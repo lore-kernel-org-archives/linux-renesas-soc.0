@@ -1,160 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:34807 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751395AbeEQCBZ (ORCPT
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:36920 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751430AbeEPVQs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 May 2018 22:01:25 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] v4l: Add support for STD ioctls on subdev nodes
-Date: Thu, 17 May 2018 04:00:57 +0200
-Message-Id: <20180517020057.14423-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 16 May 2018 17:16:48 -0400
+Received: by mail-wr0-f196.google.com with SMTP id h5-v6so3425122wrm.4
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 May 2018 14:16:48 -0700 (PDT)
+Date: Wed, 16 May 2018 23:16:45 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: laurent.pinchart@ideasonboard.com, horms@verge.net.au,
+        geert@glider.be, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/6] media: rcar-vin: Brush endpoint properties
+Message-ID: <20180516211645.GA17948@bigcity.dyn.berto.se>
+References: <1526488352-898-1-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1526488352-898-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- Documentation/media/uapi/v4l/vidioc-g-std.rst    | 14 ++++++++++----
- Documentation/media/uapi/v4l/vidioc-querystd.rst | 11 +++++++----
- drivers/media/v4l2-core/v4l2-subdev.c            | 12 ++++++++++++
- include/uapi/linux/v4l2-subdev.h                 |  3 +++
- 4 files changed, 32 insertions(+), 8 deletions(-)
+Hi Jacopo,
 
----
+On 2018-05-16 18:32:26 +0200, Jacopo Mondi wrote:
+> Hello,
+>    this series touches the bindings and the driver handling endpoint
+> properties for digital subdevices of the R-Car VIN driver.
+> 
+> The first patch simply documents what are the endpoint properties supported
+> at the moment, then the second one extends them with 'data-active'.
+> 
+> As the VIN hardware allows to use HSYNC as data enable signal when the CLCKENB
+> pin is left unconnected, the 'data-active' property presence determinates
+> if HSYNC has to be used or not as data enable signal. As a consequence, when
+> running with embedded synchronism, and there is not HSYNC signal, it becomes
+> mandatory to specify 'data-active' polarity in DTS.
+> 
+> To address this, all Gen-2 boards featuring a composite video input and
+> running with embedded synchronization, now need that property to be specified
+> in DTS. Before adding it, remove un-used properties as 'pclk-sample' and
+> 'bus-width' from the Gen-2 bindings, as they are not parsed by the VIN driver
+> and only confuse users.
+> 
+> Niklas, as you already know I don't have any Gen2 board. Could you give this
+> a spin on Koelsch if you like the series?
 
-Hi Hans,
+I tested this on my Koelsch and capture is still working :-)
 
-I have tested this on Renesas Gen3 Salvator-XS M3-N using the AFE 
-subdevice from the adv748x driver together with the R-Car VIN and CSI-2 
-pipeline.  
+> 
+> Thanks
+>    j
+> 
+> Jacopo Mondi (6):
+>   dt-bindings: media: rcar-vin: Describe optional ep properties
+>   dt-bindings: media: rcar-vin: Document data-active
+>   media: rcar-vin: Handle data-active property
+>   media: rcar-vin: Handle CLOCKENB pin polarity
+>   ARM: dts: rcar-gen2: Remove unused VIN properties
+>   ARM: dts: rcar-gen2: Add 'data-active' property
+> 
+>  Documentation/devicetree/bindings/media/rcar_vin.txt | 18 +++++++++++++++++-
+>  arch/arm/boot/dts/r8a7790-lager.dts                  |  4 +---
+>  arch/arm/boot/dts/r8a7791-koelsch.dts                |  4 +---
+>  arch/arm/boot/dts/r8a7791-porter.dts                 |  2 +-
+>  arch/arm/boot/dts/r8a7793-gose.dts                   |  4 +---
+>  arch/arm/boot/dts/r8a7794-alt.dts                    |  2 +-
+>  arch/arm/boot/dts/r8a7794-silk.dts                   |  2 +-
+>  drivers/media/platform/rcar-vin/rcar-core.c          | 10 ++++++++--
+>  drivers/media/platform/rcar-vin/rcar-dma.c           | 11 +++++++++++
+>  9 files changed, 42 insertions(+), 15 deletions(-)
+> 
+> --
+> 2.7.4
+> 
 
-I wrote a prototype patch for v4l2-ctl which adds three new options 
-(--get-subdev-standard, --set-subdev-standard and 
---get-subdev-detected-standard) to ease testing which I plan to submit 
-after some cleanup if this patch receives positive feedback.
-
-If you or anyone else is interested in testing this patch the v4l2-utils 
-prototype patches are available at
-
-git://git.ragnatech.se/v4l-utils#subdev-std
-
-Regards,
-// Niklas
-
-diff --git a/Documentation/media/uapi/v4l/vidioc-g-std.rst b/Documentation/media/uapi/v4l/vidioc-g-std.rst
-index 90791ab51a5371b8..8d94f0404df270db 100644
---- a/Documentation/media/uapi/v4l/vidioc-g-std.rst
-+++ b/Documentation/media/uapi/v4l/vidioc-g-std.rst
-@@ -2,14 +2,14 @@
- 
- .. _VIDIOC_G_STD:
- 
--********************************
--ioctl VIDIOC_G_STD, VIDIOC_S_STD
--********************************
-+**************************************************************************
-+ioctl VIDIOC_G_STD, VIDIOC_S_STD, VIDIOC_SUBDEV_G_STD, VIDIOC_SUBDEV_S_STD
-+**************************************************************************
- 
- Name
- ====
- 
--VIDIOC_G_STD - VIDIOC_S_STD - Query or select the video standard of the current input
-+VIDIOC_G_STD - VIDIOC_S_STD - VIDIOC_SUBDEV_G_STD - VIDIOC_SUBDEV_S_STD - Query or select the video standard of the current input
- 
- 
- Synopsis
-@@ -21,6 +21,12 @@ Synopsis
- .. c:function:: int ioctl( int fd, VIDIOC_S_STD, const v4l2_std_id *argp )
-     :name: VIDIOC_S_STD
- 
-+.. c:function:: int ioctl( int fd, VIDIOC_SUBDEV_G_STD, v4l2_std_id *argp )
-+    :name: VIDIOC_SUBDEV_G_STD
-+
-+.. c:function:: int ioctl( int fd, VIDIOC_SUBDEV_S_STD, const v4l2_std_id *argp )
-+    :name: VIDIOC_SUBDEV_S_STD
-+
- 
- Arguments
- =========
-diff --git a/Documentation/media/uapi/v4l/vidioc-querystd.rst b/Documentation/media/uapi/v4l/vidioc-querystd.rst
-index cf40bca19b9f8665..a8385cc7481869dd 100644
---- a/Documentation/media/uapi/v4l/vidioc-querystd.rst
-+++ b/Documentation/media/uapi/v4l/vidioc-querystd.rst
-@@ -2,14 +2,14 @@
- 
- .. _VIDIOC_QUERYSTD:
- 
--*********************
--ioctl VIDIOC_QUERYSTD
--*********************
-+*********************************************
-+ioctl VIDIOC_QUERYSTD, VIDIOC_SUBDEV_QUERYSTD
-+*********************************************
- 
- Name
- ====
- 
--VIDIOC_QUERYSTD - Sense the video standard received by the current input
-+VIDIOC_QUERYSTD - VIDIOC_SUBDEV_QUERYSTD - Sense the video standard received by the current input
- 
- 
- Synopsis
-@@ -18,6 +18,9 @@ Synopsis
- .. c:function:: int ioctl( int fd, VIDIOC_QUERYSTD, v4l2_std_id *argp )
-     :name: VIDIOC_QUERYSTD
- 
-+.. c:function:: int ioctl( int fd, VIDIOC_SUBDEV_QUERYSTD, v4l2_std_id *argp )
-+    :name: VIDIOC_SUBDEV_QUERYSTD
-+
- 
- Arguments
- =========
-diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
-index f9eed938d3480b74..a156b1812e923721 100644
---- a/drivers/media/v4l2-core/v4l2-subdev.c
-+++ b/drivers/media/v4l2-core/v4l2-subdev.c
-@@ -494,6 +494,18 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg)
- 
- 	case VIDIOC_SUBDEV_S_DV_TIMINGS:
- 		return v4l2_subdev_call(sd, video, s_dv_timings, arg);
-+
-+	case VIDIOC_SUBDEV_G_STD:
-+		return v4l2_subdev_call(sd, video, g_std, arg);
-+
-+	case VIDIOC_SUBDEV_S_STD: {
-+		v4l2_std_id *std = arg;
-+
-+		return v4l2_subdev_call(sd, video, s_std, *std);
-+	}
-+
-+	case VIDIOC_SUBDEV_QUERYSTD:
-+		return v4l2_subdev_call(sd, video, querystd, arg);
- #endif
- 	default:
- 		return v4l2_subdev_call(sd, core, ioctl, cmd, arg);
-diff --git a/include/uapi/linux/v4l2-subdev.h b/include/uapi/linux/v4l2-subdev.h
-index c95a53e6743cb040..133696a1f324ffdc 100644
---- a/include/uapi/linux/v4l2-subdev.h
-+++ b/include/uapi/linux/v4l2-subdev.h
-@@ -170,8 +170,11 @@ struct v4l2_subdev_selection {
- #define VIDIOC_SUBDEV_G_SELECTION		_IOWR('V', 61, struct v4l2_subdev_selection)
- #define VIDIOC_SUBDEV_S_SELECTION		_IOWR('V', 62, struct v4l2_subdev_selection)
- /* The following ioctls are identical to the ioctls in videodev2.h */
-+#define VIDIOC_SUBDEV_G_STD			_IOR('V', 23, v4l2_std_id)
-+#define VIDIOC_SUBDEV_S_STD			_IOW('V', 24, v4l2_std_id)
- #define VIDIOC_SUBDEV_G_EDID			_IOWR('V', 40, struct v4l2_edid)
- #define VIDIOC_SUBDEV_S_EDID			_IOWR('V', 41, struct v4l2_edid)
-+#define VIDIOC_SUBDEV_QUERYSTD			_IOR('V', 63, v4l2_std_id)
- #define VIDIOC_SUBDEV_S_DV_TIMINGS		_IOWR('V', 87, struct v4l2_dv_timings)
- #define VIDIOC_SUBDEV_G_DV_TIMINGS		_IOWR('V', 88, struct v4l2_dv_timings)
- #define VIDIOC_SUBDEV_ENUM_DV_TIMINGS		_IOWR('V', 98, struct v4l2_enum_dv_timings)
 -- 
-2.17.0
+Regards,
+Niklas S�derlund
