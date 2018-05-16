@@ -1,128 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:51885 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752232AbeEKKAc (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:50857 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752433AbeEPHc1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 May 2018 06:00:32 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        horms@verge.net.au, geert@glider.be, magnus.damm@gmail.com,
-        robh+dt@kernel.org
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] arm64: dts: renesas: draak: Describe HDMI input
-Date: Fri, 11 May 2018 12:00:02 +0200
-Message-Id: <1526032802-14376-4-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1526032802-14376-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1526032802-14376-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 16 May 2018 03:32:27 -0400
+Date: Wed, 16 May 2018 09:32:23 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/7] arm64: dts: renesas: enable VIN, CSI-2 and ADV7482
+Message-ID: <20180516073223.it7ijcd22kfj2wip@verge.net.au>
+References: <20180516015854.19432-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180516015854.19432-1-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe HDMI input connected to VIN4 interface for R-Car D3 Draak
-development board.
+On Wed, May 16, 2018 at 03:58:47AM +0200, Niklas Söderlund wrote:
+> Hi Simon,
+> 
+> This series enable capture for H3, M3-W, M3-N Salvator-X and Salvator-XS 
+> boards. It also adds the VIN and CSI-2 nodes for V3M, but as the ADV7482 
+> is on the V3M expansion boards I have chosen not include that enablement 
+> in this series.
+> 
+> Patch 1-5/6 adds the VIN and CSI-2 for each SoC, patch 5/6 adds the 
+> ADV7482 to the common salvator-common.dtsi which is shared between all 
+> Salvator-{X,XS} boards. And finally patch 6/6 set the status of the VINs 
+> to okay.
+> 
+> The CSI-2 bindings are acked and in Sakaris branch for-4.18-6 [1]. All 
+> VIN bindings except r8a77965 is already in the media tree [2]. The 
+> r8a77965 compability string [3] have not yet been picked up but as it 
+> just building on the already accepted pattern I see little risk. If this 
+> troubles please disregard patch 4/6.
+> 
+> 1. https://git.linuxtv.org/sailus/media_tree.git/
+> 2. https://git.linuxtv.org/media_tree.git/
+> 3. https://patchwork.linuxtv.org/patch/49476/
+> 
+> Kieran Bingham (1):
+>   arm64: dts: renesas: salvator-common: Add ADV7482 support
+> 
+> Niklas Söderlund (6):
+>   arm64: dts: renesas: r8a7795: add VIN and CSI-2 nodes
+>   arm64: dts: renesas: r8a7795-es1: add CSI-2 node
+>   arm64: dts: renesas: r8a7796: add VIN and CSI-2 nodes
+>   arm64: dts: renesas: r8a77965: add VIN and CSI-2 nodes
+>   arm64: dts: renesas: r8a77970: add VIN and CSI-2 nodes
+>   arm64: dts: renesas: salvator-common: enable VIN
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 68 ++++++++++++++++++++++++++
- 1 file changed, 68 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index d03f194..e0ce462 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -59,6 +59,17 @@
- 		};
- 	};
- 
-+	hdmi-in {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&adv7612_in>;
-+			};
-+		};
-+	};
-+
- 	memory@48000000 {
- 		device_type = "memory";
- 		/* first 128MB is reserved for secure area. */
-@@ -142,6 +153,11 @@
- 		groups = "usb0";
- 		function = "usb0";
- 	};
-+
-+	vin4_pins: vin4 {
-+		groups = "vin4_data24", "vin4_sync", "vin4_clk", "vin4_clkenb";
-+		function = "vin4";
-+	};
- };
- 
- &i2c0 {
-@@ -154,6 +170,35 @@
- 		reg = <0x50>;
- 		pagesize = <8>;
- 	};
-+
-+	hdmi-decoder@4c {
-+		compatible = "adi,adv7612";
-+		reg = <0x4c>;
-+		default-input = <0>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7612_in: endpoint {
-+					remote-endpoint = <&hdmi_con_in>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+				adv7612_out: endpoint {
-+					pclk-sample = <0>;
-+					hsync-active = <0>;
-+					vsync-active = <0>;
-+
-+					remote-endpoint = <&vin4_in>;
-+				};
-+			};
-+		};
-+	};
- };
- 
- &i2c1 {
-@@ -246,3 +291,26 @@
- 	timeout-sec = <60>;
- 	status = "okay";
- };
-+
-+&vin4 {
-+	pinctrl-0 = <&vin4_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+
-+			vin4_in: endpoint {
-+				hsync-active = <0>;
-+				vsync-active = <0>;
-+
-+				remote-endpoint = <&adv7612_out>;
-+			};
-+		};
-+	};
-+};
--- 
-2.7.4
+Thanks, applied.
