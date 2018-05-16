@@ -1,9 +1,19 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Wed, 16 May 2018 14:27:52 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-        netdev <netdev@vger.kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:44192 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751046AbeEPIyO (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 16 May 2018 04:54:14 -0400
+MIME-Version: 1.0
+In-Reply-To: <20180515235619.27773-1-f.fainelli@gmail.com>
+References: <20180515235619.27773-1-f.fainelli@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 16 May 2018 10:54:12 +0200
+Message-ID: <CAMuHMdXfOOgADe1my9Y3s3b9_OsXPjbqq1PPFR9izZWhtPuaFg@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 0/2] of: mdio: Fall back to mdiobus_register()
+ with NULL device_node
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: netdev <netdev@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>,
         Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
         "David S. Miller" <davem@davemloft.net>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
@@ -22,7 +32,7 @@ Cc: Florian Fainelli <f.fainelli@gmail.com>,
         Russell King <rmk+kernel@armlinux.org.uk>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Niklas =?iso-8859-1?Q?S=F6derlund?=
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>,
         Simon Horman <horms+renesas@verge.net.au>,
         Maxim Uvarov <muvarov@gmail.com>, Sekhar Nori <nsekhar@ti.com>,
@@ -34,45 +44,43 @@ Cc: Florian Fainelli <f.fainelli@gmail.com>,
         "open list:USB NETWORKING DRIVERS" <linux-usb@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE"
         <devicetree@vger.kernel.org>
-Subject: Re: [PATCH net-next v2 0/2] of: mdio: Fall back to
- mdiobus_register() with NULL device_node
-Message-ID: <20180516122752.GC22000@lunn.ch>
-References: <20180515235619.27773-1-f.fainelli@gmail.com>
- <CAMuHMdXfOOgADe1my9Y3s3b9_OsXPjbqq1PPFR9izZWhtPuaFg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXfOOgADe1my9Y3s3b9_OsXPjbqq1PPFR9izZWhtPuaFg@mail.gmail.com>
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, May 16, 2018 at 10:54:12AM +0200, Geert Uytterhoeven wrote:
-> Hi Florian,
-> 
-> Thanks for your series!
-> I like the effect on simplifying drivers.
-> 
-> On Wed, May 16, 2018 at 1:56 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
-> > This patch series updates of_mdiobus_register() such that when the device_node
-> > argument is NULL, it calls mdiobus_register() directly. This is consistent with
-> > the behavior of of_mdiobus_register() when CONFIG_OF=n.
-> 
-> IMHO the CONFIG_OF=n behavior of of_mdiobus_register() (which I wasn't
-> aware of) is inconsistent with the behavior of other of_*() functions,
-> which are just empty stubs.
-> 
-> So I'm wondering if you should do it the other way around, and let
-> mdiobus_register() call of_mdiobus_register() if dev->of_node exists?
+Hi Florian,
 
-Hi Geert
+Thanks for your series!
+I like the effect on simplifying drivers.
 
-dev->of_node is often not the correct OF node. The mdio properties are
-often embedded inside a MAC driver, and use an 'mdio' container
-node. This container node is needed, not the device node.
+On Wed, May 16, 2018 at 1:56 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> This patch series updates of_mdiobus_register() such that when the device_node
+> argument is NULL, it calls mdiobus_register() directly. This is consistent with
+> the behavior of of_mdiobus_register() when CONFIG_OF=n.
 
-> I haven't looked at the ACPI handling, but perhaps this can be moved
-> inside mdiobus_register() as well?
+IMHO the CONFIG_OF=n behavior of of_mdiobus_register() (which I wasn't
+aware of) is inconsistent with the behavior of other of_*() functions,
+which are just empty stubs.
 
-The ACPI binding for MDIO and PHYs has not been defined yet.
+So I'm wondering if you should do it the other way around, and let
+mdiobus_register() call of_mdiobus_register() if dev->of_node exists?
 
-    Andrew
+This does mean mdiobus_register() should gain a struct device * parameter,
+and thus changes to many more drivers are needed.
+
+> I only converted the most obvious drivers, there are others that have a much
+> less obvious behavior and specifically attempt to deal with CONFIG_ACPI.
+
+I haven't looked at the ACPI handling, but perhaps this can be moved
+inside mdiobus_register() as well?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
