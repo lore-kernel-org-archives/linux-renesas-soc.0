@@ -1,73 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752648AbeERLTH (ORCPT
+Received: from relay10.mail.gandi.net ([217.70.178.230]:42091 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751395AbeEPNmV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:19:07 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 45/69] ARM: dts: r8a7790: Fix sort order of VSP1/FDP1 nodes
-Date: Fri, 18 May 2018 13:17:18 +0200
-Message-Id: <b9ac80c815eabb81b66dc2dad2bb1a376915aeca.1526641667.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
-References: <cover.1526641667.git.horms+renesas@verge.net.au>
+        Wed, 16 May 2018 09:42:21 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
+        horms@verge.net.au, geert@glider.be, magnus.damm@gmail.com,
+        robh+dt@kernel.org
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] arm64: dts: Draak: Enable video inputs and VIN4
+Date: Wed, 16 May 2018 15:42:06 +0200
+Message-Id: <1526478129-16465-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Hello,
+   the second iteration of this series enables HDMI and CVBS video inputs
+for the Draak board.
 
-Commit 5d3b50d3c04d ("ARM: dts: renesas: r8a7790: Add FDP1 instances")
-introduced the FDP1 for the r8a7790, but broke the sort ordering of the
-device tree nodes.
+>From v1 series the description of VIN4 video interface for R8A77995 SoC has
+already been collected by Simon, thus I'm not resending it.
 
-Move the last VSP up to it's peers to correct the ordering.
+This new version describes the HDMI input as v1 did, but does not connect it
+to the VIN4 interface, as the video input path is shared between HDMI and
+CVBS, and the default switches configuration selects CVBS.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7790.dtsi | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+I've not been able to test CVBS capture as I don't have any CVBS video source
+here, but the devices shows up in the media controller graph as expected.
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 0f1948d560d7..b64d99e3ad9d 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1616,6 +1616,15 @@
- 			resets = <&cpg 128>;
- 		};
- 
-+		vsp@fe938000 {
-+			compatible = "renesas,vsp1";
-+			reg = <0 0xfe938000 0 0x8000>;
-+			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 127>;
-+			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
-+			resets = <&cpg 127>;
-+		};
-+
- 		fdp1@fe940000 {
- 			compatible = "renesas,fdp1";
- 			reg = <0 0xfe940000 0 0x2400>;
-@@ -1643,15 +1652,6 @@
- 			resets = <&cpg 117>;
- 		};
- 
--		vsp@fe938000 {
--			compatible = "renesas,vsp1";
--			reg = <0 0xfe938000 0 0x8000>;
--			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 127>;
--			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
--			resets = <&cpg 127>;
--		};
--
- 		jpu: jpeg-codec@fe980000 {
- 			compatible = "renesas,jpu-r8a7790",
- 				     "renesas,rcar-gen2-jpu";
--- 
-2.11.0
+-------------------------------------------------------------------------------
+[root@alarm ~]# media-ctl  -p -d /dev/media1
+Media controller API version 4.17.0
+
+Media device information
+------------------------
+driver          rcar_vin
+model           renesas,vin-r8a77995
+serial
+bus info        platform:e6ef4000.video
+hw revision     0x0
+driver version  4.17.0
+
+Device topology
+- entity 1: adv7180 0-0020 (1 pad, 1 link)
+            type V4L2 subdev subtype Unknown flags 20004
+            device node name /dev/v4l-subdev6
+        pad0: Source
+                [fmt:UYVY8_2X8/720x480 field:interlaced colorspace:smpte170m]
+                -> "VIN4 output":0 []
+
+- entity 5: VIN4 output (1 pad, 1 link)
+            type Node subtype V4L flags 0
+            device node name /dev/video3
+        pad0: Sink
+                <- "adv7180 0-0020":0 []
+-------------------------------------------------------------------------------
+
+Compared to Gen2 boards that use adv7180 (Lager, Alt, Koelsch, Porter, Gose
+and Silk) I have removed the 'bus-width' property as it is not parsed by the
+driver nor mentioned in the chip device tree binding description.
+
+Switching from CVBS to HDMI input requires connecting the HDMI decoder endpoint
+to VIN4, change the pin muxing to increase the VIN4 input bus width to 24 bits,
+and add the synchronism signal polarities to the vin endpoint, as the HDMI
+decoder uses BT.601 while the analog video decoder uses BT.656 unconditionally.
+
+The series has been developed on top of media-master tree but applies cleanly
+on top of latest renesas-driver.
+
+Patches for testing are available at:
+git://jmondi.org/linux d3/media-master/driver-v2
+git://jmondi.org/linux d3/media-master/dts-v2
+git://jmondi.org/vin-tests d3
+
+Thanks
+    j
+
+Jacopo Mondi (3):
+  dt-bindings: media: rcar-vin: Add R8A77995 support
+  arm64: dts: renesas: draak: Describe CVBS input
+  arm64: dts: renesas: draak: Describe HDMI input
+
+ .../devicetree/bindings/media/rcar_vin.txt         |  1 +
+ arch/arm64/boot/dts/renesas/r8a77995-draak.dts     | 74 ++++++++++++++++++++++
+ 2 files changed, 75 insertions(+)
+
+--
+2.7.4
