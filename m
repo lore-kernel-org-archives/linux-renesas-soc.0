@@ -1,50 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750888AbeERLRY (ORCPT
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:34789 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751227AbeEPUxe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:17:24 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 073/102] arm64: dts: renesas: salvator-common: add eeprom
-Date: Fri, 18 May 2018 13:15:35 +0200
-Message-Id: <99b1eb0f62f90159da2c0ff7791f4db9f9c66f64.1526637994.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
-References: <cover.1526637994.git.horms+renesas@verge.net.au>
+        Wed, 16 May 2018 16:53:34 -0400
+Received: by mail-wr0-f194.google.com with SMTP id p18-v6so3347692wrm.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 May 2018 13:53:34 -0700 (PDT)
+Date: Wed, 16 May 2018 22:53:31 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] media: rcar-vin: Add support for R-Car R8A77995
+ SoC
+Message-ID: <20180516205331.GE17838@bigcity.dyn.berto.se>
+References: <1526473016-30559-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1526473016-30559-5-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1526473016-30559-5-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hi Jacopo,
 
-Add the EEPROM found on Salvator-X and -XS boards for H3, M3-W, and M3-N
-on the IIC_DVFS bus.
+On 2018-05-16 14:16:56 +0200, Jacopo Mondi wrote:
+> Add R-Car R8A77995 SoC to the rcar-vin supported ones.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index ea74c55..fba8610 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -1104,6 +1104,10 @@ static const struct rvin_group_route _rcar_info_r8a77970_routes[] = {
+>  	{ /* Sentinel */ }
+>  };
+>  
+> +static const struct rvin_group_route _rcar_info_r8a77995_routes[] = {
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+Nitpick and I see that the error is not yours but present in other but 
+not all route declarations. But the intention is not to have a leading _ 
+here.  A patch to clean that up for _rcar_info_r8a77965_routes[] and 
+_rcar_info_r8a77970_routes[] would be welcome, or I can do it if you are 
+over loaded.
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index 9116f4caa3c6..803220a02f50 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -385,6 +385,12 @@
- 			};
- 		};
- 	};
-+
-+	eeprom@50 {
-+		compatible = "rohm,br24t01", "atmel,24c01";
-+		reg = <0x50>;
-+		pagesize = <8>;
-+	};
- };
- 
- &ohci0 {
+> +	{ /* Sentinel */ }
+> +};
+> +
+>  static const struct rvin_info rcar_info_r8a77970 = {
+>  	.model = RCAR_GEN3,
+>  	.use_mc = true,
+> @@ -1112,6 +1116,14 @@ static const struct rvin_info rcar_info_r8a77970 = {
+>  	.routes = _rcar_info_r8a77970_routes,
+>  };
+>  
+> +static const struct rvin_info rcar_info_r8a77995 = {
+> +	.model = RCAR_GEN3,
+> +	.use_mc = true,
+> +	.max_width = 4096,
+> +	.max_height = 4096,
+> +	.routes = _rcar_info_r8a77995_routes,
+> +};
+> +
+>  static const struct of_device_id rvin_of_id_table[] = {
+>  	{
+>  		.compatible = "renesas,vin-r8a7778",
+> @@ -1153,6 +1165,10 @@ static const struct of_device_id rvin_of_id_table[] = {
+>  		.compatible = "renesas,vin-r8a77970",
+>  		.data = &rcar_info_r8a77970,
+>  	},
+> +	{
+> +		.compatible = "renesas,vin-r8a77995",
+> +		.data = &rcar_info_r8a77995,
+> +	},
+>  	{ /* Sentinel */ },
+>  };
+>  MODULE_DEVICE_TABLE(of, rvin_of_id_table);
+> -- 
+> 2.7.4
+> 
+
 -- 
-2.11.0
+Regards,
+Niklas S�derlund
