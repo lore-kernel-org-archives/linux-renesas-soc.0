@@ -1,131 +1,201 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:35025 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751196AbeECTk7 (ORCPT
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:12221 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751309AbeEPCCg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 May 2018 15:40:59 -0400
-Received: by mail-lf0-f68.google.com with SMTP id y72-v6so13937465lfd.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 May 2018 12:40:58 -0700 (PDT)
-Subject: [PATCH v3 3/5] pcie-rcar: add R-Car gen3 PHY support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-References: <b98130a7-b128-9fc3-aee1-1a5a2590b320@cogentembedded.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Message-ID: <def3b364-088b-3fcc-47ab-bcb0838b8fe4@cogentembedded.com>
-Date: Thu, 3 May 2018 22:40:54 +0300
+        Tue, 15 May 2018 22:02:36 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 5/7] arm64: dts: renesas: r8a77970: add VIN and CSI-2 nodes
+Date: Wed, 16 May 2018 03:58:52 +0200
+Message-Id: <20180516015854.19432-6-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180516015854.19432-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180516015854.19432-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <b98130a7-b128-9fc3-aee1-1a5a2590b320@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On R-Car gen3 SoCs the PCIe PHY has its own register region -- and I have
-written a generic PHY driver for it, thus we need to add the corresponding
-code in rcar_pcie_hw_init_gen3() and call devm_phy_optional_get() at the
-driver's probing time, so that the existing R-Car gen3 device trees (not
-having a PHY node) would still work (we only need to power up the PHY on
-R-Car V3H).
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-Changes in version 3:
-- removed double spaces in the patch description;
-- added Simon's tag;
-- refreshed atop of the recent driver/bindings patches.
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 152 ++++++++++++++++++++++
+ 1 file changed, 152 insertions(+)
 
-Changes in version 2:
-- updated the bindings.
-
- Documentation/devicetree/bindings/pci/rcar-pci.txt |    5 +++
- drivers/pci/host/pcie-rcar.c                       |   27 +++++++++++++++++++--
- 2 files changed, 30 insertions(+), 2 deletions(-)
-
-Index: pci/Documentation/devicetree/bindings/pci/rcar-pci.txt
-===================================================================
---- pci.orig/Documentation/devicetree/bindings/pci/rcar-pci.txt
-+++ pci/Documentation/devicetree/bindings/pci/rcar-pci.txt
-@@ -32,6 +32,11 @@ compatible: "renesas,pcie-r8a7743" for t
- 	and PCIe bus clocks.
- - clock-names: from common clock binding: should be "pcie" and "pcie_bus".
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+index c8464d1ef1b20590..98a2317a16c470bb 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -547,6 +547,119 @@
+ 			status = "disabled";
+ 		};
  
-+Optional properties:
-+- phys: from common PHY binding: PHY phandle and specifier (only make sense
-+	for R-Car gen3 SoCs where the PCIe PHYs have their own register blocks).
-+- phy-names: from common PHY binding: should be "pcie".
 +
- Example:
++		vin0: video@e6ef0000 {
++			compatible = "renesas,vin-r8a77970";
++			reg = <0 0xe6ef0000 0 0x1000>;
++			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 811>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 811>;
++			renesas,id = <0>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					vin0csi40: endpoint@2 {
++						reg = <2>;
++						remote-endpoint= <&csi40vin0>;
++					};
++				};
++			};
++		};
++
++		vin1: video@e6ef1000 {
++			compatible = "renesas,vin-r8a77970";
++			reg = <0 0xe6ef1000 0 0x1000>;
++			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 810>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 810>;
++			renesas,id = <1>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					vin1csi40: endpoint@2 {
++						reg = <2>;
++						remote-endpoint= <&csi40vin1>;
++					};
++				};
++			};
++		};
++
++		vin2: video@e6ef2000 {
++			compatible = "renesas,vin-r8a77970";
++			reg = <0 0xe6ef2000 0 0x1000>;
++			interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 809>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 809>;
++			renesas,id = <2>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					vin2csi40: endpoint@2 {
++						reg = <2>;
++						remote-endpoint= <&csi40vin2>;
++					};
++				};
++			};
++		};
++
++		vin3: video@e6ef3000 {
++			compatible = "renesas,vin-r8a77970";
++			reg = <0 0xe6ef3000 0 0x1000>;
++			interrupts = <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 808>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 808>;
++			renesas,id = <3>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					vin3csi40: endpoint@2 {
++						reg = <2>;
++						remote-endpoint= <&csi40vin3>;
++					};
++				};
++			};
++		};
++
+ 		dmac1: dma-controller@e7300000 {
+ 			compatible = "renesas,dmac-r8a77970",
+ 				     "renesas,rcar-dmac";
+@@ -679,6 +792,45 @@
+ 			resets = <&cpg 603>;
+ 		};
  
- SoC-specific DT Entry:
-Index: pci/drivers/pci/host/pcie-rcar.c
-===================================================================
---- pci.orig/drivers/pci/host/pcie-rcar.c
-+++ pci/drivers/pci/host/pcie-rcar.c
-@@ -25,6 +25,7 @@
- #include <linux/of_pci.h>
- #include <linux/of_platform.h>
- #include <linux/pci.h>
-+#include <linux/phy/phy.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/slab.h>
-@@ -141,6 +142,7 @@ static inline struct rcar_msi *to_rcar_m
- /* Structure representing the PCIe interface */
- struct rcar_pcie {
- 	struct device		*dev;
-+	struct phy		*phy;
- 	void __iomem		*base;
- 	struct list_head	resources;
- 	int			root_bus_nr;
-@@ -667,6 +669,21 @@ static int rcar_pcie_hw_init_gen2(struct
- 	return rcar_pcie_hw_init(pcie);
- }
- 
-+static int rcar_pcie_hw_init_gen3(struct rcar_pcie *pcie)
-+{
-+	int err;
++		csi40: csi2@feaa0000 {
++			compatible = "renesas,r8a77970-csi2";
++			reg = <0 0xfeaa0000 0 0x10000>;
++			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 716>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 716>;
++			status = "disabled";
 +
-+	err = phy_init(pcie->phy);
-+	if (err)
-+		return err;
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
 +
-+	err = phy_power_on(pcie->phy);
-+	if (err)
-+		return err;
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
 +
-+	return rcar_pcie_hw_init(pcie);
-+}
++					reg = <1>;
 +
- static int rcar_msi_alloc(struct rcar_msi *chip)
- {
- 	int msi;
-@@ -916,6 +933,10 @@ static int rcar_pcie_get_resources(struc
- 	struct resource res;
- 	int err, i;
- 
-+	pcie->phy = devm_phy_optional_get(dev, "pcie");
-+	if (IS_ERR(pcie->phy))
-+		return PTR_ERR(pcie->phy);
++					csi40vin0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&vin0csi40>;
++					};
++					csi40vin1: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&vin1csi40>;
++					};
++					csi40vin2: endpoint@2 {
++						reg = <2>;
++						remote-endpoint = <&vin2csi40>;
++					};
++					csi40vin3: endpoint@3 {
++						reg = <3>;
++						remote-endpoint = <&vin3csi40>;
++					};
++				};
++			};
++		};
 +
- 	err = of_address_to_resource(dev->of_node, 0, &res);
- 	if (err)
- 		return err;
-@@ -1056,8 +1077,10 @@ static const struct of_device_id rcar_pc
- 	  .data = rcar_pcie_hw_init_gen2 },
- 	{ .compatible = "renesas,pcie-rcar-gen2",
- 	  .data = rcar_pcie_hw_init_gen2 },
--	{ .compatible = "renesas,pcie-r8a7795", .data = rcar_pcie_hw_init },
--	{ .compatible = "renesas,pcie-rcar-gen3", .data = rcar_pcie_hw_init },
-+	{ .compatible = "renesas,pcie-r8a7795",
-+	  .data = rcar_pcie_hw_init_gen3 },
-+	{ .compatible = "renesas,pcie-rcar-gen3",
-+	  .data = rcar_pcie_hw_init_gen3 },
- 	{},
- };
- 
+ 		du: display@feb00000 {
+ 			compatible = "renesas,du-r8a77970";
+ 			reg = <0 0xfeb00000 0 0x80000>;
+-- 
+2.17.0
