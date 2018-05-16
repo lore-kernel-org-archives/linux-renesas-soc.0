@@ -1,95 +1,40 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:43272 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751127AbeEUNLn (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 May 2018 09:11:43 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-pci@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 3/4] PCI: rcar: Add missing irq_dispose_mapping() into failpath
-Date: Mon, 21 May 2018 15:11:22 +0200
-Message-Id: <20180521131123.2009-3-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180521131123.2009-1-marek.vasut+renesas@gmail.com>
-References: <20180521131123.2009-1-marek.vasut+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Sakari Ailus <sakari.ailus@iki.fi>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH] rcar-csi2: set default format if a unsupported one is requested
+Date: Thu, 17 May 2018 01:04:33 +0200
+Message-Id: <20180516230433.29194-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The rcar_pcie_get_resources() is another misnomer with a side effect.
-The function does not only get resources, but also maps MSI IRQs via
-irq_of_parse_and_map(). In case anything fails afterward, the IRQ
-mapping must be disposed through irq_dispose_mapping() which is not
-done.
+Instead of failing the set_fmt() if a unsupported format is requested
+set a default one and return the changed format to the user.
 
-This patch handles irq_of_parse_and_map() failures in by disposing
-of the mapping in rcar_pcie_get_resources() as well as in probe.
-
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reported-by: Sakari Ailus <sakari.ailus@iki.fi>
 ---
- drivers/pci/host/pcie-rcar.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-csi2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index eac4b71d9c60..3cc84f7e05f7 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -923,18 +923,25 @@ static int rcar_pcie_get_resources(struct rcar_pcie *pcie)
- 	i = irq_of_parse_and_map(dev->of_node, 0);
- 	if (!i) {
- 		dev_err(dev, "cannot get platform resources for msi interrupt\n");
--		return -ENOENT;
-+		err = -ENOENT;
-+		goto err_irq1;
- 	}
- 	pcie->msi.irq1 = i;
+diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+index e64f07fe184e7675..daef72d410a3425d 100644
+--- a/drivers/media/platform/rcar-vin/rcar-csi2.c
++++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+@@ -613,7 +613,7 @@ static int rcsi2_set_pad_format(struct v4l2_subdev *sd,
+ 	struct v4l2_mbus_framefmt *framefmt;
  
- 	i = irq_of_parse_and_map(dev->of_node, 1);
- 	if (!i) {
- 		dev_err(dev, "cannot get platform resources for msi interrupt\n");
--		return -ENOENT;
-+		err = -ENOENT;
-+		goto err_irq2;
- 	}
- 	pcie->msi.irq2 = i;
+ 	if (!rcsi2_code_to_fmt(format->format.code))
+-		return -EINVAL;
++		format->format.code = rcar_csi2_formats[0].code;
  
- 	return 0;
-+
-+err_irq2:
-+	irq_dispose_mapping(pcie->msi.irq1);
-+err_irq1:
-+	return err;
- }
- 
- static int rcar_pcie_inbound_ranges(struct rcar_pcie *pcie,
-@@ -1118,7 +1125,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- 	err = clk_prepare_enable(pcie->bus_clk);
- 	if (err) {
- 		dev_err(dev, "failed to enable bus clock: %d\n", err);
--		goto err_pm_put;
-+		goto err_unmap_msi_irqs;
- 	}
- 
- 	err = rcar_pcie_parse_map_dma_ranges(pcie, dev->of_node);
-@@ -1156,6 +1163,10 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- err_clk_disable:
- 	clk_disable_unprepare(pcie->bus_clk);
- 
-+err_unmap_msi_irqs:
-+	irq_dispose_mapping(pcie->msi.irq2);
-+	irq_dispose_mapping(pcie->msi.irq1);
-+
- err_pm_put:
- 	pm_runtime_put(dev);
- 
+ 	if (format->which == V4L2_SUBDEV_FORMAT_ACTIVE) {
+ 		priv->mf = format->format;
 -- 
-2.16.2
+2.17.0
