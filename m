@@ -1,53 +1,78 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([184.105.139.130]:43526 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751147AbeEPSVH (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 May 2018 14:21:07 -0400
-Date: Wed, 16 May 2018 14:21:02 -0400 (EDT)
-Message-Id: <20180516.142102.1650229402143291732.davem@davemloft.net>
-To: f.fainelli@gmail.com
-Cc: netdev@vger.kernel.org, andrew@lunn.ch,
-        vivien.didelot@savoirfairelinux.com, nicolas.ferre@microchip.com,
-        fugang.duan@nxp.com, sergei.shtylyov@cogentembedded.com,
-        peppe.cavallaro@st.com, alexandre.torgue@st.com,
-        joabreu@synopsys.com, grygorii.strashko@ti.com,
-        woojung.huh@microchip.com, UNGLinuxDriver@microchip.com,
-        robh+dt@kernel.org, frowand.list@gmail.com,
-        antoine.tenart@free-electrons.com, Tobias.Jordan@elektrobit.com,
-        rmk+kernel@armlinux.org.uk, geert+renesas@glider.be,
-        thomas.petazzoni@free-electrons.com,
-        niklas.soderlund+renesas@ragnatech.se, horms+renesas@verge.net.au,
-        muvarov@gmail.com, nsekhar@ti.com, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 16 May 2018 14:27:52 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+        netdev <netdev@vger.kernel.org>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Fugang Duan <fugang.duan@nxp.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Woojung Huh <woojung.huh@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Antoine Tenart <antoine.tenart@free-electrons.com>,
+        Tobias Jordan <Tobias.Jordan@elektrobit.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Maxim Uvarov <muvarov@gmail.com>, Sekhar Nori <nsekhar@ti.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:RENESAS ETHERNET DRIVERS"
+        <linux-renesas-soc@vger.kernel.org>,
+        "open list:TI ETHERNET SWITCH DRIVER (CPSW)"
+        <linux-omap@vger.kernel.org>,
+        "open list:USB NETWORKING DRIVERS" <linux-usb@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE"
+        <devicetree@vger.kernel.org>
 Subject: Re: [PATCH net-next v2 0/2] of: mdio: Fall back to
  mdiobus_register() with NULL device_node
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180515235619.27773-1-f.fainelli@gmail.com>
+Message-ID: <20180516122752.GC22000@lunn.ch>
 References: <20180515235619.27773-1-f.fainelli@gmail.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+ <CAMuHMdXfOOgADe1my9Y3s3b9_OsXPjbqq1PPFR9izZWhtPuaFg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXfOOgADe1my9Y3s3b9_OsXPjbqq1PPFR9izZWhtPuaFg@mail.gmail.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Tue, 15 May 2018 16:56:17 -0700
-
-> This patch series updates of_mdiobus_register() such that when the device_node
-> argument is NULL, it calls mdiobus_register() directly. This is consistent with
-> the behavior of of_mdiobus_register() when CONFIG_OF=n.
+On Wed, May 16, 2018 at 10:54:12AM +0200, Geert Uytterhoeven wrote:
+> Hi Florian,
 > 
-> I only converted the most obvious drivers, there are others that have a much
-> less obvious behavior and specifically attempt to deal with CONFIG_ACPI.
+> Thanks for your series!
+> I like the effect on simplifying drivers.
 > 
-> Changes in v2:
+> On Wed, May 16, 2018 at 1:56 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> > This patch series updates of_mdiobus_register() such that when the device_node
+> > argument is NULL, it calls mdiobus_register() directly. This is consistent with
+> > the behavior of of_mdiobus_register() when CONFIG_OF=n.
 > 
-> - fixed build error in davincin_mdio.c (Grygorii)
-> - reworked first patch a bit: commit message, subject and removed useless
->   code comment
+> IMHO the CONFIG_OF=n behavior of of_mdiobus_register() (which I wasn't
+> aware of) is inconsistent with the behavior of other of_*() functions,
+> which are just empty stubs.
+> 
+> So I'm wondering if you should do it the other way around, and let
+> mdiobus_register() call of_mdiobus_register() if dev->of_node exists?
 
-Based upon Andrew's response to Geert's feedback, I'm applying this series.
+Hi Geert
 
-Thanks.
+dev->of_node is often not the correct OF node. The mdio properties are
+often embedded inside a MAC driver, and use an 'mdio' container
+node. This container node is needed, not the device node.
+
+> I haven't looked at the ACPI handling, but perhaps this can be moved
+> inside mdiobus_register() as well?
+
+The ACPI binding for MDIO and PHYs has not been defined yet.
+
+    Andrew
