@@ -1,104 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:42993 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751651AbeEDTHB (ORCPT
+Received: from mail-he1eur01on0090.outbound.protection.outlook.com ([104.47.0.90]:36556
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753447AbeEPKQk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 May 2018 15:07:01 -0400
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
-To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
-Cc: f.fainelli@gmail.com, opendmb@gmail.com,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
-Subject: [PATCH v9 07/12] ARM: sunxi: Add initialization of CNTVOFF
-Date: Fri,  4 May 2018 21:05:40 +0200
-Message-Id: <20180504190545.5114-8-mylene.josserand@bootlin.com>
-In-Reply-To: <20180504190545.5114-1-mylene.josserand@bootlin.com>
-References: <20180504190545.5114-1-mylene.josserand@bootlin.com>
+        Wed, 16 May 2018 06:16:40 -0400
+From: Peter Rosin <peda@axentia.se>
+To: linux-kernel@vger.kernel.org
+Cc: Peter Rosin <peda@axentia.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Jyri Sarha <jsarha@ti.com>, Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCH v3 22/26] drm/rcar-du: lvds: provide an owner .odev device for the bridge
+Date: Wed, 16 May 2018 12:15:06 +0200
+Message-Id: <20180516101510.13215-23-peda@axentia.se>
+In-Reply-To: <20180516101510.13215-1-peda@axentia.se>
+References: <20180516101510.13215-1-peda@axentia.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the initialization of CNTVOFF for sun8i-a83t.
+The .of_node member is going away.
 
-For boot CPU, create a new machine that handles this
-function's call in an "init_early" callback. We need to initialize
-CNTVOFF before the arch timer's initialization otherwise, it will
-not be taken into account and fails to boot correctly.
-Because of that, this function can't be called in SMP's early_initcall
-function which is called after timer's init.
-
-For secondary CPUs, add this function into secondary_startup
-assembly entry.
-
-Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Peter Rosin <peda@axentia.se>
 ---
- arch/arm/mach-sunxi/headsmp.S |  1 +
- arch/arm/mach-sunxi/sunxi.c   | 20 +++++++++++++++++++-
- 2 files changed, 20 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/rcar-du/rcar_lvds.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
-index 37dc772701f3..32d76be98541 100644
---- a/arch/arm/mach-sunxi/headsmp.S
-+++ b/arch/arm/mach-sunxi/headsmp.S
-@@ -71,6 +71,7 @@ ENDPROC(sunxi_mc_smp_cluster_cache_enable)
+diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+index 3d2d3bbd1342..efda02f55c95 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
++++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+@@ -463,9 +463,9 @@ static int rcar_lvds_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		return ret;
  
- ENTRY(sunxi_mc_smp_secondary_startup)
- 	bl	sunxi_mc_smp_cluster_cache_enable
-+	bl	secure_cntvoff_init
- 	b	secondary_startup
- ENDPROC(sunxi_mc_smp_secondary_startup)
++	lvds->bridge.odev = &pdev->dev;
+ 	lvds->bridge.driver_private = lvds;
+ 	lvds->bridge.funcs = &rcar_lvds_bridge_ops;
+-	lvds->bridge.of_node = pdev->dev.of_node;
  
-diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
-index 5e9602ce1573..752e0748b0c8 100644
---- a/arch/arm/mach-sunxi/sunxi.c
-+++ b/arch/arm/mach-sunxi/sunxi.c
-@@ -16,6 +16,7 @@
- #include <linux/platform_device.h>
- 
- #include <asm/mach/arch.h>
-+#include <asm/secure_cntvoff.h>
- 
- static const char * const sunxi_board_dt_compat[] = {
- 	"allwinner,sun4i-a10",
-@@ -62,7 +63,6 @@ MACHINE_END
- static const char * const sun8i_board_dt_compat[] = {
- 	"allwinner,sun8i-a23",
- 	"allwinner,sun8i-a33",
--	"allwinner,sun8i-a83t",
- 	"allwinner,sun8i-h2-plus",
- 	"allwinner,sun8i-h3",
- 	"allwinner,sun8i-r40",
-@@ -75,6 +75,24 @@ DT_MACHINE_START(SUN8I_DT, "Allwinner sun8i Family")
- 	.dt_compat	= sun8i_board_dt_compat,
- MACHINE_END
- 
-+void __init sun8i_a83t_cntvoff_init(void)
-+{
-+#ifdef CONFIG_SMP
-+	secure_cntvoff_init();
-+#endif
-+}
-+
-+static const char * const sun8i_a83t_cntvoff_board_dt_compat[] = {
-+	"allwinner,sun8i-a83t",
-+	NULL,
-+};
-+
-+DT_MACHINE_START(SUN8I_A83T_CNTVOFF_DT, "Allwinner sun8i-a83t board")
-+	.init_early	= sun8i_a83t_cntvoff_init,
-+	.init_time	= sun6i_timer_init,
-+	.dt_compat	= sun8i_a83t_cntvoff_board_dt_compat,
-+MACHINE_END
-+
- static const char * const sun9i_board_dt_compat[] = {
- 	"allwinner,sun9i-a80",
- 	NULL,
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	lvds->mmio = devm_ioremap_resource(&pdev->dev, mem);
 -- 
 2.11.0
