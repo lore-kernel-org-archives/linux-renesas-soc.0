@@ -1,108 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay11.mail.gandi.net ([217.70.178.231]:36009 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751879AbeEPQcz (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39788 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751680AbeEQHy7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 May 2018 12:32:55 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        horms@verge.net.au, geert@glider.be
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 6/6] ARM: dts: rcar-gen2: Add 'data-active' property
-Date: Wed, 16 May 2018 18:32:32 +0200
-Message-Id: <1526488352-898-7-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1526488352-898-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1526488352-898-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 17 May 2018 03:54:59 -0400
+Date: Thu, 17 May 2018 09:54:40 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Ulrich Hecht <ulrich.hecht@gmail.com>,
+        jacopo mondi <jacopo@jmondi.org>,
+        Yoshihiro Kaneko <ykaneko0929@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH/RFT v3 0/3] thermal: add support for r8a77995
+Message-ID: <20180517075439.46uxurrgcfqk3s35@verge.net.au>
+References: <1522759385-17661-1-git-send-email-ykaneko0929@gmail.com>
+ <20180411090122.GK6436@w540>
+ <CAO3366w6jfL4W5i_ezoL0s6_1Rrc0RssHyc0p2zhKQcicpzNqQ@mail.gmail.com>
+ <20180516190806.GA17838@bigcity.dyn.berto.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180516190806.GA17838@bigcity.dyn.berto.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The 'data-active' property needs to be specified when using embedded
-synchronization. Add it to the Gen-2 boards using composite video input.
+On Wed, May 16, 2018 at 09:08:06PM +0200, Niklas Söderlund wrote:
+> Hi Ulrich,
+> 
+> On 2018-05-16 15:07:01 +0200, Ulrich Hecht wrote:
+> > On Wed, Apr 11, 2018 at 11:01 AM, jacopo mondi <jacopo@jmondi.org> wrote:
+> > > Hello Kaneko-san,
+> > >
+> > > On Tue, Apr 03, 2018 at 09:43:02PM +0900, Yoshihiro Kaneko wrote:
+> > >> This series adds thermal support for r8a77995.
+> > >> R-Car D3 (r8a77995) have a thermal sensor module which is similar to Gen2.
+> > >> Therefore this series adds r8a77995 support to rcar_thermal driver not
+> > >> rcar_gen3_thermal driver.
+> > >
+> > > I tested this on D3 Draak.
+> > >
+> > > I generated load expecting the detected temperature to rise.
+> > >
+> > > It took a while, and I only see a slight increase of the temperature
+> > > reported by the 'temp' attribute.
+> > 
+> > Pointing a heat gun at the SoC, I managed to get the temperature up to
+> > 80000, and it went back to 40000 when I removed it. I'd say this
+> > works.
+> 
+> I like your style! I contemplated using a hairdryer when testing some 
+> Gen3 thermal work but decided against it. Good too see others are not as 
+> weak minded as my self :-)
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/arm/boot/dts/r8a7790-lager.dts   | 1 +
- arch/arm/boot/dts/r8a7791-koelsch.dts | 1 +
- arch/arm/boot/dts/r8a7791-porter.dts  | 1 +
- arch/arm/boot/dts/r8a7793-gose.dts    | 1 +
- arch/arm/boot/dts/r8a7794-alt.dts     | 1 +
- arch/arm/boot/dts/r8a7794-silk.dts    | 1 +
- 6 files changed, 6 insertions(+)
+I think that we may need some new tags to differentiate between
+weak and awesome tests.
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index b56b309..48fcb44 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -893,6 +893,7 @@
-
- 		vin1ep0: endpoint {
- 			remote-endpoint = <&adv7180>;
-+			data-active = <1>;
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index 9967666..fa0b25f 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -868,6 +868,7 @@
-
- 		vin1ep: endpoint {
- 			remote-endpoint = <&adv7180>;
-+			data-active = <1>;
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-index 055a7f1..96b9605 100644
---- a/arch/arm/boot/dts/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -391,6 +391,7 @@
-
- 		vin0ep: endpoint {
- 			remote-endpoint = <&adv7180>;
-+			data-active = <1>;
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index 9d3fba2..80b4fa8 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -779,6 +779,7 @@
-
- 		vin1ep: endpoint {
- 			remote-endpoint = <&adv7180_out>;
-+			data-active = <1>;
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index 4bbb9cc..00df605d 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -380,6 +380,7 @@
-
- 		vin0ep: endpoint {
- 			remote-endpoint = <&adv7180>;
-+			data-active = <1>;
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
-index c0c5d31..ed17376 100644
---- a/arch/arm/boot/dts/r8a7794-silk.dts
-+++ b/arch/arm/boot/dts/r8a7794-silk.dts
-@@ -480,6 +480,7 @@
-
- 		vin0ep: endpoint {
- 			remote-endpoint = <&adv7180>;
-+			data-active = <1>;
- 		};
- 	};
- };
---
-2.7.4
+> > Tested-By: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> > 
+> > CU
+> > Uli
+> 
+> -- 
+> Regards,
+> Niklas Söderlund
+> 
