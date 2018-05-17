@@ -1,53 +1,196 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay11.mail.gandi.net ([217.70.178.231]:53771 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935564AbeE2PGo (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 May 2018 11:06:44 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        horms@verge.net.au, geert@glider.be
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 6/8] dt-bindings: rcar-vin: Add 'hsync-as-de' custom prop
-Date: Tue, 29 May 2018 17:05:57 +0200
-Message-Id: <1527606359-19261-7-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1527606359-19261-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1527606359-19261-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 2/2] v4l: Add support for STD ioctls on subdev nodes
+Date: Thu, 17 May 2018 16:30:16 +0200
+Message-Id: <20180517143016.13501-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180517143016.13501-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180517143016.13501-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the boolean custom property 'renesas,hsync-as-de' that indicates
-that the HSYNC signal is internally used as data-enable, when the
-CLKENB signal is not connected.
+There is no way to control the standard of subdevices which are part of
+a media device. The ioctls which exists all target video devices
+explicitly and the idea is that the video device should talk to the
+subdevice. For subdevices part of a media graph this is not possible and
+the standard must be controlled on the subdev device directly.
 
-As this is a VIN specificity create a custom property specific to the R-Car
-VIN driver.
+Add four new ioctls to be able to directly interact with subdevices and
+control the video standard; VIDIOC_SUBDEV_ENUMSTD, VIDIOC_SUBDEV_G_STD,
+VIDIOC_SUBDEV_S_STD and VIDIOC_SUBDEV_QUERYSTD.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
 ---
-v3:
-- new patch
+
+* Changes since v1
+- Added VIDIOC_SUBDEV_ENUMSTD.
 ---
- Documentation/devicetree/bindings/media/rcar_vin.txt | 3 +++
- 1 file changed, 3 insertions(+)
+ .../media/uapi/v4l/vidioc-enumstd.rst         | 11 ++++++----
+ Documentation/media/uapi/v4l/vidioc-g-std.rst | 14 ++++++++----
+ .../media/uapi/v4l/vidioc-querystd.rst        | 11 ++++++----
+ drivers/media/v4l2-core/v4l2-subdev.c         | 22 +++++++++++++++++++
+ include/uapi/linux/v4l2-subdev.h              |  4 ++++
+ 5 files changed, 50 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
-index ff53226..024c109 100644
---- a/Documentation/devicetree/bindings/media/rcar_vin.txt
-+++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
-@@ -60,6 +60,9 @@ from local SoC CSI-2 receivers (port1) depending on SoC.
-         - vsync-active: see [1] for description. Default is active high.
-         - data-enable-active: polarity of CLKENB signal, see [1] for
-           description. Default is active high.
-+        - renesas,hsync-as-de: a boolean property to indicate that HSYNC signal
-+          is internally used as data-enable when the CLKENB signal is
-+          not available.
-
-         If both HSYNC and VSYNC polarities are not specified, embedded
-         synchronization is selected.
---
-2.7.4
+diff --git a/Documentation/media/uapi/v4l/vidioc-enumstd.rst b/Documentation/media/uapi/v4l/vidioc-enumstd.rst
+index b7fda29f46a139a0..2644a62acd4b6822 100644
+--- a/Documentation/media/uapi/v4l/vidioc-enumstd.rst
++++ b/Documentation/media/uapi/v4l/vidioc-enumstd.rst
+@@ -2,14 +2,14 @@
+ 
+ .. _VIDIOC_ENUMSTD:
+ 
+-********************
+-ioctl VIDIOC_ENUMSTD
+-********************
++*******************************************
++ioctl VIDIOC_ENUMSTD, VIDIOC_SUBDEV_ENUMSTD
++*******************************************
+ 
+ Name
+ ====
+ 
+-VIDIOC_ENUMSTD - Enumerate supported video standards
++VIDIOC_ENUMSTD - VIDIOC_SUBDEV_ENUMSTD - Enumerate supported video standards
+ 
+ 
+ Synopsis
+@@ -18,6 +18,9 @@ Synopsis
+ .. c:function:: int ioctl( int fd, VIDIOC_ENUMSTD, struct v4l2_standard *argp )
+     :name: VIDIOC_ENUMSTD
+ 
++.. c:function:: int ioctl( int fd, VIDIOC_SUBDEV_ENUMSTD, struct v4l2_standard *argp )
++    :name: VIDIOC_SUBDEV_ENUMSTD
++
+ 
+ Arguments
+ =========
+diff --git a/Documentation/media/uapi/v4l/vidioc-g-std.rst b/Documentation/media/uapi/v4l/vidioc-g-std.rst
+index 90791ab51a5371b8..8d94f0404df270db 100644
+--- a/Documentation/media/uapi/v4l/vidioc-g-std.rst
++++ b/Documentation/media/uapi/v4l/vidioc-g-std.rst
+@@ -2,14 +2,14 @@
+ 
+ .. _VIDIOC_G_STD:
+ 
+-********************************
+-ioctl VIDIOC_G_STD, VIDIOC_S_STD
+-********************************
++**************************************************************************
++ioctl VIDIOC_G_STD, VIDIOC_S_STD, VIDIOC_SUBDEV_G_STD, VIDIOC_SUBDEV_S_STD
++**************************************************************************
+ 
+ Name
+ ====
+ 
+-VIDIOC_G_STD - VIDIOC_S_STD - Query or select the video standard of the current input
++VIDIOC_G_STD - VIDIOC_S_STD - VIDIOC_SUBDEV_G_STD - VIDIOC_SUBDEV_S_STD - Query or select the video standard of the current input
+ 
+ 
+ Synopsis
+@@ -21,6 +21,12 @@ Synopsis
+ .. c:function:: int ioctl( int fd, VIDIOC_S_STD, const v4l2_std_id *argp )
+     :name: VIDIOC_S_STD
+ 
++.. c:function:: int ioctl( int fd, VIDIOC_SUBDEV_G_STD, v4l2_std_id *argp )
++    :name: VIDIOC_SUBDEV_G_STD
++
++.. c:function:: int ioctl( int fd, VIDIOC_SUBDEV_S_STD, const v4l2_std_id *argp )
++    :name: VIDIOC_SUBDEV_S_STD
++
+ 
+ Arguments
+ =========
+diff --git a/Documentation/media/uapi/v4l/vidioc-querystd.rst b/Documentation/media/uapi/v4l/vidioc-querystd.rst
+index cf40bca19b9f8665..a8385cc7481869dd 100644
+--- a/Documentation/media/uapi/v4l/vidioc-querystd.rst
++++ b/Documentation/media/uapi/v4l/vidioc-querystd.rst
+@@ -2,14 +2,14 @@
+ 
+ .. _VIDIOC_QUERYSTD:
+ 
+-*********************
+-ioctl VIDIOC_QUERYSTD
+-*********************
++*********************************************
++ioctl VIDIOC_QUERYSTD, VIDIOC_SUBDEV_QUERYSTD
++*********************************************
+ 
+ Name
+ ====
+ 
+-VIDIOC_QUERYSTD - Sense the video standard received by the current input
++VIDIOC_QUERYSTD - VIDIOC_SUBDEV_QUERYSTD - Sense the video standard received by the current input
+ 
+ 
+ Synopsis
+@@ -18,6 +18,9 @@ Synopsis
+ .. c:function:: int ioctl( int fd, VIDIOC_QUERYSTD, v4l2_std_id *argp )
+     :name: VIDIOC_QUERYSTD
+ 
++.. c:function:: int ioctl( int fd, VIDIOC_SUBDEV_QUERYSTD, v4l2_std_id *argp )
++    :name: VIDIOC_SUBDEV_QUERYSTD
++
+ 
+ Arguments
+ =========
+diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
+index f9eed938d3480b74..27a2c633f2323f5f 100644
+--- a/drivers/media/v4l2-core/v4l2-subdev.c
++++ b/drivers/media/v4l2-core/v4l2-subdev.c
+@@ -494,6 +494,28 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg)
+ 
+ 	case VIDIOC_SUBDEV_S_DV_TIMINGS:
+ 		return v4l2_subdev_call(sd, video, s_dv_timings, arg);
++
++	case VIDIOC_SUBDEV_G_STD:
++		return v4l2_subdev_call(sd, video, g_std, arg);
++
++	case VIDIOC_SUBDEV_S_STD: {
++		v4l2_std_id *std = arg;
++
++		return v4l2_subdev_call(sd, video, s_std, *std);
++	}
++
++	case VIDIOC_SUBDEV_ENUMSTD: {
++		struct v4l2_standard *p = arg;
++		v4l2_std_id id;
++
++		if (v4l2_subdev_call(sd, video, g_tvnorms, &id))
++			return -EINVAL;
++
++		return v4l_video_std_enumstd(p, id);
++	}
++
++	case VIDIOC_SUBDEV_QUERYSTD:
++		return v4l2_subdev_call(sd, video, querystd, arg);
+ #endif
+ 	default:
+ 		return v4l2_subdev_call(sd, core, ioctl, cmd, arg);
+diff --git a/include/uapi/linux/v4l2-subdev.h b/include/uapi/linux/v4l2-subdev.h
+index c95a53e6743cb040..03970ce3074193e6 100644
+--- a/include/uapi/linux/v4l2-subdev.h
++++ b/include/uapi/linux/v4l2-subdev.h
+@@ -170,8 +170,12 @@ struct v4l2_subdev_selection {
+ #define VIDIOC_SUBDEV_G_SELECTION		_IOWR('V', 61, struct v4l2_subdev_selection)
+ #define VIDIOC_SUBDEV_S_SELECTION		_IOWR('V', 62, struct v4l2_subdev_selection)
+ /* The following ioctls are identical to the ioctls in videodev2.h */
++#define VIDIOC_SUBDEV_G_STD			_IOR('V', 23, v4l2_std_id)
++#define VIDIOC_SUBDEV_S_STD			_IOW('V', 24, v4l2_std_id)
++#define VIDIOC_SUBDEV_ENUMSTD			_IOWR('V', 25, struct v4l2_standard)
+ #define VIDIOC_SUBDEV_G_EDID			_IOWR('V', 40, struct v4l2_edid)
+ #define VIDIOC_SUBDEV_S_EDID			_IOWR('V', 41, struct v4l2_edid)
++#define VIDIOC_SUBDEV_QUERYSTD			_IOR('V', 63, v4l2_std_id)
+ #define VIDIOC_SUBDEV_S_DV_TIMINGS		_IOWR('V', 87, struct v4l2_dv_timings)
+ #define VIDIOC_SUBDEV_G_DV_TIMINGS		_IOWR('V', 88, struct v4l2_dv_timings)
+ #define VIDIOC_SUBDEV_ENUM_DV_TIMINGS		_IOWR('V', 98, struct v4l2_enum_dv_timings)
+-- 
+2.17.0
