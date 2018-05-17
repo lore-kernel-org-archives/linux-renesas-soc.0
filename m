@@ -1,13 +1,18 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:45591 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751481AbeEQNRo (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 17 May 2018 09:17:44 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAOtvUMdVNX_vBRofpc5rNiVL-a1NvWMDyWSOaXKYPkm57wkR_A@mail.gmail.com>
+In-Reply-To: <CAMuHMdVM55S7+PdnKusX-qkTxioc=0kQ6EGSbwv+kbLk5RCUYw@mail.gmail.com>
 References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
  <1526387370-17142-4-git-send-email-gilad@benyossef.com> <CAMuHMdWzeNqsho1V6ezZb81T3_HcRzrtuQpmGXsjtFgt9BtZDQ@mail.gmail.com>
  <20180516074333.i2672u435ymwffk3@verge.net.au> <CAOtvUMfFjokOLCg6aHNQESJ_q4Jiok3izrPtae5wR+cND=XL6g@mail.gmail.com>
- <CAMuHMdVM55S7+PdnKusX-qkTxioc=0kQ6EGSbwv+kbLk5RCUYw@mail.gmail.com> <CAOtvUMdVNX_vBRofpc5rNiVL-a1NvWMDyWSOaXKYPkm57wkR_A@mail.gmail.com>
+ <CAMuHMdVM55S7+PdnKusX-qkTxioc=0kQ6EGSbwv+kbLk5RCUYw@mail.gmail.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 17 May 2018 15:35:07 +0200
-Message-ID: <CAMuHMdX5quhZzaPkcrtB4CuHWeaKsyF1SustjB9V0SWw_SzXVg@mail.gmail.com>
+Date: Thu, 17 May 2018 15:17:42 +0200
+Message-ID: <CAMuHMdUd9A_JG4zvFTtJtKEJF4NFs11vWdG+vCnFAtoqYS0Yog@mail.gmail.com>
 Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
 To: Gilad Ben-Yossef <gilad@benyossef.com>
 Cc: Simon Horman <horms@verge.net.au>,
@@ -30,47 +35,42 @@ Cc: Simon Horman <horms@verge.net.au>,
         linux-clk <linux-clk@vger.kernel.org>,
         Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Gilad,
-
-On Thu, May 17, 2018 at 3:09 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
-> On Thu, May 17, 2018 at 1:16 PM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> However, even with your clock patch, the signature checking fails for me,
->> on both R-Car H3 ES1.0 and ES2.0.
->> Does this need changes to the ARM Trusted Firmware, to allow Linux to
->> access the public SCEG module?
+On Thu, May 17, 2018 at 12:16 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Thu, May 17, 2018 at 10:01 AM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+>> On Wed, May 16, 2018 at 10:43 AM, Simon Horman <horms@verge.net.au> wrote:
+>>> On Tue, May 15, 2018 at 04:50:44PM +0200, Geert Uytterhoeven wrote:
+>>>> On Tue, May 15, 2018 at 2:29 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+>>>> > Add bindings for CryptoCell instance in the SoC.
+>>>> >
+>>>> > Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+>>>>
+>>>> Thanks for your patch!
+>>>>
+>>>> > --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+>>>> > +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+>>>> > @@ -528,6 +528,14 @@
+>>>> >                         status = "disabled";
+>>>> >                 };
+>>>> >
+>>>> > +               arm_cc630p: crypto@e6601000 {
+>>>> > +                       compatible = "arm,cryptocell-630p-ree";
+>>>> > +                       interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
+>>>> > +                       #interrupt-cells = <2>;
+>>>>
+>>>> I believe the #interrupt-cells property is not needed.
+>>>>
+>>>> > +                       reg = <0x0 0xe6601000 0 0x1000>;
+>>>> > +                       clocks = <&cpg CPG_MOD 229>;
 >
-> Well, this is actually something different. If you look you will
-> notice that my patch was part of a 3 part patch series,
-> the first of which disabled this test.
+> Missing "power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;", as
+> the Secure Engine is part of the CPG/MSSR clock domain (see below [*]).
 
-Sorry, I had completely forgotten about the first patch from the series.
-With that applied, it continues:
-
-        ccree e6601000.crypto: ARM CryptoCell 630P Driver: HW version
-0x00000000, Driver version 4.0
-        ccree e6601000.crypto: Cache params previous: 0x00000777
-        ccree e6601000.crypto: Cache params current: 0x00000000
-(expect: 0x00000000)
-        alg: No test for cts1(cbc(aes)) (cts1-cbc-aes-ccree)
-        alg: No test for authenc(xcbc(aes),cbc(aes))
-(authenc-xcbc-aes-cbc-aes-ccree)
-        alg: No test for authenc(xcbc(aes),rfc3686(ctr(aes)))
-(authenc-xcbc-aes-rfc3686-ctr-aes-ccree)
-        ccree e6601000.crypto: ARM ccree device initialized
-
-Is HW version 0x00000000 expected?
-
-> If you take all the 3 patches, it will work.
-
-is there an easy way to test proper operation?
-I enabled CONFIG_CRYPT_TEST, and did insmod tcrypt.ko, but I mostly see
-"Failed to load transform" messages.
-
-Thanks!
+And missing "resets = <&cpg 229>;", as the module is tied to the CPG/MSSR
+reset controller.
 
 Gr{oetje,eeting}s,
 
