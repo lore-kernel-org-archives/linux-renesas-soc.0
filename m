@@ -1,69 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:33979 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752523AbeESVDp (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39310 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751977AbeEQH0r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 19 May 2018 17:03:45 -0400
-Received: by mail-lf0-f67.google.com with SMTP id x145-v6so6733975lff.1
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 19 May 2018 14:03:44 -0700 (PDT)
-Subject: [PATCH 2/3] sh_eth: fix comment grammar in 'struct sh_eth_cpu_data'
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
-Cc: linux-renesas-soc@vger.kernel.org
-References: <d47afee4-6fd5-af6d-885c-5b07996749fc@cogentembedded.com>
-Message-ID: <b8dc3a23-561a-6336-9587-2cfd336a2163@cogentembedded.com>
-Date: Sun, 20 May 2018 00:03:42 +0300
+        Thu, 17 May 2018 03:26:47 -0400
+Date: Thu, 17 May 2018 09:26:28 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
+        geert@linux-m68k.org, linux-serial@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: Re: [PATCH] arm64: dts: r8a77995: Add all HSCIF nodes
+Message-ID: <20180517072627.fm7wrij57qux5rty@verge.net.au>
+References: <1526475891-13599-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <d47afee4-6fd5-af6d-885c-5b07996749fc@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526475891-13599-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-All the verbs in the comments to the 'struct sh_eth_cpu_data' declaration
-should  be in a  3rd person singular, to match the nouns.
+On Wed, May 16, 2018 at 03:04:50PM +0200, Ulrich Hecht wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> 
+> This patch adds the device nodes all HSCIF serial ports
+> incl. clocks and power domain to the R8A77995 SoC.
+> 
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 35 +++++++++++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> index 2f712ac..4b05dc2 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> @@ -240,6 +240,41 @@
+>  			resets = <&cpg 407>;
+>  		};
+>  
+> +		hscif0: serial@e6540000 {
+> +			compatible = "renesas,hscif-r8a77995",
+> +				     "renesas,rcar-gen3-hscif",
+> +				     "renesas,hscif";
+> +			reg = <0 0xe6540000 0 0x60>;
+> +			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 520>,
+> +				 <&cpg CPG_CORE R8A77995_CLK_S3D1>,
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Section 56.1 of the User's Manual v1.00 indicates that
+the clock is S3D1C (250MHz) rather than S3D1 (266.66... MHz).
 
----
- drivers/net/ethernet/renesas/sh_eth.h |   22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+Otherwise the patch looks fine to me.
 
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.h
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.h
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.h
-@@ -499,21 +499,21 @@ struct sh_eth_cpu_data {
- 
- 	/* hardware features */
- 	unsigned long irq_flags; /* IRQ configuration flags */
--	unsigned no_psr:1;	/* EtherC DO NOT have PSR */
--	unsigned apr:1;		/* EtherC have APR */
--	unsigned mpr:1;		/* EtherC have MPR */
--	unsigned tpauser:1;	/* EtherC have TPAUSER */
--	unsigned bculr:1;	/* EtherC have BCULR */
--	unsigned tsu:1;		/* EtherC have TSU */
--	unsigned hw_swap:1;	/* E-DMAC have DE bit in EDMR */
-+	unsigned no_psr:1;	/* EtherC DOES NOT have PSR */
-+	unsigned apr:1;		/* EtherC has APR */
-+	unsigned mpr:1;		/* EtherC has MPR */
-+	unsigned tpauser:1;	/* EtherC has TPAUSER */
-+	unsigned bculr:1;	/* EtherC has BCULR */
-+	unsigned tsu:1;		/* EtherC has TSU */
-+	unsigned hw_swap:1;	/* E-DMAC has DE bit in EDMR */
- 	unsigned nbst:1;	/* E-DMAC has NBST bit in EDMR */
--	unsigned rpadir:1;	/* E-DMAC have RPADIR */
--	unsigned no_trimd:1;	/* E-DMAC DO NOT have TRIMD */
--	unsigned no_ade:1;	/* E-DMAC DO NOT have ADE bit in EESR */
-+	unsigned rpadir:1;	/* E-DMAC has RPADIR */
-+	unsigned no_trimd:1;	/* E-DMAC DOES NOT have TRIMD */
-+	unsigned no_ade:1;	/* E-DMAC DOES NOT have ADE bit in EESR */
- 	unsigned no_xdfar:1;	/* E-DMAC DOES NOT have RDFAR/TDFAR */
- 	unsigned xdfar_rw:1;	/* E-DMAC has writeable RDFAR/TDFAR */
- 	unsigned hw_checksum:1;	/* E-DMAC has CSMR */
--	unsigned select_mii:1;	/* EtherC have RMII_MII (MII select register) */
-+	unsigned select_mii:1;	/* EtherC has RMII_MII (MII select register) */
- 	unsigned rmiimode:1;	/* EtherC has RMIIMODE register */
- 	unsigned rtrate:1;	/* EtherC has RTRATE register */
- 	unsigned magic:1;	/* EtherC has ECMR.MPDE and ECSR.MPD */
+> +				 <&scif_clk>;
+> +			clock-names = "fck", "brg_int", "scif_clk";
+> +			dmas = <&dmac1 0x31>, <&dmac1 0x30>,
+> +			       <&dmac2 0x31>, <&dmac2 0x30>;
+> +			dma-names = "tx", "rx", "tx", "rx";
+> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+> +			resets = <&cpg 520>;
+> +			status = "disabled";
+> +		};
+> +
+> +		hscif3: serial@e66a0000 {
+> +			compatible = "renesas,hscif-r8a77995",
+> +				     "renesas,rcar-gen3-hscif",
+> +				     "renesas,hscif";
+> +			reg = <0 0xe66a0000 0 0x60>;
+> +			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 517>,
+> +				 <&cpg CPG_CORE R8A77995_CLK_S3D1>,
+> +				 <&scif_clk>;
+> +			clock-names = "fck", "brg_int", "scif_clk";
+> +			dmas = <&dmac0 0x37>, <&dmac0 0x36>;
+> +			dma-names = "tx", "rx";
+> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+> +			resets = <&cpg 517>;
+> +			status = "disabled";
+> +		};
+> +
+>  		i2c0: i2c@e6500000 {
+>  			#address-cells = <1>;
+>  			#size-cells = <0>;
+> -- 
+> 2.7.4
+> 
