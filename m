@@ -1,185 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:48432 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:41094 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751045AbeEBKSb (ORCPT
+        with ESMTP id S1752162AbeEQJDT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 May 2018 06:18:31 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/3] ARM: dts: r8a7790: Convert to new LVDS DT bindings
-Date: Wed,  2 May 2018 12:18:22 +0200
-Message-Id: <15a1ff30d8f9bd83273d8712973b88663ad16265.1525256178.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1525256178.git.horms+renesas@verge.net.au>
-References: <cover.1525256178.git.horms+renesas@verge.net.au>
+        Thu, 17 May 2018 05:03:19 -0400
+Date: Thu, 17 May 2018 11:03:00 +0200
+From: Simon Horman <horms@verge.net.au>
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com, geert@glider.be,
+        magnus.damm@gmail.com, robh+dt@kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] arm64: dts: renesas: draak: Describe HDMI input
+Message-ID: <20180517090259.ps6ikcgdxxpfr2ac@verge.net.au>
+References: <1526478129-16465-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1526478129-16465-4-git-send-email-jacopo+renesas@jmondi.org>
+ <20180516222318.GI17948@bigcity.dyn.berto.se>
+ <20180517071456.GT5956@w540>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180517071456.GT5956@w540>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+On Thu, May 17, 2018 at 09:14:56AM +0200, jacopo mondi wrote:
+> Hi Niklas,
+> 
+> On Thu, May 17, 2018 at 12:23:18AM +0200, Niklas Söderlund wrote:
+> > Hi Jacopo,
+> >
+> > Thanks for your patch.
+> >
+> > On 2018-05-16 15:42:09 +0200, Jacopo Mondi wrote:
+> > > Describe HDMI input connector and ADV7612 HDMI decoder installed on
+> > > R-Car Gen3 Draak board.
+> > >
+> > > The video signal routing to the HDMI decoder to the video input interface
+> > > VIN4 is multiplexed with CVBS input path, and enabled/disabled through
+> > > on-board switches SW-49, SW-50, SW-51 and SW-52.
+> > >
+> > > As the default board switches configuration connects CVBS input to VIN4,
+> > > leave the HDMI decoder unconnected in DTS.
+> > >
+> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >
+> > I'm not sure we have a policy about describing hardware which can't be
+> > used without flipping switches. I have no opinion on if we should do
+> > that or not I leave that to others, but for the change itself.
+> >
+> > Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> >
+> 
+> Thanks
+> 
+> > I think it's good we describe it as it's part of the Draak board itself
+> > and not an expansion board which we have seen a lot of :-) Maybe even
+> > add a commented out line in the adv7612 port@2 which hints which VIN
+> > this is connected to if the switches are flipped?
+> 
+> The only VIN instance that's on Draak, VIN4.
+> 
+> I can add a comment that describes the switch settings that enables
+> the HDMI video capture path.
 
-The internal LVDS encoder now has DT bindings separate from the DU. Port
-the device tree over to the new model.
-
-Fixes: c6a27fa41fab ("drm: rcar-du: Convert LVDS encoder code to bridge driver")
-Fixes: 4bdb7aa7dcd0 ("ARM: dts: r8a7790: add soc node")
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7790-lager.dts | 22 ++++++++++---
- arch/arm/boot/dts/r8a7790.dtsi      | 65 ++++++++++++++++++++++++++++++++-----
- 2 files changed, 74 insertions(+), 13 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 063fdb65dc60..f07f9018c3e7 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -379,7 +379,7 @@
- 				port@0 {
- 					reg = <0>;
- 					adv7511_in: endpoint {
--						remote-endpoint = <&du_out_lvds0>;
-+						remote-endpoint = <&lvds0_out>;
- 					};
- 				};
- 
-@@ -467,10 +467,8 @@
- 	status = "okay";
- 
- 	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>, <&cpg CPG_MOD 722>,
--		 <&cpg CPG_MOD 726>, <&cpg CPG_MOD 725>,
- 		 <&x13_clk>, <&x2_clk>;
--	clock-names = "du.0", "du.1", "du.2", "lvds.0", "lvds.1",
--		      "dclkin.0", "dclkin.1";
-+	clock-names = "du.0", "du.1", "du.2", "dclkin.0", "dclkin.1";
- 
- 	ports {
- 		port@0 {
-@@ -478,12 +476,26 @@
- 				remote-endpoint = <&adv7123_in>;
- 			};
- 		};
-+	};
-+};
-+
-+&lvds0 {
-+	status = "okay";
-+
-+	ports {
- 		port@1 {
- 			endpoint {
- 				remote-endpoint = <&adv7511_in>;
- 			};
- 		};
--		port@2 {
-+	};
-+};
-+
-+&lvds1 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
- 			lvds_connector: endpoint {
- 			};
- 		};
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index e4367cecad18..05a0fc23ac88 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1627,18 +1627,13 @@
- 
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a7790";
--			reg = <0 0xfeb00000 0 0x70000>,
--			      <0 0xfeb90000 0 0x1c>,
--			      <0 0xfeb94000 0 0x1c>;
--			reg-names = "du", "lvds.0", "lvds.1";
-+			reg = <0 0xfeb00000 0 0x70000>;
- 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
--				 <&cpg CPG_MOD 722>, <&cpg CPG_MOD 726>,
--				 <&cpg CPG_MOD 725>;
--			clock-names = "du.0", "du.1", "du.2", "lvds.0",
--				      "lvds.1";
-+				 <&cpg CPG_MOD 722>;
-+			clock-names = "du.0", "du.1", "du.2";
- 			status = "disabled";
- 
- 			ports {
-@@ -1653,11 +1648,65 @@
- 				port@1 {
- 					reg = <1>;
- 					du_out_lvds0: endpoint {
-+						remote-endpoint = <&lvds0_in>;
- 					};
- 				};
- 				port@2 {
- 					reg = <2>;
- 					du_out_lvds1: endpoint {
-+						remote-endpoint = <&lvds1_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		lvds0: lvds@feb90000 {
-+			compatible = "renesas,r8a7790-lvds";
-+			reg = <0 0xfeb90000 0 0x1c>;
-+			clocks = <&cpg CPG_MOD 726>;
-+			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
-+			resets = <&cpg 726>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					lvds0_in: endpoint {
-+						remote-endpoint = <&du_out_lvds0>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					lvds0_out: endpoint {
-+					};
-+				};
-+			};
-+		};
-+
-+		lvds1: lvds@feb94000 {
-+			compatible = "renesas,r8a7790-lvds";
-+			reg = <0 0xfeb94000 0 0x1c>;
-+			clocks = <&cpg CPG_MOD 725>;
-+			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
-+			resets = <&cpg 725>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					lvds1_in: endpoint {
-+						remote-endpoint = <&du_out_lvds1>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					lvds1_out: endpoint {
- 					};
- 				};
- 			};
--- 
-2.11.0
+That sounds like a good plan to me.
