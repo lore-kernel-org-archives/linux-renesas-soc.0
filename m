@@ -1,103 +1,137 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:44141 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750707AbeEDJca (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:50654 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752535AbeEQRYL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 May 2018 05:32:30 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, hverkuil@xs4all.nl,
-        mchehab@kernel.org, sakari.ailus@iki.fi
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] media: renesas-ceu: Set mbus_fmt on subdev operations
-Date: Fri,  4 May 2018 11:32:17 +0200
-Message-Id: <1525426337-17636-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 17 May 2018 13:24:11 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v10 5/8] media: vsp1: Use reference counting for bodies
+Date: Thu, 17 May 2018 18:23:58 +0100
+Message-Id: <66525c9827fe90aaa991d3f3ddcb460125593971.1526577622.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.e217e37c63010c4a78c4022a30a389e5d7627919.1526577622.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.e217e37c63010c4a78c4022a30a389e5d7627919.1526577622.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.e217e37c63010c4a78c4022a30a389e5d7627919.1526577622.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.e217e37c63010c4a78c4022a30a389e5d7627919.1526577622.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The renesas-ceu driver intializes the desired mbus_format at 'complete'
-time, inspecting the supported subdevice ones, and tuning some
-parameters to produce the requested memory format from what the sensor
-can produce. Although, the initially selected mbus_format was not
-provided to the subdevice during set_fmt and try_fmt operations,
-providing instead a '0' mbus format code.
+Extend the display list body with a reference count, allowing bodies to
+be kept as long as a reference is maintained. This provides the ability
+to keep a cached copy of bodies which will not change, so that they can
+be re-applied to multiple display lists.
 
-As long as the sensor defaults to a compatible mbus_format when an
-invalid code as '0' is provided, capture operations work correctly. If
-the subdevice defaults to an unsupported format (eg. some RGB
-permutations) capture does not work properly due to a mismatch on the
-expected and received image format on the wire.
-
-Fix that by re-using the initially selected mbus_format code during
-set_fmt and try_fmt subdevice operation calls.
-
-Tested by printing out the format selection procedure with ov7670
-sensor.
-
-Before this patch:
-[    0.866001] ov7670_try_fmt_internal -- Looking for mbus_code 0x0000
-[    0.870882] ov7670_try_fmt_internal -- Try mbus_code 0x2008
-[    0.876336] ov7670_try_fmt_internal -- Try mbus_code 0x1002
-[    0.881387] ov7670_try_fmt_internal -- Try mbus_code 0x1008
-[    0.886537] ov7670_try_fmt_internal -- Try mbus_code 0x3001
-[    0.891584] ov7670_try_fmt_internal -- mbus_code defaulted to 0x2008
-
-With this patch applied:
-[    0.867015] ov7670_try_fmt_internal -- Looking for mbus_code 0x2008
-[    0.873205] ov7670_try_fmt_internal -- Try mbus_code 0x2008: match
-
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/media/platform/renesas-ceu.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ drivers/media/platform/vsp1/vsp1_clu.c |  7 ++++++-
+ drivers/media/platform/vsp1/vsp1_dl.c  | 16 ++++++++++++++--
+ drivers/media/platform/vsp1/vsp1_lut.c |  7 ++++++-
+ 3 files changed, 26 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/renesas-ceu.c b/drivers/media/platform/renesas-ceu.c
-index 6599dba..dec1b35 100644
---- a/drivers/media/platform/renesas-ceu.c
-+++ b/drivers/media/platform/renesas-ceu.c
-@@ -777,8 +777,15 @@ static int ceu_try_fmt(struct ceu_device *ceudev, struct v4l2_format *v4l2_fmt)
- 	const struct ceu_fmt *ceu_fmt;
- 	int ret;
-
-+	/*
-+	 * Set format on sensor sub device: bus format used to produce memory
-+	 * format is selected at initialization time.
-+	 */
- 	struct v4l2_subdev_format sd_format = {
--		.which = V4L2_SUBDEV_FORMAT_TRY,
-+		.which	= V4L2_SUBDEV_FORMAT_TRY,
-+		.format	= {
-+			.code = ceu_sd->mbus_fmt.mbus_code,
-+		},
- 	};
-
- 	switch (pix->pixelformat) {
-@@ -800,10 +807,6 @@ static int ceu_try_fmt(struct ceu_device *ceudev, struct v4l2_format *v4l2_fmt)
- 	v4l_bound_align_image(&pix->width, 2, CEU_MAX_WIDTH, 4,
- 			      &pix->height, 4, CEU_MAX_HEIGHT, 4, 0);
-
--	/*
--	 * Set format on sensor sub device: bus format used to produce memory
--	 * format is selected at initialization time.
--	 */
- 	v4l2_fill_mbus_format_mplane(&sd_format.format, pix);
- 	ret = v4l2_subdev_call(v4l2_sd, pad, set_fmt, &pad_cfg, &sd_format);
- 	if (ret)
-@@ -827,8 +830,15 @@ static int ceu_set_fmt(struct ceu_device *ceudev, struct v4l2_format *v4l2_fmt)
- 	struct v4l2_subdev *v4l2_sd = ceu_sd->v4l2_sd;
- 	int ret;
-
-+	/*
-+	 * Set format on sensor sub device: bus format used to produce memory
-+	 * format is selected at initialization time.
-+	 */
- 	struct v4l2_subdev_format format = {
- 		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+		.format	= {
-+			.code = ceu_sd->mbus_fmt.mbus_code,
-+		},
- 	};
-
- 	ret = ceu_try_fmt(ceudev, v4l2_fmt);
---
-2.7.4
+diff --git a/drivers/media/platform/vsp1/vsp1_clu.c b/drivers/media/platform/vsp1/vsp1_clu.c
+index 8efa12f5e53f..ea83f1b7d125 100644
+--- a/drivers/media/platform/vsp1/vsp1_clu.c
++++ b/drivers/media/platform/vsp1/vsp1_clu.c
+@@ -212,8 +212,13 @@ static void clu_configure(struct vsp1_entity *entity,
+ 		clu->clu = NULL;
+ 		spin_unlock_irqrestore(&clu->lock, flags);
+ 
+-		if (dlb)
++		if (dlb) {
+ 			vsp1_dl_list_add_body(dl, dlb);
++
++			/* Release our local reference. */
++			vsp1_dl_body_put(dlb);
++		}
++
+ 		break;
+ 	}
+ }
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index 617c46a03dec..1407c90c6880 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -10,6 +10,7 @@
+ #include <linux/device.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/gfp.h>
++#include <linux/refcount.h>
+ #include <linux/slab.h>
+ #include <linux/workqueue.h>
+ 
+@@ -54,6 +55,8 @@ struct vsp1_dl_body {
+ 	struct list_head list;
+ 	struct list_head free;
+ 
++	refcount_t refcnt;
++
+ 	struct vsp1_dl_body_pool *pool;
+ 	struct vsp1_device *vsp1;
+ 
+@@ -258,6 +261,7 @@ struct vsp1_dl_body *vsp1_dl_body_get(struct vsp1_dl_body_pool *pool)
+ 	if (!list_empty(&pool->free)) {
+ 		dlb = list_first_entry(&pool->free, struct vsp1_dl_body, free);
+ 		list_del(&dlb->free);
++		refcount_set(&dlb->refcnt, 1);
+ 	}
+ 
+ 	spin_unlock_irqrestore(&pool->lock, flags);
+@@ -278,6 +282,9 @@ void vsp1_dl_body_put(struct vsp1_dl_body *dlb)
+ 	if (!dlb)
+ 		return;
+ 
++	if (!refcount_dec_and_test(&dlb->refcnt))
++		return;
++
+ 	dlb->num_entries = 0;
+ 
+ 	spin_lock_irqsave(&dlb->pool->lock, flags);
+@@ -463,8 +470,11 @@ void vsp1_dl_list_write(struct vsp1_dl_list *dl, u32 reg, u32 data)
+  * which bodies are added.
+  *
+  * Adding a body to a display list passes ownership of the body to the list. The
+- * caller must not touch the body after this call, and must not release it
+- * explicitly with vsp1_dl_body_put().
++ * caller retains its reference to the fragment when adding it to the display
++ * list, but is not allowed to add new entries to the body.
++ *
++ * The reference must be explicitly released by a call to vsp1_dl_body_put()
++ * when the body isn't needed anymore.
+  *
+  * Additional bodies are only usable for display lists in header mode.
+  * Attempting to add a body to a header-less display list will return an error.
+@@ -475,6 +485,8 @@ int vsp1_dl_list_add_body(struct vsp1_dl_list *dl, struct vsp1_dl_body *dlb)
+ 	if (dl->dlm->mode != VSP1_DL_MODE_HEADER)
+ 		return -EINVAL;
+ 
++	refcount_inc(&dlb->refcnt);
++
+ 	list_add_tail(&dlb->list, &dl->bodies);
+ 
+ 	return 0;
+diff --git a/drivers/media/platform/vsp1/vsp1_lut.c b/drivers/media/platform/vsp1/vsp1_lut.c
+index 6b358617ce15..b3ea90172439 100644
+--- a/drivers/media/platform/vsp1/vsp1_lut.c
++++ b/drivers/media/platform/vsp1/vsp1_lut.c
+@@ -168,8 +168,13 @@ static void lut_configure(struct vsp1_entity *entity,
+ 		lut->lut = NULL;
+ 		spin_unlock_irqrestore(&lut->lock, flags);
+ 
+-		if (dlb)
++		if (dlb) {
+ 			vsp1_dl_list_add_body(dl, dlb);
++
++			/* Release our local reference. */
++			vsp1_dl_body_put(dlb);
++		}
++
+ 		break;
+ 	}
+ }
+-- 
+git-series 0.9.1
