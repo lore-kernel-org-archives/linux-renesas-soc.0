@@ -1,14 +1,20 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:42820 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751395AbeEQIAL (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 17 May 2018 04:00:11 -0400
+Received: by mail-vk0-f68.google.com with SMTP id j7-v6so2131856vkc.9
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 17 May 2018 01:00:11 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAOtvUMf0pnX1+MOz0KkB5LxqL5HTmLRYjVZTUrAx-eCvm26+LA@mail.gmail.com>
+In-Reply-To: <CAMuHMdXWPwW_p=D56BhNF274m+JLe+mbD2fqQu8-we-uMW4b8Q@mail.gmail.com>
 References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
  <1526387370-17142-3-git-send-email-gilad@benyossef.com> <CAMuHMdXWPwW_p=D56BhNF274m+JLe+mbD2fqQu8-we-uMW4b8Q@mail.gmail.com>
- <CAOtvUMf0pnX1+MOz0KkB5LxqL5HTmLRYjVZTUrAx-eCvm26+LA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 17 May 2018 10:41:46 +0200
-Message-ID: <CAMuHMdWxfZO+a0+tcd+4juNTVwB_nnJi0_SFD2C3OLCF1nSbKw@mail.gmail.com>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+Date: Thu, 17 May 2018 11:00:10 +0300
+Message-ID: <CAOtvUMf0pnX1+MOz0KkB5LxqL5HTmLRYjVZTUrAx-eCvm26+LA@mail.gmail.com>
 Subject: Re: [PATCH 2/3] clk: renesas: r8a7795: Add ccree clock
-To: Gilad Ben-Yossef <gilad@benyossef.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -29,57 +35,62 @@ Cc: Simon Horman <horms@verge.net.au>,
         linux-clk <linux-clk@vger.kernel.org>,
         Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Gilad,
-
-On Thu, May 17, 2018 at 10:00 AM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
-> On Tue, May 15, 2018 at 5:47 PM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> On Tue, May 15, 2018 at 2:29 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
->>> This patch adds the clock used by the CryptoCell 630p instance in the SoC.
->>>
->>> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
->>
->> Thanks for your patch!
->>
->>> --- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
->>> +++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
->>> @@ -132,6 +132,7 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
->>>         DEF_MOD("sys-dmac2",             217,   R8A7795_CLK_S0D3),
->>>         DEF_MOD("sys-dmac1",             218,   R8A7795_CLK_S0D3),
->>>         DEF_MOD("sys-dmac0",             219,   R8A7795_CLK_S0D3),
->>> +       DEF_MOD("ccree",                 229,   R8A7795_CLK_S3D2),
->>
->> I don't know if "ccree" is the proper name for this clock, as there
->> may be multiple
->> instances.
+On Tue, May 15, 2018 at 5:47 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Gilad,
 >
-> I'd be happy to rename it to anything else. Suggestions?
-
-I believe it should be called "sceg-pub".
-
->> I also can't verify the parent clock.
+> On Tue, May 15, 2018 at 2:29 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+>> This patch adds the clock used by the CryptoCell 630p instance in the SoC.
+>>
+>> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 >
-> I'm afraid I can't really help. This is based on code snippet from
-> Renesas. I verified it works but
-> I am not an expert on the clock settings :-(
+> Thanks for your patch!
+>
+>> --- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
+>> +++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+>> @@ -132,6 +132,7 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
+>>         DEF_MOD("sys-dmac2",             217,   R8A7795_CLK_S0D3),
+>>         DEF_MOD("sys-dmac1",             218,   R8A7795_CLK_S0D3),
+>>         DEF_MOD("sys-dmac0",             219,   R8A7795_CLK_S0D3),
+>> +       DEF_MOD("ccree",                 229,   R8A7795_CLK_S3D2),
+>
+> I don't know if "ccree" is the proper name for this clock, as there
+> may be multiple
+> instances.
 
-As your driver doesn't care about the clock rate, only about
-enabling/disabling the clock, the actual parent doesn't matter much.
+I'd be happy to rename it to anything else. Suggestions?
 
-After some deeper diving into the datasheet, I believe the correct parent is
-the CR clock, which is unfortunately not yet supported by the R-Car H3 clock
-driver. I'll send a patch...
+> I also can't verify the parent clock.
 
-Gr{oetje,eeting}s,
+I'm afraid I can't really help. This is based on code snippet from
+Renesas. I verified it works but
+I am not an expert on the clock settings :-(
 
-                        Geert
+>
+>>         DEF_MOD("cmt3",                  300,   R8A7795_CLK_R),
+>>         DEF_MOD("cmt2",                  301,   R8A7795_CLK_R),
+>>         DEF_MOD("cmt1",                  302,   R8A7795_CLK_R),
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+
+
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Gilad Ben-Yossef
+Chief Coffee Drinker
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+"If you take a class in large-scale robotics, can you end up in a
+situation where the homework eats your dog?"
+ -- Jean-Baptiste Queru
