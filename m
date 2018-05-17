@@ -1,62 +1,142 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:46498 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751402AbeENNqe (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:17998 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752441AbeEQObI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 May 2018 09:46:34 -0400
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "open list:DRM DRIVERS FOR RENESAS"
-        <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: Re: [PATCH 0/3] fbdev/drm: sh_mobile: remove unused MERAM support
-Date: Mon, 14 May 2018 15:46:25 +0200
-Message-id: <1860943.gJ4HIv7g2V@amdc3058>
-In-reply-to: <CAKMK7uEJYcxpwJbhvQBF87VOo+zFA73Ro-guGkh4FtOFtr1Ehw@mail.gmail.com>
-MIME-version: 1.0
-Content-transfer-encoding: 7Bit
-Content-type: text/plain; charset="us-ascii"
-References: <CGME20180427112213epcas2p3ed6890af75e679b537121f2655aa91d8@epcas2p3.samsung.com>
-        <2561366.LzYTbHeMbO@avalon>
-        <CAKMK7uEJYcxpwJbhvQBF87VOo+zFA73Ro-guGkh4FtOFtr1Ehw@mail.gmail.com>
+        Thu, 17 May 2018 10:31:08 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 1/2] v4l2-ioctl: create helper to fill in v4l2_standard for ENUMSTD
+Date: Thu, 17 May 2018 16:30:15 +0200
+Message-Id: <20180517143016.13501-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180517143016.13501-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180517143016.13501-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Friday, April 27, 2018 02:09:31 PM Daniel Vetter wrote:
-> On Fri, Apr 27, 2018 at 1:36 PM, Laurent Pinchart
-> <laurent.pinchart@ideasonboard.com> wrote:
-> > Hi Bartlomiej,
-> >
-> > On Friday, 27 April 2018 14:21:42 EEST Bartlomiej Zolnierkiewicz wrote:
-> >> Hi,
-> >>
-> >> This patchset removes unused MERAM support (last user was removed
-> >> 3 years ago) from shmobile fbdev & drm drivers and then removes
-> >> MERAM driver itself.
-> >>
-> >> If it is okay to merge this patches I would like patch #1 to go
-> >> through fbdev tree and patch #2 to go through drm tree. Once they
-> >> are both upstream (v4.18) I will apply patch #3 to fbdev tree.
-> >
-> > Or you could merge everything through the fbdev tree in one go, the shmobile
-> > driver hardly sees any activity these days.
-> >
-> > For the whole series,
-> >
-> > Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
-> Yeah merging all through fbdev is probably simplest, shmobile is not a
-> driver that's actively changed a lot. Ack from me too.
+Prepare for adding a new IOCTL VIDIOC_SUBDEV_ENUMSTD which would
+enumerate the standards for a subdevice by breaking out the code which
+could be shared between the video and subdevice versions of this IOCTL.
 
-Thanks, I've applied all patches to fbdev-for-next.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/v4l2-core/v4l2-ioctl.c | 66 ++++++++++++++++------------
+ include/media/v4l2-ioctl.h           | 11 +++++
+ 2 files changed, 48 insertions(+), 29 deletions(-)
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+index a40dbec271f1d9fe..1b5893373358ad5e 100644
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -125,6 +125,42 @@ int v4l2_video_std_construct(struct v4l2_standard *vs,
+ }
+ EXPORT_SYMBOL(v4l2_video_std_construct);
+ 
++/* Fill in the fields of a v4l2_standard structure according to the
++ * 'id' and 'vs->index' parameters. Returns negative on error. */
++int v4l_video_std_enumstd(struct v4l2_standard *vs, v4l2_std_id id)
++{
++	v4l2_std_id curr_id = 0;
++	unsigned int index = vs->index, i, j = 0;
++	const char *descr = "";
++
++	/* Return -ENODATA if the id for the current input
++	   or output is 0, meaning that it doesn't support this API. */
++	if (id == 0)
++		return -ENODATA;
++
++	/* Return norm array in a canonical way */
++	for (i = 0; i <= index && id; i++) {
++		/* last std value in the standards array is 0, so this
++		   while always ends there since (id & 0) == 0. */
++		while ((id & standards[j].std) != standards[j].std)
++			j++;
++		curr_id = standards[j].std;
++		descr = standards[j].descr;
++		j++;
++		if (curr_id == 0)
++			break;
++		if (curr_id != V4L2_STD_PAL &&
++				curr_id != V4L2_STD_SECAM &&
++				curr_id != V4L2_STD_NTSC)
++			id &= ~curr_id;
++	}
++	if (i <= index)
++		return -EINVAL;
++
++	v4l2_video_std_construct(vs, curr_id, descr);
++	return 0;
++}
++
+ /* ----------------------------------------------------------------- */
+ /* some arrays for pretty-printing debug messages of enum types      */
+ 
+@@ -1753,36 +1789,8 @@ static int v4l_enumstd(const struct v4l2_ioctl_ops *ops,
+ {
+ 	struct video_device *vfd = video_devdata(file);
+ 	struct v4l2_standard *p = arg;
+-	v4l2_std_id id = vfd->tvnorms, curr_id = 0;
+-	unsigned int index = p->index, i, j = 0;
+-	const char *descr = "";
+-
+-	/* Return -ENODATA if the tvnorms for the current input
+-	   or output is 0, meaning that it doesn't support this API. */
+-	if (id == 0)
+-		return -ENODATA;
+ 
+-	/* Return norm array in a canonical way */
+-	for (i = 0; i <= index && id; i++) {
+-		/* last std value in the standards array is 0, so this
+-		   while always ends there since (id & 0) == 0. */
+-		while ((id & standards[j].std) != standards[j].std)
+-			j++;
+-		curr_id = standards[j].std;
+-		descr = standards[j].descr;
+-		j++;
+-		if (curr_id == 0)
+-			break;
+-		if (curr_id != V4L2_STD_PAL &&
+-				curr_id != V4L2_STD_SECAM &&
+-				curr_id != V4L2_STD_NTSC)
+-			id &= ~curr_id;
+-	}
+-	if (i <= index)
+-		return -EINVAL;
+-
+-	v4l2_video_std_construct(p, curr_id, descr);
+-	return 0;
++	return v4l_video_std_enumstd(p, vfd->tvnorms);
+ }
+ 
+ static int v4l_s_std(const struct v4l2_ioctl_ops *ops,
+diff --git a/include/media/v4l2-ioctl.h b/include/media/v4l2-ioctl.h
+index a7b3f7c75d628b06..fa0463a1b19dc880 100644
+--- a/include/media/v4l2-ioctl.h
++++ b/include/media/v4l2-ioctl.h
+@@ -642,6 +642,17 @@ void v4l2_video_std_frame_period(int id, struct v4l2_fract *frameperiod);
+ int v4l2_video_std_construct(struct v4l2_standard *vs,
+ 				    int id, const char *name);
+ 
++/**
++ * v4l_video_std_enumstd - Ancillary routine that fills in the fields of
++ *	a &v4l2_standard structure according to the @id and @vs->index
++ *	parameters.
++ *
++ * @vs: struct &v4l2_standard pointer to be filled.
++ * @id: analog TV sdandard ID.
++ *
++ */
++int v4l_video_std_enumstd(struct v4l2_standard *vs, v4l2_std_id id);
++
+ /**
+  * v4l_printk_ioctl - Ancillary routine that prints the ioctl in a
+  *	human-readable format.
+-- 
+2.17.0
