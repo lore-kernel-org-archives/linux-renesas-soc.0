@@ -1,72 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:42959 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752525AbeEPMRJ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750888AbeERLQh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 May 2018 08:17:09 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 3/4] media: rcar-vin: Handle digital subdev in link_notify
-Date: Wed, 16 May 2018 14:16:55 +0200
-Message-Id: <1526473016-30559-4-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1526473016-30559-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1526473016-30559-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 18 May 2018 07:16:37 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 031/102] arm64: dts: renesas: r8a7796: Enable IPMMU devices
+Date: Fri, 18 May 2018 13:14:53 +0200
+Message-Id: <330f2dc009e937efe6618096718f12a4a5a847f8.1526637994.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
+References: <cover.1526637994.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Handle digital subdevices in link_notify callback. If the notified link
-involves a digital subdevice, do not change routing of the VIN-CSI-2
-devices.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Remove 'status = "disabled"' to make sure all IPMMU devices are enabled
+in DT on the r8a7796 SoC.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 30 +++++++++++++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 1003c8c..ea74c55 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -168,10 +168,36 @@ static int rvin_group_link_notify(struct media_link *link, u32 flags,
- 	}
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index e6254711556c..f33063dd7cd7 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -881,7 +881,6 @@
+ 			renesas,ipmmu-main = <&ipmmu_mm 2>;
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
  
- 	/* Add the new link to the existing mask and check if it works. */
--	csi_id = rvin_group_entity_to_csi_id(group, link->source->entity);
- 	channel = rvin_group_csi_pad_to_channel(link->source->index);
--	mask_new = mask & rvin_group_get_mask(vin, csi_id, channel);
-+	csi_id = rvin_group_entity_to_csi_id(group, link->source->entity);
-+	if (csi_id == -ENODEV) {
-+		struct v4l2_subdev *sd;
-+		unsigned int i;
-+
-+		/*
-+		 * Make sure the source entity subdevice is registered as
-+		 * a digital input of one of the enabled VINs if it is not
-+		 * one of the CSI-2 subdevices.
-+		 *
-+		 * No hardware configuration required for digital inputs,
-+		 * we can return here.
-+		 */
-+		sd = media_entity_to_v4l2_subdev(link->source->entity);
-+		for (i = 0; i < RCAR_VIN_NUM; i++) {
-+			if (group->vin[i] && group->vin[i]->digital &&
-+			    group->vin[i]->digital->subdev == sd) {
-+				ret = 0;
-+				goto out;
-+			}
-+		}
-+
-+		vin_err(vin, "Subdevice %s not registered to any VIN\n",
-+			link->source->entity->name);
-+		ret = -ENODEV;
-+		goto out;
-+	}
+ 		ipmmu_ir: mmu@ff8b0000 {
+@@ -890,7 +889,6 @@
+ 			renesas,ipmmu-main = <&ipmmu_mm 3>;
+ 			power-domains = <&sysc R8A7796_PD_A3IR>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
  
-+	mask_new = mask & rvin_group_get_mask(vin, csi_id, channel);
- 	vin_dbg(vin, "Try link change mask: 0x%x new: 0x%x\n", mask, mask_new);
+ 		ipmmu_mm: mmu@e67b0000 {
+@@ -924,7 +922,6 @@
+ 			renesas,ipmmu-main = <&ipmmu_mm 6>;
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
  
- 	if (!mask_new) {
+ 		ipmmu_rt: mmu@ffc80000 {
+@@ -933,7 +930,6 @@
+ 			renesas,ipmmu-main = <&ipmmu_mm 7>;
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
+ 
+ 		ipmmu_vc0: mmu@fe6b0000 {
+@@ -942,7 +938,6 @@
+ 			renesas,ipmmu-main = <&ipmmu_mm 8>;
+ 			power-domains = <&sysc R8A7796_PD_A3VC>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
+ 
+ 		ipmmu_vi0: mmu@febd0000 {
 -- 
-2.7.4
+2.11.0
