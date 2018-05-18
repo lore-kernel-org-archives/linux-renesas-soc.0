@@ -1,121 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33375 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751151AbeEPNFB (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751435AbeERLSr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 May 2018 09:05:01 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+        Fri, 18 May 2018 07:18:47 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: wsa@the-dreams.de, geert@linux-m68k.org,
-        linux-serial@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH] arm64: dts: r8a77995: Add SCIF-{0,1,3,4,5} device nodes
-Date: Wed, 16 May 2018 15:04:51 +0200
-Message-Id: <1526475891-13599-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1526475891-13599-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1526475891-13599-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 20/69] ARM: dts: r8a7792: Adjust SMP routine size
+Date: Fri, 18 May 2018 13:16:53 +0200
+Message-Id: <75f666509fe6545754755a166cc00f84e8018866.1526641667.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
+References: <cover.1526641667.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-This patch adds the device nodes for SCIF-{0,1,3,4,5} serial ports,
-incl. clocks and power domain.
+This patch adjusts the definition of the SMP routine size according
+to the latest changes made by commit:
+"ARM: shmobile: Add watchdog support"
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 70 +++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+ arch/arm/boot/dts/r8a7792.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 4b05dc2..73d6589 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -628,6 +628,34 @@
- 			status = "disabled";
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index 268987ff0201..bea0f12f03d3 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -341,7 +341,7 @@
+ 
+ 			smp-sram@0 {
+ 				compatible = "renesas,smp-sram";
+-				reg = <0 0x10>;
++				reg = <0 0x100>;
+ 			};
  		};
  
-+		scif0: serial@e6e60000 {
-+			compatible = "renesas,scif-r8a77995",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6e60000 0 64>;
-+			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 207>,
-+				 <&cpg CPG_CORE R8A77995_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 207>;
-+			status = "disabled";
-+		};
-+
-+		scif1: serial@e6e68000 {
-+			compatible = "renesas,scif-r8a77995",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6e68000 0 64>;
-+			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 206>,
-+				 <&cpg CPG_CORE R8A77995_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 206>;
-+			status = "disabled";
-+		};
-+
- 		scif2: serial@e6e88000 {
- 			compatible = "renesas,scif-r8a77995",
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
-@@ -645,6 +673,48 @@
- 			status = "disabled";
- 		};
- 
-+		scif3: serial@e6c50000 {
-+			compatible = "renesas,scif-r8a77995",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6c50000 0 64>;
-+			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 204>,
-+				 <&cpg CPG_CORE R8A77995_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 204>;
-+			status = "disabled";
-+		};
-+
-+		scif4: serial@e6c40000 {
-+			compatible = "renesas,scif-r8a77995",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6c40000 0 64>;
-+			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 203>,
-+				 <&cpg CPG_CORE R8A77995_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 203>;
-+			status = "disabled";
-+		};
-+
-+		scif5: serial@e6f30000 {
-+			compatible = "renesas,scif-r8a77995",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6f30000 0 64>;
-+			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 202>,
-+				 <&cpg CPG_CORE R8A77995_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 202>;
-+			status = "disabled";
-+		};
-+
- 		vin4: video@e6ef4000 {
- 			compatible = "renesas,vin-r8a77995";
- 			reg = <0 0xe6ef4000 0 0x1000>;
 -- 
-2.7.4
+2.11.0
