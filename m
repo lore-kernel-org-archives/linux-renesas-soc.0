@@ -1,53 +1,64 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        horms@verge.net.au, geert@glider.be
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 4/6] media: rcar-vin: Handle CLOCKENB pin polarity
-Date: Wed, 16 May 2018 18:32:30 +0200
-Message-Id: <1526488352-898-5-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1526488352-898-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1526488352-898-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750888AbeERLRO (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 18 May 2018 07:17:14 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 064/102] arm64: dts: renesas: r8a77965: Add address properties to rcar_sound port nodes
+Date: Fri, 18 May 2018 13:15:26 +0200
+Message-Id: <e94ac4c7f4f0b9b2c28cfba3b7c6ba089092a22d.1526637994.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
+References: <cover.1526637994.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Handle CLOCKENB pin polarity, or use HSYNC in its place if polarity is
-not specified.
+The rcar_sound port nodes have unit names and thus should have register
+properties.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+This is flagged by dtc as follows:
+ # make dtbs W=1
+ ...
+ DTC     arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb
+arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@0: node has a unit name, but no reg property
+ DTC     arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dtb
+arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@0: node has a unit name, but no reg property
+
+Prior to this patch the port nodes only defined in board DTS files.
+As the register properties are common this patch defines the port nodes
+and provides register properties in the SoC DTS file.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/media/platform/rcar-vin/rcar-dma.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index ac07f99..7a84eae 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -123,6 +123,8 @@
- /* Video n Data Mode Register 2 bits */
- #define VNDMR2_VPS		(1 << 30)
- #define VNDMR2_HPS		(1 << 29)
-+#define VNDMR2_CES		(1 << 28)
-+#define VNDMR2_CHS		(1 << 23)
- #define VNDMR2_FTEV		(1 << 17)
- #define VNDMR2_VLV(n)		((n & 0xf) << 12)
- 
-@@ -691,6 +693,15 @@ static int rvin_setup(struct rvin_dev *vin)
- 		dmr2 |= VNDMR2_VPS;
- 
- 	/*
-+	 * Clock-enable active level select.
-+	 * Use HSYNC as enable if not specified
-+	 */
-+	if (vin->mbus_cfg.flags & V4L2_MBUS_DATA_ACTIVE_LOW)
-+		dmr2 |= VNDMR2_CES;
-+	else if (!(vin->mbus_cfg.flags & V4L2_MBUS_DATA_ACTIVE_HIGH))
-+		dmr2 |= VNDMR2_CHS;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index b46af2744135..7c9555309c0a 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -857,6 +857,14 @@
+ 				ssi1: ssi-1 {
+ 				};
+ 			};
 +
-+	/*
- 	 * Output format
- 	 */
- 	switch (vin->format.pixelformat) {
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				port@0 {
++					reg = <0>;
++				};
++			};
+ 		};
+ 
+ 		xhci0: usb@ee000000 {
 -- 
-2.7.4
+2.11.0
