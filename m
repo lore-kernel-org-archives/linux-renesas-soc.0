@@ -1,57 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:46883 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755026AbeE2IsT (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751569AbeERLTR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 May 2018 04:48:19 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 0/10] rcar-vin: Add support for parallel input on Gen3
-Date: Tue, 29 May 2018 10:47:58 +0200
-Message-Id: <1527583688-314-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 18 May 2018 07:19:17 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 48/69] ARM: dts: gose: Drop unnecessary address properties from port nodes
+Date: Fri, 18 May 2018 13:17:21 +0200
+Message-Id: <c1eb7457ad6e9f3e2937f39ebfefb82cd729d625.1526641667.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
+References: <cover.1526641667.git.horms+renesas@verge.net.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-   this series adds support for parallel video input to the Gen3 version of
-rcar-vin driver.
+The vin port nodes does not have an address and thus does not need
+address-cells or address size-properties.
 
-Since last version one patch has been added (as anticipated by email) to clean
-up the memory reserved for notifier's async subdevices if the notifier
-registration fails ([4/10]), and two comments from Niklas has been addressed
-in [6/10], where the group notifier is now cleaned up in the error path if
-it's necessary to do that.
+This is flagged by dtc as follows:
+ # make dtbs W=1
+ arch/arm/boot/dts/r8a7793-gose.dtb: Warning (avoid_unnecessary_addr_size): /soc/video@e6ef0000/port: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+ arch/arm/boot/dts/r8a7793-gose.dtb: Warning (avoid_unnecessary_addr_size): /soc/video@e6ef1000/port: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
 
-Patches 4,5 and 6 have not yet been Acked-by/Reviewed-by, all the other ones
-have at least one tag, so things looks quite good.
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ arch/arm/boot/dts/r8a7793-gose.dts | 6 ------
+ 1 file changed, 6 deletions(-)
 
-Additional changelogs in single patches.
-
-Thanks
-    j
-
-Jacopo Mondi (10):
-  media: rcar-vin: Rename 'digital' to 'parallel'
-  media: rcar-vin: Remove two empty lines
-  media: rcar-vin: Create a group notifier
-  media: rcar-vin: Cleanup notifier in error path
-  media: rcar-vin: Cache the mbus configuration flags
-  media: rcar-vin: Parse parallel input on Gen3
-  media: rcar-vin: Link parallel input media entities
-  media: rcar-vin: Handle parallel subdev in link_notify
-  media: rcar-vin: Rename _rcar_info to rcar_info
-  media: rcar-vin: Add support for R-Car R8A77995 SoC
-
- drivers/media/platform/rcar-vin/rcar-core.c | 269 +++++++++++++++++++---------
- drivers/media/platform/rcar-vin/rcar-dma.c  |  36 ++--
- drivers/media/platform/rcar-vin/rcar-v4l2.c |  12 +-
- drivers/media/platform/rcar-vin/rcar-vin.h  |  29 +--
- 4 files changed, 230 insertions(+), 116 deletions(-)
-
---
-2.7.4
+diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+index 7a66d885e657..ec94e2402bdf 100644
+--- a/arch/arm/boot/dts/r8a7793-gose.dts
++++ b/arch/arm/boot/dts/r8a7793-gose.dts
+@@ -759,9 +759,6 @@
+ 	pinctrl-names = "default";
+ 
+ 	port {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+ 		vin0ep2: endpoint {
+ 			remote-endpoint = <&adv7612_out>;
+ 			bus-width = <24>;
+@@ -781,9 +778,6 @@
+ 	status = "okay";
+ 
+ 	port {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+ 		vin1ep: endpoint {
+ 			remote-endpoint = <&adv7180_out>;
+ 			bus-width = <8>;
+-- 
+2.11.0
