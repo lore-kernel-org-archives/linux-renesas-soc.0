@@ -1,71 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750888AbeERLQX (ORCPT
+        with ESMTP id S1750888AbeERLRF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:16:23 -0400
+        Fri, 18 May 2018 07:17:05 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 021/102] arm64: dts: renesas: r8a77970: add LVDS support
-Date: Fri, 18 May 2018 13:14:43 +0200
-Message-Id: <3cd0bd7d92bb54dc224e23dcb2cc319ff83b7b73.1526637994.git.horms+renesas@verge.net.au>
+Subject: [PATCH 057/102] arm64: dts: renesas: r8a77965: Add HDMI encoder instance
+Date: Fri, 18 May 2018 13:15:19 +0200
+Message-Id: <5daa6f9f160bcc63664aeb6fd597a9e712bcd4d0.1526637994.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
 References: <cover.1526637994.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Define the generic R8A77970 part of the LVDS device node.
+Add the HDMI encoder to the R8A77965 DT in disabled state.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Based on a similar patch of the R8A7796 device tree
+by Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>.
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[Kieran: Rebase to top of tree]
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 30 +++++++++++++++++++++++++++++-
+ 1 file changed, 29 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index 8efb5c3a5da1..a194cb8d7d62 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -660,6 +660,34 @@
- 				port@1 {
- 					reg = <1>;
- 					du_out_lvds0: endpoint {
-+						remote-endpoint = <&lvds0_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		lvds0: lvds-encoder@feb90000 {
-+			compatible = "renesas,r8a77970-lvds";
-+			reg = <0 0xfeb90000 0 0x14>;
-+			clocks = <&cpg CPG_MOD 727>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 727>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index a35ea2f32da2..b46af2744135 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -8,7 +8,7 @@
+  * Copyright (C) 2016 Renesas Electronics Corp.
+  */
+ 
+-#include <dt-bindings/clock/renesas-cpg-mssr.h>
++#include <dt-bindings/clock/r8a77965-cpg-mssr.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/power/r8a77965-sysc.h>
+ 
+@@ -1105,6 +1105,33 @@
+ 			};
+ 		};
+ 
++		hdmi0: hdmi@fead0000 {
++			compatible = "renesas,r8a77965-hdmi",
++				     "renesas,rcar-gen3-hdmi";
++			reg = <0 0xfead0000 0 0x10000>;
++			interrupts = <GIC_SPI 389 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 729>,
++				 <&cpg CPG_CORE R8A77965_CLK_HDMI>;
++			clock-names = "iahb", "isfr";
++			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
++			resets = <&cpg 729>;
 +			status = "disabled";
 +
 +			ports {
 +				#address-cells = <1>;
 +				#size-cells = <0>;
-+
 +				port@0 {
 +					reg = <0>;
-+					lvds0_in: endpoint {
-+						remote-endpoint =
-+							<&du_out_lvds0>;
++					dw_hdmi0_in: endpoint {
++						remote-endpoint = <&du_out_hdmi0>;
 +					};
 +				};
 +				port@1 {
 +					reg = <1>;
-+					lvds0_out: endpoint {
++				};
++			};
++		};
++
+ 		du: display@feb00000 {
+ 			compatible = "renesas,du-r8a77965";
+ 			reg = <0 0xfeb00000 0 0x80000>;
+@@ -1132,6 +1159,7 @@
+ 				port@1 {
+ 					reg = <1>;
+ 					du_out_hdmi0: endpoint {
++						remote-endpoint = <&dw_hdmi0_in>;
  					};
  				};
- 			};
+ 				port@2 {
 -- 
 2.11.0
