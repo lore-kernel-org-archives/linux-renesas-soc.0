@@ -1,34 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:54930 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752472AbeESUeI (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752128AbeERLTs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 19 May 2018 16:34:08 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+        Fri, 18 May 2018 07:19:48 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: kieran.bingham@ideasonboard.com
-Subject: [PATCH 0/2] vsp-tests: Fix suspend/resume test
-Date: Sat, 19 May 2018 23:34:24 +0300
-Message-Id: <20180519203426.25711-1-laurent.pinchart@ideasonboard.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 01/14] soc: renesas: Identify RZ/G1C
+Date: Fri, 18 May 2018 13:17:59 +0200
+Message-Id: <1daf13ba10378cad9ea4f5f26b83dd36c36dcdc0.1526639075.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526639075.git.horms+renesas@verge.net.au>
+References: <cover.1526639075.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+From: Biju Das <biju.das@bp.renesas.com>
 
-This small series fixes the VSP suspend/resume test to ensure that the
-VSP is running when suspending. The first patch isn't strictly required,
-but was helpful when debugging the second patch, so I've included it in
-the series.
+Add support for identifying the RZ/G1C (r8a77470) SoC.
 
-Laurent Pinchart (2):
-  vsp-lib: Capture the kernel log messages in test log files
-  tests: suspend/resume: Increase number of processed frames
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/soc/renesas/renesas-soc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
- scripts/vsp-lib.sh          |  5 +++++
- tests/vsp-unit-test-0020.sh | 15 ++++++++-------
- 2 files changed, 13 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
+index ea71c413c926..3912a71bd417 100644
+--- a/drivers/soc/renesas/renesas-soc.c
++++ b/drivers/soc/renesas/renesas-soc.c
+@@ -100,6 +100,11 @@ static const struct renesas_soc soc_rz_g1e __initconst __maybe_unused = {
+ 	.id	= 0x4c,
+ };
+ 
++static const struct renesas_soc soc_rz_g1c __initconst __maybe_unused = {
++	.family	= &fam_rzg,
++	.id	= 0x53,
++};
++
+ static const struct renesas_soc soc_rcar_m1a __initconst __maybe_unused = {
+ 	.family	= &fam_rcar_gen1,
+ };
+@@ -192,6 +197,9 @@ static const struct of_device_id renesas_socs[] __initconst = {
+ #ifdef CONFIG_ARCH_R8A7745
+ 	{ .compatible = "renesas,r8a7745",	.data = &soc_rz_g1e },
+ #endif
++#ifdef CONFIG_ARCH_R8A77470
++	{ .compatible = "renesas,r8a77470",	.data = &soc_rz_g1c },
++#endif
+ #ifdef CONFIG_ARCH_R8A7778
+ 	{ .compatible = "renesas,r8a7778",	.data = &soc_rcar_m1a },
+ #endif
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
