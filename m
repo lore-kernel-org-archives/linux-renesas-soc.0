@@ -1,94 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750888AbeERLRF (ORCPT
+        with ESMTP id S1750888AbeERLQ7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:17:05 -0400
+        Fri, 18 May 2018 07:16:59 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 057/102] arm64: dts: renesas: r8a77965: Add HDMI encoder instance
-Date: Fri, 18 May 2018 13:15:19 +0200
-Message-Id: <5daa6f9f160bcc63664aeb6fd597a9e712bcd4d0.1526637994.git.horms+renesas@verge.net.au>
+Subject: [PATCH 050/102] arm64: dts: renesas: r8a7796-salvator-x: enable HDMI sound
+Date: Fri, 18 May 2018 13:15:12 +0200
+Message-Id: <5c29ba526ca8f4e34a3f2935651f1ab4592c03a3.1526637994.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
 References: <cover.1526637994.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Add the HDMI encoder to the R8A77965 DT in disabled state.
-
-Based on a similar patch of the R8A7796 device tree
-by Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>.
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[Kieran: Rebase to top of tree]
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Tested-by: Nguyen Viet Dung <nv-dung@jinso.co.jp>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 30 +++++++++++++++++++++++++++++-
- 1 file changed, 29 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 28 ++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index a35ea2f32da2..b46af2744135 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -8,7 +8,7 @@
-  * Copyright (C) 2016 Renesas Electronics Corp.
-  */
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+index 498c9e807dc4..90cca09b9a5e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+@@ -40,6 +40,11 @@
+ 		      "dclkin.0", "dclkin.1", "dclkin.2";
+ };
  
--#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+#include <dt-bindings/clock/r8a77965-cpg-mssr.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/power/r8a77965-sysc.h>
++&sound_card {
++	dais = <&rsnd_port0	/* ak4613 */
++		&rsnd_port1>;	/* HDMI0  */
++};
++
+ &hdmi0 {
+ 	status = "okay";
  
-@@ -1105,6 +1105,33 @@
+@@ -50,9 +55,32 @@
+ 				remote-endpoint = <&hdmi0_con>;
  			};
  		};
- 
-+		hdmi0: hdmi@fead0000 {
-+			compatible = "renesas,r8a77965-hdmi",
-+				     "renesas,rcar-gen3-hdmi";
-+			reg = <0 0xfead0000 0 0x10000>;
-+			interrupts = <GIC_SPI 389 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 729>,
-+				 <&cpg CPG_CORE R8A77965_CLK_HDMI>;
-+			clock-names = "iahb", "isfr";
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 729>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				port@0 {
-+					reg = <0>;
-+					dw_hdmi0_in: endpoint {
-+						remote-endpoint = <&du_out_hdmi0>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+				};
++		port@2 {
++			reg = <2>;
++			dw_hdmi0_snd_in: endpoint {
++				remote-endpoint = <&rsnd_endpoint1>;
 +			};
 +		};
+ 	};
+ };
+ 
+ &hdmi0_con {
+ 	remote-endpoint = <&rcar_dw_hdmi0_out>;
+ };
 +
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a77965";
- 			reg = <0 0xfeb00000 0 0x80000>;
-@@ -1132,6 +1159,7 @@
- 				port@1 {
- 					reg = <1>;
- 					du_out_hdmi0: endpoint {
-+						remote-endpoint = <&dw_hdmi0_in>;
- 					};
- 				};
- 				port@2 {
++&rcar_sound {
++	ports {
++		/* rsnd_port0 is on salvator-common */
++		rsnd_port1: port@1 {
++			rsnd_endpoint1: endpoint {
++				remote-endpoint = <&dw_hdmi0_snd_in>;
++
++				dai-format = "i2s";
++				bitclock-master = <&rsnd_endpoint1>;
++				frame-master = <&rsnd_endpoint1>;
++
++				playback = <&ssi2>;
++			};
++		};
++	};
++};
 -- 
 2.11.0
