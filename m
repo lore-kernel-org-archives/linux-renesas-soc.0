@@ -1,56 +1,127 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:41664 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750912AbeETHAl (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752500AbeERLS6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 20 May 2018 03:00:41 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: qemu-devel@nongnu.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        =?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <f4bug@amsat.org>
-Subject: [PATCH v3 RESEND 2/3] nvram: at24c: use a sane default for "rom-size"
-Date: Sun, 20 May 2018 09:00:36 +0200
-Message-Id: <20180520070037.8593-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180520070037.8593-1-wsa+renesas@sang-engineering.com>
-References: <20180520070037.8593-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 18 May 2018 07:18:58 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 40/69] ARM: dts: r8a77470: Add SCIF support
+Date: Fri, 18 May 2018 13:17:13 +0200
+Message-Id: <8cdb8f1ab7efbd88868d3067ec1f211ff289bc01.1526641667.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
+References: <cover.1526641667.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-0 as "rom-size" will lead to an error message. Let's use the size of a
-small 24c01 which has 128 byte.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Describe SCIF ports in the R8A77470 device tree.
+Also it fixes the CPG clock index ZS from 6 to 5.
+
+Fixes: 6929dfc5918049 ("ARM: dts: r8a77470: Initial SoC device tree")
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- hw/nvram/eeprom_at24c.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a77470.dtsi | 69 +++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 67 insertions(+), 2 deletions(-)
 
-diff --git a/hw/nvram/eeprom_at24c.c b/hw/nvram/eeprom_at24c.c
-index ccf78b25e4..ab1ef686e2 100644
---- a/hw/nvram/eeprom_at24c.c
-+++ b/hw/nvram/eeprom_at24c.c
-@@ -28,6 +28,9 @@
- #define TYPE_AT24C_EE "at24c-eeprom"
- #define AT24C_EE(obj) OBJECT_CHECK(EEPROMState, (obj), TYPE_AT24C_EE)
+diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
+index 2f89f33f5b88..39549f28be85 100644
+--- a/arch/arm/boot/dts/r8a77470.dtsi
++++ b/arch/arm/boot/dts/r8a77470.dtsi
+@@ -190,19 +190,84 @@
+ 			dma-channels = <15>;
+ 		};
  
-+/* default is the size of a 24c01 EEPROM */
-+#define AT24C_ROMSIZE_DEFAULT 128
++		scif0: serial@e6e60000 {
++			compatible = "renesas,scif-r8a77470",
++				     "renesas,rcar-gen2-scif", "renesas,scif";
++			reg = <0 0xe6e60000 0 0x40>;
++			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 721>,
++				 <&cpg CPG_CORE 5>, <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 721>;
++			status = "disabled";
++		};
 +
- typedef struct EEPROMState {
-     I2CSlave parent_obj;
+ 		scif1: serial@e6e68000 {
+ 			compatible = "renesas,scif-r8a77470",
+ 				     "renesas,rcar-gen2-scif", "renesas,scif";
+ 			reg = <0 0xe6e68000 0 0x40>;
+ 			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
+-				clocks = <&cpg CPG_MOD 720>,
+-				 <&cpg CPG_CORE 6>, <&scif_clk>;
++			clocks = <&cpg CPG_MOD 720>,
++				 <&cpg CPG_CORE 5>, <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			power-domains = <&sysc 32>;
+ 			resets = <&cpg 720>;
+ 			status = "disabled";
+ 		};
  
-@@ -171,7 +174,7 @@ void at24c_eeprom_reset(DeviceState *state)
- }
- 
- static Property at24c_eeprom_props[] = {
--    DEFINE_PROP_UINT32("rom-size", EEPROMState, rsize, 0),
-+    DEFINE_PROP_UINT32("rom-size", EEPROMState, rsize, AT24C_ROMSIZE_DEFAULT),
-     DEFINE_PROP_BOOL("writable", EEPROMState, writable, true),
-     DEFINE_PROP_DRIVE("drive", EEPROMState, blk),
-     DEFINE_PROP_END_OF_LIST()
++		scif2: serial@e6e58000 {
++			compatible = "renesas,scif-r8a77470",
++				     "renesas,rcar-gen2-scif", "renesas,scif";
++			reg = <0 0xe6e58000 0 0x40>;
++			interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 719>,
++				 <&cpg CPG_CORE 5>, <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 719>;
++			status = "disabled";
++		};
++
++		scif3: serial@e6ea8000 {
++			compatible = "renesas,scif-r8a77470",
++				     "renesas,rcar-gen2-scif", "renesas,scif";
++			reg = <0 0xe6ea8000 0 0x40>;
++			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 718>,
++				 <&cpg CPG_CORE 5>, <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 718>;
++			status = "disabled";
++		};
++
++		scif4: serial@e6ee0000 {
++			compatible = "renesas,scif-r8a77470",
++				     "renesas,rcar-gen2-scif", "renesas,scif";
++			reg = <0 0xe6ee0000 0 0x40>;
++			interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 715>,
++				 <&cpg CPG_CORE 5>, <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 715>;
++			status = "disabled";
++		};
++
++		scif5: serial@e6ee8000 {
++			compatible = "renesas,scif-r8a77470",
++				     "renesas,rcar-gen2-scif", "renesas,scif";
++			reg = <0 0xe6ee8000 0 0x40>;
++			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 714>,
++				 <&cpg CPG_CORE 5>, <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 714>;
++			status = "disabled";
++		};
++
+ 		gic: interrupt-controller@f1001000 {
+ 			compatible = "arm,gic-400";
+ 			#interrupt-cells = <3>;
 -- 
 2.11.0
