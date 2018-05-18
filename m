@@ -1,250 +1,98 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:23714 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752024AbeEOA5G (ORCPT
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:35375 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751184AbeERLww (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 May 2018 20:57:06 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        jacopo mondi <jacopo@jmondi.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v16 0/2] rcar-csi2: add Renesas R-Car MIPI CSI-2
-Date: Tue, 15 May 2018 02:56:33 +0200
-Message-Id: <20180515005635.25715-1-niklas.soderlund+renesas@ragnatech.se>
+        Fri, 18 May 2018 07:52:52 -0400
+Date: Fri, 18 May 2018 13:52:43 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/2] Remove calls to empty arch_setup_pdev_archdata()
+Message-ID: <20180518115243.GA4432@w540>
+References: <1526641611-2769-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="bg08WKrSYDhXBjb5"
+Content-Disposition: inline
+In-Reply-To: <1526641611-2769-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
 
-This is the latest incarnation of R-Car MIPI CSI-2 receiver driver. It's
-based on top of the media-tree and are tested on Renesas Salvator-X and
-Salvator-XS together with adv7482 and the now in tree rcar-vin driver :-)
+--bg08WKrSYDhXBjb5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-I hope this is the last incarnation of this patch-set, I do think it is
-ready for upstream consumption :-)
+Hi Geert,
 
-* Changes since v15
-- Merge struct phtw_mbps and struct phypll_hsfreqrange into a new struct 
-  which maps a mpbs value to a register value, struct rcsi2_mbps_reg.
-- Reduced number of loops and delay when waiting for LP-11 and 
-  confirmation of PHTW write as suggested by Laurent.
-- Dropped dev_dbg() printouts of the requested link speed.
-- Fix small issues in comments.
-- Remove unneeded () in for-loop condition in rcsi2_phtw_write_array().
-- Remove __refdata from declaration of 'static struct platform_driver 
-  rcar_csi2_pdrv'.
-- Update MODULE_DESCRIPTION to 'Renesas R-Car MIPI CSI-2 receiver 
-  driver'.
-- Fixed two erroneous values in hsfreqrange_h3_v3h_m3n[]. Thanks Jacopo 
-  for spotting this!
-- Max link speed for V3M and E3 are 1.125Gbps remove settings above that 
-  limit in phtw_mbps_v3m_e3. This also changed in datasheet v1.0.
-- Add review tags from Laurent and Maxime.
+On Fri, May 18, 2018 at 01:06:49PM +0200, Geert Uytterhoeven wrote:
+> 	Hi,
+>
+> Recently, a few calls to arch_setup_pdev_archdata() were added to the
+> ecovec and migor board files (copied from platform_device_register())?
 
-* Changes since v14.
-- Data sheet update changed init sequence for PHY forcing a restructure
-  of the driver. The restructure was so big I felt compel to drop all
-  review tags :-(
-- The change was that the Renesas H3 procedure was aligned with other
-  SoC in the Gen3 family procedure. I had kept the rework as separate
-  patches and was planing to post once original driver with H3 and M3-W
-  support where merged. As review tags are dropped I chosen to squash
-  those patches into 2/2.
-- Add support for Gen3 M3-N.
-- Add support for Gen3 V3M.
-- Set PHTC_TESTCLR when stopping the PHY.
-- Revert back to the v12 and earlier phypll calculation as it turns out
-  it was correct after all.
-- Added compatible string for R8A77965 and R8A77970.
-- s/Port 0/port@0/
-- s/Port 1/port@1/
-- s/Endpoint 0/endpoint@0/
+I suspect that was me
 
-* Changes since v13
-- Change return rcar_csi2_formats + i to return &rcar_csi2_formats[i].
-- Add define for PHCLM_STOPSTATECKL.
-- Update spelling in comments.
-- Update calculation in rcar_csi2_calc_phypll() according to
-  https://linuxtv.org/downloads/v4l-dvb-apis/kapi/csi2.html. The one
-  before v14 did not take into account that 2 bits per sample is
-  transmitted.
-- Use Geert's suggestion of (1 << priv->lanes) - 1 instead of switch
-  statement to set correct number of lanes to enable.
-- Change hex constants in hsfreqrange_m3w_h3es1[] to lower case to match
-  style of rest of file.
-- Switch to %u instead of 0x%x when printing bus type.
-- Switch to %u instead of %d for priv->lanes which is unsigned.
-- Add MEDIA_BUS_FMT_YUYV8_1X16 to the list of supported formats in
-  rcar_csi2_formats[].
-- Fixed bps for MEDIA_BUS_FMT_YUYV10_2X10 to 20 and not 16.
-- Set INTSTATE after PL-11 is confirmed to match flow chart in
-  datasheet.
-- Change priv->notifier.subdevs == NULL to !priv->notifier.subdevs.
-- Add Maxime's and laurent's tags.
+>
+> However, SuperH doesn't implement arch_setup_pdev_archdata(), and falls
+> back to the default (empty) implementation.  As this code is
+> board-specific, the calls can just be removed.
 
-* Changes since v12
-- Fixed spelling mistakes in commit messages and documentation patch,
-  thanks Laurent.
-- Mark endpoints in port 1 as optional as it is allowed to not connect a
-  VIN to the CSI-2 and instead have it only use its parallel input
-  source (for those VIN that have one).
-- Added Ack from Sakari, thanks!
-- Media bus codes are u32 not unsigned int.
-- Ignore error check for v4l2_subdev_call(sd, video, s_stream, 0)
-- Do not set subdev host data as it's not used,
-  v4l2_set_subdev_hostdata().
-- Fixed spelling errors in commit message.
-- Add SPDX header
-- Rename badly named variable tmp to vcdt_part.
-- Cache subdevice in bound callback instead of looking it up in the
-  media graph. By doing this rcar_csi2_sd_info() can be removed.
-- Print unsigned using %u not %d.
-- Call pm_runtime_enable() before calling v4l2_async_register_subdev().
-- Dropped of_match_ptr() as OF is required.
+Thanks for looking into that.
 
-* Changes since v11
-- Added missing call to v4l2_async_notifier_unregister().
-- Fixed missing reg popery in bindings documentation.
-- Add Rob's ack to 01/02.
-- Dropped 'media:' prefix from patch subjects as it seems they are added
-  first when a patch is picked up by the maintainer.
-- Fixed typo in comment enpoint -> endpoint, thanks Hans.
-- Added Hans Reviewed-by to driver.
+Acked-by: Jacopo Mondi <jacopo@jmondi.org>
 
-* Changes since v10
-- Renamed Documentation/devicetree/bindings/media/rcar-csi2.txt to
-  Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
-- Add extra newline in rcar_csi2_code_to_fmt()
-- Use locally stored format information instead of reading it from the
-  remote subdevice, Sakari pointed out that the pipeline is validated
-  before .s_stream() is called so this is safe.
-- Do not check return from media_entity_to_v4l2_subdev() in
-  rcar_csi2_start(), Sakari pointed out it can't fail. Also move logic
-  to find the remote subdevice is moved to the only user of it,
-  rcar_csi2_calc_phypll().
-- Move pm_runtime_get_sync() and pm_runtime_put() to
-  rcar_csi2_s_stream() and remove rcar_csi2_s_power().
-- Add validation of pixel code to rcar_csi2_set_pad_format().
-- Remove static rcar_csi2_notify_unbind() as it only printed a debug
-  message.
+Thanks
+   j
 
-* Changes since v9
-- Add reset property to device tree example
-- Use BIT(x) instead of (1 << x)
-- Use u16 in struct phypll_hsfreqrange to pack struct better.
-- Use unsigned int type for loop variable in rcar_csi2_code_to_fmt
-- Move fields inside struct struct rcar_csi2_info and struct rcar_csi2
-  to pack struct's tighter.
-- Use %u instead of %d when printing __u32.
-- Don't check return of platform_get_resource(), let
-  devm_ioremap_resource() handle it.
-- Store quirk workaround for r8a7795 ES1.0 in the data field of struct
-  soc_device_attribute.
+>
+> Thanks!
+>
+> Geert Uytterhoeven (2):
+>   sh: ecovec: Remove calls to empty arch_setup_pdev_archdata()
+>   sh: migor: Remove calls to empty arch_setup_pdev_archdata()
+>
+>  arch/sh/boards/mach-ecovec24/setup.c | 2 --
+>  arch/sh/boards/mach-migor/setup.c    | 1 -
+>  2 files changed, 3 deletions(-)
+>
+> --
+> 2.7.4
+>
+> Gr{oetje,eeting}s,
+>
+> 						Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+> 							    -- Linus Torvalds
 
-Changes since v8:
-- Updated bindings documentation, thanks Rob!
-- Make use of the now in media-tree sub-notifier V4L2 API
-- Add delay when resetting the IP to allow for a proper reset
-- Fix bug in s_stream error path where the usage count was off if an
-  error was hit.
-- Add support for H3 ES2.0
+--bg08WKrSYDhXBjb5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Changes since v7:
-- Rebase on top of the latest incremental async patches.
-- Fix comments on DT documentation.
-- Use v4l2_ctrl_g_ctrl_int64() instead of v4l2_g_ext_ctrls().
-- Handle try formats in .set_fmt() and .get_fmt().
-- Don't call v4l2_device_register_subdev_nodes() as this is not needed
-  with the complete() callbacks synchronized.
-- Fix line over 80 chars.
-- Fix varies spelling mistakes.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Changes since v6:
-- Rebased on top of Sakaris fwnode patches.
-- Changed of RCAR_CSI2_PAD_MAX to NR_OF_RCAR_CSI2_PAD.
-- Remove assumption about unknown media bus type, thanks Sakari for
-  pointing this out.
-- Created table for supported format information instead of scattering
-  this information around the driver, thanks Sakari!
-- Small newline fixes and reduce some indentation levels
+iQIcBAEBAgAGBQJa/r6KAAoJEHI0Bo8WoVY82LwP/1cxACVID1it0L++O9Ey3Wme
+c/ucOz/wdV5tTNvCFhIR8UdjEelPLfczCfa1g8p2nWQyHlA3Al8Ec82i6IrG4Itp
+sc2LAcBafi3yjh2q5YetHu0+/tmH5KuUn0Gn1e3VsjrxhjYdYHBQa6SmGDteuyy6
+XSX/mh9gOJE0ryIRQfSBBTGjwTyHboAjhHhJCh0ehUpSwxelu7EQA+gEx4fLqsYT
+hcX8Gn0QyyZ5rpxJqd2nltQxd7HnEvzZH8B25fXSdiVu1eAo62yCynZMdQxLtUhr
+vjnBNTxvCBZFZrusNYXkAB8vexT+w/K8CF+6XYK0qcW425/zBrov8pkF4dVsr+Zb
+l/NtXqa9xYKiU7Ehw9SC6x+wWM8trhVWc/RFA3jdRzb0ycyC1HsTXoXGoVz9xjw+
+KRDAca5Xspx2sXubl4Max0UTMKPH2Jbm02ZbZq3JNmVADkWKf6Wx6P/RPP3Cln6Q
+bMdHwv0ijfKXls4XLe4i3mRqWYOcEIvj1FV74H7GI1oLGNhWPGqWdq0uyW0N8Fz2
+l7sAPl1/jGN/SnAHhM6W/3L2QF0z79q/WfIPhFSogqZ58zTETVCT1p0kSlul5qdF
+fSim18Agl5o1Ey9fLrFIwzkeATsGhrR2ycIy9Y/MkQeNBwBnsUWtytxx5PF56i5e
+3/txBONEwzVvba4lZzsV
+=JGip
+-----END PGP SIGNATURE-----
 
-Changes since v5:
-- Make use of the incremental async subnotifer and helper to map DT
-  endpoint to media pad number. This moves functionality which
-  previously in the Gen3 patches for R-Car VIN driver to this R-Car
-  CSI-2 driver. This is done in preparation to support the ADV7482
-  driver in development by Kieran which will register more then one
-  subdevice and the CSI-2 driver needs to cope wit this. Further more it
-  prepares the driver for another use-case where more then one subdevice
-  is present upstream for the CSI-2.
-- Small cleanups.
-- Add explicit include for linux/io.h, thanks Kieran.
-
-Changes since v4:
-- Match SoC part numbers and drop trailing space in documentation,
-  thanks Geert for pointing this out.
-- Clarify that the driver is a CSI-2 receiver by supervised
-  s/interface/receiver/, thanks Laurent.
-- Add entries in Kconfig and Makefile alphabetically instead of append.
-- Rename struct rcar_csi2 member swap to lane_swap.
-- Remove macros to wrap calls to dev_{dbg,info,warn,err}.
-- Add wrappers for ioread32 and iowrite32.
-- Remove unused interrupt handler, but keep checking in probe that there
-  are a interrupt define in DT.
-- Rework how to wait for LP-11 state, thanks Laurent for the great idea!
-- Remove unneeded delay in rcar_csi2_reset()
-- Remove check for duplicated lane id:s from DT parsing. Broken out to a
-  separate patch adding this check directly to v4l2_of_parse_endpoint().
-- Fixed rcar_csi2_start() to ask it's source subdevice for information
-  about pixel rate and frame format. With this change having
-  {set,get}_fmt operations became redundant, it was only used for
-  figuring out this out so dropped them.
-- Tabulated frequency settings map.
-- Dropped V4L2_SUBDEV_FL_HAS_DEVNODE it should never have been set.
-- Switched from MEDIA_ENT_F_ATV_DECODER to
-  MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER as entity function. I can't
-  find a more suitable function, and what the hardware do is to fetch
-  video from an external chip and passes it on to a another SoC internal
-  IP it's sort of a formatter.
-- Break out DT documentation and code in two patches.
-
-Changes since v3:
-- Update DT binding documentation with input from Geert Uytterhoeven,
-  thanks
-
-Changes since v2:
-- Added media control pads as this is needed by the new rcar-vin driver.
-- Update DT bindings after review comments and to add r8a7796 support.
-- Add get_fmt handler.
-- Fix media bus format error s/YUYV8/UYVY8/
-
-Changes since v1:
-- Drop dependency on a pad aware s_stream operation.
-- Use the DT bindings format "renesas,<soctype>-<device>", thanks Geert
-  for pointing this out.
-
-Niklas Söderlund (2):
-  rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver documentation
-  rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver driver
-
- .../bindings/media/renesas,rcar-csi2.txt      |  101 ++
- MAINTAINERS                                   |    1 +
- drivers/media/platform/rcar-vin/Kconfig       |   12 +
- drivers/media/platform/rcar-vin/Makefile      |    1 +
- drivers/media/platform/rcar-vin/rcar-csi2.c   | 1084 +++++++++++++++++
- 5 files changed, 1199 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
- create mode 100644 drivers/media/platform/rcar-vin/rcar-csi2.c
-
--- 
-2.17.0
+--bg08WKrSYDhXBjb5--
