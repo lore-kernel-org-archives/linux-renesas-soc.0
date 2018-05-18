@@ -1,56 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:34652 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751076AbeEBNKT (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751581AbeERLSP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 May 2018 09:10:19 -0400
-Received: by mail-vk0-f68.google.com with SMTP id t63-v6so8922924vkb.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 May 2018 06:10:19 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <20180426102951.8683-1-horms+renesas@verge.net.au>
-References: <20180426102951.8683-1-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 May 2018 15:10:18 +0200
-Message-ID: <CAMuHMdUBtNrny+DPqamKSL6nmiyuF38BQdD0eqc7kzDhuMSQqg@mail.gmail.com>
-Subject: Re: [PATCH 00/10] ARM, arm64: dts: renesas: update register properties
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Fri, 18 May 2018 07:18:15 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset="UTF-8"
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 3/6] dt-bindings: arm: Document Renesas Ebisu board DT bindings
+Date: Fri, 18 May 2018 13:16:45 +0200
+Message-Id: <d2ba004b0341e63dc49f640ddd8e79c764ff16c8.1526549153.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526549153.git.horms+renesas@verge.net.au>
+References: <cover.1526549153.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-On Thu, Apr 26, 2018 at 12:29 PM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> this series:
->
-> 1. Drops unnecessary address properties from VIN port nodes
->    on Renesas R-Car Gen2 SoC board DTSes. These are unnecessary
->    as the nodes to not have bus addresses.
+This patch adds device tree bindings documentation for Renesas
+Ebisu board (RTP0RC77990SEB0010S).
 
-I guess the example in Documentation/devicetree/bindings/media/rcar_vin.txt
-should be updated, too?
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> 2. And adds address properties to R-Car Sound port nodes on
->    Renesas R-Car Gen2 SoC DTSes. These are necessary as the nodes
->    have unit names.
-
-Documentation/devicetree/bindings/sound/renesas,rsnd.txt doesn't say
-anything about the presence of ports?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index e1a24708a284..804f1d7c1f2b 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -69,6 +69,8 @@ Boards:
+     compatible = "renesas,draak", "renesas,r8a77995"
+   - Eagle (RTP0RC77970SEB0010S)
+     compatible = "renesas,eagle", "renesas,r8a77970"
++  - Ebisu (RTP0RC77990SEB0010S)
++    compatible = "renesas,ebisu", "renesas,r8a77990"
+   - Genmai (RTK772100BC00000BR)
+     compatible = "renesas,genmai", "renesas,r7s72100"
+   - GR-Peach (X28A-M01-E/F)
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.11.0
