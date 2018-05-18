@@ -1,103 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:43526 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750957AbeERMtA (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750888AbeERLQa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 08:49:00 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/5] ARM: shmobile: r8a7790: Use common R-Car Gen2 machine definition
-Date: Fri, 18 May 2018 14:48:51 +0200
-Message-Id: <1526647734-1200-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1526647734-1200-1-git-send-email-geert+renesas@glider.be>
-References: <1526647734-1200-1-git-send-email-geert+renesas@glider.be>
+        Fri, 18 May 2018 07:16:30 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 018/102] arm64: dts: renesas: r8a7796: decrease temperature hysteresis
+Date: Fri, 18 May 2018 13:14:40 +0200
+Message-Id: <1f153093b0bb6a9b46cb410ee3535d990348a2b3.1526637994.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
+References: <cover.1526637994.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Now r8a7790 no longer needs the SMP initialization fallback, it can use
-the common R-Car Gen2 machine definition, and the r8a7790-specific one
-can be removed.
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+To incorporate more tests by the hardware team decrease the hysteresis
+value to 1C.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-shmobile/Makefile          |  1 -
- arch/arm/mach-shmobile/setup-r8a7790.c   | 36 --------------------------------
- arch/arm/mach-shmobile/setup-rcar-gen2.c |  3 ++-
- 3 files changed, 2 insertions(+), 38 deletions(-)
- delete mode 100644 arch/arm/mach-shmobile/setup-r8a7790.c
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
-index 9133949b5df2c824..13aca853a162ed5d 100644
---- a/arch/arm/mach-shmobile/Makefile
-+++ b/arch/arm/mach-shmobile/Makefile
-@@ -12,7 +12,6 @@ obj-$(CONFIG_ARCH_R8A73A4)	+= setup-r8a73a4.o
- obj-$(CONFIG_ARCH_R8A7740)	+= setup-r8a7740.o
- obj-$(CONFIG_ARCH_R8A7778)	+= setup-r8a7778.o
- obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o pm-r8a7779.o
--obj-$(CONFIG_ARCH_R8A7790)	+= setup-r8a7790.o
- obj-$(CONFIG_ARCH_R8A7791)	+= setup-r8a7791.o
- obj-$(CONFIG_ARCH_EMEV2)	+= setup-emev2.o
- obj-$(CONFIG_ARCH_R7S72100)	+= setup-r7s72100.o
-diff --git a/arch/arm/mach-shmobile/setup-r8a7790.c b/arch/arm/mach-shmobile/setup-r8a7790.c
-deleted file mode 100644
-index fd2435b39529438e..0000000000000000
---- a/arch/arm/mach-shmobile/setup-r8a7790.c
-+++ /dev/null
-@@ -1,36 +0,0 @@
--/*
-- * r8a7790 processor support
-- *
-- * Copyright (C) 2013  Renesas Solutions Corp.
-- * Copyright (C) 2013  Magnus Damm
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
--
--#include <linux/init.h>
--
--#include <asm/mach/arch.h>
--
--#include "common.h"
--#include "rcar-gen2.h"
--
--static const char * const r8a7790_boards_compat_dt[] __initconst = {
--	"renesas,r8a7790",
--	NULL,
--};
--
--DT_MACHINE_START(R8A7790_DT, "Generic R8A7790 (Flattened Device Tree)")
--	.smp_init	= smp_init_ops(shmobile_smp_init_fallback_ops),
--	.init_early	= shmobile_init_delay,
--	.init_time	= rcar_gen2_timer_init,
--	.init_late	= shmobile_init_late,
--	.reserve	= rcar_gen2_reserve,
--	.dt_compat	= r8a7790_boards_compat_dt,
--MACHINE_END
-diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-index 80de6be912e132f7..a9860f71ba11fba4 100644
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -185,8 +185,9 @@ void __init rcar_gen2_reserve(void)
- }
- 
- static const char * const rcar_gen2_boards_compat_dt[] __initconst = {
-+	"renesas,r8a7790",
- 	/*
--	 * R8A7790 and R8A7791 can't be handled here as long as they need SMP
-+	 * R8A7791 can't be handled here as long as it needs SMP
- 	 * initialization fallback.
- 	 */
- 	"renesas,r8a7792",
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 55a64169d3d4..e6254711556c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -2072,12 +2072,12 @@
+ 			trips {
+ 				sensor1_passive: sensor1-passive {
+ 					temperature = <95000>;
+-					hysteresis = <2000>;
++					hysteresis = <1000>;
+ 					type = "passive";
+ 				};
+ 				sensor1_crit: sensor1-crit {
+ 					temperature = <120000>;
+-					hysteresis = <2000>;
++					hysteresis = <1000>;
+ 					type = "critical";
+ 				};
+ 			};
+@@ -2098,12 +2098,12 @@
+ 			trips {
+ 				sensor2_passive: sensor2-passive {
+ 					temperature = <95000>;
+-					hysteresis = <2000>;
++					hysteresis = <1000>;
+ 					type = "passive";
+ 				};
+ 				sensor2_crit: sensor2-crit {
+ 					temperature = <120000>;
+-					hysteresis = <2000>;
++					hysteresis = <1000>;
+ 					type = "critical";
+ 				};
+ 			};
+@@ -2124,12 +2124,12 @@
+ 			trips {
+ 				sensor3_passive: sensor3-passive {
+ 					temperature = <95000>;
+-					hysteresis = <2000>;
++					hysteresis = <1000>;
+ 					type = "passive";
+ 				};
+ 				sensor3_crit: sensor3-crit {
+ 					temperature = <120000>;
+-					hysteresis = <2000>;
++					hysteresis = <1000>;
+ 					type = "critical";
+ 				};
+ 			};
 -- 
-2.7.4
+2.11.0
