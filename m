@@ -1,47 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751815AbeERLSE (ORCPT
+        with ESMTP id S1752488AbeERLTG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:18:04 -0400
+        Fri, 18 May 2018 07:19:06 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Biju Das <biju.das@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/6] ARM: shmobile: defconfig: Disable CONFIG_FB_SH_MOBILE_MERAM
-Date: Fri, 18 May 2018 13:16:29 +0200
-Message-Id: <ddba297cc1cc01c70cd08dd4647d46ea33f942a1.1526548577.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526548577.git.horms+renesas@verge.net.au>
-References: <cover.1526548577.git.horms+renesas@verge.net.au>
+Subject: [PATCH 44/69] ARM: dts: iwg23s-sbc: Add EtherAVB support
+Date: Fri, 18 May 2018 13:17:17 +0200
+Message-Id: <b6ef074bcadf9f89295bc7ee19424714b6ffc4c8.1526641667.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
+References: <cover.1526641667.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Biju Das <biju.das@bp.renesas.com>
 
-The last Renesas ARM platform using this driver was removed in commit
-a521422ea4ae6128 ("ARM: shmobile: mackerel: Remove Legacy C board
-code").
+Define the iW-RainboW-G23S board dependent part of the
+EtherAVB device node.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/configs/shmobile_defconfig | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index dc650db70063..dd95d395f565 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -157,7 +157,6 @@ CONFIG_DRM_DUMB_VGA_DAC=y
- CONFIG_DRM_I2C_ADV7511=y
- CONFIG_DRM_I2C_ADV7511_AUDIO=y
- CONFIG_FB_SH_MOBILE_LCDC=y
--CONFIG_FB_SH_MOBILE_MERAM=y
- # CONFIG_LCD_CLASS_DEVICE is not set
- # CONFIG_BACKLIGHT_GENERIC is not set
- CONFIG_BACKLIGHT_PWM=y
+diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+index d21baad9f0ad..e3585daafdd6 100644
+--- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
++++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+@@ -12,11 +12,12 @@
+ 	compatible = "iwave,g23s", "renesas,r8a77470";
+ 
+ 	aliases {
++		ethernet0 = &avb;
+ 		serial1 = &scif1;
+ 	};
+ 
+ 	chosen {
+-		bootargs = "ignore_loglevel";
++		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
+ 		stdout-path = "serial1:115200n8";
+ 	};
+ 
+@@ -26,6 +27,18 @@
+ 	};
+ };
+ 
++&avb {
++	phy-handle = <&phy3>;
++	phy-mode = "gmii";
++	renesas,no-ether-link;
++	status = "okay";
++
++	phy3: ethernet-phy@3 {
++		reg = <3>;
++		micrel,led-mode = <1>;
++	};
++};
++
+ &extal_clk {
+ 	clock-frequency = <20000000>;
+ };
 -- 
 2.11.0
