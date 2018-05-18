@@ -1,63 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751744AbeERLUC (ORCPT
+Received: from shards.monkeyblade.net ([184.105.139.130]:48102 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752370AbeERRqU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:20:02 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 11/14] arm: shmobile: Change platform dependency to ARCH_RENESAS
-Date: Fri, 18 May 2018 13:18:09 +0200
-Message-Id: <d9be9ceb1f72c7ac216ba164b6b15cf19e6e56b4.1526639075.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526639075.git.horms+renesas@verge.net.au>
-References: <cover.1526639075.git.horms+renesas@verge.net.au>
+        Fri, 18 May 2018 13:46:20 -0400
+Date: Fri, 18 May 2018 13:46:18 -0400 (EDT)
+Message-Id: <20180518.134618.1154522110280250465.davem@davemloft.net>
+To: geert+renesas@glider.be
+Cc: sergei.shtylyov@cogentembedded.com, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] sh_eth: Change platform check to CONFIG_ARCH_RENESAS
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1526640771-473-1-git-send-email-geert+renesas@glider.be>
+References: <1526640771-473-1-git-send-email-geert+renesas@glider.be>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Fri, 18 May 2018 12:52:51 +0200
 
-Since commit 9b5ba0df4ea4f940 ("ARM: shmobile: Introduce ARCH_RENESAS")
-ARCH_RENESAS is a more appropriate platform dependency than the legacy
-ARCH_SHMOBILE, hence use the former.
+> Since commit 9b5ba0df4ea4f940 ("ARM: shmobile: Introduce ARCH_RENESAS")
+> is CONFIG_ARCH_RENESAS a more appropriate platform check than the legacy
+> CONFIG_ARCH_SHMOBILE, hence use the former.
+> 
+> Renesas SuperH SH-Mobile SoCs are still covered by the CONFIG_CPU_SH4
+> check.
+> 
+> This will allow to drop ARCH_SHMOBILE on ARM and ARM64 in the near
+> future.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-This will allow to drop ARCH_SHMOBILE on ARM in the near future.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/Kconfig  | 2 +-
- arch/arm/Makefile | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index a7f8e7f4b88f..2d34c0a44877 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1467,7 +1467,7 @@ config ARM_PSCI
- config ARCH_NR_GPIO
- 	int
- 	default 2048 if ARCH_SOCFPGA
--	default 1024 if ARCH_BRCMSTB || ARCH_SHMOBILE || ARCH_TEGRA || \
-+	default 1024 if ARCH_BRCMSTB || ARCH_RENESAS || ARCH_TEGRA || \
- 		ARCH_ZYNQ
- 	default 512 if ARCH_EXYNOS || ARCH_KEYSTONE || SOC_OMAP5 || \
- 		SOC_DRA7XX || ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210
-diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-index e4e537f27339..a92f5a876d96 100644
---- a/arch/arm/Makefile
-+++ b/arch/arm/Makefile
-@@ -212,7 +212,7 @@ machine-$(CONFIG_ARCH_S3C24XX)		+= s3c24xx
- machine-$(CONFIG_ARCH_S3C64XX)		+= s3c64xx
- machine-$(CONFIG_ARCH_S5PV210)		+= s5pv210
- machine-$(CONFIG_ARCH_SA1100)		+= sa1100
--machine-$(CONFIG_ARCH_SHMOBILE) 	+= shmobile
-+machine-$(CONFIG_ARCH_RENESAS)	 	+= shmobile
- machine-$(CONFIG_ARCH_SIRF)		+= prima2
- machine-$(CONFIG_ARCH_SOCFPGA)		+= socfpga
- machine-$(CONFIG_ARCH_STI)		+= sti
--- 
-2.11.0
+Applied.
