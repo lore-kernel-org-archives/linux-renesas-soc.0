@@ -1,63 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:32970 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755467AbeEHQjo (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751588AbeERLTz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 May 2018 12:39:44 -0400
-Received: by mail-lf0-f67.google.com with SMTP id m18-v6so46826890lfb.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 May 2018 09:39:43 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] arm64: dts: renesas: r8a77970: add SMP support
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: mark.rutland@arm.com, magnus.damm@gmail.com,
-        linux-arm-kernel@lists.infradead.org
-References: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
-Message-ID: <54dbd1d2-8279-5073-cffb-c647fba91e42@cogentembedded.com>
-Date: Tue, 8 May 2018 19:39:40 +0300
-MIME-Version: 1.0
-In-Reply-To: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Fri, 18 May 2018 07:19:55 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 04/14] ARM: shmobile: r8a77470: basic SoC support
+Date: Fri, 18 May 2018 13:18:02 +0200
+Message-Id: <0c1d543b75f242f08b08e7fb63a1df2ada025903.1526639075.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526639075.git.horms+renesas@verge.net.au>
+References: <cover.1526639075.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the device node for the second Cortex-A53 CPU core.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
+Add minimal support for the RZ/G1C (R8A77470) SoC.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-This patch is against the 'renesas-devel-20180508-v4.17-rc4' tag of Simon
-Horman's 'renesas.git' repo.
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ arch/arm/mach-shmobile/Kconfig                     | 4 ++++
+ arch/arm/mach-shmobile/setup-rcar-gen2.c           | 2 ++
+ 3 files changed, 8 insertions(+)
 
- arch/arm64/boot/dts/renesas/r8a77970.dtsi |   10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -41,6 +41,16 @@
- 			enable-method = "psci";
- 		};
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index d3d1df97834f..86ac320323a7 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -21,6 +21,8 @@ SoCs:
+     compatible = "renesas,r8a7744"
+   - RZ/G1E (R8A77450)
+     compatible = "renesas,r8a7745"
++  - RZ/G1C (R8A77470)
++    compatible = "renesas,r8a77470"
+   - R-Car M1A (R8A77781)
+     compatible = "renesas,r8a7778"
+   - R-Car H1 (R8A77790)
+diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
+index 280e7312a9e1..6b9111455a30 100644
+--- a/arch/arm/mach-shmobile/Kconfig
++++ b/arch/arm/mach-shmobile/Kconfig
+@@ -75,6 +75,10 @@ config ARCH_R8A7745
+ 	bool "RZ/G1E (R8A77450)"
+ 	select ARCH_RCAR_GEN2
  
-+		a53_1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53","arm,armv8";
-+			reg = <1>;
-+			clocks = <&cpg CPG_CORE R8A77970_CLK_Z2>;
-+			power-domains = <&sysc R8A77970_PD_CA53_CPU1>;
-+			next-level-cache = <&L2_CA53>;
-+			enable-method = "psci";
-+		};
++config ARCH_R8A77470
++	bool "RZ/G1C (R8A77470)"
++	select ARCH_RCAR_GEN2
 +
- 		L2_CA53: cache-controller {
- 			compatible = "cache";
- 			power-domains = <&sysc R8A77970_PD_CA53_SCU>;
+ config ARCH_R8A7778
+ 	bool "R-Car M1A (R8A77781)"
+ 	select ARCH_RCAR_GEN1
+diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+index 5561dbed7a33..80de6be912e1 100644
+--- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+@@ -73,6 +73,7 @@ void __init rcar_gen2_timer_init(void)
+ 	shmobile_init_cntvoff();
+ 
+ 	if (of_machine_is_compatible("renesas,r8a7745") ||
++	    of_machine_is_compatible("renesas,r8a77470") ||
+ 	    of_machine_is_compatible("renesas,r8a7792") ||
+ 	    of_machine_is_compatible("renesas,r8a7794")) {
+ 		freq = 260000000 / 8;	/* ZS / 8 */
+@@ -205,6 +206,7 @@ MACHINE_END
+ static const char * const rz_g1_boards_compat_dt[] __initconst = {
+ 	"renesas,r8a7743",
+ 	"renesas,r8a7745",
++	"renesas,r8a77470",
+ 	NULL,
+ };
+ 
+-- 
+2.11.0
