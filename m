@@ -1,118 +1,112 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:34053 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751197AbeERSct (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750888AbeERLQ3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 14:32:49 -0400
-Received: by mail-lf0-f68.google.com with SMTP id x145-v6so3305670lff.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 May 2018 11:32:48 -0700 (PDT)
-Subject: [PATCH v2 3/3] sh_eth: add R8A77980 support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org
-References: <f30c98ff-f6da-9e7f-c637-49076a428885@cogentembedded.com>
-Message-ID: <a0dec765-3196-c09d-b41c-c1eb3025a8ad@cogentembedded.com>
-Date: Fri, 18 May 2018 21:32:46 +0300
-MIME-Version: 1.0
-In-Reply-To: <f30c98ff-f6da-9e7f-c637-49076a428885@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Fri, 18 May 2018 07:16:29 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 013/102] arm64: dts: renesas: r8a77965: Add all MSIOF device nodes
+Date: Fri, 18 May 2018 13:14:35 +0200
+Message-Id: <93b0e5643a684ff0843b9d0222eae168838b2ffa.1526637994.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
+References: <cover.1526637994.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Finally, add support for the DT probing of the R-Car V3H (AKA R8A77980) --
-it's the only R-Car gen3 SoC having the GEther controller -- others have
-only EtherAVB...
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Based on the original (and large) patch by Vladimir Barinov.
+Add the device nodes for all MSIOF SPI controllers.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Based on several similar patches of the R8A7796 device tree
+by Geert Uytterhoeven <geert+renesas@glider.be>
+and Simon Horman <horms+renesas@verge.net.au>.
 
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[geert: Use numerical power domain indices for initial r8a77965.dtsi]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-Changes in version 2:
-- added Simon's tag.
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 62 +++++++++++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
 
- Documentation/devicetree/bindings/net/sh_eth.txt |    1 
- drivers/net/ethernet/renesas/sh_eth.c            |   44 +++++++++++++++++++++++
- 2 files changed, 45 insertions(+)
-
-Index: net-next/Documentation/devicetree/bindings/net/sh_eth.txt
-===================================================================
---- net-next.orig/Documentation/devicetree/bindings/net/sh_eth.txt
-+++ net-next/Documentation/devicetree/bindings/net/sh_eth.txt
-@@ -14,6 +14,7 @@ Required properties:
- 	      "renesas,ether-r8a7791"  if the device is a part of R8A7791 SoC.
- 	      "renesas,ether-r8a7793"  if the device is a part of R8A7793 SoC.
- 	      "renesas,ether-r8a7794"  if the device is a part of R8A7794 SoC.
-+	      "renesas,gether-r8a77980" if the device is a part of R8A77980 SoC.
- 	      "renesas,ether-r7s72100" if the device is a part of R7S72100 SoC.
- 	      "renesas,rcar-gen1-ether" for a generic R-Car Gen1 device.
- 	      "renesas,rcar-gen2-ether" for a generic R-Car Gen2 or RZ/G1
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.c
-@@ -753,6 +753,49 @@ static struct sh_eth_cpu_data rcar_gen2_
- 	.rmiimode	= 1,
- 	.magic		= 1,
- };
-+
-+/* R8A77980 */
-+static struct sh_eth_cpu_data r8a77980_data = {
-+	.soft_reset	= sh_eth_soft_reset_gether,
-+
-+	.set_duplex	= sh_eth_set_duplex,
-+	.set_rate	= sh_eth_set_rate_gether,
-+
-+	.register_type  = SH_ETH_REG_GIGABIT,
-+
-+	.edtrr_trns	= EDTRR_TRNS_GETHER,
-+	.ecsr_value	= ECSR_PSRTO | ECSR_LCHNG | ECSR_ICD | ECSR_MPD,
-+	.ecsipr_value	= ECSIPR_PSRTOIP | ECSIPR_LCHNGIP | ECSIPR_ICDIP |
-+			  ECSIPR_MPDIP,
-+	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP |
-+			  EESIPR_FTCIP | EESIPR_TDEIP | EESIPR_TFUFIP |
-+			  EESIPR_FRIP | EESIPR_RDEIP | EESIPR_RFOFIP |
-+			  EESIPR_RMAFIP | EESIPR_RRFIP |
-+			  EESIPR_RTLFIP | EESIPR_RTSFIP |
-+			  EESIPR_PREIP | EESIPR_CERFIP,
-+
-+	.tx_check       = EESR_FTC | EESR_CD | EESR_RTO,
-+	.eesr_err_check = EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT |
-+			  EESR_RFE | EESR_RDE | EESR_RFRMER |
-+			  EESR_TFE | EESR_TDE | EESR_ECI,
-+	.fdr_value	= 0x0000070f,
-+
-+	.apr		= 1,
-+	.mpr		= 1,
-+	.tpauser	= 1,
-+	.bculr		= 1,
-+	.hw_swap	= 1,
-+	.nbst		= 1,
-+	.rpadir		= 1,
-+	.rpadir_value   = 2 << 16,
-+	.no_trimd	= 1,
-+	.no_ade		= 1,
-+	.xdfar_rw	= 1,
-+	.hw_checksum	= 1,
-+	.select_mii	= 1,
-+	.magic		= 1,
-+	.cexcr		= 1,
-+};
- #endif /* CONFIG_OF */
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index 6f748e94a901..4371be3e869a 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -805,6 +805,68 @@
+ 			/* placeholder */
+ 		};
  
- static void sh_eth_set_rate_sh7724(struct net_device *ndev)
-@@ -3134,6 +3177,7 @@ static const struct of_device_id sh_eth_
- 	{ .compatible = "renesas,ether-r8a7791", .data = &rcar_gen2_data },
- 	{ .compatible = "renesas,ether-r8a7793", .data = &rcar_gen2_data },
- 	{ .compatible = "renesas,ether-r8a7794", .data = &rcar_gen2_data },
-+	{ .compatible = "renesas,gether-r8a77980", .data = &r8a77980_data },
- 	{ .compatible = "renesas,ether-r7s72100", .data = &r7s72100_data },
- 	{ .compatible = "renesas,rcar-gen1-ether", .data = &rcar_gen1_data },
- 	{ .compatible = "renesas,rcar-gen2-ether", .data = &rcar_gen2_data },
++		msiof0: spi@e6e90000 {
++			compatible = "renesas,msiof-r8a77965",
++				     "renesas,rcar-gen3-msiof";
++			reg = <0 0xe6e90000 0 0x0064>;
++			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 211>;
++			dmas = <&dmac1 0x41>, <&dmac1 0x40>,
++			       <&dmac2 0x41>, <&dmac2 0x40>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 211>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		msiof1: spi@e6ea0000 {
++			compatible = "renesas,msiof-r8a77965",
++				     "renesas,rcar-gen3-msiof";
++			reg = <0 0xe6ea0000 0 0x0064>;
++			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 210>;
++			dmas = <&dmac1 0x43>, <&dmac1 0x42>,
++			       <&dmac2 0x43>, <&dmac2 0x42>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 210>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		msiof2: spi@e6c00000 {
++			compatible = "renesas,msiof-r8a77965",
++				     "renesas,rcar-gen3-msiof";
++			reg = <0 0xe6c00000 0 0x0064>;
++			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 209>;
++			dmas = <&dmac0 0x45>, <&dmac0 0x44>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 209>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		msiof3: spi@e6c10000 {
++			compatible = "renesas,msiof-r8a77965",
++				     "renesas,rcar-gen3-msiof";
++			reg = <0 0xe6c10000 0 0x0064>;
++			interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 208>;
++			dmas = <&dmac0 0x47>, <&dmac0 0x46>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 208>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		du: display@feb00000 {
+ 			reg = <0 0xfeb00000 0 0x80000>,
+ 			      <0 0xfeb90000 0 0x14>;
+-- 
+2.11.0
