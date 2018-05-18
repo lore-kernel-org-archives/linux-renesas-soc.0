@@ -1,50 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:41740 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752466AbeEGN5J (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750888AbeERLQq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 May 2018 09:57:09 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/8] ARM: dts: r7s72100: Add PMU device node
-Date: Mon,  7 May 2018 15:57:00 +0200
-Message-Id: <1525701427-12914-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1525701427-12914-1-git-send-email-geert+renesas@glider.be>
-References: <1525701427-12914-1-git-send-email-geert+renesas@glider.be>
+        Fri, 18 May 2018 07:16:46 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 040/102] arm64: dts: renesas: condor: add SCIF0 pins
+Date: Fri, 18 May 2018 13:15:02 +0200
+Message-Id: <a824e63cfcfd60289023d990fe01839ec0db5950.1526637994.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
+References: <cover.1526637994.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable support for the ARM Performance Monitor Units in the Cortex-A9
-CPU core on RZ/A1H by adding a device node for the PMU.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-New Linux output:
+Add the (previously omitted) SCIF0 pin data to the Condor board's
+device tree.
 
-    hw perfevents: enabled with armv7_cortex_a9 PMU driver, 7 counters available
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r7s72100.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77980-condor.dts | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index eb2e6f95a2e85862..a54822e97bac42ed 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -77,6 +77,11 @@
- 		clock-div = <6>;
- 	};
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980-condor.dts b/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+index 06cf6845765a..38f11cee42dc 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+@@ -49,7 +49,22 @@
+ 	clock-frequency = <32768>;
+ };
  
-+	pmu {
-+		compatible = "arm,cortex-a9-pmu";
-+		interrupts-extended = <&gic GIC_PPI 0 IRQ_TYPE_LEVEL_HIGH>;
++&pfc {
++	scif0_pins: scif0 {
++		groups = "scif0_data";
++		function = "scif0";
 +	};
 +
- 	rtc_x1_clk: rtc_x1 {
- 		#clock-cells = <0>;
- 		compatible = "fixed-clock";
++	scif_clk_pins: scif_clk {
++		groups = "scif_clk_b";
++		function = "scif_clk";
++	};
++};
++
+ &scif0 {
++	pinctrl-0 = <&scif0_pins>, <&scif_clk_pins>;
++	pinctrl-names = "default";
++
+ 	status = "okay";
+ };
+ 
 -- 
-2.7.4
+2.11.0
