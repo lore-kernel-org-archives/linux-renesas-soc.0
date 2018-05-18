@@ -1,89 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:38144 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935483AbeEIQwr (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752647AbeERLTF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 May 2018 12:52:47 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] pinctrl: sh-pfc: Updates for v4.17 (take two)
-Date: Wed,  9 May 2018 18:52:44 +0200
-Message-Id: <1525884764-21337-1-git-send-email-geert+renesas@glider.be>
+        Fri, 18 May 2018 07:19:05 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 43/69] ARM: dts: r8a77470: Add EtherAVB support
+Date: Fri, 18 May 2018 13:17:16 +0200
+Message-Id: <f70b0958c044a73188056a231d40a8af55c04dd2.1526641667.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
+References: <cover.1526641667.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Linus,
+From: Biju Das <biju.das@bp.renesas.com>
 
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+Define the generic R8A77470 part of the EtherAVB device node.
 
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a77470.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.18-tag1
-
-for you to fetch changes up to f18fab4bcb4f85db806048b2ee44c885b46b5a0f:
-
-  pinctrl: sh-pfc: Add r8a77470 PFC support (2018-05-04 11:42:54 +0200)
-
-----------------------------------------------------------------
-pinctrl: sh-pfc: Updates for v4.18
-
-  - Add DU, MSIOF, PWM, and SDHI pin groups on R-Car M3-N,
-  - Add support for the new RZ/G1C SoC,
-  - Add support for I/O voltage control on R-Car V3M and V3H,
-  - Small fixes and cleanups.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Biju Das (2):
-      dt-bindings: pinctrl: sh-pfc: Document r8a77470 PFC support
-      pinctrl: sh-pfc: Add r8a77470 PFC support
-
-Geert Uytterhoeven (2):
-      pinctrl: sh-pfc: r8a7795: Fix comment for MSIOF3 SS2_E pin
-      pinctrl: sh-pfc: r8a7796: Fix comment for MSIOF3 SS2_E pin
-
-Kieran Bingham (1):
-      pinctrl: sh-pfc: r8a77965: Add DU RGB output pins, groups and functions
-
-Sergei Shtylyov (2):
-      pinctrl: sh-pfc: r8a77980: Add pin I/O voltage control support
-      pinctrl: sh-pfc: r8a77970: Fix pin I/O voltage control support
-
-Takeshi Kihara (3):
-      pinctrl: sh-pfc: r8a77965: Add MSIOF pins, groups and functions
-      pinctrl: sh-pfc: r8a77965: Add PWM pins, groups and functions
-      pinctrl: sh-pfc: r8a77965: Add SDHI pins, groups and functions
-
-Thomas Gleixner (1):
-      pinctrl: sh-pfc: r8a77965: Fixup incorrect SPDX identifier
-
- .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |    1 +
- drivers/pinctrl/sh-pfc/Kconfig                     |    5 +
- drivers/pinctrl/sh-pfc/Makefile                    |    1 +
- drivers/pinctrl/sh-pfc/core.c                      |    6 +
- drivers/pinctrl/sh-pfc/pfc-r8a77470.c              | 2343 ++++++++++++++++++++
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c               |    2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c               |    2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c              | 1509 ++++++++++++-
- drivers/pinctrl/sh-pfc/pfc-r8a77970.c              |   32 +-
- drivers/pinctrl/sh-pfc/pfc-r8a77980.c              |   52 +-
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |    1 +
- 11 files changed, 3940 insertions(+), 14 deletions(-)
- create mode 100644 drivers/pinctrl/sh-pfc/pfc-r8a77470.c
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
+index baec3cae49d5..c85032f9605b 100644
+--- a/arch/arm/boot/dts/r8a77470.dtsi
++++ b/arch/arm/boot/dts/r8a77470.dtsi
+@@ -190,6 +190,19 @@
+ 			dma-channels = <15>;
+ 		};
+ 
++		avb: ethernet@e6800000 {
++			compatible = "renesas,etheravb-r8a77470",
++				     "renesas,etheravb-rcar-gen2";
++			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
++			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 812>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 812>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		scif0: serial@e6e60000 {
+ 			compatible = "renesas,scif-r8a77470",
+ 				     "renesas,rcar-gen2-scif", "renesas,scif";
+-- 
+2.11.0
