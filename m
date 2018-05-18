@@ -1,143 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:37890 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751112AbeERMtC (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751815AbeERLTK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 08:49:02 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/5] ARM: shmobile: r8a7791: Remove legacy SMP fallback code
-Date: Fri, 18 May 2018 14:48:52 +0200
-Message-Id: <1526647734-1200-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1526647734-1200-1-git-send-email-geert+renesas@glider.be>
-References: <1526647734-1200-1-git-send-email-geert+renesas@glider.be>
+        Fri, 18 May 2018 07:19:10 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 22/69] ARM: dts: r8a7794: Adjust SMP routine size
+Date: Fri, 18 May 2018 13:16:55 +0200
+Message-Id: <8bcbcfd9e3ea981c188cb21cac5add7784580ee4.1526641667.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
+References: <cover.1526641667.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-As of commit f89a51700d7ae0ef ("ARM: shmobile: r8a7791: Prioritize DT
-APMU support") in v4.8, non-DT enablement of SMP was left as a fallback
-for backwards compatibility with old DTBs.
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-The time has come to drop backwards compatibility, hence remove the
-fallback code.
+This patch adjusts the definition of the SMP routine size according
+to the latest changes made by commit:
+"ARM: shmobile: Add watchdog support"
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-shmobile/Makefile        |  1 -
- arch/arm/mach-shmobile/r8a7791.h       |  7 -----
- arch/arm/mach-shmobile/setup-r8a7791.c |  2 --
- arch/arm/mach-shmobile/smp-r8a7791.c   | 53 ----------------------------------
- 4 files changed, 63 deletions(-)
- delete mode 100644 arch/arm/mach-shmobile/r8a7791.h
- delete mode 100644 arch/arm/mach-shmobile/smp-r8a7791.c
+ arch/arm/boot/dts/r8a7794.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
-index 13aca853a162ed5d..38086d0d2f5484a1 100644
---- a/arch/arm/mach-shmobile/Makefile
-+++ b/arch/arm/mach-shmobile/Makefile
-@@ -31,7 +31,6 @@ obj-$(CONFIG_ARCH_R8A7793)	+= regulator-quirk-rcar-gen2.o
- smp-y				:= $(cpu-y)
- smp-$(CONFIG_ARCH_SH73A0)	+= smp-sh73a0.o headsmp-scu.o platsmp-scu.o
- smp-$(CONFIG_ARCH_R8A7779)	+= smp-r8a7779.o headsmp-scu.o platsmp-scu.o
--smp-$(CONFIG_ARCH_R8A7791)	+= smp-r8a7791.o
- smp-$(CONFIG_ARCH_EMEV2)	+= smp-emev2.o headsmp-scu.o platsmp-scu.o
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 56f5fa6a2c0f..34c111907eb7 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -348,7 +348,7 @@
  
- # PM objects
-diff --git a/arch/arm/mach-shmobile/r8a7791.h b/arch/arm/mach-shmobile/r8a7791.h
-deleted file mode 100644
-index 8c794aace938a766..0000000000000000
---- a/arch/arm/mach-shmobile/r8a7791.h
-+++ /dev/null
-@@ -1,7 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef __ASM_R8A7791_H__
--#define __ASM_R8A7791_H__
--
--extern const struct smp_operations r8a7791_smp_ops;
--
--#endif /* __ASM_R8A7791_H__ */
-diff --git a/arch/arm/mach-shmobile/setup-r8a7791.c b/arch/arm/mach-shmobile/setup-r8a7791.c
-index 26e2d181a1904da2..2de32fde1af7caae 100644
---- a/arch/arm/mach-shmobile/setup-r8a7791.c
-+++ b/arch/arm/mach-shmobile/setup-r8a7791.c
-@@ -20,7 +20,6 @@
- #include <asm/mach/arch.h>
+ 			smp-sram@0 {
+ 				compatible = "renesas,smp-sram";
+-				reg = <0 0x10>;
++				reg = <0 0x100>;
+ 			};
+ 		};
  
- #include "common.h"
--#include "r8a7791.h"
- #include "rcar-gen2.h"
- 
- static const char *const r8a7791_boards_compat_dt[] __initconst = {
-@@ -30,7 +29,6 @@ static const char *const r8a7791_boards_compat_dt[] __initconst = {
- 
- DT_MACHINE_START(R8A7791_DT, "Generic R8A7791 (Flattened Device Tree)")
- 	.smp_init	= smp_init_ops(shmobile_smp_init_fallback_ops),
--	.smp		= smp_ops(r8a7791_smp_ops),
- 	.init_early	= shmobile_init_delay,
- 	.init_time	= rcar_gen2_timer_init,
- 	.init_late	= shmobile_init_late,
-diff --git a/arch/arm/mach-shmobile/smp-r8a7791.c b/arch/arm/mach-shmobile/smp-r8a7791.c
-deleted file mode 100644
-index 2948c22cfc53026c..0000000000000000
---- a/arch/arm/mach-shmobile/smp-r8a7791.c
-+++ /dev/null
-@@ -1,53 +0,0 @@
--/*
-- * SMP support for r8a7791
-- *
-- * Copyright (C) 2013 Renesas Solutions Corp.
-- * Copyright (C) 2013 Magnus Damm
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
--#include <linux/kernel.h>
--#include <linux/init.h>
--#include <linux/smp.h>
--#include <linux/io.h>
--
--#include <asm/smp_plat.h>
--
--#include "common.h"
--#include "platsmp-apmu.h"
--#include "r8a7791.h"
--#include "rcar-gen2.h"
--
--static struct rcar_apmu_config r8a7791_apmu_config[] = {
--	{
--		.iomem = DEFINE_RES_MEM(0xe6152000, 0x188),
--		.cpus = { 0, 1 },
--	}
--};
--
--static void __init r8a7791_smp_prepare_cpus(unsigned int max_cpus)
--{
--	/* let APMU code install data related to shmobile_boot_vector */
--	shmobile_smp_apmu_prepare_cpus(max_cpus,
--				       r8a7791_apmu_config,
--				       ARRAY_SIZE(r8a7791_apmu_config));
--
--	rcar_gen2_pm_init();
--}
--
--const struct smp_operations r8a7791_smp_ops __initconst = {
--	.smp_prepare_cpus	= r8a7791_smp_prepare_cpus,
--	.smp_boot_secondary	= shmobile_smp_apmu_boot_secondary,
--#ifdef CONFIG_HOTPLUG_CPU
--	.cpu_can_disable	= shmobile_smp_cpu_can_disable,
--	.cpu_die		= shmobile_smp_apmu_cpu_die,
--	.cpu_kill		= shmobile_smp_apmu_cpu_kill,
--#endif
--};
 -- 
-2.7.4
+2.11.0
