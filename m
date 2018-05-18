@@ -1,62 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752613AbeERLSj (ORCPT
+        with ESMTP id S1752600AbeERLTa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:18:39 -0400
+        Fri, 18 May 2018 07:19:30 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 10/69] ARM: dts: renesas: r8a7791: Add FDP1 instances
-Date: Fri, 18 May 2018 13:16:43 +0200
-Message-Id: <e7f36fb8ffafbda9c168e1aafab5b5ebe54ebaa8.1526641667.git.horms+renesas@verge.net.au>
+Subject: [PATCH 61/69] ARM: dts: r8a7790: Add PMU device nodes
+Date: Fri, 18 May 2018 13:17:34 +0200
+Message-Id: <5b68384469af764caa2c02f2c651409c6930c767.1526641667.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
 References: <cover.1526641667.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The r8a7791 has two FDP1 instances.
+Enable support for the ARM Performance Monitor Units in the Cortex-A15
+and Cortex-A7 CPU cores on R-Car H2 by adding device nodes for the two
+PMUs.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+New Linux output:
+
+    hw perfevents: enabled with armv7_cortex_a15 PMU driver, 7 counters available
+    hw perfevents: /pmu-1: failed to probe PMU!
+    hw perfevents: /pmu-1: failed to register PMU devices!
+
+The last two lines are due to the Cortex-A7 CPU cores being described in
+DT, but not enabled by the firmware.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7791.dtsi | 18 ++++++++++++++++++
+ arch/arm/boot/dts/r8a7790.dtsi | 18 ++++++++++++++++++
  1 file changed, 18 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index f11dab71b03a..55b5a56da35e 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -1621,6 +1621,24 @@
- 			resets = <&cpg 127>;
- 		};
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 0a426548a212..ae97ec146260 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -202,6 +202,24 @@
+ 		clock-frequency = <0>;
+ 	};
  
-+		fdp1@fe940000 {
-+			compatible = "renesas,fdp1";
-+			reg = <0 0xfe940000 0 0x2400>;
-+			interrupts = <GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 119>;
-+			power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
-+			resets = <&cpg 119>;
-+		};
++	pmu-0 {
++		compatible = "arm,cortex-a15-pmu";
++		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>;
++	};
 +
-+		fdp1@fe944000 {
-+			compatible = "renesas,fdp1";
-+			reg = <0 0xfe944000 0 0x2400>;
-+			interrupts = <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 118>;
-+			power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
-+			resets = <&cpg 118>;
-+		};
++	pmu-1 {
++		compatible = "arm,cortex-a7-pmu";
++		interrupts-extended = <&gic GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&cpu4>, <&cpu5>, <&cpu6>, <&cpu7>;
++	};
 +
- 		jpu: jpeg-codec@fe980000 {
- 			compatible = "renesas,jpu-r8a7791",
- 				     "renesas,rcar-gen2-jpu";
+ 	/* External SCIF clock */
+ 	scif_clk: scif {
+ 		compatible = "fixed-clock";
 -- 
 2.11.0
