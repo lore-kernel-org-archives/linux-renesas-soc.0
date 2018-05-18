@@ -1,648 +1,98 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752205AbeERLSa (ORCPT
+        with ESMTP id S1750888AbeERLRf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:18:30 -0400
+        Fri, 18 May 2018 07:17:35 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Yoshihiro Kaneko <ykaneko0929@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/69] ARM: dts: r7s72100: sort subnodes of soc node
-Date: Fri, 18 May 2018 13:16:36 +0200
-Message-Id: <f7255d1fa215fd68be876b0de5e2bf68eadfe9cf.1526641667.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
-References: <cover.1526641667.git.horms+renesas@verge.net.au>
+Subject: [PATCH 083/102] arm64: dts: renesas: r8a77965: Add SDHI device nodes
+Date: Fri, 18 May 2018 13:15:45 +0200
+Message-Id: <aa7a6365d03aacd4714ae62630f0262cac82a478.1526637994.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
+References: <cover.1526637994.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Sort the subnodes of the soc node to improve maintainability.
-The sort key is the address on the bus with instances of the same
-IP block grouped together and sorted alphabetically.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-This patch should not introduce any functional change.
+Add SDHI nodes to the DT of the r8a77965 SoC.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Based on several similar patches of the R8A7796 device tree
+by Simon Horman <horms+renesas@verge.net.au>.
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r7s72100.dtsi | 570 ++++++++++++++++++++--------------------
- 1 file changed, 285 insertions(+), 285 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 36 +++++++++++++++++++++++++++----
+ 1 file changed, 32 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index 0aa74355e24f..0d63dbe11e0d 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -110,187 +110,14 @@
- 		#size-cells = <1>;
- 		ranges;
- 
--		/* Special CPG clocks */
--		cpg_clocks: cpg_clocks@fcfe0000 {
--			#clock-cells = <1>;
--			compatible = "renesas,r7s72100-cpg-clocks",
--				     "renesas,rz-cpg-clocks";
--			reg = <0xfcfe0000 0x18>;
--			clocks = <&extal_clk>, <&usb_x1_clk>;
--			clock-output-names = "pll", "i", "g";
--			#power-domain-cells = <0>;
--		};
--
--		/* MSTP clocks */
--		mstp3_clks: mstp3_clks@fcfe0420 {
--			#clock-cells = <1>;
--			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
--			reg = <0xfcfe0420 4>;
--			clocks = <&p0_clk>;
--			clock-indices = <R7S72100_CLK_MTU2>;
--			clock-output-names = "mtu2";
--		};
--
--		mstp4_clks: mstp4_clks@fcfe0424 {
--			#clock-cells = <1>;
--			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
--			reg = <0xfcfe0424 4>;
--			clocks = <&p1_clk>, <&p1_clk>, <&p1_clk>, <&p1_clk>,
--				 <&p1_clk>, <&p1_clk>, <&p1_clk>, <&p1_clk>;
--			clock-indices = <
--				R7S72100_CLK_SCIF0 R7S72100_CLK_SCIF1 R7S72100_CLK_SCIF2 R7S72100_CLK_SCIF3
--				R7S72100_CLK_SCIF4 R7S72100_CLK_SCIF5 R7S72100_CLK_SCIF6 R7S72100_CLK_SCIF7
--			>;
--			clock-output-names = "scif0", "scif1", "scif2", "scif3", "scif4", "scif5", "scif6", "scif7";
--		};
--
--		mstp5_clks: mstp5_clks@fcfe0428 {
--			#clock-cells = <1>;
--			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
--			reg = <0xfcfe0428 4>;
--			clocks = <&p0_clk>, <&p0_clk>;
--			clock-indices = <R7S72100_CLK_OSTM0 R7S72100_CLK_OSTM1>;
--			clock-output-names = "ostm0", "ostm1";
--		};
--
--		mstp6_clks: mstp6_clks@fcfe042c {
--			#clock-cells = <1>;
--			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
--			reg = <0xfcfe042c 4>;
--			clocks = <&p0_clk>;
--			clock-indices = <R7S72100_CLK_RTC>;
--			clock-output-names = "rtc";
--		};
--
--		mstp7_clks: mstp7_clks@fcfe0430 {
--			#clock-cells = <1>;
--			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
--			reg = <0xfcfe0430 4>;
--			clocks = <&b_clk>, <&p1_clk>, <&p1_clk>;
--			clock-indices = <R7S72100_CLK_ETHER R7S72100_CLK_USB0 R7S72100_CLK_USB1>;
--			clock-output-names = "ether", "usb0", "usb1";
--		};
--
--		mstp8_clks: mstp8_clks@fcfe0434 {
--			#clock-cells = <1>;
--			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
--			reg = <0xfcfe0434 4>;
--			clocks = <&p1_clk>;
--			clock-indices = <R7S72100_CLK_MMCIF>;
--			clock-output-names = "mmcif";
--		};
--
--		mstp9_clks: mstp9_clks@fcfe0438 {
--			#clock-cells = <1>;
--			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
--			reg = <0xfcfe0438 4>;
--			clocks = <&p0_clk>, <&p0_clk>, <&p0_clk>, <&p0_clk>;
--			clock-indices = <
--				R7S72100_CLK_I2C0 R7S72100_CLK_I2C1 R7S72100_CLK_I2C2 R7S72100_CLK_I2C3
--			>;
--			clock-output-names = "i2c0", "i2c1", "i2c2", "i2c3";
--		};
--
--		mstp10_clks: mstp10_clks@fcfe043c {
--			#clock-cells = <1>;
--			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
--			reg = <0xfcfe043c 4>;
--			clocks = <&p1_clk>, <&p1_clk>, <&p1_clk>, <&p1_clk>,
--				 <&p1_clk>;
--			clock-indices = <
--				R7S72100_CLK_SPI0 R7S72100_CLK_SPI1 R7S72100_CLK_SPI2 R7S72100_CLK_SPI3
--				R7S72100_CLK_SPI4
--			>;
--			clock-output-names = "spi0", "spi1", "spi2", "spi3", "spi4";
--		};
--		mstp12_clks: mstp12_clks@fcfe0444 {
--			#clock-cells = <1>;
--			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
--			reg = <0xfcfe0444 4>;
--			clocks = <&p1_clk>, <&p1_clk>, <&p1_clk>, <&p1_clk>;
--			clock-indices = <
--				R7S72100_CLK_SDHI00 R7S72100_CLK_SDHI01
--				R7S72100_CLK_SDHI10 R7S72100_CLK_SDHI11
--			>;
--			clock-output-names = "sdhi00", "sdhi01", "sdhi10", "sdhi11";
--		};
--
--		pinctrl: pin-controller@fcfe3000 {
--			compatible = "renesas,r7s72100-ports";
--
--			reg = <0xfcfe3000 0x4230>;
--
--			port0: gpio-0 {
--				gpio-controller;
--				#gpio-cells = <2>;
--				gpio-ranges = <&pinctrl 0 0 6>;
--			};
--
--			port1: gpio-1 {
--				gpio-controller;
--				#gpio-cells = <2>;
--				gpio-ranges = <&pinctrl 0 16 16>;
--			};
--
--			port2: gpio-2 {
--				gpio-controller;
--				#gpio-cells = <2>;
--				gpio-ranges = <&pinctrl 0 32 16>;
--			};
--
--			port3: gpio-3 {
--				gpio-controller;
--				#gpio-cells = <2>;
--				gpio-ranges = <&pinctrl 0 48 16>;
--			};
--
--			port4: gpio-4 {
--				gpio-controller;
--				#gpio-cells = <2>;
--				gpio-ranges = <&pinctrl 0 64 16>;
--			};
--
--			port5: gpio-5 {
--				gpio-controller;
--				#gpio-cells = <2>;
--				gpio-ranges = <&pinctrl 0 80 11>;
--			};
--
--			port6: gpio-6 {
--				gpio-controller;
--				#gpio-cells = <2>;
--				gpio-ranges = <&pinctrl 0 96 16>;
--			};
--
--			port7: gpio-7 {
--				gpio-controller;
--				#gpio-cells = <2>;
--				gpio-ranges = <&pinctrl 0 112 16>;
--			};
--
--			port8: gpio-8 {
--				gpio-controller;
--				#gpio-cells = <2>;
--				gpio-ranges = <&pinctrl 0 128 16>;
--			};
--
--			port9: gpio-9 {
--				gpio-controller;
--				#gpio-cells = <2>;
--				gpio-ranges = <&pinctrl 0 144 8>;
--			};
--
--			port10: gpio-10 {
--				gpio-controller;
--				#gpio-cells = <2>;
--				gpio-ranges = <&pinctrl 0 160 16>;
--			};
--
--			port11: gpio-11 {
--				gpio-controller;
--				#gpio-cells = <2>;
--				gpio-ranges = <&pinctrl 0 176 16>;
--			};
-+		L2: cache-controller@3ffff000 {
-+			compatible = "arm,pl310-cache";
-+			reg = <0x3ffff000 0x1000>;
-+			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-+			arm,early-bresp-disable;
-+			arm,full-line-zero-disable;
-+			cache-unified;
-+			cache-level = <2>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index ba0edda431a5..f51c1b2cbae4 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -978,23 +978,51 @@
  		};
  
- 		scif0: serial@e8007000 {
-@@ -472,6 +299,71 @@
- 			status = "disabled";
- 		};
- 
-+		usbhs0: usb@e8010000 {
-+			compatible = "renesas,usbhs-r7s72100", "renesas,rza1-usbhs";
-+			reg = <0xe8010000 0x1a0>;
-+			interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R7S72100_CLK_USB0>;
-+			renesas,buswait = <4>;
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
-+
-+		usbhs1: usb@e8207000 {
-+			compatible = "renesas,usbhs-r7s72100", "renesas,rza1-usbhs";
-+			reg = <0xe8207000 0x1a0>;
-+			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R7S72100_CLK_USB1>;
-+			renesas,buswait = <4>;
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
-+
-+		mmcif: mmc@e804c800 {
-+			compatible = "renesas,mmcif-r7s72100", "renesas,sh-mmcif";
-+			reg = <0xe804c800 0x80>;
-+			interrupts = <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp8_clks R7S72100_CLK_MMCIF>;
-+			power-domains = <&cpg_clocks>;
-+			reg-io-width = <4>;
-+			bus-width = <8>;
-+			status = "disabled";
-+		};
-+
-+		sdhi0: sd@e804e000 {
-+			compatible = "renesas,sdhi-r7s72100";
-+			reg = <0xe804e000 0x100>;
-+			interrupts = <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			clocks = <&mstp12_clks R7S72100_CLK_SDHI00>,
-+				 <&mstp12_clks R7S72100_CLK_SDHI01>;
-+			clock-names = "core", "cd";
-+			power-domains = <&cpg_clocks>;
-+			cap-sd-highspeed;
-+			cap-sdio-irq;
-+			status = "disabled";
-+		};
-+
-+		sdhi1: sd@e804e800 {
-+			compatible = "renesas,sdhi-r7s72100";
-+			reg = <0xe804e800 0x100>;
-+			interrupts = <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			clocks = <&mstp12_clks R7S72100_CLK_SDHI10>,
-+				 <&mstp12_clks R7S72100_CLK_SDHI11>;
-+			clock-names = "core", "cd";
-+			power-domains = <&cpg_clocks>;
-+			cap-sd-highspeed;
-+			cap-sdio-irq;
-+			status = "disabled";
-+		};
-+
- 		gic: interrupt-controller@e8201000 {
- 			compatible = "arm,pl390";
- 			#interrupt-cells = <3>;
-@@ -481,14 +373,17 @@
- 				<0xe8202000 0x1000>;
- 		};
- 
--		L2: cache-controller@3ffff000 {
--			compatible = "arm,pl310-cache";
--			reg = <0x3ffff000 0x1000>;
--			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
--			arm,early-bresp-disable;
--			arm,full-line-zero-disable;
--			cache-unified;
--			cache-level = <2>;
-+		ether: ethernet@e8203000 {
-+			compatible = "renesas,ether-r7s72100";
-+			reg = <0xe8203000 0x800>,
-+			      <0xe8204800 0x200>;
-+			interrupts = <GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R7S72100_CLK_ETHER>;
-+			power-domains = <&cpg_clocks>;
-+			phy-mode = "mii";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
+ 		sdhi0: sd@ee100000 {
++			compatible = "renesas,sdhi-r8a77965",
++				     "renesas,rcar-gen3-sdhi";
+ 			reg = <0 0xee100000 0 0x2000>;
+-			/* placeholder */
++			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 314>;
++			max-frequency = <200000000>;
++			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
++			resets = <&cpg 314>;
 +			status = "disabled";
  		};
  
- 		wdt: watchdog@fcfe0000 {
-@@ -498,6 +393,207 @@
- 			clocks = <&p0_clk>;
+ 		sdhi1: sd@ee120000 {
++			compatible = "renesas,sdhi-r8a77965",
++				     "renesas,rcar-gen3-sdhi";
+ 			reg = <0 0xee120000 0 0x2000>;
+-			/* placeholder */
++			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 313>;
++			max-frequency = <200000000>;
++			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
++			resets = <&cpg 313>;
++			status = "disabled";
  		};
  
-+		/* Special CPG clocks */
-+		cpg_clocks: cpg_clocks@fcfe0000 {
-+			#clock-cells = <1>;
-+			compatible = "renesas,r7s72100-cpg-clocks",
-+				     "renesas,rz-cpg-clocks";
-+			reg = <0xfcfe0000 0x18>;
-+			clocks = <&extal_clk>, <&usb_x1_clk>;
-+			clock-output-names = "pll", "i", "g";
-+			#power-domain-cells = <0>;
-+		};
-+
-+		/* MSTP clocks */
-+		mstp3_clks: mstp3_clks@fcfe0420 {
-+			#clock-cells = <1>;
-+			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
-+			reg = <0xfcfe0420 4>;
-+			clocks = <&p0_clk>;
-+			clock-indices = <R7S72100_CLK_MTU2>;
-+			clock-output-names = "mtu2";
-+		};
-+
-+		mstp4_clks: mstp4_clks@fcfe0424 {
-+			#clock-cells = <1>;
-+			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
-+			reg = <0xfcfe0424 4>;
-+			clocks = <&p1_clk>, <&p1_clk>, <&p1_clk>, <&p1_clk>,
-+				 <&p1_clk>, <&p1_clk>, <&p1_clk>, <&p1_clk>;
-+			clock-indices = <
-+				R7S72100_CLK_SCIF0 R7S72100_CLK_SCIF1 R7S72100_CLK_SCIF2 R7S72100_CLK_SCIF3
-+				R7S72100_CLK_SCIF4 R7S72100_CLK_SCIF5 R7S72100_CLK_SCIF6 R7S72100_CLK_SCIF7
-+			>;
-+			clock-output-names = "scif0", "scif1", "scif2", "scif3", "scif4", "scif5", "scif6", "scif7";
-+		};
-+
-+		mstp5_clks: mstp5_clks@fcfe0428 {
-+			#clock-cells = <1>;
-+			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
-+			reg = <0xfcfe0428 4>;
-+			clocks = <&p0_clk>, <&p0_clk>;
-+			clock-indices = <R7S72100_CLK_OSTM0 R7S72100_CLK_OSTM1>;
-+			clock-output-names = "ostm0", "ostm1";
-+		};
-+
-+		mstp6_clks: mstp6_clks@fcfe042c {
-+			#clock-cells = <1>;
-+			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
-+			reg = <0xfcfe042c 4>;
-+			clocks = <&p0_clk>;
-+			clock-indices = <R7S72100_CLK_RTC>;
-+			clock-output-names = "rtc";
-+		};
-+
-+		mstp7_clks: mstp7_clks@fcfe0430 {
-+			#clock-cells = <1>;
-+			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
-+			reg = <0xfcfe0430 4>;
-+			clocks = <&b_clk>, <&p1_clk>, <&p1_clk>;
-+			clock-indices = <R7S72100_CLK_ETHER R7S72100_CLK_USB0 R7S72100_CLK_USB1>;
-+			clock-output-names = "ether", "usb0", "usb1";
-+		};
-+
-+		mstp8_clks: mstp8_clks@fcfe0434 {
-+			#clock-cells = <1>;
-+			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
-+			reg = <0xfcfe0434 4>;
-+			clocks = <&p1_clk>;
-+			clock-indices = <R7S72100_CLK_MMCIF>;
-+			clock-output-names = "mmcif";
-+		};
-+
-+		mstp9_clks: mstp9_clks@fcfe0438 {
-+			#clock-cells = <1>;
-+			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
-+			reg = <0xfcfe0438 4>;
-+			clocks = <&p0_clk>, <&p0_clk>, <&p0_clk>, <&p0_clk>;
-+			clock-indices = <
-+				R7S72100_CLK_I2C0 R7S72100_CLK_I2C1 R7S72100_CLK_I2C2 R7S72100_CLK_I2C3
-+			>;
-+			clock-output-names = "i2c0", "i2c1", "i2c2", "i2c3";
-+		};
-+
-+		mstp10_clks: mstp10_clks@fcfe043c {
-+			#clock-cells = <1>;
-+			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
-+			reg = <0xfcfe043c 4>;
-+			clocks = <&p1_clk>, <&p1_clk>, <&p1_clk>, <&p1_clk>,
-+				 <&p1_clk>;
-+			clock-indices = <
-+				R7S72100_CLK_SPI0 R7S72100_CLK_SPI1 R7S72100_CLK_SPI2 R7S72100_CLK_SPI3
-+				R7S72100_CLK_SPI4
-+			>;
-+			clock-output-names = "spi0", "spi1", "spi2", "spi3", "spi4";
-+		};
-+		mstp12_clks: mstp12_clks@fcfe0444 {
-+			#clock-cells = <1>;
-+			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
-+			reg = <0xfcfe0444 4>;
-+			clocks = <&p1_clk>, <&p1_clk>, <&p1_clk>, <&p1_clk>;
-+			clock-indices = <
-+				R7S72100_CLK_SDHI00 R7S72100_CLK_SDHI01
-+				R7S72100_CLK_SDHI10 R7S72100_CLK_SDHI11
-+			>;
-+			clock-output-names = "sdhi00", "sdhi01", "sdhi10", "sdhi11";
-+		};
-+
-+		pinctrl: pin-controller@fcfe3000 {
-+			compatible = "renesas,r7s72100-ports";
-+
-+			reg = <0xfcfe3000 0x4230>;
-+
-+			port0: gpio-0 {
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 0 6>;
-+			};
-+
-+			port1: gpio-1 {
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 16 16>;
-+			};
-+
-+			port2: gpio-2 {
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 32 16>;
-+			};
-+
-+			port3: gpio-3 {
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 48 16>;
-+			};
-+
-+			port4: gpio-4 {
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 64 16>;
-+			};
-+
-+			port5: gpio-5 {
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 80 11>;
-+			};
-+
-+			port6: gpio-6 {
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 96 16>;
-+			};
-+
-+			port7: gpio-7 {
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 112 16>;
-+			};
-+
-+			port8: gpio-8 {
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 128 16>;
-+			};
-+
-+			port9: gpio-9 {
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 144 8>;
-+			};
-+
-+			port10: gpio-10 {
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 160 16>;
-+			};
-+
-+			port11: gpio-11 {
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 176 16>;
-+			};
-+		};
-+
-+		ostm0: timer@fcfec000 {
-+			compatible = "renesas,r7s72100-ostm", "renesas,ostm";
-+			reg = <0xfcfec000 0x30>;
-+			interrupts = <GIC_SPI 102 IRQ_TYPE_EDGE_RISING>;
-+			clocks = <&mstp5_clks R7S72100_CLK_OSTM0>;
-+			power-domains = <&cpg_clocks>;
+ 		sdhi2: sd@ee140000 {
++			compatible = "renesas,sdhi-r8a77965",
++				     "renesas,rcar-gen3-sdhi";
+ 			reg = <0 0xee140000 0 0x2000>;
+-			/* placeholder */
++			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 312>;
++			max-frequency = <200000000>;
++			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
++			resets = <&cpg 312>;
 +			status = "disabled";
-+		};
-+
-+		ostm1: timer@fcfec400 {
-+			compatible = "renesas,r7s72100-ostm", "renesas,ostm";
-+			reg = <0xfcfec400 0x30>;
-+			interrupts = <GIC_SPI 103 IRQ_TYPE_EDGE_RISING>;
-+			clocks = <&mstp5_clks R7S72100_CLK_OSTM1>;
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
-+
- 		i2c0: i2c@fcfee000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -585,82 +681,6 @@
- 			status = "disabled";
  		};
  
--		ether: ethernet@e8203000 {
--			compatible = "renesas,ether-r7s72100";
--			reg = <0xe8203000 0x800>,
--			      <0xe8204800 0x200>;
--			interrupts = <GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&mstp7_clks R7S72100_CLK_ETHER>;
--			power-domains = <&cpg_clocks>;
--			phy-mode = "mii";
--			#address-cells = <1>;
--			#size-cells = <0>;
--			status = "disabled";
--		};
--
--		mmcif: mmc@e804c800 {
--			compatible = "renesas,mmcif-r7s72100", "renesas,sh-mmcif";
--			reg = <0xe804c800 0x80>;
--			interrupts = <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH
--				      GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH
--				      GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&mstp8_clks R7S72100_CLK_MMCIF>;
--			power-domains = <&cpg_clocks>;
--			reg-io-width = <4>;
--			bus-width = <8>;
--			status = "disabled";
--		};
--
--		sdhi0: sd@e804e000 {
--			compatible = "renesas,sdhi-r7s72100";
--			reg = <0xe804e000 0x100>;
--			interrupts = <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH
--				      GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH
--				      GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
--
--			clocks = <&mstp12_clks R7S72100_CLK_SDHI00>,
--				 <&mstp12_clks R7S72100_CLK_SDHI01>;
--			clock-names = "core", "cd";
--			power-domains = <&cpg_clocks>;
--			cap-sd-highspeed;
--			cap-sdio-irq;
--			status = "disabled";
--		};
--
--		sdhi1: sd@e804e800 {
--			compatible = "renesas,sdhi-r7s72100";
--			reg = <0xe804e800 0x100>;
--			interrupts = <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH
--				      GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH
--				      GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH>;
--
--			clocks = <&mstp12_clks R7S72100_CLK_SDHI10>,
--				 <&mstp12_clks R7S72100_CLK_SDHI11>;
--			clock-names = "core", "cd";
--			power-domains = <&cpg_clocks>;
--			cap-sd-highspeed;
--			cap-sdio-irq;
--			status = "disabled";
--		};
--
--		ostm0: timer@fcfec000 {
--			compatible = "renesas,r7s72100-ostm", "renesas,ostm";
--			reg = <0xfcfec000 0x30>;
--			interrupts = <GIC_SPI 102 IRQ_TYPE_EDGE_RISING>;
--			clocks = <&mstp5_clks R7S72100_CLK_OSTM0>;
--			power-domains = <&cpg_clocks>;
--			status = "disabled";
--		};
--
--		ostm1: timer@fcfec400 {
--			compatible = "renesas,r7s72100-ostm", "renesas,ostm";
--			reg = <0xfcfec400 0x30>;
--			interrupts = <GIC_SPI 103 IRQ_TYPE_EDGE_RISING>;
--			clocks = <&mstp5_clks R7S72100_CLK_OSTM1>;
--			power-domains = <&cpg_clocks>;
--			status = "disabled";
--		};
--
- 		rtc: rtc@fcff1000 {
- 			compatible = "renesas,r7s72100-rtc", "renesas,sh-rtc";
- 			reg = <0xfcff1000 0x2e>;
-@@ -674,25 +694,5 @@
- 			power-domains = <&cpg_clocks>;
- 			status = "disabled";
+ 		sdhi3: sd@ee160000 {
++			compatible = "renesas,sdhi-r8a77965",
++				     "renesas,rcar-gen3-sdhi";
+ 			reg = <0 0xee160000 0 0x2000>;
+-			/* placeholder */
++			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 311>;
++			max-frequency = <200000000>;
++			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
++			resets = <&cpg 311>;
++			status = "disabled";
  		};
--
--		usbhs0: usb@e8010000 {
--			compatible = "renesas,usbhs-r7s72100", "renesas,rza1-usbhs";
--			reg = <0xe8010000 0x1a0>;
--			interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&mstp7_clks R7S72100_CLK_USB0>;
--			renesas,buswait = <4>;
--			power-domains = <&cpg_clocks>;
--			status = "disabled";
--		};
--
--		usbhs1: usb@e8207000 {
--			compatible = "renesas,usbhs-r7s72100", "renesas,rza1-usbhs";
--			reg = <0xe8207000 0x1a0>;
--			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&mstp7_clks R7S72100_CLK_USB1>;
--			renesas,buswait = <4>;
--			power-domains = <&cpg_clocks>;
--			status = "disabled";
--		};
- 	};
- };
+ 
+ 		gic: interrupt-controller@f1010000 {
 -- 
 2.11.0
