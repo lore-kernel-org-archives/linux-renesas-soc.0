@@ -1,55 +1,100 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.13]:59035 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966527AbeEYPvr (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750888AbeERLR2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 25 May 2018 11:51:47 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Liviu Dudau <Liviu.Dudau@arm.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/8] drm/rcar-du: fix merge conflict for state->alpha
-Date: Fri, 25 May 2018 17:50:11 +0200
-Message-Id: <20180525155030.3667352-4-arnd@arndb.de>
-In-Reply-To: <20180525155030.3667352-1-arnd@arndb.de>
-References: <20180525155030.3667352-1-arnd@arndb.de>
+        Fri, 18 May 2018 07:17:28 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 077/102] arm64: dts: renesas: r8a7795: Correct whitespace
+Date: Fri, 18 May 2018 13:15:39 +0200
+Message-Id: <399ec3ffb161ccfa0a6aba4e3162a1c5ec90af71.1526637994.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
+References: <cover.1526637994.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The "alpha" struct member was removed in one commit but another user
-added in another, leading to a build failure:
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-drivers/gpu/drm/rcar-du/rcar_du_vsp.c: In function 'rcar_du_vsp_plane_atomic_duplicate_state':
-drivers/gpu/drm/rcar-du/rcar_du_vsp.c:325:6: error: 'struct rcar_du_vsp_plane_state' has no member named 'alpha'
-  copy->alpha = to_rcar_vsp_plane_state(plane->state)->alpha;
+Add missing spaces after commas.
+Replace 8 consecutive spaces by a TAB.
 
-This fixes up the merge by using the correct member.
-
-Fixes: 75a07f399cd4 ("drm: rcar-du: Zero-out sg_tables when duplicating plane state")
-Fixes: 301a9b8d5456 ("drm/rcar-du: Convert to the new generic alpha property")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-index 4a98470626d5..d9232e749b6d 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-@@ -322,7 +322,7 @@ rcar_du_vsp_plane_atomic_duplicate_state(struct drm_plane *plane)
- 		return NULL;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 9b080a864ea1..91486b4910ce 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -132,7 +132,7 @@
+ 		};
  
- 	__drm_atomic_helper_plane_duplicate_state(plane, &copy->state);
--	copy->alpha = to_rcar_vsp_plane_state(plane->state)->alpha;
-+	copy->state.alpha = plane->state->alpha;
+ 		a57_1: cpu@1 {
+-			compatible = "arm,cortex-a57","arm,armv8";
++			compatible = "arm,cortex-a57", "arm,armv8";
+ 			reg = <0x1>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7795_PD_CA57_CPU1>;
+@@ -144,7 +144,7 @@
+ 		};
  
- 	return &copy->state;
- }
+ 		a57_2: cpu@2 {
+-			compatible = "arm,cortex-a57","arm,armv8";
++			compatible = "arm,cortex-a57", "arm,armv8";
+ 			reg = <0x2>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7795_PD_CA57_CPU2>;
+@@ -156,7 +156,7 @@
+ 		};
+ 
+ 		a57_3: cpu@3 {
+-			compatible = "arm,cortex-a57","arm,armv8";
++			compatible = "arm,cortex-a57", "arm,armv8";
+ 			reg = <0x3>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7795_PD_CA57_CPU3>;
+@@ -179,7 +179,7 @@
+ 		};
+ 
+ 		a53_1: cpu@101 {
+-			compatible = "arm,cortex-a53","arm,armv8";
++			compatible = "arm,cortex-a53", "arm,armv8";
+ 			reg = <0x101>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7795_PD_CA53_CPU1>;
+@@ -190,7 +190,7 @@
+ 		};
+ 
+ 		a53_2: cpu@102 {
+-			compatible = "arm,cortex-a53","arm,armv8";
++			compatible = "arm,cortex-a53", "arm,armv8";
+ 			reg = <0x102>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7795_PD_CA53_CPU2>;
+@@ -201,7 +201,7 @@
+ 		};
+ 
+ 		a53_3: cpu@103 {
+-			compatible = "arm,cortex-a53","arm,armv8";
++			compatible = "arm,cortex-a53", "arm,armv8";
+ 			reg = <0x103>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7795_PD_CA53_CPU3>;
+@@ -262,7 +262,7 @@
+ 	pmu_a57 {
+ 		compatible = "arm,cortex-a57-pmu";
+ 		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
+-		                      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
+ 				      <&gic GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
+ 				      <&gic GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-affinity = <&a57_0>,
 -- 
-2.9.0
+2.11.0
