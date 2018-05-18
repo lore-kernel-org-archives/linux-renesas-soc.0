@@ -1,61 +1,139 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:37882 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752256AbeEGNkJ (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:43784 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752014AbeERUmP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 May 2018 09:40:09 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] ARM: dts: emev2: Add missing interrupt-affinity to PMU node
-Date: Mon,  7 May 2018 15:40:05 +0200
-Message-Id: <1525700405-7993-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1525700405-7993-1-git-send-email-geert+renesas@glider.be>
-References: <1525700405-7993-1-git-send-email-geert+renesas@glider.be>
+        Fri, 18 May 2018 16:42:15 -0400
+From: Kieran Bingham <kieran@ksquared.org.uk>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v11 07/10] media: vsp1: Use reference counting for bodies
+Date: Fri, 18 May 2018 21:42:00 +0100
+Message-Id: <9144f0023ebf935794b9516df560962e61fe4d61.1526675940.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.4fb0850a617881b465a66140fdf06941777212ae.1526675940.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.4fb0850a617881b465a66140fdf06941777212ae.1526675940.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.4fb0850a617881b465a66140fdf06941777212ae.1526675940.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.4fb0850a617881b465a66140fdf06941777212ae.1526675940.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The PMU node references two interrupts, but lacks the interrupt-affinity
-property, which is required in that case:
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-    hw perfevents: no interrupt-affinity property for /pmu, guessing.
+Extend the display list body with a reference count, allowing bodies to
+be kept as long as a reference is maintained. This provides the ability
+to keep a cached copy of bodies which will not change, so that they can
+be re-applied to multiple display lists.
 
-Add the missing property to fix this.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- arch/arm/boot/dts/emev2.dtsi | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/media/platform/vsp1/vsp1_clu.c |  7 ++++++-
+ drivers/media/platform/vsp1/vsp1_dl.c  | 16 ++++++++++++++--
+ drivers/media/platform/vsp1/vsp1_lut.c |  7 ++++++-
+ 3 files changed, 26 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/emev2.dtsi b/arch/arm/boot/dts/emev2.dtsi
-index 42ea246e71cb4e20..fec1241b858ff96f 100644
---- a/arch/arm/boot/dts/emev2.dtsi
-+++ b/arch/arm/boot/dts/emev2.dtsi
-@@ -31,13 +31,13 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+diff --git a/drivers/media/platform/vsp1/vsp1_clu.c b/drivers/media/platform/vsp1/vsp1_clu.c
+index 8efa12f5e53f..ea83f1b7d125 100644
+--- a/drivers/media/platform/vsp1/vsp1_clu.c
++++ b/drivers/media/platform/vsp1/vsp1_clu.c
+@@ -212,8 +212,13 @@ static void clu_configure(struct vsp1_entity *entity,
+ 		clu->clu = NULL;
+ 		spin_unlock_irqrestore(&clu->lock, flags);
  
--		cpu@0 {
-+		cpu0: cpu@0 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <0>;
- 			clock-frequency = <533000000>;
- 		};
--		cpu@1 {
-+		cpu1: cpu@1 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <1>;
-@@ -57,6 +57,7 @@
- 		compatible = "arm,cortex-a9-pmu";
- 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&cpu0>, <&cpu1>;
- 	};
+-		if (dlb)
++		if (dlb) {
+ 			vsp1_dl_list_add_body(dl, dlb);
++
++			/* Release our local reference. */
++			vsp1_dl_body_put(dlb);
++		}
++
+ 		break;
+ 	}
+ }
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index 617c46a03dec..1407c90c6880 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -10,6 +10,7 @@
+ #include <linux/device.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/gfp.h>
++#include <linux/refcount.h>
+ #include <linux/slab.h>
+ #include <linux/workqueue.h>
  
- 	clocks@e0110000 {
+@@ -54,6 +55,8 @@ struct vsp1_dl_body {
+ 	struct list_head list;
+ 	struct list_head free;
+ 
++	refcount_t refcnt;
++
+ 	struct vsp1_dl_body_pool *pool;
+ 	struct vsp1_device *vsp1;
+ 
+@@ -258,6 +261,7 @@ struct vsp1_dl_body *vsp1_dl_body_get(struct vsp1_dl_body_pool *pool)
+ 	if (!list_empty(&pool->free)) {
+ 		dlb = list_first_entry(&pool->free, struct vsp1_dl_body, free);
+ 		list_del(&dlb->free);
++		refcount_set(&dlb->refcnt, 1);
+ 	}
+ 
+ 	spin_unlock_irqrestore(&pool->lock, flags);
+@@ -278,6 +282,9 @@ void vsp1_dl_body_put(struct vsp1_dl_body *dlb)
+ 	if (!dlb)
+ 		return;
+ 
++	if (!refcount_dec_and_test(&dlb->refcnt))
++		return;
++
+ 	dlb->num_entries = 0;
+ 
+ 	spin_lock_irqsave(&dlb->pool->lock, flags);
+@@ -463,8 +470,11 @@ void vsp1_dl_list_write(struct vsp1_dl_list *dl, u32 reg, u32 data)
+  * which bodies are added.
+  *
+  * Adding a body to a display list passes ownership of the body to the list. The
+- * caller must not touch the body after this call, and must not release it
+- * explicitly with vsp1_dl_body_put().
++ * caller retains its reference to the fragment when adding it to the display
++ * list, but is not allowed to add new entries to the body.
++ *
++ * The reference must be explicitly released by a call to vsp1_dl_body_put()
++ * when the body isn't needed anymore.
+  *
+  * Additional bodies are only usable for display lists in header mode.
+  * Attempting to add a body to a header-less display list will return an error.
+@@ -475,6 +485,8 @@ int vsp1_dl_list_add_body(struct vsp1_dl_list *dl, struct vsp1_dl_body *dlb)
+ 	if (dl->dlm->mode != VSP1_DL_MODE_HEADER)
+ 		return -EINVAL;
+ 
++	refcount_inc(&dlb->refcnt);
++
+ 	list_add_tail(&dlb->list, &dl->bodies);
+ 
+ 	return 0;
+diff --git a/drivers/media/platform/vsp1/vsp1_lut.c b/drivers/media/platform/vsp1/vsp1_lut.c
+index 6b358617ce15..b3ea90172439 100644
+--- a/drivers/media/platform/vsp1/vsp1_lut.c
++++ b/drivers/media/platform/vsp1/vsp1_lut.c
+@@ -168,8 +168,13 @@ static void lut_configure(struct vsp1_entity *entity,
+ 		lut->lut = NULL;
+ 		spin_unlock_irqrestore(&lut->lock, flags);
+ 
+-		if (dlb)
++		if (dlb) {
+ 			vsp1_dl_list_add_body(dl, dlb);
++
++			/* Release our local reference. */
++			vsp1_dl_body_put(dlb);
++		}
++
+ 		break;
+ 	}
+ }
 -- 
-2.7.4
+git-series 0.9.1
