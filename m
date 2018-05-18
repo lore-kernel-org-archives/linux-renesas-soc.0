@@ -1,57 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:14062 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753811AbeERIh5 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750888AbeERLQZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 04:37:57 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC] usb: gadget: function: printer: avoid wrong list handling in printer_write()
-Date: Fri, 18 May 2018 17:37:21 +0900
-Message-Id: <1526632641-30086-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 18 May 2018 07:16:25 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 007/102] arm64: dts: renesas: r8a77965: add USB 3.0 peripheral node
+Date: Fri, 18 May 2018 13:14:29 +0200
+Message-Id: <3a7dc06d833bd88f26c66fb16f56d93771cd4c2f.1526637994.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
+References: <cover.1526637994.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The usb_ep_queue() in printer_write() is possible to call req->complete().
-In that case, since tx_complete() calls list_add(&req->list, &dev->tx_reqs),
-printer_write() should not call list_add(&req->list, &dev->tx_reqs_active)
-because the transfer has already finished. So, this patch checks
-the condition of req->list before adding the list in printer_write().
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+
+This patch adds USB 3.0 peripheral node for r8a77965.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- This issue can be caused by renesas_usbhs udc driver. I'm not sure
- this patch is acceptable or not. So, I marked RFC on this patch.
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
- drivers/usb/gadget/function/f_printer.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/usb/gadget/function/f_printer.c b/drivers/usb/gadget/function/f_printer.c
-index d359efe..01de45e 100644
---- a/drivers/usb/gadget/function/f_printer.c
-+++ b/drivers/usb/gadget/function/f_printer.c
-@@ -640,10 +640,14 @@ static void tx_complete(struct usb_ep *ep, struct usb_request *req)
- 			spin_unlock_irqrestore(&dev->lock, flags);
- 			mutex_unlock(&dev->lock_printer_io);
- 			return -EAGAIN;
-+		} else if (list_empty(&req->list)) {
-+			/*
-+			 * Since usb_ep_queue() is possible to call complete,
-+			 * we should check the req->list here, and then add
-+			 * it into dev->tx_reqs_active.
-+			 */
-+			list_add(&req->list, &dev->tx_reqs_active);
- 		}
--
--		list_add(&req->list, &dev->tx_reqs_active);
--
- 	}
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index a34b80a0f304..6f748e94a901 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -951,8 +951,14 @@
+ 		};
  
- 	spin_unlock_irqrestore(&dev->lock, flags);
+ 		usb3_peri0: usb@ee020000 {
++			compatible = "renesas,r8a77965-usb3-peri",
++				     "renesas,rcar-gen3-usb3-peri";
+ 			reg = <0 0xee020000 0 0x400>;
+-			/* placeholder */
++			interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 328>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 328>;
++			status = "disabled";
+ 		};
+ 
+ 		xhci0: usb@ee000000 {
 -- 
-1.9.1
+2.11.0
