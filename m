@@ -1,39 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:43580 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752688AbeEUOnc (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751588AbeERLTP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 May 2018 10:43:32 -0400
-Received: by mail-pf0-f195.google.com with SMTP id j20-v6so7194948pff.10
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 May 2018 07:43:32 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
+        Fri, 18 May 2018 07:19:15 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>
-Date: Mon, 21 May 2018 23:44:44 +0900
-Message-Id: <152691388485.29667.16990860330809844193.sendpatchset@little-apple>
-Subject: [PATCH 00/03] arm64: dts: renesas: Add IPMMU device nodes
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 47/69] ARM: dts: porter: Drop unnecessary address properties from vin port node
+Date: Fri, 18 May 2018 13:17:20 +0200
+Message-Id: <99a755f586ac113cfd2c4355f7a794b3b2361229.1526641667.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
+References: <cover.1526641667.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-arm64: dts: renesas: Add IPMMU device nodes
+The vin port node does not have an address and thus does not need
+address-cells or address size-properties.
 
-[PATCH 01/03] arm64: dts: renesas: r8a77965: Add IPMMU devices nodes
-[PATCH 02/03] arm64: dts: renesas: r8a77980: Add IPMMU devices nodes
-[PATCH 03/03] arm64: dts: renesas: r8a77990: Add IPMMU devices nodes
+This is flagged by dtc as follows:
+ # make dtbs W=1
+ arch/arm/boot/dts/r8a7791-porter.dtb: Warning (avoid_unnecessary_addr_size): /soc/video@e6ef0000/port: unnecessary #address-cells/#size-cells without
 
-This series adds IPMMU device nodes to R-Car M3-N, V3H and E3 SoCs.
-
-The IPMMU DT binding changes are not yet merged upstream however they
-have been documented by the following patches:
-
-[PATCH] iommu/ipmmu-vmsa: Document R-Car M3-N IPMMU DT bindings 
-[PATCH] iommu/ipmmu-vmsa: Document R-Car V3H and E3 IPMMU DT bindings
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
+ arch/arm/boot/dts/r8a7791-porter.dts | 3 ---
+ 1 file changed, 3 deletions(-)
 
- Developed on top of renesas-devel-20180518-v4.17-rc5
-
- arch/arm64/boot/dts/renesas/r8a77965.dtsi |   89 +++++++++++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77980.dtsi |   49 +++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77990.dtsi |   82 ++++++++++++++++++++++++++
+diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
+index 4dd5a5db2de8..876d38f46367 100644
+--- a/arch/arm/boot/dts/r8a7791-porter.dts
++++ b/arch/arm/boot/dts/r8a7791-porter.dts
+@@ -386,9 +386,6 @@
+ 	pinctrl-names = "default";
+ 
+ 	port {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+ 		vin0ep: endpoint {
+ 			remote-endpoint = <&adv7180>;
+ 			bus-width = <8>;
+-- 
+2.11.0
