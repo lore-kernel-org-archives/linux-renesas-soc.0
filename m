@@ -1,179 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751815AbeERLSA (ORCPT
+        with ESMTP id S1752613AbeERLSm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:18:00 -0400
+        Fri, 18 May 2018 07:18:42 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 028/102] arm64: dts: renesas: Add Renesas R8A77990 SoC support
-Date: Fri, 18 May 2018 13:14:50 +0200
-Message-Id: <f37a7767f6c4ec66c3df227ad4028e5390322202.1526637994.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
-References: <cover.1526637994.git.horms+renesas@verge.net.au>
+Subject: [PATCH 15/69] ARM: dts: r7s72100: Add Capture Engine Unit (CEU)
+Date: Fri, 18 May 2018 13:16:48 +0200
+Message-Id: <f558d42a9d1c4724a8b3880fe230a66fa16e21c8.1526641667.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
+References: <cover.1526641667.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-This patch adds basic support for the Renesas R-Car E3 (R8A77990) SoC:
-  - PSCI
-  - CPU (single)
-  - Cache controller
-  - Main clocks and controller
-  - Interrupt controller
-  - Timer
-  - PMU
-  - Reset controller
-  - Product register
-  - System controller
-  - UART for console
+Add Capture Engine Unit (CEU) node to device tree.
 
-Inspried by a patch by Takeshi Kihara in the BSP.
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+[simon: rebased]
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 127 ++++++++++++++++++++++++++++++
- 1 file changed, 127 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a77990.dtsi
+ arch/arm/boot/dts/r7s72100.dtsi | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-new file mode 100644
-index 000000000000..3a19b9ebdd6e
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -0,0 +1,127 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Device Tree Source for the r8a77990 SoC
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+/ {
-+	compatible = "renesas,r8a77990";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		/* 1 core only at this point */
-+		a53_0: cpu@0 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0x0>;
-+			device_type = "cpu";
-+			power-domains = <&sysc 5>;
-+			next-level-cache = <&L2_CA53>;
-+			enable-method = "psci";
-+		};
-+
-+		L2_CA53: cache-controller@0 {
-+			compatible = "cache";
-+			reg = <0>;
-+			power-domains = <&sysc 21>;
-+			cache-unified;
-+			cache-level = <2>;
-+		};
-+	};
-+
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board */
-+		clock-frequency = <0>;
-+	};
-+
-+	pmu_a53 {
-+		compatible = "arm,cortex-a53-pmu";
-+		interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&a53_0>;
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	soc: soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		cpg: clock-controller@e6150000 {
-+			compatible = "renesas,r8a77990-cpg-mssr";
-+			reg = <0 0xe6150000 0 0x1000>;
-+			clocks = <&extal_clk>;
-+			clock-names = "extal";
-+			#clock-cells = <2>;
-+			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
-+		};
-+
-+		rst: reset-controller@e6160000 {
-+			compatible = "renesas,r8a77990-rst";
-+			reg = <0 0xe6160000 0 0x0200>;
-+		};
-+
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a77990-sysc";
-+			reg = <0 0xe6180000 0 0x0400>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		scif2: serial@e6e88000 {
-+			compatible = "renesas,scif-r8a77990",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6e88000 0 64>;
-+			interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 310>;
-+			clock-names = "fck";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 310>;
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index ecf9516bcda8..4a1aade0e751 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -375,6 +375,15 @@
+ 			status = "disabled";
+ 		};
+ 
++		ceu: camera@e8210000 {
++			reg = <0xe8210000 0x3000>;
++			compatible = "renesas,r7s72100-ceu";
++			interrupts = <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp6_clks R7S72100_CLK_CEU>;
++			power-domains = <&cpg_clocks>;
 +			status = "disabled";
 +		};
 +
-+		gic: interrupt-controller@f1010000 {
-+			compatible = "arm,gic-400";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0x0 0xf1010000 0 0x1000>,
-+			      <0x0 0xf1020000 0 0x20000>,
-+			      <0x0 0xf1040000 0 0x20000>,
-+			      <0x0 0xf1060000 0 0x20000>;
-+			interrupts = <GIC_PPI 9
-+					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
-+			clocks = <&cpg CPG_MOD 408>;
-+			clock-names = "clk";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 408>;
-+		};
-+
-+		prr: chipid@fff00044 {
-+			compatible = "renesas,prr";
-+			reg = <0 0xfff00044 0 4>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+};
+ 		wdt: watchdog@fcfe0000 {
+ 			compatible = "renesas,r7s72100-wdt", "renesas,rza-wdt";
+ 			reg = <0xfcfe0000 0x6>;
+@@ -429,9 +438,9 @@
+ 			#clock-cells = <1>;
+ 			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0xfcfe042c 4>;
+-			clocks = <&p0_clk>;
+-			clock-indices = <R7S72100_CLK_RTC>;
+-			clock-output-names = "rtc";
++			clocks = <&b_clk>, <&p0_clk>;
++			clock-indices = <R7S72100_CLK_CEU R7S72100_CLK_RTC>;
++			clock-output-names = "ceu", "rtc";
+ 		};
+ 
+ 		mstp7_clks: mstp7_clks@fcfe0430 {
 -- 
 2.11.0
