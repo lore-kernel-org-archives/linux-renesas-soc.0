@@ -1,56 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36770 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752421AbeEOMUq (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750888AbeERLQS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 May 2018 08:20:46 -0400
-Received: by mail-wm0-f65.google.com with SMTP id n10-v6so723948wmc.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 15 May 2018 05:20:46 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+        Fri, 18 May 2018 07:16:18 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 0/5] R-Car D3 LVDS/HDMI support
-Date: Tue, 15 May 2018 14:20:35 +0200
-Message-Id: <1526386840-15368-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 016/102] arm64: dts: renesas: Add Renesas R8A77990 Kconfig support
+Date: Fri, 18 May 2018 13:14:38 +0200
+Message-Id: <c4e96f74ad46d1139e1f31ec925c5bb21aa9830e.1526637994.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
+References: <cover.1526637994.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-This adds D3 support to the DU and LVDS drivers, not including LVDS PLL
-support.
+Add configuration option for the R-Car E3 (R8A77990) SoC.
 
-It also adds LVDS encoders to the D3 device tree, and LVDS decoder, HDMI
-encoder and HDMI output connector to the Draak device tree.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/Kconfig.platforms | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-In theory that should be good enough to provide HDMI output on the Draak
-board, but in practice the lack of LVDS PLL support prevents generation of
-close-enough dot clock frequencies.
-
-This series is based on renesas-drivers-2018-05-02-v4.17-rc3 and requires
-Jacopo's "drm: bridge: Add thc63lvd1024 LVDS decoder driver" patch.
-
-CU
-Uli
-
-
-Kieran Bingham (1):
-  arm64: dts: renesas: r8a77995: Add LVDS support
-
-Koji Matsuoka (1):
-  drm: rcar-du: Add r8a77995 device support
-
-Ulrich Hecht (3):
-  drm: rcar-du: lvds: Add R8A77995 support
-  arm64: dts: renesas: r8a77995-draak: add HDMI output
-  arm64: dts: renesas: r8a77995-draak: add X12 input dot clock
-
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 91 ++++++++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77995.dtsi      | 56 ++++++++++++++++
- drivers/gpu/drm/rcar-du/rcar_du_drv.c          | 26 ++++++++
- drivers/gpu/drm/rcar-du/rcar_lvds.c            |  6 ++
- 4 files changed, 179 insertions(+)
-
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 2b1535cdeb7c..d5aeac351fc3 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -208,6 +208,12 @@ config ARCH_R8A77980
+ 	help
+ 	  This enables support for the Renesas R-Car V3H SoC.
+ 
++config ARCH_R8A77990
++	bool "Renesas R-Car E3 SoC Platform"
++	depends on ARCH_RENESAS
++	help
++	  This enables support for the Renesas R-Car E3 SoC.
++
+ config ARCH_R8A77995
+ 	bool "Renesas R-Car D3 SoC Platform"
+ 	depends on ARCH_RENESAS
 -- 
-2.7.4
+2.11.0
