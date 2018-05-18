@@ -1,58 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750888AbeERLQP (ORCPT
+        with ESMTP id S1750888AbeERLQ5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:16:15 -0400
+        Fri, 18 May 2018 07:16:57 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 005/102] arm64: dts: renesas: r8a77965: add HS-USB node
-Date: Fri, 18 May 2018 13:14:27 +0200
-Message-Id: <a06e8af801760a98fd1d1355cafa92f89c78c771.1526637994.git.horms+renesas@verge.net.au>
+Subject: [PATCH 049/102] arm64: dts: renesas: r8a7795-salvator-x: enable HDMI sound
+Date: Fri, 18 May 2018 13:15:11 +0200
+Message-Id: <a4ff9aed55eb0172291005f0b1a0174be257b892.1526637994.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
 References: <cover.1526637994.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-This patch adds HS-USB node for r8a77965.
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Tested-by: Nguyen Viet Dung <nv-dung@jinso.co.jp>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 46 ++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index e5a5dd9d43da..ac74413d006f 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -861,8 +861,20 @@
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index af467419266a..0efbef5ea9b7 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -56,6 +56,12 @@
+ 	status = "okay";
+ };
  
- 		hsusb: usb@e6590000 {
-+			compatible = "renesas,usbhs-r8a7796",
-+				     "renesas,rcar-gen3-usbhs";
- 			reg = <0 0xe6590000 0 0x100>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 704>;
-+			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
-+			       <&usb_dmac1 0>, <&usb_dmac1 1>;
-+			dma-names = "ch0", "ch1", "ch2", "ch3";
-+			renesas,buswait = <11>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 704>;
-+			status = "disabled";
- 		};
++&sound_card {
++	dais = <&rsnd_port0	/* ak4613 */
++		&rsnd_port1	/* HDMI0  */
++		&rsnd_port2>;	/* HDMI1  */
++};
++
+ &hdmi0 {
+ 	status = "okay";
  
- 		pciec0: pcie@fe000000 {
+@@ -66,6 +72,12 @@
+ 				remote-endpoint = <&hdmi0_con>;
+ 			};
+ 		};
++		port@2 {
++			reg = <2>;
++			dw_hdmi0_snd_in: endpoint {
++				remote-endpoint = <&rsnd_endpoint1>;
++			};
++		};
+ 	};
+ };
+ 
+@@ -83,6 +95,12 @@
+ 				remote-endpoint = <&hdmi1_con>;
+ 			};
+ 		};
++		port@2 {
++			reg = <2>;
++			dw_hdmi1_snd_in: endpoint {
++				remote-endpoint = <&rsnd_endpoint2>;
++			};
++		};
+ 	};
+ };
+ 
+@@ -94,6 +112,34 @@
+ 	status = "okay";
+ };
+ 
++&rcar_sound {
++	ports {
++		/* rsnd_port0 is on salvator-common */
++		rsnd_port1: port@1 {
++			rsnd_endpoint1: endpoint {
++				remote-endpoint = <&dw_hdmi0_snd_in>;
++
++				dai-format = "i2s";
++				bitclock-master = <&rsnd_endpoint1>;
++				frame-master = <&rsnd_endpoint1>;
++
++				playback = <&ssi2>;
++			};
++		};
++		rsnd_port2: port@2 {
++			rsnd_endpoint2: endpoint {
++				remote-endpoint = <&dw_hdmi1_snd_in>;
++
++				dai-format = "i2s";
++				bitclock-master = <&rsnd_endpoint2>;
++				frame-master = <&rsnd_endpoint2>;
++
++				playback = <&ssi3>;
++			};
++		};
++	};
++};
++
+ &pfc {
+ 	usb2_pins: usb2 {
+ 		groups = "usb2";
 -- 
 2.11.0
