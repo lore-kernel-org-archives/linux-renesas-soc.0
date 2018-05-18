@@ -1,217 +1,118 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Hoan Tran <hotran@apm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v6] gpio: dwapb: Add support for 1 interrupt per port A GPIO
-Date: Fri, 11 May 2018 09:31:37 +0100
-Message-Id: <1526027497-32556-1-git-send-email-phil.edworthy@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750888AbeERLRn (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 18 May 2018 07:17:43 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 090/102] arm64: dts: renesas: initial V3HSK board device tree
+Date: Fri, 18 May 2018 13:15:52 +0200
+Message-Id: <116a12f7d6c00e1e477aaec9e486cd510fa1895c.1526637994.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
+References: <cover.1526637994.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The DesignWare GPIO IP can be configured for either 1 interrupt or 1
-per GPIO in port A, but the driver currently only supports 1 interrupt.
-See the DesignWare DW_apb_gpio Databook description of the
-'GPIO_INTR_IO' parameter.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-This change allows the driver to work with up to 32 interrupts, it will
-get as many interrupts as specified in the DT 'interrupts' property.
-It doesn't do anything clever with the different interrupts, it just calls
-the same handler used for single interrupt hardware.
+Add the initial device  tree for  the V3H Starter Kit board.
+The board has 1 debug serial port (SCIF0); include support for it,
+so that the serial console can work.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
+Based on the original (and large) patch by Vladimir Barinov.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-One point to mention is that I have made it possible for users to have
-unconnected interrupts by specifying holes in the list of interrupts. This is
-done by supporting the interrupts-extended DT prop.
-However, I have no use for this and had to hack some test case for this.
-Perhaps the driver should support 1 interrupt or all GPIOa as interrupts?
+ arch/arm64/boot/dts/renesas/Makefile           |  2 +-
+ arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts | 60 ++++++++++++++++++++++++++
+ 2 files changed, 61 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
 
-v6:
- - Treat DT and ACPI the same as much as possible. Note that we can't use
-   platform_get_irq() to get the DT interrupts as they are in the port
-   sub-node and hence do not have an associated platform device.
-v5:
- - Rolled ACPI companion code provided by Hoan Tran into this patch.
-v4:
- - Use of_irq_get() instead of of_irq_parse_one()+irq_create_of_mapping()
-v3:
- - Rolled mfd: intel_quark_i2c_gpio fix into this patch to avoid bisect problems
-v2:
- - Replaced interrupt-mask DT prop with support for the interrupts-extended
-   prop. This means replacing the call to irq_of_parse_and_map() with calls
-   to of_irq_parse_one() and irq_create_of_mapping().
----
- .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   |  9 +++-
- drivers/gpio/gpio-dwapb.c                          | 49 +++++++++++++++-------
- drivers/mfd/intel_quark_i2c_gpio.c                 |  3 +-
- include/linux/platform_data/gpio-dwapb.h           |  3 +-
- 4 files changed, 45 insertions(+), 19 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-index 4a75da7..3c1118b 100644
---- a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-+++ b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-@@ -26,8 +26,13 @@ controller.
-   the second encodes the triger flags encoded as described in
-   Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
- - interrupt-parent : The parent interrupt controller.
--- interrupts : The interrupt to the parent controller raised when GPIOs
--  generate the interrupts.
-+- interrupts : The interrupts to the parent controller raised when GPIOs
-+  generate the interrupts. If the controller provides one combined interrupt
-+  for all GPIOs, specify a single interrupt. If the controller provides one
-+  interrupt for each GPIO, provide a list of interrupts that correspond to each
-+  of the GPIO pins. When specifying multiple interrupts, if any are unconnected,
-+  use the interrupts-extended property to specify the interrupts and set the
-+  interrupt controller handle for unused interrupts to 0.
- - snps,nr-gpios : The number of pins in the port, a single cell.
- - resets : Reset line for the controller.
- 
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 226977f..15b4154 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -441,14 +441,19 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
- 	irq_gc->chip_types[1].handler = handle_edge_irq;
- 
- 	if (!pp->irq_shared) {
--		irq_set_chained_handler_and_data(pp->irq, dwapb_irq_handler,
--						 gpio);
-+		int i;
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index a235961c6532..9e2394bc3c62 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -9,6 +9,6 @@ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-m3ulcb-kf.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
+ dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-x.dtb r8a77965-salvator-xs.dtb
+ dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb r8a77970-v3msk.dtb
+-dtb-$(CONFIG_ARCH_R8A77980) += r8a77980-condor.dtb
++dtb-$(CONFIG_ARCH_R8A77980) += r8a77980-condor.dtb r8a77980-v3hsk.dtb
+ dtb-$(CONFIG_ARCH_R8A77990) += r8a77990-ebisu.dtb
+ dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts b/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
+new file mode 100644
+index 000000000000..c9680994555d
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
+@@ -0,0 +1,60 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the V3H Starter Kit board
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ * Copyright (C) 2018 Cogent Embedded, Inc.
++ */
 +
-+		for (i = 0; i < pp->ngpio; i++) {
-+			if (pp->irq[i] >= 0)
-+				irq_set_chained_handler_and_data(pp->irq[i],
-+						dwapb_irq_handler, gpio);
-+		}
- 	} else {
- 		/*
- 		 * Request a shared IRQ since where MFD would have devices
- 		 * using the same irq pin
- 		 */
--		err = devm_request_irq(gpio->dev, pp->irq,
-+		err = devm_request_irq(gpio->dev, pp->irq[0],
- 				       dwapb_irq_handler_mfd,
- 				       IRQF_SHARED, "gpio-dwapb-mfd", gpio);
- 		if (err) {
-@@ -524,7 +529,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
- 	if (pp->idx == 0)
- 		port->gc.set_config = dwapb_gpio_set_config;
- 
--	if (pp->irq)
-+	if (pp->has_irq)
- 		dwapb_configure_irqs(gpio, port, pp);
- 
- 	err = gpiochip_add_data(&port->gc, port);
-@@ -535,7 +540,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
- 		port->is_registered = true;
- 
- 	/* Add GPIO-signaled ACPI event support */
--	if (pp->irq)
-+	if (pp->has_irq)
- 		acpi_gpiochip_request_interrupts(&port->gc);
- 
- 	return err;
-@@ -557,7 +562,7 @@ dwapb_gpio_get_pdata(struct device *dev)
- 	struct dwapb_platform_data *pdata;
- 	struct dwapb_port_property *pp;
- 	int nports;
--	int i;
-+	int i, j;
- 
- 	nports = device_get_child_node_count(dev);
- 	if (nports == 0)
-@@ -575,6 +580,8 @@ dwapb_gpio_get_pdata(struct device *dev)
- 
- 	i = 0;
- 	device_for_each_child_node(dev, fwnode)  {
-+		struct device_node *np = NULL;
++/dts-v1/;
++#include "r8a77980.dtsi"
 +
- 		pp = &pdata->properties[i++];
- 		pp->fwnode = fwnode;
- 
-@@ -594,23 +601,35 @@ dwapb_gpio_get_pdata(struct device *dev)
- 			pp->ngpio = 32;
- 		}
- 
-+		pp->irq_shared	= false;
-+		pp->gpio_base	= -1;
++/ {
++	model = "Renesas V3H Starter Kit board";
++	compatible = "renesas,v3hsk", "renesas,r8a77980";
 +
- 		/*
- 		 * Only port A can provide interrupts in all configurations of
- 		 * the IP.
- 		 */
--		if (dev->of_node && pp->idx == 0 &&
--			fwnode_property_read_bool(fwnode,
-+		if (pp->idx != 0)
-+			continue;
++	aliases {
++		serial0 = &scif0;
++	};
 +
-+		if (dev->of_node && fwnode_property_read_bool(fwnode,
- 						  "interrupt-controller")) {
--			pp->irq = irq_of_parse_and_map(to_of_node(fwnode), 0);
--			if (!pp->irq)
--				dev_warn(dev, "no irq for port%d\n", pp->idx);
-+			np = to_of_node(fwnode);
- 		}
- 
--		if (has_acpi_companion(dev) && pp->idx == 0)
--			pp->irq = platform_get_irq(to_platform_device(dev), 0);
-+		for (j = 0; j < pp->ngpio; j++) {
-+			pp->irq[j] = -ENXIO;
- 
--		pp->irq_shared	= false;
--		pp->gpio_base	= -1;
-+			if (np)
-+				pp->irq[j] = of_irq_get(np, j);
-+			else if (has_acpi_companion(dev))
-+				pp->irq[j] = platform_get_irq(to_platform_device(dev), j);
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
 +
-+			if (pp->irq[j] >= 0)
-+				pp->has_irq = true;
-+		}
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0 0x48000000 0 0x78000000>;
++	};
++};
 +
-+		if (!pp->has_irq)
-+			dev_warn(dev, "no irq for port%d\n", pp->idx);
- 	}
- 
- 	return pdata;
-diff --git a/drivers/mfd/intel_quark_i2c_gpio.c b/drivers/mfd/intel_quark_i2c_gpio.c
-index 90e35de..5bddb84 100644
---- a/drivers/mfd/intel_quark_i2c_gpio.c
-+++ b/drivers/mfd/intel_quark_i2c_gpio.c
-@@ -233,7 +233,8 @@ static int intel_quark_gpio_setup(struct pci_dev *pdev, struct mfd_cell *cell)
- 	pdata->properties->idx		= 0;
- 	pdata->properties->ngpio	= INTEL_QUARK_MFD_NGPIO;
- 	pdata->properties->gpio_base	= INTEL_QUARK_MFD_GPIO_BASE;
--	pdata->properties->irq		= pdev->irq;
-+	pdata->properties->irq[0]	= pdev->irq;
-+	pdata->properties->has_irq	= true;
- 	pdata->properties->irq_shared	= true;
- 
- 	cell->platform_data = pdata;
-diff --git a/include/linux/platform_data/gpio-dwapb.h b/include/linux/platform_data/gpio-dwapb.h
-index 2dc7f4a..419cfac 100644
---- a/include/linux/platform_data/gpio-dwapb.h
-+++ b/include/linux/platform_data/gpio-dwapb.h
-@@ -19,7 +19,8 @@ struct dwapb_port_property {
- 	unsigned int	idx;
- 	unsigned int	ngpio;
- 	unsigned int	gpio_base;
--	unsigned int	irq;
-+	int		irq[32];
-+	bool		has_irq;
- 	bool		irq_shared;
- };
- 
++&extal_clk {
++	clock-frequency = <16666666>;
++};
++
++&extalr_clk {
++	clock-frequency = <32768>;
++};
++
++&pfc {
++	scif0_pins: scif0 {
++		groups = "scif0_data";
++		function = "scif0";
++	};
++
++	scif_clk_pins: scif_clk {
++		groups = "scif_clk_b";
++		function = "scif_clk";
++	};
++};
++
++&scif0 {
++	pinctrl-0 = <&scif0_pins>, <&scif_clk_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++&scif_clk {
++	clock-frequency = <14745600>;
++};
 -- 
-2.7.4
-
+2.11.0
