@@ -1,103 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:46456 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936853AbeE2RPa (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750888AbeERLRe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 May 2018 13:15:30 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Eric Auger <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc: kvm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4] vfio: platform: Fix using devices in PM Domains
-Date: Tue, 29 May 2018 19:15:28 +0200
-Message-Id: <1527614128-30196-1-git-send-email-geert+renesas@glider.be>
+        Fri, 18 May 2018 07:17:34 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 084/102] arm64: dts: renesas: r8a77970: Add secondary CA53 CPU core
+Date: Fri, 18 May 2018 13:15:46 +0200
+Message-Id: <77899dd2c094fc99413e18264384cc428c23cd23.1526637994.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
+References: <cover.1526637994.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If a device is part of a PM Domain (e.g. power and/or clock domain), its
-power state is managed using Runtime PM.  Without Runtime PM, the device
-may not be powered up or clocked, causing subtle failures, crashes, or
-system lock-ups when the device is accessed by the guest.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Fix this by adding Runtime PM support, powering the device when the VFIO
-device is opened by the guest.
+Add a device node for the second Cortex-A53 CPU core on the Renesas
+R-Car V3M (r8a77970) SoC, and adjust the interrupt delivery masks for
+ARM Generic Interrupt Controller and Architectured Timer.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-Against linux-vfio/next
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
-v4:
-  - Keep device powered while issuing reset,
-
-v3:
-  - Drop controversial note about unsafeness of exporting fine-grained
-    power management from host to guest,
-
-v2:
-  - Improve wording,
-  - Add Reviewed-by.
----
- drivers/vfio/platform/vfio_platform_common.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
-index b60bb5326668498c..c0cd824be2b767be 100644
---- a/drivers/vfio/platform/vfio_platform_common.c
-+++ b/drivers/vfio/platform/vfio_platform_common.c
-@@ -17,6 +17,7 @@
- #include <linux/iommu.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-+#include <linux/pm_runtime.h>
- #include <linux/slab.h>
- #include <linux/types.h>
- #include <linux/uaccess.h>
-@@ -239,6 +240,7 @@ static void vfio_platform_release(void *device_data)
- 				 ret, extra_dbg ? extra_dbg : "");
- 			WARN_ON(1);
- 		}
-+		pm_runtime_put(vdev->device);
- 		vfio_platform_regions_cleanup(vdev);
- 		vfio_platform_irq_cleanup(vdev);
- 	}
-@@ -269,6 +271,10 @@ static int vfio_platform_open(void *device_data)
- 		if (ret)
- 			goto err_irq;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+index 37b843c0677a..1efaad71804d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -41,6 +41,16 @@
+ 			enable-method = "psci";
+ 		};
  
-+		ret = pm_runtime_get_sync(vdev->device);
-+		if (ret < 0)
-+			goto err_pm;
++		a53_1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53", "arm,armv8";
++			reg = <1>;
++			clocks = <&cpg CPG_CORE R8A77970_CLK_Z2>;
++			power-domains = <&sysc R8A77970_PD_CA53_CPU1>;
++			next-level-cache = <&L2_CA53>;
++			enable-method = "psci";
++		};
 +
- 		ret = vfio_platform_call_reset(vdev, &extra_dbg);
- 		if (ret && vdev->reset_required) {
- 			dev_warn(vdev->device, "reset driver is required and reset call failed in open (%d) %s\n",
-@@ -283,6 +289,8 @@ static int vfio_platform_open(void *device_data)
- 	return 0;
+ 		L2_CA53: cache-controller {
+ 			compatible = "cache";
+ 			power-domains = <&sysc R8A77970_PD_CA53_SCU>;
+@@ -635,7 +645,7 @@
+ 			      <0 0xf1020000 0 0x20000>,
+ 			      <0 0xf1040000 0 0x20000>,
+ 			      <0 0xf1060000 0 0x20000>;
+-			interrupts = <GIC_PPI 9	(GIC_CPU_MASK_SIMPLE(1) |
++			interrupts = <GIC_PPI 9	(GIC_CPU_MASK_SIMPLE(2) |
+ 				      IRQ_TYPE_LEVEL_HIGH)>;
+ 			clocks = <&cpg CPG_MOD 408>;
+ 			clock-names = "clk";
+@@ -726,9 +736,9 @@
  
- err_rst:
-+	pm_runtime_put(vdev->device);
-+err_pm:
- 	vfio_platform_irq_cleanup(vdev);
- err_irq:
- 	vfio_platform_regions_cleanup(vdev);
-@@ -690,6 +698,7 @@ int vfio_platform_probe_common(struct vfio_platform_device *vdev,
- 
- 	mutex_init(&vdev->igate);
- 
-+	pm_runtime_enable(vdev->device);
- 	return 0;
- 
- put_iommu:
-@@ -707,6 +716,7 @@ struct vfio_platform_device *vfio_platform_remove_common(struct device *dev)
- 	vdev = vfio_del_group_dev(dev);
- 
- 	if (vdev) {
-+		pm_runtime_disable(vdev->device);
- 		vfio_platform_put_reset(vdev);
- 		vfio_iommu_group_put(dev->iommu_group, dev);
- 	}
+ 	timer {
+ 		compatible = "arm,armv8-timer";
+-		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
+-				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
+-				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
+-				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
++		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
+ 	};
+ };
 -- 
-2.7.4
+2.11.0
