@@ -1,105 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:40404 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753647AbeE3PZT (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:60870 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751296AbeERJ6C (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 May 2018 11:25:19 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/6] ARM: shmobile: r8a7779: Use rcar_sysc_power_{down,up}_cpu()
-Date: Wed, 30 May 2018 17:25:14 +0200
-Message-Id: <1527693916-11215-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1527693916-11215-1-git-send-email-geert+renesas@glider.be>
-References: <1527693916-11215-1-git-send-email-geert+renesas@glider.be>
+        Fri, 18 May 2018 05:58:02 -0400
+Date: Fri, 18 May 2018 11:57:58 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Gilad Ben-Yossef <gilad@benyossef.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: r8a7795: Add CR clock
+Message-ID: <20180518095758.3mguoq3ufjc7fp5q@verge.net.au>
+References: <1526552462-3476-1-git-send-email-geert+renesas@glider.be>
+ <20180517143904.GA24534@bigcity.dyn.berto.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180517143904.GA24534@bigcity.dyn.berto.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The r8a7779 SMP code calls rcar_sysc_power_{down,up}() to control power
-to the SYSC power areas containing CPUs. This requires passing full CPU
-power area parameter blocks.
+On Thu, May 17, 2018 at 04:39:04PM +0200, Niklas Söderlund wrote:
+> Hi Geert,
+> 
+> Thanks for your patch.
+> 
+> On 2018-05-17 12:21:02 +0200, Geert Uytterhoeven wrote:
+> > Add the CR core clock, which is used by the Secure Engine (SCEG).
+> > 
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Migrate the code to call the new rcar_sysc_power_{down,up}_cpu()
-helpers, which just take a CPU index, and use the SYSC power area
-definitions from the r8a7779-sysc driver.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/mach-shmobile/smp-r8a7779.c | 47 +++++-------------------------------
- 1 file changed, 6 insertions(+), 41 deletions(-)
-
-diff --git a/arch/arm/mach-shmobile/smp-r8a7779.c b/arch/arm/mach-shmobile/smp-r8a7779.c
-index ff1e6fc0b861c4fc..3036f910046118ee 100644
---- a/arch/arm/mach-shmobile/smp-r8a7779.c
-+++ b/arch/arm/mach-shmobile/smp-r8a7779.c
-@@ -31,59 +31,24 @@
- #define AVECR IOMEM(0xfe700040)
- #define R8A7779_SCU_BASE 0xf0000000
- 
--static const struct rcar_sysc_ch r8a7779_ch_cpu1 = {
--	.chan_offs = 0x40, /* PWRSR0 .. PWRER0 */
--	.chan_bit = 1, /* ARM1 */
--	.isr_bit = 1, /* ARM1 */
--};
--
--static const struct rcar_sysc_ch r8a7779_ch_cpu2 = {
--	.chan_offs = 0x40, /* PWRSR0 .. PWRER0 */
--	.chan_bit = 2, /* ARM2 */
--	.isr_bit = 2, /* ARM2 */
--};
--
--static const struct rcar_sysc_ch r8a7779_ch_cpu3 = {
--	.chan_offs = 0x40, /* PWRSR0 .. PWRER0 */
--	.chan_bit = 3, /* ARM3 */
--	.isr_bit = 3, /* ARM3 */
--};
--
--static const struct rcar_sysc_ch * const r8a7779_ch_cpu[4] = {
--	[1] = &r8a7779_ch_cpu1,
--	[2] = &r8a7779_ch_cpu2,
--	[3] = &r8a7779_ch_cpu3,
--};
--
- static int r8a7779_platform_cpu_kill(unsigned int cpu)
- {
--	const struct rcar_sysc_ch *ch = NULL;
- 	int ret = -EIO;
- 
- 	cpu = cpu_logical_map(cpu);
--
--	if (cpu < ARRAY_SIZE(r8a7779_ch_cpu))
--		ch = r8a7779_ch_cpu[cpu];
--
--	if (ch)
--		ret = rcar_sysc_power_down(ch);
-+	if (cpu)
-+		ret = rcar_sysc_power_down_cpu(cpu);
- 
- 	return ret ? ret : 1;
- }
- 
- static int r8a7779_boot_secondary(unsigned int cpu, struct task_struct *idle)
- {
--	const struct rcar_sysc_ch *ch = NULL;
--	unsigned int lcpu = cpu_logical_map(cpu);
--	int ret;
--
--	if (lcpu < ARRAY_SIZE(r8a7779_ch_cpu))
--		ch = r8a7779_ch_cpu[lcpu];
-+	int ret = -EIO;
- 
--	if (ch)
--		ret = rcar_sysc_power_up(ch);
--	else
--		ret = -EIO;
-+	cpu = cpu_logical_map(cpu);
-+	if (cpu)
-+		ret = rcar_sysc_power_up_cpu(cpu);
- 
- 	return ret;
- }
--- 
-2.7.4
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
