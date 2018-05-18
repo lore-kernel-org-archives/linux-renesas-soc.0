@@ -1,90 +1,179 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:51994 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033236AbeE1P0I (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751815AbeERLSA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 May 2018 11:26:08 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Eric Auger <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc: kvm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3] vfio: platform: Fix using devices in PM Domains
-Date: Mon, 28 May 2018 17:26:05 +0200
-Message-Id: <1527521165-29345-1-git-send-email-geert+renesas@glider.be>
+        Fri, 18 May 2018 07:18:00 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 028/102] arm64: dts: renesas: Add Renesas R8A77990 SoC support
+Date: Fri, 18 May 2018 13:14:50 +0200
+Message-Id: <f37a7767f6c4ec66c3df227ad4028e5390322202.1526637994.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
+References: <cover.1526637994.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If a device is part of a PM Domain (e.g. power and/or clock domain), its
-power state is managed using Runtime PM.  Without Runtime PM, the device
-may not be powered up or clocked, causing subtle failures, crashes, or
-system lock-ups when the device is accessed by the guest.
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Fix this by adding Runtime PM support, powering the device when the VFIO
-device is opened by the guest.
+This patch adds basic support for the Renesas R-Car E3 (R8A77990) SoC:
+  - PSCI
+  - CPU (single)
+  - Cache controller
+  - Main clocks and controller
+  - Interrupt controller
+  - Timer
+  - PMU
+  - Reset controller
+  - Product register
+  - System controller
+  - UART for console
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Inspried by a patch by Takeshi Kihara in the BSP.
+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v3:
-  - Drop controversial note about unsafeness of exporting fine-grained
-    power management from host to guest,
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi | 127 ++++++++++++++++++++++++++++++
+ 1 file changed, 127 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a77990.dtsi
 
-v2:
-  - Improve wording,
-  - Add Reviewed-by.
----
- drivers/vfio/platform/vfio_platform_common.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
-index b60bb5326668498c..41f862f055054543 100644
---- a/drivers/vfio/platform/vfio_platform_common.c
-+++ b/drivers/vfio/platform/vfio_platform_common.c
-@@ -17,6 +17,7 @@
- #include <linux/iommu.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-+#include <linux/pm_runtime.h>
- #include <linux/slab.h>
- #include <linux/types.h>
- #include <linux/uaccess.h>
-@@ -233,6 +234,8 @@ static void vfio_platform_release(void *device_data)
- 		const char *extra_dbg = NULL;
- 		int ret;
- 
-+		pm_runtime_put(vdev->device);
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+new file mode 100644
+index 000000000000..3a19b9ebdd6e
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -0,0 +1,127 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Device Tree Source for the r8a77990 SoC
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ */
 +
- 		ret = vfio_platform_call_reset(vdev, &extra_dbg);
- 		if (ret && vdev->reset_required) {
- 			dev_warn(vdev->device, "reset driver is required and reset call failed in release (%d) %s\n",
-@@ -275,6 +278,10 @@ static int vfio_platform_open(void *device_data)
- 				 ret, extra_dbg ? extra_dbg : "");
- 			goto err_rst;
- 		}
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
 +
-+		ret = pm_runtime_get_sync(vdev->device);
-+		if (ret < 0)
-+			goto err_rst;
- 	}
- 
- 	vdev->refcnt++;
-@@ -690,6 +697,7 @@ int vfio_platform_probe_common(struct vfio_platform_device *vdev,
- 
- 	mutex_init(&vdev->igate);
- 
-+	pm_runtime_enable(vdev->device);
- 	return 0;
- 
- put_iommu:
-@@ -707,6 +715,7 @@ struct vfio_platform_device *vfio_platform_remove_common(struct device *dev)
- 	vdev = vfio_del_group_dev(dev);
- 
- 	if (vdev) {
-+		pm_runtime_disable(vdev->device);
- 		vfio_platform_put_reset(vdev);
- 		vfio_iommu_group_put(dev->iommu_group, dev);
- 	}
++/ {
++	compatible = "renesas,r8a77990";
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		/* 1 core only at this point */
++		a53_0: cpu@0 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			reg = <0x0>;
++			device_type = "cpu";
++			power-domains = <&sysc 5>;
++			next-level-cache = <&L2_CA53>;
++			enable-method = "psci";
++		};
++
++		L2_CA53: cache-controller@0 {
++			compatible = "cache";
++			reg = <0>;
++			power-domains = <&sysc 21>;
++			cache-unified;
++			cache-level = <2>;
++		};
++	};
++
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board */
++		clock-frequency = <0>;
++	};
++
++	pmu_a53 {
++		compatible = "arm,cortex-a53-pmu";
++		interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&a53_0>;
++	};
++
++	psci {
++		compatible = "arm,psci-0.2";
++		method = "smc";
++	};
++
++	soc: soc {
++		compatible = "simple-bus";
++		interrupt-parent = <&gic>;
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		cpg: clock-controller@e6150000 {
++			compatible = "renesas,r8a77990-cpg-mssr";
++			reg = <0 0xe6150000 0 0x1000>;
++			clocks = <&extal_clk>;
++			clock-names = "extal";
++			#clock-cells = <2>;
++			#power-domain-cells = <0>;
++			#reset-cells = <1>;
++		};
++
++		rst: reset-controller@e6160000 {
++			compatible = "renesas,r8a77990-rst";
++			reg = <0 0xe6160000 0 0x0200>;
++		};
++
++		sysc: system-controller@e6180000 {
++			compatible = "renesas,r8a77990-sysc";
++			reg = <0 0xe6180000 0 0x0400>;
++			#power-domain-cells = <1>;
++		};
++
++		scif2: serial@e6e88000 {
++			compatible = "renesas,scif-r8a77990",
++				     "renesas,rcar-gen3-scif", "renesas,scif";
++			reg = <0 0xe6e88000 0 64>;
++			interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 310>;
++			clock-names = "fck";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 310>;
++			status = "disabled";
++		};
++
++		gic: interrupt-controller@f1010000 {
++			compatible = "arm,gic-400";
++			#interrupt-cells = <3>;
++			#address-cells = <0>;
++			interrupt-controller;
++			reg = <0x0 0xf1010000 0 0x1000>,
++			      <0x0 0xf1020000 0 0x20000>,
++			      <0x0 0xf1040000 0 0x20000>,
++			      <0x0 0xf1060000 0 0x20000>;
++			interrupts = <GIC_PPI 9
++					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&cpg CPG_MOD 408>;
++			clock-names = "clk";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 408>;
++		};
++
++		prr: chipid@fff00044 {
++			compatible = "renesas,prr";
++			reg = <0 0xfff00044 0 4>;
++		};
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++};
 -- 
-2.7.4
+2.11.0
