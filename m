@@ -1,49 +1,59 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 09/10] media: rcar-vin: Rename _rcar_info to rcar_info
-Date: Tue, 29 May 2018 10:48:07 +0200
-Message-Id: <1527583688-314-10-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1527583688-314-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1527583688-314-1-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750888AbeERLQo (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 18 May 2018 07:16:44 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 038/102] arm64: dts: renesas: v3msk: add EtherAVB pins
+Date: Fri, 18 May 2018 13:15:00 +0200
+Message-Id: <68d3b03fcb5a2e7c71b1e72c6d856e6030c4f2fd.1526637994.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
+References: <cover.1526637994.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Remove leading underscore to align all rcar_group_route structure
-declarations.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Add the (previously omitted) EtherAVB pin data to the V3M Starter Kit
+board's device tree.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index e353ba9..7869308 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -1036,7 +1036,7 @@ static const struct rvin_info rcar_info_r8a7796 = {
- 	.routes = rcar_info_r8a7796_routes,
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts b/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
+index a8ceeac77992..55aa01b663e5 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
+@@ -32,6 +32,9 @@
  };
  
--static const struct rvin_group_route _rcar_info_r8a77970_routes[] = {
-+static const struct rvin_group_route rcar_info_r8a77970_routes[] = {
- 	{ .csi = RVIN_CSI40, .channel = 0, .vin = 0, .mask = BIT(0) | BIT(3) },
- 	{ .csi = RVIN_CSI40, .channel = 0, .vin = 1, .mask = BIT(2) },
- 	{ .csi = RVIN_CSI40, .channel = 1, .vin = 1, .mask = BIT(3) },
-@@ -1052,7 +1052,7 @@ static const struct rvin_info rcar_info_r8a77970 = {
- 	.use_mc = true,
- 	.max_width = 4096,
- 	.max_height = 4096,
--	.routes = _rcar_info_r8a77970_routes,
-+	.routes = rcar_info_r8a77970_routes,
+ &avb {
++	pinctrl-0 = <&avb_pins>;
++	pinctrl-names = "default";
++
+ 	renesas,no-ether-link;
+ 	phy-handle = <&phy0>;
+ 	phy-mode = "rgmii-id";
+@@ -52,6 +55,11 @@
  };
  
- static const struct of_device_id rvin_of_id_table[] = {
+ &pfc {
++	avb_pins: avb0 {
++		groups = "avb0_mdio", "avb0_rgmii", "avb0_txcrefclk";
++		function = "avb0";
++	};
++
+ 	scif0_pins: scif0 {
+ 		groups = "scif0_data";
+ 		function = "scif0";
 -- 
-2.7.4
+2.11.0
