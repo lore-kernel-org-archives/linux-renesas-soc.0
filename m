@@ -1,51 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751569AbeERLTT (ORCPT
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:33000 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750959AbeEREGw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:19:19 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 50/69] ARM: dts: alt: Drop unnecessary address properties from vin port node
-Date: Fri, 18 May 2018 13:17:23 +0200
-Message-Id: <03c3a66b4d72aa1ad9bf7a943270f1794c443e50.1526641667.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
-References: <cover.1526641667.git.horms+renesas@verge.net.au>
+        Fri, 18 May 2018 00:06:52 -0400
+Received: by mail-pf0-f195.google.com with SMTP id a20-v6so3104988pfo.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 17 May 2018 21:06:52 -0700 (PDT)
+Date: Fri, 18 May 2018 09:36:48 +0530
+From: Vinod Koul <vinod.koul@linaro.org>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
+        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Subject: Re: [PATCH 1/2] dmaengine: usb-dmac: Document R8A7799{0,5} bindings
+Message-ID: <20180518040648.GC2932@vkoul-mobl>
+References: <1526475979-13891-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526475979-13891-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The vin port node does not have an address and thus does not need
-address-cells or address size-properties.
+On 16-05-18, 15:06, Ulrich Hecht wrote:
+> From: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+> 
+> Renesas R-Car D3 (R8A77995) and E3 (R8A77990) SoCs also have the R-Car
+> gen2/3 compatible DMA controllers, so document the SoC specific binding.
 
-This is flagged by dtc as follows:
- # make dtbs W=1
- arch/arm/boot/dts/r8a7794-alt.dtb: Warning (avoid_unnecessary_addr_size): /soc/video@e6ef0000/port: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+Applied, thanks
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm/boot/dts/r8a7794-alt.dts | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index 1ecc5b9135f3..c210412f80ec 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -380,9 +380,6 @@
- 	pinctrl-names = "default";
- 
- 	port {
--		#address-cells = <1>;
--		#size-cells = <0>;
--
- 		vin0ep: endpoint {
- 			remote-endpoint = <&adv7180>;
- 			bus-width = <8>;
 -- 
-2.11.0
+~Vinod
