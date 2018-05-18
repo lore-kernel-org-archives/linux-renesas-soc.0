@@ -1,71 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752488AbeERLTG (ORCPT
+        with ESMTP id S1752342AbeERLTh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:19:06 -0400
+        Fri, 18 May 2018 07:19:37 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 44/69] ARM: dts: iwg23s-sbc: Add EtherAVB support
-Date: Fri, 18 May 2018 13:17:17 +0200
-Message-Id: <b6ef074bcadf9f89295bc7ee19424714b6ffc4c8.1526641667.git.horms+renesas@verge.net.au>
+Subject: [PATCH 67/69] ARM: dts: r8a7745: Add PMU device node
+Date: Fri, 18 May 2018 13:17:40 +0200
+Message-Id: <9562a6b1d0f6a287f5dda16a4538526c59408927.1526641667.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
 References: <cover.1526641667.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Define the iW-RainboW-G23S board dependent part of the
-EtherAVB device node.
+Enable support for the ARM Performance Monitor Units in the Cortex-A7
+CPU cores on RZ/G1E by adding a device node for the PMU.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+New Linux output:
+
+    hw perfevents: enabled with armv7_cortex_a7 PMU driver, 5 counters available
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7745.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-index d21baad9f0ad..e3585daafdd6 100644
---- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -12,11 +12,12 @@
- 	compatible = "iwave,g23s", "renesas,r8a77470";
- 
- 	aliases {
-+		ethernet0 = &avb;
- 		serial1 = &scif1;
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 3de69cb66c44..1cb7a7ab0418 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -105,6 +105,13 @@
+ 		clock-frequency = <0>;
  	};
  
- 	chosen {
--		bootargs = "ignore_loglevel";
-+		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
- 		stdout-path = "serial1:115200n8";
- 	};
- 
-@@ -26,6 +27,18 @@
- 	};
- };
- 
-+&avb {
-+	phy-handle = <&phy3>;
-+	phy-mode = "gmii";
-+	renesas,no-ether-link;
-+	status = "okay";
-+
-+	phy3: ethernet-phy@3 {
-+		reg = <3>;
-+		micrel,led-mode = <1>;
++	pmu {
++		compatible = "arm,cortex-a7-pmu";
++		interrupts-extended = <&gic GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&cpu0>, <&cpu1>;
 +	};
-+};
 +
- &extal_clk {
- 	clock-frequency = <20000000>;
- };
+ 	/* External SCIF clock */
+ 	scif_clk: scif {
+ 		compatible = "fixed-clock";
 -- 
 2.11.0
