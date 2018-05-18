@@ -1,51 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750888AbeERLRg (ORCPT
+        with ESMTP id S1751815AbeERLTL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:17:36 -0400
+        Fri, 18 May 2018 07:19:11 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 085/102] arm64: dts: renesas: r8a77970: Add Cortex-A53 PMU node
-Date: Fri, 18 May 2018 13:15:47 +0200
-Message-Id: <d005b562be9c3379151f40b70a774ba61ed8bb0e.1526637994.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
-References: <cover.1526637994.git.horms+renesas@verge.net.au>
+Subject: [PATCH 21/69] ARM: dts: r8a7793: Adjust SMP routine size
+Date: Fri, 18 May 2018 13:16:54 +0200
+Message-Id: <f515e5996a85fd4e042f3eec38d82a4250ac1a6c.1526641667.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
+References: <cover.1526641667.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Enable the performance monitor unit for the Cortex-A53 cores on the
-R-Car V3M (r8a77970) SoC.
+This patch adjusts the definition of the SMP routine size according
+to the latest changes made by commit:
+"ARM: shmobile: Add watchdog support"
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm/boot/dts/r8a7793.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index 1efaad71804d..50046405d348 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -73,6 +73,13 @@
- 		clock-frequency = <0>;
- 	};
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 61c58029e03e..72d9b0004928 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -392,7 +392,7 @@
  
-+	pmu_a53 {
-+		compatible = "arm,cortex-a53-pmu";
-+		interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&a53_0>, <&a53_1>;
-+	};
-+
- 	psci {
- 		compatible = "arm,psci-1.0", "arm,psci-0.2";
- 		method = "smc";
+ 			smp-sram@0 {
+ 				compatible = "renesas,smp-sram";
+-				reg = <0 0x10>;
++				reg = <0 0x100>;
+ 			};
+ 		};
+ 
 -- 
 2.11.0
