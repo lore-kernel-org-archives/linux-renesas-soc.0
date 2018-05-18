@@ -1,53 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54158 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752421AbeEOMUx (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750888AbeERLRd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 May 2018 08:20:53 -0400
-Received: by mail-wm0-f68.google.com with SMTP id a67-v6so638677wmf.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 15 May 2018 05:20:52 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+        Fri, 18 May 2018 07:17:33 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 2/5] drm: rcar-du: lvds: Add R8A77995 support
-Date: Tue, 15 May 2018 14:20:37 +0200
-Message-Id: <1526386840-15368-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1526386840-15368-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1526386840-15368-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 082/102] arm64: dts: renesas: ulcb: Add PMIC DDR Backup Power config
+Date: Fri, 18 May 2018 13:15:44 +0200
+Message-Id: <1c81a633de0e271d1f6f75f7f3e8a515d4a3085e.1526637994.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
+References: <cover.1526637994.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for the R-Car D3 (R8A77995) SoC to the LVDS encoder driver.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+On the R-Car Starter Kit Premier/Pro, all of the DDR0, DDR1, DDR0C, and
+DDR1C power rails need to be kept powered when backup mode is enabled.
+Reflect this in the "rohm,ddr-backup-power" property for the BD9571MWV
+PMIC node.
+
+The accessory power switch (SW8) is a momentary switch, hense specify
+"rohm,rstbmode-pulse".
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/gpu/drm/rcar-du/rcar_lvds.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm64/boot/dts/renesas/ulcb.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-index 3d2d3bb..58fb9f8 100644
---- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-@@ -511,6 +511,11 @@ static const struct rcar_lvds_device_info rcar_lvds_r8a77970_info = {
- 	.quirks = RCAR_LVDS_QUIRK_GEN2_PLLCR | RCAR_LVDS_QUIRK_GEN3_LVEN,
- };
+diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+index ee4249287fbd..0edb16e6b372 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+@@ -256,6 +256,8 @@
+ 		#interrupt-cells = <2>;
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
++		rohm,ddr-backup-power = <0xf>;
++		rohm,rstbmode-pulse;
  
-+static const struct rcar_lvds_device_info rcar_lvds_r8a77995_info = {
-+	.gen = 3,
-+	.quirks = RCAR_LVDS_QUIRK_GEN3_LVEN,
-+};
-+
- static const struct of_device_id rcar_lvds_of_table[] = {
- 	{ .compatible = "renesas,r8a7743-lvds", .data = &rcar_lvds_gen2_info },
- 	{ .compatible = "renesas,r8a7790-lvds", .data = &rcar_lvds_r8a7790_info },
-@@ -519,6 +524,7 @@ static const struct of_device_id rcar_lvds_of_table[] = {
- 	{ .compatible = "renesas,r8a7795-lvds", .data = &rcar_lvds_gen3_info },
- 	{ .compatible = "renesas,r8a7796-lvds", .data = &rcar_lvds_gen3_info },
- 	{ .compatible = "renesas,r8a77970-lvds", .data = &rcar_lvds_r8a77970_info },
-+	{ .compatible = "renesas,r8a77995-lvds", .data = &rcar_lvds_r8a77995_info },
- 	{ }
- };
- 
+ 		regulators {
+ 			dvfs: dvfs {
 -- 
-2.7.4
+2.11.0
