@@ -1,77 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751744AbeERLUD (ORCPT
+        with ESMTP id S1752205AbeERLSd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:20:03 -0400
+        Fri, 18 May 2018 07:18:33 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 09/14] soc: renesas: rcar-rst: Add support for R-Car E3
-Date: Fri, 18 May 2018 13:18:07 +0200
-Message-Id: <b0d77648e0cd910ff087853237502ff08dfdb352.1526639075.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526639075.git.horms+renesas@verge.net.au>
-References: <cover.1526639075.git.horms+renesas@verge.net.au>
+Subject: [PATCH 08/69] ARM: dts: wheat: Fix ADV7513 address usage
+Date: Fri, 18 May 2018 13:16:41 +0200
+Message-Id: <1d26a5217187189fdbee15bc03d3713d8e8ae7e9.1526641667.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
+References: <cover.1526641667.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Add support for R-Car E3 (R8A77990) to the R-Car RST driver.
-This driver is needed for the clock driver to work.
+The r8a7792 Wheat board has two ADV7513 devices sharing a single I2C
+bus, however in low power mode the ADV7513 will reset it's slave maps to
+use the hardware defined default addresses.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[shimoda: rebase]
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The ADV7511 driver was adapted to allow the two devices to be registered
+correctly - but it did not take into account the fault whereby the
+devices reset the addresses.
+
+This results in an address conflict between the device using the default
+addresses, and the other device if it is in low-power-mode.
+
+Repair this issue by moving both devices away from the default address
+definitions.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Fixes: f6eea82a87db ("ARM: dts: wheat: add DU support")
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/reset/renesas,rst.txt | 1 +
- drivers/soc/renesas/Kconfig                             | 3 ++-
- drivers/soc/renesas/rcar-rst.c                          | 1 +
- 3 files changed, 4 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7792-wheat.dts | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-index 7be61efc3c8a..67e83b02e10b 100644
---- a/Documentation/devicetree/bindings/reset/renesas,rst.txt
-+++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-@@ -30,6 +30,7 @@ Required properties:
- 		  - "renesas,r8a77965-rst" (R-Car M3-N)
- 		  - "renesas,r8a77970-rst" (R-Car V3M)
- 		  - "renesas,r8a77980-rst" (R-Car V3H)
-+		  - "renesas,r8a77990-rst" (R-Car E3)
- 		  - "renesas,r8a77995-rst" (R-Car D3)
-   - reg: Address start and address range for the device.
+diff --git a/arch/arm/boot/dts/r8a7792-wheat.dts b/arch/arm/boot/dts/r8a7792-wheat.dts
+index b9471b67b728..95aab56a56ab 100644
+--- a/arch/arm/boot/dts/r8a7792-wheat.dts
++++ b/arch/arm/boot/dts/r8a7792-wheat.dts
+@@ -240,9 +240,15 @@
+ 	status = "okay";
+ 	clock-frequency = <400000>;
  
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index 96dd93660359..c0e0286a2360 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -4,7 +4,8 @@ config SOC_RENESAS
- 	select SOC_BUS
- 	select RST_RCAR if ARCH_RCAR_GEN1 || ARCH_RCAR_GEN2 || \
- 			   ARCH_R8A7795 || ARCH_R8A7796 || ARCH_R8A77965 || \
--			   ARCH_R8A77970 || ARCH_R8A77980 || ARCH_R8A77995
-+			   ARCH_R8A77970 || ARCH_R8A77980 || ARCH_R8A77990 || \
-+			   ARCH_R8A77995
- 	select SYSC_R8A7743 if ARCH_R8A7743
- 	select SYSC_R8A7745 if ARCH_R8A7745
- 	select SYSC_R8A77470 if ARCH_R8A77470
-diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
-index 66d7dbac2ded..d9c1034e70e9 100644
---- a/drivers/soc/renesas/rcar-rst.c
-+++ b/drivers/soc/renesas/rcar-rst.c
-@@ -60,6 +60,7 @@ static const struct of_device_id rcar_rst_matches[] __initconst = {
- 	{ .compatible = "renesas,r8a77965-rst", .data = &rcar_rst_gen3 },
- 	{ .compatible = "renesas,r8a77970-rst", .data = &rcar_rst_gen3 },
- 	{ .compatible = "renesas,r8a77980-rst", .data = &rcar_rst_gen3 },
-+	{ .compatible = "renesas,r8a77990-rst", .data = &rcar_rst_gen3 },
- 	{ .compatible = "renesas,r8a77995-rst", .data = &rcar_rst_gen3 },
- 	{ /* sentinel */ }
- };
++	/*
++	 * The adv75xx resets its addresses to defaults during low power mode.
++	 * Because we have two ADV7513 devices on the same bus, we must change
++	 * both of them away from the defaults so that they do not conflict.
++	 */
+ 	hdmi@3d {
+ 		compatible = "adi,adv7513";
+-		reg = <0x3d>;
++		reg = <0x3d>, <0x2d>, <0x4d>, <0x5d>;
++		reg-names = "main", "cec", "edid", "packet";
+ 
+ 		adi,input-depth = <8>;
+ 		adi,input-colorspace = "rgb";
+@@ -272,7 +278,8 @@
+ 
+ 	hdmi@39 {
+ 		compatible = "adi,adv7513";
+-		reg = <0x39>;
++		reg = <0x39>, <0x29>, <0x49>, <0x59>;
++		reg-names = "main", "cec", "edid", "packet";
+ 
+ 		adi,input-depth = <8>;
+ 		adi,input-colorspace = "rgb";
 -- 
 2.11.0
