@@ -1,72 +1,48 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
-To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
-Cc: f.fainelli@gmail.com, opendmb@gmail.com,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
-Subject: [PATCH v9 01/12] ARM: Allow this header to be included by assembly files
-Date: Fri,  4 May 2018 21:05:34 +0200
-Message-Id: <20180504190545.5114-2-mylene.josserand@bootlin.com>
-In-Reply-To: <20180504190545.5114-1-mylene.josserand@bootlin.com>
-References: <20180504190545.5114-1-mylene.josserand@bootlin.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750888AbeERLQi (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 18 May 2018 07:16:38 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 034/102] arm64: dts: renesas: draak: Rename EtherAVB "mdc" pin group to "mdio"
+Date: Fri, 18 May 2018 13:14:56 +0200
+Message-Id: <5f7d7808ae1162d55b835cb2faf31db19b69fdf2.1526637994.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
+References: <cover.1526637994.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Doug Berger <opendmb@gmail.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The constants defined in this file are equally useful in assembly and C
-source files. The arm64 architecture version of this file allows
-inclusion in both assembly and C source files, so this this commit adds
-that capability to the arm architecture version so that the constants
-don't need to be defined in multiple places.
+On other Renesas SoCs, the pin group for the MDIO bus is named "mdio"
+instead of "mdc".  Fix the inconsistency, now the pinctrl drivers for
+R-Car H3, M3-W, and M3-N have gained support for the traditional pin
+group name.
 
-Signed-off-by: Doug Berger <opendmb@gmail.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/include/asm/cputype.h | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/include/asm/cputype.h b/arch/arm/include/asm/cputype.h
-index cb546425da8a..e7632f536633 100644
---- a/arch/arm/include/asm/cputype.h
-+++ b/arch/arm/include/asm/cputype.h
-@@ -2,9 +2,6 @@
- #ifndef __ASM_ARM_CPUTYPE_H
- #define __ASM_ARM_CPUTYPE_H
- 
--#include <linux/stringify.h>
--#include <linux/kernel.h>
--
- #define CPUID_ID	0
- #define CPUID_CACHETYPE	1
- #define CPUID_TCM	2
-@@ -98,6 +95,11 @@
- /* Qualcomm implemented cores */
- #define ARM_CPU_PART_SCORPION		0x510002d0
- 
-+#ifndef __ASSEMBLY__
-+
-+#include <linux/stringify.h>
-+#include <linux/kernel.h>
-+
- extern unsigned int processor_id;
- 
- #ifdef CONFIG_CPU_CP15
-@@ -326,4 +328,6 @@ static inline int __attribute_const__ cpuid_feature_extract_field(u32 features,
- #define cpuid_feature_extract(reg, field) \
- 	cpuid_feature_extract_field(read_cpuid_ext(reg), field)
- 
-+#endif /* __ASSEMBLY__ */
-+
- #endif
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+index d03f19414028..9d73de8bc94d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+@@ -91,7 +91,7 @@
+ &pfc {
+ 	avb0_pins: avb {
+ 		mux {
+-			groups = "avb0_link", "avb0_mdc", "avb0_mii";
++			groups = "avb0_link", "avb0_mdio", "avb0_mii";
+ 			function = "avb0";
+ 		};
+ 	};
 -- 
 2.11.0
-
