@@ -1,80 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751744AbeERLT6 (ORCPT
+        with ESMTP id S1752613AbeERLSk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:19:58 -0400
+        Fri, 18 May 2018 07:18:40 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 06/14] ARM: debug-ll: Add support for r8a77470
-Date: Fri, 18 May 2018 13:18:04 +0200
-Message-Id: <2f095c261a0fe15aacf1c3b2958b4d23a4735b4e.1526639075.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526639075.git.horms+renesas@verge.net.au>
-References: <cover.1526639075.git.horms+renesas@verge.net.au>
+Subject: [PATCH 11/69] ARM: dts: renesas: r8a7793: Add FDP1 instances
+Date: Fri, 18 May 2018 13:16:44 +0200
+Message-Id: <d7ce14dfbaff685a65b56bdb6622b430ae9ad57a.1526641667.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
+References: <cover.1526641667.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Enable low-level debugging support for RZ/G1C (r8a77470). RZ/G1C uses
-SCIF1 for the debug console.
+The r8a7793 has two FDP1 instances.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/Kconfig.debug | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7793.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index 199ebc1c4538..693f84392f1b 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -942,6 +942,13 @@ choice
- 		  via SCIF0 on Renesas RZ/G1M (R8A7743), R-Car H2 (R8A7790),
- 		  M2-W (R8A7791), V2H (R8A7792), or M2-N (R8A7793).
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index f9c5a557107d..61c58029e03e 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -1290,6 +1290,24 @@
+ 			resets = <&cpg 408>;
+ 		};
  
-+	config DEBUG_RCAR_GEN2_SCIF1
-+		bool "Kernel low-level debugging messages via SCIF1 on R8A77470"
-+		depends on ARCH_R8A77470
-+		help
-+		  Say Y here if you want kernel low-level debugging support
-+		  via SCIF1 on Renesas RZ/G1C (R8A77470).
++		fdp1@fe940000 {
++			compatible = "renesas,fdp1";
++			reg = <0 0xfe940000 0 0x2400>;
++			interrupts = <GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 119>;
++			power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
++			resets = <&cpg 119>;
++		};
 +
- 	config DEBUG_RCAR_GEN2_SCIF2
- 		bool "Kernel low-level debugging messages via SCIF2 on R8A7794"
- 		depends on ARCH_R8A7794
-@@ -1495,6 +1502,7 @@ config DEBUG_LL_INCLUDE
- 	default "debug/renesas-scif.S" if DEBUG_RCAR_GEN1_SCIF0
- 	default "debug/renesas-scif.S" if DEBUG_RCAR_GEN1_SCIF2
- 	default "debug/renesas-scif.S" if DEBUG_RCAR_GEN2_SCIF0
-+	default "debug/renesas-scif.S" if DEBUG_RCAR_GEN2_SCIF1
- 	default "debug/renesas-scif.S" if DEBUG_RCAR_GEN2_SCIF2
- 	default "debug/renesas-scif.S" if DEBUG_RCAR_GEN2_SCIF4
- 	default "debug/renesas-scif.S" if DEBUG_RMOBILE_SCIFA0
-@@ -1617,6 +1625,7 @@ config DEBUG_UART_PHYS
- 	default 0xe6c80000 if DEBUG_RMOBILE_SCIFA4
- 	default 0xe6e58000 if DEBUG_RCAR_GEN2_SCIF2
- 	default 0xe6e60000 if DEBUG_RCAR_GEN2_SCIF0
-+	default 0xe6e68000 if DEBUG_RCAR_GEN2_SCIF1
- 	default 0xe6ee0000 if DEBUG_RCAR_GEN2_SCIF4
- 	default 0xe8008000 if DEBUG_R7S72100_SCIF2
- 	default 0xf0000be0 if ARCH_EBSA110
-@@ -1651,8 +1660,8 @@ config DEBUG_UART_PHYS
- 		DEBUG_NETX_UART || \
- 		DEBUG_QCOM_UARTDM || DEBUG_R7S72100_SCIF2 || \
- 		DEBUG_RCAR_GEN1_SCIF0 || DEBUG_RCAR_GEN1_SCIF2 || \
--		DEBUG_RCAR_GEN2_SCIF0 || DEBUG_RCAR_GEN2_SCIF2 || \
--		DEBUG_RCAR_GEN2_SCIF4 || \
-+		DEBUG_RCAR_GEN2_SCIF0 || DEBUG_RCAR_GEN2_SCIF1 || \
-+		DEBUG_RCAR_GEN2_SCIF2 || DEBUG_RCAR_GEN2_SCIF4 || \
- 		DEBUG_RMOBILE_SCIFA0 || DEBUG_RMOBILE_SCIFA1 || \
- 		DEBUG_RMOBILE_SCIFA4 || DEBUG_S3C24XX_UART || \
- 		DEBUG_S3C64XX_UART || \
++		fdp1@fe944000 {
++			compatible = "renesas,fdp1";
++			reg = <0 0xfe944000 0 0x2400>;
++			interrupts = <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 118>;
++			power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
++			resets = <&cpg 118>;
++		};
++
+ 		du: display@feb00000 {
+ 			compatible = "renesas,du-r8a7793";
+ 			reg = <0 0xfeb00000 0 0x40000>,
 -- 
 2.11.0
