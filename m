@@ -1,79 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:45943 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751292AbeETJ0g (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751815AbeERLR6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 20 May 2018 05:26:36 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+        Fri, 18 May 2018 07:17:58 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v4 3/3] arm64: dts: renesas: r8a77995: add thermal device support
-Date: Sun, 20 May 2018 18:26:19 +0900
-Message-Id: <1526808379-3850-4-git-send-email-ykaneko0929@gmail.com>
-In-Reply-To: <1526808379-3850-1-git-send-email-ykaneko0929@gmail.com>
-References: <1526808379-3850-1-git-send-email-ykaneko0929@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 035/102] arm64: dts: renesas: salvator-common: Rename EtherAVB "mdc" pin group to "mdio"
+Date: Fri, 18 May 2018 13:14:57 +0200
+Message-Id: <77bf06adb128ef0b47b9c49b1ae8f3313c684a70.1526637994.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
+References: <cover.1526637994.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 82aed7e..d4884e3 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -216,6 +216,18 @@
- 			#power-domain-cells = <1>;
+On other Renesas SoCs, the pin group for the MDIO bus is named "mdio"
+instead of "mdc".  Fix the inconsistency, now the pinctrl drivers for
+R-Car H3, M3-W, and M3-N have gained support for the traditional pin
+group name.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index 2a7f36abd2dd..1642bc9c8906 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -416,12 +416,12 @@
+ 
+ 	avb_pins: avb {
+ 		mux {
+-			groups = "avb_link", "avb_mdc", "avb_mii";
++			groups = "avb_link", "avb_mdio", "avb_mii";
+ 			function = "avb";
  		};
  
-+		thermal: thermal@e6190000 {
-+			compatible = "renesas,thermal-r8a77995";
-+			reg = <0 0xe6190000 0 0x10>, <0 0xe6190100 0 0x38>;
-+			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 522>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 522>;
-+			#thermal-sensor-cells = <0>;
-+		};
-+
- 		intc_ex: interrupt-controller@e61c0000 {
- 			compatible = "renesas,intc-ex-r8a77995", "renesas,irqc";
- 			#interrupt-cells = <2>;
-@@ -785,6 +797,25 @@
+-		pins_mdc {
+-			groups = "avb_mdc";
++		pins_mdio {
++			groups = "avb_mdio";
+ 			drive-strength = <24>;
  		};
- 	};
  
-+	thermal-zones {
-+		cpu_thermal: cpu-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&thermal>;
-+
-+			trips {
-+				cpu-crit {
-+					temperature = <120000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+
-+			cooling-maps {
-+			};
-+		};
-+	};
-+
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
 -- 
-1.9.1
+2.11.0
