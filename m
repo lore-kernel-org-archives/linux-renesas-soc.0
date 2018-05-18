@@ -1,48 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:35211 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750733AbeEDHtl (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750888AbeERLQl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 May 2018 03:49:41 -0400
-MIME-Version: 1.0
-In-Reply-To: <1524828105-26585-4-git-send-email-b.zolnierkie@samsung.com>
-References: <CGME20180427112241epcas1p423b20f397d034a444ec018f39241d82b@epcas1p4.samsung.com>
- <1524828105-26585-1-git-send-email-b.zolnierkie@samsung.com> <1524828105-26585-4-git-send-email-b.zolnierkie@samsung.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 4 May 2018 09:49:39 +0200
-Message-ID: <CAMuHMdUEHosD=RyvQrBEjci1=DBH+2x9r9baX1d=0mx-sCc0qQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] video: fbdev: remove unused sh_mobile_meram driver
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 18 May 2018 07:16:41 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 020/102] arm64: dts: renesas: r8a77970: add DU support
+Date: Fri, 18 May 2018 13:14:42 +0200
+Message-Id: <f66598b95dbac72365f5b81ffa61ca6357af6b22.1526637994.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
+References: <cover.1526637994.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Apr 27, 2018 at 1:21 PM, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
-> Since commit a521422ea4ae  ("ARM: shmobile: mackerel: Remove Legacy C
-> board code") MERAM functionality is unused. Remove it.
->
-> Cc: Simon Horman <horms+renesas@verge.net.au>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Define the generic R8A77970 part of the DU device node.
 
-Gr{oetje,eeting}s,
+Based on the original (and large) patch by Daisuke Matsushita
+<daisuke.matsushita.ns@hitachi.com>.
 
-                        Geert
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+index 9a7cf2ab099e..8efb5c3a5da1 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -635,6 +635,35 @@
+ 			resets = <&cpg 623>;
+ 			renesas,fcp = <&fcpvd0>;
+ 		};
++
++		du: display@feb00000 {
++			compatible = "renesas,du-r8a77970";
++			reg = <0 0xfeb00000 0 0x80000>;
++			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 724>;
++			clock-names = "du.0";
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 724>;
++			vsps = <&vspd0>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					du_out_rgb: endpoint {
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++					du_out_lvds0: endpoint {
++					};
++				};
++			};
++		};
+ 	};
+ 
+ 	timer {
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.11.0
