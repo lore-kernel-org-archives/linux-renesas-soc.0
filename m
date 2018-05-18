@@ -1,48 +1,135 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35069 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032388AbeEZVlA (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751994AbeERLTo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 26 May 2018 17:41:00 -0400
-Received: by mail-wm0-f67.google.com with SMTP id o78-v6so23042142wmg.0
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 26 May 2018 14:41:00 -0700 (PDT)
-Date: Sat, 26 May 2018 14:40:45 -0700
-From: Olof Johansson <olof@lixom.net>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Fri, 18 May 2018 07:19:44 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: arm@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
         Kevin Hilman <khilman@kernel.org>,
         Arnd Bergmann <arnd@arndb.de>,
         linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [GIT PULL] Renesas ARM Based SoC Updates for v4.18
-Message-ID: <20180526214045.ljra2xhkz3sw2ony@localhost>
-References: <cover.1526639075.git.horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1526639075.git.horms+renesas@verge.net.au>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [GIT PULL] Renesas ARM Based SoC Updates for v4.18
+Date: Fri, 18 May 2018 13:18:11 +0200
+Message-Id: <cover.1526639075.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, May 18, 2018 at 01:18:11PM +0200, Simon Horman wrote:
-> Hi Olof, Hi Kevin, Hi Arnd,
-> 
-> Please consider these Renesas ARM based SoC updates for v4.18.
-> 
-> 
-> The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
-> 
->   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-> 
-> are available in the git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-soc-for-v4.18
-> 
-> for you to fetch changes up to 086b399965a7ee7e50c3b3c57f2dba30ff0334b0:
-> 
->   soc: renesas: r8a77990-sysc: Add workaround for 3DG-{A,B} (2018-05-16 10:57:44 +0200)
+Hi Olof, Hi Kevin, Hi Arnd,
 
-Merged, thanks.
+Please consider these Renesas ARM based SoC updates for v4.18.
 
 
--Olof
+The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+
+  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-soc-for-v4.18
+
+for you to fetch changes up to 086b399965a7ee7e50c3b3c57f2dba30ff0334b0:
+
+  soc: renesas: r8a77990-sysc: Add workaround for 3DG-{A,B} (2018-05-16 10:57:44 +0200)
+
+----------------------------------------------------------------
+Renesas ARM Based SoC Updates for v4.18
+
+* SoC
+  - Change platform dependency to ARCH_RENESAS
+
+    Geert Uytterhoeven says "The Renesas Fine Display Processor driver is
+    used on Renesas R-Car SoCs only.  Since commit 9b5ba0df4ea4f940 ("ARM:
+    shmobile: Introduce ARCH_RENESAS") is ARCH_RENESAS a more appropriate
+    platform dependency than the legacy ARCH_SHMOBILE, hence use the
+    former.
+
+    This will allow to drop ARCH_SHMOBILE on ARM and ARM64 in the near
+    future."
+
+  - Add the to Kconfig RZ/N1D (r9a06g032) SoC
+
+    In preparation for upstream support of this SoC
+
+  - Identify R-Car E3 (r8a77990) SoC
+
+  - Identify and add minimal support for RZ/G1C (r8a77470) SoC
+
+* R-Car SYSC
+  - Add support for R-Car E3 (r8a77990) SoC
+
+    Shimoda-san says this adds:
+    + "Cortex-A53 CPU{0,1}, Cortex-A53 SCU, Cortex-R7, A3VC,
+       A2VC1 and 3DG-{A,B} power domain areas..."
+
+    + "workaround for 3DG-{A,B} of R-Car E3 ES1.0 because
+       the SoC has a restriction about the order."
+
+  - Remove unused inclusion of <linux/sys_soc.h>,
+
+  - Make r8a77995_areas[] const.
+
+* R-Car Reset
+
+  - Add support for R-Car E3 (r8a77990) SoC
+
+    This driver is needed for the clock driver to work
+
+* Debug-LL
+
+  - Add support for RZ/G1C (r8a77470) SoC
+
+    RZ/G1C uses SCIF1 for the debug console
+
+----------------------------------------------------------------
+Biju Das (5):
+      soc: renesas: Identify RZ/G1C
+      soc: renesas: rcar-rst: Add support for RZ/G1C
+      soc: renesas: rcar-sysc: Add r8a77470 support
+      ARM: shmobile: r8a77470: basic SoC support
+      ARM: debug-ll: Add support for r8a77470
+
+Geert Uytterhoeven (2):
+      soc: renesas: r8a77995-sysc: Cleanups
+      arm: shmobile: Change platform dependency to ARCH_RENESAS
+
+Michel Pollet (2):
+      ARM: shmobile: Add the RZ/N1 arch to the shmobile Kconfig
+      arm: shmobile: Add the RZ/N1D (R9A06G032) to the shmobile Kconfig
+
+Takeshi Kihara (4):
+      soc: renesas: identify R-Car E3
+      soc: renesas: Add r8a77990 SYSC PM Domain Binding Definitions
+      soc: renesas: rcar-rst: Add support for R-Car E3
+      soc: renesas: rcar-sysc: Add support for R-Car E3 power areas
+
+Yoshihiro Shimoda (1):
+      soc: renesas: r8a77990-sysc: Add workaround for 3DG-{A,B}
+
+ Documentation/devicetree/bindings/arm/shmobile.txt |  2 +
+ .../bindings/power/renesas,rcar-sysc.txt           |  2 +
+ .../devicetree/bindings/reset/renesas,rst.txt      |  2 +
+ arch/arm/Kconfig                                   |  2 +-
+ arch/arm/Kconfig.debug                             | 13 ++++-
+ arch/arm/Makefile                                  |  2 +-
+ arch/arm/mach-shmobile/Kconfig                     | 13 +++++
+ arch/arm/mach-shmobile/setup-rcar-gen2.c           |  2 +
+ drivers/soc/renesas/Kconfig                        | 13 ++++-
+ drivers/soc/renesas/Makefile                       |  2 +
+ drivers/soc/renesas/r8a77470-sysc.c                | 29 +++++++++
+ drivers/soc/renesas/r8a77990-sysc.c                | 68 ++++++++++++++++++++++
+ drivers/soc/renesas/r8a77995-sysc.c                |  3 +-
+ drivers/soc/renesas/rcar-rst.c                     |  2 +
+ drivers/soc/renesas/rcar-sysc.c                    |  6 ++
+ drivers/soc/renesas/rcar-sysc.h                    |  2 +
+ drivers/soc/renesas/renesas-soc.c                  | 16 +++++
+ include/dt-bindings/power/r8a77470-sysc.h          | 22 +++++++
+ include/dt-bindings/power/r8a77990-sysc.h          | 26 +++++++++
+ 19 files changed, 220 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/soc/renesas/r8a77470-sysc.c
+ create mode 100644 drivers/soc/renesas/r8a77990-sysc.c
+ create mode 100644 include/dt-bindings/power/r8a77470-sysc.h
+ create mode 100644 include/dt-bindings/power/r8a77990-sysc.h
