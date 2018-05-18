@@ -1,97 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:55306 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754329AbeEWKw3 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752648AbeERLTH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 May 2018 06:52:29 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-pci@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] PCI: rcar: Remove IRQ mappings in rcar_pcie_enable_msi failpath
-Date: Wed, 23 May 2018 12:52:20 +0200
-Message-Id: <20180523105220.25518-1-marek.vasut+renesas@gmail.com>
+        Fri, 18 May 2018 07:19:07 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 45/69] ARM: dts: r8a7790: Fix sort order of VSP1/FDP1 nodes
+Date: Fri, 18 May 2018 13:17:18 +0200
+Message-Id: <b9ac80c815eabb81b66dc2dad2bb1a376915aeca.1526641667.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
+References: <cover.1526641667.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The rcar_pcie_enable_msi() creates IRQ mappings using irq_create_mapping()
-before requesting the IRQs using devm_request_irq(). If devm_request_irq()
-fails for some reason, rcar_pcie_enable_msi() does not remove the mapping.
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Pull out the code for disposing IRQ mappings from rcar_pcie_teardown_msi()
-into a separate function and call it from both rcar_pcie_teardown_msi()
-and rcar_pcie_enable_msi() failpath to remove the mappings correctly.
+Commit 5d3b50d3c04d ("ARM: dts: renesas: r8a7790: Add FDP1 instances")
+introduced the FDP1 for the r8a7790, but broke the sort ordering of the
+device tree nodes.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
+Move the last VSP up to it's peers to correct the ordering.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/pci/host/pcie-rcar.c | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+ arch/arm/boot/dts/r8a7790.dtsi | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 3aa6fe5f2d64..e738d65c22e9 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -843,6 +843,20 @@ static const struct irq_domain_ops msi_domain_ops = {
- 	.map = rcar_msi_map,
- };
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 0f1948d560d7..b64d99e3ad9d 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1616,6 +1616,15 @@
+ 			resets = <&cpg 128>;
+ 		};
  
-+static void rcar_pcie_unmap_msi(struct rcar_pcie *pcie)
-+{
-+	struct rcar_msi *msi = &pcie->msi;
-+	int i, irq;
++		vsp@fe938000 {
++			compatible = "renesas,vsp1";
++			reg = <0 0xfe938000 0 0x8000>;
++			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 127>;
++			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
++			resets = <&cpg 127>;
++		};
 +
-+	for (i = 0; i < INT_PCI_MSI_NR; i++) {
-+		irq = irq_find_mapping(msi->domain, i);
-+		if (irq > 0)
-+			irq_dispose_mapping(irq);
-+	}
-+
-+	irq_domain_remove(msi->domain);
-+}
-+
- static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
- {
- 	struct device *dev = pcie->dev;
-@@ -897,14 +911,13 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
- 	return 0;
+ 		fdp1@fe940000 {
+ 			compatible = "renesas,fdp1";
+ 			reg = <0 0xfe940000 0 0x2400>;
+@@ -1643,15 +1652,6 @@
+ 			resets = <&cpg 117>;
+ 		};
  
- err:
--	irq_domain_remove(msi->domain);
-+	rcar_pcie_unmap_msi(pcie);
- 	return err;
- }
- 
- static void rcar_pcie_teardown_msi(struct rcar_pcie *pcie)
- {
- 	struct rcar_msi *msi = &pcie->msi;
--	int irq, i;
- 
- 	/* Disable all MSI interrupts */
- 	rcar_pci_write_reg(pcie, 0, PCIEMSIIER);
-@@ -914,13 +927,7 @@ static void rcar_pcie_teardown_msi(struct rcar_pcie *pcie)
- 
- 	free_pages(msi->pages, 0);
- 
--	for (i = 0; i < INT_PCI_MSI_NR; i++) {
--		irq = irq_find_mapping(msi->domain, i);
--		if (irq > 0)
--			irq_dispose_mapping(irq);
--	}
+-		vsp@fe938000 {
+-			compatible = "renesas,vsp1";
+-			reg = <0 0xfe938000 0 0x8000>;
+-			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&cpg CPG_MOD 127>;
+-			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+-			resets = <&cpg 127>;
+-		};
 -
--	irq_domain_remove(msi->domain);
-+	rcar_pcie_unmap_msi(pcie);
- }
- 
- static int rcar_pcie_get_resources(struct rcar_pcie *pcie)
+ 		jpu: jpeg-codec@fe980000 {
+ 			compatible = "renesas,jpu-r8a7790",
+ 				     "renesas,rcar-gen2-jpu";
 -- 
-2.16.2
+2.11.0
