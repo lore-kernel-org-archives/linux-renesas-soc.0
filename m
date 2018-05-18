@@ -1,60 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752128AbeERLTs (ORCPT
+        with ESMTP id S1751569AbeERLTX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:19:48 -0400
+        Fri, 18 May 2018 07:19:23 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 01/14] soc: renesas: Identify RZ/G1C
-Date: Fri, 18 May 2018 13:17:59 +0200
-Message-Id: <1daf13ba10378cad9ea4f5f26b83dd36c36dcdc0.1526639075.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526639075.git.horms+renesas@verge.net.au>
-References: <cover.1526639075.git.horms+renesas@verge.net.au>
+Subject: [PATCH 55/69] ARM: dts: r8a73a4: Correct mask for GIC PPI interrupts
+Date: Fri, 18 May 2018 13:17:28 +0200
+Message-Id: <45e75c425bdd1dd75d93eeaaef4c81d1563f2efa.1526641667.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
+References: <cover.1526641667.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add support for identifying the RZ/G1C (r8a77470) SoC.
+R-Mobile APE6 (r8a73a4) contains four Cortex-A15 and four Cortex-A7
+cores, hence the second interrupt specifier cell for Private Peripheral
+Interrupts should use "GIC_CPU_MASK_SIMPLE(8)", so GIC interrupts are
+delivered to all 8 processor cores.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/soc/renesas/renesas-soc.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/boot/dts/r8a73a4.dtsi | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
-index ea71c413c926..3912a71bd417 100644
---- a/drivers/soc/renesas/renesas-soc.c
-+++ b/drivers/soc/renesas/renesas-soc.c
-@@ -100,6 +100,11 @@ static const struct renesas_soc soc_rz_g1e __initconst __maybe_unused = {
- 	.id	= 0x4c,
- };
+diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
+index 8e48090e4fdc..080d037f5733 100644
+--- a/arch/arm/boot/dts/r8a73a4.dtsi
++++ b/arch/arm/boot/dts/r8a73a4.dtsi
+@@ -57,10 +57,10 @@
  
-+static const struct renesas_soc soc_rz_g1c __initconst __maybe_unused = {
-+	.family	= &fam_rzg,
-+	.id	= 0x53,
-+};
-+
- static const struct renesas_soc soc_rcar_m1a __initconst __maybe_unused = {
- 	.family	= &fam_rcar_gen1,
- };
-@@ -192,6 +197,9 @@ static const struct of_device_id renesas_socs[] __initconst = {
- #ifdef CONFIG_ARCH_R8A7745
- 	{ .compatible = "renesas,r8a7745",	.data = &soc_rz_g1e },
- #endif
-+#ifdef CONFIG_ARCH_R8A77470
-+	{ .compatible = "renesas,r8a77470",	.data = &soc_rz_g1c },
-+#endif
- #ifdef CONFIG_ARCH_R8A7778
- 	{ .compatible = "renesas,r8a7778",	.data = &soc_rcar_m1a },
- #endif
+ 	timer {
+ 		compatible = "arm,armv7-timer";
+-		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+-			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+-			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+-			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
++		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
+ 	};
+ 
+ 	dbsc1: memory-controller@e6790000 {
+@@ -464,7 +464,7 @@
+ 			<0 0xf1002000 0 0x2000>,
+ 			<0 0xf1004000 0 0x2000>,
+ 			<0 0xf1006000 0 0x2000>;
+-		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
+ 		clocks = <&mstp4_clks R8A73A4_CLK_INTC_SYS>;
+ 		clock-names = "clk";
+ 		power-domains = <&pd_c4>;
 -- 
 2.11.0
