@@ -1,77 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:37869 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751214AbeEVMDS (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750888AbeERLRA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 May 2018 08:03:18 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 7/9] ARM: dts: gose: Drop MTD partitioning from DT
-Date: Tue, 22 May 2018 14:02:55 +0200
-Message-Id: <20180522120257.13232-7-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180522120257.13232-1-marek.vasut+renesas@gmail.com>
-References: <20180522120257.13232-1-marek.vasut+renesas@gmail.com>
+        Fri, 18 May 2018 07:17:00 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 052/102] arm64: dts: renesas: r8a77990: Revise the psci node
+Date: Fri, 18 May 2018 13:15:14 +0200
+Message-Id: <bc26b8f4e43acc4d2e3ae0bbf8f20515b4de5c5b.1526637994.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
+References: <cover.1526637994.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Drop the MTD partitioning from DT, since it does not describe HW
-and to give way to a more flexible kernel command line partition
-passing.
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-To retain the original partitioning, assure you have enabled
-CONFIG_MTD_CMDLINE_PARTS in your kernel config and add the
-following to your kernel command line:
+The basic support patch 9491a8b17530 ("arm64: dts: renesas: Add Renesas
+R8A77990 SoC support") lacks the compatible "arm,psci-1.0" in the psci
+node. So, this patch revises it.
 
-  mtdparts=spi0.0:256k@0(loader),4096k(user),-(flash)
-
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7793-gose.dts | 21 ---------------------
- 1 file changed, 21 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index aa209f6e5d71..b2dd54fbe40c 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -676,27 +676,6 @@
- 		spi-cpol;
- 		spi-cpha;
- 		m25p,fast-read;
--
--		partitions {
--			compatible = "fixed-partitions";
--			#address-cells = <1>;
--			#size-cells = <1>;
--
--			partition@0 {
--				label = "loader";
--				reg = <0x00000000 0x00040000>;
--				read-only;
--			};
--			partition@40000 {
--				label = "user";
--				reg = <0x00040000 0x00400000>;
--				read-only;
--			};
--			partition@440000 {
--				label = "flash";
--				reg = <0x00440000 0x03bc0000>;
--			};
--		};
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index 3a19b9ebdd6e..19c1f7cea913 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -50,7 +50,7 @@
  	};
- };
+ 
+ 	psci {
+-		compatible = "arm,psci-0.2";
++		compatible = "arm,psci-1.0", "arm,psci-0.2";
+ 		method = "smc";
+ 	};
  
 -- 
-2.16.2
+2.11.0
