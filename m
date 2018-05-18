@@ -1,52 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:41736 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752464AbeEGN5J (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751581AbeERLTD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 May 2018 09:57:09 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/8] ARM: dts: r8a7792: Add PMU device node
-Date: Mon,  7 May 2018 15:57:03 +0200
-Message-Id: <1525701427-12914-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1525701427-12914-1-git-send-email-geert+renesas@glider.be>
-References: <1525701427-12914-1-git-send-email-geert+renesas@glider.be>
+        Fri, 18 May 2018 07:19:03 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 42/69] ARM: dts: renesas: r8a7790: Add FDP1 instances
+Date: Fri, 18 May 2018 13:17:15 +0200
+Message-Id: <5d3b50d3c04dc277258dfca02afdddd8e69ecd29.1526641667.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
+References: <cover.1526641667.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable support for the ARM Performance Monitor Units in the Cortex-A15
-CPU cores on R-Car V2H by adding a device node for the PMU.
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-New Linux output:
+The r8a7790 has three FDP1 instances.
 
-    hw perfevents: enabled with armv7_cortex_a15 PMU driver, 7 counters available
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7792.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm/boot/dts/r8a7790.dtsi | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index d2cf8dd2d9b03624..f44257dd86f66289 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -85,6 +85,13 @@
- 		clock-frequency = <0>;
- 	};
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 7ba62b7aa0ba..0f1948d560d7 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1616,6 +1616,33 @@
+ 			resets = <&cpg 128>;
+ 		};
  
-+	pmu {
-+		compatible = "arm,cortex-a15-pmu";
-+		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&cpu0>, <&cpu1>;
-+	};
++		fdp1@fe940000 {
++			compatible = "renesas,fdp1";
++			reg = <0 0xfe940000 0 0x2400>;
++			interrupts = <GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 119>;
++			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
++			resets = <&cpg 119>;
++		};
 +
- 	/* External SCIF clock */
- 	scif_clk: scif {
- 		compatible = "fixed-clock";
++		fdp1@fe944000 {
++			compatible = "renesas,fdp1";
++			reg = <0 0xfe944000 0 0x2400>;
++			interrupts = <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 118>;
++			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
++			resets = <&cpg 118>;
++		};
++
++		fdp1@fe948000 {
++			compatible = "renesas,fdp1";
++			reg = <0 0xfe948000 0 0x2400>;
++			interrupts = <GIC_SPI 264 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 117>;
++			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
++			resets = <&cpg 117>;
++		};
++
+ 		vsp@fe938000 {
+ 			compatible = "renesas,vsp1";
+ 			reg = <0 0xfe938000 0 0x8000>;
 -- 
-2.7.4
+2.11.0
