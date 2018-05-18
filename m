@@ -1,65 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:43331 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751309AbeEPCCC (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751473AbeERLUH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 May 2018 22:02:02 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/7] arm64: dts: renesas: enable VIN, CSI-2 and ADV7482
-Date: Wed, 16 May 2018 03:58:47 +0200
-Message-Id: <20180516015854.19432-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 18 May 2018 07:20:07 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 14/14] soc: renesas: r8a77990-sysc: Add workaround for 3DG-{A,B}
+Date: Fri, 18 May 2018 13:18:12 +0200
+Message-Id: <086b399965a7ee7e50c3b3c57f2dba30ff0334b0.1526639075.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526639075.git.horms+renesas@verge.net.au>
+References: <cover.1526639075.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-This series enable capture for H3, M3-W, M3-N Salvator-X and Salvator-XS 
-boards. It also adds the VIN and CSI-2 nodes for V3M, but as the ADV7482 
-is on the V3M expansion boards I have chosen not include that enablement 
-in this series.
+This patch adds workaround for 3DG-{A,B} of R-Car E3 ES1.0 because
+the SoC has a restriction about the order.
 
-Patch 1-5/6 adds the VIN and CSI-2 for each SoC, patch 5/6 adds the 
-ADV7482 to the common salvator-common.dtsi which is shared between all 
-Salvator-{X,XS} boards. And finally patch 6/6 set the status of the VINs 
-to okay.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/soc/renesas/r8a77990-sysc.c | 37 ++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 36 insertions(+), 1 deletion(-)
 
-The CSI-2 bindings are acked and in Sakaris branch for-4.18-6 [1]. All 
-VIN bindings except r8a77965 is already in the media tree [2]. The 
-r8a77965 compability string [3] have not yet been picked up but as it 
-just building on the already accepted pattern I see little risk. If this 
-troubles please disregard patch 4/6.
-
-1. https://git.linuxtv.org/sailus/media_tree.git/
-2. https://git.linuxtv.org/media_tree.git/
-3. https://patchwork.linuxtv.org/patch/49476/
-
-Kieran Bingham (1):
-  arm64: dts: renesas: salvator-common: Add ADV7482 support
-
-Niklas Söderlund (6):
-  arm64: dts: renesas: r8a7795: add VIN and CSI-2 nodes
-  arm64: dts: renesas: r8a7795-es1: add CSI-2 node
-  arm64: dts: renesas: r8a7796: add VIN and CSI-2 nodes
-  arm64: dts: renesas: r8a77965: add VIN and CSI-2 nodes
-  arm64: dts: renesas: r8a77970: add VIN and CSI-2 nodes
-  arm64: dts: renesas: salvator-common: enable VIN
-
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi  | 143 +++++++
- arch/arm64/boot/dts/renesas/r8a7795.dtsi      | 389 ++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a7796.dtsi      | 367 +++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77965.dtsi     | 326 ++++++++++++++-
- arch/arm64/boot/dts/renesas/r8a77970.dtsi     | 152 +++++++
- .../boot/dts/renesas/salvator-common.dtsi     | 135 ++++++
- 6 files changed, 1502 insertions(+), 10 deletions(-)
-
+diff --git a/drivers/soc/renesas/r8a77990-sysc.c b/drivers/soc/renesas/r8a77990-sysc.c
+index a8c6417fcd2b..15579ebc5ed2 100644
+--- a/drivers/soc/renesas/r8a77990-sysc.c
++++ b/drivers/soc/renesas/r8a77990-sysc.c
+@@ -7,12 +7,13 @@
+ 
+ #include <linux/bug.h>
+ #include <linux/kernel.h>
++#include <linux/sys_soc.h>
+ 
+ #include <dt-bindings/power/r8a77990-sysc.h>
+ 
+ #include "rcar-sysc.h"
+ 
+-static const struct rcar_sysc_area r8a77990_areas[] __initconst = {
++static struct rcar_sysc_area r8a77990_areas[] __initdata = {
+ 	{ "always-on",	    0, 0, R8A77990_PD_ALWAYS_ON, -1, PD_ALWAYS_ON },
+ 	{ "ca53-scu",	0x140, 0, R8A77990_PD_CA53_SCU,  R8A77990_PD_ALWAYS_ON,
+ 	  PD_SCU },
+@@ -27,7 +28,41 @@ static const struct rcar_sysc_area r8a77990_areas[] __initconst = {
+ 	{ "3dg-b",	0x100, 1, R8A77990_PD_3DG_B,	R8A77990_PD_3DG_A },
+ };
+ 
++static void __init rcar_sysc_fix_parent(struct rcar_sysc_area *areas,
++					unsigned int num_areas, u8 id,
++					int new_parent)
++{
++	unsigned int i;
++
++	for (i = 0; i < num_areas; i++)
++		if (areas[i].isr_bit == id) {
++			areas[i].parent = new_parent;
++			return;
++		}
++}
++
++/* Fixups for R-Car E3 ES1.0 revision */
++static const struct soc_device_attribute r8a77990[] __initconst = {
++	{ .soc_id = "r8a77990", .revision = "ES1.0" },
++	{ /* sentinel */ }
++};
++
++static int __init r8a77990_sysc_init(void)
++{
++	if (soc_device_match(r8a77990)) {
++		rcar_sysc_fix_parent(r8a77990_areas,
++				     ARRAY_SIZE(r8a77990_areas),
++				     R8A77990_PD_3DG_A, R8A77990_PD_3DG_B);
++		rcar_sysc_fix_parent(r8a77990_areas,
++				     ARRAY_SIZE(r8a77990_areas),
++				     R8A77990_PD_3DG_B, R8A77990_PD_ALWAYS_ON);
++	}
++
++	return 0;
++}
++
+ const struct rcar_sysc_info r8a77990_sysc_info __initconst = {
++	.init = r8a77990_sysc_init,
+ 	.areas = r8a77990_areas,
+ 	.num_areas = ARRAY_SIZE(r8a77990_areas),
+ };
 -- 
-2.17.0
+2.11.0
