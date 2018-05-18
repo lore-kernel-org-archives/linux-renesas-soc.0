@@ -1,62 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:60158 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750883AbeETHEV (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751569AbeERLSN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 20 May 2018 03:04:21 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v6 9/9] v4l: vsp1: Reduce display list body size
-Date: Sun, 20 May 2018 10:04:43 +0300
-Message-ID: <2794710.jCN7UpUv5u@avalon>
-In-Reply-To: <e0ad4e839ffffb002ced5e960b43f5a54cd0260e.1519850924.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.d841c9354585c652c97473ace29c877b9395e83b.1519850924.git-series.kieran.bingham+renesas@ideasonboard.com> <e0ad4e839ffffb002ced5e960b43f5a54cd0260e.1519850924.git-series.kieran.bingham+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Fri, 18 May 2018 07:18:13 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/6] dt-bindings: arm: Document R-Car E3 SoC DT bindings
+Date: Fri, 18 May 2018 13:16:44 +0200
+Message-Id: <6fdc4f90b4950a7df1d314bdc53e25c1c4e70dc9.1526549153.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526549153.git.horms+renesas@verge.net.au>
+References: <cover.1526549153.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-On Wednesday, 28 February 2018 22:52:43 EEST Kieran Bingham wrote:
-> The display list originally allocated a body of 256 entries to store all
-> of the register lists required for each frame.
-> 
-> This has now been separated into fragments for constant stream setup, and
-> runtime updates.
-> 
-> Empirical testing shows that the body0 now uses a maximum of 41
-> registers for each frame, for both DRM and Video API pipelines thus a
-> rounded 64 entries provides a suitable allocation.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+This patch adds device tree bindings documentation for Renesas R-Car
+E3 (r8a77990).
 
-Just wondering, why have you dropped this from new versions of the patch 
-series ?
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> ---
->  drivers/media/platform/vsp1/vsp1_dl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c
-> b/drivers/media/platform/vsp1/vsp1_dl.c index a762e840d147..6b5743a431a2
-> 100644
-> --- a/drivers/media/platform/vsp1/vsp1_dl.c
-> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
-> @@ -21,7 +21,7 @@
->  #include "vsp1.h"
->  #include "vsp1_dl.h"
-> 
-> -#define VSP1_DL_NUM_ENTRIES		256
-> +#define VSP1_DL_NUM_ENTRIES		64
-> 
->  #define VSP1_DLH_INT_ENABLE		(1 << 1)
->  #define VSP1_DLH_AUTO_START		(1 << 0)
-
-
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 29093ba6c5d0..e1a24708a284 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -45,6 +45,8 @@ SoCs:
+     compatible = "renesas,r8a77970"
+   - R-Car V3H (R8A77980)
+     compatible = "renesas,r8a77980"
++  - R-Car E3 (R8A77990)
++    compatible = "renesas,r8a77990"
+   - R-Car D3 (R8A77995)
+     compatible = "renesas,r8a77995"
+ 
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
