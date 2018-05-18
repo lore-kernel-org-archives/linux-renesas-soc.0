@@ -1,74 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:50100 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750722AbeELIJ1 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750888AbeERLST (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 12 May 2018 04:09:27 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Geert Uytterhoeven <geert@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [GIT PULL FOR renesas-drivers] drm/du/m3n
-Date: Sat, 12 May 2018 09:09:22 +0100
-Message-Id: <20180512080922.22025-1-kieran.bingham+renesas@ideasonboard.com>
+        Fri, 18 May 2018 07:18:19 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 5/6] dt-bindings: timer: renesas, cmt: Document r8a774[35] CMT support
+Date: Fri, 18 May 2018 13:16:47 +0200
+Message-Id: <24d79d738b6fed977f44cae2ca277a49a7aa5f70.1526549153.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526549153.git.horms+renesas@verge.net.au>
+References: <cover.1526549153.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Please consider including this release in renesas-drivers.
+Document SoC specific compatible strings for r8a7743 and r8a7745.
+No driver change is needed as the fallback strings will activate
+the right code.
 
---
-Regards
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ Documentation/devicetree/bindings/timer/renesas,cmt.txt | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-Kieran
-
-The following changes since commit 6d08b06e67cd117f6992c46611dfb4ce267cd71e:
-
-  Linux 4.17-rc2 (2018-04-22 19:20:09 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git tags/drm/du/m3n
-
-for you to fetch changes up to f1e9a22ac3cff749077f40bf1a149aaaf587ae2d:
-
-  drm: rcar-du: Add R8A77965 support (2018-05-05 17:11:20 +0300)
-
-----------------------------------------------------------------
-drm: rcar-du: Provide support for the M3-N
-
-The M3-N has non linear addressing of it's group objects, which was not
-supported by the rcar-du driver implementation due to asumptions on the
-match between a CRTC index, and the hardware indexes.
-
-Implement support to remove this assumption and enable the M3-N
-
-----------------------------------------------------------------
-Kieran Bingham (9):
-      drm: rcar-du: of: Include header to define prototypes
-      drm: rcar-du: Use NULL for table initialisation
-      dt-bindings: display: renesas: du: Increase indent in output table
-      dt-bindings: display: renesas: du: Document the r8a77965 bindings
-      drm: rcar-du: Use the correct naming for ODPM fields in DEFR6
-      dt-bindings: display: renesas: Add R-Car M3-N HDMI TX DT bindings
-      drm: rcar-du: Split CRTC handling to support hardware indexing
-      drm: rcar-du: Allow DU groups to work with hardware indexing
-      drm: rcar-du: Add R8A77965 support
-
-Laurent Pinchart (1):
-      drm: rcar-du: Zero-out sg_tables when duplicating plane state
-
- .../bindings/display/bridge/renesas,dw-hdmi.txt    |  1 +
- .../devicetree/bindings/display/renesas,du.txt     | 28 ++++++------
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c             | 26 ++++++-----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h             |  3 +-
- drivers/gpu/drm/rcar-du/rcar_du_drv.c              | 51 +++++++++++++++++-----
- drivers/gpu/drm/rcar-du/rcar_du_drv.h              |  4 +-
- drivers/gpu/drm/rcar-du/rcar_du_group.c            | 16 ++++---
- drivers/gpu/drm/rcar-du/rcar_du_group.h            |  2 +
- drivers/gpu/drm/rcar-du/rcar_du_kms.c              | 25 ++++++++---
- drivers/gpu/drm/rcar-du/rcar_du_of.c               |  1 +
- drivers/gpu/drm/rcar-du/rcar_du_regs.h             | 16 +++----
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c              |  5 +--
- 12 files changed, 115 insertions(+), 63 deletions(-)
+diff --git a/Documentation/devicetree/bindings/timer/renesas,cmt.txt b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
+index d740989eb569..b40add2d9bb4 100644
+--- a/Documentation/devicetree/bindings/timer/renesas,cmt.txt
++++ b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
+@@ -22,6 +22,10 @@ Required Properties:
+ 
+     - "renesas,r8a73a4-cmt0" for the 32-bit CMT0 device included in r8a73a4.
+     - "renesas,r8a73a4-cmt1" for the 48-bit CMT1 device included in r8a73a4.
++    - "renesas,r8a7743-cmt0" for the 32-bit CMT0 device included in r8a7743.
++    - "renesas,r8a7743-cmt1" for the 48-bit CMT1 device included in r8a7743.
++    - "renesas,r8a7745-cmt0" for the 32-bit CMT0 device included in r8a7745.
++    - "renesas,r8a7745-cmt1" for the 48-bit CMT1 device included in r8a7745.
+     - "renesas,r8a7790-cmt0" for the 32-bit CMT0 device included in r8a7790.
+     - "renesas,r8a7790-cmt1" for the 48-bit CMT1 device included in r8a7790.
+     - "renesas,r8a7791-cmt0" for the 32-bit CMT0 device included in r8a7791.
+@@ -31,10 +35,12 @@ Required Properties:
+     - "renesas,r8a7794-cmt0" for the 32-bit CMT0 device included in r8a7794.
+     - "renesas,r8a7794-cmt1" for the 48-bit CMT1 device included in r8a7794.
+ 
+-    - "renesas,rcar-gen2-cmt0" for 32-bit CMT0 devices included in R-Car Gen2.
+-    - "renesas,rcar-gen2-cmt1" for 48-bit CMT1 devices included in R-Car Gen2.
+-		These are fallbacks for r8a73a4 and all the R-Car Gen2
+-		entries	listed above.
++    - "renesas,rcar-gen2-cmt0" for 32-bit CMT0 devices included in R-Car Gen2
++		and RZ/G1.
++    - "renesas,rcar-gen2-cmt1" for 48-bit CMT1 devices included in R-Car Gen2
++		and RZ/G1.
++		These are fallbacks for r8a73a4, R-Car Gen2 and RZ/G1 entries
++		listed above.
+ 
+   - reg: base address and length of the registers block for the timer module.
+   - interrupts: interrupt-specifier for the timer, one per channel.
+-- 
+2.11.0
