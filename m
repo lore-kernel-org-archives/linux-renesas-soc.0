@@ -1,48 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750888AbeERLR0 (ORCPT
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:53467 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751418AbeEROsN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:17:26 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 075/102] arm64: dts: renesas: r8a7795: salvator-xs: enable hsusb channel 3 node
-Date: Fri, 18 May 2018 13:15:37 +0200
-Message-Id: <5650011a0607930b1691108ad66034aef1a75fa0.1526637994.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
-References: <cover.1526637994.git.horms+renesas@verge.net.au>
+        Fri, 18 May 2018 10:48:13 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
+        horms@verge.net.au, geert@glider.be, magnus.damm@gmail.com,
+        robh+dt@kernel.org
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/3] dt-bindings: media: rcar-vin: Add R8A77995 support
+Date: Fri, 18 May 2018 16:47:56 +0200
+Message-Id: <1526654878-11143-2-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1526654878-11143-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1526654878-11143-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Add compatible string for R-Car D3 R8A7795 to list of SoCs supported by
+rcar-vin driver.
 
-This patch enables HS-USB channel3 node for r8a7795 with Salvator-XS.
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+ Documentation/devicetree/bindings/media/rcar_vin.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-index 622b2a22ab0f..bbf5a8812b70 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-@@ -56,6 +56,11 @@
- 	status = "okay";
- };
- 
-+&hsusb3 {
-+	dr_mode = "otg";
-+	status = "okay";
-+};
-+
- &sound_card {
- 	dais = <&rsnd_port0	/* ak4613 */
- 		&rsnd_port1	/* HDMI0  */
--- 
-2.11.0
+diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
+index a19517e1..5c6f2a7 100644
+--- a/Documentation/devicetree/bindings/media/rcar_vin.txt
++++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
+@@ -22,6 +22,7 @@ on Gen3 platforms to a CSI-2 receiver.
+    - "renesas,vin-r8a7795" for the R8A7795 device
+    - "renesas,vin-r8a7796" for the R8A7796 device
+    - "renesas,vin-r8a77970" for the R8A77970 device
++   - "renesas,vin-r8a77995" for the R8A77995 device
+    - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 or RZ/G1 compatible
+      device.
+
+--
+2.7.4
