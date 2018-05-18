@@ -1,80 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:54014 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932847AbeE2K7D (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33707 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750888AbeERLO6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 May 2018 06:59:03 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 0/1] i2c: rcar: handle RXDMA HW bug on Gen3
-Date: Tue, 29 May 2018 12:58:46 +0200
-Message-Id: <20180529105847.15663-1-wsa+renesas@sang-engineering.com>
+        Fri, 18 May 2018 07:14:58 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/3] arm64: defconfig: makes SND_SIMPLE_CARD to module
+Date: Fri, 18 May 2018 13:14:49 +0200
+Message-Id: <93f7bfd930c04039288db0a6bc46596aad5bd8b9.1526548323.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526548323.git.horms+renesas@verge.net.au>
+References: <cover.1526548323.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-As mentioned in the patch description, this patch works around a HW bug on
-Renesas R-Car Gen3 SoCs. It had not been discovered yet because it only happens
-when clearing DMA enable bits is too late because of latency. To reproduce the
-problem reliably, the below patch was used [1].
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-To the best of my knowledge, all Gen3 SoCs are affected, so I didn't add any
-soc_device_match kind of matching for now. If the situation changes, we can add
-it. For now, priv->devtype is good.
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/configs/defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The improvement can be shown by using the following command. Before the patch,
-executed on a Salvator-X / R-Car M3-W ES1.0:
-
-# i2ctransfer -y 2 w1@0x10 0 r16 w1 0 r16
-0x0f 0x07 0x3f 0x20 0x20 0x55 0x05 0x07 0x0f 0x07 0x3f 0x00 0x00 0x00 0x00 0x00
-0xfe 0x0f 0x07 0x3f 0x20 0x20 0x55 0x05 0x07 0x0f 0x07 0x3f 0x00 0x00 0x00 0x00
-# i2ctransfer -y 2 w1@0x10 0 r16 w1 0 r16
-0xfe 0x0f 0x07 0x3f 0x20 0x20 0x55 0x05 0x07 0x0f 0x07 0x3f 0x00 0x00 0x00 0x00
-0xfe 0x0f 0x07 0x3f 0x20 0x20 0x55 0x05 0x07 0x0f 0x07 0x3f 0x00 0x00 0x00 0x00
-
-Note the broken first byte (0xfe) after the first successful RXDMA transfer.
-After the patch (tested with and without CONFIG_RESET_CONTROLLER):
-
-# i2ctransfer -y 2 w1@0x10 0 r16 w1 0 r16
-0x0f 0x07 0x3f 0x20 0x20 0x55 0x05 0x07 0x0f 0x07 0x3f 0x00 0x00 0x00 0x00 0x00
-0x0f 0x07 0x3f 0x20 0x20 0x55 0x05 0x07 0x0f 0x07 0x3f 0x00 0x00 0x00 0x00 0x00
-# i2ctransfer -y 2 w1@0x10 0 r16 w1 0 r16
-0x0f 0x07 0x3f 0x20 0x20 0x55 0x05 0x07 0x0f 0x07 0x3f 0x00 0x00 0x00 0x00 0x00
-0x0f 0x07 0x3f 0x20 0x20 0x55 0x05 0x07 0x0f 0x07 0x3f 0x00 0x00 0x00 0x00 0x00
-
-Looks way better!
-
-Patch was tested with current renesas-drivers/master, but should also apply cleanly
-on i2c/for-next or v4.17-rc7. Please test and comment.
-
-Kind regards,
-
-   Wolfram
-
-
-Wolfram Sang (1):
-  i2c: rcar: handle RXDMA HW bug on Gen3
-
- drivers/i2c/busses/i2c-rcar.c | 29 ++++++++++++++++++++++++++---
- 1 file changed, 26 insertions(+), 3 deletions(-)
-
-
-[1] Testcase patch:
-
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index d445b5891280..e42cd0121862 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -353,6 +353,7 @@ static void rcar_i2c_dma_unmap(struct rcar_i2c_priv *priv)
- 	struct dma_chan *chan = priv->dma_direction == DMA_FROM_DEVICE
- 		? priv->dma_rx : priv->dma_tx;
- 
-+	mdelay(10);
- 	/* Disable DMA Master Received/Transmitted */
- 	rcar_i2c_write(priv, ICDMAER, 0);
- 
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index ecf613761e78..53b3e3a56870 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -439,7 +439,7 @@ CONFIG_SND_BCM2835_SOC_I2S=m
+ CONFIG_SND_SOC_SAMSUNG=y
+ CONFIG_SND_SOC_RCAR=m
+ CONFIG_SND_SOC_AK4613=m
+-CONFIG_SND_SIMPLE_CARD=y
++CONFIG_SND_SIMPLE_CARD=m
+ CONFIG_USB=y
+ CONFIG_USB_OTG=y
+ CONFIG_USB_XHCI_HCD=y
 -- 
 2.11.0
