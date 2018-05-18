@@ -1,76 +1,242 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750888AbeERLRH (ORCPT
+        with ESMTP id S1750888AbeERLQ1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:17:07 -0400
+        Fri, 18 May 2018 07:16:27 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 058/102] arm64: dts: renesas: r8a77965-salvator-x: Enable DU external clocks and HDMI
-Date: Fri, 18 May 2018 13:15:20 +0200
-Message-Id: <a0b0be30a096a18f050bc53eed6c9b814d84cfac.1526637994.git.horms+renesas@verge.net.au>
+Subject: [PATCH 009/102] arm64: dts: renesas: r8a7796: sort subnodes of the root node
+Date: Fri, 18 May 2018 13:14:31 +0200
+Message-Id: <6ef5e21294dfd2edcc3e1bb547aef3333d42e86d.1526637994.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
 References: <cover.1526637994.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Sort subnodes of the root node alphanumerically.
 
-The DU1 external dot clock is provided by the fixed frequency clock
-generator X21, while the DU0 and DU3 clocks are provided by the
-programmable Versaclock5 clock generator.
+This is part of an ongoing effort to provide consistent node
+order in the DT of Renesas SoCs to improve maintainability.
 
-Enable the clocks, and the HDMI encoder for the M3-N Salvator-X board
-and hook it up to the HDMI connector.
+This should not have any run-time effect.
 
-Based on patches from Takeshi Kihara <takeshi.kihara.df@renesas.com>
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- .../arm64/boot/dts/renesas/r8a77965-salvator-x.dts | 28 ++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 162 +++++++++++++++----------------
+ 1 file changed, 81 insertions(+), 81 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
-index 75d890d91df9..340a3c72b65a 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
-@@ -19,3 +19,31 @@
- 		reg = <0x0 0x48000000 0x0 0x78000000>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 556eb8e45499..78fbb4fd34bf 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -60,6 +60,72 @@
+ 		clock-frequency = <0>;
  	};
- };
+ 
++	cluster0_opp: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
 +
-+&du {
-+	clocks = <&cpg CPG_MOD 724>,
-+		 <&cpg CPG_MOD 723>,
-+		 <&cpg CPG_MOD 721>,
-+		 <&versaclock5 1>,
-+		 <&x21_clk>,
-+		 <&versaclock5 2>;
-+	clock-names = "du.0", "du.1", "du.3",
-+		      "dclkin.0", "dclkin.1", "dclkin.3";
-+};
-+
-+&hdmi0 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			reg = <1>;
-+			rcar_dw_hdmi0_out: endpoint {
-+				remote-endpoint = <&hdmi0_con>;
-+			};
++		opp-500000000 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1500000000 {
++			opp-hz = /bits/ 64 <1500000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1600000000 {
++			opp-hz = /bits/ 64 <1600000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++		opp-1700000000 {
++			opp-hz = /bits/ 64 <1700000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++		opp-1800000000 {
++			opp-hz = /bits/ 64 <1800000000>;
++			opp-microvolt = <960000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
 +		};
 +	};
-+};
 +
-+&hdmi0_con {
-+	remote-endpoint = <&rcar_dw_hdmi0_out>;
-+};
++	cluster1_opp: opp_table1 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-800000000 {
++			opp-hz = /bits/ 64 <800000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1200000000 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1300000000 {
++			opp-hz = /bits/ 64 <1300000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -161,72 +227,6 @@
+ 		clock-frequency = <0>;
+ 	};
+ 
+-	cluster0_opp: opp_table0 {
+-		compatible = "operating-points-v2";
+-		opp-shared;
+-
+-		opp-500000000 {
+-			opp-hz = /bits/ 64 <500000000>;
+-			opp-microvolt = <820000>;
+-			clock-latency-ns = <300000>;
+-		};
+-		opp-1000000000 {
+-			opp-hz = /bits/ 64 <1000000000>;
+-			opp-microvolt = <820000>;
+-			clock-latency-ns = <300000>;
+-		};
+-		opp-1500000000 {
+-			opp-hz = /bits/ 64 <1500000000>;
+-			opp-microvolt = <820000>;
+-			clock-latency-ns = <300000>;
+-		};
+-		opp-1600000000 {
+-			opp-hz = /bits/ 64 <1600000000>;
+-			opp-microvolt = <900000>;
+-			clock-latency-ns = <300000>;
+-			turbo-mode;
+-		};
+-		opp-1700000000 {
+-			opp-hz = /bits/ 64 <1700000000>;
+-			opp-microvolt = <900000>;
+-			clock-latency-ns = <300000>;
+-			turbo-mode;
+-		};
+-		opp-1800000000 {
+-			opp-hz = /bits/ 64 <1800000000>;
+-			opp-microvolt = <960000>;
+-			clock-latency-ns = <300000>;
+-			turbo-mode;
+-		};
+-	};
+-
+-	cluster1_opp: opp_table1 {
+-		compatible = "operating-points-v2";
+-		opp-shared;
+-
+-		opp-800000000 {
+-			opp-hz = /bits/ 64 <800000000>;
+-			opp-microvolt = <820000>;
+-			clock-latency-ns = <300000>;
+-		};
+-		opp-1000000000 {
+-			opp-hz = /bits/ 64 <1000000000>;
+-			opp-microvolt = <820000>;
+-			clock-latency-ns = <300000>;
+-		};
+-		opp-1200000000 {
+-			opp-hz = /bits/ 64 <1200000000>;
+-			opp-microvolt = <820000>;
+-			clock-latency-ns = <300000>;
+-		};
+-		opp-1300000000 {
+-			opp-hz = /bits/ 64 <1300000000>;
+-			opp-microvolt = <820000>;
+-			clock-latency-ns = <300000>;
+-			turbo-mode;
+-		};
+-	};
+-
+ 	/* External PCIe clock - can be overridden by the board */
+ 	pcie_bus_clk: pcie_bus {
+ 		compatible = "fixed-clock";
+@@ -234,13 +234,6 @@
+ 		clock-frequency = <0>;
+ 	};
+ 
+-	pmu_a57 {
+-		compatible = "arm,cortex-a57-pmu";
+-		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
+-				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
+-		interrupt-affinity = <&a57_0>, <&a57_1>;
+-	};
+-
+ 	pmu_a53 {
+ 		compatible = "arm,cortex-a53-pmu";
+ 		interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
+@@ -250,6 +243,13 @@
+ 		interrupt-affinity = <&a53_0>, <&a53_1>, <&a53_2>, <&a53_3>;
+ 	};
+ 
++	pmu_a57 {
++		compatible = "arm,cortex-a57-pmu";
++		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&a57_0>, <&a57_1>;
++	};
++
+ 	psci {
+ 		compatible = "arm,psci-1.0", "arm,psci-0.2";
+ 		method = "smc";
+@@ -2063,14 +2063,6 @@
+ 		};
+ 	};
+ 
+-	timer {
+-		compatible = "arm,armv8-timer";
+-		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
+-				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
+-				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
+-				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>;
+-	};
+-
+ 	thermal-zones {
+ 		sensor_thermal1: sensor-thermal1 {
+ 			polling-delay-passive = <250>;
+@@ -2151,6 +2143,14 @@
+ 		};
+ 	};
+ 
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++
+ 	/* External USB clocks - can be overridden by the board */
+ 	usb3s0_clk: usb3s0 {
+ 		compatible = "fixed-clock";
 -- 
 2.11.0
