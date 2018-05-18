@@ -1,52 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:36878 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752396AbeEGN5J (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750888AbeERLQ0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 May 2018 09:57:09 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 5/8] ARM: dts: r8a7793: Add PMU device node
-Date: Mon,  7 May 2018 15:57:04 +0200
-Message-Id: <1525701427-12914-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1525701427-12914-1-git-send-email-geert+renesas@glider.be>
-References: <1525701427-12914-1-git-send-email-geert+renesas@glider.be>
+        Fri, 18 May 2018 07:16:26 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 008/102] arm64: dts: renesas: r8a77970: Update IPMMU DS1 bit number
+Date: Fri, 18 May 2018 13:14:30 +0200
+Message-Id: <d2b860cb303fdeffa886c20bfbdbfd88cc52c85f.1526637994.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
+References: <cover.1526637994.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable support for the ARM Performance Monitor Units in the Cortex-A15
-CPU cores on R-Car M2-N by adding a device node for the PMU.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-New Linux output:
+Judging by "R-Car-Gen3-rev0.80" IPMMU IMSSTR register documentation
+for [R-Car V3M] the DS1 bit field should be bit 0.
 
-    hw perfevents: enabled with armv7_cortex_a15 PMU driver, 7 counters available
+Update the ipmmu-main property to make it match the data sheet.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: ce3b52a1595b ("arm64: dts: renesas: r8a77970: Add IPMMU device nodes")
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 2fa052200495caef..4abecfc0ca98c483 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -110,6 +110,13 @@
- 		clock-frequency = <0>;
- 	};
- 
-+	pmu {
-+		compatible = "arm,cortex-a15-pmu";
-+		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&cpu0>, <&cpu1>;
-+	};
-+
- 	/* External SCIF clock */
- 	scif_clk: scif {
- 		compatible = "fixed-clock";
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+index c6db8ea43906..e8358d9bfd66 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -160,7 +160,7 @@
+ 		ipmmu_ds1: mmu@e7740000 {
+ 			compatible = "renesas,ipmmu-r8a77970";
+ 			reg = <0 0xe7740000 0 0x1000>;
+-			renesas,ipmmu-main = <&ipmmu_mm 1>;
++			renesas,ipmmu-main = <&ipmmu_mm 0>;
+ 			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
+ 			#iommu-cells = <1>;
+ 		};
 -- 
-2.7.4
+2.11.0
