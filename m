@@ -1,131 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750888AbeERLRP (ORCPT
+        with ESMTP id S1751588AbeERLTQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:17:15 -0400
+        Fri, 18 May 2018 07:19:16 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 065/102] arm64: dts: renesas: r8a77980: use CPG core clock macros
-Date: Fri, 18 May 2018 13:15:27 +0200
-Message-Id: <c64cc3683ff2622fe3528af93a5df01a6584e871.1526637994.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
-References: <cover.1526637994.git.horms+renesas@verge.net.au>
+Subject: [PATCH 49/69] ARM: dts: koelsch: Drop unnecessary address properties from port nodes
+Date: Fri, 18 May 2018 13:17:22 +0200
+Message-Id: <778dff91e83da64c55dd7cbe3489793797a9775e.1526641667.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
+References: <cover.1526641667.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+The vin port nodes does not have an address and thus does not need
+address-cells or address size-properties.
 
-Now that the commit 35b3c462dae1 ("dt-bindings: clock: add R8A77980 CPG
-core clock definitions") has hit Linus' tree, we can replace the bare
-numbers (we had to use to avoid a cross tree dependency) with these macro
-definitions...
+This is flagged by dtc as follows:
+ # make dtbs W=1
+ arch/arm/boot/dts/r8a7791-koelsch.dtb: Warning (avoid_unnecessary_addr_size): /soc/video@e6ef0000/port: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+ arch/arm/boot/dts/r8a7791-koelsch.dtb: Warning (avoid_unnecessary_addr_size): /soc/video@e6ef1000/port: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm64/boot/dts/renesas/r8a77980.dtsi | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-index d27b80bcdbb4..fddbaf250087 100644
---- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -6,9 +6,9 @@
-  * Copyright (C) 2018 Cogent Embedded, Inc.
-  */
+diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+index fcdd0164142b..68e8272cb90e 100644
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -849,9 +849,6 @@
+ 	pinctrl-names = "default";
  
-+#include <dt-bindings/clock/r8a77980-cpg-mssr.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
--#include <dt-bindings/clock/renesas-cpg-mssr.h>
+ 	port {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+ 		vin0ep2: endpoint {
+ 			remote-endpoint = <&adv7612_out>;
+ 			bus-width = <24>;
+@@ -870,9 +867,6 @@
+ 	pinctrl-names = "default";
  
- / {
- 	compatible = "renesas,r8a77980";
-@@ -23,7 +23,7 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a53", "arm,armv8";
- 			reg = <0>;
--			clocks = <&cpg CPG_CORE 0>;
-+			clocks = <&cpg CPG_CORE R8A77980_CLK_Z2>;
- 			power-domains = <&sysc 5>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
-@@ -104,7 +104,7 @@
- 			reg = <0 0xe6540000 0 0x60>;
- 			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 520>,
--				 <&cpg CPG_CORE 19>,
-+				 <&cpg CPG_CORE R8A77980_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x31>, <&dmac1 0x30>,
-@@ -122,7 +122,7 @@
- 			reg = <0 0xe6550000 0 0x60>;
- 			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 519>,
--				 <&cpg CPG_CORE 19>,
-+				 <&cpg CPG_CORE R8A77980_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x33>, <&dmac1 0x32>,
-@@ -140,7 +140,7 @@
- 			reg = <0 0xe6560000 0 0x60>;
- 			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 518>,
--				 <&cpg CPG_CORE 19>,
-+				 <&cpg CPG_CORE R8A77980_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x35>, <&dmac1 0x34>,
-@@ -158,7 +158,7 @@
- 			reg = <0 0xe66a0000 0 0x60>;
- 			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 517>,
--				 <&cpg CPG_CORE 19>,
-+				 <&cpg CPG_CORE R8A77980_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x37>, <&dmac1 0x36>,
-@@ -220,7 +220,7 @@
- 			reg = <0 0xe6e60000 0 0x40>;
- 			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 207>,
--				 <&cpg CPG_CORE 19>,
-+				 <&cpg CPG_CORE R8A77980_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
-@@ -238,7 +238,7 @@
- 			reg = <0 0xe6e68000 0 0x40>;
- 			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 206>,
--				 <&cpg CPG_CORE 19>,
-+				 <&cpg CPG_CORE R8A77980_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
-@@ -256,7 +256,7 @@
- 			reg = <0 0xe6c50000 0 0x40>;
- 			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 204>,
--				 <&cpg CPG_CORE 19>,
-+				 <&cpg CPG_CORE R8A77980_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x57>, <&dmac1 0x56>,
-@@ -274,7 +274,7 @@
- 			reg = <0 0xe6c40000 0 0x40>;
- 			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 203>,
--				 <&cpg CPG_CORE 19>,
-+				 <&cpg CPG_CORE R8A77980_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x59>, <&dmac1 0x58>,
+ 	port {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+ 		vin1ep: endpoint {
+ 			remote-endpoint = <&adv7180>;
+ 			bus-width = <8>;
 -- 
 2.11.0
