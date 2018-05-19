@@ -1,201 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:12221 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751309AbeEPCCg (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:33390 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752608AbeESVFF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 May 2018 22:02:36 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 5/7] arm64: dts: renesas: r8a77970: add VIN and CSI-2 nodes
-Date: Wed, 16 May 2018 03:58:52 +0200
-Message-Id: <20180516015854.19432-6-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180516015854.19432-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180516015854.19432-1-niklas.soderlund+renesas@ragnatech.se>
+        Sat, 19 May 2018 17:05:05 -0400
+Received: by mail-lf0-f65.google.com with SMTP id u9-v6so1577394lfc.0
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 19 May 2018 14:05:05 -0700 (PDT)
+Subject: [PATCH 3/3] sh_eth: fix typo in comment to BCULR write
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Cc: linux-renesas-soc@vger.kernel.org
+References: <d47afee4-6fd5-af6d-885c-5b07996749fc@cogentembedded.com>
+Message-ID: <fcde85a9-50fa-adf1-1fe2-17574a9bc0b1@cogentembedded.com>
+Date: Sun, 20 May 2018 00:05:02 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <d47afee4-6fd5-af6d-885c-5b07996749fc@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 152 ++++++++++++++++++++++
- 1 file changed, 152 insertions(+)
+Simon has noticed a typo in the comment accompaining the BCULR write --
+fix it and move the comment before the write (following the style of
+the other comments), while at it...
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index c8464d1ef1b20590..98a2317a16c470bb 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -547,6 +547,119 @@
- 			status = "disabled";
- 		};
+Reported-by: Simon Horman <horms@verge.net.au>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+---
+ drivers/net/ethernet/renesas/sh_eth.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
+===================================================================
+--- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
++++ net-next/drivers/net/ethernet/renesas/sh_eth.c
+@@ -1481,8 +1481,9 @@ static int sh_eth_dev_init(struct net_de
+ 	if (mdp->cd->nbst)
+ 		sh_eth_modify(ndev, EDMR, EDMR_NBST, EDMR_NBST);
  
-+
-+		vin0: video@e6ef0000 {
-+			compatible = "renesas,vin-r8a77970";
-+			reg = <0 0xe6ef0000 0 0x1000>;
-+			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 811>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 811>;
-+			renesas,id = <0>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					vin0csi40: endpoint@2 {
-+						reg = <2>;
-+						remote-endpoint= <&csi40vin0>;
-+					};
-+				};
-+			};
-+		};
-+
-+		vin1: video@e6ef1000 {
-+			compatible = "renesas,vin-r8a77970";
-+			reg = <0 0xe6ef1000 0 0x1000>;
-+			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 810>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 810>;
-+			renesas,id = <1>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					vin1csi40: endpoint@2 {
-+						reg = <2>;
-+						remote-endpoint= <&csi40vin1>;
-+					};
-+				};
-+			};
-+		};
-+
-+		vin2: video@e6ef2000 {
-+			compatible = "renesas,vin-r8a77970";
-+			reg = <0 0xe6ef2000 0 0x1000>;
-+			interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 809>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 809>;
-+			renesas,id = <2>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					vin2csi40: endpoint@2 {
-+						reg = <2>;
-+						remote-endpoint= <&csi40vin2>;
-+					};
-+				};
-+			};
-+		};
-+
-+		vin3: video@e6ef3000 {
-+			compatible = "renesas,vin-r8a77970";
-+			reg = <0 0xe6ef3000 0 0x1000>;
-+			interrupts = <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 808>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 808>;
-+			renesas,id = <3>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					vin3csi40: endpoint@2 {
-+						reg = <2>;
-+						remote-endpoint= <&csi40vin3>;
-+					};
-+				};
-+			};
-+		};
-+
- 		dmac1: dma-controller@e7300000 {
- 			compatible = "renesas,dmac-r8a77970",
- 				     "renesas,rcar-dmac";
-@@ -679,6 +792,45 @@
- 			resets = <&cpg 603>;
- 		};
++	/* Burst cycle count upper-limit */
+ 	if (mdp->cd->bculr)
+-		sh_eth_write(ndev, 0x800, BCULR);	/* Burst sycle set */
++		sh_eth_write(ndev, 0x800, BCULR);
  
-+		csi40: csi2@feaa0000 {
-+			compatible = "renesas,r8a77970-csi2";
-+			reg = <0 0xfeaa0000 0 0x10000>;
-+			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 716>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 716>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					csi40vin0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&vin0csi40>;
-+					};
-+					csi40vin1: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&vin1csi40>;
-+					};
-+					csi40vin2: endpoint@2 {
-+						reg = <2>;
-+						remote-endpoint = <&vin2csi40>;
-+					};
-+					csi40vin3: endpoint@3 {
-+						reg = <3>;
-+						remote-endpoint = <&vin3csi40>;
-+					};
-+				};
-+			};
-+		};
-+
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a77970";
- 			reg = <0 0xfeb00000 0 0x80000>;
--- 
-2.17.0
+ 	sh_eth_write(ndev, mdp->cd->fcftr_value, FCFTR);
+ 
