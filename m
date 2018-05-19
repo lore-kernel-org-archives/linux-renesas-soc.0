@@ -1,109 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750888AbeERLQ5 (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:58232 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752370AbeESQIP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:16:57 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 049/102] arm64: dts: renesas: r8a7795-salvator-x: enable HDMI sound
-Date: Fri, 18 May 2018 13:15:11 +0200
-Message-Id: <a4ff9aed55eb0172291005f0b1a0174be257b892.1526637994.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
-References: <cover.1526637994.git.horms+renesas@verge.net.au>
+        Sat, 19 May 2018 12:08:15 -0400
+From: Heiko Stuebner <heiko@sntech.de>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Martin Donnelly <martin.donnelly@ge.com>,
+        Martyn Welch <martyn.welch@collabora.co.uk>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        CK Hu <ck.hu@mediatek.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Sandy Huang <hjc@rock-chips.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, Jyri Sarha <jsarha@ti.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v3 01/26] drm/bridge: allow optionally specifying an owner .odev device
+Date: Sat, 19 May 2018 18:07:33 +0200
+Message-ID: <21812146.Dm3JJO5T5a@phil>
+In-Reply-To: <20180516101510.13215-2-peda@axentia.se>
+References: <20180516101510.13215-1-peda@axentia.se> <20180516101510.13215-2-peda@axentia.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Hi Peter,
 
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Tested-by: Nguyen Viet Dung <nv-dung@jinso.co.jp>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 46 ++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+Am Mittwoch, 16. Mai 2018, 12:14:45 CEST schrieb Peter Rosin:
+> Bridge drivers can now (temporarily, in a transition phase) select if
+> they want to provide a full owner device or keep just providing an
+> of_node.
+> 
+> By providing a full owner device, the bridge drivers no longer need
+> to provide an of_node since that node is available via the owner
+> device.
+> 
+> When all bridge drivers provide an owner device, that will become
+> mandatory and the .of_node member will be removed.
+> 
+> There is an interaction with the rockchip lvds driver, since that
+> driver peeks into somewhat private parts of the bridge struct in
+> order to find out things about the remote bridge. When there are
+> now two ways to get to the remote bridge, the rockchip lvds driver
+> has to adapt. That said, the correct thing to do for the rockchip
+> lvds driver is to use some other way than DT to find things out
+> about the remote bridge, but that is orthogonal to this patch.
+> 
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+> Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index af467419266a..0efbef5ea9b7 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -56,6 +56,12 @@
- 	status = "okay";
- };
- 
-+&sound_card {
-+	dais = <&rsnd_port0	/* ak4613 */
-+		&rsnd_port1	/* HDMI0  */
-+		&rsnd_port2>;	/* HDMI1  */
-+};
-+
- &hdmi0 {
- 	status = "okay";
- 
-@@ -66,6 +72,12 @@
- 				remote-endpoint = <&hdmi0_con>;
- 			};
- 		};
-+		port@2 {
-+			reg = <2>;
-+			dw_hdmi0_snd_in: endpoint {
-+				remote-endpoint = <&rsnd_endpoint1>;
-+			};
-+		};
- 	};
- };
- 
-@@ -83,6 +95,12 @@
- 				remote-endpoint = <&hdmi1_con>;
- 			};
- 		};
-+		port@2 {
-+			reg = <2>;
-+			dw_hdmi1_snd_in: endpoint {
-+				remote-endpoint = <&rsnd_endpoint2>;
-+			};
-+		};
- 	};
- };
- 
-@@ -94,6 +112,34 @@
- 	status = "okay";
- };
- 
-+&rcar_sound {
-+	ports {
-+		/* rsnd_port0 is on salvator-common */
-+		rsnd_port1: port@1 {
-+			rsnd_endpoint1: endpoint {
-+				remote-endpoint = <&dw_hdmi0_snd_in>;
-+
-+				dai-format = "i2s";
-+				bitclock-master = <&rsnd_endpoint1>;
-+				frame-master = <&rsnd_endpoint1>;
-+
-+				playback = <&ssi2>;
-+			};
-+		};
-+		rsnd_port2: port@2 {
-+			rsnd_endpoint2: endpoint {
-+				remote-endpoint = <&dw_hdmi1_snd_in>;
-+
-+				dai-format = "i2s";
-+				bitclock-master = <&rsnd_endpoint2>;
-+				frame-master = <&rsnd_endpoint2>;
-+
-+				playback = <&ssi3>;
-+			};
-+		};
-+	};
-+};
-+
- &pfc {
- 	usb2_pins: usb2 {
- 		groups = "usb2";
--- 
-2.11.0
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_lvds.c b/drivers/gpu/drm/rockchip/rockchip_lvds.c
+> index 4bd94b167d2c..557e0079c98d 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_lvds.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_lvds.c
+> @@ -377,8 +377,10 @@ static int rockchip_lvds_bind(struct device *dev, struct device *master,
+>  	}
+>  	if (lvds->panel)
+>  		remote = lvds->panel->dev->of_node;
+> -	else
+> +	else if (lvds->bridge->of_node)
+>  		remote = lvds->bridge->of_node;
+> +	else
+> +		remote = lvds->bridge->odev->of_node;
+>  	if (of_property_read_string(dev->of_node, "rockchip,output", &name))
+>  		/* default set it as output rgb */
+>  		lvds->output = DISPLAY_OUTPUT_RGB;
+
+for the Rockchip-part
+Acked-by: Heiko Stuebner <heiko@sntech.de>
