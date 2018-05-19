@@ -1,132 +1,34 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v6 4/6] ARM: dts: Renesas RZ/N1 SoC base device tree file
-Date: Tue, 22 May 2018 11:01:24 +0100
-Message-Id: <1526983321-41949-5-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from perceval.ideasonboard.com ([213.167.242.64]:54930 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752472AbeESUeI (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sat, 19 May 2018 16:34:08 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: kieran.bingham@ideasonboard.com
+Subject: [PATCH 0/2] vsp-tests: Fix suspend/resume test
+Date: Sat, 19 May 2018 23:34:24 +0300
+Message-Id: <20180519203426.25711-1-laurent.pinchart@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This adds the Renesas RZ/N1D (Part #R9A06G032) SoC bare
-bone support.
+Hello,
 
-This currently only handles generic parts (gic, architected timer)
-and a UART.
-For simplicity sake, this also relies on the bootloader to set the
-pinctrl and clocks.
+This small series fixes the VSP suspend/resume test to ensure that the
+VSP is running when suspending. The first patch isn't strictly required,
+but was helpful when debugging the second patch, so I've included it in
+the series.
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
----
- arch/arm/boot/dts/r9a06g032.dtsi | 86 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
- create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
+Laurent Pinchart (2):
+  vsp-lib: Capture the kernel log messages in test log files
+  tests: suspend/resume: Increase number of processed frames
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-new file mode 100644
-index 0000000..c7764c7
---- /dev/null
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -0,0 +1,86 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ */
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/rzn1-clock.h>
-+
-+/ {
-+	compatible = "renesas,r9a06g032", "renesas,rzn1";
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&clock RZN1_DIV_CA7>;
-+
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0>;
-+		};
-+
-+		cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <1>;
-+		};
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		interrupt-parent = <&gic>;
-+		ranges;
-+
-+		clock: clocks@4000c000 {
-+			compatible = "renesas,r9a06g032-clocks",
-+					"renesas,rzn1-clocks";
-+			reg = <0x4000c000 0x1000>;
-+			status = "okay";
-+			#clock-cells = <1>;
-+		};
-+
-+		uart0: serial@40060000 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x40060000 0x400>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&clock RZN1_CLK_UART0>;
-+			clock-names = "baudclk";
-+			status = "disabled";
-+		};
-+
-+		gic: gic@44101000 {
-+			compatible = "arm,cortex-a7-gic", "arm,gic-400";
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			reg = <0x44101000 0x1000>, /* Distributer */
-+			      <0x44102000 0x2000>, /* CPU interface */
-+			      <0x44104000 0x2000>, /* Virt interface control */
-+			      <0x44106000 0x2000>; /* Virt CPU interface */
-+			interrupts =
-+				<GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,cortex-a7-timer",
-+			     "arm,armv7-timer";
-+		interrupt-parent = <&gic>;
-+		arm,cpu-registers-not-fw-configured;
-+		always-on;
-+		interrupts =
-+			<GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+};
+ scripts/vsp-lib.sh          |  5 +++++
+ tests/vsp-unit-test-0020.sh | 15 ++++++++-------
+ 2 files changed, 13 insertions(+), 7 deletions(-)
+
 -- 
-2.7.4
+Regards,
 
+Laurent Pinchart
