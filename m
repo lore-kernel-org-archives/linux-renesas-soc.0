@@ -1,78 +1,84 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 4/9] ARM: dts: koelsch: Drop MTD partitioning from DT
-Date: Thu, 24 May 2018 17:07:16 +0200
-Message-Id: <20180524150721.28964-4-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180524150721.28964-1-marek.vasut+renesas@gmail.com>
-References: <20180524150721.28964-1-marek.vasut+renesas@gmail.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:45933 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750925AbeETJ02 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 20 May 2018 05:26:28 -0400
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v4 0/3] thermal: add support for r8a77995
+Date: Sun, 20 May 2018 18:26:16 +0900
+Message-Id: <1526808379-3850-1-git-send-email-ykaneko0929@gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Drop the MTD partitioning from DT, since it does not describe HW
-and to give way to a more flexible kernel command line partition
-passing.
+This series adds thermal support for r8a77995.
+R-Car D3 (r8a77995) have a thermal sensor module which is similar to Gen2.
+Therefore this series adds r8a77995 support to rcar_thermal driver not
+rcar_gen3_thermal driver.
 
-To retain the original partitioning, assure you have enabled
-CONFIG_MTD_CMDLINE_PARTS in your kernel config and add the
-following to your kernel command line:
+This series is based on the next branch of Zhang Rui's linux tree.
 
-  mtdparts=spi0.0:512k(loader),5632k(user),-(flash)
+v4 [Yoshihiro Kaneko]
+rcar_thermal.c:
+- add Tested-by tag
+* As suggested by Simon Horman
+- add comment to ".nirqs = 2" of rcar_gen3_thermal
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: Drop the @0 anchor from the commit message
----
- arch/arm/boot/dts/r8a7791-koelsch.dts | 21 ---------------------
- 1 file changed, 21 deletions(-)
+rcar-thermal.txt:
+* As suggested by Simon Horman
+- update the explanation of the interrupts
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index 8ab793d8b2fd..406d5d29e29c 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -724,27 +724,6 @@
- 		spi-cpha;
- 		spi-cpol;
- 		m25p,fast-read;
--
--		partitions {
--			compatible = "fixed-partitions";
--			#address-cells = <1>;
--			#size-cells = <1>;
--
--			partition@0 {
--				label = "loader";
--				reg = <0x00000000 0x00080000>;
--				read-only;
--			};
--			partition@80000 {
--				label = "user";
--				reg = <0x00080000 0x00580000>;
--				read-only;
--			};
--			partition@600000 {
--				label = "flash";
--				reg = <0x00600000 0x03a00000>;
--			};
--		};
- 	};
- };
- 
+r8a77995.dtsi:
+- repositioned the thermal subnode by bus address order
+
+
+v3 [Yoshihiro Kaneko]
+* As suggested by Geert Uytterhoeven
+rcar_thermal.c:
+- make use_of_thermal in structure rcar_thermal_chip a single bit
+- add feature bits to rcar_thermal_chip
+- add the number of interrupts to rcar_thermal_chip
+- remove rcar_thermal_type in rcar_thermal_cip
+- make variable chip in rcar_thermal_probe() a const
+
+rcar-thermal.txt:
+* No change
+
+r8a77995.dtsi:
+* No change
+
+
+v2 [Yoshihiro Kaneko]
+* As suggested by Geert Uytterhoeven
+rcar_thermal.c:
+- remove rcar_of_data macro
+- store a pointer to rcar_thermal_chip in rcar_thermal_priv
+- remove unnecessary cast in rcar_thermal_dt_ids
+
+rcar-thermal.txt:
+- drop the fallback for D3
+- update the paragraph about interrupts
+
+r8a77995.dtsi:
+- fix the base address and the register addresses
+- drop the fallback
+
+Yoshihiro Kaneko (3):
+  thermal: rcar_thermal: add r8a77995 support
+  dt-bindings: thermal: rcar-thermal: add R8A77995 support
+  arm64: dts: renesas: r8a77995: add thermal device support
+
+ .../devicetree/bindings/thermal/rcar-thermal.txt   |   7 +-
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi          |  31 ++++
+ drivers/thermal/rcar_thermal.c                     | 158 ++++++++++++++++-----
+ 3 files changed, 162 insertions(+), 34 deletions(-)
+
 -- 
-2.16.2
-
+1.9.1
