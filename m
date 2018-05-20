@@ -1,67 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-eopbgr00096.outbound.protection.outlook.com ([40.107.0.96]:63285
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752553AbeESWAH (ORCPT
+Received: from sauhun.de ([88.99.104.3]:41650 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750912AbeETHAk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 19 May 2018 18:00:07 -0400
-Subject: Re: [PATCH] i2c: mux: demux-pinctrl: disable PM user interface
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-References: <20180430120842.28110-1-wsa+renesas@sang-engineering.com>
-From: Peter Rosin <peda@axentia.se>
-Message-ID: <e0be4d76-4c17-6955-5106-eb36b09c3b19@axentia.se>
-Date: Sat, 19 May 2018 23:59:57 +0200
+        Sun, 20 May 2018 03:00:40 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: qemu-devel@nongnu.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v3 RESEND 0/3] nvram: at24c: fix problems related to "rom-size"
+Date: Sun, 20 May 2018 09:00:34 +0200
+Message-Id: <20180520070037.8593-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-In-Reply-To: <20180430120842.28110-1-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 2018-04-30 14:08, Wolfram Sang wrote:
-> The demux device is only a logical device with no children. So, no
-> RuntimePM is needed, let's disable the sysfs interface for it.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> I think it is proper to just disable the interface without enabling RPM at all.
-> USB and PCIE core do this as well. Still, adding PM and Rafael to CC in case we
-> all got it wrong.
+I used this driver as a template for a custom one. While hacking on my own, I
+noticed some problems in this driver, too. This series fixes the first set of
+them, related to the "rom-size" parameter. It fixes a segfault.
 
-Sounds ok to me. I'm not fluent with PM stuff, but I trust your judgement.
+I think the first patch is clearly suitable for stable. I think the second one,
+too, but not as clearly. The third one is a cleanup and not for stable. Still,
+I am open for opinions about these thoughts.
 
-Applied to i2c-mux/for-next.
+Thanks,
 
-Cheers,
-Peter
+   Wolfram
 
->  drivers/i2c/muxes/i2c-demux-pinctrl.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/i2c/muxes/i2c-demux-pinctrl.c b/drivers/i2c/muxes/i2c-demux-pinctrl.c
-> index 61440a9507e4..d5e7d4aa6ee1 100644
-> --- a/drivers/i2c/muxes/i2c-demux-pinctrl.c
-> +++ b/drivers/i2c/muxes/i2c-demux-pinctrl.c
-> @@ -18,6 +18,7 @@
->  #include <linux/of.h>
->  #include <linux/pinctrl/consumer.h>
->  #include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/slab.h>
->  #include <linux/sysfs.h>
->  
-> @@ -262,6 +263,8 @@ static int i2c_demux_pinctrl_probe(struct platform_device *pdev)
->  
->  	platform_set_drvdata(pdev, priv);
->  
-> +	pm_runtime_no_callbacks(&pdev->dev);
-> +
->  	/* switch to first parent as active master */
->  	i2c_demux_activate_master(priv, 0);
->  
-> 
+This is the same v3 as last time. Rebased to current master, but that produced
+no diff.
+
+Changes since v2:
+
+* removed '\n' from error_report-strings
+* made sure checkpatch is happy
+* added tags from Philippe (thanks!)
+
+Changes since v1:
+
+* reordered patches according to significance for stable
+* use AT24C_ROMSIZE_DEFAULT instead of magic value
+* patch 3 doesn't improve the ERR macro anymore but replaces
+  it completely with error_report().
+
+
+Wolfram Sang (3):
+  nvram: at24c: prevent segfault by checking "rom-size"
+  nvram: at24c: use a sane default for "rom-size"
+  nvram: at24c: use standard error reporting
+
+ hw/nvram/eeprom_at24c.c | 25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
+
+-- 
+2.11.0
