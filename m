@@ -1,48 +1,82 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        horms@verge.net.au, geert@glider.be, magnus.damm@gmail.com,
-        robh+dt@kernel.org
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] arm64: dts: renesas: r8a77995: Add VIN4
-Date: Fri, 11 May 2018 12:00:01 +0200
-Message-Id: <1526032802-14376-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1526032802-14376-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1526032802-14376-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:39039 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752707AbeEULfq (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 21 May 2018 07:35:46 -0400
+Received: by mail-it0-f66.google.com with SMTP id c3-v6so20699537itj.4
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 May 2018 04:35:46 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1525869528-3429-1-git-send-email-ykaneko0929@gmail.com>
+References: <1525869528-3429-1-git-send-email-ykaneko0929@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 21 May 2018 13:35:45 +0200
+Message-ID: <CAPDyKFrjV+1Y4Xx8T0FgZtd0qY_p=4UNHm0yFnyj6XvYhPb_Zg@mail.gmail.com>
+Subject: Re: [PATCH v2] mmc: renesas_sdhi: Add r8a77965 support
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe VIN4 interface for R-Car D3 R8A77995 SoC.
+On 9 May 2018 at 14:38, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+>
+> This patch adds r8a77965 support in SDHI.
+>
+> Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> Tested-by: Simon Horman <horms+renesas@verge.net.au>
+> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Thanks, applied for next!
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 82aed7e..bdf7017 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -783,6 +783,17 @@
- 				};
- 			};
- 		};
-+
-+		vin4: video@e6ef4000 {
-+			compatible = "renesas,vin-r8a77995";
-+			reg = <0 0xe6ef4000 0 0x1000>;
-+			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 807>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 807>;
-+			renesas,id = <4>;
-+			status = "disabled";
-+		};
- 	};
- 
- 	timer {
--- 
-2.7.4
+Kind regards
+Uffe
 
+> ---
+>
+> This patch is based on the next branch of Ulf Hansson's mmc tree.
+>
+> v2 [Yoshihiro Kaneko]
+> renesas_sdhi_internal_dmac.c
+> * As suggested by Simon Horman
+>   Dropped .revision for r8a77965 in gen3_soc_whitelist.
+> * As suggested by Wolfram Sang
+>   Dropped "renesas,rcar-gen3-sdhi" line in renesas_sdhi_internal_dmac_of_match.
+>
+>  Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 1 +
+>  drivers/mmc/host/renesas_sdhi_internal_dmac.c      | 1 +
+>  2 files changed, 2 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> index ba38252..ee978c9 100644
+> --- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> @@ -26,6 +26,7 @@ Required properties:
+>                 "renesas,sdhi-r8a7794" - SDHI IP on R8A7794 SoC
+>                 "renesas,sdhi-r8a7795" - SDHI IP on R8A7795 SoC
+>                 "renesas,sdhi-r8a7796" - SDHI IP on R8A7796 SoC
+> +               "renesas,sdhi-r8a77965" - SDHI IP on R8A77965 SoC
+>                 "renesas,sdhi-r8a77980" - SDHI IP on R8A77980 SoC
+>                 "renesas,sdhi-r8a77995" - SDHI IP on R8A77995 SoC
+>                 "renesas,sdhi-shmobile" - a generic sh-mobile SDHI controller
+> diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> index a6bf123..b6edb7a 100644
+> --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> @@ -276,6 +276,7 @@ static void renesas_sdhi_internal_dmac_complete_tasklet_fn(unsigned long arg)
+>         /* generic ones */
+>         { .soc_id = "r8a7795" },
+>         { .soc_id = "r8a7796" },
+> +       { .soc_id = "r8a77965" },
+>         { .soc_id = "r8a77980" },
+>         { .soc_id = "r8a77995" },
+>         { /* sentinel */ }
+> --
+> 1.9.1
+>
