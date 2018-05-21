@@ -1,72 +1,58 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 8/9] ARM: dts: alt: Drop MTD partitioning from DT
-Date: Tue, 22 May 2018 14:02:56 +0200
-Message-Id: <20180522120257.13232-8-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180522120257.13232-1-marek.vasut+renesas@gmail.com>
-References: <20180522120257.13232-1-marek.vasut+renesas@gmail.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from perceval.ideasonboard.com ([213.167.242.64]:46118 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750945AbeEUJKl (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 21 May 2018 05:10:41 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: kieran.bingham@ideasonboard.com
+Subject: [PATCH v2 1/2] vsp-lib: Capture the kernel log messages in test log files
+Date: Mon, 21 May 2018 12:11:01 +0300
+Message-Id: <20180521091102.18764-2-laurent.pinchart@ideasonboard.com>
+In-Reply-To: <20180521091102.18764-1-laurent.pinchart@ideasonboard.com>
+References: <20180521091102.18764-1-laurent.pinchart@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Drop the MTD partitioning from DT, since it does not describe HW
-and to give way to a more flexible kernel command line partition
-passing.
+It can be useful to capture kernel log messages in test log files for
+diagnostic purpose. Add a simple mechanism to do so by capturing the
+full kernel log at the end of the test. The kernel log is cleared first
+before starting the test to avoid capturing unrelated messages.
 
-To retain the original partitioning, assure you have enabled
-CONFIG_MTD_CMDLINE_PARTS in your kernel config and add the
-following to your kernel command line:
-
-  mtdparts=spi0.0:256k@0(loader),256k(system),-(user)
-
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- arch/arm/boot/dts/r8a7794-alt.dts | 21 ---------------------
- 1 file changed, 21 deletions(-)
+Changes since v1:
 
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index e17027532941..1d044ed598f3 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -419,26 +419,5 @@
- 		spi-cpol;
- 		spi-cpha;
- 		m25p,fast-read;
--
--		partitions {
--			compatible = "fixed-partitions";
--			#address-cells = <1>;
--			#size-cells = <1>;
--
--			partition@0 {
--				label = "loader";
--				reg = <0x00000000 0x00040000>;
--				read-only;
--			};
--			partition@40000 {
--				label = "system";
--				reg = <0x00040000 0x00040000>;
--				read-only;
--			};
--			partition@80000 {
--				label = "user";
--				reg = <0x00080000 0x03f80000>;
--			};
--		};
- 	};
- };
+- Don't clear the kernel log
+---
+ scripts/vsp-lib.sh | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/scripts/vsp-lib.sh b/scripts/vsp-lib.sh
+index 0f3992a7827e..0ecdf9acb152 100755
+--- a/scripts/vsp-lib.sh
++++ b/scripts/vsp-lib.sh
+@@ -1080,12 +1080,18 @@ test_init() {
+ test_start() {
+ 	echo "Testing $1" | ./logger.sh >> $logfile
+ 	echo -n "Testing $1: " >&2
++
++	# Store the marker for the last line of the kernel log.
++	marker=$(dmesg | tail -n 1 | sed 's/^\[\([^]]*\)\].*/\1/g')
+ }
+ 
+ test_complete() {
+ 	echo "Done: $1" | ./logger.sh >> $logfile
+ 	echo $1 >&2
+ 
++	# Capture the part of the kernel log relative to the test.
++	dmesg | sed "1,/$marker/d" | ./logger.sh kernel >> $logfile
++
+ 	rm -f ${frames_dir}frame-*.bin
+ 	rm -f ${frames_dir}histo-*.bin
+ 	rm -f ${frames_dir}rpf.*.bin
 -- 
-2.16.2
+Regards,
 
+Laurent Pinchart
