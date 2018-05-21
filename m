@@ -1,84 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:65226 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751058AbeEUH5g (ORCPT
+Received: from mga02.intel.com ([134.134.136.20]:51479 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750898AbeEUG7J (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 May 2018 03:57:36 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Felipe Balbi <balbi@kernel.org>
-CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH/RFC] usb: gadget: function: printer: avoid wrong list
- handling in printer_write()
-Date: Mon, 21 May 2018 07:57:32 +0000
-Message-ID: <OSBPR01MB2293D296A8A8F8249A6E6BFAD8950@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+        Mon, 21 May 2018 02:59:09 -0400
+From: Felipe Balbi <balbi@kernel.org>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH/RFC] usb: gadget: function: printer: avoid wrong list handling in printer_write()
+In-Reply-To: <1526632641-30086-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1526632641-30086-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <87r2m58pir.fsf@linux.intel.com>
-In-Reply-To: <87r2m58pir.fsf@linux.intel.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Date: Mon, 21 May 2018 09:57:16 +0300
+Message-ID: <87r2m58pir.fsf@linux.intel.com>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+
+
 Hi,
 
-> From: Felipe Balbi, Sent: Monday, May 21, 2018 3:57 PM
->=20
-> Hi,
->=20
-> Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com> writes:
-> > The usb_ep_queue() in printer_write() is possible to call req->complete=
-().
-> > In that case, since tx_complete() calls list_add(&req->list, &dev->tx_r=
-eqs),
-> > printer_write() should not call list_add(&req->list, &dev->tx_reqs_acti=
-ve)
-> > because the transfer has already finished. So, this patch checks
-> > the condition of req->list before adding the list in printer_write().
-> >
-> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> > ---
-> >  This issue can be caused by renesas_usbhs udc driver. I'm not sure
-> >  this patch is acceptable or not. So, I marked RFC on this patch.
->=20
-> can you explain this a little more? How do you trigger the problem?
+Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com> writes:
+> The usb_ep_queue() in printer_write() is possible to call req->complete().
+> In that case, since tx_complete() calls list_add(&req->list, &dev->tx_req=
+s),
+> printer_write() should not call list_add(&req->list, &dev->tx_reqs_active)
+> because the transfer has already finished. So, this patch checks
+> the condition of req->list before adding the list in printer_write().
+>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  This issue can be caused by renesas_usbhs udc driver. I'm not sure
+>  this patch is acceptable or not. So, I marked RFC on this patch.
 
-Sure. If printer_write() called usb_ep_queue() with 63 bytes or less data,
-the renesas_usbhs udc driver transfers data as PIO. In this case, the udc
-driver calls usb_gadget_giveback_reuqest() in .queue ops (usbhsg_ep_queue()=
-)
-immediately. Then, printer_write() calls list_add(&req->list, &dev->tx_reqs=
-_active); wrongly.
-After that, if we do rmmod g_printer, WARN_ON(!list_empty(&dev->tx_reqs_act=
-ive); happens in
-printer_func_unbind() because the list entry is not removed.
+can you explain this a little more? How do you trigger the problem?
 
-< Reference: calltrace (very long though...) >
-	usb_ep_queue(...);		at f_printer.c / printer_write()
-	1-> usbhsg_ep_queue();		at renesas_usbhs/mod_gadget.c
-	 2-> usbhsg_queue_push();
-	  3-> usbhs_pkt_start();		at renesas_usbhs/fifo.c
-	   4-> usbhsf_pkt_handler();
-	    5-> func() =3D usbhsf_dma_prepare_push();
-	     6-> goto usbhsf_pio_prepare_push; // Because len is 63
-	      7-> usbhsf_pio_prepare_push();
-	       8-> usbhsf_pio_try_push();
-            5-> done() =3D usbhsg_queue_done();	at renesas_usbhs/mod_gadget=
-.c
-	     6-> __usbsg_queue_pop();
-	      7-> usb_gadget_giveback_reuqest();
-	       8-> tx_complete();		at f_printer.c
-                9-> list_del_init(&req->list);
-                9-> list_add(&req->list, &dev->tx_reqs);
-	list_add(&req->list, &dev->tx_reqs_active);	// Even if the transaction alr=
-eady finished, this driver is possible to add the list to "active".
+=2D-=20
+balbi
 
-Best regards,
-Yoshihiro Shimoda
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> --
-> balbi
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlsCbc4ACgkQzL64meEa
+mQaxfRAAhu0BaNNfERDpSYmcZgW8TcWagivRYYNp5DUWVjjfyX8g33+3kGmIgt3Y
+TJOGI1aZaJNpUGP9Vfj57zIeE44MNMMTiwoYhbA2yWlkSggSPnSrz7Fvq/2OB3m9
+o3hbNhDqIRX9zxam3a6N0JEWMTgvnTuRjv2JsjwlLPMzApuYkAm6KDfggOcYyLGm
+Z95wsxRe8NNMwQx7re1Ra7z8bfNKf+vQZsLMWcJAR0dSw8kTk/HRhMBc4XTqnSS5
+v5zAAaCkJ3Hk7W5UWuFQ1elRQDh4BEtAKxPtor1QwfqzCsvgfsFAA9+9RA+OS3Vp
+IpeZe0QcdJit9idJCFcmRPLTR8N0HhuTnO9I4k10aQ5zuN7lR3h48SdUljRtpC3Y
+KwvSBMJIRviXn5mHJ/pw7mG/Cjb65Ut6qU9u3pzfsv6YLiVSSsgprH/iFab4KXET
+b9vEMAx3D1jgmBhFObo6h2b5fU6QsGjpOipg9yolPYpPnGJCzHmeFEXRjULP4Bzx
+shrjzhtIfkebVxPDDMtFtjO24gufz09BS1Pb2XGDYcYXPAI9mXWyjD+D4+E/Z/5r
+yzMXu93CMSNKTh1AiHKGhIDqB+B5esmBBkxqyaM4Qg9Hgzg5AZjWpV+4WHI4L7tY
+pcDCDfjhK8kYXL8WHRuDoVkVSow1oo2Qr6UDsIGuRuZ1jA94jrY=
+=duRm
+-----END PGP SIGNATURE-----
+--=-=-=--
