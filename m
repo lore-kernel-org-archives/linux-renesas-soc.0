@@ -1,41 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36675 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751240AbeEVJMa (ORCPT
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:45017 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751127AbeEUNLl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 May 2018 05:12:30 -0400
-Date: Tue, 22 May 2018 11:12:26 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-pci@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Mon, 21 May 2018 09:11:41 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-pci@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa@the-dreams.de>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/4] PCI: rcar: Rename
- rcar_pcie_parse_request_of_pci_ranges()
-Message-ID: <20180522091226.o2774zydwhdsvc4x@verge.net.au>
-References: <20180521131123.2009-1-marek.vasut+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180521131123.2009-1-marek.vasut+renesas@gmail.com>
+Subject: [PATCH 1/4] PCI: rcar: Rename rcar_pcie_parse_request_of_pci_ranges()
+Date: Mon, 21 May 2018 15:11:20 +0200
+Message-Id: <20180521131123.2009-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, May 21, 2018 at 03:11:20PM +0200, Marek Vasut wrote:
-> The function name is just too confusing, rename it, no functional change.
-> Rename the function to rcar_pcie_alloc_and_parse_pci_resource_list() as
-> it's matching failpath function is pci_free_resource_list() so the names
-> align much better and the new name also describes what the function does
-> much better.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Phil Edworthy <phil.edworthy@renesas.com>
-> Cc: Simon Horman <horms+renesas@verge.net.au>
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Cc: linux-renesas-soc@vger.kernel.org
+The function name is just too confusing, rename it, no functional change.
+Rename the function to rcar_pcie_alloc_and_parse_pci_resource_list() as
+it's matching failpath function is pci_free_resource_list() so the names
+align much better and the new name also describes what the function does
+much better.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org
+---
+ drivers/pci/host/pcie-rcar.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+index e403c5206b24..dbc80e457f95 100644
+--- a/drivers/pci/host/pcie-rcar.c
++++ b/drivers/pci/host/pcie-rcar.c
+@@ -1051,7 +1051,7 @@ static const struct of_device_id rcar_pcie_of_match[] = {
+ 	{},
+ };
+ 
+-static int rcar_pcie_parse_request_of_pci_ranges(struct rcar_pcie *pci)
++static int rcar_pcie_alloc_and_parse_pci_resource_list(struct rcar_pcie *pci)
+ {
+ 	int err;
+ 	struct device *dev = pci->dev;
+@@ -1108,7 +1108,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+ 
+ 	INIT_LIST_HEAD(&pcie->resources);
+ 
+-	err = rcar_pcie_parse_request_of_pci_ranges(pcie);
++	err = rcar_pcie_alloc_and_parse_pci_resource_list(pcie);
+ 	if (err)
+ 		goto err_free_bridge;
+ 
+-- 
+2.16.2
