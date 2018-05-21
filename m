@@ -1,27 +1,42 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-Subject: Re: [PATCH] i2c: mux: improve error message for failed symlink
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-References: <20180521073413.3423-1-wsa+renesas@sang-engineering.com>
-From: Peter Rosin <peda@axentia.se>
-Message-ID: <267ef8d2-129d-8bfb-e409-5302645625f3@axentia.se>
-Date: Thu, 24 May 2018 14:01:52 +0200
-MIME-Version: 1.0
-In-Reply-To: <20180521073413.3423-1-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:49720 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750867AbeEUHeU (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 21 May 2018 03:34:20 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: Peter Rosin <peda@axentia.se>, linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH] i2c: mux: improve error message for failed symlink
+Date: Mon, 21 May 2018 09:34:13 +0200
+Message-Id: <20180521073413.3423-1-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 2018-05-21 09:34, Wolfram Sang wrote:
-> Trivial, but still: the failed symlink is not *for* the channel but a
-> link *to* the channel.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Trivial, but still: the failed symlink is not *for* the channel but a
+link *to* the channel.
 
-Applied to i2c-mux/for-next.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Cheers,
-Peter
+Found this while adding a similar message to the demux driver.
+
+ drivers/i2c/i2c-mux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/i2c/i2c-mux.c b/drivers/i2c/i2c-mux.c
+index 9669ca4937b8..300ab4b672e4 100644
+--- a/drivers/i2c/i2c-mux.c
++++ b/drivers/i2c/i2c-mux.c
+@@ -418,7 +418,7 @@ int i2c_mux_add_adapter(struct i2c_mux_core *muxc,
+ 	snprintf(symlink_name, sizeof(symlink_name), "channel-%u", chan_id);
+ 	WARN(sysfs_create_link(&muxc->dev->kobj, &priv->adap.dev.kobj,
+ 			       symlink_name),
+-	     "can't create symlink for channel %u\n", chan_id);
++	     "can't create symlink to channel %u\n", chan_id);
+ 	dev_info(&parent->dev, "Added multiplexed i2c bus %d\n",
+ 		 i2c_adapter_id(&priv->adap));
+ 
+-- 
+2.11.0
