@@ -1,73 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:53278 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751738AbeEUMZy (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:61336 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751166AbeEULSs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 May 2018 08:25:54 -0400
-From: Felipe Balbi <balbi@kernel.org>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Mon, 21 May 2018 07:18:48 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org
 Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: Re: [PATCH v2] usb: gadget: function: printer: avoid wrong list handling in printer_write()
-In-Reply-To: <1526901487-22438-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1526901487-22438-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Date: Mon, 21 May 2018 15:24:06 +0300
-Message-ID: <87tvr16vtl.fsf@linux.intel.com>
+Subject: [PATCH v2] usb: gadget: function: printer: avoid wrong list handling in printer_write()
+Date: Mon, 21 May 2018 20:18:07 +0900
+Message-Id: <1526901487-22438-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+When printer_write() calls usb_ep_queue(), a udc driver (e.g.
+renesas_usbhs driver) may call usb_gadget_giveback_request() in
+the udc .queue ops immediately. Then, printer_write() calls
+list_add(&req->list, &dev->tx_reqs_active) wrongly. After that,
+if we do unbind the printer driver, WARN_ON() happens in
+printer_func_unbind() because the list entry is not removed.
 
+So, this patch moves list_add(&req->list, &dev->tx_reqs_active)
+calling before usb_ep_queue().
 
-Hi Greg,
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Acked-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+---
+ Changes from RFC (v1):
+  - Modify the implementation to fix the issue.
+  - Add "Acked-by Felipe Balbi".
+  - Remove RFC.
+  - Revise commit log.
 
-Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com> writes:
-> When printer_write() calls usb_ep_queue(), a udc driver (e.g.
-> renesas_usbhs driver) may call usb_gadget_giveback_request() in
-> the udc .queue ops immediately. Then, printer_write() calls
-> list_add(&req->list, &dev->tx_reqs_active) wrongly. After that,
-> if we do unbind the printer driver, WARN_ON() happens in
-> printer_func_unbind() because the list entry is not removed.
->
-> So, this patch moves list_add(&req->list, &dev->tx_reqs_active)
-> calling before usb_ep_queue().
->
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Acked-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+ drivers/usb/gadget/function/f_printer.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-I'm not sure if you're still taking bug fixes for current -rc cycle, but
-if you are, please take this directly. If you're done with v4.17, please
-apply this on top of my pull request which I sent an hour or so ago.
-
-Thanks
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlsCumYACgkQzL64meEa
-mQbFsA/+Id8ppJQ/XrDsCmaCb8VHt+dW/8qMfjCRhbALXvUkzxwHScGh16+OYDgY
-rBXKTfDBPFPOrZ2coq1O/8AyJT5lI7dy6c1BddeXYp9RNMn24hIKFD1LK4EysBJB
-MnqGacRMxpJJziIxaB3SLy8yahKnYsqsL7r5W4PwHda97oKqYWAc0nYY/Ot1vX72
-fyiK6dUiQ/cfIPvJIp3C8kWAzSRDxyirMZqcq5/SZoOQhd+EuW/7eBKEvQv1k+ex
-80k7GjEoOONeRZabuwQpgBsVze+ej8BUkaRjc/8W2/7XZzv+uBAZrjcdXDnC8xGl
-k8OeEY4Zbl3YZ5M2Wc0//wSizTJ6BvD9eMcjkKnUE/P9Mba13avKMWFNEKZ/I30U
-dcErLHXLINmGadRlvWbXQeP+mdh94SL6Ny/2/YGvASWU/N9UvFpGkH/2bpUtxyy3
-Q0vET7dFEUvfavHLsb2/kVfFRim9GKSofdSZ1q5q7ynUw/gca4RsSo/u62EsGSag
-fQmnJM+7DCYb4ycr5tbteaMDf4Adtg75HwyBZCftFz5f0DRnPNHyR9ETz4mKpUbE
-92rIze6KM5jfx44YDlnFTYgMrX+jLQPVYmNbfDk9eCL8bmOJulgD0tuhn7NEeQXX
-Szqky1EQ3ebDpBh5GgXzcvxl5zzeQglVX2bU1cZE+/13BpGeNII=
-=FbAu
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/drivers/usb/gadget/function/f_printer.c b/drivers/usb/gadget/function/f_printer.c
+index d359efe..9c7ed25 100644
+--- a/drivers/usb/gadget/function/f_printer.c
++++ b/drivers/usb/gadget/function/f_printer.c
+@@ -631,19 +631,19 @@ static void tx_complete(struct usb_ep *ep, struct usb_request *req)
+ 			return -EAGAIN;
+ 		}
+ 
++		list_add(&req->list, &dev->tx_reqs_active);
++
+ 		/* here, we unlock, and only unlock, to avoid deadlock. */
+ 		spin_unlock(&dev->lock);
+ 		value = usb_ep_queue(dev->in_ep, req, GFP_ATOMIC);
+ 		spin_lock(&dev->lock);
+ 		if (value) {
++			list_del(&req->list);
+ 			list_add(&req->list, &dev->tx_reqs);
+ 			spin_unlock_irqrestore(&dev->lock, flags);
+ 			mutex_unlock(&dev->lock_printer_io);
+ 			return -EAGAIN;
+ 		}
+-
+-		list_add(&req->list, &dev->tx_reqs_active);
+-
+ 	}
+ 
+ 	spin_unlock_irqrestore(&dev->lock, flags);
+-- 
+1.9.1
