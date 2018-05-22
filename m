@@ -1,61 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:36850 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750872AbeEFF7G (ORCPT
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:38145 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751279AbeEVOdi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 6 May 2018 01:59:06 -0400
-Date: Sat, 5 May 2018 22:59:02 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [v2] watchdog: renesas-wdt: Add support for the R8A77965 WDT
-Message-ID: <20180506055902.GA3711@roeck-us.net>
-References: <20180414101858.3208-1-wsa+renesas@sang-engineering.com>
+        Tue, 22 May 2018 10:33:38 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180414101858.3208-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180522120257.13232-3-marek.vasut+renesas@gmail.com>
+References: <20180522120257.13232-1-marek.vasut+renesas@gmail.com> <20180522120257.13232-3-marek.vasut+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 22 May 2018 16:33:37 +0200
+Message-ID: <CAMuHMdXw06zb-J7_858+KfRi3aAqQw8d3Js2k0Y69kKwzu2dTw@mail.gmail.com>
+Subject: Re: [PATCH 3/9] ARM: dts: stout: Drop MTD partitioning from DT
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, Apr 14, 2018 at 12:18:58PM +0200, Wolfram Sang wrote:
-> Document support for the Watchdog Timer (WDT) Controller in the Renesas
-> R-Car M3-N (R8A77965) SoC. No driver update is needed.
-> 
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> [wsa: rebased to top-of-tree]
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-> Reviewed-by: Vaishali Thakkar <vthakkar@vaishalithakkar.in>
+On Tue, May 22, 2018 at 2:02 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> Drop the MTD partitioning from DT, since it does not describe HW
+> and to give way to a more flexible kernel command line partition
+> passing.
+>
+> To retain the original partitioning, assure you have enabled
+> CONFIG_MTD_CMDLINE_PARTS in your kernel config and add the
+> following to your kernel command line:
+>
+>   mtdparts=spi0.0:512k@0(loader),256k(uboot),256k(uboot-env),-(flash)
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-Unfortunately this patch isn't based on anything recognized by git,
-and even though it is simple I can't get it to apply. Can someone please
-rebase it to mainline and resend ?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks,
-Guenter
+Gr{oetje,eeting}s,
 
-> ---
-> 
-> Change since v1: s/M3N/M3-N/ (Thanks, Geert!)
-> 
->  Documentation/devicetree/bindings/watchdog/renesas-wdt.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-> index 123bb1b2654b..613d860f2353 100644
-> --- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-> +++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-> @@ -15,6 +15,7 @@ Required properties:
->  		 - "renesas,r8a7794-wdt" (R-Car E2)
->  		 - "renesas,r8a7795-wdt" (R-Car H3)
->  		 - "renesas,r8a7796-wdt" (R-Car M3-W)
-> +		 - "renesas,r8a77965-wdt" (R-Car M3-N)
->  		 - "renesas,r8a77970-wdt" (R-Car V3M)
->  		 - "renesas,r8a77995-wdt" (R-Car D3)
->  	       The generic compatible string must be:
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
