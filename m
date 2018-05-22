@@ -1,82 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:48089 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940289AbeE1QhZ (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35411 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751177AbeEVKAm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 May 2018 12:37:25 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com,
-        sakari.ailus@iki.fi, mchehab@kernel.org,
-        ysato@users.sourceforge.jp, dalias@libc.org
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/5] Remove sh_mobile_ceu_camera from arch/sh
-Date: Mon, 28 May 2018 18:37:06 +0200
-Message-Id: <1527525431-22852-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 22 May 2018 06:00:42 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+Subject: Re: [PATCH][RFC] PCI: rcar: Add bus notifier so we can limit the DMA
+ range
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-pci <linux-pci@vger.kernel.org>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+References: <20180521220514.30256-1-marek.vasut+renesas@gmail.com>
+ <CAK8P3a1PZ_MfgEcvWdUbN-eCcs5Xo38LQ54imLc4kNtSKO9Txw@mail.gmail.com>
+Message-ID: <c2897d82-fe33-52cd-5aa6-3bddb478cb9f@gmail.com>
+Date: Tue, 22 May 2018 11:52:21 +0200
+MIME-Version: 1.0
+In-Reply-To: <CAK8P3a1PZ_MfgEcvWdUbN-eCcs5Xo38LQ54imLc4kNtSKO9Txw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-    this series removes dependencies on the soc_camera based
-sh_mobile_ceu_camera driver from 3 board files in arch/sh and from one
-sensor driver used by one of those boards.
+On 05/22/2018 10:10 AM, Arnd Bergmann wrote:
+> On Tue, May 22, 2018 at 12:05 AM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>> From: Phil Edworthy <phil.edworthy@renesas.com>
+>>
+>> The PCIe DMA controller on RCar Gen2 and earlier is on 32bit bus,
+>> so limit the DMA range to 32bit.
+>>
+>> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>> Cc: Arnd Bergmann <arnd@arndb.de>
+>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+>> Cc: Simon Horman <horms+renesas@verge.net.au>
+>> Cc: Wolfram Sang <wsa@the-dreams.de>
+>> Cc: linux-renesas-soc@vger.kernel.org
+>> To: linux-pci@vger.kernel.org
+>> ---
+>> NOTE: I'm aware of https://patchwork.kernel.org/patch/9495895/ , but the
+>>       discussion seems to have gone way off, so I'm sending this as a
+>>       RFC. Any feedback on how to do this limiting properly would be nice.
+> 
+> Doing it in the driver is clearly not appropriate, we must do this in
+> common code. If I remember correctly, it's specifically ARM64 that is
+> broken here, it incorrectly allows setting a DMA mask to 64 bit
+> when that is not available.
 
-Hans, this means there are no more user of the soc_camera framework that I know
-of in Linux, and I guess we can now plan of to remove that framework.
+Yep, that's correct. ARM64 with devices mapping tremendous amounts of
+memory. So did anything change since that discussion references in the NOTE?
 
-A note on the sensor driver: I haven't been able to find any documentation
-for the SHARP RJ54N1CB0C sensor and so I inferred as much as possible from the
-existing code. It seems to me that the sensor needs to power-up/enable gpios
-(both active high) and I have registered them from the kfr2r09 board file,
-assuming this was not a platform-specific design, but something the sensor
-requires. As per the previous drivers ported away from soc_camera, I'm in
-favour of moving them to staging if they do not match the quality expected
-from a modern V4L2 sensor driver. Ie. framerate control is missing, and I
-know this has been a blocker for other drivers in the past.
-
-What I've done to three board files closely resembles what I done already for
-Migo-R and Ecovec, and it listed in the single commit messages.
-
-The only tough one is probably ap325rxa, which had an additional sensor
-registered but controlled from i2c transaction of magic blobs from the board
-file. I dare to remove that sensor registration completely as it seems to me
-there is no diver for that at all in mainline.
-
-Last, this patch is based on the media tree master branch, with Akinobu Mita's
-patches on ov772x driver on top, which I strangely see only partially applied
-to the media master tree [1]
-
-Hans, as this is mostly media-related work, but mostly on SH architecture, I
-would like to ask if these should go through you or SH tree.
-
-All of that has only been compile tested. It's pretty hard to find this
-platforms around and testing would be awesome if somebody happens to have
-one of these.
-
-Thanks
-   j
-
-[1] https://patchwork.linuxtv.org/patch/49318/
-    https://patchwork.linuxtv.org/patch/49317/
-    https://patchwork.linuxtv.org/patch/49312/
-
-Jacopo Mondi (5):
-  media: i2c: Copy rj54n1cb0c soc_camera sensor driver
-  media: i2c: rj54n1: Remove soc_camera dependencies
-  arch: sh: kfr2r09: Use new renesas-ceu camera driver
-  arch: sh: ms7724se: Use new renesas-ceu camera driver
-  arch: sh: ap325rxa: Use new renesas-ceu camera driver
-
- arch/sh/boards/mach-ap325rxa/setup.c   |  282 ++-----
- arch/sh/boards/mach-kfr2r09/setup.c    |  216 +++--
- arch/sh/boards/mach-se/7724/setup.c    |  120 ++-
- arch/sh/kernel/cpu/sh4a/clock-sh7723.c |    2 +-
- drivers/media/i2c/Kconfig              |   11 +
- drivers/media/i2c/Makefile             |    1 +
- drivers/media/i2c/rj54n1cb0c.c         | 1437 ++++++++++++++++++++++++++++++++
- 7 files changed, 1710 insertions(+), 359 deletions(-)
- create mode 100644 drivers/media/i2c/rj54n1cb0c.c
-
---
-2.7.4
+-- 
+Best regards,
+Marek Vasut
