@@ -1,75 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:58840 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751192AbeEVMek (ORCPT
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:44841 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751214AbeEVMDQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 May 2018 08:34:40 -0400
-Date: Tue, 22 May 2018 14:34:38 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Tue, 22 May 2018 08:03:16 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: devicetree@vger.kernel.org,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 5/9] ARM: dts: porter: Drop MTD partitioning from DT
-Message-ID: <20180522123438.gkfd55suu4g2p6nr@ninjato>
+Subject: [PATCH 5/9] ARM: dts: porter: Drop MTD partitioning from DT
+Date: Tue, 22 May 2018 14:02:53 +0200
+Message-Id: <20180522120257.13232-5-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180522120257.13232-1-marek.vasut+renesas@gmail.com>
 References: <20180522120257.13232-1-marek.vasut+renesas@gmail.com>
- <20180522120257.13232-5-marek.vasut+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ug5wdebxo5aqk226"
-Content-Disposition: inline
-In-Reply-To: <20180522120257.13232-5-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Drop the MTD partitioning from DT, since it does not describe HW
+and to give way to a more flexible kernel command line partition
+passing.
 
---ug5wdebxo5aqk226
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+To retain the original partitioning, assure you have enabled
+CONFIG_MTD_CMDLINE_PARTS in your kernel config and add the
+following to your kernel command line:
 
-On Tue, May 22, 2018 at 02:02:53PM +0200, Marek Vasut wrote:
-> Drop the MTD partitioning from DT, since it does not describe HW
-> and to give way to a more flexible kernel command line partition
-> passing.
->=20
-> To retain the original partitioning, assure you have enabled
-> CONFIG_MTD_CMDLINE_PARTS in your kernel config and add the
-> following to your kernel command line:
->=20
->   mtdparts=3Dspi0.0:256k@0(loader_prg),4096k(user_prg),-(flash_fs)
->=20
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Simon Horman <horms+renesas@verge.net.au>
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Cc: linux-renesas-soc@vger.kernel.org
+  mtdparts=spi0.0:256k@0(loader_prg),4096k(user_prg),-(flash_fs)
 
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org
+---
+ arch/arm/boot/dts/r8a7791-porter.dts | 21 ---------------------
+ 1 file changed, 21 deletions(-)
 
-
---ug5wdebxo5aqk226
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsEDl4ACgkQFA3kzBSg
-KbYH7w//RFyVVNKLUbQYlY2I+gZwlS+yKVfhq7CwKZFllOJAtoQwEyEhVTmcsmRP
-U2FRjua7gp9LMJVpZZlP7fx2J5/F5Z/SERjkhLfffDH3YEqXAhigfvt5sEb67p7X
-4y4C6SuoYpQ81LkNkLsi1DqoqH3fR8SOdtrYpHVfH+61BpHmlUL7ECzAT6KAg7VT
-6D1TGny5/1bKYKDKegL3Ig1Db1yrgyez0AvmRZrcHByEUWbEYm9P3JkMFxgJGrkg
-p28LJZJxEt1vqY1xKAznFCGKJUtqUGQjy2NdT+2g1HS5ac0a+t0Jyv9yU0vsd8wg
-nBpVkDY7gfAtL/TwWkbwzhF5ESutWfcqW7GqnujEHpLgafc3fQufwSoSyliGKxHA
-lwBEDo9ykvIJ5pYGNmamyhLydXrRMCVO2HaVUbTh3HSpZkOhgzEz5nKrfewPq1Pz
-uUPlpevcZgP5ezfWzmhQZ2G+94EtpmnMf2oO7xNLQBiAo+pWMZ4BvbgVve+uVegK
-Nsx6+/PH9hE6X8hoTbaUu54lO1uWz9HpssnuE2cpHU+/FRYxzr9RmYoKmqsw87Ls
-hNXNJhCGbQipuBv378K6zhYP+abSN/0BFg8Eep7IIBH6bSPpGxUxBYBPd4K6+T2Z
-/6X+2/VWYMAtoxmhMhr3ItKSsq+AO9dJ1C5c6LR+R5xJbZ4djoQ=
-=g6tG
------END PGP SIGNATURE-----
-
---ug5wdebxo5aqk226--
+diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
+index a01101b49d99..45d89e064407 100644
+--- a/arch/arm/boot/dts/r8a7791-porter.dts
++++ b/arch/arm/boot/dts/r8a7791-porter.dts
+@@ -344,27 +344,6 @@
+ 		spi-tx-bus-width = <4>;
+ 		spi-rx-bus-width = <4>;
+ 		m25p,fast-read;
+-
+-		partitions {
+-			compatible = "fixed-partitions";
+-			#address-cells = <1>;
+-			#size-cells = <1>;
+-
+-			partition@0 {
+-				label = "loader_prg";
+-				reg = <0x00000000 0x00040000>;
+-				read-only;
+-			};
+-			partition@40000 {
+-				label = "user_prg";
+-				reg = <0x00040000 0x00400000>;
+-				read-only;
+-			};
+-			partition@440000 {
+-				label = "flash_fs";
+-				reg = <0x00440000 0x03bc0000>;
+-			};
+-		};
+ 	};
+ };
+ 
+-- 
+2.16.2
