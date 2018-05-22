@@ -1,53 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752600AbeERLT2 (ORCPT
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:44983 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751317AbeEVOId (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:19:28 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 60/69] ARM: dts: r7s72100: Add PMU device node
-Date: Fri, 18 May 2018 13:17:33 +0200
-Message-Id: <74a0e50d70aa8f7baeaad7a5c5f7d6bdaf92ff1a.1526641667.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
-References: <cover.1526641667.git.horms+renesas@verge.net.au>
+        Tue, 22 May 2018 10:08:33 -0400
+MIME-Version: 1.0
+In-Reply-To: <1526475916-13705-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1526475916-13705-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1526475916-13705-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 22 May 2018 16:08:31 +0200
+Message-ID: <CAMuHMdU0kTrKeszus==q9bJf1S+OwFw4Qdte-Ht5ESyER1rxKA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] spi: sh-msiof: Document R-Car D3 support
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-spi <linux-spi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, May 16, 2018 at 3:05 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Document support for the MSIOF module in the Renesas D3 (r8a77995) SoC.
+>
+> No driver update is needed.
+>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Enable support for the ARM Performance Monitor Units in the Cortex-A9
-CPU core on RZ/A1H by adding a device node for the PMU.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-New Linux output:
+Gr{oetje,eeting}s,
 
-    hw perfevents: enabled with armv7_cortex_a9 PMU driver, 7 counters available
+                        Geert
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r7s72100.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index eb2e6f95a2e8..a54822e97bac 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -77,6 +77,11 @@
- 		clock-div = <6>;
- 	};
- 
-+	pmu {
-+		compatible = "arm,cortex-a9-pmu";
-+		interrupts-extended = <&gic GIC_PPI 0 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
- 	rtc_x1_clk: rtc_x1 {
- 		#clock-cells = <0>;
- 		compatible = "fixed-clock";
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
