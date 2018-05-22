@@ -1,42 +1,43 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: [PATCH v3 5/5] DT: pci: rcar-pci: document R8A77980 bindings
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-References: <b98130a7-b128-9fc3-aee1-1a5a2590b320@cogentembedded.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Message-ID: <eb928983-475a-c238-5a44-505c07472b93@cogentembedded.com>
-Date: Thu, 3 May 2018 22:44:58 +0300
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:40629 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751420AbeEVMzr (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 22 May 2018 08:55:47 -0400
+Date: Tue, 22 May 2018 14:55:43 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 01/03] arm64: dts: renesas: r8a77965: Add IPMMU devices
+ nodes
+Message-ID: <20180522125543.v2w4qf3xdmpxkp57@verge.net.au>
+References: <152691388485.29667.16990860330809844193.sendpatchset@little-apple>
+ <152691389327.29667.11748814522423573308.sendpatchset@little-apple>
 MIME-Version: 1.0
-In-Reply-To: <b98130a7-b128-9fc3-aee1-1a5a2590b320@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152691389327.29667.11748814522423573308.sendpatchset@little-apple>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the R-Car V3H (R8A77980) SoC in the R-Car PCIe bindings.
+On Mon, May 21, 2018 at 11:44:53PM +0900, Magnus Damm wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+> 
+> Add IPMMU device nodes for the R-Car M3-N SoC aka r8a77965.
+> 
+> The r8a77965 IPMMU is quite similar to r8a7796 however VP0
+> has been added and PV1 has been removed. Also the IMSSTR
+> bit assignment has been reworked.
+> 
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> ---
+> 
+>  Developed on top of renesas-devel-20180518-v4.17-rc5
+> 
+>  The DT binding for the M3-N IPMMU has earlier been documented in:
+>  [PATCH] iommu/ipmmu-vmsa: Document R-Car M3-N IPMMU DT bindings
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+This looks fine but I will wait to see if there are other reviews before
+applying.
 
----
-Changes in version 2:
-- new patch.
-
- Documentation/devicetree/bindings/pci/rcar-pci.txt |    1 +
- 1 file changed, 1 insertion(+)
-
-Index: pci/Documentation/devicetree/bindings/pci/rcar-pci.txt
-===================================================================
---- pci.orig/Documentation/devicetree/bindings/pci/rcar-pci.txt
-+++ pci/Documentation/devicetree/bindings/pci/rcar-pci.txt
-@@ -8,6 +8,7 @@ compatible: "renesas,pcie-r8a7743" for t
- 	    "renesas,pcie-r8a7793" for the R8A7793 SoC;
- 	    "renesas,pcie-r8a7795" for the R8A7795 SoC;
- 	    "renesas,pcie-r8a7796" for the R8A7796 SoC;
-+	    "renesas,pcie-r8a77980" for the R8A77980 SoC;
- 	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 or
- 				     RZ/G1 compatible device.
- 	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 compatible device.
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
