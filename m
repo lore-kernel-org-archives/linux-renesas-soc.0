@@ -1,43 +1,45 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:48316 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751413AbeERLGx (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:06:53 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, linux-sh@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] media: arch: sh: migor: Remove calls to empty arch_setup_pdev_archdata()
-Date: Fri, 18 May 2018 13:06:51 +0200
-Message-Id: <1526641611-2769-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1526641611-2769-1-git-send-email-geert+renesas@glider.be>
-References: <1526641611-2769-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Tue, 22 May 2018 15:25:24 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        niklas.soderlund@ragnatech.se, geert@glider.be,
+        magnus.damm@gmail.com, robh+dt@kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] arm64: dts: renesas: draak: Describe CVBS input
+Message-ID: <20180522132523.ccinau62naa7zacc@verge.net.au>
+References: <1526913942-15426-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1526913942-15426-3-git-send-email-jacopo+renesas@jmondi.org>
+ <1958464.yiJe0NDHa3@avalon>
+ <20180522132411.7szrsk4pxvwrqrxf@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180522132411.7szrsk4pxvwrqrxf@verge.net.au>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SuperH doesn't implement arch_setup_pdev_archdata(), and falls back to
-the default (empty) implementation.  As this code is board-specific, the
-call can just be removed.
+On Tue, May 22, 2018 at 03:24:13PM +0200, Simon Horman wrote:
+> On Mon, May 21, 2018 at 05:50:50PM +0300, Laurent Pinchart wrote:
+> > Hi Jacopo,
+> > 
+> > Thank you for the patch.
+> > 
+> > On Monday, 21 May 2018 17:45:41 EEST Jacopo Mondi wrote:
+> > > Describe CVBS video input through analog video decoder ADV7180
+> > > connected to video input interface VIN4.
+> > > 
+> > > The video input signal path is shared with HDMI video input, and
+> > > selected by on-board switches SW-53 and SW-54 with CVBS input selected
+> > > by the default switches configuration.
+> > > 
+> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > > Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > 
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+> Thanks Niklas, applied.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/sh/boards/mach-migor/setup.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/sh/boards/mach-migor/setup.c b/arch/sh/boards/mach-migor/setup.c
-index 271dfc260e8281f6..8cc09f3d03689e0d 100644
---- a/arch/sh/boards/mach-migor/setup.c
-+++ b/arch/sh/boards/mach-migor/setup.c
-@@ -603,7 +603,6 @@ static int __init migor_devices_setup(void)
- 
- 	/* Initialize CEU platform device separately to map memory first */
- 	device_initialize(&migor_ceu_device.dev);
--	arch_setup_pdev_archdata(&migor_ceu_device);
- 	dma_declare_coherent_memory(&migor_ceu_device.dev,
- 				    ceu_dma_membase, ceu_dma_membase,
- 				    ceu_dma_membase + CEU_BUFFER_MEMORY_SIZE - 1,
--- 
-2.7.4
+Sorry, I meant thanks Jacopo, Niklas and Laurent!
