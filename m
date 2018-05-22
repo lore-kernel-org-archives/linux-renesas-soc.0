@@ -1,54 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33783 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750888AbeERLQJ (ORCPT
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:33130 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753306AbeEVXUP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:16:09 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 002/102] arm64: dts: renesas: r8a77965: add usb3_phy node
-Date: Fri, 18 May 2018 13:14:24 +0200
-Message-Id: <7a4a541eed654d62f82146f71b8aed869254e9ad.1526637994.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
-References: <cover.1526637994.git.horms+renesas@verge.net.au>
+        Tue, 22 May 2018 19:20:15 -0400
+Subject: Re: [PATCH 3/4] PCI: rcar: Add missing irq_dispose_mapping() into
+ failpath
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-pci <linux-pci@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <20180521131123.2009-1-marek.vasut+renesas@gmail.com>
+ <20180521131123.2009-3-marek.vasut+renesas@gmail.com>
+ <CAMuHMdV9_-MRLDP98G5J5v1bojAUmRLvSkyf3Fhmn41t1rpn4g@mail.gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <a95615e8-69f7-886e-f659-6b9880debf28@gmail.com>
+Date: Tue, 22 May 2018 23:51:09 +0200
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdV9_-MRLDP98G5J5v1bojAUmRLvSkyf3Fhmn41t1rpn4g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+On 05/22/2018 05:18 PM, Geert Uytterhoeven wrote:
+> Hi Marek,
 
-This patch adds usb3_phy node for r8a77965.
+Hi,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+> On Mon, May 21, 2018 at 3:11 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>> The rcar_pcie_get_resources() is another misnomer with a side effect.
+>> The function does not only get resources, but also maps MSI IRQs via
+>> irq_of_parse_and_map(). In case anything fails afterward, the IRQ
+>> mapping must be disposed through irq_dispose_mapping() which is not
+>> done.
+>>
+>> This patch handles irq_of_parse_and_map() failures in by disposing
+>> of the mapping in rcar_pcie_get_resources() as well as in probe.
+>>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+>> --- a/drivers/pci/host/pcie-rcar.c
+>> +++ b/drivers/pci/host/pcie-rcar.c
+>> @@ -923,18 +923,25 @@ static int rcar_pcie_get_resources(struct rcar_pcie *pcie)
+>>         i = irq_of_parse_and_map(dev->of_node, 0);
+>>         if (!i) {
+>>                 dev_err(dev, "cannot get platform resources for msi interrupt\n");
+>> -               return -ENOENT;
+>> +               err = -ENOENT;
+>> +               goto err_irq1;
+> 
+> You could have kept the return here.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index d498274fa0f3..abb4d4dcc0ed 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -868,9 +868,16 @@
- 		};
- 
- 		usb3_phy0: usb-phy@e65ee000 {
-+			compatible = "renesas,r8a77965-usb3-phy",
-+				     "renesas,rcar-gen3-usb3-phy";
- 			reg = <0 0xe65ee000 0 0x90>;
-+			clocks = <&cpg CPG_MOD 328>, <&usb3s0_clk>,
-+				 <&usb_extal_clk>;
-+			clock-names = "usb3-if", "usb3s_clk", "usb_extal";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 328>;
- 			#phy-cells = <0>;
--			/* placeholder */
-+			status = "disabled";
- 		};
- 
- 		usb3_peri0: usb@ee020000 {
+I like the symmetry ;-)
+
+[...]
+
 -- 
-2.11.0
+Best regards,
+Marek Vasut
