@@ -1,57 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751435AbeERLSs (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35875 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751214AbeEVMyr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:18:48 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 23/69] ARM: dts: r8a7743: Add watchdog support to SoC dtsi
-Date: Fri, 18 May 2018 13:16:56 +0200
-Message-Id: <b5beb5d4c81c358f50a8310108e7d8614eec8bfd.1526641667.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
-References: <cover.1526641667.git.horms+renesas@verge.net.au>
+        Tue, 22 May 2018 08:54:47 -0400
+Subject: Re: [PATCH] PCI: rcar: Poll more often in rcar_pcie_wait_for_dl()
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-pci <linux-pci@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <20180521210522.29346-1-marek.vasut+renesas@gmail.com>
+ <CAMuHMdVkeSEsO-jRCzh-_9VkzZ+4X-VAN1KZOA2wB7bUQTrRYg@mail.gmail.com>
+ <3936f87b-155f-7fc1-1618-287d5d64b7b3@gmail.com>
+ <CAMuHMdU=s3ZyCLO5zDXgQis8Ak5akhJhcShs4hgQikaoWYLGZw@mail.gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <f7d3ed30-0290-8297-1a7b-7c6bfb2dfcb6@gmail.com>
+Date: Tue, 22 May 2018 14:20:09 +0200
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdU=s3ZyCLO5zDXgQis8Ak5akhJhcShs4hgQikaoWYLGZw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+On 05/22/2018 12:33 PM, Geert Uytterhoeven wrote:
+> Hi Marek,
+> 
+> On Tue, May 22, 2018 at 11:48 AM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>> On 05/22/2018 11:42 AM, Geert Uytterhoeven wrote:
+>>> On Mon, May 21, 2018 at 11:05 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>>>> The data link active signal usually takes ~20 uSec to be asserted,
+>>>> poll the bit more often to avoid useless delays in this function.
+>>>> Use udelay() instead of usleep() for such a small delay as suggested
+>>>> by the timer documentation and because this will be used in atomic
+>>>> context later on when the suspend/resume patches land.
+>>>>
+>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>>
+>>> Thanks for your patch!
+>>>
+>>>> --- a/drivers/pci/host/pcie-rcar.c
+>>>> +++ b/drivers/pci/host/pcie-rcar.c
+>>>> @@ -529,13 +529,13 @@ static void phy_write_reg(struct rcar_pcie *pcie,
+>>>>
+>>>>  static int rcar_pcie_wait_for_dl(struct rcar_pcie *pcie)
+>>>>  {
+>>>> -       unsigned int timeout = 10;
+>>>> +       unsigned int timeout = 10000;
+>>>>
+>>>>         while (timeout--) {
+>>>>                 if ((rcar_pci_read_reg(pcie, PCIETSTR) & DATA_LINK_ACTIVE))
+>>>>                         return 0;
+>>>>
+>>>> -               msleep(5);
+>>>> +               udelay(5);
+>>>
+>>> + cpu_relax()?
+>>
+>> Is it safe to use in atomic context ? Because of that suspend/resume thing.
+> 
+> Yes.
 
-This patch adds watchdog support to the r8a7743 SoC dtsi.
+OK, added.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7743.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+>>>>         }
+>>>
+>>> if this ever happens, it will have blocked for more than 50 ms...
+>>
+>> Well yes, so did the previous thing.
+> 
+> No, the previous thing slept. Big difference.
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 0381b86b7591..69d8f7e0f053 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -297,6 +297,16 @@
- 			reg = <0 0xe6160000 0 0x100>;
- 		};
- 
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a7743-wdt",
-+				     "renesas,rcar-gen2-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
-+		};
-+
- 		sysc: system-controller@e6180000 {
- 			compatible = "renesas,r8a7743-sysc";
- 			reg = <0 0xe6180000 0 0x200>;
+True
+
 -- 
-2.11.0
+Best regards,
+Marek Vasut
