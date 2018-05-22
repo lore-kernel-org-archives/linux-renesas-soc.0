@@ -1,30 +1,35 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Wed, 23 May 2018 10:51:12 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:43326 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752698AbeEVWeZ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 22 May 2018 18:34:25 -0400
+Date: Tue, 22 May 2018 17:34:23 -0500
+From: Rob Herring <robh@kernel.org>
+To: Niklas =?iso-8859-1?Q?S=F6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Cc: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH] media: dt-bindings: media: rcar_vin: add support for
  r8a77965
-Message-ID: <20180523085111.gud5b2652vkvbgoq@verge.net.au>
+Message-ID: <20180522223423.GA14893@rob-hp-laptop>
 References: <20180513185818.15359-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 In-Reply-To: <20180513185818.15359-1-niklas.soderlund+renesas@ragnatech.se>
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, May 13, 2018 at 08:58:18PM +0200, Niklas Söderlund wrote:
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
+On Sun, May 13, 2018 at 08:58:18PM +0200, Niklas S�derlund wrote:
+> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 > ---
 >  Documentation/devicetree/bindings/media/rcar_vin.txt | 1 +
 >  1 file changed, 1 insertion(+)
+
+Acked-by: Rob Herring <robh@kernel.org>
+
 > 
 > diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
 > index a19517e1c669eb35..c2c57dcf73f4851b 100644
