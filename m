@@ -1,23 +1,15 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:35203 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965492AbeEXNUe (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 May 2018 09:20:34 -0400
-Received: by mail-ua0-f193.google.com with SMTP id a2-v6so1068549uak.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 24 May 2018 06:20:34 -0700 (PDT)
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdX-t8WfjRKpZ7UxXBbBNojsn-8z7_BM9grmLJcf=9Ks2Q@mail.gmail.com>
+In-Reply-To: <CAOtvUMcf-fHduThORv3cbcN16wEm_Si27OjSjAmSc9g5eK4PJw@mail.gmail.com>
 References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
  <1526387370-17142-4-git-send-email-gilad@benyossef.com> <CAMuHMdWzeNqsho1V6ezZb81T3_HcRzrtuQpmGXsjtFgt9BtZDQ@mail.gmail.com>
  <20180516074333.i2672u435ymwffk3@verge.net.au> <CAOtvUMfFjokOLCg6aHNQESJ_q4Jiok3izrPtae5wR+cND=XL6g@mail.gmail.com>
- <CAMuHMdVM55S7+PdnKusX-qkTxioc=0kQ6EGSbwv+kbLk5RCUYw@mail.gmail.com>
- <CAOtvUMcf-fHduThORv3cbcN16wEm_Si27OjSjAmSc9g5eK4PJw@mail.gmail.com> <CAMuHMdX-t8WfjRKpZ7UxXBbBNojsn-8z7_BM9grmLJcf=9Ks2Q@mail.gmail.com>
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-Date: Thu, 24 May 2018 16:20:33 +0300
-Message-ID: <CAOtvUMdCSoxYjpyb+fD36EE5+4sV4CjrxwK94RQ7bNKE5rajmQ@mail.gmail.com>
+ <CAMuHMdVM55S7+PdnKusX-qkTxioc=0kQ6EGSbwv+kbLk5RCUYw@mail.gmail.com> <CAOtvUMcf-fHduThORv3cbcN16wEm_Si27OjSjAmSc9g5eK4PJw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 22 May 2018 09:48:06 +0200
+Message-ID: <CAMuHMdX-t8WfjRKpZ7UxXBbBNojsn-8z7_BM9grmLJcf=9Ks2Q@mail.gmail.com>
 Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Gilad Ben-Yossef <gilad@benyossef.com>
 Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -38,52 +30,36 @@ Cc: Simon Horman <horms@verge.net.au>,
         linux-clk <linux-clk@vger.kernel.org>,
         Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, May 22, 2018 at 10:48 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Hi Gilad,
->
-> On Mon, May 21, 2018 at 3:43 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
->> On Thu, May 17, 2018 at 1:16 PM, Geert Uytterhoeven
->> <geert@linux-m68k.org> wrote:
->>> Indeed. From a quick glance, it looks like drivers/crypto/ccree/cc_driver.c
->>> does not distinguish between the absence of the clock property, and an
->>> actual error in getting the clock, and never considers any error a failure
->>> (incl. -PROBE_DEFER).
->>>
->>> As of_clk_get() returns -ENOENT for both a missing clock property and a
->>> missing clock, you should use (devm_)clk_get() instead, and distinguish
->>> between NULL (no clock property) and IS_ERR() (actual failure -> abort).
+Hi Gilad,
+
+On Mon, May 21, 2018 at 3:43 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> On Thu, May 17, 2018 at 1:16 PM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> Indeed. From a quick glance, it looks like drivers/crypto/ccree/cc_driver.c
+>> does not distinguish between the absence of the clock property, and an
+>> actual error in getting the clock, and never considers any error a failure
+>> (incl. -PROBE_DEFER).
 >>
->> I was trying to do as you suggested but I didn't quite get what is the
->> dev_id (2nd) parameter to devm_clk_get parameter is supposed to be.
+>> As of_clk_get() returns -ENOENT for both a missing clock property and a
+>> missing clock, you should use (devm_)clk_get() instead, and distinguish
+>> between NULL (no clock property) and IS_ERR() (actual failure -> abort).
 >
-> It's the (optional) name of the clock, helpful in case there is more than one.
-> In your case, NULL is fine.
->
+> I was trying to do as you suggested but I didn't quite get what is the
+> dev_id (2nd) parameter to devm_clk_get parameter is supposed to be.
 
-I have assumed as much and tried it, it did not work and so I assumed
-I am missing something and asked you.
-It turns out I was missing the fact I was using the wrong device tree
-file... :-(
+It's the (optional) name of the clock, helpful in case there is more than one.
+In your case, NULL is fine.
 
-So thanks, it works now :-)
+Gr{oetje,eeting}s,
 
-Having said that, while using devm)clk_get() is a better approach, it
-does not seems to distinguish
-between no "clocks" and a failure to clock information - it returns
-ENOENT in both cases as well.
-
-Thanks,
-Gilad
-
+                        Geert
 
 -- 
-Gilad Ben-Yossef
-Chief Coffee Drinker
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-"If you take a class in large-scale robotics, can you end up in a
-situation where the homework eats your dog?"
- -- Jean-Baptiste Queru
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
