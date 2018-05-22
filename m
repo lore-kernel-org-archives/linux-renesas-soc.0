@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57531 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:36339 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754395AbeEWJTA (ORCPT
+        with ESMTP id S1751002AbeEVIwY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 May 2018 05:19:00 -0400
-Date: Wed, 23 May 2018 11:18:55 +0200
+        Tue, 22 May 2018 04:52:24 -0400
+Date: Tue, 22 May 2018 10:52:21 +0200
 From: Simon Horman <horms@verge.net.au>
 To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Rob Herring <robh+dt@kernel.org>,
@@ -15,29 +15,25 @@ Cc: Rob Herring <robh+dt@kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org
 Subject: Re: [PATCH 2/2] arm64: dts: renesas: v3hsk: add GEther support
-Message-ID: <20180523091854.iybdiv6lyuxcv4cw@verge.net.au>
+Message-ID: <20180522085220.vzffiwiwzixlvpkz@verge.net.au>
 References: <a4230699-e46f-0782-e3b1-22d58b9033c8@cogentembedded.com>
  <7a853b57-747e-7536-89fe-2e0c847f58f4@cogentembedded.com>
- <20180522085220.vzffiwiwzixlvpkz@verge.net.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180522085220.vzffiwiwzixlvpkz@verge.net.au>
+In-Reply-To: <7a853b57-747e-7536-89fe-2e0c847f58f4@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, May 22, 2018 at 10:52:21AM +0200, Simon Horman wrote:
-> On Fri, May 18, 2018 at 10:46:19PM +0300, Sergei Shtylyov wrote:
-> > Define the V3H Starter Kit board dependent part of the GEther device node.
-> > 
-> > Based on the original (and large) patch by Vladimir Barinov.
-> > 
-> > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Fri, May 18, 2018 at 10:46:19PM +0300, Sergei Shtylyov wrote:
+> Define the V3H Starter Kit board dependent part of the GEther device node.
 > 
-> This looks fine but I will wait to see if there are other reviews before
-> applying.
+> Based on the original (and large) patch by Vladimir Barinov.
 > 
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Applied.
+This looks fine but I will wait to see if there are other reviews before
+applying.
+
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
