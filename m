@@ -1,75 +1,53 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        horms@verge.net.au, geert@glider.be
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 0/8] media: rcar-vin: Brush endpoint properties
-Date: Tue, 29 May 2018 17:05:51 +0200
-Message-Id: <1527606359-19261-1-git-send-email-jacopo+renesas@jmondi.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:46001 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751196AbeEVO3x (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 22 May 2018 10:29:53 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <20180522120257.13232-4-marek.vasut+renesas@gmail.com>
+References: <20180522120257.13232-1-marek.vasut+renesas@gmail.com> <20180522120257.13232-4-marek.vasut+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 22 May 2018 16:29:52 +0200
+Message-ID: <CAMuHMdW_r4D2WyJVJAW6smrg5dipjwB6wV5ZF5O4v3Mq2cXd3g@mail.gmail.com>
+Subject: Re: [PATCH 4/9] ARM: dts: koelsch: Drop MTD partitioning from DT
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-   3rd version of VIN endpoint brushing series.
+On Tue, May 22, 2018 at 2:02 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> Drop the MTD partitioning from DT, since it does not describe HW
+> and to give way to a more flexible kernel command line partition
+> passing.
+>
+> To retain the original partitioning, assure you have enabled
+> CONFIG_MTD_CMDLINE_PARTS in your kernel config and add the
+> following to your kernel command line:
+>
+>   mtdparts=spi0.0:512k@0(loader),5632k(user),-(flash)
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-Slightly enlarged the linux-media receiver list, as this new version
-introduces a common property in 'video-interfaces.txt'.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Quite some changes compared to v1/v2:
-- First patch in the series changed to include Niklas' comments on using
-  spaces for indent over tabs in documentation and as suggested by Rob and
-  Laurent to refer to 'video-interfaces.txt' in property description.
-- As suggested by Rob this series introduces a new property 'data-enable-active'
-  to describe data enable signal polarity instead of using 'data-active' which
-  refers to the data lanes polarity.
-- Use this new property to control CLKENB pin polarity in VIN driver
-- Introduce a new custom property to describe the 'use HSYNC as data-enable'
-  function provided by VIN. In previous iterations I used the presence of
-  'data-active' to enable/disable this functionality. That was confusing and
-  not correct as it used the wrong property. As this is a VIN specificity, I
-  thought a custom property is more suited.
-- Last patch is still there and I know it is debated. My opinion is that it is
-  still needed, as the presence of those un-documented and un-parsed properties
-  confuses users which may expect changing those properties value to reflect on
-  the video interface configuration, which does not happens instead.
+Gr{oetje,eeting}s,
 
-Individual changelog per patch when relevant.
+                        Geert
 
-Thanks
-    j
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Jacopo Mondi (8):
-  dt-bindings: media: rcar-vin: Describe optional ep properties
-  dt-bindings: media: Document data-enable-active property
-  media: v4l2-fwnode: parse 'data-enable-active' prop
-  dt-bindings: media: rcar-vin: Add 'data-enable-active'
-  media: rcar-vin: Handle data-enable polarity
-  dt-bindings: rcar-vin: Add 'hsync-as-de' custom prop
-  media: rcar-vin: Handle 'hsync-as-de' property
-  ARM: dts: rcar-gen2: Remove unused VIN properties
-
- Documentation/devicetree/bindings/media/rcar_vin.txt     | 16 +++++++++++++++-
- .../devicetree/bindings/media/video-interfaces.txt       |  2 ++
- arch/arm/boot/dts/r8a7790-lager.dts                      |  3 ---
- arch/arm/boot/dts/r8a7791-koelsch.dts                    |  3 ---
- arch/arm/boot/dts/r8a7791-porter.dts                     |  1 -
- arch/arm/boot/dts/r8a7793-gose.dts                       |  3 ---
- arch/arm/boot/dts/r8a7794-alt.dts                        |  1 -
- arch/arm/boot/dts/r8a7794-silk.dts                       |  1 -
- drivers/media/platform/rcar-vin/rcar-core.c              |  6 ++++++
- drivers/media/platform/rcar-vin/rcar-dma.c               | 11 +++++++++++
- drivers/media/platform/rcar-vin/rcar-vin.h               |  2 ++
- drivers/media/v4l2-core/v4l2-fwnode.c                    |  5 +++++
- include/media/v4l2-mediabus.h                            |  2 ++
- 13 files changed, 43 insertions(+), 13 deletions(-)
-
---
-2.7.4
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
