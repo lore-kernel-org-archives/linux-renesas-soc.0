@@ -1,14 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57059 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754334AbeEWI52 (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:64423 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751161AbeEVKGm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 May 2018 04:57:28 -0400
-Date: Wed, 23 May 2018 10:57:24 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
+        Tue, 22 May 2018 06:06:42 -0400
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
         Michel Pollet <buserror+upstream@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -17,24 +18,44 @@ Cc: linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: Re: [PATCH v6 1/6] dt-bindings: arm: Document the RZN1D-DB board
-Message-ID: <20180523085723.yp6qc32cozaf7l2n@verge.net.au>
+Subject: [PATCH v6 1/6] dt-bindings: arm: Document the RZN1D-DB board
+Date: Tue, 22 May 2018 11:01:21 +0100
+Message-Id: <1526983321-41949-2-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
 References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
- <1526983321-41949-2-git-send-email-michel.pollet@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526983321-41949-2-git-send-email-michel.pollet@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, May 22, 2018 at 11:01:21AM +0100, Michel Pollet wrote:
-> This documents the RZ/N1 bindings for the RZN1D-DB board.
-> 
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+This documents the RZ/N1 bindings for the RZN1D-DB board.
 
-This looks fine but I will wait to see if there are other reviews before
-applying.
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/arm/shmobile.txt | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index d8cf740..89b4a38 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -51,7 +51,8 @@ SoCs:
+     compatible = "renesas,r8a77990"
+   - R-Car D3 (R8A77995)
+     compatible = "renesas,r8a77995"
+-
++  - RZ/N1D (R9A06G032)
++    compatible = "renesas,r9a06g032"
+ 
+ Boards:
+ 
+@@ -112,6 +113,8 @@ Boards:
+     compatible = "renesas,porter", "renesas,r8a7791"
+   - RSKRZA1 (YR0K77210C000BE)
+     compatible = "renesas,rskrza1", "renesas,r7s72100"
++  - RZN1D-DB (RZ/N1D Demo Board for the RZ/N1D 400 pins package)
++    compatible = "renesas,rzn1d400-db", "renesas,r9a06g032"
+   - Salvator-X (RTP0RC7795SIPB0010S)
+     compatible = "renesas,salvator-x", "renesas,r8a7795"
+   - Salvator-X (RTP0RC7796SIPB0011S)
+-- 
+2.7.4
