@@ -1,54 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:39771 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751245AbeEVOc4 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:58794 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751192AbeEVMe2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 May 2018 10:32:56 -0400
-MIME-Version: 1.0
-In-Reply-To: <20180522120257.13232-2-marek.vasut+renesas@gmail.com>
-References: <20180522120257.13232-1-marek.vasut+renesas@gmail.com> <20180522120257.13232-2-marek.vasut+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 22 May 2018 16:32:55 +0200
-Message-ID: <CAMuHMdV1TFH_QwTv4fsOGnUOCNftC9369_1AQmZDK+NBLDmw-Q@mail.gmail.com>
-Subject: Re: [PATCH 2/9] ARM: dts: lager: Drop MTD partitioning from DT
+        Tue, 22 May 2018 08:34:28 -0400
+Date: Tue, 22 May 2018 14:34:26 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
 To: Marek Vasut <marek.vasut@gmail.com>
-Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 2/9] ARM: dts: lager: Drop MTD partitioning from DT
+Message-ID: <20180522123426.babh2lm6icyvlqdo@ninjato>
+References: <20180522120257.13232-1-marek.vasut+renesas@gmail.com>
+ <20180522120257.13232-2-marek.vasut+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="sbxzebvbhenfqsrv"
+Content-Disposition: inline
+In-Reply-To: <20180522120257.13232-2-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, May 22, 2018 at 2:02 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+
+--sbxzebvbhenfqsrv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, May 22, 2018 at 02:02:50PM +0200, Marek Vasut wrote:
 > Drop the MTD partitioning from DT, since it does not describe HW
 > and to give way to a more flexible kernel command line partition
 > passing.
->
+>=20
 > To retain the original partitioning, assure you have enabled
 > CONFIG_MTD_CMDLINE_PARTS in your kernel config and add the
 > following to your kernel command line:
->
->   mtdparts=spi0.0:256k@0(loader),4096k(user),-(flash)
-
-I guess s/4096k/4m/ works, too?
-
+>=20
+>   mtdparts=3Dspi0.0:256k@0(loader),4096k(user),-(flash)
+>=20
 > Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
+> Cc: linux-renesas-soc@vger.kernel.org
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Gr{oetje,eeting}s,
 
-                        Geert
+--sbxzebvbhenfqsrv
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+-----BEGIN PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsEDlIACgkQFA3kzBSg
+KbaCFw/8CsNTiCCFxPjhzvE5lo57dB39+ewANwc6tO4S1xxB4nc48JqbLCPxF/KP
+HtKO/BrMum+JD/sxvl0eWGBJYrgovvi9RLgG1ORIcWxYQcm1K0OALkE/NnaTIZpu
+9HZxk+8kUk7lO6vy2UVT5qwXkUTlcNNmBa0fyN4oPwWd3vkWsjQd99f4cR6fQfSI
+oXejgFJcfN48W8BqDeJtWtCB8njDLmgrvWeXieWkHZw+YzpbQDoLtesirx5dPQ7n
+SVvxbOyKWAU5srXrNgGPbqgvPZXf+/nSZ5pa4W26slh0EJOFuEea3CIhNYdACpGB
+sbzL/7ll6LfFN+0K/xIkZqbzd9PVc8NCqc2pGFnevg8zrAl40SkFzf7RirorvE7b
+exwRY/ycU1paD/XRcTqb8d4Ij4pAZpB66FOTkHDhExkSA5+WH38gKEO/kHS67hyp
+FofXvVW5yt5NBCTB9n1gp8phqYK7+3j78n7P5+unaqquPB7GeVv07KXDdrlTOiXN
+JHQ/nNB6Re0o1WfSz2Kbzmj5nEmpLrQ8TGgMw79K6T1GUO0efoczzOB7+v8Uf2Kq
+LCW+vp/UKHLfggXgWzyGeTq7lqid69zDQwbVKWgYLEB3nGqGElQCyGhblkCH51BA
+lv7Okc0g0qxhvXs0j/+QM0hpuh/iLwlxeqbJbG/Mg0NRTLv1/mo=
+=tjxv
+-----END PGP SIGNATURE-----
+
+--sbxzebvbhenfqsrv--
