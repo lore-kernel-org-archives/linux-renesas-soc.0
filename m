@@ -1,59 +1,63 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:33708 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751469AbeEVSms (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 May 2018 14:42:48 -0400
-MIME-Version: 1.0
-In-Reply-To: <1526983321-41949-4-git-send-email-michel.pollet@bp.renesas.com>
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com> <1526983321-41949-4-git-send-email-michel.pollet@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 22 May 2018 20:42:46 +0200
-Message-ID: <CAMuHMdUW-tteZ26J4rd9=KsrHotjCs7BR_pjyjFQnfoOF5=oFQ@mail.gmail.com>
-Subject: Re: [PATCH v6 3/6] dt-bindings: clock: renesas,rzn1-clocks: document
- RZ/N1 clock driver
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Tue, 22 May 2018 11:09:13 -0500
+From: Rob Herring <robh@kernel.org>
 To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
+Cc: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>, phil.edworthy@renesas.com,
         Michel Pollet <buserror+upstream@gmail.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 3/6] dt-bindings: clock: renesas,rzn1-clocks: document
+ RZ/N1 clock driver
+Message-ID: <20180522160913.GA7755@rob-hp-laptop>
+References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1526983321-41949-4-git-send-email-michel.pollet@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526983321-41949-4-git-send-email-michel.pollet@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Michel,
-
-On Tue, May 22, 2018 at 12:01 PM, Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
+On Tue, May 22, 2018 at 11:01:23AM +0100, Michel Pollet wrote:
 > The Renesas RZ/N1 Family (Part #R9A06G0xx) requires a driver
 > to provide the SoC clock infrastructure for Linux.
->
+> 
 > This documents the driver bindings.
->
+> 
 > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-
-Thanks for your patch!
-
+> ---
+>  .../bindings/clock/renesas,rzn1-clocks.txt         | 44 ++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
+> new file mode 100644
+> index 0000000..0c41137
 > --- /dev/null
 > +++ b/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
 > @@ -0,0 +1,44 @@
 > +* Renesas RZ/N1 Clock Driver
 > +
 > +This driver provides the clock infrastructure used by all the other drivers.
+
+Bindings document h/w not drivers.
+
 > +
 > +One of the 'special' feature of this infrastructure is that Linux doesn't
+
+Bindings are not just for Linux.
+
 > +necessary 'own' all the clocks on the SoC, some other OS runs on
 > +the Cortex-M3 core and that OS can access and claim it's own clocks.
+
+How is this relevant to the binding?
+
 > +
 > +Required Properties:
 > +
@@ -61,16 +65,54 @@ Thanks for your patch!
 > +    - "renesas,r9a06g032-clocks" for the RZ/N1D
 > +    and "renesas,rzn1-clocks" as a fallback.
 
-Why the fallback? I doubt all existing (and future) RZ/N1D SoCs provide the
-exact same clock hierarchy.
+Is "clocks" how the chip reference manual refers to this block?
 
-Gr{oetje,eeting}s,
+> +  - reg: Base address and length of the memory resource used by the driver
+> +  - #clock-cells: Must be 1
+> +
+> +Examples
+> +--------
+> +
+> +  - Clock driver device node:
+> +
+> +	clock: clocks@4000c000 {
 
-                        Geert
+clock-controller@...
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> +		compatible = "renesas,r9a06g032-clocks",
+> +				"renesas,rzn1-clocks";
+> +		reg = <0x4000c000 0x1000>;
+> +		status = "okay";
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Don't show status in examples. (Plus, I doubt you ever want to have this 
+disabled, so you don't need the property in your dts files either).
+
+> +		#clock-cells = <1>;
+> +	};
+> +
+> +
+> +  - Other drivers can use the clocks as in:
+
+s/drivers/nodes/
+
+> +
+> +	uart0: serial@40060000 {
+> +		compatible = "snps,dw-apb-uart";
+> +		reg = <0x40060000 0x400>;
+> +		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
+> +		reg-shift = <2>;
+> +		reg-io-width = <4>;
+> +		clocks = <&clock RZN1_CLK_UART0>;
+> +		clock-names = "baudclk";
+> +	};
+> +    Note the use of RZN1_CLK_UART0 -- these constants are declared in
+> +    the rzn1-clocks.h header file. These are not hardware based constants
+> +    and are Linux specific.
+
+No, they are not Linux specific. They are part of the DT ABI. 
+
+While it is not a requirement to base them on some h/w numbering, it is 
+preferred if you can. That usually only works if you can base them on 
+bit positions or register offsets.
+
+Rob
