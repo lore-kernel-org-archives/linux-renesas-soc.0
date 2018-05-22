@@ -1,74 +1,88 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1526983321-41949-6-git-send-email-michel.pollet@bp.renesas.com>
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com> <1526983321-41949-6-git-send-email-michel.pollet@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 May 2018 11:13:40 +0200
-Message-ID: <CAMuHMdWu69Mfn-JhBgvChZ3tvzUvCOeYKowzizQt3DcWJLeR0A@mail.gmail.com>
-Subject: Re: [PATCH v6 5/6] ARM: dts: Renesas RZN1D-DB Board base file
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:49636 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751633AbeEVKHk (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 22 May 2018 06:07:40 -0400
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
         Michel Pollet <buserror+upstream@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: devicetree-owner@vger.kernel.org
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v6 5/6] ARM: dts: Renesas RZN1D-DB Board base file
+Date: Tue, 22 May 2018 11:01:25 +0100
+Message-Id: <1526983321-41949-6-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Michel,
+This adds a base device tree file for the RZN1-DB board, with only the
+basic support allowing the system to boot to a prompt. Only one UART is
+used, with only a single CPU running.
 
-On Tue, May 22, 2018 at 12:01 PM, Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> This adds a base device tree file for the RZN1-DB board, with only the
-> basic support allowing the system to boot to a prompt. Only one UART is
-> used, with only a single CPU running.
->
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+---
+ arch/arm/boot/dts/Makefile                  |  1 +
+ arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts | 29 +++++++++++++++++++++++++++++
+ 2 files changed, 30 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
 
-Thanks for your patch!
-
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
-> @@ -0,0 +1,29 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Device Tree Source for the RZN1D-DB Board
-> + *
-> + * Copyright (C) 2018 Renesas Electronics Europe Limited
-> + *
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "r9a06g032.dtsi"
-> +
-> +/ {
-> +       model = "RZN1D-DB Board";
-> +       compatible = "renesas,rzn1d400-db",
-> +                       "renesas,r9a06g032", "renesas,rzn1";
-
-Please drop the "renesas,rzn1".
-
-With the above fixed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index f4753b0..6157897 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -814,6 +814,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
+ 	r8a7793-gose.dtb \
+ 	r8a7794-alt.dtb \
+ 	r8a7794-silk.dtb \
++	r9a06g032-rzn1d400-db.dtb \
+ 	sh73a0-kzm9g.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += \
+ 	rv1108-evb.dtb \
+diff --git a/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+new file mode 100644
+index 0000000..5fc2c40
+--- /dev/null
++++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+@@ -0,0 +1,29 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the RZN1D-DB Board
++ *
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ */
++
++/dts-v1/;
++
++#include "r9a06g032.dtsi"
++
++/ {
++	model = "RZN1D-DB Board";
++	compatible = "renesas,rzn1d400-db",
++			"renesas,r9a06g032", "renesas,rzn1";
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	aliases {
++		serial0 = &uart0;
++	};
++};
++
++&uart0 {
++	status = "okay";
++};
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.7.4
