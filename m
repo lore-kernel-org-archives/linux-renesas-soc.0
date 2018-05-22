@@ -1,58 +1,114 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:59476 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751416AbeECIow (ORCPT
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:47042 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751239AbeEVMAc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 May 2018 04:44:52 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v3 11/11] drm: rcar-du: Support interlaced video output through vsp1
-Date: Thu,  3 May 2018 09:44:22 +0100
-Message-Id: <2ceb322df5029f641ca33f8b9e65d53cefac02f5.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.a15c17beeb074afaf226d19ff3c4fdba2f647500.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.a15c17beeb074afaf226d19ff3c4fdba2f647500.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.a15c17beeb074afaf226d19ff3c4fdba2f647500.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.a15c17beeb074afaf226d19ff3c4fdba2f647500.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Tue, 22 May 2018 08:00:32 -0400
+Received: by mail-ua0-f196.google.com with SMTP id e8-v6so12082196uam.13
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 May 2018 05:00:32 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <3087943.gJsCFVCJnt@avalon>
+References: <1526386840-15368-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1526386840-15368-4-git-send-email-ulrich.hecht+renesas@gmail.com> <3087943.gJsCFVCJnt@avalon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 22 May 2018 14:00:30 +0200
+Message-ID: <CAMuHMdUYNpPuujL=Uq3ho5Ogu0Vs-orWS4p3ZedujnRWER5kgw@mail.gmail.com>
+Subject: Re: [PATCH 3/5] arm64: dts: renesas: r8a77995: Add LVDS support
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the newly exposed VSP1 interface to enable interlaced frame support
-through the VSP1 lif pipelines.
+Hi Laurent,
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 1 +
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c  | 3 +++
- 2 files changed, 4 insertions(+)
+On Sun, May 20, 2018 at 10:50 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Tuesday, 15 May 2018 15:20:38 EEST Ulrich Hecht wrote:
+>> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>>
+>> The r8a77995 D3 platform has 2 LVDS channels connected to the DU.
+>>
+>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>> [uli: moved lvds* into the soc node, added PM domains, resets]
+>> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+>> ---
+>>  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 56 ++++++++++++++++++++++++++++
+>>  1 file changed, 56 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+>> b/arch/arm64/boot/dts/renesas/r8a77995.dtsi index ba98865..8e78110d 100644
+>> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+>> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+>> @@ -757,12 +757,68 @@
+>>                               port@1 {
+>>                                       reg = <1>;
+>>                                       du_out_lvds0: endpoint {
+>> +                                             remote-endpoint = <&lvds0_in>;
+>>                                       };
+>>                               };
+>>
+>>                               port@2 {
+>>                                       reg = <2>;
+>>                                       du_out_lvds1: endpoint {
+>> +                                             remote-endpoint = <&lvds1_in>;
+>> +                                     };
+>> +                             };
+>> +                     };
+>> +             };
+>> +
+>> +             lvds0: lvds-encoder@feb90000 {
+>> +                     compatible = "renesas,r8a77995-lvds";
+>> +                     reg = <0 0xfeb90000 0 0x20>;
+>> +                     clocks = <&cpg CPG_MOD 727>;
+>> +                     power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+>> +                     resets = <&cpg 727>;
+>> +                     status = "disabled";
+>> +
+>> +                     ports {
+>> +                             #address-cells = <1>;
+>> +                             #size-cells = <0>;
+>> +
+>> +                             port@0 {
+>> +                                     reg = <0>;
+>> +                                     lvds0_in: endpoint {
+>> +                                             remote-endpoint = <&du_out_lvds0>;
+>> +                                     };
+>> +                             };
+>> +
+>> +                             port@1 {
+>> +                                     reg = <1>;
+>> +                                     lvds0_out: endpoint {
+>> +                                     };
+>> +                             };
+>> +                     };
+>> +             };
+>> +
+>> +             lvds1: lvds-encoder@feb90100 {
+>> +                     compatible = "renesas,r8a77995-lvds";
+>> +                     reg = <0 0xfeb90100 0 0x20>;
+>> +                     clocks = <&cpg CPG_MOD 727>;
+>> +                     power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+>> +                     resets = <&cpg 727>;
+>
+> While there seems to be a single clock for both LVDS encoders, it appears that
+> two separate reset lines are used.
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index d71d709fe3d9..206532959ec9 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -289,6 +289,7 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 	/* Signal polarities */
- 	value = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
- 	      | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? DSMR_HSL : 0)
-+	      | ((mode->flags & DRM_MODE_FLAG_INTERLACE) ? DSMR_ODEV : 0)
- 	      | DSMR_DIPM_DISP | DSMR_CSPM;
- 	rcar_du_crtc_write(rcrtc, DSMR, value);
- 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-index af7822a66dee..c7b37232ee91 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-@@ -186,6 +186,9 @@ static void rcar_du_vsp_plane_setup(struct rcar_du_vsp_plane *plane)
- 	};
- 	unsigned int i;
- 
-+	cfg.interlaced = !!(plane->plane.state->crtc->mode.flags
-+			    & DRM_MODE_FLAG_INTERLACE);
-+
- 	cfg.src.left = state->state.src.x1 >> 16;
- 	cfg.src.top = state->state.src.y1 >> 16;
- 	cfg.src.width = drm_rect_width(&state->state.src) >> 16;
+Nice catch!
+
+So you can reset the individual LVDS instances, but not the individual DU
+instances. Doh...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-git-series 0.9.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
