@@ -1,6 +1,17 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:43537 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751465AbeEVLsI (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 22 May 2018 07:48:08 -0400
+MIME-Version: 1.0
+In-Reply-To: <8910c197-cf1b-9ee9-9ddb-5d2f705a4b26@cogentembedded.com>
+References: <a4230699-e46f-0782-e3b1-22d58b9033c8@cogentembedded.com> <8910c197-cf1b-9ee9-9ddb-5d2f705a4b26@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 22 May 2018 13:48:06 +0200
+Message-ID: <CAMuHMdW9UzOGV_zh3NxugYrj0j0qszX+NFoZtFvZRD9CNMHt+w@mail.gmail.com>
 Subject: Re: [PATCH 1/2] arm64: dts: renesas: r8a77980: add GEther support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Rob Herring <robh+dt@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -11,73 +22,61 @@ Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <a4230699-e46f-0782-e3b1-22d58b9033c8@cogentembedded.com>
- <8910c197-cf1b-9ee9-9ddb-5d2f705a4b26@cogentembedded.com>
- <CAMuHMdW9UzOGV_zh3NxugYrj0j0qszX+NFoZtFvZRD9CNMHt+w@mail.gmail.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <bdbfd13e-cf0c-e19a-b76f-5e8e024dca26@cogentembedded.com>
-Date: Tue, 22 May 2018 18:44:59 +0300
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdW9UzOGV_zh3NxugYrj0j0qszX+NFoZtFvZRD9CNMHt+w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 05/22/2018 02:48 PM, Geert Uytterhoeven wrote:
+Hi Sergei,
 
->> Define the generic R8A77980 part of the GEther device node.
->>
->> Based on the original (and large) patch by Vladimir Barinov.
->>
->> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> Thanks for your patch!
-> 
-> With the below addressed:
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Fri, May 18, 2018 at 9:45 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Define the generic R8A77980 part of the GEther device node.
+>
+> Based on the original (and large) patch by Vladimir Barinov.
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-   Thanks!
+Thanks for your patch!
 
->> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
->> +++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
->> @@ -417,6 +417,17 @@
->>                         dma-channels = <16>;
->>                 };
->>
->> +               gether: ethernet@e7400000 {
->> +                       compatible = "renesas,gether-r8a77980";
->> +                       reg = <0 0xe7400000 0 0x1000>;
->> +                       interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
->> +                       clocks = <&cpg CPG_MOD 813>;
->> +                       power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-> 
-> resets = <&cpg 813>;
+With the below addressed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-   As usual...
+> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+> +++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+> @@ -417,6 +417,17 @@
+>                         dma-channels = <16>;
+>                 };
+>
+> +               gether: ethernet@e7400000 {
+> +                       compatible = "renesas,gether-r8a77980";
+> +                       reg = <0 0xe7400000 0 0x1000>;
+> +                       interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&cpg CPG_MOD 813>;
+> +                       power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
 
-> 
->> +                       #address-cells = <1>;
->> +                       #size-cells = <0>;
->> +                       status = "disabled";
-> 
-> Any default phy-mode needed?
+resets = <&cpg 813>;
 
-   A default "phy-mode" IMO make sense when the MAC supports a single 
-PHY interface mode. In this case, both RMII and RGMII are supported, so
-I coulsn't choose a default...
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +                       status = "disabled";
 
->> +               };
->> +
->>                 mmc0: mmc@ee140000 {
->>                         compatible = "renesas,sdhi-r8a77980",
->>                                      "renesas,rcar-gen3-sdhi";
-> 
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+Any default phy-mode needed?
 
+> +               };
+> +
+>                 mmc0: mmc@ee140000 {
+>                         compatible = "renesas,sdhi-r8a77980",
+>                                      "renesas,rcar-gen3-sdhi";
+
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
