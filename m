@@ -1,91 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750888AbeERLRq (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:53037 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751199AbeEVPcX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:17:46 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 094/102] arm64: dts: renesas: r8a77990: ebisu: Enable EthernetAVB
-Date: Fri, 18 May 2018 13:15:56 +0200
-Message-Id: <8441ef643d7dc8b4df85cbd7d8b99efc08ec00f3.1526637994.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
-References: <cover.1526637994.git.horms+renesas@verge.net.au>
+        Tue, 22 May 2018 11:32:23 -0400
+Received: by mail-wm0-f66.google.com with SMTP id w194-v6so920064wmf.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 May 2018 08:32:22 -0700 (PDT)
+Date: Tue, 22 May 2018 17:32:20 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: laurent.pinchart@ideasonboard.com, horms@verge.net.au,
+        geert@glider.be, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] dt-bindings: media: rcar-vin: Document data-active
+Message-ID: <20180522153220.GD5115@bigcity.dyn.berto.se>
+References: <1526923663-8179-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1526923663-8179-3-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1526923663-8179-3-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Hi Jacopo,
 
-This patch enables EthernetAVB for r8a77990 Ebisu board.
+Thanks for your patch.
 
-Based on a patch from Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On 2018-05-21 19:27:41 +0200, Jacopo Mondi wrote:
+> Document 'data-active' property in R-Car VIN device tree bindings.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> 
+> v1 -> v2:
+> - HSYNC is used in place of data enable signal only when running with
+>   explicit synchronizations.
+> - The property is no more mandatory when running with embedded
+>   synchronizations, and default is selected.
+> ---
+>  Documentation/devicetree/bindings/media/rcar_vin.txt | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
+> index dab3118..2c144b4 100644
+> --- a/Documentation/devicetree/bindings/media/rcar_vin.txt
+> +++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
+> @@ -64,6 +64,12 @@ from local SoC CSI-2 receivers (port1) depending on SoC.
+>  	If both HSYNC and VSYNC polarities are not specified, embedded
+>  	synchronization is selected.
+>  
+> +        - data-active: data enable signal line polarity (CLKENB pin).
+> +          0/1 for LOW/HIGH respectively. If not specified and running with
+> +	  embedded synchronization, the default is active high. If not
+> +	  specified and running with explicit synchronization, HSYNC is used
+> +	  as data enable signal.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 28 ++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+This indentation looks funny :-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-index 63ee1347bb19..7a09d0524f9b 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-@@ -7,6 +7,7 @@
- 
- /dts-v1/;
- #include "r8a77990.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
- 
- / {
- 	model = "Renesas Ebisu board based on r8a77990";
-@@ -14,6 +15,7 @@
- 
- 	aliases {
- 		serial0 = &scif2;
-+		ethernet0 = &avb;
- 	};
- 
- 	chosen {
-@@ -28,10 +30,36 @@
- 	};
- };
- 
-+&avb {
-+	pinctrl-0 = <&avb_pins>;
-+	pinctrl-names = "default";
-+	renesas,no-ether-link;
-+	phy-handle = <&phy0>;
-+	phy-mode = "rgmii-txid";
-+	status = "okay";
-+
-+	phy0: ethernet-phy@0 {
-+		rxc-skew-ps = <1500>;
-+		reg = <0>;
-+		interrupt-parent = <&gpio2>;
-+		interrupts = <21 IRQ_TYPE_LEVEL_LOW>;
-+		reset-gpios = <&gpio1 20 GPIO_ACTIVE_LOW>;
-+	};
-+};
-+
- &extal_clk {
- 	clock-frequency = <48000000>;
- };
- 
-+&pfc {
-+	avb_pins: avb {
-+		mux {
-+			groups = "avb_link", "avb_mii";
-+			function = "avb";
-+		};
-+	};
-+};
-+
- &scif2 {
- 	status = "okay";
- };
+If you check the rest of the rcar_vin.txt file only spaces are used for
+indentation.
+
+> +
+>      - port 1 - sub-nodes describing one or more endpoints connected to
+>        the VIN from local SoC CSI-2 receivers. The endpoint numbers must
+>        use the following schema.
+> -- 
+> 2.7.4
+> 
+
 -- 
-2.11.0
+Regards,
+Niklas S�derlund
