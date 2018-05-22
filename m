@@ -1,60 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:50498 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752128AbeEUVF2 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36233 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751240AbeEVInn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 May 2018 17:05:28 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-pci@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] PCI: rcar: Poll more often in rcar_pcie_wait_for_dl()
-Date: Mon, 21 May 2018 23:05:22 +0200
-Message-Id: <20180521210522.29346-1-marek.vasut+renesas@gmail.com>
+        Tue, 22 May 2018 04:43:43 -0400
+Date: Tue, 22 May 2018 10:43:39 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/5] ARM: shmobile: rcar-gen2: Remove legacy SMP fallback
+ code
+Message-ID: <20180522084338.dk62ibxyi4mwmtby@verge.net.au>
+References: <1526647734-1200-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526647734-1200-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The data link active signal usually takes ~20 uSec to be asserted,
-poll the bit more often to avoid useless delays in this function.
-Use udelay() instead of usleep() for such a small delay as suggested
-by the timer documentation and because this will be used in atomic
-context later on when the suspend/resume patches land.
+On Fri, May 18, 2018 at 02:48:49PM +0200, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
+> 
+> R-Car H2 and M2-W have been supporting SMP enablement from DT using the
+> "renesas,apmu" enable-method since v4.8.  A legacy fallback was left in
+> place for backwards compatibility with old DTBs.
+> 
+> This patch series removes the legacy SMP fallbacks for R-Car H2 and
+> M2-W, and consolidates their support in the common R-Car Gen2 machine
+> definition.
+> 
+> For testing, this series is available in the
+> topic/rcar2-legacy-smp-removal-v1 branch of my renesas-drivers git
+> repository at
+> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+> 
+> Thanks for applying!
+> 
+> Geert Uytterhoeven (5):
+>   ARM: shmobile: r8a7790: Remove legacy SMP fallback code
+>   ARM: shmobile: r8a7790: Use common R-Car Gen2 machine definition
+>   ARM: shmobile: r8a7791: Remove legacy SMP fallback code
+>   ARM: shmobile: r8a7791: Use common R-Car Gen2 machine definition
+>   ARM: shmobile: Remove unused shmobile_smp_init_fallback_ops()
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: s/content/context in commit message
----
- drivers/pci/host/pcie-rcar.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 5c365f743df5..65ebe7aa3488 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -529,13 +529,13 @@ static void phy_write_reg(struct rcar_pcie *pcie,
- 
- static int rcar_pcie_wait_for_dl(struct rcar_pcie *pcie)
- {
--	unsigned int timeout = 10;
-+	unsigned int timeout = 10000;
- 
- 	while (timeout--) {
- 		if ((rcar_pci_read_reg(pcie, PCIETSTR) & DATA_LINK_ACTIVE))
- 			return 0;
- 
--		msleep(5);
-+		udelay(5);
- 	}
- 
- 	return -ETIMEDOUT;
--- 
-2.16.2
+Thanks, applied for v4.19.
