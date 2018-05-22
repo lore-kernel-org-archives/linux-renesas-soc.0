@@ -1,75 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay12.mail.gandi.net ([217.70.178.232]:34367 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966725AbeEXWCc (ORCPT
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:36581 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751173AbeEVOeY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 May 2018 18:02:32 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 0/9] rcar-vin: Add support for parallel input on Gen3
-Date: Fri, 25 May 2018 00:02:10 +0200
-Message-Id: <1527199339-7724-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 22 May 2018 10:34:24 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180522120257.13232-5-marek.vasut+renesas@gmail.com>
+References: <20180522120257.13232-1-marek.vasut+renesas@gmail.com> <20180522120257.13232-5-marek.vasut+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 22 May 2018 16:34:22 +0200
+Message-ID: <CAMuHMdUu_DosgA2r1O8FBUpheYQeNJ9uRG=jGE5w0OZw8MTHMA@mail.gmail.com>
+Subject: Re: [PATCH 5/9] ARM: dts: porter: Drop MTD partitioning from DT
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-   this series adds support for parallel video input to the Gen3 version of
-rcar-vin driver.
+On Tue, May 22, 2018 at 2:02 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> Drop the MTD partitioning from DT, since it does not describe HW
+> and to give way to a more flexible kernel command line partition
+> passing.
+>
+> To retain the original partitioning, assure you have enabled
+> CONFIG_MTD_CMDLINE_PARTS in your kernel config and add the
+> following to your kernel command line:
+>
+>   mtdparts=spi0.0:256k@0(loader_prg),4096k(user_prg),-(flash_fs)
 
-Compared to v3, this new iteration closes all comments from Niklas and Sergei.
+4m?
 
-As the meat of the patch series hasn't changed much, please refer to v3 cover
-letter for more details.
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-The most notable change is the great simplification of the parallel
-input notifiers registration in [5/9], as now the media controller is
-initialized before parallel inputs are parsed. As the media device is now
-properly initialized, parallel input notifiers can be registered as soon as new
-input devices are discovered, without having to wait for the group notifier
-complete callback to be called. Thanks Niklas for pointing that out.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Testing:
-Tested image capture on both Draak and Salvator-X M3-W with a fake parallel
-input device added.
+Gr{oetje,eeting}s,
 
-Test branch for Salvator-X available at
-git://jmondi.org d3/media-master/salvator-x-dts_csi2/m3w-add_parallel_to_dts+driver-v4
-For Draak at:
-git://jmondi.org d3/media-master/salvator-x-dts_csi2/d3-vin-driver-v4+enable-HDMI-in-dts
-(sorry for the horrid branch names :)
+                        Geert
 
-Niklas, I know you have a V3M with expansion that has both CSI-2 and parallel
-input. Could you give this one a spin please?
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-No changelog reported here, except from the one reported above.
-
-Most of the other changes are minors, the most notable ones are reported in
-each patch commit message.
-
-Thanks
-   j
-
-Jacopo Mondi (9):
-  media: rcar-vin: Rename 'digital' to 'parallel'
-  media: rcar-vin: Remove two empty lines
-  media: rcar-vin: Create a group notifier
-  media: rcar-vin: Cache the mbus configuration flags
-  media: rcar-vin: Parse parallel input on Gen3
-  media: rcar-vin: Link parallel input media entities
-  media: rcar-vin: Handle parallel subdev in link_notify
-  media: rcar-vin: Rename _rcar_info to rcar_info
-  media: rcar-vin: Add support for R-Car R8A77995 SoC
-
- drivers/media/platform/rcar-vin/rcar-core.c | 258 ++++++++++++++++++----------
- drivers/media/platform/rcar-vin/rcar-dma.c  |  36 ++--
- drivers/media/platform/rcar-vin/rcar-v4l2.c |  12 +-
- drivers/media/platform/rcar-vin/rcar-vin.h  |  29 ++--
- 4 files changed, 215 insertions(+), 120 deletions(-)
-
---
-2.7.4
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
