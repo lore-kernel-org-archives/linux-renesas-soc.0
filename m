@@ -1,77 +1,104 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:44841 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751214AbeEVMDQ (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:8871 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751291AbeEVMBy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 May 2018 08:03:16 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 5/9] ARM: dts: porter: Drop MTD partitioning from DT
-Date: Tue, 22 May 2018 14:02:53 +0200
-Message-Id: <20180522120257.13232-5-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180522120257.13232-1-marek.vasut+renesas@gmail.com>
-References: <20180522120257.13232-1-marek.vasut+renesas@gmail.com>
+        Tue, 22 May 2018 08:01:54 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: gregkh@linuxfoundation.org, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: heikki.krogerus@linux.intel.com, hdegoede@redhat.com,
+        andy.shevchenko@gmail.com, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH/RFC v4 1/4] base: devcon: add graph parse in device_connection_find_match()
+Date: Tue, 22 May 2018 21:01:06 +0900
+Message-Id: <1526990469-20739-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1526990469-20739-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1526990469-20739-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Drop the MTD partitioning from DT, since it does not describe HW
-and to give way to a more flexible kernel command line partition
-passing.
+This patch adds graph parsing in device_connection_find_match().
+The match function will be called with fwnode pointer in struct
+device_connection. So, a caller can check the matching by using it.
 
-To retain the original partitioning, assure you have enabled
-CONFIG_MTD_CMDLINE_PARTS in your kernel config and add the
-following to your kernel command line:
-
-  mtdparts=spi0.0:256k@0(loader_prg),4096k(user_prg),-(flash_fs)
-
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm/boot/dts/r8a7791-porter.dts | 21 ---------------------
- 1 file changed, 21 deletions(-)
+ Documentation/driver-api/device_connection.rst |  2 +-
+ drivers/base/devcon.c                          | 15 +++++++++++++++
+ include/linux/device.h                         |  2 ++
+ 3 files changed, 18 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-index a01101b49d99..45d89e064407 100644
---- a/arch/arm/boot/dts/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -344,27 +344,6 @@
- 		spi-tx-bus-width = <4>;
- 		spi-rx-bus-width = <4>;
- 		m25p,fast-read;
--
--		partitions {
--			compatible = "fixed-partitions";
--			#address-cells = <1>;
--			#size-cells = <1>;
--
--			partition@0 {
--				label = "loader_prg";
--				reg = <0x00000000 0x00040000>;
--				read-only;
--			};
--			partition@40000 {
--				label = "user_prg";
--				reg = <0x00040000 0x00400000>;
--				read-only;
--			};
--			partition@440000 {
--				label = "flash_fs";
--				reg = <0x00440000 0x03bc0000>;
--			};
--		};
- 	};
+diff --git a/Documentation/driver-api/device_connection.rst b/Documentation/driver-api/device_connection.rst
+index affbc556..cc6b1da 100644
+--- a/Documentation/driver-api/device_connection.rst
++++ b/Documentation/driver-api/device_connection.rst
+@@ -19,7 +19,7 @@ Device connections alone do not create a dependency between the two devices.
+ They are only descriptions which are not tied to either of the devices directly.
+ A dependency between the two devices exists only if one of the two endpoint
+ devices requests a reference to the other. The descriptions themselves can be
+-defined in firmware (not yet supported) or they can be built-in.
++defined in firmware or they can be built-in.
+ 
+ Usage
+ -----
+diff --git a/drivers/base/devcon.c b/drivers/base/devcon.c
+index d427e80..374bb39 100644
+--- a/drivers/base/devcon.c
++++ b/drivers/base/devcon.c
+@@ -7,6 +7,7 @@
+  */
+ 
+ #include <linux/device.h>
++#include <linux/property.h>
+ 
+ static DEFINE_MUTEX(devcon_lock);
+ static LIST_HEAD(devcon_list);
+@@ -31,10 +32,24 @@ void *device_connection_find_match(struct device *dev, const char *con_id,
+ 	struct device_connection *con;
+ 	void *ret = NULL;
+ 	int ep;
++	struct device_connection graph;
++	struct fwnode_handle *fwnode_ep;
++	struct fwnode_handle *remote;
+ 
+ 	if (!match)
+ 		return NULL;
+ 
++	fwnode_graph_for_each_endpoint(dev->fwnode, fwnode_ep) {
++		remote = fwnode_graph_get_remote_port_parent(fwnode_ep);
++		if (!remote)
++			continue;
++
++		graph.fwnode = remote;
++		ret = match(&graph, 0, data);
++		if (!IS_ERR(ret))
++			return ret;
++	}
++
+ 	mutex_lock(&devcon_lock);
+ 
+ 	list_for_each_entry(con, &devcon_list, list) {
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 0059b99..175907b 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -734,11 +734,13 @@ struct device_dma_parameters {
+  * struct device_connection - Device Connection Descriptor
+  * @endpoint: The names of the two devices connected together
+  * @id: Unique identifier for the connection
++ * @fwnode: fwnode pointer for finding a connection from graph
+  * @list: List head, private, for internal use only
+  */
+ struct device_connection {
+ 	const char		*endpoint[2];
+ 	const char		*id;
++	struct fwnode_handle	*fwnode;
+ 	struct list_head	list;
  };
  
 -- 
-2.16.2
+1.9.1
