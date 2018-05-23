@@ -1,317 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:59476 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751392AbeECIoj (ORCPT
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:44950 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754395AbeEWIua (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 May 2018 04:44:39 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v3 09/11] media: vsp1: Provide support for extended command pools
-Date: Thu,  3 May 2018 09:44:20 +0100
-Message-Id: <03ddf56f4368f80b0e5226d82d3ff1e5a11712fc.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.a15c17beeb074afaf226d19ff3c4fdba2f647500.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.a15c17beeb074afaf226d19ff3c4fdba2f647500.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.a15c17beeb074afaf226d19ff3c4fdba2f647500.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.a15c17beeb074afaf226d19ff3c4fdba2f647500.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Wed, 23 May 2018 04:50:30 -0400
+MIME-Version: 1.0
+In-Reply-To: <20180523083746.f4nkz4uhjwfgw7yz@verge.net.au>
+References: <1526995765-29693-1-git-send-email-geert+renesas@glider.be> <20180523083746.f4nkz4uhjwfgw7yz@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 May 2018 10:50:27 +0200
+Message-ID: <CAMuHMdV2VwoD3Le=T4-+Ek2E9tL+hmiR0r4cXxG9EH4GXV-uTw@mail.gmail.com>
+Subject: Re: [PATCH/RFC] ARM: dts: r8a7791: Move enable-method to CPU nodes
+To: Simon Horman <horms@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-VSPD and VSP-DL devices can provide extended display lists supporting
-extended command display list objects.
+Hi Simon,
 
-These extended commands require their own dma memory areas for a header
-and body specific to the command type.
+On Wed, May 23, 2018 at 10:37 AM, Simon Horman <horms@verge.net.au> wrote:
+> On Tue, May 22, 2018 at 03:29:25PM +0200, Geert Uytterhoeven wrote:
+>> According to Documentation/devicetree/bindings/arm/cpus.txt, the
+>> "enable-method" property should be a property of the individual CPU
+>> nodes, not of the parent "cpus" node.  However, on R-Car M2-W (and on
+>> several other arm32 SoCs), the property is tied to the "cpus" node
+>> instead.
+>>
+>> Secondary CPU bringup and CPU hot (un)plug work regardless, as
+>> arm_dt_init_cpu_maps() falls back to looking in the "cpus" node.
+>>
+>> The cpuidle code does not have such a fallback, so it does not detect
+>> the enable-method.  Note that cpuidle does not support the
+>> "renesas,apmu" enable-method yet, so for now this does not make any
+>> difference.
+>
+> Is the implication that if we keep the current binding for cpu nodes
+> then at some point we will need to update the cpuidle binding?
 
-Implement a command pool to allocate all necessary memory in a single
-DMA allocation to reduce pressure on the TLB, and provide convenient
-re-usable command objects for the entities to utilise.
+If we keep the current binding for cpu nodes, we indeed have to update
+(common) Documentation/devicetree/bindings/arm/cpus.txt.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+In addition, if we want to add renesas,apmu-based cpuidle support later,
+we will have to update the common cpuidle code to look in /cpus, too.
 
----
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>> Arm64 and powerpc do not have such a fallback, but SH has, like arm32.
+>>
+>> This is marked RFC, as the alternative is to update the DT bindings to
+>> keep the status quo.
+>> ---
+>>  arch/arm/boot/dts/r8a7791.dtsi | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+>> index d568bd22d6cbd855..b214cb8f52e47109 100644
+>> --- a/arch/arm/boot/dts/r8a7791.dtsi
+>> +++ b/arch/arm/boot/dts/r8a7791.dtsi
+>> @@ -71,7 +71,6 @@
+>>       cpus {
+>>               #address-cells = <1>;
+>>               #size-cells = <0>;
+>> -             enable-method = "renesas,apmu";
+>>
+>>               cpu0: cpu@0 {
+>>                       device_type = "cpu";
+>> @@ -83,6 +82,7 @@
+>>                       clock-latency = <300000>; /* 300 us */
+>>                       power-domains = <&sysc R8A7791_PD_CA15_CPU0>;
+>>                       next-level-cache = <&L2_CA15>;
+>> +                     enable-method = "renesas,apmu";
+>>
+>>                       /* kHz - uV - OPPs unknown yet */
+>>                       operating-points = <1500000 1000000>,
+>> @@ -101,6 +101,7 @@
+>>                       clocks = <&cpg CPG_CORE R8A7791_CLK_Z>;
+>>                       power-domains = <&sysc R8A7791_PD_CA15_CPU1>;
+>>                       next-level-cache = <&L2_CA15>;
+>> +                     enable-method = "renesas,apmu";
+>>               };
+>>
+>>               L2_CA15: cache-controller-0 {
 
-v2:
- - Fix spelling typo in commit message
- - constify, and staticify the instantiation of vsp1_extended_commands
- - s/autfld_cmds/autofld_cmds/
- - staticify cmd pool functions (Thanks kbuild-bot)
+Gr{oetje,eeting}s,
 
- drivers/media/platform/vsp1/vsp1_dl.c | 191 +++++++++++++++++++++++++++-
- drivers/media/platform/vsp1/vsp1_dl.h |   3 +-
- 2 files changed, 194 insertions(+)
+                        Geert
 
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 82556f0f0a9a..6366a1fc92b9 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -117,6 +117,30 @@ struct vsp1_dl_body_pool {
- };
- 
- /**
-+ * struct vsp1_cmd_pool - display list body pool
-+ * @dma: DMA address of the entries
-+ * @size: size of the full DMA memory pool in bytes
-+ * @mem: CPU memory pointer for the pool
-+ * @bodies: Array of DLB structures for the pool
-+ * @free: List of free DLB entries
-+ * @lock: Protects the pool and free list
-+ * @vsp1: the VSP1 device
-+ */
-+struct vsp1_dl_cmd_pool {
-+	/* DMA allocation */
-+	dma_addr_t dma;
-+	size_t size;
-+	void *mem;
-+
-+	struct vsp1_dl_ext_cmd *cmds;
-+	struct list_head free;
-+
-+	spinlock_t lock;
-+
-+	struct vsp1_device *vsp1;
-+};
-+
-+/**
-  * struct vsp1_dl_list - Display list
-  * @list: entry in the display list manager lists
-  * @dlm: the display list manager
-@@ -162,6 +186,7 @@ struct vsp1_dl_list {
-  * @queued: list queued to the hardware (written to the DL registers)
-  * @pending: list waiting to be queued to the hardware
-  * @pool: body pool for the display list bodies
-+ * @autofld_cmds: command pool to support auto-fld interlaced mode
-  */
- struct vsp1_dl_manager {
- 	unsigned int index;
-@@ -175,6 +200,7 @@ struct vsp1_dl_manager {
- 	struct vsp1_dl_list *pending;
- 
- 	struct vsp1_dl_body_pool *pool;
-+	struct vsp1_dl_cmd_pool *autofld_cmds;
- };
- 
- /* -----------------------------------------------------------------------------
-@@ -338,6 +364,140 @@ void vsp1_dl_body_write(struct vsp1_dl_body *dlb, u32 reg, u32 data)
- }
- 
- /* -----------------------------------------------------------------------------
-+ * Display List Extended Command Management
-+ */
-+
-+enum vsp1_extcmd_type {
-+	VSP1_EXTCMD_AUTODISP,
-+	VSP1_EXTCMD_AUTOFLD,
-+};
-+
-+struct vsp1_extended_command_info {
-+	u16 opcode;
-+	size_t body_size;
-+} static const vsp1_extended_commands[] = {
-+	[VSP1_EXTCMD_AUTODISP] = { 0x02, 96 },
-+	[VSP1_EXTCMD_AUTOFLD]  = { 0x03, 160 },
-+};
-+
-+/**
-+ * vsp1_dl_cmd_pool_create - Create a pool of commands from a single allocation
-+ * @vsp1: The VSP1 device
-+ * @type: The command pool type
-+ * @num_commands: The quantity of commands to allocate
-+ *
-+ * Allocate a pool of commands each with enough memory to contain the private
-+ * data of each command. The allocation sizes are dependent upon the command
-+ * type.
-+ *
-+ * Return a pointer to a pool on success or NULL if memory can't be allocated.
-+ */
-+static struct vsp1_dl_cmd_pool *
-+vsp1_dl_cmd_pool_create(struct vsp1_device *vsp1, enum vsp1_extcmd_type type,
-+			unsigned int num_cmds)
-+{
-+	struct vsp1_dl_cmd_pool *pool;
-+	unsigned int i;
-+	size_t cmd_size;
-+
-+	pool = kzalloc(sizeof(*pool), GFP_KERNEL);
-+	if (!pool)
-+		return NULL;
-+
-+	pool->cmds = kcalloc(num_cmds, sizeof(*pool->cmds), GFP_KERNEL);
-+	if (!pool->cmds) {
-+		kfree(pool);
-+		return NULL;
-+	}
-+
-+	cmd_size = sizeof(struct vsp1_dl_ext_cmd_header) +
-+		   vsp1_extended_commands[type].body_size;
-+	cmd_size = ALIGN(cmd_size, 16);
-+
-+	pool->size = cmd_size * num_cmds;
-+	pool->mem = dma_alloc_wc(vsp1->bus_master, pool->size, &pool->dma,
-+				 GFP_KERNEL);
-+	if (!pool->mem) {
-+		kfree(pool->cmds);
-+		kfree(pool);
-+		return NULL;
-+	}
-+
-+	spin_lock_init(&pool->lock);
-+	INIT_LIST_HEAD(&pool->free);
-+
-+	for (i = 0; i < num_cmds; ++i) {
-+		struct vsp1_dl_ext_cmd *cmd = &pool->cmds[i];
-+		size_t cmd_offset = i * cmd_size;
-+		size_t data_offset = sizeof(struct vsp1_dl_ext_cmd_header) +
-+				     cmd_offset;
-+
-+		cmd->pool = pool;
-+		cmd->cmd_opcode = vsp1_extended_commands[type].opcode;
-+
-+		/* TODO: Auto-disp can utilise more than one command per cmd */
-+		cmd->num_cmds = 1;
-+		cmd->cmds = pool->mem + cmd_offset;
-+		cmd->cmd_dma = pool->dma + cmd_offset;
-+
-+		cmd->data = pool->mem + data_offset;
-+		cmd->data_dma = pool->dma + data_offset;
-+		cmd->data_size = vsp1_extended_commands[type].body_size;
-+
-+		list_add_tail(&cmd->free, &pool->free);
-+	}
-+
-+	return pool;
-+}
-+
-+static
-+struct vsp1_dl_ext_cmd *vsp1_dl_ext_cmd_get(struct vsp1_dl_cmd_pool *pool)
-+{
-+	struct vsp1_dl_ext_cmd *cmd = NULL;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&pool->lock, flags);
-+
-+	if (!list_empty(&pool->free)) {
-+		cmd = list_first_entry(&pool->free, struct vsp1_dl_ext_cmd,
-+				       free);
-+		list_del(&cmd->free);
-+	}
-+
-+	spin_unlock_irqrestore(&pool->lock, flags);
-+
-+	return cmd;
-+}
-+
-+static void vsp1_dl_ext_cmd_put(struct vsp1_dl_ext_cmd *cmd)
-+{
-+	unsigned long flags;
-+
-+	if (!cmd)
-+		return;
-+
-+	/* Reset flags, these mark data usage */
-+	cmd->flags = 0;
-+
-+	spin_lock_irqsave(&cmd->pool->lock, flags);
-+	list_add_tail(&cmd->free, &cmd->pool->free);
-+	spin_unlock_irqrestore(&cmd->pool->lock, flags);
-+}
-+
-+static void vsp1_dl_ext_cmd_pool_destroy(struct vsp1_dl_cmd_pool *pool)
-+{
-+	if (!pool)
-+		return;
-+
-+	if (pool->mem)
-+		dma_free_wc(pool->vsp1->bus_master, pool->size, pool->mem,
-+			    pool->dma);
-+
-+	kfree(pool->cmds);
-+	kfree(pool);
-+}
-+
-+/* ----------------------------------------------------------------------------
-  * Display List Transaction Management
-  */
- 
-@@ -440,6 +600,12 @@ static void __vsp1_dl_list_put(struct vsp1_dl_list *dl)
- 
- 	vsp1_dl_list_bodies_put(dl);
- 
-+	vsp1_dl_ext_cmd_put(dl->pre_cmd);
-+	vsp1_dl_ext_cmd_put(dl->post_cmd);
-+
-+	dl->pre_cmd = NULL;
-+	dl->post_cmd = NULL;
-+
- 	/*
- 	 * body0 is reused as as an optimisation as presently every display list
- 	 * has at least one body, thus we reinitialise the entries list.
-@@ -883,6 +1049,15 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
- 		list_add_tail(&dl->list, &dlm->free);
- 	}
- 
-+	if (vsp1_feature(vsp1, VSP1_HAS_EXT_DL)) {
-+		dlm->autofld_cmds = vsp1_dl_cmd_pool_create(vsp1,
-+					VSP1_EXTCMD_AUTOFLD, prealloc);
-+		if (!dlm->autofld_cmds) {
-+			vsp1_dlm_destroy(dlm);
-+			return NULL;
-+		}
-+	}
-+
- 	return dlm;
- }
- 
-@@ -899,4 +1074,20 @@ void vsp1_dlm_destroy(struct vsp1_dl_manager *dlm)
- 	}
- 
- 	vsp1_dl_body_pool_destroy(dlm->pool);
-+	vsp1_dl_ext_cmd_pool_destroy(dlm->autofld_cmds);
-+}
-+
-+struct vsp1_dl_ext_cmd *vsp1_dlm_get_autofld_cmd(struct vsp1_dl_list *dl)
-+{
-+	struct vsp1_dl_manager *dlm = dl->dlm;
-+	struct vsp1_dl_ext_cmd *cmd;
-+
-+	if (dl->pre_cmd)
-+		return dl->pre_cmd;
-+
-+	cmd = vsp1_dl_ext_cmd_get(dlm->autofld_cmds);
-+	if (cmd)
-+		dl->pre_cmd = cmd;
-+
-+	return cmd;
- }
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.h b/drivers/media/platform/vsp1/vsp1_dl.h
-index aa5f4adc6617..d9621207b093 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.h
-+++ b/drivers/media/platform/vsp1/vsp1_dl.h
-@@ -22,6 +22,7 @@ struct vsp1_dl_manager;
- 
- /**
-  * struct vsp1_dl_ext_cmd - Extended Display command
-+ * @pool: pool to which this command belongs
-  * @free: entry in the pool of free commands list
-  * @cmd_opcode: command type opcode
-  * @flags: flags used by the command
-@@ -33,6 +34,7 @@ struct vsp1_dl_manager;
-  * @data_size: size of the @data_dma memory in bytes
-  */
- struct vsp1_dl_ext_cmd {
-+	struct vsp1_dl_cmd_pool *pool;
- 	struct list_head free;
- 
- 	u8 cmd_opcode;
-@@ -55,6 +57,7 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
- void vsp1_dlm_destroy(struct vsp1_dl_manager *dlm);
- void vsp1_dlm_reset(struct vsp1_dl_manager *dlm);
- unsigned int vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm);
-+struct vsp1_dl_ext_cmd *vsp1_dlm_get_autofld_cmd(struct vsp1_dl_list *dl);
- 
- struct vsp1_dl_list *vsp1_dl_list_get(struct vsp1_dl_manager *dlm);
- void vsp1_dl_list_put(struct vsp1_dl_list *dl);
 -- 
-git-series 0.9.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
