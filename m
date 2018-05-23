@@ -1,44 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42959 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965291AbeEYKEs (ORCPT
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:39425 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932391AbeEWLMb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 25 May 2018 06:04:48 -0400
-Date: Fri, 25 May 2018 12:04:44 +0200
-From: Simon Horman <horms@verge.net.au>
+        Wed, 23 May 2018 07:12:31 -0400
+MIME-Version: 1.0
+In-Reply-To: <20180523105220.25518-1-marek.vasut+renesas@gmail.com>
+References: <20180523105220.25518-1-marek.vasut+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 May 2018 13:12:29 +0200
+Message-ID: <CAMuHMdXAgeat-vL0Cvh-w9+Fnvru_WW5g1qYu=ewM_b7fcJ8iQ@mail.gmail.com>
+Subject: Re: [PATCH] PCI: rcar: Remove IRQ mappings in rcar_pcie_enable_msi failpath
 To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-pci@vger.kernel.org,
+Cc: linux-pci <linux-pci@vger.kernel.org>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] PCI: rcar: Remove IRQ mappings in rcar_pcie_enable_msi
- failpath
-Message-ID: <20180525100444.2257mefqsxdhfvfs@verge.net.au>
-References: <20180523105220.25518-1-marek.vasut+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180523105220.25518-1-marek.vasut+renesas@gmail.com>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, May 23, 2018 at 12:52:20PM +0200, Marek Vasut wrote:
+Hi Marek,
+
+On Wed, May 23, 2018 at 12:52 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
 > The rcar_pcie_enable_msi() creates IRQ mappings using irq_create_mapping()
 > before requesting the IRQs using devm_request_irq(). If devm_request_irq()
 > fails for some reason, rcar_pcie_enable_msi() does not remove the mapping.
-> 
+>
 > Pull out the code for disposing IRQ mappings from rcar_pcie_teardown_msi()
 > into a separate function and call it from both rcar_pcie_teardown_msi()
 > and rcar_pcie_enable_msi() failpath to remove the mappings correctly.
-> 
+>
 > Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 > Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Phil Edworthy <phil.edworthy@renesas.com>
-> Cc: Simon Horman <horms+renesas@verge.net.au>
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Cc: linux-renesas-soc@vger.kernel.org
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Thanks a lot!
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
