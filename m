@@ -1,100 +1,43 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:34433 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750785AbeEBCcg (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 1 May 2018 22:32:36 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 23 May 2018 10:51:12 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] media: dt-bindings: media: rcar_vin: add support for
+ r8a77965
+Message-ID: <20180523085111.gud5b2652vkvbgoq@verge.net.au>
+References: <20180513185818.15359-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <20180415190934.GX3094@brightrain.aerifal.cx>
-References: <1512047522-16312-1-git-send-email-geert+renesas@glider.be>
- <1512047522-16312-4-git-send-email-geert+renesas@glider.be>
- <20180415003420.GU3094@brightrain.aerifal.cx> <CAMuHMdVKMwe_FHQWdC_R2hEUxyksCg7Vo+0knX2J+oEcEgRpEQ@mail.gmail.com>
- <20180415190934.GX3094@brightrain.aerifal.cx>
-From: Rob Herring <robherring2@gmail.com>
-Date: Tue, 1 May 2018 21:32:15 -0500
-Message-ID: <CAL_JsqJ0MJRpQR7ECY0bi_KJuOzD4NvL1KCzjPnjaVeifHxXVQ@mail.gmail.com>
-Subject: Re: [PATCH 3/5] tty: serial: sh-sci: Hide earlycon config question
-To: Rich Felker <dalias@libc.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Jiri Slaby <jslaby@suse.com>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "moderated list:H8/300 ARCHITECTURE"
-        <uclinux-h8-devel@lists.sourceforge.jp>,
-        Linux-sh list <linux-sh@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180513185818.15359-1-niklas.soderlund+renesas@ragnatech.se>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, Apr 15, 2018 at 2:09 PM, Rich Felker <dalias@libc.org> wrote:
-> On Sun, Apr 15, 2018 at 08:58:42PM +0200, Geert Uytterhoeven wrote:
->> Hi Rich,
->>
->> On Sun, Apr 15, 2018 at 2:34 AM, Rich Felker <dalias@libc.org> wrote:
->> > On Thu, Nov 30, 2017 at 02:12:00PM +0100, Geert Uytterhoeven wrote:
->> >> Renesas H8/300 and ARM platforms use DT and support earlycon, so most
->> >> users want earlycon support to be enabled.
->> >>
->> >> On SuperH platforms, earlycon is not yet supported.
->> >>
->> >> Hence follow the above rationale to configure the default, unless
->> >> CONFIG_EXPERT is enabled.
->> >>
->> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> >> ---
->> >>  drivers/tty/serial/Kconfig | 3 ++-
->> >>  1 file changed, 2 insertions(+), 1 deletion(-)
->> >>
->> >> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
->> >> index 0c75562d620feb82..952a2c6a9da08fdd 100644
->> >> --- a/drivers/tty/serial/Kconfig
->> >> +++ b/drivers/tty/serial/Kconfig
->> >> @@ -774,10 +774,11 @@ config SERIAL_SH_SCI_CONSOLE
->> >>       default y
->> >>
->> >>  config SERIAL_SH_SCI_EARLYCON
->> >> -     bool "Support for early console on SuperH SCI(F)"
->> >> +     bool "Support for early console on SuperH SCI(F)" if EXPERT
->> >>       depends on SERIAL_SH_SCI=y
->> >>       select SERIAL_CORE_CONSOLE
->> >>       select SERIAL_EARLYCON
->> >> +     default ARCH_RENESAS || H8300
->> >>
->> >>  config SERIAL_SH_SCI_DMA
->> >>       bool "DMA support"
->> >> --
->> >
->> > Can you clarify what the claim that SuperH does not support earlycon
->> > is based on? My understanding is that users were successfully using
->> > this option on Renesas SH systems, and I'm using it on J2 with the
->> > uartlite earlycon support which I added in 7cdcc29e49. I think if you
->> > want to omit the question it should always default to enabled.
->>
->> This is a patch for a Kconfig option for the Renesas sh-sci driver, which
->> supports the SCI, SCIF, SCIFA, SCIFB, and HSCIF uarts found on various
->> Renesas SoCs.
->>
->> Earlycon is used with DT only. While you are using earlycon on J2, you do
->> use it with a different uart (uartlite). Currently there's no upstream support
->> for using DT on Renesas SuperH SoCs. If this changes, the default for
->> SERIAL_SH_SCI_EARLYCON has to be changed.
->>
->> So none of my patch applies to the current state of SuperH Linux support.
->
-> OK, I was under the impression (from users) that it worked on Renesas
-> SH devices without DT. If it really doesn't then it doesn't matter
-> until DT support for them is added. I've got some hardware to
-> experiment with now so I'll see what can be done.
+On Sun, May 13, 2018 at 08:58:18PM +0200, Niklas Söderlund wrote:
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Yes, it works without DT (but maybe that is UART specific). It was
-originally an x86 8250 thing.
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-The main thing you need is either fixmap support or ioremap has to
-work before paging_init when early_params are processed.
-
-Rob
+> ---
+>  Documentation/devicetree/bindings/media/rcar_vin.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
+> index a19517e1c669eb35..c2c57dcf73f4851b 100644
+> --- a/Documentation/devicetree/bindings/media/rcar_vin.txt
+> +++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
+> @@ -21,6 +21,7 @@ on Gen3 platforms to a CSI-2 receiver.
+>     - "renesas,vin-r8a7794" for the R8A7794 device
+>     - "renesas,vin-r8a7795" for the R8A7795 device
+>     - "renesas,vin-r8a7796" for the R8A7796 device
+> +   - "renesas,vin-r8a77965" for the R8A77965 device
+>     - "renesas,vin-r8a77970" for the R8A77970 device
+>     - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 or RZ/G1 compatible
+>       device.
+> -- 
+> 2.17.0
+> 
