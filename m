@@ -1,68 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57457 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754378AbeEWJOY (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:46170 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932138AbeEWJCI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 May 2018 05:14:24 -0400
-Date: Wed, 23 May 2018 11:14:19 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Mark Brown <broonie@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] spi: sh-msiof: Fix setting SIRMDR1.SYNCAC to match
- SITMDR1.SYNCAC
-Message-ID: <20180523091418.grcphcfcr2ejnvht@verge.net.au>
-References: <1527066124-1541-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527066124-1541-1-git-send-email-geert+renesas@glider.be>
+        Wed, 23 May 2018 05:02:08 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mark Brown <broonie@kernel.org>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] spi: sh-msiof: Fix setting SIRMDR1.SYNCAC to match SITMDR1.SYNCAC
+Date: Wed, 23 May 2018 11:02:04 +0200
+Message-Id: <1527066124-1541-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, May 23, 2018 at 11:02:04AM +0200, Geert Uytterhoeven wrote:
-> According to section 59.2.4 MSIOF Receive Mode Register 1 (SIRMDR1) in
-> the R-Car Gen3 datasheet Rev.1.00, the value of the SIRMDR1.SYNCAC bit
-> must match the value of the SITMDR1.SYNCAC bit.  However,
-> sh_msiof_spi_setup() changes only the latter.
-> 
-> Fix this by updating the SIRMDR1 register like the SITMDR1 register,
-> taking into account register bits that exist in SITMDR1 only.
-> 
-> Reported-by: Renesas BSP team via Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Fixes: 7ff0b53c4051145d ("spi: sh-msiof: Avoid writing to registers from spi_master.setup()")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+According to section 59.2.4 MSIOF Receive Mode Register 1 (SIRMDR1) in
+the R-Car Gen3 datasheet Rev.1.00, the value of the SIRMDR1.SYNCAC bit
+must match the value of the SITMDR1.SYNCAC bit.  However,
+sh_msiof_spi_setup() changes only the latter.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Fix this by updating the SIRMDR1 register like the SITMDR1 register,
+taking into account register bits that exist in SITMDR1 only.
 
-> ---
->  drivers/spi/spi-sh-msiof.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-> index 244e841fc4bcfcc7..09c04c1b7d0b5a15 100644
-> --- a/drivers/spi/spi-sh-msiof.c
-> +++ b/drivers/spi/spi-sh-msiof.c
-> @@ -567,14 +567,16 @@ static int sh_msiof_spi_setup(struct spi_device *spi)
->  
->  	/* Configure native chip select mode/polarity early */
->  	clr = MDR1_SYNCMD_MASK;
-> -	set = MDR1_TRMD | TMDR1_PCON | MDR1_SYNCMD_SPI;
-> +	set = MDR1_SYNCMD_SPI;
->  	if (spi->mode & SPI_CS_HIGH)
->  		clr |= BIT(MDR1_SYNCAC_SHIFT);
->  	else
->  		set |= BIT(MDR1_SYNCAC_SHIFT);
->  	pm_runtime_get_sync(&p->pdev->dev);
->  	tmp = sh_msiof_read(p, TMDR1) & ~clr;
-> -	sh_msiof_write(p, TMDR1, tmp | set);
-> +	sh_msiof_write(p, TMDR1, tmp | set | MDR1_TRMD | TMDR1_PCON);
-> +	tmp = sh_msiof_read(p, RMDR1) & ~clr;
-> +	sh_msiof_write(p, RMDR1, tmp | set);
->  	pm_runtime_put(&p->pdev->dev);
->  	p->native_cs_high = spi->mode & SPI_CS_HIGH;
->  	p->native_cs_inited = true;
-> -- 
-> 2.7.4
-> 
+Reported-by: Renesas BSP team via Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Fixes: 7ff0b53c4051145d ("spi: sh-msiof: Avoid writing to registers from spi_master.setup()")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/spi/spi-sh-msiof.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index 244e841fc4bcfcc7..09c04c1b7d0b5a15 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -567,14 +567,16 @@ static int sh_msiof_spi_setup(struct spi_device *spi)
+ 
+ 	/* Configure native chip select mode/polarity early */
+ 	clr = MDR1_SYNCMD_MASK;
+-	set = MDR1_TRMD | TMDR1_PCON | MDR1_SYNCMD_SPI;
++	set = MDR1_SYNCMD_SPI;
+ 	if (spi->mode & SPI_CS_HIGH)
+ 		clr |= BIT(MDR1_SYNCAC_SHIFT);
+ 	else
+ 		set |= BIT(MDR1_SYNCAC_SHIFT);
+ 	pm_runtime_get_sync(&p->pdev->dev);
+ 	tmp = sh_msiof_read(p, TMDR1) & ~clr;
+-	sh_msiof_write(p, TMDR1, tmp | set);
++	sh_msiof_write(p, TMDR1, tmp | set | MDR1_TRMD | TMDR1_PCON);
++	tmp = sh_msiof_read(p, RMDR1) & ~clr;
++	sh_msiof_write(p, RMDR1, tmp | set);
+ 	pm_runtime_put(&p->pdev->dev);
+ 	p->native_cs_high = spi->mode & SPI_CS_HIGH;
+ 	p->native_cs_inited = true;
+-- 
+2.7.4
