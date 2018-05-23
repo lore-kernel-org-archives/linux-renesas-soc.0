@@ -1,64 +1,63 @@
 Return-Path: <linux-i2c-owner@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] i2c: mux: demux-pinctrl: add symlinks to the demux
- device in sysfs
-To: Wolfram Sang <wsa@the-dreams.de>
+Date: Wed, 23 May 2018 10:54:29 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms@verge.net.au>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+        linux-i2c@vger.kernel.org, Peter Rosin <peda@axentia.se>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] i2c: mux: demux-pinctrl: add symlinks to the
+ demux device in sysfs
+Message-ID: <20180523085429.wywudkeo44wavyvv@ninjato>
 References: <20180521072939.2836-1-wsa+renesas@sang-engineering.com>
  <20180521072939.2836-3-wsa+renesas@sang-engineering.com>
- <6641706f-fe9e-8d92-48c5-ebd4453c51c3@axentia.se>
- <20180522191325.luqgcfhxlzg3j4ho@ninjato>
-From: Peter Rosin <peda@axentia.se>
-Message-ID: <4f283ee0-af31-db44-f862-96b224b6f8ae@axentia.se>
-Date: Thu, 24 May 2018 13:55:57 +0200
+ <20180523084820.cdebd2kxritr5rm2@verge.net.au>
 MIME-Version: 1.0
-In-Reply-To: <20180522191325.luqgcfhxlzg3j4ho@ninjato>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rc24vz6iw3ppnm7o"
+Content-Disposition: inline
+In-Reply-To: <20180523084820.cdebd2kxritr5rm2@verge.net.au>
 Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 2018-05-22 21:13, Wolfram Sang wrote:
-> Hi Peter,
-> 
->> Hmm, now that I have slept on it, I find this a bit odd. For muxes, all
->> channels and the parent are always present. Here, that is not the case.
->> And don't get me wrong, I see why that is the case, but that doesn't
->> mean that I like it. It would be so much nicer and less disruptive if
->> the client devices were not unbound and rebound (which I think they are,
->> right?) on every master switch.
-> 
-> Yes, we rebind on every master switch. In the first iteration of this
-> driver, I tried the on-the-fly approach. It turned out to be very flaky
-> because it was stretching the driver model too much. There is no support
-> for multiple parents and no support for switching the parent at runtime.
-> When trying to do that, you find out that e.g. the whole relationship
-> tree needs to be rebuilt, say to keep PM hierarchy consistent. And even,
-> just for I2C, on-the-fly switching is not really supported. Some Renesas
-> R-Car SoCs have two different I2C IP cores which can be muxed to the
-> same pins. One has DMA, the other slave functionality. I don't see a way
-> to combine both into one "virtual" master. This is why I came to the
-> current approach. The use case that the customers decide on the feature
-> set they want to use after booting was said to be good enough.
-> 
->> In some cases I think it might be possible to make the switch automatic
->> and seamless, e.g. if there are two masters and one of them is faster
->> but has some glitch(es), and the other is slower but complete (or at
->> least complete enough).
-> 
-> That might work for some cases, yet I'd favor a generic solution.
-> 
->> What do you think?
-> 
-> Given my above experiences, I'd just drop the channel symlink and keep
-> the driver as is :)
 
-Ok, I'm dropping this patch.
+--rc24vz6iw3ppnm7o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> But thanks for thinking about it!
 
-No problem.
+> > +	WARN(sysfs_create_link(&priv->cur_adap.dev.kobj, &priv->dev->kobj,
+> > +			       "demux_device"),
+> > +	     "can't create symlink to mux device\n");
+> > +	WARN(sysfs_create_link(&priv->dev->kobj, &priv->cur_adap.dev.kobj,
+> > +			       "channel-0"),
+> > +	     "can't create symlink to channel 0\n");
+> > +
+>=20
+> Personally I'd rather not rely on side-effects from WARN statements,
+> but perhaps thats just me.
 
-Cheers,
-Peter
+It's a way to satisfy the __must_check from sysfs_create_link().
+
+
+--rc24vz6iw3ppnm7o
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsFLEEACgkQFA3kzBSg
+KbYAXxAAovSk+IqtFaxXU3ZuTZ99ARSmd4b5ThbG3Fk3eMdQa+epRZmGeRfevxks
+TpsMH3b+HSPYE8SosEY/lML5/lnAe3CQA0A23c+/2IUuV2iLyTvjmeA/nvahpE8N
+9Hk10FzTmFTmMmih7S3TVFRIFGfN9TjP0WK9RI7CSdst5G1T+/6RFN+e7k7mAY/3
+SDmbM+6hyYUBIvoHHFPhPBBK8boHBG3J5jU8mi3/KukNn7Z0NW/2UFbtw2mjfsSk
+AS26bJsYiZDYVVy1EBSPO86FPOCA0sIXKJoPHJGw+/a4zugioRfy7w7yIl3wC6dc
+oQzM4e0ic0OexBlxcXXhQRAGe2OAeDIRVJOGdx/0+whHTQSxeWSVofOhIp7PZsYt
+5ys2PBYMbY1Tl2t5kE1zaH91Anof8DeJEwDIVrX/nqPJ6+0PwttUSh5r+eL4Yv/K
+/F5+vbT8DSiwRbcFo6TWsYMAYTI+1BbVK/DEbcZolhwcgcNdmES8TyIUoTgJLaJT
+Gr+E3C+jtIkzAVbZZe2ZuZjPkuveu6HmvT6dBwucyJN2Gu8ATA/K8MQXfeWDvhD8
+3KNuyJNyaZ7RmGTaeelk0m4gKt5X7Iw4xpFCNamohqB4sR8LWFuqrcDYg3URnQ/+
+IVWo1qspeHazmvXKkrF/vMn1oqq1HrPvCZUBwAgU8+2fMe+NDnk=
+=F+Vf
+-----END PGP SIGNATURE-----
+
+--rc24vz6iw3ppnm7o--
