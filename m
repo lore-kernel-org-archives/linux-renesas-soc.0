@@ -1,92 +1,45 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:35257 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754024AbeEWMFe (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 23 May 2018 08:05:34 -0400
+MIME-Version: 1.0
+In-Reply-To: <20180523114230.10109-5-marek.vasut+renesas@gmail.com>
+References: <20180523114230.10109-1-marek.vasut+renesas@gmail.com> <20180523114230.10109-5-marek.vasut+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 May 2018 14:05:33 +0200
+Message-ID: <CAMuHMdVzNgaS6cnuW0x-mNK4vF3-9Ry+0GNZ3fYjjSUapeZW7A@mail.gmail.com>
+Subject: Re: [PATCH 5/6] mfd: da9063: Handle less LDOs on DA9063L
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: Ofir Drang <ofir.drang@arm.com>, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-crypto@vger.kernel.org
-Subject: [PATCH 1/3] crypto: ccree: drop signature register check
-Date: Tue, 15 May 2018 13:29:27 +0100
-Message-Id: <1526387370-17142-2-git-send-email-gilad@benyossef.com>
-In-Reply-To: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
-References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
-Sender: devicetree-owner@vger.kernel.org
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We were using the content of the signature register as a sanity
-check for the hardware functioning but it turns out not all
-implementers use the same values so the check is giving false
-negative on certain SoCs and so we drop it.
+On Wed, May 23, 2018 at 1:42 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> Move the LDOs present only on DA9063 at the end of the list, so that
+> the DA9063L can simply indicate less LDOs and still share the list of
+> regulators with DA9063.
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
----
- drivers/crypto/ccree/cc_driver.c | 18 +++---------------
- 1 file changed, 3 insertions(+), 15 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/crypto/ccree/cc_driver.c b/drivers/crypto/ccree/cc_driver.c
-index 89ce013..f8ff358 100644
---- a/drivers/crypto/ccree/cc_driver.c
-+++ b/drivers/crypto/ccree/cc_driver.c
-@@ -38,21 +38,20 @@ MODULE_PARM_DESC(cc_dump_bytes, "Dump buffers to kernel log as debugging aid");
- struct cc_hw_data {
- 	char *name;
- 	enum cc_hw_rev rev;
--	u32 sig;
- };
- 
- /* Hardware revisions defs. */
- 
- static const struct cc_hw_data cc712_hw = {
--	.name = "712", .rev = CC_HW_REV_712, .sig =  0xDCC71200U
-+	.name = "712", .rev = CC_HW_REV_712
- };
- 
- static const struct cc_hw_data cc710_hw = {
--	.name = "710", .rev = CC_HW_REV_710, .sig =  0xDCC63200U
-+	.name = "710", .rev = CC_HW_REV_710
- };
- 
- static const struct cc_hw_data cc630p_hw = {
--	.name = "630P", .rev = CC_HW_REV_630, .sig = 0xDCC63000U
-+	.name = "630P", .rev = CC_HW_REV_630
- };
- 
- static const struct of_device_id arm_ccree_dev_of_match[] = {
-@@ -186,7 +185,6 @@ static int init_cc_resources(struct platform_device *plat_dev)
- 	struct cc_drvdata *new_drvdata;
- 	struct device *dev = &plat_dev->dev;
- 	struct device_node *np = dev->of_node;
--	u32 signature_val;
- 	u64 dma_mask;
- 	const struct cc_hw_data *hw_rev;
- 	const struct of_device_id *dev_id;
-@@ -275,16 +273,6 @@ static int init_cc_resources(struct platform_device *plat_dev)
- 		return rc;
- 	}
- 
--	/* Verify correct mapping */
--	signature_val = cc_ioread(new_drvdata, CC_REG(HOST_SIGNATURE));
--	if (signature_val != hw_rev->sig) {
--		dev_err(dev, "Invalid CC signature: SIGNATURE=0x%08X != expected=0x%08X\n",
--			signature_val, hw_rev->sig);
--		rc = -EINVAL;
--		goto post_clk_err;
--	}
--	dev_dbg(dev, "CC SIGNATURE=0x%08X\n", signature_val);
--
- 	/* Display HW versions */
- 	dev_info(dev, "ARM CryptoCell %s Driver: HW version 0x%08X, Driver version %s\n",
- 		 hw_rev->name, cc_ioread(new_drvdata, CC_REG(HOST_VERSION)),
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
