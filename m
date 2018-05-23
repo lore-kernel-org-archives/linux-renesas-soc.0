@@ -1,63 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751569AbeERLTX (ORCPT
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:45537 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754623AbeEWQdp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:19:23 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 55/69] ARM: dts: r8a73a4: Correct mask for GIC PPI interrupts
-Date: Fri, 18 May 2018 13:17:28 +0200
-Message-Id: <45e75c425bdd1dd75d93eeaaef4c81d1563f2efa.1526641667.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
-References: <cover.1526641667.git.horms+renesas@verge.net.au>
+        Wed, 23 May 2018 12:33:45 -0400
+Date: Wed, 23 May 2018 11:33:43 -0500
+From: Rob Herring <robh@kernel.org>
+To: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com, horms@verge.net.au,
+        geert@glider.be, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 5/6] ARM: dts: rcar-gen2: Remove unused VIN properties
+Message-ID: <20180523163343.GA16505@rob-hp-laptop>
+References: <1526488352-898-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1526488352-898-6-git-send-email-jacopo+renesas@jmondi.org>
+ <20180516221307.GF17948@bigcity.dyn.berto.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180516221307.GF17948@bigcity.dyn.berto.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Thu, May 17, 2018 at 12:13:07AM +0200, Niklas S�derlund wrote:
+> Hi Jacopo,
+> 
+> Thanks for your work.
+> 
+> On 2018-05-16 18:32:31 +0200, Jacopo Mondi wrote:
+> > The 'bus-width' and 'pclk-sample' properties are not parsed by the VIN
+> > driver and only confuse users. Remove them in all Gen2 SoC that used
+> > them.
+> > 
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> >  arch/arm/boot/dts/r8a7790-lager.dts   | 3 ---
+> >  arch/arm/boot/dts/r8a7791-koelsch.dts | 3 ---
+> >  arch/arm/boot/dts/r8a7791-porter.dts  | 1 -
+> >  arch/arm/boot/dts/r8a7793-gose.dts    | 3 ---
+> >  arch/arm/boot/dts/r8a7794-alt.dts     | 1 -
+> >  arch/arm/boot/dts/r8a7794-silk.dts    | 1 -
+> >  6 files changed, 12 deletions(-)
+> > 
+> > diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+> > index 063fdb6..b56b309 100644
+> > --- a/arch/arm/boot/dts/r8a7790-lager.dts
+> > +++ b/arch/arm/boot/dts/r8a7790-lager.dts
+> > @@ -873,10 +873,8 @@
+> >  	port {
+> >  		vin0ep2: endpoint {
+> >  			remote-endpoint = <&adv7612_out>;
+> > -			bus-width = <24>;
+> 
+> I can't really make up my mind if this is a good thing or not. Device 
+> tree describes the hardware and not what the drivers make use of. And 
+> the fact is that this bus is 24 bits wide. So I'm not sure we should 
+> remove these properties. But I would love to hear what others think 
+> about this.
 
-R-Mobile APE6 (r8a73a4) contains four Cortex-A15 and four Cortex-A7
-cores, hence the second interrupt specifier cell for Private Peripheral
-Interrupts should use "GIC_CPU_MASK_SIMPLE(8)", so GIC interrupts are
-delivered to all 8 processor cores.
+IMO, this property should only be present when all the pins are not 
+connected. And by "all", I mean the minimum of what each end of the 
+graph can support.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a73a4.dtsi | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
-index 8e48090e4fdc..080d037f5733 100644
---- a/arch/arm/boot/dts/r8a73a4.dtsi
-+++ b/arch/arm/boot/dts/r8a73a4.dtsi
-@@ -57,10 +57,10 @@
- 
- 	timer {
- 		compatible = "arm,armv7-timer";
--		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
--			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
--			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
--			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
- 	};
- 
- 	dbsc1: memory-controller@e6790000 {
-@@ -464,7 +464,7 @@
- 			<0 0xf1002000 0 0x2000>,
- 			<0 0xf1004000 0 0x2000>,
- 			<0 0xf1006000 0 0x2000>;
--		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
- 		clocks = <&mstp4_clks R8A73A4_CLK_INTC_SYS>;
- 		clock-names = "clk";
- 		power-domains = <&pd_c4>;
--- 
-2.11.0
+Rob
