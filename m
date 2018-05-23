@@ -1,58 +1,53 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        horms@verge.net.au, geert@glider.be, magnus.damm@gmail.com,
-        robh+dt@kernel.org
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 0/3] arm64: dts: Draak: Enable video inputs and VIN4
-Date: Mon, 21 May 2018 16:45:39 +0200
-Message-Id: <1526913942-15426-1-git-send-email-jacopo+renesas@jmondi.org>
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Wed, 23 May 2018 11:09:57 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Nobuhiro Iwamatsu <iwamatsu@nigauri.org>,
+        Nobuhiro Iwamatsu <iwamatsu@debian.org>
+Subject: Re: [PATCH v2] v4l: vsp1: Fix vsp1_regs.h license header
+Message-ID: <20180523090956.7u5cfvd5wdnxghtj@verge.net.au>
+References: <20180520072437.9686-1-laurent.pinchart+renesas@ideasonboard.com>
+ <CAMuHMdUbjkcWsuocU-ox0y2etTsy7=WhKFKj3HDEoqyif_CtMw@mail.gmail.com>
+ <20180523083324.vvtadkkoz6ti5qi7@verge.net.au>
+ <1905091.9toDD4m9Wz@avalon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1905091.9toDD4m9Wz@avalon>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-  this series enables HDMI, CVBS and VIN4 for R8A77995 Draak board.
+On Wed, May 23, 2018 at 11:37:47AM +0300, Laurent Pinchart wrote:
+> Hi Simon,
+> 
+> On Wednesday, 23 May 2018 11:33:26 EEST Simon Horman wrote:
+> > On Tue, May 22, 2018 at 01:04:56PM +0200, Geert Uytterhoeven wrote:
+> > > On Tue, May 22, 2018 at 11:05 AM, Simon Horman <horms@verge.net.au> wrote:
+> > >>> --- a/drivers/media/platform/vsp1/vsp1_regs.h
+> > >>> +++ b/drivers/media/platform/vsp1/vsp1_regs.h
+> > >>> @@ -1,4 +1,4 @@
+> > >>> -/* SPDX-License-Identifier: GPL-2.0 */
+> > >>> +/* SPDX-License-Identifier: GPL-2.0+ */
+> > >> 
+> > >> While you are changing this line, I believe the correct format is
+> > >> to use a '//' comment.
+> > >> 
+> > >> i.e.:
+> > >> 
+> > >> // SPDX-License-Identifier: GPL-2.0+
+> > > 
+> > > Not for C header files, only for C source files.
+> > 
+> > Wow!
+> 
+> Yes, it's a mess :-( The rationale is that the assembler doesn't support C++-
+> style comments, so we need to use C-style comments in header files. We should 
+> really have standardized usage of C-style comments everywhere, it makes no 
+> sense to me.
 
-Compared to v3, the analog video decoder ADV7180 is now described in bindings
-with the compatible string "adi,adv7180cp" and its port nodes definition
-has been res-structured according to the chip bindings as reported by
-Laurent on v3.
-
-Bindings have been copi^W^Winspired from Gen2 Gose board, the only Gen2 board
-using the "adv7180cp" compatible string.
-
-Example of how to switch to HDMI input is still available here:
-git://jmondi.org/linux d3/media-master/salvator-x-dts_csi2/d3-hdmi
-
-And the series still depends on
-[PATCH v3 0/9] rcar-vin: Add support for parallel input on Gen3
-
-Thanks
-   j
-
-Jacopo Mondi (3):
-  dt-bindings: media: rcar-vin: Add R8A77995 support
-  arm64: dts: renesas: draak: Describe CVBS input
-  arm64: dts: renesas: draak: Describe HDMI input
-
-v3 -> v4:
-- Use 'adi,adv7180cp' in [3/3] as detailed in the commit message
-- Add Laurent's R-b tag to [2/3]
-
-v2 -> v3:
-- Add comment to CVBS and HDMI inputs
-- Add missing Signed-off-by to [2/3]
-- Add Niklas' tag
-
- .../devicetree/bindings/media/rcar_vin.txt         |   1 +
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts     | 117 +++++++++++++++++++++
- 2 files changed, 118 insertions(+)
-
---
-2.7.4
-
+I'm reading this email while standing on my head
+and things make much more sense :)
