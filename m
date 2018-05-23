@@ -1,14 +1,14 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57562 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754443AbeEWJU2 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 May 2018 05:20:28 -0400
-Date: Wed, 23 May 2018 11:20:24 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michel Pollet <michel.pollet@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1526983321-41949-2-git-send-email-michel.pollet@bp.renesas.com>
+References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com> <1526983321-41949-2-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 May 2018 11:03:56 +0200
+Message-ID: <CAMuHMdXSGHg9P-MxCHr3h2NRTKAK79KSdf+cB+3a4+pQOvpmSQ@mail.gmail.com>
+Subject: Re: [PATCH v6 1/6] dt-bindings: arm: Document the RZN1D-DB board
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
         Phil Edworthy <phil.edworthy@renesas.com>,
         Michel Pollet <buserror+upstream@gmail.com>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -21,26 +21,26 @@ Cc: Michel Pollet <michel.pollet@bp.renesas.com>,
         <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v6 1/6] dt-bindings: arm: Document the RZN1D-DB board
-Message-ID: <20180523092023.uo3acbxutmvqodux@verge.net.au>
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
- <1526983321-41949-2-git-send-email-michel.pollet@bp.renesas.com>
- <CAMuHMdXSGHg9P-MxCHr3h2NRTKAK79KSdf+cB+3a4+pQOvpmSQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXSGHg9P-MxCHr3h2NRTKAK79KSdf+cB+3a4+pQOvpmSQ@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, May 23, 2018 at 11:03:56AM +0200, Geert Uytterhoeven wrote:
-> On Tue, May 22, 2018 at 12:01 PM, Michel Pollet
-> <michel.pollet@bp.renesas.com> wrote:
-> > This documents the RZ/N1 bindings for the RZN1D-DB board.
-> >
-> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Tue, May 22, 2018 at 12:01 PM, Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> This documents the RZ/N1 bindings for the RZN1D-DB board.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Thanks, applied.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
