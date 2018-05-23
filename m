@@ -1,121 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:38311 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754024AbeEWL0u (ORCPT
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:43990 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754623AbeEWQhY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 May 2018 07:26:50 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: devicetree@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] mfd: dt: Add bindings for DA9063L
-Date: Wed, 23 May 2018 13:26:44 +0200
-Message-Id: <20180523112644.9464-1-marek.vasut+renesas@gmail.com>
+        Wed, 23 May 2018 12:37:24 -0400
+Date: Wed, 23 May 2018 11:37:21 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
+        horms@verge.net.au, geert@glider.be, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/6] dt-bindings: media: rcar-vin: Document data-active
+Message-ID: <20180523163721.GB16505@rob-hp-laptop>
+References: <1526488352-898-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1526488352-898-3-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526488352-898-3-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device tree bindings for the Dialog DA9063L. This is a
-variant of the DA9063 chip with smaller package, with less
-LDO regulators and without RTC block. The other properties
-of the chip are the same, including the content of the chip
-ID register.
+On Wed, May 16, 2018 at 06:32:28PM +0200, Jacopo Mondi wrote:
+> Document 'data-active' property in R-Car VIN device tree bindings.
+> The property is optional when running with explicit synchronization
+> (eg. BT.601) but mandatory when embedded synchronization is in use (eg.
+> BT.656) as specified by the hardware manual.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  Documentation/devicetree/bindings/media/rcar_vin.txt | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
+> index c53ce4e..17eac8a 100644
+> --- a/Documentation/devicetree/bindings/media/rcar_vin.txt
+> +++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
+> @@ -63,6 +63,11 @@ from local SoC CSI-2 receivers (port1) depending on SoC.
+>  	If both HSYNC and VSYNC polarities are not specified, embedded
+>  	synchronization is selected.
+> 
+> +        - data-active: active state of data enable signal (CLOCKENB pin).
+> +          0/1 for LOW/HIGH respectively. If not specified, use HSYNC as
+> +          data enable signal. When using embedded synchronization this
+> +          property is mandatory.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
----
- Documentation/devicetree/bindings/mfd/da9063.txt | 34 +++++++++++++++++-------
- 1 file changed, 25 insertions(+), 9 deletions(-)
+This doesn't match the common property's definition which AIUI is for 
+the data lines' polarity. You need a new property. Perhaps a common one.
 
-diff --git a/Documentation/devicetree/bindings/mfd/da9063.txt b/Documentation/devicetree/bindings/mfd/da9063.txt
-index 05b21bcb8543..a519cf0f5c8d 100644
---- a/Documentation/devicetree/bindings/mfd/da9063.txt
-+++ b/Documentation/devicetree/bindings/mfd/da9063.txt
-@@ -1,4 +1,4 @@
--* Dialog DA9063 Power Management Integrated Circuit (PMIC)
-+* Dialog DA9063/DA9063L Power Management Integrated Circuit (PMIC)
- 
- DA9093 consists of a large and varied group of sub-devices (I2C Only):
- 
-@@ -6,14 +6,14 @@ Device                   Supply Names    Description
- ------                   ------------    -----------
- da9063-regulator        :               : LDOs & BUCKs
- da9063-onkey            :               : On Key
--da9063-rtc              :               : Real-Time Clock
-+da9063-rtc              :               : Real-Time Clock (DA9063 only)
- da9063-watchdog         :               : Watchdog
- 
- ======
- 
- Required properties:
- 
--- compatible : Should be "dlg,da9063"
-+- compatible : Should be "dlg,da9063" or "dlg,da9063l"
- - reg : Specifies the I2C slave address (this defaults to 0x58 but it can be
-   modified to match the chip's OTP settings).
- - interrupt-parent : Specifies the reference to the interrupt controller for
-@@ -23,8 +23,8 @@ Required properties:
- 
- Sub-nodes:
- 
--- regulators : This node defines the settings for the LDOs and BUCKs. The
--  DA9063 regulators are bound using their names listed below:
-+- regulators : This node defines the settings for the LDOs and BUCKs.
-+  The DA9063 regulators are bound using their names listed below:
- 
-     bcore1    : BUCK CORE1
-     bcore2    : BUCK CORE2
-@@ -44,13 +44,28 @@ Sub-nodes:
-     ldo10     : LDO_10
-     ldo11     : LDO_11
- 
-+  The DA9063L regulators are bound using their names listed below:
-+
-+    bcore1    : BUCK CORE1
-+    bcore2    : BUCK CORE2
-+    bpro      : BUCK PRO
-+    bmem      : BUCK MEM
-+    bio       : BUCK IO
-+    bperi     : BUCK PERI
-+    ldo3      : LDO_3
-+    ldo7      : LDO_7
-+    ldo8      : LDO_8
-+    ldo9      : LDO_9
-+    ldo11     : LDO_11
-+
-   The component follows the standard regulator framework and the bindings
-   details of individual regulator device can be found in:
-   Documentation/devicetree/bindings/regulator/regulator.txt
- 
- - rtc : This node defines settings for the Real-Time Clock associated with
--  the DA9063. There are currently no entries in this binding, however
--  compatible = "dlg,da9063-rtc" should be added if a node is created.
-+  the DA9063 only. The RTC is not present in DA9063L. There are currently
-+  no entries in this binding, however compatible = "dlg,da9063-rtc" should
-+  be added if a node is created.
- 
- - onkey : This node defines the OnKey settings for controlling the key
-   functionality of the device. The node should contain the compatible property
-@@ -65,8 +80,9 @@ Sub-nodes:
-     and KEY_SLEEP.
- 
- - watchdog : This node defines settings for the Watchdog timer associated
--  with the DA9063. There are currently no entries in this binding, however
--  compatible = "dlg,da9063-watchdog" should be added if a node is created.
-+  with the DA9063 and DA9063L. There are currently no entries in this
-+  binding, however compatible = "dlg,da9063-watchdog" should be added
-+  if a node is created.
- 
- 
- Example:
--- 
-2.16.2
+> +
+>      - port 1 - sub-nodes describing one or more endpoints connected to
+>        the VIN from local SoC CSI-2 receivers. The endpoint numbers must
+>        use the following schema.
+> --
+> 2.7.4
+> 
