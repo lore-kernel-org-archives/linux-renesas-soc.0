@@ -1,56 +1,142 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56684 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932501AbeEWLuQ (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:51331 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932550AbeEWLmy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 May 2018 07:50:16 -0400
-Date: Wed, 23 May 2018 12:50:12 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Wed, 23 May 2018 07:42:54 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
         Steve Twiss <stwiss.opensource@diasemi.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 2/6] mfd: da9063: Replace model with type
-Message-ID: <20180523115012.GG4828@sirena.org.uk>
+Subject: [PATCH 2/6] mfd: da9063: Replace model with type
+Date: Wed, 23 May 2018 13:42:26 +0200
+Message-Id: <20180523114230.10109-2-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180523114230.10109-1-marek.vasut+renesas@gmail.com>
 References: <20180523114230.10109-1-marek.vasut+renesas@gmail.com>
- <20180523114230.10109-2-marek.vasut+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="RDS4xtyBfx+7DiaI"
-Content-Disposition: inline
-In-Reply-To: <20180523114230.10109-2-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+The model number stored in the struct da9063 is the same for all
+variants of the da9063 since it is the chip ID, which is always
+the same. Replace that with a separate identifier instead, which
+allows us to discern the DA9063 variants by setting the type
+based on either DT match or otherwise.
 
---RDS4xtyBfx+7DiaI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+---
+ drivers/mfd/da9063-core.c            | 1 -
+ drivers/mfd/da9063-i2c.c             | 5 +++--
+ drivers/regulator/da9063-regulator.c | 6 +++---
+ include/linux/mfd/da9063/core.h      | 6 +++++-
+ 4 files changed, 11 insertions(+), 7 deletions(-)
 
-On Wed, May 23, 2018 at 01:42:26PM +0200, Marek Vasut wrote:
-> The model number stored in the struct da9063 is the same for all
-> variants of the da9063 since it is the chip ID, which is always
-> the same. Replace that with a separate identifier instead, which
-
-Acked-by: Mark Brown <broonie@kernel.org>
-
---RDS4xtyBfx+7DiaI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsFVXQACgkQJNaLcl1U
-h9BSAggAhweERD6NMxyF/EC1YhWeLIdRUk8Ouc28pLB3wQYRZMLbIQIAJd+5O+aV
-YP4QzfakUlmTF+N/gCQGefRY7D9Iut2LiuaJKIcaDOdg9XC0TpqHJmda7I3nLDkz
-Vrv/nia9wJBYckh6Ir8p3PPDWr9siwncu1v7XNm9NC55Fe/Q7bFVS0A9Zvdai8X5
-W+EAXZjJ/SJzHf8HYy0NxEyo15lziW/mFORq3mNXCM0MHsatnGWZp/U5fX24Kx0e
-YaCPj/UuGvJE6ZE8qtG77mvM2gOmF2wF1aWJyJMEasvQFBohs7O56iVfTAaWNtUM
-f/iGrBPWPkp6VxUDJYHSr3L79R6maw==
-=ySq4
------END PGP SIGNATURE-----
-
---RDS4xtyBfx+7DiaI--
+diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
+index 00b3caee4e21..7360b76b4f72 100644
+--- a/drivers/mfd/da9063-core.c
++++ b/drivers/mfd/da9063-core.c
+@@ -215,7 +215,6 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
+ 		return -ENODEV;
+ 	}
+ 
+-	da9063->model = model;
+ 	da9063->variant_code = variant_code;
+ 
+ 	ret = da9063_irq_init(da9063);
+diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
+index 7f84030c8d53..5544ce8e3363 100644
+--- a/drivers/mfd/da9063-i2c.c
++++ b/drivers/mfd/da9063-i2c.c
+@@ -236,7 +236,7 @@ static const struct of_device_id da9063_dt_ids[] = {
+ };
+ MODULE_DEVICE_TABLE(of, da9063_dt_ids);
+ static int da9063_i2c_probe(struct i2c_client *i2c,
+-	const struct i2c_device_id *id)
++			    const struct i2c_device_id *id)
+ {
+ 	struct da9063 *da9063;
+ 	int ret;
+@@ -248,6 +248,7 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
+ 	i2c_set_clientdata(i2c, da9063);
+ 	da9063->dev = &i2c->dev;
+ 	da9063->chip_irq = i2c->irq;
++	da9063->type = (enum da9063_type)id->driver_data;
+ 
+ 	if (da9063->variant_code == PMIC_DA9063_AD) {
+ 		da9063_regmap_config.rd_table = &da9063_ad_readable_table;
+@@ -280,7 +281,7 @@ static int da9063_i2c_remove(struct i2c_client *i2c)
+ }
+ 
+ static const struct i2c_device_id da9063_i2c_id[] = {
+-	{ "da9063", PMIC_CHIP_ID_DA9063 },
++	{ "da9063", PMIC_TYPE_DA9063 },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(i2c, da9063_i2c_id);
+diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
+index 87c884ae0064..9b5c28392ae6 100644
+--- a/drivers/regulator/da9063-regulator.c
++++ b/drivers/regulator/da9063-regulator.c
+@@ -98,7 +98,7 @@ struct da9063_regulator_info {
+ struct da9063_dev_model {
+ 	const struct da9063_regulator_info	*regulator_info;
+ 	unsigned				n_regulators;
+-	unsigned				dev_model;
++	enum da9063_type			type;
+ };
+ 
+ /* Single regulator settings */
+@@ -585,7 +585,7 @@ static struct da9063_dev_model regulators_models[] = {
+ 	{
+ 		.regulator_info = da9063_regulator_info,
+ 		.n_regulators = ARRAY_SIZE(da9063_regulator_info),
+-		.dev_model = PMIC_CHIP_ID_DA9063,
++		.type = PMIC_TYPE_DA9063,
+ 	},
+ 	{ }
+ };
+@@ -741,7 +741,7 @@ static int da9063_regulator_probe(struct platform_device *pdev)
+ 
+ 	/* Find regulators set for particular device model */
+ 	for (model = regulators_models; model->regulator_info; model++) {
+-		if (model->dev_model == da9063->model)
++		if (model->dev_model == da9063->type)
+ 			break;
+ 	}
+ 	if (!model->regulator_info) {
+diff --git a/include/linux/mfd/da9063/core.h b/include/linux/mfd/da9063/core.h
+index 664f650d0086..eb234582dcb2 100644
+--- a/include/linux/mfd/da9063/core.h
++++ b/include/linux/mfd/da9063/core.h
+@@ -31,6 +31,10 @@
+ 
+ #define PMIC_CHIP_ID_DA9063		0x61
+ 
++enum da9063_type {
++	PMIC_TYPE_DA9063 = 0,
++};
++
+ enum da9063_variant_codes {
+ 	PMIC_DA9063_AD = 0x3,
+ 	PMIC_DA9063_BB = 0x5,
+@@ -76,7 +80,7 @@ enum da9063_irqs {
+ struct da9063 {
+ 	/* Device */
+ 	struct device	*dev;
+-	unsigned short	model;
++	enum da9063_type type;
+ 	unsigned char	variant_code;
+ 	unsigned int	flags;
+ 
+-- 
+2.16.2
