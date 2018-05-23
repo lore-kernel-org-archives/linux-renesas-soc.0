@@ -1,40 +1,137 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f42.google.com ([209.85.215.42]:44288 "EHLO
-        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751750AbeERThe (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:49096 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933471AbeEWPmc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 15:37:34 -0400
-Received: by mail-lf0-f42.google.com with SMTP id h197-v6so15538997lfg.11
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 May 2018 12:37:34 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 0/2] Add R8A77980/V3HSK GEther support
-To: Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Message-ID: <a4230699-e46f-0782-e3b1-22d58b9033c8@cogentembedded.com>
-Date: Fri, 18 May 2018 22:37:29 +0300
+        Wed, 23 May 2018 11:42:32 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAMMfpEwn3+fCZZZ8ADNxjun+jzNSnH+8xPcA8OUS_jPUJ-o6LA@mail.gmail.com>
+References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1526983321-41949-4-git-send-email-michel.pollet@bp.renesas.com>
+ <20180522160913.GA7755@rob-hp-laptop> <CAMMfpEwn3+fCZZZ8ADNxjun+jzNSnH+8xPcA8OUS_jPUJ-o6LA@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 23 May 2018 10:42:10 -0500
+Message-ID: <CAL_JsqLqmwfGZcZseO6gB33BA04TLtwZ94VGKOL7TWp30bm44w@mail.gmail.com>
+Subject: Re: [PATCH v6 3/6] dt-bindings: clock: renesas,rzn1-clocks: document
+ RZ/N1 clock driver
+To: M P <buserror@gmail.com>
+Cc: Michel Pollet <michel.pollet@bp.renesas.com>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
+        <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+On Wed, May 23, 2018 at 1:52 AM, M P <buserror@gmail.com> wrote:
+> Hi Rob,
+>
+> On Tue, 22 May 2018 at 17:09, Rob Herring <robh@kernel.org> wrote:
+>
+>> On Tue, May 22, 2018 at 11:01:23AM +0100, Michel Pollet wrote:
+>> > The Renesas RZ/N1 Family (Part #R9A06G0xx) requires a driver
+>> > to provide the SoC clock infrastructure for Linux.
+>> >
+>> > This documents the driver bindings.
+>> >
+>> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+>> > ---
+>> >  .../bindings/clock/renesas,rzn1-clocks.txt         | 44
+> ++++++++++++++++++++++
+>> >  1 file changed, 44 insertions(+)
+>> >  create mode 100644
+> Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
+>> >
+>> > diff --git
+> a/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
+> b/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
+>> > new file mode 100644
+>> > index 0000000..0c41137
+>> > --- /dev/null
+>> > +++ b/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
+>> > @@ -0,0 +1,44 @@
+>> > +* Renesas RZ/N1 Clock Driver
+>> > +
+>> > +This driver provides the clock infrastructure used by all the other
+> drivers.
+>
+>> Bindings document h/w not drivers.
+>
+>> > +
+>> > +One of the 'special' feature of this infrastructure is that Linux
+> doesn't
+>
+>> Bindings are not just for Linux.
+>
+>> > +necessary 'own' all the clocks on the SoC, some other OS runs on
+>> > +the Cortex-M3 core and that OS can access and claim it's own clocks.
+>
+>> How is this relevant to the binding?
+>
+> Well you just said it, if the binding is not just for linux, it's probably
+> a good idea to mention it somewhere since I can promise you it's *not*
+> documented in the hardware manual. Whatever this binding is for, it's
+> relevant to point out it is different from the other clock drivers in the
+> same directory... ?
 
-Here's the set of 2 patches against Simon Horman's 'renesas.git' repo's
-'renesas-devel-20180518-v4.17-rc5' tag plus the R8A77980 SMP support patch.
-I'm adding the device tree support for mounting the NFS root on the R8A77980-
-based V3H Starter Kit board. The 'sh_eth' driver patches adding R8A77980
-GEther support patches needed for these 2 patches to work have been posted
-and are close to be merged...
+That's not an uncommon issue (sometimes it's secure world that owns
+the clocks, not even a different processor). I'm just not sure what I
+do with this information. It doesn't tell me which clocks are owned by
+the M3 or not.
 
-[1/2] arm64: dts: renesas: r8a77980: add GEther support
-[2/2] arm64: dts: renesas: v3hsk: add GEther support
+>> > +
+>> > +Required Properties:
+>> > +
+>> > +  - compatible: Must be
+>> > +    - "renesas,r9a06g032-clocks" for the RZ/N1D
+>> > +    and "renesas,rzn1-clocks" as a fallback.
+>
+>> Is "clocks" how the chip reference manual refers to this block?
+>
+> No, the block is called 'sysctrl' and has tons of other stuff in there.
+> I've tried multiple times to get a 'sysctrl' driver in the previous
+> versions of the patch, in various shape or form, and I can't because I'd be
+> supposed to 'document' binding for stuff that has no code, no purpose, no
+> testing, and have all wildly different topics. So, after some more
+> lengthily discussion with Geert, we've decided to make the 'primary'
+> feature of that block (clocks) as a driver, and see from there onward.
 
-WBR, Sergei
+If you are referring to Geert's reply on v4, then this is not how I
+interpreted it. I understood it as make the clock driver bind to the
+sysctrl node and the clock driver can register other functions like
+reset. Then later if you need multiple drivers, you can make an MFD
+driver that binds to the sysctrl node and creates child devices to
+bind sub-drivers (like clocks) to. But the DT doesn't change in the
+process wrt clocks.
+
+You don't have to have a driver for everything, but the binding should
+be as complete as possible and done in an extendable way. The way you
+have done it now is not. I can already see that at some point you will
+want to break things and do something like this:
+
+{
+  compatible = "renesas,r9a06g032-sysctrl";
+  ...
+  {
+    compatible = "renesas,r9a06g032-clocks";
+    ...
+  };
+};
+
+Which is likely wrong because there's no need to have a child node
+like that. The parent node can be the clock provider (and any other
+provider). There are cases when child nodes do make sense, but we need
+a more complete binding to make that decision. Evolving it one feature
+at a time doesn't work.
+
+Rob
