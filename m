@@ -1,51 +1,62 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:40624 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751976AbeEGNYy (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 May 2018 09:24:54 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Chris Brandt <chris.brandt@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] ARM: dts: r7s72100: Correct interrupt types
-Date: Mon,  7 May 2018 15:24:47 +0200
-Message-Id: <1525699489-6172-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+CC: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Hoan Tran <hotran@apm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Lee Jones" <lee.jones@linaro.org>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v6] gpio: dwapb: Add support for 1 interrupt per port A
+ GPIO
+Date: Wed, 23 May 2018 08:45:57 +0000
+Message-ID: <TY1PR01MB17696814810E9F9DA4C79989F56B0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <1526027497-32556-1-git-send-email-phil.edworthy@renesas.com>
+ <CACRpkdZAdhAn97iWPsym_K+A8iVwa3tRacpeEu=J6C=b+xAO6g@mail.gmail.com>
+In-Reply-To: <CACRpkdZAdhAn97iWPsym_K+A8iVwa3tRacpeEu=J6C=b+xAO6g@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
-
-RZ/A1H peripherals use a mix of level and edge interrupts.
-
-This patch series corrects the interrupt types for watchdog and RTC from
-edge to level, to match the datasheet.
-
-Is there any easy way to test this?
-The watchdog interrupt is not used by the Linux driver.
-The RTC interrupts are used, but how to trigger them?
-
-Thanks!
-
-Geert Uytterhoeven (2):
-  ARM: dts: r7s72100: Correct watchdog timer interrupt type
-  ARM: dts: r7s72100: Correct RTC interrupt types
-
- arch/arm/boot/dts/r7s72100.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
--- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+SGkgTGludXMsDQoNCk9uIDIzIE1heSAyMDE4IDA5OjI5LCBMaW51cyBXYWxsZWlqIHdyb3RlOg0K
+PiBPbiBGcmksIE1heSAxMSwgMjAxOCBhdCAxMDozMSBBTSwgUGhpbCBFZHdvcnRoeSB3cm90ZToN
+Cj4gDQo+ID4gVGhlIERlc2lnbldhcmUgR1BJTyBJUCBjYW4gYmUgY29uZmlndXJlZCBmb3IgZWl0
+aGVyIDEgaW50ZXJydXB0IG9yIDENCj4gPiBwZXIgR1BJTyBpbiBwb3J0IEEsIGJ1dCB0aGUgZHJp
+dmVyIGN1cnJlbnRseSBvbmx5IHN1cHBvcnRzIDEgaW50ZXJydXB0Lg0KPiA+IFNlZSB0aGUgRGVz
+aWduV2FyZSBEV19hcGJfZ3BpbyBEYXRhYm9vayBkZXNjcmlwdGlvbiBvZiB0aGUNCj4gPiAnR1BJ
+T19JTlRSX0lPJyBwYXJhbWV0ZXIuDQo+ID4NCj4gPiBUaGlzIGNoYW5nZSBhbGxvd3MgdGhlIGRy
+aXZlciB0byB3b3JrIHdpdGggdXAgdG8gMzIgaW50ZXJydXB0cywgaXQNCj4gPiB3aWxsIGdldCBh
+cyBtYW55IGludGVycnVwdHMgYXMgc3BlY2lmaWVkIGluIHRoZSBEVCAnaW50ZXJydXB0cycgcHJv
+cGVydHkuDQo+ID4gSXQgZG9lc24ndCBkbyBhbnl0aGluZyBjbGV2ZXIgd2l0aCB0aGUgZGlmZmVy
+ZW50IGludGVycnVwdHMsIGl0IGp1c3QNCj4gPiBjYWxscyB0aGUgc2FtZSBoYW5kbGVyIHVzZWQg
+Zm9yIHNpbmdsZSBpbnRlcnJ1cHQgaGFyZHdhcmUuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBQ
+aGlsIEVkd29ydGh5IDxwaGlsLmVkd29ydGh5QHJlbmVzYXMuY29tPg0KPiA+IFJldmlld2VkLWJ5
+OiBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPg0KPiA+IEFja2VkLWJ5OiBMZWUgSm9uZXMg
+PGxlZS5qb25lc0BsaW5hcm8ub3JnPg0KPiA+IC0tLQ0KPiA+IE9uZSBwb2ludCB0byBtZW50aW9u
+IGlzIHRoYXQgSSBoYXZlIG1hZGUgaXQgcG9zc2libGUgZm9yIHVzZXJzIHRvIGhhdmUNCj4gPiB1
+bmNvbm5lY3RlZCBpbnRlcnJ1cHRzIGJ5IHNwZWNpZnlpbmcgaG9sZXMgaW4gdGhlIGxpc3Qgb2Yg
+aW50ZXJydXB0cy4NCj4gPiBUaGlzIGlzIGRvbmUgYnkgc3VwcG9ydGluZyB0aGUgaW50ZXJydXB0
+cy1leHRlbmRlZCBEVCBwcm9wLg0KPiA+IEhvd2V2ZXIsIEkgaGF2ZSBubyB1c2UgZm9yIHRoaXMg
+YW5kIGhhZCB0byBoYWNrIHNvbWUgdGVzdCBjYXNlIGZvciB0aGlzLg0KPiA+IFBlcmhhcHMgdGhl
+IGRyaXZlciBzaG91bGQgc3VwcG9ydCAxIGludGVycnVwdCBvciBhbGwgR1BJT2EgYXMgaW50ZXJy
+dXB0cz8NCj4gPg0KPiA+IHY2Og0KPiA+ICAtIFRyZWF0IERUIGFuZCBBQ1BJIHRoZSBzYW1lIGFz
+IG11Y2ggYXMgcG9zc2libGUuIE5vdGUgdGhhdCB3ZSBjYW4ndCB1c2UNCj4gPiAgICBwbGF0Zm9y
+bV9nZXRfaXJxKCkgdG8gZ2V0IHRoZSBEVCBpbnRlcnJ1cHRzIGFzIHRoZXkgYXJlIGluIHRoZSBw
+b3J0DQo+ID4gICAgc3ViLW5vZGUgYW5kIGhlbmNlIGRvIG5vdCBoYXZlIGFuIGFzc29jaWF0ZWQg
+cGxhdGZvcm0gZGV2aWNlLg0KPiANCj4gSSBhbHJlYWR5IGFwcGxpZWQgdGhpcyBwYXRjaCBpbiBz
+b21lIHZlcnNpb24sIGNhbiB5b3UgY2hlY2sgd2hhdCBpcyBpbiBteQ0KPiBkZXZlbCBicmFuY2gg
+YW5kIHNlbmQgaW5jcmVtZW50YWwgcGF0Y2hlcyBvbiB0b3AgaWYgc29tZXRoaW5nIG5lZWRzDQo+
+IGNoYW5naW5nPw0KPiBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVs
+L2dpdC9saW51c3cvbGludXgtDQo+IGdwaW8uZ2l0L2NvbW1pdC8/aD1kZXZlbCZpZD1lNmNhMjZh
+YmQzNzYwNmJhNDg2NGYyMGM4NWQzZmU0YTIxNzNiOTNmDQo+IA0KPiBTb3JyeSBmb3Igbm90IGtu
+b3dpbmcgYnkgaGVhcnQgd2hhdCB3YXMgYXBwbGllZCBvciB3aGVuLCBpdCdzIGp1c3QgdG9vIG11
+Y2gNCj4gZm9yIG1lIHNvbWV0aW1lcy4NCk5vIHByb2JsZW0sIEknbGwgc2VuZCBhIHBhdGNoIHdp
+dGggdGhlIGluY3JlbWVudGFsIGNoYW5nZXMuDQoNClRoYW5rcw0KUGhpbA0K
