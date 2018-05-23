@@ -1,81 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:53222 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S970728AbeEXPH4 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57457 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754378AbeEWJOY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 May 2018 11:07:56 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 9/9] ARM: dts: silk: Drop MTD partitioning from DT
-Date: Thu, 24 May 2018 17:07:21 +0200
-Message-Id: <20180524150721.28964-9-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180524150721.28964-1-marek.vasut+renesas@gmail.com>
-References: <20180524150721.28964-1-marek.vasut+renesas@gmail.com>
+        Wed, 23 May 2018 05:14:24 -0400
+Date: Wed, 23 May 2018 11:14:19 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mark Brown <broonie@kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] spi: sh-msiof: Fix setting SIRMDR1.SYNCAC to match
+ SITMDR1.SYNCAC
+Message-ID: <20180523091418.grcphcfcr2ejnvht@verge.net.au>
+References: <1527066124-1541-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527066124-1541-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Drop the MTD partitioning from DT, since it does not describe HW
-and to give way to a more flexible kernel command line partition
-passing.
+On Wed, May 23, 2018 at 11:02:04AM +0200, Geert Uytterhoeven wrote:
+> According to section 59.2.4 MSIOF Receive Mode Register 1 (SIRMDR1) in
+> the R-Car Gen3 datasheet Rev.1.00, the value of the SIRMDR1.SYNCAC bit
+> must match the value of the SITMDR1.SYNCAC bit.  However,
+> sh_msiof_spi_setup() changes only the latter.
+> 
+> Fix this by updating the SIRMDR1 register like the SITMDR1 register,
+> taking into account register bits that exist in SITMDR1 only.
+> 
+> Reported-by: Renesas BSP team via Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Fixes: 7ff0b53c4051145d ("spi: sh-msiof: Avoid writing to registers from spi_master.setup()")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-To retain the original partitioning, assure you have enabled
-CONFIG_MTD_CMDLINE_PARTS in your kernel config and add the
-following to your kernel command line:
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-  mtdparts=spi0.0:256k(loader),4m(user),-(flash)
-
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: Drop the @0 anchor from the commit message, use 4m
----
- arch/arm/boot/dts/r8a7794-silk.dts | 21 ---------------------
- 1 file changed, 21 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
-index 7808aaee6644..b8163a0e2190 100644
---- a/arch/arm/boot/dts/r8a7794-silk.dts
-+++ b/arch/arm/boot/dts/r8a7794-silk.dts
-@@ -444,27 +444,6 @@
- 		spi-cpol;
- 		spi-cpha;
- 		m25p,fast-read;
--
--		partitions {
--			compatible = "fixed-partitions";
--			#address-cells = <1>;
--			#size-cells = <1>;
--
--			partition@0 {
--				label = "loader";
--				reg = <0x00000000 0x00040000>;
--				read-only;
--			};
--			partition@40000 {
--				label = "user";
--				reg = <0x00040000 0x00400000>;
--				read-only;
--			};
--			partition@440000 {
--				label = "flash";
--				reg = <0x00440000 0x03bc0000>;
--			};
--		};
- 	};
- };
- 
--- 
-2.16.2
+> ---
+>  drivers/spi/spi-sh-msiof.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+> index 244e841fc4bcfcc7..09c04c1b7d0b5a15 100644
+> --- a/drivers/spi/spi-sh-msiof.c
+> +++ b/drivers/spi/spi-sh-msiof.c
+> @@ -567,14 +567,16 @@ static int sh_msiof_spi_setup(struct spi_device *spi)
+>  
+>  	/* Configure native chip select mode/polarity early */
+>  	clr = MDR1_SYNCMD_MASK;
+> -	set = MDR1_TRMD | TMDR1_PCON | MDR1_SYNCMD_SPI;
+> +	set = MDR1_SYNCMD_SPI;
+>  	if (spi->mode & SPI_CS_HIGH)
+>  		clr |= BIT(MDR1_SYNCAC_SHIFT);
+>  	else
+>  		set |= BIT(MDR1_SYNCAC_SHIFT);
+>  	pm_runtime_get_sync(&p->pdev->dev);
+>  	tmp = sh_msiof_read(p, TMDR1) & ~clr;
+> -	sh_msiof_write(p, TMDR1, tmp | set);
+> +	sh_msiof_write(p, TMDR1, tmp | set | MDR1_TRMD | TMDR1_PCON);
+> +	tmp = sh_msiof_read(p, RMDR1) & ~clr;
+> +	sh_msiof_write(p, RMDR1, tmp | set);
+>  	pm_runtime_put(&p->pdev->dev);
+>  	p->native_cs_high = spi->mode & SPI_CS_HIGH;
+>  	p->native_cs_inited = true;
+> -- 
+> 2.7.4
+> 
