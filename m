@@ -1,62 +1,69 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-CC: Andy Shevchenko <andy.shevchenko@gmail.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:54792 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754597AbeEWI3W (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 23 May 2018 04:29:22 -0400
+Received: by mail-it0-f68.google.com with SMTP id z6-v6so3346276iti.4
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 May 2018 01:29:22 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1526027497-32556-1-git-send-email-phil.edworthy@renesas.com>
+References: <1526027497-32556-1-git-send-email-phil.edworthy@renesas.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 23 May 2018 10:29:20 +0200
+Message-ID: <CACRpkdZAdhAn97iWPsym_K+A8iVwa3tRacpeEu=J6C=b+xAO6g@mail.gmail.com>
+Subject: Re: [PATCH v6] gpio: dwapb: Add support for 1 interrupt per port A GPIO
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
         Hoan Tran <hotran@apm.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Rob Herring <robh+dt@kernel.org>,
-        "Lee Jones" <lee.jones@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
         Michel Pollet <michel.pollet@bp.renesas.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
         <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v6] gpio: dwapb: Add support for 1 interrupt per port A
- GPIO
-Date: Wed, 23 May 2018 08:45:57 +0000
-Message-ID: <TY1PR01MB17696814810E9F9DA4C79989F56B0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <1526027497-32556-1-git-send-email-phil.edworthy@renesas.com>
- <CACRpkdZAdhAn97iWPsym_K+A8iVwa3tRacpeEu=J6C=b+xAO6g@mail.gmail.com>
-In-Reply-To: <CACRpkdZAdhAn97iWPsym_K+A8iVwa3tRacpeEu=J6C=b+xAO6g@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgTGludXMsDQoNCk9uIDIzIE1heSAyMDE4IDA5OjI5LCBMaW51cyBXYWxsZWlqIHdyb3RlOg0K
-PiBPbiBGcmksIE1heSAxMSwgMjAxOCBhdCAxMDozMSBBTSwgUGhpbCBFZHdvcnRoeSB3cm90ZToN
-Cj4gDQo+ID4gVGhlIERlc2lnbldhcmUgR1BJTyBJUCBjYW4gYmUgY29uZmlndXJlZCBmb3IgZWl0
-aGVyIDEgaW50ZXJydXB0IG9yIDENCj4gPiBwZXIgR1BJTyBpbiBwb3J0IEEsIGJ1dCB0aGUgZHJp
-dmVyIGN1cnJlbnRseSBvbmx5IHN1cHBvcnRzIDEgaW50ZXJydXB0Lg0KPiA+IFNlZSB0aGUgRGVz
-aWduV2FyZSBEV19hcGJfZ3BpbyBEYXRhYm9vayBkZXNjcmlwdGlvbiBvZiB0aGUNCj4gPiAnR1BJ
-T19JTlRSX0lPJyBwYXJhbWV0ZXIuDQo+ID4NCj4gPiBUaGlzIGNoYW5nZSBhbGxvd3MgdGhlIGRy
-aXZlciB0byB3b3JrIHdpdGggdXAgdG8gMzIgaW50ZXJydXB0cywgaXQNCj4gPiB3aWxsIGdldCBh
-cyBtYW55IGludGVycnVwdHMgYXMgc3BlY2lmaWVkIGluIHRoZSBEVCAnaW50ZXJydXB0cycgcHJv
-cGVydHkuDQo+ID4gSXQgZG9lc24ndCBkbyBhbnl0aGluZyBjbGV2ZXIgd2l0aCB0aGUgZGlmZmVy
-ZW50IGludGVycnVwdHMsIGl0IGp1c3QNCj4gPiBjYWxscyB0aGUgc2FtZSBoYW5kbGVyIHVzZWQg
-Zm9yIHNpbmdsZSBpbnRlcnJ1cHQgaGFyZHdhcmUuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBQ
-aGlsIEVkd29ydGh5IDxwaGlsLmVkd29ydGh5QHJlbmVzYXMuY29tPg0KPiA+IFJldmlld2VkLWJ5
-OiBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPg0KPiA+IEFja2VkLWJ5OiBMZWUgSm9uZXMg
-PGxlZS5qb25lc0BsaW5hcm8ub3JnPg0KPiA+IC0tLQ0KPiA+IE9uZSBwb2ludCB0byBtZW50aW9u
-IGlzIHRoYXQgSSBoYXZlIG1hZGUgaXQgcG9zc2libGUgZm9yIHVzZXJzIHRvIGhhdmUNCj4gPiB1
-bmNvbm5lY3RlZCBpbnRlcnJ1cHRzIGJ5IHNwZWNpZnlpbmcgaG9sZXMgaW4gdGhlIGxpc3Qgb2Yg
-aW50ZXJydXB0cy4NCj4gPiBUaGlzIGlzIGRvbmUgYnkgc3VwcG9ydGluZyB0aGUgaW50ZXJydXB0
-cy1leHRlbmRlZCBEVCBwcm9wLg0KPiA+IEhvd2V2ZXIsIEkgaGF2ZSBubyB1c2UgZm9yIHRoaXMg
-YW5kIGhhZCB0byBoYWNrIHNvbWUgdGVzdCBjYXNlIGZvciB0aGlzLg0KPiA+IFBlcmhhcHMgdGhl
-IGRyaXZlciBzaG91bGQgc3VwcG9ydCAxIGludGVycnVwdCBvciBhbGwgR1BJT2EgYXMgaW50ZXJy
-dXB0cz8NCj4gPg0KPiA+IHY2Og0KPiA+ICAtIFRyZWF0IERUIGFuZCBBQ1BJIHRoZSBzYW1lIGFz
-IG11Y2ggYXMgcG9zc2libGUuIE5vdGUgdGhhdCB3ZSBjYW4ndCB1c2UNCj4gPiAgICBwbGF0Zm9y
-bV9nZXRfaXJxKCkgdG8gZ2V0IHRoZSBEVCBpbnRlcnJ1cHRzIGFzIHRoZXkgYXJlIGluIHRoZSBw
-b3J0DQo+ID4gICAgc3ViLW5vZGUgYW5kIGhlbmNlIGRvIG5vdCBoYXZlIGFuIGFzc29jaWF0ZWQg
-cGxhdGZvcm0gZGV2aWNlLg0KPiANCj4gSSBhbHJlYWR5IGFwcGxpZWQgdGhpcyBwYXRjaCBpbiBz
-b21lIHZlcnNpb24sIGNhbiB5b3UgY2hlY2sgd2hhdCBpcyBpbiBteQ0KPiBkZXZlbCBicmFuY2gg
-YW5kIHNlbmQgaW5jcmVtZW50YWwgcGF0Y2hlcyBvbiB0b3AgaWYgc29tZXRoaW5nIG5lZWRzDQo+
-IGNoYW5naW5nPw0KPiBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVs
-L2dpdC9saW51c3cvbGludXgtDQo+IGdwaW8uZ2l0L2NvbW1pdC8/aD1kZXZlbCZpZD1lNmNhMjZh
-YmQzNzYwNmJhNDg2NGYyMGM4NWQzZmU0YTIxNzNiOTNmDQo+IA0KPiBTb3JyeSBmb3Igbm90IGtu
-b3dpbmcgYnkgaGVhcnQgd2hhdCB3YXMgYXBwbGllZCBvciB3aGVuLCBpdCdzIGp1c3QgdG9vIG11
-Y2gNCj4gZm9yIG1lIHNvbWV0aW1lcy4NCk5vIHByb2JsZW0sIEknbGwgc2VuZCBhIHBhdGNoIHdp
-dGggdGhlIGluY3JlbWVudGFsIGNoYW5nZXMuDQoNClRoYW5rcw0KUGhpbA0K
+On Fri, May 11, 2018 at 10:31 AM, Phil Edworthy
+<phil.edworthy@renesas.com> wrote:
+
+> The DesignWare GPIO IP can be configured for either 1 interrupt or 1
+> per GPIO in port A, but the driver currently only supports 1 interrupt.
+> See the DesignWare DW_apb_gpio Databook description of the
+> 'GPIO_INTR_IO' parameter.
+>
+> This change allows the driver to work with up to 32 interrupts, it will
+> get as many interrupts as specified in the DT 'interrupts' property.
+> It doesn't do anything clever with the different interrupts, it just calls
+> the same handler used for single interrupt hardware.
+>
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Acked-by: Lee Jones <lee.jones@linaro.org>
+> ---
+> One point to mention is that I have made it possible for users to have
+> unconnected interrupts by specifying holes in the list of interrupts. This is
+> done by supporting the interrupts-extended DT prop.
+> However, I have no use for this and had to hack some test case for this.
+> Perhaps the driver should support 1 interrupt or all GPIOa as interrupts?
+>
+> v6:
+>  - Treat DT and ACPI the same as much as possible. Note that we can't use
+>    platform_get_irq() to get the DT interrupts as they are in the port
+>    sub-node and hence do not have an associated platform device.
+
+I already applied this patch in some version, can you check what is
+in my devel branch and send incremental patches on top if
+something needs changing?
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/commit/?h=devel&id=e6ca26abd37606ba4864f20c85d3fe4a2173b93f
+
+Sorry for not knowing by heart what was applied or when, it's
+just too much for me sometimes.
+
+Yours,
+Linus Walleij
