@@ -1,51 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:56704 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751588AbeERLTP (ORCPT
+        with ESMTP id S1754266AbeEWIm6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:19:15 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 47/69] ARM: dts: porter: Drop unnecessary address properties from vin port node
-Date: Fri, 18 May 2018 13:17:20 +0200
-Message-Id: <99a755f586ac113cfd2c4355f7a794b3b2361229.1526641667.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
-References: <cover.1526641667.git.horms+renesas@verge.net.au>
+        Wed, 23 May 2018 04:42:58 -0400
+Date: Wed, 23 May 2018 10:42:53 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] dt-bindings: thermal: rcar-thermal: add R8A77995
+ support
+Message-ID: <20180523084252.qpgmrhvq5mdbrgku@verge.net.au>
+References: <1526808379-3850-1-git-send-email-ykaneko0929@gmail.com>
+ <1526808379-3850-3-git-send-email-ykaneko0929@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526808379-3850-3-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The vin port node does not have an address and thus does not need
-address-cells or address size-properties.
+On Sun, May 20, 2018 at 06:26:18PM +0900, Yoshihiro Kaneko wrote:
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This is flagged by dtc as follows:
- # make dtbs W=1
- arch/arm/boot/dts/r8a7791-porter.dtb: Warning (avoid_unnecessary_addr_size): /soc/video@e6ef0000/port: unnecessary #address-cells/#size-cells without
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm/boot/dts/r8a7791-porter.dts | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-index 4dd5a5db2de8..876d38f46367 100644
---- a/arch/arm/boot/dts/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -386,9 +386,6 @@
- 	pinctrl-names = "default";
- 
- 	port {
--		#address-cells = <1>;
--		#size-cells = <0>;
--
- 		vin0ep: endpoint {
- 			remote-endpoint = <&adv7180>;
- 			bus-width = <8>;
--- 
-2.11.0
+> ---
+>  Documentation/devicetree/bindings/thermal/rcar-thermal.txt | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/thermal/rcar-thermal.txt b/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
+> index 349e635..67c563f 100644
+> --- a/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
+> +++ b/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
+> @@ -3,7 +3,8 @@
+>  Required properties:
+>  - compatible		: "renesas,thermal-<soctype>",
+>  			   "renesas,rcar-gen2-thermal" (with thermal-zone) or
+> -			   "renesas,rcar-thermal" (without thermal-zone) as fallback.
+> +			   "renesas,rcar-thermal" (without thermal-zone) as
+> +                           fallback except R-Car D3.
+>  			  Examples with soctypes are:
+>  			    - "renesas,thermal-r8a73a4" (R-Mobile APE6)
+>  			    - "renesas,thermal-r8a7743" (RZ/G1M)
+> @@ -12,13 +13,15 @@ Required properties:
+>  			    - "renesas,thermal-r8a7791" (R-Car M2-W)
+>  			    - "renesas,thermal-r8a7792" (R-Car V2H)
+>  			    - "renesas,thermal-r8a7793" (R-Car M2-N)
+> +			    - "renesas,thermal-r8a77995" (R-Car D3)
+>  - reg			: Address range of the thermal registers.
+>  			  The 1st reg will be recognized as common register
+>  			  if it has "interrupts".
+>  
+>  Option properties:
+>  
+> -- interrupts		: use interrupt
+> +- interrupts		: If present should contain 3 interrupts for
+> +                          R-Car D3 or 1 interrupt otherwise.
+>  
+>  Example (non interrupt support):
+>  
+> -- 
+> 1.9.1
+> 
