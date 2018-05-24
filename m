@@ -1,71 +1,72 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:51085 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750847AbeEPT63 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 May 2018 15:58:29 -0400
-Received: by mail-wm0-f67.google.com with SMTP id t11-v6so4378108wmt.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 May 2018 12:58:28 -0700 (PDT)
-Subject: [PATCH 2/3] sh_eth: add EDMR.NBST support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
-Cc: linux-renesas-soc@vger.kernel.org
-References: <087c91a3-a451-6de7-5e0f-a835f8cc98f1@cogentembedded.com>
-Message-ID: <7e929d5a-e97d-7339-a089-2231c7a6a92c@cogentembedded.com>
-Date: Wed, 16 May 2018 22:58:26 +0300
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 10/11] media: vsp1: Support Interlaced display pipelines
+Date: Thu, 24 May 2018 13:08:55 +0300
+Message-ID: <6945038.6Y03vj1EZt@avalon>
+In-Reply-To: <8df5710f-77c0-f466-e9ed-ffde4dd2f8d9@ideasonboard.com>
+References: <cover.a15c17beeb074afaf226d19ff3c4fdba2f647500.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com> <1784754.iAtk829Up8@avalon> <8df5710f-77c0-f466-e9ed-ffde4dd2f8d9@ideasonboard.com>
 MIME-Version: 1.0
-In-Reply-To: <087c91a3-a451-6de7-5e0f-a835f8cc98f1@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R-Car V3H (AKA R8A77980) GEther controller adds the DMA burst mode bit
-(NBST) in EDMR and the manual tells to always set it before doing any DMA.
+Hi Kieran,
 
-Based on the original (and large) patch by Vladimir Barinov.
+On Thursday, 3 May 2018 16:45:30 EEST Kieran Bingham wrote:
+> On 03/05/18 12:13, Laurent Pinchart wrote:
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+[snip]
 
----
- drivers/net/ethernet/renesas/sh_eth.c |    4 ++++
- drivers/net/ethernet/renesas/sh_eth.h |    2 ++
- 2 files changed, 6 insertions(+)
+> >>> diff --git a/drivers/media/platform/vsp1/vsp1_rwpf.h
+> >>> b/drivers/media/platform/vsp1/vsp1_rwpf.h index
+> >>> 70742ecf766f..8d6e42f27908 100644
+> >>> --- a/drivers/media/platform/vsp1/vsp1_rwpf.h
+> >>> +++ b/drivers/media/platform/vsp1/vsp1_rwpf.h
+> >>> @@ -42,6 +42,7 @@ struct vsp1_rwpf {
+> >>> 
+> >>>  	struct v4l2_pix_format_mplane format;
+> >>>  	const struct vsp1_format_info *fmtinfo;
+> >>>  	unsigned int brx_input;
+> >>> 
+> >>> +	bool interlaced;
+> > 
+> > kerneldoc might be nice :-)
+> 
+> There's no existing kerneldoc on struct vsp1_rwpf ?
 
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.c
-@@ -1434,6 +1434,10 @@ static int sh_eth_dev_init(struct net_de
- 
- 	sh_eth_write(ndev, mdp->cd->trscer_err_mask, TRSCER);
- 
-+	/* DMA transfer burst mode */
-+	if (mdp->cd->nbst)
-+		sh_eth_modify(ndev, EDMR, EDMR_NBST, EDMR_NBST);
-+
- 	if (mdp->cd->bculr)
- 		sh_eth_write(ndev, 0x800, BCULR);	/* Burst sycle set */
- 
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.h
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.h
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.h
-@@ -184,6 +184,7 @@ enum GECMR_BIT {
- 
- /* EDMR */
- enum DMAC_M_BIT {
-+	EDMR_NBST = 0x80,
- 	EDMR_EL = 0x40, /* Litte endian */
- 	EDMR_DL1 = 0x20, EDMR_DL0 = 0x10,
- 	EDMR_SRST_GETHER = 0x03,
-@@ -505,6 +506,7 @@ struct sh_eth_cpu_data {
- 	unsigned bculr:1;	/* EtherC have BCULR */
- 	unsigned tsu:1;		/* EtherC have TSU */
- 	unsigned hw_swap:1;	/* E-DMAC have DE bit in EDMR */
-+	unsigned nbst:1;	/* E-DMAC has NBST bit in EDMR */
- 	unsigned rpadir:1;	/* E-DMAC have RPADIR */
- 	unsigned no_trimd:1;	/* E-DMAC DO NOT have TRIMD */
- 	unsigned no_ade:1;	/* E-DMAC DO NOT have ADE bit in EESR */
+I'm glad we agree it should be added :-)
+
+> >>>  	unsigned int alpha;
+> > 
+> > [snip]
+> > 
+> >>> diff --git a/include/media/vsp1.h b/include/media/vsp1.h
+> >>> index 678c24de1ac6..c10883f30980 100644
+> >>> --- a/include/media/vsp1.h
+> >>> +++ b/include/media/vsp1.h
+> >>> @@ -50,6 +50,7 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int
+> >>> pipe_index,
+> >>>   * @dst: destination rectangle on the display (integer coordinates)
+> >>>   * @alpha: alpha value (0: fully transparent, 255: fully opaque)
+> >>>   * @zpos: Z position of the plane (from 0 to number of planes minus 1)
+> >>> + * @interlaced: true for interlaced pipelines
+> > 
+> > Maybe "true if the pipeline outputs an interlaced stream" ?
+> 
+> That's fine - but I've neglected to incorporate this into my v4 repost :-(
+> 
+> If by any magic - v4 is suitable for integration already, and you're happy
+> to take it into your tree - please feel free to update this comment.
+> 
+> Otherwise it will be in any next update.
+
+I'll check v4 now.
+
+-- 
+Regards,
+
+Laurent Pinchart
