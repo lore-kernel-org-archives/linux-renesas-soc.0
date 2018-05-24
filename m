@@ -1,315 +1,380 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:59474 "EHLO
+Received: from perceval.ideasonboard.com ([213.167.242.64]:45298 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751246AbeECIoh (ORCPT
+        with ESMTP id S966400AbeEXMMy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 May 2018 04:44:37 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v3 08/11] media: vsp1: Add support for extended display list headers
-Date: Thu,  3 May 2018 09:44:19 +0100
-Message-Id: <93e6f7d9c38cccbb886279c1d4b2ffebc054df92.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.a15c17beeb074afaf226d19ff3c4fdba2f647500.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.a15c17beeb074afaf226d19ff3c4fdba2f647500.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.a15c17beeb074afaf226d19ff3c4fdba2f647500.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.a15c17beeb074afaf226d19ff3c4fdba2f647500.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Thu, 24 May 2018 08:12:54 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v4 09/11] media: vsp1: Provide support for extended command pools
+Date: Thu, 24 May 2018 15:12:50 +0300
+Message-ID: <3571558.kvhfykCuCL@avalon>
+In-Reply-To: <58cdbb43c0d617e28b3545060aff2019d42c148c.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.bd2eb66d11f8094114941107dbc78dc02c9c7fdd.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com> <58cdbb43c0d617e28b3545060aff2019d42c148c.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Extended display list headers allow pre and post command lists to be
-executed by the VSP pipeline. This provides the base support for
-features such as AUTO_FLD (for interlaced support) and AUTO_DISP (for
-supporting continuous camera preview pipelines.
+Hi Kieran,
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Thank you for the patch.
 
----
+On Thursday, 3 May 2018 16:36:20 EEST Kieran Bingham wrote:
+> VSPD and VSP-DL devices can provide extended display lists supporting
+> extended command display list objects.
+> 
+> These extended commands require their own dma memory areas for a header
+> and body specific to the command type.
+> 
+> Implement a command pool to allocate all necessary memory in a single
+> DMA allocation to reduce pressure on the TLB, and provide convenient
+> re-usable command objects for the entities to utilise.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> ---
+> 
+> v2:
+>  - Fix spelling typo in commit message
+>  - constify, and staticify the instantiation of vsp1_extended_commands
+>  - s/autfld_cmds/autofld_cmds/
+>  - staticify cmd pool functions (Thanks kbuild-bot)
+> ---
+>  drivers/media/platform/vsp1/vsp1_dl.c | 191 +++++++++++++++++++++++++++-
+>  drivers/media/platform/vsp1/vsp1_dl.h |   3 +-
+>  2 files changed, 194 insertions(+)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c
+> b/drivers/media/platform/vsp1/vsp1_dl.c index b64d32535edc..d33ae5f125bd
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_dl.c
+> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
+> @@ -117,6 +117,30 @@ struct vsp1_dl_body_pool {
+>  };
+> 
+>  /**
+> + * struct vsp1_cmd_pool - display list body pool
 
-v2:
- - remove __packed attributes
+The structure is called vsp1_dl_cmd_pool. I would document it as "Display list 
+commands pool", not "body pool".
 
- drivers/media/platform/vsp1/vsp1.h      |  1 +-
- drivers/media/platform/vsp1/vsp1_dl.c   | 83 +++++++++++++++++++++++++-
- drivers/media/platform/vsp1/vsp1_dl.h   | 29 ++++++++-
- drivers/media/platform/vsp1/vsp1_drv.c  |  7 +-
- drivers/media/platform/vsp1/vsp1_regs.h |  5 +-
- 5 files changed, 116 insertions(+), 9 deletions(-)
+> + * @dma: DMA address of the entries
+> + * @size: size of the full DMA memory pool in bytes
+> + * @mem: CPU memory pointer for the pool
+> + * @bodies: Array of DLB structures for the pool
 
-diff --git a/drivers/media/platform/vsp1/vsp1.h b/drivers/media/platform/vsp1/vsp1.h
-index f0d21cc8e9ab..56c62122a81a 100644
---- a/drivers/media/platform/vsp1/vsp1.h
-+++ b/drivers/media/platform/vsp1/vsp1.h
-@@ -53,6 +53,7 @@ struct vsp1_uif;
- #define VSP1_HAS_HGO		(1 << 7)
- #define VSP1_HAS_HGT		(1 << 8)
- #define VSP1_HAS_BRS		(1 << 9)
-+#define VSP1_HAS_EXT_DL		(1 << 10)
- 
- struct vsp1_device_info {
- 	u32 version;
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index eafe93a3b4d9..82556f0f0a9a 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -22,6 +22,9 @@
- #define VSP1_DLH_INT_ENABLE		(1 << 1)
- #define VSP1_DLH_AUTO_START		(1 << 0)
- 
-+#define VSP1_DLH_EXT_PRE_CMD_EXEC	(1 << 9)
-+#define VSP1_DLH_EXT_POST_CMD_EXEC	(1 << 8)
-+
- struct vsp1_dl_header_list {
- 	u32 num_bytes;
- 	u32 addr;
-@@ -34,11 +37,34 @@ struct vsp1_dl_header {
- 	u32 flags;
- };
- 
-+struct vsp1_dl_ext_header {
-+	u32 reserved0;		/* alignment padding */
-+
-+	u16 pre_ext_cmd_qty;
-+	u16 flags;
-+	u32 pre_ext_cmd_plist;
-+
-+	u32 post_ext_cmd_qty;
-+	u32 post_ext_cmd_plist;
-+};
-+
-+struct vsp1_dl_header_extended {
-+	struct vsp1_dl_header header;
-+	struct vsp1_dl_ext_header ext;
-+};
-+
- struct vsp1_dl_entry {
- 	u32 addr;
- 	u32 data;
- };
- 
-+struct vsp1_dl_ext_cmd_header {
-+	u32 cmd;
-+	u32 flags;
-+	u32 data;
-+	u32 reserved;
-+};
-+
- /**
-  * struct vsp1_dl_body - Display list body
-  * @list: entry in the display list list of bodies
-@@ -95,9 +121,12 @@ struct vsp1_dl_body_pool {
-  * @list: entry in the display list manager lists
-  * @dlm: the display list manager
-  * @header: display list header
-+ * @extended: extended display list header. NULL for normal lists
-  * @dma: DMA address for the header
-  * @body0: first display list body
-  * @bodies: list of extra display list bodies
-+ * @pre_cmd: pre cmd to be issued through extended dl header
-+ * @post_cmd: post cmd to be issued through extended dl header
-  * @has_chain: if true, indicates that there's a partition chain
-  * @chain: entry in the display list partition chain
-  * @internal: whether the display list is used for internal purpose
-@@ -107,11 +136,15 @@ struct vsp1_dl_list {
- 	struct vsp1_dl_manager *dlm;
- 
- 	struct vsp1_dl_header *header;
-+	struct vsp1_dl_ext_header *extended;
- 	dma_addr_t dma;
- 
- 	struct vsp1_dl_body *body0;
- 	struct list_head bodies;
- 
-+	struct vsp1_dl_ext_cmd *pre_cmd;
-+	struct vsp1_dl_ext_cmd *post_cmd;
-+
- 	bool has_chain;
- 	struct list_head chain;
- 
-@@ -496,6 +529,14 @@ int vsp1_dl_list_add_chain(struct vsp1_dl_list *head,
- 	return 0;
- }
- 
-+static void vsp1_dl_ext_cmd_fill_header(struct vsp1_dl_ext_cmd *cmd)
-+{
-+	cmd->cmds[0].cmd = cmd->cmd_opcode;
-+	cmd->cmds[0].flags = cmd->flags;
-+	cmd->cmds[0].data = cmd->data_dma;
-+	cmd->cmds[0].reserved = 0;
-+}
-+
- static void vsp1_dl_list_fill_header(struct vsp1_dl_list *dl, bool is_last)
- {
- 	struct vsp1_dl_manager *dlm = dl->dlm;
-@@ -548,6 +589,27 @@ static void vsp1_dl_list_fill_header(struct vsp1_dl_list *dl, bool is_last)
- 		 */
- 		dl->header->flags = VSP1_DLH_INT_ENABLE;
- 	}
-+
-+	if (!dl->extended)
-+		return;
-+
-+	dl->extended->flags = 0;
-+
-+	if (dl->pre_cmd) {
-+		dl->extended->pre_ext_cmd_plist = dl->pre_cmd->cmd_dma;
-+		dl->extended->pre_ext_cmd_qty = dl->pre_cmd->num_cmds;
-+		dl->extended->flags |= VSP1_DLH_EXT_PRE_CMD_EXEC;
-+
-+		vsp1_dl_ext_cmd_fill_header(dl->pre_cmd);
-+	}
-+
-+	if (dl->post_cmd) {
-+		dl->extended->pre_ext_cmd_plist = dl->post_cmd->cmd_dma;
-+		dl->extended->pre_ext_cmd_qty = dl->post_cmd->num_cmds;
-+		dl->extended->flags |= VSP1_DLH_EXT_POST_CMD_EXEC;
-+
-+		vsp1_dl_ext_cmd_fill_header(dl->pre_cmd);
-+	}
- }
- 
- static bool vsp1_dl_list_hw_update_pending(struct vsp1_dl_manager *dlm)
-@@ -735,14 +797,20 @@ unsigned int vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
- }
- 
- /* Hardware Setup */
--void vsp1_dlm_setup(struct vsp1_device *vsp1)
-+void vsp1_dlm_setup(struct vsp1_device *vsp1, unsigned int index)
- {
- 	u32 ctrl = (256 << VI6_DL_CTRL_AR_WAIT_SHIFT)
- 		 | VI6_DL_CTRL_DC2 | VI6_DL_CTRL_DC1 | VI6_DL_CTRL_DC0
- 		 | VI6_DL_CTRL_DLE;
- 
-+	if (vsp1_feature(vsp1, VSP1_HAS_EXT_DL))
-+		vsp1_write(vsp1, VI6_DL_EXT_CTRL(index),
-+			   (0x02 << VI6_DL_EXT_CTRL_POLINT_SHIFT) |
-+			   VI6_DL_EXT_CTRL_DLPRI | VI6_DL_EXT_CTRL_EXT);
-+
- 	vsp1_write(vsp1, VI6_DL_CTRL, ctrl);
--	vsp1_write(vsp1, VI6_DL_SWAP, VI6_DL_SWAP_LWS);
-+	vsp1_write(vsp1, VI6_DL_SWAP(index), VI6_DL_SWAP_LWS |
-+			 ((index == 1) ? VI6_DL_SWAP_IND : 0));
- }
- 
- void vsp1_dlm_reset(struct vsp1_dl_manager *dlm)
-@@ -787,7 +855,11 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
- 	 * fragmentation, with the header located right after the body in
- 	 * memory.
- 	 */
--	header_size = ALIGN(sizeof(struct vsp1_dl_header), 8);
-+	header_size = vsp1_feature(vsp1, VSP1_HAS_EXT_DL) ?
-+			sizeof(struct vsp1_dl_header_extended) :
-+			sizeof(struct vsp1_dl_header);
-+
-+	header_size = ALIGN(header_size, 8);
- 
- 	dlm->pool = vsp1_dl_body_pool_create(vsp1, prealloc,
- 					     VSP1_DL_NUM_ENTRIES, header_size);
-@@ -803,6 +875,11 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
- 			return NULL;
- 		}
- 
-+		/* The extended header immediately follows the header */
-+		if (vsp1_feature(vsp1, VSP1_HAS_EXT_DL))
-+			dl->extended = (void *)dl->header
-+				     + sizeof(*dl->header);
-+
- 		list_add_tail(&dl->list, &dlm->free);
- 	}
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.h b/drivers/media/platform/vsp1/vsp1_dl.h
-index 216bd23029dd..aa5f4adc6617 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.h
-+++ b/drivers/media/platform/vsp1/vsp1_dl.h
-@@ -20,7 +20,34 @@ struct vsp1_dl_manager;
- #define VSP1_DL_FRAME_END_COMPLETED		BIT(0)
- #define VSP1_DL_FRAME_END_INTERNAL		BIT(1)
- 
--void vsp1_dlm_setup(struct vsp1_device *vsp1);
-+/**
-+ * struct vsp1_dl_ext_cmd - Extended Display command
-+ * @free: entry in the pool of free commands list
-+ * @cmd_opcode: command type opcode
-+ * @flags: flags used by the command
-+ * @cmds: array of command bodies for this extended cmd
-+ * @num_cmds: quantity of commands in @cmds array
-+ * @cmd_dma: DMA address of the command bodies
-+ * @data: memory allocation for command specific data
-+ * @data_dma: DMA address for command specific data
-+ * @data_size: size of the @data_dma memory in bytes
-+ */
-+struct vsp1_dl_ext_cmd {
-+	struct list_head free;
-+
-+	u8 cmd_opcode;
-+	u32 flags;
-+
-+	struct vsp1_dl_ext_cmd_header *cmds;
-+	unsigned int num_cmds;
-+	dma_addr_t cmd_dma;
-+
-+	void *data;
-+	dma_addr_t data_dma;
-+	size_t data_size;
-+};
-+
-+void vsp1_dlm_setup(struct vsp1_device *vsp1, unsigned int index);
- 
- struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
- 					unsigned int index,
-diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
-index 0fc388bf5a33..26a7b4d32e6c 100644
---- a/drivers/media/platform/vsp1/vsp1_drv.c
-+++ b/drivers/media/platform/vsp1/vsp1_drv.c
-@@ -545,7 +545,8 @@ static int vsp1_device_init(struct vsp1_device *vsp1)
- 	vsp1_write(vsp1, VI6_DPR_HGT_SMPPT, (7 << VI6_DPR_SMPPT_TGW_SHIFT) |
- 		   (VI6_DPR_NODE_UNUSED << VI6_DPR_SMPPT_PT_SHIFT));
- 
--	vsp1_dlm_setup(vsp1);
-+	for (i = 0; i < vsp1->info->wpf_count; ++i)
-+		vsp1_dlm_setup(vsp1, i);
- 
- 	return 0;
- }
-@@ -754,7 +755,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 		.version = VI6_IP_VERSION_MODEL_VSPD_GEN3,
- 		.model = "VSP2-D",
- 		.gen = 3,
--		.features = VSP1_HAS_BRU | VSP1_HAS_WPF_VFLIP,
-+		.features = VSP1_HAS_BRU | VSP1_HAS_WPF_VFLIP | VSP1_HAS_EXT_DL,
- 		.lif_count = 1,
- 		.rpf_count = 5,
- 		.uif_count = 1,
-@@ -774,7 +775,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 		.version = VI6_IP_VERSION_MODEL_VSPDL_GEN3,
- 		.model = "VSP2-DL",
- 		.gen = 3,
--		.features = VSP1_HAS_BRS | VSP1_HAS_BRU,
-+		.features = VSP1_HAS_BRS | VSP1_HAS_BRU | VSP1_HAS_EXT_DL,
- 		.lif_count = 2,
- 		.rpf_count = 5,
- 		.uif_count = 2,
-diff --git a/drivers/media/platform/vsp1/vsp1_regs.h b/drivers/media/platform/vsp1/vsp1_regs.h
-index 0d249ff9f564..d054767570c1 100644
---- a/drivers/media/platform/vsp1/vsp1_regs.h
-+++ b/drivers/media/platform/vsp1/vsp1_regs.h
-@@ -67,12 +67,13 @@
- 
- #define VI6_DL_HDR_ADDR(n)		(0x0104 + (n) * 4)
- 
--#define VI6_DL_SWAP			0x0114
-+#define VI6_DL_SWAP(n)			(0x0114 + (n) * 56)
-+#define VI6_DL_SWAP_IND			(1 << 31)
- #define VI6_DL_SWAP_LWS			(1 << 2)
- #define VI6_DL_SWAP_WDS			(1 << 1)
- #define VI6_DL_SWAP_BTS			(1 << 0)
- 
--#define VI6_DL_EXT_CTRL			0x011c
-+#define VI6_DL_EXT_CTRL(n)		(0x011c + (n) * 36)
- #define VI6_DL_EXT_CTRL_NWE		(1 << 16)
- #define VI6_DL_EXT_CTRL_POLINT_MASK	(0x3f << 8)
- #define VI6_DL_EXT_CTRL_POLINT_SHIFT	8
+The field is called cmds.
+
+> + * @free: List of free DLB entries
+
+"free pool entries" or "free command entries" ?
+
+> + * @lock: Protects the pool and free list
+
+The pool is the whole structure, does the lock really protects all fields ?
+
+> + * @vsp1: the VSP1 device
+> + */
+> +struct vsp1_dl_cmd_pool {
+> +	/* DMA allocation */
+> +	dma_addr_t dma;
+> +	size_t size;
+> +	void *mem;
+> +
+> +	struct vsp1_dl_ext_cmd *cmds;
+> +	struct list_head free;
+> +
+> +	spinlock_t lock;
+> +
+> +	struct vsp1_device *vsp1;
+> +};
+> +
+> +/**
+>   * struct vsp1_dl_list - Display list
+>   * @list: entry in the display list manager lists
+>   * @dlm: the display list manager
+> @@ -162,6 +186,7 @@ struct vsp1_dl_list {
+>   * @queued: list queued to the hardware (written to the DL registers)
+>   * @pending: list waiting to be queued to the hardware
+>   * @pool: body pool for the display list bodies
+> + * @autofld_cmds: command pool to support auto-fld interlaced mode
+
+This could also be used for auto-disp. How about calling it cmdpool ?
+
+>   */
+>  struct vsp1_dl_manager {
+>  	unsigned int index;
+> @@ -175,6 +200,7 @@ struct vsp1_dl_manager {
+>  	struct vsp1_dl_list *pending;
+> 
+>  	struct vsp1_dl_body_pool *pool;
+> +	struct vsp1_dl_cmd_pool *autofld_cmds;
+>  };
+> 
+>  /* ------------------------------------------------------------------------
+> @@ -338,6 +364,140 @@ void vsp1_dl_body_write(struct vsp1_dl_body *dlb,
+> u32 reg, u32 data) }
+> 
+>  /* ------------------------------------------------------------------------
+> + * Display List Extended Command Management
+> + */
+> +
+> +enum vsp1_extcmd_type {
+> +	VSP1_EXTCMD_AUTODISP,
+> +	VSP1_EXTCMD_AUTOFLD,
+> +};
+> +
+> +struct vsp1_extended_command_info {
+> +	u16 opcode;
+> +	size_t body_size;
+> +} static const vsp1_extended_commands[] = {
+
+The location of the static const keywords is strange. I would move them before 
+struct, or split the structure definition and variable declaration.
+
+> +	[VSP1_EXTCMD_AUTODISP] = { 0x02, 96 },
+> +	[VSP1_EXTCMD_AUTOFLD]  = { 0x03, 160 },
+> +};
+> +
+> +/**
+> + * vsp1_dl_cmd_pool_create - Create a pool of commands from a single
+> allocation
+> + * @vsp1: The VSP1 device
+> + * @type: The command pool type
+> + * @num_commands: The quantity of commands to allocate
+
+s/quantity/number/ ?
+
+> + *
+> + * Allocate a pool of commands each with enough memory to contain the
+> private
+> + * data of each command. The allocation sizes are dependent upon the
+> command
+> + * type.
+> + *
+> + * Return a pointer to a pool on success or NULL if memory can't be
+
+s/a pool/the pool/
+
+> allocated.
+> + */
+> +static struct vsp1_dl_cmd_pool *
+> +vsp1_dl_cmd_pool_create(struct vsp1_device *vsp1, enum vsp1_extcmd_type
+> type,
+> +			unsigned int num_cmds)
+> +{
+> +	struct vsp1_dl_cmd_pool *pool;
+> +	unsigned int i;
+> +	size_t cmd_size;
+> +
+> +	pool = kzalloc(sizeof(*pool), GFP_KERNEL);
+> +	if (!pool)
+> +		return NULL;
+> +
+> +	pool->cmds = kcalloc(num_cmds, sizeof(*pool->cmds), GFP_KERNEL);
+> +	if (!pool->cmds) {
+> +		kfree(pool);
+> +		return NULL;
+> +	}
+> +
+> +	cmd_size = sizeof(struct vsp1_dl_ext_cmd_header) +
+> +		   vsp1_extended_commands[type].body_size;
+> +	cmd_size = ALIGN(cmd_size, 16);
+> +
+> +	pool->size = cmd_size * num_cmds;
+> +	pool->mem = dma_alloc_wc(vsp1->bus_master, pool->size, &pool->dma,
+> +				 GFP_KERNEL);
+> +	if (!pool->mem) {
+> +		kfree(pool->cmds);
+> +		kfree(pool);
+> +		return NULL;
+> +	}
+> +
+> +	spin_lock_init(&pool->lock);
+> +	INIT_LIST_HEAD(&pool->free);
+
+I would move these two lines right after allocation of pool, I find it more 
+readable to perform small and simple initialization right away.
+
+> +	for (i = 0; i < num_cmds; ++i) {
+> +		struct vsp1_dl_ext_cmd *cmd = &pool->cmds[i];
+> +		size_t cmd_offset = i * cmd_size;
+> +		size_t data_offset = sizeof(struct vsp1_dl_ext_cmd_header) +
+> +				     cmd_offset;
+
+The data memory has to be 16-bytes aligned. This is guaranteed as the header 
+is 16 bytes long, and cmd_size is aligned to 16 bytes, but it would be worth 
+adding a comment to explain this.
+
+> +		cmd->pool = pool;
+> +		cmd->cmd_opcode = vsp1_extended_commands[type].opcode;
+> +
+> +		/* TODO: Auto-disp can utilise more than one command per cmd */
+
+That will be annoying to handle :-/
+
+> +		cmd->num_cmds = 1;
+> +		cmd->cmds = pool->mem + cmd_offset;
+> +		cmd->cmd_dma = pool->dma + cmd_offset;
+> +
+> +		cmd->data = pool->mem + data_offset;
+> +		cmd->data_dma = pool->dma + data_offset;
+> +		cmd->data_size = vsp1_extended_commands[type].body_size;
+> +
+> +		list_add_tail(&cmd->free, &pool->free);
+> +	}
+> +
+> +	return pool;
+> +}
+> +
+> +static
+> +struct vsp1_dl_ext_cmd *vsp1_dl_ext_cmd_get(struct vsp1_dl_cmd_pool *pool)
+> +{
+> +	struct vsp1_dl_ext_cmd *cmd = NULL;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&pool->lock, flags);
+> +
+> +	if (!list_empty(&pool->free)) {
+> +		cmd = list_first_entry(&pool->free, struct vsp1_dl_ext_cmd,
+> +				       free);
+> +		list_del(&cmd->free);
+> +	}
+> +
+> +	spin_unlock_irqrestore(&pool->lock, flags);
+> +
+> +	return cmd;
+> +}
+> +
+> +static void vsp1_dl_ext_cmd_put(struct vsp1_dl_ext_cmd *cmd)
+> +{
+> +	unsigned long flags;
+> +
+> +	if (!cmd)
+> +		return;
+> +
+> +	/* Reset flags, these mark data usage */
+
+s/usage/usage./
+
+> +	cmd->flags = 0;
+> +
+> +	spin_lock_irqsave(&cmd->pool->lock, flags);
+> +	list_add_tail(&cmd->free, &cmd->pool->free);
+> +	spin_unlock_irqrestore(&cmd->pool->lock, flags);
+> +}
+> +
+> +static void vsp1_dl_ext_cmd_pool_destroy(struct vsp1_dl_cmd_pool *pool)
+> +{
+> +	if (!pool)
+> +		return;
+> +
+> +	if (pool->mem)
+> +		dma_free_wc(pool->vsp1->bus_master, pool->size, pool->mem,
+> +			    pool->dma);
+> +
+> +	kfree(pool->cmds);
+> +	kfree(pool);
+> +}
+> +
+> +/* ------------------------------------------------------------------------
+> - * Display List Transaction Management
+>   */
+> 
+> @@ -440,6 +600,12 @@ static void __vsp1_dl_list_put(struct vsp1_dl_list *dl)
+> 
+>  	vsp1_dl_list_bodies_put(dl);
+> 
+> +	vsp1_dl_ext_cmd_put(dl->pre_cmd);
+> +	vsp1_dl_ext_cmd_put(dl->post_cmd);
+> +
+> +	dl->pre_cmd = NULL;
+> +	dl->post_cmd = NULL;
+> +
+>  	/*
+>  	 * body0 is reused as as an optimisation as presently every display list
+>  	 * has at least one body, thus we reinitialise the entries list.
+> @@ -883,6 +1049,15 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct
+> vsp1_device *vsp1, list_add_tail(&dl->list, &dlm->free);
+>  	}
+> 
+> +	if (vsp1_feature(vsp1, VSP1_HAS_EXT_DL)) {
+> +		dlm->autofld_cmds = vsp1_dl_cmd_pool_create(vsp1,
+> +					VSP1_EXTCMD_AUTOFLD, prealloc);
+> +		if (!dlm->autofld_cmds) {
+> +			vsp1_dlm_destroy(dlm);
+> +			return NULL;
+> +		}
+> +	}
+> +
+>  	return dlm;
+>  }
+> 
+> @@ -899,4 +1074,20 @@ void vsp1_dlm_destroy(struct vsp1_dl_manager *dlm)
+>  	}
+> 
+>  	vsp1_dl_body_pool_destroy(dlm->pool);
+> +	vsp1_dl_ext_cmd_pool_destroy(dlm->autofld_cmds);
+> +}
+> +
+> +struct vsp1_dl_ext_cmd *vsp1_dlm_get_autofld_cmd(struct vsp1_dl_list *dl)
+> +{
+> +	struct vsp1_dl_manager *dlm = dl->dlm;
+> +	struct vsp1_dl_ext_cmd *cmd;
+> +
+> +	if (dl->pre_cmd)
+> +		return dl->pre_cmd;
+> +
+> +	cmd = vsp1_dl_ext_cmd_get(dlm->autofld_cmds);
+> +	if (cmd)
+> +		dl->pre_cmd = cmd;
+> +
+> +	return cmd;
+
+You can write it in a simpler way.
+
+	dl->pre_cmd = vsp1_dl_ext_cmd_get(dlm->autofld_cmds);
+	return dl->pre_cmd;
+
+>  }
+> diff --git a/drivers/media/platform/vsp1/vsp1_dl.h
+> b/drivers/media/platform/vsp1/vsp1_dl.h index aa5f4adc6617..d9621207b093
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_dl.h
+> +++ b/drivers/media/platform/vsp1/vsp1_dl.h
+> @@ -22,6 +22,7 @@ struct vsp1_dl_manager;
+> 
+>  /**
+>   * struct vsp1_dl_ext_cmd - Extended Display command
+> + * @pool: pool to which this command belongs
+>   * @free: entry in the pool of free commands list
+>   * @cmd_opcode: command type opcode
+>   * @flags: flags used by the command
+> @@ -33,6 +34,7 @@ struct vsp1_dl_manager;
+>   * @data_size: size of the @data_dma memory in bytes
+>   */
+>  struct vsp1_dl_ext_cmd {
+> +	struct vsp1_dl_cmd_pool *pool;
+>  	struct list_head free;
+> 
+>  	u8 cmd_opcode;
+> @@ -55,6 +57,7 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device
+> *vsp1, void vsp1_dlm_destroy(struct vsp1_dl_manager *dlm);
+>  void vsp1_dlm_reset(struct vsp1_dl_manager *dlm);
+>  unsigned int vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm);
+> +struct vsp1_dl_ext_cmd *vsp1_dlm_get_autofld_cmd(struct vsp1_dl_list *dl);
+
+Should this be named vsp1_dl_get_autofld_cmd() as it operates on a dl ? I also 
+think that you should move it down to group it with the dl functions.
+
+>  struct vsp1_dl_list *vsp1_dl_list_get(struct vsp1_dl_manager *dlm);
+>  void vsp1_dl_list_put(struct vsp1_dl_list *dl);
+
 -- 
-git-series 0.9.1
+Regards,
+
+Laurent Pinchart
