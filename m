@@ -1,13 +1,12 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38090 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750869AbeE3J2O (ORCPT
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45648 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1032054AbeEXOTj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 May 2018 05:28:14 -0400
-Date: Tue, 29 May 2018 17:13:45 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Gilad Ben-Yossef <gilad@benyossef.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Thu, 24 May 2018 10:19:39 -0400
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -16,26 +15,48 @@ Cc: Magnus Damm <magnus.damm@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ofir Drang <ofir.drang@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] crypto: ccree: silence debug prints
-Message-ID: <20180529161345.rhx73mixbnxrfzum@verge.net.au>
+        "David S. Miller" <davem@davemloft.net>
+Cc: Ofir Drang <ofir.drang@arm.com>, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-crypto@vger.kernel.org
+Subject: [PATCH v2 3/5] crypto: ccree: silence debug prints
+Date: Thu, 24 May 2018 15:19:08 +0100
+Message-Id: <1527171551-21979-4-git-send-email-gilad@benyossef.com>
+In-Reply-To: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
 References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
- <1527171551-21979-4-git-send-email-gilad@benyossef.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527171551-21979-4-git-send-email-gilad@benyossef.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, May 24, 2018 at 03:19:08PM +0100, Gilad Ben-Yossef wrote:
-> The cache parameter register configuration was being too verbose.
-> Use dev_dbg() to only provide the information if needed.
-> 
-> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+The cache parameter register configuration was being too verbose.
+Use dev_dbg() to only provide the information if needed.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+---
+ drivers/crypto/ccree/cc_driver.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/crypto/ccree/cc_driver.c b/drivers/crypto/ccree/cc_driver.c
+index b266657..1e40e76 100644
+--- a/drivers/crypto/ccree/cc_driver.c
++++ b/drivers/crypto/ccree/cc_driver.c
+@@ -168,14 +168,14 @@ int init_cc_regs(struct cc_drvdata *drvdata, bool is_probe)
+ 	val = cc_ioread(drvdata, CC_REG(AXIM_CACHE_PARAMS));
+ 
+ 	if (is_probe)
+-		dev_info(dev, "Cache params previous: 0x%08X\n", val);
++		dev_dbg(dev, "Cache params previous: 0x%08X\n", val);
+ 
+ 	cc_iowrite(drvdata, CC_REG(AXIM_CACHE_PARAMS), cache_params);
+ 	val = cc_ioread(drvdata, CC_REG(AXIM_CACHE_PARAMS));
+ 
+ 	if (is_probe)
+-		dev_info(dev, "Cache params current: 0x%08X (expect: 0x%08X)\n",
+-			 val, cache_params);
++		dev_dbg(dev, "Cache params current: 0x%08X (expect: 0x%08X)\n",
++			val, cache_params);
+ 
+ 	return 0;
+ }
+-- 
+2.7.4
