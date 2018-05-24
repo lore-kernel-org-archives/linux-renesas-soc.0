@@ -1,49 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay11.mail.gandi.net ([217.70.178.231]:35021 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751564AbeEPQcs (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:44654 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030236AbeEXK6K (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 May 2018 12:32:48 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        horms@verge.net.au, geert@glider.be
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/6] dt-bindings: media: rcar-vin: Document data-active
-Date: Wed, 16 May 2018 18:32:28 +0200
-Message-Id: <1526488352-898-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1526488352-898-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1526488352-898-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 24 May 2018 06:58:10 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v4 05/11] media: vsp1: Clean up DLM objects on error
+Date: Thu, 24 May 2018 13:58:06 +0300
+Message-ID: <1938981.0TdDEbag8f@avalon>
+In-Reply-To: <b7cebaf1f970e25e32a211c4a352baaa7e026fc6.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.bd2eb66d11f8094114941107dbc78dc02c9c7fdd.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com> <b7cebaf1f970e25e32a211c4a352baaa7e026fc6.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document 'data-active' property in R-Car VIN device tree bindings.
-The property is optional when running with explicit synchronization
-(eg. BT.601) but mandatory when embedded synchronization is in use (eg.
-BT.656) as specified by the hardware manual.
+Hi Kieran,
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- Documentation/devicetree/bindings/media/rcar_vin.txt | 5 +++++
- 1 file changed, 5 insertions(+)
+Thank you for the patch.
 
-diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
-index c53ce4e..17eac8a 100644
---- a/Documentation/devicetree/bindings/media/rcar_vin.txt
-+++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
-@@ -63,6 +63,11 @@ from local SoC CSI-2 receivers (port1) depending on SoC.
- 	If both HSYNC and VSYNC polarities are not specified, embedded
- 	synchronization is selected.
+On Thursday, 3 May 2018 16:36:16 EEST Kieran Bingham wrote:
+> If there is an error allocating a display list within a DLM object
+> the existing display lists are not free'd, and neither is the DL body
+> pool.
+> 
+> Use the existing vsp1_dlm_destroy() function to clean up on error.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-+        - data-active: active state of data enable signal (CLOCKENB pin).
-+          0/1 for LOW/HIGH respectively. If not specified, use HSYNC as
-+          data enable signal. When using embedded synchronization this
-+          property is mandatory.
-+
-     - port 1 - sub-nodes describing one or more endpoints connected to
-       the VIN from local SoC CSI-2 receivers. The endpoint numbers must
-       use the following schema.
---
-2.7.4
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/media/platform/vsp1/vsp1_dl.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c
+> b/drivers/media/platform/vsp1/vsp1_dl.c index b23e88cda49f..fbffbd407b29
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_dl.c
+> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
+> @@ -851,8 +851,10 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct
+> vsp1_device *vsp1, struct vsp1_dl_list *dl;
+> 
+>  		dl = vsp1_dl_list_alloc(dlm);
+> -		if (!dl)
+> +		if (!dl) {
+> +			vsp1_dlm_destroy(dlm);
+>  			return NULL;
+> +		}
+> 
+>  		list_add_tail(&dl->list, &dlm->free);
+>  	}
+
+
+-- 
+Regards,
+
+Laurent Pinchart
