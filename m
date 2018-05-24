@@ -1,13 +1,11 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from orcrist.hmeau.com ([104.223.48.154]:54652 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753487AbeE3Q2i (ORCPT
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45574 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030516AbeEXOTW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 May 2018 12:28:38 -0400
-Date: Thu, 31 May 2018 00:28:04 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Gilad Ben-Yossef <gilad@benyossef.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Thu, 24 May 2018 10:19:22 -0400
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -16,37 +14,45 @@ Cc: Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ofir Drang <ofir.drang@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] crypto: ccree: cleanup, fixes and R-Car enabling
-Message-ID: <20180530162804.zp4n22nprqmigywz@gondor.apana.org.au>
-References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: Ofir Drang <ofir.drang@arm.com>, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-crypto@vger.kernel.org
+Subject: [PATCH v2 0/5] crypto: ccree: cleanup, fixes and R-Car enabling
+Date: Thu, 24 May 2018 15:19:05 +0100
+Message-Id: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, May 24, 2018 at 03:19:05PM +0100, Gilad Ben-Yossef wrote:
-> The patch set enables the use of CryptoCell found in some Renesas R-Car
-> Salvator-X boards and fixes some driver issues uncovered that prevented
-> to work properly.
-> 
-> Changes from v1:
-> - Properly fix the bug that caused us to read a bad signature register
->   rather than dropping the check
-> - Proper DT fields as indicated by Geert Uytterhoeven.
-> - Better clock enabling as suggested by Geert Uytterhoeven.
-> 
-> Note! the last two patches in the set depend on the
-> "clk: renesas: r8a7795: Add CR clock" patch from Geert Uytterhoeven.
+The patch set enables the use of CryptoCell found in some Renesas R-Car
+Salvator-X boards and fixes some driver issues uncovered that prevented
+to work properly.
 
-Patches 1-3 applied.  Thanks.
+Changes from v1:
+- Properly fix the bug that caused us to read a bad signature register
+  rather than dropping the check
+- Proper DT fields as indicated by Geert Uytterhoeven.
+- Better clock enabling as suggested by Geert Uytterhoeven.
+
+Note! the last two patches in the set depend on the
+"clk: renesas: r8a7795: Add CR clock" patch from Geert Uytterhoeven.
+
+Gilad Ben-Yossef (5):
+  crypto: ccree: correct host regs offset
+  crypto: ccree: better clock handling
+  crypto: ccree: silence debug prints
+  clk: renesas: r8a7795: add ccree clock bindings
+  arm64: dts: renesas: r8a7795: add ccree binding
+
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi |  9 +++++++++
+ drivers/clk/renesas/r8a7795-cpg-mssr.c   |  1 +
+ drivers/crypto/ccree/cc_debugfs.c        |  7 +++++--
+ drivers/crypto/ccree/cc_driver.c         | 34 ++++++++++++++++++++++++++------
+ drivers/crypto/ccree/cc_driver.h         |  2 ++
+ drivers/crypto/ccree/cc_host_regs.h      |  6 ++++--
+ 6 files changed, 49 insertions(+), 10 deletions(-)
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.7.4
