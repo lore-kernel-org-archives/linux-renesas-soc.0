@@ -1,84 +1,167 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-eopbgr20104.outbound.protection.outlook.com ([40.107.2.104]:7868
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751833AbeEDNxw (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 May 2018 09:53:52 -0400
-From: Peter Rosin <peda@axentia.se>
-To: linux-kernel@vger.kernel.org
-Cc: Peter Rosin <peda@axentia.se>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Peter Senna Tschudin <peter.senna@collabora.com>,
-        Martin Donnelly <martin.donnelly@ge.com>,
-        Martyn Welch <martyn.welch@collabora.co.uk>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        CK Hu <ck.hu@mediatek.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, Jyri Sarha <jsarha@ti.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH v2 25/26] drm/bridge: require the owner .odev to be filled in on drm_bridge_add/attach
-Date: Fri,  4 May 2018 15:52:11 +0200
-Message-Id: <20180504135212.26977-26-peda@axentia.se>
-In-Reply-To: <20180504135212.26977-1-peda@axentia.se>
-References: <20180504135212.26977-1-peda@axentia.se>
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v4 06/11] media: vsp1: Provide VSP1 feature helper macro
+Date: Thu, 24 May 2018 14:00:35 +0300
+Message-ID: <2086855.Txm5IEeXWY@avalon>
+In-Reply-To: <c9def3055aa8acf4a45c3a17b1da2c2468d35cca.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.bd2eb66d11f8094114941107dbc78dc02c9c7fdd.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com> <c9def3055aa8acf4a45c3a17b1da2c2468d35cca.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The .odev owner device will be handy to have around.
+Hi Kieran,
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
----
- drivers/gpu/drm/drm_bridge.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Thank you for the patch.
 
-diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-index df084db33494..78d186b6831b 100644
---- a/drivers/gpu/drm/drm_bridge.c
-+++ b/drivers/gpu/drm/drm_bridge.c
-@@ -70,6 +70,9 @@ static LIST_HEAD(bridge_list);
-  */
- void drm_bridge_add(struct drm_bridge *bridge)
- {
-+	if (WARN_ON(!bridge->odev))
-+		return;
-+
- 	mutex_lock(&bridge_lock);
- 	list_add_tail(&bridge->list, &bridge_list);
- 	mutex_unlock(&bridge_lock);
-@@ -115,6 +118,9 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
- 	if (!encoder || !bridge)
- 		return -EINVAL;
- 
-+	if (WARN_ON(!bridge->odev))
-+		return -EINVAL;
-+
- 	if (previous && (!previous->dev || previous->encoder != encoder))
- 		return -EINVAL;
- 
+On Thursday, 3 May 2018 16:36:17 EEST Kieran Bingham wrote:
+> The VSP1 devices define their specific capabilities through features
+> marked in their device info structure. Various parts of the code read
+> this info structure to infer if the features are available.
+> 
+> Wrap this into a more readable vsp1_feature(vsp1, f) macro to ensure
+> that usage is consistent throughout the driver.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/media/platform/vsp1/vsp1.h     |  2 ++
+>  drivers/media/platform/vsp1/vsp1_drv.c | 16 ++++++++--------
+>  drivers/media/platform/vsp1/vsp1_wpf.c |  6 +++---
+>  3 files changed, 13 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1.h
+> b/drivers/media/platform/vsp1/vsp1.h index 33f632331474..f0d21cc8e9ab
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1.h
+> +++ b/drivers/media/platform/vsp1/vsp1.h
+> @@ -68,6 +68,8 @@ struct vsp1_device_info {
+>  	bool uapi;
+>  };
+> 
+> +#define vsp1_feature(vsp1, f) ((vsp1)->info->features & (f))
+> +
+>  struct vsp1_device {
+>  	struct device *dev;
+>  	const struct vsp1_device_info *info;
+> diff --git a/drivers/media/platform/vsp1/vsp1_drv.c
+> b/drivers/media/platform/vsp1/vsp1_drv.c index d29f9c4baebe..0fc388bf5a33
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_drv.c
+> +++ b/drivers/media/platform/vsp1/vsp1_drv.c
+> @@ -265,7 +265,7 @@ static int vsp1_create_entities(struct vsp1_device
+> *vsp1) }
+> 
+>  	/* Instantiate all the entities. */
+> -	if (vsp1->info->features & VSP1_HAS_BRS) {
+> +	if (vsp1_feature(vsp1, VSP1_HAS_BRS)) {
+>  		vsp1->brs = vsp1_brx_create(vsp1, VSP1_ENTITY_BRS);
+>  		if (IS_ERR(vsp1->brs)) {
+>  			ret = PTR_ERR(vsp1->brs);
+> @@ -275,7 +275,7 @@ static int vsp1_create_entities(struct vsp1_device
+> *vsp1) list_add_tail(&vsp1->brs->entity.list_dev, &vsp1->entities);
+>  	}
+> 
+> -	if (vsp1->info->features & VSP1_HAS_BRU) {
+> +	if (vsp1_feature(vsp1, VSP1_HAS_BRU)) {
+>  		vsp1->bru = vsp1_brx_create(vsp1, VSP1_ENTITY_BRU);
+>  		if (IS_ERR(vsp1->bru)) {
+>  			ret = PTR_ERR(vsp1->bru);
+> @@ -285,7 +285,7 @@ static int vsp1_create_entities(struct vsp1_device
+> *vsp1) list_add_tail(&vsp1->bru->entity.list_dev, &vsp1->entities);
+>  	}
+> 
+> -	if (vsp1->info->features & VSP1_HAS_CLU) {
+> +	if (vsp1_feature(vsp1, VSP1_HAS_CLU)) {
+>  		vsp1->clu = vsp1_clu_create(vsp1);
+>  		if (IS_ERR(vsp1->clu)) {
+>  			ret = PTR_ERR(vsp1->clu);
+> @@ -311,7 +311,7 @@ static int vsp1_create_entities(struct vsp1_device
+> *vsp1)
+> 
+>  	list_add_tail(&vsp1->hst->entity.list_dev, &vsp1->entities);
+> 
+> -	if (vsp1->info->features & VSP1_HAS_HGO && vsp1->info->uapi) {
+> +	if (vsp1_feature(vsp1, VSP1_HAS_HGO) && vsp1->info->uapi) {
+>  		vsp1->hgo = vsp1_hgo_create(vsp1);
+>  		if (IS_ERR(vsp1->hgo)) {
+>  			ret = PTR_ERR(vsp1->hgo);
+> @@ -322,7 +322,7 @@ static int vsp1_create_entities(struct vsp1_device
+> *vsp1) &vsp1->entities);
+>  	}
+> 
+> -	if (vsp1->info->features & VSP1_HAS_HGT && vsp1->info->uapi) {
+> +	if (vsp1_feature(vsp1, VSP1_HAS_HGT) && vsp1->info->uapi) {
+>  		vsp1->hgt = vsp1_hgt_create(vsp1);
+>  		if (IS_ERR(vsp1->hgt)) {
+>  			ret = PTR_ERR(vsp1->hgt);
+> @@ -353,7 +353,7 @@ static int vsp1_create_entities(struct vsp1_device
+> *vsp1) }
+>  	}
+> 
+> -	if (vsp1->info->features & VSP1_HAS_LUT) {
+> +	if (vsp1_feature(vsp1, VSP1_HAS_LUT)) {
+>  		vsp1->lut = vsp1_lut_create(vsp1);
+>  		if (IS_ERR(vsp1->lut)) {
+>  			ret = PTR_ERR(vsp1->lut);
+> @@ -387,7 +387,7 @@ static int vsp1_create_entities(struct vsp1_device
+> *vsp1) }
+>  	}
+> 
+> -	if (vsp1->info->features & VSP1_HAS_SRU) {
+> +	if (vsp1_feature(vsp1, VSP1_HAS_SRU)) {
+>  		vsp1->sru = vsp1_sru_create(vsp1);
+>  		if (IS_ERR(vsp1->sru)) {
+>  			ret = PTR_ERR(vsp1->sru);
+> @@ -537,7 +537,7 @@ static int vsp1_device_init(struct vsp1_device *vsp1)
+>  	vsp1_write(vsp1, VI6_DPR_HSI_ROUTE, VI6_DPR_NODE_UNUSED);
+>  	vsp1_write(vsp1, VI6_DPR_BRU_ROUTE, VI6_DPR_NODE_UNUSED);
+> 
+> -	if (vsp1->info->features & VSP1_HAS_BRS)
+> +	if (vsp1_feature(vsp1, VSP1_HAS_BRS))
+>  		vsp1_write(vsp1, VI6_DPR_ILV_BRS_ROUTE, VI6_DPR_NODE_UNUSED);
+> 
+>  	vsp1_write(vsp1, VI6_DPR_HGO_SMPPT, (7 << VI6_DPR_SMPPT_TGW_SHIFT) |
+> diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c
+> b/drivers/media/platform/vsp1/vsp1_wpf.c index 2edea361eee4..ea1d226371b2
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_wpf.c
+> +++ b/drivers/media/platform/vsp1/vsp1_wpf.c
+> @@ -141,13 +141,13 @@ static int wpf_init_controls(struct vsp1_rwpf *wpf)
+>  	if (wpf->entity.index != 0) {
+>  		/* Only WPF0 supports flipping. */
+>  		num_flip_ctrls = 0;
+> -	} else if (vsp1->info->features & VSP1_HAS_WPF_HFLIP) {
+> +	} else if (vsp1_feature(vsp1, VSP1_HAS_WPF_HFLIP)) {
+>  		/*
+>  		 * When horizontal flip is supported the WPF implements three
+>  		 * controls (horizontal flip, vertical flip and rotation).
+>  		 */
+>  		num_flip_ctrls = 3;
+> -	} else if (vsp1->info->features & VSP1_HAS_WPF_VFLIP) {
+> +	} else if (vsp1_feature(vsp1, VSP1_HAS_WPF_VFLIP)) {
+>  		/*
+>  		 * When only vertical flip is supported the WPF implements a
+>  		 * single control (vertical flip).
+> @@ -276,7 +276,7 @@ static void wpf_configure_stream(struct vsp1_entity
+> *entity,
+> 
+>  		vsp1_wpf_write(wpf, dlb, VI6_WPF_DSWAP, fmtinfo->swap);
+> 
+> -		if (vsp1->info->features & VSP1_HAS_WPF_HFLIP &&
+> +		if (vsp1_feature(vsp1, VSP1_HAS_WPF_HFLIP) &&
+>  		    wpf->entity.index == 0)
+>  			vsp1_wpf_write(wpf, dlb, VI6_WPF_ROT_CTRL,
+>  				       VI6_WPF_ROT_CTRL_LN16 |
+
+
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
