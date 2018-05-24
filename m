@@ -1,47 +1,92 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34867 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933599AbeE1TjJ (ORCPT
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:43743 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966066AbeEXNoU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 May 2018 15:39:09 -0400
-Received: by mail-wm0-f68.google.com with SMTP id o78-v6so34680752wmg.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 28 May 2018 12:39:08 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] i2c: rcar: document R8A77980 bindings
-To: Rob Herring <robh+dt@kernel.org>, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org
-Message-ID: <95b945f7-1e6c-39f1-e101-06ed748ccec2@cogentembedded.com>
-Date: Mon, 28 May 2018 22:39:05 +0300
+        Thu, 24 May 2018 09:44:20 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAOtvUMdCSoxYjpyb+fD36EE5+4sV4CjrxwK94RQ7bNKE5rajmQ@mail.gmail.com>
+References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
+ <1526387370-17142-4-git-send-email-gilad@benyossef.com> <CAMuHMdWzeNqsho1V6ezZb81T3_HcRzrtuQpmGXsjtFgt9BtZDQ@mail.gmail.com>
+ <20180516074333.i2672u435ymwffk3@verge.net.au> <CAOtvUMfFjokOLCg6aHNQESJ_q4Jiok3izrPtae5wR+cND=XL6g@mail.gmail.com>
+ <CAMuHMdVM55S7+PdnKusX-qkTxioc=0kQ6EGSbwv+kbLk5RCUYw@mail.gmail.com>
+ <CAOtvUMcf-fHduThORv3cbcN16wEm_Si27OjSjAmSc9g5eK4PJw@mail.gmail.com>
+ <CAMuHMdX-t8WfjRKpZ7UxXBbBNojsn-8z7_BM9grmLJcf=9Ks2Q@mail.gmail.com> <CAOtvUMdCSoxYjpyb+fD36EE5+4sV4CjrxwK94RQ7bNKE5rajmQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 24 May 2018 15:44:18 +0200
+Message-ID: <CAMuHMdXcGDVOdf52JcJD-nawJ6-0tTJp8e5Ok8_0P51uPRnthQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car V3H (R8A77980) SoC also has the R-Car gen3 compatible I2C controller,
-so document the SoC  specific bindings.
+Hi Gilad,
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Thu, May 24, 2018 at 3:20 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> On Tue, May 22, 2018 at 10:48 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Mon, May 21, 2018 at 3:43 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+>>> On Thu, May 17, 2018 at 1:16 PM, Geert Uytterhoeven
+>>> <geert@linux-m68k.org> wrote:
+>>>> Indeed. From a quick glance, it looks like drivers/crypto/ccree/cc_driver.c
+>>>> does not distinguish between the absence of the clock property, and an
+>>>> actual error in getting the clock, and never considers any error a failure
+>>>> (incl. -PROBE_DEFER).
+>>>>
+>>>> As of_clk_get() returns -ENOENT for both a missing clock property and a
+>>>> missing clock, you should use (devm_)clk_get() instead, and distinguish
+>>>> between NULL (no clock property) and IS_ERR() (actual failure -> abort).
+>>>
+>>> I was trying to do as you suggested but I didn't quite get what is the
+>>> dev_id (2nd) parameter to devm_clk_get parameter is supposed to be.
+>>
+>> It's the (optional) name of the clock, helpful in case there is more than one.
+>> In your case, NULL is fine.
+>
+> I have assumed as much and tried it, it did not work and so I assumed
+> I am missing something and asked you.
+> It turns out I was missing the fact I was using the wrong device tree
+> file... :-(
+>
+> So thanks, it works now :-)
 
----
-The patch is against Wolfram Sang's 'linux.git' repo's 'i2c/for-next' branch
-but I wouldn't mind if it was applied to the 'i2c/for-current' branch. :-)
+Glad to hear that!
 
- Documentation/devicetree/bindings/i2c/i2c-rcar.txt |    1 +
- 1 file changed, 1 insertion(+)
+> Having said that, while using devm)clk_get() is a better approach, it
+> does not seems to distinguish
+> between no "clocks" and a failure to clock information - it returns
+> ENOENT in both cases as well.
 
-Index: linux/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
-===================================================================
---- linux.orig/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
-+++ linux/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
-@@ -15,6 +15,7 @@ Required properties:
- 	"renesas,i2c-r8a7796" if the device is a part of a R8A7796 SoC.
- 	"renesas,i2c-r8a77965" if the device is a part of a R8A77965 SoC.
- 	"renesas,i2c-r8a77970" if the device is a part of a R8A77970 SoC.
-+	"renesas,i2c-r8a77980" if the device is a part of a R8A77980 SoC.
- 	"renesas,i2c-r8a77995" if the device is a part of a R8A77995 SoC.
- 	"renesas,rcar-gen1-i2c" for a generic R-Car Gen1 compatible device.
- 	"renesas,rcar-gen2-i2c" for a generic R-Car Gen2 or RZ/G1 compatible
+Oh right, I guess I'm too used to not even getting that far due to the PM
+Domain code failing to obtain the clock...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
