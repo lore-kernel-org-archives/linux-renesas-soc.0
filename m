@@ -1,96 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:34642 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752746AbeEUOnt (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:40805 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1030971AbeEXKe6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 May 2018 10:43:49 -0400
-Received: by mail-pl0-f66.google.com with SMTP id ay10-v6so8956882plb.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 May 2018 07:43:49 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>
-Date: Mon, 21 May 2018 23:45:01 +0900
-Message-Id: <152691390170.29667.18382622980928156135.sendpatchset@little-apple>
-In-Reply-To: <152691388485.29667.16990860330809844193.sendpatchset@little-apple>
-References: <152691388485.29667.16990860330809844193.sendpatchset@little-apple>
-Subject: [PATCH 02/03] arm64: dts: renesas: r8a77980: Add IPMMU devices nodes
+        Thu, 24 May 2018 06:34:58 -0400
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Carlo Caione <carlo@endlessm.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Juri Lelli <juri.lelli@arm.com>,
+        Frank Rowand <frank.rowand@sony.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 0/3] Renesas R9A06G032 SMP enabler
+Date: Thu, 24 May 2018 11:30:26 +0100
+Message-Id: <1527157834-7747-1-git-send-email-michel.pollet@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+*WARNING -- this requires the base R9A06G032 support patches 
+already posted
 
-Add IPMMU device nodes for the R-Car V3H SoC aka r8a77980.
+This patch series is for enabling the second CA7 of the R9A06G032.
+It's based on a spin_table method, and it reuses the same binding
+property as that driver.
 
-The r8a77980 IPMMU is quite similar to r8a77970 however VC0
-has been added. The IMSSTR bit assignment has also been
-reworked. Power domains are also quite different however the
-the documentation is rather unclear about this topic.
+v3:
+  + Removed mentions of rz/?n1d?
+  + Rebased on base patch v7 
+v2:
+  + Added suggestions from Florian Fainelli
+  + Use __pa_symbol()
+  + Simplified logic in prepare_cpu()
+  + Reordered the patches
+  + Rebased on RZN1 Base patch v5
 
-Until we know better VC0 gets assigned to R8A77980_PD_ALWAYS_ON.
+Michel Pollet (3):
+  dt-bindings: cpu: Add Renesas R9A06G032 SMP enable method.
+  arm: shmobile: Add the R9A06G032 SMP enabler driver
+  ARM: dts: Renesas R9A06G032 SMP enable method
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+ Documentation/devicetree/bindings/arm/cpus.txt |  1 +
+ arch/arm/boot/dts/r9a06g032.dtsi               |  2 +
+ arch/arm/mach-shmobile/Makefile                |  1 +
+ arch/arm/mach-shmobile/smp-r9a06g032.c         | 85 ++++++++++++++++++++++++++
+ 4 files changed, 89 insertions(+)
+ create mode 100644 arch/arm/mach-shmobile/smp-r9a06g032.c
 
- Developed on top of renesas-devel-20180518-v4.17-rc5
-
- arch/arm64/boot/dts/renesas/r8a77980.dtsi |   49 +++++++++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
-
---- 0001/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a77980.dtsi	2018-05-21 22:31:52.460607110 +0900
-@@ -387,6 +387,55 @@
- 			dma-channels = <16>;
- 		};
- 
-+		ipmmu_ds1: mmu@e7740000 {
-+			compatible = "renesas,ipmmu-r8a77980";
-+			reg = <0 0xe7740000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 0>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_ir: mmu@ff8b0000 {
-+			compatible = "renesas,ipmmu-r8a77980";
-+			reg = <0 0xff8b0000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 3>;
-+			power-domains = <&sysc R8A77980_PD_A3IR>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_mm: mmu@e67b0000 {
-+			compatible = "renesas,ipmmu-r8a77980";
-+			reg = <0 0xe67b0000 0 0x1000>;
-+			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_rt: mmu@ffc80000 {
-+			compatible = "renesas,ipmmu-r8a77980";
-+			reg = <0 0xffc80000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 10>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_vc0: mmu@fe6b0000 {
-+			compatible = "renesas,ipmmu-r8a77980";
-+			reg = <0 0xfe6b0000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 12>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_vi0: mmu@febd0000 {
-+			compatible = "renesas,ipmmu-r8a77980";
-+			reg = <0 0xfebd0000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 14>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
- 		mmc0: mmc@ee140000 {
- 			compatible = "renesas,sdhi-r8a77980",
- 				     "renesas,rcar-gen3-sdhi";
+-- 
+2.7.4
