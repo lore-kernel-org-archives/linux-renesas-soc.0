@@ -1,18 +1,6 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:38127 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932449AbeE2Is7 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 May 2018 04:48:59 -0400
-MIME-Version: 1.0
-In-Reply-To: <1527171551-21979-5-git-send-email-gilad@benyossef.com>
-References: <1527171551-21979-1-git-send-email-gilad@benyossef.com> <1527171551-21979-5-git-send-email-gilad@benyossef.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 29 May 2018 10:48:58 +0200
-Message-ID: <CAMuHMdVxcnw5Qy4JPo5r-VvgSxDpp==g6sandNeNji+8CgKOqQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] clk: renesas: r8a7795: add ccree clock bindings
-To: Gilad Ben-Yossef <gilad@benyossef.com>
-Cc: Simon Horman <horms@verge.net.au>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -22,35 +10,42 @@ Cc: Simon Horman <horms@verge.net.au>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ofir Drang <ofir.drang@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        "David S. Miller" <davem@davemloft.net>
+Cc: Ofir Drang <ofir.drang@arm.com>, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-crypto@vger.kernel.org
+Subject: [PATCH v2 4/5] clk: renesas: r8a7795: add ccree clock bindings
+Date: Thu, 24 May 2018 15:19:09 +0100
+Message-Id: <1527171551-21979-5-git-send-email-gilad@benyossef.com>
+In-Reply-To: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, May 24, 2018 at 4:19 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
-> This patch adds the clock used by the CryptoCell 630p instance in the SoC.
->
-> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+This patch adds the clock used by the CryptoCell 630p instance in the SoC.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Thanks, queueing in clk-renesas-for-v4.19, with "bindings" dropped from the
-one-line summary.
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+---
 
-Gr{oetje,eeting}s,
+This patch depends upon the "clk: renesas: r8a7795: Add CR clock" patch
+from Geert Uytterhoeven.
 
-                        Geert
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index e5b1865..a85dd50 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -133,6 +133,7 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
+ 	DEF_MOD("sys-dmac2",		 217,	R8A7795_CLK_S0D3),
+ 	DEF_MOD("sys-dmac1",		 218,	R8A7795_CLK_S0D3),
+ 	DEF_MOD("sys-dmac0",		 219,	R8A7795_CLK_S0D3),
++	DEF_MOD("sceg-pub",		 229,	R8A7795_CLK_CR),
+ 	DEF_MOD("cmt3",			 300,	R8A7795_CLK_R),
+ 	DEF_MOD("cmt2",			 301,	R8A7795_CLK_R),
+ 	DEF_MOD("cmt1",			 302,	R8A7795_CLK_R),
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.7.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
