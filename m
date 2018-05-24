@@ -1,80 +1,42 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:34714 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751246AbeECNfy (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 May 2018 09:35:54 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v9 2/8] media: vsp1: Protect bodies against overflow
-Date: Thu,  3 May 2018 14:35:41 +0100
-Message-Id: <23f4f857e2e311f2948f6794f793c018e3e62062.1525354160.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.76b8251c2457cea047ecba892cf0d7a351644051.1525354160.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.76b8251c2457cea047ecba892cf0d7a351644051.1525354160.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.76b8251c2457cea047ecba892cf0d7a351644051.1525354160.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.76b8251c2457cea047ecba892cf0d7a351644051.1525354160.git-series.kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v4 2/9] media: rcar-vin: Remove two empty lines
+Date: Fri, 25 May 2018 00:02:12 +0200
+Message-Id: <1527199339-7724-3-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1527199339-7724-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1527199339-7724-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The body write function relies on the code never asking it to write more
-than the entries available in the list.
+Remove un-necessary empty lines.
 
-Currently with each list body containing 256 entries, this is fine, but
-we can reduce this number greatly saving memory. In preparation of this
-add a level of protection to catch any buffer overflows.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
+ drivers/media/platform/rcar-vin/rcar-core.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-v3:
- - adapt for new 'body' terminology
- - simplify WARN_ON macro usage
----
- drivers/media/platform/vsp1/vsp1_dl.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 083da4f05c20..51965c30dec2 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -46,6 +46,7 @@ struct vsp1_dl_entry {
-  * @dma: DMA address of the entries
-  * @size: size of the DMA memory in bytes
-  * @num_entries: number of stored entries
-+ * @max_entries: number of entries available
-  */
- struct vsp1_dl_body {
- 	struct list_head list;
-@@ -56,6 +57,7 @@ struct vsp1_dl_body {
- 	size_t size;
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 16d3e01..bcf02de 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -707,11 +707,9 @@ static int rvin_mc_parse_of_endpoint(struct device *dev,
+ 		return -EINVAL;
  
- 	unsigned int num_entries;
-+	unsigned int max_entries;
- };
+ 	if (!of_device_is_available(to_of_node(asd->match.fwnode))) {
+-
+ 		vin_dbg(vin, "OF device %pOF disabled, ignoring\n",
+ 			to_of_node(asd->match.fwnode));
+ 		return -ENOTCONN;
+-
+ 	}
  
- /**
-@@ -138,6 +140,7 @@ static int vsp1_dl_body_init(struct vsp1_device *vsp1,
- 
- 	dlb->vsp1 = vsp1;
- 	dlb->size = size;
-+	dlb->max_entries = num_entries;
- 
- 	dlb->entries = dma_alloc_wc(vsp1->bus_master, dlb->size, &dlb->dma,
- 				    GFP_KERNEL);
-@@ -219,6 +222,10 @@ void vsp1_dl_body_free(struct vsp1_dl_body *dlb)
-  */
- void vsp1_dl_body_write(struct vsp1_dl_body *dlb, u32 reg, u32 data)
- {
-+	if (WARN_ONCE(dlb->num_entries >= dlb->max_entries,
-+		      "DLB size exceeded (max %u)", dlb->max_entries))
-+		return;
-+
- 	dlb->entries[dlb->num_entries].addr = reg;
- 	dlb->entries[dlb->num_entries].data = data;
- 	dlb->num_entries++;
+ 	if (vin->group->csi[vep->base.id].fwnode) {
 -- 
-git-series 0.9.1
+2.7.4
