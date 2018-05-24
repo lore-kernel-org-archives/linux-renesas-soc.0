@@ -1,111 +1,116 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:17719 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932155AbeEWJdK (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:53975 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968435AbeEXKhe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 May 2018 05:33:10 -0400
-Subject: Re: [PATCH 15/61] gpu: drm: omapdrm: displays: simplify getting
- .drvdata
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        <linux-kernel@vger.kernel.org>
-CC: <linux-renesas-soc@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, David Airlie <airlied@linux.ie>,
-        <dri-devel@lists.freedesktop.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-16-wsa+renesas@sang-engineering.com>
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Message-ID: <09116562-53e8-a6ca-42af-fcfd15f940ed@ti.com>
-Date: Wed, 23 May 2018 12:32:59 +0300
+        Thu, 24 May 2018 06:37:34 -0400
+Received: by mail-wm0-f65.google.com with SMTP id a67-v6so3684945wmf.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 24 May 2018 03:37:33 -0700 (PDT)
+Date: Thu, 24 May 2018 12:37:31 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 7/9] media: rcar-vin: Handle parallel subdev in
+ link_notify
+Message-ID: <20180524103731.GG31036@bigcity.dyn.berto.se>
+References: <1526654445-10702-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1526654445-10702-8-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-In-Reply-To: <20180419140641.27926-16-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1526654445-10702-8-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 19/04/18 17:05, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
+Hi Jacopo,
+
+Thanks for your patch.
+
+On 2018-05-18 16:40:43 +0200, Jacopo Mondi wrote:
+> Handle parallel subdevices in link_notify callback. If the notified link
+> involves a parallel subdevice, do not change routing of the VIN-CSI-2
+> devices and mark the VIN instance as using a parallel input. If the
+> CSI-2 link setup succeeds instead, mark the VIN instance as using CSI-2.
 > 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 > ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 36 +++++++++++++++++++++++++++--
+>  1 file changed, 34 insertions(+), 2 deletions(-)
 > 
-> Build tested only. buildbot is happy. Please apply individually.
-> 
->  drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c | 18 ++++++------------
->  1 file changed, 6 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c b/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-> index 428de90fced1..8f8573a00e07 100644
-> --- a/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-> +++ b/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-> @@ -412,8 +412,7 @@ static const struct backlight_ops dsicm_bl_ops = {
->  static ssize_t dsicm_num_errors_show(struct device *dev,
->  		struct device_attribute *attr, char *buf)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-> +	struct panel_drv_data *ddata = dev_get_drvdata(dev);
->  	struct omap_dss_device *in = ddata->in;
->  	u8 errors = 0;
->  	int r;
-> @@ -444,8 +443,7 @@ static ssize_t dsicm_num_errors_show(struct device *dev,
->  static ssize_t dsicm_hw_revision_show(struct device *dev,
->  		struct device_attribute *attr, char *buf)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-> +	struct panel_drv_data *ddata = dev_get_drvdata(dev);
->  	struct omap_dss_device *in = ddata->in;
->  	u8 id1, id2, id3;
->  	int r;
-> @@ -476,8 +474,7 @@ static ssize_t dsicm_store_ulps(struct device *dev,
->  		struct device_attribute *attr,
->  		const char *buf, size_t count)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-> +	struct panel_drv_data *ddata = dev_get_drvdata(dev);
->  	struct omap_dss_device *in = ddata->in;
->  	unsigned long t;
->  	int r;
-> @@ -511,8 +508,7 @@ static ssize_t dsicm_show_ulps(struct device *dev,
->  		struct device_attribute *attr,
->  		char *buf)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-> +	struct panel_drv_data *ddata = dev_get_drvdata(dev);
->  	unsigned int t;
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index d13bbcf..dcebb42 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -168,10 +168,37 @@ static int rvin_group_link_notify(struct media_link *link, u32 flags,
+>  	}
 >  
->  	mutex_lock(&ddata->lock);
-> @@ -526,8 +522,7 @@ static ssize_t dsicm_store_ulps_timeout(struct device *dev,
->  		struct device_attribute *attr,
->  		const char *buf, size_t count)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-> +	struct panel_drv_data *ddata = dev_get_drvdata(dev);
->  	struct omap_dss_device *in = ddata->in;
->  	unsigned long t;
->  	int r;
-> @@ -558,8 +553,7 @@ static ssize_t dsicm_show_ulps_timeout(struct device *dev,
->  		struct device_attribute *attr,
->  		char *buf)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-> +	struct panel_drv_data *ddata = dev_get_drvdata(dev);
->  	unsigned int t;
+>  	/* Add the new link to the existing mask and check if it works. */
+> -	csi_id = rvin_group_entity_to_csi_id(group, link->source->entity);
+>  	channel = rvin_group_csi_pad_to_channel(link->source->index);
+
+I think you should move the channel = ...; bellow the new if statement 
+the same way you do with mask_new.
+
+> -	mask_new = mask & rvin_group_get_mask(vin, csi_id, channel);
+> +	csi_id = rvin_group_entity_to_csi_id(group, link->source->entity);
+
+Missing new line.
+
+With these two nits fixed:
+
+Acked-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+
+> +	if (csi_id == -ENODEV) {
+> +		struct v4l2_subdev *sd;
+> +		unsigned int i;
+> +
+> +		/*
+> +		 * Make sure the source entity subdevice is registered as
+> +		 * a parallel input of one of the enabled VINs if it is not
+> +		 * one of the CSI-2 subdevices.
+> +		 *
+> +		 * No hardware configuration required for parallel inputs,
+> +		 * we can return here.
+> +		 */
+> +		sd = media_entity_to_v4l2_subdev(link->source->entity);
+> +		for (i = 0; i < RCAR_VIN_NUM; i++) {
+> +			if (group->vin[i] && group->vin[i]->parallel &&
+> +			    group->vin[i]->parallel->subdev == sd) {
+> +				group->vin[i]->is_csi = false;
+> +				ret = 0;
+> +				goto out;
+> +			}
+> +		}
+> +
+> +		vin_err(vin, "Subdevice %s not registered to any VIN\n",
+> +			link->source->entity->name);
+> +		ret = -ENODEV;
+> +		goto out;
+> +	}
 >  
->  	mutex_lock(&ddata->lock);
+> +	mask_new = mask & rvin_group_get_mask(vin, csi_id, channel);
+>  	vin_dbg(vin, "Try link change mask: 0x%x new: 0x%x\n", mask, mask_new);
+>  
+>  	if (!mask_new) {
+> @@ -181,6 +208,11 @@ static int rvin_group_link_notify(struct media_link *link, u32 flags,
+>  
+>  	/* New valid CHSEL found, set the new value. */
+>  	ret = rvin_set_channel_routing(group->vin[master_id], __ffs(mask_new));
+> +	if (ret)
+> +		goto out;
+> +
+> +	vin->is_csi = true;
+> +
+>  out:
+>  	mutex_unlock(&group->lock);
+>  
+> -- 
+> 2.7.4
 > 
-
-Thanks, I have picked this up.
-
- Tomi
 
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Regards,
+Niklas S�derlund
