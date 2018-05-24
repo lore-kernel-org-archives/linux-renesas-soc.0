@@ -1,81 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34806 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967592AbeEXPHy (ORCPT
+Received: from relay12.mail.gandi.net ([217.70.178.232]:54833 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161587AbeEXWCm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 May 2018 11:07:54 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 7/9] ARM: dts: gose: Drop MTD partitioning from DT
-Date: Thu, 24 May 2018 17:07:19 +0200
-Message-Id: <20180524150721.28964-7-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180524150721.28964-1-marek.vasut+renesas@gmail.com>
-References: <20180524150721.28964-1-marek.vasut+renesas@gmail.com>
+        Thu, 24 May 2018 18:02:42 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v4 8/9] media: rcar-vin: Rename _rcar_info to rcar_info
+Date: Fri, 25 May 2018 00:02:18 +0200
+Message-Id: <1527199339-7724-9-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1527199339-7724-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1527199339-7724-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Drop the MTD partitioning from DT, since it does not describe HW
-and to give way to a more flexible kernel command line partition
-passing.
+Remove leading underscore to align all rcar_group_route structure
+declarations.
 
-To retain the original partitioning, assure you have enabled
-CONFIG_MTD_CMDLINE_PARTS in your kernel config and add the
-following to your kernel command line:
-
-  mtdparts=spi0.0:256k(loader),4m(user),-(flash)
-
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-V2: Drop the @0 anchor from the commit message, use 4m
----
- arch/arm/boot/dts/r8a7793-gose.dts | 21 ---------------------
- 1 file changed, 21 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index aa209f6e5d71..b2dd54fbe40c 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -676,27 +676,6 @@
- 		spi-cpol;
- 		spi-cpha;
- 		m25p,fast-read;
--
--		partitions {
--			compatible = "fixed-partitions";
--			#address-cells = <1>;
--			#size-cells = <1>;
--
--			partition@0 {
--				label = "loader";
--				reg = <0x00000000 0x00040000>;
--				read-only;
--			};
--			partition@40000 {
--				label = "user";
--				reg = <0x00040000 0x00400000>;
--				read-only;
--			};
--			partition@440000 {
--				label = "flash";
--				reg = <0x00440000 0x03bc0000>;
--			};
--		};
- 	};
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 8edf896..30f6ea7 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -1019,7 +1019,7 @@ static const struct rvin_info rcar_info_r8a7796 = {
+ 	.routes = rcar_info_r8a7796_routes,
  };
  
+-static const struct rvin_group_route _rcar_info_r8a77970_routes[] = {
++static const struct rvin_group_route rcar_info_r8a77970_routes[] = {
+ 	{ .csi = RVIN_CSI40, .channel = 0, .vin = 0, .mask = BIT(0) | BIT(3) },
+ 	{ .csi = RVIN_CSI40, .channel = 0, .vin = 1, .mask = BIT(2) },
+ 	{ .csi = RVIN_CSI40, .channel = 1, .vin = 1, .mask = BIT(3) },
+@@ -1035,7 +1035,7 @@ static const struct rvin_info rcar_info_r8a77970 = {
+ 	.use_mc = true,
+ 	.max_width = 4096,
+ 	.max_height = 4096,
+-	.routes = _rcar_info_r8a77970_routes,
++	.routes = rcar_info_r8a77970_routes,
+ };
+ 
+ static const struct of_device_id rvin_of_id_table[] = {
 -- 
-2.16.2
+2.7.4
