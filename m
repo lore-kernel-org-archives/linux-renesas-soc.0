@@ -1,48 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay11.mail.gandi.net ([217.70.178.231]:54061 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936466AbeE2PGi (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34806 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967592AbeEXPHy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 May 2018 11:06:38 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        horms@verge.net.au, geert@glider.be
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        Thu, 24 May 2018 11:07:54 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: devicetree@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 4/8] dt-bindings: media: rcar-vin: Add 'data-enable-active'
-Date: Tue, 29 May 2018 17:05:55 +0200
-Message-Id: <1527606359-19261-5-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1527606359-19261-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1527606359-19261-1-git-send-email-jacopo+renesas@jmondi.org>
+Subject: [PATCH v2 7/9] ARM: dts: gose: Drop MTD partitioning from DT
+Date: Thu, 24 May 2018 17:07:19 +0200
+Message-Id: <20180524150721.28964-7-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180524150721.28964-1-marek.vasut+renesas@gmail.com>
+References: <20180524150721.28964-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe optional endpoint property 'data-enable-active' for R-Car VIN.
+Drop the MTD partitioning from DT, since it does not describe HW
+and to give way to a more flexible kernel command line partition
+passing.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To retain the original partitioning, assure you have enabled
+CONFIG_MTD_CMDLINE_PARTS in your kernel config and add the
+following to your kernel command line:
+
+  mtdparts=spi0.0:256k(loader),4m(user),-(flash)
+
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org
 ---
-v3:
-- new patch
+V2: Drop the @0 anchor from the commit message, use 4m
 ---
+ arch/arm/boot/dts/r8a7793-gose.dts | 21 ---------------------
+ 1 file changed, 21 deletions(-)
 
- Documentation/devicetree/bindings/media/rcar_vin.txt | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
-index 4d91a36..ff53226 100644
---- a/Documentation/devicetree/bindings/media/rcar_vin.txt
-+++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
-@@ -58,6 +58,8 @@ from local SoC CSI-2 receivers (port1) depending on SoC.
-       - Optional properties for endpoint nodes of port@0:
-         - hsync-active: see [1] for description. Default is active high.
-         - vsync-active: see [1] for description. Default is active high.
-+        - data-enable-active: polarity of CLKENB signal, see [1] for
-+          description. Default is active high.
-
-         If both HSYNC and VSYNC polarities are not specified, embedded
-         synchronization is selected.
---
-2.7.4
+diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+index aa209f6e5d71..b2dd54fbe40c 100644
+--- a/arch/arm/boot/dts/r8a7793-gose.dts
++++ b/arch/arm/boot/dts/r8a7793-gose.dts
+@@ -676,27 +676,6 @@
+ 		spi-cpol;
+ 		spi-cpha;
+ 		m25p,fast-read;
+-
+-		partitions {
+-			compatible = "fixed-partitions";
+-			#address-cells = <1>;
+-			#size-cells = <1>;
+-
+-			partition@0 {
+-				label = "loader";
+-				reg = <0x00000000 0x00040000>;
+-				read-only;
+-			};
+-			partition@40000 {
+-				label = "user";
+-				reg = <0x00040000 0x00400000>;
+-				read-only;
+-			};
+-			partition@440000 {
+-				label = "flash";
+-				reg = <0x00440000 0x03bc0000>;
+-			};
+-		};
+ 	};
+ };
+ 
+-- 
+2.16.2
