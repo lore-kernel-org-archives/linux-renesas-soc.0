@@ -1,95 +1,281 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:50504 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935616AbeEXHXe (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36987 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030845AbeEXKUl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 May 2018 03:23:34 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-pci@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
+        Thu, 24 May 2018 06:20:41 -0400
+Received: by mail-wm0-f66.google.com with SMTP id l1-v6so3687005wmb.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 24 May 2018 03:20:41 -0700 (PDT)
+Date: Thu, 24 May 2018 12:20:39 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/6] PCI: rcar: Add missing irq_dispose_mapping() into failpath
-Date: Thu, 24 May 2018 09:23:19 +0200
-Message-Id: <20180524072323.22115-2-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180524072323.22115-1-marek.vasut+renesas@gmail.com>
-References: <20180524072323.22115-1-marek.vasut+renesas@gmail.com>
+Subject: Re: [PATCH v3 4/9] media: rcar-vin: Cache the mbus configuration
+ flags
+Message-ID: <20180524102038.GD31036@bigcity.dyn.berto.se>
+References: <1526654445-10702-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1526654445-10702-5-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1526654445-10702-5-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The rcar_pcie_get_resources() is another misnomer with a side effect.
-The function does not only get resources, but also maps MSI IRQs via
-irq_of_parse_and_map(). In case anything fails afterward, the IRQ
-mapping must be disposed through irq_dispose_mapping() which is not
-done.
+Hi Jacopo,
 
-This patch handles irq_of_parse_and_map() failures in by disposing
-of the mapping in rcar_pcie_get_resources() as well as in probe.
+Thanks for your patch.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/pci/host/pcie-rcar.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+On 2018-05-18 16:40:40 +0200, Jacopo Mondi wrote:
+> Media bus configuration flags and media bus type were so far a property
+> of each VIN instance, as the subdevice they were connected to was
+> immutable during the whole system life time.
+> 
+> With the forth-coming introduction of parallel input devices support,
+> a VIN instance can have the subdevice it is connected to switched at
+> runtime, from a CSI-2 subdevice to a parallel one and viceversa, through
+> the modification of links between media entities in the media controller
+> graph. To avoid discarding the per-subdevice configuration flags retrieved by
+> v4l2_fwnode parsing facilities, cache them in the 'rvin_graph_entity'
+> member of each VIN instance, opportunely renamed to 'rvin_parallel_entity'.
+> 
+> Also modify the register configuration function to take mbus flags into
+> account when running on a bus type that supports them.
+> 
+> The media bus type currently in use will be updated in a follow-up patch
+> to the link state change notification function.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 23 ++++++++++-------------
+>  drivers/media/platform/rcar-vin/rcar-dma.c  | 24 +++++++++++++++++-------
+>  drivers/media/platform/rcar-vin/rcar-vin.h  | 22 ++++++++++++++++------
+>  3 files changed, 43 insertions(+), 26 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index c6e603f..0a35a98 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -524,30 +524,30 @@ static int rvin_parallel_parse_v4l2(struct device *dev,
+>  				    struct v4l2_async_subdev *asd)
+>  {
+>  	struct rvin_dev *vin = dev_get_drvdata(dev);
+> -	struct rvin_graph_entity *rvge =
+> -		container_of(asd, struct rvin_graph_entity, asd);
+> +	struct rvin_parallel_entity *rvpe =
+> +		container_of(asd, struct rvin_parallel_entity, asd);
+>  
+>  	if (vep->base.port || vep->base.id)
+>  		return -ENOTCONN;
+>  
+> -	vin->mbus_cfg.type = vep->bus_type;
+> +	vin->is_csi = false;
 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 0879880f7975..6bb1cdec26be 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -950,18 +950,25 @@ static int rcar_pcie_get_resources(struct rcar_pcie *pcie)
- 	i = irq_of_parse_and_map(dev->of_node, 0);
- 	if (!i) {
- 		dev_err(dev, "cannot get platform resources for msi interrupt\n");
--		return -ENOENT;
-+		err = -ENOENT;
-+		goto err_irq1;
- 	}
- 	pcie->msi.irq1 = i;
- 
- 	i = irq_of_parse_and_map(dev->of_node, 1);
- 	if (!i) {
- 		dev_err(dev, "cannot get platform resources for msi interrupt\n");
--		return -ENOENT;
-+		err = -ENOENT;
-+		goto err_irq2;
- 	}
- 	pcie->msi.irq2 = i;
- 
- 	return 0;
-+
-+err_irq2:
-+	irq_dispose_mapping(pcie->msi.irq1);
-+err_irq1:
-+	return err;
- }
- 
- static int rcar_pcie_inbound_ranges(struct rcar_pcie *pcie,
-@@ -1108,7 +1115,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- 	err = clk_prepare_enable(pcie->bus_clk);
- 	if (err) {
- 		dev_err(dev, "failed to enable bus clock: %d\n", err);
--		goto err_pm_put;
-+		goto err_unmap_msi_irqs;
- 	}
- 
- 	err = rcar_pcie_parse_map_dma_ranges(pcie, dev->of_node);
-@@ -1151,6 +1158,10 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- err_clk_disable:
- 	clk_disable_unprepare(pcie->bus_clk);
- 
-+err_unmap_msi_irqs:
-+	irq_dispose_mapping(pcie->msi.irq2);
-+	irq_dispose_mapping(pcie->msi.irq1);
-+
- err_pm_put:
- 	pm_runtime_put(dev);
- 
+No need to initialize is_csi here, the link_notify() callback needs to 
+be called before any streaming can happen and that will with your later 
+patches in this series take care of setting up this flag.
+
+> +	vin->parallel = rvpe;
+> +	vin->parallel->mbus_type = vep->bus_type;
+>  
+> -	switch (vin->mbus_cfg.type) {
+> +	switch (vin->parallel->mbus_type) {
+>  	case V4L2_MBUS_PARALLEL:
+>  		vin_dbg(vin, "Found PARALLEL media bus\n");
+> -		vin->mbus_cfg.flags = vep->bus.parallel.flags;
+> +		vin->parallel->mbus_flags = vep->bus.parallel.flags;
+>  		break;
+>  	case V4L2_MBUS_BT656:
+>  		vin_dbg(vin, "Found BT656 media bus\n");
+> -		vin->mbus_cfg.flags = 0;
+> +		vin->parallel->mbus_flags = 0;
+>  		break;
+>  	default:
+>  		vin_err(vin, "Unknown media bus type\n");
+>  		return -EINVAL;
+>  	}
+>  
+> -	vin->parallel = rvge;
+> -
+>  	return 0;
+>  }
+>  
+> @@ -557,7 +557,7 @@ static int rvin_parallel_graph_init(struct rvin_dev *vin)
+>  
+>  	ret = v4l2_async_notifier_parse_fwnode_endpoints(
+>  		vin->dev, &vin->notifier,
+> -		sizeof(struct rvin_graph_entity), rvin_parallel_parse_v4l2);
+> +		sizeof(struct rvin_parallel_entity), rvin_parallel_parse_v4l2);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -718,6 +718,7 @@ static int rvin_mc_parse_of_endpoint(struct device *dev,
+>  		return -ENOTCONN;
+>  	}
+>  
+> +	vin->is_csi = true;
+
+Same here, no need to set is_csi.
+
+>  	vin->group->csi[vep->base.id].fwnode = asd->match.fwnode;
+>  
+>  	vin_dbg(vin, "Add group OF device %pOF to slot %u\n",
+> @@ -783,10 +784,6 @@ static int rvin_mc_init(struct rvin_dev *vin)
+>  {
+>  	int ret;
+>  
+> -	/* All our sources are CSI-2 */
+> -	vin->mbus_cfg.type = V4L2_MBUS_CSI2;
+> -	vin->mbus_cfg.flags = 0;
+> -
+>  	vin->pad.flags = MEDIA_PAD_FL_SINK;
+>  	ret = media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
+>  	if (ret)
+> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+> index f1c3585..17f291f 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> @@ -659,8 +659,12 @@ static int rvin_setup(struct rvin_dev *vin)
+>  		break;
+>  	case MEDIA_BUS_FMT_UYVY8_2X8:
+>  		/* BT.656 8bit YCbCr422 or BT.601 8bit YCbCr422 */
+> -		vnmc |= vin->mbus_cfg.type == V4L2_MBUS_BT656 ?
+> -			VNMC_INF_YUV8_BT656 : VNMC_INF_YUV8_BT601;
+> +		if (!vin->is_csi &&
+> +		    vin->parallel->mbus_type == V4L2_MBUS_BT656)
+> +			vnmc |= VNMC_INF_YUV8_BT656;
+> +		else
+> +			vnmc |= VNMC_INF_YUV8_BT601;
+> +
+>  		input_is_yuv = true;
+>  		break;
+>  	case MEDIA_BUS_FMT_RGB888_1X24:
+> @@ -668,8 +672,12 @@ static int rvin_setup(struct rvin_dev *vin)
+>  		break;
+>  	case MEDIA_BUS_FMT_UYVY10_2X10:
+>  		/* BT.656 10bit YCbCr422 or BT.601 10bit YCbCr422 */
+> -		vnmc |= vin->mbus_cfg.type == V4L2_MBUS_BT656 ?
+> -			VNMC_INF_YUV10_BT656 : VNMC_INF_YUV10_BT601;
+> +		if (!vin->is_csi &&
+> +		    vin->parallel->mbus_type == V4L2_MBUS_BT656)
+> +			vnmc |= VNMC_INF_YUV10_BT656;
+> +		else
+> +			vnmc |= VNMC_INF_YUV10_BT601;
+> +
+>  		input_is_yuv = true;
+>  		break;
+>  	default:
+> @@ -683,11 +691,13 @@ static int rvin_setup(struct rvin_dev *vin)
+>  		dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
+>  
+>  	/* Hsync Signal Polarity Select */
+> -	if (!(vin->mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
+> +	if (!vin->is_csi &&
+> +	    !(vin->parallel->mbus_flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
+>  		dmr2 |= VNDMR2_HPS;
+>  
+>  	/* Vsync Signal Polarity Select */
+> -	if (!(vin->mbus_cfg.flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
+> +	if (!vin->is_csi &&
+> +	    !(vin->parallel->mbus_flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
+>  		dmr2 |= VNDMR2_VPS;
+
+Would it not make sens to have nested if-statements here?
+
+    if (!vin->is_csi) {
+        if (!(vin->parallel->mbus_flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
+            ...
+
+        ...
+    }
+
+>  
+>  	/*
+> @@ -734,7 +744,7 @@ static int rvin_setup(struct rvin_dev *vin)
+>  
+>  	if (vin->info->model == RCAR_GEN3) {
+>  		/* Select between CSI-2 and parallel input */
+> -		if (vin->mbus_cfg.type == V4L2_MBUS_CSI2)
+> +		if (vin->is_csi)
+>  			vnmc &= ~VNMC_DPINE;
+>  		else
+>  			vnmc |= VNMC_DPINE;
+> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+> index 7d0ffe08..c5f7fd1 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
+> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+> @@ -73,16 +73,22 @@ struct rvin_video_format {
+>  };
+>  
+>  /**
+> - * struct rvin_graph_entity - Video endpoint from async framework
+> + * struct rvin_parallel_entity - Parallel video input endpoint descriptor
+>   * @asd:	sub-device descriptor for async framework
+>   * @subdev:	subdevice matched using async framework
+> + * @mbus_type:	media bus type
+> + * @mbus_flags:	media bus configuration flags
+>   * @source_pad:	source pad of remote subdevice
+>   * @sink_pad:	sink pad of remote subdevice
+> + *
+>   */
+> -struct rvin_graph_entity {
+> +struct rvin_parallel_entity {
+>  	struct v4l2_async_subdev asd;
+>  	struct v4l2_subdev *subdev;
+>  
+> +	enum v4l2_mbus_type mbus_type;
+> +	unsigned int mbus_flags;
+> +
+>  	unsigned int source_pad;
+>  	unsigned int sink_pad;
+>  };
+> @@ -146,7 +152,8 @@ struct rvin_info {
+>   * @v4l2_dev:		V4L2 device
+>   * @ctrl_handler:	V4L2 control handler
+>   * @notifier:		V4L2 asynchronous subdevs notifier
+> - * @parallel:		entity in the DT for local parallel subdevice
+> + *
+> + * @parallel:		parallel input subdevice descriptor
+>   *
+>   * @group:		Gen3 CSI group
+>   * @id:			Gen3 group id for this VIN
+> @@ -164,7 +171,8 @@ struct rvin_info {
+>   * @sequence:		V4L2 buffers sequence number
+>   * @state:		keeps track of operation state
+>   *
+> - * @mbus_cfg:		media bus configuration from DT
+> + * @is_csi:		flag to mark the VIN as using a CSI-2 subdevice
+> + *
+>   * @mbus_code:		media bus format code
+>   * @format:		active V4L2 pixel format
+>   *
+> @@ -182,7 +190,8 @@ struct rvin_dev {
+>  	struct v4l2_device v4l2_dev;
+>  	struct v4l2_ctrl_handler ctrl_handler;
+>  	struct v4l2_async_notifier notifier;
+> -	struct rvin_graph_entity *parallel;
+> +
+> +	struct rvin_parallel_entity *parallel;
+>  
+>  	struct rvin_group *group;
+>  	unsigned int id;
+> @@ -199,7 +208,8 @@ struct rvin_dev {
+>  	unsigned int sequence;
+>  	enum rvin_dma_state state;
+>  
+> -	struct v4l2_mbus_config mbus_cfg;
+> +	bool is_csi;
+> +
+>  	u32 mbus_code;
+>  	struct v4l2_pix_format format;
+>  
+> -- 
+> 2.7.4
+> 
+
 -- 
-2.16.2
+Regards,
+Niklas S�derlund
