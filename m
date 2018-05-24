@@ -1,213 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:35025 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750793AbeE3ErE (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:44572 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032525AbeEXKrf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 May 2018 00:47:04 -0400
-Received: by mail-pf0-f194.google.com with SMTP id x9-v6so8370486pfm.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 29 May 2018 21:47:04 -0700 (PDT)
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: arm@kernel.org, biju.das@bp.renesas.com,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        ionela.voinescu@arm.com,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        chris.redpath@arm.com, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V2 13/15] arm: dts: r8a77xx: Add missing OPP properties for CPUs
-Date: Wed, 30 May 2018 10:16:58 +0530
-Message-Id: <c6254ebb1f177468db6b8ac560ffb5a4a0b864f0.1527655562.git.viresh.kumar@linaro.org>
-In-Reply-To: <5821a6dbe413b5a217ca1e24ddf8ebfa63ba6ef0.1527244201.git.viresh.kumar@linaro.org>
-References: <5821a6dbe413b5a217ca1e24ddf8ebfa63ba6ef0.1527244201.git.viresh.kumar@linaro.org>
+        Thu, 24 May 2018 06:47:35 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v4 02/11] media: vsp1: Remove packed attributes from aligned structures
+Date: Thu, 24 May 2018 13:47:30 +0300
+Message-ID: <1879534.EAt6bC61BJ@avalon>
+In-Reply-To: <d8f8e86a4e89a48150fae5cc4ee4bb977a13c196.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.bd2eb66d11f8094114941107dbc78dc02c9c7fdd.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com> <d8f8e86a4e89a48150fae5cc4ee4bb977a13c196.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The OPP properties, like "operating-points", should either be present
-for all the CPUs of a cluster or none. If these are present only for a
-subset of CPUs of a cluster then things will start falling apart as soon
-as the CPUs are brought online in a different order. For example, this
-will happen because the operating system looks for such properties in
-the CPU node it is trying to bring up, so that it can create an OPP
-table.
+Hi Kieran,
 
-Add such missing properties.
+Thank you for the patch.
 
-Fix other missing properties (like, clock latency, voltage tolerance,
-etc) as well to make it all work.
+On Thursday, 3 May 2018 16:36:13 EEST Kieran Bingham wrote:
+> The use of the packed attribute can cause a performance penalty for
+> all accesses to the struct members, as the compiler will assume that the
+> structure has the potential to have an unaligned base.
+> 
+> These structures are all correctly aligned and contain no holes, thus
+> the attribute is redundant and negatively impacts performance, so we
+> remove the attributes entirely.
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- arch/arm/boot/dts/r8a7743.dtsi |  9 +++++++++
- arch/arm/boot/dts/r8a7790.dtsi | 34 ++++++++++++++++++++++++++++++++--
- arch/arm/boot/dts/r8a7791.dtsi | 14 ++++++++++++--
- arch/arm/boot/dts/r8a7793.dtsi | 15 +++++++++++++--
- 4 files changed, 66 insertions(+), 6 deletions(-)
+With gcc 6.4.0 this patch makes no difference on the generated object. Is it 
+worth it ?
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 142949d7066f..e4fb31c4f0ee 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -98,8 +98,17 @@
- 			reg = <1>;
- 			clock-frequency = <1500000000>;
- 			clocks = <&cpg CPG_CORE R8A7743_CLK_Z>;
-+			clock-latency = <300000>; /* 300 us */
- 			power-domains = <&sysc R8A7743_PD_CA15_CPU1>;
- 			next-level-cache = <&L2_CA15>;
-+
-+			/* kHz - uV - OPPs unknown yet */
-+			operating-points = <1500000 1000000>,
-+					   <1312500 1000000>,
-+					   <1125000 1000000>,
-+					   < 937500 1000000>,
-+					   < 750000 1000000>,
-+					   < 375000 1000000>;
- 		};
- 
- 		L2_CA15: cache-controller-0 {
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 4d06b154bd7e..c4324b1a2ec4 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -79,12 +79,12 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <0>;
- 			clock-frequency = <1300000000>;
--			voltage-tolerance = <1>; /* 1% */
- 			clocks = <&cpg CPG_CORE R8A7790_CLK_Z>;
--			clock-latency = <300000>; /* 300 us */
- 			power-domains = <&sysc R8A7790_PD_CA15_CPU0>;
- 			next-level-cache = <&L2_CA15>;
- 			capacity-dmips-mhz = <1024>;
-+			voltage-tolerance = <1>; /* 1% */
-+			clock-latency = <300000>; /* 300 us */
- 
- 			/* kHz - uV - OPPs unknown yet */
- 			operating-points = <1400000 1000000>,
-@@ -104,6 +104,16 @@
- 			power-domains = <&sysc R8A7790_PD_CA15_CPU1>;
- 			next-level-cache = <&L2_CA15>;
- 			capacity-dmips-mhz = <1024>;
-+			voltage-tolerance = <1>; /* 1% */
-+			clock-latency = <300000>; /* 300 us */
-+
-+			/* kHz - uV - OPPs unknown yet */
-+			operating-points = <1400000 1000000>,
-+					   <1225000 1000000>,
-+					   <1050000 1000000>,
-+					   < 875000 1000000>,
-+					   < 700000 1000000>,
-+					   < 350000 1000000>;
- 		};
- 
- 		cpu2: cpu@2 {
-@@ -115,6 +125,16 @@
- 			power-domains = <&sysc R8A7790_PD_CA15_CPU2>;
- 			next-level-cache = <&L2_CA15>;
- 			capacity-dmips-mhz = <1024>;
-+			voltage-tolerance = <1>; /* 1% */
-+			clock-latency = <300000>; /* 300 us */
-+
-+			/* kHz - uV - OPPs unknown yet */
-+			operating-points = <1400000 1000000>,
-+					   <1225000 1000000>,
-+					   <1050000 1000000>,
-+					   < 875000 1000000>,
-+					   < 700000 1000000>,
-+					   < 350000 1000000>;
- 		};
- 
- 		cpu3: cpu@3 {
-@@ -126,6 +146,16 @@
- 			power-domains = <&sysc R8A7790_PD_CA15_CPU3>;
- 			next-level-cache = <&L2_CA15>;
- 			capacity-dmips-mhz = <1024>;
-+			voltage-tolerance = <1>; /* 1% */
-+			clock-latency = <300000>; /* 300 us */
-+
-+			/* kHz - uV - OPPs unknown yet */
-+			operating-points = <1400000 1000000>,
-+					   <1225000 1000000>,
-+					   <1050000 1000000>,
-+					   < 875000 1000000>,
-+					   < 700000 1000000>,
-+					   < 350000 1000000>;
- 		};
- 
- 		cpu4: cpu@100 {
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 6e1dd7ad7bd6..d1d726a1364a 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -78,11 +78,11 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <0>;
- 			clock-frequency = <1500000000>;
--			voltage-tolerance = <1>; /* 1% */
- 			clocks = <&cpg CPG_CORE R8A7791_CLK_Z>;
--			clock-latency = <300000>; /* 300 us */
- 			power-domains = <&sysc R8A7791_PD_CA15_CPU0>;
- 			next-level-cache = <&L2_CA15>;
-+			voltage-tolerance = <1>; /* 1% */
-+			clock-latency = <300000>; /* 300 us */
- 
- 			/* kHz - uV - OPPs unknown yet */
- 			operating-points = <1500000 1000000>,
-@@ -101,6 +101,16 @@
- 			clocks = <&cpg CPG_CORE R8A7791_CLK_Z>;
- 			power-domains = <&sysc R8A7791_PD_CA15_CPU1>;
- 			next-level-cache = <&L2_CA15>;
-+			voltage-tolerance = <1>; /* 1% */
-+			clock-latency = <300000>; /* 300 us */
-+
-+			/* kHz - uV - OPPs unknown yet */
-+			operating-points = <1500000 1000000>,
-+					   <1312500 1000000>,
-+					   <1125000 1000000>,
-+					   < 937500 1000000>,
-+					   < 750000 1000000>,
-+					   < 375000 1000000>;
- 		};
- 
- 		L2_CA15: cache-controller-0 {
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 4abecfc0ca98..1e6439b85a6b 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -70,10 +70,10 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <0>;
- 			clock-frequency = <1500000000>;
--			voltage-tolerance = <1>; /* 1% */
- 			clocks = <&cpg CPG_CORE R8A7793_CLK_Z>;
--			clock-latency = <300000>; /* 300 us */
- 			power-domains = <&sysc R8A7793_PD_CA15_CPU0>;
-+			voltage-tolerance = <1>; /* 1% */
-+			clock-latency = <300000>; /* 300 us */
- 
- 			/* kHz - uV - OPPs unknown yet */
- 			operating-points = <1500000 1000000>,
-@@ -92,6 +92,17 @@
- 			clock-frequency = <1500000000>;
- 			clocks = <&cpg CPG_CORE R8A7793_CLK_Z>;
- 			power-domains = <&sysc R8A7793_PD_CA15_CPU1>;
-+			voltage-tolerance = <1>; /* 1% */
-+			clock-latency = <300000>; /* 300 us */
-+
-+			/* kHz - uV - OPPs unknown yet */
-+			operating-points = <1500000 1000000>,
-+					   <1312500 1000000>,
-+					   <1125000 1000000>,
-+					   < 937500 1000000>,
-+					   < 750000 1000000>,
-+					   < 375000 1000000>;
-+			next-level-cache = <&L2_CA15>;
- 		};
- 
- 		L2_CA15: cache-controller-0 {
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+You forget to pick Geert's review tag.
+
+> ---
+> v2
+>  - Remove attributes entirely
+> ---
+>  drivers/media/platform/vsp1/vsp1_dl.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c
+> b/drivers/media/platform/vsp1/vsp1_dl.c index c7fa1cb088cd..f4cede9b9b43
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_dl.c
+> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
+> @@ -25,19 +25,19 @@
+>  struct vsp1_dl_header_list {
+>  	u32 num_bytes;
+>  	u32 addr;
+> -} __attribute__((__packed__));
+> +};
+> 
+>  struct vsp1_dl_header {
+>  	u32 num_lists;
+>  	struct vsp1_dl_header_list lists[8];
+>  	u32 next_header;
+>  	u32 flags;
+> -} __attribute__((__packed__));
+> +};
+> 
+>  struct vsp1_dl_entry {
+>  	u32 addr;
+>  	u32 data;
+> -} __attribute__((__packed__));
+> +};
+> 
+>  /**
+>   * struct vsp1_dl_body - Display list body
+
 -- 
-2.15.0.194.g9af6a3dea062
+Regards,
+
+Laurent Pinchart
