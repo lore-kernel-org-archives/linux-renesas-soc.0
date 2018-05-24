@@ -1,57 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751815AbeERLTN (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:34025 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755019AbeEXHFg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:19:13 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 26/69] ARM: dts: r8a7791: Add watchdog support to SoC dtsi
-Date: Fri, 18 May 2018 13:16:59 +0200
-Message-Id: <6912394d66471296d4cd16e41e70f4758827a3e6.1526641667.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
-References: <cover.1526641667.git.horms+renesas@verge.net.au>
+        Thu, 24 May 2018 03:05:36 -0400
+Received: by mail-io0-f196.google.com with SMTP id p124-v6so1075794iod.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 24 May 2018 00:05:36 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1527080192-30230-1-git-send-email-geert+renesas@glider.be>
+References: <1527080192-30230-1-git-send-email-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 24 May 2018 09:05:35 +0200
+Message-ID: <CACRpkdYkm2xzA+xUeFXm-uEFG4=xm6ZOhcG4mraXpPCj5nA3WA@mail.gmail.com>
+Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.18 (take two)
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+On Wed, May 23, 2018 at 2:56 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-This commit adds watchdog support to the r8a7791 dtsi.
+>         Hi Linus,
+>
+> The following changes since commit 73dacc3403436fc246258c0933e35b6e809640ac:
+>
+>   pinctrl: sh-pfc: Add r8a77470 PFC support (2018-05-16 13:32:15 +0200)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.18-tag2
+>
+> for you to fetch changes up to db701f4bea09a0f9925e262753444e848c33af89:
+>
+>   pinctrl: sh-pfc: rcar-gen3: Fix grammar in static pin comments (2018-05-23 14:43:49 +0200)
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7791.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Pulled into my "devel" branch for v4.18, thanks!
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 8b05f59738c3..570ca12422c5 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -142,6 +142,16 @@
- 		#size-cells = <2>;
- 		ranges;
- 
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a7791-wdt",
-+				     "renesas,rcar-gen2-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
-+		};
-+
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a7791",
- 				     "renesas,rcar-gen2-gpio";
--- 
-2.11.0
+Yours,
+Linus Walleij
