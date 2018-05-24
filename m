@@ -1,48 +1,102 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56053 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753994AbeE1Iv1 (ORCPT
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:37952 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S970452AbeEXOgf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 May 2018 04:51:27 -0400
-Date: Mon, 28 May 2018 10:51:23 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-pci@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Thu, 24 May 2018 10:36:35 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-pci@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa@the-dreams.de>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v4 2/6] PCI: rcar: Add missing irq_dispose_mapping() into
- failpath
-Message-ID: <20180528085122.oufttjzjk6yqe6ts@verge.net.au>
+Subject: [PATCH v4 2/6] PCI: rcar: Add missing irq_dispose_mapping() into failpath
+Date: Thu, 24 May 2018 16:36:20 +0200
+Message-Id: <20180524143624.26718-3-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180524143624.26718-1-marek.vasut+renesas@gmail.com>
 References: <20180524143624.26718-1-marek.vasut+renesas@gmail.com>
- <20180524143624.26718-3-marek.vasut+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180524143624.26718-3-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, May 24, 2018 at 04:36:20PM +0200, Marek Vasut wrote:
-> The rcar_pcie_get_resources() is another misnomer with a side effect.
-> The function does not only get resources, but also maps MSI IRQs via
-> irq_of_parse_and_map(). In case anything fails afterward, the IRQ
-> mapping must be disposed through irq_dispose_mapping() which is not
-> done.
-> 
-> This patch handles irq_of_parse_and_map() failures in by disposing
-> of the mapping in rcar_pcie_get_resources() as well as in probe.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Cc: Phil Edworthy <phil.edworthy@renesas.com>
-> Cc: Simon Horman <horms+renesas@verge.net.au>
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Cc: linux-renesas-soc@vger.kernel.org
+The rcar_pcie_get_resources() is another misnomer with a side effect.
+The function does not only get resources, but also maps MSI IRQs via
+irq_of_parse_and_map(). In case anything fails afterward, the IRQ
+mapping must be disposed through irq_dispose_mapping() which is not
+done.
 
+This patch handles irq_of_parse_and_map() failures in by disposing
+of the mapping in rcar_pcie_get_resources() as well as in probe.
 
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org
+---
+V2: No change
+V3: No change
+V4: Rebase on top of Lorenzo's pci/rcar, fix up the rebase breakage
+    induced by patches therein
+---
+ drivers/pci/host/pcie-rcar.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+index 0879880f7975..6bb1cdec26be 100644
+--- a/drivers/pci/host/pcie-rcar.c
++++ b/drivers/pci/host/pcie-rcar.c
+@@ -950,18 +950,25 @@ static int rcar_pcie_get_resources(struct rcar_pcie *pcie)
+ 	i = irq_of_parse_and_map(dev->of_node, 0);
+ 	if (!i) {
+ 		dev_err(dev, "cannot get platform resources for msi interrupt\n");
+-		return -ENOENT;
++		err = -ENOENT;
++		goto err_irq1;
+ 	}
+ 	pcie->msi.irq1 = i;
+ 
+ 	i = irq_of_parse_and_map(dev->of_node, 1);
+ 	if (!i) {
+ 		dev_err(dev, "cannot get platform resources for msi interrupt\n");
+-		return -ENOENT;
++		err = -ENOENT;
++		goto err_irq2;
+ 	}
+ 	pcie->msi.irq2 = i;
+ 
+ 	return 0;
++
++err_irq2:
++	irq_dispose_mapping(pcie->msi.irq1);
++err_irq1:
++	return err;
+ }
+ 
+ static int rcar_pcie_inbound_ranges(struct rcar_pcie *pcie,
+@@ -1108,7 +1115,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+ 	err = clk_prepare_enable(pcie->bus_clk);
+ 	if (err) {
+ 		dev_err(dev, "failed to enable bus clock: %d\n", err);
+-		goto err_pm_put;
++		goto err_unmap_msi_irqs;
+ 	}
+ 
+ 	err = rcar_pcie_parse_map_dma_ranges(pcie, dev->of_node);
+@@ -1151,6 +1158,10 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+ err_clk_disable:
+ 	clk_disable_unprepare(pcie->bus_clk);
+ 
++err_unmap_msi_irqs:
++	irq_dispose_mapping(pcie->msi.irq2);
++	irq_dispose_mapping(pcie->msi.irq1);
++
+ err_pm_put:
+ 	pm_runtime_put(dev);
+ 
+-- 
+2.16.2
