@@ -1,47 +1,51 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751569AbeERLSN (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:18:13 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/6] dt-bindings: arm: Document R-Car E3 SoC DT bindings
-Date: Fri, 18 May 2018 13:16:44 +0200
-Message-Id: <6fdc4f90b4950a7df1d314bdc53e25c1c4e70dc9.1526549153.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526549153.git.horms+renesas@verge.net.au>
-References: <cover.1526549153.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Russell King <linux@armlinux.org.uk>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Carlo Caione <carlo@endlessm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Frank Rowand <frank.rowand@sony.com>,
+        Juri Lelli <juri.lelli@arm.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 3/3] ARM: dts: Renesas R9A06G032 SMP enable method
+Date: Thu, 24 May 2018 11:39:51 +0100
+Message-Id: <1527158396-22350-4-git-send-email-michel.pollet@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Add a special enable method for the second CA7 of the R9A06G032
+as well as the default value for the "cpu-release-addr" property.
 
-This patch adds device tree bindings documentation for Renesas R-Car
-E3 (r8a77990).
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ arch/arm/boot/dts/r9a06g032.dtsi | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 29093ba6c5d0..e1a24708a284 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -45,6 +45,8 @@ SoCs:
-     compatible = "renesas,r8a77970"
-   - R-Car V3H (R8A77980)
-     compatible = "renesas,r8a77980"
-+  - R-Car E3 (R8A77990)
-+    compatible = "renesas,r8a77990"
-   - R-Car D3 (R8A77995)
-     compatible = "renesas,r8a77995"
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+index 9534f1b..d7b5414 100644
+--- a/arch/arm/boot/dts/r9a06g032.dtsi
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -30,6 +30,8 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <1>;
+ 			clocks = <&sysctrl R9A06G032_DIV_CA7>;
++			enable-method = "renesas,r9a06g032-smp";
++			cpu-release-addr = <0x4000c204>;
+ 		};
+ 	};
  
 -- 
-2.11.0
+2.7.4
+
