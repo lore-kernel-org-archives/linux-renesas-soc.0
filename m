@@ -1,50 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750888AbeERLRk (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:44430 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030464AbeEXKYh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:17:40 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 088/102] arm64: dts: renesas: r8a77970: disable EtherAVB
-Date: Fri, 18 May 2018 13:15:50 +0200
-Message-Id: <9223eef03f2659bd9650c2bc4364b1748e62eade.1526637994.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
-References: <cover.1526637994.git.horms+renesas@verge.net.au>
+        Thu, 24 May 2018 06:24:37 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v4 01/11] media: vsp1: drm: Fix minor grammar error
+Date: Thu, 24 May 2018 13:24:33 +0300
+Message-ID: <18402905.oJTJa3tjgA@avalon>
+In-Reply-To: <7ad68ea5ac48bbf51e30205c05b3fd4167f7afc5.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.bd2eb66d11f8094114941107dbc78dc02c9c7fdd.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com> <7ad68ea5ac48bbf51e30205c05b3fd4167f7afc5.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hi Kieran,
 
-When adding the R8A77970 EtherAVB device I failed to notice that it does
-not have the usual "status" property disabling the described devices in
-anticipation that the board device trees enable the devices according to
-their needs. This causes the EtherAVB driver to successfully probe despite
-e.g. the needed pins not having been configured -- luckily, "eth<n>" device
-can't be opened anyway...
+Thank you for the patch.
 
-Fixes: bea2ab136eaa ("arm64: dts: renesas: r8a77970: add EtherAVB support")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+On Thursday, 3 May 2018 16:36:12 EEST Kieran Bingham wrote:
+> The pixel format is 'unsupported'. Fix the small debug message which
+> incorrectly declares this.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index 50046405d348..c8464d1ef1b2 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -473,6 +473,7 @@
- 			iommus = <&ipmmu_rt 3>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-+			status = "disabled";
- 		};
- 
- 		scif0: serial@e6e60000 {
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/media/platform/vsp1/vsp1_drm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_drm.c
+> b/drivers/media/platform/vsp1/vsp1_drm.c index ef0148082bf7..2c3db8b8adce
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_drm.c
+> +++ b/drivers/media/platform/vsp1/vsp1_drm.c
+> @@ -806,7 +806,7 @@ int vsp1_du_atomic_update(struct device *dev, unsigned
+> int pipe_index, */
+>  	fmtinfo = vsp1_get_format_info(vsp1, cfg->pixelformat);
+>  	if (!fmtinfo) {
+> -		dev_dbg(vsp1->dev, "Unsupport pixel format %08x for RPF\n",
+> +		dev_dbg(vsp1->dev, "Unsupported pixel format %08x for RPF\n",
+>  			cfg->pixelformat);
+>  		return -EINVAL;
+>  	}
+
+
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
