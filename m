@@ -1,39 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35315 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933885AbeE1UKz (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:44606 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030469AbeEXKvJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 May 2018 16:10:55 -0400
-Received: by mail-wm0-f65.google.com with SMTP id o78-v6so34853429wmg.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 28 May 2018 13:10:55 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v3 0/2] Add R8A77980/Condor I2C support
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Message-ID: <e9c94553-be9d-0eec-a1ee-1713bb97fbab@cogentembedded.com>
-Date: Mon, 28 May 2018 23:10:52 +0300
+        Thu, 24 May 2018 06:51:09 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v4 03/11] media: vsp1: Rename dl_child to dl_next
+Date: Thu, 24 May 2018 13:51:05 +0300
+Message-ID: <1629785.SXvnFGcEuQ@avalon>
+In-Reply-To: <6de8b0a020738df7775fdcae22adccc0e97d8a96.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.bd2eb66d11f8094114941107dbc78dc02c9c7fdd.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com> <6de8b0a020738df7775fdcae22adccc0e97d8a96.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+Hi Kieran,
 
-Here's the set of 2 patches against Simon Horman's 'renesas.git' repo's
-'renesas-devel-20180528-v4.17-rc7' tag. We're adding the R8A77980 I2C nodes
-and then describing 2 PCA9654 I/O expanders connected to the I2C0 bus on
-the Condor board.
+Thank you for the patch.
 
-[1/2] arm64: dts: renesas: r8a77980: add I2C support
-[2/2] arm64: dts: renesas: condor: add I2C0 support
+On Thursday, 3 May 2018 16:36:14 EEST Kieran Bingham wrote:
+> Both vsp1_dl_list_commit() and __vsp1_dl_list_put() walk the display
+> list chain referencing the nodes as children, when in reality they are
+> siblings.
+> 
+> Update the terminology to 'dl_next' to be consistent with the
+> vsp1_video_pipeline_run() usage.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-WBR, Sergei
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/media/platform/vsp1/vsp1_dl.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c
+> b/drivers/media/platform/vsp1/vsp1_dl.c index f4cede9b9b43..ec6fc21fabe0
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_dl.c
+> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
+> @@ -398,7 +398,7 @@ struct vsp1_dl_list *vsp1_dl_list_get(struct
+> vsp1_dl_manager *dlm) /* This function must be called with the display list
+> manager lock held.*/ static void __vsp1_dl_list_put(struct vsp1_dl_list
+> *dl)
+>  {
+> -	struct vsp1_dl_list *dl_child;
+> +	struct vsp1_dl_list *dl_next;
+> 
+>  	if (!dl)
+>  		return;
+> @@ -408,8 +408,8 @@ static void __vsp1_dl_list_put(struct vsp1_dl_list *dl)
+>  	 * hardware operation.
+>  	 */
+>  	if (dl->has_chain) {
+> -		list_for_each_entry(dl_child, &dl->chain, chain)
+> -			__vsp1_dl_list_put(dl_child);
+> +		list_for_each_entry(dl_next, &dl->chain, chain)
+> +			__vsp1_dl_list_put(dl_next);
+>  	}
+> 
+>  	dl->has_chain = false;
+> @@ -673,17 +673,17 @@ static void vsp1_dl_list_commit_singleshot(struct
+> vsp1_dl_list *dl) void vsp1_dl_list_commit(struct vsp1_dl_list *dl, bool
+> internal)
+>  {
+>  	struct vsp1_dl_manager *dlm = dl->dlm;
+> -	struct vsp1_dl_list *dl_child;
+> +	struct vsp1_dl_list *dl_next;
+>  	unsigned long flags;
+> 
+>  	if (dlm->mode == VSP1_DL_MODE_HEADER) {
+>  		/* Fill the header for the head and chained display lists. */
+>  		vsp1_dl_list_fill_header(dl, list_empty(&dl->chain));
+> 
+> -		list_for_each_entry(dl_child, &dl->chain, chain) {
+> -			bool last = list_is_last(&dl_child->chain, &dl->chain);
+> +		list_for_each_entry(dl_next, &dl->chain, chain) {
+> +			bool last = list_is_last(&dl_next->chain, &dl->chain);
+> 
+> -			vsp1_dl_list_fill_header(dl_child, last);
+> +			vsp1_dl_list_fill_header(dl_next, last);
+>  		}
+>  	}
+
+
+-- 
+Regards,
+
+Laurent Pinchart
