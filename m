@@ -1,55 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750888AbeERLQs (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:50436 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968494AbeEXKiz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:16:48 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 042/102] arm64: dts: renesas: r8a77980: add MMC support
-Date: Fri, 18 May 2018 13:15:04 +0200
-Message-Id: <63eb8ee5333657677789ba3454dd5b86fc53311b.1526637994.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
-References: <cover.1526637994.git.horms+renesas@verge.net.au>
+        Thu, 24 May 2018 06:38:55 -0400
+Received: by mail-wm0-f66.google.com with SMTP id t11-v6so3744203wmt.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 24 May 2018 03:38:55 -0700 (PDT)
+Date: Thu, 24 May 2018 12:38:53 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 8/9] media: rcar-vin: Rename _rcar_info to rcar_info
+Message-ID: <20180524103853.GH31036@bigcity.dyn.berto.se>
+References: <1526654445-10702-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1526654445-10702-9-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1526654445-10702-9-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hi Jacopo,
 
-Define the generic R8A77980 part of the MMC0 (SDHI2) device node.
+Thanks for your work.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77980.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+On 2018-05-18 16:40:44 +0200, Jacopo Mondi wrote:
+> Remove trailing underscore to align all rcar_group_route structure
+> declarations.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-index 08c6708eb9dd..d27b80bcdbb4 100644
---- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -353,6 +353,18 @@
- 			dma-channels = <16>;
- 		};
- 
-+		mmc0: mmc@ee140000 {
-+			compatible = "renesas,sdhi-r8a77980",
-+				     "renesas,rcar-gen3-sdhi";
-+			reg = <0 0xee140000 0 0x2000>;
-+			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 314>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 314>;
-+			max-frequency = <200000000>;
-+			status = "disabled";
-+		};
-+
- 		gic: interrupt-controller@f1010000 {
- 			compatible = "arm,gic-400";
- 			#interrupt-cells = <3>;
+With Sergei's comment addressed:
+
+Acked-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index dcebb42..b740f41 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -1060,7 +1060,7 @@ static const struct rvin_info rcar_info_r8a7796 = {
+>  	.routes = rcar_info_r8a7796_routes,
+>  };
+>  
+> -static const struct rvin_group_route _rcar_info_r8a77970_routes[] = {
+> +static const struct rvin_group_route rcar_info_r8a77970_routes[] = {
+>  	{ .csi = RVIN_CSI40, .channel = 0, .vin = 0, .mask = BIT(0) | BIT(3) },
+>  	{ .csi = RVIN_CSI40, .channel = 0, .vin = 1, .mask = BIT(2) },
+>  	{ .csi = RVIN_CSI40, .channel = 1, .vin = 1, .mask = BIT(3) },
+> @@ -1076,7 +1076,7 @@ static const struct rvin_info rcar_info_r8a77970 = {
+>  	.use_mc = true,
+>  	.max_width = 4096,
+>  	.max_height = 4096,
+> -	.routes = _rcar_info_r8a77970_routes,
+> +	.routes = rcar_info_r8a77970_routes,
+>  };
+>  
+>  static const struct of_device_id rvin_of_id_table[] = {
+> -- 
+> 2.7.4
+> 
+
 -- 
-2.11.0
+Regards,
+Niklas S�derlund
