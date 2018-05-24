@@ -1,79 +1,128 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:46177 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964909AbeEYJ1s (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 25 May 2018 05:27:48 -0400
-MIME-Version: 1.0
-In-Reply-To: <1527154169-32380-4-git-send-email-michel.pollet@bp.renesas.com>
-References: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com> <1527154169-32380-4-git-send-email-michel.pollet@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 25 May 2018 11:27:46 +0200
-Message-ID: <CAMuHMdW5VvZ-wbO7TuZC2z+KFPLq_PhBGe3WbAeES-nezb7tmQ@mail.gmail.com>
-Subject: Re: [PATCH v7 3/5] ARM: dts: Renesas R9A06G032 base device tree file
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
         Michel Pollet <buserror+upstream@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v7 3/5] ARM: dts: Renesas R9A06G032 base device tree file
+Date: Thu, 24 May 2018 10:28:41 +0100
+Message-Id: <1527154169-32380-4-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Michel,
+This adds the Renesas R9A06G032 bare bone support.
 
-On Thu, May 24, 2018 at 11:28 AM, Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> This adds the Renesas R9A06G032 bare bone support.
->
-> This currently only handles generic parts (gic, architected timer)
-> and a UART.
->
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+This currently only handles generic parts (gic, architected timer)
+and a UART.
 
-Thanks for your patch!
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+---
+ arch/arm/boot/dts/r9a06g032.dtsi | 86 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 86 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
 
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
-
-> +       soc {
-> +               compatible = "simple-bus";
-> +               #address-cells = <1>;
-> +               #size-cells = <1>;
-> +               interrupt-parent = <&gic>;
-> +               ranges;
-> +
-> +               sysctrl: sysctrl@4000c000 {
-
-system-controller@
-
-> +                       compatible = "renesas,r9a06g032-sysctrl";
-> +                       reg = <0x4000c000 0x1000>;
-> +                       status = "okay";
-> +                       #clock-cells = <1>;
-> +               };
-
-With the minor nit above resolved, and pending acceptance of the
-sysctrl bindings:
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+new file mode 100644
+index 0000000..9534f1b
+--- /dev/null
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -0,0 +1,86 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
++ *
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ */
++
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/r9a06g032-sysctrl.h>
++
++/ {
++	compatible = "renesas,r9a06g032";
++	#address-cells = <1>;
++	#size-cells = <1>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <0>;
++			clocks = <&sysctrl R9A06G032_DIV_CA7>;
++		};
++
++		cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <1>;
++			clocks = <&sysctrl R9A06G032_DIV_CA7>;
++		};
++	};
++
++	soc {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		interrupt-parent = <&gic>;
++		ranges;
++
++		sysctrl: sysctrl@4000c000 {
++			compatible = "renesas,r9a06g032-sysctrl";
++			reg = <0x4000c000 0x1000>;
++			status = "okay";
++			#clock-cells = <1>;
++		};
++
++		uart0: serial@40060000 {
++			compatible = "snps,dw-apb-uart";
++			reg = <0x40060000 0x400>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++			reg-shift = <2>;
++			reg-io-width = <4>;
++			clocks = <&sysctrl R9A06G032_CLK_UART0>;
++			clock-names = "baudclk";
++			status = "disabled";
++		};
++
++		gic: gic@44101000 {
++			compatible = "arm,cortex-a7-gic", "arm,gic-400";
++			interrupt-controller;
++			#interrupt-cells = <3>;
++			reg = <0x44101000 0x1000>, /* Distributer */
++			      <0x44102000 0x2000>, /* CPU interface */
++			      <0x44104000 0x2000>, /* Virt interface control */
++			      <0x44106000 0x2000>; /* Virt CPU interface */
++			interrupts =
++				<GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
++		};
++	};
++
++	timer {
++		compatible = "arm,cortex-a7-timer",
++			     "arm,armv7-timer";
++		interrupt-parent = <&gic>;
++		arm,cpu-registers-not-fw-configured;
++		always-on;
++		interrupts =
++			<GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++};
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.7.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
