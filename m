@@ -1,75 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:56218 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965664AbeEXJeW (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:53222 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S970728AbeEXPH4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 May 2018 05:34:22 -0400
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Thu, 24 May 2018 11:07:56 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: devicetree@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v7 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
-Date: Thu, 24 May 2018 10:28:40 +0100
-Message-Id: <1527154169-32380-3-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com>
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 9/9] ARM: dts: silk: Drop MTD partitioning from DT
+Date: Thu, 24 May 2018 17:07:21 +0200
+Message-Id: <20180524150721.28964-9-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180524150721.28964-1-marek.vasut+renesas@gmail.com>
+References: <20180524150721.28964-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas R9A06G032 SYSCTRL node description.
+Drop the MTD partitioning from DT, since it does not describe HW
+and to give way to a more flexible kernel command line partition
+passing.
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+To retain the original partitioning, assure you have enabled
+CONFIG_MTD_CMDLINE_PARTS in your kernel config and add the
+following to your kernel command line:
+
+  mtdparts=spi0.0:256k(loader),4m(user),-(flash)
+
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org
 ---
- .../bindings/clock/renesas,r9a06g032-sysctrl.txt   | 32 ++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
+V2: Drop the @0 anchor from the commit message, use 4m
+---
+ arch/arm/boot/dts/r8a7794-silk.dts | 21 ---------------------
+ 1 file changed, 21 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
-new file mode 100644
-index 0000000..63eb66cd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
-@@ -0,0 +1,32 @@
-+* Renesas R9A06G032 SYSCTRL
-+
-+Required Properties:
-+
-+  - compatible: Must be:
-+    - "renesas,r9a06g032-sysctrl"
-+  - reg: Base address and length of the SYSCTRL IO block.
-+  - #clock-cells: Must be 1
-+
-+Examples
-+--------
-+
-+  - SYSCTRL node:
-+
-+	sysctrl: sysctrl@4000c000 {
-+		compatible = "renesas,r9a06g032-sysctrl";
-+		reg = <0x4000c000 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+  - Other nodes can use the clocks provided by SYSCTRL as in:
-+
-+	#include <dt-bindings/clock/r9a06g032-sysctrl.h>
-+	uart0: serial@40060000 {
-+		compatible = "snps,dw-apb-uart";
-+		reg = <0x40060000 0x400>;
-+		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+		reg-shift = <2>;
-+		reg-io-width = <4>;
-+		clocks = <&sysctrl R9A06G032_CLK_UART0>;
-+		clock-names = "baudclk";
-+	};
+diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
+index 7808aaee6644..b8163a0e2190 100644
+--- a/arch/arm/boot/dts/r8a7794-silk.dts
++++ b/arch/arm/boot/dts/r8a7794-silk.dts
+@@ -444,27 +444,6 @@
+ 		spi-cpol;
+ 		spi-cpha;
+ 		m25p,fast-read;
+-
+-		partitions {
+-			compatible = "fixed-partitions";
+-			#address-cells = <1>;
+-			#size-cells = <1>;
+-
+-			partition@0 {
+-				label = "loader";
+-				reg = <0x00000000 0x00040000>;
+-				read-only;
+-			};
+-			partition@40000 {
+-				label = "user";
+-				reg = <0x00040000 0x00400000>;
+-				read-only;
+-			};
+-			partition@440000 {
+-				label = "flash";
+-				reg = <0x00440000 0x03bc0000>;
+-			};
+-		};
+ 	};
+ };
+ 
 -- 
-2.7.4
+2.16.2
