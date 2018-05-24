@@ -1,23 +1,22 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:42729 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S970449AbeEXOgk (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50528 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935605AbeEXHXj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 May 2018 10:36:40 -0400
+        Thu, 24 May 2018 03:23:39 -0400
 From: Marek Vasut <marek.vasut@gmail.com>
 To: linux-pci@vger.kernel.org
 Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Phil Edworthy <phil.edworthy@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa@the-dreams.de>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 6/6] PCI: rcar: Shut the PHY down in failpath
-Date: Thu, 24 May 2018 16:36:24 +0200
-Message-Id: <20180524143624.26718-7-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180524143624.26718-1-marek.vasut+renesas@gmail.com>
-References: <20180524143624.26718-1-marek.vasut+renesas@gmail.com>
+Subject: [PATCH 6/6] PCI: rcar: Shut the PHY down in failpath
+Date: Thu, 24 May 2018 09:23:23 +0200
+Message-Id: <20180524072323.22115-6-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180524072323.22115-1-marek.vasut+renesas@gmail.com>
+References: <20180524072323.22115-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -29,14 +28,11 @@ Add that counterpart.
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Cc: Phil Edworthy <phil.edworthy@renesas.com>
 Cc: Simon Horman <horms+renesas@verge.net.au>
 Cc: Wolfram Sang <wsa@the-dreams.de>
 Cc: linux-renesas-soc@vger.kernel.org
 Fixes: 517ca93a7159 ("PCI: rcar: Add R-Car gen3 PHY support")
----
-V4: New patch
 ---
  drivers/pci/host/pcie-rcar.c | 10 ++++++++--
  1 file changed, 8 insertions(+), 2 deletions(-)
