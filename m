@@ -1,54 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay12.mail.gandi.net ([217.70.178.232]:54833 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161587AbeEXWCm (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:50018 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966146AbeEXVgt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 May 2018 18:02:42 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 8/9] media: rcar-vin: Rename _rcar_info to rcar_info
-Date: Fri, 25 May 2018 00:02:18 +0200
-Message-Id: <1527199339-7724-9-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1527199339-7724-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1527199339-7724-1-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Thu, 24 May 2018 17:36:49 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Subject: [PATCH] v4l: vsp1: Fix YCbCr planar formats pitch calculation
+Date: Fri, 25 May 2018 00:36:42 +0300
+Message-Id: <20180524213642.14584-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Remove leading underscore to align all rcar_group_route structure
-declarations.
+From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+YCbCr planar formats can have different pitch values for the luma and
+chroma planes. This isn't taken into account in the driver. Fix it.
+
+Based on a BSP patch from Koji Matsuoka <koji.matsuoka.xm@renesas.com>.
+
+Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/platform/vsp1/vsp1_drm.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 8edf896..30f6ea7 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -1019,7 +1019,7 @@ static const struct rvin_info rcar_info_r8a7796 = {
- 	.routes = rcar_info_r8a7796_routes,
- };
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+index edb35a5c57ea..917f60f553fc 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -771,6 +771,7 @@ int vsp1_du_atomic_update(struct device *dev, unsigned int pipe_index,
+ 	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
+ 	struct vsp1_drm_pipeline *drm_pipe = &vsp1->drm->pipe[pipe_index];
+ 	const struct vsp1_format_info *fmtinfo;
++	unsigned int chroma_hsub;
+ 	struct vsp1_rwpf *rpf;
  
--static const struct rvin_group_route _rcar_info_r8a77970_routes[] = {
-+static const struct rvin_group_route rcar_info_r8a77970_routes[] = {
- 	{ .csi = RVIN_CSI40, .channel = 0, .vin = 0, .mask = BIT(0) | BIT(3) },
- 	{ .csi = RVIN_CSI40, .channel = 0, .vin = 1, .mask = BIT(2) },
- 	{ .csi = RVIN_CSI40, .channel = 1, .vin = 1, .mask = BIT(3) },
-@@ -1035,7 +1035,7 @@ static const struct rvin_info rcar_info_r8a77970 = {
- 	.use_mc = true,
- 	.max_width = 4096,
- 	.max_height = 4096,
--	.routes = _rcar_info_r8a77970_routes,
-+	.routes = rcar_info_r8a77970_routes,
- };
+ 	if (rpf_index >= vsp1->info->rpf_count)
+@@ -811,10 +812,18 @@ int vsp1_du_atomic_update(struct device *dev, unsigned int pipe_index,
+ 		return -EINVAL;
+ 	}
  
- static const struct of_device_id rvin_of_id_table[] = {
++	/*
++	 * Only formats with three planes can affect the chroma planes pitch.
++	 * All formats with two planes have a horizontal subsampling value of 2,
++	 * but combine U and V in a single chroma plane, which thus results in
++	 * the luma plane and chroma plane having the same pitch.
++	 */
++	chroma_hsub = (fmtinfo->planes == 3) ? fmtinfo->hsub : 1;
++
+ 	rpf->fmtinfo = fmtinfo;
+ 	rpf->format.num_planes = fmtinfo->planes;
+ 	rpf->format.plane_fmt[0].bytesperline = cfg->pitch;
+-	rpf->format.plane_fmt[1].bytesperline = cfg->pitch;
++	rpf->format.plane_fmt[1].bytesperline = cfg->pitch / chroma_hsub;
+ 	rpf->alpha = cfg->alpha;
+ 
+ 	rpf->mem.addr[0] = cfg->mem[0];
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
