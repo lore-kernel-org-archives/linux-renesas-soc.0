@@ -1,60 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:45017 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751127AbeEUNLl (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:44618 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032454AbeEXKvl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 May 2018 09:11:41 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-pci@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/4] PCI: rcar: Rename rcar_pcie_parse_request_of_pci_ranges()
-Date: Mon, 21 May 2018 15:11:20 +0200
-Message-Id: <20180521131123.2009-1-marek.vasut+renesas@gmail.com>
+        Thu, 24 May 2018 06:51:41 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v4 04/11] media: vsp1: Remove unused display list structure field
+Date: Thu, 24 May 2018 13:51:37 +0300
+Message-ID: <4994134.peM4qCLYyD@avalon>
+In-Reply-To: <9266418a78e00b185bb5ff131b54f289c7d8b016.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.bd2eb66d11f8094114941107dbc78dc02c9c7fdd.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com> <9266418a78e00b185bb5ff131b54f289c7d8b016.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The function name is just too confusing, rename it, no functional change.
-Rename the function to rcar_pcie_alloc_and_parse_pci_resource_list() as
-it's matching failpath function is pci_free_resource_list() so the names
-align much better and the new name also describes what the function does
-much better.
+Hi Kieran,
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/pci/host/pcie-rcar.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thank you for the patch.
 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index e403c5206b24..dbc80e457f95 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -1051,7 +1051,7 @@ static const struct of_device_id rcar_pcie_of_match[] = {
- 	{},
- };
- 
--static int rcar_pcie_parse_request_of_pci_ranges(struct rcar_pcie *pci)
-+static int rcar_pcie_alloc_and_parse_pci_resource_list(struct rcar_pcie *pci)
- {
- 	int err;
- 	struct device *dev = pci->dev;
-@@ -1108,7 +1108,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- 
- 	INIT_LIST_HEAD(&pcie->resources);
- 
--	err = rcar_pcie_parse_request_of_pci_ranges(pcie);
-+	err = rcar_pcie_alloc_and_parse_pci_resource_list(pcie);
- 	if (err)
- 		goto err_free_bridge;
- 
+On Thursday, 3 May 2018 16:36:15 EEST Kieran Bingham wrote:
+> The vsp1 reference in the vsp1_dl_body structure is not used.
+> Remove it.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/media/platform/vsp1/vsp1_dl.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c
+> b/drivers/media/platform/vsp1/vsp1_dl.c index ec6fc21fabe0..b23e88cda49f
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_dl.c
+> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
+> @@ -44,7 +44,6 @@ struct vsp1_dl_entry {
+>   * @list: entry in the display list list of bodies
+>   * @free: entry in the pool free body list
+>   * @pool: pool to which this body belongs
+> - * @vsp1: the VSP1 device
+>   * @entries: array of entries
+>   * @dma: DMA address of the entries
+>   * @size: size of the DMA memory in bytes
+> @@ -58,7 +57,6 @@ struct vsp1_dl_body {
+>  	refcount_t refcnt;
+> 
+>  	struct vsp1_dl_body_pool *pool;
+> -	struct vsp1_device *vsp1;
+> 
+>  	struct vsp1_dl_entry *entries;
+>  	dma_addr_t dma;
+
 -- 
-2.16.2
+Regards,
+
+Laurent Pinchart
