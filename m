@@ -1,23 +1,22 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:37952 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S970452AbeEXOgf (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:50504 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935616AbeEXHXe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 May 2018 10:36:35 -0400
+        Thu, 24 May 2018 03:23:34 -0400
 From: Marek Vasut <marek.vasut@gmail.com>
 To: linux-pci@vger.kernel.org
 Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Phil Edworthy <phil.edworthy@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa@the-dreams.de>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 2/6] PCI: rcar: Add missing irq_dispose_mapping() into failpath
-Date: Thu, 24 May 2018 16:36:20 +0200
-Message-Id: <20180524143624.26718-3-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180524143624.26718-1-marek.vasut+renesas@gmail.com>
-References: <20180524143624.26718-1-marek.vasut+renesas@gmail.com>
+Subject: [PATCH 2/6] PCI: rcar: Add missing irq_dispose_mapping() into failpath
+Date: Thu, 24 May 2018 09:23:19 +0200
+Message-Id: <20180524072323.22115-2-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180524072323.22115-1-marek.vasut+renesas@gmail.com>
+References: <20180524072323.22115-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -32,16 +31,10 @@ of the mapping in rcar_pcie_get_resources() as well as in probe.
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Cc: Phil Edworthy <phil.edworthy@renesas.com>
 Cc: Simon Horman <horms+renesas@verge.net.au>
 Cc: Wolfram Sang <wsa@the-dreams.de>
 Cc: linux-renesas-soc@vger.kernel.org
----
-V2: No change
-V3: No change
-V4: Rebase on top of Lorenzo's pci/rcar, fix up the rebase breakage
-    induced by patches therein
 ---
  drivers/pci/host/pcie-rcar.c | 17 ++++++++++++++---
  1 file changed, 14 insertions(+), 3 deletions(-)
