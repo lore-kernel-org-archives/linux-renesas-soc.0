@@ -1,62 +1,76 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751569AbeERLTR (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:19:17 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 48/69] ARM: dts: gose: Drop unnecessary address properties from port nodes
-Date: Fri, 18 May 2018 13:17:21 +0200
-Message-Id: <c1eb7457ad6e9f3e2937f39ebfefb82cd729d625.1526641667.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
-References: <cover.1526641667.git.horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: devicetree@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 8/9] ARM: dts: alt: Drop MTD partitioning from DT
+Date: Thu, 24 May 2018 17:07:20 +0200
+Message-Id: <20180524150721.28964-8-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180524150721.28964-1-marek.vasut+renesas@gmail.com>
+References: <20180524150721.28964-1-marek.vasut+renesas@gmail.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The vin port nodes does not have an address and thus does not need
-address-cells or address size-properties.
+Drop the MTD partitioning from DT, since it does not describe HW
+and to give way to a more flexible kernel command line partition
+passing.
 
-This is flagged by dtc as follows:
- # make dtbs W=1
- arch/arm/boot/dts/r8a7793-gose.dtb: Warning (avoid_unnecessary_addr_size): /soc/video@e6ef0000/port: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
- arch/arm/boot/dts/r8a7793-gose.dtb: Warning (avoid_unnecessary_addr_size): /soc/video@e6ef1000/port: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+To retain the original partitioning, assure you have enabled
+CONFIG_MTD_CMDLINE_PARTS in your kernel config and add the
+following to your kernel command line:
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+  mtdparts=spi0.0:256k(loader),256k(system),-(user)
+
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org
 ---
- arch/arm/boot/dts/r8a7793-gose.dts | 6 ------
- 1 file changed, 6 deletions(-)
+V2: Drop the @0 anchor from the commit message
+---
+ arch/arm/boot/dts/r8a7794-alt.dts | 21 ---------------------
+ 1 file changed, 21 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index 7a66d885e657..ec94e2402bdf 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -759,9 +759,6 @@
- 	pinctrl-names = "default";
- 
- 	port {
--		#address-cells = <1>;
--		#size-cells = <0>;
+diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
+index e17027532941..1d044ed598f3 100644
+--- a/arch/arm/boot/dts/r8a7794-alt.dts
++++ b/arch/arm/boot/dts/r8a7794-alt.dts
+@@ -419,26 +419,5 @@
+ 		spi-cpol;
+ 		spi-cpha;
+ 		m25p,fast-read;
 -
- 		vin0ep2: endpoint {
- 			remote-endpoint = <&adv7612_out>;
- 			bus-width = <24>;
-@@ -781,9 +778,6 @@
- 	status = "okay";
- 
- 	port {
--		#address-cells = <1>;
--		#size-cells = <0>;
+-		partitions {
+-			compatible = "fixed-partitions";
+-			#address-cells = <1>;
+-			#size-cells = <1>;
 -
- 		vin1ep: endpoint {
- 			remote-endpoint = <&adv7180_out>;
- 			bus-width = <8>;
+-			partition@0 {
+-				label = "loader";
+-				reg = <0x00000000 0x00040000>;
+-				read-only;
+-			};
+-			partition@40000 {
+-				label = "system";
+-				reg = <0x00040000 0x00040000>;
+-				read-only;
+-			};
+-			partition@80000 {
+-				label = "user";
+-				reg = <0x00080000 0x03f80000>;
+-			};
+-		};
+ 	};
+ };
 -- 
-2.11.0
+2.16.2
+
