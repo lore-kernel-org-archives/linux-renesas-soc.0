@@ -1,58 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40076 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753278AbeEURDA (ORCPT
+Received: from relay12.mail.gandi.net ([217.70.178.232]:34367 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966725AbeEXWCc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 May 2018 13:03:00 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-pci@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] PCI: rcar: Poll more often in rcar_pcie_wait_for_dl()
-Date: Mon, 21 May 2018 19:02:50 +0200
-Message-Id: <20180521170250.13224-1-marek.vasut+renesas@gmail.com>
+        Thu, 24 May 2018 18:02:32 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v4 0/9] rcar-vin: Add support for parallel input on Gen3
+Date: Fri, 25 May 2018 00:02:10 +0200
+Message-Id: <1527199339-7724-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The data link active signal usually takes ~20 uSec to be asserted,
-poll the bit more often to avoid useless delays in this function.
-Use udelay() instead of usleep() for such a small delay as suggested
-by the timer documentation and because this will be used in atomic
-content later on when the suspend/resume patches land.
+Hello,
+   this series adds support for parallel video input to the Gen3 version of
+rcar-vin driver.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/pci/host/pcie-rcar.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Compared to v3, this new iteration closes all comments from Niklas and Sergei.
 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 5c365f743df5..65ebe7aa3488 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -529,13 +529,13 @@ static void phy_write_reg(struct rcar_pcie *pcie,
- 
- static int rcar_pcie_wait_for_dl(struct rcar_pcie *pcie)
- {
--	unsigned int timeout = 10;
-+	unsigned int timeout = 10000;
- 
- 	while (timeout--) {
- 		if ((rcar_pci_read_reg(pcie, PCIETSTR) & DATA_LINK_ACTIVE))
- 			return 0;
- 
--		msleep(5);
-+		udelay(5);
- 	}
- 
- 	return -ETIMEDOUT;
--- 
-2.16.2
+As the meat of the patch series hasn't changed much, please refer to v3 cover
+letter for more details.
+
+The most notable change is the great simplification of the parallel
+input notifiers registration in [5/9], as now the media controller is
+initialized before parallel inputs are parsed. As the media device is now
+properly initialized, parallel input notifiers can be registered as soon as new
+input devices are discovered, without having to wait for the group notifier
+complete callback to be called. Thanks Niklas for pointing that out.
+
+Testing:
+Tested image capture on both Draak and Salvator-X M3-W with a fake parallel
+input device added.
+
+Test branch for Salvator-X available at
+git://jmondi.org d3/media-master/salvator-x-dts_csi2/m3w-add_parallel_to_dts+driver-v4
+For Draak at:
+git://jmondi.org d3/media-master/salvator-x-dts_csi2/d3-vin-driver-v4+enable-HDMI-in-dts
+(sorry for the horrid branch names :)
+
+Niklas, I know you have a V3M with expansion that has both CSI-2 and parallel
+input. Could you give this one a spin please?
+
+No changelog reported here, except from the one reported above.
+
+Most of the other changes are minors, the most notable ones are reported in
+each patch commit message.
+
+Thanks
+   j
+
+Jacopo Mondi (9):
+  media: rcar-vin: Rename 'digital' to 'parallel'
+  media: rcar-vin: Remove two empty lines
+  media: rcar-vin: Create a group notifier
+  media: rcar-vin: Cache the mbus configuration flags
+  media: rcar-vin: Parse parallel input on Gen3
+  media: rcar-vin: Link parallel input media entities
+  media: rcar-vin: Handle parallel subdev in link_notify
+  media: rcar-vin: Rename _rcar_info to rcar_info
+  media: rcar-vin: Add support for R-Car R8A77995 SoC
+
+ drivers/media/platform/rcar-vin/rcar-core.c | 258 ++++++++++++++++++----------
+ drivers/media/platform/rcar-vin/rcar-dma.c  |  36 ++--
+ drivers/media/platform/rcar-vin/rcar-v4l2.c |  12 +-
+ drivers/media/platform/rcar-vin/rcar-vin.h  |  29 ++--
+ 4 files changed, 215 insertions(+), 120 deletions(-)
+
+--
+2.7.4
