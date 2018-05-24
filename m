@@ -1,23 +1,22 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40276 "EHLO
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52530 "EHLO
         mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S970456AbeEXOgj (ORCPT
+        with ESMTP id S935346AbeEXHXi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 May 2018 10:36:39 -0400
+        Thu, 24 May 2018 03:23:38 -0400
 From: Marek Vasut <marek.vasut@gmail.com>
 To: linux-pci@vger.kernel.org
 Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Phil Edworthy <phil.edworthy@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa@the-dreams.de>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 5/6] PCI: rcar: Remove IRQ mappings in rcar_pcie_enable_msi failpath
-Date: Thu, 24 May 2018 16:36:23 +0200
-Message-Id: <20180524143624.26718-6-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180524143624.26718-1-marek.vasut+renesas@gmail.com>
-References: <20180524143624.26718-1-marek.vasut+renesas@gmail.com>
+Subject: [PATCH 5/6] PCI: rcar: Remove IRQ mappings in rcar_pcie_enable_msi failpath
+Date: Thu, 24 May 2018 09:23:22 +0200
+Message-Id: <20180524072323.22115-5-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180524072323.22115-1-marek.vasut+renesas@gmail.com>
+References: <20180524072323.22115-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -32,16 +31,10 @@ and rcar_pcie_enable_msi() failpath to remove the mappings correctly.
 Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Cc: Phil Edworthy <phil.edworthy@renesas.com>
 Cc: Simon Horman <horms+renesas@verge.net.au>
 Cc: Wolfram Sang <wsa@the-dreams.de>
 Cc: linux-renesas-soc@vger.kernel.org
----
-V2: No change
-V3: No change
-V4: Rebase on top of Lorenzo's pci/rcar, fix up the rebase breakage
-    induced by patches therein
 ---
  drivers/pci/host/pcie-rcar.c | 25 ++++++++++++++++---------
  1 file changed, 16 insertions(+), 9 deletions(-)
