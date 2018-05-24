@@ -1,101 +1,86 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: arm@kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        Andy Gross <andy.gross@linaro.org>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        David Brown <david.brown@linaro.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Tony Lindgren <tony@atomide.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        ionela.voinescu@arm.com,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        chris.redpath@arm.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-soc@vger.kernel.org
-Subject: [PATCH 00/15] arm: dts: Fix OPP and cooling device properties
-Date: Fri, 25 May 2018 16:01:46 +0530
-Message-Id: <cover.1527244200.git.viresh.kumar@linaro.org>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relay12.mail.gandi.net ([217.70.178.232]:53439 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033200AbeEXWCj (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 24 May 2018 18:02:39 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v4 6/9] media: rcar-vin: Link parallel input media entities
+Date: Fri, 25 May 2018 00:02:16 +0200
+Message-Id: <1527199339-7724-7-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1527199339-7724-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1527199339-7724-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This fixes missing OPP and cooling device properties for CPUs for the
-ARM 32 bit platforms. This is build tested by the zero day testing
-infrastructure as well.
+When running with media-controller link the parallel input
+media entities with the VIN entities at 'complete' callback time.
 
-Individual maintainers can pick the patches to their SoC trees or I will
-ask ARM SoC maintainers to pick them up later.
+To create media links the v4l2_device should be registered first.
+Check if the device is already registered, to avoid double registrations.
 
---
-viresh
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-core.c | 26 ++++++++++++++++++++++++--
+ 1 file changed, 24 insertions(+), 2 deletions(-)
 
-Viresh Kumar (15):
-  arm: dts: armada: Fix "#cooling-cells" property's name
-  arm: dts: ls1021a: Add missing cooling device properties for CPUs
-  arm: dts: mediatek: Add missing cooling device properties for CPUs
-  arm: dts: rk322x: Add missing cooling device properties for CPUs
-  arm: dts: uniphier: Add missing cooling device properties for CPUs
-  arm: dts: sun: Add missing cooling device properties for CPUs
-  arm: dts: exynos: Add missing cooling device properties for CPUs
-  arm: dts: dra74x: Add missing cooling device properties for CPUs
-  arm: dts: omap: Add missing cooling device properties for CPUs
-  arm: dts: rk3288: Add missing cooling device properties for CPUs
-  arm: dts: berlin: Add missing OPP properties for CPUs
-  arm: dts: highbank: Add missing OPP properties for CPUs
-  arm: dts: r8a7743: Add missing OPP properties for CPUs
-  arm: dts: qcom: Add missing OPP properties for CPUs
-  arm: dts: imx: Add missing OPP properties for CPUs
-
- arch/arm/boot/dts/armada-385-synology-ds116.dts |  2 +-
- arch/arm/boot/dts/berlin2.dtsi                  | 10 +++
- arch/arm/boot/dts/berlin2q.dtsi                 | 33 ++++++++++
- arch/arm/boot/dts/dra74x.dtsi                   | 10 +++
- arch/arm/boot/dts/exynos3250.dtsi               | 16 +++++
- arch/arm/boot/dts/exynos4210.dtsi               | 13 ++++
- arch/arm/boot/dts/exynos4412.dtsi               |  9 +++
- arch/arm/boot/dts/exynos5250.dtsi               | 23 +++++++
- arch/arm/boot/dts/highbank.dts                  | 30 +++++++++
- arch/arm/boot/dts/imx6dl.dtsi                   | 23 +++++++
- arch/arm/boot/dts/imx6q-cm-fx6.dts              | 66 +++++++++++++++++++
- arch/arm/boot/dts/imx6q.dtsi                    | 87 ++++++++++++++++++++++++-
- arch/arm/boot/dts/imx7d.dtsi                    |  5 ++
- arch/arm/boot/dts/ls1021a.dtsi                  |  1 +
- arch/arm/boot/dts/mt7623.dtsi                   |  3 +
- arch/arm/boot/dts/omap5.dtsi                    | 14 ++++
- arch/arm/boot/dts/qcom-ipq4019.dtsi             | 24 +++++++
- arch/arm/boot/dts/r8a7743.dtsi                  |  9 +++
- arch/arm/boot/dts/rk322x.dtsi                   |  3 +
- arch/arm/boot/dts/rk3288.dtsi                   | 54 +++++++++++++++
- arch/arm/boot/dts/sun6i-a31.dtsi                | 30 +++++++++
- arch/arm/boot/dts/sun7i-a20.dtsi                | 13 ++++
- arch/arm/boot/dts/sun8i-a33.dtsi                |  9 +++
- arch/arm/boot/dts/sun8i-h3.dtsi                 |  9 +++
- arch/arm/boot/dts/uniphier-pxs2.dtsi            |  3 +
- 25 files changed, 495 insertions(+), 4 deletions(-)
-
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 29619c2..b69b375 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -476,6 +476,8 @@ static void rvin_parallel_subdevice_detach(struct rvin_dev *vin)
+ static int rvin_parallel_notify_complete(struct v4l2_async_notifier *notifier)
+ {
+ 	struct rvin_dev *vin = notifier_to_vin(notifier);
++	struct media_entity *source;
++	struct media_entity *sink;
+ 	int ret;
+ 
+ 	ret = v4l2_device_register_subdev_nodes(&vin->v4l2_dev);
+@@ -484,7 +486,26 @@ static int rvin_parallel_notify_complete(struct v4l2_async_notifier *notifier)
+ 		return ret;
+ 	}
+ 
+-	return rvin_v4l2_register(vin);
++	if (!video_is_registered(&vin->vdev)) {
++		ret = rvin_v4l2_register(vin);
++		if (ret < 0)
++			return ret;
++	}
++
++	if (!vin->info->use_mc)
++		return 0;
++
++	/* If we're running with media-controller, link the subdevs. */
++	source = &vin->parallel->subdev->entity;
++	sink = &vin->vdev.entity;
++
++	ret = media_create_pad_link(source, vin->parallel->source_pad,
++				    sink, vin->parallel->sink_pad, 0);
++	if (ret)
++		vin_err(vin, "Error adding link from %s to %s: %d\n",
++			source->name, sink->name, ret);
++
++	return ret;
+ }
+ 
+ static void rvin_parallel_notify_unbind(struct v4l2_async_notifier *notifier,
+@@ -604,7 +625,8 @@ static int rvin_group_notify_complete(struct v4l2_async_notifier *notifier)
+ 
+ 	/* Register all video nodes for the group. */
+ 	for (i = 0; i < RCAR_VIN_NUM; i++) {
+-		if (vin->group->vin[i]) {
++		if (vin->group->vin[i] &&
++		    !video_is_registered(&vin->group->vin[i]->vdev)) {
+ 			ret = rvin_v4l2_register(vin->group->vin[i]);
+ 			if (ret)
+ 				return ret;
 -- 
-2.15.0.194.g9af6a3dea062
-
+2.7.4
