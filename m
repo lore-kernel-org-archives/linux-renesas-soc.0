@@ -1,44 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56084 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754002AbeE1Ixd (ORCPT
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:37332 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033380AbeEXOgh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 May 2018 04:53:33 -0400
-Date: Mon, 28 May 2018 10:53:29 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-pci@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Thu, 24 May 2018 10:36:37 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-pci@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa@the-dreams.de>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v4 4/6] PCI: rcar: Poll more often in
- rcar_pcie_wait_for_dl()
-Message-ID: <20180528085328.snw6hybeckgdcpel@verge.net.au>
+Subject: [PATCH v4 4/6] PCI: rcar: Poll more often in rcar_pcie_wait_for_dl()
+Date: Thu, 24 May 2018 16:36:22 +0200
+Message-Id: <20180524143624.26718-5-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180524143624.26718-1-marek.vasut+renesas@gmail.com>
 References: <20180524143624.26718-1-marek.vasut+renesas@gmail.com>
- <20180524143624.26718-5-marek.vasut+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180524143624.26718-5-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, May 24, 2018 at 04:36:22PM +0200, Marek Vasut wrote:
-> The data link active signal usually takes ~20 uSec to be asserted,
-> poll the bit more often to avoid useless delays in this function.
-> Use udelay() instead of usleep() for such a small delay as suggested
-> by the timer documentation and because this will be used in atomic
-> context later on when the suspend/resume patches land.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Cc: Phil Edworthy <phil.edworthy@renesas.com>
-> Cc: Simon Horman <horms+renesas@verge.net.au>
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Cc: linux-renesas-soc@vger.kernel.org
+The data link active signal usually takes ~20 uSec to be asserted,
+poll the bit more often to avoid useless delays in this function.
+Use udelay() instead of usleep() for such a small delay as suggested
+by the timer documentation and because this will be used in atomic
+context later on when the suspend/resume patches land.
 
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org
+---
+V2: s/content/context in commit message
+V3: Add cpu_relax()
+V4: Rebase on top of Lorenzo's pci/rcar, fix up the rebase breakage
+    induced by patches therein
+---
+ drivers/pci/host/pcie-rcar.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+index d6a7e8482dcf..4843a4dc6059 100644
+--- a/drivers/pci/host/pcie-rcar.c
++++ b/drivers/pci/host/pcie-rcar.c
+@@ -546,13 +546,14 @@ static int rcar_pcie_wait_for_phyrdy(struct rcar_pcie *pcie)
+ 
+ static int rcar_pcie_wait_for_dl(struct rcar_pcie *pcie)
+ {
+-	unsigned int timeout = 10;
++	unsigned int timeout = 10000;
+ 
+ 	while (timeout--) {
+ 		if ((rcar_pci_read_reg(pcie, PCIETSTR) & DATA_LINK_ACTIVE))
+ 			return 0;
+ 
+-		msleep(5);
++		udelay(5);
++		cpu_relax();
+ 	}
+ 
+ 	return -ETIMEDOUT;
+-- 
+2.16.2
