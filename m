@@ -1,19 +1,12 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:42387 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965712AbeEYKBp (ORCPT
+Received: from foss.arm.com ([217.140.101.70]:57960 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965634AbeEYJ4V (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 25 May 2018 06:01:45 -0400
-MIME-Version: 1.0
-In-Reply-To: <20180525095616.GC6507@e107981-ln.cambridge.arm.com>
-References: <20180524143624.26718-1-marek.vasut+renesas@gmail.com>
- <20180525093541.GB6507@e107981-ln.cambridge.arm.com> <CAMuHMdWaxcyed2K_Ce86uqJSHsv4htC1zdrszKJKBRn21K-qoQ@mail.gmail.com>
- <20180525095616.GC6507@e107981-ln.cambridge.arm.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 25 May 2018 12:01:44 +0200
-Message-ID: <CAMuHMdWH0a3KMQrzwqhyR_+3hc6Om-NN9TK8z56F7TwkK00cvg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/6] PCI: rcar: Failpath fixes
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+        Fri, 25 May 2018 05:56:21 -0400
+Date: Fri, 25 May 2018 10:56:16 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Marek Vasut <marek.vasut@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>,
@@ -22,35 +15,30 @@ Cc: Marek Vasut <marek.vasut@gmail.com>,
         Phil Edworthy <phil.edworthy@renesas.com>,
         Wolfram Sang <wsa@the-dreams.de>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v4 0/6] PCI: rcar: Failpath fixes
+Message-ID: <20180525095616.GC6507@e107981-ln.cambridge.arm.com>
+References: <20180524143624.26718-1-marek.vasut+renesas@gmail.com>
+ <20180525093541.GB6507@e107981-ln.cambridge.arm.com>
+ <CAMuHMdWaxcyed2K_Ce86uqJSHsv4htC1zdrszKJKBRn21K-qoQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWaxcyed2K_Ce86uqJSHsv4htC1zdrszKJKBRn21K-qoQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Lorenzo,
+On Fri, May 25, 2018 at 11:39:08AM +0200, Geert Uytterhoeven wrote:
+> Hi Lorenzo,
+> 
+> On Fri, May 25, 2018 at 11:35 AM, Lorenzo Pieralisi
+> <lorenzo.pieralisi@arm.com> wrote:
+> > Can I retain your review tags on this series so that I can queue
+> > the patches ? I already added them apart from the last patch that
+> > is new, please let me know asap.
+> 
+> Yes, please.
 
-On Fri, May 25, 2018 at 11:56 AM, Lorenzo Pieralisi
-<lorenzo.pieralisi@arm.com> wrote:
-> On Fri, May 25, 2018 at 11:39:08AM +0200, Geert Uytterhoeven wrote:
->> On Fri, May 25, 2018 at 11:35 AM, Lorenzo Pieralisi
->> <lorenzo.pieralisi@arm.com> wrote:
->> > Can I retain your review tags on this series so that I can queue
->> > the patches ? I already added them apart from the last patch that
->> > is new, please let me know asap.
->>
->> Yes, please.
->
-> I assume that's valid also for the last patch, I need Simon's ACK
-> to proceed too.
+I assume that's valid also for the last patch, I need Simon's ACK
+to proceed too.
 
-I haven't reviewed the last patch yet.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Lorenzo
