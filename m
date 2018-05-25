@@ -1,47 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:54361 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755307AbeE2IsV (ORCPT
+Received: from sauhun.de ([88.99.104.3]:54568 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S936186AbeEYPFX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 May 2018 04:48:21 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 02/10] media: rcar-vin: Remove two empty lines
-Date: Tue, 29 May 2018 10:48:00 +0200
-Message-Id: <1527583688-314-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1527583688-314-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1527583688-314-1-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 25 May 2018 11:05:23 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Simon Horman <horms@verge.net.au>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 1/2] arm64: dts: salvator-common: Add sdhi2_ds pin group to SDHI2 pinctrl groups
+Date: Fri, 25 May 2018 17:05:17 +0200
+Message-Id: <20180525150518.26894-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180525150518.26894-1-wsa+renesas@sang-engineering.com>
+References: <20180525150518.26894-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Remove un-necessary empty lines.
+From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+This patch adds definitions for configuration of the power-source,
+drive-strength, etc... for the SD2_DS pin.
+
+Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 2 --
- 1 file changed, 2 deletions(-)
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 16d3e01..bcf02de 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -707,11 +707,9 @@ static int rvin_mc_parse_of_endpoint(struct device *dev,
- 		return -EINVAL;
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index 9256fbaaab7f..b3c0b6912af4 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -589,13 +589,13 @@
+ 	};
  
- 	if (!of_device_is_available(to_of_node(asd->match.fwnode))) {
--
- 		vin_dbg(vin, "OF device %pOF disabled, ignoring\n",
- 			to_of_node(asd->match.fwnode));
- 		return -ENOTCONN;
--
- 	}
+ 	sdhi2_pins: sd2 {
+-		groups = "sdhi2_data8", "sdhi2_ctrl";
++		groups = "sdhi2_data8", "sdhi2_ctrl", "sdhi2_ds";
+ 		function = "sdhi2";
+ 		power-source = <3300>;
+ 	};
  
- 	if (vin->group->csi[vep->base.id].fwnode) {
+ 	sdhi2_pins_uhs: sd2_uhs {
+-		groups = "sdhi2_data8", "sdhi2_ctrl";
++		groups = "sdhi2_data8", "sdhi2_ctrl", "sdhi2_ds";
+ 		function = "sdhi2";
+ 		power-source = <1800>;
+ 	};
 -- 
-2.7.4
+2.11.0
