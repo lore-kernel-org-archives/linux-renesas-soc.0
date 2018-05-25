@@ -1,10 +1,21 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:34216 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965457AbeEYJtO (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 25 May 2018 05:49:14 -0400
+MIME-Version: 1.0
+In-Reply-To: <1527157834-7747-3-git-send-email-michel.pollet@bp.renesas.com>
+References: <1527157834-7747-1-git-send-email-michel.pollet@bp.renesas.com> <1527157834-7747-3-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 25 May 2018 11:49:13 +0200
+Message-ID: <CAMuHMdWv2ZRbX=k5+H_WfAeoQ4QsyQLU9iQ9TJ9OQ0fmwg0GOQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] arm: shmobile: Add the R9A06G032 SMP enabler driver
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Michel Pollet <buserror+upstream@gmail.com>,
-        "Mark Rutland" <mark.rutland@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
         Phil Edworthy <phil.edworthy@renesas.com>,
         Florian Fainelli <f.fainelli@gmail.com>,
         Rajendra Nayak <rnayak@codeaurora.org>,
@@ -19,60 +30,83 @@ CC: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
         Carlo Caione <carlo@endlessm.com>,
         Kevin Hilman <khilman@baylibre.com>,
-        =?utf-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
         Frank Rowand <frank.rowand@sony.com>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v3 2/3] arm: shmobile: Add the R9A06G032 SMP enabler
- driver
-Date: Wed, 30 May 2018 08:19:54 +0000
-Message-ID: <OSBPR01MB20546AE06422C9AD896F8F60D26C0@OSBPR01MB2054.jpnprd01.prod.outlook.com>
-References: <1527157834-7747-1-git-send-email-michel.pollet@bp.renesas.com>
- <1527157834-7747-3-git-send-email-michel.pollet@bp.renesas.com>
- <CAMuHMdWv2ZRbX=k5+H_WfAeoQ4QsyQLU9iQ9TJ9OQ0fmwg0GOQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdWv2ZRbX=k5+H_WfAeoQ4QsyQLU9iQ9TJ9OQ0fmwg0GOQ@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-DQpPbiAyNSBNYXkgMjAxOCAxMDo0OSwgR2VlcnQgd3JvdGU6DQo+IFN1YmplY3Q6IFJlOiBbUEFU
-Q0ggdjMgMi8zXSBhcm06IHNobW9iaWxlOiBBZGQgdGhlIFI5QTA2RzAzMiBTTVAgZW5hYmxlcg0K
-PiBkcml2ZXINCj4NCj4gSGkgTWljaGVsLA0KDQpIaSBHZWVydCwNCg0KPg0KPiBPbiBUaHUsIE1h
-eSAyNCwgMjAxOCBhdCAxMjozMCBQTSwgTWljaGVsIFBvbGxldA0KPiA8bWljaGVsLnBvbGxldEBi
-cC5yZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gVGhlIFJlbmVzYXMgUjlBMDZHMDMyIHNlY29uZCBD
-QTcgaXMgcGFya2VkIGluIGEgUk9NIHBlbiBhdCBib290IHRpbWUsDQo+ID4gaXQgcmVxdWlyZXMg
-YSBzcGVjaWFsIGVuYWJsZSBtZXRob2QgdG8gZ2V0IGl0IHN0YXJ0ZWQuDQo+ID4NCj4gPiBTaWdu
-ZWQtb2ZmLWJ5OiBNaWNoZWwgUG9sbGV0IDxtaWNoZWwucG9sbGV0QGJwLnJlbmVzYXMuY29tPg0K
-Pg0KPiBUaGFua3MgZm9yIHlvdXIgcGF0Y2ghDQo+DQo+ID4gIGFyY2gvYXJtL21hY2gtc2htb2Jp
-bGUvc21wLXI5YTA2ZzAzMi5jIHwgODUNCj4gPiArKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrDQo+DQo+IEkgdGhpbmsgeW91IGNhbiBzYWZlbHkgY2FsbCB0aGlzIGRyaXZlciBzbXAt
-cnpuMWQuYywgb3Igc21wLXJ6bjEuYy4NCj4gU291cmNlIGZpbGVzIGFyZSBub3QgY292ZXJlZCBi
-eSB0aGUgc3RhYmxlIERUIEFCSSwgYW5kIGNhbiBiZSByZW9yZGVyZWQgbGF0ZXINCj4gYXQgd2ls
-bC4NCj4NCj4gSSBleHBlY3QgeW91IHdpbGwganVzdCBhZGQgbW9yZSBDUFVfTUVUSE9EX09GX0RF
-Q0xBUkUoKSBsaW5lcyBsYXRlcg0KPiAocGVyaGFwcyB3aXRoIGEgbGl0dGxlIGJpdCBvZiBleHRy
-YSBjb2RlIHRvIGhhbmRsZSBkZXZpYXRpb25zKS4NCg0KTm93IEkgYW0gY29tcGxldGVseSBjb25m
-dXNlZCAtLSB5b3UgaGFkIG1lIHJlbW92ZSB0aGUgbWVudGlvbiBvZiByem4xDQpmcm9tIGV2ZXJ5
-d2hlcmUgaXQgbWF0dGVyZWQgdG8gaGFuZGxlICdmYW1pbHknIGNhc2VzLCBhbmQgbm93IHlvdSBh
-cmUNCnRlbGxpbmcgbWUgdGhhdCBpbiAqdGhpcyogY2FzZSB3aGVyZSB0aGVyZSBpcyBub3QgYSBz
-aW5nbGUgY2hhbmNlIG9mIHRoYXQgZmlsZQ0KY292ZXJpbmcgYW5vdGhlciBwYXJ0IGFuZCB0aGVy
-ZSdzIGEgY2xlYXIgY3V0IGNhc2UgZm9yIGl0IHRvIGJlIHBhcnQgc3BlY2lmaWMNCi4uLi4gSSBz
-aG91bGQgY2FsbCBpdCByem4xPyE/DQoNCkkgZXZlbiBhbHJlYWR5IHJlbmFtZWQgdGhlIHN5bWJv
-bHMgb24gbXkgdHJlZSB0byBtYXRjaCB0aGUNCnJlc3QgZm9yIHY0Li4uDQoNCkknZCBsaWtlIGNv
-bnNpc3RlbmN5IC0tIEkgKnRob3VnaHQqIEkgaGFkIGEgY29uc2lzdGVudCBuYW1pbmcgc2NoZW1l
-IGJlZm9yZSwNCm5vdyBJJ3ZlIG1vdmVkIHRvIHlvdXIgcGFydCBzcGVjaWZpYyBvbmUgKHVuZGVy
-IGR1cmVzcyksIEknZCByYXRoZXIgc3RpY2sgdG8NCnNvbWV0aGluZyB0aGF0IGlzIGNvbnNpc3Rl
-bnQgYW5kIGtlZXAgZXZlcnl0aGluZyBhcyByOWEwNmcwMzIgbm93Lg0KDQo+DQo+ID4gLS0tIC9k
-ZXYvbnVsbA0KPiA+ICsrKyBiL2FyY2gvYXJtL21hY2gtc2htb2JpbGUvc21wLXI5YTA2ZzAzMi5j
-DQo+ID4gQEAgLTAsMCArMSw4NSBAQA0KPiA+ICsvLyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjog
-R1BMLTIuMA0KPiA+ICsvKg0KPiA+ICsgKiBSWi9OMUQgU2Vjb25kIENBNyBlbmFibGVyLg0KPiA+
-ICsgKg0KPiA+ICsgKiBDb3B5cmlnaHQgKEMpIDIwMTggUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJv
-cGUgTGltaXRlZA0KPiA+ICsgKg0KPiA+ICsgKiBNaWNoZWwgUG9sbGV0IDxtaWNoZWwucG9sbGV0
-QGJwLnJlbmVzYXMuY29tPiwNCj4gPGJ1c2Vycm9yQGdtYWlsLmNvbT4NCj4gPiArICogRGVyaXZl
-ZCBmcm9tIGFjdGlvbixzNTAwLXNtcA0KPiA+ICsgKi8NCj4gPiArDQo+ID4gKyNpbmNsdWRlIDxs
-aW51eC9kZWxheS5oPg0KPg0KPiBEbyB5b3UgbmVlZCB0aGlzPw0KDQpGaXhlZCBhbGwgdGhlIG90
-aGVyIHJlbWFya3MsIHRoYW5rcyBmb3IgdGhhdCENCg0KTWljaGVsDQoNCg0KDQoNClJlbmVzYXMg
-RWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9hZCwgQm91
-cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBFbmds
-YW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
+Hi Michel,
+
+On Thu, May 24, 2018 at 12:30 PM, Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> The Renesas R9A06G032 second CA7 is parked in a ROM pen at boot time, it
+> requires a special enable method to get it started.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+
+Thanks for your patch!
+
+>  arch/arm/mach-shmobile/smp-r9a06g032.c | 85 ++++++++++++++++++++++++++++++++++
+
+I think you can safely call this driver smp-rzn1d.c, or smp-rzn1.c.
+Source files are not covered by the stable DT ABI, and can be reordered
+later at will.
+
+I expect you will just add more CPU_METHOD_OF_DECLARE() lines later
+(perhaps with a little bit of extra code to handle deviations).
+
+> --- /dev/null
+> +++ b/arch/arm/mach-shmobile/smp-r9a06g032.c
+> @@ -0,0 +1,85 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * RZ/N1D Second CA7 enabler.
+> + *
+> + * Copyright (C) 2018 Renesas Electronics Europe Limited
+> + *
+> + * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
+> + * Derived from action,s500-smp
+> + */
+> +
+> +#include <linux/delay.h>
+
+Do you need this?
+
+> +#include <asm/cacheflush.h>
+> +#include <asm/smp_plat.h>
+> +#include <asm/smp_scu.h>
+
+Do you need these?
+
+> +static void __init rzn1_smp_prepare_cpus(unsigned int max_cpus)
+> +{
+> +       struct device_node *dn;
+> +       int ret;
+> +       u32 bootaddr;
+
+> +       pr_info("CPU#1: cpu-release-addr %08x\n", (u32)bootaddr);
+
+The cast is not needed.
+
+> +
+> +       cpu_bootaddr = ioremap(bootaddr, sizeof(bootaddr));
+> +       if (!cpu_bootaddr)
+> +               pr_err("CPU#1: cpu-release-addr map failed\n");
+
+If this fails, that is basically an OOM condition, which will scream anyway.
+So I think you should drop the error message.
+
+> +}
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
