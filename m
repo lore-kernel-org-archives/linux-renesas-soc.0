@@ -1,100 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:49856 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S939101AbeE1N2o (ORCPT
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:41733 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967752AbeEYTM6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 May 2018 09:28:44 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+        Fri, 25 May 2018 15:12:58 -0400
+MIME-Version: 1.0
+In-Reply-To: <20180525161051.187324-2-arnd@arndb.de>
+References: <20180525161051.187324-1-arnd@arndb.de> <20180525161051.187324-2-arnd@arndb.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 25 May 2018 21:12:57 +0200
+Message-ID: <CAMuHMdVsEH31x60p4wfqZsM-b1WNt39=ko8vKtYLfk2db6u5TQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ARM: shmobile: only call secure_cntvoff_init on SMP builds
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: arm@kernel.org, Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC] arm64: dts: renesas: salvator-common: Add HSCIF1 device support
-Date: Mon, 28 May 2018 15:28:40 +0200
-Message-Id: <1527514120-19693-1-git-send-email-geert+renesas@glider.be>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@bootlin.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Hi Arnd,
 
-This patch adds the pin control for HSCIF1, and supports connection with
-the Debug Serial-1 (CN26) on Salvator boards.
+On Fri, May 25, 2018 at 6:10 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> The secure_cntvoff_init() function is not available without CONFIG_SMP,
+> leading to a link error on shmobile:
+>
+> arch/arm/mach-shmobile/setup-rcar-gen2.o: In function `rcar_gen2_timer_init':
+> setup-rcar-gen2.c:(.init.text+0x18): undefined reference to `secure_cntvoff_init'
+>
+> From the description in commit 3fd45a136ff6 ("ARM: shmobile: rcar-gen2:
+> Make sure CNTVOFF is initialized on CA7/15"), I understand that we
+> don't need to call it on non-SMP builds because the boot CPU is always
+> initialized by common code, so we can simply avoid the reference by
+> checking for CONFIG_SMP.
+>
+> Fixes: cad160ed0a94 ("ARM: shmobile: Convert file to use cntvoff")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-SCIF1 and HSCI1 are sharing the pin connected to the Debug Serial-1
-(CN26) on Salvator boards, and it is necessary to use it by exclusion.
+NAKed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-As for the default of this DeviceTree, SCIF1 is connected.
+> --- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
+> +++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+> @@ -71,7 +71,8 @@ void __init rcar_gen2_timer_init(void)
+>         void __iomem *base;
+>         u32 freq;
+>
+> -       secure_cntvoff_init();
+> +       if (IS_ENABLED(CONFIG_SMP))
+> +               secure_cntvoff_init();
 
-Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[geert: Add missing "uart-has-rtscts"]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This depends on "arm64: dts: renesas: r8a77965: Add all HSCIF nodes",
-due to the &hscif1 reference.
+The call here is for the boot CPU, since commit 9ce3fa6816c2fb59 ("ARM:
+shmobile: rcar-gen2: Add CA7 arch_timer initialization for r8a7794"), and
+modified and consolidated in commit 3fd45a136ff6 mentioned above.
 
-This doesn't really change anything, but serves as an example and
-documentation.
+The call for secondary CPUs is in arch/arm/mach-shmobile/headsmp-apmu.S.
 
-Questions:
-  1. Do we want to have such examples/documentation?
+>
+>         if (of_machine_is_compatible("renesas,r8a7745") ||
+>             of_machine_is_compatible("renesas,r8a77470") ||
 
-  2. Should we make HSCIF1 the default? IMHO, HSCIF is superior to SCIF.
-     Both are served by the same driver, so increased kernel size is not
-     a counter-argument.
-     For comparison: r8a7790-lager.dts uses SCIFA1 instead of SCIF1 for
-     the debug serial (not for the serial console, due to earlycon and
-     U-Boot compatibility).
+So the proper fix is to build arch/arm/common/secure_cntvoff.o
+unconditionally.
 
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index 9256fbaaab7f3297..976fda67e202f054 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -341,6 +341,15 @@
- 	clock-frequency = <32768>;
- };
- 
-+&hscif1 {
-+	pinctrl-0 = <&hscif1_pins>;
-+	pinctrl-names = "default";
-+
-+	uart-has-rtscts;
-+	/* Please use exclusively to the scif1 node */
-+	/* status = "okay"; */
-+};
-+
- &hsusb {
- 	dr_mode = "otg";
- 	status = "okay";
-@@ -546,6 +555,11 @@
- 		function = "du";
- 	};
- 
-+	hscif1_pins: hscif1 {
-+		groups = "hscif1_data_a", "hscif1_ctrl_a";
-+		function = "hscif1";
-+	};
-+
- 	i2c2_pins: i2c2 {
- 		groups = "i2c2_a";
- 		function = "i2c2";
-@@ -711,6 +725,7 @@
- 	pinctrl-names = "default";
- 
- 	uart-has-rtscts;
-+	/* Please use exclusively to the hscif1 node */
- 	status = "okay";
- };
- 
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
