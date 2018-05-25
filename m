@@ -1,49 +1,44 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: trivial@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org
-Subject: [PATCH 0/9] tree-wide: fix typo 'can by' to 'can be'
-Date: Sun,  6 May 2018 13:23:44 +0200
-Message-Id: <20180506112404.24872-1-wsa+renesas@sang-engineering.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:42959 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965291AbeEYKEs (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 25 May 2018 06:04:48 -0400
+Date: Fri, 25 May 2018 12:04:44 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-pci@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] PCI: rcar: Remove IRQ mappings in rcar_pcie_enable_msi
+ failpath
+Message-ID: <20180525100444.2257mefqsxdhfvfs@verge.net.au>
+References: <20180523105220.25518-1-marek.vasut+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180523105220.25518-1-marek.vasut+renesas@gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I found this kind of typo when reading the documentation for device_remove().
-So, I checked the tree for it.
+On Wed, May 23, 2018 at 12:52:20PM +0200, Marek Vasut wrote:
+> The rcar_pcie_enable_msi() creates IRQ mappings using irq_create_mapping()
+> before requesting the IRQs using devm_request_irq(). If devm_request_irq()
+> fails for some reason, rcar_pcie_enable_msi() does not remove the mapping.
+> 
+> Pull out the code for disposing IRQ mappings from rcar_pcie_teardown_msi()
+> into a separate function and call it from both rcar_pcie_teardown_msi()
+> and rcar_pcie_enable_msi() failpath to remove the mappings correctly.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
+> Cc: linux-renesas-soc@vger.kernel.org
 
-CCing all the subsystems directly, and I'd think the leftover ones could be
-picked up by the trivial tree. Or would it be more convenient if trivial would
-pick up all? I don't mind.
-
-Based on v4.17-rc3.
-
-Wolfram Sang (9):
-  dt-bindings: i2c: fix typo 'can by' to 'can be'
-  powerpc/watchdog: fix typo 'can by' to 'can be'
-  base: core: fix typo 'can by' to 'can be'
-  hwmon: fschmd: fix typo 'can by' to 'can be'
-  input: ati_remote2: fix typo 'can by' to 'can be'
-  NTB: ntb_hw_idt: fix typo 'can by' to 'can be'
-  reiserfs: journal: fix typo 'can by' to 'can be'
-  net: flow_dissector: fix typo 'can by' to 'can be'
-  objtool: fix typo 'can by' to 'can be'
-
- Documentation/devicetree/bindings/i2c/i2c-davinci.txt | 2 +-
- arch/powerpc/kernel/watchdog.c                        | 2 +-
- drivers/base/core.c                                   | 2 +-
- drivers/hwmon/fschmd.c                                | 2 +-
- drivers/input/misc/ati_remote2.c                      | 2 +-
- drivers/ntb/hw/idt/ntb_hw_idt.c                       | 2 +-
- fs/reiserfs/journal.c                                 | 2 +-
- include/net/flow_dissector.h                          | 2 +-
- tools/objtool/Documentation/stack-validation.txt      | 2 +-
- 9 files changed, 9 insertions(+), 9 deletions(-)
-
--- 
-2.11.0
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
