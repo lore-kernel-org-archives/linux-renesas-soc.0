@@ -1,91 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35630 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032007AbeEZQ4O (ORCPT
+Received: from relay1.mentorg.com ([192.94.38.131]:36083 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932304AbeEYGFd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 26 May 2018 12:56:14 -0400
-Received: by mail-wm0-f67.google.com with SMTP id o78-v6so22133440wmg.0
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 26 May 2018 09:56:14 -0700 (PDT)
+        Fri, 25 May 2018 02:05:33 -0400
 Subject: Re: [PATCH 1/6] ravb: remove custom .nway_reset from ethtool ops
-To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Andrew Lunn <andrew@lunn.ch>
 References: <1527160318-10958-1-git-send-email-vladimir_zapolskiy@mentor.com>
  <1527160318-10958-2-git-send-email-vladimir_zapolskiy@mentor.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <6367c651-1dc2-d3a9-a53d-1bbdaaf9118b@cogentembedded.com>
-Date: Sat, 26 May 2018 19:56:10 +0300
+ <20180524132202.GE24557@lunn.ch>
+ <2bf96562-e402-d797-31e6-ba7e262e5637@mleia.com>
+ <af16fdce-427e-c73a-b18b-d5f1c1d9d624@cogentembedded.com>
+ <20180524164422.GI5128@lunn.ch>
+ <f6e0b8c5-7fb9-babe-0114-350e7d6b2186@cogentembedded.com>
+CC: Vladimir Zapolskiy <vz@mleia.com>,
+        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Message-ID: <701f71f8-5943-216e-9f81-62f88b9b0dc2@mentor.com>
+Date: Fri, 25 May 2018 09:05:17 +0300
 MIME-Version: 1.0
-In-Reply-To: <1527160318-10958-2-git-send-email-vladimir_zapolskiy@mentor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
+In-Reply-To: <f6e0b8c5-7fb9-babe-0114-350e7d6b2186@cogentembedded.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+Hello Sergei,
 
-   A formal patch review this time...
-
-On 05/24/2018 02:11 PM, Vladimir Zapolskiy wrote:
-
-> The change fixes a sleep in atomic context issue, which can be
-> always triggered by running 'ethtool -r' command, because
-> phy_start_aneg() protects phydev fields by a mutex.
-
-   OK so far...
-
-> Another note is that the change implicitly replaces phy_start_aneg()
-> with a newer phy_restart_aneg().
-
-   Why? Is this necessary to fix the BUG()?
-
-> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> ---
->  drivers/net/ethernet/renesas/ravb_main.c | 17 +----------------
->  1 file changed, 1 insertion(+), 16 deletions(-)
+On 05/24/2018 08:01 PM, Sergei Shtylyov wrote:
+> On 05/24/2018 07:44 PM, Andrew Lunn wrote:
 > 
-> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-> index 68f122140966..4a043eb0e2aa 100644
-> --- a/drivers/net/ethernet/renesas/ravb_main.c
-> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-> @@ -1150,21 +1150,6 @@ static int ravb_set_link_ksettings(struct net_device *ndev,
->  	return error;
->  }
->  
-> -static int ravb_nway_reset(struct net_device *ndev)
-> -{
-> -	struct ravb_private *priv = netdev_priv(ndev);
-> -	int error = -ENODEV;
-> -	unsigned long flags;
-> -
-> -	if (ndev->phydev) {
-> -		spin_lock_irqsave(&priv->lock, flags);
+>>>>>> The change fixes a sleep in atomic context issue, which can be
+>>>>>> always triggered by running 'ethtool -r' command, because
+>>>>>> phy_start_aneg() protects phydev fields by a mutex.
+>>>
+>>>   You don't say that *not* grabbing the spinlock is safe...
 
-   OK, removing spin_lock_irqsave() fixes the BUG()...
-   Not sure what we rotect against here anyway, MAC interrupts?
+I say both that it is the fix and it is safe, I've already described
+the function of the spinlock in my comments, and it is more or less
+clear from the driver code.
 
-> -		error = phy_start_aneg(ndev->phydev);
-> -		spin_unlock_irqrestore(&priv->lock, flags);
-> -	}
-> -
-> -	return error;
-> -}
-> -
->  static u32 ravb_get_msglevel(struct net_device *ndev)
->  {
->  	struct ravb_private *priv = netdev_priv(ndev);
-> @@ -1377,7 +1362,7 @@ static int ravb_set_wol(struct net_device *ndev, struct ethtool_wolinfo *wol)
->  }
->  
->  static const struct ethtool_ops ravb_ethtool_ops = {
-> -	.nway_reset		= ravb_nway_reset,
-> +	.nway_reset		= phy_ethtool_nway_reset,
+>>
+>> For it to be unsafe, i think that would mean phylib would need to call
+>> back into the MAC driver? The only way that could happen is via the
+>> adjust_link call. And that will deadlock, since it takes the same
+>> lock.
+>>
+>> Or am i/we missing something?
+> 
+>    It doesn't take any locks currently, only patches #3/#6 makes it do so...
 
-   What does this fix?
+And that's the proper fix in my opinion, my tests don't unveil any issues.
 
->  	.get_msglevel		= ravb_get_msglevel,
->  	.set_msglevel		= ravb_set_msglevel,
->  	.get_link		= ethtool_op_get_link,
-
-MBR, Sergei
+--
+With best wishes,
+Vladimir
