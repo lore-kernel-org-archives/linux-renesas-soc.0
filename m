@@ -1,43 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:35059 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752348AbeEROlU (ORCPT
+Received: from sauhun.de ([88.99.104.3]:54560 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S936185AbeEYPFX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 10:41:20 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 2/9] media: rcar-vin: Remove two empty lines
-Date: Fri, 18 May 2018 16:40:38 +0200
-Message-Id: <1526654445-10702-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1526654445-10702-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1526654445-10702-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 25 May 2018 11:05:23 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Simon Horman <horms@verge.net.au>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 0/2] arm64: dts: renesas: add missing strobe pin to SDHI
+Date: Fri, 25 May 2018 17:05:16 +0200
+Message-Id: <20180525150518.26894-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Remove un-necessary empty lines.
+The strobe pin (SD2_DS) was forgotten to be configured when switching to 1.8V
+on H3/M3-W/M3-N boards. Fix it with this series.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 2 --
- 1 file changed, 2 deletions(-)
+While this is a bug, I am not sure if it needs to be backported. This pin is
+only needed for HS400 operation which we don't support yet but soon.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 6b80f98..1aadd90 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -707,11 +707,9 @@ static int rvin_mc_parse_of_endpoint(struct device *dev,
- 		return -EINVAL;
- 
- 	if (!of_device_is_available(to_of_node(asd->match.fwnode))) {
--
- 		vin_dbg(vin, "OF device %pOF disabled, ignoring\n",
- 			to_of_node(asd->match.fwnode));
- 		return -ENOTCONN;
--
- 	}
- 
- 	if (vin->group->csi[vep->base.id].fwnode) {
+So, we surely want to have it in 4.17 before we hopefully merge HS400 support
+for 4.18. But it could also be argued that this is a bug in the HW description,
+so it needs to be backported. I am open for both options here.
+
+But we really want this patch whenever we test HS400.
+
+Thanks,
+
+   Wolfram
+
+
+Masaharu Hayakawa (1):
+  arm64: dts: salvator-common: Add sdhi2_ds pin group to SDHI2 pinctrl
+    groups
+
+Wolfram Sang (1):
+  arm64: dts: ulcb: Add sdhi2_ds pin group to SDHI2 pinctrl groups
+
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 4 ++--
+ arch/arm64/boot/dts/renesas/ulcb.dtsi            | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
 -- 
-2.7.4
+2.11.0
