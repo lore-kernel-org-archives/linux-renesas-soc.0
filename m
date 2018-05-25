@@ -1,55 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752600AbeERLTb (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:33832 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753754AbeEYRXt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:19:31 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 63/69] ARM: dts: r8a7792: Add PMU device node
-Date: Fri, 18 May 2018 13:17:36 +0200
-Message-Id: <0f2bcba999463fcc2ad2d6ae0c91b62649d45190.1526641667.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
-References: <cover.1526641667.git.horms+renesas@verge.net.au>
+        Fri, 25 May 2018 13:23:49 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: David Airlie <airlied@linux.ie>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/8] drm/rcar-du: fix merge conflict for state->alpha
+Date: Fri, 25 May 2018 20:23:45 +0300
+Message-ID: <2645574.AKFHv1VX8C@avalon>
+In-Reply-To: <20180525155030.3667352-4-arnd@arndb.de>
+References: <20180525155030.3667352-1-arnd@arndb.de> <20180525155030.3667352-4-arnd@arndb.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Arnd,
 
-Enable support for the ARM Performance Monitor Units in the Cortex-A15
-CPU cores on R-Car V2H by adding a device node for the PMU.
+Thank you for the patch.
 
-New Linux output:
+On Friday, 25 May 2018 18:50:11 EEST Arnd Bergmann wrote:
+> The "alpha" struct member was removed in one commit but another user
+> added in another, leading to a build failure:
+> 
+> drivers/gpu/drm/rcar-du/rcar_du_vsp.c: In function
+> 'rcar_du_vsp_plane_atomic_duplicate_state':
+> drivers/gpu/drm/rcar-du/rcar_du_vsp.c:325:6: error: 'struct
+> rcar_du_vsp_plane_state' has no member named 'alpha' copy->alpha =
+> to_rcar_vsp_plane_state(plane->state)->alpha;
+> 
+> This fixes up the merge by using the correct member.
+> 
+> Fixes: 75a07f399cd4 ("drm: rcar-du: Zero-out sg_tables when duplicating
+> plane state") Fixes: 301a9b8d5456 ("drm/rcar-du: Convert to the new generic
+> alpha property") Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-    hw perfevents: enabled with armv7_cortex_a15 PMU driver, 7 counters available
+I have posted the same fix a week ago, see https://patchwork.freedesktop.org/
+patch/msgid/20180515174752.28954-1-laurent.pinchart+renesas@ideasonboard.com. 
+The patch is in Dave's master branch in commit 
+315852b422972e6ebb1dfddaadada09e46a2681a.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7792.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_vsp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c index 4a98470626d5..d9232e749b6d
+> 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> @@ -322,7 +322,7 @@ rcar_du_vsp_plane_atomic_duplicate_state(struct
+> drm_plane *plane) return NULL;
+> 
+>  	__drm_atomic_helper_plane_duplicate_state(plane, &copy->state);
+> -	copy->alpha = to_rcar_vsp_plane_state(plane->state)->alpha;
+> +	copy->state.alpha = plane->state->alpha;
+> 
+>  	return &copy->state;
+>  }
 
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index d2cf8dd2d9b0..f44257dd86f6 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -85,6 +85,13 @@
- 		clock-frequency = <0>;
- 	};
- 
-+	pmu {
-+		compatible = "arm,cortex-a15-pmu";
-+		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&cpu0>, <&cpu1>;
-+	};
-+
- 	/* External SCIF clock */
- 	scif_clk: scif {
- 		compatible = "fixed-clock";
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
