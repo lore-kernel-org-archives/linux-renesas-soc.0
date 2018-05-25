@@ -1,90 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:55786 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751221AbeERKzQ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43212 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965450AbeEYKL0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 06:55:16 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Eric Auger <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc: kvm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] vfio: platform: Fix using devices in PM Domains
-Date: Fri, 18 May 2018 12:55:12 +0200
-Message-Id: <1526640912-894-1-git-send-email-geert+renesas@glider.be>
+        Fri, 25 May 2018 06:11:26 -0400
+Date: Fri, 25 May 2018 12:11:22 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Dien Pham <dien.pham.ry@renesas.com>
+Subject: Re: [PATCH] arm64: defconfig: Enable BD9571MWV regulator
+Message-ID: <20180525101122.pkqgos7huinmknow@verge.net.au>
+References: <1527082531-11640-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527082531-11640-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If a device is part of a PM Domain (e.g. power and/or clock domain), its
-power state is managed using Runtime PM.  Without Runtime PM, the device
-may not be powered up or clocked, causing subtle failures, crashes, or
-system lock-ups when the device is accessed by the guest.
+On Wed, May 23, 2018 at 03:35:31PM +0200, Geert Uytterhoeven wrote:
+> From: Dien Pham <dien.pham.ry@renesas.com>
+> 
+> The BD9571 PMIC is present on the Renesas Salvator-X(S) and R-Car
+> Starter Kit Premier/Pro development boards.
+> 
+> Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Fix this by adding Runtime PM support, powering the device when the VFIO
-device is opened by the guest.
-
-Note that while more fine-grained power management could be implemented
-on the guest side, if exported by the host, this would be inherently
-unsafe, as abusing it may take down the whole system.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
----
-v2:
-  - Improve wording,
-  - Add Reviewed-by.
----
- drivers/vfio/platform/vfio_platform_common.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
-index b60bb5326668498c..41f862f055054543 100644
---- a/drivers/vfio/platform/vfio_platform_common.c
-+++ b/drivers/vfio/platform/vfio_platform_common.c
-@@ -17,6 +17,7 @@
- #include <linux/iommu.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-+#include <linux/pm_runtime.h>
- #include <linux/slab.h>
- #include <linux/types.h>
- #include <linux/uaccess.h>
-@@ -233,6 +234,8 @@ static void vfio_platform_release(void *device_data)
- 		const char *extra_dbg = NULL;
- 		int ret;
- 
-+		pm_runtime_put(vdev->device);
-+
- 		ret = vfio_platform_call_reset(vdev, &extra_dbg);
- 		if (ret && vdev->reset_required) {
- 			dev_warn(vdev->device, "reset driver is required and reset call failed in release (%d) %s\n",
-@@ -275,6 +278,10 @@ static int vfio_platform_open(void *device_data)
- 				 ret, extra_dbg ? extra_dbg : "");
- 			goto err_rst;
- 		}
-+
-+		ret = pm_runtime_get_sync(vdev->device);
-+		if (ret < 0)
-+			goto err_rst;
- 	}
- 
- 	vdev->refcnt++;
-@@ -690,6 +697,7 @@ int vfio_platform_probe_common(struct vfio_platform_device *vdev,
- 
- 	mutex_init(&vdev->igate);
- 
-+	pm_runtime_enable(vdev->device);
- 	return 0;
- 
- put_iommu:
-@@ -707,6 +715,7 @@ struct vfio_platform_device *vfio_platform_remove_common(struct device *dev)
- 	vdev = vfio_del_group_dev(dev);
- 
- 	if (vdev) {
-+		pm_runtime_disable(vdev->device);
- 		vfio_platform_put_reset(vdev);
- 		vfio_iommu_group_put(dev->iommu_group, dev);
- 	}
--- 
-2.7.4
+Thanks, applied.
