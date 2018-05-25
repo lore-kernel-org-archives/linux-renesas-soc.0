@@ -1,36 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:38671 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966158AbeEYLuN (ORCPT
+Received: from relay11.mail.gandi.net ([217.70.178.231]:47937 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935163AbeEYHQV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 25 May 2018 07:50:13 -0400
-Date: Fri, 25 May 2018 13:50:08 +0200
+        Fri, 25 May 2018 03:16:21 -0400
+Date: Fri, 25 May 2018 09:16:15 +0200
 From: jacopo mondi <jacopo@jmondi.org>
 To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
 Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
         linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH v4 5/9] media: rcar-vin: Parse parallel input on Gen3
-Message-ID: <20180525115008.GL18369@w540>
+Message-ID: <20180525071615.GJ18369@w540>
 References: <1527199339-7724-1-git-send-email-jacopo+renesas@jmondi.org>
  <1527199339-7724-6-git-send-email-jacopo+renesas@jmondi.org>
  <20180524222944.GI31036@bigcity.dyn.berto.se>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="S0GG+JvAI2G0KxBG"
+        protocol="application/pgp-signature"; boundary="yklP1rR72f9kjNtc"
 Content-Disposition: inline
 In-Reply-To: <20180524222944.GI31036@bigcity.dyn.berto.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---S0GG+JvAI2G0KxBG
+--yklP1rR72f9kjNtc
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Niklas,
-   I might have another question before sending v5.
 
 On Fri, May 25, 2018 at 12:29:44AM +0200, Niklas S=C3=B6derlund wrote:
 > Hi Jacopo,
@@ -38,6 +37,10 @@ On Fri, May 25, 2018 at 12:29:44AM +0200, Niklas S=C3=B6derlund wrote:
 > Thanks for your work.
 >
 > I really like what you did with this patch in v4.
+
+Thanks for review and suggestions, what's there comes mostly from your
+comments and guidance.
+
 >
 > On 2018-05-25 00:02:15 +0200, Jacopo Mondi wrote:
 > > The rcar-vin driver so far had a mutually exclusive code path for
@@ -125,6 +128,9 @@ otifier)
 > preserve Gen2 which runs without media controller behavior. How about:
 >
 >     return vin->info->use_mc ? -ENOTCONN : -ENODEV;
+
+Right, I wish I had some gen2 board to test. I wonder if that's not
+better handled in probe though... I'll see how it looks like.
 >
 > >
 > >  	vin_dbg(vin, "Found parallel subdevice %pOF\n",
@@ -172,6 +178,20 @@ e *pdev)
 > rvin_mc_init(). With the reorder of the rvin_mc_init()
 > rvin_parallel_init() I would keep this in rvin_mc_init().
 >
+
+Just because I've been lazy re-structuring that part of code I broke
+up in previous versions. I'll move that part back to mc_init() and
+possibly also remove the
+
++	if (!vin->info->use_mc)
++		return 0;
+
+in that function and handle this in probe().
+
+Thanks
+   j
+
+
 > > +
 > > +	ret =3D rvin_mc_init(vin);
 > > +	if (ret)
@@ -182,88 +202,6 @@ e *pdev)
 > >  		goto error;
 > >
 > >  	pm_suspend_ignore_children(&pdev->dev, true);
-
-I've been looking at the error path handling now that the code looks
-like this in the forthcoming v5:
-
-	if (vin->info->use_mc) {
-		ret =3D rvin_mc_init(vin);
-		if (ret)
-			goto error_dma_unregister;
-	}
-
-	ret =3D rvin_parallel_init(vin);
-	if (ret)
-		goto error_group_unregister;
-
-
-        ...
-
-
-error_group_unreg:
-	if (vin->info->use_mc) {
-		mutex_lock(&vin->group->lock);
-		if (&vin->v4l2_dev =3D=3D vin->group->notifier.v4l2_dev) {
-			v4l2_async_notifier_unregister(&vin->group->notifier);
-			v4l2_async_notifier_cleanup(&vin->group->notifier);
-		}
-		mutex_unlock(&vin->group->lock);
-		rvin_group_put(vin);
-	}
-
-error_dma_unreg:
-	rvin_dma_unregister(vin);
-
-	return ret;
-
-Question is, do you think the group notifier should be unregistered
-and cleaned up if the parallel input initialization of the VIN
-instance whose v4l2_dev is used to register the group notifier fails?
-
-I feel like it should, as the VIN instance whose v4l2_dev is used is
-always the last probing one, so there should be no issues with other
-VINs registering after it and finding themselves without a valid
-notifier.
-
-I felt like it was better anticipating this to you instead of adding
-this part out of the blue in v5.
-
-Also, I think in both parallel input and mc notifier registration, the
-notifier should be cleaned up to release the parsed async subdevices
-memory allocated by
-v4l2_async_notifier_parse_fwnode_endpoints_by_port() if the
-sub-sequent v4l2_async_notifier_register() fails.
-
-That would be:
-
-@@ -781,18 +782,29 @@ static int rvin_mc_parse_of_graph(struct rvin_dev *vi=
-n)
-                                           &vin->group->notifier);
-        if (ret < 0) {
-                vin_err(vin, "Notifier registration failed\n");
--               return ret;
-+               goto error_clean_up_notifier;
-        }
-
-        return 0;
-+
-+error_clean_up_notifier:
-+       v4l2_async_notifier_cleanup(&vin->group->notifier);
-+
-+       return ret;
- }
-
-in both mc and parallel initialization functions.
-
-With your ack I can send two patches on top of the currently merged VIN
-version, and rebase my series on top eventually.
-
-Sorry for the long email.
-
-Thanks
-   j
-
-
 > > --
 > > 2.7.4
 > >
@@ -272,25 +210,25 @@ Thanks
 > Regards,
 > Niklas S=C3=B6derlund
 
---S0GG+JvAI2G0KxBG
+--yklP1rR72f9kjNtc
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJbB/hwAAoJEHI0Bo8WoVY8JMgP/iJEKBENU5bZpoUIw8SCNJWQ
-58kHN0SVbn3KJ6ga9dFKB7rGgcISGzMurr6YPfPbGlYmKGlR6ijrD2Y6/MtLGmzR
-WHF3PHFcTy4sSItaQ7Q5NvJNTHWgKlZLlG8naTohW/1C07vK2OzYsYekDQzdnzc+
-xzi5lCKPftA/QwHL12/QHXljRq1gyAx85d6V5GajyMloN1w6kflpyV0Hb8i6Sw8A
-c1mqDUV60nPeAzgVZoSOnKAC2hnr3s93j4c2VVHo8WcJLhskcdAgsOqQmmWtoNIc
-DZo0Uam8QpVVDnoImY21uOuYfRIKIn9AnuyzwF6c8E/oPcVOwye0EPrPB/xY2Q9c
-ZfApKNy//GKZiz5Ul7DBWC6KpwzFtRVPVCLljGyVZyhTZEuhYLLqwy5t8/qBT90t
-ezLMLBKaBp2qOH2tBC/58nq1NfBLVozfJZPrE8hWvCyfgab7lz3iHMjsfo3o09/b
-uf2+FLgLBW9HglWqhvq101wyJFQkQu0a+yoU0E4p0G2AUqpBhtwFu1cioRIaZgIQ
-fjqFXXnGNzixjRyieOZKNlFyg6c2x7Mq2ASRIg8nScH9ay1gANOFBi+yW8UxNNEQ
-Ew1G9+bQcQ81E9bFmsLIDdoKll3zWX+to276aX6WAvD+0dhprLOFR6Pj7MtVFkML
-E1UD1dfBJT1SdZDt/J73
-=JHjN
+iQIcBAEBAgAGBQJbB7g/AAoJEHI0Bo8WoVY8H9sP/jLqdwWBXmOLiZJzrVaKVwsS
+WD+g30BByEOBcXRQ2gty34wl/ORXQiHTHW0kVnltl1KH/KzDRsi3p7FOQxJZ0bu7
+LtBpKMQzIY0sW3TFPKxxTIXUvgKNdbzflBb2swA6nsieNwnJwCHE7wugEd8eX3r9
+iLNEXSCX1fp6J8AtIT0iFMEwhCEDNndt6PESVE9HpImxNnejXQT37AXGBd8+Rmlf
+cj218kbnxrSW58Qt/NNeC2oj0nxlO9mR41I7oUflKjI+0BrWChLVFmOEah3Y7pFT
+bcUO6ab7trKwrlmIKSt0y6JFdqdqHIDz19MbVCvz7BP4qVhGvCmxzecvgFUsHCl/
+2XQgn8qnamA+JiuMwFQiJh+OtlYF/Zo7l9+JOmSxrL/Pc26tCJ6tPWZdlO1oiuRE
+kpP74iXqv/Ic8oCli1qhIfdXx5uySv0UTdbW1u0l3XFK1VPE1fRky+W2HwIbFfxQ
+NxVn5VjPefqTPtgg/I5CFZvxDqz73mAPrMOn8NtaF+Rg2c14ZHVUxY/9rf33TpDz
+/X5iyZ2FmWqDCWbMYuYdrW72B7QtHauRV8L4ImJh8Ed6ZQlIRitJ93CF1W/7XNz6
+btRPg5CIBdSDeXfx7VJ1RoiCp1dUkVpdoxYINncz+73dhNOqopnM2w4Xh9/UIuTe
+i9Vd1tZLJSao7okVkT0t
+=Idy5
 -----END PGP SIGNATURE-----
 
---S0GG+JvAI2G0KxBG--
+--yklP1rR72f9kjNtc--
