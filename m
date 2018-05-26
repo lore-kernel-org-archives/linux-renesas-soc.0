@@ -1,79 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:50650 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753784AbeE3PPe (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34428 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032387AbeEZUvv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 May 2018 11:15:34 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
+        Sat, 26 May 2018 16:51:51 -0400
+Received: by mail-wm0-f67.google.com with SMTP id q4-v6so18377349wmq.1
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 26 May 2018 13:51:51 -0700 (PDT)
+Date: Sat, 26 May 2018 12:37:20 -0700
+From: Olof Johansson <olof@lixom.net>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
         linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/3] ARM: shmobile: apmu: Move cpu_leave_lowpower() to SUSPEND section
-Date: Wed, 30 May 2018 17:15:26 +0200
-Message-Id: <1527693328-10559-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1527693328-10559-1-git-send-email-geert+renesas@glider.be>
-References: <1527693328-10559-1-git-send-email-geert+renesas@glider.be>
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM Based SoC Defconfig Updates for v4.18
+Message-ID: <20180526193720.bx7ojopv6mbl3ka2@localhost>
+References: <cover.1526548577.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1526548577.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-cpu_leave_lowpower() is used for suspend only, not for CPU hotplug.
-Hence move it from the HOTPLUG_CPU || SUSPEND section to the SUSPEND
-section.
+On Fri, May 18, 2018 at 01:16:25PM +0200, Simon Horman wrote:
+> Hi Olof, Hi Kevin, Hi Arnd,
+> 
+> Please consider these Renesas ARM based SoC defconfig updates for v4.18.
+> 
+> 
+> The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+> 
+>   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+> 
+> are available in the git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-defconfig-for-v4.18
+> 
+> for you to fetch changes up to eedd7902366b17f95f4fe687c54dcfa186a53158:
+> 
+>   ARM: multi_v7_defconfig: Enable RENESAS_WDT (2018-05-16 11:08:35 +0200)
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/mach-shmobile/platsmp-apmu.c | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+Merged, thanks.
 
-diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
-index ba732effc90b019f..778b6b618ce7c088 100644
---- a/arch/arm/mach-shmobile/platsmp-apmu.c
-+++ b/arch/arm/mach-shmobile/platsmp-apmu.c
-@@ -270,21 +270,6 @@ static void shmobile_smp_apmu_cpu_shutdown(unsigned int cpu)
- 	/* Do ARM specific CPU shutdown */
- 	cpu_enter_lowpower_a15();
- }
--
--static inline void cpu_leave_lowpower(void)
--{
--	unsigned int v;
--
--	asm volatile("mrc    p15, 0, %0, c1, c0, 0\n"
--		     "       orr     %0, %0, %1\n"
--		     "       mcr     p15, 0, %0, c1, c0, 0\n"
--		     "       mrc     p15, 0, %0, c1, c0, 1\n"
--		     "       orr     %0, %0, %2\n"
--		     "       mcr     p15, 0, %0, c1, c0, 1\n"
--		     : "=&r" (v)
--		     : "Ir" (CR_C), "Ir" (0x40)
--		     : "cc");
--}
- #endif
- 
- #if defined(CONFIG_HOTPLUG_CPU)
-@@ -315,6 +300,21 @@ static int shmobile_smp_apmu_do_suspend(unsigned long cpu)
- 	return 1;
- }
- 
-+static inline void cpu_leave_lowpower(void)
-+{
-+	unsigned int v;
-+
-+	asm volatile("mrc    p15, 0, %0, c1, c0, 0\n"
-+		     "       orr     %0, %0, %1\n"
-+		     "       mcr     p15, 0, %0, c1, c0, 0\n"
-+		     "       mrc     p15, 0, %0, c1, c0, 1\n"
-+		     "       orr     %0, %0, %2\n"
-+		     "       mcr     p15, 0, %0, c1, c0, 1\n"
-+		     : "=&r" (v)
-+		     : "Ir" (CR_C), "Ir" (0x40)
-+		     : "cc");
-+}
-+
- static int shmobile_smp_apmu_enter_suspend(suspend_state_t state)
- {
- 	cpu_suspend(smp_processor_id(), shmobile_smp_apmu_do_suspend);
--- 
-2.7.4
+
+-Olof
