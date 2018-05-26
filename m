@@ -1,11 +1,11 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:32818 "EHLO
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35630 "EHLO
         mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032170AbeEZQ4S (ORCPT
+        with ESMTP id S1032007AbeEZQ4O (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 26 May 2018 12:56:18 -0400
-Received: by mail-wm0-f67.google.com with SMTP id x12-v6so36913869wmc.0
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 26 May 2018 09:56:18 -0700 (PDT)
+        Sat, 26 May 2018 12:56:14 -0400
+Received: by mail-wm0-f67.google.com with SMTP id o78-v6so22133440wmg.0
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 26 May 2018 09:56:14 -0700 (PDT)
 Subject: Re: [PATCH 1/6] ravb: remove custom .nway_reset from ethtool ops
 To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
         "David S. Miller" <davem@davemloft.net>
@@ -13,8 +13,8 @@ Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 References: <1527160318-10958-1-git-send-email-vladimir_zapolskiy@mentor.com>
  <1527160318-10958-2-git-send-email-vladimir_zapolskiy@mentor.com>
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <b3ede08c-f5f2-a0b2-8b2d-d4a2eec66e05@cogentembedded.com>
-Date: Sat, 26 May 2018 19:56:15 +0300
+Message-ID: <6367c651-1dc2-d3a9-a53d-1bbdaaf9118b@cogentembedded.com>
+Date: Sat, 26 May 2018 19:56:10 +0300
 MIME-Version: 1.0
 In-Reply-To: <1527160318-10958-2-git-send-email-vladimir_zapolskiy@mentor.com>
 Content-Type: text/plain; charset=utf-8
