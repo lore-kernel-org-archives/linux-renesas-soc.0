@@ -19,22 +19,26 @@ Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20180526155623.12610-1-digetx@gmail.com>
  <20180526155623.12610-2-digetx@gmail.com> <4468833.XY6THhPN9R@avalon>
- <1762515.PDM3oOmb9k@avalon>
 From: Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <aa16a9c8-cc17-564c-e5f6-d5f4f202a8b1@gmail.com>
-Date: Sat, 26 May 2018 19:29:08 +0300
+Message-ID: <8b518eb4-07b6-bc03-b9af-804b5e9bafde@gmail.com>
+Date: Sat, 26 May 2018 19:27:53 +0300
 MIME-Version: 1.0
-In-Reply-To: <1762515.PDM3oOmb9k@avalon>
+In-Reply-To: <4468833.XY6THhPN9R@avalon>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 26.05.2018 19:18, Laurent Pinchart wrote:
-> On Saturday, 26 May 2018 19:16:54 EEST Laurent Pinchart wrote:
->> Hi Dimitri,
+On 26.05.2018 19:16, Laurent Pinchart wrote:
+> Hi Dimitri,
 > 
-> And sorry for the spelling mistake :-/
-
-That's also a kinda correct spelling. No worries ;)
+> Thank you for the patch.
+> 
+> I'll review this in details, but as this patch is based on the "[PATCH/RFC 
+> 1/4] drm: Add colorkey properties" patch I've submitted, please retain the 
+> authorship, both in the Signed-off-by line, and in the patch author in git.
+Okay. /I think/ I've seen requests to do the other way around for the picked up
+and re-worked patches, though I don't mind at all to keep your authorship. I'll
+change the authorship in the next iteration. Waiting for you review comments,
+thanks.
