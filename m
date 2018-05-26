@@ -1,42 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:38114 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033596AbeE1KYZ (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38401 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032179AbeEZRvi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 May 2018 06:24:25 -0400
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-To: mchehab@kernel.org, linux-media@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH] media: vsp1: Document vsp1_dl_body refcnt
-Date: Mon, 28 May 2018 11:24:20 +0100
-Message-Id: <20180528102420.19150-1-kieran.bingham@ideasonboard.com>
+        Sat, 26 May 2018 13:51:38 -0400
+Received: by mail-wm0-f67.google.com with SMTP id m129-v6so22196602wmb.3
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 26 May 2018 10:51:37 -0700 (PDT)
+Subject: Re: [PATCH 1/6] ravb: remove custom .nway_reset from ethtool ops
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <1527160318-10958-1-git-send-email-vladimir_zapolskiy@mentor.com>
+ <1527160318-10958-2-git-send-email-vladimir_zapolskiy@mentor.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <bb3eaa46-137c-264f-732f-3cc87383a884@cogentembedded.com>
+Date: Sat, 26 May 2018 20:51:35 +0300
+MIME-Version: 1.0
+In-Reply-To: <1527160318-10958-2-git-send-email-vladimir_zapolskiy@mentor.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In commit 2d9445db0ee9 ("media: vsp1: Use reference counting for
-bodies"), a new field was introduced to the vsp1_dl_body structure to
-account for usage tracking of the body.
+On 05/24/2018 02:11 PM, Vladimir Zapolskiy wrote:
 
-Document the newly added field in the kerneldoc.
+> The change fixes a sleep in atomic context issue, which can be
+> always triggered by running 'ethtool -r' command, because
+> phy_start_aneg() protects phydev fields by a mutex.
 
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_dl.c | 1 +
- 1 file changed, 1 insertion(+)
+   BTW, I was unable to trigger the BUG() with 'ethtool -r eth0' where 'eth0'
+is EtherAVB. What am I doing wrong? :-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index d9b9cdd8fbe2..10a24bde2299 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -43,6 +43,7 @@ struct vsp1_dl_entry {
-  * struct vsp1_dl_body - Display list body
-  * @list: entry in the display list list of bodies
-  * @free: entry in the pool free body list
-+ * @refcnt: reference tracking for the body
-  * @pool: pool to which this body belongs
-  * @vsp1: the VSP1 device
-  * @entries: array of entries
--- 
-2.17.0
+MBR, Sergei
