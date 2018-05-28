@@ -1,7 +1,7 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Mon, 28 May 2018 13:58:38 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Viresh Kumar <viresh.kumar@linaro.org>
+Date: Mon, 28 May 2018 16:28:31 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Simon Horman <horms@verge.net.au>
 Cc: arm@kernel.org, Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -13,46 +13,44 @@ Cc: arm@kernel.org, Magnus Damm <magnus.damm@gmail.com>,
         Biju Das <biju.das@bp.renesas.com>
 Subject: Re: [PATCH 13/15] arm: dts: r8a7743: Add missing OPP properties for
  CPUs
-Message-ID: <20180528115832.b2wovvanypxkgalj@verge.net.au>
+Message-ID: <20180528105831.vesrswazlagynemq@vireshk-i7>
 References: <cover.1527244200.git.viresh.kumar@linaro.org>
  <5821a6dbe413b5a217ca1e24ddf8ebfa63ba6ef0.1527244201.git.viresh.kumar@linaro.org>
  <20180528092331.3jon45nsqfdzs5ds@verge.net.au>
- <20180528105831.vesrswazlagynemq@vireshk-i7>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180528105831.vesrswazlagynemq@vireshk-i7>
+In-Reply-To: <20180528092331.3jon45nsqfdzs5ds@verge.net.au>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, May 28, 2018 at 04:28:31PM +0530, Viresh Kumar wrote:
-> On 28-05-18, 11:23, Simon Horman wrote:
-> > [Cc Biju Das]
-> > 
-> > On Fri, May 25, 2018 at 04:01:59PM +0530, Viresh Kumar wrote:
-> > > The OPP properties, like "operating-points", should either be present
-> > > for all the CPUs of a cluster or none. If these are present only for a
-> > > subset of CPUs of a cluster then things will start falling apart as soon
-> > > as the CPUs are brought online in a different order. For example, this
-> > > will happen because the operating system looks for such properties in
-> > > the CPU node it is trying to bring up, so that it can create an OPP
-> > > table.
-> > > 
-> > > Add such missing properties.
-> > > 
-> > > Fix other missing property (clock latency) as well to make it all
-> > > work.
-> > > 
-> > > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > 
-> > Thanks, this looks good to me and it looks like it should have:
-> > 
-> > Fixes: 0417814ea140 ("ARM: dts: r8a7743: Add OPP table for frequency scaling")
+On 28-05-18, 11:23, Simon Horman wrote:
+> [Cc Biju Das]
 > 
-> Sure.
+> On Fri, May 25, 2018 at 04:01:59PM +0530, Viresh Kumar wrote:
+> > The OPP properties, like "operating-points", should either be present
+> > for all the CPUs of a cluster or none. If these are present only for a
+> > subset of CPUs of a cluster then things will start falling apart as soon
+> > as the CPUs are brought online in a different order. For example, this
+> > will happen because the operating system looks for such properties in
+> > the CPU node it is trying to bring up, so that it can create an OPP
+> > table.
+> > 
+> > Add such missing properties.
+> > 
+> > Fix other missing property (clock latency) as well to make it all
+> > work.
+> > 
+> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 > 
-> Will you be picking this patch directly and send it part of your pull
-> request ? Maybe add Fixes tag then only ?
+> Thanks, this looks good to me and it looks like it should have:
+> 
+> Fixes: 0417814ea140 ("ARM: dts: r8a7743: Add OPP table for frequency scaling")
 
-Yes, that is my plan. I can handle adding the Fixes tag.
-But I'll wait to see if Bjiu has an feedback first.
+Sure.
+
+Will you be picking this patch directly and send it part of your pull
+request ? Maybe add Fixes tag then only ?
+
+-- 
+viresh
