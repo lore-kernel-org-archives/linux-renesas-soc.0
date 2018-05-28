@@ -1,99 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:52530 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935346AbeEXHXi (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55979 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754030AbeE1IsS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 May 2018 03:23:38 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-pci@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Mon, 28 May 2018 04:48:18 -0400
+Date: Mon, 28 May 2018 10:48:14 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-pci@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa@the-dreams.de>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 5/6] PCI: rcar: Remove IRQ mappings in rcar_pcie_enable_msi failpath
-Date: Thu, 24 May 2018 09:23:22 +0200
-Message-Id: <20180524072323.22115-5-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180524072323.22115-1-marek.vasut+renesas@gmail.com>
-References: <20180524072323.22115-1-marek.vasut+renesas@gmail.com>
+Subject: Re: [PATCH v4 6/6] PCI: rcar: Shut the PHY down in failpath
+Message-ID: <20180528084813.ic5gyos7hq5vxknw@verge.net.au>
+References: <20180524143624.26718-1-marek.vasut+renesas@gmail.com>
+ <20180524143624.26718-7-marek.vasut+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180524143624.26718-7-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The rcar_pcie_enable_msi() creates IRQ mappings using irq_create_mapping()
-before requesting the IRQs using devm_request_irq(). If devm_request_irq()
-fails for some reason, rcar_pcie_enable_msi() does not remove the mapping.
+On Thu, May 24, 2018 at 04:36:24PM +0200, Marek Vasut wrote:
+> If anything fails past phy_init_fn() and the system is a Gen3 with
+> a PHY, the PHY will be left on and inited. This is caused by the
+> phy_init_fn, which is in fact a pointer to rcar_pcie_phy_init_gen3()
+> function, which starts the PHY, yet has no counterpart in the failpath.
+> Add that counterpart.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Fixes: 517ca93a7159 ("PCI: rcar: Add R-Car gen3 PHY support")
 
-Pull out the code for disposing IRQ mappings from rcar_pcie_teardown_msi()
-into a separate function and call it from both rcar_pcie_teardown_msi()
-and rcar_pcie_enable_msi() failpath to remove the mappings correctly.
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/pci/host/pcie-rcar.c | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 4843a4dc6059..636c3c5095d2 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -866,6 +866,20 @@ static const struct irq_domain_ops msi_domain_ops = {
- 	.map = rcar_msi_map,
- };
- 
-+static void rcar_pcie_unmap_msi(struct rcar_pcie *pcie)
-+{
-+	struct rcar_msi *msi = &pcie->msi;
-+	int i, irq;
-+
-+	for (i = 0; i < INT_PCI_MSI_NR; i++) {
-+		irq = irq_find_mapping(msi->domain, i);
-+		if (irq > 0)
-+			irq_dispose_mapping(irq);
-+	}
-+
-+	irq_domain_remove(msi->domain);
-+}
-+
- static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
- {
- 	struct device *dev = pcie->dev;
-@@ -920,14 +934,13 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
- 	return 0;
- 
- err:
--	irq_domain_remove(msi->domain);
-+	rcar_pcie_unmap_msi(pcie);
- 	return err;
- }
- 
- static void rcar_pcie_teardown_msi(struct rcar_pcie *pcie)
- {
- 	struct rcar_msi *msi = &pcie->msi;
--	int irq, i;
- 
- 	/* Disable all MSI interrupts */
- 	rcar_pci_write_reg(pcie, 0, PCIEMSIIER);
-@@ -937,13 +950,7 @@ static void rcar_pcie_teardown_msi(struct rcar_pcie *pcie)
- 
- 	free_pages(msi->pages, 0);
- 
--	for (i = 0; i < INT_PCI_MSI_NR; i++) {
--		irq = irq_find_mapping(msi->domain, i);
--		if (irq > 0)
--			irq_dispose_mapping(irq);
--	}
--
--	irq_domain_remove(msi->domain);
-+	rcar_pcie_unmap_msi(pcie);
- }
- 
- static int rcar_pcie_get_resources(struct rcar_pcie *pcie)
--- 
-2.16.2
+> ---
+> V4: New patch
+> ---
+>  drivers/pci/host/pcie-rcar.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+> index 636c3c5095d2..695781934f0a 100644
+> --- a/drivers/pci/host/pcie-rcar.c
+> +++ b/drivers/pci/host/pcie-rcar.c
+> @@ -1163,7 +1163,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+>  	if (rcar_pcie_hw_init(pcie)) {
+>  		dev_info(dev, "PCIe link down\n");
+>  		err = -ENODEV;
+> -		goto err_clk_disable;
+> +		goto err_phy_shutdown;
+>  	}
+>  
+>  	data = rcar_pci_read_reg(pcie, MACSR);
+> @@ -1175,7 +1175,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+>  			dev_err(dev,
+>  				"failed to enable MSI support: %d\n",
+>  				err);
+> -			goto err_clk_disable;
+> +			goto err_phy_shutdown;
+>  		}
+>  	}
+>  
+> @@ -1189,6 +1189,12 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+>  	if (IS_ENABLED(CONFIG_PCI_MSI))
+>  		rcar_pcie_teardown_msi(pcie);
+>  
+> +err_phy_shutdown:
+> +	if (pcie->phy) {
+> +		phy_power_off(pcie->phy);
+> +		phy_exit(pcie->phy);
+> +	}
+> +
+>  err_clk_disable:
+>  	clk_disable_unprepare(pcie->bus_clk);
+>  
+> -- 
+> 2.16.2
+> 
