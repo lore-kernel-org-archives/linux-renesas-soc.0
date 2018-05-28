@@ -1,105 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750888AbeERLQx (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:17160 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936473AbeE1Xtc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:16:53 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 045/102] arm64: dts: renesas: salvator-common: use audio-graph-card for Sound
-Date: Fri, 18 May 2018 13:15:07 +0200
-Message-Id: <06a574c7ef69bd0bd26ed08e35967acb76622ab3.1526637994.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
-References: <cover.1526637994.git.horms+renesas@verge.net.au>
+        Mon, 28 May 2018 19:49:32 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2] media: rcar-vin: enable support for r8a77965
+Date: Tue, 29 May 2018 01:49:06 +0200
+Message-Id: <20180528234906.5228-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Add the SoC specific information for Renesas r8a77965.
 
-Current Sound is using simple-audio-card which can't support HDMI.
-To use HDMI sound, we need to use audio-graph-card.
-But, one note is that r8a7795 has 2 HDMI ports, but r8a7796 has 1.
-Because of this mismatch, supporting HDMI on salvator-common is
-impossible.
-Thus, this patch exchange sound card to audio-graph-card and keep
-supporting ak4613 as 1st sound node.
-r8a7795/r8a7796 salvator-x{s} need to add HDMI sound individually.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Tested-by: Nguyen Viet Dung <nv-dung@jinso.co.jp>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 38 ++++++++++++++----------
- 1 file changed, 22 insertions(+), 16 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index 1642bc9c8906..9116f4caa3c6 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -93,20 +93,12 @@
- 		regulator-always-on;
- 	};
- 
--	rsnd_ak4613: sound {
--		compatible = "simple-audio-card";
-+	sound_card: sound {
-+		compatible = "audio-graph-card";
- 
--		simple-audio-card,format = "left_j";
--		simple-audio-card,bitclock-master = <&sndcpu>;
--		simple-audio-card,frame-master = <&sndcpu>;
-+		label = "rcar-sound";
- 
--		sndcpu: simple-audio-card,cpu {
--			sound-dai = <&rcar_sound>;
--		};
--
--		sndcodec: simple-audio-card,codec {
--			sound-dai = <&ak4613>;
--		};
-+		dais = <&rsnd_port0>;
- 	};
- 
- 	vbus0_usb2: regulator-vbus0-usb2 {
-@@ -322,6 +314,12 @@
- 		asahi-kasei,out4-single-end;
- 		asahi-kasei,out5-single-end;
- 		asahi-kasei,out6-single-end;
-+
-+		port {
-+			ak4613_endpoint: endpoint {
-+				remote-endpoint = <&rsnd_endpoint0>;
-+			};
-+		};
- 	};
- 
- 	cs2000: clk_multiplier@4f {
-@@ -581,10 +579,18 @@
- 		 <&audio_clk_c>,
- 		 <&cpg CPG_CORE CPG_AUDIO_CLK_I>;
- 
--	rcar_sound,dai {
--		dai0 {
--			playback = <&ssi0 &src0 &dvc0>;
--			capture  = <&ssi1 &src1 &dvc1>;
-+	ports {
-+		rsnd_port0: port@0 {
-+			rsnd_endpoint0: endpoint {
-+				remote-endpoint = <&ak4613_endpoint>;
-+
-+				dai-format = "left_j";
-+				bitclock-master = <&rsnd_endpoint0>;
-+				frame-master = <&rsnd_endpoint0>;
-+
-+				playback = <&ssi0 &src0 &dvc0>;
-+				capture  = <&ssi1 &src1 &dvc1>;
-+			};
- 		};
- 	};
+* Changes since v1
+- Fixed typo in variable name,
+  s/_rcar_info_r8a77965_routes/rcar_info_r8a77965_routes/.
+- Collected Laurents tag.
+---
+ drivers/media/platform/rcar-vin/rcar-core.c | 48 +++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index d3072e166a1ca24f..e6a010ee4ba1f671 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -974,6 +974,50 @@ static const struct rvin_info rcar_info_r8a7796 = {
+ 	.routes = rcar_info_r8a7796_routes,
  };
+ 
++static const struct rvin_group_route rcar_info_r8a77965_routes[] = {
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 0, .mask = BIT(0) | BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 0, .mask = BIT(1) | BIT(4) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 0, .mask = BIT(2) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 1, .mask = BIT(0) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 1, .mask = BIT(1) | BIT(3) },
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 1, .mask = BIT(2) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 1, .mask = BIT(4) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 2, .mask = BIT(0) },
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 2, .mask = BIT(1) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 2, .mask = BIT(2) },
++	{ .csi = RVIN_CSI40, .channel = 2, .vin = 2, .mask = BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 2, .vin = 2, .mask = BIT(4) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 3, .mask = BIT(0) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 3, .mask = BIT(1) | BIT(2) },
++	{ .csi = RVIN_CSI40, .channel = 3, .vin = 3, .mask = BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 3, .vin = 3, .mask = BIT(4) },
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 4, .mask = BIT(0) | BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 4, .mask = BIT(1) | BIT(4) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 4, .mask = BIT(2) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 5, .mask = BIT(0) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 5, .mask = BIT(1) | BIT(3) },
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 5, .mask = BIT(2) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 5, .mask = BIT(4) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 6, .mask = BIT(0) },
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 6, .mask = BIT(1) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 6, .mask = BIT(2) },
++	{ .csi = RVIN_CSI40, .channel = 2, .vin = 6, .mask = BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 2, .vin = 6, .mask = BIT(4) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 7, .mask = BIT(0) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 7, .mask = BIT(1) | BIT(2) },
++	{ .csi = RVIN_CSI40, .channel = 3, .vin = 7, .mask = BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 3, .vin = 7, .mask = BIT(4) },
++	{ /* Sentinel */ }
++};
++
++static const struct rvin_info rcar_info_r8a77965 = {
++	.model = RCAR_GEN3,
++	.use_mc = true,
++	.max_width = 4096,
++	.max_height = 4096,
++	.routes = rcar_info_r8a77965_routes,
++};
++
+ static const struct rvin_group_route _rcar_info_r8a77970_routes[] = {
+ 	{ .csi = RVIN_CSI40, .channel = 0, .vin = 0, .mask = BIT(0) | BIT(3) },
+ 	{ .csi = RVIN_CSI40, .channel = 0, .vin = 1, .mask = BIT(2) },
+@@ -1030,6 +1074,10 @@ static const struct of_device_id rvin_of_id_table[] = {
+ 		.compatible = "renesas,vin-r8a7796",
+ 		.data = &rcar_info_r8a7796,
+ 	},
++	{
++		.compatible = "renesas,vin-r8a77965",
++		.data = &rcar_info_r8a77965,
++	},
+ 	{
+ 		.compatible = "renesas,vin-r8a77970",
+ 		.data = &rcar_info_r8a77970,
 -- 
-2.11.0
+2.17.0
