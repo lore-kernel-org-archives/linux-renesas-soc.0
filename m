@@ -1,135 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:51588 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753607AbeE3PZT (ORCPT
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:36387 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935206AbeE1X0z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 May 2018 11:25:19 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
+        Mon, 28 May 2018 19:26:55 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 5/6] ARM: shmobile: r8a7779: Remove explicit SYSC config and init
-Date: Wed, 30 May 2018 17:25:15 +0200
-Message-Id: <1527693916-11215-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1527693916-11215-1-git-send-email-geert+renesas@glider.be>
-References: <1527693916-11215-1-git-send-email-geert+renesas@glider.be>
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2] rcar-vin: sync which hardware buffer to start capture from
+Date: Tue, 29 May 2018 01:26:37 +0200
+Message-Id: <20180528232637.14905-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If the R-Car H1 system controller is described in DT, the rcar-sysc
-driver configures SYSCIER and SYSCIMR based on the SoC-specific power
-area definitions in r8a7779-sysc.  The platform code still passed this
-information to the rcar-sysc driver, for compatibility with old DTBs
-predating commit b2df3aa487395a1b ("ARM: dts: r8a7779: Add SYSC PM
-Domains") in v4.7.  The time has come to drop backwards compatibility,
-and delegate everything to the DT enabled rcar-sysc driver.
+When starting the VIN capture procedure we are not guaranteed that the
+first buffer written to is VnMB1 to which we assigned the first buffer
+queued. This is problematic for two reasons. Buffers might not be
+dequeued in the same order they where queued for capture. Future
+features planed for the VIN driver is support for outputting frames in
+SEQ_TB/BT format and to do that it's important that capture starts from
+the first buffer slot, VnMB1.
 
-After stopping powering down secondary CPUs during early boot, there is
-no longer a need to force an early initialization of the rcar-sysc
-driver.  It will be initialized in time for secondary CPU bringup by its
-early_initcall().
+We are guaranteed that capturing always happens in sequence (VnMB1 ->
+VnMB2 -> VnMB3 -> VnMB1). So drop up to two frames when starting
+capturing so that the driver always returns buffers in the same order
+they are queued and prepare for SEQ_TB/BT output.
 
-Hence all explicit SYSC configuration and initialization can be removed
-from the R-Car H1 platform code.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
--------------------------------------------------------
 ---
- arch/arm/mach-shmobile/Makefile      |  2 +-
- arch/arm/mach-shmobile/pm-r8a7779.c  | 41 ------------------------------------
- arch/arm/mach-shmobile/r8a7779.h     |  2 --
- arch/arm/mach-shmobile/smp-r8a7779.c |  2 --
- 4 files changed, 1 insertion(+), 46 deletions(-)
- delete mode 100644 arch/arm/mach-shmobile/pm-r8a7779.c
 
-diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
-index 2b8d3896e1ebbe6a..05ba728ed4f67cf2 100644
---- a/arch/arm/mach-shmobile/Makefile
-+++ b/arch/arm/mach-shmobile/Makefile
-@@ -11,7 +11,7 @@ obj-$(CONFIG_ARCH_SH73A0)	+= setup-sh73a0.o
- obj-$(CONFIG_ARCH_R8A73A4)	+= setup-r8a73a4.o
- obj-$(CONFIG_ARCH_R8A7740)	+= setup-r8a7740.o
- obj-$(CONFIG_ARCH_R8A7778)	+= setup-r8a7778.o
--obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o pm-r8a7779.o
-+obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o
- obj-$(CONFIG_ARCH_EMEV2)	+= setup-emev2.o
- obj-$(CONFIG_ARCH_R7S72100)	+= setup-r7s72100.o
+* Changes since v1
+- Fix spelling in commit message pointed out by Sergei.
+  s/writing/written/ and s/outputing/outputting/.
+---
+ drivers/media/platform/rcar-vin/rcar-dma.c | 16 +++++++++++++++-
+ drivers/media/platform/rcar-vin/rcar-vin.h |  2 ++
+ 2 files changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index ac07f99e3516a620..cfe5d7a9d44ee0e1 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -856,7 +856,7 @@ static int rvin_capture_start(struct rvin_dev *vin)
+ 	/* Continuous Frame Capture Mode */
+ 	rvin_write(vin, VNFC_C_FRAME, VNFC_REG);
  
-diff --git a/arch/arm/mach-shmobile/pm-r8a7779.c b/arch/arm/mach-shmobile/pm-r8a7779.c
-deleted file mode 100644
-index 5c9a93f5e650181a..0000000000000000
---- a/arch/arm/mach-shmobile/pm-r8a7779.c
-+++ /dev/null
-@@ -1,41 +0,0 @@
--/*
-- * r8a7779 Power management support
-- *
-- * Copyright (C) 2011  Renesas Solutions Corp.
-- * Copyright (C) 2011  Magnus Damm
-- *
-- * This file is subject to the terms and conditions of the GNU General Public
-- * License.  See the file "COPYING" in the main directory of this archive
-- * for more details.
-- */
--
--#include <linux/soc/renesas/rcar-sysc.h>
--
--#include <asm/io.h>
--
--#include "r8a7779.h"
--
--/* SYSC */
--#define SYSCIER 0x0c
--#define SYSCIMR 0x10
--
--#if defined(CONFIG_PM) || defined(CONFIG_SMP)
--
--static void __init r8a7779_sysc_init(void)
--{
--	rcar_sysc_init(0xffd85000, 0x0131000e);
--}
--
--#else /* CONFIG_PM || CONFIG_SMP */
--
--static inline void r8a7779_sysc_init(void) {}
--
--#endif /* CONFIG_PM || CONFIG_SMP */
--
--void __init r8a7779_pm_init(void)
--{
--	static int once;
--
--	if (!once++)
--		r8a7779_sysc_init();
--}
-diff --git a/arch/arm/mach-shmobile/r8a7779.h b/arch/arm/mach-shmobile/r8a7779.h
-index 30668aa6acc34647..ca9db8fde2f791cc 100644
---- a/arch/arm/mach-shmobile/r8a7779.h
-+++ b/arch/arm/mach-shmobile/r8a7779.h
-@@ -2,8 +2,6 @@
- #ifndef __ASM_R8A7779_H__
- #define __ASM_R8A7779_H__
+-	vin->state = RUNNING;
++	vin->state = STARTING;
  
--extern void r8a7779_pm_init(void);
--
- extern const struct smp_operations r8a7779_smp_ops;
- 
- #endif /* __ASM_R8A7779_H__ */
-diff --git a/arch/arm/mach-shmobile/smp-r8a7779.c b/arch/arm/mach-shmobile/smp-r8a7779.c
-index 3036f910046118ee..0d3ec5c2b8fcbe7c 100644
---- a/arch/arm/mach-shmobile/smp-r8a7779.c
-+++ b/arch/arm/mach-shmobile/smp-r8a7779.c
-@@ -60,8 +60,6 @@ static void __init r8a7779_smp_prepare_cpus(unsigned int max_cpus)
- 
- 	/* setup r8a7779 specific SCU bits */
- 	shmobile_smp_scu_prepare_cpus(R8A7779_SCU_BASE, max_cpus);
--
--	r8a7779_pm_init();
+ 	return 0;
  }
+@@ -910,6 +910,20 @@ static irqreturn_t rvin_irq(int irq, void *data)
+ 	vnms = rvin_read(vin, VNMS_REG);
+ 	slot = (vnms & VNMS_FBS_MASK) >> VNMS_FBS_SHIFT;
  
- #ifdef CONFIG_HOTPLUG_CPU
++	/*
++	 * To hand buffers back in a known order to userspace start
++	 * to capture first from slot 0.
++	 */
++	if (vin->state == STARTING) {
++		if (slot != 0) {
++			vin_dbg(vin, "Starting sync slot: %d\n", slot);
++			goto done;
++		}
++
++		vin_dbg(vin, "Capture start synced!\n");
++		vin->state = RUNNING;
++	}
++
+ 	/* Capture frame */
+ 	if (vin->queue_buf[slot]) {
+ 		vin->queue_buf[slot]->field = vin->format.field;
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index c2aef789b491ab31..ff747e22d8cfb643 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -53,11 +53,13 @@ enum rvin_csi_id {
+ 
+ /**
+  * STOPPED  - No operation in progress
++ * STARTING - Capture starting up
+  * RUNNING  - Operation in progress have buffers
+  * STOPPING - Stopping operation
+  */
+ enum rvin_dma_state {
+ 	STOPPED = 0,
++	STARTING,
+ 	RUNNING,
+ 	STOPPING,
+ };
 -- 
-2.7.4
+2.17.0
