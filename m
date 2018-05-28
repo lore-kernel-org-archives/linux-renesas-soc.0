@@ -1,135 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:56112 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751994AbeERLTo (ORCPT
+        with ESMTP id S1754051AbeE1Iyi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:19:44 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC Updates for v4.18
-Date: Fri, 18 May 2018 13:18:11 +0200
-Message-Id: <cover.1526639075.git.horms+renesas@verge.net.au>
+        Mon, 28 May 2018 04:54:38 -0400
+Date: Mon, 28 May 2018 10:54:34 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Marek Vasut <marek.vasut@gmail.com>, linux-pci@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] PCI: rcar: Failpath fixes
+Message-ID: <20180528085433.nl3thty2jk6y3e2n@verge.net.au>
+References: <20180524143624.26718-1-marek.vasut+renesas@gmail.com>
+ <20180525164313.GA13284@e107981-ln.cambridge.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180525164313.GA13284@e107981-ln.cambridge.arm.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+On Fri, May 25, 2018 at 05:43:13PM +0100, Lorenzo Pieralisi wrote:
+> On Thu, May 24, 2018 at 04:36:18PM +0200, Marek Vasut wrote:
+> > Multiple minor failpath fixes for the R-Car PCIe driver.
+> > 
+> > V4: Sync up the version numbers
+> >     Rebase on top of Lorenzo's tree
+> >     Add new patch fixing bug in the PHY code
+> > 
+> > Marek Vasut (6):
+> >   PCI: rcar: Pull bus clock enable/disable from
+> >     rcar_pcie_get_resources()
+> >   PCI: rcar: Add missing irq_dispose_mapping() into failpath
+> >   PCI: rcar: Teardown MSI setup if rcar_pcie_enable() fails
+> >   PCI: rcar: Poll more often in rcar_pcie_wait_for_dl()
+> >   PCI: rcar: Remove IRQ mappings in rcar_pcie_enable_msi failpath
+> >   PCI: rcar: Shut the PHY down in failpath
+> > 
+> >  drivers/pci/host/pcie-rcar.c | 82 +++++++++++++++++++++++++++++++++++---------
+> >  1 file changed, 66 insertions(+), 16 deletions(-)
+> 
+> Marek,
+> 
+> I have applied patches [1-5] to pci/rcar for v4.18, I could not
+> apply patch 6 since it is missing Simon's ACK (please have a look
+> at what I queued to check it is OK).
 
-Please consider these Renesas ARM based SoC updates for v4.18.
+Sorry for the delay. You should have that now.
+
+If not, for the entire series:
+
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 
 
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
-
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-soc-for-v4.18
-
-for you to fetch changes up to 086b399965a7ee7e50c3b3c57f2dba30ff0334b0:
-
-  soc: renesas: r8a77990-sysc: Add workaround for 3DG-{A,B} (2018-05-16 10:57:44 +0200)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC Updates for v4.18
-
-* SoC
-  - Change platform dependency to ARCH_RENESAS
-
-    Geert Uytterhoeven says "The Renesas Fine Display Processor driver is
-    used on Renesas R-Car SoCs only.  Since commit 9b5ba0df4ea4f940 ("ARM:
-    shmobile: Introduce ARCH_RENESAS") is ARCH_RENESAS a more appropriate
-    platform dependency than the legacy ARCH_SHMOBILE, hence use the
-    former.
-
-    This will allow to drop ARCH_SHMOBILE on ARM and ARM64 in the near
-    future."
-
-  - Add the to Kconfig RZ/N1D (r9a06g032) SoC
-
-    In preparation for upstream support of this SoC
-
-  - Identify R-Car E3 (r8a77990) SoC
-
-  - Identify and add minimal support for RZ/G1C (r8a77470) SoC
-
-* R-Car SYSC
-  - Add support for R-Car E3 (r8a77990) SoC
-
-    Shimoda-san says this adds:
-    + "Cortex-A53 CPU{0,1}, Cortex-A53 SCU, Cortex-R7, A3VC,
-       A2VC1 and 3DG-{A,B} power domain areas..."
-
-    + "workaround for 3DG-{A,B} of R-Car E3 ES1.0 because
-       the SoC has a restriction about the order."
-
-  - Remove unused inclusion of <linux/sys_soc.h>,
-
-  - Make r8a77995_areas[] const.
-
-* R-Car Reset
-
-  - Add support for R-Car E3 (r8a77990) SoC
-
-    This driver is needed for the clock driver to work
-
-* Debug-LL
-
-  - Add support for RZ/G1C (r8a77470) SoC
-
-    RZ/G1C uses SCIF1 for the debug console
-
-----------------------------------------------------------------
-Biju Das (5):
-      soc: renesas: Identify RZ/G1C
-      soc: renesas: rcar-rst: Add support for RZ/G1C
-      soc: renesas: rcar-sysc: Add r8a77470 support
-      ARM: shmobile: r8a77470: basic SoC support
-      ARM: debug-ll: Add support for r8a77470
-
-Geert Uytterhoeven (2):
-      soc: renesas: r8a77995-sysc: Cleanups
-      arm: shmobile: Change platform dependency to ARCH_RENESAS
-
-Michel Pollet (2):
-      ARM: shmobile: Add the RZ/N1 arch to the shmobile Kconfig
-      arm: shmobile: Add the RZ/N1D (R9A06G032) to the shmobile Kconfig
-
-Takeshi Kihara (4):
-      soc: renesas: identify R-Car E3
-      soc: renesas: Add r8a77990 SYSC PM Domain Binding Definitions
-      soc: renesas: rcar-rst: Add support for R-Car E3
-      soc: renesas: rcar-sysc: Add support for R-Car E3 power areas
-
-Yoshihiro Shimoda (1):
-      soc: renesas: r8a77990-sysc: Add workaround for 3DG-{A,B}
-
- Documentation/devicetree/bindings/arm/shmobile.txt |  2 +
- .../bindings/power/renesas,rcar-sysc.txt           |  2 +
- .../devicetree/bindings/reset/renesas,rst.txt      |  2 +
- arch/arm/Kconfig                                   |  2 +-
- arch/arm/Kconfig.debug                             | 13 ++++-
- arch/arm/Makefile                                  |  2 +-
- arch/arm/mach-shmobile/Kconfig                     | 13 +++++
- arch/arm/mach-shmobile/setup-rcar-gen2.c           |  2 +
- drivers/soc/renesas/Kconfig                        | 13 ++++-
- drivers/soc/renesas/Makefile                       |  2 +
- drivers/soc/renesas/r8a77470-sysc.c                | 29 +++++++++
- drivers/soc/renesas/r8a77990-sysc.c                | 68 ++++++++++++++++++++++
- drivers/soc/renesas/r8a77995-sysc.c                |  3 +-
- drivers/soc/renesas/rcar-rst.c                     |  2 +
- drivers/soc/renesas/rcar-sysc.c                    |  6 ++
- drivers/soc/renesas/rcar-sysc.h                    |  2 +
- drivers/soc/renesas/renesas-soc.c                  | 16 +++++
- include/dt-bindings/power/r8a77470-sysc.h          | 22 +++++++
- include/dt-bindings/power/r8a77990-sysc.h          | 26 +++++++++
- 19 files changed, 220 insertions(+), 7 deletions(-)
- create mode 100644 drivers/soc/renesas/r8a77470-sysc.c
- create mode 100644 drivers/soc/renesas/r8a77990-sysc.c
- create mode 100644 include/dt-bindings/power/r8a77470-sysc.h
- create mode 100644 include/dt-bindings/power/r8a77990-sysc.h
+> 
+> Bjorn will be merging the branch into -next shortly, I do not know if
+> there is room for adding additional patches on top of it, as I mentioned
+> on linux-pci I will be offline for two weeks so it is possible that
+> what's in pci/rcar at present will be what gets into v4.18, apologies,
+> that's all I can do.
