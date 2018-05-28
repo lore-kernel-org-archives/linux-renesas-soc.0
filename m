@@ -1,17 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:43049 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163324AbeE1NHD (ORCPT
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:41827 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754207AbeE1Jcv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 May 2018 09:07:03 -0400
-Received: by mail-vk0-f65.google.com with SMTP id x191-v6so7006920vke.10
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 28 May 2018 06:07:02 -0700 (PDT)
+        Mon, 28 May 2018 05:32:51 -0400
+Received: by mail-ua0-f195.google.com with SMTP id a3-v6so7467410uad.8
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 28 May 2018 02:32:51 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUuuMJZRzCcA86fWghFuWODUHFEbmvG0gqFxmvJzNxRzQ@mail.gmail.com>
-References: <1527078995-4259-1-git-send-email-ykaneko0929@gmail.com> <CAMuHMdUuuMJZRzCcA86fWghFuWODUHFEbmvG0gqFxmvJzNxRzQ@mail.gmail.com>
+In-Reply-To: <1527078995-4259-1-git-send-email-ykaneko0929@gmail.com>
+References: <1527078995-4259-1-git-send-email-ykaneko0929@gmail.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 28 May 2018 15:07:01 +0200
-Message-ID: <CAMuHMdUmqyA8d1VYD9jRyz9pz8RXMrb8ddHor1j9auLu+7T-yA@mail.gmail.com>
+Date: Mon, 28 May 2018 11:32:50 +0200
+Message-ID: <CAMuHMdUuuMJZRzCcA86fWghFuWODUHFEbmvG0gqFxmvJzNxRzQ@mail.gmail.com>
 Subject: Re: [PATCH] arm64: dts: r8a77965: Add Watchdog Timer controller node
  using RCLK Watchdog Timer
 To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
@@ -24,30 +24,20 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kaneko-san,
-
-(after adding more coffee)
-
-The summary prefix should be "arm64: dts: renesas: r8a77965:"
-
-On Mon, May 28, 2018 at 11:32 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Wed, May 23, 2018 at 2:36 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
->> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->>
->> Add a device node for the Watchdog Timer (WDT) controller on the Renesas
->> R-Car M3N (R8A77965) SoC.
-
-M3-N
-
->> Based on a similar patch of the R8A7796 device tree
->> by Geert Uytterhoeven <geert+renesas@glider.be>.
->>
->> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+On Wed, May 23, 2018 at 2:36 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 >
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Add a device node for the Watchdog Timer (WDT) controller on the Renesas
+> R-Car M3N (R8A77965) SoC.
+>
+> Based on a similar patch of the R8A7796 device tree
+> by Geert Uytterhoeven <geert+renesas@glider.be>.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
