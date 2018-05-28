@@ -1,80 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:45634 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031916AbeEXOTd (ORCPT
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:36746 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932387AbeE1PCk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 May 2018 10:19:33 -0400
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: Ofir Drang <ofir.drang@arm.com>, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-crypto@vger.kernel.org
-Subject: [PATCH v2 2/5] crypto: ccree: better clock handling
-Date: Thu, 24 May 2018 15:19:07 +0100
-Message-Id: <1527171551-21979-3-git-send-email-gilad@benyossef.com>
-In-Reply-To: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
-References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+        Mon, 28 May 2018 11:02:40 -0400
+MIME-Version: 1.0
+In-Reply-To: <10a503da-d431-f2c9-3ddc-91b065563a0d@redhat.com>
+References: <1526640912-894-1-git-send-email-geert+renesas@glider.be> <10a503da-d431-f2c9-3ddc-91b065563a0d@redhat.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 28 May 2018 17:02:38 +0200
+Message-ID: <CAMuHMdXfEj9Z8b3csyM_5rbS5-ki99bWJqnWZcL2chK9P39vTg@mail.gmail.com>
+Subject: Re: [PATCH v2] vfio: platform: Fix using devices in PM Domains
+To: Auger Eric <eric.auger@redhat.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        KVM list <kvm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use managed clock handling, differentiate between no clock (possibly OK)
-and clock init failure (never OK) and correctly handle clock detection
-being deferred.
+Hi Eric,
 
-Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
----
- drivers/crypto/ccree/cc_driver.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
+On Mon, May 28, 2018 at 4:54 PM, Auger Eric <eric.auger@redhat.com> wrote:
+> On 05/18/2018 12:55 PM, Geert Uytterhoeven wrote:
+>> If a device is part of a PM Domain (e.g. power and/or clock domain), its
+>> power state is managed using Runtime PM.  Without Runtime PM, the device
+>> may not be powered up or clocked, causing subtle failures, crashes, or
+>> system lock-ups when the device is accessed by the guest.
+>>
+>> Fix this by adding Runtime PM support, powering the device when the VFIO
+>> device is opened by the guest.
+>
+> I fail to apply this on master branch?
 
-diff --git a/drivers/crypto/ccree/cc_driver.c b/drivers/crypto/ccree/cc_driver.c
-index 6f93ce7..b266657 100644
---- a/drivers/crypto/ccree/cc_driver.c
-+++ b/drivers/crypto/ccree/cc_driver.c
-@@ -190,6 +190,7 @@ static int init_cc_resources(struct platform_device *plat_dev)
- 	u64 dma_mask;
- 	const struct cc_hw_data *hw_rev;
- 	const struct of_device_id *dev_id;
-+	struct clk *clk;
- 	int rc = 0;
- 
- 	new_drvdata = devm_kzalloc(dev, sizeof(*new_drvdata), GFP_KERNEL);
-@@ -219,7 +220,24 @@ static int init_cc_resources(struct platform_device *plat_dev)
- 	platform_set_drvdata(plat_dev, new_drvdata);
- 	new_drvdata->plat_dev = plat_dev;
- 
--	new_drvdata->clk = of_clk_get(np, 0);
-+	clk = devm_clk_get(dev, NULL);
-+	if (IS_ERR(clk))
-+		switch (PTR_ERR(clk)) {
-+		/* Clock is optional so this might be fine */
-+		case -ENOENT:
-+			break;
-+
-+		/* Clock not available, let's try again soon */
-+		case -EPROBE_DEFER:
-+			return -EPROBE_DEFER;
-+
-+		default:
-+			dev_err(dev, "Error getting clock: %ld\n",
-+				PTR_ERR(clk));
-+			return PTR_ERR(clk);
-+		}
-+	new_drvdata->clk = clk;
-+
- 	new_drvdata->coherent = of_dma_is_coherent(np);
- 
- 	/* Get device resources */
+It's against git://github.com/awilliam/linux-vfio.git#next.
+
+>> Note that while more fine-grained power management could be implemented
+>> on the guest side, if exported by the host, this would be inherently
+>> unsafe, as abusing it may take down the whole system.
+> I think I would prefer we get rid of the above paragraph.
+
+OK, I will drop it. But you've been warned ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
