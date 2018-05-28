@@ -1,77 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:37471 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751342AbeEVMDP (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57196 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937290AbeE1K3U (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 May 2018 08:03:15 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 4/9] ARM: dts: koelsch: Drop MTD partitioning from DT
-Date: Tue, 22 May 2018 14:02:52 +0200
-Message-Id: <20180522120257.13232-4-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180522120257.13232-1-marek.vasut+renesas@gmail.com>
-References: <20180522120257.13232-1-marek.vasut+renesas@gmail.com>
+        Mon, 28 May 2018 06:29:20 -0400
+Date: Mon, 28 May 2018 12:29:15 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v4 00/16] R-Car DU: Convert LVDS code to bridge driver
+Message-ID: <20180528102913.b52r6by5glr45igx@verge.net.au>
+References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
+ <1527247074.On16LTaIee@avalon>
+ <20180528093916.dmju4nuvvqrsbeaj@verge.net.au>
+ <1738628.8dYAcPdHeb@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1738628.8dYAcPdHeb@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Drop the MTD partitioning from DT, since it does not describe HW
-and to give way to a more flexible kernel command line partition
-passing.
+On Mon, May 28, 2018 at 12:45:32PM +0300, Laurent Pinchart wrote:
+> Hi Simon,
+> 
+> On Monday, 28 May 2018 12:39:17 EEST Simon Horman wrote:
+> > On Fri, May 25, 2018 at 01:23:53PM +0300, Laurent Pinchart wrote:
+> > > On Friday, 25 May 2018 13:13:20 EEST Simon Horman wrote:
+> > >> On Thu, May 24, 2018 at 11:00:52AM +0300, Laurent Pinchart wrote:
+> > >>> On Wednesday, 21 February 2018 18:39:25 EEST Simon Horman wrote:
+> > >>>> On Wed, Feb 21, 2018 at 01:10:30AM +0200, Laurent Pinchart wrote:
+> > > 
+> > > [snip]
+> > > 
+> > >>>>> Laurent Pinchart (11):
+> > >>>>>   dt-bindings: display: renesas: Add R-Car LVDS encoder DT bindings
+> > >>>>>   dt-bindings: display: renesas: Deprecate LVDS support in the DU
+> > >>>>>     bindings
+> > >>>>>   drm: rcar-du: Fix legacy DT to create LVDS encoder nodes
+> > >>>>>   drm: rcar-du: Convert LVDS encoder code to bridge driver
+> > >>>>>   ARM: dts: r8a7790: Convert to new LVDS DT bindings
+> > >>>>>   ARM: dts: r8a7791: Convert to new LVDS DT bindings
+> > >>>>>   ARM: dts: r8a7792: Convert to new DU DT bindings
+> > >>>>>   ARM: dts: r8a7793: Convert to new LVDS DT bindings
+> > >>>>>   ARM: dts: r8a7794: Convert to new DU DT bindings
+> > >>>>>   arm64: dts: renesas: r8a7795: Convert to new LVDS DT bindings
+> > >>>>>   arm64: dts: renesas: r8a7796: Convert to new LVDS DT bindings
+> > >>>> 
+> > >>>> I have marked the dts patches above as deferred as they depend
+> > >>>> on the driver changes not to cause a regression. Please repost them
+> > >>>> or otherwise ping me once the driver dependencies are present in an
+> > >>>> rc release.
+> > >>> 
+> > >>> The driver changes have made it to v4.17-rc1. Is it too late for v4.18
+> > >>> ?
+> > >> 
+> > >> Unfortunately it is. Shall I apply them for v4.19?
+> > > 
+> > > Please do.
+> > 
+> > Hi Laurent,
+> > 
+> > I'm sorry to have to ask this, but in the light of Olof Johansson's recent
+> > comments in ("Re: [GIT PULL] Renesas ARM64 Based SoC DT Updates for v4.18")
+> > please consider squashing the DTS patches and reposting.
+> 
+> It's about time we stopped trying to game the kernel patch statistics :-)
+> 
+> Before I repost, has there been a consensus on the new rule ? And how are we 
+> expected to proceed from now on ?
 
-To retain the original partitioning, assure you have enabled
-CONFIG_MTD_CMDLINE_PARTS in your kernel config and add the
-following to your kernel command line:
-
-  mtdparts=spi0.0:512k@0(loader),5632k(user),-(flash)
-
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
----
- arch/arm/boot/dts/r8a7791-koelsch.dts | 21 ---------------------
- 1 file changed, 21 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index 8ab793d8b2fd..406d5d29e29c 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -724,27 +724,6 @@
- 		spi-cpha;
- 		spi-cpol;
- 		m25p,fast-read;
--
--		partitions {
--			compatible = "fixed-partitions";
--			#address-cells = <1>;
--			#size-cells = <1>;
--
--			partition@0 {
--				label = "loader";
--				reg = <0x00000000 0x00080000>;
--				read-only;
--			};
--			partition@80000 {
--				label = "user";
--				reg = <0x00080000 0x00580000>;
--				read-only;
--			};
--			partition@600000 {
--				label = "flash";
--				reg = <0x00600000 0x03a00000>;
--			};
--		};
- 	};
- };
- 
--- 
-2.16.2
+No, there has not been. And I think there needs to be.
