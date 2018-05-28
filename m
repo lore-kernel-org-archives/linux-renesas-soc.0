@@ -1,70 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay11.mail.gandi.net ([217.70.178.231]:47221 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935454AbeE2PG3 (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:45995 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753612AbeE1HqG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 May 2018 11:06:29 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        horms@verge.net.au, geert@glider.be
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 1/8] dt-bindings: media: rcar-vin: Describe optional ep properties
-Date: Tue, 29 May 2018 17:05:52 +0200
-Message-Id: <1527606359-19261-2-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1527606359-19261-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1527606359-19261-1-git-send-email-jacopo+renesas@jmondi.org>
+        Mon, 28 May 2018 03:46:06 -0400
+Received: by mail-io0-f195.google.com with SMTP id c9-v6so13070237iob.12
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 28 May 2018 00:46:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1527261094-10412-1-git-send-email-phil.edworthy@renesas.com>
+References: <1527261094-10412-1-git-send-email-phil.edworthy@renesas.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 28 May 2018 09:46:04 +0200
+Message-ID: <CACRpkdb4A=oFh6iirtWLVqqf5F2JpZ3Q-Gc7i+tT9EP7Phb+Dg@mail.gmail.com>
+Subject: Re: [PATCH] gpio: dwapb: Fix rework support for 1 interrupt per port
+ A GPIO
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Hoan Tran <hotran@apm.com>, Lee Jones <lee.jones@linaro.org>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the optional endpoint properties for endpoint nodes of port@0
-and port@1 of the R-Car VIN driver device tree bindings documentation.
+On Fri, May 25, 2018 at 5:11 PM, Phil Edworthy
+<phil.edworthy@renesas.com> wrote:
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Commit da069d5d2b814d9887989dcdb29fb0202eac8b38 ("gpio: dwapb: Rework
+> support for 1 interrupt per port A GPIO"), was an incremental patch that
+> was supposed to provide the delta between v5 and v6 patch set for
+> adding support for 1 interupt per port A GPIO. v5 was applied, then some
+> other feedback came afterwards.
+>
+> However, in my haste I managed to drop the changes made to dwapb_port_property
+> struct. This patch includes those missing changes.
+>
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 
----
-v2 -> v3:
-- Do not repeat property description, just reference video-interfaces.txt
-- Indent with spaces, not tabs as the rest of the document
-- Do not remove (yet) the 'bus-width' property from example
----
- Documentation/devicetree/bindings/media/rcar_vin.txt | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Patch applied!
 
-diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
-index 5c6f2a7..4d91a36 100644
---- a/Documentation/devicetree/bindings/media/rcar_vin.txt
-+++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
-@@ -54,6 +54,14 @@ from local SoC CSI-2 receivers (port1) depending on SoC.
-       from external SoC pins described in video-interfaces.txt[1].
-       Describing more then one endpoint in port 0 is invalid. Only VIN
-       instances that are connected to external pins should have port 0.
-+
-+      - Optional properties for endpoint nodes of port@0:
-+        - hsync-active: see [1] for description. Default is active high.
-+        - vsync-active: see [1] for description. Default is active high.
-+
-+        If both HSYNC and VSYNC polarities are not specified, embedded
-+        synchronization is selected.
-+
-     - port 1 - sub-nodes describing one or more endpoints connected to
-       the VIN from local SoC CSI-2 receivers. The endpoint numbers must
-       use the following schema.
-@@ -63,6 +71,8 @@ from local SoC CSI-2 receivers (port1) depending on SoC.
-         - Endpoint 2 - sub-node describing the endpoint connected to CSI40
-         - Endpoint 3 - sub-node describing the endpoint connected to CSI41
-
-+      Endpoint nodes of port@1 do not support any optional endpoint property.
-+
- Device node example for Gen2 platforms
- --------------------------------------
-
---
-2.7.4
+Yours,
+Linus Walleij
