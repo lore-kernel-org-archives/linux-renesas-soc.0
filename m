@@ -1,50 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:56613 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752336AbeERLTJ (ORCPT
+        with ESMTP id S1754305AbeE1JbG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:19:09 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 17/69] ARM: dts: r8a7745: Adjust SMP routine size
-Date: Fri, 18 May 2018 13:16:50 +0200
-Message-Id: <7270dedc8438c7247474a33a8334f3920816e2c2.1526641667.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
-References: <cover.1526641667.git.horms+renesas@verge.net.au>
+        Mon, 28 May 2018 05:31:06 -0400
+Date: Mon, 28 May 2018 11:31:02 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Subject: Re: [PATCH 2/2] arm64: dts: ulcb: Add sdhi2_ds pin group to SDHI2
+ pinctrl groups
+Message-ID: <20180528093102.koll7ny3g5rjo2zb@verge.net.au>
+References: <20180525150518.26894-1-wsa+renesas@sang-engineering.com>
+ <20180525150518.26894-3-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180525150518.26894-3-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+On Fri, May 25, 2018 at 05:05:18PM +0200, Wolfram Sang wrote:
+> This patch adds definitions for configuration of the power-source,
+> drive-strength, etc... for the SD2_DS pin. Based on a similar patch for
+> Salvator boards by Masaharu Hayakawa and Takeshi Kihara.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-This patch adjusts the definition of the SMP routine size according
-to the latest changes made by commit:
-"ARM: shmobile: Add watchdog support"
+Hi Wolfram,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7745.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index dd49a8b48f3e..0c3f4c5b345b 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -360,7 +360,7 @@
- 
- 			smp-sram@0 {
- 				compatible = "renesas,smp-sram";
--				reg = <0 0x10>;
-+				reg = <0 0x100>;
- 			};
- 		};
- 
--- 
-2.11.0
+Given Olof Johansson's recent comments in ("Re: [GIT PULL] Renesas ARM64
+Based SoC DT Updates for v4.18") please consider squashing this
+series into a single patch and reposting.
