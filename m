@@ -1,61 +1,39 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        horms@verge.net.au, geert@glider.be
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 3/8] media: v4l2-fwnode: parse 'data-enable-active' prop
-Date: Tue, 29 May 2018 17:05:54 +0200
-Message-Id: <1527606359-19261-4-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1527606359-19261-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1527606359-19261-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:51877 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934966AbeE2O3j (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 29 May 2018 10:29:39 -0400
+Date: Tue, 29 May 2018 14:12:15 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2] dt-bindings: media: rcar_vin: fix style for ports and
+ endpoints
+Message-ID: <20180529131215.i75ka7rkij3ebfhg@verge.net.au>
+References: <20180528231704.13806-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180528231704.13806-1-niklas.soderlund+renesas@ragnatech.se>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Parse the newly defined 'data-enable-active' property in parallel endpoint
-parsing function.
+On Tue, May 29, 2018 at 01:17:04AM +0200, Niklas Söderlund wrote:
+> The style for referring to ports and endpoint are wrong. Refer to them
+> using lowercase and a unit address, port@x and endpoint@x.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Sorry, I responded to v1 before noticing there is a v2:
 
----
-v3:
-- new patch
----
- drivers/media/v4l2-core/v4l2-fwnode.c | 4 ++++
- include/media/v4l2-mediabus.h         | 2 ++
- 2 files changed, 6 insertions(+)
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
-index 3f77aa3..6105191 100644
---- a/drivers/media/v4l2-core/v4l2-fwnode.c
-+++ b/drivers/media/v4l2-core/v4l2-fwnode.c
-@@ -154,6 +154,10 @@ static void v4l2_fwnode_endpoint_parse_parallel_bus(
- 		flags |= v ? V4L2_MBUS_VIDEO_SOG_ACTIVE_HIGH :
- 			V4L2_MBUS_VIDEO_SOG_ACTIVE_LOW;
-
-+	if (!fwnode_property_read_u32(fwnode, "data-enable-active", &v))
-+		flags |= v ? V4L2_MBUS_DATA_ENABLE_HIGH :
-+			V4L2_MBUS_DATA_ENABLE_LOW;
-+
- 	bus->flags = flags;
-
- }
-diff --git a/include/media/v4l2-mediabus.h b/include/media/v4l2-mediabus.h
-index 4d8626c..4bbb5f3 100644
---- a/include/media/v4l2-mediabus.h
-+++ b/include/media/v4l2-mediabus.h
-@@ -45,6 +45,8 @@
- /* Active state of Sync-on-green (SoG) signal, 0/1 for LOW/HIGH respectively. */
- #define V4L2_MBUS_VIDEO_SOG_ACTIVE_HIGH		BIT(12)
- #define V4L2_MBUS_VIDEO_SOG_ACTIVE_LOW		BIT(13)
-+#define V4L2_MBUS_DATA_ENABLE_HIGH		BIT(14)
-+#define V4L2_MBUS_DATA_ENABLE_LOW		BIT(15)
-
- /* Serial flags */
- /* How many lanes the client can use */
---
-2.7.4
-
+FWIW, there are some instances of = that aren't preceded by a space
+in this file.
