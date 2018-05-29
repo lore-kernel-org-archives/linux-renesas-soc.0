@@ -1,10 +1,5 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:27409 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750831AbeE2HRt (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 May 2018 03:17:49 -0400
-Date: Tue, 29 May 2018 10:17:42 +0300
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Tue, 29 May 2018 10:11:03 +0300
 From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
 To: Dmitry Osipenko <digetx@gmail.com>
 Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
@@ -23,95 +18,423 @@ Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [RFC PATCH v2 1/2] drm: Add generic colorkey properties
-Message-ID: <20180529071742.GM23723@intel.com>
+Message-ID: <20180529071103.GL23723@intel.com>
 References: <20180526155623.12610-1-digetx@gmail.com>
  <20180526155623.12610-2-digetx@gmail.com>
+ <20180528131501.GK23723@intel.com>
+ <efba1801-5b00-1fa1-45df-a5d3a2e3d63a@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180526155623.12610-2-digetx@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <efba1801-5b00-1fa1-45df-a5d3a2e3d63a@gmail.com>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, May 26, 2018 at 06:56:22PM +0300, Dmitry Osipenko wrote:
-> Color keying is the action of replacing pixels matching a given color
-> (or range of colors) with transparent pixels in an overlay when
-> performing blitting. Depending on the hardware capabilities, the
-> matching pixel can either become fully transparent or gain adjustment
-> of the pixels component values.
+On Tue, May 29, 2018 at 02:48:22AM +0300, Dmitry Osipenko wrote:
+> On 28.05.2018 16:15, Ville Syrj�l� wrote:
+> > On Sat, May 26, 2018 at 06:56:22PM +0300, Dmitry Osipenko wrote:
+> >> Color keying is the action of replacing pixels matching a given color
+> >> (or range of colors) with transparent pixels in an overlay when
+> >> performing blitting. Depending on the hardware capabilities, the
+> >> matching pixel can either become fully transparent or gain adjustment
+> >> of the pixels component values.
+> >>
+> >> Color keying is found in a large number of devices whose capabilities
+> >> often differ, but they still have enough common features in range to
+> >> standardize color key properties. This commit adds nine generic DRM plane
+> >> properties related to the color keying to cover various HW capabilities.
+> >>
+> >> This patch is based on the initial work done by Laurent Pinchart, most of
+> >> credits for this patch goes to him.
+> >>
+> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >> ---
+> >>  drivers/gpu/drm/drm_atomic.c |  36 ++++++
+> >>  drivers/gpu/drm/drm_blend.c  | 229 +++++++++++++++++++++++++++++++++++
+> >>  include/drm/drm_blend.h      |   3 +
+> >>  include/drm/drm_plane.h      |  77 ++++++++++++
+> >>  4 files changed, 345 insertions(+)
+> >>
+> >> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+> >> index 895741e9cd7d..5b808cb68654 100644
+> >> --- a/drivers/gpu/drm/drm_atomic.c
+> >> +++ b/drivers/gpu/drm/drm_atomic.c
+> >> @@ -799,6 +799,24 @@ static int drm_atomic_plane_set_property(struct drm_plane *plane,
+> >>  		state->rotation = val;
+> >>  	} else if (property == plane->zpos_property) {
+> >>  		state->zpos = val;
+> >> +	} else if (property == plane->colorkey.mode_property) {
+> >> +		state->colorkey.mode = val;
+> >> +	} else if (property == plane->colorkey.min_property) {
+> >> +		state->colorkey.min = val;
+> >> +	} else if (property == plane->colorkey.max_property) {
+> >> +		state->colorkey.max = val;
+> >> +	} else if (property == plane->colorkey.format_property) {
+> >> +		state->colorkey.format = val;
+> >> +	} else if (property == plane->colorkey.mask_property) {
+> >> +		state->colorkey.mask = val;
+> >> +	} else if (property == plane->colorkey.inverted_match_property) {
+> >> +		state->colorkey.inverted_match = val;
+> >> +	} else if (property == plane->colorkey.replacement_mask_property) {
+> >> +		state->colorkey.replacement_mask = val;
+> >> +	} else if (property == plane->colorkey.replacement_value_property) {
+> >> +		state->colorkey.replacement_value = val;
+> >> +	} else if (property == plane->colorkey.replacement_format_property) {
+> >> +		state->colorkey.replacement_format = val;
+> >>  	} else if (property == plane->color_encoding_property) {
+> >>  		state->color_encoding = val;
+> >>  	} else if (property == plane->color_range_property) {
+> >> @@ -864,6 +882,24 @@ drm_atomic_plane_get_property(struct drm_plane *plane,
+> >>  		*val = state->rotation;
+> >>  	} else if (property == plane->zpos_property) {
+> >>  		*val = state->zpos;
+> >> +	} else if (property == plane->colorkey.mode_property) {
+> >> +		*val = state->colorkey.mode;
+> >> +	} else if (property == plane->colorkey.min_property) {
+> >> +		*val = state->colorkey.min;
+> >> +	} else if (property == plane->colorkey.max_property) {
+> >> +		*val = state->colorkey.max;
+> >> +	} else if (property == plane->colorkey.format_property) {
+> >> +		*val = state->colorkey.format;
+> >> +	} else if (property == plane->colorkey.mask_property) {
+> >> +		*val = state->colorkey.mask;
+> >> +	} else if (property == plane->colorkey.inverted_match_property) {
+> >> +		*val = state->colorkey.inverted_match;
+> >> +	} else if (property == plane->colorkey.replacement_mask_property) {
+> >> +		*val = state->colorkey.replacement_mask;
+> >> +	} else if (property == plane->colorkey.replacement_value_property) {
+> >> +		*val = state->colorkey.replacement_value;
+> >> +	} else if (property == plane->colorkey.replacement_format_property) {
+> >> +		*val = state->colorkey.replacement_format;
+> >>  	} else if (property == plane->color_encoding_property) {
+> >>  		*val = state->color_encoding;
+> >>  	} else if (property == plane->color_range_property) {
+> >> diff --git a/drivers/gpu/drm/drm_blend.c b/drivers/gpu/drm/drm_blend.c
+> >> index a16a74d7e15e..05e5632ce375 100644
+> >> --- a/drivers/gpu/drm/drm_blend.c
+> >> +++ b/drivers/gpu/drm/drm_blend.c
+> >> @@ -107,6 +107,11 @@
+> >>   *	planes. Without this property the primary plane is always below the cursor
+> >>   *	plane, and ordering between all other planes is undefined.
+> >>   *
+> >> + * colorkey:
+> >> + *	Color keying is set up with drm_plane_create_colorkey_properties().
+> >> + *	It adds support for replacing a range of colors with a transparent
+> >> + *	color in the plane.
+> >> + *
+> >>   * Note that all the property extensions described here apply either to the
+> >>   * plane or the CRTC (e.g. for the background color, which currently is not
+> >>   * exposed and assumed to be black).
+> >> @@ -448,3 +453,227 @@ int drm_atomic_normalize_zpos(struct drm_device *dev,
+> >>  	return 0;
+> >>  }
+> >>  EXPORT_SYMBOL(drm_atomic_normalize_zpos);
+> >> +
+> >> +static const char * const plane_colorkey_mode_name[] = {
+> >> +	[DRM_PLANE_COLORKEY_MODE_DISABLED] = "disabled",
+> >> +	[DRM_PLANE_COLORKEY_MODE_SRC] = "src-match-src-replace",
+> >> +	[DRM_PLANE_COLORKEY_MODE_DST] = "dst-match-src-replace",
+> > 
+> > This list seems way more limited than I was expecting, at least when
+> > compared to all the different props you're proposing to add.
+> > 
 > 
-> Color keying is found in a large number of devices whose capabilities
-> often differ, but they still have enough common features in range to
-> standardize color key properties. This commit adds nine generic DRM plane
-> properties related to the color keying to cover various HW capabilities.
+> What else are you expecting to see in the list?
+
+Prerry much all kinds of modes for the funky replacement values
+and whanot.
+
 > 
-> This patch is based on the initial work done by Laurent Pinchart, most of
-> credits for this patch goes to him.
+> >> +};
+> >> +
+> >> +/**
+> >> + * drm_plane_create_colorkey_properties - create colorkey properties
+> >> + * @plane: drm plane
+> >> + * @supported_modes: bitmask of supported color keying modes
+> >> + *
+> >> + * This function creates the generic color keying properties and attach them to
+> >> + * the plane to enable color keying control for blending operations.
+> >> + *
+> >> + * Color keying is controlled through nine properties:
+> >> + *
+> >> + * colorkey.mode:
+> >> + *	The mode is an enumerated property that controls how color keying
+> >> + *	operates. The "disabled" mode that disables color keying and is
+> >> + *	very likely to exist if color keying is supported, it should be the
+> >> + *	default mode.
+> >> + *
+> >> + * colorkey.min, colorkey.max:
+> >> + *	These two properties specify the colors that are treated as the color
+> >> + *	key. Pixel whose value is in the [min, max] range is the color key
+> >> + *	matching pixel. The minimum and maximum values are expressed as a
+> >> + *	64-bit integer in AXYZ16161616 format, where A is the alpha value and
+> >> + *	X, Y and Z correspond to the color components of the colorkey.format.
+> >> + *	In most cases XYZ will be either RGB or YUV.
+> >> + *
+> >> + *	When a single color key is desired instead of a range, userspace shall
+> >> + *	set the min and max properties to the same value.
+> >> + *
+> >> + *	Drivers return an error from their plane atomic check if range can't be
+> >> + *	handled.
+> >> + *
+> >> + * colorkey.format:
+> >> + *	This property specifies the pixel format for the colorkey.min / max
+> >> + *	properties. The format is given in a form of DRM fourcc code.
+> > 
+> > Umm. Why we do even need this? This seems incompatible with your earlier
+> > "min/max are specified in 16bpc format" statement.
+> > 
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/gpu/drm/drm_atomic.c |  36 ++++++
->  drivers/gpu/drm/drm_blend.c  | 229 +++++++++++++++++++++++++++++++++++
->  include/drm/drm_blend.h      |   3 +
->  include/drm/drm_plane.h      |  77 ++++++++++++
->  4 files changed, 345 insertions(+)
+> AXYZ16161616 is just an abstraction of a pixel format, at least that's how I'm
+> interpreting the AXYZ16161616.
 > 
-> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-> index 895741e9cd7d..5b808cb68654 100644
-> @@ -124,6 +175,19 @@ struct drm_plane_state {
->  	unsigned int zpos;
->  	unsigned int normalized_zpos;
->  
-> +	/* Plane colorkey */
-> +	struct {
-> +		enum drm_plane_colorkey_mode mode;
-> +		u64 min;
-> +		u64 max;
-> +		u64 mask;
-> +		u32 format;
-> +		bool inverted_match;
-> +		u64 replacement_mask;
-> +		u64 replacement_value;
-> +		u32 replacement_format;
-> +	} colorkey;
+> Previously Laurent specified that min/max values should be given in the format
+> of the planes framebuffer. This doesn't work for a case of setting property for
+> a disabled plane because disabled plane doesn't have a framebuffer. This also
+> doesn't work for Tegra that can take only XRGB8888 format for a color key, AFAIK
+> HW internally converts all pixel formats to ARGB8888 and RGB part participates
+> in the color matching (later Tegra's support alpha channel matching as well).
+> Hence I added the format property that explicitly tells in what format the color
+> key integer value is given.
+> 
+> I'm now thinking that format property should be exposed to userspace in a form
+> of a ENUM-list, because otherwise userspace doesn't know what color key formats
+> are supported by the DRM driver.
 
-After a quick stab at implementing this for i915 I came to the
-conclusion that I'd like this struct to have a name so that I can pass
-it around/consult it easily without having to mess about with the entire
-plane state.
+I'm not sure that'll help particularly much. Generally you can't 
+choose the format anyway, and it may just depends on the fb format
+or some other related factors. So not really sure how much benefit
+such an enum would have.
 
-One extra question that came up is how are we going to define the
-destination color key? Is it to be a) enabled on the plane that has the
-colorkey painted on it, or is it to be b) enabled on a plane that sits
-above the plane that is going to be covering up the colorkey? Modern
-Intel hardware defines it the a) way, whereas older hw used the b)
-method. Thinking about it I do think the a) method seems nicer because
-it removes the ambiguity as to which plane's pixels are going to be
-compared again the colorkey. So kinda matches the src colorkey case
-better.
+And for hw where eg. the colorkey is always RGB even for YUV data
+(or vice versa) we could just do the YUV<->RGB conversion in the
+driver for the colorkey value provided by the user. The driver is
+in the best position to know the exact YUV<->RGB conversion formula
+used by the hardware anyway.
 
-Oh and this also brings up the question as to which other plane(s) are
-taking part in the colorkey process. Looks like on modern Intel hw it's
-supposed to be just the plane immediately above the plane with
-dst keying enabled. On some really old hw there were some more
-complicated rules as to which pair of planes are involved. On middle
-aged hw the situation is simpler a there are only ever two
-(non-cursor) planes on the same crtc. The cursor doesn't seem to
-participate in the colorkeing ever. Not sure there's a sane way to
-fully abstract this all.
+> 
+> And probably somehow userspace should be informed about that colorkey format
+> should match the framebuffers format if that's what driver expects. Maybe a
+> read-only property?
+> 
+> >> + *
+> >> + *	Drivers return an error from their plane atomic check if pixel format
+> >> + *	is unsupported.
+> >> + *
+> >> + * colorkey.mask:
+> >> + *	This property specifies the pixel components mask. Unmasked pixel
+> >> + *	components are not participating in the matching. This mask value is
+> >> + *	applied to colorkey.min / max values. The mask value is given in a
+> >> + *	form of DRM fourcc code corresponding to the colorkey.format property.
+> >> + *
+> >> + *	For example: userspace shall set the colorkey.mask to 0x0000ff00
+> >> + *	to match only the green component if colorkey.format is set to
+> >> + *	DRM_FORMAT_XRGB8888.
+> >> + *
+> >> + *	Drivers return an error from their plane atomic check if mask value
+> >> + *	can't be handled.
+> >> + *
+> >> + * colorkey.inverted-match:
+> >> + *	This property specifies whether the matching min-max range should
+> >> + *	be inverted, i.e. pixels outside of the given color range become
+> >> + *	the color key match.
+> >> + *
+> >> + *	Drivers return an error from their plane atomic check if inversion
+> >> + *	mode can't be handled.
+> > 
+> > Hmm. I'm trying to figure out what this means for the src vs. dst
+> > colorkey modes. Those pretty much already have an inverted meaning when
+> > compared to each other. So I can't figure out from these docs whether 
+> > you're supposed to use this when you want a normal dst ckey or normal
+> > src key semantics.
+> > 
+> 
+> I also couldn't understand what initial semantic to src/dst was given by Laurent.
+> 
+> In a case of this patch:
+> 
+> The src/dst-match specifies the "source" plane for which the color matching is
+> performed. Src means the plane to which the colorkey properties are applied. Dst
+> means planes other than plane X to which the colorkey properties are applied, in
+> particular the planes that are Z-positioned under the plane X. Hope that's more
+> clear now.
+> 
+> The src-replace part specifies that pixels of the plane to which the colorkey
+> properties are applied will be replaced.
+> 
+> I'll try to re-work the doc if the above sounds good.
+> 
+> The inverted-match property controls whether given color-match range shall be
+> inverted, like for example: if given color key is a red color, then all colors
+> expect the red will be matched as a color key.
+> 
+> Actually maybe inversion could be expressed using the mask solely. Like we could
+> add a helper that converts "value+mask" into "value=(value & ~mask),
+> inversion=true" if mask has form of 0x11000111, though this could be not
+> applicable to all possible pixel formats.. not sure.
+> 
+> >> + *
+> >> + * colorkey.replacement-value:
+> >> + *	This property specifies the color value that replaces pixels matching
+> >> + *	the color key. The value is expressed in AXYZ16161616 format, where A
+> >> + *	is the alpha value and X, Y and Z correspond to the color components
+> >> + *	of the colorkey.replacement-format.
+> >> + *
+> >> + *	Drivers return an error from their plane atomic check if replacement
+> >> + *	value can't be handled.
+> >> + *
+> >> + * colorkey.replacement-format:
+> >> + *	This property specifies the pixel format for the
+> >> + *	colorkey.replacement-value property. The format is given in a form of
+> >> + *	DRM fourcc code.
+> > 
+> > Again this seems at odds with the 16bpc replacement-value.
+> > 
+> >> + *
+> >> + *	Drivers return an error from their plane atomic check if replacement
+> >> + *	pixel format is unsupported.
+> >> + *
+> >> + * colorkey.replacement-mask:
+> >> + *	This property specifies the pixel components mask that defines
+> >> + *	what components of the colorkey.replacement-value will participate in
+> >> + *	replacement of the pixels color. Unmasked pixel components are not
+> >> + *	participating in the replacement.
+> > 
+> > Does that mean that the data for the unmasked bits will be coming
+> > from the source?
+> > 
+> 
+> Yeah, I see that "source" is vaguely defined.
+> 
+> Yes, the unmasked bits are coming from the source. The "source" is defined by
+> the mode.
+> 
+> src-match- -->SRC<-- -replace
+> dst-match- -->SRC<-- -replace
+> 
+> Src means the plane to which the colorkey properties are applied, as I stated above.
+> 
+> >> The mask value is given in a form of
+> >> + *	DRM fourcc code corresponding to the colorkey.replacement-format
+> >> + *	property.
+> >> + *
+> >> + *	For example: userspace shall set the colorkey.replacement-mask to
+> >> + *	0x0000ff00 to replace only the green component if
+> >> + *	colorkey.replacement-format is set to DRM_FORMAT_XRGB8888.
+> >> + *
+> >> + *	Userspace shall set colorkey.replacement-mask to 0 to disable the color
+> >> + *	replacement. In this case matching pixels become transparent.
+> >> + *
+> >> + *	Drivers return an error from their plane atomic check if replacement
+> >> + *	mask value can't be handled.
+> >> + *
+> >> + * Returns:
+> >> + * Zero on success, negative errno on failure.
+> >> + */
+> >> +int drm_plane_create_colorkey_properties(struct drm_plane *plane,
+> >> +					 u32 supported_modes)
+> >> +{
+> >> +	struct drm_prop_enum_list modes_list[DRM_PLANE_COLORKEY_MODES_NUM];
+> >> +	struct drm_property *replacement_format_prop;
+> >> +	struct drm_property *replacement_value_prop;
+> >> +	struct drm_property *replacement_mask_prop;
+> >> +	struct drm_property *inverted_match_prop;
+> >> +	struct drm_property *format_prop;
+> >> +	struct drm_property *mask_prop;
+> >> +	struct drm_property *mode_prop;
+> >> +	struct drm_property *min_prop;
+> >> +	struct drm_property *max_prop;
+> >> +	unsigned int modes_num = 0;
+> >> +	unsigned int i;
+> >> +
+> >> +	/* at least two modes should be supported */
+> >> +	if (!supported_modes)
+> >> +		return -EINVAL;
+> >> +
+> >> +	/* modes are driver-specific, build the list of supported modes */
+> >> +	for (i = 0; i < DRM_PLANE_COLORKEY_MODES_NUM; i++) {
+> >> +		if (!(supported_modes & BIT(i)))
+> >> +			continue;
+> >> +
+> >> +		modes_list[modes_num].name = plane_colorkey_mode_name[i];
+> >> +		modes_list[modes_num].type = i;
+> >> +		modes_num++;
+> >> +	}
+> >> +
+> >> +	mode_prop = drm_property_create_enum(plane->dev, 0, "colorkey.mode",
+> >> +					     modes_list, modes_num);
+> >> +	if (!mode_prop)
+> >> +		return -ENOMEM;
+> >> +
+> >> +	mask_prop = drm_property_create_range(plane->dev, 0, "colorkey.mask",
+> >> +					      0, U64_MAX);
+> >> +	if (!mask_prop)
+> >> +		goto err_destroy_mode_prop;
+> >> +
+> >> +	min_prop = drm_property_create_range(plane->dev, 0, "colorkey.min",
+> >> +					     0, U64_MAX);
+> >> +	if (!min_prop)
+> >> +		goto err_destroy_mask_prop;
+> >> +
+> >> +	max_prop = drm_property_create_range(plane->dev, 0, "colorkey.max",
+> >> +					     0, U64_MAX);
+> >> +	if (!max_prop)
+> >> +		goto err_destroy_min_prop;
+> >> +
+> >> +	format_prop = drm_property_create_range(plane->dev, 0,
+> >> +					"colorkey.format",
+> >> +					0, U32_MAX);
+> >> +	if (!format_prop)
+> >> +		goto err_destroy_max_prop;
+> >> +
+> >> +	inverted_match_prop = drm_property_create_bool(plane->dev, 0,
+> >> +					"colorkey.inverted-match");
+> >> +	if (!inverted_match_prop)
+> >> +		goto err_destroy_format_prop;
+> >> +
+> >> +	replacement_mask_prop = drm_property_create_range(plane->dev, 0,
+> >> +					"colorkey.replacement-mask",
+> >> +					0, U64_MAX);
+> >> +	if (!replacement_mask_prop)
+> >> +		goto err_destroy_inverted_match_prop;
+> >> +
+> >> +	replacement_value_prop = drm_property_create_range(plane->dev, 0,
+> >> +					"colorkey.replacement-value",
+> >> +					0, U64_MAX);
+> >> +	if (!replacement_value_prop)
+> >> +		goto err_destroy_replacement_mask_prop;
+> >> +
+> >> +	replacement_format_prop = drm_property_create_range(plane->dev, 0,
+> >> +					"colorkey.replacement-format",
+> >> +					0, U64_MAX);
+> >> +	if (!replacement_format_prop)
+> >> +		goto err_destroy_replacement_value_prop;
+> > 
+> > I don't think we want to add all these props for every driver/hardware.
+> > IMO the set of props we expose should depend on the supported set of
+> > colorkeying modes.
+> > 
+> 
+> Probably, I don't mind. This should be documented then, I can address that in
+> the next iteration.
+> 
+> /I think/ all of the currently-defined properties are relevant to the defined
+> color keying modes.
 
-I should probably poke at the hardware a bit more to figure out how
-this really works when there are more than two active planes on the
-crtc. <day later> I did poke at one particular class of hw which is
-a bit of a mix of old and middle aged hw, and there it seems I can
-also do dst colorkeying the a) way. And in this case there are three
-planes taking part in the dst colorkey match (the primary that
-has the colorkey painted on it, and two overlay planes that cover
-up the matched pixels). So for that case definitely the a) approach
-in the uapi would make more sense as trying to specify conflicting
-dst colorkey settings for each of the overlay planes wouldn't make
-any sense. I'll need to poke at the modern hw a bit more still...
+i915 will want just value/mask or min/max, depending on whether we're
+dealing with rgb or yuv. And I've seen a lot of hardware with just the
+value/mask approach over the years.
+
+> Later, if the list of modes will be extended with new modes,
+> the creation of properties could be conditionalized.
+> 
+> Though maybe "color components replacement" and "replacement with a complete
+> transparency" could be factored out into a specific color keying modes.
+
+Yes. I've never seen those in any hardware. In fact I'm wondering where
+is the userspace for all these complex modes? Ie. should we even bother
+with them at this time?
 
 -- 
 Ville Syrj�l�
