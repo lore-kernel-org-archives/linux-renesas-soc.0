@@ -1,78 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:32504 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935040AbeE1XRc (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:49271 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755428AbeE2Isd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 May 2018 19:17:32 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2] dt-bindings: media: rcar_vin: fix style for ports and endpoints
-Date: Tue, 29 May 2018 01:17:04 +0200
-Message-Id: <20180528231704.13806-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 29 May 2018 04:48:33 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v5 10/10] media: rcar-vin: Add support for R-Car R8A77995 SoC
+Date: Tue, 29 May 2018 10:48:08 +0200
+Message-Id: <1527583688-314-11-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1527583688-314-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1527583688-314-1-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The style for referring to ports and endpoint are wrong. Refer to them
-using lowercase and a unit address, port@x and endpoint@x.
+Add R-Car R8A77995 SoC to the rcar-vin supported ones.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
+ drivers/media/platform/rcar-vin/rcar-core.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-* Changes since v1.
-- Fixed spelling reported by Sergei, s/then/than/.
-- Collected Rob's tag.
----
- .../devicetree/bindings/media/rcar_vin.txt    | 20 +++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
-index c2c57dcf73f4851b..f8b50f8a3a0bd5d3 100644
---- a/Documentation/devicetree/bindings/media/rcar_vin.txt
-+++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
-@@ -45,23 +45,23 @@ The per-board settings Gen2 platforms:
- The per-board settings Gen3 platforms:
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 7869308..3062171 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -1055,6 +1055,18 @@ static const struct rvin_info rcar_info_r8a77970 = {
+ 	.routes = rcar_info_r8a77970_routes,
+ };
  
- Gen3 platforms can support both a single connected parallel input source
--from external SoC pins (port0) and/or multiple parallel input sources
--from local SoC CSI-2 receivers (port1) depending on SoC.
-+from external SoC pins (port@0) and/or multiple parallel input sources
-+from local SoC CSI-2 receivers (port@1) depending on SoC.
- 
- - renesas,id - ID number of the VIN, VINx in the documentation.
- - ports
--    - port 0 - sub-node describing a single endpoint connected to the VIN
-+    - port@0 - sub-node describing a single endpoint connected to the VIN
-       from external SoC pins described in video-interfaces.txt[1].
--      Describing more then one endpoint in port 0 is invalid. Only VIN
--      instances that are connected to external pins should have port 0.
--    - port 1 - sub-nodes describing one or more endpoints connected to
-+      Describing more than one endpoint in port@0 is invalid. Only VIN
-+      instances that are connected to external pins should have port@0.
-+    - port@1 - sub-nodes describing one or more endpoints connected to
-       the VIN from local SoC CSI-2 receivers. The endpoint numbers must
-       use the following schema.
- 
--        - Endpoint 0 - sub-node describing the endpoint connected to CSI20
--        - Endpoint 1 - sub-node describing the endpoint connected to CSI21
--        - Endpoint 2 - sub-node describing the endpoint connected to CSI40
--        - Endpoint 3 - sub-node describing the endpoint connected to CSI41
-+        - endpoint@0 - sub-node describing the endpoint connected to CSI20
-+        - endpoint@1 - sub-node describing the endpoint connected to CSI21
-+        - endpoint@2 - sub-node describing the endpoint connected to CSI40
-+        - endpoint@3 - sub-node describing the endpoint connected to CSI41
- 
- Device node example for Gen2 platforms
- --------------------------------------
++static const struct rvin_group_route rcar_info_r8a77995_routes[] = {
++	{ /* Sentinel */ }
++};
++
++static const struct rvin_info rcar_info_r8a77995 = {
++	.model = RCAR_GEN3,
++	.use_mc = true,
++	.max_width = 4096,
++	.max_height = 4096,
++	.routes = rcar_info_r8a77995_routes,
++};
++
+ static const struct of_device_id rvin_of_id_table[] = {
+ 	{
+ 		.compatible = "renesas,vin-r8a7778",
+@@ -1096,6 +1108,10 @@ static const struct of_device_id rvin_of_id_table[] = {
+ 		.compatible = "renesas,vin-r8a77970",
+ 		.data = &rcar_info_r8a77970,
+ 	},
++	{
++		.compatible = "renesas,vin-r8a77995",
++		.data = &rcar_info_r8a77995,
++	},
+ 	{ /* Sentinel */ },
+ };
+ MODULE_DEVICE_TABLE(of, rvin_of_id_table);
 -- 
-2.17.0
+2.7.4
