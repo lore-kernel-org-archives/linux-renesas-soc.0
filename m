@@ -1,39 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:42254 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754137AbeEaUTB (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38090 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750869AbeE3J2O (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 31 May 2018 16:19:01 -0400
-Received: by mail-lf0-f67.google.com with SMTP id v135-v6so11565596lfa.9
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 31 May 2018 13:19:01 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v2 0/2] Add R8A77980/Condor I2C support
-To: Simon Horman <horms@verge.net.au>,
+        Wed, 30 May 2018 05:28:14 -0400
+Date: Tue, 29 May 2018 17:13:45 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Message-ID: <2a88f4e9-0a86-8e6f-0ef2-20913dc9431d@cogentembedded.com>
-Date: Thu, 31 May 2018 23:18:57 +0300
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] crypto: ccree: silence debug prints
+Message-ID: <20180529161345.rhx73mixbnxrfzum@verge.net.au>
+References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+ <1527171551-21979-4-git-send-email-gilad@benyossef.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527171551-21979-4-git-send-email-gilad@benyossef.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+On Thu, May 24, 2018 at 03:19:08PM +0100, Gilad Ben-Yossef wrote:
+> The cache parameter register configuration was being too verbose.
+> Use dev_dbg() to only provide the information if needed.
+> 
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 
-Here's the set of 2 patches against Simon Horman's 'renesas.git' repo's
-'renesas-devel-20180529-v4.17-rc7' tag. We're adding the R8A77980 I2C nodes
-and then describing 2 PCA9654 I/O expanders connected to the I2C0 bus on
-the Condor board.
-
-[1/2] arm64: dts: renesas: r8a77980: add I2C support
-[2/2] arm64: dts: renesas: condor: add I2C0 support
-
-WBR, Sergei
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
