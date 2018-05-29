@@ -1,88 +1,55 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        horms@verge.net.au, geert@glider.be
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 3/4] media: rcar-vin: Handle CLOCKENB pin polarity
-Date: Mon, 21 May 2018 19:27:42 +0200
-Message-Id: <1526923663-8179-4-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1526923663-8179-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1526923663-8179-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:34829 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935486AbeE2Q2u (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 29 May 2018 12:28:50 -0400
+Received: by mail-ua0-f195.google.com with SMTP id a2-v6so10407179uak.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 29 May 2018 09:28:49 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <5151514.osXWQNHT4Q@avalon>
+References: <5151514.osXWQNHT4Q@avalon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 29 May 2018 18:28:48 +0200
+Message-ID: <CAMuHMdU7FjZ43+MTgWQfZX6fx6zyaFyw+SY-UoPZ5Gx2hDOL7A@mail.gmail.com>
+Subject: Re: [GIT PULL for renesas-drivers] Display color keying support for Gen3
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Handle CLOCKENB pin polarity, or use HSYNC in its place if polarity is
-not specified and we're running on parallel data bus with explicit
-synchronism signals.
+Hi Laurent,
 
-While at there, simplify the media bus handling flags logic, inspecting
-flags only if the system is running on parallel media bus type and ignore
-flags when on CSI-2. Also change comments style to remove un-necessary
-camel case and add a full stop at the end of sentences.
+On Sun, Dec 17, 2017 at 1:18 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> The following changes since commit 9428088c90b6f7d5edd2a1b0d742c75339b36f6e:
+>
+>   drm/qxl: reapply cursor after resetting primary (2017-12-08 13:37:02 +1000)
+>
+> are available in the git repository at:
+>
+>   git://linuxtv.org/pinchartl/media.git tags/drm-next-colorkey-v1-20171215
+>
+> for you to fetch changes up to 3e6d38e62e3542a8d5f93773ef42f2d0920d9629:
+>
+>   drm: rcar-du: Add support for color keying on Gen3 (2017-12-17 01:44:29
+> +0200)
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/media/platform/rcar-vin/rcar-dma.c | 34 ++++++++++++++++++++++--------
- 1 file changed, 25 insertions(+), 9 deletions(-)
+Dropped.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 17f291f..ffd3d62 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -123,6 +123,8 @@
- /* Video n Data Mode Register 2 bits */
- #define VNDMR2_VPS		(1 << 30)
- #define VNDMR2_HPS		(1 << 29)
-+#define VNDMR2_CES		(1 << 28)
-+#define VNDMR2_CHS		(1 << 23)
- #define VNDMR2_FTEV		(1 << 17)
- #define VNDMR2_VLV(n)		((n & 0xf) << 12)
- 
-@@ -684,21 +686,35 @@ static int rvin_setup(struct rvin_dev *vin)
- 		break;
- 	}
- 
--	/* Enable VSYNC Field Toogle mode after one VSYNC input */
-+	/* Enable VSYNC field toggle mode after one VSYNC input. */
- 	if (vin->info->model == RCAR_GEN3)
- 		dmr2 = VNDMR2_FTEV;
- 	else
- 		dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
- 
--	/* Hsync Signal Polarity Select */
--	if (!vin->is_csi &&
--	    !(vin->parallel->mbus_flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
--		dmr2 |= VNDMR2_HPS;
-+	/* Synchronism signal polarities: only for parallel data bus. */
-+	if (!vin->is_csi) {
-+		/* Hsync signal polarity select. */
-+		if (!(vin->parallel->mbus_flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
-+			dmr2 |= VNDMR2_HPS;
- 
--	/* Vsync Signal Polarity Select */
--	if (!vin->is_csi &&
--	    !(vin->parallel->mbus_flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
--		dmr2 |= VNDMR2_VPS;
-+		/* Vsync signal polarity select. */
-+		if (!(vin->parallel->mbus_flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
-+			dmr2 |= VNDMR2_VPS;
-+
-+		/*
-+		 * Data enable signal polarity select.
-+		 * Use HSYNC as data-enable if not specified and running
-+		 * with explicit synchronizations; otherwise default 'high'
-+		 * is selected.
-+		 */
-+		if (vin->parallel->mbus_flags & V4L2_MBUS_DATA_ACTIVE_LOW)
-+			dmr2 |= VNDMR2_CES;
-+		else if (!(vin->parallel->mbus_flags &
-+			 V4L2_MBUS_DATA_ACTIVE_HIGH) &&
-+			 vin->parallel->mbus_type == V4L2_MBUS_PARALLEL)
-+			dmr2 |= VNDMR2_CHS;
-+	}
- 
- 	/*
- 	 * Output format
+Please rebase to a modern baseline.
+v4.15-rc2 is almost 6 months old.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
