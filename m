@@ -1,56 +1,61 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:37447 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751236AbeEVMDK (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 May 2018 08:03:10 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
+        horms@verge.net.au, geert@glider.be
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
+        robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/9] ARM: shmobile: defconfig: Enable MTD command line partition parsing
-Date: Tue, 22 May 2018 14:02:49 +0200
-Message-Id: <20180522120257.13232-1-marek.vasut+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH v3 3/8] media: v4l2-fwnode: parse 'data-enable-active' prop
+Date: Tue, 29 May 2018 17:05:54 +0200
+Message-Id: <1527606359-19261-4-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1527606359-19261-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1527606359-19261-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In preparation for removing MTD partitioning from the DTs and moving
-it over to kernel command line partition parsing, enable the support
-for kernel command line MTD partition parsing.
+Parse the newly defined 'data-enable-active' property in parallel endpoint
+parsing function.
 
-The argument for not having MTD partitions in the DT is the same as
-for not having hard drive partitions in DT, neither describes the
-hardware itself, so it shouldn't be in the DT. Furthermore, kernel
-command line MTD partition passing allows greater flexibility in
-case someone decided to repartition the flash, which is well in the
-realm of possibility with these systems.
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
 ---
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+v3:
+- new patch
+---
+ drivers/media/v4l2-core/v4l2-fwnode.c | 4 ++++
+ include/media/v4l2-mediabus.h         | 2 ++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index b49887e86a3d..4d0d5a00a188 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -64,6 +64,7 @@ CONFIG_DMA_CMA=y
- CONFIG_CMA_SIZE_MBYTES=64
- CONFIG_SIMPLE_PM_BUS=y
- CONFIG_MTD=y
-+CONFIG_MTD_CMDLINE_PARTS=y
- CONFIG_MTD_BLOCK=y
- CONFIG_MTD_M25P80=y
- CONFIG_MTD_SPI_NOR=y
--- 
-2.16.2
+diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
+index 3f77aa3..6105191 100644
+--- a/drivers/media/v4l2-core/v4l2-fwnode.c
++++ b/drivers/media/v4l2-core/v4l2-fwnode.c
+@@ -154,6 +154,10 @@ static void v4l2_fwnode_endpoint_parse_parallel_bus(
+ 		flags |= v ? V4L2_MBUS_VIDEO_SOG_ACTIVE_HIGH :
+ 			V4L2_MBUS_VIDEO_SOG_ACTIVE_LOW;
+
++	if (!fwnode_property_read_u32(fwnode, "data-enable-active", &v))
++		flags |= v ? V4L2_MBUS_DATA_ENABLE_HIGH :
++			V4L2_MBUS_DATA_ENABLE_LOW;
++
+ 	bus->flags = flags;
+
+ }
+diff --git a/include/media/v4l2-mediabus.h b/include/media/v4l2-mediabus.h
+index 4d8626c..4bbb5f3 100644
+--- a/include/media/v4l2-mediabus.h
++++ b/include/media/v4l2-mediabus.h
+@@ -45,6 +45,8 @@
+ /* Active state of Sync-on-green (SoG) signal, 0/1 for LOW/HIGH respectively. */
+ #define V4L2_MBUS_VIDEO_SOG_ACTIVE_HIGH		BIT(12)
+ #define V4L2_MBUS_VIDEO_SOG_ACTIVE_LOW		BIT(13)
++#define V4L2_MBUS_DATA_ENABLE_HIGH		BIT(14)
++#define V4L2_MBUS_DATA_ENABLE_LOW		BIT(15)
+
+ /* Serial flags */
+ /* How many lanes the client can use */
+--
+2.7.4
+
