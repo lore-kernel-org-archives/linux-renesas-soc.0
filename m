@@ -1,92 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:35540 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751236AbeECTgl (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51846 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934828AbeE2O3Y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 May 2018 15:36:41 -0400
-Received: by mail-lf0-f66.google.com with SMTP id y72-v6so13921269lfd.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 May 2018 12:36:40 -0700 (PDT)
-Subject: [PATCH v3 1/5] pcie-rcar: poll PHYRDY in rcar_pcie_hw_init()
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-References: <b98130a7-b128-9fc3-aee1-1a5a2590b320@cogentembedded.com>
-Message-ID: <89f4bb11-918a-397d-0dd8-5a6e630504f7@cogentembedded.com>
-Date: Thu, 3 May 2018 22:36:37 +0300
+        Tue, 29 May 2018 10:29:24 -0400
+Date: Tue, 29 May 2018 14:40:15 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77965: Use r8a77965-cpg-mssr
+ binding definitions
+Message-ID: <20180529124014.kduaibb4tsbbixgu@verge.net.au>
+References: <1527513329-18780-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <b98130a7-b128-9fc3-aee1-1a5a2590b320@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527513329-18780-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In  all the R-Car gen1/2/3 manuals, we are instructed to poll PCIEPHYSR
-for PHYRDY=1  at  an early stage of the PCIEC initialization -- while
-the driver only does this on R-Car H1 (polling a PHY specific register).
-Add the PHYRDY polling to rcar_pcie_hw_init(). Note that without the
-special PHY driver on the R-Car V3H (R8A77980) the PCIEC initialization
-just freezes the kernel -- adding the PHYRDY polling allows the init code
-to exit gracefully on timeout (PHY starts powered down after reset on this
-SoC).
+On Mon, May 28, 2018 at 03:15:29PM +0200, Geert Uytterhoeven wrote:
+> Replace the hardcoded clock indices by R8A77965_CLK_* symbols.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Commit 7ce36da900c0a2ff ("clk: renesas: cpg-mssr: Add support for R-Car
+> M3-N") providing the definitions is in v4.17-rc1.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+This looks fine but I will wait to see if there are other reviews before
+applying.
+
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
----
-Changes in version 3:
-- used the BIT() macro in #define PHYRDY;
-- added the SoC model # to the patch description;
-- added Rob's and Simon's tags;
-- refreshed atop of Marek's patch.
-
- drivers/pci/host/pcie-rcar.c |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-Index: pci/drivers/pci/host/pcie-rcar.c
-===================================================================
---- pci.orig/drivers/pci/host/pcie-rcar.c
-+++ pci/drivers/pci/host/pcie-rcar.c
-@@ -37,6 +37,8 @@
- #define PCIECDR			0x000020
- #define PCIEMSR			0x000028
- #define PCIEINTXR		0x000400
-+#define PCIEPHYSR		0x0007f0
-+#define  PHYRDY			BIT(0)
- #define PCIEMSITXR		0x000840
- 
- /* Transfer control */
-@@ -527,6 +529,20 @@ static void phy_write_reg(struct rcar_pc
- 	phy_wait_for_ack(pcie);
- }
- 
-+static int rcar_pcie_wait_for_phyrdy(struct rcar_pcie *pcie)
-+{
-+	unsigned int timeout = 10;
-+
-+	while (timeout--) {
-+		if (rcar_pci_read_reg(pcie, PCIEPHYSR) & PHYRDY)
-+			return 0;
-+
-+		msleep(5);
-+	}
-+
-+	return -ETIMEDOUT;
-+}
-+
- static int rcar_pcie_wait_for_dl(struct rcar_pcie *pcie)
- {
- 	unsigned int timeout = 10;
-@@ -551,6 +567,10 @@ static int rcar_pcie_hw_init(struct rcar
- 	/* Set mode */
- 	rcar_pci_write_reg(pcie, 1, PCIEMSR);
- 
-+	err = rcar_pcie_wait_for_phyrdy(pcie);
-+	if (err)
-+		return err;
-+
- 	/*
- 	 * Initial header for port config space is type 1, set the device
- 	 * class to match. Hardware takes care of propagating the IDSETR
