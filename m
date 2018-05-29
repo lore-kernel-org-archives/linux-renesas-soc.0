@@ -1,44 +1,86 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <3675b19f-b800-172f-9472-c47a37760fa9@cogentembedded.com>
-References: <e9c94553-be9d-0eec-a1ee-1713bb97fbab@cogentembedded.com> <3675b19f-b800-172f-9472-c47a37760fa9@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 29 May 2018 18:41:30 +0200
-Message-ID: <CAMuHMdV873HNH2r+yP++NH6No4vnLa_fBP7724PWkAGHiU7zFA@mail.gmail.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:36205 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935771AbeE2QEv (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 29 May 2018 12:04:51 -0400
+Received: by mail-wr0-f194.google.com with SMTP id f16-v6so11113848wrm.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 29 May 2018 09:04:50 -0700 (PDT)
 Subject: Re: [PATCH 1/2] arm64: dts: renesas: r8a77980: add I2C support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
+To: Simon Horman <horms@verge.net.au>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: devicetree-owner@vger.kernel.org
+References: <e9c94553-be9d-0eec-a1ee-1713bb97fbab@cogentembedded.com>
+ <3675b19f-b800-172f-9472-c47a37760fa9@cogentembedded.com>
+ <20180529130504.lpkpgads7lfomois@verge.net.au>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <a33a0dd7-c301-fd44-9374-45d57df6a53d@cogentembedded.com>
+Date: Tue, 29 May 2018 19:04:48 +0300
+MIME-Version: 1.0
+In-Reply-To: <20180529130504.lpkpgads7lfomois@verge.net.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, May 28, 2018 at 10:13 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Define the generic R8A77980 parts of the I2C[0-5] device node.
->
-> Based on the original (and large) patch by Vladimir Barinov.
->
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On 05/29/2018 04:05 PM, Simon Horman wrote:
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Define the generic R8A77980 parts of the I2C[0-5] device node.
+>>
+>> Based on the original (and large) patch by Vladimir Barinov.
+>>
+>> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>
+>> ---
+>>  arch/arm64/boot/dts/renesas/r8a77980.dtsi |  111 ++++++++++++++++++++++++++++++
+>>  1 file changed, 111 insertions(+)
+>>
+>> Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+>> ===================================================================
+>> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+>> +++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+[...]
+>> @@ -135,6 +144,108 @@
+[...]
+>> +		i2c3: i2c@e66d0000 {
+>> +			compatible = "renesas,i2c-r8a77980",
+>> +				     "renesas,rcar-gen3-i2c";
+>> +			reg = <0 0xe66d0000 0 0x40>;
+>> +			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks = <&cpg CPG_MOD 928>;
+>> +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+>> +			resets = <&cpg 928>;
+>> +			dmas = <&dmac1 0x97>, <&dmac1 0x96>,
+>> +			       <&dmac2 0x97>, <&dmac2 0x96>;
+>> +			dma-names = "tx", "rx", "tx", "rx";
+>> +			i2c-scl-internal-delay-ns = <6>;
+>> +			#address-cells = <1>;
+>> +			#size-cells = <0>;
+>> +			status = "disabled";
+>> +		};
+> 
+> DMA for i2c3 and i2c4  seems unclear in v0.80 and v1.00 of the User's Manual.
+> Although what is described here does match v0.55E of the User's Manual.
 
-Gr{oetje,eeting}s,
+   Hm, looking at all these manuals, I'm not even seeing V3H I2C3/4 having DMA
+in v0.55E!
 
-                        Geert
+> Have you been able to confirm what is correct here?
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+   No. Probably need to drop I2C3/4 DMA altogether...
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Other than that this patch looks fine to me.
+
+   TY!
+
+[...]
+
+MBR, Sergei
