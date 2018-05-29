@@ -1,13 +1,12 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20180529161248.fphjnceozoyxqy7v@verge.net.au>
-References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
- <1527171551-21979-2-git-send-email-gilad@benyossef.com> <20180529161248.fphjnceozoyxqy7v@verge.net.au>
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-Date: Thu, 31 May 2018 14:51:22 +0300
-Message-ID: <CAOtvUMfoyuaGac29WUYqvfRr1S7Fof3FgMZo_3K7EaozqbeT6Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] crypto: ccree: correct host regs offset
-To: Simon Horman <horms@verge.net.au>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:38103 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965209AbeE3J2X (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 30 May 2018 05:28:23 -0400
+Date: Tue, 29 May 2018 17:12:52 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Gilad Ben-Yossef <gilad@benyossef.com>
 Cc: Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -19,52 +18,157 @@ Cc: Magnus Damm <magnus.damm@gmail.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         "David S. Miller" <davem@davemloft.net>,
         Ofir Drang <ofir.drang@arm.com>, stable@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: devicetree-owner@vger.kernel.org
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] crypto: ccree: correct host regs offset
+Message-ID: <20180529161248.fphjnceozoyxqy7v@verge.net.au>
+References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+ <1527171551-21979-2-git-send-email-gilad@benyossef.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527171551-21979-2-git-send-email-gilad@benyossef.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, May 29, 2018 at 7:12 PM, Simon Horman <horms@verge.net.au> wrote:
-> On Thu, May 24, 2018 at 03:19:06PM +0100, Gilad Ben-Yossef wrote:
->> The product signature and HW revision register have different offset on the
->> older HW revisions.
->> This fixes the problem of the driver failing sanity check on silicon
->> despite working on the FPGA emulation systems.
->>
->> Fixes: 27b3b22dd98c ("crypto: ccree - add support for older HW revs")
->
-> Did the above introduce a regression that is fixed by this patch
-> or did it add a feature that only works with this patch?
->
+On Thu, May 24, 2018 at 03:19:06PM +0100, Gilad Ben-Yossef wrote:
+> The product signature and HW revision register have different offset on the
+> older HW revisions.
+> This fixes the problem of the driver failing sanity check on silicon
+> despite working on the FPGA emulation systems.
+> 
+> Fixes: 27b3b22dd98c ("crypto: ccree - add support for older HW revs")
 
-Sort of in between - the first patch made more devices work but
-unreliability (it will sometime work, sometime doesn't).
-This one make it work reliably.
+Did the above introduce a regression that is fixed by this patch
+or did it add a feature that only works with this patch?
 
-> In the case of the latter I would drop the Fixes tag,
-> but I don't feel strongly about it.
->
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
->
-> Minor not below not withstanding,
->
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+In the case of the latter I would drop the Fixes tag,
+but I don't feel strongly about it.
 
-Thank you for the review and help :-)
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 
-Gilad
+Minor not below not withstanding,
 
--- 
-Gilad Ben-Yossef
-Chief Coffee Drinker
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-"If you take a class in large-scale robotics, can you end up in a
-situation where the homework eats your dog?"
- -- Jean-Baptiste Queru
+> ---
+>  drivers/crypto/ccree/cc_debugfs.c   | 7 +++++--
+>  drivers/crypto/ccree/cc_driver.c    | 8 ++++++--
+>  drivers/crypto/ccree/cc_driver.h    | 2 ++
+>  drivers/crypto/ccree/cc_host_regs.h | 6 ++++--
+>  4 files changed, 17 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/crypto/ccree/cc_debugfs.c b/drivers/crypto/ccree/cc_debugfs.c
+> index 08f8db4..5ca184e 100644
+> --- a/drivers/crypto/ccree/cc_debugfs.c
+> +++ b/drivers/crypto/ccree/cc_debugfs.c
+> @@ -26,7 +26,8 @@ struct cc_debugfs_ctx {
+>  static struct dentry *cc_debugfs_dir;
+>  
+>  static struct debugfs_reg32 debug_regs[] = {
+> -	CC_DEBUG_REG(HOST_SIGNATURE),
+> +	{ .name = "SIGNATURE" }, /* Must be 0th */
+> +	{ .name = "VERSION" }, /* Must be 1st */
+>  	CC_DEBUG_REG(HOST_IRR),
+>  	CC_DEBUG_REG(HOST_POWER_DOWN_EN),
+>  	CC_DEBUG_REG(AXIM_MON_ERR),
+> @@ -34,7 +35,6 @@ static struct debugfs_reg32 debug_regs[] = {
+>  	CC_DEBUG_REG(HOST_IMR),
+>  	CC_DEBUG_REG(AXIM_CFG),
+>  	CC_DEBUG_REG(AXIM_CACHE_PARAMS),
+> -	CC_DEBUG_REG(HOST_VERSION),
+>  	CC_DEBUG_REG(GPR_HOST),
+>  	CC_DEBUG_REG(AXIM_MON_COMP),
+>  };
+> @@ -58,6 +58,9 @@ int cc_debugfs_init(struct cc_drvdata *drvdata)
+>  	struct debugfs_regset32 *regset;
+>  	struct dentry *file;
+>  
+> +	debug_regs[0].offset = drvdata->sig_offset;
+> +	debug_regs[1].offset = drvdata->ver_offset;
+> +
+>  	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+>  	if (!ctx)
+>  		return -ENOMEM;
+> diff --git a/drivers/crypto/ccree/cc_driver.c b/drivers/crypto/ccree/cc_driver.c
+> index 89ce013..6f93ce7 100644
+> --- a/drivers/crypto/ccree/cc_driver.c
+> +++ b/drivers/crypto/ccree/cc_driver.c
+> @@ -207,9 +207,13 @@ static int init_cc_resources(struct platform_device *plat_dev)
+>  	if (hw_rev->rev >= CC_HW_REV_712) {
+>  		new_drvdata->hash_len_sz = HASH_LEN_SIZE_712;
+>  		new_drvdata->axim_mon_offset = CC_REG(AXIM_MON_COMP);
+> +		new_drvdata->sig_offset = CC_REG(HOST_SIGNATURE_712);
+> +		new_drvdata->ver_offset = CC_REG(HOST_VERSION_712);
+>  	} else {
+>  		new_drvdata->hash_len_sz = HASH_LEN_SIZE_630;
+>  		new_drvdata->axim_mon_offset = CC_REG(AXIM_MON_COMP8);
+> +		new_drvdata->sig_offset = CC_REG(HOST_SIGNATURE_630);
+> +		new_drvdata->ver_offset = CC_REG(HOST_VERSION_630);
+>  	}
+>  
+>  	platform_set_drvdata(plat_dev, new_drvdata);
+> @@ -276,7 +280,7 @@ static int init_cc_resources(struct platform_device *plat_dev)
+>  	}
+>  
+>  	/* Verify correct mapping */
+> -	signature_val = cc_ioread(new_drvdata, CC_REG(HOST_SIGNATURE));
+> +	signature_val = cc_ioread(new_drvdata, new_drvdata->sig_offset);
+>  	if (signature_val != hw_rev->sig) {
+>  		dev_err(dev, "Invalid CC signature: SIGNATURE=0x%08X != expected=0x%08X\n",
+>  			signature_val, hw_rev->sig);
+> @@ -287,7 +291,7 @@ static int init_cc_resources(struct platform_device *plat_dev)
+>  
+>  	/* Display HW versions */
+>  	dev_info(dev, "ARM CryptoCell %s Driver: HW version 0x%08X, Driver version %s\n",
+> -		 hw_rev->name, cc_ioread(new_drvdata, CC_REG(HOST_VERSION)),
+> +		 hw_rev->name, cc_ioread(new_drvdata, new_drvdata->ver_offset),
+>  		 DRV_MODULE_VERSION);
+>  
+>  	rc = init_cc_regs(new_drvdata, true);
+> diff --git a/drivers/crypto/ccree/cc_driver.h b/drivers/crypto/ccree/cc_driver.h
+> index 2048fde..95f82b2 100644
+> --- a/drivers/crypto/ccree/cc_driver.h
+> +++ b/drivers/crypto/ccree/cc_driver.h
+> @@ -129,6 +129,8 @@ struct cc_drvdata {
+
+This patch doesn't make things (much) worse
+but struct cc_drvdata has a rather incomplete kdoc.
+
+>  	enum cc_hw_rev hw_rev;
+>  	u32 hash_len_sz;
+>  	u32 axim_mon_offset;
+> +	u32 sig_offset;
+> +	u32 ver_offset;
+>  };
+>  
+>  struct cc_crypto_alg {
+> diff --git a/drivers/crypto/ccree/cc_host_regs.h b/drivers/crypto/ccree/cc_host_regs.h
+> index f510018..616b2e1 100644
+> --- a/drivers/crypto/ccree/cc_host_regs.h
+> +++ b/drivers/crypto/ccree/cc_host_regs.h
+> @@ -45,7 +45,8 @@
+>  #define CC_HOST_ICR_DSCRPTR_WATERMARK_QUEUE0_CLEAR_BIT_SIZE	0x1UL
+>  #define CC_HOST_ICR_AXIM_COMP_INT_CLEAR_BIT_SHIFT	0x17UL
+>  #define CC_HOST_ICR_AXIM_COMP_INT_CLEAR_BIT_SIZE	0x1UL
+> -#define CC_HOST_SIGNATURE_REG_OFFSET	0xA24UL
+> +#define CC_HOST_SIGNATURE_712_REG_OFFSET	0xA24UL
+> +#define CC_HOST_SIGNATURE_630_REG_OFFSET	0xAC8UL
+>  #define CC_HOST_SIGNATURE_VALUE_BIT_SHIFT	0x0UL
+>  #define CC_HOST_SIGNATURE_VALUE_BIT_SIZE	0x20UL
+>  #define CC_HOST_BOOT_REG_OFFSET	0xA28UL
+> @@ -105,7 +106,8 @@
+>  #define CC_HOST_BOOT_ONLY_ENCRYPT_LOCAL_BIT_SIZE	0x1UL
+>  #define CC_HOST_BOOT_AES_EXISTS_LOCAL_BIT_SHIFT	0x1EUL
+>  #define CC_HOST_BOOT_AES_EXISTS_LOCAL_BIT_SIZE	0x1UL
+> -#define CC_HOST_VERSION_REG_OFFSET	0xA40UL
+> +#define CC_HOST_VERSION_712_REG_OFFSET	0xA40UL
+> +#define CC_HOST_VERSION_630_REG_OFFSET	0xAD8UL
+>  #define CC_HOST_VERSION_VALUE_BIT_SHIFT	0x0UL
+>  #define CC_HOST_VERSION_VALUE_BIT_SIZE	0x20UL
+>  #define CC_HOST_KFDE0_VALID_REG_OFFSET	0xA60UL
+> -- 
+> 2.7.4
+> 
