@@ -1,66 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:41551 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751444AbeE2HBR (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38103 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750869AbeE3J2T (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 May 2018 03:01:17 -0400
-Received: by mail-pl0-f67.google.com with SMTP id az12-v6so8394465plb.8
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 29 May 2018 00:01:17 -0700 (PDT)
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2] arm64: dts: renesas: r8a77965: Add Watchdog Timer controller node using RCLK Watchdog Timer
-Date: Tue, 29 May 2018 16:01:02 +0900
-Message-Id: <1527577262-8754-1-git-send-email-ykaneko0929@gmail.com>
+        Wed, 30 May 2018 05:28:19 -0400
+Date: Tue, 29 May 2018 17:13:32 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] crypto: ccree: better clock handling
+Message-ID: <20180529161332.vqdtcbj54mel2tdk@verge.net.au>
+References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+ <1527171551-21979-3-git-send-email-gilad@benyossef.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527171551-21979-3-git-send-email-gilad@benyossef.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On Thu, May 24, 2018 at 03:19:07PM +0100, Gilad Ben-Yossef wrote:
+> Use managed clock handling, differentiate between no clock (possibly OK)
+> and clock init failure (never OK) and correctly handle clock detection
+> being deferred.
+> 
+> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 
-Add a device node for the Watchdog Timer (WDT) controller on the Renesas
-R-Car M3-N (R8A77965) SoC.
-
-Based on a similar patch of the R8A7796 device tree
-by Geert Uytterhoeven <geert+renesas@glider.be>.
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
 
-This patch is based on the devel branch of Simon Horman's renesas tree.
-
-v2 [Yoshihiro Kaneko]
-- add tags
-* As suggested by Geert Uytterhoeven
-- fix the summary prefix of the subject
-- fix the notation of the name of SoC
-
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 486aeca..fb7100f 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -139,8 +139,13 @@
- 		ranges;
- 
- 		wdt0: watchdog@e6020000 {
-+			compatible = "renesas,r8a77965-wdt",
-+				     "renesas,rcar-gen3-wdt";
- 			reg = <0 0xe6020000 0 0x0c>;
--			/* placeholder */
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
- 		};
- 
- 		gpio0: gpio@e6050000 {
--- 
-1.9.1
+> ---
+>  drivers/crypto/ccree/cc_driver.c | 20 +++++++++++++++++++-
+>  1 file changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/crypto/ccree/cc_driver.c b/drivers/crypto/ccree/cc_driver.c
+> index 6f93ce7..b266657 100644
+> --- a/drivers/crypto/ccree/cc_driver.c
+> +++ b/drivers/crypto/ccree/cc_driver.c
+> @@ -190,6 +190,7 @@ static int init_cc_resources(struct platform_device *plat_dev)
+>  	u64 dma_mask;
+>  	const struct cc_hw_data *hw_rev;
+>  	const struct of_device_id *dev_id;
+> +	struct clk *clk;
+>  	int rc = 0;
+>  
+>  	new_drvdata = devm_kzalloc(dev, sizeof(*new_drvdata), GFP_KERNEL);
+> @@ -219,7 +220,24 @@ static int init_cc_resources(struct platform_device *plat_dev)
+>  	platform_set_drvdata(plat_dev, new_drvdata);
+>  	new_drvdata->plat_dev = plat_dev;
+>  
+> -	new_drvdata->clk = of_clk_get(np, 0);
+> +	clk = devm_clk_get(dev, NULL);
+> +	if (IS_ERR(clk))
+> +		switch (PTR_ERR(clk)) {
+> +		/* Clock is optional so this might be fine */
+> +		case -ENOENT:
+> +			break;
+> +
+> +		/* Clock not available, let's try again soon */
+> +		case -EPROBE_DEFER:
+> +			return -EPROBE_DEFER;
+> +
+> +		default:
+> +			dev_err(dev, "Error getting clock: %ld\n",
+> +				PTR_ERR(clk));
+> +			return PTR_ERR(clk);
+> +		}
+> +	new_drvdata->clk = clk;
+> +
+>  	new_drvdata->coherent = of_dma_is_coherent(np);
+>  
+>  	/* Get device resources */
+> -- 
+> 2.7.4
+> 
