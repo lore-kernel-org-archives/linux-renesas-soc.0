@@ -1,61 +1,89 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:22650 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1756582AbeEJH0C (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 May 2018 03:26:02 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: "balbi@kernel.org" <balbi@kernel.org>
-CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH v2 0/6] usb: gadget: udc: renesas_usb3: fix some major
- issues
-Date: Thu, 10 May 2018 07:25:58 +0000
-Message-ID: <OSBPR01MB229317DA6F56C0E875285DF2D8980@OSBPR01MB2293.jpnprd01.prod.outlook.com>
-References: <1523338734-20474-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1523338734-20474-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 04/10] media: rcar-vin: Cleanup notifier in error path
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>, niklas.soderlund@ragnatech.se,
+ laurent.pinchart@ideasonboard.com
+Cc: mchehab@kernel.org, linux-media@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+References: <1527583688-314-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1527583688-314-5-git-send-email-jacopo+renesas@jmondi.org>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reply-To: kieran.bingham@ideasonboard.com
+Message-ID: <d37e437a-81fa-2649-4659-5b0b05419c1f@ideasonboard.com>
+Date: Tue, 29 May 2018 10:02:01 +0100
 MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <1527583688-314-5-git-send-email-jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Felipe,
+Hi Jacopo,
 
-> From: Yoshihiro Shimoda, Sent: Tuesday, April 10, 2018 2:39 PM
->=20
-> This patch set is based on v4.16.
+Thankyou for the patch,
 
-Would you review this patch set?
-I checked this is able to be applied on your testing/fixes branch.
+On 29/05/18 09:48, Jacopo Mondi wrote:
+> During the notifier initialization, memory for the list of associated async
+> subdevices is reserved during the fwnode endpoint parsing from the v4l2-async
+> framework. If the notifier registration fails, that memory should be released
+> and the notifier 'cleaned up'.
+> 
+> Catch the notifier registration error and perform the cleanup both for the
+> group and the parallel notifiers.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> 
+> ---
+> v5:
+> - new patch
+> 
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index d3aadf3..f7a28e9 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -573,10 +573,15 @@ static int rvin_parallel_graph_init(struct rvin_dev *vin)
+>  	ret = v4l2_async_notifier_register(&vin->v4l2_dev, &vin->notifier);
+>  	if (ret < 0) {
+>  		vin_err(vin, "Notifier registration failed\n");
+> -		return ret;
+> +		goto error_notifier_cleanup;
+>  	}
+> 
+>  	return 0;
+> +
+> +error_notifier_cleanup:
+> +	v4l2_async_notifier_cleanup(&vin->group->notifier);
 
-Best regards,
-Yoshihiro Shimoda
+Wouldn't it be less lines to just call the cleanup before the return? Or do you
+anticipate multiple paths needing to call through the clean up here ?
 
-> Changes from v1:
->  - Add Reviewed-by in patch 1, 2, 3 and 4.
->  - Revise typo in patch 4.
->  - Add new patches as patch 5 and 6.
->=20
-> Yoshihiro Shimoda (6):
->   usb: gadget: udc: renesas_usb3: fix double phy_put()
->   usb: gadget: udc: renesas_usb3: should remove debugfs
->   usb: gadget: udc: renesas_usb3: should call pm_runtime_enable() before
->     add udc
->   usb: gadget: udc: renesas_usb3: should call devm_phy_get() before add
->     udc
->   usb: gadget: udc: renesas_usb3: should fail if devm_phy_get() returns
->     error
->   usb: gadget: udc: renesas_usb3: disable the controller's irqs for
->     reconnecting
->=20
->  drivers/usb/gadget/udc/renesas_usb3.c | 37 +++++++++++++++++++++++------=
-------
->  1 file changed, 25 insertions(+), 12 deletions(-)
->=20
+> +
+> +	return ret;
+>  }
+> 
+>  /* -----------------------------------------------------------------------------
+> @@ -775,10 +780,15 @@ static int rvin_mc_parse_of_graph(struct rvin_dev *vin)
+>  					   &vin->group->notifier);
+>  	if (ret < 0) {
+>  		vin_err(vin, "Notifier registration failed\n");
+> -		return ret;
+> +		goto error_notifier_cleanup;
+>  	}
+> 
+>  	return 0;
+> +
+> +error_notifier_cleanup:
+> +	v4l2_async_notifier_cleanup(&vin->group->notifier);
+> +
+
+Same here...
+
+> +	return ret;
+>  }
+> 
+>  static int rvin_mc_init(struct rvin_dev *vin)
 > --
-> 1.9.1
+> 2.7.4
+> 
