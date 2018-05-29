@@ -1,50 +1,56 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:26402 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S936185AbeEYPLk (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 25 May 2018 11:11:40 -0400
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Hoan Tran <hotran@apm.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH] gpio: dwapb: Fix rework support for 1 interrupt per port A GPIO
-Date: Fri, 25 May 2018 16:11:34 +0100
-Message-Id: <1527261094-10412-1-git-send-email-phil.edworthy@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: mchehab@kernel.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] media: vsp1: Document vsp1_dl_body refcnt
+Date: Tue, 29 May 2018 15:32:01 +0300
+Message-ID: <2592409.Y0HWR0tUhb@avalon>
+In-Reply-To: <20180528102420.19150-1-kieran.bingham@ideasonboard.com>
+References: <20180528102420.19150-1-kieran.bingham@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Commit da069d5d2b814d9887989dcdb29fb0202eac8b38 ("gpio: dwapb: Rework
-support for 1 interrupt per port A GPIO"), was an incremental patch that
-was supposed to provide the delta between v5 and v6 patch set for
-adding support for 1 interupt per port A GPIO. v5 was applied, then some
-other feedback came afterwards.
+Hi Kieran,
 
-However, in my haste I managed to drop the changes made to dwapb_port_property
-struct. This patch includes those missing changes.
+Thank you for the patch.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
- include/linux/platform_data/gpio-dwapb.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Monday, 28 May 2018 13:24:20 EEST Kieran Bingham wrote:
+> In commit 2d9445db0ee9 ("media: vsp1: Use reference counting for
+> bodies"), a new field was introduced to the vsp1_dl_body structure to
+> account for usage tracking of the body.
+> 
+> Document the newly added field in the kerneldoc.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-diff --git a/include/linux/platform_data/gpio-dwapb.h b/include/linux/platform_data/gpio-dwapb.h
-index 5a52d69..419cfac 100644
---- a/include/linux/platform_data/gpio-dwapb.h
-+++ b/include/linux/platform_data/gpio-dwapb.h
-@@ -19,7 +19,7 @@ struct dwapb_port_property {
- 	unsigned int	idx;
- 	unsigned int	ngpio;
- 	unsigned int	gpio_base;
--	unsigned int	irq[32];
-+	int		irq[32];
- 	bool		has_irq;
- 	bool		irq_shared;
- };
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+and taken in my tree for v4.19.
+
+> ---
+>  drivers/media/platform/vsp1/vsp1_dl.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c
+> b/drivers/media/platform/vsp1/vsp1_dl.c index d9b9cdd8fbe2..10a24bde2299
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_dl.c
+> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
+> @@ -43,6 +43,7 @@ struct vsp1_dl_entry {
+>   * struct vsp1_dl_body - Display list body
+>   * @list: entry in the display list list of bodies
+>   * @free: entry in the pool free body list
+> + * @refcnt: reference tracking for the body
+>   * @pool: pool to which this body belongs
+>   * @vsp1: the VSP1 device
+>   * @entries: array of entries
+
+
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
