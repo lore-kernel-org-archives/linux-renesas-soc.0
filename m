@@ -1,57 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([217.72.192.75]:37605 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967068AbeEYQMR (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46313 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751091AbeE2I5a (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 25 May 2018 12:12:17 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: arm@kernel.org, Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] ARM: shmobile: only call secure_cntvoff_init on SMP builds
-Date: Fri, 25 May 2018 18:10:21 +0200
-Message-Id: <20180525161051.187324-2-arnd@arndb.de>
-In-Reply-To: <20180525161051.187324-1-arnd@arndb.de>
-References: <20180525161051.187324-1-arnd@arndb.de>
+        Tue, 29 May 2018 04:57:30 -0400
+Date: Tue, 29 May 2018 10:57:11 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] arm64: dts: renesas: r8a77965: Add Watchdog Timer
+ controller node using RCLK Watchdog Timer
+Message-ID: <20180529085710.bwszso7ywiyvy5ld@verge.net.au>
+References: <1527577262-8754-1-git-send-email-ykaneko0929@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527577262-8754-1-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The secure_cntvoff_init() function is not available without CONFIG_SMP,
-leading to a link error on shmobile:
+On Tue, May 29, 2018 at 04:01:02PM +0900, Yoshihiro Kaneko wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> 
+> Add a device node for the Watchdog Timer (WDT) controller on the Renesas
+> R-Car M3-N (R8A77965) SoC.
+> 
+> Based on a similar patch of the R8A7796 device tree
+> by Geert Uytterhoeven <geert+renesas@glider.be>.
+> 
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-arch/arm/mach-shmobile/setup-rcar-gen2.o: In function `rcar_gen2_timer_init':
-setup-rcar-gen2.c:(.init.text+0x18): undefined reference to `secure_cntvoff_init'
-
->From the description in commit 3fd45a136ff6 ("ARM: shmobile: rcar-gen2:
-Make sure CNTVOFF is initialized on CA7/15"), I understand that we
-don't need to call it on non-SMP builds because the boot CPU is always
-initialized by common code, so we can simply avoid the reference by
-checking for CONFIG_SMP.
-
-Fixes: cad160ed0a94 ("ARM: shmobile: Convert file to use cntvoff")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/mach-shmobile/setup-rcar-gen2.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-index 88fdc1801d90..39085d7a8f37 100644
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -71,7 +71,8 @@ void __init rcar_gen2_timer_init(void)
- 	void __iomem *base;
- 	u32 freq;
- 
--	secure_cntvoff_init();
-+	if (IS_ENABLED(CONFIG_SMP))
-+		secure_cntvoff_init();
- 
- 	if (of_machine_is_compatible("renesas,r8a7745") ||
- 	    of_machine_is_compatible("renesas,r8a77470") ||
--- 
-2.9.0
+Thanks, applied.
