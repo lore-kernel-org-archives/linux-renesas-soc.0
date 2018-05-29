@@ -1,46 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751815AbeERLSD (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:38051 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755410AbeE2Isa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:18:03 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/6] ARM: shmobile: defconfig: Enable r8a77470 SoC
-Date: Fri, 18 May 2018 13:16:27 +0200
-Message-Id: <f794fa1e8f0f7e308edae8eaef2f9cd59aa62bc6.1526548577.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526548577.git.horms+renesas@verge.net.au>
-References: <cover.1526548577.git.horms+renesas@verge.net.au>
+        Tue, 29 May 2018 04:48:30 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v5 08/10] media: rcar-vin: Handle parallel subdev in link_notify
+Date: Tue, 29 May 2018 10:48:06 +0200
+Message-Id: <1527583688-314-9-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1527583688-314-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1527583688-314-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+Handle parallel subdevices in link_notify callback. If the notified link
+involves a parallel subdevice, do not change routing of the VIN-CSI-2
+devices and mark the VIN instance as using a parallel input. If the
+CSI-2 link setup succeeds instead, mark the VIN instance as using CSI-2.
 
-Enable recently added r8a77470 (RZ/G1C) SoC.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/platform/rcar-vin/rcar-core.c | 35 ++++++++++++++++++++++++++++-
+ 1 file changed, 34 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index a701601fbd76..dc650db70063 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -14,6 +14,7 @@ CONFIG_ARCH_R8A73A4=y
- CONFIG_ARCH_R8A7740=y
- CONFIG_ARCH_R8A7743=y
- CONFIG_ARCH_R8A7745=y
-+CONFIG_ARCH_R8A77470=y
- CONFIG_ARCH_R8A7778=y
- CONFIG_ARCH_R8A7779=y
- CONFIG_ARCH_R8A7790=y
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 66066a0..e353ba9 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -171,9 +171,37 @@ static int rvin_group_link_notify(struct media_link *link, u32 flags,
+ 
+ 	/* Add the new link to the existing mask and check if it works. */
+ 	csi_id = rvin_group_entity_to_csi_id(group, link->source->entity);
++
++	if (csi_id == -ENODEV) {
++		struct v4l2_subdev *sd;
++		unsigned int i;
++
++		/*
++		 * Make sure the source entity subdevice is registered as
++		 * a parallel input of one of the enabled VINs if it is not
++		 * one of the CSI-2 subdevices.
++		 *
++		 * No hardware configuration required for parallel inputs,
++		 * we can return here.
++		 */
++		sd = media_entity_to_v4l2_subdev(link->source->entity);
++		for (i = 0; i < RCAR_VIN_NUM; i++) {
++			if (group->vin[i] && group->vin[i]->parallel &&
++			    group->vin[i]->parallel->subdev == sd) {
++				group->vin[i]->is_csi = false;
++				ret = 0;
++				goto out;
++			}
++		}
++
++		vin_err(vin, "Subdevice %s not registered to any VIN\n",
++			link->source->entity->name);
++		ret = -ENODEV;
++		goto out;
++	}
++
+ 	channel = rvin_group_csi_pad_to_channel(link->source->index);
+ 	mask_new = mask & rvin_group_get_mask(vin, csi_id, channel);
+-
+ 	vin_dbg(vin, "Try link change mask: 0x%x new: 0x%x\n", mask, mask_new);
+ 
+ 	if (!mask_new) {
+@@ -183,6 +211,11 @@ static int rvin_group_link_notify(struct media_link *link, u32 flags,
+ 
+ 	/* New valid CHSEL found, set the new value. */
+ 	ret = rvin_set_channel_routing(group->vin[master_id], __ffs(mask_new));
++	if (ret)
++		goto out;
++
++	vin->is_csi = true;
++
+ out:
+ 	mutex_unlock(&group->lock);
+ 
 -- 
-2.11.0
+2.7.4
