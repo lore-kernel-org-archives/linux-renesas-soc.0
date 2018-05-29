@@ -1,145 +1,58 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        horms@verge.net.au, geert@glider.be, magnus.damm@gmail.com,
-        robh+dt@kernel.org
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/3] arm64: dts: renesas: draak: Describe CVBS input
-Date: Mon, 21 May 2018 16:45:41 +0200
-Message-Id: <1526913942-15426-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1526913942-15426-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1526913942-15426-1-git-send-email-jacopo+renesas@jmondi.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>,
+        "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH v5] usb: gadget: udc: renesas_usb3: Add register of usb
+ role switch
+Date: Tue, 29 May 2018 02:52:27 +0000
+Message-ID: <TY2PR01MB2297E86466DEA9A16246D752D86D0@TY2PR01MB2297.jpnprd01.prod.outlook.com>
+References: <1527232376-5613-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20180528130439.GD29600@kuha.fi.intel.com>
+In-Reply-To: <20180528130439.GD29600@kuha.fi.intel.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe CVBS video input through analog video decoder ADV7180
-connected to video input interface VIN4.
+Hi Heikki,
 
-The video input signal path is shared with HDMI video input, and
-selected by on-board switches SW-53 and SW-54 with CVBS input selected
-by the default switches configuration.
+> From: Heikki Krogerus, Sent: Monday, May 28, 2018 10:05 PM
+>=20
+> On Fri, May 25, 2018 at 04:12:56PM +0900, Yoshihiro Shimoda wrote:
+> > @@ -2573,6 +2635,12 @@ static void renesas_usb3_init_ram(struct renesas=
+_usb3 *usb3, struct device *dev,
+> >  	EXTCON_NONE,
+> >  };
+> >
+> > +static struct usb_role_switch_desc renesas_usb3_role_switch_desc =3D {
+>=20
+> You can constify that.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Thank you for the review! I'll modify this in v6 patch.
 
----
-v3 -> v4:
-- Use 'adi,adv7180cp' compatible string in place of just 'adi,adv7180'
-  as suggested by Laurent.
-- Re-structure CVBS input ports definition according to adv7180cp
-  bindings: add port@0 for composite input, add port@3 for parallel
-  video output.
-- Change node label to 'composite-in' as in Gose board bindings.
+Best regards,
+Yoshihiro Shimoda
 
-v2 -> v3:
-- Add comment to describe the shared input video path.
-- Add my SoB and Niklas' R-b tags.
----
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 68 ++++++++++++++++++++++++++
- 1 file changed, 68 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index 9d73de8..ad59032 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -59,6 +59,16 @@
- 		};
- 	};
- 
-+	composite-in {
-+		compatible = "composite-video-connector";
-+
-+		port {
-+			composite_con_in: endpoint {
-+				remote-endpoint = <&adv7180_in>;
-+			};
-+		};
-+	};
-+
- 	memory@48000000 {
- 		device_type = "memory";
- 		/* first 128MB is reserved for secure area. */
-@@ -142,6 +152,11 @@
- 		groups = "usb0";
- 		function = "usb0";
- 	};
-+
-+	vin4_pins_cvbs: vin4 {
-+		groups = "vin4_data8", "vin4_sync", "vin4_clk";
-+		function = "vin4";
-+	};
- };
- 
- &i2c0 {
-@@ -154,6 +169,39 @@
- 		reg = <0x50>;
- 		pagesize = <8>;
- 	};
-+
-+	composite-in@20 {
-+		compatible = "adi,adv7180cp";
-+		reg = <0x20>;
-+
-+		port {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7180_in: endpoint {
-+					remote-endpoint = <&composite_con_in>;
-+				};
-+			};
-+
-+			port@3 {
-+				reg = <3>;
-+
-+				/*
-+				 * The VIN4 video input path is shared between
-+				 * CVBS and HDMI inputs through SW[49-53]
-+				 * switches.
-+				 *
-+				 * CVBS is the default selection, link it to
-+				 * VIN4 here.
-+				 */
-+				adv7180_out: endpoint {
-+					remote-endpoint = <&vin4_in>;
-+				};
-+			};
-+		};
-+	};
- };
- 
- &i2c1 {
-@@ -246,3 +294,23 @@
- 	timeout-sec = <60>;
- 	status = "okay";
- };
-+
-+&vin4 {
-+	pinctrl-0 = <&vin4_pins_cvbs>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+
-+			vin4_in: endpoint {
-+				remote-endpoint = <&adv7180_out>;
-+			};
-+		};
-+	};
-+};
--- 
-2.7.4
-
+> > +	.set =3D renesas_usb3_role_switch_set,
+> > +	.get =3D renesas_usb3_role_switch_get,
+> > +	.allow_userspace_control =3D true,
+> > +};
+> > +
+> >  static int renesas_usb3_probe(struct platform_device *pdev)
+> >  {
+> >  	struct renesas_usb3 *usb3;
+>=20
+> Thanks,
+>=20
+> --
+> heikki
