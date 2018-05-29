@@ -1,72 +1,49 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750888AbeERLR3 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:17:29 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 078/102] arm64: dts: renesas: r8a7796: Correct whitespace
-Date: Fri, 18 May 2018 13:15:40 +0200
-Message-Id: <e4d9242a30dce2ec01e8a321237c4b8d08c12c7b.1526637994.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
-References: <cover.1526637994.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v5 09/10] media: rcar-vin: Rename _rcar_info to rcar_info
+Date: Tue, 29 May 2018 10:48:07 +0200
+Message-Id: <1527583688-314-10-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1527583688-314-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1527583688-314-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Remove leading underscore to align all rcar_group_route structure
+declarations.
 
-Add missing spaces after commas.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 3fbd86590fb0..6ffab2da07cb 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -143,7 +143,7 @@
- 		};
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index e353ba9..7869308 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -1036,7 +1036,7 @@ static const struct rvin_info rcar_info_r8a7796 = {
+ 	.routes = rcar_info_r8a7796_routes,
+ };
  
- 		a57_1: cpu@1 {
--			compatible = "arm,cortex-a57","arm,armv8";
-+			compatible = "arm,cortex-a57", "arm,armv8";
- 			reg = <0x1>;
- 			device_type = "cpu";
- 			power-domains = <&sysc R8A7796_PD_CA57_CPU1>;
-@@ -166,7 +166,7 @@
- 		};
+-static const struct rvin_group_route _rcar_info_r8a77970_routes[] = {
++static const struct rvin_group_route rcar_info_r8a77970_routes[] = {
+ 	{ .csi = RVIN_CSI40, .channel = 0, .vin = 0, .mask = BIT(0) | BIT(3) },
+ 	{ .csi = RVIN_CSI40, .channel = 0, .vin = 1, .mask = BIT(2) },
+ 	{ .csi = RVIN_CSI40, .channel = 1, .vin = 1, .mask = BIT(3) },
+@@ -1052,7 +1052,7 @@ static const struct rvin_info rcar_info_r8a77970 = {
+ 	.use_mc = true,
+ 	.max_width = 4096,
+ 	.max_height = 4096,
+-	.routes = _rcar_info_r8a77970_routes,
++	.routes = rcar_info_r8a77970_routes,
+ };
  
- 		a53_1: cpu@101 {
--			compatible = "arm,cortex-a53","arm,armv8";
-+			compatible = "arm,cortex-a53", "arm,armv8";
- 			reg = <0x101>;
- 			device_type = "cpu";
- 			power-domains = <&sysc R8A7796_PD_CA53_CPU1>;
-@@ -177,7 +177,7 @@
- 		};
- 
- 		a53_2: cpu@102 {
--			compatible = "arm,cortex-a53","arm,armv8";
-+			compatible = "arm,cortex-a53", "arm,armv8";
- 			reg = <0x102>;
- 			device_type = "cpu";
- 			power-domains = <&sysc R8A7796_PD_CA53_CPU2>;
-@@ -188,7 +188,7 @@
- 		};
- 
- 		a53_3: cpu@103 {
--			compatible = "arm,cortex-a53","arm,armv8";
-+			compatible = "arm,cortex-a53", "arm,armv8";
- 			reg = <0x103>;
- 			device_type = "cpu";
- 			power-domains = <&sysc R8A7796_PD_CA53_CPU3>;
+ static const struct of_device_id rvin_of_id_table[] = {
 -- 
-2.11.0
+2.7.4
