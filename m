@@ -1,64 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750888AbeERLQR (ORCPT
+Received: from sauhun.de ([88.99.104.3]:56900 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965985AbeE2SI3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:16:17 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 015/102] arm64: dts: renesas: r8a77970: add FCPVD support
-Date: Fri, 18 May 2018 13:14:37 +0200
-Message-Id: <faa5c3176a67ed53a5bfefdf8b5e91dab9785d0d.1526637994.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
-References: <cover.1526637994.git.horms+renesas@verge.net.au>
+        Tue, 29 May 2018 14:08:29 -0400
+Date: Tue, 29 May 2018 20:08:27 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] i2c: rcar: document R8A77980 bindings
+Message-ID: <20180529180827.lxcaval2kter63po@ninjato>
+References: <95b945f7-1e6c-39f1-e101-06ed748ccec2@cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="23dsutfutlrd56ce"
+Content-Disposition: inline
+In-Reply-To: <95b945f7-1e6c-39f1-e101-06ed748ccec2@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Describe FCPVD0 in the R8A77970 device tree; it will be used by VSPD0 in
-the next patch...
+--23dsutfutlrd56ce
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
+On Mon, May 28, 2018 at 10:39:05PM +0300, Sergei Shtylyov wrote:
+> R-Car V3H (R8A77980) SoC also has the R-Car gen3 compatible I2C controlle=
+r,
+> so document the SoC  specific bindings.
+>=20
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>=20
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Applied to for-next, thanks!
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index e8358d9bfd66..71f466daa036 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -617,6 +617,14 @@
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 		};
-+
-+		fcpvd0: fcp@fea27000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea27000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 603>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 603>;
-+		};
- 	};
- 
- 	timer {
--- 
-2.11.0
+
+--23dsutfutlrd56ce
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsNlxsACgkQFA3kzBSg
+KbbIyBAAhBQqh/eQcZmKv2EebhJBqJwxCdrS2UIMj3VODXFsUuWZ3GVwDymLWIuJ
+QxbGqFRiLUsGwVfJrfb00IOZfjfvlUOnAU7ftoiDwsCO19uI/ADy63amUV+/gvMa
+SjVlUI7NMYydBm7vxArdRQi17bGpYwjiiMk4v7aNfNhEBW7f2KvALnriQfxb11CE
+YLaVATPFxZZYRx0jAiP9Xgu99697cCMDYGGhdIV75nRtSeitqIx6SqErpcQeyKfN
+2gGnKWHLjAHmQRdISF5E9Kj0iW5WnzIfyyTwzpomoxIfQO7zU4fi9/Ci7qdknoxI
+nhc1l3CH18+XWVgfEvBJiqYIG+W/xxDkjiCPbH12USLtXRoPbYb0Sz87G8+OBYYl
+dZ+Zo1c9TmAjWcE18csRIVFtKBF9HZJol6DNR4WxTiyHyRKc1NZzvuIT4CX0EtgO
+f93C5RdlaGpALYuHYuOEAoa1pqQWaxzAVCMU+8gjhE/DMVyDTrxy3SP50EThFPMh
+8WnwSmWg6q9bPO55mgwASENTxGIE2ypFuY2e5uKx9am56LibJ85KfTv6wCw37Mc0
+I0j9dmBrXFF0/2nfFohRgSX3dhP958lrLuiEufGgC0nAAOFYkw1RhxxM7uTDvzoJ
+oT+tXEmCdxjwh0Ak1ltoRHJzRSfg8H5QzmtOAEQUVwZPfE8Sw+A=
+=gufs
+-----END PGP SIGNATURE-----
+
+--23dsutfutlrd56ce--
