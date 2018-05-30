@@ -1,11 +1,11 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:34801 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751000AbeE3KMU (ORCPT
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:40525 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750718AbeE3KLg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 May 2018 06:12:20 -0400
-Received: by mail-wr0-f193.google.com with SMTP id j1-v6so28926698wrm.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 May 2018 03:12:19 -0700 (PDT)
+        Wed, 30 May 2018 06:11:36 -0400
+Received: by mail-wr0-f196.google.com with SMTP id l41-v6so28954592wre.7
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 May 2018 03:11:35 -0700 (PDT)
 From: Marek Vasut <marek.vasut@gmail.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
@@ -14,9 +14,9 @@ Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa@the-dreams.de>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V4] ARM: dts: rmobile: Drop MTD partitioning from DT
-Date: Wed, 30 May 2018 12:12:11 +0200
-Message-Id: <20180530101211.3625-1-marek.vasut+renesas@gmail.com>
+Subject: [PATCH] ARM: dts: rmobile: Drop MTD partitioning from DT
+Date: Wed, 30 May 2018 12:11:30 +0200
+Message-Id: <20180530101130.3566-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -49,7 +49,6 @@ Cc: linux-renesas-soc@vger.kernel.org
 ---
 V2: Drop the @0 anchor from the commit message, use 4m
 V3: Squash the patches into one as requested by the higher ups
-V4: Add this missing Vx to PATCH Vx in subject
 ---
  arch/arm/boot/dts/r8a7790-lager.dts   | 21 ---------------------
  arch/arm/boot/dts/r8a7790-stout.dts   | 26 --------------------------
