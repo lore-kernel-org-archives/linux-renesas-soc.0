@@ -1,146 +1,110 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Juri Lelli <juri.lelli@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Frank Rowand <frank.rowand@sony.com>,
-        Carlo Caione <carlo@endlessm.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 2/3] arm: shmobile: Add the R9A06G032 SMP enabler driver
-Date: Thu, 24 May 2018 11:30:28 +0100
-Message-Id: <1527157834-7747-3-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1527157834-7747-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1527157834-7747-1-git-send-email-michel.pollet@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from andre.telenet-ops.be ([195.130.132.53]:51574 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753595AbeE3PZT (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 30 May 2018 11:25:19 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/6] soc: renesas: rcar-sysc: Provide helpers to power up/down CPUs
+Date: Wed, 30 May 2018 17:25:13 +0200
+Message-Id: <1527693916-11215-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1527693916-11215-1-git-send-email-geert+renesas@glider.be>
+References: <1527693916-11215-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas R9A06G032 second CA7 is parked in a ROM pen at boot time, it
-requires a special enable method to get it started.
+Provide helpers to control CPU power areas from platform code, taking
+just a CPU index.  This will avoid having to pass full CPU power area
+parameter blocks, and thus duplicating information already provided by
+SoC-specific SYSC drivers.
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+This will be used on R-Car H1 only.
+Later R-Car generations rely on APMU/RST for CPU power area control.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/mach-shmobile/Makefile        |  1 +
- arch/arm/mach-shmobile/smp-r9a06g032.c | 85 ++++++++++++++++++++++++++++++++++
- 2 files changed, 86 insertions(+)
- create mode 100644 arch/arm/mach-shmobile/smp-r9a06g032.c
+ drivers/soc/renesas/rcar-sysc.c       | 40 +++++++++++++++++++++++++++++++++++
+ include/linux/soc/renesas/rcar-sysc.h |  2 ++
+ 2 files changed, 42 insertions(+)
 
-diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
-index 1939f52..d7fc98f 100644
---- a/arch/arm/mach-shmobile/Makefile
-+++ b/arch/arm/mach-shmobile/Makefile
-@@ -34,6 +34,7 @@ smp-$(CONFIG_ARCH_SH73A0)	+= smp-sh73a0.o headsmp-scu.o platsmp-scu.o
- smp-$(CONFIG_ARCH_R8A7779)	+= smp-r8a7779.o headsmp-scu.o platsmp-scu.o
- smp-$(CONFIG_ARCH_R8A7790)	+= smp-r8a7790.o
- smp-$(CONFIG_ARCH_R8A7791)	+= smp-r8a7791.o
-+smp-$(CONFIG_ARCH_R9A06G032)	+= smp-r9a06g032.o
- smp-$(CONFIG_ARCH_EMEV2)	+= smp-emev2.o headsmp-scu.o platsmp-scu.o
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index 95120acc4d806da6..4ad6dcd19420a045 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -310,6 +310,8 @@ struct rcar_pm_domains {
+ 	struct generic_pm_domain *domains[RCAR_PD_ALWAYS_ON + 1];
+ };
  
- # PM objects
-diff --git a/arch/arm/mach-shmobile/smp-r9a06g032.c b/arch/arm/mach-shmobile/smp-r9a06g032.c
-new file mode 100644
-index 0000000..a536e89
---- /dev/null
-+++ b/arch/arm/mach-shmobile/smp-r9a06g032.c
-@@ -0,0 +1,85 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * RZ/N1D Second CA7 enabler.
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
-+ * Derived from action,s500-smp
-+ */
++static struct genpd_onecell_data *rcar_sysc_onecell_data;
 +
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/smp.h>
-+#include <asm/cacheflush.h>
-+#include <asm/smp_plat.h>
-+#include <asm/smp_scu.h>
+ static int __init rcar_sysc_pd_init(void)
+ {
+ 	const struct rcar_sysc_info *info;
+@@ -356,6 +358,7 @@ static int __init rcar_sysc_pd_init(void)
+ 
+ 	domains->onecell_data.domains = domains->domains;
+ 	domains->onecell_data.num_domains = ARRAY_SIZE(domains->domains);
++	rcar_sysc_onecell_data = &domains->onecell_data;
+ 
+ 	for (i = 0, syscier = 0; i < info->num_areas; i++)
+ 		syscier |= BIT(info->areas[i].isr_bit);
+@@ -449,3 +452,40 @@ void __init rcar_sysc_init(phys_addr_t base, u32 syscier)
+ 	pr_debug("%s: syscier = 0x%08x\n", __func__, syscier);
+ 	iowrite32(syscier, rcar_sysc_base + SYSCIER);
+ }
 +
-+/*
-+ * The second CPU is parked in ROM at boot time. It requires waking it after
-+ * writing an address into the BOOTADDR register of sysctrl.
-+ *
-+ * So the default value of the "cpu-release-addr" corresponds to BOOTADDR...
-+ *
-+ * *However* the BOOTADDR register is not available when the kernel
-+ * starts in NONSEC mode.
-+ *
-+ * So for NONSEC mode, the bootloader re-parks the second CPU into a pen
-+ * in SRAM, and changes the "cpu-release-addr" of linux's DT to a SRAM address,
-+ * which is not restricted.
-+ */
-+
-+static void __iomem *cpu_bootaddr;
-+
-+static DEFINE_SPINLOCK(cpu_lock);
-+
-+static int rzn1_smp_boot_secondary(unsigned int cpu, struct task_struct *idle)
++#ifdef CONFIG_ARCH_R8A7779
++static int rcar_sysc_power_cpu(unsigned int idx, bool on)
 +{
-+	if (!cpu_bootaddr)
++	struct generic_pm_domain *genpd;
++	struct rcar_sysc_pd *pd;
++	unsigned int i;
++
++	if (!rcar_sysc_onecell_data)
 +		return -ENODEV;
 +
-+	spin_lock(&cpu_lock);
++	for (i = 0; i < rcar_sysc_onecell_data->num_domains; i++) {
++		genpd = rcar_sysc_onecell_data->domains[i];
++		if (!genpd)
++			continue;
 +
-+	writel(__pa_symbol(secondary_startup), cpu_bootaddr);
-+	arch_send_wakeup_ipi_mask(cpumask_of(cpu));
++		pd = to_rcar_pd(genpd);
++		if (!(pd->flags & PD_CPU) || pd->ch.chan_bit != idx)
++			continue;
 +
-+	spin_unlock(&cpu_lock);
++		return on ? rcar_sysc_power_up(&pd->ch)
++			  : rcar_sysc_power_down(&pd->ch);
++	}
 +
-+	return 0;
++	return -ENOENT;
 +}
 +
-+static void __init rzn1_smp_prepare_cpus(unsigned int max_cpus)
++int rcar_sysc_power_down_cpu(unsigned int cpu)
 +{
-+	struct device_node *dn;
-+	int ret;
-+	u32 bootaddr;
-+
-+	dn = of_get_cpu_node(1, NULL);
-+	if (!dn) {
-+		pr_err("CPU#1: missing device tree node\n");
-+		return;
-+	}
-+	/*
-+	 * Determine the address from which the CPU is polling.
-+	 * The bootloader *does* change this property
-+	 */
-+	ret = of_property_read_u32(dn, "cpu-release-addr", &bootaddr);
-+	of_node_put(dn);
-+	if (ret) {
-+		pr_err("CPU#1: invalid cpu-release-addr property\n");
-+		return;
-+	}
-+	pr_info("CPU#1: cpu-release-addr %08x\n", (u32)bootaddr);
-+
-+	cpu_bootaddr = ioremap(bootaddr, sizeof(bootaddr));
-+	if (!cpu_bootaddr)
-+		pr_err("CPU#1: cpu-release-addr map failed\n");
++	return rcar_sysc_power_cpu(cpu, false);
 +}
 +
-+static const struct smp_operations rzn1_smp_ops __initconst = {
-+	.smp_prepare_cpus = rzn1_smp_prepare_cpus,
-+	.smp_boot_secondary = rzn1_smp_boot_secondary,
-+};
-+CPU_METHOD_OF_DECLARE(rzn1_smp, "renesas,r9a06g032-smp", &rzn1_smp_ops);
++int rcar_sysc_power_up_cpu(unsigned int cpu)
++{
++	return rcar_sysc_power_cpu(cpu, true);
++}
++#endif /* CONFIG_ARCH_R8A7779 */
+diff --git a/include/linux/soc/renesas/rcar-sysc.h b/include/linux/soc/renesas/rcar-sysc.h
+index 8a6086d2e9c37585..9020da2111fdeea9 100644
+--- a/include/linux/soc/renesas/rcar-sysc.h
++++ b/include/linux/soc/renesas/rcar-sysc.h
+@@ -13,5 +13,7 @@ struct rcar_sysc_ch {
+ int rcar_sysc_power_down(const struct rcar_sysc_ch *sysc_ch);
+ int rcar_sysc_power_up(const struct rcar_sysc_ch *sysc_ch);
+ void rcar_sysc_init(phys_addr_t base, u32 syscier);
++int rcar_sysc_power_down_cpu(unsigned int cpu);
++int rcar_sysc_power_up_cpu(unsigned int cpu);
+ 
+ #endif /* __LINUX_SOC_RENESAS_RCAR_SYSC_H__ */
 -- 
 2.7.4
-
