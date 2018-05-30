@@ -1,46 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:45040 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965209AbeE3Jav (ORCPT
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:42671 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968844AbeE3JNi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 May 2018 05:30:51 -0400
-MIME-Version: 1.0
-In-Reply-To: <1527671604-18768-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1527671604-18768-1-git-send-email-jacopo+renesas@jmondi.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 30 May 2018 11:30:49 +0200
-Message-ID: <CAMuHMdVsV9k0OjFMkQSiKCenxfEHgcZxrMU3a5eXRaCDdeA5-A@mail.gmail.com>
-Subject: Re: [PATCH] media: arch: sh: migor: Fix TW9910 PDN gpio
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 30 May 2018 05:13:38 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: ysato@users.sourceforge.jp, dalias@libc.org,
+        laurent.pinchart@ideasonboard.com, hans.verkuil@cisco.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, linux-sh@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] media: arch: sh: migor: Fix TW9910 PDN gpio
+Date: Wed, 30 May 2018 11:13:24 +0200
+Message-Id: <1527671604-18768-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
+The TW9910 PDN gpio (power down) is listed as active high in the chip
+manual. It turns out it is actually active low as when set to physical
+level 0 it actually turns the video decoder power off.
 
-On Wed, May 30, 2018 at 11:13 AM, Jacopo Mondi
-<jacopo+renesas@jmondi.org> wrote:
-> The TW9910 PDN gpio (power down) is listed as active high in the chip
-> manual. It turns out it is actually active low as when set to physical
-> level 0 it actually turns the video decoder power off.
+Without this patch applied:
+tw9910 0-0045: Product ID error 1f:2
 
-So the picture "Typical TW9910 External Circuitry" in the datasheet, which
-ties PDN to GND permanently, is wrong?
+With this patch applied:
+tw9910 0-0045: tw9910 Product ID b:0
 
-Gr{oetje,eeting}s,
+Fixes: commit "186c446f4b840bd77b79d3dc951ca436cb8abe79"
 
-                        Geert
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+---
+Hi,
+   sending to both media and sh lists, as all previous CEU-related patches
+went through Hans' tree, even the board specific parts.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks
+   j
+---
+ arch/sh/boards/mach-migor/setup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/sh/boards/mach-migor/setup.c b/arch/sh/boards/mach-migor/setup.c
+index 271dfc2..3d7d004 100644
+--- a/arch/sh/boards/mach-migor/setup.c
++++ b/arch/sh/boards/mach-migor/setup.c
+@@ -359,7 +359,7 @@ static struct gpiod_lookup_table ov7725_gpios = {
+ static struct gpiod_lookup_table tw9910_gpios = {
+ 	.dev_id		= "0-0045",
+ 	.table		= {
+-		GPIO_LOOKUP("sh7722_pfc", GPIO_PTT2, "pdn", GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("sh7722_pfc", GPIO_PTT2, "pdn", GPIO_ACTIVE_LOW),
+ 		GPIO_LOOKUP("sh7722_pfc", GPIO_PTT3, "rstb", GPIO_ACTIVE_LOW),
+ 	},
+ };
+--
+2.7.4
