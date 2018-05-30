@@ -1,69 +1,52 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:51566 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753480AbeE3PZT (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 May 2018 11:25:19 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/6] ARM: shmobile: rcar: Drop lehacy SYSC fallbacks
-Date: Wed, 30 May 2018 17:25:10 +0200
-Message-Id: <1527693916-11215-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 30 May 2018 10:17:49 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        "arm@kernel.org" <arm@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "ionela.voinescu@arm.com" <ionela.voinescu@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "chris.redpath@arm.com" <chris.redpath@arm.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 13/15] arm: dts: r8a7743: Add missing OPP properties for
+ CPUs
+Message-ID: <20180530044749.ou45frhlrdykoiuq@vireshk-i7>
+References: <cover.1527244200.git.viresh.kumar@linaro.org>
+ <5821a6dbe413b5a217ca1e24ddf8ebfa63ba6ef0.1527244201.git.viresh.kumar@linaro.org>
+ <20180528092331.3jon45nsqfdzs5ds@verge.net.au>
+ <20180528105831.vesrswazlagynemq@vireshk-i7>
+ <20180528115832.b2wovvanypxkgalj@verge.net.au>
+ <OSBPR01MB2103A3411D0C3C5DB76F715EB86D0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <OSBPR01MB2103A3411D0C3C5DB76F715EB86D0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+On 29-05-18, 13:33, Biju Das wrote:
+> Hi All,
+> 
+> I have tested this patch on RZ/G1M and I didn't find any issues.
+> r8a7743 is similar to r8a7791. So I assume you will apply the same
+> patch for other R-SoC devices as well.
 
-When DT SYSC support was introduced in v4.7, legacy fallbacks were kept
-to keep secondary CPUs working on R-Car H1, H2, and M2-W using old DTBs.
-However, the time has come to drop these fallbacks, and clean up the
-resulting code.
+Okay, I have sent V2 for this and it fixes all those platforms as
+well.
 
-Most of this was written when I worked on DT SYSC support, but postponed
-until the time was ripe.  So basically I've been running this during the
-last +2 years.
+> Apart from this, maybe we need to update the OPP binding
+> documentation. i.e., extend the  operating- point usage to other
+> cores in the cluster (Binding 1: operating-points).
 
-I avoided touching drivers/soc/renesas and arch/arm/mach-shmobile code
-in the same patch.  If you prefer some patches to be squashed, please
-let me know.
-
-Tested on Marzen (R-Car H1), Lager (R-Car H2), and Koelsch (R-Car M2-W).
-
-Thanks!
-
-Geert Uytterhoeven (6):
-  ARM: shmobile: rcar-gen2: Remove explicit SYSC config and init
-  ARM: shmobile: r8a7779: Stop powering down secondary CPUs during early
-    boot
-  soc: renesas: rcar-sysc: Provide helpers to power up/down CPUs
-  ARM: shmobile: r8a7779: Use rcar_sysc_power_{down,up}_cpu()
-  ARM: shmobile: r8a7779: Remove explicit SYSC config and init
-  soc: renesas: rcar-sysc: Drop legacy handling
-
- arch/arm/mach-shmobile/Makefile       |  2 +-
- arch/arm/mach-shmobile/pm-r8a7779.c   | 41 ----------------------
- arch/arm/mach-shmobile/pm-rcar-gen2.c | 25 --------------
- arch/arm/mach-shmobile/r8a7779.h      |  2 --
- arch/arm/mach-shmobile/smp-r8a7779.c  | 54 ++++-------------------------
- drivers/soc/renesas/rcar-sysc.c       | 64 ++++++++++++++++++++++-------------
- include/linux/soc/renesas/rcar-sysc.h | 13 ++-----
- 7 files changed, 50 insertions(+), 151 deletions(-)
- delete mode 100644 arch/arm/mach-shmobile/pm-r8a7779.c
+Its already done, you need to start using operating-points-v2 property
+to avoid duplication like this.
 
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+viresh
