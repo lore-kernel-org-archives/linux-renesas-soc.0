@@ -1,105 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:43524 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751112AbeERMtA (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:50650 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753784AbeE3PPe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 08:49:00 -0400
+        Wed, 30 May 2018 11:15:34 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/5] ARM: shmobile: r8a7791: Use common R-Car Gen2 machine definition
-Date: Fri, 18 May 2018 14:48:53 +0200
-Message-Id: <1526647734-1200-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1526647734-1200-1-git-send-email-geert+renesas@glider.be>
-References: <1526647734-1200-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 1/3] ARM: shmobile: apmu: Move cpu_leave_lowpower() to SUSPEND section
+Date: Wed, 30 May 2018 17:15:26 +0200
+Message-Id: <1527693328-10559-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1527693328-10559-1-git-send-email-geert+renesas@glider.be>
+References: <1527693328-10559-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Now r8a7791 no longer needs the SMP initialization fallback, it can use
-the common R-Car Gen2 machine definition, and the r8a7791-specific one
-can be removed.
+cpu_leave_lowpower() is used for suspend only, not for CPU hotplug.
+Hence move it from the HOTPLUG_CPU || SUSPEND section to the SUSPEND
+section.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/mach-shmobile/Makefile          |  1 -
- arch/arm/mach-shmobile/setup-r8a7791.c   | 37 --------------------------------
- arch/arm/mach-shmobile/setup-rcar-gen2.c |  5 +----
- 3 files changed, 1 insertion(+), 42 deletions(-)
- delete mode 100644 arch/arm/mach-shmobile/setup-r8a7791.c
+ arch/arm/mach-shmobile/platsmp-apmu.c | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
-index 38086d0d2f5484a1..2b8d3896e1ebbe6a 100644
---- a/arch/arm/mach-shmobile/Makefile
-+++ b/arch/arm/mach-shmobile/Makefile
-@@ -12,7 +12,6 @@ obj-$(CONFIG_ARCH_R8A73A4)	+= setup-r8a73a4.o
- obj-$(CONFIG_ARCH_R8A7740)	+= setup-r8a7740.o
- obj-$(CONFIG_ARCH_R8A7778)	+= setup-r8a7778.o
- obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o pm-r8a7779.o
--obj-$(CONFIG_ARCH_R8A7791)	+= setup-r8a7791.o
- obj-$(CONFIG_ARCH_EMEV2)	+= setup-emev2.o
- obj-$(CONFIG_ARCH_R7S72100)	+= setup-r7s72100.o
+diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
+index ba732effc90b019f..778b6b618ce7c088 100644
+--- a/arch/arm/mach-shmobile/platsmp-apmu.c
++++ b/arch/arm/mach-shmobile/platsmp-apmu.c
+@@ -270,21 +270,6 @@ static void shmobile_smp_apmu_cpu_shutdown(unsigned int cpu)
+ 	/* Do ARM specific CPU shutdown */
+ 	cpu_enter_lowpower_a15();
+ }
+-
+-static inline void cpu_leave_lowpower(void)
+-{
+-	unsigned int v;
+-
+-	asm volatile("mrc    p15, 0, %0, c1, c0, 0\n"
+-		     "       orr     %0, %0, %1\n"
+-		     "       mcr     p15, 0, %0, c1, c0, 0\n"
+-		     "       mrc     p15, 0, %0, c1, c0, 1\n"
+-		     "       orr     %0, %0, %2\n"
+-		     "       mcr     p15, 0, %0, c1, c0, 1\n"
+-		     : "=&r" (v)
+-		     : "Ir" (CR_C), "Ir" (0x40)
+-		     : "cc");
+-}
+ #endif
  
-diff --git a/arch/arm/mach-shmobile/setup-r8a7791.c b/arch/arm/mach-shmobile/setup-r8a7791.c
-deleted file mode 100644
-index 2de32fde1af7caae..0000000000000000
---- a/arch/arm/mach-shmobile/setup-r8a7791.c
-+++ /dev/null
-@@ -1,37 +0,0 @@
--/*
-- * r8a7791 processor support
-- *
-- * Copyright (C) 2013  Renesas Electronics Corporation
-- * Copyright (C) 2013  Renesas Solutions Corp.
-- * Copyright (C) 2013  Magnus Damm
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
--
--#include <linux/init.h>
--
--#include <asm/mach/arch.h>
--
--#include "common.h"
--#include "rcar-gen2.h"
--
--static const char *const r8a7791_boards_compat_dt[] __initconst = {
--	"renesas,r8a7791",
--	NULL,
--};
--
--DT_MACHINE_START(R8A7791_DT, "Generic R8A7791 (Flattened Device Tree)")
--	.smp_init	= smp_init_ops(shmobile_smp_init_fallback_ops),
--	.init_early	= shmobile_init_delay,
--	.init_time	= rcar_gen2_timer_init,
--	.init_late	= shmobile_init_late,
--	.reserve	= rcar_gen2_reserve,
--	.dt_compat	= r8a7791_boards_compat_dt,
--MACHINE_END
-diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-index a9860f71ba11fba4..5ba1d215d741d92a 100644
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -186,10 +186,7 @@ void __init rcar_gen2_reserve(void)
+ #if defined(CONFIG_HOTPLUG_CPU)
+@@ -315,6 +300,21 @@ static int shmobile_smp_apmu_do_suspend(unsigned long cpu)
+ 	return 1;
+ }
  
- static const char * const rcar_gen2_boards_compat_dt[] __initconst = {
- 	"renesas,r8a7790",
--	/*
--	 * R8A7791 can't be handled here as long as it needs SMP
--	 * initialization fallback.
--	 */
-+	"renesas,r8a7791",
- 	"renesas,r8a7792",
- 	"renesas,r8a7793",
- 	"renesas,r8a7794",
++static inline void cpu_leave_lowpower(void)
++{
++	unsigned int v;
++
++	asm volatile("mrc    p15, 0, %0, c1, c0, 0\n"
++		     "       orr     %0, %0, %1\n"
++		     "       mcr     p15, 0, %0, c1, c0, 0\n"
++		     "       mrc     p15, 0, %0, c1, c0, 1\n"
++		     "       orr     %0, %0, %2\n"
++		     "       mcr     p15, 0, %0, c1, c0, 1\n"
++		     : "=&r" (v)
++		     : "Ir" (CR_C), "Ir" (0x40)
++		     : "cc");
++}
++
+ static int shmobile_smp_apmu_enter_suspend(suspend_state_t state)
+ {
+ 	cpu_suspend(smp_processor_id(), shmobile_smp_apmu_do_suspend);
 -- 
 2.7.4
