@@ -1,120 +1,122 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:47082 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751096AbeEJSMd (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55621 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752485AbeE3LBi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 May 2018 14:12:33 -0400
-Received: by mail-lf0-f66.google.com with SMTP id x7-v6so4226695lff.13
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 10 May 2018 11:12:33 -0700 (PDT)
-Subject: [PATCH 2/2] arm64: dts: renesas: initial V3HSK board device tree
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Will Deacon <will.deacon@arm.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <3923fc5f-103c-94c9-57ba-cb29e8c55d05@cogentembedded.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <50de037c-7560-c261-f96a-f86065674c9b@cogentembedded.com>
-Date: Thu, 10 May 2018 21:12:30 +0300
+        Wed, 30 May 2018 07:01:38 -0400
+Subject: Re: [PATCH 4/6] mfd: da9063: Disallow RTC on DA9063L
+To: Lee Jones <lee.jones@linaro.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+References: <20180523114230.10109-1-marek.vasut+renesas@gmail.com>
+ <20180523114230.10109-4-marek.vasut+renesas@gmail.com>
+ <6ED8E3B22081A4459DAC7699F3695FB701941A488A@SW-EX-MBX02.diasemi.com>
+ <20180529075505.GD4790@dell>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <2960b4f7-7fb4-48d4-5b2c-5cc1bdc80ef5@gmail.com>
+Date: Wed, 30 May 2018 12:59:08 +0200
 MIME-Version: 1.0
-In-Reply-To: <3923fc5f-103c-94c9-57ba-cb29e8c55d05@cogentembedded.com>
+In-Reply-To: <20180529075505.GD4790@dell>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the initial device  tree for  the V3H Starter Kit board.
-The board has 1 debug serial port (SCIF0); include support for it,
-so that the serial console can work.
+On 05/29/2018 09:55 AM, Lee Jones wrote:
+> On Thu, 24 May 2018, Steve Twiss wrote:
+> 
+>> Thanks Marek,
+>>
+>> On 23 May 2018 12:42 Marek Vasut wrote,
+>>
+>>> To: linux-kernel@vger.kernel.org
+>>> Cc: Marek Vasut <marek.vasut+renesas@gmail.com>; Geert Uytterhoeven <geert+renesas@glider.be>; Lee Jones <lee.jones@linaro.org>; Mark Brown <broonie@kernel.org>; Steve Twiss <stwiss.opensource@diasemi.com>; Wolfram Sang <wsa+renesas@sang-engineering.com>; linux-renesas-soc@vger.kernel.org
+>>> Subject: [PATCH 4/6] mfd: da9063: Disallow RTC on DA9063L
+>>>
+>>> The DA9063L does not contain RTC block, unlike the full DA9063.
+>>> Do not allow binding RTC driver on this variant of the chip.
+>>>
+>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>>> Cc: Lee Jones <lee.jones@linaro.org>
+>>> Cc: Mark Brown <broonie@kernel.org>
+>>> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+>>> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>>> Cc: linux-renesas-soc@vger.kernel.org
+>>> ---
+>>>  drivers/mfd/da9063-core.c | 18 +++++++++++-------
+>>>  1 file changed, 11 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c index 7360b76b4f72..263c83006413 100644
+>>> --- a/drivers/mfd/da9063-core.c
+>>> +++ b/drivers/mfd/da9063-core.c
+>>> @@ -101,14 +101,14 @@ static const struct mfd_cell da9063_devs[] = {
+>>>  		.of_compatible = "dlg,da9063-onkey",
+>>>  	},
+>>>  	{
+>>> +		.name		= DA9063_DRVNAME_VIBRATION,
+>>> +	},
+>>> +	{	/* Only present on DA9063 , not on DA9063L */
+>>>  		.name		= DA9063_DRVNAME_RTC,
+>>>  		.num_resources	= ARRAY_SIZE(da9063_rtc_resources),
+>>>  		.resources	= da9063_rtc_resources,
+>>>  		.of_compatible	= "dlg,da9063-rtc",
+>>>  	},
+>>> -	{
+>>> -		.name		= DA9063_DRVNAME_VIBRATION,
+>>> -	},
+>>>  };
+>>>  
+>>>  static int da9063_clear_fault_log(struct da9063 *da9063) @@ -163,7 +163,7 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)  {
+>>>  	struct da9063_pdata *pdata = da9063->dev->platform_data;
+>>>  	int model, variant_id, variant_code;
+>>> -	int ret;
+>>> +	int da9063_devs_len, ret;
+>>>  
+>>>  	ret = da9063_clear_fault_log(da9063);
+>>>  	if (ret < 0)
+>>> @@ -225,9 +225,13 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
+>>>  
+>>>  	da9063->irq_base = regmap_irq_chip_get_base(da9063->regmap_irq);
+>>>  
+>>> -	ret = mfd_add_devices(da9063->dev, -1, da9063_devs,
+>>> -			      ARRAY_SIZE(da9063_devs), NULL, da9063->irq_base,
+>>> -			      NULL);
+>>> +	da9063_devs_len = ARRAY_SIZE(da9063_devs);
+>>> +	/* RTC, the last device in the list, is only present on DA9063 */
+>>> +	if (da9063->type == PMIC_TYPE_DA9063L)
+>>> +		da9063_devs_len -= 1;
+>>> +
+>>> +	ret = mfd_add_devices(da9063->dev, -1, da9063_devs, da9063_devs_len,
+>>> +			      NULL, da9063->irq_base, NULL);
+>>>  	if (ret)
+>>>  		dev_err(da9063->dev, "Cannot add MFD cells\n");
+>>>  
+>>
+>> MFD cells definitely has less impact than regmap_range and regmap_irq.
+>> I agree, there's no point in having a completely new 
+>> static const struct mfd_cell da9063l_devs[] = { ... }  for DA9063L
+> 
+> This solution is fragile.
+> 
+> I agree that a new MFD cell is not required in its entirety.  It
+> would however, be better to split out the RTC entry into a new one and
+> only register it when (da9063->type == PMIC_TYPE_DA9063).  This is a
+> better solution than messing around with passed struct sizes.
 
-Based on the original (and large) patch by Vladimir Barinov.
+This indeed is better.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+btw this da9063_device_init() function is missing a failpath to undo the
+setup done by da9063_irq_init(), so I'll be sending a patch for that too
+shortly.
 
----
- arch/arm64/boot/dts/renesas/Makefile           |    2 
- arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts |   60 +++++++++++++++++++++++++
- 2 files changed, 61 insertions(+), 1 deletion(-)
-
-Index: renesas/arch/arm64/boot/dts/renesas/Makefile
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/Makefile
-+++ renesas/arch/arm64/boot/dts/renesas/Makefile
-@@ -9,6 +9,6 @@ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-m3
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
- dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-x.dtb r8a77965-salvator-xs.dtb
- dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb r8a77970-v3msk.dtb
--dtb-$(CONFIG_ARCH_R8A77980) += r8a77980-condor.dtb
-+dtb-$(CONFIG_ARCH_R8A77980) += r8a77980-condor.dtb r8a77980-v3hsk.dtb
- dtb-$(CONFIG_ARCH_R8A77990) += r8a77990-ebisu.dtb
- dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-===================================================================
---- /dev/null
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-@@ -0,0 +1,60 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the V3H Starter Kit board
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ * Copyright (C) 2018 Cogent Embedded, Inc.
-+ */
-+
-+/dts-v1/;
-+#include "r8a77980.dtsi"
-+
-+/ {
-+	model = "Renesas V3H Starter Kit board";
-+	compatible = "renesas,v3hsk", "renesas,r8a77980";
-+
-+	aliases {
-+		serial0 = &scif0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0 0x48000000 0 0x78000000>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <16666666>;
-+};
-+
-+&extalr_clk {
-+	clock-frequency = <32768>;
-+};
-+
-+&pfc {
-+	scif0_pins: scif0 {
-+		groups = "scif0_data";
-+		function = "scif0";
-+	};
-+
-+	scif_clk_pins: scif_clk {
-+		groups = "scif_clk_b";
-+		function = "scif_clk";
-+	};
-+};
-+
-+&scif0 {
-+	pinctrl-0 = <&scif0_pins>, <&scif_clk_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&scif_clk {
-+	clock-frequency = <14745600>;
-+};
+-- 
+Best regards,
+Marek Vasut
