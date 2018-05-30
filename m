@@ -1,124 +1,110 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Marek Vasut <marek.vasut@gmail.com>
-To: devicetree@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V2] mfd: dt: Add bindings for DA9063L
-Date: Wed, 23 May 2018 14:21:40 +0200
-Message-Id: <20180523122140.6275-1-marek.vasut+renesas@gmail.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from andre.telenet-ops.be ([195.130.132.53]:36034 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753786AbeE3PPc (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 30 May 2018 11:15:32 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/3] ARM: shmobile: apmu: Remove obsolete shmobile_smp_apmu_prepare_cpus()
+Date: Wed, 30 May 2018 17:15:27 +0200
+Message-Id: <1527693328-10559-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1527693328-10559-1-git-send-email-geert+renesas@glider.be>
+References: <1527693328-10559-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device tree bindings for the Dialog DA9063L. This is a
-variant of the DA9063 chip with smaller package, with less
-LDO regulators and without RTC block. The other properties
-of the chip are the same, including the content of the chip
-ID register.
+After the removal of the legacy SMP fallbacks, there are no more users
+left of shmobile_smp_apmu_prepare_cpus().
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: Merge the DA9063/DA9063L regulator lists and mark DA9063-only
-    regulators in that single list
----
- Documentation/devicetree/bindings/mfd/da9063.txt | 32 +++++++++++++-----------
- 1 file changed, 17 insertions(+), 15 deletions(-)
+Remove it, together with the legacy SMP config parser.
 
-diff --git a/Documentation/devicetree/bindings/mfd/da9063.txt b/Documentation/devicetree/bindings/mfd/da9063.txt
-index 05b21bcb8543..443e68286957 100644
---- a/Documentation/devicetree/bindings/mfd/da9063.txt
-+++ b/Documentation/devicetree/bindings/mfd/da9063.txt
-@@ -1,4 +1,4 @@
--* Dialog DA9063 Power Management Integrated Circuit (PMIC)
-+* Dialog DA9063/DA9063L Power Management Integrated Circuit (PMIC)
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/mach-shmobile/platsmp-apmu.c | 40 -----------------------------------
+ arch/arm/mach-shmobile/platsmp-apmu.h |  8 -------
+ 2 files changed, 48 deletions(-)
+
+diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
+index 778b6b618ce7c088..42c9405e556b14aa 100644
+--- a/arch/arm/mach-shmobile/platsmp-apmu.c
++++ b/arch/arm/mach-shmobile/platsmp-apmu.c
+@@ -106,38 +106,6 @@ static void apmu_init_cpu(struct resource *res, int cpu, int bit)
+ 	writel(x, apmu_cpus[cpu].iomem + DBGRCR_OFFS);
+ }
  
- DA9093 consists of a large and varied group of sub-devices (I2C Only):
+-static void apmu_parse_cfg(void (*fn)(struct resource *res, int cpu, int bit),
+-			   struct rcar_apmu_config *apmu_config, int num)
+-{
+-	int id;
+-	int k;
+-	int bit, index;
+-	bool is_allowed;
+-
+-	for (k = 0; k < num; k++) {
+-		/* only enable the cluster that includes the boot CPU */
+-		is_allowed = false;
+-		for (bit = 0; bit < ARRAY_SIZE(apmu_config[k].cpus); bit++) {
+-			id = apmu_config[k].cpus[bit];
+-			if (id >= 0) {
+-				if (id == cpu_logical_map(0))
+-					is_allowed = true;
+-			}
+-		}
+-		if (!is_allowed)
+-			continue;
+-
+-		for (bit = 0; bit < ARRAY_SIZE(apmu_config[k].cpus); bit++) {
+-			id = apmu_config[k].cpus[bit];
+-			if (id >= 0) {
+-				index = get_logical_index(id);
+-				if (index >= 0)
+-					fn(&apmu_config[k].iomem, index, bit);
+-			}
+-		}
+-	}
+-}
+-
+ static const struct of_device_id apmu_ids[] = {
+ 	{ .compatible = "renesas,apmu" },
+ 	{ /*sentinel*/ }
+@@ -194,14 +162,6 @@ static void __init shmobile_smp_apmu_setup_boot(void)
+ 	shmobile_boot_fn_gen2 = shmobile_boot_fn;
+ }
  
-@@ -6,14 +6,14 @@ Device                   Supply Names    Description
- ------                   ------------    -----------
- da9063-regulator        :               : LDOs & BUCKs
- da9063-onkey            :               : On Key
--da9063-rtc              :               : Real-Time Clock
-+da9063-rtc              :               : Real-Time Clock (DA9063 only)
- da9063-watchdog         :               : Watchdog
+-void __init shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
+-					   struct rcar_apmu_config *apmu_config,
+-					   int num)
+-{
+-	shmobile_smp_apmu_setup_boot();
+-	apmu_parse_cfg(apmu_init_cpu, apmu_config, num);
+-}
+-
+ int shmobile_smp_apmu_boot_secondary(unsigned int cpu, struct task_struct *idle)
+ {
+ 	/* For this particular CPU register boot vector */
+diff --git a/arch/arm/mach-shmobile/platsmp-apmu.h b/arch/arm/mach-shmobile/platsmp-apmu.h
+index 76512c9a2545da75..70424572b9da2e70 100644
+--- a/arch/arm/mach-shmobile/platsmp-apmu.h
++++ b/arch/arm/mach-shmobile/platsmp-apmu.h
+@@ -16,14 +16,6 @@
+ #ifndef PLATSMP_APMU_H
+ #define PLATSMP_APMU_H
  
- ======
- 
- Required properties:
- 
--- compatible : Should be "dlg,da9063"
-+- compatible : Should be "dlg,da9063" or "dlg,da9063l"
- - reg : Specifies the I2C slave address (this defaults to 0x58 but it can be
-   modified to match the chip's OTP settings).
- - interrupt-parent : Specifies the reference to the interrupt controller for
-@@ -23,8 +23,8 @@ Required properties:
- 
- Sub-nodes:
- 
--- regulators : This node defines the settings for the LDOs and BUCKs. The
--  DA9063 regulators are bound using their names listed below:
-+- regulators : This node defines the settings for the LDOs and BUCKs.
-+  The DA9063(L) regulators are bound using their names listed below:
- 
-     bcore1    : BUCK CORE1
-     bcore2    : BUCK CORE2
-@@ -32,16 +32,16 @@ Sub-nodes:
-     bmem      : BUCK MEM
-     bio       : BUCK IO
-     bperi     : BUCK PERI
--    ldo1      : LDO_1
--    ldo2      : LDO_2
-+    ldo1      : LDO_1	(DA9063 only)
-+    ldo2      : LDO_2	(DA9063 only)
-     ldo3      : LDO_3
--    ldo4      : LDO_4
--    ldo5      : LDO_5
--    ldo6      : LDO_6
-+    ldo4      : LDO_4	(DA9063 only)
-+    ldo5      : LDO_5	(DA9063 only)
-+    ldo6      : LDO_6	(DA9063 only)
-     ldo7      : LDO_7
-     ldo8      : LDO_8
-     ldo9      : LDO_9
--    ldo10     : LDO_10
-+    ldo10     : LDO_10	(DA9063 only)
-     ldo11     : LDO_11
- 
-   The component follows the standard regulator framework and the bindings
-@@ -49,8 +49,9 @@ Sub-nodes:
-   Documentation/devicetree/bindings/regulator/regulator.txt
- 
- - rtc : This node defines settings for the Real-Time Clock associated with
--  the DA9063. There are currently no entries in this binding, however
--  compatible = "dlg,da9063-rtc" should be added if a node is created.
-+  the DA9063 only. The RTC is not present in DA9063L. There are currently
-+  no entries in this binding, however compatible = "dlg,da9063-rtc" should
-+  be added if a node is created.
- 
- - onkey : This node defines the OnKey settings for controlling the key
-   functionality of the device. The node should contain the compatible property
-@@ -65,8 +66,9 @@ Sub-nodes:
-     and KEY_SLEEP.
- 
- - watchdog : This node defines settings for the Watchdog timer associated
--  with the DA9063. There are currently no entries in this binding, however
--  compatible = "dlg,da9063-watchdog" should be added if a node is created.
-+  with the DA9063 and DA9063L. There are currently no entries in this
-+  binding, however compatible = "dlg,da9063-watchdog" should be added
-+  if a node is created.
- 
- 
- Example:
+-struct rcar_apmu_config {
+-	struct resource iomem;
+-	int cpus[4];
+-};
+-
+-extern void shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
+-					   struct rcar_apmu_config *apmu_config,
+-					   int num);
+ extern int shmobile_smp_apmu_boot_secondary(unsigned int cpu,
+ 					    struct task_struct *idle);
+ extern void shmobile_smp_apmu_cpu_die(unsigned int cpu);
 -- 
-2.16.2
-
+2.7.4
