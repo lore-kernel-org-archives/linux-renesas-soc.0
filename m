@@ -1,50 +1,133 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751994AbeERLTj (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:50884 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753804AbeE3PZT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:19:39 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 69/69] ARM: dts: r8a7740: Add CEU1
-Date: Fri, 18 May 2018 13:17:42 +0200
-Message-Id: <7fad92d05887319998b8d2bb40082b8b224d5ef5.1526641667.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
-References: <cover.1526641667.git.horms+renesas@verge.net.au>
+        Wed, 30 May 2018 11:25:19 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 6/6] soc: renesas: rcar-sysc: Drop legacy handling
+Date: Wed, 30 May 2018 17:25:16 +0200
+Message-Id: <1527693916-11215-7-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1527693916-11215-1-git-send-email-geert+renesas@glider.be>
+References: <1527693916-11215-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe CEU1 peripheral for Renesas R-Mobile A1 R8A7740 Soc.
+Now the R-Car platform code no longer supports DTBs lacking a SYSC
+device node in DT, all legacy handling can be dropped from the R-Car
+SYSC driver:
+  - Make rcar_sysc_ch private to the driver,
+  - Make rcar_sysc_power_{down,up}() static (they have been replaced by
+    rcar_sysc_power_{down,up}_cpu()),
+  - Remove the legacy wrapper rcar_sysc_init(), and the check for double
+    initialization (only the early_initcall is left).
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7740.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/soc/renesas/rcar-sysc.c       | 38 ++++++++---------------------------
+ include/linux/soc/renesas/rcar-sysc.h | 11 ----------
+ 2 files changed, 8 insertions(+), 41 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
-index 180eb9d2a390..eb9a911deefb 100644
---- a/arch/arm/boot/dts/r8a7740.dtsi
-+++ b/arch/arm/boot/dts/r8a7740.dtsi
-@@ -76,6 +76,15 @@
- 		status = "disabled";
- 	};
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index 4ad6dcd19420a045..41af9c7b912f09ca 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -58,6 +58,12 @@
  
-+	ceu1: ceu@fe914000 {
-+		reg = <0xfe914000 0x3000>;
-+		compatible = "renesas,r8a7740-ceu";
-+		interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp1_clks R8A7740_CLK_CEU21>;
-+		power-domains = <&pd_a4r>;
-+		status = "disabled";
-+	};
+ #define RCAR_PD_ALWAYS_ON	32	/* Always-on power area */
+ 
++struct rcar_sysc_ch {
++	u16 chan_offs;
++	u8 chan_bit;
++	u8 isr_bit;
++};
 +
- 	cmt1: timer@e6138000 {
- 		compatible = "renesas,cmt-48-r8a7740", "renesas,cmt-48";
- 		reg = <0xe6138000 0x170>;
+ static void __iomem *rcar_sysc_base;
+ static DEFINE_SPINLOCK(rcar_sysc_lock); /* SMP CPUs + I/O devices */
+ 
+@@ -143,12 +149,12 @@ static int rcar_sysc_power(const struct rcar_sysc_ch *sysc_ch, bool on)
+ 	return ret;
+ }
+ 
+-int rcar_sysc_power_down(const struct rcar_sysc_ch *sysc_ch)
++static int rcar_sysc_power_down(const struct rcar_sysc_ch *sysc_ch)
+ {
+ 	return rcar_sysc_power(sysc_ch, false);
+ }
+ 
+-int rcar_sysc_power_up(const struct rcar_sysc_ch *sysc_ch)
++static int rcar_sysc_power_up(const struct rcar_sysc_ch *sysc_ch)
+ {
+ 	return rcar_sysc_power(sysc_ch, true);
+ }
+@@ -323,9 +329,6 @@ static int __init rcar_sysc_pd_init(void)
+ 	unsigned int i;
+ 	int error;
+ 
+-	if (rcar_sysc_base)
+-		return 0;
+-
+ 	np = of_find_matching_node_and_match(NULL, rcar_sysc_matches, &match);
+ 	if (!np)
+ 		return -ENODEV;
+@@ -428,31 +431,6 @@ void __init rcar_sysc_nullify(struct rcar_sysc_area *areas,
+ 		}
+ }
+ 
+-void __init rcar_sysc_init(phys_addr_t base, u32 syscier)
+-{
+-	u32 syscimr;
+-
+-	if (!rcar_sysc_pd_init())
+-		return;
+-
+-	rcar_sysc_base = ioremap_nocache(base, PAGE_SIZE);
+-
+-	/*
+-	 * Mask all interrupt sources to prevent the CPU from receiving them.
+-	 * Make sure not to clear reserved bits that were set before.
+-	 */
+-	syscimr = ioread32(rcar_sysc_base + SYSCIMR);
+-	syscimr |= syscier;
+-	pr_debug("%s: syscimr = 0x%08x\n", __func__, syscimr);
+-	iowrite32(syscimr, rcar_sysc_base + SYSCIMR);
+-
+-	/*
+-	 * SYSC needs all interrupt sources enabled to control power.
+-	 */
+-	pr_debug("%s: syscier = 0x%08x\n", __func__, syscier);
+-	iowrite32(syscier, rcar_sysc_base + SYSCIER);
+-}
+-
+ #ifdef CONFIG_ARCH_R8A7779
+ static int rcar_sysc_power_cpu(unsigned int idx, bool on)
+ {
+diff --git a/include/linux/soc/renesas/rcar-sysc.h b/include/linux/soc/renesas/rcar-sysc.h
+index 9020da2111fdeea9..00fae6fd234d7895 100644
+--- a/include/linux/soc/renesas/rcar-sysc.h
++++ b/include/linux/soc/renesas/rcar-sysc.h
+@@ -2,17 +2,6 @@
+ #ifndef __LINUX_SOC_RENESAS_RCAR_SYSC_H__
+ #define __LINUX_SOC_RENESAS_RCAR_SYSC_H__
+ 
+-#include <linux/types.h>
+-
+-struct rcar_sysc_ch {
+-	u16 chan_offs;
+-	u8 chan_bit;
+-	u8 isr_bit;
+-};
+-
+-int rcar_sysc_power_down(const struct rcar_sysc_ch *sysc_ch);
+-int rcar_sysc_power_up(const struct rcar_sysc_ch *sysc_ch);
+-void rcar_sysc_init(phys_addr_t base, u32 syscier);
+ int rcar_sysc_power_down_cpu(unsigned int cpu);
+ int rcar_sysc_power_up_cpu(unsigned int cpu);
+ 
 -- 
-2.11.0
+2.7.4
