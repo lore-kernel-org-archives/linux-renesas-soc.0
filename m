@@ -1,50 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:51200 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751817AbeE3Lw3 (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:46901 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750981AbeE3LIc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 May 2018 07:52:29 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+        Wed, 30 May 2018 07:08:32 -0400
+Received: by mail-lf0-f68.google.com with SMTP id h9-v6so3634266lfc.13
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 May 2018 04:08:31 -0700 (PDT)
 Subject: Re: [PATCH] media: arch: sh: migor: Fix TW9910 PDN gpio
-Date: Wed, 30 May 2018 14:52:31 +0300
-Message-ID: <2981239.tGoCg7U0XF@avalon>
-In-Reply-To: <CAMuHMdVsV9k0OjFMkQSiKCenxfEHgcZxrMU3a5eXRaCDdeA5-A@mail.gmail.com>
-References: <1527671604-18768-1-git-send-email-jacopo+renesas@jmondi.org> <CAMuHMdVsV9k0OjFMkQSiKCenxfEHgcZxrMU3a5eXRaCDdeA5-A@mail.gmail.com>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        ysato@users.sourceforge.jp, dalias@libc.org,
+        laurent.pinchart@ideasonboard.com, hans.verkuil@cisco.com
+Cc: linux-sh@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <1527671604-18768-1-git-send-email-jacopo+renesas@jmondi.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <4e636f8b-ba38-754a-4763-022eab578934@cogentembedded.com>
+Date: Wed, 30 May 2018 14:08:28 +0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1527671604-18768-1-git-send-email-jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+Hello!
 
-On Wednesday, 30 May 2018 12:30:49 EEST Geert Uytterhoeven wrote:
-> Hi Jacopo,
+On 05/30/2018 12:13 PM, Jacopo Mondi wrote:
+
+> The TW9910 PDN gpio (power down) is listed as active high in the chip
+
+   GPIO.
+
+> manual. It turns out it is actually active low as when set to physical
+> level 0 it actually turns the video decoder power off.
 > 
-> On Wed, May 30, 2018 at 11:13 AM, Jacopo Mondi wrote:
-> > The TW9910 PDN gpio (power down) is listed as active high in the chip
-> > manual. It turns out it is actually active low as when set to physical
-> > level 0 it actually turns the video decoder power off.
+> Without this patch applied:
+> tw9910 0-0045: Product ID error 1f:2
 > 
-> So the picture "Typical TW9910 External Circuitry" in the datasheet, which
-> ties PDN to GND permanently, is wrong?
+> With this patch applied:
+> tw9910 0-0045: tw9910 Product ID b:0
+> 
+> Fixes: commit "186c446f4b840bd77b79d3dc951ca436cb8abe79"
 
-The SH PTT2 line is connected directory to the TW9910 PDN signal, without any 
-inverter on the board. The PDN signal is clearly documented as active-high in 
-the TW9910 datasheet. Something is thus weird.
+   That's not how you specify the "Fixes:" tag, please see
+Documentation/process/submitting-patches.rst.
 
-Jacopo, is it possible to measure the PDN signal on the board as close as 
-possible to the TW9910 to see if it works as expected ?
+> 
 
--- 
-Regards,
+   There shouldn't be an emoty line here.
 
-Laurent Pinchart
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+[...]
+
+MBR, Sergei
