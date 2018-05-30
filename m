@@ -1,61 +1,97 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:17919 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752411AbeEQObF (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38256 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964974AbeE3Jfr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 May 2018 10:31:05 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 0/2] v4l: Add support for STD ioctls on subdev nodes
-Date: Thu, 17 May 2018 16:30:14 +0200
-Message-Id: <20180517143016.13501-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 30 May 2018 05:35:47 -0400
+Date: Wed, 30 May 2018 05:35:39 -0400
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 2/2] arm64: dts: renesas: condor: add I2C0 support
+Message-ID: <20180530093535.wjzhk6duxloperk6@verge.net.au>
+References: <e9c94553-be9d-0eec-a1ee-1713bb97fbab@cogentembedded.com>
+ <61f6f4a4-e55c-06e0-cba1-7d90a556950a@cogentembedded.com>
+ <20180529131012.ohyqwmiaxiiw6noi@verge.net.au>
+ <9bc27b57-cf26-3b03-6ec4-1e9788a46426@cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9bc27b57-cf26-3b03-6ec4-1e9788a46426@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Hans,
+On Tue, May 29, 2018 at 06:46:10PM +0300, Sergei Shtylyov wrote:
+> Hello!
+> 
+> On 05/29/2018 04:10 PM, Simon Horman wrote:
+> 
+> >> Define the Condor board dependent part of the I2C0 device node.
+> >>
+> >> The I2C0 bus is populated by 2 ON Semiconductor PCA9654 I/O expanders
+> >> and Analog Devices  ADV7511W HDMI transmitter (but we're only describing
+> >> the former chips now).
+> >>
+> >> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >>
+> >> ---
+> >>  arch/arm64/boot/dts/renesas/r8a77980-condor.dts |   27 ++++++++++++++++++++++++
+> >>  1 file changed, 27 insertions(+)
+> >>
+> >> Index: renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+> >> ===================================================================
+> >> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+> >> +++ renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+> >> @@ -80,6 +80,28 @@
+> >>  	clock-frequency = <32768>;
+> >>  };
+> >>  
+> >> +&i2c0 {
+> >> +	pinctrl-0 = <&i2c0_pins>;
+> >> +	pinctrl-names = "default";
+> >> +
+> >> +	status = "okay";
+> >> +	clock-frequency = <400000>;
+> >> +
+> >> +	io_expander0: gpio@20 {
+> > 
+> > Hi Sergei,
+> > 
+> > I'm a little confused about where 0x20 and 0x21 are derived from.
+> > Could you explain a little?
+> 
+>    r-carv3h_system_evaluation_board_rev020.pdf, pp. 16-17, lower left corners.
+> The schematics gives the 8-bit read/write addresses but we use uniform 7-bit
+> I2C address in DTs.
 
-This series enables the video standards to be controlled directly on the 
-subdev device node. This is needed as there is no way to control the 
-standard of a subdevice if it's part of a media controller centric setup 
-as oppose to a video centric one.
+Thanks, this patch looks fine to me.
+However, I'd like to give others a chance to review it,
+and it is dependent on patch 1/2 where I have a different review question.
 
-I have tested this on Renesas Gen3 Salvator-XS M3-N using the AFE
-subdevice from the adv748x driver together with the R-Car VIN and CSI-2
-pipeline. And verified ENUMSTD still works for video device centric 
-devices on Renesas Gen2 Koelsch board.
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-I wrote a prototype patch for v4l2-ctl which adds four new options
-(--get-subdev-standard, --get-subdev-standard, --set-subdev-standard and
---get-subdev-detected-standard) to ease testing which I plan to submit
-after some cleanup if this patch receives positive feedback.
-
-If you or anyone else is interested in testing this patch the v4l2-utils
-prototype patches are available at
-
-git://git.ragnatech.se/v4l-utils#subdev-std
-
-* Changes since v1
-- Add VIDIOC_SUBDEV_ENUMSTD.
-
-Niklas Söderlund (2):
-  v4l2-ioctl: create helper to fill in v4l2_standard for ENUMSTD
-  v4l: Add support for STD ioctls on subdev nodes
-
- .../media/uapi/v4l/vidioc-enumstd.rst         | 11 ++--
- Documentation/media/uapi/v4l/vidioc-g-std.rst | 14 ++--
- .../media/uapi/v4l/vidioc-querystd.rst        | 11 ++--
- drivers/media/v4l2-core/v4l2-ioctl.c          | 66 +++++++++++--------
- drivers/media/v4l2-core/v4l2-subdev.c         | 22 +++++++
- include/media/v4l2-ioctl.h                    | 11 ++++
- include/uapi/linux/v4l2-subdev.h              |  4 ++
- 7 files changed, 98 insertions(+), 41 deletions(-)
-
--- 
-2.17.0
+> >> +		compatible = "onnn,pca9654";
+> >> +		reg = <0x20>;
+> >> +		gpio-controller;
+> >> +		#gpio-cells = <2>;
+> >> +	};
+> >> +
+> >> +	io_expander1: gpio@21 {
+> >> +		compatible = "onnn,pca9654";
+> >> +		reg = <0x21>;
+> >> +		gpio-controller;
+> >> +		#gpio-cells = <2>;
+> >> +	};
+> >> +};
+> >> +
+> >>  &mmc0 {
+> >>  	pinctrl-0 = <&mmc_pins>;
+> >>  	pinctrl-1 = <&mmc_pins_uhs>;
+> 
