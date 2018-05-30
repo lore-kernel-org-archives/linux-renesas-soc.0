@@ -1,73 +1,102 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:50306 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752464AbeE3LBf (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 30 May 2018 07:01:35 -0400
+Subject: Re: [PATCH 2/6] mfd: da9063: Replace model with type
+To: Ye Xiaolong <xiaolong.ye@intel.com>
+Cc: kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+        linux-kernel@vger.kernel.org,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 6/9] ARM: dts: wheat: Drop MTD partitioning from DT
-Date: Tue, 22 May 2018 14:02:54 +0200
-Message-Id: <20180522120257.13232-6-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180522120257.13232-1-marek.vasut+renesas@gmail.com>
-References: <20180522120257.13232-1-marek.vasut+renesas@gmail.com>
-Sender: devicetree-owner@vger.kernel.org
+References: <20180523114230.10109-2-marek.vasut+renesas@gmail.com>
+ <201805261713.OJMLXvlB%fengguang.wu@intel.com>
+ <fca2a629-e5e8-6ef8-7e7d-d25353ab4c3e@gmail.com>
+ <20180530052110.GB27396@yexl-desktop>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <7db6e995-70db-8bdf-e425-14c52e2592ea@gmail.com>
+Date: Wed, 30 May 2018 12:45:55 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180530052110.GB27396@yexl-desktop>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Drop the MTD partitioning from DT, since it does not describe HW
-and to give way to a more flexible kernel command line partition
-passing.
+On 05/30/2018 07:21 AM, Ye Xiaolong wrote:
+> Hi, Marek
+> 
+> On 05/26, Marek Vasut wrote:
+>> On 05/26/2018 11:16 AM, kbuild test robot wrote:
+>>> Hi Marek,
+>>>
+>>> I love your patch! Perhaps something to improve:
+>>>
+>>> [auto build test WARNING on ljones-mfd/for-mfd-next]
+>>> [also build test WARNING on v4.17-rc6]
+>>> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>>>
+>>> url:    https://github.com/0day-ci/linux/commits/Marek-Vasut/mfd-da9063-Rename-PMIC_DA9063-to-PMIC_CHIP_ID_DA9063/20180526-162613
+>>> base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
+>>> config: x86_64-randconfig-x002-201820 (attached as .config)
+>>> compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
+>>> reproduce:
+>>>         # save the attached .config to linux build tree
+>>>         make ARCH=x86_64 
+>>>
+>>> All warnings (new ones prefixed by >>):
+>>>
+>>>    In file included from include/linux/kernel.h:10:0,
+>>>                     from drivers//regulator/da9063-regulator.c:16:
+>>>    drivers//regulator/da9063-regulator.c: In function 'da9063_regulator_probe':
+>>>    drivers//regulator/da9063-regulator.c:744:12: error: 'const struct da9063_dev_model' has no member named 'dev_model'
+>>>       if (model->dev_model == da9063->type)
+>>>                ^
+>>>    include/linux/compiler.h:58:30: note: in definition of macro '__trace_if'
+>>>      if (__builtin_constant_p(!!(cond)) ? !!(cond) :   \
+>>>                                  ^~~~
+>>>>> drivers//regulator/da9063-regulator.c:744:3: note: in expansion of macro 'if'
+>>>       if (model->dev_model == da9063->type)
+>>>       ^~
+>>>    drivers//regulator/da9063-regulator.c:744:12: error: 'const struct da9063_dev_model' has no member named 'dev_model'
+>>>       if (model->dev_model == da9063->type)
+>>>                ^
+>>>    include/linux/compiler.h:58:42: note: in definition of macro '__trace_if'
+>>>      if (__builtin_constant_p(!!(cond)) ? !!(cond) :   \
+>>>                                              ^~~~
+>>>>> drivers//regulator/da9063-regulator.c:744:3: note: in expansion of macro 'if'
+>>>       if (model->dev_model == da9063->type)
+>>>       ^~
+>>>    drivers//regulator/da9063-regulator.c:744:12: error: 'const struct da9063_dev_model' has no member named 'dev_model'
+>>>       if (model->dev_model == da9063->type)
+>>>                ^
+>>>    include/linux/compiler.h:69:16: note: in definition of macro '__trace_if'
+>>>       ______r = !!(cond);     \
+>>>                    ^~~~
+>>>>> drivers//regulator/da9063-regulator.c:744:3: note: in expansion of macro 'if'
+>>>       if (model->dev_model == da9063->type)
+>>>       ^~
+>>>    drivers//regulator/da9063-regulator.c:749:10: error: 'struct da9063' has no member named 'model'
+>>>        da9063->model);
+>>>              ^~
+>>>
+>>> vim +/if +744 drivers//regulator/da9063-regulator.c
+>>
+>> Is it testing this patch without the other patches in the series or at
+>> least 1/6 ?
+> 
+> It was tested with the whole patch series as you can see in https://github.com/0day-ci/linux/commits/Marek-Vasut/mfd-da9063-Rename-PMIC_DA9063-to-PMIC_CHIP_ID_DA9063/20180526-162613.
 
-To retain the original partitioning, assure you have enabled
-CONFIG_MTD_CMDLINE_PARTS in your kernel config and add the
-following to your kernel command line:
+Ha, I see the problem. Thanks for confirming it's checked with the whole
+series.
 
-  mtdparts=spi0.0:256k@0(loader),4096k(user),-(flash)
-
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
----
- arch/arm/boot/dts/r8a7792-wheat.dts | 21 ---------------------
- 1 file changed, 21 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7792-wheat.dts b/arch/arm/boot/dts/r8a7792-wheat.dts
-index db01de7a3811..93f78716225a 100644
---- a/arch/arm/boot/dts/r8a7792-wheat.dts
-+++ b/arch/arm/boot/dts/r8a7792-wheat.dts
-@@ -217,27 +217,6 @@
- 		spi-cpol;
- 		spi-cpha;
- 		m25p,fast-read;
--
--		partitions {
--			compatible = "fixed-partitions";
--			#address-cells = <1>;
--			#size-cells = <1>;
--
--			partition@0 {
--				label = "loader";
--				reg = <0x00000000 0x00040000>;
--				read-only;
--			};
--			partition@40000 {
--				label = "user";
--				reg = <0x00040000 0x00400000>;
--				read-only;
--			};
--			partition@440000 {
--				label = "flash";
--				reg = <0x00440000 0x03bc0000>;
--			};
--		};
- 	};
- };
- 
 -- 
-2.16.2
-
+Best regards,
+Marek Vasut
