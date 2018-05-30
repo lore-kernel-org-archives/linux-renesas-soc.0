@@ -1,82 +1,135 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:55215 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967698AbeEXLMG (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:51588 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753607AbeE3PZT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 May 2018 07:12:06 -0400
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-To: "David S. Miller" <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-CC: <netdev@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>
-Subject: [PATCH 0/6] ravb/sh_eth: fix sleep in atomic by reusing shared ethtool handlers
-Date: Thu, 24 May 2018 14:11:52 +0300
-Message-ID: <1527160318-10958-1-git-send-email-vladimir_zapolskiy@mentor.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Wed, 30 May 2018 11:25:19 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 5/6] ARM: shmobile: r8a7779: Remove explicit SYSC config and init
+Date: Wed, 30 May 2018 17:25:15 +0200
+Message-Id: <1527693916-11215-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1527693916-11215-1-git-send-email-geert+renesas@glider.be>
+References: <1527693916-11215-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-For ages trivial changes to RAVB and SuperH ethernet links by means of
-standard 'ethtool' trigger a 'sleeping function called from invalid
-context' bug, to visualize it on r8a7795 ULCB:
+If the R-Car H1 system controller is described in DT, the rcar-sysc
+driver configures SYSCIER and SYSCIMR based on the SoC-specific power
+area definitions in r8a7779-sysc.  The platform code still passed this
+information to the rcar-sysc driver, for compatibility with old DTBs
+predating commit b2df3aa487395a1b ("ARM: dts: r8a7779: Add SYSC PM
+Domains") in v4.7.  The time has come to drop backwards compatibility,
+and delegate everything to the DT enabled rcar-sysc driver.
 
-  % ethtool -r eth0
-  BUG: sleeping function called from invalid context at kernel/locking/mutex.c:747
-  in_atomic(): 1, irqs_disabled(): 128, pid: 554, name: ethtool
-  INFO: lockdep is turned off.
-  irq event stamp: 0
-  hardirqs last  enabled at (0): [<0000000000000000>]           (null)
-  hardirqs last disabled at (0): [<ffff0000080e1d3c>] copy_process.isra.7.part.8+0x2cc/0x1918
-  softirqs last  enabled at (0): [<ffff0000080e1d3c>] copy_process.isra.7.part.8+0x2cc/0x1918
-  softirqs last disabled at (0): [<0000000000000000>]           (null)
-  CPU: 5 PID: 554 Comm: ethtool Not tainted 4.17.0-rc4-arm64-renesas+ #33
-  Hardware name: Renesas H3ULCB board based on r8a7795 ES2.0+ (DT)
-  Call trace:
-   dump_backtrace+0x0/0x198
-   show_stack+0x24/0x30
-   dump_stack+0xb8/0xf4
-   ___might_sleep+0x1c8/0x1f8
-   __might_sleep+0x58/0x90
-   __mutex_lock+0x50/0x890
-   mutex_lock_nested+0x3c/0x50
-   phy_start_aneg_priv+0x38/0x180
-   phy_start_aneg+0x24/0x30
-   ravb_nway_reset+0x3c/0x68
-   dev_ethtool+0x3dc/0x2338
-   dev_ioctl+0x19c/0x490
-   sock_do_ioctl+0xe0/0x238
-   sock_ioctl+0x254/0x460
-   do_vfs_ioctl+0xb0/0x918
-   ksys_ioctl+0x50/0x80
-   sys_ioctl+0x34/0x48
-   __sys_trace_return+0x0/0x4
+After stopping powering down secondary CPUs during early boot, there is
+no longer a need to force an early initialization of the rcar-sysc
+driver.  It will be initialized in time for secondary CPU bringup by its
+early_initcall().
 
-The root cause is that an attempt to modify ECMR and GECMR registers
-only when RX/TX function is disabled was too overcomplicated in its
-original implementation, also processing of an optional Link Change
-interrupt added even more complexity, as a result the implementation
-was error prone.
+Hence all explicit SYSC configuration and initialization can be removed
+from the R-Car H1 platform code.
 
-The new locking scheme is confirmed to be correct by dumping driver
-specific and generic PHY framework function calls with aid of ftrace
-while running more or less advanced tests.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Please note that sh_eth patches from the series were built-tested only.
+-------------------------------------------------------
+---
+ arch/arm/mach-shmobile/Makefile      |  2 +-
+ arch/arm/mach-shmobile/pm-r8a7779.c  | 41 ------------------------------------
+ arch/arm/mach-shmobile/r8a7779.h     |  2 --
+ arch/arm/mach-shmobile/smp-r8a7779.c |  2 --
+ 4 files changed, 1 insertion(+), 46 deletions(-)
+ delete mode 100644 arch/arm/mach-shmobile/pm-r8a7779.c
 
-On purpose I do not add Fixes tags, the reused PHY handlers were added
-way later than the fixed problems were firstly found in the drivers.
-
-Vladimir Zapolskiy (6):
-  ravb: remove custom .nway_reset from ethtool ops
-  ravb: remove custom .get_link_ksettings from ethtool ops
-  ravb: remove custom .set_link_ksettings from ethtool ops
-  sh_eth: remove custom .nway_reset from ethtool ops
-  sh_eth: remove custom .get_link_ksettings from ethtool ops
-  sh_eth: remove custom .set_link_ksettings from ethtool ops
-
- drivers/net/ethernet/renesas/ravb_main.c | 93 ++++++-------------------------
- drivers/net/ethernet/renesas/sh_eth.c    | 94 ++++++--------------------------
- 2 files changed, 34 insertions(+), 153 deletions(-)
-
+diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
+index 2b8d3896e1ebbe6a..05ba728ed4f67cf2 100644
+--- a/arch/arm/mach-shmobile/Makefile
++++ b/arch/arm/mach-shmobile/Makefile
+@@ -11,7 +11,7 @@ obj-$(CONFIG_ARCH_SH73A0)	+= setup-sh73a0.o
+ obj-$(CONFIG_ARCH_R8A73A4)	+= setup-r8a73a4.o
+ obj-$(CONFIG_ARCH_R8A7740)	+= setup-r8a7740.o
+ obj-$(CONFIG_ARCH_R8A7778)	+= setup-r8a7778.o
+-obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o pm-r8a7779.o
++obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o
+ obj-$(CONFIG_ARCH_EMEV2)	+= setup-emev2.o
+ obj-$(CONFIG_ARCH_R7S72100)	+= setup-r7s72100.o
+ 
+diff --git a/arch/arm/mach-shmobile/pm-r8a7779.c b/arch/arm/mach-shmobile/pm-r8a7779.c
+deleted file mode 100644
+index 5c9a93f5e650181a..0000000000000000
+--- a/arch/arm/mach-shmobile/pm-r8a7779.c
++++ /dev/null
+@@ -1,41 +0,0 @@
+-/*
+- * r8a7779 Power management support
+- *
+- * Copyright (C) 2011  Renesas Solutions Corp.
+- * Copyright (C) 2011  Magnus Damm
+- *
+- * This file is subject to the terms and conditions of the GNU General Public
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+- */
+-
+-#include <linux/soc/renesas/rcar-sysc.h>
+-
+-#include <asm/io.h>
+-
+-#include "r8a7779.h"
+-
+-/* SYSC */
+-#define SYSCIER 0x0c
+-#define SYSCIMR 0x10
+-
+-#if defined(CONFIG_PM) || defined(CONFIG_SMP)
+-
+-static void __init r8a7779_sysc_init(void)
+-{
+-	rcar_sysc_init(0xffd85000, 0x0131000e);
+-}
+-
+-#else /* CONFIG_PM || CONFIG_SMP */
+-
+-static inline void r8a7779_sysc_init(void) {}
+-
+-#endif /* CONFIG_PM || CONFIG_SMP */
+-
+-void __init r8a7779_pm_init(void)
+-{
+-	static int once;
+-
+-	if (!once++)
+-		r8a7779_sysc_init();
+-}
+diff --git a/arch/arm/mach-shmobile/r8a7779.h b/arch/arm/mach-shmobile/r8a7779.h
+index 30668aa6acc34647..ca9db8fde2f791cc 100644
+--- a/arch/arm/mach-shmobile/r8a7779.h
++++ b/arch/arm/mach-shmobile/r8a7779.h
+@@ -2,8 +2,6 @@
+ #ifndef __ASM_R8A7779_H__
+ #define __ASM_R8A7779_H__
+ 
+-extern void r8a7779_pm_init(void);
+-
+ extern const struct smp_operations r8a7779_smp_ops;
+ 
+ #endif /* __ASM_R8A7779_H__ */
+diff --git a/arch/arm/mach-shmobile/smp-r8a7779.c b/arch/arm/mach-shmobile/smp-r8a7779.c
+index 3036f910046118ee..0d3ec5c2b8fcbe7c 100644
+--- a/arch/arm/mach-shmobile/smp-r8a7779.c
++++ b/arch/arm/mach-shmobile/smp-r8a7779.c
+@@ -60,8 +60,6 @@ static void __init r8a7779_smp_prepare_cpus(unsigned int max_cpus)
+ 
+ 	/* setup r8a7779 specific SCU bits */
+ 	shmobile_smp_scu_prepare_cpus(R8A7779_SCU_BASE, max_cpus);
+-
+-	r8a7779_pm_init();
+ }
+ 
+ #ifdef CONFIG_HOTPLUG_CPU
 -- 
-2.8.1
+2.7.4
