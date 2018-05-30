@@ -1,56 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:64191 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751168AbeEKDXG (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:40404 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753647AbeE3PZT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 May 2018 23:23:06 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/6] pinctrl: sh-pfc: Add PORT_GP_11 helper macro
-Date: Fri, 11 May 2018 12:22:22 +0900
-Message-Id: <1526008947-26667-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1526008947-26667-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1526008947-26667-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Wed, 30 May 2018 11:25:19 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4/6] ARM: shmobile: r8a7779: Use rcar_sysc_power_{down,up}_cpu()
+Date: Wed, 30 May 2018 17:25:14 +0200
+Message-Id: <1527693916-11215-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1527693916-11215-1-git-send-email-geert+renesas@glider.be>
+References: <1527693916-11215-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+The r8a7779 SMP code calls rcar_sysc_power_{down,up}() to control power
+to the SYSC power areas containing CPUs. This requires passing full CPU
+power area parameter blocks.
 
-This follows the style of existion PORT_GP_X macros and
-will be used by a follow-up patch for the r8a77990 SoC.
+Migrate the code to call the new rcar_sysc_power_{down,up}_cpu()
+helpers, which just take a CPU index, and use the SYSC power area
+definitions from the r8a7779-sysc driver.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/sh-pfc/sh_pfc.h | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/arm/mach-shmobile/smp-r8a7779.c | 47 +++++-------------------------------
+ 1 file changed, 6 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index 7fad897..b1a9957 100644
---- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -415,9 +415,13 @@ struct sh_pfc_soc_info {
- 	PORT_GP_CFG_1(bank, 9,  fn, sfx, cfg)
- #define PORT_GP_10(bank, fn, sfx)	PORT_GP_CFG_10(bank, fn, sfx, 0)
+diff --git a/arch/arm/mach-shmobile/smp-r8a7779.c b/arch/arm/mach-shmobile/smp-r8a7779.c
+index ff1e6fc0b861c4fc..3036f910046118ee 100644
+--- a/arch/arm/mach-shmobile/smp-r8a7779.c
++++ b/arch/arm/mach-shmobile/smp-r8a7779.c
+@@ -31,59 +31,24 @@
+ #define AVECR IOMEM(0xfe700040)
+ #define R8A7779_SCU_BASE 0xf0000000
  
--#define PORT_GP_CFG_12(bank, fn, sfx, cfg)				\
-+#define PORT_GP_CFG_11(bank, fn, sfx, cfg)				\
- 	PORT_GP_CFG_10(bank, fn, sfx, cfg),				\
--	PORT_GP_CFG_1(bank, 10, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 10,  fn, sfx, cfg)
-+#define PORT_GP_11(bank, fn, sfx)	PORT_GP_CFG_11(bank, fn, sfx, 0)
-+
-+#define PORT_GP_CFG_12(bank, fn, sfx, cfg)				\
-+	PORT_GP_CFG_11(bank, fn, sfx, cfg),				\
- 	PORT_GP_CFG_1(bank, 11, fn, sfx, cfg)
- #define PORT_GP_12(bank, fn, sfx)	PORT_GP_CFG_12(bank, fn, sfx, 0)
+-static const struct rcar_sysc_ch r8a7779_ch_cpu1 = {
+-	.chan_offs = 0x40, /* PWRSR0 .. PWRER0 */
+-	.chan_bit = 1, /* ARM1 */
+-	.isr_bit = 1, /* ARM1 */
+-};
+-
+-static const struct rcar_sysc_ch r8a7779_ch_cpu2 = {
+-	.chan_offs = 0x40, /* PWRSR0 .. PWRER0 */
+-	.chan_bit = 2, /* ARM2 */
+-	.isr_bit = 2, /* ARM2 */
+-};
+-
+-static const struct rcar_sysc_ch r8a7779_ch_cpu3 = {
+-	.chan_offs = 0x40, /* PWRSR0 .. PWRER0 */
+-	.chan_bit = 3, /* ARM3 */
+-	.isr_bit = 3, /* ARM3 */
+-};
+-
+-static const struct rcar_sysc_ch * const r8a7779_ch_cpu[4] = {
+-	[1] = &r8a7779_ch_cpu1,
+-	[2] = &r8a7779_ch_cpu2,
+-	[3] = &r8a7779_ch_cpu3,
+-};
+-
+ static int r8a7779_platform_cpu_kill(unsigned int cpu)
+ {
+-	const struct rcar_sysc_ch *ch = NULL;
+ 	int ret = -EIO;
  
+ 	cpu = cpu_logical_map(cpu);
+-
+-	if (cpu < ARRAY_SIZE(r8a7779_ch_cpu))
+-		ch = r8a7779_ch_cpu[cpu];
+-
+-	if (ch)
+-		ret = rcar_sysc_power_down(ch);
++	if (cpu)
++		ret = rcar_sysc_power_down_cpu(cpu);
+ 
+ 	return ret ? ret : 1;
+ }
+ 
+ static int r8a7779_boot_secondary(unsigned int cpu, struct task_struct *idle)
+ {
+-	const struct rcar_sysc_ch *ch = NULL;
+-	unsigned int lcpu = cpu_logical_map(cpu);
+-	int ret;
+-
+-	if (lcpu < ARRAY_SIZE(r8a7779_ch_cpu))
+-		ch = r8a7779_ch_cpu[lcpu];
++	int ret = -EIO;
+ 
+-	if (ch)
+-		ret = rcar_sysc_power_up(ch);
+-	else
+-		ret = -EIO;
++	cpu = cpu_logical_map(cpu);
++	if (cpu)
++		ret = rcar_sysc_power_up_cpu(cpu);
+ 
+ 	return ret;
+ }
 -- 
-1.9.1
+2.7.4
