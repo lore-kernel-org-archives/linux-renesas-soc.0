@@ -1,56 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:46901 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750981AbeE3LIc (ORCPT
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:45040 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965209AbeE3Jav (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 May 2018 07:08:32 -0400
-Received: by mail-lf0-f68.google.com with SMTP id h9-v6so3634266lfc.13
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 May 2018 04:08:31 -0700 (PDT)
-Subject: Re: [PATCH] media: arch: sh: migor: Fix TW9910 PDN gpio
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        ysato@users.sourceforge.jp, dalias@libc.org,
-        laurent.pinchart@ideasonboard.com, hans.verkuil@cisco.com
-Cc: linux-sh@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-References: <1527671604-18768-1-git-send-email-jacopo+renesas@jmondi.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <4e636f8b-ba38-754a-4763-022eab578934@cogentembedded.com>
-Date: Wed, 30 May 2018 14:08:28 +0300
+        Wed, 30 May 2018 05:30:51 -0400
 MIME-Version: 1.0
 In-Reply-To: <1527671604-18768-1-git-send-email-jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+References: <1527671604-18768-1-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 30 May 2018 11:30:49 +0200
+Message-ID: <CAMuHMdVsV9k0OjFMkQSiKCenxfEHgcZxrMU3a5eXRaCDdeA5-A@mail.gmail.com>
+Subject: Re: [PATCH] media: arch: sh: migor: Fix TW9910 PDN gpio
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+Hi Jacopo,
 
-On 05/30/2018 12:13 PM, Jacopo Mondi wrote:
-
+On Wed, May 30, 2018 at 11:13 AM, Jacopo Mondi
+<jacopo+renesas@jmondi.org> wrote:
 > The TW9910 PDN gpio (power down) is listed as active high in the chip
-
-   GPIO.
-
 > manual. It turns out it is actually active low as when set to physical
 > level 0 it actually turns the video decoder power off.
-> 
-> Without this patch applied:
-> tw9910 0-0045: Product ID error 1f:2
-> 
-> With this patch applied:
-> tw9910 0-0045: tw9910 Product ID b:0
-> 
-> Fixes: commit "186c446f4b840bd77b79d3dc951ca436cb8abe79"
 
-   That's not how you specify the "Fixes:" tag, please see
-Documentation/process/submitting-patches.rst.
+So the picture "Typical TW9910 External Circuitry" in the datasheet, which
+ties PDN to GND permanently, is wrong?
 
-> 
+Gr{oetje,eeting}s,
 
-   There shouldn't be an emoty line here.
+                        Geert
 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-[...]
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-MBR, Sergei
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
