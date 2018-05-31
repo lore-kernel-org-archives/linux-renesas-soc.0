@@ -1,102 +1,134 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:30056 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753771AbeEHCna (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 May 2018 22:43:30 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Rob Herring <robh@kernel.org>
-CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>,
-        "hdegoede@redhat.com" <hdegoede@redhat.com>,
-        "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [PATCH/RFC v2 1/6] dt-bindings: usb: add Renesas R-Car USB 3.0
- role switch
-Date: Tue, 8 May 2018 02:43:25 +0000
-Message-ID: <OSBPR01MB2293BDDB3DDEF46D6EDA8F20D89A0@OSBPR01MB2293.jpnprd01.prod.outlook.com>
-References: <1524742006-17984-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1524742006-17984-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <20180427200559.5kxgetsjzpjlrm2m@rob-hp-laptop>
-In-Reply-To: <20180427200559.5kxgetsjzpjlrm2m@rob-hp-laptop>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Return-Path: <gilad@benyossef.com>
 MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <20180529161248.fphjnceozoyxqy7v@verge.net.au>
+References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+ <1527171551-21979-2-git-send-email-gilad@benyossef.com> <20180529161248.fphjnceozoyxqy7v@verge.net.au>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+Date: Thu, 31 May 2018 14:49:54 +0300
+Message-ID: <CAOtvUMebK3eM0O0C4bMa+13vej6egVV389AZ=HOnruPbfxZDkg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] crypto: ccree: correct host regs offset
+To: Simon Horman <horms@verge.net.au>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
+	Ofir Drang <ofir.drang@arm.com>, stable@vger.kernel.org,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Linux kernel mailing list <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: multipart/alternative; boundary="000000000000da90a2056d7f104e"
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Rob,
+--000000000000da90a2056d7f104e
+Content-Type: text/plain; charset="UTF-8"
 
-Sorry for the delayed response. I had a vacation in last week.
+On Tue, May 29, 2018 at 7:12 PM, Simon Horman <horms@verge.net.au> wrote:
 
-> From: Rob Herring, Sent: Saturday, April 28, 2018 5:06 AM
->=20
-> On Thu, Apr 26, 2018 at 08:26:41PM +0900, Yoshihiro Shimoda wrote:
-> > This patch adds a new documentation for Renesas R-Car USB 3.0 role
-> > switch that can change the USB 3.0 role to either host or peripheral
-> > by a hardware register that is included in USB3.0 peripheral module.
+> On Thu, May 24, 2018 at 03:19:06PM +0100, Gilad Ben-Yossef wrote:
+> > The product signature and HW revision register have different offset on
+> the
+> > older HW revisions.
+> > This fixes the problem of the driver failing sanity check on silicon
+> > despite working on the FPGA emulation systems.
 > >
-> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> > ---
-> >  .../bindings/usb/renesas,rcar-usb3-role-sw.txt     | 47 ++++++++++++++=
-++++++++
-> >  1 file changed, 47 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/usb/renesas,rcar-=
-usb3-role-sw.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/usb/renesas,rcar-usb3-ro=
-le-sw.txt
-> b/Documentation/devicetree/bindings/usb/renesas,rcar-usb3-role-sw.txt
-> > new file mode 100644
-> > index 0000000..e074c03
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/usb/renesas,rcar-usb3-role-sw.t=
-xt
-> > @@ -0,0 +1,47 @@
-> > +Renesas Electronics R-Car USB 3.0 role switch
-> > +
-> > +A renesas_usb3's node can contain this node.
-> > +
-> > +Required properties:
-> > + - compatible: Must contain "renesas,rcar-usb3-role-switch".
-> > +
-> > +Required nodes:
-> > + - The connection to a usb3.0 host node needs by using OF graph bindin=
-gs.
-> > +  - port@0 =3D USB 3.0 host port
-> > +  - port@1 =3D USB 3.0 peripheral port
-> > +
-> > +Example of R-Car H3 ES2.0:
-> > +	usb3_peri0: usb@ee020000 {
-> > +		compatible =3D "renesas,r8a7795-usb3-peri",
-> > +			     "renesas,rcar-gen3-usb3-peri";
-> > +		reg =3D <0 0xee020000 0 0x400>;
-> > +		interrupts =3D <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
-> > +		clocks =3D <&cpg CPG_MOD 328>;
-> > +		power-domains =3D <&sysc R8A7795_PD_ALWAYS_ON>;
-> > +		resets =3D <&cpg 328>;
-> > +
-> > +		usb3-role-sw {
-> > +			compatible =3D "renesas,rcar-usb3-role-switch";
->=20
-> You don't define any h/w resources. How is this device accessed?
+> > Fixes: 27b3b22dd98c ("crypto: ccree - add support for older HW revs")
+>
+> Did the above introduce a regression that is fixed by this patch
+> or did it add a feature that only works with this patch?
+>
+>
+Sort of in between - the first patch made more devices work but
+unreliability (it will sometime work, sometime doesn't).
+This one make it work reliably.
 
-This device accesses one of registers in the usb3_peri0.
-In the detail, the usb3-role-sw uses 0xee020218 (32-bit register) only.
-(Unfortunately, the hardware design is not good...)
 
-In this case, should I describe the following in the usb3-role-sw node?
+> In the case of the latter I would drop the Fixes tag,
+> but I don't feel strongly about it.
+>
 
-	reg =3D <0 0xee020218 0 4>;
 
-Or, shouldn't I add the usb3-role-sw node and a driver for usb3_peri0 shoul=
-d
-take care for it?
 
-Best regards,
-Yoshihiro Shimoda
+>
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+>
+> Minor not below not withstanding,
+>
+
+
+
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+>
+> Thank you for the review and help :-)
+
+Gilad
+
+--000000000000da90a2056d7f104e
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><br><div class=3D"gmail_extra"><br><div class=3D"gmail_quo=
+te">On Tue, May 29, 2018 at 7:12 PM, Simon Horman <span dir=3D"ltr">&lt;<a =
+href=3D"mailto:horms@verge.net.au" target=3D"_blank">horms@verge.net.au</a>=
+&gt;</span> wrote:<br><blockquote class=3D"gmail_quote" style=3D"margin:0 0=
+ 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"><span class=3D"">On Th=
+u, May 24, 2018 at 03:19:06PM +0100, Gilad Ben-Yossef wrote:<br>
+&gt; The product signature and HW revision register have different offset o=
+n the<br>
+&gt; older HW revisions.<br>
+&gt; This fixes the problem of the driver failing sanity check on silicon<b=
+r>
+&gt; despite working on the FPGA emulation systems.<br>
+&gt; <br>
+&gt; Fixes: 27b3b22dd98c (&quot;crypto: ccree - add support for older HW re=
+vs&quot;)<br>
+<br>
+</span>Did the above introduce a regression that is fixed by this patch<br>
+or did it add a feature that only works with this patch?<br>
+<br></blockquote><div><br></div><div>Sort of in between - the first patch m=
+ade more devices work but unreliability (it will sometime work, sometime do=
+esn&#39;t).</div><div>This one make it work reliably.</div><div>=C2=A0</div=
+><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1=
+px #ccc solid;padding-left:1ex">
+In the case of the latter I would drop the Fixes tag,<br>
+but I don&#39;t feel strongly about it.<br></blockquote><div><br></div><div=
+>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;b=
+order-left:1px #ccc solid;padding-left:1ex">
+<span class=3D""><br>
+&gt; Cc: <a href=3D"mailto:stable@vger.kernel.org">stable@vger.kernel.org</=
+a><br>
+&gt; Signed-off-by: Gilad Ben-Yossef &lt;<a href=3D"mailto:gilad@benyossef.=
+com">gilad@benyossef.com</a>&gt;<br>
+<br>
+</span>Minor not below not withstanding,<br></blockquote><div><br></div><di=
+v><br></div><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;bo=
+rder-left:1px #ccc solid;padding-left:1ex">
+<br>
+Reviewed-by: Simon Horman &lt;<a href=3D"mailto:horms%2Brenesas@verge.net.a=
+u">horms+renesas@verge.net.au</a>&gt;<br>
+<div><div class=3D"h5"><br></div></div></blockquote><div>
+
+<div style=3D"color:rgb(34,34,34);font-family:arial,sans-serif;font-size:sm=
+all;font-style:normal;font-variant-ligatures:normal;font-variant-caps:norma=
+l;font-weight:400;letter-spacing:normal;text-align:start;text-indent:0px;te=
+xt-transform:none;white-space:normal;word-spacing:0px;background-color:rgb(=
+255,255,255);text-decoration-style:initial;text-decoration-color:initial">T=
+hank you for the review and help :-)</div><div style=3D"color:rgb(34,34,34)=
+;font-family:arial,sans-serif;font-size:small;font-style:normal;font-varian=
+t-ligatures:normal;font-variant-caps:normal;font-weight:400;letter-spacing:=
+normal;text-align:start;text-indent:0px;text-transform:none;white-space:nor=
+mal;word-spacing:0px;background-color:rgb(255,255,255);text-decoration-styl=
+e:initial;text-decoration-color:initial"><br></div><div style=3D"color:rgb(=
+34,34,34);font-family:arial,sans-serif;font-size:small;font-style:normal;fo=
+nt-variant-ligatures:normal;font-variant-caps:normal;font-weight:400;letter=
+-spacing:normal;text-align:start;text-indent:0px;text-transform:none;white-=
+space:normal;word-spacing:0px;background-color:rgb(255,255,255);text-decora=
+tion-style:initial;text-decoration-color:initial">Gilad=C2=A0</div>
+
+<br></div></div>
+</div></div>
+
+--000000000000da90a2056d7f104e--
