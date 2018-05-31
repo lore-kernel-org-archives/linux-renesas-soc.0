@@ -1,121 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay12.mail.gandi.net ([217.70.178.232]:53823 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752980AbeEKKBS (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55421 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754522AbeEaLjh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 May 2018 06:01:18 -0400
-From: Jacopo Mondi <jacopo@jmondi.org>
-To: niklas.soderlund@ragnatech.se
-Cc: Jacopo Mondi <jacopo@jmondi.org>, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/5] boards: Add R8A77995 D3 Draak board
-Date: Fri, 11 May 2018 12:00:35 +0200
-Message-Id: <1526032839-14536-2-git-send-email-jacopo@jmondi.org>
-In-Reply-To: <1526032839-14536-1-git-send-email-jacopo@jmondi.org>
-References: <1526032839-14536-1-git-send-email-jacopo@jmondi.org>
+        Thu, 31 May 2018 07:39:37 -0400
+Date: Thu, 31 May 2018 07:39:29 -0400
+From: Simon Horman <horms@verge.net.au>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: rmobile: Drop MTD partitioning from DT
+Message-ID: <20180531113928.ep3eqvkm4wlyb4c2@verge.net.au>
+References: <20180530101130.3566-1-marek.vasut+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180530101130.3566-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for R-Car Gen3 Draak board based on R8A77995 SoC.
-Define additional variables such as which vin should be used to perform
-capture operations and which is the destination image format for each
-board. These variables will be used later to generalize the image
-scripts.
+On Wed, May 30, 2018 at 12:11:30PM +0200, Marek Vasut wrote:
+> Drop the MTD partitioning from DT, since it does not describe HW
+> and to give way to a more flexible kernel command line partition
+> passing.
+> 
+> To retain the original partitioning, assure you have enabled
+> CONFIG_MTD_CMDLINE_PARTS in your kernel config and add the
+> following to your kernel command line:
+> 
+> lager:   mtdparts=spi0.0:256k(loader),4m(user),-(flash)
+> stout:   mtdparts=spi0.0:512k(loader),256k(uboot),256k(uboot-env),-(flash)
+> koelsch: mtdparts=spi0.0:512k(loader),5632k(user),-(flash)
+> porter:  mtdparts=spi0.0:256k(loader_prg),4m(user_prg),-(flash_fs)
+> wheat:   mtdparts=spi0.0:256k(loader),4m(user),-(flash)
+> gose:    mtdparts=spi0.0:256k(loader),4m(user),-(flash)
+> alt:     mtdparts=spi0.0:256k(loader),256k(system),-(user)
+> silk:    mtdparts=spi0.0:256k(loader),4m(user),-(flash)
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be> on Koelsch
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+> V2: Drop the @0 anchor from the commit message, use 4m
+> V3: Squash the patches into one as requested by the higher ups
 
-Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
----
- scripts/boards.sh | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
-
-diff --git a/scripts/boards.sh b/scripts/boards.sh
-index e078ba5..f265463 100644
---- a/scripts/boards.sh
-+++ b/scripts/boards.sh
-@@ -16,6 +16,8 @@ case $info in
-         vin6=$(basename /sys/devices/platform/soc/e6ef6000.video/video4linux/video*)
-         vin7=$(basename /sys/devices/platform/soc/e6ef7000.video/video4linux/video*)
- 
-+        capture_vin="${vin0}"
-+
-         vinname0="VIN0 output"
-         vinname1="VIN1 output"
-         vinname2="VIN2 output"
-@@ -35,6 +37,8 @@ case $info in
- 
-         txaname="adv748x 4-0070 txa"
-         txbname="adv748x 4-0070 txb"
-+
-+        convert_format="RGB565"
-         ;;
- 
-     "Renesas Salvator-X 2nd version board based on r8a7795 ES2.0+")
-@@ -50,6 +54,8 @@ case $info in
-         vin6=$(basename /sys/devices/platform/soc/e6ef6000.video/video4linux/video*)
-         vin7=$(basename /sys/devices/platform/soc/e6ef7000.video/video4linux/video*)
- 
-+        capture_vin="${vin0}"
-+
-         vinname0="VIN0 output"
-         vinname1="VIN1 output"
-         vinname2="VIN2 output"
-@@ -68,6 +74,8 @@ case $info in
- 
-         txaname="adv748x 4-0070 txa"
-         txbname="adv748x 4-0070 txb"
-+
-+        convert_format="RGB565"
-         ;;
- 
-     "Renesas Salvator-X board based on r8a7796")
-@@ -82,6 +90,8 @@ case $info in
-         vin6=$(basename /sys/devices/platform/soc/e6ef6000.video/video4linux/video*)
-         vin7=$(basename /sys/devices/platform/soc/e6ef7000.video/video4linux/video*)
- 
-+        capture_vin="${vin0}"
-+
-         vinname0="VIN0 output"
-         vinname1="VIN1 output"
-         vinname2="VIN2 output"
-@@ -99,6 +109,8 @@ case $info in
- 
-         txaname="adv748x 4-0070 txa"
-         txbname="adv748x 4-0070 txb"
-+
-+        convert_format="RGB565"
-         ;;
- 
-     "Renesas Eagle board based on r8a77970")
-@@ -109,6 +121,8 @@ case $info in
-         vin2=$(basename /sys/devices/platform/soc/e6ef2000.video/video4linux/video*)
-         vin3=$(basename /sys/devices/platform/soc/e6ef3000.video/video4linux/video*)
- 
-+        capture_vin="${vin0}"
-+
-         vinname0="VIN0 output"
-         vinname1="VIN1 output"
-         vinname2="VIN2 output"
-@@ -121,6 +135,23 @@ case $info in
- 
-         txaname="adv748x 0-0070 txa"
-         txbname="adv748x 0-0070 txb"
-+
-+        convert_format="RGB565"
-+        ;;
-+
-+    "Renesas Draak board based on r8a77995")
-+        echo "Board: D3"
-+        gen="gen3"
-+        digital=1
-+        vin4=$(basename /sys/devices/platform/soc/e6ef4000.video/video4linux/video*)
-+
-+        capture_vin="${vin4}"
-+
-+        vinname4="VIN4 output"
-+
-+        hdminame="adv7612 0-004c"
-+
-+        convert_format="BGR32"
-         ;;
- 
-     "Koelsch")
--- 
-2.7.4
+Thanks, applied.
