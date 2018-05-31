@@ -1,110 +1,108 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:36034 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753786AbeE3PPc (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 May 2018 11:15:32 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/3] ARM: shmobile: apmu: Remove obsolete shmobile_smp_apmu_prepare_cpus()
-Date: Wed, 30 May 2018 17:15:27 +0200
-Message-Id: <1527693328-10559-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1527693328-10559-1-git-send-email-geert+renesas@glider.be>
-References: <1527693328-10559-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Thu, 31 May 2018 07:40:48 -0400
+From: Simon Horman <horms@verge.net.au>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: Re: [PATCH 6/9] ARM: dts: wheat: Drop MTD partitioning from DT
+Message-ID: <20180531114047.6zkdxacep77a6rvc@verge.net.au>
+References: <20180522120257.13232-1-marek.vasut+renesas@gmail.com>
+ <20180522120257.13232-6-marek.vasut+renesas@gmail.com>
+ <CAMuHMdXRnoyhNz=3v_=ZCV=FWX4TwKqx7MpH0g3c7GwtXKP1tg@mail.gmail.com>
+ <fc1cfd7e-db27-9277-dbed-cc2274c614a6@gmail.com>
+ <CAMuHMdXnNABJSJZ6MLF+aQu8QKpFoMCAvno9Yc-9LOe810NtbA@mail.gmail.com>
+ <7e1563c3-3e13-235b-3071-c3936502530f@gmail.com>
+ <20180528084135.q5xng5eaypprsypr@verge.net.au>
+ <CAMuHMdXYyN=XY6nb9RVEE+t0NeoSPhTh6fUk-9YWdFzAE1FfPA@mail.gmail.com>
+ <20180528093602.eb36j34bbfzmpmw2@verge.net.au>
+ <d78bb8a8-a351-409c-54d2-33ee02fd8afe@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d78bb8a8-a351-409c-54d2-33ee02fd8afe@gmail.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-After the removal of the legacy SMP fallbacks, there are no more users
-left of shmobile_smp_apmu_prepare_cpus().
+On Wed, May 30, 2018 at 12:13:31PM +0200, Marek Vasut wrote:
+> On 05/28/2018 11:36 AM, Simon Horman wrote:
+> > On Mon, May 28, 2018 at 10:54:57AM +0200, Geert Uytterhoeven wrote:
+> >> Hi Simon,
+> >>
+> >> On Mon, May 28, 2018 at 10:41 AM, Simon Horman <horms@verge.net.au> wrote:
+> >>> On Thu, May 24, 2018 at 04:52:59PM +0200, Marek Vasut wrote:
+> >>>> On 05/23/2018 08:25 AM, Geert Uytterhoeven wrote:
+> >>>>> On Wed, May 23, 2018 at 12:01 AM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> >>>>>> On 05/22/2018 04:43 PM, Geert Uytterhoeven wrote:
+> >>>>>>> On Tue, May 22, 2018 at 2:02 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> >>>>>>>> Drop the MTD partitioning from DT, since it does not describe HW
+> >>>>>>>> and to give way to a more flexible kernel command line partition
+> >>>>>>>> passing.
+> >>>>>>>>
+> >>>>>>>> To retain the original partitioning, assure you have enabled
+> >>>>>>>> CONFIG_MTD_CMDLINE_PARTS in your kernel config and add the
+> >>>>>>>> following to your kernel command line:
+> >>>>>>>>
+> >>>>>>>>   mtdparts=spi0.0:256k@0(loader),4096k(user),-(flash)
+> >>>>>>>
+> >>>>>>> I think the "@0" can be dropped, as it's optional?
+> >>>>>>> 4m?
+> >>>>>>
+> >>>>>> My take on this is that the loader is actually at offset 0x0 of the MTD
+> >>>>>> device and we explicitly state that in the mtdparts to anchor the first
+> >>>>>> partition within the MTD device and all the other partitions are at
+> >>>>>> offset +(sum of the sizes of all partitions listed before the current
+> >>>>>> one) relative to that first partition.
+> >>>>>
+> >>>>> Where is this explicitly states for the first partition?
+> >>>>>
+> >>>>>> Removing the @0 feels fragile at best and it seems to depend on the
+> >>>>>> current behavior of the code.
+> >>>>>
+> >>>>> Better, it also depends on the documented behavior:
+> >>>>>
+> >>>>> Documentation/admin-guide/kernel-parameters.txt refers to
+> >>>>> drivers/mtd/cmdlinepart.c, which states:
+> >>>>>
+> >>>>>  * <offset>  := standard linux memsize
+> >>>>>  *              if omitted the part will immediately follow the previous part
+> >>>>>  *              or 0 if the first part
+> >>>>>
+> >>>>> None of the examples listed there or under the MTD_CMDLINE_PARTS Kconfig
+> >>>>> help text, or in a defconfig bundled with the kernel, use @0 for the first
+> >>>>> partition.
+> >>>>
+> >>>> I think this is exceptionally fragile and dangerous to depend on this,
+> >>>> but so be it.
+> >>>
+> >>> Could you respin with this change?
+> >>>
+> >>> I would also like to ask for another change, in light of recent
+> >>> feedback from Olof Johansson ("Re: [GIT PULL] Renesas ARM64 Based SoC DT
+> >>> Updates for v4.18").
+> >>>
+> >>> Please consolidate the dts patches into a single patch?
+> >>
+> >> I think it's better to keep them split, as each commit description mentions
+> >> what needs to be passed on the kernel command line for the corresponding
+> >> board.
+> >>
+> >> Combining it in a single patch makes it much harder to extract this information.
+> >> Unless you're fine with a list:
+> >>
+> >>    koelsch: ...
+> >>    wheat: mtdparts=spi0.0:256k@0(loader),4096k(user),-(flash)
+> > 
+> > Lets try a list.
+> 
+> Reposted with a list, twice :/
 
-Remove it, together with the legacy SMP config parser.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/mach-shmobile/platsmp-apmu.c | 40 -----------------------------------
- arch/arm/mach-shmobile/platsmp-apmu.h |  8 -------
- 2 files changed, 48 deletions(-)
-
-diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
-index 778b6b618ce7c088..42c9405e556b14aa 100644
---- a/arch/arm/mach-shmobile/platsmp-apmu.c
-+++ b/arch/arm/mach-shmobile/platsmp-apmu.c
-@@ -106,38 +106,6 @@ static void apmu_init_cpu(struct resource *res, int cpu, int bit)
- 	writel(x, apmu_cpus[cpu].iomem + DBGRCR_OFFS);
- }
- 
--static void apmu_parse_cfg(void (*fn)(struct resource *res, int cpu, int bit),
--			   struct rcar_apmu_config *apmu_config, int num)
--{
--	int id;
--	int k;
--	int bit, index;
--	bool is_allowed;
--
--	for (k = 0; k < num; k++) {
--		/* only enable the cluster that includes the boot CPU */
--		is_allowed = false;
--		for (bit = 0; bit < ARRAY_SIZE(apmu_config[k].cpus); bit++) {
--			id = apmu_config[k].cpus[bit];
--			if (id >= 0) {
--				if (id == cpu_logical_map(0))
--					is_allowed = true;
--			}
--		}
--		if (!is_allowed)
--			continue;
--
--		for (bit = 0; bit < ARRAY_SIZE(apmu_config[k].cpus); bit++) {
--			id = apmu_config[k].cpus[bit];
--			if (id >= 0) {
--				index = get_logical_index(id);
--				if (index >= 0)
--					fn(&apmu_config[k].iomem, index, bit);
--			}
--		}
--	}
--}
--
- static const struct of_device_id apmu_ids[] = {
- 	{ .compatible = "renesas,apmu" },
- 	{ /*sentinel*/ }
-@@ -194,14 +162,6 @@ static void __init shmobile_smp_apmu_setup_boot(void)
- 	shmobile_boot_fn_gen2 = shmobile_boot_fn;
- }
- 
--void __init shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
--					   struct rcar_apmu_config *apmu_config,
--					   int num)
--{
--	shmobile_smp_apmu_setup_boot();
--	apmu_parse_cfg(apmu_init_cpu, apmu_config, num);
--}
--
- int shmobile_smp_apmu_boot_secondary(unsigned int cpu, struct task_struct *idle)
- {
- 	/* For this particular CPU register boot vector */
-diff --git a/arch/arm/mach-shmobile/platsmp-apmu.h b/arch/arm/mach-shmobile/platsmp-apmu.h
-index 76512c9a2545da75..70424572b9da2e70 100644
---- a/arch/arm/mach-shmobile/platsmp-apmu.h
-+++ b/arch/arm/mach-shmobile/platsmp-apmu.h
-@@ -16,14 +16,6 @@
- #ifndef PLATSMP_APMU_H
- #define PLATSMP_APMU_H
- 
--struct rcar_apmu_config {
--	struct resource iomem;
--	int cpus[4];
--};
--
--extern void shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
--					   struct rcar_apmu_config *apmu_config,
--					   int num);
- extern int shmobile_smp_apmu_boot_secondary(unsigned int cpu,
- 					    struct task_struct *idle);
- extern void shmobile_smp_apmu_cpu_die(unsigned int cpu);
--- 
-2.7.4
+Thanks, got it :)
