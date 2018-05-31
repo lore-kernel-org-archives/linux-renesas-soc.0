@@ -1,77 +1,86 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 5/9] ARM: dts: porter: Drop MTD partitioning from DT
-Date: Thu, 24 May 2018 17:07:17 +0200
-Message-Id: <20180524150721.28964-5-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180524150721.28964-1-marek.vasut+renesas@gmail.com>
-References: <20180524150721.28964-1-marek.vasut+renesas@gmail.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:41879 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754314AbeEaKRF (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 31 May 2018 06:17:05 -0400
+MIME-Version: 1.0
+References: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1527154169-32380-3-git-send-email-michel.pollet@bp.renesas.com> <CAMuHMdUb4fWFB9oP41ejO0_FDxmgBPL0GxQnkFv18Zfb5=1-fw@mail.gmail.com>
+In-Reply-To: <CAMuHMdUb4fWFB9oP41ejO0_FDxmgBPL0GxQnkFv18Zfb5=1-fw@mail.gmail.com>
+From: M P <buserror@gmail.com>
+Date: Thu, 31 May 2018 11:16:53 +0100
+Message-ID: <CAMMfpExt6Kogw6T5FVrD94QuuN6BBNCXdW0qfnnWr2bEMfqjpA@mail.gmail.com>
+Subject: Re: [PATCH v7 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: michel.pollet@bp.renesas.com, linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        buserror+upstream@gmail.com,
+        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, geert+renesas@glider.be,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Drop the MTD partitioning from DT, since it does not describe HW
-and to give way to a more flexible kernel command line partition
-passing.
+Hi Geert,
 
-To retain the original partitioning, assure you have enabled
-CONFIG_MTD_CMDLINE_PARTS in your kernel config and add the
-following to your kernel command line:
+On Fri, 25 May 2018 at 10:23, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Michel,
+>
+> On Thu, May 24, 2018 at 11:28 AM, Michel Pollet
+> <michel.pollet@bp.renesas.com> wrote:
+> > The Renesas R9A06G032 SYSCTRL node description.
+> >
+> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
+> > @@ -0,0 +1,32 @@
+> > +* Renesas R9A06G032 SYSCTRL
+> > +
+> > +Required Properties:
+> > +
+> > +  - compatible: Must be:
+> > +    - "renesas,r9a06g032-sysctrl"
+> > +  - reg: Base address and length of the SYSCTRL IO block.
+> > +  - #clock-cells: Must be 1
+>
+> No clocks/clock-names for the external clock inputs?
+>
+> "RZ/N1 has 3 clock sources, 1 reference clock inputs for RGMII, and 2
+>  reference clock outputs for RMII/MII."
+>
+> Given the documentation explicitly mentions the module clocks are to be
+> used for power-management, you may want to add #power-domain-cells as well,
+> and let the driver register clock domain. But that can be added later
+> (although it will break backwards compatibility with old DTBs).
+>
+> As PWRCTRL_* registers allow to reset individual modules, #reset-cells is
+> another thing to add later.  It's good to start thinking early about how to
+> reference resets, though.
+> E.g. on other Renesas-SoCs, module resets uses the same numerical
+> references as module clocks.
 
-  mtdparts=spi0.0:256k(loader_prg),4m(user_prg),-(flash_fs)
+As you said, could we add all that later, as appropriate? Here I tried
+to trim it
+down to the the bare minimum -- my previous version of the driver had
+separate reset  descriptors, but this one has been all compacted to do just
+what it's supposed to do: clocks.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: Drop the @0 anchor from the commit message, use 4m
----
- arch/arm/boot/dts/r8a7791-porter.dts | 21 ---------------------
- 1 file changed, 21 deletions(-)
+Or, so you want to add another DT index to refer to other reset indexes etc?
+ie not use the of_clk_src_onecell_get provider? That COULD work and yes, the
+indexes would stay the same, I'd just have to get the reset descriptor from the
+clock object. We haven't had a use for individual resets so far.
 
-diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-index a01101b49d99..45d89e064407 100644
---- a/arch/arm/boot/dts/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -344,27 +344,6 @@
- 		spi-tx-bus-width = <4>;
- 		spi-rx-bus-width = <4>;
- 		m25p,fast-read;
--
--		partitions {
--			compatible = "fixed-partitions";
--			#address-cells = <1>;
--			#size-cells = <1>;
--
--			partition@0 {
--				label = "loader_prg";
--				reg = <0x00000000 0x00040000>;
--				read-only;
--			};
--			partition@40000 {
--				label = "user_prg";
--				reg = <0x00040000 0x00400000>;
--				read-only;
--			};
--			partition@440000 {
--				label = "flash_fs";
--				reg = <0x00440000 0x03bc0000>;
--			};
--		};
- 	};
- };
- 
--- 
-2.16.2
+> Gr{oetje,eeting}s,
+>
+>                         Geert
 
+Cheers,
+Michel
