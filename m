@@ -1,159 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay11.mail.gandi.net ([217.70.178.231]:41835 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936713AbeE2PGt (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:46341 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754234AbeEaU0x (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 May 2018 11:06:49 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        horms@verge.net.au, geert@glider.be
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 8/8] ARM: dts: rcar-gen2: Remove unused VIN properties
-Date: Tue, 29 May 2018 17:05:59 +0200
-Message-Id: <1527606359-19261-9-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1527606359-19261-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1527606359-19261-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 31 May 2018 16:26:53 -0400
+Received: by mail-lf0-f68.google.com with SMTP id j13-v6so7151514lfb.13
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 31 May 2018 13:26:52 -0700 (PDT)
+Subject: [PATCH v2 2/2] arm64: dts: renesas: condor: add I2C0 support
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+References: <2a88f4e9-0a86-8e6f-0ef2-20913dc9431d@cogentembedded.com>
+Message-ID: <2ea2c8bc-2abd-57fa-9c13-2ff55b41e0d4@cogentembedded.com>
+Date: Thu, 31 May 2018 23:26:49 +0300
+MIME-Version: 1.0
+In-Reply-To: <2a88f4e9-0a86-8e6f-0ef2-20913dc9431d@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The 'bus-width' and 'pclk-sample' properties are not parsed by the VIN
-driver and only confuse users. Remove them in all Gen2 SoC that use
-them.
+Define the Condor board dependent part of the I2C0 device node.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+The I2C0 bus is populated by 2 ON Semiconductor PCA9654 I/O expanders
+and Analog Devices  ADV7511W HDMI transmitter (but we're only describing
+the former chips now).
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+
 ---
-v3:
-- remove bus-width from dt-bindings example
----
- Documentation/devicetree/bindings/media/rcar_vin.txt | 1 -
- arch/arm/boot/dts/r8a7790-lager.dts                  | 3 ---
- arch/arm/boot/dts/r8a7791-koelsch.dts                | 3 ---
- arch/arm/boot/dts/r8a7791-porter.dts                 | 1 -
- arch/arm/boot/dts/r8a7793-gose.dts                   | 3 ---
- arch/arm/boot/dts/r8a7794-alt.dts                    | 1 -
- arch/arm/boot/dts/r8a7794-silk.dts                   | 1 -
- 7 files changed, 13 deletions(-)
+Changes in version 2:
+- added Simon's tag.
 
-diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
-index 024c109..c6d7f60 100644
---- a/Documentation/devicetree/bindings/media/rcar_vin.txt
-+++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
-@@ -128,7 +128,6 @@ Board setup example for Gen2 platforms (vin1 composite video input)
+ arch/arm64/boot/dts/renesas/r8a77980-condor.dts |   27 ++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-                 vin1ep0: endpoint {
-                         remote-endpoint = <&adv7180>;
--                        bus-width = <8>;
-                 };
-         };
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
++++ renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+@@ -80,6 +80,28 @@
+ 	clock-frequency = <32768>;
  };
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 092610e..9cdabfcf 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -885,10 +885,8 @@
- 	port {
- 		vin0ep2: endpoint {
- 			remote-endpoint = <&adv7612_out>;
--			bus-width = <24>;
- 			hsync-active = <0>;
- 			vsync-active = <0>;
--			pclk-sample = <1>;
- 			data-active = <1>;
- 		};
+ 
++&i2c0 {
++	pinctrl-0 = <&i2c0_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++	clock-frequency = <400000>;
++
++	io_expander0: gpio@20 {
++		compatible = "onnn,pca9654";
++		reg = <0x20>;
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++
++	io_expander1: gpio@21 {
++		compatible = "onnn,pca9654";
++		reg = <0x21>;
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++};
++
+ &mmc0 {
+ 	pinctrl-0 = <&mmc_pins>;
+ 	pinctrl-1 = <&mmc_pins_uhs>;
+@@ -104,6 +126,11 @@
+ 		function = "canfd0";
  	};
-@@ -904,7 +902,6 @@
- 	port {
- 		vin1ep0: endpoint {
- 			remote-endpoint = <&adv7180>;
--			bus-width = <8>;
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index 8ab793d..033c9e3 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -857,10 +857,8 @@
- 	port {
- 		vin0ep2: endpoint {
- 			remote-endpoint = <&adv7612_out>;
--			bus-width = <24>;
- 			hsync-active = <0>;
- 			vsync-active = <0>;
--			pclk-sample = <1>;
- 			data-active = <1>;
- 		};
- 	};
-@@ -875,7 +873,6 @@
- 	port {
- 		vin1ep: endpoint {
- 			remote-endpoint = <&adv7180>;
--			bus-width = <8>;
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-index a01101b..c16e870 100644
---- a/arch/arm/boot/dts/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -388,7 +388,6 @@
- 	port {
- 		vin0ep: endpoint {
- 			remote-endpoint = <&adv7180>;
--			bus-width = <8>;
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index aa209f6..60aaddb 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -765,10 +765,8 @@
- 	port {
- 		vin0ep2: endpoint {
- 			remote-endpoint = <&adv7612_out>;
--			bus-width = <24>;
- 			hsync-active = <0>;
- 			vsync-active = <0>;
--			pclk-sample = <1>;
- 			data-active = <1>;
- 		};
- 	};
-@@ -784,7 +782,6 @@
- 	port {
- 		vin1ep: endpoint {
- 			remote-endpoint = <&adv7180_out>;
--			bus-width = <8>;
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index e170275..8ed7a71 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -388,7 +388,6 @@
- 	port {
- 		vin0ep: endpoint {
- 			remote-endpoint = <&adv7180>;
--			bus-width = <8>;
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
-index 7808aae..6adfcd6 100644
---- a/arch/arm/boot/dts/r8a7794-silk.dts
-+++ b/arch/arm/boot/dts/r8a7794-silk.dts
-@@ -477,7 +477,6 @@
- 	port {
- 		vin0ep: endpoint {
- 			remote-endpoint = <&adv7180>;
--			bus-width = <8>;
- 		};
- 	};
- };
---
-2.7.4
+ 
++	i2c0_pins: i2c0 {
++		groups = "i2c0";
++		function = "i2c0";
++	};
++
+ 	mmc_pins: mmc {
+ 		groups = "mmc_data8", "mmc_ctrl", "mmc_ds";
+ 		function = "mmc";
