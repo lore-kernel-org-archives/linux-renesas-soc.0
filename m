@@ -1,66 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:42995 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754314AbeEaJMM (ORCPT
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:35363 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754090AbeEaIpF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 31 May 2018 05:12:12 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Thu, 31 May 2018 04:45:05 -0400
+MIME-Version: 1.0
+In-Reply-To: <TY2PR01MB2297BC5F12034143657590A7D86C0@TY2PR01MB2297.jpnprd01.prod.outlook.com>
+References: <20180529105847.15663-1-wsa+renesas@sang-engineering.com>
+ <20180529105847.15663-2-wsa+renesas@sang-engineering.com> <TY2PR01MB2297BC5F12034143657590A7D86C0@TY2PR01MB2297.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 31 May 2018 10:45:04 +0200
+Message-ID: <CAMuHMdXaspHUg3LF1Jckg5CWHZWRL6gKOeCv-LHk4uzsji2W1Q@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/1] i2c: rcar: handle RXDMA HW bug on Gen3
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-Subject: RE: [RFC PATCH 1/1] i2c: rcar: handle RXDMA HW bug on Gen3
-Date: Thu, 31 May 2018 09:12:09 +0000
-Message-ID: <OSBPR01MB2293BBBFEBF58E8D90F3B516D8630@OSBPR01MB2293.jpnprd01.prod.outlook.com>
-References: <20180529105847.15663-1-wsa+renesas@sang-engineering.com>
- <20180529105847.15663-2-wsa+renesas@sang-engineering.com>
- <TY2PR01MB2297BC5F12034143657590A7D86C0@TY2PR01MB2297.jpnprd01.prod.outlook.com>
- <CAMuHMdXaspHUg3LF1Jckg5CWHZWRL6gKOeCv-LHk4uzsji2W1Q@mail.gmail.com>
-In-Reply-To: <CAMuHMdXaspHUg3LF1Jckg5CWHZWRL6gKOeCv-LHk4uzsji2W1Q@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQtc2FuLCBXb2xmcmFtLXNhbiwNCg0KPiBGcm9tOiBHZWVydCBVeXR0ZXJob2V2ZW4s
-IFNlbnQ6IFRodXJzZGF5LCBNYXkgMzEsIDIwMTggNTo0NSBQTQ0KPiANCj4gSGkgU2hpbW9kYS1z
-YW4sDQo+IA0KPiBPbiBXZWQsIE1heSAzMCwgMjAxOCBhdCAxMDozNSBBTSwgWW9zaGloaXJvIFNo
-aW1vZGENCj4gPHlvc2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMuY29tPiB3cm90ZToNCj4gPj4g
-RnJvbTogV29sZnJhbSBTYW5nLCBTZW50OiBUdWVzZGF5LCBNYXkgMjksIDIwMTggNzo1OSBQTQ0K
-PiA+PiBTdWJqZWN0OiBbUkZDIFBBVENIIDEvMV0gaTJjOiByY2FyOiBoYW5kbGUgUlhETUEgSFcg
-YnVnIG9uIEdlbjMNCj4gPg0KPiA+IElmIHBvc3NpYmxlLCBJJ2QgbGlrZSB0byByZXBsYWNlICJi
-dWciIHdpdGggInNwZWNpZmljYXRpb24iIG9yIG90aGVyIHdvcmRzIDopDQo+ID4NCj4gPiA8c25p
-cD4NCj4gPj4gQEAgLTc0Myw2ICs3NTMsMTYgQEAgc3RhdGljIGludCByY2FyX2kyY19tYXN0ZXJf
-eGZlcihzdHJ1Y3QgaTJjX2FkYXB0ZXIgKmFkYXAsDQo+ID4+DQo+ID4+ICAgICAgIHBtX3J1bnRp
-bWVfZ2V0X3N5bmMoZGV2KTsNCj4gPj4NCj4gPj4gKyAgICAgLyogR2VuMyBoYXMgYSBIVyBidWcg
-d2hpY2ggbmVlZHMgYSByZXNldCBiZWZvcmUgYWxsb3dpbmcgUlggRE1BIG9uY2UgKi8NCj4gPj4g
-KyAgICAgaWYgKHByaXYtPmRldnR5cGUgPT0gSTJDX1JDQVJfR0VOMykgew0KPiA+PiArICAgICAg
-ICAgICAgIHByaXYtPmZsYWdzIHw9IElEX1BfTk9fUlhETUE7DQo+ID4+ICsgICAgICAgICAgICAg
-aWYgKCFJU19FUlIocHJpdi0+cnN0YykpIHsNCj4gPj4gKyAgICAgICAgICAgICAgICAgICAgIHJl
-dCA9IHJlc2V0X2NvbnRyb2xfcmVzZXQocHJpdi0+cnN0Yyk7DQo+ID4NCj4gPiBBY2NvcmRpbmcg
-dG8gdGhlIGRhdGFzaGVldCBSZXYuMS4wMCBwYWdlIDU3LTY5LCB3ZSBzaG91bGQgZG86DQo+ID4g
-ICAgICAgICByZXNldF9jb250cm9sX2Fzc2VydCgpOw0KPiA+ICAgICAgICAgdWRlbGF5KDEpOw0K
-PiA+ICAgICAgICAgcmVzZXRfY29udHJvbF9kZWFzc2VydCgpOw0KPiA+ICAgICAgICAgd2hpbGUg
-KHJlc2V0X2NvbnRyb2xfc3RhdHVzKCkpDQo+ID4gICAgICAgICAgICAgICAgIDsNCj4gPiBpbnN0
-ZWFkIG9mIHJlc2V0X2NvbnRyb2xfcmVzZXQoKSwgSSB0aGluay4NCj4gDQo+IFRoZSBpMmMtc3Bl
-Y2lmaWMgcHJvY2VkdXJlIGRvY3VtZW50ZWQgYXQgcGFnZSA1Ny02OSB0aHVzIGRpZmZlcnMgZnJv
-bQ0KPiB0aGUgZ2VuZXJpYyBvbmUgYXQgcGFnZSA4QS01OCwgd2hpY2ggaXMgd2hhdCBjcGdfbXNz
-cl9yZXNldCgpIGltcGxlbWVudHMuDQo+IA0KPiBUaGUgbGF0dGVyIHdhaXRzIDM1wrVzIGluc3Rl
-YWQgb2YgMcK1cywgc28gdGhhdCBzaG91bGQgYmUgc2FmZS4NCj4gQnV0IGl0IGRvZXNuJ3QgY2hl
-Y2sgdGhlIHN0YXR1cyBiaXQuIElzIHRoZSBsb25nZXIgZGVsYXkgc3VmZmljaWVudCwgb3Igc2hv
-dWxkDQo+IGEgY2hlY2sgcG9sbGluZyB0aGUgc3RhdHVzIGJpdCBiZSBhZGRlZCB0byBjcGdfbXNz
-cl9yZXNldCgpPw0KDQpUaGFuayB5b3UgZm9yIHRoZSBwb2ludGVkIG91dC4NCkkgYWdyZWUgd2Ug
-c2hvdWxkIHdhaXQgMzV1cyBmb3Igc2FmZS4NCkJ1dCwgYW55d2F5IEknbGwgYXNrIEhXIHRlYW0g
-YWJvdXQgdGhpcyBjb250cmFkaWN0aW9uIGFuZCByZWFsbHkgbmVlZCBwb2xsaW5nIHRoZSBzdGF0
-dXMuDQoNCkJlc3QgcmVnYXJkcywNCllvc2hpaGlybyBTaGltb2RhDQoNCj4gR3J7b2V0amUsZWV0
-aW5nfXMsDQo+IA0KPiAgICAgICAgICAgICAgICAgICAgICAgICBHZWVydA0KPiANCj4gLS0NCj4g
-R2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAt
-LSBnZWVydEBsaW51eC1tNjhrLm9yZw0KPiANCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3
-aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0KPiB3aGVu
-IEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNv
-bWV0aGluZyBsaWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0g
-TGludXMgVG9ydmFsZHMNCg==
+Hi Shimoda-san,
+
+On Wed, May 30, 2018 at 10:35 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+>> From: Wolfram Sang, Sent: Tuesday, May 29, 2018 7:59 PM
+>> Subject: [RFC PATCH 1/1] i2c: rcar: handle RXDMA HW bug on Gen3
+>
+> If possible, I'd like to replace "bug" with "specification" or other word=
+s :)
+>
+> <snip>
+>> @@ -743,6 +753,16 @@ static int rcar_i2c_master_xfer(struct i2c_adapter =
+*adap,
+>>
+>>       pm_runtime_get_sync(dev);
+>>
+>> +     /* Gen3 has a HW bug which needs a reset before allowing RX DMA on=
+ce */
+>> +     if (priv->devtype =3D=3D I2C_RCAR_GEN3) {
+>> +             priv->flags |=3D ID_P_NO_RXDMA;
+>> +             if (!IS_ERR(priv->rstc)) {
+>> +                     ret =3D reset_control_reset(priv->rstc);
+>
+> According to the datasheet Rev.1.00 page 57-69, we should do:
+>         reset_control_assert();
+>         udelay(1);
+>         reset_control_deassert();
+>         while (reset_control_status())
+>                 ;
+> instead of reset_control_reset(), I think.
+
+The i2c-specific procedure documented at page 57-69 thus differs from
+the generic one at page 8A-58, which is what cpg_mssr_reset() implements.
+
+The latter waits 35=C2=B5s instead of 1=C2=B5s, so that should be safe.
+But it doesn't check the status bit. Is the longer delay sufficient, or sho=
+uld
+a check polling the status bit be added to cpg_mssr_reset()?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
