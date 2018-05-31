@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51146 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:44262 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751791AbeFDJ6D (ORCPT
+        with ESMTP id S1750850AbeFALxT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Jun 2018 05:58:03 -0400
-Date: Mon, 4 Jun 2018 11:57:44 +0200
+        Fri, 1 Jun 2018 07:53:19 -0400
+Date: Thu, 31 May 2018 10:24:37 -0400
 From: Simon Horman <horms@verge.net.au>
 To: Viresh Kumar <viresh.kumar@linaro.org>
 Cc: arm@kernel.org, biju.das@bp.renesas.com,
@@ -18,7 +18,7 @@ Cc: arm@kernel.org, biju.das@bp.renesas.com,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH V2 13/15] arm: dts: r8a77xx: Add missing OPP properties
  for CPUs
-Message-ID: <20180604095744.a7ztsmokxzhcat7j@verge.net.au>
+Message-ID: <20180531142433.ndnr7dn7nptkpb5k@verge.net.au>
 References: <5821a6dbe413b5a217ca1e24ddf8ebfa63ba6ef0.1527244201.git.viresh.kumar@linaro.org>
  <c6254ebb1f177468db6b8ac560ffb5a4a0b864f0.1527655562.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
@@ -44,5 +44,7 @@ On Wed, May 30, 2018 at 10:16:58AM +0530, Viresh Kumar wrote:
 > 
 > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Thanks, I took the liberty of changing the prefix of this patch to
-"ARM: dts: r8a77(43|9[013]):" when applying this patch.
+This looks fine but I will wait to see if there are other reviews before
+applying.
+
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
