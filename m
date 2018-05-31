@@ -1,100 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:59432 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754272AbeEaJWM (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:42995 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754314AbeEaJMM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 31 May 2018 05:22:12 -0400
+        Thu, 31 May 2018 05:12:12 -0400
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Wolfram Sang <wsa@the-dreams.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
 Subject: RE: [RFC PATCH 1/1] i2c: rcar: handle RXDMA HW bug on Gen3
-Date: Thu, 31 May 2018 09:22:02 +0000
-Message-ID: <OSBPR01MB22932FB39AA6D91DC42E7971D8630@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+Date: Thu, 31 May 2018 09:12:09 +0000
+Message-ID: <OSBPR01MB2293BBBFEBF58E8D90F3B516D8630@OSBPR01MB2293.jpnprd01.prod.outlook.com>
 References: <20180529105847.15663-1-wsa+renesas@sang-engineering.com>
  <20180529105847.15663-2-wsa+renesas@sang-engineering.com>
  <TY2PR01MB2297BC5F12034143657590A7D86C0@TY2PR01MB2297.jpnprd01.prod.outlook.com>
- <20180531083129.qtcxoiupqeh6xzg3@ninjato>
-In-Reply-To: <20180531083129.qtcxoiupqeh6xzg3@ninjato>
+ <CAMuHMdXaspHUg3LF1Jckg5CWHZWRL6gKOeCv-LHk4uzsji2W1Q@mail.gmail.com>
+In-Reply-To: <CAMuHMdXaspHUg3LF1Jckg5CWHZWRL6gKOeCv-LHk4uzsji2W1Q@mail.gmail.com>
 Content-Language: ja-JP
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Wolfram-san,
-
-> From: Wolfram Sang, Sent: Thursday, May 31, 2018 5:31 PM
->=20
-> Hello Shimoda-san,
->=20
-> > > Subject: [RFC PATCH 1/1] i2c: rcar: handle RXDMA HW bug on Gen3
-> >
-> > If possible, I'd like to replace "bug" with "specification" or other wo=
-rds :)
->=20
-> "behaviour" maybe is a better word?
-
-It sounds good to me.
-
-> > > +	/* Gen3 has a HW bug which needs a reset before allowing RX DMA onc=
-e */
-> > > +	if (priv->devtype =3D=3D I2C_RCAR_GEN3) {
-> > > +		priv->flags |=3D ID_P_NO_RXDMA;
-> > > +		if (!IS_ERR(priv->rstc)) {
-> > > +			ret =3D reset_control_reset(priv->rstc);
-> >
-> > According to the datasheet Rev.1.00 page 57-69, we should do:
-> > 	reset_control_assert();
-> > 	udelay(1);
-> > 	reset_control_deassert();
-> > 	while (reset_control_status())
-> > 		;
-> > instead of reset_control_reset(), I think.
->=20
-> I was following Geert's suggestion here from the mail thread '[periperi] =
-About
-> BSP patch "i2c: rcar: Fix I2C DMA reception by adding reset':
->=20
-> =3D=3D=3D
->=20
-> >> reset_control_assert() + reset_control_deassert() can be replaced by
-> >> reset_control_assert().
-> >
-> > Do you mean 'reset_control_reset' maybe? I am not sure, I don't know
-> > this API very well... but two time *_assert looks suspicious.
->=20
-> Of course. Silly c&p.
->=20
-> >> In addition, that will make sure the delay of one cycle of the RCLK cl=
-ock
-> >> is taken into account, which is not the case with the current code.
-> >
-> > I guess this is why there is now this patch in the BSP which Shimoda-sa=
-n
-> > mentioned in a later mail:
-> >
-> > f0cd22525f73 ("i2c: rcar: Fix module reset function for hardware specif=
-ication")
->=20
-> Exactly.
->=20
-> =3D=3D=3D
->=20
-> As far as I understood it takes care of the proper reset mechanism with t=
-he delay?
-
-I missed this email... As I replied to Geert-san on other email thread,
-I'll ask HW team about this topic.
-
-Best regards,
-Yoshihiro Shimoda
-
-> Kind regards,
->=20
->    Wolfram
+SGkgR2VlcnQtc2FuLCBXb2xmcmFtLXNhbiwNCg0KPiBGcm9tOiBHZWVydCBVeXR0ZXJob2V2ZW4s
+IFNlbnQ6IFRodXJzZGF5LCBNYXkgMzEsIDIwMTggNTo0NSBQTQ0KPiANCj4gSGkgU2hpbW9kYS1z
+YW4sDQo+IA0KPiBPbiBXZWQsIE1heSAzMCwgMjAxOCBhdCAxMDozNSBBTSwgWW9zaGloaXJvIFNo
+aW1vZGENCj4gPHlvc2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMuY29tPiB3cm90ZToNCj4gPj4g
+RnJvbTogV29sZnJhbSBTYW5nLCBTZW50OiBUdWVzZGF5LCBNYXkgMjksIDIwMTggNzo1OSBQTQ0K
+PiA+PiBTdWJqZWN0OiBbUkZDIFBBVENIIDEvMV0gaTJjOiByY2FyOiBoYW5kbGUgUlhETUEgSFcg
+YnVnIG9uIEdlbjMNCj4gPg0KPiA+IElmIHBvc3NpYmxlLCBJJ2QgbGlrZSB0byByZXBsYWNlICJi
+dWciIHdpdGggInNwZWNpZmljYXRpb24iIG9yIG90aGVyIHdvcmRzIDopDQo+ID4NCj4gPiA8c25p
+cD4NCj4gPj4gQEAgLTc0Myw2ICs3NTMsMTYgQEAgc3RhdGljIGludCByY2FyX2kyY19tYXN0ZXJf
+eGZlcihzdHJ1Y3QgaTJjX2FkYXB0ZXIgKmFkYXAsDQo+ID4+DQo+ID4+ICAgICAgIHBtX3J1bnRp
+bWVfZ2V0X3N5bmMoZGV2KTsNCj4gPj4NCj4gPj4gKyAgICAgLyogR2VuMyBoYXMgYSBIVyBidWcg
+d2hpY2ggbmVlZHMgYSByZXNldCBiZWZvcmUgYWxsb3dpbmcgUlggRE1BIG9uY2UgKi8NCj4gPj4g
+KyAgICAgaWYgKHByaXYtPmRldnR5cGUgPT0gSTJDX1JDQVJfR0VOMykgew0KPiA+PiArICAgICAg
+ICAgICAgIHByaXYtPmZsYWdzIHw9IElEX1BfTk9fUlhETUE7DQo+ID4+ICsgICAgICAgICAgICAg
+aWYgKCFJU19FUlIocHJpdi0+cnN0YykpIHsNCj4gPj4gKyAgICAgICAgICAgICAgICAgICAgIHJl
+dCA9IHJlc2V0X2NvbnRyb2xfcmVzZXQocHJpdi0+cnN0Yyk7DQo+ID4NCj4gPiBBY2NvcmRpbmcg
+dG8gdGhlIGRhdGFzaGVldCBSZXYuMS4wMCBwYWdlIDU3LTY5LCB3ZSBzaG91bGQgZG86DQo+ID4g
+ICAgICAgICByZXNldF9jb250cm9sX2Fzc2VydCgpOw0KPiA+ICAgICAgICAgdWRlbGF5KDEpOw0K
+PiA+ICAgICAgICAgcmVzZXRfY29udHJvbF9kZWFzc2VydCgpOw0KPiA+ICAgICAgICAgd2hpbGUg
+KHJlc2V0X2NvbnRyb2xfc3RhdHVzKCkpDQo+ID4gICAgICAgICAgICAgICAgIDsNCj4gPiBpbnN0
+ZWFkIG9mIHJlc2V0X2NvbnRyb2xfcmVzZXQoKSwgSSB0aGluay4NCj4gDQo+IFRoZSBpMmMtc3Bl
+Y2lmaWMgcHJvY2VkdXJlIGRvY3VtZW50ZWQgYXQgcGFnZSA1Ny02OSB0aHVzIGRpZmZlcnMgZnJv
+bQ0KPiB0aGUgZ2VuZXJpYyBvbmUgYXQgcGFnZSA4QS01OCwgd2hpY2ggaXMgd2hhdCBjcGdfbXNz
+cl9yZXNldCgpIGltcGxlbWVudHMuDQo+IA0KPiBUaGUgbGF0dGVyIHdhaXRzIDM1wrVzIGluc3Rl
+YWQgb2YgMcK1cywgc28gdGhhdCBzaG91bGQgYmUgc2FmZS4NCj4gQnV0IGl0IGRvZXNuJ3QgY2hl
+Y2sgdGhlIHN0YXR1cyBiaXQuIElzIHRoZSBsb25nZXIgZGVsYXkgc3VmZmljaWVudCwgb3Igc2hv
+dWxkDQo+IGEgY2hlY2sgcG9sbGluZyB0aGUgc3RhdHVzIGJpdCBiZSBhZGRlZCB0byBjcGdfbXNz
+cl9yZXNldCgpPw0KDQpUaGFuayB5b3UgZm9yIHRoZSBwb2ludGVkIG91dC4NCkkgYWdyZWUgd2Ug
+c2hvdWxkIHdhaXQgMzV1cyBmb3Igc2FmZS4NCkJ1dCwgYW55d2F5IEknbGwgYXNrIEhXIHRlYW0g
+YWJvdXQgdGhpcyBjb250cmFkaWN0aW9uIGFuZCByZWFsbHkgbmVlZCBwb2xsaW5nIHRoZSBzdGF0
+dXMuDQoNCkJlc3QgcmVnYXJkcywNCllvc2hpaGlybyBTaGltb2RhDQoNCj4gR3J7b2V0amUsZWV0
+aW5nfXMsDQo+IA0KPiAgICAgICAgICAgICAgICAgICAgICAgICBHZWVydA0KPiANCj4gLS0NCj4g
+R2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAt
+LSBnZWVydEBsaW51eC1tNjhrLm9yZw0KPiANCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3
+aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0KPiB3aGVu
+IEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNv
+bWV0aGluZyBsaWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0g
+TGludXMgVG9ydmFsZHMNCg==
