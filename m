@@ -1,80 +1,37 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:46223 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967517AbeEXPHw (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 May 2018 11:07:52 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 6/9] ARM: dts: wheat: Drop MTD partitioning from DT
-Date: Thu, 24 May 2018 17:07:18 +0200
-Message-Id: <20180524150721.28964-6-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180524150721.28964-1-marek.vasut+renesas@gmail.com>
-References: <20180524150721.28964-1-marek.vasut+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Wed, 30 May 2018 22:14:51 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
+        horms@verge.net.au, geert@glider.be, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 2/8] dt-bindings: media: Document data-enable-active
+ property
+Message-ID: <20180531031451.GA5215@rob-hp-laptop>
+References: <1527606359-19261-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1527606359-19261-3-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527606359-19261-3-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Drop the MTD partitioning from DT, since it does not describe HW
-and to give way to a more flexible kernel command line partition
-passing.
+On Tue, May 29, 2018 at 05:05:53PM +0200, Jacopo Mondi wrote:
+> Add 'data-enable-active' property to endpoint node properties list.
+> 
+> The property allows to specify the polarity of the data-enable signal, which
+> when in active state determinates when data lanes have to sampled for valid
+> pixel data.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+> v3:
+> - new patch
+> ---
+>  Documentation/devicetree/bindings/media/video-interfaces.txt | 2 ++
+>  1 file changed, 2 insertions(+)
 
-To retain the original partitioning, assure you have enabled
-CONFIG_MTD_CMDLINE_PARTS in your kernel config and add the
-following to your kernel command line:
-
-  mtdparts=spi0.0:256k(loader),4m(user),-(flash)
-
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: Drop the @0 anchor from the commit message, use 4m
----
- arch/arm/boot/dts/r8a7792-wheat.dts | 21 ---------------------
- 1 file changed, 21 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7792-wheat.dts b/arch/arm/boot/dts/r8a7792-wheat.dts
-index db01de7a3811..93f78716225a 100644
---- a/arch/arm/boot/dts/r8a7792-wheat.dts
-+++ b/arch/arm/boot/dts/r8a7792-wheat.dts
-@@ -217,27 +217,6 @@
- 		spi-cpol;
- 		spi-cpha;
- 		m25p,fast-read;
--
--		partitions {
--			compatible = "fixed-partitions";
--			#address-cells = <1>;
--			#size-cells = <1>;
--
--			partition@0 {
--				label = "loader";
--				reg = <0x00000000 0x00040000>;
--				read-only;
--			};
--			partition@40000 {
--				label = "user";
--				reg = <0x00040000 0x00400000>;
--				read-only;
--			};
--			partition@440000 {
--				label = "flash";
--				reg = <0x00440000 0x03bc0000>;
--			};
--		};
- 	};
- };
- 
--- 
-2.16.2
+Reviewed-by: Rob Herring <robh@kernel.org>
