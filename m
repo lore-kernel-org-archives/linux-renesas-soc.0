@@ -1,131 +1,70 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:42257 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754168AbeEWIwv (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 May 2018 04:52:51 -0400
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Hoan Tran <hotran@apm.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH] gpio: dwapb: Rework support for 1 interrupt per port A GPIO
-Date: Wed, 23 May 2018 09:52:44 +0100
-Message-Id: <1527065564-9127-1-git-send-email-phil.edworthy@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20180529161248.fphjnceozoyxqy7v@verge.net.au>
+References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+ <1527171551-21979-2-git-send-email-gilad@benyossef.com> <20180529161248.fphjnceozoyxqy7v@verge.net.au>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+Date: Thu, 31 May 2018 14:51:22 +0300
+Message-ID: <CAOtvUMfoyuaGac29WUYqvfRr1S7Fof3FgMZo_3K7EaozqbeT6Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] crypto: ccree: correct host regs offset
+To: Simon Horman <horms@verge.net.au>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>, stable@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Treat DT and ACPI the same as much as possible. Note that we can't use
-platform_get_irq() to get the DT interrupts as they are in the port
-sub-node and hence do not have an associated platform device.
+On Tue, May 29, 2018 at 7:12 PM, Simon Horman <horms@verge.net.au> wrote:
+> On Thu, May 24, 2018 at 03:19:06PM +0100, Gilad Ben-Yossef wrote:
+>> The product signature and HW revision register have different offset on the
+>> older HW revisions.
+>> This fixes the problem of the driver failing sanity check on silicon
+>> despite working on the FPGA emulation systems.
+>>
+>> Fixes: 27b3b22dd98c ("crypto: ccree - add support for older HW revs")
+>
+> Did the above introduce a regression that is fixed by this patch
+> or did it add a feature that only works with this patch?
+>
 
-This also fixes a problem introduced with error checking when calling
-platform_get_irq().
+Sort of in between - the first patch made more devices work but
+unreliability (it will sometime work, sometime doesn't).
+This one make it work reliably.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
- drivers/gpio/gpio-dwapb.c | 53 ++++++++++++++++++++---------------------------
- 1 file changed, 22 insertions(+), 31 deletions(-)
+> In the case of the latter I would drop the Fixes tag,
+> but I don't feel strongly about it.
+>
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+>
+> Minor not below not withstanding,
+>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 7dcd06b..15b4154 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -444,7 +444,7 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
- 		int i;
- 
- 		for (i = 0; i < pp->ngpio; i++) {
--			if (pp->irq[i])
-+			if (pp->irq[i] >= 0)
- 				irq_set_chained_handler_and_data(pp->irq[i],
- 						dwapb_irq_handler, gpio);
- 		}
-@@ -562,7 +562,7 @@ dwapb_gpio_get_pdata(struct device *dev)
- 	struct dwapb_platform_data *pdata;
- 	struct dwapb_port_property *pp;
- 	int nports;
--	int i;
-+	int i, j;
- 
- 	nports = device_get_child_node_count(dev);
- 	if (nports == 0)
-@@ -580,6 +580,8 @@ dwapb_gpio_get_pdata(struct device *dev)
- 
- 	i = 0;
- 	device_for_each_child_node(dev, fwnode)  {
-+		struct device_node *np = NULL;
-+
- 		pp = &pdata->properties[i++];
- 		pp->fwnode = fwnode;
- 
-@@ -599,46 +601,35 @@ dwapb_gpio_get_pdata(struct device *dev)
- 			pp->ngpio = 32;
- 		}
- 
-+		pp->irq_shared	= false;
-+		pp->gpio_base	= -1;
-+
- 		/*
- 		 * Only port A can provide interrupts in all configurations of
- 		 * the IP.
- 		 */
--		if (dev->of_node && pp->idx == 0 &&
--			fwnode_property_read_bool(fwnode,
--						  "interrupt-controller")) {
--			struct device_node *np = to_of_node(fwnode);
--			unsigned int j;
--
--			/*
--			 * The IP has configuration options to allow a single
--			 * combined interrupt or one per gpio. If one per gpio,
--			 * some might not be used.
--			 */
--			for (j = 0; j < pp->ngpio; j++) {
--				int irq = of_irq_get(np, j);
--				if (irq < 0)
--					continue;
--
--				pp->irq[j] = irq;
--				pp->has_irq = true;
--			}
-+		if (pp->idx != 0)
-+			continue;
- 
--			if (!pp->has_irq)
--				dev_warn(dev, "no irq for port%d\n", pp->idx);
-+		if (dev->of_node && fwnode_property_read_bool(fwnode,
-+						  "interrupt-controller")) {
-+			np = to_of_node(fwnode);
- 		}
- 
--		if (has_acpi_companion(dev) && pp->idx == 0) {
--			unsigned int j;
-+		for (j = 0; j < pp->ngpio; j++) {
-+			pp->irq[j] = -ENXIO;
- 
--			for (j = 0; j < pp->ngpio; j++) {
-+			if (np)
-+				pp->irq[j] = of_irq_get(np, j);
-+			else if (has_acpi_companion(dev))
- 				pp->irq[j] = platform_get_irq(to_platform_device(dev), j);
--				if (pp->irq[j])
--					pp->has_irq = true;
--			}
-+
-+			if (pp->irq[j] >= 0)
-+				pp->has_irq = true;
- 		}
- 
--		pp->irq_shared	= false;
--		pp->gpio_base	= -1;
-+		if (!pp->has_irq)
-+			dev_warn(dev, "no irq for port%d\n", pp->idx);
- 	}
- 
- 	return pdata;
+Thank you for the review and help :-)
+
+Gilad
+
 -- 
-2.7.4
+Gilad Ben-Yossef
+Chief Coffee Drinker
+
+"If you take a class in large-scale robotics, can you end up in a
+situation where the homework eats your dog?"
+ -- Jean-Baptiste Queru
