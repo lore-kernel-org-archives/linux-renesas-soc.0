@@ -1,84 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:49254 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755486AbeF2OZW (ORCPT
+Received: from sauhun.de ([88.99.104.3]:47266 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750913AbeFAIHc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Jun 2018 10:25:22 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-sh@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/4] serial: sh-sci: Stop using deprecated dmaengine_terminate_all()
-Date: Fri, 29 Jun 2018 16:25:11 +0200
-Message-Id: <20180629142513.20743-6-geert+renesas@glider.be>
-In-Reply-To: <20180629142513.20743-1-geert+renesas@glider.be>
-References: <20180629142513.20743-1-geert+renesas@glider.be>
+        Fri, 1 Jun 2018 04:07:32 -0400
+Date: Fri, 1 Jun 2018 10:07:30 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH] mmc: renesas_sdhi: fix WP detection
+Message-ID: <20180601080730.h3zjnnaov7ygpsue@ninjato>
+References: <20180305204842.25391-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cysqc67v7jog72hl"
+Content-Disposition: inline
+In-Reply-To: <20180305204842.25391-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-As of commit b36f09c3c441a6e5 ("dmaengine: Add transfer termination
-synchronization support"), dmaengine_terminate_all() is deprecated.
 
-Replace calls to dmaengine_terminate_all() in DMA release code by calls
-to dmaengine_terminate_sync(), as the latter waits until all running
-completion callbacks have finished.
+--cysqc67v7jog72hl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Replace calls to dmaengine_terminate_all() in DMA failure paths by calls
-to dmaengine_terminate_async(), as these are usually done in atomic
-context.
+On Mon, Mar 05, 2018 at 09:48:42PM +0100, Wolfram Sang wrote:
+> Commit "mmc: renesas_sdhi: use MMC_CAP2_NO_WRITE_PROTECT instead of
+> TMIO own flag" activated MMC_CAP2_NO_WRITE_PROTECT for Renesas SDHI
+> which incorrectly disabled WP altogether instead of only disabling the
+> internal mechanism. Since the whole WP handling has been reworked, we
+> can simply disable this capability to re-enable WP GPIOs.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/tty/serial/sh-sci.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Ulf, it seems this patch is also not proper yet, we still have
+regressions. I am working on it right now and hope to have a fix ASAP. I
+know it is super-last-minute, but I hope for an easy to parse two-liner
+which we maybe can still have in 4.17.
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 898c1034cad23a88..061660ccf9442d02 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1613,7 +1613,7 @@ dev_dbg_dma(port->dev, "%s\n", __func__);
- 	s->chan_rx_saved = s->chan_rx = NULL;
- 	s->cookie_rx[0] = s->cookie_rx[1] = -EINVAL;
- WARN(!chan, "RX DMA channel already released\n");
--	dmaengine_terminate_all(chan);
-+	dmaengine_terminate_sync(chan);
- 	dma_free_coherent(chan->device->dev, s->buf_len_rx * 2, s->rx_buf[0],
- 			  sg_dma_address(&s->sg_rx[0]));
- 	dma_release_channel(chan);
-@@ -1708,7 +1708,7 @@ dev_dbg_dma(port->dev, "%s\n", __func__);
- 	s->chan_tx_saved = s->chan_tx = NULL;
- 	s->cookie_tx = -EINVAL;
- WARN(!chan, "TX DMA channel already released\n");
--	dmaengine_terminate_all(chan);
-+	dmaengine_terminate_sync(chan);
- 	dma_unmap_single(chan->device->dev, s->tx_dma_addr, UART_XMIT_SIZE,
- 			 DMA_TO_DEVICE);
- 	dma_release_channel(chan);
-@@ -1747,7 +1747,7 @@ dev_dbg_dma(s->port.dev, "  %s\n", __func__);
- 
- fail:
- 	if (i)
--		dmaengine_terminate_all(chan);
-+		dmaengine_terminate_async(chan);
- 	// FIXME Not needed?
- 	for (i = 0; i < 2; i++)
- 		s->cookie_rx[i] = -EINVAL;
-@@ -1877,9 +1877,9 @@ dev_dbg_dma(port->dev, "  %s active %d\n", __func__, active);
- 
- 	/* Handle incomplete DMA receive */
- dev_dbg_dma(port->dev, "  %s:%u dmaengine_terminate_all()\n", __func__, __LINE__);
--	dmaengine_terminate_all(s->chan_rx);
-+	dmaengine_terminate_async(s->chan_rx);
- 	// FIXME More data may have been transfered in between
--	// FIXME dmaengine_tx_status() and dmaengine_terminate_all()
-+	// FIXME dmaengine_tx_status() and dmaengine_terminate_async()
- 	// FIXME Call dmaengine_pause() first
- dev_dbg_dma(port->dev, "  %s:%u terminated\n", __func__, __LINE__);
- 	read = sg_dma_len(&s->sg_rx[active]) - state.residue;
--- 
-2.17.1
+Just so you know already...
+
+
+--cysqc67v7jog72hl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsQ/r4ACgkQFA3kzBSg
+KbYcdA//QOliNlBFJvDptbUazAd+q/7WsG+NE4p8+x62lo5co0gw7DxlWUdh9XvF
+7PURnNv1b+Hqx0kSzQ8/SFmUcD440Sh+Ig/IMe/fe4+VON6ifP0TA+z/NbG58eLx
+NxvXqjwnF8vPuK/vfSXjqRnHIaKDcZkaNUacFrviv+OElOx4ajM7oQ+uDOKA53WO
+6SXtz5oVbmMWl6SvMrmLIBfg7afnWKei9yQ9pCijWRwYaGRCfyR849jMmVaWlsGT
+mb3voa1CBirpmFdgoZBvT7tzHCfPYGIhzr5ox534fnKUbvDF1tY6LnIek/6XUh/m
+5TB9zzEa0Su3e/DIbCtIVA5TMOOXXuN7t7FswclB6KQ4GPh6JY9sJDx9W6Smk7f4
+eLRrjP80pvMndbg/iuQR0rGViwkzV4PaWJe6N9Jrz+b5HrimA07hPOW/27HbyD6m
+gdp0pBmioBB9bwEb465hVwgw+S3OZPGBRfpKRiPzbJIEfiaQMoo/2wmhe5UusidK
+63FF/iJVV5i2N659UNapFwjAXH7BLO/UViWJDSWxNdwtyAGctAhF9BG2951yh45U
+oRmRVSzcehPiy53fbLzcu9Cst+CaBERlZ6X8hPAWzKndNnouoT8f/bF7b+Nl8+/r
+SB1pgjzuhaoma28Z7mV7SP3I60HhE1c+YjfLgK4z6sOJ1J83ycY=
+=sb0g
+-----END PGP SIGNATURE-----
+
+--cysqc67v7jog72hl--
