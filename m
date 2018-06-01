@@ -1,39 +1,141 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52103 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751769AbeFDKel (ORCPT
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:35715 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750732AbeFAUou (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Jun 2018 06:34:41 -0400
-Date: Mon, 4 Jun 2018 12:34:22 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+        Fri, 1 Jun 2018 16:44:50 -0400
+Received: by mail-lf0-f67.google.com with SMTP id y72-v6so16628920lfd.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 01 Jun 2018 13:44:49 -0700 (PDT)
+Subject: [PATCH 1/3] arm64: dts: renesas: r8a77980: add GPIO support
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/3] arm64: dts: renesas: r8a77980: add GPIO support
-Message-ID: <20180604103422.nqz5zkh2ne7apotb@verge.net.au>
 References: <4acc208e-c593-1e8a-00ca-fc9a5574074e@cogentembedded.com>
- <3c195d53-be0f-ad15-92e6-8ba43b14f076@cogentembedded.com>
+Message-ID: <3c195d53-be0f-ad15-92e6-8ba43b14f076@cogentembedded.com>
+Date: Fri, 1 Jun 2018 23:44:46 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3c195d53-be0f-ad15-92e6-8ba43b14f076@cogentembedded.com>
+In-Reply-To: <4acc208e-c593-1e8a-00ca-fc9a5574074e@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jun 01, 2018 at 11:44:46PM +0300, Sergei Shtylyov wrote:
-> Describe all 6 GPIO controllers in the R8A77980 device tree.
-> 
-> Based on the original (and large) patch by Vladimir Barinov.
-> 
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Describe all 6 GPIO controllers in the R8A77980 device tree.
 
-This looks fine but I will wait to see if there are other reviews before
-applying.
+Based on the original (and large) patch by Vladimir Barinov.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+---
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi |   90 ++++++++++++++++++++++++++++++
+ 1 file changed, 90 insertions(+)
+
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -118,6 +118,96 @@
+ 		#size-cells = <2>;
+ 		ranges;
+ 
++		gpio0: gpio@e6050000 {
++			compatible = "renesas,gpio-r8a77980",
++				     "renesas,rcar-gen3-gpio";
++			reg = <0 0xe6050000 0 0x50>;
++			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 0 22>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 912>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 912>;
++		};
++
++		gpio1: gpio@e6051000 {
++			compatible = "renesas,gpio-r8a77980",
++				     "renesas,rcar-gen3-gpio";
++			reg = <0 0xe6051000 0 0x50>;
++			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 32 28>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 911>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 911>;
++		};
++
++		gpio2: gpio@e6052000 {
++			compatible = "renesas,gpio-r8a77980",
++				     "renesas,rcar-gen3-gpio";
++			reg = <0 0xe6052000 0 0x50>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 64 30>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 910>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 910>;
++		};
++
++		gpio3: gpio@e6053000 {
++			compatible = "renesas,gpio-r8a77980",
++				     "renesas,rcar-gen3-gpio";
++			reg = <0 0xe6053000 0 0x50>;
++			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 96 17>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 909>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 909>;
++		};
++
++		gpio4: gpio@e6054000 {
++			compatible = "renesas,gpio-r8a77980",
++				     "renesas,rcar-gen3-gpio";
++			reg = <0 0xe6054000 0 0x50>;
++			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 128 25>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 908>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 908>;
++		};
++
++		gpio5: gpio@e6055000 {
++			compatible = "renesas,gpio-r8a77980",
++				     "renesas,rcar-gen3-gpio";
++			reg = <0 0xe6055000 0 0x50>;
++			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 160 15>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 907>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 907>;
++		};
++
+ 		pfc: pin-controller@e6060000 {
+ 			compatible = "renesas,pfc-r8a77980";
+ 			reg = <0 0xe6060000 0 0x50c>;
