@@ -1,8 +1,20 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Sat, 2 Jun 2018 09:12:45 -0400
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Gilad Ben-Yossef <gilad@benyossef.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:33392 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750796AbeFAIM0 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 1 Jun 2018 04:12:26 -0400
+MIME-Version: 1.0
+In-Reply-To: <CAOtvUMeBCH+23c3FDWncMwPPe5N=7yjRKzhyLmFXrYazgGbcJw@mail.gmail.com>
+References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+ <1527171551-21979-6-git-send-email-gilad@benyossef.com> <20180529161936.prhp4oikzamr6u3n@verge.net.au>
+ <CAOtvUMeBCH+23c3FDWncMwPPe5N=7yjRKzhyLmFXrYazgGbcJw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 1 Jun 2018 10:12:24 +0200
+Message-ID: <CAMuHMdUX874g6pAz-Ze-yA3S+6aOhzUkfGN9wmQUhy-y0f7dMw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] arm64: dts: renesas: r8a7795: add ccree binding
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -21,85 +33,49 @@ Cc: Gilad Ben-Yossef <gilad@benyossef.com>,
         Linux kernel mailing list <linux-kernel@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
         Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Subject: Re: [PATCH v2 5/5] arm64: dts: renesas: r8a7795: add ccree binding
-Message-ID: <20180602131241.5cl4hkbxydvcy6mu@verge.net.au>
-References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
- <1527171551-21979-6-git-send-email-gilad@benyossef.com>
- <20180529161936.prhp4oikzamr6u3n@verge.net.au>
- <CAOtvUMeBCH+23c3FDWncMwPPe5N=7yjRKzhyLmFXrYazgGbcJw@mail.gmail.com>
- <CAMuHMdUX874g6pAz-Ze-yA3S+6aOhzUkfGN9wmQUhy-y0f7dMw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUX874g6pAz-Ze-yA3S+6aOhzUkfGN9wmQUhy-y0f7dMw@mail.gmail.com>
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jun 01, 2018 at 10:12:24AM +0200, Geert Uytterhoeven wrote:
-> Hi Gilad,
-> 
-> On Thu, May 31, 2018 at 1:55 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
-> > On Tue, May 29, 2018 at 7:19 PM, Simon Horman <horms@verge.net.au> wrote:
-> >> On Thu, May 24, 2018 at 03:19:10PM +0100, Gilad Ben-Yossef wrote:
-> >>> Add bindings for CryptoCell instance in the SoC.
-> >>>
-> >>> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
-> >>
-> >> In so far as I can review the details of this (which is not much) this
-> >> looks fine to me. I am, however, a little unclear in when it should be
-> >> accepted.
-> >
-> > Since Herbert Xu ACKed the driver changes, I would say the only gating
-> > commit is Geert's CR clock patch.
-> 
-> These are queued for v4.19.
-> 
-> > If that one is in, than I would say this one should go in as well.
-> 
-> As the device node now has a power-domains property, the genpd code will
-> try to attach it to the CPG/MSSR PM Domain, which is a clock domain.
-> In the absence of the clock patch, the device's module clock cannot be
-> found, and dev_pm_domain_attach() and thus platform_drv_probe() will fail,
-> before calling the device driver's .probe() function.
-> 
-> So there is no longer a dependency on the clock patch, and the DT patch can
-> go in in parallel (although I prefer its subject to be changed
-> s/binding/device device/).
+Hi Gilad,
 
-Thanks, I have applied the following (but may not push until next week).
+On Thu, May 31, 2018 at 1:55 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> On Tue, May 29, 2018 at 7:19 PM, Simon Horman <horms@verge.net.au> wrote:
+>> On Thu, May 24, 2018 at 03:19:10PM +0100, Gilad Ben-Yossef wrote:
+>>> Add bindings for CryptoCell instance in the SoC.
+>>>
+>>> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+>>
+>> In so far as I can review the details of this (which is not much) this
+>> looks fine to me. I am, however, a little unclear in when it should be
+>> accepted.
+>
+> Since Herbert Xu ACKed the driver changes, I would say the only gating
+> commit is Geert's CR clock patch.
 
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-Subject: [PATCH] arm64: dts: renesas: r8a7795: add ccree to device tree
+These are queued for v4.19.
 
-Add bindings for CryptoCell instance in the SoC.
+> If that one is in, than I would say this one should go in as well.
 
-Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+As the device node now has a power-domains property, the genpd code will
+try to attach it to the CPG/MSSR PM Domain, which is a clock domain.
+In the absence of the clock patch, the device's module clock cannot be
+found, and dev_pm_domain_attach() and thus platform_drv_probe() will fail,
+before calling the device driver's .probe() function.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index d842940b2f43..3ac75dbf2d93 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -528,6 +528,15 @@
- 			status = "disabled";
- 		};
- 
-+		arm_cc630p: crypto@e6601000 {
-+			compatible = "arm,cryptocell-630p-ree";
-+			interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
-+			reg = <0x0 0xe6601000 0 0x1000>;
-+			clocks = <&cpg CPG_MOD 229>;
-+			resets = <&cpg 229>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+		};
-+
- 		i2c3: i2c@e66d0000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
+So there is no longer a dependency on the clock patch, and the DT patch can
+go in in parallel (although I prefer its subject to be changed
+s/binding/device device/).
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
