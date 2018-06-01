@@ -1,67 +1,61 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
-        <ville.syrjala@linux.intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        dri-devel@lists.freedesktop.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Sinclair Yeh <syeh@vmware.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v3 0/2] drm: Add generic colorkey plane properties
-Date: Mon,  4 Jun 2018 01:00:57 +0300
-Message-Id: <20180603220059.17670-1-digetx@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from xavier.telenet-ops.be ([195.130.132.52]:48900 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751597AbeFAJ3H (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 1 Jun 2018 05:29:07 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/4] serial: sh-sci: Stop using printk format %pCr
+Date: Fri,  1 Jun 2018 11:28:21 +0200
+Message-Id: <1527845302-12159-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
+References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
+called in atomic context.
 
-In this version I've reduced color keying modes and properties to a bare
-minimum because considering several modes and properties at once might take
-quite a lot of effort due to a variety of HW capabilities. This allows us to
-start easy with the generic colorkey properties support.
+Replace it by open-coding the operation.  This is safe here, as the code
+runs in task context.
 
-For the starter let's implement probably the most common (and simple) color
-keying mode - the "green screen" (or "chroma key") mode. More advanced modes
-and features could be implemented later on by as needed basis.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/tty/serial/sh-sci.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Following Ville's Syrjälä review comments to v2, the color key value is now
-given in ARGB16161616 format. Drivers have to convert this 16bpc format into
-internal color key value representation themselves. This works well for cases
-where conversion is done to a non-planar integer formats, but I'm not sure how
-drivers are supposed to cope with cases where conversion involves churning with
-fixed point math / floating point representation. Comments are welcome.
-
-v2: https://lists.freedesktop.org/archives/dri-devel/2018-May/178408.html
-v1: https://lists.freedesktop.org/archives/dri-devel/2017-December/160510.html
-
-Dmitry Osipenko (1):
-  drm/tegra: plane: Implement generic colorkey property for older
-    Tegra's
-
-Laurent Pinchart (1):
-  drm: Add generic colorkey properties for DRM planes
-
- drivers/gpu/drm/drm_atomic.c  |  12 ++++
- drivers/gpu/drm/drm_blend.c   |  99 +++++++++++++++++++++++++++++++++
- drivers/gpu/drm/tegra/dc.c    |  25 +++++++++
- drivers/gpu/drm/tegra/dc.h    |   7 +++
- drivers/gpu/drm/tegra/plane.c | 102 ++++++++++++++++++++++++++++++++++
- include/drm/drm_blend.h       |   3 +
- include/drm/drm_plane.h       |  53 ++++++++++++++++++
- 7 files changed, 301 insertions(+)
-
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index b46b146524ce7495..c181eb37f98509e6 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -2724,8 +2724,8 @@ static int sci_init_clocks(struct sci_port *sci_port, struct device *dev)
+ 			dev_dbg(dev, "failed to get %s (%ld)\n", clk_names[i],
+ 				PTR_ERR(clk));
+ 		else
+-			dev_dbg(dev, "clk %s is %pC rate %pCr\n", clk_names[i],
+-				clk, clk);
++			dev_dbg(dev, "clk %s is %pC rate %lu\n", clk_names[i],
++				clk, clk_get_rate(clk));
+ 		sci_port->clks[i] = IS_ERR(clk) ? NULL : clk;
+ 	}
+ 	return 0;
 -- 
-2.17.0
+2.7.4
