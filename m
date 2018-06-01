@@ -1,21 +1,30 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:58364 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751012AbeFALrm (ORCPT
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:46873 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750790AbeFALEF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Jun 2018 07:47:42 -0400
-Date: Fri, 1 Jun 2018 13:47:38 +0200
-From: Petr Mladek <pmladek@suse.com>
+        Fri, 1 Jun 2018 07:04:05 -0400
+MIME-Version: 1.0
+In-Reply-To: <CA+55aFxHHSRnDbbNGq6SwNAwEt0EhX15n_pNqon3MzGYJgMJmA@mail.gmail.com>
+References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be> <CA+55aFxHHSRnDbbNGq6SwNAwEt0EhX15n_pNqon3MzGYJgMJmA@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 1 Jun 2018 14:04:03 +0300
+Message-ID: <CAHp75VeCmeBkUfnmx2F-czHCVVDm32WiGzvih8xozPEdv8P_Hw@mail.gmail.com>
+Subject: Re: [PATCH 0/4] lib/vsprintf: Remove atomic-unsafe support for printk
+ format %pCr
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        baijiaju1990@gmail.com, Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>,
         Eric Anholt <eric@anholt.net>,
         Stefan Wahren <stefan.wahren@i2se.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
         Steven Rostedt <rostedt@goodmis.org>,
         "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         linux-clk@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
@@ -23,36 +32,31 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/4] lib/vsprintf: Remove atomic-unsafe support for
- printk format %pCr
-Message-ID: <20180601114738.kdoggkha2yosjgbv@pathway.suse.cz>
-References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
- <CA+55aFxHHSRnDbbNGq6SwNAwEt0EhX15n_pNqon3MzGYJgMJmA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFxHHSRnDbbNGq6SwNAwEt0EhX15n_pNqon3MzGYJgMJmA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri 2018-06-01 06:00:47, Linus Torvalds wrote:
+On Fri, Jun 1, 2018 at 2:00 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 > On Fri, Jun 1, 2018 at 4:29 AM Geert Uytterhoeven
 > <geert+renesas@glider.be> wrote:
-> >
-> > This patch series:
-> >   - Changes all existing users of "%pCr" to print the result of
-> >     clk_get_rate() directly, which is safe as they all do this in task
-> >     context only,
-> >   - Removes support for the "%pCr" printk format.
-> 
+>>
+>> This patch series:
+>>   - Changes all existing users of "%pCr" to print the result of
+>>     clk_get_rate() directly, which is safe as they all do this in task
+>>     context only,
+>>   - Removes support for the "%pCr" printk format.
+>
 > Looks good to me.
-> 
+>
 > What tree will this go through? The normal printk one? Just checking
 > that this doesn't end up falling through the cracks because nobody
 > knows who would take it...
 
-I will take it via printk.git. There already is bunch of vsprintf
-changes for-4.18.
+We discussed few month before with Petr that he would take care of the
+patches against vsprintf.c.
+I think this is the case here.
 
-Best Regards,
-Petr
+-- 
+With Best Regards,
+Andy Shevchenko
