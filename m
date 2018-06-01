@@ -1,126 +1,217 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934258AbeFYOEb (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:04:31 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 27/29] arm64: dts: renesas: r8a77980: add FCPVD/VSPD/DU/LVDS support
-Date: Mon, 25 Jun 2018 16:03:22 +0200
-Message-Id: <a334e781e01afeb97634480ec0d9819287b79a68.1529933747.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
-References: <cover.1529933747.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <CAMMfpEwnB26q+JzEfwby409XkUPWpNZAD8FhRWJfjW=0naY+pg@mail.gmail.com>
+References: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1527154169-32380-2-git-send-email-michel.pollet@bp.renesas.com>
+ <CAMuHMdVzN0Cbc9+MJqC4EzVgD3bkDixkf10NA13ko87cMwvpLA@mail.gmail.com>
+ <CAMMfpEwpiZnZEykzxQJMTwE+cDnOD_qA3nUzyB96DGTWPzSJrw@mail.gmail.com>
+ <CAMuHMdXQWSVh37HqrvFWeLNHZ5zNh0=9+hV0_nsQ9mi1HQSCaQ@mail.gmail.com> <CAMMfpEwnB26q+JzEfwby409XkUPWpNZAD8FhRWJfjW=0naY+pg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 1 Jun 2018 10:18:35 +0200
+Message-ID: <CAMuHMdUa4UFOsMb1z9aBdCOW1YmrnLOQ866TCOCfmvEu3H3Dxg@mail.gmail.com>
+Subject: Re: [PATCH v7 1/5] dt-bindings: Add the r9a06g032-sysctrl.h file
+To: M P <buserror@gmail.com>
+Cc: Michel Pollet <michel.pollet@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hi Michel,
 
-Describe the interconnected FCPVD0, VSPD0, DU, and LVDS0 devices in the
-R8A77980 device tree...
+On Thu, May 31, 2018 at 12:01 PM, M P <buserror@gmail.com> wrote:
+> On Thu, 31 May 2018 at 10:32, Geert Uytterhoeven <geert@linux-m68k.org> w=
+rote:
+>> On Thu, May 31, 2018 at 11:11 AM, M P <buserror@gmail.com> wrote:
+>> > On Fri, 25 May 2018 at 11:31, Geert Uytterhoeven <geert@linux-m68k.org=
+>
+>> > wrote:
+>> >> On Thu, May 24, 2018 at 11:28 AM, Michel Pollet
+>> >> <michel.pollet@bp.renesas.com> wrote:
+>> >> > This adds the constants necessary to use the renesas,r9a06g032-sysc=
+trl
+>> > node.
+>>
+>> >> > @@ -0,0 +1,187 @@
+>> >> > +/* SPDX-License-Identifier: GPL-2.0 */
+>> >> > +/*
+>> >> > + * R9A06G032 sysctrl IDs
+>> >> > + *
+>> >> > + * Copyright (C) 2018 Renesas Electronics Europe Limited
+>> >> > + *
+>> >> > + * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.c=
+om>
+>> >> > + * Derived from zx-reboot.c
+>> >> > + */
+>> >> > +
+>> >> > +#ifndef __DT_BINDINGS_R9A06G032_SYSCTRL_H__
+>> >> > +#define __DT_BINDINGS_R9A06G032_SYSCTRL_H__
+>> >> > +
+>> >> > +#define R9A06G032_CLKOUT                       0
+>> >> > +#define R9A06G032_CLK_PLL_USB                  1
+>> >> > +#define R9A06G032_CLK_48                       1 /* AKA CLK_PLL_US=
+B */
+>> >> > +#define R9A06G032_CLKOUT_D10                   2
+>> >> > +#define R9A06G032_CLKOUT_D16                   3
+>> >> > +#define R9A06G032_MSEBIS_CLK                   3 /* AKA CLKOUT_D16=
+ */
+>> >> > +#define R9A06G032_MSEBIM_CLK                   3 /* AKA CLKOUT_D16=
+ */
+>> >> > +#define R9A06G032_CLKOUT_D160                  4
+>> >> > +#define R9A06G032_CLKOUT_D1OR2                 5
+>> >> > +#define R9A06G032_CLK_DDRPHY_PLLCLK            5 /* AKA CLKOUT_D1O=
+R2 */
+>> >
+>> >> [...]
+>> >
+>> >> I have 3 comments:
+>> >
+>> >>    1. I had expected this list to match (both name- and order-wise)
+>> > Appendix
+>> >>       C ("Clock Tree Structure") in the RZ/N1[DSL] User=E2=80=99s Man=
+ual: System
+>> >>       Introduction, Multiplexing, Electrical and Mechanical Informati=
+on.
+>> >>       That would make it easier to review.
+>> >
+>> > Well, that document was made a *long* time after the internal document=
+ation
+>> > we used to generate the clock lists. There are a few things we had to =
+do:
+>> >
+>> > * Renumber peripherals. We decided a long time ago that u-boot and lin=
+ux
+>> > would stick to zero based peripherals, and not one based numbers. It's=
+ next
+>> > to impossible to keep mixing number based across software base, so we =
+use
+>> > UART0 while the hardware manual mentions UART1 -- It *is* documented
+>> > extensively with out SDK, and makes life using linux a lot easier. It'=
+s
+>> > across all our SDK, u-boot, webapps readmes, howtos etc.
+>> >
+>> > * Rename some peripherals. Plenty of peripherals names made little sen=
+se
+>> > and had zero consistency, in fact, many names were different depending=
+ on
+>> > the place they were used! -- "flashnand"+"nand_flash"+"FNAND" etc,
+>> > "QUADSPI"+"QSPI" etc etc so we also re-normalized the names to match l=
+inux
+>> > conventions.
+>> >
+>> > * Other internal reasons I can't document here
+>> >
+>> > Also, the value here are made up anyway -- so I've decided to sort the=
+m to
+>> > make sure any clock that has a parent is numbered *after* the parent..=
+.
+>>
+>> Well, all of that combines makes it very hard for us to review the list.
+>
+> I understand -- the previous format was a lot more readable, here I had t=
+o
+> work to make the table as small as I could, and quite a few bits of reada=
+bility
+> were lost in the process. It's already a huge file.
+>
+> I'm not sure if that would help, but here is the link to the old table
+> format I used
+> https://github.com/renesas-rz/rzn1_linux/blob/rzn1-stable/drivers/clk/rzn=
+1/rzn1-clkctrl-tables.h
+>
+> I had to throw that away to make up the new composite table that now cont=
+ains
+> what was in the device tree file before. However the names are the same.
+>
+> Perhaps I could change how I encode the register/bit pairs to use 8+8 bit=
+s to
+> make the hex constants more readable?
 
-Based on the original (and large) patch by Vladimir Barinov.
+Alternatively, you can use a macro to pack them, cfr. MOD_CLK_PACK()
+in renesas-cpg-mssr.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77980.dtsi | 77 +++++++++++++++++++++++++++++++
- 1 file changed, 77 insertions(+)
+>> >>    2. These definitions seems to be a mix of:
+>> >>         1. Internal core clocks,
+>> >>         2. Other core clocks,
+>> >>         3. Module clocks.
+>> >
+>> >>       The internal clocks do not need to be referenced from DT, so I =
+would
+>> >>       not make them part of the DT bindings.
+>> >
+>> > Why? I'm told that "Bindings aren't for linux" -- why can't I imagine
+>> > 'something' needing them? Why would I decide NOT to include them,
+>> > as they are there? I 'factored' a few of them to the same number when
+>>
+>> Just general safety w.r.t. unchangeable DT definitions: anything that is
+>> not listed here cannot be declared wrong later.
+>
+> Well, I need these #define *somewhere* as I use them in my driver. So wha=
+t
+> do you want me to do?
+> + Remove the header, move the constants into the driver?
+> + Use hard coded numbers in the DT and remove the header entirely?
+> + Duplicate the header, keep the full one with the driver, and only list
+> the CA7+UART0 one in the dt-binding and duplicate the ones I need as
+> I go along?
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-index 68cede26b01a..623ebe435417 100644
---- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -653,6 +653,83 @@
- 			resets = <&cpg 408>;
- 		};
- 
-+		vspd0: vsp@fea20000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfea20000 0 0x5000>;
-+			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 623>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 623>;
-+			renesas,fcp = <&fcpvd0>;
-+		};
-+
-+		fcpvd0: fcp@fea27000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea27000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 603>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 603>;
-+		};
-+
-+		du: display@feb00000 {
-+			compatible = "renesas,du-r8a77980",
-+				     "renesas,du-r8a77970";
-+			reg = <0 0xfeb00000 0 0x80000>;
-+			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 724>;
-+			clock-names = "du.0";
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 724>;
-+			vsps = <&vspd0>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					du_out_rgb: endpoint {
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					du_out_lvds0: endpoint {
-+						remote-endpoint = <&lvds0_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		lvds0: lvds-encoder@feb90000 {
-+			compatible = "renesas,r8a77980-lvds";
-+			reg = <0 0xfeb90000 0 0x14>;
-+			clocks = <&cpg CPG_MOD 727>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 727>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					lvds0_in: endpoint {
-+						remote-endpoint =
-+							<&du_out_lvds0>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					lvds0_out: endpoint {
-+					};
-+				};
-+			};
-+		};
-+
- 		prr: chipid@fff00044 {
- 			compatible = "renesas,prr";
- 			reg = <0 0xfff00044 0 4>;
--- 
-2.11.0
+None of these. You can just move the #defines that will never be needed
+from DT into the driver source file.
+
+Cfr. "Internal Core Clocks" in drivers/clk/renesas/r8a7795-cpg-mssr.c.
+
+>> > applicable.
+>>
+>> You're 100% sure they're the same?
+>
+> Yes, the script logic hasn't changed in 2 years, and we've been using tha=
+t
+> hierarchy extensively since.
+> Basically the logic is that if a clock doesn't have a gate and isn't a di=
+visor
+> of some sort, it's factored with it's parent clock... it used to be
+> done with a DT
+> alias of the same name.
+
+OK.
+
+>> > This is all done automatically BTW -- a script takes the original cloc=
+king
+>> > spreadsheet, and converts it into a table, correcting 'human input' as=
+ it
+>> > goes along.
+>>
+>> So the internal spreadsheet doesn't match the public documentation neith=
+er?
+>
+> Nope, as usual, people who wrote the documentation went their own way at
+> some point, and didn't backport any changes they made.
+
+Well, I guess we'll have to live with that...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
