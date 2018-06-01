@@ -1,53 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52588 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934074AbeFYOGm (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:53174 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751693AbeFAJ3K (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:06:42 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 10/15] ARM: shmobile: r8a7779: Stop powering down secondary CPUs during early boot
-Date: Mon, 25 Jun 2018 16:06:21 +0200
-Message-Id: <62f55ce683e3675aa83cc3e912f070aef1baeff8.1529934908.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1529934908.git.horms+renesas@verge.net.au>
-References: <cover.1529934908.git.horms+renesas@verge.net.au>
+        Fri, 1 Jun 2018 05:29:10 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4/4] lib/vsprintf: Remove atomic-unsafe support for %pCr
+Date: Fri,  1 Jun 2018 11:28:22 +0200
+Message-Id: <1527845302-12159-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
+References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+"%pCr" formats the current rate of a clock, and calls clk_get_rate().
+The latter obtains a mutex, hence it must not be called from atomic
+context.
 
-At .smp_prepare_cpus() time, CPUs 1-3 are still powered down:
-  - The bootloader doesn't enable CPUs 1-3,
-  - Non-boot CPUs are disabled by kexec before starting the new kernel.
+Remove support for this rarely-used format, as vsprintf() (and e.g.
+printk()) must be callable from any context.
 
-Hence there is no need to try to power them down again, as it will fail
-silently with -EIO anyway.
+Any remaining out-of-tree users will start seeing the clock's name
+printed instead of its rate.
 
+Reported-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Fixes: 900cca2944254edd ("lib/vsprintf: add %pC{,n,r} format specifiers for clocks")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-shmobile/smp-r8a7779.c | 5 -----
- 1 file changed, 5 deletions(-)
+ Documentation/core-api/printk-formats.rst | 3 +--
+ lib/vsprintf.c                            | 3 ---
+ 2 files changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/arch/arm/mach-shmobile/smp-r8a7779.c b/arch/arm/mach-shmobile/smp-r8a7779.c
-index c6951ee24588..ff1e6fc0b861 100644
---- a/arch/arm/mach-shmobile/smp-r8a7779.c
-+++ b/arch/arm/mach-shmobile/smp-r8a7779.c
-@@ -97,11 +97,6 @@ static void __init r8a7779_smp_prepare_cpus(unsigned int max_cpus)
- 	shmobile_smp_scu_prepare_cpus(R8A7779_SCU_BASE, max_cpus);
+diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
+index eb30efdd2e789616..25dc591cb1108790 100644
+--- a/Documentation/core-api/printk-formats.rst
++++ b/Documentation/core-api/printk-formats.rst
+@@ -419,11 +419,10 @@ struct clk
  
- 	r8a7779_pm_init();
+ 	%pC	pll1
+ 	%pCn	pll1
+-	%pCr	1560000000
+ 
+ For printing struct clk structures. %pC and %pCn print the name
+ (Common Clock Framework) or address (legacy clock framework) of the
+-structure; %pCr prints the current clock rate.
++structure.
+ 
+ Passed by reference.
+ 
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index 247a7e0bf24f6f74..a48aaa79d352313a 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -1469,9 +1469,6 @@ char *clock(char *buf, char *end, struct clk *clk, struct printf_spec spec,
+ 		return string(buf, end, NULL, spec);
+ 
+ 	switch (fmt[1]) {
+-	case 'r':
+-		return number(buf, end, clk_get_rate(clk), spec);
 -
--	/* power off secondary CPUs */
--	r8a7779_platform_cpu_kill(1);
--	r8a7779_platform_cpu_kill(2);
--	r8a7779_platform_cpu_kill(3);
- }
- 
- #ifdef CONFIG_HOTPLUG_CPU
+ 	case 'n':
+ 	default:
+ #ifdef CONFIG_COMMON_CLK
 -- 
-2.11.0
+2.7.4
