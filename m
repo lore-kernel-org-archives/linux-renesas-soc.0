@@ -1,51 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:35163 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750790AbeFALA7 (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:60296 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751464AbeFAJ3H (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Jun 2018 07:00:59 -0400
-MIME-Version: 1.0
-References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 1 Jun 2018 06:00:47 -0500
-Message-ID: <CA+55aFxHHSRnDbbNGq6SwNAwEt0EhX15n_pNqon3MzGYJgMJmA@mail.gmail.com>
-Subject: Re: [PATCH 0/4] lib/vsprintf: Remove atomic-unsafe support for printk
- format %pCr
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: baijiaju1990@gmail.com, Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        Fri, 1 Jun 2018 05:29:07 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>,
         Eric Anholt <eric@anholt.net>,
         Stefan Wahren <stefan.wahren@i2se.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
         Petr Mladek <pmladek@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Steven Rostedt <rostedt@goodmis.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-clk@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
-        linux-serial <linux-serial@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/4] lib/vsprintf: Remove atomic-unsafe support for printk format %pCr
+Date: Fri,  1 Jun 2018 11:28:18 +0200
+Message-Id: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jun 1, 2018 at 4:29 AM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->
-> This patch series:
->   - Changes all existing users of "%pCr" to print the result of
->     clk_get_rate() directly, which is safe as they all do this in task
->     context only,
->   - Removes support for the "%pCr" printk format.
+	Hi all,
 
-Looks good to me.
+"%pCr" formats the current rate of a clock, and calls clk_get_rate().
+The latter obtains a mutex, hence it must not be called from atomic
+context.  As vsprintf() (and e.g. printk()) must be callable from any
+context, it's better to remove support for this (rarely-used) format.
 
-What tree will this go through? The normal printk one? Just checking
-that this doesn't end up falling through the cracks because nobody
-knows who would take it...
+This patch series:
+  - Changes all existing users of "%pCr" to print the result of
+    clk_get_rate() directly, which is safe as they all do this in task
+    context only,
+  - Removes support for the "%pCr" printk format.
 
-               Linus
+Note that any remaining out-of-tree users will start seeing the clock's
+name printed instead of its rate.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (4):
+  clk: renesas: cpg-mssr: Stop using printk format %pCr
+  thermal: bcm2835: Stop using printk format %pCr
+  serial: sh-sci: Stop using printk format %pCr
+  lib/vsprintf: Remove atomic-unsafe support for %pCr
+
+ Documentation/core-api/printk-formats.rst  | 3 +--
+ drivers/clk/renesas/renesas-cpg-mssr.c     | 9 +++++----
+ drivers/thermal/broadcom/bcm2835_thermal.c | 4 ++--
+ drivers/tty/serial/sh-sci.c                | 4 ++--
+ lib/vsprintf.c                             | 3 ---
+ 5 files changed, 10 insertions(+), 13 deletions(-)
+
+-- 
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
