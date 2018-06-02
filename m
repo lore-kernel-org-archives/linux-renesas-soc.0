@@ -1,73 +1,151 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:45700 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751931AbeFDHjv (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39119 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751538AbeFBKMW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:39:51 -0400
-MIME-Version: 1.0
-In-Reply-To: <20180602101155.26375-6-marek.vasut+renesas@gmail.com>
-References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com> <20180602101155.26375-6-marek.vasut+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 4 Jun 2018 09:39:49 +0200
-Message-ID: <CAMuHMdV-o0_G76vR0i9nTnSowpzP3Wrt2rC7jVnoFSR3SdObYA@mail.gmail.com>
-Subject: Re: [PATCH v3 06/10] mfd: da9063: Add custom regmap for DA9063L
-To: Marek Vasut <marek.vasut@gmail.com>,
-        Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Sat, 2 Jun 2018 06:12:22 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Lee Jones <lee.jones@linaro.org>,
         Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v3 06/10] mfd: da9063: Add custom regmap for DA9063L
+Date: Sat,  2 Jun 2018 12:11:51 +0200
+Message-Id: <20180602101155.26375-6-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
+References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Marek, Steve,
+While the datasheet for DA9063L (2v1, 23-Mar-2017) lists the RTC register
+block, the DA9063L does not have an RTC. Add custom regmap for DA9063L to
+prevent access into that register block.
 
-On Sat, Jun 2, 2018 at 12:11 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
-> While the datasheet for DA9063L (2v1, 23-Mar-2017) lists the RTC register
-> block, the DA9063L does not have an RTC. Add custom regmap for DA9063L to
-> prevent access into that register block.
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+---
+V3: New patch
+---
+ drivers/mfd/da9063-i2c.c | 91 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 91 insertions(+)
 
-Thanks for your patch!
-
-> --- a/drivers/mfd/da9063-i2c.c
-> +++ b/drivers/mfd/da9063-i2c.c
-> @@ -254,6 +341,10 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
-
-Note that the line above doesn't check da9063->type, but da9063->variant_code...
-
->                 da9063_regmap_config.rd_table = &da9063_ad_readable_table;
->                 da9063_regmap_config.wr_table = &da9063_ad_writeable_table;
->                 da9063_regmap_config.volatile_table = &da9063_ad_volatile_table;
-> +       } else if (da9063->type == PMIC_TYPE_DA9063L) {
-
-... so this may be slightly confusing.
-
-> +               da9063_regmap_config.rd_table = &da9063l_bb_readable_table;
-> +               da9063_regmap_config.wr_table = &da9063l_bb_writeable_table;
-> +               da9063_regmap_config.volatile_table = &da9063l_bb_volatile_table;
->         } else {
->                 da9063_regmap_config.rd_table = &da9063_bb_readable_table;
->                 da9063_regmap_config.wr_table = &da9063_bb_writeable_table;
-
-However, da9063->variant_code doesn't seem to have been filled in at this
-point yet (the call to da9063_device_init() doing so is below, at the end
-of the probe function!), so commit 9cb42e2a8ed06e91 ("mfd: da9063: Add
-support for AD silicon variant") never actually handled the AD silicon variant
-correctly? Or am I missing something?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
+index 048ce55ebc5b..f0d92a37df6b 100644
+--- a/drivers/mfd/da9063-i2c.c
++++ b/drivers/mfd/da9063-i2c.c
+@@ -208,6 +208,93 @@ static const struct regmap_access_table da9063_bb_volatile_table = {
+ 	.n_yes_ranges = ARRAY_SIZE(da9063_bb_volatile_ranges),
+ };
+ 
++static const struct regmap_range da9063l_bb_readable_ranges[] = {
++	{
++		.range_min = DA9063_REG_PAGE_CON,
++		.range_max = DA9063_REG_MON_A10_RES,
++	}, {
++		.range_min = DA9063_REG_SEQ,
++		.range_max = DA9063_REG_ID_32_31,
++	}, {
++		.range_min = DA9063_REG_SEQ_A,
++		.range_max = DA9063_REG_AUTO3_LOW,
++	}, {
++		.range_min = DA9063_REG_T_OFFSET,
++		.range_max = DA9063_BB_REG_GP_ID_19,
++	}, {
++		.range_min = DA9063_REG_CHIP_ID,
++		.range_max = DA9063_REG_CHIP_VARIANT,
++	},
++};
++
++static const struct regmap_range da9063l_bb_writeable_ranges[] = {
++	{
++		.range_min = DA9063_REG_PAGE_CON,
++		.range_max = DA9063_REG_PAGE_CON,
++	}, {
++		.range_min = DA9063_REG_FAULT_LOG,
++		.range_max = DA9063_REG_VSYS_MON,
++	}, {
++		.range_min = DA9063_REG_SEQ,
++		.range_max = DA9063_REG_ID_32_31,
++	}, {
++		.range_min = DA9063_REG_SEQ_A,
++		.range_max = DA9063_REG_AUTO3_LOW,
++	}, {
++		.range_min = DA9063_REG_CONFIG_I,
++		.range_max = DA9063_BB_REG_MON_REG_4,
++	}, {
++		.range_min = DA9063_BB_REG_GP_ID_0,
++		.range_max = DA9063_BB_REG_GP_ID_19,
++	},
++};
++
++static const struct regmap_range da9063l_bb_volatile_ranges[] = {
++	{
++		.range_min = DA9063_REG_PAGE_CON,
++		.range_max = DA9063_REG_EVENT_D,
++	}, {
++		.range_min = DA9063_REG_CONTROL_A,
++		.range_max = DA9063_REG_CONTROL_B,
++	}, {
++		.range_min = DA9063_REG_CONTROL_E,
++		.range_max = DA9063_REG_CONTROL_F,
++	}, {
++		.range_min = DA9063_REG_BCORE2_CONT,
++		.range_max = DA9063_REG_LDO11_CONT,
++	}, {
++		.range_min = DA9063_REG_DVC_1,
++		.range_max = DA9063_REG_ADC_MAN,
++	}, {
++		.range_min = DA9063_REG_ADC_RES_L,
++		.range_max = DA9063_REG_MON_A10_RES,
++	}, {
++		.range_min = DA9063_REG_SEQ,
++		.range_max = DA9063_REG_SEQ,
++	}, {
++		.range_min = DA9063_REG_EN_32K,
++		.range_max = DA9063_REG_EN_32K,
++	}, {
++		.range_min = DA9063_BB_REG_MON_REG_5,
++		.range_max = DA9063_BB_REG_MON_REG_6,
++	},
++};
++
++static const struct regmap_access_table da9063l_bb_readable_table = {
++	.yes_ranges = da9063l_bb_readable_ranges,
++	.n_yes_ranges = ARRAY_SIZE(da9063l_bb_readable_ranges),
++};
++
++static const struct regmap_access_table da9063l_bb_writeable_table = {
++	.yes_ranges = da9063l_bb_writeable_ranges,
++	.n_yes_ranges = ARRAY_SIZE(da9063l_bb_writeable_ranges),
++};
++
++static const struct regmap_access_table da9063l_bb_volatile_table = {
++	.yes_ranges = da9063l_bb_volatile_ranges,
++	.n_yes_ranges = ARRAY_SIZE(da9063l_bb_volatile_ranges),
++};
++
+ static const struct regmap_range_cfg da9063_range_cfg[] = {
+ 	{
+ 		.range_min = DA9063_REG_PAGE_CON,
+@@ -254,6 +341,10 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
+ 		da9063_regmap_config.rd_table = &da9063_ad_readable_table;
+ 		da9063_regmap_config.wr_table = &da9063_ad_writeable_table;
+ 		da9063_regmap_config.volatile_table = &da9063_ad_volatile_table;
++	} else if (da9063->type == PMIC_TYPE_DA9063L) {
++		da9063_regmap_config.rd_table = &da9063l_bb_readable_table;
++		da9063_regmap_config.wr_table = &da9063l_bb_writeable_table;
++		da9063_regmap_config.volatile_table = &da9063l_bb_volatile_table;
+ 	} else {
+ 		da9063_regmap_config.rd_table = &da9063_bb_readable_table;
+ 		da9063_regmap_config.wr_table = &da9063_bb_writeable_table;
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.16.2
