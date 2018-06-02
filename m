@@ -1,41 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:39242 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751787AbeFDIu3 (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:41771 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751895AbeFBTi7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Jun 2018 04:50:29 -0400
+        Sat, 2 Jun 2018 15:38:59 -0400
+Received: by mail-lf0-f68.google.com with SMTP id d24-v6so19524126lfa.8
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 02 Jun 2018 12:38:59 -0700 (PDT)
+Subject: [PATCH 2/3] sh_eth: uninline sh_eth_soft_swap()
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Cc: linux-renesas-soc@vger.kernel.org
+References: <9027499a-0e19-7721-a17f-26e86885da3f@cogentembedded.com>
+Message-ID: <a1eb21c8-ab44-3022-b239-0b5c33691d3b@cogentembedded.com>
+Date: Sat, 2 Jun 2018 22:38:56 +0300
 MIME-Version: 1.0
-In-Reply-To: <a1eb21c8-ab44-3022-b239-0b5c33691d3b@cogentembedded.com>
-References: <9027499a-0e19-7721-a17f-26e86885da3f@cogentembedded.com> <a1eb21c8-ab44-3022-b239-0b5c33691d3b@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 4 Jun 2018 10:50:27 +0200
-Message-ID: <CAMuHMdWYSRin9OkTbbvABJkp++o8xkWkfWzq=jQXvKPeVV6h1Q@mail.gmail.com>
-Subject: Re: [PATCH 2/3] sh_eth: uninline sh_eth_soft_swap()
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: netdev <netdev@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <9027499a-0e19-7721-a17f-26e86885da3f@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, Jun 2, 2018 at 9:38 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> sh_eth_tsu_soft_swap() is called twice by the driver, remove *inline* and
-> move  that function  from the header to the driver itself to let gcc decide
-> whether to expand it inline or not...
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+sh_eth_tsu_soft_swap() is called twice by the driver, remove *inline* and
+move  that function  from the header to the driver itself to let gcc decide
+whether to expand it inline or not...
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Gr{oetje,eeting}s,
+---
+ drivers/net/ethernet/renesas/sh_eth.c |   11 +++++++++++
+ drivers/net/ethernet/renesas/sh_eth.h |   12 ------------
+ 2 files changed, 11 insertions(+), 12 deletions(-)
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
+===================================================================
+--- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
++++ net-next/drivers/net/ethernet/renesas/sh_eth.c
+@@ -460,6 +460,17 @@ static u32 sh_eth_tsu_read(struct sh_eth
+ 	return ioread32(mdp->tsu_addr + offset);
+ }
+ 
++static void sh_eth_soft_swap(char *src, int len)
++{
++#ifdef __LITTLE_ENDIAN
++	u32 *p = (u32 *)src;
++	u32 *maxp = p + ((len + sizeof(u32) - 1) / sizeof(u32));
++
++	for (; p < maxp; p++)
++		*p = swab32(*p);
++#endif
++}
++
+ static void sh_eth_select_mii(struct net_device *ndev)
+ {
+ 	struct sh_eth_private *mdp = netdev_priv(ndev);
+Index: net-next/drivers/net/ethernet/renesas/sh_eth.h
+===================================================================
+--- net-next.orig/drivers/net/ethernet/renesas/sh_eth.h
++++ net-next/drivers/net/ethernet/renesas/sh_eth.h
+@@ -560,18 +560,6 @@ struct sh_eth_private {
+ 	unsigned wol_enabled:1;
+ };
+ 
+-static inline void sh_eth_soft_swap(char *src, int len)
+-{
+-#ifdef __LITTLE_ENDIAN
+-	u32 *p = (u32 *)src;
+-	u32 *maxp;
+-	maxp = p + ((len + sizeof(u32) - 1) / sizeof(u32));
+-
+-	for (; p < maxp; p++)
+-		*p = swab32(*p);
+-#endif
+-}
+-
+ static inline void *sh_eth_tsu_get_offset(struct sh_eth_private *mdp,
+ 					  int enum_index)
+ {
