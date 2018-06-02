@@ -1,66 +1,104 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39723 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753106AbeFDM1C (ORCPT
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:34532 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751037AbeFBKMT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Jun 2018 08:27:02 -0400
-Received: by mail-wm0-f68.google.com with SMTP id p11-v6so13996778wmc.4
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Jun 2018 05:27:01 -0700 (PDT)
-Date: Mon, 4 Jun 2018 13:26:58 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Sat, 2 Jun 2018 06:12:19 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
         Mark Brown <broonie@kernel.org>,
         Steve Twiss <stwiss.opensource@diasemi.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 03/10] mfd: da9063: Rename PMIC_DA9063 to
- PMIC_CHIP_ID_DA9063
-Message-ID: <20180604122658.GC21163@dell>
+Subject: [PATCH v3 03/10] mfd: da9063: Rename PMIC_DA9063 to PMIC_CHIP_ID_DA9063
+Date: Sat,  2 Jun 2018 12:11:48 +0200
+Message-Id: <20180602101155.26375-3-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
 References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
- <20180602101155.26375-3-marek.vasut+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180602101155.26375-3-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, 02 Jun 2018, Marek Vasut wrote:
+The PMIC_DA9063 is a complete misnomer, it denotes the value of the
+DA9063 chip ID register, so rename it as such. It is also the value
+of chip ID register of DA9063L though, so drop the enum as all the
+DA9063 "models" share the same chip ID and thus the distinction will
+have to be made using DT or otherwise.
 
-> The PMIC_DA9063 is a complete misnomer, it denotes the value of the
-> DA9063 chip ID register, so rename it as such. It is also the value
-> of chip ID register of DA9063L though, so drop the enum as all the
-> DA9063 "models" share the same chip ID and thus the distinction will
-> have to be made using DT or otherwise.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> Acked-by: Mark Brown <broonie@kernel.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> V2: No change
-> V3: No change
-> ---
->  drivers/mfd/da9063-core.c            | 2 +-
->  drivers/mfd/da9063-i2c.c             | 2 +-
->  drivers/regulator/da9063-regulator.c | 2 +-
->  include/linux/mfd/da9063/core.h      | 4 +---
->  4 files changed, 4 insertions(+), 6 deletions(-)
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Acked-by: Mark Brown <broonie@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+V2: No change
+V3: No change
+---
+ drivers/mfd/da9063-core.c            | 2 +-
+ drivers/mfd/da9063-i2c.c             | 2 +-
+ drivers/regulator/da9063-regulator.c | 2 +-
+ include/linux/mfd/da9063/core.h      | 4 +---
+ 4 files changed, 4 insertions(+), 6 deletions(-)
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-
+diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
+index 8226ebd8b96d..fb122316c421 100644
+--- a/drivers/mfd/da9063-core.c
++++ b/drivers/mfd/da9063-core.c
+@@ -192,7 +192,7 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
+ 		dev_err(da9063->dev, "Cannot read chip model id.\n");
+ 		return -EIO;
+ 	}
+-	if (model != PMIC_DA9063) {
++	if (model != PMIC_CHIP_ID_DA9063) {
+ 		dev_err(da9063->dev, "Invalid chip model id: 0x%02x\n", model);
+ 		return -ENODEV;
+ 	}
+diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
+index 981805a2c521..7f84030c8d53 100644
+--- a/drivers/mfd/da9063-i2c.c
++++ b/drivers/mfd/da9063-i2c.c
+@@ -280,7 +280,7 @@ static int da9063_i2c_remove(struct i2c_client *i2c)
+ }
+ 
+ static const struct i2c_device_id da9063_i2c_id[] = {
+-	{"da9063", PMIC_DA9063},
++	{ "da9063", PMIC_CHIP_ID_DA9063 },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(i2c, da9063_i2c_id);
+diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
+index 6a8f9cd69f52..87c884ae0064 100644
+--- a/drivers/regulator/da9063-regulator.c
++++ b/drivers/regulator/da9063-regulator.c
+@@ -585,7 +585,7 @@ static struct da9063_dev_model regulators_models[] = {
+ 	{
+ 		.regulator_info = da9063_regulator_info,
+ 		.n_regulators = ARRAY_SIZE(da9063_regulator_info),
+-		.dev_model = PMIC_DA9063,
++		.dev_model = PMIC_CHIP_ID_DA9063,
+ 	},
+ 	{ }
+ };
+diff --git a/include/linux/mfd/da9063/core.h b/include/linux/mfd/da9063/core.h
+index f3ae65db4c86..664f650d0086 100644
+--- a/include/linux/mfd/da9063/core.h
++++ b/include/linux/mfd/da9063/core.h
+@@ -29,9 +29,7 @@
+ #define DA9063_DRVNAME_RTC		"da9063-rtc"
+ #define DA9063_DRVNAME_VIBRATION	"da9063-vibration"
+ 
+-enum da9063_models {
+-	PMIC_DA9063 = 0x61,
+-};
++#define PMIC_CHIP_ID_DA9063		0x61
+ 
+ enum da9063_variant_codes {
+ 	PMIC_DA9063_AD = 0x3,
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.16.2
