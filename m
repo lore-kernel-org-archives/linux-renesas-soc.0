@@ -1,150 +1,105 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
+Date: Sat, 2 Jun 2018 09:12:45 -0400
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Gilad Ben-Yossef <gilad@benyossef.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Frank Rowand <frank.rowand@sony.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Carlo Caione <carlo@endlessm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 2/3] arm: shmobile: Add the R9A06G032 SMP enabler driver
-Date: Thu, 14 Jun 2018 11:58:57 +0100
-Message-Id: <1528973943-28132-3-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1528973943-28132-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1528973943-28132-1-git-send-email-michel.pollet@bp.renesas.com>
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: Re: [PATCH v2 5/5] arm64: dts: renesas: r8a7795: add ccree binding
+Message-ID: <20180602131241.5cl4hkbxydvcy6mu@verge.net.au>
+References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+ <1527171551-21979-6-git-send-email-gilad@benyossef.com>
+ <20180529161936.prhp4oikzamr6u3n@verge.net.au>
+ <CAOtvUMeBCH+23c3FDWncMwPPe5N=7yjRKzhyLmFXrYazgGbcJw@mail.gmail.com>
+ <CAMuHMdUX874g6pAz-Ze-yA3S+6aOhzUkfGN9wmQUhy-y0f7dMw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUX874g6pAz-Ze-yA3S+6aOhzUkfGN9wmQUhy-y0f7dMw@mail.gmail.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas R9A06G032 second CA7 is parked in a ROM pen at boot time, it
-requires a special enable method to get it started.
+On Fri, Jun 01, 2018 at 10:12:24AM +0200, Geert Uytterhoeven wrote:
+> Hi Gilad,
+> 
+> On Thu, May 31, 2018 at 1:55 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> > On Tue, May 29, 2018 at 7:19 PM, Simon Horman <horms@verge.net.au> wrote:
+> >> On Thu, May 24, 2018 at 03:19:10PM +0100, Gilad Ben-Yossef wrote:
+> >>> Add bindings for CryptoCell instance in the SoC.
+> >>>
+> >>> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+> >>
+> >> In so far as I can review the details of this (which is not much) this
+> >> looks fine to me. I am, however, a little unclear in when it should be
+> >> accepted.
+> >
+> > Since Herbert Xu ACKed the driver changes, I would say the only gating
+> > commit is Geert's CR clock patch.
+> 
+> These are queued for v4.19.
+> 
+> > If that one is in, than I would say this one should go in as well.
+> 
+> As the device node now has a power-domains property, the genpd code will
+> try to attach it to the CPG/MSSR PM Domain, which is a clock domain.
+> In the absence of the clock patch, the device's module clock cannot be
+> found, and dev_pm_domain_attach() and thus platform_drv_probe() will fail,
+> before calling the device driver's .probe() function.
+> 
+> So there is no longer a dependency on the clock patch, and the DT patch can
+> go in in parallel (although I prefer its subject to be changed
+> s/binding/device device/).
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Thanks, I have applied the following (but may not push until next week).
+
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+Subject: [PATCH] arm64: dts: renesas: r8a7795: add ccree to device tree
+
+Add bindings for CryptoCell instance in the SoC.
+
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-shmobile/Makefile        |  1 +
- arch/arm/mach-shmobile/smp-r9a06g032.c | 90 ++++++++++++++++++++++++++++++++++
- 2 files changed, 91 insertions(+)
- create mode 100644 arch/arm/mach-shmobile/smp-r9a06g032.c
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
-index 1939f52..d7fc98f 100644
---- a/arch/arm/mach-shmobile/Makefile
-+++ b/arch/arm/mach-shmobile/Makefile
-@@ -34,6 +34,7 @@ smp-$(CONFIG_ARCH_SH73A0)	+= smp-sh73a0.o headsmp-scu.o platsmp-scu.o
- smp-$(CONFIG_ARCH_R8A7779)	+= smp-r8a7779.o headsmp-scu.o platsmp-scu.o
- smp-$(CONFIG_ARCH_R8A7790)	+= smp-r8a7790.o
- smp-$(CONFIG_ARCH_R8A7791)	+= smp-r8a7791.o
-+smp-$(CONFIG_ARCH_R9A06G032)	+= smp-r9a06g032.o
- smp-$(CONFIG_ARCH_EMEV2)	+= smp-emev2.o headsmp-scu.o platsmp-scu.o
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index d842940b2f43..3ac75dbf2d93 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -528,6 +528,15 @@
+ 			status = "disabled";
+ 		};
  
- # PM objects
-diff --git a/arch/arm/mach-shmobile/smp-r9a06g032.c b/arch/arm/mach-shmobile/smp-r9a06g032.c
-new file mode 100644
-index 0000000..882a838
---- /dev/null
-+++ b/arch/arm/mach-shmobile/smp-r9a06g032.c
-@@ -0,0 +1,90 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * R9A06G032 Second CA7 enabler.
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
-+ * Derived from actions,s500-smp
-+ */
++		arm_cc630p: crypto@e6601000 {
++			compatible = "arm,cryptocell-630p-ree";
++			interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0x0 0xe6601000 0 0x1000>;
++			clocks = <&cpg CPG_MOD 229>;
++			resets = <&cpg 229>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++		};
 +
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/smp.h>
-+
-+/*
-+ * The second CPU is parked in ROM at boot time. It requires waking it after
-+ * writing an address into the BOOTADDR register of sysctrl.
-+ *
-+ * So the default value of the "cpu-release-addr" corresponds to BOOTADDR...
-+ *
-+ * *However* the BOOTADDR register is not available when the kernel
-+ * starts in NONSEC mode.
-+ *
-+ * So for NONSEC mode, the bootloader re-parks the second CPU into a pen
-+ * in SRAM, and changes the "cpu-release-addr" of linux's DT to a SRAM address,
-+ * which is not restricted.
-+ */
-+
-+static void __iomem *cpu_bootaddr;
-+
-+static DEFINE_SPINLOCK(cpu_lock);
-+
-+static int r9a06g032_smp_boot_secondary(unsigned int cpu, struct task_struct *idle)
-+{
-+	if (!cpu_bootaddr)
-+		return -ENODEV;
-+
-+	spin_lock(&cpu_lock);
-+
-+	writel(__pa_symbol(secondary_startup), cpu_bootaddr);
-+	arch_send_wakeup_ipi_mask(cpumask_of(cpu));
-+
-+	spin_unlock(&cpu_lock);
-+
-+	return 0;
-+}
-+
-+static void __init r9a06g032_smp_prepare_cpus(unsigned int max_cpus)
-+{
-+	struct device_node *dn;
-+	int ret = -EINVAL, dns;
-+	u32 bootaddr;
-+
-+	dn = of_get_cpu_node(1, NULL);
-+	if (!dn) {
-+		pr_err("CPU#1: missing device tree node\n");
-+		return;
-+	}
-+	/*
-+	 * Determine the address from which the CPU is polling.
-+	 * The bootloader *does* change this property.
-+	 * Note: The property can be either 64 or 32 bits, so handle both cases
-+	 */
-+	if (of_find_property(dn, "cpu-release-addr", &dns)) {
-+		if (dns == sizeof(u64)) {
-+			u64 temp;
-+			ret = of_property_read_u64(dn,
-+					"cpu-release-addr", &temp);
-+			bootaddr = temp;
-+		} else
-+			ret = of_property_read_u32(dn,
-+					"cpu-release-addr", &bootaddr);
-+	}
-+	of_node_put(dn);
-+	if (ret) {
-+		pr_err("CPU#1: invalid cpu-release-addr property\n");
-+		return;
-+	}
-+	pr_info("CPU#1: cpu-release-addr %08x\n", bootaddr);
-+
-+	cpu_bootaddr = ioremap(bootaddr, sizeof(bootaddr));
-+}
-+
-+static const struct smp_operations r9a06g032_smp_ops __initconst = {
-+	.smp_prepare_cpus = r9a06g032_smp_prepare_cpus,
-+	.smp_boot_secondary = r9a06g032_smp_boot_secondary,
-+};
-+CPU_METHOD_OF_DECLARE(r9a06g032_smp,
-+	"renesas,r9a06g032-smp", &r9a06g032_smp_ops);
+ 		i2c3: i2c@e66d0000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
 -- 
-2.7.4
+2.11.0
 
