@@ -1,108 +1,67 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52588 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934074AbeFYOGf (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:06:35 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 04/15] ARM: shmobile: r8a7791: Use common R-Car Gen2 machine definition
-Date: Mon, 25 Jun 2018 16:06:15 +0200
-Message-Id: <1e90fea35b80cfe17718ceecf8898eb4b8188b45.1529934908.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1529934908.git.horms+renesas@verge.net.au>
-References: <cover.1529934908.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
+        <ville.syrjala@linux.intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        dri-devel@lists.freedesktop.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Sinclair Yeh <syeh@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v3 0/2] drm: Add generic colorkey plane properties
+Date: Mon,  4 Jun 2018 01:00:57 +0300
+Message-Id: <20180603220059.17670-1-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hello,
 
-Now r8a7791 no longer needs the SMP initialization fallback, it can use
-the common R-Car Gen2 machine definition, and the r8a7791-specific one
-can be removed.
+In this version I've reduced color keying modes and properties to a bare
+minimum because considering several modes and properties at once might take
+quite a lot of effort due to a variety of HW capabilities. This allows us to
+start easy with the generic colorkey properties support.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/mach-shmobile/Makefile          |  1 -
- arch/arm/mach-shmobile/setup-r8a7791.c   | 37 --------------------------------
- arch/arm/mach-shmobile/setup-rcar-gen2.c |  5 +----
- 3 files changed, 1 insertion(+), 42 deletions(-)
- delete mode 100644 arch/arm/mach-shmobile/setup-r8a7791.c
+For the starter let's implement probably the most common (and simple) color
+keying mode - the "green screen" (or "chroma key") mode. More advanced modes
+and features could be implemented later on by as needed basis.
 
-diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
-index 38086d0d2f54..2b8d3896e1eb 100644
---- a/arch/arm/mach-shmobile/Makefile
-+++ b/arch/arm/mach-shmobile/Makefile
-@@ -12,7 +12,6 @@ obj-$(CONFIG_ARCH_R8A73A4)	+= setup-r8a73a4.o
- obj-$(CONFIG_ARCH_R8A7740)	+= setup-r8a7740.o
- obj-$(CONFIG_ARCH_R8A7778)	+= setup-r8a7778.o
- obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o pm-r8a7779.o
--obj-$(CONFIG_ARCH_R8A7791)	+= setup-r8a7791.o
- obj-$(CONFIG_ARCH_EMEV2)	+= setup-emev2.o
- obj-$(CONFIG_ARCH_R7S72100)	+= setup-r7s72100.o
- 
-diff --git a/arch/arm/mach-shmobile/setup-r8a7791.c b/arch/arm/mach-shmobile/setup-r8a7791.c
-deleted file mode 100644
-index 2de32fde1af7..000000000000
---- a/arch/arm/mach-shmobile/setup-r8a7791.c
-+++ /dev/null
-@@ -1,37 +0,0 @@
--/*
-- * r8a7791 processor support
-- *
-- * Copyright (C) 2013  Renesas Electronics Corporation
-- * Copyright (C) 2013  Renesas Solutions Corp.
-- * Copyright (C) 2013  Magnus Damm
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
--
--#include <linux/init.h>
--
--#include <asm/mach/arch.h>
--
--#include "common.h"
--#include "rcar-gen2.h"
--
--static const char *const r8a7791_boards_compat_dt[] __initconst = {
--	"renesas,r8a7791",
--	NULL,
--};
--
--DT_MACHINE_START(R8A7791_DT, "Generic R8A7791 (Flattened Device Tree)")
--	.smp_init	= smp_init_ops(shmobile_smp_init_fallback_ops),
--	.init_early	= shmobile_init_delay,
--	.init_time	= rcar_gen2_timer_init,
--	.init_late	= shmobile_init_late,
--	.reserve	= rcar_gen2_reserve,
--	.dt_compat	= r8a7791_boards_compat_dt,
--MACHINE_END
-diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-index e01f21d17167..4c605129cd37 100644
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -187,10 +187,7 @@ void __init rcar_gen2_reserve(void)
- 
- static const char * const rcar_gen2_boards_compat_dt[] __initconst = {
- 	"renesas,r8a7790",
--	/*
--	 * R8A7791 can't be handled here as long as it needs SMP
--	 * initialization fallback.
--	 */
-+	"renesas,r8a7791",
- 	"renesas,r8a7792",
- 	"renesas,r8a7793",
- 	"renesas,r8a7794",
+Following Ville's Syrjälä review comments to v2, the color key value is now
+given in ARGB16161616 format. Drivers have to convert this 16bpc format into
+internal color key value representation themselves. This works well for cases
+where conversion is done to a non-planar integer formats, but I'm not sure how
+drivers are supposed to cope with cases where conversion involves churning with
+fixed point math / floating point representation. Comments are welcome.
+
+v2: https://lists.freedesktop.org/archives/dri-devel/2018-May/178408.html
+v1: https://lists.freedesktop.org/archives/dri-devel/2017-December/160510.html
+
+Dmitry Osipenko (1):
+  drm/tegra: plane: Implement generic colorkey property for older
+    Tegra's
+
+Laurent Pinchart (1):
+  drm: Add generic colorkey properties for DRM planes
+
+ drivers/gpu/drm/drm_atomic.c  |  12 ++++
+ drivers/gpu/drm/drm_blend.c   |  99 +++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/tegra/dc.c    |  25 +++++++++
+ drivers/gpu/drm/tegra/dc.h    |   7 +++
+ drivers/gpu/drm/tegra/plane.c | 102 ++++++++++++++++++++++++++++++++++
+ include/drm/drm_blend.h       |   3 +
+ include/drm/drm_plane.h       |  53 ++++++++++++++++++
+ 7 files changed, 301 insertions(+)
+
 -- 
-2.11.0
+2.17.0
