@@ -1,128 +1,88 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:41972 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751769AbeFDNIX (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 4 Jun 2018 09:08:23 -0400
+Subject: Re: [PATCH v3 01/10] mfd: da9063: Fix failpath in core
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-kernel@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v9 0/5] arm: Base support for Renesas RZN1D-DB Board
-Date: Thu, 14 Jun 2018 11:56:29 +0100
-Message-Id: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
+ <20180604122410.GA21163@dell>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <8b76fcb6-87fc-36da-63af-4b77a09e6e59@gmail.com>
+Date: Mon, 4 Jun 2018 15:08:20 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180604122410.GA21163@dell>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series adds the plain basic support for booting a bare
-kernel on the RZ/N1D-DB Board. It's been trimmed to the strict
-minimum as a 'base', further patches that could add the
-rest of the support.
+On 06/04/2018 02:24 PM, Lee Jones wrote:
+> On Sat, 02 Jun 2018, Marek Vasut wrote:
+> 
+>> In case mfd_add_devices() fails, da9063_irq_exit() is not called to
+>> undo the IRQchip setup done by da9063_irq_init(). Fix this by adding
+>> the missing fail path.
+>>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Cc: Lee Jones <lee.jones@linaro.org>
+>> Cc: Mark Brown <broonie@kernel.org>
+>> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+>> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> Cc: linux-renesas-soc@vger.kernel.org
+>> ---
+>> V3: New patch
+>> ---
+>>  drivers/mfd/da9063-core.c | 8 +++++++-
+>>  1 file changed, 7 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
+>> index 6c2870d4e754..8226ebd8b96d 100644
+>> --- a/drivers/mfd/da9063-core.c
+>> +++ b/drivers/mfd/da9063-core.c
+>> @@ -229,10 +229,16 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
+>>  	ret = mfd_add_devices(da9063->dev, -1, da9063_devs,
+>>  			      ARRAY_SIZE(da9063_devs), NULL, da9063->irq_base,
+>>  			      NULL);
+>> -	if (ret)
+>> +	if (ret) {
+>>  		dev_err(da9063->dev, "Cannot add MFD cells\n");
+>> +		goto err_irq_exit;
+>> +	}
+>>  
+>>  	return ret;
+>> +
+>> +err_irq_exit:
+>> +	da9063_irq_exit(da9063);
+>> +	return ret;
+>>  }
+>>  
+>>  void da9063_device_exit(struct da9063 *da9063)
+> 
+> I haven't seen the later patches yet, so maybe the goto label expanded
+> on, but if it's not, then this would be better:
+> 
+>  -	if (ret)
+>  +	if (ret) {
+>   		dev_err(da9063->dev, "Cannot add MFD cells\n");
+>  +		da9063_irq_exit(da9063);
+>  +	}
+>   
+>   	return ret;
+>   }
 
-Note on the clock driver: Current usage of the clocks on Linux
-involves Linux 'claiming' all of them, disabling the one it doesn't
-need and so on.
-On *this* architecture it can't be done, there is at least one other
-OS running on the CM3 core that claims it's own clock; Linux can claim
-some others but definitely not start disabling stuff it isn't supposed to.
-
-Thanks for the comments on the previous versions!
-
-v9:
- + Added Reviewed mentions as appropriate.
- + Tweaked the detection code for clocks that are already in use.
-   (Now check the reset bits, as some clocks gates are marked as 'enabled'
-    when still in reset (!)).
- + Added external clocks to the sysctrl node.
- + Reworked the clock driver to be a platform one, not an OF one.
-v8:
- + Added Reviewed mentions as appropriate.
- + Moved some of the clocks #defines into the driver
- + Tweaked the pointer arithmetics in the clock driver.
- + Removed clk_readl/writel
- + Use CLK_IS_CRITICAL instead of my own flag
- + Also added that critical section to the dualgate object.
- + Few other nitpick fixed.
- + Rebased on next-20180604
-v7:
- + Removed mention of 'rz[/]n1' from everywhere.
- + Removed unwanted documentation.
- + Renamed clock node back to sysctrl.
- + Renamed rzn1-clocks.h to r9a06g032-sysctrl.h to match
- + Made the clock driver claim the sysctrl node.
- + Fixed a couple of 'sparse' warning in the clock driver.
-v6:
- + Fix for suggestion by Geert Uytterhoeven
- + Removed "renesas,rzn1" from the board bindings
- + Removed patches already merged.
- + Removed reboot driver
- + Added a whole clock infrastructure.
- + Rebased on next-20180517
-v5:
- + Given the problems I have with getting in some structure around the
-   sysctrl block, I've removed the MFD, I've now attached the reboot
-   driver on it's  own pair of registers.
- + Rebased on next-20180417
-v4:
- + Fixes for suggestions by Simon Horman
- + Fixes for suggestions by Jacopo Mondi
- + Fixes for suggestions by Geert Uytterhoeven
- + Renamed the r9a06g0xx.dtsi file, given up on trying to get a family
-   common file in, so dropped potential RZ/N1S support and now only
-   focus on RZ/N1D for this patchset.
- + Added 'always-on' to the architected timer node, because it is.
- + Added ARCH_R9A06G032, to match others patterns like RCAR
- + Sorted the .dts files, added empty lines as required.
- + Fixed patch prefixes to match git-log for bindings&dts
- + Merged board .dts & Makefile changes together
- + Rebased on next-20180410
-v3:
- + Fixes for suggestions by Geert Uytterhoeven
- + Removed SoC Specific renesas,r9a06g032-xxx, as it's not needed for now.
- + Kept renesas,rzn1 as a family/generic for this family.
- + Fixed a couple of the commit messages.
- + Added Geert's Reviewed-By where appropriate.
-v2:
- + Fixes for suggestions by Simon Horman
- + Fixes for suggestions by Rob Herring
- + Fixes for suggestions by Geert Uytterhoeven
- + Removed the mach file
- + Added a MFD base for the sysctrl block
- + Added a regmap based sub driver for the reboot handler
- + Renamed the files to match shmobile conventions
- + Adapted the compatible= strings to reflect 'family' vs 'part'
-   distinction.
- + Removed the sysctrl.h file entirelly.
- + Fixed every warnings from the DTC compiler on W=12 mode.
- + Split the device-tree patches from the code.
-
-
-Michel Pollet (5):
-  dt-bindings: Add the r9a06g032-sysctrl.h file
-  dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
-  ARM: dts: Renesas R9A06G032 base device tree file
-  ARM: dts: Renesas RZN1D-DB Board base file
-  clk: renesas: Renesas R9A06G032 clock driver
-
- .../bindings/clock/renesas,r9a06g032-sysctrl.txt   |  44 +
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts        |  28 +
- arch/arm/boot/dts/r9a06g032.dtsi                   | 114 +++
- drivers/clk/renesas/Kconfig                        |   6 +
- drivers/clk/renesas/Makefile                       |   1 +
- drivers/clk/renesas/r9a06g032-clocks.c             | 895 +++++++++++++++++++++
- include/dt-bindings/clock/r9a06g032-sysctrl.h      | 148 ++++
- 8 files changed, 1237 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
- create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
- create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
- create mode 100644 drivers/clk/renesas/r9a06g032-clocks.c
- create mode 100644 include/dt-bindings/clock/r9a06g032-sysctrl.h
+It did expand in the later patches, yes.
 
 -- 
-2.7.4
-
+Best regards,
+Marek Vasut
