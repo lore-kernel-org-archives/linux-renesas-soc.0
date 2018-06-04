@@ -1,54 +1,32 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay10.mail.gandi.net ([217.70.178.230]:58469 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933422AbeFLJnz (ORCPT
+Received: from shards.monkeyblade.net ([184.105.139.130]:51464 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750779AbeFDTYS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Jun 2018 05:43:55 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 09/10] media: rcar-vin: Rename _rcar_info to rcar_info
-Date: Tue, 12 Jun 2018 11:43:31 +0200
-Message-Id: <1528796612-7387-10-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1528796612-7387-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1528796612-7387-1-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 4 Jun 2018 15:24:18 -0400
+Date: Mon, 04 Jun 2018 15:24:12 -0400 (EDT)
+Message-Id: <20180604.152412.1320672866529057364.davem@davemloft.net>
+To: sergei.shtylyov@cogentembedded.com
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/3] sh_eth: fix & clean up sh_eth_soft_swap()
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <9027499a-0e19-7721-a17f-26e86885da3f@cogentembedded.com>
+References: <9027499a-0e19-7721-a17f-26e86885da3f@cogentembedded.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Remove leading underscore to align all rcar_group_route structure
-declarations.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Date: Sat, 2 Jun 2018 22:32:48 +0300
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Here's a set of 3 patches against DaveM's 'net-next.git' repo. First one fixes an
+> old buffer endiannes issue (luckily, the ARM SoCs are smart enough to not actually
+> care) plus couple clean ups around sh_eth_soft_swap()...
+> 
+> [1/1] sh_eth: make sh_eth_soft_swap() work on ARM
+> [2/3] sh_eth: uninline sh_eth_soft_swap()
+> [3/3] sh_eth: use DIV_ROUND_UP() in sh_eth_soft_swap()
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 8950af1..a2d166f 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -1026,7 +1026,7 @@ static const struct rvin_info rcar_info_r8a7796 = {
- 	.routes = rcar_info_r8a7796_routes,
- };
- 
--static const struct rvin_group_route _rcar_info_r8a77970_routes[] = {
-+static const struct rvin_group_route rcar_info_r8a77970_routes[] = {
- 	{ .csi = RVIN_CSI40, .channel = 0, .vin = 0, .mask = BIT(0) | BIT(3) },
- 	{ .csi = RVIN_CSI40, .channel = 0, .vin = 1, .mask = BIT(2) },
- 	{ .csi = RVIN_CSI40, .channel = 1, .vin = 1, .mask = BIT(3) },
-@@ -1042,7 +1042,7 @@ static const struct rvin_info rcar_info_r8a77970 = {
- 	.use_mc = true,
- 	.max_width = 4096,
- 	.max_height = 4096,
--	.routes = _rcar_info_r8a77970_routes,
-+	.routes = rcar_info_r8a77970_routes,
- };
- 
- static const struct of_device_id rvin_of_id_table[] = {
--- 
-2.7.4
+Series applied, thank you.
