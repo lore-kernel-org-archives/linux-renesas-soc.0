@@ -1,134 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934238AbeFYOEM (ORCPT
+Received: from sauhun.de ([88.99.104.3]:40074 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751473AbeFDOc6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:04:12 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 13/29] arm64: dts: renesas: r8a77965: Add all HSCIF nodes
-Date: Mon, 25 Jun 2018 16:03:08 +0200
-Message-Id: <b8e3c8e17611ccfa77acd4d06e1df7e49d40c763.1529933747.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
-References: <cover.1529933747.git.horms+renesas@verge.net.au>
+        Mon, 4 Jun 2018 10:32:58 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 2/2] i2c: gpio: fault-injector: add incomplete_write_byte
+Date: Mon,  4 Jun 2018 16:32:52 +0200
+Message-Id: <20180604143252.325-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180604143252.325-1-wsa+renesas@sang-engineering.com>
+References: <20180604143252.325-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Add another injector for an incomplete transfer. As mentioned in the
+docs, this one is important to check bus recovery algorithms with it.
+Otherwise random data may be sent to devices!
 
-Based on a similar patch of the R8A7796 device tree
-by Ulrich Hecht <ulrich.hecht+renesas@gmail.com>.
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 88 +++++++++++++++++++++++++++++++
- 1 file changed, 88 insertions(+)
+ Documentation/i2c/gpio-fault-injection | 15 +++++++++++++++
+ drivers/i2c/busses/i2c-gpio.c          | 21 +++++++++++++++++++++
+ 2 files changed, 36 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 25932a0727be..d740c79752d5 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -456,6 +456,94 @@
- 			status = "disabled";
- 		};
+diff --git a/Documentation/i2c/gpio-fault-injection b/Documentation/i2c/gpio-fault-injection
+index ce89a71547d2..5ceca19b6030 100644
+--- a/Documentation/i2c/gpio-fault-injection
++++ b/Documentation/i2c/gpio-fault-injection
+@@ -60,3 +60,18 @@ above, the bus master under test should detect this condition and try a bus
+ recovery. This time, however, it should succeed and the device should release
+ SDA after toggling SCL.
  
-+		hscif0: serial@e6540000 {
-+			compatible = "renesas,hscif-r8a77965",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe6540000 0 0x60>;
-+			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 520>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x31>, <&dmac1 0x30>,
-+			       <&dmac2 0x31>, <&dmac2 0x30>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 520>;
-+			status = "disabled";
-+		};
++"incomplete_write_byte"
++-----------------------
 +
-+		hscif1: serial@e6550000 {
-+			compatible = "renesas,hscif-r8a77965",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe6550000 0 0x60>;
-+			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 519>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x33>, <&dmac1 0x32>,
-+			       <&dmac2 0x33>, <&dmac2 0x32>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 519>;
-+			status = "disabled";
-+		};
++Similar to above, this file is write only and you need to write the address of
++an existing I2C client device to it.
 +
-+		hscif2: serial@e6560000 {
-+			compatible = "renesas,hscif-r8a77965",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe6560000 0 0x60>;
-+			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 518>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x35>, <&dmac1 0x34>,
-+			       <&dmac2 0x35>, <&dmac2 0x34>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 518>;
-+			status = "disabled";
-+		};
++The injector will again stop at the ACK phase, so the device will keep SDA low
++because it acknowledges data. However, there are two differences: a) the
++message sent out will be a write message b) after the address byte, an
++additional 0x00 byte will be transferred. This is a delicate state, the device
++is set up to write any data to register 0x00 (if it has registers) when further
++clock pulses happen on SCL. This is why bus recovery (up to 9 clock pulses)
++must either check SDA or send additional STOP conditions, otherwise random data
++will be written to a device!
 +
-+		hscif3: serial@e66a0000 {
-+			compatible = "renesas,hscif-r8a77965",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe66a0000 0 0x60>;
-+			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 517>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x37>, <&dmac0 0x36>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 517>;
-+			status = "disabled";
-+		};
+diff --git a/drivers/i2c/busses/i2c-gpio.c b/drivers/i2c/busses/i2c-gpio.c
+index cbbb7b201d59..52265572e317 100644
+--- a/drivers/i2c/busses/i2c-gpio.c
++++ b/drivers/i2c/busses/i2c-gpio.c
+@@ -143,6 +143,25 @@ static int fops_incomplete_addr_phase_set(void *data, u64 addr)
+ }
+ DEFINE_DEBUGFS_ATTRIBUTE(fops_incomplete_addr_phase, NULL, fops_incomplete_addr_phase_set, "%llu\n");
+ 
++static int fops_incomplete_write_byte_set(void *data, u64 addr)
++{
++	struct i2c_gpio_private_data *priv = data;
++	u32 pattern;
 +
-+		hscif4: serial@e66b0000 {
-+			compatible = "renesas,hscif-r8a77965",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe66b0000 0 0x60>;
-+			interrupts = <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 516>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x39>, <&dmac0 0x38>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 516>;
-+			status = "disabled";
-+		};
++	if (addr > 0x7f)
++		return -EINVAL;
 +
- 		hsusb: usb@e6590000 {
- 			compatible = "renesas,usbhs-r8a7796",
- 				     "renesas,rcar-gen3-usbhs";
++	/* ADDR (7 bit) + WR (1 bit) + Client ACK (1 bit) */
++	pattern = (addr << 2) | 1;
++	/* 0x00 (8 bit) + Client ACK, keep SDA hi (1 bit) */
++	pattern = (pattern << 9) | 1;
++
++	i2c_gpio_incomplete_transfer(priv, pattern, 18);
++
++	return 0;
++}
++DEFINE_DEBUGFS_ATTRIBUTE(fops_incomplete_write_byte, NULL, fops_incomplete_write_byte_set, "%llu\n");
++
+ static void i2c_gpio_fault_injector_init(struct platform_device *pdev)
+ {
+ 	struct i2c_gpio_private_data *priv = platform_get_drvdata(pdev);
+@@ -166,6 +185,8 @@ static void i2c_gpio_fault_injector_init(struct platform_device *pdev)
+ 	debugfs_create_file_unsafe("sda", 0600, priv->debug_dir, priv, &fops_sda);
+ 	debugfs_create_file_unsafe("incomplete_address_phase", 0200, priv->debug_dir,
+ 				   priv, &fops_incomplete_addr_phase);
++	debugfs_create_file_unsafe("incomplete_write_byte", 0200, priv->debug_dir,
++				   priv, &fops_incomplete_write_byte);
+ }
+ 
+ static void i2c_gpio_fault_injector_exit(struct platform_device *pdev)
 -- 
 2.11.0
