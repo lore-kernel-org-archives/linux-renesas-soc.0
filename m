@@ -1,92 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40016 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753040AbeFDM02 (ORCPT
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:39797 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752770AbeFDHR6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Jun 2018 08:26:28 -0400
-Received: by mail-wm0-f66.google.com with SMTP id n5-v6so2538579wmc.5
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Jun 2018 05:26:27 -0700 (PDT)
-Date: Mon, 4 Jun 2018 13:26:24 +0100
-From: Lee Jones <lee.jones@linaro.org>
+        Mon, 4 Jun 2018 03:17:58 -0400
+MIME-Version: 1.0
+In-Reply-To: <20180602101155.26375-2-marek.vasut+renesas@gmail.com>
+References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com> <20180602101155.26375-2-marek.vasut+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 4 Jun 2018 09:17:56 +0200
+Message-ID: <CAMuHMdVdN4OGLztHtZE9BuiAm_QAvji96VSBX6g3DLbNhb6z_g@mail.gmail.com>
+Subject: Re: [PATCH v3 02/10] mfd: da9063: Use REGMAP_IRQ_REG
 To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
         Mark Brown <broonie@kernel.org>,
         Steve Twiss <stwiss.opensource@diasemi.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 02/10] mfd: da9063: Use REGMAP_IRQ_REG
-Message-ID: <20180604122624.GB21163@dell>
-References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
- <20180602101155.26375-2-marek.vasut+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180602101155.26375-2-marek.vasut+renesas@gmail.com>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, 02 Jun 2018, Marek Vasut wrote:
-
+On Sat, Jun 2, 2018 at 12:11 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
 > Convert the regmap_irq table to use REGMAP_IRQ_REG().
-> 
+>
 > Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
-> V3: New patch
-> Note: A sed oneliner was used:
->       sed -i "/\[DA9063_IRQ_/ {N;N;N;s/\n//g;s/.*\[\(DA9063_IRQ_[^]]\+\)].*reg_offset = \([^,]\+\),.* = \([^,]\+\),.*/\tREGMAP_IRQ_REG(\1, \2, \3),/}" drivers/mfd/da9063-irq.c
-> ---
->  drivers/mfd/da9063-irq.c | 145 ++++++++++-------------------------------------
->  1 file changed, 29 insertions(+), 116 deletions(-)
-> 
-> diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
-> index 207bbfe55449..5b406ecfc14a 100644
-> --- a/drivers/mfd/da9063-irq.c
-> +++ b/drivers/mfd/da9063-irq.c
-> @@ -28,125 +28,38 @@
->  
->  static const struct regmap_irq da9063_irqs[] = {
->  	/* DA9063 event A register */
-> -	[DA9063_IRQ_ONKEY] = {
-> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
-> -		.mask = DA9063_M_ONKEY,
-> -	},
-> -	[DA9063_IRQ_ALARM] = {
-> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
-> -		.mask = DA9063_M_ALARM,
-> -	},
-> -	[DA9063_IRQ_TICK] = {
-> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
-> -		.mask = DA9063_M_TICK,
-> -	},
-> -	[DA9063_IRQ_ADC_RDY] = {
-> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
-> -		.mask = DA9063_M_ADC_RDY,
-> -	},
-> -	[DA9063_IRQ_SEQ_RDY] = {
-> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
-> -		.mask = DA9063_M_SEQ_RDY,
-> -	},
-> +	REGMAP_IRQ_REG(DA9063_IRQ_ONKEY, DA9063_REG_EVENT_A_OFFSET, DA9063_M_ONKEY),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_ALARM, DA9063_REG_EVENT_A_OFFSET, DA9063_M_ALARM),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_TICK, DA9063_REG_EVENT_A_OFFSET, DA9063_M_TICK),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_ADC_RDY, DA9063_REG_EVENT_A_OFFSET, DA9063_M_ADC_RDY),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_SEQ_RDY, DA9063_REG_EVENT_A_OFFSET, DA9063_M_SEQ_RDY),
 
-Nice, but I think checkpatch.pl would complain.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Better to break after the first argument I think.
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
