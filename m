@@ -1,90 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:51220 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934283AbeFYOEJ (ORCPT
+        with ESMTP id S1752217AbeFDKAF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:04:09 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 12/29] arm64: dts: renesas: r8a77965: Use r8a77965-cpg-mssr binding definitions
-Date: Mon, 25 Jun 2018 16:03:07 +0200
-Message-Id: <a6972dec904ed073bc40ccabd1bccca1bfd2f7bf.1529933747.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
-References: <cover.1529933747.git.horms+renesas@verge.net.au>
+        Mon, 4 Jun 2018 06:00:05 -0400
+Date: Mon, 4 Jun 2018 11:59:46 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/3] ARM: shmobile: apmu: Cleanups after legacy SMP
+ fallback removal
+Message-ID: <20180604095945.qglbwc5rp67g4jpv@verge.net.au>
+References: <1527693328-10559-1-git-send-email-geert+renesas@glider.be>
+ <20180531143947.j56rcjmscflmvf6a@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180531143947.j56rcjmscflmvf6a@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Thu, May 31, 2018 at 10:39:48AM -0400, Simon Horman wrote:
+> On Wed, May 30, 2018 at 05:15:25PM +0200, Geert Uytterhoeven wrote:
+> > 	Hi Simon, Magnus,
+> > 
+> > Now the legacy SMP fallbacks for R-Car H2 and M2-W have been removed, a
+> > few more code cleanups can be applied.
+> > 
+> > The third patch is a bit larger than I had hoped, due to the need to
+> > reshuffle a few functions in the absence of forward declarations.
+> > 
+> > Tested on Lager (R-Car H2) and Koelsch (R-Car M2-W).
+> > 
+> > Thanks!
+> > 
+> > Geert Uytterhoeven (3):
+> >   ARM: shmobile: apmu: Move cpu_leave_lowpower() to SUSPEND section
+> >   ARM: shmobile: apmu: Remove obsolete shmobile_smp_apmu_prepare_cpus()
+> >   ARM: shmobile: apmu: Remove platsmp-apmu.h
+> 
+> This looks fine but I will wait to see if there are other reviews before
+> applying.
+> 
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Replace the hardcoded clock indices by R8A77965_CLK_* symbols.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index fb7100f85454..25932a0727be 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -737,7 +737,7 @@
- 			reg = <0 0xe6e60000 0 64>;
- 			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 207>,
--				 <&cpg CPG_CORE 20>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
-@@ -754,7 +754,7 @@
- 			reg = <0 0xe6e68000 0 64>;
- 			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 206>,
--				 <&cpg CPG_CORE 20>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
-@@ -771,7 +771,7 @@
- 			reg = <0 0xe6e88000 0 64>;
- 			interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 310>,
--				 <&cpg CPG_CORE 20>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-@@ -785,7 +785,7 @@
- 			reg = <0 0xe6c50000 0 64>;
- 			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 204>,
--				 <&cpg CPG_CORE 20>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0x57>, <&dmac0 0x56>;
-@@ -801,7 +801,7 @@
- 			reg = <0 0xe6c40000 0 64>;
- 			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 203>,
--				 <&cpg CPG_CORE 20>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0x59>, <&dmac0 0x58>;
-@@ -817,7 +817,7 @@
- 			reg = <0 0xe6f30000 0 64>;
- 			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 202>,
--				 <&cpg CPG_CORE 20>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x5b>, <&dmac1 0x5a>,
--- 
-2.11.0
+Thanks, applied.
