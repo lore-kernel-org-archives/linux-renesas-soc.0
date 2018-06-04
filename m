@@ -1,62 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:48958 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751586AbeFAJ3H (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:43175 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752330AbeFDMNT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Jun 2018 05:29:07 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/4] thermal: bcm2835: Stop using printk format %pCr
-Date: Fri,  1 Jun 2018 11:28:20 +0200
-Message-Id: <1527845302-12159-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
-References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
+        Mon, 4 Jun 2018 08:13:19 -0400
+Received: by mail-lf0-f65.google.com with SMTP id n15-v6so7535979lfn.10
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Jun 2018 05:13:18 -0700 (PDT)
+Date: Mon, 4 Jun 2018 14:13:16 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: laurent.pinchart@ideasonboard.com, horms@verge.net.au,
+        geert@glider.be, mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        hans.verkuil@cisco.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 5/8] media: rcar-vin: Handle data-enable polarity
+Message-ID: <20180604121316.GF19674@bigcity.dyn.berto.se>
+References: <1527606359-19261-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1527606359-19261-6-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1527606359-19261-6-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
-called in atomic context.
+Hi Jacopo,
 
-Replace it by printing the variable that already holds the clock rate.
-Note that calling clk_get_rate() is safe here, as the code runs in task
-context.
+Thanks for your work.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/thermal/broadcom/bcm2835_thermal.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 2018-05-29 17:05:56 +0200, Jacopo Mondi wrote:
+> Handle data-enable signal polarity. If the polarity is not specifically
+> requested to be active low, use the active high default.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
-index a4d6a0e2e9938190..23ad4f9f21438e45 100644
---- a/drivers/thermal/broadcom/bcm2835_thermal.c
-+++ b/drivers/thermal/broadcom/bcm2835_thermal.c
-@@ -213,8 +213,8 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
- 	rate = clk_get_rate(data->clk);
- 	if ((rate < 1920000) || (rate > 5000000))
- 		dev_warn(&pdev->dev,
--			 "Clock %pCn running at %pCr Hz is outside of the recommended range: 1.92 to 5MHz\n",
--			 data->clk, data->clk);
-+			 "Clock %pCn running at %lu Hz is outside of the recommended range: 1.92 to 5MHz\n",
-+			 data->clk, rate);
- 
- 	/* register of thermal sensor and get info from DT */
- 	tz = thermal_zone_of_sensor_register(&pdev->dev, 0, data,
+Acked-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+
+> ---
+> v3:
+> - use new property to set the CES bit
+> ---
+>  drivers/media/platform/rcar-vin/rcar-dma.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+> index d2b7002..9145b56 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> @@ -123,6 +123,7 @@
+>  /* Video n Data Mode Register 2 bits */
+>  #define VNDMR2_VPS		(1 << 30)
+>  #define VNDMR2_HPS		(1 << 29)
+> +#define VNDMR2_CES		(1 << 28)
+>  #define VNDMR2_FTEV		(1 << 17)
+>  #define VNDMR2_VLV(n)		((n & 0xf) << 12)
+> 
+> @@ -698,6 +699,10 @@ static int rvin_setup(struct rvin_dev *vin)
+>  		/* Vsync Signal Polarity Select */
+>  		if (!(vin->parallel->mbus_flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
+>  			dmr2 |= VNDMR2_VPS;
+> +
+> +		/* Data Enable Polarity Select */
+> +		if (vin->parallel->mbus_flags & V4L2_MBUS_DATA_ENABLE_LOW)
+> +			dmr2 |= VNDMR2_CES;
+>  	}
+> 
+>  	/*
+> --
+> 2.7.4
+> 
+
 -- 
-2.7.4
+Regards,
+Niklas S�derlund
