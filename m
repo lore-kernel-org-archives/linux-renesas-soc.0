@@ -1,54 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:34931 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750914AbeFAUrR (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:50333 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752292AbeFDJLm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Jun 2018 16:47:17 -0400
-Received: by mail-lf0-f65.google.com with SMTP id y72-v6so16636085lfd.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 01 Jun 2018 13:47:16 -0700 (PDT)
-Subject: [PATCH 3/3] arm64: dts: renesas: v3hsk: specify GEther PHY IRQ
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+        Mon, 4 Jun 2018 05:11:42 -0400
+Date: Mon, 4 Jun 2018 11:11:23 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <4acc208e-c593-1e8a-00ca-fc9a5574074e@cogentembedded.com>
-Message-ID: <9e6c40eb-71d0-d35b-1cf7-9179e093ed10@cogentembedded.com>
-Date: Fri, 1 Jun 2018 23:47:14 +0300
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77965: Use r8a77965-cpg-mssr
+ binding definitions
+Message-ID: <20180604091122.4rhjdhs55ht52xkf@verge.net.au>
+References: <1527513329-18780-1-git-send-email-geert+renesas@glider.be>
+ <20180529124014.kduaibb4tsbbixgu@verge.net.au>
 MIME-Version: 1.0
-In-Reply-To: <4acc208e-c593-1e8a-00ca-fc9a5574074e@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180529124014.kduaibb4tsbbixgu@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Specify GEther PHY IRQ in the V3H Starter Kit board's device tree, now
-that we have the GPIO support (previously phylib had to resort to polling).
+On Tue, May 29, 2018 at 02:40:15PM +0200, Simon Horman wrote:
+> On Mon, May 28, 2018 at 03:15:29PM +0200, Geert Uytterhoeven wrote:
+> > Replace the hardcoded clock indices by R8A77965_CLK_* symbols.
+> > 
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > Commit 7ce36da900c0a2ff ("clk: renesas: cpg-mssr: Add support for R-Car
+> > M3-N") providing the definitions is in v4.17-rc1.
+> 
+> This looks fine but I will wait to see if there are other reviews before
+> applying.
+> 
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Based on the original (and large) patch by Vladimir Barinov.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
----
- arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts |    2 ++
- 1 file changed, 2 insertions(+)
-
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-@@ -48,6 +48,8 @@
- 
- 	phy0: ethernet-phy@0 {
- 		reg = <0>;
-+		interrupt-parent = <&gpio4>;
-+		interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
- 	};
- };
- 
+Thanks, applied.
