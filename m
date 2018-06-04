@@ -1,105 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:15216 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932116AbeFFGnz (ORCPT
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:43820 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752071AbeFDMKn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 02:43:55 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-        linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/2] pinctrl: sh-pfc: r8a77990: Add USB2.0 pins, groups and functions
-Date: Wed,  6 Jun 2018 15:43:05 +0900
-Message-Id: <1528267385-19017-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1528267385-19017-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1528267385-19017-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Mon, 4 Jun 2018 08:10:43 -0400
+Received: by mail-lf0-f67.google.com with SMTP id n15-v6so7523023lfn.10
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Jun 2018 05:10:43 -0700 (PDT)
+Date: Mon, 4 Jun 2018 14:10:41 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: laurent.pinchart@ideasonboard.com, horms@verge.net.au,
+        geert@glider.be, mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        hans.verkuil@cisco.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 4/8] dt-bindings: media: rcar-vin: Add
+ 'data-enable-active'
+Message-ID: <20180604121041.GE19674@bigcity.dyn.berto.se>
+References: <1527606359-19261-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1527606359-19261-5-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1527606359-19261-5-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hi Jacopo,
 
-This patch adds USB0_{PWEN,OVC}_{A,B} and USB0_ID pins, groups and
-functions to the R8A77990 SoC.
+Thanks for your patch.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 38 +++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+On 2018-05-29 17:05:55 +0200, Jacopo Mondi wrote:
+> Describe optional endpoint property 'data-enable-active' for R-Car VIN.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-index dc4a957..edefcc3 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-@@ -1784,6 +1784,34 @@ enum {
- 	SCIF_CLK_B_MARK,
- };
- 
-+/* - USB0 ------------------------------------------------------------------- */
-+static const unsigned int usb0_a_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 17), RCAR_GP_PIN(6, 9),
-+};
-+
-+static const unsigned int usb0_a_mux[] = {
-+	USB0_PWEN_A_MARK, USB0_OVC_A_MARK,
-+};
-+
-+static const unsigned int usb0_b_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 11), RCAR_GP_PIN(6, 12),
-+};
-+
-+static const unsigned int usb0_b_mux[] = {
-+	USB0_PWEN_B_MARK, USB0_OVC_B_MARK,
-+};
-+
-+static const unsigned int usb0_id_pins[] = {
-+	/* ID */
-+	RCAR_GP_PIN(5, 0)
-+};
-+
-+static const unsigned int usb0_id_mux[] = {
-+	USB0_ID_MARK,
-+};
-+
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(avb_link),
- 	SH_PFC_PIN_GROUP(avb_magic),
-@@ -1837,6 +1865,9 @@ enum {
- 	SH_PFC_PIN_GROUP(scif5_data_c),
- 	SH_PFC_PIN_GROUP(scif_clk_a),
- 	SH_PFC_PIN_GROUP(scif_clk_b),
-+	SH_PFC_PIN_GROUP(usb0_a),
-+	SH_PFC_PIN_GROUP(usb0_b),
-+	SH_PFC_PIN_GROUP(usb0_id),
- };
- 
- static const char * const avb_groups[] = {
-@@ -1933,6 +1964,12 @@ enum {
- 	"scif_clk_b",
- };
- 
-+static const char * const usb0_groups[] = {
-+	"usb0_a",
-+	"usb0_b",
-+	"usb0_id",
-+};
-+
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(i2c1),
-@@ -1948,6 +1985,7 @@ enum {
- 	SH_PFC_FUNCTION(scif4),
- 	SH_PFC_FUNCTION(scif5),
- 	SH_PFC_FUNCTION(scif_clk),
-+	SH_PFC_FUNCTION(usb0),
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+
+> ---
+> v3:
+> - new patch
+> ---
+> 
+>  Documentation/devicetree/bindings/media/rcar_vin.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
+> index 4d91a36..ff53226 100644
+> --- a/Documentation/devicetree/bindings/media/rcar_vin.txt
+> +++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
+> @@ -58,6 +58,8 @@ from local SoC CSI-2 receivers (port1) depending on SoC.
+>        - Optional properties for endpoint nodes of port@0:
+>          - hsync-active: see [1] for description. Default is active high.
+>          - vsync-active: see [1] for description. Default is active high.
+> +        - data-enable-active: polarity of CLKENB signal, see [1] for
+> +          description. Default is active high.
+> 
+>          If both HSYNC and VSYNC polarities are not specified, embedded
+>          synchronization is selected.
+> --
+> 2.7.4
+> 
+
 -- 
-1.9.1
+Regards,
+Niklas S�derlund
