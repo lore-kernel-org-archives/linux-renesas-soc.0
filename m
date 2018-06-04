@@ -1,93 +1,169 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:40074 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751473AbeFDOc6 (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:39764 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753078AbeFDMw7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Jun 2018 10:32:58 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 2/2] i2c: gpio: fault-injector: add incomplete_write_byte
-Date: Mon,  4 Jun 2018 16:32:52 +0200
-Message-Id: <20180604143252.325-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180604143252.325-1-wsa+renesas@sang-engineering.com>
-References: <20180604143252.325-1-wsa+renesas@sang-engineering.com>
+        Mon, 4 Jun 2018 08:52:59 -0400
+Received: by mail-lf0-f65.google.com with SMTP id t134-v6so25022192lff.6
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Jun 2018 05:52:58 -0700 (PDT)
+Date: Mon, 4 Jun 2018 14:52:56 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v5 06/10] media: rcar-vin: Parse parallel input on Gen3
+Message-ID: <20180604125256.GL19674@bigcity.dyn.berto.se>
+References: <1527583688-314-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1527583688-314-7-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1527583688-314-7-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add another injector for an incomplete transfer. As mentioned in the
-docs, this one is important to check bus recovery algorithms with it.
-Otherwise random data may be sent to devices!
+Hi Jacopo,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- Documentation/i2c/gpio-fault-injection | 15 +++++++++++++++
- drivers/i2c/busses/i2c-gpio.c          | 21 +++++++++++++++++++++
- 2 files changed, 36 insertions(+)
+Thanks for your patch.
 
-diff --git a/Documentation/i2c/gpio-fault-injection b/Documentation/i2c/gpio-fault-injection
-index ce89a71547d2..5ceca19b6030 100644
---- a/Documentation/i2c/gpio-fault-injection
-+++ b/Documentation/i2c/gpio-fault-injection
-@@ -60,3 +60,18 @@ above, the bus master under test should detect this condition and try a bus
- recovery. This time, however, it should succeed and the device should release
- SDA after toggling SCL.
- 
-+"incomplete_write_byte"
-+-----------------------
-+
-+Similar to above, this file is write only and you need to write the address of
-+an existing I2C client device to it.
-+
-+The injector will again stop at the ACK phase, so the device will keep SDA low
-+because it acknowledges data. However, there are two differences: a) the
-+message sent out will be a write message b) after the address byte, an
-+additional 0x00 byte will be transferred. This is a delicate state, the device
-+is set up to write any data to register 0x00 (if it has registers) when further
-+clock pulses happen on SCL. This is why bus recovery (up to 9 clock pulses)
-+must either check SDA or send additional STOP conditions, otherwise random data
-+will be written to a device!
-+
-diff --git a/drivers/i2c/busses/i2c-gpio.c b/drivers/i2c/busses/i2c-gpio.c
-index cbbb7b201d59..52265572e317 100644
---- a/drivers/i2c/busses/i2c-gpio.c
-+++ b/drivers/i2c/busses/i2c-gpio.c
-@@ -143,6 +143,25 @@ static int fops_incomplete_addr_phase_set(void *data, u64 addr)
- }
- DEFINE_DEBUGFS_ATTRIBUTE(fops_incomplete_addr_phase, NULL, fops_incomplete_addr_phase_set, "%llu\n");
- 
-+static int fops_incomplete_write_byte_set(void *data, u64 addr)
-+{
-+	struct i2c_gpio_private_data *priv = data;
-+	u32 pattern;
-+
-+	if (addr > 0x7f)
-+		return -EINVAL;
-+
-+	/* ADDR (7 bit) + WR (1 bit) + Client ACK (1 bit) */
-+	pattern = (addr << 2) | 1;
-+	/* 0x00 (8 bit) + Client ACK, keep SDA hi (1 bit) */
-+	pattern = (pattern << 9) | 1;
-+
-+	i2c_gpio_incomplete_transfer(priv, pattern, 18);
-+
-+	return 0;
-+}
-+DEFINE_DEBUGFS_ATTRIBUTE(fops_incomplete_write_byte, NULL, fops_incomplete_write_byte_set, "%llu\n");
-+
- static void i2c_gpio_fault_injector_init(struct platform_device *pdev)
- {
- 	struct i2c_gpio_private_data *priv = platform_get_drvdata(pdev);
-@@ -166,6 +185,8 @@ static void i2c_gpio_fault_injector_init(struct platform_device *pdev)
- 	debugfs_create_file_unsafe("sda", 0600, priv->debug_dir, priv, &fops_sda);
- 	debugfs_create_file_unsafe("incomplete_address_phase", 0200, priv->debug_dir,
- 				   priv, &fops_incomplete_addr_phase);
-+	debugfs_create_file_unsafe("incomplete_write_byte", 0200, priv->debug_dir,
-+				   priv, &fops_incomplete_write_byte);
- }
- 
- static void i2c_gpio_fault_injector_exit(struct platform_device *pdev)
+On 2018-05-29 10:48:04 +0200, Jacopo Mondi wrote:
+> The rcar-vin driver so far had a mutually exclusive code path for
+> handling parallel and CSI-2 video input subdevices, with only the CSI-2
+> use case supporting media-controller. As we add support for parallel
+> inputs to Gen3 media-controller compliant code path now parse both port@0
+> and port@1, handling the media-controller use case in the parallel
+> bound/unbind notifier operations.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+
+I think this patch looks fine except the label name mismatch. I think 
+it's ready but will hold off with my tag until I can review a complete 
+version of the patch :-)
+
+> 
+> ---
+> v4 -> v5:
+> - Re-group rvin_mc_init() function
+> - Add error_group_unreg error path to clean up group registration
+> - Change rvin_parallel_init() return type to make sure Gen2 works as before
+> 
+> v3 -> v4:
+> - Change the mc/parallel initialization order. Initialize mc first, then
+>   parallel
+> - As a consequence no need to delay parallel notifiers registration, the
+>   media controller is set up already when parallel input got parsed,
+>   this greatly simplify the group notifier complete callback.
+> 
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 53 +++++++++++++++++++++--------
+>  1 file changed, 38 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index fc98986..c1d6feb 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -399,6 +399,11 @@ static int rvin_parallel_subdevice_attach(struct rvin_dev *vin,
+>  	ret = rvin_find_pad(subdev, MEDIA_PAD_FL_SINK);
+>  	vin->parallel->sink_pad = ret < 0 ? 0 : ret;
+> 
+> +	if (vin->info->use_mc) {
+> +		vin->parallel->subdev = subdev;
+> +		return 0;
+> +	}
+> +
+>  	/* Find compatible subdevices mbus format */
+>  	vin->mbus_code = 0;
+>  	code.index = 0;
+> @@ -460,10 +465,12 @@ static int rvin_parallel_subdevice_attach(struct rvin_dev *vin,
+>  static void rvin_parallel_subdevice_detach(struct rvin_dev *vin)
+>  {
+>  	rvin_v4l2_unregister(vin);
+> -	v4l2_ctrl_handler_free(&vin->ctrl_handler);
+> -
+> -	vin->vdev.ctrl_handler = NULL;
+>  	vin->parallel->subdev = NULL;
+> +
+> +	if (!vin->info->use_mc) {
+> +		v4l2_ctrl_handler_free(&vin->ctrl_handler);
+> +		vin->vdev.ctrl_handler = NULL;
+> +	}
+>  }
+> 
+>  static int rvin_parallel_notify_complete(struct v4l2_async_notifier *notifier)
+> @@ -552,18 +559,19 @@ static int rvin_parallel_parse_v4l2(struct device *dev,
+>  	return 0;
+>  }
+> 
+> -static int rvin_parallel_graph_init(struct rvin_dev *vin)
+> +static int rvin_parallel_init(struct rvin_dev *vin)
+>  {
+>  	int ret;
+> 
+> -	ret = v4l2_async_notifier_parse_fwnode_endpoints(
+> -		vin->dev, &vin->notifier,
+> -		sizeof(struct rvin_parallel_entity), rvin_parallel_parse_v4l2);
+> +	ret = v4l2_async_notifier_parse_fwnode_endpoints_by_port(
+> +		vin->dev, &vin->notifier, sizeof(struct rvin_parallel_entity),
+> +		0, rvin_parallel_parse_v4l2);
+>  	if (ret)
+>  		return ret;
+> 
+> +	/* If using mc, it's fine not to have any input registered. */
+>  	if (!vin->parallel)
+> -		return -ENODEV;
+> +		return vin->info->use_mc ? 0 : -ENODEV;
+> 
+>  	vin_dbg(vin, "Found parallel subdevice %pOF\n",
+>  		to_of_node(vin->parallel->asd.match.fwnode));
+> @@ -1084,20 +1092,35 @@ static int rcar_vin_probe(struct platform_device *pdev)
+>  		return ret;
+> 
+>  	platform_set_drvdata(pdev, vin);
+> -	if (vin->info->use_mc)
+> +
+> +	if (vin->info->use_mc) {
+>  		ret = rvin_mc_init(vin);
+> -	else
+> -		ret = rvin_parallel_graph_init(vin);
+> -	if (ret < 0)
+> -		goto error;
+> +		if (ret)
+> +			goto error_dma_unregister;
+> +	}
+> +
+> +	ret = rvin_parallel_init(vin);
+> +	if (ret)
+> +		goto error_group_unregister;
+> 
+>  	pm_suspend_ignore_children(&pdev->dev, true);
+>  	pm_runtime_enable(&pdev->dev);
+> 
+>  	return 0;
+> -error:
+> +
+> +error_group_unreg:
+> +	if (vin->info->use_mc) {
+> +		mutex_lock(&vin->group->lock);
+> +		if (&vin->v4l2_dev == vin->group->notifier.v4l2_dev) {
+> +			v4l2_async_notifier_unregister(&vin->group->notifier);
+> +			v4l2_async_notifier_cleanup(&vin->group->notifier);
+> +		}
+> +		mutex_unlock(&vin->group->lock);
+> +		rvin_group_put(vin);
+> +	}
+> +
+> +error_dma_unreg:
+>  	rvin_dma_unregister(vin);
+> -	v4l2_async_notifier_cleanup(&vin->notifier);
+> 
+>  	return ret;
+>  }
+> --
+> 2.7.4
+> 
+
 -- 
-2.11.0
+Regards,
+Niklas S�derlund
