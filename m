@@ -1,60 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:41088 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933375AbeFKL7Q (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:50697 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751624AbeFDJmq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:59:16 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 09/14] mfd: da9063: Add DA9063L type
-Date: Mon, 11 Jun 2018 13:58:46 +0200
-Message-Id: <20180611115851.1987-9-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
-References: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
+        Mon, 4 Jun 2018 05:42:46 -0400
+Date: Mon, 4 Jun 2018 11:42:27 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: Re: [PATCH v2] arm64: dts: renesas: Add sdhi2_ds pin group to SDHI2
+ pinctrl groups
+Message-ID: <20180604094227.b42jr3ue7dcldapa@verge.net.au>
+References: <20180528192842.2758-1-wsa+renesas@sang-engineering.com>
+ <20180529124741.psdy7qjijurbyh5d@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180529124741.psdy7qjijurbyh5d@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add type for DA9063L, which is a reduced variant of the DA9063
-without RTC block and with less regulators.
+On Tue, May 29, 2018 at 02:47:41PM +0200, Simon Horman wrote:
+> On Mon, May 28, 2018 at 09:28:42PM +0200, Wolfram Sang wrote:
+> > From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+> > 
+> > This patch adds definitions for configuration of the power-source,
+> > drive-strength, etc... for the SD2_DS pin for Salvator-X(S) and ULCB
+> > boards.
+> > 
+> > Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+> > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> > [wsa: fixed for ULCB boards, too]
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> 
+> This looks fine but I will wait to see if there are other reviews before
+> applying.
+> 
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
----
-V2: No change
-V3: No change
-V4: No change
-V5: No change
-V6: No change
----
- include/linux/mfd/da9063/core.h | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/include/linux/mfd/da9063/core.h b/include/linux/mfd/da9063/core.h
-index 9e36097adc42..71b09154e2db 100644
---- a/include/linux/mfd/da9063/core.h
-+++ b/include/linux/mfd/da9063/core.h
-@@ -33,6 +33,7 @@
- 
- enum da9063_type {
- 	PMIC_TYPE_DA9063 = 0,
-+	PMIC_TYPE_DA9063L,
- };
- 
- enum da9063_variant_codes {
--- 
-2.16.2
+Thanks, applied.
