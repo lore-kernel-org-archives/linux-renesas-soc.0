@@ -1,111 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail1.bemta26.messagelabs.com ([85.158.142.3]:35893 "EHLO
-        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752545AbeFEUR1 (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55699 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751401AbeFDR5E (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Jun 2018 16:17:27 -0400
-From: Steve Twiss <stwiss.opensource@diasemi.com>
-To: Marek Vasut <marek.vasut@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mon, 4 Jun 2018 13:57:04 -0400
+Subject: Re: [PATCH v3 06/10] mfd: da9063: Add custom regmap for DA9063L
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Lee Jones <lee.jones@linaro.org>,
         Mark Brown <broonie@kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Support Opensource <Support.Opensource@diasemi.com>
-Subject: RE: [PATCH v3 06/10] mfd: da9063: Add custom regmap for DA9063L
-Date: Tue, 5 Jun 2018 20:17:22 +0000
-Message-ID: <6ED8E3B22081A4459DAC7699F3695FB701941AD701@SW-EX-MBX02.diasemi.com>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
  <20180602101155.26375-6-marek.vasut+renesas@gmail.com>
  <CAMuHMdV-o0_G76vR0i9nTnSowpzP3Wrt2rC7jVnoFSR3SdObYA@mail.gmail.com>
- <9acdc0af-4be9-91cb-ffed-25133bba73c3@gmail.com>
-In-Reply-To: <9acdc0af-4be9-91cb-ffed-25133bba73c3@gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <9acdc0af-4be9-91cb-ffed-25133bba73c3@gmail.com>
+Date: Mon, 4 Jun 2018 18:25:18 +0200
 MIME-Version: 1.0
+In-Reply-To: <CAMuHMdV-o0_G76vR0i9nTnSowpzP3Wrt2rC7jVnoFSR3SdObYA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgTWFyZWsgYW5kIEdlZXJ0LA0KDQpPbiAwNCBKdW5lIDIwMTggMTc6MjUgTWFyZWsgVmFzdXQg
-d3JvdGUsDQoNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MyAwNi8xMF0gbWZkOiBkYTkwNjM6IEFk
-ZCBjdXN0b20gcmVnbWFwIGZvciBEQTkwNjNMDQo+IA0KPiBPbiAwNi8wNC8yMDE4IDA5OjM5IEFN
-LCBHZWVydCBVeXR0ZXJob2V2ZW4gd3JvdGU6DQo+ID4gSGkgTWFyZWssIFN0ZXZlLA0KPiA+DQo+
-ID4gT24gU2F0LCBKdW4gMiwgMjAxOCBhdCAxMjoxMSBQTSwgTWFyZWsgVmFzdXQgPG1hcmVrLnZh
-c3V0QGdtYWlsLmNvbT4gd3JvdGU6DQo+ID4+IFdoaWxlIHRoZSBkYXRhc2hlZXQgZm9yIERBOTA2
-M0wgKDJ2MSwgMjMtTWFyLTIwMTcpIGxpc3RzIHRoZSBSVEMgcmVnaXN0ZXINCj4gPj4gYmxvY2ss
-IHRoZSBEQTkwNjNMIGRvZXMgbm90IGhhdmUgYW4gUlRDLiBBZGQgY3VzdG9tIHJlZ21hcCBmb3Ig
-REE5MDYzTCB0bw0KPiA+PiBwcmV2ZW50IGFjY2VzcyBpbnRvIHRoYXQgcmVnaXN0ZXIgYmxvY2su
-DQoNCk9rLiBJJ3ZlIHNhaWQgcHJldmlvdXNseSBpbiBbdjMgMDcvMTBdLCBidXQgSSdsbCBjb3B5
-IGFnYWluOg0KVGhlcmUgaXMgbm93IGFuIGludGVybmFsIERpYWxvZyByZXF1ZXN0IHRvIHJlbW92
-ZSB0aGUgUlRDIHJlZmVyZW5jZXMgZnJvbSB0aGUgREE5MDYzTCBkYXRhc2hlZXQuDQpBZGRpbmcg
-dGhhdCBmaXJzdCBwYXJ0IHRvIHRoZSBzZW50ZW5jZSBpbiB0aGUgY29tbWl0IGxvZzogIldoaWxl
-IHRoZSBkYXRhc2hlZXQgZm9yIERBOTA2M0wNCigydjEsIDIzLU1hci0yMDE3KSBsaXN0cyB0aGUg
-UlRDIHJlZ2lzdGVyIGJsb2NrIiAtLSBpdCBleGlzdHMgaW4gZXJyb3IgZm9yIHRoZSByZWdpc3Rl
-ciBtYXAgdGFibGUNCm9uIHBhZ2UgOTEsIGJ1dCB0aGUgZGF0YXNoZWV0IGFsc28gaWRlbnRpZmll
-cyB0aG9zZSByZWdpc3RlcnMgaW4gVGFibGUgMTAyIG9uIHBhZ2UgMTI2IGFzDQoiUmVzZXJ2ZWQi
-Lg0KDQpQb2ludGluZyBvdXQgdGhlIGFtYmlndWl0eSBpbiB0aGlzIHZlcnNpb24gb2YgdGhlIGRh
-dGFzaGVldCBzZWVtcyByZWR1bmRhbnQgaW4gdGhlIGNvbW1pdCBsb2cuDQpBbHNvIERpYWxvZyBk
-byBub3Qgc3RvcmUgYSBoaXN0b3J5IG9mIERhdGFzaGVldHMgb24gdGhlaXIgd2Vic2l0ZSBzbyBv
-bmNlIHRoaXMgaXMgdXBkYXRlZCAoYWx0aG91Z2gNCnRoaXMgdXBkYXRlIGlzIG5vdCBpbiBteSBo
-YW5kcykgdGhlIGRhdGFzaGVldCB3aWxsIGJlIHJlcGxhY2VkLiBTbywgaXQgc2VlbXMgdGhpcyBj
-b21tZW50IGNvdWxkDQptYWtlIHRoZSBjb21taXQgbWVzc2FnZSBqdXN0IGFzIG1pc2xlYWRpbmcg
-YXMgdGhlIGN1cnJlbnQgZGF0YXNoZWV0Lg0KDQpIb3cgYWJvdXQgc29tZXRoaW5nIHNpbXBsZXI/
-DQoiVGhlIERBOTA2M0wgZG9lcyBub3QgaGF2ZSBhbiBSVEMuIEFkZCBjdXN0b20gcmVnbWFwIGZv
-ciBEQTkwNjNMIHRvIHByZXZlbnQgYWNjZXNzDQppbnRvIHRoYXQgcmVnaXN0ZXIgYmxvY2suIg0K
-DQo+ID4+DQo+ID4+IFNpZ25lZC1vZmYtYnk6IE1hcmVrIFZhc3V0IDxtYXJlay52YXN1dCtyZW5l
-c2FzQGdtYWlsLmNvbT4NCj4gPg0KPiA+IFRoYW5rcyBmb3IgeW91ciBwYXRjaCENCj4gPg0KPiA+
-PiAtLS0gYS9kcml2ZXJzL21mZC9kYTkwNjMtaTJjLmMNCj4gPj4gKysrIGIvZHJpdmVycy9tZmQv
-ZGE5MDYzLWkyYy5jDQo+ID4+IEBAIC0yNTQsNiArMzQxLDEwIEBAIHN0YXRpYyBpbnQgZGE5MDYz
-X2kyY19wcm9iZShzdHJ1Y3QgaTJjX2NsaWVudCAqaTJjLA0KPiA+DQo+ID4gTm90ZSB0aGF0IHRo
-ZSBsaW5lIGFib3ZlIGRvZXNuJ3QgY2hlY2sgZGE5MDYzLT50eXBlLCBidXQgZGE5MDYzLQ0KPiA+
-dmFyaWFudF9jb2RlLi4uDQo+ID4NCj4gPj4gICAgICAgICAgICAgICAgIGRhOTA2M19yZWdtYXBf
-Y29uZmlnLnJkX3RhYmxlID0gJmRhOTA2M19hZF9yZWFkYWJsZV90YWJsZTsNCj4gPj4gICAgICAg
-ICAgICAgICAgIGRhOTA2M19yZWdtYXBfY29uZmlnLndyX3RhYmxlID0gJmRhOTA2M19hZF93cml0
-ZWFibGVfdGFibGU7DQo+ID4+ICAgICAgICAgICAgICAgICBkYTkwNjNfcmVnbWFwX2NvbmZpZy52
-b2xhdGlsZV90YWJsZSA9ICZkYTkwNjNfYWRfdm9sYXRpbGVfdGFibGU7DQo+ID4+ICsgICAgICAg
-fSBlbHNlIGlmIChkYTkwNjMtPnR5cGUgPT0gUE1JQ19UWVBFX0RBOTA2M0wpIHsNCj4gPg0KPiA+
-IC4uLiBzbyB0aGlzIG1heSBiZSBzbGlnaHRseSBjb25mdXNpbmcuDQo+IA0KPiBJIGtub3cuDQo+
-IA0KPiA+PiArICAgICAgICAgICAgICAgZGE5MDYzX3JlZ21hcF9jb25maWcucmRfdGFibGUgPSAm
-ZGE5MDYzbF9iYl9yZWFkYWJsZV90YWJsZTsNCj4gPj4gKyAgICAgICAgICAgICAgIGRhOTA2M19y
-ZWdtYXBfY29uZmlnLndyX3RhYmxlID0gJmRhOTA2M2xfYmJfd3JpdGVhYmxlX3RhYmxlOw0KPiA+
-PiArICAgICAgICAgICAgICAgZGE5MDYzX3JlZ21hcF9jb25maWcudm9sYXRpbGVfdGFibGUgPSAm
-ZGE5MDYzbF9iYl92b2xhdGlsZV90YWJsZTsNCj4gPj4gICAgICAgICB9IGVsc2Ugew0KPiA+PiAg
-ICAgICAgICAgICAgICAgZGE5MDYzX3JlZ21hcF9jb25maWcucmRfdGFibGUgPSAmZGE5MDYzX2Ji
-X3JlYWRhYmxlX3RhYmxlOw0KPiA+PiAgICAgICAgICAgICAgICAgZGE5MDYzX3JlZ21hcF9jb25m
-aWcud3JfdGFibGUgPSAmZGE5MDYzX2JiX3dyaXRlYWJsZV90YWJsZTsNCj4gPg0KPiA+IEhvd2V2
-ZXIsIGRhOTA2My0+dmFyaWFudF9jb2RlIGRvZXNuJ3Qgc2VlbSB0byBoYXZlIGJlZW4gZmlsbGVk
-IGluIGF0IHRoaXMNCj4gPiBwb2ludCB5ZXQgKHRoZSBjYWxsIHRvIGRhOTA2M19kZXZpY2VfaW5p
-dCgpIGRvaW5nIHNvIGlzIGJlbG93LCBhdCB0aGUgZW5kDQo+ID4gb2YgdGhlIHByb2JlIGZ1bmN0
-aW9uISksIHNvIGNvbW1pdCA5Y2I0MmUyYThlZDA2ZTkxICgibWZkOiBkYTkwNjM6IEFkZA0KPiA+
-IHN1cHBvcnQgZm9yIEFEIHNpbGljb24gdmFyaWFudCIpIG5ldmVyIGFjdHVhbGx5IGhhbmRsZWQg
-dGhlIEFEIHNpbGljb24gdmFyaWFudA0KPiA+IGNvcnJlY3RseT8gT3IgYW0gSSBtaXNzaW5nIHNv
-bWV0aGluZz8NCg0KT2theSAuLi4gTm8uIFlvdSdyZSBub3QgbWlzc2luZyBhbnl0aGluZy4gSSBo
-YWQgbm90aWNlZCB0aGF0Lg0KVGhlIEFEIGNoaXAgbW9kZWwgaXMgbm90IHJlZmVyZW5jZWQgYW5k
-IGJ5IGRlZmF1bHQgb25seSB0aGUgQkIgY2hpcCBtb2RlbCBpcyB1c2VkLg0KDQo+IEhhLCB0aGF0
-IGlzIGEgZ29vZCBwb2ludC4NCg0KWWVhaCwgaXQncyBhIGdvb2QgcG9pbnQsIGJ1dCBpdCdzIG5v
-dCBhbiBhbXVzaW5nIHBvaW50Lg0KVGhlIGRldmljZSB0cmVlIG9ubHkgZGlzdGluZ3Vpc2hlcyBh
-ICJkbGcsZGE5MDYzIiwgdGhlcmUgaXMgbm8gQUQgdHlwZSBpbiB0aGUgRFQgc2NoZW1hLg0KVGhl
-cmUgaXMgbm8gZGF0YXNoZWV0IGxpc3RpbmcgQUQgcmVnaXN0ZXJzIHN1cHBvcnRlZCBieSBEaWFs
-b2csIG9ubHkgQkIuDQoNCkJ1dCwgQUQgcmVnaXN0ZXJzIHdlcmUgYWRkZWQgYmFjayBpbnRvIHRo
-ZSBoZWFkZXIgZmlsZSBpbiBjb21taXQgOWNiNDJlMmE4ZWQwNmU5MQ0KYW5kIHRoZSBSVEMgZHJp
-dmVyIHdhcyB1cGRhdGVkIHRvIGRpc3Rpbmd1aXNoIGJldHdlZW4gdGhlIEFEIGFuZCBCQiBhY2Nv
-cmRpbmcgdG8NCnRoZSB0eXBlIG9mIHZhcmlhbnQgZGV0ZWN0ZWQgYXQgcnVuLXRpbWUgZHVyaW5n
-IHRoZSBkYTkwNjNfZGV2aWNlX2luaXQoKSBjYWxsLg0KDQpUaGUgcmVhbCBwcm9ibGVtIGlzIHRo
-YXQgdGhpcyBsZWFkcyB0byB0d28gY29tcGV0aW5nIGNoaXAgZGV0ZWN0aW9uIG1ldGhvZHMgZm9y
-IHRoZQ0KREE5MDYzLiBUaGUgZnVuY3Rpb24gZGE5MDYzX2RldmljZV9pbml0KCkgYXV0b2RldGVj
-dHMgdGhlIGNoaXAgdmFyaWFudCwgYnV0DQphdXRvZGV0ZWN0aW9uIGNhbm5vdCBkZWZpbmUgdGhl
-IGNoaXAgbW9kZWwuIEl0J3MgY2lyY3VsYXI6IHRoZSBjaGlwIG1vZGVsIGNhbm5vdCBiZQ0KYXV0
-b2RldGVjdGVkIGJlY2F1c2UgYSBjaGlwIG1vZGVsIGlzIG5lZWRlZCB0byBhY2Nlc3MgdGhlIHJl
-Z2lzdGVyIHVzZWQgZHVyaW5nDQphdXRvZGV0ZWN0aW9uLg0KDQpXaGljaCBsZWFkcyBtZSBiYWNr
-IHRvIHdoYXQgSSBzYWlkIHR3byBwYXJhZ3JhcGhzIHVwOg0KPiBUaGUgZGV2aWNlIHRyZWUgb25s
-eSBkaXN0aW5ndWlzaGVzIGEgImRsZyxkYTkwNjMiLCB0aGVyZSBpcyBubyBBRCB0eXBlIGluIHRo
-ZSBEVCBzY2hlbWEuDQo+IFRoZXJlIGlzIG5vIGRhdGFzaGVldCBsaXN0aW5nIEFEIHJlZ2lzdGVy
-cyBzdXBwb3J0ZWQgYnkgRGlhbG9nLCBvbmx5IEJCLg0KDQpUaGlzIGlzIG5vdCBob3cgaXQgaXMg
-ZG9uZSBpbiB0aGUgREE5MDYyIGFuZCBEQTkwNjEgZHJpdmVyOiB0aGUgdmFyaWFudCBjb2RlIGlz
-IG9ubHkNCnVzZWQgdG8gcHJpbnQgdGhlIGluZm9ybWF0aW9uIHRvIHRoZSBjb25zb2xlIGR1cmlu
-ZyBzdGFydC11cCBhbmQgaXQgaXMgdGhlIERUIHRoYXQgZGVmaW5lcw0KdGhlIGNoaXAgbW9kZWwg
-YmFzZWQgdXBvbiAiZGxnLGRhOTA2MiIgb3IgImRsZyxkYTkwNjEiLg0KDQpTdGV2ZQ0K
+On 06/04/2018 09:39 AM, Geert Uytterhoeven wrote:
+> Hi Marek, Steve,
+> 
+> On Sat, Jun 2, 2018 at 12:11 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>> While the datasheet for DA9063L (2v1, 23-Mar-2017) lists the RTC register
+>> block, the DA9063L does not have an RTC. Add custom regmap for DA9063L to
+>> prevent access into that register block.
+>>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> 
+> Thanks for your patch!
+> 
+>> --- a/drivers/mfd/da9063-i2c.c
+>> +++ b/drivers/mfd/da9063-i2c.c
+>> @@ -254,6 +341,10 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
+> 
+> Note that the line above doesn't check da9063->type, but da9063->variant_code...
+> 
+>>                 da9063_regmap_config.rd_table = &da9063_ad_readable_table;
+>>                 da9063_regmap_config.wr_table = &da9063_ad_writeable_table;
+>>                 da9063_regmap_config.volatile_table = &da9063_ad_volatile_table;
+>> +       } else if (da9063->type == PMIC_TYPE_DA9063L) {
+> 
+> ... so this may be slightly confusing.
+
+I know.
+
+>> +               da9063_regmap_config.rd_table = &da9063l_bb_readable_table;
+>> +               da9063_regmap_config.wr_table = &da9063l_bb_writeable_table;
+>> +               da9063_regmap_config.volatile_table = &da9063l_bb_volatile_table;
+>>         } else {
+>>                 da9063_regmap_config.rd_table = &da9063_bb_readable_table;
+>>                 da9063_regmap_config.wr_table = &da9063_bb_writeable_table;
+> 
+> However, da9063->variant_code doesn't seem to have been filled in at this
+> point yet (the call to da9063_device_init() doing so is below, at the end
+> of the probe function!), so commit 9cb42e2a8ed06e91 ("mfd: da9063: Add
+> support for AD silicon variant") never actually handled the AD silicon variant
+> correctly? Or am I missing something?
+
+Ha, that is a good point.
+
+-- 
+Best regards,
+Marek Vasut
