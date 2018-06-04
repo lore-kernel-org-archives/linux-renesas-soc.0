@@ -1,147 +1,114 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:46926 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751376AbeFBKMU (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:46035 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752633AbeFDM5c (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 2 Jun 2018 06:12:20 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 04/10] mfd: da9063: Replace model with type
-Date: Sat,  2 Jun 2018 12:11:49 +0200
-Message-Id: <20180602101155.26375-4-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
-References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
+        Mon, 4 Jun 2018 08:57:32 -0400
+Date: Mon, 4 Jun 2018 14:57:27 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Simon Horman <horms@verge.net.au>
+Cc: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com, geert@glider.be,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] ARM: dts: rcar-gen2: Remove unused VIN properties
+Message-ID: <20180604125727.GH10472@w540>
+References: <1526923663-8179-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1526923663-8179-5-git-send-email-jacopo+renesas@jmondi.org>
+ <20180604095308.pnlmd4aalxceuozq@verge.net.au>
+ <20180604113154.GC19674@bigcity.dyn.berto.se>
+ <20180604122511.cfb7cg7ojihel5mx@verge.net.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="BXr400anF0jyguTS"
+Content-Disposition: inline
+In-Reply-To: <20180604122511.cfb7cg7ojihel5mx@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The model number stored in the struct da9063 is the same for all
-variants of the da9063 since it is the chip ID, which is always
-the same. Replace that with a separate identifier instead, which
-allows us to discern the DA9063 variants by setting the type
-based on either DT match or otherwise.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Acked-by: Mark Brown <broonie@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-V2: Drop useless cast of id->driver_data
-V3: Fix kernel 0day error , s/dev_model/type/
----
- drivers/mfd/da9063-core.c            | 1 -
- drivers/mfd/da9063-i2c.c             | 5 +++--
- drivers/regulator/da9063-regulator.c | 6 +++---
- include/linux/mfd/da9063/core.h      | 6 +++++-
- 4 files changed, 11 insertions(+), 7 deletions(-)
+--BXr400anF0jyguTS
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
-index fb122316c421..eebca3442cf3 100644
---- a/drivers/mfd/da9063-core.c
-+++ b/drivers/mfd/da9063-core.c
-@@ -215,7 +215,6 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
- 		return -ENODEV;
- 	}
- 
--	da9063->model = model;
- 	da9063->variant_code = variant_code;
- 
- 	ret = da9063_irq_init(da9063);
-diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
-index 7f84030c8d53..048ce55ebc5b 100644
---- a/drivers/mfd/da9063-i2c.c
-+++ b/drivers/mfd/da9063-i2c.c
-@@ -236,7 +236,7 @@ static const struct of_device_id da9063_dt_ids[] = {
- };
- MODULE_DEVICE_TABLE(of, da9063_dt_ids);
- static int da9063_i2c_probe(struct i2c_client *i2c,
--	const struct i2c_device_id *id)
-+			    const struct i2c_device_id *id)
- {
- 	struct da9063 *da9063;
- 	int ret;
-@@ -248,6 +248,7 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
- 	i2c_set_clientdata(i2c, da9063);
- 	da9063->dev = &i2c->dev;
- 	da9063->chip_irq = i2c->irq;
-+	da9063->type = id->driver_data;
- 
- 	if (da9063->variant_code == PMIC_DA9063_AD) {
- 		da9063_regmap_config.rd_table = &da9063_ad_readable_table;
-@@ -280,7 +281,7 @@ static int da9063_i2c_remove(struct i2c_client *i2c)
- }
- 
- static const struct i2c_device_id da9063_i2c_id[] = {
--	{ "da9063", PMIC_CHIP_ID_DA9063 },
-+	{ "da9063", PMIC_TYPE_DA9063 },
- 	{},
- };
- MODULE_DEVICE_TABLE(i2c, da9063_i2c_id);
-diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
-index 87c884ae0064..eeb0d431dda1 100644
---- a/drivers/regulator/da9063-regulator.c
-+++ b/drivers/regulator/da9063-regulator.c
-@@ -98,7 +98,7 @@ struct da9063_regulator_info {
- struct da9063_dev_model {
- 	const struct da9063_regulator_info	*regulator_info;
- 	unsigned				n_regulators;
--	unsigned				dev_model;
-+	enum da9063_type			type;
- };
- 
- /* Single regulator settings */
-@@ -585,7 +585,7 @@ static struct da9063_dev_model regulators_models[] = {
- 	{
- 		.regulator_info = da9063_regulator_info,
- 		.n_regulators = ARRAY_SIZE(da9063_regulator_info),
--		.dev_model = PMIC_CHIP_ID_DA9063,
-+		.type = PMIC_TYPE_DA9063,
- 	},
- 	{ }
- };
-@@ -741,7 +741,7 @@ static int da9063_regulator_probe(struct platform_device *pdev)
- 
- 	/* Find regulators set for particular device model */
- 	for (model = regulators_models; model->regulator_info; model++) {
--		if (model->dev_model == da9063->model)
-+		if (model->type == da9063->type)
- 			break;
- 	}
- 	if (!model->regulator_info) {
-diff --git a/include/linux/mfd/da9063/core.h b/include/linux/mfd/da9063/core.h
-index 664f650d0086..eb234582dcb2 100644
---- a/include/linux/mfd/da9063/core.h
-+++ b/include/linux/mfd/da9063/core.h
-@@ -31,6 +31,10 @@
- 
- #define PMIC_CHIP_ID_DA9063		0x61
- 
-+enum da9063_type {
-+	PMIC_TYPE_DA9063 = 0,
-+};
-+
- enum da9063_variant_codes {
- 	PMIC_DA9063_AD = 0x3,
- 	PMIC_DA9063_BB = 0x5,
-@@ -76,7 +80,7 @@ enum da9063_irqs {
- struct da9063 {
- 	/* Device */
- 	struct device	*dev;
--	unsigned short	model;
-+	enum da9063_type type;
- 	unsigned char	variant_code;
- 	unsigned int	flags;
- 
--- 
-2.16.2
+Hi Niklas,
+
+On Mon, Jun 04, 2018 at 02:25:15PM +0200, Simon Horman wrote:
+> On Mon, Jun 04, 2018 at 01:31:54PM +0200, Niklas S=C3=B6derlund wrote:
+> > Hi Simon,
+> >
+> > On 2018-06-04 11:53:09 +0200, Simon Horman wrote:
+> > > On Mon, May 21, 2018 at 07:27:43PM +0200, Jacopo Mondi wrote:
+> > >
+> > > > The 'bus-width' and 'pclk-sample' properties are not parsed by the =
+VIN
+> > > > driver and only confuse users. Remove them in all Gen2 SoC that use
+> > > > them.
+> > >
+> > > I think that the rational for removing properties (or not) is their
+> > > presence in the bindings as DT should describe the hardware and not t=
+he
+> > > current state of the driver implementation.
+> > >
+> > > I see that 'bus-width' may be removed from the binding, as per discus=
+sion
+> > > in a different sub-thread. I'd like that discussion to reach a conclu=
+sion
+> > > before considering that part of this patch any further.
+> > >
+> > > And I'd appreciate Niklas's feedback on the 'pclk-sample' portion.
+> >
+> > My thoughts on 'pclk-sample' is the same as for 'bus-width', they
+> > describe the hardware. So we either should keep or remove both. As our
+> > discussion in the other thread I'm leaning towards that both should be
+> > kept.
+
+Am I wrong, or we discussed about the face there is no way to specify
+the bus widht of the VIN parallel input interface?
+
+>
+> Thanks, that sounds reasonable to me.
+
+So they should be documented if we want to keep them. Currently, they
+are not.
+
+And again, someone integrating a sensor may try to play around with those
+properties, expecting them to change the interface behavior and wasting time
+trying to figure out where the error is, on sensor side or VIN side, before
+realizing those properties are actually ignored.
+
+Anyway, the most important thing, if we want to keep them is to
+provide a patch to document them as optional properties of the VIN
+endpoint.
+
+Thanks
+   j
+
+>
+> I'm marking (v4 of) this as deferred pending a conclusion to that
+> conversation.
+>
+
+--BXr400anF0jyguTS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJbFTc3AAoJEHI0Bo8WoVY8YSwQALktvG/UQlCbEdUYzu/+X9Uo
+0CeAdPoRZjkCwo4jCISLCuKAIzFgZNdsAMGb1ggKf0zwHSvzh4JhszHiUjkvjEDw
+aLcR6p07kdBiaSk+a7moV0yjffXrvtrFXUl8MzmlIgbVuIHZQoXVab+DDi2ebyFV
+Eyw4SRiD0gkqZr/nj9pE6UTe7e6UHaKmNwiMsTgVBMfpC3ozMnhOTIVloyl2kvN/
+3p0XrQIe1rbz5gAcygs0YwsCyKNilf0r9iIg7sCOx2T69vLwD4fCvWYXY4NKFIxH
+skzsD5WYl/jnH0yFM1TUwx1lBo3DnsgX2zsNKQc+Jp7niEVlyM9ewKq+dDNcQaKc
+7e+TSmR4s0Ouauf07IQzL6XFTFCBkZ1JBHwygJ/cXF/6JllX9SFmPHThZoHiYUye
+vSaMGZF9QpWCzIeW/Y+thYbF2wVGVZ88+3G5FAB3JVKSTSf1/AdcMqQ80cFMiCVS
+bczJFYrphM0DstFUB4SWXJvURlkfGfkS/cXU4V2VBaoApnAtnEtkVNxiV4AU8ExE
+r3MNPGsRUtH5zzn8rNPBx3VLVQR2e3Y3wiGYJs+DUx4Usf7kjWLyMt2TGo3xB9pZ
+FYmCeMXC784C2LtsQBM9bakJNrtov0/KbhYuKmiA4cBtkToBfgT9CYTkGWmCVGZm
+XUnqAPzHUKtCzniFc8Zo
+=fR5f
+-----END PGP SIGNATURE-----
+
+--BXr400anF0jyguTS--
