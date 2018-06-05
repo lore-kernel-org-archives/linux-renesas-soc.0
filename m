@@ -1,55 +1,56 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:39053 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751832AbeFENYV (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Jun 2018 09:24:21 -0400
-MIME-Version: 1.0
-In-Reply-To: <1528198148-23308-4-git-send-email-michel.pollet@bp.renesas.com>
-References: <1528198148-23308-1-git-send-email-michel.pollet@bp.renesas.com> <1528198148-23308-4-git-send-email-michel.pollet@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 5 Jun 2018 15:24:20 +0200
-Message-ID: <CAMuHMdVPfE=0EynQg1syOiPCMbvtK9ooWo+_hvtY=VEMKMPXHw@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] ARM: dts: Renesas R9A06G032 SMP enable method
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
         Michel Pollet <buserror+upstream@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Carlo Caione <carlo@endlessm.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
         Frank Rowand <frank.rowand@sony.com>,
         Rajendra Nayak <rnayak@codeaurora.org>,
         Stefan Wahren <stefan.wahren@i2se.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4 3/3] ARM: dts: Renesas R9A06G032 SMP enable method
+Date: Tue,  5 Jun 2018 12:28:48 +0100
+Message-Id: <1528198148-23308-4-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1528198148-23308-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1528198148-23308-1-git-send-email-michel.pollet@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jun 5, 2018 at 1:28 PM, Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> Add a special enable method for the second CA7 of the R9A06G032
-> as well as the default value for the "cpu-release-addr" property.
->
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Add a special enable method for the second CA7 of the R9A06G032
+as well as the default value for the "cpu-release-addr" property.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+---
+ arch/arm/boot/dts/r9a06g032.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+index 40827bb..9d7e74a 100644
+--- a/arch/arm/boot/dts/r9a06g032.dtsi
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -1,3 +1,4 @@
++
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+  * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
+@@ -30,6 +31,8 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <1>;
+ 			clocks = <&sysctrl R9A06G032_CLK_A7MP>;
++			enable-method = "renesas,r9a06g032-smp";
++			cpu-release-addr = <0x4000c204>;
+ 		};
+ 	};
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.7.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
