@@ -1,61 +1,44 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        devicetree@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 1/2] media: dt-bindings: adv748x: Fix decimal unit addresses
-Date: Thu, 14 Jun 2018 15:48:07 +0200
-Message-Id: <1528984088-24801-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1528984088-24801-1-git-send-email-geert+renesas@glider.be>
-References: <1528984088-24801-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:40398 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752144AbeFEUaj (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 5 Jun 2018 16:30:39 -0400
+Received: by mail-lf0-f66.google.com with SMTP id q11-v6so5614588lfc.7
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Jun 2018 13:30:38 -0700 (PDT)
+Subject: [PATCH 2/2] drm: rcar-du: lvds: add R8A77980 support
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+References: <ef3c6b7e-98f2-7012-71c5-6693e6e48999@cogentembedded.com>
+Message-ID: <668491ee-915d-66fc-feea-c2afed5d645d@cogentembedded.com>
+Date: Tue, 5 Jun 2018 23:30:36 +0300
+MIME-Version: 1.0
+In-Reply-To: <ef3c6b7e-98f2-7012-71c5-6693e6e48999@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-With recent dtc and W=1:
+Add support for the R-Car V3H (R8A77980) SoC to the LVDS encoder driver.
 
-    Warning (graph_port): video-receiver@70/port@10: graph node unit address error, expected "a"
-    Warning (graph_port): video-receiver@70/port@11: graph node unit address error, expected "b"
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Unit addresses are always hexadecimal (without prefix), while the bases
-of reg property values depend on their prefixes.
-
-Fixes: e69595170b1cad85 ("media: adv748x: Add adv7481, adv7482 bindings")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/media/i2c/adv748x.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_lvds.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/adv748x.txt b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-index 21ffb5ed818302ff..54d1d3bc186949fa 100644
---- a/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-+++ b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-@@ -73,7 +73,7 @@ Example:
- 			};
- 		};
+Index: drm/drivers/gpu/drm/rcar-du/rcar_lvds.c
+===================================================================
+--- drm.orig/drivers/gpu/drm/rcar-du/rcar_lvds.c
++++ drm/drivers/gpu/drm/rcar-du/rcar_lvds.c
+@@ -519,6 +519,7 @@ static const struct of_device_id rcar_lv
+ 	{ .compatible = "renesas,r8a7795-lvds", .data = &rcar_lvds_gen3_info },
+ 	{ .compatible = "renesas,r8a7796-lvds", .data = &rcar_lvds_gen3_info },
+ 	{ .compatible = "renesas,r8a77970-lvds", .data = &rcar_lvds_r8a77970_info },
++	{ .compatible = "renesas,r8a77980-lvds", .data = &rcar_lvds_gen3_info },
+ 	{ }
+ };
  
--		port@10 {
-+		port@a {
- 			reg = <10>;
- 
- 			adv7482_txa: endpoint {
-@@ -83,7 +83,7 @@ Example:
- 			};
- 		};
- 
--		port@11 {
-+		port@b {
- 			reg = <11>;
- 
- 			adv7482_txb: endpoint {
--- 
-2.7.4
-
