@@ -1,111 +1,235 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45516 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751822AbeFEJVx (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:37895 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751507AbeFEIHc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Jun 2018 05:21:53 -0400
-Date: Tue, 5 Jun 2018 11:21:51 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms@verge.net.au>
-Cc: Marek Vasut <marek.vasut@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
+        Tue, 5 Jun 2018 04:07:32 -0400
+Date: Tue, 5 Jun 2018 10:07:28 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH V3] ARM: shmobile: Rework the PMIC IRQ line quirk
-Message-ID: <20180605092151.57ezynjgf23yunkf@ninjato>
+Message-ID: <20180605080727.ygh25rmjsrs3dmlq@verge.net.au>
 References: <20180604175911.799-1-marek.vasut+renesas@gmail.com>
- <20180605080727.ygh25rmjsrs3dmlq@verge.net.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jgvlq5pi7jztadld"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180605080727.ygh25rmjsrs3dmlq@verge.net.au>
+In-Reply-To: <20180604175911.799-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Mon, Jun 04, 2018 at 07:59:11PM +0200, Marek Vasut wrote:
+> Rather than hard-coding the quirk topology, which stopped scaling,
+> parse the information from DT. The code looks for all compatible
+> PMICs -- da9036 and da9210 -- and checks if their IRQ line is tied
+> to the same pin. If so, the code sends a matching sequence to the
+> PMIC to deassert the IRQ.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+> V2: - Replace the DT shared IRQ check loop with memcmp()
+>     - Send the I2C message to deassert the IRQ line to all PMICs
+>       in the list with shared IRQ line instead of just one
+>     - Add comment that this works only in case all the PMICs are
+>       on the same I2C bus
+> V3: - Drop the addr = 0x00 init
+>     - Drop reinit of argsa in rcar_gen2_regulator_quirk
+> ---
+>  arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c | 114 ++++++++++++++++-----
+>  1 file changed, 90 insertions(+), 24 deletions(-)
+> 
+> diff --git a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+> index 93f628acfd94..b919073aa27e 100644
+> --- a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+> +++ b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+> @@ -31,8 +31,10 @@
+>  #include <linux/i2c.h>
+>  #include <linux/init.h>
+>  #include <linux/io.h>
+> +#include <linux/list.h>
+>  #include <linux/notifier.h>
+>  #include <linux/of.h>
+> +#include <linux/of_irq.h>
+>  #include <linux/mfd/da9063/registers.h>
+>  
+>  
+> @@ -44,34 +46,45 @@
+>  /* start of DA9210 System Control and Event Registers */
+>  #define DA9210_REG_MASK_A		0x54
+>  
+> +struct regulator_quirk {
+> +	struct list_head		list;
+> +	const struct of_device_id	*id;
+> +	struct of_phandle_args		irq_args;
+> +	struct i2c_msg			i2c_msg;
+> +	bool				shared;	/* IRQ line is shared */
+> +};
+> +
+> +static LIST_HEAD(quirk_list);
+>  static void __iomem *irqc;
+>  
+>  /* first byte sets the memory pointer, following are consecutive reg values */
+>  static u8 da9063_irq_clr[] = { DA9063_REG_IRQ_MASK_A, 0xff, 0xff, 0xff, 0xff };
+>  static u8 da9210_irq_clr[] = { DA9210_REG_MASK_A, 0xff, 0xff };
+>  
+> -static struct i2c_msg da9xxx_msgs[3] = {
+> -	{
+> -		.addr = 0x58,
+> -		.len = ARRAY_SIZE(da9063_irq_clr),
+> -		.buf = da9063_irq_clr,
+> -	}, {
+> -		.addr = 0x68,
+> -		.len = ARRAY_SIZE(da9210_irq_clr),
+> -		.buf = da9210_irq_clr,
+> -	}, {
+> -		.addr = 0x70,
+> -		.len = ARRAY_SIZE(da9210_irq_clr),
+> -		.buf = da9210_irq_clr,
+> -	},
+> +static struct i2c_msg da9063_msgs = {
+> +	.len = ARRAY_SIZE(da9063_irq_clr),
+> +	.buf = da9063_irq_clr,
+> +};
+> +
+> +static struct i2c_msg da9210_msgs = {
+> +	.len = ARRAY_SIZE(da9210_irq_clr),
+> +	.buf = da9210_irq_clr,
+> +};
+> +
+> +static const struct of_device_id rcar_gen2_quirk_match[] = {
+> +	{ .compatible = "dlg,da9063", .data = &da9063_msgs },
+> +	{ .compatible = "dlg,da9210", .data = &da9210_msgs },
+> +	{},
+>  };
+>  
+>  static int regulator_quirk_notify(struct notifier_block *nb,
+>  				  unsigned long action, void *data)
+>  {
+> +	struct regulator_quirk *pos, *tmp;
+>  	struct device *dev = data;
+>  	struct i2c_client *client;
+>  	static bool done;
+> +	int ret;
+>  	u32 mon;
+>  
+>  	if (done)
+> @@ -88,17 +101,20 @@ static int regulator_quirk_notify(struct notifier_block *nb,
+>  	client = to_i2c_client(dev);
+>  	dev_dbg(dev, "Detected %s\n", client->name);
+>  
+> -	if ((client->addr == 0x58 && !strcmp(client->name, "da9063")) ||
+> -	    (client->addr == 0x68 && !strcmp(client->name, "da9210")) ||
+> -	    (client->addr == 0x70 && !strcmp(client->name, "da9210"))) {
+> -		int ret, len;
+> +	/*
+> +	 * Send message to all PMICs that share an IRQ line to deassert it.
+> +	 *
+> +	 * WARNING: This works only if all the PMICs are on the same I2C bus.
+> +	 */
+> +	list_for_each_entry(pos, &quirk_list, list) {
+> +		if (!pos->shared)
+> +			continue;
+>  
+> -		/* There are two DA9210 on Stout, one on the other boards. */
+> -		len = of_machine_is_compatible("renesas,stout") ? 3 : 2;
+> +		dev_info(&client->dev, "clearing %s@0x%02x interrupts\n",
+> +			 pos->id->compatible, pos->i2c_msg.addr);
+>  
+> -		dev_info(&client->dev, "clearing da9063/da9210 interrupts\n");
+> -		ret = i2c_transfer(client->adapter, da9xxx_msgs, len);
+> -		if (ret != len)
+> +		ret = i2c_transfer(client->adapter, &pos->i2c_msg, 1);
+> +		if (ret != 1)
+>  			dev_err(&client->dev, "i2c error %d\n", ret);
+>  	}
+>  
+> @@ -111,6 +127,11 @@ static int regulator_quirk_notify(struct notifier_block *nb,
+>  remove:
+>  	dev_info(dev, "IRQ2 is not asserted, removing quirk\n");
+>  
+> +	list_for_each_entry_safe(pos, tmp, &quirk_list, list) {
+> +		list_del(&pos->list);
+> +		kfree(pos);
+> +	}
+> +
+>  	done = true;
+>  	iounmap(irqc);
+>  	return 0;
+> @@ -122,7 +143,13 @@ static struct notifier_block regulator_quirk_nb = {
+>  
+>  static int __init rcar_gen2_regulator_quirk(void)
+>  {
+> -	u32 mon;
+> +	struct device_node *np;
+> +	const struct of_device_id *id;
+> +	struct regulator_quirk *quirk;
+> +	struct regulator_quirk *pos;
+> +	struct of_phandle_args *argsa, *argsb;
+> +	u32 mon, addr;
+> +	int ret;
+>  
+>  	if (!of_machine_is_compatible("renesas,koelsch") &&
+>  	    !of_machine_is_compatible("renesas,lager") &&
+> @@ -130,6 +157,45 @@ static int __init rcar_gen2_regulator_quirk(void)
+>  	    !of_machine_is_compatible("renesas,gose"))
+>  		return -ENODEV;
+>  
+> +	for_each_matching_node_and_match(np, rcar_gen2_quirk_match, &id) {
+> +		if (!np || !of_device_is_available(np))
+> +			break;
+> +
+> +		quirk = kzalloc(sizeof(*quirk), GFP_KERNEL);
+> +
+> +		argsa = &quirk->irq_args;
+> +		memcpy(&quirk->i2c_msg, id->data, sizeof(quirk->i2c_msg));
+> +
+> +		ret = of_property_read_u32(np, "reg", &addr);
+> +		if (ret)
+> +			return ret;
+> +
+> +		quirk->id = id;
+> +		quirk->i2c_msg.addr = addr;
+> +		quirk->shared = false;
+> +
+> +		ret = of_irq_parse_one(np, 0, &quirk->irq_args);
 
---jgvlq5pi7jztadld
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+As per my comment on v2,
+&quirk->irq_args is assigned to argsa above and used directly here.
 
-Hi Marek,
-
-On Tue, Jun 05, 2018 at 10:07:28AM +0200, Simon Horman wrote:
-> On Mon, Jun 04, 2018 at 07:59:11PM +0200, Marek Vasut wrote:
-> > Rather than hard-coding the quirk topology, which stopped scaling,
-> > parse the information from DT. The code looks for all compatible
-> > PMICs -- da9036 and da9210 -- and checks if their IRQ line is tied
-> > to the same pin. If so, the code sends a matching sequence to the
-> > PMIC to deassert the IRQ.
-> >=20
-> > Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> > Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> > Cc: Simon Horman <horms+renesas@verge.net.au>
-> > Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-=46rom an I2C point of view:
-
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Minor nits:
-
-> > @@ -122,7 +143,13 @@ static struct notifier_block regulator_quirk_nb =
-=3D {
-> > =20
-> >  static int __init rcar_gen2_regulator_quirk(void)
-> >  {
-> > -	u32 mon;
-> > +	struct device_node *np;
-> > +	const struct of_device_id *id;
-> > +	struct regulator_quirk *quirk;
-> > +	struct regulator_quirk *pos;
-
-Merge the last two lines into one?
-
-> > +	struct of_phandle_args *argsa, *argsb;
-> > +	u32 mon, addr;
-> > +	int ret;
-> > =20
-> >  	if (!of_machine_is_compatible("renesas,koelsch") &&
-> >  	    !of_machine_is_compatible("renesas,lager") &&
-> > @@ -130,6 +157,45 @@ static int __init rcar_gen2_regulator_quirk(void)
-> >  	    !of_machine_is_compatible("renesas,gose"))
-> >  		return -ENODEV;
-> > =20
-> > +	for_each_matching_node_and_match(np, rcar_gen2_quirk_match, &id) {
-> > +		if (!np || !of_device_is_available(np))
-
-Can '!np' actually happen? This is the exit condition of the for-loop,
-or am I overlooking something?
-
-Regards,
-
-   Wolfram
-
-
---jgvlq5pi7jztadld
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsWViYACgkQFA3kzBSg
-KbZAGg//ZI6pLJPe3S0usCFE8KZhA6I/MHl/0Q0LhZIyUHvCBN5fMQUOdVaGZAMc
-ln+3CV4V1CIjJ++aXFgwd1ggN+l3phoGjbtx2afGWVakFqwo69J+SZhZ8DQZAtY6
-i6PwBN9sEg/hwns8PLRdxa/WGK3PUDq/sZAjM/jdtvEOdFP7vaS14zxt+VChlgUP
-F8LoQ/oT9gRHg6c9cnXrY1xBUBe8W9JSt0LVAZHmOPDK4TnOu30JTcgm+Dck4/TJ
-RTnGXAbwJy5JVxqBncKp7p0DN+3/fZMdTD/7TTCXYu1ckSO/ejdmL1lt5SumFa/G
-sqjQJpwsucjGXACD6SGCii2g/TZVUyQaOZgBk9HhOYsPIVgihYR5luLTGv42CMs3
-SoHKNCKTkWcUzAs2wEIaSM9+5aYj38GvWf7mtpRpQEl/18Qp0DPaI3LcLcsvtTuT
-bgcWUSVduATOe14qB0/vMSyrWEPWShaWCcGfq2snC7iKSm6w3kW4xhOmEa27CtUF
-GJb10sC5vU9lBnHU8LBl4DjlRKjoXrsBHcTmSLl6gZ0MeE0YuAKPE+dn0Q7n3HTe
-/0M6MoOWauuGm7jJytW30WIzvkoOsVConC24AB+e6M/H1Fd3wDsxmRX9mpkJYOrk
-hkY/ZjKQB8SdQPq9Adz2dMMEyO5z9DSpQxle2Fp+dLzUygYKMEU=
-=2hre
------END PGP SIGNATURE-----
-
---jgvlq5pi7jztadld--
+> +		if (ret)
+> +			return ret;
+> +
+> +		list_for_each_entry(pos, &quirk_list, list) {
+> +			argsb = &pos->irq_args;
+> +
+> +			if (argsa->args_count != argsb->args_count)
+> +				continue;
+> +
+> +			ret = memcmp(argsa->args, argsb->args,
+> +				     argsa->args_count *
+> +				     sizeof(argsa->args[0]));
+> +			if (!ret) {
+> +				pos->shared = true;
+> +				quirk->shared = true;
+> +			}
+> +		}
+> +
+> +		list_add_tail(&quirk->list, &quirk_list);
+> +	}
+> +
+>  	irqc = ioremap(IRQC_BASE, PAGE_SIZE);
+>  	if (!irqc)
+>  		return -ENOMEM;
+> -- 
+> 2.16.2
+> 
