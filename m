@@ -1,250 +1,121 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.3]:12125 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751895AbeFETsu (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:55962 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751820AbeFEIQm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Jun 2018 15:48:50 -0400
-From: Steve Twiss <stwiss.opensource@diasemi.com>
-To: Marek Vasut <marek.vasut@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Tue, 5 Jun 2018 04:16:42 -0400
+Received: by mail-wm0-f65.google.com with SMTP id v16-v6so3078741wmh.5
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Jun 2018 01:16:41 -0700 (PDT)
+Date: Tue, 5 Jun 2018 09:16:38 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Marek Vasut <marek.vasut@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
         Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Support Opensource <Support.Opensource@diasemi.com>
-Subject: RE: [PATCH v3 02/10] mfd: da9063: Use REGMAP_IRQ_REG
-Date: Tue, 5 Jun 2018 19:48:47 +0000
-Message-ID: <6ED8E3B22081A4459DAC7699F3695FB701941AD6BF@SW-EX-MBX02.diasemi.com>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v3 02/10] mfd: da9063: Use REGMAP_IRQ_REG
+Message-ID: <20180605080115.GN21163@dell>
 References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
  <20180602101155.26375-2-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180602101155.26375-2-marek.vasut+renesas@gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+ <20180604122624.GB21163@dell>
+ <b3c9a486-002e-a63b-7d2d-2b51ce55b08f@gmail.com>
+ <20180605070913.GH21163@dell>
+ <CAMuHMdWEeH4_ciyn6V7FYrs0doutqkz++32D_bz57rSHnY=CEQ@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdWEeH4_ciyn6V7FYrs0doutqkz++32D_bz57rSHnY=CEQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 02 June 2018 11:12, Marek Vasut wrote,
+On Tue, 05 Jun 2018, Geert Uytterhoeven wrote:
 
-> Subject: [PATCH v3 02/10] mfd: da9063: Use REGMAP_IRQ_REG
+> Hi Lee,
 > 
-> Convert the regmap_irq table to use REGMAP_IRQ_REG().
+> On Tue, Jun 5, 2018 at 9:09 AM, Lee Jones <lee.jones@linaro.org> wrote:
+> > On Mon, 04 Jun 2018, Marek Vasut wrote:
+> >> On 06/04/2018 02:26 PM, Lee Jones wrote:
+> >> > On Sat, 02 Jun 2018, Marek Vasut wrote:
+> >> >> Convert the regmap_irq table to use REGMAP_IRQ_REG().
+> >> >>
+> >> >> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> >> >> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> >> Cc: Lee Jones <lee.jones@linaro.org>
+> >> >> Cc: Mark Brown <broonie@kernel.org>
+> >> >> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+> >> >> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >> >> Cc: linux-renesas-soc@vger.kernel.org
+> >> >> ---
+> >> >> V3: New patch
+> >> >> Note: A sed oneliner was used:
+> >> >>       sed -i "/\[DA9063_IRQ_/ {N;N;N;s/\n//g;s/.*\[\(DA9063_IRQ_[^]]\+\)].*reg_offset = \([^,]\+\),.* = \([^,]\+\),.*/\tREGMAP_IRQ_REG(\1, \2, \3),/}" drivers/mfd/da9063-irq.c
+> >> >> ---
+> >> >>  drivers/mfd/da9063-irq.c | 145 ++++++++++-------------------------------------
+> >> >>  1 file changed, 29 insertions(+), 116 deletions(-)
+> >> >>
+> >> >> diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
+> >> >> index 207bbfe55449..5b406ecfc14a 100644
+> >> >> --- a/drivers/mfd/da9063-irq.c
+> >> >> +++ b/drivers/mfd/da9063-irq.c
+> >> >> @@ -28,125 +28,38 @@
+> >> >>
+> >> >>  static const struct regmap_irq da9063_irqs[] = {
+> >> >>    /* DA9063 event A register */
+> >> >> -  [DA9063_IRQ_ONKEY] = {
+> >> >> -          .reg_offset = DA9063_REG_EVENT_A_OFFSET,
+> >> >> -          .mask = DA9063_M_ONKEY,
+> >> >> -  },
+> >> >> -  [DA9063_IRQ_ALARM] = {
+> >> >> -          .reg_offset = DA9063_REG_EVENT_A_OFFSET,
+> >> >> -          .mask = DA9063_M_ALARM,
+> >> >> -  },
+> >> >> -  [DA9063_IRQ_TICK] = {
+> >> >> -          .reg_offset = DA9063_REG_EVENT_A_OFFSET,
+> >> >> -          .mask = DA9063_M_TICK,
+> >> >> -  },
+> >> >> -  [DA9063_IRQ_ADC_RDY] = {
+> >> >> -          .reg_offset = DA9063_REG_EVENT_A_OFFSET,
+> >> >> -          .mask = DA9063_M_ADC_RDY,
+> >> >> -  },
+> >> >> -  [DA9063_IRQ_SEQ_RDY] = {
+> >> >> -          .reg_offset = DA9063_REG_EVENT_A_OFFSET,
+> >> >> -          .mask = DA9063_M_SEQ_RDY,
+> >> >> -  },
+> >> >> +  REGMAP_IRQ_REG(DA9063_IRQ_ONKEY, DA9063_REG_EVENT_A_OFFSET, DA9063_M_ONKEY),
+> >> >> +  REGMAP_IRQ_REG(DA9063_IRQ_ALARM, DA9063_REG_EVENT_A_OFFSET, DA9063_M_ALARM),
+> >> >> +  REGMAP_IRQ_REG(DA9063_IRQ_TICK, DA9063_REG_EVENT_A_OFFSET, DA9063_M_TICK),
+> >> >> +  REGMAP_IRQ_REG(DA9063_IRQ_ADC_RDY, DA9063_REG_EVENT_A_OFFSET, DA9063_M_ADC_RDY),
+> >> >> +  REGMAP_IRQ_REG(DA9063_IRQ_SEQ_RDY, DA9063_REG_EVENT_A_OFFSET, DA9063_M_SEQ_RDY),
+> >> >
+> >> > Nice, but I think checkpatch.pl would complain.
+> >> >
+> >> > Better to break after the first argument I think.
+> >>
+> >> Doesn't really help the readability, but done.
+> >
+> > I don't make the rules. :)
 > 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
-> V3: New patch
-> Note: A sed oneliner was used:
->       sed -i "/\[DA9063_IRQ_/
-> {N;N;N;s/\n//g;s/.*\[\(DA9063_IRQ_[^]]\+\)].*reg_offset = \([^,]\+\),.* =
-> \([^,]\+\),.*/\tREGMAP_IRQ_REG(\1, \2, \3),/}" drivers/mfd/da9063-irq.c
-> ---
->  drivers/mfd/da9063-irq.c | 145 ++++++++++-------------------------------------
->  1 file changed, 29 insertions(+), 116 deletions(-)
+> Documentation/process/coding-style.rst:
 > 
-> diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
-> index 207bbfe55449..5b406ecfc14a 100644
-> --- a/drivers/mfd/da9063-irq.c
-> +++ b/drivers/mfd/da9063-irq.c
-> @@ -28,125 +28,38 @@
-> 
->  static const struct regmap_irq da9063_irqs[] = {
->  	/* DA9063 event A register */
-> -	[DA9063_IRQ_ONKEY] = {
-> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
-> -		.mask = DA9063_M_ONKEY,
-> -	},
-> -	[DA9063_IRQ_ALARM] = {
-> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
-> -		.mask = DA9063_M_ALARM,
-> -	},
-> -	[DA9063_IRQ_TICK] = {
-> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
-> -		.mask = DA9063_M_TICK,
-> -	},
-> -	[DA9063_IRQ_ADC_RDY] = {
-> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
-> -		.mask = DA9063_M_ADC_RDY,
-> -	},
-> -	[DA9063_IRQ_SEQ_RDY] = {
-> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
-> -		.mask = DA9063_M_SEQ_RDY,
-> -	},
-> +	REGMAP_IRQ_REG(DA9063_IRQ_ONKEY,
-> DA9063_REG_EVENT_A_OFFSET, DA9063_M_ONKEY),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_ALARM,
-> DA9063_REG_EVENT_A_OFFSET, DA9063_M_ALARM),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_TICK, DA9063_REG_EVENT_A_OFFSET,
-> DA9063_M_TICK),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_ADC_RDY,
-> DA9063_REG_EVENT_A_OFFSET, DA9063_M_ADC_RDY),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_SEQ_RDY,
-> DA9063_REG_EVENT_A_OFFSET, DA9063_M_SEQ_RDY),
->  	/* DA9063 event B register */
-> -	[DA9063_IRQ_WAKE] = {
-> -		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
-> -		.mask = DA9063_M_WAKE,
-> -	},
-> -	[DA9063_IRQ_TEMP] = {
-> -		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
-> -		.mask = DA9063_M_TEMP,
-> -	},
-> -	[DA9063_IRQ_COMP_1V2] = {
-> -		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
-> -		.mask = DA9063_M_COMP_1V2,
-> -	},
-> -	[DA9063_IRQ_LDO_LIM] = {
-> -		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
-> -		.mask = DA9063_M_LDO_LIM,
-> -	},
-> -	[DA9063_IRQ_REG_UVOV] = {
-> -		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
-> -		.mask = DA9063_M_UVOV,
-> -	},
-> -	[DA9063_IRQ_DVC_RDY] = {
-> -		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
-> -		.mask = DA9063_M_DVC_RDY,
-> -	},
-> -	[DA9063_IRQ_VDD_MON] = {
-> -		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
-> -		.mask = DA9063_M_VDD_MON,
-> -	},
-> -	[DA9063_IRQ_WARN] = {
-> -		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
-> -		.mask = DA9063_M_VDD_WARN,
-> -	},
-> +	REGMAP_IRQ_REG(DA9063_IRQ_WAKE,
-> DA9063_REG_EVENT_B_OFFSET, DA9063_M_WAKE),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_TEMP,
-> DA9063_REG_EVENT_B_OFFSET, DA9063_M_TEMP),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_COMP_1V2,
-> DA9063_REG_EVENT_B_OFFSET, DA9063_M_COMP_1V2),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_LDO_LIM,
-> DA9063_REG_EVENT_B_OFFSET, DA9063_M_LDO_LIM),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_REG_UVOV,
-> DA9063_REG_EVENT_B_OFFSET, DA9063_M_UVOV),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_DVC_RDY,
-> DA9063_REG_EVENT_B_OFFSET, DA9063_M_DVC_RDY),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_VDD_MON,
-> DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_MON),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_WARN,
-> DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_WARN),
->  	/* DA9063 event C register */
-> -	[DA9063_IRQ_GPI0] = {
-> -		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
-> -		.mask = DA9063_M_GPI0,
-> -	},
-> -	[DA9063_IRQ_GPI1] = {
-> -		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
-> -		.mask = DA9063_M_GPI1,
-> -	},
-> -	[DA9063_IRQ_GPI2] = {
-> -		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
-> -		.mask = DA9063_M_GPI2,
-> -	},
-> -	[DA9063_IRQ_GPI3] = {
-> -		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
-> -		.mask = DA9063_M_GPI3,
-> -	},
-> -	[DA9063_IRQ_GPI4] = {
-> -		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
-> -		.mask = DA9063_M_GPI4,
-> -	},
-> -	[DA9063_IRQ_GPI5] = {
-> -		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
-> -		.mask = DA9063_M_GPI5,
-> -	},
-> -	[DA9063_IRQ_GPI6] = {
-> -		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
-> -		.mask = DA9063_M_GPI6,
-> -	},
-> -	[DA9063_IRQ_GPI7] = {
-> -		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
-> -		.mask = DA9063_M_GPI7,
-> -	},
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI0, DA9063_REG_EVENT_C_OFFSET,
-> DA9063_M_GPI0),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI1, DA9063_REG_EVENT_C_OFFSET,
-> DA9063_M_GPI1),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI2, DA9063_REG_EVENT_C_OFFSET,
-> DA9063_M_GPI2),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI3, DA9063_REG_EVENT_C_OFFSET,
-> DA9063_M_GPI3),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI4, DA9063_REG_EVENT_C_OFFSET,
-> DA9063_M_GPI4),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI5, DA9063_REG_EVENT_C_OFFSET,
-> DA9063_M_GPI5),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI6, DA9063_REG_EVENT_C_OFFSET,
-> DA9063_M_GPI6),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI7, DA9063_REG_EVENT_C_OFFSET,
-> DA9063_M_GPI7),
->  	/* DA9063 event D register */
-> -	[DA9063_IRQ_GPI8] = {
-> -		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
-> -		.mask = DA9063_M_GPI8,
-> -	},
-> -	[DA9063_IRQ_GPI9] = {
-> -		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
-> -		.mask = DA9063_M_GPI9,
-> -	},
-> -	[DA9063_IRQ_GPI10] = {
-> -		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
-> -		.mask = DA9063_M_GPI10,
-> -	},
-> -	[DA9063_IRQ_GPI11] = {
-> -		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
-> -		.mask = DA9063_M_GPI11,
-> -	},
-> -	[DA9063_IRQ_GPI12] = {
-> -		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
-> -		.mask = DA9063_M_GPI12,
-> -	},
-> -	[DA9063_IRQ_GPI13] = {
-> -		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
-> -		.mask = DA9063_M_GPI13,
-> -	},
-> -	[DA9063_IRQ_GPI14] = {
-> -		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
-> -		.mask = DA9063_M_GPI14,
-> -	},
-> -	[DA9063_IRQ_GPI15] = {
-> -		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
-> -		.mask = DA9063_M_GPI15,
-> -	},
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI8, DA9063_REG_EVENT_D_OFFSET,
-> DA9063_M_GPI8),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI9, DA9063_REG_EVENT_D_OFFSET,
-> DA9063_M_GPI9),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI10,
-> DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI10),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI11,
-> DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI11),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI12,
-> DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI12),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI13,
-> DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI13),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI14,
-> DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI14),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI15,
-> DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI15),
->  };
-> 
->  static const struct regmap_irq_chip da9063_irq_chip = {
-> --
-> 2.16.2
+> "Statements longer than 80 columns will be broken into sensible chunks, unless
+>  exceeding 80 columns significantly increases readability and does not hide
+>  information."
 
-Hi Marek,
+Operative word here is "significantly".
 
-Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
+> > Personally /me is hoping that the 80 char limit is lifted to ~120 soon.
+> 
+> Please no ;-)
 
-Regards,
-Steve
+Maybe 120 is pushing it a little, but 80 is so 19xx? ... well, 80!
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
