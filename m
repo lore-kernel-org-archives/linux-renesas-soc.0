@@ -1,88 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:27543 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751141AbeFHQYW (ORCPT
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:33452 "EHLO
+        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752358AbeFEUZ4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Jun 2018 12:24:22 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc: Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH] clocksource/drivers/sh_cmt: wait for CMCNT on init
-Date: Fri,  8 Jun 2018 17:19:45 +0100
-Message-Id: <1528474785-11778-1-git-send-email-biju.das@bp.renesas.com>
+        Tue, 5 Jun 2018 16:25:56 -0400
+Received: by mail-lf0-f49.google.com with SMTP id y20-v6so5640036lfy.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Jun 2018 13:25:55 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 0/2] Add R-Car V3H (R8A77980) support to the R-Car LVDS driver
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>
+Message-ID: <ef3c6b7e-98f2-7012-71c5-6693e6e48999@cogentembedded.com>
+Date: Tue, 5 Jun 2018 23:25:52 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-As per section 57A.3.5/69A.3.5/79.A.3.5 of rz/g/r-car gen2/3 hardware
-manual,it is mentioned that we need to provide 2 cycles in counter input
-clock (RCLK) for reflecting written data to counter behaviour. Adding
-sufficient wait to let the CMCNT register value settle before starting the
-timer channel.
+Hello!
 
-It fixes the error "sh_cmt ffca0000.timer: ch1: cannot clear CMCNT"
+Here's the set of 2 patches against the 'drm-next' branch of the 'drm.git' repo.
+The purpose of these patches is to add the R-Car V3H (R8A77980) support to the
+R-Car LVDS driver.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
----
-Hello,
+[1/2] dt-bindings: display: renesas: lvds: document R8A77980 bindings
+[2/2] drm: rcar-du: lvds: add R8A77980 support
 
-During cmt testing, the tool (tools/testing/selftests/timers/clocksource-switch.c)
-is complaining about the error "sh_cmt ffca0000.timer: ch1: cannot clear CMCNT".
-The above patch fixes this issue is by adding sufficient wait to let the
-CMCNT register value settle before starting the timer channel.
-
-This issue is reproduced on Koelsch/RZ/G1[ME] based iwave boards etc...,
-as I assume the same issue should be present on lager etc. as well?
-
-regards,
-Biju
-
- drivers/clocksource/sh_cmt.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clocksource/sh_cmt.c b/drivers/clocksource/sh_cmt.c
-index 70b3cf8..48910df 100644
---- a/drivers/clocksource/sh_cmt.c
-+++ b/drivers/clocksource/sh_cmt.c
-@@ -328,7 +328,7 @@ static void sh_cmt_start_stop_ch(struct sh_cmt_channel *ch, int start)
- 
- static int sh_cmt_enable(struct sh_cmt_channel *ch)
- {
--	int k, ret;
-+	int j, k, ret;
- 
- 	pm_runtime_get_sync(&ch->cmt->pdev->dev);
- 	dev_pm_syscore_device(&ch->cmt->pdev->dev, true);
-@@ -368,11 +368,17 @@ static int sh_cmt_enable(struct sh_cmt_channel *ch)
- 	 * While at it, we're supposed to clear out the CMCNT as of this
- 	 * moment, so make sure it's processed properly here.  This will
- 	 * take RCLKx2 at maximum.
-+	 *
-+	 * Similar register access usage for CMCNT is mentioned in R-Car
-+	 * Gen[2/3]/RZ/G1 user's manual, RCLKx2 for cmt0 and RCLKx2 or
-+	 * CPϕx2 (CPEXϕx2)) for cmt1.
- 	 */
--	for (k = 0; k < 100; k++) {
--		if (!sh_cmt_read_cmcnt(ch))
--			break;
--		udelay(1);
-+	for (j = 0; j < 2; j++) {
-+		for (k = 0; k < 100; k++) {
-+			if (!sh_cmt_read_cmcnt(ch))
-+				break;
-+			udelay(1);
-+		}
- 	}
- 
- 	if (sh_cmt_read_cmcnt(ch)) {
--- 
-2.7.4
+MBR, Sergei
