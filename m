@@ -1,69 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:38668 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932263AbeFKKAv (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:43289 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751662AbeFEIgM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Jun 2018 06:00:51 -0400
-MIME-Version: 1.0
-References: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com> <1528187462-47093-3-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1528187462-47093-3-git-send-email-michel.pollet@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 11 Jun 2018 12:00:39 +0200
-Message-ID: <CAMuHMdWoE=+sEUtFdPKk4eBGtOn8f7bUPV-HLAvEETuqgVMeVw@mail.gmail.com>
-Subject: Re: [PATCH v8 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
+        Tue, 5 Jun 2018 04:36:12 -0400
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
         Michel Pollet <buserror+upstream@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v8 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
+Date: Tue,  5 Jun 2018 09:29:58 +0100
+Message-Id: <1528187462-47093-3-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Michel,
+The Renesas R9A06G032 SYSCTRL node description.
 
-On Tue, Jun 5, 2018 at 10:36 AM Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> The Renesas R9A06G032 SYSCTRL node description.
->
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+---
+ .../bindings/clock/renesas,r9a06g032-sysctrl.txt   | 32 ++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
 
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
-> @@ -0,0 +1,32 @@
-> +* Renesas R9A06G032 SYSCTRL
-> +
-> +Required Properties:
-> +
-> +  - compatible: Must be:
-> +    - "renesas,r9a06g032-sysctrl"
-> +  - reg: Base address and length of the SYSCTRL IO block.
-> +  - #clock-cells: Must be 1
-
-(repeating myself) No clocks/clock-names for the external clock inputs?
-
-"RZ/N1 has 3 clock sources, 1 reference clock inputs for RGMII, and 2
- reference clock outputs for RMII/MII."
-
-The rest looks fine to me.
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
+new file mode 100644
+index 0000000..6aee360
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
+@@ -0,0 +1,32 @@
++* Renesas R9A06G032 SYSCTRL
++
++Required Properties:
++
++  - compatible: Must be:
++    - "renesas,r9a06g032-sysctrl"
++  - reg: Base address and length of the SYSCTRL IO block.
++  - #clock-cells: Must be 1
++
++Examples
++--------
++
++  - SYSCTRL node:
++
++	sysctrl: system-controller@4000c000 {
++		compatible = "renesas,r9a06g032-sysctrl";
++		reg = <0x4000c000 0x1000>;
++		#clock-cells = <1>;
++	};
++
++  - Other nodes can use the clocks provided by SYSCTRL as in:
++
++	#include <dt-bindings/clock/r9a06g032-sysctrl.h>
++	uart0: serial@40060000 {
++		compatible = "snps,dw-apb-uart";
++		reg = <0x40060000 0x400>;
++		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++		reg-shift = <2>;
++		reg-io-width = <4>;
++		clocks = <&sysctrl R9A06G032_CLK_UART0>;
++		clock-names = "baudclk";
++	};
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.7.4
