@@ -1,65 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:46182 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932265AbeFFIwl (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:41270 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751828AbeFEMqY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 04:52:41 -0400
+        Tue, 5 Jun 2018 08:46:24 -0400
+Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
+        by ayla.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fQBLy-0001ey-L4
+        for linux-renesas-soc@vger.kernel.org; Tue, 05 Jun 2018 14:46:22 +0200
+Received: from geert by ramsan with local (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fQBLy-0005b4-Jf
+        for linux-renesas-soc@vger.kernel.org; Tue, 05 Jun 2018 14:46:22 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ARM: Build secure_cntvoff.S unconditionally to fix shmobile !SMP build
-Date: Wed,  6 Jun 2018 10:52:34 +0200
-Message-Id: <1528275154-5164-1-git-send-email-geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2018-06-05-v4.17
+Date: Tue,  5 Jun 2018 14:46:22 +0200
+Message-Id: <1528202782-21475-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If CONFIG_SMP=n, building a kernel for R-Car Gen2 fails with:
+I have pushed renesas-drivers-2018-06-05-v4.17 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-    arch/arm/mach-shmobile/setup-rcar-gen2.o: In function `rcar_gen2_timer_init':
-    setup-rcar-gen2.c:(.init.text+0x30): undefined reference to `secure_cntvoff_init'
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the development branch of
+Simon Horman's renesas.git tree.
 
-Indeed, on R-Car Gen2 SoCs, secure_cntvoff_init() is not only needed for
-secondary CPUs, but also for the boot CPU.  This is most visible on SoCs
-with Cortex A7 cores (e.g. R-Car E2, cfr. commit 9ce3fa6816c2fb59 ("ARM:
-shmobile: rcar-gen2: Add CA7 arch_timer initialization for r8a7794")),
-but Cortex A15 is affected, too.
+Today's version is based on renesas-devel-20180604-v4.17.
 
-Fix this by always providing secure_cntvoff_init().
+Included branches with driver code:
+  - clk-renesas
+  - sh-pfc
+  - topic/bd9571-ddr-backup-mode-driver-v3
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/ipmmu-driver-v6
+  - git://linuxtv.org/pinchartl/media.git#drm-du-iommu-v1-20171115
+  - git://git.ragnatech.se/linux#for-renesas-drivers
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#tags/vsp1/du/interlaced/v4.5
 
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Fixes: 7c607944bc657616 ("ARM: smp: Add initialization of CNTVOFF")
-Fixes: cad160ed0a94927e ("ARM: shmobile: Convert file to use cntvoff")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/common/Makefile | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Included fixes:
+  - [LOCAL] arm64: defconfig: Update renesas_defconfig
 
-diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
-index 1e9f7af8f70ff6ba..923a8d08be679399 100644
---- a/arch/arm/common/Makefile
-+++ b/arch/arm/common/Makefile
-@@ -3,14 +3,13 @@
- # Makefile for the linux kernel.
- #
- 
--obj-y				+= firmware.o
-+obj-y				+= firmware.o secure_cntvoff.o
- 
- obj-$(CONFIG_SA1111)		+= sa1111.o
- obj-$(CONFIG_DMABOUNCE)		+= dmabounce.o
- obj-$(CONFIG_SHARP_LOCOMO)	+= locomo.o
- obj-$(CONFIG_SHARP_PARAM)	+= sharpsl_param.o
- obj-$(CONFIG_SHARP_SCOOP)	+= scoop.o
--obj-$(CONFIG_SMP)		+= secure_cntvoff.o
- obj-$(CONFIG_PCI_HOST_ITE8152)  += it8152.o
- obj-$(CONFIG_MCPM)		+= mcpm_head.o mcpm_entry.o mcpm_platsmp.o vlock.o
- CFLAGS_REMOVE_mcpm_entry.o	= -pg
--- 
-2.7.4
+Included subsystem trees (the last four are due to an issue with Mark
+Brown's for-next branches):
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://people.freedesktop.org/~airlied/linux#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/media_tree.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://github.com/bzolnier/linux.git#fbdev-for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#/git.kernel.org/pub/scm/linux/kernel/git/broonie/spi spi-v4.18
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#/git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git regmap-v4.18
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#a9ac77cd2b0ee009
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#7a5421d2f6c16eab
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
