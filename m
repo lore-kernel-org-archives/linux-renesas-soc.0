@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35083 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932573AbeFFKAb (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:40839 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752697AbeFEXKk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 06:00:31 -0400
+        Tue, 5 Jun 2018 19:10:40 -0400
 From: Marek Vasut <marek.vasut@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
@@ -13,11 +13,11 @@ Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Steve Twiss <stwiss.opensource@diasemi.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 08/14] mfd: da9063: Replace model with type
-Date: Wed,  6 Jun 2018 11:59:57 +0200
-Message-Id: <20180606100003.17067-8-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
-References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+Subject: [PATCH v4 06/12] mfd: da9063: Replace model with type
+Date: Wed,  6 Jun 2018 01:10:07 +0200
+Message-Id: <20180605231013.1803-6-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
+References: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -41,7 +41,6 @@ Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 V2: Drop useless cast of id->driver_data
 V3: Fix kernel 0day error , s/dev_model/type/
 V4: No change
-V5: No change
 ---
  drivers/mfd/da9063-core.c            | 1 -
  drivers/mfd/da9063-i2c.c             | 5 +++--
@@ -50,7 +49,7 @@ V5: No change
  4 files changed, 11 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
-index c54777cc2f12..ded59990f18c 100644
+index a21a771f6177..9aff815877c0 100644
 --- a/drivers/mfd/da9063-core.c
 +++ b/drivers/mfd/da9063-core.c
 @@ -215,7 +215,6 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
@@ -62,10 +61,10 @@ index c54777cc2f12..ded59990f18c 100644
  
  	ret = da9063_irq_init(da9063);
 diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
-index d1fe88777e3f..6fe9c3464b41 100644
+index 7f84030c8d53..048ce55ebc5b 100644
 --- a/drivers/mfd/da9063-i2c.c
 +++ b/drivers/mfd/da9063-i2c.c
-@@ -146,7 +146,7 @@ static const struct of_device_id da9063_dt_ids[] = {
+@@ -236,7 +236,7 @@ static const struct of_device_id da9063_dt_ids[] = {
  };
  MODULE_DEVICE_TABLE(of, da9063_dt_ids);
  static int da9063_i2c_probe(struct i2c_client *i2c,
@@ -74,7 +73,7 @@ index d1fe88777e3f..6fe9c3464b41 100644
  {
  	struct da9063 *da9063;
  	int ret;
-@@ -158,6 +158,7 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
+@@ -248,6 +248,7 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
  	i2c_set_clientdata(i2c, da9063);
  	da9063->dev = &i2c->dev;
  	da9063->chip_irq = i2c->irq;
@@ -82,7 +81,7 @@ index d1fe88777e3f..6fe9c3464b41 100644
  
  	if (da9063->variant_code == PMIC_DA9063_AD) {
  		da9063_regmap_config.rd_table = &da9063_ad_readable_table;
-@@ -181,7 +182,7 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
+@@ -280,7 +281,7 @@ static int da9063_i2c_remove(struct i2c_client *i2c)
  }
  
  static const struct i2c_device_id da9063_i2c_id[] = {
@@ -123,7 +122,7 @@ index 87c884ae0064..eeb0d431dda1 100644
  	}
  	if (!model->regulator_info) {
 diff --git a/include/linux/mfd/da9063/core.h b/include/linux/mfd/da9063/core.h
-index e015b065db7e..9e36097adc42 100644
+index 5fed1c874926..6caf23483e8e 100644
 --- a/include/linux/mfd/da9063/core.h
 +++ b/include/linux/mfd/da9063/core.h
 @@ -31,6 +31,10 @@
@@ -137,7 +136,7 @@ index e015b065db7e..9e36097adc42 100644
  enum da9063_variant_codes {
  	PMIC_DA9063_AD = 0x3,
  	PMIC_DA9063_BB = 0x5,
-@@ -73,7 +77,7 @@ enum da9063_irqs {
+@@ -75,7 +79,7 @@ enum da9063_irqs {
  struct da9063 {
  	/* Device */
  	struct device	*dev;
