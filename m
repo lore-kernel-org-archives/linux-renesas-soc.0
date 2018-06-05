@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54868 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932576AbeFFKAc (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38318 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752713AbeFEXKk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 06:00:32 -0400
+        Tue, 5 Jun 2018 19:10:40 -0400
 From: Marek Vasut <marek.vasut@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
@@ -13,11 +13,11 @@ Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Steve Twiss <stwiss.opensource@diasemi.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 09/14] mfd: da9063: Add DA9063L type
-Date: Wed,  6 Jun 2018 11:59:58 +0200
-Message-Id: <20180606100003.17067-9-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
-References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+Subject: [PATCH v4 07/12] mfd: da9063: Add DA9063L type
+Date: Wed,  6 Jun 2018 01:10:08 +0200
+Message-Id: <20180605231013.1803-7-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
+References: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -38,13 +38,12 @@ Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
 V2: No change
 V3: No change
 V4: No change
-V5: No change
 ---
  include/linux/mfd/da9063/core.h | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/include/linux/mfd/da9063/core.h b/include/linux/mfd/da9063/core.h
-index 9e36097adc42..71b09154e2db 100644
+index 6caf23483e8e..c9b0adfcb068 100644
 --- a/include/linux/mfd/da9063/core.h
 +++ b/include/linux/mfd/da9063/core.h
 @@ -33,6 +33,7 @@
