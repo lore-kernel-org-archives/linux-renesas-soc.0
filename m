@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:44970 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752384AbeFFKA0 (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36001 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752166AbeFEXKe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 06:00:26 -0400
+        Tue, 5 Jun 2018 19:10:34 -0400
 From: Marek Vasut <marek.vasut@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
@@ -13,11 +13,11 @@ Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Steve Twiss <stwiss.opensource@diasemi.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 04/14] mfd: da9063: Use REGMAP_IRQ_REG
-Date: Wed,  6 Jun 2018 11:59:53 +0200
-Message-Id: <20180606100003.17067-4-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
-References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+Subject: [PATCH v4 02/12] mfd: da9063: Use REGMAP_IRQ_REG
+Date: Wed,  6 Jun 2018 01:10:03 +0200
+Message-Id: <20180605231013.1803-2-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
+References: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -37,13 +37,12 @@ Note: A sed oneliner was used:
       sed -i "/\[DA9063_IRQ_/ {N;N;N;s/\n//g;s/.*\[\(DA9063_IRQ_[^]]\+\)].*reg_offset = \([^,]\+\),.* = \([^,]\+\),.*/\tREGMAP_IRQ_REG(\1, \2, \3),/}" drivers/mfd/da9063-irq.c
 V4: Formatting fixes with "s/,/&\r\t\t      /" on the array
     Drop extra newline in da9063_irq_chip
-V5: No change
 ---
  drivers/mfd/da9063-irq.c | 175 ++++++++++++++++-------------------------------
  1 file changed, 58 insertions(+), 117 deletions(-)
 
 diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
-index da6ceb41f0d1..044bd867f540 100644
+index 207bbfe55449..bd448d6cdf8b 100644
 --- a/drivers/mfd/da9063-irq.c
 +++ b/drivers/mfd/da9063-irq.c
 @@ -28,132 +28,73 @@
