@@ -1,179 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.131]:29672 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751902AbeFETw2 (ORCPT
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:46511 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751707AbeFEIYE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Jun 2018 15:52:28 -0400
-From: Steve Twiss <stwiss.opensource@diasemi.com>
-To: Marek Vasut <marek.vasut@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Tue, 5 Jun 2018 04:24:04 -0400
+Received: by mail-wr0-f196.google.com with SMTP id v13-v6so1359590wrp.13
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Jun 2018 01:24:04 -0700 (PDT)
+Date: Tue, 5 Jun 2018 09:24:00 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Marek Vasut <marek.vasut@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
         Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Support Opensource <Support.Opensource@diasemi.com>
-Subject: RE: [PATCH v3 07/10] mfd: da9063: Add custom IRQ map for DA9063L
-Date: Tue, 5 Jun 2018 19:52:25 +0000
-Message-ID: <6ED8E3B22081A4459DAC7699F3695FB701941AD6EC@SW-EX-MBX02.diasemi.com>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v3 07/10] mfd: da9063: Add custom IRQ map for DA9063L
+Message-ID: <20180605082400.GQ21163@dell>
 References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
  <20180602101155.26375-7-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180602101155.26375-7-marek.vasut+renesas@gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+ <20180605074727.GL21163@dell>
+ <CAMuHMdU3ctFuSXsGAxHJyxPkFEeqm+WrWj7HrKFCKs32asWcYw@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdU3ctFuSXsGAxHJyxPkFEeqm+WrWj7HrKFCKs32asWcYw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Marek,
+On Tue, 05 Jun 2018, Geert Uytterhoeven wrote:
 
-Thanks.
-
-On 02 June 2018 11:12, Marek Vasut wrote,
-
-> Subject: [PATCH v3 07/10] mfd: da9063: Add custom IRQ map for DA9063L
+> Hi Lee,
 > 
-> While the datasheet for DA9063L (2v1, 23-Mar-2017) lists the RTC register
-> block, the DA9063L does not have an RTC. Add custom IRQ map for DA9063L to
-> ignore the Alarm and Tick IRQs from the PMIC.
-
-I've added a request to remove the RTC references from the DA9063L datasheet.
-
-Adding that first part to the sentence in the commit log: "While the datasheet for DA9063L
-(2v1, 23-Mar-2017) lists the RTC register block" is just pointing out an ambiguity from the
-datasheet since the it also identifies those registers in Table 102 on page 126 as
-"Reserved".
-
-I would like to suggest, the commit log entry: "Add custom IRQ map for DA9063L to ignore
-the Alarm and Tick IRQs from the PMIC".
-
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
-> V3: New patch
-> ---
->  drivers/mfd/da9063-irq.c | 55
-> ++++++++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 53 insertions(+), 2 deletions(-)
+> On Tue, Jun 5, 2018 at 9:47 AM, Lee Jones <lee.jones@linaro.org> wrote:
+> > On Sat, 02 Jun 2018, Marek Vasut wrote:
+> >> While the datasheet for DA9063L (2v1, 23-Mar-2017) lists the RTC register
+> >> block, the DA9063L does not have an RTC. Add custom IRQ map for DA9063L to
+> >> ignore the Alarm and Tick IRQs from the PMIC.
+> >>
+> >> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 > 
-> diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
-> index 5b406ecfc14a..b6a88861cc2e 100644
-> --- a/drivers/mfd/da9063-irq.c
-> +++ b/drivers/mfd/da9063-irq.c
-> @@ -74,8 +74,55 @@ static const struct regmap_irq_chip da9063_irq_chip = {
->  	.init_ack_masked = true,
->  };
+> >> --- a/drivers/mfd/da9063-irq.c
+> >> +++ b/drivers/mfd/da9063-irq.c
+> >> @@ -74,8 +74,55 @@ static const struct regmap_irq_chip da9063_irq_chip = {
+> >>       .init_ack_masked = true,
+> >>  };
+> >>
+> >> +static const struct regmap_irq da9063l_irqs[] = {
+> >> +     /* DA9063 event A register */
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_ONKEY, DA9063_REG_EVENT_A_OFFSET, DA9063_M_ONKEY),
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_ADC_RDY, DA9063_REG_EVENT_A_OFFSET, DA9063_M_ADC_RDY),
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_SEQ_RDY, DA9063_REG_EVENT_A_OFFSET, DA9063_M_SEQ_RDY),
+> >> +     /* DA9063 event B register */
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_WAKE, DA9063_REG_EVENT_B_OFFSET, DA9063_M_WAKE),
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_TEMP, DA9063_REG_EVENT_B_OFFSET, DA9063_M_TEMP),
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_COMP_1V2, DA9063_REG_EVENT_B_OFFSET, DA9063_M_COMP_1V2),
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_LDO_LIM, DA9063_REG_EVENT_B_OFFSET, DA9063_M_LDO_LIM),
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_REG_UVOV, DA9063_REG_EVENT_B_OFFSET, DA9063_M_UVOV),
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_DVC_RDY, DA9063_REG_EVENT_B_OFFSET, DA9063_M_DVC_RDY),
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_VDD_MON, DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_MON),
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_WARN, DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_WARN),
+> >> +     /* DA9063 event C register */
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_GPI0, DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI0),
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_GPI1, DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI1),
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_GPI2, DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI2),
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_GPI3, DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI3),
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_GPI4, DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI4),
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_GPI5, DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI5),
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_GPI6, DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI6),
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_GPI7, DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI7),
+> >> +     /* DA9063 event D register */
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_GPI8, DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI8),
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_GPI9, DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI9),
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_GPI10, DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI10),
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_GPI11, DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI11),
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_GPI12, DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI12),
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_GPI13, DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI13),
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_GPI14, DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI14),
+> >> +     REGMAP_IRQ_REG(DA9063_IRQ_GPI15, DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI15),
+> >> +};
+> >
+> > Same here.  Please make checkpatch.pl happen, even if it makes the
+> > code slightly less readable.
 > 
-> +static const struct regmap_irq da9063l_irqs[] = {
-> +	/* DA9063 event A register */
-> +	REGMAP_IRQ_REG(DA9063_IRQ_ONKEY,
-> DA9063_REG_EVENT_A_OFFSET, DA9063_M_ONKEY),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_ADC_RDY,
-> DA9063_REG_EVENT_A_OFFSET, DA9063_M_ADC_RDY),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_SEQ_RDY,
-> DA9063_REG_EVENT_A_OFFSET, DA9063_M_SEQ_RDY),
-> +	/* DA9063 event B register */
-> +	REGMAP_IRQ_REG(DA9063_IRQ_WAKE,
-> DA9063_REG_EVENT_B_OFFSET, DA9063_M_WAKE),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_TEMP,
-> DA9063_REG_EVENT_B_OFFSET, DA9063_M_TEMP),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_COMP_1V2,
-> DA9063_REG_EVENT_B_OFFSET, DA9063_M_COMP_1V2),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_LDO_LIM,
-> DA9063_REG_EVENT_B_OFFSET, DA9063_M_LDO_LIM),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_REG_UVOV,
-> DA9063_REG_EVENT_B_OFFSET, DA9063_M_UVOV),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_DVC_RDY,
-> DA9063_REG_EVENT_B_OFFSET, DA9063_M_DVC_RDY),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_VDD_MON,
-> DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_MON),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_WARN,
-> DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_WARN),
-> +	/* DA9063 event C register */
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI0, DA9063_REG_EVENT_C_OFFSET,
-> DA9063_M_GPI0),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI1, DA9063_REG_EVENT_C_OFFSET,
-> DA9063_M_GPI1),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI2, DA9063_REG_EVENT_C_OFFSET,
-> DA9063_M_GPI2),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI3, DA9063_REG_EVENT_C_OFFSET,
-> DA9063_M_GPI3),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI4, DA9063_REG_EVENT_C_OFFSET,
-> DA9063_M_GPI4),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI5, DA9063_REG_EVENT_C_OFFSET,
-> DA9063_M_GPI5),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI6, DA9063_REG_EVENT_C_OFFSET,
-> DA9063_M_GPI6),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI7, DA9063_REG_EVENT_C_OFFSET,
-> DA9063_M_GPI7),
-> +	/* DA9063 event D register */
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI8, DA9063_REG_EVENT_D_OFFSET,
-> DA9063_M_GPI8),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI9, DA9063_REG_EVENT_D_OFFSET,
-> DA9063_M_GPI9),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI10,
-> DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI10),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI11,
-> DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI11),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI12,
-> DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI12),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI13,
-> DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI13),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI14,
-> DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI14),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI15,
-> DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI15),
-> +};
-> +
-> +static const struct regmap_irq_chip da9063l_irq_chip = {
-> +	.name = "da9063l-irq",
-> +	.irqs = da9063l_irqs,
-> +	.num_irqs = DA9063_NUM_IRQ,
+> I beg to disagree: source code should be optimized for reading.
+> Checkpatch is a hinting tool, not an absolute check.
 
-Isn't the number of IRQs in the DA9063L different to the standard DA9063
-because of the missing RTC?
+I agree with you to some degree, but as per the Coding Standards we
+are to use max 80-chars unless it *significantly* reduces
+readability.
 
-Regards,
-Steve
+Breaking lines into two on a natural break only *slightly* reduces
+readability, if at all to be frank.
 
-> +
-> +	.num_regs = 4,
-> +	.status_base = DA9063_REG_EVENT_A,
-> +	.mask_base = DA9063_REG_IRQ_MASK_A,
-> +	.ack_base = DA9063_REG_EVENT_A,
-> +	.init_ack_masked = true,
-> +};
-> +
->  int da9063_irq_init(struct da9063 *da9063)
->  {
-> +	struct regmap_irq_chip *irq_chip;
->  	int ret;
-> 
->  	if (!da9063->chip_irq) {
-> @@ -83,10 +130,14 @@ int da9063_irq_init(struct da9063 *da9063)
->  		return -EINVAL;
->  	}
-> 
-> +	if (da9063->type == PMIC_TYPE_DA9063)
-> +		irq_chip = &da9063_irq_chip;
-> +	else
-> +		irq_chip = &da9063l_irq_chip;
-> +
->  	ret = regmap_add_irq_chip(da9063->regmap, da9063->chip_irq,
->  			IRQF_TRIGGER_LOW | IRQF_ONESHOT | IRQF_SHARED,
-> -			da9063->irq_base, &da9063_irq_chip,
-> -			&da9063->regmap_irq);
-> +			da9063->irq_base, irq_chip, &da9063->regmap_irq);
->  	if (ret) {
->  		dev_err(da9063->dev, "Failed to reguest IRQ %d: %d\n",
->  				da9063->chip_irq, ret);
-> --
-> 2.16.2
+We have MACROS which encompass many arguments and we have to draw the
+line somewhere.  I choose 80-chars.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
