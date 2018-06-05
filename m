@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:50963 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752425AbeFFKAh (ORCPT
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:36201 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752713AbeFEXKq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 06:00:37 -0400
+        Tue, 5 Jun 2018 19:10:46 -0400
 From: Marek Vasut <marek.vasut@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
@@ -13,11 +13,11 @@ Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Steve Twiss <stwiss.opensource@diasemi.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 13/14] regulator: da9063: Handle less LDOs on DA9063L
-Date: Wed,  6 Jun 2018 12:00:02 +0200
-Message-Id: <20180606100003.17067-13-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
-References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+Subject: [PATCH v4 11/12] regulator: da9063: Handle less LDOs on DA9063L
+Date: Wed,  6 Jun 2018 01:10:12 +0200
+Message-Id: <20180605231013.1803-11-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
+References: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -39,7 +39,6 @@ Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 V2: No change
 V3: No change
 V4: Change subject s/mfd/regulator/
-V5: No change
 ---
  drivers/regulator/da9063-regulator.c | 76 +++++++++++++++++++++---------------
  1 file changed, 45 insertions(+), 31 deletions(-)
