@@ -1,92 +1,92 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:47734 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933150AbeFISiO (ORCPT
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:39852 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752257AbeFFXY3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 9 Jun 2018 14:38:14 -0400
-Date: Sat, 9 Jun 2018 20:38:10 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        Wed, 6 Jun 2018 19:24:29 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-Subject: Re: [PATCH 3/3] mmc: tmio: Fix reset operation
-Message-ID: <20180609183806.iex7e2sfoefupnwd@ninjato>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 3/3] mmc: tmio: Fix reset operation
+Date: Thu,  7 Jun 2018 01:22:52 +0200
+Message-Id: <20180606232252.31583-4-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180606232252.31583-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20180606232252.31583-1-niklas.soderlund+renesas@ragnatech.se>
- <20180606232252.31583-4-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pcw3gj5zt73ehfnf"
-Content-Disposition: inline
-In-Reply-To: <20180606232252.31583-4-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
 
---pcw3gj5zt73ehfnf
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+SD / MMC did not operate properly when suspend transition failed.
+Because the SCC was not reset at resume, issue of the command failed.
+Changed tmio_mmc_reset() to tmio_mmc_hw_reset() in order to add reset
+of SCC to tmio_mmc_host_runtime_resume().
 
-On Thu, Jun 07, 2018 at 01:22:52AM +0200, Niklas S=C3=B6derlund wrote:
-> From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
->=20
-> SD / MMC did not operate properly when suspend transition failed.
-> Because the SCC was not reset at resume, issue of the command failed.
-> Changed tmio_mmc_reset() to tmio_mmc_hw_reset() in order to add reset
-> of SCC to tmio_mmc_host_runtime_resume().
+On runtime power management resume, the host clock needs to be
+enabled before calling tmio_mmc_reset. If the mmc device has a power
+domain entry, the host clock is enabled via genpd_runtime_resume,
+running before tmio_mmc_host_runtime_resume. If the mmc device has
+no power domain entry, however, genpd_runtime_resume is not called.
+This patch changes tmio_mmc_host_runtime_resume to enable the host
+clock before calling tmio_mmc_reset.
 
-So, my gut feeling is that this change, in general, seems OK. However,
-the naming (tmio_mmc_reset and tmio_mmc_hw_reset) becomes confusing and
-unneeded. tmio_mmc_reset now only gets called in tmio_mmc_hw_reset, so
-we can merge the two functions into one to reduce the confusion.
+Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+[Niklas: small fixes when rebase to mmc/next]
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/mmc/host/tmio_mmc_core.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-Because we add stuff to the function which gets pointed to by
-mmc_ops->hw_reset, it makes sense to me to double check when the MMC
-core calls this pointer and if our additions still make sense there.
-I'd think so, but better safe than sorry.
-
-> On runtime power management resume, the host clock needs to be
-> enabled before calling tmio_mmc_reset. If the mmc device has a power
-> domain entry, the host clock is enabled via genpd_runtime_resume,
-> running before tmio_mmc_host_runtime_resume. If the mmc device has
-> no power domain entry, however, genpd_runtime_resume is not called.
-> This patch changes tmio_mmc_host_runtime_resume to enable the host
-> clock before calling tmio_mmc_reset.
-
-I think this makes sense but should be a seperate patch. Or maybe even
-something slightly different? Because we have a patch in the BSP [1] for
-which I ever wondered in what case it was needed. But seeing the above,
-it might make sense to add the clock enablement to the reset routine?
-Niklas, do you have time to check that?
-
-Thanks,
-
-   Wolfram
-
-[1] 940904fe4ea8 ("mmc: tmio: Add SDCLK enable after reset")
-
-
---pcw3gj5zt73ehfnf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlscHo4ACgkQFA3kzBSg
-KbaPGBAAmlJWuVwbyTANW+4SBG9v8u6kfJqhLCNWq2tkcpa9MUFa7vY3rEHTUR94
-osNPy+bMixBcezzn4I43C1djOHq6uYp7JteUp2+RKmnJsPzlkpsHEYqfsYwuPapn
-NOaq2BaqkBs5jzv0W8jgrh27rEJnODoa4XptvfSpr3I1dYNrVq5F8kZz0bI/zF8u
-1soDic/IF380lj4lY0gbpjbV8Zuj8KRuFBZ4GK3KKlGxqn2TL5VYjCpOTBM7rROw
-QMYIlGhJQu/kHTqkGWFAedZ6/MPD0FN+gTGpxo2QS7KlhYetDdE/qCYTvGqKn56h
-Zo9Bzh6qlVToNrYY0zulwGLFYklVYDCqMdvVoYORs8630buQpOBadkcZCZ0iiHxM
-rbqduw6rYdvh7xuBCsbFpSk+ojEXurdjBOf8qFFZQjoVDG+6ycyfo1tVlsz0wt7A
-m8oBYP3FWmhybn+UjDK0ireIVOrSufAFTSU6s3DHDMIIS4UCN+uFOQpCve2Ud63l
-Ty0VtfwKsAYM528ShUGD7Z7vLFFEKdtVI6BFgj2+DfPYNr6vHEFZ/K3eIW0vbUO3
-5oC9/AYkRA/YvjIAtsXD2GRcKW4t2Wz85RfBtsvD2Fzbwoiybf9A+5ZYYTsnfl77
-krN/68z+JWiNP7Asrw9mNxxCRZgE34hcYDTtaHS6vbCxGbglRi8=
-=fp/L
------END PGP SIGNATURE-----
-
---pcw3gj5zt73ehfnf--
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 9f5793407552a23a..da10b26d8f2d80e7 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -247,6 +247,10 @@ static void tmio_mmc_hw_reset(struct mmc_host *mmc)
+ {
+ 	struct tmio_mmc_host *host = mmc_priv(mmc);
+ 
++	tmio_mmc_reset(host);
++
++	tmio_mmc_abort_dma(host);
++
+ 	if (host->hw_reset)
+ 		host->hw_reset(host);
+ }
+@@ -289,7 +293,7 @@ static void tmio_mmc_reset_work(struct work_struct *work)
+ 
+ 	spin_unlock_irqrestore(&host->lock, flags);
+ 
+-	tmio_mmc_reset(host);
++	tmio_mmc_hw_reset(host->mmc);
+ 
+ 	/* Ready for new calls */
+ 	host->mrq = NULL;
+@@ -1271,7 +1275,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
+ 		_host->sdio_irq_mask = TMIO_SDIO_MASK_ALL;
+ 
+ 	tmio_mmc_clk_stop(_host);
+-	tmio_mmc_reset(_host);
++	tmio_mmc_hw_reset(mmc);
+ 
+ 	sd_ctrl_write32_as_16_and_16(_host, CTL_IRQ_MASK, TMIO_MASK_INIT);
+ 	_host->sdcard_irq_mask = sd_ctrl_read16_and_16_as_32(_host, CTL_IRQ_MASK);
+@@ -1372,8 +1376,8 @@ int tmio_mmc_host_runtime_resume(struct device *dev)
+ {
+ 	struct tmio_mmc_host *host = dev_get_drvdata(dev);
+ 
+-	tmio_mmc_reset(host);
+ 	tmio_mmc_clk_enable(host);
++	tmio_mmc_hw_reset(host->mmc);
+ 
+ 	if (host->clk_cache)
+ 		tmio_mmc_set_clock(host, host->clk_cache);
+-- 
+2.17.0
