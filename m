@@ -1,19 +1,23 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:43681 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752517AbeFFTiK (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 15:38:10 -0400
-Subject: Re: [PATCH v4 2/3] arm: shmobile: Add the R9A06G032 SMP enabler
- driver
-To: Frank Rowand <frowand.list@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <bbbd287c-437e-d7bd-d40f-6bb914d96860@gmail.com>
+References: <1528198148-23308-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1528198148-23308-3-git-send-email-michel.pollet@bp.renesas.com>
+ <0481173f-6384-98d6-707c-89dc5ef103f0@gmail.com> <OSBPR01MB2054E3A1E383495F3534B551D2650@OSBPR01MB2054.jpnprd01.prod.outlook.com>
+ <bbbd287c-437e-d7bd-d40f-6bb914d96860@gmail.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Wed, 6 Jun 2018 14:35:08 -0500
+Message-ID: <CAL_JsqJCkP_c_wKGRc7Qzkiw8sZLRf6MGz-WgVsLjnQfqK8r6Q@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] arm: shmobile: Add the R9A06G032 SMP enabler driver
+To: Frank Rowand <frowand.list@gmail.com>
+Cc: Michel Pollet <michel.pollet@bp.renesas.com>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>
-Cc: Michel Pollet <buserror+upstream@gmail.com>,
+        Simon Horman <horms@verge.net.au>,
+        Michel Pollet <buserror+upstream@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Phil Edworthy <phil.edworthy@renesas.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         Rajendra Nayak <rnayak@codeaurora.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
@@ -21,31 +25,19 @@ Cc: Michel Pollet <buserror+upstream@gmail.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Douglas Anderson <dianders@chromium.org>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
         Carlo Caione <carlo@endlessm.com>,
-        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
         Frank Rowand <frank.rowand@sony.com>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
-References: <1528198148-23308-1-git-send-email-michel.pollet@bp.renesas.com>
- <1528198148-23308-3-git-send-email-michel.pollet@bp.renesas.com>
- <0481173f-6384-98d6-707c-89dc5ef103f0@gmail.com>
- <OSBPR01MB2054E3A1E383495F3534B551D2650@OSBPR01MB2054.jpnprd01.prod.outlook.com>
- <bbbd287c-437e-d7bd-d40f-6bb914d96860@gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <7e49c265-e332-29c5-5d91-4b5d5da6cb37@gmail.com>
-Date: Wed, 6 Jun 2018 12:37:58 -0700
-MIME-Version: 1.0
-In-Reply-To: <bbbd287c-437e-d7bd-d40f-6bb914d96860@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 06/06/2018 12:30 PM, Frank Rowand wrote:
+On Wed, Jun 6, 2018 at 2:30 PM, Frank Rowand <frowand.list@gmail.com> wrote:
 > Hi Michel,
-> 
+>
 > On 06/05/18 23:36, Michel Pollet wrote:
 >> Hi Frank,
 >>
@@ -125,9 +117,9 @@ On 06/06/2018 12:30 PM, Frank Rowand wrote:
 >> Documentation/devicetree/bindings/arm/cpus.txt -- just under where I
 >> added my 'enable-method' -- And it is already used as 32 bits in at least
 >> arch/arm/boot/dts/stih407-family.dtsi.
-> 
+>
 > From cpus.txt:
-> 
+>
 >         - cpu-release-addr
 >                 Usage: required for systems that have an "enable-method"
 >                        property value of "spin-table".
@@ -136,13 +128,26 @@ On 06/06/2018 12:30 PM, Frank Rowand wrote:
 >                         # On ARM v8 64-bit systems must be a two cell
 >                           property identifying a 64-bit zero-initialised
 >                           memory location.
-> 
+>
 > The definition specifies a two cell property for 64-bit systems.
-> 
+>
 > Please add to the definition that cpu-release-addr is a one cell property
 > for 32-bit systems.
 
-Or maybe phrase it such that the number of cells encoded in
-cpu-release-addr must exactly match the CPU node's #address-cells size?
--- 
-Florian
+Actually, this is all already documented in the DT spec and it is
+always 2 cells[1]. We should perhaps just remove whatever is
+duplicated from the spec.
+
+Rob
+
+[1]
+   ``cpu-release-addr``   | SD  | ``<u64>``        The
+cpu-release-addr property is required for
+                                                   cpu nodes that have
+an enable-method property
+                                                   value of
+``"spin-table"``. The value specifies the
+                                                   physical address of
+a spin table entry that
+                                                   releases a
+secondary CPU from its spin loop.
