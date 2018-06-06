@@ -1,108 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52588 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934074AbeFYOGo (ORCPT
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:46272 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932554AbeFFKA2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:06:44 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Wed, 6 Jun 2018 06:00:28 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 12/15] ARM: shmobile: r8a7779: Use rcar_sysc_power_{down,up}_cpu()
-Date: Mon, 25 Jun 2018 16:06:23 +0200
-Message-Id: <9d65c891587ea9d0936551e432f34485c16bb71c.1529934908.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1529934908.git.horms+renesas@verge.net.au>
-References: <cover.1529934908.git.horms+renesas@verge.net.au>
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v5 06/14] mfd: da9063: Replace DA9063_NUM_IRQ with ARRAY_SIZE
+Date: Wed,  6 Jun 2018 11:59:55 +0200
+Message-Id: <20180606100003.17067-6-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Replace DA9063_NUM_IRQ macro which is not used anywhere with
+plain ARRAY_SIZE().
 
-The r8a7779 SMP code calls rcar_sysc_power_{down,up}() to control power
-to the SYSC power areas containing CPUs. This requires passing full CPU
-power area parameter blocks.
-
-Migrate the code to call the new rcar_sysc_power_{down,up}_cpu()
-helpers, which just take a CPU index, and use the SYSC power area
-definitions from the r8a7779-sysc driver.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
- arch/arm/mach-shmobile/smp-r8a7779.c | 47 +++++-------------------------------
- 1 file changed, 6 insertions(+), 41 deletions(-)
+V4: New patch
+V5: Remove DA9063_IRQ_BASE_OFFSET
+---
+ drivers/mfd/da9063-irq.c        | 2 +-
+ include/linux/mfd/da9063/core.h | 3 ---
+ 2 files changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/arch/arm/mach-shmobile/smp-r8a7779.c b/arch/arm/mach-shmobile/smp-r8a7779.c
-index ff1e6fc0b861..3036f9100461 100644
---- a/arch/arm/mach-shmobile/smp-r8a7779.c
-+++ b/arch/arm/mach-shmobile/smp-r8a7779.c
-@@ -31,59 +31,24 @@
- #define AVECR IOMEM(0xfe700040)
- #define R8A7779_SCU_BASE 0xf0000000
+diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
+index 044bd867f540..579947f83486 100644
+--- a/drivers/mfd/da9063-irq.c
++++ b/drivers/mfd/da9063-irq.c
+@@ -94,7 +94,7 @@ static const struct regmap_irq da9063_irqs[] = {
+ static const struct regmap_irq_chip da9063_irq_chip = {
+ 	.name = "da9063-irq",
+ 	.irqs = da9063_irqs,
+-	.num_irqs = DA9063_NUM_IRQ,
++	.num_irqs = ARRAY_SIZE(da9063_irqs),
+ 	.num_regs = 4,
+ 	.status_base = DA9063_REG_EVENT_A,
+ 	.mask_base = DA9063_REG_IRQ_MASK_A,
+diff --git a/include/linux/mfd/da9063/core.h b/include/linux/mfd/da9063/core.h
+index 8e6684d884e0..260cd5834861 100644
+--- a/include/linux/mfd/da9063/core.h
++++ b/include/linux/mfd/da9063/core.h
+@@ -72,9 +72,6 @@ enum da9063_irqs {
+ 	DA9063_IRQ_GPI15,
+ };
  
--static const struct rcar_sysc_ch r8a7779_ch_cpu1 = {
--	.chan_offs = 0x40, /* PWRSR0 .. PWRER0 */
--	.chan_bit = 1, /* ARM1 */
--	.isr_bit = 1, /* ARM1 */
--};
+-#define DA9063_IRQ_BASE_OFFSET	0
+-#define DA9063_NUM_IRQ		(DA9063_IRQ_GPI15 + 1 - DA9063_IRQ_BASE_OFFSET)
 -
--static const struct rcar_sysc_ch r8a7779_ch_cpu2 = {
--	.chan_offs = 0x40, /* PWRSR0 .. PWRER0 */
--	.chan_bit = 2, /* ARM2 */
--	.isr_bit = 2, /* ARM2 */
--};
--
--static const struct rcar_sysc_ch r8a7779_ch_cpu3 = {
--	.chan_offs = 0x40, /* PWRSR0 .. PWRER0 */
--	.chan_bit = 3, /* ARM3 */
--	.isr_bit = 3, /* ARM3 */
--};
--
--static const struct rcar_sysc_ch * const r8a7779_ch_cpu[4] = {
--	[1] = &r8a7779_ch_cpu1,
--	[2] = &r8a7779_ch_cpu2,
--	[3] = &r8a7779_ch_cpu3,
--};
--
- static int r8a7779_platform_cpu_kill(unsigned int cpu)
- {
--	const struct rcar_sysc_ch *ch = NULL;
- 	int ret = -EIO;
- 
- 	cpu = cpu_logical_map(cpu);
--
--	if (cpu < ARRAY_SIZE(r8a7779_ch_cpu))
--		ch = r8a7779_ch_cpu[cpu];
--
--	if (ch)
--		ret = rcar_sysc_power_down(ch);
-+	if (cpu)
-+		ret = rcar_sysc_power_down_cpu(cpu);
- 
- 	return ret ? ret : 1;
- }
- 
- static int r8a7779_boot_secondary(unsigned int cpu, struct task_struct *idle)
- {
--	const struct rcar_sysc_ch *ch = NULL;
--	unsigned int lcpu = cpu_logical_map(cpu);
--	int ret;
--
--	if (lcpu < ARRAY_SIZE(r8a7779_ch_cpu))
--		ch = r8a7779_ch_cpu[lcpu];
-+	int ret = -EIO;
- 
--	if (ch)
--		ret = rcar_sysc_power_up(ch);
--	else
--		ret = -EIO;
-+	cpu = cpu_logical_map(cpu);
-+	if (cpu)
-+		ret = rcar_sysc_power_up_cpu(cpu);
- 
- 	return ret;
- }
+ struct da9063 {
+ 	/* Device */
+ 	struct device	*dev;
 -- 
-2.11.0
+2.16.2
