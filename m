@@ -1,80 +1,166 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934260AbeFYOEN (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:04:13 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 14/29] arm64: dts: renesas: Add sdhi2_ds pin group to SDHI2 pinctrl groups
-Date: Mon, 25 Jun 2018 16:03:09 +0200
-Message-Id: <c5dd01aa790c436f2839ed9a7ab7feaf8924e7e4.1529933747.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
-References: <cover.1529933747.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: [PATCH 5/5] arm64: dts: renesas: condor: add DU/LVDS/HDMI support
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <4fbd0895-c1ec-41fc-912d-8306dd933997@cogentembedded.com>
+Message-ID: <67b499db-c8de-eff8-0547-1063c8ebd358@cogentembedded.com>
+Date: Wed, 6 Jun 2018 19:59:35 +0300
+MIME-Version: 1.0
+In-Reply-To: <4fbd0895-c1ec-41fc-912d-8306dd933997@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+Define the Condor board dependent part of the DU and  LVDS device nodes.
+Also add the device nodes for Thine THC63LVD1024 LVDS decoder and Analog
+Devices ADV7511W HDMI transmitter...
 
-This patch adds definitions for configuration of the power-source,
-drive-strength, etc... for the SD2_DS pin for Salvator-X(S) and ULCB
-boards.
+Based on the original (and large) patch by Vladimir Barinov.
 
-Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[wsa: fixed for ULCB boards, too]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 4 ++--
- arch/arm64/boot/dts/renesas/ulcb.dtsi            | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77980-condor.dts |  106 ++++++++++++++++++++++++
+ 1 file changed, 106 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index 9256fbaaab7f..b3c0b6912af4 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -589,13 +589,13 @@
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
++++ renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+@@ -45,6 +45,56 @@
+ 		regulator-boot-on;
+ 		regulator-always-on;
  	};
++
++	d1_8v: regulator-2 {
++		compatible = "regulator-fixed";
++		regulator-name = "D1.8V";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	hdmi-out {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con: endpoint {
++				remote-endpoint = <&adv7511_out>;
++			};
++		};
++	};
++
++	lvds-decoder {
++		compatible = "thine,thc63lvd1024";
++		vcc-supply = <&d3_3v>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				thc63lvd1024_in: endpoint {
++					remote-endpoint = <&lvds0_out>;
++				};
++			};
++
++			port@2 {
++				reg = <2>;
++				thc63lvd1024_out: endpoint {
++					remote-endpoint = <&adv7511_in>;
++				};
++			};
++		};
++	};
++
++	x1_clk: x1-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <148500000>;
++	};
+ };
  
- 	sdhi2_pins: sd2 {
--		groups = "sdhi2_data8", "sdhi2_ctrl";
-+		groups = "sdhi2_data8", "sdhi2_ctrl", "sdhi2_ds";
- 		function = "sdhi2";
- 		power-source = <3300>;
+ &avb {
+@@ -74,6 +124,13 @@
  	};
+ };
  
- 	sdhi2_pins_uhs: sd2_uhs {
--		groups = "sdhi2_data8", "sdhi2_ctrl";
-+		groups = "sdhi2_data8", "sdhi2_ctrl", "sdhi2_ds";
- 		function = "sdhi2";
- 		power-source = <1800>;
++&du {
++	clocks = <&cpg CPG_MOD 724>,
++		 <&x1_clk>;
++	clock-names = "du.0", "dclkin.0";
++	status = "okay";
++};
++
+ &extal_clk {
+ 	clock-frequency = <16666666>;
+ };
+@@ -102,6 +159,55 @@
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
  	};
-diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-index 0edb16e6b372..702df9cbed52 100644
---- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-@@ -330,13 +330,13 @@
- 	};
++
++	hdmi@39{
++		compatible = "adi,adv7511w";
++		reg = <0x39>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
++		avdd-supply = <&d1_8v>;
++		dvdd-supply = <&d1_8v>;
++		pvdd-supply = <&d1_8v>;
++		bgvdd-supply = <&d1_8v>;
++		dvdd-3v-supply = <&d3_3v>;
++
++		adi,input-depth = <8>;
++		adi,input-colorspace = "rgb";
++		adi,input-clock = "1x";
++		adi,input-style = <1>;
++		adi,input-justification = "evenly";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7511_in: endpoint {
++					remote-endpoint = <&thc63lvd1024_out>;
++				};
++			};
++
++			port@1 {
++				reg = <1>;
++				adv7511_out: endpoint {
++					remote-endpoint = <&hdmi_con>;
++				};
++			};
++		};
++	};
++};
++
++&lvds0 {
++	status = "okay";
++
++	ports {
++		port@1 {
++			lvds0_out: endpoint {
++				remote-endpoint = <&thc63lvd1024_in>;
++			};
++		};
++	};
+ };
  
- 	sdhi2_pins: sd2 {
--		groups = "sdhi2_data8", "sdhi2_ctrl";
-+		groups = "sdhi2_data8", "sdhi2_ctrl", "sdhi2_ds";
- 		function = "sdhi2";
- 		power-source = <3300>;
- 	};
- 
- 	sdhi2_pins_uhs: sd2_uhs {
--		groups = "sdhi2_data8", "sdhi2_ctrl";
-+		groups = "sdhi2_data8", "sdhi2_ctrl", "sdhi2_ds";
- 		function = "sdhi2";
- 		power-source = <1800>;
- 	};
--- 
-2.11.0
+ &mmc0 {
