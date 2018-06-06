@@ -1,271 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:34378 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932658AbeFKMPS (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:43624 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752205AbeFFQ4O (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Jun 2018 08:15:18 -0400
-Received: by mail-wr0-f196.google.com with SMTP id a12-v6so20169762wro.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Jun 2018 05:15:17 -0700 (PDT)
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V5] ARM: shmobile: Rework the PMIC IRQ line quirk
-Date: Mon, 11 Jun 2018 14:15:13 +0200
-Message-Id: <20180611121513.9673-1-marek.vasut+renesas@gmail.com>
+        Wed, 6 Jun 2018 12:56:14 -0400
+Received: by mail-lf0-f66.google.com with SMTP id n15-v6so10179383lfn.10
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Jun 2018 09:56:14 -0700 (PDT)
+Subject: [PATCH 3/5] arm64: dts: renesas: r8a77980: add DU support
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <4fbd0895-c1ec-41fc-912d-8306dd933997@cogentembedded.com>
+Message-ID: <6ccb3998-f964-5e19-53dd-f567e4ed05bf@cogentembedded.com>
+Date: Wed, 6 Jun 2018 19:56:11 +0300
+MIME-Version: 1.0
+In-Reply-To: <4fbd0895-c1ec-41fc-912d-8306dd933997@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Rather than hard-coding the quirk topology, which stopped scaling,
-parse the information from DT. The code looks for all compatible
-PMICs -- da9063 and da9210 -- and checks if their IRQ line is tied
-to the same pin. If so, the code sends a matching sequence to the
-PMIC to deassert the IRQ.
+Define the generic R8A77980 part of the DU device node.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be> (on Koelsch)
----
-V2: - Replace the DT shared IRQ check loop with memcmp()
-    - Send the I2C message to deassert the IRQ line to all PMICs
-      in the list with shared IRQ line instead of just one
-    - Add comment that this works only in case all the PMICs are
-      on the same I2C bus
-V3: - Drop the addr = 0x00 init
-    - Drop reinit of argsa in rcar_gen2_regulator_quirk
-V4: - Squash regulator_quirk on single line
-    - Drop !np check in for_each_matching_node_and_match()
-    - Use argsa in of_irq_parse_one
-V5: - Check kzalloc failure
-    - Rename da...._msgs to da...._msg
-    - Don't reinit quirk->shared
----
- arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c | 137 ++++++++++++++++-----
- 1 file changed, 108 insertions(+), 29 deletions(-)
+Based on the original (and large) patch by Vladimir Barinov.
 
-diff --git a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-index 93f628acfd94..cf4d260882cf 100644
---- a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-@@ -31,11 +31,12 @@
- #include <linux/i2c.h>
- #include <linux/init.h>
- #include <linux/io.h>
-+#include <linux/list.h>
- #include <linux/notifier.h>
- #include <linux/of.h>
-+#include <linux/of_irq.h>
- #include <linux/mfd/da9063/registers.h>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+---
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi |   30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -671,6 +671,36 @@
+ 			resets = <&cpg 603>;
+ 		};
  
--
- #define IRQC_BASE		0xe61c0000
- #define IRQC_MONITOR		0x104	/* IRQn Signal Level Monitor Register */
- 
-@@ -44,34 +45,45 @@
- /* start of DA9210 System Control and Event Registers */
- #define DA9210_REG_MASK_A		0x54
- 
-+struct regulator_quirk {
-+	struct list_head		list;
-+	const struct of_device_id	*id;
-+	struct of_phandle_args		irq_args;
-+	struct i2c_msg			i2c_msg;
-+	bool				shared;	/* IRQ line is shared */
-+};
++		du: display@feb00000 {
++			compatible = "renesas,du-r8a77980",
++				     "renesas,du-r8a77970";
++			reg = <0 0xfeb00000 0 0x80000>;
++			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 724>;
++			clock-names = "du.0";
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 724>;
++			vsps = <&vspd0>;
++			status = "disabled";
 +
-+static LIST_HEAD(quirk_list);
- static void __iomem *irqc;
- 
- /* first byte sets the memory pointer, following are consecutive reg values */
- static u8 da9063_irq_clr[] = { DA9063_REG_IRQ_MASK_A, 0xff, 0xff, 0xff, 0xff };
- static u8 da9210_irq_clr[] = { DA9210_REG_MASK_A, 0xff, 0xff };
- 
--static struct i2c_msg da9xxx_msgs[3] = {
--	{
--		.addr = 0x58,
--		.len = ARRAY_SIZE(da9063_irq_clr),
--		.buf = da9063_irq_clr,
--	}, {
--		.addr = 0x68,
--		.len = ARRAY_SIZE(da9210_irq_clr),
--		.buf = da9210_irq_clr,
--	}, {
--		.addr = 0x70,
--		.len = ARRAY_SIZE(da9210_irq_clr),
--		.buf = da9210_irq_clr,
--	},
-+static struct i2c_msg da9063_msg = {
-+	.len = ARRAY_SIZE(da9063_irq_clr),
-+	.buf = da9063_irq_clr,
-+};
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
 +
-+static struct i2c_msg da9210_msg = {
-+	.len = ARRAY_SIZE(da9210_irq_clr),
-+	.buf = da9210_irq_clr,
-+};
++				port@0 {
++					reg = <0>;
++					du_out_rgb: endpoint {
++					};
++				};
 +
-+static const struct of_device_id rcar_gen2_quirk_match[] = {
-+	{ .compatible = "dlg,da9063", .data = &da9063_msg },
-+	{ .compatible = "dlg,da9210", .data = &da9210_msg },
-+	{},
- };
- 
- static int regulator_quirk_notify(struct notifier_block *nb,
- 				  unsigned long action, void *data)
- {
-+	struct regulator_quirk *pos, *tmp;
- 	struct device *dev = data;
- 	struct i2c_client *client;
- 	static bool done;
-+	int ret;
- 	u32 mon;
- 
- 	if (done)
-@@ -88,17 +100,20 @@ static int regulator_quirk_notify(struct notifier_block *nb,
- 	client = to_i2c_client(dev);
- 	dev_dbg(dev, "Detected %s\n", client->name);
- 
--	if ((client->addr == 0x58 && !strcmp(client->name, "da9063")) ||
--	    (client->addr == 0x68 && !strcmp(client->name, "da9210")) ||
--	    (client->addr == 0x70 && !strcmp(client->name, "da9210"))) {
--		int ret, len;
-+	/*
-+	 * Send message to all PMICs that share an IRQ line to deassert it.
-+	 *
-+	 * WARNING: This works only if all the PMICs are on the same I2C bus.
-+	 */
-+	list_for_each_entry(pos, &quirk_list, list) {
-+		if (!pos->shared)
-+			continue;
- 
--		/* There are two DA9210 on Stout, one on the other boards. */
--		len = of_machine_is_compatible("renesas,stout") ? 3 : 2;
-+		dev_info(&client->dev, "clearing %s@0x%02x interrupts\n",
-+			 pos->id->compatible, pos->i2c_msg.addr);
- 
--		dev_info(&client->dev, "clearing da9063/da9210 interrupts\n");
--		ret = i2c_transfer(client->adapter, da9xxx_msgs, len);
--		if (ret != len)
-+		ret = i2c_transfer(client->adapter, &pos->i2c_msg, 1);
-+		if (ret != 1)
- 			dev_err(&client->dev, "i2c error %d\n", ret);
- 	}
- 
-@@ -111,6 +126,11 @@ static int regulator_quirk_notify(struct notifier_block *nb,
- remove:
- 	dev_info(dev, "IRQ2 is not asserted, removing quirk\n");
- 
-+	list_for_each_entry_safe(pos, tmp, &quirk_list, list) {
-+		list_del(&pos->list);
-+		kfree(pos);
-+	}
++				port@1 {
++					reg = <1>;
++					du_out_lvds0: endpoint {
++					};
++				};
++			};
++		};
 +
- 	done = true;
- 	iounmap(irqc);
- 	return 0;
-@@ -122,7 +142,12 @@ static struct notifier_block regulator_quirk_nb = {
- 
- static int __init rcar_gen2_regulator_quirk(void)
- {
--	u32 mon;
-+	struct regulator_quirk *quirk, *pos, *tmp;
-+	struct of_phandle_args *argsa, *argsb;
-+	const struct of_device_id *id;
-+	struct device_node *np;
-+	u32 mon, addr;
-+	int ret;
- 
- 	if (!of_machine_is_compatible("renesas,koelsch") &&
- 	    !of_machine_is_compatible("renesas,lager") &&
-@@ -130,22 +155,76 @@ static int __init rcar_gen2_regulator_quirk(void)
- 	    !of_machine_is_compatible("renesas,gose"))
- 		return -ENODEV;
- 
-+	for_each_matching_node_and_match(np, rcar_gen2_quirk_match, &id) {
-+		if (!of_device_is_available(np))
-+			break;
-+
-+		quirk = kzalloc(sizeof(*quirk), GFP_KERNEL);
-+		if (!quirk) {
-+			ret = -ENOMEM;
-+			goto err_mem;
-+		}
-+
-+		argsa = &quirk->irq_args;
-+		memcpy(&quirk->i2c_msg, id->data, sizeof(quirk->i2c_msg));
-+
-+		ret = of_property_read_u32(np, "reg", &addr);
-+		if (ret)
-+			return ret;
-+
-+		quirk->id = id;
-+		quirk->i2c_msg.addr = addr;
-+
-+		ret = of_irq_parse_one(np, 0, argsa);
-+		if (ret)
-+			return ret;
-+
-+		list_for_each_entry(pos, &quirk_list, list) {
-+			argsb = &pos->irq_args;
-+
-+			if (argsa->args_count != argsb->args_count)
-+				continue;
-+
-+			ret = memcmp(argsa->args, argsb->args,
-+				     argsa->args_count *
-+				     sizeof(argsa->args[0]));
-+			if (!ret) {
-+				pos->shared = true;
-+				quirk->shared = true;
-+			}
-+		}
-+
-+		list_add_tail(&quirk->list, &quirk_list);
-+	}
-+
- 	irqc = ioremap(IRQC_BASE, PAGE_SIZE);
--	if (!irqc)
--		return -ENOMEM;
-+	if (!irqc) {
-+		ret = -ENOMEM;
-+		goto err_mem;
-+	}
- 
- 	mon = ioread32(irqc + IRQC_MONITOR);
- 	if (mon & REGULATOR_IRQ_MASK) {
- 		pr_debug("%s: IRQ2 is not asserted, not installing quirk\n",
- 			 __func__);
--		iounmap(irqc);
--		return 0;
-+		ret = 0;
-+		goto err_free;
- 	}
- 
- 	pr_info("IRQ2 is asserted, installing da9063/da9210 regulator quirk\n");
- 
- 	bus_register_notifier(&i2c_bus_type, &regulator_quirk_nb);
- 	return 0;
-+
-+err_free:
-+	iounmap(irqc);
-+err_mem:
-+	list_for_each_entry_safe(pos, tmp, &quirk_list, list) {
-+		list_del(&pos->list);
-+		kfree(pos);
-+	}
-+
-+	return ret;
- }
- 
- arch_initcall(rcar_gen2_regulator_quirk);
--- 
-2.16.2
+ 		prr: chipid@fff00044 {
+ 			compatible = "renesas,prr";
+ 			reg = <0 0xfff00044 0 4>;
