@@ -1,56 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:44217 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932073AbeFFUsC (ORCPT
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:37655 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932274AbeFFHqb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 16:48:02 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 1/4] mmc: tmio: Fix tuning flow
-Date: Wed,  6 Jun 2018 22:47:21 +0200
-Message-Id: <20180606204724.26055-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180606204724.26055-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180606204724.26055-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 6 Jun 2018 03:46:31 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <61f6f4a4-e55c-06e0-cba1-7d90a556950a@cogentembedded.com>
+References: <e9c94553-be9d-0eec-a1ee-1713bb97fbab@cogentembedded.com> <61f6f4a4-e55c-06e0-cba1-7d90a556950a@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 6 Jun 2018 09:46:30 +0200
+Message-ID: <CAMuHMdVRTCOmVz2wkq5SnqEUH4PAdAEp8PVj06JxgC2zLs=wow@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: renesas: condor: add I2C0 support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+Hi Sergei,
 
-If the return value of mmc_send_tuning() is error other than -EILSEQ,
-the tuning fails and process goes out of for_loop. The correct
-processing is to judge their TAP as not good (NG) and continue.
+On Mon, May 28, 2018 at 10:14 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Define the Condor board dependent part of the I2C0 device node.
+>
+> The I2C0 bus is populated by 2 ON Semiconductor PCA9654 I/O expanders
+> and Analog Devices  ADV7511W HDMI transmitter (but we're only describing
+> the former chips now).
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-[Niklas: update commit message]
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/mmc/host/tmio_mmc_core.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 3080299303045adc..e805f84b24a2def8 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -804,10 +804,7 @@ static int tmio_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
- 		if (host->prepare_tuning)
- 			host->prepare_tuning(host, i % host->tap_num);
- 
--		ret = mmc_send_tuning(mmc, opcode, NULL);
--		if (ret && ret != -EILSEQ)
--			goto out;
--		if (ret == 0)
-+		if (!mmc_send_tuning(mmc, opcode, NULL))
- 			set_bit(i, host->taps);
- 
- 		usleep_range(1000, 1200);
+Suggestion for future improvement below.
+
+> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+> +++ renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+> @@ -80,6 +80,28 @@
+>         clock-frequency = <32768>;
+>  };
+>
+> +&i2c0 {
+> +       pinctrl-0 = <&i2c0_pins>;
+> +       pinctrl-names = "default";
+> +
+> +       status = "okay";
+> +       clock-frequency = <400000>;
+> +
+> +       io_expander0: gpio@20 {
+> +               compatible = "onnn,pca9654";
+> +               reg = <0x20>;
+> +               gpio-controller;
+> +               #gpio-cells = <2>;
+
+The bindings don't mention this (the example does have it) the optional
+interrupts prototype. As this is wired to INTC-EX IRQ4, you may want to
+add that. Perhaps later, as r8a77980.dtsi doesn't have INTC-EX yet.
+
+> +       };
+> +
+> +       io_expander1: gpio@21 {
+> +               compatible = "onnn,pca9654";
+> +               reg = <0x21>;
+> +               gpio-controller;
+> +               #gpio-cells = <2>;
+
+Same for IRQ5.
+
+> +       };
+> +};
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.17.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
