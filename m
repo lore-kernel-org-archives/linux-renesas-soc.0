@@ -1,30 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:42747 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753203AbeF1KaF (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52183 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932496AbeFFKA1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Jun 2018 06:30:05 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org
-Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/2] mmc: renesas_sdhi_internal_dmac: fix two issues for error path
-Date: Thu, 28 Jun 2018 19:29:03 +0900
-Message-Id: <1530181745-10519-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Wed, 6 Jun 2018 06:00:27 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v5 05/14] mfd: da9063: Use PLATFORM_DEVID_NONE
+Date: Wed,  6 Jun 2018 11:59:54 +0200
+Message-Id: <20180606100003.17067-5-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set is based on the mmc.git / fixes branch.
+Use PLATFORM_DEVID_NONE instead of -1 in mfd_add_devices.
 
-Yoshihiro Shimoda (2):
-  mmc: renesas_sdhi_internal_dmac: Fix missing unmap in error patch
-  mmc: renesas_sdhi_internal_dmac: Cannot clear the RX_IN_USE in abort
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+---
+V4: New patch
+V5: Rebase on top of new 01 and 02 patches
+---
+ drivers/mfd/da9063-core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
+index 76258e5709f8..f57558590283 100644
+--- a/drivers/mfd/da9063-core.c
++++ b/drivers/mfd/da9063-core.c
+@@ -226,9 +226,9 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
+ 
+ 	da9063->irq_base = regmap_irq_chip_get_base(da9063->regmap_irq);
+ 
+-	ret = devm_mfd_add_devices(da9063->dev, -1, da9063_devs,
+-				   ARRAY_SIZE(da9063_devs), NULL,
+-				   da9063->irq_base, NULL);
++	ret = devm_mfd_add_devices(da9063->dev, PLATFORM_DEVID_NONE,
++				   da9063_devs, ARRAY_SIZE(da9063_devs),
++				   NULL, da9063->irq_base, NULL);
+ 	if (ret)
+ 		dev_err(da9063->dev, "Cannot add MFD cells\n");
+ 
 -- 
-1.9.1
+2.16.2
