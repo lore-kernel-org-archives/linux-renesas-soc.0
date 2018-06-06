@@ -1,132 +1,142 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail1.bemta26.messagelabs.com ([85.158.142.5]:60440 "EHLO
-        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932294AbeFFJrW (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:52715 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932107AbeFFGjk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 05:47:22 -0400
-From: Steve Twiss <stwiss.opensource@diasemi.com>
-To: Marek Vasut <marek.vasut@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Wed, 6 Jun 2018 02:39:40 -0400
+Received: by mail-wm0-f68.google.com with SMTP id p126-v6so9315736wmb.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Jun 2018 23:39:39 -0700 (PDT)
+Date: Wed, 6 Jun 2018 07:39:36 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
         Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Support Opensource <Support.Opensource@diasemi.com>
-Subject: RE: [PATCH v3 06/10] mfd: da9063: Add custom regmap for DA9063L
-Date: Wed, 6 Jun 2018 09:47:18 +0000
-Message-ID: <6ED8E3B22081A4459DAC7699F3695FB701941AE842@SW-EX-MBX02.diasemi.com>
-References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
- <20180602101155.26375-6-marek.vasut+renesas@gmail.com>
- <CAMuHMdV-o0_G76vR0i9nTnSowpzP3Wrt2rC7jVnoFSR3SdObYA@mail.gmail.com>
- <9acdc0af-4be9-91cb-ffed-25133bba73c3@gmail.com>
- <6ED8E3B22081A4459DAC7699F3695FB701941AD701@SW-EX-MBX02.diasemi.com>
- <ab8fa587-a33a-5906-9403-ff5e23e09ff0@gmail.com>
-In-Reply-To: <ab8fa587-a33a-5906-9403-ff5e23e09ff0@gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v4 08/12] mfd: da9063: Add custom regmap for DA9063L
+Message-ID: <20180606063936.GY21163@dell>
+References: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
+ <20180605231013.1803-8-marek.vasut+renesas@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180605231013.1803-8-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgTWFyZWsgYW5kIEdlZXJ0LA0KDQpPbiAwNiBKdW5lIDIwMTggMDA6MDIgTWFyZWsgVmFzdXQg
-d3JvdGUsDQoNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MyAwNi8xMF0gbWZkOiBkYTkwNjM6IEFk
-ZCBjdXN0b20gcmVnbWFwIGZvciBEQTkwNjNMDQo+IA0KPiBPbiAwNi8wNS8yMDE4IDEwOjE3IFBN
-LCBTdGV2ZSBUd2lzcyB3cm90ZToNCj4gPiBIaSBNYXJlayBhbmQgR2VlcnQsDQo+ID4NCj4gPiBP
-biAwNCBKdW5lIDIwMTggMTc6MjUgTWFyZWsgVmFzdXQgd3JvdGUsDQo+ID4NCj4gPj4gU3ViamVj
-dDogUmU6IFtQQVRDSCB2MyAwNi8xMF0gbWZkOiBkYTkwNjM6IEFkZCBjdXN0b20gcmVnbWFwIGZv
-ciBEQTkwNjNMDQo+ID4+DQo+ID4+IE9uIDA2LzA0LzIwMTggMDk6MzkgQU0sIEdlZXJ0IFV5dHRl
-cmhvZXZlbiB3cm90ZToNCj4gPj4+IEhpIE1hcmVrLCBTdGV2ZSwNCj4gPj4+DQo+ID4+PiBPbiBT
-YXQsIEp1biAyLCAyMDE4IGF0IDEyOjExIFBNLCBNYXJlayBWYXN1dCA8bWFyZWsudmFzdXRAZ21h
-aWwuY29tPiB3cm90ZToNCj4gPj4+PiBXaGlsZSB0aGUgZGF0YXNoZWV0IGZvciBEQTkwNjNMICgy
-djEsIDIzLU1hci0yMDE3KSBsaXN0cyB0aGUgUlRDIHJlZ2lzdGVyDQo+ID4+Pj4gYmxvY2ssIHRo
-ZSBEQTkwNjNMIGRvZXMgbm90IGhhdmUgYW4gUlRDLiBBZGQgY3VzdG9tIHJlZ21hcCBmb3IgREE5
-MDYzTCB0bw0KPiA+Pj4+IHByZXZlbnQgYWNjZXNzIGludG8gdGhhdCByZWdpc3RlciBibG9jay4N
-Cj4gPg0KPiA+IE9rLiBJJ3ZlIHNhaWQgcHJldmlvdXNseSBpbiBbdjMgMDcvMTBdLCBidXQgSSds
-bCBjb3B5IGFnYWluOg0KPiA+IFRoZXJlIGlzIG5vdyBhbiBpbnRlcm5hbCBEaWFsb2cgcmVxdWVz
-dCB0byByZW1vdmUgdGhlIFJUQyByZWZlcmVuY2VzIGZyb20gdGhlIERBOTA2M0wgZGF0YXNoZWV0
-Lg0KPiA+IEFkZGluZyB0aGF0IGZpcnN0IHBhcnQgdG8gdGhlIHNlbnRlbmNlIGluIHRoZSBjb21t
-aXQgbG9nOiAiV2hpbGUgdGhlIGRhdGFzaGVldCBmb3IgREE5MDYzTA0KPiA+ICgydjEsIDIzLU1h
-ci0yMDE3KSBsaXN0cyB0aGUgUlRDIHJlZ2lzdGVyIGJsb2NrIiAtLSBpdCBleGlzdHMgaW4gZXJy
-b3IgZm9yIHRoZSByZWdpc3RlciBtYXAgdGFibGUNCj4gPiBvbiBwYWdlIDkxLCBidXQgdGhlIGRh
-dGFzaGVldCBhbHNvIGlkZW50aWZpZXMgdGhvc2UgcmVnaXN0ZXJzIGluIFRhYmxlIDEwMiBvbiBw
-YWdlIDEyNiBhcw0KPiA+ICJSZXNlcnZlZCIuDQo+ID4NCj4gPiBQb2ludGluZyBvdXQgdGhlIGFt
-YmlndWl0eSBpbiB0aGlzIHZlcnNpb24gb2YgdGhlIGRhdGFzaGVldCBzZWVtcyByZWR1bmRhbnQg
-aW4gdGhlIGNvbW1pdCBsb2cuDQo+ID4gQWxzbyBEaWFsb2cgZG8gbm90IHN0b3JlIGEgaGlzdG9y
-eSBvZiBEYXRhc2hlZXRzIG9uIHRoZWlyIHdlYnNpdGUgc28gb25jZSB0aGlzIGlzIHVwZGF0ZWQg
-KGFsdGhvdWdoDQo+ID4gdGhpcyB1cGRhdGUgaXMgbm90IGluIG15IGhhbmRzKSB0aGUgZGF0YXNo
-ZWV0IHdpbGwgYmUgcmVwbGFjZWQuIFNvLCBpdCBzZWVtcyB0aGlzIGNvbW1lbnQgY291bGQNCj4g
-PiBtYWtlIHRoZSBjb21taXQgbWVzc2FnZSBqdXN0IGFzIG1pc2xlYWRpbmcgYXMgdGhlIGN1cnJl
-bnQgZGF0YXNoZWV0Lg0KPiA+DQo+ID4gSG93IGFib3V0IHNvbWV0aGluZyBzaW1wbGVyPw0KPiA+
-ICJUaGUgREE5MDYzTCBkb2VzIG5vdCBoYXZlIGFuIFJUQy4gQWRkIGN1c3RvbSByZWdtYXAgZm9y
-IERBOTA2M0wgdG8gcHJldmVudCBhY2Nlc3MNCj4gPiBpbnRvIHRoYXQgcmVnaXN0ZXIgYmxvY2su
-Ig0KPiA+DQo+ID4+Pj4NCj4gPj4+PiBTaWduZWQtb2ZmLWJ5OiBNYXJlayBWYXN1dCA8bWFyZWsu
-dmFzdXQrcmVuZXNhc0BnbWFpbC5jb20+DQo+ID4+Pg0KPiA+Pj4gVGhhbmtzIGZvciB5b3VyIHBh
-dGNoIQ0KPiA+Pj4NCj4gPj4+PiAtLS0gYS9kcml2ZXJzL21mZC9kYTkwNjMtaTJjLmMNCj4gPj4+
-PiArKysgYi9kcml2ZXJzL21mZC9kYTkwNjMtaTJjLmMNCj4gPj4+PiBAQCAtMjU0LDYgKzM0MSwx
-MCBAQCBzdGF0aWMgaW50IGRhOTA2M19pMmNfcHJvYmUoc3RydWN0IGkyY19jbGllbnQgKmkyYywN
-Cj4gPj4+DQo+ID4+PiBOb3RlIHRoYXQgdGhlIGxpbmUgYWJvdmUgZG9lc24ndCBjaGVjayBkYTkw
-NjMtPnR5cGUsIGJ1dCBkYTkwNjMtDQo+ID4+PiB2YXJpYW50X2NvZGUuLi4NCj4gPj4+DQo+ID4+
-Pj4gICAgICAgICAgICAgICAgIGRhOTA2M19yZWdtYXBfY29uZmlnLnJkX3RhYmxlID0gJmRhOTA2
-M19hZF9yZWFkYWJsZV90YWJsZTsNCj4gPj4+PiAgICAgICAgICAgICAgICAgZGE5MDYzX3JlZ21h
-cF9jb25maWcud3JfdGFibGUgPSAmZGE5MDYzX2FkX3dyaXRlYWJsZV90YWJsZTsNCj4gPj4+PiAg
-ICAgICAgICAgICAgICAgZGE5MDYzX3JlZ21hcF9jb25maWcudm9sYXRpbGVfdGFibGUgPSAmZGE5
-MDYzX2FkX3ZvbGF0aWxlX3RhYmxlOw0KPiA+Pj4+ICsgICAgICAgfSBlbHNlIGlmIChkYTkwNjMt
-PnR5cGUgPT0gUE1JQ19UWVBFX0RBOTA2M0wpIHsNCj4gPj4+DQo+ID4+PiAuLi4gc28gdGhpcyBt
-YXkgYmUgc2xpZ2h0bHkgY29uZnVzaW5nLg0KPiA+Pg0KPiA+PiBJIGtub3cuDQo+ID4+DQo+ID4+
-Pj4gKyAgICAgICAgICAgICAgIGRhOTA2M19yZWdtYXBfY29uZmlnLnJkX3RhYmxlID0gJmRhOTA2
-M2xfYmJfcmVhZGFibGVfdGFibGU7DQo+ID4+Pj4gKyAgICAgICAgICAgICAgIGRhOTA2M19yZWdt
-YXBfY29uZmlnLndyX3RhYmxlID0gJmRhOTA2M2xfYmJfd3JpdGVhYmxlX3RhYmxlOw0KPiA+Pj4+
-ICsgICAgICAgICAgICAgICBkYTkwNjNfcmVnbWFwX2NvbmZpZy52b2xhdGlsZV90YWJsZSA9ICZk
-YTkwNjNsX2JiX3ZvbGF0aWxlX3RhYmxlOw0KPiA+Pj4+ICAgICAgICAgfSBlbHNlIHsNCj4gPj4+
-PiAgICAgICAgICAgICAgICAgZGE5MDYzX3JlZ21hcF9jb25maWcucmRfdGFibGUgPSAmZGE5MDYz
-X2JiX3JlYWRhYmxlX3RhYmxlOw0KPiA+Pj4+ICAgICAgICAgICAgICAgICBkYTkwNjNfcmVnbWFw
-X2NvbmZpZy53cl90YWJsZSA9ICZkYTkwNjNfYmJfd3JpdGVhYmxlX3RhYmxlOw0KPiA+Pj4NCj4g
-Pj4+IEhvd2V2ZXIsIGRhOTA2My0+dmFyaWFudF9jb2RlIGRvZXNuJ3Qgc2VlbSB0byBoYXZlIGJl
-ZW4gZmlsbGVkIGluIGF0IHRoaXMNCj4gPj4+IHBvaW50IHlldCAodGhlIGNhbGwgdG8gZGE5MDYz
-X2RldmljZV9pbml0KCkgZG9pbmcgc28gaXMgYmVsb3csIGF0IHRoZSBlbmQNCj4gPj4+IG9mIHRo
-ZSBwcm9iZSBmdW5jdGlvbiEpLCBzbyBjb21taXQgOWNiNDJlMmE4ZWQwNmU5MSAoIm1mZDogZGE5
-MDYzOiBBZGQNCj4gPj4+IHN1cHBvcnQgZm9yIEFEIHNpbGljb24gdmFyaWFudCIpIG5ldmVyIGFj
-dHVhbGx5IGhhbmRsZWQgdGhlIEFEIHNpbGljb24gdmFyaWFudA0KPiA+Pj4gY29ycmVjdGx5PyBP
-ciBhbSBJIG1pc3Npbmcgc29tZXRoaW5nPw0KPiA+DQo+ID4gT2theSAuLi4gTm8uIFlvdSdyZSBu
-b3QgbWlzc2luZyBhbnl0aGluZy4gSSBoYWQgbm90aWNlZCB0aGF0Lg0KPiA+IFRoZSBBRCBjaGlw
-IG1vZGVsIGlzIG5vdCByZWZlcmVuY2VkIGFuZCBieSBkZWZhdWx0IG9ubHkgdGhlIEJCIGNoaXAg
-bW9kZWwgaXMgdXNlZC4NCj4gPg0KPiA+PiBIYSwgdGhhdCBpcyBhIGdvb2QgcG9pbnQuDQo+ID4N
-Cj4gPiBZZWFoLCBpdCdzIGEgZ29vZCBwb2ludCwgYnV0IGl0J3Mgbm90IGFuIGFtdXNpbmcgcG9p
-bnQuDQo+ID4gVGhlIGRldmljZSB0cmVlIG9ubHkgZGlzdGluZ3Vpc2hlcyBhICJkbGcsZGE5MDYz
-IiwgdGhlcmUgaXMgbm8gQUQgdHlwZSBpbiB0aGUgRFQgc2NoZW1hLg0KPiA+IFRoZXJlIGlzIG5v
-IGRhdGFzaGVldCBsaXN0aW5nIEFEIHJlZ2lzdGVycyBzdXBwb3J0ZWQgYnkgRGlhbG9nLCBvbmx5
-IEJCLg0KPiA+DQo+ID4gQnV0LCBBRCByZWdpc3RlcnMgd2VyZSBhZGRlZCBiYWNrIGludG8gdGhl
-IGhlYWRlciBmaWxlIGluIGNvbW1pdCA5Y2I0MmUyYThlZDA2ZTkxDQo+ID4gYW5kIHRoZSBSVEMg
-ZHJpdmVyIHdhcyB1cGRhdGVkIHRvIGRpc3Rpbmd1aXNoIGJldHdlZW4gdGhlIEFEIGFuZCBCQiBh
-Y2NvcmRpbmcgdG8NCj4gPiB0aGUgdHlwZSBvZiB2YXJpYW50IGRldGVjdGVkIGF0IHJ1bi10aW1l
-IGR1cmluZyB0aGUgZGE5MDYzX2RldmljZV9pbml0KCkgY2FsbC4NCj4gPg0KPiA+IFRoZSByZWFs
-IHByb2JsZW0gaXMgdGhhdCB0aGlzIGxlYWRzIHRvIHR3byBjb21wZXRpbmcgY2hpcCBkZXRlY3Rp
-b24gbWV0aG9kcyBmb3IgdGhlDQo+ID4gREE5MDYzLiBUaGUgZnVuY3Rpb24gZGE5MDYzX2Rldmlj
-ZV9pbml0KCkgYXV0b2RldGVjdHMgdGhlIGNoaXAgdmFyaWFudCwgYnV0DQo+ID4gYXV0b2RldGVj
-dGlvbiBjYW5ub3QgZGVmaW5lIHRoZSBjaGlwIG1vZGVsLiBJdCdzIGNpcmN1bGFyOiB0aGUgY2hp
-cCBtb2RlbCBjYW5ub3QgYmUNCj4gPiBhdXRvZGV0ZWN0ZWQgYmVjYXVzZSBhIGNoaXAgbW9kZWwg
-aXMgbmVlZGVkIHRvIGFjY2VzcyB0aGUgcmVnaXN0ZXIgdXNlZCBkdXJpbmcNCj4gPiBhdXRvZGV0
-ZWN0aW9uLg0KPiA+DQo+ID4gV2hpY2ggbGVhZHMgbWUgYmFjayB0byB3aGF0IEkgc2FpZCB0d28g
-cGFyYWdyYXBocyB1cDoNCj4gPj4gVGhlIGRldmljZSB0cmVlIG9ubHkgZGlzdGluZ3Vpc2hlcyBh
-ICJkbGcsZGE5MDYzIiwgdGhlcmUgaXMgbm8gQUQgdHlwZSBpbiB0aGUgRFQgc2NoZW1hLg0KPiA+
-PiBUaGVyZSBpcyBubyBkYXRhc2hlZXQgbGlzdGluZyBBRCByZWdpc3RlcnMgc3VwcG9ydGVkIGJ5
-IERpYWxvZywgb25seSBCQi4NCj4gPg0KPiA+IFRoaXMgaXMgbm90IGhvdyBpdCBpcyBkb25lIGlu
-IHRoZSBEQTkwNjIgYW5kIERBOTA2MSBkcml2ZXI6IHRoZSB2YXJpYW50IGNvZGUgaXMgb25seQ0K
-PiA+IHVzZWQgdG8gcHJpbnQgdGhlIGluZm9ybWF0aW9uIHRvIHRoZSBjb25zb2xlIGR1cmluZyBz
-dGFydC11cCBhbmQgaXQgaXMgdGhlIERUIHRoYXQgZGVmaW5lcw0KPiA+IHRoZSBjaGlwIG1vZGVs
-IGJhc2VkIHVwb24gImRsZyxkYTkwNjIiIG9yICJkbGcsZGE5MDYxIi4NCj4gDQo+IFNvIHRoZSBB
-RCB3YXMgYnJva2VuIHNpbmNlIGZvcmV2ZXIgYW5kIG5vb25lIG5vdGljZWQgPyA6KQ0KDQpOb3Qg
-cXVpdGUuIA0KVGhlIEFEIHN1cHBvcnQgaXMgd29ya2luZywgYnV0IHRoZSBkcml2ZXIgZG9lc24n
-dCB3b3JrIGxpa2UgZXZlcnlib2R5DQpleHBlY3RzIGJlY2F1c2UgaXQgdXNlcyB0aGUgQkIgY2hp
-cCBtb2RlbC4gQnV0IGl0IGRvZXMgd29yayBiZWNhdXNlIHRoZSBjaGlwDQptb2RlbCBmb3IgQkIg
-aXMgdmFsaWQgZm9yIEFEOyBpbiB0aGlzIGNhc2UgQkIgcmVwcmVzZW50cyBhIHN1cGVyc2V0IG9m
-IEFEDQpyZWdpc3RlcnMgKGFuZCBhbnkgbWlzbWF0Y2hlcyBhcmUgbmV2ZXIgYWNjZXNzZWQgb3Ig
-bWVhbiBhbnl0aGluZyBpbiBBRCkuDQoNCj4gRG8geW91IGhhdmUgYW4gQUQgaGFyZHdhcmUgYW5k
-IGNhbiB5b3UgZml4IGl0ID8NCg0KUGFydCBvZiBteSB3b3JrIGlzIHRvIHN1cHBvcnQgdGhlIGNv
-bW11bml0eSBhbmQgSSB0aGluayB0aGlzIGlzIGZpeGFibGUuDQoNCkJ1dCBhbGwgb2YgdGhpcyBz
-aG91bGRuJ3QgYWZmZWN0IHlvdXIgREE5MDYzTCBzdWJtaXNzaW9uIHNob3VsZCBpdD8NCg0KUmVn
-YXJkcywNClN0ZXZlDQoNCg==
+On Wed, 06 Jun 2018, Marek Vasut wrote:
+
+> The DA9063L does not have an RTC. Add custom regmap for DA9063L to
+> prevent access into that register block.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+> V3: New patch
+> V4: Drop mention of buggy datasheet in the commit message
+> ---
+>  drivers/mfd/da9063-i2c.c | 91 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 91 insertions(+)
+> 
+> diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
+> index 048ce55ebc5b..f0d92a37df6b 100644
+> --- a/drivers/mfd/da9063-i2c.c
+> +++ b/drivers/mfd/da9063-i2c.c
+> @@ -208,6 +208,93 @@ static const struct regmap_access_table da9063_bb_volatile_table = {
+>  	.n_yes_ranges = ARRAY_SIZE(da9063_bb_volatile_ranges),
+>  };
+>  
+> +static const struct regmap_range da9063l_bb_readable_ranges[] = {
+> +	{
+> +		.range_min = DA9063_REG_PAGE_CON,
+> +		.range_max = DA9063_REG_MON_A10_RES,
+> +	}, {
+> +		.range_min = DA9063_REG_SEQ,
+> +		.range_max = DA9063_REG_ID_32_31,
+> +	}, {
+> +		.range_min = DA9063_REG_SEQ_A,
+> +		.range_max = DA9063_REG_AUTO3_LOW,
+> +	}, {
+> +		.range_min = DA9063_REG_T_OFFSET,
+> +		.range_max = DA9063_BB_REG_GP_ID_19,
+> +	}, {
+> +		.range_min = DA9063_REG_CHIP_ID,
+> +		.range_max = DA9063_REG_CHIP_VARIANT,
+> +	},
+> +};
+> +
+> +static const struct regmap_range da9063l_bb_writeable_ranges[] = {
+> +	{
+> +		.range_min = DA9063_REG_PAGE_CON,
+> +		.range_max = DA9063_REG_PAGE_CON,
+> +	}, {
+> +		.range_min = DA9063_REG_FAULT_LOG,
+> +		.range_max = DA9063_REG_VSYS_MON,
+> +	}, {
+> +		.range_min = DA9063_REG_SEQ,
+> +		.range_max = DA9063_REG_ID_32_31,
+> +	}, {
+> +		.range_min = DA9063_REG_SEQ_A,
+> +		.range_max = DA9063_REG_AUTO3_LOW,
+> +	}, {
+> +		.range_min = DA9063_REG_CONFIG_I,
+> +		.range_max = DA9063_BB_REG_MON_REG_4,
+> +	}, {
+> +		.range_min = DA9063_BB_REG_GP_ID_0,
+> +		.range_max = DA9063_BB_REG_GP_ID_19,
+> +	},
+> +};
+> +
+> +static const struct regmap_range da9063l_bb_volatile_ranges[] = {
+> +	{
+> +		.range_min = DA9063_REG_PAGE_CON,
+> +		.range_max = DA9063_REG_EVENT_D,
+> +	}, {
+> +		.range_min = DA9063_REG_CONTROL_A,
+> +		.range_max = DA9063_REG_CONTROL_B,
+> +	}, {
+> +		.range_min = DA9063_REG_CONTROL_E,
+> +		.range_max = DA9063_REG_CONTROL_F,
+> +	}, {
+> +		.range_min = DA9063_REG_BCORE2_CONT,
+> +		.range_max = DA9063_REG_LDO11_CONT,
+> +	}, {
+> +		.range_min = DA9063_REG_DVC_1,
+> +		.range_max = DA9063_REG_ADC_MAN,
+> +	}, {
+> +		.range_min = DA9063_REG_ADC_RES_L,
+> +		.range_max = DA9063_REG_MON_A10_RES,
+> +	}, {
+> +		.range_min = DA9063_REG_SEQ,
+> +		.range_max = DA9063_REG_SEQ,
+> +	}, {
+> +		.range_min = DA9063_REG_EN_32K,
+> +		.range_max = DA9063_REG_EN_32K,
+> +	}, {
+> +		.range_min = DA9063_BB_REG_MON_REG_5,
+> +		.range_max = DA9063_BB_REG_MON_REG_6,
+> +	},
+> +};
+
+Not sure why the regmap_reg_range() MACRO is lower case, but still,
+please make use of it to save a few lines.
+
+Once changed, please add my:
+
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
