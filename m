@@ -1,131 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:60490 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932213AbeFKOtw (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:53039 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932116AbeFFGf4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:49:52 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 0/3] arch: convert to SPDX identifiers
-Date: Mon, 11 Jun 2018 23:49:34 +0900
-Message-Id: <20180611144937.9554-1-wsa+renesas@sang-engineering.com>
+        Wed, 6 Jun 2018 02:35:56 -0400
+Received: by mail-wm0-f68.google.com with SMTP id p126-v6so9298272wmb.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Jun 2018 23:35:55 -0700 (PDT)
+Date: Wed, 6 Jun 2018 07:35:52 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v4 01/12] mfd: da9063: Fix failpath in core
+Message-ID: <20180606063552.GW21163@dell>
+References: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-So, here are the first patches to convert files copyright by Renesas to the
-SPDX format. I have way more pending, but these are the easiest ones for now.
+On Wed, 06 Jun 2018, Marek Vasut wrote:
 
-In 'mach-shmobile', there are a few files left which don't have a clear GPL2
-only statement. I want to leave them for now, group the problematic cases
-later, and fix those in batches per group.
+> In case mfd_add_devices() fails, da9063_irq_exit() is not called to
+> undo the IRQchip setup done by da9063_irq_init(). Fix this by adding
+> the missing fail path.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+> V3: New patch
+> V4: No change
+> ---
+>  drivers/mfd/da9063-core.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 
-But for now, let's fix ARM DTS, ARM64 DTS, and mach-shmobile first.
-
-I used scripts and macros to assist me and to double check, but in the end this
-was still a somewhat manual process.
-
-Stress testing welcome :)
-
-Thanks,
-
-   Wolfram
-
-Wolfram Sang (3):
-  arm64: dts: renesas: convert to SPDX identifiers
-  ARM: dts: convert to SPDX identifier for Renesas boards
-  ARM: shmobile: convert to SPDX identifier
-
- arch/arm/boot/dts/emev2-kzm9d.dts                      |  5 +----
- arch/arm/boot/dts/emev2.dtsi                           |  5 +----
- arch/arm/boot/dts/iwg20d-q7-common.dtsi                |  5 +----
- arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi               |  5 +----
- arch/arm/boot/dts/r7s72100-genmai.dts                  |  5 +----
- arch/arm/boot/dts/r7s72100-gr-peach.dts                |  5 +----
- arch/arm/boot/dts/r7s72100-rskrza1.dts                 |  5 +----
- arch/arm/boot/dts/r7s72100.dtsi                        |  5 +----
- arch/arm/boot/dts/r8a73a4-ape6evm.dts                  |  5 +----
- arch/arm/boot/dts/r8a73a4.dtsi                         |  5 +----
- arch/arm/boot/dts/r8a7740-armadillo800eva.dts          |  5 +----
- arch/arm/boot/dts/r8a7740.dtsi                         |  5 +----
- arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts        |  5 +----
- arch/arm/boot/dts/r8a7743-iwg20d-q7.dts                |  5 +----
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi                  |  5 +----
- arch/arm/boot/dts/r8a7743-sk-rzg1m.dts                 |  5 +----
- arch/arm/boot/dts/r8a7743.dtsi                         |  5 +----
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts    |  5 +----
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts            |  5 +----
- arch/arm/boot/dts/r8a7745-iwg22m.dtsi                  |  5 +----
- arch/arm/boot/dts/r8a7745-sk-rzg1e.dts                 |  5 +----
- arch/arm/boot/dts/r8a7745.dtsi                         |  5 +----
- arch/arm/boot/dts/r8a7778-bockw.dts                    |  5 +----
- arch/arm/boot/dts/r8a7778.dtsi                         |  5 +----
- arch/arm/boot/dts/r8a7779-marzen.dts                   |  5 +----
- arch/arm/boot/dts/r8a7779.dtsi                         |  5 +----
- arch/arm/boot/dts/r8a7790-lager.dts                    |  5 +----
- arch/arm/boot/dts/r8a7790.dtsi                         |  5 +----
- arch/arm/boot/dts/r8a7791-koelsch.dts                  |  5 +----
- arch/arm/boot/dts/r8a7791-porter.dts                   |  5 +----
- arch/arm/boot/dts/r8a7791.dtsi                         |  5 +----
- arch/arm/boot/dts/r8a7792-blanche.dts                  |  5 +----
- arch/arm/boot/dts/r8a7792-wheat.dts                    |  5 +----
- arch/arm/boot/dts/r8a7792.dtsi                         |  5 +----
- arch/arm/boot/dts/r8a7793-gose.dts                     |  5 +----
- arch/arm/boot/dts/r8a7793.dtsi                         |  5 +----
- arch/arm/boot/dts/r8a7794-alt.dts                      |  5 +----
- arch/arm/boot/dts/r8a7794-silk.dts                     |  5 +----
- arch/arm/boot/dts/r8a7794.dtsi                         |  5 +----
- arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi         |  5 +----
- arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi         |  5 +----
- arch/arm/boot/dts/sh73a0-kzm9g.dts                     |  5 +----
- arch/arm/boot/dts/sh73a0.dtsi                          |  5 +----
- arch/arm/include/debug/renesas-scif.S                  |  5 +----
- arch/arm/mach-shmobile/headsmp-apmu.S                  |  5 +----
- arch/arm/mach-shmobile/platsmp-apmu.c                  |  5 +----
- arch/arm/mach-shmobile/platsmp-apmu.h                  | 10 +---------
- arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c     | 10 +---------
- arch/arm/mach-shmobile/setup-emev2.c                   | 10 +---------
- arch/arm/mach-shmobile/setup-r7s72100.c                | 10 +---------
- arch/arm/mach-shmobile/setup-r8a73a4.c                 | 10 +---------
- arch/arm/mach-shmobile/setup-r8a7740.c                 | 10 +---------
- arch/arm/mach-shmobile/setup-r8a7778.c                 | 10 +---------
- arch/arm/mach-shmobile/setup-r8a7779.c                 | 10 +---------
- arch/arm/mach-shmobile/setup-r8a7790.c                 | 10 +---------
- arch/arm/mach-shmobile/setup-r8a7791.c                 | 10 +---------
- arch/arm/mach-shmobile/setup-rcar-gen2.c               | 10 +---------
- arch/arm/mach-shmobile/setup-sh73a0.c                  | 10 +---------
- arch/arm/mach-shmobile/smp-emev2.c                     | 10 +---------
- arch/arm/mach-shmobile/smp-r8a7779.c                   | 10 +---------
- arch/arm/mach-shmobile/smp-r8a7790.c                   | 10 +---------
- arch/arm/mach-shmobile/smp-r8a7791.c                   | 10 +---------
- arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts  |  5 +----
- arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dts     |  5 +----
- arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts |  5 +----
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi           |  5 +----
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dts      |  5 +----
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts         |  5 +----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts     |  5 +----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts    |  5 +----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi               |  5 +----
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dts      |  5 +----
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts         |  5 +----
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts     |  5 +----
- arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts    |  5 +----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi               |  5 +----
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts         |  5 +----
- arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts         |  5 +----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi              |  5 +----
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts         |  5 +----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi              |  5 +----
- arch/arm64/boot/dts/renesas/salvator-common.dtsi       |  5 +----
- arch/arm64/boot/dts/renesas/salvator-x.dtsi            |  5 +----
- arch/arm64/boot/dts/renesas/salvator-xs.dtsi           |  5 +----
- arch/arm64/boot/dts/renesas/ulcb-kf.dtsi               |  5 +----
- arch/arm64/boot/dts/renesas/ulcb.dtsi                  |  5 +----
- 86 files changed, 86 insertions(+), 424 deletions(-)
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
 -- 
-2.11.0
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
