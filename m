@@ -1,183 +1,110 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:37538 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752399AbeFDMX2 (ORCPT
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:44981 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932601AbeFFKAd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Jun 2018 08:23:28 -0400
-Received: by mail-lf0-f67.google.com with SMTP id r2-v6so24861410lff.4
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Jun 2018 05:23:27 -0700 (PDT)
-Date: Mon, 4 Jun 2018 14:23:25 +0200
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: laurent.pinchart@ideasonboard.com, horms@verge.net.au,
-        geert@glider.be, mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        hans.verkuil@cisco.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 8/8] ARM: dts: rcar-gen2: Remove unused VIN properties
-Message-ID: <20180604122325.GH19674@bigcity.dyn.berto.se>
-References: <1527606359-19261-1-git-send-email-jacopo+renesas@jmondi.org>
- <1527606359-19261-9-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1527606359-19261-9-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 6 Jun 2018 06:00:33 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v5 10/14] mfd: da9063: Add custom regmap for DA9063L
+Date: Wed,  6 Jun 2018 11:59:59 +0200
+Message-Id: <20180606100003.17067-10-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
+The DA9063L does not have an RTC. Add custom regmap for DA9063L to
+prevent access into that register block.
 
-Thanks for your work.
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+---
+V3: New patch
+V4: Drop mention of buggy datasheet in the commit message
+V5: Use regmap_reg_range macro
+---
+ drivers/mfd/da9063-i2c.c | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-On 2018-05-29 17:05:59 +0200, Jacopo Mondi wrote:
-> The 'bus-width' and 'pclk-sample' properties are not parsed by the VIN
-> driver and only confuse users. Remove them in all Gen2 SoC that use
-> them.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-
-The more I think about this the more I lean towards that this patch 
-should be dropped. The properties accurately describes the hardware and 
-I think there is value in that. That the driver currently don't parse or 
-make use of them don't in my view reduce there value. Maybe you should 
-break out this patch to a separate series?
-
-> ---
-> v3:
-> - remove bus-width from dt-bindings example
-> ---
->  Documentation/devicetree/bindings/media/rcar_vin.txt | 1 -
->  arch/arm/boot/dts/r8a7790-lager.dts                  | 3 ---
->  arch/arm/boot/dts/r8a7791-koelsch.dts                | 3 ---
->  arch/arm/boot/dts/r8a7791-porter.dts                 | 1 -
->  arch/arm/boot/dts/r8a7793-gose.dts                   | 3 ---
->  arch/arm/boot/dts/r8a7794-alt.dts                    | 1 -
->  arch/arm/boot/dts/r8a7794-silk.dts                   | 1 -
->  7 files changed, 13 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
-> index 024c109..c6d7f60 100644
-> --- a/Documentation/devicetree/bindings/media/rcar_vin.txt
-> +++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
-> @@ -128,7 +128,6 @@ Board setup example for Gen2 platforms (vin1 composite video input)
-> 
->                  vin1ep0: endpoint {
->                          remote-endpoint = <&adv7180>;
-> -                        bus-width = <8>;
->                  };
->          };
->  };
-> diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-> index 092610e..9cdabfcf 100644
-> --- a/arch/arm/boot/dts/r8a7790-lager.dts
-> +++ b/arch/arm/boot/dts/r8a7790-lager.dts
-> @@ -885,10 +885,8 @@
->  	port {
->  		vin0ep2: endpoint {
->  			remote-endpoint = <&adv7612_out>;
-> -			bus-width = <24>;
->  			hsync-active = <0>;
->  			vsync-active = <0>;
-> -			pclk-sample = <1>;
->  			data-active = <1>;
->  		};
->  	};
-> @@ -904,7 +902,6 @@
->  	port {
->  		vin1ep0: endpoint {
->  			remote-endpoint = <&adv7180>;
-> -			bus-width = <8>;
->  		};
->  	};
->  };
-> diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-> index 8ab793d..033c9e3 100644
-> --- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-> +++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-> @@ -857,10 +857,8 @@
->  	port {
->  		vin0ep2: endpoint {
->  			remote-endpoint = <&adv7612_out>;
-> -			bus-width = <24>;
->  			hsync-active = <0>;
->  			vsync-active = <0>;
-> -			pclk-sample = <1>;
->  			data-active = <1>;
->  		};
->  	};
-> @@ -875,7 +873,6 @@
->  	port {
->  		vin1ep: endpoint {
->  			remote-endpoint = <&adv7180>;
-> -			bus-width = <8>;
->  		};
->  	};
->  };
-> diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-> index a01101b..c16e870 100644
-> --- a/arch/arm/boot/dts/r8a7791-porter.dts
-> +++ b/arch/arm/boot/dts/r8a7791-porter.dts
-> @@ -388,7 +388,6 @@
->  	port {
->  		vin0ep: endpoint {
->  			remote-endpoint = <&adv7180>;
-> -			bus-width = <8>;
->  		};
->  	};
->  };
-> diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-> index aa209f6..60aaddb 100644
-> --- a/arch/arm/boot/dts/r8a7793-gose.dts
-> +++ b/arch/arm/boot/dts/r8a7793-gose.dts
-> @@ -765,10 +765,8 @@
->  	port {
->  		vin0ep2: endpoint {
->  			remote-endpoint = <&adv7612_out>;
-> -			bus-width = <24>;
->  			hsync-active = <0>;
->  			vsync-active = <0>;
-> -			pclk-sample = <1>;
->  			data-active = <1>;
->  		};
->  	};
-> @@ -784,7 +782,6 @@
->  	port {
->  		vin1ep: endpoint {
->  			remote-endpoint = <&adv7180_out>;
-> -			bus-width = <8>;
->  		};
->  	};
->  };
-> diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-> index e170275..8ed7a71 100644
-> --- a/arch/arm/boot/dts/r8a7794-alt.dts
-> +++ b/arch/arm/boot/dts/r8a7794-alt.dts
-> @@ -388,7 +388,6 @@
->  	port {
->  		vin0ep: endpoint {
->  			remote-endpoint = <&adv7180>;
-> -			bus-width = <8>;
->  		};
->  	};
->  };
-> diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
-> index 7808aae..6adfcd6 100644
-> --- a/arch/arm/boot/dts/r8a7794-silk.dts
-> +++ b/arch/arm/boot/dts/r8a7794-silk.dts
-> @@ -477,7 +477,6 @@
->  	port {
->  		vin0ep: endpoint {
->  			remote-endpoint = <&adv7180>;
-> -			bus-width = <8>;
->  		};
->  	};
->  };
-> --
-> 2.7.4
-> 
-
+diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
+index 6fe9c3464b41..a449a9263dd7 100644
+--- a/drivers/mfd/da9063-i2c.c
++++ b/drivers/mfd/da9063-i2c.c
+@@ -118,6 +118,50 @@ static const struct regmap_access_table da9063_bb_volatile_table = {
+ 	.n_yes_ranges = ARRAY_SIZE(da9063_bb_volatile_ranges),
+ };
+ 
++static const struct regmap_range da9063l_bb_readable_ranges[] = {
++	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_MON_A10_RES),
++	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
++	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
++	regmap_reg_range(DA9063_REG_T_OFFSET, DA9063_BB_REG_GP_ID_19),
++	regmap_reg_range(DA9063_REG_CHIP_ID, DA9063_REG_CHIP_VARIANT),
++};
++
++static const struct regmap_range da9063l_bb_writeable_ranges[] = {
++	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_PAGE_CON),
++	regmap_reg_range(DA9063_REG_FAULT_LOG, DA9063_REG_VSYS_MON),
++	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
++	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
++	regmap_reg_range(DA9063_REG_CONFIG_I, DA9063_BB_REG_MON_REG_4),
++	regmap_reg_range(DA9063_BB_REG_GP_ID_0, DA9063_BB_REG_GP_ID_19),
++};
++
++static const struct regmap_range da9063l_bb_volatile_ranges[] = {
++	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_EVENT_D),
++	regmap_reg_range(DA9063_REG_CONTROL_A, DA9063_REG_CONTROL_B),
++	regmap_reg_range(DA9063_REG_CONTROL_E, DA9063_REG_CONTROL_F),
++	regmap_reg_range(DA9063_REG_BCORE2_CONT, DA9063_REG_LDO11_CONT),
++	regmap_reg_range(DA9063_REG_DVC_1, DA9063_REG_ADC_MAN),
++	regmap_reg_range(DA9063_REG_ADC_RES_L, DA9063_REG_MON_A10_RES),
++	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_SEQ),
++	regmap_reg_range(DA9063_REG_EN_32K, DA9063_REG_EN_32K),
++	regmap_reg_range(DA9063_BB_REG_MON_REG_5, DA9063_BB_REG_MON_REG_6),
++};
++
++static const struct regmap_access_table da9063l_bb_readable_table = {
++	.yes_ranges = da9063l_bb_readable_ranges,
++	.n_yes_ranges = ARRAY_SIZE(da9063l_bb_readable_ranges),
++};
++
++static const struct regmap_access_table da9063l_bb_writeable_table = {
++	.yes_ranges = da9063l_bb_writeable_ranges,
++	.n_yes_ranges = ARRAY_SIZE(da9063l_bb_writeable_ranges),
++};
++
++static const struct regmap_access_table da9063l_bb_volatile_table = {
++	.yes_ranges = da9063l_bb_volatile_ranges,
++	.n_yes_ranges = ARRAY_SIZE(da9063l_bb_volatile_ranges),
++};
++
+ static const struct regmap_range_cfg da9063_range_cfg[] = {
+ 	{
+ 		.range_min = DA9063_REG_PAGE_CON,
+@@ -164,6 +208,10 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
+ 		da9063_regmap_config.rd_table = &da9063_ad_readable_table;
+ 		da9063_regmap_config.wr_table = &da9063_ad_writeable_table;
+ 		da9063_regmap_config.volatile_table = &da9063_ad_volatile_table;
++	} else if (da9063->type == PMIC_TYPE_DA9063L) {
++		da9063_regmap_config.rd_table = &da9063l_bb_readable_table;
++		da9063_regmap_config.wr_table = &da9063l_bb_writeable_table;
++		da9063_regmap_config.volatile_table = &da9063l_bb_volatile_table;
+ 	} else {
+ 		da9063_regmap_config.rd_table = &da9063_bb_readable_table;
+ 		da9063_regmap_config.wr_table = &da9063_bb_writeable_table;
 -- 
-Regards,
-Niklas S�derlund
+2.16.2
