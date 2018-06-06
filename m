@@ -1,224 +1,198 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:51033 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751714AbeFFNWH (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50963 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752425AbeFFKAh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:22:07 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        kieran.bingham@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] media: renesas-ceu: Add support for YUYV permutations
-Date: Wed,  6 Jun 2018 15:21:53 +0200
-Message-Id: <1528291313-20471-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 6 Jun 2018 06:00:37 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v5 13/14] regulator: da9063: Handle less LDOs on DA9063L
+Date: Wed,  6 Jun 2018 12:00:02 +0200
+Message-Id: <20180606100003.17067-13-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for YUYV permutations, passing down to the subdevice the media bus
-format with components ordering that reflect the output pixel format one.
+Move the LDOs present only on DA9063 at the end of the list, so that
+the DA9063L can simply indicate less LDOs and still share the list of
+regulators with DA9063.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Acked-by: Mark Brown <broonie@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/media/platform/renesas-ceu.c | 91 ++++++++++++++++++++++++++++++------
- 1 file changed, 78 insertions(+), 13 deletions(-)
+V2: No change
+V3: No change
+V4: Change subject s/mfd/regulator/
+V5: No change
+---
+ drivers/regulator/da9063-regulator.c | 76 +++++++++++++++++++++---------------
+ 1 file changed, 45 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/media/platform/renesas-ceu.c b/drivers/media/platform/renesas-ceu.c
-index fe4fe94..46b0639 100644
---- a/drivers/media/platform/renesas-ceu.c
-+++ b/drivers/media/platform/renesas-ceu.c
-@@ -254,6 +254,18 @@ static const struct ceu_fmt ceu_fmt_list[] = {
- 		.fourcc	= V4L2_PIX_FMT_YUYV,
- 		.bpp	= 16,
+diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
+index eeb0d431dda1..0c09e73e0b23 100644
+--- a/drivers/regulator/da9063-regulator.c
++++ b/drivers/regulator/da9063-regulator.c
+@@ -529,6 +529,32 @@ static const struct da9063_regulator_info da9063_regulator_info[] = {
+ 		.ilimit = BFIELD(DA9063_REG_BUCK_ILIM_A,
+ 				 DA9063_BMEM_ILIM_MASK),
  	},
 +	{
-+		.fourcc	= V4L2_PIX_FMT_UYVY,
-+		.bpp	= 16,
++		DA9063_LDO(DA9063, LDO3, 900, 20, 3440),
++		.suspend = BFIELD(DA9063_REG_DVC_1, DA9063_VLDO3_SEL),
++		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO3_LIM),
 +	},
 +	{
-+		.fourcc	= V4L2_PIX_FMT_YVYU,
-+		.bpp	= 16,
++		DA9063_LDO(DA9063, LDO7, 900, 50, 3600),
++		.suspend = BFIELD(DA9063_REG_LDO7_CONT, DA9063_VLDO7_SEL),
++		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO7_LIM),
 +	},
 +	{
-+		.fourcc	= V4L2_PIX_FMT_VYUY,
-+		.bpp	= 16,
++		DA9063_LDO(DA9063, LDO8, 900, 50, 3600),
++		.suspend = BFIELD(DA9063_REG_LDO8_CONT, DA9063_VLDO8_SEL),
++		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO8_LIM),
 +	},
++	{
++		DA9063_LDO(DA9063, LDO9, 950, 50, 3600),
++		.suspend = BFIELD(DA9063_REG_LDO9_CONT, DA9063_VLDO9_SEL),
++	},
++	{
++		DA9063_LDO(DA9063, LDO11, 900, 50, 3600),
++		.suspend = BFIELD(DA9063_REG_LDO11_CONT, DA9063_VLDO11_SEL),
++		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO11_LIM),
++	},
++
++	/* The following LDOs are present only on DA9063, not on DA9063L */
+ 	{
+ 		DA9063_LDO(DA9063, LDO1, 600, 20, 1860),
+ 		.suspend = BFIELD(DA9063_REG_DVC_1, DA9063_VLDO1_SEL),
+@@ -537,11 +563,6 @@ static const struct da9063_regulator_info da9063_regulator_info[] = {
+ 		DA9063_LDO(DA9063, LDO2, 600, 20, 1860),
+ 		.suspend = BFIELD(DA9063_REG_DVC_1, DA9063_VLDO2_SEL),
+ 	},
+-	{
+-		DA9063_LDO(DA9063, LDO3, 900, 20, 3440),
+-		.suspend = BFIELD(DA9063_REG_DVC_1, DA9063_VLDO3_SEL),
+-		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO3_LIM),
+-	},
+ 	{
+ 		DA9063_LDO(DA9063, LDO4, 900, 20, 3440),
+ 		.suspend = BFIELD(DA9063_REG_DVC_2, DA9063_VLDO4_SEL),
+@@ -555,29 +576,11 @@ static const struct da9063_regulator_info da9063_regulator_info[] = {
+ 		DA9063_LDO(DA9063, LDO6, 900, 50, 3600),
+ 		.suspend = BFIELD(DA9063_REG_LDO6_CONT, DA9063_VLDO6_SEL),
+ 	},
+-	{
+-		DA9063_LDO(DA9063, LDO7, 900, 50, 3600),
+-		.suspend = BFIELD(DA9063_REG_LDO7_CONT, DA9063_VLDO7_SEL),
+-		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO7_LIM),
+-	},
+-	{
+-		DA9063_LDO(DA9063, LDO8, 900, 50, 3600),
+-		.suspend = BFIELD(DA9063_REG_LDO8_CONT, DA9063_VLDO8_SEL),
+-		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO8_LIM),
+-	},
+-	{
+-		DA9063_LDO(DA9063, LDO9, 950, 50, 3600),
+-		.suspend = BFIELD(DA9063_REG_LDO9_CONT, DA9063_VLDO9_SEL),
+-	},
++
+ 	{
+ 		DA9063_LDO(DA9063, LDO10, 900, 50, 3600),
+ 		.suspend = BFIELD(DA9063_REG_LDO10_CONT, DA9063_VLDO10_SEL),
+ 	},
+-	{
+-		DA9063_LDO(DA9063, LDO11, 900, 50, 3600),
+-		.suspend = BFIELD(DA9063_REG_LDO11_CONT, DA9063_VLDO11_SEL),
+-		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO11_LIM),
+-	},
  };
-
- static const struct ceu_fmt *get_ceu_fmt_from_fourcc(unsigned int fourcc)
-@@ -272,6 +284,9 @@ static bool ceu_fmt_mplane(struct v4l2_pix_format_mplane *pix)
+ 
+ /* Link chip model with regulators info table */
+@@ -587,6 +590,11 @@ static struct da9063_dev_model regulators_models[] = {
+ 		.n_regulators = ARRAY_SIZE(da9063_regulator_info),
+ 		.type = PMIC_TYPE_DA9063,
+ 	},
++	{
++		.regulator_info = da9063_regulator_info,
++		.n_regulators = ARRAY_SIZE(da9063_regulator_info) - 6,
++		.type = PMIC_TYPE_DA9063L,
++	},
+ 	{ }
+ };
+ 
+@@ -641,28 +649,34 @@ static struct of_regulator_match da9063_matches[] = {
+ 	[DA9063_ID_BPERI]            = { .name = "bperi",           },
+ 	[DA9063_ID_BCORES_MERGED]    = { .name = "bcores-merged"    },
+ 	[DA9063_ID_BMEM_BIO_MERGED]  = { .name = "bmem-bio-merged", },
++	[DA9063_ID_LDO3]             = { .name = "ldo3",            },
++	[DA9063_ID_LDO7]             = { .name = "ldo7",            },
++	[DA9063_ID_LDO8]             = { .name = "ldo8",            },
++	[DA9063_ID_LDO9]             = { .name = "ldo9",            },
++	[DA9063_ID_LDO11]            = { .name = "ldo11",           },
++	/* The following LDOs are present only on DA9063, not on DA9063L */
+ 	[DA9063_ID_LDO1]             = { .name = "ldo1",            },
+ 	[DA9063_ID_LDO2]             = { .name = "ldo2",            },
+-	[DA9063_ID_LDO3]             = { .name = "ldo3",            },
+ 	[DA9063_ID_LDO4]             = { .name = "ldo4",            },
+ 	[DA9063_ID_LDO5]             = { .name = "ldo5",            },
+ 	[DA9063_ID_LDO6]             = { .name = "ldo6",            },
+-	[DA9063_ID_LDO7]             = { .name = "ldo7",            },
+-	[DA9063_ID_LDO8]             = { .name = "ldo8",            },
+-	[DA9063_ID_LDO9]             = { .name = "ldo9",            },
+ 	[DA9063_ID_LDO10]            = { .name = "ldo10",           },
+-	[DA9063_ID_LDO11]            = { .name = "ldo11",           },
+ };
+ 
+ static struct da9063_regulators_pdata *da9063_parse_regulators_dt(
+ 		struct platform_device *pdev,
+ 		struct of_regulator_match **da9063_reg_matches)
  {
- 	switch (pix->pixelformat) {
- 	case V4L2_PIX_FMT_YUYV:
-+	case V4L2_PIX_FMT_UYVY:
-+	case V4L2_PIX_FMT_YVYU:
-+	case V4L2_PIX_FMT_VYUY:
- 		return false;
- 	case V4L2_PIX_FMT_NV16:
- 	case V4L2_PIX_FMT_NV61:
-@@ -380,7 +395,9 @@ static int ceu_hw_config(struct ceu_device *ceudev)
- 	switch (pix->pixelformat) {
- 	/* Data fetch sync mode */
- 	case V4L2_PIX_FMT_YUYV:
--		/* TODO: handle YUYV permutations through DTARY bits. */
-+	case V4L2_PIX_FMT_YVYU:
-+	case V4L2_PIX_FMT_UYVY:
-+	case V4L2_PIX_FMT_VYUY:
- 		camcr	= CEU_CAMCR_JPEG;
- 		cdocr	|= CEU_CDOCR_NO_DOWSAMPLE;
- 		cfzsr	= (pix->height << 16) | pix->width;
-@@ -568,6 +585,9 @@ static void ceu_calc_plane_sizes(struct ceu_device *ceudev,
-
- 	switch (pix->pixelformat) {
- 	case V4L2_PIX_FMT_YUYV:
-+	case V4L2_PIX_FMT_UYVY:
-+	case V4L2_PIX_FMT_YVYU:
-+	case V4L2_PIX_FMT_VYUY:
- 		pix->num_planes	= 1;
- 		bpl		= pix->width * ceu_fmt->bpp / 8;
- 		szimage		= pix->height * bpl;
-@@ -762,42 +782,59 @@ static const struct vb2_ops ceu_vb2_ops = {
- /* --- CEU image formats handling --- */
-
- /*
-- * ceu_try_fmt() - test format on CEU and sensor
-+ * __ceu_try_fmt() - test format on CEU and sensor
-  * @ceudev: The CEU device.
-  * @v4l2_fmt: format to test.
-+ * @sd_mbus_code: the media bus code accepted by the subdevice; output param.
-  *
-  * Returns 0 for success, < 0 for errors.
-  */
--static int ceu_try_fmt(struct ceu_device *ceudev, struct v4l2_format *v4l2_fmt)
-+static int __ceu_try_fmt(struct ceu_device *ceudev, struct v4l2_format *v4l2_fmt,
-+			 u32 *sd_mbus_code)
- {
- 	struct ceu_subdev *ceu_sd = ceudev->sd;
- 	struct v4l2_pix_format_mplane *pix = &v4l2_fmt->fmt.pix_mp;
- 	struct v4l2_subdev *v4l2_sd = ceu_sd->v4l2_sd;
- 	struct v4l2_subdev_pad_config pad_cfg;
- 	const struct ceu_fmt *ceu_fmt;
-+	u32 mbus_code_old;
-+	u32 mbus_code;
- 	int ret;
-
- 	/*
- 	 * Set format on sensor sub device: bus format used to produce memory
--	 * format is selected at initialization time.
-+	 * format is selected depending on YUV component ordering or
-+	 * at initialization time.
- 	 */
- 	struct v4l2_subdev_format sd_format = {
- 		.which	= V4L2_SUBDEV_FORMAT_TRY,
--		.format	= {
--			.code = ceu_sd->mbus_fmt.mbus_code,
--		},
- 	};
-
-+	mbus_code_old = ceu_sd->mbus_fmt.mbus_code;
++	struct da9063 *da9063 = dev_get_drvdata(pdev->dev.parent);
+ 	struct da9063_regulators_pdata *pdata;
+ 	struct da9063_regulator_data *rdata;
+ 	struct device_node *node;
++	int da9063_matches_len = ARRAY_SIZE(da9063_matches);
+ 	int i, n, num;
+ 
++	if (da9063->type == PMIC_TYPE_DA9063L)
++		da9063_matches_len -= 6;
 +
- 	switch (pix->pixelformat) {
- 	case V4L2_PIX_FMT_YUYV:
-+		mbus_code = MEDIA_BUS_FMT_YUYV8_2X8;
-+		break;
-+	case V4L2_PIX_FMT_UYVY:
-+		mbus_code = MEDIA_BUS_FMT_UYVY8_2X8;
-+		break;
-+	case V4L2_PIX_FMT_YVYU:
-+		mbus_code = MEDIA_BUS_FMT_YVYU8_2X8;
-+		break;
-+	case V4L2_PIX_FMT_VYUY:
-+		mbus_code = MEDIA_BUS_FMT_VYUY8_2X8;
-+		break;
- 	case V4L2_PIX_FMT_NV16:
- 	case V4L2_PIX_FMT_NV61:
- 	case V4L2_PIX_FMT_NV12:
- 	case V4L2_PIX_FMT_NV21:
-+		mbus_code = ceu_sd->mbus_fmt.mbus_code;
- 		break;
-
- 	default:
- 		pix->pixelformat = V4L2_PIX_FMT_NV16;
-+		mbus_code = ceu_sd->mbus_fmt.mbus_code;
- 		break;
+ 	node = of_get_child_by_name(pdev->dev.parent->of_node, "regulators");
+ 	if (!node) {
+ 		dev_err(&pdev->dev, "Regulators device node not found\n");
+@@ -670,7 +684,7 @@ static struct da9063_regulators_pdata *da9063_parse_regulators_dt(
  	}
-
-@@ -808,9 +845,25 @@ static int ceu_try_fmt(struct ceu_device *ceudev, struct v4l2_format *v4l2_fmt)
- 			      &pix->height, 4, CEU_MAX_HEIGHT, 4, 0);
-
- 	v4l2_fill_mbus_format_mplane(&sd_format.format, pix);
-+
-+	/*
-+	 * Try with the mbus_code matching YUYV components ordering first,
-+	 * if that one fails, fallback to default selected at initialization
-+	 * time.
-+	 */
-+	sd_format.format.code = mbus_code;
- 	ret = v4l2_subdev_call(v4l2_sd, pad, set_fmt, &pad_cfg, &sd_format);
--	if (ret)
--		return ret;
-+	if (ret) {
-+		if (ret == -EINVAL) {
-+			/* fallback */
-+			sd_format.format.code = mbus_code_old;
-+			ret = v4l2_subdev_call(v4l2_sd, pad, set_fmt,
-+					       &pad_cfg, &sd_format);
-+		}
-+
-+		if (ret)
-+			return ret;
-+	}
-
- 	/* Apply size returned by sensor as the CEU can't scale. */
- 	v4l2_fill_pix_format_mplane(pix, &sd_format.format);
-@@ -818,16 +871,30 @@ static int ceu_try_fmt(struct ceu_device *ceudev, struct v4l2_format *v4l2_fmt)
- 	/* Calculate per-plane sizes based on image format. */
- 	ceu_calc_plane_sizes(ceudev, ceu_fmt, pix);
-
-+	/* Report to caller the configured mbus format. */
-+	*sd_mbus_code = sd_format.format.code;
-+
- 	return 0;
- }
-
- /*
-+ * ceu_try_fmt() - Wrapper for __ceu_try_fmt; discard configured mbus_fmt
-+ */
-+static int ceu_try_fmt(struct ceu_device *ceudev, struct v4l2_format *v4l2_fmt)
-+{
-+	u32 mbus_code;
-+
-+	return __ceu_try_fmt(ceudev, v4l2_fmt, &mbus_code);
-+}
-+
-+/*
-  * ceu_set_fmt() - Apply the supplied format to both sensor and CEU
-  */
- static int ceu_set_fmt(struct ceu_device *ceudev, struct v4l2_format *v4l2_fmt)
- {
- 	struct ceu_subdev *ceu_sd = ceudev->sd;
- 	struct v4l2_subdev *v4l2_sd = ceu_sd->v4l2_sd;
-+	u32 mbus_code;
- 	int ret;
-
- 	/*
-@@ -836,15 +903,13 @@ static int ceu_set_fmt(struct ceu_device *ceudev, struct v4l2_format *v4l2_fmt)
- 	 */
- 	struct v4l2_subdev_format format = {
- 		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
--		.format	= {
--			.code = ceu_sd->mbus_fmt.mbus_code,
--		},
- 	};
-
--	ret = ceu_try_fmt(ceudev, v4l2_fmt);
-+	ret = __ceu_try_fmt(ceudev, v4l2_fmt, &mbus_code);
- 	if (ret)
- 		return ret;
-
-+	format.format.code = mbus_code;
- 	v4l2_fill_mbus_format_mplane(&format.format, &v4l2_fmt->fmt.pix_mp);
- 	ret = v4l2_subdev_call(v4l2_sd, pad, set_fmt, NULL, &format);
- 	if (ret)
---
-2.7.4
+ 
+ 	num = of_regulator_match(&pdev->dev, node, da9063_matches,
+-				 ARRAY_SIZE(da9063_matches));
++				 da9063_matches_len);
+ 	of_node_put(node);
+ 	if (num < 0) {
+ 		dev_err(&pdev->dev, "Failed to match regulators\n");
+@@ -689,7 +703,7 @@ static struct da9063_regulators_pdata *da9063_parse_regulators_dt(
+ 	pdata->n_regulators = num;
+ 
+ 	n = 0;
+-	for (i = 0; i < ARRAY_SIZE(da9063_matches); i++) {
++	for (i = 0; i < da9063_matches_len; i++) {
+ 		if (!da9063_matches[i].init_data)
+ 			continue;
+ 
+-- 
+2.16.2
