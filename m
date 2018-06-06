@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:49506 "EHLO
+Received: from bh-25.webhostbox.net ([208.91.199.152]:39515 "EHLO
         bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932931AbeFFQYG (ORCPT
+        with ESMTP id S1752303AbeFFQVG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 12:24:06 -0400
-Date: Wed, 6 Jun 2018 09:24:04 -0700
+        Wed, 6 Jun 2018 12:21:06 -0400
+Date: Wed, 6 Jun 2018 09:21:03 -0700
 From: Guenter Roeck <linux@roeck-us.net>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
@@ -15,7 +15,7 @@ Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
         Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
 Subject: Re: dt-bindings: watchdog: renesas-wdt: Add support for the R8A77990
  wdt
-Message-ID: <20180606162404.GA10066@roeck-us.net>
+Message-ID: <20180606162103.GA9740@roeck-us.net>
 References: <1528219113-29014-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -35,9 +35,7 @@ On Tue, Jun 05, 2018 at 07:18:33PM +0200, Geert Uytterhoeven wrote:
 > Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This refuses to apply for me. What tree is it based on ?
-
-Guenter
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
 > ---
 >  Documentation/devicetree/bindings/watchdog/renesas-wdt.txt | 1 +
