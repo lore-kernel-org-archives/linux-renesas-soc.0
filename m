@@ -1,50 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:51748 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750950AbeFDPdS (ORCPT
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:36691 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932144AbeFFGeo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Jun 2018 11:33:18 -0400
+        Wed, 6 Jun 2018 02:34:44 -0400
+Received: by mail-wr0-f194.google.com with SMTP id f16-v6so4921633wrm.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Jun 2018 23:34:43 -0700 (PDT)
+Date: Wed, 6 Jun 2018 07:34:40 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v4 03/12] mfd: da9063: Use PLATFORM_DEVID_NONE
+Message-ID: <20180606063440.GV21163@dell>
+References: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
+ <20180605231013.1803-3-marek.vasut+renesas@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <19e43b97-9235-a752-7cf9-56a5e3bb281a@cogentembedded.com>
-References: <1526008736-26496-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <20180511.155942.16024095909155343.davem@davemloft.net> <20180513075803.plrkbwmzksjnz45u@verge.net.au>
- <19e43b97-9235-a752-7cf9-56a5e3bb281a@cogentembedded.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Mon, 4 Jun 2018 10:32:57 -0500
-Message-ID: <CAL_JsqKuFh6-hoaLnkOPcVpHmEaGkN3OaOrFA1WazR-HZeQsOg@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: net: ravb: Add support for r8a77990 SoC
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "Shimoda, Yoshihiro" <yoshihiro.shimoda.uh@renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
-        <linux-renesas-soc@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180605231013.1803-3-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, May 15, 2018 at 3:43 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> On 5/13/2018 10:58 AM, Simon Horman wrote:
->
->>>> Add documentation for r8a77990 compatible string to renesas ravb device
->>>> tree bindings documentation.
->>>>
->>>> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
->>>
->>>
->>> I'm assuming this isn't targetted at one of my trees.  Just FYI.
->>
->>
->> Hi Dave,
->>
->> I think this is appropriate for net-next but if not I can take it.
->
->
->    There's also Rob, and IIRC he has taken alike patch recently...
+On Wed, 06 Jun 2018, Marek Vasut wrote:
 
-Applied.
+> Use PLATFORM_DEVID_NONE instead of -1 in mfd_add_devices.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+> V4: New patch
+> ---
+>  drivers/mfd/da9063-core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Rob
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
