@@ -1,60 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:44423 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932073AbeFFUsa (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:34110 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752193AbeFFQzS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 16:48:30 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 3/4] mmc: renesas_sdhi: Fix sampling clock position selecting
-Date: Wed,  6 Jun 2018 22:47:23 +0200
-Message-Id: <20180606204724.26055-4-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180606204724.26055-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180606204724.26055-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 6 Jun 2018 12:55:18 -0400
+Received: by mail-lf0-f65.google.com with SMTP id o9-v6so10201320lfk.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Jun 2018 09:55:17 -0700 (PDT)
+Subject: [PATCH 2/5] arm64: dts: renesas: r8a77980: add VSPD support
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <4fbd0895-c1ec-41fc-912d-8306dd933997@cogentembedded.com>
+Message-ID: <789d8d0c-336d-6721-093e-856803c87671@cogentembedded.com>
+Date: Wed, 6 Jun 2018 19:55:15 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <4fbd0895-c1ec-41fc-912d-8306dd933997@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+Describe VSPD0 in the R8A77980 device tree; it will be used by DU in
+the next patch...
 
-When the result of tuning was different between the first set and the
-second set, there was a case where the wrong sampling clock position was
-selected. As a countermeasure, make the two results the same.
+Based on the original (and large) patch by Vladimir Barinov.
 
-Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-[Niklas: update commit message]
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
- drivers/mmc/host/renesas_sdhi_core.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 45c015da2e757c90..85152e73e6386f1c 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -301,6 +301,15 @@ static int renesas_sdhi_select_tuning(struct tmio_mmc_host *host)
- 	/* Clear SCC_RVSREQ */
- 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_RVSREQ, 0);
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -653,6 +653,16 @@
+ 			resets = <&cpg 408>;
+ 		};
  
-+	/* Merge the results */
-+	for (i = 0; i < host->tap_num * 2; i++) {
-+		if (!test_bit(i, host->taps)) {
-+			clear_bit(i % host->tap_num, host->taps);
-+			clear_bit((i % host->tap_num) + host->tap_num,
-+				  host->taps);
-+		}
-+	}
++		vspd0: vsp@fea20000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfea20000 0 0x4000>;
++			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 623>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 623>;
++			renesas,fcp = <&fcpvd0>;
++		};
 +
- 	/*
- 	 * Find the longest consecutive run of successful probes.  If that
- 	 * is more than SH_MOBILE_SDHI_MAX_TAP probes long then use the
--- 
-2.17.0
+ 		fcpvd0: fcp@fea27000 {
+ 			compatible = "renesas,fcpv";
+ 			reg = <0 0xfea27000 0 0x200>;
