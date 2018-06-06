@@ -1,70 +1,68 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: [PATCH 4/5] arm64: dts: renesas: r8a77980: add LVDS support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <4fbd0895-c1ec-41fc-912d-8306dd933997@cogentembedded.com>
-Message-ID: <2f71d619-d463-bb67-585b-2c08d3791bfb@cogentembedded.com>
-Date: Wed, 6 Jun 2018 19:57:29 +0300
-MIME-Version: 1.0
-In-Reply-To: <4fbd0895-c1ec-41fc-912d-8306dd933997@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35846 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932601AbeFFKAi (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 6 Jun 2018 06:00:38 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v5 14/14] mfd: da9063: Add DA9063L support
+Date: Wed,  6 Jun 2018 12:00:03 +0200
+Message-Id: <20180606100003.17067-14-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the generic R8A77980 part of the LVDS device node.
+Add support for DA9063L, which is a reduced variant of the DA9063
+with less regulators and without RTC.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Acked-by: Mark Brown <broonie@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
 ---
- arch/arm64/boot/dts/renesas/r8a77980.dtsi |   29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+V2: No change
+V3: No change
+V4: No change
+V5: No change
+---
+ drivers/mfd/da9063-i2c.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -696,6 +696,35 @@
- 				port@1 {
- 					reg = <1>;
- 					du_out_lvds0: endpoint {
-+						remote-endpoint = <&lvds0_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		lvds0: lvds-encoder@feb90000 {
-+			compatible = "renesas,r8a77980-lvds";
-+			reg = <0 0xfeb90000 0 0x14>;
-+			clocks = <&cpg CPG_MOD 727>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 727>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					lvds0_in: endpoint {
-+						remote-endpoint =
-+							<&du_out_lvds0>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					lvds0_out: endpoint {
- 					};
- 				};
- 			};
+diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
+index a449a9263dd7..50a24b1921d0 100644
+--- a/drivers/mfd/da9063-i2c.c
++++ b/drivers/mfd/da9063-i2c.c
+@@ -186,6 +186,7 @@ static struct regmap_config da9063_regmap_config = {
+ 
+ static const struct of_device_id da9063_dt_ids[] = {
+ 	{ .compatible = "dlg,da9063", },
++	{ .compatible = "dlg,da9063l", },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, da9063_dt_ids);
+@@ -231,6 +232,7 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
+ 
+ static const struct i2c_device_id da9063_i2c_id[] = {
+ 	{ "da9063", PMIC_TYPE_DA9063 },
++	{ "da9063l", PMIC_TYPE_DA9063L },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(i2c, da9063_i2c_id);
+-- 
+2.16.2
