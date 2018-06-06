@@ -1,11 +1,14 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35174 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932371AbeFFJut (ORCPT
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:39037 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751330AbeFFGQ1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 05:50:49 -0400
-Subject: Re: [PATCH v3 08/10] mfd: da9063: Register RTC only on DA9063L
-To: Lee Jones <lee.jones@linaro.org>
+        Wed, 6 Jun 2018 02:16:27 -0400
+Received: by mail-wr0-f193.google.com with SMTP id w7-v6so4858449wrn.6
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Jun 2018 23:16:26 -0700 (PDT)
+Date: Wed, 6 Jun 2018 07:16:23 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Marek Vasut <marek.vasut@gmail.com>
 Cc: linux-kernel@vger.kernel.org,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -13,96 +16,107 @@ Cc: linux-kernel@vger.kernel.org,
         Steve Twiss <stwiss.opensource@diasemi.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 08/10] mfd: da9063: Register RTC only on DA9063L
+Message-ID: <20180606061623.GT21163@dell>
 References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
  <20180602101155.26375-8-marek.vasut+renesas@gmail.com>
  <20180605075321.GM21163@dell>
  <ac43842f-7d8a-1d6d-7077-9fb58ab852b7@gmail.com>
- <20180606061623.GT21163@dell>
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <69893894-899f-54cd-2610-96653ec246c0@gmail.com>
-Date: Wed, 6 Jun 2018 11:17:53 +0200
 MIME-Version: 1.0
-In-Reply-To: <20180606061623.GT21163@dell>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ac43842f-7d8a-1d6d-7077-9fb58ab852b7@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 06/06/2018 08:16 AM, Lee Jones wrote:
-> On Tue, 05 Jun 2018, Marek Vasut wrote:
+On Tue, 05 Jun 2018, Marek Vasut wrote:
+
+> On 06/05/2018 09:53 AM, Lee Jones wrote:
+> > On Sat, 02 Jun 2018, Marek Vasut wrote:
+> > 
+> >> The DA9063L does not contain RTC block, unlike the full DA9063.
+> >> Split the RTC block into separate mfd cell and register it only
+> >> on DA9063.
+> >>
+> >> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> >> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> Cc: Lee Jones <lee.jones@linaro.org>
+> >> Cc: Mark Brown <broonie@kernel.org>
+> >> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+> >> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >> Cc: linux-renesas-soc@vger.kernel.org
+> >> ---
+> >> V2: No change
+> >> V3: Rework of mfd: da9063: Disallow RTC on DA9063L
+> >> ---
+> >>  drivers/mfd/da9063-core.c | 30 +++++++++++++++++++++++-------
+> >>  1 file changed, 23 insertions(+), 7 deletions(-)
+> >>
+> >> diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
+> >> index eebca3442cf3..b05910c797af 100644
+> >> --- a/drivers/mfd/da9063-core.c
+> >> +++ b/drivers/mfd/da9063-core.c
+> >> @@ -76,7 +76,7 @@ static struct resource da9063_hwmon_resources[] = {
+> >>  };
+> >>  
+> >>  
+> >> -static const struct mfd_cell da9063_devs[] = {
+> >> +static const struct mfd_cell da9063_common_devs[] = {
+> >>  	{
+> >>  		.name		= DA9063_DRVNAME_REGULATORS,
+> > 
+> > Appreciate that these are historical, but these device name defines
+> > make me shudder.  They only serve to act as an obfuscation layer when
+> > debugging at platform level.  Please consider getting rid of them.
+> 
+> The macro can be shared between the core and the drivers, so the names
+> never run out of sync.
+
+Platform driver name changes are vary rare.  Even if they are changed,
+even light testing would uncover the fact that child drivers do not
+.probe().  Due to the current obfuscation, I currently have no idea
+what this device's name is.  This technique is not allowed for new
+drivers - unfortunately I didn't not review this driver in the first
+instance.
+
+It doesn't bother me enough to go and change it myself and I'm not
+going to have a baby over patches not being submitted to fix it.
+
+> >>  		.num_resources	= ARRAY_SIZE(da9063_regulators_resources),
+> >> @@ -100,15 +100,19 @@ static const struct mfd_cell da9063_devs[] = {
+> >>  		.resources	= da9063_onkey_resources,
+> >>  		.of_compatible = "dlg,da9063-onkey",
+> >>  	},
+> >> +	{
+> >> +		.name		= DA9063_DRVNAME_VIBRATION,
+> >> +	},
+> > 
+> > Place this on a single line please.
+> 
+> This would only make the style inconsistent with the ie. LEDs entry.
+> 
+> >         { .name	= DA9063_DRVNAME_VIBRATION },
+
+If that is a one line entry spaced over multiple lines, then that
+should also be changed.
+
+Maybe I will go through and stylise this driver a bit after all (but
+as time is short at the moment, maybe not!) :)
 
 [...]
 
->>>> -static const struct mfd_cell da9063_devs[] = {
->>>> +static const struct mfd_cell da9063_common_devs[] = {
->>>>  	{
->>>>  		.name		= DA9063_DRVNAME_REGULATORS,
->>>
->>> Appreciate that these are historical, but these device name defines
->>> make me shudder.  They only serve to act as an obfuscation layer when
->>> debugging at platform level.  Please consider getting rid of them.
->>
->> The macro can be shared between the core and the drivers, so the names
->> never run out of sync.
+> >> +err_mfd_cleanup:
+> >> +	mfd_remove_devices(da9063->dev);
+> > 
+> > Any reason why you can't use devm_*?
 > 
-> Platform driver name changes are vary rare.  Even if they are changed,
-> even light testing would uncover the fact that child drivers do not
-> .probe().
+> Because we need to undo the MFD setup before the IRQ setup.
 
-Sure, while if the macro is used, this problem is avoided altogether.
-
-> Due to the current obfuscation, I currently have no idea
-> what this device's name is.
-
-I'm sure ctags or git grep can easily help.
-
-> This technique is not allowed for new
-> drivers - unfortunately I didn't not review this driver in the first
-> instance.
-
-Why not ? This looks like a step back to me.
-
-> It doesn't bother me enough to go and change it myself and I'm not
-> going to have a baby over patches not being submitted to fix it.
-> 
->>>>  		.num_resources	= ARRAY_SIZE(da9063_regulators_resources),
->>>> @@ -100,15 +100,19 @@ static const struct mfd_cell da9063_devs[] = {
->>>>  		.resources	= da9063_onkey_resources,
->>>>  		.of_compatible = "dlg,da9063-onkey",
->>>>  	},
->>>> +	{
->>>> +		.name		= DA9063_DRVNAME_VIBRATION,
->>>> +	},
->>>
->>> Place this on a single line please.
->>
->> This would only make the style inconsistent with the ie. LEDs entry.
->>
->>>         { .name	= DA9063_DRVNAME_VIBRATION },
-> 
-> If that is a one line entry spaced over multiple lines, then that
-> should also be changed.
-> 
-> Maybe I will go through and stylise this driver a bit after all (but
-> as time is short at the moment, maybe not!) :)
-
-You'd end up with two entries which look different then the rest, which
-triggers my OCD.
-
-> [...]
-> 
->>>> +err_mfd_cleanup:
->>>> +	mfd_remove_devices(da9063->dev);
->>>
->>> Any reason why you can't use devm_*?
->>
->> Because we need to undo the MFD setup before the IRQ setup.
-> 
-> Sounds like a good enough reason.
-
-Or the da9063_irq_init() could use devm_regmap_add_irq_chip().
+Sounds like a good enough reason.
 
 -- 
-Best regards,
-Marek Vasut
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
