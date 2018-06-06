@@ -1,63 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:54444 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751409AbeFFNlo (ORCPT
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:45223 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751870AbeFFMqh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:41:44 -0400
-Date: Wed, 6 Jun 2018 15:41:39 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wed, 6 Jun 2018 08:46:37 -0400
+Received: by mail-ua0-f196.google.com with SMTP id k14-v6so3887814uao.12
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Jun 2018 05:46:37 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20180528192947.2808-1-wsa+renesas@sang-engineering.com>
+References: <20180528192947.2808-1-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 6 Jun 2018 14:46:36 +0200
+Message-ID: <CAMuHMdVXrFvg9JqAp9C8pzcYZVMraeRUehgW5G0YszEjwoHb4Q@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: salvator-x(s): Update I2C ch4 clock to 400kHz
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Subject: Re: [PATCH v2] arm64: dts: salvator-x(s): Update I2C ch4 clock to
- 400kHz
-Message-ID: <20180606134138.2b7x5odnc6iwrk3o@ninjato>
-References: <20180528192947.2808-1-wsa+renesas@sang-engineering.com>
- <CAMuHMdVXrFvg9JqAp9C8pzcYZVMraeRUehgW5G0YszEjwoHb4Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="y3ppirffuue63etm"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVXrFvg9JqAp9C8pzcYZVMraeRUehgW5G0YszEjwoHb4Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
 
---y3ppirffuue63etm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, May 28, 2018 at 9:29 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> Any of the following devices connected to I2C ch4 of the Salvator-X(S)
+> boards will operate at 400 kHz:
+>
+>     PCA9654, 9FGV0841, ADV7482WBBCZ, MAX9611, 5P49V5923, 5P49V6901A
+>
+> This patch updates the clock frequency to 400 KHz.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> [wsa: squashed commits into one]
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>
+> Changes since V1:
+>         * squashed commits into single one
+>
+>  arch/arm64/boot/dts/renesas/salvator-x.dtsi  | 2 ++
+>  arch/arm64/boot/dts/renesas/salvator-xs.dtsi | 2 ++
 
+Any reason this cannot be added to salvator-common.dtsi instead?
 
-> >  arch/arm64/boot/dts/renesas/salvator-x.dtsi  | 2 ++
-> >  arch/arm64/boot/dts/renesas/salvator-xs.dtsi | 2 ++
->=20
-> Any reason this cannot be added to salvator-common.dtsi instead?
+Gr{oetje,eeting}s,
 
-It could be. For clarity, I wanted to place this attribute to the
-highest level and not somewhere inbetween.
+                        Geert
 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---y3ppirffuue63etm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsX5I4ACgkQFA3kzBSg
-Kba4ng//VTekOl3foGvIqRxYfVsGWaWu6jhfYAntN/KcEjZ5oqbxT6N33aaYuM5u
-Ki7SeqWJDsqQhq//aDNDJJAWrkn3SRLp6Xl1zaWkpVQXSgEZAJFjzeIN0zWzG0WN
-krtBtIWxXWAoOCgYd9DV/17lx5HTmrgOTP5OD90JyQC3m/LKxQFImll+6atWB+Wm
-Q2qQMCRNcR7vGtEFrmAUtnO50r8BGldVujF41dDXPwqYF7tvTQOrdHWQC9kmGReG
-IpziunYuIXb6hwdy+lQsqdv2LdaLtv3UZ8QwqtUaOsyaPLajQ1JZ6HhHnfl5/XrS
-NiOjH5aQ9w6J2rAQ+W4BsSg456VwcSkDjxzQTc4i0rS9vAiBZ7rRT16poFvqFxHM
-Niq+JC2DWpgpUWOyuQnRI9petIFo026K9ElyW+fjMcye0YMHTFN2cGMiwoqQcJSf
-S4KWx4EctOM2lh75axl17Yo7n1JJPovUoyZ7PwQiq5qOm8i5qWTqyAdHcKptGILP
-U7IupHqt4uaysWl/rdJ0+GELUkkU8ywb6NvIbriE7w1lpxvPBk1TVKpsO4bQd8TP
-huADrIY3RnHtcwawOGMwKAodvjbfpshF6crvLB1MEBSndI03oMlQ7I7zL7orN0b0
-MZdLZ7d89ia7NgId+S33CmOAkC/EyBQsWIvEHceirKNJg27l6qE=
-=5yIV
------END PGP SIGNATURE-----
-
---y3ppirffuue63etm--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
