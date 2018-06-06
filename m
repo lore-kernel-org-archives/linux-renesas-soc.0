@@ -1,51 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:43303 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750878AbeFGEdN (ORCPT
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:45511 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932312AbeFFI6G (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Jun 2018 00:33:13 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms@verge.net.au>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wed, 6 Jun 2018 04:58:06 -0400
+MIME-Version: 1.0
+In-Reply-To: <20180606085218.5ug5moky75pzlrim@verge.net.au>
+References: <1528211115-12334-1-git-send-email-geert+renesas@glider.be> <20180606085218.5ug5moky75pzlrim@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 6 Jun 2018 10:58:04 +0200
+Message-ID: <CAMuHMdWxKaNM21d1_YfX25CkbXzGfw1C-12MjMKNsn=Vn8N6yA@mail.gmail.com>
+Subject: Re: [PATCH] soc: renesas: rcar-sysc: Make PM domain initialization
+ more robust
+To: Simon Horman <horms@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux PM list <linux-pm@vger.kernel.org>
-Subject: RE: [PATCH] soc: renesas: rcar-sysc: Make PM domain initialization
- more robust
-Date: Thu, 7 Jun 2018 04:33:07 +0000
-Message-ID: <OSBPR01MB22939931CC2349CC441554C2D8640@OSBPR01MB2293.jpnprd01.prod.outlook.com>
-References: <1528211115-12334-1-git-send-email-geert+renesas@glider.be>
- <20180606085218.5ug5moky75pzlrim@verge.net.au>
- <CAMuHMdWxKaNM21d1_YfX25CkbXzGfw1C-12MjMKNsn=Vn8N6yA@mail.gmail.com>
-In-Reply-To: <CAMuHMdWxKaNM21d1_YfX25CkbXzGfw1C-12MjMKNsn=Vn8N6yA@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEJlaGFsZiBPZiBHZWVydCBVeXR0ZXJob2V2ZW4sIFNl
-bnQ6IFdlZG5lc2RheSwgSnVuZSA2LCAyMDE4IDU6NTggUE0NCj4gDQo+IEhpIFNpbW9uLA0KPiAN
-Cj4gT24gV2VkLCBKdW4gNiwgMjAxOCBhdCAxMDo1MiBBTSwgU2ltb24gSG9ybWFuIDxob3Jtc0B2
-ZXJnZS5uZXQuYXU+IHdyb3RlOg0KPiA+IE9uIFR1ZSwgSnVuIDA1LCAyMDE4IGF0IDA1OjA1OjE1
-UE0gKzAyMDAsIEdlZXJ0IFV5dHRlcmhvZXZlbiB3cm90ZToNCjxzbmlwPg0KPiA+IFRoaXMgbG9v
-a3MgZmluZSB0byBtZSBidXQgSSB3aWxsIHdhaXQgdG8gc2VlIGlmIHRoZXJlIGFyZSBvdGhlciBy
-ZXZpZXdzDQo+ID4gYmVmb3JlIGFwcGx5aW5nLg0KPiANCj4gTGV0J3Mgd2FpdCBmb3IgZmVlZGJh
-Y2sgZnJvbSBTaGltb2RhLXNhbi4gUGVycGFwcyB0aGUgcXVpcmsgZGlkIHJlbHkgb24NCj4gdGhl
-IGJ1Z2d5IGJlaGF2aW9yLg0KDQpJIGNoZWNrZWQgL3N5cy9rZXJuZWwvZGVidWcvcG1fZ2VucGQv
-cG1fZ2VucGRfc3VtbWFyeS4NCg0KPCBCZWZvcmUgYXBwbGllcyB0aGUgcGF0Y2ggPg0KIC0gIjNk
-Zy1iJ3MiIHN0YXR1cyBpcyAib2ZmLTAiLg0KIC0gIjNkZy1iIiBkb2Vzbid0IGhhdmUgYW55IHNs
-YXZlcy4NCg0KPCBBZnRlciBhcHBsaWVkIHRoZSBwYXRjaCA+DQogLSAiM2RnLWIncyIgc3RhdHVz
-IGlzICJvbiIuDQogLSAiM2RnLWIiIGhhcyAiM2RnLWEiIHNsYXZlLg0KDQpTbywNCg0KVGVzdGVk
-LWJ5OiBZb3NoaWhpcm8gU2hpbW9kYSA8eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+
-DQoNCkJlc3QgcmVnYXJkcywNCllvc2hpaGlybyBTaGltb2RhDQoNCj4gPiBSZXZpZXdlZC1ieTog
-U2ltb24gSG9ybWFuIDxob3JtcytyZW5lc2FzQHZlcmdlLm5ldC5hdT4NCj4gDQo+IFRoYW5rcyEN
-Cj4gDQo+IEdye29ldGplLGVldGluZ31zLA0KPiANCj4gICAgICAgICAgICAgICAgICAgICAgICAg
-R2VlcnQNCj4gDQo+IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2Yg
-TGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5vcmcNCj4gDQo+IEluIHBlcnNv
-bmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEg
-aGFja2VyLiBCdXQNCj4gd2hlbiBJJ20gdGFsa2luZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5
-ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcgbGlrZSB0aGF0Lg0KPiAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZhbGRzDQo=
+Hi Simon,
+
+On Wed, Jun 6, 2018 at 10:52 AM, Simon Horman <horms@verge.net.au> wrote:
+> On Tue, Jun 05, 2018 at 05:05:15PM +0200, Geert Uytterhoeven wrote:
+>> The quirk for R-Car E3 ES1.0 added in commit 086b399965a7ee7e ("soc:
+>> renesas: r8a77990-sysc: Add workaround for 3DG-{A,B}") makes the 3DG-A
+>> PM domain a subdomain of the 3DG-B PM domain.  However, registering
+>> 3DG-A with its parent fails silently, as the 3DG-B PM domain hasn't been
+>> registered yet, and such failures are never reported.
+>>
+>> Fix this by:
+>>   1. Splitting PM Domain initialization in two steps, so all PM domains
+>>      are registered before any child-parent links are established,
+>>   2. Reporting any failures in establishing child-parent relations.
+>>
+>> Check for and report pm_genpd_init() failures, too, as that function
+>> gained a return value in commit 7eb231c337e00735 ("PM / Domains: Convert
+>> pm_genpd_init() to return an error code").
+>>
+>> Fixes: 086b399965a7ee7e ("soc: renesas: r8a77990-sysc: Add workaround for 3DG-{A,B}")
+>
+> That makes this a fix for v4.18, right?
+
+Correct.
+
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> This looks fine to me but I will wait to see if there are other reviews
+> before applying.
+
+Let's wait for feedback from Shimoda-san. Perpaps the quirk did rely on
+the buggy behavior.
+
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
