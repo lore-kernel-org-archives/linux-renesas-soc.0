@@ -1,104 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:34532 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751037AbeFBKMT (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:38930 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753692AbeFFQv7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 2 Jun 2018 06:12:19 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 03/10] mfd: da9063: Rename PMIC_DA9063 to PMIC_CHIP_ID_DA9063
-Date: Sat,  2 Jun 2018 12:11:48 +0200
-Message-Id: <20180602101155.26375-3-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
-References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
+        Wed, 6 Jun 2018 12:51:59 -0400
+Received: by mail-lf0-f68.google.com with SMTP id t134-v6so10169155lff.6
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Jun 2018 09:51:58 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 0/5] Add R8A77970/V3MSK LVDS/HDMI support
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Message-ID: <9c092022-dcdd-1320-499c-00c5b2d9db3b@cogentembedded.com>
+Date: Wed, 6 Jun 2018 19:51:55 +0300
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The PMIC_DA9063 is a complete misnomer, it denotes the value of the
-DA9063 chip ID register, so rename it as such. It is also the value
-of chip ID register of DA9063L though, so drop the enum as all the
-DA9063 "models" share the same chip ID and thus the distinction will
-have to be made using DT or otherwise.
+Hello!
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Acked-by: Mark Brown <broonie@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-V2: No change
-V3: No change
----
- drivers/mfd/da9063-core.c            | 2 +-
- drivers/mfd/da9063-i2c.c             | 2 +-
- drivers/regulator/da9063-regulator.c | 2 +-
- include/linux/mfd/da9063/core.h      | 4 +---
- 4 files changed, 4 insertions(+), 6 deletions(-)
+Here's the set of 5 patches against Simon Horman's 'renesas.git' repo's
+'renesas-devel-20180604-v4.17-rc7' tag. We're adding the R8A77980 FCPVD/VSPD/
+DU/LVDS device nodes and then describing the LVDS decoder and HDMI encoder
+connected to the LVDS output. These patches depend on the Thine THC63LVD1024
+driver and the R8A77980 LVDS support patch in order to work, and R8A77980 GPIO
+DT patches in order to apply/compile...
 
-diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
-index 8226ebd8b96d..fb122316c421 100644
---- a/drivers/mfd/da9063-core.c
-+++ b/drivers/mfd/da9063-core.c
-@@ -192,7 +192,7 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
- 		dev_err(da9063->dev, "Cannot read chip model id.\n");
- 		return -EIO;
- 	}
--	if (model != PMIC_DA9063) {
-+	if (model != PMIC_CHIP_ID_DA9063) {
- 		dev_err(da9063->dev, "Invalid chip model id: 0x%02x\n", model);
- 		return -ENODEV;
- 	}
-diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
-index 981805a2c521..7f84030c8d53 100644
---- a/drivers/mfd/da9063-i2c.c
-+++ b/drivers/mfd/da9063-i2c.c
-@@ -280,7 +280,7 @@ static int da9063_i2c_remove(struct i2c_client *i2c)
- }
- 
- static const struct i2c_device_id da9063_i2c_id[] = {
--	{"da9063", PMIC_DA9063},
-+	{ "da9063", PMIC_CHIP_ID_DA9063 },
- 	{},
- };
- MODULE_DEVICE_TABLE(i2c, da9063_i2c_id);
-diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
-index 6a8f9cd69f52..87c884ae0064 100644
---- a/drivers/regulator/da9063-regulator.c
-+++ b/drivers/regulator/da9063-regulator.c
-@@ -585,7 +585,7 @@ static struct da9063_dev_model regulators_models[] = {
- 	{
- 		.regulator_info = da9063_regulator_info,
- 		.n_regulators = ARRAY_SIZE(da9063_regulator_info),
--		.dev_model = PMIC_DA9063,
-+		.dev_model = PMIC_CHIP_ID_DA9063,
- 	},
- 	{ }
- };
-diff --git a/include/linux/mfd/da9063/core.h b/include/linux/mfd/da9063/core.h
-index f3ae65db4c86..664f650d0086 100644
---- a/include/linux/mfd/da9063/core.h
-+++ b/include/linux/mfd/da9063/core.h
-@@ -29,9 +29,7 @@
- #define DA9063_DRVNAME_RTC		"da9063-rtc"
- #define DA9063_DRVNAME_VIBRATION	"da9063-vibration"
- 
--enum da9063_models {
--	PMIC_DA9063 = 0x61,
--};
-+#define PMIC_CHIP_ID_DA9063		0x61
- 
- enum da9063_variant_codes {
- 	PMIC_DA9063_AD = 0x3,
--- 
-2.16.2
+[1/5] arm64: dts: renesas: r8a77980: add FCPVD support
+[2/5] arm64: dts: renesas: r8a77980: add VSPD support
+[3/5] arm64: dts: renesas: r8a77980: add DU support
+[4/5] arm64: dts: renesas: r8a77980: add LVDS support
+[5/5] arm64: dts: renesas: condor: add DU/LVDS/HDMI support
+
+WBR, Sergei
