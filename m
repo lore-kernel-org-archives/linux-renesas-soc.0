@@ -1,122 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39534 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964874AbeFMPNy (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:33117 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933527AbeFFQxe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Jun 2018 11:13:54 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH/RFT v2 1/2] arm64: dts: r8a77995: Add SCIF-{0,1,3,4,5} device nodes
-Date: Wed, 13 Jun 2018 17:13:48 +0200
-Message-Id: <20180613151348.28697-1-horms+renesas@verge.net.au>
+        Wed, 6 Jun 2018 12:53:34 -0400
+Received: by mail-lf0-f65.google.com with SMTP id y20-v6so10210413lfy.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Jun 2018 09:53:33 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 0/5] Add R8A77980/Condor LVDS/HDMI support
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Message-ID: <4fbd0895-c1ec-41fc-912d-8306dd933997@cogentembedded.com>
+Date: Wed, 6 Jun 2018 19:53:31 +0300
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hello!
 
-This patch adds the device nodes for SCIF-{0,1,3,4,5} serial ports,
-incl. clocks and power domain.
+Reposting with the correct subject... Sorry! :-]
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-[simon: updated internal clock from S3D1 to S3D1C to match documentation]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 70 +++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+Here's the set of 5 patches against Simon Horman's 'renesas.git' repo's
+'renesas-devel-20180604-v4.17-rc7' tag. We're adding the R8A77980 FCPVD/VSPD/
+DU/LVDS device nodes and then describing the LVDS decoder and HDMI encoder
+connected to the LVDS output. These patches depend on the Thine THC63LVD1024
+driver and the R8A77980 LVDS support patch in order to work, and R8A77980 GPIO
+DT patches in order to apply/compile...
 
- Based on renesas-devel-20180613-v4.17
+[1/5] arm64: dts: renesas: r8a77980: add FCPVD support
+[2/5] arm64: dts: renesas: r8a77980: add VSPD support
+[3/5] arm64: dts: renesas: r8a77980: add DU support
+[4/5] arm64: dts: renesas: r8a77980: add LVDS support
+[5/5] arm64: dts: renesas: condor: add DU/LVDS/HDMI support
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 1de6ffca4772..16cbb34692ad 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -605,6 +605,34 @@
- 			status = "disabled";
- 		};
- 
-+		scif0: serial@e6e60000 {
-+			compatible = "renesas,scif-r8a77995",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6e60000 0 64>;
-+			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 207>,
-+				 <&cpg CPG_CORE R8A77995_CLK_S3D1C>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 207>;
-+			status = "disabled";
-+		};
-+
-+		scif1: serial@e6e68000 {
-+			compatible = "renesas,scif-r8a77995",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6e68000 0 64>;
-+			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 206>,
-+				 <&cpg CPG_CORE R8A77995_CLK_S3D1C>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 206>;
-+			status = "disabled";
-+		};
-+
- 		scif2: serial@e6e88000 {
- 			compatible = "renesas,scif-r8a77995",
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
-@@ -622,6 +650,48 @@
- 			status = "disabled";
- 		};
- 
-+		scif3: serial@e6c50000 {
-+			compatible = "renesas,scif-r8a77995",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6c50000 0 64>;
-+			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 204>,
-+				 <&cpg CPG_CORE R8A77995_CLK_S3D1C>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 204>;
-+			status = "disabled";
-+		};
-+
-+		scif4: serial@e6c40000 {
-+			compatible = "renesas,scif-r8a77995",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6c40000 0 64>;
-+			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 203>,
-+				 <&cpg CPG_CORE R8A77995_CLK_S3D1C>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 203>;
-+			status = "disabled";
-+		};
-+
-+		scif5: serial@e6f30000 {
-+			compatible = "renesas,scif-r8a77995",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6f30000 0 64>;
-+			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 202>,
-+				 <&cpg CPG_CORE R8A77995_CLK_S3D1C>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 202>;
-+			status = "disabled";
-+		};
-+
- 		vin4: video@e6ef4000 {
- 			compatible = "renesas,vin-r8a77995";
- 			reg = <0 0xe6ef4000 0 0x1000>;
--- 
-2.11.0
+WBR, Sergei
