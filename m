@@ -1,19 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:43444 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751546AbeFFTaM (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:9917 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932103AbeFFGga (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 15:30:12 -0400
-Subject: Re: [PATCH v4 2/3] arm: shmobile: Add the R9A06G032 SMP enabler
- driver
-To: Michel Pollet <michel.pollet@bp.renesas.com>,
+        Wed, 6 Jun 2018 02:36:30 -0400
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: Frank Rowand <frowand.list@gmail.com>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>
-Cc: Michel Pollet <buserror+upstream@gmail.com>,
+CC: Michel Pollet <buserror+upstream@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Phil Edworthy <phil.edworthy@renesas.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        "Florian Fainelli" <f.fainelli@gmail.com>,
         Rajendra Nayak <rnayak@codeaurora.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
@@ -21,194 +20,109 @@ Cc: Michel Pollet <buserror+upstream@gmail.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Douglas Anderson <dianders@chromium.org>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        "Chen-Yu Tsai" <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
         Carlo Caione <carlo@endlessm.com>,
-        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
+        =?utf-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>,
         Frank Rowand <frank.rowand@sony.com>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v4 2/3] arm: shmobile: Add the R9A06G032 SMP enabler
+ driver
+Date: Wed, 6 Jun 2018 06:36:24 +0000
+Message-ID: <OSBPR01MB2054E3A1E383495F3534B551D2650@OSBPR01MB2054.jpnprd01.prod.outlook.com>
 References: <1528198148-23308-1-git-send-email-michel.pollet@bp.renesas.com>
  <1528198148-23308-3-git-send-email-michel.pollet@bp.renesas.com>
  <0481173f-6384-98d6-707c-89dc5ef103f0@gmail.com>
- <OSBPR01MB2054E3A1E383495F3534B551D2650@OSBPR01MB2054.jpnprd01.prod.outlook.com>
-From: Frank Rowand <frowand.list@gmail.com>
-Message-ID: <bbbd287c-437e-d7bd-d40f-6bb914d96860@gmail.com>
-Date: Wed, 6 Jun 2018 12:30:10 -0700
-MIME-Version: 1.0
-In-Reply-To: <OSBPR01MB2054E3A1E383495F3534B551D2650@OSBPR01MB2054.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <0481173f-6384-98d6-707c-89dc5ef103f0@gmail.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Michel,
-
-On 06/05/18 23:36, Michel Pollet wrote:
-> Hi Frank,
-> 
-> On 05 June 2018 18:34, Frank wrote:
->> On 06/05/18 04:28, Michel Pollet wrote:
->>> The Renesas R9A06G032 second CA7 is parked in a ROM pen at boot time,
->>> it requires a special enable method to get it started.
->>>
->>> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
->>> ---
->>>  arch/arm/mach-shmobile/Makefile        |  1 +
->>>  arch/arm/mach-shmobile/smp-r9a06g032.c | 79
->>> ++++++++++++++++++++++++++++++++++
->>>  2 files changed, 80 insertions(+)
->>>  create mode 100644 arch/arm/mach-shmobile/smp-r9a06g032.c
->>>
->>> diff --git a/arch/arm/mach-shmobile/Makefile
->>> b/arch/arm/mach-shmobile/Makefile index 1939f52..d7fc98f 100644
->>> --- a/arch/arm/mach-shmobile/Makefile
->>> +++ b/arch/arm/mach-shmobile/Makefile
->>> @@ -34,6 +34,7 @@ smp-$(CONFIG_ARCH_SH73A0)+= smp-sh73a0.o
->> headsmp-scu.o platsmp-scu.o
->>>  smp-$(CONFIG_ARCH_R8A7779)+= smp-r8a7779.o headsmp-scu.o
->> platsmp-scu.o
->>>  smp-$(CONFIG_ARCH_R8A7790)+= smp-r8a7790.o
->>>  smp-$(CONFIG_ARCH_R8A7791)+= smp-r8a7791.o
->>> +smp-$(CONFIG_ARCH_R9A06G032)+= smp-r9a06g032.o
->>>  smp-$(CONFIG_ARCH_EMEV2)+= smp-emev2.o headsmp-scu.o
->> platsmp-scu.o
->>>
->>>  # PM objects
->>> diff --git a/arch/arm/mach-shmobile/smp-r9a06g032.c
->>> b/arch/arm/mach-shmobile/smp-r9a06g032.c
->>> new file mode 100644
->>> index 0000000..cd40e6e
->>> --- /dev/null
->>> +++ b/arch/arm/mach-shmobile/smp-r9a06g032.c
->>> @@ -0,0 +1,79 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/*
->>> + * R9A06G032 Second CA7 enabler.
->>> + *
->>> + * Copyright (C) 2018 Renesas Electronics Europe Limited
->>> + *
->>> + * Michel Pollet <michel.pollet@bp.renesas.com>,
->> <buserror@gmail.com>
->>> + * Derived from action,s500-smp
->>> + */
->>> +
->>> +#include <linux/io.h>
->>> +#include <linux/of.h>
->>> +#include <linux/of_address.h>
->>> +#include <linux/smp.h>
->>> +
->>> +/*
->>> + * The second CPU is parked in ROM at boot time. It requires waking
->>> +it after
->>> + * writing an address into the BOOTADDR register of sysctrl.
->>> + *
->>> + * So the default value of the "cpu-release-addr" corresponds to
->> BOOTADDR...
->>> + *
->>> + * *However* the BOOTADDR register is not available when the kernel
->>> + * starts in NONSEC mode.
->>> + *
->>> + * So for NONSEC mode, the bootloader re-parks the second CPU into a
->>> +pen
->>> + * in SRAM, and changes the "cpu-release-addr" of linux's DT to a
->>> +SRAM address,
->>> + * which is not restricted.
->>
->> The binding document for cpu-release-addr does not have a definition for 32
->> bit arm.  The existing definition is only 64 bit arm.  Please add the definition
->> for 32 bit arm to patch 1.
-> 
-> Hmmm I do find a definition in
-> Documentation/devicetree/bindings/arm/cpus.txt -- just under where I
-> added my 'enable-method' -- And it is already used as 32 bits in at least
-> arch/arm/boot/dts/stih407-family.dtsi.
-
->From cpus.txt:
-
-        - cpu-release-addr
-                Usage: required for systems that have an "enable-method"
-                       property value of "spin-table".
-                Value type: <prop-encoded-array>
-                Definition:
-                        # On ARM v8 64-bit systems must be a two cell
-                          property identifying a 64-bit zero-initialised
-                          memory location.
-
-The definition specifies a two cell property for 64-bit systems.
-
-Please add to the definition that cpu-release-addr is a one cell property
-for 32-bit systems.
-
--Frank
-
-> 
-> What do you want me to add to this exactly? Do you want me to just
-> change "required for systems that have an "enable-method" property
-> value of "spin-table" to also specify renesas,r9a06g032 ?
-> 
-> Thanks!
-> Michel
-> 
->>
->> -Frank
->>
->>
->>> + */
->>> +
->>> +static void __iomem *cpu_bootaddr;
->>> +
->>> +static DEFINE_SPINLOCK(cpu_lock);
->>> +
->>> +static int r9a06g032_smp_boot_secondary(unsigned int cpu, struct
->>> +task_struct *idle) {
->>> +if (!cpu_bootaddr)
->>> +return -ENODEV;
->>> +
->>> +spin_lock(&cpu_lock);
->>> +
->>> +writel(__pa_symbol(secondary_startup), cpu_bootaddr);
->>> +arch_send_wakeup_ipi_mask(cpumask_of(cpu));
->>> +
->>> +spin_unlock(&cpu_lock);
->>> +
->>> +return 0;
->>> +}
->>> +
->>> +static void __init r9a06g032_smp_prepare_cpus(unsigned int max_cpus)
->>> +{
->>> +struct device_node *dn;
->>> +int ret;
->>> +u32 bootaddr;
->>> +
->>> +dn = of_get_cpu_node(1, NULL);
->>> +if (!dn) {
->>> +pr_err("CPU#1: missing device tree node\n");
->>> +return;
->>> +}
->>> +/*
->>> + * Determine the address from which the CPU is polling.
->>> + * The bootloader *does* change this property
->>> + */
->>> +ret = of_property_read_u32(dn, "cpu-release-addr", &bootaddr);
->>> +of_node_put(dn);
->>> +if (ret) {
->>> +pr_err("CPU#1: invalid cpu-release-addr property\n");
->>> +return;
->>> +}
->>> +pr_info("CPU#1: cpu-release-addr %08x\n", bootaddr);
->>> +
->>> +cpu_bootaddr = ioremap(bootaddr, sizeof(bootaddr)); }
->>> +
->>> +static const struct smp_operations r9a06g032_smp_ops __initconst = {
->>> +.smp_prepare_cpus = r9a06g032_smp_prepare_cpus,
->>> +.smp_boot_secondary = r9a06g032_smp_boot_secondary, };
->>> +CPU_METHOD_OF_DECLARE(r9a06g032_smp, "renesas,r9a06g032-smp",
->>> +&r9a06g032_smp_ops);
->>>
-> 
-> 
-> 
-> 
-> Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered No. 04586709.
-> 
+SGkgRnJhbmssDQoNCk9uIDA1IEp1bmUgMjAxOCAxODozNCwgRnJhbmsgd3JvdGU6DQo+IE9uIDA2
+LzA1LzE4IDA0OjI4LCBNaWNoZWwgUG9sbGV0IHdyb3RlOg0KPiA+IFRoZSBSZW5lc2FzIFI5QTA2
+RzAzMiBzZWNvbmQgQ0E3IGlzIHBhcmtlZCBpbiBhIFJPTSBwZW4gYXQgYm9vdCB0aW1lLA0KPiA+
+IGl0IHJlcXVpcmVzIGEgc3BlY2lhbCBlbmFibGUgbWV0aG9kIHRvIGdldCBpdCBzdGFydGVkLg0K
+PiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogTWljaGVsIFBvbGxldCA8bWljaGVsLnBvbGxldEBicC5y
+ZW5lc2FzLmNvbT4NCj4gPiAtLS0NCj4gPiAgYXJjaC9hcm0vbWFjaC1zaG1vYmlsZS9NYWtlZmls
+ZSAgICAgICAgfCAgMSArDQo+ID4gIGFyY2gvYXJtL21hY2gtc2htb2JpbGUvc21wLXI5YTA2ZzAz
+Mi5jIHwgNzkNCj4gPiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ID4gIDIg
+ZmlsZXMgY2hhbmdlZCwgODAgaW5zZXJ0aW9ucygrKQ0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQg
+YXJjaC9hcm0vbWFjaC1zaG1vYmlsZS9zbXAtcjlhMDZnMDMyLmMNCj4gPg0KPiA+IGRpZmYgLS1n
+aXQgYS9hcmNoL2FybS9tYWNoLXNobW9iaWxlL01ha2VmaWxlDQo+ID4gYi9hcmNoL2FybS9tYWNo
+LXNobW9iaWxlL01ha2VmaWxlIGluZGV4IDE5MzlmNTIuLmQ3ZmM5OGYgMTAwNjQ0DQo+ID4gLS0t
+IGEvYXJjaC9hcm0vbWFjaC1zaG1vYmlsZS9NYWtlZmlsZQ0KPiA+ICsrKyBiL2FyY2gvYXJtL21h
+Y2gtc2htb2JpbGUvTWFrZWZpbGUNCj4gPiBAQCAtMzQsNiArMzQsNyBAQCBzbXAtJChDT05GSUdf
+QVJDSF9TSDczQTApKz0gc21wLXNoNzNhMC5vDQo+IGhlYWRzbXAtc2N1Lm8gcGxhdHNtcC1zY3Uu
+bw0KPiA+ICBzbXAtJChDT05GSUdfQVJDSF9SOEE3Nzc5KSs9IHNtcC1yOGE3Nzc5Lm8gaGVhZHNt
+cC1zY3Uubw0KPiBwbGF0c21wLXNjdS5vDQo+ID4gIHNtcC0kKENPTkZJR19BUkNIX1I4QTc3OTAp
+Kz0gc21wLXI4YTc3OTAubw0KPiA+ICBzbXAtJChDT05GSUdfQVJDSF9SOEE3NzkxKSs9IHNtcC1y
+OGE3NzkxLm8NCj4gPiArc21wLSQoQ09ORklHX0FSQ0hfUjlBMDZHMDMyKSs9IHNtcC1yOWEwNmcw
+MzIubw0KPiA+ICBzbXAtJChDT05GSUdfQVJDSF9FTUVWMikrPSBzbXAtZW1ldjIubyBoZWFkc21w
+LXNjdS5vDQo+IHBsYXRzbXAtc2N1Lm8NCj4gPg0KPiA+ICAjIFBNIG9iamVjdHMNCj4gPiBkaWZm
+IC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1zaG1vYmlsZS9zbXAtcjlhMDZnMDMyLmMNCj4gPiBiL2Fy
+Y2gvYXJtL21hY2gtc2htb2JpbGUvc21wLXI5YTA2ZzAzMi5jDQo+ID4gbmV3IGZpbGUgbW9kZSAx
+MDA2NDQNCj4gPiBpbmRleCAwMDAwMDAwLi5jZDQwZTZlDQo+ID4gLS0tIC9kZXYvbnVsbA0KPiA+
+ICsrKyBiL2FyY2gvYXJtL21hY2gtc2htb2JpbGUvc21wLXI5YTA2ZzAzMi5jDQo+ID4gQEAgLTAs
+MCArMSw3OSBAQA0KPiA+ICsvLyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMA0KPiA+
+ICsvKg0KPiA+ICsgKiBSOUEwNkcwMzIgU2Vjb25kIENBNyBlbmFibGVyLg0KPiA+ICsgKg0KPiA+
+ICsgKiBDb3B5cmlnaHQgKEMpIDIwMTggUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgTGltaXRl
+ZA0KPiA+ICsgKg0KPiA+ICsgKiBNaWNoZWwgUG9sbGV0IDxtaWNoZWwucG9sbGV0QGJwLnJlbmVz
+YXMuY29tPiwNCj4gPGJ1c2Vycm9yQGdtYWlsLmNvbT4NCj4gPiArICogRGVyaXZlZCBmcm9tIGFj
+dGlvbixzNTAwLXNtcA0KPiA+ICsgKi8NCj4gPiArDQo+ID4gKyNpbmNsdWRlIDxsaW51eC9pby5o
+Pg0KPiA+ICsjaW5jbHVkZSA8bGludXgvb2YuaD4NCj4gPiArI2luY2x1ZGUgPGxpbnV4L29mX2Fk
+ZHJlc3MuaD4NCj4gPiArI2luY2x1ZGUgPGxpbnV4L3NtcC5oPg0KPiA+ICsNCj4gPiArLyoNCj4g
+PiArICogVGhlIHNlY29uZCBDUFUgaXMgcGFya2VkIGluIFJPTSBhdCBib290IHRpbWUuIEl0IHJl
+cXVpcmVzIHdha2luZw0KPiA+ICtpdCBhZnRlcg0KPiA+ICsgKiB3cml0aW5nIGFuIGFkZHJlc3Mg
+aW50byB0aGUgQk9PVEFERFIgcmVnaXN0ZXIgb2Ygc3lzY3RybC4NCj4gPiArICoNCj4gPiArICog
+U28gdGhlIGRlZmF1bHQgdmFsdWUgb2YgdGhlICJjcHUtcmVsZWFzZS1hZGRyIiBjb3JyZXNwb25k
+cyB0bw0KPiBCT09UQUREUi4uLg0KPiA+ICsgKg0KPiA+ICsgKiAqSG93ZXZlciogdGhlIEJPT1RB
+RERSIHJlZ2lzdGVyIGlzIG5vdCBhdmFpbGFibGUgd2hlbiB0aGUga2VybmVsDQo+ID4gKyAqIHN0
+YXJ0cyBpbiBOT05TRUMgbW9kZS4NCj4gPiArICoNCj4gPiArICogU28gZm9yIE5PTlNFQyBtb2Rl
+LCB0aGUgYm9vdGxvYWRlciByZS1wYXJrcyB0aGUgc2Vjb25kIENQVSBpbnRvIGENCj4gPiArcGVu
+DQo+ID4gKyAqIGluIFNSQU0sIGFuZCBjaGFuZ2VzIHRoZSAiY3B1LXJlbGVhc2UtYWRkciIgb2Yg
+bGludXgncyBEVCB0byBhDQo+ID4gK1NSQU0gYWRkcmVzcywNCj4gPiArICogd2hpY2ggaXMgbm90
+IHJlc3RyaWN0ZWQuDQo+DQo+IFRoZSBiaW5kaW5nIGRvY3VtZW50IGZvciBjcHUtcmVsZWFzZS1h
+ZGRyIGRvZXMgbm90IGhhdmUgYSBkZWZpbml0aW9uIGZvciAzMg0KPiBiaXQgYXJtLiAgVGhlIGV4
+aXN0aW5nIGRlZmluaXRpb24gaXMgb25seSA2NCBiaXQgYXJtLiAgUGxlYXNlIGFkZCB0aGUgZGVm
+aW5pdGlvbg0KPiBmb3IgMzIgYml0IGFybSB0byBwYXRjaCAxLg0KDQpIbW1tIEkgZG8gZmluZCBh
+IGRlZmluaXRpb24gaW4NCkRvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vY3B1
+cy50eHQgLS0ganVzdCB1bmRlciB3aGVyZSBJDQphZGRlZCBteSAnZW5hYmxlLW1ldGhvZCcgLS0g
+QW5kIGl0IGlzIGFscmVhZHkgdXNlZCBhcyAzMiBiaXRzIGluIGF0IGxlYXN0DQphcmNoL2FybS9i
+b290L2R0cy9zdGloNDA3LWZhbWlseS5kdHNpLg0KDQpXaGF0IGRvIHlvdSB3YW50IG1lIHRvIGFk
+ZCB0byB0aGlzIGV4YWN0bHk/IERvIHlvdSB3YW50IG1lIHRvIGp1c3QNCmNoYW5nZSAicmVxdWly
+ZWQgZm9yIHN5c3RlbXMgdGhhdCBoYXZlIGFuICJlbmFibGUtbWV0aG9kIiBwcm9wZXJ0eQ0KdmFs
+dWUgb2YgInNwaW4tdGFibGUiIHRvIGFsc28gc3BlY2lmeSByZW5lc2FzLHI5YTA2ZzAzMiA/DQoN
+ClRoYW5rcyENCk1pY2hlbA0KDQo+DQo+IC1GcmFuaw0KPg0KPg0KPiA+ICsgKi8NCj4gPiArDQo+
+ID4gK3N0YXRpYyB2b2lkIF9faW9tZW0gKmNwdV9ib290YWRkcjsNCj4gPiArDQo+ID4gK3N0YXRp
+YyBERUZJTkVfU1BJTkxPQ0soY3B1X2xvY2spOw0KPiA+ICsNCj4gPiArc3RhdGljIGludCByOWEw
+NmcwMzJfc21wX2Jvb3Rfc2Vjb25kYXJ5KHVuc2lnbmVkIGludCBjcHUsIHN0cnVjdA0KPiA+ICt0
+YXNrX3N0cnVjdCAqaWRsZSkgew0KPiA+ICtpZiAoIWNwdV9ib290YWRkcikNCj4gPiArcmV0dXJu
+IC1FTk9ERVY7DQo+ID4gKw0KPiA+ICtzcGluX2xvY2soJmNwdV9sb2NrKTsNCj4gPiArDQo+ID4g
+K3dyaXRlbChfX3BhX3N5bWJvbChzZWNvbmRhcnlfc3RhcnR1cCksIGNwdV9ib290YWRkcik7DQo+
+ID4gK2FyY2hfc2VuZF93YWtldXBfaXBpX21hc2soY3B1bWFza19vZihjcHUpKTsNCj4gPiArDQo+
+ID4gK3NwaW5fdW5sb2NrKCZjcHVfbG9jayk7DQo+ID4gKw0KPiA+ICtyZXR1cm4gMDsNCj4gPiAr
+fQ0KPiA+ICsNCj4gPiArc3RhdGljIHZvaWQgX19pbml0IHI5YTA2ZzAzMl9zbXBfcHJlcGFyZV9j
+cHVzKHVuc2lnbmVkIGludCBtYXhfY3B1cykNCj4gPiArew0KPiA+ICtzdHJ1Y3QgZGV2aWNlX25v
+ZGUgKmRuOw0KPiA+ICtpbnQgcmV0Ow0KPiA+ICt1MzIgYm9vdGFkZHI7DQo+ID4gKw0KPiA+ICtk
+biA9IG9mX2dldF9jcHVfbm9kZSgxLCBOVUxMKTsNCj4gPiAraWYgKCFkbikgew0KPiA+ICtwcl9l
+cnIoIkNQVSMxOiBtaXNzaW5nIGRldmljZSB0cmVlIG5vZGVcbiIpOw0KPiA+ICtyZXR1cm47DQo+
+ID4gK30NCj4gPiArLyoNCj4gPiArICogRGV0ZXJtaW5lIHRoZSBhZGRyZXNzIGZyb20gd2hpY2gg
+dGhlIENQVSBpcyBwb2xsaW5nLg0KPiA+ICsgKiBUaGUgYm9vdGxvYWRlciAqZG9lcyogY2hhbmdl
+IHRoaXMgcHJvcGVydHkNCj4gPiArICovDQo+ID4gK3JldCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMy
+KGRuLCAiY3B1LXJlbGVhc2UtYWRkciIsICZib290YWRkcik7DQo+ID4gK29mX25vZGVfcHV0KGRu
+KTsNCj4gPiAraWYgKHJldCkgew0KPiA+ICtwcl9lcnIoIkNQVSMxOiBpbnZhbGlkIGNwdS1yZWxl
+YXNlLWFkZHIgcHJvcGVydHlcbiIpOw0KPiA+ICtyZXR1cm47DQo+ID4gK30NCj4gPiArcHJfaW5m
+bygiQ1BVIzE6IGNwdS1yZWxlYXNlLWFkZHIgJTA4eFxuIiwgYm9vdGFkZHIpOw0KPiA+ICsNCj4g
+PiArY3B1X2Jvb3RhZGRyID0gaW9yZW1hcChib290YWRkciwgc2l6ZW9mKGJvb3RhZGRyKSk7IH0N
+Cj4gPiArDQo+ID4gK3N0YXRpYyBjb25zdCBzdHJ1Y3Qgc21wX29wZXJhdGlvbnMgcjlhMDZnMDMy
+X3NtcF9vcHMgX19pbml0Y29uc3QgPSB7DQo+ID4gKy5zbXBfcHJlcGFyZV9jcHVzID0gcjlhMDZn
+MDMyX3NtcF9wcmVwYXJlX2NwdXMsDQo+ID4gKy5zbXBfYm9vdF9zZWNvbmRhcnkgPSByOWEwNmcw
+MzJfc21wX2Jvb3Rfc2Vjb25kYXJ5LCB9Ow0KPiA+ICtDUFVfTUVUSE9EX09GX0RFQ0xBUkUocjlh
+MDZnMDMyX3NtcCwgInJlbmVzYXMscjlhMDZnMDMyLXNtcCIsDQo+ID4gKyZyOWEwNmcwMzJfc21w
+X29wcyk7DQo+ID4NCg0KDQoNCg0KUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgTHRkLCBEdWtl
+cyBNZWFkb3csIE1pbGxib2FyZCBSb2FkLCBCb3VybmUgRW5kLCBCdWNraW5naGFtc2hpcmUsIFNM
+OCA1RkgsIFVLLiBSZWdpc3RlcmVkIGluIEVuZ2xhbmQgJiBXYWxlcyB1bmRlciBSZWdpc3RlcmVk
+IE5vLiAwNDU4NjcwOS4NCg==
