@@ -1,45 +1,53 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:48106 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935532AbeFNB1k (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Jun 2018 21:27:40 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org, cerg2010cerg2010@mail.ru
-Cc: linux-renesas-soc@vger.kernel.org,
-        drivers_video-dri@kernel-bugs.osdl.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFT 1/2] i2c: algos: bit: apply generic delays on initial STOP
-Date: Thu, 14 Jun 2018 10:27:13 +0900
-Message-Id: <20180614012714.5937-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180614012714.5937-1-wsa+renesas@sang-engineering.com>
-References: <20180614012714.5937-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: [PATCH 1/5] arm64: dts: renesas: r8a77980: add FCPVD support
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <4fbd0895-c1ec-41fc-912d-8306dd933997@cogentembedded.com>
+Message-ID: <710fddfa-f1d5-9be1-62de-d42f19a2f1a9@cogentembedded.com>
+Date: Wed, 6 Jun 2018 19:54:20 +0300
+MIME-Version: 1.0
+In-Reply-To: <4fbd0895-c1ec-41fc-912d-8306dd933997@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When using the generic functions for setting SCL/SDA high, we make sure
-necessary delays are met.
+Describe FCPVD0 in the R8A77980 device tree; it will be used by VSPD0 in
+the next patch...
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Based on the original (and large) patch by Vladimir Barinov.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
- drivers/i2c/algos/i2c-algo-bit.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/i2c/algos/i2c-algo-bit.c b/drivers/i2c/algos/i2c-algo-bit.c
-index 3df0efd69ae3..c76cf51975d0 100644
---- a/drivers/i2c/algos/i2c-algo-bit.c
-+++ b/drivers/i2c/algos/i2c-algo-bit.c
-@@ -650,9 +650,8 @@ static int __i2c_bit_add_bus(struct i2c_adapter *adap,
- 		adap->quirks = &i2c_bit_quirk_no_clk_stretch;
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -653,6 +653,14 @@
+ 			resets = <&cpg 408>;
+ 		};
  
- 	/* Bring bus to a known state. Looks like STOP if bus is not free yet */
--	setscl(bit_adap, 1);
--	udelay(bit_adap->udelay);
--	setsda(bit_adap, 1);
-+	sclhi(bit_adap);
-+	sdahi(bit_adap);
- 
- 	ret = add_adapter(adap);
- 	if (ret < 0)
--- 
-2.11.0
++		fcpvd0: fcp@fea27000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea27000 0 0x200>;
++			clocks = <&cpg CPG_MOD 603>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 603>;
++		};
++
+ 		prr: chipid@fff00044 {
+ 			compatible = "renesas,prr";
+ 			reg = <0 0xfff00044 0 4>;
