@@ -1,55 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:23801 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932262AbeFFG5F (ORCPT
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:40265 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932164AbeFFGl7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 02:57:05 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 3/4] arm64: dts: renesas: r8a77990: ebisu: enable usb2_phy0
-Date: Wed,  6 Jun 2018 15:56:10 +0900
-Message-Id: <1528268171-19276-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1528268171-19276-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1528268171-19276-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 6 Jun 2018 02:41:59 -0400
+Received: by mail-wr0-f194.google.com with SMTP id l41-v6so4929002wre.7
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Jun 2018 23:41:59 -0700 (PDT)
+Date: Wed, 6 Jun 2018 07:41:56 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v4 10/12] mfd: da9063: Register RTC only on DA9063L
+Message-ID: <20180606064156.GA21163@dell>
+References: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
+ <20180605231013.1803-10-marek.vasut+renesas@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180605231013.1803-10-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch enables usb2_phy0 for r8a77990 Ebisu board.
+On Wed, 06 Jun 2018, Marek Vasut wrote:
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+> The DA9063L does not contain RTC block, unlike the full DA9063.
+> Split the RTC block into separate mfd cell and register it only
+> on DA9063.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+> V2: No change
+> V3: Rework of mfd: da9063: Disallow RTC on DA9063L
+> V4: - Change the original failure text
+>     - Use PLATFORM_DEVID_NONE in mfd_add_devices
+> ---
+>  drivers/mfd/da9063-core.c | 33 +++++++++++++++++++++++++--------
+>  1 file changed, 25 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
+> index 9aff815877c0..3443c9321c09 100644
+> --- a/drivers/mfd/da9063-core.c
+> +++ b/drivers/mfd/da9063-core.c
+> @@ -76,7 +76,7 @@ static struct resource da9063_hwmon_resources[] = {
+>  };
+>  
+>  
+> -static const struct mfd_cell da9063_devs[] = {
+> +static const struct mfd_cell da9063_common_devs[] = {
+>  	{
+>  		.name		= DA9063_DRVNAME_REGULATORS,
+>  		.num_resources	= ARRAY_SIZE(da9063_regulators_resources),
+> @@ -100,15 +100,19 @@ static const struct mfd_cell da9063_devs[] = {
+>  		.resources	= da9063_onkey_resources,
+>  		.of_compatible = "dlg,da9063-onkey",
+>  	},
+> +	{
+> +		.name		= DA9063_DRVNAME_VIBRATION,
+> +	},
+> +};
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-index 7a09d05..1be10c9 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-@@ -58,8 +58,20 @@
- 			function = "avb";
- 		};
- 	};
-+
-+	usb0_pins: usb {
-+		groups = "usb0_b";
-+		function = "usb0";
-+	};
- };
- 
- &scif2 {
- 	status = "okay";
- };
-+
-+&usb2_phy0 {
-+	pinctrl-0 = <&usb0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
+Still not a fan of multi-line single entries, but seeing as it was
+already multi-line and you are just moving it, I'll let it go.
+
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+
 -- 
-1.9.1
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
