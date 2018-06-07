@@ -1,45 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56778 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932068AbeFHIV3 (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:45097 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752616AbeFGURM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Jun 2018 04:21:29 -0400
-Date: Fri, 8 Jun 2018 10:21:25 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+        Thu, 7 Jun 2018 16:17:12 -0400
+Received: by mail-lf0-f68.google.com with SMTP id n3-v6so16589375lfe.12
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 07 Jun 2018 13:17:11 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH v2 0/5] Add R8A77980/Condor/V3HSK LVDS/HDMI support
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 0/5] Add R8A77980/Condor/V3HSK LVDS/HDMI support
-Message-ID: <20180608082125.tjnd6jayecv26csv@verge.net.au>
-References: <390fabf0-4caf-1600-3780-1893207d94f7@cogentembedded.com>
+Message-ID: <390fabf0-4caf-1600-3780-1893207d94f7@cogentembedded.com>
+Date: Thu, 7 Jun 2018 23:17:03 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <390fabf0-4caf-1600-3780-1893207d94f7@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jun 07, 2018 at 11:17:03PM +0300, Sergei Shtylyov wrote:
-> Hello!
-> 
-> Here's the set of 5 patches against Simon Horman's 'renesas.git' repo's
-> 'renesas-devel-20180604-v4.17' tag. We're adding the R8A77980 FCPVD/VSPD/
-> DU/LVDS device nodes and then describing the LVDS decoder and HDMI encoder
-> connected to the LVDS output. These patches depend on the Thine THC63LVD1024
-> driver and the R8A77980 LVDS support patch in order to work, and R8A77980 GPIO
-> DT patches in order to apply/compile...
-> 
-> [1/5] arm64: dts: renesas: r8a77980: add FCPVD support
-> [2/5] arm64: dts: renesas: r8a77980: add VSPD support
-> [3/5] arm64: dts: renesas: r8a77980: add DU support
-> [4/5] arm64: dts: renesas: r8a77980: add LVDS support
-> [5/5] arm64: dts: renesas: condor/v3hsk: add DU/LVDS/HDMI support
+Hello!
 
-Sergei,
+Here's the set of 5 patches against Simon Horman's 'renesas.git' repo's
+'renesas-devel-20180604-v4.17' tag. We're adding the R8A77980 FCPVD/VSPD/
+DU/LVDS device nodes and then describing the LVDS decoder and HDMI encoder
+connected to the LVDS output. These patches depend on the Thine THC63LVD1024
+driver and the R8A77980 LVDS support patch in order to work, and R8A77980 GPIO
+DT patches in order to apply/compile...
 
-what are the changes in this series between v1 and v2?
+[1/5] arm64: dts: renesas: r8a77980: add FCPVD support
+[2/5] arm64: dts: renesas: r8a77980: add VSPD support
+[3/5] arm64: dts: renesas: r8a77980: add DU support
+[4/5] arm64: dts: renesas: r8a77980: add LVDS support
+[5/5] arm64: dts: renesas: condor/v3hsk: add DU/LVDS/HDMI support
+
+WBR, Sergei
