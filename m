@@ -1,151 +1,71 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <OSBPR01MB229354C6675F1185BD182C54D8640@OSBPR01MB2293.jpnprd01.prod.outlook.com>
-References: <20180529105847.15663-1-wsa+renesas@sang-engineering.com>
- <20180529105847.15663-2-wsa+renesas@sang-engineering.com> <TY2PR01MB2297BC5F12034143657590A7D86C0@TY2PR01MB2297.jpnprd01.prod.outlook.com>
- <CAMuHMdXaspHUg3LF1Jckg5CWHZWRL6gKOeCv-LHk4uzsji2W1Q@mail.gmail.com>
- <OSBPR01MB2293BBBFEBF58E8D90F3B516D8630@OSBPR01MB2293.jpnprd01.prod.outlook.com>
- <OSBPR01MB229354C6675F1185BD182C54D8640@OSBPR01MB2293.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 7 Jun 2018 12:08:41 +0200
-Message-ID: <CAMuHMdV-vLn-C6HcZBLwJWbXq2S3e-iQdmQXCEXm23+cEvk8gw@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/1] i2c: rcar: handle RXDMA HW bug on Gen3
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:46819 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751448AbeFGFhq (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 7 Jun 2018 01:37:46 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Sender: linux-i2c-owner@vger.kernel.org
+Subject: RE: [RFC PATCH 1/1] i2c: rcar: handle RXDMA HW bug on Gen3
+Date: Thu, 7 Jun 2018 05:36:10 +0000
+Message-ID: <OSBPR01MB229354C6675F1185BD182C54D8640@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+References: <20180529105847.15663-1-wsa+renesas@sang-engineering.com>
+ <20180529105847.15663-2-wsa+renesas@sang-engineering.com>
+ <TY2PR01MB2297BC5F12034143657590A7D86C0@TY2PR01MB2297.jpnprd01.prod.outlook.com>
+ <CAMuHMdXaspHUg3LF1Jckg5CWHZWRL6gKOeCv-LHk4uzsji2W1Q@mail.gmail.com>
+ <OSBPR01MB2293BBBFEBF58E8D90F3B516D8630@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSBPR01MB2293BBBFEBF58E8D90F3B516D8630@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Shimoda-san,
-
-On Thu, Jun 7, 2018 at 7:36 AM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
->> From: Yoshihiro Shimoda, Sent: Thursday, May 31, 2018 6:12 PM
->> > From: Geert Uytterhoeven, Sent: Thursday, May 31, 2018 5:45 PM
->> > On Wed, May 30, 2018 at 10:35 AM, Yoshihiro Shimoda
->> > <yoshihiro.shimoda.uh@renesas.com> wrote:
->> > >> From: Wolfram Sang, Sent: Tuesday, May 29, 2018 7:59 PM
->> > >> Subject: [RFC PATCH 1/1] i2c: rcar: handle RXDMA HW bug on Gen3
->> > >
->> > > If possible, I'd like to replace "bug" with "specification" or other=
- words :)
->> > >
->> > > <snip>
->> > >> @@ -743,6 +753,16 @@ static int rcar_i2c_master_xfer(struct i2c_ada=
-pter *adap,
->> > >>
->> > >>       pm_runtime_get_sync(dev);
->> > >>
->> > >> +     /* Gen3 has a HW bug which needs a reset before allowing RX D=
-MA once */
->> > >> +     if (priv->devtype =3D=3D I2C_RCAR_GEN3) {
->> > >> +             priv->flags |=3D ID_P_NO_RXDMA;
->> > >> +             if (!IS_ERR(priv->rstc)) {
->> > >> +                     ret =3D reset_control_reset(priv->rstc);
->> > >
->> > > According to the datasheet Rev.1.00 page 57-69, we should do:
->> > >         reset_control_assert();
->> > >         udelay(1);
->> > >         reset_control_deassert();
->> > >         while (reset_control_status())
->> > >                 ;
->> > > instead of reset_control_reset(), I think.
->> >
->> > The i2c-specific procedure documented at page 57-69 thus differs from
->> > the generic one at page 8A-58, which is what cpg_mssr_reset() implemen=
-ts.
->> >
->> > The latter waits 35=C2=B5s instead of 1=C2=B5s, so that should be safe=
-.
->> > But it doesn't check the status bit. Is the longer delay sufficient, o=
-r should
->> > a check polling the status bit be added to cpg_mssr_reset()?
->>
->> Thank you for the pointed out.
->> I agree we should wait 35us for safe.
->> But, anyway I'll ask HW team about this contradiction and really need po=
-lling the status.
->
-> I got information about this topic.
->
-> < In CPG / MSSR point of view >
->  - This needs 35 usec wait while asserting.
->  - After deasserted a reset, no wait needs.
->   - In other words, there is each hardware IP dependence.
-
-Let's call the above procedure A.
-
-> < In I2C point of view >
->  - After deasserted the reset, this nees SRCR register polling.
-
-Let's call the above procedure B.
-
-> So, I don't think cpg_mssr_reset() checks the status bit after deasserted=
- a reset.
-> But, what do you think?
-
-cpg_mssr_reset() indeed does not check the status bit after deasserting
-the reset, as it follows procedure A.
-
-Such a check could be added, though. Then it'll become
-(let's call this procedure C):
-
-        /* Reset module */
-        spin_lock_irqsave(&priv->rmw_lock, flags);
-        value =3D readl(priv->base + SRCR(reg));
-        value |=3D bitmask;
-        writel(value, priv->base + SRCR(reg));
-        spin_unlock_irqrestore(&priv->rmw_lock, flags);
-
-        /* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
-        udelay(35);
-
-        /* Release module from reset state */
-        writel(bitmask, priv->base + SRSTCLR(reg));
-
-+       /* Wait until deassertion has completed */
-+       while (readl(priv->base + SRCR(reg)) & bitmask)
-+               cpu_relax();
-
-Probably we need an upper limit on the number of loops, and call udelay(1)
-after each iteration?
-
-        for (i 0; i < 35; i++) {
-                if (!(readl(priv->base + SRCR(reg)) & bitmask))
-                        return 0;
-                udelay(1);
-        }
-        return -EIO;
-
-Any advice from the hardware team about that?
-
-But according to procedure A, the check is not needed?
-Probably because 35=C2=B5s is an upper limit satisfying all individual hard=
-ware
-modules?
-
-I'm wondering whether we could use procedure B in the general case,
-as it explicitly checks for completion?
-
-Procedure C is safest, though, so probably the way to go.
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IFlvc2hpaGlybyBTaGltb2RhLCBTZW50OiBUaHVyc2Rh
+eSwgTWF5IDMxLCAyMDE4IDY6MTIgUE0NCj4gDQo+IEhpIEdlZXJ0LXNhbiwgV29sZnJhbS1zYW4s
+DQo+IA0KPiA+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbiwgU2VudDogVGh1cnNkYXksIE1heSAz
+MSwgMjAxOCA1OjQ1IFBNDQo+ID4NCj4gPiBIaSBTaGltb2RhLXNhbiwNCj4gPg0KPiA+IE9uIFdl
+ZCwgTWF5IDMwLCAyMDE4IGF0IDEwOjM1IEFNLCBZb3NoaWhpcm8gU2hpbW9kYQ0KPiA+IDx5b3No
+aWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gPj4gRnJvbTogV29sZnJh
+bSBTYW5nLCBTZW50OiBUdWVzZGF5LCBNYXkgMjksIDIwMTggNzo1OSBQTQ0KPiA+ID4+IFN1Ympl
+Y3Q6IFtSRkMgUEFUQ0ggMS8xXSBpMmM6IHJjYXI6IGhhbmRsZSBSWERNQSBIVyBidWcgb24gR2Vu
+Mw0KPiA+ID4NCj4gPiA+IElmIHBvc3NpYmxlLCBJJ2QgbGlrZSB0byByZXBsYWNlICJidWciIHdp
+dGggInNwZWNpZmljYXRpb24iIG9yIG90aGVyIHdvcmRzIDopDQo+ID4gPg0KPiA+ID4gPHNuaXA+
+DQo+ID4gPj4gQEAgLTc0Myw2ICs3NTMsMTYgQEAgc3RhdGljIGludCByY2FyX2kyY19tYXN0ZXJf
+eGZlcihzdHJ1Y3QgaTJjX2FkYXB0ZXIgKmFkYXAsDQo+ID4gPj4NCj4gPiA+PiAgICAgICBwbV9y
+dW50aW1lX2dldF9zeW5jKGRldik7DQo+ID4gPj4NCj4gPiA+PiArICAgICAvKiBHZW4zIGhhcyBh
+IEhXIGJ1ZyB3aGljaCBuZWVkcyBhIHJlc2V0IGJlZm9yZSBhbGxvd2luZyBSWCBETUEgb25jZSAq
+Lw0KPiA+ID4+ICsgICAgIGlmIChwcml2LT5kZXZ0eXBlID09IEkyQ19SQ0FSX0dFTjMpIHsNCj4g
+PiA+PiArICAgICAgICAgICAgIHByaXYtPmZsYWdzIHw9IElEX1BfTk9fUlhETUE7DQo+ID4gPj4g
+KyAgICAgICAgICAgICBpZiAoIUlTX0VSUihwcml2LT5yc3RjKSkgew0KPiA+ID4+ICsgICAgICAg
+ICAgICAgICAgICAgICByZXQgPSByZXNldF9jb250cm9sX3Jlc2V0KHByaXYtPnJzdGMpOw0KPiA+
+ID4NCj4gPiA+IEFjY29yZGluZyB0byB0aGUgZGF0YXNoZWV0IFJldi4xLjAwIHBhZ2UgNTctNjks
+IHdlIHNob3VsZCBkbzoNCj4gPiA+ICAgICAgICAgcmVzZXRfY29udHJvbF9hc3NlcnQoKTsNCj4g
+PiA+ICAgICAgICAgdWRlbGF5KDEpOw0KPiA+ID4gICAgICAgICByZXNldF9jb250cm9sX2RlYXNz
+ZXJ0KCk7DQo+ID4gPiAgICAgICAgIHdoaWxlIChyZXNldF9jb250cm9sX3N0YXR1cygpKQ0KPiA+
+ID4gICAgICAgICAgICAgICAgIDsNCj4gPiA+IGluc3RlYWQgb2YgcmVzZXRfY29udHJvbF9yZXNl
+dCgpLCBJIHRoaW5rLg0KPiA+DQo+ID4gVGhlIGkyYy1zcGVjaWZpYyBwcm9jZWR1cmUgZG9jdW1l
+bnRlZCBhdCBwYWdlIDU3LTY5IHRodXMgZGlmZmVycyBmcm9tDQo+ID4gdGhlIGdlbmVyaWMgb25l
+IGF0IHBhZ2UgOEEtNTgsIHdoaWNoIGlzIHdoYXQgY3BnX21zc3JfcmVzZXQoKSBpbXBsZW1lbnRz
+Lg0KPiA+DQo+ID4gVGhlIGxhdHRlciB3YWl0cyAzNcK1cyBpbnN0ZWFkIG9mIDHCtXMsIHNvIHRo
+YXQgc2hvdWxkIGJlIHNhZmUuDQo+ID4gQnV0IGl0IGRvZXNuJ3QgY2hlY2sgdGhlIHN0YXR1cyBi
+aXQuIElzIHRoZSBsb25nZXIgZGVsYXkgc3VmZmljaWVudCwgb3Igc2hvdWxkDQo+ID4gYSBjaGVj
+ayBwb2xsaW5nIHRoZSBzdGF0dXMgYml0IGJlIGFkZGVkIHRvIGNwZ19tc3NyX3Jlc2V0KCk/DQo+
+IA0KPiBUaGFuayB5b3UgZm9yIHRoZSBwb2ludGVkIG91dC4NCj4gSSBhZ3JlZSB3ZSBzaG91bGQg
+d2FpdCAzNXVzIGZvciBzYWZlLg0KPiBCdXQsIGFueXdheSBJJ2xsIGFzayBIVyB0ZWFtIGFib3V0
+IHRoaXMgY29udHJhZGljdGlvbiBhbmQgcmVhbGx5IG5lZWQgcG9sbGluZyB0aGUgc3RhdHVzLg0K
+DQpJIGdvdCBpbmZvcm1hdGlvbiBhYm91dCB0aGlzIHRvcGljLg0KDQo8IEluIENQRyAvIE1TU1Ig
+cG9pbnQgb2YgdmlldyA+DQogLSBUaGlzIG5lZWRzIDM1IHVzZWMgd2FpdCB3aGlsZSBhc3NlcnRp
+bmcuDQogLSBBZnRlciBkZWFzc2VydGVkIGEgcmVzZXQsIG5vIHdhaXQgbmVlZHMuDQogIC0gSW4g
+b3RoZXIgd29yZHMsIHRoZXJlIGlzIGVhY2ggaGFyZHdhcmUgSVAgZGVwZW5kZW5jZS4NCg0KPCBJ
+biBJMkMgcG9pbnQgb2YgdmlldyA+DQogLSBBZnRlciBkZWFzc2VydGVkIHRoZSByZXNldCwgdGhp
+cyBuZWVzIFNSQ1IgcmVnaXN0ZXIgcG9sbGluZy4NCg0KU28sIEkgZG9uJ3QgdGhpbmsgY3BnX21z
+c3JfcmVzZXQoKSBjaGVja3MgdGhlIHN0YXR1cyBiaXQgYWZ0ZXIgZGVhc3NlcnRlZCBhIHJlc2V0
+Lg0KQnV0LCB3aGF0IGRvIHlvdSB0aGluaz8NCg0KQmVzdCByZWdhcmRzLA0KWW9zaGloaXJvIFNo
+aW1vZGENCg0K
