@@ -1,132 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:39112 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753369AbeFGMra (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:43303 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750878AbeFGEdN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Jun 2018 08:47:30 -0400
-Received: by mail-io0-f196.google.com with SMTP id f1-v6so11642412ioh.6
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 07 Jun 2018 05:47:30 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1528211115-12334-1-git-send-email-geert+renesas@glider.be>
-References: <1528211115-12334-1-git-send-email-geert+renesas@glider.be>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 7 Jun 2018 14:47:29 +0200
-Message-ID: <CAPDyKFoVkWPDB=_KEFfCMhYs5r+SZxTHkaUYRfyAW-C_mqgkog@mail.gmail.com>
-Subject: Re: [PATCH] soc: renesas: rcar-sysc: Make PM domain initialization
- more robust
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms@verge.net.au>,
+        Thu, 7 Jun 2018 00:33:13 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms@verge.net.au>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Linux PM list <linux-pm@vger.kernel.org>
+Subject: RE: [PATCH] soc: renesas: rcar-sysc: Make PM domain initialization
+ more robust
+Date: Thu, 7 Jun 2018 04:33:07 +0000
+Message-ID: <OSBPR01MB22939931CC2349CC441554C2D8640@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+References: <1528211115-12334-1-git-send-email-geert+renesas@glider.be>
+ <20180606085218.5ug5moky75pzlrim@verge.net.au>
+ <CAMuHMdWxKaNM21d1_YfX25CkbXzGfw1C-12MjMKNsn=Vn8N6yA@mail.gmail.com>
+In-Reply-To: <CAMuHMdWxKaNM21d1_YfX25CkbXzGfw1C-12MjMKNsn=Vn8N6yA@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 5 June 2018 at 17:05, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
-> The quirk for R-Car E3 ES1.0 added in commit 086b399965a7ee7e ("soc:
-> renesas: r8a77990-sysc: Add workaround for 3DG-{A,B}") makes the 3DG-A
-> PM domain a subdomain of the 3DG-B PM domain.  However, registering
-> 3DG-A with its parent fails silently, as the 3DG-B PM domain hasn't been
-> registered yet, and such failures are never reported.
->
-> Fix this by:
->   1. Splitting PM Domain initialization in two steps, so all PM domains
->      are registered before any child-parent links are established,
->   2. Reporting any failures in establishing child-parent relations.
->
-> Check for and report pm_genpd_init() failures, too, as that function
-> gained a return value in commit 7eb231c337e00735 ("PM / Domains: Convert
-> pm_genpd_init() to return an error code").
->
-> Fixes: 086b399965a7ee7e ("soc: renesas: r8a77990-sysc: Add workaround for 3DG-{A,B}")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-
-Kind regards
-Uffe
-
-> ---
->  drivers/soc/renesas/rcar-sysc.c | 35 +++++++++++++++++++++++++++++------
->  1 file changed, 29 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-> index 4db53fa38abc5cf3..99e926f68299878d 100644
-> --- a/drivers/soc/renesas/rcar-sysc.c
-> +++ b/drivers/soc/renesas/rcar-sysc.c
-> @@ -379,11 +379,12 @@ static int rcar_sysc_pd_power_on(struct generic_pm_domain *genpd)
->
->  static bool has_cpg_mstp;
->
-> -static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
-> +static int __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
->  {
->         struct generic_pm_domain *genpd = &pd->genpd;
->         const char *name = pd->genpd.name;
->         struct dev_power_governor *gov = &simple_qos_governor;
-> +       int error;
->
->         if (pd->flags & PD_CPU) {
->                 /*
-> @@ -436,7 +437,11 @@ static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
->         rcar_sysc_power_up(&pd->ch);
->
->  finalize:
-> -       pm_genpd_init(genpd, gov, false);
-> +       error = pm_genpd_init(genpd, gov, false);
-> +       if (error)
-> +               pr_err("Failed to init PM domain %s: %d\n", name, error);
-> +
-> +       return error;
->  }
->
->  static const struct of_device_id rcar_sysc_matches[] __initconst = {
-> @@ -560,6 +565,9 @@ static int __init rcar_sysc_pd_init(void)
->         pr_debug("%pOF: syscier = 0x%08x\n", np, syscier);
->         iowrite32(syscier, base + SYSCIER);
->
-> +       /*
-> +        * First, create all PM domains
-> +        */
->         for (i = 0; i < info->num_areas; i++) {
->                 const struct rcar_sysc_area *area = &info->areas[i];
->                 struct rcar_sysc_pd *pd;
-> @@ -582,14 +590,29 @@ static int __init rcar_sysc_pd_init(void)
->                 pd->ch.isr_bit = area->isr_bit;
->                 pd->flags = area->flags;
->
-> -               rcar_sysc_pd_setup(pd);
-> -               if (area->parent >= 0)
-> -                       pm_genpd_add_subdomain(domains->domains[area->parent],
-> -                                              &pd->genpd);
-> +               error = rcar_sysc_pd_setup(pd);
-> +               if (error)
-> +                       goto out_put;
->
->                 domains->domains[area->isr_bit] = &pd->genpd;
->         }
->
-> +       /*
-> +        * Second, link all PM domains to their parents
-> +        */
-> +       for (i = 0; i < info->num_areas; i++) {
-> +               const struct rcar_sysc_area *area = &info->areas[i];
-> +
-> +               if (!area->name || area->parent < 0)
-> +                       continue;
-> +
-> +               error = pm_genpd_add_subdomain(domains->domains[area->parent],
-> +                                              domains->domains[area->isr_bit]);
-> +               if (error)
-> +                       pr_warn("Failed to add PM subdomain %s to parent %u\n",
-> +                               area->name, area->parent);
-> +       }
-> +
->         error = of_genpd_add_provider_onecell(np, &domains->onecell_data);
->
->  out_put:
-> --
-> 2.7.4
->
+SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEJlaGFsZiBPZiBHZWVydCBVeXR0ZXJob2V2ZW4sIFNl
+bnQ6IFdlZG5lc2RheSwgSnVuZSA2LCAyMDE4IDU6NTggUE0NCj4gDQo+IEhpIFNpbW9uLA0KPiAN
+Cj4gT24gV2VkLCBKdW4gNiwgMjAxOCBhdCAxMDo1MiBBTSwgU2ltb24gSG9ybWFuIDxob3Jtc0B2
+ZXJnZS5uZXQuYXU+IHdyb3RlOg0KPiA+IE9uIFR1ZSwgSnVuIDA1LCAyMDE4IGF0IDA1OjA1OjE1
+UE0gKzAyMDAsIEdlZXJ0IFV5dHRlcmhvZXZlbiB3cm90ZToNCjxzbmlwPg0KPiA+IFRoaXMgbG9v
+a3MgZmluZSB0byBtZSBidXQgSSB3aWxsIHdhaXQgdG8gc2VlIGlmIHRoZXJlIGFyZSBvdGhlciBy
+ZXZpZXdzDQo+ID4gYmVmb3JlIGFwcGx5aW5nLg0KPiANCj4gTGV0J3Mgd2FpdCBmb3IgZmVlZGJh
+Y2sgZnJvbSBTaGltb2RhLXNhbi4gUGVycGFwcyB0aGUgcXVpcmsgZGlkIHJlbHkgb24NCj4gdGhl
+IGJ1Z2d5IGJlaGF2aW9yLg0KDQpJIGNoZWNrZWQgL3N5cy9rZXJuZWwvZGVidWcvcG1fZ2VucGQv
+cG1fZ2VucGRfc3VtbWFyeS4NCg0KPCBCZWZvcmUgYXBwbGllcyB0aGUgcGF0Y2ggPg0KIC0gIjNk
+Zy1iJ3MiIHN0YXR1cyBpcyAib2ZmLTAiLg0KIC0gIjNkZy1iIiBkb2Vzbid0IGhhdmUgYW55IHNs
+YXZlcy4NCg0KPCBBZnRlciBhcHBsaWVkIHRoZSBwYXRjaCA+DQogLSAiM2RnLWIncyIgc3RhdHVz
+IGlzICJvbiIuDQogLSAiM2RnLWIiIGhhcyAiM2RnLWEiIHNsYXZlLg0KDQpTbywNCg0KVGVzdGVk
+LWJ5OiBZb3NoaWhpcm8gU2hpbW9kYSA8eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+
+DQoNCkJlc3QgcmVnYXJkcywNCllvc2hpaGlybyBTaGltb2RhDQoNCj4gPiBSZXZpZXdlZC1ieTog
+U2ltb24gSG9ybWFuIDxob3JtcytyZW5lc2FzQHZlcmdlLm5ldC5hdT4NCj4gDQo+IFRoYW5rcyEN
+Cj4gDQo+IEdye29ldGplLGVldGluZ31zLA0KPiANCj4gICAgICAgICAgICAgICAgICAgICAgICAg
+R2VlcnQNCj4gDQo+IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2Yg
+TGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5vcmcNCj4gDQo+IEluIHBlcnNv
+bmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEg
+aGFja2VyLiBCdXQNCj4gd2hlbiBJJ20gdGFsa2luZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5
+ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcgbGlrZSB0aGF0Lg0KPiAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZhbGRzDQo=
