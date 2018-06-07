@@ -1,53 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:31369 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932239AbeFFG5C (ORCPT
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:38897 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753313AbeFGHk5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 02:57:02 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/4] arm64: dts: renesas: r8a77990: add usb2_phy device node
-Date: Wed,  6 Jun 2018 15:56:08 +0900
-Message-Id: <1528268171-19276-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1528268171-19276-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1528268171-19276-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Thu, 7 Jun 2018 03:40:57 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <3317638e-8688-35ef-ab61-7281312f2c3f@gmail.com>
+References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+ <20180606100003.17067-4-marek.vasut+renesas@gmail.com> <CAMuHMdXdoAaBbx+_G3+n=e+zki3z20t7ATXttDUnmYRu95HMVA@mail.gmail.com>
+ <3317638e-8688-35ef-ab61-7281312f2c3f@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 7 Jun 2018 09:40:54 +0200
+Message-ID: <CAMuHMdWsZYDeqS4jao0isVVVpG+gFFW1LkOGhcnU7U3+6reHAA@mail.gmail.com>
+Subject: Re: [PATCH v5 04/14] mfd: da9063: Use REGMAP_IRQ_REG
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds USB2.0 phy device node for r8a77990.
+Hi Marek,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+On Wed, Jun 6, 2018 at 6:06 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> On 06/06/2018 01:31 PM, Geert Uytterhoeven wrote:
+>> On Wed, Jun 6, 2018 at 11:59 AM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>>> Convert the regmap_irq table to use REGMAP_IRQ_REG().
+>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>
+>> Again:
+>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Added.
+>
+> And the obvious question is, what do you all use to collect these tags?
+> Doing it manually sucks.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index be4f519..121c4a0 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -248,6 +248,18 @@
- 			status = "disabled";
- 		};
- 
-+		usb2_phy0: usb-phy@ee080200 {
-+			compatible = "renesas,usb2-phy-r8a77990",
-+				     "renesas,rcar-gen3-usb2-phy";
-+			reg = <0 0xee080200 0 0x700>;
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 703>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 703>;
-+			#phy-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		gic: interrupt-controller@f1010000 {
- 			compatible = "arm,gic-400";
- 			#interrupt-cells = <3>;
+1. Add green star (in gmail) to email supplying tag,
+2. Once in a while, filter using has:green-star, and git rebase -i my queue,
+   adding tags and changelogs to the commits in git.
+
+Hope this helps.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-1.9.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
