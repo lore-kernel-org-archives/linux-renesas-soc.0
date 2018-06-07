@@ -1,61 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:48900 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751597AbeFAJ3H (ORCPT
+Received: from sauhun.de ([88.99.104.3]:60198 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752547AbeFGJTn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Jun 2018 05:29:07 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/4] serial: sh-sci: Stop using printk format %pCr
-Date: Fri,  1 Jun 2018 11:28:21 +0200
-Message-Id: <1527845302-12159-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
-References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
+        Thu, 7 Jun 2018 05:19:43 -0400
+Date: Thu, 7 Jun 2018 11:19:40 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+Subject: Re: [PATCH 4/4] mmc: renesas_sdhi: Fix SCC error detection
+Message-ID: <20180607091939.c5jbc4rnvsfydqjt@ninjato>
+References: <20180606204724.26055-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180606204724.26055-5-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="jiihzppp2gknpr54"
+Content-Disposition: inline
+In-Reply-To: <20180606204724.26055-5-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
-called in atomic context.
 
-Replace it by open-coding the operation.  This is safe here, as the code
-runs in task context.
+--jiihzppp2gknpr54
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/tty/serial/sh-sci.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Wed, Jun 06, 2018 at 10:47:24PM +0200, Niklas S=C3=B6derlund wrote:
+> From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+>=20
+> SDR104 and HS200 need to check SCC error. If SCC error is detected,
+> retuning is necessary.
+>=20
+> In addition SCC error checking during retuning is unnecessary.
+>=20
+> Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+> [Niklas: fix small style issue]
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index b46b146524ce7495..c181eb37f98509e6 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -2724,8 +2724,8 @@ static int sci_init_clocks(struct sci_port *sci_port, struct device *dev)
- 			dev_dbg(dev, "failed to get %s (%ld)\n", clk_names[i],
- 				PTR_ERR(clk));
- 		else
--			dev_dbg(dev, "clk %s is %pC rate %pCr\n", clk_names[i],
--				clk, clk);
-+			dev_dbg(dev, "clk %s is %pC rate %lu\n", clk_names[i],
-+				clk, clk_get_rate(clk));
- 		sci_port->clks[i] = IS_ERR(clk) ? NULL : clk;
- 	}
- 	return 0;
--- 
-2.7.4
+Same here, needs more explanation in the commit message IMO.
+
+Thanks for working on this!
+
+
+--jiihzppp2gknpr54
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsY+KsACgkQFA3kzBSg
+KbbbGA//VEaQ5WtXyebIBE0/VGhbidQART2S2iLF5hZur4q9Bkw/UBJMUKNtKSP6
+ZMbW/6OVC9R31eTfOpy3StEGNR0jPKHR74B84LygiSdZQK26BFm4SCsZJLM74yme
+Dvgiai8Ix6s9s3JtBVw8NPPJXpzLPogaTXwMFn80Pk8ml8+iXOhARdKuKBIOmwgB
+/gM/1l/ZO7Uhua59qyrBHVKTJPDZGf6ygQHqiru7zFQWaZtPJW/8xlZsfqPVXya1
+GbWhMNxBYyyoLUgG5jk+VgcEoRXFmsA35chYqRFo7qahM8eJIFulBxuQV7E4NhWz
+8rZ44tAZsXg7c2cLoYFb9EcJd6zgqigUNH4g59dmAFKIQmF/W1fbIEa7T0Rp+R6Z
+ToaDtCX2+dnrYacevUjOVYKarY/qWedqLUaNU7plhLLZ51aFd5fO/60OkeNPWUYg
+4fqunWnheYPrt0rALeJepC0acQvT333NMQEUTgr0lkRS1MSz1P6mk63RyGaIwu2p
+rqWNVX4TATE8vc18do4G4Kqa5wAcNxy7su7hJGz6KmWSJS33CoKL+Fpo39i3WjQ4
+uRKbkC9JiBC+mfk3jux6a2oTlg94f6TCIL3AH91nB56f0cxAz4VUbk/gNWPXO9ju
+vS3tAejeBEhmVuO75eWICV9cpppwLTgHyBVOKN19NSpfl4Ec864=
+=zGGt
+-----END PGP SIGNATURE-----
+
+--jiihzppp2gknpr54--
