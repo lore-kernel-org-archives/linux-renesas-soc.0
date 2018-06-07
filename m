@@ -1,63 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:33788 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932309AbeFFHwZ (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36364 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752570AbeFGHHT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 03:52:25 -0400
+        Thu, 7 Jun 2018 03:07:19 -0400
+Received: by mail-wm0-f66.google.com with SMTP id v131-v6so16626203wma.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 07 Jun 2018 00:07:19 -0700 (PDT)
+Date: Thu, 7 Jun 2018 08:07:16 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v5 02/14] mfd: da9063: Replace mfd_add_devices with devm
+ counterpart
+Message-ID: <20180607070715.GC22841@dell>
+References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+ <20180606100003.17067-2-marek.vasut+renesas@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <50de037c-7560-c261-f96a-f86065674c9b@cogentembedded.com>
-References: <3923fc5f-103c-94c9-57ba-cb29e8c55d05@cogentembedded.com> <50de037c-7560-c261-f96a-f86065674c9b@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 6 Jun 2018 09:52:24 +0200
-Message-ID: <CAMuHMdXQMkzunWf=z3NpQvKTuKL_j7q_HStfb_2NU2G-npDPNw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: renesas: initial V3HSK board device tree
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>, Will Deacon <will.deacon@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180606100003.17067-2-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, May 10, 2018 at 8:12 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add the initial device  tree for  the V3H Starter Kit board.
-> The board has 1 debug serial port (SCIF0); include support for it,
-> so that the serial console can work.
->
-> Based on the original (and large) patch by Vladimir Barinov.
->
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Wed, 06 Jun 2018, Marek Vasut wrote:
 
-FTR:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Use devm_mfd_add_devices() instead of plain mfd_add_devices(), which
+> removes the need for da9063_device_exit() altogether and also for the
+> .remove callback in da9063-i2c.c .
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+> V5: New patch
+> ---
+>  drivers/mfd/da9063-core.c       | 11 +++--------
+>  drivers/mfd/da9063-i2c.c        | 10 ----------
+>  include/linux/mfd/da9063/core.h |  2 --
+>  3 files changed, 3 insertions(+), 20 deletions(-)
 
-> --- /dev/null
-> +++ renesas/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-
-> +&pfc {
-> +       scif0_pins: scif0 {
-> +               groups = "scif0_data";
-> +               function = "scif0";
-> +       };
-
-JFYI, hscif0 can be routed to the same pins, if higher performance is needed.
-
-
-Gr{oetje,eeting}s,
-
-                        Geert
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
