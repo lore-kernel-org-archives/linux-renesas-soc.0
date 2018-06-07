@@ -1,60 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:38897 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753313AbeFGHk5 (ORCPT
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:36285 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752570AbeFGHFo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Jun 2018 03:40:57 -0400
-MIME-Version: 1.0
-In-Reply-To: <3317638e-8688-35ef-ab61-7281312f2c3f@gmail.com>
-References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
- <20180606100003.17067-4-marek.vasut+renesas@gmail.com> <CAMuHMdXdoAaBbx+_G3+n=e+zki3z20t7ATXttDUnmYRu95HMVA@mail.gmail.com>
- <3317638e-8688-35ef-ab61-7281312f2c3f@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 7 Jun 2018 09:40:54 +0200
-Message-ID: <CAMuHMdWsZYDeqS4jao0isVVVpG+gFFW1LkOGhcnU7U3+6reHAA@mail.gmail.com>
-Subject: Re: [PATCH v5 04/14] mfd: da9063: Use REGMAP_IRQ_REG
+        Thu, 7 Jun 2018 03:05:44 -0400
+Received: by mail-wr0-f194.google.com with SMTP id f16-v6so8816403wrm.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 07 Jun 2018 00:05:44 -0700 (PDT)
+Date: Thu, 7 Jun 2018 08:05:40 +0100
+From: Lee Jones <lee.jones@linaro.org>
 To: Marek Vasut <marek.vasut@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+Cc: linux-kernel@vger.kernel.org,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
         Mark Brown <broonie@kernel.org>,
         Steve Twiss <stwiss.opensource@diasemi.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v5 04/14] mfd: da9063: Use REGMAP_IRQ_REG
+Message-ID: <20180607070540.GA22841@dell>
+References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+ <20180606100003.17067-4-marek.vasut+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180606100003.17067-4-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Marek,
+On Wed, 06 Jun 2018, Marek Vasut wrote:
 
-On Wed, Jun 6, 2018 at 6:06 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
-> On 06/06/2018 01:31 PM, Geert Uytterhoeven wrote:
->> On Wed, Jun 6, 2018 at 11:59 AM, Marek Vasut <marek.vasut@gmail.com> wrote:
->>> Convert the regmap_irq table to use REGMAP_IRQ_REG().
->>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
->>
->> Again:
->> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Added.
->
-> And the obvious question is, what do you all use to collect these tags?
-> Doing it manually sucks.
+> Convert the regmap_irq table to use REGMAP_IRQ_REG().
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
+> ---
+> V3: New patch
+> Note: A sed oneliner was used:
+>       sed -i "/\[DA9063_IRQ_/ {N;N;N;s/\n//g;s/.*\[\(DA9063_IRQ_[^]]\+\)].*reg_offset = \([^,]\+\),.* = \([^,]\+\),.*/\tREGMAP_IRQ_REG(\1, \2, \3),/}" drivers/mfd/da9063-irq.c
+> V4: Formatting fixes with "s/,/&\r\t\t      /" on the array
+>     Drop extra newline in da9063_irq_chip
+> V5: No change
+> ---
+>  drivers/mfd/da9063-irq.c | 175 ++++++++++++++++-------------------------------
+>  1 file changed, 58 insertions(+), 117 deletions(-)
 
-1. Add green star (in gmail) to email supplying tag,
-2. Once in a while, filter using has:green-star, and git rebase -i my queue,
-   adding tags and changelogs to the commits in git.
-
-Hope this helps.
-
-Gr{oetje,eeting}s,
-
-                        Geert
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
