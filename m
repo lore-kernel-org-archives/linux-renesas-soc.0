@@ -1,89 +1,68 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:39105 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752260AbeFFKAW (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 06:00:22 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 01/14] mfd: da9063: Replace regmap_add_irq_chip with devm counterpart
-Date: Wed,  6 Jun 2018 11:59:50 +0200
-Message-Id: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/5] arm64: dts: renesas: r8a77980: add FCPVD support
+Date: Fri, 08 Jun 2018 17:22:32 +0300
+Message-ID: <2406394.UFm6YmyhWF@avalon>
+In-Reply-To: <73f61c34-d0ec-75cd-b6fd-a41cfb39078f@cogentembedded.com>
+References: <390fabf0-4caf-1600-3780-1893207d94f7@cogentembedded.com> <73f61c34-d0ec-75cd-b6fd-a41cfb39078f@cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use devm_regmap_add_irq_chip() instead of plain regmap_add_irq_chip(),
-which removes the need for da9063_irq_exit() altogether and also
-fixes a bug in da9063_device_init() where the da9063_irq_exit() was
-not called in a failpath.
+Hi Sergei,
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
----
-V5: New patch
----
- drivers/mfd/da9063-core.c       | 1 -
- drivers/mfd/da9063-irq.c        | 8 ++------
- include/linux/mfd/da9063/core.h | 1 -
- 3 files changed, 2 insertions(+), 8 deletions(-)
+Thank you for the patch.
 
-diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
-index 6c2870d4e754..2647bb371d86 100644
---- a/drivers/mfd/da9063-core.c
-+++ b/drivers/mfd/da9063-core.c
-@@ -238,7 +238,6 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
- void da9063_device_exit(struct da9063 *da9063)
- {
- 	mfd_remove_devices(da9063->dev);
--	da9063_irq_exit(da9063);
- }
- 
- MODULE_DESCRIPTION("PMIC driver for Dialog DA9063");
-diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
-index 207bbfe55449..da6ceb41f0d1 100644
---- a/drivers/mfd/da9063-irq.c
-+++ b/drivers/mfd/da9063-irq.c
-@@ -170,7 +170,8 @@ int da9063_irq_init(struct da9063 *da9063)
- 		return -EINVAL;
- 	}
- 
--	ret = regmap_add_irq_chip(da9063->regmap, da9063->chip_irq,
-+	ret = devm_regmap_add_irq_chip(da9063->dev, da9063->regmap,
-+			da9063->chip_irq,
- 			IRQF_TRIGGER_LOW | IRQF_ONESHOT | IRQF_SHARED,
- 			da9063->irq_base, &da9063_irq_chip,
- 			&da9063->regmap_irq);
-@@ -182,8 +183,3 @@ int da9063_irq_init(struct da9063 *da9063)
- 
- 	return 0;
- }
--
--void da9063_irq_exit(struct da9063 *da9063)
--{
--	regmap_del_irq_chip(da9063->chip_irq, da9063->regmap_irq);
--}
-diff --git a/include/linux/mfd/da9063/core.h b/include/linux/mfd/da9063/core.h
-index f3ae65db4c86..9ab7049977aa 100644
---- a/include/linux/mfd/da9063/core.h
-+++ b/include/linux/mfd/da9063/core.h
-@@ -95,6 +95,5 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq);
- int da9063_irq_init(struct da9063 *da9063);
- 
- void da9063_device_exit(struct da9063 *da9063);
--void da9063_irq_exit(struct da9063 *da9063);
- 
- #endif /* __MFD_DA9063_CORE_H__ */
+On Thursday, 7 June 2018 23:19:31 EEST Sergei Shtylyov wrote:
+> Describe FCPVD0 in the R8A77980 device tree; it will be used by VSPD0 in
+> the next patch...
+> 
+> Based on the original (and large) patch by Vladimir Barinov.
+> 
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77980.dtsi |    8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+> ===================================================================
+> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+> +++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+> @@ -653,6 +653,14 @@
+>  			resets = <&cpg 408>;
+>  		};
+> 
+> +		fcpvd0: fcp@fea27000 {
+> +			compatible = "renesas,fcpv";
+> +			reg = <0 0xfea27000 0 0x200>;
+> +			clocks = <&cpg CPG_MOD 603>;
+> +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+> +			resets = <&cpg 603>;
+> +		};
+> +
+>  		prr: chipid@fff00044 {
+>  			compatible = "renesas,prr";
+>  			reg = <0 0xfff00044 0 4>;
+
 -- 
-2.16.2
+Regards,
+
+Laurent Pinchart
+
+
+
