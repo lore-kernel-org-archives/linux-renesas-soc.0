@@ -1,44 +1,91 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
-        yoshihiro.shimoda.uh@renesas.com, joro@8bytes.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [RESEND 6/6] iommu/ipmmu-vmsa: Document R-Car V3H and E3 IPMMU DT bindings
-Date: Thu, 14 Jun 2018 12:48:26 +0200
-Message-Id: <1528973306-7962-7-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1528973306-7962-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1528973306-7962-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59108 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752716AbeFHOUw (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 8 Jun 2018 10:20:52 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 3/5] arm64: dts: renesas: r8a77980: add DU support
+Date: Fri, 08 Jun 2018 17:21:08 +0300
+Message-ID: <2730856.67CqOl6nIY@avalon>
+In-Reply-To: <842200af-095f-7096-a542-1d2865543264@cogentembedded.com>
+References: <390fabf0-4caf-1600-3780-1893207d94f7@cogentembedded.com> <842200af-095f-7096-a542-1d2865543264@cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hi Sergei,
 
-Update the IPMMU DT binding documentation to include the compat strings
-for the IPMMU devices included in the R-Car V3H and E3 SoCs.
+Thank you for the patch.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt | 2 ++
- 1 file changed, 2 insertions(+)
+On Thursday, 7 June 2018 23:21:38 EEST Sergei Shtylyov wrote:
+> Define the generic R8A77980 part of the DU device node.
+> 
+> Based on the original (and large) patch by Vladimir Barinov.
+> 
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-diff --git a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-index 8d145a4..c6e2d85 100644
---- a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-+++ b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-@@ -21,6 +21,8 @@ Required Properties:
-     - "renesas,ipmmu-r8a7796" for the R8A7796 (R-Car M3-W) IPMMU.
-     - "renesas,ipmmu-r8a77965" for the R8A77965 (R-Car M3-N) IPMMU.
-     - "renesas,ipmmu-r8a77970" for the R8A77970 (R-Car V3M) IPMMU.
-+    - "renesas,ipmmu-r8a77980" for the R8A77980 (R-Car V3H) IPMMU.
-+    - "renesas,ipmmu-r8a77990" for the R8A77990 (R-Car E3) IPMMU.
-     - "renesas,ipmmu-r8a77995" for the R8A77995 (R-Car D3) IPMMU.
-     - "renesas,ipmmu-vmsa" for generic R-Car Gen2 or RZ/G1 VMSA-compatible
- 			   IPMMU.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77980.dtsi |   30 ++++++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+> 
+> Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+> ===================================================================
+> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+> +++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+> @@ -671,6 +671,36 @@
+>  			resets = <&cpg 603>;
+>  		};
+> 
+> +		du: display@feb00000 {
+> +			compatible = "renesas,du-r8a77980",
+> +				     "renesas,du-r8a77970";
+> +			reg = <0 0xfeb00000 0 0x80000>;
+> +			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 724>;
+> +			clock-names = "du.0";
+> +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+> +			resets = <&cpg 724>;
+> +			vsps = <&vspd0>;
+> +			status = "disabled";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +					du_out_rgb: endpoint {
+> +					};
+> +				};
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +					du_out_lvds0: endpoint {
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+>  		prr: chipid@fff00044 {
+>  			compatible = "renesas,prr";
+>  			reg = <0 0xfff00044 0 4>;
+
 -- 
-2.7.4
+Regards,
 
+Laurent Pinchart
