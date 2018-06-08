@@ -1,56 +1,56 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 04/10] media: rcar-vin: Cleanup notifier in error path
-Date: Tue, 12 Jun 2018 11:43:26 +0200
-Message-Id: <1528796612-7387-5-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1528796612-7387-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1528796612-7387-1-git-send-email-jacopo+renesas@jmondi.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:37445 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751249AbeFHLxj (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 8 Jun 2018 07:53:39 -0400
+Received: by mail-vk0-f65.google.com with SMTP id w8-v6so8056702vkh.4
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 08 Jun 2018 04:53:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+References: <20180608111655.2725-1-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180608111655.2725-1-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 8 Jun 2018 13:53:27 +0200
+Message-ID: <CAMuHMdVQzVxtbprAiUaH3qA0yb9ZGiTWzavVQfsSy0Ysepi5ag@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: dts: renesas: r8a77970: Fix VSP registers range
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-During the notifier initialization, memory for the list of associated async
-subdevices is reserved during the fwnode endpoint parsing from the v4l2-async
-framework. If the notifier registration fails, that memory should be released
-and the notifier 'cleaned up'.
+Hi Laurent,
 
-Catch the notifier registration error and perform the cleanup both for the
-group and the parallel notifiers.
+Thanks for your patch!
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+On Fri, Jun 8, 2018 at 1:18 PM Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> The R8A77970 VSP and FCP nodes have overlapping register ranges, as the
+> SoC integrates the FCP devices in the memory range usually used by the
+> VSP LUT and CLUT, which are not present. Fix this by shortening the VSP
 
----
-v5 -> v6:
-- replace goto call with direct 'v4l2_async_notifier_cleanup()'
----
- drivers/media/platform/rcar-vin/rcar-core.c | 2 ++
- 1 file changed, 2 insertions(+)
+According to datasheet rev. 1.00, the CLUT is present on R-Car V3M, the
+LUT is not.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 72ffd19..b00387f 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -571,6 +571,7 @@ static int rvin_parallel_graph_init(struct rvin_dev *vin)
- 	ret = v4l2_async_notifier_register(&vin->v4l2_dev, &vin->notifier);
- 	if (ret < 0) {
- 		vin_err(vin, "Notifier registration failed\n");
-+		v4l2_async_notifier_cleanup(&vin->group->notifier);
- 		return ret;
- 	}
+> registers range to 0x5000.
+>
+> Fixes: b4f92030d5d3 ("arm64: dts: renesas: r8a77970: add VSPD support")
+> Reported-by: Simon Horman <horms+renesas@verge.net.au>
+> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-@@ -773,6 +774,7 @@ static int rvin_mc_parse_of_graph(struct rvin_dev *vin)
- 					   &vin->group->notifier);
- 	if (ret < 0) {
- 		vin_err(vin, "Notifier registration failed\n");
-+		v4l2_async_notifier_cleanup(&vin->group->notifier);
- 		return ret;
- 	}
+Apart from my comment above:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
---
-2.7.4
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
