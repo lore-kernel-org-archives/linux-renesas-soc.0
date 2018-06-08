@@ -1,59 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:17555 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755159AbeFNLEM (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56821 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932219AbeFHIZm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Jun 2018 07:04:12 -0400
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Fri, 8 Jun 2018 04:25:42 -0400
+Date: Fri, 8 Jun 2018 10:25:38 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Carlo Caione <carlo@endlessm.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Frank Rowand <frank.rowand@sony.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 1/3] dt-bindings: cpu: Add Renesas R9A06G032 SMP enable method.
-Date: Thu, 14 Jun 2018 11:58:56 +0100
-Message-Id: <1528973943-28132-2-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1528973943-28132-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1528973943-28132-1-git-send-email-michel.pollet@bp.renesas.com>
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/3] arm64: dts: renesas: r8a77980: add GPIO support
+Message-ID: <20180608082537.yaj7xi5k6scf5kez@verge.net.au>
+References: <4acc208e-c593-1e8a-00ca-fc9a5574074e@cogentembedded.com>
+ <3c195d53-be0f-ad15-92e6-8ba43b14f076@cogentembedded.com>
+ <CAMuHMdU4smhy0Z6YUVP2wr+YnJof=eW86Q9jN47r0yo3VEsB9A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdU4smhy0Z6YUVP2wr+YnJof=eW86Q9jN47r0yo3VEsB9A@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a special enable method for second CA7 of the R9A06G032
+On Wed, Jun 06, 2018 at 11:07:27AM +0200, Geert Uytterhoeven wrote:
+> On Fri, Jun 1, 2018 at 10:44 PM, Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+> > Describe all 6 GPIO controllers in the R8A77980 device tree.
+> >
+> > Based on the original (and large) patch by Vladimir Barinov.
+> >
+> > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
----
- Documentation/devicetree/bindings/arm/cpus.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
-index 29e1dc5..b395d107 100644
---- a/Documentation/devicetree/bindings/arm/cpus.txt
-+++ b/Documentation/devicetree/bindings/arm/cpus.txt
-@@ -219,6 +219,7 @@ described below.
- 			    "qcom,kpss-acc-v1"
- 			    "qcom,kpss-acc-v2"
- 			    "renesas,apmu"
-+			    "renesas,r9a06g032-smp"
- 			    "rockchip,rk3036-smp"
- 			    "rockchip,rk3066-smp"
- 			    "ste,dbx500-smp"
--- 
-2.7.4
+Thanks Sergei, applied.
