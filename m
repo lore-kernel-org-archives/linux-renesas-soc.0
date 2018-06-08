@@ -1,53 +1,78 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:55400 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755371AbeF2OZW (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Jun 2018 10:25:22 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Simon Horman <horms@verge.net.au>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-sh@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/4] serial: sh-sci: Stop RX FIFO timer during port shutdown
-Date: Fri, 29 Jun 2018 16:25:13 +0200
-Message-Id: <20180629142513.20743-8-geert+renesas@glider.be>
-In-Reply-To: <20180629142513.20743-1-geert+renesas@glider.be>
-References: <20180629142513.20743-1-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] arm64: dts: renesas: r8a77980: add VSPD support
+Date: Fri, 08 Jun 2018 17:01:57 +0300
+Message-ID: <5881797.ZzEO2jGKGA@avalon>
+In-Reply-To: <20180608135456.cathgcuyp24csbwx@verge.net.au>
+References: <390fabf0-4caf-1600-3780-1893207d94f7@cogentembedded.com> <5f151ec5-bec7-ed06-cb94-4f0cfe8e43dc@cogentembedded.com> <20180608135456.cathgcuyp24csbwx@verge.net.au>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The RX FIFO timer may be armed when the port is shut down, hence the
-timer function may still be called afterwards.
+Hello Simon,
 
-Fix this race condition by deleting the timer during port shutdown.
+On Friday, 8 June 2018 16:54:56 EEST Simon Horman wrote:
+> [CC Laurent, Geert]
+> 
+> On Thu, Jun 07, 2018 at 11:20:47PM +0300, Sergei Shtylyov wrote:
+> > Describe VSPD0 in the R8A77980 device tree; it will be used by DU in
+> > the next patch...
+> > 
+> > Based on the original (and large) patch by Vladimir Barinov.
+> > 
+> > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > 
+> > ---
+> > 
+> >  arch/arm64/boot/dts/renesas/r8a77980.dtsi |   10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> > 
+> > Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+> > ===================================================================
+> > --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+> > +++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+> > @@ -653,6 +653,16 @@
+> >  			resets = <&cpg 408>;
+> >  		};
+> > 
+> > +		vspd0: vsp@fea20000 {
+> > +			compatible = "renesas,vsp2";
+> > +			reg = <0 0xfea20000 0 0x4000>;
+> 
+> As per "[PATCH] arm64: dts: renesas: Fix VSPD registers range"
+> I think the width of the range should be 0x5000.
 
-Fixes: 039403765e5da3c6 ("serial: sh-sci: SCIFA/B RX FIFO software timeout")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Tested with scifa0 on r8a7740/armadillo, after
+I agree with that.
 
-    echo 2000 > /sys/devices/platform/e6c40000.serial/rx_fifo_timeout
----
- drivers/tty/serial/sh-sci.c | 2 ++
- 1 file changed, 2 insertions(+)
+> > +			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
+> > +			clocks = <&cpg CPG_MOD 623>;
+> > +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+> > +			resets = <&cpg 623>;
+> > +			renesas,fcp = <&fcpvd0>;
+> > +		};
+> > +
+> >  		fcpvd0: fcp@fea27000 {
+> >  			compatible = "renesas,fcpv";
+> >  			reg = <0 0xfea27000 0 0x200>;
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 58016386558c6789..cca3bbc62a6b1110 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -2571,6 +2571,8 @@ static void sci_shutdown(struct uart_port *port)
- 	}
- #endif
- 
-+	if (s->rx_trigger > 1 && s->rx_fifo_timeout > 0)
-+		del_timer_sync(&s->rx_fifo_timer);
- 	sci_free_irq(s);
- 	sci_free_dma(port);
- }
 -- 
-2.17.1
+Regards,
+
+Laurent Pinchart
+
+
+
