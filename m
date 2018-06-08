@@ -1,141 +1,81 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:35715 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750732AbeFAUou (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Jun 2018 16:44:50 -0400
-Received: by mail-lf0-f67.google.com with SMTP id y72-v6so16628920lfd.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 01 Jun 2018 13:44:49 -0700 (PDT)
-Subject: [PATCH 1/3] arm64: dts: renesas: r8a77980: add GPIO support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Fri, 8 Jun 2018 10:41:24 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/3] arm64: dts: renesas: condor: specify EtherAVB PHY IRQ
+Message-ID: <20180608084124.ulbmdcyodfx3c6yi@verge.net.au>
 References: <4acc208e-c593-1e8a-00ca-fc9a5574074e@cogentembedded.com>
-Message-ID: <3c195d53-be0f-ad15-92e6-8ba43b14f076@cogentembedded.com>
-Date: Fri, 1 Jun 2018 23:44:46 +0300
+ <21578b79-7ba0-b3a6-ae45-7e9ffbb7c8db@cogentembedded.com>
+ <20180604103302.f5kx5fqhbl3ohfpi@verge.net.au>
+ <049a712d-7381-c771-c352-6badc2978175@cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <4acc208e-c593-1e8a-00ca-fc9a5574074e@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <049a712d-7381-c771-c352-6badc2978175@cogentembedded.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe all 6 GPIO controllers in the R8A77980 device tree.
+On Mon, Jun 04, 2018 at 05:22:52PM +0300, Sergei Shtylyov wrote:
+> On 06/04/2018 01:33 PM, Simon Horman wrote:
+> 
+> >> Specify EtherAVB PHY IRQ in the Condor board's device tree, now that
+> >> we have the GPIO support (previously phylib had to resort to polling).
+> >>
+> >> Based on the original (and large) patch by Vladimir Barinov.
+> >>
+> >> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> >> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >>
+> >> ---
+> >>  arch/arm64/boot/dts/renesas/r8a77980-condor.dts |    2 ++
+> >>  1 file changed, 2 insertions(+)
+> >>
+> >> Index: renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+> >> ===================================================================
+> >> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+> >> +++ renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+> >> @@ -59,6 +59,8 @@
+> >>  	phy0: ethernet-phy@0 {
+> >>  		rxc-skew-ps = <1500>;
+> >>  		reg = <0>;
+> >> +		interrupt-parent = <&gpio1>;
+> >> +		interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
+> > 
+> > I don't see this documented. Perhaps I'm missing something obvious.
+> 
+>    Have you looked into the V3H PFC section for where in the GPSRs AVB_PHY_INT
+> is mapped?
 
-Based on the original (and large) patch by Vladimir Barinov.
+Thanks, I see that now.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>    The Condor schematics doesn't explicitly list the GPIO for AVB_PHY_INT
+> because that signal is meant to be routed thru the MAC. Unfortunately, the
+> sh_eth/ravb drivers don't support the PHY interrupt (the phylib function,
+> phy_mac_interrupt() reporting the PHY interrupts routed thru MAC is clearly
+> inadequate as it wants the link state as an argument), so we have to resort
+> to the GPIO interrupts...
 
----
- arch/arm64/boot/dts/renesas/r8a77980.dtsi |   90 ++++++++++++++++++++++++++++++
- 1 file changed, 90 insertions(+)
+Understood.
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -118,6 +118,96 @@
- 		#size-cells = <2>;
- 		ranges;
- 
-+		gpio0: gpio@e6050000 {
-+			compatible = "renesas,gpio-r8a77980",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6050000 0 0x50>;
-+			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 0 22>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 912>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 912>;
-+		};
-+
-+		gpio1: gpio@e6051000 {
-+			compatible = "renesas,gpio-r8a77980",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6051000 0 0x50>;
-+			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 32 28>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 911>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 911>;
-+		};
-+
-+		gpio2: gpio@e6052000 {
-+			compatible = "renesas,gpio-r8a77980",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6052000 0 0x50>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 64 30>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 910>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 910>;
-+		};
-+
-+		gpio3: gpio@e6053000 {
-+			compatible = "renesas,gpio-r8a77980",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6053000 0 0x50>;
-+			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 96 17>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 909>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 909>;
-+		};
-+
-+		gpio4: gpio@e6054000 {
-+			compatible = "renesas,gpio-r8a77980",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6054000 0 0x50>;
-+			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 128 25>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 908>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 908>;
-+		};
-+
-+		gpio5: gpio@e6055000 {
-+			compatible = "renesas,gpio-r8a77980",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6055000 0 0x50>;
-+			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 160 15>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 907>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 907>;
-+		};
-+
- 		pfc: pin-controller@e6060000 {
- 			compatible = "renesas,pfc-r8a77980";
- 			reg = <0 0xe6060000 0 0x50c>;
+> > Or you have some extra information or newer documentation?
+> 
+>    No.
+> 
+> > Also, given Olof Johansson's recent comments in ("Re: [GIT PULL] Renesas
+> > ARM64 Based SoC DT Updates for v4.18") please consider squashing this patch
+> > and the following one.
+> 
+>    Hm... note that the different Ether cores are involved in these 2 PHY IRQ
+> patches. If that's OK, I can merge the patches...
+
+Tough call. Functionally these are both ethernet even though they are
+different IP cores. So I think I prefer a squash.
+
+I have applied 1/3 of this series and will push shortly.
