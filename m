@@ -1,69 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:39330 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752746AbeF0Ini (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:58454 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751504AbeFHMfZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Jun 2018 04:43:38 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Marc Zyngier <marc.zyngier@arm.com>
-CC: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
+        Fri, 8 Jun 2018 08:35:25 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: RE: [PATCH] dt-bindings: irqchip: renesas-irqc: Document r8a77470
- support
-Date: Wed, 27 Jun 2018 08:43:30 +0000
-Message-ID: <OSBPR01MB2103FF4CF9F5477C8D47720CB8480@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <1522318628-52821-1-git-send-email-biju.das@bp.renesas.com>
- <CAMuHMdUsO_jw5Lb4jDKk6H2Zn=4kJHhFp_fBArnaddkBXDQ24Q@mail.gmail.com>
-In-Reply-To: <CAMuHMdUsO_jw5Lb4jDKk6H2Zn=4kJHhFp_fBArnaddkBXDQ24Q@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH 2/2] arm64: dts: renesas: r8a77995: Fix VSP registers range
+Date: Fri, 08 Jun 2018 15:35:41 +0300
+Message-ID: <17008507.Jhr6cnHLcg@avalon>
+In-Reply-To: <CAMuHMdXk3EbgYLo0Y8jZcugGq3ud7ZZ_4K_qwhi2W6sP84J4aA@mail.gmail.com>
+References: <20180608111655.2725-1-laurent.pinchart+renesas@ideasonboard.com> <20180608111655.2725-2-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdXk3EbgYLo0Y8jZcugGq3ud7ZZ_4K_qwhi2W6sP84J4aA@mail.gmail.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gTWFyYywNCg0KU29ycnkgdG8gYm90aGVyIHlvdS4gIEFyZSB5b3UgaGFwcHkgdG8gbWVy
-Z2UgdGhlIGJlbG93IHBhdGNoIHdpdGggNC4xOC1yYzM/DQpodHRwczovL3d3dy5zcGluaWNzLm5l
-dC9saXN0cy9saW51eC1yZW5lc2FzLXNvYy9tc2cyNTc4OC5odG1sDQoNCnJlZ2FyZHMsDQpCaWp1
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogZ2VlcnQudXl0dGVyaG9l
-dmVuQGdtYWlsLmNvbQ0KPiBbbWFpbHRvOmdlZXJ0LnV5dHRlcmhvZXZlbkBnbWFpbC5jb21dIE9u
-IEJlaGFsZiBPZiBHZWVydCBVeXR0ZXJob2V2ZW4NCj4gU2VudDogMzAgTWFyY2ggMjAxOCAwODo1
-Mw0KPiBUbzogQmlqdSBEYXMgPGJpanUuZGFzQGJwLnJlbmVzYXMuY29tPg0KPiBDYzogVGhvbWFz
-IEdsZWl4bmVyIDx0Z2x4QGxpbnV0cm9uaXguZGU+OyBKYXNvbiBDb29wZXINCj4gPGphc29uQGxh
-a2VkYWVtb24ubmV0PjsgTWFyYyBaeW5naWVyIDxtYXJjLnp5bmdpZXJAYXJtLmNvbT47IFJvYg0K
-PiBIZXJyaW5nIDxyb2JoK2R0QGtlcm5lbC5vcmc+OyBNYXJrIFJ1dGxhbmQgPG1hcmsucnV0bGFu
-ZEBhcm0uY29tPjsNCj4gR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5i
-ZT47IFNpbW9uIEhvcm1hbg0KPiA8aG9ybXNAdmVyZ2UubmV0LmF1PjsgQ2hyaXMgUGF0ZXJzb24g
-PENocmlzLlBhdGVyc29uMkByZW5lc2FzLmNvbT47DQo+IEZhYnJpemlvIENhc3RybyA8ZmFicml6
-aW8uY2FzdHJvQGJwLnJlbmVzYXMuY29tPjsgb3BlbiBsaXN0Ok9QRU4NCj4gRklSTVdBUkUgQU5E
-IEZMQVRURU5FRCBERVZJQ0UgVFJFRSBCSU5ESU5HUw0KPiA8ZGV2aWNldHJlZUB2Z2VyLmtlcm5l
-bC5vcmc+OyBMaW51eC1SZW5lc2FzIDxsaW51eC1yZW5lc2FzLQ0KPiBzb2NAdmdlci5rZXJuZWwu
-b3JnPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBkdC1iaW5kaW5nczogaXJxY2hpcDogcmVuZXNh
-cy1pcnFjOiBEb2N1bWVudCByOGE3NzQ3MA0KPiBzdXBwb3J0DQo+DQo+IE9uIFRodSwgTWFyIDI5
-LCAyMDE4IGF0IDEyOjE3IFBNLCBCaWp1IERhcyA8YmlqdS5kYXNAYnAucmVuZXNhcy5jb20+DQo+
-IHdyb3RlOg0KPiA+IFJlbmVzYXMgUlovRyBTb0MgaGF2ZSB0aGUgUi1DYXIgZ2VuMiBjb21wYXRp
-YmxlIElSUUMgaW50ZXJydXB0DQo+ID4gY29udHJvbGxlcnMuIERvY3VtZW50IFJaL0cxQyAoYWxz
-byBrbm93biBhcyBSOEE3NzQ3MCkgU29DIGJpbmRpbmdzLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1i
-eTogQmlqdSBEYXMgPGJpanUuZGFzQGJwLnJlbmVzYXMuY29tPg0KPiA+IFJldmlld2VkLWJ5OiBG
-YWJyaXppbyBDYXN0cm8gPGZhYnJpemlvLmNhc3Ryb0BicC5yZW5lc2FzLmNvbT4NCj4NCj4gUmV2
-aWV3ZWQtYnk6IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnQrcmVuZXNhc0BnbGlkZXIuYmU+DQo+
-DQo+IEdye29ldGplLGVldGluZ31zLA0KPg0KPiAgICAgICAgICAgICAgICAgICAgICAgICBHZWVy
-dA0KPg0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4
-IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LQ0KPiBtNjhrLm9yZw0KPg0KPiBJbiBwZXJzb25h
-bCBjb252ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBhIGhh
-Y2tlci4gQnV0DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAi
-cHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4gICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0KDQoNCg0KUmVuZXNhcyBFbGVjdHJvbmlj
-cyBFdXJvcGUgTHRkLCBEdWtlcyBNZWFkb3csIE1pbGxib2FyZCBSb2FkLCBCb3VybmUgRW5kLCBC
-dWNraW5naGFtc2hpcmUsIFNMOCA1RkgsIFVLLiBSZWdpc3RlcmVkIGluIEVuZ2xhbmQgJiBXYWxl
-cyB1bmRlciBSZWdpc3RlcmVkIE5vLiAwNDU4NjcwOS4NCg==
+Hi Geert,
+
+On Friday, 8 June 2018 14:53:28 EEST Geert Uytterhoeven wrote:
+> On Fri, Jun 8, 2018 at 1:18 PM Laurent Pinchart wrote:
+> > The R8A77995 VSP and FCP nodes have overlapping register ranges, as the
+> > SoC integrates the FCP devices in the memory range usually used by the
+> > VSP LUT and CLUT, which are not present. Fix this by shortening the VSP
+> > registers range to 0x5000.
+> 
+> According to datasheet rev. 1.00, the CLUT is present on R-Car D3, the
+> LUT is not.
+
+That was a typo, the commit message should have mentioned CLU, not CLUT. I've 
+sent a v2 that fixes this and covers the H3 and M3* SoCs.
+
+> > Fixes: 295952a183d3 ("arm64: dts: renesas: r8a77995: add VSP instances")
+> > Reported-by: Simon Horman <horms+renesas@verge.net.au>
+> > Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> 
+> Apart from my comment above:
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+-- 
+Regards,
+
+Laurent Pinchart
