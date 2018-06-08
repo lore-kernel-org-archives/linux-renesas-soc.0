@@ -1,54 +1,29 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay10.mail.gandi.net ([217.70.178.230]:55513 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754286AbeFLJnm (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56456 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751140AbeFHH5N (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Jun 2018 05:43:42 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 0/10] rcar-vin: Add support for parallel input on Gen3
-Date: Tue, 12 Jun 2018 11:43:22 +0200
-Message-Id: <1528796612-7387-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 8 Jun 2018 03:57:13 -0400
+Date: Fri, 8 Jun 2018 09:57:09 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Corentin Labbe <clabbe@baylibre.com>
+Cc: geert+renesas@glider.be, jroedel@suse.de, magnus.damm@gmail.com,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] iommu/shmobile: Remove unused
+ include/linux/platform_data/sh_ipmmu.h header
+Message-ID: <20180608075709.fjk5ohrxz5ukrcdh@verge.net.au>
+References: <1528400696-32609-1-git-send-email-clabbe@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1528400696-32609-1-git-send-email-clabbe@baylibre.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-   this series adds support for parallel video input to the Gen3 version of
-rcar-vin driver.
+On Thu, Jun 07, 2018 at 07:44:56PM +0000, Corentin Labbe wrote:
+> include/linux/platform_data/sh_ipmmu.h is unused since commit ae50dc4874c5 ("iommu/shmobile: Remove unused Renesas IPMMU/IPMMUI")
+> Let's remove it.
+> 
+> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
 
-Few changes compared to v5, closing a few comments from Kieran and Niklas,
-and fixed the label names I forgot to change in previous version.
-
-Changlog in the individual patches when relevant.
-
-A few patches have not yet been acked-by, but things look smooth and we
-should be close to have this finalized.
-
-Thanks
-   j
-
-Jacopo Mondi (10):
-  media: rcar-vin: Rename 'digital' to 'parallel'
-  media: rcar-vin: Remove two empty lines
-  media: rcar-vin: Create a group notifier
-  media: rcar-vin: Cleanup notifier in error path
-  media: rcar-vin: Cache the mbus configuration flags
-  media: rcar-vin: Parse parallel input on Gen3
-  media: rcar-vin: Link parallel input media entities
-  media: rcar-vin: Handle parallel subdev in link_notify
-  media: rcar-vin: Rename _rcar_info to rcar_info
-  media: rcar-vin: Add support for R-Car R8A77995 SoC
-
- drivers/media/platform/rcar-vin/rcar-core.c | 265 ++++++++++++++++++----------
- drivers/media/platform/rcar-vin/rcar-dma.c  |  36 ++--
- drivers/media/platform/rcar-vin/rcar-v4l2.c |  12 +-
- drivers/media/platform/rcar-vin/rcar-vin.h  |  29 +--
- 4 files changed, 223 insertions(+), 119 deletions(-)
-
---
-2.7.4
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
