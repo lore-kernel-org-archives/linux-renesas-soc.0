@@ -1,141 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:57926 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934518AbeFZOQn (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:36231 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752923AbeFILaR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Jun 2018 10:16:43 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Russell King <linux@armlinux.org.uk>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] ARM: Debug kernel copy by printing
-Date: Tue, 26 Jun 2018 15:16:35 +0100
-Message-Id: <1530022595-6806-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Sat, 9 Jun 2018 07:30:17 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: kieran.bingham+renesas@ideasonboard.com,
+        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [RFC 2/2] dt-bindings: media: i2c: Add bindings for IMI RDACM20
+Date: Sat,  9 Jun 2018 13:30:05 +0200
+Message-Id: <1528543805-23945-3-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1528543805-23945-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1528543805-23945-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-It may happen that when we relocate the kernel we corrupt other
-sensible memory (e.g. the memory needed by U-Boot for dealing
-with bootm command) while copying the kernel. If we overwrite
-the content of the memory area used by U-Boot's command bootm
-(described by U-Boot's parameters bootm_low and bootm_size),
-the kernel won't be able to boot. Troubleshooting the problem
-then is not straightforward.
+IMI D&D RDACM20 automotive platform is a Gigabit Multimedia Serial Link
+(GMSL) camera transmitting video and I2C control messages on coax cable
+physical link.
 
-This commit allows the user to easily print information on
-where the kernel gets copied from/to in order to help with the
-design of the system memory map (e.g. bootm_low and bootm_size)
-at boot up.
+Document its device tree binding interface.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-Acked-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
-Dear All,
+ .../devicetree/bindings/media/i2c/imi,rdacm20.txt  | 62 ++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
 
-shmobile_defconfig doesn't use kernel modules, everything gets
-built-in. iwg20d and iwg22d platforms from iWave use uImage
-to boot, DRAM starts at address 0x40000000, the kernel gets
-loaded up in memory at address 0x40007fc0, bootm_low is
-0x40e00000, and bootm_size is 0x100000.
-
-The kernel is getting larger and larger, so much so that during
-the relocation the kernel is copying itself right where the
-bootm memory area lives, preventing Linux from booting.
-Here is what this patch prints when applied on top of tag
-next-20180625 and running on the iwg22d:
-
-C:0x400080C0-0x404922A0->0x40E90800-0x4131A9E0
-
-The designer then has to pick up a suitable memory range for
-bootm memory area to fix this, but the only way to successfully
-achieve this is by knowing where the kernel is going to copy
-itself in memory, so that he can stay clear of it.
-
-Other platforms that use the same defconfig suffer from the same
-issue (e.g. Koelsch et al.) as they have been designed some time
-ago or the original BSP was based on an LTS kernel.
-
-Debugging this basically requires a JTAG debugger at this stage.
-
-Do you think this patch could be considered acceptable? If not,
-what would be the best way to get useful/sensible/debug
-information out of the kernel when the problem occours?
-
-Comments welcome!
-
-Thanks,
-Fab
-
- arch/arm/boot/compressed/head.S | 43 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
-
-diff --git a/arch/arm/boot/compressed/head.S b/arch/arm/boot/compressed/head.S
-index 517e0e1..6c7ccb4 100644
---- a/arch/arm/boot/compressed/head.S
-+++ b/arch/arm/boot/compressed/head.S
-@@ -114,6 +114,35 @@
- #endif
- 		.endm
- 
-+		/*
-+		 * Debug kernel copy by printing the memory addresses involved
-+		 */
-+		.macro dbgkc, begin, end, cbegin, cend
-+#ifdef DEBUG
-+		kputc   #'\n'
-+		kputc   #'C'
-+		kputc   #':'
-+		kputc   #'0'
-+		kputc   #'x'
-+		kphex   \begin, 8	/* Start of compressed kernel */
-+		kputc	#'-'
-+		kputc	#'0'
-+		kputc	#'x'
-+		kphex	\end, 8		/* End of compressed kernel */
-+		kputc	#'-'
-+		kputc	#'>'
-+		kputc   #'0'
-+		kputc   #'x'
-+		kphex   \cbegin, 8	/* Start of kernel copy */
-+		kputc	#'-'
-+		kputc	#'0'
-+		kputc	#'x'
-+		kphex	\cend, 8	/* End of kernel copy */
-+		kputc	#'\n'
-+		kputc	#'\r'
-+#endif
-+		.endm
+diff --git a/Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt b/Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
+new file mode 100644
+index 0000000..7fda068
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
+@@ -0,0 +1,62 @@
++IMI D&D RDACM20 Automotive Camera Platform
++------------------------------------------
 +
- 		.section ".start", #alloc, #execinstr
- /*
-  * sort out different calling conventions
-@@ -450,6 +479,20 @@ dtb_check_done:
- 		add	r6, r9, r5
- 		add	r9, r9, r10
- 
-+#ifdef DEBUG
-+		sub     r10, r6, r5
-+		sub     r10, r9, r10
-+		/*
-+		 * We are about to copy the kernel to a new memory area.
-+		 * The boundaries of the new memory area can be found in
-+		 * r10 and r9, whilst r5 and r6 contain the boundaries
-+		 * of the memory we are going to copy.
-+		 * Calling dbgkc will help with the printing of this
-+		 * information.
-+		 */
-+		dbgkc	r5, r6, r10, r9
-+#endif
++The IMI D&D RDACM20 is a GMSL-compatible camera designed for automotive
++applications. It is encloses a Maxim Integrated MAX9271 GMSL serializer, an
++Omnivision OV10635 camera sensor and an embedded MCU, and connects to a remote
++GMSL endpoint through a coaxial cable.
 +
- 1:		ldmdb	r6!, {r0 - r3, r10 - r12, lr}
- 		cmp	r6, r5
- 		stmdb	r9!, {r0 - r3, r10 - r12, lr}
++                                                     IMI RDACM20
++ ---------------                               --------------------------------
++|      GMSL     |   <---  Video Stream        |       <- Video--------\        |
++|               |< ====== GMSL Link ======== >|MAX9271<- I2C bus-> <-->OV10635 |
++| de-serializer |   <---  I2C messages --->   |                   \<-->MCU     |
++ ---------------                               --------------------------------
++
++RDACM20 transmits video data generated by the embedded camera sensor on the
++GMSL serial channel to a remote GMSL de-serializer, as well as it receives and
++transmits I2C messages encapsulated in the GMSL bidirectional control channel.
++
++All I2C traffic received on the GMSL link not directed to the serializer is
++propagated on the local I2C bus to the embedded camera sensor and MCU. All
++I2C traffic generated on the local I2C bus not directed to the serializer is
++propagated to the remote de-serializer encapsulated in the GMSL control channel.
++
++Required Properties:
++
++- compatible: Shall be "imi,rdacm20".
++- reg: Pair of I2C device addresses, the first to be assigned to the serializer
++  the second to be assigned to the camera sensor.
++
++Connection to the remote GMSL endpoint are modeled using the OF graph bindings
++in accordance with the video interface bindings defined in
++Documentation/devicetree/bindings/media/video-interfaces.txt.
++
++The device node contains a single "port" child node with a single "endpoint"
++sub-device.
++
++Required endpoint properties:
++
++- remote-endpoint: phandle to the remote GMSL endpoint sub-node in the remote
++  node port.
++
++Example:
++-------
++
++	i2c@0 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0>;
++
++		camera@51 {
++			compatible = "imi,rdacm20";
++			reg = <0x51 0x61>;
++
++			port {
++				rdacm20_out0: endpoint {
++					remote-endpoint = <&max9286_in0>;
++				};
++			};
++
++		};
++	};
 -- 
 2.7.4
