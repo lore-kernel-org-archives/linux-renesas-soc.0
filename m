@@ -1,69 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:38280 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933093AbeFKL7X (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:47295 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752923AbeFILaP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:59:23 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 14/14] mfd: da9063: Add DA9063L support
-Date: Mon, 11 Jun 2018 13:58:51 +0200
-Message-Id: <20180611115851.1987-14-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
-References: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
+        Sat, 9 Jun 2018 07:30:15 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: kieran.bingham+renesas@ideasonboard.com,
+        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [RFC 0/2] GMSL bindings description update
+Date: Sat,  9 Jun 2018 13:30:03 +0200
+Message-Id: <1528543805-23945-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for DA9063L, which is a reduced variant of the DA9063
-with less regulators and without RTC.
+Hi Kieran,
+  as anticipated offline here you have an alternative bindings description
+for max9286 and rdacm20 prepared before your GMSL upstreaming effort.
+Sorry for not having shared this in advance.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Acked-by: Mark Brown <broonie@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
----
-V2: No change
-V3: No change
-V4: No change
-V5: No change
-V6: No change
----
- drivers/mfd/da9063-i2c.c | 2 ++
- 1 file changed, 2 insertions(+)
+I integrated some what you proposed in your bindings description here, feel
+free to add other parts if yuo think that's the case.
 
-diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
-index a449a9263dd7..50a24b1921d0 100644
---- a/drivers/mfd/da9063-i2c.c
-+++ b/drivers/mfd/da9063-i2c.c
-@@ -186,6 +186,7 @@ static struct regmap_config da9063_regmap_config = {
- 
- static const struct of_device_id da9063_dt_ids[] = {
- 	{ .compatible = "dlg,da9063", },
-+	{ .compatible = "dlg,da9063l", },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, da9063_dt_ids);
-@@ -231,6 +232,7 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
- 
- static const struct i2c_device_id da9063_i2c_id[] = {
- 	{ "da9063", PMIC_TYPE_DA9063 },
-+	{ "da9063l", PMIC_TYPE_DA9063L },
- 	{},
- };
- MODULE_DEVICE_TABLE(i2c, da9063_i2c_id);
--- 
-2.16.2
+Thanks
+   j
+
+Jacopo Mondi (1):
+  dt-bindings: media: i2c: Add bindings for IMI RDACM20
+
+Laurent Pinchart (1):
+  dt/bindings: media: Add DT bindings for Maxim Integrated MAX9286
+
+ .../devicetree/bindings/media/i2c/imi,rdacm20.txt  |  62 +++++++
+ .../bindings/media/i2c/maxim,max9286.txt           | 180 +++++++++++++++++++++
+ 2 files changed, 242 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt
+
+--
+2.7.4
