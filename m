@@ -1,136 +1,92 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52588 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934166AbeFYOGt (ORCPT
+Received: from sauhun.de ([88.99.104.3]:47734 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933150AbeFISiO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:06:49 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 13/15] ARM: shmobile: r8a7779: Remove explicit SYSC config and init
-Date: Mon, 25 Jun 2018 16:06:24 +0200
-Message-Id: <16acd53b1547d3dbe3eabef5e3356674eb957ae4.1529934908.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1529934908.git.horms+renesas@verge.net.au>
-References: <cover.1529934908.git.horms+renesas@verge.net.au>
+        Sat, 9 Jun 2018 14:38:14 -0400
+Date: Sat, 9 Jun 2018 20:38:10 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+Subject: Re: [PATCH 3/3] mmc: tmio: Fix reset operation
+Message-ID: <20180609183806.iex7e2sfoefupnwd@ninjato>
+References: <20180606232252.31583-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180606232252.31583-4-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pcw3gj5zt73ehfnf"
+Content-Disposition: inline
+In-Reply-To: <20180606232252.31583-4-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-If the R-Car H1 system controller is described in DT, the rcar-sysc
-driver configures SYSCIER and SYSCIMR based on the SoC-specific power
-area definitions in r8a7779-sysc.  The platform code still passed this
-information to the rcar-sysc driver, for compatibility with old DTBs
-predating commit b2df3aa487395a1b ("ARM: dts: r8a7779: Add SYSC PM
-Domains") in v4.7.  The time has come to drop backwards compatibility,
-and delegate everything to the DT enabled rcar-sysc driver.
+--pcw3gj5zt73ehfnf
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-After stopping powering down secondary CPUs during early boot, there is
-no longer a need to force an early initialization of the rcar-sysc
-driver.  It will be initialized in time for secondary CPU bringup by its
-early_initcall().
+On Thu, Jun 07, 2018 at 01:22:52AM +0200, Niklas S=C3=B6derlund wrote:
+> From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+>=20
+> SD / MMC did not operate properly when suspend transition failed.
+> Because the SCC was not reset at resume, issue of the command failed.
+> Changed tmio_mmc_reset() to tmio_mmc_hw_reset() in order to add reset
+> of SCC to tmio_mmc_host_runtime_resume().
 
-Hence all explicit SYSC configuration and initialization can be removed
-from the R-Car H1 platform code.
+So, my gut feeling is that this change, in general, seems OK. However,
+the naming (tmio_mmc_reset and tmio_mmc_hw_reset) becomes confusing and
+unneeded. tmio_mmc_reset now only gets called in tmio_mmc_hw_reset, so
+we can merge the two functions into one to reduce the confusion.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/mach-shmobile/Makefile      |  2 +-
- arch/arm/mach-shmobile/pm-r8a7779.c  | 41 ------------------------------------
- arch/arm/mach-shmobile/r8a7779.h     |  2 --
- arch/arm/mach-shmobile/smp-r8a7779.c |  2 --
- 4 files changed, 1 insertion(+), 46 deletions(-)
- delete mode 100644 arch/arm/mach-shmobile/pm-r8a7779.c
+Because we add stuff to the function which gets pointed to by
+mmc_ops->hw_reset, it makes sense to me to double check when the MMC
+core calls this pointer and if our additions still make sense there.
+I'd think so, but better safe than sorry.
 
-diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
-index 2b8d3896e1eb..05ba728ed4f6 100644
---- a/arch/arm/mach-shmobile/Makefile
-+++ b/arch/arm/mach-shmobile/Makefile
-@@ -11,7 +11,7 @@ obj-$(CONFIG_ARCH_SH73A0)	+= setup-sh73a0.o
- obj-$(CONFIG_ARCH_R8A73A4)	+= setup-r8a73a4.o
- obj-$(CONFIG_ARCH_R8A7740)	+= setup-r8a7740.o
- obj-$(CONFIG_ARCH_R8A7778)	+= setup-r8a7778.o
--obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o pm-r8a7779.o
-+obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o
- obj-$(CONFIG_ARCH_EMEV2)	+= setup-emev2.o
- obj-$(CONFIG_ARCH_R7S72100)	+= setup-r7s72100.o
- 
-diff --git a/arch/arm/mach-shmobile/pm-r8a7779.c b/arch/arm/mach-shmobile/pm-r8a7779.c
-deleted file mode 100644
-index 5c9a93f5e650..000000000000
---- a/arch/arm/mach-shmobile/pm-r8a7779.c
-+++ /dev/null
-@@ -1,41 +0,0 @@
--/*
-- * r8a7779 Power management support
-- *
-- * Copyright (C) 2011  Renesas Solutions Corp.
-- * Copyright (C) 2011  Magnus Damm
-- *
-- * This file is subject to the terms and conditions of the GNU General Public
-- * License.  See the file "COPYING" in the main directory of this archive
-- * for more details.
-- */
--
--#include <linux/soc/renesas/rcar-sysc.h>
--
--#include <asm/io.h>
--
--#include "r8a7779.h"
--
--/* SYSC */
--#define SYSCIER 0x0c
--#define SYSCIMR 0x10
--
--#if defined(CONFIG_PM) || defined(CONFIG_SMP)
--
--static void __init r8a7779_sysc_init(void)
--{
--	rcar_sysc_init(0xffd85000, 0x0131000e);
--}
--
--#else /* CONFIG_PM || CONFIG_SMP */
--
--static inline void r8a7779_sysc_init(void) {}
--
--#endif /* CONFIG_PM || CONFIG_SMP */
--
--void __init r8a7779_pm_init(void)
--{
--	static int once;
--
--	if (!once++)
--		r8a7779_sysc_init();
--}
-diff --git a/arch/arm/mach-shmobile/r8a7779.h b/arch/arm/mach-shmobile/r8a7779.h
-index 30668aa6acc3..ca9db8fde2f7 100644
---- a/arch/arm/mach-shmobile/r8a7779.h
-+++ b/arch/arm/mach-shmobile/r8a7779.h
-@@ -2,8 +2,6 @@
- #ifndef __ASM_R8A7779_H__
- #define __ASM_R8A7779_H__
- 
--extern void r8a7779_pm_init(void);
--
- extern const struct smp_operations r8a7779_smp_ops;
- 
- #endif /* __ASM_R8A7779_H__ */
-diff --git a/arch/arm/mach-shmobile/smp-r8a7779.c b/arch/arm/mach-shmobile/smp-r8a7779.c
-index 3036f9100461..0d3ec5c2b8fc 100644
---- a/arch/arm/mach-shmobile/smp-r8a7779.c
-+++ b/arch/arm/mach-shmobile/smp-r8a7779.c
-@@ -60,8 +60,6 @@ static void __init r8a7779_smp_prepare_cpus(unsigned int max_cpus)
- 
- 	/* setup r8a7779 specific SCU bits */
- 	shmobile_smp_scu_prepare_cpus(R8A7779_SCU_BASE, max_cpus);
--
--	r8a7779_pm_init();
- }
- 
- #ifdef CONFIG_HOTPLUG_CPU
--- 
-2.11.0
+> On runtime power management resume, the host clock needs to be
+> enabled before calling tmio_mmc_reset. If the mmc device has a power
+> domain entry, the host clock is enabled via genpd_runtime_resume,
+> running before tmio_mmc_host_runtime_resume. If the mmc device has
+> no power domain entry, however, genpd_runtime_resume is not called.
+> This patch changes tmio_mmc_host_runtime_resume to enable the host
+> clock before calling tmio_mmc_reset.
+
+I think this makes sense but should be a seperate patch. Or maybe even
+something slightly different? Because we have a patch in the BSP [1] for
+which I ever wondered in what case it was needed. But seeing the above,
+it might make sense to add the clock enablement to the reset routine?
+Niklas, do you have time to check that?
+
+Thanks,
+
+   Wolfram
+
+[1] 940904fe4ea8 ("mmc: tmio: Add SDCLK enable after reset")
+
+
+--pcw3gj5zt73ehfnf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlscHo4ACgkQFA3kzBSg
+KbaPGBAAmlJWuVwbyTANW+4SBG9v8u6kfJqhLCNWq2tkcpa9MUFa7vY3rEHTUR94
+osNPy+bMixBcezzn4I43C1djOHq6uYp7JteUp2+RKmnJsPzlkpsHEYqfsYwuPapn
+NOaq2BaqkBs5jzv0W8jgrh27rEJnODoa4XptvfSpr3I1dYNrVq5F8kZz0bI/zF8u
+1soDic/IF380lj4lY0gbpjbV8Zuj8KRuFBZ4GK3KKlGxqn2TL5VYjCpOTBM7rROw
+QMYIlGhJQu/kHTqkGWFAedZ6/MPD0FN+gTGpxo2QS7KlhYetDdE/qCYTvGqKn56h
+Zo9Bzh6qlVToNrYY0zulwGLFYklVYDCqMdvVoYORs8630buQpOBadkcZCZ0iiHxM
+rbqduw6rYdvh7xuBCsbFpSk+ojEXurdjBOf8qFFZQjoVDG+6ycyfo1tVlsz0wt7A
+m8oBYP3FWmhybn+UjDK0ireIVOrSufAFTSU6s3DHDMIIS4UCN+uFOQpCve2Ud63l
+Ty0VtfwKsAYM528ShUGD7Z7vLFFEKdtVI6BFgj2+DfPYNr6vHEFZ/K3eIW0vbUO3
+5oC9/AYkRA/YvjIAtsXD2GRcKW4t2Wz85RfBtsvD2Fzbwoiybf9A+5ZYYTsnfl77
+krN/68z+JWiNP7Asrw9mNxxCRZgE34hcYDTtaHS6vbCxGbglRi8=
+=fp/L
+-----END PGP SIGNATURE-----
+
+--pcw3gj5zt73ehfnf--
