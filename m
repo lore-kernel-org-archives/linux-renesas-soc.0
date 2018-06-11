@@ -1,147 +1,113 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:46592 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754173AbeF2JMv (ORCPT
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:40217 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933169AbeFKL7G (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Jun 2018 05:12:51 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 1/2] i2c: gpio: fault-injector: refactor incomplete transfer
-Date: Fri, 29 Jun 2018 11:12:46 +0200
-Message-Id: <20180629091247.32568-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180629091247.32568-1-wsa+renesas@sang-engineering.com>
-References: <20180629091247.32568-1-wsa+renesas@sang-engineering.com>
+        Mon, 11 Jun 2018 07:59:06 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v6 02/14] mfd: da9063: Replace mfd_add_devices with devm counterpart
+Date: Mon, 11 Jun 2018 13:58:39 +0200
+Message-Id: <20180611115851.1987-2-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
+References: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make the incomplete_transfer routine reusable, so we can add other test
-cases with different patterns later. Prepare the docs for that, too.
+Use devm_mfd_add_devices() instead of plain mfd_add_devices(), which
+removes the need for da9063_device_exit() altogether and also for the
+.remove callback in da9063-i2c.c .
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
- Documentation/i2c/gpio-fault-injection | 30 +++++++++++++++++-----------
- drivers/i2c/busses/i2c-gpio.c          | 36 +++++++++++++++++++++-------------
- 2 files changed, 41 insertions(+), 25 deletions(-)
+V5: New patch
+V6: No change
+---
+ drivers/mfd/da9063-core.c       | 11 +++--------
+ drivers/mfd/da9063-i2c.c        | 10 ----------
+ include/linux/mfd/da9063/core.h |  2 --
+ 3 files changed, 3 insertions(+), 20 deletions(-)
 
-diff --git a/Documentation/i2c/gpio-fault-injection b/Documentation/i2c/gpio-fault-injection
-index e0c4f775e239..37542461cea4 100644
---- a/Documentation/i2c/gpio-fault-injection
-+++ b/Documentation/i2c/gpio-fault-injection
-@@ -34,21 +34,29 @@ I2C specification version 4, section 3.1.16) using the helpers of the Linux I2C
- core (see 'struct bus_recovery_info'). However, the bus recovery will not
- succeed because SDA is still pinned low until you manually release it again
- with "echo 1 > sda". A test with an automatic release can be done with the
--'incomplete_transfer' file.
-+following class of fault injectors.
+diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
+index 2647bb371d86..76258e5709f8 100644
+--- a/drivers/mfd/da9063-core.c
++++ b/drivers/mfd/da9063-core.c
+@@ -226,20 +226,15 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
  
--"incomplete_transfer"
-----------------------
-+Introduction to incomplete transfers
-+------------------------------------
-+
-+The following fault injectors create situations where SDA will be held low by a
-+device. Bus recovery should be able to fix these situations. But please note:
-+there are I2C client devices which detect a stuck SDA on their side and release
-+it on their own after a few milliseconds. Also, there might be an external
-+device deglitching and monitoring the I2C bus. It could also detect a stuck SDA
-+and will init a bus recovery on its own. If you want to implement bus recovery
-+in a bus master driver, make sure you checked your hardware setup for such
-+devices before. And always verify with a scope or logic analyzer!
-+
-+"incomplete_address_phase"
-+--------------------------
+ 	da9063->irq_base = regmap_irq_chip_get_base(da9063->regmap_irq);
  
- This file is write only and you need to write the address of an existing I2C
--client device to it. Then, a transfer to this device will be started, but it
--will stop at the ACK phase after the address of the client has been
-+client device to it. Then, a read transfer to this device will be started, but
-+it will stop at the ACK phase after the address of the client has been
- transmitted. Because the device will ACK its presence, this results in SDA
- being pulled low by the device while SCL is high. So, similar to the "sda" file
- above, the bus master under test should detect this condition and try a bus
- recovery. This time, however, it should succeed and the device should release
--SDA after toggling SCL. Please note: there are I2C client devices which detect
--a stuck SDA on their side and release it on their own after a few milliseconds.
--Also, there are external devices deglitching and monitoring the I2C bus. They
--can also detect a stuck SDA and will init a bus recovery on their own. If you
--want to implement bus recovery in a bus master driver, make sure you checked
--your hardware setup carefully before.
-+SDA after toggling SCL.
-+
-diff --git a/drivers/i2c/busses/i2c-gpio.c b/drivers/i2c/busses/i2c-gpio.c
-index 66f85bbf3591..b69bb46bdb9d 100644
---- a/drivers/i2c/busses/i2c-gpio.c
-+++ b/drivers/i2c/busses/i2c-gpio.c
-@@ -101,17 +101,11 @@ DEFINE_DEBUGFS_ATTRIBUTE(fops_##wire, fops_##wire##_get, fops_##wire##_set, "%ll
- WIRE_ATTRIBUTE(scl);
- WIRE_ATTRIBUTE(sda);
+-	ret = mfd_add_devices(da9063->dev, -1, da9063_devs,
+-			      ARRAY_SIZE(da9063_devs), NULL, da9063->irq_base,
+-			      NULL);
++	ret = devm_mfd_add_devices(da9063->dev, -1, da9063_devs,
++				   ARRAY_SIZE(da9063_devs), NULL,
++				   da9063->irq_base, NULL);
+ 	if (ret)
+ 		dev_err(da9063->dev, "Cannot add MFD cells\n");
  
--static int fops_incomplete_transfer_set(void *data, u64 addr)
-+static void i2c_gpio_incomplete_transfer(struct i2c_gpio_private_data *priv,
-+					u32 pattern, u8 pattern_size)
- {
--	struct i2c_gpio_private_data *priv = data;
- 	struct i2c_algo_bit_data *bit_data = &priv->bit_data;
--	int i, pattern;
--
--	if (addr > 0x7f)
--		return -EINVAL;
--
--	/* ADDR (7 bit) + RD (1 bit) + SDA hi (1 bit) */
--	pattern = (addr << 2) | 3;
-+	int i;
- 
- 	i2c_lock_adapter(&priv->adap);
- 
-@@ -119,8 +113,8 @@ static int fops_incomplete_transfer_set(void *data, u64 addr)
- 	setsda(bit_data, 0);
- 	udelay(bit_data->udelay);
- 
--	/* Send ADDR+RD, request ACK, don't send STOP */
--	for (i = 8; i >= 0; i--) {
-+	/* Send pattern, request ACK, don't send STOP */
-+	for (i = pattern_size - 1; i >= 0; i--) {
- 		setscl(bit_data, 0);
- 		udelay(bit_data->udelay / 2);
- 		setsda(bit_data, (pattern >> i) & 1);
-@@ -130,10 +124,24 @@ static int fops_incomplete_transfer_set(void *data, u64 addr)
- 	}
- 
- 	i2c_unlock_adapter(&priv->adap);
-+}
-+
-+static int fops_incomplete_addr_phase_set(void *data, u64 addr)
-+{
-+	struct i2c_gpio_private_data *priv = data;
-+	u32 pattern;
-+
-+	if (addr > 0x7f)
-+		return -EINVAL;
-+
-+	/* ADDR (7 bit) + RD (1 bit) + Client ACK, keep SDA hi (1 bit) */
-+	pattern = (addr << 2) | 3;
-+
-+	i2c_gpio_incomplete_transfer(priv, pattern, 9);
- 
- 	return 0;
- }
--DEFINE_DEBUGFS_ATTRIBUTE(fops_incomplete_transfer, NULL, fops_incomplete_transfer_set, "%llu\n");
-+DEFINE_DEBUGFS_ATTRIBUTE(fops_incomplete_addr_phase, NULL, fops_incomplete_addr_phase_set, "%llu\n");
- 
- static void i2c_gpio_fault_injector_init(struct platform_device *pdev)
- {
-@@ -156,8 +164,8 @@ static void i2c_gpio_fault_injector_init(struct platform_device *pdev)
- 
- 	debugfs_create_file_unsafe("scl", 0600, priv->debug_dir, priv, &fops_scl);
- 	debugfs_create_file_unsafe("sda", 0600, priv->debug_dir, priv, &fops_sda);
--	debugfs_create_file_unsafe("incomplete_transfer", 0200, priv->debug_dir,
--				   priv, &fops_incomplete_transfer);
-+	debugfs_create_file_unsafe("incomplete_address_phase", 0200, priv->debug_dir,
-+				   priv, &fops_incomplete_addr_phase);
+ 	return ret;
  }
  
- static void i2c_gpio_fault_injector_exit(struct platform_device *pdev)
+-void da9063_device_exit(struct da9063 *da9063)
+-{
+-	mfd_remove_devices(da9063->dev);
+-}
+-
+ MODULE_DESCRIPTION("PMIC driver for Dialog DA9063");
+ MODULE_AUTHOR("Krystian Garbaciak");
+ MODULE_AUTHOR("Michal Hajduk");
+diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
+index 981805a2c521..29456e807ed4 100644
+--- a/drivers/mfd/da9063-i2c.c
++++ b/drivers/mfd/da9063-i2c.c
+@@ -270,15 +270,6 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
+ 	return da9063_device_init(da9063, i2c->irq);
+ }
+ 
+-static int da9063_i2c_remove(struct i2c_client *i2c)
+-{
+-	struct da9063 *da9063 = i2c_get_clientdata(i2c);
+-
+-	da9063_device_exit(da9063);
+-
+-	return 0;
+-}
+-
+ static const struct i2c_device_id da9063_i2c_id[] = {
+ 	{"da9063", PMIC_DA9063},
+ 	{},
+@@ -291,7 +282,6 @@ static struct i2c_driver da9063_i2c_driver = {
+ 		.of_match_table = of_match_ptr(da9063_dt_ids),
+ 	},
+ 	.probe    = da9063_i2c_probe,
+-	.remove   = da9063_i2c_remove,
+ 	.id_table = da9063_i2c_id,
+ };
+ 
+diff --git a/include/linux/mfd/da9063/core.h b/include/linux/mfd/da9063/core.h
+index 9ab7049977aa..8e6684d884e0 100644
+--- a/include/linux/mfd/da9063/core.h
++++ b/include/linux/mfd/da9063/core.h
+@@ -94,6 +94,4 @@ struct da9063 {
+ int da9063_device_init(struct da9063 *da9063, unsigned int irq);
+ int da9063_irq_init(struct da9063 *da9063);
+ 
+-void da9063_device_exit(struct da9063 *da9063);
+-
+ #endif /* __MFD_DA9063_CORE_H__ */
 -- 
-2.11.0
+2.16.2
