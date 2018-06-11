@@ -1,142 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:58304 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751534AbeFELei (ORCPT
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:45074 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932512AbeFKKNx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Jun 2018 07:34:38 -0400
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Frank Rowand <frank.rowand@sony.com>,
-        Carlo Caione <carlo@endlessm.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 2/3] arm: shmobile: Add the R9A06G032 SMP enabler driver
-Date: Tue,  5 Jun 2018 12:28:47 +0100
-Message-Id: <1528198148-23308-3-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1528198148-23308-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1528198148-23308-1-git-send-email-michel.pollet@bp.renesas.com>
+        Mon, 11 Jun 2018 06:13:53 -0400
+MIME-Version: 1.0
+References: <1528267385-19017-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1528267385-19017-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1528267385-19017-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 11 Jun 2018 12:13:42 +0200
+Message-ID: <CAMuHMdVnhtRtdJkKVF2gwmK5njpPQPvT8x1hQmopS1gMHCX7aw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a77990: Add USB2.0 pins, groups
+ and functions
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas R9A06G032 second CA7 is parked in a ROM pen at boot time, it
-requires a special enable method to get it started.
+On Wed, Jun 6, 2018 at 8:44 AM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds USB0_{PWEN,OVC}_{A,B} and USB0_ID pins, groups and
+> functions to the R8A77990 SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
----
- arch/arm/mach-shmobile/Makefile        |  1 +
- arch/arm/mach-shmobile/smp-r9a06g032.c | 79 ++++++++++++++++++++++++++++++++++
- 2 files changed, 80 insertions(+)
- create mode 100644 arch/arm/mach-shmobile/smp-r9a06g032.c
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.19.
 
-diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
-index 1939f52..d7fc98f 100644
---- a/arch/arm/mach-shmobile/Makefile
-+++ b/arch/arm/mach-shmobile/Makefile
-@@ -34,6 +34,7 @@ smp-$(CONFIG_ARCH_SH73A0)	+= smp-sh73a0.o headsmp-scu.o platsmp-scu.o
- smp-$(CONFIG_ARCH_R8A7779)	+= smp-r8a7779.o headsmp-scu.o platsmp-scu.o
- smp-$(CONFIG_ARCH_R8A7790)	+= smp-r8a7790.o
- smp-$(CONFIG_ARCH_R8A7791)	+= smp-r8a7791.o
-+smp-$(CONFIG_ARCH_R9A06G032)	+= smp-r9a06g032.o
- smp-$(CONFIG_ARCH_EMEV2)	+= smp-emev2.o headsmp-scu.o platsmp-scu.o
- 
- # PM objects
-diff --git a/arch/arm/mach-shmobile/smp-r9a06g032.c b/arch/arm/mach-shmobile/smp-r9a06g032.c
-new file mode 100644
-index 0000000..cd40e6e
---- /dev/null
-+++ b/arch/arm/mach-shmobile/smp-r9a06g032.c
-@@ -0,0 +1,79 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * R9A06G032 Second CA7 enabler.
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
-+ * Derived from action,s500-smp
-+ */
-+
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/smp.h>
-+
-+/*
-+ * The second CPU is parked in ROM at boot time. It requires waking it after
-+ * writing an address into the BOOTADDR register of sysctrl.
-+ *
-+ * So the default value of the "cpu-release-addr" corresponds to BOOTADDR...
-+ *
-+ * *However* the BOOTADDR register is not available when the kernel
-+ * starts in NONSEC mode.
-+ *
-+ * So for NONSEC mode, the bootloader re-parks the second CPU into a pen
-+ * in SRAM, and changes the "cpu-release-addr" of linux's DT to a SRAM address,
-+ * which is not restricted.
-+ */
-+
-+static void __iomem *cpu_bootaddr;
-+
-+static DEFINE_SPINLOCK(cpu_lock);
-+
-+static int r9a06g032_smp_boot_secondary(unsigned int cpu, struct task_struct *idle)
-+{
-+	if (!cpu_bootaddr)
-+		return -ENODEV;
-+
-+	spin_lock(&cpu_lock);
-+
-+	writel(__pa_symbol(secondary_startup), cpu_bootaddr);
-+	arch_send_wakeup_ipi_mask(cpumask_of(cpu));
-+
-+	spin_unlock(&cpu_lock);
-+
-+	return 0;
-+}
-+
-+static void __init r9a06g032_smp_prepare_cpus(unsigned int max_cpus)
-+{
-+	struct device_node *dn;
-+	int ret;
-+	u32 bootaddr;
-+
-+	dn = of_get_cpu_node(1, NULL);
-+	if (!dn) {
-+		pr_err("CPU#1: missing device tree node\n");
-+		return;
-+	}
-+	/*
-+	 * Determine the address from which the CPU is polling.
-+	 * The bootloader *does* change this property
-+	 */
-+	ret = of_property_read_u32(dn, "cpu-release-addr", &bootaddr);
-+	of_node_put(dn);
-+	if (ret) {
-+		pr_err("CPU#1: invalid cpu-release-addr property\n");
-+		return;
-+	}
-+	pr_info("CPU#1: cpu-release-addr %08x\n", bootaddr);
-+
-+	cpu_bootaddr = ioremap(bootaddr, sizeof(bootaddr));
-+}
-+
-+static const struct smp_operations r9a06g032_smp_ops __initconst = {
-+	.smp_prepare_cpus = r9a06g032_smp_prepare_cpus,
-+	.smp_boot_secondary = r9a06g032_smp_boot_secondary,
-+};
-+CPU_METHOD_OF_DECLARE(r9a06g032_smp, "renesas,r9a06g032-smp", &r9a06g032_smp_ops);
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
