@@ -1,12 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:21738 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933318AbeFMGib (ORCPT
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:38668 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932263AbeFKKAv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Jun 2018 02:38:31 -0400
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Mon, 11 Jun 2018 06:00:51 -0400
+MIME-Version: 1.0
+References: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com> <1528187462-47093-3-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1528187462-47093-3-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 11 Jun 2018 12:00:39 +0200
+Message-ID: <CAMuHMdWoE=+sEUtFdPKk4eBGtOn8f7bUPV-HLAvEETuqgVMeVw@mail.gmail.com>
+Subject: Re: [PATCH v8 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Phil Edworthy <phil.edworthy@renesas.com>,
         Michel Pollet <buserror+upstream@gmail.com>,
@@ -19,51 +25,45 @@ CC: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
         <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v8 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl:
- documentation
-Date: Wed, 13 Jun 2018 06:38:25 +0000
-Message-ID: <OSBPR01MB2054D7F35A31A8331B906E05D27E0@OSBPR01MB2054.jpnprd01.prod.outlook.com>
-References: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com>
- <1528187462-47093-3-git-send-email-michel.pollet@bp.renesas.com>
- <CAMuHMdWoE=+sEUtFdPKk4eBGtOn8f7bUPV-HLAvEETuqgVMeVw@mail.gmail.com>
-In-Reply-To: <CAMuHMdWoE=+sEUtFdPKk4eBGtOn8f7bUPV-HLAvEETuqgVMeVw@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIDExIEp1bmUgMjAxOCAxMTowMSwgR2VlcnQgd3JvdGU6DQo+IEhpIE1p
-Y2hlbCwNCj4NCj4gT24gVHVlLCBKdW4gNSwgMjAxOCBhdCAxMDozNiBBTSBNaWNoZWwgUG9sbGV0
-DQo+IDxtaWNoZWwucG9sbGV0QGJwLnJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiBUaGUgUmVuZXNh
-cyBSOUEwNkcwMzIgU1lTQ1RSTCBub2RlIGRlc2NyaXB0aW9uLg0KPiA+DQo+ID4gU2lnbmVkLW9m
-Zi1ieTogTWljaGVsIFBvbGxldCA8bWljaGVsLnBvbGxldEBicC5yZW5lc2FzLmNvbT4NCj4NCj4g
-PiAtLS0gL2Rldi9udWxsDQo+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
-bmdzL2Nsb2NrL3JlbmVzYXMscjlhMDZnMDMyLQ0KPiBzeXNjdHINCj4gPiArKysgbC50eHQNCj4g
-PiBAQCAtMCwwICsxLDMyIEBADQo+ID4gKyogUmVuZXNhcyBSOUEwNkcwMzIgU1lTQ1RSTA0KPiA+
-ICsNCj4gPiArUmVxdWlyZWQgUHJvcGVydGllczoNCj4gPiArDQo+ID4gKyAgLSBjb21wYXRpYmxl
-OiBNdXN0IGJlOg0KPiA+ICsgICAgLSAicmVuZXNhcyxyOWEwNmcwMzItc3lzY3RybCINCj4gPiAr
-ICAtIHJlZzogQmFzZSBhZGRyZXNzIGFuZCBsZW5ndGggb2YgdGhlIFNZU0NUUkwgSU8gYmxvY2su
-DQo+ID4gKyAgLSAjY2xvY2stY2VsbHM6IE11c3QgYmUgMQ0KPg0KPiAocmVwZWF0aW5nIG15c2Vs
-ZikgTm8gY2xvY2tzL2Nsb2NrLW5hbWVzIGZvciB0aGUgZXh0ZXJuYWwgY2xvY2sgaW5wdXRzPw0K
-Pg0KPiAiUlovTjEgaGFzIDMgY2xvY2sgc291cmNlcywgMSByZWZlcmVuY2UgY2xvY2sgaW5wdXRz
-IGZvciBSR01JSSwgYW5kIDINCj4gcmVmZXJlbmNlIGNsb2NrIG91dHB1dHMgZm9yIFJNSUkvTUlJ
-LiINCg0KV2VsbCwgSSdtIHRyeWluZyB0byBrZWVwIHRoZSBiaW5kaW5nIGFzIHNpbXBsZSBhcyBw
-b3NzaWJsZSwgdG8gZG9kZ2UgYW55DQpmdXJ0aGVyIGRpc2N1c3Npb24uIEFkZGluZyB0aGVzZSB3
-aWxsIGJlIHBvc3NpYmxlIGxhdGVyLCBJIGRvbid0IG5lZWQgdGhlbQ0KZm9yIHRoZSBtb21lbnQg
-YW55d2F5Lg0KDQo+DQo+IFRoZSByZXN0IGxvb2tzIGZpbmUgdG8gbWUuDQo+IFRoYW5rcyENCg0K
-RGlkIHlvdSBoYXZlIGEgY2hhbmNlIHRvIHJldmlldyB0aGUgY2xvY2sgZHJpdmVyIHByb3Blcj8g
-SSdtIHBvbmRlcmluZw0Kc2VuZGluZyBhIHY5IHNpbmNlIGl0J3MgYmVlbiBhIHdlZWsgKHdpdGgg
-dmVyeSBtaW5vciBjaGFuZ2VzKSAtLSBidXQgSQ0KZG9uJ3Qgd2FudCB0byBpbnRlcnJ1cHQgaWYg
-eW91IHdlcmUgaW4gdGhlIHByb2Nlc3Mgb2YgcmV2aWV3aW5nLi4uDQoNCkNoZWVycywNCk1pY2hl
-bA0KDQo+DQo+IEdye29ldGplLGVldGluZ31zLA0KPg0KPiAgICAgICAgICAgICAgICAgICAgICAg
-ICBHZWVydA0KPg0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9m
-IExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LQ0KPiBtNjhrLm9yZw0KPg0KPiBJbiBw
-ZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2Vs
-ZiBhIGhhY2tlci4gQnV0DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0
-IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4gICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0KDQoNCg0KUmVuZXNhcyBFbGVj
-dHJvbmljcyBFdXJvcGUgTHRkLCBEdWtlcyBNZWFkb3csIE1pbGxib2FyZCBSb2FkLCBCb3VybmUg
-RW5kLCBCdWNraW5naGFtc2hpcmUsIFNMOCA1RkgsIFVLLiBSZWdpc3RlcmVkIGluIEVuZ2xhbmQg
-JiBXYWxlcyB1bmRlciBSZWdpc3RlcmVkIE5vLiAwNDU4NjcwOS4NCg==
+Hi Michel,
+
+On Tue, Jun 5, 2018 at 10:36 AM Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> The Renesas R9A06G032 SYSCTRL node description.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
+> @@ -0,0 +1,32 @@
+> +* Renesas R9A06G032 SYSCTRL
+> +
+> +Required Properties:
+> +
+> +  - compatible: Must be:
+> +    - "renesas,r9a06g032-sysctrl"
+> +  - reg: Base address and length of the SYSCTRL IO block.
+> +  - #clock-cells: Must be 1
+
+(repeating myself) No clocks/clock-names for the external clock inputs?
+
+"RZ/N1 has 3 clock sources, 1 reference clock inputs for RGMII, and 2
+ reference clock outputs for RMII/MII."
+
+The rest looks fine to me.
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
