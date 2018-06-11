@@ -1,45 +1,247 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:57960 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751108AbeFHLQn (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39625 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933300AbeFKL7H (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Jun 2018 07:16:43 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>
-Subject: [PATCH 1/2] arm64: dts: renesas: r8a77970: Fix VSP registers range
-Date: Fri,  8 Jun 2018 14:16:54 +0300
-Message-Id: <20180608111655.2725-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 11 Jun 2018 07:59:07 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v6 03/14] mfd: da9063: Use regmap_reg_range
+Date: Mon, 11 Jun 2018 13:58:40 +0200
+Message-Id: <20180611115851.1987-3-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
+References: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R8A77970 VSP and FCP nodes have overlapping register ranges, as the
-SoC integrates the FCP devices in the memory range usually used by the
-VSP LUT and CLUT, which are not present. Fix this by shortening the VSP
-registers range to 0x5000.
+Convert the regmap_range tables to use regmap_reg_range() macro.
 
-Fixes: b4f92030d5d3 ("arm64: dts: renesas: r8a77970: add VSPD support")
-Reported-by: Simon Horman <horms+renesas@verge.net.au>
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+V5: New patch
+V6: No change
+---
+ drivers/mfd/da9063-i2c.c | 174 ++++++++++++-----------------------------------
+ 1 file changed, 42 insertions(+), 132 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index 98a2317a16c4..89dc4e343b7c 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -776,7 +776,7 @@
+diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
+index 29456e807ed4..e9797153bc19 100644
+--- a/drivers/mfd/da9063-i2c.c
++++ b/drivers/mfd/da9063-i2c.c
+@@ -29,78 +29,33 @@
+ #include <linux/regulator/of_regulator.h>
  
- 		vspd0: vsp@fea20000 {
- 			compatible = "renesas,vsp2";
--			reg = <0 0xfea20000 0 0x8000>;
-+			reg = <0 0xfea20000 0 0x5000>;
- 			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 623>;
- 			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
+ static const struct regmap_range da9063_ad_readable_ranges[] = {
+-	{
+-		.range_min = DA9063_REG_PAGE_CON,
+-		.range_max = DA9063_AD_REG_SECOND_D,
+-	}, {
+-		.range_min = DA9063_REG_SEQ,
+-		.range_max = DA9063_REG_ID_32_31,
+-	}, {
+-		.range_min = DA9063_REG_SEQ_A,
+-		.range_max = DA9063_REG_AUTO3_LOW,
+-	}, {
+-		.range_min = DA9063_REG_T_OFFSET,
+-		.range_max = DA9063_AD_REG_GP_ID_19,
+-	}, {
+-		.range_min = DA9063_REG_CHIP_ID,
+-		.range_max = DA9063_REG_CHIP_VARIANT,
+-	},
++	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_AD_REG_SECOND_D),
++	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
++	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
++	regmap_reg_range(DA9063_REG_T_OFFSET, DA9063_AD_REG_GP_ID_19),
++	regmap_reg_range(DA9063_REG_CHIP_ID, DA9063_REG_CHIP_VARIANT),
+ };
+ 
+ static const struct regmap_range da9063_ad_writeable_ranges[] = {
+-	{
+-		.range_min = DA9063_REG_PAGE_CON,
+-		.range_max = DA9063_REG_PAGE_CON,
+-	}, {
+-		.range_min = DA9063_REG_FAULT_LOG,
+-		.range_max = DA9063_REG_VSYS_MON,
+-	}, {
+-		.range_min = DA9063_REG_COUNT_S,
+-		.range_max = DA9063_AD_REG_ALARM_Y,
+-	}, {
+-		.range_min = DA9063_REG_SEQ,
+-		.range_max = DA9063_REG_ID_32_31,
+-	}, {
+-		.range_min = DA9063_REG_SEQ_A,
+-		.range_max = DA9063_REG_AUTO3_LOW,
+-	}, {
+-		.range_min = DA9063_REG_CONFIG_I,
+-		.range_max = DA9063_AD_REG_MON_REG_4,
+-	}, {
+-		.range_min = DA9063_AD_REG_GP_ID_0,
+-		.range_max = DA9063_AD_REG_GP_ID_19,
+-	},
++	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_PAGE_CON),
++	regmap_reg_range(DA9063_REG_FAULT_LOG, DA9063_REG_VSYS_MON),
++	regmap_reg_range(DA9063_REG_COUNT_S, DA9063_AD_REG_ALARM_Y),
++	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
++	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
++	regmap_reg_range(DA9063_REG_CONFIG_I, DA9063_AD_REG_MON_REG_4),
++	regmap_reg_range(DA9063_AD_REG_GP_ID_0, DA9063_AD_REG_GP_ID_19),
+ };
+ 
+ static const struct regmap_range da9063_ad_volatile_ranges[] = {
+-	{
+-		.range_min = DA9063_REG_PAGE_CON,
+-		.range_max = DA9063_REG_EVENT_D,
+-	}, {
+-		.range_min = DA9063_REG_CONTROL_A,
+-		.range_max = DA9063_REG_CONTROL_B,
+-	}, {
+-		.range_min = DA9063_REG_CONTROL_E,
+-		.range_max = DA9063_REG_CONTROL_F,
+-	}, {
+-		.range_min = DA9063_REG_BCORE2_CONT,
+-		.range_max = DA9063_REG_LDO11_CONT,
+-	}, {
+-		.range_min = DA9063_REG_DVC_1,
+-		.range_max = DA9063_REG_ADC_MAN,
+-	}, {
+-		.range_min = DA9063_REG_ADC_RES_L,
+-		.range_max = DA9063_AD_REG_SECOND_D,
+-	}, {
+-		.range_min = DA9063_REG_SEQ,
+-		.range_max = DA9063_REG_SEQ,
+-	}, {
+-		.range_min = DA9063_REG_EN_32K,
+-		.range_max = DA9063_REG_EN_32K,
+-	}, {
+-		.range_min = DA9063_AD_REG_MON_REG_5,
+-		.range_max = DA9063_AD_REG_MON_REG_6,
+-	},
++	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_EVENT_D),
++	regmap_reg_range(DA9063_REG_CONTROL_A, DA9063_REG_CONTROL_B),
++	regmap_reg_range(DA9063_REG_CONTROL_E, DA9063_REG_CONTROL_F),
++	regmap_reg_range(DA9063_REG_BCORE2_CONT, DA9063_REG_LDO11_CONT),
++	regmap_reg_range(DA9063_REG_DVC_1, DA9063_REG_ADC_MAN),
++	regmap_reg_range(DA9063_REG_ADC_RES_L, DA9063_AD_REG_SECOND_D),
++	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_SEQ),
++	regmap_reg_range(DA9063_REG_EN_32K, DA9063_REG_EN_32K),
++	regmap_reg_range(DA9063_AD_REG_MON_REG_5, DA9063_AD_REG_MON_REG_6),
+ };
+ 
+ static const struct regmap_access_table da9063_ad_readable_table = {
+@@ -119,78 +74,33 @@ static const struct regmap_access_table da9063_ad_volatile_table = {
+ };
+ 
+ static const struct regmap_range da9063_bb_readable_ranges[] = {
+-	{
+-		.range_min = DA9063_REG_PAGE_CON,
+-		.range_max = DA9063_BB_REG_SECOND_D,
+-	}, {
+-		.range_min = DA9063_REG_SEQ,
+-		.range_max = DA9063_REG_ID_32_31,
+-	}, {
+-		.range_min = DA9063_REG_SEQ_A,
+-		.range_max = DA9063_REG_AUTO3_LOW,
+-	}, {
+-		.range_min = DA9063_REG_T_OFFSET,
+-		.range_max = DA9063_BB_REG_GP_ID_19,
+-	}, {
+-		.range_min = DA9063_REG_CHIP_ID,
+-		.range_max = DA9063_REG_CHIP_VARIANT,
+-	},
++	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_BB_REG_SECOND_D),
++	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
++	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
++	regmap_reg_range(DA9063_REG_T_OFFSET, DA9063_BB_REG_GP_ID_19),
++	regmap_reg_range(DA9063_REG_CHIP_ID, DA9063_REG_CHIP_VARIANT),
+ };
+ 
+ static const struct regmap_range da9063_bb_writeable_ranges[] = {
+-	{
+-		.range_min = DA9063_REG_PAGE_CON,
+-		.range_max = DA9063_REG_PAGE_CON,
+-	}, {
+-		.range_min = DA9063_REG_FAULT_LOG,
+-		.range_max = DA9063_REG_VSYS_MON,
+-	}, {
+-		.range_min = DA9063_REG_COUNT_S,
+-		.range_max = DA9063_BB_REG_ALARM_Y,
+-	}, {
+-		.range_min = DA9063_REG_SEQ,
+-		.range_max = DA9063_REG_ID_32_31,
+-	}, {
+-		.range_min = DA9063_REG_SEQ_A,
+-		.range_max = DA9063_REG_AUTO3_LOW,
+-	}, {
+-		.range_min = DA9063_REG_CONFIG_I,
+-		.range_max = DA9063_BB_REG_MON_REG_4,
+-	}, {
+-		.range_min = DA9063_BB_REG_GP_ID_0,
+-		.range_max = DA9063_BB_REG_GP_ID_19,
+-	},
++	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_PAGE_CON),
++	regmap_reg_range(DA9063_REG_FAULT_LOG, DA9063_REG_VSYS_MON),
++	regmap_reg_range(DA9063_REG_COUNT_S, DA9063_BB_REG_ALARM_Y),
++	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
++	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
++	regmap_reg_range(DA9063_REG_CONFIG_I, DA9063_BB_REG_MON_REG_4),
++	regmap_reg_range(DA9063_BB_REG_GP_ID_0, DA9063_BB_REG_GP_ID_19),
+ };
+ 
+ static const struct regmap_range da9063_bb_volatile_ranges[] = {
+-	{
+-		.range_min = DA9063_REG_PAGE_CON,
+-		.range_max = DA9063_REG_EVENT_D,
+-	}, {
+-		.range_min = DA9063_REG_CONTROL_A,
+-		.range_max = DA9063_REG_CONTROL_B,
+-	}, {
+-		.range_min = DA9063_REG_CONTROL_E,
+-		.range_max = DA9063_REG_CONTROL_F,
+-	}, {
+-		.range_min = DA9063_REG_BCORE2_CONT,
+-		.range_max = DA9063_REG_LDO11_CONT,
+-	}, {
+-		.range_min = DA9063_REG_DVC_1,
+-		.range_max = DA9063_REG_ADC_MAN,
+-	}, {
+-		.range_min = DA9063_REG_ADC_RES_L,
+-		.range_max = DA9063_BB_REG_SECOND_D,
+-	}, {
+-		.range_min = DA9063_REG_SEQ,
+-		.range_max = DA9063_REG_SEQ,
+-	}, {
+-		.range_min = DA9063_REG_EN_32K,
+-		.range_max = DA9063_REG_EN_32K,
+-	}, {
+-		.range_min = DA9063_BB_REG_MON_REG_5,
+-		.range_max = DA9063_BB_REG_MON_REG_6,
+-	},
++	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_EVENT_D),
++	regmap_reg_range(DA9063_REG_CONTROL_A, DA9063_REG_CONTROL_B),
++	regmap_reg_range(DA9063_REG_CONTROL_E, DA9063_REG_CONTROL_F),
++	regmap_reg_range(DA9063_REG_BCORE2_CONT, DA9063_REG_LDO11_CONT),
++	regmap_reg_range(DA9063_REG_DVC_1, DA9063_REG_ADC_MAN),
++	regmap_reg_range(DA9063_REG_ADC_RES_L, DA9063_BB_REG_SECOND_D),
++	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_SEQ),
++	regmap_reg_range(DA9063_REG_EN_32K, DA9063_REG_EN_32K),
++	regmap_reg_range(DA9063_BB_REG_MON_REG_5, DA9063_BB_REG_MON_REG_6),
+ };
+ 
+ static const struct regmap_access_table da9063_bb_readable_table = {
 -- 
-Regards,
-
-Laurent Pinchart
+2.16.2
