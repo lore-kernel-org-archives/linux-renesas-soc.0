@@ -1,177 +1,151 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49243 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754577AbeFRM6B (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:50826 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933310AbeFKL7T (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Jun 2018 08:58:01 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v5 2/3] mmc: tmio: add eMMC HS400 mode support
-Date: Mon, 18 Jun 2018 14:57:50 +0200
-Message-Id: <20180618125751.27615-3-horms+renesas@verge.net.au>
-In-Reply-To: <20180618125751.27615-1-horms+renesas@verge.net.au>
-References: <20180618125751.27615-1-horms+renesas@verge.net.au>
+        Mon, 11 Jun 2018 07:59:19 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v6 11/14] mfd: da9063: Add custom IRQ map for DA9063L
+Date: Mon, 11 Jun 2018 13:58:48 +0200
+Message-Id: <20180611115851.1987-11-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
+References: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+The DA9063L does not have an RTC. Add custom IRQ map for DA9063L to
+ignore the Alarm and Tick IRQs from the PMIC.
 
-This patch adds processing for selecting HS400 mode.
-
-Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
-v5 [Simon Horman]
-* Make new local functions static
-* Use new names of new HS400 host ops
-* Allow differentiation between 4tap and 8tap support
-
-v4 [Simon Horman]
-* Make use of proposed new HS400 host ops
-
-v3 [Simon Horman]
-* Consolidate disable_scc and reset_hs400_mode into reset_hs400_tuning
-  callback
-
-v2 [Simon Horman]
-* Updated to new version of BSP patch from BSP v3.6.0
-* Dropped 4 and 8 tap differentiation as all SoCs currently supported
-  by the driver in upstream use 4 taps for HS400.
-* Minor cleanup
-
-v1 [Simon Horman]
-* Combined patches by Ai Kyuse and Masaharu Hayakawa.
-* Rebase
-* Minor clean-up
-
-v0 [Masaharu Hayakawa]
+V3: New patch
+V4: - Formatting fixes
+    - Drop extra newline in da9063l_irq_chip
+    - Drop mention of the buggy datasheet in commit message
+V5: Rebase on top of new 01 and 02 patches
+V6: No change
 ---
- drivers/mmc/host/tmio_mmc.h      |  6 +++++
- drivers/mmc/host/tmio_mmc_core.c | 47 ++++++++++++++++++++++++++++++++++++++--
- include/linux/mfd/tmio.h         |  3 +++
- 3 files changed, 54 insertions(+), 2 deletions(-)
+ drivers/mfd/da9063-irq.c | 81 ++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 79 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index e7d651352dc9..5d141f79e175 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -46,6 +46,7 @@
- #define CTL_DMA_ENABLE 0xd8
- #define CTL_RESET_SD 0xe0
- #define CTL_VERSION 0xe2
-+#define CTL_SDIF_MODE 0xe6
- #define CTL_SDIO_REGS 0x100
- #define CTL_CLK_AND_WAIT_CTL 0x138
- #define CTL_RESET_SDIO 0x1e0
-@@ -191,6 +192,11 @@ struct tmio_mmc_host {
- 	/* Tuning values: 1 for success, 0 for failure */
- 	DECLARE_BITMAP(taps, BITS_PER_BYTE * sizeof(long));
- 	unsigned int tap_num;
-+	unsigned long tap_set;
-+
-+	void (*prepare_hs400_tuning)(struct tmio_mmc_host *host);
-+	void (*hs400_downgrade)(struct tmio_mmc_host *host);
-+	void (*hs400_complete)(struct tmio_mmc_host *host);
- 
- 	const struct tmio_mmc_dma_ops *dma_ops;
+diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
+index 579947f83486..ecc0c8ce6c58 100644
+--- a/drivers/mfd/da9063-irq.c
++++ b/drivers/mfd/da9063-irq.c
+@@ -102,8 +102,81 @@ static const struct regmap_irq_chip da9063_irq_chip = {
+ 	.init_ack_masked = true,
  };
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 308029930304..416f9e078fda 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -199,6 +199,14 @@ static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
- 		tmio_mmc_clk_stop(host);
- 		return;
+ 
++static const struct regmap_irq da9063l_irqs[] = {
++	/* DA9063 event A register */
++	REGMAP_IRQ_REG(DA9063_IRQ_ONKEY,
++		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_ONKEY),
++	REGMAP_IRQ_REG(DA9063_IRQ_ADC_RDY,
++		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_ADC_RDY),
++	REGMAP_IRQ_REG(DA9063_IRQ_SEQ_RDY,
++		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_SEQ_RDY),
++	/* DA9063 event B register */
++	REGMAP_IRQ_REG(DA9063_IRQ_WAKE,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_WAKE),
++	REGMAP_IRQ_REG(DA9063_IRQ_TEMP,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_TEMP),
++	REGMAP_IRQ_REG(DA9063_IRQ_COMP_1V2,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_COMP_1V2),
++	REGMAP_IRQ_REG(DA9063_IRQ_LDO_LIM,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_LDO_LIM),
++	REGMAP_IRQ_REG(DA9063_IRQ_REG_UVOV,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_UVOV),
++	REGMAP_IRQ_REG(DA9063_IRQ_DVC_RDY,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_DVC_RDY),
++	REGMAP_IRQ_REG(DA9063_IRQ_VDD_MON,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_MON),
++	REGMAP_IRQ_REG(DA9063_IRQ_WARN,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_WARN),
++	/* DA9063 event C register */
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI0,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI0),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI1,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI1),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI2,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI2),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI3,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI3),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI4,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI4),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI5,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI5),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI6,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI6),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI7,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI7),
++	/* DA9063 event D register */
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI8,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI8),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI9,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI9),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI10,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI10),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI11,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI11),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI12,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI12),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI13,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI13),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI14,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI14),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI15,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI15),
++};
++
++static const struct regmap_irq_chip da9063l_irq_chip = {
++	.name = "da9063l-irq",
++	.irqs = da9063l_irqs,
++	.num_irqs = ARRAY_SIZE(da9063l_irqs),
++	.num_regs = 4,
++	.status_base = DA9063_REG_EVENT_A,
++	.mask_base = DA9063_REG_IRQ_MASK_A,
++	.ack_base = DA9063_REG_EVENT_A,
++	.init_ack_masked = true,
++};
++
+ int da9063_irq_init(struct da9063 *da9063)
+ {
++	const struct regmap_irq_chip *irq_chip;
+ 	int ret;
+ 
+ 	if (!da9063->chip_irq) {
+@@ -111,11 +184,15 @@ int da9063_irq_init(struct da9063 *da9063)
+ 		return -EINVAL;
  	}
-+	/*
-+	 * Both HS400 and HS200/SD104 set 200MHz, but some devices need to
-+	 * set 400MHz to distinguish the CPG settings in HS400.
-+	 */
-+	if (host->mmc->ios.timing == MMC_TIMING_MMC_HS400 &&
-+	    host->pdata->flags & TMIO_MMC_HAVE_4TAP_HS400 &&
-+	    new_clock == 200000000)
-+		new_clock = 400000000;
  
- 	if (host->clk_update)
- 		clock = host->clk_update(host, new_clock) / 512;
-@@ -209,8 +217,13 @@ static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
- 		clock <<= 1;
- 
- 	/* 1/1 clock is option */
--	if ((host->pdata->flags & TMIO_MMC_CLK_ACTUAL) && ((clk >> 22) & 0x1))
--		clk |= 0xff;
-+	if ((host->pdata->flags & TMIO_MMC_CLK_ACTUAL) &&
-+	    ((clk >> 22) & 0x1)) {
-+		if (!(host->mmc->ios.timing == MMC_TIMING_MMC_HS400))
-+			clk |= 0xff;
-+		else
-+			clk &= ~0xff;
-+	}
- 
- 	if (host->set_clk_div)
- 		host->set_clk_div(host->pdev, (clk >> 22) & 1);
-@@ -1087,6 +1100,33 @@ static int tmio_multi_io_quirk(struct mmc_card *card,
- 	return blk_size;
- }
- 
-+static int tmio_mmc_prepare_hs400_tuning(struct mmc_host *mmc,
-+					 struct mmc_ios *ios)
-+{
-+	struct tmio_mmc_host *host = mmc_priv(mmc);
++	if (da9063->type == PMIC_TYPE_DA9063)
++		irq_chip = &da9063_irq_chip;
++	else
++		irq_chip = &da9063l_irq_chip;
 +
-+	if (host->prepare_hs400_tuning)
-+		host->prepare_hs400_tuning(host);
-+
-+	return 0;
-+}
-+
-+static void tmio_mmc_hs400_downgrade(struct mmc_host *mmc)
-+{
-+	struct tmio_mmc_host *host = mmc_priv(mmc);
-+
-+	if (host->hs400_downgrade)
-+		host->hs400_downgrade(host);
-+}
-+
-+static void tmio_mmc_hs400_complete(struct mmc_host *mmc)
-+{
-+	struct tmio_mmc_host *host = mmc_priv(mmc);
-+
-+	if (host->hs400_complete)
-+		host->hs400_complete(host);
-+}
-+
- static const struct mmc_host_ops tmio_mmc_ops = {
- 	.request	= tmio_mmc_request,
- 	.set_ios	= tmio_mmc_set_ios,
-@@ -1096,6 +1136,9 @@ static const struct mmc_host_ops tmio_mmc_ops = {
- 	.multi_io_quirk	= tmio_multi_io_quirk,
- 	.hw_reset	= tmio_mmc_hw_reset,
- 	.execute_tuning = tmio_mmc_execute_tuning,
-+	.prepare_hs400_tuning = tmio_mmc_prepare_hs400_tuning,
-+	.hs400_downgrade = tmio_mmc_hs400_downgrade,
-+	.hs400_complete	= tmio_mmc_hs400_complete,
- };
- 
- static int tmio_mmc_init_ocr(struct tmio_mmc_host *host)
-diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
-index 91f92215ca74..77866214ab51 100644
---- a/include/linux/mfd/tmio.h
-+++ b/include/linux/mfd/tmio.h
-@@ -90,6 +90,9 @@
- /* Some controllers have a CBSY bit */
- #define TMIO_MMC_HAVE_CBSY		BIT(11)
- 
-+/* Some controllers that support HS400 use use 4 taps while others use 8. */
-+#define TMIO_MMC_HAVE_4TAP_HS400	BIT(13)
-+
- int tmio_core_mmc_enable(void __iomem *cnf, int shift, unsigned long base);
- int tmio_core_mmc_resume(void __iomem *cnf, int shift, unsigned long base);
- void tmio_core_mmc_pwr(void __iomem *cnf, int shift, int state);
+ 	ret = devm_regmap_add_irq_chip(da9063->dev, da9063->regmap,
+ 			da9063->chip_irq,
+ 			IRQF_TRIGGER_LOW | IRQF_ONESHOT | IRQF_SHARED,
+-			da9063->irq_base, &da9063_irq_chip,
+-			&da9063->regmap_irq);
++			da9063->irq_base, irq_chip, &da9063->regmap_irq);
+ 	if (ret) {
+ 		dev_err(da9063->dev, "Failed to reguest IRQ %d: %d\n",
+ 				da9063->chip_irq, ret);
 -- 
-2.11.0
+2.16.2
