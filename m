@@ -1,132 +1,138 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:54506 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932273AbeFKOg7 (ORCPT
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:46571 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932933AbeFKLlY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:36:59 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Mon, 11 Jun 2018 07:41:24 -0400
+Received: by mail-vk0-f65.google.com with SMTP id b134-v6so12037604vke.13
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Jun 2018 04:41:24 -0700 (PDT)
+MIME-Version: 1.0
+References: <1528474785-11778-1-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdX=Ys8aq0ehqu9gZchC9bKtgzF9-Tg6-DoTrzMX68SwTg@mail.gmail.com> <OSBPR01MB2103F004406C18F6630CD91BB8780@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSBPR01MB2103F004406C18F6630CD91BB8780@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 11 Jun 2018 13:41:12 +0200
+Message-ID: <CAMuHMdUHQ=AHPctY=b7sa0TVUwohP0-d4E2wSMXJ55EQfrLbYA@mail.gmail.com>
+Subject: Re: [PATCH] clocksource/drivers/sh_cmt: wait for CMCNT on init
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] clocksource/drivers/sh_cmt: wait for CMCNT on init
-Date: Mon, 11 Jun 2018 14:36:53 +0000
-Message-ID: <OSBPR01MB21036654864AE07375A91023B8780@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <1528474785-11778-1-git-send-email-biju.das@bp.renesas.com>
- <CAMuHMdX=Ys8aq0ehqu9gZchC9bKtgzF9-Tg6-DoTrzMX68SwTg@mail.gmail.com>
- <OSBPR01MB2103F004406C18F6630CD91BB8780@OSBPR01MB2103.jpnprd01.prod.outlook.com>
- <CAMuHMdUHQ=AHPctY=b7sa0TVUwohP0-d4E2wSMXJ55EQfrLbYA@mail.gmail.com>
-In-Reply-To: <CAMuHMdUHQ=AHPctY=b7sa0TVUwohP0-d4E2wSMXJ55EQfrLbYA@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBHZWVy
-dCBVeXR0ZXJob2V2ZW4gW21haWx0bzpnZWVydEBsaW51eC1tNjhrLm9yZ10NCj4gU2VudDogMTEg
-SnVuZSAyMDE4IDEyOjQxDQo+IFRvOiBCaWp1IERhcyA8YmlqdS5kYXNAYnAucmVuZXNhcy5jb20+
-DQo+IENjOiBEYW5pZWwgTGV6Y2FubyA8ZGFuaWVsLmxlemNhbm9AbGluYXJvLm9yZz47IFRob21h
-cyBHbGVpeG5lcg0KPiA8dGdseEBsaW51dHJvbml4LmRlPjsgU2ltb24gSG9ybWFuIDxob3Jtc0B2
-ZXJnZS5uZXQuYXU+OyBHZWVydA0KPiBVeXR0ZXJob2V2ZW4gPGdlZXJ0K3JlbmVzYXNAZ2xpZGVy
-LmJlPjsgQ2hyaXMgUGF0ZXJzb24NCj4gPENocmlzLlBhdGVyc29uMkByZW5lc2FzLmNvbT47IEZh
-YnJpemlvIENhc3Rybw0KPiA8ZmFicml6aW8uY2FzdHJvQGJwLnJlbmVzYXMuY29tPjsgTGludXgt
-UmVuZXNhcyA8bGludXgtcmVuZXNhcy0NCj4gc29jQHZnZXIua2VybmVsLm9yZz4NCj4gU3ViamVj
-dDogUmU6IFtQQVRDSF0gY2xvY2tzb3VyY2UvZHJpdmVycy9zaF9jbXQ6IHdhaXQgZm9yIENNQ05U
-IG9uIGluaXQNCj4NCj4gSGkgQmlqdSwNCj4NCj4gT24gTW9uLCBKdW4gMTEsIDIwMTggYXQgMToy
-MSBQTSBCaWp1IERhcyA8YmlqdS5kYXNAYnAucmVuZXNhcy5jb20+IHdyb3RlOg0KPiA+ID4gU3Vi
-amVjdDogUmU6IFtQQVRDSF0gY2xvY2tzb3VyY2UvZHJpdmVycy9zaF9jbXQ6IHdhaXQgZm9yIENN
-Q05UIG9uDQo+ID4gPiBpbml0IE9uIEZyaSwgSnVuIDgsIDIwMTggYXQgNjoyNCBQTSBCaWp1IERh
-cyA8YmlqdS5kYXNAYnAucmVuZXNhcy5jb20+DQo+IHdyb3RlOg0KPiA+ID4gPiBBcyBwZXIgc2Vj
-dGlvbiA1N0EuMy41LzY5QS4zLjUvNzkuQS4zLjUgb2YgcnovZy9yLWNhciBnZW4yLzMNCj4gPiA+
-ID4gaGFyZHdhcmUgbWFudWFsLGl0IGlzIG1lbnRpb25lZCB0aGF0IHdlIG5lZWQgdG8gcHJvdmlk
-ZSAyIGN5Y2xlcw0KPiA+ID4gPiBpbiBjb3VudGVyIGlucHV0IGNsb2NrIChSQ0xLKSBmb3IgcmVm
-bGVjdGluZyB3cml0dGVuIGRhdGEgdG8gY291bnRlcg0KPiBiZWhhdmlvdXIuDQo+ID4gPiA+IEFk
-ZGluZyBzdWZmaWNpZW50IHdhaXQgdG8gbGV0IHRoZSBDTUNOVCByZWdpc3RlciB2YWx1ZSBzZXR0
-bGUNCj4gPiA+ID4gYmVmb3JlIHN0YXJ0aW5nIHRoZSB0aW1lciBjaGFubmVsLg0KPiA+ID4NCj4g
-PiA+IFJDTEsgdXN1YWxseSBydW5zIGF0IGNhLiAzMiBrSHosIHNvIDMywrVzIHNob3VsZCBiZSBz
-dWZmaWNpZW50IG9uDQo+ID4gPiBSLUNhcg0KPiA+ID4gR2VuMi8zIGFuZCBSWi9HMS4NCj4gPiA+
-IFItTW9iaWxlIEExIGlzIHRoZSBleGNlcHRpb246IFJDTEsgcnVucyBhdCAyMyBrSHosIHNvIHlv
-dSBuZWVkIDQzwrVzDQo+ID4gPiB0byBiZSBzYWZlLg0KPiA+ID4NCj4gPiA+ID4gSXQgZml4ZXMg
-dGhlIGVycm9yICJzaF9jbXQgZmZjYTAwMDAudGltZXI6IGNoMTogY2Fubm90IGNsZWFyIENNQ05U
-Ig0KPiA+ID4gPg0KPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBCaWp1IERhcyA8YmlqdS5kYXNAYnAu
-cmVuZXNhcy5jb20+DQo+ID4gPiA+IFJldmlld2VkLWJ5OiBDaHJpcyBQYXRlcnNvbiA8Y2hyaXMu
-cGF0ZXJzb24yQHJlbmVzYXMuY29tPg0KPiA+ID4gPiAtLS0NCj4gPiA+ID4gSGVsbG8sDQo+ID4g
-PiA+DQo+ID4gPiA+IER1cmluZyBjbXQgdGVzdGluZywgdGhlIHRvb2wNCj4gPiA+ID4gKHRvb2xz
-L3Rlc3Rpbmcvc2VsZnRlc3RzL3RpbWVycy9jbG9ja3NvdXJjZS1zd2l0Y2guYykNCj4gPiA+ID4g
-aXMgY29tcGxhaW5pbmcgYWJvdXQgdGhlIGVycm9yICJzaF9jbXQgZmZjYTAwMDAudGltZXI6IGNo
-MTogY2Fubm90DQo+ID4gPiA+IGNsZWFyDQo+ID4gPiBDTUNOVCIuDQo+ID4gPiA+IFRoZSBhYm92
-ZSBwYXRjaCBmaXhlcyB0aGlzIGlzc3VlIGlzIGJ5IGFkZGluZyBzdWZmaWNpZW50IHdhaXQgdG8N
-Cj4gPiA+ID4gbGV0IHRoZSBDTUNOVCByZWdpc3RlciB2YWx1ZSBzZXR0bGUgYmVmb3JlIHN0YXJ0
-aW5nIHRoZSB0aW1lciBjaGFubmVsLg0KPiA+ID4gPg0KPiA+ID4gPiBUaGlzIGlzc3VlIGlzIHJl
-cHJvZHVjZWQgb24gS29lbHNjaC9SWi9HMVtNRV0gYmFzZWQgaXdhdmUgYm9hcmRzDQo+ID4gPiA+
-IGV0Yy4uLiwgYXMgSSBhc3N1bWUgdGhlIHNhbWUgaXNzdWUgc2hvdWxkIGJlIHByZXNlbnQgb24g
-bGFnZXIgZXRjLiBhcw0KPiB3ZWxsPw0KPiA+ID4NCj4gPiA+ID4gLS0tIGEvZHJpdmVycy9jbG9j
-a3NvdXJjZS9zaF9jbXQuYw0KPiA+ID4gPiArKysgYi9kcml2ZXJzL2Nsb2Nrc291cmNlL3NoX2Nt
-dC5jDQo+ID4gPiA+IEBAIC0zMjgsNyArMzI4LDcgQEAgc3RhdGljIHZvaWQgc2hfY210X3N0YXJ0
-X3N0b3BfY2goc3RydWN0DQo+ID4gPiA+IHNoX2NtdF9jaGFubmVsICpjaCwgaW50IHN0YXJ0KQ0K
-PiA+ID4gPg0KPiA+ID4gPiAgc3RhdGljIGludCBzaF9jbXRfZW5hYmxlKHN0cnVjdCBzaF9jbXRf
-Y2hhbm5lbCAqY2gpICB7DQo+ID4gPiA+IC0gICAgICAgaW50IGssIHJldDsNCj4gPiA+ID4gKyAg
-ICAgICBpbnQgaiwgaywgcmV0Ow0KPiA+ID4gPg0KPiA+ID4gPiAgICAgICAgIHBtX3J1bnRpbWVf
-Z2V0X3N5bmMoJmNoLT5jbXQtPnBkZXYtPmRldik7DQo+ID4gPiA+ICAgICAgICAgZGV2X3BtX3N5
-c2NvcmVfZGV2aWNlKCZjaC0+Y210LT5wZGV2LT5kZXYsIHRydWUpOyBAQA0KPiA+ID4gPiAtMzY4
-LDExICszNjgsMTcgQEAgc3RhdGljIGludCBzaF9jbXRfZW5hYmxlKHN0cnVjdCBzaF9jbXRfY2hh
-bm5lbA0KPiA+ID4gKmNoKQ0KPiA+ID4gPiAgICAgICAgICAqIFdoaWxlIGF0IGl0LCB3ZSdyZSBz
-dXBwb3NlZCB0byBjbGVhciBvdXQgdGhlIENNQ05UIGFzIG9mIHRoaXMNCj4gPiA+ID4gICAgICAg
-ICAgKiBtb21lbnQsIHNvIG1ha2Ugc3VyZSBpdCdzIHByb2Nlc3NlZCBwcm9wZXJseSBoZXJlLiAg
-VGhpcyB3aWxsDQo+ID4gPiA+ICAgICAgICAgICogdGFrZSBSQ0xLeDIgYXQgbWF4aW11bS4NCj4g
-PiA+ID4gKyAgICAgICAgKg0KPiA+ID4gPiArICAgICAgICAqIFNpbWlsYXIgcmVnaXN0ZXIgYWNj
-ZXNzIHVzYWdlIGZvciBDTUNOVCBpcyBtZW50aW9uZWQgaW4gUi1DYXINCj4gPiA+ID4gKyAgICAg
-ICAgKiBHZW5bMi8zXS9SWi9HMSB1c2VyJ3MgbWFudWFsLCBSQ0xLeDIgZm9yIGNtdDAgYW5kIFJD
-TEt4MiBvcg0KPiA+ID4gPiArICAgICAgICAqIENQz5V4MiAoQ1BFWM+VeDIpKSBmb3IgY210MS4N
-Cj4gPiA+ID4gICAgICAgICAgKi8NCj4gPiA+ID4gLSAgICAgICBmb3IgKGsgPSAwOyBrIDwgMTAw
-OyBrKyspIHsNCj4gPiA+ID4gLSAgICAgICAgICAgICAgIGlmICghc2hfY210X3JlYWRfY21jbnQo
-Y2gpKQ0KPiA+ID4gPiAtICAgICAgICAgICAgICAgICAgICAgICBicmVhazsNCj4gPiA+ID4gLSAg
-ICAgICAgICAgICAgIHVkZWxheSgxKTsNCj4gPiA+DQo+ID4gPiAxMDAgKiAxwrVzID0gMTAwwrVz
-LCBzbyB0aGUgb3JpZ2luYWwgY29kZSBzaG91bGQgYmUgc3VmZmljaWVudD8NCj4gPg0KPiA+IEZy
-b20gdGhlIHRlc3QgcmVzdWx0cywgIHRoZSBvcmlnaW5hbCBjb2RlIGlzIG5vdCBzdWZmaWNpZW50
-LiBJdCBuZWVkcyAxMzcgwrVzIG9uDQo+IGtvZWxzY2ggcGxhdGZvcm0gdG8gc2V0dGxlIHRoaXMg
-dmFsdWUuDQo+ID4NCj4gPiA+IE9yIHNob3VsZCBpdCB3YWl0IDQywrVzIHVuY29uZGl0aW9uYWxs
-eSwgaS5lLiB3aXRob3V0IGNoZWNraW5nIENNQ05UPw0KPiA+DQo+ID4gWWVzLCBBZGRpbmcgIHdh
-aXQgNDLCtXMgdW5jb25kaXRpb25hbGx5LCBqdXN0IGJlZm9yZSB0aGUgZm9yIGxvb3AgYWxzbyBm
-aXhlcw0KPiB0aGUgaXNzdWUsIHNpbmNlIHdvcnN0IGNhc2Ugd2FpdCBpcyAxMzcgwrVzLg0KPiA+
-IFdoYXQgaXMgeW91ciBzdWdnZXN0aW9uIGhlcmU/DQo+ID4NCj4gPiA+IFRoZSBkYXRhc2hlZXQg
-bWVudGlvbnMgc29tZSBvdGhlciByZWdpc3RlcnMgMiBSQ0xLIGN5Y2xlcywgdG9vLg0KPiA+ID4g
-U2hvdWxkIHRoZXJlIGJlIGEgZml4ZWQgMiBSQ0xLIGRlbGF5IGluIHNoX2NtdF93cml0ZV9jbWNz
-cigpIGFuZA0KPiA+ID4gc2hfY210X3dyaXRlX2NtY29yKCksIHdoaWNoIGFyZSBib3RoIGNhbGxl
-ZCBqdXN0IGJlZm9yZQ0KPiA+ID4gc2hfY210X3dyaXRlX2NtY250KCkNCj4gPiA+IGFib3ZlIChh
-bGwgb3V0IG9mIGRpZmYgY29udGV4dCk/DQo+ID4NCj4gPiBJIGFtIG5vdCBzdXJlIG9uIHRoaXMu
-DQo+ID4NCj4gPiA+ID4gKyAgICAgICBmb3IgKGogPSAwOyBqIDwgMjsgaisrKSB7DQo+ID4gPiA+
-ICsgICAgICAgICAgICAgICBmb3IgKGsgPSAwOyBrIDwgMTAwOyBrKyspIHsNCj4gPiA+ID4gKyAg
-ICAgICAgICAgICAgICAgICAgICAgaWYgKCFzaF9jbXRfcmVhZF9jbWNudChjaCkpDQo+ID4gPiA+
-ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7DQo+ID4gPiA+ICsgICAgICAg
-ICAgICAgICAgICAgICAgIHVkZWxheSgxKTsNCj4gPiA+ID4gKyAgICAgICAgICAgICAgIH0NCj4g
-PiA+DQo+ID4gPiBUaGlzIGlzIG5vdyB0d28gbG9vcHMsIHdpdGggdHdvIGNoZWNrcyBmb3IgQ01D
-TlQsIHdoaWNoIGxvb2tzDQo+ID4gPiBzdHJhbmdlIHRvIG1lLg0KPiA+ID4gRG8geW91IGhhdmUg
-ZmlndXJlcyBmb3IgdGhlIG51bWJlciBvZiBsb29wcyBuZWVkZWQsIGZvciBib3RoIHRoZQ0KPiA+
-ID4gZmlyc3QgKGo9MCkgYW5kIHRoZSAybmQgKGo9MSkgY3ljbGU/DQo+ID4NCj4gPiBGcm9tIHRo
-ZSB0ZXN0IHJlc3VsdHMsIGZpcnN0IGN5Y2xlICBqPTAsIGxvb3AgY291bnQobWF4KT0xMDAgU2Vj
-b25kDQo+ID4gY3ljbGUgIGo9MiwgbG9vcCBjb3VudChtYXgpPSAzNy4NCj4NCj4gMTM3wrVzIH49
-IDMgeCA0MsK1cywgYW5kIHRoZXJlIGFyZSAzIHJlZ2lzdGVyIHdyaXRlcyBhYm92ZS4NCj4gSXMg
-dGhhdCBhIGNvaW5jaWRlbmNlPyA7LSkNCg0KSSB0aGluayBzby4NCg0KPiBEb2VzIGl0IHdvcmsg
-aWYgeW91IGluc2VydCB1ZGVsYXkoNDIpIGFmdGVyIHRoZSByZWdpc3RlciB3cml0ZXMgaW4NCj4g
-c2hfY210X3dyaXRlX2NtY3NyKCksIHNoX2NtdF93cml0ZV9jbWNvcigpLCBhbmQgc2hfY210X3dy
-aXRlX2NtY250KCk/DQoNCnllcywgIEkgY29uZmlybSBpdCB3b3JrZWQgYnkgcHV0dGluZyAgdWRl
-bGF5KDQyKSBhZnRlciB0aGUgcmVnaXN0ZXIgd3JpdGVzIGluDQpzaF9jbXRfd3JpdGVfY21jc3Io
-KSwgc2hfY210X3dyaXRlX2NtY29yKCksIGFuZCBzaF9jbXRfd3JpdGVfY21jbnQoKS4NCg0KSGVy
-ZSAgaXMgdGhlIHJlc3VsdCBhZnRlciAgaW5zZXJ0aW5nIHVkZWxheSAoNDIpIC4NCg0KS29lbHNj
-aCBib2FyZDotICB3aXRoIGEgbWF4IHdhaXQgb2YgKDEwMCs0MikgwrVzICggd2l0aCBtb3JlIHRo
-YW4gMTAwMCBpdGVyYXRpb25zKQ0KUlovRzFNIGJvYXJkOi0gd2l0aCBhIG1heCB2YWx1ZSBvZiAo
-MTAwKzQyKSDCtXMgKCB3aXRoIG1vcmUgdGhhbiAxMDAwIGl0ZXJhdGlvbnMpDQpSWi9HMUUgYm9h
-cmQ6LSAgd2l0aCBhIG1heCB2YWx1ZSBvZiAoODYrNDIpIMK1cyAod2l0aCBtb3JlIHRoYW4gMTAw
-MCBpdGVyYXRpb25zKQ0KDQpMb29rcyBsaWtlIHVkZWxheSg1MCkgIGlzIHRoZSBzYWZlc3QsIGV2
-ZW4gdGhvdWdoIGl0IHdvcmtlZCB3aXRoIHVkZWxheSg0MikuIFdoYXQgZG8geW91IHRoaW5rPw0K
-DQpSZWdhcmRzLA0KQmlqdQ0KDQoNCg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0
-ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9hZCwgQm91cm5lIEVuZCwgQnVja2luZ2hhbXNo
-aXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5kZXIgUmVn
-aXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
+Hi Biju,
+
+On Mon, Jun 11, 2018 at 1:21 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> > Subject: Re: [PATCH] clocksource/drivers/sh_cmt: wait for CMCNT on init
+> > On Fri, Jun 8, 2018 at 6:24 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> > > As per section 57A.3.5/69A.3.5/79.A.3.5 of rz/g/r-car gen2/3 hardware
+> > > manual,it is mentioned that we need to provide 2 cycles in counter
+> > > input clock (RCLK) for reflecting written data to counter behaviour.
+> > > Adding sufficient wait to let the CMCNT register value settle before
+> > > starting the timer channel.
+> >
+> > RCLK usually runs at ca. 32 kHz, so 32µs should be sufficient on R-Car
+> > Gen2/3 and RZ/G1.
+> > R-Mobile A1 is the exception: RCLK runs at 23 kHz, so you need 43µs to be
+> > safe.
+> >
+> > > It fixes the error "sh_cmt ffca0000.timer: ch1: cannot clear CMCNT"
+> > >
+> > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > > Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+> > > ---
+> > > Hello,
+> > >
+> > > During cmt testing, the tool
+> > > (tools/testing/selftests/timers/clocksource-switch.c)
+> > > is complaining about the error "sh_cmt ffca0000.timer: ch1: cannot clear
+> > CMCNT".
+> > > The above patch fixes this issue is by adding sufficient wait to let
+> > > the CMCNT register value settle before starting the timer channel.
+> > >
+> > > This issue is reproduced on Koelsch/RZ/G1[ME] based iwave boards
+> > > etc..., as I assume the same issue should be present on lager etc. as well?
+> >
+> > > --- a/drivers/clocksource/sh_cmt.c
+> > > +++ b/drivers/clocksource/sh_cmt.c
+> > > @@ -328,7 +328,7 @@ static void sh_cmt_start_stop_ch(struct
+> > > sh_cmt_channel *ch, int start)
+> > >
+> > >  static int sh_cmt_enable(struct sh_cmt_channel *ch)  {
+> > > -       int k, ret;
+> > > +       int j, k, ret;
+> > >
+> > >         pm_runtime_get_sync(&ch->cmt->pdev->dev);
+> > >         dev_pm_syscore_device(&ch->cmt->pdev->dev, true);
+> > > @@ -368,11 +368,17 @@ static int sh_cmt_enable(struct sh_cmt_channel
+> > *ch)
+> > >          * While at it, we're supposed to clear out the CMCNT as of this
+> > >          * moment, so make sure it's processed properly here.  This will
+> > >          * take RCLKx2 at maximum.
+> > > +        *
+> > > +        * Similar register access usage for CMCNT is mentioned in R-Car
+> > > +        * Gen[2/3]/RZ/G1 user's manual, RCLKx2 for cmt0 and RCLKx2 or
+> > > +        * CPϕx2 (CPEXϕx2)) for cmt1.
+> > >          */
+> > > -       for (k = 0; k < 100; k++) {
+> > > -               if (!sh_cmt_read_cmcnt(ch))
+> > > -                       break;
+> > > -               udelay(1);
+> >
+> > 100 * 1µs = 100µs, so the original code should be sufficient?
+>
+> From the test results,  the original code is not sufficient. It needs 137 µs on koelsch platform to settle this value.
+>
+> > Or should it wait 42µs unconditionally, i.e. without checking CMCNT?
+>
+> Yes, Adding  wait 42µs unconditionally, just before the for loop also fixes the issue, since worst case wait is 137 µs.
+> What is your suggestion here?
+>
+> > The datasheet mentions some other registers 2 RCLK cycles, too.
+> > Should there be a fixed 2 RCLK delay in sh_cmt_write_cmcsr() and
+> > sh_cmt_write_cmcor(), which are both called just before
+> > sh_cmt_write_cmcnt()
+> > above (all out of diff context)?
+>
+> I am not sure on this.
+>
+> > > +       for (j = 0; j < 2; j++) {
+> > > +               for (k = 0; k < 100; k++) {
+> > > +                       if (!sh_cmt_read_cmcnt(ch))
+> > > +                               break;
+> > > +                       udelay(1);
+> > > +               }
+> >
+> > This is now two loops, with two checks for CMCNT, which looks strange to
+> > me.
+> > Do you have figures for the number of loops needed, for both the first (j=0)
+> > and the 2nd (j=1) cycle?
+>
+> From the test results, first cycle  j=0, loop count(max)=100
+> Second cycle  j=2, loop count(max)= 37.
+
+137µs ~= 3 x 42µs, and there are 3 register writes above.
+Is that a coincidence? ;-)
+
+Does it work if you insert udelay(42) after the register writes in
+sh_cmt_write_cmcsr(), sh_cmt_write_cmcor(), and sh_cmt_write_cmcnt()?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
