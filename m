@@ -1,105 +1,259 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:54180 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752437AbeFERRS (ORCPT
+Received: from mga17.intel.com ([192.55.52.151]:32012 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933405AbeFKOJO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:17:18 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: dts: renesas: r8a77990: Add secondary CA53 CPU core
-Date: Tue,  5 Jun 2018 19:17:13 +0200
-Message-Id: <1528219033-28788-1-git-send-email-geert+renesas@glider.be>
+        Mon, 11 Jun 2018 10:09:14 -0400
+Date: Mon, 11 Jun 2018 17:09:10 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        gregkh@linuxfoundation.org, hdegoede@redhat.com,
+        andy.shevchenko@gmail.com, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v6] usb: gadget: udc: renesas_usb3: Add register of usb
+ role switch
+Message-ID: <20180611140910.GS17155@kuha.fi.intel.com>
+References: <1527747093-1674-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527747093-1674-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the second Cortex-A53 CPU core on the Renesas
-R-Car E3 (r8a77990) SoC, and adjust the interrupt delivery masks for ARM
-Generic Interrupt Controller and Architectured Timer.
+On Thu, May 31, 2018 at 03:11:33PM +0900, Yoshihiro Shimoda wrote:
+> This patch adds role switch support for R-Car SoCs into the USB 3.0
+> peripheral driver. Some R-Car SoCs (e.g. R-Car H3) have USB 3.0
+> dual-role device controller which has the USB 3.0 xHCI host and
+> Renesas USB 3.0 peripheral.
+> 
+> Unfortunately, the mode change register (DRD_CON) contains
+> the USB 3.0 peripheral controller side only. So, this renesas_usb3
+> driver manages the DRD_CON now. However, in peripheral mode, the host
+> should stop. Also the host hardware needs to reinitialize its own
+> registers when the mode changes from peripheral to host mode.
+> Otherwise, the host cannot work correctly (e.g. detect a device
+> as high-speed).
+> 
+> To achieve this reinitialization by a driver, this driver also
+> registers a role switch driver to manage the DRD_CON and get
+> a device pointer of usb 3.0 host from "companion" property of OF.
+> Then, when the usb role is changed, renesas_usb3_role_switch_set()
+> will attach/release the xhci-plat driver to reinitialize the host
+> hardware.
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Based on a patch in the BSP by Takeshi Kihara.
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Note that the PSCI implementation on Ebisu may be a preliminary version
-with some familiar quirks:
-  - SMP bringup works, and both CPUs can be used,
-  - CPU1 can be offlined, but trying to bring it online again crashes
-    the system.
+> ---
+> This patch set is based on Felipe's usb.git / testing/next branch
+> (commit id = 47265c067c0d129f3a0e94bc221293a780af9d78).
+> 
+> Changes from v5 (https://patchwork.kernel.org/patch/10426483/):
+>  - Add a new function "usb3_set_mode_by_role_sw()" instead of reusing
+>    usb3_set_mode() and add _usb3_set_mode().
+>  - Change a coding style of container_of.
+>  - Revise an error message in renesas_usb3_role_switch_set().
+>  - Add "const" for "renesas_usb3_role_switch_desc".
+>  - Simplify a condition check of usb_of_get_companion_dev().
+> 
+> Changes from RFC v4 (https://patchwork.kernel.org/patch/10418265/):
+>  - Use "companion" device tree property simply instead of device_connection
+>    APIs with OF graph.
+>  - Merge patch 2 and 3 to one.
+>  - Revise the commit log (I should had revised this on RFC v4 though).
+> 
+> Changes from RFC v3:
+>  - Rebase latest usb.git / testing/next branch.
+>  - Add graph parse into device_connection_find_match().
+>  - Use workqueue to call _usb3_set_mode() in patch 3.
+>    (I realized renesas_usb3_role_switch_set() cannot run on atomic because
+>     device_attach() might sleep.)
+> 
+> Changes from RFC v2:
+>  - Add registering usb role switch into drivers/usb/gadget/udc/renesas_usb3
+>    because hardware resource (a register) is shared and remove individual
+>    usb role switch driver/dt-bindings for R-Car.
+>  - Remove "usb_role_switch_get_by_graph" API because the renesas_usb3 driver
+>    doesn't need such API now.
+> 
+> Changes from RFC:
+>  - Remove "device-connection-id" and "usb role switch driver" dt-bingings.
+>  - Remove drivers/of code.
+>  - Add a new API for find the connection by using graph on devcon.c and roles.c.
+>  - Use each new API on the rcar usb role switch and renesas_usb3 drivers.
+>  - Update the dtsi file for r8a7795.
+> 
+> 
+>  drivers/usb/gadget/udc/Kconfig        |  1 +
+>  drivers/usb/gadget/udc/renesas_usb3.c | 84 ++++++++++++++++++++++++++++++++++-
+>  2 files changed, 84 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/gadget/udc/Kconfig b/drivers/usb/gadget/udc/Kconfig
+> index b838cae..78823cd 100644
+> --- a/drivers/usb/gadget/udc/Kconfig
+> +++ b/drivers/usb/gadget/udc/Kconfig
+> @@ -193,6 +193,7 @@ config USB_RENESAS_USB3
+>  	tristate 'Renesas USB3.0 Peripheral controller'
+>  	depends on ARCH_RENESAS || COMPILE_TEST
+>  	depends on EXTCON && HAS_DMA
+> +	select USB_ROLE_SWITCH
+>  	help
+>  	   Renesas USB3.0 Peripheral controller is a USB peripheral controller
+>  	   that supports super, high, and full speed USB 3.0 data transfers.
+> diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
+> index 5caf78b..f44a4b1 100644
+> --- a/drivers/usb/gadget/udc/renesas_usb3.c
+> +++ b/drivers/usb/gadget/udc/renesas_usb3.c
+> @@ -23,6 +23,8 @@
+>  #include <linux/uaccess.h>
+>  #include <linux/usb/ch9.h>
+>  #include <linux/usb/gadget.h>
+> +#include <linux/usb/of.h>
+> +#include <linux/usb/role.h>
+>  
+>  /* register definitions */
+>  #define USB3_AXI_INT_STA	0x008
+> @@ -335,6 +337,11 @@ struct renesas_usb3 {
+>  	struct phy *phy;
+>  	struct dentry *dentry;
+>  
+> +	struct usb_role_switch *role_sw;
+> +	struct device *host_dev;
+> +	struct work_struct role_work;
+> +	enum usb_role role;
+> +
+>  	struct renesas_usb3_ep *usb3_ep;
+>  	int num_usb3_eps;
+>  
+> @@ -651,6 +658,14 @@ static void usb3_check_vbus(struct renesas_usb3 *usb3)
+>  	}
+>  }
+>  
+> +static void renesas_usb3_role_work(struct work_struct *work)
+> +{
+> +	struct renesas_usb3 *usb3 =
+> +			container_of(work, struct renesas_usb3, role_work);
+> +
+> +	usb_role_switch_set_role(usb3->role_sw, usb3->role);
+> +}
+> +
+>  static void usb3_set_mode(struct renesas_usb3 *usb3, bool host)
+>  {
+>  	if (host)
+> @@ -659,6 +674,16 @@ static void usb3_set_mode(struct renesas_usb3 *usb3, bool host)
+>  		usb3_set_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
+>  }
+>  
+> +static void usb3_set_mode_by_role_sw(struct renesas_usb3 *usb3, bool host)
+> +{
+> +	if (usb3->role_sw) {
+> +		usb3->role = host ? USB_ROLE_HOST : USB_ROLE_DEVICE;
+> +		schedule_work(&usb3->role_work);
+> +	} else {
+> +		usb3_set_mode(usb3, host);
+> +	}
+> +}
+> +
+>  static void usb3_vbus_out(struct renesas_usb3 *usb3, bool enable)
+>  {
+>  	if (enable)
+> @@ -672,7 +697,7 @@ static void usb3_mode_config(struct renesas_usb3 *usb3, bool host, bool a_dev)
+>  	unsigned long flags;
+>  
+>  	spin_lock_irqsave(&usb3->lock, flags);
+> -	usb3_set_mode(usb3, host);
+> +	usb3_set_mode_by_role_sw(usb3, host);
+>  	usb3_vbus_out(usb3, a_dev);
+>  	/* for A-Peripheral or forced B-device mode */
+>  	if ((!host && a_dev) ||
+> @@ -2302,6 +2327,41 @@ static int renesas_usb3_set_selfpowered(struct usb_gadget *gadget, int is_self)
+>  	.set_selfpowered	= renesas_usb3_set_selfpowered,
+>  };
+>  
+> +static enum usb_role renesas_usb3_role_switch_get(struct device *dev)
+> +{
+> +	struct renesas_usb3 *usb3 = dev_get_drvdata(dev);
+> +	enum usb_role cur_role;
+> +
+> +	pm_runtime_get_sync(dev);
+> +	cur_role = usb3_is_host(usb3) ? USB_ROLE_HOST : USB_ROLE_DEVICE;
+> +	pm_runtime_put(dev);
+> +
+> +	return cur_role;
+> +}
+> +
+> +static int renesas_usb3_role_switch_set(struct device *dev,
+> +					enum usb_role role)
+> +{
+> +	struct renesas_usb3 *usb3 = dev_get_drvdata(dev);
+> +	struct device *host = usb3->host_dev;
+> +	enum usb_role cur_role = renesas_usb3_role_switch_get(dev);
+> +
+> +	pm_runtime_get_sync(dev);
+> +	if (cur_role == USB_ROLE_HOST && role == USB_ROLE_DEVICE) {
+> +		device_release_driver(host);
+> +		usb3_set_mode(usb3, false);
+> +	} else if (cur_role == USB_ROLE_DEVICE && role == USB_ROLE_HOST) {
+> +		/* Must set the mode before device_attach of the host */
+> +		usb3_set_mode(usb3, true);
+> +		/* This device_attach() might sleep */
+> +		if (device_attach(host) < 0)
+> +			dev_err(dev, "device_attach(host) failed\n");
+> +	}
+> +	pm_runtime_put(dev);
+> +
+> +	return 0;
+> +}
+> +
+>  static ssize_t role_store(struct device *dev, struct device_attribute *attr,
+>  			  const char *buf, size_t count)
+>  {
+> @@ -2417,6 +2477,8 @@ static int renesas_usb3_remove(struct platform_device *pdev)
+>  	debugfs_remove_recursive(usb3->dentry);
+>  	device_remove_file(&pdev->dev, &dev_attr_role);
+>  
+> +	usb_role_switch_unregister(usb3->role_sw);
+> +
+>  	usb_del_gadget_udc(&usb3->gadget);
+>  	renesas_usb3_dma_free_prd(usb3, &pdev->dev);
+>  
+> @@ -2573,6 +2635,12 @@ static void renesas_usb3_init_ram(struct renesas_usb3 *usb3, struct device *dev,
+>  	EXTCON_NONE,
+>  };
+>  
+> +static const struct usb_role_switch_desc renesas_usb3_role_switch_desc = {
+> +	.set = renesas_usb3_role_switch_set,
+> +	.get = renesas_usb3_role_switch_get,
+> +	.allow_userspace_control = true,
+> +};
+> +
+>  static int renesas_usb3_probe(struct platform_device *pdev)
+>  {
+>  	struct renesas_usb3 *usb3;
+> @@ -2658,6 +2726,20 @@ static int renesas_usb3_probe(struct platform_device *pdev)
+>  	if (ret < 0)
+>  		goto err_dev_create;
+>  
+> +	INIT_WORK(&usb3->role_work, renesas_usb3_role_work);
+> +	usb3->role_sw = usb_role_switch_register(&pdev->dev,
+> +					&renesas_usb3_role_switch_desc);
+> +	if (!IS_ERR(usb3->role_sw)) {
+> +		usb3->host_dev = usb_of_get_companion_dev(&pdev->dev);
+> +		if (!usb3->host_dev) {
+> +			/* If not found, this driver will not use a role sw */
+> +			usb_role_switch_unregister(usb3->role_sw);
+> +			usb3->role_sw = NULL;
+> +		}
+> +	} else {
+> +		usb3->role_sw = NULL;
+> +	}
+> +
+>  	usb3->workaround_for_vbus = priv->workaround_for_vbus;
+>  
+>  	renesas_usb3_debugfs_init(usb3, &pdev->dev);
 
-I'm confident this will be fixed in future firmware versions, just like
-on H3/Salvator-X.
----
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 27 ++++++++++++++++++---------
- 1 file changed, 18 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index be4f519711a1b029..6d597a1c7636784f 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -17,16 +17,24 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		/* 1 core only at this point */
- 		a53_0: cpu@0 {
- 			compatible = "arm,cortex-a53", "arm,armv8";
--			reg = <0x0>;
-+			reg = <0>;
- 			device_type = "cpu";
- 			power-domains = <&sysc 5>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
- 		};
- 
-+		a53_1: cpu@1 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <1>;
-+			device_type = "cpu";
-+			power-domains = <&sysc 6>;
-+			next-level-cache = <&L2_CA53>;
-+			enable-method = "psci";
-+		};
-+
- 		L2_CA53: cache-controller-0 {
- 			compatible = "cache";
- 			power-domains = <&sysc 21>;
-@@ -44,8 +52,9 @@
- 
- 	pmu_a53 {
- 		compatible = "arm,cortex-a53-pmu";
--		interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
--		interrupt-affinity = <&a53_0>;
-+		interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&a53_0>, <&a53_1>;
- 	};
- 
- 	psci {
-@@ -258,7 +267,7 @@
- 			      <0x0 0xf1040000 0 0x20000>,
- 			      <0x0 0xf1060000 0 0x20000>;
- 			interrupts = <GIC_PPI 9
--					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
-+					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
- 			clocks = <&cpg CPG_MOD 408>;
- 			clock-names = "clk";
- 			power-domains = <&sysc 32>;
-@@ -273,9 +282,9 @@
- 
- 	timer {
- 		compatible = "arm,armv8-timer";
--		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
- 	};
- };
 -- 
-2.7.4
+heikki
