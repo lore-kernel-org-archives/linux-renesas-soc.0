@@ -1,57 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:58143 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755110AbeFNKsg (ORCPT
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:38693 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754038AbeFKPRw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Jun 2018 06:48:36 -0400
+        Mon, 11 Jun 2018 11:17:52 -0400
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
-        yoshihiro.shimoda.uh@renesas.com, joro@8bytes.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [RESEND 0/6] iommu: ipmmu-vmsa: Add more Gen3 SoCs support
-Date: Thu, 14 Jun 2018 12:48:20 +0200
-Message-Id: <1528973306-7962-1-git-send-email-jacopo+renesas@jmondi.org>
+To: mchehab@kernel.org
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 0/2] media: i2c: mt9v111 sensor driver
+Date: Mon, 11 Jun 2018 17:17:31 +0200
+Message-Id: <1528730253-25135-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hello,
-   this series collects patches sent to mailing lists in late 2017 to add
-support for a number of R-Car Gen3 SoCs to the ipmmu-vmsa driver.
+   this is a sensor level driver for Aptina MT9V111.
 
-Part of the series these patches were part of went in through Alex Williamson
-tree and are now included in v4.17.
+The driver supports YUYV_2X8 output formats and VGA,QVGA,QQVGA,CIF and QCIF
+resolution.
 
-These patches have not yet been collected, and need to be rebased on v4.17,
-and this what this series serves for.
+The driver allows control of frame rate through s_frame_interval or
+V4L2_CID_H/VBLANK control. In order to allow manual frame control, the chip
+is initialized with auto-exposure control, auto white balancing and flickering
+control disabled.
 
-The series:
-- Increses the micro-TLB size to 48bits to accomodate newer SoCs
-- Adds support for M3-N, M3-W, V3-M and E3 to ipmmu-vmsa driver
-- Documents M3-N, V3H and E3 device tree bindings
-
-All patches have been acked/reviewed by, if nothing big happens they should
-be ready to be collected.
+Tested VGA, QVGA QQVGA resolutions at 5, 10, 15 and 30 frame per second.
 
 Thanks
    j
 
 Jacopo Mondi (2):
-  dt-bindings: iommu/ipmmu-vmsa: Add R-Car M3-N (R8A77965)
-  iommu/ipmmu-vmsa: Hook up R8A77965 DT matching code
+  dt-bindings: media: i2c: Document MT9V111 bindings
+  media: i2c: Add driver for Aptina MT9V111
 
-Magnus Damm (3):
-  iommu/ipmmu-vmsa: Increase maximum micro-TLBS to 48
-  iommu/ipmmu-vmsa: Hook up r8a7796 DT matching code
-  iommu/ipmmu-vmsa: Document R-Car V3H and E3 IPMMU DT bindings
-
-Simon Horman (1):
-  iommu/ipmmu-vmsa: Hook up r8a779(70|95) DT matching code
-
- .../bindings/iommu/renesas,ipmmu-vmsa.txt          |  3 ++
- drivers/iommu/ipmmu-vmsa.c                         | 38 ++++++++++++++++++----
- 2 files changed, 34 insertions(+), 7 deletions(-)
+ .../bindings/media/i2c/aptina,mt9v111.txt          |   46 +
+ MAINTAINERS                                        |    8 +
+ drivers/media/i2c/Kconfig                          |   12 +
+ drivers/media/i2c/Makefile                         |    1 +
+ drivers/media/i2c/mt9v111.c                        | 1297 ++++++++++++++++++++
+ 5 files changed, 1364 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.txt
+ create mode 100644 drivers/media/i2c/mt9v111.c
 
 --
 2.7.4
