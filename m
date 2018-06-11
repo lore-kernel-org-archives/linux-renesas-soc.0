@@ -1,160 +1,157 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934290AbeFYOEQ (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:52510 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933369AbeFKL7P (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:04:16 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 16/29] arm64: dts: renesas: r8a77980: add I2C support
-Date: Mon, 25 Jun 2018 16:03:11 +0200
-Message-Id: <bc620474c6e283c0e1e60796ed0ac9b04da9890c.1529933747.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
-References: <cover.1529933747.git.horms+renesas@verge.net.au>
+        Mon, 11 Jun 2018 07:59:15 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v6 08/14] mfd: da9063: Replace model with type
+Date: Mon, 11 Jun 2018 13:58:45 +0200
+Message-Id: <20180611115851.1987-8-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
+References: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+The model number stored in the struct da9063 is the same for all
+variants of the da9063 since it is the chip ID, which is always
+the same. Replace that with a separate identifier instead, which
+allows us to discern the DA9063 variants by setting the type
+based on either DT match or otherwise.
 
-Define the generic R8A77980 parts of the I2C[0-5] device nodes.
-
-Based on the original (and large) patch by Vladimir Barinov.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Acked-by: Mark Brown <broonie@kernel.org>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
- arch/arm64/boot/dts/renesas/r8a77980.dtsi | 105 ++++++++++++++++++++++++++++++
- 1 file changed, 105 insertions(+)
+V2: Drop useless cast of id->driver_data
+V3: Fix kernel 0day error , s/dev_model/type/
+V4: No change
+V5: No change
+V6: Zap one more missing da9063->model
+---
+ drivers/mfd/da9063-core.c            | 1 -
+ drivers/mfd/da9063-i2c.c             | 5 +++--
+ drivers/regulator/da9063-regulator.c | 8 ++++----
+ include/linux/mfd/da9063/core.h      | 6 +++++-
+ 4 files changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-index c797db59ae18..424d5f12cdd3 100644
---- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -16,6 +16,15 @@
- 	#address-cells = <2>;
- 	#size-cells = <2>;
+diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
+index c54777cc2f12..ded59990f18c 100644
+--- a/drivers/mfd/da9063-core.c
++++ b/drivers/mfd/da9063-core.c
+@@ -215,7 +215,6 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
+ 		return -ENODEV;
+ 	}
  
-+	aliases {
-+		i2c0 = &i2c0;
-+		i2c1 = &i2c1;
-+		i2c2 = &i2c2;
-+		i2c3 = &i2c3;
-+		i2c4 = &i2c4;
-+		i2c5 = &i2c5;
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -135,6 +144,102 @@
- 			#power-domain-cells = <1>;
- 		};
+-	da9063->model = model;
+ 	da9063->variant_code = variant_code;
  
-+		i2c0: i2c@e6500000 {
-+			compatible = "renesas,i2c-r8a77980",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe6500000 0 0x40>;
-+			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 931>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 931>;
-+			dmas = <&dmac1 0x91>, <&dmac1 0x90>,
-+			       <&dmac2 0x91>, <&dmac2 0x90>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			i2c-scl-internal-delay-ns = <6>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
+ 	ret = da9063_irq_init(da9063);
+diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
+index d1fe88777e3f..6fe9c3464b41 100644
+--- a/drivers/mfd/da9063-i2c.c
++++ b/drivers/mfd/da9063-i2c.c
+@@ -146,7 +146,7 @@ static const struct of_device_id da9063_dt_ids[] = {
+ };
+ MODULE_DEVICE_TABLE(of, da9063_dt_ids);
+ static int da9063_i2c_probe(struct i2c_client *i2c,
+-	const struct i2c_device_id *id)
++			    const struct i2c_device_id *id)
+ {
+ 	struct da9063 *da9063;
+ 	int ret;
+@@ -158,6 +158,7 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
+ 	i2c_set_clientdata(i2c, da9063);
+ 	da9063->dev = &i2c->dev;
+ 	da9063->chip_irq = i2c->irq;
++	da9063->type = id->driver_data;
+ 
+ 	if (da9063->variant_code == PMIC_DA9063_AD) {
+ 		da9063_regmap_config.rd_table = &da9063_ad_readable_table;
+@@ -181,7 +182,7 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
+ }
+ 
+ static const struct i2c_device_id da9063_i2c_id[] = {
+-	{ "da9063", PMIC_CHIP_ID_DA9063 },
++	{ "da9063", PMIC_TYPE_DA9063 },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(i2c, da9063_i2c_id);
+diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
+index 87c884ae0064..02a036f310de 100644
+--- a/drivers/regulator/da9063-regulator.c
++++ b/drivers/regulator/da9063-regulator.c
+@@ -98,7 +98,7 @@ struct da9063_regulator_info {
+ struct da9063_dev_model {
+ 	const struct da9063_regulator_info	*regulator_info;
+ 	unsigned				n_regulators;
+-	unsigned				dev_model;
++	enum da9063_type			type;
+ };
+ 
+ /* Single regulator settings */
+@@ -585,7 +585,7 @@ static struct da9063_dev_model regulators_models[] = {
+ 	{
+ 		.regulator_info = da9063_regulator_info,
+ 		.n_regulators = ARRAY_SIZE(da9063_regulator_info),
+-		.dev_model = PMIC_CHIP_ID_DA9063,
++		.type = PMIC_TYPE_DA9063,
+ 	},
+ 	{ }
+ };
+@@ -741,12 +741,12 @@ static int da9063_regulator_probe(struct platform_device *pdev)
+ 
+ 	/* Find regulators set for particular device model */
+ 	for (model = regulators_models; model->regulator_info; model++) {
+-		if (model->dev_model == da9063->model)
++		if (model->type == da9063->type)
+ 			break;
+ 	}
+ 	if (!model->regulator_info) {
+ 		dev_err(&pdev->dev, "Chip model not recognised (%u)\n",
+-			da9063->model);
++			da9063->type);
+ 		return -ENODEV;
+ 	}
+ 
+diff --git a/include/linux/mfd/da9063/core.h b/include/linux/mfd/da9063/core.h
+index e015b065db7e..9e36097adc42 100644
+--- a/include/linux/mfd/da9063/core.h
++++ b/include/linux/mfd/da9063/core.h
+@@ -31,6 +31,10 @@
+ 
+ #define PMIC_CHIP_ID_DA9063		0x61
+ 
++enum da9063_type {
++	PMIC_TYPE_DA9063 = 0,
++};
 +
-+		i2c1: i2c@e6508000 {
-+			compatible = "renesas,i2c-r8a77980",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe6508000 0 0x40>;
-+			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 930>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 930>;
-+			dmas = <&dmac1 0x93>, <&dmac1 0x92>,
-+			       <&dmac2 0x93>, <&dmac2 0x92>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			i2c-scl-internal-delay-ns = <6>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		i2c2: i2c@e6510000 {
-+			compatible = "renesas,i2c-r8a77980",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe6510000 0 0x40>;
-+			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 929>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 929>;
-+			dmas = <&dmac1 0x95>, <&dmac1 0x94>,
-+			       <&dmac2 0x95>, <&dmac2 0x94>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			i2c-scl-internal-delay-ns = <6>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		i2c3: i2c@e66d0000 {
-+			compatible = "renesas,i2c-r8a77980",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe66d0000 0 0x40>;
-+			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 928>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 928>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		i2c4: i2c@e66d8000 {
-+			compatible = "renesas,i2c-r8a77980",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe66d8000 0 0x40>;
-+			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 927>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 927>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		i2c5: i2c@e66e0000 {
-+			compatible = "renesas,i2c-r8a77980",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe66e0000 0 0x40>;
-+			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 919>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 919>;
-+			dmas = <&dmac1 0x9b>, <&dmac1 0x9a>,
-+			       <&dmac2 0x9b>, <&dmac2 0x9a>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			i2c-scl-internal-delay-ns = <6>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		hscif0: serial@e6540000 {
- 			compatible = "renesas,hscif-r8a77980",
- 				     "renesas,rcar-gen3-hscif",
+ enum da9063_variant_codes {
+ 	PMIC_DA9063_AD = 0x3,
+ 	PMIC_DA9063_BB = 0x5,
+@@ -73,7 +77,7 @@ enum da9063_irqs {
+ struct da9063 {
+ 	/* Device */
+ 	struct device	*dev;
+-	unsigned short	model;
++	enum da9063_type type;
+ 	unsigned char	variant_code;
+ 	unsigned int	flags;
+ 
 -- 
-2.11.0
+2.16.2
