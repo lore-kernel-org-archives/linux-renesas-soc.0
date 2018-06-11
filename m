@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39625 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933300AbeFKL7H (ORCPT
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:46420 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933189AbeFKL7I (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:59:07 -0400
+        Mon, 11 Jun 2018 07:59:08 -0400
 From: Marek Vasut <marek.vasut@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
@@ -13,15 +13,15 @@ Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Steve Twiss <stwiss.opensource@diasemi.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 03/14] mfd: da9063: Use regmap_reg_range
-Date: Mon, 11 Jun 2018 13:58:40 +0200
-Message-Id: <20180611115851.1987-3-marek.vasut+renesas@gmail.com>
+Subject: [PATCH v6 04/14] mfd: da9063: Use REGMAP_IRQ_REG
+Date: Mon, 11 Jun 2018 13:58:41 +0200
+Message-Id: <20180611115851.1987-4-marek.vasut+renesas@gmail.com>
 In-Reply-To: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
 References: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Convert the regmap_range tables to use regmap_reg_range() macro.
+Convert the regmap_irq table to use REGMAP_IRQ_REG().
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>
@@ -30,218 +30,215 @@ Cc: Mark Brown <broonie@kernel.org>
 Cc: Steve Twiss <stwiss.opensource@diasemi.com>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc: linux-renesas-soc@vger.kernel.org
+Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
-V5: New patch
+V3: New patch
+Note: A sed oneliner was used:
+      sed -i "/\[DA9063_IRQ_/ {N;N;N;s/\n//g;s/.*\[\(DA9063_IRQ_[^]]\+\)].*reg_offset = \([^,]\+\),.* = \([^,]\+\),.*/\tREGMAP_IRQ_REG(\1, \2, \3),/}" drivers/mfd/da9063-irq.c
+V4: Formatting fixes with "s/,/&\r\t\t      /" on the array
+    Drop extra newline in da9063_irq_chip
+V5: No change
 V6: No change
 ---
- drivers/mfd/da9063-i2c.c | 174 ++++++++++++-----------------------------------
- 1 file changed, 42 insertions(+), 132 deletions(-)
+ drivers/mfd/da9063-irq.c | 175 ++++++++++++++++-------------------------------
+ 1 file changed, 58 insertions(+), 117 deletions(-)
 
-diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
-index 29456e807ed4..e9797153bc19 100644
---- a/drivers/mfd/da9063-i2c.c
-+++ b/drivers/mfd/da9063-i2c.c
-@@ -29,78 +29,33 @@
- #include <linux/regulator/of_regulator.h>
+diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
+index da6ceb41f0d1..044bd867f540 100644
+--- a/drivers/mfd/da9063-irq.c
++++ b/drivers/mfd/da9063-irq.c
+@@ -28,132 +28,73 @@
  
- static const struct regmap_range da9063_ad_readable_ranges[] = {
--	{
--		.range_min = DA9063_REG_PAGE_CON,
--		.range_max = DA9063_AD_REG_SECOND_D,
--	}, {
--		.range_min = DA9063_REG_SEQ,
--		.range_max = DA9063_REG_ID_32_31,
--	}, {
--		.range_min = DA9063_REG_SEQ_A,
--		.range_max = DA9063_REG_AUTO3_LOW,
--	}, {
--		.range_min = DA9063_REG_T_OFFSET,
--		.range_max = DA9063_AD_REG_GP_ID_19,
--	}, {
--		.range_min = DA9063_REG_CHIP_ID,
--		.range_max = DA9063_REG_CHIP_VARIANT,
+ static const struct regmap_irq da9063_irqs[] = {
+ 	/* DA9063 event A register */
+-	[DA9063_IRQ_ONKEY] = {
+-		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+-		.mask = DA9063_M_ONKEY,
 -	},
-+	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_AD_REG_SECOND_D),
-+	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
-+	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
-+	regmap_reg_range(DA9063_REG_T_OFFSET, DA9063_AD_REG_GP_ID_19),
-+	regmap_reg_range(DA9063_REG_CHIP_ID, DA9063_REG_CHIP_VARIANT),
- };
- 
- static const struct regmap_range da9063_ad_writeable_ranges[] = {
--	{
--		.range_min = DA9063_REG_PAGE_CON,
--		.range_max = DA9063_REG_PAGE_CON,
--	}, {
--		.range_min = DA9063_REG_FAULT_LOG,
--		.range_max = DA9063_REG_VSYS_MON,
--	}, {
--		.range_min = DA9063_REG_COUNT_S,
--		.range_max = DA9063_AD_REG_ALARM_Y,
--	}, {
--		.range_min = DA9063_REG_SEQ,
--		.range_max = DA9063_REG_ID_32_31,
--	}, {
--		.range_min = DA9063_REG_SEQ_A,
--		.range_max = DA9063_REG_AUTO3_LOW,
--	}, {
--		.range_min = DA9063_REG_CONFIG_I,
--		.range_max = DA9063_AD_REG_MON_REG_4,
--	}, {
--		.range_min = DA9063_AD_REG_GP_ID_0,
--		.range_max = DA9063_AD_REG_GP_ID_19,
+-	[DA9063_IRQ_ALARM] = {
+-		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+-		.mask = DA9063_M_ALARM,
 -	},
-+	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_PAGE_CON),
-+	regmap_reg_range(DA9063_REG_FAULT_LOG, DA9063_REG_VSYS_MON),
-+	regmap_reg_range(DA9063_REG_COUNT_S, DA9063_AD_REG_ALARM_Y),
-+	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
-+	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
-+	regmap_reg_range(DA9063_REG_CONFIG_I, DA9063_AD_REG_MON_REG_4),
-+	regmap_reg_range(DA9063_AD_REG_GP_ID_0, DA9063_AD_REG_GP_ID_19),
- };
- 
- static const struct regmap_range da9063_ad_volatile_ranges[] = {
--	{
--		.range_min = DA9063_REG_PAGE_CON,
--		.range_max = DA9063_REG_EVENT_D,
--	}, {
--		.range_min = DA9063_REG_CONTROL_A,
--		.range_max = DA9063_REG_CONTROL_B,
--	}, {
--		.range_min = DA9063_REG_CONTROL_E,
--		.range_max = DA9063_REG_CONTROL_F,
--	}, {
--		.range_min = DA9063_REG_BCORE2_CONT,
--		.range_max = DA9063_REG_LDO11_CONT,
--	}, {
--		.range_min = DA9063_REG_DVC_1,
--		.range_max = DA9063_REG_ADC_MAN,
--	}, {
--		.range_min = DA9063_REG_ADC_RES_L,
--		.range_max = DA9063_AD_REG_SECOND_D,
--	}, {
--		.range_min = DA9063_REG_SEQ,
--		.range_max = DA9063_REG_SEQ,
--	}, {
--		.range_min = DA9063_REG_EN_32K,
--		.range_max = DA9063_REG_EN_32K,
--	}, {
--		.range_min = DA9063_AD_REG_MON_REG_5,
--		.range_max = DA9063_AD_REG_MON_REG_6,
+-	[DA9063_IRQ_TICK] = {
+-		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+-		.mask = DA9063_M_TICK,
 -	},
-+	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_EVENT_D),
-+	regmap_reg_range(DA9063_REG_CONTROL_A, DA9063_REG_CONTROL_B),
-+	regmap_reg_range(DA9063_REG_CONTROL_E, DA9063_REG_CONTROL_F),
-+	regmap_reg_range(DA9063_REG_BCORE2_CONT, DA9063_REG_LDO11_CONT),
-+	regmap_reg_range(DA9063_REG_DVC_1, DA9063_REG_ADC_MAN),
-+	regmap_reg_range(DA9063_REG_ADC_RES_L, DA9063_AD_REG_SECOND_D),
-+	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_SEQ),
-+	regmap_reg_range(DA9063_REG_EN_32K, DA9063_REG_EN_32K),
-+	regmap_reg_range(DA9063_AD_REG_MON_REG_5, DA9063_AD_REG_MON_REG_6),
- };
- 
- static const struct regmap_access_table da9063_ad_readable_table = {
-@@ -119,78 +74,33 @@ static const struct regmap_access_table da9063_ad_volatile_table = {
- };
- 
- static const struct regmap_range da9063_bb_readable_ranges[] = {
--	{
--		.range_min = DA9063_REG_PAGE_CON,
--		.range_max = DA9063_BB_REG_SECOND_D,
--	}, {
--		.range_min = DA9063_REG_SEQ,
--		.range_max = DA9063_REG_ID_32_31,
--	}, {
--		.range_min = DA9063_REG_SEQ_A,
--		.range_max = DA9063_REG_AUTO3_LOW,
--	}, {
--		.range_min = DA9063_REG_T_OFFSET,
--		.range_max = DA9063_BB_REG_GP_ID_19,
--	}, {
--		.range_min = DA9063_REG_CHIP_ID,
--		.range_max = DA9063_REG_CHIP_VARIANT,
+-	[DA9063_IRQ_ADC_RDY] = {
+-		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+-		.mask = DA9063_M_ADC_RDY,
 -	},
-+	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_BB_REG_SECOND_D),
-+	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
-+	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
-+	regmap_reg_range(DA9063_REG_T_OFFSET, DA9063_BB_REG_GP_ID_19),
-+	regmap_reg_range(DA9063_REG_CHIP_ID, DA9063_REG_CHIP_VARIANT),
- };
- 
- static const struct regmap_range da9063_bb_writeable_ranges[] = {
--	{
--		.range_min = DA9063_REG_PAGE_CON,
--		.range_max = DA9063_REG_PAGE_CON,
--	}, {
--		.range_min = DA9063_REG_FAULT_LOG,
--		.range_max = DA9063_REG_VSYS_MON,
--	}, {
--		.range_min = DA9063_REG_COUNT_S,
--		.range_max = DA9063_BB_REG_ALARM_Y,
--	}, {
--		.range_min = DA9063_REG_SEQ,
--		.range_max = DA9063_REG_ID_32_31,
--	}, {
--		.range_min = DA9063_REG_SEQ_A,
--		.range_max = DA9063_REG_AUTO3_LOW,
--	}, {
--		.range_min = DA9063_REG_CONFIG_I,
--		.range_max = DA9063_BB_REG_MON_REG_4,
--	}, {
--		.range_min = DA9063_BB_REG_GP_ID_0,
--		.range_max = DA9063_BB_REG_GP_ID_19,
+-	[DA9063_IRQ_SEQ_RDY] = {
+-		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+-		.mask = DA9063_M_SEQ_RDY,
 -	},
-+	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_PAGE_CON),
-+	regmap_reg_range(DA9063_REG_FAULT_LOG, DA9063_REG_VSYS_MON),
-+	regmap_reg_range(DA9063_REG_COUNT_S, DA9063_BB_REG_ALARM_Y),
-+	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
-+	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
-+	regmap_reg_range(DA9063_REG_CONFIG_I, DA9063_BB_REG_MON_REG_4),
-+	regmap_reg_range(DA9063_BB_REG_GP_ID_0, DA9063_BB_REG_GP_ID_19),
- };
- 
- static const struct regmap_range da9063_bb_volatile_ranges[] = {
--	{
--		.range_min = DA9063_REG_PAGE_CON,
--		.range_max = DA9063_REG_EVENT_D,
--	}, {
--		.range_min = DA9063_REG_CONTROL_A,
--		.range_max = DA9063_REG_CONTROL_B,
--	}, {
--		.range_min = DA9063_REG_CONTROL_E,
--		.range_max = DA9063_REG_CONTROL_F,
--	}, {
--		.range_min = DA9063_REG_BCORE2_CONT,
--		.range_max = DA9063_REG_LDO11_CONT,
--	}, {
--		.range_min = DA9063_REG_DVC_1,
--		.range_max = DA9063_REG_ADC_MAN,
--	}, {
--		.range_min = DA9063_REG_ADC_RES_L,
--		.range_max = DA9063_BB_REG_SECOND_D,
--	}, {
--		.range_min = DA9063_REG_SEQ,
--		.range_max = DA9063_REG_SEQ,
--	}, {
--		.range_min = DA9063_REG_EN_32K,
--		.range_max = DA9063_REG_EN_32K,
--	}, {
--		.range_min = DA9063_BB_REG_MON_REG_5,
--		.range_max = DA9063_BB_REG_MON_REG_6,
++	REGMAP_IRQ_REG(DA9063_IRQ_ONKEY,
++		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_ONKEY),
++	REGMAP_IRQ_REG(DA9063_IRQ_ALARM,
++		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_ALARM),
++	REGMAP_IRQ_REG(DA9063_IRQ_TICK,
++		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_TICK),
++	REGMAP_IRQ_REG(DA9063_IRQ_ADC_RDY,
++		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_ADC_RDY),
++	REGMAP_IRQ_REG(DA9063_IRQ_SEQ_RDY,
++		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_SEQ_RDY),
+ 	/* DA9063 event B register */
+-	[DA9063_IRQ_WAKE] = {
+-		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
+-		.mask = DA9063_M_WAKE,
 -	},
-+	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_EVENT_D),
-+	regmap_reg_range(DA9063_REG_CONTROL_A, DA9063_REG_CONTROL_B),
-+	regmap_reg_range(DA9063_REG_CONTROL_E, DA9063_REG_CONTROL_F),
-+	regmap_reg_range(DA9063_REG_BCORE2_CONT, DA9063_REG_LDO11_CONT),
-+	regmap_reg_range(DA9063_REG_DVC_1, DA9063_REG_ADC_MAN),
-+	regmap_reg_range(DA9063_REG_ADC_RES_L, DA9063_BB_REG_SECOND_D),
-+	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_SEQ),
-+	regmap_reg_range(DA9063_REG_EN_32K, DA9063_REG_EN_32K),
-+	regmap_reg_range(DA9063_BB_REG_MON_REG_5, DA9063_BB_REG_MON_REG_6),
+-	[DA9063_IRQ_TEMP] = {
+-		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
+-		.mask = DA9063_M_TEMP,
+-	},
+-	[DA9063_IRQ_COMP_1V2] = {
+-		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
+-		.mask = DA9063_M_COMP_1V2,
+-	},
+-	[DA9063_IRQ_LDO_LIM] = {
+-		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
+-		.mask = DA9063_M_LDO_LIM,
+-	},
+-	[DA9063_IRQ_REG_UVOV] = {
+-		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
+-		.mask = DA9063_M_UVOV,
+-	},
+-	[DA9063_IRQ_DVC_RDY] = {
+-		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
+-		.mask = DA9063_M_DVC_RDY,
+-	},
+-	[DA9063_IRQ_VDD_MON] = {
+-		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
+-		.mask = DA9063_M_VDD_MON,
+-	},
+-	[DA9063_IRQ_WARN] = {
+-		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
+-		.mask = DA9063_M_VDD_WARN,
+-	},
++	REGMAP_IRQ_REG(DA9063_IRQ_WAKE,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_WAKE),
++	REGMAP_IRQ_REG(DA9063_IRQ_TEMP,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_TEMP),
++	REGMAP_IRQ_REG(DA9063_IRQ_COMP_1V2,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_COMP_1V2),
++	REGMAP_IRQ_REG(DA9063_IRQ_LDO_LIM,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_LDO_LIM),
++	REGMAP_IRQ_REG(DA9063_IRQ_REG_UVOV,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_UVOV),
++	REGMAP_IRQ_REG(DA9063_IRQ_DVC_RDY,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_DVC_RDY),
++	REGMAP_IRQ_REG(DA9063_IRQ_VDD_MON,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_MON),
++	REGMAP_IRQ_REG(DA9063_IRQ_WARN,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_WARN),
+ 	/* DA9063 event C register */
+-	[DA9063_IRQ_GPI0] = {
+-		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
+-		.mask = DA9063_M_GPI0,
+-	},
+-	[DA9063_IRQ_GPI1] = {
+-		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
+-		.mask = DA9063_M_GPI1,
+-	},
+-	[DA9063_IRQ_GPI2] = {
+-		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
+-		.mask = DA9063_M_GPI2,
+-	},
+-	[DA9063_IRQ_GPI3] = {
+-		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
+-		.mask = DA9063_M_GPI3,
+-	},
+-	[DA9063_IRQ_GPI4] = {
+-		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
+-		.mask = DA9063_M_GPI4,
+-	},
+-	[DA9063_IRQ_GPI5] = {
+-		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
+-		.mask = DA9063_M_GPI5,
+-	},
+-	[DA9063_IRQ_GPI6] = {
+-		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
+-		.mask = DA9063_M_GPI6,
+-	},
+-	[DA9063_IRQ_GPI7] = {
+-		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
+-		.mask = DA9063_M_GPI7,
+-	},
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI0,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI0),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI1,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI1),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI2,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI2),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI3,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI3),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI4,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI4),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI5,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI5),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI6,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI6),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI7,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI7),
+ 	/* DA9063 event D register */
+-	[DA9063_IRQ_GPI8] = {
+-		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
+-		.mask = DA9063_M_GPI8,
+-	},
+-	[DA9063_IRQ_GPI9] = {
+-		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
+-		.mask = DA9063_M_GPI9,
+-	},
+-	[DA9063_IRQ_GPI10] = {
+-		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
+-		.mask = DA9063_M_GPI10,
+-	},
+-	[DA9063_IRQ_GPI11] = {
+-		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
+-		.mask = DA9063_M_GPI11,
+-	},
+-	[DA9063_IRQ_GPI12] = {
+-		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
+-		.mask = DA9063_M_GPI12,
+-	},
+-	[DA9063_IRQ_GPI13] = {
+-		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
+-		.mask = DA9063_M_GPI13,
+-	},
+-	[DA9063_IRQ_GPI14] = {
+-		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
+-		.mask = DA9063_M_GPI14,
+-	},
+-	[DA9063_IRQ_GPI15] = {
+-		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
+-		.mask = DA9063_M_GPI15,
+-	},
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI8,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI8),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI9,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI9),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI10,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI10),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI11,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI11),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI12,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI12),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI13,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI13),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI14,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI14),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI15,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI15),
  };
  
- static const struct regmap_access_table da9063_bb_readable_table = {
+ static const struct regmap_irq_chip da9063_irq_chip = {
+ 	.name = "da9063-irq",
+ 	.irqs = da9063_irqs,
+ 	.num_irqs = DA9063_NUM_IRQ,
+-
+ 	.num_regs = 4,
+ 	.status_base = DA9063_REG_EVENT_A,
+ 	.mask_base = DA9063_REG_IRQ_MASK_A,
 -- 
 2.16.2
