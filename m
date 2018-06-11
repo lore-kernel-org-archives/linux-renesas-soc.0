@@ -1,84 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934258AbeFYOEY (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:50808 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933341AbeFKL7M (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:04:24 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Mon, 11 Jun 2018 07:59:12 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 28/29] arm64: dts: renesas: salvator-common: Add HSCIF1 device support
-Date: Mon, 25 Jun 2018 16:03:23 +0200
-Message-Id: <b6d3134ddcbe4d3c3986e4e7b649467a19045949.1529933747.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
-References: <cover.1529933747.git.horms+renesas@verge.net.au>
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v6 06/14] mfd: da9063: Replace DA9063_NUM_IRQ with ARRAY_SIZE
+Date: Mon, 11 Jun 2018 13:58:43 +0200
+Message-Id: <20180611115851.1987-6-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
+References: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Replace DA9063_NUM_IRQ macro which is not used anywhere with
+plain ARRAY_SIZE().
 
-This patch adds pin control for HSCIF1, and supports connection with
-Debug Serial-1 (CN26) on Salvator boards.
-
-SCIF1 and HSCIF1 are sharing the pins connected to Debug Serial-1 (CN26)
-on Salvator boards, and it is necessary to ensure that either SCIF1 or
-HSCIF1 is enabled, not both.
-
-As for the default of this DeviceTree, SCIF1 is connected.
-
-Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[geert: Add missing "uart-has-rtscts"]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+V4: New patch
+V5: Remove DA9063_IRQ_BASE_OFFSET
+V6: No change
+---
+ drivers/mfd/da9063-irq.c        | 2 +-
+ include/linux/mfd/da9063/core.h | 3 ---
+ 2 files changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index 320250d708c3..ce808d3f9f62 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -338,6 +338,15 @@
- 	clock-frequency = <32768>;
+diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
+index 044bd867f540..579947f83486 100644
+--- a/drivers/mfd/da9063-irq.c
++++ b/drivers/mfd/da9063-irq.c
+@@ -94,7 +94,7 @@ static const struct regmap_irq da9063_irqs[] = {
+ static const struct regmap_irq_chip da9063_irq_chip = {
+ 	.name = "da9063-irq",
+ 	.irqs = da9063_irqs,
+-	.num_irqs = DA9063_NUM_IRQ,
++	.num_irqs = ARRAY_SIZE(da9063_irqs),
+ 	.num_regs = 4,
+ 	.status_base = DA9063_REG_EVENT_A,
+ 	.mask_base = DA9063_REG_IRQ_MASK_A,
+diff --git a/include/linux/mfd/da9063/core.h b/include/linux/mfd/da9063/core.h
+index 8e6684d884e0..260cd5834861 100644
+--- a/include/linux/mfd/da9063/core.h
++++ b/include/linux/mfd/da9063/core.h
+@@ -72,9 +72,6 @@ enum da9063_irqs {
+ 	DA9063_IRQ_GPI15,
  };
  
-+&hscif1 {
-+	pinctrl-0 = <&hscif1_pins>;
-+	pinctrl-names = "default";
-+
-+	uart-has-rtscts;
-+	/* Please only enable hscif1 or scif1 */
-+	/* status = "okay"; */
-+};
-+
- &hsusb {
- 	dr_mode = "otg";
- 	status = "okay";
-@@ -543,6 +552,11 @@
- 		function = "du";
- 	};
- 
-+	hscif1_pins: hscif1 {
-+		groups = "hscif1_data_a", "hscif1_ctrl_a";
-+		function = "hscif1";
-+	};
-+
- 	i2c2_pins: i2c2 {
- 		groups = "i2c2_a";
- 		function = "i2c2";
-@@ -708,6 +722,7 @@
- 	pinctrl-names = "default";
- 
- 	uart-has-rtscts;
-+	/* Please only enable hscif1 or scif1 */
- 	status = "okay";
- };
- 
+-#define DA9063_IRQ_BASE_OFFSET	0
+-#define DA9063_NUM_IRQ		(DA9063_IRQ_GPI15 + 1 - DA9063_IRQ_BASE_OFFSET)
+-
+ struct da9063 {
+ 	/* Device */
+ 	struct device	*dev;
 -- 
-2.11.0
+2.16.2
