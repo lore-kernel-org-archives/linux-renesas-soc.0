@@ -1,36 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:50815 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751769AbeFDJqh (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39637 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933310AbeFKL7L (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Jun 2018 05:46:37 -0400
-Date: Mon, 4 Jun 2018 11:46:18 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 0/2] Add R8A77980/Condor I2C support
-Message-ID: <20180604094613.3uxggbt3bvisq65l@verge.net.au>
-References: <2a88f4e9-0a86-8e6f-0ef2-20913dc9431d@cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2a88f4e9-0a86-8e6f-0ef2-20913dc9431d@cogentembedded.com>
+        Mon, 11 Jun 2018 07:59:11 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v6 05/14] mfd: da9063: Use PLATFORM_DEVID_NONE
+Date: Mon, 11 Jun 2018 13:58:42 +0200
+Message-Id: <20180611115851.1987-5-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
+References: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, May 31, 2018 at 11:18:57PM +0300, Sergei Shtylyov wrote:
-> Hello!
-> 
-> Here's the set of 2 patches against Simon Horman's 'renesas.git' repo's
-> 'renesas-devel-20180529-v4.17-rc7' tag. We're adding the R8A77980 I2C nodes
-> and then describing 2 PCA9654 I/O expanders connected to the I2C0 bus on
-> the Condor board.
+Use PLATFORM_DEVID_NONE instead of -1 in mfd_add_devices.
 
-Thanks, applied.
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+---
+V4: New patch
+V5: Rebase on top of new 01 and 02 patches
+V6: No change
+---
+ drivers/mfd/da9063-core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
+index 76258e5709f8..f57558590283 100644
+--- a/drivers/mfd/da9063-core.c
++++ b/drivers/mfd/da9063-core.c
+@@ -226,9 +226,9 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
+ 
+ 	da9063->irq_base = regmap_irq_chip_get_base(da9063->regmap_irq);
+ 
+-	ret = devm_mfd_add_devices(da9063->dev, -1, da9063_devs,
+-				   ARRAY_SIZE(da9063_devs), NULL,
+-				   da9063->irq_base, NULL);
++	ret = devm_mfd_add_devices(da9063->dev, PLATFORM_DEVID_NONE,
++				   da9063_devs, ARRAY_SIZE(da9063_devs),
++				   NULL, da9063->irq_base, NULL);
+ 	if (ret)
+ 		dev_err(da9063->dev, "Cannot add MFD cells\n");
+ 
+-- 
+2.16.2
