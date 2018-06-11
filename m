@@ -1,139 +1,111 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:38803 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932810AbeFQKkz (ORCPT
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:34613 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933407AbeFKL7U (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 17 Jun 2018 06:40:55 -0400
-Received: by mail-pf0-f195.google.com with SMTP id b74-v6so6817946pfl.5
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 17 Jun 2018 03:40:55 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>
-Date: Sun, 17 Jun 2018 19:42:31 +0900
-Message-Id: <152923215125.18394.10152095394019866712.sendpatchset@little-apple>
-In-Reply-To: <152923212426.18394.1638836062311758848.sendpatchset@little-apple>
-References: <152923212426.18394.1638836062311758848.sendpatchset@little-apple>
-Subject: [PATCH v2 03/03] arm64: dts: renesas: r8a77990: Add IPMMU devices nodes
+        Mon, 11 Jun 2018 07:59:20 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v6 12/14] mfd: da9063: Register RTC only on DA9063L
+Date: Mon, 11 Jun 2018 13:58:49 +0200
+Message-Id: <20180611115851.1987-12-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
+References: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+The DA9063L does not contain RTC block, unlike the full DA9063.
+Split the RTC block into separate mfd cell and register it only
+on DA9063.
 
-Add IPMMU device nodes for the R-Car E3 SoC aka r8a77990.
-
-The r8a77990 IPMMU is similar to r8a77995. Power domains are
-however different and the public documentation is still unclear.
-
-Based on preliminary information from the hardware team the R-Car E3
-SoC comes with an IPMMU-VP0 device in an Always-on power domain and
-the IPMMU-VC0 is placed as expected in the A3VC power domain.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
+V2: No change
+V3: Rework of mfd: da9063: Disallow RTC on DA9063L
+V4: - Change the original failure text
+    - Use PLATFORM_DEVID_NONE in mfd_add_devices
+V5: Rebase on top of new 01 and 02 patches
+V6: No change
+---
+ drivers/mfd/da9063-core.c | 31 ++++++++++++++++++++++++-------
+ 1 file changed, 24 insertions(+), 7 deletions(-)
 
- Changes since V1:
- - Updated patch description based on information from hardware team
- - Added Reviewed-by from Simon - thanks!
-
- arch/arm64/boot/dts/renesas/r8a77990.dtsi |   82 +++++++++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
-
---- 0001/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -7,6 +7,7 @@
+diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
+index ded59990f18c..6e4ce49b4405 100644
+--- a/drivers/mfd/da9063-core.c
++++ b/drivers/mfd/da9063-core.c
+@@ -76,7 +76,7 @@ static struct resource da9063_hwmon_resources[] = {
+ };
  
- #include <dt-bindings/clock/renesas-cpg-mssr.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/power/r8a77990-sysc.h>
  
- / {
- 	compatible = "renesas,r8a77990";
-@@ -191,6 +192,87 @@
- 			#power-domain-cells = <1>;
- 		};
+-static const struct mfd_cell da9063_devs[] = {
++static const struct mfd_cell da9063_common_devs[] = {
+ 	{
+ 		.name		= DA9063_DRVNAME_REGULATORS,
+ 		.num_resources	= ARRAY_SIZE(da9063_regulators_resources),
+@@ -100,15 +100,19 @@ static const struct mfd_cell da9063_devs[] = {
+ 		.resources	= da9063_onkey_resources,
+ 		.of_compatible = "dlg,da9063-onkey",
+ 	},
++	{
++		.name		= DA9063_DRVNAME_VIBRATION,
++	},
++};
++
++/* Only present on DA9063 , not on DA9063L */
++static const struct mfd_cell da9063_devs[] = {
+ 	{
+ 		.name		= DA9063_DRVNAME_RTC,
+ 		.num_resources	= ARRAY_SIZE(da9063_rtc_resources),
+ 		.resources	= da9063_rtc_resources,
+ 		.of_compatible	= "dlg,da9063-rtc",
+ 	},
+-	{
+-		.name		= DA9063_DRVNAME_VIBRATION,
+-	},
+ };
  
-+		ipmmu_ds0: mmu@e6740000 {
-+			compatible = "renesas,ipmmu-r8a77990";
-+			reg = <0 0xe6740000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 0>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
+ static int da9063_clear_fault_log(struct da9063 *da9063)
+@@ -226,10 +230,23 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
+ 	da9063->irq_base = regmap_irq_chip_get_base(da9063->regmap_irq);
+ 
+ 	ret = devm_mfd_add_devices(da9063->dev, PLATFORM_DEVID_NONE,
+-				   da9063_devs, ARRAY_SIZE(da9063_devs),
++				   da9063_common_devs,
++				   ARRAY_SIZE(da9063_common_devs),
+ 				   NULL, da9063->irq_base, NULL);
+-	if (ret)
+-		dev_err(da9063->dev, "Cannot add MFD cells\n");
++	if (ret) {
++		dev_err(da9063->dev, "Failed to add child devices\n");
++		return ret;
++	}
 +
-+		ipmmu_ds1: mmu@e7740000 {
-+			compatible = "renesas,ipmmu-r8a77990";
-+			reg = <0 0xe7740000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 1>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_hc: mmu@e6570000 {
-+			compatible = "renesas,ipmmu-r8a77990";
-+			reg = <0 0xe6570000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 2>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_mm: mmu@e67b0000 {
-+			compatible = "renesas,ipmmu-r8a77990";
-+			reg = <0 0xe67b0000 0 0x1000>;
-+			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_mp: mmu@ec670000 {
-+			compatible = "renesas,ipmmu-r8a77990";
-+			reg = <0 0xec670000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 4>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_pv0: mmu@fd800000 {
-+			compatible = "renesas,ipmmu-r8a77990";
-+			reg = <0 0xfd800000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 6>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_rt: mmu@ffc80000 {
-+			compatible = "renesas,ipmmu-r8a77990";
-+			reg = <0 0xffc80000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 10>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_vc0: mmu@fe6b0000 {
-+			compatible = "renesas,ipmmu-r8a77990";
-+			reg = <0 0xfe6b0000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 12>;
-+			power-domains = <&sysc R8A77990_PD_A3VC>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_vi0: mmu@febd0000 {
-+			compatible = "renesas,ipmmu-r8a77990";
-+			reg = <0 0xfebd0000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 14>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_vp0: mmu@fe990000 {
-+			compatible = "renesas,ipmmu-r8a77990";
-+			reg = <0 0xfe990000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 16>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
- 		avb: ethernet@e6800000 {
- 			compatible = "renesas,etheravb-r8a77990",
- 				     "renesas,etheravb-rcar-gen3";
++	if (da9063->type == PMIC_TYPE_DA9063) {
++		ret = devm_mfd_add_devices(da9063->dev, PLATFORM_DEVID_NONE,
++					   da9063_devs, ARRAY_SIZE(da9063_devs),
++					   NULL, da9063->irq_base, NULL);
++		if (ret) {
++			dev_err(da9063->dev, "Failed to add child devices\n");
++			return ret;
++		}
++	}
+ 
+ 	return ret;
+ }
+-- 
+2.16.2
