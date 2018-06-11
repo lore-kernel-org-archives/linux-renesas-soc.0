@@ -1,88 +1,115 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:45419 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754066AbeFKI3B (ORCPT
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:37856 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754001AbeFKHQQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Jun 2018 04:29:01 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-CC: Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] clocksource/drivers/sh_cmt: wait for CMCNT on init
-Date: Mon, 11 Jun 2018 08:28:53 +0000
-Message-ID: <OSBPR01MB21038E08CD17E7E071EC381AB8780@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <1528474785-11778-1-git-send-email-biju.das@bp.renesas.com>
- <4a274cfd-b5eb-b935-a3b5-af4bacd126c1@cogentembedded.com>
-In-Reply-To: <4a274cfd-b5eb-b935-a3b5-af4bacd126c1@cogentembedded.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 11 Jun 2018 03:16:16 -0400
+Received: by mail-ua0-f194.google.com with SMTP id i3-v6so12839804uad.4
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Jun 2018 00:16:16 -0700 (PDT)
 MIME-Version: 1.0
+References: <1528474785-11778-1-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1528474785-11778-1-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 11 Jun 2018 09:16:03 +0200
+Message-ID: <CAMuHMdX=Ys8aq0ehqu9gZchC9bKtgzF9-Tg6-DoTrzMX68SwTg@mail.gmail.com>
+Subject: Re: [PATCH] clocksource/drivers/sh_cmt: wait for CMCNT on init
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgU2VyZ2llLA0KDQpUaGFua3MgZm9yIHRoZSBmZWVkYmFjay4NCg0KPiBTdWJqZWN0OiBSZTog
-W1BBVENIXSBjbG9ja3NvdXJjZS9kcml2ZXJzL3NoX2NtdDogd2FpdCBmb3IgQ01DTlQgb24gaW5p
-dA0KPg0KPiBIZWxsbyENCj4NCj4gT24gNi84LzIwMTggNzoxOSBQTSwgQmlqdSBEYXMgd3JvdGU6
-DQo+DQo+ID4gQXMgcGVyIHNlY3Rpb24gNTdBLjMuNS82OUEuMy41Lzc5LkEuMy41IG9mIHJ6L2cv
-ci1jYXIgZ2VuMi8zIGhhcmR3YXJlDQo+DQo+ICAgICA3OUEuMy41Pw0KDQpXaWxsIGZpeCB0aGlz
-Lg0KDQo+ID4gbWFudWFsLGl0IGlzIG1lbnRpb25lZCB0aGF0IHdlIG5lZWQgdG8gcHJvdmlkZSAy
-IGN5Y2xlcyBpbiBjb3VudGVyDQo+ID4gaW5wdXQNCj4gICAgICAgICAgIF4gbmVlZCBzcGFjZQ0K
-DQpXaWxsIGZpeCB0aGlzLg0KDQo+ID4gY2xvY2sgKFJDTEspIGZvciByZWZsZWN0aW5nIHdyaXR0
-ZW4gZGF0YSB0byBjb3VudGVyIGJlaGF2aW91ci4gQWRkaW5nDQo+ID4gc3VmZmljaWVudCB3YWl0
-IHRvIGxldCB0aGUgQ01DTlQgcmVnaXN0ZXIgdmFsdWUgc2V0dGxlIGJlZm9yZSBzdGFydGluZw0K
-PiA+IHRoZSB0aW1lciBjaGFubmVsLg0KPiA+DQo+ID4gSXQgZml4ZXMgdGhlIGVycm9yICJzaF9j
-bXQgZmZjYTAwMDAudGltZXI6IGNoMTogY2Fubm90IGNsZWFyIENNQ05UIg0KPiA+DQo+ID4gU2ln
-bmVkLW9mZi1ieTogQmlqdSBEYXMgPGJpanUuZGFzQGJwLnJlbmVzYXMuY29tPg0KPiA+IFJldmll
-d2VkLWJ5OiBDaHJpcyBQYXRlcnNvbiA8Y2hyaXMucGF0ZXJzb24yQHJlbmVzYXMuY29tPg0KPiA+
-IC0tLQ0KPiA+IEhlbGxvLA0KPiA+DQo+ID4gRHVyaW5nIGNtdCB0ZXN0aW5nLCB0aGUgdG9vbA0K
-PiA+ICh0b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy90aW1lcnMvY2xvY2tzb3VyY2Utc3dpdGNoLmMp
-DQo+ID4gaXMgY29tcGxhaW5pbmcgYWJvdXQgdGhlIGVycm9yICJzaF9jbXQgZmZjYTAwMDAudGlt
-ZXI6IGNoMTogY2Fubm90IGNsZWFyDQo+IENNQ05UIi4NCj4gPiBUaGUgYWJvdmUgcGF0Y2ggZml4
-ZXMgdGhpcyBpc3N1ZSBpcyBieSBhZGRpbmcgc3VmZmljaWVudCB3YWl0IHRvIGxldA0KPiA+IHRo
-ZSBDTUNOVCByZWdpc3RlciB2YWx1ZSBzZXR0bGUgYmVmb3JlIHN0YXJ0aW5nIHRoZSB0aW1lciBj
-aGFubmVsLg0KPiA+DQo+ID4gVGhpcyBpc3N1ZSBpcyByZXByb2R1Y2VkIG9uIEtvZWxzY2gvUlov
-RzFbTUVdIGJhc2VkIGl3YXZlIGJvYXJkcw0KPiA+IGV0Yy4uLiwgYXMgSSBhc3N1bWUgdGhlIHNh
-bWUgaXNzdWUgc2hvdWxkIGJlIHByZXNlbnQgb24gbGFnZXIgZXRjLiBhcyB3ZWxsPw0KPiA+DQo+
-ID4gcmVnYXJkcywNCj4gPiBCaWp1DQo+ID4NCj4gPiAgIGRyaXZlcnMvY2xvY2tzb3VyY2Uvc2hf
-Y210LmMgfCAxNiArKysrKysrKysrKy0tLS0tDQo+ID4gICAxIGZpbGUgY2hhbmdlZCwgMTEgaW5z
-ZXJ0aW9ucygrKSwgNSBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJz
-L2Nsb2Nrc291cmNlL3NoX2NtdC5jDQo+ID4gYi9kcml2ZXJzL2Nsb2Nrc291cmNlL3NoX2NtdC5j
-IGluZGV4IDcwYjNjZjguLjQ4OTEwZGYgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9jbG9ja3Nv
-dXJjZS9zaF9jbXQuYw0KPiA+ICsrKyBiL2RyaXZlcnMvY2xvY2tzb3VyY2Uvc2hfY210LmMNCj4g
-PiBAQCAtMzI4LDcgKzMyOCw3IEBAIHN0YXRpYyB2b2lkIHNoX2NtdF9zdGFydF9zdG9wX2NoKHN0
-cnVjdA0KPiA+IHNoX2NtdF9jaGFubmVsICpjaCwgaW50IHN0YXJ0KQ0KPiA+DQo+ID4gICBzdGF0
-aWMgaW50IHNoX2NtdF9lbmFibGUoc3RydWN0IHNoX2NtdF9jaGFubmVsICpjaCkNCj4gPiAgIHsN
-Cj4gPiAtaW50IGssIHJldDsNCj4gPiAraW50IGosIGssIHJldDsNCj4gPg0KPiA+ICAgcG1fcnVu
-dGltZV9nZXRfc3luYygmY2gtPmNtdC0+cGRldi0+ZGV2KTsNCj4gPiAgIGRldl9wbV9zeXNjb3Jl
-X2RldmljZSgmY2gtPmNtdC0+cGRldi0+ZGV2LCB0cnVlKTsgQEAgLTM2OCwxMQ0KPiA+ICszNjgs
-MTcgQEAgc3RhdGljIGludCBzaF9jbXRfZW5hYmxlKHN0cnVjdCBzaF9jbXRfY2hhbm5lbCAqY2gp
-DQo+ID4gICAgKiBXaGlsZSBhdCBpdCwgd2UncmUgc3VwcG9zZWQgdG8gY2xlYXIgb3V0IHRoZSBD
-TUNOVCBhcyBvZiB0aGlzDQo+ID4gICAgKiBtb21lbnQsIHNvIG1ha2Ugc3VyZSBpdCdzIHByb2Nl
-c3NlZCBwcm9wZXJseSBoZXJlLiAgVGhpcyB3aWxsDQo+ID4gICAgKiB0YWtlIFJDTEt4MiBhdCBt
-YXhpbXVtLg0KPiA+ICsgKg0KPiA+ICsgKiBTaW1pbGFyIHJlZ2lzdGVyIGFjY2VzcyB1c2FnZSBm
-b3IgQ01DTlQgaXMgbWVudGlvbmVkIGluIFItQ2FyDQo+ID4gKyAqIEdlblsyLzNdL1JaL0cxIHVz
-ZXIncyBtYW51YWwsIFJDTEt4MiBmb3IgY210MCBhbmQgUkNMS3gyIG9yDQo+ID4gKyAqIENQz5V4
-MiAoQ1BFWM+VeDIpKSBmb3IgY210MS4NCj4gPiAgICAqLw0KPiA+IC1mb3IgKGsgPSAwOyBrIDwg
-MTAwOyBrKyspIHsNCj4gPiAtaWYgKCFzaF9jbXRfcmVhZF9jbWNudChjaCkpDQo+ID4gLWJyZWFr
-Ow0KPiA+IC11ZGVsYXkoMSk7DQo+ID4gK2ZvciAoaiA9IDA7IGogPCAyOyBqKyspIHsNCj4gPiAr
-Zm9yIChrID0gMDsgayA8IDEwMDsgaysrKSB7DQo+DQo+ICAgICBXaHkgbm90IHNpbXBseSBjb3Vu
-dCB0byAyMDAgSVNPIDEwMD8NCg0KVGhpcyBpc3N1ZSBpcyByZWxhdGVkIHRvIHNldHRsaW5nIG9m
-IENNQ05UIHJlZ2lzdGVyIGR1cmluZyBpbml0Lg0KDQpEdXJpbmcgbXkgdGVzdGluZywgSSBmb3Vu
-ZCB0aGF0IHRoZSBmaXJzdCBsb29wIGV4aXQgaW1tZWRpYXRlbHkNCmJlZm9yZSBhY3R1YWxseSBz
-ZXR0bGluZyB0aGlzIHJlZ2lzdGVyIHZhbHVlIHRvICIwIi4gaWUsDQp0aGUgaW5zdGFudGFuZW91
-cyB2YWx1ZSBvZiByZWdpc3RlciBiZWNvbWVzICIwIiBpbiB0aGUgZmlyc3QgY2hlY2sgYW5kDQpp
-dCBicmVha3MgdGhlIGZpcnN0IGxvb3AgYW5kIGluIHRoZSBuZXh0IGNoZWNrIHJlcG9ydCB0aGUg
-ZXJyb3IuDQoNClRoZSBuZXcgbG9naWMgaXMgdG8gZG91YmxlIGNoZWNrIHRoaXMgcmVnaXN0ZXIg
-dmFsdWUgYW5kDQptYWtlIHN1cmUgdGhhdCB0aGlzIHJlZ2lzdGVyIHZhbHVlIGlzIHNldHRsZWQg
-dG8gIjAiLA0KYmVmb3JlIHN0YXJ0aW5nIHRoZSB0aW1lciBjaGFubmVsLg0KDQpSZWdhcmRzLA0K
-QmlqdQ0KDQoNCg0KDQpSZW5lc2FzIEVsZWN0cm9uaWNzIEV1cm9wZSBMdGQsIER1a2VzIE1lYWRv
-dywgTWlsbGJvYXJkIFJvYWQsIEJvdXJuZSBFbmQsIEJ1Y2tpbmdoYW1zaGlyZSwgU0w4IDVGSCwg
-VUsuIFJlZ2lzdGVyZWQgaW4gRW5nbGFuZCAmIFdhbGVzIHVuZGVyIFJlZ2lzdGVyZWQgTm8uIDA0
-NTg2NzA5Lg0K
+Hi Biju,
+
+Thanks for your patch!
+
+On Fri, Jun 8, 2018 at 6:24 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> As per section 57A.3.5/69A.3.5/79.A.3.5 of rz/g/r-car gen2/3 hardware
+> manual,it is mentioned that we need to provide 2 cycles in counter input
+> clock (RCLK) for reflecting written data to counter behaviour. Adding
+> sufficient wait to let the CMCNT register value settle before starting the
+> timer channel.
+
+RCLK usually runs at ca. 32 kHz, so 32µs should be sufficient on R-Car
+Gen2/3 and RZ/G1.
+R-Mobile A1 is the exception: RCLK runs at 23 kHz, so you need 43µs to
+be safe.
+
+> It fixes the error "sh_cmt ffca0000.timer: ch1: cannot clear CMCNT"
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+> ---
+> Hello,
+>
+> During cmt testing, the tool (tools/testing/selftests/timers/clocksource-switch.c)
+> is complaining about the error "sh_cmt ffca0000.timer: ch1: cannot clear CMCNT".
+> The above patch fixes this issue is by adding sufficient wait to let the
+> CMCNT register value settle before starting the timer channel.
+>
+> This issue is reproduced on Koelsch/RZ/G1[ME] based iwave boards etc...,
+> as I assume the same issue should be present on lager etc. as well?
+
+> --- a/drivers/clocksource/sh_cmt.c
+> +++ b/drivers/clocksource/sh_cmt.c
+> @@ -328,7 +328,7 @@ static void sh_cmt_start_stop_ch(struct sh_cmt_channel *ch, int start)
+>
+>  static int sh_cmt_enable(struct sh_cmt_channel *ch)
+>  {
+> -       int k, ret;
+> +       int j, k, ret;
+>
+>         pm_runtime_get_sync(&ch->cmt->pdev->dev);
+>         dev_pm_syscore_device(&ch->cmt->pdev->dev, true);
+> @@ -368,11 +368,17 @@ static int sh_cmt_enable(struct sh_cmt_channel *ch)
+>          * While at it, we're supposed to clear out the CMCNT as of this
+>          * moment, so make sure it's processed properly here.  This will
+>          * take RCLKx2 at maximum.
+> +        *
+> +        * Similar register access usage for CMCNT is mentioned in R-Car
+> +        * Gen[2/3]/RZ/G1 user's manual, RCLKx2 for cmt0 and RCLKx2 or
+> +        * CPϕx2 (CPEXϕx2)) for cmt1.
+>          */
+> -       for (k = 0; k < 100; k++) {
+> -               if (!sh_cmt_read_cmcnt(ch))
+> -                       break;
+> -               udelay(1);
+
+100 * 1µs = 100µs, so the original code should be sufficient?
+Or should it wait 42µs unconditionally, i.e. without checking CMCNT?
+
+The datasheet mentions some other registers 2 RCLK cycles, too.
+Should there be a fixed 2 RCLK delay in sh_cmt_write_cmcsr() and
+sh_cmt_write_cmcor(), which are both called just before sh_cmt_write_cmcnt()
+above (all out of diff context)?
+
+> +       for (j = 0; j < 2; j++) {
+> +               for (k = 0; k < 100; k++) {
+> +                       if (!sh_cmt_read_cmcnt(ch))
+> +                               break;
+> +                       udelay(1);
+> +               }
+
+This is now two loops, with two checks for CMCNT, which looks strange to me.
+Do you have figures for the number of loops needed, for both the first (j=0)
+and the 2nd (j=1) cycle?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
