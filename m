@@ -1,48 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:38693 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754038AbeFKPRw (ORCPT
+Received: from relay10.mail.gandi.net ([217.70.178.230]:55513 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754286AbeFLJnm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Jun 2018 11:17:52 -0400
+        Tue, 12 Jun 2018 05:43:42 -0400
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: mchehab@kernel.org
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 0/2] media: i2c: mt9v111 sensor driver
-Date: Mon, 11 Jun 2018 17:17:31 +0200
-Message-Id: <1528730253-25135-1-git-send-email-jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v6 0/10] rcar-vin: Add support for parallel input on Gen3
+Date: Tue, 12 Jun 2018 11:43:22 +0200
+Message-Id: <1528796612-7387-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hello,
-   this is a sensor level driver for Aptina MT9V111.
+   this series adds support for parallel video input to the Gen3 version of
+rcar-vin driver.
 
-The driver supports YUYV_2X8 output formats and VGA,QVGA,QQVGA,CIF and QCIF
-resolution.
+Few changes compared to v5, closing a few comments from Kieran and Niklas,
+and fixed the label names I forgot to change in previous version.
 
-The driver allows control of frame rate through s_frame_interval or
-V4L2_CID_H/VBLANK control. In order to allow manual frame control, the chip
-is initialized with auto-exposure control, auto white balancing and flickering
-control disabled.
+Changlog in the individual patches when relevant.
 
-Tested VGA, QVGA QQVGA resolutions at 5, 10, 15 and 30 frame per second.
+A few patches have not yet been acked-by, but things look smooth and we
+should be close to have this finalized.
 
 Thanks
    j
 
-Jacopo Mondi (2):
-  dt-bindings: media: i2c: Document MT9V111 bindings
-  media: i2c: Add driver for Aptina MT9V111
+Jacopo Mondi (10):
+  media: rcar-vin: Rename 'digital' to 'parallel'
+  media: rcar-vin: Remove two empty lines
+  media: rcar-vin: Create a group notifier
+  media: rcar-vin: Cleanup notifier in error path
+  media: rcar-vin: Cache the mbus configuration flags
+  media: rcar-vin: Parse parallel input on Gen3
+  media: rcar-vin: Link parallel input media entities
+  media: rcar-vin: Handle parallel subdev in link_notify
+  media: rcar-vin: Rename _rcar_info to rcar_info
+  media: rcar-vin: Add support for R-Car R8A77995 SoC
 
- .../bindings/media/i2c/aptina,mt9v111.txt          |   46 +
- MAINTAINERS                                        |    8 +
- drivers/media/i2c/Kconfig                          |   12 +
- drivers/media/i2c/Makefile                         |    1 +
- drivers/media/i2c/mt9v111.c                        | 1297 ++++++++++++++++++++
- 5 files changed, 1364 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.txt
- create mode 100644 drivers/media/i2c/mt9v111.c
+ drivers/media/platform/rcar-vin/rcar-core.c | 265 ++++++++++++++++++----------
+ drivers/media/platform/rcar-vin/rcar-dma.c  |  36 ++--
+ drivers/media/platform/rcar-vin/rcar-v4l2.c |  12 +-
+ drivers/media/platform/rcar-vin/rcar-vin.h  |  29 +--
+ 4 files changed, 223 insertions(+), 119 deletions(-)
 
 --
 2.7.4
