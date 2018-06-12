@@ -1,253 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:39897 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751350AbeFFNWZ (ORCPT
+Received: from relay10.mail.gandi.net ([217.70.178.230]:48963 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933386AbeFLJny (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:22:25 -0400
+        Tue, 12 Jun 2018 05:43:54 -0400
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        kieran.bingham@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
         linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [RFC] media: renesas-ceu: Add media-controller support
-Date: Wed,  6 Jun 2018 15:22:13 +0200
-Message-Id: <1528291333-20562-1-git-send-email-jacopo+renesas@jmondi.org>
+Subject: [PATCH v6 08/10] media: rcar-vin: Handle parallel subdev in link_notify
+Date: Tue, 12 Jun 2018 11:43:30 +0200
+Message-Id: <1528796612-7387-9-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1528796612-7387-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1528796612-7387-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add initial support for media controller framework to the renesas-ceu driver.
-
-Adding media-controller support allows to operate sensors that expose advanced
-functionalities through the v4l2-subdev APIs.
+Handle parallel subdevices in link_notify callback. If the notified link
+involves a parallel subdevice, do not change routing of the VIN-CSI-2
+devices and mark the VIN instance as using a parallel input. If the
+CSI-2 link setup succeeds instead, mark the VIN instance as using CSI-2.
 
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-Hello,
-   I'm in the process of adding support to a sensor driver that exposes advanced
-functionalities through the v4l2-subdev APIs.
+ drivers/media/platform/rcar-vin/rcar-core.c | 35 ++++++++++++++++++++++++++++-
+ 1 file changed, 34 insertions(+), 1 deletion(-)
 
-In order to operate on it, I had to add initial media-controller support to the
-host driver (renesas-ceu) to have the subdevice video nodes properly created.
-
-The current implementation allows to create and operate on the media graph, but
-the result is a lot of #ifdef in the driver code I don't see in any other
-mainline platform driver.
-
-As there are more media-controller specificities to be supported (eg. set_fmt
-that should not call into the subdev operations etc) before going too far I
-decided to send this out to collect suggestions.
-
-What is the best way to add media-controller support to a non-mc driver?
-
-Ideally I would like this to continue working with all sensor drivers, and thus
-I see a few ways of doing this:
-
-- Keep using #ifdef CONFIG_MEDIA_CONTROLLER, but I don't see it in any other
-  driver in mainline
-- Add a media-controller compatible string, and decide at runtime if we should
-  use media-controller or not (similar to what VIN driver does)
-- Make the driver media controller only, but I fear 'old-style' sensor driver
-  won't be usable anymore with this new version.
-
-Any pointer/opinion is welcome.
-
-Thanks
-  j
----
- drivers/media/platform/renesas-ceu.c | 111 +++++++++++++++++++++++++++++++++++
- 1 file changed, 111 insertions(+)
-
-diff --git a/drivers/media/platform/renesas-ceu.c b/drivers/media/platform/renesas-ceu.c
-index 46b0639..5911f097 100644
---- a/drivers/media/platform/renesas-ceu.c
-+++ b/drivers/media/platform/renesas-ceu.c
-@@ -39,6 +39,7 @@
- #include <media/v4l2-fwnode.h>
- #include <media/v4l2-image-sizes.h>
- #include <media/v4l2-ioctl.h>
-+#include <media/v4l2-mc.h>
- #include <media/v4l2-mediabus.h>
- #include <media/videobuf2-dma-contig.h>
-
-@@ -158,6 +159,9 @@ struct ceu_subdev {
- 	/* per-subdevice mbus configuration options */
- 	unsigned int mbus_flags;
- 	struct ceu_mbus_fmt mbus_fmt;
-+#ifdef CONFIG_MEDIA_CONTROLLER
-+	int source_pad;
-+#endif
- };
-
- static struct ceu_subdev *to_ceu_subdev(struct v4l2_async_subdev *asd)
-@@ -173,6 +177,11 @@ struct ceu_device {
- 	struct video_device	vdev;
- 	struct v4l2_device	v4l2_dev;
-
-+#ifdef CONFIG_MEDIA_CONTROLLER
-+	struct media_device	mdev;
-+	struct media_pad	pad;
-+#endif
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 98fe121..8950af1 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -171,9 +171,37 @@ static int rvin_group_link_notify(struct media_link *link, u32 flags,
+ 
+ 	/* Add the new link to the existing mask and check if it works. */
+ 	csi_id = rvin_group_entity_to_csi_id(group, link->source->entity);
 +
- 	/* subdevices descriptors */
- 	struct ceu_subdev	*subdevs;
- 	/* the subdevice currently in use */
-@@ -1381,6 +1390,60 @@ static void ceu_vdev_release(struct video_device *vdev)
- 	kfree(ceudev);
- }
-
-+#ifdef CONFIG_MEDIA_CONTROLLER
-+static int ceu_find_pad(struct v4l2_subdev *sd, int direction)
-+{
-+	unsigned int pad;
++	if (csi_id == -ENODEV) {
++		struct v4l2_subdev *sd;
++		unsigned int i;
 +
-+	if (sd->entity.num_pads <= 1)
-+		return 0;
++		/*
++		 * Make sure the source entity subdevice is registered as
++		 * a parallel input of one of the enabled VINs if it is not
++		 * one of the CSI-2 subdevices.
++		 *
++		 * No hardware configuration required for parallel inputs,
++		 * we can return here.
++		 */
++		sd = media_entity_to_v4l2_subdev(link->source->entity);
++		for (i = 0; i < RCAR_VIN_NUM; i++) {
++			if (group->vin[i] && group->vin[i]->parallel &&
++			    group->vin[i]->parallel->subdev == sd) {
++				group->vin[i]->is_csi = false;
++				ret = 0;
++				goto out;
++			}
++		}
 +
-+	for (pad = 0; pad < sd->entity.num_pads; pad++)
-+		if (sd->entity.pads[pad].flags & direction)
-+			return pad;
-+
-+	return -EINVAL;
-+}
-+
-+static int ceu_notify_complete_mc(struct ceu_device *ceudev)
-+{
-+	struct video_device *vdev = &ceudev->vdev;
-+	struct media_entity *source;
-+	struct media_entity *sink;
-+
-+	unsigned int i;
-+	int ret;
-+
-+	ret = media_device_register(&ceudev->mdev);
-+	if (ret) {
-+		v4l2_err(vdev->v4l2_dev,
-+			 "media_device_register failed : %d\n", ret);
-+		return ret;
++		vin_err(vin, "Subdevice %s not registered to any VIN\n",
++			link->source->entity->name);
++		ret = -ENODEV;
++		goto out;
 +	}
 +
-+	ret = v4l2_device_register_subdev_nodes(&ceudev->v4l2_dev);
+ 	channel = rvin_group_csi_pad_to_channel(link->source->index);
+ 	mask_new = mask & rvin_group_get_mask(vin, csi_id, channel);
+-
+ 	vin_dbg(vin, "Try link change mask: 0x%x new: 0x%x\n", mask, mask_new);
+ 
+ 	if (!mask_new) {
+@@ -183,6 +211,11 @@ static int rvin_group_link_notify(struct media_link *link, u32 flags,
+ 
+ 	/* New valid CHSEL found, set the new value. */
+ 	ret = rvin_set_channel_routing(group->vin[master_id], __ffs(mask_new));
 +	if (ret)
-+		return ret;
++		goto out;
 +
-+	/* Link subdev's first available source pad to CEU sink one. */
-+	for (i = 0; i < ceudev->num_sd; i++) {
-+		int source_pad = ceudev->subdevs[i].source_pad;
++	vin->is_csi = true;
 +
-+		if (source_pad < 0)
-+			continue;
-+
-+		source = &ceudev->subdevs[i].v4l2_sd->entity;
-+		sink = &vdev->entity;
-+
-+		ret = media_create_pad_link(source, source_pad, sink, 0, 0);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+#endif
-+
- static int ceu_notify_bound(struct v4l2_async_notifier *notifier,
- 			    struct v4l2_subdev *v4l2_sd,
- 			    struct v4l2_async_subdev *asd)
-@@ -1392,6 +1455,11 @@ static int ceu_notify_bound(struct v4l2_async_notifier *notifier,
- 	ceu_sd->v4l2_sd = v4l2_sd;
- 	ceudev->num_sd++;
-
-+#ifdef CONFIG_MEDIA_CONTROLLER
-+	/* Cache the entity source pad for later link creation. */
-+	ceu_sd->source_pad = ceu_find_pad(v4l2_sd, MEDIA_PAD_FL_SOURCE);
-+#endif
-+
- 	return 0;
- }
-
-@@ -1459,6 +1527,14 @@ static int ceu_notify_complete(struct v4l2_async_notifier *notifier)
- 		return ret;
- 	}
-
-+#ifdef CONFIG_MEDIA_CONTROLLER
-+	ret = ceu_notify_complete_mc(ceudev);
-+	if (ret) {
-+		video_unregister_device(&ceudev->vdev);
-+		return ret;
-+	}
-+#endif
-+
- 	return 0;
- }
-
-@@ -1467,6 +1543,12 @@ static const struct v4l2_async_notifier_operations ceu_notify_ops = {
- 	.complete	= ceu_notify_complete,
- };
-
-+#ifdef CONFIG_MEDIA_CONTROLLER
-+static const struct media_device_ops ceu_media_ops = {
-+	.link_notify = v4l2_pipeline_link_notify,
-+};
-+#endif
-+
- /*
-  * ceu_init_async_subdevs() - Initialize CEU subdevices and async_subdevs in
-  *			      ceu device. Both DT and platform data parsing use
-@@ -1631,6 +1713,9 @@ static int ceu_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	const struct ceu_data *ceu_data;
- 	struct ceu_device *ceudev;
-+#ifdef CONFIG_MEDIA_CONTROLLER
-+	struct media_device *mdev;
-+#endif
- 	struct resource *res;
- 	unsigned int irq;
- 	int num_subdevs;
-@@ -1670,6 +1755,24 @@ static int ceu_probe(struct platform_device *pdev)
-
- 	pm_runtime_enable(dev);
-
-+#ifdef CONFIG_MEDIA_CONTROLLER
-+	mdev = &ceudev->mdev;
-+	mdev->dev = dev;
-+	mdev->ops = &ceu_media_ops;
-+	strlcpy(mdev->driver_name, KBUILD_MODNAME, sizeof(mdev->driver_name));
-+	strlcpy(mdev->model, KBUILD_MODNAME, sizeof(mdev->model));
-+	snprintf(mdev->bus_info, sizeof(mdev->bus_info), "platform:%s",
-+		 dev_name(mdev->dev));
-+
-+	media_device_init(mdev);
-+	ceudev->v4l2_dev.mdev = mdev;
-+
-+	ceudev->pad.flags = MEDIA_PAD_FL_SINK;
-+	ret = media_entity_pads_init(&ceudev->vdev.entity, 1, &ceudev->pad);
-+	if (ret)
-+		goto error_pm_disable;
-+#endif
-+
- 	ret = v4l2_device_register(dev, &ceudev->v4l2_dev);
- 	if (ret)
- 		goto error_pm_disable;
-@@ -1709,6 +1812,9 @@ static int ceu_probe(struct platform_device *pdev)
- 	v4l2_device_unregister(&ceudev->v4l2_dev);
- error_pm_disable:
- 	pm_runtime_disable(dev);
-+#ifdef CONFIG_MEDIA_CONTROLLER
-+	media_device_cleanup(&ceudev->mdev);
-+#endif
- error_free_ceudev:
- 	kfree(ceudev);
-
-@@ -1723,6 +1829,11 @@ static int ceu_remove(struct platform_device *pdev)
-
- 	v4l2_async_notifier_unregister(&ceudev->notifier);
-
-+#ifdef CONFIG_MEDIA_CONTROLLER
-+	media_device_cleanup(&ceudev->mdev);
-+	media_device_unregister(&ceudev->mdev);
-+#endif
-+
- 	v4l2_device_unregister(&ceudev->v4l2_dev);
-
- 	video_unregister_device(&ceudev->vdev);
---
+ out:
+ 	mutex_unlock(&group->lock);
+ 
+-- 
 2.7.4
