@@ -1,136 +1,148 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:50958 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753058AbeF2RA3 (ORCPT
+Received: from relay10.mail.gandi.net ([217.70.178.230]:52577 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933295AbeFLJnv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Jun 2018 13:00:29 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Gerd Hoffmann <kraxel@redhat.com>
-Subject: [PROTO] [VIRTIO] [PATCH 2/2] virtio-gpu: Support host-allocated backing storage
-Date: Fri, 29 Jun 2018 20:00:41 +0300
-Message-Id: <20180629170041.13722-3-laurent.pinchart@ideasonboard.com>
-In-Reply-To: <20180629170041.13722-1-laurent.pinchart@ideasonboard.com>
-References: <20180629170041.13722-1-laurent.pinchart@ideasonboard.com>
+        Tue, 12 Jun 2018 05:43:51 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v6 06/10] media: rcar-vin: Parse parallel input on Gen3
+Date: Tue, 12 Jun 2018 11:43:28 +0200
+Message-Id: <1528796612-7387-7-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1528796612-7387-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1528796612-7387-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The virtio-gpu protocol is based on opaque host resources backed by
-guest-allocated memory. This requires transferring data from guest
-framebuffers to host display device buffers.
+The rcar-vin driver so far had a mutually exclusive code path for
+handling parallel and CSI-2 video input subdevices, with only the CSI-2
+use case supporting media-controller. As we add support for parallel
+inputs to Gen3 media-controller compliant code path now parse both port@0
+and port@1, handling the media-controller use case in the parallel
+bound/unbind notifier operations.
 
-When the host supports VIRGL, the GPU is used for both 2D and 3D
-rendering, in which case the memory transfer can take the form of a DMA
-operation without incurring significant costs. However, when VIRGL
-support isn't available, 2D transfers require a CPU memory copy for
-every page flip. Display is slowed down to an unusable state.
-
-To solve this problem, extend the virtio-gpu protocol with the ability
-for the host to allocate resource backing storage and map it to the
-guest. The allocated memory can then be used directly by the host-side
-display device, removing the need for memory copy operations.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- virtio-gpu.tex | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+r5 -> r6:
+- Fix 'error_group_unregister' and 'error_dma_unregister' label names
 
-diff --git a/virtio-gpu.tex b/virtio-gpu.tex
-index 34cf493bbcd1..22546cc1748f 100644
---- a/virtio-gpu.tex
-+++ b/virtio-gpu.tex
-@@ -34,6 +34,7 @@ control queue.
- 
- \begin{description}
- \item[VIRTIO_GPU_F_VIRGL (0)] virgl 3D mode is supported.
-+\item[VIRTIO_GPU_F_HOST_ALLOC (1)] buffer allocation by the host is supported.
- \end{description}
- 
- \subsection{Device configuration layout}\label{sec:Device Types / GPU Device / Device configuration layout}
-@@ -90,6 +91,11 @@ height and format along with an identifier. The guest must then attach
- backing store to the resources in order for DMA transfers to
- work. This is like a GART in a real GPU.
- 
-+Additionally, when the VIRTIO_GPU_F_HOST_ALLOC feature is present, the guest
-+can request the host to allocate backing store for resources on its behalf, in
-+which case the allocated resources can be accessed by both the host and the
-+guest without any need for DMA transfers.
-+
- \subsubsection{Device Operation: Create a framebuffer and configure scanout}
- 
- \begin{itemize*}
-@@ -120,6 +126,18 @@ using VIRTIO_GPU_CMD_SET_SCANOUT and VIRTIO_GPU_CMD_RESOURCE_FLUSH,
- and update the invisible framebuffer using
- VIRTIO_GPU_CMD_TRANSFER_SEND_2D.
- 
-+\subsubsection{Device Operation: Create a framebuffer from host-allocated memory}
-+
-+\begin{itemize*}
-+\item Create a host resource using VIRTIO_GPU_CMD_RESOURCE_CREATE_2D. This
-+  step is identical to the guest-allocated backing store case.
-+\item Request the host to allocate the backing storage for the resource just
-+  created, using VIRTIO_GPU_CMD_RESOURCE_ALLOC_BACKING.  The host will map the
-+  memory to the guest and will return the memory address.
-+\item Use VIRTIO_GPU_CMD_SET_SCANOUT, VIRTIO_GPU_CMD_TRANSFER_SEND_2D and
-+  VIRTIO_GPU_CMD_RESOURCE_FLUSH as for guest-allocated memory.
-+\end{itemize*}
-+
- \subsubsection{Device Operation: Multihead setup}
- 
- In case two or more displays are present there are different ways to
-@@ -171,6 +189,7 @@ enum virtio_gpu_ctrl_type {
-         VIRTIO_GPU_CMD_TRANSFER_TO_HOST_2D,
-         VIRTIO_GPU_CMD_RESOURCE_ATTACH_BACKING,
-         VIRTIO_GPU_CMD_RESOURCE_DETACH_BACKING,
-+        VIRTIO_GPU_CMD_RESOURCE_ALLOC_BACKING,
- 
-         /* cursor commands */
-         VIRTIO_GPU_CMD_UPDATE_CURSOR = 0x0300,
-@@ -179,6 +198,7 @@ enum virtio_gpu_ctrl_type {
-         /* success responses */
-         VIRTIO_GPU_RESP_OK_NODATA = 0x1100,
-         VIRTIO_GPU_RESP_OK_DISPLAY_INFO,
-+        VIRTIO_GPU_RESP_OK_ALLOC_BACKING,
- 
-         /* error responses */
-         VIRTIO_GPU_RESP_ERR_UNSPEC = 0x1200,
-@@ -417,6 +437,34 @@ struct virtio_gpu_resource_detach_backing {
- This detaches any backing pages from a resource, to be used in case of
- guest swapping or object destruction.
- 
-+\item[VIRTIO_GPU_CMD_RESOURCE_ALLOC_BACKING] Request the host to allocate
-+  backing pages for a resource.  Request data is \field{struct
-+    virtio_gpu_resource_alloc_backing}.  Response type is
-+    VIRTIO_GPU_RESP_OK_ALLOC_BACKING, response data is \field{struct
-+    virtio_gpu_resp_resource_alloc_backing}.
-+
-+\begin{lstlisting}
-+struct virtio_gpu_resource_alloc_backing {
-+        struct virtio_gpu_ctrl_hdr hdr;
-+        le32 resource_id;
-+        le32 padding;
-+};
-+
-+struct virtio_gpu_resp_resource_alloc_backing {
-+        struct virtio_gpu_ctrl_hdr hdr;
-+        le64 addr;
-+};
-+\end{lstlisting}
-+
-+This allocates backing store memory for a resource on the host, and maps the
-+memory physically contiguous to the guest. The host returns the guest memory
-+address in the \field{addr} field. If memory can't be allocated, the response
-+is VIRTIO_GPU_RESP_ERR_OUT_OF_MEMORY with no data.
-+
-+When the backing store is detached from the resource with
-+VIRTIO_GPU_CMD_RESOURCE_DETACH_BACKING, the memory is freed and unmapped from
-+the guest.
-+
- \end{description}
- 
- \subsubsection{Device Operation: cursorq}\label{sec:Device Types / GPU Device / Device Operation / Device Operation: cursorq}
--- 
-Regards,
+v4 -> v5:
+- Re-group rvin_mc_init() function
+- Add error_group_unreg error path to clean up group registration
+- Change rvin_parallel_init() return type to make sure Gen2 works as before
 
-Laurent Pinchart
+v3 -> v4:
+- Change the mc/parallel initialization order. Initialize mc first, then
+  parallel
+- As a consequence no need to delay parallel notifiers registration, the
+  media controller is set up already when parallel input got parsed,
+  this greatly simplify the group notifier complete callback.
+---
+
+ drivers/media/platform/rcar-vin/rcar-core.c | 53 +++++++++++++++++++++--------
+ 1 file changed, 38 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 39bb193..91ccaf8 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -397,6 +397,11 @@ static int rvin_parallel_subdevice_attach(struct rvin_dev *vin,
+ 	ret = rvin_find_pad(subdev, MEDIA_PAD_FL_SINK);
+ 	vin->parallel->sink_pad = ret < 0 ? 0 : ret;
+
++	if (vin->info->use_mc) {
++		vin->parallel->subdev = subdev;
++		return 0;
++	}
++
+ 	/* Find compatible subdevices mbus format */
+ 	vin->mbus_code = 0;
+ 	code.index = 0;
+@@ -458,10 +463,12 @@ static int rvin_parallel_subdevice_attach(struct rvin_dev *vin,
+ static void rvin_parallel_subdevice_detach(struct rvin_dev *vin)
+ {
+ 	rvin_v4l2_unregister(vin);
+-	v4l2_ctrl_handler_free(&vin->ctrl_handler);
+-
+-	vin->vdev.ctrl_handler = NULL;
+ 	vin->parallel->subdev = NULL;
++
++	if (!vin->info->use_mc) {
++		v4l2_ctrl_handler_free(&vin->ctrl_handler);
++		vin->vdev.ctrl_handler = NULL;
++	}
+ }
+
+ static int rvin_parallel_notify_complete(struct v4l2_async_notifier *notifier)
+@@ -550,18 +557,19 @@ static int rvin_parallel_parse_v4l2(struct device *dev,
+ 	return 0;
+ }
+
+-static int rvin_parallel_graph_init(struct rvin_dev *vin)
++static int rvin_parallel_init(struct rvin_dev *vin)
+ {
+ 	int ret;
+
+-	ret = v4l2_async_notifier_parse_fwnode_endpoints(
+-		vin->dev, &vin->notifier,
+-		sizeof(struct rvin_parallel_entity), rvin_parallel_parse_v4l2);
++	ret = v4l2_async_notifier_parse_fwnode_endpoints_by_port(
++		vin->dev, &vin->notifier, sizeof(struct rvin_parallel_entity),
++		0, rvin_parallel_parse_v4l2);
+ 	if (ret)
+ 		return ret;
+
++	/* If using mc, it's fine not to have any input registered. */
+ 	if (!vin->parallel)
+-		return -ENODEV;
++		return vin->info->use_mc ? 0 : -ENODEV;
+
+ 	vin_dbg(vin, "Found parallel subdevice %pOF\n",
+ 		to_of_node(vin->parallel->asd.match.fwnode));
+@@ -1074,20 +1082,35 @@ static int rcar_vin_probe(struct platform_device *pdev)
+ 		return ret;
+
+ 	platform_set_drvdata(pdev, vin);
+-	if (vin->info->use_mc)
++
++	if (vin->info->use_mc) {
+ 		ret = rvin_mc_init(vin);
+-	else
+-		ret = rvin_parallel_graph_init(vin);
+-	if (ret < 0)
+-		goto error;
++		if (ret)
++			goto error_dma_unregister;
++	}
++
++	ret = rvin_parallel_init(vin);
++	if (ret)
++		goto error_group_unregister;
+
+ 	pm_suspend_ignore_children(&pdev->dev, true);
+ 	pm_runtime_enable(&pdev->dev);
+
+ 	return 0;
+-error:
++
++error_group_unregister:
++	if (vin->info->use_mc) {
++		mutex_lock(&vin->group->lock);
++		if (&vin->v4l2_dev == vin->group->notifier.v4l2_dev) {
++			v4l2_async_notifier_unregister(&vin->group->notifier);
++			v4l2_async_notifier_cleanup(&vin->group->notifier);
++		}
++		mutex_unlock(&vin->group->lock);
++		rvin_group_put(vin);
++	}
++
++error_dma_unregister:
+ 	rvin_dma_unregister(vin);
+-	v4l2_async_notifier_cleanup(&vin->notifier);
+
+ 	return ret;
+ }
+--
+2.7.4
