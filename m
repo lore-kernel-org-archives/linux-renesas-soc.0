@@ -1,67 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934238AbeFYOEP (ORCPT
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:54167 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932712AbeFLO0r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:04:15 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 15/29] arm64: dts: renesas: salvator-x(s): Update I2C ch4 clock to 400kHz
-Date: Mon, 25 Jun 2018 16:03:10 +0200
-Message-Id: <56195dc5c3a156cad6afb7cbda411fd2cfd978ae.1529933747.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
-References: <cover.1529933747.git.horms+renesas@verge.net.au>
+        Tue, 12 Jun 2018 10:26:47 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
+        horms@verge.net.au, geert@glider.be
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
+        robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v4 5/6] media: rcar-vin: Handle data-enable polarity
+Date: Tue, 12 Jun 2018 16:26:05 +0200
+Message-Id: <1528813566-17927-6-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1528813566-17927-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1528813566-17927-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Handle data-enable signal polarity. If the polarity is not specifically
+requested to be active low, use the active high default.
 
-Any of the following devices connected to I2C ch4 of the Salvator-X(S)
-boards will operate at 400 kHz:
-
-    PCA9654, 9FGV0841, ADV7482WBBCZ, MAX9611, 5P49V5923, 5P49V6901A
-
-This patch updates the clock frequency to 400 KHz.
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[wsa: squashed commits into one]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm64/boot/dts/renesas/salvator-x.dtsi  | 2 ++
- arch/arm64/boot/dts/renesas/salvator-xs.dtsi | 2 ++
- 2 files changed, 4 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-dma.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-x.dtsi b/arch/arm64/boot/dts/renesas/salvator-x.dtsi
-index 468868c8ed9f..2828482eba1c 100644
---- a/arch/arm64/boot/dts/renesas/salvator-x.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-x.dtsi
-@@ -20,6 +20,8 @@
- };
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index d2b7002..9145b56 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -123,6 +123,7 @@
+ /* Video n Data Mode Register 2 bits */
+ #define VNDMR2_VPS		(1 << 30)
+ #define VNDMR2_HPS		(1 << 29)
++#define VNDMR2_CES		(1 << 28)
+ #define VNDMR2_FTEV		(1 << 17)
+ #define VNDMR2_VLV(n)		((n & 0xf) << 12)
  
- &i2c4 {
-+	clock-frequency = <400000>;
+@@ -698,6 +699,10 @@ static int rvin_setup(struct rvin_dev *vin)
+ 		/* Vsync Signal Polarity Select */
+ 		if (!(vin->parallel->mbus_flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
+ 			dmr2 |= VNDMR2_VPS;
 +
- 	versaclock5: clock-generator@6a {
- 		compatible = "idt,5p49v5923";
- 		reg = <0x6a>;
-diff --git a/arch/arm64/boot/dts/renesas/salvator-xs.dtsi b/arch/arm64/boot/dts/renesas/salvator-xs.dtsi
-index bf4d200fb546..1ac03b7564aa 100644
---- a/arch/arm64/boot/dts/renesas/salvator-xs.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-xs.dtsi
-@@ -20,6 +20,8 @@
- };
++		/* Data Enable Polarity Select */
++		if (vin->parallel->mbus_flags & V4L2_MBUS_DATA_ENABLE_LOW)
++			dmr2 |= VNDMR2_CES;
+ 	}
  
- &i2c4 {
-+	clock-frequency = <400000>;
-+
- 	versaclock6: clock-generator@6a {
- 		compatible = "idt,5p49v6901";
- 		reg = <0x6a>;
+ 	/*
 -- 
-2.11.0
+2.7.4
