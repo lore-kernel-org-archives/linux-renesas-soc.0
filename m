@@ -1,67 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38338 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752845AbeFEXKr (ORCPT
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:46599 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933533AbeFLVki (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Jun 2018 19:10:47 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 12/12] mfd: da9063: Add DA9063L support
-Date: Wed,  6 Jun 2018 01:10:13 +0200
-Message-Id: <20180605231013.1803-12-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
-References: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
+        Tue, 12 Jun 2018 17:40:38 -0400
+Date: Tue, 12 Jun 2018 15:40:35 -0600
+From: Rob Herring <robh@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+Subject: Re: [PATCH] dt-bindings: watchdog: renesas-wdt: Add support for the
+ R8A77990 wdt
+Message-ID: <20180612214035.GA24451@rob-hp-laptop>
+References: <1528219113-29014-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1528219113-29014-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for DA9063L, which is a reduced variant of the DA9063
-with less regulators and without RTC.
+On Tue, Jun 05, 2018 at 07:18:33PM +0200, Geert Uytterhoeven wrote:
+> From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+> 
+> Document support for the Watchdog Timer (WDT) Controller in the Renesas
+> R-Car E3 (R8A77990) SoC.
+> 
+> No driver update is needed.
+> 
+> Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  Documentation/devicetree/bindings/watchdog/renesas-wdt.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Acked-by: Mark Brown <broonie@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
----
-V2: No change
-V3: No change
-V4: No change
----
- drivers/mfd/da9063-i2c.c | 2 ++
- 1 file changed, 2 insertions(+)
+Acked-by: Rob Herring <robh@kernel.org>
 
-diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
-index f0d92a37df6b..74a3b10a7208 100644
---- a/drivers/mfd/da9063-i2c.c
-+++ b/drivers/mfd/da9063-i2c.c
-@@ -319,6 +319,7 @@ static struct regmap_config da9063_regmap_config = {
- 
- static const struct of_device_id da9063_dt_ids[] = {
- 	{ .compatible = "dlg,da9063", },
-+	{ .compatible = "dlg,da9063l", },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, da9063_dt_ids);
-@@ -373,6 +374,7 @@ static int da9063_i2c_remove(struct i2c_client *i2c)
- 
- static const struct i2c_device_id da9063_i2c_id[] = {
- 	{ "da9063", PMIC_TYPE_DA9063 },
-+	{ "da9063l", PMIC_TYPE_DA9063L },
- 	{},
- };
- MODULE_DEVICE_TABLE(i2c, da9063_i2c_id);
--- 
-2.16.2
+> 
+> diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+> index f24d802b8056f6c6..5d47a262474cfe0e 100644
+> --- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+> +++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+> @@ -16,6 +16,7 @@ Required properties:
+>  	         - "renesas,r8a7796-wdt" (R-Car M3-W)
+>  		 - "renesas,r8a77965-wdt" (R-Car M3-N)
+>  	         - "renesas,r8a77970-wdt" (R-Car V3M)
+> +	         - "renesas,r8a77990-wdt" (R-Car E3)
+>  	         - "renesas,r8a77995-wdt" (R-Car D3)
+>  	         - "renesas,r7s72100-wdt" (RZ/A1)
+>  		The generic compatible string must be:
+> -- 
+> 2.7.4
+> 
