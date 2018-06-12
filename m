@@ -1,26 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from szxga06-in.huawei.com ([45.249.212.32]:34736 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934182AbeFMImK (ORCPT
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:52369 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932712AbeFLO0d (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Jun 2018 04:42:10 -0400
-To: <laurent.pinchart@ideasonboard.com>, <airlied@linux.ie>
-CC: <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "weiyongjun (A)" <weiyongjun1@huawei.com>
-From: YueHaibing <yuehaibing@huawei.com>
-Subject: Missing [PATCH] drm/shmob: fix return value check in
- shmob_drm_probe()
-Message-ID: <5ffbb7e8-ec5e-ac0e-f95a-7fc12dbc70f8@huawei.com>
-Date: Wed, 13 Jun 2018 16:41:51 +0800
+        Tue, 12 Jun 2018 10:26:33 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
+        horms@verge.net.au, geert@glider.be
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
+        robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v4 1/6] dt-bindings: media: rcar-vin: Describe optional ep properties
+Date: Tue, 12 Jun 2018 16:26:01 +0200
+Message-Id: <1528813566-17927-2-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1528813566-17927-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1528813566-17927-1-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Describe the optional endpoint properties for endpoint nodes of port@0
+and port@1 of the R-Car VIN driver device tree bindings documentation.
 
-It seems the below patch missing in the torvalds tree.
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/media/rcar_vin.txt | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-https://patchwork.kernel.org/patch/9697515/
+diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
+index a19517e1..87f93ec 100644
+--- a/Documentation/devicetree/bindings/media/rcar_vin.txt
++++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
+@@ -53,6 +53,14 @@ from local SoC CSI-2 receivers (port1) depending on SoC.
+       from external SoC pins described in video-interfaces.txt[1].
+       Describing more then one endpoint in port 0 is invalid. Only VIN
+       instances that are connected to external pins should have port 0.
++
++      - Optional properties for endpoint nodes of port@0:
++        - hsync-active: see [1] for description. Default is active high.
++        - vsync-active: see [1] for description. Default is active high.
++
++        If both HSYNC and VSYNC polarities are not specified, embedded
++        synchronization is selected.
++
+     - port 1 - sub-nodes describing one or more endpoints connected to
+       the VIN from local SoC CSI-2 receivers. The endpoint numbers must
+       use the following schema.
+@@ -62,6 +70,8 @@ from local SoC CSI-2 receivers (port1) depending on SoC.
+         - Endpoint 2 - sub-node describing the endpoint connected to CSI40
+         - Endpoint 3 - sub-node describing the endpoint connected to CSI41
+ 
++      Endpoint nodes of port@1 do not support any optional endpoint property.
++
+ Device node example for Gen2 platforms
+ --------------------------------------
+ 
+-- 
+2.7.4
