@@ -1,116 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:42672 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751699AbeFEPFT (ORCPT
+Received: from relay10.mail.gandi.net ([217.70.178.230]:58469 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933156AbeFLJnw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Jun 2018 11:05:19 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] soc: renesas: rcar-sysc: Make PM domain initialization more robust
-Date: Tue,  5 Jun 2018 17:05:15 +0200
-Message-Id: <1528211115-12334-1-git-send-email-geert+renesas@glider.be>
+        Tue, 12 Jun 2018 05:43:52 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v6 07/10] media: rcar-vin: Link parallel input media entities
+Date: Tue, 12 Jun 2018 11:43:29 +0200
+Message-Id: <1528796612-7387-8-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1528796612-7387-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1528796612-7387-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The quirk for R-Car E3 ES1.0 added in commit 086b399965a7ee7e ("soc:
-renesas: r8a77990-sysc: Add workaround for 3DG-{A,B}") makes the 3DG-A
-PM domain a subdomain of the 3DG-B PM domain.  However, registering
-3DG-A with its parent fails silently, as the 3DG-B PM domain hasn't been
-registered yet, and such failures are never reported.
+When running with media-controller link the parallel input
+media entities with the VIN entities at 'complete' callback time.
 
-Fix this by:
-  1. Splitting PM Domain initialization in two steps, so all PM domains
-     are registered before any child-parent links are established,
-  2. Reporting any failures in establishing child-parent relations.
+To create media links the v4l2_device should be registered first.
+Check if the device is already registered, to avoid double registrations.
 
-Check for and report pm_genpd_init() failures, too, as that function
-gained a return value in commit 7eb231c337e00735 ("PM / Domains: Convert
-pm_genpd_init() to return an error code").
-
-Fixes: 086b399965a7ee7e ("soc: renesas: r8a77990-sysc: Add workaround for 3DG-{A,B}")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/soc/renesas/rcar-sysc.c | 35 +++++++++++++++++++++++++++++------
- 1 file changed, 29 insertions(+), 6 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-core.c | 26 ++++++++++++++++++++++++--
+ 1 file changed, 24 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index 4db53fa38abc5cf3..99e926f68299878d 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -379,11 +379,12 @@ static int rcar_sysc_pd_power_on(struct generic_pm_domain *genpd)
- 
- static bool has_cpg_mstp;
- 
--static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
-+static int __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 91ccaf8..98fe121 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -474,6 +474,8 @@ static void rvin_parallel_subdevice_detach(struct rvin_dev *vin)
+ static int rvin_parallel_notify_complete(struct v4l2_async_notifier *notifier)
  {
- 	struct generic_pm_domain *genpd = &pd->genpd;
- 	const char *name = pd->genpd.name;
- 	struct dev_power_governor *gov = &simple_qos_governor;
-+	int error;
+ 	struct rvin_dev *vin = v4l2_dev_to_vin(notifier->v4l2_dev);
++	struct media_entity *source;
++	struct media_entity *sink;
+ 	int ret;
  
- 	if (pd->flags & PD_CPU) {
- 		/*
-@@ -436,7 +437,11 @@ static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
- 	rcar_sysc_power_up(&pd->ch);
- 
- finalize:
--	pm_genpd_init(genpd, gov, false);
-+	error = pm_genpd_init(genpd, gov, false);
-+	if (error)
-+		pr_err("Failed to init PM domain %s: %d\n", name, error);
-+
-+	return error;
- }
- 
- static const struct of_device_id rcar_sysc_matches[] __initconst = {
-@@ -560,6 +565,9 @@ static int __init rcar_sysc_pd_init(void)
- 	pr_debug("%pOF: syscier = 0x%08x\n", np, syscier);
- 	iowrite32(syscier, base + SYSCIER);
- 
-+	/*
-+	 * First, create all PM domains
-+	 */
- 	for (i = 0; i < info->num_areas; i++) {
- 		const struct rcar_sysc_area *area = &info->areas[i];
- 		struct rcar_sysc_pd *pd;
-@@ -582,14 +590,29 @@ static int __init rcar_sysc_pd_init(void)
- 		pd->ch.isr_bit = area->isr_bit;
- 		pd->flags = area->flags;
- 
--		rcar_sysc_pd_setup(pd);
--		if (area->parent >= 0)
--			pm_genpd_add_subdomain(domains->domains[area->parent],
--					       &pd->genpd);
-+		error = rcar_sysc_pd_setup(pd);
-+		if (error)
-+			goto out_put;
- 
- 		domains->domains[area->isr_bit] = &pd->genpd;
+ 	ret = v4l2_device_register_subdev_nodes(&vin->v4l2_dev);
+@@ -482,7 +484,26 @@ static int rvin_parallel_notify_complete(struct v4l2_async_notifier *notifier)
+ 		return ret;
  	}
  
-+	/*
-+	 * Second, link all PM domains to their parents
-+	 */
-+	for (i = 0; i < info->num_areas; i++) {
-+		const struct rcar_sysc_area *area = &info->areas[i];
-+
-+		if (!area->name || area->parent < 0)
-+			continue;
-+
-+		error = pm_genpd_add_subdomain(domains->domains[area->parent],
-+					       domains->domains[area->isr_bit]);
-+		if (error)
-+			pr_warn("Failed to add PM subdomain %s to parent %u\n",
-+				area->name, area->parent);
+-	return rvin_v4l2_register(vin);
++	if (!video_is_registered(&vin->vdev)) {
++		ret = rvin_v4l2_register(vin);
++		if (ret < 0)
++			return ret;
 +	}
 +
- 	error = of_genpd_add_provider_onecell(np, &domains->onecell_data);
++	if (!vin->info->use_mc)
++		return 0;
++
++	/* If we're running with media-controller, link the subdevs. */
++	source = &vin->parallel->subdev->entity;
++	sink = &vin->vdev.entity;
++
++	ret = media_create_pad_link(source, vin->parallel->source_pad,
++				    sink, vin->parallel->sink_pad, 0);
++	if (ret)
++		vin_err(vin, "Error adding link from %s to %s: %d\n",
++			source->name, sink->name, ret);
++
++	return ret;
+ }
  
- out_put:
+ static void rvin_parallel_notify_unbind(struct v4l2_async_notifier *notifier,
+@@ -604,7 +625,8 @@ static int rvin_group_notify_complete(struct v4l2_async_notifier *notifier)
+ 
+ 	/* Register all video nodes for the group. */
+ 	for (i = 0; i < RCAR_VIN_NUM; i++) {
+-		if (vin->group->vin[i]) {
++		if (vin->group->vin[i] &&
++		    !video_is_registered(&vin->group->vin[i]->vdev)) {
+ 			ret = rvin_v4l2_register(vin->group->vin[i]);
+ 			if (ret)
+ 				return ret;
 -- 
 2.7.4
