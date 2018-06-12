@@ -1,36 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:34342 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752972AbeFGMMJ (ORCPT
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:45161 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754325AbeFLVC3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Jun 2018 08:12:09 -0400
-Received: by mail-pf0-f195.google.com with SMTP id a63-v6so4839325pfl.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 07 Jun 2018 05:12:09 -0700 (PDT)
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH/RFT 0/2] Add PCIe support for r8a77965
-Date: Thu,  7 Jun 2018 21:11:32 +0900
-Message-Id: <1528373494-18503-1-git-send-email-ykaneko0929@gmail.com>
+        Tue, 12 Jun 2018 17:02:29 -0400
+Date: Tue, 12 Jun 2018 15:02:26 -0600
+From: Rob Herring <robh@kernel.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH] dt-bindings: display: renesas: du: document R8A77980
+ bindings
+Message-ID: <20180612210226.GA14893@rob-hp-laptop>
+References: <2a775652-604c-6379-b807-19979f164f84@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2a775652-604c-6379-b807-19979f164f84@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series adds PCIe support for r8a77965 (R-Car M3-N).
-It is not necessary to update driver and PFC.
+On Mon, Jun 04, 2018 at 10:04:59PM +0300, Sergei Shtylyov wrote:
+> Document the R-Car V3H (R8A77980) SoC in the R-Car DU bindings; the DU
+> hardware seems the same as in the R-Car V3M (R8A77970).
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> ---
+> The patch is against the 'drm-next' branch of David Airlie's 'linux.git' repo.
+> 
+>  Documentation/devicetree/bindings/display/renesas,du.txt |    2 ++
+>  1 file changed, 2 insertions(+)
 
-This series is based on the devel branch of Simon Horman's renesas tree.
-
-Takeshi Kihara (1):
-  arm64: dts: renesas: r8a77965: Add PCIe device nodes
-
-Yoshihiro Kaneko (1):
-  PCI: rcar: Add compatible string for r8a77965
-
- Documentation/devicetree/bindings/pci/rcar-pci.txt |  1 +
- arch/arm64/boot/dts/renesas/r8a77965.dtsi          | 48 +++++++++++++++++++++-
- 2 files changed, 47 insertions(+), 2 deletions(-)
-
--- 
-1.9.1
+Acked-by: Rob Herring <robh@kernel.org>
