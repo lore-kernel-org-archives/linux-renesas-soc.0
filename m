@@ -1,126 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:51902 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755735AbeFOJkP (ORCPT
+Received: from relay10.mail.gandi.net ([217.70.178.230]:58469 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933422AbeFLJnz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Jun 2018 05:40:15 -0400
-Received: by mail-wm0-f65.google.com with SMTP id r15-v6so2521073wmc.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Jun 2018 02:40:14 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, u-boot@lists.denx.de
-Cc: geert@linux-m68k.org, marek.vasut@gmail.com,
-        yoshihiro.shimoda.uh@renesas.com, magnus.damm@gmail.com,
-        takuya.sakata.wz@bp.renesas.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [RFC] ARM: rmobile: create DT memory nodes for R8A7795 3.0 and newer
-Date: Fri, 15 Jun 2018 11:40:04 +0200
-Message-Id: <1529055605-29942-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Tue, 12 Jun 2018 05:43:55 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v6 09/10] media: rcar-vin: Rename _rcar_info to rcar_info
+Date: Tue, 12 Jun 2018 11:43:31 +0200
+Message-Id: <1528796612-7387-10-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1528796612-7387-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1528796612-7387-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Uses an SMC call to the ATF to determine the memory configuration, then
-creates appropriate DT memory nodes.
+Remove leading underscore to align all rcar_group_route structure
+declarations.
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-This is an attempt to avoid having to have a ton of different device trees
-for Renesas R8A7795 H3 SoCs from revision 3.0, which come in a number of
-different memory configurations.
+ drivers/media/platform/rcar-vin/rcar-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-The specific configuration is statically baked into the ARM Trusted Firmware
-binary, so this solution adds an SMC "SiP Service Call" to the ATF returning
-the memory configuration, and then has u-boot build appropriate memory nodes.
-
-This has not been tested in the flesh successfully, as I only have a revision
-1.0 board. I'd like to get some feedback on whether this approach is sound,
-though. Thanks.
-
-Depends on "[RFC ATF] Add SMCCC_RENESAS_MEMCONF SMC call".
-
-CU
-Uli
-
-
-
- board/renesas/salvator-x/salvator-x.c | 51 +++++++++++++++++++++++++++++++++++
- configs/r8a7795_salvator-x_defconfig  |  2 ++
- 2 files changed, 53 insertions(+)
-
-diff --git a/board/renesas/salvator-x/salvator-x.c b/board/renesas/salvator-x/salvator-x.c
-index 651877c..307cb64 100644
---- a/board/renesas/salvator-x/salvator-x.c
-+++ b/board/renesas/salvator-x/salvator-x.c
-@@ -24,6 +24,7 @@
- #include <asm/arch/sh_sdhi.h>
- #include <i2c.h>
- #include <mmc.h>
-+#include <linux/arm-smccc.h>
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 8950af1..a2d166f 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -1026,7 +1026,7 @@ static const struct rvin_info rcar_info_r8a7796 = {
+ 	.routes = rcar_info_r8a7796_routes,
+ };
  
- DECLARE_GLOBAL_DATA_PTR;
+-static const struct rvin_group_route _rcar_info_r8a77970_routes[] = {
++static const struct rvin_group_route rcar_info_r8a77970_routes[] = {
+ 	{ .csi = RVIN_CSI40, .channel = 0, .vin = 0, .mask = BIT(0) | BIT(3) },
+ 	{ .csi = RVIN_CSI40, .channel = 0, .vin = 1, .mask = BIT(2) },
+ 	{ .csi = RVIN_CSI40, .channel = 1, .vin = 1, .mask = BIT(3) },
+@@ -1042,7 +1042,7 @@ static const struct rvin_info rcar_info_r8a77970 = {
+ 	.use_mc = true,
+ 	.max_width = 4096,
+ 	.max_height = 4096,
+-	.routes = _rcar_info_r8a77970_routes,
++	.routes = rcar_info_r8a77970_routes,
+ };
  
-@@ -136,3 +137,53 @@ void reset_cpu(ulong addr)
- 	writel(RST_CODE, RST_CA57RESCNT);
- #endif
- }
-+
-+#define ARM_SMCCC_RENESAS_MEMCONF	0x82000000UL
-+int ft_board_setup(void *blob, bd_t *bd)
-+{
-+	if (rmobile_get_cpu_type() == RMOBILE_CPU_TYPE_R8A7795 &&
-+	    rmobile_get_cpu_rev_integer() >= 3) {
-+		u64 base[CONFIG_NR_DRAM_BANKS];
-+		u64 size[CONFIG_NR_DRAM_BANKS];
-+		struct arm_smccc_res res;
-+
-+		arm_smccc_smc(ARM_SMCCC_RENESAS_MEMCONF,
-+			      0, 0, 0, 0, 0, 0, 0, &res);
-+
-+		switch (res.a0) {
-+		case 1:
-+			base[0] = 0x048000000ULL;
-+			size[0] = 0x038000000ULL;
-+			base[1] = 0x500000000ULL;
-+			size[1] = 0x040000000ULL;
-+			base[2] = 0x600000000ULL;
-+			size[2] = 0x040000000ULL;
-+			base[3] = 0x700000000ULL;
-+			size[3] = 0x040000000ULL;
-+			fdt_fixup_memory_banks(blob, base, size, 4);
-+			break;
-+		case 2:
-+			base[0] = 0x048000000ULL;
-+			size[0] = 0x078000000ULL;
-+			base[1] = 0x500000000ULL;
-+			size[1] = 0x080000000ULL;
-+			fdt_fixup_memory_banks(blob, base, size, 2);
-+			break;
-+		case 3:
-+			base[0] = 0x048000000ULL;
-+			size[0] = 0x078000000ULL;
-+			base[1] = 0x500000000ULL;
-+			size[1] = 0x080000000ULL;
-+			base[2] = 0x600000000ULL;
-+			size[2] = 0x080000000ULL;
-+			base[3] = 0x700000000ULL;
-+			size[3] = 0x080000000ULL;
-+			fdt_fixup_memory_banks(blob, base, size, 4);
-+			break;
-+		default:
-+			break;
-+		}
-+	}
-+
-+	return 0;
-+}
-diff --git a/configs/r8a7795_salvator-x_defconfig b/configs/r8a7795_salvator-x_defconfig
-index fdfa41c..cd2bb59 100644
---- a/configs/r8a7795_salvator-x_defconfig
-+++ b/configs/r8a7795_salvator-x_defconfig
-@@ -61,3 +61,5 @@ CONFIG_USB_EHCI_GENERIC=y
- CONFIG_USB_STORAGE=y
- CONFIG_OF_LIBFDT_OVERLAY=y
- CONFIG_SMBIOS_MANUFACTURER=""
-+CONFIG_OF_BOARD_SETUP=y
-+CONFIG_ARM_SMCCC=y
+ static const struct of_device_id rvin_of_id_table[] = {
 -- 
 2.7.4
