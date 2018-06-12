@@ -1,52 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36962 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935188AbeFMLlR (ORCPT
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:39329 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932712AbeFLO0g (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Jun 2018 07:41:17 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC Fixes for v4.18
-Date: Wed, 13 Jun 2018 13:41:12 +0200
-Message-Id: <cover.1528889592.git.horms+renesas@verge.net.au>
+        Tue, 12 Jun 2018 10:26:36 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
+        horms@verge.net.au, geert@glider.be
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
+        robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v4 2/6] dt-bindings: media: Document data-enable-active property
+Date: Tue, 12 Jun 2018 16:26:02 +0200
+Message-Id: <1528813566-17927-3-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1528813566-17927-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1528813566-17927-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Add 'data-enable-active' property to endpoint node properties list.
 
-Please consider these Renesas ARM based SoC fixes for v4.18.
+The property allows to specify the polarity of the data-enable signal, which
+when in active state determinates when data lines have to sampled for valid
+pixel data.
 
-This pull request is based on renesas-soc-for-v4.18,
-which you have already pulled.
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/media/video-interfaces.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-The following changes since commit 086b399965a7ee7e50c3b3c57f2dba30ff0334b0:
-
-  soc: renesas: r8a77990-sysc: Add workaround for 3DG-{A,B} (2018-05-16 10:57:44 +0200)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-fixes-for-v4.18
-
-for you to fetch changes up to 977d5ba4507dfe5b1346597ee57750262d8d2b19:
-
-  soc: renesas: rcar-sysc: Make PM domain initialization more robust (2018-06-08 10:04:25 +0200)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC Fixes for v4.18
-
-Make PM domain initialization more robust in Renesas R-Car SYSC driver.
-This resolves a regression due to re-parenting of PM domains by
-086b399965a7ee7e ("soc: renesas: r8a77990-sysc: Add workaround for 3DG-{A,B}").
-
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      soc: renesas: rcar-sysc: Make PM domain initialization more robust
-
- drivers/soc/renesas/rcar-sysc.c | 35 +++++++++++++++++++++++++++++------
- 1 file changed, 29 insertions(+), 6 deletions(-)
+diff --git a/Documentation/devicetree/bindings/media/video-interfaces.txt b/Documentation/devicetree/bindings/media/video-interfaces.txt
+index 258b8df..9839d26 100644
+--- a/Documentation/devicetree/bindings/media/video-interfaces.txt
++++ b/Documentation/devicetree/bindings/media/video-interfaces.txt
+@@ -109,6 +109,8 @@ Optional endpoint properties
+   Note, that if HSYNC and VSYNC polarities are not specified, embedded
+   synchronization may be required, where supported.
+ - data-active: similar to HSYNC and VSYNC, specifies data line polarity.
++- data-enable-active: similar to HSYNC and VSYNC, specifies the data enable
++  signal polarity.
+ - field-even-active: field signal level during the even field data transmission.
+ - pclk-sample: sample data on rising (1) or falling (0) edge of the pixel clock
+   signal.
+-- 
+2.7.4
