@@ -1,91 +1,56 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:34581 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932973AbeFKL7F (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:59:05 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 01/14] mfd: da9063: Replace regmap_add_irq_chip with devm counterpart
-Date: Mon, 11 Jun 2018 13:58:38 +0200
-Message-Id: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v6 04/10] media: rcar-vin: Cleanup notifier in error path
+Date: Tue, 12 Jun 2018 11:43:26 +0200
+Message-Id: <1528796612-7387-5-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1528796612-7387-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1528796612-7387-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use devm_regmap_add_irq_chip() instead of plain regmap_add_irq_chip(),
-which removes the need for da9063_irq_exit() altogether and also
-fixes a bug in da9063_device_init() where the da9063_irq_exit() was
-not called in a failpath.
+During the notifier initialization, memory for the list of associated async
+subdevices is reserved during the fwnode endpoint parsing from the v4l2-async
+framework. If the notifier registration fails, that memory should be released
+and the notifier 'cleaned up'.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
-V5: New patch
-V6: No change
----
- drivers/mfd/da9063-core.c       | 1 -
- drivers/mfd/da9063-irq.c        | 8 ++------
- include/linux/mfd/da9063/core.h | 1 -
- 3 files changed, 2 insertions(+), 8 deletions(-)
+Catch the notifier registration error and perform the cleanup both for the
+group and the parallel notifiers.
 
-diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
-index 6c2870d4e754..2647bb371d86 100644
---- a/drivers/mfd/da9063-core.c
-+++ b/drivers/mfd/da9063-core.c
-@@ -238,7 +238,6 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
- void da9063_device_exit(struct da9063 *da9063)
- {
- 	mfd_remove_devices(da9063->dev);
--	da9063_irq_exit(da9063);
- }
- 
- MODULE_DESCRIPTION("PMIC driver for Dialog DA9063");
-diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
-index 207bbfe55449..da6ceb41f0d1 100644
---- a/drivers/mfd/da9063-irq.c
-+++ b/drivers/mfd/da9063-irq.c
-@@ -170,7 +170,8 @@ int da9063_irq_init(struct da9063 *da9063)
- 		return -EINVAL;
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+---
+v5 -> v6:
+- replace goto call with direct 'v4l2_async_notifier_cleanup()'
+---
+ drivers/media/platform/rcar-vin/rcar-core.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 72ffd19..b00387f 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -571,6 +571,7 @@ static int rvin_parallel_graph_init(struct rvin_dev *vin)
+ 	ret = v4l2_async_notifier_register(&vin->v4l2_dev, &vin->notifier);
+ 	if (ret < 0) {
+ 		vin_err(vin, "Notifier registration failed\n");
++		v4l2_async_notifier_cleanup(&vin->group->notifier);
+ 		return ret;
  	}
- 
--	ret = regmap_add_irq_chip(da9063->regmap, da9063->chip_irq,
-+	ret = devm_regmap_add_irq_chip(da9063->dev, da9063->regmap,
-+			da9063->chip_irq,
- 			IRQF_TRIGGER_LOW | IRQF_ONESHOT | IRQF_SHARED,
- 			da9063->irq_base, &da9063_irq_chip,
- 			&da9063->regmap_irq);
-@@ -182,8 +183,3 @@ int da9063_irq_init(struct da9063 *da9063)
- 
- 	return 0;
- }
--
--void da9063_irq_exit(struct da9063 *da9063)
--{
--	regmap_del_irq_chip(da9063->chip_irq, da9063->regmap_irq);
--}
-diff --git a/include/linux/mfd/da9063/core.h b/include/linux/mfd/da9063/core.h
-index f3ae65db4c86..9ab7049977aa 100644
---- a/include/linux/mfd/da9063/core.h
-+++ b/include/linux/mfd/da9063/core.h
-@@ -95,6 +95,5 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq);
- int da9063_irq_init(struct da9063 *da9063);
- 
- void da9063_device_exit(struct da9063 *da9063);
--void da9063_irq_exit(struct da9063 *da9063);
- 
- #endif /* __MFD_DA9063_CORE_H__ */
--- 
-2.16.2
+
+@@ -773,6 +774,7 @@ static int rvin_mc_parse_of_graph(struct rvin_dev *vin)
+ 					   &vin->group->notifier);
+ 	if (ret < 0) {
+ 		vin_err(vin, "Notifier registration failed\n");
++		v4l2_async_notifier_cleanup(&vin->group->notifier);
+ 		return ret;
+ 	}
+
+--
+2.7.4
