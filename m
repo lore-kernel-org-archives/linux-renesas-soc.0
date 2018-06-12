@@ -1,96 +1,245 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:46598 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754382AbeF2JMv (ORCPT
+Received: from relay10.mail.gandi.net ([217.70.178.230]:54351 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933156AbeFLJnu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Jun 2018 05:12:51 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 2/2] i2c: gpio: fault-injector: add incomplete_write_byte
-Date: Fri, 29 Jun 2018 11:12:47 +0200
-Message-Id: <20180629091247.32568-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180629091247.32568-1-wsa+renesas@sang-engineering.com>
-References: <20180629091247.32568-1-wsa+renesas@sang-engineering.com>
+        Tue, 12 Jun 2018 05:43:50 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v6 05/10] media: rcar-vin: Cache the mbus configuration flags
+Date: Tue, 12 Jun 2018 11:43:27 +0200
+Message-Id: <1528796612-7387-6-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1528796612-7387-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1528796612-7387-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add another injector for an incomplete transfer. As mentioned in the
-docs, this one is important to check bus recovery algorithms with it.
-Otherwise random data may be sent to devices!
+Media bus configuration flags and media bus type were so far a property
+of each VIN instance, as the subdevice they were connected to was
+immutable during the whole system life time.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+With the forth-coming introduction of parallel input devices support,
+a VIN instance can have the subdevice it is connected to switched at
+runtime, from a CSI-2 subdevice to a parallel one and viceversa, through
+the modification of links between media entities in the media controller
+graph. To avoid discarding the per-subdevice configuration flags retrieved by
+v4l2_fwnode parsing facilities, cache them in the 'rvin_graph_entity'
+member of each VIN instance, opportunely renamed to 'rvin_parallel_entity'.
+
+Also modify the register configuration function to take mbus flags into
+account when running on a bus type that supports them.
+
+The media bus type currently in use will be updated in a follow-up patch
+to the link state change notification function.
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- Documentation/i2c/gpio-fault-injection | 19 +++++++++++++++++++
- drivers/i2c/busses/i2c-gpio.c          | 21 +++++++++++++++++++++
- 2 files changed, 40 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-core.c | 21 ++++++++-----------
+ drivers/media/platform/rcar-vin/rcar-dma.c  | 32 +++++++++++++++++++----------
+ drivers/media/platform/rcar-vin/rcar-vin.h  | 22 ++++++++++++++------
+ 3 files changed, 45 insertions(+), 30 deletions(-)
 
-diff --git a/Documentation/i2c/gpio-fault-injection b/Documentation/i2c/gpio-fault-injection
-index 37542461cea4..a4ce62090fd5 100644
---- a/Documentation/i2c/gpio-fault-injection
-+++ b/Documentation/i2c/gpio-fault-injection
-@@ -60,3 +60,22 @@ above, the bus master under test should detect this condition and try a bus
- recovery. This time, however, it should succeed and the device should release
- SDA after toggling SCL.
- 
-+"incomplete_write_byte"
-+-----------------------
-+
-+Similar to above, this file is write only and you need to write the address of
-+an existing I2C client device to it.
-+
-+The injector will again stop at one ACK phase, so the device will keep SDA low
-+because it acknowledges data. However, there are two differences compared to
-+'incomplete_address_phase':
-+
-+a) the message sent out will be a write message
-+b) after the address byte, a 0x00 byte will be transferred. Then, stop at ACK.
-+
-+This is a highly delicate state, the device is set up to write any data to
-+register 0x00 (if it has registers) when further clock pulses happen on SCL.
-+This is why bus recovery (up to 9 clock pulses) must either check SDA or send
-+additional STOP conditions to ensure the bus has been released. Otherwise
-+random data will be written to a device!
-+
-diff --git a/drivers/i2c/busses/i2c-gpio.c b/drivers/i2c/busses/i2c-gpio.c
-index b69bb46bdb9d..ac00b8e08251 100644
---- a/drivers/i2c/busses/i2c-gpio.c
-+++ b/drivers/i2c/busses/i2c-gpio.c
-@@ -143,6 +143,25 @@ static int fops_incomplete_addr_phase_set(void *data, u64 addr)
- }
- DEFINE_DEBUGFS_ATTRIBUTE(fops_incomplete_addr_phase, NULL, fops_incomplete_addr_phase_set, "%llu\n");
- 
-+static int fops_incomplete_write_byte_set(void *data, u64 addr)
-+{
-+	struct i2c_gpio_private_data *priv = data;
-+	u32 pattern;
-+
-+	if (addr > 0x7f)
-+		return -EINVAL;
-+
-+	/* ADDR (7 bit) + WR (1 bit) + Client ACK (1 bit) */
-+	pattern = (addr << 2) | 1;
-+	/* 0x00 (8 bit) + Client ACK, keep SDA hi (1 bit) */
-+	pattern = (pattern << 9) | 1;
-+
-+	i2c_gpio_incomplete_transfer(priv, pattern, 18);
-+
-+	return 0;
-+}
-+DEFINE_DEBUGFS_ATTRIBUTE(fops_incomplete_write_byte, NULL, fops_incomplete_write_byte_set, "%llu\n");
-+
- static void i2c_gpio_fault_injector_init(struct platform_device *pdev)
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index b00387f..39bb193 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -524,30 +524,29 @@ static int rvin_parallel_parse_v4l2(struct device *dev,
+ 				    struct v4l2_async_subdev *asd)
  {
- 	struct i2c_gpio_private_data *priv = platform_get_drvdata(pdev);
-@@ -166,6 +185,8 @@ static void i2c_gpio_fault_injector_init(struct platform_device *pdev)
- 	debugfs_create_file_unsafe("sda", 0600, priv->debug_dir, priv, &fops_sda);
- 	debugfs_create_file_unsafe("incomplete_address_phase", 0200, priv->debug_dir,
- 				   priv, &fops_incomplete_addr_phase);
-+	debugfs_create_file_unsafe("incomplete_write_byte", 0200, priv->debug_dir,
-+				   priv, &fops_incomplete_write_byte);
+ 	struct rvin_dev *vin = dev_get_drvdata(dev);
+-	struct rvin_graph_entity *rvge =
+-		container_of(asd, struct rvin_graph_entity, asd);
++	struct rvin_parallel_entity *rvpe =
++		container_of(asd, struct rvin_parallel_entity, asd);
+ 
+ 	if (vep->base.port || vep->base.id)
+ 		return -ENOTCONN;
+ 
+-	vin->mbus_cfg.type = vep->bus_type;
++	vin->parallel = rvpe;
++	vin->parallel->mbus_type = vep->bus_type;
+ 
+-	switch (vin->mbus_cfg.type) {
++	switch (vin->parallel->mbus_type) {
+ 	case V4L2_MBUS_PARALLEL:
+ 		vin_dbg(vin, "Found PARALLEL media bus\n");
+-		vin->mbus_cfg.flags = vep->bus.parallel.flags;
++		vin->parallel->mbus_flags = vep->bus.parallel.flags;
+ 		break;
+ 	case V4L2_MBUS_BT656:
+ 		vin_dbg(vin, "Found BT656 media bus\n");
+-		vin->mbus_cfg.flags = 0;
++		vin->parallel->mbus_flags = 0;
+ 		break;
+ 	default:
+ 		vin_err(vin, "Unknown media bus type\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	vin->parallel = rvge;
+-
+ 	return 0;
  }
  
- static void i2c_gpio_fault_injector_exit(struct platform_device *pdev)
+@@ -557,7 +556,7 @@ static int rvin_parallel_graph_init(struct rvin_dev *vin)
+ 
+ 	ret = v4l2_async_notifier_parse_fwnode_endpoints(
+ 		vin->dev, &vin->notifier,
+-		sizeof(struct rvin_graph_entity), rvin_parallel_parse_v4l2);
++		sizeof(struct rvin_parallel_entity), rvin_parallel_parse_v4l2);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -785,10 +784,6 @@ static int rvin_mc_init(struct rvin_dev *vin)
+ {
+ 	int ret;
+ 
+-	/* All our sources are CSI-2 */
+-	vin->mbus_cfg.type = V4L2_MBUS_CSI2;
+-	vin->mbus_cfg.flags = 0;
+-
+ 	vin->pad.flags = MEDIA_PAD_FL_SINK;
+ 	ret = media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
+ 	if (ret)
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index f1c3585..d2b7002 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -659,8 +659,12 @@ static int rvin_setup(struct rvin_dev *vin)
+ 		break;
+ 	case MEDIA_BUS_FMT_UYVY8_2X8:
+ 		/* BT.656 8bit YCbCr422 or BT.601 8bit YCbCr422 */
+-		vnmc |= vin->mbus_cfg.type == V4L2_MBUS_BT656 ?
+-			VNMC_INF_YUV8_BT656 : VNMC_INF_YUV8_BT601;
++		if (!vin->is_csi &&
++		    vin->parallel->mbus_type == V4L2_MBUS_BT656)
++			vnmc |= VNMC_INF_YUV8_BT656;
++		else
++			vnmc |= VNMC_INF_YUV8_BT601;
++
+ 		input_is_yuv = true;
+ 		break;
+ 	case MEDIA_BUS_FMT_RGB888_1X24:
+@@ -668,8 +672,12 @@ static int rvin_setup(struct rvin_dev *vin)
+ 		break;
+ 	case MEDIA_BUS_FMT_UYVY10_2X10:
+ 		/* BT.656 10bit YCbCr422 or BT.601 10bit YCbCr422 */
+-		vnmc |= vin->mbus_cfg.type == V4L2_MBUS_BT656 ?
+-			VNMC_INF_YUV10_BT656 : VNMC_INF_YUV10_BT601;
++		if (!vin->is_csi &&
++		    vin->parallel->mbus_type == V4L2_MBUS_BT656)
++			vnmc |= VNMC_INF_YUV10_BT656;
++		else
++			vnmc |= VNMC_INF_YUV10_BT601;
++
+ 		input_is_yuv = true;
+ 		break;
+ 	default:
+@@ -682,13 +690,15 @@ static int rvin_setup(struct rvin_dev *vin)
+ 	else
+ 		dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
+ 
+-	/* Hsync Signal Polarity Select */
+-	if (!(vin->mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
+-		dmr2 |= VNDMR2_HPS;
++	if (!vin->is_csi) {
++		/* Hsync Signal Polarity Select */
++		if (!(vin->parallel->mbus_flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
++			dmr2 |= VNDMR2_HPS;
+ 
+-	/* Vsync Signal Polarity Select */
+-	if (!(vin->mbus_cfg.flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
+-		dmr2 |= VNDMR2_VPS;
++		/* Vsync Signal Polarity Select */
++		if (!(vin->parallel->mbus_flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
++			dmr2 |= VNDMR2_VPS;
++	}
+ 
+ 	/*
+ 	 * Output format
+@@ -734,7 +744,7 @@ static int rvin_setup(struct rvin_dev *vin)
+ 
+ 	if (vin->info->model == RCAR_GEN3) {
+ 		/* Select between CSI-2 and parallel input */
+-		if (vin->mbus_cfg.type == V4L2_MBUS_CSI2)
++		if (vin->is_csi)
+ 			vnmc &= ~VNMC_DPINE;
+ 		else
+ 			vnmc |= VNMC_DPINE;
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index ebb480f7..8bc3704 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -73,16 +73,22 @@ struct rvin_video_format {
+ };
+ 
+ /**
+- * struct rvin_graph_entity - Video endpoint from async framework
++ * struct rvin_parallel_entity - Parallel video input endpoint descriptor
+  * @asd:	sub-device descriptor for async framework
+  * @subdev:	subdevice matched using async framework
++ * @mbus_type:	media bus type
++ * @mbus_flags:	media bus configuration flags
+  * @source_pad:	source pad of remote subdevice
+  * @sink_pad:	sink pad of remote subdevice
++ *
+  */
+-struct rvin_graph_entity {
++struct rvin_parallel_entity {
+ 	struct v4l2_async_subdev asd;
+ 	struct v4l2_subdev *subdev;
+ 
++	enum v4l2_mbus_type mbus_type;
++	unsigned int mbus_flags;
++
+ 	unsigned int source_pad;
+ 	unsigned int sink_pad;
+ };
+@@ -146,7 +152,8 @@ struct rvin_info {
+  * @v4l2_dev:		V4L2 device
+  * @ctrl_handler:	V4L2 control handler
+  * @notifier:		V4L2 asynchronous subdevs notifier
+- * @parallel:		entity in the DT for local parallel subdevice
++ *
++ * @parallel:		parallel input subdevice descriptor
+  *
+  * @group:		Gen3 CSI group
+  * @id:			Gen3 group id for this VIN
+@@ -164,7 +171,8 @@ struct rvin_info {
+  * @sequence:		V4L2 buffers sequence number
+  * @state:		keeps track of operation state
+  *
+- * @mbus_cfg:		media bus configuration from DT
++ * @is_csi:		flag to mark the VIN as using a CSI-2 subdevice
++ *
+  * @mbus_code:		media bus format code
+  * @format:		active V4L2 pixel format
+  *
+@@ -182,7 +190,8 @@ struct rvin_dev {
+ 	struct v4l2_device v4l2_dev;
+ 	struct v4l2_ctrl_handler ctrl_handler;
+ 	struct v4l2_async_notifier notifier;
+-	struct rvin_graph_entity *parallel;
++
++	struct rvin_parallel_entity *parallel;
+ 
+ 	struct rvin_group *group;
+ 	unsigned int id;
+@@ -199,7 +208,8 @@ struct rvin_dev {
+ 	unsigned int sequence;
+ 	enum rvin_dma_state state;
+ 
+-	struct v4l2_mbus_config mbus_cfg;
++	bool is_csi;
++
+ 	u32 mbus_code;
+ 	struct v4l2_pix_format format;
+ 
 -- 
-2.11.0
+2.7.4
