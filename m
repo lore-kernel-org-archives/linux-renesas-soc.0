@@ -1,151 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:50826 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933310AbeFKL7T (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36755 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934972AbeFMLVy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:59:19 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 11/14] mfd: da9063: Add custom IRQ map for DA9063L
-Date: Mon, 11 Jun 2018 13:58:48 +0200
-Message-Id: <20180611115851.1987-11-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
-References: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
+        Wed, 13 Jun 2018 07:21:54 -0400
+Date: Wed, 13 Jun 2018 13:21:50 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH] arm64: dts: renesas: Fix VSPD registers range
+Message-ID: <20180613112149.63fs2cli5v5gdt43@verge.net.au>
+References: <20180608122115.21138-1-laurent.pinchart+renesas@ideasonboard.com>
+ <2a6247d0-6224-f2b0-b6ac-7116c8bc0cae@cogentembedded.com>
+ <2285616.K3iSyOB0te@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2285616.K3iSyOB0te@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The DA9063L does not have an RTC. Add custom IRQ map for DA9063L to
-ignore the Alarm and Tick IRQs from the PMIC.
+On Fri, Jun 08, 2018 at 07:49:43PM +0300, Laurent Pinchart wrote:
+> Hi Sergei,
+> 
+> (CC'ing Olof)
+> 
+> On Friday, 8 June 2018 19:41:01 EEST Sergei Shtylyov wrote:
+> > On 06/08/2018 03:21 PM, Laurent Pinchart wrote:
+> > > The VSPD and FCPVD nodes have overlapping register ranges, as the FCPVD
+> > > devices are mapped in the memory range usually used by the VSP LUT and
+> > > CLU, which are not present in the VSPD. Fix this by shortening the VSPD
+> > > registers range to 0x5000.
+> > > 
+> > > Fixes: 9f8573e38a0b ("arm64: dts: renesas: r8a7795: Add VSP instances")
+> > > Fixes: 291e0c4994d0 ("arm64: dts: r8a7795: Add support for R-Car H3
+> > > ES2.0")
+> > > Fixes: f06ffdfbdd90 ("arm64: dts: r8a7796: Add VSP instances")
+> > > Fixes: b4f92030d5d3 ("arm64: dts: renesas: r8a77970: add VSPD support")
+> > > Fixes: 295952a183d3 ("arm64: dts: renesas: r8a77995: add VSP instances")
+> > > Fixes: 85cb3229218a ("arm64: dts: renesas: r8a77965: Add VSP instances")
+> > 
+> > That'd be a nightmare for the -stable maintainers -- all those commits
+> > were made in the different time, so constant rejects are warranted.
+> > 
+> > > Reported-by: Simon Horman <horms+renesas@verge.net.au>
+> > > Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > Signed-off-by: Laurent Pinchart
+> > > <laurent.pinchart+renesas@ideasonboard.com>
+> > > ---
+> > > Changes since v1:
+> > > 
+> > > - Fix H3, M3-W and M3-N in addition to V3H and D3
+> > > - Don't touch the VSPBS instance of D3 as there's no overlap
+> > > - Squash all patches together
+> > 
+> >  Don't think that was a good idea in this case. Other opinions?
+> 
+> We have been requested ([1]) to try and group the DT changes, hence this 
+> change. No clear rule has been set, and this might be a case where a split is 
+> better. Olof, what would you prefer ?
+> 
+> [1] https://www.spinics.net/lists/arm-kernel/msg657208.html
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
-V3: New patch
-V4: - Formatting fixes
-    - Drop extra newline in da9063l_irq_chip
-    - Drop mention of the buggy datasheet in commit message
-V5: Rebase on top of new 01 and 02 patches
-V6: No change
----
- drivers/mfd/da9063-irq.c | 81 ++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 79 insertions(+), 2 deletions(-)
+We are trying to find a new balance in response to [1].
+If this turns out to be a problem for -stable then we will
+adjust our processes accordingly.
 
-diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
-index 579947f83486..ecc0c8ce6c58 100644
---- a/drivers/mfd/da9063-irq.c
-+++ b/drivers/mfd/da9063-irq.c
-@@ -102,8 +102,81 @@ static const struct regmap_irq_chip da9063_irq_chip = {
- 	.init_ack_masked = true,
- };
- 
-+static const struct regmap_irq da9063l_irqs[] = {
-+	/* DA9063 event A register */
-+	REGMAP_IRQ_REG(DA9063_IRQ_ONKEY,
-+		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_ONKEY),
-+	REGMAP_IRQ_REG(DA9063_IRQ_ADC_RDY,
-+		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_ADC_RDY),
-+	REGMAP_IRQ_REG(DA9063_IRQ_SEQ_RDY,
-+		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_SEQ_RDY),
-+	/* DA9063 event B register */
-+	REGMAP_IRQ_REG(DA9063_IRQ_WAKE,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_WAKE),
-+	REGMAP_IRQ_REG(DA9063_IRQ_TEMP,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_TEMP),
-+	REGMAP_IRQ_REG(DA9063_IRQ_COMP_1V2,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_COMP_1V2),
-+	REGMAP_IRQ_REG(DA9063_IRQ_LDO_LIM,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_LDO_LIM),
-+	REGMAP_IRQ_REG(DA9063_IRQ_REG_UVOV,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_UVOV),
-+	REGMAP_IRQ_REG(DA9063_IRQ_DVC_RDY,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_DVC_RDY),
-+	REGMAP_IRQ_REG(DA9063_IRQ_VDD_MON,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_MON),
-+	REGMAP_IRQ_REG(DA9063_IRQ_WARN,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_WARN),
-+	/* DA9063 event C register */
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI0,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI0),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI1,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI1),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI2,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI2),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI3,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI3),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI4,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI4),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI5,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI5),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI6,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI6),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI7,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI7),
-+	/* DA9063 event D register */
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI8,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI8),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI9,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI9),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI10,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI10),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI11,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI11),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI12,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI12),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI13,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI13),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI14,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI14),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI15,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI15),
-+};
-+
-+static const struct regmap_irq_chip da9063l_irq_chip = {
-+	.name = "da9063l-irq",
-+	.irqs = da9063l_irqs,
-+	.num_irqs = ARRAY_SIZE(da9063l_irqs),
-+	.num_regs = 4,
-+	.status_base = DA9063_REG_EVENT_A,
-+	.mask_base = DA9063_REG_IRQ_MASK_A,
-+	.ack_base = DA9063_REG_EVENT_A,
-+	.init_ack_masked = true,
-+};
-+
- int da9063_irq_init(struct da9063 *da9063)
- {
-+	const struct regmap_irq_chip *irq_chip;
- 	int ret;
- 
- 	if (!da9063->chip_irq) {
-@@ -111,11 +184,15 @@ int da9063_irq_init(struct da9063 *da9063)
- 		return -EINVAL;
- 	}
- 
-+	if (da9063->type == PMIC_TYPE_DA9063)
-+		irq_chip = &da9063_irq_chip;
-+	else
-+		irq_chip = &da9063l_irq_chip;
-+
- 	ret = devm_regmap_add_irq_chip(da9063->dev, da9063->regmap,
- 			da9063->chip_irq,
- 			IRQF_TRIGGER_LOW | IRQF_ONESHOT | IRQF_SHARED,
--			da9063->irq_base, &da9063_irq_chip,
--			&da9063->regmap_irq);
-+			da9063->irq_base, irq_chip, &da9063->regmap_irq);
- 	if (ret) {
- 		dev_err(da9063->dev, "Failed to reguest IRQ %d: %d\n",
- 				da9063->chip_irq, ret);
--- 
-2.16.2
+Applied for v4.19 as this should not have any runtime effect.
+Thanks everyone.
