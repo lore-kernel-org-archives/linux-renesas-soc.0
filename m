@@ -1,63 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:51549 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752063AbeFEXKd (ORCPT
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:37542 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935896AbeFMVIA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Jun 2018 19:10:33 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Wed, 13 Jun 2018 17:08:00 -0400
+Received: by mail-pf0-f195.google.com with SMTP id y5-v6so2056404pfn.4
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Jun 2018 14:08:00 -0700 (PDT)
+Subject: Re: [PATCH V3] ARM: shmobile: Rework the PMIC IRQ line quirk
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 01/12] mfd: da9063: Fix failpath in core
-Date: Wed,  6 Jun 2018 01:10:02 +0200
-Message-Id: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
+        Simon Horman <horms+renesas@verge.net.au>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>
+References: <20180604175911.799-1-marek.vasut+renesas@gmail.com>
+ <CAMuHMdXG6mMfFTz+fdZQ53hLxYgVZPmsGpaRri8TesiruUNYUg@mail.gmail.com>
+ <fa4f843b-ae9d-fac2-77e2-b3ac1116f916@gmail.com>
+ <CAMuHMdXw146fwm0tHS7CBAofDAgRgDD2tNqgEJwzx0Jm1xKCyw@mail.gmail.com>
+ <967b800e-c935-aa35-da5a-ca3672fd18c2@gmail.com>
+ <CAMuHMdVJ+ad-kr0iYuoaH3chJ49_g6yjEb8PHmTpwjFdYcG4=Q@mail.gmail.com>
+ <47e87deb-a7a8-4780-53b5-4e4ed6e1bac3@gmail.com>
+ <CAMuHMdXJEC8HbuB5+YHMLjZy9GfCYyXmGTk0TXkoAxLhxTOJyA@mail.gmail.com>
+ <6864ed2c-39ac-615d-f38e-b28c3647e451@gmail.com>
+ <CAMuHMdUSmpkwNUV+x9oGjsJdN42XBuUBNd0vSn=bgyX+953YOw@mail.gmail.com>
+ <3eda9da7-e26e-3e77-1040-9febe3b18abb@gmail.com>
+ <CAMuHMdUmqAWHFoM5tRJA+FoH59J8L3z0BMKVO-FEv4RQbokJyg@mail.gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <c86c2ae6-21de-391e-a23f-b70976e86852@gmail.com>
+Date: Wed, 13 Jun 2018 22:53:41 +0200
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdUmqAWHFoM5tRJA+FoH59J8L3z0BMKVO-FEv4RQbokJyg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In case mfd_add_devices() fails, da9063_irq_exit() is not called to
-undo the IRQchip setup done by da9063_irq_init(). Fix this by adding
-the missing fail path.
+On 06/13/2018 01:28 PM, Geert Uytterhoeven wrote:
+> Hi Marek,
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
----
-V3: New patch
-V4: No change
----
- drivers/mfd/da9063-core.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Hi,
 
-diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
-index 6c2870d4e754..8226ebd8b96d 100644
---- a/drivers/mfd/da9063-core.c
-+++ b/drivers/mfd/da9063-core.c
-@@ -229,10 +229,16 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
- 	ret = mfd_add_devices(da9063->dev, -1, da9063_devs,
- 			      ARRAY_SIZE(da9063_devs), NULL, da9063->irq_base,
- 			      NULL);
--	if (ret)
-+	if (ret) {
- 		dev_err(da9063->dev, "Cannot add MFD cells\n");
-+		goto err_irq_exit;
-+	}
- 
- 	return ret;
-+
-+err_irq_exit:
-+	da9063_irq_exit(da9063);
-+	return ret;
- }
- 
- void da9063_device_exit(struct da9063 *da9063)
+[...]
+
+>>>> But wait, since we control which machines this code runs on , can't we
+>>>> assure they have valid DTs ? This situation with invalid DT starts to
+>>>> look a bit hypothetical to me.
+>>>
+>>> That assumes you keep the list of machines to check, and don't want to fix the
+>>> issue automatically when detected (on any R-Car Gen2 or RZ/G1 platform, so
+>>> you still need to check for r8a779[0-4] and r8a774[23457]).
+>>
+>> Yes, I want to keep a list of machines to check, to be _sure_ some
+>> machine doesn't randomly blow up.
+> 
+> Just checking for the presence of a "renesas,irqc" node should be sufficient.
+
+How so? Any other R-Car machine can have the irqc node too. That's
+fragile at best.
+
+> Using that node would also get rid of the hardcoded IRQC_BASE address.
+> Note that the code assumes IRQ2. If another IRQ is used, that won't harm
+> much though (as in: if it didn't blow up before, it won't blow up now).
+
+We could/should fix up the irqc detection though.
+
+>>> Anyway, as we care about booting old DTBs on new kernels (for a while), we
+>>> have a few more release cycles to bikeshed ;-)
+>>
+>> I was about to ask if this patch then makes any sense or not.
+> 
+> Sure. Less hard-coding is always better.
+> Especially if it means we can make it work on more machines automatically :-)
+
+I prefer to be in control of that.
+
 -- 
-2.16.2
+Best regards,
+Marek Vasut
