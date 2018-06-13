@@ -1,46 +1,122 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:45149 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935936AbeFMPXU (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39534 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964874AbeFMPNy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Jun 2018 11:23:20 -0400
-Received: by mail-lf0-f66.google.com with SMTP id n3-v6so4544182lfe.12
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Jun 2018 08:23:19 -0700 (PDT)
-Subject: Re: [PATCH/RFT v2 1/2] arm64: dts: r8a77995: Add SCIF-{0,1,3,4,5}
- device nodes
-To: Simon Horman <horms+renesas@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org,
+        Wed, 13 Jun 2018 11:13:54 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org,
         Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>
-References: <20180613151348.28697-1-horms+renesas@verge.net.au>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <76d7deba-37ad-92e1-a86a-0b407fb7dc20@cogentembedded.com>
-Date: Wed, 13 Jun 2018 18:23:16 +0300
-MIME-Version: 1.0
-In-Reply-To: <20180613151348.28697-1-horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH/RFT v2 1/2] arm64: dts: r8a77995: Add SCIF-{0,1,3,4,5} device nodes
+Date: Wed, 13 Jun 2018 17:13:48 +0200
+Message-Id: <20180613151348.28697-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-On 06/13/2018 06:13 PM, Simon Horman wrote:
+This patch adds the device nodes for SCIF-{0,1,3,4,5} serial ports,
+incl. clocks and power domain.
 
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> 
-> This patch adds the device nodes for SCIF-{0,1,3,4,5} serial ports,
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+[simon: updated internal clock from S3D1 to S3D1C to match documentation]
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 70 +++++++++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
 
-   Why hyphen between SCIF and # here in the subject?
+ Based on renesas-devel-20180613-v4.17
 
-> incl. clocks and power domain.
-> 
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> [simon: updated internal clock from S3D1 to S3D1C to match documentation]
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[...]
-
-MBR, Sergei
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index 1de6ffca4772..16cbb34692ad 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -605,6 +605,34 @@
+ 			status = "disabled";
+ 		};
+ 
++		scif0: serial@e6e60000 {
++			compatible = "renesas,scif-r8a77995",
++				     "renesas,rcar-gen3-scif", "renesas,scif";
++			reg = <0 0xe6e60000 0 64>;
++			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 207>,
++				 <&cpg CPG_CORE R8A77995_CLK_S3D1C>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 207>;
++			status = "disabled";
++		};
++
++		scif1: serial@e6e68000 {
++			compatible = "renesas,scif-r8a77995",
++				     "renesas,rcar-gen3-scif", "renesas,scif";
++			reg = <0 0xe6e68000 0 64>;
++			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 206>,
++				 <&cpg CPG_CORE R8A77995_CLK_S3D1C>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 206>;
++			status = "disabled";
++		};
++
+ 		scif2: serial@e6e88000 {
+ 			compatible = "renesas,scif-r8a77995",
+ 				     "renesas,rcar-gen3-scif", "renesas,scif";
+@@ -622,6 +650,48 @@
+ 			status = "disabled";
+ 		};
+ 
++		scif3: serial@e6c50000 {
++			compatible = "renesas,scif-r8a77995",
++				     "renesas,rcar-gen3-scif", "renesas,scif";
++			reg = <0 0xe6c50000 0 64>;
++			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 204>,
++				 <&cpg CPG_CORE R8A77995_CLK_S3D1C>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 204>;
++			status = "disabled";
++		};
++
++		scif4: serial@e6c40000 {
++			compatible = "renesas,scif-r8a77995",
++				     "renesas,rcar-gen3-scif", "renesas,scif";
++			reg = <0 0xe6c40000 0 64>;
++			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 203>,
++				 <&cpg CPG_CORE R8A77995_CLK_S3D1C>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 203>;
++			status = "disabled";
++		};
++
++		scif5: serial@e6f30000 {
++			compatible = "renesas,scif-r8a77995",
++				     "renesas,rcar-gen3-scif", "renesas,scif";
++			reg = <0 0xe6f30000 0 64>;
++			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 202>,
++				 <&cpg CPG_CORE R8A77995_CLK_S3D1C>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 202>;
++			status = "disabled";
++		};
++
+ 		vin4: video@e6ef4000 {
+ 			compatible = "renesas,vin-r8a77995";
+ 			reg = <0 0xe6ef4000 0 0x1000>;
+-- 
+2.11.0
