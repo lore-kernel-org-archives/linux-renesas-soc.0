@@ -1,40 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:45184 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935518AbeFMUJj (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:43421 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935276AbeFMTHY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Jun 2018 16:09:39 -0400
-Received: by mail-lf0-f66.google.com with SMTP id n3-v6so5832925lfe.12
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Jun 2018 13:09:38 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v3 0/2] Add R8A77980/Condor/V3HSK LVDS/HDMI support
+        Wed, 13 Jun 2018 15:07:24 -0400
+Received: by mail-lf0-f65.google.com with SMTP id n15-v6so5578005lfn.10
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Jun 2018 12:07:23 -0700 (PDT)
+Subject: Re: [PATCH v2 0/5] Add R8A77980/Condor/V3HSK LVDS/HDMI support
 To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org
-Message-ID: <95d0db34-713d-8206-00c2-ee9a42aab823@cogentembedded.com>
-Date: Wed, 13 Jun 2018 23:09:33 +0300
+References: <390fabf0-4caf-1600-3780-1893207d94f7@cogentembedded.com>
+ <4069170.tduNOXLj45@avalon> <20180611081531.xaax5ouvffnarhq5@verge.net.au>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <b6cb139a-b984-fdb3-2b06-30c630659776@cogentembedded.com>
+Date: Wed, 13 Jun 2018 22:07:20 +0300
 MIME-Version: 1.0
+In-Reply-To: <20180611081531.xaax5ouvffnarhq5@verge.net.au>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+On 06/11/2018 11:15 AM, Simon Horman wrote:
 
-Here's the set of 5 patches against Simon Horman's 'renesas.git' repo's
-'renesas-devel-20180613-v4.17' tag and the Condor/V3HSK TD patches adding
-Ethernet PHY IRQs. We're adding the R8A77980 FCPVD/VSPD/DU/LVDS device nodes
-and then describing the LVDS decoder and HDMI encoder connected to the LVDS
-output on the Condor and V3HSK boards.  These patches depend on the Thine
-THC63LVD1024 driver and the R8A77980 LVDS support patch in order to work...
+>>> Here's the set of 5 patches against Simon Horman's 'renesas.git' repo's
+>>> 'renesas-devel-20180604-v4.17' tag. We're adding the R8A77980 FCPVD/VSPD/
+>>> DU/LVDS device nodes and then describing the LVDS decoder and HDMI encoder
+>>> connected to the LVDS output. These patches depend on the Thine THC63LVD1024
+>>> driver and the R8A77980 LVDS support patch in order to work, and R8A77980
+>>> GPIO DT patches in order to apply/compile...
+>>>
+>>> [1/5] arm64: dts: renesas: r8a77980: add FCPVD support
+>>> [2/5] arm64: dts: renesas: r8a77980: add VSPD support
+>>> [3/5] arm64: dts: renesas: r8a77980: add DU support
+>>> [4/5] arm64: dts: renesas: r8a77980: add LVDS support
+>>
+>> Based on the recent request of the ARM SoC maintainers to avoid a plethora of 
+>> small patches, I think you can squash 1/5 to 4/5 all together.
+> 
+> Agreed.
+> 
+> Seregi could you please post a v2 with patches 1 - 4 squashed and the
 
-[1/2] arm64: dts: renesas: r8a77980: add FCPVD/VSPD/DU/LVDS support
-[2/2] arm64: dts: renesas: condor/v3hsk: add DU/LVDS/HDMI support
+   It's going to be v3 already. :-)
 
-WBR, Sergei
+> register range for VSPD0 reduced to 0x5000? Thanks!
+
+   More like increased. :-)
+   Working on it...
+
+>>> [5/5] arm64: dts: renesas: condor/v3hsk: add DU/LVDS/HDMI support
+
+MBR, Sergei
