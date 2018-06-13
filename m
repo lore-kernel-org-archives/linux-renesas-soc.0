@@ -1,91 +1,123 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:46844 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966368AbeFSNzW (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36972 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935316AbeFMLlT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Jun 2018 09:55:22 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/2] regulator: bd9571mwv: Add support for toggle power switches
-Date: Tue, 19 Jun 2018 15:55:16 +0200
-Message-Id: <20180619135518.8990-1-geert+renesas@glider.be>
+        Wed, 13 Jun 2018 07:41:19 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/1] soc: renesas: rcar-sysc: Make PM domain initialization more robust
+Date: Wed, 13 Jun 2018 13:41:15 +0200
+Message-Id: <977d5ba4507dfe5b1346597ee57750262d8d2b19.1528889592.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1528889592.git.horms+renesas@verge.net.au>
+References: <cover.1528889592.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The ROHM BD9571MWV PMIC on the Renesas Salvator-X(S) and ULCB
-development boards supports DDR Backup Power, which means that the DDR
-power rails can be kept powered while the main SoC is powered down.
+The quirk for R-Car E3 ES1.0 added in commit 086b399965a7ee7e ("soc:
+renesas: r8a77990-sysc: Add workaround for 3DG-{A,B}") makes the 3DG-A
+PM domain a subdomain of the 3DG-B PM domain.  However, registering
+3DG-A with its parent fails silently, as the 3DG-B PM domain hasn't been
+registered yet, and such failures are never reported.
 
-This patch series extends the support for DDR backup mode (see commit
-6eb0bfae6973eb6a ("regulator: bd9571mwv: Add support for backup mode"))
-to systems with toggle instead of momentary power switches.
+Fix this by:
+  1. Splitting PM Domain initialization in two steps, so all PM domains
+     are registered before any child-parent links are established,
+  2. Reporting any failures in establishing child-parent relations.
 
-With a toggle power switch (or level signal), the following steps must
-be followed exactly:
-   1. Configure PMIC for backup mode, which changes the role of the
-      power switch to a wake-up switch, 
-   2. Switch accessory power switch off, to prepare for system suspend,
-      which is a manual step not controlled by software,
-   3. Suspend system,
-   4. Switch accessory power switch on, to resume.
+Check for and report pm_genpd_init() failures, too, as that function
+gained a return value in commit 7eb231c337e00735 ("PM / Domains: Convert
+pm_genpd_init() to return an error code").
 
-Unlike on systems with a momentary toggle switch, an additional step 2
-must be performed in between step 1 and step 3.  Hence step 1 can no
-longer be handled in the PMIC's suspend callback.
+Fixes: 086b399965a7ee7e ("soc: renesas: r8a77990-sysc: Add workaround for 3DG-{A,B}")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/soc/renesas/rcar-sysc.c | 35 +++++++++++++++++++++++++++++------
+ 1 file changed, 29 insertions(+), 6 deletions(-)
 
-This patch series proposes a new callback for wake-up change
-notification, which allows performing step 1 when the user writes
-"enabled" to the PMIC's "wakeup" virtual file in sysfs, e.g.
-
-    echo enabled > /sys/devices/platform/soc/e60b0000.i2c/i2c-7/7-0030/bd9571mwv-regulator.2.auto/power/wakeup
-
-Conversely, writing "disabled" reverts the role of the accessory switch
-to a power switch.
-Note that unlike with momentary switches, backup mode is not enabled by
-default, as enabling it prevents the board from being powered off using
-the power switch, which may confuse the user.
-
-Changes compared to v1:
-  - Improve patch descriptions,
-  - Drop "return;" at end of function.
-
-This has been tested on M3ULCB (thanks Jacopo!), and on Salvator-X(S).
-
-For testing, this series is also available in the
-topic/bd9571-toggle-power-switch-v2 branch of my renesas-drivers git
-repository at
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-
-Thanks!
-
-Geert Uytterhoeven (2):
-  PM / wakeup: Add callback for wake-up change notification
-  regulator: bd9571mwv: Add support for toggle power switches
-
- drivers/base/power/wakeup.c             |  4 ++++
- drivers/regulator/bd9571mwv-regulator.c | 23 +++++++++++++++++++++++
- include/linux/pm.h                      |  1 +
- 3 files changed, 28 insertions(+)
-
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index 95120acc4d80..50d03d8b4f9a 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -194,11 +194,12 @@ static int rcar_sysc_pd_power_on(struct generic_pm_domain *genpd)
+ 
+ static bool has_cpg_mstp;
+ 
+-static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
++static int __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
+ {
+ 	struct generic_pm_domain *genpd = &pd->genpd;
+ 	const char *name = pd->genpd.name;
+ 	struct dev_power_governor *gov = &simple_qos_governor;
++	int error;
+ 
+ 	if (pd->flags & PD_CPU) {
+ 		/*
+@@ -251,7 +252,11 @@ static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
+ 	rcar_sysc_power_up(&pd->ch);
+ 
+ finalize:
+-	pm_genpd_init(genpd, gov, false);
++	error = pm_genpd_init(genpd, gov, false);
++	if (error)
++		pr_err("Failed to init PM domain %s: %d\n", name, error);
++
++	return error;
+ }
+ 
+ static const struct of_device_id rcar_sysc_matches[] __initconst = {
+@@ -375,6 +380,9 @@ static int __init rcar_sysc_pd_init(void)
+ 	pr_debug("%pOF: syscier = 0x%08x\n", np, syscier);
+ 	iowrite32(syscier, base + SYSCIER);
+ 
++	/*
++	 * First, create all PM domains
++	 */
+ 	for (i = 0; i < info->num_areas; i++) {
+ 		const struct rcar_sysc_area *area = &info->areas[i];
+ 		struct rcar_sysc_pd *pd;
+@@ -397,14 +405,29 @@ static int __init rcar_sysc_pd_init(void)
+ 		pd->ch.isr_bit = area->isr_bit;
+ 		pd->flags = area->flags;
+ 
+-		rcar_sysc_pd_setup(pd);
+-		if (area->parent >= 0)
+-			pm_genpd_add_subdomain(domains->domains[area->parent],
+-					       &pd->genpd);
++		error = rcar_sysc_pd_setup(pd);
++		if (error)
++			goto out_put;
+ 
+ 		domains->domains[area->isr_bit] = &pd->genpd;
+ 	}
+ 
++	/*
++	 * Second, link all PM domains to their parents
++	 */
++	for (i = 0; i < info->num_areas; i++) {
++		const struct rcar_sysc_area *area = &info->areas[i];
++
++		if (!area->name || area->parent < 0)
++			continue;
++
++		error = pm_genpd_add_subdomain(domains->domains[area->parent],
++					       domains->domains[area->isr_bit]);
++		if (error)
++			pr_warn("Failed to add PM subdomain %s to parent %u\n",
++				area->name, area->parent);
++	}
++
+ 	error = of_genpd_add_provider_onecell(np, &domains->onecell_data);
+ 
+ out_put:
 -- 
-2.17.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.11.0
