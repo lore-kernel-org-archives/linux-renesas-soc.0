@@ -1,68 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:35417 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753610AbeFJSWu (ORCPT
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:37301 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935929AbeFNKsk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 10 Jun 2018 14:22:50 -0400
-Received: by mail-lf0-f67.google.com with SMTP id i15-v6so16934138lfc.2
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 10 Jun 2018 11:22:49 -0700 (PDT)
-Subject: [PATCH v2 1/2] dt-bindings: phy: Renesas R-Car Gen3 PCIe PHY bindings
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Cc: Kishon Vijay Abraham I <kishon@ti.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org
-References: <04384ce6-b696-715d-2072-345654e3fccf@cogentembedded.com>
-Message-ID: <9293ae00-8684-962a-346e-13cb12e5cddb@cogentembedded.com>
-Date: Sun, 10 Jun 2018 21:22:46 +0300
-MIME-Version: 1.0
-In-Reply-To: <04384ce6-b696-715d-2072-345654e3fccf@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Thu, 14 Jun 2018 06:48:40 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
+        yoshihiro.shimoda.uh@renesas.com, joro@8bytes.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>
+Subject: [RESEND 2/6] iommu/ipmmu-vmsa: Hook up r8a7796 DT matching code
+Date: Thu, 14 Jun 2018 12:48:22 +0200
+Message-Id: <1528973306-7962-3-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1528973306-7962-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1528973306-7962-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This PHY is  still  mostly undocumented --  the only documented registers
-exist on R-Car V3H (R8A77980) SoC.  Add the corresponding device tree
-bindings.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Support the r8a7796 IPMMU by sharing feature flags between
+r8a7795 and r8a7796. Also update IOMMU_OF_DECLARE to hook
+up the updated compat string.
 
+[rebased on v4.17]
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Changes in version 2:
-- split from the big driver/bindings patch;
-- got rid of the generic R-Car gen3 "compatible" prop value.
+ drivers/iommu/ipmmu-vmsa.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
- Documentation/devicetree/bindings/phy/rcar-gen3-phy-pcie.txt |   24 +++++++++++
- 1 file changed, 24 insertions(+)
-
-Index: linux-phy/Documentation/devicetree/bindings/phy/rcar-gen3-phy-pcie.txt
-===================================================================
---- /dev/null
-+++ linux-phy/Documentation/devicetree/bindings/phy/rcar-gen3-phy-pcie.txt
-@@ -0,0 +1,24 @@
-+* Renesas R-Car generation 3 PCIe PHY
-+
-+This file provides information on what the device node for the R-Car
-+generation 3 PCIe PHY contains.
-+
-+Required properties:
-+- compatible: "renesas,r8a77980-pcie-phy" if the device is a part of the
-+	      R8A77980 SoC.
-+- reg: offset and length of the register block.
-+- clocks: clock phandle and specifier pair.
-+- power-domains: power domain phandle and specifier pair.
-+- resets: reset phandle and specifier pair.
-+- #phy-cells: see phy-bindings.txt in the same directory, must be <0>.
-+
-+Example (R-Car V3H):
-+
-+	pcie-phy@e65d0000 {
-+		compatible = "renesas,r8a77980-pcie-phy";
-+		reg = <0 0xe65d0000 0 0x8000>;
-+		#phy-cells = <0>;
-+		clocks = <&cpg CPG_MOD 319>;
-+		power-domains = <&sysc 32>;
-+		resets = <&cpg 319>;
-+	};
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index 5c1ade7..04c8015 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -760,8 +760,9 @@ static bool ipmmu_slave_whitelist(struct device *dev)
+ 	return false;
+ }
+ 
+-static const struct soc_device_attribute soc_r8a7795[] = {
++static const struct soc_device_attribute soc_rcar_gen3[] = {
+ 	{ .soc_id = "r8a7795", },
++	{ .soc_id = "r8a7796", },
+ 	{ /* sentinel */ }
+ };
+ 
+@@ -769,7 +770,7 @@ static int ipmmu_of_xlate(struct device *dev,
+ 			  struct of_phandle_args *spec)
+ {
+ 	/* For R-Car Gen3 use a white list to opt-in slave devices */
+-	if (soc_device_match(soc_r8a7795) && !ipmmu_slave_whitelist(dev))
++	if (soc_device_match(soc_rcar_gen3) && !ipmmu_slave_whitelist(dev))
+ 		return -ENODEV;
+ 
+ 	iommu_fwspec_add_ids(dev, spec->args, 1);
+@@ -923,7 +924,7 @@ static const struct ipmmu_features ipmmu_features_default = {
+ 	.twobit_imttbcr_sl0 = false,
+ };
+ 
+-static const struct ipmmu_features ipmmu_features_r8a7795 = {
++static const struct ipmmu_features ipmmu_features_rcar_gen3 = {
+ 	.use_ns_alias_offset = false,
+ 	.has_cache_leaf_nodes = true,
+ 	.number_of_contexts = 8,
+@@ -937,7 +938,10 @@ static const struct of_device_id ipmmu_of_ids[] = {
+ 		.data = &ipmmu_features_default,
+ 	}, {
+ 		.compatible = "renesas,ipmmu-r8a7795",
+-		.data = &ipmmu_features_r8a7795,
++		.data = &ipmmu_features_rcar_gen3,
++	}, {
++		.compatible = "renesas,ipmmu-r8a7796",
++		.data = &ipmmu_features_rcar_gen3,
+ 	}, {
+ 		/* Terminator */
+ 	},
+@@ -1114,6 +1118,7 @@ module_exit(ipmmu_exit);
+ 
+ IOMMU_OF_DECLARE(ipmmu_vmsa_iommu_of, "renesas,ipmmu-vmsa");
+ IOMMU_OF_DECLARE(ipmmu_r8a7795_iommu_of, "renesas,ipmmu-r8a7795");
++IOMMU_OF_DECLARE(ipmmu_r8a7796_iommu_of, "renesas,ipmmu-r8a7796");
+ 
+ MODULE_DESCRIPTION("IOMMU API for Renesas VMSA-compatible IPMMU");
+ MODULE_AUTHOR("Laurent Pinchart <laurent.pinchart@ideasonboard.com>");
+-- 
+2.7.4
