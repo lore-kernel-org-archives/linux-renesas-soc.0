@@ -1,50 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:19033 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753371AbeF1KaG (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55859 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754616AbeFNHaN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Jun 2018 06:30:06 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org
-Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/2] mmc: renesas_sdhi_internal_dmac: Fix missing unmap in error patch
-Date: Thu, 28 Jun 2018 19:29:04 +0900
-Message-Id: <1530181745-10519-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1530181745-10519-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1530181745-10519-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Thu, 14 Jun 2018 03:30:13 -0400
+Date: Thu, 14 Jun 2018 09:30:09 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>
+Subject: Re: [PATCH 1/3] arm64: dts: renesas: convert to SPDX identifiers
+Message-ID: <20180614073007.25j4vflj3kcxm42j@verge.net.au>
+References: <20180611144937.9554-1-wsa+renesas@sang-engineering.com>
+ <20180611144937.9554-2-wsa+renesas@sang-engineering.com>
+ <OSBPR01MB2293324289A8C59EB59CB906D87F0@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+ <20180613111228.csaxbkfz5t2upkyd@verge.net.au>
+ <20180614014229.udh4gbl7iqw3nvl5@ninjato>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180614014229.udh4gbl7iqw3nvl5@ninjato>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch fixes an issue that lacks the dma_unmap_sg() calling in
-the error patch of renesas_sdhi_internal_dmac_start_dma().
+On Thu, Jun 14, 2018 at 10:42:30AM +0900, Wolfram Sang wrote:
+> Hi Simon,
+> 
+> > I applied this by hand, resolving the conflict in r8a7796.dtsi.
+> 
+> Thanks for doing this Simon.
+> 
+> > The result is below. Wolfram, please check it.
+> 
+> I am afraid there is something missing, though...
+> 
+> >  arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts    | 5 +----
+> >  arch/arm64/boot/dts/renesas/r8a7796.dtsi               | 4 ----
+> >  arch/arm64/boot/dts/renesas/r8a77970-eagle.dts         | 5 +----
+> 
+> See the broken pattern in the diffstat?
+> 
+> > diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> > index 2a04635bc9ae..03319d008ba1 100644
+> > --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> > @@ -2,10 +2,6 @@
+> >   * Device Tree Source for the r8a7796 SoC
+> >   *
+> >   * Copyright (C) 2016-2017 Renesas Electronics Corp.
+> > - *
+> > - * This file is licensed under the terms of the GNU General Public License
+> > - * version 2.  This program is licensed "as is" without any warranty of any
+> > - * kind, whether express or implied.
+> >   */
+> 
+> The actual SPDX identifier like this
+> 
+> > +// SPDX-License-Identifier: GPL-2.0
+> 
+> got accidently dropped.
 
-Fixes: 0cbc94daa554 ("mmc: renesas_sdhi_internal_dmac: limit DMA RX for old SoCs")
-Cc: <stable@vger.kernel.org> # v4.17+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index f7f9773..d503511 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -173,8 +173,11 @@
- 	if (data->flags & MMC_DATA_READ) {
- 		dtran_mode |= DTRAN_MODE_CH_NUM_CH1;
- 		if (test_bit(SDHI_INTERNAL_DMAC_ONE_RX_ONLY, &global_flags) &&
--		    test_and_set_bit(SDHI_INTERNAL_DMAC_RX_IN_USE, &global_flags))
-+		    test_and_set_bit(SDHI_INTERNAL_DMAC_RX_IN_USE, &global_flags)) {
-+			dma_unmap_sg(&host->pdev->dev, sg, host->sg_len,
-+				     mmc_get_dma_dir(data));
- 			goto force_pio;
-+		}
- 	} else {
- 		dtran_mode |= DTRAN_MODE_CH_NUM_CH0;
- 	}
--- 
-1.9.1
+Thanks, should be fixed the next time I push.
