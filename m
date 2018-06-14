@@ -1,244 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:46420 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933189AbeFKL7I (ORCPT
+Received: from sauhun.de ([88.99.104.3]:48120 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935530AbeFNB1p (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:59:08 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 04/14] mfd: da9063: Use REGMAP_IRQ_REG
-Date: Mon, 11 Jun 2018 13:58:41 +0200
-Message-Id: <20180611115851.1987-4-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
-References: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
+        Wed, 13 Jun 2018 21:27:45 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org, cerg2010cerg2010@mail.ru
+Cc: linux-renesas-soc@vger.kernel.org,
+        drivers_video-dri@kernel-bugs.osdl.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFT 2/2] i2c: algos: bit: make sure to send STOP
+Date: Thu, 14 Jun 2018 10:27:14 +0900
+Message-Id: <20180614012714.5937-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180614012714.5937-1-wsa+renesas@sang-engineering.com>
+References: <20180614012714.5937-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Convert the regmap_irq table to use REGMAP_IRQ_REG().
+If SCL was low but SDA high, we would simply raise SCL but not send a
+STOP. To make sure we always send STOP initially, lower both lines
+first.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-V3: New patch
-Note: A sed oneliner was used:
-      sed -i "/\[DA9063_IRQ_/ {N;N;N;s/\n//g;s/.*\[\(DA9063_IRQ_[^]]\+\)].*reg_offset = \([^,]\+\),.* = \([^,]\+\),.*/\tREGMAP_IRQ_REG(\1, \2, \3),/}" drivers/mfd/da9063-irq.c
-V4: Formatting fixes with "s/,/&\r\t\t      /" on the array
-    Drop extra newline in da9063_irq_chip
-V5: No change
-V6: No change
----
- drivers/mfd/da9063-irq.c | 175 ++++++++++++++++-------------------------------
- 1 file changed, 58 insertions(+), 117 deletions(-)
+ drivers/i2c/algos/i2c-algo-bit.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
-index da6ceb41f0d1..044bd867f540 100644
---- a/drivers/mfd/da9063-irq.c
-+++ b/drivers/mfd/da9063-irq.c
-@@ -28,132 +28,73 @@
+diff --git a/drivers/i2c/algos/i2c-algo-bit.c b/drivers/i2c/algos/i2c-algo-bit.c
+index c76cf51975d0..344649847885 100644
+--- a/drivers/i2c/algos/i2c-algo-bit.c
++++ b/drivers/i2c/algos/i2c-algo-bit.c
+@@ -650,6 +650,8 @@ static int __i2c_bit_add_bus(struct i2c_adapter *adap,
+ 		adap->quirks = &i2c_bit_quirk_no_clk_stretch;
  
- static const struct regmap_irq da9063_irqs[] = {
- 	/* DA9063 event A register */
--	[DA9063_IRQ_ONKEY] = {
--		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
--		.mask = DA9063_M_ONKEY,
--	},
--	[DA9063_IRQ_ALARM] = {
--		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
--		.mask = DA9063_M_ALARM,
--	},
--	[DA9063_IRQ_TICK] = {
--		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
--		.mask = DA9063_M_TICK,
--	},
--	[DA9063_IRQ_ADC_RDY] = {
--		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
--		.mask = DA9063_M_ADC_RDY,
--	},
--	[DA9063_IRQ_SEQ_RDY] = {
--		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
--		.mask = DA9063_M_SEQ_RDY,
--	},
-+	REGMAP_IRQ_REG(DA9063_IRQ_ONKEY,
-+		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_ONKEY),
-+	REGMAP_IRQ_REG(DA9063_IRQ_ALARM,
-+		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_ALARM),
-+	REGMAP_IRQ_REG(DA9063_IRQ_TICK,
-+		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_TICK),
-+	REGMAP_IRQ_REG(DA9063_IRQ_ADC_RDY,
-+		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_ADC_RDY),
-+	REGMAP_IRQ_REG(DA9063_IRQ_SEQ_RDY,
-+		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_SEQ_RDY),
- 	/* DA9063 event B register */
--	[DA9063_IRQ_WAKE] = {
--		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
--		.mask = DA9063_M_WAKE,
--	},
--	[DA9063_IRQ_TEMP] = {
--		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
--		.mask = DA9063_M_TEMP,
--	},
--	[DA9063_IRQ_COMP_1V2] = {
--		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
--		.mask = DA9063_M_COMP_1V2,
--	},
--	[DA9063_IRQ_LDO_LIM] = {
--		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
--		.mask = DA9063_M_LDO_LIM,
--	},
--	[DA9063_IRQ_REG_UVOV] = {
--		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
--		.mask = DA9063_M_UVOV,
--	},
--	[DA9063_IRQ_DVC_RDY] = {
--		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
--		.mask = DA9063_M_DVC_RDY,
--	},
--	[DA9063_IRQ_VDD_MON] = {
--		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
--		.mask = DA9063_M_VDD_MON,
--	},
--	[DA9063_IRQ_WARN] = {
--		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
--		.mask = DA9063_M_VDD_WARN,
--	},
-+	REGMAP_IRQ_REG(DA9063_IRQ_WAKE,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_WAKE),
-+	REGMAP_IRQ_REG(DA9063_IRQ_TEMP,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_TEMP),
-+	REGMAP_IRQ_REG(DA9063_IRQ_COMP_1V2,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_COMP_1V2),
-+	REGMAP_IRQ_REG(DA9063_IRQ_LDO_LIM,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_LDO_LIM),
-+	REGMAP_IRQ_REG(DA9063_IRQ_REG_UVOV,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_UVOV),
-+	REGMAP_IRQ_REG(DA9063_IRQ_DVC_RDY,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_DVC_RDY),
-+	REGMAP_IRQ_REG(DA9063_IRQ_VDD_MON,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_MON),
-+	REGMAP_IRQ_REG(DA9063_IRQ_WARN,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_WARN),
- 	/* DA9063 event C register */
--	[DA9063_IRQ_GPI0] = {
--		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
--		.mask = DA9063_M_GPI0,
--	},
--	[DA9063_IRQ_GPI1] = {
--		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
--		.mask = DA9063_M_GPI1,
--	},
--	[DA9063_IRQ_GPI2] = {
--		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
--		.mask = DA9063_M_GPI2,
--	},
--	[DA9063_IRQ_GPI3] = {
--		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
--		.mask = DA9063_M_GPI3,
--	},
--	[DA9063_IRQ_GPI4] = {
--		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
--		.mask = DA9063_M_GPI4,
--	},
--	[DA9063_IRQ_GPI5] = {
--		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
--		.mask = DA9063_M_GPI5,
--	},
--	[DA9063_IRQ_GPI6] = {
--		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
--		.mask = DA9063_M_GPI6,
--	},
--	[DA9063_IRQ_GPI7] = {
--		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
--		.mask = DA9063_M_GPI7,
--	},
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI0,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI0),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI1,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI1),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI2,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI2),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI3,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI3),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI4,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI4),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI5,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI5),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI6,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI6),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI7,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI7),
- 	/* DA9063 event D register */
--	[DA9063_IRQ_GPI8] = {
--		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
--		.mask = DA9063_M_GPI8,
--	},
--	[DA9063_IRQ_GPI9] = {
--		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
--		.mask = DA9063_M_GPI9,
--	},
--	[DA9063_IRQ_GPI10] = {
--		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
--		.mask = DA9063_M_GPI10,
--	},
--	[DA9063_IRQ_GPI11] = {
--		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
--		.mask = DA9063_M_GPI11,
--	},
--	[DA9063_IRQ_GPI12] = {
--		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
--		.mask = DA9063_M_GPI12,
--	},
--	[DA9063_IRQ_GPI13] = {
--		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
--		.mask = DA9063_M_GPI13,
--	},
--	[DA9063_IRQ_GPI14] = {
--		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
--		.mask = DA9063_M_GPI14,
--	},
--	[DA9063_IRQ_GPI15] = {
--		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
--		.mask = DA9063_M_GPI15,
--	},
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI8,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI8),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI9,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI9),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI10,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI10),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI11,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI11),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI12,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI12),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI13,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI13),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI14,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI14),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI15,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI15),
- };
+ 	/* Bring bus to a known state. Looks like STOP if bus is not free yet */
++	scllo(bit_adap);
++	sdalo(bit_adap);
+ 	sclhi(bit_adap);
+ 	sdahi(bit_adap);
  
- static const struct regmap_irq_chip da9063_irq_chip = {
- 	.name = "da9063-irq",
- 	.irqs = da9063_irqs,
- 	.num_irqs = DA9063_NUM_IRQ,
--
- 	.num_regs = 4,
- 	.status_base = DA9063_REG_EVENT_A,
- 	.mask_base = DA9063_REG_IRQ_MASK_A,
 -- 
-2.16.2
+2.11.0
