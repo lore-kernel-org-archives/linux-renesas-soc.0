@@ -1,109 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49252 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932665AbeFRM6E (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:47636 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965022AbeFNOHZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Jun 2018 08:58:04 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        Thu, 14 Jun 2018 10:07:25 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v5 1/3] mmc: core: more fine-grained hooks for HS400 tuning
-Date: Mon, 18 Jun 2018 14:57:49 +0200
-Message-Id: <20180618125751.27615-2-horms+renesas@verge.net.au>
-In-Reply-To: <20180618125751.27615-1-horms+renesas@verge.net.au>
-References: <20180618125751.27615-1-horms+renesas@verge.net.au>
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4.17 25/45] serial: sh-sci: Stop using printk format %pCr
+Date: Thu, 14 Jun 2018 16:04:16 +0200
+Message-Id: <20180614132128.135775884@linuxfoundation.org>
+In-Reply-To: <20180614132126.797006529@linuxfoundation.org>
+References: <20180614132126.797006529@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This adds two new HS400 tuning operations:
-* hs400_downgrade
-* hs400_complete
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
-These supplement the existing HS400 operation:
-* prepare_hs400_tuning
+------------------
 
-This is motivated by a requirement of Renesas SDHI for the following:
-1. Disabling SCC before selecting to HS if selection of HS400 has occurred.
-   This can be done in an implementation of prepare_hs400_tuning_downgrade
-2. Updating registers after switching to HS400
-   This can be done in an implementation of complete_hs400_tuning
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-If hs400_downgrade or hs400_complete are not implemented then they are not
-called. Thus means there should be no affect for existing drivers as none
-implemt these ops.
+commit d63c16f8e1ab761775275adcf54f4bef7c330295 upstream.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
+called in atomic context.
+
+Replace it by open-coding the operation.  This is safe here, as the code
+runs in task context.
+
+Link: http://lkml.kernel.org/r/1527845302-12159-4-git-send-email-geert+renesas@glider.be
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Zhang Rui <rui.zhang@intel.com>
+To: Eduardo Valentin <edubezval@gmail.com>
+To: Eric Anholt <eric@anholt.net>
+To: Stefan Wahren <stefan.wahren@i2se.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+Cc: linux-serial@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: stable@vger.kernel.org # 4.5+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
-v5
-* Reworked as per feedback from Ulf Hansson
-  - Call ops from mmc_hs400_to_hs200() and mmc_select_hs400()
-    rather than mmc_retune() and mmc_select_timing().
-    This moves card code further away from core code and
-    makes the patch somewhat tider.
-  - Use shorter names for new ops.
+ drivers/tty/serial/sh-sci.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-v4
-* New patch
----
- drivers/mmc/core/mmc.c   | 10 ++++++++++
- include/linux/mmc/host.h |  7 +++++++
- 2 files changed, 17 insertions(+)
-
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index 4466f5de54d4..63a52379e8ab 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -1169,6 +1169,10 @@ static int mmc_select_hs400(struct mmc_card *card)
- 	/* Set host controller to HS timing */
- 	mmc_set_timing(card->host, MMC_TIMING_MMC_HS);
- 
-+	/* Prepare host to downgrade to HS timing */
-+	if (host->ops->hs400_downgrade)
-+		host->ops->hs400_downgrade(host);
-+
- 	/* Reduce frequency to HS frequency */
- 	max_dtr = card->ext_csd.hs_max_dtr;
- 	mmc_set_clock(host, max_dtr);
-@@ -1209,6 +1213,9 @@ static int mmc_select_hs400(struct mmc_card *card)
- 	if (err)
- 		goto out_err;
- 
-+	if (host->ops->hs400_complete)
-+		host->ops->hs400_complete(host);
-+
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -2704,8 +2704,8 @@ found:
+ 			dev_dbg(dev, "failed to get %s (%ld)\n", clk_names[i],
+ 				PTR_ERR(clk));
+ 		else
+-			dev_dbg(dev, "clk %s is %pC rate %pCr\n", clk_names[i],
+-				clk, clk);
++			dev_dbg(dev, "clk %s is %pC rate %lu\n", clk_names[i],
++				clk, clk_get_rate(clk));
+ 		sci_port->clks[i] = IS_ERR(clk) ? NULL : clk;
+ 	}
  	return 0;
- 
- out_err:
-@@ -1256,6 +1263,9 @@ int mmc_hs400_to_hs200(struct mmc_card *card)
- 
- 	mmc_set_timing(host, MMC_TIMING_MMC_HS);
- 
-+	if (host->ops->hs400_downgrade)
-+		host->ops->hs400_downgrade(host);
-+
- 	err = mmc_switch_status(card);
- 	if (err)
- 		goto out_err;
-diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-index 64300a48dcce..a39e2925c84c 100644
---- a/include/linux/mmc/host.h
-+++ b/include/linux/mmc/host.h
-@@ -146,6 +146,13 @@ struct mmc_host_ops {
- 
- 	/* Prepare HS400 target operating frequency depending host driver */
- 	int	(*prepare_hs400_tuning)(struct mmc_host *host, struct mmc_ios *ios);
-+
-+	/* Prepare for switching from HS400 to HS200 */
-+	void	(*hs400_downgrade)(struct mmc_host *host);
-+
-+	/* Complete selection of HS400 */
-+	void	(*hs400_complete)(struct mmc_host *host);
-+
- 	/* Prepare enhanced strobe depending host driver */
- 	void	(*hs400_enhanced_strobe)(struct mmc_host *host,
- 					 struct mmc_ios *ios);
--- 
-2.11.0
