@@ -1,58 +1,44 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:17597 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755178AbeFNLEe (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Jun 2018 07:04:34 -0400
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Frank Rowand <frank.rowand@sony.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Carlo Caione <carlo@endlessm.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 3/3] ARM: dts: Renesas R9A06G032 SMP enable method
-Date: Thu, 14 Jun 2018 11:58:58 +0100
-Message-Id: <1528973943-28132-4-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1528973943-28132-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1528973943-28132-1-git-send-email-michel.pollet@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
+        yoshihiro.shimoda.uh@renesas.com, joro@8bytes.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RESEND 6/6] iommu/ipmmu-vmsa: Document R-Car V3H and E3 IPMMU DT bindings
+Date: Thu, 14 Jun 2018 12:48:26 +0200
+Message-Id: <1528973306-7962-7-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1528973306-7962-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1528973306-7962-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a special enable method for the second CA7 of the R9A06G032
-as well as the default value for the "cpu-release-addr" property.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Update the IPMMU DT binding documentation to include the compat strings
+for the IPMMU devices included in the R-Car V3H and E3 SoCs.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r9a06g032.dtsi | 2 ++
+ Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index 353e06f..3e45375 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -30,6 +30,8 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <1>;
- 			clocks = <&sysctrl R9A06G032_CLK_A7MP>;
-+			enable-method = "renesas,r9a06g032-smp";
-+			cpu-release-addr = <0 0x4000c204>;
- 		};
- 	};
- 
+diff --git a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
+index 8d145a4..c6e2d85 100644
+--- a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
++++ b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
+@@ -21,6 +21,8 @@ Required Properties:
+     - "renesas,ipmmu-r8a7796" for the R8A7796 (R-Car M3-W) IPMMU.
+     - "renesas,ipmmu-r8a77965" for the R8A77965 (R-Car M3-N) IPMMU.
+     - "renesas,ipmmu-r8a77970" for the R8A77970 (R-Car V3M) IPMMU.
++    - "renesas,ipmmu-r8a77980" for the R8A77980 (R-Car V3H) IPMMU.
++    - "renesas,ipmmu-r8a77990" for the R8A77990 (R-Car E3) IPMMU.
+     - "renesas,ipmmu-r8a77995" for the R8A77995 (R-Car D3) IPMMU.
+     - "renesas,ipmmu-vmsa" for generic R-Car Gen2 or RZ/G1 VMSA-compatible
+ 			   IPMMU.
 -- 
 2.7.4
+
