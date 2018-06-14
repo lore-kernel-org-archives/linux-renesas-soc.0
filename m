@@ -1,87 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:45587 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754945AbeFNLCf (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:44029 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755131AbeFNLmf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Jun 2018 07:02:35 -0400
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
+        Thu, 14 Jun 2018 07:42:35 -0400
+Received: by mail-lf0-f68.google.com with SMTP id n15-v6so8892305lfn.10
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Jun 2018 04:42:35 -0700 (PDT)
+Subject: Re: [PATCH v1 4/5] ARM: dts: Renesas R9A06G032 pinctrl node
+To: Michel Pollet <michel.pollet@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms@verge.net.au>
 Cc: phil.edworthy@renesas.com,
         Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v9 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
-Date: Thu, 14 Jun 2018 11:56:31 +0100
-Message-Id: <1528973829-25493-3-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1528974029-29617-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1528974029-29617-5-git-send-email-michel.pollet@bp.renesas.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <7e9eefe0-5310-5925-3b00-b75800e6d87e@cogentembedded.com>
+Date: Thu, 14 Jun 2018 14:42:32 +0300
+MIME-Version: 1.0
+In-Reply-To: <1528974029-29617-5-git-send-email-michel.pollet@bp.renesas.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas R9A06G032 SYSCTRL node description.
+Hello!
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
----
- .../bindings/clock/renesas,r9a06g032-sysctrl.txt   | 44 ++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
+On 06/14/2018 02:00 PM, Michel Pollet wrote:
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
-new file mode 100644
-index 0000000..f6cb5e3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
-@@ -0,0 +1,44 @@
-+* Renesas R9A06G032 SYSCTRL
-+
-+Required Properties:
-+
-+  - compatible: Must be:
-+    - "renesas,r9a06g032-sysctrl"
-+  - reg: Base address and length of the SYSCTRL IO block.
-+  - #clock-cells: Must be 1
-+  - clocks: References to the parent clocks:
-+	- external 40mhz crystal.
-+	- external (optional) 32.768khz
-+	- external (optional) jtag input
-+	- external (optional) RGMII_REFCLK
-+  - clock-names: Must be:
-+        clock-names = "mclk", "rtc", "jtag", "rgmii_ref_ext";
-+
-+Examples
-+--------
-+
-+  - SYSCTRL node:
-+
-+	sysctrl: system-controller@4000c000 {
-+		compatible = "renesas,r9a06g032-sysctrl";
-+		reg = <0x4000c000 0x1000>;
-+		status = "okay";
-+		#clock-cells = <1>;
-+
-+		clocks = <&ext_mclk>, <&ext_rtc_clk>,
-+				<&ext_jtag_clk>, <&ext_rgmii_ref>;
-+		clock-names = "mclk", "rtc", "jtag", "rgmii_ref_ext";
-+	};
-+
-+  - Other nodes can use the clocks provided by SYSCTRL as in:
-+
-+	#include <dt-bindings/clock/r9a06g032-sysctrl.h>
-+	uart0: serial@40060000 {
-+		compatible = "snps,dw-apb-uart";
-+		reg = <0x40060000 0x400>;
-+		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+		reg-shift = <2>;
-+		reg-io-width = <4>;
-+		clocks = <&sysctrl R9A06G032_CLK_UART0>;
-+		clock-names = "baudclk";
-+	};
--- 
-2.7.4
+> This provides a pinctrl driver for the Renesas R9A06G032 SoC
+> 
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> ---
+>  arch/arm/boot/dts/r9a06g032.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+> index 3e45375..fbad039 100644
+> --- a/arch/arm/boot/dts/r9a06g032.dtsi
+> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
+> @@ -88,6 +88,14 @@
+>  			status = "disabled";
+>  		};
+>  
+> +		pinctrl: pinctrl@40067000 {
+
+   "pin-controller@..." please, it's looking more generic.
+
+> +			compatible = "renesas,r9a06g032-pinctrl";
+> +			reg = <0x40067000 0x1000>, <0x51000000 0x800>;
+> +			clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
+> +			clock-names = "bus";
+> +			status = "okay";
+> +		};
+> +
+>  		gic: gic@44101000 {
+>  			compatible = "arm,cortex-a7-gic", "arm,gic-400";
+>  			interrupt-controller;
+
+MBR, Sergei
