@@ -1,78 +1,502 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:49966 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752791AbeFNIJ0 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55838 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752759AbeFNH3i (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Jun 2018 04:09:26 -0400
-Date: Thu, 14 Jun 2018 17:09:20 +0900
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
+        Thu, 14 Jun 2018 03:29:38 -0400
+Date: Thu, 14 Jun 2018 09:29:33 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH v2 2/2] arm64: dts: renesas: r8a7796 add missing SPDX
  identifier
-Message-ID: <20180614080919.3llg73cu4ydfjk3d@ninjato>
+Message-ID: <20180614072932.oneux4ep25okr63w@verge.net.au>
 References: <20180614015607.7066-1-wsa+renesas@sang-engineering.com>
  <20180614015607.7066-3-wsa+renesas@sang-engineering.com>
- <20180614072932.oneux4ep25okr63w@verge.net.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ytiam7geqsap3j2j"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180614072932.oneux4ep25okr63w@verge.net.au>
+In-Reply-To: <20180614015607.7066-3-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Thu, Jun 14, 2018 at 10:56:07AM +0900, Wolfram Sang wrote:
+> Due to a merge conflict, this got accidently dropped. Add it again.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a7796.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> index 50a8475fa837..af8196281b06 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> @@ -1,3 +1,4 @@
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * Device Tree Source for the r8a7796 SoC
+>   *
 
---ytiam7geqsap3j2j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks, I squashed this into the patch that I messed up.
+The result is as follows.
 
-On Thu, Jun 14, 2018 at 09:29:33AM +0200, Simon Horman wrote:
-> On Thu, Jun 14, 2018 at 10:56:07AM +0900, Wolfram Sang wrote:
-> > Due to a merge conflict, this got accidently dropped. Add it again.
-> >=20
-> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > ---
-> >  arch/arm64/boot/dts/renesas/r8a7796.dtsi | 1 +
-> >  1 file changed, 1 insertion(+)
-> >=20
-> > diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot=
-/dts/renesas/r8a7796.dtsi
-> > index 50a8475fa837..af8196281b06 100644
-> > --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> > @@ -1,3 +1,4 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> >  /*
-> >   * Device Tree Source for the r8a7796 SoC
-> >   *
->=20
-> Thanks, I squashed this into the patch that I messed up.
-> The result is as follows.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH] arm64: dts: renesas: convert to SPDX identifiers
 
-Looks good to me, thanks Simon!
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Acked-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts  | 5 +----
+ arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dts     | 5 +----
+ arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts | 5 +----
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi           | 5 +----
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dts      | 5 +----
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts         | 5 +----
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts     | 5 +----
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts    | 5 +----
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi               | 5 +----
+ arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dts      | 5 +----
+ arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts         | 5 +----
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts     | 5 +----
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts    | 5 +----
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi               | 5 +----
+ arch/arm64/boot/dts/renesas/r8a77970-eagle.dts         | 5 +----
+ arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts         | 5 +----
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi              | 5 +----
+ arch/arm64/boot/dts/renesas/r8a77995-draak.dts         | 5 +----
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi              | 5 +----
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi       | 5 +----
+ arch/arm64/boot/dts/renesas/salvator-x.dtsi            | 5 +----
+ arch/arm64/boot/dts/renesas/salvator-xs.dtsi           | 5 +----
+ arch/arm64/boot/dts/renesas/ulcb-kf.dtsi               | 5 +----
+ arch/arm64/boot/dts/renesas/ulcb.dtsi                  | 5 +----
+ 24 files changed, 24 insertions(+), 96 deletions(-)
 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts b/arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts
+index 009cb1cb0dde..2f24dfc45617 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the H3ULCB Kingfisher board
+  *
+  * Copyright (C) 2017 Renesas Electronics Corp.
+  * Copyright (C) 2017 Cogent Embedded, Inc.
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2.  This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+  */
+ 
+ #include "r8a7795-es1-h3ulcb.dts"
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dts
+index dd4f9b6a4254..598b98168559 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dts
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the H3ULCB (R-Car Starter Kit Premier) board
+  *
+  * Copyright (C) 2016 Renesas Electronics Corp.
+  * Copyright (C) 2016 Cogent Embedded, Inc.
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2.  This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+  */
+ 
+ /dts-v1/;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
+index 3f46345a4644..6b5fa91f1d5d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
+@@ -1,11 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the Salvator-X board with R-Car H3 ES1.x
+  *
+  * Copyright (C) 2015 Renesas Electronics Corp.
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2.  This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+  */
+ 
+ /dts-v1/;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+index e19dcd6cb767..fde3e84626d7 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+@@ -1,11 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the r8a7795 ES1.x SoC
+  *
+  * Copyright (C) 2015 Renesas Electronics Corp.
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2.  This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+  */
+ 
+ #include "r8a7795.dtsi"
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dts
+index 4403227c0f97..80791ed27539 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dts
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the H3ULCB Kingfisher board
+  *
+  * Copyright (C) 2017 Renesas Electronics Corp.
+  * Copyright (C) 2017 Cogent Embedded, Inc.
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2.  This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+  */
+ 
+ #include "r8a7795-h3ulcb.dts"
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index 0afe777973de..df50bf46406e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the H3ULCB (R-Car Starter Kit Premier) board
+  *
+  * Copyright (C) 2016 Renesas Electronics Corp.
+  * Copyright (C) 2016 Cogent Embedded, Inc.
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2.  This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+  */
+ 
+ /dts-v1/;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 0efbef5ea9b7..446822f5751c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -1,11 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the Salvator-X board with R-Car H3 ES2.0
+  *
+  * Copyright (C) 2015 Renesas Electronics Corp.
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2.  This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+  */
+ 
+ /dts-v1/;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+index e231b5a7cbab..8ded64d0a4d5 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+@@ -1,11 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the Salvator-X 2nd version board with R-Car H3 ES2.0
+  *
+  * Copyright (C) 2015-2017 Renesas Electronics Corp.
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2.  This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+  */
+ 
+ /dts-v1/;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 3ac75dbf2d93..018507d78132 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1,11 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the r8a7795 SoC
+  *
+  * Copyright (C) 2015 Renesas Electronics Corp.
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2.  This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+  */
+ 
+ #include <dt-bindings/clock/r8a7795-cpg-mssr.h>
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dts
+index de2390f009e7..2df50eb11f16 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dts
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the M3ULCB Kingfisher board
+  *
+  * Copyright (C) 2017 Renesas Electronics Corp.
+  * Copyright (C) 2017 Cogent Embedded, Inc.
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2.  This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+  */
+ 
+ #include "r8a7796-m3ulcb.dts"
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+index daee1f1a3f68..cbd8acbf537e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the M3ULCB (R-Car Starter Kit Pro) board
+  *
+  * Copyright (C) 2016 Renesas Electronics Corp.
+  * Copyright (C) 2016 Cogent Embedded, Inc.
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2.  This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+  */
+ 
+ /dts-v1/;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+index 90cca09b9a5e..052d72acc862 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+@@ -1,11 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the Salvator-X board with R-Car M3-W
+  *
+  * Copyright (C) 2016 Renesas Electronics Corp.
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2.  This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+  */
+ 
+ /dts-v1/;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts
+index ddf35d4cd5e5..8860be65342e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts
+@@ -1,11 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the Salvator-X 2nd version board with R-Car M3-W
+  *
+  * Copyright (C) 2015-2017 Renesas Electronics Corp.
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2.  This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+  */
+ 
+ /dts-v1/;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 2a04635bc9ae..6436e814268a 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1,11 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the r8a7796 SoC
+  *
+  * Copyright (C) 2016-2017 Renesas Electronics Corp.
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2.  This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+  */
+ 
+ #include <dt-bindings/clock/r8a7796-cpg-mssr.h>
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+index 21f9cf5c6e84..b6d53321576b 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the Eagle board
+  *
+  * Copyright (C) 2016-2017 Renesas Electronics Corp.
+  * Copyright (C) 2017 Cogent Embedded, Inc.
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2.  This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+  */
+ 
+ /dts-v1/;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts b/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
+index 9fce031a596f..8eac8ca6550b 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the V3M Starter Kit board
+  *
+  * Copyright (C) 2017 Renesas Electronics Corp.
+  * Copyright (C) 2017 Cogent Embedded, Inc.
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2.  This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+  */
+ 
+ /dts-v1/;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+index 98a2317a16c4..04953e1e205e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the r8a77970 SoC
+  *
+  * Copyright (C) 2016-2017 Renesas Electronics Corp.
+  * Copyright (C) 2017 Cogent Embedded, Inc.
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2.  This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+  */
+ 
+ #include <dt-bindings/clock/r8a77970-cpg-mssr.h>
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+index f62627ce6a72..a8e8f2669d4c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the Draak board
+  *
+  * Copyright (C) 2016 Renesas Electronics Corp.
+  * Copyright (C) 2017 Glider bvba
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2.  This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+  */
+ 
+ /dts-v1/;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index eb23c85c561b..b67d38cc4cf0 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the r8a77995 SoC
+  *
+  * Copyright (C) 2016 Renesas Electronics Corp.
+  * Copyright (C) 2017 Glider bvba
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2.  This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+  */
+ 
+ #include <dt-bindings/clock/r8a77995-cpg-mssr.h>
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index b3c0b6912af4..320250d708c3 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -1,11 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for common parts of Salvator-X board variants
+  *
+  * Copyright (C) 2015-2016 Renesas Electronics Corp.
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2.  This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+  */
+ 
+ /*
+diff --git a/arch/arm64/boot/dts/renesas/salvator-x.dtsi b/arch/arm64/boot/dts/renesas/salvator-x.dtsi
+index 2828482eba1c..ddee50e64632 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-x.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-x.dtsi
+@@ -1,11 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the Salvator-X board
+  *
+  * Copyright (C) 2015-2016 Renesas Electronics Corp.
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2.  This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+  */
+ 
+ #include "salvator-common.dtsi"
+diff --git a/arch/arm64/boot/dts/renesas/salvator-xs.dtsi b/arch/arm64/boot/dts/renesas/salvator-xs.dtsi
+index 1ac03b7564aa..717d42758cbc 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-xs.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-xs.dtsi
+@@ -1,11 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the Salvator-X 2nd version board
+  *
+  * Copyright (C) 2015-2017 Renesas Electronics Corp.
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2.  This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+  */
+ 
+ #include "salvator-common.dtsi"
+diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+index a4e715cbde87..8bf3091a899c 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the Kingfisher (ULCB extension) board
+  *
+  * Copyright (C) 2017 Renesas Electronics Corp.
+  * Copyright (C) 2017 Cogent Embedded, Inc.
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2.  This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+  */
+ 
+ / {
+diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+index 702df9cbed52..83c546c0fe86 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the R-Car Gen3 ULCB board
+  *
+  * Copyright (C) 2016 Renesas Electronics Corp.
+  * Copyright (C) 2016 Cogent Embedded, Inc.
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2.  This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+  */
+ 
+ #include <dt-bindings/gpio/gpio.h>
+-- 
+2.11.0
 
---ytiam7geqsap3j2j
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsiIqsACgkQFA3kzBSg
-KbawHA//VqOyZILCZ70gj820EUTW2gt3J4/G7Xy+LhhDFayZVkEROtZcnMyA3L/3
-P1a1tJoK6s5kjbS7awGO41vIi9yDn08s7T6yi1q3y+hHm9qLDkoa6LFo0iFWE5Gi
-Xci/13uoLf9MFV4gPA3Fzi/CS0kLKuCmxdyQlG9F2UQ6u5cnniSbREVW8tHUkS0m
-JofJVQ6y9df7qi3bUTd5HEGE9PYbAocKqvljISd+O48CJLeuVx1sW4ahTx1qvuBe
-O5eGh6gpdjWU10dEdfkuby8gG2UQC65u8eH9TxPDCFakIHM/4+5IysvqOgalp1Tc
-mluM3mFk4+sewxf0QK2G272LzdpED9kkrhhxNBc8TCM4ImDmH4bfXg6SwShI6jN7
-e6krdvhH0OS05QvLd/mBnKCJ4FAvvv8ii/CwTOTegc7mRRw6YQbBzFt4OjSKoVox
-3dJuHaQD1VHicVaE7QXR3SsK49YxZQLoxpdSQmERCuPR5eDzzoeOjSAyjMY6J8li
-KMeNSC+64wEPmQrCo28GuwIxaaqCyNj2DTCADWrH/2k0qmWkbe4bN+66g9ORD48P
-+14rL4xW3J2r6zroT3jAwDDRmqrwpZ33ZGUSp8qIqGROou3oo+Nu2KHWDpdzKhHm
-JVxWHukNRk6DJ+vG6K8Eb8R2w8o5s6ZEJaI5Nso1TxTobElNc2s=
-=0Pdz
------END PGP SIGNATURE-----
-
---ytiam7geqsap3j2j--
+a7795-h3ulcb.dtQ
