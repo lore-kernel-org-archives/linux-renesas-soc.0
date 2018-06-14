@@ -1,69 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:39714 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752336AbeFFXYP (ORCPT
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:34169 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754660AbeFNTUB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 19:24:15 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 2/3] mmc: tmio: move tmio_mmc_hw_reset()
-Date: Thu,  7 Jun 2018 01:22:51 +0200
-Message-Id: <20180606232252.31583-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180606232252.31583-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180606232252.31583-1-niklas.soderlund+renesas@ragnatech.se>
+        Thu, 14 Jun 2018 15:20:01 -0400
+Received: by mail-lf0-f67.google.com with SMTP id o9-v6so11135958lfk.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Jun 2018 12:20:01 -0700 (PDT)
+Subject: [PATCH v2 2/2] arm64: dts: renesas: condor: add PCIe support
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <b37d458c-071a-833a-2057-be8a07c880be@cogentembedded.com>
+Message-ID: <eba72bac-60f8-2c09-e3e7-4b6a73e5fdfa@cogentembedded.com>
+Date: Thu, 14 Jun 2018 22:19:58 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <b37d458c-071a-833a-2057-be8a07c880be@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Avoid having to use forward declaration when in a later patch fixing the
-reset operation by moving tmio_mmc_hw_reset() earlier in the source
-file. No functional change in this change.
+Enable PCIe PHY and PCIEC and specify the PCIe bus clock for the Condor
+board.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Based on the original (and large) patch by Vladimir Barinov.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
- drivers/mmc/host/tmio_mmc_core.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+Changes in version 2:
+- mentioned Vladimir's original work and added his signoff;
+- refreshed the patch.
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 2ede81476daf76ce..9f5793407552a23a 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -243,6 +243,14 @@ static void tmio_mmc_reset(struct tmio_mmc_host *host)
+ arch/arm64/boot/dts/renesas/r8a77980-condor.dts |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
++++ renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+@@ -223,6 +223,18 @@
+ 	status = "okay";
+ };
  
- }
- 
-+static void tmio_mmc_hw_reset(struct mmc_host *mmc)
-+{
-+	struct tmio_mmc_host *host = mmc_priv(mmc);
++&pciec {
++	status = "okay";
++};
 +
-+	if (host->hw_reset)
-+		host->hw_reset(host);
-+}
++&pcie_bus_clk {
++	clock-frequency = <100000000>;
++};
 +
- static void tmio_mmc_reset_work(struct work_struct *work)
- {
- 	struct tmio_mmc_host *host = container_of(work, struct tmio_mmc_host,
-@@ -769,14 +777,6 @@ static int tmio_mmc_start_data(struct tmio_mmc_host *host,
- 	return 0;
- }
- 
--static void tmio_mmc_hw_reset(struct mmc_host *mmc)
--{
--	struct tmio_mmc_host *host = mmc_priv(mmc);
--
--	if (host->hw_reset)
--		host->hw_reset(host);
--}
--
- static int tmio_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
- {
- 	struct tmio_mmc_host *host = mmc_priv(mmc);
--- 
-2.17.0
++&pcie_phy {
++	status = "okay";
++};
++
+ &pfc {
+ 	avb_pins: avb {
+ 		groups = "avb_mdio", "avb_rgmii";
