@@ -1,60 +1,128 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:37415 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932712AbeFLO0a (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Jun 2018 10:26:30 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        horms@verge.net.au, geert@glider.be
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 0/6] media: rcar-vin: Brush endpoint properties
-Date: Tue, 12 Jun 2018 16:26:00 +0200
-Message-Id: <1528813566-17927-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v9 0/5] arm: Base support for Renesas RZN1D-DB Board
+Date: Thu, 14 Jun 2018 11:56:29 +0100
+Message-Id: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-  4th round for the VIN endpoint brushing series.
+This series adds the plain basic support for booting a bare
+kernel on the RZ/N1D-DB Board. It's been trimmed to the strict
+minimum as a 'base', further patches that could add the
+rest of the support.
 
-Slightly enlarged the linux-media receiver list, as this new version
-introduces a common property in 'video-interfaces.txt'.
+Note on the clock driver: Current usage of the clocks on Linux
+involves Linux 'claiming' all of them, disabling the one it doesn't
+need and so on.
+On *this* architecture it can't be done, there is at least one other
+OS running on the CM3 core that claims it's own clock; Linux can claim
+some others but definitely not start disabling stuff it isn't supposed to.
 
-Compared to v3 I have dropped the last controversial parts:
+Thanks for the comments on the previous versions!
 
-- The custom 'renesas,hsync-as-de' property has been dropped: do not handle
-  CHS bit for the moment.
-- Do not remove properties not parsed by the driver and not listed in the
-  interface bindings from Gen2 boards. As this lead to a long discussion, I
-  have now proposed a patch to clearly state that properties not listed in the
-  interface bindings can be optionally specified, but they don't affect the
-  interface behaviour. To avoid more discussions this patch may be dropped
-  and things will stay the way they are now.
+v9:
+ + Added Reviewed mentions as appropriate.
+ + Tweaked the detection code for clocks that are already in use.
+   (Now check the reset bits, as some clocks gates are marked as 'enabled'
+    when still in reset (!)).
+ + Added external clocks to the sysctrl node.
+ + Reworked the clock driver to be a platform one, not an OF one.
+v8:
+ + Added Reviewed mentions as appropriate.
+ + Moved some of the clocks #defines into the driver
+ + Tweaked the pointer arithmetics in the clock driver.
+ + Removed clk_readl/writel
+ + Use CLK_IS_CRITICAL instead of my own flag
+ + Also added that critical section to the dualgate object.
+ + Few other nitpick fixed.
+ + Rebased on next-20180604
+v7:
+ + Removed mention of 'rz[/]n1' from everywhere.
+ + Removed unwanted documentation.
+ + Renamed clock node back to sysctrl.
+ + Renamed rzn1-clocks.h to r9a06g032-sysctrl.h to match
+ + Made the clock driver claim the sysctrl node.
+ + Fixed a couple of 'sparse' warning in the clock driver.
+v6:
+ + Fix for suggestion by Geert Uytterhoeven
+ + Removed "renesas,rzn1" from the board bindings
+ + Removed patches already merged.
+ + Removed reboot driver
+ + Added a whole clock infrastructure.
+ + Rebased on next-20180517
+v5:
+ + Given the problems I have with getting in some structure around the
+   sysctrl block, I've removed the MFD, I've now attached the reboot
+   driver on it's  own pair of registers.
+ + Rebased on next-20180417
+v4:
+ + Fixes for suggestions by Simon Horman
+ + Fixes for suggestions by Jacopo Mondi
+ + Fixes for suggestions by Geert Uytterhoeven
+ + Renamed the r9a06g0xx.dtsi file, given up on trying to get a family
+   common file in, so dropped potential RZ/N1S support and now only
+   focus on RZ/N1D for this patchset.
+ + Added 'always-on' to the architected timer node, because it is.
+ + Added ARCH_R9A06G032, to match others patterns like RCAR
+ + Sorted the .dts files, added empty lines as required.
+ + Fixed patch prefixes to match git-log for bindings&dts
+ + Merged board .dts & Makefile changes together
+ + Rebased on next-20180410
+v3:
+ + Fixes for suggestions by Geert Uytterhoeven
+ + Removed SoC Specific renesas,r9a06g032-xxx, as it's not needed for now.
+ + Kept renesas,rzn1 as a family/generic for this family.
+ + Fixed a couple of the commit messages.
+ + Added Geert's Reviewed-By where appropriate.
+v2:
+ + Fixes for suggestions by Simon Horman
+ + Fixes for suggestions by Rob Herring
+ + Fixes for suggestions by Geert Uytterhoeven
+ + Removed the mach file
+ + Added a MFD base for the sysctrl block
+ + Added a regmap based sub driver for the reboot handler
+ + Renamed the files to match shmobile conventions
+ + Adapted the compatible= strings to reflect 'family' vs 'part'
+   distinction.
+ + Removed the sysctrl.h file entirelly.
+ + Fixed every warnings from the DTC compiler on W=12 mode.
+ + Split the device-tree patches from the code.
 
-For the common 'data-enable-active' property, I guess with Rob's ack we should
-be fine there and I hope the rest of the series won't slow down its acceptance.
 
-Thanks
-   j
+Michel Pollet (5):
+  dt-bindings: Add the r9a06g032-sysctrl.h file
+  dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
+  ARM: dts: Renesas R9A06G032 base device tree file
+  ARM: dts: Renesas RZN1D-DB Board base file
+  clk: renesas: Renesas R9A06G032 clock driver
 
-Jacopo Mondi (6):
-  dt-bindings: media: rcar-vin: Describe optional ep properties
-  dt-bindings: media: Document data-enable-active property
-  media: v4l2-fwnode: parse 'data-enable-active' prop
-  dt-bindings: media: rcar-vin: Add 'data-enable-active'
-  media: rcar-vin: Handle data-enable polarity
-  dt-bindings: media: rcar-vin: Clarify optional props
+ .../bindings/clock/renesas,r9a06g032-sysctrl.txt   |  44 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts        |  28 +
+ arch/arm/boot/dts/r9a06g032.dtsi                   | 114 +++
+ drivers/clk/renesas/Kconfig                        |   6 +
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/r9a06g032-clocks.c             | 895 +++++++++++++++++++++
+ include/dt-bindings/clock/r9a06g032-sysctrl.h      | 148 ++++
+ 8 files changed, 1237 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
+ create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+ create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
+ create mode 100644 drivers/clk/renesas/r9a06g032-clocks.c
+ create mode 100644 include/dt-bindings/clock/r9a06g032-sysctrl.h
 
- Documentation/devicetree/bindings/media/rcar_vin.txt   | 18 ++++++++++++++++++
- .../devicetree/bindings/media/video-interfaces.txt     |  2 ++
- drivers/media/platform/rcar-vin/rcar-dma.c             |  5 +++++
- drivers/media/v4l2-core/v4l2-fwnode.c                  |  4 ++++
- include/media/v4l2-mediabus.h                          |  2 ++
- 5 files changed, 31 insertions(+)
-
---
+-- 
 2.7.4
+
