@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:49124 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:51182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965230AbeFNOI3 (ORCPT
+        id S965515AbeFNOKL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:08:29 -0400
+        Thu, 14 Jun 2018 10:10:11 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
         Jonathan Corbet <corbet@lwn.net>,
@@ -24,17 +24,17 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4.16 25/43] serial: sh-sci: Stop using printk format %pCr
-Date: Thu, 14 Jun 2018 16:04:29 +0200
-Message-Id: <20180614132136.880991791@linuxfoundation.org>
-In-Reply-To: <20180614132135.111973468@linuxfoundation.org>
-References: <20180614132135.111973468@linuxfoundation.org>
+Subject: [PATCH 4.14 18/36] serial: sh-sci: Stop using printk format %pCr
+Date: Thu, 14 Jun 2018 16:04:41 +0200
+Message-Id: <20180614132158.085822615@linuxfoundation.org>
+In-Reply-To: <20180614132157.333004166@linuxfoundation.org>
+References: <20180614132157.333004166@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -81,7 +81,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/tty/serial/sh-sci.c
 +++ b/drivers/tty/serial/sh-sci.c
-@@ -2691,8 +2691,8 @@ found:
+@@ -2669,8 +2669,8 @@ found:
  			dev_dbg(dev, "failed to get %s (%ld)\n", clk_names[i],
  				PTR_ERR(clk));
  		else
