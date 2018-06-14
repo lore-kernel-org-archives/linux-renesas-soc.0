@@ -1,43 +1,121 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56040 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754023AbeFTItP (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:38146 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754660AbeFNTRt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:49:15 -0400
-Date: Wed, 20 Jun 2018 10:49:11 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+        Thu, 14 Jun 2018 15:17:49 -0400
+Received: by mail-lf0-f65.google.com with SMTP id i83-v6so11113354lfh.5
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Jun 2018 12:17:49 -0700 (PDT)
+Subject: [PATCH v2 1/2] arm64: dts: renesas: r8a77980: add PCIe support
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/2] arm64: dts: renesas: r8a77980: add PCIe support
-Message-ID: <20180620084910.fal6aym7b66zgqto@verge.net.au>
 References: <b37d458c-071a-833a-2057-be8a07c880be@cogentembedded.com>
- <7e8c70ae-5c85-1e73-1be9-a40901a345f0@cogentembedded.com>
+Message-ID: <7e8c70ae-5c85-1e73-1be9-a40901a345f0@cogentembedded.com>
+Date: Thu, 14 Jun 2018 22:17:46 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7e8c70ae-5c85-1e73-1be9-a40901a345f0@cogentembedded.com>
+In-Reply-To: <b37d458c-071a-833a-2057-be8a07c880be@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jun 14, 2018 at 10:17:46PM +0300, Sergei Shtylyov wrote:
-> Describe the PCIe PHY, PCIEC, and PCIe bus clock in the R8A77980 device
-> tree.
-> 
-> Based on the original (and large) patch by Vladimir Barinov.
-> 
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Describe the PCIe PHY, PCIEC, and PCIe bus clock in the R8A77980 device
+tree.
 
-This looks good to me.
+Based on the original (and large) patch by Vladimir Barinov.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-I am marking it as deferred pending acceptance of the
-renesas,r8a77980-pcie-phy binding. Please repost or otherwise
-ping me once that has happened.
+---
+Changes in version 2:
+- merged in the PCIEC patch, renamed the patch, updated the description
+  accordingly;
+- used R8A77980_PD_ALWAYS_ON in the "power-domains" props
+- mentioned Vladimir's original work and added his signoff.
+
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi |   49 ++++++++++++++++++++++++++++++
+ 1 file changed, 49 insertions(+)
+
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -98,6 +98,13 @@
+ 		clock-frequency = <0>;
+ 	};
+ 
++	/* External PCIe clock - can be overridden by the board */
++	pcie_bus_clk: pcie_bus {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
+ 	psci {
+ 		compatible = "arm,psci-1.0", "arm,psci-0.2";
+ 		method = "smc";
+@@ -402,6 +409,16 @@
+ 			status = "disabled";
+ 		};
+ 
++		pcie_phy: pcie-phy@e65d0000 {
++			compatible = "renesas,r8a77980-pcie-phy";
++			reg = <0 0xe65d0000 0 0x8000>;
++			#phy-cells = <0>;
++			clocks = <&cpg CPG_MOD 319>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 319>;
++			status = "disabled";
++		};
++
+ 		canfd: can@e66c0000 {
+ 			compatible = "renesas,r8a77980-canfd",
+ 				     "renesas,rcar-gen3-canfd";
+@@ -653,6 +670,38 @@
+ 			resets = <&cpg 408>;
+ 		};
+ 
++		pciec: pcie@fe000000 {
++			compatible = "renesas,pcie-r8a77980",
++				     "renesas,pcie-rcar-gen3";
++			reg = <0 0xfe000000 0 0x80000>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			bus-range = <0x00 0xff>;
++			device_type = "pci";
++			ranges = <
++				0x01000000 0 0x00000000 0 0xfe100000 0 0x0100000
++				0x02000000 0 0xfe200000 0 0xfe200000 0 0x0200000
++				0x02000000 0 0x30000000 0 0x30000000 0 0x8000000
++				0x42000000 0 0x38000000 0 0x38000000 0 0x8000000
++			>;
++			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000
++				      0 0x80000000>;
++			interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 0>;
++			interrupt-map = <0 0 0 0 &gic GIC_SPI 148
++					 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 319>, <&pcie_bus_clk>;
++			clock-names = "pcie", "pcie_bus";
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 319>;
++			phys = <&pcie_phy>;
++			phy-names = "pcie";
++			status = "disabled";
++		};
++
+ 		vspd0: vsp@fea20000 {
+ 			compatible = "renesas,vsp2";
+ 			reg = <0 0xfea20000 0 0x5000>;
