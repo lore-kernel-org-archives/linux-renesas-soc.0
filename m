@@ -1,157 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51014 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751782AbeFDJx2 (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:43898 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754860AbeFNLGa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Jun 2018 05:53:28 -0400
-Date: Mon, 4 Jun 2018 11:53:09 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        geert@glider.be, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] ARM: dts: rcar-gen2: Remove unused VIN properties
-Message-ID: <20180604095308.pnlmd4aalxceuozq@verge.net.au>
-References: <1526923663-8179-1-git-send-email-jacopo+renesas@jmondi.org>
- <1526923663-8179-5-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526923663-8179-5-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 14 Jun 2018 07:06:30 -0400
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1 5/5] ARM: dts: Renesas RZN1D-DB Board: Add UART0 pinmux node
+Date: Thu, 14 Jun 2018 12:00:21 +0100
+Message-Id: <1528974029-29617-6-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1528974029-29617-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1528974029-29617-1-git-send-email-michel.pollet@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, May 21, 2018 at 07:27:43PM +0200, Jacopo Mondi wrote:
+This adds the necessary nodes to add pin configuration for the UART0
+of that board.
 
-> The 'bus-width' and 'pclk-sample' properties are not parsed by the VIN
-> driver and only confuse users. Remove them in all Gen2 SoC that use
-> them.
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+---
+ arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-I think that the rational for removing properties (or not) is their
-presence in the bindings as DT should describe the hardware and not the
-current state of the driver implementation.
-
-I see that 'bus-width' may be removed from the binding, as per discussion
-in a different sub-thread. I'd like that discussion to reach a conclusion
-before considering that part of this patch any further.
-
-And I'd appreciate Niklas's feedback on the 'pclk-sample' portion.
-
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  arch/arm/boot/dts/r8a7790-lager.dts   | 3 ---
->  arch/arm/boot/dts/r8a7791-koelsch.dts | 3 ---
->  arch/arm/boot/dts/r8a7791-porter.dts  | 1 -
->  arch/arm/boot/dts/r8a7793-gose.dts    | 3 ---
->  arch/arm/boot/dts/r8a7794-alt.dts     | 1 -
->  arch/arm/boot/dts/r8a7794-silk.dts    | 1 -
->  6 files changed, 12 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-> index 092610e..9cdabfcf 100644
-> --- a/arch/arm/boot/dts/r8a7790-lager.dts
-> +++ b/arch/arm/boot/dts/r8a7790-lager.dts
-> @@ -885,10 +885,8 @@
->  	port {
->  		vin0ep2: endpoint {
->  			remote-endpoint = <&adv7612_out>;
-> -			bus-width = <24>;
->  			hsync-active = <0>;
->  			vsync-active = <0>;
-> -			pclk-sample = <1>;
->  			data-active = <1>;
->  		};
->  	};
-> @@ -904,7 +902,6 @@
->  	port {
->  		vin1ep0: endpoint {
->  			remote-endpoint = <&adv7180>;
-> -			bus-width = <8>;
->  		};
->  	};
->  };
-> diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-> index 8ab793d..033c9e3 100644
-> --- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-> +++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-> @@ -857,10 +857,8 @@
->  	port {
->  		vin0ep2: endpoint {
->  			remote-endpoint = <&adv7612_out>;
-> -			bus-width = <24>;
->  			hsync-active = <0>;
->  			vsync-active = <0>;
-> -			pclk-sample = <1>;
->  			data-active = <1>;
->  		};
->  	};
-> @@ -875,7 +873,6 @@
->  	port {
->  		vin1ep: endpoint {
->  			remote-endpoint = <&adv7180>;
-> -			bus-width = <8>;
->  		};
->  	};
->  };
-> diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-> index a01101b..c16e870 100644
-> --- a/arch/arm/boot/dts/r8a7791-porter.dts
-> +++ b/arch/arm/boot/dts/r8a7791-porter.dts
-> @@ -388,7 +388,6 @@
->  	port {
->  		vin0ep: endpoint {
->  			remote-endpoint = <&adv7180>;
-> -			bus-width = <8>;
->  		};
->  	};
->  };
-> diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-> index aa209f6..60aaddb 100644
-> --- a/arch/arm/boot/dts/r8a7793-gose.dts
-> +++ b/arch/arm/boot/dts/r8a7793-gose.dts
-> @@ -765,10 +765,8 @@
->  	port {
->  		vin0ep2: endpoint {
->  			remote-endpoint = <&adv7612_out>;
-> -			bus-width = <24>;
->  			hsync-active = <0>;
->  			vsync-active = <0>;
-> -			pclk-sample = <1>;
->  			data-active = <1>;
->  		};
->  	};
-> @@ -784,7 +782,6 @@
->  	port {
->  		vin1ep: endpoint {
->  			remote-endpoint = <&adv7180_out>;
-> -			bus-width = <8>;
->  		};
->  	};
->  };
-> diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-> index e170275..8ed7a71 100644
-> --- a/arch/arm/boot/dts/r8a7794-alt.dts
-> +++ b/arch/arm/boot/dts/r8a7794-alt.dts
-> @@ -388,7 +388,6 @@
->  	port {
->  		vin0ep: endpoint {
->  			remote-endpoint = <&adv7180>;
-> -			bus-width = <8>;
->  		};
->  	};
->  };
-> diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
-> index 7808aae..6adfcd6 100644
-> --- a/arch/arm/boot/dts/r8a7794-silk.dts
-> +++ b/arch/arm/boot/dts/r8a7794-silk.dts
-> @@ -477,7 +477,6 @@
->  	port {
->  		vin0ep: endpoint {
->  			remote-endpoint = <&adv7180>;
-> -			bus-width = <8>;
->  		};
->  	};
->  };
-> -- 
-> 2.7.4
-> 
+diff --git a/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+index 4e57ae2..039ec2e 100644
+--- a/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
++++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+@@ -8,6 +8,8 @@
+ 
+ /dts-v1/;
+ 
++#include <dt-bindings/pinctrl/r9a06g032-pinctrl.h>
++
+ #include "r9a06g032.dtsi"
+ 
+ / {
+@@ -23,6 +25,17 @@
+ 	};
+ };
+ 
++&pinctrl {
++	pinsuart0: pinsuart0 {
++		renesas,rzn1-pinmux-ids = <
++			RZN1_MUX(103, UART0_I)	/* UART0_TXD */
++			RZN1_MUX(104, UART0_I)	/* UART0_RXD */
++		>;
++	};
++};
++
+ &uart0 {
+ 	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinsuart0>;
+ };
+-- 
+2.7.4
