@@ -1,109 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:45192 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753103AbeFGOZt (ORCPT
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:54079 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755114AbeFNKsi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:25:49 -0400
-MIME-Version: 1.0
-In-Reply-To: <20180606163846.495725-1-jeremy.linton@arm.com>
-References: <20180606163846.495725-1-jeremy.linton@arm.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 7 Jun 2018 16:25:47 +0200
-Message-ID: <CAMuHMdXW4M5CNS3wvb1R8v7ioGX7Q3ODcfgcdn2Ok3FRedTMZA@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: topology: Avoid checking numa mask for
- scheduler MC selection
-To: Jeremy Linton <jeremy.linton@arm.com>
-Cc: Sudeep Holla <Sudeep.Holla@arm.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Catalin Marinas <Catalin.Marinas@arm.com>,
-        Robin Murphy <Robin.Murphy@arm.com>, Morten.Rasmussen@arm.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 14 Jun 2018 06:48:38 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
+        yoshihiro.shimoda.uh@renesas.com, joro@8bytes.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RESEND 1/6] iommu/ipmmu-vmsa: Increase maximum micro-TLBS to 48
+Date: Thu, 14 Jun 2018 12:48:21 +0200
+Message-Id: <1528973306-7962-2-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1528973306-7962-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1528973306-7962-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jeremy,
+From: Magnus Damm <damm+renesas@opensource.se>
 
-On Wed, Jun 6, 2018 at 6:38 PM, Jeremy Linton <jeremy.linton@arm.com> wrote:
-> The numa mask subset check can often lead to system hang or crash during
-> CPU hotplug and system suspend operation if NUMA is disabled. This is
+Bump up the maximum numbers of micro-TLBS to 48.
 
-Also during boot, if CONFIG_ARM_PSCI_CHECKER=y.
+Each IPMMU device instance get micro-TLB assignment via
+the "iommus" property in DT. Older SoCs tend to use a
+maximum number of 32 micro-TLBs per IPMMU instance however
+newer SoCs such as r8a7796 make use of up to 48 micro-TLBs.
 
-> mostly observed on HMP systems where the CPU compute capacities are
-> different and ends up in different scheduler domains. Since
-> cpumask_of_node is returned instead core_sibling, the scheduler is
-> confused with incorrect cpumasks(e.g. one CPU in two different sched
-> domains at the same time) on CPU hotplug.
->
-> Lets disable the NUMA siblings checks for the time being, as NUMA in
-> socket machines have LLC's that will assure that the scheduler topology
-> isn't "borken".
->
-> The NUMA check exists to assure that if a LLC within a socket crosses
-> NUMA nodes/chiplets the scheduler domains remain consistent. This code will
-> likely have to be re-enabled in the near future once the NUMA mask story
-> is sorted.  At the moment its not necessary because the NUMA in socket
-> machines LLC's are contained within the NUMA domains.
->
-> Further, as a defensive mechanism during hot-plug, lets assure that the
-> LLC siblings are also masked.
->
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+At this point no SoC specific handling is done to validate
+the maximum number of micro-TLBs, and because of that the
+DT information is assumed to be within correct range for
+each particular SoC.
 
-Thanks!
+If needed in the future SoC specific feature flags can be
+added to handle the maximum number of micro-TLBs without
+requiring DT changes, however at this point this does not
+seem necessary.
 
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/iommu/ipmmu-vmsa.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-> ---
->  arch/arm64/kernel/topology.c | 11 ++++-------
->  1 file changed, 4 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-> index 7415c166281f..f845a8617812 100644
-> --- a/arch/arm64/kernel/topology.c
-> +++ b/arch/arm64/kernel/topology.c
-> @@ -215,13 +215,8 @@ EXPORT_SYMBOL_GPL(cpu_topology);
->
->  const struct cpumask *cpu_coregroup_mask(int cpu)
->  {
-> -       const cpumask_t *core_mask = cpumask_of_node(cpu_to_node(cpu));
-> +       const cpumask_t *core_mask = &cpu_topology[cpu].core_sibling;
->
-> -       /* Find the smaller of NUMA, core or LLC siblings */
-> -       if (cpumask_subset(&cpu_topology[cpu].core_sibling, core_mask)) {
-> -               /* not numa in package, lets use the package siblings */
-> -               core_mask = &cpu_topology[cpu].core_sibling;
-> -       }
->         if (cpu_topology[cpu].llc_id != -1) {
->                 if (cpumask_subset(&cpu_topology[cpu].llc_siblings, core_mask))
->                         core_mask = &cpu_topology[cpu].llc_siblings;
-> @@ -239,8 +234,10 @@ static void update_siblings_masks(unsigned int cpuid)
->         for_each_possible_cpu(cpu) {
->                 cpu_topo = &cpu_topology[cpu];
->
-> -               if (cpuid_topo->llc_id == cpu_topo->llc_id)
-> +               if (cpuid_topo->llc_id == cpu_topo->llc_id) {
->                         cpumask_set_cpu(cpu, &cpuid_topo->llc_siblings);
-> +                       cpumask_set_cpu(cpuid, &cpu_topo->llc_siblings);
-> +               }
->
->                 if (cpuid_topo->package_id != cpu_topo->package_id)
->                         continue;
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index 40ae6e8..5c1ade7 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -194,7 +194,9 @@ static struct ipmmu_vmsa_device *to_ipmmu(struct device *dev)
+ #define IMPMBA(n)			(0x0280 + ((n) * 4))
+ #define IMPMBD(n)			(0x02c0 + ((n) * 4))
+ 
+-#define IMUCTR(n)			(0x0300 + ((n) * 16))
++#define IMUCTR(n)			((n) < 32 ? IMUCTR0(n) : IMUCTR32(n))
++#define IMUCTR0(n)			(0x0300 + ((n) * 16))
++#define IMUCTR32(n)			(0x0600 + (((n) - 32) * 16))
+ #define IMUCTR_FIXADDEN			(1 << 31)
+ #define IMUCTR_FIXADD_MASK		(0xff << 16)
+ #define IMUCTR_FIXADD_SHIFT		16
+@@ -204,7 +206,9 @@ static struct ipmmu_vmsa_device *to_ipmmu(struct device *dev)
+ #define IMUCTR_FLUSH			(1 << 1)
+ #define IMUCTR_MMUEN			(1 << 0)
+ 
+-#define IMUASID(n)			(0x0308 + ((n) * 16))
++#define IMUASID(n)			((n) < 32 ? IMUASID0(n) : IMUASID32(n))
++#define IMUASID0(n)			(0x0308 + ((n) * 16))
++#define IMUASID32(n)			(0x0608 + (((n) - 32) * 16))
+ #define IMUASID_ASID8_MASK		(0xff << 8)
+ #define IMUASID_ASID8_SHIFT		8
+ #define IMUASID_ASID0_MASK		(0xff << 0)
+@@ -955,7 +959,7 @@ static int ipmmu_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	mmu->dev = &pdev->dev;
+-	mmu->num_utlbs = 32;
++	mmu->num_utlbs = 48;
+ 	spin_lock_init(&mmu->lock);
+ 	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
+ 	mmu->features = of_device_get_match_data(&pdev->dev);
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.7.4
