@@ -1,77 +1,45 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Mon, 4 Jun 2018 14:19:33 +0200
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: laurent.pinchart@ideasonboard.com, horms@verge.net.au,
-        geert@glider.be, mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        hans.verkuil@cisco.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 6/8] dt-bindings: rcar-vin: Add 'hsync-as-de' custom
- prop
-Message-ID: <20180604121933.GG19674@bigcity.dyn.berto.se>
-References: <1527606359-19261-1-git-send-email-jacopo+renesas@jmondi.org>
- <1527606359-19261-7-git-send-email-jacopo+renesas@jmondi.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:55766 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752744AbeFNHXn (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 14 Jun 2018 03:23:43 -0400
+Date: Thu, 14 Jun 2018 09:23:39 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 1/2] arm64: dts: renesas: r8a77980: add
+ FCPVD/VSPD/DU/LVDS support
+Message-ID: <20180614072338.ti7pejilvbfqhegn@verge.net.au>
+References: <95d0db34-713d-8206-00c2-ee9a42aab823@cogentembedded.com>
+ <1611fe94-07dd-fc8b-e94f-143e1ed26a17@cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1527606359-19261-7-git-send-email-jacopo+renesas@jmondi.org>
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <1611fe94-07dd-fc8b-e94f-143e1ed26a17@cogentembedded.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
-
-Thanks for your work.
-
-On 2018-05-29 17:05:57 +0200, Jacopo Mondi wrote:
-> Document the boolean custom property 'renesas,hsync-as-de' that indicates
-> that the HSYNC signal is internally used as data-enable, when the
-> CLKENB signal is not connected.
+On Wed, Jun 13, 2018 at 11:11:27PM +0300, Sergei Shtylyov wrote:
+> Describe the interconnected FCPVD0, VSPD0, DU, and LVDS0 devices in the
+> R8A77980 device tree...
 > 
-> As this is a VIN specificity create a custom property specific to the R-Car
-> VIN driver.
+> Based on the original (and large) patch by Vladimir Barinov.
 > 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
 > ---
-> v3:
-> - new patch
-> ---
->  Documentation/devicetree/bindings/media/rcar_vin.txt | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
-> index ff53226..024c109 100644
-> --- a/Documentation/devicetree/bindings/media/rcar_vin.txt
-> +++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
-> @@ -60,6 +60,9 @@ from local SoC CSI-2 receivers (port1) depending on SoC.
->          - vsync-active: see [1] for description. Default is active high.
->          - data-enable-active: polarity of CLKENB signal, see [1] for
->            description. Default is active high.
-> +        - renesas,hsync-as-de: a boolean property to indicate that HSYNC signal
-> +          is internally used as data-enable when the CLKENB signal is
-> +          not available.
+> Changes in version 3:
+> - merged in the VSPD/DU/LVDS patches, renamed the patch, and updated the patch
+>   description accordingly;
+> - fixed the VSPD0's "reg" property.
 
-I'm not sure I like this, is there really a need to add a custom 
-property for this? The datasheet states that when the CLKENB pin is not 
-connected the driver should enable 'Clock Enable Hsync Select (CHS)'.  
-With the new generic property 'data-enable-active' which describes the 
-polarity of the CLKENB pin we also gain the knowledge if the CLKENB pin 
-is connected or not.
-
-I propose we drop this custom property and instead let the driver check 
-if the CLKENB polarity is described or not and use that to determine if 
-CHS bit should be set or not. IMHO that is much simpler then having two 
-properties describing the same pin.
-
-> 
->          If both HSYNC and VSYNC polarities are not specified, embedded
->          synchronization is selected.
-> --
-> 2.7.4
-> 
-
--- 
-Regards,
-Niklas S�derlund
+Thanks Sergei, applied.
