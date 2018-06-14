@@ -1,69 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:34424 "EHLO foss.arm.com"
+Received: from sauhun.de ([88.99.104.3]:48314 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753045AbeF2NhZ (ORCPT
+        id S935616AbeFNB4X (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Jun 2018 09:37:25 -0400
-Date: Fri, 29 Jun 2018 14:39:11 +0100
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-pci@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] PCI: rcar: Clean up PHY init on failure
-Message-ID: <20180629133911.GB9643@red-moon>
-References: <20180525183326.5245-1-marek.vasut+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180525183326.5245-1-marek.vasut+renesas@gmail.com>
+        Wed, 13 Jun 2018 21:56:23 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 0/2] arch: convert to SPDX identifiers
+Date: Thu, 14 Jun 2018 10:56:05 +0900
+Message-Id: <20180614015607.7066-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, May 25, 2018 at 08:33:26PM +0200, Marek Vasut wrote:
-> If the Gen3 PHY fails to power up, the code does not undo the
-> initialization caused by phy_init(). Add the missing failure
-> handling to the rcar_pcie_phy_init_gen3() function.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Cc: Phil Edworthy <phil.edworthy@renesas.com>
-> Cc: Simon Horman <horms+renesas@verge.net.au>
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Cc: linux-renesas-soc@vger.kernel.org
-> Fixes: 517ca93a7159 ("PCI: rcar: Add R-Car gen3 PHY support")
-> ---
->  drivers/pci/host/pcie-rcar.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+So, here is the rebased patch adding SPDX identifiers to mach-shmobile.
+And a fixup patch to add the missing identifier in r8a7796.dtsi.
 
-Applied to pci/controller-fixes to be tentatively merged for
--rc4, thanks.
+Thanks,
 
-Lorenzo
+   Wolfram
 
-> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-> index 695781934f0a..477bf40cc031 100644
-> --- a/drivers/pci/host/pcie-rcar.c
-> +++ b/drivers/pci/host/pcie-rcar.c
-> @@ -678,7 +678,11 @@ static int rcar_pcie_phy_init_gen3(struct rcar_pcie *pcie)
->  	if (err)
->  		return err;
->  
-> -	return phy_power_on(pcie->phy);
-> +	err = phy_power_on(pcie->phy);
-> +	if (err)
-> +		phy_exit(pcie->phy);
-> +
-> +	return err;
->  }
->  
->  static int rcar_msi_alloc(struct rcar_msi *chip)
-> -- 
-> 2.16.2
-> 
+Wolfram Sang (2):
+  ARM: shmobile: convert to SPDX identifier
+  arm64: dts: renesas: r8a7796 add missing SPDX identifier
+
+ arch/arm/include/debug/renesas-scif.S              |  5 +----
+ arch/arm/mach-shmobile/headsmp-apmu.S              |  5 +----
+ arch/arm/mach-shmobile/platsmp-apmu.c              |  5 +----
+ arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c | 10 +---------
+ arch/arm/mach-shmobile/setup-emev2.c               | 10 +---------
+ arch/arm/mach-shmobile/setup-r7s72100.c            | 10 +---------
+ arch/arm/mach-shmobile/setup-r8a73a4.c             | 10 +---------
+ arch/arm/mach-shmobile/setup-r8a7740.c             | 10 +---------
+ arch/arm/mach-shmobile/setup-r8a7778.c             | 10 +---------
+ arch/arm/mach-shmobile/setup-r8a7779.c             | 10 +---------
+ arch/arm/mach-shmobile/setup-rcar-gen2.c           | 10 +---------
+ arch/arm/mach-shmobile/setup-sh73a0.c              | 10 +---------
+ arch/arm/mach-shmobile/smp-emev2.c                 | 10 +---------
+ arch/arm/mach-shmobile/smp-r8a7779.c               | 10 +---------
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi           |  1 +
+ 15 files changed, 15 insertions(+), 111 deletions(-)
+
+-- 
+2.11.0
