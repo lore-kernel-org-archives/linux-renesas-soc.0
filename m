@@ -1,105 +1,90 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:48808 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936464AbeFOXVR (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Jun 2018 19:21:17 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        u-boot@lists.denx.de, Geert Uytterhoeven <geert@linux-m68k.org>,
-        shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        takuya.sakata.wz@bp.renesas.com
-Subject: Re: [RFC] ARM: rmobile: create DT memory nodes for R8A7795 3.0 and newer
-Date: Sat, 16 Jun 2018 02:21:32 +0300
-Message-ID: <2832035.axAMzJBFkt@avalon>
-In-Reply-To: <85111443-91db-70ab-3cea-9ed326982d1b@gmail.com>
-References: <1529055605-29942-1-git-send-email-ulrich.hecht+renesas@gmail.com> <3a3b322d-c04d-063e-392b-7967a9b8959c@gmail.com> <85111443-91db-70ab-3cea-9ed326982d1b@gmail.com>
+Return-Path: <u-boot-bounces@lists.denx.de>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+References: <1529055605-29942-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <fc5a0c4f-8e2a-19bf-2d46-6ade92920b5c@gmail.com>
+ <CAO3366yB85UTK+T1Wq8_tV_J4AS0zwAWkKSDAfqUJWcLsDj=7g@mail.gmail.com>
+ <3a3b322d-c04d-063e-392b-7967a9b8959c@gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <85111443-91db-70ab-3cea-9ed326982d1b@gmail.com>
+Date: Fri, 15 Jun 2018 14:00:31 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <3a3b322d-c04d-063e-392b-7967a9b8959c@gmail.com>
+Content-Language: en-US
+Cc: takuya.sakata.wz@bp.renesas.com, Magnus Damm <magnus.damm@gmail.com>,
+ Linux-Renesas <linux-renesas-soc@vger.kernel.org>, u-boot@lists.denx.de,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [U-Boot] [RFC] ARM: rmobile: create DT memory nodes for R8A7795
+ 3.0 and newer
+List-Unsubscribe: <https://lists.denx.de/options/u-boot>,
+ <mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
+List-Archive: <http://lists.denx.de/pipermail/u-boot/>
+List-Post: <mailto:u-boot@lists.denx.de>
+List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
+List-Subscribe: <https://lists.denx.de/listinfo/u-boot>,
+ <mailto:u-boot-request@lists.denx.de?subject=subscribe>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Errors-To: u-boot-bounces@lists.denx.de
+Sender: "U-Boot" <u-boot-bounces@lists.denx.de>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Marek,
-
-On Friday, 15 June 2018 15:00:31 EEST Marek Vasut wrote:
-> On 06/15/2018 01:43 PM, Marek Vasut wrote:
-> > On 06/15/2018 12:37 PM, Ulrich Hecht wrote:
-> >> On Fri, Jun 15, 2018 at 12:09 PM, Marek Vasut <marek.vasut@gmail.com> 
-wrote:
-> >>>> +             arm_smccc_smc(ARM_SMCCC_RENESAS_MEMCONF,
-> >>>> +                           0, 0, 0, 0, 0, 0, 0, &res);
-> >>> 
-> >>> Will this call work on platforms without patched ATF ?
-> >>> (I think not, don't you need to handle return value?)
-> >> 
-> >> I have not actually tested that, but if I understand the ATF code
-> >> correctly, unimplemented calls return
-> >> SMC_UNK (0xffffffff), which should be handled by the default case (NOP)
-> >> below.> 
-> > Which means the board has a memory size of 0 and fails to boot ?
-> > 
-> >>>> +             switch (res.a0) {
-> >>>> +             case 1:
-> >>>> +                     base[0] = 0x048000000ULL;
-> >>>> +                     size[0] = 0x038000000ULL;
-> >>>> +                     base[1] = 0x500000000ULL;
-> >>>> +                     size[1] = 0x040000000ULL;
-> >>>> +                     base[2] = 0x600000000ULL;
-> >>>> +                     size[2] = 0x040000000ULL;
-> >>>> +                     base[3] = 0x700000000ULL;
-> >>>> +                     size[3] = 0x040000000ULL;
-> >>>> +                     fdt_fixup_memory_banks(blob, base, size, 4);
-> >>>> +                     break;
-> >>>> +             case 2:
-> >>>> +                     base[0] = 0x048000000ULL;
-> >>>> +                     size[0] = 0x078000000ULL;
-> >>>> +                     base[1] = 0x500000000ULL;
-> >>>> +                     size[1] = 0x080000000ULL;
-> >>>> +                     fdt_fixup_memory_banks(blob, base, size, 2);
-> >>>> +                     break;
-> >>>> +             case 3:
-> >>>> +                     base[0] = 0x048000000ULL;
-> >>>> +                     size[0] = 0x078000000ULL;
-> >>>> +                     base[1] = 0x500000000ULL;
-> >>>> +                     size[1] = 0x080000000ULL;
-> >>>> +                     base[2] = 0x600000000ULL;
-> >>>> +                     size[2] = 0x080000000ULL;
-> >>>> +                     base[3] = 0x700000000ULL;
-> >>>> +                     size[3] = 0x080000000ULL;
-> >>>> +                     fdt_fixup_memory_banks(blob, base, size, 4);
-> >>>> +                     break;
-> >>> 
-> >>> Obvious design question is -- since you're adding new SMC call anyway,
-> >>> can't the call just return the memory layout table itself, so that it
-> >>> won't be duplicated both in U-Boot and ATF ?
-> >> 
-> >> My gut feeling was to go with the smallest interface possible.
-> > 
-> > But this doesn't scale. The API here uses some ad-hoc constants to
-> > identify memory layout tables which have to be encoded both in ATF and
-> > U-Boot, both of which must be kept in sync.
-> > 
-> > The ATF already has those memory layout tables, it's only a matter of
-> > passing them to U-Boot. If you do just that, the ad-hoc constants and
-> > encoding of tables into U-Boot goes away and in fact simplifies the
-> > design.
-> > 
-> > Yet, I have to wonder if ATF doesn't already contain some sort of
-> > standard SMC call to get memory topology. It surprises me that it
-> > wouldn't.
-> 
-> In fact, Laurent (CCed) was solving some similar issue with lossy decomp
-> and I think this involved some passing of memory layout information from
-> ATF to U-Boot too, or am I mistaken ?
-
-That's correct, ATF stores information about the memory layout at a fixed 
-address in system memory, and U-Boot can read it.
-
--- 
-Regards,
-
-Laurent Pinchart
+T24gMDYvMTUvMjAxOCAwMTo0MyBQTSwgTWFyZWsgVmFzdXQgd3JvdGU6Cj4gT24gMDYvMTUvMjAx
+OCAxMjozNyBQTSwgVWxyaWNoIEhlY2h0IHdyb3RlOgo+PiBPbiBGcmksIEp1biAxNSwgMjAxOCBh
+dCAxMjowOSBQTSwgTWFyZWsgVmFzdXQgPG1hcmVrLnZhc3V0QGdtYWlsLmNvbT4gd3JvdGU6Cj4+
+Pj4gKyAgICAgICAgICAgICBhcm1fc21jY2Nfc21jKEFSTV9TTUNDQ19SRU5FU0FTX01FTUNPTkYs
+Cj4+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgIDAsIDAsIDAsIDAsIDAsIDAsIDAsICZy
+ZXMpOwo+Pj4KPj4+IFdpbGwgdGhpcyBjYWxsIHdvcmsgb24gcGxhdGZvcm1zIHdpdGhvdXQgcGF0
+Y2hlZCBBVEYgPwo+Pj4gKEkgdGhpbmsgbm90LCBkb24ndCB5b3UgbmVlZCB0byBoYW5kbGUgcmV0
+dXJuIHZhbHVlPykKPj4KPj4gSSBoYXZlIG5vdCBhY3R1YWxseSB0ZXN0ZWQgdGhhdCwgYnV0IGlm
+IEkgdW5kZXJzdGFuZCB0aGUgQVRGIGNvZGUKPj4gY29ycmVjdGx5LCB1bmltcGxlbWVudGVkIGNh
+bGxzIHJldHVybgo+PiBTTUNfVU5LICgweGZmZmZmZmZmKSwgd2hpY2ggc2hvdWxkIGJlIGhhbmRs
+ZWQgYnkgdGhlIGRlZmF1bHQgY2FzZSAoTk9QKSBiZWxvdy4KPiAKPiBXaGljaCBtZWFucyB0aGUg
+Ym9hcmQgaGFzIGEgbWVtb3J5IHNpemUgb2YgMCBhbmQgZmFpbHMgdG8gYm9vdCA/Cj4gCj4+Pj4g
+KyAgICAgICAgICAgICBzd2l0Y2ggKHJlcy5hMCkgewo+Pj4+ICsgICAgICAgICAgICAgY2FzZSAx
+Ogo+Pj4+ICsgICAgICAgICAgICAgICAgICAgICBiYXNlWzBdID0gMHgwNDgwMDAwMDBVTEw7Cj4+
+Pj4gKyAgICAgICAgICAgICAgICAgICAgIHNpemVbMF0gPSAweDAzODAwMDAwMFVMTDsKPj4+PiAr
+ICAgICAgICAgICAgICAgICAgICAgYmFzZVsxXSA9IDB4NTAwMDAwMDAwVUxMOwo+Pj4+ICsgICAg
+ICAgICAgICAgICAgICAgICBzaXplWzFdID0gMHgwNDAwMDAwMDBVTEw7Cj4+Pj4gKyAgICAgICAg
+ICAgICAgICAgICAgIGJhc2VbMl0gPSAweDYwMDAwMDAwMFVMTDsKPj4+PiArICAgICAgICAgICAg
+ICAgICAgICAgc2l6ZVsyXSA9IDB4MDQwMDAwMDAwVUxMOwo+Pj4+ICsgICAgICAgICAgICAgICAg
+ICAgICBiYXNlWzNdID0gMHg3MDAwMDAwMDBVTEw7Cj4+Pj4gKyAgICAgICAgICAgICAgICAgICAg
+IHNpemVbM10gPSAweDA0MDAwMDAwMFVMTDsKPj4+PiArICAgICAgICAgICAgICAgICAgICAgZmR0
+X2ZpeHVwX21lbW9yeV9iYW5rcyhibG9iLCBiYXNlLCBzaXplLCA0KTsKPj4+PiArICAgICAgICAg
+ICAgICAgICAgICAgYnJlYWs7Cj4+Pj4gKyAgICAgICAgICAgICBjYXNlIDI6Cj4+Pj4gKyAgICAg
+ICAgICAgICAgICAgICAgIGJhc2VbMF0gPSAweDA0ODAwMDAwMFVMTDsKPj4+PiArICAgICAgICAg
+ICAgICAgICAgICAgc2l6ZVswXSA9IDB4MDc4MDAwMDAwVUxMOwo+Pj4+ICsgICAgICAgICAgICAg
+ICAgICAgICBiYXNlWzFdID0gMHg1MDAwMDAwMDBVTEw7Cj4+Pj4gKyAgICAgICAgICAgICAgICAg
+ICAgIHNpemVbMV0gPSAweDA4MDAwMDAwMFVMTDsKPj4+PiArICAgICAgICAgICAgICAgICAgICAg
+ZmR0X2ZpeHVwX21lbW9yeV9iYW5rcyhibG9iLCBiYXNlLCBzaXplLCAyKTsKPj4+PiArICAgICAg
+ICAgICAgICAgICAgICAgYnJlYWs7Cj4+Pj4gKyAgICAgICAgICAgICBjYXNlIDM6Cj4+Pj4gKyAg
+ICAgICAgICAgICAgICAgICAgIGJhc2VbMF0gPSAweDA0ODAwMDAwMFVMTDsKPj4+PiArICAgICAg
+ICAgICAgICAgICAgICAgc2l6ZVswXSA9IDB4MDc4MDAwMDAwVUxMOwo+Pj4+ICsgICAgICAgICAg
+ICAgICAgICAgICBiYXNlWzFdID0gMHg1MDAwMDAwMDBVTEw7Cj4+Pj4gKyAgICAgICAgICAgICAg
+ICAgICAgIHNpemVbMV0gPSAweDA4MDAwMDAwMFVMTDsKPj4+PiArICAgICAgICAgICAgICAgICAg
+ICAgYmFzZVsyXSA9IDB4NjAwMDAwMDAwVUxMOwo+Pj4+ICsgICAgICAgICAgICAgICAgICAgICBz
+aXplWzJdID0gMHgwODAwMDAwMDBVTEw7Cj4+Pj4gKyAgICAgICAgICAgICAgICAgICAgIGJhc2Vb
+M10gPSAweDcwMDAwMDAwMFVMTDsKPj4+PiArICAgICAgICAgICAgICAgICAgICAgc2l6ZVszXSA9
+IDB4MDgwMDAwMDAwVUxMOwo+Pj4+ICsgICAgICAgICAgICAgICAgICAgICBmZHRfZml4dXBfbWVt
+b3J5X2JhbmtzKGJsb2IsIGJhc2UsIHNpemUsIDQpOwo+Pj4+ICsgICAgICAgICAgICAgICAgICAg
+ICBicmVhazsKPj4+Cj4+PiBPYnZpb3VzIGRlc2lnbiBxdWVzdGlvbiBpcyAtLSBzaW5jZSB5b3Un
+cmUgYWRkaW5nIG5ldyBTTUMgY2FsbCBhbnl3YXksCj4+PiBjYW4ndCB0aGUgY2FsbCBqdXN0IHJl
+dHVybiB0aGUgbWVtb3J5IGxheW91dCB0YWJsZSBpdHNlbGYsIHNvIHRoYXQgaXQKPj4+IHdvbid0
+IGJlIGR1cGxpY2F0ZWQgYm90aCBpbiBVLUJvb3QgYW5kIEFURiA/Cj4+Cj4+IE15IGd1dCBmZWVs
+aW5nIHdhcyB0byBnbyB3aXRoIHRoZSBzbWFsbGVzdCBpbnRlcmZhY2UgcG9zc2libGUuCj4gCj4g
+QnV0IHRoaXMgZG9lc24ndCBzY2FsZS4gVGhlIEFQSSBoZXJlIHVzZXMgc29tZSBhZC1ob2MgY29u
+c3RhbnRzIHRvCj4gaWRlbnRpZnkgbWVtb3J5IGxheW91dCB0YWJsZXMgd2hpY2ggaGF2ZSB0byBi
+ZSBlbmNvZGVkIGJvdGggaW4gQVRGIGFuZAo+IFUtQm9vdCwgYm90aCBvZiB3aGljaCBtdXN0IGJl
+IGtlcHQgaW4gc3luYy4KPiAKPiBUaGUgQVRGIGFscmVhZHkgaGFzIHRob3NlIG1lbW9yeSBsYXlv
+dXQgdGFibGVzLCBpdCdzIG9ubHkgYSBtYXR0ZXIgb2YKPiBwYXNzaW5nIHRoZW0gdG8gVS1Cb290
+LiBJZiB5b3UgZG8ganVzdCB0aGF0LCB0aGUgYWQtaG9jIGNvbnN0YW50cyBhbmQKPiBlbmNvZGlu
+ZyBvZiB0YWJsZXMgaW50byBVLUJvb3QgZ29lcyBhd2F5IGFuZCBpbiBmYWN0IHNpbXBsaWZpZXMg
+dGhlIGRlc2lnbi4KPiAKPiBZZXQsIEkgaGF2ZSB0byB3b25kZXIgaWYgQVRGIGRvZXNuJ3QgYWxy
+ZWFkeSBjb250YWluIHNvbWUgc29ydCBvZgo+IHN0YW5kYXJkIFNNQyBjYWxsIHRvIGdldCBtZW1v
+cnkgdG9wb2xvZ3kuIEl0IHN1cnByaXNlcyBtZSB0aGF0IGl0IHdvdWxkbid0LgoKSW4gZmFjdCwg
+TGF1cmVudCAoQ0NlZCkgd2FzIHNvbHZpbmcgc29tZSBzaW1pbGFyIGlzc3VlIHdpdGggbG9zc3kg
+ZGVjb21wCmFuZCBJIHRoaW5rIHRoaXMgaW52b2x2ZWQgc29tZSBwYXNzaW5nIG9mIG1lbW9yeSBs
+YXlvdXQgaW5mb3JtYXRpb24gZnJvbQpBVEYgdG8gVS1Cb290IHRvbywgb3IgYW0gSSBtaXN0YWtl
+biA/CgotLSAKQmVzdCByZWdhcmRzLApNYXJlayBWYXN1dApfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpVLUJvb3QgbWFpbGluZyBsaXN0ClUtQm9vdEBsaXN0
+cy5kZW54LmRlCmh0dHBzOi8vbGlzdHMuZGVueC5kZS9saXN0aW5mby91LWJvb3QK
