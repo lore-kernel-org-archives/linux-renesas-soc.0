@@ -1,76 +1,95 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:37982 "EHLO
-        mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965590AbeFOKhc (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Jun 2018 06:37:32 -0400
-Received: by mail-oi0-f42.google.com with SMTP id d5-v6so8392103oib.5
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Jun 2018 03:37:31 -0700 (PDT)
+Return-Path: <u-boot-bounces@lists.denx.de>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+ linux-renesas-soc@vger.kernel.org, u-boot@lists.denx.de
+References: <1529055605-29942-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <fc5a0c4f-8e2a-19bf-2d46-6ade92920b5c@gmail.com>
+Date: Fri, 15 Jun 2018 12:09:38 +0200
 MIME-Version: 1.0
-In-Reply-To: <fc5a0c4f-8e2a-19bf-2d46-6ade92920b5c@gmail.com>
-References: <1529055605-29942-1-git-send-email-ulrich.hecht+renesas@gmail.com> <fc5a0c4f-8e2a-19bf-2d46-6ade92920b5c@gmail.com>
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Date: Fri, 15 Jun 2018 12:37:30 +0200
-Message-ID: <CAO3366yB85UTK+T1Wq8_tV_J4AS0zwAWkKSDAfqUJWcLsDj=7g@mail.gmail.com>
-Subject: Re: [RFC] ARM: rmobile: create DT memory nodes for R8A7795 3.0 and newer
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        u-boot@lists.denx.de, Geert Uytterhoeven <geert@linux-m68k.org>,
-        shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        takuya.sakata.wz@bp.renesas.com
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <1529055605-29942-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+Content-Language: en-US
+Cc: takuya.sakata.wz@bp.renesas.com, magnus.damm@gmail.com,
+ geert@linux-m68k.org
+Subject: Re: [U-Boot] [RFC] ARM: rmobile: create DT memory nodes for R8A7795
+ 3.0 and newer
+List-Unsubscribe: <https://lists.denx.de/options/u-boot>,
+ <mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
+List-Archive: <http://lists.denx.de/pipermail/u-boot/>
+List-Post: <mailto:u-boot@lists.denx.de>
+List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
+List-Subscribe: <https://lists.denx.de/listinfo/u-boot>,
+ <mailto:u-boot-request@lists.denx.de?subject=subscribe>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Errors-To: u-boot-bounces@lists.denx.de
+Sender: "U-Boot" <u-boot-bounces@lists.denx.de>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jun 15, 2018 at 12:09 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
->> +             arm_smccc_smc(ARM_SMCCC_RENESAS_MEMCONF,
->> +                           0, 0, 0, 0, 0, 0, 0, &res);
->
-> Will this call work on platforms without patched ATF ?
-> (I think not, don't you need to handle return value?)
-
-I have not actually tested that, but if I understand the ATF code
-correctly, unimplemented calls return
-SMC_UNK (0xffffffff), which should be handled by the default case (NOP) below.
-
->
->> +             switch (res.a0) {
->> +             case 1:
->> +                     base[0] = 0x048000000ULL;
->> +                     size[0] = 0x038000000ULL;
->> +                     base[1] = 0x500000000ULL;
->> +                     size[1] = 0x040000000ULL;
->> +                     base[2] = 0x600000000ULL;
->> +                     size[2] = 0x040000000ULL;
->> +                     base[3] = 0x700000000ULL;
->> +                     size[3] = 0x040000000ULL;
->> +                     fdt_fixup_memory_banks(blob, base, size, 4);
->> +                     break;
->> +             case 2:
->> +                     base[0] = 0x048000000ULL;
->> +                     size[0] = 0x078000000ULL;
->> +                     base[1] = 0x500000000ULL;
->> +                     size[1] = 0x080000000ULL;
->> +                     fdt_fixup_memory_banks(blob, base, size, 2);
->> +                     break;
->> +             case 3:
->> +                     base[0] = 0x048000000ULL;
->> +                     size[0] = 0x078000000ULL;
->> +                     base[1] = 0x500000000ULL;
->> +                     size[1] = 0x080000000ULL;
->> +                     base[2] = 0x600000000ULL;
->> +                     size[2] = 0x080000000ULL;
->> +                     base[3] = 0x700000000ULL;
->> +                     size[3] = 0x080000000ULL;
->> +                     fdt_fixup_memory_banks(blob, base, size, 4);
->> +                     break;
->
-> Obvious design question is -- since you're adding new SMC call anyway,
-> can't the call just return the memory layout table itself, so that it
-> won't be duplicated both in U-Boot and ATF ?
-
-My gut feeling was to go with the smallest interface possible.
-
-CU
-Uli
+T24gMDYvMTUvMjAxOCAxMTo0MCBBTSwgVWxyaWNoIEhlY2h0IHdyb3RlOgo+IFVzZXMgYW4gU01D
+IGNhbGwgdG8gdGhlIEFURiB0byBkZXRlcm1pbmUgdGhlIG1lbW9yeSBjb25maWd1cmF0aW9uLCB0
+aGVuCj4gY3JlYXRlcyBhcHByb3ByaWF0ZSBEVCBtZW1vcnkgbm9kZXMuCj4gCj4gU2lnbmVkLW9m
+Zi1ieTogVWxyaWNoIEhlY2h0IDx1bHJpY2guaGVjaHQrcmVuZXNhc0BnbWFpbC5jb20+Cj4gLS0t
+Cj4gVGhpcyBpcyBhbiBhdHRlbXB0IHRvIGF2b2lkIGhhdmluZyB0byBoYXZlIGEgdG9uIG9mIGRp
+ZmZlcmVudCBkZXZpY2UgdHJlZXMKPiBmb3IgUmVuZXNhcyBSOEE3Nzk1IEgzIFNvQ3MgZnJvbSBy
+ZXZpc2lvbiAzLjAsIHdoaWNoIGNvbWUgaW4gYSBudW1iZXIgb2YKPiBkaWZmZXJlbnQgbWVtb3J5
+IGNvbmZpZ3VyYXRpb25zLgo+IAo+IFRoZSBzcGVjaWZpYyBjb25maWd1cmF0aW9uIGlzIHN0YXRp
+Y2FsbHkgYmFrZWQgaW50byB0aGUgQVJNIFRydXN0ZWQgRmlybXdhcmUKPiBiaW5hcnksIHNvIHRo
+aXMgc29sdXRpb24gYWRkcyBhbiBTTUMgIlNpUCBTZXJ2aWNlIENhbGwiIHRvIHRoZSBBVEYgcmV0
+dXJuaW5nCj4gdGhlIG1lbW9yeSBjb25maWd1cmF0aW9uLCBhbmQgdGhlbiBoYXMgdS1ib290IGJ1
+aWxkIGFwcHJvcHJpYXRlIG1lbW9yeSBub2Rlcy4KPiAKPiBUaGlzIGhhcyBub3QgYmVlbiB0ZXN0
+ZWQgaW4gdGhlIGZsZXNoIHN1Y2Nlc3NmdWxseSwgYXMgSSBvbmx5IGhhdmUgYSByZXZpc2lvbgo+
+IDEuMCBib2FyZC4gSSdkIGxpa2UgdG8gZ2V0IHNvbWUgZmVlZGJhY2sgb24gd2hldGhlciB0aGlz
+IGFwcHJvYWNoIGlzIHNvdW5kLAo+IHRob3VnaC4gVGhhbmtzLgo+IAo+IERlcGVuZHMgb24gIltS
+RkMgQVRGXSBBZGQgU01DQ0NfUkVORVNBU19NRU1DT05GIFNNQyBjYWxsIi4KPiAKPiBDVQo+IFVs
+aQo+IAo+IAo+IAo+ICBib2FyZC9yZW5lc2FzL3NhbHZhdG9yLXgvc2FsdmF0b3IteC5jIHwgNTEg
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKPiAgY29uZmlncy9yOGE3Nzk1X3Nh
+bHZhdG9yLXhfZGVmY29uZmlnICB8ICAyICsrCj4gIDIgZmlsZXMgY2hhbmdlZCwgNTMgaW5zZXJ0
+aW9ucygrKQo+IAo+IGRpZmYgLS1naXQgYS9ib2FyZC9yZW5lc2FzL3NhbHZhdG9yLXgvc2FsdmF0
+b3IteC5jIGIvYm9hcmQvcmVuZXNhcy9zYWx2YXRvci14L3NhbHZhdG9yLXguYwo+IGluZGV4IDY1
+MTg3N2MuLjMwN2NiNjQgMTAwNjQ0Cj4gLS0tIGEvYm9hcmQvcmVuZXNhcy9zYWx2YXRvci14L3Nh
+bHZhdG9yLXguYwo+ICsrKyBiL2JvYXJkL3JlbmVzYXMvc2FsdmF0b3IteC9zYWx2YXRvci14LmMK
+PiBAQCAtMjQsNiArMjQsNyBAQAo+ICAjaW5jbHVkZSA8YXNtL2FyY2gvc2hfc2RoaS5oPgo+ICAj
+aW5jbHVkZSA8aTJjLmg+Cj4gICNpbmNsdWRlIDxtbWMuaD4KPiArI2luY2x1ZGUgPGxpbnV4L2Fy
+bS1zbWNjYy5oPgo+ICAKPiAgREVDTEFSRV9HTE9CQUxfREFUQV9QVFI7Cj4gIAo+IEBAIC0xMzYs
+MyArMTM3LDUzIEBAIHZvaWQgcmVzZXRfY3B1KHVsb25nIGFkZHIpCj4gIAl3cml0ZWwoUlNUX0NP
+REUsIFJTVF9DQTU3UkVTQ05UKTsKPiAgI2VuZGlmCj4gIH0KPiArCj4gKyNkZWZpbmUgQVJNX1NN
+Q0NDX1JFTkVTQVNfTUVNQ09ORgkweDgyMDAwMDAwVUwKPiAraW50IGZ0X2JvYXJkX3NldHVwKHZv
+aWQgKmJsb2IsIGJkX3QgKmJkKQo+ICt7Cj4gKwlpZiAocm1vYmlsZV9nZXRfY3B1X3R5cGUoKSA9
+PSBSTU9CSUxFX0NQVV9UWVBFX1I4QTc3OTUgJiYKPiArCSAgICBybW9iaWxlX2dldF9jcHVfcmV2
+X2ludGVnZXIoKSA+PSAzKSB7Cj4gKwkJdTY0IGJhc2VbQ09ORklHX05SX0RSQU1fQkFOS1NdOwo+
+ICsJCXU2NCBzaXplW0NPTkZJR19OUl9EUkFNX0JBTktTXTsKPiArCQlzdHJ1Y3QgYXJtX3NtY2Nj
+X3JlcyByZXM7Cj4gKwo+ICsJCWFybV9zbWNjY19zbWMoQVJNX1NNQ0NDX1JFTkVTQVNfTUVNQ09O
+RiwKPiArCQkJICAgICAgMCwgMCwgMCwgMCwgMCwgMCwgMCwgJnJlcyk7CgpXaWxsIHRoaXMgY2Fs
+bCB3b3JrIG9uIHBsYXRmb3JtcyB3aXRob3V0IHBhdGNoZWQgQVRGID8KKEkgdGhpbmsgbm90LCBk
+b24ndCB5b3UgbmVlZCB0byBoYW5kbGUgcmV0dXJuIHZhbHVlPykKCj4gKwkJc3dpdGNoIChyZXMu
+YTApIHsKPiArCQljYXNlIDE6Cj4gKwkJCWJhc2VbMF0gPSAweDA0ODAwMDAwMFVMTDsKPiArCQkJ
+c2l6ZVswXSA9IDB4MDM4MDAwMDAwVUxMOwo+ICsJCQliYXNlWzFdID0gMHg1MDAwMDAwMDBVTEw7
+Cj4gKwkJCXNpemVbMV0gPSAweDA0MDAwMDAwMFVMTDsKPiArCQkJYmFzZVsyXSA9IDB4NjAwMDAw
+MDAwVUxMOwo+ICsJCQlzaXplWzJdID0gMHgwNDAwMDAwMDBVTEw7Cj4gKwkJCWJhc2VbM10gPSAw
+eDcwMDAwMDAwMFVMTDsKPiArCQkJc2l6ZVszXSA9IDB4MDQwMDAwMDAwVUxMOwo+ICsJCQlmZHRf
+Zml4dXBfbWVtb3J5X2JhbmtzKGJsb2IsIGJhc2UsIHNpemUsIDQpOwo+ICsJCQlicmVhazsKPiAr
+CQljYXNlIDI6Cj4gKwkJCWJhc2VbMF0gPSAweDA0ODAwMDAwMFVMTDsKPiArCQkJc2l6ZVswXSA9
+IDB4MDc4MDAwMDAwVUxMOwo+ICsJCQliYXNlWzFdID0gMHg1MDAwMDAwMDBVTEw7Cj4gKwkJCXNp
+emVbMV0gPSAweDA4MDAwMDAwMFVMTDsKPiArCQkJZmR0X2ZpeHVwX21lbW9yeV9iYW5rcyhibG9i
+LCBiYXNlLCBzaXplLCAyKTsKPiArCQkJYnJlYWs7Cj4gKwkJY2FzZSAzOgo+ICsJCQliYXNlWzBd
+ID0gMHgwNDgwMDAwMDBVTEw7Cj4gKwkJCXNpemVbMF0gPSAweDA3ODAwMDAwMFVMTDsKPiArCQkJ
+YmFzZVsxXSA9IDB4NTAwMDAwMDAwVUxMOwo+ICsJCQlzaXplWzFdID0gMHgwODAwMDAwMDBVTEw7
+Cj4gKwkJCWJhc2VbMl0gPSAweDYwMDAwMDAwMFVMTDsKPiArCQkJc2l6ZVsyXSA9IDB4MDgwMDAw
+MDAwVUxMOwo+ICsJCQliYXNlWzNdID0gMHg3MDAwMDAwMDBVTEw7Cj4gKwkJCXNpemVbM10gPSAw
+eDA4MDAwMDAwMFVMTDsKPiArCQkJZmR0X2ZpeHVwX21lbW9yeV9iYW5rcyhibG9iLCBiYXNlLCBz
+aXplLCA0KTsKPiArCQkJYnJlYWs7CgpPYnZpb3VzIGRlc2lnbiBxdWVzdGlvbiBpcyAtLSBzaW5j
+ZSB5b3UncmUgYWRkaW5nIG5ldyBTTUMgY2FsbCBhbnl3YXksCmNhbid0IHRoZSBjYWxsIGp1c3Qg
+cmV0dXJuIHRoZSBtZW1vcnkgbGF5b3V0IHRhYmxlIGl0c2VsZiwgc28gdGhhdCBpdAp3b24ndCBi
+ZSBkdXBsaWNhdGVkIGJvdGggaW4gVS1Cb290IGFuZCBBVEYgPwoKPiArCQlkZWZhdWx0Ogo+ICsJ
+CQlicmVhazsKPiArCQl9Cj4gKwl9Cj4gKwo+ICsJcmV0dXJuIDA7Cj4gK30KPiBkaWZmIC0tZ2l0
+IGEvY29uZmlncy9yOGE3Nzk1X3NhbHZhdG9yLXhfZGVmY29uZmlnIGIvY29uZmlncy9yOGE3Nzk1
+X3NhbHZhdG9yLXhfZGVmY29uZmlnCj4gaW5kZXggZmRmYTQxYy4uY2QyYmI1OSAxMDA2NDQKPiAt
+LS0gYS9jb25maWdzL3I4YTc3OTVfc2FsdmF0b3IteF9kZWZjb25maWcKPiArKysgYi9jb25maWdz
+L3I4YTc3OTVfc2FsdmF0b3IteF9kZWZjb25maWcKPiBAQCAtNjEsMyArNjEsNSBAQCBDT05GSUdf
+VVNCX0VIQ0lfR0VORVJJQz15Cj4gIENPTkZJR19VU0JfU1RPUkFHRT15Cj4gIENPTkZJR19PRl9M
+SUJGRFRfT1ZFUkxBWT15Cj4gIENPTkZJR19TTUJJT1NfTUFOVUZBQ1RVUkVSPSIiCj4gK0NPTkZJ
+R19PRl9CT0FSRF9TRVRVUD15Cj4gK0NPTkZJR19BUk1fU01DQ0M9eQoKVXBkYXRlIHRoZSBkZWZj
+b25maWcgd2l0aCBtYWtlIHNhdmVkZWZjb25maWcgLgoKLS0gCkJlc3QgcmVnYXJkcywKTWFyZWsg
+VmFzdXQKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KVS1C
+b290IG1haWxpbmcgbGlzdApVLUJvb3RAbGlzdHMuZGVueC5kZQpodHRwczovL2xpc3RzLmRlbngu
+ZGUvbGlzdGluZm8vdS1ib290Cg==
