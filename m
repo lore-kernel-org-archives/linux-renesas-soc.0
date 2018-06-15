@@ -1,60 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:52183 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932496AbeFFKA1 (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:46112 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964778AbeFOO4R (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 06:00:27 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 05/14] mfd: da9063: Use PLATFORM_DEVID_NONE
-Date: Wed,  6 Jun 2018 11:59:54 +0200
-Message-Id: <20180606100003.17067-5-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
-References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+        Fri, 15 Jun 2018 10:56:17 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH] [HACK] serial: sh-sci: Hard code SCIF clocks
+Date: Fri, 15 Jun 2018 15:56:09 +0100
+Message-Id: <20180615145609.22617-1-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use PLATFORM_DEVID_NONE instead of -1 in mfd_add_devices.
+Hard code the clock rates for the SCI_FCK clock to allow
+development of serial passthrough within virtualisation environments
+without clock support.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
-V4: New patch
-V5: Rebase on top of new 01 and 02 patches
----
- drivers/mfd/da9063-core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/tty/serial/sh-sci.c | 21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
-index 76258e5709f8..f57558590283 100644
---- a/drivers/mfd/da9063-core.c
-+++ b/drivers/mfd/da9063-core.c
-@@ -226,9 +226,9 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index b46b146524ce..729326d25056 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -510,8 +510,27 @@ static void sci_port_enable(struct sci_port *sci_port)
+ 	for (i = 0; i < SCI_NUM_CLKS; i++) {
+ 		clk_prepare_enable(sci_port->clks[i]);
+ 		sci_port->clk_rates[i] = clk_get_rate(sci_port->clks[i]);
++
++		pr_err("sci_port->clk_rates[%u] = %lu\n", i , sci_port->clk_rates[i]);
+ 	}
+-	sci_port->port.uartclk = sci_port->clk_rates[SCI_FCK];
++
++	/*
++[   62.482432] sh-sci e6e68000.serial: BRG: 9600+0 bps using DL 96 SR 32
++[   62.491553] sh-sci e6e68000.serial: Using clk scif for 9600+0 bps
++[   62.500304] sci_port->clk_rates[0] = 66560000
++[   62.507276] sci_port->clk_rates[1] = 0
++[   62.513596] sci_port->clk_rates[2] = 266240000
++[   62.520570] sci_port->clk_rates[3] = 14745600
++[   62.527720] sh-sci e6e68000.serial: BRG: 115200+0 bps using DL 8 SR 32
++[   62.536802] sh-sci e6e68000.serial: Using clk scif for 115200+0 bps
++[   62.545613] sci_port->clk_rates[0] = 66560000
++[   62.552463] sci_port->clk_rates[1] = 0
++[   62.558689] sci_port->clk_rates[2] = 266240000
++[   62.565594] sci_port->clk_rates[3] = 14745600
++	 */
++
++	// Temporary Hardcode
++	sci_port->port.uartclk = sci_port->clk_rates[SCI_FCK] = 66560000;
+ }
  
- 	da9063->irq_base = regmap_irq_chip_get_base(da9063->regmap_irq);
- 
--	ret = devm_mfd_add_devices(da9063->dev, -1, da9063_devs,
--				   ARRAY_SIZE(da9063_devs), NULL,
--				   da9063->irq_base, NULL);
-+	ret = devm_mfd_add_devices(da9063->dev, PLATFORM_DEVID_NONE,
-+				   da9063_devs, ARRAY_SIZE(da9063_devs),
-+				   NULL, da9063->irq_base, NULL);
- 	if (ret)
- 		dev_err(da9063->dev, "Cannot add MFD cells\n");
- 
+ static void sci_port_disable(struct sci_port *sci_port)
 -- 
-2.16.2
+2.17.1
