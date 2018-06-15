@@ -1,83 +1,76 @@
-Return-Path: <u-boot-bounces@lists.denx.de>
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-References: <1529055605-29942-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <fc5a0c4f-8e2a-19bf-2d46-6ade92920b5c@gmail.com>
- <CAO3366yB85UTK+T1Wq8_tV_J4AS0zwAWkKSDAfqUJWcLsDj=7g@mail.gmail.com>
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <3a3b322d-c04d-063e-392b-7967a9b8959c@gmail.com>
-Date: Fri, 15 Jun 2018 13:43:11 +0200
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:37982 "EHLO
+        mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965590AbeFOKhc (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 15 Jun 2018 06:37:32 -0400
+Received: by mail-oi0-f42.google.com with SMTP id d5-v6so8392103oib.5
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Jun 2018 03:37:31 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAO3366yB85UTK+T1Wq8_tV_J4AS0zwAWkKSDAfqUJWcLsDj=7g@mail.gmail.com>
-Content-Language: en-US
-Cc: takuya.sakata.wz@bp.renesas.com, Magnus Damm <magnus.damm@gmail.com>,
- Linux-Renesas <linux-renesas-soc@vger.kernel.org>, u-boot@lists.denx.de,
- Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [U-Boot] [RFC] ARM: rmobile: create DT memory nodes for R8A7795
- 3.0 and newer
-List-Unsubscribe: <https://lists.denx.de/options/u-boot>,
- <mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
-List-Archive: <http://lists.denx.de/pipermail/u-boot/>
-List-Post: <mailto:u-boot@lists.denx.de>
-List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
-List-Subscribe: <https://lists.denx.de/listinfo/u-boot>,
- <mailto:u-boot-request@lists.denx.de?subject=subscribe>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Errors-To: u-boot-bounces@lists.denx.de
-Sender: "U-Boot" <u-boot-bounces@lists.denx.de>
+In-Reply-To: <fc5a0c4f-8e2a-19bf-2d46-6ade92920b5c@gmail.com>
+References: <1529055605-29942-1-git-send-email-ulrich.hecht+renesas@gmail.com> <fc5a0c4f-8e2a-19bf-2d46-6ade92920b5c@gmail.com>
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Date: Fri, 15 Jun 2018 12:37:30 +0200
+Message-ID: <CAO3366yB85UTK+T1Wq8_tV_J4AS0zwAWkKSDAfqUJWcLsDj=7g@mail.gmail.com>
+Subject: Re: [RFC] ARM: rmobile: create DT memory nodes for R8A7795 3.0 and newer
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        u-boot@lists.denx.de, Geert Uytterhoeven <geert@linux-m68k.org>,
+        shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        takuya.sakata.wz@bp.renesas.com
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-T24gMDYvMTUvMjAxOCAxMjozNyBQTSwgVWxyaWNoIEhlY2h0IHdyb3RlOgo+IE9uIEZyaSwgSnVu
-IDE1LCAyMDE4IGF0IDEyOjA5IFBNLCBNYXJlayBWYXN1dCA8bWFyZWsudmFzdXRAZ21haWwuY29t
-PiB3cm90ZToKPj4+ICsgICAgICAgICAgICAgYXJtX3NtY2NjX3NtYyhBUk1fU01DQ0NfUkVORVNB
-U19NRU1DT05GLAo+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgIDAsIDAsIDAsIDAsIDAs
-IDAsIDAsICZyZXMpOwo+Pgo+PiBXaWxsIHRoaXMgY2FsbCB3b3JrIG9uIHBsYXRmb3JtcyB3aXRo
-b3V0IHBhdGNoZWQgQVRGID8KPj4gKEkgdGhpbmsgbm90LCBkb24ndCB5b3UgbmVlZCB0byBoYW5k
-bGUgcmV0dXJuIHZhbHVlPykKPiAKPiBJIGhhdmUgbm90IGFjdHVhbGx5IHRlc3RlZCB0aGF0LCBi
-dXQgaWYgSSB1bmRlcnN0YW5kIHRoZSBBVEYgY29kZQo+IGNvcnJlY3RseSwgdW5pbXBsZW1lbnRl
-ZCBjYWxscyByZXR1cm4KPiBTTUNfVU5LICgweGZmZmZmZmZmKSwgd2hpY2ggc2hvdWxkIGJlIGhh
-bmRsZWQgYnkgdGhlIGRlZmF1bHQgY2FzZSAoTk9QKSBiZWxvdy4KCldoaWNoIG1lYW5zIHRoZSBi
-b2FyZCBoYXMgYSBtZW1vcnkgc2l6ZSBvZiAwIGFuZCBmYWlscyB0byBib290ID8KCj4+PiArICAg
-ICAgICAgICAgIHN3aXRjaCAocmVzLmEwKSB7Cj4+PiArICAgICAgICAgICAgIGNhc2UgMToKPj4+
-ICsgICAgICAgICAgICAgICAgICAgICBiYXNlWzBdID0gMHgwNDgwMDAwMDBVTEw7Cj4+PiArICAg
-ICAgICAgICAgICAgICAgICAgc2l6ZVswXSA9IDB4MDM4MDAwMDAwVUxMOwo+Pj4gKyAgICAgICAg
-ICAgICAgICAgICAgIGJhc2VbMV0gPSAweDUwMDAwMDAwMFVMTDsKPj4+ICsgICAgICAgICAgICAg
-ICAgICAgICBzaXplWzFdID0gMHgwNDAwMDAwMDBVTEw7Cj4+PiArICAgICAgICAgICAgICAgICAg
-ICAgYmFzZVsyXSA9IDB4NjAwMDAwMDAwVUxMOwo+Pj4gKyAgICAgICAgICAgICAgICAgICAgIHNp
-emVbMl0gPSAweDA0MDAwMDAwMFVMTDsKPj4+ICsgICAgICAgICAgICAgICAgICAgICBiYXNlWzNd
-ID0gMHg3MDAwMDAwMDBVTEw7Cj4+PiArICAgICAgICAgICAgICAgICAgICAgc2l6ZVszXSA9IDB4
-MDQwMDAwMDAwVUxMOwo+Pj4gKyAgICAgICAgICAgICAgICAgICAgIGZkdF9maXh1cF9tZW1vcnlf
-YmFua3MoYmxvYiwgYmFzZSwgc2l6ZSwgNCk7Cj4+PiArICAgICAgICAgICAgICAgICAgICAgYnJl
-YWs7Cj4+PiArICAgICAgICAgICAgIGNhc2UgMjoKPj4+ICsgICAgICAgICAgICAgICAgICAgICBi
-YXNlWzBdID0gMHgwNDgwMDAwMDBVTEw7Cj4+PiArICAgICAgICAgICAgICAgICAgICAgc2l6ZVsw
-XSA9IDB4MDc4MDAwMDAwVUxMOwo+Pj4gKyAgICAgICAgICAgICAgICAgICAgIGJhc2VbMV0gPSAw
-eDUwMDAwMDAwMFVMTDsKPj4+ICsgICAgICAgICAgICAgICAgICAgICBzaXplWzFdID0gMHgwODAw
-MDAwMDBVTEw7Cj4+PiArICAgICAgICAgICAgICAgICAgICAgZmR0X2ZpeHVwX21lbW9yeV9iYW5r
-cyhibG9iLCBiYXNlLCBzaXplLCAyKTsKPj4+ICsgICAgICAgICAgICAgICAgICAgICBicmVhazsK
-Pj4+ICsgICAgICAgICAgICAgY2FzZSAzOgo+Pj4gKyAgICAgICAgICAgICAgICAgICAgIGJhc2Vb
-MF0gPSAweDA0ODAwMDAwMFVMTDsKPj4+ICsgICAgICAgICAgICAgICAgICAgICBzaXplWzBdID0g
-MHgwNzgwMDAwMDBVTEw7Cj4+PiArICAgICAgICAgICAgICAgICAgICAgYmFzZVsxXSA9IDB4NTAw
-MDAwMDAwVUxMOwo+Pj4gKyAgICAgICAgICAgICAgICAgICAgIHNpemVbMV0gPSAweDA4MDAwMDAw
-MFVMTDsKPj4+ICsgICAgICAgICAgICAgICAgICAgICBiYXNlWzJdID0gMHg2MDAwMDAwMDBVTEw7
-Cj4+PiArICAgICAgICAgICAgICAgICAgICAgc2l6ZVsyXSA9IDB4MDgwMDAwMDAwVUxMOwo+Pj4g
-KyAgICAgICAgICAgICAgICAgICAgIGJhc2VbM10gPSAweDcwMDAwMDAwMFVMTDsKPj4+ICsgICAg
-ICAgICAgICAgICAgICAgICBzaXplWzNdID0gMHgwODAwMDAwMDBVTEw7Cj4+PiArICAgICAgICAg
-ICAgICAgICAgICAgZmR0X2ZpeHVwX21lbW9yeV9iYW5rcyhibG9iLCBiYXNlLCBzaXplLCA0KTsK
-Pj4+ICsgICAgICAgICAgICAgICAgICAgICBicmVhazsKPj4KPj4gT2J2aW91cyBkZXNpZ24gcXVl
-c3Rpb24gaXMgLS0gc2luY2UgeW91J3JlIGFkZGluZyBuZXcgU01DIGNhbGwgYW55d2F5LAo+PiBj
-YW4ndCB0aGUgY2FsbCBqdXN0IHJldHVybiB0aGUgbWVtb3J5IGxheW91dCB0YWJsZSBpdHNlbGYs
-IHNvIHRoYXQgaXQKPj4gd29uJ3QgYmUgZHVwbGljYXRlZCBib3RoIGluIFUtQm9vdCBhbmQgQVRG
-ID8KPiAKPiBNeSBndXQgZmVlbGluZyB3YXMgdG8gZ28gd2l0aCB0aGUgc21hbGxlc3QgaW50ZXJm
-YWNlIHBvc3NpYmxlLgoKQnV0IHRoaXMgZG9lc24ndCBzY2FsZS4gVGhlIEFQSSBoZXJlIHVzZXMg
-c29tZSBhZC1ob2MgY29uc3RhbnRzIHRvCmlkZW50aWZ5IG1lbW9yeSBsYXlvdXQgdGFibGVzIHdo
-aWNoIGhhdmUgdG8gYmUgZW5jb2RlZCBib3RoIGluIEFURiBhbmQKVS1Cb290LCBib3RoIG9mIHdo
-aWNoIG11c3QgYmUga2VwdCBpbiBzeW5jLgoKVGhlIEFURiBhbHJlYWR5IGhhcyB0aG9zZSBtZW1v
-cnkgbGF5b3V0IHRhYmxlcywgaXQncyBvbmx5IGEgbWF0dGVyIG9mCnBhc3NpbmcgdGhlbSB0byBV
-LUJvb3QuIElmIHlvdSBkbyBqdXN0IHRoYXQsIHRoZSBhZC1ob2MgY29uc3RhbnRzIGFuZAplbmNv
-ZGluZyBvZiB0YWJsZXMgaW50byBVLUJvb3QgZ29lcyBhd2F5IGFuZCBpbiBmYWN0IHNpbXBsaWZp
-ZXMgdGhlIGRlc2lnbi4KCllldCwgSSBoYXZlIHRvIHdvbmRlciBpZiBBVEYgZG9lc24ndCBhbHJl
-YWR5IGNvbnRhaW4gc29tZSBzb3J0IG9mCnN0YW5kYXJkIFNNQyBjYWxsIHRvIGdldCBtZW1vcnkg
-dG9wb2xvZ3kuIEl0IHN1cnByaXNlcyBtZSB0aGF0IGl0IHdvdWxkbid0LgoKLS0gCkJlc3QgcmVn
-YXJkcywKTWFyZWsgVmFzdXQKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX18KVS1Cb290IG1haWxpbmcgbGlzdApVLUJvb3RAbGlzdHMuZGVueC5kZQpodHRwczov
-L2xpc3RzLmRlbnguZGUvbGlzdGluZm8vdS1ib290Cg==
+On Fri, Jun 15, 2018 at 12:09 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>> +             arm_smccc_smc(ARM_SMCCC_RENESAS_MEMCONF,
+>> +                           0, 0, 0, 0, 0, 0, 0, &res);
+>
+> Will this call work on platforms without patched ATF ?
+> (I think not, don't you need to handle return value?)
+
+I have not actually tested that, but if I understand the ATF code
+correctly, unimplemented calls return
+SMC_UNK (0xffffffff), which should be handled by the default case (NOP) below.
+
+>
+>> +             switch (res.a0) {
+>> +             case 1:
+>> +                     base[0] = 0x048000000ULL;
+>> +                     size[0] = 0x038000000ULL;
+>> +                     base[1] = 0x500000000ULL;
+>> +                     size[1] = 0x040000000ULL;
+>> +                     base[2] = 0x600000000ULL;
+>> +                     size[2] = 0x040000000ULL;
+>> +                     base[3] = 0x700000000ULL;
+>> +                     size[3] = 0x040000000ULL;
+>> +                     fdt_fixup_memory_banks(blob, base, size, 4);
+>> +                     break;
+>> +             case 2:
+>> +                     base[0] = 0x048000000ULL;
+>> +                     size[0] = 0x078000000ULL;
+>> +                     base[1] = 0x500000000ULL;
+>> +                     size[1] = 0x080000000ULL;
+>> +                     fdt_fixup_memory_banks(blob, base, size, 2);
+>> +                     break;
+>> +             case 3:
+>> +                     base[0] = 0x048000000ULL;
+>> +                     size[0] = 0x078000000ULL;
+>> +                     base[1] = 0x500000000ULL;
+>> +                     size[1] = 0x080000000ULL;
+>> +                     base[2] = 0x600000000ULL;
+>> +                     size[2] = 0x080000000ULL;
+>> +                     base[3] = 0x700000000ULL;
+>> +                     size[3] = 0x080000000ULL;
+>> +                     fdt_fixup_memory_banks(blob, base, size, 4);
+>> +                     break;
+>
+> Obvious design question is -- since you're adding new SMC call anyway,
+> can't the call just return the memory layout table itself, so that it
+> won't be duplicated both in U-Boot and ATF ?
+
+My gut feeling was to go with the smallest interface possible.
+
+CU
+Uli
