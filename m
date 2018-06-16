@@ -1,128 +1,31 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934258AbeFYOE1 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:35752 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932719AbeFPNiK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:04:27 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 21/29] arm64: dts: renesas: r8a77990: Enable USB2.0 Host for Ebisu board
-Date: Mon, 25 Jun 2018 16:03:16 +0200
-Message-Id: <6dd72b4d3da1f2be7fc57511677a0cb782d6acd9.1529933747.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
-References: <cover.1529933747.git.horms+renesas@verge.net.au>
+        Sat, 16 Jun 2018 09:38:10 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Sergey Larin <cerg2010cerg2010@mail.ru>,
+        dri-devel@lists.freedesktop.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 0/2] i2c: algos: bit: revert to fix regression (#200045)
+Date: Sat, 16 Jun 2018 22:37:55 +0900
+Message-Id: <20180616133757.5994-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+A regression was reported via Bugzilla and a revert seems to be the best choice
+for now. Check patch 1 for details. To not make the same mistake again, patch 2
+adds a comment sharing our experience.
 
-This patch adds USB2.0 PHY and Host(EHCI/OHCI) nodes and
-enables them for R-Car E3 Ebisu board.
+Wolfram Sang (2):
+  Revert "i2c: algo-bit: init the bus to a known state"
+  i2c: algos: bit: mention our experience about initial states
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 20 ++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77990.dtsi      | 37 ++++++++++++++++++++++++++
- 2 files changed, 57 insertions(+)
+ drivers/i2c/algos/i2c-algo-bit.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-index 28945a8b9800..5e28c1b94b77 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-@@ -47,10 +47,18 @@
- 	};
- };
- 
-+&ehci0 {
-+	status = "okay";
-+};
-+
- &extal_clk {
- 	clock-frequency = <48000000>;
- };
- 
-+&ohci0 {
-+	status = "okay";
-+};
-+
- &pfc {
- 	avb_pins: avb {
- 		mux {
-@@ -58,6 +66,11 @@
- 			function = "avb";
- 		};
- 	};
-+
-+	usb0_pins: usb {
-+		groups = "usb0_b";
-+		function = "usb0";
-+	};
- };
- 
- &rwdt {
-@@ -68,3 +81,10 @@
- &scif2 {
- 	status = "okay";
- };
-+
-+&usb2_phy0 {
-+	pinctrl-0 = <&usb0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index 735881d4e57a..f8004608c595 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -267,6 +267,43 @@
- 			status = "disabled";
- 		};
- 
-+		ohci0: usb@ee080000 {
-+			compatible = "generic-ohci";
-+			reg = <0 0xee080000 0 0x100>;
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 703>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 703>;
-+			status = "disabled";
-+		};
-+
-+		ehci0: usb@ee080100 {
-+			compatible = "generic-ehci";
-+			reg = <0 0xee080100 0 0x100>;
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 703>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			companion = <&ohci0>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 703>;
-+			status = "disabled";
-+		};
-+
-+		usb2_phy0: usb-phy@ee080200 {
-+			compatible = "renesas,usb2-phy-r8a77990",
-+				     "renesas,rcar-gen3-usb2-phy";
-+			reg = <0 0xee080200 0 0x700>;
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 703>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 703>;
-+			#phy-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		gic: interrupt-controller@f1010000 {
- 			compatible = "arm,gic-400";
- 			#interrupt-cells = <3>;
 -- 
 2.11.0
