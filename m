@@ -1,58 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:45544 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751727AbeFDFrD (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:49252 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932665AbeFRM6E (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Jun 2018 01:47:03 -0400
-Received: by mail-wr0-f195.google.com with SMTP id o12-v6so10729044wrm.12
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 03 Jun 2018 22:47:03 -0700 (PDT)
-Date: Mon, 4 Jun 2018 06:47:00 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: devicetree@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh+dt@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH V2] mfd: dt: Add bindings for DA9063L
-Message-ID: <20180604054700.GE17993@dell>
-References: <20180523122140.6275-1-marek.vasut+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180523122140.6275-1-marek.vasut+renesas@gmail.com>
+        Mon, 18 Jun 2018 08:58:04 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v5 1/3] mmc: core: more fine-grained hooks for HS400 tuning
+Date: Mon, 18 Jun 2018 14:57:49 +0200
+Message-Id: <20180618125751.27615-2-horms+renesas@verge.net.au>
+In-Reply-To: <20180618125751.27615-1-horms+renesas@verge.net.au>
+References: <20180618125751.27615-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, 23 May 2018, Marek Vasut wrote:
+This adds two new HS400 tuning operations:
+* hs400_downgrade
+* hs400_complete
 
-> Add device tree bindings for the Dialog DA9063L. This is a
-> variant of the DA9063 chip with smaller package, with less
-> LDO regulators and without RTC block. The other properties
-> of the chip are the same, including the content of the chip
-> ID register.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
-> V2: Merge the DA9063/DA9063L regulator lists and mark DA9063-only
->     regulators in that single list
-> ---
->  Documentation/devicetree/bindings/mfd/da9063.txt | 32 +++++++++++++-----------
->  1 file changed, 17 insertions(+), 15 deletions(-)
+These supplement the existing HS400 operation:
+* prepare_hs400_tuning
 
-Applied, thanks.
+This is motivated by a requirement of Renesas SDHI for the following:
+1. Disabling SCC before selecting to HS if selection of HS400 has occurred.
+   This can be done in an implementation of prepare_hs400_tuning_downgrade
+2. Updating registers after switching to HS400
+   This can be done in an implementation of complete_hs400_tuning
 
+If hs400_downgrade or hs400_complete are not implemented then they are not
+called. Thus means there should be no affect for existing drivers as none
+implemt these ops.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+v5
+* Reworked as per feedback from Ulf Hansson
+  - Call ops from mmc_hs400_to_hs200() and mmc_select_hs400()
+    rather than mmc_retune() and mmc_select_timing().
+    This moves card code further away from core code and
+    makes the patch somewhat tider.
+  - Use shorter names for new ops.
+
+v4
+* New patch
+---
+ drivers/mmc/core/mmc.c   | 10 ++++++++++
+ include/linux/mmc/host.h |  7 +++++++
+ 2 files changed, 17 insertions(+)
+
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index 4466f5de54d4..63a52379e8ab 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -1169,6 +1169,10 @@ static int mmc_select_hs400(struct mmc_card *card)
+ 	/* Set host controller to HS timing */
+ 	mmc_set_timing(card->host, MMC_TIMING_MMC_HS);
+ 
++	/* Prepare host to downgrade to HS timing */
++	if (host->ops->hs400_downgrade)
++		host->ops->hs400_downgrade(host);
++
+ 	/* Reduce frequency to HS frequency */
+ 	max_dtr = card->ext_csd.hs_max_dtr;
+ 	mmc_set_clock(host, max_dtr);
+@@ -1209,6 +1213,9 @@ static int mmc_select_hs400(struct mmc_card *card)
+ 	if (err)
+ 		goto out_err;
+ 
++	if (host->ops->hs400_complete)
++		host->ops->hs400_complete(host);
++
+ 	return 0;
+ 
+ out_err:
+@@ -1256,6 +1263,9 @@ int mmc_hs400_to_hs200(struct mmc_card *card)
+ 
+ 	mmc_set_timing(host, MMC_TIMING_MMC_HS);
+ 
++	if (host->ops->hs400_downgrade)
++		host->ops->hs400_downgrade(host);
++
+ 	err = mmc_switch_status(card);
+ 	if (err)
+ 		goto out_err;
+diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+index 64300a48dcce..a39e2925c84c 100644
+--- a/include/linux/mmc/host.h
++++ b/include/linux/mmc/host.h
+@@ -146,6 +146,13 @@ struct mmc_host_ops {
+ 
+ 	/* Prepare HS400 target operating frequency depending host driver */
+ 	int	(*prepare_hs400_tuning)(struct mmc_host *host, struct mmc_ios *ios);
++
++	/* Prepare for switching from HS400 to HS200 */
++	void	(*hs400_downgrade)(struct mmc_host *host);
++
++	/* Complete selection of HS400 */
++	void	(*hs400_complete)(struct mmc_host *host);
++
+ 	/* Prepare enhanced strobe depending host driver */
+ 	void	(*hs400_enhanced_strobe)(struct mmc_host *host,
+ 					 struct mmc_ios *ios);
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.11.0
