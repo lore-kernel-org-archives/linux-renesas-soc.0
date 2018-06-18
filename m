@@ -1,324 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:32964 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753169AbeFGUYN (ORCPT
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:41917 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754876AbeFRHNX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Jun 2018 16:24:13 -0400
-Received: by mail-lf0-f67.google.com with SMTP id y20-v6so16678219lfy.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 07 Jun 2018 13:24:12 -0700 (PDT)
-Subject: [PATCH v2 5/5] arm64: dts: renesas: condor/v3hsk: add DU/LVDS/HDMI
- support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <390fabf0-4caf-1600-3780-1893207d94f7@cogentembedded.com>
-Message-ID: <b72e7fde-0b04-b9dd-586d-cb1f8c5577a6@cogentembedded.com>
-Date: Thu, 7 Jun 2018 23:24:09 +0300
+        Mon, 18 Jun 2018 03:13:23 -0400
+Received: by mail-ua0-f196.google.com with SMTP id a5-v6so10018202uao.8
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 Jun 2018 00:13:23 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <390fabf0-4caf-1600-3780-1893207d94f7@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+References: <152923285268.19253.8187284565521042664.sendpatchset@little-apple>
+In-Reply-To: <152923285268.19253.8187284565521042664.sendpatchset@little-apple>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 18 Jun 2018 09:13:11 +0200
+Message-ID: <CAMuHMdWdUXcjKZeS65u1VAJ3jtkO4y7TRreZTdsvFjGsn29wug@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: IPMMU deferred probe test prototype
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the Condor/V3HSK board dependent parts of the DU and  LVDS device
-nodes. Also add the device nodes for Thine THC63LVD1024 LVDS decoder and
-Analog Devices ADV7511W HDMI transmitter...
+Hi Magnus,
 
-Based on the original (and large) patch by Vladimir Barinov.
+On Sun, Jun 17, 2018 at 12:52 PM Magnus Damm <magnus.damm@gmail.com> wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> Here's my local modification to test IPMMU with SYS-DMAC and the SCIF
+> console on r8a7795 H3ULCB. The dmac1 and dmac2 devices together with
+> audio dmacs are added to the IPMMU white list. The dmac0 device is
+> disabled in DT to easily be able to associate the /proc/interrupt
+> counters with the console activity.
+>
+> A quick test has been performed by checking the console boot log output
+> (no errors and DMACs are assigned to the IPMMU) and also validating that
+> SCIF console activity results in incrementing /proc/interrupts counters
+> associated with the DMAC channels. Audio has not been tested.
+>
+> Not-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Thanks for your patch!
 
----
-Changes in version 2:
-- added the V3HSK DT update, reworded the description, renamed the patch;
-- added a space between the HDMI node name and a brace.
+Just wondering from the oneline-summary: where is the deferred probe (not)
+supposed to happen?
 
- arch/arm64/boot/dts/renesas/r8a77980-condor.dts |  106 +++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts  |  120 ++++++++++++++++++++++++
- 2 files changed, 226 insertions(+)
+Gr{oetje,eeting}s,
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-@@ -45,6 +45,56 @@
- 		regulator-boot-on;
- 		regulator-always-on;
- 	};
-+
-+	d1_8v: regulator-2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "D1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con: endpoint {
-+				remote-endpoint = <&adv7511_out>;
-+			};
-+		};
-+	};
-+
-+	lvds-decoder {
-+		compatible = "thine,thc63lvd1024";
-+		vcc-supply = <&d3_3v>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				thc63lvd1024_in: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+				thc63lvd1024_out: endpoint {
-+					remote-endpoint = <&adv7511_in>;
-+				};
-+			};
-+		};
-+	};
-+
-+	x1_clk: x1-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <148500000>;
-+	};
- };
- 
- &avb {
-@@ -74,6 +124,13 @@
- 	};
- };
- 
-+&du {
-+	clocks = <&cpg CPG_MOD 724>,
-+		 <&x1_clk>;
-+	clock-names = "du.0", "dclkin.0";
-+	status = "okay";
-+};
-+
- &extal_clk {
- 	clock-frequency = <16666666>;
- };
-@@ -102,6 +159,55 @@
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 	};
-+
-+	hdmi@39 {
-+		compatible = "adi,adv7511w";
-+		reg = <0x39>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
-+		avdd-supply = <&d1_8v>;
-+		dvdd-supply = <&d1_8v>;
-+		pvdd-supply = <&d1_8v>;
-+		bgvdd-supply = <&d1_8v>;
-+		dvdd-3v-supply = <&d3_3v>;
-+
-+		adi,input-depth = <8>;
-+		adi,input-colorspace = "rgb";
-+		adi,input-clock = "1x";
-+		adi,input-style = <1>;
-+		adi,input-justification = "evenly";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7511_in: endpoint {
-+					remote-endpoint = <&thc63lvd1024_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				adv7511_out: endpoint {
-+					remote-endpoint = <&hdmi_con>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&lvds0 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			lvds0_out: endpoint {
-+				remote-endpoint = <&thc63lvd1024_in>;
-+			};
-+		};
-+	};
- };
- 
- &mmc0 {
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-@@ -27,6 +27,63 @@
- 		/* first 128MB is reserved for secure area. */
- 		reg = <0 0x48000000 0 0x78000000>;
- 	};
-+
-+	hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con: endpoint {
-+				remote-endpoint = <&adv7511_out>;
-+			};
-+		};
-+	};
-+
-+	lvds-decoder {
-+		compatible = "thine,thc63lvd1024";
-+		vcc-supply = <&vcc3v3_d5>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				thc63lvd1024_in: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+				thc63lvd1024_out: endpoint {
-+					remote-endpoint = <&adv7511_in>;
-+				};
-+			};
-+		};
-+	};
-+
-+	vcc1v8_d4: regulator-0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VCC1V8_D4";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vcc3v3_d5: regulator-1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VCC3V3_D5";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+};
-+
-+&du {
-+	status = "okay";
- };
- 
- &extal_clk {
-@@ -53,6 +110,64 @@
- 	};
- };
- 
-+&lvds0 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			lvds0_out: endpoint {
-+				remote-endpoint = <&thc63lvd1024_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&i2c0 {
-+	pinctrl-0 = <&i2c0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	hdmi@39 {
-+		compatible = "adi,adv7511w";
-+		#sound-dai-cells = <0>;
-+		reg = <0x39>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
-+		avdd-supply = <&vcc1v8_d4>;
-+		dvdd-supply = <&vcc1v8_d4>;
-+		pvdd-supply = <&vcc1v8_d4>;
-+		bgvdd-supply = <&vcc1v8_d4>;
-+		dvdd-3v-supply = <&vcc3v3_d5>;
-+
-+		adi,input-depth = <8>;
-+		adi,input-colorspace = "rgb";
-+		adi,input-clock = "1x";
-+		adi,input-style = <1>;
-+		adi,input-justification = "evenly";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7511_in: endpoint {
-+					remote-endpoint = <&thc63lvd1024_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				adv7511_out: endpoint {
-+					remote-endpoint = <&hdmi_con>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
- &pfc {
- 	gether_pins: gether {
- 		groups = "gether_mdio_a", "gether_rgmii",
-@@ -60,6 +175,11 @@
- 		function = "gether";
- 	};
- 
-+	i2c0_pins: i2c0 {
-+		groups = "i2c0";
-+		function = "i2c0";
-+	};
-+
- 	scif0_pins: scif0 {
- 		groups = "scif0_data";
- 		function = "scif0";
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
