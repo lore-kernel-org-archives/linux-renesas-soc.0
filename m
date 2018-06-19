@@ -1,75 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:60296 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751464AbeFAJ3H (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:58246 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966314AbeFSNzW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Jun 2018 05:29:07 -0400
+        Tue, 19 Jun 2018 09:55:22 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/4] lib/vsprintf: Remove atomic-unsafe support for printk format %pCr
-Date: Fri,  1 Jun 2018 11:28:18 +0200
-Message-Id: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 2/2] regulator: bd9571mwv: Add support for toggle power switches
+Date: Tue, 19 Jun 2018 15:55:18 +0200
+Message-Id: <20180619135518.8990-3-geert+renesas@glider.be>
+In-Reply-To: <20180619135518.8990-1-geert+renesas@glider.be>
+References: <20180619135518.8990-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+Extend the existing support for backup mode to toggle power switches.
+With a toggle power switch (or level signal), the following steps must
+be followed exactly:
+   1. Configure PMIC for backup mode,
+   2. Switch accessory power switch off, to prepare for system suspend,
+      which is a manual step not controlled by software,
+   3. Suspend system,
+   4. Switch accessory power switch on to wake up system.
 
-"%pCr" formats the current rate of a clock, and calls clk_get_rate().
-The latter obtains a mutex, hence it must not be called from atomic
-context.  As vsprintf() (and e.g. printk()) must be callable from any
-context, it's better to remove support for this (rarely-used) format.
+Hence the PMIC is configured for backup mode when "enabled" is written
+to the PMIC's "wakeup" virtual file in sysfs, using the newly introduced
+callback for wake-up change notification.  Conversely, writing
+"disabled" reverts the role of the accessory switch to a power switch.
 
-This patch series:
-  - Changes all existing users of "%pCr" to print the result of
-    clk_get_rate() directly, which is safe as they all do this in task
-    context only,
-  - Removes support for the "%pCr" printk format.
+Unlike with momentary switches, backup mode is not enabled by default,
+as enabling it prevents the board from being powered off using the power
+switch, which may confuse the user.
 
-Note that any remaining out-of-tree users will start seeing the clock's
-name printed instead of its rate.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - Improve patch description,
+  - Drop "return;" at end of function.
+---
+ drivers/regulator/bd9571mwv-regulator.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-Thanks for your comments!
-
-Geert Uytterhoeven (4):
-  clk: renesas: cpg-mssr: Stop using printk format %pCr
-  thermal: bcm2835: Stop using printk format %pCr
-  serial: sh-sci: Stop using printk format %pCr
-  lib/vsprintf: Remove atomic-unsafe support for %pCr
-
- Documentation/core-api/printk-formats.rst  | 3 +--
- drivers/clk/renesas/renesas-cpg-mssr.c     | 9 +++++----
- drivers/thermal/broadcom/bcm2835_thermal.c | 4 ++--
- drivers/tty/serial/sh-sci.c                | 4 ++--
- lib/vsprintf.c                             | 3 ---
- 5 files changed, 10 insertions(+), 13 deletions(-)
-
+diff --git a/drivers/regulator/bd9571mwv-regulator.c b/drivers/regulator/bd9571mwv-regulator.c
+index be574eb444ebda97..403bc3fa1f2513de 100644
+--- a/drivers/regulator/bd9571mwv-regulator.c
++++ b/drivers/regulator/bd9571mwv-regulator.c
+@@ -171,6 +171,24 @@ static int bd9571mwv_bkup_mode_write(struct bd9571mwv *bd, unsigned int mode)
+ 	return 0;
+ }
+ 
++static void bd9571mwv_wakeup_change_notify(struct device *dev, bool enable)
++{
++	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
++
++	unsigned int mode;
++	int ret;
++
++	ret = bd9571mwv_bkup_mode_read(bdreg->bd, &mode);
++	if (ret)
++		return;
++
++	mode &= ~BD9571MWV_BKUP_MODE_CNT_KEEPON_MASK;
++	if (enable)
++		mode |= bdreg->bkup_mode_cnt_keepon;
++
++	bd9571mwv_bkup_mode_write(bdreg->bd, mode);
++}
++
+ static int bd9571mwv_suspend(struct device *dev)
+ {
+ 	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
+@@ -277,6 +295,11 @@ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
+ 		 * explicit user setup in level mode.
+ 		 */
+ 		device_set_wakeup_enable(&pdev->dev, bdreg->rstbmode_pulse);
++#ifdef CONFIG_PM_SLEEP
++		if (bdreg->rstbmode_level)
++			pdev->dev.power.wakeup_change_notify =
++				bd9571mwv_wakeup_change_notify;
++#endif /* CONFIG_PM_SLEEP */
+ 	}
+ 
+ 	return 0;
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.17.1
