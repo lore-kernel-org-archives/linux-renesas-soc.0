@@ -1,119 +1,94 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:37042 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750961AbeFSHR0 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Jun 2018 03:17:26 -0400
-Received: by mail-vk0-f66.google.com with SMTP id w8-v6so11077668vkh.4
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Jun 2018 00:17:26 -0700 (PDT)
-MIME-Version: 1.0
+Return-Path: <u-boot-bounces@lists.denx.de>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 19 Jun 2018 10:11:05 +0300
+Message-ID: <6565802.4mR889inCT@avalon>
+In-Reply-To: <CAMuHMdVM2O0_ygAe=J-7yAGnANDh7ez4M8bst16B5CSe_Sj2Ow@mail.gmail.com>
 References: <1529055605-29942-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <10848514.jCgBdBqkyy@avalon> <CAMuHMdVM2O0_ygAe=J-7yAGnANDh7ez4M8bst16B5CSe_Sj2Ow@mail.gmail.com>
- <6565802.4mR889inCT@avalon>
-In-Reply-To: <6565802.4mR889inCT@avalon>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 19 Jun 2018 09:17:14 +0200
-Message-ID: <CAMuHMdXb49KTMHjfrht2H2yZxx5ieiF=OYWtLHVy32_pRPAeLg@mail.gmail.com>
-Subject: Re: [RFC] ARM: rmobile: create DT memory nodes for R8A7795 3.0 and newer
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Marek Vasut <marek.vasut@gmail.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        U-Boot Mailing List <u-boot@lists.denx.de>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        takuya.sakata.wz@bp.renesas.com
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+ <10848514.jCgBdBqkyy@avalon>
+ <CAMuHMdVM2O0_ygAe=J-7yAGnANDh7ez4M8bst16B5CSe_Sj2Ow@mail.gmail.com>
+MIME-Version: 1.0
+Cc: takuya.sakata.wz@bp.renesas.com, U-Boot Mailing List <u-boot@lists.denx.de>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+ Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: Re: [U-Boot] [RFC] ARM: rmobile: create DT memory nodes for R8A7795
+	3.0 and newer
+List-Unsubscribe: <https://lists.denx.de/options/u-boot>,
+ <mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
+List-Archive: <http://lists.denx.de/pipermail/u-boot/>
+List-Post: <mailto:u-boot@lists.denx.de>
+List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
+List-Subscribe: <https://lists.denx.de/listinfo/u-boot>,
+ <mailto:u-boot-request@lists.denx.de?subject=subscribe>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Errors-To: u-boot-bounces@lists.denx.de
+Sender: "U-Boot" <u-boot-bounces@lists.denx.de>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
-
-On Tue, Jun 19, 2018 at 9:10 AM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Tuesday, 19 June 2018 09:58:59 EEST Geert Uytterhoeven wrote:
-> > On Tue, Jun 19, 2018 at 4:15 AM Laurent Pinchart wrote:
-> > > On Sunday, 17 June 2018 03:08:02 EEST Marek Vasut wrote:
-> > >> On 06/16/2018 05:44 PM, Laurent Pinchart wrote:
-> > >>> On Saturday, 16 June 2018 02:42:30 EEST Marek Vasut wrote:
-> > >>>> On 06/16/2018 01:21 AM, Laurent Pinchart wrote:
-> > >>>>> On Friday, 15 June 2018 15:00:31 EEST Marek Vasut wrote:
-> > >>>>>> On 06/15/2018 01:43 PM, Marek Vasut wrote:
->
-> [snip]
->
-> > >>>>>>>>> Obvious design question is -- since you're adding new SMC call
-> > >>>>>>>>> anyway, can't the call just return the memory layout table
-> > >>>>>>>>> itself, so that it won't be duplicated both in U-Boot and ATF ?
-> > >>>>>>>>
-> > >>>>>>>> My gut feeling was to go with the smallest interface possible.
-> > >>>>>>>
-> > >>>>>>> But this doesn't scale. The API here uses some ad-hoc constants to
-> > >>>>>>> identify memory layout tables which have to be encoded both in ATF
-> > >>>>>>> and U-Boot, both of which must be kept in sync.
-> > >>>>>>>
-> > >>>>>>> The ATF already has those memory layout tables, it's only a matter
-> > >>>>>>> of passing them to U-Boot. If you do just that, the ad-hoc
-> > >>>>>>> constants and encoding of tables into U-Boot goes away and in fact
-> > >>>>>>> simplifies the design.
-> > >>>>>>>
-> > >>>>>>> Yet, I have to wonder if ATF doesn't already contain some sort of
-> > >>>>>>> standard SMC call to get memory topology. It surprises me that it
-> > >>>>>>> wouldn't.
-> > >>>>>>
-> > >>>>>> In fact, Laurent (CCed) was solving some similar issue with lossy
-> > >>>>>> decomp and I think this involved some passing of memory layout
-> > >>>>>> information from ATF to U-Boot too, or am I mistaken ?
-> > >>>>>
-> > >>>>> That's correct, ATF stores information about the memory layout at a
-> > >>>>> fixed address in system memory, and U-Boot can read it.
-> > >>>>
-> > >>>> Well, that sounds good ! Maybe we can avoid adding SMC call
-> > >>>> altogether then? :)
-> > >>>
-> > >>> I'd prefer that, yes.
-> > >>>
-> > >>> Let's not duplicate the mechanism used to pass FCNL information from
-> > >>> ATF to U- Boot, but instead create a data table format that can store
-> > >>> all the information we need, in an easily extensible way.
-> > >>>
-> > >>> To see how the mechanism is implemented for FCNL, search for 47FD7000
-> > >>> in the Renesas ATF sources
-> > >>> (git://github.com/renesas-rcar/arm-trusted-firmware.git).
-> > >>
-> > >> For everyone involved, can you explain what FCNL is ? ;-)
-> > >
-> > > FCNL is Frame Compression Near Lossless. It's a way to reduce memory
-> > > bandwidth by transparent compression and decompression of video frames.
-> > > Compression is handled by an IP core called FCP, and decompression is
-> > > handled by the DRAM controller. ATF programs the DRAM controller with
-> > > ranges of memory addresses that will be dynamically decompressed. The
-> > > registers containing those ranges are accessible in secure mode only, so
-> > > neither U-Boot nor Linux can read them. That's why ATF has to pass the
-> > > information to U-Boot, in order to add the ranges as reserved memory in
-> > > DT.
-> > >
-> > >> Any yes, I agree this sounds good. I had a discussion on the U-Boot IRC
-> > >> about passing the memory configuration around and the result is
-> > >> basically the same -- pass a table from ATF to U-Boot. If there's
-> > >> already something, great.
-> >
-> > Pass a "table"? Or an FDT containing the /memory nodes?
-> > The latter allows for easier future extension.
->
-> ATF passes a table to U-Boot, and U-Boot then updates the FDT accordingly
-> before starting Linux.
-
-I know it passes a table. A table is very easy to parse, but complicates future
-extension.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQsCgpPbiBUdWVzZGF5LCAxOSBKdW5lIDIwMTggMDk6NTg6NTkgRUVTVCBHZWVydCBV
+eXR0ZXJob2V2ZW4gd3JvdGU6Cj4gT24gVHVlLCBKdW4gMTksIDIwMTggYXQgNDoxNSBBTSBMYXVy
+ZW50IFBpbmNoYXJ0IHdyb3RlOgo+ID4gT24gU3VuZGF5LCAxNyBKdW5lIDIwMTggMDM6MDg6MDIg
+RUVTVCBNYXJlayBWYXN1dCB3cm90ZToKPiA+PiBPbiAwNi8xNi8yMDE4IDA1OjQ0IFBNLCBMYXVy
+ZW50IFBpbmNoYXJ0IHdyb3RlOgo+ID4+PiBPbiBTYXR1cmRheSwgMTYgSnVuZSAyMDE4IDAyOjQy
+OjMwIEVFU1QgTWFyZWsgVmFzdXQgd3JvdGU6Cj4gPj4+PiBPbiAwNi8xNi8yMDE4IDAxOjIxIEFN
+LCBMYXVyZW50IFBpbmNoYXJ0IHdyb3RlOgo+ID4+Pj4+IE9uIEZyaWRheSwgMTUgSnVuZSAyMDE4
+IDE1OjAwOjMxIEVFU1QgTWFyZWsgVmFzdXQgd3JvdGU6Cj4gPj4+Pj4+IE9uIDA2LzE1LzIwMTgg
+MDE6NDMgUE0sIE1hcmVrIFZhc3V0IHdyb3RlOgoKW3NuaXBdCgo+ID4+Pj4+Pj4+PiBPYnZpb3Vz
+IGRlc2lnbiBxdWVzdGlvbiBpcyAtLSBzaW5jZSB5b3UncmUgYWRkaW5nIG5ldyBTTUMgY2FsbAo+
+ID4+Pj4+Pj4+PiBhbnl3YXksIGNhbid0IHRoZSBjYWxsIGp1c3QgcmV0dXJuIHRoZSBtZW1vcnkg
+bGF5b3V0IHRhYmxlCj4gPj4+Pj4+Pj4+IGl0c2VsZiwgc28gdGhhdCBpdCB3b24ndCBiZSBkdXBs
+aWNhdGVkIGJvdGggaW4gVS1Cb290IGFuZCBBVEYgPwo+ID4+Pj4+Pj4+IAo+ID4+Pj4+Pj4+IE15
+IGd1dCBmZWVsaW5nIHdhcyB0byBnbyB3aXRoIHRoZSBzbWFsbGVzdCBpbnRlcmZhY2UgcG9zc2li
+bGUuCj4gPj4+Pj4+PiAKPiA+Pj4+Pj4+IEJ1dCB0aGlzIGRvZXNuJ3Qgc2NhbGUuIFRoZSBBUEkg
+aGVyZSB1c2VzIHNvbWUgYWQtaG9jIGNvbnN0YW50cyB0bwo+ID4+Pj4+Pj4gaWRlbnRpZnkgbWVt
+b3J5IGxheW91dCB0YWJsZXMgd2hpY2ggaGF2ZSB0byBiZSBlbmNvZGVkIGJvdGggaW4gQVRGCj4g
+Pj4+Pj4+PiBhbmQgVS1Cb290LCBib3RoIG9mIHdoaWNoIG11c3QgYmUga2VwdCBpbiBzeW5jLgo+
+ID4+Pj4+Pj4gCj4gPj4+Pj4+PiBUaGUgQVRGIGFscmVhZHkgaGFzIHRob3NlIG1lbW9yeSBsYXlv
+dXQgdGFibGVzLCBpdCdzIG9ubHkgYSBtYXR0ZXIKPiA+Pj4+Pj4+IG9mIHBhc3NpbmcgdGhlbSB0
+byBVLUJvb3QuIElmIHlvdSBkbyBqdXN0IHRoYXQsIHRoZSBhZC1ob2MKPiA+Pj4+Pj4+IGNvbnN0
+YW50cyBhbmQgZW5jb2Rpbmcgb2YgdGFibGVzIGludG8gVS1Cb290IGdvZXMgYXdheSBhbmQgaW4g
+ZmFjdAo+ID4+Pj4+Pj4gc2ltcGxpZmllcyB0aGUgZGVzaWduLgo+ID4+Pj4+Pj4gCj4gPj4+Pj4+
+PiBZZXQsIEkgaGF2ZSB0byB3b25kZXIgaWYgQVRGIGRvZXNuJ3QgYWxyZWFkeSBjb250YWluIHNv
+bWUgc29ydCBvZgo+ID4+Pj4+Pj4gc3RhbmRhcmQgU01DIGNhbGwgdG8gZ2V0IG1lbW9yeSB0b3Bv
+bG9neS4gSXQgc3VycHJpc2VzIG1lIHRoYXQgaXQKPiA+Pj4+Pj4+IHdvdWxkbid0Lgo+ID4+Pj4+
+PiAKPiA+Pj4+Pj4gSW4gZmFjdCwgTGF1cmVudCAoQ0NlZCkgd2FzIHNvbHZpbmcgc29tZSBzaW1p
+bGFyIGlzc3VlIHdpdGggbG9zc3kKPiA+Pj4+Pj4gZGVjb21wIGFuZCBJIHRoaW5rIHRoaXMgaW52
+b2x2ZWQgc29tZSBwYXNzaW5nIG9mIG1lbW9yeSBsYXlvdXQKPiA+Pj4+Pj4gaW5mb3JtYXRpb24g
+ZnJvbSBBVEYgdG8gVS1Cb290IHRvbywgb3IgYW0gSSBtaXN0YWtlbiA/Cj4gPj4+Pj4gCj4gPj4+
+Pj4gVGhhdCdzIGNvcnJlY3QsIEFURiBzdG9yZXMgaW5mb3JtYXRpb24gYWJvdXQgdGhlIG1lbW9y
+eSBsYXlvdXQgYXQgYQo+ID4+Pj4+IGZpeGVkIGFkZHJlc3MgaW4gc3lzdGVtIG1lbW9yeSwgYW5k
+IFUtQm9vdCBjYW4gcmVhZCBpdC4KPiA+Pj4+IAo+ID4+Pj4gV2VsbCwgdGhhdCBzb3VuZHMgZ29v
+ZCAhIE1heWJlIHdlIGNhbiBhdm9pZCBhZGRpbmcgU01DIGNhbGwKPiA+Pj4+IGFsdG9nZXRoZXIg
+dGhlbj8gOikKPiA+Pj4gCj4gPj4+IEknZCBwcmVmZXIgdGhhdCwgeWVzLgo+ID4+PiAKPiA+Pj4g
+TGV0J3Mgbm90IGR1cGxpY2F0ZSB0aGUgbWVjaGFuaXNtIHVzZWQgdG8gcGFzcyBGQ05MIGluZm9y
+bWF0aW9uIGZyb20KPiA+Pj4gQVRGIHRvIFUtIEJvb3QsIGJ1dCBpbnN0ZWFkIGNyZWF0ZSBhIGRh
+dGEgdGFibGUgZm9ybWF0IHRoYXQgY2FuIHN0b3JlCj4gPj4+IGFsbCB0aGUgaW5mb3JtYXRpb24g
+d2UgbmVlZCwgaW4gYW4gZWFzaWx5IGV4dGVuc2libGUgd2F5Lgo+ID4+PiAKPiA+Pj4gVG8gc2Vl
+IGhvdyB0aGUgbWVjaGFuaXNtIGlzIGltcGxlbWVudGVkIGZvciBGQ05MLCBzZWFyY2ggZm9yIDQ3
+RkQ3MDAwCj4gPj4+IGluIHRoZSBSZW5lc2FzIEFURiBzb3VyY2VzCj4gPj4+IChnaXQ6Ly9naXRo
+dWIuY29tL3JlbmVzYXMtcmNhci9hcm0tdHJ1c3RlZC1maXJtd2FyZS5naXQpLgo+ID4+IAo+ID4+
+IEZvciBldmVyeW9uZSBpbnZvbHZlZCwgY2FuIHlvdSBleHBsYWluIHdoYXQgRkNOTCBpcyA/IDst
+KQo+ID4gCj4gPiBGQ05MIGlzIEZyYW1lIENvbXByZXNzaW9uIE5lYXIgTG9zc2xlc3MuIEl0J3Mg
+YSB3YXkgdG8gcmVkdWNlIG1lbW9yeQo+ID4gYmFuZHdpZHRoIGJ5IHRyYW5zcGFyZW50IGNvbXBy
+ZXNzaW9uIGFuZCBkZWNvbXByZXNzaW9uIG9mIHZpZGVvIGZyYW1lcy4KPiA+IENvbXByZXNzaW9u
+IGlzIGhhbmRsZWQgYnkgYW4gSVAgY29yZSBjYWxsZWQgRkNQLCBhbmQgZGVjb21wcmVzc2lvbiBp
+cwo+ID4gaGFuZGxlZCBieSB0aGUgRFJBTSBjb250cm9sbGVyLiBBVEYgcHJvZ3JhbXMgdGhlIERS
+QU0gY29udHJvbGxlciB3aXRoCj4gPiByYW5nZXMgb2YgbWVtb3J5IGFkZHJlc3NlcyB0aGF0IHdp
+bGwgYmUgZHluYW1pY2FsbHkgZGVjb21wcmVzc2VkLiBUaGUKPiA+IHJlZ2lzdGVycyBjb250YWlu
+aW5nIHRob3NlIHJhbmdlcyBhcmUgYWNjZXNzaWJsZSBpbiBzZWN1cmUgbW9kZSBvbmx5LCBzbwo+
+ID4gbmVpdGhlciBVLUJvb3Qgbm9yIExpbnV4IGNhbiByZWFkIHRoZW0uIFRoYXQncyB3aHkgQVRG
+IGhhcyB0byBwYXNzIHRoZQo+ID4gaW5mb3JtYXRpb24gdG8gVS1Cb290LCBpbiBvcmRlciB0byBh
+ZGQgdGhlIHJhbmdlcyBhcyByZXNlcnZlZCBtZW1vcnkgaW4KPiA+IERULgo+ID4gCj4gPj4gQW55
+IHllcywgSSBhZ3JlZSB0aGlzIHNvdW5kcyBnb29kLiBJIGhhZCBhIGRpc2N1c3Npb24gb24gdGhl
+IFUtQm9vdCBJUkMKPiA+PiBhYm91dCBwYXNzaW5nIHRoZSBtZW1vcnkgY29uZmlndXJhdGlvbiBh
+cm91bmQgYW5kIHRoZSByZXN1bHQgaXMKPiA+PiBiYXNpY2FsbHkgdGhlIHNhbWUgLS0gcGFzcyBh
+IHRhYmxlIGZyb20gQVRGIHRvIFUtQm9vdC4gSWYgdGhlcmUncwo+ID4+IGFscmVhZHkgc29tZXRo
+aW5nLCBncmVhdC4KPiAKPiBQYXNzIGEgInRhYmxlIj8gT3IgYW4gRkRUIGNvbnRhaW5pbmcgdGhl
+IC9tZW1vcnkgbm9kZXM/Cj4gVGhlIGxhdHRlciBhbGxvd3MgZm9yIGVhc2llciBmdXR1cmUgZXh0
+ZW5zaW9uLgoKQVRGIHBhc3NlcyBhIHRhYmxlIHRvIFUtQm9vdCwgYW5kIFUtQm9vdCB0aGVuIHVw
+ZGF0ZXMgdGhlIEZEVCBhY2NvcmRpbmdseSAKYmVmb3JlIHN0YXJ0aW5nIExpbnV4LgoKLS0gClJl
+Z2FyZHMsCgpMYXVyZW50IFBpbmNoYXJ0CgoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fClUtQm9vdCBtYWlsaW5nIGxpc3QKVS1Cb290QGxpc3RzLmRlbngu
+ZGUKaHR0cHM6Ly9saXN0cy5kZW54LmRlL2xpc3RpbmZvL3UtYm9vdAo=
