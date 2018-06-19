@@ -1,38 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56246 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752725AbeFTI4X (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:57792 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966819AbeFSRUv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:56:23 -0400
-Date: Wed, 20 Jun 2018 10:56:19 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: shmobile: rcar-gen2: Stop compiling headsmp-apmu on
- !SMP
-Message-ID: <20180620085618.dy5vnlhxiajppryy@verge.net.au>
-References: <20180619172049.20089-1-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180619172049.20089-1-geert+renesas@glider.be>
+        Tue, 19 Jun 2018 13:20:51 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] ARM: shmobile: rcar-gen2: Stop compiling headsmp-apmu on !SMP
+Date: Tue, 19 Jun 2018 19:20:49 +0200
+Message-Id: <20180619172049.20089-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jun 19, 2018 at 07:20:49PM +0200, Geert Uytterhoeven wrote:
-> As of commit cad160ed0a94927e ("ARM: shmobile: Convert file to use
-> cntvoff"), there's no non-SMP code left in headsmp-apmu.S.
-> 
-> Hence build the file for SMP only, and drop the no longer needed check
-> for CONFIG_SMP inside the file.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+As of commit cad160ed0a94927e ("ARM: shmobile: Convert file to use
+cntvoff"), there's no non-SMP code left in headsmp-apmu.S.
 
-Thanks Geert,
+Hence build the file for SMP only, and drop the no longer needed check
+for CONFIG_SMP inside the file.
 
-This looks fine to me but I will wait to see if there are other reviews
-before applying.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/mach-shmobile/Makefile       | 2 +-
+ arch/arm/mach-shmobile/headsmp-apmu.S | 2 --
+ 2 files changed, 1 insertion(+), 3 deletions(-)
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
+index 05ba728ed4f67cf2..b33dc59d8698d218 100644
+--- a/arch/arm/mach-shmobile/Makefile
++++ b/arch/arm/mach-shmobile/Makefile
+@@ -21,13 +21,13 @@ cpu-y				:= platsmp.o headsmp.o
+ # Shared SoC family objects
+ obj-$(CONFIG_ARCH_RCAR_GEN2)	+= setup-rcar-gen2.o platsmp-apmu.o $(cpu-y)
+ CFLAGS_setup-rcar-gen2.o	+= -march=armv7-a
+-obj-$(CONFIG_ARCH_RCAR_GEN2)	+= headsmp-apmu.o
+ obj-$(CONFIG_ARCH_R8A7790)	+= regulator-quirk-rcar-gen2.o
+ obj-$(CONFIG_ARCH_R8A7791)	+= regulator-quirk-rcar-gen2.o
+ obj-$(CONFIG_ARCH_R8A7793)	+= regulator-quirk-rcar-gen2.o
+ 
+ # SMP objects
+ smp-y				:= $(cpu-y)
++smp-$(CONFIG_ARCH_RCAR_GEN2)	+= headsmp-apmu.o
+ smp-$(CONFIG_ARCH_SH73A0)	+= smp-sh73a0.o headsmp-scu.o platsmp-scu.o
+ smp-$(CONFIG_ARCH_R8A7779)	+= smp-r8a7779.o headsmp-scu.o platsmp-scu.o
+ smp-$(CONFIG_ARCH_EMEV2)	+= smp-emev2.o headsmp-scu.o platsmp-scu.o
+diff --git a/arch/arm/mach-shmobile/headsmp-apmu.S b/arch/arm/mach-shmobile/headsmp-apmu.S
+index a7b4bc7a087bdca1..fabe9cadd12ef0b1 100644
+--- a/arch/arm/mach-shmobile/headsmp-apmu.S
++++ b/arch/arm/mach-shmobile/headsmp-apmu.S
+@@ -8,9 +8,7 @@
+ #include <linux/linkage.h>
+ #include <asm/assembler.h>
+ 
+-#ifdef CONFIG_SMP
+ ENTRY(shmobile_boot_apmu)
+ 	bl	secure_cntvoff_init
+ 	b	secondary_startup
+ ENDPROC(shmobile_boot_apmu)
+-#endif
+-- 
+2.17.1
