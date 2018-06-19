@@ -1,113 +1,134 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52588 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934074AbeFYOGl (ORCPT
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:46175 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937514AbeFSPRZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:06:41 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
+        Tue, 19 Jun 2018 11:17:25 -0400
+Received: by mail-pf0-f193.google.com with SMTP id q1-v6so10809pff.13
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Jun 2018 08:17:24 -0700 (PDT)
+From: Magnus Damm <magnus.damm@gmail.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 07/15] ARM: shmobile: apmu: Remove obsolete shmobile_smp_apmu_prepare_cpus()
-Date: Mon, 25 Jun 2018 16:06:18 +0200
-Message-Id: <36a90c0553dd9c4d54a65f5387638ee55e4cf93c.1529934908.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1529934908.git.horms+renesas@verge.net.au>
-References: <cover.1529934908.git.horms+renesas@verge.net.au>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Date: Wed, 20 Jun 2018 00:19:03 +0900
+Message-Id: <152942154349.28480.6185772843276119432.sendpatchset@little-apple>
+In-Reply-To: <152942152672.28480.665572564123111170.sendpatchset@little-apple>
+References: <152942152672.28480.665572564123111170.sendpatchset@little-apple>
+Subject: [PATCH 02/04] arm64: dts: renesas: r8a77990: add VIN and CSI-2 nodes
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-After the removal of the legacy SMP fallbacks, there are no more users
-left of shmobile_smp_apmu_prepare_cpus().
+Add VIN and CSI device nodes to the r8a77990 dtsi file.
 
-Remove it, together with the legacy SMP config parser.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Not-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- arch/arm/mach-shmobile/platsmp-apmu.c | 40 -----------------------------------
- arch/arm/mach-shmobile/platsmp-apmu.h |  8 -------
- 2 files changed, 48 deletions(-)
 
-diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
-index 778b6b618ce7..42c9405e556b 100644
---- a/arch/arm/mach-shmobile/platsmp-apmu.c
-+++ b/arch/arm/mach-shmobile/platsmp-apmu.c
-@@ -106,38 +106,6 @@ static void apmu_init_cpu(struct resource *res, int cpu, int bit)
- 	writel(x, apmu_cpus[cpu].iomem + DBGRCR_OFFS);
- }
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi |   89 +++++++++++++++++++++++++++++
+ 1 file changed, 89 insertions(+)
+
+--- 0001/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ work/arch/arm64/boot/dts/renesas/r8a77990.dtsi	2018-06-19 20:16:52.580607110 +0900
+@@ -248,6 +248,63 @@
+ 			status = "disabled";
+ 		};
  
--static void apmu_parse_cfg(void (*fn)(struct resource *res, int cpu, int bit),
--			   struct rcar_apmu_config *apmu_config, int num)
--{
--	int id;
--	int k;
--	int bit, index;
--	bool is_allowed;
--
--	for (k = 0; k < num; k++) {
--		/* only enable the cluster that includes the boot CPU */
--		is_allowed = false;
--		for (bit = 0; bit < ARRAY_SIZE(apmu_config[k].cpus); bit++) {
--			id = apmu_config[k].cpus[bit];
--			if (id >= 0) {
--				if (id == cpu_logical_map(0))
--					is_allowed = true;
--			}
--		}
--		if (!is_allowed)
--			continue;
--
--		for (bit = 0; bit < ARRAY_SIZE(apmu_config[k].cpus); bit++) {
--			id = apmu_config[k].cpus[bit];
--			if (id >= 0) {
--				index = get_logical_index(id);
--				if (index >= 0)
--					fn(&apmu_config[k].iomem, index, bit);
--			}
--		}
--	}
--}
--
- static const struct of_device_id apmu_ids[] = {
- 	{ .compatible = "renesas,apmu" },
- 	{ /*sentinel*/ }
-@@ -194,14 +162,6 @@ static void __init shmobile_smp_apmu_setup_boot(void)
- 	shmobile_boot_fn_gen2 = shmobile_boot_fn;
- }
++		vin4: video@e6ef4000 {
++			compatible = "renesas,vin-r8a77990";
++			reg = <0 0xe6ef4000 0 0x1000>;
++			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 807>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 807>;
++			renesas,id = <4>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					vin4csi40: endpoint@0 {
++						reg = <0>;
++						remote-endpoint= <&csi40vin4>;
++					};
++				};
++			};
++		};
++
++		vin5: video@e6ef5000 {
++			compatible = "renesas,vin-r8a77990";
++			reg = <0 0xe6ef5000 0 0x1000>;
++			interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 806>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 806>;
++			renesas,id = <5>;
++			status = "disabled";
++
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					vin5csi40: endpoint@0 {
++						reg = <0>;
++						remote-endpoint= <&csi40vin5>;
++					};
++				};
++			};
++		};
++
+ 		gic: interrupt-controller@f1010000 {
+ 			compatible = "arm,gic-400";
+ 			#interrupt-cells = <3>;
+@@ -265,6 +322,38 @@
+ 			resets = <&cpg 408>;
+ 		};
  
--void __init shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
--					   struct rcar_apmu_config *apmu_config,
--					   int num)
--{
--	shmobile_smp_apmu_setup_boot();
--	apmu_parse_cfg(apmu_init_cpu, apmu_config, num);
--}
--
- int shmobile_smp_apmu_boot_secondary(unsigned int cpu, struct task_struct *idle)
- {
- 	/* For this particular CPU register boot vector */
-diff --git a/arch/arm/mach-shmobile/platsmp-apmu.h b/arch/arm/mach-shmobile/platsmp-apmu.h
-index 76512c9a2545..70424572b9da 100644
---- a/arch/arm/mach-shmobile/platsmp-apmu.h
-+++ b/arch/arm/mach-shmobile/platsmp-apmu.h
-@@ -16,14 +16,6 @@
- #ifndef PLATSMP_APMU_H
- #define PLATSMP_APMU_H
- 
--struct rcar_apmu_config {
--	struct resource iomem;
--	int cpus[4];
--};
--
--extern void shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
--					   struct rcar_apmu_config *apmu_config,
--					   int num);
- extern int shmobile_smp_apmu_boot_secondary(unsigned int cpu,
- 					    struct task_struct *idle);
- extern void shmobile_smp_apmu_cpu_die(unsigned int cpu);
--- 
-2.11.0
++
++		csi40: csi2@feaa0000 {
++			compatible = "renesas,r8a77990-csi2";
++			reg = <0 0xfeaa0000 0 0x10000>;
++			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 716>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 716>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					csi40vin4: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&vin4csi40>;
++					};
++					csi40vin5: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&vin5csi40>;
++					};
++				};
++			};
++		};
++
+ 		prr: chipid@fff00044 {
+ 			compatible = "renesas,prr";
+ 			reg = <0 0xfff00044 0 4>;
