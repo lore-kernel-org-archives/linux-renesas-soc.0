@@ -1,67 +1,140 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:47266 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750913AbeFAIHc (ORCPT
+Received: from mail-pf0-f170.google.com ([209.85.192.170]:39762 "EHLO
+        mail-pf0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937365AbeFSPRl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Jun 2018 04:07:32 -0400
-Date: Fri, 1 Jun 2018 10:07:30 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] mmc: renesas_sdhi: fix WP detection
-Message-ID: <20180601080730.h3zjnnaov7ygpsue@ninjato>
-References: <20180305204842.25391-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cysqc67v7jog72hl"
-Content-Disposition: inline
-In-Reply-To: <20180305204842.25391-1-wsa+renesas@sang-engineering.com>
+        Tue, 19 Jun 2018 11:17:41 -0400
+Received: by mail-pf0-f170.google.com with SMTP id r11-v6so21048pfl.6
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Jun 2018 08:17:41 -0700 (PDT)
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Date: Wed, 20 Jun 2018 00:19:19 +0900
+Message-Id: <152942155999.28480.10752587080512094478.sendpatchset@little-apple>
+In-Reply-To: <152942152672.28480.665572564123111170.sendpatchset@little-apple>
+References: <152942152672.28480.665572564123111170.sendpatchset@little-apple>
+Subject: [PATCH 03/04] arm64: dts: renesas: ebisu: add adv7482 support
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Magnus Damm <damm+renesas@opensource.se>
 
---cysqc67v7jog72hl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add experimental support for ADV7482 on the r8a77990 Ebisu board.
 
-On Mon, Mar 05, 2018 at 09:48:42PM +0100, Wolfram Sang wrote:
-> Commit "mmc: renesas_sdhi: use MMC_CAP2_NO_WRITE_PROTECT instead of
-> TMIO own flag" activated MMC_CAP2_NO_WRITE_PROTECT for Renesas SDHI
-> which incorrectly disabled WP altogether instead of only disabling the
-> internal mechanism. Since the whole WP handling has been reworked, we
-> can simply disable this capability to re-enable WP GPIOs.
->=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Not-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
-Ulf, it seems this patch is also not proper yet, we still have
-regressions. I am working on it right now and hope to have a fix ASAP. I
-know it is super-last-minute, but I hope for an easy to parse two-liner
-which we maybe can still have in 4.17.
+ arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts |   91 ++++++++++++++++++++++++
+ 1 file changed, 91 insertions(+)
 
-Just so you know already...
-
-
---cysqc67v7jog72hl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsQ/r4ACgkQFA3kzBSg
-KbYcdA//QOliNlBFJvDptbUazAd+q/7WsG+NE4p8+x62lo5co0gw7DxlWUdh9XvF
-7PURnNv1b+Hqx0kSzQ8/SFmUcD440Sh+Ig/IMe/fe4+VON6ifP0TA+z/NbG58eLx
-NxvXqjwnF8vPuK/vfSXjqRnHIaKDcZkaNUacFrviv+OElOx4ajM7oQ+uDOKA53WO
-6SXtz5oVbmMWl6SvMrmLIBfg7afnWKei9yQ9pCijWRwYaGRCfyR849jMmVaWlsGT
-mb3voa1CBirpmFdgoZBvT7tzHCfPYGIhzr5ox534fnKUbvDF1tY6LnIek/6XUh/m
-5TB9zzEa0Su3e/DIbCtIVA5TMOOXXuN7t7FswclB6KQ4GPh6JY9sJDx9W6Smk7f4
-eLRrjP80pvMndbg/iuQR0rGViwkzV4PaWJe6N9Jrz+b5HrimA07hPOW/27HbyD6m
-gdp0pBmioBB9bwEb465hVwgw+S3OZPGBRfpKRiPzbJIEfiaQMoo/2wmhe5UusidK
-63FF/iJVV5i2N659UNapFwjAXH7BLO/UViWJDSWxNdwtyAGctAhF9BG2951yh45U
-oRmRVSzcehPiy53fbLzcu9Cst+CaBERlZ6X8hPAWzKndNnouoT8f/bF7b+Nl8+/r
-SB1pgjzuhaoma28Z7mV7SP3I60HhE1c+YjfLgK4z6sOJ1J83ycY=
-=sb0g
------END PGP SIGNATURE-----
-
---cysqc67v7jog72hl--
+--- 0001/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
++++ work/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts	2018-06-19 21:14:13.230607110 +0900
+@@ -28,6 +28,30 @@
+ 		/* first 128MB is reserved for secure area. */
+ 		reg = <0x0 0x48000000 0x0 0x38000000>;
+ 	};
++
++	cvbs-in {
++		compatible = "composite-video-connector";
++		label = "CVBS IN";
++
++		port {
++			cvbs_con: endpoint {
++				remote-endpoint = <&adv7482_ain7>;
++			};
++		};
++	};
++
++	hdmi-in {
++		compatible = "hdmi-connector";
++		label = "HDMI IN";
++		type = "a";
++
++		port {
++			hdmi_in_con: endpoint {
++				remote-endpoint = <&adv7482_hdmi>;
++			};
++		};
++	};
++
+ };
+ 
+ &avb {
+@@ -47,6 +71,65 @@
+ 	};
+ };
+ 
++&csi40 {
++	status = "okay";
++
++	ports {
++		port@0 {
++			reg = <0>;
++
++			csi40_in: endpoint {
++				clock-lanes = <0>;
++				data-lanes = <1 2>;
++				remote-endpoint = <&adv7482_txa>;
++			};
++		};
++	};
++};
++
++&i2c0 {
++	status = "okay";
++
++	video-receiver@70 {
++		compatible = "adi,adv7482";
++		reg = <0x70>;
++
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		interrupt-parent = <&gpio0>;
++		interrupt-names = "intrq1", "intrq2";
++		interrupts = <7 IRQ_TYPE_LEVEL_LOW>,
++			     <17 IRQ_TYPE_LEVEL_LOW>;
++
++		port@7 {
++			reg = <7>;
++
++			adv7482_ain7: endpoint {
++				remote-endpoint = <&cvbs_con>;
++			};
++		};
++
++		port@8 {
++			reg = <8>;
++
++			adv7482_hdmi: endpoint {
++				remote-endpoint = <&hdmi_in_con>;
++			};
++		};
++
++		port@10 {
++			reg = <10>;
++
++			adv7482_txa: endpoint {
++				clock-lanes = <0>;
++				data-lanes = <1 2>;
++				remote-endpoint = <&csi40_in>;
++			};
++		};
++	};
++};
++
+ &extal_clk {
+ 	clock-frequency = <48000000>;
+ };
+@@ -63,3 +146,11 @@
+ &scif2 {
+ 	status = "okay";
+ };
++
++&vin4 {
++	status = "okay";
++};
++
++&vin5 {
++	status = "okay";
++};
