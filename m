@@ -1,26 +1,26 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:40863 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935908AbeFSG7L (ORCPT
+Received: from mail-wr0-f182.google.com ([209.85.128.182]:42557 "EHLO
+        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755524AbeFSGoJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Jun 2018 02:59:11 -0400
-Received: by mail-ua0-f196.google.com with SMTP id l11-v6so12373190uak.7
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 Jun 2018 23:59:11 -0700 (PDT)
+        Tue, 19 Jun 2018 02:44:09 -0400
+Received: by mail-wr0-f182.google.com with SMTP id w10-v6so19242523wrk.9
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 Jun 2018 23:44:08 -0700 (PDT)
 MIME-Version: 1.0
+In-Reply-To: <2538185.ecTHDDYmKt@avalon>
 References: <1529055605-29942-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <1667599.ksFFHZy3Oy@avalon> <64c5ff1c-d679-27bb-f6a1-398d8595c050@gmail.com> <10848514.jCgBdBqkyy@avalon>
-In-Reply-To: <10848514.jCgBdBqkyy@avalon>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 19 Jun 2018 08:58:59 +0200
-Message-ID: <CAMuHMdVM2O0_ygAe=J-7yAGnANDh7ez4M8bst16B5CSe_Sj2Ow@mail.gmail.com>
+ <10848514.jCgBdBqkyy@avalon> <CANqRtoQZTZ_34yzpT0+dpM1gu6gmPP-QAhdwgRXwoWeVOpdeaA@mail.gmail.com>
+ <2538185.ecTHDDYmKt@avalon>
+From: Magnus Damm <magnus.damm@gmail.com>
+Date: Tue, 19 Jun 2018 15:44:07 +0900
+Message-ID: <CANqRtoR5FpcMQ7B7SpdTALuTwqtQCR+2mUkhzmfUgMd5CPPChw@mail.gmail.com>
 Subject: Re: [RFC] ARM: rmobile: create DT memory nodes for R8A7795 3.0 and newer
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: Marek Vasut <marek.vasut@gmail.com>,
         Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        U-Boot Mailing List <u-boot@lists.denx.de>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        shimoda <yoshihiro.shimoda.uh@renesas.com>,
         takuya.sakata.wz@bp.renesas.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -28,130 +28,84 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Laurent,
 
-On Tue, Jun 19, 2018 at 4:15 AM Laurent Pinchart
+[dropped u-boot list]
+
+On Tue, Jun 19, 2018 at 2:56 PM, Laurent Pinchart
 <laurent.pinchart@ideasonboard.com> wrote:
-> On Sunday, 17 June 2018 03:08:02 EEST Marek Vasut wrote:
-> > On 06/16/2018 05:44 PM, Laurent Pinchart wrote:
-> > > On Saturday, 16 June 2018 02:42:30 EEST Marek Vasut wrote:
-> > >> On 06/16/2018 01:21 AM, Laurent Pinchart wrote:
-> > >>> On Friday, 15 June 2018 15:00:31 EEST Marek Vasut wrote:
-> > >>>> On 06/15/2018 01:43 PM, Marek Vasut wrote:
-> > >>>>> On 06/15/2018 12:37 PM, Ulrich Hecht wrote:
-> > >>>>>> On Fri, Jun 15, 2018 at 12:09 PM, Marek Vasut  wrote:
-> > >>>>>>>> +             arm_smccc_smc(ARM_SMCCC_RENESAS_MEMCONF,
-> > >>>>>>>> +                           0, 0, 0, 0, 0, 0, 0, &res);
-> > >>>>>>>
-> > >>>>>>> Will this call work on platforms without patched ATF ?
-> > >>>>>>> (I think not, don't you need to handle return value?)
-> > >>>>>>
-> > >>>>>> I have not actually tested that, but if I understand the ATF code
-> > >>>>>> correctly, unimplemented calls return
-> > >>>>>> SMC_UNK (0xffffffff), which should be handled by the default case
-> > >>>>>> (NOP)
-> > >>>>>> below.
-> > >>>>>
-> > >>>>> Which means the board has a memory size of 0 and fails to boot ?
-> > >>>>>
-> > >>>>>>>> +             switch (res.a0) {
-> > >>>>>>>> +             case 1:
-> > >>>>>>>> +                     base[0] = 0x048000000ULL;
-> > >>>>>>>> +                     size[0] = 0x038000000ULL;
-> > >>>>>>>> +                     base[1] = 0x500000000ULL;
-> > >>>>>>>> +                     size[1] = 0x040000000ULL;
-> > >>>>>>>> +                     base[2] = 0x600000000ULL;
-> > >>>>>>>> +                     size[2] = 0x040000000ULL;
-> > >>>>>>>> +                     base[3] = 0x700000000ULL;
-> > >>>>>>>> +                     size[3] = 0x040000000ULL;
-> > >>>>>>>> +                     fdt_fixup_memory_banks(blob, base, size, 4);
-> > >>>>>>>> +                     break;
-> > >>>>>>>> +             case 2:
-> > >>>>>>>> +                     base[0] = 0x048000000ULL;
-> > >>>>>>>> +                     size[0] = 0x078000000ULL;
-> > >>>>>>>> +                     base[1] = 0x500000000ULL;
-> > >>>>>>>> +                     size[1] = 0x080000000ULL;
-> > >>>>>>>> +                     fdt_fixup_memory_banks(blob, base, size, 2);
-> > >>>>>>>> +                     break;
-> > >>>>>>>> +             case 3:
-> > >>>>>>>> +                     base[0] = 0x048000000ULL;
-> > >>>>>>>> +                     size[0] = 0x078000000ULL;
-> > >>>>>>>> +                     base[1] = 0x500000000ULL;
-> > >>>>>>>> +                     size[1] = 0x080000000ULL;
-> > >>>>>>>> +                     base[2] = 0x600000000ULL;
-> > >>>>>>>> +                     size[2] = 0x080000000ULL;
-> > >>>>>>>> +                     base[3] = 0x700000000ULL;
-> > >>>>>>>> +                     size[3] = 0x080000000ULL;
-> > >>>>>>>> +                     fdt_fixup_memory_banks(blob, base, size, 4);
-> > >>>>>>>> +                     break;
-> > >>>>>>>
-> > >>>>>>> Obvious design question is -- since you're adding new SMC call
-> > >>>>>>> anyway,
-> > >>>>>>> can't the call just return the memory layout table itself, so that
-> > >>>>>>> it
-> > >>>>>>> won't be duplicated both in U-Boot and ATF ?
-> > >>>>>>
-> > >>>>>> My gut feeling was to go with the smallest interface possible.
-> > >>>>>
-> > >>>>> But this doesn't scale. The API here uses some ad-hoc constants to
-> > >>>>> identify memory layout tables which have to be encoded both in ATF and
-> > >>>>> U-Boot, both of which must be kept in sync.
-> > >>>>>
-> > >>>>> The ATF already has those memory layout tables, it's only a matter of
-> > >>>>> passing them to U-Boot. If you do just that, the ad-hoc constants and
-> > >>>>> encoding of tables into U-Boot goes away and in fact simplifies the
-> > >>>>> design.
-> > >>>>>
-> > >>>>> Yet, I have to wonder if ATF doesn't already contain some sort of
-> > >>>>> standard SMC call to get memory topology. It surprises me that it
-> > >>>>> wouldn't.
-> > >>>>
-> > >>>> In fact, Laurent (CCed) was solving some similar issue with lossy
-> > >>>> decomp
-> > >>>> and I think this involved some passing of memory layout information
-> > >>>> from
-> > >>>> ATF to U-Boot too, or am I mistaken ?
-> > >>>
-> > >>> That's correct, ATF stores information about the memory layout at a
-> > >>> fixed
-> > >>> address in system memory, and U-Boot can read it.
-> > >>
-> > >> Well, that sounds good ! Maybe we can avoid adding SMC call altogether
-> > >> then? :)
-> > >
-> > > I'd prefer that, yes.
-> > >
-> > > Let's not duplicate the mechanism used to pass FCNL information from ATF
-> > > to U- Boot, but instead create a data table format that can store all the
-> > > information we need, in an easily extensible way.
-> > >
-> > > To see how the mechanism is implemented for FCNL, search for 47FD7000 in
-> > > the Renesas ATF sources
-> > > (git://github.com/renesas-rcar/arm-trusted-firmware.git).
-> > For everyone involved, can you explain what FCNL is ? ;-)
+> Hi Magnus,
 >
-> FCNL is Frame Compression Near Lossless. It's a way to reduce memory bandwidth
-> by transparent compression and decompression of video frames. Compression is
-> handled by an IP core called FCP, and decompression is handled by the DRAM
-> controller. ATF programs the DRAM controller with ranges of memory addresses
-> that will be dynamically decompressed. The registers containing those ranges
-> are accessible in secure mode only, so neither U-Boot nor Linux can read them.
-> That's why ATF has to pass the information to U-Boot, in order to add the
-> ranges as reserved memory in DT.
+> On Tuesday, 19 June 2018 08:43:31 EEST Magnus Damm wrote:
+>> On Tue, Jun 19, 2018 at 11:15 AM, Laurent Pinchart wrote:
+>> > On Sunday, 17 June 2018 03:08:02 EEST Marek Vasut wrote:
+>> >> On 06/16/2018 05:44 PM, Laurent Pinchart wrote:
+>> >>> On Saturday, 16 June 2018 02:42:30 EEST Marek Vasut wrote:
+>> >>>> On 06/16/2018 01:21 AM, Laurent Pinchart wrote:
+>> >>>>> On Friday, 15 June 2018 15:00:31 EEST Marek Vasut wrote:
+>> >>>>>> On 06/15/2018 01:43 PM, Marek Vasut wrote:
 >
-> > Any yes, I agree this sounds good. I had a discussion on the U-Boot IRC
-> > about passing the memory configuration around and the result is
-> > basically the same -- pass a table from ATF to U-Boot. If there's
-> > already something, great.
+> [snip]
+>
+>> >>>>>>> Yet, I have to wonder if ATF doesn't already contain some sort of
+>> >>>>>>> standard SMC call to get memory topology. It surprises me that it
+>> >>>>>>> wouldn't.
+>> >>>>>>
+>> >>>>>> In fact, Laurent (CCed) was solving some similar issue with lossy
+>> >>>>>> decomp and I think this involved some passing of memory layout
+>> >>>>>> information from ATF to U-Boot too, or am I mistaken ?
+>> >>>>>
+>> >>>>> That's correct, ATF stores information about the memory layout at a
+>> >>>>> fixed address in system memory, and U-Boot can read it.
+>> >>>>
+>> >>>> Well, that sounds good ! Maybe we can avoid adding SMC call altogether
+>> >>>> then? :)
+>> >>>
+>> >>> I'd prefer that, yes.
+>> >>>
+>> >>> Let's not duplicate the mechanism used to pass FCNL information from
+>> >>> ATF to U- Boot, but instead create a data table format that can store
+>> >>> all the information we need, in an easily extensible way.
+>> >>>
+>> >>> To see how the mechanism is implemented for FCNL, search for 47FD7000
+>> >>> in the Renesas ATF sources
+>> >>> (git://github.com/renesas-rcar/arm-trusted-firmware.git).
+>> >>
+>> >> For everyone involved, can you explain what FCNL is ? ;-)
+>> >
+>> > FCNL is Frame Compression Near Lossless. It's a way to reduce memory
+>> > bandwidth by transparent compression and decompression of video frames.
+>> > Compression is handled by an IP core called FCP, and decompression is
+>> > handled by the DRAM controller. ATF programs the DRAM controller with
+>> > ranges of memory addresses that will be dynamically decompressed. The
+>> > registers containing those ranges are accessible in secure mode only, so
+>> > neither U-Boot nor Linux can read them. That's why ATF has to pass the
+>> > information to U-Boot, in order to add the ranges as reserved memory in
+>> > DT.
+>>
+>> Thanks for the clarification. I wonder how much of the split between
+>> ATF and "the rest" can be adjusted. It smells like just a software
+>> architecture policy, my gut feeling is that LIFEC can be programmed to
+>> adjust the assignment between secure side and "regular". At least it
+>> can do so for a wide range of bus masters. However if this is the case
+>> for FCNL remains to be seen.
+>>
+>> As a side note, for FCNL I personally would prefer a more dynamic
+>> solution where we manage physically contiguous ranges from Linux
+>> during run time instead of relying of statically setup windows.
+>
+> So would I, but whether we can be allowed to access those registers from Linux
+> isn't my decision :-/
 
-Pass a "table"? Or an FDT containing the /memory nodes?
-The latter allows for easier future extension.
+I suspect the physical ranges programmed in the DRAM controller for
+decompression purpose may be ranges in higher memory that are aliases
+to actual physical memory. So if we would create statically aliased
+ranges of the entire physical memory for decompression purpose then
+inside Linux we can simply do a translation to these aliases instead
+of actual physical memory at map/unmap time. This way you would get
+both statically setup tables in ATF and dynamic operation inside
+Linux.
 
-Gr{oetje,eeting}s,
+Lets discuss this more when we meet tomorrow.
 
-                        Geert
+Cheers,
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+/ magnus
