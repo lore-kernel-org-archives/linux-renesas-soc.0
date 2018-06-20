@@ -1,43 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:31369 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932230AbeFFG5B (ORCPT
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:37817 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750793AbeFTNCM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 02:57:01 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/4] arm64: dts: renesas: r8a77990 and ebisu: Enable USB2.0 host
-Date: Wed,  6 Jun 2018 15:56:07 +0900
-Message-Id: <1528268171-19276-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 20 Jun 2018 09:02:12 -0400
+Received: by mail-ua0-f195.google.com with SMTP id c2-v6so89333uae.4
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Jun 2018 06:02:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20180613151348.28697-1-horms+renesas@verge.net.au>
+In-Reply-To: <20180613151348.28697-1-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 20 Jun 2018 15:02:00 +0200
+Message-ID: <CAMuHMdWJ24iCA=YQdoE99+1aVw8LNw3hRAGGbET6qAJNt4=QoQ@mail.gmail.com>
+Subject: Re: [PATCH/RFT v2 1/2] arm64: dts: r8a77995: Add SCIF-{0, 1, 3, 4, 5}
+ device nodes
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set is based on renesas-drivers.git /
-renesas-drivers-2018-06-05-v4.17 tag.
+Hi Simon,
 
-About dt-bindings of "renesas,usb2-phy-r8a77990", I submitted a patch:
-https://patchwork.kernel.org/patch/10449723/
+On Wed, Jun 13, 2018 at 5:14 PM Simon Horman <horms+renesas@verge.net.au> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds the device nodes for SCIF-{0,1,3,4,5} serial ports,
+> incl. clocks and power domain.
 
-But, the phy-rcar-gen3-usb2 driver works on the board without the bindings
-because "renesas,rcar-gen3-usb2-phy" can bind the driver.
+While at it, perhaps you want to add DMA properties, too?
+The existing SCIF2 device node already has them.
 
-Also, for now, I don't try to add/enable USB2.0 peripheral on the board
-because the phy driver needs some modifications.
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> [simon: updated internal clock from S3D1 to S3D1C to match documentation]
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Yoshihiro Shimoda (4):
-  arm64: dts: renesas: r8a77990: add usb2_phy device node
-  arm64: dts: renesas: r8a77990: add USB2.0 host device nodes
-  arm64: dts: renesas: r8a77990: ebisu: enable usb2_phy0
-  arm64: dts: renesas: r8a77990: ebisu: enable USB2.0 host
+Thanks for the update!
 
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 20 ++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77990.dtsi      | 37 ++++++++++++++++++++++++++
- 2 files changed, 57 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-1.9.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
