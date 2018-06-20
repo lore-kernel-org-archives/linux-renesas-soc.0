@@ -1,43 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:59220 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754345AbeFTNx1 (ORCPT
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:35958 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754017AbeFTNft (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Jun 2018 09:53:27 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: dts: renesas: r8a77990: Remove non-existing STBE region
-Date: Wed, 20 Jun 2018 15:53:23 +0200
-Message-Id: <20180620135323.29225-1-geert+renesas@glider.be>
+        Wed, 20 Jun 2018 09:35:49 -0400
+Received: by mail-ua0-f195.google.com with SMTP id c23-v6so2151413uan.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Jun 2018 06:35:49 -0700 (PDT)
+MIME-Version: 1.0
+References: <152923212426.18394.1638836062311758848.sendpatchset@little-apple> <152923213334.18394.3204301521937895163.sendpatchset@little-apple>
+In-Reply-To: <152923213334.18394.3204301521937895163.sendpatchset@little-apple>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 20 Jun 2018 15:35:38 +0200
+Message-ID: <CAMuHMdVoAVit4+b_MQd0HrC=6259kax3_8t19mF=4EbFZAohrg@mail.gmail.com>
+Subject: Re: [PATCH v2 01/03] arm64: dts: renesas: r8a77965: Add IPMMU devices nodes
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car E3 does not have the Stream Buffer for EtherAVB-IF (STBE).
+On Sun, Jun 17, 2018 at 12:40 PM Magnus Damm <magnus.damm@gmail.com> wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> Add IPMMU device nodes for the R-Car M3-N SoC aka r8a77965.
+>
+> The r8a77965 IPMMU is quite similar to r8a7796 however VP0
+> has been added and PV1 has been removed. Also the IMSSTR
+> bit assignment has been reworked.
+>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Note that the RAVB driver does not use this region.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Fixes: 913a78b575c313b8 ("arm64: dts: renesas: r8a77990: Add EthernetAVB device nodes")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index f8004608c5954913..615a0d2edffc150f 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -213,7 +213,7 @@
- 		avb: ethernet@e6800000 {
- 			compatible = "renesas,etheravb-r8a77990",
- 				     "renesas,etheravb-rcar-gen3";
--			reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
-+			reg = <0 0xe6800000 0 0x800>;
- 			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
+                        Geert
+
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
