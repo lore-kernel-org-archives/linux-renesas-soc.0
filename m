@@ -1,146 +1,119 @@
-Return-Path: <u-boot-bounces@lists.denx.de>
-MIME-Version: 1.0
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:43764 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750831AbeFTE5m (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 20 Jun 2018 00:57:42 -0400
+Received: by mail-pg0-f65.google.com with SMTP id a14-v6so886859pgw.10
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Jun 2018 21:57:42 -0700 (PDT)
+Subject: Re: [RFC] ARM: rmobile: create DT memory nodes for R8A7795 3.0 and
+ newer
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        U-Boot Mailing List <u-boot@lists.denx.de>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        takuya.sakata.wz@bp.renesas.com
 References: <1529055605-29942-1-git-send-email-ulrich.hecht+renesas@gmail.com>
  <10848514.jCgBdBqkyy@avalon>
  <CAMuHMdVM2O0_ygAe=J-7yAGnANDh7ez4M8bst16B5CSe_Sj2Ow@mail.gmail.com>
- <6565802.4mR889inCT@avalon> <0982498d-6237-aff6-abbd-dd63970716e5@gmail.com>
-In-Reply-To: <0982498d-6237-aff6-abbd-dd63970716e5@gmail.com>
-From: Eugeniu Rosca <roscaeugeniu@gmail.com>
-Date: Thu, 28 Jun 2018 19:24:18 +0200
-Message-ID: <CAH3KO=0sUrewsyLf=zr61Qe86tQndby_Mxj=ciF789bBs1QabA@mail.gmail.com>
-To: marek.vasut@gmail.com
-Cc: takuya.sakata.wz@bp.renesas.com, magnus.damm@gmail.com,
- Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
- U-Boot Mailing List <u-boot@lists.denx.de>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- ulrich.hecht+renesas@gmail.com, Eugeniu Rosca <erosca@de.adit-jv.com>
-Subject: Re: [U-Boot] [RFC] ARM: rmobile: create DT memory nodes for R8A7795
- 3.0 and newer
-List-Unsubscribe: <https://lists.denx.de/options/u-boot>,
- <mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
-List-Archive: <http://lists.denx.de/pipermail/u-boot/>
-List-Post: <mailto:u-boot@lists.denx.de>
-List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
-List-Subscribe: <https://lists.denx.de/listinfo/u-boot>,
- <mailto:u-boot-request@lists.denx.de?subject=subscribe>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Errors-To: u-boot-bounces@lists.denx.de
-Sender: "U-Boot" <u-boot-bounces@lists.denx.de>
+ <6565802.4mR889inCT@avalon>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <0982498d-6237-aff6-abbd-dd63970716e5@gmail.com>
+Date: Wed, 20 Jun 2018 06:55:56 +0200
+MIME-Version: 1.0
+In-Reply-To: <6565802.4mR889inCT@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgTWFyZWssIEFsbCwKCkkgYW0gbG9va2luZyBmb3J3YXJkIGZvciB0aGUgc29sdXRpb24vYXBw
-cm9hY2ggeW91IGFyZSBnb2luZyB0byByZWFjaAppbiB0aGlzIHRocmVhZC4KQ3VycmVudGx5LCBp
-bnRlZ3JhdGluZyBSZW5lc2FzIFlvY3RvIHYzLjcuMCByZWxlYXNlIFsxXSwgSSBjYW4gc2VlCnRo
-YXQgdGhlIGluY3JlYXNlIG9mIFNvQy9TaVAgdmVyc2lvbnMgc3VwcG9ydGVkIGluIHRoaXMgcmVs
-ZWFzZQppbmNyZWFzZXMgdGhlIG51bWJlciBvZiBBVEYvVS1ib290IGJ1aWxkIHZhcmlhbnRzIGRy
-YW1hdGljYWxseS4KClJlbmVzYXMgVS1ib290IHN0YXJ0cyB0byByZWx5IG5vdCBvbmx5IG9uIGRl
-ZmNvbmZpZywgYnV0IGFsc28gb24KYnVpbGQtdGltZSBmbGFncyBwYXNzZWQgdmlhIFlvY3RvIHJl
-Y2lwZXMgKHNlZSB1c2FnZSBvZgpnZXRfdWJvb3RfY29uZmlnX29wdCBpbiBbMiwzXSkuIFRoaXMg
-ZG9lc24ndCBsb29rIHJpZ2h0IChJIGRvbid0IHNlZQpVLUJvb3QgS0NGTEFHUyBiZWluZyBhZGp1
-c3RlZCB0b28gb2Z0ZW4gaW4gbWFpbmxpbmUpLiBMYXRlc3QgUmVuZXNhcwpBVEYgYWxzbyBhZGRz
-IGEgYnVuY2ggb2YgbmV3IG1ha2UgZmxhZ3MsIGFsbCBiZWluZyByZWxhdGVkIHRvIFNpUCBEUkFN
-CmNvbmZpZ3VyYXRpb24sIHdoaWNoIG1lYW5zIGl0J3MgdmVyeSBlYXN5IHRvIHBpY2sgdGhlIHdy
-b25nIHNldHRpbmcgYXQKYnVpbGQtdGltZSBhbmQgdGhlbiBkZWFsIHdpdGggb2JzY3VyZSBpc3N1
-ZXMgYWZ0ZXJ3YXJkcyAoaG9wZWZ1bGx5IHRoZQp0YXJnZXQganVzdCBkb2Vzbid0IGJvb3QpIDoo
-CgpGV0lXLCB3aXRoIHJlZ2FyZCB0byBGRFQgc3VwcG9ydCBpbiBBVEYsIGl0IHNlZW1zIHRvIGJl
-IHRoZXJlIHN0YXJ0aW5nCndpdGggY29tbWl0IFs0XSBhbmQgdGhlcmUgYXJlIGFscmVhZHkgdXNl
-cnMvY2FsbGVycyBvZiBsaWJmZHQgQVBJcyBpbgp0aGUgdHJlZSBbNV0uClNvbWV0aGluZyBJIGFt
-IHdvbmRlcmluZyBhYm91dCBpcyB3aHkgbm90IGdldHRpbmcgdGhlIG1lbW9yeQpjb25maWd1cmF0
-aW9uIGluIEFURiBhdCBydW50aW1lPyBIYXZlbid0IERSQU0gdmVuZG9ycyB0aG91Z2h0IHRoaXMK
-aW5mb3JtYXRpb24gKG51bWJlci9zaXplIG9mIEREUiBiYW5rcykgd291bGQgYmUgdXNlZnVsIGFu
-ZCBzaG91bGQgYmUKZXhwb3NlZCBieSBIVyBhbmQgYWNjZXNzaWJsZSBieSBTVz8gQ3VycmVudGx5
-IFJlbmVzYXMgdGVsbHMgdGhlaXIKY3VzdG9tZXJzIHRoYXQgdGhlIGNvcnJlY3QgU2lQLXNwZWNp
-ZmljIEREUiBjb25maWd1cmF0aW9uIGhhcyB0byBiZQpoYXJkY29kZWQgZHVyaW5nIGJ1aWxkIHBy
-b2Nlc3MuIElmIGFueWJvZHkgaGFzIGFuIGV4cGxhbmF0aW9uIHdoeQpydW50aW1lIEREUiBkZXRl
-Y3Rpb24gaXMgbm90IHBvc3NpYmxlIGluIEFURiwgY291bGQgeW91IHBsZWFzZSBzaGFyZT8KCkJl
-c3QgcmVnYXJkcywKRXVnZW5pdS4KClsxXSBodHRwczovL2dpdGh1Yi5jb20vcmVuZXNhcy1yY2Fy
-L21ldGEtcmVuZXNhcy9yZWxlYXNlcy90YWcvUmVuZXNhcy1Zb2N0by12My43LjAKWzJdIGh0dHBz
-Oi8vZ2l0aHViLmNvbS9yZW5lc2FzLXJjYXIvbWV0YS1yZW5lc2FzL2Jsb2IvUmVuZXNhcy1Zb2N0
-by12My43LjAvbWV0YS1yY2FyLWdlbjMvaW5jbHVkZS91Ym9vdC1jb250cm9sLmluYwpbM10gaHR0
-cHM6Ly9naXRodWIuY29tL3JlbmVzYXMtcmNhci9tZXRhLXJlbmVzYXMvYmxvYi9SZW5lc2FzLVlv
-Y3RvLXYzLjcuMC9tZXRhLXJjYXItZ2VuMy9yZWNpcGVzLWJzcC91LWJvb3QvdS1ib290XzIwMTUu
-MDQuYmIKWzRdIGh0dHBzOi8vZ2l0aHViLmNvbS9BUk0tc29mdHdhcmUvYXJtLXRydXN0ZWQtZmly
-bXdhcmUvY29tbWl0LzkxMTc2YmM2MzYzZAooIkltcG9ydCBsaWJmZHQgdjEuNC4xIikKWzVdIGdp
-dCBncmVwIC1FbCAiZmR0X3xmZHR3XyIgLS0gIjpcISpsaWIvbGliZmR0LyoiICIqLmMiCmNvbW1v
-bi9mZHRfd3JhcHBlcnMuYwpwbGF0L2FybS9jb21tb24vYXJtX2R5bl9jZmdfaGVscGVycy5jCnBs
-YXQvYXJtL2Nzcy9zZ2kvc2dpX2ltYWdlX2xvYWQuYwpwbGF0L3FlbXUvZHQuYwpwbGF0L3FlbXUv
-cWVtdV9ibDJfc2V0dXAuYwpPbiBXZWQsIEp1biAyMCwgMjAxOCBhdCA2OjU4IEFNIE1hcmVrIFZh
-c3V0IDxtYXJlay52YXN1dEBnbWFpbC5jb20+IHdyb3RlOgo+Cj4gT24gMDYvMTkvMjAxOCAwOTox
-MSBBTSwgTGF1cmVudCBQaW5jaGFydCB3cm90ZToKPiA+IEhpIEdlZXJ0LAo+ID4KPiA+IE9uIFR1
-ZXNkYXksIDE5IEp1bmUgMjAxOCAwOTo1ODo1OSBFRVNUIEdlZXJ0IFV5dHRlcmhvZXZlbiB3cm90
-ZToKPiA+PiBPbiBUdWUsIEp1biAxOSwgMjAxOCBhdCA0OjE1IEFNIExhdXJlbnQgUGluY2hhcnQg
-d3JvdGU6Cj4gPj4+IE9uIFN1bmRheSwgMTcgSnVuZSAyMDE4IDAzOjA4OjAyIEVFU1QgTWFyZWsg
-VmFzdXQgd3JvdGU6Cj4gPj4+PiBPbiAwNi8xNi8yMDE4IDA1OjQ0IFBNLCBMYXVyZW50IFBpbmNo
-YXJ0IHdyb3RlOgo+ID4+Pj4+IE9uIFNhdHVyZGF5LCAxNiBKdW5lIDIwMTggMDI6NDI6MzAgRUVT
-VCBNYXJlayBWYXN1dCB3cm90ZToKPiA+Pj4+Pj4gT24gMDYvMTYvMjAxOCAwMToyMSBBTSwgTGF1
-cmVudCBQaW5jaGFydCB3cm90ZToKPiA+Pj4+Pj4+IE9uIEZyaWRheSwgMTUgSnVuZSAyMDE4IDE1
-OjAwOjMxIEVFU1QgTWFyZWsgVmFzdXQgd3JvdGU6Cj4gPj4+Pj4+Pj4gT24gMDYvMTUvMjAxOCAw
-MTo0MyBQTSwgTWFyZWsgVmFzdXQgd3JvdGU6Cj4gPgo+ID4gW3NuaXBdCj4gPgo+ID4+Pj4+Pj4+
-Pj4+IE9idmlvdXMgZGVzaWduIHF1ZXN0aW9uIGlzIC0tIHNpbmNlIHlvdSdyZSBhZGRpbmcgbmV3
-IFNNQyBjYWxsCj4gPj4+Pj4+Pj4+Pj4gYW55d2F5LCBjYW4ndCB0aGUgY2FsbCBqdXN0IHJldHVy
-biB0aGUgbWVtb3J5IGxheW91dCB0YWJsZQo+ID4+Pj4+Pj4+Pj4+IGl0c2VsZiwgc28gdGhhdCBp
-dCB3b24ndCBiZSBkdXBsaWNhdGVkIGJvdGggaW4gVS1Cb290IGFuZCBBVEYgPwo+ID4+Pj4+Pj4+
-Pj4KPiA+Pj4+Pj4+Pj4+IE15IGd1dCBmZWVsaW5nIHdhcyB0byBnbyB3aXRoIHRoZSBzbWFsbGVz
-dCBpbnRlcmZhY2UgcG9zc2libGUuCj4gPj4+Pj4+Pj4+Cj4gPj4+Pj4+Pj4+IEJ1dCB0aGlzIGRv
-ZXNuJ3Qgc2NhbGUuIFRoZSBBUEkgaGVyZSB1c2VzIHNvbWUgYWQtaG9jIGNvbnN0YW50cyB0bwo+
-ID4+Pj4+Pj4+PiBpZGVudGlmeSBtZW1vcnkgbGF5b3V0IHRhYmxlcyB3aGljaCBoYXZlIHRvIGJl
-IGVuY29kZWQgYm90aCBpbiBBVEYKPiA+Pj4+Pj4+Pj4gYW5kIFUtQm9vdCwgYm90aCBvZiB3aGlj
-aCBtdXN0IGJlIGtlcHQgaW4gc3luYy4KPiA+Pj4+Pj4+Pj4KPiA+Pj4+Pj4+Pj4gVGhlIEFURiBh
-bHJlYWR5IGhhcyB0aG9zZSBtZW1vcnkgbGF5b3V0IHRhYmxlcywgaXQncyBvbmx5IGEgbWF0dGVy
-Cj4gPj4+Pj4+Pj4+IG9mIHBhc3NpbmcgdGhlbSB0byBVLUJvb3QuIElmIHlvdSBkbyBqdXN0IHRo
-YXQsIHRoZSBhZC1ob2MKPiA+Pj4+Pj4+Pj4gY29uc3RhbnRzIGFuZCBlbmNvZGluZyBvZiB0YWJs
-ZXMgaW50byBVLUJvb3QgZ29lcyBhd2F5IGFuZCBpbiBmYWN0Cj4gPj4+Pj4+Pj4+IHNpbXBsaWZp
-ZXMgdGhlIGRlc2lnbi4KPiA+Pj4+Pj4+Pj4KPiA+Pj4+Pj4+Pj4gWWV0LCBJIGhhdmUgdG8gd29u
-ZGVyIGlmIEFURiBkb2Vzbid0IGFscmVhZHkgY29udGFpbiBzb21lIHNvcnQgb2YKPiA+Pj4+Pj4+
-Pj4gc3RhbmRhcmQgU01DIGNhbGwgdG8gZ2V0IG1lbW9yeSB0b3BvbG9neS4gSXQgc3VycHJpc2Vz
-IG1lIHRoYXQgaXQKPiA+Pj4+Pj4+Pj4gd291bGRuJ3QuCj4gPj4+Pj4+Pj4KPiA+Pj4+Pj4+PiBJ
-biBmYWN0LCBMYXVyZW50IChDQ2VkKSB3YXMgc29sdmluZyBzb21lIHNpbWlsYXIgaXNzdWUgd2l0
-aCBsb3NzeQo+ID4+Pj4+Pj4+IGRlY29tcCBhbmQgSSB0aGluayB0aGlzIGludm9sdmVkIHNvbWUg
-cGFzc2luZyBvZiBtZW1vcnkgbGF5b3V0Cj4gPj4+Pj4+Pj4gaW5mb3JtYXRpb24gZnJvbSBBVEYg
-dG8gVS1Cb290IHRvbywgb3IgYW0gSSBtaXN0YWtlbiA/Cj4gPj4+Pj4+Pgo+ID4+Pj4+Pj4gVGhh
-dCdzIGNvcnJlY3QsIEFURiBzdG9yZXMgaW5mb3JtYXRpb24gYWJvdXQgdGhlIG1lbW9yeSBsYXlv
-dXQgYXQgYQo+ID4+Pj4+Pj4gZml4ZWQgYWRkcmVzcyBpbiBzeXN0ZW0gbWVtb3J5LCBhbmQgVS1C
-b290IGNhbiByZWFkIGl0Lgo+ID4+Pj4+Pgo+ID4+Pj4+PiBXZWxsLCB0aGF0IHNvdW5kcyBnb29k
-ICEgTWF5YmUgd2UgY2FuIGF2b2lkIGFkZGluZyBTTUMgY2FsbAo+ID4+Pj4+PiBhbHRvZ2V0aGVy
-IHRoZW4/IDopCj4gPj4+Pj4KPiA+Pj4+PiBJJ2QgcHJlZmVyIHRoYXQsIHllcy4KPiA+Pj4+Pgo+
-ID4+Pj4+IExldCdzIG5vdCBkdXBsaWNhdGUgdGhlIG1lY2hhbmlzbSB1c2VkIHRvIHBhc3MgRkNO
-TCBpbmZvcm1hdGlvbiBmcm9tCj4gPj4+Pj4gQVRGIHRvIFUtIEJvb3QsIGJ1dCBpbnN0ZWFkIGNy
-ZWF0ZSBhIGRhdGEgdGFibGUgZm9ybWF0IHRoYXQgY2FuIHN0b3JlCj4gPj4+Pj4gYWxsIHRoZSBp
-bmZvcm1hdGlvbiB3ZSBuZWVkLCBpbiBhbiBlYXNpbHkgZXh0ZW5zaWJsZSB3YXkuCj4gPj4+Pj4K
-PiA+Pj4+PiBUbyBzZWUgaG93IHRoZSBtZWNoYW5pc20gaXMgaW1wbGVtZW50ZWQgZm9yIEZDTkws
-IHNlYXJjaCBmb3IgNDdGRDcwMDAKPiA+Pj4+PiBpbiB0aGUgUmVuZXNhcyBBVEYgc291cmNlcwo+
-ID4+Pj4+IChnaXQ6Ly9naXRodWIuY29tL3JlbmVzYXMtcmNhci9hcm0tdHJ1c3RlZC1maXJtd2Fy
-ZS5naXQpLgo+ID4+Pj4KPiA+Pj4+IEZvciBldmVyeW9uZSBpbnZvbHZlZCwgY2FuIHlvdSBleHBs
-YWluIHdoYXQgRkNOTCBpcyA/IDstKQo+ID4+Pgo+ID4+PiBGQ05MIGlzIEZyYW1lIENvbXByZXNz
-aW9uIE5lYXIgTG9zc2xlc3MuIEl0J3MgYSB3YXkgdG8gcmVkdWNlIG1lbW9yeQo+ID4+PiBiYW5k
-d2lkdGggYnkgdHJhbnNwYXJlbnQgY29tcHJlc3Npb24gYW5kIGRlY29tcHJlc3Npb24gb2Ygdmlk
-ZW8gZnJhbWVzLgo+ID4+PiBDb21wcmVzc2lvbiBpcyBoYW5kbGVkIGJ5IGFuIElQIGNvcmUgY2Fs
-bGVkIEZDUCwgYW5kIGRlY29tcHJlc3Npb24gaXMKPiA+Pj4gaGFuZGxlZCBieSB0aGUgRFJBTSBj
-b250cm9sbGVyLiBBVEYgcHJvZ3JhbXMgdGhlIERSQU0gY29udHJvbGxlciB3aXRoCj4gPj4+IHJh
-bmdlcyBvZiBtZW1vcnkgYWRkcmVzc2VzIHRoYXQgd2lsbCBiZSBkeW5hbWljYWxseSBkZWNvbXBy
-ZXNzZWQuIFRoZQo+ID4+PiByZWdpc3RlcnMgY29udGFpbmluZyB0aG9zZSByYW5nZXMgYXJlIGFj
-Y2Vzc2libGUgaW4gc2VjdXJlIG1vZGUgb25seSwgc28KPiA+Pj4gbmVpdGhlciBVLUJvb3Qgbm9y
-IExpbnV4IGNhbiByZWFkIHRoZW0uIFRoYXQncyB3aHkgQVRGIGhhcyB0byBwYXNzIHRoZQo+ID4+
-PiBpbmZvcm1hdGlvbiB0byBVLUJvb3QsIGluIG9yZGVyIHRvIGFkZCB0aGUgcmFuZ2VzIGFzIHJl
-c2VydmVkIG1lbW9yeSBpbgo+ID4+PiBEVC4KPiA+Pj4KPiA+Pj4+IEFueSB5ZXMsIEkgYWdyZWUg
-dGhpcyBzb3VuZHMgZ29vZC4gSSBoYWQgYSBkaXNjdXNzaW9uIG9uIHRoZSBVLUJvb3QgSVJDCj4g
-Pj4+PiBhYm91dCBwYXNzaW5nIHRoZSBtZW1vcnkgY29uZmlndXJhdGlvbiBhcm91bmQgYW5kIHRo
-ZSByZXN1bHQgaXMKPiA+Pj4+IGJhc2ljYWxseSB0aGUgc2FtZSAtLSBwYXNzIGEgdGFibGUgZnJv
-bSBBVEYgdG8gVS1Cb290LiBJZiB0aGVyZSdzCj4gPj4+PiBhbHJlYWR5IHNvbWV0aGluZywgZ3Jl
-YXQuCj4gPj4KPiA+PiBQYXNzIGEgInRhYmxlIj8gT3IgYW4gRkRUIGNvbnRhaW5pbmcgdGhlIC9t
-ZW1vcnkgbm9kZXM/Cj4gPj4gVGhlIGxhdHRlciBhbGxvd3MgZm9yIGVhc2llciBmdXR1cmUgZXh0
-ZW5zaW9uLgo+ID4KPiA+IEFURiBwYXNzZXMgYSB0YWJsZSB0byBVLUJvb3QsIGFuZCBVLUJvb3Qg
-dGhlbiB1cGRhdGVzIHRoZSBGRFQgYWNjb3JkaW5nbHkKPiA+IGJlZm9yZSBzdGFydGluZyBMaW51
-eC4KPgo+IEF0IHRoaXMgcG9pbnQsIFUtQm9vdCBkb2VzIG5vdCBwYXJzZSBhbnkgc3VjaCB0YWJs
-ZS4gSXQgY291bGQgYmUgc29tZQo+IGZvcmsgZG9lcyB0aGF0LCBidXQgbWFpbmxpbmUgZG9lcyBu
-b3QuIEJ1dCB0aGF0IGNvZGUgY291bGQgKGFuZCBwcm9iYWJseQo+IHNob3VsZCkgYmUgYWRkZWQu
-Cj4KPiBJIGRvbid0IHRoaW5rIEFURiBoYXMgRkRUIHN1cHBvcnQsIGJ1dCBJIG1pZ2h0IGJlIHdy
-b25nLiBBbmQgaWYgQVRGIGNhbgo+IHBhc3MgRFQgZnJhZ21lbnQgb3Igc29tZSBzaW1wbGUgRFQs
-IHRoYXQnZCBiZSBuZWF0Lgo+Cj4gLS0KPiBCZXN0IHJlZ2FyZHMsCj4gTWFyZWsgVmFzdXQKPiBf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IFUtQm9vdCBt
-YWlsaW5nIGxpc3QKPiBVLUJvb3RAbGlzdHMuZGVueC5kZQo+IGh0dHBzOi8vbGlzdHMuZGVueC5k
-ZS9saXN0aW5mby91LWJvb3QKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX18KVS1Cb290IG1haWxpbmcgbGlzdApVLUJvb3RAbGlzdHMuZGVueC5kZQpodHRwczov
-L2xpc3RzLmRlbnguZGUvbGlzdGluZm8vdS1ib290Cg==
+On 06/19/2018 09:11 AM, Laurent Pinchart wrote:
+> Hi Geert,
+> 
+> On Tuesday, 19 June 2018 09:58:59 EEST Geert Uytterhoeven wrote:
+>> On Tue, Jun 19, 2018 at 4:15 AM Laurent Pinchart wrote:
+>>> On Sunday, 17 June 2018 03:08:02 EEST Marek Vasut wrote:
+>>>> On 06/16/2018 05:44 PM, Laurent Pinchart wrote:
+>>>>> On Saturday, 16 June 2018 02:42:30 EEST Marek Vasut wrote:
+>>>>>> On 06/16/2018 01:21 AM, Laurent Pinchart wrote:
+>>>>>>> On Friday, 15 June 2018 15:00:31 EEST Marek Vasut wrote:
+>>>>>>>> On 06/15/2018 01:43 PM, Marek Vasut wrote:
+> 
+> [snip]
+> 
+>>>>>>>>>>> Obvious design question is -- since you're adding new SMC call
+>>>>>>>>>>> anyway, can't the call just return the memory layout table
+>>>>>>>>>>> itself, so that it won't be duplicated both in U-Boot and ATF ?
+>>>>>>>>>>
+>>>>>>>>>> My gut feeling was to go with the smallest interface possible.
+>>>>>>>>>
+>>>>>>>>> But this doesn't scale. The API here uses some ad-hoc constants to
+>>>>>>>>> identify memory layout tables which have to be encoded both in ATF
+>>>>>>>>> and U-Boot, both of which must be kept in sync.
+>>>>>>>>>
+>>>>>>>>> The ATF already has those memory layout tables, it's only a matter
+>>>>>>>>> of passing them to U-Boot. If you do just that, the ad-hoc
+>>>>>>>>> constants and encoding of tables into U-Boot goes away and in fact
+>>>>>>>>> simplifies the design.
+>>>>>>>>>
+>>>>>>>>> Yet, I have to wonder if ATF doesn't already contain some sort of
+>>>>>>>>> standard SMC call to get memory topology. It surprises me that it
+>>>>>>>>> wouldn't.
+>>>>>>>>
+>>>>>>>> In fact, Laurent (CCed) was solving some similar issue with lossy
+>>>>>>>> decomp and I think this involved some passing of memory layout
+>>>>>>>> information from ATF to U-Boot too, or am I mistaken ?
+>>>>>>>
+>>>>>>> That's correct, ATF stores information about the memory layout at a
+>>>>>>> fixed address in system memory, and U-Boot can read it.
+>>>>>>
+>>>>>> Well, that sounds good ! Maybe we can avoid adding SMC call
+>>>>>> altogether then? :)
+>>>>>
+>>>>> I'd prefer that, yes.
+>>>>>
+>>>>> Let's not duplicate the mechanism used to pass FCNL information from
+>>>>> ATF to U- Boot, but instead create a data table format that can store
+>>>>> all the information we need, in an easily extensible way.
+>>>>>
+>>>>> To see how the mechanism is implemented for FCNL, search for 47FD7000
+>>>>> in the Renesas ATF sources
+>>>>> (git://github.com/renesas-rcar/arm-trusted-firmware.git).
+>>>>
+>>>> For everyone involved, can you explain what FCNL is ? ;-)
+>>>
+>>> FCNL is Frame Compression Near Lossless. It's a way to reduce memory
+>>> bandwidth by transparent compression and decompression of video frames.
+>>> Compression is handled by an IP core called FCP, and decompression is
+>>> handled by the DRAM controller. ATF programs the DRAM controller with
+>>> ranges of memory addresses that will be dynamically decompressed. The
+>>> registers containing those ranges are accessible in secure mode only, so
+>>> neither U-Boot nor Linux can read them. That's why ATF has to pass the
+>>> information to U-Boot, in order to add the ranges as reserved memory in
+>>> DT.
+>>>
+>>>> Any yes, I agree this sounds good. I had a discussion on the U-Boot IRC
+>>>> about passing the memory configuration around and the result is
+>>>> basically the same -- pass a table from ATF to U-Boot. If there's
+>>>> already something, great.
+>>
+>> Pass a "table"? Or an FDT containing the /memory nodes?
+>> The latter allows for easier future extension.
+> 
+> ATF passes a table to U-Boot, and U-Boot then updates the FDT accordingly 
+> before starting Linux.
+
+At this point, U-Boot does not parse any such table. It could be some
+fork does that, but mainline does not. But that code could (and probably
+should) be added.
+
+I don't think ATF has FDT support, but I might be wrong. And if ATF can
+pass DT fragment or some simple DT, that'd be neat.
+
+-- 
+Best regards,
+Marek Vasut
