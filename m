@@ -1,129 +1,49 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: [PATCH v3 1/2] arm64: dts: renesas: r8a77980: add FCPVD/VSPD/DU/LVDS
- support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <95d0db34-713d-8206-00c2-ee9a42aab823@cogentembedded.com>
-Message-ID: <1611fe94-07dd-fc8b-e94f-143e1ed26a17@cogentembedded.com>
-Date: Wed, 13 Jun 2018 23:11:27 +0300
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:37242 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752856AbeFTNZc (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 20 Jun 2018 09:25:32 -0400
+Received: by mail-ua0-f195.google.com with SMTP id c2-v6so139067uae.4
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Jun 2018 06:25:32 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <95d0db34-713d-8206-00c2-ee9a42aab823@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+References: <152923212426.18394.1638836062311758848.sendpatchset@little-apple> <152923215125.18394.10152095394019866712.sendpatchset@little-apple>
+In-Reply-To: <152923215125.18394.10152095394019866712.sendpatchset@little-apple>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 20 Jun 2018 15:25:20 +0200
+Message-ID: <CAMuHMdVrRJYdVQOt7eJ7tjhOoiX9PvaMmfXCxoaQMHCJjan7Pw@mail.gmail.com>
+Subject: Re: [PATCH v2 03/03] arm64: dts: renesas: r8a77990: Add IPMMU devices nodes
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the interconnected FCPVD0, VSPD0, DU, and LVDS0 devices in the
-R8A77980 device tree...
+On Sun, Jun 17, 2018 at 12:41 PM Magnus Damm <magnus.damm@gmail.com> wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> Add IPMMU device nodes for the R-Car E3 SoC aka r8a77990.
+>
+> The r8a77990 IPMMU is similar to r8a77995. Power domains are
+> however different and the public documentation is still unclear.
+>
+> Based on preliminary information from the hardware team the R-Car E3
+> SoC comes with an IPMMU-VP0 device in an Always-on power domain and
+> the IPMMU-VC0 is placed as expected in the A3VC power domain.
+>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Based on the original (and large) patch by Vladimir Barinov.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Gr{oetje,eeting}s,
 
----
-Changes in version 3:
-- merged in the VSPD/DU/LVDS patches, renamed the patch, and updated the patch
-  description accordingly;
-- fixed the VSPD0's "reg" property.
+                        Geert
 
- arch/arm64/boot/dts/renesas/r8a77980.dtsi |   77 ++++++++++++++++++++++++++++++
- 1 file changed, 77 insertions(+)
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -653,6 +653,83 @@
- 			resets = <&cpg 408>;
- 		};
- 
-+		vspd0: vsp@fea20000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfea20000 0 0x5000>;
-+			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 623>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 623>;
-+			renesas,fcp = <&fcpvd0>;
-+		};
-+
-+		fcpvd0: fcp@fea27000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea27000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 603>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 603>;
-+		};
-+
-+		du: display@feb00000 {
-+			compatible = "renesas,du-r8a77980",
-+				     "renesas,du-r8a77970";
-+			reg = <0 0xfeb00000 0 0x80000>;
-+			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 724>;
-+			clock-names = "du.0";
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 724>;
-+			vsps = <&vspd0>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					du_out_rgb: endpoint {
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					du_out_lvds0: endpoint {
-+						remote-endpoint = <&lvds0_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		lvds0: lvds-encoder@feb90000 {
-+			compatible = "renesas,r8a77980-lvds";
-+			reg = <0 0xfeb90000 0 0x14>;
-+			clocks = <&cpg CPG_MOD 727>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 727>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					lvds0_in: endpoint {
-+						remote-endpoint =
-+							<&du_out_lvds0>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					lvds0_out: endpoint {
-+					};
-+				};
-+			};
-+		};
-+
- 		prr: chipid@fff00044 {
- 			compatible = "renesas,prr";
- 			reg = <0 0xfff00044 0 4>;
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
