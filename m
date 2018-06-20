@@ -1,46 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:44364 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750798AbeFUGzt (ORCPT
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:35733 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754740AbeFTTgQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Jun 2018 02:55:49 -0400
-Date: Thu, 21 Jun 2018 08:55:36 +0200
-From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Rob Herring <robh@kernel.org>,
-        Tanmay Inamdar <tinamdar@apm.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] pci: fix I/O space page leak
-Message-ID: <20180621085536.1e19ef4e@windsurf>
-In-Reply-To: <1ca6adde-a91e-84d0-c7dc-fd01bfd9edcc@cogentembedded.com>
+        Wed, 20 Jun 2018 15:36:16 -0400
+From: "Jingoo Han" <jingoohan1@gmail.com>
+To: "'Sergei Shtylyov'" <sergei.shtylyov@cogentembedded.com>,
+        "'Bjorn Helgaas'" <bhelgaas@google.com>,
+        <linux-pci@vger.kernel.org>,
+        "'Linus Walleij'" <linus.walleij@linaro.org>,
+        "'Joao Pinto'" <Joao.Pinto@synopsys.com>,
+        "'Lorenzo Pieralisi'" <lorenzo.pieralisi@arm.com>,
+        "'Thomas Petazzoni'" <thomas.petazzoni@free-electrons.com>,
+        "'Rob Herring'" <robh@kernel.org>,
+        "'Tanmay Inamdar'" <tinamdar@apm.com>,
+        "'Ryder Lee'" <ryder.lee@mediatek.com>
+Cc: "'Matthias Brugger'" <matthias.bgg@gmail.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-renesas-soc@vger.kernel.org>
 References: <1ca6adde-a91e-84d0-c7dc-fd01bfd9edcc@cogentembedded.com>
+In-Reply-To: <1ca6adde-a91e-84d0-c7dc-fd01bfd9edcc@cogentembedded.com>
+Subject: Re: [PATCH] pci: fix I/O space page leak
+Date: Wed, 20 Jun 2018 15:36:13 -0400
+Message-ID: <000001d408cd$f396c810$dac45830$@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-us
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-
-On Wed, 20 Jun 2018 20:51:37 +0300, Sergei Shtylyov wrote:
-> When testing the R-Car PCIe driver on the Condor board, I noticed that iff
-> I  left the PCIe PHY driver disabled, the kernel crashed  with this BUG:
-> 
+On Wednesday, June 20, 2018 1:52 PM, Sergei Shtylyov wrote:
+>=20
+> When testing the R-Car PCIe driver on the Condor board, I noticed that =
+iff
+> I  left the PCIe PHY driver disabled, the kernel crashed  with this =
+BUG:
+>=20
 > [    1.225819] kernel BUG at lib/ioremap.c:72!
 > [    1.230007] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
 > [    1.235496] Modules linked in:
-> [    1.238561] CPU: 0 PID: 39 Comm: kworker/0:1 Not tainted 4.17.0-dirty #1092
-> [    1.245526] Hardware name: Renesas Condor board based on r8a77980 (DT)
+> [    1.238561] CPU: 0 PID: 39 Comm: kworker/0:1 Not tainted =
+4.17.0-dirty
+> #1092
+> [    1.245526] Hardware name: Renesas Condor board based on r8a77980 =
+(DT)
 > [    1.252075] Workqueue: events deferred_probe_work_func
 > [    1.257220] pstate: 80000005 (Nzcv daif -PAN -UAO)
 > [    1.262024] pc : ioremap_page_range+0x370/0x3c8
@@ -56,12 +62,13 @@ On Wed, 20 Jun 2018 20:51:37 +0300, Sergei Shtylyov wrote:
 > [    1.311544] x15: 0000000000000000 x14: 0720072007200720
 > [    1.316862] x13: 0720072007200720 x12: 0720072007200720
 > [    1.322180] x11: 0720072007300730 x10: 00000000000000ae
-> [    1.327498] x9 : 0000000000000000 x8 : ffff7dffff000000                      
+> [    1.327498] x9 : 0000000000000000 x8 : ffff7dffff000000
 > [    1.332816] x7 : 0000000000000000 x6 : 0000000000000100
 > [    1.338134] x5 : 0000000000000000 x4 : 000000007b906000
 > [    1.343452] x3 : ffff80007c61a880 x2 : ffff7dfffeefffff
 > [    1.348770] x1 : 0000000040000000 x0 : 00e80000fe100f07
-> [    1.354090] Process kworker/0:1 (pid: 39, stack limit = 0x        (ptrval))  
+> [    1.354090] Process kworker/0:1 (pid: 39, stack limit =3D 0x
+> (ptrval))
 > [    1.361056] Call trace:
 > [    1.363504]  ioremap_page_range+0x370/0x3c8
 > [    1.367695]  pci_remap_iospace+0x7c/0xac
@@ -80,45 +87,272 @@ On Wed, 20 Jun 2018 20:51:37 +0300, Sergei Shtylyov wrote:
 > [    1.421522]  kthread+0x108/0x134
 > [    1.424755]  ret_from_fork+0x10/0x18
 > [    1.428334] Code: f9004ba2 54000080 aa0003fb 17ffff48 (d4210000)
-> 
+>=20
 > It turned out that pci_remap_iospace() wasn't undone when the driver's
-> probe failed, and since devm_phy_optional_get() returned -EPROBE_DEFER,
+> probe failed, and since devm_phy_optional_get() returned =
+-EPROBE_DEFER,
 > the probe was retried,  finally causing the BUG due to trying to remap
 > already remapped pages.
-> 
+>=20
 > The most feasible solution seems to introduce devm_pci_remap_iospace()
-> and call it instead of pci_remap_iospace(), so that the pages get unmapped
+> and call it instead of pci_remap_iospace(), so that the pages get =
+unmapped
 > automagically on any probe failure.
-> 
-> And  while fixing pci_parse_request_of_pci_ranges(), aslo fix the other
+>=20
+> And  while fixing pci_parse_request_of_pci_ranges(), aslo fix the =
+other
 > drivers that have probably copied the bad example...
-> 
-> Fixes: 4e64dbe226e7 ("PCI: generic: Expose pci_host_common_probe() for use by other drivers")
+>=20
+> Fixes: 4e64dbe226e7 ("PCI: generic: Expose pci_host_common_probe() for =
+use
+> by other drivers")
 > Fixes: cbce7900598c ("PCI: designware: Make driver arch-agnostic")
-> Fixes: 8c39d710363c ("PCI: aardvark: Add Aardvark PCI host controller driver")
-> Fixes: d3c68e0a7e34 ("PCI: faraday: Add Faraday Technology FTPCI100 PCI Host Bridge driver")
-> Fixes: 68a15eb7bd0c ("PCI: v3-semi: Add V3 Semiconductor PCI host driver")
-> Fixes: b7e78170efd4 ("PCI: versatile: Add DT-based ARM Versatile PB PCIe host driver")
+> Fixes: 8c39d710363c ("PCI: aardvark: Add Aardvark PCI host controller
+> driver")
+> Fixes: d3c68e0a7e34 ("PCI: faraday: Add Faraday Technology FTPCI100 =
+PCI
+> Host Bridge driver")
+> Fixes: 68a15eb7bd0c ("PCI: v3-semi: Add V3 Semiconductor PCI host =
+driver")
+> Fixes: b7e78170efd4 ("PCI: versatile: Add DT-based ARM Versatile PB =
+PCIe
+> host driver")
 > Fixes: 5f6b6ccdbe1c ("PCI: xgene: Add APM X-Gene PCIe driver")
-> Fixes: 637cfacae96f ("PCI: mediatek: Add MediaTek PCIe host controller support")
+> Fixes: 637cfacae96f ("PCI: mediatek: Add MediaTek PCIe host controller
+> support")
 > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 > Cc: stable@vger.kernel.org
-> 
+
+It looks good!
+For drivers/pci/controller/dwc/pcie-designware-host.c,
+Acked-by: Jingoo Han <jingoohan1@gmail.com>
+
+Best regards,
+Jingoo Han
+
+>=20
 > ---
-> The patch is against the 'master' branch of Bjorn Helgaas' 'pci.git' repo...
+> The patch is against the 'master' branch of Bjorn Helgaas' 'pci.git'
+> repo...
 > It  has only been tested with the R-Car PCIe driver...
-> 
+>=20
 >  drivers/pci/controller/dwc/pcie-designware-host.c |    3 +
 >  drivers/pci/controller/pci-aardvark.c             |    2 -
-
-For the Aardvark chunk:
-
-Reviewed-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-
-Thanks!
-
-Thomas Petazzoni
--- 
-Thomas Petazzoni, CTO, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+>  drivers/pci/controller/pci-ftpci100.c             |    2 -
+>  drivers/pci/controller/pci-v3-semi.c              |    2 -
+>  drivers/pci/controller/pci-versatile.c            |    2 -
+>  drivers/pci/controller/pci-xgene.c                |    2 -
+>  drivers/pci/controller/pcie-mediatek.c            |    2 -
+>  drivers/pci/of.c                                  |    2 -
+>  drivers/pci/pci.c                                 |   38 =
+++++++++++++++++++++++
+>  include/linux/pci.h                               |    2 +
+>  10 files changed, 49 insertions(+), 8 deletions(-)
+>=20
+> Index: pci/drivers/pci/controller/dwc/pcie-designware-host.c
+> =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- pci.orig/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ pci/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -363,7 +363,8 @@ int dw_pcie_host_init(struct pcie_port *
+>  	resource_list_for_each_entry_safe(win, tmp, &bridge->windows) {
+>  		switch (resource_type(win->res)) {
+>  		case IORESOURCE_IO:
+> -			ret =3D pci_remap_iospace(win->res, pp->io_base);
+> +			ret =3D devm_pci_remap_iospace(dev, win->res,
+> +						     pp->io_base);
+>  			if (ret) {
+>  				dev_warn(dev, "Error %d: failed to map
+> resource %pR\n",
+>  					 ret, win->res);
+> Index: pci/drivers/pci/controller/pci-aardvark.c
+> =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- pci.orig/drivers/pci/controller/pci-aardvark.c
+> +++ pci/drivers/pci/controller/pci-aardvark.c
+> @@ -849,7 +849,7 @@ static int advk_pcie_parse_request_of_pc
+>  					     0,	0xF8000000, 0,
+>  					     lower_32_bits(res->start),
+>  					     OB_PCIE_IO);
+> -			err =3D pci_remap_iospace(res, iobase);
+> +			err =3D devm_pci_remap_iospace(dev, res, iobase);
+>  			if (err) {
+>  				dev_warn(dev, "error %d: failed to map
+> resource %pR\n",
+>  					 err, res);
+> Index: pci/drivers/pci/controller/pci-ftpci100.c
+> =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- pci.orig/drivers/pci/controller/pci-ftpci100.c
+> +++ pci/drivers/pci/controller/pci-ftpci100.c
+> @@ -501,7 +501,7 @@ static int faraday_pci_probe(struct plat
+>  				dev_err(dev, "illegal IO mem size\n");
+>  				return -EINVAL;
+>  			}
+> -			ret =3D pci_remap_iospace(io, io_base);
+> +			ret =3D devm_pci_remap_iospace(dev, io, io_base);
+>  			if (ret) {
+>  				dev_warn(dev, "error %d: failed to map
+> resource %pR\n",
+>  					 ret, io);
+> Index: pci/drivers/pci/controller/pci-v3-semi.c
+> =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- pci.orig/drivers/pci/controller/pci-v3-semi.c
+> +++ pci/drivers/pci/controller/pci-v3-semi.c
+> @@ -537,7 +537,7 @@ static int v3_pci_setup_resource(struct
+>  		v3->io_bus_addr =3D io->start - win->offset;
+>  		dev_dbg(dev, "I/O window %pR, bus addr %pap\n",
+>  			io, &v3->io_bus_addr);
+> -		ret =3D pci_remap_iospace(io, io_base);
+> +		ret =3D devm_pci_remap_iospace(dev, io, io_base);
+>  		if (ret) {
+>  			dev_warn(dev,
+>  				 "error %d: failed to map resource %pR\n",
+> Index: pci/drivers/pci/controller/pci-versatile.c
+> =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- pci.orig/drivers/pci/controller/pci-versatile.c
+> +++ pci/drivers/pci/controller/pci-versatile.c
+> @@ -82,7 +82,7 @@ static int versatile_pci_parse_request_o
+>=20
+>  		switch (resource_type(res)) {
+>  		case IORESOURCE_IO:
+> -			err =3D pci_remap_iospace(res, iobase);
+> +			err =3D devm_pci_remap_iospace(dev, res, iobase);
+>  			if (err) {
+>  				dev_warn(dev, "error %d: failed to map
+> resource %pR\n",
+>  					 err, res);
+> Index: pci/drivers/pci/controller/pci-xgene.c
+> =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- pci.orig/drivers/pci/controller/pci-xgene.c
+> +++ pci/drivers/pci/controller/pci-xgene.c
+> @@ -423,7 +423,7 @@ static int xgene_pcie_map_ranges(struct
+>  		case IORESOURCE_IO:
+>  			xgene_pcie_setup_ob_reg(port, res, OMR3BARL, io_base,
+>  						res->start - window->offset);
+> -			ret =3D pci_remap_iospace(res, io_base);
+> +			ret =3D devm_pci_remap_iospace(dev, res, io_base);
+>  			if (ret < 0)
+>  				return ret;
+>  			break;
+> Index: pci/drivers/pci/controller/pcie-mediatek.c
+> =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- pci.orig/drivers/pci/controller/pcie-mediatek.c
+> +++ pci/drivers/pci/controller/pcie-mediatek.c
+> @@ -1109,7 +1109,7 @@ static int mtk_pcie_request_resources(st
+>  	if (err < 0)
+>  		return err;
+>=20
+> -	pci_remap_iospace(&pcie->pio, pcie->io.start);
+> +	devm_pci_remap_iospace(dev, &pcie->pio, pcie->io.start);
+>=20
+>  	return 0;
+>  }
+> Index: pci/drivers/pci/of.c
+> =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- pci.orig/drivers/pci/of.c
+> +++ pci/drivers/pci/of.c
+> @@ -612,7 +612,7 @@ int pci_parse_request_of_pci_ranges(stru
+>=20
+>  		switch (resource_type(res)) {
+>  		case IORESOURCE_IO:
+> -			err =3D pci_remap_iospace(res, iobase);
+> +			err =3D devm_pci_remap_iospace(dev, res, iobase);
+>  			if (err) {
+>  				dev_warn(dev, "error %d: failed to map
+> resource %pR\n",
+>  					 err, res);
+> Index: pci/drivers/pci/pci.c
+> =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- pci.orig/drivers/pci/pci.c
+> +++ pci/drivers/pci/pci.c
+> @@ -3579,6 +3579,44 @@ void pci_unmap_iospace(struct resource *
+>  }
+>  EXPORT_SYMBOL(pci_unmap_iospace);
+>=20
+> +static void devm_pci_unmap_iospace(struct device *dev, void *ptr)
+> +{
+> +	struct resource **res =3D ptr;
+> +
+> +	pci_unmap_iospace(*res);
+> +}
+> +
+> +/**
+> + * devm_pci_remap_iospace - Managed pci_remap_iospace()
+> + * @dev: Generic device to remap IO address for
+> + * @res: Resource describing the I/O space
+> + * @phys_addr: physical address of range to be mapped
+> + *
+> + * Managed pci_remap_iospace().  Map is automatically unmapped on =
+driver
+> + * detach.
+> + */
+> +int devm_pci_remap_iospace(struct device *dev, const struct resource =
+*res,
+> +			   phys_addr_t phys_addr)
+> +{
+> +	const struct resource **ptr;
+> +	int error;
+> +
+> +	ptr =3D devres_alloc(devm_pci_unmap_iospace, sizeof(*ptr),
+> GFP_KERNEL);
+> +	if (!ptr)
+> +		return -ENOMEM;
+> +
+> +	error =3D pci_remap_iospace(res, phys_addr);
+> +	if (error) {
+> +		devres_free(ptr);
+> +	} else	{
+> +		*ptr =3D res;
+> +		devres_add(dev, ptr);
+> +	}
+> +
+> +	return error;
+> +}
+> +EXPORT_SYMBOL(devm_pci_remap_iospace);
+> +
+>  /**
+>   * devm_pci_remap_cfgspace - Managed pci_remap_cfgspace()
+>   * @dev: Generic device to remap IO address for
+> Index: pci/include/linux/pci.h
+> =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- pci.orig/include/linux/pci.h
+> +++ pci/include/linux/pci.h
+> @@ -1240,6 +1240,8 @@ int pci_register_io_range(struct fwnode_
+>  unsigned long pci_address_to_pio(phys_addr_t addr);
+>  phys_addr_t pci_pio_to_address(unsigned long pio);
+>  int pci_remap_iospace(const struct resource *res, phys_addr_t =
+phys_addr);
+> +int devm_pci_remap_iospace(struct device *dev, const struct resource =
+*res,
+> +			   phys_addr_t phys_addr);
+>  void pci_unmap_iospace(struct resource *res);
+>  void __iomem *devm_pci_remap_cfgspace(struct device *dev,
+>  				      resource_size_t offset,
