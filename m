@@ -1,101 +1,60 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:41270 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751828AbeFEMqY (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Jun 2018 08:46:24 -0400
-Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
-        by ayla.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1fQBLy-0001ey-L4
-        for linux-renesas-soc@vger.kernel.org; Tue, 05 Jun 2018 14:46:22 +0200
-Received: from geert by ramsan with local (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1fQBLy-0005b4-Jf
-        for linux-renesas-soc@vger.kernel.org; Tue, 05 Jun 2018 14:46:22 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2018-06-05-v4.17
-Date: Tue,  5 Jun 2018 14:46:22 +0200
-Message-Id: <1528202782-21475-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 20 Jun 2018 10:50:09 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 0/2] Add R8A77980/Condor PCIe support
+Message-ID: <20180620085009.xvd6todrfss6zazd@verge.net.au>
+References: <b37d458c-071a-833a-2057-be8a07c880be@cogentembedded.com>
+ <20180618093623.s33bkiptazxem463@verge.net.au>
+ <cfa599bd-d244-0032-490b-553f7870d07c@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cfa599bd-d244-0032-490b-553f7870d07c@cogentembedded.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I have pushed renesas-drivers-2018-06-05-v4.17 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+On Mon, Jun 18, 2018 at 07:16:47PM +0300, Sergei Shtylyov wrote:
+> On 06/18/2018 12:36 PM, Simon Horman wrote:
+> 
+> >> Here's the set of 2 patches against Simon Horman's 'renesas.git' repo's
+> >> 'renesas-devel-20180614v2-v4.17' tag. We're adding the R8A77980 PCIe related
+> >> device nodes and then enable PCIe on the Condor board. These patches depend
+> >> on the R8A77980 PCIe PHY driver support in order to work properly. Note that
+> >> in case the PCIe PHY driver is not enabled, the kernel will BUG() due to I/O
+> >> space page leak in the PCIe driver...
+> > 
+> > Is that problem specific to the presence of PCIe nodes for
+> > condor/r8a77980
+> 
+>    The nodes are safe unless they are enabled, so the Condor patch may be
+> deferred untl I fix the PCI code.
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging (a) the for-next branches
-of various subsystem trees and (b) branches with driver code submitted
-or planned for submission to maintainers into the development branch of
-Simon Horman's renesas.git tree.
+Understood. I would expect that given this is a but a fix
+would be backported to -stable in due course. But I agree its
+best to be cautious here.
 
-Today's version is based on renesas-devel-20180604-v4.17.
-
-Included branches with driver code:
-  - clk-renesas
-  - sh-pfc
-  - topic/bd9571-ddr-backup-mode-driver-v3
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/ipmmu-driver-v6
-  - git://linuxtv.org/pinchartl/media.git#drm-du-iommu-v1-20171115
-  - git://git.ragnatech.se/linux#for-renesas-drivers
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#tags/vsp1/du/interlaced/v4.5
-
-Included fixes:
-  - [LOCAL] arm64: defconfig: Update renesas_defconfig
-
-Included subsystem trees (the last four are due to an issue with Mark
-Brown's for-next branches):
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://people.freedesktop.org/~airlied/linux#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/media_tree.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
-  - git://git.infradead.org/users/vkoul/slave-dma.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
-  - git://github.com/bzolnier/linux.git#fbdev-for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#/git.kernel.org/pub/scm/linux/kernel/git/broonie/spi spi-v4.18
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#/git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git regmap-v4.18
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#a9ac77cd2b0ee009
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#7a5421d2f6c16eab
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+> > condor/r8a77980 or is it also true of other (R-Car) boards where
+> > PCIe is enabled?
+> 
+>    The leak happens every time the driver fails to probe later than
+> pci_remap_iospace() is called but the BUG_ON() is only triggered by rhe 2nd try
+> with EPROBE_DEFER returned previously.
+> 
+> > Regardless, it sounds like these patches expose a kernel bug.
+> > Is it being fixed?
+> 
+>    I'm working on a fix (which embraces several PCI drivers)...
+> 
+> >> [1/2] arm64: dts: renesas: r8a77980: add PCIe support
+> >> [2/2] arm64: dts: renesas: condor: add PCIe support
+> 
+> WBR, Sergei
+> 
