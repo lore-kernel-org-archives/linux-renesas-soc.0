@@ -1,159 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:51815 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753218AbeFYIaj (ORCPT
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:40778 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751166AbeFTNow (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jun 2018 04:30:39 -0400
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        Carlo Caione <carlo@endlessm.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v6 2/3] arm: shmobile: Add the R9A06G032 SMP enabler driver
-Date: Mon, 25 Jun 2018 09:25:05 +0100
-Message-Id: <1529915110-5867-3-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1529915110-5867-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1529915110-5867-1-git-send-email-michel.pollet@bp.renesas.com>
+        Wed, 20 Jun 2018 09:44:52 -0400
+Received: by mail-vk0-f68.google.com with SMTP id o71-v6so1965114vke.7
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Jun 2018 06:44:52 -0700 (PDT)
+MIME-Version: 1.0
+References: <152923212426.18394.1638836062311758848.sendpatchset@little-apple> <152923214214.18394.2028588895827362308.sendpatchset@little-apple>
+In-Reply-To: <152923214214.18394.2028588895827362308.sendpatchset@little-apple>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 20 Jun 2018 15:44:40 +0200
+Message-ID: <CAMuHMdWw8Gz-kkE3LbtaOBepiD5FRp-jEr9+HFV4c5zZLtVtww@mail.gmail.com>
+Subject: Re: [PATCH v2 02/03] arm64: dts: renesas: r8a77980: Add IPMMU devices nodes
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas R9A06G032 second CA7 is parked in a ROM pen at boot time, it
-requires a special enable method to get it started.
+Hi Magnus,
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Thanks for your patch!
+
+On Sun, Jun 17, 2018 at 12:41 PM Magnus Damm <magnus.damm@gmail.com> wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> Add IPMMU device nodes for the R-Car V3H SoC aka r8a77980.
+>
+> The r8a77980 IPMMU is quite similar to r8a77970 however VC0
+> has been added. The IMSSTR bit assignment has also been
+
+... VC0, VIP0, and VIP1 have been added.
+
+> reworked. Power domains are also quite different however the
+> the documentation is rather unclear about this topic.
+>
+> Until we know better VC0 gets assigned to R8A77980_PD_ALWAYS_ON.
+>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+
+>  Changes since V1:
+>  - Added ipmmu_vip0 and ipmmu_vip1 from 1.00 data sheet
+>  - Interrupt bit configuration based on 1.00 data sheet
+
+... which lacks the bits for VIP0 and VIP1, sigh...
+
+>  - Updated order of DT nodes per request by Simon
+
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/mach-shmobile/Makefile        |  1 +
- arch/arm/mach-shmobile/smp-r9a06g032.c | 96 ++++++++++++++++++++++++++++++++++
- 2 files changed, 97 insertions(+)
- create mode 100644 arch/arm/mach-shmobile/smp-r9a06g032.c
 
-diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
-index 05ba728..d24d9c9 100644
---- a/arch/arm/mach-shmobile/Makefile
-+++ b/arch/arm/mach-shmobile/Makefile
-@@ -30,6 +30,7 @@ obj-$(CONFIG_ARCH_R8A7793)	+= regulator-quirk-rcar-gen2.o
- smp-y				:= $(cpu-y)
- smp-$(CONFIG_ARCH_SH73A0)	+= smp-sh73a0.o headsmp-scu.o platsmp-scu.o
- smp-$(CONFIG_ARCH_R8A7779)	+= smp-r8a7779.o headsmp-scu.o platsmp-scu.o
-+smp-$(CONFIG_ARCH_R9A06G032)	+= smp-r9a06g032.o
- smp-$(CONFIG_ARCH_EMEV2)	+= smp-emev2.o headsmp-scu.o platsmp-scu.o
- 
- # PM objects
-diff --git a/arch/arm/mach-shmobile/smp-r9a06g032.c b/arch/arm/mach-shmobile/smp-r9a06g032.c
-new file mode 100644
-index 0000000..a1926e8
---- /dev/null
-+++ b/arch/arm/mach-shmobile/smp-r9a06g032.c
-@@ -0,0 +1,96 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * R9A06G032 Second CA7 enabler.
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
-+ * Derived from actions,s500-smp
-+ */
-+
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/smp.h>
-+
-+/*
-+ * The second CPU is parked in ROM at boot time. It requires waking it after
-+ * writing an address into the BOOTADDR register of sysctrl.
-+ *
-+ * So the default value of the "cpu-release-addr" corresponds to BOOTADDR...
-+ *
-+ * *However* the BOOTADDR register is not available when the kernel
-+ * starts in NONSEC mode.
-+ *
-+ * So for NONSEC mode, the bootloader re-parks the second CPU into a pen
-+ * in SRAM, and changes the "cpu-release-addr" of linux's DT to a SRAM address,
-+ * which is not restricted.
-+ */
-+
-+static void __iomem *cpu_bootaddr;
-+
-+static DEFINE_SPINLOCK(cpu_lock);
-+
-+static int
-+r9a06g032_smp_boot_secondary(unsigned int cpu,
-+			     struct task_struct *idle)
-+{
-+	if (!cpu_bootaddr)
-+		return -ENODEV;
-+
-+	spin_lock(&cpu_lock);
-+
-+	writel(__pa_symbol(secondary_startup), cpu_bootaddr);
-+	arch_send_wakeup_ipi_mask(cpumask_of(cpu));
-+
-+	spin_unlock(&cpu_lock);
-+
-+	return 0;
-+}
-+
-+static void __init r9a06g032_smp_prepare_cpus(unsigned int max_cpus)
-+{
-+	struct device_node *dn;
-+	int ret = -EINVAL, dns;
-+	u32 bootaddr;
-+
-+	dn = of_get_cpu_node(1, NULL);
-+	if (!dn) {
-+		pr_err("CPU#1: missing device tree node\n");
-+		return;
-+	}
-+	/*
-+	 * Determine the address from which the CPU is polling.
-+	 * The bootloader *does* change this property.
-+	 * Note: The property can be either 64 or 32 bits, so handle both cases
-+	 */
-+	if (of_find_property(dn, "cpu-release-addr", &dns)) {
-+		if (dns == sizeof(u64)) {
-+			u64 temp;
-+
-+			ret = of_property_read_u64(dn,
-+						   "cpu-release-addr", &temp);
-+			bootaddr = temp;
-+		} else {
-+			ret = of_property_read_u32(dn,
-+						   "cpu-release-addr",
-+						   &bootaddr);
-+		}
-+	}
-+	of_node_put(dn);
-+	if (ret) {
-+		pr_err("CPU#1: invalid cpu-release-addr property\n");
-+		return;
-+	}
-+	pr_info("CPU#1: cpu-release-addr %08x\n", bootaddr);
-+
-+	cpu_bootaddr = ioremap(bootaddr, sizeof(bootaddr));
-+}
-+
-+static const struct smp_operations r9a06g032_smp_ops __initconst = {
-+	.smp_prepare_cpus = r9a06g032_smp_prepare_cpus,
-+	.smp_boot_secondary = r9a06g032_smp_boot_secondary,
-+};
-+
-+CPU_METHOD_OF_DECLARE(r9a06g032_smp,
-+		      "renesas,r9a06g032-smp", &r9a06g032_smp_ops);
--- 
-2.7.4
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
