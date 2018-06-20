@@ -1,53 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:7827 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753305AbeF2KCr (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56611 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752838AbeFTJOV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Jun 2018 06:02:47 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org
-Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 2/2] mmc: renesas_sdhi_internal_dmac: Cannot clear the RX_IN_USE in abort
-Date: Fri, 29 Jun 2018 19:01:45 +0900
-Message-Id: <1530266505-19953-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1530266505-19953-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1530266505-19953-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 20 Jun 2018 05:14:21 -0400
+Date: Wed, 20 Jun 2018 11:14:17 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 00/03] arm64: dts: renesas: Add IPMMU device nodes V2
+Message-ID: <20180620091416.s4vdg5tgkl3mnoxd@verge.net.au>
+References: <152923212426.18394.1638836062311758848.sendpatchset@little-apple>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152923212426.18394.1638836062311758848.sendpatchset@little-apple>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch is fixes an issue that the SDHI_INTERNAL_DMAC_RX_IN_USE
-flag cannot be cleared because tmio_mmc_core sets the host->data
-to NULL before the tmio_mmc_core calls tmio_mmc_abort_dma().
+On Sun, Jun 17, 2018 at 07:42:04PM +0900, Magnus Damm wrote:
+> arm64: dts: renesas: Add IPMMU device nodes V2
+> 
+> [PATCH v2 01/03] arm64: dts: renesas: r8a77965: Add IPMMU devices nodes
+> [PATCH v2 02/03] arm64: dts: renesas: r8a77980: Add IPMMU devices nodes
+> [PATCH v2 03/03] arm64: dts: renesas: r8a77990: Add IPMMU devices nodes
+> 
+> This series is the second attempt to add IPMMU device nodes to R-Car M3-N,
+> R-Car V3H and R-Car E3 SoCs.
+> 
+> The IPMMU DT binding changes are not yet merged upstream however they
+> have been documented by the following patches:
+> 
+> [PATCH] iommu/ipmmu-vmsa: Document R-Car M3-N IPMMU DT bindings 
+> [PATCH] iommu/ipmmu-vmsa: Document R-Car V3H and E3 IPMMU DT bindings
+> 
+> Please see each individual patch for list of changes.
 
-So, this patch clears the SDHI_INTERNAL_DMAC_RX_IN_USE in
-the renesas_sdhi_internal_dmac_abort_dma() anyway. This doesn't
-cause any side effects.
+Hi Magnus,
 
-Fixes: 0cbc94daa554 ("mmc: renesas_sdhi_internal_dmac: limit DMA RX for old SoCs")
-Cc: <stable@vger.kernel.org> # v4.17+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index d676a20..d032bd6 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -139,8 +139,7 @@
- 	renesas_sdhi_internal_dmac_dm_write(host, DM_CM_RST,
- 					    RST_RESERVED_BITS | val);
- 
--	if (host->data && host->data->flags & MMC_DATA_READ)
--		clear_bit(SDHI_INTERNAL_DMAC_RX_IN_USE, &global_flags);
-+	clear_bit(SDHI_INTERNAL_DMAC_RX_IN_USE, &global_flags);
- 
- 	renesas_sdhi_internal_dmac_enable_dma(host, true);
- }
--- 
-1.9.1
+as per my comment on v1, did you consider merging these patches into one
+patch. Olof has asked that we consider such consolidation.
