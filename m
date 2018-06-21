@@ -1,21 +1,14 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:45199 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751869AbeFZHgN (ORCPT
+Received: from mail.bootlin.com ([62.4.15.54]:44364 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750798AbeFUGzt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Jun 2018 03:36:13 -0400
-Received: by mail-io0-f196.google.com with SMTP id l25-v6so14992666ioh.12
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Jun 2018 00:36:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <1ca6adde-a91e-84d0-c7dc-fd01bfd9edcc@cogentembedded.com>
-In-Reply-To: <1ca6adde-a91e-84d0-c7dc-fd01bfd9edcc@cogentembedded.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 26 Jun 2018 09:36:01 +0200
-Message-ID: <CACRpkdbfonW6xyjTpBvQrFfDg6C8O_EW_Xg+wYgVs8pTh_T7Ww@mail.gmail.com>
-Subject: Re: [PATCH] pci: fix I/O space page leak
+        Thu, 21 Jun 2018 02:55:49 -0400
+Date: Thu, 21 Jun 2018 08:55:36 +0200
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
         Jingoo Han <jingoohan1@gmail.com>,
         Joao Pinto <Joao.Pinto@synopsys.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
@@ -24,20 +17,25 @@ Cc: Bjorn Helgaas <bhelgaas@google.com>,
         Tanmay Inamdar <tinamdar@apm.com>,
         Ryder Lee <ryder.lee@mediatek.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support"
-        <linux-mediatek@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] pci: fix I/O space page leak
+Message-ID: <20180621085536.1e19ef4e@windsurf>
+In-Reply-To: <1ca6adde-a91e-84d0-c7dc-fd01bfd9edcc@cogentembedded.com>
+References: <1ca6adde-a91e-84d0-c7dc-fd01bfd9edcc@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jun 20, 2018 at 7:51 PM Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
+Hello,
 
+On Wed, 20 Jun 2018 20:51:37 +0300, Sergei Shtylyov wrote:
 > When testing the R-Car PCIe driver on the Condor board, I noticed that iff
 > I  left the PCIe PHY driver disabled, the kernel crashed  with this BUG:
->
+> 
 > [    1.225819] kernel BUG at lib/ioremap.c:72!
 > [    1.230007] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
 > [    1.235496] Modules linked in:
@@ -58,12 +56,12 @@ On Wed, Jun 20, 2018 at 7:51 PM Sergei Shtylyov
 > [    1.311544] x15: 0000000000000000 x14: 0720072007200720
 > [    1.316862] x13: 0720072007200720 x12: 0720072007200720
 > [    1.322180] x11: 0720072007300730 x10: 00000000000000ae
-> [    1.327498] x9 : 0000000000000000 x8 : ffff7dffff000000
+> [    1.327498] x9 : 0000000000000000 x8 : ffff7dffff000000                      
 > [    1.332816] x7 : 0000000000000000 x6 : 0000000000000100
 > [    1.338134] x5 : 0000000000000000 x4 : 000000007b906000
 > [    1.343452] x3 : ffff80007c61a880 x2 : ffff7dfffeefffff
 > [    1.348770] x1 : 0000000040000000 x0 : 00e80000fe100f07
-> [    1.354090] Process kworker/0:1 (pid: 39, stack limit = 0x        (ptrval))
+> [    1.354090] Process kworker/0:1 (pid: 39, stack limit = 0x        (ptrval))  
 > [    1.361056] Call trace:
 > [    1.363504]  ioremap_page_range+0x370/0x3c8
 > [    1.367695]  pci_remap_iospace+0x7c/0xac
@@ -82,19 +80,19 @@ On Wed, Jun 20, 2018 at 7:51 PM Sergei Shtylyov
 > [    1.421522]  kthread+0x108/0x134
 > [    1.424755]  ret_from_fork+0x10/0x18
 > [    1.428334] Code: f9004ba2 54000080 aa0003fb 17ffff48 (d4210000)
->
+> 
 > It turned out that pci_remap_iospace() wasn't undone when the driver's
 > probe failed, and since devm_phy_optional_get() returned -EPROBE_DEFER,
 > the probe was retried,  finally causing the BUG due to trying to remap
 > already remapped pages.
->
+> 
 > The most feasible solution seems to introduce devm_pci_remap_iospace()
 > and call it instead of pci_remap_iospace(), so that the pages get unmapped
 > automagically on any probe failure.
->
+> 
 > And  while fixing pci_parse_request_of_pci_ranges(), aslo fix the other
 > drivers that have probably copied the bad example...
->
+> 
 > Fixes: 4e64dbe226e7 ("PCI: generic: Expose pci_host_common_probe() for use by other drivers")
 > Fixes: cbce7900598c ("PCI: designware: Make driver arch-agnostic")
 > Fixes: 8c39d710363c ("PCI: aardvark: Add Aardvark PCI host controller driver")
@@ -105,10 +103,22 @@ On Wed, Jun 20, 2018 at 7:51 PM Sergei Shtylyov
 > Fixes: 637cfacae96f ("PCI: mediatek: Add MediaTek PCIe host controller support")
 > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 > Cc: stable@vger.kernel.org
+> 
+> ---
+> The patch is against the 'master' branch of Bjorn Helgaas' 'pci.git' repo...
+> It  has only been tested with the R-Car PCIe driver...
+> 
+>  drivers/pci/controller/dwc/pcie-designware-host.c |    3 +
+>  drivers/pci/controller/pci-aardvark.c             |    2 -
 
-Nice, clean and thorough fix!
+For the Aardvark chunk:
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 
-Yours,
-Linus Walleij
+Thanks!
+
+Thomas Petazzoni
+-- 
+Thomas Petazzoni, CTO, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
