@@ -1,85 +1,74 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:33218 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751266AbeFVN3m (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 22 Jun 2018 09:29:42 -0400
+MIME-Version: 1.0
+References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com> <1528973829-25493-6-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1528973829-25493-6-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 22 Jun 2018 15:29:30 +0200
+Message-ID: <CAMuHMdUin=CjcWvR=nCm9vN-8VWaNXbFt+3k_MUEOmqpKoe2mA@mail.gmail.com>
+Subject: Re: [PATCH v9 5/5] clk: renesas: Renesas R9A06G032 clock driver
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] arm64: dts: renesas: salvator-common: Add HSCIF1 device support
-Date: Tue, 19 Jun 2018 19:14:01 +0200
-Message-Id: <20180619171401.19489-1-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Hi Michel,
 
-This patch adds pin control for HSCIF1, and supports connection with
-Debug Serial-1 (CN26) on Salvator boards.
+On Thu, Jun 14, 2018 at 1:03 PM Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> This provides a clock driver for the Renesas R09A06G032.
+> This uses a structure derived from both the RCAR gen2 driver as well as
+> the renesas-cpg-mssr driver.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-SCIF1 and HSCIF1 are sharing the pins connected to Debug Serial-1 (CN26)
-on Salvator boards, and it is necessary to ensure that either SCIF1 or
-HSCIF1 is enabled, not both.
+Thanks for your patch!
 
-As for the default of this DeviceTree, SCIF1 is connected.
+> --- /dev/null
+> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
 
-Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[geert: Add missing "uart-has-rtscts"]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Drop RFC state,
-  - Reword.
----
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+> +static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
+> +{
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index d9de075c91df3a06..82623b8f7c2657d8 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -353,6 +353,15 @@
- 	clock-frequency = <32768>;
- };
- 
-+&hscif1 {
-+	pinctrl-0 = <&hscif1_pins>;
-+	pinctrl-names = "default";
-+
-+	uart-has-rtscts;
-+	/* Please only enable hscif1 or scif1 */
-+	/* status = "okay"; */
-+};
-+
- &hsusb {
- 	dr_mode = "otg";
- 	status = "okay";
-@@ -558,6 +567,11 @@
- 		function = "du";
- 	};
- 
-+	hscif1_pins: hscif1 {
-+		groups = "hscif1_data_a", "hscif1_ctrl_a";
-+		function = "hscif1";
-+	};
-+
- 	i2c2_pins: i2c2 {
- 		groups = "i2c2_a";
- 		function = "i2c2";
-@@ -728,6 +742,7 @@
- 	pinctrl-names = "default";
- 
- 	uart-has-rtscts;
-+	/* Please only enable hscif1 or scif1 */
- 	status = "okay";
- };
- 
+[...]
+
+> +       error = of_clk_add_provider(np, of_clk_src_onecell_get, &clocks->data);
+> +       if (error)
+> +               return error;
+> +
+> +       error = devm_add_action_or_reset(
+> +                       dev, r9a06g032_clocks_del_clk_provider, np);
+> +
+> +       return error;
+
+This could just be "return devm_add_action_or_reset(...);".
+
+Queuing in clk-renesas-for-v4.19 with the above small change.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
