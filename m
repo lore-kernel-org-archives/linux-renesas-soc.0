@@ -1,244 +1,149 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:34032 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752260AbeFFKAY (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43466 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751325AbeFVNvf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 06:00:24 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 03/14] mfd: da9063: Use regmap_reg_range
-Date: Wed,  6 Jun 2018 11:59:52 +0200
-Message-Id: <20180606100003.17067-3-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
-References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+        Fri, 22 Jun 2018 09:51:35 -0400
+Date: Fri, 22 Jun 2018 15:51:30 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: Re: [PATCH v2 1/2] arm64: dts: r8a77995: Add MSIOF device nodes
+Message-ID: <20180622135129.xeelks4zmbnbl7ff@verge.net.au>
+References: <1529496081-10571-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <CAMuHMdX=g7xq5N72cfZ8+_m+-MgmoavadaFzNq+j5EHpQ+k+=Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdX=g7xq5N72cfZ8+_m+-MgmoavadaFzNq+j5EHpQ+k+=Q@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Convert the regmap_range tables to use regmap_reg_range() macro.
+On Wed, Jun 20, 2018 at 02:51:47PM +0200, Geert Uytterhoeven wrote:
+> Hi Ulrich,
+> 
+> On Wed, Jun 20, 2018 at 2:01 PM Ulrich Hecht
+> <ulrich.hecht+renesas@gmail.com> wrote:
+> > From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+> >
+> > This patch adds MSIOF device nodes for the R8A77995 SoC.
+> >
+> > Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+> > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> > [uli: remove unimplemented ref clock, clock-names]
+> > Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> 
+> Thanks for the update!
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> > --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> > @@ -798,6 +798,68 @@
+> >                         compatible = "renesas,prr";
+> >                         reg = <0 0xfff00044 0 4>;
+> >                 };
+> > +
+> > +               msiof0: spi@e6e90000 {
+> 
+> To preserve sort order, the msiof nodes should be inserted in between the SCIF
+> and VIN nodes.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
----
-V5: New patch
----
- drivers/mfd/da9063-i2c.c | 174 ++++++++++++-----------------------------------
- 1 file changed, 42 insertions(+), 132 deletions(-)
+Thanks, I have made that change and queued-up the following:
 
-diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
-index 29456e807ed4..e9797153bc19 100644
---- a/drivers/mfd/da9063-i2c.c
-+++ b/drivers/mfd/da9063-i2c.c
-@@ -29,78 +29,33 @@
- #include <linux/regulator/of_regulator.h>
+From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Subject: [PATCH] arm64: dts: r8a77995: Add MSIOF device nodes
+
+This patch adds MSIOF device nodes for the R8A77995 SoC.
+
+Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[uli: remove unimplemented ref clock, clock-names]
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[simon: preserved node ordering by moving msiof nodes to before vin nodes]
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 62 +++++++++++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index 1de6ffca4772..6c0a8217d40f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -622,6 +622,68 @@
+ 			status = "disabled";
+ 		};
  
- static const struct regmap_range da9063_ad_readable_ranges[] = {
--	{
--		.range_min = DA9063_REG_PAGE_CON,
--		.range_max = DA9063_AD_REG_SECOND_D,
--	}, {
--		.range_min = DA9063_REG_SEQ,
--		.range_max = DA9063_REG_ID_32_31,
--	}, {
--		.range_min = DA9063_REG_SEQ_A,
--		.range_max = DA9063_REG_AUTO3_LOW,
--	}, {
--		.range_min = DA9063_REG_T_OFFSET,
--		.range_max = DA9063_AD_REG_GP_ID_19,
--	}, {
--		.range_min = DA9063_REG_CHIP_ID,
--		.range_max = DA9063_REG_CHIP_VARIANT,
--	},
-+	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_AD_REG_SECOND_D),
-+	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
-+	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
-+	regmap_reg_range(DA9063_REG_T_OFFSET, DA9063_AD_REG_GP_ID_19),
-+	regmap_reg_range(DA9063_REG_CHIP_ID, DA9063_REG_CHIP_VARIANT),
- };
- 
- static const struct regmap_range da9063_ad_writeable_ranges[] = {
--	{
--		.range_min = DA9063_REG_PAGE_CON,
--		.range_max = DA9063_REG_PAGE_CON,
--	}, {
--		.range_min = DA9063_REG_FAULT_LOG,
--		.range_max = DA9063_REG_VSYS_MON,
--	}, {
--		.range_min = DA9063_REG_COUNT_S,
--		.range_max = DA9063_AD_REG_ALARM_Y,
--	}, {
--		.range_min = DA9063_REG_SEQ,
--		.range_max = DA9063_REG_ID_32_31,
--	}, {
--		.range_min = DA9063_REG_SEQ_A,
--		.range_max = DA9063_REG_AUTO3_LOW,
--	}, {
--		.range_min = DA9063_REG_CONFIG_I,
--		.range_max = DA9063_AD_REG_MON_REG_4,
--	}, {
--		.range_min = DA9063_AD_REG_GP_ID_0,
--		.range_max = DA9063_AD_REG_GP_ID_19,
--	},
-+	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_PAGE_CON),
-+	regmap_reg_range(DA9063_REG_FAULT_LOG, DA9063_REG_VSYS_MON),
-+	regmap_reg_range(DA9063_REG_COUNT_S, DA9063_AD_REG_ALARM_Y),
-+	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
-+	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
-+	regmap_reg_range(DA9063_REG_CONFIG_I, DA9063_AD_REG_MON_REG_4),
-+	regmap_reg_range(DA9063_AD_REG_GP_ID_0, DA9063_AD_REG_GP_ID_19),
- };
- 
- static const struct regmap_range da9063_ad_volatile_ranges[] = {
--	{
--		.range_min = DA9063_REG_PAGE_CON,
--		.range_max = DA9063_REG_EVENT_D,
--	}, {
--		.range_min = DA9063_REG_CONTROL_A,
--		.range_max = DA9063_REG_CONTROL_B,
--	}, {
--		.range_min = DA9063_REG_CONTROL_E,
--		.range_max = DA9063_REG_CONTROL_F,
--	}, {
--		.range_min = DA9063_REG_BCORE2_CONT,
--		.range_max = DA9063_REG_LDO11_CONT,
--	}, {
--		.range_min = DA9063_REG_DVC_1,
--		.range_max = DA9063_REG_ADC_MAN,
--	}, {
--		.range_min = DA9063_REG_ADC_RES_L,
--		.range_max = DA9063_AD_REG_SECOND_D,
--	}, {
--		.range_min = DA9063_REG_SEQ,
--		.range_max = DA9063_REG_SEQ,
--	}, {
--		.range_min = DA9063_REG_EN_32K,
--		.range_max = DA9063_REG_EN_32K,
--	}, {
--		.range_min = DA9063_AD_REG_MON_REG_5,
--		.range_max = DA9063_AD_REG_MON_REG_6,
--	},
-+	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_EVENT_D),
-+	regmap_reg_range(DA9063_REG_CONTROL_A, DA9063_REG_CONTROL_B),
-+	regmap_reg_range(DA9063_REG_CONTROL_E, DA9063_REG_CONTROL_F),
-+	regmap_reg_range(DA9063_REG_BCORE2_CONT, DA9063_REG_LDO11_CONT),
-+	regmap_reg_range(DA9063_REG_DVC_1, DA9063_REG_ADC_MAN),
-+	regmap_reg_range(DA9063_REG_ADC_RES_L, DA9063_AD_REG_SECOND_D),
-+	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_SEQ),
-+	regmap_reg_range(DA9063_REG_EN_32K, DA9063_REG_EN_32K),
-+	regmap_reg_range(DA9063_AD_REG_MON_REG_5, DA9063_AD_REG_MON_REG_6),
- };
- 
- static const struct regmap_access_table da9063_ad_readable_table = {
-@@ -119,78 +74,33 @@ static const struct regmap_access_table da9063_ad_volatile_table = {
- };
- 
- static const struct regmap_range da9063_bb_readable_ranges[] = {
--	{
--		.range_min = DA9063_REG_PAGE_CON,
--		.range_max = DA9063_BB_REG_SECOND_D,
--	}, {
--		.range_min = DA9063_REG_SEQ,
--		.range_max = DA9063_REG_ID_32_31,
--	}, {
--		.range_min = DA9063_REG_SEQ_A,
--		.range_max = DA9063_REG_AUTO3_LOW,
--	}, {
--		.range_min = DA9063_REG_T_OFFSET,
--		.range_max = DA9063_BB_REG_GP_ID_19,
--	}, {
--		.range_min = DA9063_REG_CHIP_ID,
--		.range_max = DA9063_REG_CHIP_VARIANT,
--	},
-+	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_BB_REG_SECOND_D),
-+	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
-+	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
-+	regmap_reg_range(DA9063_REG_T_OFFSET, DA9063_BB_REG_GP_ID_19),
-+	regmap_reg_range(DA9063_REG_CHIP_ID, DA9063_REG_CHIP_VARIANT),
- };
- 
- static const struct regmap_range da9063_bb_writeable_ranges[] = {
--	{
--		.range_min = DA9063_REG_PAGE_CON,
--		.range_max = DA9063_REG_PAGE_CON,
--	}, {
--		.range_min = DA9063_REG_FAULT_LOG,
--		.range_max = DA9063_REG_VSYS_MON,
--	}, {
--		.range_min = DA9063_REG_COUNT_S,
--		.range_max = DA9063_BB_REG_ALARM_Y,
--	}, {
--		.range_min = DA9063_REG_SEQ,
--		.range_max = DA9063_REG_ID_32_31,
--	}, {
--		.range_min = DA9063_REG_SEQ_A,
--		.range_max = DA9063_REG_AUTO3_LOW,
--	}, {
--		.range_min = DA9063_REG_CONFIG_I,
--		.range_max = DA9063_BB_REG_MON_REG_4,
--	}, {
--		.range_min = DA9063_BB_REG_GP_ID_0,
--		.range_max = DA9063_BB_REG_GP_ID_19,
--	},
-+	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_PAGE_CON),
-+	regmap_reg_range(DA9063_REG_FAULT_LOG, DA9063_REG_VSYS_MON),
-+	regmap_reg_range(DA9063_REG_COUNT_S, DA9063_BB_REG_ALARM_Y),
-+	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
-+	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
-+	regmap_reg_range(DA9063_REG_CONFIG_I, DA9063_BB_REG_MON_REG_4),
-+	regmap_reg_range(DA9063_BB_REG_GP_ID_0, DA9063_BB_REG_GP_ID_19),
- };
- 
- static const struct regmap_range da9063_bb_volatile_ranges[] = {
--	{
--		.range_min = DA9063_REG_PAGE_CON,
--		.range_max = DA9063_REG_EVENT_D,
--	}, {
--		.range_min = DA9063_REG_CONTROL_A,
--		.range_max = DA9063_REG_CONTROL_B,
--	}, {
--		.range_min = DA9063_REG_CONTROL_E,
--		.range_max = DA9063_REG_CONTROL_F,
--	}, {
--		.range_min = DA9063_REG_BCORE2_CONT,
--		.range_max = DA9063_REG_LDO11_CONT,
--	}, {
--		.range_min = DA9063_REG_DVC_1,
--		.range_max = DA9063_REG_ADC_MAN,
--	}, {
--		.range_min = DA9063_REG_ADC_RES_L,
--		.range_max = DA9063_BB_REG_SECOND_D,
--	}, {
--		.range_min = DA9063_REG_SEQ,
--		.range_max = DA9063_REG_SEQ,
--	}, {
--		.range_min = DA9063_REG_EN_32K,
--		.range_max = DA9063_REG_EN_32K,
--	}, {
--		.range_min = DA9063_BB_REG_MON_REG_5,
--		.range_max = DA9063_BB_REG_MON_REG_6,
--	},
-+	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_EVENT_D),
-+	regmap_reg_range(DA9063_REG_CONTROL_A, DA9063_REG_CONTROL_B),
-+	regmap_reg_range(DA9063_REG_CONTROL_E, DA9063_REG_CONTROL_F),
-+	regmap_reg_range(DA9063_REG_BCORE2_CONT, DA9063_REG_LDO11_CONT),
-+	regmap_reg_range(DA9063_REG_DVC_1, DA9063_REG_ADC_MAN),
-+	regmap_reg_range(DA9063_REG_ADC_RES_L, DA9063_BB_REG_SECOND_D),
-+	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_SEQ),
-+	regmap_reg_range(DA9063_REG_EN_32K, DA9063_REG_EN_32K),
-+	regmap_reg_range(DA9063_BB_REG_MON_REG_5, DA9063_BB_REG_MON_REG_6),
- };
- 
- static const struct regmap_access_table da9063_bb_readable_table = {
++		msiof0: spi@e6e90000 {
++			compatible = "renesas,msiof-r8a77995",
++				     "renesas,rcar-gen3-msiof";
++			reg = <0 0xe6e90000 0 0x64>;
++			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 211>;
++			dmas = <&dmac1 0x41>, <&dmac1 0x40>,
++			       <&dmac2 0x41>, <&dmac2 0x40>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 211>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		msiof1: spi@e6ea0000 {
++			compatible = "renesas,msiof-r8a77995",
++				     "renesas,rcar-gen3-msiof";
++			reg = <0 0xe6ea0000 0 0x64>;
++			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 210>;
++			dmas = <&dmac1 0x43>, <&dmac1 0x42>,
++			       <&dmac2 0x43>, <&dmac2 0x42>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 210>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		msiof2: spi@e6c00000 {
++			compatible = "renesas,msiof-r8a77995",
++				     "renesas,rcar-gen3-msiof";
++			reg = <0 0xe6c00000 0 0x64>;
++			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 209>;
++			dmas = <&dmac0 0x45>, <&dmac0 0x44>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 209>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		msiof3: spi@e6c10000 {
++			compatible = "renesas,msiof-r8a77995",
++				     "renesas,rcar-gen3-msiof";
++			reg = <0 0xe6c10000 0 0x64>;
++			interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 208>;
++			dmas = <&dmac0 0x47>, <&dmac0 0x46>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 208>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		vin4: video@e6ef4000 {
+ 			compatible = "renesas,vin-r8a77995";
+ 			reg = <0 0xe6ef4000 0 0x1000>;
 -- 
-2.16.2
+2.11.0
