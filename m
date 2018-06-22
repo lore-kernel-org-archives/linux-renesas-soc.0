@@ -1,48 +1,82 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Thu, 28 Jun 2018 14:00:32 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:34074 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753275AbeFVM0A (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 22 Jun 2018 08:26:00 -0400
+Subject: Re: [PATCH v9 3/5] ARM: dts: Renesas R9A06G032 base device tree file
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
         Michel Pollet <buserror+upstream@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 3/5] ARM: dts: Renesas R9A06G032 base device tree file
-Message-ID: <20180628120031.eq2yuysz4re2olwn@verge.net.au>
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
  <1528973829-25493-4-git-send-email-michel.pollet@bp.renesas.com>
+ <CAMuHMdXamhn2GZs41i=wHXSRn0HgeHg4=7=g7pg7uni3LizK9w@mail.gmail.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Message-ID: <e90e0670-3cf5-4430-3b4a-8f7ad520938d@arm.com>
+Date: Fri, 22 Jun 2018 13:25:56 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1528973829-25493-4-git-send-email-michel.pollet@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <CAMuHMdXamhn2GZs41i=wHXSRn0HgeHg4=7=g7pg7uni3LizK9w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jun 14, 2018 at 11:56:32AM +0100, Michel Pollet wrote:
-> This adds the Renesas R9A06G032 bare bone support.
+On 22/06/18 13:14, Geert Uytterhoeven wrote:
+> Hi Michel,
 > 
-> This currently only handles the SYSCTRL block note,
-> generic parts (gic, architected timer) and a UART.
+> CC MarcZ
 > 
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> On Thu, Jun 14, 2018 at 1:02 PM Michel Pollet
+> <michel.pollet@bp.renesas.com> wrote:
+>> This adds the Renesas R9A06G032 bare bone support.
+>>
+>> This currently only handles the SYSCTRL block note,
+>> generic parts (gic, architected timer) and a UART.
+>>
+>> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> 
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
+> 
+>> +       timer {
+>> +               compatible = "arm,cortex-a7-timer",
+> 
+> Checkpatch says:
+> WARNING: DT compatible string "arm,cortex-a7-timer" appears
+> un-documented -- check ./Documentation/devicetree/bindings/
+> 
+>> +                            "arm,armv7-timer";
+> 
+> Documentation/devicetree/bindings/arm/arch_timer.txt says:
+> 
+>     compatible should at least contain "arm,armv7-timer"
+> 
+> but fails to list other possible values?
 
-Thanks, applied with the following appended:
+The idea is that you could add something useful that matches your CPU.
+Adding new CPU types in the binding seems to be a never ending battle...
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9d5eeff51b5f..4c85ac04872d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1969,6 +1969,7 @@ S:	Supported
- F:	arch/arm/boot/dts/emev2*
- F:	arch/arm/boot/dts/r7s*
- F:	arch/arm/boot/dts/r8a*
-+F:	arch/arm/boot/dts/r9a*
- F:	arch/arm/boot/dts/sh*
- F:	arch/arm/configs/shmobile_defconfig
- F:	arch/arm/include/debug/renesas-scif.S
+> 
+>> +               interrupt-parent = <&gic>;
+>> +               arm,cpu-registers-not-fw-configured;
+
+Really? :-(
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
