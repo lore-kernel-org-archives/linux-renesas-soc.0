@@ -1,12 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:34074 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753275AbeFVM0A (ORCPT
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:46864 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751005AbeFVMOm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Jun 2018 08:26:00 -0400
+        Fri, 22 Jun 2018 08:14:42 -0400
+MIME-Version: 1.0
+References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com> <1528973829-25493-4-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1528973829-25493-4-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 22 Jun 2018 14:14:30 +0200
+Message-ID: <CAMuHMdXamhn2GZs41i=wHXSRn0HgeHg4=7=g7pg7uni3LizK9w@mail.gmail.com>
 Subject: Re: [PATCH v9 3/5] ARM: dts: Renesas R9A06G032 base device tree file
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michel Pollet <michel.pollet@bp.renesas.com>
+To: Michel Pollet <michel.pollet@bp.renesas.com>
 Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Phil Edworthy <phil.edworthy@renesas.com>,
@@ -19,64 +24,60 @@ Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
         <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
- <1528973829-25493-4-git-send-email-michel.pollet@bp.renesas.com>
- <CAMuHMdXamhn2GZs41i=wHXSRn0HgeHg4=7=g7pg7uni3LizK9w@mail.gmail.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Message-ID: <e90e0670-3cf5-4430-3b4a-8f7ad520938d@arm.com>
-Date: Fri, 22 Jun 2018 13:25:56 +0100
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXamhn2GZs41i=wHXSRn0HgeHg4=7=g7pg7uni3LizK9w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marc Zyngier <Marc.Zyngier@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 22/06/18 13:14, Geert Uytterhoeven wrote:
-> Hi Michel,
-> 
-> CC MarcZ
-> 
-> On Thu, Jun 14, 2018 at 1:02 PM Michel Pollet
-> <michel.pollet@bp.renesas.com> wrote:
->> This adds the Renesas R9A06G032 bare bone support.
->>
->> This currently only handles the SYSCTRL block note,
->> generic parts (gic, architected timer) and a UART.
->>
->> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> 
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
-> 
->> +       timer {
->> +               compatible = "arm,cortex-a7-timer",
-> 
-> Checkpatch says:
-> WARNING: DT compatible string "arm,cortex-a7-timer" appears
-> un-documented -- check ./Documentation/devicetree/bindings/
-> 
->> +                            "arm,armv7-timer";
-> 
-> Documentation/devicetree/bindings/arm/arch_timer.txt says:
-> 
->     compatible should at least contain "arm,armv7-timer"
-> 
-> but fails to list other possible values?
+Hi Michel,
 
-The idea is that you could add something useful that matches your CPU.
-Adding new CPU types in the binding seems to be a never ending battle...
+CC MarcZ
 
-> 
->> +               interrupt-parent = <&gic>;
->> +               arm,cpu-registers-not-fw-configured;
+On Thu, Jun 14, 2018 at 1:02 PM Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> This adds the Renesas R9A06G032 bare bone support.
+>
+> This currently only handles the SYSCTRL block note,
+> generic parts (gic, architected timer) and a UART.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-Really? :-(
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
 
-Thanks,
+> +       timer {
+> +               compatible = "arm,cortex-a7-timer",
 
-	M.
+Checkpatch says:
+WARNING: DT compatible string "arm,cortex-a7-timer" appears
+un-documented -- check ./Documentation/devicetree/bindings/
+
+> +                            "arm,armv7-timer";
+
+Documentation/devicetree/bindings/arm/arch_timer.txt says:
+
+    compatible should at least contain "arm,armv7-timer"
+
+but fails to list other possible values?
+
+> +               interrupt-parent = <&gic>;
+> +               arm,cpu-registers-not-fw-configured;
+> +               always-on;
+> +               interrupts =
+> +                       <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+> +                       <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+> +                       <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+> +                       <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
+> +       };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-Jazz is not dead. It just smells funny...
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
