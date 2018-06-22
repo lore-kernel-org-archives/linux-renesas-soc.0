@@ -1,298 +1,70 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52588 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934074AbeFYOGk (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:06:40 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1528973829-25493-3-git-send-email-michel.pollet@bp.renesas.com> <20180620154344.GA32205@rob-hp-laptop>
+In-Reply-To: <20180620154344.GA32205@rob-hp-laptop>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 22 Jun 2018 15:27:27 +0200
+Message-ID: <CAMuHMdW5bfhPeHxdCeJEJrkWAXvxU4wSVvDErF2DhCQfvF1rUw@mail.gmail.com>
+Subject: Re: [PATCH v9 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
+To: Rob Herring <robh@kernel.org>
+Cc: Michel Pollet <michel.pollet@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 08/15] ARM: shmobile: apmu: Remove platsmp-apmu.h
-Date: Mon, 25 Jun 2018 16:06:19 +0200
-Message-Id: <3bf6d77388273c2d99756040b820dd71959e4587.1529934908.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1529934908.git.horms+renesas@verge.net.au>
-References: <cover.1529934908.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, Jun 20, 2018 at 5:43 PM Rob Herring <robh@kernel.org> wrote:
+> On Thu, Jun 14, 2018 at 11:56:31AM +0100, Michel Pollet wrote:
+> > The Renesas R9A06G032 SYSCTRL node description.
+> >
+> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> > ---
+> >  .../bindings/clock/renesas,r9a06g032-sysctrl.txt   | 44 ++++++++++++++++++++++
+> >  1 file changed, 44 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
+>
+> One nit, otherwise:
+>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-After the removal of the legacy SMP fallbacks, platsmp-apmu.h is no
-longer needed outside platsmp-apmu.c.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Hence remove platsmp-apmu.h, and make the functions exported previously
-static.  As the header file also provided forward declarations, the code
-in platsmp-apmu.c must be reshuffled.
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/mach-shmobile/platsmp-apmu.c | 200 +++++++++++++++++-----------------
- arch/arm/mach-shmobile/platsmp-apmu.h |  24 ----
- 2 files changed, 100 insertions(+), 124 deletions(-)
- delete mode 100644 arch/arm/mach-shmobile/platsmp-apmu.h
+> > +Examples
+> > +--------
+> > +
+> > +  - SYSCTRL node:
+> > +
+> > +     sysctrl: system-controller@4000c000 {
+> > +             compatible = "renesas,r9a06g032-sysctrl";
+> > +             reg = <0x4000c000 0x1000>;
+> > +             status = "okay";
+>
+> Don't show status in examples.
 
-diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
-index 42c9405e556b..9e1e85cf1899 100644
---- a/arch/arm/mach-shmobile/platsmp-apmu.c
-+++ b/arch/arm/mach-shmobile/platsmp-apmu.c
-@@ -23,7 +23,6 @@
- #include <asm/smp_plat.h>
- #include <asm/suspend.h>
- #include "common.h"
--#include "platsmp-apmu.h"
- #include "rcar-gen2.h"
- 
- static struct {
-@@ -87,6 +86,104 @@ static int __maybe_unused apmu_wrap(int cpu, int (*fn)(void __iomem *p, int cpu)
- 	return p ? fn(p, apmu_cpus[cpu].bit) : -EINVAL;
- }
- 
-+#if defined(CONFIG_HOTPLUG_CPU) || defined(CONFIG_SUSPEND)
-+/* nicked from arch/arm/mach-exynos/hotplug.c */
-+static inline void cpu_enter_lowpower_a15(void)
-+{
-+	unsigned int v;
-+
-+	asm volatile(
-+	"       mrc     p15, 0, %0, c1, c0, 0\n"
-+	"       bic     %0, %0, %1\n"
-+	"       mcr     p15, 0, %0, c1, c0, 0\n"
-+		: "=&r" (v)
-+		: "Ir" (CR_C)
-+		: "cc");
-+
-+	flush_cache_louis();
-+
-+	asm volatile(
-+	/*
-+	 * Turn off coherency
-+	 */
-+	"       mrc     p15, 0, %0, c1, c0, 1\n"
-+	"       bic     %0, %0, %1\n"
-+	"       mcr     p15, 0, %0, c1, c0, 1\n"
-+		: "=&r" (v)
-+		: "Ir" (0x40)
-+		: "cc");
-+
-+	isb();
-+	dsb();
-+}
-+
-+static void shmobile_smp_apmu_cpu_shutdown(unsigned int cpu)
-+{
-+
-+	/* Select next sleep mode using the APMU */
-+	apmu_wrap(cpu, apmu_power_off);
-+
-+	/* Do ARM specific CPU shutdown */
-+	cpu_enter_lowpower_a15();
-+}
-+#endif
-+
-+#if defined(CONFIG_HOTPLUG_CPU)
-+static void shmobile_smp_apmu_cpu_die(unsigned int cpu)
-+{
-+	/* For this particular CPU deregister boot vector */
-+	shmobile_smp_hook(cpu, 0, 0);
-+
-+	/* Shutdown CPU core */
-+	shmobile_smp_apmu_cpu_shutdown(cpu);
-+
-+	/* jump to shared mach-shmobile sleep / reset code */
-+	shmobile_smp_sleep();
-+}
-+
-+static int shmobile_smp_apmu_cpu_kill(unsigned int cpu)
-+{
-+	return apmu_wrap(cpu, apmu_power_off_poll);
-+}
-+#endif
-+
-+#if defined(CONFIG_SUSPEND)
-+static int shmobile_smp_apmu_do_suspend(unsigned long cpu)
-+{
-+	shmobile_smp_hook(cpu, __pa_symbol(cpu_resume), 0);
-+	shmobile_smp_apmu_cpu_shutdown(cpu);
-+	cpu_do_idle(); /* WFI selects Core Standby */
-+	return 1;
-+}
-+
-+static inline void cpu_leave_lowpower(void)
-+{
-+	unsigned int v;
-+
-+	asm volatile("mrc    p15, 0, %0, c1, c0, 0\n"
-+		     "       orr     %0, %0, %1\n"
-+		     "       mcr     p15, 0, %0, c1, c0, 0\n"
-+		     "       mrc     p15, 0, %0, c1, c0, 1\n"
-+		     "       orr     %0, %0, %2\n"
-+		     "       mcr     p15, 0, %0, c1, c0, 1\n"
-+		     : "=&r" (v)
-+		     : "Ir" (CR_C), "Ir" (0x40)
-+		     : "cc");
-+}
-+
-+static int shmobile_smp_apmu_enter_suspend(suspend_state_t state)
-+{
-+	cpu_suspend(smp_processor_id(), shmobile_smp_apmu_do_suspend);
-+	cpu_leave_lowpower();
-+	return 0;
-+}
-+
-+void __init shmobile_smp_apmu_suspend_init(void)
-+{
-+	shmobile_suspend_ops.enter = shmobile_smp_apmu_enter_suspend;
-+}
-+#endif
-+
- #ifdef CONFIG_SMP
- static void apmu_init_cpu(struct resource *res, int cpu, int bit)
- {
-@@ -162,7 +259,8 @@ static void __init shmobile_smp_apmu_setup_boot(void)
- 	shmobile_boot_fn_gen2 = shmobile_boot_fn;
- }
- 
--int shmobile_smp_apmu_boot_secondary(unsigned int cpu, struct task_struct *idle)
-+static int shmobile_smp_apmu_boot_secondary(unsigned int cpu,
-+					    struct task_struct *idle)
- {
- 	/* For this particular CPU register boot vector */
- 	shmobile_smp_hook(cpu, __pa_symbol(shmobile_boot_apmu), 0);
-@@ -189,101 +287,3 @@ static struct smp_operations apmu_smp_ops __initdata = {
- 
- CPU_METHOD_OF_DECLARE(shmobile_smp_apmu, "renesas,apmu", &apmu_smp_ops);
- #endif /* CONFIG_SMP */
--
--#if defined(CONFIG_HOTPLUG_CPU) || defined(CONFIG_SUSPEND)
--/* nicked from arch/arm/mach-exynos/hotplug.c */
--static inline void cpu_enter_lowpower_a15(void)
--{
--	unsigned int v;
--
--	asm volatile(
--	"       mrc     p15, 0, %0, c1, c0, 0\n"
--	"       bic     %0, %0, %1\n"
--	"       mcr     p15, 0, %0, c1, c0, 0\n"
--		: "=&r" (v)
--		: "Ir" (CR_C)
--		: "cc");
--
--	flush_cache_louis();
--
--	asm volatile(
--	/*
--	 * Turn off coherency
--	 */
--	"       mrc     p15, 0, %0, c1, c0, 1\n"
--	"       bic     %0, %0, %1\n"
--	"       mcr     p15, 0, %0, c1, c0, 1\n"
--		: "=&r" (v)
--		: "Ir" (0x40)
--		: "cc");
--
--	isb();
--	dsb();
--}
--
--static void shmobile_smp_apmu_cpu_shutdown(unsigned int cpu)
--{
--
--	/* Select next sleep mode using the APMU */
--	apmu_wrap(cpu, apmu_power_off);
--
--	/* Do ARM specific CPU shutdown */
--	cpu_enter_lowpower_a15();
--}
--#endif
--
--#if defined(CONFIG_HOTPLUG_CPU)
--void shmobile_smp_apmu_cpu_die(unsigned int cpu)
--{
--	/* For this particular CPU deregister boot vector */
--	shmobile_smp_hook(cpu, 0, 0);
--
--	/* Shutdown CPU core */
--	shmobile_smp_apmu_cpu_shutdown(cpu);
--
--	/* jump to shared mach-shmobile sleep / reset code */
--	shmobile_smp_sleep();
--}
--
--int shmobile_smp_apmu_cpu_kill(unsigned int cpu)
--{
--	return apmu_wrap(cpu, apmu_power_off_poll);
--}
--#endif
--
--#if defined(CONFIG_SUSPEND)
--static int shmobile_smp_apmu_do_suspend(unsigned long cpu)
--{
--	shmobile_smp_hook(cpu, __pa_symbol(cpu_resume), 0);
--	shmobile_smp_apmu_cpu_shutdown(cpu);
--	cpu_do_idle(); /* WFI selects Core Standby */
--	return 1;
--}
--
--static inline void cpu_leave_lowpower(void)
--{
--	unsigned int v;
--
--	asm volatile("mrc    p15, 0, %0, c1, c0, 0\n"
--		     "       orr     %0, %0, %1\n"
--		     "       mcr     p15, 0, %0, c1, c0, 0\n"
--		     "       mrc     p15, 0, %0, c1, c0, 1\n"
--		     "       orr     %0, %0, %2\n"
--		     "       mcr     p15, 0, %0, c1, c0, 1\n"
--		     : "=&r" (v)
--		     : "Ir" (CR_C), "Ir" (0x40)
--		     : "cc");
--}
--
--static int shmobile_smp_apmu_enter_suspend(suspend_state_t state)
--{
--	cpu_suspend(smp_processor_id(), shmobile_smp_apmu_do_suspend);
--	cpu_leave_lowpower();
--	return 0;
--}
--
--void __init shmobile_smp_apmu_suspend_init(void)
--{
--	shmobile_suspend_ops.enter = shmobile_smp_apmu_enter_suspend;
--}
--#endif
-diff --git a/arch/arm/mach-shmobile/platsmp-apmu.h b/arch/arm/mach-shmobile/platsmp-apmu.h
-deleted file mode 100644
-index 70424572b9da..000000000000
---- a/arch/arm/mach-shmobile/platsmp-apmu.h
-+++ /dev/null
-@@ -1,24 +0,0 @@
--/*
-- * rmobile apmu definition
-- *
-- * Copyright (C) 2014  Renesas Electronics Corporation
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
--
--#ifndef PLATSMP_APMU_H
--#define PLATSMP_APMU_H
--
--extern int shmobile_smp_apmu_boot_secondary(unsigned int cpu,
--					    struct task_struct *idle);
--extern void shmobile_smp_apmu_cpu_die(unsigned int cpu);
--extern int shmobile_smp_apmu_cpu_kill(unsigned int cpu);
--
--#endif /* PLATSMP_APMU_H */
+Thanks, queuing in clk-renesas-for-v4.19 with the above fixed.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
