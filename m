@@ -1,176 +1,108 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52179 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:52588 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933951AbeFYOD2 (ORCPT
+        with ESMTP id S934074AbeFYOGo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:03:28 -0400
+        Mon, 25 Jun 2018 10:06:44 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM64 Based SoC DT Updates for v4.19
-Date: Mon, 25 Jun 2018 16:03:16 +0200
-Message-Id: <cover.1529933747.git.horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH 12/15] ARM: shmobile: r8a7779: Use rcar_sysc_power_{down,up}_cpu()
+Date: Mon, 25 Jun 2018 16:06:23 +0200
+Message-Id: <9d65c891587ea9d0936551e432f34485c16bb71c.1529934908.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1529934908.git.horms+renesas@verge.net.au>
+References: <cover.1529934908.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Please consider these Renesas ARM64 based SoC DT updates for v4.19.
+The r8a7779 SMP code calls rcar_sysc_power_{down,up}() to control power
+to the SYSC power areas containing CPUs. This requires passing full CPU
+power area parameter blocks.
 
+Migrate the code to call the new rcar_sysc_power_{down,up}_cpu()
+helpers, which just take a CPU index, and use the SYSC power area
+definitions from the r8a7779-sysc driver.
 
-The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/mach-shmobile/smp-r8a7779.c | 47 +++++-------------------------------
+ 1 file changed, 6 insertions(+), 41 deletions(-)
 
-  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt-for-v4.19
-
-for you to fetch changes up to 6b284a81307848b4331453b02cf7a33c09719d4b:
-
-  arm64: dts: renesas: r8a77995: Add MSIOF device nodes (2018-06-25 15:30:39 +0200)
-
-----------------------------------------------------------------
-Renesas ARM64 Based SoC DT Updates for v4.19
-
-* All applicable R-Car Gen 3 SoCs
-  - Correct VSPD registers range
-  - Convert R-Car Gen3 SoC and board DT files to SPDX identifiers
-
-* R-Car H3 (r8a7795), M3-W (r8a7796) and M3-N (r8a77965) SoCs
-  - Salvator-X and Salvator-XS boards
-    + Describe HSCIF1 device
-    + Correct I2C ch4 clock to 400kHz
-  - Salvator-X, Salvator-XS and ULCB boards
-    + Add sdhi2_ds pin group to SDHI2 pinctrl groups
-
-* R-Car H3 (r8a7795) SoC
-  - Describe CryptoCAL (CCREE) device
-
-* R-Car M3-W (r8a7796) SoC
-  - Describe PCIe devices
-  - Describe HSCIF nodes
-
-* R-Car M3-N (r8a77965) SoC
-  - Describe PCIe devices
-  - Use CPG MSSR symbols instead of numeric indicies
-
-* R-Car D3 (r8a77995) SoC
-  - Describe Thermal device
-  - Describe MSIOF devices
-  - Add power domains to description of IPMMU devices
-  - Do not use deprecated renesas,gpio-rcar compat string
-  - Describe HDMI and CVBS input in DT of R-Car Gen3 D3 Draak board
-
-* R-Car V3H (r8a77980) SoC
-  - Describe secondary CA53 CPU cores, and GPIO and
-    interconected FCPVD0, VSPD0, DU, and LVDS0 devices
-  - Enable ethernet on V3HSK board
-  - Specify Ethernet PHY IRQs in the DT of the Condor and V3HSK boards.
-    This is possible now that GPIO support is present.
-    Previously phylib had to resort to polling.
-  - Enable I2C0 on Condor board
-
-* R-Car E3 (r8a77990)
-  - Enable Watchdog timer and USB2.0 host on Ebisu board
-  - Enable secondary CA53 CPU core
-
-----------------------------------------------------------------
-Geert Uytterhoeven (2):
-      arm64: dts: renesas: r8a77965: Use r8a77965-cpg-mssr binding definitions
-      arm64: dts: renesas: r8a77990: Add secondary CA53 CPU core
-
-Gilad Ben-Yossef (1):
-      arm64: dts: renesas: r8a7795: add ccree to device tree
-
-Harunobu Kurokawa (1):
-      arm64: dts: renesas: r8a7796: Add PCIe device nodes
-
-Hiromitsu Yamasaki (2):
-      arm64: dts: renesas: salvator-common: Add HSCIF1 device support
-      arm64: dts: renesas: r8a77995: Add MSIOF device nodes
-
-Jacopo Mondi (2):
-      arm64: dts: renesas: draak: Describe CVBS input
-      arm64: dts: renesas: draak: Describe HDMI input
-
-Laurent Pinchart (1):
-      arm64: dts: renesas: Fix VSPD registers range
-
-Magnus Damm (1):
-      arm64: dts: renesas: r8a77995: Add IPMMU power domains
-
-Masaharu Hayakawa (1):
-      arm64: dts: renesas: Add sdhi2_ds pin group to SDHI2 pinctrl groups
-
-Sergei Shtylyov (8):
-      arm64: dts: renesas: r8a77980: add SMP support
-      arm64: dts: renesas: r8a77980: add GEther support
-      arm64: dts: renesas: v3hsk: add GEther support
-      arm64: dts: renesas: r8a77980: add I2C support
-      arm64: dts: renesas: condor: add I2C0 support
-      arm64: dts: renesas: r8a77980: add GPIO support
-      arm64: dts: renesas: condor/v3hsk: specify Ethernet PHY IRQs
-      arm64: dts: renesas: r8a77980: add FCPVD/VSPD/DU/LVDS support
-
-Simon Horman (1):
-      arm64: dts: renesas: r8a77995: don't use deprecated renesas,gpio-rcar compat string
-
-Takeshi Kihara (5):
-      arm64: dts: renesas: r8a77965: Add Watchdog Timer controller node using RCLK Watchdog Timer
-      arm64: dts: renesas: r8a77965: Add all HSCIF nodes
-      arm64: dts: renesas: salvator-x(s): Update I2C ch4 clock to 400kHz
-      arm64: dts: renesas: r8a77990: ebisu: Enable watchdog timer
-      arm64: dts: renesas: r8a77965: Add PCIe device nodes
-
-Ulrich Hecht (1):
-      arm64: dts: renesas: draak: add X12 input dot clock
-
-Wolfram Sang (1):
-      arm64: dts: renesas: convert to SPDX identifiers
-
-Yoshihiro Kaneko (1):
-      arm64: dts: renesas: r8a77995: add thermal device support
-
-Yoshihiro Shimoda (1):
-      arm64: dts: renesas: r8a77990: Enable USB2.0 Host for Ebisu board
-
- .../boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts     |   5 +-
- arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb.dts |   5 +-
- .../boot/dts/renesas/r8a7795-es1-salvator-x.dts    |   5 +-
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi       |   7 +-
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dts  |   5 +-
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts     |   5 +-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |   5 +-
- .../arm64/boot/dts/renesas/r8a7795-salvator-xs.dts |   5 +-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  20 +-
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dts  |   5 +-
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts     |   5 +-
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |   5 +-
- .../arm64/boot/dts/renesas/r8a7796-salvator-xs.dts |   5 +-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           |  61 +++-
- arch/arm64/boot/dts/renesas/r8a77965.dtsi          | 159 +++++++++-
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts     |   5 +-
- arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts     |   5 +-
- arch/arm64/boot/dts/renesas/r8a77970.dtsi          |   7 +-
- arch/arm64/boot/dts/renesas/r8a77980-condor.dts    |  29 ++
- arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts     |  23 ++
- arch/arm64/boot/dts/renesas/r8a77980.dtsi          | 324 ++++++++++++++++++++-
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts     |  25 ++
- arch/arm64/boot/dts/renesas/r8a77990.dtsi          |  74 ++++-
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts     | 133 ++++++++-
- arch/arm64/boot/dts/renesas/r8a77995.dtsi          | 133 +++++++--
- arch/arm64/boot/dts/renesas/salvator-common.dtsi   |  24 +-
- arch/arm64/boot/dts/renesas/salvator-x.dtsi        |   7 +-
- arch/arm64/boot/dts/renesas/salvator-xs.dtsi       |   7 +-
- arch/arm64/boot/dts/renesas/ulcb-kf.dtsi           |   5 +-
- arch/arm64/boot/dts/renesas/ulcb.dtsi              |   9 +-
- 30 files changed, 960 insertions(+), 152 deletions(-)
+diff --git a/arch/arm/mach-shmobile/smp-r8a7779.c b/arch/arm/mach-shmobile/smp-r8a7779.c
+index ff1e6fc0b861..3036f9100461 100644
+--- a/arch/arm/mach-shmobile/smp-r8a7779.c
++++ b/arch/arm/mach-shmobile/smp-r8a7779.c
+@@ -31,59 +31,24 @@
+ #define AVECR IOMEM(0xfe700040)
+ #define R8A7779_SCU_BASE 0xf0000000
+ 
+-static const struct rcar_sysc_ch r8a7779_ch_cpu1 = {
+-	.chan_offs = 0x40, /* PWRSR0 .. PWRER0 */
+-	.chan_bit = 1, /* ARM1 */
+-	.isr_bit = 1, /* ARM1 */
+-};
+-
+-static const struct rcar_sysc_ch r8a7779_ch_cpu2 = {
+-	.chan_offs = 0x40, /* PWRSR0 .. PWRER0 */
+-	.chan_bit = 2, /* ARM2 */
+-	.isr_bit = 2, /* ARM2 */
+-};
+-
+-static const struct rcar_sysc_ch r8a7779_ch_cpu3 = {
+-	.chan_offs = 0x40, /* PWRSR0 .. PWRER0 */
+-	.chan_bit = 3, /* ARM3 */
+-	.isr_bit = 3, /* ARM3 */
+-};
+-
+-static const struct rcar_sysc_ch * const r8a7779_ch_cpu[4] = {
+-	[1] = &r8a7779_ch_cpu1,
+-	[2] = &r8a7779_ch_cpu2,
+-	[3] = &r8a7779_ch_cpu3,
+-};
+-
+ static int r8a7779_platform_cpu_kill(unsigned int cpu)
+ {
+-	const struct rcar_sysc_ch *ch = NULL;
+ 	int ret = -EIO;
+ 
+ 	cpu = cpu_logical_map(cpu);
+-
+-	if (cpu < ARRAY_SIZE(r8a7779_ch_cpu))
+-		ch = r8a7779_ch_cpu[cpu];
+-
+-	if (ch)
+-		ret = rcar_sysc_power_down(ch);
++	if (cpu)
++		ret = rcar_sysc_power_down_cpu(cpu);
+ 
+ 	return ret ? ret : 1;
+ }
+ 
+ static int r8a7779_boot_secondary(unsigned int cpu, struct task_struct *idle)
+ {
+-	const struct rcar_sysc_ch *ch = NULL;
+-	unsigned int lcpu = cpu_logical_map(cpu);
+-	int ret;
+-
+-	if (lcpu < ARRAY_SIZE(r8a7779_ch_cpu))
+-		ch = r8a7779_ch_cpu[lcpu];
++	int ret = -EIO;
+ 
+-	if (ch)
+-		ret = rcar_sysc_power_up(ch);
+-	else
+-		ret = -EIO;
++	cpu = cpu_logical_map(cpu);
++	if (cpu)
++		ret = rcar_sysc_power_up_cpu(cpu);
+ 
+ 	return ret;
+ }
+-- 
+2.11.0
