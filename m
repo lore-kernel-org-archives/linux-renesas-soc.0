@@ -1,158 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:45651 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934562AbeF1IXH (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52211 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933997AbeFYOD5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Jun 2018 04:23:07 -0400
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Mon, 25 Jun 2018 10:03:57 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Carlo Caione <carlo@endlessm.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v7 2/3] arm: shmobile: Add the R9A06G032 SMP enabler driver
-Date: Thu, 28 Jun 2018 09:17:13 +0100
-Message-Id: <1530173842-56851-3-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1530173842-56851-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1530173842-56851-1-git-send-email-michel.pollet@bp.renesas.com>
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 01/29] arm64: dts: renesas: draak: add X12 input dot clock
+Date: Mon, 25 Jun 2018 16:02:56 +0200
+Message-Id: <856e7e42a4aa9a9acfadf84f4ff2b23ba6c69b11.1529933747.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
+References: <cover.1529933747.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas R9A06G032 second CA7 is parked in a ROM pen at boot time, it
-equires a special enable method to get it started.
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+74.25 Mhz oscillator X12 is connected to DU_DOTCLKIN0.
+
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/soc/renesas/Makefile        |  1 +
- drivers/soc/renesas/r9a06g032-smp.c | 96 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 97 insertions(+)
- create mode 100644 drivers/soc/renesas/r9a06g032-smp.c
+ arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
-index 7dc0f20..44a0d6b1 100644
---- a/drivers/soc/renesas/Makefile
-+++ b/drivers/soc/renesas/Makefile
-@@ -18,6 +18,7 @@ obj-$(CONFIG_SYSC_R8A77970)	+= r8a77970-sysc.o
- obj-$(CONFIG_SYSC_R8A77980)	+= r8a77980-sysc.o
- obj-$(CONFIG_SYSC_R8A77990)	+= r8a77990-sysc.o
- obj-$(CONFIG_SYSC_R8A77995)	+= r8a77995-sysc.o
-+obj-$(CONFIG_ARCH_R9A06G032)	+= r9a06g032-smp.o
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+index 9d73de8bc94d..9d1c33927064 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+@@ -82,6 +82,12 @@
+ 		regulator-boot-on;
+ 		regulator-always-on;
+ 	};
++
++	x12_clk: x12 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <74250000>;
++	};
+ };
  
- # Family
- obj-$(CONFIG_RST_RCAR)		+= rcar-rst.o
-diff --git a/drivers/soc/renesas/r9a06g032-smp.c b/drivers/soc/renesas/r9a06g032-smp.c
-new file mode 100644
-index 0000000..a1926e8
---- /dev/null
-+++ b/drivers/soc/renesas/r9a06g032-smp.c
-@@ -0,0 +1,96 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * R9A06G032 Second CA7 enabler.
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
-+ * Derived from actions,s500-smp
-+ */
+ &extal_clk {
+@@ -167,6 +173,11 @@
+ 	pinctrl-names = "default";
+ 	status = "okay";
+ 
++	clocks = <&cpg CPG_MOD 724>,
++		 <&cpg CPG_MOD 723>,
++		 <&x12_clk>;
++	clock-names = "du.0", "du.1", "dclkin.0";
 +
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/smp.h>
-+
-+/*
-+ * The second CPU is parked in ROM at boot time. It requires waking it after
-+ * writing an address into the BOOTADDR register of sysctrl.
-+ *
-+ * So the default value of the "cpu-release-addr" corresponds to BOOTADDR...
-+ *
-+ * *However* the BOOTADDR register is not available when the kernel
-+ * starts in NONSEC mode.
-+ *
-+ * So for NONSEC mode, the bootloader re-parks the second CPU into a pen
-+ * in SRAM, and changes the "cpu-release-addr" of linux's DT to a SRAM address,
-+ * which is not restricted.
-+ */
-+
-+static void __iomem *cpu_bootaddr;
-+
-+static DEFINE_SPINLOCK(cpu_lock);
-+
-+static int
-+r9a06g032_smp_boot_secondary(unsigned int cpu,
-+			     struct task_struct *idle)
-+{
-+	if (!cpu_bootaddr)
-+		return -ENODEV;
-+
-+	spin_lock(&cpu_lock);
-+
-+	writel(__pa_symbol(secondary_startup), cpu_bootaddr);
-+	arch_send_wakeup_ipi_mask(cpumask_of(cpu));
-+
-+	spin_unlock(&cpu_lock);
-+
-+	return 0;
-+}
-+
-+static void __init r9a06g032_smp_prepare_cpus(unsigned int max_cpus)
-+{
-+	struct device_node *dn;
-+	int ret = -EINVAL, dns;
-+	u32 bootaddr;
-+
-+	dn = of_get_cpu_node(1, NULL);
-+	if (!dn) {
-+		pr_err("CPU#1: missing device tree node\n");
-+		return;
-+	}
-+	/*
-+	 * Determine the address from which the CPU is polling.
-+	 * The bootloader *does* change this property.
-+	 * Note: The property can be either 64 or 32 bits, so handle both cases
-+	 */
-+	if (of_find_property(dn, "cpu-release-addr", &dns)) {
-+		if (dns == sizeof(u64)) {
-+			u64 temp;
-+
-+			ret = of_property_read_u64(dn,
-+						   "cpu-release-addr", &temp);
-+			bootaddr = temp;
-+		} else {
-+			ret = of_property_read_u32(dn,
-+						   "cpu-release-addr",
-+						   &bootaddr);
-+		}
-+	}
-+	of_node_put(dn);
-+	if (ret) {
-+		pr_err("CPU#1: invalid cpu-release-addr property\n");
-+		return;
-+	}
-+	pr_info("CPU#1: cpu-release-addr %08x\n", bootaddr);
-+
-+	cpu_bootaddr = ioremap(bootaddr, sizeof(bootaddr));
-+}
-+
-+static const struct smp_operations r9a06g032_smp_ops __initconst = {
-+	.smp_prepare_cpus = r9a06g032_smp_prepare_cpus,
-+	.smp_boot_secondary = r9a06g032_smp_boot_secondary,
-+};
-+
-+CPU_METHOD_OF_DECLARE(r9a06g032_smp,
-+		      "renesas,r9a06g032-smp", &r9a06g032_smp_ops);
+ 	ports {
+ 		port@0 {
+ 			endpoint {
 -- 
-2.7.4
+2.11.0
