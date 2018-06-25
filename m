@@ -1,107 +1,117 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:40231 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755690AbeFYUhK (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934223AbeFYOD6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jun 2018 16:37:10 -0400
-Received: by mail-wr0-f196.google.com with SMTP id g18-v6so14957673wro.7
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 25 Jun 2018 13:37:09 -0700 (PDT)
-Subject: [PATCH 2/2] sh_eth: remove sh_eth_cpu_data::rpadir_value
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
-Cc: linux-renesas-soc@vger.kernel.org
-References: <2809eba8-4c9a-1d5f-a47d-8125777e365b@cogentembedded.com>
-Message-ID: <d2b67329-7bed-80e2-76e8-d0514f8545ae@cogentembedded.com>
-Date: Mon, 25 Jun 2018 23:37:06 +0300
-MIME-Version: 1.0
-In-Reply-To: <2809eba8-4c9a-1d5f-a47d-8125777e365b@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Mon, 25 Jun 2018 10:03:58 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 02/29] arm64: dts: renesas: r8a77995: Add IPMMU power domains
+Date: Mon, 25 Jun 2018 16:02:57 +0200
+Message-Id: <7e26bd3334bb21daefe092dc34e7a8e38bac576f.1529933747.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
+References: <cover.1529933747.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If RPADIR exists, the value written to it is always the same for all SoCs
-(and derived from NET_IP_ALIGN), so there has not  been any need to store
-it in the *struct* sh_eth_cpu_data...
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Add power domain information to the R-Car D3 IPMMU device nodes.
+As specified by the data sheet, all the IPMMU devices are always on.
 
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/net/ethernet/renesas/sh_eth.c |    8 +-------
- drivers/net/ethernet/renesas/sh_eth.h |    1 -
- 2 files changed, 1 insertion(+), 8 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.c
-@@ -622,7 +622,6 @@ static struct sh_eth_cpu_data r7s72100_d
- 	.tpauser	= 1,
- 	.hw_swap	= 1,
- 	.rpadir		= 1,
--	.rpadir_value   = 2 << 16,
- 	.no_trimd	= 1,
- 	.no_ade		= 1,
- 	.xdfar_rw	= 1,
-@@ -672,7 +671,6 @@ static struct sh_eth_cpu_data r8a7740_da
- 	.bculr		= 1,
- 	.hw_swap	= 1,
- 	.rpadir		= 1,
--	.rpadir_value   = 2 << 16,
- 	.no_trimd	= 1,
- 	.no_ade		= 1,
- 	.xdfar_rw	= 1,
-@@ -798,7 +796,6 @@ static struct sh_eth_cpu_data r8a77980_d
- 	.hw_swap	= 1,
- 	.nbst		= 1,
- 	.rpadir		= 1,
--	.rpadir_value   = 2 << 16,
- 	.no_trimd	= 1,
- 	.no_ade		= 1,
- 	.xdfar_rw	= 1,
-@@ -851,7 +848,6 @@ static struct sh_eth_cpu_data sh7724_dat
- 	.tpauser	= 1,
- 	.hw_swap	= 1,
- 	.rpadir		= 1,
--	.rpadir_value	= 0x00020000, /* NET_IP_ALIGN assumed to be 2 */
- };
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index 2506f46293e8..44268671c487 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -408,6 +408,7 @@
+ 			compatible = "renesas,ipmmu-r8a77995";
+ 			reg = <0 0xe6740000 0 0x1000>;
+ 			renesas,ipmmu-main = <&ipmmu_mm 0>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+ 			#iommu-cells = <1>;
+ 		};
  
- static void sh_eth_set_rate_sh7757(struct net_device *ndev)
-@@ -898,7 +894,6 @@ static struct sh_eth_cpu_data sh7757_dat
- 	.hw_swap	= 1,
- 	.no_ade		= 1,
- 	.rpadir		= 1,
--	.rpadir_value   = 2 << 16,
- 	.rtrate		= 1,
- 	.dual_port	= 1,
- };
-@@ -978,7 +973,6 @@ static struct sh_eth_cpu_data sh7757_dat
- 	.bculr		= 1,
- 	.hw_swap	= 1,
- 	.rpadir		= 1,
--	.rpadir_value   = 2 << 16,
- 	.no_trimd	= 1,
- 	.no_ade		= 1,
- 	.xdfar_rw	= 1,
-@@ -1467,7 +1461,7 @@ static int sh_eth_dev_init(struct net_de
- 	/* Descriptor format */
- 	sh_eth_ring_format(ndev);
- 	if (mdp->cd->rpadir)
--		sh_eth_write(ndev, mdp->cd->rpadir_value, RPADIR);
-+		sh_eth_write(ndev, NET_IP_ALIGN << 16, RPADIR);
+@@ -415,6 +416,7 @@
+ 			compatible = "renesas,ipmmu-r8a77995";
+ 			reg = <0 0xe7740000 0 0x1000>;
+ 			renesas,ipmmu-main = <&ipmmu_mm 1>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+ 			#iommu-cells = <1>;
+ 		};
  
- 	/* all sh_eth int mask */
- 	sh_eth_write(ndev, 0, EESIPR);
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.h
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.h
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.h
-@@ -487,7 +487,6 @@ struct sh_eth_cpu_data {
- 	u32 ecsipr_value;
- 	u32 fdr_value;
- 	u32 fcftr_value;
--	u32 rpadir_value;
+@@ -422,6 +424,7 @@
+ 			compatible = "renesas,ipmmu-r8a77995";
+ 			reg = <0 0xe6570000 0 0x1000>;
+ 			renesas,ipmmu-main = <&ipmmu_mm 2>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+ 			#iommu-cells = <1>;
+ 		};
  
- 	/* interrupt checking mask */
- 	u32 tx_check;
+@@ -430,6 +433,7 @@
+ 			reg = <0 0xe67b0000 0 0x1000>;
+ 			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+ 			#iommu-cells = <1>;
+ 		};
+ 
+@@ -437,6 +441,7 @@
+ 			compatible = "renesas,ipmmu-r8a77995";
+ 			reg = <0 0xec670000 0 0x1000>;
+ 			renesas,ipmmu-main = <&ipmmu_mm 4>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+ 			#iommu-cells = <1>;
+ 		};
+ 
+@@ -444,6 +449,7 @@
+ 			compatible = "renesas,ipmmu-r8a77995";
+ 			reg = <0 0xfd800000 0 0x1000>;
+ 			renesas,ipmmu-main = <&ipmmu_mm 6>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+ 			#iommu-cells = <1>;
+ 		};
+ 
+@@ -451,6 +457,7 @@
+ 			compatible = "renesas,ipmmu-r8a77995";
+ 			reg = <0 0xffc80000 0 0x1000>;
+ 			renesas,ipmmu-main = <&ipmmu_mm 10>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+ 			#iommu-cells = <1>;
+ 		};
+ 
+@@ -458,6 +465,7 @@
+ 			compatible = "renesas,ipmmu-r8a77995";
+ 			reg = <0 0xfe6b0000 0 0x1000>;
+ 			renesas,ipmmu-main = <&ipmmu_mm 12>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+ 			#iommu-cells = <1>;
+ 		};
+ 
+@@ -465,6 +473,7 @@
+ 			compatible = "renesas,ipmmu-r8a77995";
+ 			reg = <0 0xfebd0000 0 0x1000>;
+ 			renesas,ipmmu-main = <&ipmmu_mm 14>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+ 			#iommu-cells = <1>;
+ 		};
+ 
+@@ -472,6 +481,7 @@
+ 			compatible = "renesas,ipmmu-r8a77995";
+ 			reg = <0 0xfe990000 0 0x1000>;
+ 			renesas,ipmmu-main = <&ipmmu_mm 16>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+ 			#iommu-cells = <1>;
+ 		};
+ 
+-- 
+2.11.0
