@@ -1,110 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52588 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934074AbeFYOGn (ORCPT
+        with ESMTP id S934260AbeFYOEL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:06:43 -0400
+        Mon, 25 Jun 2018 10:04:11 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Gilad Ben-Yossef <gilad@benyossef.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 09/15] ARM: shmobile: rcar-gen2: Remove explicit SYSC config and init
-Date: Mon, 25 Jun 2018 16:06:20 +0200
-Message-Id: <319b15df66f931544dace69eb6465fc0a6e05797.1529934908.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1529934908.git.horms+renesas@verge.net.au>
-References: <cover.1529934908.git.horms+renesas@verge.net.au>
+Subject: [PATCH 11/29] arm64: dts: renesas: r8a7795: add ccree to device tree
+Date: Mon, 25 Jun 2018 16:03:06 +0200
+Message-Id: <0f6d237cafda2e06b289eab1fa2addf09e666a07.1529933747.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
+References: <cover.1529933747.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
 
-If the R-Car system controller is described in DT, the rcar-sysc driver
-configures SYSCIER and SYSCIMR based on the SoC-specific power area
-definitions in r8a779*-sysc.  The platform code still passed this
-information to the rcar-sysc driver, for compatibility with old R-Car H2
-and M2-W DTBs predating commit 8574de861978d518 ("ARM: dts: r8a7791: Add
-SYSC PM Domains") in v4.7.  The time has come to drop backwards
-compatibility, and delegate everything to the DT enabled rcar-sysc
-driver.
+Add bindings for CryptoCell instance in the SoC.
 
-After the removal of the legacy SMP fallbacks, which powered up the SCUs
-explicitly, there is no longer a need to force an early initialization
-of the rcar-sysc driver.  It will be initialized in time for secondary
-CPU bringup by its early_initcall().
-
-Hence all explicit SYSC configuration and initialization can be removed
-from the R-Car Gen2 platform code.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-shmobile/pm-rcar-gen2.c | 25 -------------------------
- 1 file changed, 25 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
-index 5a798b406af0..345af3ebcc3a 100644
---- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
-@@ -15,7 +15,6 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/smp.h>
--#include <linux/soc/renesas/rcar-sysc.h>
- #include <asm/io.h>
- #include <asm/cputype.h>
- #include "common.h"
-@@ -46,23 +45,6 @@ static inline u32 phys_to_sbar(phys_addr_t addr)
- 	return (addr >> 8) & 0xfffffc00;
- }
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index d842940b2f43..3ac75dbf2d93 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -528,6 +528,15 @@
+ 			status = "disabled";
+ 		};
  
--/* SYSC */
--#define SYSCIER 0x0c
--#define SYSCIMR 0x10
--
--#if defined(CONFIG_SMP)
--
--static void __init rcar_gen2_sysc_init(u32 syscier)
--{
--	rcar_sysc_init(0xe6180000, syscier);
--}
--
--#else /* CONFIG_SMP */
--
--static inline void rcar_gen2_sysc_init(u32 syscier) {}
--
--#endif /* CONFIG_SMP */
--
- void __init rcar_gen2_pm_init(void)
- {
- 	void __iomem *p;
-@@ -72,7 +54,6 @@ void __init rcar_gen2_pm_init(void)
- 	bool has_a7 = false;
- 	bool has_a15 = false;
- 	struct resource res;
--	u32 syscier = 0;
- 	int error;
- 
- 	if (once++)
-@@ -89,11 +70,6 @@ void __init rcar_gen2_pm_init(void)
- 			has_a7 = true;
- 	}
- 
--	if (of_machine_is_compatible("renesas,r8a7790"))
--		syscier = 0x013111ef;
--	else if (of_machine_is_compatible("renesas,r8a7791"))
--		syscier = 0x00111003;
--
- 	np = of_find_compatible_node(NULL, NULL, "renesas,smp-sram");
- 	if (!np) {
- 		/* No smp-sram in DT, fall back to hardcoded address */
-@@ -155,6 +131,5 @@ void __init rcar_gen2_pm_init(void)
- 	}
- 	iounmap(p);
- 
--	rcar_gen2_sysc_init(syscier);
- 	shmobile_smp_apmu_suspend_init();
- }
++		arm_cc630p: crypto@e6601000 {
++			compatible = "arm,cryptocell-630p-ree";
++			interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0x0 0xe6601000 0 0x1000>;
++			clocks = <&cpg CPG_MOD 229>;
++			resets = <&cpg 229>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++		};
++
+ 		i2c3: i2c@e66d0000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
 -- 
 2.11.0
