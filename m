@@ -1,68 +1,181 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:38979 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965883AbeFSM6W (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934258AbeFYOEV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Jun 2018 08:58:22 -0400
-MIME-Version: 1.0
-References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
-In-Reply-To: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 19 Jun 2018 14:58:10 +0200
-Message-ID: <CAMuHMdVXrppnFEBmR3xhwNu3i0N3mVE1+FJRjEcWBYpHHbsAsw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] crypto: ccree: cleanup, fixes and R-Car enabling
-To: Gilad Ben-Yossef <gilad@benyossef.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Mon, 25 Jun 2018 10:04:21 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Ofir Drang <ofir.drang@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 24/29] arm64: dts: renesas: Fix VSPD registers range
+Date: Mon, 25 Jun 2018 16:03:19 +0200
+Message-Id: <e21adc781bb45e810f1c396c4bc2c1624a4c25b9.1529933747.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
+References: <cover.1529933747.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Gilad,
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-On Thu, May 24, 2018 at 4:19 PM Gilad Ben-Yossef <gilad@benyossef.com> wrote:
-> The patch set enables the use of CryptoCell found in some Renesas R-Car
-> Salvator-X boards and fixes some driver issues uncovered that prevented
-> to work properly.
+The VSPD and FCPVD nodes have overlapping register ranges, as the FCPVD
+devices are mapped in the memory range usually used by the VSP LUT and
+CLU, which are not present in the VSPD. Fix this by shortening the VSPD
+registers range to 0x5000.
 
-With DEBUG enabled on R-Car H3, I see lots of
+Fixes: 9f8573e38a0b ("arm64: dts: renesas: r8a7795: Add VSP instances")
+Fixes: 291e0c4994d0 ("arm64: dts: r8a7795: Add support for R-Car H3 ES2.0")
+Fixes: f06ffdfbdd90 ("arm64: dts: r8a7796: Add VSP instances")
+Fixes: b4f92030d5d3 ("arm64: dts: renesas: r8a77970: add VSPD support")
+Fixes: 295952a183d3 ("arm64: dts: renesas: r8a77995: add VSP instances")
+Fixes: 85cb3229218a ("arm64: dts: renesas: r8a77965: Add VSP instances")
+Reported-by: Simon Horman <horms+renesas@verge.net.au>
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 2 +-
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 6 +++---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi     | 6 +++---
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi    | 4 ++--
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi    | 2 +-
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi    | 4 ++--
+ 6 files changed, 12 insertions(+), 12 deletions(-)
 
-    ccree e6601000.crypto: IRR includes unknown cause bits (0x00000098)
-    ccree e6601000.crypto: IRR includes unknown cause bits (0x000000C0)
-    ccree e6601000.crypto: IRR includes unknown cause bits (0x000000D0)
-    ccree e6601000.crypto: IRR includes unknown cause bits (0x000000D8)
-    ccree e6601000.crypto: IRR includes unknown cause bits (0x000000E0)
-    ccree e6601000.crypto: IRR includes unknown cause bits (0x000000F0)
-    ccree e6601000.crypto: IRR includes unknown cause bits (0x000000F8)
-
-during boot. Is that expected?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+index fde3e84626d7..7b2fbaec9aef 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+@@ -77,7 +77,7 @@
+ 
+ 	vspd3: vsp@fea38000 {
+ 		compatible = "renesas,vsp2";
+-		reg = <0 0xfea38000 0 0x8000>;
++		reg = <0 0xfea38000 0 0x5000>;
+ 		interrupts = <GIC_SPI 469 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 620>;
+ 		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 018507d78132..e07546f91dff 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -2536,7 +2536,7 @@
+ 
+ 		vspd0: vsp@fea20000 {
+ 			compatible = "renesas,vsp2";
+-			reg = <0 0xfea20000 0 0x8000>;
++			reg = <0 0xfea20000 0 0x5000>;
+ 			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 623>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+@@ -2547,7 +2547,7 @@
+ 
+ 		vspd1: vsp@fea28000 {
+ 			compatible = "renesas,vsp2";
+-			reg = <0 0xfea28000 0 0x8000>;
++			reg = <0 0xfea28000 0 0x5000>;
+ 			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 622>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+@@ -2558,7 +2558,7 @@
+ 
+ 		vspd2: vsp@fea30000 {
+ 			compatible = "renesas,vsp2";
+-			reg = <0 0xfea30000 0 0x8000>;
++			reg = <0 0xfea30000 0 0x5000>;
+ 			interrupts = <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 621>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 6436e814268a..af8196281b06 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -2253,7 +2253,7 @@
+ 
+ 		vspd0: vsp@fea20000 {
+ 			compatible = "renesas,vsp2";
+-			reg = <0 0xfea20000 0 0x8000>;
++			reg = <0 0xfea20000 0 0x5000>;
+ 			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 623>;
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+@@ -2264,7 +2264,7 @@
+ 
+ 		vspd1: vsp@fea28000 {
+ 			compatible = "renesas,vsp2";
+-			reg = <0 0xfea28000 0 0x8000>;
++			reg = <0 0xfea28000 0 0x5000>;
+ 			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 622>;
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+@@ -2275,7 +2275,7 @@
+ 
+ 		vspd2: vsp@fea30000 {
+ 			compatible = "renesas,vsp2";
+-			reg = <0 0xfea30000 0 0x8000>;
++			reg = <0 0xfea30000 0 0x5000>;
+ 			interrupts = <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 621>;
+ 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index d740c79752d5..a584dfc78339 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -1490,7 +1490,7 @@
+ 
+ 		vspd0: vsp@fea20000 {
+ 			compatible = "renesas,vsp2";
+-			reg = <0 0xfea20000 0 0x8000>;
++			reg = <0 0xfea20000 0 0x5000>;
+ 			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 623>;
+ 			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
+@@ -1509,7 +1509,7 @@
+ 
+ 		vspd1: vsp@fea28000 {
+ 			compatible = "renesas,vsp2";
+-			reg = <0 0xfea28000 0 0x8000>;
++			reg = <0 0xfea28000 0 0x5000>;
+ 			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 622>;
+ 			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+index 04953e1e205e..954168858fed 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -773,7 +773,7 @@
+ 
+ 		vspd0: vsp@fea20000 {
+ 			compatible = "renesas,vsp2";
+-			reg = <0 0xfea20000 0 0x8000>;
++			reg = <0 0xfea20000 0 0x5000>;
+ 			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 623>;
+ 			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index b67d38cc4cf0..1de6ffca4772 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -711,7 +711,7 @@
+ 
+ 		vspd0: vsp@fea20000 {
+ 			compatible = "renesas,vsp2";
+-			reg = <0 0xfea20000 0 0x8000>;
++			reg = <0 0xfea20000 0 0x5000>;
+ 			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 623>;
+ 			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+@@ -721,7 +721,7 @@
+ 
+ 		vspd1: vsp@fea28000 {
+ 			compatible = "renesas,vsp2";
+-			reg = <0 0xfea28000 0 0x8000>;
++			reg = <0 0xfea28000 0 0x5000>;
+ 			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 622>;
+ 			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.11.0
