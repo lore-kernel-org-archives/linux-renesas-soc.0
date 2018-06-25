@@ -1,84 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:53174 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751693AbeFAJ3K (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52588 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933803AbeFYOGd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Jun 2018 05:29:10 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/4] lib/vsprintf: Remove atomic-unsafe support for %pCr
-Date: Fri,  1 Jun 2018 11:28:22 +0200
-Message-Id: <1527845302-12159-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
-References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
+        Mon, 25 Jun 2018 10:06:33 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 02/15] ARM: shmobile: r8a7790: Use common R-Car Gen2 machine definition
+Date: Mon, 25 Jun 2018 16:06:13 +0200
+Message-Id: <78a9057fcc6341bb468e7ec5ac599f06e6a75547.1529934908.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1529934908.git.horms+renesas@verge.net.au>
+References: <cover.1529934908.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-"%pCr" formats the current rate of a clock, and calls clk_get_rate().
-The latter obtains a mutex, hence it must not be called from atomic
-context.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Remove support for this rarely-used format, as vsprintf() (and e.g.
-printk()) must be callable from any context.
+Now r8a7790 no longer needs the SMP initialization fallback, it can use
+the common R-Car Gen2 machine definition, and the r8a7790-specific one
+can be removed.
 
-Any remaining out-of-tree users will start seeing the clock's name
-printed instead of its rate.
-
-Reported-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Fixes: 900cca2944254edd ("lib/vsprintf: add %pC{,n,r} format specifiers for clocks")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/core-api/printk-formats.rst | 3 +--
- lib/vsprintf.c                            | 3 ---
- 2 files changed, 1 insertion(+), 5 deletions(-)
+ arch/arm/mach-shmobile/Makefile          |  1 -
+ arch/arm/mach-shmobile/setup-r8a7790.c   | 36 --------------------------------
+ arch/arm/mach-shmobile/setup-rcar-gen2.c |  3 ++-
+ 3 files changed, 2 insertions(+), 38 deletions(-)
+ delete mode 100644 arch/arm/mach-shmobile/setup-r8a7790.c
 
-diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
-index eb30efdd2e789616..25dc591cb1108790 100644
---- a/Documentation/core-api/printk-formats.rst
-+++ b/Documentation/core-api/printk-formats.rst
-@@ -419,11 +419,10 @@ struct clk
- 
- 	%pC	pll1
- 	%pCn	pll1
--	%pCr	1560000000
- 
- For printing struct clk structures. %pC and %pCn print the name
- (Common Clock Framework) or address (legacy clock framework) of the
--structure; %pCr prints the current clock rate.
-+structure.
- 
- Passed by reference.
- 
-diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index 247a7e0bf24f6f74..a48aaa79d352313a 100644
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -1469,9 +1469,6 @@ char *clock(char *buf, char *end, struct clk *clk, struct printf_spec spec,
- 		return string(buf, end, NULL, spec);
- 
- 	switch (fmt[1]) {
--	case 'r':
--		return number(buf, end, clk_get_rate(clk), spec);
+diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
+index 9133949b5df2..13aca853a162 100644
+--- a/arch/arm/mach-shmobile/Makefile
++++ b/arch/arm/mach-shmobile/Makefile
+@@ -12,7 +12,6 @@ obj-$(CONFIG_ARCH_R8A73A4)	+= setup-r8a73a4.o
+ obj-$(CONFIG_ARCH_R8A7740)	+= setup-r8a7740.o
+ obj-$(CONFIG_ARCH_R8A7778)	+= setup-r8a7778.o
+ obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o pm-r8a7779.o
+-obj-$(CONFIG_ARCH_R8A7790)	+= setup-r8a7790.o
+ obj-$(CONFIG_ARCH_R8A7791)	+= setup-r8a7791.o
+ obj-$(CONFIG_ARCH_EMEV2)	+= setup-emev2.o
+ obj-$(CONFIG_ARCH_R7S72100)	+= setup-r7s72100.o
+diff --git a/arch/arm/mach-shmobile/setup-r8a7790.c b/arch/arm/mach-shmobile/setup-r8a7790.c
+deleted file mode 100644
+index fd2435b39529..000000000000
+--- a/arch/arm/mach-shmobile/setup-r8a7790.c
++++ /dev/null
+@@ -1,36 +0,0 @@
+-/*
+- * r8a7790 processor support
+- *
+- * Copyright (C) 2013  Renesas Solutions Corp.
+- * Copyright (C) 2013  Magnus Damm
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; version 2 of the License.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
 -
- 	case 'n':
- 	default:
- #ifdef CONFIG_COMMON_CLK
+-#include <linux/init.h>
+-
+-#include <asm/mach/arch.h>
+-
+-#include "common.h"
+-#include "rcar-gen2.h"
+-
+-static const char * const r8a7790_boards_compat_dt[] __initconst = {
+-	"renesas,r8a7790",
+-	NULL,
+-};
+-
+-DT_MACHINE_START(R8A7790_DT, "Generic R8A7790 (Flattened Device Tree)")
+-	.smp_init	= smp_init_ops(shmobile_smp_init_fallback_ops),
+-	.init_early	= shmobile_init_delay,
+-	.init_time	= rcar_gen2_timer_init,
+-	.init_late	= shmobile_init_late,
+-	.reserve	= rcar_gen2_reserve,
+-	.dt_compat	= r8a7790_boards_compat_dt,
+-MACHINE_END
+diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+index 88fdc1801d90..e01f21d17167 100644
+--- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+@@ -186,8 +186,9 @@ void __init rcar_gen2_reserve(void)
+ }
+ 
+ static const char * const rcar_gen2_boards_compat_dt[] __initconst = {
++	"renesas,r8a7790",
+ 	/*
+-	 * R8A7790 and R8A7791 can't be handled here as long as they need SMP
++	 * R8A7791 can't be handled here as long as it needs SMP
+ 	 * initialization fallback.
+ 	 */
+ 	"renesas,r8a7792",
 -- 
-2.7.4
+2.11.0
