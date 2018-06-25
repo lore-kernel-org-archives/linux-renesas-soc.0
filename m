@@ -1,90 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:37301 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935929AbeFNKsk (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934237AbeFYOEF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Jun 2018 06:48:40 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
-        yoshihiro.shimoda.uh@renesas.com, joro@8bytes.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: [RESEND 2/6] iommu/ipmmu-vmsa: Hook up r8a7796 DT matching code
-Date: Thu, 14 Jun 2018 12:48:22 +0200
-Message-Id: <1528973306-7962-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1528973306-7962-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1528973306-7962-1-git-send-email-jacopo+renesas@jmondi.org>
+        Mon, 25 Jun 2018 10:04:05 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 08/29] arm64: dts: renesas: r8a77980: add GEther support
+Date: Mon, 25 Jun 2018 16:03:03 +0200
+Message-Id: <87bea6780b952dac7f58ed2395d2eaa434deb0fb.1529933747.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
+References: <cover.1529933747.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Support the r8a7796 IPMMU by sharing feature flags between
-r8a7795 and r8a7796. Also update IOMMU_OF_DECLARE to hook
-up the updated compat string.
+Define the generic R8A77980 part of the GEther device node.
 
-[rebased on v4.17]
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Based on the original (and large) patch by Vladimir Barinov.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[simon: add resets property]
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/iommu/ipmmu-vmsa.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 5c1ade7..04c8015 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -760,8 +760,9 @@ static bool ipmmu_slave_whitelist(struct device *dev)
- 	return false;
- }
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+index 6d2b61d83caf..c797db59ae18 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -417,6 +417,18 @@
+ 			dma-channels = <16>;
+ 		};
  
--static const struct soc_device_attribute soc_r8a7795[] = {
-+static const struct soc_device_attribute soc_rcar_gen3[] = {
- 	{ .soc_id = "r8a7795", },
-+	{ .soc_id = "r8a7796", },
- 	{ /* sentinel */ }
- };
- 
-@@ -769,7 +770,7 @@ static int ipmmu_of_xlate(struct device *dev,
- 			  struct of_phandle_args *spec)
- {
- 	/* For R-Car Gen3 use a white list to opt-in slave devices */
--	if (soc_device_match(soc_r8a7795) && !ipmmu_slave_whitelist(dev))
-+	if (soc_device_match(soc_rcar_gen3) && !ipmmu_slave_whitelist(dev))
- 		return -ENODEV;
- 
- 	iommu_fwspec_add_ids(dev, spec->args, 1);
-@@ -923,7 +924,7 @@ static const struct ipmmu_features ipmmu_features_default = {
- 	.twobit_imttbcr_sl0 = false,
- };
- 
--static const struct ipmmu_features ipmmu_features_r8a7795 = {
-+static const struct ipmmu_features ipmmu_features_rcar_gen3 = {
- 	.use_ns_alias_offset = false,
- 	.has_cache_leaf_nodes = true,
- 	.number_of_contexts = 8,
-@@ -937,7 +938,10 @@ static const struct of_device_id ipmmu_of_ids[] = {
- 		.data = &ipmmu_features_default,
- 	}, {
- 		.compatible = "renesas,ipmmu-r8a7795",
--		.data = &ipmmu_features_r8a7795,
-+		.data = &ipmmu_features_rcar_gen3,
-+	}, {
-+		.compatible = "renesas,ipmmu-r8a7796",
-+		.data = &ipmmu_features_rcar_gen3,
- 	}, {
- 		/* Terminator */
- 	},
-@@ -1114,6 +1118,7 @@ module_exit(ipmmu_exit);
- 
- IOMMU_OF_DECLARE(ipmmu_vmsa_iommu_of, "renesas,ipmmu-vmsa");
- IOMMU_OF_DECLARE(ipmmu_r8a7795_iommu_of, "renesas,ipmmu-r8a7795");
-+IOMMU_OF_DECLARE(ipmmu_r8a7796_iommu_of, "renesas,ipmmu-r8a7796");
- 
- MODULE_DESCRIPTION("IOMMU API for Renesas VMSA-compatible IPMMU");
- MODULE_AUTHOR("Laurent Pinchart <laurent.pinchart@ideasonboard.com>");
++		gether: ethernet@e7400000 {
++			compatible = "renesas,gether-r8a77980";
++			reg = <0 0xe7400000 0 0x1000>;
++			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 813>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 813>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		mmc0: mmc@ee140000 {
+ 			compatible = "renesas,sdhi-r8a77980",
+ 				     "renesas,rcar-gen3-sdhi";
 -- 
-2.7.4
+2.11.0
