@@ -1,96 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:58244 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966295AbeFSNzW (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:22832 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755094AbeFYKhW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Jun 2018 09:55:22 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/2] PM / wakeup: Add callback for wake-up change notification
-Date: Tue, 19 Jun 2018 15:55:17 +0200
-Message-Id: <20180619135518.8990-2-geert+renesas@glider.be>
-In-Reply-To: <20180619135518.8990-1-geert+renesas@glider.be>
-References: <20180619135518.8990-1-geert+renesas@glider.be>
+        Mon, 25 Jun 2018 06:37:22 -0400
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        Carlo Caione <carlo@endlessm.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v6 2/3] arm: shmobile: Add the R9A06G032 SMP enabler
+ driver
+Date: Mon, 25 Jun 2018 10:37:15 +0000
+Message-ID: <OSBPR01MB20545582133969454236476AD24A0@OSBPR01MB2054.jpnprd01.prod.outlook.com>
+References: <1529915110-5867-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1529915110-5867-3-git-send-email-michel.pollet@bp.renesas.com>
+ <CAMuHMdVarwq26Jr=YN+zBDrHjQf-Q+u3L6oRNiSKh-hxuwOsrA@mail.gmail.com>
+ <20180625094249.b6dwnraqruicmo2u@verge.net.au>
+In-Reply-To: <20180625094249.b6dwnraqruicmo2u@verge.net.au>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a callback to inform a device that its wake-up setting has been
-changed.  This allows a device to synchronize device configuration with
-an external user action.
 
-E.g. on systems using a Rohm BD9571MWV PMIC and a toggle accessory power
-switch, the system suspend/resume procedure is:
-  1. Configure PMIC for DDR backup mode (by software), which changes the
-     role of the accessory power switch from a power to a wake-up
-     switch,
-  2. Switch accessory power switch off (manually), to prepare for system
-     suspend,
-  3. Suspend system (by software),
-  4. Switch accessory power switch on (manually), to wake up the system.
+On 25 June 2018 10:43, Simon wrote:
+>
+> On Mon, Jun 25, 2018 at 11:24:48AM +0200, Geert Uytterhoeven wrote:
+> > Hi Michel,
+> >
+> > On Mon, Jun 25, 2018 at 10:31 AM Michel Pollet
+> > <michel.pollet@bp.renesas.com> wrote:
+> > > The Renesas R9A06G032 second CA7 is parked in a ROM pen at boot
+> > > time, it requires a special enable method to get it started.
+> > >
+> > > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > ---
+> > >  arch/arm/mach-shmobile/Makefile        |  1 +
+> > >  arch/arm/mach-shmobile/smp-r9a06g032.c | 96
+> > > ++++++++++++++++++++++++++++++++++
+> > >  2 files changed, 97 insertions(+)
+> > >  create mode 100644 arch/arm/mach-shmobile/smp-r9a06g032.c
+> >
+> > Given this doesn't depend on anything under arch/arm/mach-shmobile/,
+> > perhaps this should be moved to drivers/soc/renesas/ (and renamed to
+> > r9a06g032-smp.c for consistency) instead?
+> >
+> > Simon: what do you think?
+>
+> Yes, I think that would be nice.
 
-As step 2 involves a manual operation, step 1 cannot be combined
-with step 3 and performed in the PMIC's suspend callback (unlike on
-systems with a momentary power switch).
+So, do you guys want me to try to integrate this with the subsystem there, =
+with
+The renesas-soc bits, or should I just plonk the driver in and change the m=
+akefile?
 
-Adding the new callback allows to move step 1 to the new callback, to be
-performed in response to the user writing "enabled" to the PMIC's
-"wakeup" virtual file in sysfs.
+Secondary question: is it to for me to repost with these changes ASAP?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Is there a better way to handle this?
+Cheers
+Michel
 
-Currently step 1 is done in userspace using i2set, which is very
-user-unfriendly
-(https://elinux.org/R-Car/Boards/Salvator-XS#PSCI_System_Suspend).
 
-v2:
-  - Improve patch description.
----
- drivers/base/power/wakeup.c | 4 ++++
- include/linux/pm.h          | 1 +
- 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
-index 5fa1898755a34878..933560d658692fe3 100644
---- a/drivers/base/power/wakeup.c
-+++ b/drivers/base/power/wakeup.c
-@@ -255,6 +255,8 @@ static int device_wakeup_attach(struct device *dev, struct wakeup_source *ws)
- 	if (dev->power.wakeirq)
- 		device_wakeup_attach_irq(dev, dev->power.wakeirq);
- 	spin_unlock_irq(&dev->power.lock);
-+	if (dev->power.wakeup_change_notify)
-+		dev->power.wakeup_change_notify(dev, true);
- 	return 0;
- }
- 
-@@ -372,6 +374,8 @@ static struct wakeup_source *device_wakeup_detach(struct device *dev)
- {
- 	struct wakeup_source *ws;
- 
-+	if (dev->power.wakeup_change_notify)
-+		dev->power.wakeup_change_notify(dev, false);
- 	spin_lock_irq(&dev->power.lock);
- 	ws = dev->power.wakeup;
- 	dev->power.wakeup = NULL;
-diff --git a/include/linux/pm.h b/include/linux/pm.h
-index e723b78d835706f2..3dec274bffffc6f8 100644
---- a/include/linux/pm.h
-+++ b/include/linux/pm.h
-@@ -599,6 +599,7 @@ struct dev_pm_info {
- 	struct list_head	entry;
- 	struct completion	completion;
- 	struct wakeup_source	*wakeup;
-+	void (*wakeup_change_notify)(struct device *dev, bool enable);
- 	bool			wakeup_path:1;
- 	bool			syscore:1;
- 	bool			no_pm_callbacks:1;	/* Owned by the PM core */
--- 
-2.17.1
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
