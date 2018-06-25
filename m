@@ -1,102 +1,113 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:52588 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934290AbeFYOE0 (ORCPT
+        with ESMTP id S934074AbeFYOGl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:04:26 -0400
+        Mon, 25 Jun 2018 10:06:41 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 19/29] arm64: dts: renesas: r8a77990: Add secondary CA53 CPU core
-Date: Mon, 25 Jun 2018 16:03:14 +0200
-Message-Id: <7085f5d9e803688045e92ccb69e1f7fe0eee9621.1529933747.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
-References: <cover.1529933747.git.horms+renesas@verge.net.au>
+Subject: [PATCH 07/15] ARM: shmobile: apmu: Remove obsolete shmobile_smp_apmu_prepare_cpus()
+Date: Mon, 25 Jun 2018 16:06:18 +0200
+Message-Id: <36a90c0553dd9c4d54a65f5387638ee55e4cf93c.1529934908.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1529934908.git.horms+renesas@verge.net.au>
+References: <cover.1529934908.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add a device node for the second Cortex-A53 CPU core on the Renesas
-R-Car E3 (r8a77990) SoC, and adjust the interrupt delivery masks for ARM
-Generic Interrupt Controller and Architectured Timer.
+After the removal of the legacy SMP fallbacks, there are no more users
+left of shmobile_smp_apmu_prepare_cpus().
 
-Based on a patch in the BSP by Takeshi Kihara.
+Remove it, together with the legacy SMP config parser.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 27 ++++++++++++++++++---------
- 1 file changed, 18 insertions(+), 9 deletions(-)
+ arch/arm/mach-shmobile/platsmp-apmu.c | 40 -----------------------------------
+ arch/arm/mach-shmobile/platsmp-apmu.h |  8 -------
+ 2 files changed, 48 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index e644f49c9b58..735881d4e57a 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -17,16 +17,24 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
+index 778b6b618ce7..42c9405e556b 100644
+--- a/arch/arm/mach-shmobile/platsmp-apmu.c
++++ b/arch/arm/mach-shmobile/platsmp-apmu.c
+@@ -106,38 +106,6 @@ static void apmu_init_cpu(struct resource *res, int cpu, int bit)
+ 	writel(x, apmu_cpus[cpu].iomem + DBGRCR_OFFS);
+ }
  
--		/* 1 core only at this point */
- 		a53_0: cpu@0 {
- 			compatible = "arm,cortex-a53", "arm,armv8";
--			reg = <0x0>;
-+			reg = <0>;
- 			device_type = "cpu";
- 			power-domains = <&sysc 5>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
- 		};
+-static void apmu_parse_cfg(void (*fn)(struct resource *res, int cpu, int bit),
+-			   struct rcar_apmu_config *apmu_config, int num)
+-{
+-	int id;
+-	int k;
+-	int bit, index;
+-	bool is_allowed;
+-
+-	for (k = 0; k < num; k++) {
+-		/* only enable the cluster that includes the boot CPU */
+-		is_allowed = false;
+-		for (bit = 0; bit < ARRAY_SIZE(apmu_config[k].cpus); bit++) {
+-			id = apmu_config[k].cpus[bit];
+-			if (id >= 0) {
+-				if (id == cpu_logical_map(0))
+-					is_allowed = true;
+-			}
+-		}
+-		if (!is_allowed)
+-			continue;
+-
+-		for (bit = 0; bit < ARRAY_SIZE(apmu_config[k].cpus); bit++) {
+-			id = apmu_config[k].cpus[bit];
+-			if (id >= 0) {
+-				index = get_logical_index(id);
+-				if (index >= 0)
+-					fn(&apmu_config[k].iomem, index, bit);
+-			}
+-		}
+-	}
+-}
+-
+ static const struct of_device_id apmu_ids[] = {
+ 	{ .compatible = "renesas,apmu" },
+ 	{ /*sentinel*/ }
+@@ -194,14 +162,6 @@ static void __init shmobile_smp_apmu_setup_boot(void)
+ 	shmobile_boot_fn_gen2 = shmobile_boot_fn;
+ }
  
-+		a53_1: cpu@1 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <1>;
-+			device_type = "cpu";
-+			power-domains = <&sysc 6>;
-+			next-level-cache = <&L2_CA53>;
-+			enable-method = "psci";
-+		};
-+
- 		L2_CA53: cache-controller-0 {
- 			compatible = "cache";
- 			power-domains = <&sysc 21>;
-@@ -44,8 +52,9 @@
+-void __init shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
+-					   struct rcar_apmu_config *apmu_config,
+-					   int num)
+-{
+-	shmobile_smp_apmu_setup_boot();
+-	apmu_parse_cfg(apmu_init_cpu, apmu_config, num);
+-}
+-
+ int shmobile_smp_apmu_boot_secondary(unsigned int cpu, struct task_struct *idle)
+ {
+ 	/* For this particular CPU register boot vector */
+diff --git a/arch/arm/mach-shmobile/platsmp-apmu.h b/arch/arm/mach-shmobile/platsmp-apmu.h
+index 76512c9a2545..70424572b9da 100644
+--- a/arch/arm/mach-shmobile/platsmp-apmu.h
++++ b/arch/arm/mach-shmobile/platsmp-apmu.h
+@@ -16,14 +16,6 @@
+ #ifndef PLATSMP_APMU_H
+ #define PLATSMP_APMU_H
  
- 	pmu_a53 {
- 		compatible = "arm,cortex-a53-pmu";
--		interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
--		interrupt-affinity = <&a53_0>;
-+		interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&a53_0>, <&a53_1>;
- 	};
- 
- 	psci {
-@@ -268,7 +277,7 @@
- 			      <0x0 0xf1040000 0 0x20000>,
- 			      <0x0 0xf1060000 0 0x20000>;
- 			interrupts = <GIC_PPI 9
--					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
-+					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
- 			clocks = <&cpg CPG_MOD 408>;
- 			clock-names = "clk";
- 			power-domains = <&sysc 32>;
-@@ -283,9 +292,9 @@
- 
- 	timer {
- 		compatible = "arm,armv8-timer";
--		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
- 	};
- };
+-struct rcar_apmu_config {
+-	struct resource iomem;
+-	int cpus[4];
+-};
+-
+-extern void shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
+-					   struct rcar_apmu_config *apmu_config,
+-					   int num);
+ extern int shmobile_smp_apmu_boot_secondary(unsigned int cpu,
+ 					    struct task_struct *idle);
+ extern void shmobile_smp_apmu_cpu_die(unsigned int cpu);
 -- 
 2.11.0
