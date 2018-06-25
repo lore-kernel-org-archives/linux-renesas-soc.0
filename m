@@ -1,34 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:7827 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751433AbeF2KCq (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52588 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934074AbeFYOGg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Jun 2018 06:02:46 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org
-Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 0/2] mmc: renesas_sdhi_internal_dmac: fix two issues for error path
-Date: Fri, 29 Jun 2018 19:01:43 +0900
-Message-Id: <1530266505-19953-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Mon, 25 Jun 2018 10:06:36 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 06/15] ARM: shmobile: apmu: Move cpu_leave_lowpower() to SUSPEND section
+Date: Mon, 25 Jun 2018 16:06:17 +0200
+Message-Id: <fa6e9cb2aca1cdca1b85e5b19f9cda8aac78752b.1529934908.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1529934908.git.horms+renesas@verge.net.au>
+References: <cover.1529934908.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set is based on the mmc.git / fixes branch.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Changes from v1:
- - Add Reviewed-by Geert-san.
- - Add a new goto label for error path.
+cpu_leave_lowpower() is used for suspend only, not for CPU hotplug.
+Hence move it from the HOTPLUG_CPU || SUSPEND section to the SUSPEND
+section.
 
-Yoshihiro Shimoda (2):
-  mmc: renesas_sdhi_internal_dmac: Fix missing unmap in error patch
-  mmc: renesas_sdhi_internal_dmac: Cannot clear the RX_IN_USE in abort
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/mach-shmobile/platsmp-apmu.c | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
-
+diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
+index ba732effc90b..778b6b618ce7 100644
+--- a/arch/arm/mach-shmobile/platsmp-apmu.c
++++ b/arch/arm/mach-shmobile/platsmp-apmu.c
+@@ -270,21 +270,6 @@ static void shmobile_smp_apmu_cpu_shutdown(unsigned int cpu)
+ 	/* Do ARM specific CPU shutdown */
+ 	cpu_enter_lowpower_a15();
+ }
+-
+-static inline void cpu_leave_lowpower(void)
+-{
+-	unsigned int v;
+-
+-	asm volatile("mrc    p15, 0, %0, c1, c0, 0\n"
+-		     "       orr     %0, %0, %1\n"
+-		     "       mcr     p15, 0, %0, c1, c0, 0\n"
+-		     "       mrc     p15, 0, %0, c1, c0, 1\n"
+-		     "       orr     %0, %0, %2\n"
+-		     "       mcr     p15, 0, %0, c1, c0, 1\n"
+-		     : "=&r" (v)
+-		     : "Ir" (CR_C), "Ir" (0x40)
+-		     : "cc");
+-}
+ #endif
+ 
+ #if defined(CONFIG_HOTPLUG_CPU)
+@@ -315,6 +300,21 @@ static int shmobile_smp_apmu_do_suspend(unsigned long cpu)
+ 	return 1;
+ }
+ 
++static inline void cpu_leave_lowpower(void)
++{
++	unsigned int v;
++
++	asm volatile("mrc    p15, 0, %0, c1, c0, 0\n"
++		     "       orr     %0, %0, %1\n"
++		     "       mcr     p15, 0, %0, c1, c0, 0\n"
++		     "       mrc     p15, 0, %0, c1, c0, 1\n"
++		     "       orr     %0, %0, %2\n"
++		     "       mcr     p15, 0, %0, c1, c0, 1\n"
++		     : "=&r" (v)
++		     : "Ir" (CR_C), "Ir" (0x40)
++		     : "cc");
++}
++
+ static int shmobile_smp_apmu_enter_suspend(suspend_state_t state)
+ {
+ 	cpu_suspend(smp_processor_id(), shmobile_smp_apmu_do_suspend);
 -- 
-1.9.1
+2.11.0
