@@ -1,119 +1,126 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:39121 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751553AbeFBKMX (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934258AbeFYOEb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 2 Jun 2018 06:12:23 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 07/10] mfd: da9063: Add custom IRQ map for DA9063L
-Date: Sat,  2 Jun 2018 12:11:52 +0200
-Message-Id: <20180602101155.26375-7-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
-References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
+        Mon, 25 Jun 2018 10:04:31 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 27/29] arm64: dts: renesas: r8a77980: add FCPVD/VSPD/DU/LVDS support
+Date: Mon, 25 Jun 2018 16:03:22 +0200
+Message-Id: <a334e781e01afeb97634480ec0d9819287b79a68.1529933747.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
+References: <cover.1529933747.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-While the datasheet for DA9063L (2v1, 23-Mar-2017) lists the RTC register
-block, the DA9063L does not have an RTC. Add custom IRQ map for DA9063L to
-ignore the Alarm and Tick IRQs from the PMIC.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
----
-V3: New patch
----
- drivers/mfd/da9063-irq.c | 55 ++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 53 insertions(+), 2 deletions(-)
+Describe the interconnected FCPVD0, VSPD0, DU, and LVDS0 devices in the
+R8A77980 device tree...
 
-diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
-index 5b406ecfc14a..b6a88861cc2e 100644
---- a/drivers/mfd/da9063-irq.c
-+++ b/drivers/mfd/da9063-irq.c
-@@ -74,8 +74,55 @@ static const struct regmap_irq_chip da9063_irq_chip = {
- 	.init_ack_masked = true,
- };
+Based on the original (and large) patch by Vladimir Barinov.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi | 77 +++++++++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+index 68cede26b01a..623ebe435417 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -653,6 +653,83 @@
+ 			resets = <&cpg 408>;
+ 		};
  
-+static const struct regmap_irq da9063l_irqs[] = {
-+	/* DA9063 event A register */
-+	REGMAP_IRQ_REG(DA9063_IRQ_ONKEY, DA9063_REG_EVENT_A_OFFSET, DA9063_M_ONKEY),
-+	REGMAP_IRQ_REG(DA9063_IRQ_ADC_RDY, DA9063_REG_EVENT_A_OFFSET, DA9063_M_ADC_RDY),
-+	REGMAP_IRQ_REG(DA9063_IRQ_SEQ_RDY, DA9063_REG_EVENT_A_OFFSET, DA9063_M_SEQ_RDY),
-+	/* DA9063 event B register */
-+	REGMAP_IRQ_REG(DA9063_IRQ_WAKE, DA9063_REG_EVENT_B_OFFSET, DA9063_M_WAKE),
-+	REGMAP_IRQ_REG(DA9063_IRQ_TEMP, DA9063_REG_EVENT_B_OFFSET, DA9063_M_TEMP),
-+	REGMAP_IRQ_REG(DA9063_IRQ_COMP_1V2, DA9063_REG_EVENT_B_OFFSET, DA9063_M_COMP_1V2),
-+	REGMAP_IRQ_REG(DA9063_IRQ_LDO_LIM, DA9063_REG_EVENT_B_OFFSET, DA9063_M_LDO_LIM),
-+	REGMAP_IRQ_REG(DA9063_IRQ_REG_UVOV, DA9063_REG_EVENT_B_OFFSET, DA9063_M_UVOV),
-+	REGMAP_IRQ_REG(DA9063_IRQ_DVC_RDY, DA9063_REG_EVENT_B_OFFSET, DA9063_M_DVC_RDY),
-+	REGMAP_IRQ_REG(DA9063_IRQ_VDD_MON, DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_MON),
-+	REGMAP_IRQ_REG(DA9063_IRQ_WARN, DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_WARN),
-+	/* DA9063 event C register */
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI0, DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI0),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI1, DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI1),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI2, DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI2),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI3, DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI3),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI4, DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI4),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI5, DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI5),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI6, DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI6),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI7, DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI7),
-+	/* DA9063 event D register */
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI8, DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI8),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI9, DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI9),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI10, DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI10),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI11, DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI11),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI12, DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI12),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI13, DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI13),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI14, DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI14),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI15, DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI15),
-+};
++		vspd0: vsp@fea20000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfea20000 0 0x5000>;
++			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 623>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 623>;
++			renesas,fcp = <&fcpvd0>;
++		};
 +
-+static const struct regmap_irq_chip da9063l_irq_chip = {
-+	.name = "da9063l-irq",
-+	.irqs = da9063l_irqs,
-+	.num_irqs = DA9063_NUM_IRQ,
++		fcpvd0: fcp@fea27000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea27000 0 0x200>;
++			clocks = <&cpg CPG_MOD 603>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 603>;
++		};
 +
-+	.num_regs = 4,
-+	.status_base = DA9063_REG_EVENT_A,
-+	.mask_base = DA9063_REG_IRQ_MASK_A,
-+	.ack_base = DA9063_REG_EVENT_A,
-+	.init_ack_masked = true,
-+};
++		du: display@feb00000 {
++			compatible = "renesas,du-r8a77980",
++				     "renesas,du-r8a77970";
++			reg = <0 0xfeb00000 0 0x80000>;
++			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 724>;
++			clock-names = "du.0";
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 724>;
++			vsps = <&vspd0>;
++			status = "disabled";
 +
- int da9063_irq_init(struct da9063 *da9063)
- {
-+	struct regmap_irq_chip *irq_chip;
- 	int ret;
- 
- 	if (!da9063->chip_irq) {
-@@ -83,10 +130,14 @@ int da9063_irq_init(struct da9063 *da9063)
- 		return -EINVAL;
- 	}
- 
-+	if (da9063->type == PMIC_TYPE_DA9063)
-+		irq_chip = &da9063_irq_chip;
-+	else
-+		irq_chip = &da9063l_irq_chip;
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
 +
- 	ret = regmap_add_irq_chip(da9063->regmap, da9063->chip_irq,
- 			IRQF_TRIGGER_LOW | IRQF_ONESHOT | IRQF_SHARED,
--			da9063->irq_base, &da9063_irq_chip,
--			&da9063->regmap_irq);
-+			da9063->irq_base, irq_chip, &da9063->regmap_irq);
- 	if (ret) {
- 		dev_err(da9063->dev, "Failed to reguest IRQ %d: %d\n",
- 				da9063->chip_irq, ret);
++				port@0 {
++					reg = <0>;
++					du_out_rgb: endpoint {
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++					du_out_lvds0: endpoint {
++						remote-endpoint = <&lvds0_in>;
++					};
++				};
++			};
++		};
++
++		lvds0: lvds-encoder@feb90000 {
++			compatible = "renesas,r8a77980-lvds";
++			reg = <0 0xfeb90000 0 0x14>;
++			clocks = <&cpg CPG_MOD 727>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 727>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					lvds0_in: endpoint {
++						remote-endpoint =
++							<&du_out_lvds0>;
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++					lvds0_out: endpoint {
++					};
++				};
++			};
++		};
++
+ 		prr: chipid@fff00044 {
+ 			compatible = "renesas,prr";
+ 			reg = <0 0xfff00044 0 4>;
 -- 
-2.16.2
+2.11.0
