@@ -1,53 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:54510 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752637AbeFEXKf (ORCPT
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:40121 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754449AbeFYJVE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Jun 2018 19:10:35 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Mon, 25 Jun 2018 05:21:04 -0400
+MIME-Version: 1.0
+References: <1529915064-5014-1-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1529915064-5014-1-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 25 Jun 2018 11:20:52 +0200
+Message-ID: <CAMuHMdVtkxvpBjSy2+2MHvZ15t5ZTSq-4H+pfgsayOx+EHXnEg@mail.gmail.com>
+Subject: Re: [PATCH v10 1/1] clk: renesas: Renesas R9A06G032 clock driver
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 03/12] mfd: da9063: Use PLATFORM_DEVID_NONE
-Date: Wed,  6 Jun 2018 01:10:04 +0200
-Message-Id: <20180605231013.1803-3-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
-References: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use PLATFORM_DEVID_NONE instead of -1 in mfd_add_devices.
+Hi Michel,
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
----
-V4: New patch
----
- drivers/mfd/da9063-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, Jun 25, 2018 at 10:29 AM Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> This provides a clock driver for the Renesas R09A06G032.
+> This uses a structure derived from both the RCAR gen2 driver as well as
+> the renesas-cpg-mssr driver.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
-index 8226ebd8b96d..61ffee5eac2c 100644
---- a/drivers/mfd/da9063-core.c
-+++ b/drivers/mfd/da9063-core.c
-@@ -226,7 +226,7 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
- 
- 	da9063->irq_base = regmap_irq_chip_get_base(da9063->regmap_irq);
- 
--	ret = mfd_add_devices(da9063->dev, -1, da9063_devs,
-+	ret = mfd_add_devices(da9063->dev, PLATFORM_DEVID_NONE, da9063_devs,
- 			      ARRAY_SIZE(da9063_devs), NULL, da9063->irq_base,
- 			      NULL);
- 	if (ret) {
+Thanks, updated.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.16.2
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
