@@ -1,42 +1,139 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:47295 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752923AbeFILaP (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934232AbeFYOEB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 9 Jun 2018 07:30:15 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: kieran.bingham+renesas@ideasonboard.com,
-        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [RFC 0/2] GMSL bindings description update
-Date: Sat,  9 Jun 2018 13:30:03 +0200
-Message-Id: <1528543805-23945-1-git-send-email-jacopo+renesas@jmondi.org>
+        Mon, 25 Jun 2018 10:04:01 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 04/29] arm64: dts: renesas: draak: Describe CVBS input
+Date: Mon, 25 Jun 2018 16:02:59 +0200
+Message-Id: <6a0942c20f5ca9bf203a20ab4a91c7b7dcd6a0c5.1529933747.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
+References: <cover.1529933747.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
-  as anticipated offline here you have an alternative bindings description
-for max9286 and rdacm20 prepared before your GMSL upstreaming effort.
-Sorry for not having shared this in advance.
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-I integrated some what you proposed in your bindings description here, feel
-free to add other parts if yuo think that's the case.
+Describe CVBS video input through analog video decoder ADV7180
+connected to video input interface VIN4.
 
-Thanks
-   j
+The video input signal path is shared with HDMI video input, and
+selected by on-board switches SW-53 and SW-54 with CVBS input selected
+by the default switches configuration.
 
-Jacopo Mondi (1):
-  dt-bindings: media: i2c: Add bindings for IMI RDACM20
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 68 ++++++++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
 
-Laurent Pinchart (1):
-  dt/bindings: media: Add DT bindings for Maxim Integrated MAX9286
-
- .../devicetree/bindings/media/i2c/imi,rdacm20.txt  |  62 +++++++
- .../bindings/media/i2c/maxim,max9286.txt           | 180 +++++++++++++++++++++
- 2 files changed, 242 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
- create mode 100644 Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt
-
---
-2.7.4
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+index 9d1c33927064..a1b71c7d01b6 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+@@ -59,6 +59,16 @@
+ 		};
+ 	};
+ 
++	composite-in {
++		compatible = "composite-video-connector";
++
++		port {
++			composite_con_in: endpoint {
++				remote-endpoint = <&adv7180_in>;
++			};
++		};
++	};
++
+ 	memory@48000000 {
+ 		device_type = "memory";
+ 		/* first 128MB is reserved for secure area. */
+@@ -148,6 +158,11 @@
+ 		groups = "usb0";
+ 		function = "usb0";
+ 	};
++
++	vin4_pins_cvbs: vin4 {
++		groups = "vin4_data8", "vin4_sync", "vin4_clk";
++		function = "vin4";
++	};
+ };
+ 
+ &i2c0 {
+@@ -160,6 +175,39 @@
+ 		reg = <0x50>;
+ 		pagesize = <8>;
+ 	};
++
++	composite-in@20 {
++		compatible = "adi,adv7180cp";
++		reg = <0x20>;
++
++		port {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7180_in: endpoint {
++					remote-endpoint = <&composite_con_in>;
++				};
++			};
++
++			port@3 {
++				reg = <3>;
++
++				/*
++				 * The VIN4 video input path is shared between
++				 * CVBS and HDMI inputs through SW[49-53]
++				 * switches.
++				 *
++				 * CVBS is the default selection, link it to
++				 * VIN4 here.
++				 */
++				adv7180_out: endpoint {
++					remote-endpoint = <&vin4_in>;
++				};
++			};
++		};
++	};
+ };
+ 
+ &i2c1 {
+@@ -257,3 +305,23 @@
+ 	timeout-sec = <60>;
+ 	status = "okay";
+ };
++
++&vin4 {
++	pinctrl-0 = <&vin4_pins_cvbs>;
++	pinctrl-names = "default";
++
++	status = "okay";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			reg = <0>;
++
++			vin4_in: endpoint {
++				remote-endpoint = <&adv7180_out>;
++			};
++		};
++	};
++};
+-- 
+2.11.0
