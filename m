@@ -1,61 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:34830 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751590AbeFEJvD (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934238AbeFYOEP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Jun 2018 05:51:03 -0400
-Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A3BA91AA3
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  5 Jun 2018 11:51:01 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 25 Jun 2018 10:04:15 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 1/2] ARM: dts: rcar-gen2: Convert to new DU DT bindings
-Date: Tue,  5 Jun 2018 12:51:05 +0300
-Message-Id: <20180605095106.25586-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180605095106.25586-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180605095106.25586-1-laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 15/29] arm64: dts: renesas: salvator-x(s): Update I2C ch4 clock to 400kHz
+Date: Mon, 25 Jun 2018 16:03:10 +0200
+Message-Id: <56195dc5c3a156cad6afb7cbda411fd2cfd978ae.1529933747.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
+References: <cover.1529933747.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The DU DT bindings have been updated to drop the reg-names property.
-Update the r8a7792 and r8a7794 device trees accordingly.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Any of the following devices connected to I2C ch4 of the Salvator-X(S)
+boards will operate at 400 kHz:
+
+    PCA9654, 9FGV0841, ADV7482WBBCZ, MAX9611, 5P49V5923, 5P49V6901A
+
+This patch updates the clock frequency to 400 KHz.
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[wsa: squashed commits into one]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-Changes since v4:
+ arch/arm64/boot/dts/renesas/salvator-x.dtsi  | 2 ++
+ arch/arm64/boot/dts/renesas/salvator-xs.dtsi | 2 ++
+ 2 files changed, 4 insertions(+)
 
-- Fixed typo in commit message
-- Squashed the r8a7792 and r8a7794 changes together
----
- arch/arm/boot/dts/r8a7792.dtsi | 1 -
- arch/arm/boot/dts/r8a7794.dtsi | 1 -
- 2 files changed, 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index f44257dd86f6..d48652a00bf3 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -832,7 +832,6 @@
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a7792";
- 			reg = <0 0xfeb00000 0 0x40000>;
--			reg-names = "du";
- 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 724>,
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 736196903d22..ff8390c0c45c 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -1352,7 +1352,6 @@
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a7794";
- 			reg = <0 0xfeb00000 0 0x40000>;
--			reg-names = "du";
- 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>;
+diff --git a/arch/arm64/boot/dts/renesas/salvator-x.dtsi b/arch/arm64/boot/dts/renesas/salvator-x.dtsi
+index 468868c8ed9f..2828482eba1c 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-x.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-x.dtsi
+@@ -20,6 +20,8 @@
+ };
+ 
+ &i2c4 {
++	clock-frequency = <400000>;
++
+ 	versaclock5: clock-generator@6a {
+ 		compatible = "idt,5p49v5923";
+ 		reg = <0x6a>;
+diff --git a/arch/arm64/boot/dts/renesas/salvator-xs.dtsi b/arch/arm64/boot/dts/renesas/salvator-xs.dtsi
+index bf4d200fb546..1ac03b7564aa 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-xs.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-xs.dtsi
+@@ -20,6 +20,8 @@
+ };
+ 
+ &i2c4 {
++	clock-frequency = <400000>;
++
+ 	versaclock6: clock-generator@6a {
+ 		compatible = "idt,5p49v6901";
+ 		reg = <0x6a>;
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
