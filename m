@@ -1,97 +1,113 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:52526 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937674AbeFSMfd (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52588 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934166AbeFYOGq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Jun 2018 08:35:33 -0400
-Received: from rox.of.borg ([192.168.97.57])
-        by ayla.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1fVFr9-0007xD-Mu
-        for linux-renesas-soc@vger.kernel.org; Tue, 19 Jun 2018 14:35:31 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1fVFr9-0001xh-KA
-        for linux-renesas-soc@vger.kernel.org; Tue, 19 Jun 2018 14:35:31 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+        Mon, 25 Jun 2018 10:06:46 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2018-06-19-v4.18-rc1
-Date: Tue, 19 Jun 2018 14:35:31 +0200
-Message-Id: <20180619123531.7499-1-geert+renesas@glider.be>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 11/15] soc: renesas: rcar-sysc: Provide helpers to power up/down CPUs
+Date: Mon, 25 Jun 2018 16:06:22 +0200
+Message-Id: <f2b1d2f94af887c91bb8a0cfb495e546331bc5ed.1529934908.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1529934908.git.horms+renesas@verge.net.au>
+References: <cover.1529934908.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I have pushed renesas-drivers-2018-06-19-v4.18-rc1 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging (a) the for-next branches
-of various subsystem trees and (b) branches with driver code submitted
-or planned for submission to maintainers into the development branch of
-Simon Horman's renesas.git tree.
+Provide helpers to control CPU power areas from platform code, taking
+just a CPU index.  This will avoid having to pass full CPU power area
+parameter blocks, and thus duplicating information already provided by
+SoC-specific SYSC drivers.
 
-Today's version is based on renesas-devel-20180618-v4.18-rc1.
+This will be used on R-Car H1 only.
+Later R-Car generations rely on APMU/RST for CPU power area control.
 
-Included branches with driver code:
-  - clk-renesas
-  - sh-pfc
-  - topic/bd9571-ddr-backup-mode-driver-v3
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/renesas-defconfig
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/ipmmu-driver-v6
-  - git://linuxtv.org/pinchartl/media.git#drm-du-iommu-v1-20171115
-  - git://git.ragnatech.se/linux#for-renesas-drivers
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#tags/vsp1/du/interlaced/v4.5
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/soc/renesas/rcar-sysc.c       | 40 +++++++++++++++++++++++++++++++++++
+ include/linux/soc/renesas/rcar-sysc.h |  2 ++
+ 2 files changed, 42 insertions(+)
 
-Included fixes:
-  - [LOCAL] arm64: defconfig: Update renesas_defconfig
-
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://git.freedesktop.org/git/drm/drm.git#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/media_tree.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
-  - git://git.infradead.org/users/vkoul/slave-dma.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
-  - git://github.com/bzolnier/linux.git#fbdev-for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index 95120acc4d80..4ad6dcd19420 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -310,6 +310,8 @@ struct rcar_pm_domains {
+ 	struct generic_pm_domain *domains[RCAR_PD_ALWAYS_ON + 1];
+ };
+ 
++static struct genpd_onecell_data *rcar_sysc_onecell_data;
++
+ static int __init rcar_sysc_pd_init(void)
+ {
+ 	const struct rcar_sysc_info *info;
+@@ -356,6 +358,7 @@ static int __init rcar_sysc_pd_init(void)
+ 
+ 	domains->onecell_data.domains = domains->domains;
+ 	domains->onecell_data.num_domains = ARRAY_SIZE(domains->domains);
++	rcar_sysc_onecell_data = &domains->onecell_data;
+ 
+ 	for (i = 0, syscier = 0; i < info->num_areas; i++)
+ 		syscier |= BIT(info->areas[i].isr_bit);
+@@ -449,3 +452,40 @@ void __init rcar_sysc_init(phys_addr_t base, u32 syscier)
+ 	pr_debug("%s: syscier = 0x%08x\n", __func__, syscier);
+ 	iowrite32(syscier, rcar_sysc_base + SYSCIER);
+ }
++
++#ifdef CONFIG_ARCH_R8A7779
++static int rcar_sysc_power_cpu(unsigned int idx, bool on)
++{
++	struct generic_pm_domain *genpd;
++	struct rcar_sysc_pd *pd;
++	unsigned int i;
++
++	if (!rcar_sysc_onecell_data)
++		return -ENODEV;
++
++	for (i = 0; i < rcar_sysc_onecell_data->num_domains; i++) {
++		genpd = rcar_sysc_onecell_data->domains[i];
++		if (!genpd)
++			continue;
++
++		pd = to_rcar_pd(genpd);
++		if (!(pd->flags & PD_CPU) || pd->ch.chan_bit != idx)
++			continue;
++
++		return on ? rcar_sysc_power_up(&pd->ch)
++			  : rcar_sysc_power_down(&pd->ch);
++	}
++
++	return -ENOENT;
++}
++
++int rcar_sysc_power_down_cpu(unsigned int cpu)
++{
++	return rcar_sysc_power_cpu(cpu, false);
++}
++
++int rcar_sysc_power_up_cpu(unsigned int cpu)
++{
++	return rcar_sysc_power_cpu(cpu, true);
++}
++#endif /* CONFIG_ARCH_R8A7779 */
+diff --git a/include/linux/soc/renesas/rcar-sysc.h b/include/linux/soc/renesas/rcar-sysc.h
+index 8a6086d2e9c3..9020da2111fd 100644
+--- a/include/linux/soc/renesas/rcar-sysc.h
++++ b/include/linux/soc/renesas/rcar-sysc.h
+@@ -13,5 +13,7 @@ struct rcar_sysc_ch {
+ int rcar_sysc_power_down(const struct rcar_sysc_ch *sysc_ch);
+ int rcar_sysc_power_up(const struct rcar_sysc_ch *sysc_ch);
+ void rcar_sysc_init(phys_addr_t base, u32 syscier);
++int rcar_sysc_power_down_cpu(unsigned int cpu);
++int rcar_sysc_power_up_cpu(unsigned int cpu);
+ 
+ #endif /* __LINUX_SOC_RENESAS_RCAR_SYSC_H__ */
+-- 
+2.11.0
