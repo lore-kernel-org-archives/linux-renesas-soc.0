@@ -1,54 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:37704 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750732AbeFAUp7 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934260AbeFYOEN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Jun 2018 16:45:59 -0400
-Received: by mail-lf0-f68.google.com with SMTP id r2-v6so16628639lff.4
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 01 Jun 2018 13:45:58 -0700 (PDT)
-Subject: [PATCH 2/3] arm64: dts: renesas: condor: specify EtherAVB PHY IRQ
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <4acc208e-c593-1e8a-00ca-fc9a5574074e@cogentembedded.com>
-Message-ID: <21578b79-7ba0-b3a6-ae45-7e9ffbb7c8db@cogentembedded.com>
-Date: Fri, 1 Jun 2018 23:45:55 +0300
-MIME-Version: 1.0
-In-Reply-To: <4acc208e-c593-1e8a-00ca-fc9a5574074e@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Mon, 25 Jun 2018 10:04:13 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 14/29] arm64: dts: renesas: Add sdhi2_ds pin group to SDHI2 pinctrl groups
+Date: Mon, 25 Jun 2018 16:03:09 +0200
+Message-Id: <c5dd01aa790c436f2839ed9a7ab7feaf8924e7e4.1529933747.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
+References: <cover.1529933747.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Specify EtherAVB PHY IRQ in the Condor board's device tree, now that
-we have the GPIO support (previously phylib had to resort to polling).
+From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
 
-Based on the original (and large) patch by Vladimir Barinov.
+This patch adds definitions for configuration of the power-source,
+drive-strength, etc... for the SD2_DS pin for Salvator-X(S) and ULCB
+boards.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[wsa: fixed for ULCB boards, too]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77980-condor.dts |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 4 ++--
+ arch/arm64/boot/dts/renesas/ulcb.dtsi            | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-@@ -59,6 +59,8 @@
- 	phy0: ethernet-phy@0 {
- 		rxc-skew-ps = <1500>;
- 		reg = <0>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index 9256fbaaab7f..b3c0b6912af4 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -589,13 +589,13 @@
  	};
- };
  
+ 	sdhi2_pins: sd2 {
+-		groups = "sdhi2_data8", "sdhi2_ctrl";
++		groups = "sdhi2_data8", "sdhi2_ctrl", "sdhi2_ds";
+ 		function = "sdhi2";
+ 		power-source = <3300>;
+ 	};
+ 
+ 	sdhi2_pins_uhs: sd2_uhs {
+-		groups = "sdhi2_data8", "sdhi2_ctrl";
++		groups = "sdhi2_data8", "sdhi2_ctrl", "sdhi2_ds";
+ 		function = "sdhi2";
+ 		power-source = <1800>;
+ 	};
+diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+index 0edb16e6b372..702df9cbed52 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+@@ -330,13 +330,13 @@
+ 	};
+ 
+ 	sdhi2_pins: sd2 {
+-		groups = "sdhi2_data8", "sdhi2_ctrl";
++		groups = "sdhi2_data8", "sdhi2_ctrl", "sdhi2_ds";
+ 		function = "sdhi2";
+ 		power-source = <3300>;
+ 	};
+ 
+ 	sdhi2_pins_uhs: sd2_uhs {
+-		groups = "sdhi2_data8", "sdhi2_ctrl";
++		groups = "sdhi2_data8", "sdhi2_ctrl", "sdhi2_ds";
+ 		function = "sdhi2";
+ 		power-source = <1800>;
+ 	};
+-- 
+2.11.0
