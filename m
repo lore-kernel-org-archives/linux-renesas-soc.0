@@ -1,91 +1,298 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pl0-f46.google.com ([209.85.160.46]:42822 "EHLO
-        mail-pl0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937514AbeFSPRQ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52588 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934074AbeFYOGk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:17:16 -0400
-Received: by mail-pl0-f46.google.com with SMTP id w17-v6so16775pll.9
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Jun 2018 08:17:16 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
+        Mon, 25 Jun 2018 10:06:40 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Wed, 20 Jun 2018 00:18:55 +0900
-Message-Id: <152942153504.28480.18358640564322769858.sendpatchset@little-apple>
-In-Reply-To: <152942152672.28480.665572564123111170.sendpatchset@little-apple>
-References: <152942152672.28480.665572564123111170.sendpatchset@little-apple>
-Subject: [PATCH 01/04] rcar-vin: r8a77990 prototype
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 08/15] ARM: shmobile: apmu: Remove platsmp-apmu.h
+Date: Mon, 25 Jun 2018 16:06:19 +0200
+Message-Id: <3bf6d77388273c2d99756040b820dd71959e4587.1529934908.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1529934908.git.horms+renesas@verge.net.au>
+References: <cover.1529934908.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Extend the VIN driver with experimental r8a77990 support.
+After the removal of the legacy SMP fallbacks, platsmp-apmu.h is no
+longer needed outside platsmp-apmu.c.
 
-Not-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Hence remove platsmp-apmu.h, and make the functions exported previously
+static.  As the header file also provided forward declarations, the code
+in platsmp-apmu.c must be reshuffled.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm/mach-shmobile/platsmp-apmu.c | 200 +++++++++++++++++-----------------
+ arch/arm/mach-shmobile/platsmp-apmu.h |  24 ----
+ 2 files changed, 100 insertions(+), 124 deletions(-)
+ delete mode 100644 arch/arm/mach-shmobile/platsmp-apmu.h
 
- drivers/media/platform/rcar-vin/rcar-core.c |   21 +++++++++++++++++++++
- drivers/media/platform/rcar-vin/rcar-csi2.c |    8 ++++++++
- 2 files changed, 29 insertions(+)
-
---- 0001/drivers/media/platform/rcar-vin/rcar-core.c
-+++ work/drivers/media/platform/rcar-vin/rcar-core.c	2018-06-19 20:54:34.180607110 +0900
-@@ -1037,6 +1037,23 @@ static const struct rvin_info rcar_info_
- 	.routes = _rcar_info_r8a77970_routes,
- };
+diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
+index 42c9405e556b..9e1e85cf1899 100644
+--- a/arch/arm/mach-shmobile/platsmp-apmu.c
++++ b/arch/arm/mach-shmobile/platsmp-apmu.c
+@@ -23,7 +23,6 @@
+ #include <asm/smp_plat.h>
+ #include <asm/suspend.h>
+ #include "common.h"
+-#include "platsmp-apmu.h"
+ #include "rcar-gen2.h"
  
-+
-+static const struct rvin_group_route _rcar_info_r8a77990_routes[] = {
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 4, .mask = BIT(0) | BIT(3) },
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 5, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI40, .channel = 1, .vin = 4, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI40, .channel = 1, .vin = 5, .mask = BIT(1) | BIT(3) },
-+	{ /* Sentinel */ }
-+};
-+
-+static const struct rvin_info rcar_info_r8a77990 = {
-+	.model = RCAR_GEN3,
-+	.use_mc = true,
-+	.max_width = 4096,
-+	.max_height = 4096,
-+	.routes = _rcar_info_r8a77990_routes,
-+};
-+
- static const struct of_device_id rvin_of_id_table[] = {
- 	{
- 		.compatible = "renesas,vin-r8a7778",
-@@ -1082,6 +1099,10 @@ static const struct of_device_id rvin_of
- 		.compatible = "renesas,vin-r8a77970",
- 		.data = &rcar_info_r8a77970,
- 	},
-+	{
-+		.compatible = "renesas,vin-r8a77990",
-+		.data = &rcar_info_r8a77990,
-+	},
- 	{ /* Sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, rvin_of_id_table);
---- 0001/drivers/media/platform/rcar-vin/rcar-csi2.c
-+++ work/drivers/media/platform/rcar-vin/rcar-csi2.c	2018-06-19 20:54:34.180607110 +0900
-@@ -951,6 +951,10 @@ static const struct rcar_csi2_info rcar_
- 	.init_phtw = rcsi2_init_phtw_v3m_e3,
- };
+ static struct {
+@@ -87,6 +86,104 @@ static int __maybe_unused apmu_wrap(int cpu, int (*fn)(void __iomem *p, int cpu)
+ 	return p ? fn(p, apmu_cpus[cpu].bit) : -EINVAL;
+ }
  
-+static const struct rcar_csi2_info rcar_csi2_info_r8a77990 = {
-+	.init_phtw = rcsi2_init_phtw_v3m_e3,
-+};
++#if defined(CONFIG_HOTPLUG_CPU) || defined(CONFIG_SUSPEND)
++/* nicked from arch/arm/mach-exynos/hotplug.c */
++static inline void cpu_enter_lowpower_a15(void)
++{
++	unsigned int v;
 +
- static const struct of_device_id rcar_csi2_of_table[] = {
- 	{
- 		.compatible = "renesas,r8a7795-csi2",
-@@ -968,6 +972,10 @@ static const struct of_device_id rcar_cs
- 		.compatible = "renesas,r8a77970-csi2",
- 		.data = &rcar_csi2_info_r8a77970,
- 	},
-+	{
-+		.compatible = "renesas,r8a77990-csi2",
-+		.data = &rcar_csi2_info_r8a77990,
-+	},
- 	{ /* sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, rcar_csi2_of_table);
++	asm volatile(
++	"       mrc     p15, 0, %0, c1, c0, 0\n"
++	"       bic     %0, %0, %1\n"
++	"       mcr     p15, 0, %0, c1, c0, 0\n"
++		: "=&r" (v)
++		: "Ir" (CR_C)
++		: "cc");
++
++	flush_cache_louis();
++
++	asm volatile(
++	/*
++	 * Turn off coherency
++	 */
++	"       mrc     p15, 0, %0, c1, c0, 1\n"
++	"       bic     %0, %0, %1\n"
++	"       mcr     p15, 0, %0, c1, c0, 1\n"
++		: "=&r" (v)
++		: "Ir" (0x40)
++		: "cc");
++
++	isb();
++	dsb();
++}
++
++static void shmobile_smp_apmu_cpu_shutdown(unsigned int cpu)
++{
++
++	/* Select next sleep mode using the APMU */
++	apmu_wrap(cpu, apmu_power_off);
++
++	/* Do ARM specific CPU shutdown */
++	cpu_enter_lowpower_a15();
++}
++#endif
++
++#if defined(CONFIG_HOTPLUG_CPU)
++static void shmobile_smp_apmu_cpu_die(unsigned int cpu)
++{
++	/* For this particular CPU deregister boot vector */
++	shmobile_smp_hook(cpu, 0, 0);
++
++	/* Shutdown CPU core */
++	shmobile_smp_apmu_cpu_shutdown(cpu);
++
++	/* jump to shared mach-shmobile sleep / reset code */
++	shmobile_smp_sleep();
++}
++
++static int shmobile_smp_apmu_cpu_kill(unsigned int cpu)
++{
++	return apmu_wrap(cpu, apmu_power_off_poll);
++}
++#endif
++
++#if defined(CONFIG_SUSPEND)
++static int shmobile_smp_apmu_do_suspend(unsigned long cpu)
++{
++	shmobile_smp_hook(cpu, __pa_symbol(cpu_resume), 0);
++	shmobile_smp_apmu_cpu_shutdown(cpu);
++	cpu_do_idle(); /* WFI selects Core Standby */
++	return 1;
++}
++
++static inline void cpu_leave_lowpower(void)
++{
++	unsigned int v;
++
++	asm volatile("mrc    p15, 0, %0, c1, c0, 0\n"
++		     "       orr     %0, %0, %1\n"
++		     "       mcr     p15, 0, %0, c1, c0, 0\n"
++		     "       mrc     p15, 0, %0, c1, c0, 1\n"
++		     "       orr     %0, %0, %2\n"
++		     "       mcr     p15, 0, %0, c1, c0, 1\n"
++		     : "=&r" (v)
++		     : "Ir" (CR_C), "Ir" (0x40)
++		     : "cc");
++}
++
++static int shmobile_smp_apmu_enter_suspend(suspend_state_t state)
++{
++	cpu_suspend(smp_processor_id(), shmobile_smp_apmu_do_suspend);
++	cpu_leave_lowpower();
++	return 0;
++}
++
++void __init shmobile_smp_apmu_suspend_init(void)
++{
++	shmobile_suspend_ops.enter = shmobile_smp_apmu_enter_suspend;
++}
++#endif
++
+ #ifdef CONFIG_SMP
+ static void apmu_init_cpu(struct resource *res, int cpu, int bit)
+ {
+@@ -162,7 +259,8 @@ static void __init shmobile_smp_apmu_setup_boot(void)
+ 	shmobile_boot_fn_gen2 = shmobile_boot_fn;
+ }
+ 
+-int shmobile_smp_apmu_boot_secondary(unsigned int cpu, struct task_struct *idle)
++static int shmobile_smp_apmu_boot_secondary(unsigned int cpu,
++					    struct task_struct *idle)
+ {
+ 	/* For this particular CPU register boot vector */
+ 	shmobile_smp_hook(cpu, __pa_symbol(shmobile_boot_apmu), 0);
+@@ -189,101 +287,3 @@ static struct smp_operations apmu_smp_ops __initdata = {
+ 
+ CPU_METHOD_OF_DECLARE(shmobile_smp_apmu, "renesas,apmu", &apmu_smp_ops);
+ #endif /* CONFIG_SMP */
+-
+-#if defined(CONFIG_HOTPLUG_CPU) || defined(CONFIG_SUSPEND)
+-/* nicked from arch/arm/mach-exynos/hotplug.c */
+-static inline void cpu_enter_lowpower_a15(void)
+-{
+-	unsigned int v;
+-
+-	asm volatile(
+-	"       mrc     p15, 0, %0, c1, c0, 0\n"
+-	"       bic     %0, %0, %1\n"
+-	"       mcr     p15, 0, %0, c1, c0, 0\n"
+-		: "=&r" (v)
+-		: "Ir" (CR_C)
+-		: "cc");
+-
+-	flush_cache_louis();
+-
+-	asm volatile(
+-	/*
+-	 * Turn off coherency
+-	 */
+-	"       mrc     p15, 0, %0, c1, c0, 1\n"
+-	"       bic     %0, %0, %1\n"
+-	"       mcr     p15, 0, %0, c1, c0, 1\n"
+-		: "=&r" (v)
+-		: "Ir" (0x40)
+-		: "cc");
+-
+-	isb();
+-	dsb();
+-}
+-
+-static void shmobile_smp_apmu_cpu_shutdown(unsigned int cpu)
+-{
+-
+-	/* Select next sleep mode using the APMU */
+-	apmu_wrap(cpu, apmu_power_off);
+-
+-	/* Do ARM specific CPU shutdown */
+-	cpu_enter_lowpower_a15();
+-}
+-#endif
+-
+-#if defined(CONFIG_HOTPLUG_CPU)
+-void shmobile_smp_apmu_cpu_die(unsigned int cpu)
+-{
+-	/* For this particular CPU deregister boot vector */
+-	shmobile_smp_hook(cpu, 0, 0);
+-
+-	/* Shutdown CPU core */
+-	shmobile_smp_apmu_cpu_shutdown(cpu);
+-
+-	/* jump to shared mach-shmobile sleep / reset code */
+-	shmobile_smp_sleep();
+-}
+-
+-int shmobile_smp_apmu_cpu_kill(unsigned int cpu)
+-{
+-	return apmu_wrap(cpu, apmu_power_off_poll);
+-}
+-#endif
+-
+-#if defined(CONFIG_SUSPEND)
+-static int shmobile_smp_apmu_do_suspend(unsigned long cpu)
+-{
+-	shmobile_smp_hook(cpu, __pa_symbol(cpu_resume), 0);
+-	shmobile_smp_apmu_cpu_shutdown(cpu);
+-	cpu_do_idle(); /* WFI selects Core Standby */
+-	return 1;
+-}
+-
+-static inline void cpu_leave_lowpower(void)
+-{
+-	unsigned int v;
+-
+-	asm volatile("mrc    p15, 0, %0, c1, c0, 0\n"
+-		     "       orr     %0, %0, %1\n"
+-		     "       mcr     p15, 0, %0, c1, c0, 0\n"
+-		     "       mrc     p15, 0, %0, c1, c0, 1\n"
+-		     "       orr     %0, %0, %2\n"
+-		     "       mcr     p15, 0, %0, c1, c0, 1\n"
+-		     : "=&r" (v)
+-		     : "Ir" (CR_C), "Ir" (0x40)
+-		     : "cc");
+-}
+-
+-static int shmobile_smp_apmu_enter_suspend(suspend_state_t state)
+-{
+-	cpu_suspend(smp_processor_id(), shmobile_smp_apmu_do_suspend);
+-	cpu_leave_lowpower();
+-	return 0;
+-}
+-
+-void __init shmobile_smp_apmu_suspend_init(void)
+-{
+-	shmobile_suspend_ops.enter = shmobile_smp_apmu_enter_suspend;
+-}
+-#endif
+diff --git a/arch/arm/mach-shmobile/platsmp-apmu.h b/arch/arm/mach-shmobile/platsmp-apmu.h
+deleted file mode 100644
+index 70424572b9da..000000000000
+--- a/arch/arm/mach-shmobile/platsmp-apmu.h
++++ /dev/null
+@@ -1,24 +0,0 @@
+-/*
+- * rmobile apmu definition
+- *
+- * Copyright (C) 2014  Renesas Electronics Corporation
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; version 2 of the License.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
+-
+-#ifndef PLATSMP_APMU_H
+-#define PLATSMP_APMU_H
+-
+-extern int shmobile_smp_apmu_boot_secondary(unsigned int cpu,
+-					    struct task_struct *idle);
+-extern void shmobile_smp_apmu_cpu_die(unsigned int cpu);
+-extern int shmobile_smp_apmu_cpu_kill(unsigned int cpu);
+-
+-#endif /* PLATSMP_APMU_H */
+-- 
+2.11.0
