@@ -1,111 +1,138 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:53571 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933093AbeFKL7S (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934238AbeFYOEU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:59:18 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 10/14] mfd: da9063: Add custom regmap for DA9063L
-Date: Mon, 11 Jun 2018 13:58:47 +0200
-Message-Id: <20180611115851.1987-10-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
-References: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
+        Mon, 25 Jun 2018 10:04:20 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 22/29] arm64: dts: renesas: r8a77980: add GPIO support
+Date: Mon, 25 Jun 2018 16:03:17 +0200
+Message-Id: <efcb52e35d162dc9104be56492b65049a17dc6a4.1529933747.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
+References: <cover.1529933747.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The DA9063L does not have an RTC. Add custom regmap for DA9063L to
-prevent access into that register block.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
-V3: New patch
-V4: Drop mention of buggy datasheet in the commit message
-V5: Use regmap_reg_range macro
-V6: No change
----
- drivers/mfd/da9063-i2c.c | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+Describe all 6 GPIO controllers in the R8A77980 device tree.
 
-diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
-index 6fe9c3464b41..a449a9263dd7 100644
---- a/drivers/mfd/da9063-i2c.c
-+++ b/drivers/mfd/da9063-i2c.c
-@@ -118,6 +118,50 @@ static const struct regmap_access_table da9063_bb_volatile_table = {
- 	.n_yes_ranges = ARRAY_SIZE(da9063_bb_volatile_ranges),
- };
+Based on the original (and large) patch by Vladimir Barinov.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi | 90 +++++++++++++++++++++++++++++++
+ 1 file changed, 90 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+index 424d5f12cdd3..68cede26b01a 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -118,6 +118,96 @@
+ 		#size-cells = <2>;
+ 		ranges;
  
-+static const struct regmap_range da9063l_bb_readable_ranges[] = {
-+	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_MON_A10_RES),
-+	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
-+	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
-+	regmap_reg_range(DA9063_REG_T_OFFSET, DA9063_BB_REG_GP_ID_19),
-+	regmap_reg_range(DA9063_REG_CHIP_ID, DA9063_REG_CHIP_VARIANT),
-+};
++		gpio0: gpio@e6050000 {
++			compatible = "renesas,gpio-r8a77980",
++				     "renesas,rcar-gen3-gpio";
++			reg = <0 0xe6050000 0 0x50>;
++			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 0 22>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 912>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 912>;
++		};
 +
-+static const struct regmap_range da9063l_bb_writeable_ranges[] = {
-+	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_PAGE_CON),
-+	regmap_reg_range(DA9063_REG_FAULT_LOG, DA9063_REG_VSYS_MON),
-+	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
-+	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
-+	regmap_reg_range(DA9063_REG_CONFIG_I, DA9063_BB_REG_MON_REG_4),
-+	regmap_reg_range(DA9063_BB_REG_GP_ID_0, DA9063_BB_REG_GP_ID_19),
-+};
++		gpio1: gpio@e6051000 {
++			compatible = "renesas,gpio-r8a77980",
++				     "renesas,rcar-gen3-gpio";
++			reg = <0 0xe6051000 0 0x50>;
++			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 32 28>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 911>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 911>;
++		};
 +
-+static const struct regmap_range da9063l_bb_volatile_ranges[] = {
-+	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_EVENT_D),
-+	regmap_reg_range(DA9063_REG_CONTROL_A, DA9063_REG_CONTROL_B),
-+	regmap_reg_range(DA9063_REG_CONTROL_E, DA9063_REG_CONTROL_F),
-+	regmap_reg_range(DA9063_REG_BCORE2_CONT, DA9063_REG_LDO11_CONT),
-+	regmap_reg_range(DA9063_REG_DVC_1, DA9063_REG_ADC_MAN),
-+	regmap_reg_range(DA9063_REG_ADC_RES_L, DA9063_REG_MON_A10_RES),
-+	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_SEQ),
-+	regmap_reg_range(DA9063_REG_EN_32K, DA9063_REG_EN_32K),
-+	regmap_reg_range(DA9063_BB_REG_MON_REG_5, DA9063_BB_REG_MON_REG_6),
-+};
++		gpio2: gpio@e6052000 {
++			compatible = "renesas,gpio-r8a77980",
++				     "renesas,rcar-gen3-gpio";
++			reg = <0 0xe6052000 0 0x50>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 64 30>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 910>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 910>;
++		};
 +
-+static const struct regmap_access_table da9063l_bb_readable_table = {
-+	.yes_ranges = da9063l_bb_readable_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(da9063l_bb_readable_ranges),
-+};
++		gpio3: gpio@e6053000 {
++			compatible = "renesas,gpio-r8a77980",
++				     "renesas,rcar-gen3-gpio";
++			reg = <0 0xe6053000 0 0x50>;
++			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 96 17>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 909>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 909>;
++		};
 +
-+static const struct regmap_access_table da9063l_bb_writeable_table = {
-+	.yes_ranges = da9063l_bb_writeable_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(da9063l_bb_writeable_ranges),
-+};
++		gpio4: gpio@e6054000 {
++			compatible = "renesas,gpio-r8a77980",
++				     "renesas,rcar-gen3-gpio";
++			reg = <0 0xe6054000 0 0x50>;
++			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 128 25>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 908>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 908>;
++		};
 +
-+static const struct regmap_access_table da9063l_bb_volatile_table = {
-+	.yes_ranges = da9063l_bb_volatile_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(da9063l_bb_volatile_ranges),
-+};
++		gpio5: gpio@e6055000 {
++			compatible = "renesas,gpio-r8a77980",
++				     "renesas,rcar-gen3-gpio";
++			reg = <0 0xe6055000 0 0x50>;
++			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 160 15>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 907>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 907>;
++		};
 +
- static const struct regmap_range_cfg da9063_range_cfg[] = {
- 	{
- 		.range_min = DA9063_REG_PAGE_CON,
-@@ -164,6 +208,10 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
- 		da9063_regmap_config.rd_table = &da9063_ad_readable_table;
- 		da9063_regmap_config.wr_table = &da9063_ad_writeable_table;
- 		da9063_regmap_config.volatile_table = &da9063_ad_volatile_table;
-+	} else if (da9063->type == PMIC_TYPE_DA9063L) {
-+		da9063_regmap_config.rd_table = &da9063l_bb_readable_table;
-+		da9063_regmap_config.wr_table = &da9063l_bb_writeable_table;
-+		da9063_regmap_config.volatile_table = &da9063l_bb_volatile_table;
- 	} else {
- 		da9063_regmap_config.rd_table = &da9063_bb_readable_table;
- 		da9063_regmap_config.wr_table = &da9063_bb_writeable_table;
+ 		pfc: pin-controller@e6060000 {
+ 			compatible = "renesas,pfc-r8a77980";
+ 			reg = <0 0xe6060000 0 0x50c>;
 -- 
-2.16.2
+2.11.0
