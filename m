@@ -1,61 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:45036 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754566AbeF2OZW (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934290AbeFYOEX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Jun 2018 10:25:22 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-sh@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/3] serial: sh-sci: Stop TX DMA workqueue during port shutdown
-Date: Fri, 29 Jun 2018 16:25:08 +0200
-Message-Id: <20180629142513.20743-3-geert+renesas@glider.be>
-In-Reply-To: <20180629142513.20743-1-geert+renesas@glider.be>
-References: <20180629142513.20743-1-geert+renesas@glider.be>
+        Mon, 25 Jun 2018 10:04:23 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 26/29] arm64: dts: renesas: condor/v3hsk: specify Ethernet PHY IRQs
+Date: Mon, 25 Jun 2018 16:03:21 +0200
+Message-Id: <ffbd52352208534a30d5bbe2e15ee9e5cbb98c6d.1529933747.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
+References: <cover.1529933747.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The transmit DMA workqueue is never stopped, hence the work function may
-be called after the port has been shut down.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Fix this race condition by cancelling queued work, if any, before DMA
-release.  Don't initialize the work if DMA initialization failed, as it
-won't be used anyway.
+Specify Ethernet PHY IRQs in the Condor/V3HSK board device trees, now that
+we have the GPIO support (previously phylib had  to resort to polling).
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Based on the original (and large) patch by Vladimir Barinov.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/tty/serial/sh-sci.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77980-condor.dts | 2 ++
+ arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts  | 2 ++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 0ed91692f53ad859..1e0b6fe6865dcff6 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1295,6 +1295,7 @@ static void sci_tx_dma_release(struct sci_port *s)
- 	struct dma_chan *chan = s->chan_tx_saved;
- 	struct uart_port *port = &s->port;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980-condor.dts b/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+index cc3ee25f4e2d..9f25c407dfd7 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+@@ -59,6 +59,8 @@
+ 	phy0: ethernet-phy@0 {
+ 		rxc-skew-ps = <1500>;
+ 		reg = <0>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
+ 	};
+ };
  
-+	cancel_work_sync(&s->work_tx);
- 	s->chan_tx_saved = s->chan_tx = NULL;
- 	s->cookie_tx = -EINVAL;
- 	dmaengine_terminate_all(chan);
-@@ -1550,10 +1551,9 @@ static void sci_request_dma(struct uart_port *port)
- 				__func__, UART_XMIT_SIZE,
- 				port->state->xmit.buf, &s->tx_dma_addr);
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts b/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
+index bb7e0e5cd57b..9dac42f8f804 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
+@@ -48,6 +48,8 @@
  
-+			INIT_WORK(&s->work_tx, work_fn_tx);
- 			s->chan_tx_saved = s->chan_tx = chan;
- 		}
--
--		INIT_WORK(&s->work_tx, work_fn_tx);
- 	}
+ 	phy0: ethernet-phy@0 {
+ 		reg = <0>;
++		interrupt-parent = <&gpio4>;
++		interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
+ 	};
+ };
  
- 	chan = sci_request_dma_chan(port, DMA_DEV_TO_MEM);
 -- 
-2.17.1
+2.11.0
