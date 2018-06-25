@@ -1,43 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:48120 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935530AbeFNB1p (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934258AbeFYOEY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Jun 2018 21:27:45 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org, cerg2010cerg2010@mail.ru
-Cc: linux-renesas-soc@vger.kernel.org,
-        drivers_video-dri@kernel-bugs.osdl.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFT 2/2] i2c: algos: bit: make sure to send STOP
-Date: Thu, 14 Jun 2018 10:27:14 +0900
-Message-Id: <20180614012714.5937-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180614012714.5937-1-wsa+renesas@sang-engineering.com>
-References: <20180614012714.5937-1-wsa+renesas@sang-engineering.com>
+        Mon, 25 Jun 2018 10:04:24 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 28/29] arm64: dts: renesas: salvator-common: Add HSCIF1 device support
+Date: Mon, 25 Jun 2018 16:03:23 +0200
+Message-Id: <b6d3134ddcbe4d3c3986e4e7b649467a19045949.1529933747.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
+References: <cover.1529933747.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If SCL was low but SDA high, we would simply raise SCL but not send a
-STOP. To make sure we always send STOP initially, lower both lines
-first.
+From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This patch adds pin control for HSCIF1, and supports connection with
+Debug Serial-1 (CN26) on Salvator boards.
+
+SCIF1 and HSCIF1 are sharing the pins connected to Debug Serial-1 (CN26)
+on Salvator boards, and it is necessary to ensure that either SCIF1 or
+HSCIF1 is enabled, not both.
+
+As for the default of this DeviceTree, SCIF1 is connected.
+
+Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[geert: Add missing "uart-has-rtscts"]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/i2c/algos/i2c-algo-bit.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/drivers/i2c/algos/i2c-algo-bit.c b/drivers/i2c/algos/i2c-algo-bit.c
-index c76cf51975d0..344649847885 100644
---- a/drivers/i2c/algos/i2c-algo-bit.c
-+++ b/drivers/i2c/algos/i2c-algo-bit.c
-@@ -650,6 +650,8 @@ static int __i2c_bit_add_bus(struct i2c_adapter *adap,
- 		adap->quirks = &i2c_bit_quirk_no_clk_stretch;
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index 320250d708c3..ce808d3f9f62 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -338,6 +338,15 @@
+ 	clock-frequency = <32768>;
+ };
  
- 	/* Bring bus to a known state. Looks like STOP if bus is not free yet */
-+	scllo(bit_adap);
-+	sdalo(bit_adap);
- 	sclhi(bit_adap);
- 	sdahi(bit_adap);
++&hscif1 {
++	pinctrl-0 = <&hscif1_pins>;
++	pinctrl-names = "default";
++
++	uart-has-rtscts;
++	/* Please only enable hscif1 or scif1 */
++	/* status = "okay"; */
++};
++
+ &hsusb {
+ 	dr_mode = "otg";
+ 	status = "okay";
+@@ -543,6 +552,11 @@
+ 		function = "du";
+ 	};
+ 
++	hscif1_pins: hscif1 {
++		groups = "hscif1_data_a", "hscif1_ctrl_a";
++		function = "hscif1";
++	};
++
+ 	i2c2_pins: i2c2 {
+ 		groups = "i2c2_a";
+ 		function = "i2c2";
+@@ -708,6 +722,7 @@
+ 	pinctrl-names = "default";
+ 
+ 	uart-has-rtscts;
++	/* Please only enable hscif1 or scif1 */
+ 	status = "okay";
+ };
  
 -- 
 2.11.0
