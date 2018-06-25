@@ -1,52 +1,136 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:41862 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937365AbeFSPRd (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52588 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934074AbeFYOGr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:17:33 -0400
-Received: by mail-pl0-f67.google.com with SMTP id w8-v6so17573ply.8
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Jun 2018 08:17:33 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
+        Mon, 25 Jun 2018 10:06:47 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Wed, 20 Jun 2018 00:19:11 +0900
-Message-Id: <152942155173.28480.9146351774134316184.sendpatchset@little-apple>
-In-Reply-To: <152942152672.28480.665572564123111170.sendpatchset@little-apple>
-References: <152942152672.28480.665572564123111170.sendpatchset@little-apple>
-Subject: [PATCH 03/04] arm64: dts: renesas: r8a77990: hook up I2C0
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 14/15] soc: renesas: rcar-sysc: Drop legacy handling
+Date: Mon, 25 Jun 2018 16:06:25 +0200
+Message-Id: <7e8a50df26f4e7003d09f7e8d1e57fbbb7ebb750.1529934908.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1529934908.git.horms+renesas@verge.net.au>
+References: <cover.1529934908.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-A hack to add I2C0 on r8a77990. This is needed to hook up the video decoder.
+Now the R-Car platform code no longer supports DTBs lacking a SYSC
+device node in DT, all legacy handling can be dropped from the R-Car
+SYSC driver:
+  - Make rcar_sysc_ch private to the driver,
+  - Make rcar_sysc_power_{down,up}() static (they have been replaced by
+    rcar_sysc_power_{down,up}_cpu()),
+  - Remove the legacy wrapper rcar_sysc_init(), and the check for double
+    initialization (only the early_initcall is left).
 
-Not-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ drivers/soc/renesas/rcar-sysc.c       | 38 ++++++++---------------------------
+ include/linux/soc/renesas/rcar-sysc.h | 11 ----------
+ 2 files changed, 8 insertions(+), 41 deletions(-)
 
- arch/arm64/boot/dts/renesas/r8a77990.dtsi |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
---- 0003/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a77990.dtsi	2018-06-19 21:07:37.440607110 +0900
-@@ -191,6 +191,20 @@
- 			#power-domain-cells = <1>;
- 		};
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index 4ad6dcd19420..41af9c7b912f 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -58,6 +58,12 @@
  
-+		i2c0: i2c@e6500000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a77990",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe6500000 0 0x40>;
-+			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 931>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 931>;
-+			i2c-scl-internal-delay-ns = <110>;
-+			status = "disabled";
-+		};
+ #define RCAR_PD_ALWAYS_ON	32	/* Always-on power area */
+ 
++struct rcar_sysc_ch {
++	u16 chan_offs;
++	u8 chan_bit;
++	u8 isr_bit;
++};
 +
- 		avb: ethernet@e6800000 {
- 			compatible = "renesas,etheravb-r8a77990",
- 				     "renesas,etheravb-rcar-gen3";
+ static void __iomem *rcar_sysc_base;
+ static DEFINE_SPINLOCK(rcar_sysc_lock); /* SMP CPUs + I/O devices */
+ 
+@@ -143,12 +149,12 @@ static int rcar_sysc_power(const struct rcar_sysc_ch *sysc_ch, bool on)
+ 	return ret;
+ }
+ 
+-int rcar_sysc_power_down(const struct rcar_sysc_ch *sysc_ch)
++static int rcar_sysc_power_down(const struct rcar_sysc_ch *sysc_ch)
+ {
+ 	return rcar_sysc_power(sysc_ch, false);
+ }
+ 
+-int rcar_sysc_power_up(const struct rcar_sysc_ch *sysc_ch)
++static int rcar_sysc_power_up(const struct rcar_sysc_ch *sysc_ch)
+ {
+ 	return rcar_sysc_power(sysc_ch, true);
+ }
+@@ -323,9 +329,6 @@ static int __init rcar_sysc_pd_init(void)
+ 	unsigned int i;
+ 	int error;
+ 
+-	if (rcar_sysc_base)
+-		return 0;
+-
+ 	np = of_find_matching_node_and_match(NULL, rcar_sysc_matches, &match);
+ 	if (!np)
+ 		return -ENODEV;
+@@ -428,31 +431,6 @@ void __init rcar_sysc_nullify(struct rcar_sysc_area *areas,
+ 		}
+ }
+ 
+-void __init rcar_sysc_init(phys_addr_t base, u32 syscier)
+-{
+-	u32 syscimr;
+-
+-	if (!rcar_sysc_pd_init())
+-		return;
+-
+-	rcar_sysc_base = ioremap_nocache(base, PAGE_SIZE);
+-
+-	/*
+-	 * Mask all interrupt sources to prevent the CPU from receiving them.
+-	 * Make sure not to clear reserved bits that were set before.
+-	 */
+-	syscimr = ioread32(rcar_sysc_base + SYSCIMR);
+-	syscimr |= syscier;
+-	pr_debug("%s: syscimr = 0x%08x\n", __func__, syscimr);
+-	iowrite32(syscimr, rcar_sysc_base + SYSCIMR);
+-
+-	/*
+-	 * SYSC needs all interrupt sources enabled to control power.
+-	 */
+-	pr_debug("%s: syscier = 0x%08x\n", __func__, syscier);
+-	iowrite32(syscier, rcar_sysc_base + SYSCIER);
+-}
+-
+ #ifdef CONFIG_ARCH_R8A7779
+ static int rcar_sysc_power_cpu(unsigned int idx, bool on)
+ {
+diff --git a/include/linux/soc/renesas/rcar-sysc.h b/include/linux/soc/renesas/rcar-sysc.h
+index 9020da2111fd..00fae6fd234d 100644
+--- a/include/linux/soc/renesas/rcar-sysc.h
++++ b/include/linux/soc/renesas/rcar-sysc.h
+@@ -2,17 +2,6 @@
+ #ifndef __LINUX_SOC_RENESAS_RCAR_SYSC_H__
+ #define __LINUX_SOC_RENESAS_RCAR_SYSC_H__
+ 
+-#include <linux/types.h>
+-
+-struct rcar_sysc_ch {
+-	u16 chan_offs;
+-	u8 chan_bit;
+-	u8 isr_bit;
+-};
+-
+-int rcar_sysc_power_down(const struct rcar_sysc_ch *sysc_ch);
+-int rcar_sysc_power_up(const struct rcar_sysc_ch *sysc_ch);
+-void rcar_sysc_init(phys_addr_t base, u32 syscier);
+ int rcar_sysc_power_down_cpu(unsigned int cpu);
+ int rcar_sysc_power_up_cpu(unsigned int cpu);
+ 
+-- 
+2.11.0
