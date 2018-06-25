@@ -1,69 +1,164 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:43820 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752071AbeFDMKn (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52570 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933803AbeFYOGb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Jun 2018 08:10:43 -0400
-Received: by mail-lf0-f67.google.com with SMTP id n15-v6so7523023lfn.10
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Jun 2018 05:10:43 -0700 (PDT)
-Date: Mon, 4 Jun 2018 14:10:41 +0200
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: laurent.pinchart@ideasonboard.com, horms@verge.net.au,
-        geert@glider.be, mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        hans.verkuil@cisco.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 4/8] dt-bindings: media: rcar-vin: Add
- 'data-enable-active'
-Message-ID: <20180604121041.GE19674@bigcity.dyn.berto.se>
-References: <1527606359-19261-1-git-send-email-jacopo+renesas@jmondi.org>
- <1527606359-19261-5-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1527606359-19261-5-git-send-email-jacopo+renesas@jmondi.org>
+        Mon, 25 Jun 2018 10:06:31 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 01/15] ARM: shmobile: r8a7790: Remove legacy SMP fallback code
+Date: Mon, 25 Jun 2018 16:06:12 +0200
+Message-Id: <f13e47ee48e283e0b5aab8f899d438ae54b1d05d.1529934908.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1529934908.git.horms+renesas@verge.net.au>
+References: <cover.1529934908.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks for your patch.
+As of commit f5d70b9cee2282ec ("ARM: shmobile: r8a7790: Prioritize DT
+APMU support") in v4.8, non-DT enablement of SMP was left as a fallback
+for backwards compatibility with old DTBs.
 
-On 2018-05-29 17:05:55 +0200, Jacopo Mondi wrote:
-> Describe optional endpoint property 'data-enable-active' for R-Car VIN.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+The time has come to drop backwards compatibility, hence remove the
+fallback code.
 
-Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/mach-shmobile/Makefile        |  1 -
+ arch/arm/mach-shmobile/r8a7790.h       |  7 ----
+ arch/arm/mach-shmobile/setup-r8a7790.c |  2 -
+ arch/arm/mach-shmobile/smp-r8a7790.c   | 71 ----------------------------------
+ 4 files changed, 81 deletions(-)
+ delete mode 100644 arch/arm/mach-shmobile/r8a7790.h
+ delete mode 100644 arch/arm/mach-shmobile/smp-r8a7790.c
 
-> ---
-> v3:
-> - new patch
-> ---
-> 
->  Documentation/devicetree/bindings/media/rcar_vin.txt | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
-> index 4d91a36..ff53226 100644
-> --- a/Documentation/devicetree/bindings/media/rcar_vin.txt
-> +++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
-> @@ -58,6 +58,8 @@ from local SoC CSI-2 receivers (port1) depending on SoC.
->        - Optional properties for endpoint nodes of port@0:
->          - hsync-active: see [1] for description. Default is active high.
->          - vsync-active: see [1] for description. Default is active high.
-> +        - data-enable-active: polarity of CLKENB signal, see [1] for
-> +          description. Default is active high.
-> 
->          If both HSYNC and VSYNC polarities are not specified, embedded
->          synchronization is selected.
-> --
-> 2.7.4
-> 
-
+diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
+index 1939f521579c..9133949b5df2 100644
+--- a/arch/arm/mach-shmobile/Makefile
++++ b/arch/arm/mach-shmobile/Makefile
+@@ -32,7 +32,6 @@ obj-$(CONFIG_ARCH_R8A7793)	+= regulator-quirk-rcar-gen2.o
+ smp-y				:= $(cpu-y)
+ smp-$(CONFIG_ARCH_SH73A0)	+= smp-sh73a0.o headsmp-scu.o platsmp-scu.o
+ smp-$(CONFIG_ARCH_R8A7779)	+= smp-r8a7779.o headsmp-scu.o platsmp-scu.o
+-smp-$(CONFIG_ARCH_R8A7790)	+= smp-r8a7790.o
+ smp-$(CONFIG_ARCH_R8A7791)	+= smp-r8a7791.o
+ smp-$(CONFIG_ARCH_EMEV2)	+= smp-emev2.o headsmp-scu.o platsmp-scu.o
+ 
+diff --git a/arch/arm/mach-shmobile/r8a7790.h b/arch/arm/mach-shmobile/r8a7790.h
+deleted file mode 100644
+index 669c8cd09e07..000000000000
+--- a/arch/arm/mach-shmobile/r8a7790.h
++++ /dev/null
+@@ -1,7 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef __ASM_R8A7790_H__
+-#define __ASM_R8A7790_H__
+-
+-extern const struct smp_operations r8a7790_smp_ops;
+-
+-#endif /* __ASM_R8A7790_H__ */
+diff --git a/arch/arm/mach-shmobile/setup-r8a7790.c b/arch/arm/mach-shmobile/setup-r8a7790.c
+index 78d3e859bd64..fd2435b39529 100644
+--- a/arch/arm/mach-shmobile/setup-r8a7790.c
++++ b/arch/arm/mach-shmobile/setup-r8a7790.c
+@@ -19,7 +19,6 @@
+ #include <asm/mach/arch.h>
+ 
+ #include "common.h"
+-#include "r8a7790.h"
+ #include "rcar-gen2.h"
+ 
+ static const char * const r8a7790_boards_compat_dt[] __initconst = {
+@@ -29,7 +28,6 @@ static const char * const r8a7790_boards_compat_dt[] __initconst = {
+ 
+ DT_MACHINE_START(R8A7790_DT, "Generic R8A7790 (Flattened Device Tree)")
+ 	.smp_init	= smp_init_ops(shmobile_smp_init_fallback_ops),
+-	.smp		= smp_ops(r8a7790_smp_ops),
+ 	.init_early	= shmobile_init_delay,
+ 	.init_time	= rcar_gen2_timer_init,
+ 	.init_late	= shmobile_init_late,
+diff --git a/arch/arm/mach-shmobile/smp-r8a7790.c b/arch/arm/mach-shmobile/smp-r8a7790.c
+deleted file mode 100644
+index 28f26d5362d8..000000000000
+--- a/arch/arm/mach-shmobile/smp-r8a7790.c
++++ /dev/null
+@@ -1,71 +0,0 @@
+-/*
+- * SMP support for r8a7790
+- *
+- * Copyright (C) 2012-2013 Renesas Solutions Corp.
+- * Copyright (C) 2012 Takashi Yoshii <takashi.yoshii.ze@renesas.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; version 2 of the License.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
+-#include <linux/kernel.h>
+-#include <linux/init.h>
+-#include <linux/smp.h>
+-#include <linux/io.h>
+-#include <linux/soc/renesas/rcar-sysc.h>
+-
+-#include <asm/smp_plat.h>
+-
+-#include "common.h"
+-#include "platsmp-apmu.h"
+-#include "rcar-gen2.h"
+-#include "r8a7790.h"
+-
+-static const struct rcar_sysc_ch r8a7790_ca15_scu = {
+-	.chan_offs = 0x180, /* PWRSR5 .. PWRER5 */
+-	.isr_bit = 12, /* CA15-SCU */
+-};
+-
+-static const struct rcar_sysc_ch r8a7790_ca7_scu = {
+-	.chan_offs = 0x100, /* PWRSR3 .. PWRER3 */
+-	.isr_bit = 21, /* CA7-SCU */
+-};
+-
+-static struct rcar_apmu_config r8a7790_apmu_config[] = {
+-	{
+-		.iomem = DEFINE_RES_MEM(0xe6152000, 0x188),
+-		.cpus = { 0, 1, 2, 3 },
+-	},
+-	{
+-		.iomem = DEFINE_RES_MEM(0xe6151000, 0x188),
+-		.cpus = { 0x100, 0x0101, 0x102, 0x103 },
+-	}
+-};
+-
+-static void __init r8a7790_smp_prepare_cpus(unsigned int max_cpus)
+-{
+-	/* let APMU code install data related to shmobile_boot_vector */
+-	shmobile_smp_apmu_prepare_cpus(max_cpus,
+-				       r8a7790_apmu_config,
+-				       ARRAY_SIZE(r8a7790_apmu_config));
+-
+-	/* turn on power to SCU */
+-	rcar_gen2_pm_init();
+-	rcar_sysc_power_up(&r8a7790_ca15_scu);
+-	rcar_sysc_power_up(&r8a7790_ca7_scu);
+-}
+-
+-const struct smp_operations r8a7790_smp_ops __initconst = {
+-	.smp_prepare_cpus	= r8a7790_smp_prepare_cpus,
+-	.smp_boot_secondary	= shmobile_smp_apmu_boot_secondary,
+-#ifdef CONFIG_HOTPLUG_CPU
+-	.cpu_can_disable	= shmobile_smp_cpu_can_disable,
+-	.cpu_die		= shmobile_smp_apmu_cpu_die,
+-	.cpu_kill		= shmobile_smp_apmu_cpu_kill,
+-#endif
+-};
 -- 
-Regards,
-Niklas S�derlund
+2.11.0
