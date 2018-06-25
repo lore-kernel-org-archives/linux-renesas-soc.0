@@ -1,80 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39358 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964879AbeFMPJ7 (ORCPT
+        with ESMTP id S934237AbeFYOEE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Jun 2018 11:09:59 -0400
+        Mon, 25 Jun 2018 10:04:04 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH/RFT v2 2/2] arm64: dts: r8a77995: Add all HSCIF nodes
-Date: Wed, 13 Jun 2018 17:09:51 +0200
-Message-Id: <20180613150951.32322-1-horms+renesas@verge.net.au>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Kaneko <ykaneko0929@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 07/29] arm64: dts: renesas: r8a77995: add thermal device support
+Date: Mon, 25 Jun 2018 16:03:02 +0200
+Message-Id: <21bd05387fe6643a6f1cdfe395e85725fd296f6c.1529933747.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
+References: <cover.1529933747.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-This patch adds the device nodes all HSCIF serial ports
-incl. clocks and power domain to the R8A77995 SoC.
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-[simon: updated internal clock from S3D1 to S3D1C to match documentation]
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 35 +++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
-
- Based on renesas-devel-20180613-v4.17
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 16cbb34692ad..0a9caf9cdc86 100644
+index 8f162ac369b1..eb23c85c561b 100644
 --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -242,6 +242,41 @@
- 			resets = <&cpg 407>;
+@@ -217,6 +217,18 @@
+ 			#power-domain-cells = <1>;
  		};
  
-+		hscif0: serial@e6540000 {
-+			compatible = "renesas,hscif-r8a77995",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe6540000 0 0x60>;
-+			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 520>,
-+				 <&cpg CPG_CORE R8A77995_CLK_S3D1C>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x31>, <&dmac1 0x30>,
-+			       <&dmac2 0x31>, <&dmac2 0x30>;
-+			dma-names = "tx", "rx", "tx", "rx";
++		thermal: thermal@e6190000 {
++			compatible = "renesas,thermal-r8a77995";
++			reg = <0 0xe6190000 0 0x10>, <0 0xe6190100 0 0x38>;
++			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 522>;
 +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 520>;
-+			status = "disabled";
++			resets = <&cpg 522>;
++			#thermal-sensor-cells = <0>;
 +		};
 +
-+		hscif3: serial@e66a0000 {
-+			compatible = "renesas,hscif-r8a77995",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe66a0000 0 0x60>;
-+			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 517>,
-+				 <&cpg CPG_CORE R8A77995_CLK_S3D1C>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x37>, <&dmac0 0x36>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 517>;
-+			status = "disabled";
-+		};
+ 		intc_ex: interrupt-controller@e61c0000 {
+ 			compatible = "renesas,intc-ex-r8a77995", "renesas,irqc";
+ 			#interrupt-cells = <2>;
+@@ -788,6 +800,25 @@
+ 		};
+ 	};
+ 
++	thermal-zones {
++		cpu_thermal: cpu-thermal {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++			thermal-sensors = <&thermal>;
 +
- 		i2c0: i2c@e6500000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
++			trips {
++				cpu-crit {
++					temperature = <120000>;
++					hysteresis = <2000>;
++					type = "critical";
++				};
++			};
++
++			cooling-maps {
++			};
++		};
++	};
++
+ 	timer {
+ 		compatible = "arm,armv8-timer";
+ 		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
 -- 
 2.11.0
