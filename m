@@ -1,105 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:52588 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933997AbeFYOEA (ORCPT
+        with ESMTP id S934074AbeFYOGm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:04:00 -0400
+        Mon, 25 Jun 2018 10:06:42 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/29] arm64: dts: renesas: r8a77995: don't use deprecated renesas,gpio-rcar compat string
-Date: Mon, 25 Jun 2018 16:02:58 +0200
-Message-Id: <341238b57dfb1adf40d26557da4399de8823532a.1529933747.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
-References: <cover.1529933747.git.horms+renesas@verge.net.au>
+Subject: [PATCH 10/15] ARM: shmobile: r8a7779: Stop powering down secondary CPUs during early boot
+Date: Mon, 25 Jun 2018 16:06:21 +0200
+Message-Id: <62f55ce683e3675aa83cc3e912f070aef1baeff8.1529934908.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1529934908.git.horms+renesas@verge.net.au>
+References: <cover.1529934908.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The compat string renesas,gpio-rcar has been deprecated since v4.14,
-the same release that r8a77990 SoC support was added. Thus
-renesas,gpio-rcar can safely be removed without any risk of behaviour
-changes between old and new mainline kernels and DTBs.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
+At .smp_prepare_cpus() time, CPUs 1-3 are still powered down:
+  - The bootloader doesn't enable CPUs 1-3,
+  - Non-boot CPUs are disabled by kexec before starting the new kernel.
+
+Hence there is no need to try to power them down again, as it will fail
+silently with -EIO anyway.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+ arch/arm/mach-shmobile/smp-r8a7779.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 44268671c487..8f162ac369b1 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -88,8 +88,7 @@
+diff --git a/arch/arm/mach-shmobile/smp-r8a7779.c b/arch/arm/mach-shmobile/smp-r8a7779.c
+index c6951ee24588..ff1e6fc0b861 100644
+--- a/arch/arm/mach-shmobile/smp-r8a7779.c
++++ b/arch/arm/mach-shmobile/smp-r8a7779.c
+@@ -97,11 +97,6 @@ static void __init r8a7779_smp_prepare_cpus(unsigned int max_cpus)
+ 	shmobile_smp_scu_prepare_cpus(R8A7779_SCU_BASE, max_cpus);
  
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a77995",
--				     "renesas,rcar-gen3-gpio",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6050000 0 0x50>;
- 			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -104,8 +103,7 @@
+ 	r8a7779_pm_init();
+-
+-	/* power off secondary CPUs */
+-	r8a7779_platform_cpu_kill(1);
+-	r8a7779_platform_cpu_kill(2);
+-	r8a7779_platform_cpu_kill(3);
+ }
  
- 		gpio1: gpio@e6051000 {
- 			compatible = "renesas,gpio-r8a77995",
--				     "renesas,rcar-gen3-gpio",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6051000 0 0x50>;
- 			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -120,8 +118,7 @@
- 
- 		gpio2: gpio@e6052000 {
- 			compatible = "renesas,gpio-r8a77995",
--				     "renesas,rcar-gen3-gpio",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6052000 0 0x50>;
- 			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -136,8 +133,7 @@
- 
- 		gpio3: gpio@e6053000 {
- 			compatible = "renesas,gpio-r8a77995",
--				     "renesas,rcar-gen3-gpio",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6053000 0 0x50>;
- 			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -152,8 +148,7 @@
- 
- 		gpio4: gpio@e6054000 {
- 			compatible = "renesas,gpio-r8a77995",
--				     "renesas,rcar-gen3-gpio",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6054000 0 0x50>;
- 			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -168,8 +163,7 @@
- 
- 		gpio5: gpio@e6055000 {
- 			compatible = "renesas,gpio-r8a77995",
--				     "renesas,rcar-gen3-gpio",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6055000 0 0x50>;
- 			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -184,8 +178,7 @@
- 
- 		gpio6: gpio@e6055400 {
- 			compatible = "renesas,gpio-r8a77995",
--				     "renesas,rcar-gen3-gpio",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6055400 0 0x50>;
- 			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
+ #ifdef CONFIG_HOTPLUG_CPU
 -- 
 2.11.0
