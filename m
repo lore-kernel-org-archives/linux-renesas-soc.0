@@ -1,87 +1,112 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:55570 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751361AbeFEIgh (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934258AbeFYOEe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Jun 2018 04:36:37 -0400
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v8 4/5] ARM: dts: Renesas RZN1D-DB Board base file
-Date: Tue,  5 Jun 2018 09:30:00 +0100
-Message-Id: <1528187462-47093-5-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com>
+        Mon, 25 Jun 2018 10:04:34 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 29/29] arm64: dts: renesas: r8a77995: Add MSIOF device nodes
+Date: Mon, 25 Jun 2018 16:03:24 +0200
+Message-Id: <6b284a81307848b4331453b02cf7a33c09719d4b.1529933747.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
+References: <cover.1529933747.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This adds a base device tree file for the RZN1-DB board, with only the
-basic support allowing the system to boot to a prompt. Only one UART is
-used, with only a single CPU running.
+From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+This patch adds MSIOF device nodes for the R8A77995 SoC.
+
+Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[uli: remove unimplemented ref clock, clock-names]
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[simon: preserved node ordering by moving msiof nodes to before vin nodes]
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/Makefile                  |  1 +
- arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts | 28 ++++++++++++++++++++++++++++
- 2 files changed, 29 insertions(+)
- create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 62 +++++++++++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 37a3de7..c07f077 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -819,6 +819,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
- 	r8a7793-gose.dtb \
- 	r8a7794-alt.dtb \
- 	r8a7794-silk.dtb \
-+	r9a06g032-rzn1d400-db.dtb \
- 	sh73a0-kzm9g.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += \
- 	rv1108-evb.dtb \
-diff --git a/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
-new file mode 100644
-index 0000000..4e57ae2
---- /dev/null
-+++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
-@@ -0,0 +1,28 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the RZN1D-DB Board
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ */
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index 1de6ffca4772..6c0a8217d40f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -622,6 +622,68 @@
+ 			status = "disabled";
+ 		};
+ 
++		msiof0: spi@e6e90000 {
++			compatible = "renesas,msiof-r8a77995",
++				     "renesas,rcar-gen3-msiof";
++			reg = <0 0xe6e90000 0 0x64>;
++			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 211>;
++			dmas = <&dmac1 0x41>, <&dmac1 0x40>,
++			       <&dmac2 0x41>, <&dmac2 0x40>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 211>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
 +
-+/dts-v1/;
++		msiof1: spi@e6ea0000 {
++			compatible = "renesas,msiof-r8a77995",
++				     "renesas,rcar-gen3-msiof";
++			reg = <0 0xe6ea0000 0 0x64>;
++			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 210>;
++			dmas = <&dmac1 0x43>, <&dmac1 0x42>,
++			       <&dmac2 0x43>, <&dmac2 0x42>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 210>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
 +
-+#include "r9a06g032.dtsi"
++		msiof2: spi@e6c00000 {
++			compatible = "renesas,msiof-r8a77995",
++				     "renesas,rcar-gen3-msiof";
++			reg = <0 0xe6c00000 0 0x64>;
++			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 209>;
++			dmas = <&dmac0 0x45>, <&dmac0 0x44>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 209>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
 +
-+/ {
-+	model = "RZN1D-DB Board";
-+	compatible = "renesas,rzn1d400-db", "renesas,r9a06g032";
++		msiof3: spi@e6c10000 {
++			compatible = "renesas,msiof-r8a77995",
++				     "renesas,rcar-gen3-msiof";
++			reg = <0 0xe6c10000 0 0x64>;
++			interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 208>;
++			dmas = <&dmac0 0x47>, <&dmac0 0x46>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 208>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
 +
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
+ 		vin4: video@e6ef4000 {
+ 			compatible = "renesas,vin-r8a77995";
+ 			reg = <0 0xe6ef4000 0 0x1000>;
 -- 
-2.7.4
+2.11.0
