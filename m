@@ -1,73 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:34336 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752261AbeFEXek (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:48144 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754451AbeFYIaZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Jun 2018 19:34:40 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        niklas.soderlund@ragnatech.se, jacopo@jmondi.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [RFC PATCH v1 0/4] GMSL Drivers
-Date: Wed,  6 Jun 2018 00:34:31 +0100
-Message-Id: <20180605233435.18102-1-kieran.bingham+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 25 Jun 2018 04:30:25 -0400
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andy Gross <andy.gross@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Carlo Caione <carlo@endlessm.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v6 1/3] dt-bindings: cpu: Add Renesas R9A06G032 SMP enable method.
+Date: Mon, 25 Jun 2018 09:25:04 +0100
+Message-Id: <1529915110-5867-2-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1529915110-5867-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1529915110-5867-1-git-send-email-michel.pollet@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series provides an early release of a pair of drivers for GMSL
-cameras on the R-Car ADAS platforms.
+Add a special enable method for second CA7 of the R9A06G032
 
-These drivers originate from Cogent Embedded, and have been refactored
-to split the MAX9286 away from the RDACM20 drivers which were once very
-tightly coupled.
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ Documentation/devicetree/bindings/arm/cpus.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-This posting is the culmination of ~100 changesets spread across Jacopo,
-Niklas, Laurent, and myself - thus they contain all of our SoB tags
-currently. This may be better suited to be Co-Author tags or such, along
-with the original Cogent developer - I'm not sure. But it has certainly
-been a considerable effort to get this far. And of course there are
-still a few TODO's scattered throughout.
-
-Anyway, now that Niklas' VIN and CSI-2 drivers are accepted, a public v1
-of these drivers gets the ball rolling and out in the open at last, and
-establishes a baseline for continued development.
-
-The patches are based upon Niklas' V4L2 Mux series [0], which is itself
-based upon Sakari's VC work [1].
-
-[0] git://git.ragnatech.se/linux/ v4l2/mux
-[1] git://linuxtv.org/sailus/media_tree.git vc
-
-The series along with the associated platform support for the
-Renesas R-Car Salvator-X, and Eagle-V3M can be found at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git gmsl/v1
-
-Kieran Bingham (4):
-  media: dt-bindings: max9286: add device tree binding
-  media: i2c: Add MAX9286 driver
-  media: dt-bindings: rdacm20: add device tree binding
-  media: i2c: Add RDACM20 driver
-
- .../devicetree/bindings/media/i2c/max9286.txt |   75 ++
- .../devicetree/bindings/media/i2c/rdacm20.txt |   31 +
- .../devicetree/bindings/vendor-prefixes.txt   |    1 +
- MAINTAINERS                                   |   20 +
- drivers/media/i2c/Kconfig                     |   22 +
- drivers/media/i2c/Makefile                    |    2 +
- drivers/media/i2c/max9286.c                   | 1185 +++++++++++++++++
- drivers/media/i2c/rdacm20-ov10635.h           |  953 +++++++++++++
- drivers/media/i2c/rdacm20.c                   |  635 +++++++++
- 9 files changed, 2924 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/max9286.txt
- create mode 100644 Documentation/devicetree/bindings/media/i2c/rdacm20.txt
- create mode 100644 drivers/media/i2c/max9286.c
- create mode 100644 drivers/media/i2c/rdacm20-ov10635.h
- create mode 100644 drivers/media/i2c/rdacm20.c
-
+diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
+index 29e1dc5..b395d107 100644
+--- a/Documentation/devicetree/bindings/arm/cpus.txt
++++ b/Documentation/devicetree/bindings/arm/cpus.txt
+@@ -219,6 +219,7 @@ described below.
+ 			    "qcom,kpss-acc-v1"
+ 			    "qcom,kpss-acc-v2"
+ 			    "renesas,apmu"
++			    "renesas,r9a06g032-smp"
+ 			    "rockchip,rk3036-smp"
+ 			    "rockchip,rk3066-smp"
+ 			    "ste,dbx500-smp"
 -- 
-2.17.0
+2.7.4
