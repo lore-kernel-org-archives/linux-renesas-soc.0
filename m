@@ -1,240 +1,136 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:36001 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752166AbeFEXKe (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52588 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934166AbeFYOGt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Jun 2018 19:10:34 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Mon, 25 Jun 2018 10:06:49 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 02/12] mfd: da9063: Use REGMAP_IRQ_REG
-Date: Wed,  6 Jun 2018 01:10:03 +0200
-Message-Id: <20180605231013.1803-2-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
-References: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 13/15] ARM: shmobile: r8a7779: Remove explicit SYSC config and init
+Date: Mon, 25 Jun 2018 16:06:24 +0200
+Message-Id: <16acd53b1547d3dbe3eabef5e3356674eb957ae4.1529934908.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1529934908.git.horms+renesas@verge.net.au>
+References: <cover.1529934908.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Convert the regmap_irq table to use REGMAP_IRQ_REG().
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
----
-V3: New patch
-Note: A sed oneliner was used:
-      sed -i "/\[DA9063_IRQ_/ {N;N;N;s/\n//g;s/.*\[\(DA9063_IRQ_[^]]\+\)].*reg_offset = \([^,]\+\),.* = \([^,]\+\),.*/\tREGMAP_IRQ_REG(\1, \2, \3),/}" drivers/mfd/da9063-irq.c
-V4: Formatting fixes with "s/,/&\r\t\t      /" on the array
-    Drop extra newline in da9063_irq_chip
----
- drivers/mfd/da9063-irq.c | 175 ++++++++++++++++-------------------------------
- 1 file changed, 58 insertions(+), 117 deletions(-)
+If the R-Car H1 system controller is described in DT, the rcar-sysc
+driver configures SYSCIER and SYSCIMR based on the SoC-specific power
+area definitions in r8a7779-sysc.  The platform code still passed this
+information to the rcar-sysc driver, for compatibility with old DTBs
+predating commit b2df3aa487395a1b ("ARM: dts: r8a7779: Add SYSC PM
+Domains") in v4.7.  The time has come to drop backwards compatibility,
+and delegate everything to the DT enabled rcar-sysc driver.
 
-diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
-index 207bbfe55449..bd448d6cdf8b 100644
---- a/drivers/mfd/da9063-irq.c
-+++ b/drivers/mfd/da9063-irq.c
-@@ -28,132 +28,73 @@
+After stopping powering down secondary CPUs during early boot, there is
+no longer a need to force an early initialization of the rcar-sysc
+driver.  It will be initialized in time for secondary CPU bringup by its
+early_initcall().
+
+Hence all explicit SYSC configuration and initialization can be removed
+from the R-Car H1 platform code.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/mach-shmobile/Makefile      |  2 +-
+ arch/arm/mach-shmobile/pm-r8a7779.c  | 41 ------------------------------------
+ arch/arm/mach-shmobile/r8a7779.h     |  2 --
+ arch/arm/mach-shmobile/smp-r8a7779.c |  2 --
+ 4 files changed, 1 insertion(+), 46 deletions(-)
+ delete mode 100644 arch/arm/mach-shmobile/pm-r8a7779.c
+
+diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
+index 2b8d3896e1eb..05ba728ed4f6 100644
+--- a/arch/arm/mach-shmobile/Makefile
++++ b/arch/arm/mach-shmobile/Makefile
+@@ -11,7 +11,7 @@ obj-$(CONFIG_ARCH_SH73A0)	+= setup-sh73a0.o
+ obj-$(CONFIG_ARCH_R8A73A4)	+= setup-r8a73a4.o
+ obj-$(CONFIG_ARCH_R8A7740)	+= setup-r8a7740.o
+ obj-$(CONFIG_ARCH_R8A7778)	+= setup-r8a7778.o
+-obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o pm-r8a7779.o
++obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o
+ obj-$(CONFIG_ARCH_EMEV2)	+= setup-emev2.o
+ obj-$(CONFIG_ARCH_R7S72100)	+= setup-r7s72100.o
  
- static const struct regmap_irq da9063_irqs[] = {
- 	/* DA9063 event A register */
--	[DA9063_IRQ_ONKEY] = {
--		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
--		.mask = DA9063_M_ONKEY,
--	},
--	[DA9063_IRQ_ALARM] = {
--		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
--		.mask = DA9063_M_ALARM,
--	},
--	[DA9063_IRQ_TICK] = {
--		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
--		.mask = DA9063_M_TICK,
--	},
--	[DA9063_IRQ_ADC_RDY] = {
--		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
--		.mask = DA9063_M_ADC_RDY,
--	},
--	[DA9063_IRQ_SEQ_RDY] = {
--		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
--		.mask = DA9063_M_SEQ_RDY,
--	},
-+	REGMAP_IRQ_REG(DA9063_IRQ_ONKEY,
-+		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_ONKEY),
-+	REGMAP_IRQ_REG(DA9063_IRQ_ALARM,
-+		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_ALARM),
-+	REGMAP_IRQ_REG(DA9063_IRQ_TICK,
-+		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_TICK),
-+	REGMAP_IRQ_REG(DA9063_IRQ_ADC_RDY,
-+		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_ADC_RDY),
-+	REGMAP_IRQ_REG(DA9063_IRQ_SEQ_RDY,
-+		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_SEQ_RDY),
- 	/* DA9063 event B register */
--	[DA9063_IRQ_WAKE] = {
--		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
--		.mask = DA9063_M_WAKE,
--	},
--	[DA9063_IRQ_TEMP] = {
--		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
--		.mask = DA9063_M_TEMP,
--	},
--	[DA9063_IRQ_COMP_1V2] = {
--		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
--		.mask = DA9063_M_COMP_1V2,
--	},
--	[DA9063_IRQ_LDO_LIM] = {
--		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
--		.mask = DA9063_M_LDO_LIM,
--	},
--	[DA9063_IRQ_REG_UVOV] = {
--		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
--		.mask = DA9063_M_UVOV,
--	},
--	[DA9063_IRQ_DVC_RDY] = {
--		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
--		.mask = DA9063_M_DVC_RDY,
--	},
--	[DA9063_IRQ_VDD_MON] = {
--		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
--		.mask = DA9063_M_VDD_MON,
--	},
--	[DA9063_IRQ_WARN] = {
--		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
--		.mask = DA9063_M_VDD_WARN,
--	},
-+	REGMAP_IRQ_REG(DA9063_IRQ_WAKE,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_WAKE),
-+	REGMAP_IRQ_REG(DA9063_IRQ_TEMP,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_TEMP),
-+	REGMAP_IRQ_REG(DA9063_IRQ_COMP_1V2,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_COMP_1V2),
-+	REGMAP_IRQ_REG(DA9063_IRQ_LDO_LIM,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_LDO_LIM),
-+	REGMAP_IRQ_REG(DA9063_IRQ_REG_UVOV,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_UVOV),
-+	REGMAP_IRQ_REG(DA9063_IRQ_DVC_RDY,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_DVC_RDY),
-+	REGMAP_IRQ_REG(DA9063_IRQ_VDD_MON,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_MON),
-+	REGMAP_IRQ_REG(DA9063_IRQ_WARN,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_WARN),
- 	/* DA9063 event C register */
--	[DA9063_IRQ_GPI0] = {
--		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
--		.mask = DA9063_M_GPI0,
--	},
--	[DA9063_IRQ_GPI1] = {
--		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
--		.mask = DA9063_M_GPI1,
--	},
--	[DA9063_IRQ_GPI2] = {
--		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
--		.mask = DA9063_M_GPI2,
--	},
--	[DA9063_IRQ_GPI3] = {
--		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
--		.mask = DA9063_M_GPI3,
--	},
--	[DA9063_IRQ_GPI4] = {
--		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
--		.mask = DA9063_M_GPI4,
--	},
--	[DA9063_IRQ_GPI5] = {
--		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
--		.mask = DA9063_M_GPI5,
--	},
--	[DA9063_IRQ_GPI6] = {
--		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
--		.mask = DA9063_M_GPI6,
--	},
--	[DA9063_IRQ_GPI7] = {
--		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
--		.mask = DA9063_M_GPI7,
--	},
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI0,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI0),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI1,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI1),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI2,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI2),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI3,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI3),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI4,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI4),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI5,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI5),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI6,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI6),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI7,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI7),
- 	/* DA9063 event D register */
--	[DA9063_IRQ_GPI8] = {
--		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
--		.mask = DA9063_M_GPI8,
--	},
--	[DA9063_IRQ_GPI9] = {
--		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
--		.mask = DA9063_M_GPI9,
--	},
--	[DA9063_IRQ_GPI10] = {
--		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
--		.mask = DA9063_M_GPI10,
--	},
--	[DA9063_IRQ_GPI11] = {
--		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
--		.mask = DA9063_M_GPI11,
--	},
--	[DA9063_IRQ_GPI12] = {
--		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
--		.mask = DA9063_M_GPI12,
--	},
--	[DA9063_IRQ_GPI13] = {
--		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
--		.mask = DA9063_M_GPI13,
--	},
--	[DA9063_IRQ_GPI14] = {
--		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
--		.mask = DA9063_M_GPI14,
--	},
--	[DA9063_IRQ_GPI15] = {
--		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
--		.mask = DA9063_M_GPI15,
--	},
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI8,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI8),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI9,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI9),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI10,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI10),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI11,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI11),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI12,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI12),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI13,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI13),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI14,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI14),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI15,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI15),
- };
- 
- static const struct regmap_irq_chip da9063_irq_chip = {
- 	.name = "da9063-irq",
- 	.irqs = da9063_irqs,
- 	.num_irqs = DA9063_NUM_IRQ,
+diff --git a/arch/arm/mach-shmobile/pm-r8a7779.c b/arch/arm/mach-shmobile/pm-r8a7779.c
+deleted file mode 100644
+index 5c9a93f5e650..000000000000
+--- a/arch/arm/mach-shmobile/pm-r8a7779.c
++++ /dev/null
+@@ -1,41 +0,0 @@
+-/*
+- * r8a7779 Power management support
+- *
+- * Copyright (C) 2011  Renesas Solutions Corp.
+- * Copyright (C) 2011  Magnus Damm
+- *
+- * This file is subject to the terms and conditions of the GNU General Public
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+- */
 -
- 	.num_regs = 4,
- 	.status_base = DA9063_REG_EVENT_A,
- 	.mask_base = DA9063_REG_IRQ_MASK_A,
+-#include <linux/soc/renesas/rcar-sysc.h>
+-
+-#include <asm/io.h>
+-
+-#include "r8a7779.h"
+-
+-/* SYSC */
+-#define SYSCIER 0x0c
+-#define SYSCIMR 0x10
+-
+-#if defined(CONFIG_PM) || defined(CONFIG_SMP)
+-
+-static void __init r8a7779_sysc_init(void)
+-{
+-	rcar_sysc_init(0xffd85000, 0x0131000e);
+-}
+-
+-#else /* CONFIG_PM || CONFIG_SMP */
+-
+-static inline void r8a7779_sysc_init(void) {}
+-
+-#endif /* CONFIG_PM || CONFIG_SMP */
+-
+-void __init r8a7779_pm_init(void)
+-{
+-	static int once;
+-
+-	if (!once++)
+-		r8a7779_sysc_init();
+-}
+diff --git a/arch/arm/mach-shmobile/r8a7779.h b/arch/arm/mach-shmobile/r8a7779.h
+index 30668aa6acc3..ca9db8fde2f7 100644
+--- a/arch/arm/mach-shmobile/r8a7779.h
++++ b/arch/arm/mach-shmobile/r8a7779.h
+@@ -2,8 +2,6 @@
+ #ifndef __ASM_R8A7779_H__
+ #define __ASM_R8A7779_H__
+ 
+-extern void r8a7779_pm_init(void);
+-
+ extern const struct smp_operations r8a7779_smp_ops;
+ 
+ #endif /* __ASM_R8A7779_H__ */
+diff --git a/arch/arm/mach-shmobile/smp-r8a7779.c b/arch/arm/mach-shmobile/smp-r8a7779.c
+index 3036f9100461..0d3ec5c2b8fc 100644
+--- a/arch/arm/mach-shmobile/smp-r8a7779.c
++++ b/arch/arm/mach-shmobile/smp-r8a7779.c
+@@ -60,8 +60,6 @@ static void __init r8a7779_smp_prepare_cpus(unsigned int max_cpus)
+ 
+ 	/* setup r8a7779 specific SCU bits */
+ 	shmobile_smp_scu_prepare_cpus(R8A7779_SCU_BASE, max_cpus);
+-
+-	r8a7779_pm_init();
+ }
+ 
+ #ifdef CONFIG_HOTPLUG_CPU
 -- 
-2.16.2
+2.11.0
