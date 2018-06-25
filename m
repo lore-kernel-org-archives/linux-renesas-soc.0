@@ -1,111 +1,124 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:34344 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752418AbeFEXek (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52556 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933803AbeFYOG3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Jun 2018 19:34:40 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        niklas.soderlund@ragnatech.se, jacopo@jmondi.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [RFC PATCH v1 1/4] media: dt-bindings: max9286: add device tree binding
-Date: Wed,  6 Jun 2018 00:34:32 +0100
-Message-Id: <20180605233435.18102-2-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <20180605233435.18102-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20180605233435.18102-1-kieran.bingham+renesas@ideasonboard.com>
+        Mon, 25 Jun 2018 10:06:29 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: arm@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [GIT PULL] Renesas ARM Based SoC Arm SoC Updates for v4.19
+Date: Mon, 25 Jun 2018 16:05:26 +0200
+Message-Id: <cover.1529934908.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Provide device tree binding documentation for the MAX9286 Quad GMSL
-deserialiser.
+Hi Olof, Hi Kevin, Hi Arnd,
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- .../devicetree/bindings/media/i2c/max9286.txt | 75 +++++++++++++++++++
- 1 file changed, 75 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/max9286.txt
+Please consider these Renesas ARM based SoC arm SoC updates for v4.19.
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/max9286.txt b/Documentation/devicetree/bindings/media/i2c/max9286.txt
-new file mode 100644
-index 000000000000..e6e5d2c93245
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/i2c/max9286.txt
-@@ -0,0 +1,75 @@
-+* Maxim Integrated MAX9286 GMSL Quad 1.5Gbps GMSL Deserializer
-+
-+Required Properties:
-+ - compatible: Shall be "maxim,max9286"
-+
-+The following required properties are defined externally in
-+Documentation/devicetree/bindings/i2c/i2c-mux.txt:
-+ - Standard I2C mux properties.
-+ - I2C child bus nodes.
-+
-+A maximum of 4 I2C child nodes can be specified on the MAX9286, to
-+correspond with a maximum of 4 input devices.
-+
-+The device node must contain one 'port' child node per device input and output
-+port, in accordance with the video interface bindings defined in
-+Documentation/devicetree/bindings/media/video-interfaces.txt. The port nodes
-+are numbered as follows.
-+
-+      Port        Type
-+    ----------------------
-+       0          sink
-+       1          sink
-+       2          sink
-+       3          sink
-+       4          source
-+
-+Example:
-+&i2c4 {
-+	gmsl-deserializer@0 {
-+		compatible = "maxim,max9286";
-+		reg = <0x4c>;
-+		poc-supply = <&poc_12v>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				max9286_in0: endpoint {
-+					remote-endpoint = <&rdacm20_out0>;
-+				};
-+			};
-+
-+			port@4 {
-+				reg = <4>;
-+				max9286_out0: endpoint {
-+					clock-lanes = <0>;
-+					data-lanes = <1 2 3 4>;
-+					remote-endpoint = <&csi40_in>;
-+				};
-+			};
-+		};
-+
-+		i2c@0 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0>;
-+
-+			camera@51 {
-+				compatible = MAXIM_CAMERA0;
-+				reg = <0x51 0x61>;
-+
-+				port {
-+					rdacm20_out0: endpoint {
-+						remote-endpoint = <&max9286_in0>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+};
--- 
-2.17.0
+
+The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
+
+  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm-soc-for-v4.19
+
+for you to fetch changes up to c44e182e537492baaa37303fc0ee299222fce921:
+
+  ARM: shmobile: convert to SPDX identifier (2018-06-18 12:00:29 +0200)
+
+----------------------------------------------------------------
+Renesas ARM Based SoC Arm SoC Updates for v4.19
+
+* Convert to SPDX identifier
+
+* Remove legacy SMP fallback code
+
+  Geert Uytterhoeven says "R-Car H2 and M2-W have been supporting SMP
+  enablement from DT using the "renesas,apmu" enable-method since v4.8.
+  A legacy fallback was left in place for backwards compatibility with old
+  DTBs.
+
+  This patch series removes the legacy SMP fallbacks for R-Car H2 and
+  M2-W, and consolidates their support in the common R-Car Gen2 machine
+  definition.2
+
+* APMU cleanups after legacy SMP fallback removal
+  - Move cpu_leave_lowpower() from HOTPLUG_CPU || SUSPEND section to the
+    SUSPEND section as it is only used for suspend
+  - Remove shmobile_smp_apmu_prepare_cpus() as it is no longer used
+  - Remove platsmp-apmu.h
+
+* Drop legacy SYSC fallbacks
+
+  Geert Uytterhoeven says "When DT SYSC support was introduced in v4.7,
+  legacy fallbacks were kept to keep secondary CPUs working on R-Car H1,
+  H2, and M2-W using old DTBs.  However, the time has come to drop these
+  fallbacks, and clean up the resulting code"
+
+----------------------------------------------------------------
+Geert Uytterhoeven (14):
+      ARM: shmobile: r8a7790: Remove legacy SMP fallback code
+      ARM: shmobile: r8a7790: Use common R-Car Gen2 machine definition
+      ARM: shmobile: r8a7791: Remove legacy SMP fallback code
+      ARM: shmobile: r8a7791: Use common R-Car Gen2 machine definition
+      ARM: shmobile: Remove unused shmobile_smp_init_fallback_ops()
+      ARM: shmobile: apmu: Move cpu_leave_lowpower() to SUSPEND section
+      ARM: shmobile: apmu: Remove obsolete shmobile_smp_apmu_prepare_cpus()
+      ARM: shmobile: apmu: Remove platsmp-apmu.h
+      ARM: shmobile: rcar-gen2: Remove explicit SYSC config and init
+      ARM: shmobile: r8a7779: Stop powering down secondary CPUs during early boot
+      soc: renesas: rcar-sysc: Provide helpers to power up/down CPUs
+      ARM: shmobile: r8a7779: Use rcar_sysc_power_{down,up}_cpu()
+      ARM: shmobile: r8a7779: Remove explicit SYSC config and init
+      soc: renesas: rcar-sysc: Drop legacy handling
+
+Wolfram Sang (1):
+      ARM: shmobile: convert to SPDX identifier
+
+ arch/arm/include/debug/renesas-scif.S              |   5 +-
+ arch/arm/mach-shmobile/Makefile                    |   6 +-
+ arch/arm/mach-shmobile/common.h                    |   1 -
+ arch/arm/mach-shmobile/headsmp-apmu.S              |   5 +-
+ arch/arm/mach-shmobile/platsmp-apmu.c              | 245 +++++++++------------
+ arch/arm/mach-shmobile/platsmp-apmu.h              |  32 ---
+ arch/arm/mach-shmobile/platsmp.c                   |   9 -
+ arch/arm/mach-shmobile/pm-r8a7779.c                |  41 ----
+ arch/arm/mach-shmobile/pm-rcar-gen2.c              |  25 ---
+ arch/arm/mach-shmobile/r8a7779.h                   |   2 -
+ arch/arm/mach-shmobile/r8a7790.h                   |   7 -
+ arch/arm/mach-shmobile/r8a7791.h                   |   7 -
+ arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c |  10 +-
+ arch/arm/mach-shmobile/setup-emev2.c               |  10 +-
+ arch/arm/mach-shmobile/setup-r7s72100.c            |  10 +-
+ arch/arm/mach-shmobile/setup-r8a73a4.c             |  10 +-
+ arch/arm/mach-shmobile/setup-r8a7740.c             |  10 +-
+ arch/arm/mach-shmobile/setup-r8a7778.c             |  10 +-
+ arch/arm/mach-shmobile/setup-r8a7779.c             |  10 +-
+ arch/arm/mach-shmobile/setup-r8a7790.c             |  38 ----
+ arch/arm/mach-shmobile/setup-r8a7791.c             |  39 ----
+ arch/arm/mach-shmobile/setup-rcar-gen2.c           |  16 +-
+ arch/arm/mach-shmobile/setup-sh73a0.c              |  10 +-
+ arch/arm/mach-shmobile/smp-emev2.c                 |  10 +-
+ arch/arm/mach-shmobile/smp-r8a7779.c               |  64 +-----
+ arch/arm/mach-shmobile/smp-r8a7790.c               |  71 ------
+ arch/arm/mach-shmobile/smp-r8a7791.c               |  53 -----
+ drivers/soc/renesas/rcar-sysc.c                    |  64 ++++--
+ include/linux/soc/renesas/rcar-sysc.h              |  13 +-
+ 29 files changed, 166 insertions(+), 667 deletions(-)
+ delete mode 100644 arch/arm/mach-shmobile/platsmp-apmu.h
+ delete mode 100644 arch/arm/mach-shmobile/pm-r8a7779.c
+ delete mode 100644 arch/arm/mach-shmobile/r8a7790.h
+ delete mode 100644 arch/arm/mach-shmobile/r8a7791.h
+ delete mode 100644 arch/arm/mach-shmobile/setup-r8a7790.c
+ delete mode 100644 arch/arm/mach-shmobile/setup-r8a7791.c
+ delete mode 100644 arch/arm/mach-shmobile/smp-r8a7790.c
+ delete mode 100644 arch/arm/mach-shmobile/smp-r8a7791.c
