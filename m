@@ -1,20 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:38535 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752481AbeFZIiS (ORCPT
+Received: from sauhun.de ([88.99.104.3]:49200 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965243AbeFZDFO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Jun 2018 04:38:18 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Wolfram Sang <wsa@the-dreams.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Mon, 25 Jun 2018 23:05:14 -0400
+Date: Tue, 26 Jun 2018 07:05:10 +0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-Subject: RE: [RFC PATCH 1/1] i2c: rcar: handle RXDMA HW bug on Gen3
-Date: Tue, 26 Jun 2018 08:38:12 +0000
-Message-ID: <TY2PR01MB22973680E5B69BAD232C234DD8490@TY2PR01MB2297.jpnprd01.prod.outlook.com>
+Subject: Re: [RFC PATCH 1/1] i2c: rcar: handle RXDMA HW bug on Gen3
+Message-ID: <20180626030510.gq3xyejsrc5gd5wj@ninjato>
 References: <20180529105847.15663-1-wsa+renesas@sang-engineering.com>
  <20180529105847.15663-2-wsa+renesas@sang-engineering.com>
  <TY2PR01MB2297BC5F12034143657590A7D86C0@TY2PR01MB2297.jpnprd01.prod.outlook.com>
@@ -22,72 +22,108 @@ References: <20180529105847.15663-1-wsa+renesas@sang-engineering.com>
  <OSBPR01MB2293BBBFEBF58E8D90F3B516D8630@OSBPR01MB2293.jpnprd01.prod.outlook.com>
  <OSBPR01MB229354C6675F1185BD182C54D8640@OSBPR01MB2293.jpnprd01.prod.outlook.com>
  <CAMuHMdV-vLn-C6HcZBLwJWbXq2S3e-iQdmQXCEXm23+cEvk8gw@mail.gmail.com>
- <20180626030510.gq3xyejsrc5gd5wj@ninjato>
-In-Reply-To: <20180626030510.gq3xyejsrc5gd5wj@ninjato>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ntvp55rya5tnnkbm"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV-vLn-C6HcZBLwJWbXq2S3e-iQdmQXCEXm23+cEvk8gw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgV29sZnJhbS1zYW4sIEdlZXJ0LXNhbiwNCg0KSSdtIHNvcnJ5IGZvciBkZWxheWVkIHJlc3Bv
-bnNlLiBJIGNvbXBsZXRlbHkgb3Zlcmxvb2tlZCB0aGlzIGVtYWlsLi4uDQoNCj4gRnJvbTogV29s
-ZnJhbSBTYW5nIDx3c2FAdGhlLWRyZWFtcy5kZT4sIFNlbnQ6IFR1ZXNkYXksIEp1bmUgMjYsIDIw
-MTggMTI6MDUgUE0NCj4gDQo+ID4gPiBJIGdvdCBpbmZvcm1hdGlvbiBhYm91dCB0aGlzIHRvcGlj
-Lg0KPiA+ID4NCj4gPiA+IDwgSW4gQ1BHIC8gTVNTUiBwb2ludCBvZiB2aWV3ID4NCj4gPiA+ICAt
-IFRoaXMgbmVlZHMgMzUgdXNlYyB3YWl0IHdoaWxlIGFzc2VydGluZy4NCj4gPiA+ICAtIEFmdGVy
-IGRlYXNzZXJ0ZWQgYSByZXNldCwgbm8gd2FpdCBuZWVkcy4NCj4gPiA+ICAgLSBJbiBvdGhlciB3
-b3JkcywgdGhlcmUgaXMgZWFjaCBoYXJkd2FyZSBJUCBkZXBlbmRlbmNlLg0KPiA+DQo+ID4gTGV0
-J3MgY2FsbCB0aGUgYWJvdmUgcHJvY2VkdXJlIEEuDQo+ID4NCj4gPiA+IDwgSW4gSTJDIHBvaW50
-IG9mIHZpZXcgPg0KPiA+ID4gIC0gQWZ0ZXIgZGVhc3NlcnRlZCB0aGUgcmVzZXQsIHRoaXMgbmVl
-cyBTUkNSIHJlZ2lzdGVyIHBvbGxpbmcuDQo+ID4NCj4gPiBMZXQncyBjYWxsIHRoZSBhYm92ZSBw
-cm9jZWR1cmUgQi4NCj4gPg0KPiA+ID4gU28sIEkgZG9uJ3QgdGhpbmsgY3BnX21zc3JfcmVzZXQo
-KSBjaGVja3MgdGhlIHN0YXR1cyBiaXQgYWZ0ZXIgZGVhc3NlcnRlZCBhIHJlc2V0Lg0KPiA+ID4g
-QnV0LCB3aGF0IGRvIHlvdSB0aGluaz8NCj4gPg0KPiA+IGNwZ19tc3NyX3Jlc2V0KCkgaW5kZWVk
-IGRvZXMgbm90IGNoZWNrIHRoZSBzdGF0dXMgYml0IGFmdGVyIGRlYXNzZXJ0aW5nDQo+ID4gdGhl
-IHJlc2V0LCBhcyBpdCBmb2xsb3dzIHByb2NlZHVyZSBBLg0KPiA+DQo+ID4gU3VjaCBhIGNoZWNr
-IGNvdWxkIGJlIGFkZGVkLCB0aG91Z2guIFRoZW4gaXQnbGwgYmVjb21lDQo+ID4gKGxldCdzIGNh
-bGwgdGhpcyBwcm9jZWR1cmUgQyk6DQo+ID4NCj4gPiAgICAgICAgIC8qIFJlc2V0IG1vZHVsZSAq
-Lw0KPiA+ICAgICAgICAgc3Bpbl9sb2NrX2lycXNhdmUoJnByaXYtPnJtd19sb2NrLCBmbGFncyk7
-DQo+ID4gICAgICAgICB2YWx1ZSA9IHJlYWRsKHByaXYtPmJhc2UgKyBTUkNSKHJlZykpOw0KPiA+
-ICAgICAgICAgdmFsdWUgfD0gYml0bWFzazsNCj4gPiAgICAgICAgIHdyaXRlbCh2YWx1ZSwgcHJp
-di0+YmFzZSArIFNSQ1IocmVnKSk7DQo+ID4gICAgICAgICBzcGluX3VubG9ja19pcnFyZXN0b3Jl
-KCZwcml2LT5ybXdfbG9jaywgZmxhZ3MpOw0KPiA+DQo+ID4gICAgICAgICAvKiBXYWl0IGZvciBh
-dCBsZWFzdCBvbmUgY3ljbGUgb2YgdGhlIFJDTEsgY2xvY2sgKEAgY2EuIDMyIGtIeikgKi8NCj4g
-PiAgICAgICAgIHVkZWxheSgzNSk7DQo+ID4NCj4gPiAgICAgICAgIC8qIFJlbGVhc2UgbW9kdWxl
-IGZyb20gcmVzZXQgc3RhdGUgKi8NCj4gPiAgICAgICAgIHdyaXRlbChiaXRtYXNrLCBwcml2LT5i
-YXNlICsgU1JTVENMUihyZWcpKTsNCj4gPg0KPiA+ICsgICAgICAgLyogV2FpdCB1bnRpbCBkZWFz
-c2VydGlvbiBoYXMgY29tcGxldGVkICovDQo+ID4gKyAgICAgICB3aGlsZSAocmVhZGwocHJpdi0+
-YmFzZSArIFNSQ1IocmVnKSkgJiBiaXRtYXNrKQ0KPiA+ICsgICAgICAgICAgICAgICBjcHVfcmVs
-YXgoKTsNCj4gPiANCj4gPiBQcm9iYWJseSB3ZSBuZWVkIGFuIHVwcGVyIGxpbWl0IG9uIHRoZSBu
-dW1iZXIgb2YgbG9vcHMsIGFuZCBjYWxsIHVkZWxheSgxKQ0KPiA+IGFmdGVyIGVhY2ggaXRlcmF0
-aW9uPw0KPiA+DQo+ID4gICAgICAgICBmb3IgKGkgMDsgaSA8IDM1OyBpKyspIHsNCj4gPiAgICAg
-ICAgICAgICAgICAgaWYgKCEocmVhZGwocHJpdi0+YmFzZSArIFNSQ1IocmVnKSkgJiBiaXRtYXNr
-KSkNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gMDsNCj4gPiAgICAgICAgICAg
-ICAgICAgdWRlbGF5KDEpOw0KPiA+ICAgICAgICAgfQ0KPiA+ICAgICAgICAgcmV0dXJuIC1FSU87
-DQo+ID4NCj4gPiBBbnkgYWR2aWNlIGZyb20gdGhlIGhhcmR3YXJlIHRlYW0gYWJvdXQgdGhhdD8N
-Cg0KVGhlIGhhcmR3YXJlIHRlYW0gc2FpZDoNCiAtIEluIENQRyBwb2ludCBvZiB2aWV3Og0KICAg
-LSBzdWNoIHBvbGxpbmcgZG9lc24ndCBuZWVkIChiZWNhdXNlIHRoZSByZXNldCBwdWxzZSBpcyBn
-ZW5lcmF0ZWQgY29ycmVjdGx5KS4NCiAgIC0gQWJvdXQgdGhlIGludGVydmFsIGFmdGVyIGRlYXNz
-ZXJ0IHRoZSByZXNldCwgdGhpcyBpcyBkZXBlbmQgb24gZWFjaCBoYXJkd2FyZSBtb2R1bGUuDQog
-ICAgIChJbiBvdGhlciB3b3JkcywgaWYgZWFjaCBoYXJkd2FyZSBtb2R1bGUgaGFzIGEgc3BlY2lh
-bCBoYW5kbGluZyBhYm91dCBhZnRlciB0aGUgZGVhc3NlcnQgaW50ZXJ2YWwsDQogICAgICB3ZSBz
-aG91bGQgZm9sbG93IHRoZSBzcGVjaWFsIGhhbmRsaW5nLikNCiAtIFRoZSBJMkMgY29udHJvbGxl
-ciBuZWVkcyBhbiBpbnRlcnZhbCBvZiByZWFkaW5nIFNSQ1IgYXQgbGVhc3QgKHRoaXMgaXMgYSBz
-cGVjaWFsIGhhbmRsaW5nKS4NCg0KU28sIEkgdGhpbmsgYWRkaW5nIHRoaXMgY29kZSBpcyBub3Qg
-Z29vZCBmaXQgaW4gQ1BHIHBvaW50IG9mIHZpZXcuDQoNCj4gPiBCdXQgYWNjb3JkaW5nIHRvIHBy
-b2NlZHVyZSBBLCB0aGUgY2hlY2sgaXMgbm90IG5lZWRlZD8NCg0KQXMgaGFyZHdhcmUgdGVhbSBz
-YWlkLCB0aGUgY2hlY2sgKHRoYXQgbWVhbnMgcHJvY2VkdXJlIEMpIGlzIG5vdCBuZWVkZWQuDQoN
-Cj4gPiBQcm9iYWJseSBiZWNhdXNlIDM1wrVzIGlzIGFuIHVwcGVyIGxpbWl0IHNhdGlzZnlpbmcg
-YWxsIGluZGl2aWR1YWwgaGFyZHdhcmUNCj4gPiBtb2R1bGVzPw0KPiA+DQo+ID4gSSdtIHdvbmRl
-cmluZyB3aGV0aGVyIHdlIGNvdWxkIHVzZSBwcm9jZWR1cmUgQiBpbiB0aGUgZ2VuZXJhbCBjYXNl
-LA0KPiA+IGFzIGl0IGV4cGxpY2l0bHkgY2hlY2tzIGZvciBjb21wbGV0aW9uPw0KPiA+DQo+ID4g
-UHJvY2VkdXJlIEMgaXMgc2FmZXN0LCB0aG91Z2gsIHNvIHByb2JhYmx5IHRoZSB3YXkgdG8gZ28u
-DQo+IA0KPiBBbnkgbmV3cyBhYm91dCB0aGlzIHRvcGljPw0KPiANCj4gQW5kIGhvdyB0byB1cHN0
-cmVhbSBhbGwgdGhpcz8gTXkgSTJDIHBhdGNoIGlzIGNsZWFybHkgYSBidWdmaXgsIGJ1dCB0aGUN
-Cj4gbmVjZXNzYXJ5IENQRyB1cGRhdGUgdGVjaG5pY2FsbHkgaXNuJ3Q/IE5vdCBzdXJlIGFib3V0
-IHRoaXMgb25lLi4uDQoNCkkgdGhpbmsgd2UgaGF2ZSB0byBhZGQgcmVzZXRfY29udHJvbF9zdGF0
-dXMoKSBjYWxsaW5nIGludG8gdGhlIGkyYy1yY2FyLmMNCnRvIGZvbGxvdyBwcm9jZWR1cmUgQi4N
-CkJ1dCwgR2VlcnQtc2FuLCB3aGF0IGRvIHlvdSB0aGluaz8NCg0KQmVzdCByZWdhcmRzLA0KWW9z
-aGloaXJvIFNoaW1vZGENCg0K
+
+--ntvp55rya5tnnkbm
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+
+> > I got information about this topic.
+> >
+> > < In CPG / MSSR point of view >
+> >  - This needs 35 usec wait while asserting.
+> >  - After deasserted a reset, no wait needs.
+> >   - In other words, there is each hardware IP dependence.
+>=20
+> Let's call the above procedure A.
+>=20
+> > < In I2C point of view >
+> >  - After deasserted the reset, this nees SRCR register polling.
+>=20
+> Let's call the above procedure B.
+>=20
+> > So, I don't think cpg_mssr_reset() checks the status bit after deassert=
+ed a reset.
+> > But, what do you think?
+>=20
+> cpg_mssr_reset() indeed does not check the status bit after deasserting
+> the reset, as it follows procedure A.
+>=20
+> Such a check could be added, though. Then it'll become
+> (let's call this procedure C):
+>=20
+>         /* Reset module */
+>         spin_lock_irqsave(&priv->rmw_lock, flags);
+>         value =3D readl(priv->base + SRCR(reg));
+>         value |=3D bitmask;
+>         writel(value, priv->base + SRCR(reg));
+>         spin_unlock_irqrestore(&priv->rmw_lock, flags);
+>=20
+>         /* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
+>         udelay(35);
+>=20
+>         /* Release module from reset state */
+>         writel(bitmask, priv->base + SRSTCLR(reg));
+>=20
+> +       /* Wait until deassertion has completed */
+> +       while (readl(priv->base + SRCR(reg)) & bitmask)
+> +               cpu_relax();
+>=20
+> Probably we need an upper limit on the number of loops, and call udelay(1)
+> after each iteration?
+>=20
+>         for (i 0; i < 35; i++) {
+>                 if (!(readl(priv->base + SRCR(reg)) & bitmask))
+>                         return 0;
+>                 udelay(1);
+>         }
+>         return -EIO;
+>=20
+> Any advice from the hardware team about that?
+>=20
+> But according to procedure A, the check is not needed?
+> Probably because 35=C2=B5s is an upper limit satisfying all individual ha=
+rdware
+> modules?
+>=20
+> I'm wondering whether we could use procedure B in the general case,
+> as it explicitly checks for completion?
+>=20
+> Procedure C is safest, though, so probably the way to go.
+
+Any news about this topic?
+
+And how to upstream all this? My I2C patch is clearly a bugfix, but the
+necessary CPG update technically isn't? Not sure about this one...
+
+
+--ntvp55rya5tnnkbm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsxrWIACgkQFA3kzBSg
+KbattxAAqERNNqMxQryj2hvJXyUp/+CYC/3j97QPFjEHdpGK4KvDIzT4ckqaurXj
+uPtHAXP53uxlV4NrXWbvhEAfrfzgm2K3lckdClrEfnNBxaev+c8PwQoDAHh0GHKA
+j/X0FpcIs6jc5qFk3H0Fn/FQ+CqrKp7iUthnZS5dG9hJIQLvmfWMAyfOvvsmSNfV
+78Bz9A6E6Hu/LgH5n+PQql3zUrCuXGvm0gY7BG8Qyqu1X9YZTkmo0vAy6TwRNK2x
+DpIYrkQR/eYaLMf7mZ16tZEFYutHpU6LPSjO2t5HeAh20cFk52dP0wP+Q/GVqNsn
+hHVDb7FuujYpfxiKvBscXNXjQwBxjcAVn3Z8QBQW+SRlE9L9qQ878scRIm3FIHwY
+HkgeoPK/RCM1bxu1+49HFVdyDajQ4PFR/rbsD/QeuvfqJ5hFE6wgFaIYG9hSo9GW
+sJCBEdgTULls8Iz4vvGD4u4wLcXX9LgULLJSiDicDnfe0PFEdyMmH5HwvvGT1j8Y
+Zs2UZIIgLfrC0ZO+yZ9i0Zy97QCmDYHGLewVigrUsI/J5lKxicruOh0krx0LbQCP
+bt4sk2t2s1AVzzxtSJCx4kezNVIsmveI5hpuUCimmJcREj+GnBgwWrdFlbr6F39D
+AsAZAR01hffCpoYzBJmo4tS9KOice2NQxgwMXP9B64SQ3lU0VvQ=
+=LEDe
+-----END PGP SIGNATURE-----
+
+--ntvp55rya5tnnkbm--
