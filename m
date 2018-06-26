@@ -1,140 +1,96 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:45902 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756219AbeFOOl3 (ORCPT
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:40013 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965685AbeFZN4A (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Jun 2018 10:41:29 -0400
-From: Kieran Bingham <kieran@ksquared.org.uk>
-To: linux-renesas-soc@vger.kernel.org, qemu-devel@nongnu.org
-Cc: qemu-arm@nongnu.org, geert@glider.be,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran@ksquared.org.uk>
-Subject: [PATCH] [QEMU][RFC] hw/arm/sysbus-fdt: Enable rcar-gen3-scif dynamic instantiation
-Date: Fri, 15 Jun 2018 15:41:23 +0100
-Message-Id: <20180615144123.20844-1-kieran@bingham.xyz>
+        Tue, 26 Jun 2018 09:56:00 -0400
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdUYtao4fgQUwBArZG1y+yfbwHE0SHuM6v2NGnhY7GSjkA@mail.gmail.com>
+References: <20180619135518.8990-1-geert+renesas@glider.be>
+ <20180620132507.GE6242@sirena.org.uk> <CAMuHMdXYL+=mBOofUqQ06Ld4zUF7BWqt+S2dFTw6AEAPuDsZPQ@mail.gmail.com>
+ <1705903.rOAenNWc8f@aspire.rjw.lan> <CAMuHMdUYtao4fgQUwBArZG1y+yfbwHE0SHuM6v2NGnhY7GSjkA@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 26 Jun 2018 15:55:58 +0200
+Message-ID: <CAJZ5v0gAnDKe=S916ZB4489H3Sx26gkBVPqpKD45jY2f4G4wng@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] PM / wakeup: Add callback for wake-up change notification
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Mark Brown <broonie@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Allow the provision of a Renesas R-Car Gen3 (H)SCIF controller device
-from the Qemu command line:
+Hi Geert,
 
-  -device vfio-platform,host=e6e68000.serial,manufacturer=renesas,model=rcar-gen3-scif
+On Tue, Jun 26, 2018 at 12:29 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Rafael,
+>
+> On Tue, Jun 26, 2018 at 12:17 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>> On Tuesday, June 26, 2018 12:06:16 PM CEST Geert Uytterhoeven wrote:
+>> > On Wed, Jun 20, 2018 at 3:25 PM Mark Brown <broonie@kernel.org> wrote:
+>> > > On Wed, Jun 20, 2018 at 02:15:38PM +0200, Rafael J. Wysocki wrote:
+>> > > > On Wed, Jun 20, 2018 at 12:35 PM, Mark Brown <broonie@kernel.org> wrote:
+>> > >
+>> > > > > The flip side of that is that either suspend and resume or poweroff are
+>> > > > > broken for userspace unless they know about this magic sysfs file which
+>> > > > > isn't great either.
+>> > >
+>> > > > But to me that isn't that much different from an RTC wake alarm, say.
+>> > >
+>> > > > Enabling it to wake up the system in general isn't sufficient, you
+>> > > > also need to actually set the alarm using a different interface.
+>> >
+>> > The RTC wake alarm time is indeed different, as it is not a simple boolean flag.
+>> > It is also more natural for the user, who expects to need to find some way to
+>> > configure the wake-up time.
+>>
+>> OK, take Ethernet.  You need to configure WoL on that to wake up the system
+>> in addition to setting power/wakeup for it.
+>>
+>> Take WiFi: You need to set up WoW on that.
+>>
+>> And so on.
+>
+> I always found it strange that you have both "ethtool wol" and and a
+> "wakeup" file
+> in sysfs (does "ethtool wol" predate the wakeup file in sysfs?)
 
-To support this, the serial device must be unbound from the host, and
-rebound to the vfio-platform driver:
+Yes, it does.
 
-  echo 1 > /sys/module/vfio/parameters/enable_unsafe_noiommu_mode
-  echo e6e68000.serial > /sys/bus/platform/drivers/sh-sci/unbind
-  echo vfio-platform > /sys/bus/platform/devices/e6e68000.serial/driver_override
-  echo e6e68000.serial > /sys/bus/platform/drivers/vfio-platform/bind
+> I believe originally WoL supported MagicPacket only (many systems still
+> support only that), so originally it was boolean.
 
-Ideally, this patch should be unnecessary and the FDT should be
-generated automatically from the host, or perhaps with the provision of
-a DTO, allowing the configuration to be provided externally from Q-Emu.
+I don't recall the details here.  When looked at it first time
+multiple options had been there already.
 
-The functionality of this patch mostly duplicates the
-add_rcar_gpio_fdt_node() with the exception of the gpio-controller node,
-and #gpio-cells.
+>> > > It seems more like hardware breakage we're trying to fix than a feature
+>> > > - it's not like it's adding something we didn't have already (like
+>> > > setting a time in an alarm where the alarm is an additional thing), more
+>> > > just trying to execute on an existing user interface successfully.  I
+>> > > can see that there's a case that it doesn't map very well onto the
+>> > > standard interfaces so perhaps we have to add something on the side as
+>> > > the hardware is just too horrible to fit in with the standard interfaces
+>> > > and we have to do that.
+>> >
+>> > My main worry is usability: with a separate sysfs file, we need to document the
+>> > file, and the user needs to be aware of it.
+>>
+>> That's right, but it will be very hard to convince me that changing the
+>> meaning of the "wakeup" attribute just in order to work around this issue
+>> (which arguably is a consequence of "unfortunate" hardware design) is a
+>> good idea. :-)
+>
+> OK.
+>
+> Next question: where to document device-specific sysfs files for regulators?
 
-Not-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
----
-
-This patch supports testing of serial device passthrough on R-Car Gen3,
-and is not meant to be upstreamed as is. This serves as a purpose for
-ongoing development and investigation into para-virtualisation of the
-R-Car Gen3 platforms, and highlights the extensions needed to support
-passing through a basic serial device to a guest.
-
-This patch and its dependencies is available at the following branch:
-
-  https://github.com/kbingham/qemu.git rcar3/serial/passthrough
-
-This builds upon existing work [0] done by Geert Uytterhoeven
-
- [0]  https://www.spinics.net/lists/kvm/msg163975.html
----
- hw/arm/sysbus-fdt.c | 61 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
-
-diff --git a/hw/arm/sysbus-fdt.c b/hw/arm/sysbus-fdt.c
-index a04e5b384c29..ec755e0f4652 100644
---- a/hw/arm/sysbus-fdt.c
-+++ b/hw/arm/sysbus-fdt.c
-@@ -477,6 +477,66 @@ static int add_rcar_gpio_fdt_node(SysBusDevice *sbdev, void *opaque)
-     return 0;
- }
- 
-+/**
-+ * add_rcar_scif_fdt_node
-+ *
-+ * Generates a simple node with following properties:
-+ * compatible string, regs, #gpio-cells, gpio-controller
-+ */
-+static int add_rcar_scif_fdt_node(SysBusDevice *sbdev, void *opaque)
-+{
-+    PlatformBusFDTData *data = opaque;
-+    VFIOPlatformDevice *vdev = VFIO_PLATFORM_DEVICE(sbdev);
-+    const char *parent_node = data->pbus_node_name;
-+    VFIODevice *vbasedev = &vdev->vbasedev;
-+    PlatformBusDevice *pbus = data->pbus;
-+    int compat_str_len, i, irq_number;
-+    uint32_t *reg_attr, *irq_attr;
-+    void *fdt = data->fdt;
-+    uint64_t mmio_base;
-+    char *nodename;
-+
-+    mmio_base = platform_bus_get_mmio_addr(pbus, sbdev, 0);
-+    nodename = g_strdup_printf("%s/%s@%" PRIx64, parent_node,
-+                               vbasedev->name, mmio_base);
-+    qemu_fdt_add_subnode(fdt, nodename);
-+
-+    printf("%s - using nodename :%s\n", __func__, nodename);
-+
-+    /* Add compatible */
-+    compat_str_len = strlen(vdev->compat) + 1;
-+    qemu_fdt_setprop(fdt, nodename, "compatible",
-+                          vdev->compat, compat_str_len);
-+
-+    /* Copy reg */
-+    reg_attr = g_new(uint32_t, vbasedev->num_regions * 2);
-+    for (i = 0; i < vbasedev->num_regions; i++) {
-+        mmio_base = platform_bus_get_mmio_addr(pbus, sbdev, i);
-+        reg_attr[2 * i] = cpu_to_be32(mmio_base);
-+        reg_attr[2 * i + 1] = cpu_to_be32(
-+                                memory_region_size(vdev->regions[i]->mem));
-+    }
-+    qemu_fdt_setprop(fdt, nodename, "reg", reg_attr,
-+                     vbasedev->num_regions * 2 * sizeof(uint32_t));
-+
-+    /* Copy interrupts */
-+    irq_attr = g_new(uint32_t, vbasedev->num_irqs * 3);
-+    for (i = 0; i < vbasedev->num_irqs; i++) {
-+        irq_number = platform_bus_get_irqn(pbus, sbdev , i)
-+                         + data->irq_start;
-+        irq_attr[3 * i] = cpu_to_be32(GIC_FDT_IRQ_TYPE_SPI);
-+        irq_attr[3 * i + 1] = cpu_to_be32(irq_number);
-+        irq_attr[3 * i + 2] = cpu_to_be32(GIC_FDT_IRQ_FLAGS_LEVEL_HI);
-+    }
-+    qemu_fdt_setprop(fdt, nodename, "interrupts",
-+                     irq_attr, vbasedev->num_irqs * 3 * sizeof(uint32_t));
-+
-+    g_free(irq_attr);
-+    g_free(reg_attr);
-+    g_free(nodename);
-+    return 0;
-+}
-+
- /* manufacturer/model matching */
- static bool vfio_platform_match(SysBusDevice *sbdev,
-                                 const BindingEntry *entry)
-@@ -516,6 +576,7 @@ static const BindingEntry bindings[] = {
-     TYPE_BINDING(TYPE_VFIO_AMD_XGBE, add_amd_xgbe_fdt_node),
-     VFIO_PLATFORM_BINDING("amd", "xgbe-seattle-v1a", add_amd_xgbe_fdt_node),
-     VFIO_PLATFORM_BINDING("renesas", "rcar-gen3-gpio", add_rcar_gpio_fdt_node),
-+    VFIO_PLATFORM_BINDING("renesas", "rcar-gen3-scif", add_rcar_scif_fdt_node),
- #endif
-     TYPE_BINDING("", NULL), /* last element */
- };
--- 
-2.17.1
+Under Documentation/ABI/ I suppose.
