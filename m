@@ -1,61 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:38385 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932215AbeFNKsr (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54132 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933870AbeFZKhN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Jun 2018 06:48:47 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
-        yoshihiro.shimoda.uh@renesas.com, joro@8bytes.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: [RESEND 5/6] iommu/ipmmu-vmsa: Hook up R8A77965 DT matching code
-Date: Thu, 14 Jun 2018 12:48:25 +0200
-Message-Id: <1528973306-7962-6-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1528973306-7962-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1528973306-7962-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 26 Jun 2018 06:37:13 -0400
+Received: by mail-wm0-f68.google.com with SMTP id x6-v6so1298928wmc.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Jun 2018 03:37:12 -0700 (PDT)
+Subject: Re: [PATCH 1/2] sh_eth: fix *enum* RPADIR_BIT
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: netdev <netdev@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <2809eba8-4c9a-1d5f-a47d-8125777e365b@cogentembedded.com>
+ <8c72d27f-8b1a-23cf-3f41-781944cd1388@cogentembedded.com>
+ <CAMuHMdXro+fWQtoURHeqC6APqmci60NiMn5JAF98xcLxrjLNEg@mail.gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <e9cd4d85-36ed-b829-ba7a-ccebec306f1d@cogentembedded.com>
+Date: Tue, 26 Jun 2018 13:37:10 +0300
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdXro+fWQtoURHeqC6APqmci60NiMn5JAF98xcLxrjLNEg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for R-Car M3-N (R8A77965) SoC IPMMUs.
+On 6/26/2018 10:25 AM, Geert Uytterhoeven wrote:
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/iommu/ipmmu-vmsa.c | 5 +++++
- 1 file changed, 5 insertions(+)
+>> The *enum*  RPADIR_BIT  was declared in the commit 86a74ff21a7a ("net:
+>> sh_eth: add support for Renesas SuperH Ethernet") adding SH771x support,
+>> however the SH771x manual doesn't have the RPADIR register described and,
+>> moreover, tells why the padding insertion must not be used. The newer SoC
+>> manuals do have RPADIR documented, though with somewhat different layout --
+>> update the *enum* according to these manuals...
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> Thanks for your patch!
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+>> --- net-next.orig/drivers/net/ethernet/renesas/sh_eth.h
+>> +++ net-next/drivers/net/ethernet/renesas/sh_eth.h
+>> @@ -403,8 +403,7 @@ enum DESC_I_BIT {
+>>
+>>   /* RPADIR */
+>>   enum RPADIR_BIT {
+>> -       RPADIR_PADS1 = 0x20000, RPADIR_PADS0 = 0x10000,
+>> -       RPADIR_PADR = 0x0003f,
+>> +       RPADIR_PADS = 0x1f0000, RPADIR_PADR = 0xffff,
+> 
+> Perhaps add some comments?
+> 
+>          RPADIR_PADS = 0x1f0000; /* Padding Size (insert N bytes of padding) */
+>          RPADIR_PADR = 0xffff;   /* Padding Slot (insert padding at byte N) */
 
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 933a3da..6a0e714 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -763,6 +763,7 @@ static bool ipmmu_slave_whitelist(struct device *dev)
- static const struct soc_device_attribute soc_rcar_gen3[] = {
- 	{ .soc_id = "r8a7795", },
- 	{ .soc_id = "r8a7796", },
-+	{ .soc_id = "r8a77965", },
- 	{ .soc_id = "r8a77970", },
- 	{ .soc_id = "r8a77995", },
- 	{ /* sentinel */ }
-@@ -945,6 +946,9 @@ static const struct of_device_id ipmmu_of_ids[] = {
- 		.compatible = "renesas,ipmmu-r8a7796",
- 		.data = &ipmmu_features_rcar_gen3,
- 	}, {
-+		.compatible = "renesas,ipmmu-r8a77965",
-+		.data = &ipmmu_features_rcar_gen3,
-+	}, {
- 		.compatible = "renesas,ipmmu-r8a77970",
- 		.data = &ipmmu_features_rcar_gen3,
- 	}, {
-@@ -1127,6 +1131,7 @@ module_exit(ipmmu_exit);
- IOMMU_OF_DECLARE(ipmmu_vmsa_iommu_of, "renesas,ipmmu-vmsa");
- IOMMU_OF_DECLARE(ipmmu_r8a7795_iommu_of, "renesas,ipmmu-r8a7795");
- IOMMU_OF_DECLARE(ipmmu_r8a7796_iommu_of, "renesas,ipmmu-r8a7796");
-+IOMMU_OF_DECLARE(ipmmu_r8a77965_iommu_of, "renesas,ipmmu-r8a77965");
- IOMMU_OF_DECLARE(ipmmu_r8a77970_iommu_of, "renesas,ipmmu-r8a77970");
- IOMMU_OF_DECLARE(ipmmu_r8a77995_iommu_of, "renesas,ipmmu-r8a77995");
- 
--- 
-2.7.4
+    It would be nice but inconsistent with what we do for the other registers...
+
+>>   };
+> 
+> Note that none of the RPADIR enums are actually used.
+
+    I'd surely noted that. :-)
+
+> Gr{oetje,eeting}s,
+> 
+>                          Geert
+> 
+
+MBR, Sergei
