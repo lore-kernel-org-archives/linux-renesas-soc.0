@@ -1,44 +1,141 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:40398 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752144AbeFEUaj (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:57926 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934518AbeFZOQn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Jun 2018 16:30:39 -0400
-Received: by mail-lf0-f66.google.com with SMTP id q11-v6so5614588lfc.7
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Jun 2018 13:30:38 -0700 (PDT)
-Subject: [PATCH 2/2] drm: rcar-du: lvds: add R8A77980 support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-References: <ef3c6b7e-98f2-7012-71c5-6693e6e48999@cogentembedded.com>
-Message-ID: <668491ee-915d-66fc-feea-c2afed5d645d@cogentembedded.com>
-Date: Tue, 5 Jun 2018 23:30:36 +0300
-MIME-Version: 1.0
-In-Reply-To: <ef3c6b7e-98f2-7012-71c5-6693e6e48999@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Tue, 26 Jun 2018 10:16:43 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Russell King <linux@armlinux.org.uk>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] ARM: Debug kernel copy by printing
+Date: Tue, 26 Jun 2018 15:16:35 +0100
+Message-Id: <1530022595-6806-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for the R-Car V3H (R8A77980) SoC to the LVDS encoder driver.
+It may happen that when we relocate the kernel we corrupt other
+sensible memory (e.g. the memory needed by U-Boot for dealing
+with bootm command) while copying the kernel. If we overwrite
+the content of the memory area used by U-Boot's command bootm
+(described by U-Boot's parameters bootm_low and bootm_size),
+the kernel won't be able to boot. Troubleshooting the problem
+then is not straightforward.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+This commit allows the user to easily print information on
+where the kernel gets copied from/to in order to help with the
+design of the system memory map (e.g. bootm_low and bootm_size)
+at boot up.
 
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+Acked-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_lvds.c |    1 +
- 1 file changed, 1 insertion(+)
+Dear All,
 
-Index: drm/drivers/gpu/drm/rcar-du/rcar_lvds.c
-===================================================================
---- drm.orig/drivers/gpu/drm/rcar-du/rcar_lvds.c
-+++ drm/drivers/gpu/drm/rcar-du/rcar_lvds.c
-@@ -519,6 +519,7 @@ static const struct of_device_id rcar_lv
- 	{ .compatible = "renesas,r8a7795-lvds", .data = &rcar_lvds_gen3_info },
- 	{ .compatible = "renesas,r8a7796-lvds", .data = &rcar_lvds_gen3_info },
- 	{ .compatible = "renesas,r8a77970-lvds", .data = &rcar_lvds_r8a77970_info },
-+	{ .compatible = "renesas,r8a77980-lvds", .data = &rcar_lvds_gen3_info },
- 	{ }
- };
+shmobile_defconfig doesn't use kernel modules, everything gets
+built-in. iwg20d and iwg22d platforms from iWave use uImage
+to boot, DRAM starts at address 0x40000000, the kernel gets
+loaded up in memory at address 0x40007fc0, bootm_low is
+0x40e00000, and bootm_size is 0x100000.
+
+The kernel is getting larger and larger, so much so that during
+the relocation the kernel is copying itself right where the
+bootm memory area lives, preventing Linux from booting.
+Here is what this patch prints when applied on top of tag
+next-20180625 and running on the iwg22d:
+
+C:0x400080C0-0x404922A0->0x40E90800-0x4131A9E0
+
+The designer then has to pick up a suitable memory range for
+bootm memory area to fix this, but the only way to successfully
+achieve this is by knowing where the kernel is going to copy
+itself in memory, so that he can stay clear of it.
+
+Other platforms that use the same defconfig suffer from the same
+issue (e.g. Koelsch et al.) as they have been designed some time
+ago or the original BSP was based on an LTS kernel.
+
+Debugging this basically requires a JTAG debugger at this stage.
+
+Do you think this patch could be considered acceptable? If not,
+what would be the best way to get useful/sensible/debug
+information out of the kernel when the problem occours?
+
+Comments welcome!
+
+Thanks,
+Fab
+
+ arch/arm/boot/compressed/head.S | 43 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+
+diff --git a/arch/arm/boot/compressed/head.S b/arch/arm/boot/compressed/head.S
+index 517e0e1..6c7ccb4 100644
+--- a/arch/arm/boot/compressed/head.S
++++ b/arch/arm/boot/compressed/head.S
+@@ -114,6 +114,35 @@
+ #endif
+ 		.endm
  
++		/*
++		 * Debug kernel copy by printing the memory addresses involved
++		 */
++		.macro dbgkc, begin, end, cbegin, cend
++#ifdef DEBUG
++		kputc   #'\n'
++		kputc   #'C'
++		kputc   #':'
++		kputc   #'0'
++		kputc   #'x'
++		kphex   \begin, 8	/* Start of compressed kernel */
++		kputc	#'-'
++		kputc	#'0'
++		kputc	#'x'
++		kphex	\end, 8		/* End of compressed kernel */
++		kputc	#'-'
++		kputc	#'>'
++		kputc   #'0'
++		kputc   #'x'
++		kphex   \cbegin, 8	/* Start of kernel copy */
++		kputc	#'-'
++		kputc	#'0'
++		kputc	#'x'
++		kphex	\cend, 8	/* End of kernel copy */
++		kputc	#'\n'
++		kputc	#'\r'
++#endif
++		.endm
++
+ 		.section ".start", #alloc, #execinstr
+ /*
+  * sort out different calling conventions
+@@ -450,6 +479,20 @@ dtb_check_done:
+ 		add	r6, r9, r5
+ 		add	r9, r9, r10
+ 
++#ifdef DEBUG
++		sub     r10, r6, r5
++		sub     r10, r9, r10
++		/*
++		 * We are about to copy the kernel to a new memory area.
++		 * The boundaries of the new memory area can be found in
++		 * r10 and r9, whilst r5 and r6 contain the boundaries
++		 * of the memory we are going to copy.
++		 * Calling dbgkc will help with the printing of this
++		 * information.
++		 */
++		dbgkc	r5, r6, r10, r9
++#endif
++
+ 1:		ldmdb	r6!, {r0 - r3, r10 - r12, lr}
+ 		cmp	r6, r5
+ 		stmdb	r9!, {r0 - r3, r10 - r12, lr}
+-- 
+2.7.4
