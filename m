@@ -1,120 +1,144 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Wolfram Sang <wsa@the-dreams.de>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-Subject: RE: [RFC PATCH 1/1] i2c: rcar: handle RXDMA HW bug on Gen3
-Date: Tue, 26 Jun 2018 09:26:54 +0000
-Message-ID: <OSBPR01MB2293F0F6325E654763F094C7D8490@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:38527 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932210AbeFZI6j (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 26 Jun 2018 04:58:39 -0400
+MIME-Version: 1.0
 References: <20180529105847.15663-1-wsa+renesas@sang-engineering.com>
- <20180529105847.15663-2-wsa+renesas@sang-engineering.com>
- <TY2PR01MB2297BC5F12034143657590A7D86C0@TY2PR01MB2297.jpnprd01.prod.outlook.com>
+ <20180529105847.15663-2-wsa+renesas@sang-engineering.com> <TY2PR01MB2297BC5F12034143657590A7D86C0@TY2PR01MB2297.jpnprd01.prod.outlook.com>
  <CAMuHMdXaspHUg3LF1Jckg5CWHZWRL6gKOeCv-LHk4uzsji2W1Q@mail.gmail.com>
  <OSBPR01MB2293BBBFEBF58E8D90F3B516D8630@OSBPR01MB2293.jpnprd01.prod.outlook.com>
  <OSBPR01MB229354C6675F1185BD182C54D8640@OSBPR01MB2293.jpnprd01.prod.outlook.com>
  <CAMuHMdV-vLn-C6HcZBLwJWbXq2S3e-iQdmQXCEXm23+cEvk8gw@mail.gmail.com>
- <20180626030510.gq3xyejsrc5gd5wj@ninjato>
- <TY2PR01MB22973680E5B69BAD232C234DD8490@TY2PR01MB2297.jpnprd01.prod.outlook.com>
- <CAMuHMdXfUjLPa9fGXAkBe6DjVx6jiuNiGN9m2v2bRQf2xurmxA@mail.gmail.com>
-In-Reply-To: <CAMuHMdXfUjLPa9fGXAkBe6DjVx6jiuNiGN9m2v2bRQf2xurmxA@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: linux-i2c-owner@vger.kernel.org
+ <20180626030510.gq3xyejsrc5gd5wj@ninjato> <TY2PR01MB22973680E5B69BAD232C234DD8490@TY2PR01MB2297.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY2PR01MB22973680E5B69BAD232C234DD8490@TY2PR01MB2297.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 26 Jun 2018 10:58:27 +0200
+Message-ID: <CAMuHMdXfUjLPa9fGXAkBe6DjVx6jiuNiGN9m2v2bRQf2xurmxA@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/1] i2c: rcar: handle RXDMA HW bug on Gen3
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbiwgU2VudDogVHVlc2Rh
-eSwgSnVuZSAyNiwgMjAxOCA1OjU4IFBNDQo+IA0KPiBIaSBTaGltb2RhLXNhbiwNCj4gDQo+IE9u
-IFR1ZSwgSnVuIDI2LCAyMDE4IGF0IDEwOjM4IEFNIFlvc2hpaGlybyBTaGltb2RhDQo+IDx5b3No
-aWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gPiBGcm9tOiBXb2xmcmFt
-IFNhbmcgPHdzYUB0aGUtZHJlYW1zLmRlPiwgU2VudDogVHVlc2RheSwgSnVuZSAyNiwgMjAxOCAx
-MjowNSBQTQ0KPiA+ID4gPiA+IEkgZ290IGluZm9ybWF0aW9uIGFib3V0IHRoaXMgdG9waWMuDQo+
-ID4gPiA+ID4NCj4gPiA+ID4gPiA8IEluIENQRyAvIE1TU1IgcG9pbnQgb2YgdmlldyA+DQo+ID4g
-PiA+ID4gIC0gVGhpcyBuZWVkcyAzNSB1c2VjIHdhaXQgd2hpbGUgYXNzZXJ0aW5nLg0KPiA+ID4g
-PiA+ICAtIEFmdGVyIGRlYXNzZXJ0ZWQgYSByZXNldCwgbm8gd2FpdCBuZWVkcy4NCj4gPiA+ID4g
-PiAgIC0gSW4gb3RoZXIgd29yZHMsIHRoZXJlIGlzIGVhY2ggaGFyZHdhcmUgSVAgZGVwZW5kZW5j
-ZS4NCj4gPiA+ID4NCj4gPiA+ID4gTGV0J3MgY2FsbCB0aGUgYWJvdmUgcHJvY2VkdXJlIEEuDQo+
-ID4gPiA+DQo+ID4gPiA+ID4gPCBJbiBJMkMgcG9pbnQgb2YgdmlldyA+DQo+ID4gPiA+ID4gIC0g
-QWZ0ZXIgZGVhc3NlcnRlZCB0aGUgcmVzZXQsIHRoaXMgbmVlcyBTUkNSIHJlZ2lzdGVyIHBvbGxp
-bmcuDQo+ID4gPiA+DQo+ID4gPiA+IExldCdzIGNhbGwgdGhlIGFib3ZlIHByb2NlZHVyZSBCLg0K
-PiA+ID4gPg0KPiA+ID4gPiA+IFNvLCBJIGRvbid0IHRoaW5rIGNwZ19tc3NyX3Jlc2V0KCkgY2hl
-Y2tzIHRoZSBzdGF0dXMgYml0IGFmdGVyIGRlYXNzZXJ0ZWQgYSByZXNldC4NCj4gPiA+ID4gPiBC
-dXQsIHdoYXQgZG8geW91IHRoaW5rPw0KPiA+ID4gPg0KPiA+ID4gPiBjcGdfbXNzcl9yZXNldCgp
-IGluZGVlZCBkb2VzIG5vdCBjaGVjayB0aGUgc3RhdHVzIGJpdCBhZnRlciBkZWFzc2VydGluZw0K
-PiA+ID4gPiB0aGUgcmVzZXQsIGFzIGl0IGZvbGxvd3MgcHJvY2VkdXJlIEEuDQo+ID4gPiA+DQo+
-ID4gPiA+IFN1Y2ggYSBjaGVjayBjb3VsZCBiZSBhZGRlZCwgdGhvdWdoLiBUaGVuIGl0J2xsIGJl
-Y29tZQ0KPiA+ID4gPiAobGV0J3MgY2FsbCB0aGlzIHByb2NlZHVyZSBDKToNCj4gPiA+ID4NCj4g
-PiA+ID4gICAgICAgICAvKiBSZXNldCBtb2R1bGUgKi8NCj4gPiA+ID4gICAgICAgICBzcGluX2xv
-Y2tfaXJxc2F2ZSgmcHJpdi0+cm13X2xvY2ssIGZsYWdzKTsNCj4gPiA+ID4gICAgICAgICB2YWx1
-ZSA9IHJlYWRsKHByaXYtPmJhc2UgKyBTUkNSKHJlZykpOw0KPiA+ID4gPiAgICAgICAgIHZhbHVl
-IHw9IGJpdG1hc2s7DQo+ID4gPiA+ICAgICAgICAgd3JpdGVsKHZhbHVlLCBwcml2LT5iYXNlICsg
-U1JDUihyZWcpKTsNCj4gPiA+ID4gICAgICAgICBzcGluX3VubG9ja19pcnFyZXN0b3JlKCZwcml2
-LT5ybXdfbG9jaywgZmxhZ3MpOw0KPiA+ID4gPg0KPiA+ID4gPiAgICAgICAgIC8qIFdhaXQgZm9y
-IGF0IGxlYXN0IG9uZSBjeWNsZSBvZiB0aGUgUkNMSyBjbG9jayAoQCBjYS4gMzIga0h6KSAqLw0K
-PiA+ID4gPiAgICAgICAgIHVkZWxheSgzNSk7DQo+ID4gPiA+DQo+ID4gPiA+ICAgICAgICAgLyog
-UmVsZWFzZSBtb2R1bGUgZnJvbSByZXNldCBzdGF0ZSAqLw0KPiA+ID4gPiAgICAgICAgIHdyaXRl
-bChiaXRtYXNrLCBwcml2LT5iYXNlICsgU1JTVENMUihyZWcpKTsNCj4gPiA+ID4NCj4gPiA+ID4g
-KyAgICAgICAvKiBXYWl0IHVudGlsIGRlYXNzZXJ0aW9uIGhhcyBjb21wbGV0ZWQgKi8NCj4gPiA+
-ID4gKyAgICAgICB3aGlsZSAocmVhZGwocHJpdi0+YmFzZSArIFNSQ1IocmVnKSkgJiBiaXRtYXNr
-KQ0KPiA+ID4gPiArICAgICAgICAgICAgICAgY3B1X3JlbGF4KCk7DQo+ID4gPiA+DQo+ID4gPiA+
-IFByb2JhYmx5IHdlIG5lZWQgYW4gdXBwZXIgbGltaXQgb24gdGhlIG51bWJlciBvZiBsb29wcywg
-YW5kIGNhbGwgdWRlbGF5KDEpDQo+ID4gPiA+IGFmdGVyIGVhY2ggaXRlcmF0aW9uPw0KPiA+ID4g
-Pg0KPiA+ID4gPiAgICAgICAgIGZvciAoaSAwOyBpIDwgMzU7IGkrKykgew0KPiA+ID4gPiAgICAg
-ICAgICAgICAgICAgaWYgKCEocmVhZGwocHJpdi0+YmFzZSArIFNSQ1IocmVnKSkgJiBiaXRtYXNr
-KSkNCj4gPiA+ID4gICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIDA7DQo+ID4gPiA+ICAg
-ICAgICAgICAgICAgICB1ZGVsYXkoMSk7DQo+ID4gPiA+ICAgICAgICAgfQ0KPiA+ID4gPiAgICAg
-ICAgIHJldHVybiAtRUlPOw0KPiA+ID4gPg0KPiA+ID4gPiBBbnkgYWR2aWNlIGZyb20gdGhlIGhh
-cmR3YXJlIHRlYW0gYWJvdXQgdGhhdD8NCj4gPg0KPiA+IFRoZSBoYXJkd2FyZSB0ZWFtIHNhaWQ6
-DQo+ID4gIC0gSW4gQ1BHIHBvaW50IG9mIHZpZXc6DQo+ID4gICAgLSBzdWNoIHBvbGxpbmcgZG9l
-c24ndCBuZWVkIChiZWNhdXNlIHRoZSByZXNldCBwdWxzZSBpcyBnZW5lcmF0ZWQgY29ycmVjdGx5
-KS4NCj4gPiAgICAtIEFib3V0IHRoZSBpbnRlcnZhbCBhZnRlciBkZWFzc2VydCB0aGUgcmVzZXQs
-IHRoaXMgaXMgZGVwZW5kIG9uIGVhY2ggaGFyZHdhcmUgbW9kdWxlLg0KPiA+ICAgICAgKEluIG90
-aGVyIHdvcmRzLCBpZiBlYWNoIGhhcmR3YXJlIG1vZHVsZSBoYXMgYSBzcGVjaWFsIGhhbmRsaW5n
-IGFib3V0IGFmdGVyIHRoZSBkZWFzc2VydCBpbnRlcnZhbCwNCj4gPiAgICAgICB3ZSBzaG91bGQg
-Zm9sbG93IHRoZSBzcGVjaWFsIGhhbmRsaW5nLikNCj4gPiAgLSBUaGUgSTJDIGNvbnRyb2xsZXIg
-bmVlZHMgYW4gaW50ZXJ2YWwgb2YgcmVhZGluZyBTUkNSIGF0IGxlYXN0ICh0aGlzIGlzIGEgc3Bl
-Y2lhbCBoYW5kbGluZykuDQo+ID4NCj4gPiBTbywgSSB0aGluayBhZGRpbmcgdGhpcyBjb2RlIGlz
-IG5vdCBnb29kIGZpdCBpbiBDUEcgcG9pbnQgb2Ygdmlldy4NCj4gPg0KPiA+ID4gPiBCdXQgYWNj
-b3JkaW5nIHRvIHByb2NlZHVyZSBBLCB0aGUgY2hlY2sgaXMgbm90IG5lZWRlZD8NCj4gPg0KPiA+
-IEFzIGhhcmR3YXJlIHRlYW0gc2FpZCwgdGhlIGNoZWNrICh0aGF0IG1lYW5zIHByb2NlZHVyZSBD
-KSBpcyBub3QgbmVlZGVkLg0KPiA+DQo+ID4gPiA+IFByb2JhYmx5IGJlY2F1c2UgMzXCtXMgaXMg
-YW4gdXBwZXIgbGltaXQgc2F0aXNmeWluZyBhbGwgaW5kaXZpZHVhbCBoYXJkd2FyZQ0KPiA+ID4g
-PiBtb2R1bGVzPw0KPiA+ID4gPg0KPiA+ID4gPiBJJ20gd29uZGVyaW5nIHdoZXRoZXIgd2UgY291
-bGQgdXNlIHByb2NlZHVyZSBCIGluIHRoZSBnZW5lcmFsIGNhc2UsDQo+ID4gPiA+IGFzIGl0IGV4
-cGxpY2l0bHkgY2hlY2tzIGZvciBjb21wbGV0aW9uPw0KPiA+ID4gPg0KPiA+ID4gPiBQcm9jZWR1
-cmUgQyBpcyBzYWZlc3QsIHRob3VnaCwgc28gcHJvYmFibHkgdGhlIHdheSB0byBnby4NCj4gPiA+
-DQo+ID4gPiBBbnkgbmV3cyBhYm91dCB0aGlzIHRvcGljPw0KPiA+ID4NCj4gPiA+IEFuZCBob3cg
-dG8gdXBzdHJlYW0gYWxsIHRoaXM/IE15IEkyQyBwYXRjaCBpcyBjbGVhcmx5IGEgYnVnZml4LCBi
-dXQgdGhlDQo+ID4gPiBuZWNlc3NhcnkgQ1BHIHVwZGF0ZSB0ZWNobmljYWxseSBpc24ndD8gTm90
-IHN1cmUgYWJvdXQgdGhpcyBvbmUuLi4NCj4gPg0KPiA+IEkgdGhpbmsgd2UgaGF2ZSB0byBhZGQg
-cmVzZXRfY29udHJvbF9zdGF0dXMoKSBjYWxsaW5nIGludG8gdGhlIGkyYy1yY2FyLmMNCj4gPiB0
-byBmb2xsb3cgcHJvY2VkdXJlIEIuDQo+ID4gQnV0LCBHZWVydC1zYW4sIHdoYXQgZG8geW91IHRo
-aW5rPw0KPiANCj4gQ2FsbGluZyByZXNldF9jb250cm9sX3N0YXR1cygpIGZyb20gaTJjLXJjYXIg
-aXMgZmluZSBmb3IgbWUuDQoNClRoYW5rIHlvdSBmb3IgeW91ciBjb21tZW50IQ0KDQo+IE5vdGUg
-dGhhdCByZXNldCBjb250cm9sbGVyIHN1cHBvcnQgaXMgb3B0aW9uYWwsIHNvIHdlIHdhbnQgdG8g
-YWRkDQo+IA0KPiAgICAgICAgIHNlbGVjdCBSRVNFVF9DT05UUk9MTEVSIGlmIEFSQ0hfUkVORVNB
-UyAmJiBBUk02NA0KPiANCj4gdG8gdGhlIEkyQ19SQ0FSIHNlY3Rpb24gZHJpdmVycy9pMmMvYnVz
-c2VzL0tjb25maWcuIEVsc2UgcmVzZXQgd2lsbCBmYWlsDQo+IHNpbGVudGx5Lg0KDQpUaGFua3Mg
-Zm9yIHRoaXMgaW5mb3JtYXRpb24uIEl0J3MgaGVscGZ1bCB0byBtZSBiZWNhdXNlIEknbGwgYWRk
-IHJlc2V0DQpjb250cm9sbGVyIHN1cHBvcnQgb24gcmVuZXNhc191c2JocyBkcml2ZXIgbGF0ZXIu
-DQoNCj4gVGhpcyBoYXJkd2FyZSBidWcgaXMgcmVzdHJpY3RlZCB0byBSLUNhciBHZW4zPw0KDQpZ
-ZXMsIHRoaXMgaXMgaGFyZHdhcmUgImJlaGF2aW91ciIgb24gUi1DYXIgR2VuMyA6KQ0KQW5kIG9s
-ZGVyIFNvQ3MnIEkyQyBkb2Vzbid0IHN1cHBvcnQgRE1BIHRyYW5zZmVyLg0KDQo+IElmIGl0IGFw
-cGxpZXMgdG8gUi1DYXIgR2VuMiwgdG9vLCB0aGUgIiYmIEFSTTY0IiBoYXMgdG8gYmUgZHJvcHBl
-ZC4NCj4gSWYgaXQgYXBwbGllcyB0byBSLUNhciBHZW4xLCB0b28sIHdlIGhhdmUgdG8gd3JpdGUg
-YW4gUi1DYXIgR2VuMSByZXNldA0KPiBjb250cm9sbGVyIGRyaXZlciAoUi1DYXIgR2VuMSB1c2Vz
-IHRoZSBsZWdhY3kgQ1BHIGFuZCBNU1RQIGNsb2NrIGRyaXZlcnMsDQo+IGFuZCBjYW5ub3QgYmUg
-bWlncmF0ZWQgdG8gdGhlIENQRy9NU1NSIGRyaXZlciwgYXMgaXRzIE1TVFAgYW5kIFJFU0VUDQo+
-IGZ1bmN0aW9uYWxpdGllcyBhcmUgaW4gc2VwYXJhdGUgbW9kdWxlcykuDQoNClNvLCB0aGV5IGFy
-ZSBub3QgbmVlZGVkLCBJIHRoaW5rLg0KDQpCZXN0IHJlZ2FyZHMsDQpZb3NoaWhpcm8gU2hpbW9k
-YQ0KDQo+IEdye29ldGplLGVldGluZ31zLA0KPiANCj4gICAgICAgICAgICAgICAgICAgICAgICAg
-R2VlcnQNCj4gDQo+IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2Yg
-TGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5vcmcNCj4gDQo+IEluIHBlcnNv
-bmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEg
-aGFja2VyLiBCdXQNCj4gd2hlbiBJJ20gdGFsa2luZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5
-ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcgbGlrZSB0aGF0Lg0KPiAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZhbGRzDQo=
+Hi Shimoda-san,
+
+On Tue, Jun 26, 2018 at 10:38 AM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> > From: Wolfram Sang <wsa@the-dreams.de>, Sent: Tuesday, June 26, 2018 12:05 PM
+> > > > I got information about this topic.
+> > > >
+> > > > < In CPG / MSSR point of view >
+> > > >  - This needs 35 usec wait while asserting.
+> > > >  - After deasserted a reset, no wait needs.
+> > > >   - In other words, there is each hardware IP dependence.
+> > >
+> > > Let's call the above procedure A.
+> > >
+> > > > < In I2C point of view >
+> > > >  - After deasserted the reset, this nees SRCR register polling.
+> > >
+> > > Let's call the above procedure B.
+> > >
+> > > > So, I don't think cpg_mssr_reset() checks the status bit after deasserted a reset.
+> > > > But, what do you think?
+> > >
+> > > cpg_mssr_reset() indeed does not check the status bit after deasserting
+> > > the reset, as it follows procedure A.
+> > >
+> > > Such a check could be added, though. Then it'll become
+> > > (let's call this procedure C):
+> > >
+> > >         /* Reset module */
+> > >         spin_lock_irqsave(&priv->rmw_lock, flags);
+> > >         value = readl(priv->base + SRCR(reg));
+> > >         value |= bitmask;
+> > >         writel(value, priv->base + SRCR(reg));
+> > >         spin_unlock_irqrestore(&priv->rmw_lock, flags);
+> > >
+> > >         /* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
+> > >         udelay(35);
+> > >
+> > >         /* Release module from reset state */
+> > >         writel(bitmask, priv->base + SRSTCLR(reg));
+> > >
+> > > +       /* Wait until deassertion has completed */
+> > > +       while (readl(priv->base + SRCR(reg)) & bitmask)
+> > > +               cpu_relax();
+> > >
+> > > Probably we need an upper limit on the number of loops, and call udelay(1)
+> > > after each iteration?
+> > >
+> > >         for (i 0; i < 35; i++) {
+> > >                 if (!(readl(priv->base + SRCR(reg)) & bitmask))
+> > >                         return 0;
+> > >                 udelay(1);
+> > >         }
+> > >         return -EIO;
+> > >
+> > > Any advice from the hardware team about that?
+>
+> The hardware team said:
+>  - In CPG point of view:
+>    - such polling doesn't need (because the reset pulse is generated correctly).
+>    - About the interval after deassert the reset, this is depend on each hardware module.
+>      (In other words, if each hardware module has a special handling about after the deassert interval,
+>       we should follow the special handling.)
+>  - The I2C controller needs an interval of reading SRCR at least (this is a special handling).
+>
+> So, I think adding this code is not good fit in CPG point of view.
+>
+> > > But according to procedure A, the check is not needed?
+>
+> As hardware team said, the check (that means procedure C) is not needed.
+>
+> > > Probably because 35µs is an upper limit satisfying all individual hardware
+> > > modules?
+> > >
+> > > I'm wondering whether we could use procedure B in the general case,
+> > > as it explicitly checks for completion?
+> > >
+> > > Procedure C is safest, though, so probably the way to go.
+> >
+> > Any news about this topic?
+> >
+> > And how to upstream all this? My I2C patch is clearly a bugfix, but the
+> > necessary CPG update technically isn't? Not sure about this one...
+>
+> I think we have to add reset_control_status() calling into the i2c-rcar.c
+> to follow procedure B.
+> But, Geert-san, what do you think?
+
+Calling reset_control_status() from i2c-rcar is fine for me.
+
+Note that reset controller support is optional, so we want to add
+
+        select RESET_CONTROLLER if ARCH_RENESAS && ARM64
+
+to the I2C_RCAR section drivers/i2c/busses/Kconfig. Else reset will fail
+silently.
+
+This hardware bug is restricted to R-Car Gen3?
+If it applies to R-Car Gen2, too, the "&& ARM64" has to be dropped.
+If it applies to R-Car Gen1, too, we have to write an R-Car Gen1 reset
+controller driver (R-Car Gen1 uses the legacy CPG and MSTP clock drivers,
+and cannot be migrated to the CPG/MSSR driver, as its MSTP and RESET
+functionalities are in separate modules).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
