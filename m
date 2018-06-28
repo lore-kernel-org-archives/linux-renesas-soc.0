@@ -1,140 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f170.google.com ([209.85.192.170]:39762 "EHLO
-        mail-pf0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937365AbeFSPRl (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53693 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935140AbeF1MQp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:17:41 -0400
-Received: by mail-pf0-f170.google.com with SMTP id r11-v6so21048pfl.6
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Jun 2018 08:17:41 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Wed, 20 Jun 2018 00:19:19 +0900
-Message-Id: <152942155999.28480.10752587080512094478.sendpatchset@little-apple>
-In-Reply-To: <152942152672.28480.665572564123111170.sendpatchset@little-apple>
-References: <152942152672.28480.665572564123111170.sendpatchset@little-apple>
-Subject: [PATCH 03/04] arm64: dts: renesas: ebisu: add adv7482 support
+        Thu, 28 Jun 2018 08:16:45 -0400
+Date: Thu, 28 Jun 2018 14:16:41 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Carlo Caione <carlo@endlessm.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 1/3] dt-bindings: cpu: Add Renesas R9A06G032 SMP
+ enable method.
+Message-ID: <20180628121641.olxjhxau2kqqlmwb@verge.net.au>
+References: <1530173842-56851-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1530173842-56851-2-git-send-email-michel.pollet@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530173842-56851-2-git-send-email-michel.pollet@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Thu, Jun 28, 2018 at 09:17:12AM +0100, Michel Pollet wrote:
+> Add a special enable method for second CA7 of the R9A06G032
+> 
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Add experimental support for ADV7482 on the r8a77990 Ebisu board.
-
-Not-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts |   91 ++++++++++++++++++++++++
- 1 file changed, 91 insertions(+)
-
---- 0001/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-+++ work/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts	2018-06-19 21:14:13.230607110 +0900
-@@ -28,6 +28,30 @@
- 		/* first 128MB is reserved for secure area. */
- 		reg = <0x0 0x48000000 0x0 0x38000000>;
- 	};
-+
-+	cvbs-in {
-+		compatible = "composite-video-connector";
-+		label = "CVBS IN";
-+
-+		port {
-+			cvbs_con: endpoint {
-+				remote-endpoint = <&adv7482_ain7>;
-+			};
-+		};
-+	};
-+
-+	hdmi-in {
-+		compatible = "hdmi-connector";
-+		label = "HDMI IN";
-+		type = "a";
-+
-+		port {
-+			hdmi_in_con: endpoint {
-+				remote-endpoint = <&adv7482_hdmi>;
-+			};
-+		};
-+	};
-+
- };
- 
- &avb {
-@@ -47,6 +71,65 @@
- 	};
- };
- 
-+&csi40 {
-+	status = "okay";
-+
-+	ports {
-+		port@0 {
-+			reg = <0>;
-+
-+			csi40_in: endpoint {
-+				clock-lanes = <0>;
-+				data-lanes = <1 2>;
-+				remote-endpoint = <&adv7482_txa>;
-+			};
-+		};
-+	};
-+};
-+
-+&i2c0 {
-+	status = "okay";
-+
-+	video-receiver@70 {
-+		compatible = "adi,adv7482";
-+		reg = <0x70>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		interrupt-parent = <&gpio0>;
-+		interrupt-names = "intrq1", "intrq2";
-+		interrupts = <7 IRQ_TYPE_LEVEL_LOW>,
-+			     <17 IRQ_TYPE_LEVEL_LOW>;
-+
-+		port@7 {
-+			reg = <7>;
-+
-+			adv7482_ain7: endpoint {
-+				remote-endpoint = <&cvbs_con>;
-+			};
-+		};
-+
-+		port@8 {
-+			reg = <8>;
-+
-+			adv7482_hdmi: endpoint {
-+				remote-endpoint = <&hdmi_in_con>;
-+			};
-+		};
-+
-+		port@10 {
-+			reg = <10>;
-+
-+			adv7482_txa: endpoint {
-+				clock-lanes = <0>;
-+				data-lanes = <1 2>;
-+				remote-endpoint = <&csi40_in>;
-+			};
-+		};
-+	};
-+};
-+
- &extal_clk {
- 	clock-frequency = <48000000>;
- };
-@@ -63,3 +146,11 @@
- &scif2 {
- 	status = "okay";
- };
-+
-+&vin4 {
-+	status = "okay";
-+};
-+
-+&vin5 {
-+	status = "okay";
-+};
+Thanks, applied.
