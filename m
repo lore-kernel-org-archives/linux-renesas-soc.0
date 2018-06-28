@@ -1,32 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f42.google.com ([209.85.215.42]:42904 "EHLO
-        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751814AbeFBTcw (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53671 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934923AbeF1MQ2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 2 Jun 2018 15:32:52 -0400
-Received: by mail-lf0-f42.google.com with SMTP id v135-v6so19495804lfa.9
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 02 Jun 2018 12:32:51 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 0/3] sh_eth: fix & clean up sh_eth_soft_swap()
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
-Cc: linux-renesas-soc@vger.kernel.org
-Message-ID: <9027499a-0e19-7721-a17f-26e86885da3f@cogentembedded.com>
-Date: Sat, 2 Jun 2018 22:32:48 +0300
+        Thu, 28 Jun 2018 08:16:28 -0400
+Date: Thu, 28 Jun 2018 14:16:24 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 4/5] ARM: dts: Renesas RZN1D-DB Board base file
+Message-ID: <20180628121623.tncutbj6hrh2ccya@verge.net.au>
+References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1528973829-25493-5-git-send-email-michel.pollet@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1528973829-25493-5-git-send-email-michel.pollet@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+On Thu, Jun 14, 2018 at 11:56:33AM +0100, Michel Pollet wrote:
+> This adds a base device tree file for the RZN1-DB board, with only the
+> basic support allowing the system to boot to a prompt. Only one UART is
+> used, with only a single CPU running.
+> 
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Here's a set of 3 patches against DaveM's 'net-next.git' repo. First one fixes an
-old buffer endiannes issue (luckily, the ARM SoCs are smart enough to not actually
-care) plus couple clean ups around sh_eth_soft_swap()...
-
-[1/1] sh_eth: make sh_eth_soft_swap() work on ARM
-[2/3] sh_eth: uninline sh_eth_soft_swap()
-[3/3] sh_eth: use DIV_ROUND_UP() in sh_eth_soft_swap()
-
-MBR, Sergei
+Thanks, applied.
