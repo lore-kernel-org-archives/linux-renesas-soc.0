@@ -1,52 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:42747 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753236AbeF1KaH (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:38627 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966132AbeF1OK5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Jun 2018 06:30:07 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org
-Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/2] mmc: renesas_sdhi_internal_dmac: Cannot clear the RX_IN_USE in abort
-Date: Thu, 28 Jun 2018 19:29:05 +0900
-Message-Id: <1530181745-10519-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1530181745-10519-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1530181745-10519-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Thu, 28 Jun 2018 10:10:57 -0400
+Received: by mail-it0-f67.google.com with SMTP id v83-v6so12727335itc.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 28 Jun 2018 07:10:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <1528974029-29617-1-git-send-email-michel.pollet@bp.renesas.com>
+ <CACRpkdbX0R+ipasLfZi80yf2OBU0TuDT-0KoUJBvrQz3Zj6eFQ@mail.gmail.com> <CAMuHMdVL-00gb7ZfgNGr8-VawFUpg+iY5mpPF6UZPfjFqM1_jg@mail.gmail.com>
+In-Reply-To: <CAMuHMdVL-00gb7ZfgNGr8-VawFUpg+iY5mpPF6UZPfjFqM1_jg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 28 Jun 2018 16:10:45 +0200
+Message-ID: <CACRpkdag1snZfeCC1y5TJdgVzAXbv+nDJrA-3R=49haTM8Kxpw@mail.gmail.com>
+Subject: Re: [PATCH v1 0/5] Renesas R9A06G032 PINCTRL Driver
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michel Pollet <michel.pollet@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Magnus Damm <damm+renesas@opensource.se>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch is fixes an issue that the SDHI_INTERNAL_DMAC_RX_IN_USE
-flag cannot be cleared because tmio_mmc_core sets the host->data
-to NULL before the tmio_mmc_core calls tmio_mmc_abort_dma().
+On Mon, Jun 18, 2018 at 10:57 AM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Mon, Jun 18, 2018 at 10:46 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+> > On Thu, Jun 14, 2018 at 1:00 PM, Michel Pollet
+> > <michel.pollet@bp.renesas.com> wrote:
 
-So, this patch clears the SDHI_INTERNAL_DMAC_RX_IN_USE in
-the renesas_sdhi_internal_dmac_abort_dma() anyway. This doesn't
-cause any side effects.
+> > Is it totally different from the other "great old ones" in the SuperH-PFC
+> > series or is there some other reason why it was done like this?
+>
+> Yes it is, cfr. drivers/pinctrl/pinctrl-rza1.c, which lives outside sh-pfc, too.
 
-Fixes: 0cbc94daa554 ("mmc: renesas_sdhi_internal_dmac: limit DMA RX for old SoCs")
-Cc: <stable@vger.kernel.org> # v4.17+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+OK I see.
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index d503511..3669981 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -139,8 +139,7 @@
- 	renesas_sdhi_internal_dmac_dm_write(host, DM_CM_RST,
- 					    RST_RESERVED_BITS | val);
- 
--	if (host->data && host->data->flags & MMC_DATA_READ)
--		clear_bit(SDHI_INTERNAL_DMAC_RX_IN_USE, &global_flags);
-+	clear_bit(SDHI_INTERNAL_DMAC_RX_IN_USE, &global_flags);
- 
- 	renesas_sdhi_internal_dmac_enable_dma(host, true);
- }
--- 
-1.9.1
+I take it that it is also totally different from the rza1 HW?
+
+It's fine like this, if there are many of them we might want
+to create something like a renesas/ subfolder at some point
+and stash them in there.
+
+> Of course I can take it through my sh-pfc tree, once the rough edges have been
+> removed.
+
+That's best I think, it always works smooth.
+
+Yours,
+Linus Walleij
