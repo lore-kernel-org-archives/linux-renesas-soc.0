@@ -1,84 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:56696 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751280AbeF3RHN (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53739 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751177AbeF1MSS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 30 Jun 2018 13:07:13 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 2/2] i2c: recovery: require either get_sda or set_sda
-Date: Sat, 30 Jun 2018 19:07:04 +0200
-Message-Id: <20180630170704.13103-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180630170704.13103-1-wsa+renesas@sang-engineering.com>
-References: <20180630170704.13103-1-wsa+renesas@sang-engineering.com>
+        Thu, 28 Jun 2018 08:18:18 -0400
+Date: Thu, 28 Jun 2018 14:18:14 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Carlo Caione <carlo@endlessm.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 3/3] ARM: dts: Renesas R9A06G032 SMP enable method
+Message-ID: <20180628121813.ffrppdo7p3s42t5i@verge.net.au>
+References: <1530173842-56851-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1530173842-56851-4-git-send-email-michel.pollet@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530173842-56851-4-git-send-email-michel.pollet@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-For bus recovery, we either need to bail out early if we can read SDA or
-we need to send STOP after every pulse. Otherwise recovery might be
-misinterpreted as an unwanted write. So, require one of those SDA
-handling functions to avoid this problem.
+On Thu, Jun 28, 2018 at 09:17:14AM +0100, Michel Pollet wrote:
+> Add a special enable method for the second CA7 of the R9A06G032
+> as well as the default value for the "cpu-release-addr" property.
+> 
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Thanks, applied.
+
+I had to manually resolve a conflict due to updates to the patch
+that added this dtsi file (as noted elsewhere). Please check that this is
+correct.
+
+
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+Subject: [PATCH] ARM: dts: Renesas R9A06G032 SMP enable method
+
+Add a special enable method for the second CA7 of the R9A06G032
+as well as the default value for the "cpu-release-addr" property.
+
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/i2c/i2c-core-base.c |  9 +++++++--
- include/linux/i2c.h         | 12 ++++++------
- 2 files changed, 13 insertions(+), 8 deletions(-)
+ arch/arm/boot/dts/r9a06g032.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 2cb4129c9585..bfefeb2ab2fd 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -202,10 +202,11 @@ int i2c_generic_scl_recovery(struct i2c_adapter *adap)
- 		/*
- 		 * If we can't read SDA, we don't know when to bail out early.
- 		 * So, always create STOP then to ensure the additional pulses
--		 * will do no harm.
-+		 * will do no harm. Check the 'incomplete_write_byte' fault
-+		 * injector for details.
- 		 */
- 		ndelay(RECOVERY_NDELAY / 2);
--		if (!bri->get_sda && bri->set_sda)
-+		if (!bri->get_sda)
- 			bri->set_sda(adap, val);
- 		ndelay(RECOVERY_NDELAY / 2);
- 	}
-@@ -274,6 +275,10 @@ static void i2c_init_recovery(struct i2c_adapter *adap)
- 			err_str = "no {get|set}_scl() found";
- 			goto err;
- 		}
-+		if (!bri->set_sda && !bri->get_sda) {
-+			err_str = "either get_sda() or set_sda() needed";
-+			goto err;
-+		}
- 	}
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+index 339d0958011e..afe29c95a006 100644
+--- a/arch/arm/boot/dts/r9a06g032.dtsi
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -29,6 +29,8 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <1>;
+ 			clocks = <&sysctrl 84>;
++			enable-method = "renesas,r9a06g032-smp";
++			cpu-release-addr = <0 0x4000c204>;
+ 		};
+ 	};
  
- 	return;
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index 254cd34eeae2..969ddb992c88 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -576,12 +576,12 @@ struct i2c_timings {
-  *      recovery. Populated internally for generic GPIO recovery.
-  * @set_scl: This sets/clears the SCL line. Mandatory for generic SCL recovery.
-  *      Populated internally for generic GPIO recovery.
-- * @get_sda: This gets current value of SDA line. Optional for generic SCL
-- *      recovery. Populated internally, if sda_gpio is a valid GPIO, for generic
-- *      GPIO recovery.
-- * @set_sda: This sets/clears the SDA line. Optional for generic SCL recovery.
-- *	Populated internally, if sda_gpio is a valid GPIO, for generic GPIO
-- *	recovery.
-+ * @get_sda: This gets current value of SDA line. This or set_sda() is mandatory
-+ *	for generic SCL recovery. Populated internally, if sda_gpio is a valid
-+ *	GPIO, for generic GPIO recovery.
-+ * @set_sda: This sets/clears the SDA line. This or get_sda() is mandatory for
-+ *	generic SCL recovery. Populated internally, if sda_gpio is a valid GPIO,
-+ *	for generic GPIO recovery.
-  * @prepare_recovery: This will be called before starting recovery. Platform may
-  *	configure padmux here for SDA/SCL line or something else they want.
-  * @unprepare_recovery: This will be called after completing recovery. Platform
 -- 
 2.11.0
