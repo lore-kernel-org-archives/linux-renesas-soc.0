@@ -1,65 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:57964 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751137AbeFHLQn (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:48916 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752709AbeF1IWm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Jun 2018 07:16:43 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>
-Subject: [PATCH 2/2] arm64: dts: renesas: r8a77995: Fix VSP registers range
-Date: Fri,  8 Jun 2018 14:16:55 +0300
-Message-Id: <20180608111655.2725-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180608111655.2725-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180608111655.2725-1-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 28 Jun 2018 04:22:42 -0400
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Carlo Caione <carlo@endlessm.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v7 0/3] Renesas R9A06G032 SMP enabler
+Date: Thu, 28 Jun 2018 09:17:11 +0100
+Message-Id: <1530173842-56851-1-git-send-email-michel.pollet@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R8A77995 VSP and FCP nodes have overlapping register ranges, as the
-SoC integrates the FCP devices in the memory range usually used by the
-VSP LUT and CLUT, which are not present. Fix this by shortening the VSP
-registers range to 0x5000.
+*WARNING -- this requires the base R9A06G032 support patches
+already posted
 
-Fixes: 295952a183d3 ("arm64: dts: renesas: r8a77995: add VSP instances")
-Reported-by: Simon Horman <horms+renesas@verge.net.au>
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+This patch series is for enabling the second CA7 of the R9A06G032.
+It's based on a spin_table method, and it reuses the same binding
+property as that driver.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index eb23c85c561b..49ca64285092 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -704,7 +704,7 @@
- 
- 		vspbs: vsp@fe960000 {
- 			compatible = "renesas,vsp2";
--			reg = <0 0xfe960000 0 0x8000>;
-+			reg = <0 0xfe960000 0 0x5000>;
- 			interrupts = <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 627>;
- 			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-@@ -714,7 +714,7 @@
- 
- 		vspd0: vsp@fea20000 {
- 			compatible = "renesas,vsp2";
--			reg = <0 0xfea20000 0 0x8000>;
-+			reg = <0 0xfea20000 0 0x5000>;
- 			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 623>;
- 			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-@@ -724,7 +724,7 @@
- 
- 		vspd1: vsp@fea28000 {
- 			compatible = "renesas,vsp2";
--			reg = <0 0xfea28000 0 0x8000>;
-+			reg = <0 0xfea28000 0 0x5000>;
- 			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 622>;
- 			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+v7:
+ + Moved to drivers/soc/renesas, as requested.
+v6:
+ + Passed scriptcheck --strict on the driver.
+ + Rebased on base patchset v10
+v5:
+  + Fixed a couple of typos
+  + Added the Reviewed-by tags where appropriate
+  + Rebased on base patch v9
+  + Replaced the dts property with a 64 bits one.
+  + Changed the driver to support 32 or 64 bits property.
+v4:
+  + Geert's comments adressed.
+  + Renamed symbols to r9a06g032 to match the rest of patchset
+  + Rebased on base patch v8
+v3:
+  + Removed mentions of rz/?n1d?
+  + Rebased on base patch v7
+v2:
+  + Added suggestions from Florian Fainelli
+  + Use __pa_symbol()
+  + Simplified logic in prepare_cpu()
+  + Reordered the patches
+  + Rebased on RZN1 Base patch v5
+
+Michel Pollet (3):
+  dt-bindings: cpu: Add Renesas R9A06G032 SMP enable method.
+  arm: shmobile: Add the R9A06G032 SMP enabler driver
+  ARM: dts: Renesas R9A06G032 SMP enable method
+
+ Documentation/devicetree/bindings/arm/cpus.txt |  1 +
+ arch/arm/boot/dts/r9a06g032.dtsi               |  2 +
+ drivers/soc/renesas/Makefile                   |  1 +
+ drivers/soc/renesas/r9a06g032-smp.c            | 96 ++++++++++++++++++++++++++
+ 4 files changed, 100 insertions(+)
+ create mode 100644 drivers/soc/renesas/r9a06g032-smp.c
+
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
