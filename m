@@ -1,14 +1,10 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53693 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935140AbeF1MQp (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Jun 2018 08:16:45 -0400
-Date: Thu, 28 Jun 2018 14:16:41 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
         Michel Pollet <buserror+upstream@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -20,24 +16,36 @@ Cc: linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
         Carlo Caione <carlo@endlessm.com>,
         Stefan Wahren <stefan.wahren@i2se.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 1/3] dt-bindings: cpu: Add Renesas R9A06G032 SMP
- enable method.
-Message-ID: <20180628121641.olxjhxau2kqqlmwb@verge.net.au>
+Subject: [PATCH v7 1/3] dt-bindings: cpu: Add Renesas R9A06G032 SMP enable method.
+Date: Thu, 28 Jun 2018 09:17:12 +0100
+Message-Id: <1530173842-56851-2-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1530173842-56851-1-git-send-email-michel.pollet@bp.renesas.com>
 References: <1530173842-56851-1-git-send-email-michel.pollet@bp.renesas.com>
- <1530173842-56851-2-git-send-email-michel.pollet@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1530173842-56851-2-git-send-email-michel.pollet@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jun 28, 2018 at 09:17:12AM +0100, Michel Pollet wrote:
-> Add a special enable method for second CA7 of the R9A06G032
-> 
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Add a special enable method for second CA7 of the R9A06G032
 
-Thanks, applied.
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ Documentation/devicetree/bindings/arm/cpus.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
+index 29e1dc5..b395d107 100644
+--- a/Documentation/devicetree/bindings/arm/cpus.txt
++++ b/Documentation/devicetree/bindings/arm/cpus.txt
+@@ -219,6 +219,7 @@ described below.
+ 			    "qcom,kpss-acc-v1"
+ 			    "qcom,kpss-acc-v2"
+ 			    "renesas,apmu"
++			    "renesas,r9a06g032-smp"
+ 			    "rockchip,rk3036-smp"
+ 			    "rockchip,rk3066-smp"
+ 			    "ste,dbx500-smp"
+-- 
+2.7.4
+
