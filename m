@@ -1,69 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:46469 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752050AbeF2KCr (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:58926 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752599AbeF2JjK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Jun 2018 06:02:47 -0400
+        Fri, 29 Jun 2018 05:39:10 -0400
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org
-Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 1/2] mmc: renesas_sdhi_internal_dmac: Fix missing unmap in error patch
-Date: Fri, 29 Jun 2018 19:01:44 +0900
-Message-Id: <1530266505-19953-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1530266505-19953-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1530266505-19953-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Subject: RE: [PATCH 1/2] mmc: renesas_sdhi_internal_dmac: Fix missing unmap in
+ error patch
+Date: Fri, 29 Jun 2018 09:39:06 +0000
+Message-ID: <OSBPR01MB22939056914D61BF8202B1FED84E0@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+References: <1530181745-10519-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1530181745-10519-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdWRKPoP6rxgeWC5tWyxdvZ0kJH9UmxPY3H4hxWMKmq=iw@mail.gmail.com>
+In-Reply-To: <CAMuHMdWRKPoP6rxgeWC5tWyxdvZ0kJH9UmxPY3H4hxWMKmq=iw@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch fixes an issue that lacks the dma_unmap_sg() calling in
-the error patch of renesas_sdhi_internal_dmac_start_dma().
-
-Fixes: 0cbc94daa554 ("mmc: renesas_sdhi_internal_dmac: limit DMA RX for old SoCs")
-Cc: <stable@vger.kernel.org> # v4.17+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index f7f9773..d676a20 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -164,17 +164,14 @@
- 		goto force_pio;
- 
- 	/* This DMAC cannot handle if buffer is not 8-bytes alignment */
--	if (!IS_ALIGNED(sg_dma_address(sg), 8)) {
--		dma_unmap_sg(&host->pdev->dev, sg, host->sg_len,
--			     mmc_get_dma_dir(data));
--		goto force_pio;
--	}
-+	if (!IS_ALIGNED(sg_dma_address(sg), 8))
-+		goto force_pio_with_unmap;
- 
- 	if (data->flags & MMC_DATA_READ) {
- 		dtran_mode |= DTRAN_MODE_CH_NUM_CH1;
- 		if (test_bit(SDHI_INTERNAL_DMAC_ONE_RX_ONLY, &global_flags) &&
- 		    test_and_set_bit(SDHI_INTERNAL_DMAC_RX_IN_USE, &global_flags))
--			goto force_pio;
-+			goto force_pio_with_unmap;
- 	} else {
- 		dtran_mode |= DTRAN_MODE_CH_NUM_CH0;
- 	}
-@@ -189,6 +186,9 @@
- 
- 	return;
- 
-+force_pio_with_unmap:
-+	dma_unmap_sg(&host->pdev->dev, sg, host->sg_len, mmc_get_dma_dir(data));
-+
- force_pio:
- 	host->force_pio = true;
- 	renesas_sdhi_internal_dmac_enable_dma(host, false);
--- 
-1.9.1
+SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbiwgU2VudDogVGh1cnNk
+YXksIEp1bmUgMjgsIDIwMTggOTo1MCBQTQ0KPiANCj4gSGkgU2hpbW9kYS1zYW4sDQo+IA0KPiBP
+biBUaHUsIEp1biAyOCwgMjAxOCBhdCAxOjUzIFBNIFlvc2hpaGlybyBTaGltb2RhDQo+IDx5b3No
+aWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gVGhpcyBwYXRjaCBmaXhl
+cyBhbiBpc3N1ZSB0aGF0IGxhY2tzIHRoZSBkbWFfdW5tYXBfc2coKSBjYWxsaW5nIGluDQo+ID4g
+dGhlIGVycm9yIHBhdGNoIG9mIHJlbmVzYXNfc2RoaV9pbnRlcm5hbF9kbWFjX3N0YXJ0X2RtYSgp
+Lg0KPiANCj4gTmljZSBjYXRjaCENCj4gVGhhbmtzIGZvciB5b3VyIHBhdGNoIQ0KPiANCj4gPiBG
+aXhlczogMGNiYzk0ZGFhNTU0ICgibW1jOiByZW5lc2FzX3NkaGlfaW50ZXJuYWxfZG1hYzogbGlt
+aXQgRE1BIFJYIGZvciBvbGQgU29DcyIpDQo+ID4gQ2M6IDxzdGFibGVAdmdlci5rZXJuZWwub3Jn
+PiAjIHY0LjE3Kw0KPiA+IFNpZ25lZC1vZmYtYnk6IFlvc2hpaGlybyBTaGltb2RhIDx5b3NoaWhp
+cm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4NCj4gDQo+IFJldmlld2VkLWJ5OiBHZWVydCBVeXR0
+ZXJob2V2ZW4gPGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPg0KDQpUaGFuayB5b3UgZm9yIHlvdXIg
+cmV2aWV3IQ0KDQo+ID4gLS0tIGEvZHJpdmVycy9tbWMvaG9zdC9yZW5lc2FzX3NkaGlfaW50ZXJu
+YWxfZG1hYy5jDQo+ID4gKysrIGIvZHJpdmVycy9tbWMvaG9zdC9yZW5lc2FzX3NkaGlfaW50ZXJu
+YWxfZG1hYy5jDQo+ID4gQEAgLTE3Myw4ICsxNzMsMTEgQEANCj4gPiAgICAgICAgIGlmIChkYXRh
+LT5mbGFncyAmIE1NQ19EQVRBX1JFQUQpIHsNCj4gPiAgICAgICAgICAgICAgICAgZHRyYW5fbW9k
+ZSB8PSBEVFJBTl9NT0RFX0NIX05VTV9DSDE7DQo+ID4gICAgICAgICAgICAgICAgIGlmICh0ZXN0
+X2JpdChTREhJX0lOVEVSTkFMX0RNQUNfT05FX1JYX09OTFksICZnbG9iYWxfZmxhZ3MpICYmDQo+
+ID4gLSAgICAgICAgICAgICAgICAgICB0ZXN0X2FuZF9zZXRfYml0KFNESElfSU5URVJOQUxfRE1B
+Q19SWF9JTl9VU0UsICZnbG9iYWxfZmxhZ3MpKQ0KPiA+ICsgICAgICAgICAgICAgICAgICAgdGVz
+dF9hbmRfc2V0X2JpdChTREhJX0lOVEVSTkFMX0RNQUNfUlhfSU5fVVNFLCAmZ2xvYmFsX2ZsYWdz
+KSkgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGRtYV91bm1hcF9zZygmaG9zdC0+cGRl
+di0+ZGV2LCBzZywgaG9zdC0+c2dfbGVuLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICBtbWNfZ2V0X2RtYV9kaXIoZGF0YSkpOw0KPiANCj4gR2l2ZW4gdGhlcmUgaXMg
+YWxyZWFkeSBhIGNhbGwgdG8gZG1hX3VubWFwX3NnKCkgYSBmZXcgbGluZXMgZWFybGllciAsIHlv
+dQ0KPiBtYXkgd2FudCB0byBpbnRyb2R1Y2UgYSBuZXcgbGFiZWwgYmVmb3JlIGZvcmNlX3Bpbywg
+YW5kIG1vdmUgdGhlIGNhbGwgdG8NCj4gZG1hX3VubWFwX3NnKCkgdGhlcmUuDQoNClRoYW5rIHlv
+dSBmb3IgdGhlIGNvbW1lbnQuIFNvLCBJJ2xsIHN1Ym1pdCB2MiBwYXRjaC4NCg0KQmVzdCByZWdh
+cmRzLA0KWW9zaGloaXJvIFNoaW1vZGENCg0K
