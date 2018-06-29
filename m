@@ -1,113 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:48050 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750790AbeFALAq (ORCPT
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:38378 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752633AbeF2ObC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Jun 2018 07:00:46 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] mmc: renesas_sdhi: really fix WP logic regressions
-Date: Fri,  1 Jun 2018 13:00:37 +0200
-Message-Id: <20180601110037.3400-1-wsa+renesas@sang-engineering.com>
+        Fri, 29 Jun 2018 10:31:02 -0400
+MIME-Version: 1.0
+References: <20180629142513.20743-1-geert+renesas@glider.be> <20180629142513.20743-6-geert+renesas@glider.be>
+In-Reply-To: <20180629142513.20743-6-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 29 Jun 2018 16:30:49 +0200
+Message-ID: <CAMuHMdXBsdkmcakVrLcBgMYD2ULD+nY7y5mKDWm3PN-nJQVw-w@mail.gmail.com>
+Subject: Re: [PATCH 2/4] serial: sh-sci: Stop using deprecated dmaengine_terminate_all()
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This reverts commit e060d376cc61 ("mmc: renesas_sdhi: fix WP detection")
-and adds some code to really fix the regressions.
+On Fri, Jun 29, 2018 at 4:25 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> As of commit b36f09c3c441a6e5 ("dmaengine: Add transfer termination
+> synchronization support"), dmaengine_terminate_all() is deprecated.
+>
+> Replace calls to dmaengine_terminate_all() in DMA release code by calls
+> to dmaengine_terminate_sync(), as the latter waits until all running
+> completion callbacks have finished.
+>
+> Replace calls to dmaengine_terminate_all() in DMA failure paths by calls
+> to dmaengine_terminate_async(), as these are usually done in atomic
+> context.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/tty/serial/sh-sci.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+> index 898c1034cad23a88..061660ccf9442d02 100644
+> --- a/drivers/tty/serial/sh-sci.c
+> +++ b/drivers/tty/serial/sh-sci.c
+> @@ -1613,7 +1613,7 @@ dev_dbg_dma(port->dev, "%s\n", __func__);
+>         s->chan_rx_saved = s->chan_rx = NULL;
+>         s->cookie_rx[0] = s->cookie_rx[1] = -EINVAL;
+>  WARN(!chan, "RX DMA channel already released\n");
 
-It was missed so far that Renesas R-Car instantiations of SDHI chose to
-disable internal WP and used the existence of "wp-gpios" to en/disable
-WP at all.
+Woops, I had some old versions of the patches lying around, and accidentally
+sent them with the real series.
 
-With the first refactoring by Yamada-san with commit 2ad1db059b9a ("mmc:
-renesas_sdhi: use MMC_CAP2_NO_WRITE_PROTECT instead of TMIO own flag"),
-WP was always disabled even when GPIOs were present. With Wolfram's
-first fix which gets now reverted, GPIOs were honored. But when not
-available, the fallback was to internal WP and not to disabled WP. This
-caused wrong WP status on uSD card slots.
+Sorry for that, the "[x/4]" patches should be ignored.
 
-Restore the old behaviour now. By default, WP is disabled. When a GPIO
-is found, the GPIO re-enables WP. We will think about possible better
-ways to handle this in the future.
+Gr{oetje,eeting}s,
 
-Tested on a previously regressing Renesas Lager board (H2) and a still
-working Renesas Salvator-X board (M3-W).
+                        Geert
 
-Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/renesas_sdhi_core.c          | 5 +++++
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 1 +
- drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 3 +++
- 3 files changed, 9 insertions(+)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 51e01f03fb99..45c015da2e75 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -28,6 +28,7 @@
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/mmc/host.h>
-+#include <linux/mmc/slot-gpio.h>
- #include <linux/mfd/tmio.h>
- #include <linux/sh_dma.h>
- #include <linux/delay.h>
-@@ -534,6 +535,10 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 	host->multi_io_quirk	= renesas_sdhi_multi_io_quirk;
- 	host->dma_ops		= dma_ops;
- 
-+	/* For some SoC, we disable internal WP. GPIO may override this */
-+	if (mmc_can_gpio_ro(host->mmc))
-+		mmc_data->capabilities2 &= ~MMC_CAP2_NO_WRITE_PROTECT;
-+
- 	/* SDR speeds are only available on Gen2+ */
- 	if (mmc_data->flags & TMIO_MMC_MIN_RCAR2) {
- 		/* card_busy caused issues on r8a73a4 (pre-Gen2) CD-less SDHI */
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index b6edb7a695b5..f7f9773d161f 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -87,6 +87,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
- 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
- 			  MMC_CAP_CMD23,
-+	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
- 	.bus_shift	= 2,
- 	.scc_offset	= 0x1000,
- 	.taps		= rcar_gen3_scc_taps,
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index 848e50c1638a..4bb46c489d71 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -42,6 +42,7 @@ static const struct renesas_sdhi_of_data of_rz_compatible = {
- static const struct renesas_sdhi_of_data of_rcar_gen1_compatible = {
- 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
-+	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
- };
- 
- /* Definitions for sampling clocks */
-@@ -61,6 +62,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen2_compatible = {
- 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
- 			  MMC_CAP_CMD23,
-+	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
- 	.dma_buswidth	= DMA_SLAVE_BUSWIDTH_4_BYTES,
- 	.dma_rx_offset	= 0x2000,
- 	.scc_offset	= 0x0300,
-@@ -81,6 +83,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
- 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
- 			  MMC_CAP_CMD23,
-+	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
- 	.bus_shift	= 2,
- 	.scc_offset	= 0x1000,
- 	.taps		= rcar_gen3_scc_taps,
--- 
-2.11.0
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
