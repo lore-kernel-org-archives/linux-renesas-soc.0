@@ -1,128 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:59236 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932268AbeFFJww (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:50942 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752226AbeF2RAY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 05:52:52 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2] arm64: dts: renesas: r8a77990: Enable USB2.0 Host for Ebisu board
-Date: Wed,  6 Jun 2018 18:52:06 +0900
-Message-Id: <1528278726-2910-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 29 Jun 2018 13:00:24 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Gerd Hoffmann <kraxel@redhat.com>
+Subject: [PROTO] [VIRTIO] [PATCH 0/2] Improve display performances when VIRGL is not available
+Date: Fri, 29 Jun 2018 20:00:39 +0300
+Message-Id: <20180629170041.13722-1-laurent.pinchart@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds USB2.0 PHY and Host(EHCI/OHCI) nodes and
-enables them for R-Car E3 Ebisu board.
+Hello,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
-This patch set is based on renesas-drivers.git /
-renesas-drivers-2018-06-05-v4.17 tag.
+This patch series is a prototype that attemps to solve the display performance
+problem inherent to the virtio-gpu protocol when VIRGL support isn't available
+on the host side.
 
-Changes from v1:
- - Squash 4 patches into a single patch.
+The first patch is the latest version (I found) of the virtio-gpu protocol
+specification patch from Gerd Hoffmann. I have included it verbatim.
 
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 20 ++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77990.dtsi      | 37 ++++++++++++++++++++++++++
- 2 files changed, 57 insertions(+)
+The second patch is an extension to the virtio-gpu protocol to allow memory
+for buffers to be allocated by the host and mapped to the guest, in an attempt
+to remove a full-frame memcpy() for each page flip.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-index 7a09d05..76fa244 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-@@ -47,10 +47,18 @@
- 	};
- };
- 
-+&ehci0 {
-+	status = "okay";
-+};
-+
- &extal_clk {
- 	clock-frequency = <48000000>;
- };
- 
-+&ohci0 {
-+	status = "okay";
-+};
-+
- &pfc {
- 	avb_pins: avb {
- 		mux {
-@@ -58,8 +66,20 @@
- 			function = "avb";
- 		};
- 	};
-+
-+	usb0_pins: usb {
-+		groups = "usb0_b";
-+		function = "usb0";
-+	};
- };
- 
- &scif2 {
- 	status = "okay";
- };
-+
-+&usb2_phy0 {
-+	pinctrl-0 = <&usb0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index be4f519..0b2bec3 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -248,6 +248,43 @@
- 			status = "disabled";
- 		};
- 
-+		ohci0: usb@ee080000 {
-+			compatible = "generic-ohci";
-+			reg = <0 0xee080000 0 0x100>;
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 703>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 703>;
-+			status = "disabled";
-+		};
-+
-+		ehci0: usb@ee080100 {
-+			compatible = "generic-ehci";
-+			reg = <0 0xee080100 0 0x100>;
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 703>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			companion = <&ohci0>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 703>;
-+			status = "disabled";
-+		};
-+
-+		usb2_phy0: usb-phy@ee080200 {
-+			compatible = "renesas,usb2-phy-r8a77990",
-+				     "renesas,rcar-gen3-usb2-phy";
-+			reg = <0 0xee080200 0 0x700>;
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 703>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 703>;
-+			#phy-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		gic: interrupt-controller@f1010000 {
- 			compatible = "arm,gic-400";
- 			#interrupt-cells = <3>;
+I haven't finished implementing this specification in QEMU and the Linux
+kernel virtio-gpu driver yet, so it remains untested for now. One problem
+remains to be solved, as the specification doesn't document how the
+host-allocated backing storage can be mapped to the guest. I plan to
+experiment with KVM_SET_USER_MEMORY_REGION, but adding random memory regions
+to guests at runtime isn't a good idea as the guest memory space is mostly
+managed by the guest. One possible solution would be to declare a large device
+memory range (through a separate PCI BAR or mmio memory range) that would be
+initially unpopulated, and map the buffers in that range. Whether that option
+is viable remains to be analyzed, but feedback would already be welcome.
+
+Gerd Hoffmann (1):
+  Add virtio gpu device specification.
+
+Laurent Pinchart (1):
+  virtio-gpu: Support host-allocated backing storage
+
+ content.tex    |   2 +
+ virtio-gpu.tex | 529 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 531 insertions(+)
+ create mode 100644 virtio-gpu.tex
+
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
