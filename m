@@ -1,55 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:57305 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754502AbeFYIas (ORCPT
+Received: from foss.arm.com ([217.140.101.70]:34424 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753045AbeF2NhZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jun 2018 04:30:48 -0400
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Carlo Caione <carlo@endlessm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v6 3/3] ARM: dts: Renesas R9A06G032 SMP enable method
-Date: Mon, 25 Jun 2018 09:25:06 +0100
-Message-Id: <1529915110-5867-4-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1529915110-5867-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1529915110-5867-1-git-send-email-michel.pollet@bp.renesas.com>
+        Fri, 29 Jun 2018 09:37:25 -0400
+Date: Fri, 29 Jun 2018 14:39:11 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-pci@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] PCI: rcar: Clean up PHY init on failure
+Message-ID: <20180629133911.GB9643@red-moon>
+References: <20180525183326.5245-1-marek.vasut+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180525183326.5245-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a special enable method for the second CA7 of the R9A06G032
-as well as the default value for the "cpu-release-addr" property.
+On Fri, May 25, 2018 at 08:33:26PM +0200, Marek Vasut wrote:
+> If the Gen3 PHY fails to power up, the code does not undo the
+> initialization caused by phy_init(). Add the missing failure
+> handling to the rcar_pcie_phy_init_gen3() function.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Fixes: 517ca93a7159 ("PCI: rcar: Add R-Car gen3 PHY support")
+> ---
+>  drivers/pci/host/pcie-rcar.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r9a06g032.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+Applied to pci/controller-fixes to be tentatively merged for
+-rc4, thanks.
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index 353e06f..3e45375 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -30,6 +30,8 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <1>;
- 			clocks = <&sysctrl R9A06G032_CLK_A7MP>;
-+			enable-method = "renesas,r9a06g032-smp";
-+			cpu-release-addr = <0 0x4000c204>;
- 		};
- 	};
- 
--- 
-2.7.4
+Lorenzo
+
+> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+> index 695781934f0a..477bf40cc031 100644
+> --- a/drivers/pci/host/pcie-rcar.c
+> +++ b/drivers/pci/host/pcie-rcar.c
+> @@ -678,7 +678,11 @@ static int rcar_pcie_phy_init_gen3(struct rcar_pcie *pcie)
+>  	if (err)
+>  		return err;
+>  
+> -	return phy_power_on(pcie->phy);
+> +	err = phy_power_on(pcie->phy);
+> +	if (err)
+> +		phy_exit(pcie->phy);
+> +
+> +	return err;
+>  }
+>  
+>  static int rcar_msi_alloc(struct rcar_msi *chip)
+> -- 
+> 2.16.2
+> 
