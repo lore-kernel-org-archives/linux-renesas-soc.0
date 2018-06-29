@@ -1,7 +1,7 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:37710 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755478AbeF2OZW (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:45036 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754566AbeF2OZW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 29 Jun 2018 10:25:22 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
@@ -13,9 +13,9 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 Cc: linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-sh@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/4] serial: sh-sci: Stop TX DMA workqueue during port shutdown
-Date: Fri, 29 Jun 2018 16:25:12 +0200
-Message-Id: <20180629142513.20743-7-geert+renesas@glider.be>
+Subject: [PATCH 2/3] serial: sh-sci: Stop TX DMA workqueue during port shutdown
+Date: Fri, 29 Jun 2018 16:25:08 +0200
+Message-Id: <20180629142513.20743-3-geert+renesas@glider.be>
 In-Reply-To: <20180629142513.20743-1-geert+renesas@glider.be>
 References: <20180629142513.20743-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -34,19 +34,19 @@ Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 061660ccf9442d02..58016386558c6789 100644
+index 0ed91692f53ad859..1e0b6fe6865dcff6 100644
 --- a/drivers/tty/serial/sh-sci.c
 +++ b/drivers/tty/serial/sh-sci.c
-@@ -1704,6 +1704,7 @@ static void sci_tx_dma_release(struct sci_port *s)
+@@ -1295,6 +1295,7 @@ static void sci_tx_dma_release(struct sci_port *s)
  	struct dma_chan *chan = s->chan_tx_saved;
  	struct uart_port *port = &s->port;
  
 +	cancel_work_sync(&s->work_tx);
- dev_dbg_dma(port->dev, "%s\n", __func__);
  	s->chan_tx_saved = s->chan_tx = NULL;
  	s->cookie_tx = -EINVAL;
-@@ -1978,10 +1979,9 @@ static void sci_request_dma(struct uart_port *port)
- 				UART_XMIT_SIZE,
+ 	dmaengine_terminate_all(chan);
+@@ -1550,10 +1551,9 @@ static void sci_request_dma(struct uart_port *port)
+ 				__func__, UART_XMIT_SIZE,
  				port->state->xmit.buf, &s->tx_dma_addr);
  
 +			INIT_WORK(&s->work_tx, work_fn_tx);
