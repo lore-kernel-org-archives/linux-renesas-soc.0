@@ -1,80 +1,80 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:48940 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751602AbeFAJ3H (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Jun 2018 05:29:07 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/4] clk: renesas: cpg-mssr: Stop using printk format %pCr
-Date: Fri,  1 Jun 2018 11:28:19 +0200
-Message-Id: <1527845302-12159-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
-References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+Date: Fri, 29 Jun 2018 09:54:04 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH 1/1] i2c: rcar: handle RXDMA HW behaviour on Gen3
+Message-ID: <20180629075404.ivnaauv2hdir32ig@ninjato>
+References: <20180628204538.866-1-wsa+renesas@sang-engineering.com>
+ <20180628204538.866-2-wsa+renesas@sang-engineering.com>
+ <CAMuHMdWEce9+Se0b0pH2Uvma68ozSXxiPGUu__XFFX=yBtmKjw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zo52uacn4npqaxah"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWEce9+Se0b0pH2Uvma68ozSXxiPGUu__XFFX=yBtmKjw@mail.gmail.com>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
-called in atomic context.
 
-Replace it by open-coding the operation.  This is safe here, as the code
-runs in task context.
+--zo52uacn4npqaxah
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 49e510691eeeab07..f4b013e9352d9efc 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -258,8 +258,9 @@ struct clk *cpg_mssr_clk_src_twocell_get(struct of_phandle_args *clkspec,
- 		dev_err(dev, "Cannot get %s clock %u: %ld", type, clkidx,
- 		       PTR_ERR(clk));
- 	else
--		dev_dbg(dev, "clock (%u, %u) is %pC at %pCr Hz\n",
--			clkspec->args[0], clkspec->args[1], clk, clk);
-+		dev_dbg(dev, "clock (%u, %u) is %pC at %lu Hz\n",
-+			clkspec->args[0], clkspec->args[1], clk,
-+			clk_get_rate(clk));
- 	return clk;
- }
- 
-@@ -326,7 +327,7 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
- 	if (IS_ERR_OR_NULL(clk))
- 		goto fail;
- 
--	dev_dbg(dev, "Core clock %pC at %pCr Hz\n", clk, clk);
-+	dev_dbg(dev, "Core clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
- 	priv->clks[id] = clk;
- 	return;
- 
-@@ -392,7 +393,7 @@ static void __init cpg_mssr_register_mod_clk(const struct mssr_mod_clk *mod,
- 	if (IS_ERR(clk))
- 		goto fail;
- 
--	dev_dbg(dev, "Module clock %pC at %pCr Hz\n", clk, clk);
-+	dev_dbg(dev, "Module clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
- 	priv->clks[id] = clk;
- 	priv->smstpcr_saved[clock->index / 32].mask |= BIT(clock->index % 32);
- 	return;
--- 
-2.7.4
+> > +       /* Gen3 needs a reset before allowing RXDMA once */
+> > +       if (priv->devtype =3D=3D I2C_RCAR_GEN3) {
+>=20
+> So on R-Car Gen3 the device is always reset, even if no reads will be don=
+e?
+> Or is that something you cannot check for at this point?
+
+You got a point. I copied the behaviour from the BSP to do this as early
+as possible. Still, it might be worthwhile to merge this into
+rcar_i2c_request_dma() and move the call to it to the front. Will check.
+
+> > +       if (priv->devtype =3D=3D I2C_RCAR_GEN3) {
+> > +               priv->rstc =3D devm_reset_control_get_exclusive(&pdev->=
+dev, NULL);
+> > +               if (!IS_ERR(priv->rstc)) {
+> > +                       ret =3D reset_control_status(priv->rstc);
+>=20
+> Why this call and check? To check if .status() is implemented (it always =
+is
+> on R-Car Gen3, if CONFIG_RESET_CONTROLLER is enabled), and to avoid the
+> timeout in rcar_i2c_do_reset() on every transfer?
+
+Yes. We can save all the hazzle if it is not implemented. And I didn't
+want to implicitly assume that it will be implemented anywhere forever.
+That could be a very subtle bug later.
+
+Thanks,
+
+   Wolfram
+
+
+--zo52uacn4npqaxah
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAls15ZgACgkQFA3kzBSg
+KbaiVRAAn5Wi37NK4TQVOkJTgQQ7Z3vQUZV2DmciJ6LGfL0A7ansiICbaJXEn5mc
+DjwJ/+FxfYdTkYIjPu7kCkvuphLlChONjnZTbDpZzsIew8f0nPMh/2+1Fq2N62Ht
+FzW5XD9bwJs3My/BuZ6tKWrkUZuMFKgz7X3HepnokT7/8j4SNwldLnUpt8sx2Jv/
+ZUbexfw5Z89xaN67DYDKSBtXF6mMi45MB6rfXM8rXCQaPiegkNzWNNpO9B5rZGhS
+YhKWjU6ySjMw9m9b0qIrYjt7q9soJFzzfgViw6V70DslJZCfVf0ba0nb0VVC9PdB
+OnLjnBljOwHEaZMGu7/Iz6/uLCNXTVaiqzdzN/4i1sSJ3V7V+WPA0AEd5HSXlmNJ
+yO/iaSx274yklxw6iaxW12Hs76Scy5FB68XpI6GT0lH03yj3a3j1GRbgUu+Iro3I
+phws+Vb18TmbklwfyBkdkUV0v7UDy6lW9yha/Dy8DtmHCtpYBv8N30AHpfRRD2mW
+UiG31+PwjLCuL6qzvEzuz+3GcLq7GBqTNtF+e8sHm6XiWjXVaLgKhlSd19mXagy5
+hPfEy9lNyox3AARoPQI0yMmEaCAGhLI1ro2LgPhFLZ/fHp6o/2tH/otD4/n+R+uY
+ps8J5EbKxmZMTEymefsL3aTDAkx/nq2aRfKXLnPYrE01dSTJl+s=
+=5+3O
+-----END PGP SIGNATURE-----
+
+--zo52uacn4npqaxah--
