@@ -1,53 +1,101 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:42040 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750982AbeFTMBn (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Jun 2018 08:01:43 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: horms@verge.net.au, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, vinod.koul@linaro.org,
-        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH resend] dmaengine: rcar-dmac: Document R8A77990 bindings
-Date: Wed, 20 Jun 2018 14:01:37 +0200
-Message-Id: <1529496097-10629-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Fri, 29 Jun 2018 16:45:06 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michel Pollet <michel.pollet@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v9 3/5] ARM: dts: Renesas R9A06G032 base device tree file
+Message-ID: <20180629144505.xcencoba4ru6tiee@verge.net.au>
+References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1528973829-25493-4-git-send-email-michel.pollet@bp.renesas.com>
+ <20180628120031.eq2yuysz4re2olwn@verge.net.au>
+ <20180628121609.jf4dp4azeowte7pb@verge.net.au>
+ <CAMuHMdWqowQjZ8Wsdj6ne-+UG8-OY_j6pi3R9JPP6L7ZgRhvBQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWqowQjZ8Wsdj6ne-+UG8-OY_j6pi3R9JPP6L7ZgRhvBQ@mail.gmail.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+On Thu, Jun 28, 2018 at 02:45:41PM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Thu, Jun 28, 2018 at 2:16 PM Simon Horman <horms@verge.net.au> wrote:
+> > On Thu, Jun 28, 2018 at 02:00:32PM +0200, Simon Horman wrote:
+> > > On Thu, Jun 14, 2018 at 11:56:32AM +0100, Michel Pollet wrote:
+> > > > This adds the Renesas R9A06G032 bare bone support.
+> > > >
+> > > > This currently only handles the SYSCTRL block note,
+> > > > generic parts (gic, architected timer) and a UART.
+> > > >
+> > > > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> > > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> > >
+> > > Thanks, applied with the following appended:
+> > >
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index 9d5eeff51b5f..4c85ac04872d 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -1969,6 +1969,7 @@ S:      Supported
+> > >  F:   arch/arm/boot/dts/emev2*
+> > >  F:   arch/arm/boot/dts/r7s*
+> > >  F:   arch/arm/boot/dts/r8a*
+> > > +F:   arch/arm/boot/dts/r9a*
+> > >  F:   arch/arm/boot/dts/sh*
+> > >  F:   arch/arm/configs/shmobile_defconfig
+> > >  F:   arch/arm/include/debug/renesas-scif.S
+> >
+> > One more update.
+> >
+> > dt-bindings/clock/r9a06g032-sysctrl.h is not present in v4.18-rc1,
+> > current base of the renesas tree and likely base for the rest of the v4.19
+> > development cycle.
+> >
+> > Accordingly I have removed the include of that header and replaced
+> > the use of symbols it defines with numeric constants. The result is below.
+> 
+> Oh right. Thanks!
+> 
+> > Please:
+> > 1) Check that this is correct and
+> 
+> Looks good to me, except for the bogus "fixes" and "SoB" below
+> (bad squash?)
+> 
+> > From: Michel Pollet <michel.pollet@bp.renesas.com>
+> > Subject: [PATCH] ARM: dts: Renesas R9A06G032 base device tree file
+> >
+> > This adds the Renesas R9A06G032 bare bone support.
+> >
+> > This currently only handles the SYSCTRL block note,
+> > generic parts (gic, architected timer) and a UART.
+> >
+> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > [simon: updated MAINTAINERS file
+> > [simon: do not use r9a06g032-sysctrl.h as it is not in the renesas tree yet]
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> >
+> > fixes
+>   ^^^^^
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+>   ^^^^
+> 
+> Gr{oetje,eeting}s,
 
-Renesas R-Car E3 (R8A77990) SoC also has the R-Car gen2/3 compatible DMA
-controllers, so document the SoC specific binding.
-
-Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This didn't apply for Vinod before, but now it seems to. If it still does
-not, please tell me what tree to base this on.
-
-CU
-Uli
-
-
- Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-index b1ba6395..946229c 100644
---- a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-+++ b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-@@ -29,6 +29,7 @@ Required Properties:
- 		- "renesas,dmac-r8a77965" (R-Car M3-N)
- 		- "renesas,dmac-r8a77970" (R-Car V3M)
- 		- "renesas,dmac-r8a77980" (R-Car V3H)
-+		- "renesas,dmac-r8a77990" (R-Car E3)
- 		- "renesas,dmac-r8a77995" (R-Car D3)
- 
- - reg: base address and length of the registers block for the DMAC
--- 
-2.7.4
+Thanks, I'll remove that trailing garbage.
