@@ -1,111 +1,127 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:34613 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933407AbeFKL7U (ORCPT
+Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:55596 "EHLO
+        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932785AbeF2Mc7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:59:20 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 12/14] mfd: da9063: Register RTC only on DA9063L
-Date: Mon, 11 Jun 2018 13:58:49 +0200
-Message-Id: <20180611115851.1987-12-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
-References: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
+        Fri, 29 Jun 2018 08:32:59 -0400
+Subject: Re: [PATCH v2 2/2] v4l: Add support for STD ioctls on subdev nodes
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20180517143016.13501-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180517143016.13501-3-niklas.soderlund+renesas@ragnatech.se>
+ <20180628083732.3679d730@coco.lan>
+ <536a05bd-372e-a509-a6b6-0a3e916e48ae@xs4all.nl>
+ <20180629070647.1ce7f73b@coco.lan>
+ <1b948535-8067-fef6-efd9-92aff3049ec5@xs4all.nl>
+ <20180629092856.73406202@coco.lan>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <6a37f16c-eb12-b60d-667f-169364d74dbe@xs4all.nl>
+Date: Fri, 29 Jun 2018 14:32:54 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180629092856.73406202@coco.lan>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The DA9063L does not contain RTC block, unlike the full DA9063.
-Split the RTC block into separate mfd cell and register it only
-on DA9063.
+On 06/29/18 14:28, Mauro Carvalho Chehab wrote:
+> Em Fri, 29 Jun 2018 12:26:20 +0200
+> Hans Verkuil <hverkuil@xs4all.nl> escreveu:
+> 
+>> On 06/29/18 12:06, Mauro Carvalho Chehab wrote:
+>>> Em Thu, 28 Jun 2018 14:47:05 +0200
+>>> Hans Verkuil <hverkuil@xs4all.nl> escreveu:
+>>>   
+>>>> On 06/28/18 13:37, Mauro Carvalho Chehab wrote:  
+>>>>> Em Thu, 17 May 2018 16:30:16 +0200
+>>>>> Niklas Söderlund         <niklas.soderlund+renesas@ragnatech.se> escreveu:
+>>>>>     
+>>>>>> There is no way to control the standard of subdevices which are part of
+>>>>>> a media device. The ioctls which exists all target video devices
+>>>>>> explicitly and the idea is that the video device should talk to the
+>>>>>> subdevice. For subdevices part of a media graph this is not possible and
+>>>>>> the standard must be controlled on the subdev device directly.    
+>>>>>
+>>>>> Why isn't it possible? A media pipeline should have at least a video
+>>>>> devnode where the standard ioctls will be issued.    
+>>>>
+>>>> Not for an MC-centric device like the r-car or imx. It's why we have v4l-subdev
+>>>> ioctls for the DV_TIMINGS API, but the corresponding SDTV standards API is
+>>>> missing.
+>>>>
+>>>> And in a complex scenario there is nothing preventing you from having multiple
+>>>> SDTV inputs, some of which need PAL-BG, some SECAM, some NTSC (less likely)
+>>>> which are all composed together (think security cameras or something like that).
+>>>>
+>>>> You definitely cannot set the standard from a video device. If nothing else,
+>>>> it would be completely inconsistent with how HDMI inputs work.
+>>>>
+>>>> The whole point of MC centric devices is that you *don't* control subdevs
+>>>> from video nodes.  
+>>>
+>>> Well, the way it is, this change is disruptive, as, as far as I remember,
+>>> MC-based devices with tvp5150 already sets STD via the /dev/video device.  
+>>
+>> Really? Which driver? I am not aware of this and I think you are mistaken.
+>> Remember that we are talking about MC-centric drivers. em28xx is not MC-centric,
+>> even though it has a media device.
+> 
+> OMAP3. There are some boards out there with tvp5150.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
-V2: No change
-V3: Rework of mfd: da9063: Disallow RTC on DA9063L
-V4: - Change the original failure text
-    - Use PLATFORM_DEVID_NONE in mfd_add_devices
-V5: Rebase on top of new 01 and 02 patches
-V6: No change
----
- drivers/mfd/da9063-core.c | 31 ++++++++++++++++++++++++-------
- 1 file changed, 24 insertions(+), 7 deletions(-)
+There is no standards support in omap3isp. It only supports sensors, not
+analog or digital video receivers. So if they support SDTV, then they hacked
+the omap3isp driver.
 
-diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
-index ded59990f18c..6e4ce49b4405 100644
---- a/drivers/mfd/da9063-core.c
-+++ b/drivers/mfd/da9063-core.c
-@@ -76,7 +76,7 @@ static struct resource da9063_hwmon_resources[] = {
- };
- 
- 
--static const struct mfd_cell da9063_devs[] = {
-+static const struct mfd_cell da9063_common_devs[] = {
- 	{
- 		.name		= DA9063_DRVNAME_REGULATORS,
- 		.num_resources	= ARRAY_SIZE(da9063_regulators_resources),
-@@ -100,15 +100,19 @@ static const struct mfd_cell da9063_devs[] = {
- 		.resources	= da9063_onkey_resources,
- 		.of_compatible = "dlg,da9063-onkey",
- 	},
-+	{
-+		.name		= DA9063_DRVNAME_VIBRATION,
-+	},
-+};
-+
-+/* Only present on DA9063 , not on DA9063L */
-+static const struct mfd_cell da9063_devs[] = {
- 	{
- 		.name		= DA9063_DRVNAME_RTC,
- 		.num_resources	= ARRAY_SIZE(da9063_rtc_resources),
- 		.resources	= da9063_rtc_resources,
- 		.of_compatible	= "dlg,da9063-rtc",
- 	},
--	{
--		.name		= DA9063_DRVNAME_VIBRATION,
--	},
- };
- 
- static int da9063_clear_fault_log(struct da9063 *da9063)
-@@ -226,10 +230,23 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
- 	da9063->irq_base = regmap_irq_chip_get_base(da9063->regmap_irq);
- 
- 	ret = devm_mfd_add_devices(da9063->dev, PLATFORM_DEVID_NONE,
--				   da9063_devs, ARRAY_SIZE(da9063_devs),
-+				   da9063_common_devs,
-+				   ARRAY_SIZE(da9063_common_devs),
- 				   NULL, da9063->irq_base, NULL);
--	if (ret)
--		dev_err(da9063->dev, "Cannot add MFD cells\n");
-+	if (ret) {
-+		dev_err(da9063->dev, "Failed to add child devices\n");
-+		return ret;
-+	}
-+
-+	if (da9063->type == PMIC_TYPE_DA9063) {
-+		ret = devm_mfd_add_devices(da9063->dev, PLATFORM_DEVID_NONE,
-+					   da9063_devs, ARRAY_SIZE(da9063_devs),
-+					   NULL, da9063->irq_base, NULL);
-+		if (ret) {
-+			dev_err(da9063->dev, "Failed to add child devices\n");
-+			return ret;
-+		}
-+	}
- 
- 	return ret;
- }
--- 
-2.16.2
+Regards,
+
+	Hans
+
+> 
+>>
+>>>
+>>> If we're willing to add it, we'll need to be clear when one approach
+>>> should be taken, and be clear that, if the SUBDEV version is used, the
+>>> driver should not support the non-subdev option.  
+>>
+>> Of course, but in the case of em28xx the tvp5150 v4l-subdev node is never
+>> created, so this is not a problem.
+>>
+>> Regards,
+>>
+>> 	Hans
+>>
+>>>   
+>>>>
+>>>> Regards,
+>>>>
+>>>> 	Hans
+>>>>  
+>>>>> So, I don't see why you would need to explicitly set the standard inside
+>>>>> a sub-device.
+>>>>>
+>>>>> The way I see, inside a given pipeline, all subdevs should be using the
+>>>>> same video standard (maybe except for a m2m device with would have some
+>>>>> coded that would be doing format conversion).
+>>>>>
+>>>>> Am I missing something?
+>>>>>
+>>>>> Thanks,
+>>>>> Mauro
+>>>>>     
+>>>>  
+>>>
+>>>
+>>>
+>>> Thanks,
+>>> Mauro
+>>>   
+>>
+> 
+> 
+> 
+> Thanks,
+> Mauro
+> 
