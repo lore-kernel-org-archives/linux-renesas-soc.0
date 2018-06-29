@@ -1,80 +1,136 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934237AbeFYOEE (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:50958 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753058AbeF2RA3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:04:04 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
+        Fri, 29 Jun 2018 13:00:29 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Kaneko <ykaneko0929@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 07/29] arm64: dts: renesas: r8a77995: add thermal device support
-Date: Mon, 25 Jun 2018 16:03:02 +0200
-Message-Id: <21bd05387fe6643a6f1cdfe395e85725fd296f6c.1529933747.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
-References: <cover.1529933747.git.horms+renesas@verge.net.au>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Gerd Hoffmann <kraxel@redhat.com>
+Subject: [PROTO] [VIRTIO] [PATCH 2/2] virtio-gpu: Support host-allocated backing storage
+Date: Fri, 29 Jun 2018 20:00:41 +0300
+Message-Id: <20180629170041.13722-3-laurent.pinchart@ideasonboard.com>
+In-Reply-To: <20180629170041.13722-1-laurent.pinchart@ideasonboard.com>
+References: <20180629170041.13722-1-laurent.pinchart@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+The virtio-gpu protocol is based on opaque host resources backed by
+guest-allocated memory. This requires transferring data from guest
+framebuffers to host display device buffers.
 
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+When the host supports VIRGL, the GPU is used for both 2D and 3D
+rendering, in which case the memory transfer can take the form of a DMA
+operation without incurring significant costs. However, when VIRGL
+support isn't available, 2D transfers require a CPU memory copy for
+every page flip. Display is slowed down to an unusable state.
+
+To solve this problem, extend the virtio-gpu protocol with the ability
+for the host to allocate resource backing storage and map it to the
+guest. The allocated memory can then be used directly by the host-side
+display device, removing the need for memory copy operations.
+
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ virtio-gpu.tex | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 8f162ac369b1..eb23c85c561b 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -217,6 +217,18 @@
- 			#power-domain-cells = <1>;
- 		};
+diff --git a/virtio-gpu.tex b/virtio-gpu.tex
+index 34cf493bbcd1..22546cc1748f 100644
+--- a/virtio-gpu.tex
++++ b/virtio-gpu.tex
+@@ -34,6 +34,7 @@ control queue.
  
-+		thermal: thermal@e6190000 {
-+			compatible = "renesas,thermal-r8a77995";
-+			reg = <0 0xe6190000 0 0x10>, <0 0xe6190100 0 0x38>;
-+			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 522>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 522>;
-+			#thermal-sensor-cells = <0>;
-+		};
-+
- 		intc_ex: interrupt-controller@e61c0000 {
- 			compatible = "renesas,intc-ex-r8a77995", "renesas,irqc";
- 			#interrupt-cells = <2>;
-@@ -788,6 +800,25 @@
- 		};
- 	};
+ \begin{description}
+ \item[VIRTIO_GPU_F_VIRGL (0)] virgl 3D mode is supported.
++\item[VIRTIO_GPU_F_HOST_ALLOC (1)] buffer allocation by the host is supported.
+ \end{description}
  
-+	thermal-zones {
-+		cpu_thermal: cpu-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&thermal>;
+ \subsection{Device configuration layout}\label{sec:Device Types / GPU Device / Device configuration layout}
+@@ -90,6 +91,11 @@ height and format along with an identifier. The guest must then attach
+ backing store to the resources in order for DMA transfers to
+ work. This is like a GART in a real GPU.
+ 
++Additionally, when the VIRTIO_GPU_F_HOST_ALLOC feature is present, the guest
++can request the host to allocate backing store for resources on its behalf, in
++which case the allocated resources can be accessed by both the host and the
++guest without any need for DMA transfers.
 +
-+			trips {
-+				cpu-crit {
-+					temperature = <120000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
+ \subsubsection{Device Operation: Create a framebuffer and configure scanout}
+ 
+ \begin{itemize*}
+@@ -120,6 +126,18 @@ using VIRTIO_GPU_CMD_SET_SCANOUT and VIRTIO_GPU_CMD_RESOURCE_FLUSH,
+ and update the invisible framebuffer using
+ VIRTIO_GPU_CMD_TRANSFER_SEND_2D.
+ 
++\subsubsection{Device Operation: Create a framebuffer from host-allocated memory}
 +
-+			cooling-maps {
-+			};
-+		};
-+	};
++\begin{itemize*}
++\item Create a host resource using VIRTIO_GPU_CMD_RESOURCE_CREATE_2D. This
++  step is identical to the guest-allocated backing store case.
++\item Request the host to allocate the backing storage for the resource just
++  created, using VIRTIO_GPU_CMD_RESOURCE_ALLOC_BACKING.  The host will map the
++  memory to the guest and will return the memory address.
++\item Use VIRTIO_GPU_CMD_SET_SCANOUT, VIRTIO_GPU_CMD_TRANSFER_SEND_2D and
++  VIRTIO_GPU_CMD_RESOURCE_FLUSH as for guest-allocated memory.
++\end{itemize*}
 +
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
+ \subsubsection{Device Operation: Multihead setup}
+ 
+ In case two or more displays are present there are different ways to
+@@ -171,6 +189,7 @@ enum virtio_gpu_ctrl_type {
+         VIRTIO_GPU_CMD_TRANSFER_TO_HOST_2D,
+         VIRTIO_GPU_CMD_RESOURCE_ATTACH_BACKING,
+         VIRTIO_GPU_CMD_RESOURCE_DETACH_BACKING,
++        VIRTIO_GPU_CMD_RESOURCE_ALLOC_BACKING,
+ 
+         /* cursor commands */
+         VIRTIO_GPU_CMD_UPDATE_CURSOR = 0x0300,
+@@ -179,6 +198,7 @@ enum virtio_gpu_ctrl_type {
+         /* success responses */
+         VIRTIO_GPU_RESP_OK_NODATA = 0x1100,
+         VIRTIO_GPU_RESP_OK_DISPLAY_INFO,
++        VIRTIO_GPU_RESP_OK_ALLOC_BACKING,
+ 
+         /* error responses */
+         VIRTIO_GPU_RESP_ERR_UNSPEC = 0x1200,
+@@ -417,6 +437,34 @@ struct virtio_gpu_resource_detach_backing {
+ This detaches any backing pages from a resource, to be used in case of
+ guest swapping or object destruction.
+ 
++\item[VIRTIO_GPU_CMD_RESOURCE_ALLOC_BACKING] Request the host to allocate
++  backing pages for a resource.  Request data is \field{struct
++    virtio_gpu_resource_alloc_backing}.  Response type is
++    VIRTIO_GPU_RESP_OK_ALLOC_BACKING, response data is \field{struct
++    virtio_gpu_resp_resource_alloc_backing}.
++
++\begin{lstlisting}
++struct virtio_gpu_resource_alloc_backing {
++        struct virtio_gpu_ctrl_hdr hdr;
++        le32 resource_id;
++        le32 padding;
++};
++
++struct virtio_gpu_resp_resource_alloc_backing {
++        struct virtio_gpu_ctrl_hdr hdr;
++        le64 addr;
++};
++\end{lstlisting}
++
++This allocates backing store memory for a resource on the host, and maps the
++memory physically contiguous to the guest. The host returns the guest memory
++address in the \field{addr} field. If memory can't be allocated, the response
++is VIRTIO_GPU_RESP_ERR_OUT_OF_MEMORY with no data.
++
++When the backing store is detached from the resource with
++VIRTIO_GPU_CMD_RESOURCE_DETACH_BACKING, the memory is freed and unmapped from
++the guest.
++
+ \end{description}
+ 
+ \subsubsection{Device Operation: cursorq}\label{sec:Device Types / GPU Device / Device Operation / Device Operation: cursorq}
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
