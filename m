@@ -1,7 +1,7 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:49272 "EHLO
+Received: from michel.telenet-ops.be ([195.130.137.88]:49254 "EHLO
         michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755442AbeF2OZW (ORCPT
+        with ESMTP id S1755486AbeF2OZW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 29 Jun 2018 10:25:22 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
@@ -13,9 +13,9 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 Cc: linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-sh@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/3] serial: sh-sci: Stop using deprecated dmaengine_terminate_all()
-Date: Fri, 29 Jun 2018 16:25:09 +0200
-Message-Id: <20180629142513.20743-4-geert+renesas@glider.be>
+Subject: [PATCH 2/4] serial: sh-sci: Stop using deprecated dmaengine_terminate_all()
+Date: Fri, 29 Jun 2018 16:25:11 +0200
+Message-Id: <20180629142513.20743-6-geert+renesas@glider.be>
 In-Reply-To: <20180629142513.20743-1-geert+renesas@glider.be>
 References: <20180629142513.20743-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -34,48 +34,51 @@ context.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/tty/serial/sh-sci.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/tty/serial/sh-sci.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 1e0b6fe6865dcff6..5c870ab80b98e25b 100644
+index 898c1034cad23a88..061660ccf9442d02 100644
 --- a/drivers/tty/serial/sh-sci.c
 +++ b/drivers/tty/serial/sh-sci.c
-@@ -1221,7 +1221,7 @@ static void sci_rx_dma_release(struct sci_port *s)
- 
+@@ -1613,7 +1613,7 @@ dev_dbg_dma(port->dev, "%s\n", __func__);
  	s->chan_rx_saved = s->chan_rx = NULL;
  	s->cookie_rx[0] = s->cookie_rx[1] = -EINVAL;
+ WARN(!chan, "RX DMA channel already released\n");
 -	dmaengine_terminate_all(chan);
 +	dmaengine_terminate_sync(chan);
  	dma_free_coherent(chan->device->dev, s->buf_len_rx * 2, s->rx_buf[0],
  			  sg_dma_address(&s->sg_rx[0]));
  	dma_release_channel(chan);
-@@ -1298,7 +1298,7 @@ static void sci_tx_dma_release(struct sci_port *s)
- 	cancel_work_sync(&s->work_tx);
+@@ -1708,7 +1708,7 @@ dev_dbg_dma(port->dev, "%s\n", __func__);
  	s->chan_tx_saved = s->chan_tx = NULL;
  	s->cookie_tx = -EINVAL;
+ WARN(!chan, "TX DMA channel already released\n");
 -	dmaengine_terminate_all(chan);
 +	dmaengine_terminate_sync(chan);
  	dma_unmap_single(chan->device->dev, s->tx_dma_addr, UART_XMIT_SIZE,
  			 DMA_TO_DEVICE);
  	dma_release_channel(chan);
-@@ -1336,7 +1336,7 @@ static void sci_submit_rx(struct sci_port *s)
+@@ -1747,7 +1747,7 @@ dev_dbg_dma(s->port.dev, "  %s\n", __func__);
  
  fail:
  	if (i)
 -		dmaengine_terminate_all(chan);
 +		dmaengine_terminate_async(chan);
+ 	// FIXME Not needed?
  	for (i = 0; i < 2; i++)
  		s->cookie_rx[i] = -EINVAL;
- 	s->active_rx = -EINVAL;
-@@ -1454,7 +1454,7 @@ static enum hrtimer_restart rx_timer_fn(struct hrtimer *t)
- 	}
+@@ -1877,9 +1877,9 @@ dev_dbg_dma(port->dev, "  %s active %d\n", __func__, active);
  
  	/* Handle incomplete DMA receive */
+ dev_dbg_dma(port->dev, "  %s:%u dmaengine_terminate_all()\n", __func__, __LINE__);
 -	dmaengine_terminate_all(s->chan_rx);
 +	dmaengine_terminate_async(s->chan_rx);
+ 	// FIXME More data may have been transfered in between
+-	// FIXME dmaengine_tx_status() and dmaengine_terminate_all()
++	// FIXME dmaengine_tx_status() and dmaengine_terminate_async()
+ 	// FIXME Call dmaengine_pause() first
+ dev_dbg_dma(port->dev, "  %s:%u terminated\n", __func__, __LINE__);
  	read = sg_dma_len(&s->sg_rx[active]) - state.residue;
- 
- 	if (read) {
 -- 
 2.17.1
