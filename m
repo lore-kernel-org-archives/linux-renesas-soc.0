@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:50482 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751757AbeF2O2H (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:55400 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755371AbeF2OZW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Jun 2018 10:28:07 -0400
+        Fri, 29 Jun 2018 10:25:22 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>,
@@ -13,9 +13,11 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 Cc: linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-sh@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] serial: sh-sci: Stop RX FIFO timer during port shutdown
-Date: Fri, 29 Jun 2018 16:28:03 +0200
-Message-Id: <20180629142803.21077-1-geert+renesas@glider.be>
+Subject: [PATCH 4/4] serial: sh-sci: Stop RX FIFO timer during port shutdown
+Date: Fri, 29 Jun 2018 16:25:13 +0200
+Message-Id: <20180629142513.20743-8-geert+renesas@glider.be>
+In-Reply-To: <20180629142513.20743-1-geert+renesas@glider.be>
+References: <20180629142513.20743-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -35,10 +37,10 @@ Tested with scifa0 on r8a7740/armadillo, after
  1 file changed, 2 insertions(+)
 
 diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 5c870ab80b98e25b..04f5b754e69e28dd 100644
+index 58016386558c6789..cca3bbc62a6b1110 100644
 --- a/drivers/tty/serial/sh-sci.c
 +++ b/drivers/tty/serial/sh-sci.c
-@@ -2100,6 +2100,8 @@ static void sci_shutdown(struct uart_port *port)
+@@ -2571,6 +2571,8 @@ static void sci_shutdown(struct uart_port *port)
  	}
  #endif
  
