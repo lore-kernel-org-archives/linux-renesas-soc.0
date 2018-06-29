@@ -1,129 +1,34 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v8 3/5] ARM: dts: Renesas R9A06G032 base device tree file
-Date: Tue,  5 Jun 2018 09:29:59 +0100
-Message-Id: <1528187462-47093-4-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:7827 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751433AbeF2KCq (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 29 Jun 2018 06:02:46 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org
+Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        stable@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 0/2] mmc: renesas_sdhi_internal_dmac: fix two issues for error path
+Date: Fri, 29 Jun 2018 19:01:43 +0900
+Message-Id: <1530266505-19953-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This adds the Renesas R9A06G032 bare bone support.
+This patch set is based on the mmc.git / fixes branch.
 
-This currently only handles the SYSCTRL block node,
-generic parts (gic, architected timer) and a UART.
+Changes from v1:
+ - Add Reviewed-by Geert-san.
+ - Add a new goto label for error path.
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r9a06g032.dtsi | 86 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
- create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
+Yoshihiro Shimoda (2):
+  mmc: renesas_sdhi_internal_dmac: Fix missing unmap in error patch
+  mmc: renesas_sdhi_internal_dmac: Cannot clear the RX_IN_USE in abort
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-new file mode 100644
-index 0000000..40827bb
---- /dev/null
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -0,0 +1,86 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ */
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/r9a06g032-sysctrl.h>
-+
-+/ {
-+	compatible = "renesas,r9a06g032";
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0>;
-+			clocks = <&sysctrl R9A06G032_CLK_A7MP>;
-+		};
-+
-+		cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <1>;
-+			clocks = <&sysctrl R9A06G032_CLK_A7MP>;
-+		};
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		interrupt-parent = <&gic>;
-+		ranges;
-+
-+		sysctrl: system-controller@4000c000 {
-+			compatible = "renesas,r9a06g032-sysctrl";
-+			reg = <0x4000c000 0x1000>;
-+			status = "okay";
-+			#clock-cells = <1>;
-+		};
-+
-+		uart0: serial@40060000 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x40060000 0x400>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&sysctrl R9A06G032_CLK_UART0>;
-+			clock-names = "baudclk";
-+			status = "disabled";
-+		};
-+
-+		gic: gic@44101000 {
-+			compatible = "arm,cortex-a7-gic", "arm,gic-400";
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			reg = <0x44101000 0x1000>, /* Distributer */
-+			      <0x44102000 0x2000>, /* CPU interface */
-+			      <0x44104000 0x2000>, /* Virt interface control */
-+			      <0x44106000 0x2000>; /* Virt CPU interface */
-+			interrupts =
-+				<GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,cortex-a7-timer",
-+			     "arm,armv7-timer";
-+		interrupt-parent = <&gic>;
-+		arm,cpu-registers-not-fw-configured;
-+		always-on;
-+		interrupts =
-+			<GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+};
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+
 -- 
-2.7.4
-
+1.9.1
