@@ -1,48 +1,43 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 1/2] i2c: recovery: send STOP if get_sda is not available
-Date: Sat, 30 Jun 2018 19:07:03 +0200
-Message-Id: <20180630170704.13103-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180630170704.13103-1-wsa+renesas@sang-engineering.com>
-References: <20180630170704.13103-1-wsa+renesas@sang-engineering.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:46006 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936350AbeF2Ork (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 29 Jun 2018 10:47:40 -0400
+Date: Fri, 29 Jun 2018 16:47:36 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77965: Add second port to
+ rcar_sound placeholder
+Message-ID: <20180629144734.23zhak4uhxr4sgdk@verge.net.au>
+References: <20180628124259.12760-1-horms+renesas@verge.net.au>
+ <CAMuHMdVBbQ-rHHcdkw=3_+Dng-sOdnV4uyQ7bGXT_FNWte67Fw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVBbQ-rHHcdkw=3_+Dng-sOdnV4uyQ7bGXT_FNWte67Fw@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If we can't read SDA to bail out early and toggle too many pulses,
-slaves may misunderstand these pulses. In the worst case, as a write
-operation. To avoid that and if we can write SDA, try to send STOP to
-avoid the misinterpretation.
+On Thu, Jun 28, 2018 at 03:33:59PM +0200, Geert Uytterhoeven wrote:
+> On Thu, Jun 28, 2018 at 2:43 PM Simon Horman <horms+renesas@verge.net.au> wrote:
+> > This node is just a placeholder but fills that function better if it does
+> > not trigger build warnings. This update satisfies the requirement that
+> > nodes with #address-cells/#size-cells properties have more than one child
+> > node.
+> >
+> > This is flagged by dtc as follows:
+> >  # make dtbs W=1
+> >  arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning (graph_child_address): /soc/sound@ec500000/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
+> >  arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dtb: Warning (graph_child_address): /soc/sound@ec500000/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/i2c-core-base.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 31d16ada6e7d..2cb4129c9585 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -198,7 +198,16 @@ int i2c_generic_scl_recovery(struct i2c_adapter *adap)
- 
- 		val = !val;
- 		bri->set_scl(adap, val);
--		ndelay(RECOVERY_NDELAY);
-+
-+		/*
-+		 * If we can't read SDA, we don't know when to bail out early.
-+		 * So, always create STOP then to ensure the additional pulses
-+		 * will do no harm.
-+		 */
-+		ndelay(RECOVERY_NDELAY / 2);
-+		if (!bri->get_sda && bri->set_sda)
-+			bri->set_sda(adap, val);
-+		ndelay(RECOVERY_NDELAY / 2);
- 	}
- 
- 	/* check if recovery actually succeeded */
--- 
-2.11.0
+Thanks, applied.
