@@ -1,40 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46087 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932254AbeF2OuI (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:7827 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753305AbeF2KCr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Jun 2018 10:50:08 -0400
-Date: Fri, 29 Jun 2018 16:50:04 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] mmc: renesas_sdhi_internal_dmac: Cannot clear the
- RX_IN_USE in abort
-Message-ID: <20180629145003.nap2ofgxt6ingpcx@verge.net.au>
+        Fri, 29 Jun 2018 06:02:47 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org
+Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        stable@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 2/2] mmc: renesas_sdhi_internal_dmac: Cannot clear the RX_IN_USE in abort
+Date: Fri, 29 Jun 2018 19:01:45 +0900
+Message-Id: <1530266505-19953-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1530266505-19953-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1530266505-19953-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1530266505-19953-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1530266505-19953-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jun 29, 2018 at 07:01:45PM +0900, Yoshihiro Shimoda wrote:
-> This patch is fixes an issue that the SDHI_INTERNAL_DMAC_RX_IN_USE
-> flag cannot be cleared because tmio_mmc_core sets the host->data
-> to NULL before the tmio_mmc_core calls tmio_mmc_abort_dma().
-> 
-> So, this patch clears the SDHI_INTERNAL_DMAC_RX_IN_USE in
-> the renesas_sdhi_internal_dmac_abort_dma() anyway. This doesn't
-> cause any side effects.
-> 
-> Fixes: 0cbc94daa554 ("mmc: renesas_sdhi_internal_dmac: limit DMA RX for old SoCs")
-> Cc: <stable@vger.kernel.org> # v4.17+
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This patch is fixes an issue that the SDHI_INTERNAL_DMAC_RX_IN_USE
+flag cannot be cleared because tmio_mmc_core sets the host->data
+to NULL before the tmio_mmc_core calls tmio_mmc_abort_dma().
 
+So, this patch clears the SDHI_INTERNAL_DMAC_RX_IN_USE in
+the renesas_sdhi_internal_dmac_abort_dma() anyway. This doesn't
+cause any side effects.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Fixes: 0cbc94daa554 ("mmc: renesas_sdhi_internal_dmac: limit DMA RX for old SoCs")
+Cc: <stable@vger.kernel.org> # v4.17+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index d676a20..d032bd6 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -139,8 +139,7 @@
+ 	renesas_sdhi_internal_dmac_dm_write(host, DM_CM_RST,
+ 					    RST_RESERVED_BITS | val);
+ 
+-	if (host->data && host->data->flags & MMC_DATA_READ)
+-		clear_bit(SDHI_INTERNAL_DMAC_RX_IN_USE, &global_flags);
++	clear_bit(SDHI_INTERNAL_DMAC_RX_IN_USE, &global_flags);
+ 
+ 	renesas_sdhi_internal_dmac_enable_dma(host, true);
+ }
+-- 
+1.9.1
