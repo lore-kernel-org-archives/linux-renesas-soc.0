@@ -1,74 +1,70 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: [PATCH v2 3/5] arm64: dts: renesas: r8a77980: add DU support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <390fabf0-4caf-1600-3780-1893207d94f7@cogentembedded.com>
-Message-ID: <842200af-095f-7096-a542-1d2865543264@cogentembedded.com>
-Date: Thu, 7 Jun 2018 23:21:38 +0300
-MIME-Version: 1.0
-In-Reply-To: <390fabf0-4caf-1600-3780-1893207d94f7@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:55004 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755464AbeF2OZW (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 29 Jun 2018 10:25:22 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-sh@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/3] serial: sh-sci: Fix port shutdown DMA race conditions
+Date: Fri, 29 Jun 2018 16:25:06 +0200
+Message-Id: <20180629142513.20743-1-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the generic R8A77980 part of the DU device node.
+	Hi all,
 
-Based on the original (and large) patch by Vladimir Barinov.
+This patch series fixes race conditions between DMA use and port
+shutdown on Renesas "SCIF" serial ports, causing e.g.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+    sh-sci e6550000.serial: Failed preparing Tx DMA descriptor
+    Unable to handle kernel read from unreadable memory at virtual address 0000000000000000
+    ...
+    Call trace:
+     sci_tx_dma_release+0x50/0xfc
+     work_fn_tx+0x128/0x22c
+     process_one_work+0x394/0x62c
+     worker_thread+0x21c/0x324
+     kthread+0x118/0x128
+     ret_from_fork+0x10/0x18
 
----
- arch/arm64/boot/dts/renesas/r8a77980.dtsi |   30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+I have no guaranteed way to reproducis this issue. I see it sometimes
+when doing a partial login on a port running getty, and letting getty
+time out.
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -671,6 +671,36 @@
- 			resets = <&cpg 603>;
- 		};
- 
-+		du: display@feb00000 {
-+			compatible = "renesas,du-r8a77980",
-+				     "renesas,du-r8a77970";
-+			reg = <0 0xfeb00000 0 0x80000>;
-+			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 724>;
-+			clock-names = "du.0";
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 724>;
-+			vsps = <&vspd0>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					du_out_rgb: endpoint {
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					du_out_lvds0: endpoint {
-+					};
-+				};
-+			};
-+		};
-+
- 		prr: chipid@fff00044 {
- 			compatible = "renesas,prr";
- 			reg = <0 0xfff00044 0 4>;
+The first two patches simplify DMA release handling, and make sure the
+work function is not called after port shutdown.
+The last patch switches the driver to the new
+dmaengine_terminate_(a)sync() functions, now DMA release is done from a
+single point.
+
+Please review. Thanks!
+
+Geert Uytterhoeven (3):
+  serial: sh-sci: Postpone DMA release when falling back to PIO
+  serial: sh-sci: Stop TX DMA workqueue during port shutdown
+  serial: sh-sci: Stop using deprecated dmaengine_terminate_all()
+
+ drivers/tty/serial/sh-sci.c | 93 +++++++++++++++++++------------------
+ 1 file changed, 47 insertions(+), 46 deletions(-)
+
+-- 
+2.17.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
