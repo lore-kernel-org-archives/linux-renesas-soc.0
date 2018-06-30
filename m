@@ -1,64 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52231 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934290AbeFYOEX (ORCPT
+Received: from sauhun.de ([88.99.104.3]:56738 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751241AbeF3RJp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jun 2018 10:04:23 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 26/29] arm64: dts: renesas: condor/v3hsk: specify Ethernet PHY IRQs
-Date: Mon, 25 Jun 2018 16:03:21 +0200
-Message-Id: <ffbd52352208534a30d5bbe2e15ee9e5cbb98c6d.1529933747.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1529933747.git.horms+renesas@verge.net.au>
-References: <cover.1529933747.git.horms+renesas@verge.net.au>
+        Sat, 30 Jun 2018 13:09:45 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH] i2c: recovery: rename variable for easier understanding
+Date: Sat, 30 Jun 2018 19:09:39 +0200
+Message-Id: <20180630170939.13240-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-Specify Ethernet PHY IRQs in the Condor/V3HSK board device trees, now that
-we have the GPIO support (previously phylib had  to resort to polling).
-
-Based on the original (and large) patch by Vladimir Barinov.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm64/boot/dts/renesas/r8a77980-condor.dts | 2 ++
- arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts  | 2 ++
- 2 files changed, 4 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980-condor.dts b/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-index cc3ee25f4e2d..9f25c407dfd7 100644
---- a/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-@@ -59,6 +59,8 @@
- 	phy0: ethernet-phy@0 {
- 		rxc-skew-ps = <1500>;
- 		reg = <0>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
- 	};
- };
+I think it does, but I am open for discussion, of course.
+
+ drivers/i2c/i2c-core-base.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index cbbfe3fd387b..6bf9c7b4af64 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -169,12 +169,12 @@ static void set_sda_gpio_value(struct i2c_adapter *adap, int val)
+ int i2c_generic_scl_recovery(struct i2c_adapter *adap)
+ {
+ 	struct i2c_bus_recovery_info *bri = adap->bus_recovery_info;
+-	int i = 0, val = 1, ret = 0;
++	int i = 0, scl = 1, ret = 0;
  
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts b/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-index bb7e0e5cd57b..9dac42f8f804 100644
---- a/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-@@ -48,6 +48,8 @@
+ 	if (bri->prepare_recovery)
+ 		bri->prepare_recovery(adap);
  
- 	phy0: ethernet-phy@0 {
- 		reg = <0>;
-+		interrupt-parent = <&gpio4>;
-+		interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
- 	};
- };
+-	bri->set_scl(adap, val);
++	bri->set_scl(adap, scl);
+ 	if (bri->set_sda)
+ 		bri->set_sda(adap, 1);
+ 	ndelay(RECOVERY_NDELAY);
+@@ -183,7 +183,7 @@ int i2c_generic_scl_recovery(struct i2c_adapter *adap)
+ 	 * By this time SCL is high, as we need to give 9 falling-rising edges
+ 	 */
+ 	while (i++ < RECOVERY_CLK_CNT * 2) {
+-		if (val) {
++		if (scl) {
+ 			/* SCL shouldn't be low here */
+ 			if (!bri->get_scl(adap)) {
+ 				dev_err(&adap->dev,
+@@ -196,8 +196,8 @@ int i2c_generic_scl_recovery(struct i2c_adapter *adap)
+ 				break;
+ 		}
+ 
+-		val = !val;
+-		bri->set_scl(adap, val);
++		scl = !scl;
++		bri->set_scl(adap, scl);
+ 
+ 		/*
+ 		 * If we can't read SDA, we don't know when to bail out early.
+@@ -207,7 +207,7 @@ int i2c_generic_scl_recovery(struct i2c_adapter *adap)
+ 		 */
+ 		ndelay(RECOVERY_NDELAY / 2);
+ 		if (!bri->get_sda)
+-			bri->set_sda(adap, val);
++			bri->set_sda(adap, scl);
+ 		ndelay(RECOVERY_NDELAY / 2);
+ 	}
  
 -- 
 2.11.0
