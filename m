@@ -1,72 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:46272 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932554AbeFFKA2 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:56668 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751272AbeF3RHN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jun 2018 06:00:28 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 06/14] mfd: da9063: Replace DA9063_NUM_IRQ with ARRAY_SIZE
-Date: Wed,  6 Jun 2018 11:59:55 +0200
-Message-Id: <20180606100003.17067-6-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
-References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+        Sat, 30 Jun 2018 13:07:13 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 0/2] i2c: recovery: make sure pulses are not misinterpreted
+Date: Sat, 30 Jun 2018 19:07:02 +0200
+Message-Id: <20180630170704.13103-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Replace DA9063_NUM_IRQ macro which is not used anywhere with
-plain ARRAY_SIZE().
+As the 'incomplete_write_byte' fault injector has shown, we need to take care
+that pulses used for recovery will not be misinterpreted as a regular cycle.
+This series implements that. This approach makes sure that STOP signals put on
+the bus do not create additional pulses. We still do 9 pulses only, but
+generate a STOP signal in case SDA was released again (and we cannot read SDA
+status).
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
-V4: New patch
-V5: Remove DA9063_IRQ_BASE_OFFSET
----
- drivers/mfd/da9063-irq.c        | 2 +-
- include/linux/mfd/da9063/core.h | 3 ---
- 2 files changed, 1 insertion(+), 4 deletions(-)
+The first patch implements it in a minimal way, so it is suitable for stable.
+The second patch adds some sanity checking and documentation on top which is
+not suitable for stable.
 
-diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
-index 044bd867f540..579947f83486 100644
---- a/drivers/mfd/da9063-irq.c
-+++ b/drivers/mfd/da9063-irq.c
-@@ -94,7 +94,7 @@ static const struct regmap_irq da9063_irqs[] = {
- static const struct regmap_irq_chip da9063_irq_chip = {
- 	.name = "da9063-irq",
- 	.irqs = da9063_irqs,
--	.num_irqs = DA9063_NUM_IRQ,
-+	.num_irqs = ARRAY_SIZE(da9063_irqs),
- 	.num_regs = 4,
- 	.status_base = DA9063_REG_EVENT_A,
- 	.mask_base = DA9063_REG_IRQ_MASK_A,
-diff --git a/include/linux/mfd/da9063/core.h b/include/linux/mfd/da9063/core.h
-index 8e6684d884e0..260cd5834861 100644
---- a/include/linux/mfd/da9063/core.h
-+++ b/include/linux/mfd/da9063/core.h
-@@ -72,9 +72,6 @@ enum da9063_irqs {
- 	DA9063_IRQ_GPI15,
- };
- 
--#define DA9063_IRQ_BASE_OFFSET	0
--#define DA9063_NUM_IRQ		(DA9063_IRQ_GPI15 + 1 - DA9063_IRQ_BASE_OFFSET)
--
- struct da9063 {
- 	/* Device */
- 	struct device	*dev;
+Looking forward to comments.
+
+Kind regards,
+
+   Wolfram
+
+
+Wolfram Sang (2):
+  i2c: recovery: send STOP if get_sda is not available
+  i2c: recovery: require either get_sda or set_sda
+
+ drivers/i2c/i2c-core-base.c | 16 +++++++++++++++-
+ include/linux/i2c.h         | 12 ++++++------
+ 2 files changed, 21 insertions(+), 7 deletions(-)
+
 -- 
-2.16.2
+2.11.0
