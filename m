@@ -1,127 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:44508 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388273AbeGKOZn (ORCPT
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34634 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030294AbeGAQ35 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:25:43 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Sun, 1 Jul 2018 12:29:57 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 07/11] clk: renesas: rcar-gen3: Add support for RCKSEL clock selection
-Date: Wed, 11 Jul 2018 16:20:56 +0200
-Message-Id: <20180711142100.3765-8-geert+renesas@glider.be>
-In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
-References: <20180711142100.3765-1-geert+renesas@glider.be>
+Subject: [PATCH 4.14 021/157] thermal: bcm2835: Stop using printk format %pCr
+Date: Sun,  1 Jul 2018 18:21:33 +0200
+Message-Id: <20180701160853.314692037@linuxfoundation.org>
+In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
+References: <20180701160852.287307684@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a clock type and macro for defining clocks where the parent and
-divider are selected based on the value of the RCKCR.CKSEL bit.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
+------------------
+
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+
+commit bd2a07f71a1e2e198f8a30cb551d9defe422d83d upstream.
+
+Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
+called in atomic context.
+
+Replace it by printing the variable that already holds the clock rate.
+Note that calling clk_get_rate() is safe here, as the code runs in task
+context.
+
+Link: http://lkml.kernel.org/r/1527845302-12159-3-git-send-email-geert+renesas@glider.be
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Zhang Rui <rui.zhang@intel.com>
+To: Eduardo Valentin <edubezval@gmail.com>
+To: Eric Anholt <eric@anholt.net>
+To: Stefan Wahren <stefan.wahren@i2se.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+Cc: linux-serial@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org # 4.12+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/rcar-gen3-cpg.c | 23 ++++++++++++++++++++---
- drivers/clk/renesas/rcar-gen3-cpg.h |  8 +++++++-
- 2 files changed, 27 insertions(+), 4 deletions(-)
+Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 7533a51c679bfd54..19a77822757d29de 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -1,7 +1,7 @@
- /*
-  * R-Car Gen3 Clock Pulse Generator
-  *
-- * Copyright (C) 2015-2016 Glider bvba
-+ * Copyright (C) 2015-2018 Glider bvba
-  *
-  * Based on clk-rcar-gen3.c
-  *
-@@ -31,6 +31,8 @@
- #define CPG_PLL2CR		0x002c
- #define CPG_PLL4CR		0x01f4
+---
+ drivers/thermal/broadcom/bcm2835_thermal.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/thermal/broadcom/bcm2835_thermal.c
++++ b/drivers/thermal/broadcom/bcm2835_thermal.c
+@@ -213,8 +213,8 @@ static int bcm2835_thermal_probe(struct
+ 	rate = clk_get_rate(data->clk);
+ 	if ((rate < 1920000) || (rate > 5000000))
+ 		dev_warn(&pdev->dev,
+-			 "Clock %pCn running at %pCr Hz is outside of the recommended range: 1.92 to 5MHz\n",
+-			 data->clk, data->clk);
++			 "Clock %pCn running at %lu Hz is outside of the recommended range: 1.92 to 5MHz\n",
++			 data->clk, rate);
  
-+#define CPG_RCKCR_CKSEL	BIT(15)	/* RCLK Clock Source Select */
-+
- struct cpg_simple_notifier {
- 	struct notifier_block nb;
- 	void __iomem *reg;
-@@ -444,7 +446,7 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 	unsigned int div = 1;
- 	u32 value;
- 
--	parent = clks[core->parent & 0xffff];	/* CLK_TYPE_PE uses high bits */
-+	parent = clks[core->parent & 0xffff];	/* some types use high bits */
- 	if (IS_ERR(parent))
- 		return ERR_CAST(parent);
- 
-@@ -524,7 +526,7 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 
- 			if (clk_get_rate(clks[cpg_clk_extalr])) {
- 				parent = clks[cpg_clk_extalr];
--				value |= BIT(15);
-+				value |= CPG_RCKCR_CKSEL;
- 			}
- 
- 			writel(value, csn->reg);
-@@ -570,6 +572,21 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 		div = cpg_pll_config->osc_prediv * core->div;
- 		break;
- 
-+	case CLK_TYPE_GEN3_RCKSEL:
-+		/*
-+		 * Clock selectable between two parents and two fixed dividers
-+		 * using RCKCR.CKSEL
-+		 */
-+		if (readl(base + CPG_RCKCR) & CPG_RCKCR_CKSEL) {
-+			div = core->div & 0xffff;
-+		} else {
-+			parent = clks[core->parent >> 16];
-+			if (IS_ERR(parent))
-+				return ERR_CAST(parent);
-+			div = core->div >> 16;
-+		}
-+		break;
-+
- 	default:
- 		return ERR_PTR(-EINVAL);
- 	}
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-index d7d84d9e4a1c9c8b..214df713ce719991 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -1,7 +1,7 @@
- /*
-  * R-Car Gen3 Clock Pulse Generator
-  *
-- * Copyright (C) 2015-2016 Glider bvba
-+ * Copyright (C) 2015-2018 Glider bvba
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License as published by
-@@ -24,6 +24,7 @@ enum rcar_gen3_clk_types {
- 	CLK_TYPE_GEN3_Z,
- 	CLK_TYPE_GEN3_Z2,
- 	CLK_TYPE_GEN3_OSC,	/* OSC EXTAL predivider and fixed divider */
-+	CLK_TYPE_GEN3_RCKSEL,	/* Select parent/divider using RCKCR.CKSEL */
- };
- 
- #define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
-@@ -37,6 +38,11 @@ enum rcar_gen3_clk_types {
- #define DEF_GEN3_OSC(_name, _id, _parent, _div)		\
- 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_OSC, _parent, .div = _div)
- 
-+#define DEF_GEN3_RCKSEL(_name, _id, _parent0, _div0, _parent1, _div1) \
-+	DEF_BASE(_name, _id, CLK_TYPE_GEN3_RCKSEL,	\
-+		 (_parent0) << 16 | (_parent1),	.div = (_div0) << 16 | (_div1))
-+
-+
- struct rcar_gen3_cpg_pll_config {
- 	u8 extal_div;
- 	u8 pll1_mult;
--- 
-2.17.1
+ 	/* register of thermal sensor and get info from DT */
+ 	tz = thermal_zone_of_sensor_register(&pdev->dev, 0, data,
