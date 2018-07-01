@@ -1,122 +1,115 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:37544 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387907AbeGWTNs (ORCPT
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33042 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753225AbeGAQSh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jul 2018 15:13:48 -0400
-Received: by mail-lf1-f68.google.com with SMTP id j8-v6so1138136lfb.4
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Jul 2018 11:11:21 -0700 (PDT)
-Subject: [PATCH 2/5] sh_eth: make sh_eth_tsu_get_offset() match its name
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
-Cc: linux-renesas-soc@vger.kernel.org
-References: <24093fd0-1b9b-a211-f988-0272483185d6@cogentembedded.com>
-Message-ID: <ccec4eaa-89e8-76be-e5c2-874fcde0b223@cogentembedded.com>
-Date: Mon, 23 Jul 2018 21:11:19 +0300
+        Sun, 1 Jul 2018 12:18:37 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4.4 035/105] lib/vsprintf: Remove atomic-unsafe support for %pCr
+Date: Sun,  1 Jul 2018 18:01:45 +0200
+Message-Id: <20180701153151.781880637@linuxfoundation.org>
+In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
+References: <20180701153149.382300170@linuxfoundation.org>
 MIME-Version: 1.0
-In-Reply-To: <24093fd0-1b9b-a211-f988-0272483185d6@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-sh_eth_tsu_get_offset(), despite its name, returns a TSU register's address,
-not its offset.  Make this  function match its name and return a register's
-offset  from the TSU  registers base address instead.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+------------------
+
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+
+commit 666902e42fd8344b923c02dc5b0f37948ff4f225 upstream.
+
+"%pCr" formats the current rate of a clock, and calls clk_get_rate().
+The latter obtains a mutex, hence it must not be called from atomic
+context.
+
+Remove support for this rarely-used format, as vsprintf() (and e.g.
+printk()) must be callable from any context.
+
+Any remaining out-of-tree users will start seeing the clock's name
+printed instead of its rate.
+
+Reported-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Fixes: 900cca2944254edd ("lib/vsprintf: add %pC{,n,r} format specifiers for clocks")
+Link: http://lkml.kernel.org/r/1527845302-12159-5-git-send-email-geert+renesas@glider.be
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Zhang Rui <rui.zhang@intel.com>
+To: Eduardo Valentin <edubezval@gmail.com>
+To: Eric Anholt <eric@anholt.net>
+To: Stefan Wahren <stefan.wahren@i2se.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+Cc: linux-serial@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: stable@vger.kernel.org # 4.1+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/renesas/sh_eth.c |   24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+ Documentation/printk-formats.txt |    3 +--
+ lib/vsprintf.c                   |    3 ---
+ 2 files changed, 1 insertion(+), 5 deletions(-)
 
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.c
-@@ -439,9 +439,9 @@ static void sh_eth_modify(struct net_dev
- 		     enum_index);
- }
+--- a/Documentation/printk-formats.txt
++++ b/Documentation/printk-formats.txt
+@@ -273,11 +273,10 @@ struct clk:
  
--static void *sh_eth_tsu_get_offset(struct sh_eth_private *mdp, int enum_index)
-+static u16 sh_eth_tsu_get_offset(struct sh_eth_private *mdp, int enum_index)
- {
--	return mdp->tsu_addr + mdp->reg_offset[enum_index];
-+	return mdp->reg_offset[enum_index];
- }
+ 	%pC	pll1
+ 	%pCn	pll1
+-	%pCr	1560000000
  
- static void sh_eth_tsu_write(struct sh_eth_private *mdp, u32 data,
-@@ -2712,12 +2712,12 @@ static void sh_eth_tsu_read_entry(void *
- static int sh_eth_tsu_find_entry(struct net_device *ndev, const u8 *addr)
- {
- 	struct sh_eth_private *mdp = netdev_priv(ndev);
--	void *reg_offset = sh_eth_tsu_get_offset(mdp, TSU_ADRH0);
-+	u16 reg_offset = sh_eth_tsu_get_offset(mdp, TSU_ADRH0);
- 	int i;
- 	u8 c_addr[ETH_ALEN];
+ 	For printing struct clk structures. '%pC' and '%pCn' print the name
+ 	(Common Clock Framework) or address (legacy clock framework) of the
+-	structure; '%pCr' prints the current clock rate.
++	structure.
  
- 	for (i = 0; i < SH_ETH_TSU_CAM_ENTRIES; i++, reg_offset += 8) {
--		sh_eth_tsu_read_entry(reg_offset, c_addr);
-+		sh_eth_tsu_read_entry(mdp->tsu_addr + reg_offset, c_addr);
- 		if (ether_addr_equal(addr, c_addr))
- 			return i;
- 	}
-@@ -2739,7 +2739,7 @@ static int sh_eth_tsu_disable_cam_entry_
- 					      int entry)
- {
- 	struct sh_eth_private *mdp = netdev_priv(ndev);
--	void *reg_offset = sh_eth_tsu_get_offset(mdp, TSU_ADRH0);
-+	u16 reg_offset = sh_eth_tsu_get_offset(mdp, TSU_ADRH0);
- 	int ret;
- 	u8 blank[ETH_ALEN];
+ 	Passed by reference.
  
-@@ -2747,7 +2747,9 @@ static int sh_eth_tsu_disable_cam_entry_
- 			 ~(1 << (31 - entry)), TSU_TEN);
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -1345,9 +1345,6 @@ char *clock(char *buf, char *end, struct
+ 		return string(buf, end, NULL, spec);
  
- 	memset(blank, 0, sizeof(blank));
--	ret = sh_eth_tsu_write_entry(ndev, reg_offset + entry * 8, blank);
-+	ret = sh_eth_tsu_write_entry(ndev,
-+				     mdp->tsu_addr + reg_offset + entry * 8,
-+				     blank);
- 	if (ret < 0)
- 		return ret;
- 	return 0;
-@@ -2756,7 +2758,7 @@ static int sh_eth_tsu_disable_cam_entry_
- static int sh_eth_tsu_add_entry(struct net_device *ndev, const u8 *addr)
- {
- 	struct sh_eth_private *mdp = netdev_priv(ndev);
--	void *reg_offset = sh_eth_tsu_get_offset(mdp, TSU_ADRH0);
-+	u16 reg_offset = sh_eth_tsu_get_offset(mdp, TSU_ADRH0);
- 	int i, ret;
- 
- 	if (!mdp->cd->tsu)
-@@ -2768,7 +2770,9 @@ static int sh_eth_tsu_add_entry(struct n
- 		i = sh_eth_tsu_find_empty(ndev);
- 		if (i < 0)
- 			return -ENOMEM;
--		ret = sh_eth_tsu_write_entry(ndev, reg_offset + i * 8, addr);
-+		ret = sh_eth_tsu_write_entry(ndev,
-+					     mdp->tsu_addr + reg_offset + i * 8,
-+					     addr);
- 		if (ret < 0)
- 			return ret;
- 
-@@ -2830,15 +2834,15 @@ static int sh_eth_tsu_purge_all(struct n
- static void sh_eth_tsu_purge_mcast(struct net_device *ndev)
- {
- 	struct sh_eth_private *mdp = netdev_priv(ndev);
-+	u16 reg_offset = sh_eth_tsu_get_offset(mdp, TSU_ADRH0);
- 	u8 addr[ETH_ALEN];
--	void *reg_offset = sh_eth_tsu_get_offset(mdp, TSU_ADRH0);
- 	int i;
- 
- 	if (!mdp->cd->tsu)
- 		return;
- 
- 	for (i = 0; i < SH_ETH_TSU_CAM_ENTRIES; i++, reg_offset += 8) {
--		sh_eth_tsu_read_entry(reg_offset, addr);
-+		sh_eth_tsu_read_entry(mdp->tsu_addr + reg_offset, addr);
- 		if (is_multicast_ether_addr(addr))
- 			sh_eth_tsu_del_entry(ndev, addr);
- 	}
+ 	switch (fmt[1]) {
+-	case 'r':
+-		return number(buf, end, clk_get_rate(clk), spec);
+-
+ 	case 'n':
+ 	default:
+ #ifdef CONFIG_COMMON_CLK
