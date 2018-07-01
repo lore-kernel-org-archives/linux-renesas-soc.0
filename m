@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33524 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37120 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964845AbeGAQYi (ORCPT
+        with ESMTP id S1031853AbeGAQkI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:24:38 -0400
+        Sun, 1 Jul 2018 12:40:08 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
         Jonathan Corbet <corbet@lwn.net>,
@@ -24,17 +24,17 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4.9 016/101] lib/vsprintf: Remove atomic-unsafe support for %pCr
-Date: Sun,  1 Jul 2018 18:21:02 +0200
-Message-Id: <20180701160757.782482744@linuxfoundation.org>
-In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
-References: <20180701160757.138608453@linuxfoundation.org>
+Subject: [PATCH 4.17 033/220] lib/vsprintf: Remove atomic-unsafe support for %pCr
+Date: Sun,  1 Jul 2018 18:20:57 +0200
+Message-Id: <20180701160909.718293393@linuxfoundation.org>
+In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
+References: <20180701160908.272447118@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -82,28 +82,28 @@ Signed-off-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/printk-formats.txt |    3 +--
- lib/vsprintf.c                   |    3 ---
+ Documentation/core-api/printk-formats.rst |    3 +--
+ lib/vsprintf.c                            |    3 ---
  2 files changed, 1 insertion(+), 5 deletions(-)
 
---- a/Documentation/printk-formats.txt
-+++ b/Documentation/printk-formats.txt
-@@ -279,11 +279,10 @@ struct clk:
+--- a/Documentation/core-api/printk-formats.rst
++++ b/Documentation/core-api/printk-formats.rst
+@@ -419,11 +419,10 @@ struct clk
  
  	%pC	pll1
  	%pCn	pll1
 -	%pCr	1560000000
  
- 	For printing struct clk structures. '%pC' and '%pCn' print the name
- 	(Common Clock Framework) or address (legacy clock framework) of the
--	structure; '%pCr' prints the current clock rate.
-+	structure.
+ For printing struct clk structures. %pC and %pCn print the name
+ (Common Clock Framework) or address (legacy clock framework) of the
+-structure; %pCr prints the current clock rate.
++structure.
  
- 	Passed by reference.
+ Passed by reference.
  
 --- a/lib/vsprintf.c
 +++ b/lib/vsprintf.c
-@@ -1391,9 +1391,6 @@ char *clock(char *buf, char *end, struct
+@@ -1456,9 +1456,6 @@ char *clock(char *buf, char *end, struct
  		return string(buf, end, NULL, spec);
  
  	switch (fmt[1]) {
