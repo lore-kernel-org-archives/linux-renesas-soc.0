@@ -1,70 +1,114 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:53505 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731524AbeGQNEM (ORCPT
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33494 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933640AbeGAQYf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jul 2018 09:04:12 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Lars-Peter Clausen <lars@metafoo.de>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        Steve Longerbeam <steve_longerbeam@mentor.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 2/2] adv7180: add g_frame_interval support
-Date: Tue, 17 Jul 2018 14:30:41 +0200
-Message-Id: <20180717123041.2862-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180717123041.2862-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180717123041.2862-1-niklas.soderlund+renesas@ragnatech.se>
+        Sun, 1 Jul 2018 12:24:35 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4.9 015/101] clk: renesas: cpg-mssr: Stop using printk format %pCr
+Date: Sun,  1 Jul 2018 18:21:01 +0200
+Message-Id: <20180701160757.744559346@linuxfoundation.org>
+In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
+References: <20180701160757.138608453@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Implement g_frame_interval to return the current standard's frame
-interval.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+------------------
+
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+
+commit ef4b0be62641d296cf4c0ad8f75ab83ab066ed51 upstream.
+
+Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
+called in atomic context.
+
+Replace it by open-coding the operation.  This is safe here, as the code
+runs in task context.
+
+Link: http://lkml.kernel.org/r/1527845302-12159-2-git-send-email-geert+renesas@glider.be
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Zhang Rui <rui.zhang@intel.com>
+To: Eduardo Valentin <edubezval@gmail.com>
+To: Eric Anholt <eric@anholt.net>
+To: Stefan Wahren <stefan.wahren@i2se.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+Cc: linux-serial@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: stable@vger.kernel.org # 4.5+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/media/i2c/adv7180.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/clk/renesas/renesas-cpg-mssr.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/i2c/adv7180.c b/drivers/media/i2c/adv7180.c
-index c2e24132e8c21d38..f72312efc471acd9 100644
---- a/drivers/media/i2c/adv7180.c
-+++ b/drivers/media/i2c/adv7180.c
-@@ -461,6 +461,22 @@ static int adv7180_g_std(struct v4l2_subdev *sd, v4l2_std_id *norm)
- 	return 0;
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -243,8 +243,9 @@ struct clk *cpg_mssr_clk_src_twocell_get
+ 		dev_err(dev, "Cannot get %s clock %u: %ld", type, clkidx,
+ 		       PTR_ERR(clk));
+ 	else
+-		dev_dbg(dev, "clock (%u, %u) is %pC at %pCr Hz\n",
+-			clkspec->args[0], clkspec->args[1], clk, clk);
++		dev_dbg(dev, "clock (%u, %u) is %pC at %lu Hz\n",
++			clkspec->args[0], clkspec->args[1], clk,
++			clk_get_rate(clk));
+ 	return clk;
  }
  
-+static int adv7180_g_frame_interval(struct v4l2_subdev *sd,
-+				    struct v4l2_subdev_frame_interval *fi)
-+{
-+	struct adv7180_state *state = to_state(sd);
-+
-+	if (state->curr_norm & V4L2_STD_525_60) {
-+		fi->interval.numerator = 1001;
-+		fi->interval.denominator = 30000;
-+	} else {
-+		fi->interval.numerator = 1;
-+		fi->interval.denominator = 25;
-+	}
-+
-+	return 0;
-+}
-+
- static void adv7180_set_power_pin(struct adv7180_state *state, bool on)
- {
- 	if (!state->pwdn_gpio)
-@@ -820,6 +836,7 @@ static int adv7180_subscribe_event(struct v4l2_subdev *sd,
- static const struct v4l2_subdev_video_ops adv7180_video_ops = {
- 	.s_std = adv7180_s_std,
- 	.g_std = adv7180_g_std,
-+	.g_frame_interval = adv7180_g_frame_interval,
- 	.querystd = adv7180_querystd,
- 	.g_input_status = adv7180_g_input_status,
- 	.s_routing = adv7180_s_routing,
--- 
-2.18.0
+@@ -304,7 +305,7 @@ static void __init cpg_mssr_register_cor
+ 	if (IS_ERR_OR_NULL(clk))
+ 		goto fail;
+ 
+-	dev_dbg(dev, "Core clock %pC at %pCr Hz\n", clk, clk);
++	dev_dbg(dev, "Core clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
+ 	priv->clks[id] = clk;
+ 	return;
+ 
+@@ -372,7 +373,7 @@ static void __init cpg_mssr_register_mod
+ 	if (IS_ERR(clk))
+ 		goto fail;
+ 
+-	dev_dbg(dev, "Module clock %pC at %pCr Hz\n", clk, clk);
++	dev_dbg(dev, "Module clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
+ 	priv->clks[id] = clk;
+ 	return;
+ 
