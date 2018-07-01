@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33494 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34648 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933640AbeGAQYf (ORCPT
+        with ESMTP id S1030295AbeGAQaA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:24:35 -0400
+        Sun, 1 Jul 2018 12:30:00 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
         Jonathan Corbet <corbet@lwn.net>,
@@ -24,17 +24,17 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4.9 015/101] clk: renesas: cpg-mssr: Stop using printk format %pCr
-Date: Sun,  1 Jul 2018 18:21:01 +0200
-Message-Id: <20180701160757.744559346@linuxfoundation.org>
-In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
-References: <20180701160757.138608453@linuxfoundation.org>
+Subject: [PATCH 4.14 022/157] clk: renesas: cpg-mssr: Stop using printk format %pCr
+Date: Sun,  1 Jul 2018 18:21:34 +0200
+Message-Id: <20180701160853.368381940@linuxfoundation.org>
+In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
+References: <20180701160852.287307684@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -82,7 +82,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/clk/renesas/renesas-cpg-mssr.c
 +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -243,8 +243,9 @@ struct clk *cpg_mssr_clk_src_twocell_get
+@@ -248,8 +248,9 @@ struct clk *cpg_mssr_clk_src_twocell_get
  		dev_err(dev, "Cannot get %s clock %u: %ld", type, clkidx,
  		       PTR_ERR(clk));
  	else
@@ -94,7 +94,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	return clk;
  }
  
-@@ -304,7 +305,7 @@ static void __init cpg_mssr_register_cor
+@@ -314,7 +315,7 @@ static void __init cpg_mssr_register_cor
  	if (IS_ERR_OR_NULL(clk))
  		goto fail;
  
@@ -103,7 +103,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	priv->clks[id] = clk;
  	return;
  
-@@ -372,7 +373,7 @@ static void __init cpg_mssr_register_mod
+@@ -380,7 +381,7 @@ static void __init cpg_mssr_register_mod
  	if (IS_ERR(clk))
  		goto fail;
  
