@@ -1,69 +1,169 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:38762 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388365AbeGKOZn (ORCPT
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:34995 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752584AbeGBSI0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:25:43 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 06/11] clk: renesas: cpg-mssr: Add support for fixed rate clocks
-Date: Wed, 11 Jul 2018 16:20:55 +0200
-Message-Id: <20180711142100.3765-7-geert+renesas@glider.be>
-In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
-References: <20180711142100.3765-1-geert+renesas@glider.be>
+        Mon, 2 Jul 2018 14:08:26 -0400
+Received: by mail-lj1-f196.google.com with SMTP id i125-v6so13210517lji.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 02 Jul 2018 11:08:25 -0700 (PDT)
+Date: Mon, 2 Jul 2018 20:08:23 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v6 06/10] media: rcar-vin: Parse parallel input on Gen3
+Message-ID: <20180702180823.GY5237@bigcity.dyn.berto.se>
+References: <1528796612-7387-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1528796612-7387-7-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1528796612-7387-7-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for defining fixed rate clocks, to be used for on-chip
-oscillators.
+Hi Jacopo,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 5 +++++
- drivers/clk/renesas/renesas-cpg-mssr.h | 3 +++
- 2 files changed, 8 insertions(+)
+Thanks for your work.
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index f4b013e9352d9efc..e04338932786bc14 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -313,6 +313,11 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
- 		}
- 		break;
- 
-+	case CLK_TYPE_FR:
-+		clk = clk_register_fixed_rate(NULL, core->name, NULL, 0,
-+					      core->mult);
-+		break;
-+
- 	default:
- 		if (info->cpg_clk_register)
- 			clk = info->cpg_clk_register(dev, core, info,
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
-index 642f720b9b055337..87bb8f368d4ecd18 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.h
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-@@ -38,6 +38,7 @@ enum clk_types {
- 	CLK_TYPE_FF,		/* Fixed Factor Clock */
- 	CLK_TYPE_DIV6P1,	/* DIV6 Clock with 1 parent clock */
- 	CLK_TYPE_DIV6_RO,	/* DIV6 Clock read only with extra divisor */
-+	CLK_TYPE_FR,		/* Fixed Rate Clock */
- 
- 	/* Custom definitions start here */
- 	CLK_TYPE_CUSTOM,
-@@ -56,6 +57,8 @@ enum clk_types {
- 	DEF_BASE(_name, _id, CLK_TYPE_DIV6P1, _parent, .offset = _offset)
- #define DEF_DIV6_RO(_name, _id, _parent, _offset, _div)	\
- 	DEF_BASE(_name, _id, CLK_TYPE_DIV6_RO, _parent, .offset = _offset, .div = _div, .mult = 1)
-+#define DEF_RATE(_name, _id, _rate)	\
-+	DEF_TYPE(_name, _id, CLK_TYPE_FR, .mult = _rate)
- 
-     /*
-      * Definitions of Module Clocks
+On 2018-06-12 11:43:28 +0200, Jacopo Mondi wrote:
+> The rcar-vin driver so far had a mutually exclusive code path for
+> handling parallel and CSI-2 video input subdevices, with only the CSI-2
+> use case supporting media-controller. As we add support for parallel
+> inputs to Gen3 media-controller compliant code path now parse both port@0
+> and port@1, handling the media-controller use case in the parallel
+> bound/unbind notifier operations.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+
+Acked-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+
+> ---
+> r5 -> r6:
+> - Fix 'error_group_unregister' and 'error_dma_unregister' label names
+> 
+> v4 -> v5:
+> - Re-group rvin_mc_init() function
+> - Add error_group_unreg error path to clean up group registration
+> - Change rvin_parallel_init() return type to make sure Gen2 works as before
+> 
+> v3 -> v4:
+> - Change the mc/parallel initialization order. Initialize mc first, then
+>   parallel
+> - As a consequence no need to delay parallel notifiers registration, the
+>   media controller is set up already when parallel input got parsed,
+>   this greatly simplify the group notifier complete callback.
+> ---
+> 
+>  drivers/media/platform/rcar-vin/rcar-core.c | 53 +++++++++++++++++++++--------
+>  1 file changed, 38 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index 39bb193..91ccaf8 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -397,6 +397,11 @@ static int rvin_parallel_subdevice_attach(struct rvin_dev *vin,
+>  	ret = rvin_find_pad(subdev, MEDIA_PAD_FL_SINK);
+>  	vin->parallel->sink_pad = ret < 0 ? 0 : ret;
+> 
+> +	if (vin->info->use_mc) {
+> +		vin->parallel->subdev = subdev;
+> +		return 0;
+> +	}
+> +
+>  	/* Find compatible subdevices mbus format */
+>  	vin->mbus_code = 0;
+>  	code.index = 0;
+> @@ -458,10 +463,12 @@ static int rvin_parallel_subdevice_attach(struct rvin_dev *vin,
+>  static void rvin_parallel_subdevice_detach(struct rvin_dev *vin)
+>  {
+>  	rvin_v4l2_unregister(vin);
+> -	v4l2_ctrl_handler_free(&vin->ctrl_handler);
+> -
+> -	vin->vdev.ctrl_handler = NULL;
+>  	vin->parallel->subdev = NULL;
+> +
+> +	if (!vin->info->use_mc) {
+> +		v4l2_ctrl_handler_free(&vin->ctrl_handler);
+> +		vin->vdev.ctrl_handler = NULL;
+> +	}
+>  }
+> 
+>  static int rvin_parallel_notify_complete(struct v4l2_async_notifier *notifier)
+> @@ -550,18 +557,19 @@ static int rvin_parallel_parse_v4l2(struct device *dev,
+>  	return 0;
+>  }
+> 
+> -static int rvin_parallel_graph_init(struct rvin_dev *vin)
+> +static int rvin_parallel_init(struct rvin_dev *vin)
+>  {
+>  	int ret;
+> 
+> -	ret = v4l2_async_notifier_parse_fwnode_endpoints(
+> -		vin->dev, &vin->notifier,
+> -		sizeof(struct rvin_parallel_entity), rvin_parallel_parse_v4l2);
+> +	ret = v4l2_async_notifier_parse_fwnode_endpoints_by_port(
+> +		vin->dev, &vin->notifier, sizeof(struct rvin_parallel_entity),
+> +		0, rvin_parallel_parse_v4l2);
+>  	if (ret)
+>  		return ret;
+> 
+> +	/* If using mc, it's fine not to have any input registered. */
+>  	if (!vin->parallel)
+> -		return -ENODEV;
+> +		return vin->info->use_mc ? 0 : -ENODEV;
+> 
+>  	vin_dbg(vin, "Found parallel subdevice %pOF\n",
+>  		to_of_node(vin->parallel->asd.match.fwnode));
+> @@ -1074,20 +1082,35 @@ static int rcar_vin_probe(struct platform_device *pdev)
+>  		return ret;
+> 
+>  	platform_set_drvdata(pdev, vin);
+> -	if (vin->info->use_mc)
+> +
+> +	if (vin->info->use_mc) {
+>  		ret = rvin_mc_init(vin);
+> -	else
+> -		ret = rvin_parallel_graph_init(vin);
+> -	if (ret < 0)
+> -		goto error;
+> +		if (ret)
+> +			goto error_dma_unregister;
+> +	}
+> +
+> +	ret = rvin_parallel_init(vin);
+> +	if (ret)
+> +		goto error_group_unregister;
+> 
+>  	pm_suspend_ignore_children(&pdev->dev, true);
+>  	pm_runtime_enable(&pdev->dev);
+> 
+>  	return 0;
+> -error:
+> +
+> +error_group_unregister:
+> +	if (vin->info->use_mc) {
+> +		mutex_lock(&vin->group->lock);
+> +		if (&vin->v4l2_dev == vin->group->notifier.v4l2_dev) {
+> +			v4l2_async_notifier_unregister(&vin->group->notifier);
+> +			v4l2_async_notifier_cleanup(&vin->group->notifier);
+> +		}
+> +		mutex_unlock(&vin->group->lock);
+> +		rvin_group_put(vin);
+> +	}
+> +
+> +error_dma_unregister:
+>  	rvin_dma_unregister(vin);
+> -	v4l2_async_notifier_cleanup(&vin->notifier);
+> 
+>  	return ret;
+>  }
+> --
+> 2.7.4
+> 
+
 -- 
-2.17.1
+Regards,
+Niklas S�derlund
