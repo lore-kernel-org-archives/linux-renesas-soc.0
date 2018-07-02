@@ -1,55 +1,95 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        horms@verge.net.au, geert@glider.be
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 0/6] media: rcar-vin: Brush endpoint properties
-Date: Mon,  9 Jul 2018 16:19:15 +0200
-Message-Id: <1531145962-1540-1-git-send-email-jacopo+renesas@jmondi.org>
+Return-Path: <linux-media-owner@vger.kernel.org>
+Subject: Re: [PATCH v11 10/10] arch: sh: migor: Use new renesas-ceu camera
+ driver
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, mchehab@kernel.org, festevam@gmail.com,
+        sakari.ailus@iki.fi, robh+dt@kernel.org, mark.rutland@arm.com,
+        pombredanne@nexb.com
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1519295846-11612-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519295846-11612-11-git-send-email-jacopo+renesas@jmondi.org>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <3a262281-2f47-af79-970a-c8ec5ac82778@xs4all.nl>
+Date: Mon, 2 Jul 2018 12:11:59 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <1519295846-11612-11-git-send-email-jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-   based on Niklas', Laurent's and Sakari's comments on v4, here it is a new
-version of this series brushing R-Car VIN interface device tree bindings
-description.
+On 22/02/18 11:37, Jacopo Mondi wrote:
+> Migo-R platform uses sh_mobile_ceu camera driver, which is now being
+> replaced by a proper V4L2 camera driver named 'renesas-ceu'.
+> 
+> Move Migo-R platform to use the v4l2 renesas-ceu camera driver
+> interface and get rid of soc_camera defined components used to register
+> sensor drivers and of platform specific enable/disable routines.
+> 
+> Register clock source and GPIOs for sensor drivers, so they can use
+> clock and gpio APIs.
+> 
+> Also, memory for CEU video buffers is now reserved with membocks APIs,
+> and need to be declared as dma_coherent during machine initialization to
+> remove that architecture specific part from CEU driver.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+> ---
+>  arch/sh/boards/mach-migor/setup.c      | 225 +++++++++++++++------------------
+>  arch/sh/kernel/cpu/sh4a/clock-sh7722.c |   2 +-
+>  2 files changed, 101 insertions(+), 126 deletions(-)
+> 
+> diff --git a/arch/sh/boards/mach-migor/setup.c b/arch/sh/boards/mach-migor/setup.c
+> index 0bcbe58..271dfc2 100644
+> --- a/arch/sh/boards/mach-migor/setup.c
+> +++ b/arch/sh/boards/mach-migor/setup.c
+> @@ -1,17 +1,16 @@
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * Renesas System Solutions Asia Pte. Ltd - Migo-R
+>   *
+>   * Copyright (C) 2008 Magnus Damm
+> - *
+> - * This file is subject to the terms and conditions of the GNU General Public
+> - * License.  See the file "COPYING" in the main directory of this archive
+> - * for more details.
+>   */
+> +#include <linux/clkdev.h>
+>  #include <linux/init.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/input.h>
+>  #include <linux/input/sh_keysc.h>
+> +#include <linux/memblock.h>
+>  #include <linux/mmc/host.h>
+>  #include <linux/mtd/physmap.h>
+>  #include <linux/mfd/tmio.h>
+> @@ -23,10 +22,11 @@
+>  #include <linux/delay.h>
+>  #include <linux/clk.h>
+>  #include <linux/gpio.h>
+> +#include <linux/gpio/machine.h>
+>  #include <linux/videodev2.h>
+>  #include <linux/sh_intc.h>
+>  #include <video/sh_mobile_lcdc.h>
+> -#include <media/drv-intf/sh_mobile_ceu.h>
+> +#include <media/drv-intf/renesas-ceu.h>
+>  #include <media/i2c/ov772x.h>
+>  #include <media/soc_camera.h>
 
-The interface supports the following configurable properties:
-- hsync, vsync and data-enable signal polarities
-- field signal polarity during even field
-- parallel data bus widht and data shift.
+You left a stray soc_camera.h include here.
 
-As preferred by Niklas, I have listed the properties in the Gen2 section of the
-bindings documentation, and referred to them in the Gen3 one.
+Can you make a patch that removes this and verify that everything compiles?
 
-The series, as v4 did, does introduce a new properties in 'video-interfaces.txt'
-and for this reason the audiance is still a little larger than v3.
+I also see CONFIG_SOC_CAMERA in several arch/sh/configs/*_defconfig files.
+Should those be updated?
 
-Thanks
-   j
+Regards,
 
-Jacopo Mondi (6):
-  dt-bindings: media: rcar-vin: Align Gen2 and Gen3
-  dt-bindings: media: rcar-vin: Describe optional ep properties
-  dt-bindings: media: Document data-enable-active property
-  media: v4l2-fwnode: parse 'data-enable-active' prop
-  dt-bindings: media: rcar-vin: Add 'data-enable-active'
-  media: rcar-vin: Handle data-enable polarity
-
- .../devicetree/bindings/media/rcar_vin.txt         | 29 +++++++++++++++++++---
- .../devicetree/bindings/media/video-interfaces.txt |  2 ++
- drivers/media/platform/rcar-vin/rcar-dma.c         |  5 ++++
- drivers/media/v4l2-core/v4l2-fwnode.c              |  4 +++
- include/media/v4l2-mediabus.h                      |  2 ++
- 5 files changed, 38 insertions(+), 4 deletions(-)
-
---
-2.7.4
-
+	Hans
