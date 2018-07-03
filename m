@@ -1,63 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:42817 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933050AbeGDIPV (ORCPT
+Received: from sauhun.de ([88.99.104.3]:52886 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753104AbeGCVKb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Jul 2018 04:15:21 -0400
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S . Miller" <davem@davemloft.net>
-CC: Andrew Lunn <andrew@lunn.ch>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        <netdev@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>
-Subject: [PATCH v2 06/14] sh_eth: remove custom .get_link_ksettings from ethtool ops
-Date: Wed, 4 Jul 2018 11:14:48 +0300
-Message-ID: <20180704081451.7482-2-vladimir_zapolskiy@mentor.com>
-In-Reply-To: <20180704081245.7395-1-vladimir_zapolskiy@mentor.com>
-References: <20180704081245.7395-1-vladimir_zapolskiy@mentor.com>
+        Tue, 3 Jul 2018 17:10:31 -0400
+Date: Tue, 3 Jul 2018 23:10:29 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] i2c: gpio: fault-injector: add
+ incomplete_write_byte
+Message-ID: <20180703211029.czme4gzf6wlveu32@ninjato>
+References: <20180629091247.32568-1-wsa+renesas@sang-engineering.com>
+ <20180629091247.32568-3-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="s6kbeduptdb3of6s"
+Content-Disposition: inline
+In-Reply-To: <20180629091247.32568-3-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The generic phy_ethtool_get_link_ksettings() function from phylib can be
-used instead of in-house sh_eth_get_link_ksettings().
 
-Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
----
- drivers/net/ethernet/renesas/sh_eth.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+--s6kbeduptdb3of6s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index 152edd1e9a23..bd4a0b9c3362 100644
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -2040,17 +2040,6 @@ static int sh_eth_phy_start(struct net_device *ndev)
- 	return 0;
- }
- 
--static int sh_eth_get_link_ksettings(struct net_device *ndev,
--				     struct ethtool_link_ksettings *cmd)
--{
--	if (!ndev->phydev)
--		return -ENODEV;
--
--	phy_ethtool_ksettings_get(ndev->phydev, cmd);
--
--	return 0;
--}
--
- static int sh_eth_set_link_ksettings(struct net_device *ndev,
- 				     const struct ethtool_link_ksettings *cmd)
- {
-@@ -2398,7 +2387,7 @@ static const struct ethtool_ops sh_eth_ethtool_ops = {
- 	.get_sset_count     = sh_eth_get_sset_count,
- 	.get_ringparam	= sh_eth_get_ringparam,
- 	.set_ringparam	= sh_eth_set_ringparam,
--	.get_link_ksettings = sh_eth_get_link_ksettings,
-+	.get_link_ksettings = phy_ethtool_get_link_ksettings,
- 	.set_link_ksettings = sh_eth_set_link_ksettings,
- 	.get_wol	= sh_eth_get_wol,
- 	.set_wol	= sh_eth_set_wol,
--- 
-2.17.1
+On Fri, Jun 29, 2018 at 11:12:47AM +0200, Wolfram Sang wrote:
+> Add another injector for an incomplete transfer. As mentioned in the
+> docs, this one is important to check bus recovery algorithms with it.
+> Otherwise random data may be sent to devices!
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Applied to for-next, thanks!
+
+
+--s6kbeduptdb3of6s
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAls75kUACgkQFA3kzBSg
+KbZYlw/9F60WCILd0zbiSkkrhEQqoXw6WWwQil8Q0PqIBzRvN7QQTYFWyuZREI1f
+fffMT/64bYOtNlO8Y177//Kv5BV/WULOFs8ywc4OoUB2YutXVCjsS2W1VVRSroKF
+gqqubsx0wAx0aVuVy8+eLHQWOlD16PKI/e5aQ76O3X+70EzG2QEHyOxR5PuADWwT
+4fNcfnxobqX66jUEMVnK12qvRgVV5T0e2WtgCtEvHJvxbeL8Rwnk9fLnfHzEV+P0
+xdhDGNZyEh/LoGrP5yRlrsgIzmYJyhOxTrbZe/BdiNjSm8nYWFxex6AtWSajJYU/
+j8A4l4naTQuDW1vJm8emn0TfH+Ug8MHdoaNAm+ETtDi7p8Xn88/mv8PNQe4xSb2+
+ZhrhekfJrrFKeK0nzP39WF5YXqA0TZh7J2f8/DSc/ZKCIsy2019s2yf/xgWrJGvQ
+UrYFuYZXuzqbgmPeLvjaIPSMYoMwZVKsBzRPrsAzd8dsE0lpGNT6nO3uz6wzty1Y
+asqjWMjCE8bRkarLRXsTny0IOl/B3zc/4pUtun/x5PXALTWHsSvJ/KXHYBio8pve
+z6ltqN0eAwj0wK48/jALTZR306wQl41PKGG4bC/HWj+RcJQU+U1Hu0hH9p+UyEJx
+aWcHrKOXG9Cw8bf999yTy1H7i2xZX5SJO2uxXQzPgXC9FEfScEg=
+=vnN7
+-----END PGP SIGNATURE-----
+
+--s6kbeduptdb3of6s--
