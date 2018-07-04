@@ -1,97 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:57094 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733160AbeGTRGC (ORCPT
+Received: from sauhun.de ([88.99.104.3]:57472 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933664AbeGDMZB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jul 2018 13:06:02 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Joerg Roedel <joro@8bytes.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] iommu/ipmmu-vmsa: Fix allocation in atomic context
-Date: Fri, 20 Jul 2018 18:16:59 +0200
-Message-Id: <20180720161659.29800-1-geert+renesas@glider.be>
+        Wed, 4 Jul 2018 08:25:01 -0400
+Date: Wed, 4 Jul 2018 14:24:59 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: renesas_sdhi: mapping sg segment longer than device claims to
+ support
+Message-ID: <20180704122459.p5yqu2olgznkeqtx@ninjato>
+References: <CAMuHMdWR0KuVyXu-Gg1JGNUu7xS1rT9Rg9siGXAjDGBm+O6G=w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ihubqrq4eehdvvd4"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWR0KuVyXu-Gg1JGNUu7xS1rT9Rg9siGXAjDGBm+O6G=w@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When attaching a device to an IOMMU group with
-CONFIG_DEBUG_ATOMIC_SLEEP=y:
 
-    BUG: sleeping function called from invalid context at mm/slab.h:421
-    in_atomic(): 1, irqs_disabled(): 128, pid: 61, name: kworker/1:1
-    ...
-    Call trace:
-     ...
-     arm_lpae_alloc_pgtable+0x114/0x184
-     arm_64_lpae_alloc_pgtable_s1+0x2c/0x128
-     arm_32_lpae_alloc_pgtable_s1+0x40/0x6c
-     alloc_io_pgtable_ops+0x60/0x88
-     ipmmu_attach_device+0x140/0x334
+--ihubqrq4eehdvvd4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-ipmmu_attach_device() takes a spinlock, while arm_lpae_alloc_pgtable()
-allocates memory using GFP_KERNEL.  Originally, the ipmmu-vmsa driver
-had its own custom page table allocation implementation using
-GFP_ATOMIC, hence the spinlock was fine.
+On Tue, Jun 19, 2018 at 02:40:33PM +0200, Geert Uytterhoeven wrote:
 
-Fix this by replacing the spinlock by a mutex, like the arm-smmu driver
-does.
+> Hi all,
+>=20
+> With the new CONFIG_DMA_API_DEBUG_SG option enabled, I get the following
+> warning (actual value of len varies) during boot on various R-Car Gen3
+> platforms:
+>=20
+>  renesas_sdhi_internal_dmac ee140000.sd: DMA-API: mapping sg segment
+> longer than device claims to support [len=3D98304] [max=3D65536]
 
-Fixes: f20ed39f53145e45 ("iommu/ipmmu-vmsa: Use the ARM LPAE page table allocator")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/iommu/ipmmu-vmsa.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+Looks like our internal DMA engine needs to use this new thing:
 
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 6a0e7142f41bf667..8f54f25404456035 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -73,7 +73,7 @@ struct ipmmu_vmsa_domain {
- 	struct io_pgtable_ops *iop;
- 
- 	unsigned int context_id;
--	spinlock_t lock;			/* Protects mappings */
-+	struct mutex mutex;			/* Protects mappings */
- };
- 
- static struct ipmmu_vmsa_domain *to_vmsa_domain(struct iommu_domain *dom)
-@@ -599,7 +599,7 @@ static struct iommu_domain *__ipmmu_domain_alloc(unsigned type)
- 	if (!domain)
- 		return NULL;
- 
--	spin_lock_init(&domain->lock);
-+	mutex_init(&domain->mutex);
- 
- 	return &domain->io_domain;
- }
-@@ -645,7 +645,6 @@ static int ipmmu_attach_device(struct iommu_domain *io_domain,
- 	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
- 	struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
- 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
--	unsigned long flags;
- 	unsigned int i;
- 	int ret = 0;
- 
-@@ -654,7 +653,7 @@ static int ipmmu_attach_device(struct iommu_domain *io_domain,
- 		return -ENXIO;
- 	}
- 
--	spin_lock_irqsave(&domain->lock, flags);
-+	mutex_lock(&domain->mutex);
- 
- 	if (!domain->mmu) {
- 		/* The domain hasn't been used yet, initialize it. */
-@@ -678,7 +677,7 @@ static int ipmmu_attach_device(struct iommu_domain *io_domain,
- 	} else
- 		dev_info(dev, "Reusing IPMMU context %u\n", domain->context_id);
- 
--	spin_unlock_irqrestore(&domain->lock, flags);
-+	mutex_unlock(&domain->mutex);
- 
- 	if (ret < 0)
- 		return ret;
--- 
-2.17.1
+dma_get_max_seg_size()
+
+which means we need a 'struct device_dma_parameters' somewhere.
+
+Yet, I wonder why the sys-dmac part of Gen2 doesn't trigger this? I
+don't see the R-Car DMAC driver setting such a struct? Am I missing
+something?
+
+Regards,
+
+   Wolfram
+
+
+--ihubqrq4eehdvvd4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAls8vJcACgkQFA3kzBSg
+Kba1Jg//ekzEMgidf2pQ5shdOGlDJ+i8QMWGkbaKqZmbY+AaFowq1Ps0yM44L9kY
+lzTZYBuOeVglF7ol97Zj+T9hGUg0QReQP+Zqch3na3ldPrYNbuaTj4mpUGJ+3ZIH
+nlRzwAi7A20G6Eh7wkGVTqcWZ2ortztNkqp/km0jAzWjmpirLDxtNdPCiJJAW/th
+IP7bRurLtr36l5L7Q57Ppb6s0/HraU6aYxe6pBY3XO87NsqOKwgqMfBG4cEb7gIf
+KH8omWCixtptK+LhSGO4ZdsvrUURLO1K5ZNzWo8akXBSJnr0l04nSsRwyAYAlCSy
+StJg1nE5P+CoDzRBpV9r5u0aBvh6n2noZ6I9iaOCe4lohZKzKLw1/qVMAcvi8yur
+1PVqZKIkmXtOCslyfI2NdEgFuDLzjg/TEZKpp2prAH0D9TfwaB79N/QM/7/B4QfA
+qZ/o2WxrHT9Ug+zOdj9UWVJf0djByKULJnyKRwCnNSYUiYJ4ptB20bO0xcxlq8/D
+6FpjsoI/m+gw8yBbIOzQlsP5demht3l0lQVDWDhUjZyVKp1wLPCs8Yl9YpbpD7DJ
+6iU2vk08Ok5DiAu0CocLPJqUez5FvTZjeX7TUazvWI6JEV6JrcB3HfzLYikVT96D
+DiSIfa9wCl9AcFHRj1EiMNSW0xBrRRhR+5rforXchKVgrqUNhe8=
+=Jgxe
+-----END PGP SIGNATURE-----
+
+--ihubqrq4eehdvvd4--
