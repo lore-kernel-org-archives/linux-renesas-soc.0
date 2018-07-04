@@ -1,78 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:46988 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753287AbeGEI3h (ORCPT
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:40066 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753086AbeGDHUR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Jul 2018 04:29:37 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+        Wed, 4 Jul 2018 03:20:17 -0400
+MIME-Version: 1.0
+References: <87r2kjx2qw.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87r2kjx2qw.wl-kuninori.morimoto.gx@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 4 Jul 2018 09:20:05 +0200
+Message-ID: <CAMuHMdUTZSqVbGwjH-Kia78qo+Sywjo1P1PzEPuYAjTanOY2YA@mail.gmail.com>
+Subject: Re: [PATCH v2] dmaengine: rcar-dmac: convert to SPDX identifiers
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Vinod <vkoul@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Dan Williams <dan.j.williams@intel.com>,
+Cc: vkoul@kernel.org, Dan Williams <dan.j.williams@intel.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran@ksquared.org.uk>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        dmaengine@vger.kernel.org,
-        Hiroki Negishi <hiroki.negishi.bx@renesas.com>
-Subject: Re: [PATCH v2] dmaengine: rcar-dmac: convert to SPDX identifiers
-Date: Thu, 05 Jul 2018 11:30:07 +0300
-Message-ID: <7735701.7c6vkt9JJK@avalon>
-In-Reply-To: <87r2kjx2qw.wl-kuninori.morimoto.gx@renesas.com>
-References: <87r2kjx2qw.wl-kuninori.morimoto.gx@renesas.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        dmaengine@vger.kernel.org, hiroki.negishi.bx@renesas.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Morimoto-san,
-
-Thank you for the patch.
-
-On Wednesday, 4 July 2018 03:34:10 EEST Kuninori Morimoto wrote:
+On Wed, Jul 4, 2018 at 2:34 AM Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
 > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> 
+>
 > This patch is using C++ comment style for SPDX line only,
 > because driver author want it.
-> 
+>
 > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>   August 21 -  Release of renesas-drivers-2018-08-21-v4.18 (TBC) or
+>               Release of renesas-drivers-2018-08-21-v4.19-rc1 (TBC)
 
-> ---
-> I posted this because I don't know which style was OK.
-> Please pick-up best side patch
-> 
-> v1 -> v2
-> 
->  - used // for SPDX line only
-> 
->  drivers/dma/sh/rcar-dmac.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-> index 79d14af..ebd160d 100644
-> --- a/drivers/dma/sh/rcar-dmac.c
-> +++ b/drivers/dma/sh/rcar-dmac.c
-> @@ -1,13 +1,10 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * Renesas R-Car Gen2 DMA Controller Driver
->   *
->   * Copyright (C) 2014 Renesas Electronics Inc.
->   *
->   * Author: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> - *
-> - * This is free software; you can redistribute it and/or modify
-> - * it under the terms of version 2 of the GNU General Public License as
-> - * published by the Free Software Foundation.
->   */
-> 
->  #include <linux/delay.h>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Regards,
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Laurent Pinchart
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
