@@ -1,119 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:57426 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752292AbeGBPCL (ORCPT
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:34211 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932733AbeGDLsG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 Jul 2018 11:02:11 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dmaengine: rcar-dmac: Disable interrupts while stopping channels
-Date: Mon,  2 Jul 2018 17:02:06 +0200
-Message-Id: <20180702150206.29244-1-geert+renesas@glider.be>
+        Wed, 4 Jul 2018 07:48:06 -0400
+Received: by mail-vk0-f68.google.com with SMTP id l189-v6so2933562vke.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Jul 2018 04:48:06 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180704114333.27584-1-geert+renesas@glider.be> <20180704114333.27584-4-geert+renesas@glider.be>
+In-Reply-To: <20180704114333.27584-4-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 4 Jul 2018 13:47:54 +0200
+Message-ID: <CAMuHMdXORDTQNXswW1ePx=X_w3ckcfUSKDfGpMAoyBs46-goVw@mail.gmail.com>
+Subject: Re: [PATCH 3/5] ARM: shmobile: defconfig: Enable support for RZN1D-DB
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Michel Pollet <buserror+upstream@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-During system reboot or halt, with lockdep enabled:
+CC Michel
 
-    ================================
-    WARNING: inconsistent lock state
-    4.18.0-rc1-salvator-x-00002-g9203dbec90a68103 #41 Tainted: G        W
-    --------------------------------
-    inconsistent {IN-HARDIRQ-W} -> {HARDIRQ-ON-W} usage.
-    reboot/2779 [HC0[0]:SC0[0]:HE1:SE1] takes:
-    0000000098ae4ad3 (&(&rchan->lock)->rlock){?.-.}, at: rcar_dmac_shutdown+0x58/0x6c
-    {IN-HARDIRQ-W} state was registered at:
-      lock_acquire+0x208/0x238
-      _raw_spin_lock+0x40/0x54
-      rcar_dmac_isr_channel+0x28/0x200
-      __handle_irq_event_percpu+0x1c0/0x3c8
-      handle_irq_event_percpu+0x34/0x88
-      handle_irq_event+0x48/0x78
-      handle_fasteoi_irq+0xc4/0x12c
-      generic_handle_irq+0x18/0x2c
-      __handle_domain_irq+0xa8/0xac
-      gic_handle_irq+0x78/0xbc
-      el1_irq+0xec/0x1c0
-      arch_cpu_idle+0xe8/0x1bc
-      default_idle_call+0x2c/0x30
-      do_idle+0x144/0x234
-      cpu_startup_entry+0x20/0x24
-      rest_init+0x27c/0x290
-      start_kernel+0x430/0x45c
-    irq event stamp: 12177
-    hardirqs last  enabled at (12177): [<ffffff800881d804>] _raw_spin_unlock_irq+0x2c/0x4c
-    hardirqs last disabled at (12176): [<ffffff800881d638>] _raw_spin_lock_irq+0x1c/0x60
-    softirqs last  enabled at (11948): [<ffffff8008081da8>] __do_softirq+0x160/0x4ec
-    softirqs last disabled at (11935): [<ffffff80080ec948>] irq_exit+0xa0/0xfc
+On Wed, Jul 4, 2018 at 1:43 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+> Enable support for the Renesas RZN1D-DB Board:
+>   - RZ/N1D (R9A06G032) base SoC support,
+>   - Synopsys DesignWare 8250 serial port support.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Compile-tested only.
+> ---
+>  arch/arm/configs/shmobile_defconfig | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+> index a08d0bcdca750d28..7a5a970420b6353a 100644
+> --- a/arch/arm/configs/shmobile_defconfig
+> +++ b/arch/arm/configs/shmobile_defconfig
+> @@ -22,6 +22,7 @@ CONFIG_ARCH_R8A7791=y
+>  CONFIG_ARCH_R8A7792=y
+>  CONFIG_ARCH_R8A7793=y
+>  CONFIG_ARCH_R8A7794=y
+> +CONFIG_ARCH_R9A06G032=y
+>  CONFIG_ARCH_SH73A0=y
+>  CONFIG_PL310_ERRATA_588369=y
+>  CONFIG_ARM_ERRATA_754322=y
+> @@ -88,6 +89,7 @@ CONFIG_INPUT_ADXL34X=y
+>  # CONFIG_LEGACY_PTYS is not set
+>  CONFIG_SERIAL_8250=y
+>  CONFIG_SERIAL_8250_CONSOLE=y
+> +CONFIG_SERIAL_8250_DW=y
+>  CONFIG_SERIAL_8250_EM=y
+>  CONFIG_SERIAL_SH_SCI=y
+>  CONFIG_I2C_CHARDEV=y
 
-    other info that might help us debug this:
-     Possible unsafe locking scenario:
+Gr{oetje,eeting}s,
 
-	   CPU0
-	   ----
-      lock(&(&rchan->lock)->rlock);
-      <Interrupt>
-	lock(&(&rchan->lock)->rlock);
+                        Geert
 
-     *** DEADLOCK ***
-
-    3 locks held by reboot/2779:
-     #0: 00000000bfabfa74 (reboot_mutex){+.+.}, at: sys_reboot+0xdc/0x208
-     #1: 00000000c75d8c3a (&dev->mutex){....}, at: device_shutdown+0xc8/0x1c4
-     #2: 00000000ebec58ec (&dev->mutex){....}, at: device_shutdown+0xd8/0x1c4
-
-    stack backtrace:
-    CPU: 6 PID: 2779 Comm: reboot Tainted: G        W         4.18.0-rc1-salvator-x-00002-g9203dbec90a68103 #41
-    Hardware name: Renesas Salvator-X 2nd version board based on r8a7795 ES2.0+ (DT)
-    Call trace:
-     dump_backtrace+0x0/0x148
-     show_stack+0x14/0x1c
-     dump_stack+0xb0/0xf0
-     print_usage_bug.part.26+0x1c4/0x27c
-     mark_lock+0x38c/0x610
-     __lock_acquire+0x3fc/0x14d4
-     lock_acquire+0x208/0x238
-     _raw_spin_lock+0x40/0x54
-     rcar_dmac_shutdown+0x58/0x6c
-     platform_drv_shutdown+0x20/0x2c
-     device_shutdown+0x160/0x1c4
-     kernel_restart_prepare+0x34/0x3c
-     kernel_restart+0x14/0x5c
-     sys_reboot+0x160/0x208
-     el0_svc_naked+0x30/0x34
-
-rcar_dmac_stop_all_chan() takes the channel lock while stopping a
-channel, but does not disable interrupts, leading to a deadlock when a
-DMAC interrupt comes in.  Before, the same code block was called from an
-interrupt handler, hence taking the spinlock was sufficient.
-
-Fix this by disabling local interrupts while taking the spinlock.
-
-Fixes: 9203dbec90a68103 ("dmaengine: rcar-dmac: don't use DMAC error interrupt")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/dma/sh/rcar-dmac.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 279c930c4a7635e0..4e4d183190bd0c9c 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -823,9 +823,9 @@ static void rcar_dmac_stop_all_chan(struct rcar_dmac *dmac)
- 		struct rcar_dmac_chan *chan = &dmac->channels[i];
- 
- 		/* Stop and reinitialize the channel. */
--		spin_lock(&chan->lock);
-+		spin_lock_irq(&chan->lock);
- 		rcar_dmac_chan_halt(chan);
--		spin_unlock(&chan->lock);
-+		spin_unlock_irq(&chan->lock);
- 	}
- }
- 
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
