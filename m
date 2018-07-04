@@ -1,40 +1,46 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Lars-Peter Clausen <lars@metafoo.de>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        Steve Longerbeam <steve_longerbeam@mentor.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 0/2] adv7180: fix format and frame interval
-Date: Thu, 26 Jul 2018 12:27:14 +0200
-Message-Id: <20180726102716.1390-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:32882 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932733AbeGDJTV (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 4 Jul 2018 05:19:21 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+References: <1530615208-7827-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1530615208-7827-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 4 Jul 2018 11:19:09 +0200
+Message-ID: <CAMuHMdWBARvThKtKk+yR5Sc2JVZfFLXF_HSfTrmB=eeBUEpWeg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a77990: Add USB3.0 pins, groups and functions
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+On Tue, Jul 3, 2018 at 12:54 PM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds USB30_{PWEN,OVC} and USB3HS0_ID pins, groups and functions
+> to the R8A77990 SoC.
+>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-These first patch fix a issue which was discussed back in 2016 that the
-field format of the adv7180 should be V4L2_FIELD_ALTERNATE. While the
-second patch adds support for the g_frame_interval video op.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+and queuing in sh-pfc-for-v4.19.
 
-Work is loosely based on work by Steve Longerbeam posted in 2016. I have
-talked to Steven and he have agreed to me taking over the patches as he
-did not intend to continue his work on the original series.
+Gr{oetje,eeting}s,
 
-The series is based on the latest media-tree and tested on Renesas
-Koelsch board.
-
-Niklas Söderlund (2):
-  adv7180: fix field type to V4L2_FIELD_ALTERNATE
-  adv7180: add g_frame_interval support
-
- drivers/media/i2c/adv7180.c | 30 +++++++++++++++++++++++++-----
- 1 file changed, 25 insertions(+), 5 deletions(-)
+                        Geert
 
 -- 
-2.18.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
