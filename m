@@ -1,95 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36512 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031397AbeGAQhz (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:55342 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932997AbeGDLnj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:37:55 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
+        Wed, 4 Jul 2018 07:43:39 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4.17 031/220] thermal: bcm2835: Stop using printk format %pCr
-Date: Sun,  1 Jul 2018 18:20:55 +0200
-Message-Id: <20180701160909.632858221@linuxfoundation.org>
-In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
-References: <20180701160908.272447118@linuxfoundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH 2/5] ARM: shmobile: defconfig: Enable reset controller support
+Date: Wed,  4 Jul 2018 13:43:30 +0200
+Message-Id: <20180704114333.27584-3-geert+renesas@glider.be>
+In-Reply-To: <20180704114333.27584-1-geert+renesas@glider.be>
+References: <20180704114333.27584-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+R-Car Gen2 and RZ/G1 SoCs can make use of the optional reset controller
+support in the Renesas CPG/MSSR driver.
 
-------------------
-
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-
-commit bd2a07f71a1e2e198f8a30cb551d9defe422d83d upstream.
-
-Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
-called in atomic context.
-
-Replace it by printing the variable that already holds the clock rate.
-Note that calling clk_get_rate() is safe here, as the code runs in task
-context.
-
-Link: http://lkml.kernel.org/r/1527845302-12159-3-git-send-email-geert+renesas@glider.be
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>
-To: Michael Turquette <mturquette@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-To: Zhang Rui <rui.zhang@intel.com>
-To: Eduardo Valentin <edubezval@gmail.com>
-To: Eric Anholt <eric@anholt.net>
-To: Stefan Wahren <stefan.wahren@i2se.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-doc@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
-Cc: linux-serial@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org # 4.12+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/thermal/broadcom/bcm2835_thermal.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/configs/shmobile_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/thermal/broadcom/bcm2835_thermal.c
-+++ b/drivers/thermal/broadcom/bcm2835_thermal.c
-@@ -213,8 +213,8 @@ static int bcm2835_thermal_probe(struct
- 	rate = clk_get_rate(data->clk);
- 	if ((rate < 1920000) || (rate > 5000000))
- 		dev_warn(&pdev->dev,
--			 "Clock %pCn running at %pCr Hz is outside of the recommended range: 1.92 to 5MHz\n",
--			 data->clk, data->clk);
-+			 "Clock %pCn running at %lu Hz is outside of the recommended range: 1.92 to 5MHz\n",
-+			 data->clk, rate);
- 
- 	/* register of thermal sensor and get info from DT */
- 	tz = thermal_zone_of_sensor_register(&pdev->dev, 0, data,
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index 393697a54fb40e08..a08d0bcdca750d28 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -193,6 +193,7 @@ CONFIG_AK8975=y
+ CONFIG_PWM=y
+ CONFIG_PWM_RCAR=y
+ CONFIG_PWM_RENESAS_TPU=y
++CONFIG_RESET_CONTROLLER=y
+ CONFIG_GENERIC_PHY=y
+ CONFIG_PHY_RCAR_GEN2=y
+ # CONFIG_DNOTIFY is not set
+-- 
+2.17.1
