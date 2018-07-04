@@ -1,137 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:55762 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388422AbeGKOZo (ORCPT
+Received: from relay10.mail.gandi.net ([217.70.178.230]:59569 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934165AbeGDJBX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:25:44 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 02/11] clk: renesas: r8a7795: Add OSC EXTAL predivider configuration
-Date: Wed, 11 Jul 2018 16:20:51 +0200
-Message-Id: <20180711142100.3765-3-geert+renesas@glider.be>
-In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
-References: <20180711142100.3765-1-geert+renesas@glider.be>
+        Wed, 4 Jul 2018 05:01:23 -0400
+Date: Wed, 4 Jul 2018 11:01:18 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: mchehab@kernel.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/2] media: i2c: mt9v111 sensor driver
+Message-ID: <20180704090118.GC4463@w540>
+References: <1528730253-25135-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="JwB53PgKC5A7+0Ej"
+Content-Disposition: inline
+In-Reply-To: <1528730253-25135-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen3 Hardware Manual Rev.0.52 documents the relation between the
-MD13 and MD14 mode pins, and the OSC EXTAL predivider, as used by the
-OSC and RINT RCLK clocks.  Hence augment the configuration structure
-with all documented predivider values.
 
-According to R-Car Gen3 Hardware Manual Rev.0.53, the CPG_RCKCR
-register was removed in R-Car H3 ES2.0.  Change the OSC and RINT
-clock definitions to use the OSC EXTAL predivider instead, which is
-supported on all R-Car H3 SoC revisions.
+--JwB53PgKC5A7+0Ej
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Inspired by a patch in the BSP by Takeshi Kihara
-<takeshi.kihara.df@renesas.com>.
+Hello linux-media list,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 66 +++++++++++++-------------
- 1 file changed, 33 insertions(+), 33 deletions(-)
+On Mon, Jun 11, 2018 at 05:17:31PM +0200, Jacopo Mondi wrote:
+> Hello,
+>    this is a sensor level driver for Aptina MT9V111.
+>
+> The driver supports YUYV_2X8 output formats and VGA,QVGA,QQVGA,CIF and QCIF
+> resolution.
+>
+> The driver allows control of frame rate through s_frame_interval or
+> V4L2_CID_H/VBLANK control. In order to allow manual frame control, the chip
+> is initialized with auto-exposure control, auto white balancing and flickering
+> control disabled.
+>
+> Tested VGA, QVGA QQVGA resolutions at 5, 10, 15 and 30 frame per second.
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index a85dd50e89110d5d..ea0b33ddcc0ea531 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -111,8 +111,8 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
- 	DEF_DIV6P1("mso",       R8A7795_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
- 	DEF_DIV6P1("hdmi",      R8A7795_CLK_HDMI,  CLK_PLL1_DIV4, 0x250),
- 
--	DEF_DIV6_RO("osc",      R8A7795_CLK_OSC,   CLK_EXTAL, CPG_RCKCR,  8),
--	DEF_DIV6_RO("r_int",    CLK_RINT,          CLK_EXTAL, CPG_RCKCR, 32),
-+	DEF_GEN3_OSC("osc",     R8A7795_CLK_OSC,   CLK_EXTAL,     8),
-+	DEF_GEN3_OSC("r_int",   CLK_RINT,          CLK_EXTAL,     32),
- 
- 	DEF_BASE("r",           R8A7795_CLK_R,     CLK_TYPE_GEN3_R, CLK_RINT),
- };
-@@ -283,25 +283,25 @@ static const unsigned int r8a7795_crit_mod_clks[] __initconst = {
-  */
- 
- /*
-- *   MD		EXTAL		PLL0	PLL1	PLL2	PLL3	PLL4
-+ *   MD		EXTAL		PLL0	PLL1	PLL2	PLL3	PLL4	OSC
-  * 14 13 19 17	(MHz)
-- *-------------------------------------------------------------------
-- * 0  0  0  0	16.66 x 1	x180	x192	x144	x192	x144
-- * 0  0  0  1	16.66 x 1	x180	x192	x144	x128	x144
-+ *-------------------------------------------------------------------------
-+ * 0  0  0  0	16.66 x 1	x180	x192	x144	x192	x144	/16
-+ * 0  0  0  1	16.66 x 1	x180	x192	x144	x128	x144	/16
-  * 0  0  1  0	Prohibited setting
-- * 0  0  1  1	16.66 x 1	x180	x192	x144	x192	x144
-- * 0  1  0  0	20    x 1	x150	x160	x120	x160	x120
-- * 0  1  0  1	20    x 1	x150	x160	x120	x106	x120
-+ * 0  0  1  1	16.66 x 1	x180	x192	x144	x192	x144	/16
-+ * 0  1  0  0	20    x 1	x150	x160	x120	x160	x120	/19
-+ * 0  1  0  1	20    x 1	x150	x160	x120	x106	x120	/19
-  * 0  1  1  0	Prohibited setting
-- * 0  1  1  1	20    x 1	x150	x160	x120	x160	x120
-- * 1  0  0  0	25    x 1	x120	x128	x96	x128	x96
-- * 1  0  0  1	25    x 1	x120	x128	x96	x84	x96
-+ * 0  1  1  1	20    x 1	x150	x160	x120	x160	x120	/19
-+ * 1  0  0  0	25    x 1	x120	x128	x96	x128	x96	/24
-+ * 1  0  0  1	25    x 1	x120	x128	x96	x84	x96	/24
-  * 1  0  1  0	Prohibited setting
-- * 1  0  1  1	25    x 1	x120	x128	x96	x128	x96
-- * 1  1  0  0	33.33 / 2	x180	x192	x144	x192	x144
-- * 1  1  0  1	33.33 / 2	x180	x192	x144	x128	x144
-+ * 1  0  1  1	25    x 1	x120	x128	x96	x128	x96	/24
-+ * 1  1  0  0	33.33 / 2	x180	x192	x144	x192	x144	/32
-+ * 1  1  0  1	33.33 / 2	x180	x192	x144	x128	x144	/32
-  * 1  1  1  0	Prohibited setting
-- * 1  1  1  1	33.33 / 2	x180	x192	x144	x192	x144
-+ * 1  1  1  1	33.33 / 2	x180	x192	x144	x192	x144	/32
-  */
- #define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 11) | \
- 					 (((md) & BIT(13)) >> 11) | \
-@@ -309,23 +309,23 @@ static const unsigned int r8a7795_crit_mod_clks[] __initconst = {
- 					 (((md) & BIT(17)) >> 17))
- 
- static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
--	/* EXTAL div	PLL1 mult/div	PLL3 mult/div */
--	{ 1,		192,	1,	192,	1,	},
--	{ 1,		192,	1,	128,	1,	},
--	{ 0, /* Prohibited setting */			},
--	{ 1,		192,	1,	192,	1,	},
--	{ 1,		160,	1,	160,	1,	},
--	{ 1,		160,	1,	106,	1,	},
--	{ 0, /* Prohibited setting */			},
--	{ 1,		160,	1,	160,	1,	},
--	{ 1,		128,	1,	128,	1,	},
--	{ 1,		128,	1,	84,	1,	},
--	{ 0, /* Prohibited setting */			},
--	{ 1,		128,	1,	128,	1,	},
--	{ 2,		192,	1,	192,	1,	},
--	{ 2,		192,	1,	128,	1,	},
--	{ 0, /* Prohibited setting */			},
--	{ 2,		192,	1,	192,	1,	},
-+	/* EXTAL div	PLL1 mult/div	PLL3 mult/div	OSC prediv */
-+	{ 1,		192,	1,	192,	1,	16,	},
-+	{ 1,		192,	1,	128,	1,	16,	},
-+	{ 0, /* Prohibited setting */				},
-+	{ 1,		192,	1,	192,	1,	16,	},
-+	{ 1,		160,	1,	160,	1,	19,	},
-+	{ 1,		160,	1,	106,	1,	19,	},
-+	{ 0, /* Prohibited setting */				},
-+	{ 1,		160,	1,	160,	1,	19,	},
-+	{ 1,		128,	1,	128,	1,	24,	},
-+	{ 1,		128,	1,	84,	1,	24,	},
-+	{ 0, /* Prohibited setting */				},
-+	{ 1,		128,	1,	128,	1,	24,	},
-+	{ 2,		192,	1,	192,	1,	32,	},
-+	{ 2,		192,	1,	128,	1,	32,	},
-+	{ 0, /* Prohibited setting */				},
-+	{ 2,		192,	1,	192,	1,	32,	},
- };
- 
- static const struct soc_device_attribute r8a7795es1[] __initconst = {
--- 
-2.17.1
+Gentle ping for this driver, as I have now sent a patch to add a user
+for it
+https://patchwork.kernel.org/patch/10505175/
+
+Thanks
+   j
+
+>
+> Thanks
+>    j
+>
+> Jacopo Mondi (2):
+>   dt-bindings: media: i2c: Document MT9V111 bindings
+>   media: i2c: Add driver for Aptina MT9V111
+>
+>  .../bindings/media/i2c/aptina,mt9v111.txt          |   46 +
+>  MAINTAINERS                                        |    8 +
+>  drivers/media/i2c/Kconfig                          |   12 +
+>  drivers/media/i2c/Makefile                         |    1 +
+>  drivers/media/i2c/mt9v111.c                        | 1297 ++++++++++++++++++++
+>  5 files changed, 1364 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.txt
+>  create mode 100644 drivers/media/i2c/mt9v111.c
+>
+> --
+> 2.7.4
+>
+
+--JwB53PgKC5A7+0Ej
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJbPIzeAAoJEHI0Bo8WoVY8MzAP/254585/SldQw+B3ZHU50Q9B
+nNGDfkMUOki6Y+nfOUuSHuErPrdYbCQo1JOXy7t7Yun2l5Ctb8qnQX2cohbPwHqV
+2IDewGNmPxmNIzAmhDw6TbjvDvkTY3+K5axnAVSF0VAe8bisHtTwPPpzyFr5rPgJ
+a56gSvu/F9+LJG4zaKnFyWt+CMT/UnuR7+VXC0CS8llX0qhe54gK4S+njC5CTICN
+S4hrSA24IcKFGZCzArDyndT3obxdUh0Wk9ipzHgrtIIBZyOfky+a2h9g7JtGeHr+
+DOb+l3l5kTkHJtR1CufRB93GrGDCkBFpBcsT7KerhThSZpGSAofX7ViiHgI/Ze2/
+8UlkwQUem5hFd/hq6CISQ7H5nEsijIIOjjOsYKv6Sv9aEr2vJhHYlr5PkY2oS333
+DyAssMrjSwbafEokI5hMxudCVaN/b40JhymSmPL9bVgkeOhvgFdzQ3OpgMaes0so
+6ni2QSZe8BHitJ4AH8QJOEivGlA0YI+4ABOz9TiBH2oZJzQyG8aM4JDGM6irnv4G
+JtYyMZ7HCZRzixCb9VuujNod/bOhcDEtPl+JyanG5k7aVEycnmetpuTk7LO54MPJ
+uJb2X8RIoWt57/qYT9KwOI+BWzErQIT3aBslLvfUYf/gX14VkCsW9hAsRBWU8B8z
+yUWow718UGGlQvFJjJnO
+=j6DM
+-----END PGP SIGNATURE-----
+
+--JwB53PgKC5A7+0Ej--
