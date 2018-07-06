@@ -1,55 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:40096 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729715AbeGQJ3s (ORCPT
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34496 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934695AbeGFTrI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jul 2018 05:29:48 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Chris Brandt <chris.brandt@renesas.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc: linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] serial: sh-sci: Fix use-after-free on subsequent port startup
-Date: Tue, 17 Jul 2018 10:58:10 +0200
-Message-Id: <20180717085810.23502-1-geert+renesas@glider.be>
+        Fri, 6 Jul 2018 15:47:08 -0400
+Received: by mail-wr1-f68.google.com with SMTP id c13-v6so5142099wrt.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 06 Jul 2018 12:47:08 -0700 (PDT)
+Subject: Re: [PATCH v2 08/14] ravb: fix invalid context bug while calling
+ auto-negotiation by ethtool
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        "David S . Miller" <davem@davemloft.net>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20180704081245.7395-1-vladimir_zapolskiy@mentor.com>
+ <20180704081451.7482-4-vladimir_zapolskiy@mentor.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <979018fc-19a6-6092-3453-16c0fa9df187@cogentembedded.com>
+Date: Fri, 6 Jul 2018 22:47:04 +0300
+MIME-Version: 1.0
+In-Reply-To: <20180704081451.7482-4-vladimir_zapolskiy@mentor.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-sci_request_irq() checks port->irqstr[j] for a NULL pointer, to decide
-if a fallback interrupt name string should be allocated or not.
+On 07/04/2018 11:14 AM, Vladimir Zapolskiy wrote:
 
-While this string is freed during port shutdown, the pointer is not
-zeroed.  Hence on a subsequent startup of the port, it will still be
-pointing to the freed memory, leading to e.g.
+> Since commit 35b5f6b1a82b ("PHYLIB: Locking fixes for PHY I/O
+> potentially sleeping") phy_start_aneg() function utilizes a mutex
+> to serialize changes to phy state, however the helper function is
+> called in atomic context.
+> 
+> The bug can be reproduced by running "ethtool -r" command, the bug
+> is reported if CONFIG_DEBUG_ATOMIC_SLEEP build option is enabled.
+> 
+> Fixes: a0d2f20650e8 ("Renesas Ethernet AVB PTP clock driver")
+> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+[...]
 
-    WARNING: CPU: 0 PID: 404 at fs/proc/generic.c:388 __proc_create+0xbc/0x260
-    name len 0
+Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-or to a crash (the latter is more likely with CONFIG_DEBUG_SLAB=y, due
-to the poisoning of freed memory).
+   Again, the patch order question...
 
-Instead of zeroeing the pointer at multiple places, preinitialize
-port->irqstr[j] to zero to fix this.
-
-Fixes: 8b0bbd956228ae87 ("serial: sh-sci: Add support for R7S9210")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/tty/serial/sh-sci.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 5808edfe3f7be404..f8e53ac5c17dfb94 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1872,6 +1872,7 @@ static int sci_request_irq(struct sci_port *port)
- 		}
- 
- 		desc = sci_irq_desc + i;
-+		port->irqstr[j] = NULL;
- 		if (SCIx_TEIDRI_IRQ_EXISTS(port)) {
- 			/*
- 			 * ERI and BRI are muxed, just register ERI and
--- 
-2.17.1
+MBR, Sergei
