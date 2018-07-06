@@ -1,13 +1,13 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:40426 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933616AbeGFQdU (ORCPT
+Received: from mga01.intel.com ([192.55.52.88]:25744 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932724AbeGFQcm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jul 2018 12:33:20 -0400
-From: Dmitry Osipenko <digetx@gmail.com>
+        Fri, 6 Jul 2018 12:32:42 -0400
+Date: Fri, 6 Jul 2018 19:32:35 +0300
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
 To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Ville =?ISO-8859-1?Q?Syrj=E4l=E4?=
-        <ville.syrjala@linux.intel.com>,
+Cc: Dmitry Osipenko <digetx@gmail.com>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -20,71 +20,97 @@ Cc: Ville =?ISO-8859-1?Q?Syrj=E4l=E4?=
         Ben Skeggs <bskeggs@redhat.com>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>,
         linux-tegra@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [RFC PATCH v3 1/2] drm: Add generic colorkey properties for DRM planes
-Date: Fri, 06 Jul 2018 19:33:14 +0300
-Message-ID: <2513788.CeRymH5ehq@dimapc>
-In-Reply-To: <20180706154027.GB17271@n2100.armlinux.org.uk>
-References: <20180603220059.17670-1-digetx@gmail.com> <2295190.xHWjP7Ltc3@dimapc> <20180706154027.GB17271@n2100.armlinux.org.uk>
+Subject: Re: [RFC PATCH v3 1/2] drm: Add generic colorkey properties for DRM
+ planes
+Message-ID: <20180706163235.GO5565@intel.com>
+References: <20180603220059.17670-1-digetx@gmail.com>
+ <a2e6e02b-bc6c-a411-0797-99e1bdb6674a@gmail.com>
+ <20180706141010.GJ5565@intel.com>
+ <2295190.xHWjP7Ltc3@dimapc>
+ <20180706154027.GB17271@n2100.armlinux.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180706154027.GB17271@n2100.armlinux.org.uk>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Friday, 6 July 2018 18:40:27 MSK Russell King - ARM Linux wrote:
+On Fri, Jul 06, 2018 at 04:40:27PM +0100, Russell King - ARM Linux wrote:
 > On Fri, Jul 06, 2018 at 05:58:50PM +0300, Dmitry Osipenko wrote:
-> > On Friday, 6 July 2018 17:10:10 MSK Ville Syrj=E4l=E4 wrote:
+> > On Friday, 6 July 2018 17:10:10 MSK Ville Syrj�l� wrote:
 > > > IIRC my earlier idea was to have different colorkey modes for the
 > > > min+max and value+mask modes. That way userspace might actually have
 > > > some chance of figuring out which bits of state actually do something.
-> > > Although for Intel hw I think the general rule is that min+max for YU=
-V,
+> > > Although for Intel hw I think the general rule is that min+max for YUV,
 > > > value+mask for RGB, so it's still not 100% clear what to pick if the
 > > > plane supports both.
-> > >=20
+> > > 
 > > > I guess one alternative would be to have min+max only, and the driver
-> > > would reject 'min !=3D max' if it only uses a single value?
-> >=20
-> > You should pick both and reject unsupported property values based on the
-> > planes framebuffer format. So it will be possible to set unsupported
-> > values
-> > while plane is disabled because it doesn't have an associated framebuff=
-er
-> > and then atomic check will fail to enable plane if property values are
-> > invalid for the given format.
->=20
+> > > would reject 'min != max' if it only uses a single value?
+> > > 
+> > 
+> > You should pick both and reject unsupported property values based on the 
+> > planes framebuffer format. So it will be possible to set unsupported values 
+> > while plane is disabled because it doesn't have an associated framebuffer and 
+> > then atomic check will fail to enable plane if property values are invalid for 
+> > the given format.
+> 
 > The colorkey which is attached to a plane 'A' is not applied to plane
 > 'A', so the format of plane 'A' is not relevant.  The colorkey is
 > applied to some other plane which will be below this plane in terms
 > of the plane blending operation.
->=20
+> 
 > What if you have several planes below plane 'A' with differing
 > framebuffer formats - maybe an ARGB8888 plane and a ARGB1555 plane -
 > do you decide to limit the colorkey to 8bits per channel, or to
 > ARGB1555 format?
->=20
+> 
 > The answer is, of course, hardware dependent - generic code can't
 > know the details of the colorkey implementation, which could be one
 > of:
->=20
+> 
 >   lower plane data -> expand to 8bpc -> match ARGB8888 colorkey
 >   lower plane data -> match ARGB8888 reduced to plane compatible colorkey
->=20
+> 
 > which will give different results depending on the format of the
 > lower plane data.
 
-All unsupportable cases should be rejected in the atomic check. If your HW=
-=20
-can't handle the case where multiple bottom planes have a different format,=
-=20
-then in the planes atomic check you'll have to walk up all the bottom plane=
-s=20
-and verify their formats.
+Yeah. This is one of the other issues I highlighted previously. On some
+Intel hw you enable the dst colorkey on the lower plane where you paint
+the colorkey, on others you enable it on the plane above that gets
+shown/hidden based on the key match on the lower plane. I think on most
+of our hardware dst keying only ever happens between two planes, even
+if more planes are enabled on the crtc. But there is at least one
+exception where you can have two overlay planes that get keyed against
+the same primary plane.
 
-I'm not sure whether it's worth to check the planes intersection and fail o=
-nly=20
-if top plane intersects with multiple bottom planes having different format=
-s.=20
-Perhaps that could be a driver-specific implementation detail, userspace=20
-should take into account that atomic commit may fail on changing planes=20
-position.
+I was questioning which one is the better model for the uapi. Either
+way you still have the uncertainty of which planes actually participate
+in the keying process. One way around that would be to expose some kind
+of plane mask which would indicate the set of planes taking part in the
+keying process. I think for that to work we would have to move to a
+model where you enable the dst key on the lower plane where you paint
+the color key, otherwise having multiple bits set in the mask wouldn't
+make sense. That would perhaps also make it more clear what the
+format of the color key will be.
+
+So as an example that exception Intel hw case would have:
+ overlay 2: key_mode={src,none}
+ overlay 1: key_mode={src,none}
+ primary:   key_mode={dst,none}, dst_key_plane_mask=0x6
+
+to indicate that both overlay planes participate in the keying
+process.
+
+Whereas most other Intel hw would have:
+ overlay 2: key_mode={src,none}
+ overlay 1: key_mode={src,none}
+ primary:   key_mode={dst,none}, dst_key_plane_mask=0x2
+
+to indicate that only the overlay immediately above the primary
+will participate.
+
+-- 
+Ville Syrj�l�
+Intel
