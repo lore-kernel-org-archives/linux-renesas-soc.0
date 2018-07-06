@@ -1,150 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:53660 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731620AbeGMQrI (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34467 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934095AbeGFT6W (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Jul 2018 12:47:08 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 1/3] regulator: bd9571mwv: Use "backup_mode" sysfs file instead of "wake_up"
-Date: Fri, 13 Jul 2018 17:47:18 +0200
-Message-Id: <20180713154720.18316-2-geert+renesas@glider.be>
-In-Reply-To: <20180713154720.18316-1-geert+renesas@glider.be>
-References: <20180713154720.18316-1-geert+renesas@glider.be>
+        Fri, 6 Jul 2018 15:58:22 -0400
+Received: by mail-wm0-f67.google.com with SMTP id s13-v6so5201652wmc.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 06 Jul 2018 12:58:22 -0700 (PDT)
+Subject: Re: [PATCH v2 09/14] ravb: fix invalid context bug while changing
+ link options by ethtool
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        "David S . Miller" <davem@davemloft.net>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20180704081245.7395-1-vladimir_zapolskiy@mentor.com>
+ <20180704081451.7482-5-vladimir_zapolskiy@mentor.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <8c930884-f819-edcb-9b63-07929738a0a3@cogentembedded.com>
+Date: Fri, 6 Jul 2018 22:58:18 +0300
+MIME-Version: 1.0
+In-Reply-To: <20180704081451.7482-5-vladimir_zapolskiy@mentor.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently the BD9571MWV PMIC driver uses the standard "wake_up" sysfs
-file to control enablement of DDR Backup Mode.
+On 07/04/2018 11:14 AM, Vladimir Zapolskiy wrote:
 
-However, configuring DDR Backup Mode is not really equivalent to
-configuring the PMIC as a wake-up source.  To avoid confusion, use a
-custom "backup_mode" attribute file in sysfs instead.
+> The change fixes sleep in atomic context bug, which is encountered
+> every time when link settings are changed by ethtool.
+> 
+> Since commit 35b5f6b1a82b ("PHYLIB: Locking fixes for PHY I/O
+> potentially sleeping") phy_start_aneg() function utilizes a mutex
+> to serialize changes to phy state, however that helper function is
+> called in atomic context under a grabbed spinlock, because
+> phy_start_aneg() is called by phy_ethtool_ksettings_set() and by
+> replaced phy_ethtool_sset() helpers from phylib.
+> 
+> Now duplex mode setting is enforced in ravb_adjust_link() only, also
+> now RX/TX is disabled when link is put down or modifications to E-MAC
+> registers ECMR and GECMR are expected for both cases of checked and
+> ignored link status pin state from E-MAC interrupt handler.
+> 
+> Fixes: a0d2f20650e8 ("Renesas Ethernet AVB PTP clock driver")
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - New.
----
- drivers/regulator/bd9571mwv-regulator.c | 52 ++++++++++++++++++++++---
- 1 file changed, 46 insertions(+), 6 deletions(-)
+   Wrong commit, as already noted...
 
-diff --git a/drivers/regulator/bd9571mwv-regulator.c b/drivers/regulator/bd9571mwv-regulator.c
-index be574eb444ebda97..7432b605db4dc879 100644
---- a/drivers/regulator/bd9571mwv-regulator.c
-+++ b/drivers/regulator/bd9571mwv-regulator.c
-@@ -30,6 +30,7 @@ struct bd9571mwv_reg {
- 	/* DDR Backup Power */
- 	u8 bkup_mode_cnt_keepon;	/* from "rohm,ddr-backup-power" */
- 	u8 bkup_mode_cnt_saved;
-+	bool bkup_mode_enabled;
- 
- 	/* Power switch type */
- 	bool rstbmode_level;
-@@ -171,13 +172,40 @@ static int bd9571mwv_bkup_mode_write(struct bd9571mwv *bd, unsigned int mode)
- 	return 0;
- }
- 
-+static ssize_t backup_mode_show(struct device *dev,
-+				struct device_attribute *attr, char *buf)
-+{
-+	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%s\n", bdreg->bkup_mode_enabled ? "on" : "off");
-+}
-+
-+static ssize_t backup_mode_store(struct device *dev,
-+				 struct device_attribute *attr,
-+				 const char *buf, size_t count)
-+{
-+	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
-+	int ret;
-+
-+	if (!count)
-+		return 0;
-+
-+	ret = kstrtobool(buf, &bdreg->bkup_mode_enabled);
-+	if (ret)
-+		return ret;
-+
-+	return count;
-+}
-+
-+DEVICE_ATTR_RW(backup_mode);
-+
- static int bd9571mwv_suspend(struct device *dev)
- {
- 	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
- 	unsigned int mode;
- 	int ret;
- 
--	if (!device_may_wakeup(dev))
-+	if (!bdreg->bkup_mode_enabled)
- 		return 0;
- 
- 	/* Save DDR Backup Mode */
-@@ -204,7 +232,7 @@ static int bd9571mwv_resume(struct device *dev)
- {
- 	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
- 
--	if (!device_may_wakeup(dev))
-+	if (!bdreg->bkup_mode_enabled)
- 		return 0;
- 
- 	/* Restore DDR Backup Mode */
-@@ -227,7 +255,7 @@ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
- 	struct bd9571mwv_reg *bdreg;
- 	struct regulator_dev *rdev;
- 	unsigned int val;
--	int i;
-+	int i, ret;
- 
- 	bdreg = devm_kzalloc(&pdev->dev, sizeof(*bdreg), GFP_KERNEL);
- 	if (!bdreg)
-@@ -270,15 +298,26 @@ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
-+#ifdef CONFIG_PM_SLEEP
- 	if (bdreg->bkup_mode_cnt_keepon) {
--		device_set_wakeup_capable(&pdev->dev, true);
- 		/*
--		 * Wakeup is enabled by default in pulse mode, but needs
-+		 * Backup mode is enabled by default in pulse mode, but needs
- 		 * explicit user setup in level mode.
- 		 */
--		device_set_wakeup_enable(&pdev->dev, bdreg->rstbmode_pulse);
-+		bdreg->bkup_mode_enabled = bdreg->rstbmode_pulse;
-+
-+		ret = device_create_file(&pdev->dev, &dev_attr_backup_mode);
-+		if (ret)
-+			return ret;
- 	}
-+#endif /* CONFIG_PM_SLEEP */
-+
-+	return 0;
-+}
- 
-+static int bd9571mwv_regulator_remove(struct platform_device *pdev)
-+{
-+	device_remove_file(&pdev->dev, &dev_attr_backup_mode);
- 	return 0;
- }
- 
-@@ -294,6 +333,7 @@ static struct platform_driver bd9571mwv_regulator_driver = {
- 		.pm = DEV_PM_OPS,
- 	},
- 	.probe = bd9571mwv_regulator_probe,
-+	.remove = bd9571mwv_regulator_remove,
- 	.id_table = bd9571mwv_regulator_id_table,
- };
- module_platform_driver(bd9571mwv_regulator_driver);
--- 
-2.17.1
+> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+[...]
+
+Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+MBR, Sergei
