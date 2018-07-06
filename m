@@ -1,55 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:57494 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729684AbeGQVKX (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:52298 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934536AbeGFTIT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jul 2018 17:10:23 -0400
-From: Kieran Bingham <kieran@ksquared.org.uk>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v5 04/11] media: vsp1: Remove unused display list structure field
-Date: Tue, 17 Jul 2018 21:35:46 +0100
-Message-Id: <806476d71b4c25ab8695537bffc063604af5c7ee.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Fri, 6 Jul 2018 15:08:19 -0400
+Received: by mail-wm0-f66.google.com with SMTP id w16-v6so15704547wmc.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 06 Jul 2018 12:08:18 -0700 (PDT)
+Subject: Re: [PATCH v2 06/14] sh_eth: remove custom .get_link_ksettings from
+ ethtool ops
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        "David S . Miller" <davem@davemloft.net>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20180704081245.7395-1-vladimir_zapolskiy@mentor.com>
+ <20180704081451.7482-2-vladimir_zapolskiy@mentor.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <fa4c9d5e-2956-3ebe-1977-33586c2b8c28@cogentembedded.com>
+Date: Fri, 6 Jul 2018 22:08:15 +0300
+MIME-Version: 1.0
+In-Reply-To: <20180704081451.7482-2-vladimir_zapolskiy@mentor.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On 07/04/2018 11:14 AM, Vladimir Zapolskiy wrote:
 
-The vsp1 reference in the vsp1_dl_body structure is not used.
-Remove it.
+> The generic phy_ethtool_get_link_ksettings() function from phylib can be
+> used instead of in-house sh_eth_get_link_ksettings().
+> 
+> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+[...]
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_dl.c | 2 --
- 1 file changed, 2 deletions(-)
+Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 851ac26860ae..da73881a975b 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -44,7 +44,6 @@ struct vsp1_dl_entry {
-  * @list: entry in the display list list of bodies
-  * @free: entry in the pool free body list
-  * @pool: pool to which this body belongs
-- * @vsp1: the VSP1 device
-  * @entries: array of entries
-  * @dma: DMA address of the entries
-  * @size: size of the DMA memory in bytes
-@@ -58,7 +57,6 @@ struct vsp1_dl_body {
- 	refcount_t refcnt;
- 
- 	struct vsp1_dl_body_pool *pool;
--	struct vsp1_device *vsp1;
- 
- 	struct vsp1_dl_entry *entries;
- 	dma_addr_t dma;
--- 
-git-series 0.9.1
+MBR, Sergei
