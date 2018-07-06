@@ -1,49 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:55915 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933045AbeGIOTo (ORCPT
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:45743 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753567AbeGFIxe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Jul 2018 10:19:44 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        horms@verge.net.au, geert@glider.be
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 3/6] dt-bindings: media: Document data-enable-active property
-Date: Mon,  9 Jul 2018 16:19:18 +0200
-Message-Id: <1531145962-1540-4-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1531145962-1540-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1531145962-1540-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 6 Jul 2018 04:53:34 -0400
+MIME-Version: 1.0
+References: <1526995765-29693-1-git-send-email-geert+renesas@glider.be>
+ <20180523083746.f4nkz4uhjwfgw7yz@verge.net.au> <CAMuHMdV2VwoD3Le=T4-+Ek2E9tL+hmiR0r4cXxG9EH4GXV-uTw@mail.gmail.com>
+In-Reply-To: <CAMuHMdV2VwoD3Le=T4-+Ek2E9tL+hmiR0r4cXxG9EH4GXV-uTw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 6 Jul 2018 10:53:22 +0200
+Message-ID: <CAMuHMdV8McM-V5zME1DKE0nsdtVLU25mk9QQCNwNL74V9c2Cag@mail.gmail.com>
+Subject: Re: [PATCH/RFC] ARM: dts: r8a7791: Move enable-method to CPU nodes
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms@verge.net.au>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add 'data-enable-active' property to endpoint node properties list.
+On Wed, May 23, 2018 at 10:50 AM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Wed, May 23, 2018 at 10:37 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Tue, May 22, 2018 at 03:29:25PM +0200, Geert Uytterhoeven wrote:
+> >> According to Documentation/devicetree/bindings/arm/cpus.txt, the
+> >> "enable-method" property should be a property of the individual CPU
+> >> nodes, not of the parent "cpus" node.  However, on R-Car M2-W (and on
+> >> several other arm32 SoCs), the property is tied to the "cpus" node
+> >> instead.
+> >>
+> >> Secondary CPU bringup and CPU hot (un)plug work regardless, as
+> >> arm_dt_init_cpu_maps() falls back to looking in the "cpus" node.
+> >>
+> >> The cpuidle code does not have such a fallback, so it does not detect
+> >> the enable-method.  Note that cpuidle does not support the
+> >> "renesas,apmu" enable-method yet, so for now this does not make any
+> >> difference.
+> >
+> > Is the implication that if we keep the current binding for cpu nodes
+> > then at some point we will need to update the cpuidle binding?
+>
+> If we keep the current binding for cpu nodes, we indeed have to update
+> (common) Documentation/devicetree/bindings/arm/cpus.txt.
+>
+> In addition, if we want to add renesas,apmu-based cpuidle support later,
+> we will have to update the common cpuidle code to look in /cpus, too.
 
-The property allows to specify the polarity of the data-enable signal, which
-when in active state determinates when data lines have to sampled for valid
-pixel data.
+Any comments from the DT/ARM people?
+Thanks!
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/media/video-interfaces.txt | 2 ++
- 1 file changed, 2 insertions(+)
+> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> ---
+> >> Arm64 and powerpc do not have such a fallback, but SH has, like arm32.
+> >>
+> >> This is marked RFC, as the alternative is to update the DT bindings to
+> >> keep the status quo.
+> >> ---
+> >>  arch/arm/boot/dts/r8a7791.dtsi | 3 ++-
+> >>  1 file changed, 2 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+> >> index d568bd22d6cbd855..b214cb8f52e47109 100644
+> >> --- a/arch/arm/boot/dts/r8a7791.dtsi
+> >> +++ b/arch/arm/boot/dts/r8a7791.dtsi
+> >> @@ -71,7 +71,6 @@
+> >>       cpus {
+> >>               #address-cells = <1>;
+> >>               #size-cells = <0>;
+> >> -             enable-method = "renesas,apmu";
+> >>
+> >>               cpu0: cpu@0 {
+> >>                       device_type = "cpu";
+> >> @@ -83,6 +82,7 @@
+> >>                       clock-latency = <300000>; /* 300 us */
+> >>                       power-domains = <&sysc R8A7791_PD_CA15_CPU0>;
+> >>                       next-level-cache = <&L2_CA15>;
+> >> +                     enable-method = "renesas,apmu";
+> >>
+> >>                       /* kHz - uV - OPPs unknown yet */
+> >>                       operating-points = <1500000 1000000>,
+> >> @@ -101,6 +101,7 @@
+> >>                       clocks = <&cpg CPG_CORE R8A7791_CLK_Z>;
+> >>                       power-domains = <&sysc R8A7791_PD_CA15_CPU1>;
+> >>                       next-level-cache = <&L2_CA15>;
+> >> +                     enable-method = "renesas,apmu";
+> >>               };
+> >>
+> >>               L2_CA15: cache-controller-0 {
 
-diff --git a/Documentation/devicetree/bindings/media/video-interfaces.txt b/Documentation/devicetree/bindings/media/video-interfaces.txt
-index 52b7c7b..baf9d97 100644
---- a/Documentation/devicetree/bindings/media/video-interfaces.txt
-+++ b/Documentation/devicetree/bindings/media/video-interfaces.txt
-@@ -113,6 +113,8 @@ Optional endpoint properties
-   Note, that if HSYNC and VSYNC polarities are not specified, embedded
-   synchronization may be required, where supported.
- - data-active: similar to HSYNC and VSYNC, specifies data line polarity.
-+- data-enable-active: similar to HSYNC and VSYNC, specifies the data enable
-+  signal polarity.
- - field-even-active: field signal level during the even field data transmission.
- - pclk-sample: sample data on rising (1) or falling (0) edge of the pixel clock
-   signal.
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
