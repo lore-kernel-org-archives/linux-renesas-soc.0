@@ -1,66 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:44467 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729754AbeGQUWh (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:48444 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753341AbeGFJIj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jul 2018 16:22:37 -0400
-Received: by mail-pl0-f66.google.com with SMTP id m16-v6so905411pls.11
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Jul 2018 12:48:29 -0700 (PDT)
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH/RFT 7/7] arm64: dts: renesas: r8a77965: Add Sound MIX support
-Date: Wed, 18 Jul 2018 04:48:03 +0900
-Message-Id: <1531856883-19645-8-git-send-email-ykaneko0929@gmail.com>
-In-Reply-To: <1531856883-19645-1-git-send-email-ykaneko0929@gmail.com>
-References: <1531856883-19645-1-git-send-email-ykaneko0929@gmail.com>
+        Fri, 6 Jul 2018 05:08:39 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-sh@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] serial: sh-sci: Stop RX FIFO timer during port shutdown
+Date: Fri,  6 Jul 2018 11:08:36 +0200
+Message-Id: <20180706090836.31945-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+The RX FIFO timer may be armed when the port is shut down, hence the
+timer function may still be called afterwards.
 
-Based on a similar patch of the R8A7796 device tree
-by Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>.
+Fix this race condition by deleting the timer during port shutdown.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Fixes: 039403765e5da3c6 ("serial: sh-sci: SCIFA/B RX FIFO software timeout")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+Tested with scifa0 on r8a7740/armadillo, after
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 2188ad2..56303ac 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -1356,6 +1356,7 @@
- 				 <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
- 				 <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
- 				 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
-+				 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
- 				 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
- 				 <&audio_clk_a>, <&audio_clk_b>,
- 				 <&audio_clk_c>,
-@@ -1367,6 +1368,7 @@
- 				      "src.9", "src.8", "src.7", "src.6",
- 				      "src.5", "src.4", "src.3", "src.2",
- 				      "src.1", "src.0",
-+				      "mix.1", "mix.0",
- 				      "ctu.1", "ctu.0",
- 				      "dvc.0", "dvc.1",
- 				      "clk_a", "clk_b", "clk_c", "clk_i";
-@@ -1394,6 +1396,11 @@
- 				};
- 			};
+    echo 2000 > /sys/devices/platform/e6c40000.serial/rx_fifo_timeout
+
+v2:
+  - Add Reviewed-by.
+---
+ drivers/tty/serial/sh-sci.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 360664a9adf66632..6eb65160e0150f27 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -2098,6 +2098,8 @@ static void sci_shutdown(struct uart_port *port)
+ 	}
+ #endif
  
-+			rcar_sound,mix {
-+				mix0: mix-0 { };
-+				mix1: mix-1 { };
-+			};
-+
- 			rcar_sound,ctu {
- 				ctu00: ctu-0 { };
- 				ctu01: ctu-1 { };
++	if (s->rx_trigger > 1 && s->rx_fifo_timeout > 0)
++		del_timer_sync(&s->rx_fifo_timer);
+ 	sci_free_irq(s);
+ 	sci_free_dma(port);
+ }
 -- 
-1.9.1
+2.17.1
