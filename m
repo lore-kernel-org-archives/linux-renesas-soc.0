@@ -1,85 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:46758 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388473AbeGKOZp (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41876 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754459AbeGIM6o (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:25:45 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 01/11] clk: renesas: rcar-gen3: Add support for OSC EXTAL predivider
-Date: Wed, 11 Jul 2018 16:20:50 +0200
-Message-Id: <20180711142100.3765-2-geert+renesas@glider.be>
-In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
-References: <20180711142100.3765-1-geert+renesas@glider.be>
+        Mon, 9 Jul 2018 08:58:44 -0400
+Date: Mon, 9 Jul 2018 14:58:40 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ARM: shmobile: r8a7779: hide unused
+ r8a7779_platform_cpu_kill
+Message-ID: <20180709125839.havdrfvk4hs4h76v@verge.net.au>
+References: <20180706151528.3759312-1-arnd@arndb.de>
+ <CAMuHMdXhN_Mw-Z+71LetjX2mJar-F4m3_-FjqouHgvjqtMq4OA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXhN_Mw-Z+71LetjX2mJar-F4m3_-FjqouHgvjqtMq4OA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a clock type and macro for defining clocks using the OSC EXTAL
-predivider combined with a fixed divider.
+On Fri, Jul 06, 2018 at 05:26:40PM +0200, Geert Uytterhoeven wrote:
+> Hi Arnd,
+> 
+> On Fri, Jul 6, 2018 at 5:15 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > After the cleanup in r8a7779_smp_prepare_cpus(), the only remaining caller of
+> > r8a7779_platform_cpu_kill() is in an ifdef, which leads to a build warning
+> > without CONFIG_HOTPLUG_CPU:
+> >
+> > arch/arm/mach-shmobile/smp-r8a7779.c:26:12: error: 'r8a7779_platform_cpu_kill' defined but not used [-Werror=unused-function]
+> >
+> > This moves the function inside of that #ifdef to avoid the warning.
+> >
+> > Fixes: 62f55ce683e3 ("ARM: shmobile: r8a7779: Stop powering down secondary CPUs during early boot")
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> Thanks, seems like I only built the R-Car Gen2 code without
+> CONFIG_HOTPLUG_CPU...
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On most R-Car Gen3 SoCs, the predivider value depends on mode pins, and
-thus must be specified in the configuration structure.
-
-Inspired by a patch in the BSP by Takeshi Kihara
-<takeshi.kihara.df@renesas.com>.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/rcar-gen3-cpg.c | 7 +++++++
- drivers/clk/renesas/rcar-gen3-cpg.h | 4 ++++
- 2 files changed, 11 insertions(+)
-
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 628b63b85d3f09c5..7533a51c679bfd54 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -563,6 +563,13 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 		return cpg_z_clk_register(core->name, __clk_get_name(parent),
- 					  base, CPG_FRQCRC_Z2FC_MASK);
- 
-+	case CLK_TYPE_GEN3_OSC:
-+		/*
-+		 * Clock combining OSC EXTAL predivider and a fixed divider
-+		 */
-+		div = cpg_pll_config->osc_prediv * core->div;
-+		break;
-+
- 	default:
- 		return ERR_PTR(-EINVAL);
- 	}
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-index ea4f8fc3c4c972e7..d7d84d9e4a1c9c8b 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -23,6 +23,7 @@ enum rcar_gen3_clk_types {
- 	CLK_TYPE_GEN3_PE,
- 	CLK_TYPE_GEN3_Z,
- 	CLK_TYPE_GEN3_Z2,
-+	CLK_TYPE_GEN3_OSC,	/* OSC EXTAL predivider and fixed divider */
- };
- 
- #define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
-@@ -33,6 +34,8 @@ enum rcar_gen3_clk_types {
- 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_PE,			\
- 		 (_parent_sscg) << 16 | (_parent_clean),	\
- 		 .div = (_div_sscg) << 16 | (_div_clean))
-+#define DEF_GEN3_OSC(_name, _id, _parent, _div)		\
-+	DEF_BASE(_name, _id, CLK_TYPE_GEN3_OSC, _parent, .div = _div)
- 
- struct rcar_gen3_cpg_pll_config {
- 	u8 extal_div;
-@@ -40,6 +43,7 @@ struct rcar_gen3_cpg_pll_config {
- 	u8 pll1_div;
- 	u8 pll3_mult;
- 	u8 pll3_div;
-+	u8 osc_prediv;
- };
- 
- #define CPG_RCKCR	0x240
--- 
-2.17.1
+Thanks, applied.
