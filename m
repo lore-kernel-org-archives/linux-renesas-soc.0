@@ -1,71 +1,55 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:51238 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388064AbeGWV3r (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jul 2018 17:29:47 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 02/12] i2c: designware-master: use core to detect 'no zero length' quirk
-Date: Mon, 23 Jul 2018 22:26:06 +0200
-Message-Id: <20180723202617.15230-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
-References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
+        horms@verge.net.au, geert@glider.be
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
+        robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v5 0/6] media: rcar-vin: Brush endpoint properties
+Date: Mon,  9 Jul 2018 16:19:15 +0200
+Message-Id: <1531145962-1540-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-And don't reimplement in the driver.
+Hello,
+   based on Niklas', Laurent's and Sakari's comments on v4, here it is a new
+version of this series brushing R-Car VIN interface device tree bindings
+description.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+The interface supports the following configurable properties:
+- hsync, vsync and data-enable signal polarities
+- field signal polarity during even field
+- parallel data bus widht and data shift.
 
-Only build tested.
+As preferred by Niklas, I have listed the properties in the Gen2 section of the
+bindings documentation, and referred to them in the Gen3 one.
 
- drivers/i2c/busses/i2c-designware-master.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+The series, as v4 did, does introduce a new properties in 'video-interfaces.txt'
+and for this reason the audiance is still a little larger than v3.
 
-diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
-index fc7c255c80af..a1717bff06a8 100644
---- a/drivers/i2c/busses/i2c-designware-master.c
-+++ b/drivers/i2c/busses/i2c-designware-master.c
-@@ -274,13 +274,6 @@ i2c_dw_xfer_msg(struct dw_i2c_dev *dev)
- 			break;
- 		}
- 
--		if (msgs[dev->msg_write_idx].len == 0) {
--			dev_err(dev->dev,
--				"%s: invalid message length\n", __func__);
--			dev->msg_err = -EINVAL;
--			break;
--		}
--
- 		if (!(dev->status & STATUS_WRITE_IN_PROGRESS)) {
- 			/* new i2c_msg */
- 			buf = msgs[dev->msg_write_idx].buf;
-@@ -523,6 +516,10 @@ static const struct i2c_algorithm i2c_dw_algo = {
- 	.functionality = i2c_dw_func,
- };
- 
-+static const struct i2c_adapter_quirks i2c_dw_quirks = {
-+	.flags = I2C_AQ_NO_ZERO_LEN,
-+};
-+
- static u32 i2c_dw_read_clear_intrbits(struct dw_i2c_dev *dev)
- {
- 	u32 stat;
-@@ -718,6 +715,7 @@ int i2c_dw_probe(struct dw_i2c_dev *dev)
- 		 "Synopsys DesignWare I2C adapter");
- 	adap->retries = 3;
- 	adap->algo = &i2c_dw_algo;
-+	adap->quirks = &i2c_dw_quirks;
- 	adap->dev.parent = dev->dev;
- 	i2c_set_adapdata(adap, dev);
- 
--- 
-2.11.0
+Thanks
+   j
+
+Jacopo Mondi (6):
+  dt-bindings: media: rcar-vin: Align Gen2 and Gen3
+  dt-bindings: media: rcar-vin: Describe optional ep properties
+  dt-bindings: media: Document data-enable-active property
+  media: v4l2-fwnode: parse 'data-enable-active' prop
+  dt-bindings: media: rcar-vin: Add 'data-enable-active'
+  media: rcar-vin: Handle data-enable polarity
+
+ .../devicetree/bindings/media/rcar_vin.txt         | 29 +++++++++++++++++++---
+ .../devicetree/bindings/media/video-interfaces.txt |  2 ++
+ drivers/media/platform/rcar-vin/rcar-dma.c         |  5 ++++
+ drivers/media/v4l2-core/v4l2-fwnode.c              |  4 +++
+ include/media/v4l2-mediabus.h                      |  2 ++
+ 5 files changed, 38 insertions(+), 4 deletions(-)
+
+--
+2.7.4
+
