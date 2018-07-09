@@ -1,118 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:36226 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727242AbeGSMA2 (ORCPT
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:49859 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933045AbeGIOTr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Jul 2018 08:00:28 -0400
-Received: by mail-pl0-f66.google.com with SMTP id e11-v6so3508266plb.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Jul 2018 04:17:47 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Thu, 19 Jul 2018 20:19:50 +0900
-Message-Id: <153199919069.10140.15895581107478774899.sendpatchset@little-apple>
-Subject: [PATCH] arm64: dts: renesas: Include R-Car product name in DTSI files
+        Mon, 9 Jul 2018 10:19:47 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
+        horms@verge.net.au, geert@glider.be
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
+        robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v5 4/6] media: v4l2-fwnode: parse 'data-enable-active' prop
+Date: Mon,  9 Jul 2018 16:19:19 +0200
+Message-Id: <1531145962-1540-5-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1531145962-1540-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1531145962-1540-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Parse the newly defined 'data-enable-active' property in parallel endpoint
+parsing function.
 
-Browsing the DTS for all the R-Car SoCs with similar part numbers
-makes my head hurt, so to improve the user friendliness of the
-DTS code base include R-Car product name in each DTSI file.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
+ drivers/media/v4l2-core/v4l2-fwnode.c | 4 ++++
+ include/media/v4l2-mediabus.h         | 2 ++
+ 2 files changed, 6 insertions(+)
 
- Based on renesas-drivers-2018-07-17-v4.18-rc5
+diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
+index 3f77aa3..6105191 100644
+--- a/drivers/media/v4l2-core/v4l2-fwnode.c
++++ b/drivers/media/v4l2-core/v4l2-fwnode.c
+@@ -154,6 +154,10 @@ static void v4l2_fwnode_endpoint_parse_parallel_bus(
+ 		flags |= v ? V4L2_MBUS_VIDEO_SOG_ACTIVE_HIGH :
+ 			V4L2_MBUS_VIDEO_SOG_ACTIVE_LOW;
 
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi |    2 +-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi     |    2 +-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi     |    2 +-
- arch/arm64/boot/dts/renesas/r8a77965.dtsi    |    2 +-
- arch/arm64/boot/dts/renesas/r8a77970.dtsi    |    2 +-
- arch/arm64/boot/dts/renesas/r8a77980.dtsi    |    2 +-
- arch/arm64/boot/dts/renesas/r8a77990.dtsi    |    2 +-
- arch/arm64/boot/dts/renesas/r8a77995.dtsi    |    2 +-
- 8 files changed, 8 insertions(+), 8 deletions(-)
++	if (!fwnode_property_read_u32(fwnode, "data-enable-active", &v))
++		flags |= v ? V4L2_MBUS_DATA_ENABLE_HIGH :
++			V4L2_MBUS_DATA_ENABLE_LOW;
++
+ 	bus->flags = flags;
 
---- 0001/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi	2018-07-19 20:04:10.900607110 +0900
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Device Tree Source for the r8a7795 ES1.x SoC
-+ * Device Tree Source for the R-Car H3 (R8A77950) ES1.x SoC
-  *
-  * Copyright (C) 2015 Renesas Electronics Corp.
-  */
---- 0001/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a7795.dtsi	2018-07-19 20:04:21.030607110 +0900
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Device Tree Source for the r8a7795 SoC
-+ * Device Tree Source for the R-Car H3 (R8A77950) SoC
-  *
-  * Copyright (C) 2015 Renesas Electronics Corp.
-  */
---- 0001/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a7796.dtsi	2018-07-19 20:04:53.310607110 +0900
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Device Tree Source for the r8a7796 SoC
-+ * Device Tree Source for the R-Car M3-W (R8A77960) SoC
-  *
-  * Copyright (C) 2016-2017 Renesas Electronics Corp.
-  */
---- 0001/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a77965.dtsi	2018-07-19 20:05:24.380607110 +0900
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Device Tree Source for the r8a77965 SoC
-+ * Device Tree Source for the R-Car M3-N (R8A77965) SoC
-  *
-  * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
-  *
---- 0001/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a77970.dtsi	2018-07-19 20:06:31.090607110 +0900
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Device Tree Source for the r8a77970 SoC
-+ * Device Tree Source for the R-Car V3M (R8A77970) SoC
-  *
-  * Copyright (C) 2016-2017 Renesas Electronics Corp.
-  * Copyright (C) 2017 Cogent Embedded, Inc.
---- 0001/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a77980.dtsi	2018-07-19 20:06:16.310607110 +0900
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Device Tree Source for the r8a77980 SoC
-+ * Device Tree Source for the R-Car V3H (R8A77980) SoC
-  *
-  * Copyright (C) 2018 Renesas Electronics Corp.
-  * Copyright (C) 2018 Cogent Embedded, Inc.
---- 0001/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a77990.dtsi	2018-07-19 20:06:58.970607110 +0900
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /*
-- * Device Tree Source for the r8a77990 SoC
-+ * Device Tree Source for the R-Car E3 (R8A77990) SoC
-  *
-  * Copyright (C) 2018 Renesas Electronics Corp.
-  */
---- 0005/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a77995.dtsi	2018-07-19 20:07:20.150607110 +0900
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Device Tree Source for the r8a77995 SoC
-+ * Device Tree Source for the R-Car D3 (R8A77995) SoC
-  *
-  * Copyright (C) 2016 Renesas Electronics Corp.
-  * Copyright (C) 2017 Glider bvba
+ }
+diff --git a/include/media/v4l2-mediabus.h b/include/media/v4l2-mediabus.h
+index 4d8626c..4bbb5f3 100644
+--- a/include/media/v4l2-mediabus.h
++++ b/include/media/v4l2-mediabus.h
+@@ -45,6 +45,8 @@
+ /* Active state of Sync-on-green (SoG) signal, 0/1 for LOW/HIGH respectively. */
+ #define V4L2_MBUS_VIDEO_SOG_ACTIVE_HIGH		BIT(12)
+ #define V4L2_MBUS_VIDEO_SOG_ACTIVE_LOW		BIT(13)
++#define V4L2_MBUS_DATA_ENABLE_HIGH		BIT(14)
++#define V4L2_MBUS_DATA_ENABLE_LOW		BIT(15)
+
+ /* Serial flags */
+ /* How many lanes the client can use */
+--
+2.7.4
