@@ -1,102 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:12032 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727409AbeGaMWC (ORCPT
+Received: from shards.monkeyblade.net ([23.128.96.9]:47844 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933003AbeGISQt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 31 Jul 2018 08:22:02 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3 3/4] serial: sh-sci: Remove SCIx_RZ_SCIFA_REGTYPE
-Date: Tue, 31 Jul 2018 05:41:38 -0500
-Message-Id: <20180731104139.93291-4-chris.brandt@renesas.com>
-In-Reply-To: <20180731104139.93291-1-chris.brandt@renesas.com>
-References: <20180731104139.93291-1-chris.brandt@renesas.com>
+        Mon, 9 Jul 2018 14:16:49 -0400
+Date: Mon, 09 Jul 2018 11:16:45 -0700 (PDT)
+Message-Id: <20180709.111645.379820862060333809.davem@davemloft.net>
+To: sergei.shtylyov@cogentembedded.com
+Cc: vladimir_zapolskiy@mentor.com, andrew@lunn.ch,
+        geert@linux-m68k.org, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 00/14] ravb/sh_eth: fix sleep in atomic by reusing
+ shared ethtool handlers
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <efa424b3-1cf8-3eac-aea4-eaaef9df1b66@cogentembedded.com>
+References: <14b0b5fd-02d1-3b57-ec7c-eacdf8bff091@cogentembedded.com>
+        <20180708.085834.1283723823527928346.davem@davemloft.net>
+        <efa424b3-1cf8-3eac-aea4-eaaef9df1b66@cogentembedded.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-There is no more need for SCIx_RZ_SCIFA_REGTYPE now that
-SCIx_SH4_SCIF_REGTYPE can provide the same register/address definitions.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Date: Mon, 9 Jul 2018 02:24:45 +0300
 
-Also, R7S9210 no longer needs a special compatible since the standard
-"renesas,scif" will work just fine.
+> Hello!
+> 
+> On 7/8/2018 2:58 AM, David Miller wrote:
+> 
+>>>     So you applied the whole series to net.git... that was somewhat
+>>>     unexpected, at least by me. Care to share your reasoning?
+>> It's fixes a sleep in atomic which is a serious bug.
+> 
+>    Do you realize that only patches 0, 1, 8, and 9 were real fixes,
+>    others were just follow-up cleanups? (Although the wording of the
+>    cover letter could have made people think that the whole series is the
+>    fixes...)
+>    OK, I understand what's done is done and it's not me that would have
+>    to justify the cleanups in a middle of the 4.18-rc's. But still, it
+>    was not a pleasant surprise (and I told Vladimir he shouldn't mix the
+>    real fixes and
+> cleanups in reply to his cover letter, IIRC).
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-* add Reviewed-by
----
- drivers/tty/serial/sh-sci.c | 31 -------------------------------
- include/linux/serial_sci.h  |  1 -
- 2 files changed, 32 deletions(-)
+I was disappointed the series was so large as well.
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index c29244f76057..54ea58bbe3c9 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -293,33 +293,6 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
- 		.error_clear = SCIF_ERROR_CLEAR,
- 	},
- 
--	/*
--	 * The "SCIFA" that is in RZ/T and RZ/A2.
--	 * It looks like a normal SCIF with FIFO data, but with a
--	 * compressed address space. Also, the break out of interrupts
--	 * are different: ERI/BRI, RXI, TXI, TEI, DRI.
--	 */
--	[SCIx_RZ_SCIFA_REGTYPE] = {
--		.regs = {
--			[SCSMR]		= { 0x00, 16 },
--			[SCBRR]		= { 0x02,  8 },
--			[SCSCR]		= { 0x04, 16 },
--			[SCxTDR]	= { 0x06,  8 },
--			[SCxSR]		= { 0x08, 16 },
--			[SCxRDR]	= { 0x0A,  8 },
--			[SCFCR]		= { 0x0C, 16 },
--			[SCFDR]		= { 0x0E, 16 },
--			[SCSPTR]	= { 0x10, 16 },
--			[SCLSR]		= { 0x12, 16 },
--		},
--		.fifosize = 16,
--		.overrun_reg = SCLSR,
--		.overrun_mask = SCLSR_ORER,
--		.sampling_rate_mask = SCI_SR(32),
--		.error_mask = SCIF_DEFAULT_ERROR_MASK,
--		.error_clear = SCIF_ERROR_CLEAR,
--	},
--
- 	/*
- 	 * Common SH-3 SCIF definitions.
- 	 */
-@@ -3148,10 +3121,6 @@ static const struct of_device_id of_sci_match[] = {
- 		.compatible = "renesas,scif-r7s72100",
- 		.data = SCI_OF_DATA(PORT_SCIF, SCIx_SH2_SCIF_FIFODATA_REGTYPE),
- 	},
--	{
--		.compatible = "renesas,scif-r7s9210",
--		.data = SCI_OF_DATA(PORT_SCIF, SCIx_RZ_SCIFA_REGTYPE),
--	},
- 	/* Family-specific types */
- 	{
- 		.compatible = "renesas,rcar-gen1-scif",
-diff --git a/include/linux/serial_sci.h b/include/linux/serial_sci.h
-index 1c89611e0e06..c0e795d95477 100644
---- a/include/linux/serial_sci.h
-+++ b/include/linux/serial_sci.h
-@@ -36,7 +36,6 @@ enum {
- 	SCIx_SH4_SCIF_FIFODATA_REGTYPE,
- 	SCIx_SH7705_SCIF_REGTYPE,
- 	SCIx_HSCIF_REGTYPE,
--	SCIx_RZ_SCIFA_REGTYPE,
- 
- 	SCIx_NR_REGTYPES,
- };
--- 
-2.16.1
+Let's try to work together to handle this better next time, ok?
