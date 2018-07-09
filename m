@@ -1,60 +1,120 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:52886 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753104AbeGCVKb (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:34541 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750996AbeGIO0l (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Jul 2018 17:10:31 -0400
-Date: Tue, 3 Jul 2018 23:10:29 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] i2c: gpio: fault-injector: add
- incomplete_write_byte
-Message-ID: <20180703211029.czme4gzf6wlveu32@ninjato>
-References: <20180629091247.32568-1-wsa+renesas@sang-engineering.com>
- <20180629091247.32568-3-wsa+renesas@sang-engineering.com>
+        Mon, 9 Jul 2018 10:26:41 -0400
+Date: Mon, 9 Jul 2018 16:26:30 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
+        horms@verge.net.au, geert@glider.be, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
+        robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v5 7/7] ARM: dts: rcar-gen2: Remove un-supported VIN
+ properties
+Message-ID: <20180709142630.GC23629@w540>
+References: <1531145962-1540-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1531145962-1540-8-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="s6kbeduptdb3of6s"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="H8ygTp4AXg6deix2"
 Content-Disposition: inline
-In-Reply-To: <20180629091247.32568-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <1531145962-1540-8-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---s6kbeduptdb3of6s
-Content-Type: text/plain; charset=us-ascii
+--H8ygTp4AXg6deix2
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 29, 2018 at 11:12:47AM +0200, Wolfram Sang wrote:
-> Add another injector for an incomplete transfer. As mentioned in the
-> docs, this one is important to check bus recovery algorithms with it.
-> Otherwise random data may be sent to devices!
->=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Ah ups,
+   I initially had this one in the series (see, it's [7/7]), then I
+dropped it not to sparkle any more debate, and re-generated patches,
+but forget to remove this one, which has been sent with the rest of
+the series.
 
-Applied to for-next, thanks!
+So please ignore it.
 
+Sorry for the noise.
+   j
 
---s6kbeduptdb3of6s
+On Mon, Jul 09, 2018 at 04:19:22PM +0200, Jacopo Mondi wrote:
+> Remove from VIN interface description properties that are not listed as
+> supported in bindings documentation, as their value is fixed in the hardware.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  arch/arm/boot/dts/r8a7790-lager.dts   | 2 --
+>  arch/arm/boot/dts/r8a7791-koelsch.dts | 2 --
+>  arch/arm/boot/dts/r8a7793-gose.dts    | 2 --
+>  3 files changed, 6 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+> index 092610e..250f698 100644
+> --- a/arch/arm/boot/dts/r8a7790-lager.dts
+> +++ b/arch/arm/boot/dts/r8a7790-lager.dts
+> @@ -888,8 +888,6 @@
+>  			bus-width = <24>;
+>  			hsync-active = <0>;
+>  			vsync-active = <0>;
+> -			pclk-sample = <1>;
+> -			data-active = <1>;
+>  		};
+>  	};
+>  };
+> diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+> index 8ab793d..1becb79 100644
+> --- a/arch/arm/boot/dts/r8a7791-koelsch.dts
+> +++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+> @@ -860,8 +860,6 @@
+>  			bus-width = <24>;
+>  			hsync-active = <0>;
+>  			vsync-active = <0>;
+> -			pclk-sample = <1>;
+> -			data-active = <1>;
+>  		};
+>  	};
+>  };
+> diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+> index aa209f6..f57a7ae 100644
+> --- a/arch/arm/boot/dts/r8a7793-gose.dts
+> +++ b/arch/arm/boot/dts/r8a7793-gose.dts
+> @@ -768,8 +768,6 @@
+>  			bus-width = <24>;
+>  			hsync-active = <0>;
+>  			vsync-active = <0>;
+> -			pclk-sample = <1>;
+> -			data-active = <1>;
+>  		};
+>  	};
+>  };
+> --
+> 2.7.4
+>
+
+--H8ygTp4AXg6deix2
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAls75kUACgkQFA3kzBSg
-KbZYlw/9F60WCILd0zbiSkkrhEQqoXw6WWwQil8Q0PqIBzRvN7QQTYFWyuZREI1f
-fffMT/64bYOtNlO8Y177//Kv5BV/WULOFs8ywc4OoUB2YutXVCjsS2W1VVRSroKF
-gqqubsx0wAx0aVuVy8+eLHQWOlD16PKI/e5aQ76O3X+70EzG2QEHyOxR5PuADWwT
-4fNcfnxobqX66jUEMVnK12qvRgVV5T0e2WtgCtEvHJvxbeL8Rwnk9fLnfHzEV+P0
-xdhDGNZyEh/LoGrP5yRlrsgIzmYJyhOxTrbZe/BdiNjSm8nYWFxex6AtWSajJYU/
-j8A4l4naTQuDW1vJm8emn0TfH+Ug8MHdoaNAm+ETtDi7p8Xn88/mv8PNQe4xSb2+
-ZhrhekfJrrFKeK0nzP39WF5YXqA0TZh7J2f8/DSc/ZKCIsy2019s2yf/xgWrJGvQ
-UrYFuYZXuzqbgmPeLvjaIPSMYoMwZVKsBzRPrsAzd8dsE0lpGNT6nO3uz6wzty1Y
-asqjWMjCE8bRkarLRXsTny0IOl/B3zc/4pUtun/x5PXALTWHsSvJ/KXHYBio8pve
-z6ltqN0eAwj0wK48/jALTZR306wQl41PKGG4bC/HWj+RcJQU+U1Hu0hH9p+UyEJx
-aWcHrKOXG9Cw8bf999yTy1H7i2xZX5SJO2uxXQzPgXC9FEfScEg=
-=vnN7
+iQIcBAEBAgAGBQJbQ3CWAAoJEHI0Bo8WoVY8tHwP/1G3ShHzpii8KjX4fVdyU6Rc
+Jg7E/TOkLjuFq9qszZm49/AUW7AR17iCntGK3HQcFmaLD5oH5BJLsdDNUBx7ipRn
+YcaA5qx6O73CGTrxYs7nQSFPN+TCxQBmyAFSSE8ITvS2ExF6VmbiQ2A6+oX2MTWu
+NCCAjN3sCMn1DOU1I7w70G+tbef7GiqHN62xehS/UdjSIjaUR5ME4A83DFXFbNuX
+6R3CIhB74dwtgU6bODUrNPGz40ulY88UmZD1yPWuGbU/wO9dJvB0MxYYfqei/JUF
+1XAFT6cbgt2Q99qYlqLmCoXVNtIiYqgsGD99XKXoX6QAAaX45QfK4EzcLnS8mW/k
+ETb6oSqUlxwXLJvDO/kNJ0S4odjCgTkAoRDzK1twES3yyeqd78PQP1mJ7Srl9ad4
+4+nSldGJ3lcEUuc1anJmXMsLAl7/EGNrOpXKr425f863M9/QELOZn47wHXJvwXKl
+3I+QNgZ2JGOl3RLu78KPlqVVxCki1iq/c/DOXFNc0NPHfZBP7bGO3HyhVJjQQKRO
+Nyg/mRaWFgJKKr54tQfvB9rM77BRjjs71f+UhwycGA7Ga4TCJTT17d8hty9NQJdb
+7Mpi4YRTpQaCRTeKiB5v0aY7XjtY8iqd+wNY7xxyzmmPNFchakQ7wJV0A3MFRR7R
+msxQp2u/PTo9CZH18UKA
+=oUEm
 -----END PGP SIGNATURE-----
 
---s6kbeduptdb3of6s--
+--H8ygTp4AXg6deix2--
