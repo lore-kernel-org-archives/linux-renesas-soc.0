@@ -1,15 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:49274 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:60126 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933900AbeGJPVv (ORCPT
+        id S933415AbeGIRZa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Jul 2018 11:21:51 -0400
-Date: Tue, 10 Jul 2018 20:51:47 +0530
+        Mon, 9 Jul 2018 13:25:30 -0400
+Date: Mon, 9 Jul 2018 22:55:21 +0530
 From: Vinod <vkoul@kernel.org>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH 0/2] dma: sh: rcar-dmac: Add dma_pause operation
-Message-ID: <20180710152147.GD3219@vkoul-mobl>
+Message-ID: <20180709172521.GN22377@vkoul-mobl>
 References: <1530523312-2253-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -30,8 +32,25 @@ On 02-07-18, 18:21, Yoshihiro Shimoda wrote:
 >  # cmp <somewhere the 5MiB file> rx.txt
 >  output "differ: byte NNNNN, line MMM"
 
-This fails to apply for me. Please rebase. Also please fix the subsystem
-name
+Looks okay to me, Acks/tested-by..?
+
+> 
+> [1] https://patchwork.kernel.org/patch/10500775/
+> 
+> Yoshihiro Shimoda (2):
+>   dma: sh: rcar-dmac: add a new function to clear CHCR.DE with barrier
+>   dma: sh: rcar-dmac: Add dma_pause operation
+> 
+>  drivers/dma/sh/rcar-dmac.c | 27 +++++++++++++++++++++++----
+>  1 file changed, 23 insertions(+), 4 deletions(-)
+> 
+> -- 
+> 1.9.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe dmaengine" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 -- 
 ~Vinod
