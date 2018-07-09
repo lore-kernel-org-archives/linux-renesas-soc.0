@@ -1,17 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:48904 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:59174 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933374AbeGJPUw (ORCPT
+        id S933415AbeGIRXc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Jul 2018 11:20:52 -0400
-Date: Tue, 10 Jul 2018 20:50:43 +0530
+        Mon, 9 Jul 2018 13:23:32 -0400
+Date: Mon, 9 Jul 2018 22:53:24 +0530
 From: Vinod <vkoul@kernel.org>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: vinod.koul@intel.com, dmaengine@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH] dma: sh: rcar-dmac: avoid to write CHCR.TE to 1 if TCR
  is set to 0
-Message-ID: <20180710152043.GC3219@vkoul-mobl>
+Message-ID: <20180709172324.GM22377@vkoul-mobl>
 References: <1530523083-2106-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -50,7 +51,35 @@ On 02-07-18, 18:18, Yoshihiro Shimoda wrote:
 >  (Send 5MiB file by Teraterm. After a few minutes later, we cannot
 >   input any commands by the serial console.)
 
-Applied after fixing subsystem name
+Ack/tested-by ..?
+
+> 
+>  drivers/dma/sh/rcar-dmac.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+> index 2a2ccd9..8305a1c 100644
+> --- a/drivers/dma/sh/rcar-dmac.c
+> +++ b/drivers/dma/sh/rcar-dmac.c
+> @@ -774,8 +774,9 @@ static void rcar_dmac_sync_tcr(struct rcar_dmac_chan *chan)
+>  	/* make sure all remaining data was flushed */
+>  	rcar_dmac_chcr_de_barrier(chan);
+>  
+> -	/* back DE */
+> -	rcar_dmac_chan_write(chan, RCAR_DMACHCR, chcr);
+> +	/* back DE if remain data exists */
+> +	if (rcar_dmac_chan_read(chan, RCAR_DMATCR))
+> +		rcar_dmac_chan_write(chan, RCAR_DMACHCR, chcr);
+>  }
+>  
+>  static void rcar_dmac_chan_halt(struct rcar_dmac_chan *chan)
+> -- 
+> 1.9.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe dmaengine" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 -- 
 ~Vinod
