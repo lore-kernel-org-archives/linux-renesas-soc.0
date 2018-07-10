@@ -1,56 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:51256 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:45522 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388149AbeGWV3w (ORCPT
+        id S1732187AbeGJVnW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jul 2018 17:29:52 -0400
+        Tue, 10 Jul 2018 17:43:22 -0400
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-i2c@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 08/12] i2c: tegra: use core to detect 'no zero length' quirk
-Date: Mon, 23 Jul 2018 22:26:12 +0200
-Message-Id: <20180723202617.15230-9-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
-References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Eddie James <eajames@linux.vnet.ibm.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 0/3] i2c: recovery: make sure pulses are not misinterpreted
+Date: Tue, 10 Jul 2018 23:42:14 +0200
+Message-Id: <20180710214217.1336-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-And don't reimplement in the driver.
+As the 'incomplete_write_byte' fault injector has shown, we need to take care
+that pulses used for recovery will not be misinterpreted as a regular cycle.
+This series implements that. This approach makes sure that STOP signals put on
+the bus do not create additional pulses. We still do 9 pulses only, but
+generate a STOP signal in case SDA was released again.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+The first patch implements it in a minimal way, so it is suitable for stable.
+The second patch adds some sanity checking and documentation on top which is
+not suitable for stable. The third patch simplifies the logic because of the
+new behaviour.
 
-Only build tested.
+It has been tested with a Renesas Lager board (R-Car H2). I will test it
+tomorrow a bit more once I taught the GPIO driver bus recovery.
 
- drivers/i2c/busses/i2c-tegra.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+A branch (with further improvements) can be found here:
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 60c8561fbe65..437294ea2f0a 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -684,9 +684,6 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 
- 	tegra_i2c_flush_fifos(i2c_dev);
- 
--	if (msg->len == 0)
--		return -EINVAL;
--
- 	i2c_dev->msg_buf = msg->buf;
- 	i2c_dev->msg_buf_remaining = msg->len;
- 	i2c_dev->msg_err = I2C_ERR_NONE;
-@@ -831,6 +828,7 @@ static const struct i2c_algorithm tegra_i2c_algo = {
- 
- /* payload size is only 12 bit */
- static const struct i2c_adapter_quirks tegra_i2c_quirks = {
-+	.flags = I2C_AQ_NO_ZERO_LEN,
- 	.max_read_len = 4096,
- 	.max_write_len = 4096,
- };
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/recovery/write-byte-fix
+
+Looking forward to comments.
+
+Kind regards,
+
+   Wolfram
+
+Changes since V1:
+
+* we create STOP now always when set_sda is available independent of get_sda
+  being available or not. This is much safer and allows for a cleaner logic
+  implemented in the new patch 3.
+* hopefully improved comments
+
+Wolfram Sang (3):
+  i2c: recovery: if possible send STOP with recovery pulses
+  i2c: recovery: require either get_sda or set_sda
+  i2c: recovery: refactor recovery function
+
+ drivers/i2c/i2c-core-base.c | 36 +++++++++++++++++++-----------------
+ include/linux/i2c.h         | 12 ++++++------
+ 2 files changed, 25 insertions(+), 23 deletions(-)
+
 -- 
 2.11.0
