@@ -1,29 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47635 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732469AbeGKNdL (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:44888 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751057AbeGJH7A (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jul 2018 09:33:11 -0400
-Date: Wed, 11 Jul 2018 15:28:45 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: rcar-gen3-phy-usb2: Add bindings for
+        Tue, 10 Jul 2018 03:59:00 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Rob Herring <robh@kernel.org>, "kishon@ti.com" <kishon@ti.com>
+CC: "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] dt-bindings: rcar-gen3-phy-usb2: Add bindings for
  r8a77990
-Message-ID: <20180711132844.xky6fkuuvbppzb4d@verge.net.au>
+Date: Tue, 10 Jul 2018 07:58:56 +0000
+Message-ID: <OSBPR01MB2293646B55B7C7ECA13BD37FD85B0@OSBPR01MB2293.jpnprd01.prod.outlook.com>
 References: <1528267348-18960-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20180612214433.GA28082@rob-hp-laptop>
+In-Reply-To: <20180612214433.GA28082@rob-hp-laptop>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1528267348-18960-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jun 06, 2018 at 03:42:28PM +0900, Yoshihiro Shimoda wrote:
-> This patch adds suuport for r8a77990 (R-Car E3).
-> 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Hi Kishon,
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Would you review this patch?
+
+
+Hi Rob,
+
+Thank you for your review!
+
+Best regards,
+Yoshihiro Shimoda
+
+> -----Original Message-----
+> From: Rob Herring <robh@kernel.org>
+> Sent: Wednesday, June 13, 2018 6:45 AM
+> To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Cc: kishon@ti.com; mark.rutland@arm.com; linux-kernel@vger.kernel.org; de=
+vicetree@vger.kernel.org;
+> linux-renesas-soc@vger.kernel.org
+> Subject: Re: [PATCH] dt-bindings: rcar-gen3-phy-usb2: Add bindings for r8=
+a77990
+>=20
+> On Wed, Jun 06, 2018 at 03:42:28PM +0900, Yoshihiro Shimoda wrote:
+> > This patch adds suuport for r8a77990 (R-Car E3).
+> >
+> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > ---
+> >  Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 2 ++
+> >  1 file changed, 2 insertions(+)
+>=20
+> Acked-by: Rob Herring <robh@kernel.org>
