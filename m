@@ -1,38 +1,72 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] DT: irqchip: renesas-irqc: document R8A77980 support
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Message-ID: <71e2be51-5699-1b26-c2a1-fca7897817d1@cogentembedded.com>
-Date: Tue, 17 Jul 2018 22:23:17 +0300
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:53952 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750992AbeGJHE7 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 10 Jul 2018 03:04:59 -0400
+Date: Tue, 10 Jul 2018 09:04:55 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Olof Johansson <olof@lixom.net>
+Cc: ARM-SoC Maintainers <arm@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM64 Based SoC DT Updates for v4.19
+Message-ID: <20180710070450.kpahx5kgtqtcdua2@verge.net.au>
+References: <cover.1529933747.git.horms+renesas@verge.net.au>
+ <CAOesGMhZD0VS+NbZhgJOqhpP5A5X_pXVfUdkUnGmqLbnagJZaA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOesGMhZD0VS+NbZhgJOqhpP5A5X_pXVfUdkUnGmqLbnagJZaA@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document R-Car V3H (AKA R8A77980) SoC bindings.
+On Mon, Jul 02, 2018 at 10:09:41AM -0700, Olof Johansson wrote:
+> On Mon, Jun 25, 2018 at 7:03 AM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > Hi Olof, Hi Kevin, Hi Arnd,
+> >
+> > Please consider these Renesas ARM64 based SoC DT updates for v4.19.
+> >
+> >
+> > The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
+> >
+> >   Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+> >
+> > are available in the git repository at:
+> >
+> >   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt-for-v4.19
+> >
+> > for you to fetch changes up to 6b284a81307848b4331453b02cf7a33c09719d4b:
+> >
+> >   arm64: dts: renesas: r8a77995: Add MSIOF device nodes (2018-06-25 15:30:39 +0200)
+> 
+> Thanks, merged into next/dt.
+> 
+> I think you can still collapse some commits a bit further, for example
+> when a large number of devices are added to a new SoC, you don't need
+> a commit per device (i.e. the r8a77980 series).
+> 
+> It's not a problem if it's just a few, but like last merge window when
+> it really added to a lot of small trivial patches it's adding noise to
+> someone looking at changelogs -- it's harder to get a feel for what
+> new things are going in on a larger scope. Keep in mind that you, as
+> maintainer, should feel free to squash together patches when you apply
+> them if it makes sense -- just make sure you retain authorship and
+> credits/COO.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Thanks Olof,
 
----
- Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt |    1 +
- 1 file changed, 1 insertion(+)
+as I think you can see we have adjusted things somewhat in the light of
+the feedback you provided during the v4.18 development cycle. And we'll
+continue to do so.
 
-Index: renesas/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-===================================================================
---- renesas.orig/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-+++ renesas/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-@@ -16,6 +16,7 @@ Required properties:
-     - "renesas,intc-ex-r8a7796" (R-Car M3-W)
-     - "renesas,intc-ex-r8a77965" (R-Car M3-N)
-     - "renesas,intc-ex-r8a77970" (R-Car V3M)
-+    - "renesas,intc-ex-r8a77980" (R-Car V3H)
-     - "renesas,intc-ex-r8a77995" (R-Car D3)
- - #interrupt-cells: has to be <2>: an interrupt index and flags, as defined in
-   interrupts.txt in this directory
+In the case of enabling various devices for the r8a77980 I do take your
+point with regards to squashing patches. Although I believe that in this
+case the patches came in over time, which makes them a little less obvious
+candidates for squashing than would be the case if they came in all at
+once. Nonetheless, I'll continue to work with the team to streamline our
+processes and make the pull requests as easy to digest as possible.
