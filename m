@@ -1,45 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:36453 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726789AbeGMJqv (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:53004 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388222AbeGKRIz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Jul 2018 05:46:51 -0400
-MIME-Version: 1.0
-References: <20180711170313.80321-1-chris.brandt@renesas.com> <20180711170313.80321-3-chris.brandt@renesas.com>
-In-Reply-To: <20180711170313.80321-3-chris.brandt@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 13 Jul 2018 11:32:49 +0200
-Message-ID: <CAMuHMdUYdrcGKfp+t4QP=pHJgJ3hyQpp8yOEMT6A_yv0eKX_6w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: renesas: mstp: Document R7S9210 support
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+        Wed, 11 Jul 2018 13:08:55 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset="UTF-8"
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH 2/2] clk: renesas: mstp: Document R7S9210 support
+Date: Wed, 11 Jul 2018 12:03:13 -0500
+Message-Id: <20180711170313.80321-3-chris.brandt@renesas.com>
+In-Reply-To: <20180711170313.80321-1-chris.brandt@renesas.com>
+References: <20180711170313.80321-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jul 11, 2018 at 7:03 PM Chris Brandt <chris.brandt@renesas.com> wrote:
-> Renesas R7S9210 SoC also has the CPG MSTP clocks.
->
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Renesas R7S9210 SoC also has the CPG MSTP clocks.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+ Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
+index da578ebdda28..bb470d9bc07f 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
+@@ -11,6 +11,7 @@ Required Properties:
+ 
+   - compatible: Must be one of the following
+     - "renesas,r7s72100-mstp-clocks" for R7S72100 (RZ) MSTP gate clocks
++    - "renesas,r7s9210-mstp-clocks" for R7S9210 (RZ A2) MSTP gate clocks
+     - "renesas,r8a73a4-mstp-clocks" for R8A73A4 (R-Mobile APE6) MSTP gate clocks
+     - "renesas,r8a7740-mstp-clocks" for R8A7740 (R-Mobile A1) MSTP gate clocks
+     - "renesas,r8a7778-mstp-clocks" for R8A7778 (R-Car M1) MSTP gate clocks
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.16.1
