@@ -1,58 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:33740 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728279AbeGQJVA (ORCPT
+Received: from mail-eopbgr40112.outbound.protection.outlook.com ([40.107.4.112]:21983
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726360AbeGKGEy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jul 2018 05:21:00 -0400
-Date: Tue, 17 Jul 2018 10:49:27 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+        Wed, 11 Jul 2018 02:04:54 -0400
 Subject: Re: [PATCH v2] i2c: recovery: rename variable for easier
  understanding
-Message-ID: <20180717084927.rz5lonzsw5ousuvh@ninjato>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
 References: <20180710222722.7852-1-wsa+renesas@sang-engineering.com>
+From: Peter Rosin <peda@axentia.se>
+Message-ID: <988eca90-88c3-1b52-ed97-af4a47d8f591@axentia.se>
+Date: Wed, 11 Jul 2018 08:01:54 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="eiafcuwtundpitog"
-Content-Disposition: inline
 In-Reply-To: <20180710222722.7852-1-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
---eiafcuwtundpitog
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jul 11, 2018 at 12:27:22AM +0200, Wolfram Sang wrote:
+On 2018-07-11 00:27, Wolfram Sang wrote:
 > While refactoring the routine before, it occured to me that this will
 > make the code much easier to understand.
->=20
+
+Acked-by: Peter Rosin <peda@axentia.se>
+ 
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Fixed a typo in the commit msg and applied to for-next, thanks!
-
-
---eiafcuwtundpitog
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltNrZcACgkQFA3kzBSg
-KbbG2A//dqKwUl9dXcO15YkefQqioKc36rIPYY9fH5vhnuWnMFzeOdRnXqBSbZGB
-sfrguulICLlqQOqZhy1UOOT0GIz4MAdIiwFFiN36D/2RDOwf74ablYmN1cH8McnK
-4WTDUIrUwaAmUnD1647ml1eHyWgcfOpuyw5RkLmntPZnF9M84ia1W8jtqr4OiQ8I
-qsZrnjWSpi3QQkLDrkgpLcTgzUyTr7Vx43kVoPPJSflPRuDJQaKwADSxevg/OUyC
-tjNuiEJ+zo44uK/gdWwDQ6lJQvGjr+o+NAkIi8kmKVPIEMIw0g2A4Jv6DJr/BRnl
-i+nuFnzCrwCT17K6vjrX+FxVanvk/kgH0SzUxF2lEBWOTMQ7TYy9JECqCM3pv9QT
-W6p5WmevR9wsehIf/WrJ0e8FBU44B67QnLdRaEg8euTVRrQmVCovSQeok7RxLZNe
-dUZ6g/KKNB/h87v972gugMFrUJBNuhdWoWYmxwN/F0XH/IaIKekY+eLKvTvfSyiY
-h+jnEAcHyo/wK15ANH9Ex6W0JqovAYiCeecXMGUsOyhtYMELtTer1NF9dGNjq14A
-XWInyLtniZGP2jupx/TpuL6m9TU9lrmUbK7jhheIrKbJIAeRNENakZ1w7t3IlRw8
-O9+jIIVCO8hdJfVWvBvcNFGfVno7FodjsLlwrklK7wJOCAIiP14=
-=jbll
------END PGP SIGNATURE-----
-
---eiafcuwtundpitog--
+> ---
+> 
+> Change since V1:
+> * rebased to the new recovery refactoring
+> 
+> Branch is here:
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/recovery/write-byte-fix
+> 
+>  drivers/i2c/i2c-core-base.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+> index 59f8dfc5be36..57538d72f2e5 100644
+> --- a/drivers/i2c/i2c-core-base.c
+> +++ b/drivers/i2c/i2c-core-base.c
+> @@ -185,12 +185,12 @@ static int i2c_generic_bus_free(struct i2c_adapter *adap)
+>  int i2c_generic_scl_recovery(struct i2c_adapter *adap)
+>  {
+>  	struct i2c_bus_recovery_info *bri = adap->bus_recovery_info;
+> -	int i = 0, val = 1, ret;
+> +	int i = 0, scl = 1, ret;
+>  
+>  	if (bri->prepare_recovery)
+>  		bri->prepare_recovery(adap);
+>  
+> -	bri->set_scl(adap, val);
+> +	bri->set_scl(adap, scl);
+>  	if (bri->set_sda)
+>  		bri->set_sda(adap, 1);
+>  	ndelay(RECOVERY_NDELAY);
+> @@ -199,7 +199,7 @@ int i2c_generic_scl_recovery(struct i2c_adapter *adap)
+>  	 * By this time SCL is high, as we need to give 9 falling-rising edges
+>  	 */
+>  	while (i++ < RECOVERY_CLK_CNT * 2) {
+> -		if (val) {
+> +		if (scl) {
+>  			/* SCL shouldn't be low here */
+>  			if (!bri->get_scl(adap)) {
+>  				dev_err(&adap->dev,
+> @@ -209,8 +209,8 @@ int i2c_generic_scl_recovery(struct i2c_adapter *adap)
+>  			}
+>  		}
+>  
+> -		val = !val;
+> -		bri->set_scl(adap, val);
+> +		scl = !scl;
+> +		bri->set_scl(adap, scl);
+>  
+>  		/*
+>  		 * If we can set SDA, we will always create STOP here to ensure
+> @@ -220,10 +220,10 @@ int i2c_generic_scl_recovery(struct i2c_adapter *adap)
+>  		 */
+>  		ndelay(RECOVERY_NDELAY / 2);
+>  		if (bri->set_sda)
+> -			bri->set_sda(adap, val);
+> +			bri->set_sda(adap, scl);
+>  		ndelay(RECOVERY_NDELAY / 2);
+>  
+> -		if (val) {
+> +		if (scl) {
+>  			ret = i2c_generic_bus_free(adap);
+>  			if (ret == 0)
+>  				break;
+> 
