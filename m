@@ -1,49 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:53365 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932875AbeGIOTu (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:44520 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388421AbeGKOZn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Jul 2018 10:19:50 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        horms@verge.net.au, geert@glider.be
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 5/6] dt-bindings: media: rcar-vin: Add 'data-enable-active'
-Date: Mon,  9 Jul 2018 16:19:20 +0200
-Message-Id: <1531145962-1540-6-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1531145962-1540-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1531145962-1540-1-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Wed, 11 Jul 2018 10:25:43 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 10/11] clk: renesas: rcar-gen3: Add support for mode pin clock selection
+Date: Wed, 11 Jul 2018 16:20:59 +0200
+Message-Id: <20180711142100.3765-11-geert+renesas@glider.be>
+In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
+References: <20180711142100.3765-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe optional endpoint property 'data-enable-active' for R-Car VIN.
+Make the existing support for selecting between clean and SSCG clocks
+using MD12 more generic, to allow using other mode pins for arbitrary
+clock selection.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/media/rcar_vin.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/renesas/rcar-gen3-cpg.c | 10 ++++------
+ drivers/clk/renesas/rcar-gen3-cpg.h | 13 +++++++++----
+ 2 files changed, 13 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
-index b410863..2f42005 100644
---- a/Documentation/devicetree/bindings/media/rcar_vin.txt
-+++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
-@@ -55,6 +55,8 @@ The per-board settings Gen2 platforms:
-       the SoC type and selected input image format.
-       Valid values are: 8, 10, 12, 16, 24 and 32.
-     - data-shift: see [1] for description. Valid values are 0 and 8.
-+    - data-enable-active: polarity of CLKENB signal, see [1] for
-+      description. Default is active high.
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index 19a77822757d29de..4346fdeef01bbeae 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -539,16 +539,14 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 			parent = clks[cpg_clk_extalr];
+ 		break;
  
- The per-board settings Gen3 platforms:
+-	case CLK_TYPE_GEN3_PE:
++	case CLK_TYPE_GEN3_MDSEL:
+ 		/*
+-		 * Peripheral clock with a fixed divider, selectable between
+-		 * clean and spread spectrum parents using MD12
++		 * Clock selectable between two parents and two fixed dividers
++		 * using a mode pin
+ 		 */
+-		if (cpg_mode & BIT(12)) {
+-			/* Clean */
++		if (cpg_mode & BIT(core->offset)) {
+ 			div = core->div & 0xffff;
+ 		} else {
+-			/* SCCG */
+ 			parent = clks[core->parent >> 16];
+ 			if (IS_ERR(parent))
+ 				return ERR_CAST(parent);
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
+index 214df713ce719991..01619242d8ca6384 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.h
++++ b/drivers/clk/renesas/rcar-gen3-cpg.h
+@@ -20,7 +20,7 @@ enum rcar_gen3_clk_types {
+ 	CLK_TYPE_GEN3_PLL4,
+ 	CLK_TYPE_GEN3_SD,
+ 	CLK_TYPE_GEN3_R,
+-	CLK_TYPE_GEN3_PE,
++	CLK_TYPE_GEN3_MDSEL,	/* Select parent/divider using mode pin */
+ 	CLK_TYPE_GEN3_Z,
+ 	CLK_TYPE_GEN3_Z2,
+ 	CLK_TYPE_GEN3_OSC,	/* OSC EXTAL predivider and fixed divider */
+@@ -30,11 +30,16 @@ enum rcar_gen3_clk_types {
+ #define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
+ 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_SD, _parent, .offset = _offset)
+ 
++#define DEF_GEN3_MDSEL(_name, _id, _md, _parent0, _div0, _parent1, _div1) \
++	DEF_BASE(_name, _id, CLK_TYPE_GEN3_MDSEL,	\
++		 (_parent0) << 16 | (_parent1),		\
++		 .div = (_div0) << 16 | (_div1), .offset = _md)
++
+ #define DEF_GEN3_PE(_name, _id, _parent_sscg, _div_sscg, _parent_clean, \
+ 		    _div_clean) \
+-	DEF_BASE(_name, _id, CLK_TYPE_GEN3_PE,			\
+-		 (_parent_sscg) << 16 | (_parent_clean),	\
+-		 .div = (_div_sscg) << 16 | (_div_clean))
++	DEF_GEN3_MDSEL(_name, _id, 12, _parent_sscg, _div_sscg,	\
++		       _parent_clean, _div_clean)
++
+ #define DEF_GEN3_OSC(_name, _id, _parent, _div)		\
+ 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_OSC, _parent, .div = _div)
  
 -- 
-2.7.4
+2.17.1
