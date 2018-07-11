@@ -1,65 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:51870 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388160AbeGKQsA (ORCPT
+Received: from mail-eopbgr60102.outbound.protection.outlook.com ([40.107.6.102]:10048
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726167AbeGKFxr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jul 2018 12:48:00 -0400
-Date: Wed, 11 Jul 2018 18:42:48 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Peter Rosin <peda@axentia.se>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Wed, 11 Jul 2018 01:53:47 -0400
+Subject: Re: [PATCH v2 2/3] i2c: recovery: require either get_sda or set_sda
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Eddie James <eajames@linux.vnet.ibm.com>
-Subject: Re: [PATCH v2 2/3] i2c: recovery: require either get_sda or set_sda
-Message-ID: <20180711164248.h4r57esqe5nld4lj@ninjato>
 References: <20180710214217.1336-1-wsa+renesas@sang-engineering.com>
  <20180710214217.1336-3-wsa+renesas@sang-engineering.com>
- <66c45ef4-cf51-930f-d4bf-99798c3653a0@axentia.se>
+From: Peter Rosin <peda@axentia.se>
+Message-ID: <66c45ef4-cf51-930f-d4bf-99798c3653a0@axentia.se>
+Date: Wed, 11 Jul 2018 07:51:02 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gspzsx2ztlsn4r3u"
-Content-Disposition: inline
-In-Reply-To: <66c45ef4-cf51-930f-d4bf-99798c3653a0@axentia.se>
+In-Reply-To: <20180710214217.1336-3-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On 2018-07-10 23:42, Wolfram Sang wrote:
+> For bus recovery, we either need to bail out early if we can read SDA or
+> we need to send STOP after every pulse. Otherwise recovery might be
+> misinterpreted as an unwanted write. So, require one of those SDA
+> handling functions to avoid this problem.
 
---gspzsx2ztlsn4r3u
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Assuming that all users fulfill the stricter requirement...
 
-On Wed, Jul 11, 2018 at 07:51:02AM +0200, Peter Rosin wrote:
-> On 2018-07-10 23:42, Wolfram Sang wrote:
-> > For bus recovery, we either need to bail out early if we can read SDA or
-> > we need to send STOP after every pulse. Otherwise recovery might be
-> > misinterpreted as an unwanted write. So, require one of those SDA
-> > handling functions to avoid this problem.
->=20
-> Assuming that all users fulfill the stricter requirement...
+Acked-by: Peter Rosin <peda@axentia.se>
 
-Yes, I checked all in-tree users for that.
-
-
---gspzsx2ztlsn4r3u
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltGM4gACgkQFA3kzBSg
-KbZFxw//WAxh2kz8EG1nAU2TfdnA/mLz1QX790KIGyQuxiykyC6toiOKbctRLBwb
-8/SFeLjQQ5BBCG5VvzCzJ2mWhPggmj9uRYuBDc7WiG5n/0JzMI09IxBXyb+6+c5A
-KEDYcYK1xmt0p40zcMAirGNVY7Cwgl3por8AaaqdRoYCSfjwWNdzBlIawJ0c4bWy
-aQxxpenbuWZ/pgpjfZCExNhf2D5N1vpSv97Ohj0lu0FJgic53LR9OZARXH0+6jhd
-3xhlxzPyTw64vXOznN6gYEql0RXxEf0gNUGh+W5abCP40jsAHfvxmjafUZO8CylX
-4wjKQ49l1hHpI+IyIHlg+gctDdi7gxvomz6ZZpKC/p064eAfteakXCAyaX2pds3U
-StR/50FnUgn/RXabwaIlQIHEvS69rmzuPHfJyO7MsN6Rlix6ouMcentNyIinlFEG
-VDrFPyKnOVYabUtYyUUu26dbfYlcfTs+NTca6ZwkPRze8fpi8dKVdV4OqSASr0aB
-vdU8oMWpR+Lw8MQLSq5C7uelJK0mxaq79X2W7alNifd97Po7uOWTKT60OA/35fNU
-hN5ECJXjMmG5N62Y4CVO9TDHymJ+l/HCJGSzrmKS0BBZW5mqbBWNcLr7zBxuifyH
-DwJYKhwrBKzGkNZI3LYuPPbPe/oVxxq1WFOAqtP4jlJcoFVBfRQ=
-=WL9l
------END PGP SIGNATURE-----
-
---gspzsx2ztlsn4r3u--
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  drivers/i2c/i2c-core-base.c |  7 ++++++-
+>  include/linux/i2c.h         | 12 ++++++------
+>  2 files changed, 12 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+> index 301285c54603..871a9731894f 100644
+> --- a/drivers/i2c/i2c-core-base.c
+> +++ b/drivers/i2c/i2c-core-base.c
+> @@ -202,7 +202,8 @@ int i2c_generic_scl_recovery(struct i2c_adapter *adap)
+>  		/*
+>  		 * If we can set SDA, we will always create STOP here to ensure
+>  		 * the additional pulses will do no harm. This is achieved by
+> -		 * letting SDA follow SCL half a cycle later.
+> +		 * letting SDA follow SCL half a cycle later. Check the
+> +		 * 'incomplete_write_byte' fault injector for details.
+>  		 */
+>  		ndelay(RECOVERY_NDELAY / 2);
+>  		if (bri->set_sda)
+> @@ -274,6 +275,10 @@ static void i2c_init_recovery(struct i2c_adapter *adap)
+>  			err_str = "no {get|set}_scl() found";
+>  			goto err;
+>  		}
+> +		if (!bri->set_sda && !bri->get_sda) {
+> +			err_str = "either get_sda() or set_sda() needed";
+> +			goto err;
+> +		}
+>  	}
+>  
+>  	return;
+> diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+> index 465afb092fa7..9d1818c56775 100644
+> --- a/include/linux/i2c.h
+> +++ b/include/linux/i2c.h
+> @@ -581,12 +581,12 @@ struct i2c_timings {
+>   *      recovery. Populated internally for generic GPIO recovery.
+>   * @set_scl: This sets/clears the SCL line. Mandatory for generic SCL recovery.
+>   *      Populated internally for generic GPIO recovery.
+> - * @get_sda: This gets current value of SDA line. Optional for generic SCL
+> - *      recovery. Populated internally, if sda_gpio is a valid GPIO, for generic
+> - *      GPIO recovery.
+> - * @set_sda: This sets/clears the SDA line. Optional for generic SCL recovery.
+> - *	Populated internally, if sda_gpio is a valid GPIO, for generic GPIO
+> - *	recovery.
+> + * @get_sda: This gets current value of SDA line. This or set_sda() is mandatory
+> + *	for generic SCL recovery. Populated internally, if sda_gpio is a valid
+> + *	GPIO, for generic GPIO recovery.
+> + * @set_sda: This sets/clears the SDA line. This or get_sda() is mandatory for
+> + *	generic SCL recovery. Populated internally, if sda_gpio is a valid GPIO,
+> + *	for generic GPIO recovery.
+>   * @prepare_recovery: This will be called before starting recovery. Platform may
+>   *	configure padmux here for SDA/SCL line or something else they want.
+>   * @unprepare_recovery: This will be called after completing recovery. Platform
+> 
