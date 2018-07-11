@@ -1,109 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53389 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387854AbeGWNHh (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:55736 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388391AbeGKOZn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:07:37 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 8/8] ARM: dts: r8a77470: Use r8a77470-cpg-mssr binding definitions
-Date: Mon, 23 Jul 2018 14:06:26 +0200
-Message-Id: <c03e2f12a2967f1639ee53299b72922ee3472528.1532345886.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1532345886.git.horms+renesas@verge.net.au>
-References: <cover.1532345886.git.horms+renesas@verge.net.au>
+        Wed, 11 Jul 2018 10:25:43 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 08/11] clk: renesas: r8a77990: Correct RCLK handling
+Date: Wed, 11 Jul 2018 16:20:57 +0200
+Message-Id: <20180711142100.3765-9-geert+renesas@glider.be>
+In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
+References: <20180711142100.3765-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+According to R-Car Gen3 Hardware Manual Rev.1.00, R-Car E3 has the
+RCLK Frequency Control Register (RCKCR), which determines the OSC and
+RINT predivider values, and selection of the RCLK clock source between
+RINT and the On-Chip Oscillator.
 
-Replace the hardcoded clock indices by R8A77470_CLK_* symbols.
+Hence change the OSC and RINT clock definitions to use the RCKCR
+divider, and add the missing On-Chip Oscillator and RCLK clock source
+switching logic.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a77470.dtsi | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+As Figure 8.1g "Block Diagram of CPG (R-Car E3)" shows 1/61 and 1/4
+dividers after the On-Chip Oscillator, I assume the OCO runs at 8 MHz.
+---
+ drivers/clk/renesas/r8a77990-cpg-mssr.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index c85032f9605b..87d32d3e23de 100644
---- a/arch/arm/boot/dts/r8a77470.dtsi
-+++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -7,7 +7,7 @@
+diff --git a/drivers/clk/renesas/r8a77990-cpg-mssr.c b/drivers/clk/renesas/r8a77990-cpg-mssr.c
+index 9e14f1486fbb93cc..6fcc0abdb20c442d 100644
+--- a/drivers/clk/renesas/r8a77990-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77990-cpg-mssr.c
+@@ -44,6 +44,8 @@ enum clk_ids {
+ 	CLK_S2,
+ 	CLK_S3,
+ 	CLK_SDSRC,
++	CLK_RINT,
++	CLK_OCO,
  
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
--#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+#include <dt-bindings/clock/r8a77470-cpg-mssr.h>
- / {
- 	compatible = "renesas,r8a77470";
- 	#address-cells = <2>;
-@@ -22,7 +22,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0>;
- 			clock-frequency = <1000000000>;
--			clocks = <&cpg CPG_CORE 0>;
-+			clocks = <&cpg CPG_CORE R8A77470_CLK_Z2>;
- 			power-domains = <&sysc 5>;
- 			next-level-cache = <&L2_CA7>;
- 		};
-@@ -209,7 +209,7 @@
- 			reg = <0 0xe6e60000 0 0x40>;
- 			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 721>,
--				 <&cpg CPG_CORE 5>, <&scif_clk>;
-+				 <&cpg CPG_CORE R8A77470_CLK_ZS>, <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
- 			       <&dmac1 0x29>, <&dmac1 0x2a>;
-@@ -225,7 +225,7 @@
- 			reg = <0 0xe6e68000 0 0x40>;
- 			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 720>,
--				 <&cpg CPG_CORE 5>, <&scif_clk>;
-+				 <&cpg CPG_CORE R8A77470_CLK_ZS>, <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
- 			       <&dmac1 0x2d>, <&dmac1 0x2e>;
-@@ -241,7 +241,7 @@
- 			reg = <0 0xe6e58000 0 0x40>;
- 			interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 719>,
--				 <&cpg CPG_CORE 5>, <&scif_clk>;
-+				 <&cpg CPG_CORE R8A77470_CLK_ZS>, <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
- 			       <&dmac1 0x2b>, <&dmac1 0x2c>;
-@@ -257,7 +257,7 @@
- 			reg = <0 0xe6ea8000 0 0x40>;
- 			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 718>,
--				 <&cpg CPG_CORE 5>, <&scif_clk>;
-+				 <&cpg CPG_CORE R8A77470_CLK_ZS>, <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0x2f>, <&dmac0 0x30>,
- 			       <&dmac1 0x2f>, <&dmac1 0x30>;
-@@ -273,7 +273,7 @@
- 			reg = <0 0xe6ee0000 0 0x40>;
- 			interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 715>,
--				 <&cpg CPG_CORE 5>, <&scif_clk>;
-+				 <&cpg CPG_CORE R8A77470_CLK_ZS>, <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0xfb>, <&dmac0 0xfc>,
- 			       <&dmac1 0xfb>, <&dmac1 0xfc>;
-@@ -289,7 +289,7 @@
- 			reg = <0 0xe6ee8000 0 0x40>;
- 			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 714>,
--				 <&cpg CPG_CORE 5>, <&scif_clk>;
-+				 <&cpg CPG_CORE R8A77470_CLK_ZS>, <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0xfd>, <&dmac0 0xfe>,
- 			       <&dmac1 0xfd>, <&dmac1 0xfe>;
+ 	/* Module Clocks */
+ 	MOD_CLK_BASE
+@@ -100,8 +102,8 @@ static const struct cpg_core_clk r8a77990_core_clks[] __initconst = {
+ 	DEF_FIXED("cl",        R8A77990_CLK_CL,    CLK_PLL1,      48, 1),
+ 	DEF_FIXED("cp",        R8A77990_CLK_CP,    CLK_EXTAL,      2, 1),
+ 	DEF_FIXED("cpex",      R8A77990_CLK_CPEX,  CLK_EXTAL,      4, 1),
+-	DEF_FIXED("osc",       R8A77990_CLK_OSC,   CLK_EXTAL,    384, 1),
+-	DEF_FIXED("r",         R8A77990_CLK_R,     CLK_EXTAL,   1536, 1),
++	DEF_DIV6_RO("osc",     R8A77990_CLK_OSC,   CLK_EXTAL, CPG_RCKCR,  8),
++	DEF_DIV6_RO("r_int",   CLK_RINT,           CLK_EXTAL, CPG_RCKCR, 32),
+ 
+ 	DEF_GEN3_PE("s0d6c",   R8A77990_CLK_S0D6C, CLK_S0, 6, CLK_PE, 2),
+ 	DEF_GEN3_PE("s3d1c",   R8A77990_CLK_S3D1C, CLK_S3, 1, CLK_PE, 1),
+@@ -111,6 +113,9 @@ static const struct cpg_core_clk r8a77990_core_clks[] __initconst = {
+ 	DEF_DIV6P1("canfd",    R8A77990_CLK_CANFD, CLK_PLL0D6, 0x244),
+ 	DEF_DIV6P1("csi0",     R8A77990_CLK_CSI0,  CLK_PLL1D2, 0x00c),
+ 	DEF_DIV6P1("mso",      R8A77990_CLK_MSO,   CLK_PLL1D2, 0x014),
++
++	DEF_RATE("oco",        CLK_OCO,            8 * 1000 * 1000),
++	DEF_GEN3_RCKSEL("r",   R8A77990_CLK_R, CLK_RINT, 1, CLK_OCO, 61 * 4),
+ };
+ 
+ static const struct mssr_mod_clk r8a77990_mod_clks[] __initconst = {
 -- 
-2.11.0
+2.17.1
