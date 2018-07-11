@@ -1,32 +1,48 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:49419 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732286AbeGKMeL (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jul 2018 08:34:11 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         Simon Horman <horms@verge.net.au>,
         linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH 0/2] dt: serial: Add Renesas RZ/N1 binding documentation
-Date: Wed, 11 Jul 2018 13:29:32 +0100
-Message-Id: <1531312174-17489-1-git-send-email-phil.edworthy@renesas.com>
-To: unlisted-recipients:; (no To-header on input)
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        devicetree@vger.kernel.org
+Subject: [PATCH 1/2] dt: serial: Add Renesas RZ/N1 binding documentation
+Date: Wed, 11 Jul 2018 13:29:33 +0100
+Message-Id: <1531312174-17489-2-git-send-email-phil.edworthy@renesas.com>
+In-Reply-To: <1531312174-17489-1-git-send-email-phil.edworthy@renesas.com>
+References: <1531312174-17489-1-git-send-email-phil.edworthy@renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Just a new compatible string for the Synopsys UART to allow us to add DMA at
-some point in the future.
+The RZ/N1 UART is a modified Synopsys DesignWare UART.
+The modifications only relate to DMA so you could actually use the
+controller with the Synopsys compatible string if you are not using
+DMA, but you should not do so.
 
-Phil Edworthy (2):
-  dt: serial: Add Renesas RZ/N1 binding documentation
-  serial: 8250_dw: Add compatible string for Renesas RZ/N1 UART
-
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+---
  Documentation/devicetree/bindings/serial/renesas,rzn1-uart.txt | 10 ++++++++++
- drivers/tty/serial/8250/8250_dw.c                              |  1 +
- 2 files changed, 11 insertions(+)
+ 1 file changed, 10 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/serial/renesas,rzn1-uart.txt
 
+diff --git a/Documentation/devicetree/bindings/serial/renesas,rzn1-uart.txt b/Documentation/devicetree/bindings/serial/renesas,rzn1-uart.txt
+new file mode 100644
+index 0000000..4d40587
+--- /dev/null
++++ b/Documentation/devicetree/bindings/serial/renesas,rzn1-uart.txt
+@@ -0,0 +1,10 @@
++Renesas RZ/N1 UART
++
++This controller is based on the Synopsys DesignWare ABP UART and inherits all
++properties defined in snps-dw-apb-uart.txt except for the compatible property.
++
++Required properties:
++- compatible : The device specific string followed by the generic RZ/N1 string.
++   Therefore it must be one of:
++   "renesas,uart-r9a06g032", "renesas,uart-rzn1"
++   "renesas,uart-r9a06g033", "renesas,uart-rzn1"
 -- 
 2.7.4
+
