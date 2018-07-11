@@ -1,77 +1,137 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36250 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752431AbeGBSLH (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:38776 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387949AbeGKOZp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 Jul 2018 14:11:07 -0400
-Received: by mail-lj1-f196.google.com with SMTP id o26-v6so13210453ljg.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 02 Jul 2018 11:11:06 -0700 (PDT)
-Date: Mon, 2 Jul 2018 20:11:04 +0200
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v6 0/10] rcar-vin: Add support for parallel input on Gen3
-Message-ID: <20180702181104.GZ5237@bigcity.dyn.berto.se>
-References: <1528796612-7387-1-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1528796612-7387-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 11 Jul 2018 10:25:45 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 04/11] clk: renesas: r8a77965: Add OSC EXTAL predivider configuration
+Date: Wed, 11 Jul 2018 16:20:53 +0200
+Message-Id: <20180711142100.3765-5-geert+renesas@glider.be>
+In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
+References: <20180711142100.3765-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
+R-Car Gen3 Hardware Manual Rev.0.52 documents the relation between the
+MD13 and MD14 mode pins, and the OSC EXTAL predivider, as used by the
+OSC and RINT RCLK clocks.  Hence augment the configuration structure
+with all documented predivider values.
 
-Nice work, I'm happy with the work you have done thanks!
+According to R-Car Gen3 Hardware Manual Rev.1.00, R-Car M3-N does not
+have the CPG_RCKCR register.  Change the OSC and RINT clock definitions
+to use the OSC EXTAL predivider instead, which is supported on all R-Car
+M3-N SoC revisions.
 
-I have tested this series on M3-N to make sure it don't break anything 
-on existing Gen3. Tested on V3M to make sure you can switch between 
-CSI-2 and parallel input at runtime. And last I tested it on Koelsch to 
-make sure Gen2 still works. All tests looks good.
+Inspired by a patch in the BSP by Takeshi Kihara
+<takeshi.kihara.df@renesas.com>.
 
-Thanks for your effort!
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/r8a77965-cpg-mssr.c | 66 ++++++++++++-------------
+ 1 file changed, 33 insertions(+), 33 deletions(-)
 
-On 2018-06-12 11:43:22 +0200, Jacopo Mondi wrote:
-> Hello,
->    this series adds support for parallel video input to the Gen3 version of
-> rcar-vin driver.
-> 
-> Few changes compared to v5, closing a few comments from Kieran and Niklas,
-> and fixed the label names I forgot to change in previous version.
-> 
-> Changlog in the individual patches when relevant.
-> 
-> A few patches have not yet been acked-by, but things look smooth and we
-> should be close to have this finalized.
-> 
-> Thanks
->    j
-> 
-> Jacopo Mondi (10):
->   media: rcar-vin: Rename 'digital' to 'parallel'
->   media: rcar-vin: Remove two empty lines
->   media: rcar-vin: Create a group notifier
->   media: rcar-vin: Cleanup notifier in error path
->   media: rcar-vin: Cache the mbus configuration flags
->   media: rcar-vin: Parse parallel input on Gen3
->   media: rcar-vin: Link parallel input media entities
->   media: rcar-vin: Handle parallel subdev in link_notify
->   media: rcar-vin: Rename _rcar_info to rcar_info
->   media: rcar-vin: Add support for R-Car R8A77995 SoC
-> 
->  drivers/media/platform/rcar-vin/rcar-core.c | 265 ++++++++++++++++++----------
->  drivers/media/platform/rcar-vin/rcar-dma.c  |  36 ++--
->  drivers/media/platform/rcar-vin/rcar-v4l2.c |  12 +-
->  drivers/media/platform/rcar-vin/rcar-vin.h  |  29 +--
->  4 files changed, 223 insertions(+), 119 deletions(-)
-> 
-> --
-> 2.7.4
-> 
-
+diff --git a/drivers/clk/renesas/r8a77965-cpg-mssr.c b/drivers/clk/renesas/r8a77965-cpg-mssr.c
+index 8fae5e9c4a77242d..0b508aaf234c35e9 100644
+--- a/drivers/clk/renesas/r8a77965-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77965-cpg-mssr.c
+@@ -104,8 +104,8 @@ static const struct cpg_core_clk r8a77965_core_clks[] __initconst = {
+ 	DEF_DIV6P1("mso",	R8A77965_CLK_MSO,	CLK_PLL1_DIV4,	0x014),
+ 	DEF_DIV6P1("hdmi",	R8A77965_CLK_HDMI,	CLK_PLL1_DIV4,	0x250),
+ 
+-	DEF_DIV6_RO("osc",	R8A77965_CLK_OSC, CLK_EXTAL, CPG_RCKCR, 8),
+-	DEF_DIV6_RO("r_int",	CLK_RINT, CLK_EXTAL, CPG_RCKCR, 32),
++	DEF_GEN3_OSC("osc",	R8A77965_CLK_OSC,	CLK_EXTAL,	8),
++	DEF_GEN3_OSC("r_int",	CLK_RINT,		CLK_EXTAL,	32),
+ 
+ 	DEF_BASE("r",		R8A77965_CLK_R,	CLK_TYPE_GEN3_R, CLK_RINT),
+ };
+@@ -252,25 +252,25 @@ static const unsigned int r8a77965_crit_mod_clks[] __initconst = {
+  */
+ 
+ /*
+- *   MD		EXTAL		PLL0	PLL1	PLL3	PLL4
++ *   MD		EXTAL		PLL0	PLL1	PLL3	PLL4	OSC
+  * 14 13 19 17	(MHz)
+- *-----------------------------------------------------------
+- * 0  0  0  0	16.66 x 1	x180	x192	x192	x144
+- * 0  0  0  1	16.66 x 1	x180	x192	x128	x144
++ *-----------------------------------------------------------------
++ * 0  0  0  0	16.66 x 1	x180	x192	x192	x144	/16
++ * 0  0  0  1	16.66 x 1	x180	x192	x128	x144	/16
+  * 0  0  1  0	Prohibited setting
+- * 0  0  1  1	16.66 x 1	x180	x192	x192	x144
+- * 0  1  0  0	20    x 1	x150	x160	x160	x120
+- * 0  1  0  1	20    x 1	x150	x160	x106	x120
++ * 0  0  1  1	16.66 x 1	x180	x192	x192	x144	/16
++ * 0  1  0  0	20    x 1	x150	x160	x160	x120	/19
++ * 0  1  0  1	20    x 1	x150	x160	x106	x120	/19
+  * 0  1  1  0	Prohibited setting
+- * 0  1  1  1	20    x 1	x150	x160	x160	x120
+- * 1  0  0  0	25    x 1	x120	x128	x128	x96
+- * 1  0  0  1	25    x 1	x120	x128	x84	x96
++ * 0  1  1  1	20    x 1	x150	x160	x160	x120	/19
++ * 1  0  0  0	25    x 1	x120	x128	x128	x96	/24
++ * 1  0  0  1	25    x 1	x120	x128	x84	x96	/24
+  * 1  0  1  0	Prohibited setting
+- * 1  0  1  1	25    x 1	x120	x128	x128	x96
+- * 1  1  0  0	33.33 / 2	x180	x192	x192	x144
+- * 1  1  0  1	33.33 / 2	x180	x192	x128	x144
++ * 1  0  1  1	25    x 1	x120	x128	x128	x96	/24
++ * 1  1  0  0	33.33 / 2	x180	x192	x192	x144	/32
++ * 1  1  0  1	33.33 / 2	x180	x192	x128	x144	/32
+  * 1  1  1  0	Prohibited setting
+- * 1  1  1  1	33.33 / 2	x180	x192	x192	x144
++ * 1  1  1  1	33.33 / 2	x180	x192	x192	x144	/32
+  */
+ #define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 11) | \
+ 					 (((md) & BIT(13)) >> 11) | \
+@@ -278,23 +278,23 @@ static const unsigned int r8a77965_crit_mod_clks[] __initconst = {
+ 					 (((md) & BIT(17)) >> 17))
+ 
+ static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
+-	/* EXTAL div	PLL1 mult/div	PLL3 mult/div */
+-	{ 1,		192,	1,	192,	1,	},
+-	{ 1,		192,	1,	128,	1,	},
+-	{ 0, /* Prohibited setting */			},
+-	{ 1,		192,	1,	192,	1,	},
+-	{ 1,		160,	1,	160,	1,	},
+-	{ 1,		160,	1,	106,	1,	},
+-	{ 0, /* Prohibited setting */			},
+-	{ 1,		160,	1,	160,	1,	},
+-	{ 1,		128,	1,	128,	1,	},
+-	{ 1,		128,	1,	84,	1,	},
+-	{ 0, /* Prohibited setting */			},
+-	{ 1,		128,	1,	128,	1,	},
+-	{ 2,		192,	1,	192,	1,	},
+-	{ 2,		192,	1,	128,	1,	},
+-	{ 0, /* Prohibited setting */			},
+-	{ 2,		192,	1,	192,	1,	},
++	/* EXTAL div	PLL1 mult/div	PLL3 mult/div	OSC prediv */
++	{ 1,		192,	1,	192,	1,	16,	},
++	{ 1,		192,	1,	128,	1,	16,	},
++	{ 0, /* Prohibited setting */				},
++	{ 1,		192,	1,	192,	1,	16,	},
++	{ 1,		160,	1,	160,	1,	19,	},
++	{ 1,		160,	1,	106,	1,	19,	},
++	{ 0, /* Prohibited setting */				},
++	{ 1,		160,	1,	160,	1,	19,	},
++	{ 1,		128,	1,	128,	1,	24,	},
++	{ 1,		128,	1,	84,	1,	24,	},
++	{ 0, /* Prohibited setting */				},
++	{ 1,		128,	1,	128,	1,	24,	},
++	{ 2,		192,	1,	192,	1,	32,	},
++	{ 2,		192,	1,	128,	1,	32,	},
++	{ 0, /* Prohibited setting */				},
++	{ 2,		192,	1,	192,	1,	32,	},
+ };
+ 
+ static int __init r8a77965_cpg_mssr_init(struct device *dev)
 -- 
-Regards,
-Niklas S�derlund
+2.17.1
