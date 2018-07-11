@@ -1,45 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33214 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727755AbeGTMwI (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:15108 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732284AbeGKCOn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jul 2018 08:52:08 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 7/7] ARM: multi_v7_defconfig: Enable support for RZN1D-DB
-Date: Fri, 20 Jul 2018 14:03:55 +0200
-Message-Id: <e82c98d0448c60706a8024d460eadb9d7402dcba.1532086504.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1532086504.git.horms+renesas@verge.net.au>
-References: <cover.1532086504.git.horms+renesas@verge.net.au>
+        Tue, 10 Jul 2018 22:14:43 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Vinod <vkoul@kernel.org>
+CC: "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 0/2] dma: sh: rcar-dmac: Add dma_pause operation
+Date: Wed, 11 Jul 2018 02:12:45 +0000
+Message-ID: <OSBPR01MB2293E3B96CC2350A5268A808D85A0@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+References: <1530523312-2253-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20180710152147.GD3219@vkoul-mobl>
+In-Reply-To: <20180710152147.GD3219@vkoul-mobl>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Vinod,
 
-Enable support for the Renesas RZN1D-DB Board:
-  - RZ/N1D (R9A06G032) base SoC support.
+> From: Vinod, Sent: Wednesday, July 11, 2018 12:22 AM
+>=20
+> On 02-07-18, 18:21, Yoshihiro Shimoda wrote:
+> > This patch set is based on the lasest slave-dma / next branch.
+> >
+> > This issue can be reproduced by the following commands on r8a7795
+> > Salvator-XS with the fixed patch [1] and Windows Teraterm :) :
+> >  # stty 921600
+> >  (Change Teraterm baud rate)
+> >  # cat > rx.txt
+> >  (Send 5MiB file by Teraterm.)
+> >  # cmp <somewhere the 5MiB file> rx.txt
+> >  output "differ: byte NNNNN, line MMM"
+>=20
+> This fails to apply for me. Please rebase. Also please fix the subsystem
+> name
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+I'm sorry for the trouble. I submitted v2 patch.
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 7e1c543162c3..874813d7c08e 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -98,6 +98,7 @@ CONFIG_ARCH_R8A7791=y
- CONFIG_ARCH_R8A7792=y
- CONFIG_ARCH_R8A7793=y
- CONFIG_ARCH_R8A7794=y
-+CONFIG_ARCH_R9A06G032=y
- CONFIG_ARCH_SH73A0=y
- CONFIG_ARCH_SUNXI=y
- CONFIG_ARCH_SIRF=y
--- 
-2.11.0
+Best regards,
+Yoshihiro Shimoda
