@@ -1,64 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:7803 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933470AbeGBJWz (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:44512 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388407AbeGKOZn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 Jul 2018 05:22:55 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: vinod.koul@intel.com
-Cc: dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/2] dma: sh: rcar-dmac: add a new function to clear CHCR.DE with barrier
-Date: Mon,  2 Jul 2018 18:21:51 +0900
-Message-Id: <1530523312-2253-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1530523312-2253-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1530523312-2253-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Wed, 11 Jul 2018 10:25:43 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 11/11] clk: renesas: r8a77980: Add RCLK for watchdog timer
+Date: Wed, 11 Jul 2018 16:21:00 +0200
+Message-Id: <20180711142100.3765-12-geert+renesas@glider.be>
+In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
+References: <20180711142100.3765-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds a new function rcar_dmac_clear_chcr_de() to simplify
-adding pause function later.
+On R-Car V3H, RCLK can be switched between EXTALR and the On-Chip
+Oscillator using mode pin MD19.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/dma/sh/rcar-dmac.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+As Figure 8.1e "Block Diagram of CPG (R-Car V3H)" does not show any
+divider after the On-Chip Oscillator, I assume the OCO runs at 32768 Hz.
+---
+ drivers/clk/renesas/r8a77980-cpg-mssr.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 279c930..afd8c7b 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -762,18 +762,25 @@ static void rcar_dmac_chcr_de_barrier(struct rcar_dmac_chan *chan)
- 	dev_err(chan->chan.device->dev, "CHCR DE check error\n");
- }
+diff --git a/drivers/clk/renesas/r8a77980-cpg-mssr.c b/drivers/clk/renesas/r8a77980-cpg-mssr.c
+index 093677b8927800fa..122d722aca2db7d4 100644
+--- a/drivers/clk/renesas/r8a77980-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77980-cpg-mssr.c
+@@ -41,6 +41,7 @@ enum clk_ids {
+ 	CLK_S2,
+ 	CLK_S3,
+ 	CLK_SDSRC,
++	CLK_OCO,
  
--static void rcar_dmac_sync_tcr(struct rcar_dmac_chan *chan)
-+static void rcar_dmac_clear_chcr_de(struct rcar_dmac_chan *chan)
- {
- 	u32 chcr = rcar_dmac_chan_read(chan, RCAR_DMACHCR);
+ 	/* Module Clocks */
+ 	MOD_CLK_BASE
+@@ -98,6 +99,8 @@ static const struct cpg_core_clk r8a77980_core_clks[] __initconst = {
+ 	DEF_DIV6P1("mso",	R8A77980_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
  
--	if (!(chcr & RCAR_DMACHCR_DE))
--		return;
--
- 	/* set DE=0 and flush remaining data */
- 	rcar_dmac_chan_write(chan, RCAR_DMACHCR, (chcr & ~RCAR_DMACHCR_DE));
+ 	DEF_GEN3_OSC("osc",	R8A77980_CLK_OSC,   CLK_EXTAL,     8),
++	DEF_RATE("oco",		CLK_OCO,            32768),
++	DEF_GEN3_MDSEL("r",	R8A77980_CLK_R, 29, CLK_EXTALR, 1, CLK_OCO, 1),
+ };
  
- 	/* make sure all remaining data was flushed */
- 	rcar_dmac_chcr_de_barrier(chan);
-+}
-+
-+static void rcar_dmac_sync_tcr(struct rcar_dmac_chan *chan)
-+{
-+	u32 chcr = rcar_dmac_chan_read(chan, RCAR_DMACHCR);
-+
-+	if (!(chcr & RCAR_DMACHCR_DE))
-+		return;
-+
-+	rcar_dmac_clear_chcr_de(chan);
- 
- 	/* back DE */
- 	rcar_dmac_chan_write(chan, RCAR_DMACHCR, chcr);
+ static const struct mssr_mod_clk r8a77980_mod_clks[] __initconst = {
+@@ -119,6 +122,7 @@ static const struct mssr_mod_clk r8a77980_mod_clks[] __initconst = {
+ 	DEF_MOD("tpu0",			 304,	R8A77980_CLK_S3D4),
+ 	DEF_MOD("sdif",			 314,	R8A77980_CLK_SD0),
+ 	DEF_MOD("pciec0",		 319,	R8A77980_CLK_S2D2),
++	DEF_MOD("rwdt",			 402,	R8A77980_CLK_R),
+ 	DEF_MOD("intc-ex",		 407,	R8A77980_CLK_CP),
+ 	DEF_MOD("intc-ap",		 408,	R8A77980_CLK_S0D3),
+ 	DEF_MOD("hscif3",		 517,	R8A77980_CLK_S3D1),
 -- 
-1.9.1
+2.17.1
