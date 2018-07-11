@@ -1,63 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:43079 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726269AbeGKMq1 (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:58109 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732286AbeGKMed (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jul 2018 08:46:27 -0400
-MIME-Version: 1.0
-References: <1531312174-17489-1-git-send-email-phil.edworthy@renesas.com> <1531312174-17489-3-git-send-email-phil.edworthy@renesas.com>
-In-Reply-To: <1531312174-17489-3-git-send-email-phil.edworthy@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 11 Jul 2018 14:42:07 +0200
-Message-ID: <CAMuHMdWHPp4kGzPqkhCKOxNSiKgkrb=w76tofSb4SwP5DF5tdw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] serial: 8250_dw: Add compatible string for Renesas
- RZ/N1 UART
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
+        Wed, 11 Jul 2018 08:34:33 -0400
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         Simon Horman <horms@verge.net.au>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Phil Edworthy <phil.edworthy@renesas.com>,
         Jiri Slaby <jslaby@suse.com>,
         Joshua Scott <joshua.scott@alliedtelesis.co.nz>,
-        ed.blake@sondrel.com, Stefan.Potyra@elektrobit.com
-Content-Type: text/plain; charset="UTF-8"
+        Ed Blake <ed.blake@sondrel.com>,
+        Stefan Potyra <Stefan.Potyra@elektrobit.com>
+Subject: [PATCH 2/2] serial: 8250_dw: Add compatible string for Renesas RZ/N1 UART
+Date: Wed, 11 Jul 2018 13:29:34 +0100
+Message-Id: <1531312174-17489-3-git-send-email-phil.edworthy@renesas.com>
+In-Reply-To: <1531312174-17489-1-git-send-email-phil.edworthy@renesas.com>
+References: <1531312174-17489-1-git-send-email-phil.edworthy@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Phil,
+The Renesas RZ/N1 UART is based on the Synopsys DW UART, but has additional
+registers for DMA. This patch does not address the changes required for DMA
+support, it simply adds the compatible string.
 
-On Wed, Jul 11, 2018 at 2:30 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
-> The Renesas RZ/N1 UART is based on the Synopsys DW UART, but has additional
-> registers for DMA. This patch does not address the changes required for DMA
-> support, it simply adds the compatible string.
->
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+---
+ drivers/tty/serial/8250/8250_dw.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks for your patch!
-
-What happens if someone would boot a kernel that has only this patch applied and
-a DTB that already has the to-be-supported dmas properties?
-
-> --- a/drivers/tty/serial/8250/8250_dw.c
-> +++ b/drivers/tty/serial/8250/8250_dw.c
-> @@ -693,6 +693,7 @@ static const struct of_device_id dw8250_of_match[] = {
->         { .compatible = "snps,dw-apb-uart" },
->         { .compatible = "cavium,octeon-3860-uart" },
->         { .compatible = "marvell,armada-38x-uart" },
-> +       { .compatible = "renesas,uart-rzn1" },
-
-renesas,rzn1-uart
-
->         { /* Sentinel */ }
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
+index aff04f1..c92f5ad 100644
+--- a/drivers/tty/serial/8250/8250_dw.c
++++ b/drivers/tty/serial/8250/8250_dw.c
+@@ -693,6 +693,7 @@ static const struct of_device_id dw8250_of_match[] = {
+ 	{ .compatible = "snps,dw-apb-uart" },
+ 	{ .compatible = "cavium,octeon-3860-uart" },
+ 	{ .compatible = "marvell,armada-38x-uart" },
++	{ .compatible = "renesas,uart-rzn1" },
+ 	{ /* Sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, dw8250_of_match);
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.7.4
