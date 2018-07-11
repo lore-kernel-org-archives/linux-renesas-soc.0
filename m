@@ -1,44 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:41258 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732594AbeGKRaB (ORCPT
+Received: from sauhun.de ([88.99.104.3]:51778 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387712AbeGKQie (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jul 2018 13:30:01 -0400
-MIME-Version: 1.0
-References: <20180711163319.28004-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180711163319.28004-1-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 11 Jul 2018 19:24:30 +0200
-Message-ID: <CAMuHMdUZR7REt8__jR9=Ef_vZeq5bUUXwgFqaa-OC50G89tjuA@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: use better errno if get_direction is not available
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 11 Jul 2018 12:38:34 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-gpio@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH] gpiolib: use better errno if get_direction is not available
+Date: Wed, 11 Jul 2018 18:33:19 +0200
+Message-Id: <20180711163319.28004-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
+EINVAL is very generic, use ENOTSUPP in case the gpiochip does not
+provide this function. While removing the assignment from the 'status'
+variable, use better indentation in the declaration block.
 
-On Wed, Jul 11, 2018 at 6:33 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> @Geert: any reason gpio-rcar is missing it? I would need it for the
-> i2c-gpio-fault-injector.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Because so far no one had a need for it?
-/me thought gpiolib would return a cached value from a previous
-set_direction_{in,out}put(), but apparently that must have been a dream...
+I got puzzled by the EINVAL until I found out that gpio-rcar simply does not
+implement it.
 
-Do you want me to implement it?
+@Geert: any reason gpio-rcar is missing it? I would need it for the
+i2c-gpio-fault-injector.
 
-Gr{oetje,eeting}s,
+ drivers/gpio/gpiolib.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-                        Geert
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index e11a3bb03820..18719f64e80b 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -210,15 +210,15 @@ static int gpiochip_find_base(int ngpio)
+  */
+ int gpiod_get_direction(struct gpio_desc *desc)
+ {
+-	struct gpio_chip	*chip;
+-	unsigned		offset;
+-	int			status = -EINVAL;
++	struct gpio_chip *chip;
++	unsigned offset;
++	int status;
+ 
+ 	chip = gpiod_to_chip(desc);
+ 	offset = gpio_chip_hwgpio(desc);
+ 
+ 	if (!chip->get_direction)
+-		return status;
++		return -ENOTSUPP;
+ 
+ 	status = chip->get_direction(chip, offset);
+ 	if (status > 0) {
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.11.0
