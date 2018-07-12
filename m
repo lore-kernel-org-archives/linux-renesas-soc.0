@@ -1,54 +1,137 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:57500 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729675AbeGQVKX (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34754 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727497AbeGLOMO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jul 2018 17:10:23 -0400
-From: Kieran Bingham <kieran@ksquared.org.uk>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v5 05/11] media: vsp1: Clean up DLM objects on error
-Date: Tue, 17 Jul 2018 21:35:47 +0100
-Message-Id: <f3afbd64f3dc876028a91097fc14079f37eb1e80.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Thu, 12 Jul 2018 10:12:14 -0400
+Date: Thu, 12 Jul 2018 16:02:28 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 07/11] clk: renesas: rcar-gen3: Add support for RCKSEL
+ clock selection
+Message-ID: <20180712140227.qptdarpkh7chsb25@verge.net.au>
+References: <20180711142100.3765-1-geert+renesas@glider.be>
+ <20180711142100.3765-8-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180711142100.3765-8-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On Wed, Jul 11, 2018 at 04:20:56PM +0200, Geert Uytterhoeven wrote:
+> Add a clock type and macro for defining clocks where the parent and
+> divider are selected based on the value of the RCKCR.CKSEL bit.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/clk/renesas/rcar-gen3-cpg.c | 23 ++++++++++++++++++++---
+>  drivers/clk/renesas/rcar-gen3-cpg.h |  8 +++++++-
+>  2 files changed, 27 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+> index 7533a51c679bfd54..19a77822757d29de 100644
+> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
+> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+> @@ -1,7 +1,7 @@
+>  /*
+>   * R-Car Gen3 Clock Pulse Generator
+>   *
+> - * Copyright (C) 2015-2016 Glider bvba
+> + * Copyright (C) 2015-2018 Glider bvba
+>   *
+>   * Based on clk-rcar-gen3.c
+>   *
+> @@ -31,6 +31,8 @@
+>  #define CPG_PLL2CR		0x002c
+>  #define CPG_PLL4CR		0x01f4
+>  
+> +#define CPG_RCKCR_CKSEL	BIT(15)	/* RCLK Clock Source Select */
+> +
+>  struct cpg_simple_notifier {
+>  	struct notifier_block nb;
+>  	void __iomem *reg;
+> @@ -444,7 +446,7 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+>  	unsigned int div = 1;
+>  	u32 value;
+>  
+> -	parent = clks[core->parent & 0xffff];	/* CLK_TYPE_PE uses high bits */
+> +	parent = clks[core->parent & 0xffff];	/* some types use high bits */
+>  	if (IS_ERR(parent))
+>  		return ERR_CAST(parent);
+>  
+> @@ -524,7 +526,7 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+>  
+>  			if (clk_get_rate(clks[cpg_clk_extalr])) {
+>  				parent = clks[cpg_clk_extalr];
+> -				value |= BIT(15);
+> +				value |= CPG_RCKCR_CKSEL;
+>  			}
+>  
+>  			writel(value, csn->reg);
+> @@ -570,6 +572,21 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+>  		div = cpg_pll_config->osc_prediv * core->div;
+>  		break;
+>  
+> +	case CLK_TYPE_GEN3_RCKSEL:
+> +		/*
+> +		 * Clock selectable between two parents and two fixed dividers
+> +		 * using RCKCR.CKSEL
+> +		 */
+> +		if (readl(base + CPG_RCKCR) & CPG_RCKCR_CKSEL) {
+> +			div = core->div & 0xffff;
+> +		} else {
+> +			parent = clks[core->parent >> 16];
+> +			if (IS_ERR(parent))
+> +				return ERR_CAST(parent);
+> +			div = core->div >> 16;
+> +		}
+> +		break;
+> +
+>  	default:
+>  		return ERR_PTR(-EINVAL);
+>  	}
+> diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
+> index d7d84d9e4a1c9c8b..214df713ce719991 100644
+> --- a/drivers/clk/renesas/rcar-gen3-cpg.h
+> +++ b/drivers/clk/renesas/rcar-gen3-cpg.h
+> @@ -1,7 +1,7 @@
+>  /*
+>   * R-Car Gen3 Clock Pulse Generator
+>   *
+> - * Copyright (C) 2015-2016 Glider bvba
+> + * Copyright (C) 2015-2018 Glider bvba
+>   *
+>   * This program is free software; you can redistribute it and/or modify
+>   * it under the terms of the GNU General Public License as published by
+> @@ -24,6 +24,7 @@ enum rcar_gen3_clk_types {
+>  	CLK_TYPE_GEN3_Z,
+>  	CLK_TYPE_GEN3_Z2,
+>  	CLK_TYPE_GEN3_OSC,	/* OSC EXTAL predivider and fixed divider */
+> +	CLK_TYPE_GEN3_RCKSEL,	/* Select parent/divider using RCKCR.CKSEL */
+>  };
+>  
+>  #define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
+> @@ -37,6 +38,11 @@ enum rcar_gen3_clk_types {
+>  #define DEF_GEN3_OSC(_name, _id, _parent, _div)		\
+>  	DEF_BASE(_name, _id, CLK_TYPE_GEN3_OSC, _parent, .div = _div)
+>  
+> +#define DEF_GEN3_RCKSEL(_name, _id, _parent0, _div0, _parent1, _div1) \
+> +	DEF_BASE(_name, _id, CLK_TYPE_GEN3_RCKSEL,	\
+> +		 (_parent0) << 16 | (_parent1),	.div = (_div0) << 16 | (_div1))
+> +
+> +
 
-If there is an error allocating a display list within a DLM object
-the existing display lists are not free'd, and neither is the DL body
-pool.
+There seems to be an extra blank line here.
 
-Use the existing vsp1_dlm_destroy() function to clean up on error.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_dl.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index da73881a975b..3bf5b0b871b6 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -857,8 +857,10 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
- 		struct vsp1_dl_list *dl;
- 
- 		dl = vsp1_dl_list_alloc(dlm);
--		if (!dl)
-+		if (!dl) {
-+			vsp1_dlm_destroy(dlm);
- 			return NULL;
-+		}
- 
- 		list_add_tail(&dl->list, &dlm->free);
- 	}
--- 
-git-series 0.9.1
+>  struct rcar_gen3_cpg_pll_config {
+>  	u8 extal_div;
+>  	u8 pll1_mult;
+> -- 
+> 2.17.1
+> 
