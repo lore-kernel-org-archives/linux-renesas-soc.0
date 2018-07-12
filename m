@@ -1,105 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:42157 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752069AbeGBRQC (ORCPT
+Received: from sauhun.de ([88.99.104.3]:60040 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733154AbeGLVu1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 Jul 2018 13:16:02 -0400
-Received: by mail-lj1-f193.google.com with SMTP id 1-v6so3747644ljv.9
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 02 Jul 2018 10:16:01 -0700 (PDT)
+        Thu, 12 Jul 2018 17:50:27 -0400
+Date: Thu, 12 Jul 2018 23:38:59 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Eddie James <eajames@linux.vnet.ibm.com>
+Subject: Re: [PATCH v2 1/3] i2c: recovery: if possible send STOP with
+ recovery pulses
+Message-ID: <20180712213859.2btuqc7hfoeo3usk@ninjato>
+References: <20180710214217.1336-1-wsa+renesas@sang-engineering.com>
+ <20180710214217.1336-2-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-In-Reply-To: <cover.1529934908.git.horms+renesas@verge.net.au>
-References: <cover.1529934908.git.horms+renesas@verge.net.au>
-From: Olof Johansson <olof@lixom.net>
-Date: Mon, 2 Jul 2018 10:15:59 -0700
-Message-ID: <CAOesGMjunEcbcPj3fw=VktkNdkO9UNWPXo+t6L=xf+HR3gVyvw@mail.gmail.com>
-Subject: Re: [GIT PULL] Renesas ARM Based SoC Arm SoC Updates for v4.19
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: ARM-SoC Maintainers <arm@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="aqhppz2rqvalxnr3"
+Content-Disposition: inline
+In-Reply-To: <20180710214217.1336-2-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+
+--aqhppz2rqvalxnr3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Jul 10, 2018 at 11:42:15PM +0200, Wolfram Sang wrote:
+> I2C clients may misunderstand recovery pulses if they can't read SDA to
+> bail out early. In the worst case, as a write operation. To avoid that
+> and if we can write SDA, try to send STOP to avoid the
+> misinterpretation.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Applied to for-current, thanks!
 
 
-On Mon, Jun 25, 2018 at 7:05 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> Hi Olof, Hi Kevin, Hi Arnd,
->
-> Please consider these Renesas ARM based SoC arm SoC updates for v4.19.
->
->
-> The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
->
->   Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
->
-> are available in the git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm-soc-for-v4.19
->
-> for you to fetch changes up to c44e182e537492baaa37303fc0ee299222fce921:
->
->   ARM: shmobile: convert to SPDX identifier (2018-06-18 12:00:29 +0200)
+--aqhppz2rqvalxnr3
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I've merged this into next/soc but wanted to give a bit of feedback on
-the tag description for future consideration:
+-----BEGIN PGP SIGNATURE-----
 
-> ----------------------------------------------------------------
-> Renesas ARM Based SoC Arm SoC Updates for v4.19
->
-> * Convert to SPDX identifier
->
-> * Remove legacy SMP fallback code
->
->   Geert Uytterhoeven says "R-Car H2 and M2-W have been supporting SMP
->   enablement from DT using the "renesas,apmu" enable-method since v4.8.
->   A legacy fallback was left in place for backwards compatibility with old
->   DTBs.
->
->   This patch series removes the legacy SMP fallbacks for R-Car H2 and
->   M2-W, and consolidates their support in the common R-Car Gen2 machine
->   definition.2
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltHynMACgkQFA3kzBSg
+Kbbmzw/9EiZW+hFY0Bx4Nm7DQdAkR/T1zG+9gItVg/xPjm3Ln987b867qlCgGMdb
+/iQ/tssy/Mbj7DftiLvSyu76xYMcd7cPsnO1JsGipbGEl9fcnmPsDVYZwi7ZhDM5
+b9P+dX4qC8DtcWATlPY6WlNAxQ71SZG/IweuJAylEXW2/ty5mmt1DSuukADUqcoE
+QWa6scIjTOWH8X0GNNSG11Wb+wycTab5q9EMl/f+InNVfRIYwheNISSJ4PBugzba
+T6oYAv3mAQosNYvWV0gOKbdwF7TfUOoQ8PDYMcm6p1rmWGArUBdS3uZH4fIYXLy5
+1HtIuguKYmywwm7w/o9anqUW/TnxBHX+DfNWSdcOtOFm3cXVFetKeFfnWMmJVHIg
+0dOX/7pzzewDTqEaJjNH5PQQP/c4pmvFRa4T/S5ZtF+K29cIFBAVofGmnDbNTVio
+dA54CQwOZKOqp/TwPsLUvY0XPeFnT85zuM1nZ9zAsNvWI3w8sgtArKPoVG1PXtxD
+IEowKXdn9DVTiElXwxKmer0Tve0h1pkjkCAa3IFRSBt/wNKdrBOL4m/jOi+r8ps+
+CnO6uz+aBvdJjmhB2cvVnzdQ3Weyl4T9ihaMZpce+0tO4zZhXDeYeeciEl72OtKJ
+39EL6hnFTOgkU01HMR4xnprfyqwAbDJamEmIbBdbTNRlp8wh5j0=
+=/wF2
+-----END PGP SIGNATURE-----
 
-Can you please edit a little more when you write these pull requests?
-Distilling the information into a higher concentration.
-
-This could have been something like:
-
- - Remove legacy SMP fallback code for R-Car H2 and M2-W
-    DT enablement has been in since 4.8 and it's no longer needed.
-
-> * APMU cleanups after legacy SMP fallback removal
->   - Move cpu_leave_lowpower() from HOTPLUG_CPU || SUSPEND section to the
->     SUSPEND section as it is only used for suspend
->   - Remove shmobile_smp_apmu_prepare_cpus() as it is no longer used
->   - Remove platsmp-apmu.h
-
-These are typical "what" descriptions, not "why". Just as with patch
-descriptions, it's usually more important to describe why something is
-changed than exactly what (since what can be derived from looking at
-the diff).
-
-It's a bit different for cleanups, of course, but general rule of
-thumb still applies.
-
->
-> * Drop legacy SYSC fallbacks
->
->   Geert Uytterhoeven says "When DT SYSC support was introduced in v4.7,
->   legacy fallbacks were kept to keep secondary CPUs working on R-Car H1,
->   H2, and M2-W using old DTBs.  However, the time has come to drop these
->   fallbacks, and clean up the resulting code"
-
-Again, this could have a single-sentence description similar to SMP
-fallback removal.
-
-
-Thanks,
-
-
--Olof
+--aqhppz2rqvalxnr3--
