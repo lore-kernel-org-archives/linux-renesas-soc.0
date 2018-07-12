@@ -1,62 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:46211 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726580AbeGLMYF (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:42961 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726463AbeGLDJf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Jul 2018 08:24:05 -0400
-MIME-Version: 1.0
-References: <20180712030149.91385-1-chris.brandt@renesas.com> <20180712030149.91385-3-chris.brandt@renesas.com>
-In-Reply-To: <20180712030149.91385-3-chris.brandt@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 12 Jul 2018 14:14:35 +0200
-Message-ID: <CAMuHMdXuXJdvtmEu3WYVSgwd0xfCpQcWQeL+FA9vUMxiA7h=VQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] dt-bindings: arm: Document RZ/A2 SoC DT bindings
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Wed, 11 Jul 2018 23:09:35 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH 2/2] dt-bindings: arm: Document RZ/A2 SoC DT bindings
+Date: Wed, 11 Jul 2018 22:01:49 -0500
+Message-Id: <20180712030149.91385-3-chris.brandt@renesas.com>
+In-Reply-To: <20180712030149.91385-1-chris.brandt@renesas.com>
+References: <20180712030149.91385-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
+Add device tree bindings documentation for Renesas RZ/A2 (r7s9210) SoC.
 
-On Thu, Jul 12, 2018 at 5:02 AM Chris Brandt <chris.brandt@renesas.com> wrote:
-> Add device tree bindings documentation for Renesas RZ/A2 (r7s9210) SoC.
->
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> --- a/Documentation/devicetree/bindings/arm/shmobile.txt
-> +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-> @@ -7,6 +7,8 @@ SoCs:
->      compatible = "renesas,emev2"
->    - RZ/A1H (R7S72100)
->      compatible = "renesas,r7s72100"
-> +  - RZ/A2 (R7S9210)
-> +    compatible = "renesas,r7s9210"
-
-There seems to be a difference between the r7s92104x and the r7s92105x
-parts (with "x" just denoting a different packaging)?
-Do we need one more digit?
-
->    - SH-Mobile AG5 (R8A73A00/SH73A0)
->      compatible = "renesas,sh73a0"
->    - R-Mobile APE6 (R8A73A40)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 89b4a389fbc7..7288c2081cd5 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -7,6 +7,8 @@ SoCs:
+     compatible = "renesas,emev2"
+   - RZ/A1H (R7S72100)
+     compatible = "renesas,r7s72100"
++  - RZ/A2 (R7S9210)
++    compatible = "renesas,r7s9210"
+   - SH-Mobile AG5 (R8A73A00/SH73A0)
+     compatible = "renesas,sh73a0"
+   - R-Mobile APE6 (R8A73A40)
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.16.1
