@@ -1,63 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33214 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728362AbeGTMvo (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:43159 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727019AbeGLIWv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jul 2018 08:51:44 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/9] arm64: dts: renesas: salvator-common: Fix adv7482 decimal unit addresses
-Date: Fri, 20 Jul 2018 14:03:33 +0200
-Message-Id: <c5a884838ce34681200b5a45b2330177036affd0.1532087303.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1532087303.git.horms+renesas@verge.net.au>
-References: <cover.1532087303.git.horms+renesas@verge.net.au>
+        Thu, 12 Jul 2018 04:22:51 -0400
+Received: by mail-lf0-f68.google.com with SMTP id m12-v6so23481349lfc.10
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Jul 2018 01:14:21 -0700 (PDT)
+Date: Thu, 12 Jul 2018 10:14:19 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: laurent.pinchart@ideasonboard.com, horms@verge.net.au,
+        geert@glider.be, mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        hans.verkuil@cisco.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v5 1/6] dt-bindings: media: rcar-vin: Align Gen2 and Gen3
+Message-ID: <20180712081419.GU5237@bigcity.dyn.berto.se>
+References: <1531145962-1540-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1531145962-1540-2-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1531145962-1540-2-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Jacopo,
 
-With recent dtc and W=1:
+On 2018-07-09 16:19:16 +0200, Jacopo Mondi wrote:
+> Align description of the Gen2 and Gen3 bindings for parallel input.
+> This commit prepares for description of optional endpoint properties in ports
+> subnodes accepting parallel video connections.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-    ...salvator-x.dtb: Warning (graph_port): /soc/i2c@e66d8000/video-receiver@70/port@10: graph node unit address error, expected "a"
-    ...salvator-x.dtb: Warning (graph_port): /soc/i2c@e66d8000/video-receiver@70/port@11: graph node unit address error, expected "b"
+Acked-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-Unit addresses are always hexadecimal (without prefix), while the bases
-of reg property values depend on their prefixes.
+> ---
+>  Documentation/devicetree/bindings/media/rcar_vin.txt | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
+> index e25ab07..39c4e6a 100644
+> --- a/Documentation/devicetree/bindings/media/rcar_vin.txt
+> +++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
+> @@ -39,9 +39,11 @@ Additionally, an alias named vinX will need to be created to specify
+>  which video input device this is.
+>  
+>  The per-board settings Gen2 platforms:
+> - - port sub-node describing a single endpoint connected to the vin
+> -   as described in video-interfaces.txt[1]. Only the first one will
+> -   be considered as each vin interface has one input port.
+> +
+> +- port - sub-node describing a single endpoint connected to the VIN
+> +  from external SoC pins as described in video-interfaces.txt[1].
+> +  Only the first one will be considered as each vin interface has one
+> +  input port.
+>  
+>  The per-board settings Gen3 platforms:
+>  
+> @@ -52,7 +54,7 @@ from local SoC CSI-2 receivers (port@1) depending on SoC.
+>  - renesas,id - ID number of the VIN, VINx in the documentation.
+>  - ports
+>      - port@0 - sub-node describing a single endpoint connected to the VIN
+> -      from external SoC pins described in video-interfaces.txt[1].
+> +      from external SoC pins as described in video-interfaces.txt[1].
+>        Describing more than one endpoint in port@0 is invalid. Only VIN
+>        instances that are connected to external pins should have port@0.
+>      - port@1 - sub-nodes describing one or more endpoints connected to
+> -- 
+> 2.7.4
+> 
 
-Fixes: 908001d778eba06e ("arm64: dts: renesas: salvator-common: Add ADV7482 support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index ce808d3f9f62..6439d05fd7ec 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -446,7 +446,7 @@
- 			};
- 		};
- 
--		port@10 {
-+		port@a {
- 			reg = <10>;
- 
- 			adv7482_txa: endpoint {
-@@ -456,7 +456,7 @@
- 			};
- 		};
- 
--		port@11 {
-+		port@b {
- 			reg = <11>;
- 
- 			adv7482_txb: endpoint {
 -- 
-2.11.0
+Regards,
+Niklas S�derlund
