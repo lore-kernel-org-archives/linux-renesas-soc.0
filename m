@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:19869 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727434AbeGMMEl (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:23994 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726703AbeGLP7B (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Jul 2018 08:04:41 -0400
+        Thu, 12 Jul 2018 11:59:01 -0400
 From: Chris Brandt <Chris.Brandt@renesas.com>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 CC: Simon Horman <horms@verge.net.au>,
@@ -15,8 +15,8 @@ CC: Simon Horman <horms@verge.net.au>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
         <devicetree@vger.kernel.org>
 Subject: RE: [PATCH 2/2] dt-bindings: arm: Document RZ/A2 SoC DT bindings
-Date: Fri, 13 Jul 2018 11:50:16 +0000
-Message-ID: <TY1PR01MB1562A3B909AFC6CEB7E5BD088A580@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+Date: Thu, 12 Jul 2018 15:48:46 +0000
+Message-ID: <TY1PR01MB1562246C4C6BAF431C15D7218A590@TY1PR01MB1562.jpnprd01.prod.outlook.com>
 References: <20180712030149.91385-1-chris.brandt@renesas.com>
  <20180712030149.91385-3-chris.brandt@renesas.com>
  <CAMuHMdXuXJdvtmEu3WYVSgwd0xfCpQcWQeL+FA9vUMxiA7h=VQ@mail.gmail.com>
@@ -42,12 +42,7 @@ QyBsZXZlbCwgaS5lLg0KPiAicmVuZXNhcyxyN3M5MjEwNCIuDQo+IFVubGVzcyB0aGVyZSdzIGEg
 aGFyZHdhcmUgcmVnaXN0ZXIgdG8gZGV0ZWN0IHRoZSB2ZXJzaW9uIGF0IHJ1bnRpbWUuDQo+IEJ1
 dCBpdCBzZWVtcyBSWi9BMiBkb2Vzbid0IGhhdmUgYSBQcm9kdWN0IFJlZ2lzdGVyDQo+IChQUlIp
 LCB3aGljaCBtb3N0IG90aGVyIFNIL1ItTW9iaWxlIGFuZCBSLUNhciBTb0NzIGRvIGhhdmU/DQoN
-Cg0KVGhlcmUgaXMgYW4gSUQgcmVnaXN0ZXIgaW4gUlovQTIgdGhhdCB3aWxsIGhhdmUgYSBkaWZm
-ZXJlbnQgbnVtYmVyIGZvciANCmVhY2ggc2lsaWNvbi4NClNlZSB0aGUgZmlyc3QgZW50cnkgaW4g
-VGFibGUgNS42IChCU0lEIHJlZ2lzdGVyKS4NCg0KVGVjaG5pY2FsbHksIGl0J3Mgbm90ICAiUFJS
-IiBsaWtlIGl0J3MgU0gvUi1DYXIgZGV2aWNlcy4gSXQncyBhY3R1YWxseSANCnRoZSBib3VuZGFy
-eSBzY2FuIElEIG51bWJlci4gQWxsIFJaL0ExIGRldmljZXMgaGF2ZSB0aGlzIHRvby4gQnV0IHdp
-dGggDQpSWi9BMSwgeW91IGNvdWxkIG9ubHkgZ2V0IHRvIHRoaXMgcmVnaXN0ZXIgdGhyb3VnaCBK
-VEFHIChub3QgYnkgdGhlIENQVSkuIA0KU28gZm9yIFJaL0EyKywgdGhleSB3aWxsIG1pcnJvciB0
-aGF0IHJlZ2lzdGVyIHRvIENQVSBzcGFjZS4NCg0KU28gd2l0aCB0aGF0IHNhaWQsIGFyZSB3ZSBn
-b29kIHdpdGggQ09ORklHX0FSQ0hfUjdTOTIxMD8NCg0KQ2hyaXMNCg0K
+ClRoZXJlIGlzIHN1cHBvc2VkIHRvIGJlIG9uZS4gSSBzcGVjaWZpY2FsbHkgYXNrZWQgZm9yIGl0
+IChhbmQgcmVtZW1iZXIgDQpyZXZpZXdpbmcgaXQpLg0KQnV0LCBub3cgSSdtIG5vdCBzZWVpbmcg
+aXQgaW4gdGhlIGxhdGVzdCB2ZXJzaW9uIG9mIHRoZSBtYW51YWwuDQoNCkxldCBtZSBmaW5kIG91
+dCB3aGVyZSBpdCBpcy4NCg0KQ2hyaXMNCg0KDQo=
