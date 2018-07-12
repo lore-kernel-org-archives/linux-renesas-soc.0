@@ -1,60 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:33704 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:58822 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728624AbeGQJTi (ORCPT
+        id S1725967AbeGLRtg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jul 2018 05:19:38 -0400
-Date: Tue, 17 Jul 2018 10:48:05 +0200
+        Thu, 12 Jul 2018 13:49:36 -0400
+Date: Thu, 12 Jul 2018 19:39:00 +0200
 From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+To: Peter Rosin <peda@axentia.se>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Subject: Re: [PATCH 1/2] i2c: recovery: add get_bus_free callback
-Message-ID: <20180717084804.scksrehgyr4jq4u3@ninjato>
+Message-ID: <20180712173859.2ltochywona6ffaz@ninjato>
 References: <20180710222423.7792-1-wsa+renesas@sang-engineering.com>
  <20180710222423.7792-2-wsa+renesas@sang-engineering.com>
+ <e87cb471-e26b-5f57-c1f7-4d403c476a9d@axentia.se>
+ <20180711165216.hl5ajk5w2uxceiq6@ninjato>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="c3swbs5zee4qbg5m"
+        protocol="application/pgp-signature"; boundary="dlnrx5axysftziwz"
 Content-Disposition: inline
-In-Reply-To: <20180710222423.7792-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180711165216.hl5ajk5w2uxceiq6@ninjato>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---c3swbs5zee4qbg5m
+--dlnrx5axysftziwz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 11, 2018 at 12:24:22AM +0200, Wolfram Sang wrote:
-> Some IP cores have an internal 'bus free' logic which may be more
-> advanced than just checking if SDA is high. Add a separate callback to
-> get this status. Filling it is optional.
+
+> > More importantly, isn't a ->get_bus_free implementation a sufficient re=
+quirement
+> > for recovery? I.e. even if both ->get_sda and ->set_sda are missing?
 >=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> In my case, it isn't. It needs set_sda (=3D=3D STOP) to achieve a useful
+> result. Hmm, I think this needs better documentation...
 
-Applied to for-next, thanks!
+On a second thought, it may be possible to simply merge get_sda and
+get_bus_free in the future. For now, I'd like to keep them seperate
+until we have implemented bus recovery for some more hardware.
 
 
---c3swbs5zee4qbg5m
+--dlnrx5axysftziwz
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltNrUQACgkQFA3kzBSg
-KbZrlQ//VdfWQYyJm726uLqe+O3jW9bjN+jm1rfaWN7r2A+j/eQYb30O2xac0qoM
-ORyTWutv0pae6q2qdEBa94tkFYtMZMOAV3yxeD3kTceKI85Ofy51X81LV5dwOvTe
-rO/X/5Y3TzA9OJJAi1KdybHmQo1Oo6IO+WQNEsp6o8Au9UZK1NnEhg4g99Lu14SP
-nvx4ED4ezp5eKeLOizY3nN8BtCcMGMWeXzhidjyo8cF4UCPgvWq0wiDVntOHZ+b/
-iSJUCuiyiAqiC1ZlVhhTZ84JICJfP5KVGEFQK8kYi7llUzpV0BCyGCcysZWZlq81
-AJp7ZFOVQQXFH2GM5kLabsVJM+igVA7YUuWUSl0uVqpXlEY4kJrRPUn+8HNtbYHw
-GMw5DCBNBDCbnFcyJQ9uX+u6mMk5KJrb9J980OMX4804OY3w7uHmoaMr5a2WZfPN
-CzF4TPwn7wecWmzWvTTLxV9Kc1mwZAtBebTjYe3kT8JEW7SD7oGbzMZYD6UipD6p
-6oZE9Ho60XcMS6QKgdqx8/Pc0TCGHY3lGPg9lxS+owrvio6l8rfQQ1ejDead8Lrq
-kufJmK13Tm7c9trA4POcUeX28br8bVSwBBGIPg4FBTS7c8xr7zmqU88zqgsgBQez
-GPWPoVAhFdAJKwI5nTrO7hchZox1tCVpteSHsuTA8Lq+3ZlGSbs=
-=SFvK
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltHki8ACgkQFA3kzBSg
+KbZeUw/8D53EudeZKJzyQD0OL7V1SgFEjCyXPKdijpF6AH6PccXWA3Imqph8oRib
+6JfbIzwhVBINVeBhd3LvUkgzpVypAIFmQJtN9W/xHYBtaXPWbQay85YEf7b5aLAE
+1EM2vFBxHqqNEHCW24QoQrXJ84d2YSVH+hVgbkT4lToZqPrbmtVa9WAcrdFoFJ52
+q34XHsnEisp49DxSkMRXOyrLjziFcMXSC/m6QY14Dwnn7y9yx5092g/kXcFJy583
+F7q5MqIXEzpC+pO7nDeGjuXyjO+dNAohTPZPozlJAPFGfdvzzAkjn23ZwbvDWBMn
+9Py2E0iFAojqP9BMxJGaRKTflryNTqc2WgHE41DkrDLzFjXrOn/+W+FCncVDo91u
+NLlBs8M0bS4agLdGxqMysrd0uZgz4mDy90AcU2UQBagwrGkbdZeDTeNzSWFIa5+7
+bhW6Pb9uDmbBXCgJILldqvePbkOR1tYgEgH9Ko/IE1aHx2aCyJzs7o3yEjukaps1
+s0W2dxuKEH5ZuHteWcwOSMo+Y/mH3qc0pqvg7ysoP8oDeh89fEKhNbsWcqLNwcJ1
+SWOis+AW6gL6pZSxne95vPx2AgpeiaYKQs05wdMk53hP8G0ET796NyAF9zKixhRC
+BR2Sb96EoTJaOvt3bPtELmt0Ugd4d1DjzXh7Nzclq+SnOuzrDUI=
+=KIdn
 -----END PGP SIGNATURE-----
 
---c3swbs5zee4qbg5m--
+--dlnrx5axysftziwz--
