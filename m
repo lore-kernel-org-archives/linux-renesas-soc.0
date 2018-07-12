@@ -1,78 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:46391 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727497AbeGLOdy (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34710 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727497AbeGLOGF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Jul 2018 10:33:54 -0400
-MIME-Version: 1.0
-References: <20180711142100.3765-1-geert+renesas@glider.be>
- <20180711142100.3765-6-geert+renesas@glider.be> <20180712135618.fviccj5rg4jgguvp@verge.net.au>
-In-Reply-To: <20180712135618.fviccj5rg4jgguvp@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 12 Jul 2018 16:23:53 +0200
-Message-ID: <CAMuHMdWyt7FeocWyf9RFwx2QRZdqZbpn++vjSF-6SpM4w-ZdvQ@mail.gmail.com>
-Subject: Re: [PATCH 05/11] clk: renesas: r8a77980: Add OSC predivider
- configuration and clock
-To: Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Thu, 12 Jul 2018 10:06:05 -0400
+Date: Thu, 12 Jul 2018 15:56:19 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 05/11] clk: renesas: r8a77980: Add OSC predivider
+ configuration and clock
+Message-ID: <20180712135618.fviccj5rg4jgguvp@verge.net.au>
+References: <20180711142100.3765-1-geert+renesas@glider.be>
+ <20180711142100.3765-6-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180711142100.3765-6-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+On Wed, Jul 11, 2018 at 04:20:54PM +0200, Geert Uytterhoeven wrote:
+> R-Car Gen3 Hardware Manual Rev.0.54 documents the relation between the
+> MD13 and MD14 mode pins, and the OSC EXTAL predivider, as used by the
+> OSC clock.  Hence augment the configuration structure with all
+> documented predivider values.
+> 
+> Add the OSC clock using the configured predivider.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/clk/renesas/r8a77980-cpg-mssr.c | 24 +++++++++++++-----------
+>  1 file changed, 13 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/clk/renesas/r8a77980-cpg-mssr.c b/drivers/clk/renesas/r8a77980-cpg-mssr.c
+> index d7ebd9ec00594fc8..093677b8927800fa 100644
+> --- a/drivers/clk/renesas/r8a77980-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a77980-cpg-mssr.c
+> @@ -96,6 +96,8 @@ static const struct cpg_core_clk r8a77980_core_clks[] __initconst = {
+>  	DEF_DIV6P1("canfd",	R8A77980_CLK_CANFD, CLK_PLL1_DIV4, 0x244),
+>  	DEF_DIV6P1("csi0",	R8A77980_CLK_CSI0,  CLK_PLL1_DIV4, 0x00c),
+>  	DEF_DIV6P1("mso",	R8A77980_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
+> +
+> +	DEF_GEN3_OSC("osc",	R8A77980_CLK_OSC,   CLK_EXTAL,     8),
+>  };
+>  
+>  static const struct mssr_mod_clk r8a77980_mod_clks[] __initconst = {
+> @@ -171,23 +173,23 @@ static const unsigned int r8a77980_crit_mod_clks[] __initconst = {
+>   */
+>  
+>  /*
+> - *   MD		EXTAL		PLL2	PLL1	PLL3
+> + *   MD		EXTAL		PLL2	PLL1	PLL3	OSC
+>   * 14 13	(MHz)
+> - * --------------------------------------------------
+> - * 0  0		16.66 x 1	x240	x192	x192
+> - * 0  1		20    x 1	x200	x160	x160
+> - * 1  0		27    x 1	x148	x118	x118
+> - * 1  1		33.33 / 2	x240	x192	x192
+> + * --------------------------------------------------------
+> + * 0  0		16.66 x 1	x240	x192	x192	/16
+> + * 0  1		20    x 1	x200	x160	x160	/19
+> + * 1  0		27    x 1	x148	x118	x118	/24
 
-On Thu, Jul 12, 2018 at 3:56 PM Simon Horman <horms@verge.net.au> wrote:
-> On Wed, Jul 11, 2018 at 04:20:54PM +0200, Geert Uytterhoeven wrote:
-> > R-Car Gen3 Hardware Manual Rev.0.54 documents the relation between the
-> > MD13 and MD14 mode pins, and the OSC EXTAL predivider, as used by the
-> > OSC clock.  Hence augment the configuration structure with all
-> > documented predivider values.
-> >
-> > Add the OSC clock using the configured predivider.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Not related to this patch, but in the Users' Manual 1.0
+EXTAL is listed as 27MHz in table 8.4e but 25MHz (below) table 8.2e.
 
-> > --- a/drivers/clk/renesas/r8a77980-cpg-mssr.c
-> > +++ b/drivers/clk/renesas/r8a77980-cpg-mssr.c
-
-> > @@ -171,23 +173,23 @@ static const unsigned int r8a77980_crit_mod_clks[] __initconst = {
-> >   */
-> >
-> >  /*
-> > - *   MD              EXTAL           PLL2    PLL1    PLL3
-> > + *   MD              EXTAL           PLL2    PLL1    PLL3    OSC
-> >   * 14 13     (MHz)
-> > - * --------------------------------------------------
-> > - * 0  0              16.66 x 1       x240    x192    x192
-> > - * 0  1              20    x 1       x200    x160    x160
-> > - * 1  0              27    x 1       x148    x118    x118
-> > - * 1  1              33.33 / 2       x240    x192    x192
-> > + * --------------------------------------------------------
-> > + * 0  0              16.66 x 1       x240    x192    x192    /16
-> > + * 0  1              20    x 1       x200    x160    x160    /19
-> > + * 1  0              27    x 1       x148    x118    x118    /24
->
-> Not related to this patch, but in the Users' Manual 1.0
-> EXTAL is listed as 27MHz in table 8.4e but 25MHz (below) table 8.2e.
-
-Nice catch:
-  - Divider 24 is correct for 25 MHz, but not for 27 Mhz.
-  - Multipliers 148 and 118 are correct for 27 MHz, but not for 25 MHz.
-Needs clarification...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> + * 1  1		33.33 / 2	x240	x192	x192	/32
+>   */
+>  #define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 13) | \
+>  					 (((md) & BIT(13)) >> 13))
+>  
+>  static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[4] __initconst = {
+> -	/* EXTAL div	PLL1 mult/div	PLL3 mult/div */
+> -	{ 1,		192,	1,	192,	1,	},
+> -	{ 1,		160,	1,	160,	1,	},
+> -	{ 1,		118,	1,	118,	1,	},
+> -	{ 2,		192,	1,	192,	1,	},
+> +	/* EXTAL div	PLL1 mult/div	PLL3 mult/div	OSC prediv */
+> +	{ 1,		192,	1,	192,	1,	16,	},
+> +	{ 1,		160,	1,	160,	1,	19,	},
+> +	{ 1,		118,	1,	118,	1,	24,	},
+> +	{ 2,		192,	1,	192,	1,	32,	},
+>  };
+>  
+>  static int __init r8a77980_cpg_mssr_init(struct device *dev)
+> -- 
+> 2.17.1
+> 
