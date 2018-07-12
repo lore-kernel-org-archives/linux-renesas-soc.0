@@ -1,66 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:51252 "EHLO pokefinder.org"
+Received: from www.zeus03.de ([194.117.254.33]:59466 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388062AbeGWV3t (ORCPT
+        id S1726532AbeGLJJC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jul 2018 17:29:49 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 04/12] i2c: omap: use core to detect 'no zero length' quirk
-Date: Mon, 23 Jul 2018 22:26:08 +0200
-Message-Id: <20180723202617.15230-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
-References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
+        Thu, 12 Jul 2018 05:09:02 -0400
+Date: Thu, 12 Jul 2018 11:00:21 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-serial@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH 0/2] serial: sh-sci: Use pm_runtime_get_sync()/put()
+Message-ID: <20180712090021.a2e5p3t2mmoimtio@katana>
+References: <1523638854-21804-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <CAMuHMdXn3ngXNFFM6Zsi2-YftvKeWnBSCxoQHd7j3xxFnBORrA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="z4anosvar7oyar3d"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXn3ngXNFFM6Zsi2-YftvKeWnBSCxoQHd7j3xxFnBORrA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-And don't reimplement in the driver.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+--z4anosvar7oyar3d
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Only build tested.
+On Fri, Apr 13, 2018 at 07:27:59PM +0200, Geert Uytterhoeven wrote:
+> Hi Ulrich,
+>=20
+> On Fri, Apr 13, 2018 at 7:00 PM, Ulrich Hecht
+> <ulrich.hecht+renesas@gmail.com> wrote:
+> > These patches make sure that the device is up while the suspend/resume =
+code
+> > is executed. Up-port from the BSP, tested not to break stuff.
+> >
+> > Hien Dang (2):
+> >   serial: sh-sci: Use pm_runtime_get_sync()/put() on suspend
+> >   serial: sh-sci: Use pm_runtime_get_sync()/put() on resume
+>=20
+> I don't think it makes much sense to split this in two parts...
+>=20
+> Furthermore, shouldn't this be handled by the serial core, calling
+> uart_change_pm()?
+>=20
+> It looks like uart_resume_port() already changes the port's state to
+> enabled, while  uart_suspend_port() assumes the port is already enabled,
+> and disables it.
+>=20
+> Perhaps handling is not correct for some code paths?
 
- drivers/i2c/busses/i2c-omap.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+Ulrich, what is your take on this?
 
-diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
-index 65d06a819307..b1086bfb0465 100644
---- a/drivers/i2c/busses/i2c-omap.c
-+++ b/drivers/i2c/busses/i2c-omap.c
-@@ -661,9 +661,6 @@ static int omap_i2c_xfer_msg(struct i2c_adapter *adap,
- 	dev_dbg(omap->dev, "addr: 0x%04x, len: %d, flags: 0x%x, stop: %d\n",
- 		msg->addr, msg->len, msg->flags, stop);
- 
--	if (msg->len == 0)
--		return -EINVAL;
--
- 	omap->receiver = !!(msg->flags & I2C_M_RD);
- 	omap_i2c_resize_fifo(omap, msg->len, omap->receiver);
- 
-@@ -1179,6 +1176,10 @@ static const struct i2c_algorithm omap_i2c_algo = {
- 	.functionality	= omap_i2c_func,
- };
- 
-+static const struct i2c_adapter_quirks omap_i2c_quirks = {
-+	.flags = I2C_AQ_NO_ZERO_LEN,
-+};
-+
- #ifdef CONFIG_OF
- static struct omap_i2c_bus_platform_data omap2420_pdata = {
- 	.rev = OMAP_I2C_IP_VERSION_1,
-@@ -1453,6 +1454,7 @@ omap_i2c_probe(struct platform_device *pdev)
- 	adap->class = I2C_CLASS_DEPRECATED;
- 	strlcpy(adap->name, "OMAP I2C adapter", sizeof(adap->name));
- 	adap->algo = &omap_i2c_algo;
-+	adap->quirks = &omap_i2c_quirks;
- 	adap->dev.parent = &pdev->dev;
- 	adap->dev.of_node = pdev->dev.of_node;
- 	adap->bus_recovery_info = &omap_i2c_bus_recovery_info;
--- 
-2.11.0
+
+--z4anosvar7oyar3d
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltHGKEACgkQFA3kzBSg
+KbYgZA/+Imu76eHLkpWy8YW6qYosqIWDMaQkonim7BKRPnyp3lMddXiw25/nEmL8
+3dPoEa9P0m4UoawvA0uzqX1Cgt85zoCbkAi5mBQzs95FjGePgINsc44bqzVHjUkX
+8l4SMCM/ou+pWXRScJvqCxwx9IAQ+bZZS0gFailaSxuRGgq4DwlQvk3ZBZyr2e+E
+Zfi7mBXQslmCHfQ5ieeIUhPQw5gth6QZQDS7+AE4u3Vl/T2KyM4+v68datcajcXF
+VVm6k5ynaEksW3Ljf3GAqaQe4WxpOzavYdgSO2TzqGrbKqVoB0qmPrj2Q56D4D0d
+CFJcAI/b8Lk65l6otDsBCwnXyFaIGgGfsIiovlL29utawnh13hBLKr95KWaVLi2P
+XlqadW0/DXpMId5gJgem4rssQUmopPBEtuxGOhB6JReN+i7+r0t7cn5FsmECHK4X
+GCH3T6lXgKjh2B9QmDvEhWz0GGSImZP6QvGb7NvBxVTKsKr+hy0DC3ODpOuYwD5b
+L/nDVcZASTUptX2tNzKUDsVZjQaULe8qJpKhGZV4TI4Rxrbri5h01Ub0wCBLb/iL
+LoO13ojeBJNApR+7sN68HjWUwdlxQGJ74X3BcIxg6ZH7/wMloK5iy89A56BiBarL
+lhNesLWfZPKyR1ibrgq7oPu2BX8olt4TK6bK4accBve33L8uJ+s=
+=yAPH
+-----END PGP SIGNATURE-----
+
+--z4anosvar7oyar3d--
