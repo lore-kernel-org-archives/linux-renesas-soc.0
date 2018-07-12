@@ -1,55 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:26946 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730029AbeGPMrJ (ORCPT
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:46391 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727497AbeGLOdy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Jul 2018 08:47:09 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        netdev@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 3/3] ravb: fix byte order for TX descriptor tag field lower bits
-Date: Mon, 16 Jul 2018 14:19:27 +0200
-Message-Id: <20180716121927.21918-4-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180716121927.21918-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180716121927.21918-1-niklas.soderlund+renesas@ragnatech.se>
+        Thu, 12 Jul 2018 10:33:54 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20180711142100.3765-1-geert+renesas@glider.be>
+ <20180711142100.3765-6-geert+renesas@glider.be> <20180712135618.fviccj5rg4jgguvp@verge.net.au>
+In-Reply-To: <20180712135618.fviccj5rg4jgguvp@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 12 Jul 2018 16:23:53 +0200
+Message-ID: <CAMuHMdWyt7FeocWyf9RFwx2QRZdqZbpn++vjSF-6SpM4w-ZdvQ@mail.gmail.com>
+Subject: Re: [PATCH 05/11] clk: renesas: r8a77980: Add OSC predivider
+ configuration and clock
+To: Simon Horman <horms@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The wrong helper is used to swap the bytes when adding the lower bits of
-the TX descriptors tag field in the shared ds_tagl variable. The
-variable contains the DS[11:0] field and then the TAG[3:0] bits.
+Hi Simon,
 
-The mistake was highlighted by the sparse warning:
+On Thu, Jul 12, 2018 at 3:56 PM Simon Horman <horms@verge.net.au> wrote:
+> On Wed, Jul 11, 2018 at 04:20:54PM +0200, Geert Uytterhoeven wrote:
+> > R-Car Gen3 Hardware Manual Rev.0.54 documents the relation between the
+> > MD13 and MD14 mode pins, and the OSC EXTAL predivider, as used by the
+> > OSC clock.  Hence augment the configuration structure with all
+> > documented predivider values.
+> >
+> > Add the OSC clock using the configured predivider.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-ravb_main.c:1622:31:    left side has type restricted __le16
-ravb_main.c:1622:31:    right side has type unsigned short
-ravb_main.c:1622:31: warning: invalid assignment: |=
-ravb_main.c:1622:34: warning: cast to restricted __le16
+> > --- a/drivers/clk/renesas/r8a77980-cpg-mssr.c
+> > +++ b/drivers/clk/renesas/r8a77980-cpg-mssr.c
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/net/ethernet/renesas/ravb_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > @@ -171,23 +173,23 @@ static const unsigned int r8a77980_crit_mod_clks[] __initconst = {
+> >   */
+> >
+> >  /*
+> > - *   MD              EXTAL           PLL2    PLL1    PLL3
+> > + *   MD              EXTAL           PLL2    PLL1    PLL3    OSC
+> >   * 14 13     (MHz)
+> > - * --------------------------------------------------
+> > - * 0  0              16.66 x 1       x240    x192    x192
+> > - * 0  1              20    x 1       x200    x160    x160
+> > - * 1  0              27    x 1       x148    x118    x118
+> > - * 1  1              33.33 / 2       x240    x192    x192
+> > + * --------------------------------------------------------
+> > + * 0  0              16.66 x 1       x240    x192    x192    /16
+> > + * 0  1              20    x 1       x200    x160    x160    /19
+> > + * 1  0              27    x 1       x148    x118    x118    /24
+>
+> Not related to this patch, but in the Users' Manual 1.0
+> EXTAL is listed as 27MHz in table 8.4e but 25MHz (below) table 8.2e.
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index a100bccb3234bd5c..f7e649c831ad5595 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1623,7 +1623,7 @@ static netdev_tx_t ravb_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 		/* TAG and timestamp required flag */
- 		skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
- 		desc->tagh_tsr = (ts_skb->tag >> 4) | TX_TSR;
--		desc->ds_tagl |= le16_to_cpu(ts_skb->tag << 12);
-+		desc->ds_tagl |= cpu_to_le16(ts_skb->tag << 12);
- 	}
- 
- 	skb_tx_timestamp(skb);
+Nice catch:
+  - Divider 24 is correct for 25 MHz, but not for 27 Mhz.
+  - Multipliers 148 and 118 are correct for 27 MHz, but not for 25 MHz.
+Needs clarification...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.17.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
