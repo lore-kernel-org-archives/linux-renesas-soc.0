@@ -1,12 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:18749 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726816AbeGLPuU (ORCPT
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:37771 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726946AbeGLNE3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Jul 2018 11:50:20 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Simon Horman <horms@verge.net.au>,
+        Thu, 12 Jul 2018 09:04:29 -0400
+MIME-Version: 1.0
+References: <20180712030149.91385-1-chris.brandt@renesas.com> <20180712030149.91385-2-chris.brandt@renesas.com>
+In-Reply-To: <20180712030149.91385-2-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 12 Jul 2018 14:54:50 +0200
+Message-ID: <CAMuHMdX4BPxQY__2DYrUGMBFZPMm_x_jxaBvG+EAPR0fWreAew@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ARM: shmobile: Add basic RZ/A2 SoC support
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -14,24 +20,58 @@ CC: Simon Horman <horms@verge.net.au>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
         <devicetree@vger.kernel.org>
-Subject: RE: [PATCH 1/2] ARM: shmobile: Add basic RZ/A2 SoC support
-Date: Thu, 12 Jul 2018 15:40:05 +0000
-Message-ID: <TY1PR01MB156277033682C5749AE209368A590@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20180712030149.91385-1-chris.brandt@renesas.com>
- <20180712030149.91385-2-chris.brandt@renesas.com>
- <CAMuHMdX4BPxQY__2DYrUGMBFZPMm_x_jxaBvG+EAPR0fWreAew@mail.gmail.com>
-In-Reply-To: <CAMuHMdX4BPxQY__2DYrUGMBFZPMm_x_jxaBvG+EAPR0fWreAew@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIFRodXJzZGF5LCBKdWx5IDEyLCAyMDE4LCBHZWVydCBVeXR0ZXJob2V2
-ZW4gd3JvdGU6DQo+IEknbSB3b25kZXJpbmcgaWYgeW91IGNvdWxkIGRvIHdpdGhvdXQgYW55IGJv
-YXJkIGNvZGUsIGkuZS4gd2l0aG91dA0KPiBzZXR1cC1yN3M5MjEwLmM/DQoNCkkgdGhpbmsgSSBz
-ZWUgdGhlbSBiZWluZyByZW1vdmVkIGZvciBSLUNhci4NCkJ1dC4uLi5JJ20gbm90IHN1cmUgaG93
-IHRoYXQgYWN0dWFsbHkgd29ya3MuDQoNCkknbGwgaGF2ZSBhIGxvb2suDQoNCkFzIHlvdSBjYW4g
-c2VlLCB0aGVyZSdzIHJlYWxseSBub3RoaW5nIGluIHRoZSBSWi9BMSBzZXR1cCBmaWxlIGVpdGhl
-ci4NCg0KDQpDaHJpcw0K
+Hi Chris,
+
+On Thu, Jul 12, 2018 at 5:02 AM Chris Brandt <chris.brandt@renesas.com> wrote:
+> Add the RZ/A2 SoC to the Renesas SoC collection.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+
+> --- /dev/null
+> +++ b/arch/arm/mach-shmobile/setup-r7s9210.c
+> @@ -0,0 +1,27 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * r7s9210 processor support
+> + *
+> + * Copyright (C) 2018  Renesas Electronics Corporation
+> + * Copyright (C) 2018  Chris Brandt
+> + *
+> + */
+> +
+> +#include <linux/kernel.h>
+> +
+> +#include <asm/mach/arch.h>
+> +
+> +#include "common.h"
+> +
+> +static const char *const r7s9210_boards_compat_dt[] __initconst = {
+> +       "renesas,r7s9210",
+> +       NULL,
+> +};
+> +
+> +DT_MACHINE_START(R7S72100_DT, "Generic R7S9210 (Flattened Device Tree)")
+> +       .l2c_aux_val    = 0,
+> +       .l2c_aux_mask   = ~0,
+> +       .init_early     = shmobile_init_delay,
+> +       .init_late      = shmobile_init_late,
+> +       .dt_compat      = r7s9210_boards_compat_dt,
+> +MACHINE_END
+
+I'm wondering if you could do without any board code, i.e. without
+setup-r7s9210.c?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
