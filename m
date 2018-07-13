@@ -1,59 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54346 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729046AbeGQKa5 (ORCPT
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:42865 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727999AbeGMMr1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:30:57 -0400
-Date: Tue, 17 Jul 2018 11:59:05 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
+        Fri, 13 Jul 2018 08:47:27 -0400
+Received: by mail-ua0-f195.google.com with SMTP id x18-v6so20496654uaj.9
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Jul 2018 05:32:58 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180712160857.31471-1-geert+renesas@glider.be>
+ <CANqRtoTuofutGtWycNcHq+rPzHqAsjy8ZY0W0k9m_SNWnOajVg@mail.gmail.com>
+ <CAMuHMdVsASDbnk-8CtgZu6g5JYCVpj2eF4qFCy7q6bzBr1OEoA@mail.gmail.com> <TY1PR01MB1562D500B559B159DA971B998A580@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY1PR01MB1562D500B559B159DA971B998A580@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 13 Jul 2018 14:32:46 +0200
+Message-ID: <CAMuHMdVNvOP7NymwuiJ0fZdzCF9ijKzhm2sfgptOOiHBj2SCWA@mail.gmail.com>
 Subject: Re: [PATCH/RFC] ARM: shmobile: Always enable ARCH_TIMER on SoCs with
  A7 and/or A15
-Message-ID: <20180717095904.eik3sko64zqymzts@verge.net.au>
-References: <20180712160857.31471-1-geert+renesas@glider.be>
- <20180713080823.l4tng6oclhr6nxrh@verge.net.au>
- <CAMuHMdUrgP=YOrgeEnpQ0XVOoC_8Dz9Lt2FJ4P5GKb53KRNpNw@mail.gmail.com>
- <CAMuHMdUsHHDo_2unzUZN9W0kY2p5YW+yGkfsdXE-8ZHuBAuxnA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUsHHDo_2unzUZN9W0kY2p5YW+yGkfsdXE-8ZHuBAuxnA@mail.gmail.com>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jul 13, 2018 at 10:33:17AM +0200, Geert Uytterhoeven wrote:
-> Hi Simon,
-> 
-> On Fri, Jul 13, 2018 at 10:19 AM Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
-> > On Fri, Jul 13, 2018 at 10:08 AM Simon Horman <horms@verge.net.au> wrote:
-> > > On Thu, Jul 12, 2018 at 06:08:57PM +0200, Geert Uytterhoeven wrote:
-> > > > R-Mobile APE6, R-Car Gen2, and RZ/G1 SoCs have Cortex-A7 and/or
-> > > > Cortex-A15 CPU cores, all of which have ARM architectured timers.
-> > > >
-> > > > Force use of the ARM architectured timer on these SoCs.
-> > > > This allows to:
-> > > >   - Remove the calls to shmobile_init_delay() from the corresponding
-> > > >     machine vectors,
-> > > >   - Remove a check in timer setup specific to R-Car Gen2,
-> > > >   - Remove a check in shmobile_init_delay().
-> > > >
-> > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > >
-> > > on which boards did you test this?
+Hi Chris,
+
+On Fri, Jul 13, 2018 at 2:22 PM Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Friday, July 13, 2018, linux-renesas-soc-owner@vger.kernel.org wrote:
+> > > Exactly what the level of software support is available for the ARM
+> > > timers at this point I'm not so sure about.
 > >
-> > On APE6EVM and Koelsch (R-Car M2-W).
-> > I can give it a spin on a few more remote R-Car Gen2 boards if you want.
-> 
-> I don't expect any issues, as shmobile_defconfig already enables
-> CONFIG_HAVE_ARM_ARCH_TIMER, and shmobile_init_delay() was already
-> a no-op in that case.
+> > Using the TWD timer indeed has two issues:
+> >   - It's available on multi-core Cortex-A9 SoCs only,
+> >   - Its driver does not call register_current_timer_delay(), so it doesn't
+> > set
+> >     up lpj_fine for skipping loop calibration.
+> >
+> > The global timer driver does call register_current_timer_delay(), but so
+> > far no
+> > Renesas SoCs describe its presence in DT.
+> >
+> > At least SH-Mobile AG5 and R-Car M1A and H1 seem to have it.
+> > RZ/A1 (and A2) and R-Mobile A1 don't seem to have it, though.
+> > Perhaps the call to register_current_timer_delay() could be added to
+> > the RZ/A OSTM driver?
+>
+> For RZ/A1, technically you could use MTU2 or OSTM as your system timer.
+> However, no one would every use MTU2 because OSTM is way more accurate.
+>
+> Regardless, would we always call register_current_timer_delay() from the
+> OSTM driver?
+> Note that there are 2 OSTM channels on RZ/A1. The first one is loaded as
+> a clocksource, the second is used as an event counter. Would we call
+> register_current_timer_delay() for both instances?
 
-I am happy if you are happy.
-Shall I go ahead and apply this?
+For the clocksource only.
+Note that register_current_timer_delay() has some protection against
+multiple callers, and picks up the best timer found.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
