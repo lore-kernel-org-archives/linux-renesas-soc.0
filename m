@@ -1,17 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:33910 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728290AbeGPVrL (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45018 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727434AbeGMHlq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Jul 2018 17:47:11 -0400
-Date: Mon, 16 Jul 2018 15:17:55 -0600
-From: Rob Herring <robh@kernel.org>
+        Fri, 13 Jul 2018 03:41:46 -0400
+Date: Fri, 13 Jul 2018 09:28:21 +0200
+From: Simon Horman <horms@verge.net.au>
 To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Cc: mathias.nyman@intel.com, gregkh@linuxfoundation.org,
-        mark.rutland@arm.com, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH] dt-bindings: usb-xhci: Add r8a77990 support
-Message-ID: <20180716211755.GA2679@rob-hp-laptop>
+Message-ID: <20180713072820.mrcfs22d3fkscvju@verge.net.au>
 References: <1530615107-7733-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -25,6 +26,9 @@ On Tue, Jul 03, 2018 at 07:51:47PM +0900, Yoshihiro Shimoda wrote:
 > the fallback compatible string "renesas,rcar-gen3-xhci".
 > 
 > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+
 > ---
 >  After we applied the following patches, the driver will use
 > the fallback compatible string "renesas,rcar-gen3-xhci" on
@@ -33,8 +37,30 @@ On Tue, Jul 03, 2018 at 07:51:47PM +0900, Yoshihiro Shimoda wrote:
 > 
 >  https://patchwork.kernel.org/patch/10503777/
 >  https://patchwork.kernel.org/patch/10503781/
+
+Thanks.
+
+FWIW I think we can still merge DTS patches to enable USB3 on E3 in
+parallel with the above driver patches as enabling a device that was
+previously not enabled won't cause a regression so long as the probe
+failure doesn't cause other problems - f.e. kernel panic
+
 > 
 >  Documentation/devicetree/bindings/usb/usb-xhci.txt | 1 +
 >  1 file changed, 1 insertion(+)
-
-Reviewed-by: Rob Herring <robh@kernel.org>
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/usb-xhci.txt b/Documentation/devicetree/bindings/usb/usb-xhci.txt
+> index bd1dd31..ac4cd0d 100644
+> --- a/Documentation/devicetree/bindings/usb/usb-xhci.txt
+> +++ b/Documentation/devicetree/bindings/usb/usb-xhci.txt
+> @@ -14,6 +14,7 @@ Required properties:
+>      - "renesas,xhci-r8a7795" for r8a7795 SoC
+>      - "renesas,xhci-r8a7796" for r8a7796 SoC
+>      - "renesas,xhci-r8a77965" for r8a77965 SoC
+> +    - "renesas,xhci-r8a77990" for r8a77990 SoC
+>      - "renesas,rcar-gen2-xhci" for a generic R-Car Gen2 or RZ/G1 compatible
+>        device
+>      - "renesas,rcar-gen3-xhci" for a generic R-Car Gen3 compatible device
+> -- 
+> 1.9.1
+> 
