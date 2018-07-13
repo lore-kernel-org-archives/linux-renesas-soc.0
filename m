@@ -1,58 +1,50 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:52362 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932864AbeGDLni (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Jul 2018 07:43:38 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/5] ARM: shmobile: defconfig: Drop NET_VENDOR_<FOO>=n
-Date: Wed,  4 Jul 2018 13:43:29 +0200
-Message-Id: <20180704114333.27584-2-geert+renesas@glider.be>
-In-Reply-To: <20180704114333.27584-1-geert+renesas@glider.be>
-References: <20180704114333.27584-1-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+Date: Fri, 13 Jul 2018 09:57:52 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH] i2c: recovery: remove bogus check if SDA GPIO is set to
+ output
+Message-ID: <20180713075751.vkhwayskcmamdi3c@verge.net.au>
+References: <20180712162854.8280-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180712162854.8280-1-wsa+renesas@sang-engineering.com>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enabling NET_VENDOR_* Kconfig options does not directly affect the
-kernel, so there is no need to explicitly disable them.
-The individual network drivers under them are still disabled.
+On Thu, Jul 12, 2018 at 06:28:54PM +0200, Wolfram Sang wrote:
+> This check did not work as intended. I2C is open drain, so this function
+> will likely always have presented the GPIO as input because
+> gpiod_get_direction doesn't know about open drain states. Remove this
+> check for now. We can add it again once we know how to get more precise
+> information about the GPIO.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/configs/shmobile_defconfig | 13 -------------
- 1 file changed, 13 deletions(-)
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 4d0d5a00a18854f0..393697a54fb40e08 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -73,22 +73,9 @@ CONFIG_BLK_DEV_SD=y
- CONFIG_ATA=y
- CONFIG_SATA_RCAR=y
- CONFIG_NETDEVICES=y
--# CONFIG_NET_VENDOR_ARC is not set
--# CONFIG_NET_CADENCE is not set
--# CONFIG_NET_VENDOR_BROADCOM is not set
--# CONFIG_NET_VENDOR_CIRRUS is not set
--# CONFIG_NET_VENDOR_FARADAY is not set
--# CONFIG_NET_VENDOR_INTEL is not set
--# CONFIG_NET_VENDOR_MARVELL is not set
--# CONFIG_NET_VENDOR_MICREL is not set
--# CONFIG_NET_VENDOR_NATSEMI is not set
- CONFIG_SH_ETH=y
- CONFIG_RAVB=y
--# CONFIG_NET_VENDOR_SEEQ is not set
- CONFIG_SMSC911X=y
--# CONFIG_NET_VENDOR_STMICRO is not set
--# CONFIG_NET_VENDOR_VIA is not set
--# CONFIG_NET_VENDOR_WIZNET is not set
- CONFIG_MICREL_PHY=y
- CONFIG_SMSC_PHY=y
- CONFIG_INPUT_EVDEV=y
--- 
-2.17.1
+> ---
+>  drivers/i2c/i2c-core-base.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+> index 57538d72f2e5..4debf921ab5c 100644
+> --- a/drivers/i2c/i2c-core-base.c
+> +++ b/drivers/i2c/i2c-core-base.c
+> @@ -269,9 +269,7 @@ static void i2c_init_recovery(struct i2c_adapter *adap)
+>  		bri->set_scl = set_scl_gpio_value;
+>  		if (bri->sda_gpiod) {
+>  			bri->get_sda = get_sda_gpio_value;
+> -			/* FIXME: add proper flag instead of '0' once available */
+> -			if (gpiod_get_direction(bri->sda_gpiod) == 0)
+> -				bri->set_sda = set_sda_gpio_value;
+> +			bri->set_sda = set_sda_gpio_value;
+>  		}
+>  		return;
+>  	}
+> -- 
+> 2.11.0
+> 
