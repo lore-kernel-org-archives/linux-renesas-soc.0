@@ -1,88 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:41725 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726638AbeGORV0 (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:53526 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731914AbeGMQrI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 15 Jul 2018 13:21:26 -0400
-Date: Sun, 15 Jul 2018 18:57:49 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Fri, 13 Jul 2018 12:47:08 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] regulator: bd9571mwv: Add support for toggle
- power switches
-Message-ID: <20180715165749.GA10023@amd>
-References: <20180713154720.18316-1-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
-Content-Disposition: inline
-In-Reply-To: <20180713154720.18316-1-geert+renesas@glider.be>
+        Mark Brown <broonie@kernel.org>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 0/3] regulator: bd9571mwv: Add support for toggle power switches
+Date: Fri, 13 Jul 2018 17:47:17 +0200
+Message-Id: <20180713154720.18316-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+	Hi all,
 
---wRRV7LY7NUeQGEoC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The ROHM BD9571MWV PMIC on the Renesas Salvator-X(S) and ULCB
+development boards supports DDR Backup Power, which means that the DDR
+power rails can be kept powered while the main SoC is powered down.
 
-Hi!
+This patch series extends the support for DDR backup mode (see commit
+6eb0bfae6973eb6a ("regulator: bd9571mwv: Add support for backup mode"))
+to systems with toggle instead of momentary power switches.
 
-> The ROHM BD9571MWV PMIC on the Renesas Salvator-X(S) and ULCB
-> development boards supports DDR Backup Power, which means that the DDR
-> power rails can be kept powered while the main SoC is powered down.
->=20
-> This patch series extends the support for DDR backup mode (see commit
-> 6eb0bfae6973eb6a ("regulator: bd9571mwv: Add support for backup mode"))
-> to systems with toggle instead of momentary power switches.
->=20
-> With a toggle power switch (or level signal), the following steps must
-> be followed exactly:
->    1. Configure PMIC for backup mode, which changes the role of the
->       power switch to a wake-up switch,=20
->    2. Switch accessory power switch off, to prepare for system suspend,
->       which is a manual step not controlled by software,
->    3. Suspend system,
->    4. Switch accessory power switch on, to resume.
->=20
-> Unlike on systems with a momentary toggle switch, an additional step 2
-> must be performed in between step 1 and step 3.  Hence step 1 can no
-> longer be handled in the PMIC's suspend callback.
->=20
-> This patch series allows performing step 1 when the user writes
-> "on" to the PMIC's "backup_mode" virtual file in sysfs, e.g.
->=20
->     echo on > /sys/bus/i2c/drivers/bd9571mwv/*/bd9571mwv-regulator*/backu=
-p_mode
+With a toggle power switch (or level signal), the following steps must
+be followed exactly:
+   1. Configure PMIC for backup mode, which changes the role of the
+      power switch to a wake-up switch, 
+   2. Switch accessory power switch off, to prepare for system suspend,
+      which is a manual step not controlled by software,
+   3. Suspend system,
+   4. Switch accessory power switch on, to resume.
 
-Do you expect more boards to have similar design?
+Unlike on systems with a momentary toggle switch, an additional step 2
+must be performed in between step 1 and step 3.  Hence step 1 can no
+longer be handled in the PMIC's suspend callback.
 
-If so, we may want to have standard place in /sys/ not depending on
-i2c paths and driver names, but I believe such design is so... awkward
-that it is not going to appear anywhere else...?
+This patch series allows performing step 1 when the user writes
+"on" to the PMIC's "backup_mode" virtual file in sysfs, e.g.
 
-								Pavel
+    echo on > /sys/bus/i2c/drivers/bd9571mwv/*/bd9571mwv-regulator*/backup_mode
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Conversely, writing "off" reverts the role of the accessory switch to a
+power switch.
+Note that unlike with momentary switches, backup mode is not enabled by
+default, as enabling it prevents the board from being powered off using
+the power switch, which may confuse the user.
 
---wRRV7LY7NUeQGEoC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Changes compared to v2:
+  - Drop 'PM / wakeup: Add callback for wake-up change notification',
+  - New patch 'regulator: bd9571mwv: Use "backup_mode" sysfs file
+    instead of "wake_up"',
+  - Replace use of "wake_up" sysfs file and extra callback for wake-up
+    change notification by custom "backup_mode" sysfs file,
+  - New patch ;regulator: bd9571mwv: Document "backup_mode" sysfs file'.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Changes compared to v1:
+  - Improve patch descriptions,
+  - Drop "return;" at end of function.
 
-iEYEARECAAYFAltLfQ0ACgkQMOfwapXb+vILOgCbBFGjbwH2cufstj+Q+5TXiYPW
-+OcAn27r+67d8CbVJRQrRJLTuI0tcHyA
-=OScm
------END PGP SIGNATURE-----
+This has been tested on Salvator-XS.
 
---wRRV7LY7NUeQGEoC--
+For testing, this series is also available in the
+topic/bd9571-toggle-power-switch-v3 branch of my renesas-drivers git
+repository at
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+
+Thanks!
+
+Geert Uytterhoeven (3):
+  regulator: bd9571mwv: Use "backup_mode" sysfs file instead of
+    "wake_up"
+  regulator: bd9571mwv: Add support for toggle power switches
+  regulator: bd9571mwv: Document "backup_mode" sysfs file
+
+ .../testing/sysfs-driver-bd9571mwv-regulator  | 27 ++++++++
+ drivers/regulator/bd9571mwv-regulator.c       | 69 +++++++++++++++++--
+ 2 files changed, 90 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-bd9571mwv-regulator
+
+-- 
+2.17.1
