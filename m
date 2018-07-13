@@ -1,50 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:47560 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729691AbeGMMgr (ORCPT
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:35589 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726202AbeGMIrG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Jul 2018 08:36:47 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
+        Fri, 13 Jul 2018 04:47:06 -0400
+Received: by mail-vk0-f66.google.com with SMTP id o202-v6so17785097vko.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Jul 2018 01:33:29 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180712160857.31471-1-geert+renesas@glider.be>
+ <20180713080823.l4tng6oclhr6nxrh@verge.net.au> <CAMuHMdUrgP=YOrgeEnpQ0XVOoC_8Dz9Lt2FJ4P5GKb53KRNpNw@mail.gmail.com>
+In-Reply-To: <CAMuHMdUrgP=YOrgeEnpQ0XVOoC_8Dz9Lt2FJ4P5GKb53KRNpNw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 13 Jul 2018 10:33:17 +0200
+Message-ID: <CAMuHMdUsHHDo_2unzUZN9W0kY2p5YW+yGkfsdXE-8ZHuBAuxnA@mail.gmail.com>
+Subject: Re: [PATCH/RFC] ARM: shmobile: Always enable ARCH_TIMER on SoCs with
+ A7 and/or A15
+To: Simon Horman <horms@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH/RFC] ARM: shmobile: Always enable ARCH_TIMER on SoCs with
- A7 and/or A15
-Date: Fri, 13 Jul 2018 12:22:16 +0000
-Message-ID: <TY1PR01MB1562D500B559B159DA971B998A580@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20180712160857.31471-1-geert+renesas@glider.be>
- <CANqRtoTuofutGtWycNcHq+rPzHqAsjy8ZY0W0k9m_SNWnOajVg@mail.gmail.com>
- <CAMuHMdVsASDbnk-8CtgZu6g5JYCVpj2eF4qFCy7q6bzBr1OEoA@mail.gmail.com>
-In-Reply-To: <CAMuHMdVsASDbnk-8CtgZu6g5JYCVpj2eF4qFCy7q6bzBr1OEoA@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-T24gRnJpZGF5LCBKdWx5IDEzLCAyMDE4LCBsaW51eC1yZW5lc2FzLXNvYy1vd25lckB2Z2VyLmtl
-cm5lbC5vcmcgd3JvdGU6DQo+ID4gRXhhY3RseSB3aGF0IHRoZSBsZXZlbCBvZiBzb2Z0d2FyZSBz
-dXBwb3J0IGlzIGF2YWlsYWJsZSBmb3IgdGhlIEFSTQ0KPiA+IHRpbWVycyBhdCB0aGlzIHBvaW50
-IEknbSBub3Qgc28gc3VyZSBhYm91dC4NCj4gDQo+IFVzaW5nIHRoZSBUV0QgdGltZXIgaW5kZWVk
-IGhhcyB0d28gaXNzdWVzOg0KPiAgIC0gSXQncyBhdmFpbGFibGUgb24gbXVsdGktY29yZSBDb3J0
-ZXgtQTkgU29DcyBvbmx5LA0KPiAgIC0gSXRzIGRyaXZlciBkb2VzIG5vdCBjYWxsIHJlZ2lzdGVy
-X2N1cnJlbnRfdGltZXJfZGVsYXkoKSwgc28gaXQgZG9lc24ndA0KPiBzZXQNCj4gICAgIHVwIGxw
-al9maW5lIGZvciBza2lwcGluZyBsb29wIGNhbGlicmF0aW9uLg0KPiANCj4gVGhlIGdsb2JhbCB0
-aW1lciBkcml2ZXIgZG9lcyBjYWxsIHJlZ2lzdGVyX2N1cnJlbnRfdGltZXJfZGVsYXkoKSwgYnV0
-IHNvDQo+IGZhciBubw0KPiBSZW5lc2FzIFNvQ3MgZGVzY3JpYmUgaXRzIHByZXNlbmNlIGluIERU
-Lg0KPiANCj4gQXQgbGVhc3QgU0gtTW9iaWxlIEFHNSBhbmQgUi1DYXIgTTFBIGFuZCBIMSBzZWVt
-IHRvIGhhdmUgaXQuDQo+IFJaL0ExIChhbmQgQTIpIGFuZCBSLU1vYmlsZSBBMSBkb24ndCBzZWVt
-IHRvIGhhdmUgaXQsIHRob3VnaC4NCj4gUGVyaGFwcyB0aGUgY2FsbCB0byByZWdpc3Rlcl9jdXJy
-ZW50X3RpbWVyX2RlbGF5KCkgY291bGQgYmUgYWRkZWQgdG8NCj4gdGhlIFJaL0EgT1NUTSBkcml2
-ZXI/DQoNCkZvciBSWi9BMSwgdGVjaG5pY2FsbHkgeW91IGNvdWxkIHVzZSBNVFUyIG9yIE9TVE0g
-YXMgeW91ciBzeXN0ZW0gdGltZXIuIA0KSG93ZXZlciwgbm8gb25lIHdvdWxkIGV2ZXJ5IHVzZSBN
-VFUyIGJlY2F1c2UgT1NUTSBpcyB3YXkgbW9yZSBhY2N1cmF0ZS4NCg0KUmVnYXJkbGVzcywgd291
-bGQgd2UgYWx3YXlzIGNhbGwgcmVnaXN0ZXJfY3VycmVudF90aW1lcl9kZWxheSgpIGZyb20gdGhl
-DQpPU1RNIGRyaXZlcj8NCk5vdGUgdGhhdCB0aGVyZSBhcmUgMiBPU1RNIGNoYW5uZWxzIG9uIFJa
-L0ExLiBUaGUgZmlyc3Qgb25lIGlzIGxvYWRlZCBhcw0KYSBjbG9ja3NvdXJjZSwgdGhlIHNlY29u
-ZCBpcyB1c2VkIGFzIGFuIGV2ZW50IGNvdW50ZXIuIFdvdWxkIHdlIGNhbGwgDQpyZWdpc3Rlcl9j
-dXJyZW50X3RpbWVyX2RlbGF5KCkgZm9yIGJvdGggaW5zdGFuY2VzPw0KDQpDaHJpcw0KDQo=
+Hi Simon,
+
+On Fri, Jul 13, 2018 at 10:19 AM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Fri, Jul 13, 2018 at 10:08 AM Simon Horman <horms@verge.net.au> wrote:
+> > On Thu, Jul 12, 2018 at 06:08:57PM +0200, Geert Uytterhoeven wrote:
+> > > R-Mobile APE6, R-Car Gen2, and RZ/G1 SoCs have Cortex-A7 and/or
+> > > Cortex-A15 CPU cores, all of which have ARM architectured timers.
+> > >
+> > > Force use of the ARM architectured timer on these SoCs.
+> > > This allows to:
+> > >   - Remove the calls to shmobile_init_delay() from the corresponding
+> > >     machine vectors,
+> > >   - Remove a check in timer setup specific to R-Car Gen2,
+> > >   - Remove a check in shmobile_init_delay().
+> > >
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >
+> > on which boards did you test this?
+>
+> On APE6EVM and Koelsch (R-Car M2-W).
+> I can give it a spin on a few more remote R-Car Gen2 boards if you want.
+
+I don't expect any issues, as shmobile_defconfig already enables
+CONFIG_HAVE_ARM_ARCH_TIMER, and shmobile_init_delay() was already
+a no-op in that case.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
