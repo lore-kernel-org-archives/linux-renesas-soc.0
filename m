@@ -1,68 +1,46 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:10422 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753009AbeGBJTD (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 Jul 2018 05:19:03 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: vinod.koul@intel.com
-Cc: dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] dma: sh: rcar-dmac: avoid to write CHCR.TE to 1 if TCR is set to 0
-Date: Mon,  2 Jul 2018 18:18:03 +0900
-Message-Id: <1530523083-2106-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+Subject: RE: [PATCH 2/2] dt-bindings: arm: Document RZ/A2 SoC DT bindings
+Date: Fri, 13 Jul 2018 16:33:56 +0000
+Message-ID: <TY1PR01MB1562E15C26A10368301EB73C8A580@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+References: <20180712030149.91385-1-chris.brandt@renesas.com>
+ <20180712030149.91385-3-chris.brandt@renesas.com>
+ <CAMuHMdXuXJdvtmEu3WYVSgwd0xfCpQcWQeL+FA9vUMxiA7h=VQ@mail.gmail.com>
+ <TY1PR01MB15621B11047F645DE25485E68A590@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdWRprU3jhFUnAzExFZYemqA7Hbvr-ritx0K662Rmy2ieQ@mail.gmail.com>
+ <TY1PR01MB1562A3B909AFC6CEB7E5BD088A580@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdWFNCjmMPPFRtQqpdb=AaXQtiuRxkgLgfPbSDvR_H5Qnw@mail.gmail.com>
+In-Reply-To: <CAMuHMdWFNCjmMPPFRtQqpdb=AaXQtiuRxkgLgfPbSDvR_H5Qnw@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch fixes an issue that unexpected retransfering happens
-if TCR is set to 0 before rcar_dmac_sync_tcr() writes DE bit to
-the CHCR register. For example, sh-sci driver can reproduce this
-issue like below:
-
- In rx_timer_fn():		/* CHCR DE bit may be set to 1 */
-  dmaengine_tx_status()
-   rcar_dmac_tx_status()
-    rcar_dmac_chan_get_residue()
-     rcar_dmac_sync_tcr()	/* TCR is possible to be set to 0 */
-
-According to the description of commit 73a47bd0da66 ("dmaengine:
-rcar-dmac: use TCRB instead of TCR for residue"), "this buffered data
-will be transferred if CHCR::DE bit was cleared". So, this patch
-doesn't need to check TCRB register.
-
-Fixes: 73a47bd0da66 ("dmaengine: rcar-dmac: use TCRB instead of TCR for residue")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- This patch is based on the latest slave-dma / fixes branch.
-
- This issue can be reproduced by the following commands on r8a7795
-Salvator-XS and Windows Teraterm :) :
- # stty 921600
- (Change Teraterm baud rate)
- # cat > rx.txt
- (Send 5MiB file by Teraterm. After a few minutes later, we cannot
-  input any commands by the serial console.)
-
- drivers/dma/sh/rcar-dmac.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 2a2ccd9..8305a1c 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -774,8 +774,9 @@ static void rcar_dmac_sync_tcr(struct rcar_dmac_chan *chan)
- 	/* make sure all remaining data was flushed */
- 	rcar_dmac_chcr_de_barrier(chan);
- 
--	/* back DE */
--	rcar_dmac_chan_write(chan, RCAR_DMACHCR, chcr);
-+	/* back DE if remain data exists */
-+	if (rcar_dmac_chan_read(chan, RCAR_DMATCR))
-+		rcar_dmac_chan_write(chan, RCAR_DMACHCR, chcr);
- }
- 
- static void rcar_dmac_chan_halt(struct rcar_dmac_chan *chan)
--- 
-1.9.1
+SGkgR2VlcnQsDQoNCk9uIEZyaWRheSwgSnVseSAxMywgMjAxOCwgR2VlcnQgVXl0dGVyaG9ldmVu
+IHdyb3RlOg0KPiA+IFRoZXJlIGlzIGFuIElEIHJlZ2lzdGVyIGluIFJaL0EyIHRoYXQgd2lsbCBo
+YXZlIGEgZGlmZmVyZW50IG51bWJlciBmb3INCj4gPiBlYWNoIHNpbGljb24uDQo+ID4gU2VlIHRo
+ZSBmaXJzdCBlbnRyeSBpbiBUYWJsZSA1LjYgKEJTSUQgcmVnaXN0ZXIpLg0KPiA+DQo+ID4gVGVj
+aG5pY2FsbHksIGl0J3Mgbm90ICAiUFJSIiBsaWtlIGl0J3MgU0gvUi1DYXIgZGV2aWNlcy4gSXQn
+cyBhY3R1YWxseQ0KPiA+IHRoZSBib3VuZGFyeSBzY2FuIElEIG51bWJlci4gQWxsIFJaL0ExIGRl
+dmljZXMgaGF2ZSB0aGlzIHRvby4gQnV0IHdpdGgNCj4gPiBSWi9BMSwgeW91IGNvdWxkIG9ubHkg
+Z2V0IHRvIHRoaXMgcmVnaXN0ZXIgdGhyb3VnaCBKVEFHIChub3QgYnkgdGhlIENQVSkuDQo+ID4g
+U28gZm9yIFJaL0EyKywgdGhleSB3aWxsIG1pcnJvciB0aGF0IHJlZ2lzdGVyIHRvIENQVSBzcGFj
+ZS4NCj4gDQo+IENvb2wuIFNvIGlmIHlvdSBhZGQgYSAicmVuZXNhcyxic2lkIiBkZXZpY2Ugbm9k
+ZSB0byB0aGUgZHRzaSwgYW5kIGFkZA0KPiBzdXBwb3J0IGZvciB1c2luZyB0aGF0IHRvIGRyaXZl
+cnMvc29jL3JlbmVzYXMvcmVuZXNhcy1zb2MuYywgdGhlbiB3ZSBjYW4NCj4gdXNlIHNvY19kZXZp
+Y2VfbWF0Y2goKSB0byBmaWx0ZXIgb24gU29DIHJldmlzaW9uLCBpZiBldmVyIG5lZWRlZC4NCg0K
+T2gsIEkgc2VlLg0KDQoNCj4gPiBTbyB3aXRoIHRoYXQgc2FpZCwgYXJlIHdlIGdvb2Qgd2l0aCBD
+T05GSUdfQVJDSF9SN1M5MjEwPw0KPiANCj4gWWVzLCB0aGUgS2NvbmZpZyBzeW1ib2wgaXMgZmlu
+ZSBmb3Igc3VyZS4NCj4gDQo+IFRoYW5zayENCg0KQ29vbC4uLmV4Y2VwdCBub3cgSSBoYXZlIG1v
+cmUgY29kZSB0byBnbyBvZmYgYW5kIHdyaXRlIDspDQoNCg0KQ2hyaXMNCg==
