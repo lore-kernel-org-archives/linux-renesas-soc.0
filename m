@@ -1,68 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:36489 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752730AbeGCKsB (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:48410 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731956AbeGMV0D (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Jul 2018 06:48:01 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: mathias.nyman@intel.com, gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/3] usb: host: xhci-rcar: Simplify getting the firmware name for R-Car Gen3
-Date: Tue,  3 Jul 2018 19:46:57 +0900
-Message-Id: <1530614818-7634-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1530614818-7634-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1530614818-7634-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 13 Jul 2018 17:26:03 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel@pengutronix.de,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH/RFT 0/6] i2c: recovery: fix GPIO usage for recovery
+Date: Fri, 13 Jul 2018 23:09:12 +0200
+Message-Id: <20180713210920.3648-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch simplifies getting the firmware name for R-Car Gen3.
-Almost all R-Car Gen3 USB3.0 Host controllers use "V3". But,
-r8a7795 ES1.x SoCs only should use "V2". Since the xhci-plat already
-has the firmware_name of R-Car Gen3 as "V3", the xhci-rcar doesn't
-need some members of rcar_quirks_match.
+I have sent the last patch of this series before, but then I realized I need to
+convert all users of GPIO recovery before. I needed to make sure they all set
+the SDA GPIO to output, this is what patches 3-5 are doing. Which is also good
+for them because then they can send STOP at apropriate places when doing
+recovery.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/usb/host/xhci-rcar.c | 17 ++---------------
- 1 file changed, 2 insertions(+), 15 deletions(-)
+Then, I noticed that two drivers were not using the open drain mode for SCL
+which seems like a bug to me. So, patches 1+2 address that. I'd think those two
+are stable material.
 
-diff --git a/drivers/usb/host/xhci-rcar.c b/drivers/usb/host/xhci-rcar.c
-index f33ffc2..4a22f25 100644
---- a/drivers/usb/host/xhci-rcar.c
-+++ b/drivers/usb/host/xhci-rcar.c
-@@ -17,9 +17,8 @@
- #include "xhci-rcar.h"
- 
- /*
--* - The V3 firmware is for r8a7796 (with good performance) and r8a7795 es2.0
--*   or later.
--* - The V2 firmware can be used on both r8a7795 (es1.x) and r8a7796.
-+* - The V3 firmware is for almost all R-Car Gen3 (except r8a7795 ES1.x)
-+* - The V2 firmware is for r8a7795 ES1.x.
- * - The V2 firmware is possible to use on R-Car Gen2. However, the V2 causes
- *   performance degradation. So, this driver continues to use the V1 if R-Car
- *   Gen2.
-@@ -75,18 +74,6 @@
- 		.soc_id = "r8a7795", .revision = "ES1.*",
- 		.data = (void *)RCAR_XHCI_FIRMWARE_V2,
- 	},
--	{
--		.soc_id = "r8a7795",
--		.data = (void *)RCAR_XHCI_FIRMWARE_V3,
--	},
--	{
--		.soc_id = "r8a7796",
--		.data = (void *)RCAR_XHCI_FIRMWARE_V3,
--	},
--	{
--		.soc_id = "r8a77965",
--		.data = (void *)RCAR_XHCI_FIRMWARE_V3,
--	},
- 	{ /* sentinel */ },
- };
- 
+Due to no hardware, I could only build test these patches. I'd be really
+looking forward to comments or tests of these patches.
+
+A branch can be found here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/recovery-sda-output
+
+Thanks,
+
+   Wolfram
+
+
+Wolfram Sang (6):
+  i2c: designware: use open drain for recovery GPIO
+  i2c: imx: use open drain for recovery GPIO
+  i2c: designware: set SDA as output for recovery
+  i2c: davinci: set SDA as output for recovery
+  i2c: imx: set SDA as output for recovery
+  i2c: recovery: remove bogus check if SDA GPIO is set to output
+
+ drivers/i2c/busses/i2c-davinci.c           | 3 ++-
+ drivers/i2c/busses/i2c-designware-master.c | 4 ++--
+ drivers/i2c/busses/i2c-imx.c               | 4 ++--
+ drivers/i2c/i2c-core-base.c                | 4 +---
+ 4 files changed, 7 insertions(+), 8 deletions(-)
+
 -- 
-1.9.1
+2.11.0
