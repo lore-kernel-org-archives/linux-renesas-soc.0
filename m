@@ -1,59 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:32893 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933045AbeGIOTx (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45110 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726748AbeGMHuK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Jul 2018 10:19:53 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        horms@verge.net.au, geert@glider.be
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 6/6] media: rcar-vin: Handle data-enable polarity
-Date: Mon,  9 Jul 2018 16:19:21 +0200
-Message-Id: <1531145962-1540-7-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1531145962-1540-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1531145962-1540-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 13 Jul 2018 03:50:10 -0400
+Date: Fri, 13 Jul 2018 09:36:43 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] v4l: rcar_fdp1: Enable compilation on Gen2 platforms
+Message-ID: <20180713073642.zhvduzgdryon4iqc@verge.net.au>
+References: <20180711142332.4324-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180711142332.4324-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Handle data-enable signal polarity. If the polarity is not specifically
-requested to be active low, use the active high default.
+On Wed, Jul 11, 2018 at 04:23:32PM +0200, Geert Uytterhoeven wrote:
+> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> 
+> Commit 1d3897143815 ("[media] v4l: rcar_fdp1: add FCP dependency") fixed
+> a compilation breakage when the optional VIDEO_RENESAS_FCP dependency is
+> compiled as a module while the rcar_fdp1 driver is built in. As a side
+> effect it disabled compilation on Gen2 by disallowing the valid
+> combination ARCH_RENESAS && !VIDEO_RENESAS_FCP. Fix it by handling the
+> dependency the same way the vsp1 driver did in commit 199946731fa4
+> ("[media] vsp1: clarify FCP dependency").
+> 
+> Fixes: 1d3897143815 ("[media] v4l: rcar_fdp1: add FCP dependency")
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-dma.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 1de5981..9146f63 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -123,6 +123,7 @@
- /* Video n Data Mode Register 2 bits */
- #define VNDMR2_VPS		(1 << 30)
- #define VNDMR2_HPS		(1 << 29)
-+#define VNDMR2_CES		(1 << 28)
- #define VNDMR2_FTEV		(1 << 17)
- #define VNDMR2_VLV(n)		((n & 0xf) << 12)
- 
-@@ -698,6 +699,10 @@ static int rvin_setup(struct rvin_dev *vin)
- 		/* Vsync Signal Polarity Select */
- 		if (!(vin->parallel->mbus_flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
- 			dmr2 |= VNDMR2_VPS;
-+
-+		/* Data Enable Polarity Select */
-+		if (vin->parallel->mbus_flags & V4L2_MBUS_DATA_ENABLE_LOW)
-+			dmr2 |= VNDMR2_CES;
- 	}
- 
- 	/*
--- 
-2.7.4
+> ---
+>  drivers/media/platform/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
+> index 210b44a457eb66f0..84cb97eccb2a52bc 100644
+> --- a/drivers/media/platform/Kconfig
+> +++ b/drivers/media/platform/Kconfig
+> @@ -385,7 +385,7 @@ config VIDEO_RENESAS_FDP1
+>  	tristate "Renesas Fine Display Processor"
+>  	depends on VIDEO_DEV && VIDEO_V4L2
+>  	depends on ARCH_RENESAS || COMPILE_TEST
+> -	depends on (!ARCH_RENESAS && !VIDEO_RENESAS_FCP) || VIDEO_RENESAS_FCP
+> +	depends on (!ARM64 && !VIDEO_RENESAS_FCP) || VIDEO_RENESAS_FCP
+>  	select VIDEOBUF2_DMA_CONTIG
+>  	select V4L2_MEM2MEM_DEV
+>  	---help---
+> -- 
+> 2.17.1
+> 
