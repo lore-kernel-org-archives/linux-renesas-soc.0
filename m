@@ -1,7 +1,21 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Simon Horman <horms@verge.net.au>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:42753 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729625AbeGMM2V (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 13 Jul 2018 08:28:21 -0400
+MIME-Version: 1.0
+References: <20180712030149.91385-1-chris.brandt@renesas.com>
+ <20180712030149.91385-3-chris.brandt@renesas.com> <CAMuHMdXuXJdvtmEu3WYVSgwd0xfCpQcWQeL+FA9vUMxiA7h=VQ@mail.gmail.com>
+ <TY1PR01MB15621B11047F645DE25485E68A590@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdWRprU3jhFUnAzExFZYemqA7Hbvr-ritx0K662Rmy2ieQ@mail.gmail.com> <TY1PR01MB1562A3B909AFC6CEB7E5BD088A580@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY1PR01MB1562A3B909AFC6CEB7E5BD088A580@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 13 Jul 2018 14:13:43 +0200
+Message-ID: <CAMuHMdWFNCjmMPPFRtQqpdb=AaXQtiuRxkgLgfPbSDvR_H5Qnw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] dt-bindings: arm: Document RZ/A2 SoC DT bindings
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -9,38 +23,52 @@ CC: Simon Horman <horms@verge.net.au>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
         <devicetree@vger.kernel.org>
-Subject: RE: [PATCH 2/2] dt-bindings: arm: Document RZ/A2 SoC DT bindings
-Date: Fri, 13 Jul 2018 16:33:56 +0000
-Message-ID: <TY1PR01MB1562E15C26A10368301EB73C8A580@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20180712030149.91385-1-chris.brandt@renesas.com>
- <20180712030149.91385-3-chris.brandt@renesas.com>
- <CAMuHMdXuXJdvtmEu3WYVSgwd0xfCpQcWQeL+FA9vUMxiA7h=VQ@mail.gmail.com>
- <TY1PR01MB15621B11047F645DE25485E68A590@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <CAMuHMdWRprU3jhFUnAzExFZYemqA7Hbvr-ritx0K662Rmy2ieQ@mail.gmail.com>
- <TY1PR01MB1562A3B909AFC6CEB7E5BD088A580@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <CAMuHMdWFNCjmMPPFRtQqpdb=AaXQtiuRxkgLgfPbSDvR_H5Qnw@mail.gmail.com>
-In-Reply-To: <CAMuHMdWFNCjmMPPFRtQqpdb=AaXQtiuRxkgLgfPbSDvR_H5Qnw@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIEZyaWRheSwgSnVseSAxMywgMjAxOCwgR2VlcnQgVXl0dGVyaG9ldmVu
-IHdyb3RlOg0KPiA+IFRoZXJlIGlzIGFuIElEIHJlZ2lzdGVyIGluIFJaL0EyIHRoYXQgd2lsbCBo
-YXZlIGEgZGlmZmVyZW50IG51bWJlciBmb3INCj4gPiBlYWNoIHNpbGljb24uDQo+ID4gU2VlIHRo
-ZSBmaXJzdCBlbnRyeSBpbiBUYWJsZSA1LjYgKEJTSUQgcmVnaXN0ZXIpLg0KPiA+DQo+ID4gVGVj
-aG5pY2FsbHksIGl0J3Mgbm90ICAiUFJSIiBsaWtlIGl0J3MgU0gvUi1DYXIgZGV2aWNlcy4gSXQn
-cyBhY3R1YWxseQ0KPiA+IHRoZSBib3VuZGFyeSBzY2FuIElEIG51bWJlci4gQWxsIFJaL0ExIGRl
-dmljZXMgaGF2ZSB0aGlzIHRvby4gQnV0IHdpdGgNCj4gPiBSWi9BMSwgeW91IGNvdWxkIG9ubHkg
-Z2V0IHRvIHRoaXMgcmVnaXN0ZXIgdGhyb3VnaCBKVEFHIChub3QgYnkgdGhlIENQVSkuDQo+ID4g
-U28gZm9yIFJaL0EyKywgdGhleSB3aWxsIG1pcnJvciB0aGF0IHJlZ2lzdGVyIHRvIENQVSBzcGFj
-ZS4NCj4gDQo+IENvb2wuIFNvIGlmIHlvdSBhZGQgYSAicmVuZXNhcyxic2lkIiBkZXZpY2Ugbm9k
-ZSB0byB0aGUgZHRzaSwgYW5kIGFkZA0KPiBzdXBwb3J0IGZvciB1c2luZyB0aGF0IHRvIGRyaXZl
-cnMvc29jL3JlbmVzYXMvcmVuZXNhcy1zb2MuYywgdGhlbiB3ZSBjYW4NCj4gdXNlIHNvY19kZXZp
-Y2VfbWF0Y2goKSB0byBmaWx0ZXIgb24gU29DIHJldmlzaW9uLCBpZiBldmVyIG5lZWRlZC4NCg0K
-T2gsIEkgc2VlLg0KDQoNCj4gPiBTbyB3aXRoIHRoYXQgc2FpZCwgYXJlIHdlIGdvb2Qgd2l0aCBD
-T05GSUdfQVJDSF9SN1M5MjEwPw0KPiANCj4gWWVzLCB0aGUgS2NvbmZpZyBzeW1ib2wgaXMgZmlu
-ZSBmb3Igc3VyZS4NCj4gDQo+IFRoYW5zayENCg0KQ29vbC4uLmV4Y2VwdCBub3cgSSBoYXZlIG1v
-cmUgY29kZSB0byBnbyBvZmYgYW5kIHdyaXRlIDspDQoNCg0KQ2hyaXMNCg==
+Hi Chris,
+
+On Fri, Jul 13, 2018 at 1:50 PM Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Thursday, July 12, 2018, Geert Uytterhoeven wrote:
+> > As the IP cores are the same in all variants, using
+> > "renesas,r7s9210-<something>" should be fine for matching drivers to IP
+> > cores. Same for CONFIG_ARCH_R7S9210.
+> >
+> > However, as the actual dies differ between H, M, and L versions, there may
+> > be integration issues to be worked around. So I think it would be wise to
+> > use one more digit in the compatible value at the main SoC level, i.e.
+> > "renesas,r7s92104".
+> > Unless there's a hardware register to detect the version at runtime.
+> > But it seems RZ/A2 doesn't have a Product Register
+> > (PRR), which most other SH/R-Mobile and R-Car SoCs do have?
+>
+> There is an ID register in RZ/A2 that will have a different number for
+> each silicon.
+> See the first entry in Table 5.6 (BSID register).
+>
+> Technically, it's not  "PRR" like it's SH/R-Car devices. It's actually
+> the boundary scan ID number. All RZ/A1 devices have this too. But with
+> RZ/A1, you could only get to this register through JTAG (not by the CPU).
+> So for RZ/A2+, they will mirror that register to CPU space.
+
+Cool. So if you add a "renesas,bsid" device node to the dtsi, and add
+support for using that to drivers/soc/renesas/renesas-soc.c, then we can
+use soc_device_match() to filter on SoC revision, if ever needed.
+
+> So with that said, are we good with CONFIG_ARCH_R7S9210?
+
+Yes, the Kconfig symbol is fine for sure.
+
+Thansk!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
