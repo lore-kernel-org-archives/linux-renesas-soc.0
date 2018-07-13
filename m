@@ -1,45 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53230 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387854AbeGWNFU (ORCPT
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:41405 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726917AbeGMKUO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:05:20 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Fri, 13 Jul 2018 06:20:14 -0400
+MIME-Version: 1.0
+References: <20180712030149.91385-1-chris.brandt@renesas.com>
+ <20180712030149.91385-2-chris.brandt@renesas.com> <CAMuHMdX4BPxQY__2DYrUGMBFZPMm_x_jxaBvG+EAPR0fWreAew@mail.gmail.com>
+ <TY1PR01MB156277033682C5749AE209368A590@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdU6HwCF_W71D=kJn8DEzMjJepM19-3tO3dkVPKKJbYmQg@mail.gmail.com> <TY1PR01MB1562F7AD3087B21EBF325C0D8A590@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY1PR01MB1562F7AD3087B21EBF325C0D8A590@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 13 Jul 2018 12:06:03 +0200
+Message-ID: <CAMuHMdWs=s4CHdYhj6BbFUPUkTNMv5r1mFJ8WAjnV6MtupLMTA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ARM: shmobile: Add basic RZ/A2 SoC support
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/5] ARM: shmobile: defconfig: Enable reset controller support
-Date: Mon, 23 Jul 2018 14:04:19 +0200
-Message-Id: <9efd6903620f51011f3a8595ab33b9491cc3b57f.1532346690.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1532346690.git.horms+renesas@verge.net.au>
-References: <cover.1532346690.git.horms+renesas@verge.net.au>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Chris,
 
-R-Car Gen2 and RZ/G1 SoCs can make use of the optional reset controller
-support in the Renesas CPG/MSSR driver.
+On Thu, Jul 12, 2018 at 7:34 PM Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Thursday, July 12, 2018, Geert Uytterhoeven wrote:
+> > Yeah, that's why I asked: setup-r7s72100.c is the smallest setup file.
+> >
+> > It uses shmobile_init_delay() to preset loops-per-jiffy, to avoid
+> > calibrating the
+> > delay loop, and shmobile_init_late() to make s2ram do more than s2idle.
+> > As RZ/A doesn't have SMP, and thus there's no use for disabling secondary
+> > CPU cores, the impact of the latter is small (read: I don't know what's
+> > the real
+> > impact of calling cpu_idle_poll_ctrl()).
+>
+> It's been quite a while, but I remember when porting RZ/A1 code that
+> without those two functions, things didn't work right. Of course that was
+> many releases ago.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Right, you may not have had an early timer running yet, causing the loop
+calibration to hang. May have been fixed by ostm support.
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index e30e51809cfc..152d16ad7c91 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -192,6 +192,7 @@ CONFIG_AK8975=y
- CONFIG_PWM=y
- CONFIG_PWM_RCAR=y
- CONFIG_PWM_RENESAS_TPU=y
-+CONFIG_RESET_CONTROLLER=y
- CONFIG_GENERIC_PHY=y
- CONFIG_PHY_RCAR_GEN2=y
- # CONFIG_DNOTIFY is not set
--- 
-2.11.0
+> However, one thing that I know I need is
+>
+> +       .l2c_aux_val    = 0,
+> +       .l2c_aux_mask   = ~0,
+>
+> Without that, I don't get my L2C driver loaded.
+>
+> Hence:
+> a96bb197693e ("ARM: 8660/1: shmobile: r7s72100: Enable L2 cache")
+>
+> So at least for now, I would say I still need the setup file.
+
+I forgot about the L2C. Yeah, it's a pity we still need board code to
+enable the PL310 cache with default settings.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
