@@ -1,101 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:54195 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726370AbeG3J1y (ORCPT
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:41773 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726638AbeGORXB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Jul 2018 05:27:54 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 4/5] clk: renesas: Add r8a774a1 CPG Core Clock Definitions
-Date: Mon, 30 Jul 2018 08:48:10 +0100
-Message-Id: <1532936891-25034-5-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1532936891-25034-1-git-send-email-biju.das@bp.renesas.com>
-References: <1532936891-25034-1-git-send-email-biju.das@bp.renesas.com>
+        Sun, 15 Jul 2018 13:23:01 -0400
+Date: Sun, 15 Jul 2018 18:59:26 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] regulator: bd9571mwv: Document "backup_mode"
+ sysfs file
+Message-ID: <20180715165926.GB10023@amd>
+References: <20180713154720.18316-1-geert+renesas@glider.be>
+ <20180713154720.18316-4-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="mxv5cy4qt+RJ9ypb"
+Content-Disposition: inline
+In-Reply-To: <20180713154720.18316-4-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add all RZ/G2M Clock Pulse Generator Core Clock Outputs, as listed in
-Table 8.2b ("List of Clocks [RZ/G2M]") of the RZ/G2M Hardware User's
-Manual.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- include/dt-bindings/clock/r8a774a1-cpg-mssr.h | 59 +++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
- create mode 100644 include/dt-bindings/clock/r8a774a1-cpg-mssr.h
+--mxv5cy4qt+RJ9ypb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/include/dt-bindings/clock/r8a774a1-cpg-mssr.h b/include/dt-bindings/clock/r8a774a1-cpg-mssr.h
-new file mode 100644
-index 0000000..144c341
---- /dev/null
-+++ b/include/dt-bindings/clock/r8a774a1-cpg-mssr.h
-@@ -0,0 +1,59 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_R8A774A1_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A774A1_CPG_MSSR_H__
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* r8a774a1 CPG Core Clocks */
-+#define R8A774A1_CLK_Z			0
-+#define R8A774A1_CLK_Z2			1
-+#define R8A774A1_CLK_ZG			2
-+#define R8A774A1_CLK_ZTR		3
-+#define R8A774A1_CLK_ZTRD2		4
-+#define R8A774A1_CLK_ZT			5
-+#define R8A774A1_CLK_ZX			6
-+#define R8A774A1_CLK_S0D1		7
-+#define R8A774A1_CLK_S0D2		8
-+#define R8A774A1_CLK_S0D3		9
-+#define R8A774A1_CLK_S0D4		10
-+#define R8A774A1_CLK_S0D6		11
-+#define R8A774A1_CLK_S0D8		12
-+#define R8A774A1_CLK_S0D12		13
-+#define R8A774A1_CLK_S1D2		14
-+#define R8A774A1_CLK_S1D4		15
-+#define R8A774A1_CLK_S2D1		16
-+#define R8A774A1_CLK_S2D2		17
-+#define R8A774A1_CLK_S2D4		18
-+#define R8A774A1_CLK_S3D1		19
-+#define R8A774A1_CLK_S3D2		20
-+#define R8A774A1_CLK_S3D4		21
-+#define R8A774A1_CLK_LB			22
-+#define R8A774A1_CLK_CL			23
-+#define R8A774A1_CLK_ZB3		24
-+#define R8A774A1_CLK_ZB3D2		25
-+#define R8A774A1_CLK_ZB3D4		26
-+#define R8A774A1_CLK_CR			27
-+#define R8A774A1_CLK_CRD2		28
-+#define R8A774A1_CLK_SD0H		29
-+#define R8A774A1_CLK_SD0		30
-+#define R8A774A1_CLK_SD1H		31
-+#define R8A774A1_CLK_SD1		32
-+#define R8A774A1_CLK_SD2H		33
-+#define R8A774A1_CLK_SD2		34
-+#define R8A774A1_CLK_SD3H		35
-+#define R8A774A1_CLK_SD3		36
-+#define R8A774A1_CLK_RPC		37
-+#define R8A774A1_CLK_RPCD2		38
-+#define R8A774A1_CLK_MSO		39
-+#define R8A774A1_CLK_HDMI		40
-+#define R8A774A1_CLK_CSI0		41
-+#define R8A774A1_CLK_CP			42
-+#define R8A774A1_CLK_POST2		43
-+#define R8A774A1_CLK_CPEX		44
-+#define R8A774A1_CLK_R			45
-+#define R8A774A1_CLK_OSC		46
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A774A1_CPG_MSSR_H__ */
--- 
-2.7.4
+On Fri 2018-07-13 17:47:20, Geert Uytterhoeven wrote:
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+
+> +		     following steps must be followed exactly:
+> +		       1. Configure PMIC for backup mode, to change the role of
+> +			  the accessory power switch from a power switch to a
+> +			  wake-up switch,
+> +		       2. Switch accessory power switch off, to prepare for
+> +			  system suspend, which is a manual step not controlled
+> +			  by software,
+> +		       3. Suspend system,
+> +		       4. Switch accessory power switch on, to resume the
+> +			  system.
+> +		     DDR Backup Mode must be explicitly enabled by the user,
+> +		     to invoke step 1.
+
+I'd add "please don't design hardware like that" :-). Anyway,
+
+Acked-by: Pavel Machek <pavel@ucw.cz>
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--mxv5cy4qt+RJ9ypb
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAltLfW4ACgkQMOfwapXb+vIx3ACbBcTCUi/PPHfqfdSn02WIKtLs
+my4AoL3X663508fomzXWo409JeBMNQCB
+=RVAr
+-----END PGP SIGNATURE-----
+
+--mxv5cy4qt+RJ9ypb--
