@@ -1,79 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53212 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387854AbeGWNFS (ORCPT
+Received: from sauhun.de ([88.99.104.3]:50262 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726745AbeGOTJ0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:05:18 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL v2] Renesas ARM Based SoC Defconfig Updates for v4.19
-Date: Mon, 23 Jul 2018 14:04:13 +0200
-Message-Id: <cover.1532346690.git.horms+renesas@verge.net.au>
+        Sun, 15 Jul 2018 15:09:26 -0400
+Date: Sun, 15 Jul 2018 20:45:36 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+Subject: Re: [PATCH v2 1/4] mmc: tmio: Fix tuning flow
+Message-ID: <20180715184535.nuvreqggj2ngh2gq@tetsubishi>
+References: <20180705141841.11121-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180705141841.11121-2-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180705141841.11121-2-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+On Thu, Jul 05, 2018 at 04:18:38PM +0200, Niklas Söderlund wrote:
+> From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+> 
+> If the return value of mmc_send_tuning() is error other than -EILSEQ,
+> the tuning fails and process goes out of for_loop. The correct
+> processing is to judge their TAP as not good (NG) and continue.
+> 
+> Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+> [Niklas: update commit message]
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Please consider these Renesas ARM based SoC defconfig updates for v4.19.
+I tend to agree with Geert, but it is a minor issue for me, so
 
-Changes since v1:
-* Dropped patch to set CONFIG_LOCALVERSION as requested by Olof
-* Dropped patch to Enable MTD command line partition parsing as
-  Olof has asked for more discussion on the related DTS change
-
-
-The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
-
-  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm-defconfig-for-v4.19
-
-for you to fetch changes up to b036e6420b9aed3498cbd0429f12300139cc5a28:
-
-  ARM: multi_v7_defconfig: Enable support for RZN1D-DB (2018-07-23 13:48:02 +0200)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC Defconfig Updates for v4.19
-
-multi_v7_defconfig and shmobile_defconfig Enhancement:
-
-* Enable support for recently upstreamed RZN1D-DB board
-  in multi_v7_defconfig and shmobile_defconfig. This is
-  to give better test coverage.
-
-shmobile_defconfig Clean-Up:
-
-* Drop NET_VENDOR_<FOO>=n
-
-  This reduces the size of the defconfig without any change in the
-  resulting kernel config.
-
-shmobile_defconfig Enhancements:
-
-* Disable long deprecated /sbin/hotplug helper
-
-* Enable reset controller support
-
-  This is to give better test coverage.
-  This may be used by reset controller support in the Renesas CPG/MSSR
-  driver when used by R-Car Gen2 and RZ/G1 SoCs.
-
-----------------------------------------------------------------
-Geert Uytterhoeven (5):
-      ARM: shmobile: defconfig: Drop NET_VENDOR_<FOO>=n
-      ARM: shmobile: defconfig: Enable reset controller support
-      ARM: shmobile: defconfig: Enable support for RZN1D-DB
-      ARM: shmobile: defconfig: Disable /sbin/hotplug fork-bomb
-      ARM: multi_v7_defconfig: Enable support for RZN1D-DB
-
- arch/arm/configs/multi_v7_defconfig |  1 +
- arch/arm/configs/shmobile_defconfig | 17 +++--------------
- 2 files changed, 4 insertions(+), 14 deletions(-)
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
