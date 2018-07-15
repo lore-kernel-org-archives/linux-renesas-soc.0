@@ -1,91 +1,102 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:58772 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729788AbeGMQrF (ORCPT
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40884 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726924AbeGOQ3r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Jul 2018 12:47:05 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 2/3] regulator: bd9571mwv: Add support for toggle power switches
-Date: Fri, 13 Jul 2018 17:47:19 +0200
-Message-Id: <20180713154720.18316-3-geert+renesas@glider.be>
-In-Reply-To: <20180713154720.18316-1-geert+renesas@glider.be>
-References: <20180713154720.18316-1-geert+renesas@glider.be>
+        Sun, 15 Jul 2018 12:29:47 -0400
+Received: by mail-lj1-f195.google.com with SMTP id j19-v6so2541271ljc.7
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 15 Jul 2018 09:06:21 -0700 (PDT)
+Subject: [PATCH 2/8] PCI: of: Fix I/O space page leak
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: linux-renesas-soc@vger.kernel.org
+References: <3e862a05-084a-d732-3060-6e2b234e9718@cogentembedded.com>
+Message-ID: <181e8c62-b486-c6b1-4fce-f32cbf377cdd@cogentembedded.com>
+Date: Sun, 15 Jul 2018 19:06:19 +0300
+MIME-Version: 1.0
+In-Reply-To: <3e862a05-084a-d732-3060-6e2b234e9718@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Extend the existing support for backup mode to toggle power switches.
-With a toggle power switch (or level signal), the following steps must
-be followed exactly:
-   1. Configure PMIC for backup mode,
-   2. Switch accessory power switch off, to prepare for system suspend,
-      which is a manual step not controlled by software,
-   3. Suspend system,
-   4. Switch accessory power switch on to wake up system.
+When testing the R-Car PCIe driver on the Condor board,  I noticed that if
+I left  the PCIe PHY driver disabled, the kernel crashed with this BUG:
 
-Hence the PMIC is configured for backup mode when "on" or "1" is written
-to the PMIC's "backup_mode" virtual file in sysfs.  Conversely, writing
-"off" or "0" reverts the role of the accessory switch to a power
-switch.
+[    1.225819] kernel BUG at lib/ioremap.c:72!
+[    1.230007] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
+[    1.235496] Modules linked in:
+[    1.238561] CPU: 0 PID: 39 Comm: kworker/0:1 Not tainted 4.17.0-dirty #1092
+[    1.245526] Hardware name: Renesas Condor board based on r8a77980 (DT)
+[    1.252075] Workqueue: events deferred_probe_work_func
+[    1.257220] pstate: 80000005 (Nzcv daif -PAN -UAO)
+[    1.262024] pc : ioremap_page_range+0x370/0x3c8
+[    1.266558] lr : ioremap_page_range+0x40/0x3c8
+[    1.271002] sp : ffff000008da39e0
+[    1.274317] x29: ffff000008da39e0 x28: 00e8000000000f07
+[    1.279636] x27: ffff7dfffee00000 x26: 0140000000000000
+[    1.284954] x25: ffff7dfffef00000 x24: 00000000000fe100
+[    1.290272] x23: ffff80007b906000 x22: ffff000008ab8000
+[    1.295590] x21: ffff000008bb1d58 x20: ffff7dfffef00000
+[    1.300909] x19: ffff800009c30fb8 x18: 0000000000000001
+[    1.306226] x17: 00000000000152d0 x16: 00000000014012d0
+[    1.311544] x15: 0000000000000000 x14: 0720072007200720
+[    1.316862] x13: 0720072007200720 x12: 0720072007200720
+[    1.322180] x11: 0720072007300730 x10: 00000000000000ae
+[    1.327498] x9 : 0000000000000000 x8 : ffff7dffff000000                      
+[    1.332816] x7 : 0000000000000000 x6 : 0000000000000100
+[    1.338134] x5 : 0000000000000000 x4 : 000000007b906000
+[    1.343452] x3 : ffff80007c61a880 x2 : ffff7dfffeefffff
+[    1.348770] x1 : 0000000040000000 x0 : 00e80000fe100f07
+[    1.354090] Process kworker/0:1 (pid: 39, stack limit = 0x        (ptrval))  
+[    1.361056] Call trace:
+[    1.363504]  ioremap_page_range+0x370/0x3c8
+[    1.367695]  pci_remap_iospace+0x7c/0xac
+[    1.371624]  pci_parse_request_of_pci_ranges+0x13c/0x190
+[    1.376945]  rcar_pcie_probe+0x4c/0xb04
+[    1.380786]  platform_drv_probe+0x50/0xbc
+[    1.384799]  driver_probe_device+0x21c/0x308
+[    1.389072]  __device_attach_driver+0x98/0xc8
+[    1.393431]  bus_for_each_drv+0x54/0x94
+[    1.397269]  __device_attach+0xc4/0x12c
+[    1.401107]  device_initial_probe+0x10/0x18
+[    1.405292]  bus_probe_device+0x90/0x98
+[    1.409130]  deferred_probe_work_func+0xb0/0x150
+[    1.413756]  process_one_work+0x12c/0x29c
+[    1.417768]  worker_thread+0x200/0x3fc
+[    1.421522]  kthread+0x108/0x134
+[    1.424755]  ret_from_fork+0x10/0x18
+[    1.428334] Code: f9004ba2 54000080 aa0003fb 17ffff48 (d4210000)
 
-Unlike with momentary switches, backup mode is not enabled by default,
-as enabling it prevents the board from being powered off using the power
-switch, which may confuse the user.
+It turned out that pci_remap_iospace() wasn't undone when the driver's
+probe failed, and since devm_phy_optional_get() returned -EPROBE_DEFER,
+the probe was retried,  finally causing the BUG due to trying to remap
+already remapped pages.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The  most feasible solution seemed to introduce devm_pci_remap_iospace() --
+which was done in the XGene PCIe driver patch posted earlier...
+
+Fixes: dbf9826d5797 ("PCI: generic: Convert to DT resource parsing API")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+
 ---
-v3:
-  - Replace use of "wake_up" sysfs file and extra callback for wake-up
-    change notification by custom "backup_mode" sysfs file,
+ drivers/pci/of.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v2:
-  - Improve patch description,
-  - Drop "return;" at end of function.
----
- drivers/regulator/bd9571mwv-regulator.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/drivers/regulator/bd9571mwv-regulator.c b/drivers/regulator/bd9571mwv-regulator.c
-index 7432b605db4dc879..9b5df51751624d8b 100644
---- a/drivers/regulator/bd9571mwv-regulator.c
-+++ b/drivers/regulator/bd9571mwv-regulator.c
-@@ -185,6 +185,7 @@ static ssize_t backup_mode_store(struct device *dev,
- 				 const char *buf, size_t count)
- {
- 	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
-+	unsigned int mode;
- 	int ret;
+Index: pci/drivers/pci/of.c
+===================================================================
+--- pci.orig/drivers/pci/of.c
++++ pci/drivers/pci/of.c
+@@ -612,7 +612,7 @@ int pci_parse_request_of_pci_ranges(stru
  
- 	if (!count)
-@@ -194,6 +195,22 @@ static ssize_t backup_mode_store(struct device *dev,
- 	if (ret)
- 		return ret;
- 
-+	if (!bdreg->rstbmode_level)
-+		return count;
-+
-+	/* Configure DDR Backup Mode */
-+	ret = bd9571mwv_bkup_mode_read(bdreg->bd, &mode);
-+	if (ret)
-+		return ret;
-+
-+	mode &= ~BD9571MWV_BKUP_MODE_CNT_KEEPON_MASK;
-+	if (bdreg->bkup_mode_enabled)
-+		mode |= bdreg->bkup_mode_cnt_keepon;
-+
-+	ret = bd9571mwv_bkup_mode_write(bdreg->bd, mode);
-+	if (ret)
-+		return ret;
-+
- 	return count;
- }
- 
--- 
-2.17.1
+ 		switch (resource_type(res)) {
+ 		case IORESOURCE_IO:
+-			err = pci_remap_iospace(res, iobase);
++			err = devm_pci_remap_iospace(dev, res, iobase);
+ 			if (err) {
+ 				dev_warn(dev, "error %d: failed to map resource %pR\n",
+ 					 err, res);
