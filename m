@@ -1,53 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:52360 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933160AbeGDLnj (ORCPT
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:41242 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729881AbeGPVCK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Jul 2018 07:43:39 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/5] ARM: shmobile: defconfig: Enable support for RZN1D-DB
-Date: Wed,  4 Jul 2018 13:43:31 +0200
-Message-Id: <20180704114333.27584-4-geert+renesas@glider.be>
-In-Reply-To: <20180704114333.27584-1-geert+renesas@glider.be>
-References: <20180704114333.27584-1-geert+renesas@glider.be>
+        Mon, 16 Jul 2018 17:02:10 -0400
+MIME-Version: 1.0
+References: <20180716121927.21918-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180716121927.21918-4-niklas.soderlund+renesas@ragnatech.se>
+ <fa8eec6c-fb0b-cb44-a891-e09d5b738672@cogentembedded.com> <177386eb-037b-57f8-6c40-027e09db67f9@cogentembedded.com>
+In-Reply-To: <177386eb-037b-57f8-6c40-027e09db67f9@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 16 Jul 2018 22:32:54 +0200
+Message-ID: <CAMuHMdVGE2_JZMy0MMt1FnwxqoxM92fFOrvCzMnfOOjWCVSZbg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] ravb: fix byte order for TX descriptor tag field
+ lower bits
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        netdev <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable support for the Renesas RZN1D-DB Board:
-  - RZ/N1D (R9A06G032) base SoC support,
-  - Synopsys DesignWare 8250 serial port support.
+Hi Sergei,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Compile-tested only.
----
- arch/arm/configs/shmobile_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+On Mon, Jul 16, 2018 at 10:22 PM Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> On 07/16/2018 10:52 PM, Sergei Shtylyov wrote:
+> >> The wrong helper is used to swap the bytes when adding the lower bits of
+> >> the TX descriptors tag field in the shared ds_tagl variable. The
+> >> variable contains the DS[11:0] field and then the TAG[3:0] bits.
+> >>
+> >> The mistake was highlighted by the sparse warning:
+> >>
+> >> ravb_main.c:1622:31:    left side has type restricted __le16
+> >> ravb_main.c:1622:31:    right side has type unsigned short
+> >> ravb_main.c:1622:31: warning: invalid assignment: |=
+> >> ravb_main.c:1622:34: warning: cast to restricted __le16
+> >
+> >   Again, it's good that it's not a real bug! :-)
+>
+>    Wait! It seems to be, according to your subject. I hope you understand that
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index a08d0bcdca750d28..7a5a970420b6353a 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -22,6 +22,7 @@ CONFIG_ARCH_R8A7791=y
- CONFIG_ARCH_R8A7792=y
- CONFIG_ARCH_R8A7793=y
- CONFIG_ARCH_R8A7794=y
-+CONFIG_ARCH_R9A06G032=y
- CONFIG_ARCH_SH73A0=y
- CONFIG_PL310_ERRATA_588369=y
- CONFIG_ARM_ERRATA_754322=y
-@@ -88,6 +89,7 @@ CONFIG_INPUT_ADXL34X=y
- # CONFIG_LEGACY_PTYS is not set
- CONFIG_SERIAL_8250=y
- CONFIG_SERIAL_8250_CONSOLE=y
-+CONFIG_SERIAL_8250_DW=y
- CONFIG_SERIAL_8250_EM=y
- CONFIG_SERIAL_SH_SCI=y
- CONFIG_I2C_CHARDEV=y
+Niklas' patch fixes the sparse warning.
+
+> cpu_to_le16() and le16_to_cpu() do the same thing?
+
+While they do the same thing, they don't take the same parameter types,
+nor return the same types.
+E.g. cpu_to_le16() takes a u16 and returns an __le16, le16_to_cpu() takes
+an __le16, and returns a u16.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
