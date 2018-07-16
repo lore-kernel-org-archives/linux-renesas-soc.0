@@ -1,23 +1,28 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Tue, 17 Jul 2018 14:09:34 +0200
-From: Simon Horman <horms@verge.net.au>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:37622 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727618AbeGPSS2 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 16 Jul 2018 14:18:28 -0400
+Date: Mon, 16 Jul 2018 11:49:57 -0600
+From: Rob Herring <robh@kernel.org>
 To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms@verge.net.au>,
         linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         devicetree@vger.kernel.org
 Subject: Re: [PATCH v2 1/2] dt: serial: Add Renesas RZ/N1 binding
  documentation
-Message-ID: <20180717120934.zzrdanps2ndx3p4h@verge.net.au>
+Message-ID: <20180716174957.GA6215@rob-hp-laptop>
 References: <1531474429-17146-1-git-send-email-phil.edworthy@renesas.com>
  <1531474429-17146-2-git-send-email-phil.edworthy@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <1531474429-17146-2-git-send-email-phil.edworthy@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 On Fri, Jul 13, 2018 at 10:33:48AM +0100, Phil Edworthy wrote:
@@ -27,6 +32,13 @@ On Fri, Jul 13, 2018 at 10:33:48AM +0100, Phil Edworthy wrote:
 > DMA, but you should not do so.
 > 
 > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> ---
+> v2:
+>  - Change "renesas,<peripheral>-<family-or-device>" to
+>    "renesas,<family-or-device>-<peripheral>"
+> ---
+>  Documentation/devicetree/bindings/serial/renesas,rzn1-uart.txt | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/serial/renesas,rzn1-uart.txt
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
+Reviewed-by: Rob Herring <robh@kernel.org>
