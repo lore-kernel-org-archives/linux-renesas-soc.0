@@ -1,88 +1,103 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:58570 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730246AbeGQLmy (ORCPT
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:44434 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728160AbeGPLfl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jul 2018 07:42:54 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Ulrich Hecht <ulrich.hecht@gmail.com>
-CC: "mathias.nyman@intel.com" <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 3/3] usb: host: xhci-rcar: Add a condition check about PLL
- active
-Date: Tue, 17 Jul 2018 11:10:43 +0000
-Message-ID: <OSBPR01MB22934A31443A48EB34A937BCD85C0@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+        Mon, 16 Jul 2018 07:35:41 -0400
+MIME-Version: 1.0
+In-Reply-To: <1530614818-7634-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1530614818-7634-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
  <1530614818-7634-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAO3366yejRNmhzOHpuzwDhdLG_hRynT4tsAciDJuQ8Dz9MkXFg@mail.gmail.com>
-In-Reply-To: <CAO3366yejRNmhzOHpuzwDhdLG_hRynT4tsAciDJuQ8Dz9MkXFg@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+From: Ulrich Hecht <ulrich.hecht@gmail.com>
+Date: Mon, 16 Jul 2018 13:08:46 +0200
+Message-ID: <CAO3366yejRNmhzOHpuzwDhdLG_hRynT4tsAciDJuQ8Dz9MkXFg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] usb: host: xhci-rcar: Add a condition check about PLL active
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: mathias.nyman@intel.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgVWxyaWNoLXNhbiwNCg0KVGhhbmsgeW91IGZvciB0aGUgcmV2aWV3IQ0KDQo+IEZyb206IFVs
-cmljaCBIZWNodCwgU2VudDogTW9uZGF5LCBKdWx5IDE2LCAyMDE4IDg6MDkgUE0NCj4gDQo+IE9u
-IFR1ZSwgSnVsIDMsIDIwMTggYXQgMTI6NDYgUE0sIFlvc2hpaGlybyBTaGltb2RhDQo+IDx5b3No
-aWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gVGhpcyBwYXRjaCBhZGRz
-IGEgY29uZGl0aW9uIGNoZWNrIGFib3V0IHRoZSBQTEwgYWN2aWNlIG9mIHRoaXMNCj4gPiBjb250
-cm9sbGVyLiBPdGhlcndpc2UsIHRoZSBjb250cm9sbGVyIG1pZ2h0IGNhdXNlIGhhbmcgd2hlbg0K
-PiA+IGFueSBVU0IgY2xvY2tzIGFyZSBub3Qgc3VwcGxpZWQgeWV0IGFuZCBhY2Nlc3NlcyB0aGUg
-eEhDSSByZWdpc3RlcnMuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBZb3NoaWhpcm8gU2hpbW9k
-YSA8eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+DQo+ID4gLS0tDQo+ID4gIGRyaXZl
-cnMvdXNiL2hvc3QveGhjaS1yY2FyLmMgfCAyNiArKysrKysrKysrKysrKysrKysrKysrKysrKw0K
-PiA+ICAxIGZpbGUgY2hhbmdlZCwgMjYgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvdXNiL2hvc3QveGhjaS1yY2FyLmMgYi9kcml2ZXJzL3VzYi9ob3N0L3hoY2kt
-cmNhci5jDQo+ID4gaW5kZXggNGEyMmYyNS4uYTZlNDYzNyAxMDA2NDQNCj4gPiAtLS0gYS9kcml2
-ZXJzL3VzYi9ob3N0L3hoY2ktcmNhci5jDQo+ID4gKysrIGIvZHJpdmVycy91c2IvaG9zdC94aGNp
-LXJjYXIuYw0KPiA+IEBAIC0yOSw2ICsyOSw3IEBADQo+ID4gIE1PRFVMRV9GSVJNV0FSRShYSENJ
-X1JDQVJfRklSTVdBUkVfTkFNRV9WMyk7DQo+ID4NCj4gPiAgLyoqKiBSZWdpc3RlciBPZmZzZXQg
-KioqLw0KPiA+ICsjZGVmaW5lIFJDQVJfVVNCM19BWEhfU1RBICAgICAgMHgxMDQgICAvKiBBWEkg
-SG9zdCBDb250cm9sIFN0YXR1cyAqLw0KPiA+ICAjZGVmaW5lIFJDQVJfVVNCM19JTlRfRU5BICAg
-ICAgMHgyMjQgICAvKiBJbnRlcnJ1cHQgRW5hYmxlICovDQo+ID4gICNkZWZpbmUgUkNBUl9VU0Iz
-X0RMX0NUUkwgICAgICAweDI1MCAgIC8qIEZXIERvd25sb2FkIENvbnRyb2wgJiBTdGF0dXMgKi8N
-Cj4gPiAgI2RlZmluZSBSQ0FSX1VTQjNfRldfREFUQTAgICAgIDB4MjU4ICAgLyogRlcgRGF0YTAg
-Ki8NCj4gPiBAQCAtNDEsNiArNDIsMTIgQEANCj4gPiAgI2RlZmluZSBSQ0FSX1VTQjNfVFhfUE9M
-ICAgICAgIDB4YWI4ICAgLyogVVNCMy4wIFRYIFBvbGFyaXR5ICovDQo+ID4NCj4gPiAgLyoqKiBS
-ZWdpc3RlciBTZXR0aW5ncyAqKiovDQo+ID4gKy8qIEFYSSBIb3N0IENvbnRyb2wgU3RhdHVzICov
-DQo+ID4gKyNkZWZpbmUgUkNBUl9VU0IzX0FYSF9TVEFfQjNfUExMX0FDVElWRSAgICAgICAgICAg
-ICAgICAweDAwMDEwMDAwDQo+ID4gKyNkZWZpbmUgUkNBUl9VU0IzX0FYSF9TVEFfQjJfUExMX0FD
-VElWRSAgICAgICAgICAgICAgICAweDAwMDAwMDAxDQo+IA0KPiBNYXliZSB1c2UgQklUKCkgaGVy
-ZT8NCg0KSSB0aGluayBzby4NCiMgU2luY2UgUkNBUl9VU0IzX0lOVF9YSENfRU5BIGRvZXNu4oCZ
-dCB1c2UgQklUKCksIEkgZG9uJ3QgdXNlIHRoZSBtYWNybyB0byB0aGUgbmV3ICNkZWZpbmUuDQoj
-IEJ1dCwgUkNBUl9VU0IzX1JYX1BPTF9WQUwgdXNlcyBCSVQoKS4NCg0KSG93ZXZlciwgdGhpcyBw
-YXRjaCBoYXMgYWxyZWFkeSBiZWVuIG1lcmdlZCBpbnRvIEdyZWcncyByZXBvLg0KU28sIEknZCBs
-aWtlIHRvIHN1Ym1pdCBhbiBpbmNyZW1lbnRhbCBwYXRjaCBmb3IgY2xlYW5pbmcgdXAgdGhlIGNv
-ZGUNCihhbG1vc3QgYWxsICNkZWZpbmUgdXNlIEJJVCgpKSBsYXRlci4NCg0KQmVzdCByZWdhcmRz
-LA0KWW9zaGloaXJvIFNoaW1vZGENCg0KPiA+ICsjZGVmaW5lIFJDQVJfVVNCM19BWEhfU1RBX1BM
-TF9BQ1RJVkVfTUFTSyAoUkNBUl9VU0IzX0FYSF9TVEFfQjNfUExMX0FDVElWRSB8IFwNCj4gPiAr
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgUkNBUl9VU0IzX0FYSF9T
-VEFfQjJfUExMX0FDVElWRSkNCj4gPiArDQo+ID4gIC8qIEludGVycnVwdCBFbmFibGUgKi8NCj4g
-PiAgI2RlZmluZSBSQ0FSX1VTQjNfSU5UX1hIQ19FTkEgIDB4MDAwMDAwMDENCj4gPiAgI2RlZmlu
-ZSBSQ0FSX1VTQjNfSU5UX1BNRV9FTkEgIDB4MDAwMDAwMDINCj4gPiBAQCAtMjAwLDYgKzIwNywy
-MiBAQCBzdGF0aWMgaW50IHhoY2lfcmNhcl9kb3dubG9hZF9maXJtd2FyZShzdHJ1Y3QgdXNiX2hj
-ZCAqaGNkKQ0KPiA+ICAgICAgICAgcmV0dXJuIHJldHZhbDsNCj4gPiAgfQ0KPiA+DQo+ID4gK3N0
-YXRpYyBib29sIHhoY2lfcmNhcl93YWl0X2Zvcl9wbGxfYWN0aXZlKHN0cnVjdCB1c2JfaGNkICpo
-Y2QpDQo+ID4gK3sNCj4gPiArICAgICAgIGludCB0aW1lb3V0ID0gMTAwMDsNCj4gPiArICAgICAg
-IHUzMiB2YWwsIG1hc2sgPSBSQ0FSX1VTQjNfQVhIX1NUQV9QTExfQUNUSVZFX01BU0s7DQo+ID4g
-Kw0KPiA+ICsgICAgICAgd2hpbGUgKHRpbWVvdXQgPiAwKSB7DQo+ID4gKyAgICAgICAgICAgICAg
-IHZhbCA9IHJlYWRsKGhjZC0+cmVncyArIFJDQVJfVVNCM19BWEhfU1RBKTsNCj4gPiArICAgICAg
-ICAgICAgICAgaWYgKCh2YWwgJiBtYXNrKSA9PSBtYXNrKQ0KPiA+ICsgICAgICAgICAgICAgICAg
-ICAgICAgIHJldHVybiB0cnVlOw0KPiA+ICsgICAgICAgICAgICAgICB1ZGVsYXkoMSk7DQo+ID4g
-KyAgICAgICAgICAgICAgIHRpbWVvdXQtLTsNCj4gPiArICAgICAgIH0NCj4gPiArDQo+ID4gKyAg
-ICAgICByZXR1cm4gZmFsc2U7DQo+ID4gK30NCj4gPiArDQo+ID4gIC8qIFRoaXMgZnVuY3Rpb24g
-bmVlZHMgdG8gaW5pdGlhbGl6ZSBhICJwaHkiIG9mIHVzYiBiZWZvcmUgKi8NCj4gPiAgaW50IHho
-Y2lfcmNhcl9pbml0X3F1aXJrKHN0cnVjdCB1c2JfaGNkICpoY2QpDQo+ID4gIHsNCj4gPiBAQCAt
-MjIwLDYgKzI0Myw5IEBAIGludCB4aGNpX3JjYXJfaW5pdF9xdWlyayhzdHJ1Y3QgdXNiX2hjZCAq
-aGNkKQ0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgIHhoY2lfcmNhcl9pc19nZW4zKGhjZC0+
-c2VsZi5jb250cm9sbGVyKSkNCj4gPiAgICAgICAgICAgICAgICAgeGhjaS0+cXVpcmtzIHw9IFhI
-Q0lfTk9fNjRCSVRfU1VQUE9SVDsNCj4gPg0KPiA+ICsgICAgICAgaWYgKCF4aGNpX3JjYXJfd2Fp
-dF9mb3JfcGxsX2FjdGl2ZShoY2QpKQ0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gLUVUSU1F
-RE9VVDsNCj4gPiArDQo+ID4gICAgICAgICByZXR1cm4geGhjaV9yY2FyX2Rvd25sb2FkX2Zpcm13
-YXJlKGhjZCk7DQo+ID4gIH0NCj4gPg0KPiA+IC0tDQo+ID4gMS45LjENCj4gPg0KPiANCj4gUmV2
-aWV3ZWQtYnk6IFVscmljaCBIZWNodCA8dWxyaWNoLmhlY2h0K3JlbmVzYXNAZ21haWwuY29tPg0K
-PiANCj4gQ1UNCj4gVWxpDQo=
+On Tue, Jul 3, 2018 at 12:46 PM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> This patch adds a condition check about the PLL acvice of this
+> controller. Otherwise, the controller might cause hang when
+> any USB clocks are not supplied yet and accesses the xHCI registers.
+>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  drivers/usb/host/xhci-rcar.c | 26 ++++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+>
+> diff --git a/drivers/usb/host/xhci-rcar.c b/drivers/usb/host/xhci-rcar.c
+> index 4a22f25..a6e4637 100644
+> --- a/drivers/usb/host/xhci-rcar.c
+> +++ b/drivers/usb/host/xhci-rcar.c
+> @@ -29,6 +29,7 @@
+>  MODULE_FIRMWARE(XHCI_RCAR_FIRMWARE_NAME_V3);
+>
+>  /*** Register Offset ***/
+> +#define RCAR_USB3_AXH_STA      0x104   /* AXI Host Control Status */
+>  #define RCAR_USB3_INT_ENA      0x224   /* Interrupt Enable */
+>  #define RCAR_USB3_DL_CTRL      0x250   /* FW Download Control & Status */
+>  #define RCAR_USB3_FW_DATA0     0x258   /* FW Data0 */
+> @@ -41,6 +42,12 @@
+>  #define RCAR_USB3_TX_POL       0xab8   /* USB3.0 TX Polarity */
+>
+>  /*** Register Settings ***/
+> +/* AXI Host Control Status */
+> +#define RCAR_USB3_AXH_STA_B3_PLL_ACTIVE                0x00010000
+> +#define RCAR_USB3_AXH_STA_B2_PLL_ACTIVE                0x00000001
+
+Maybe use BIT() here?
+
+> +#define RCAR_USB3_AXH_STA_PLL_ACTIVE_MASK (RCAR_USB3_AXH_STA_B3_PLL_ACTIVE | \
+> +                                          RCAR_USB3_AXH_STA_B2_PLL_ACTIVE)
+> +
+>  /* Interrupt Enable */
+>  #define RCAR_USB3_INT_XHC_ENA  0x00000001
+>  #define RCAR_USB3_INT_PME_ENA  0x00000002
+> @@ -200,6 +207,22 @@ static int xhci_rcar_download_firmware(struct usb_hcd *hcd)
+>         return retval;
+>  }
+>
+> +static bool xhci_rcar_wait_for_pll_active(struct usb_hcd *hcd)
+> +{
+> +       int timeout = 1000;
+> +       u32 val, mask = RCAR_USB3_AXH_STA_PLL_ACTIVE_MASK;
+> +
+> +       while (timeout > 0) {
+> +               val = readl(hcd->regs + RCAR_USB3_AXH_STA);
+> +               if ((val & mask) == mask)
+> +                       return true;
+> +               udelay(1);
+> +               timeout--;
+> +       }
+> +
+> +       return false;
+> +}
+> +
+>  /* This function needs to initialize a "phy" of usb before */
+>  int xhci_rcar_init_quirk(struct usb_hcd *hcd)
+>  {
+> @@ -220,6 +243,9 @@ int xhci_rcar_init_quirk(struct usb_hcd *hcd)
+>                         xhci_rcar_is_gen3(hcd->self.controller))
+>                 xhci->quirks |= XHCI_NO_64BIT_SUPPORT;
+>
+> +       if (!xhci_rcar_wait_for_pll_active(hcd))
+> +               return -ETIMEDOUT;
+> +
+>         return xhci_rcar_download_firmware(hcd);
+>  }
+>
+> --
+> 1.9.1
+>
+
+Reviewed-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+
+CU
+Uli
