@@ -1,35 +1,55 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:34945 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387900AbeGTRI5 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jul 2018 13:08:57 -0400
-Date: Fri, 20 Jul 2018 10:19:57 -0600
-From: Rob Herring <robh@kernel.org>
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt: snps,designware-i2c: Add clock bindings
- documentation
-Message-ID: <20180720161957.GA3486@rob-hp-laptop>
+        linux-renesas-soc@vger.kernel.org,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        devicetree@vger.kernel.org
+Subject: [PATCH 1/2] dt: snps,designware-i2c: Add clock bindings documentation
+Date: Mon, 16 Jul 2018 09:59:12 +0100
+Message-Id: <1531731553-22979-2-git-send-email-phil.edworthy@renesas.com>
+In-Reply-To: <1531731553-22979-1-git-send-email-phil.edworthy@renesas.com>
 References: <1531731553-22979-1-git-send-email-phil.edworthy@renesas.com>
- <1531731553-22979-2-git-send-email-phil.edworthy@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1531731553-22979-2-git-send-email-phil.edworthy@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jul 16, 2018 at 09:59:12AM +0100, Phil Edworthy wrote:
-> The driver requires an undocumented clock property, so detail it.
-> Add documentation for a separate bus clock.
-> 
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> ---
->  Documentation/devicetree/bindings/i2c/i2c-designware.txt | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
+The driver requires an undocumented clock property, so detail it.
+Add documentation for a separate bus clock.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+---
+ Documentation/devicetree/bindings/i2c/i2c-designware.txt | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-designware.txt b/Documentation/devicetree/bindings/i2c/i2c-designware.txt
+index fbb0a6d..e9f4387 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c-designware.txt
++++ b/Documentation/devicetree/bindings/i2c/i2c-designware.txt
+@@ -1,16 +1,21 @@
+ * Synopsys DesignWare I2C
+ 
+ Required properties :
+-
+  - compatible : should be "snps,designware-i2c"
+  - reg : Offset and length of the register set for the device
+  - interrupts : <IRQ> where IRQ is the interrupt number.
++ - clocks : phandles for the clocks, see the description of clock-names below.
++   The phandle for the "ic_clk" clock is required. The phandle for the "bus"
++   clock is optional. If a single clock is specified but no clock-name, it is
++   the "ic_clk" clock. If both clocks are listed, the "ic_clk" must be first.
+ 
+ Recommended properties :
+-
+  - clock-frequency : desired I2C bus clock frequency in Hz.
+ 
+ Optional properties :
++ - clock-names : Contains the names of the clocks:
++    "ic_clk", for the core clock used to generate the external I2C clock.
++    "bus", the bus clock, sometimes described as pclk, for register accesses.
+  - i2c-sda-hold-time-ns : should contain the SDA hold time in nanoseconds.
+    This option is only supported in hardware blocks version 1.11a or newer.
+ 
+-- 
+2.7.4
