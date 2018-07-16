@@ -1,83 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33510 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727518AbeGTMx0 (ORCPT
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:33967 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727182AbeGPJY7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jul 2018 08:53:26 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 6/9] ARM: dts: Renesas RZN1D-DB Board base file
-Date: Fri, 20 Jul 2018 14:05:14 +0200
-Message-Id: <1c61d6eb207382a1ba4b9a373ff736e9b3ea0e53.1532086734.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1532086734.git.horms+renesas@verge.net.au>
-References: <cover.1532086734.git.horms+renesas@verge.net.au>
+        Mon, 16 Jul 2018 05:24:59 -0400
+MIME-Version: 1.0
+References: <20180713154720.18316-1-geert+renesas@glider.be> <20180715165749.GA10023@amd>
+In-Reply-To: <20180715165749.GA10023@amd>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 16 Jul 2018 10:58:22 +0200
+Message-ID: <CAMuHMdUqPW8wv=nuvesBDXf7iVeY378oNBXERCzKLrbPZ1SzFg@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] regulator: bd9571mwv: Add support for toggle power switches
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Michel Pollet <michel.pollet@bp.renesas.com>
+Hi Pavel,
 
-This adds a base device tree file for the RZN1-DB board, with only the
-basic support allowing the system to boot to a prompt. Only one UART is
-used, with only a single CPU running.
+On Sun, Jul 15, 2018 at 6:57 PM Pavel Machek <pavel@ucw.cz> wrote:
+> > The ROHM BD9571MWV PMIC on the Renesas Salvator-X(S) and ULCB
+> > development boards supports DDR Backup Power, which means that the DDR
+> > power rails can be kept powered while the main SoC is powered down.
+> >
+> > This patch series extends the support for DDR backup mode (see commit
+> > 6eb0bfae6973eb6a ("regulator: bd9571mwv: Add support for backup mode"))
+> > to systems with toggle instead of momentary power switches.
+> >
+> > With a toggle power switch (or level signal), the following steps must
+> > be followed exactly:
+> >    1. Configure PMIC for backup mode, which changes the role of the
+> >       power switch to a wake-up switch,
+> >    2. Switch accessory power switch off, to prepare for system suspend,
+> >       which is a manual step not controlled by software,
+> >    3. Suspend system,
+> >    4. Switch accessory power switch on, to resume.
+> >
+> > Unlike on systems with a momentary toggle switch, an additional step 2
+> > must be performed in between step 1 and step 3.  Hence step 1 can no
+> > longer be handled in the PMIC's suspend callback.
+> >
+> > This patch series allows performing step 1 when the user writes
+> > "on" to the PMIC's "backup_mode" virtual file in sysfs, e.g.
+> >
+> >     echo on > /sys/bus/i2c/drivers/bd9571mwv/*/bd9571mwv-regulator*/backup_mode
+>
+> Do you expect more boards to have similar design?
+>
+> If so, we may want to have standard place in /sys/ not depending on
+> i2c paths and driver names, but I believe such design is so... awkward
+> that it is not going to appear anywhere else...?
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/Makefile                  |  1 +
- arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts | 28 ++++++++++++++++++++++++++++
- 2 files changed, 29 insertions(+)
- create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+I have no idea. The BD9571MWV PMIC supports two power switch wirings.
+Only one of them is problematic for usability reasons.
+The newer Renesas ULCB boards use the good wiring.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 37a3de760d40..c07f077d8e99 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -819,6 +819,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
- 	r8a7793-gose.dtb \
- 	r8a7794-alt.dtb \
- 	r8a7794-silk.dtb \
-+	r9a06g032-rzn1d400-db.dtb \
- 	sh73a0-kzm9g.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += \
- 	rv1108-evb.dtb \
-diff --git a/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
-new file mode 100644
-index 000000000000..4e57ae2688fc
---- /dev/null
-+++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
-@@ -0,0 +1,28 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the RZN1D-DB Board
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ */
-+
-+/dts-v1/;
-+
-+#include "r9a06g032.dtsi"
-+
-+/ {
-+	model = "RZN1D-DB Board";
-+	compatible = "renesas,rzn1d400-db", "renesas,r9a06g032";
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
