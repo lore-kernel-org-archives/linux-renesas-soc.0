@@ -1,48 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:52055 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752372AbeGBOhM (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57027 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726713AbeGQMtL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 Jul 2018 10:37:12 -0400
-Received: by mail-it0-f68.google.com with SMTP id o5-v6so11403563itc.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 02 Jul 2018 07:37:12 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1530266505-19953-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1530266505-19953-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 2 Jul 2018 16:37:11 +0200
-Message-ID: <CAPDyKFoEM4+7waCsWt1QnkkbT-VNPVvqCsT3j+R1LXpAi5Jr7Q@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] mmc: renesas_sdhi_internal_dmac: fix two issues
- for error path
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Tue, 17 Jul 2018 08:49:11 -0400
+Date: Tue, 17 Jul 2018 14:16:45 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "# 4.0+" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH/RFC] ARM: shmobile: Always enable ARCH_TIMER on SoCs with
+ A7 and/or A15
+Message-ID: <20180717121644.gai63ewyv5cw2uge@verge.net.au>
+References: <20180712160857.31471-1-geert+renesas@glider.be>
+ <20180713080823.l4tng6oclhr6nxrh@verge.net.au>
+ <CAMuHMdUrgP=YOrgeEnpQ0XVOoC_8Dz9Lt2FJ4P5GKb53KRNpNw@mail.gmail.com>
+ <CAMuHMdUsHHDo_2unzUZN9W0kY2p5YW+yGkfsdXE-8ZHuBAuxnA@mail.gmail.com>
+ <20180717095904.eik3sko64zqymzts@verge.net.au>
+ <CAMuHMdVsvkydFmx_1pKab+ov9c3tt_j=_yWgVdEOkwryAkAwqA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVsvkydFmx_1pKab+ov9c3tt_j=_yWgVdEOkwryAkAwqA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 29 June 2018 at 12:01, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> This patch set is based on the mmc.git / fixes branch.
->
-> Changes from v1:
->  - Add Reviewed-by Geert-san.
->  - Add a new goto label for error path.
->
-> Yoshihiro Shimoda (2):
->   mmc: renesas_sdhi_internal_dmac: Fix missing unmap in error patch
->   mmc: renesas_sdhi_internal_dmac: Cannot clear the RX_IN_USE in abort
->
->  drivers/mmc/host/renesas_sdhi_internal_dmac.c | 15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
->
-> --
-> 1.9.1
->
+On Tue, Jul 17, 2018 at 12:12:14PM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Tue, Jul 17, 2018 at 11:59 AM Simon Horman <horms@verge.net.au> wrote:
+> > On Fri, Jul 13, 2018 at 10:33:17AM +0200, Geert Uytterhoeven wrote:
+> > > On Fri, Jul 13, 2018 at 10:19 AM Geert Uytterhoeven
+> > > <geert@linux-m68k.org> wrote:
+> > > > On Fri, Jul 13, 2018 at 10:08 AM Simon Horman <horms@verge.net.au> wrote:
+> > > > > On Thu, Jul 12, 2018 at 06:08:57PM +0200, Geert Uytterhoeven wrote:
+> > > > > > R-Mobile APE6, R-Car Gen2, and RZ/G1 SoCs have Cortex-A7 and/or
+> > > > > > Cortex-A15 CPU cores, all of which have ARM architectured timers.
+> > > > > >
+> > > > > > Force use of the ARM architectured timer on these SoCs.
+> > > > > > This allows to:
+> > > > > >   - Remove the calls to shmobile_init_delay() from the corresponding
+> > > > > >     machine vectors,
+> > > > > >   - Remove a check in timer setup specific to R-Car Gen2,
+> > > > > >   - Remove a check in shmobile_init_delay().
+> > > > > >
+> > > > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > > >
+> > > > > on which boards did you test this?
+> > > >
+> > > > On APE6EVM and Koelsch (R-Car M2-W).
+> > > > I can give it a spin on a few more remote R-Car Gen2 boards if you want.
+> > >
+> > > I don't expect any issues, as shmobile_defconfig already enables
+> > > CONFIG_HAVE_ARM_ARCH_TIMER, and shmobile_init_delay() was already
+> > > a no-op in that case.
+> >
+> > I am happy if you are happy.
+> > Shall I go ahead and apply this?
+> 
+> Yes, selecting HAVE_ARM_ARCH_TIMER is consistent with what several
+> other SoCs are already doing, and it leads to less code.
+> 
+> > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Thanks!
 
-Thanks, applied for fixes!
-
-Kind regards
-Uffe
+Thanks, applied.
