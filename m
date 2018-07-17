@@ -1,40 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:37412 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388075AbeGKOgE (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57090 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731314AbeGQMvw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:36:04 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ARM: multi_v7_defconfig: Enable support for RZN1D-DB
-Date: Wed, 11 Jul 2018 16:31:23 +0200
-Message-Id: <20180711143123.4838-1-geert+renesas@glider.be>
+        Tue, 17 Jul 2018 08:51:52 -0400
+Date: Tue, 17 Jul 2018 14:19:25 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: Re: [PATCH v4] arm64: dts: r8a77995: Add SCIF {0,1,3,4,5} and all
+ HSCIF device nodes
+Message-ID: <20180717121924.42ilbf4l6ryksmap@verge.net.au>
+References: <20180717113832.26413-1-horms+renesas@verge.net.au>
+ <CAMuHMdXZ_pQaF7BZs_F6MdYsacRDHmNLnUS14n5yhy9+r6Z5Mw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXZ_pQaF7BZs_F6MdYsacRDHmNLnUS14n5yhy9+r6Z5Mw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable support for the Renesas RZN1D-DB Board:
-  - RZ/N1D (R9A06G032) base SoC support.
+On Tue, Jul 17, 2018 at 01:45:26PM +0200, Geert Uytterhoeven wrote:
+> On Tue, Jul 17, 2018 at 1:38 PM Simon Horman <horms+renesas@verge.net.au> wrote:
+> > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> >
+> > This patch adds the device nodes for SCIF {0,1,3,4,5} and all HSCIF serial
+> > ports, incl. clocks, power domain and DMAs.
+> >
+> > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> > Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > --
+> > v3 [Simon Horman]
+> > * Add DMAs
+> 
+> For the newly added SCIF dmas:
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 155d1eb10c6580fe..d0dea6cad4eb7613 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -89,6 +89,7 @@ CONFIG_ARCH_R8A7791=y
- CONFIG_ARCH_R8A7792=y
- CONFIG_ARCH_R8A7793=y
- CONFIG_ARCH_R8A7794=y
-+CONFIG_ARCH_R9A06G032=y
- CONFIG_ARCH_SH73A0=y
- CONFIG_ARCH_SOCFPGA=y
- CONFIG_PLAT_SPEAR=y
--- 
-2.17.1
+Thanks, applied.
