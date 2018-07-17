@@ -1,318 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33510 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727518AbeGTMxS (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:57494 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729684AbeGQVKW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jul 2018 08:53:18 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/9] ARM: dts: renesas: Drop MTD partitioning from DT
-Date: Fri, 20 Jul 2018 14:05:10 +0200
-Message-Id: <3c1b0f731777f01691bc2107aa101771b91ba509.1532086734.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1532086734.git.horms+renesas@verge.net.au>
-References: <cover.1532086734.git.horms+renesas@verge.net.au>
+        Tue, 17 Jul 2018 17:10:22 -0400
+From: Kieran Bingham <kieran@ksquared.org.uk>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v5 02/11] media: vsp1: Remove packed attributes from aligned structures
+Date: Tue, 17 Jul 2018 21:35:44 +0100
+Message-Id: <bbb67734d09bc37971ce323570dfb085b7fec0dd.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Marek Vasut <marek.vasut@gmail.com>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Drop the MTD partitioning from DT, since it does not describe HW
-and to give way to a more flexible kernel command line partition
-passing.
+The use of the packed attribute can cause a performance penalty for
+all accesses to the struct members, as the compiler will assume that the
+structure has the potential to have an unaligned base.
 
-To retain the original partitioning, assure you have enabled
-CONFIG_MTD_CMDLINE_PARTS in your kernel config and add the
-following to your kernel command line:
+These structures are all correctly aligned and contain no holes, thus
+the attribute is redundant and negatively impacts performance, so we
+remove the attributes entirely.
 
-lager:   mtdparts=spi0.0:256k(loader),4m(user),-(flash)
-stout:   mtdparts=spi0.0:512k(loader),256k(uboot),256k(uboot-env),-(flash)
-koelsch: mtdparts=spi0.0:512k(loader),5632k(user),-(flash)
-porter:  mtdparts=spi0.0:256k(loader_prg),4m(user_prg),-(flash_fs)
-wheat:   mtdparts=spi0.0:256k(loader),4m(user),-(flash)
-gose:    mtdparts=spi0.0:256k(loader),4m(user),-(flash)
-alt:     mtdparts=spi0.0:256k(loader),256k(system),-(user)
-silk:    mtdparts=spi0.0:256k(loader),4m(user),-(flash)
-
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be> on Koelsch
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7790-lager.dts   | 21 ---------------------
- arch/arm/boot/dts/r8a7790-stout.dts   | 26 --------------------------
- arch/arm/boot/dts/r8a7791-koelsch.dts | 21 ---------------------
- arch/arm/boot/dts/r8a7791-porter.dts  | 21 ---------------------
- arch/arm/boot/dts/r8a7792-wheat.dts   | 21 ---------------------
- arch/arm/boot/dts/r8a7793-gose.dts    | 21 ---------------------
- arch/arm/boot/dts/r8a7794-alt.dts     | 21 ---------------------
- arch/arm/boot/dts/r8a7794-silk.dts    | 21 ---------------------
- 8 files changed, 173 deletions(-)
+v2
+ - Remove attributes entirely
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 092610e3f953..7c95e62efd46 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -710,27 +710,6 @@
- 		spi-cpha;
- 		spi-cpol;
- 		m25p,fast-read;
--
--		partitions {
--			compatible = "fixed-partitions";
--			#address-cells = <1>;
--			#size-cells = <1>;
--
--			partition@0 {
--				label = "loader";
--				reg = <0x00000000 0x00040000>;
--				read-only;
--			};
--			partition@40000 {
--				label = "user";
--				reg = <0x00040000 0x00400000>;
--				read-only;
--			};
--			partition@440000 {
--				label = "flash";
--				reg = <0x00440000 0x03bc0000>;
--			};
--		};
- 	};
- };
+ drivers/media/platform/vsp1/vsp1_dl.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index d9b9cdd8fbe2..5da7988dd616 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -25,19 +25,19 @@
+ struct vsp1_dl_header_list {
+ 	u32 num_bytes;
+ 	u32 addr;
+-} __attribute__((__packed__));
++};
  
-diff --git a/arch/arm/boot/dts/r8a7790-stout.dts b/arch/arm/boot/dts/r8a7790-stout.dts
-index a13a92c26645..dc65519d53ab 100644
---- a/arch/arm/boot/dts/r8a7790-stout.dts
-+++ b/arch/arm/boot/dts/r8a7790-stout.dts
-@@ -211,32 +211,6 @@
- 		spi-cpha;
- 		spi-cpol;
- 		m25p,fast-read;
--
--		partitions {
--			compatible = "fixed-partitions";
--			#address-cells = <1>;
--			#size-cells = <1>;
--
--			partition@0 {
--				label = "loader";
--				reg = <0x00000000 0x00080000>;
--				read-only;
--			};
--			partition@80000 {
--				label = "uboot";
--				reg = <0x00080000 0x00040000>;
--				read-only;
--			};
--			partition@c0000 {
--				label = "uboot-env";
--				reg = <0x000c0000 0x00040000>;
--				read-only;
--			};
--			partition@100000 {
--				label = "flash";
--				reg = <0x00100000 0x03f00000>;
--			};
--		};
- 	};
- };
+ struct vsp1_dl_header {
+ 	u32 num_lists;
+ 	struct vsp1_dl_header_list lists[8];
+ 	u32 next_header;
+ 	u32 flags;
+-} __attribute__((__packed__));
++};
  
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index 8ab793d8b2fd..406d5d29e29c 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -724,27 +724,6 @@
- 		spi-cpha;
- 		spi-cpol;
- 		m25p,fast-read;
--
--		partitions {
--			compatible = "fixed-partitions";
--			#address-cells = <1>;
--			#size-cells = <1>;
--
--			partition@0 {
--				label = "loader";
--				reg = <0x00000000 0x00080000>;
--				read-only;
--			};
--			partition@80000 {
--				label = "user";
--				reg = <0x00080000 0x00580000>;
--				read-only;
--			};
--			partition@600000 {
--				label = "flash";
--				reg = <0x00600000 0x03a00000>;
--			};
--		};
- 	};
- };
+ struct vsp1_dl_entry {
+ 	u32 addr;
+ 	u32 data;
+-} __attribute__((__packed__));
++};
  
-diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-index 5f77d73d7462..e8b834e5e2bc 100644
---- a/arch/arm/boot/dts/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -344,27 +344,6 @@
- 		spi-tx-bus-width = <4>;
- 		spi-rx-bus-width = <4>;
- 		m25p,fast-read;
--
--		partitions {
--			compatible = "fixed-partitions";
--			#address-cells = <1>;
--			#size-cells = <1>;
--
--			partition@0 {
--				label = "loader_prg";
--				reg = <0x00000000 0x00040000>;
--				read-only;
--			};
--			partition@40000 {
--				label = "user_prg";
--				reg = <0x00040000 0x00400000>;
--				read-only;
--			};
--			partition@440000 {
--				label = "flash_fs";
--				reg = <0x00440000 0x03bc0000>;
--			};
--		};
- 	};
- };
- 
-diff --git a/arch/arm/boot/dts/r8a7792-wheat.dts b/arch/arm/boot/dts/r8a7792-wheat.dts
-index db01de7a3811..93f78716225a 100644
---- a/arch/arm/boot/dts/r8a7792-wheat.dts
-+++ b/arch/arm/boot/dts/r8a7792-wheat.dts
-@@ -217,27 +217,6 @@
- 		spi-cpol;
- 		spi-cpha;
- 		m25p,fast-read;
--
--		partitions {
--			compatible = "fixed-partitions";
--			#address-cells = <1>;
--			#size-cells = <1>;
--
--			partition@0 {
--				label = "loader";
--				reg = <0x00000000 0x00040000>;
--				read-only;
--			};
--			partition@40000 {
--				label = "user";
--				reg = <0x00040000 0x00400000>;
--				read-only;
--			};
--			partition@440000 {
--				label = "flash";
--				reg = <0x00440000 0x03bc0000>;
--			};
--		};
- 	};
- };
- 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index aa209f6e5d71..b2dd54fbe40c 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -676,27 +676,6 @@
- 		spi-cpol;
- 		spi-cpha;
- 		m25p,fast-read;
--
--		partitions {
--			compatible = "fixed-partitions";
--			#address-cells = <1>;
--			#size-cells = <1>;
--
--			partition@0 {
--				label = "loader";
--				reg = <0x00000000 0x00040000>;
--				read-only;
--			};
--			partition@40000 {
--				label = "user";
--				reg = <0x00040000 0x00400000>;
--				read-only;
--			};
--			partition@440000 {
--				label = "flash";
--				reg = <0x00440000 0x03bc0000>;
--			};
--		};
- 	};
- };
- 
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index e17027532941..1d044ed598f3 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -419,26 +419,5 @@
- 		spi-cpol;
- 		spi-cpha;
- 		m25p,fast-read;
--
--		partitions {
--			compatible = "fixed-partitions";
--			#address-cells = <1>;
--			#size-cells = <1>;
--
--			partition@0 {
--				label = "loader";
--				reg = <0x00000000 0x00040000>;
--				read-only;
--			};
--			partition@40000 {
--				label = "system";
--				reg = <0x00040000 0x00040000>;
--				read-only;
--			};
--			partition@80000 {
--				label = "user";
--				reg = <0x00080000 0x03f80000>;
--			};
--		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
-index 7808aaee6644..b8163a0e2190 100644
---- a/arch/arm/boot/dts/r8a7794-silk.dts
-+++ b/arch/arm/boot/dts/r8a7794-silk.dts
-@@ -444,27 +444,6 @@
- 		spi-cpol;
- 		spi-cpha;
- 		m25p,fast-read;
--
--		partitions {
--			compatible = "fixed-partitions";
--			#address-cells = <1>;
--			#size-cells = <1>;
--
--			partition@0 {
--				label = "loader";
--				reg = <0x00000000 0x00040000>;
--				read-only;
--			};
--			partition@40000 {
--				label = "user";
--				reg = <0x00040000 0x00400000>;
--				read-only;
--			};
--			partition@440000 {
--				label = "flash";
--				reg = <0x00440000 0x03bc0000>;
--			};
--		};
- 	};
- };
- 
+ /**
+  * struct vsp1_dl_body - Display list body
 -- 
-2.11.0
+git-series 0.9.1
