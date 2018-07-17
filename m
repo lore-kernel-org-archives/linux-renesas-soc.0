@@ -1,50 +1,59 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:34316 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730290AbeG0KFr (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jul 2018 06:05:47 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+Date: Tue, 17 Jul 2018 10:44:18 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dmaengine: rcar-dmac: Make rcar_dmac_of_xlate() more robust
-Date: Fri, 27 Jul 2018 10:44:47 +0200
-Message-Id: <20180727084447.13984-1-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Eddie James <eajames@linux.vnet.ibm.com>
+Subject: Re: [PATCH v2 3/3] i2c: recovery: refactor recovery function
+Message-ID: <20180717084418.633ygemoyh4sapxz@ninjato>
+References: <20180710214217.1336-1-wsa+renesas@sang-engineering.com>
+ <20180710214217.1336-4-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yrcwlerfsj6muoq7"
+Content-Disposition: inline
+In-Reply-To: <20180710214217.1336-4-wsa+renesas@sang-engineering.com>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add an upper bound check for the MID/RID value passed from DT via the
-DMA spec.
 
-This avoids writing to reserved bits in the DMARS registers in case of
-an out-of-range value in DT.
+--yrcwlerfsj6muoq7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Suggested-by: Renesas BSP team via Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/dma/sh/rcar-dmac.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+On Tue, Jul 10, 2018 at 11:42:17PM +0200, Wolfram Sang wrote:
+> After exiting the while loop, we checked if recovery was successful and
+> sent a STOP to the clients. Meanwhile however, we send a STOP after
+> every pulse, so it is not needed after the loop. If we move the check
+> for a free bus to the end of the while loop, we can shorten and simplify
+> the logic. It is still ensured that at least one STOP will be sent to
+> the wire even if SDA was not stuck low.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 72572320208dbb9a..73cf1053bed90244 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -1644,8 +1644,11 @@ static struct dma_chan *rcar_dmac_of_xlate(struct of_phandle_args *dma_spec,
- 	struct dma_chan *chan;
- 	dma_cap_mask_t mask;
- 
--	if (dma_spec->args_count != 1)
-+	if (dma_spec->args_count != 1 || dma_spec->args[0] > 0xff) {
-+		pr_info("%s: invalid MID/RID 0x%x... for %pOF\n", __func__,
-+			dma_spec->args[0], dma_spec->np);
- 		return NULL;
-+	}
- 
- 	/* Only slave DMA channels can be allocated via DT */
- 	dma_cap_zero(mask);
--- 
-2.17.1
+Applied to for-next, thanks!
+
+
+--yrcwlerfsj6muoq7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltNrGIACgkQFA3kzBSg
+KbbxFw//dplUWHTK7q6UepHqn2RCVRX6Xtx4DqGx/OyVLX2rvTEI8PO4rEVuRwR/
+DpAfTAgVcJOUY/Rb21kOJ2hkk6Avx2c9M++rUhqVmzE/IW2apZXeG2ylbkwG5aAD
+fQI7YTTlaPBejD173aV012eYK374SFp09bxWBp3djVHZIpQoH22eBpvEy5gCTGgY
+RfE01JXrJb2z0QrporRThvydLxMVFkNTh8lmFcV2yN4g/3OoK+0ks/7TfqdQu4bK
+WQOSrsfcP9cF3XtBWOvbpzO9euKl2TwHsFb6caLOvvbBTH/2Jxcj/c5NKvaJn5FS
+AIL04agFp1uyya5nHxbK4BWkU5mH3jXBdfu3sH4G7bHFiFuSIRHfabkxC7Rj6aoI
+tdwEu9EZvkUWOcVKcb3k3sJbNEGEJLMyEwNtxrleLnZHo+8O/ZEwdPiiQlVT7dMU
+34E2YyXiGCEiw4SoMiaWG+YvKU1QfjhQgb0lHGM8uiI2uEVHzMXzrWJUOpDscwF3
+le01YpkcXGR0ZHBMwWfowAtxo8Xm+V8QQNqeo5+IqEFrIW1ZB9p+fCKvbcOjcihv
+K22AfhQ+5jogIY4jY/g2vLuBjOMSFXb/jutfbwKYa9aJS8s0Om4tI9arGYVWHv9r
+bSTLxwqb7iXfn5PeWM4lIMTQ0bgf4y/2ZZI5v2S8SZj01B9zEhM=
+=DeG3
+-----END PGP SIGNATURE-----
+
+--yrcwlerfsj6muoq7--
