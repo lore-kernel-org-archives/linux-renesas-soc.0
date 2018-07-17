@@ -1,59 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:52868 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753104AbeGCVK2 (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:53505 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731524AbeGQNEM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Jul 2018 17:10:28 -0400
-Date: Tue, 3 Jul 2018 23:10:25 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] i2c: gpio: fault-injector: refactor incomplete
- transfer
-Message-ID: <20180703211025.pqliqly7z43scl7i@ninjato>
-References: <20180629091247.32568-1-wsa+renesas@sang-engineering.com>
- <20180629091247.32568-2-wsa+renesas@sang-engineering.com>
+        Tue, 17 Jul 2018 09:04:12 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Lars-Peter Clausen <lars@metafoo.de>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        Steve Longerbeam <steve_longerbeam@mentor.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 2/2] adv7180: add g_frame_interval support
+Date: Tue, 17 Jul 2018 14:30:41 +0200
+Message-Id: <20180717123041.2862-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180717123041.2862-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180717123041.2862-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="53ak45ahsznario5"
-Content-Disposition: inline
-In-Reply-To: <20180629091247.32568-2-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Implement g_frame_interval to return the current standard's frame
+interval.
 
---53ak45ahsznario5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/i2c/adv7180.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-On Fri, Jun 29, 2018 at 11:12:46AM +0200, Wolfram Sang wrote:
-> Make the incomplete_transfer routine reusable, so we can add other test
-> cases with different patterns later. Prepare the docs for that, too.
->=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Applied to for-next, thanks!
-
-
---53ak45ahsznario5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAls75kEACgkQFA3kzBSg
-Kba5oQ//fIZmaP+MVo7ALA5agUUrXyZErUX5BgLy5S1OXbZipyCjv4G2atMOfLsE
-VsbaraJRGwUNjZG+NHBYWKwpxY1WiaPOhBIJogsFE3ghU/UgGve6AMDwUe3VmiFF
-yg7t+F3lGAN+zInHepslA41Wrkuii8iuTNGqEpmjFpbLudYcmBoZ7Qoo1diysW+j
-xIGN1I+1eKB9CYcIXqltcQm9f+TixAnSbafdunWz7/1LUxTFxr/OBxU5oLQ9hb4e
-216837TOeC++b9EZsMjvaIrpQputL+z5irSdEiNs0Ho/Qt3Ba+ntE7QRhIfKz8W1
-3mCIvVsPyJ0RArPNPaYBSgYy9HVBpQTEw2MAfLOUbIm1/qe5rKzYwYE/PAn+0qfe
-/N/m1Mq9ABxd9K2u3TIwBiatVdoeJgqXl+KXxyT0XnV+iss/TrM0CdGj0pimaf26
-tZtM2TZMmXQyquatXmeMT18CleOEIN0PgWe2thhfEM66p45Wv+VJU0yWW2wUDTYI
-AquyamTnZohREz6DmJJPeXPplYCeEBWd8OgwjllEcmMKbWn+KOVoCC+mA7/3LXfA
-hOGLpysaV2qx+xSZtjWKspwqcsoMK6dIwD0HjvKdWQPF9/jSkDK8kIP+kUdToYkT
-lqDyOketIcdvui3s+jaKrKAjaiOTvglOtkEfHeQG12arLTdN82o=
-=pYsK
------END PGP SIGNATURE-----
-
---53ak45ahsznario5--
+diff --git a/drivers/media/i2c/adv7180.c b/drivers/media/i2c/adv7180.c
+index c2e24132e8c21d38..f72312efc471acd9 100644
+--- a/drivers/media/i2c/adv7180.c
++++ b/drivers/media/i2c/adv7180.c
+@@ -461,6 +461,22 @@ static int adv7180_g_std(struct v4l2_subdev *sd, v4l2_std_id *norm)
+ 	return 0;
+ }
+ 
++static int adv7180_g_frame_interval(struct v4l2_subdev *sd,
++				    struct v4l2_subdev_frame_interval *fi)
++{
++	struct adv7180_state *state = to_state(sd);
++
++	if (state->curr_norm & V4L2_STD_525_60) {
++		fi->interval.numerator = 1001;
++		fi->interval.denominator = 30000;
++	} else {
++		fi->interval.numerator = 1;
++		fi->interval.denominator = 25;
++	}
++
++	return 0;
++}
++
+ static void adv7180_set_power_pin(struct adv7180_state *state, bool on)
+ {
+ 	if (!state->pwdn_gpio)
+@@ -820,6 +836,7 @@ static int adv7180_subscribe_event(struct v4l2_subdev *sd,
+ static const struct v4l2_subdev_video_ops adv7180_video_ops = {
+ 	.s_std = adv7180_s_std,
+ 	.g_std = adv7180_g_std,
++	.g_frame_interval = adv7180_g_frame_interval,
+ 	.querystd = adv7180_querystd,
+ 	.g_input_status = adv7180_g_input_status,
+ 	.s_routing = adv7180_s_routing,
+-- 
+2.18.0
