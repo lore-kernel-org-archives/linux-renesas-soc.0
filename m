@@ -1,82 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46240 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388279AbeGWTRH (ORCPT
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:44774 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731667AbeGQNvJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jul 2018 15:17:07 -0400
-Received: by mail-lj1-f193.google.com with SMTP id 203-v6so1319422ljj.13
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Jul 2018 11:14:41 -0700 (PDT)
-Subject: [PATCH 4/5] sh_eth: make sh_eth_tsu_write_entry() take 'offset'
- parameter
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
-Cc: linux-renesas-soc@vger.kernel.org
-References: <24093fd0-1b9b-a211-f988-0272483185d6@cogentembedded.com>
-Message-ID: <1b60d8c8-e06f-6bff-df06-9b1cbe953340@cogentembedded.com>
-Date: Mon, 23 Jul 2018 21:14:38 +0300
+        Tue, 17 Jul 2018 09:51:09 -0400
+Received: by mail-lf0-f67.google.com with SMTP id g6-v6so803110lfb.11
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Jul 2018 06:18:30 -0700 (PDT)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Tue, 17 Jul 2018 15:18:28 +0200
+To: Simon Horman <horms@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+Subject: Re: [PATCH v2 4/4] mmc: renesas_sdhi: skip SCC error check when
+ retuning
+Message-ID: <20180717131828.GI10087@bigcity.dyn.berto.se>
+References: <20180705141841.11121-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180705141841.11121-5-niklas.soderlund+renesas@ragnatech.se>
+ <20180712125722.q7b3q7ghh7hdm7jf@verge.net.au>
 MIME-Version: 1.0
-In-Reply-To: <24093fd0-1b9b-a211-f988-0272483185d6@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180712125722.q7b3q7ghh7hdm7jf@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We can add the TSU register base address to a TSU register offset right
-in sh_eth_tsu_write_entry(),  no need to do it in its callers...
+Hi Simon,
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Thanks for your feedback.
 
----
- drivers/net/ethernet/renesas/sh_eth.c |   15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+On 2018-07-12 14:57:22 +0200, Simon Horman wrote:
+> On Thu, Jul 05, 2018 at 04:18:41PM +0200, Niklas S�derlund wrote:
+> > From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+> > 
+> > Checking for SCC error during retuning is unnecessary.
+> > 
+> > Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+> > [Niklas: fix small style issue]
+> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> > ---
+> >  drivers/mmc/host/renesas_sdhi_core.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> > 
+> > diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+> > index 589da18bd636c2f4..ef711c532a26babe 100644
+> > --- a/drivers/mmc/host/renesas_sdhi_core.c
+> > +++ b/drivers/mmc/host/renesas_sdhi_core.c
+> > @@ -445,6 +445,13 @@ static bool renesas_sdhi_check_scc_error(struct tmio_mmc_host *host)
+> >  {
+> >  	struct renesas_sdhi *priv = host_to_priv(host);
+> >  
+> > +	if (!(host->mmc->ios.timing == MMC_TIMING_UHS_SDR104) &&
+> > +	    !(host->mmc->ios.timing == MMC_TIMING_MMC_HS200))
+> > +		return false;
+> > +
+> > +	if (host->mmc->doing_retune)
+> > +		return false;
+> > +
+> 
+> I believe this patch needs to be updaed now that HS400 support has
+> been merged.
 
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.c
-@@ -2676,18 +2676,19 @@ static int sh_eth_tsu_busy(struct net_de
- 	return 0;
- }
- 
--static int sh_eth_tsu_write_entry(struct net_device *ndev, void *reg,
-+static int sh_eth_tsu_write_entry(struct net_device *ndev, u16 offset,
- 				  const u8 *addr)
- {
-+	struct sh_eth_private *mdp = netdev_priv(ndev);
- 	u32 val;
- 
- 	val = addr[0] << 24 | addr[1] << 16 | addr[2] << 8 | addr[3];
--	iowrite32(val, reg);
-+	iowrite32(val, mdp->tsu_addr + offset);
- 	if (sh_eth_tsu_busy(ndev) < 0)
- 		return -EBUSY;
- 
- 	val = addr[4] << 8 | addr[5];
--	iowrite32(val, reg + 4);
-+	iowrite32(val, mdp->tsu_addr + offset + 4);
- 	if (sh_eth_tsu_busy(ndev) < 0)
- 		return -EBUSY;
- 
-@@ -2747,9 +2748,7 @@ static int sh_eth_tsu_disable_cam_entry_
- 			 ~(1 << (31 - entry)), TSU_TEN);
- 
- 	memset(blank, 0, sizeof(blank));
--	ret = sh_eth_tsu_write_entry(ndev,
--				     mdp->tsu_addr + reg_offset + entry * 8,
--				     blank);
-+	ret = sh_eth_tsu_write_entry(ndev, reg_offset + entry * 8, blank);
- 	if (ret < 0)
- 		return ret;
- 	return 0;
-@@ -2770,9 +2769,7 @@ static int sh_eth_tsu_add_entry(struct n
- 		i = sh_eth_tsu_find_empty(ndev);
- 		if (i < 0)
- 			return -ENOMEM;
--		ret = sh_eth_tsu_write_entry(ndev,
--					     mdp->tsu_addr + reg_offset + i * 8,
--					     addr);
-+		ret = sh_eth_tsu_write_entry(ndev, reg_offset + i * 8, addr);
- 		if (ret < 0)
- 			return ret;
- 
+Thanks I missed that HS400 had been merged, will update for next 
+version.
+
+> 
+> >  	/* Check SCC error */
+> >  	if (sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL) &
+> >  	    SH_MOBILE_SDHI_SCC_RVSCNTL_RVSEN &&
+> > -- 
+> > 2.17.0
+> > 
+
+-- 
+Regards,
+Niklas S�derlund
