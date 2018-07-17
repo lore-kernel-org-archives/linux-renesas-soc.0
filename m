@@ -1,12 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:51781 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731670AbeGQOQs (ORCPT
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:35118 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728288AbeGQJHC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jul 2018 10:16:48 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Greg KH <gregkh@linuxfoundation.org>,
+        Tue, 17 Jul 2018 05:07:02 -0400
+MIME-Version: 1.0
+References: <20180711144131.73552-1-chris.brandt@renesas.com>
+ <20180711144131.73552-3-chris.brandt@renesas.com> <CAMuHMdVCA0MrD4QRZb7VPR_Dqmghfd83j4WY_oZnfqVyx++rEw@mail.gmail.com>
+In-Reply-To: <CAMuHMdVCA0MrD4QRZb7VPR_Dqmghfd83j4WY_oZnfqVyx++rEw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 17 Jul 2018 10:35:21 +0200
+Message-ID: <CAMuHMdWdOoEbwPOzOfEAHH0MXNr-Wf_-37i8Qj6WdphgyKLe7g@mail.gmail.com>
+Subject: Re: [PATCH 2/2] serial: sh-sci: Document r7s9210 bindings
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
@@ -14,25 +21,33 @@ CC: Greg KH <gregkh@linuxfoundation.org>,
         <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: RE: [PATCH 2/2] serial: sh-sci: Document r7s9210 bindings
-Date: Tue, 17 Jul 2018 13:43:54 +0000
-Message-ID: <TY1PR01MB156218E907283F6429D70F3B8A5C0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20180711144131.73552-1-chris.brandt@renesas.com>
- <20180711144131.73552-3-chris.brandt@renesas.com>
- <CAMuHMdVCA0MrD4QRZb7VPR_Dqmghfd83j4WY_oZnfqVyx++rEw@mail.gmail.com>
- <CAMuHMdWdOoEbwPOzOfEAHH0MXNr-Wf_-37i8Qj6WdphgyKLe7g@mail.gmail.com>
-In-Reply-To: <CAMuHMdWdOoEbwPOzOfEAHH0MXNr-Wf_-37i8Qj6WdphgyKLe7g@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIFR1ZXNkYXksIEp1bHkgMTcsIDIwMTgsIEdlZXJ0IFV5dHRlcmhvZXZl
-biB3cm90ZToNCj4gU29ycnksIEkgc3Bva2UgdG9vIHNvb24uDQo+IEl0IHNlZW1zIHRoZSBiaW5k
-aW5ncyB3ZXJlIG5ldmVyIHVwZGF0ZWQgZm9yIHRoZSB1c2Ugb2YgbXVsdGlwbGUNCj4gaW50ZXJy
-dXB0cw0KPiBvbiBSWi9BMS4gIEFzIFJaL0EyIGFkZHMgb25lIG5ldyBpbnRlcnJ1cHQsIGNhbiB5
-b3UgcGxlYXNlIGRvY3VtZW50IHdoaWNoDQo+IGludGVycnVwdHMgYXJlIHJlcXVpcmVkPw0KPiBU
-aGFua3MhDQoNCk9LLiBJIHdpbGwgc2VudCBhbmQgdXBkYXRlZCBwYXRjaCBpbiBhIGJpdC4NCg0K
-Q2hyaXMNCg0K
+Hi Chris,
+
+On Fri, Jul 13, 2018 at 5:50 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Wed, Jul 11, 2018 at 4:42 PM Chris Brandt <chris.brandt@renesas.com> wrote:
+> > Add R7S9210 (RZ/A2) support
+> >
+> > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Sorry, I spoke too soon.
+It seems the bindings were never updated for the use of multiple interrupts
+on RZ/A1.  As RZ/A2 adds one new interrupt, can you please document which
+interrupts are required?
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
