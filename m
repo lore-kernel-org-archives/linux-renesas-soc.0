@@ -1,115 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34690 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030294AbeGAQaE (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:58570 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730246AbeGQLmy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:30:04 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4.14 023/157] lib/vsprintf: Remove atomic-unsafe support for %pCr
-Date: Sun,  1 Jul 2018 18:21:35 +0200
-Message-Id: <20180701160853.418396263@linuxfoundation.org>
-In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
-References: <20180701160852.287307684@linuxfoundation.org>
+        Tue, 17 Jul 2018 07:42:54 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Ulrich Hecht <ulrich.hecht@gmail.com>
+CC: "mathias.nyman@intel.com" <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 3/3] usb: host: xhci-rcar: Add a condition check about PLL
+ active
+Date: Tue, 17 Jul 2018 11:10:43 +0000
+Message-ID: <OSBPR01MB22934A31443A48EB34A937BCD85C0@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+References: <1530614818-7634-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1530614818-7634-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAO3366yejRNmhzOHpuzwDhdLG_hRynT4tsAciDJuQ8Dz9MkXFg@mail.gmail.com>
+In-Reply-To: <CAO3366yejRNmhzOHpuzwDhdLG_hRynT4tsAciDJuQ8Dz9MkXFg@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
-
-------------------
-
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-
-commit 666902e42fd8344b923c02dc5b0f37948ff4f225 upstream.
-
-"%pCr" formats the current rate of a clock, and calls clk_get_rate().
-The latter obtains a mutex, hence it must not be called from atomic
-context.
-
-Remove support for this rarely-used format, as vsprintf() (and e.g.
-printk()) must be callable from any context.
-
-Any remaining out-of-tree users will start seeing the clock's name
-printed instead of its rate.
-
-Reported-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Fixes: 900cca2944254edd ("lib/vsprintf: add %pC{,n,r} format specifiers for clocks")
-Link: http://lkml.kernel.org/r/1527845302-12159-5-git-send-email-geert+renesas@glider.be
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>
-To: Michael Turquette <mturquette@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-To: Zhang Rui <rui.zhang@intel.com>
-To: Eduardo Valentin <edubezval@gmail.com>
-To: Eric Anholt <eric@anholt.net>
-To: Stefan Wahren <stefan.wahren@i2se.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-doc@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
-Cc: linux-serial@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: stable@vger.kernel.org # 4.1+
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- Documentation/printk-formats.txt |    3 +--
- lib/vsprintf.c                   |    3 ---
- 2 files changed, 1 insertion(+), 5 deletions(-)
-
---- a/Documentation/printk-formats.txt
-+++ b/Documentation/printk-formats.txt
-@@ -397,11 +397,10 @@ struct clk
- 
- 	%pC	pll1
- 	%pCn	pll1
--	%pCr	1560000000
- 
- For printing struct clk structures. ``%pC`` and ``%pCn`` print the name
- (Common Clock Framework) or address (legacy clock framework) of the
--structure; ``%pCr`` prints the current clock rate.
-+structure.
- 
- Passed by reference.
- 
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -1392,9 +1392,6 @@ char *clock(char *buf, char *end, struct
- 		return string(buf, end, NULL, spec);
- 
- 	switch (fmt[1]) {
--	case 'r':
--		return number(buf, end, clk_get_rate(clk), spec);
--
- 	case 'n':
- 	default:
- #ifdef CONFIG_COMMON_CLK
+SGkgVWxyaWNoLXNhbiwNCg0KVGhhbmsgeW91IGZvciB0aGUgcmV2aWV3IQ0KDQo+IEZyb206IFVs
+cmljaCBIZWNodCwgU2VudDogTW9uZGF5LCBKdWx5IDE2LCAyMDE4IDg6MDkgUE0NCj4gDQo+IE9u
+IFR1ZSwgSnVsIDMsIDIwMTggYXQgMTI6NDYgUE0sIFlvc2hpaGlybyBTaGltb2RhDQo+IDx5b3No
+aWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gVGhpcyBwYXRjaCBhZGRz
+IGEgY29uZGl0aW9uIGNoZWNrIGFib3V0IHRoZSBQTEwgYWN2aWNlIG9mIHRoaXMNCj4gPiBjb250
+cm9sbGVyLiBPdGhlcndpc2UsIHRoZSBjb250cm9sbGVyIG1pZ2h0IGNhdXNlIGhhbmcgd2hlbg0K
+PiA+IGFueSBVU0IgY2xvY2tzIGFyZSBub3Qgc3VwcGxpZWQgeWV0IGFuZCBhY2Nlc3NlcyB0aGUg
+eEhDSSByZWdpc3RlcnMuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBZb3NoaWhpcm8gU2hpbW9k
+YSA8eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+DQo+ID4gLS0tDQo+ID4gIGRyaXZl
+cnMvdXNiL2hvc3QveGhjaS1yY2FyLmMgfCAyNiArKysrKysrKysrKysrKysrKysrKysrKysrKw0K
+PiA+ICAxIGZpbGUgY2hhbmdlZCwgMjYgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvdXNiL2hvc3QveGhjaS1yY2FyLmMgYi9kcml2ZXJzL3VzYi9ob3N0L3hoY2kt
+cmNhci5jDQo+ID4gaW5kZXggNGEyMmYyNS4uYTZlNDYzNyAxMDA2NDQNCj4gPiAtLS0gYS9kcml2
+ZXJzL3VzYi9ob3N0L3hoY2ktcmNhci5jDQo+ID4gKysrIGIvZHJpdmVycy91c2IvaG9zdC94aGNp
+LXJjYXIuYw0KPiA+IEBAIC0yOSw2ICsyOSw3IEBADQo+ID4gIE1PRFVMRV9GSVJNV0FSRShYSENJ
+X1JDQVJfRklSTVdBUkVfTkFNRV9WMyk7DQo+ID4NCj4gPiAgLyoqKiBSZWdpc3RlciBPZmZzZXQg
+KioqLw0KPiA+ICsjZGVmaW5lIFJDQVJfVVNCM19BWEhfU1RBICAgICAgMHgxMDQgICAvKiBBWEkg
+SG9zdCBDb250cm9sIFN0YXR1cyAqLw0KPiA+ICAjZGVmaW5lIFJDQVJfVVNCM19JTlRfRU5BICAg
+ICAgMHgyMjQgICAvKiBJbnRlcnJ1cHQgRW5hYmxlICovDQo+ID4gICNkZWZpbmUgUkNBUl9VU0Iz
+X0RMX0NUUkwgICAgICAweDI1MCAgIC8qIEZXIERvd25sb2FkIENvbnRyb2wgJiBTdGF0dXMgKi8N
+Cj4gPiAgI2RlZmluZSBSQ0FSX1VTQjNfRldfREFUQTAgICAgIDB4MjU4ICAgLyogRlcgRGF0YTAg
+Ki8NCj4gPiBAQCAtNDEsNiArNDIsMTIgQEANCj4gPiAgI2RlZmluZSBSQ0FSX1VTQjNfVFhfUE9M
+ICAgICAgIDB4YWI4ICAgLyogVVNCMy4wIFRYIFBvbGFyaXR5ICovDQo+ID4NCj4gPiAgLyoqKiBS
+ZWdpc3RlciBTZXR0aW5ncyAqKiovDQo+ID4gKy8qIEFYSSBIb3N0IENvbnRyb2wgU3RhdHVzICov
+DQo+ID4gKyNkZWZpbmUgUkNBUl9VU0IzX0FYSF9TVEFfQjNfUExMX0FDVElWRSAgICAgICAgICAg
+ICAgICAweDAwMDEwMDAwDQo+ID4gKyNkZWZpbmUgUkNBUl9VU0IzX0FYSF9TVEFfQjJfUExMX0FD
+VElWRSAgICAgICAgICAgICAgICAweDAwMDAwMDAxDQo+IA0KPiBNYXliZSB1c2UgQklUKCkgaGVy
+ZT8NCg0KSSB0aGluayBzby4NCiMgU2luY2UgUkNBUl9VU0IzX0lOVF9YSENfRU5BIGRvZXNu4oCZ
+dCB1c2UgQklUKCksIEkgZG9uJ3QgdXNlIHRoZSBtYWNybyB0byB0aGUgbmV3ICNkZWZpbmUuDQoj
+IEJ1dCwgUkNBUl9VU0IzX1JYX1BPTF9WQUwgdXNlcyBCSVQoKS4NCg0KSG93ZXZlciwgdGhpcyBw
+YXRjaCBoYXMgYWxyZWFkeSBiZWVuIG1lcmdlZCBpbnRvIEdyZWcncyByZXBvLg0KU28sIEknZCBs
+aWtlIHRvIHN1Ym1pdCBhbiBpbmNyZW1lbnRhbCBwYXRjaCBmb3IgY2xlYW5pbmcgdXAgdGhlIGNv
+ZGUNCihhbG1vc3QgYWxsICNkZWZpbmUgdXNlIEJJVCgpKSBsYXRlci4NCg0KQmVzdCByZWdhcmRz
+LA0KWW9zaGloaXJvIFNoaW1vZGENCg0KPiA+ICsjZGVmaW5lIFJDQVJfVVNCM19BWEhfU1RBX1BM
+TF9BQ1RJVkVfTUFTSyAoUkNBUl9VU0IzX0FYSF9TVEFfQjNfUExMX0FDVElWRSB8IFwNCj4gPiAr
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgUkNBUl9VU0IzX0FYSF9T
+VEFfQjJfUExMX0FDVElWRSkNCj4gPiArDQo+ID4gIC8qIEludGVycnVwdCBFbmFibGUgKi8NCj4g
+PiAgI2RlZmluZSBSQ0FSX1VTQjNfSU5UX1hIQ19FTkEgIDB4MDAwMDAwMDENCj4gPiAgI2RlZmlu
+ZSBSQ0FSX1VTQjNfSU5UX1BNRV9FTkEgIDB4MDAwMDAwMDINCj4gPiBAQCAtMjAwLDYgKzIwNywy
+MiBAQCBzdGF0aWMgaW50IHhoY2lfcmNhcl9kb3dubG9hZF9maXJtd2FyZShzdHJ1Y3QgdXNiX2hj
+ZCAqaGNkKQ0KPiA+ICAgICAgICAgcmV0dXJuIHJldHZhbDsNCj4gPiAgfQ0KPiA+DQo+ID4gK3N0
+YXRpYyBib29sIHhoY2lfcmNhcl93YWl0X2Zvcl9wbGxfYWN0aXZlKHN0cnVjdCB1c2JfaGNkICpo
+Y2QpDQo+ID4gK3sNCj4gPiArICAgICAgIGludCB0aW1lb3V0ID0gMTAwMDsNCj4gPiArICAgICAg
+IHUzMiB2YWwsIG1hc2sgPSBSQ0FSX1VTQjNfQVhIX1NUQV9QTExfQUNUSVZFX01BU0s7DQo+ID4g
+Kw0KPiA+ICsgICAgICAgd2hpbGUgKHRpbWVvdXQgPiAwKSB7DQo+ID4gKyAgICAgICAgICAgICAg
+IHZhbCA9IHJlYWRsKGhjZC0+cmVncyArIFJDQVJfVVNCM19BWEhfU1RBKTsNCj4gPiArICAgICAg
+ICAgICAgICAgaWYgKCh2YWwgJiBtYXNrKSA9PSBtYXNrKQ0KPiA+ICsgICAgICAgICAgICAgICAg
+ICAgICAgIHJldHVybiB0cnVlOw0KPiA+ICsgICAgICAgICAgICAgICB1ZGVsYXkoMSk7DQo+ID4g
+KyAgICAgICAgICAgICAgIHRpbWVvdXQtLTsNCj4gPiArICAgICAgIH0NCj4gPiArDQo+ID4gKyAg
+ICAgICByZXR1cm4gZmFsc2U7DQo+ID4gK30NCj4gPiArDQo+ID4gIC8qIFRoaXMgZnVuY3Rpb24g
+bmVlZHMgdG8gaW5pdGlhbGl6ZSBhICJwaHkiIG9mIHVzYiBiZWZvcmUgKi8NCj4gPiAgaW50IHho
+Y2lfcmNhcl9pbml0X3F1aXJrKHN0cnVjdCB1c2JfaGNkICpoY2QpDQo+ID4gIHsNCj4gPiBAQCAt
+MjIwLDYgKzI0Myw5IEBAIGludCB4aGNpX3JjYXJfaW5pdF9xdWlyayhzdHJ1Y3QgdXNiX2hjZCAq
+aGNkKQ0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgIHhoY2lfcmNhcl9pc19nZW4zKGhjZC0+
+c2VsZi5jb250cm9sbGVyKSkNCj4gPiAgICAgICAgICAgICAgICAgeGhjaS0+cXVpcmtzIHw9IFhI
+Q0lfTk9fNjRCSVRfU1VQUE9SVDsNCj4gPg0KPiA+ICsgICAgICAgaWYgKCF4aGNpX3JjYXJfd2Fp
+dF9mb3JfcGxsX2FjdGl2ZShoY2QpKQ0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gLUVUSU1F
+RE9VVDsNCj4gPiArDQo+ID4gICAgICAgICByZXR1cm4geGhjaV9yY2FyX2Rvd25sb2FkX2Zpcm13
+YXJlKGhjZCk7DQo+ID4gIH0NCj4gPg0KPiA+IC0tDQo+ID4gMS45LjENCj4gPg0KPiANCj4gUmV2
+aWV3ZWQtYnk6IFVscmljaCBIZWNodCA8dWxyaWNoLmhlY2h0K3JlbmVzYXNAZ21haWwuY29tPg0K
+PiANCj4gQ1UNCj4gVWxpDQo=
