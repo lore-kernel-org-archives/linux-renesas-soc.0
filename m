@@ -1,101 +1,54 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:46242 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729025AbeGYOZB (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jul 2018 10:25:01 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: Magnus Damm <damm+renesas@opensource.se>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] iommu/ipmmu-vmsa: Fix allocation in atomic context
-Date: Wed, 25 Jul 2018 15:13:20 +0200
-Message-Id: <20180725131320.5994-1-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+Date: Tue, 17 Jul 2018 10:48:10 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH 2/2] i2c: rcar: use the new get_bus_free callback
+Message-ID: <20180717084809.qshhxb4xed242tog@ninjato>
+References: <20180710222423.7792-1-wsa+renesas@sang-engineering.com>
+ <20180710222423.7792-3-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5qp3iu4wvbwyhiok"
+Content-Disposition: inline
+In-Reply-To: <20180710222423.7792-3-wsa+renesas@sang-engineering.com>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When attaching a device to an IOMMU group with
-CONFIG_DEBUG_ATOMIC_SLEEP=y:
 
-    BUG: sleeping function called from invalid context at mm/slab.h:421
-    in_atomic(): 1, irqs_disabled(): 128, pid: 61, name: kworker/1:1
-    ...
-    Call trace:
-     ...
-     arm_lpae_alloc_pgtable+0x114/0x184
-     arm_64_lpae_alloc_pgtable_s1+0x2c/0x128
-     arm_32_lpae_alloc_pgtable_s1+0x40/0x6c
-     alloc_io_pgtable_ops+0x60/0x88
-     ipmmu_attach_device+0x140/0x334
+--5qp3iu4wvbwyhiok
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-ipmmu_attach_device() takes a spinlock, while arm_lpae_alloc_pgtable()
-allocates memory using GFP_KERNEL.  Originally, the ipmmu-vmsa driver
-had its own custom page table allocation implementation using
-GFP_ATOMIC, hence the spinlock was fine.
+On Wed, Jul 11, 2018 at 12:24:23AM +0200, Wolfram Sang wrote:
+> To break out of recovery as early as possible, feed back the bus_free
+> logic state.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Fix this by replacing the spinlock by a mutex, like the arm-smmu driver
-does.
+Applied to for-next, thanks!
 
-Fixes: f20ed39f53145e45 ("iommu/ipmmu-vmsa: Use the ARM LPAE page table allocator")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
-v2:
-  - Add Reviewed-by.
----
- drivers/iommu/ipmmu-vmsa.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 40ae6e87cb880223..ef566b4989d6e2f8 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -73,7 +73,7 @@ struct ipmmu_vmsa_domain {
- 	struct io_pgtable_ops *iop;
- 
- 	unsigned int context_id;
--	spinlock_t lock;			/* Protects mappings */
-+	struct mutex mutex;			/* Protects mappings */
- };
- 
- static struct ipmmu_vmsa_domain *to_vmsa_domain(struct iommu_domain *dom)
-@@ -595,7 +595,7 @@ static struct iommu_domain *__ipmmu_domain_alloc(unsigned type)
- 	if (!domain)
- 		return NULL;
- 
--	spin_lock_init(&domain->lock);
-+	mutex_init(&domain->mutex);
- 
- 	return &domain->io_domain;
- }
-@@ -641,7 +641,6 @@ static int ipmmu_attach_device(struct iommu_domain *io_domain,
- 	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
- 	struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
- 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
--	unsigned long flags;
- 	unsigned int i;
- 	int ret = 0;
- 
-@@ -650,7 +649,7 @@ static int ipmmu_attach_device(struct iommu_domain *io_domain,
- 		return -ENXIO;
- 	}
- 
--	spin_lock_irqsave(&domain->lock, flags);
-+	mutex_lock(&domain->mutex);
- 
- 	if (!domain->mmu) {
- 		/* The domain hasn't been used yet, initialize it. */
-@@ -674,7 +673,7 @@ static int ipmmu_attach_device(struct iommu_domain *io_domain,
- 	} else
- 		dev_info(dev, "Reusing IPMMU context %u\n", domain->context_id);
- 
--	spin_unlock_irqrestore(&domain->lock, flags);
-+	mutex_unlock(&domain->mutex);
- 
- 	if (ret < 0)
- 		return ret;
--- 
-2.17.1
+--5qp3iu4wvbwyhiok
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltNrUkACgkQFA3kzBSg
+KbYmxQ/+NV6DRE1C/0W/emnwgyt+WKYziG4zifw5xybB0vFFQZ2gpuKF66tupP6H
+lvIcrpd5O/9RYvTD7fUvxr32/JwWULEhUSWOvNpmld9E9ncHyMOzeWsZn1Hpcag+
+DZuER6BT2q92nMp5ejbwvEIiOuGoqlV/kI0G0tzeGhjerNOgL42WWsElLTH/+tR5
+UeOzJki47sQz4yaPS3lKkWpkKOoLELUoaGynoA1P1Mym3IBVrvsPqwlgfhXffutU
+Lt3zU/eT9zmbM5O8xXjZ7EMv/uJua8vqEROdl2DCO9IqiOlYpBoy8OWIvzDYuqAh
+Od7KhZ2wbuy+ecqUxcaY+5L+ERD8Xz+Iy24Hm5aCaIsuQv7c0A8KtQNN5WP7T6Sy
+6qL5c1nxCEm06J1bbNzdCQIWY5c+KF15YMDNuxJjPiTN1EqWwGPWW5JM1oAXnd9J
+OiWnmwnsxdhOGbJH9e0a8QNbbksHQYtWVkVNcSDLEzYmDiw0yDTsQyr0Yv/bSR7J
+YUwuvX3h9MBDg60at/IJ7bPghaanhWYSMrVBvhKaIsDtjATc/yhpsZw+lwQsqpa7
+D3VYzrEFDnELqakU6LDKD+8xqfwtNJrhh4lTBkGjZP3YPN3/O17bWGFHro/3HwtC
++EH3ZUKAPVwIlYx+Os7JsFvYKhm5/z276x3iaX7NHeYEu+afDu0=
+=ZJQI
+-----END PGP SIGNATURE-----
+
+--5qp3iu4wvbwyhiok--
