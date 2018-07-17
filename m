@@ -1,6 +1,12 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-Subject: Re: [PATCH/RFT 1/6] i2c: designware: use open drain for recovery GPIO
-To: Wolfram Sang <wsa@the-dreams.de>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:33922 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729060AbeGQJk6 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 17 Jul 2018 05:40:58 -0400
+Date: Tue, 17 Jul 2018 11:09:20 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Phil Reid <preid@electromag.com.au>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         kernel@pengutronix.de,
@@ -8,87 +14,80 @@ Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         linux-kernel@vger.kernel.org
+Subject: Re: [PATCH/RFT 1/6] i2c: designware: use open drain for recovery GPIO
+Message-ID: <20180717090920.zy6lkeqlcewhrfs5@ninjato>
 References: <20180713210920.3648-1-wsa+renesas@sang-engineering.com>
  <20180713210920.3648-2-wsa+renesas@sang-engineering.com>
  <daaf702b-642f-e0fd-6a2e-7f0f817efba3@electromag.com.au>
- <20180717090920.zy6lkeqlcewhrfs5@ninjato>
-From: Phil Reid <preid@electromag.com.au>
-Message-ID: <b8d7c7aa-dbde-3037-4a1b-691bcf045131@electromag.com.au>
-Date: Tue, 17 Jul 2018 17:27:01 +0800
 MIME-Version: 1.0
-In-Reply-To: <20180717090920.zy6lkeqlcewhrfs5@ninjato>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-AU
-Content-Transfer-Encoding: 7bit
-Sender: linux-i2c-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tg455teebzxcygml"
+Content-Disposition: inline
+In-Reply-To: <daaf702b-642f-e0fd-6a2e-7f0f817efba3@electromag.com.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 17/07/2018 17:09, Wolfram Sang wrote:
-> Hi Phil,
-> 
->>> -	gpio = devm_gpiod_get(dev->dev, "scl", GPIOD_OUT_HIGH);
->>> +	gpio = devm_gpiod_get(dev->dev, "scl", GPIOD_OUT_HIGH_OPEN_DRAIN);
->>>    	if (IS_ERR(gpio)) {
->>>    		r = PTR_ERR(gpio);
->>>    		if (r == -ENOENT || r == -ENOSYS)
->>>
->>
->> This was intentional. The gpio we use to drive the i2c line is implemented in an
->> FPGA and signals a buffer attached to the GPIO to drive scl OPEN drain. The GPIO is output
->> only.
-> 
-> So, it is not possible to read SCL status then? Hmm, currently a working
-> get_scl is required...
-> 
->> The gpio setup can still specify the the GPIO be allocated OPEN drain if someone wishes
->> to use a "smarter" gpio.
->>
->> So while the scl is open drain, there may be hardware in between that isn't.
->> What would the correct way be to deal with that now?
-> 
-> Well, I don't know much about this IP core and how/where it is used. I
-> just wonder what happens if another user comes along using an
-> open-drain GPIO. Is that possible?
-> 
-> I assume it is the same with SDA? Non open-drain? Output only?
-> 
 
-Just had a closer look at how it's setup here.
-Maybe the following helps.
+--tg455teebzxcygml
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The designware core is routed thru the fpga fabric.
-Which provides and SCL SDA output enable pin.
+Hi Phil,
 
-Recovery gpio are provided by a FPGA gpio IO core.
-This core has a fixed output and fixed input.
+> > -	gpio =3D devm_gpiod_get(dev->dev, "scl", GPIOD_OUT_HIGH);
+> > +	gpio =3D devm_gpiod_get(dev->dev, "scl", GPIOD_OUT_HIGH_OPEN_DRAIN);
+> >   	if (IS_ERR(gpio)) {
+> >   		r =3D PTR_ERR(gpio);
+> >   		if (r =3D=3D -ENOENT || r =3D=3D -ENOSYS)
+> >=20
+>
+> This was intentional. The gpio we use to drive the i2c line is implemente=
+d in an
+> FPGA and signals a buffer attached to the GPIO to drive scl OPEN drain. T=
+he GPIO is output
+> only.
 
-Here's the relevant bit on how it's all combined.
-PWR_SDA_a / PWR_SCL_a are the signals to the outside world.
-All the other signals are internal
+So, it is not possible to read SCL status then? Hmm, currently a working
+get_scl is required...
 
-   I2c0_Dat_s <= PWR_SDA_a;
-   I2c0_Clk_s <= PWR_SCL_a;
-   PWR_SDA_a <= '0' when  (I2c0_Dat_Oe_s = '1') else 'Z';
+> The gpio setup can still specify the the GPIO be allocated OPEN drain if =
+someone wishes
+> to use a "smarter" gpio.
+>=20
+> So while the scl is open drain, there may be hardware in between that isn=
+'t.
+> What would the correct way be to deal with that now?
 
-This bit of logic combines the i2c core and gpios.
-   PWR_SCL_a <= '0' when ((I2c0_Clk_Oe_s = '1') or (PWR_SCL_rec_s = '0')) else 'Z';
+Well, I don't know much about this IP core and how/where it is used. I
+just wonder what happens if another user comes along using an
+open-drain GPIO. Is that possible?
 
-     , pio_io_in_port(1)                   => PWR_SCL_a
-     , pio_io_in_port(2)                   => PWR_SDA_a
+I assume it is the same with SDA? Non open-drain? Output only?
 
-     , pio_io_out_port(1)                  => PWR_SCL_rec_s
+Regards,
 
-pio_io_out_port port is the fixed config for output
-pio_io_in_port is the fixed config for input
+   Wolfram
 
-The gpio input / outputs exist in the same ip core.
 
-PWR_SCL_rec_s is the recovery clock gpio signal. It needs to be driven high / low.
-There's no concept of HiZ internally in the FPGA.
+--tg455teebzxcygml
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If there was some kinda of OpenDrain gpio driver that modelled a FET driven by a push pull GPIO I guess
-it could be made to work.
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Regards
-Phil Reid
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltNskAACgkQFA3kzBSg
+KbZwbQ/+MJCShrVhonYuESLYY03BEi6p8a5WPFWHsZmTC4Nc8uuKXupxRvNP6qpy
+OdXYBJvLdhIjVRGbpV7MRQII/mYeXpC4hxaVoZhkInxpf07CwqMDUyNU9oiXC0yP
+kM0ONuHPZ/sjCWQSrASMZdu44JgMqZ61PV3FTWN+FBZZY/FEFy0jiem1LK4RupB3
+J3ZrvOBzNE53yv1GLhXm4JvmYqOexkmm5NV2xJW/e1DB4LGNQvxgBxHmz1/1mMNE
+SkUSu125FR/6nhSizpr6Ftq/SC4AACPYmH+SXLCYh7GOtWCwY3ru2eWc5gBFoHkb
+pgjPV5H2GxCO38+IFPVSilH+9lMfc+BB/ykpXdLlo9wcIYBFU0g5ws4cY7/H4ZLL
++FsJwFo3LZbNVVzA1xdT5OQmIQ5Y3ASN+Z2kJ5r3J0ZDRJrG6u5hUw0H/4/KVrm3
+XcWZxxDr0L4xetggo007TvqD7tIt9qpPI94cgwKnkzR4ky65szKDJDynyswrjXID
+D1YjDkHwB6h+FfpIM/c9pWtSaR76NJ4J+f1ouF53NWSVANlUt+O7gDx6ugwDV05w
+BFfxq0iWvIKYtBuD9TjyH2HnMjJysHEfvtTsAImjsXtVEVq87L040UIxlEMz09fV
+j50YUzVql9wE2eQLncmIj2CV+xMhakex6SjkE6m7vLgumtQciZk=
+=L2Mj
+-----END PGP SIGNATURE-----
+
+--tg455teebzxcygml--
