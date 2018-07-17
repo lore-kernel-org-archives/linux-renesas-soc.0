@@ -1,73 +1,292 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:2454 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389713AbeG0WdV (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:57494 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730180AbeGQVK3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jul 2018 18:33:21 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 2/4] serial: sh-sci: Allow for compressed SCIF address
-Date: Fri, 27 Jul 2018 16:09:14 -0500
-Message-Id: <20180727210916.66642-3-chris.brandt@renesas.com>
-In-Reply-To: <20180727210916.66642-1-chris.brandt@renesas.com>
-References: <20180727210916.66642-1-chris.brandt@renesas.com>
+        Tue, 17 Jul 2018 17:10:29 -0400
+From: Kieran Bingham <kieran@ksquared.org.uk>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v5 10/11] media: vsp1: Support Interlaced display pipelines
+Date: Tue, 17 Jul 2018 21:35:52 +0100
+Message-Id: <6d3afb327daf3941c84db9e16a4d7b3ba4faedf6.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some devices with SCIx_SH4_SCIF_REGTYPE have no space between registers.
-Use the register area size to determine the spacing between register.
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Calculate the top and bottom fields for the interlaced frames and
+utilise the extended display list command feature to implement the
+auto-field operations. This allows the DU to update the VSP2 registers
+dynamically based upon the currently processing field.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
 ---
- drivers/tty/serial/sh-sci.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 6ff6f2bf3b9b..138296ec9a7d 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -348,15 +348,15 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
- 	[SCIx_SH4_SCIF_REGTYPE] = {
- 		.regs = {
- 			[SCSMR]		= { 0x00, 16 },
--			[SCBRR]		= { 0x04,  8 },
--			[SCSCR]		= { 0x08, 16 },
--			[SCxTDR]	= { 0x0c,  8 },
--			[SCxSR]		= { 0x10, 16 },
--			[SCxRDR]	= { 0x14,  8 },
--			[SCFCR]		= { 0x18, 16 },
--			[SCFDR]		= { 0x1c, 16 },
--			[SCSPTR]	= { 0x20, 16 },
--			[SCLSR]		= { 0x24, 16 },
-+			[SCBRR]		= { 0x02,  8 },
-+			[SCSCR]		= { 0x04, 16 },
-+			[SCxTDR]	= { 0x06,  8 },
-+			[SCxSR]		= { 0x08, 16 },
-+			[SCxRDR]	= { 0x0a,  8 },
-+			[SCFCR]		= { 0x0c, 16 },
-+			[SCFDR]		= { 0x0e, 16 },
-+			[SCSPTR]	= { 0x10, 16 },
-+			[SCLSR]		= { 0x12, 16 },
- 		},
- 		.fifosize = 16,
- 		.overrun_reg = SCLSR,
-@@ -2939,6 +2939,10 @@ static int sci_init_single(struct platform_device *dev,
- 			port->regshift = 1;
+v2:
+ - fix erroneous BIT value which enabled interlaced
+ - fix field handling at frame_end interrupt
+
+v3:
+ - Pass DL through partition calls to allow autocmd's to be retrieved
+ - Document interlaced field in struct vsp1_du_atomic_config
+
+v5:
+ - Obtain autofld cmd in vsp1_rpf_configure_autofld()
+ - Move VSP1_DL_EXT_AUTOFLD_INT to vsp1_regs.h
+ - Rename VSP1_DL_EXT_AUTOFLD_INT -> VI6_DL_EXT_AUTOFLD_INT
+ - move interlaced configuration parameter to pipe object
+ - autofld: Set cmd->flags in one single expression.
+
+ drivers/media/platform/vsp1/vsp1_dl.c   | 10 ++++-
+ drivers/media/platform/vsp1/vsp1_drm.c  | 16 +++++-
+ drivers/media/platform/vsp1/vsp1_pipe.h |  2 +-
+ drivers/media/platform/vsp1/vsp1_regs.h |  3 +-
+ drivers/media/platform/vsp1/vsp1_rpf.c  | 72 ++++++++++++++++++++++++--
+ include/media/vsp1.h                    |  2 +-
+ 6 files changed, 100 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index d5b3c24d160c..4963acac73f8 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -946,6 +946,8 @@ void vsp1_dl_list_commit(struct vsp1_dl_list *dl, bool internal)
+  */
+ unsigned int vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
+ {
++	struct vsp1_device *vsp1 = dlm->vsp1;
++	u32 status = vsp1_read(vsp1, VI6_STATUS);
+ 	unsigned int flags = 0;
+ 
+ 	spin_lock(&dlm->lock);
+@@ -971,6 +973,14 @@ unsigned int vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
+ 		goto done;
+ 
+ 	/*
++	 * Progressive streams report only TOP fields. If we have a BOTTOM
++	 * field, we are interlaced, and expect the frame to complete on the
++	 * next frame end interrupt.
++	 */
++	if (status & VI6_STATUS_FLD_STD(dlm->index))
++		goto done;
++
++	/*
+ 	 * The device starts processing the queued display list right after the
+ 	 * frame end interrupt. The display list thus becomes active.
+ 	 */
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+index a16856856789..efdc9a676728 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -671,8 +671,20 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+ 	drm_pipe->width = cfg->width;
+ 	drm_pipe->height = cfg->height;
+ 
+-	dev_dbg(vsp1->dev, "%s: configuring LIF%u with format %ux%u\n",
+-		__func__, pipe_index, cfg->width, cfg->height);
++	if (cfg->interlaced && !vsp1_feature(vsp1, VSP1_HAS_EXT_DL)) {
++		/*
++		 * Interlaced support requires extended display lists to
++		 * provide the auto-fld feature with the DU.
++		 */
++		dev_dbg(vsp1->dev, "Interlaced unsupported on this pipeline\n");
++		return -EINVAL;
++	}
++
++	pipe->interlaced = cfg->interlaced;
++
++	dev_dbg(vsp1->dev, "%s: configuring LIF%u with format %ux%u%s\n",
++		__func__, pipe_index, cfg->width, cfg->height,
++		pipe->interlaced ? "i" : "");
+ 
+ 	mutex_lock(&vsp1->drm->lock);
+ 
+diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h b/drivers/media/platform/vsp1/vsp1_pipe.h
+index 743d8f0db45c..ae646c9ef337 100644
+--- a/drivers/media/platform/vsp1/vsp1_pipe.h
++++ b/drivers/media/platform/vsp1/vsp1_pipe.h
+@@ -104,6 +104,7 @@ struct vsp1_partition {
+  * @entities: list of entities in the pipeline
+  * @stream_config: cached stream configuration for video pipelines
+  * @configured: when false the @stream_config shall be written to the hardware
++ * @interlaced: True when the pipeline is configured in interlaced mode
+  * @partitions: The number of partitions used to process one frame
+  * @partition: The current partition for configuration to process
+  * @part_table: The pre-calculated partitions used by the pipeline
+@@ -142,6 +143,7 @@ struct vsp1_pipeline {
+ 
+ 	struct vsp1_dl_body *stream_config;
+ 	bool configured;
++	bool interlaced;
+ 
+ 	unsigned int partitions;
+ 	struct vsp1_partition *partition;
+diff --git a/drivers/media/platform/vsp1/vsp1_regs.h b/drivers/media/platform/vsp1/vsp1_regs.h
+index 5ea9f9070cf3..3738ff2f7b85 100644
+--- a/drivers/media/platform/vsp1/vsp1_regs.h
++++ b/drivers/media/platform/vsp1/vsp1_regs.h
+@@ -28,6 +28,7 @@
+ #define VI6_SRESET_SRTS(n)		(1 << (n))
+ 
+ #define VI6_STATUS			0x0038
++#define VI6_STATUS_FLD_STD(n)		(1 << ((n) + 28))
+ #define VI6_STATUS_SYS_ACT(n)		(1 << ((n) + 8))
+ 
+ #define VI6_WPF_IRQ_ENB(n)		(0x0048 + (n) * 12)
+@@ -80,6 +81,8 @@
+ #define VI6_DL_EXT_CTRL_EXPRI		(1 << 4)
+ #define VI6_DL_EXT_CTRL_EXT		(1 << 0)
+ 
++#define VI6_DL_EXT_AUTOFLD_INT		BIT(0)
++
+ #define VI6_DL_BODY_SIZE		0x0120
+ #define VI6_DL_BODY_SIZE_UPD		(1 << 24)
+ #define VI6_DL_BODY_SIZE_BS_MASK	(0x1ffff << 0)
+diff --git a/drivers/media/platform/vsp1/vsp1_rpf.c b/drivers/media/platform/vsp1/vsp1_rpf.c
+index 69e5fe6e6b50..c728c193e09c 100644
+--- a/drivers/media/platform/vsp1/vsp1_rpf.c
++++ b/drivers/media/platform/vsp1/vsp1_rpf.c
+@@ -20,6 +20,18 @@
+ #define RPF_MAX_WIDTH				8190
+ #define RPF_MAX_HEIGHT				8190
+ 
++/* Pre extended display list command data structure. */
++struct vsp1_extcmd_auto_fld_body {
++	u32 top_y0;
++	u32 bottom_y0;
++	u32 top_c0;
++	u32 bottom_c0;
++	u32 top_c1;
++	u32 bottom_c1;
++	u32 reserved0;
++	u32 reserved1;
++};
++
+ /* -----------------------------------------------------------------------------
+  * Device Access
+  */
+@@ -64,6 +76,14 @@ static void rpf_configure_stream(struct vsp1_entity *entity,
+ 		pstride |= format->plane_fmt[1].bytesperline
+ 			<< VI6_RPF_SRCM_PSTRIDE_C_SHIFT;
+ 
++	/*
++	 * pstride has both STRIDE_Y and STRIDE_C, but multiplying the whole
++	 * of pstride by 2 is conveniently OK here as we are multiplying both
++	 * values.
++	 */
++	if (pipe->interlaced)
++		pstride *= 2;
++
+ 	vsp1_rpf_write(rpf, dlb, VI6_RPF_SRCM_PSTRIDE, pstride);
+ 
+ 	/* Format */
+@@ -100,6 +120,9 @@ static void rpf_configure_stream(struct vsp1_entity *entity,
+ 		top = compose->top;
  	}
  
-+	if (p->regtype == SCIx_SH4_SCIF_REGTYPE)
-+		if (sci_port->reg_size >= 0x20)
-+			port->regshift = 1;
++	if (pipe->interlaced)
++		top /= 2;
 +
- 	/*
- 	 * The UART port needs an IRQ value, so we peg this to the RX IRQ
- 	 * for the multi-IRQ ports, which is where we are primarily
+ 	vsp1_rpf_write(rpf, dlb, VI6_RPF_LOC,
+ 		       (left << VI6_RPF_LOC_HCOORD_SHIFT) |
+ 		       (top << VI6_RPF_LOC_VCOORD_SHIFT));
+@@ -169,6 +192,36 @@ static void rpf_configure_stream(struct vsp1_entity *entity,
+ 
+ }
+ 
++static void vsp1_rpf_configure_autofld(struct vsp1_rwpf *rpf,
++				       struct vsp1_dl_list *dl)
++{
++	const struct v4l2_pix_format_mplane *format = &rpf->format;
++	struct vsp1_dl_ext_cmd *cmd;
++	struct vsp1_extcmd_auto_fld_body *auto_fld;
++	u32 offset_y, offset_c;
++
++	cmd = vsp1_dl_get_pre_cmd(dl);
++	if (WARN_ONCE(!cmd, "Failed to obtain an autofld cmd"))
++		return;
++
++	/* Re-index our auto_fld to match the current RPF. */
++	auto_fld = cmd->data;
++	auto_fld = &auto_fld[rpf->entity.index];
++
++	auto_fld->top_y0 = rpf->mem.addr[0];
++	auto_fld->top_c0 = rpf->mem.addr[1];
++	auto_fld->top_c1 = rpf->mem.addr[2];
++
++	offset_y = format->plane_fmt[0].bytesperline;
++	offset_c = format->plane_fmt[1].bytesperline;
++
++	auto_fld->bottom_y0 = rpf->mem.addr[0] + offset_y;
++	auto_fld->bottom_c0 = rpf->mem.addr[1] + offset_c;
++	auto_fld->bottom_c1 = rpf->mem.addr[2] + offset_c;
++
++	cmd->flags |= VI6_DL_EXT_AUTOFLD_INT | BIT(16 + rpf->entity.index);
++}
++
+ static void rpf_configure_frame(struct vsp1_entity *entity,
+ 				struct vsp1_pipeline *pipe,
+ 				struct vsp1_dl_list *dl,
+@@ -221,6 +274,11 @@ static void rpf_configure_partition(struct vsp1_entity *entity,
+ 		crop.left += pipe->partition->rpf.left;
+ 	}
+ 
++	if (pipe->interlaced) {
++		crop.height = round_down(crop.height / 2, fmtinfo->vsub);
++		crop.top = round_down(crop.top / 2, fmtinfo->vsub);
++	}
++
+ 	vsp1_rpf_write(rpf, dlb, VI6_RPF_SRC_BSIZE,
+ 		       (crop.width << VI6_RPF_SRC_BSIZE_BHSIZE_SHIFT) |
+ 		       (crop.height << VI6_RPF_SRC_BSIZE_BVSIZE_SHIFT));
+@@ -249,9 +307,17 @@ static void rpf_configure_partition(struct vsp1_entity *entity,
+ 	    fmtinfo->swap_uv)
+ 		swap(mem.addr[1], mem.addr[2]);
+ 
+-	vsp1_rpf_write(rpf, dlb, VI6_RPF_SRCM_ADDR_Y, mem.addr[0]);
+-	vsp1_rpf_write(rpf, dlb, VI6_RPF_SRCM_ADDR_C0, mem.addr[1]);
+-	vsp1_rpf_write(rpf, dlb, VI6_RPF_SRCM_ADDR_C1, mem.addr[2]);
++	/*
++	 * Interlaced pipelines will use the extended pre-cmd to process
++	 * SRCM_ADDR_{Y,C0,C1}
++	 */
++	if (pipe->interlaced) {
++		vsp1_rpf_configure_autofld(rpf, dl);
++	} else {
++		vsp1_rpf_write(rpf, dlb, VI6_RPF_SRCM_ADDR_Y, mem.addr[0]);
++		vsp1_rpf_write(rpf, dlb, VI6_RPF_SRCM_ADDR_C0, mem.addr[1]);
++		vsp1_rpf_write(rpf, dlb, VI6_RPF_SRCM_ADDR_C1, mem.addr[2]);
++	}
+ }
+ 
+ static void rpf_partition(struct vsp1_entity *entity,
+diff --git a/include/media/vsp1.h b/include/media/vsp1.h
+index 678c24de1ac6..3093b9cb9067 100644
+--- a/include/media/vsp1.h
++++ b/include/media/vsp1.h
+@@ -25,6 +25,7 @@ int vsp1_du_init(struct device *dev);
+  * struct vsp1_du_lif_config - VSP LIF configuration
+  * @width: output frame width
+  * @height: output frame height
++ * @interlaced: true for interlaced pipelines
+  * @callback: frame completion callback function (optional). When a callback
+  *	      is provided, the VSP driver guarantees that it will be called once
+  *	      and only once for each vsp1_du_atomic_flush() call.
+@@ -33,6 +34,7 @@ int vsp1_du_init(struct device *dev);
+ struct vsp1_du_lif_config {
+ 	unsigned int width;
+ 	unsigned int height;
++	bool interlaced;
+ 
+ 	void (*callback)(void *data, bool completed, u32 crc);
+ 	void *callback_data;
 -- 
-2.16.1
+git-series 0.9.1
