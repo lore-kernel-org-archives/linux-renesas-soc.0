@@ -1,47 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:48598 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726985AbeGRJY1 (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:2508 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731595AbeGQOLj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Jul 2018 05:24:27 -0400
-Date: Wed, 18 Jul 2018 10:47:33 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "linux-renesas-soc@vger.kernel.org"
+        Tue, 17 Jul 2018 10:11:39 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+CC: "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] ARM: dts: r8a77470: Use r8a77470-cpg-mssr binding
+Subject: RE: [PATCH] ARM: dts: r8a77470: Use r8a77470-cpg-mssr binding
  definitions
-Message-ID: <20180718084733.t4o7ueotufof4t6s@verge.net.au>
+Date: Tue, 17 Jul 2018 13:38:51 +0000
+Message-ID: <OSBPR01MB2103E1E668881906DE6A2085B85C0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 References: <20180717132549.28793-1-geert+renesas@glider.be>
- <OSBPR01MB2103E1E668881906DE6A2085B85C0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+In-Reply-To: <20180717132549.28793-1-geert+renesas@glider.be>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <OSBPR01MB2103E1E668881906DE6A2085B85C0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jul 17, 2018 at 01:38:51PM +0000, Biju Das wrote:
-> Hi Geert,
-> 
-> Thanks for the patch.
-> 
-> > -----Original Message-----
-> > From: Geert Uytterhoeven [mailto:geert+renesas@glider.be]
-> > Sent: 17 July 2018 14:26
-> > To: Simon Horman <horms@verge.net.au>; Magnus Damm
-> > <magnus.damm@gmail.com>; Biju Das <biju.das@bp.renesas.com>
-> > Cc: linux-renesas-soc@vger.kernel.org; Geert Uytterhoeven
-> > <geert+renesas@glider.be>
-> > Subject: [PATCH] ARM: dts: r8a77470: Use r8a77470-cpg-mssr binding
-> > definitions
-> >
-> > Replace the hardcoded clock indices by R8A77470_CLK_* symbols.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Hi Geert,
 
-Thanks, applied.
+Thanks for the patch.
+
+> -----Original Message-----
+> From: Geert Uytterhoeven [mailto:geert+renesas@glider.be]
+> Sent: 17 July 2018 14:26
+> To: Simon Horman <horms@verge.net.au>; Magnus Damm
+> <magnus.damm@gmail.com>; Biju Das <biju.das@bp.renesas.com>
+> Cc: linux-renesas-soc@vger.kernel.org; Geert Uytterhoeven
+> <geert+renesas@glider.be>
+> Subject: [PATCH] ARM: dts: r8a77470: Use r8a77470-cpg-mssr binding
+> definitions
+>
+> Replace the hardcoded clock indices by R8A77470_CLK_* symbols.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+
+Regards,
+Biju
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
