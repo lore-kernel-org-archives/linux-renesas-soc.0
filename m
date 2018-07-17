@@ -1,150 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:49984 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729641AbeGQRfD (ORCPT
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48944 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729687AbeGQQ2p (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jul 2018 13:35:03 -0400
-Date: Tue, 17 Jul 2018 18:01:21 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Tue, 17 Jul 2018 12:28:45 -0400
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         Jeremy Linton <jeremy.linton@arm.com>,
         Hanjun Guo <hanjun.guo@linaro.org>,
         ganapatrao.kulkarni@cavium.com, morten.rasmussen@arm.com,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Subject: Re: [PATCH v3 5/7] arm64: smp: remove cpu and numa topology
  information when hotplugging out CPU
-Message-ID: <20180717170121.GA14049@e107155-lin>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 References: <1530874968-5960-1-git-send-email-sudeep.holla@arm.com>
  <1530874968-5960-6-git-send-email-sudeep.holla@arm.com>
  <CAMuHMdXw9My+P1UCJ19Qdjq4O9gY_0QVFZaw6C5Ytmpyac59Vw@mail.gmail.com>
  <20180717140536.GA27323@e107155-lin>
  <CAMuHMdUnL=XyoSfRU+ebVUjsiP89V4vcoN=O4xc0VwHmLP72HA@mail.gmail.com>
  <1c47b3fd-59ba-aba4-43b2-ed98e750887b@arm.com>
- <5a23f1c8-27cb-b09c-90fc-edab3eec99f9@arm.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <5a23f1c8-27cb-b09c-90fc-edab3eec99f9@arm.com>
+Date: Tue, 17 Jul 2018 16:55:22 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5a23f1c8-27cb-b09c-90fc-edab3eec99f9@arm.com>
+In-Reply-To: <1c47b3fd-59ba-aba4-43b2-ed98e750887b@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jul 17, 2018 at 04:55:22PM +0100, Sudeep Holla wrote:
 
-[..]
 
-> Going through the code again, I think I understand the problem here.
-> We use the topology_core_mask pointers which are stashed in cpu_groups[]
-> But, the cpumask themselves will be getting modified as the cpus go up
-> and down, so we need to make a copy instead of just using the pointer.
-> I will see what we can do to fix that.
+On 17/07/18 16:34, Sudeep Holla wrote:
+> 
+> 
+> On 17/07/18 16:06, Geert Uytterhoeven wrote:
+>> Hi Sudeep,
+>>
+>> On Tue, Jul 17, 2018 at 4:05 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
+>>> On Tue, Jul 17, 2018 at 02:58:14PM +0200, Geert Uytterhoeven wrote:
+>>>> On Fri, Jul 6, 2018 at 1:04 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
+> 
+> [...]
+> 
+>>>> All but CPU0 tested, as expected.
+>>>
+>>> OK, does the firmware on this system not allow CPU0 to be hotplugged out ?
+>>
+>> Correct. But that's not the issue.
+>>
+> 
+> Yes,  was just trying to understand the behavior.
+> 
+> [..]
+> 
+>>>> Woops, CPU5-7 are not tested.
+>>>
+>>> I don't understand what you mean by that. From the logs, it looks fine.
+>>> What do you mean by "CPU5-7 are not tested" ?
+>>> Sorry, but I am finding it hard to understand the issue from the log.
+>>
+>> The above is not the log, but the diff between the log before and after the bad
+>> commit. So lines prefixed with "-" are no longer printed.
+>> Before, CPU4-7 were tested for hotplug in group 1.
+>> After, only CPU4 is tested for hotplug in group 1.
+>>
+> 
+> Ah OK, I think I now understand what is the issue, will try to replicate
+> at my end and get back to you.
+> 
+Going through the code again, I think I understand the problem here.
+We use the topology_core_mask pointers which are stashed in cpu_groups[]
+But, the cpumask themselves will be getting modified as the cpus go up
+and down, so we need to make a copy instead of just using the pointer.
+I will see what we can do to fix that.
 
-This is what I could come up with. I haven't tested this but just compiled
-it. Let me know if this resolves the issue.
-
--->8
-
-From: Sudeep Holla <sudeep.holla@arm.com>
-Date: Tue, 17 Jul 2018 17:45:20 +0100
-Subject: [PATCH] drivers/firmware: psci_checker: stash and use topology_core_cpumask for hotplug tests
-
-Commit 7f9545aa1a91 ("arm64: smp: remove cpu and numa topology information
-when hotplugging out CPU") updates the cpu topology when the CPU is
-hotplugged out. However the PSCI checker code uses the topology_core_cpumask
-pointers for some of the cpu hotplug testing. Since the pointer to the
-core_cpumask of the first CPU in the group is used, which when that CPU
-itself is hotpugged out is just set to itself, the testing terminates
-after that particular CPU is tested out. But the intention of this tests
-is to cover all the CPU in the group.
-
-In order to support that, we need to stash the topology_core_cpumask
-before the start of the test and use that value instead of pointer to a
-cpumask which will be updated on CPU hotplug.
-
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/firmware/psci_checker.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/firmware/psci_checker.c b/drivers/firmware/psci_checker.c
-index bb1c068bff19..dcace6fa17b6 100644
---- a/drivers/firmware/psci_checker.c
-+++ b/drivers/firmware/psci_checker.c
-@@ -77,21 +77,20 @@ static int psci_ops_check(void)
- 	return 0;
- }
- 
--static int find_cpu_groups(const struct cpumask *cpus,
--			   const struct cpumask **cpu_groups)
-+static int find_cpu_groups(cpumask_var_t *cpu_groups)
- {
- 	unsigned int nb = 0;
- 	cpumask_var_t tmp;
- 
- 	if (!alloc_cpumask_var(&tmp, GFP_KERNEL))
- 		return -ENOMEM;
--	cpumask_copy(tmp, cpus);
-+	cpumask_copy(tmp, cpu_online_mask);
- 
- 	while (!cpumask_empty(tmp)) {
- 		const struct cpumask *cpu_group =
- 			topology_core_cpumask(cpumask_any(tmp));
- 
--		cpu_groups[nb++] = cpu_group;
-+		cpumask_copy(cpu_groups[nb++], cpu_group);
- 		cpumask_andnot(tmp, tmp, cpu_group);
- 	}
- 
-@@ -169,16 +168,15 @@ static unsigned int down_and_up_cpus(const struct cpumask *cpus,
- static int hotplug_tests(void)
- {
- 	int err;
--	cpumask_var_t offlined_cpus;
-+	cpumask_var_t offlined_cpus, *cpu_groups;
- 	int i, nb_cpu_group;
--	const struct cpumask **cpu_groups;
- 	char *page_buf;
- 
- 	err = -ENOMEM;
- 	if (!alloc_cpumask_var(&offlined_cpus, GFP_KERNEL))
- 		return err;
- 	/* We may have up to nb_available_cpus cpu_groups. */
--	cpu_groups = kmalloc_array(nb_available_cpus, sizeof(*cpu_groups),
-+	cpu_groups = kmalloc_array(nb_available_cpus, sizeof(cpu_groups),
- 				   GFP_KERNEL);
- 	if (!cpu_groups)
- 		goto out_free_cpus;
-@@ -186,8 +184,12 @@ static int hotplug_tests(void)
- 	if (!page_buf)
- 		goto out_free_cpu_groups;
- 
-+	for (i = 0; i < nb_available_cpus; ++i)
-+		if (!alloc_cpumask_var(&cpu_groups[i], GFP_KERNEL))
-+			goto out_free_cpu_groups_var;
-+
- 	err = 0;
--	nb_cpu_group = find_cpu_groups(cpu_online_mask, cpu_groups);
-+	nb_cpu_group = find_cpu_groups(cpu_groups);
- 
- 	/*
- 	 * Of course the last CPU cannot be powered down and cpu_down() should
-@@ -211,6 +213,9 @@ static int hotplug_tests(void)
- 	}
- 
- 	free_page((unsigned long)page_buf);
-+out_free_cpu_groups_var:
-+	for (i = 0; i < nb_available_cpus; ++i)
-+		free_cpumask_var(cpu_groups[i]);
- out_free_cpu_groups:
- 	kfree(cpu_groups);
- out_free_cpus:
 -- 
-2.7.4
+Regards,
+Sudeep
