@@ -1,46 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:47091 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726475AbeGSMbt (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:57500 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729675AbeGQVKW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Jul 2018 08:31:49 -0400
-Received: by mail-pf0-f196.google.com with SMTP id u24-v6so107878pfn.13
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Jul 2018 04:49:02 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Thu, 19 Jul 2018 20:51:07 +0900
-Message-Id: <153200106718.13504.7319401547888522726.sendpatchset@little-apple>
-In-Reply-To: <153200105784.13504.12882377600823578834.sendpatchset@little-apple>
-References: <153200105784.13504.12882377600823578834.sendpatchset@little-apple>
-Subject: [PATCH/RFC 01/02] ravb: Do not announce 100Mbps HDX as supported
+        Tue, 17 Jul 2018 17:10:22 -0400
+From: Kieran Bingham <kieran@ksquared.org.uk>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v5 03/11] media: vsp1: Rename dl_child to dl_next
+Date: Tue, 17 Jul 2018 21:35:45 +0100
+Message-Id: <e3ebdd65a310975d6086ca0b260863653f83e2f9.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-According to the data sheet the Ethernet-AVB hardware in R-Car Gen3
-and R-Car Gen2 SoCs do not support half duplex operation. So update
-the driver to mark 100Mbit HDX as unsupported.
+Both vsp1_dl_list_commit() and __vsp1_dl_list_put() walk the display
+list chain referencing the nodes as children, when in reality they are
+siblings.
 
-Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Update the terminology to 'dl_next' to be consistent with the
+vsp1_video_pipeline_run() usage.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
+ drivers/media/platform/vsp1/vsp1_dl.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
- Written on top of renesas-drivers-2018-07-17-v4.18-rc5
-
- drivers/net/ethernet/renesas/ravb_main.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- 0001/drivers/net/ethernet/renesas/ravb_main.c
-+++ work/drivers/net/ethernet/renesas/ravb_main.c	2018-07-19 19:18:38.210607110 +0900
-@@ -1066,8 +1066,8 @@ static int ravb_phy_init(struct net_devi
- 		netdev_info(ndev, "limited PHY to 100Mbit/s\n");
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index 5da7988dd616..851ac26860ae 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -398,7 +398,7 @@ struct vsp1_dl_list *vsp1_dl_list_get(struct vsp1_dl_manager *dlm)
+ /* This function must be called with the display list manager lock held.*/
+ static void __vsp1_dl_list_put(struct vsp1_dl_list *dl)
+ {
+-	struct vsp1_dl_list *dl_child;
++	struct vsp1_dl_list *dl_next;
+ 
+ 	if (!dl)
+ 		return;
+@@ -408,8 +408,8 @@ static void __vsp1_dl_list_put(struct vsp1_dl_list *dl)
+ 	 * hardware operation.
+ 	 */
+ 	if (dl->has_chain) {
+-		list_for_each_entry(dl_child, &dl->chain, chain)
+-			__vsp1_dl_list_put(dl_child);
++		list_for_each_entry(dl_next, &dl->chain, chain)
++			__vsp1_dl_list_put(dl_next);
  	}
  
--	/* 10BASE is not supported */
--	phydev->supported &= ~PHY_10BT_FEATURES;
-+	/* Nether 10BASE nor half duplex is supported */
-+	phydev->supported &= ~(PHY_10BT_FEATURES | SUPPORTED_100baseT_Half);
+ 	dl->has_chain = false;
+@@ -673,17 +673,17 @@ static void vsp1_dl_list_commit_singleshot(struct vsp1_dl_list *dl)
+ void vsp1_dl_list_commit(struct vsp1_dl_list *dl, bool internal)
+ {
+ 	struct vsp1_dl_manager *dlm = dl->dlm;
+-	struct vsp1_dl_list *dl_child;
++	struct vsp1_dl_list *dl_next;
+ 	unsigned long flags;
  
- 	phy_attached_info(phydev);
+ 	if (dlm->mode == VSP1_DL_MODE_HEADER) {
+ 		/* Fill the header for the head and chained display lists. */
+ 		vsp1_dl_list_fill_header(dl, list_empty(&dl->chain));
  
+-		list_for_each_entry(dl_child, &dl->chain, chain) {
+-			bool last = list_is_last(&dl_child->chain, &dl->chain);
++		list_for_each_entry(dl_next, &dl->chain, chain) {
++			bool last = list_is_last(&dl_next->chain, &dl->chain);
+ 
+-			vsp1_dl_list_fill_header(dl_child, last);
++			vsp1_dl_list_fill_header(dl_next, last);
+ 		}
+ 	}
+ 
+-- 
+git-series 0.9.1
