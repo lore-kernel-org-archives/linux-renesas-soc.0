@@ -1,69 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:55758 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388432AbeGKOZn (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:57494 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729684AbeGQVKX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:25:43 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 00/11] clk: renesas: rcar-gen3: OSC and RCLK improvements
-Date: Wed, 11 Jul 2018 16:20:49 +0200
-Message-Id: <20180711142100.3765-1-geert+renesas@glider.be>
+        Tue, 17 Jul 2018 17:10:23 -0400
+From: Kieran Bingham <kieran@ksquared.org.uk>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v5 04/11] media: vsp1: Remove unused display list structure field
+Date: Tue, 17 Jul 2018 21:35:46 +0100
+Message-Id: <806476d71b4c25ab8695537bffc063604af5c7ee.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-This patch series contains various improvements for OSC and RCLK
-handling on R-Car Gen3 SoCs.
+The vsp1 reference in the vsp1_dl_body structure is not used.
+Remove it.
 
-This has been tested on R-Car H3 ES1.0/ES2.0, R-Car M3-W ES1.0, R-Car
-D3, and R-Car E3.
-The R-Car V3H (r8a77980) patches were compile-tested only due to lack of
-hardware.
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+ drivers/media/platform/vsp1/vsp1_dl.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Thanks for your comments!
-
-Geert Uytterhoeven (11):
-  clk: renesas: rcar-gen3: Add support for OSC EXTAL predivider
-  clk: renesas: r8a7795: Add OSC EXTAL predivider configuration
-  clk: renesas: r8a7796: Add OSC EXTAL predivider configuration
-  clk: renesas: r8a77965: Add OSC EXTAL predivider configuration
-  clk: renesas: r8a77980: Add OSC predivider configuration and clock
-  clk: renesas: cpg-mssr: Add support for fixed rate clocks
-  clk: renesas: rcar-gen3: Add support for RCKSEL clock selection
-  clk: renesas: r8a77990: Correct RCLK handling
-  clk: renesas: r8a77995: Correct RCLK handling
-  clk: renesas: rcar-gen3: Add support for mode pin clock selection
-  clk: renesas: r8a77980: Add RCLK for watchdog timer
-
- drivers/clk/renesas/r8a7795-cpg-mssr.c  | 66 ++++++++++++-------------
- drivers/clk/renesas/r8a7796-cpg-mssr.c  | 66 ++++++++++++-------------
- drivers/clk/renesas/r8a77965-cpg-mssr.c | 66 ++++++++++++-------------
- drivers/clk/renesas/r8a77980-cpg-mssr.c | 28 ++++++-----
- drivers/clk/renesas/r8a77990-cpg-mssr.c |  9 +++-
- drivers/clk/renesas/r8a77995-cpg-mssr.c |  9 +++-
- drivers/clk/renesas/rcar-gen3-cpg.c     | 40 +++++++++++----
- drivers/clk/renesas/rcar-gen3-cpg.h     | 25 ++++++++--
- drivers/clk/renesas/renesas-cpg-mssr.c  |  5 ++
- drivers/clk/renesas/renesas-cpg-mssr.h  |  3 ++
- 10 files changed, 189 insertions(+), 128 deletions(-)
-
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index 851ac26860ae..da73881a975b 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -44,7 +44,6 @@ struct vsp1_dl_entry {
+  * @list: entry in the display list list of bodies
+  * @free: entry in the pool free body list
+  * @pool: pool to which this body belongs
+- * @vsp1: the VSP1 device
+  * @entries: array of entries
+  * @dma: DMA address of the entries
+  * @size: size of the DMA memory in bytes
+@@ -58,7 +57,6 @@ struct vsp1_dl_body {
+ 	refcount_t refcnt;
+ 
+ 	struct vsp1_dl_body_pool *pool;
+-	struct vsp1_device *vsp1;
+ 
+ 	struct vsp1_dl_entry *entries;
+ 	dma_addr_t dma;
 -- 
-2.17.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+git-series 0.9.1
