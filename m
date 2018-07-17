@@ -1,73 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:40454 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731671AbeGZQwq (ORCPT
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:32877 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729671AbeGQNyk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jul 2018 12:52:46 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 06/11] clk: renesas: cpg-mssr: Add support for fixed rate clocks
-Date: Thu, 26 Jul 2018 17:35:12 +0200
-Message-Id: <20180726153517.10020-7-geert+renesas@glider.be>
-In-Reply-To: <20180726153517.10020-1-geert+renesas@glider.be>
-References: <20180726153517.10020-1-geert+renesas@glider.be>
+        Tue, 17 Jul 2018 09:54:40 -0400
+Received: by mail-lj1-f195.google.com with SMTP id s12-v6so988984ljj.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Jul 2018 06:22:00 -0700 (PDT)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Tue, 17 Jul 2018 15:21:58 +0200
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] mmc: {tmio,renesas_sdhi}: fix tuning behavior
+Message-ID: <20180717132158.GJ10087@bigcity.dyn.berto.se>
+References: <20180705141841.11121-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180715184526.fd4zrr4v2mh4ady3@tetsubishi>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180715184526.fd4zrr4v2mh4ady3@tetsubishi>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for defining fixed rate clocks, to be used for on-chip
-oscillators.
+On 2018-07-15 20:45:26 +0200, Wolfram Sang wrote:
+> > Tuning failed on my R-Car H3 ES2.0 board using latest mmc/next while the
+> > Renesas BSP kernel worked. After some digging I found patches in the BSP
+> > which remedied this and whit these applied tuning now works for me.
+> > 
+> > I have done small fixes, updated commit messages and rebased on latest
+> > mmc/next but Hayakawa-san did all the real work.
+> 
+> Thanks, Niklas. Did you also test some SD card accesses? It helped with
+> your "stubborn" card, too, or?
+> 
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
----
-v2:
-  - Add Reviewed-by.
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 5 +++++
- drivers/clk/renesas/renesas-cpg-mssr.h | 3 +++
- 2 files changed, 8 insertions(+)
+Yes I did a lot of testing and as you mention patch 1/4 fixes the 
+problem I have experienced with my "stubborn" card.
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index f4b013e9352d9efc..e04338932786bc14 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -313,6 +313,11 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
- 		}
- 		break;
- 
-+	case CLK_TYPE_FR:
-+		clk = clk_register_fixed_rate(NULL, core->name, NULL, 0,
-+					      core->mult);
-+		break;
-+
- 	default:
- 		if (info->cpg_clk_register)
- 			clk = info->cpg_clk_register(dev, core, info,
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
-index 642f720b9b055337..87bb8f368d4ecd18 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.h
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-@@ -38,6 +38,7 @@ enum clk_types {
- 	CLK_TYPE_FF,		/* Fixed Factor Clock */
- 	CLK_TYPE_DIV6P1,	/* DIV6 Clock with 1 parent clock */
- 	CLK_TYPE_DIV6_RO,	/* DIV6 Clock read only with extra divisor */
-+	CLK_TYPE_FR,		/* Fixed Rate Clock */
- 
- 	/* Custom definitions start here */
- 	CLK_TYPE_CUSTOM,
-@@ -56,6 +57,8 @@ enum clk_types {
- 	DEF_BASE(_name, _id, CLK_TYPE_DIV6P1, _parent, .offset = _offset)
- #define DEF_DIV6_RO(_name, _id, _parent, _offset, _div)	\
- 	DEF_BASE(_name, _id, CLK_TYPE_DIV6_RO, _parent, .offset = _offset, .div = _div, .mult = 1)
-+#define DEF_RATE(_name, _id, _rate)	\
-+	DEF_TYPE(_name, _id, CLK_TYPE_FR, .mult = _rate)
- 
-     /*
-      * Definitions of Module Clocks
 -- 
-2.17.1
+Regards,
+Niklas S�derlund
