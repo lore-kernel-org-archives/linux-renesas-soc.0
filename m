@@ -1,73 +1,96 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:7198 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932437AbeGICyg (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:35948 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731324AbeGQNlN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 8 Jul 2018 22:54:36 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: joro@8bytes.org
-Cc: magnus.damm@gmail.com, iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] iommu/ipmmu-vmsa: IMUCTRn.TTSEL needs a special usage on R-Car Gen3
-Date: Mon,  9 Jul 2018 11:53:31 +0900
-Message-Id: <1531104811-23417-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Tue, 17 Jul 2018 09:41:13 -0400
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ffPiW-0006Rn-27
+        for linux-renesas-soc@vger.kernel.org; Tue, 17 Jul 2018 15:08:36 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ffPiW-0006QI-0q
+        for linux-renesas-soc@vger.kernel.org; Tue, 17 Jul 2018 15:08:36 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2018-07-17-v4.18-rc5
+Date: Tue, 17 Jul 2018 15:08:36 +0200
+Message-Id: <20180717130836.24648-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The TTSEL bit of IMUCTRn register of R-Car Gen3 needs to be set
-unused MMU context number even if uTLBs are disabled
-(The MMUEN bit of IMUCTRn register = 0).
-Since initial values of IMUCTRn.TTSEL on all IPMMU-domains are 0,
-this patch adds a new feature "reserved_context" to reserve IPMMU
-context number 0 as the unused MMU context.
+I have pushed renesas-drivers-2018-07-17-v4.18-rc5 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/iommu/ipmmu-vmsa.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the development branch of
+Simon Horman's renesas.git tree.
 
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 6a0e714..6cbd2bd 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -47,6 +47,7 @@ struct ipmmu_features {
- 	unsigned int number_of_contexts;
- 	bool setup_imbuscr;
- 	bool twobit_imttbcr_sl0;
-+	bool reserved_context;
- };
- 
- struct ipmmu_vmsa_device {
-@@ -925,6 +926,7 @@ static void ipmmu_device_reset(struct ipmmu_vmsa_device *mmu)
- 	.number_of_contexts = 1, /* software only tested with one context */
- 	.setup_imbuscr = true,
- 	.twobit_imttbcr_sl0 = false,
-+	.reserved_context = false,
- };
- 
- static const struct ipmmu_features ipmmu_features_rcar_gen3 = {
-@@ -933,6 +935,7 @@ static void ipmmu_device_reset(struct ipmmu_vmsa_device *mmu)
- 	.number_of_contexts = 8,
- 	.setup_imbuscr = false,
- 	.twobit_imttbcr_sl0 = true,
-+	.reserved_context = true,
- };
- 
- static const struct of_device_id ipmmu_of_ids[] = {
-@@ -1038,6 +1041,11 @@ static int ipmmu_probe(struct platform_device *pdev)
- 		}
- 
- 		ipmmu_device_reset(mmu);
-+
-+		if (mmu->features->reserved_context) {
-+			dev_info(&pdev->dev, "IPMMU context 0 is reserved\n");
-+			set_bit(0, mmu->ctx);
-+		}
- 	}
- 
- 	/*
--- 
-1.9.1
+Today's version is based on renesas-devel-20180716-v4.18-rc5.
+
+Included branches with driver code:
+  - clk-renesas
+  - sh-pfc
+  - topic/bd9571-toggle-power-switch-v4
+  - git://linuxtv.org/pinchartl/media.git#drm-du-iommu-v1-20171115
+  - git://git.ragnatech.se/linux#for-renesas-drivers
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#tags/vsp1/du/interlaced/v4.5
+
+Included fixes:
+  - serial: sh-sci: Fix use-after-free on subsequent port startup
+  - [LOCAL] arm64: defconfig: Update renesas_defconfig
+
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://git.freedesktop.org/git/drm/drm.git#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/media_tree.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://github.com/bzolnier/linux.git#fbdev-for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
