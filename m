@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56106 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:56019 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731141AbeGQMOb (ORCPT
+        with ESMTP id S1730780AbeGQMLH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jul 2018 08:14:31 -0400
+        Tue, 17 Jul 2018 08:11:07 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
@@ -12,9 +12,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
         Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3] arm64: dts: r8a77995: Add SCIF {0,1,3,4,5} and all HSCIF device nodes
-Date: Tue, 17 Jul 2018 13:42:09 +0200
-Message-Id: <20180717114209.26788-1-horms+renesas@verge.net.au>
+Subject: [PATCH v4] arm64: dts: r8a77995: Add SCIF {0,1,3,4,5} and all HSCIF device nodes
+Date: Tue, 17 Jul 2018 13:38:32 +0200
+Message-Id: <20180717113832.26413-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
