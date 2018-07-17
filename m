@@ -1,97 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:25073 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728357AbeGYJi6 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:33824 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729243AbeGQJ36 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jul 2018 05:38:58 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: vinod.koul@intel.com
-Cc: dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] dmaengine: sh: rcar-dmac: Should not stop the DMAC by rcar_dmac_sync_tcr()
-Date: Wed, 25 Jul 2018 17:27:04 +0900
-Message-Id: <1532507224-4213-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Tue, 17 Jul 2018 05:29:58 -0400
+Date: Tue, 17 Jul 2018 10:58:23 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Peter Rosin <peda@axentia.se>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] i2c: recovery: make pin init look like STOP
+Message-ID: <20180717085823.ghg657jfc4x2zol4@ninjato>
+References: <20180712174919.14447-1-wsa+renesas@sang-engineering.com>
+ <06ee47cb-16d0-99df-e18b-80e5a6e4eae9@axentia.se>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6ar5prsyq6lxba7i"
+Content-Disposition: inline
+In-Reply-To: <06ee47cb-16d0-99df-e18b-80e5a6e4eae9@axentia.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-rcar_dmac_chan_get_residue() should not stop the DMAC, because
-the commit 538603c6026c ("dmaengine: sh: rcar-dmac: avoid to write
-CHCR.TE to 1 if TCR is set to 0") had fixed unexpected re-transferring
-issue. But it had caused the next issue which might stop the cyclic
-mode transferring. Thus, for example R-Car sound might be stopped
-suddenly.
 
-According to the commit 73a47bd0da66 ("dmaengine: rcar-dmac: use TCRB
-instead of TCR for residue"), the purpose of clearing CHCR.DE bit is
-flushing buffered data to calculate the exact residue.
+--6ar5prsyq6lxba7i
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Such the "exact" residue had been required by sh-sci driver. sh-sci
-driver is calling dmaengine_pause() to stop transferring, and get
-"exact" residue. Otherwise, it might receive extra data during
-getting residue without pausing.
 
-In rx_timer_fn() of sh-sci driver:
-	dmaengine_tx_status();		/* For checking roughly */
- 	dmaengine_pause();
-	dmaengine_tx_status();		/* For getting residue */
-	dmaengine_terminate_all();
+> instead of changing this "1" to "scl"? Same-same, but it looks odd
+> to use scl as argument to sda (at least without that comment about
+> sda following scl that is present inside the loop below).
+>=20
+> At the same time, your version make the code inside the loop the
+> same as this initializing code. Oh well, your call...
 
-But, unfortunately the rcar-dmac driver didn't support dmaengine_pause()
-at that time. So, the sh-sci driver cannot get the "exact" residue
-without stopping the transferring, because rcar-dmac is buffering data
-inside.
+Yes, I wanted them to look alike. Yet, I agree to your comment about
+moving the comment. Will update.
 
-Because of these backgrounds, rcar-dmac had been cleared/set CHCR.DE
-bit in rcar_dmac_chan_get_residue() to synchronizing data and getting
-"exact" residue.
 
-However, rcar-dmac driver has rcar_dmac_chan_pause() now, and clearing
-CHCR.DE bit in rcar_dmac_chan_get_residue() doesn't need anymore.
-So, this patch removes the rcar_dmac_sync_tcr().
+--6ar5prsyq6lxba7i
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Fixes: 73a47bd0da66 ("dmaengine: rcar-dmac: use TCRB instead of TCR for residue")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
----
- drivers/dma/sh/rcar-dmac.c | 17 -----------------
- 1 file changed, 17 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index be82d69..48ee35e 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -770,20 +770,6 @@ static void rcar_dmac_clear_chcr_de(struct rcar_dmac_chan *chan)
- 	rcar_dmac_chcr_de_barrier(chan);
- }
- 
--static void rcar_dmac_sync_tcr(struct rcar_dmac_chan *chan)
--{
--	u32 chcr = rcar_dmac_chan_read(chan, RCAR_DMACHCR);
--
--	if (!(chcr & RCAR_DMACHCR_DE))
--		return;
--
--	rcar_dmac_clear_chcr_de(chan);
--
--	/* back DE if remain data exists */
--	if (rcar_dmac_chan_read(chan, RCAR_DMATCR))
--		rcar_dmac_chan_write(chan, RCAR_DMACHCR, chcr);
--}
--
- static void rcar_dmac_chan_halt(struct rcar_dmac_chan *chan)
- {
- 	u32 chcr = rcar_dmac_chan_read(chan, RCAR_DMACHCR);
-@@ -1367,9 +1353,6 @@ static unsigned int rcar_dmac_chan_get_residue(struct rcar_dmac_chan *chan,
- 		residue += chunk->size;
- 	}
- 
--	if (desc->direction == DMA_DEV_TO_MEM)
--		rcar_dmac_sync_tcr(chan);
--
- 	/* Add the residue for the current chunk. */
- 	residue += rcar_dmac_chan_read(chan, RCAR_DMATCRB) << desc->xfer_shift;
- 
--- 
-1.9.1
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltNr68ACgkQFA3kzBSg
+KbYsJw/+IbrIYx5P1TXlGSHrTvrBU6n5zfZMGDYCdPMSvtHFQh90Tudmr0F4In0d
+d1cJnROiEWRCQmWyFUqcNNi6EsUpLDw7hy3kYDlyCkOURegMN06Z+V+yAIIfCQ5j
+1EQxRRUEegIQa/m2lVwgT/sJ1r/SqkXIyUiNhDD9Ey4b3GEqkPX1cjkbo13YPXXt
+x1yx4f1LqH1kGntrb0Oyq0n3/Y/BfAVE45plht6GzAYDfW3i+1Cs3crkVvghnCct
+1o0ZGcl1zixgZPpdUBKYmvMW2+0SSthKyMYHuWDmqD/2n4fRHbVxvFi3JwPiI1+t
+1yFxrf+keZT83ZSPUlkKyUsSIpCcsFlyCAIH4wZ9V9QnnATzXpqNwxBuaaCAiRZl
+cE5MRd36JHHgukYDH43M5ljqDMvdCJFEHtuR6yUVQnVpQaoUFMI2KTJPmF2xadNT
+1qxoEJHtiBQKfTRNkpLHXLM3XMplyKGzwekTEn5MLKkIEJGk9kmCP8UakcGMZ+oL
+ysvM9Poe1la47r1+bhho85GAe0prRvjRtAVb8Je8BgjAEzY9G4cvt/iiZ4THjweI
++clUBj6qT3FUhe1lDYQkiCRvOt+fXZm8Jl48Gf8BQBG+xTjZokWeYNuymc6Z6RjU
+iXT2GJJmMFXPHZOT+LIMcM8L0f4caaiyXlAWeNgO8hwceqjwss8=
+=clG7
+-----END PGP SIGNATURE-----
+
+--6ar5prsyq6lxba7i--
