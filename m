@@ -1,65 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:49859 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933045AbeGIOTr (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:57500 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729675AbeGQVKX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Jul 2018 10:19:47 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        horms@verge.net.au, geert@glider.be
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 4/6] media: v4l2-fwnode: parse 'data-enable-active' prop
-Date: Mon,  9 Jul 2018 16:19:19 +0200
-Message-Id: <1531145962-1540-5-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1531145962-1540-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1531145962-1540-1-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Tue, 17 Jul 2018 17:10:23 -0400
+From: Kieran Bingham <kieran@ksquared.org.uk>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v5 05/11] media: vsp1: Clean up DLM objects on error
+Date: Tue, 17 Jul 2018 21:35:47 +0100
+Message-Id: <f3afbd64f3dc876028a91097fc14079f37eb1e80.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Parse the newly defined 'data-enable-active' property in parallel endpoint
-parsing function.
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+If there is an error allocating a display list within a DLM object
+the existing display lists are not free'd, and neither is the DL body
+pool.
+
+Use the existing vsp1_dlm_destroy() function to clean up on error.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/media/v4l2-core/v4l2-fwnode.c | 4 ++++
- include/media/v4l2-mediabus.h         | 2 ++
- 2 files changed, 6 insertions(+)
+ drivers/media/platform/vsp1/vsp1_dl.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
-index 3f77aa3..6105191 100644
---- a/drivers/media/v4l2-core/v4l2-fwnode.c
-+++ b/drivers/media/v4l2-core/v4l2-fwnode.c
-@@ -154,6 +154,10 @@ static void v4l2_fwnode_endpoint_parse_parallel_bus(
- 		flags |= v ? V4L2_MBUS_VIDEO_SOG_ACTIVE_HIGH :
- 			V4L2_MBUS_VIDEO_SOG_ACTIVE_LOW;
-
-+	if (!fwnode_property_read_u32(fwnode, "data-enable-active", &v))
-+		flags |= v ? V4L2_MBUS_DATA_ENABLE_HIGH :
-+			V4L2_MBUS_DATA_ENABLE_LOW;
-+
- 	bus->flags = flags;
-
- }
-diff --git a/include/media/v4l2-mediabus.h b/include/media/v4l2-mediabus.h
-index 4d8626c..4bbb5f3 100644
---- a/include/media/v4l2-mediabus.h
-+++ b/include/media/v4l2-mediabus.h
-@@ -45,6 +45,8 @@
- /* Active state of Sync-on-green (SoG) signal, 0/1 for LOW/HIGH respectively. */
- #define V4L2_MBUS_VIDEO_SOG_ACTIVE_HIGH		BIT(12)
- #define V4L2_MBUS_VIDEO_SOG_ACTIVE_LOW		BIT(13)
-+#define V4L2_MBUS_DATA_ENABLE_HIGH		BIT(14)
-+#define V4L2_MBUS_DATA_ENABLE_LOW		BIT(15)
-
- /* Serial flags */
- /* How many lanes the client can use */
---
-2.7.4
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index da73881a975b..3bf5b0b871b6 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -857,8 +857,10 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
+ 		struct vsp1_dl_list *dl;
+ 
+ 		dl = vsp1_dl_list_alloc(dlm);
+-		if (!dl)
++		if (!dl) {
++			vsp1_dlm_destroy(dlm);
+ 			return NULL;
++		}
+ 
+ 		list_add_tail(&dl->list, &dlm->free);
+ 	}
+-- 
+git-series 0.9.1
