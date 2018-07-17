@@ -1,84 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33214 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727755AbeGTMvz (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:57500 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729802AbeGQVKa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jul 2018 08:51:55 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 8/9] arm64: dts: renesas: r8a77990: Enable USB3.0 host for Ebisu board
-Date: Fri, 20 Jul 2018 14:03:40 +0200
-Message-Id: <fe1bc94a275db82720c6055aa06f6ff87cbb8450.1532087303.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1532087303.git.horms+renesas@verge.net.au>
-References: <cover.1532087303.git.horms+renesas@verge.net.au>
+        Tue, 17 Jul 2018 17:10:30 -0400
+From: Kieran Bingham <kieran@ksquared.org.uk>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v5 11/11] drm: rcar-du: Support interlaced video output through vsp1
+Date: Tue, 17 Jul 2018 21:35:53 +0100
+Message-Id: <0c4309e0e053bdad2221aeee49c763568a304dbd.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-This patch adds and USB3.0 host device node and enable it for
-R-Car E3 Ebisu board.
+Use the newly exposed VSP1 interface to enable interlaced frame support
+through the VSP1 LIF pipelines.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+The DSMR register is updated to set the ODEV flag on interlaced
+pipelines, thus defining an interlaced stream as having the ODD field
+located in the second half (BOTTOM) of the frame buffer.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
 ---
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 12 ++++++++++++
- arch/arm64/boot/dts/renesas/r8a77990.dtsi      | 11 +++++++++++
- 2 files changed, 23 insertions(+)
+v5
+ - Fix commit title
+ - Document change to DSMR
+ - Configure through vsp1_du_setup_lif(), rather than
+   vsp1_du_atomic_update()
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-index 5e28c1b94b77..2bc3a4884b00 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-@@ -71,6 +71,11 @@
- 		groups = "usb0_b";
- 		function = "usb0";
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 1 +
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c  | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+index 15dc9caa128b..b52b3e817b93 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+@@ -289,6 +289,7 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+ 	/* Signal polarities */
+ 	value = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
+ 	      | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? DSMR_HSL : 0)
++	      | ((mode->flags & DRM_MODE_FLAG_INTERLACE) ? DSMR_ODEV : 0)
+ 	      | DSMR_DIPM_DISP | DSMR_CSPM;
+ 	rcar_du_crtc_write(rcrtc, DSMR, value);
+ 
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+index 72eebeda518e..a042f116731b 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+@@ -52,6 +52,7 @@ void rcar_du_vsp_enable(struct rcar_du_crtc *crtc)
+ 	struct vsp1_du_lif_config cfg = {
+ 		.width = mode->hdisplay,
+ 		.height = mode->vdisplay,
++		.interlaced = mode->flags & DRM_MODE_FLAG_INTERLACE,
+ 		.callback = rcar_du_vsp_complete,
+ 		.callback_data = crtc,
  	};
-+
-+	usb30_pins: usb30 {
-+		groups = "usb30";
-+		function = "usb30";
-+	};
- };
- 
- &rwdt {
-@@ -88,3 +93,10 @@
- 
- 	status = "okay";
- };
-+
-+&xhci0 {
-+	pinctrl-0 = <&usb30_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index 28eccd1d3980..ae89260baad9 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -349,6 +349,17 @@
- 			status = "disabled";
- 		};
- 
-+		xhci0: usb@ee000000 {
-+			compatible = "renesas,xhci-r8a77990",
-+				     "renesas,rcar-gen3-xhci";
-+			reg = <0 0xee000000 0 0xc00>;
-+			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 328>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 328>;
-+			status = "disabled";
-+		};
-+
- 		ohci0: usb@ee080000 {
- 			compatible = "generic-ohci";
- 			reg = <0 0xee080000 0 0x100>;
 -- 
-2.11.0
+git-series 0.9.1
