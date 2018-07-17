@@ -1,62 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:33824 "EHLO pokefinder.org"
+Received: from www.zeus03.de ([194.117.254.33]:50042 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729243AbeGQJ36 (ORCPT
+        id S1728172AbeGQIBg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jul 2018 05:29:58 -0400
-Date: Tue, 17 Jul 2018 10:58:23 +0200
+        Tue, 17 Jul 2018 04:01:36 -0400
+Date: Tue, 17 Jul 2018 09:30:21 +0200
 From: Wolfram Sang <wsa@the-dreams.de>
-To: Peter Rosin <peda@axentia.se>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Peter Rosin <peda@axentia.se>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Subject: Re: [PATCH] i2c: recovery: make pin init look like STOP
-Message-ID: <20180717085823.ghg657jfc4x2zol4@ninjato>
+Message-ID: <20180717073021.djzs2smgowlmynez@katana>
 References: <20180712174919.14447-1-wsa+renesas@sang-engineering.com>
- <06ee47cb-16d0-99df-e18b-80e5a6e4eae9@axentia.se>
+ <CAMuHMdXKk=ON9kabroLUAexCJ2xRQEOCtty+sTP1vsqiusQBEg@mail.gmail.com>
+ <6101f50f-0bf5-b660-0cec-af089eddcb1a@axentia.se>
+ <CAMuHMdU8CGB6tzG3QaoVJBwrB00PwWEKTa_YW2myErepwAXzKg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6ar5prsyq6lxba7i"
+        protocol="application/pgp-signature"; boundary="xifpg5jhdm3anc3u"
 Content-Disposition: inline
-In-Reply-To: <06ee47cb-16d0-99df-e18b-80e5a6e4eae9@axentia.se>
+In-Reply-To: <CAMuHMdU8CGB6tzG3QaoVJBwrB00PwWEKTa_YW2myErepwAXzKg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---6ar5prsyq6lxba7i
+--xifpg5jhdm3anc3u
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 
-> instead of changing this "1" to "scl"? Same-same, but it looks odd
-> to use scl as argument to sda (at least without that comment about
-> sda following scl that is present inside the loop below).
+> > > Any change someone changes RECOVERY_NDELAY to 1, leading to a
+> > > zero delay here? Is that an issue?
+> >
+> > No!
+> >
+> > Above this, there is this line:
+> >
+> > #define RECOVERY_NDELAY         5000
 >=20
-> At the same time, your version make the code inside the loop the
-> same as this initializing code. Oh well, your call...
+> I did say "change".... (and the first once should have been "chance" ;-)
 
-Yes, I wanted them to look alike. Yet, I agree to your comment about
-moving the comment. Will update.
+Still no ;) The pulses would be so small that devices won't recognize
+them. 1 or 0 as a delay won't make a difference then.
 
 
---6ar5prsyq6lxba7i
+--xifpg5jhdm3anc3u
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltNr68ACgkQFA3kzBSg
-KbYsJw/+IbrIYx5P1TXlGSHrTvrBU6n5zfZMGDYCdPMSvtHFQh90Tudmr0F4In0d
-d1cJnROiEWRCQmWyFUqcNNi6EsUpLDw7hy3kYDlyCkOURegMN06Z+V+yAIIfCQ5j
-1EQxRRUEegIQa/m2lVwgT/sJ1r/SqkXIyUiNhDD9Ey4b3GEqkPX1cjkbo13YPXXt
-x1yx4f1LqH1kGntrb0Oyq0n3/Y/BfAVE45plht6GzAYDfW3i+1Cs3crkVvghnCct
-1o0ZGcl1zixgZPpdUBKYmvMW2+0SSthKyMYHuWDmqD/2n4fRHbVxvFi3JwPiI1+t
-1yFxrf+keZT83ZSPUlkKyUsSIpCcsFlyCAIH4wZ9V9QnnATzXpqNwxBuaaCAiRZl
-cE5MRd36JHHgukYDH43M5ljqDMvdCJFEHtuR6yUVQnVpQaoUFMI2KTJPmF2xadNT
-1qxoEJHtiBQKfTRNkpLHXLM3XMplyKGzwekTEn5MLKkIEJGk9kmCP8UakcGMZ+oL
-ysvM9Poe1la47r1+bhho85GAe0prRvjRtAVb8Je8BgjAEzY9G4cvt/iiZ4THjweI
-+clUBj6qT3FUhe1lDYQkiCRvOt+fXZm8Jl48Gf8BQBG+xTjZokWeYNuymc6Z6RjU
-iXT2GJJmMFXPHZOT+LIMcM8L0f4caaiyXlAWeNgO8hwceqjwss8=
-=clG7
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltNmwkACgkQFA3kzBSg
+KbZIhxAAi+GJ8UfXOguPSj4mkkTkdmC6e20YKIngDloHDlbzhXQ5DEF3RGHQwQqe
+Am1NHTUr2zPcHDJHn17EbEl8E+Wej9v2+bov+hlHH8QlPbRQUlXqPs5t6RrCtyiw
+1mkmuinqHoV9ZnR7VRVwIeyt/7lUm2COfhOYecK9NhQPXFUnWTSOvg1JR549/68/
+LLOqlIds84jz6h9QStrZ6xuVScZcmYKnqL1SJSqXR/MdH0VF4n1KTtcDYbkOa16h
+pXuhjbFAqFHYR7SoE2a2nrA0ydgIxq2IJrSv3ScQKbXpp3BnvjL3p02ReVhwPcj2
+wz1SpVe5fkmeR4G0xM9Wt6CScYV2bM4DYJTKComIfAkdPdopGk/kKthvEkMWw7fk
+T5VVe0YHYx7DPs5jPxmPxrHoETcsTrH7zlq342Wmbz67EaZ9u/rNFYNo+HOX8tjd
+2wtenYTiSmoh4/yNAWoqQohZ+1rQHV7Z/mmgpjvne54JdH9/Vi9hiPU83OYDivBE
+p12SjFfQOIGftxOE8uegUqVUJKt5Zh21NEXa6KRdxD7gKTooGPhtiEBQeSFiKETQ
+++onZjHHAh0PYtD4ujdPUo8rJXvQxpn5pto/K/xXyY4LvuywoV+PjzxMS6B1a4Cx
+VIGoTybUSIi1VmP+h3VtDKO7iopfpupVbqXGISYHx7g4sfa2k4E=
+=zHF7
 -----END PGP SIGNATURE-----
 
---6ar5prsyq6lxba7i--
+--xifpg5jhdm3anc3u--
