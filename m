@@ -1,109 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:48682 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731288AbeG3Ohd (ORCPT
+Received: from sauhun.de ([88.99.104.3]:33704 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728624AbeGQJTi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Jul 2018 10:37:33 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Peter Maydell <peter.maydell@linaro.org>
-Cc: Rob Landley <rob@landley.net>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        qemu-devel@nongnu.org, linux-renesas-soc@vger.kernel.org,
-        linux-sh@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH QEMU] hw/char/sh_serial: Add timeout handling to unbreak serial input
-Date: Mon, 30 Jul 2018 15:02:34 +0200
-Message-Id: <20180730130234.30020-1-geert+renesas@glider.be>
+        Tue, 17 Jul 2018 05:19:38 -0400
+Date: Tue, 17 Jul 2018 10:48:05 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH 1/2] i2c: recovery: add get_bus_free callback
+Message-ID: <20180717084804.scksrehgyr4jq4u3@ninjato>
+References: <20180710222423.7792-1-wsa+renesas@sang-engineering.com>
+ <20180710222423.7792-2-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="c3swbs5zee4qbg5m"
+Content-Disposition: inline
+In-Reply-To: <20180710222423.7792-2-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-As of commit 18e8cf159177100e ("serial: sh-sci: increase RX FIFO trigger
-defaults for (H)SCIF") in Linux v4.11-rc1, the serial console on the
-QEMU SH4 target is broken: it delays serial input until enough data has
-been received.
 
-Since aformentioned commit, the Linux SCIF driver programs the Receive
-FIFO Data Count Trigger bits in the FIFO Control Register, to postpone
-generating a receive interrupt until:
-  1. At least the receive trigger count of bytes of data are available
-     in the receive FIFO, OR
-  2. No further data has been received for at least 15 etu after the
-     last received data.
+--c3swbs5zee4qbg5m
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-While QEMU implements the former, it does not implement the latter.
-Hence the receive interrupt is not generated until the former condition
-is met.
+On Wed, Jul 11, 2018 at 12:24:22AM +0200, Wolfram Sang wrote:
+> Some IP cores have an internal 'bus free' logic which may be more
+> advanced than just checking if SDA is high. Add a separate callback to
+> get this status. Filling it is optional.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Fix this by adding basic timeout handling.  As the QEMU SCIF emulation
-ignores any serial speed programming, the timeout value used conforms to
-a default speed of 9600 bps, which is fine for any interative console.
+Applied to for-next, thanks!
 
-Reported-by: Rob Landley <rob@landley.net>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- hw/char/sh_serial.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
 
-diff --git a/hw/char/sh_serial.c b/hw/char/sh_serial.c
-index 373a40595fd975d1..12831561a6c8b137 100644
---- a/hw/char/sh_serial.c
-+++ b/hw/char/sh_serial.c
-@@ -29,6 +29,7 @@
- #include "hw/sh4/sh.h"
- #include "chardev/char-fe.h"
- #include "qapi/error.h"
-+#include "qemu/timer.h"
- 
- //#define DEBUG_SERIAL
- 
-@@ -63,6 +64,8 @@ typedef struct {
-     int rtrg;
- 
-     CharBackend chr;
-+    QEMUTimer *fifo_timeout_timer;
-+    uint64_t etu; /* Elementary Time Unit (ns) */
- 
-     qemu_irq eri;
-     qemu_irq rxi;
-@@ -314,6 +317,16 @@ static int sh_serial_can_receive1(void *opaque)
-     return sh_serial_can_receive(s);
- }
- 
-+static void sh_serial_timeout_int(void *opaque)
-+{
-+    sh_serial_state *s = opaque;
-+
-+    s->flags |= SH_SERIAL_FLAG_RDF;
-+    if (s->scr & (1 << 6) && s->rxi) {
-+        qemu_set_irq(s->rxi, 1);
-+    }
-+}
-+
- static void sh_serial_receive1(void *opaque, const uint8_t *buf, int size)
- {
-     sh_serial_state *s = opaque;
-@@ -330,8 +343,12 @@ static void sh_serial_receive1(void *opaque, const uint8_t *buf, int size)
-                 if (s->rx_cnt >= s->rtrg) {
-                     s->flags |= SH_SERIAL_FLAG_RDF;
-                     if (s->scr & (1 << 6) && s->rxi) {
-+                        timer_del(s->fifo_timeout_timer);
-                         qemu_set_irq(s->rxi, 1);
-                     }
-+                } else {
-+                    timer_mod(s->fifo_timeout_timer,
-+                        qemu_clock_get_ns(QEMU_CLOCK_VIRTUAL) + 15 * s->etu);
-                 }
-             }
-         }
-@@ -402,6 +419,9 @@ void sh_serial_init(MemoryRegion *sysmem,
-                                  sh_serial_event, NULL, s, NULL, true);
-     }
- 
-+    s->fifo_timeout_timer = timer_new_ns(QEMU_CLOCK_VIRTUAL,
-+                                         sh_serial_timeout_int, s);
-+    s->etu = NANOSECONDS_PER_SECOND / 9600;
-     s->eri = eri_source;
-     s->rxi = rxi_source;
-     s->txi = txi_source;
--- 
-2.17.1
+--c3swbs5zee4qbg5m
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltNrUQACgkQFA3kzBSg
+KbZrlQ//VdfWQYyJm726uLqe+O3jW9bjN+jm1rfaWN7r2A+j/eQYb30O2xac0qoM
+ORyTWutv0pae6q2qdEBa94tkFYtMZMOAV3yxeD3kTceKI85Ofy51X81LV5dwOvTe
+rO/X/5Y3TzA9OJJAi1KdybHmQo1Oo6IO+WQNEsp6o8Au9UZK1NnEhg4g99Lu14SP
+nvx4ED4ezp5eKeLOizY3nN8BtCcMGMWeXzhidjyo8cF4UCPgvWq0wiDVntOHZ+b/
+iSJUCuiyiAqiC1ZlVhhTZ84JICJfP5KVGEFQK8kYi7llUzpV0BCyGCcysZWZlq81
+AJp7ZFOVQQXFH2GM5kLabsVJM+igVA7YUuWUSl0uVqpXlEY4kJrRPUn+8HNtbYHw
+GMw5DCBNBDCbnFcyJQ9uX+u6mMk5KJrb9J980OMX4804OY3w7uHmoaMr5a2WZfPN
+CzF4TPwn7wecWmzWvTTLxV9Kc1mwZAtBebTjYe3kT8JEW7SD7oGbzMZYD6UipD6p
+6oZE9Ho60XcMS6QKgdqx8/Pc0TCGHY3lGPg9lxS+owrvio6l8rfQQ1ejDead8Lrq
+kufJmK13Tm7c9trA4POcUeX28br8bVSwBBGIPg4FBTS7c8xr7zmqU88zqgsgBQez
+GPWPoVAhFdAJKwI5nTrO7hchZox1tCVpteSHsuTA8Lq+3ZlGSbs=
+=SFvK
+-----END PGP SIGNATURE-----
+
+--c3swbs5zee4qbg5m--
