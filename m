@@ -1,48 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:61383 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729560AbeG0LS2 (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:57480 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729684AbeGQVKU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:18:28 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 3/4] ARM: dts: iwg23s-sbc: specify EtherAVB PHY IRQ
-Date: Fri, 27 Jul 2018 10:51:28 +0100
-Message-Id: <1532685089-35645-4-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1532685089-35645-1-git-send-email-biju.das@bp.renesas.com>
-References: <1532685089-35645-1-git-send-email-biju.das@bp.renesas.com>
+        Tue, 17 Jul 2018 17:10:20 -0400
+From: Kieran Bingham <kieran@ksquared.org.uk>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v5 01/11] media: vsp1: drm: Fix minor grammar error
+Date: Tue, 17 Jul 2018 21:35:43 +0100
+Message-Id: <5dcd5bfd670cb7d05c54586a31a01a0ff7757783.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Specify  EtherAVB PHY IRQ  in the board specific device tree, now that we
-have GPIO support.
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+The pixel format is 'unsupported'. Fix the small debug message which
+incorrectly declares this.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/platform/vsp1/vsp1_drm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-index 56182ee..22da819 100644
---- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -35,6 +35,8 @@
- 
- 	phy3: ethernet-phy@3 {
- 		reg = <3>;
-+		interrupt-parent = <&gpio5>;
-+		interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
- 		micrel,led-mode = <1>;
- 	};
- };
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+index edb35a5c57ea..a16856856789 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -806,7 +806,7 @@ int vsp1_du_atomic_update(struct device *dev, unsigned int pipe_index,
+ 	 */
+ 	fmtinfo = vsp1_get_format_info(vsp1, cfg->pixelformat);
+ 	if (!fmtinfo) {
+-		dev_dbg(vsp1->dev, "Unsupport pixel format %08x for RPF\n",
++		dev_dbg(vsp1->dev, "Unsupported pixel format %08x for RPF\n",
+ 			cfg->pixelformat);
+ 		return -EINVAL;
+ 	}
 -- 
-2.7.4
+git-series 0.9.1
