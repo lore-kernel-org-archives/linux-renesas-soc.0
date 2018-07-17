@@ -1,24 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:56136 "EHLO
+Received: from perceval.ideasonboard.com ([213.167.242.64]:55546 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729863AbeGQQmK (ORCPT
+        with ESMTP id S1731607AbeGQO4T (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jul 2018 12:42:10 -0400
-Reply-To: kieran.bingham+renesas@ideasonboard.com
+        Tue, 17 Jul 2018 10:56:19 -0400
 Subject: Re: [PATCH v4 10/11] media: vsp1: Support Interlaced display
  pipelines
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
         dri-devel@lists.freedesktop.org
+Reply-To: kieran.bingham+renesas@ideasonboard.com,
+          kieran.bingham+renesas@ideasonboard.com
 References: <cover.bd2eb66d11f8094114941107dbc78dc02c9c7fdd.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
+ <8e320ac8861b7fdd657a66138780c18fd66b1a19.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
  <2663986.uvcnutGSNp@avalon>
  <f794f4d6-f524-293b-3df6-097f42bef372@ideasonboard.com>
- <5111021.qdhzlld4I3@avalon>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Message-ID: <08fd7b2c-f725-6018-b96e-72ce62dc21d7@ideasonboard.com>
-Date: Tue, 17 Jul 2018 17:08:44 +0100
+Message-ID: <9dbdfd31-c899-85e7-63a6-f2c55344a549@ideasonboard.com>
+Date: Tue, 17 Jul 2018 15:23:21 +0100
 MIME-Version: 1.0
-In-Reply-To: <5111021.qdhzlld4I3@avalon>
+In-Reply-To: <f794f4d6-f524-293b-3df6-097f42bef372@ideasonboard.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
@@ -27,107 +28,56 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Laurent,
 
-On 17/07/18 13:52, Laurent Pinchart wrote:
-> Hi Kieran,
-> 
-> On Monday, 16 July 2018 21:21:00 EEST Kieran Bingham wrote:
->> On 24/05/18 13:51, Laurent Pinchart wrote:
->>> On Thursday, 3 May 2018 16:36:21 EEST Kieran Bingham wrote:
->>>> Calculate the top and bottom fields for the interlaced frames and
->>>> utilise the extended display list command feature to implement the
->>>> auto-field operations. This allows the DU to update the VSP2 registers
->>>> dynamically based upon the currently processing field.
->>>>
->>>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->>>>
->>>> ---
->>>>
->>>> v3:
->>>>  - Pass DL through partition calls to allow autocmd's to be retrieved
->>>>  - Document interlaced field in struct vsp1_du_atomic_config
->>>>
->>>> v2:
->>>>  - fix erroneous BIT value which enabled interlaced
->>>>  - fix field handling at frame_end interrupt
->>>>
->>>> ---
->>>>
->>>>  drivers/media/platform/vsp1/vsp1_dl.c   | 10 ++++-
->>>>  drivers/media/platform/vsp1/vsp1_drm.c  | 11 ++++-
->>>>  drivers/media/platform/vsp1/vsp1_regs.h |  1 +-
->>>>  drivers/media/platform/vsp1/vsp1_rpf.c  | 71 ++++++++++++++++++++++++--
->>>>  drivers/media/platform/vsp1/vsp1_rwpf.h |  1 +-
->>>>  include/media/vsp1.h                    |  2 +-
->>>>  6 files changed, 93 insertions(+), 3 deletions(-)
-> 
-> [snip]
-> 
->>>> diff --git a/drivers/media/platform/vsp1/vsp1_drm.c
->>>> b/drivers/media/platform/vsp1/vsp1_drm.c index 2c3db8b8adce..cc29c9d96bb7
->>>> 100644
->>>> --- a/drivers/media/platform/vsp1/vsp1_drm.c
->>>> +++ b/drivers/media/platform/vsp1/vsp1_drm.c
->>>> @@ -811,6 +811,17 @@ int vsp1_du_atomic_update(struct device *dev,
->>>> unsigned
->>>> int pipe_index, return -EINVAL;
->>>>
->>>>  	}
->>>>
->>>> +	if (!(vsp1_feature(vsp1, VSP1_HAS_EXT_DL)) && cfg->interlaced) {
->>>
->>> Nitpicking, writing the condition as
->>>
->>> 	if (cfg->interlaced && !(vsp1_feature(vsp1, VSP1_HAS_EXT_DL)))
->>
->> Done.
->>
->>> would match the comment better. You can also drop the parentheses around
->>> the vsp1_feature() call.
->>>
->>>> +		/*
->>>> +		 * Interlaced support requires extended display lists to
->>>> +		 * provide the auto-fld feature with the DU.
->>>> +		 */
->>>> +		dev_dbg(vsp1->dev, "Interlaced unsupported on this output\n");
->>>
->>> Could we catch this in the DU driver to fail atomic test ?
->>
->> Ugh - I thought moving the configuration to vsp1_du_setup_lif() would
->> give us this, but that return value is not checked in the DU.
->>
->> How can we interogate the VSP1 to ask it if it supports interlaced from
->> rcar_du_vsp_plane_atomic_check()?
->>
->>
->> Some dummy call to vsp1_du_setup_lif() to check the return value ? Or
->> should we implement a hook to call through to perform checks in the VSP1
->> DRM API?
-> 
-> Would it be possible to just infer that from the DU compatible string, without 
-> querying the VSP driver ? Of course that's a bit of a layering violation, but 
-> as we know what type of VSP instance is present in each SoC, such a small hack 
-> wouldn't hurt in my opinion. If the need arises later we can introduce an API 
-> to query the information from the VSP driver.
+<snip>
 
-I'm not sure what there is to match on currently.
+>>> +static void vsp1_rpf_configure_autofld(struct vsp1_rwpf *rpf,
+>>> +				       struct vsp1_dl_ext_cmd *cmd)
+>>> +{
+>>> +	const struct v4l2_pix_format_mplane *format = &rpf->format;
+>>> +	struct vsp1_extcmd_auto_fld_body *auto_fld = cmd->data;
+>>> +	u32 offset_y, offset_c;
+>>> +
+>>> +	/* Re-index our auto_fld to match the current RPF */
+>>
+>> s/RPF/RPF./
+> 
+> Fixed.
+> 
+>>
+>>> +	auto_fld = &auto_fld[rpf->entity.index];
+>>> +
+>>> +	auto_fld->top_y0 = rpf->mem.addr[0];
+>>> +	auto_fld->top_c0 = rpf->mem.addr[1];
+>>> +	auto_fld->top_c1 = rpf->mem.addr[2];
+>>> +
+>>> +	offset_y = format->plane_fmt[0].bytesperline;
+>>> +	offset_c = format->plane_fmt[1].bytesperline;
+>>> +
+>>> +	auto_fld->bottom_y0 = rpf->mem.addr[0] + offset_y;
+>>> +	auto_fld->bottom_c0 = rpf->mem.addr[1] + offset_c;
+>>> +	auto_fld->bottom_c1 = rpf->mem.addr[2] + offset_c;
+>>> +
+>>> +	cmd->flags |= VSP1_DL_EXT_AUTOFLD_INT;
+>>> +	cmd->flags |= BIT(16 + rpf->entity.index);
+>>
+>> Do you expect some flags to already be set ? If not, couldn't we assign the 
+>> value to the field instead of OR'ing it ?
 
-I thought that we had restrictions on which display pipelines supported
-interlaced. (i.e. D3/E3 might not) - but they seem to support extended
-display lists ...
+> No, I think you are correct. Moved to a single expression setting the
+> cmd->flags in one line.
 
-So isn't it the case that any pipeline which we connect to DRM supports
-interlaced? (currently) - we can't / don't physically connect other VSP
-entities to the DRM pipes...
+Ahem.... no - of course these flags have to be OR-ed in. Because it
+potentially updates a single command object for multiple RPFs.
+
+The flags get reset to 0 when the command object is discarded in
+vsp1_dl_ext_cmd_put()
 
 
 > 
->>>> +		return -EINVAL;
->>>> +	}
->>>> +
->>>> +	rpf->interlaced = cfg->interlaced;
->>>> +
->>>>  	rpf->fmtinfo = fmtinfo;
->>>>  	rpf->format.num_planes = fmtinfo->planes;
->>>>  	rpf->format.plane_fmt[0].bytesperline = cfg->pitch;
-> 
-> [snip]
+>>
+>>> +}
+
+<snip>
+
+--
+Kieran
