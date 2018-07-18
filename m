@@ -1,54 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:22735 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728863AbeGYNWE (ORCPT
+Received: from foss.arm.com ([217.140.101.70]:60002 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726996AbeGRLKj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jul 2018 09:22:04 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 2/2] mmc: tmio: Fix SCC error detection
-Date: Wed, 25 Jul 2018 14:10:31 +0200
-Message-Id: <20180725121031.24277-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180725121031.24277-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180725121031.24277-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 18 Jul 2018 07:10:39 -0400
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Hanjun Guo <hanjun.guo@linaro.org>,
+        ganapatrao.kulkarni@cavium.com, morten.rasmussen@arm.com,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v3 5/7] arm64: smp: remove cpu and numa topology
+ information when hotplugging out CPU
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1530874968-5960-1-git-send-email-sudeep.holla@arm.com>
+ <1530874968-5960-6-git-send-email-sudeep.holla@arm.com>
+ <CAMuHMdXw9My+P1UCJ19Qdjq4O9gY_0QVFZaw6C5Ytmpyac59Vw@mail.gmail.com>
+ <20180717140536.GA27323@e107155-lin>
+ <CAMuHMdUnL=XyoSfRU+ebVUjsiP89V4vcoN=O4xc0VwHmLP72HA@mail.gmail.com>
+ <1c47b3fd-59ba-aba4-43b2-ed98e750887b@arm.com>
+ <5a23f1c8-27cb-b09c-90fc-edab3eec99f9@arm.com>
+ <20180717170121.GA14049@e107155-lin>
+ <CAMuHMdWv4BjXshBbqacebjbOz2eQM=1cBSjit8c2p7dmQP4ZxA@mail.gmail.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <7cdb1d9b-cd2f-4dd7-25bf-450a7afa83d9@arm.com>
+Date: Wed, 18 Jul 2018 11:33:16 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdWv4BjXshBbqacebjbOz2eQM=1cBSjit8c2p7dmQP4ZxA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
 
-SDR104 and HS200 need to check for SCC error. If SCC error is detected,
-retuning is necessary.
 
-Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-[Niklas: update commit message]
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/mmc/host/tmio_mmc_core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 18/07/18 08:15, Geert Uytterhoeven wrote:
+> Hi Sudeep,
+> 
+> On Tue, Jul 17, 2018 at 7:02 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
+>> On Tue, Jul 17, 2018 at 04:55:22PM +0100, Sudeep Holla wrote:
+>>> Going through the code again, I think I understand the problem here.
+>>> We use the topology_core_mask pointers which are stashed in cpu_groups[]
+>>> But, the cpumask themselves will be getting modified as the cpus go up
+>>> and down, so we need to make a copy instead of just using the pointer.
+>>> I will see what we can do to fix that.
+>>
+>> This is what I could come up with. I haven't tested this but just compiled
+>> it. Let me know if this resolves the issue.
+> 
+> Thanks, it did!
+> 
+>> From: Sudeep Holla <sudeep.holla@arm.com>
+>> Date: Tue, 17 Jul 2018 17:45:20 +0100
+>> Subject: [PATCH] drivers/firmware: psci_checker: stash and use topology_core_cpumask for hotplug tests
+>>
+>> Commit 7f9545aa1a91 ("arm64: smp: remove cpu and numa topology information
+>> when hotplugging out CPU") updates the cpu topology when the CPU is
+>> hotplugged out. However the PSCI checker code uses the topology_core_cpumask
+>> pointers for some of the cpu hotplug testing. Since the pointer to the
+>> core_cpumask of the first CPU in the group is used, which when that CPU
+>> itself is hotpugged out is just set to itself, the testing terminates
+>> after that particular CPU is tested out. But the intention of this tests
+>> is to cover all the CPU in the group.
+>>
+>> In order to support that, we need to stash the topology_core_cpumask
+>> before the start of the test and use that value instead of pointer to a
+>> cpumask which will be updated on CPU hotplug.
+>>
+>> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>> Cc: Mark Rutland <mark.rutland@arm.com>
+>> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+>> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> 
+> Fixes: 7f9545aa1a91a9a4 ("arm64: smp: remove cpu and numa topology
+> information when hotplugging out CPU")
+> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 72ac806e0c762d83..81883bc08524e441 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -920,8 +920,8 @@ static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
- 	if (mrq->cmd->error || (mrq->data && mrq->data->error))
- 		tmio_mmc_abort_dma(host);
- 
--	if (host->check_scc_error)
--		host->check_scc_error(host);
-+	if (host->check_scc_error && host->check_scc_error(host))
-+		mrq->cmd->error = -EILSEQ;
- 
- 	/* If SET_BLOCK_COUNT, continue with main command */
- 	if (host->mrq && !mrq->cmd->error) {
+Thanks, I will post the patch independently with small clean up to
+reduce allocation of cpumask
+
 -- 
-2.18.0
+Regards,
+Sudeep
