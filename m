@@ -1,57 +1,124 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:58543 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730371AbeGRNaK (ORCPT
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:42651 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728565AbeGRLns (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Jul 2018 09:30:10 -0400
-Message-ID: <b70d78516e765b3a6587323cffb6066e9363cd48.camel@linux.intel.com>
+        Wed, 18 Jul 2018 07:43:48 -0400
+MIME-Version: 1.0
+References: <1531731553-22979-1-git-send-email-phil.edworthy@renesas.com>
+ <1531731553-22979-3-git-send-email-phil.edworthy@renesas.com>
+ <20180717120737.bipotpki3yhn6klf@verge.net.au> <c6b21734b729cb5f92a5686ae3fa8469692a1302.camel@linux.intel.com>
+ <TY1PR01MB1769BD3E271E217E0CFBAB46F55C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <40f2729f38bd565a829d60d9cc8f508e33b0dc65.camel@linux.intel.com>
+ <TY1PR01MB1769F130075F1635CC51532FF55C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <c912248504a4cd534a90d263ab6005526a7e16ab.camel@linux.intel.com>
+ <TY1PR01MB1769473F18D646B7011C5803F55C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <20180718091448.fw2y7ea6sk2osi3g@verge.net.au>
+In-Reply-To: <20180718091448.fw2y7ea6sk2osi3g@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 18 Jul 2018 13:06:12 +0200
+Message-ID: <CAMuHMdWJkwJ5+DDqbaWH-cMhRQynWCxb4MbFtpejqi1HhUBHTQ@mail.gmail.com>
 Subject: Re: [PATCH 2/2] i2c: designware: Add support for a bus clock
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms@verge.net.au>
+To: Simon Horman <horms@verge.net.au>
 Cc: Phil Edworthy <phil.edworthy@renesas.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Jarkko Nikula <jarkko.nikula@linux.intel.com>,
         Linux I2C <linux-i2c@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Mika Westerberg <mika.westerberg@linux.intel.com>
-Date: Wed, 18 Jul 2018 15:52:20 +0300
-In-Reply-To: <CAMuHMdWJkwJ5+DDqbaWH-cMhRQynWCxb4MbFtpejqi1HhUBHTQ@mail.gmail.com>
-References: <1531731553-22979-1-git-send-email-phil.edworthy@renesas.com>
-         <1531731553-22979-3-git-send-email-phil.edworthy@renesas.com>
-         <20180717120737.bipotpki3yhn6klf@verge.net.au>
-         <c6b21734b729cb5f92a5686ae3fa8469692a1302.camel@linux.intel.com>
-         <TY1PR01MB1769BD3E271E217E0CFBAB46F55C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-         <40f2729f38bd565a829d60d9cc8f508e33b0dc65.camel@linux.intel.com>
-         <TY1PR01MB1769F130075F1635CC51532FF55C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-         <c912248504a4cd534a90d263ab6005526a7e16ab.camel@linux.intel.com>
-         <TY1PR01MB1769473F18D646B7011C5803F55C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-         <20180718091448.fw2y7ea6sk2osi3g@verge.net.au>
-         <CAMuHMdWJkwJ5+DDqbaWH-cMhRQynWCxb4MbFtpejqi1HhUBHTQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, 2018-07-18 at 13:06 +0200, Geert Uytterhoeven wrote:
-> On Wed, Jul 18, 2018 at 11:14 AM Simon Horman <horms@verge.net.au>
-> wrote:
+On Wed, Jul 18, 2018 at 11:14 AM Simon Horman <horms@verge.net.au> wrote:
+> On Tue, Jul 17, 2018 at 02:57:27PM +0000, Phil Edworthy wrote:
+> > On 17 July 2018 15:47, Andy Shevchenko wrote:
+> > > On Tue, 2018-07-17 at 14:40 +0000, Phil Edworthy wrote:
+> > > > On 17 July 2018 15:19, Andy Shevchenko wrote:
+> > > > > On Tue, 2018-07-17 at 12:42 +0000, Phil Edworthy wrote:
+> > > > >
+> > > > > > > While your point sounds valid (don't remember how clk_get() is
+> > > > > > > implemented), NULL is also OK to have.
+> > > > > >
+> > > > > > Ok as in there is no bus clock, right?
+> > > > > > So it should be:
+> > > > > >  if (!IS_ERR_OR_NULL (dev->busclk))
+> > > > >
+> > > > > Nope, NULL is no error case for optional clock.
+> > > >
+> > > > I must be missing something here...
+> > >
+> > > See how clk_prepare_enable() is implemented.
+> > Ok, if busclk is NULL the code can safely call clk_prepare_enable()
+> >
+> > > > I agree that NULL for an optional clock is not an error. However, the
+> > > > code above is now:
+> > > > + if (prepare) {
+> > > > +         /* Optional bus clock */
+> > >
+> > > > +         if (!IS_ERR_OR_NULL(dev->busclk)) {
+> > >
+> > > Check for NULL is redundant.
+> > >
+> > > > +                 ret = clk_prepare_enable(dev->busclk);
+> > > > +                 if (ret)
+> > > > +                         return ret;
+> > > > +         }
+> > > > +
+> > > >           return clk_prepare_enable(dev->clk);
+> > > > + }
+> > > >
+> > > > So, if you have a valid busclk, it gets enabled, otherwise it is left
+> > > > alone.
+> > >
+> > So the code as sent in the original email is correct (aside from Geert's
+> > comments about EPROBE_DEFER handling).
+> >
+> > Maybe I need some coffee :\
+> > Thanks
+> > Phil
+>
+> My point is that errors should be treated as errors.
+>
+> In i2c_dw_prepare_clk() the following appears:
+>
+>         if (IS_ERR(dev->clk))
+>                 return PTR_ERR(dev->clk);
+>
+> So dev->clk being an error value is treated as an error that
+> is passed up to the caller.
+>
+> But in your patch (and the snippet below) dev->busclk is treated
+> as the optional clock not being present. Even if the error stored
+> nothing to do with the clock not being present - f.e.  ENOMEM or
+> as Geert mentioned elsewhere, EPROBE_DEFER.
+>
+> Assuming the absense of the optional clock is indicated by ENOENT,
+> in my view correct code would include something like:
+>
+>         ...
+>
+>         if (IS_ERR(dev->clk))
+>                 return PTR_ERR(dev->clk);
+>
+>         if (IS_ERR(dev->buslck) && PTR_ERR(dev->busclk) != -ENOENT)
+>                 return PTR_ERR(dev->busclk);
+>
+>         ...
 
-> >         if (IS_ERR(dev->buslck) && PTR_ERR(dev->busclk) != -ENOENT)
-> >                 return PTR_ERR(dev->busclk);
-> > 
-> >         ...
-> 
-> As this is a commonly-used construct, perhaps it would be good to
-> introduce
-> clk_get_optional() (cfr. gpiod_get_optional()) and
-> devm_clk_get_optional(),
-> which would return NULL instead of -ENOENT?
-> Then it becomes a simple check for IS_ERR() in the driver.
+As this is a commonly-used construct, perhaps it would be good to introduce
+clk_get_optional() (cfr. gpiod_get_optional()) and devm_clk_get_optional(),
+which would return NULL instead of -ENOENT?
+Then it becomes a simple check for IS_ERR() in the driver.
 
-I'm puzzled why CCF still lack of such API.
+Gr{oetje,eeting}s,
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
