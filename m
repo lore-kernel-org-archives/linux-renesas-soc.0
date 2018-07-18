@@ -1,68 +1,36 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:51232 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388062AbeGWV3r (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:49963 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730810AbeGRK2g (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jul 2018 17:29:47 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
+        Wed, 18 Jul 2018 06:28:36 -0400
+Date: Wed, 18 Jul 2018 11:51:27 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org
-Subject: [PATCH 01/12] i2c: quirks: add zero length checks
-Date: Mon, 23 Jul 2018 22:26:05 +0200
-Message-Id: <20180723202617.15230-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
-References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77980: add INTC-EX support
+Message-ID: <20180718095126.n22v75vnludbo7c7@verge.net.au>
+References: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
+ <c1e25728-8b86-b896-c097-e9ce2b891951@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c1e25728-8b86-b896-c097-e9ce2b891951@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some adapters do not support a message length of 0. Add this as a quirk
-so drivers don't have to open code it.
+On Tue, Jul 17, 2018 at 11:08:27PM +0300, Sergei Shtylyov wrote:
+> Describe the INTC-EX interrupt controller in the R8A77980 device tree.
+> 
+> Based on the original (and large) patch by Vladimir Barinov.
+> 
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-
-Only build tested.
-
- drivers/i2c/i2c-core-base.c | 6 ++++++
- include/linux/i2c.h         | 4 ++++
- 2 files changed, 10 insertions(+)
-
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 02d6f27b19e4..a26b3e9cc441 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -1839,9 +1839,15 @@ static int i2c_check_for_quirks(struct i2c_adapter *adap, struct i2c_msg *msgs,
- 		if (msgs[i].flags & I2C_M_RD) {
- 			if (do_len_check && i2c_quirk_exceeded(len, q->max_read_len))
- 				return i2c_quirk_error(adap, &msgs[i], "msg too long");
-+
-+			if (q->flags & I2C_AQ_NO_ZERO_LEN_READ && len == 0)
-+				return i2c_quirk_error(adap, &msgs[i], "no zero length");
- 		} else {
- 			if (do_len_check && i2c_quirk_exceeded(len, q->max_write_len))
- 				return i2c_quirk_error(adap, &msgs[i], "msg too long");
-+
-+			if (q->flags & I2C_AQ_NO_ZERO_LEN_WRITE && len == 0)
-+				return i2c_quirk_error(adap, &msgs[i], "no zero length");
- 		}
- 	}
- 
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index bc8d42f8544f..2a98d0886d2e 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -661,6 +661,10 @@ struct i2c_adapter_quirks {
- 					 I2C_AQ_COMB_READ_SECOND | I2C_AQ_COMB_SAME_ADDR)
- /* clock stretching is not supported */
- #define I2C_AQ_NO_CLK_STRETCH		BIT(4)
-+/* message cannot have length of 0 */
-+#define I2C_AQ_NO_ZERO_LEN_READ		BIT(5)
-+#define I2C_AQ_NO_ZERO_LEN_WRITE	BIT(6)
-+#define I2C_AQ_NO_ZERO_LEN		(I2C_AQ_NO_ZERO_LEN_READ | I2C_AQ_NO_ZERO_LEN_WRITE)
- 
- /*
-  * i2c_adapter is the structure used to identify a physical i2c bus along
--- 
-2.11.0
+Thanks Sergei, applied.
