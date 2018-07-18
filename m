@@ -1,70 +1,30 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:55253 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729111AbeGZLn7 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:50065 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726064AbeGRKeJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jul 2018 07:43:59 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Lars-Peter Clausen <lars@metafoo.de>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        Steve Longerbeam <steve_longerbeam@mentor.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 2/2] adv7180: add g_frame_interval support
-Date: Thu, 26 Jul 2018 12:27:16 +0200
-Message-Id: <20180726102716.1390-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180726102716.1390-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180726102716.1390-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 18 Jul 2018 06:34:09 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 91CD925BF12
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Jul 2018 19:57:01 +1000 (AEST)
+Date: Wed, 18 Jul 2018 11:56:59 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: [ANNOUNCE] Renesas tree closed for v4.19
+Message-ID: <20180718095658.ra5zzgl2f7kv6l65@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Implement g_frame_interval to return the current standard's frame
-interval.
+Hi,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/i2c/adv7180.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+I would like to stop accepting non-bug-fix patches for v4.19 and get
+the last pull requests posted by the end of this week. This is in order
+for them to be sent before the release of v4.18-rc6, the deadline set by the
+ARM SoC maintainers.  As patches should ideally progress from the renesas
+tree into linux-next before sending pull requests there is a few days lead
+time involved.
 
-diff --git a/drivers/media/i2c/adv7180.c b/drivers/media/i2c/adv7180.c
-index c2e24132e8c21d38..f72312efc471acd9 100644
---- a/drivers/media/i2c/adv7180.c
-+++ b/drivers/media/i2c/adv7180.c
-@@ -461,6 +461,22 @@ static int adv7180_g_std(struct v4l2_subdev *sd, v4l2_std_id *norm)
- 	return 0;
- }
- 
-+static int adv7180_g_frame_interval(struct v4l2_subdev *sd,
-+				    struct v4l2_subdev_frame_interval *fi)
-+{
-+	struct adv7180_state *state = to_state(sd);
-+
-+	if (state->curr_norm & V4L2_STD_525_60) {
-+		fi->interval.numerator = 1001;
-+		fi->interval.denominator = 30000;
-+	} else {
-+		fi->interval.numerator = 1;
-+		fi->interval.denominator = 25;
-+	}
-+
-+	return 0;
-+}
-+
- static void adv7180_set_power_pin(struct adv7180_state *state, bool on)
- {
- 	if (!state->pwdn_gpio)
-@@ -820,6 +836,7 @@ static int adv7180_subscribe_event(struct v4l2_subdev *sd,
- static const struct v4l2_subdev_video_ops adv7180_video_ops = {
- 	.s_std = adv7180_s_std,
- 	.g_std = adv7180_g_std,
-+	.g_frame_interval = adv7180_g_frame_interval,
- 	.querystd = adv7180_querystd,
- 	.g_input_status = adv7180_g_input_status,
- 	.s_routing = adv7180_s_routing,
--- 
-2.18.0
+I intend to begin queueing up patches for v4.20 as they are ready.
