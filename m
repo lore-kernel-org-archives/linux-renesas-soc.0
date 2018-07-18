@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:59512 "EHLO
+Received: from relmlor3.renesas.com ([210.160.252.173]:23226 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728929AbeGRXDd (ORCPT
+        by vger.kernel.org with ESMTP id S1729250AbeGRW71 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Jul 2018 19:03:33 -0400
+        Wed, 18 Jul 2018 18:59:27 -0400
 From: Chris Brandt <Chris.Brandt@renesas.com>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 CC: Greg KH <gregkh@linuxfoundation.org>,
@@ -15,8 +15,8 @@ CC: Greg KH <gregkh@linuxfoundation.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms+renesas@verge.net.au>
 Subject: RE: [PATCH 2/2] serial: sh-sci: Document r7s9210 bindings
-Date: Wed, 18 Jul 2018 22:23:26 +0000
-Message-ID: <TY1PR01MB1562B58322D08B16123BB1CA8A530@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+Date: Wed, 18 Jul 2018 22:19:22 +0000
+Message-ID: <TY1PR01MB1562A582DB067740B7D012ED8A530@TY1PR01MB1562.jpnprd01.prod.outlook.com>
 References: <20180711144131.73552-1-chris.brandt@renesas.com>
  <20180711144131.73552-3-chris.brandt@renesas.com>
  <CAMuHMdVCA0MrD4QRZb7VPR_Dqmghfd83j4WY_oZnfqVyx++rEw@mail.gmail.com>
