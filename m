@@ -1,114 +1,187 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36562 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031094AbeGAQh5 (ORCPT
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50808 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730451AbeGRNHf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:37:57 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4.17 032/220] clk: renesas: cpg-mssr: Stop using printk format %pCr
-Date: Sun,  1 Jul 2018 18:20:56 +0200
-Message-Id: <20180701160909.674646762@linuxfoundation.org>
-In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
-References: <20180701160908.272447118@linuxfoundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Wed, 18 Jul 2018 09:07:35 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mark Brown <broonie@kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: bd9571mwv: Use "backup_mode" sysfs file instead of "wake_up"" to the regulator tree
+In-Reply-To: <20180716153052.1830-2-geert+renesas@glider.be>
+Message-Id: <E1fflaR-0007Uu-G7@debutante>
+Date: Wed, 18 Jul 2018 13:29:43 +0100
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+The patch
 
-------------------
+   regulator: bd9571mwv: Use "backup_mode" sysfs file instead of "wake_up"
 
+has been applied to the regulator tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 02b3a073c12edc8cbc18e07e8880a32e78c1aee0 Mon Sep 17 00:00:00 2001
 From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Mon, 16 Jul 2018 17:30:50 +0200
+Subject: [PATCH] regulator: bd9571mwv: Use "backup_mode" sysfs file instead of
+ "wake_up"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-commit ef4b0be62641d296cf4c0ad8f75ab83ab066ed51 upstream.
+Currently the BD9571MWV PMIC driver uses the standard "wake_up" sysfs
+file to control enablement of DDR Backup Mode.
 
-Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
-called in atomic context.
+However, configuring DDR Backup Mode is not really equivalent to
+configuring the PMIC as a wake-up source.  To avoid confusion, use a
+custom "backup_mode" attribute file in sysfs instead.
 
-Replace it by open-coding the operation.  This is safe here, as the code
-runs in task context.
-
-Link: http://lkml.kernel.org/r/1527845302-12159-2-git-send-email-geert+renesas@glider.be
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>
-To: Michael Turquette <mturquette@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-To: Zhang Rui <rui.zhang@intel.com>
-To: Eduardo Valentin <edubezval@gmail.com>
-To: Eric Anholt <eric@anholt.net>
-To: Stefan Wahren <stefan.wahren@i2se.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-doc@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
-Cc: linux-serial@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: stable@vger.kernel.org # 4.5+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/clk/renesas/renesas-cpg-mssr.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/regulator/bd9571mwv-regulator.c | 52 ++++++++++++++++++++++---
+ 1 file changed, 47 insertions(+), 5 deletions(-)
 
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -258,8 +258,9 @@ struct clk *cpg_mssr_clk_src_twocell_get
- 		dev_err(dev, "Cannot get %s clock %u: %ld", type, clkidx,
- 		       PTR_ERR(clk));
- 	else
--		dev_dbg(dev, "clock (%u, %u) is %pC at %pCr Hz\n",
--			clkspec->args[0], clkspec->args[1], clk, clk);
-+		dev_dbg(dev, "clock (%u, %u) is %pC at %lu Hz\n",
-+			clkspec->args[0], clkspec->args[1], clk,
-+			clk_get_rate(clk));
- 	return clk;
+diff --git a/drivers/regulator/bd9571mwv-regulator.c b/drivers/regulator/bd9571mwv-regulator.c
+index be574eb444eb..1da36a6590c8 100644
+--- a/drivers/regulator/bd9571mwv-regulator.c
++++ b/drivers/regulator/bd9571mwv-regulator.c
+@@ -30,6 +30,7 @@ struct bd9571mwv_reg {
+ 	/* DDR Backup Power */
+ 	u8 bkup_mode_cnt_keepon;	/* from "rohm,ddr-backup-power" */
+ 	u8 bkup_mode_cnt_saved;
++	bool bkup_mode_enabled;
+ 
+ 	/* Power switch type */
+ 	bool rstbmode_level;
+@@ -171,13 +172,40 @@ static int bd9571mwv_bkup_mode_write(struct bd9571mwv *bd, unsigned int mode)
+ 	return 0;
  }
  
-@@ -326,7 +327,7 @@ static void __init cpg_mssr_register_cor
- 	if (IS_ERR_OR_NULL(clk))
- 		goto fail;
++static ssize_t backup_mode_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
++
++	return sprintf(buf, "%s\n", bdreg->bkup_mode_enabled ? "on" : "off");
++}
++
++static ssize_t backup_mode_store(struct device *dev,
++				 struct device_attribute *attr,
++				 const char *buf, size_t count)
++{
++	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
++	int ret;
++
++	if (!count)
++		return 0;
++
++	ret = kstrtobool(buf, &bdreg->bkup_mode_enabled);
++	if (ret)
++		return ret;
++
++	return count;
++}
++
++DEVICE_ATTR_RW(backup_mode);
++
+ static int bd9571mwv_suspend(struct device *dev)
+ {
+ 	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
+ 	unsigned int mode;
+ 	int ret;
  
--	dev_dbg(dev, "Core clock %pC at %pCr Hz\n", clk, clk);
-+	dev_dbg(dev, "Core clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
- 	priv->clks[id] = clk;
- 	return;
+-	if (!device_may_wakeup(dev))
++	if (!bdreg->bkup_mode_enabled)
+ 		return 0;
  
-@@ -392,7 +393,7 @@ static void __init cpg_mssr_register_mod
- 	if (IS_ERR(clk))
- 		goto fail;
+ 	/* Save DDR Backup Mode */
+@@ -204,7 +232,7 @@ static int bd9571mwv_resume(struct device *dev)
+ {
+ 	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
  
--	dev_dbg(dev, "Module clock %pC at %pCr Hz\n", clk, clk);
-+	dev_dbg(dev, "Module clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
- 	priv->clks[id] = clk;
- 	priv->smstpcr_saved[clock->index / 32].mask |= BIT(clock->index % 32);
- 	return;
+-	if (!device_may_wakeup(dev))
++	if (!bdreg->bkup_mode_enabled)
+ 		return 0;
+ 
+ 	/* Restore DDR Backup Mode */
+@@ -215,9 +243,15 @@ static const struct dev_pm_ops bd9571mwv_pm  = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(bd9571mwv_suspend, bd9571mwv_resume)
+ };
+ 
++static int bd9571mwv_regulator_remove(struct platform_device *pdev)
++{
++	device_remove_file(&pdev->dev, &dev_attr_backup_mode);
++	return 0;
++}
+ #define DEV_PM_OPS	&bd9571mwv_pm
+ #else
+ #define DEV_PM_OPS	NULL
++#define bd9571mwv_regulator_remove	NULL
+ #endif /* CONFIG_PM_SLEEP */
+ 
+ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
+@@ -270,14 +304,21 @@ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
++#ifdef CONFIG_PM_SLEEP
+ 	if (bdreg->bkup_mode_cnt_keepon) {
+-		device_set_wakeup_capable(&pdev->dev, true);
++		int ret;
++
+ 		/*
+-		 * Wakeup is enabled by default in pulse mode, but needs
++		 * Backup mode is enabled by default in pulse mode, but needs
+ 		 * explicit user setup in level mode.
+ 		 */
+-		device_set_wakeup_enable(&pdev->dev, bdreg->rstbmode_pulse);
++		bdreg->bkup_mode_enabled = bdreg->rstbmode_pulse;
++
++		ret = device_create_file(&pdev->dev, &dev_attr_backup_mode);
++		if (ret)
++			return ret;
+ 	}
++#endif /* CONFIG_PM_SLEEP */
+ 
+ 	return 0;
+ }
+@@ -294,6 +335,7 @@ static struct platform_driver bd9571mwv_regulator_driver = {
+ 		.pm = DEV_PM_OPS,
+ 	},
+ 	.probe = bd9571mwv_regulator_probe,
++	.remove = bd9571mwv_regulator_remove,
+ 	.id_table = bd9571mwv_regulator_id_table,
+ };
+ module_platform_driver(bd9571mwv_regulator_driver);
+-- 
+2.18.0
