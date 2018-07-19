@@ -1,159 +1,147 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:49470 "EHLO foss.arm.com"
+Received: from foss.arm.com ([217.140.101.70]:46078 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731708AbeGSOTN (ORCPT
+        id S1726894AbeGSKd1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Jul 2018 10:19:13 -0400
+        Thu, 19 Jul 2018 06:33:27 -0400
+Date: Thu, 19 Jul 2018 10:50:58 +0100
 From: Sudeep Holla <sudeep.holla@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
         Will Deacon <will.deacon@arm.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: [PATCH v2] drivers/firmware: psci_checker: stash and use topology_core_cpumask for hotplug tests
-Date: Thu, 19 Jul 2018 14:35:49 +0100
-Message-Id: <1532007349-9498-1-git-send-email-sudeep.holla@arm.com>
-In-Reply-To: <1531913132-21022-1-git-send-email-sudeep.holla@arm.com>
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH] drivers/firmware: psci_checker: stash and use
+ topology_core_cpumask for hotplug tests
+Message-ID: <20180719095058.GA8702@e107155-lin>
 References: <1531913132-21022-1-git-send-email-sudeep.holla@arm.com>
+ <20180718164930.GB21924@red-moon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180718164930.GB21924@red-moon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Commit 7f9545aa1a91 ("arm64: smp: remove cpu and numa topology
-information when hotplugging out CPU") updates the cpu topology when
-the CPU is hotplugged out. However the PSCI checker code uses the
-topology_core_cpumask pointers for some of the cpu hotplug testing.
-Since the pointer to the core_cpumask of the first CPU in the group
-is used, which when that CPU itself is hotpugged out is just set to
-itself, the testing terminates after that particular CPU is tested out.
-But the intention of this tests is to cover all the CPU in the group.
+On Wed, Jul 18, 2018 at 05:49:30PM +0100, Lorenzo Pieralisi wrote:
+> On Wed, Jul 18, 2018 at 12:25:32PM +0100, Sudeep Holla wrote:
+> > Commit 7f9545aa1a91 ("arm64: smp: remove cpu and numa topology
+> > information when hotplugging out CPU") updates the cpu topology when
+> > the CPU is hotplugged out. However the PSCI checker code uses the
+> > topology_core_cpumask pointers for some of the cpu hotplug testing.
+> > Since the pointer to the core_cpumask of the first CPU in the group
+> > is used, which when that CPU itself is hotpugged out is just set to
+> > itself, the testing terminates after that particular CPU is tested out.
+> > But the intention of this tests is to cover all the CPU in the group.
+> > 
+> > In order to support that, we need to stash the topology_core_cpumask
+> > before the start of the test and use that value instead of pointer to
+> > a cpumask which will be updated on CPU hotplug.
+> > 
+> > Fixes: 7f9545aa1a91a9a4 ("arm64: smp: remove cpu and numa topology
+> > 	information when hotplugging out CPU")
+> > Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> > ---
+> >  drivers/firmware/psci_checker.c | 30 ++++++++++++++++++++----------
+> >  1 file changed, 20 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/drivers/firmware/psci_checker.c b/drivers/firmware/psci_checker.c
+> > index bb1c068bff19..e330c6cb45f5 100644
+> > --- a/drivers/firmware/psci_checker.c
+> > +++ b/drivers/firmware/psci_checker.c
+> > @@ -77,21 +77,23 @@ static int psci_ops_check(void)
+> >  	return 0;
+> >  }
+> >  
+> > -static int find_cpu_groups(const struct cpumask *cpus,
+> > -			   const struct cpumask **cpu_groups)
+> > +static int find_cpu_groups(cpumask_var_t *cpu_groups)
+> >  {
+> >  	unsigned int nb = 0;
+> >  	cpumask_var_t tmp;
+> >  
+> >  	if (!alloc_cpumask_var(&tmp, GFP_KERNEL))
+> >  		return -ENOMEM;
+> > -	cpumask_copy(tmp, cpus);
+> > +	cpumask_copy(tmp, cpu_online_mask);
+> >  
+> >  	while (!cpumask_empty(tmp)) {
+> >  		const struct cpumask *cpu_group =
+> >  			topology_core_cpumask(cpumask_any(tmp));
+> >  
+> > -		cpu_groups[nb++] = cpu_group;
+> > +		if (cpu_groups && cpu_groups[nb])
+> > +			cpumask_copy(cpu_groups[nb], cpu_group);
+> > +
+> > +		nb++;
+> >  		cpumask_andnot(tmp, tmp, cpu_group);
+> >  	}
+> >  
+> > @@ -169,25 +171,31 @@ static unsigned int down_and_up_cpus(const struct cpumask *cpus,
+> >  static int hotplug_tests(void)
+> >  {
+> >  	int err;
+> > -	cpumask_var_t offlined_cpus;
+> > +	cpumask_var_t offlined_cpus, *cpu_groups;
+> >  	int i, nb_cpu_group;
+> > -	const struct cpumask **cpu_groups;
+> >  	char *page_buf;
+> >  
+> > +	/* first run to just get the number of cpu groups */
+> > +	nb_cpu_group = find_cpu_groups(NULL);
+> > +
+> >  	err = -ENOMEM;
+> >  	if (!alloc_cpumask_var(&offlined_cpus, GFP_KERNEL))
+> >  		return err;
+> > -	/* We may have up to nb_available_cpus cpu_groups. */
+> > -	cpu_groups = kmalloc_array(nb_available_cpus, sizeof(*cpu_groups),
+> > -				   GFP_KERNEL);
+> > +	cpu_groups = kcalloc(nb_cpu_group, sizeof(cpu_groups), GFP_KERNEL);
+> >  	if (!cpu_groups)
+> >  		goto out_free_cpus;
+> > +
+> > +	for (i = 0; i < nb_cpu_group; ++i)
+> > +		if (!alloc_cpumask_var(&cpu_groups[i], GFP_KERNEL))
+> > +			goto out_free_cpu_groups;
+> > +
+> >  	page_buf = (char *)__get_free_page(GFP_KERNEL);
+> >  	if (!page_buf)
+> >  		goto out_free_cpu_groups;
+> >  
+> >  	err = 0;
+> > -	nb_cpu_group = find_cpu_groups(cpu_online_mask, cpu_groups);
+> > +	/* second run to populate/copy the cpumask */
+> > +	nb_cpu_group = find_cpu_groups(cpu_groups);
+> >  
+> >  	/*
+> >  	 * Of course the last CPU cannot be powered down and cpu_down() should
+> > @@ -212,6 +220,8 @@ static int hotplug_tests(void)
+> >  
+> >  	free_page((unsigned long)page_buf);
+> >  out_free_cpu_groups:
+> > +	for (i = 0; i < nb_cpu_group; ++i)
+> > +		free_cpumask_var(cpu_groups[i]);
+> >  	kfree(cpu_groups);
+> >  out_free_cpus:
+> >  	free_cpumask_var(offlined_cpus);
+> 
+> Hi Sudeep,
+> 
+> thanks for the patch. I reckon that adding two functions, say,
+> alloc_cpu_groups() and free_cpu_groups() would make the code
+> more readable instead of relying on find_cpu_groups() to first
+> count then copy; it is for readability rather than correctness.
+> 
 
-In order to support that, we need to stash the topology_core_cpumask
-before the start of the test and use that value instead of pointer to
-a cpumask which will be updated on CPU hotplug.
+I agree, I can say I was lazy and started trying to keep delta small.
+I will respin.
 
-Fixes: 7f9545aa1a91a9a4 ("arm64: smp: remove cpu and numa topology
-	information when hotplugging out CPU")
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/firmware/psci_checker.c | 53 ++++++++++++++++++++++++++++++++---------
- 1 file changed, 42 insertions(+), 11 deletions(-)
-
-v1->v2:
-	- Move allocation and freeing of the cpumasks to separate
-	  routines as suggested by Lorenzo
-	- Reduced the allocation to number of groups instead of number
-	  of cpus in the system by making 2 pass
-
-diff --git a/drivers/firmware/psci_checker.c b/drivers/firmware/psci_checker.c
-index bb1c068bff19..7e6f66b588fd 100644
---- a/drivers/firmware/psci_checker.c
-+++ b/drivers/firmware/psci_checker.c
-@@ -77,21 +77,23 @@ static int psci_ops_check(void)
- 	return 0;
- }
-
--static int find_cpu_groups(const struct cpumask *cpus,
--			   const struct cpumask **cpu_groups)
-+static int find_cpu_groups(cpumask_var_t *cpu_groups)
- {
- 	unsigned int nb = 0;
- 	cpumask_var_t tmp;
-
- 	if (!alloc_cpumask_var(&tmp, GFP_KERNEL))
- 		return -ENOMEM;
--	cpumask_copy(tmp, cpus);
-+	cpumask_copy(tmp, cpu_online_mask);
-
- 	while (!cpumask_empty(tmp)) {
- 		const struct cpumask *cpu_group =
- 			topology_core_cpumask(cpumask_any(tmp));
-
--		cpu_groups[nb++] = cpu_group;
-+		if (cpu_groups && cpu_groups[nb])
-+			cpumask_copy(cpu_groups[nb], cpu_group);
-+
-+		nb++;
- 		cpumask_andnot(tmp, tmp, cpu_group);
- 	}
-
-@@ -166,20 +168,48 @@ static unsigned int down_and_up_cpus(const struct cpumask *cpus,
- 	return err;
- }
-
-+static void free_cpu_groups(int num, cpumask_var_t *cpu_groups)
-+{
-+	int i;
-+
-+	for (i = 0; i < num; ++i)
-+		free_cpumask_var(cpu_groups[i]);
-+	kfree(cpu_groups);
-+}
-+
-+static cpumask_var_t *alloc_cpu_groups(int num)
-+{
-+	int i;
-+	cpumask_var_t *cpu_groups;
-+
-+	cpu_groups = kcalloc(num, sizeof(cpu_groups), GFP_KERNEL);
-+	if (!cpu_groups)
-+		return NULL;
-+
-+	for (i = 0; i < num; ++i)
-+		if (!alloc_cpumask_var(&cpu_groups[i], GFP_KERNEL)) {
-+			free_cpu_groups(num, cpu_groups);
-+			return NULL;
-+		}
-+
-+	return cpu_groups;
-+}
-+
- static int hotplug_tests(void)
- {
- 	int err;
--	cpumask_var_t offlined_cpus;
-+	cpumask_var_t offlined_cpus, *cpu_groups;
- 	int i, nb_cpu_group;
--	const struct cpumask **cpu_groups;
- 	char *page_buf;
-
-+	/* first run to just get the number of cpu groups */
-+	nb_cpu_group = find_cpu_groups(NULL);
-+
- 	err = -ENOMEM;
- 	if (!alloc_cpumask_var(&offlined_cpus, GFP_KERNEL))
- 		return err;
--	/* We may have up to nb_available_cpus cpu_groups. */
--	cpu_groups = kmalloc_array(nb_available_cpus, sizeof(*cpu_groups),
--				   GFP_KERNEL);
-+
-+	cpu_groups = alloc_cpu_groups(nb_cpu_group);
- 	if (!cpu_groups)
- 		goto out_free_cpus;
- 	page_buf = (char *)__get_free_page(GFP_KERNEL);
-@@ -187,7 +217,8 @@ static int hotplug_tests(void)
- 		goto out_free_cpu_groups;
-
- 	err = 0;
--	nb_cpu_group = find_cpu_groups(cpu_online_mask, cpu_groups);
-+	/* second run to populate/copy the cpumask */
-+	nb_cpu_group = find_cpu_groups(cpu_groups);
-
- 	/*
- 	 * Of course the last CPU cannot be powered down and cpu_down() should
-@@ -212,7 +243,7 @@ static int hotplug_tests(void)
-
- 	free_page((unsigned long)page_buf);
- out_free_cpu_groups:
--	kfree(cpu_groups);
-+	free_cpu_groups(nb_cpu_group, cpu_groups);
- out_free_cpus:
- 	free_cpumask_var(offlined_cpus);
- 	return err;
 --
-2.7.4
+Regards,
+Sudeep
