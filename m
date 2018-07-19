@@ -1,169 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:34995 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752584AbeGBSI0 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38658 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728060AbeGSIWT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 Jul 2018 14:08:26 -0400
-Received: by mail-lj1-f196.google.com with SMTP id i125-v6so13210517lji.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 02 Jul 2018 11:08:25 -0700 (PDT)
-Date: Mon, 2 Jul 2018 20:08:23 +0200
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v6 06/10] media: rcar-vin: Parse parallel input on Gen3
-Message-ID: <20180702180823.GY5237@bigcity.dyn.berto.se>
-References: <1528796612-7387-1-git-send-email-jacopo+renesas@jmondi.org>
- <1528796612-7387-7-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 19 Jul 2018 04:22:19 -0400
+Date: Thu, 19 Jul 2018 09:40:26 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+Subject: Re: [PATCH v3 4/4] mmc: renesas_sdhi: skip SCC error check when
+ retuning
+Message-ID: <20180719074026.qdaljbvt5r2tngud@verge.net.au>
+References: <20180717145216.16840-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180717145216.16840-5-niklas.soderlund+renesas@ragnatech.se>
+ <20180718085408.eydhelufuhgtyhxj@verge.net.au>
+ <20180718122218.GR10087@bigcity.dyn.berto.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1528796612-7387-7-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <20180718122218.GR10087@bigcity.dyn.berto.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
+On Wed, Jul 18, 2018 at 02:22:18PM +0200, Niklas Söderlund wrote:
+> Hi Simon,
+> 
+> On 2018-07-18 10:54:08 +0200, Simon Horman wrote:
+> > Hi Niklas,
+> > 
+> > On Tue, Jul 17, 2018 at 04:52:16PM +0200, Niklas Söderlund wrote:
+> > > From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+> > > 
+> > > Checking for SCC error during retuning is unnecessary.
+> > > 
+> > > Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+> > > [Niklas: fix small style issue]
+> > > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > > Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > > Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > > 
+> > > ---
+> > > 
+> > > * Changes since v2
+> > > - Added check for HS400 as it's now merged.
+> > > - Added tags from Wolfram.
+> > > ---
+> > >  drivers/mmc/host/renesas_sdhi_core.c | 8 ++++++++
+> > >  1 file changed, 8 insertions(+)
+> > > 
+> > > diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+> > > index 777e32b0e410e850..a21b347424f67c52 100644
+> > > --- a/drivers/mmc/host/renesas_sdhi_core.c
+> > > +++ b/drivers/mmc/host/renesas_sdhi_core.c
+> > > @@ -444,6 +444,14 @@ static bool renesas_sdhi_check_scc_error(struct tmio_mmc_host *host)
+> > >  {
+> > >  	struct renesas_sdhi *priv = host_to_priv(host);
+> > >  
+> > > +	if (!(host->mmc->ios.timing == MMC_TIMING_UHS_SDR104) &&
+> > > +	    !(host->mmc->ios.timing == MMC_TIMING_MMC_HS200) &&
+> > > +	    !(host->mmc->ios.timing == MMC_TIMING_MMC_HS400))
+> > 
+> > According to the BSP this needs to differentiate between 4tap and 8tap
+> > variants of HS400 support.
+> 
+> Ahh I see, yes it looks like this patch will require some work to update 
+> to HS400. I might break this out to a own patch so the rest of the 
+> patches in this series can progress as they fix other unrelated issues.
+> 
+> Thanks for letting me know about this.
 
-Thanks for your work.
-
-On 2018-06-12 11:43:28 +0200, Jacopo Mondi wrote:
-> The rcar-vin driver so far had a mutually exclusive code path for
-> handling parallel and CSI-2 video input subdevices, with only the CSI-2
-> use case supporting media-controller. As we add support for parallel
-> inputs to Gen3 media-controller compliant code path now parse both port@0
-> and port@1, handling the media-controller use case in the parallel
-> bound/unbind notifier operations.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-
-Acked-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-
-> ---
-> r5 -> r6:
-> - Fix 'error_group_unregister' and 'error_dma_unregister' label names
-> 
-> v4 -> v5:
-> - Re-group rvin_mc_init() function
-> - Add error_group_unreg error path to clean up group registration
-> - Change rvin_parallel_init() return type to make sure Gen2 works as before
-> 
-> v3 -> v4:
-> - Change the mc/parallel initialization order. Initialize mc first, then
->   parallel
-> - As a consequence no need to delay parallel notifiers registration, the
->   media controller is set up already when parallel input got parsed,
->   this greatly simplify the group notifier complete callback.
-> ---
-> 
->  drivers/media/platform/rcar-vin/rcar-core.c | 53 +++++++++++++++++++++--------
->  1 file changed, 38 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-> index 39bb193..91ccaf8 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-core.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
-> @@ -397,6 +397,11 @@ static int rvin_parallel_subdevice_attach(struct rvin_dev *vin,
->  	ret = rvin_find_pad(subdev, MEDIA_PAD_FL_SINK);
->  	vin->parallel->sink_pad = ret < 0 ? 0 : ret;
-> 
-> +	if (vin->info->use_mc) {
-> +		vin->parallel->subdev = subdev;
-> +		return 0;
-> +	}
-> +
->  	/* Find compatible subdevices mbus format */
->  	vin->mbus_code = 0;
->  	code.index = 0;
-> @@ -458,10 +463,12 @@ static int rvin_parallel_subdevice_attach(struct rvin_dev *vin,
->  static void rvin_parallel_subdevice_detach(struct rvin_dev *vin)
->  {
->  	rvin_v4l2_unregister(vin);
-> -	v4l2_ctrl_handler_free(&vin->ctrl_handler);
-> -
-> -	vin->vdev.ctrl_handler = NULL;
->  	vin->parallel->subdev = NULL;
-> +
-> +	if (!vin->info->use_mc) {
-> +		v4l2_ctrl_handler_free(&vin->ctrl_handler);
-> +		vin->vdev.ctrl_handler = NULL;
-> +	}
->  }
-> 
->  static int rvin_parallel_notify_complete(struct v4l2_async_notifier *notifier)
-> @@ -550,18 +557,19 @@ static int rvin_parallel_parse_v4l2(struct device *dev,
->  	return 0;
->  }
-> 
-> -static int rvin_parallel_graph_init(struct rvin_dev *vin)
-> +static int rvin_parallel_init(struct rvin_dev *vin)
->  {
->  	int ret;
-> 
-> -	ret = v4l2_async_notifier_parse_fwnode_endpoints(
-> -		vin->dev, &vin->notifier,
-> -		sizeof(struct rvin_parallel_entity), rvin_parallel_parse_v4l2);
-> +	ret = v4l2_async_notifier_parse_fwnode_endpoints_by_port(
-> +		vin->dev, &vin->notifier, sizeof(struct rvin_parallel_entity),
-> +		0, rvin_parallel_parse_v4l2);
->  	if (ret)
->  		return ret;
-> 
-> +	/* If using mc, it's fine not to have any input registered. */
->  	if (!vin->parallel)
-> -		return -ENODEV;
-> +		return vin->info->use_mc ? 0 : -ENODEV;
-> 
->  	vin_dbg(vin, "Found parallel subdevice %pOF\n",
->  		to_of_node(vin->parallel->asd.match.fwnode));
-> @@ -1074,20 +1082,35 @@ static int rcar_vin_probe(struct platform_device *pdev)
->  		return ret;
-> 
->  	platform_set_drvdata(pdev, vin);
-> -	if (vin->info->use_mc)
-> +
-> +	if (vin->info->use_mc) {
->  		ret = rvin_mc_init(vin);
-> -	else
-> -		ret = rvin_parallel_graph_init(vin);
-> -	if (ret < 0)
-> -		goto error;
-> +		if (ret)
-> +			goto error_dma_unregister;
-> +	}
-> +
-> +	ret = rvin_parallel_init(vin);
-> +	if (ret)
-> +		goto error_group_unregister;
-> 
->  	pm_suspend_ignore_children(&pdev->dev, true);
->  	pm_runtime_enable(&pdev->dev);
-> 
->  	return 0;
-> -error:
-> +
-> +error_group_unregister:
-> +	if (vin->info->use_mc) {
-> +		mutex_lock(&vin->group->lock);
-> +		if (&vin->v4l2_dev == vin->group->notifier.v4l2_dev) {
-> +			v4l2_async_notifier_unregister(&vin->group->notifier);
-> +			v4l2_async_notifier_cleanup(&vin->group->notifier);
-> +		}
-> +		mutex_unlock(&vin->group->lock);
-> +		rvin_group_put(vin);
-> +	}
-> +
-> +error_dma_unregister:
->  	rvin_dma_unregister(vin);
-> -	v4l2_async_notifier_cleanup(&vin->notifier);
-> 
->  	return ret;
->  }
-> --
-> 2.7.4
-> 
-
--- 
-Regards,
-Niklas S�derlund
+Of course breaking this patch out from the series is fine by me.
