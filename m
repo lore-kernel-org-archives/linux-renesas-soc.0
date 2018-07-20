@@ -1,104 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:44112 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727755AbeGTNAj (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:50867 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727518AbeGTMyv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:00:39 -0400
-MIME-Version: 1.0
-References: <1531924476-23261-1-git-send-email-phil.edworthy@renesas.com>
- <CAMuHMdVEgj7kJFxNuR8w468FoGRaP_mEDv6JqB_7deuQjsed_Q@mail.gmail.com> <TY1PR01MB1769588F9C53755C0FD56D98F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY1PR01MB1769588F9C53755C0FD56D98F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 20 Jul 2018 14:12:29 +0200
-Message-ID: <CAMuHMdWqdg9KV4h_U-VZGVdOL6upUpDgqO7kwQh8tFQjDFh-Ug@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r9a06g032: Avoid needless probe deferring
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Fri, 20 Jul 2018 08:54:51 -0400
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Simon Horman <horms@verge.net.au>,
         linux-clk <linux-clk@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: RE: [PATCH] clk: renesas: r9a06g032: Avoid needless probe deferring
+Date: Fri, 20 Jul 2018 12:06:48 +0000
+Message-ID: <TY1PR01MB1769588F9C53755C0FD56D98F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <1531924476-23261-1-git-send-email-phil.edworthy@renesas.com>
+ <CAMuHMdVEgj7kJFxNuR8w468FoGRaP_mEDv6JqB_7deuQjsed_Q@mail.gmail.com>
+In-Reply-To: <CAMuHMdVEgj7kJFxNuR8w468FoGRaP_mEDv6JqB_7deuQjsed_Q@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Phil,
-
-On Fri, Jul 20, 2018 at 2:06 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
-> On 20 July 2018 12:21, Geert Uytterhoeven wrote:
-> > On Wed, Jul 18, 2018 at 4:34 PM Phil Edworthy wrote:
-> > > To avoid all SoC peripheral drivers deferring their probes, both clock
-> > > and pinctrl drivers should already be probed. Since the pinctrl driver
-> > > requires a clock to access the registers, the clock driver should be
-> > > probed before the pinctrl driver.
-> > >
-> > > Therefore, move the clock driver from subsys_initcall to core_initcall.
-> > >
-> > > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> >
-> > Thanks for your patch!
-> Thanks for your review!
->
-> > The (not yet upstreamed) pinctrl driver uses postcore_initcall(), right?
-> No, the pinctrl driver uses subsys_initcall, but postcore_initcall or
-> arch_initcall may be better to make it clear about the dependencies.
-
-if the pinctrl driver uses subsys_initcall(), ...
-
-> > > --- a/drivers/clk/renesas/r9a06g032-clocks.c
-> > > +++ b/drivers/clk/renesas/r9a06g032-clocks.c
-> > > @@ -877,17 +877,18 @@ static const struct of_device_id
-> > r9a06g032_match[] = {
-> > >         { }
-> > >  };
-> > >
-> > > -static struct platform_driver r9a06g032_clock_driver = {
-> > > +static struct platform_driver r9a06g032_clock_driver __refdata = {
-> > >         .driver         = {
-> > >                 .name   = "renesas,r9a06g032-sysctrl",
-> > >                 .of_match_table = r9a06g032_match,
-> > >         },
-> > > +       .probe = r9a06g032_clocks_probe,
-> > >  };
-> > >
-> > >  static int __init r9a06g032_clocks_init(void)  {
-> > > -       return platform_driver_probe(&r9a06g032_clock_driver,
-> > > -                       r9a06g032_clocks_probe);
-> > > +       platform_driver_register(&r9a06g032_clock_driver);
-> > > +       return 0;
-> That should be:
-> +       return platform_driver_register(&r9a06g032_clock_driver);
->
-> > >  }
-> >
-> > Why are all of the above changes needed?
-> > Shouldn't the platform_driver_probe() keep on working?
-> > If it does not, it means the clock driver has some other dependency, and
-> > cannot be bound immediately.  This is potentially a dangerous situation, as
-> > r9a06g032_clocks_probe() is __init, but can still be called at any time later.
-> > Hence using platform_driver_probe() is the safe thing to do, possibly with a
-> > different reshuffling of the clock and pinctrl initcall priorities.
-> No, you cannot call platform_driver_probe() from core_initcall.
-> All drivers that are in core_initcall call platform_driver_register().
-
-Hence they cannot have their probe function __init.
-
->
-> Thanks
-> Phil
->
-> > > -subsys_initcall(r9a06g032_clocks_init);
-> > > +core_initcall(r9a06g032_clocks_init);
-
-... using postcore_initcall() or arch_initcall() here, should work with
-platform_driver_probe()?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQsDQoNCk9uIDIwIEp1bHkgMjAxOCAxMjoyMSwgR2VlcnQgVXl0dGVyaG9ldmVuIHdy
+b3RlOg0KPiBPbiBXZWQsIEp1bCAxOCwgMjAxOCBhdCA0OjM0IFBNIFBoaWwgRWR3b3J0aHkgd3Jv
+dGU6DQo+ID4gVG8gYXZvaWQgYWxsIFNvQyBwZXJpcGhlcmFsIGRyaXZlcnMgZGVmZXJyaW5nIHRo
+ZWlyIHByb2JlcywgYm90aCBjbG9jaw0KPiA+IGFuZCBwaW5jdHJsIGRyaXZlcnMgc2hvdWxkIGFs
+cmVhZHkgYmUgcHJvYmVkLiBTaW5jZSB0aGUgcGluY3RybCBkcml2ZXINCj4gPiByZXF1aXJlcyBh
+IGNsb2NrIHRvIGFjY2VzcyB0aGUgcmVnaXN0ZXJzLCB0aGUgY2xvY2sgZHJpdmVyIHNob3VsZCBi
+ZQ0KPiA+IHByb2JlZCBiZWZvcmUgdGhlIHBpbmN0cmwgZHJpdmVyLg0KPiA+DQo+ID4gVGhlcmVm
+b3JlLCBtb3ZlIHRoZSBjbG9jayBkcml2ZXIgZnJvbSBzdWJzeXNfaW5pdGNhbGwgdG8gY29yZV9p
+bml0Y2FsbC4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFBoaWwgRWR3b3J0aHkgPHBoaWwuZWR3
+b3J0aHlAcmVuZXNhcy5jb20+DQo+IA0KPiBUaGFua3MgZm9yIHlvdXIgcGF0Y2ghDQpUaGFua3Mg
+Zm9yIHlvdXIgcmV2aWV3IQ0KDQo+IFRoZSAobm90IHlldCB1cHN0cmVhbWVkKSBwaW5jdHJsIGRy
+aXZlciB1c2VzIHBvc3Rjb3JlX2luaXRjYWxsKCksIHJpZ2h0Pw0KTm8sIHRoZSBwaW5jdHJsIGRy
+aXZlciB1c2VzIHN1YnN5c19pbml0Y2FsbCwgYnV0IHBvc3Rjb3JlX2luaXRjYWxsIG9yIA0KYXJj
+aF9pbml0Y2FsbCBtYXkgYmUgYmV0dGVyIHRvIG1ha2UgaXQgY2xlYXIgYWJvdXQgdGhlIGRlcGVu
+ZGVuY2llcy4NCg0KPiA+IC0tLSBhL2RyaXZlcnMvY2xrL3JlbmVzYXMvcjlhMDZnMDMyLWNsb2Nr
+cy5jDQo+ID4gKysrIGIvZHJpdmVycy9jbGsvcmVuZXNhcy9yOWEwNmcwMzItY2xvY2tzLmMNCj4g
+PiBAQCAtODc3LDE3ICs4NzcsMTggQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQN
+Cj4gcjlhMDZnMDMyX21hdGNoW10gPSB7DQo+ID4gICAgICAgICB7IH0NCj4gPiAgfTsNCj4gPg0K
+PiA+IC1zdGF0aWMgc3RydWN0IHBsYXRmb3JtX2RyaXZlciByOWEwNmcwMzJfY2xvY2tfZHJpdmVy
+ID0gew0KPiA+ICtzdGF0aWMgc3RydWN0IHBsYXRmb3JtX2RyaXZlciByOWEwNmcwMzJfY2xvY2tf
+ZHJpdmVyIF9fcmVmZGF0YSA9IHsNCj4gPiAgICAgICAgIC5kcml2ZXIgICAgICAgICA9IHsNCj4g
+PiAgICAgICAgICAgICAgICAgLm5hbWUgICA9ICJyZW5lc2FzLHI5YTA2ZzAzMi1zeXNjdHJsIiwN
+Cj4gPiAgICAgICAgICAgICAgICAgLm9mX21hdGNoX3RhYmxlID0gcjlhMDZnMDMyX21hdGNoLA0K
+PiA+ICAgICAgICAgfSwNCj4gPiArICAgICAgIC5wcm9iZSA9IHI5YTA2ZzAzMl9jbG9ja3NfcHJv
+YmUsDQo+ID4gIH07DQo+ID4NCj4gPiAgc3RhdGljIGludCBfX2luaXQgcjlhMDZnMDMyX2Nsb2Nr
+c19pbml0KHZvaWQpICB7DQo+ID4gLSAgICAgICByZXR1cm4gcGxhdGZvcm1fZHJpdmVyX3Byb2Jl
+KCZyOWEwNmcwMzJfY2xvY2tfZHJpdmVyLA0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgIHI5
+YTA2ZzAzMl9jbG9ja3NfcHJvYmUpOw0KPiA+ICsgICAgICAgcGxhdGZvcm1fZHJpdmVyX3JlZ2lz
+dGVyKCZyOWEwNmcwMzJfY2xvY2tfZHJpdmVyKTsNCj4gPiArICAgICAgIHJldHVybiAwOw0KVGhh
+dCBzaG91bGQgYmU6DQorICAgICAgIHJldHVybiBwbGF0Zm9ybV9kcml2ZXJfcmVnaXN0ZXIoJnI5
+YTA2ZzAzMl9jbG9ja19kcml2ZXIpOw0KDQo+ID4gIH0NCj4gDQo+IFdoeSBhcmUgYWxsIG9mIHRo
+ZSBhYm92ZSBjaGFuZ2VzIG5lZWRlZD8NCj4gU2hvdWxkbid0IHRoZSBwbGF0Zm9ybV9kcml2ZXJf
+cHJvYmUoKSBrZWVwIG9uIHdvcmtpbmc/DQo+IElmIGl0IGRvZXMgbm90LCBpdCBtZWFucyB0aGUg
+Y2xvY2sgZHJpdmVyIGhhcyBzb21lIG90aGVyIGRlcGVuZGVuY3ksIGFuZA0KPiBjYW5ub3QgYmUg
+Ym91bmQgaW1tZWRpYXRlbHkuICBUaGlzIGlzIHBvdGVudGlhbGx5IGEgZGFuZ2Vyb3VzIHNpdHVh
+dGlvbiwgYXMNCj4gcjlhMDZnMDMyX2Nsb2Nrc19wcm9iZSgpIGlzIF9faW5pdCwgYnV0IGNhbiBz
+dGlsbCBiZSBjYWxsZWQgYXQgYW55IHRpbWUgbGF0ZXIuDQo+IEhlbmNlIHVzaW5nIHBsYXRmb3Jt
+X2RyaXZlcl9wcm9iZSgpIGlzIHRoZSBzYWZlIHRoaW5nIHRvIGRvLCBwb3NzaWJseSB3aXRoIGEN
+Cj4gZGlmZmVyZW50IHJlc2h1ZmZsaW5nIG9mIHRoZSBjbG9jayBhbmQgcGluY3RybCBpbml0Y2Fs
+bCBwcmlvcml0aWVzLg0KTm8sIHlvdSBjYW5ub3QgY2FsbCBwbGF0Zm9ybV9kcml2ZXJfcHJvYmUo
+KSBmcm9tIGNvcmVfaW5pdGNhbGwuDQpBbGwgZHJpdmVycyB0aGF0IGFyZSBpbiBjb3JlX2luaXRj
+YWxsIGNhbGwgcGxhdGZvcm1fZHJpdmVyX3JlZ2lzdGVyKCkuDQoNClRoYW5rcw0KUGhpbA0KDQo+
+ID4gLXN1YnN5c19pbml0Y2FsbChyOWEwNmcwMzJfY2xvY2tzX2luaXQpOw0KPiA+ICtjb3JlX2lu
+aXRjYWxsKHI5YTA2ZzAzMl9jbG9ja3NfaW5pdCk7DQo+IA0KPiBHcntvZXRqZSxlZXRpbmd9cywN
+Cj4gDQo+ICAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+IA0KPiAtLQ0KPiBHZWVydCBV
+eXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0
+QGxpbnV4LQ0KPiBtNjhrLm9yZw0KPiANCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3aXRo
+IHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0KPiB3aGVuIEkn
+bSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNvbWV0
+aGluZyBsaWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGlu
+dXMgVG9ydmFsZHMNCg==
