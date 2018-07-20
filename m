@@ -1,155 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:56040 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730897AbeGPP6z (ORCPT
+Received: from sauhun.de ([88.99.104.3]:59796 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728845AbeGTXCX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Jul 2018 11:58:55 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 1/3] regulator: bd9571mwv: Use "backup_mode" sysfs file instead of "wake_up"
-Date: Mon, 16 Jul 2018 17:30:50 +0200
-Message-Id: <20180716153052.1830-2-geert+renesas@glider.be>
-In-Reply-To: <20180716153052.1830-1-geert+renesas@glider.be>
-References: <20180716153052.1830-1-geert+renesas@glider.be>
+        Fri, 20 Jul 2018 19:02:23 -0400
+Date: Sat, 21 Jul 2018 00:12:08 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Peter Rosin <peda@axentia.se>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: Re: [PATCH v2] i2c: recovery: make pin init look like STOP
+Message-ID: <20180720221208.zz6obk3rbqmwyezu@ninjato>
+References: <20180717090005.14997-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="l52oazuf7lrudrut"
+Content-Disposition: inline
+In-Reply-To: <20180717090005.14997-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently the BD9571MWV PMIC driver uses the standard "wake_up" sysfs
-file to control enablement of DDR Backup Mode.
 
-However, configuring DDR Backup Mode is not really equivalent to
-configuring the PMIC as a wake-up source.  To avoid confusion, use a
-custom "backup_mode" attribute file in sysfs instead.
+--l52oazuf7lrudrut
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4:
-  - Fix build error and warning if !CONFIG_PM_SLEEP,
+On Tue, Jul 17, 2018 at 11:00:05AM +0200, Wolfram Sang wrote:
+> When we we initialize the pins, make sure it looks like STOP by dividing
+> the delay into halves. It shouldn't matter because SDA is expected to be
+> held low by a device, but for super-safety, let's do it.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Reviewed-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> Reviewed-by: Peter Rosin <peda@axentia.se>
+> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 
-v3:
-  - New.
----
- drivers/regulator/bd9571mwv-regulator.c | 52 ++++++++++++++++++++++---
- 1 file changed, 47 insertions(+), 5 deletions(-)
+Fixed the typo found by Sergei (thanks!) and applied to for-next.
 
-diff --git a/drivers/regulator/bd9571mwv-regulator.c b/drivers/regulator/bd9571mwv-regulator.c
-index be574eb444ebda97..1da36a6590c84ba4 100644
---- a/drivers/regulator/bd9571mwv-regulator.c
-+++ b/drivers/regulator/bd9571mwv-regulator.c
-@@ -30,6 +30,7 @@ struct bd9571mwv_reg {
- 	/* DDR Backup Power */
- 	u8 bkup_mode_cnt_keepon;	/* from "rohm,ddr-backup-power" */
- 	u8 bkup_mode_cnt_saved;
-+	bool bkup_mode_enabled;
- 
- 	/* Power switch type */
- 	bool rstbmode_level;
-@@ -171,13 +172,40 @@ static int bd9571mwv_bkup_mode_write(struct bd9571mwv *bd, unsigned int mode)
- 	return 0;
- }
- 
-+static ssize_t backup_mode_show(struct device *dev,
-+				struct device_attribute *attr, char *buf)
-+{
-+	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%s\n", bdreg->bkup_mode_enabled ? "on" : "off");
-+}
-+
-+static ssize_t backup_mode_store(struct device *dev,
-+				 struct device_attribute *attr,
-+				 const char *buf, size_t count)
-+{
-+	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
-+	int ret;
-+
-+	if (!count)
-+		return 0;
-+
-+	ret = kstrtobool(buf, &bdreg->bkup_mode_enabled);
-+	if (ret)
-+		return ret;
-+
-+	return count;
-+}
-+
-+DEVICE_ATTR_RW(backup_mode);
-+
- static int bd9571mwv_suspend(struct device *dev)
- {
- 	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
- 	unsigned int mode;
- 	int ret;
- 
--	if (!device_may_wakeup(dev))
-+	if (!bdreg->bkup_mode_enabled)
- 		return 0;
- 
- 	/* Save DDR Backup Mode */
-@@ -204,7 +232,7 @@ static int bd9571mwv_resume(struct device *dev)
- {
- 	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
- 
--	if (!device_may_wakeup(dev))
-+	if (!bdreg->bkup_mode_enabled)
- 		return 0;
- 
- 	/* Restore DDR Backup Mode */
-@@ -215,9 +243,15 @@ static const struct dev_pm_ops bd9571mwv_pm  = {
- 	SET_SYSTEM_SLEEP_PM_OPS(bd9571mwv_suspend, bd9571mwv_resume)
- };
- 
-+static int bd9571mwv_regulator_remove(struct platform_device *pdev)
-+{
-+	device_remove_file(&pdev->dev, &dev_attr_backup_mode);
-+	return 0;
-+}
- #define DEV_PM_OPS	&bd9571mwv_pm
- #else
- #define DEV_PM_OPS	NULL
-+#define bd9571mwv_regulator_remove	NULL
- #endif /* CONFIG_PM_SLEEP */
- 
- static int bd9571mwv_regulator_probe(struct platform_device *pdev)
-@@ -270,14 +304,21 @@ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
-+#ifdef CONFIG_PM_SLEEP
- 	if (bdreg->bkup_mode_cnt_keepon) {
--		device_set_wakeup_capable(&pdev->dev, true);
-+		int ret;
-+
- 		/*
--		 * Wakeup is enabled by default in pulse mode, but needs
-+		 * Backup mode is enabled by default in pulse mode, but needs
- 		 * explicit user setup in level mode.
- 		 */
--		device_set_wakeup_enable(&pdev->dev, bdreg->rstbmode_pulse);
-+		bdreg->bkup_mode_enabled = bdreg->rstbmode_pulse;
-+
-+		ret = device_create_file(&pdev->dev, &dev_attr_backup_mode);
-+		if (ret)
-+			return ret;
- 	}
-+#endif /* CONFIG_PM_SLEEP */
- 
- 	return 0;
- }
-@@ -294,6 +335,7 @@ static struct platform_driver bd9571mwv_regulator_driver = {
- 		.pm = DEV_PM_OPS,
- 	},
- 	.probe = bd9571mwv_regulator_probe,
-+	.remove = bd9571mwv_regulator_remove,
- 	.id_table = bd9571mwv_regulator_id_table,
- };
- module_platform_driver(bd9571mwv_regulator_driver);
--- 
-2.17.1
+
+--l52oazuf7lrudrut
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltSXjgACgkQFA3kzBSg
+KbZemQ//YVM/8OpTb9/sHwQkmsMEnYXuiJoWw2kd6i+bJtegN7fkpmfi0ibL3OhF
+GFD4XlZVR8zh0eEMLaVDYPB6+GzkzSWJhrPe9CEjXuIQcpT44/AcupnBXKlB++a2
+DkoXKiXQP4sw/QTe81A1I4bsqIlja9ZZnk4UIeRDKQUCNIqVhJkLzwXjWh/Pugeg
+D+hvaPDNMaS/hzwCr9nwRqxVbbJEjuiuS0kOpYm8/+yHsEE3QtM0LxJtSXb8DzuL
+Hp1rhaYAyU6aSNnNNriiW9wnzhlY/KLUogzrb60xygODHwy81dXcNftiSz8EHI3h
+hF26XEFAlNt4/fUVL1ErQT/WPEVYY+x1z7b8zk5rseWjsoGY+irOuU7mhs/EpNtd
+Le4mNEBufSOHOwib++V0F4e43scrpB3zRYgPirteDLJ+9asXlxSr113JxX5H0SqZ
+3WW4fB3vTUMXpw9wFaAX1eAA3nGkpI8Tm2upxrB1tFQsxjFnKHpz9V2yIUNay6Ql
+SHApcKcJ0KxrlSozouv7ObzZcHkGpRxAy49eOaRNACcKEUCUiH8s2oGhlfml4PLd
+E6IJwUvVPQKQBdunE4lTZV7DSEvei1l9fU24xLG97fLodkR2VINJTJ5p9Z0q3pwo
+TORjP9V8VrsfBui2krTDPGlt03Guc4w+sgW73exojIgcSzNapd0=
+=qR3f
+-----END PGP SIGNATURE-----
+
+--l52oazuf7lrudrut--
