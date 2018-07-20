@@ -1,60 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:53964 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728631AbeGYPvS (ORCPT
+Received: from mail-lj1-f170.google.com ([209.85.208.170]:46052 "EHLO
+        mail-lj1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727675AbeGTMK1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jul 2018 11:51:18 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 0/3] serial: sh-sci: Add support for RZ/A2
-Date: Wed, 25 Jul 2018 09:38:47 -0500
-Message-Id: <20180725143850.32985-1-chris.brandt@renesas.com>
+        Fri, 20 Jul 2018 08:10:27 -0400
+Received: by mail-lj1-f170.google.com with SMTP id q5-v6so10828490ljh.12
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Jul 2018 04:22:39 -0700 (PDT)
+Subject: Re: [PATCH/RFC 01/02] ravb: Do not announce 100Mbps HDX as supported
+To: Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <153200105784.13504.12882377600823578834.sendpatchset@little-apple>
+ <153200106718.13504.7319401547888522726.sendpatchset@little-apple>
+ <f7dad4b7-d1d6-3fcc-750d-deffc0e26717@cogentembedded.com>
+ <CANqRtoQiyxrBwmNEZcDjMfR3ZPH-XfmXjJe0eCuvRE_zB0QKOw@mail.gmail.com>
+ <CAMuHMdUh+EteHBVEG9ByHGiAdqQu8UbqNmkqYrncrEn3H7PG0g@mail.gmail.com>
+ <19a353c1-34bb-ab61-8ace-c664f9764fd5@cogentembedded.com>
+ <CAMuHMdUCrinbjiUpjQ92+h5Abac6_PAMyaCyRHjTVX1H+-tXGA@mail.gmail.com>
+ <CANqRtoTGyQZ1fgkMFm-PyrkF1vD7zDhK9Vb8frLT4QdgbEULMg@mail.gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <08cdc53b-3746-7065-44ef-b89462391f26@cogentembedded.com>
+Date: Fri, 20 Jul 2018 14:22:36 +0300
+MIME-Version: 1.0
+In-Reply-To: <CANqRtoTGyQZ1fgkMFm-PyrkF1vD7zDhK9Vb8frLT4QdgbEULMg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The RZ/A2 uses a modified SCIF that until recently was only used in
-Renesas MCU devices (not MPU devices).
-So, while it functions mostly the same as a normal SCIF, some things
-needed to be shifted around.
+On 07/20/2018 06:08 AM, Magnus Damm wrote:
 
-In the end, a standard compatible = "renesas,scif" is all that is really
-needed (not a SoC specific "renesas,scif-r7s9210").
+>>>>>>> From: Magnus Damm <damm+renesas@opensource.se>
+>>>>>>> According to the data sheet the Ethernet-AVB hardware in R-Car Gen3
+>>>>>>> and R-Car Gen2 SoCs do not support half duplex operation. So update
+>>>>>>> the driver to mark 100Mbit HDX as unsupported.
+>>>>>>
+>>>>>>    What about 1000Mbit HDX?
+>>>>>
+>>>>> For Twister Pair I believe 10 and 100 Mbps come in HDX and FDX flavors
+>>>>> while 1 Gbps is HDX-only.
+>>>>
+>>>>  1 Gbps is _F_DX-only?
+>>>
+>>>    No, only higher speeds are FDX only.
+>>>
+>>>>> https://en.wikipedia.org/wiki/Ethernet_over_twisted_pair
+>>
+>> That wiki page says "However, half-duplex operation for gigabit speed isn't
+>> supported by any existing hardware.".
+> 
+> Exactly. Also the PHY data sheet might have some additional
+> information about bitmaps for advertised and supported modes.
 
-Becase there is no device tree yet, here is sample of what it would
-look like:
+   Indeed. KSZ9031MNX PHY seems to support 1000Mbit Half-duplex, judging on its
+datasheet...
 
-	scif0: serial@e8007000 {
-		compatible = "renesas,scif-r7s9210", "renesas,scif";
-		reg = <0xe8007000 18>;
-		interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>,
-			     <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>,
-			     <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>,
-			     <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>,
-			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
-			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
-		clocks = <&mstp4_clks R7S9210_CLK_SCIF0>;
-		clock-names = "fck";
-		power-domains = <&cpg_clocks>;
-		status = "disabled";
-	};
+[...]
 
+> Thanks,
+> 
+> / magnus
 
-
-Chris Brandt (3):
-  serial: sh-sci: Allow for compressed SCIF address space
-  serial: sh-sci: Add support for separate TEI+DRI interrupts
-  serial: sh-sci: Document r7s9210 bindings
-
- .../bindings/serial/renesas,sci-serial.txt         | 17 +++++-
- drivers/tty/serial/sh-sci.c                        | 66 ++++++++++++++++++----
- 2 files changed, 70 insertions(+), 13 deletions(-)
-
--- 
-2.16.1
+MBR, Sergei
