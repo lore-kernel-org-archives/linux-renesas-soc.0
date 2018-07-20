@@ -1,120 +1,150 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53389 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:33574 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387854AbeGWNHf (ORCPT
+        with ESMTP id S1727518AbeGTMxg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:07:35 -0400
+        Fri, 20 Jul 2018 08:53:36 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 7/8] ARM: dts: gr-peach: Add GR-Peach audiocamerashield support
-Date: Mon, 23 Jul 2018 14:06:25 +0200
-Message-Id: <c85aabb841f5ed544b492544e8280f2a9c1cc647.1532345886.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1532345886.git.horms+renesas@verge.net.au>
-References: <cover.1532345886.git.horms+renesas@verge.net.au>
+Subject: [PATCH 2/5] arm: shmobile: Add the R9A06G032 SMP enabler driver
+Date: Fri, 20 Jul 2018 14:05:32 +0200
+Message-Id: <cde4f86f9249be73a31c93df4706b300fba48315.1532086956.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1532086956.git.horms+renesas@verge.net.au>
+References: <cover.1532086956.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+From: Michel Pollet <michel.pollet@bp.renesas.com>
 
-Add device tree header for GR-Peach's audiocamerashield with MT9V111
-image sensor.
+The Renesas R9A06G032 second CA7 is parked in a ROM pen at boot time, it
+equires a special enable method to get it started.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi | 79 +++++++++++++++++++++++
- 1 file changed, 79 insertions(+)
- create mode 100644 arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi
+ drivers/soc/renesas/Makefile        |  1 +
+ drivers/soc/renesas/r9a06g032-smp.c | 96 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 97 insertions(+)
+ create mode 100644 drivers/soc/renesas/r9a06g032-smp.c
 
-diff --git a/arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi b/arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi
+diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
+index 7dc0f20d7907..44a0d6b10192 100644
+--- a/drivers/soc/renesas/Makefile
++++ b/drivers/soc/renesas/Makefile
+@@ -18,6 +18,7 @@ obj-$(CONFIG_SYSC_R8A77970)	+= r8a77970-sysc.o
+ obj-$(CONFIG_SYSC_R8A77980)	+= r8a77980-sysc.o
+ obj-$(CONFIG_SYSC_R8A77990)	+= r8a77990-sysc.o
+ obj-$(CONFIG_SYSC_R8A77995)	+= r8a77995-sysc.o
++obj-$(CONFIG_ARCH_R9A06G032)	+= r9a06g032-smp.o
+ 
+ # Family
+ obj-$(CONFIG_RST_RCAR)		+= rcar-rst.o
+diff --git a/drivers/soc/renesas/r9a06g032-smp.c b/drivers/soc/renesas/r9a06g032-smp.c
 new file mode 100644
-index 000000000000..e31a9e3c18a2
+index 000000000000..a1926e8d73f2
 --- /dev/null
-+++ b/arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi
-@@ -0,0 +1,79 @@
++++ b/drivers/soc/renesas/r9a06g032-smp.c
+@@ -0,0 +1,96 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Device Tree Source for the GR-Peach audiocamera shield expansion board
++ * R9A06G032 Second CA7 enabler.
 + *
-+ * Copyright (C) 2017 Jacopo Mondi <jacopo+renesas@jmondi.org>
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
++ * Derived from actions,s500-smp
 + */
 +
-+#include "r7s72100.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/smp.h>
 +
-+/ {
-+	/* On-board camera clock. */
-+	camera_clk: camera_clk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <27000000>;
-+	};
++/*
++ * The second CPU is parked in ROM at boot time. It requires waking it after
++ * writing an address into the BOOTADDR register of sysctrl.
++ *
++ * So the default value of the "cpu-release-addr" corresponds to BOOTADDR...
++ *
++ * *However* the BOOTADDR register is not available when the kernel
++ * starts in NONSEC mode.
++ *
++ * So for NONSEC mode, the bootloader re-parks the second CPU into a pen
++ * in SRAM, and changes the "cpu-release-addr" of linux's DT to a SRAM address,
++ * which is not restricted.
++ */
++
++static void __iomem *cpu_bootaddr;
++
++static DEFINE_SPINLOCK(cpu_lock);
++
++static int
++r9a06g032_smp_boot_secondary(unsigned int cpu,
++			     struct task_struct *idle)
++{
++	if (!cpu_bootaddr)
++		return -ENODEV;
++
++	spin_lock(&cpu_lock);
++
++	writel(__pa_symbol(secondary_startup), cpu_bootaddr);
++	arch_send_wakeup_ipi_mask(cpumask_of(cpu));
++
++	spin_unlock(&cpu_lock);
++
++	return 0;
++}
++
++static void __init r9a06g032_smp_prepare_cpus(unsigned int max_cpus)
++{
++	struct device_node *dn;
++	int ret = -EINVAL, dns;
++	u32 bootaddr;
++
++	dn = of_get_cpu_node(1, NULL);
++	if (!dn) {
++		pr_err("CPU#1: missing device tree node\n");
++		return;
++	}
++	/*
++	 * Determine the address from which the CPU is polling.
++	 * The bootloader *does* change this property.
++	 * Note: The property can be either 64 or 32 bits, so handle both cases
++	 */
++	if (of_find_property(dn, "cpu-release-addr", &dns)) {
++		if (dns == sizeof(u64)) {
++			u64 temp;
++
++			ret = of_property_read_u64(dn,
++						   "cpu-release-addr", &temp);
++			bootaddr = temp;
++		} else {
++			ret = of_property_read_u32(dn,
++						   "cpu-release-addr",
++						   &bootaddr);
++		}
++	}
++	of_node_put(dn);
++	if (ret) {
++		pr_err("CPU#1: invalid cpu-release-addr property\n");
++		return;
++	}
++	pr_info("CPU#1: cpu-release-addr %08x\n", bootaddr);
++
++	cpu_bootaddr = ioremap(bootaddr, sizeof(bootaddr));
++}
++
++static const struct smp_operations r9a06g032_smp_ops __initconst = {
++	.smp_prepare_cpus = r9a06g032_smp_prepare_cpus,
++	.smp_boot_secondary = r9a06g032_smp_boot_secondary,
 +};
 +
-+&pinctrl {
-+	i2c1_pins: i2c1 {
-+		/* P1_2 as SCL; P1_3 as SDA */
-+		pinmux = <RZA1_PINMUX(1, 2, 1)>, <RZA1_PINMUX(1, 3, 1)>;
-+	};
-+
-+	vio_pins: vio {
-+		/* CEU pins: VIO_D[0-10], VIO_VD, VIO_HD, VIO_CLK */
-+		pinmux = <RZA1_PINMUX(1, 0, 5)>, /* VIO_VD */
-+			 <RZA1_PINMUX(1, 1, 5)>, /* VIO_HD */
-+			 <RZA1_PINMUX(2, 0, 7)>, /* VIO_D0 */
-+			 <RZA1_PINMUX(2, 1, 7)>, /* VIO_D1 */
-+			 <RZA1_PINMUX(2, 2, 7)>, /* VIO_D2 */
-+			 <RZA1_PINMUX(2, 3, 7)>, /* VIO_D3 */
-+			 <RZA1_PINMUX(2, 4, 7)>, /* VIO_D4 */
-+			 <RZA1_PINMUX(2, 5, 7)>, /* VIO_D5 */
-+			 <RZA1_PINMUX(2, 6, 7)>, /* VIO_D6 */
-+			 <RZA1_PINMUX(2, 7, 7)>, /* VIO_D7 */
-+			 <RZA1_PINMUX(10, 0, 6)>; /* VIO_CLK */
-+	};
-+};
-+
-+&i2c1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c1_pins>;
-+
-+	status = "okay";
-+	clock-frequency = <100000>;
-+
-+	camera@48 {
-+		compatible = "aptina,mt9v111";
-+		reg = <0x48>;
-+
-+		clocks = <&camera_clk>;
-+
-+		port {
-+			mt9v111_out: endpoint {
-+				remote-endpoint = <&ceu_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&ceu {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&vio_pins>;
-+
-+	status = "okay";
-+
-+	port {
-+		ceu_in: endpoint {
-+			hsync-active = <1>;
-+			vsync-active = <1>;
-+			bus-width = <8>;
-+			pclk-sample = <1>;
-+			remote-endpoint = <&mt9v111_out>;
-+		};
-+	};
-+};
++CPU_METHOD_OF_DECLARE(r9a06g032_smp,
++		      "renesas,r9a06g032-smp", &r9a06g032_smp_ops);
 -- 
 2.11.0
