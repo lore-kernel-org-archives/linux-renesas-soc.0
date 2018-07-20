@@ -1,109 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:45743 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753567AbeGFIxe (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33574 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727518AbeGTMxf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jul 2018 04:53:34 -0400
-MIME-Version: 1.0
-References: <1526995765-29693-1-git-send-email-geert+renesas@glider.be>
- <20180523083746.f4nkz4uhjwfgw7yz@verge.net.au> <CAMuHMdV2VwoD3Le=T4-+Ek2E9tL+hmiR0r4cXxG9EH4GXV-uTw@mail.gmail.com>
-In-Reply-To: <CAMuHMdV2VwoD3Le=T4-+Ek2E9tL+hmiR0r4cXxG9EH4GXV-uTw@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 6 Jul 2018 10:53:22 +0200
-Message-ID: <CAMuHMdV8McM-V5zME1DKE0nsdtVLU25mk9QQCNwNL74V9c2Cag@mail.gmail.com>
-Subject: Re: [PATCH/RFC] ARM: dts: r8a7791: Move enable-method to CPU nodes
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Fri, 20 Jul 2018 08:53:35 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms@verge.net.au>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/5] ARM: shmobile: rcar-gen2: Stop compiling headsmp-apmu on !SMP
+Date: Fri, 20 Jul 2018 14:05:31 +0200
+Message-Id: <23295aeebf0706c717adf55487779b19a3605e21.1532087129.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1532087129.git.horms+renesas@verge.net.au>
+References: <cover.1532087129.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, May 23, 2018 at 10:50 AM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Wed, May 23, 2018 at 10:37 AM, Simon Horman <horms@verge.net.au> wrote:
-> > On Tue, May 22, 2018 at 03:29:25PM +0200, Geert Uytterhoeven wrote:
-> >> According to Documentation/devicetree/bindings/arm/cpus.txt, the
-> >> "enable-method" property should be a property of the individual CPU
-> >> nodes, not of the parent "cpus" node.  However, on R-Car M2-W (and on
-> >> several other arm32 SoCs), the property is tied to the "cpus" node
-> >> instead.
-> >>
-> >> Secondary CPU bringup and CPU hot (un)plug work regardless, as
-> >> arm_dt_init_cpu_maps() falls back to looking in the "cpus" node.
-> >>
-> >> The cpuidle code does not have such a fallback, so it does not detect
-> >> the enable-method.  Note that cpuidle does not support the
-> >> "renesas,apmu" enable-method yet, so for now this does not make any
-> >> difference.
-> >
-> > Is the implication that if we keep the current binding for cpu nodes
-> > then at some point we will need to update the cpuidle binding?
->
-> If we keep the current binding for cpu nodes, we indeed have to update
-> (common) Documentation/devicetree/bindings/arm/cpus.txt.
->
-> In addition, if we want to add renesas,apmu-based cpuidle support later,
-> we will have to update the common cpuidle code to look in /cpus, too.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Any comments from the DT/ARM people?
-Thanks!
+As of commit cad160ed0a94927e ("ARM: shmobile: Convert file to use
+cntvoff"), there's no non-SMP code left in headsmp-apmu.S.
 
-> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >> ---
-> >> Arm64 and powerpc do not have such a fallback, but SH has, like arm32.
-> >>
-> >> This is marked RFC, as the alternative is to update the DT bindings to
-> >> keep the status quo.
-> >> ---
-> >>  arch/arm/boot/dts/r8a7791.dtsi | 3 ++-
-> >>  1 file changed, 2 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-> >> index d568bd22d6cbd855..b214cb8f52e47109 100644
-> >> --- a/arch/arm/boot/dts/r8a7791.dtsi
-> >> +++ b/arch/arm/boot/dts/r8a7791.dtsi
-> >> @@ -71,7 +71,6 @@
-> >>       cpus {
-> >>               #address-cells = <1>;
-> >>               #size-cells = <0>;
-> >> -             enable-method = "renesas,apmu";
-> >>
-> >>               cpu0: cpu@0 {
-> >>                       device_type = "cpu";
-> >> @@ -83,6 +82,7 @@
-> >>                       clock-latency = <300000>; /* 300 us */
-> >>                       power-domains = <&sysc R8A7791_PD_CA15_CPU0>;
-> >>                       next-level-cache = <&L2_CA15>;
-> >> +                     enable-method = "renesas,apmu";
-> >>
-> >>                       /* kHz - uV - OPPs unknown yet */
-> >>                       operating-points = <1500000 1000000>,
-> >> @@ -101,6 +101,7 @@
-> >>                       clocks = <&cpg CPG_CORE R8A7791_CLK_Z>;
-> >>                       power-domains = <&sysc R8A7791_PD_CA15_CPU1>;
-> >>                       next-level-cache = <&L2_CA15>;
-> >> +                     enable-method = "renesas,apmu";
-> >>               };
-> >>
-> >>               L2_CA15: cache-controller-0 {
+Hence build the file for SMP only, and drop the no longer needed check
+for CONFIG_SMP inside the file.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/mach-shmobile/Makefile       | 2 +-
+ arch/arm/mach-shmobile/headsmp-apmu.S | 2 --
+ 2 files changed, 1 insertion(+), 3 deletions(-)
 
-                        Geert
-
+diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
+index 05ba728ed4f6..b33dc59d8698 100644
+--- a/arch/arm/mach-shmobile/Makefile
++++ b/arch/arm/mach-shmobile/Makefile
+@@ -21,13 +21,13 @@ cpu-y				:= platsmp.o headsmp.o
+ # Shared SoC family objects
+ obj-$(CONFIG_ARCH_RCAR_GEN2)	+= setup-rcar-gen2.o platsmp-apmu.o $(cpu-y)
+ CFLAGS_setup-rcar-gen2.o	+= -march=armv7-a
+-obj-$(CONFIG_ARCH_RCAR_GEN2)	+= headsmp-apmu.o
+ obj-$(CONFIG_ARCH_R8A7790)	+= regulator-quirk-rcar-gen2.o
+ obj-$(CONFIG_ARCH_R8A7791)	+= regulator-quirk-rcar-gen2.o
+ obj-$(CONFIG_ARCH_R8A7793)	+= regulator-quirk-rcar-gen2.o
+ 
+ # SMP objects
+ smp-y				:= $(cpu-y)
++smp-$(CONFIG_ARCH_RCAR_GEN2)	+= headsmp-apmu.o
+ smp-$(CONFIG_ARCH_SH73A0)	+= smp-sh73a0.o headsmp-scu.o platsmp-scu.o
+ smp-$(CONFIG_ARCH_R8A7779)	+= smp-r8a7779.o headsmp-scu.o platsmp-scu.o
+ smp-$(CONFIG_ARCH_EMEV2)	+= smp-emev2.o headsmp-scu.o platsmp-scu.o
+diff --git a/arch/arm/mach-shmobile/headsmp-apmu.S b/arch/arm/mach-shmobile/headsmp-apmu.S
+index a7b4bc7a087b..fabe9cadd12e 100644
+--- a/arch/arm/mach-shmobile/headsmp-apmu.S
++++ b/arch/arm/mach-shmobile/headsmp-apmu.S
+@@ -8,9 +8,7 @@
+ #include <linux/linkage.h>
+ #include <asm/assembler.h>
+ 
+-#ifdef CONFIG_SMP
+ ENTRY(shmobile_boot_apmu)
+ 	bl	secure_cntvoff_init
+ 	b	secondary_startup
+ ENDPROC(shmobile_boot_apmu)
+-#endif
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.11.0
