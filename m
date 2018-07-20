@@ -1,174 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45121 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729754AbeGQUWa (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33214 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727755AbeGTMwG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jul 2018 16:22:30 -0400
-Received: by mail-pg1-f194.google.com with SMTP id f1-v6so880417pgq.12
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Jul 2018 12:48:21 -0700 (PDT)
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+        Fri, 20 Jul 2018 08:52:06 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH/RFT 3/7] arm64: dts: renesas: r8a77965: Add Sound device node and SSI support
-Date: Wed, 18 Jul 2018 04:47:59 +0900
-Message-Id: <1531856883-19645-4-git-send-email-ykaneko0929@gmail.com>
-In-Reply-To: <1531856883-19645-1-git-send-email-ykaneko0929@gmail.com>
-References: <1531856883-19645-1-git-send-email-ykaneko0929@gmail.com>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 5/7] ARM: shmobile: defconfig: Disable /sbin/hotplug fork-bomb
+Date: Fri, 20 Jul 2018 14:03:53 +0200
+Message-Id: <c9619bca1edc7176e9ba5924f1c348e318a85a12.1532086504.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1532086504.git.horms+renesas@verge.net.au>
+References: <cover.1532086504.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Based on several similar patches of the R8A7796 device tree
-by Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>.
+No recent mainstream system uses the /sbin/hotplug fork-bomb any more.
+Commit 7934779a69f1184f29d786b89e77dd14519bd226 ("Driver-Core: disable
+/sbin/hotplug by default") disabled it in Kconfig, but the various
+defconfigs weren't updated.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+According to the systemd requirements, this option must be disabled, as
+it slows down the system and confuses udev.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 109 +++++++++++++++++++++++-------
- 1 file changed, 85 insertions(+), 24 deletions(-)
+ arch/arm/configs/shmobile_defconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index c0dbabd..c5d6ab4 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -12,7 +12,7 @@
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/power/r8a77965-sysc.h>
- 
--#define CPG_AUDIO_CLK_I		10
-+#define CPG_AUDIO_CLK_I		R8A77965_CLK_S0D4
- 
- / {
- 	compatible = "renesas,r8a77965";
-@@ -1324,42 +1324,103 @@
- 		};
- 
- 		rcar_sound: sound@ec500000 {
-+			/*
-+			 * #sound-dai-cells is required
-+			 *
-+			 * Single DAI : #sound-dai-cells = <0>;	<&rcar_sound>;
-+			 * Multi  DAI : #sound-dai-cells = <1>;	<&rcar_sound N>;
-+			 */
-+			/*
-+			 * #clock-cells is required for audio_clkout0/1/2/3
-+			 *
-+			 * clkout	: #clock-cells = <0>;	<&rcar_sound>;
-+			 * clkout0/1/2/3: #clock-cells = <1>;	<&rcar_sound N>;
-+			 */
-+			compatible =  "renesas,rcar_sound-r8a7796", "renesas,rcar_sound-gen3";
- 			reg =	<0 0xec500000 0 0x1000>, /* SCU */
- 				<0 0xec5a0000 0 0x100>,  /* ADG */
- 				<0 0xec540000 0 0x1000>, /* SSIU */
- 				<0 0xec541000 0 0x280>,  /* SSI */
- 				<0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
--			/* placeholder */
-+			reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
-+
-+			clocks = <&cpg CPG_MOD 1005>,
-+				 <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
-+				 <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
-+				 <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
-+				 <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1013>,
-+				 <&cpg CPG_MOD 1014>, <&cpg CPG_MOD 1015>,
-+				 <&audio_clk_a>, <&audio_clk_b>,
-+				 <&audio_clk_c>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S0D4>;
-+			clock-names = "ssi-all",
-+				      "ssi.9", "ssi.8", "ssi.7", "ssi.6",
-+				      "ssi.5", "ssi.4", "ssi.3", "ssi.2",
-+				      "ssi.1", "ssi.0",
-+				      "clk_a", "clk_b", "clk_c", "clk_i";
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 1005>,
-+				 <&cpg 1006>, <&cpg 1007>,
-+				 <&cpg 1008>, <&cpg 1009>,
-+				 <&cpg 1010>, <&cpg 1011>,
-+				 <&cpg 1012>, <&cpg 1013>,
-+				 <&cpg 1014>, <&cpg 1015>;
-+			reset-names = "ssi-all",
-+				      "ssi.9", "ssi.8", "ssi.7", "ssi.6",
-+				      "ssi.5", "ssi.4", "ssi.3", "ssi.2",
-+				      "ssi.1", "ssi.0";
-+			status = "disabled";
- 
--			rcar_sound,dvc {
--				dvc0: dvc-0 {
-+			rcar_sound,ssi {
-+				ssi0: ssi-0 {
-+					interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x01>, <&audma1 0x02>, <&audma0 0x15>, <&audma1 0x16>;
-+					dma-names = "rx", "tx", "rxu", "txu";
- 				};
--				dvc1: dvc-1 {
-+				ssi1: ssi-1 {
-+					interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x03>, <&audma1 0x04>, <&audma0 0x49>, <&audma1 0x4a>;
-+					dma-names = "rx", "tx", "rxu", "txu";
- 				};
--			};
--
--			rcar_sound,src {
--				src0: src-0 {
-+				ssi2: ssi-2 {
-+					interrupts = <GIC_SPI 372 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x05>, <&audma1 0x06>, <&audma0 0x63>, <&audma1 0x64>;
-+					dma-names = "rx", "tx", "rxu", "txu";
- 				};
--				src1: src-1 {
-+				ssi3: ssi-3 {
-+					interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x07>, <&audma1 0x08>, <&audma0 0x6f>, <&audma1 0x70>;
-+					dma-names = "rx", "tx", "rxu", "txu";
- 				};
--			};
--
--			rcar_sound,ssi {
--				ssi0: ssi-0 {
-+				ssi4: ssi-4 {
-+					interrupts = <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x09>, <&audma1 0x0a>, <&audma0 0x71>, <&audma1 0x72>;
-+					dma-names = "rx", "tx", "rxu", "txu";
- 				};
--				ssi1: ssi-1 {
-+				ssi5: ssi-5 {
-+					interrupts = <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x0b>, <&audma1 0x0c>, <&audma0 0x73>, <&audma1 0x74>;
-+					dma-names = "rx", "tx", "rxu", "txu";
- 				};
--			};
--
--			ports {
--				#address-cells = <1>;
--				#size-cells = <0>;
--				port@0 {
--					reg = <0>;
-+				ssi6: ssi-6 {
-+					interrupts = <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x0d>, <&audma1 0x0e>, <&audma0 0x75>, <&audma1 0x76>;
-+					dma-names = "rx", "tx", "rxu", "txu";
- 				};
--				port@1 {
--					reg = <1>;
-+				ssi7: ssi-7 {
-+					interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x0f>, <&audma1 0x10>, <&audma0 0x79>, <&audma1 0x7a>;
-+					dma-names = "rx", "tx", "rxu", "txu";
-+				};
-+				ssi8: ssi-8 {
-+					interrupts = <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x11>, <&audma1 0x12>, <&audma0 0x7b>, <&audma1 0x7c>;
-+					dma-names = "rx", "tx", "rxu", "txu";
-+				};
-+				ssi9: ssi-9 {
-+					interrupts = <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x13>, <&audma1 0x14>, <&audma0 0x7d>, <&audma1 0x7e>;
-+					dma-names = "rx", "tx", "rxu", "txu";
- 				};
- 			};
- 		};
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index 7a5a970420b6..ac3dad3c3b9d 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -58,7 +58,6 @@ CONFIG_IP_PNP=y
+ CONFIG_IP_PNP_DHCP=y
+ CONFIG_CAN=y
+ CONFIG_CAN_RCAR=y
+-CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
+ CONFIG_DEVTMPFS=y
+ CONFIG_DEVTMPFS_MOUNT=y
+ CONFIG_DMA_CMA=y
 -- 
-1.9.1
+2.11.0
