@@ -1,101 +1,135 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:41643 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733198AbeGTUL1 (ORCPT
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:39270 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727331AbeGTI45 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jul 2018 16:11:27 -0400
-Received: by mail-lf1-f67.google.com with SMTP id v22-v6so2503835lfe.8
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Jul 2018 12:21:48 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] arm64: dts: renesas: r8a77980: add RWDT support
-To: Simon Horman <horms@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-References: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
-Message-ID: <175a491f-a827-4a92-1884-2f1490d38a52@cogentembedded.com>
-Date: Fri, 20 Jul 2018 22:21:45 +0300
+        Fri, 20 Jul 2018 04:56:57 -0400
 MIME-Version: 1.0
-In-Reply-To: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+References: <20180711144131.73552-1-chris.brandt@renesas.com> <20180711144131.73552-2-chris.brandt@renesas.com>
+In-Reply-To: <20180711144131.73552-2-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 20 Jul 2018 10:09:39 +0200
+Message-ID: <CAMuHMdXpLvz3zD3=ji-ro0R6C-OUyBv6bgY2a3Hp85wYYAav5A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] serial: sh-sci: Add support for R7S9210
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe RWDT in the R8A77980 SoC device tree.
+Hi Chris,
 
-Enable RWDT on the Condor and V3H Starter Kit boards.
+On Wed, Jul 11, 2018 at 4:42 PM Chris Brandt <chris.brandt@renesas.com> wrote:
+> Add support for a "RZ_SCIFA" which is different than a traditional
+> SCIFA. It looks like a normal SCIF with FIFO data, but with a
+> compressed address space. Also, the break out of interrupts
+> are different then traditinal SCIF: ERI/BRI, RXI, TXI, TEI, DRI.
+> The R7S9210 (RZ/A2) contains this type of SCIF.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
-Based on the original (and large) patch by Vladimir Barinov.
+Thanks for your patch!
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> --- a/drivers/tty/serial/sh-sci.c
+> +++ b/drivers/tty/serial/sh-sci.c
+> @@ -65,6 +65,7 @@ enum {
+>         SCIx_RXI_IRQ,
+>         SCIx_TXI_IRQ,
+>         SCIx_BRI_IRQ,
+> +       SCIx_TEIDRI_IRQ,
 
----
-The patch is against the 'renesas-devel-20180720-v4.18-rc5' of Simon Horman's
-'renesas.git' repo.  It depends on Geert Uytterhoeven's clock driver patches
-(adding the RWDT clock) in order to work...
+Why not separate enum values for TEI and DRI? According to the RZ/A2 docs,
+there are 6 separate interrupts, but they are multiplexed at the interrupt
+controller level.
 
- arch/arm64/boot/dts/renesas/r8a77980-condor.dts |    5 +++++
- arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts  |    5 +++++
- arch/arm64/boot/dts/renesas/r8a77980.dtsi       |   10 ++++++++++
- 3 files changed, 20 insertions(+)
+>         SCIx_NR_IRQS,
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-@@ -262,6 +262,11 @@
- 	};
- };
- 
-+&rwdt {
-+	timeout-sec = <60>;
-+	status = "okay";
-+};
-+
- &scif0 {
- 	pinctrl-0 = <&scif0_pins>, <&scif_clk_pins>;
- 	pinctrl-names = "default";
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-@@ -191,6 +191,11 @@
- 	};
- };
- 
-+&rwdt {
-+	timeout-sec = <60>;
-+	status = "okay";
-+};
-+
- &scif0 {
- 	pinctrl-0 = <&scif0_pins>, <&scif_clk_pins>;
- 	pinctrl-names = "default";
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -118,6 +118,16 @@
- 		#size-cells = <2>;
- 		ranges;
- 
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a77980-wdt",
-+				     "renesas,rcar-gen3-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
-+		};
-+
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a77980",
- 				     "renesas,rcar-gen3-gpio";
+If you add interrupt value heres, you have to update the comment in
+sci_init_single(), which talks about "three or four" interrupts.
+
+sci_init_single() also fills in all unused sci_port->irqs[], so that code
+must be updated for the new interrupts.
+
+>
+>         SCIx_MUX_IRQ = SCIx_NR_IRQS,    /* special case */
+> @@ -76,6 +77,9 @@ enum {
+>         ((port)->irqs[SCIx_ERI_IRQ] &&  \
+>          ((port)->irqs[SCIx_RXI_IRQ] < 0))
+>
+> +#define SCIx_TEIDRI_IRQ_EXISTS(port)           \
+> +       ((port)->irqs[SCIx_TEIDRI_IRQ] > 0)
+> +
+>  enum SCI_CLKS {
+>         SCI_FCK,                /* Functional Clock */
+>         SCI_SCK,                /* Optional External Clock */
+> @@ -287,6 +291,33 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
+>                 .error_clear = SCIF_ERROR_CLEAR,
+>         },
+>
+> +       /*
+> +        * The "SCIFA" that is in RZ/T and RZ/A2.
+> +        * It looks like a normal SCIF with FIFO data, but with a
+> +        * compressed address space. Also, the break out of interrupts
+> +        * are different: ERI/BRI, RXI, TXI, TEI, DRI.
+> +        */
+> +       [SCIx_RZ_SCIFA_REGTYPE] = {
+> +               .regs = {
+> +                       [SCSMR]         = { 0x00, 16 },
+> +                       [SCBRR]         = { 0x02,  8 },
+> +                       [SCSCR]         = { 0x04, 16 },
+> +                       [SCxTDR]        = { 0x06,  8 },
+> +                       [SCxSR]         = { 0x08, 16 },
+> +                       [SCxRDR]        = { 0x0A,  8 },
+> +                       [SCFCR]         = { 0x0C, 16 },
+> +                       [SCFDR]         = { 0x0E, 16 },
+> +                       [SCSPTR]        = { 0x10, 16 },
+> +                       [SCLSR]         = { 0x12, 16 },
+> +               },
+> +               .fifosize = 16,
+> +               .overrun_reg = SCLSR,
+> +               .overrun_mask = SCLSR_ORER,
+> +               .sampling_rate_mask = SCI_SR(32),
+> +               .error_mask = SCIF_DEFAULT_ERROR_MASK,
+> +               .error_clear = SCIF_ERROR_CLEAR,
+> +       },
+
+
+"Compressed addres space", like SCIx_SH4_SCIF_REGTYPE with regshift -1? ;-)
+Perhaps we should adjust all offsets in SCIx_SH4_SCIF_REGTYPE and let the
+current parts use regshift 1, so RZ/A2 can use the same definition with
+regshift 0?
+
+For DT systems, the regshift value could be stored in of_device_id.data
+by adjusting the SCI_OF_DATA() macro.
+For legacy SH, probably lots of platform data must be updated.
+
+> +
+>         /*
+>          * Common SH-3 SCIF definitions.
+>          */
+> @@ -1683,11 +1714,26 @@ static irqreturn_t sci_tx_interrupt(int irq, void *ptr)
+>         return IRQ_HANDLED;
+>  }
+>
+> +static irqreturn_t sci_br_interrupt(int irq, void *ptr);
+> +
+
+For interrupts, please see my response to the DT binding patch.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
