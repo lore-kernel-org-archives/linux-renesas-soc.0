@@ -1,18 +1,16 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:36754 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388863AbeGTN3i (ORCPT
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:44112 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727755AbeGTNAj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:29:38 -0400
+        Fri, 20 Jul 2018 09:00:39 -0400
 MIME-Version: 1.0
 References: <1531924476-23261-1-git-send-email-phil.edworthy@renesas.com>
- <CAMuHMdVEgj7kJFxNuR8w468FoGRaP_mEDv6JqB_7deuQjsed_Q@mail.gmail.com>
- <TY1PR01MB1769588F9C53755C0FD56D98F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
- <CAMuHMdWqdg9KV4h_U-VZGVdOL6upUpDgqO7kwQh8tFQjDFh-Ug@mail.gmail.com> <TY1PR01MB17697FBCBDC6296E7B2589C9F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY1PR01MB17697FBCBDC6296E7B2589C9F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <CAMuHMdVEgj7kJFxNuR8w468FoGRaP_mEDv6JqB_7deuQjsed_Q@mail.gmail.com> <TY1PR01MB1769588F9C53755C0FD56D98F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY1PR01MB1769588F9C53755C0FD56D98F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 20 Jul 2018 14:41:20 +0200
-Message-ID: <CAMuHMdVMGWWcFZvjgBWZAabxWXdtBeH4XLYaXZVkQ=rOaeCH0g@mail.gmail.com>
+Date: Fri, 20 Jul 2018 14:12:29 +0200
+Message-ID: <CAMuHMdWqdg9KV4h_U-VZGVdOL6upUpDgqO7kwQh8tFQjDFh-Ug@mail.gmail.com>
 Subject: Re: [PATCH] clk: renesas: r9a06g032: Avoid needless probe deferring
 To: Phil Edworthy <phil.edworthy@renesas.com>
 Cc: Simon Horman <horms@verge.net.au>,
@@ -25,42 +23,74 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Phil,
 
-On Fri, Jul 20, 2018 at 2:26 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
-> On 20 July 2018 13:12, Geert Uytterhoeven wrote:
-> > On Fri, Jul 20, 2018 at 2:06 PM Phil Edworthy  wrote:
-> > > On 20 July 2018 12:21, Geert Uytterhoeven wrote:
-> > > > On Wed, Jul 18, 2018 at 4:34 PM Phil Edworthy wrote:
-> > > > > To avoid all SoC peripheral drivers deferring their probes, both
-> > > > > clock and pinctrl drivers should already be probed. Since the
-> > > > > pinctrl driver requires a clock to access the registers, the clock
-> > > > > driver should be probed before the pinctrl driver.
-> > > > >
-> > > > > Therefore, move the clock driver from subsys_initcall to core_initcall.
-> > > > >
-> > > > > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> > > >
-> > > > Thanks for your patch!
-> > > Thanks for your review!
+On Fri, Jul 20, 2018 at 2:06 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
+> On 20 July 2018 12:21, Geert Uytterhoeven wrote:
+> > On Wed, Jul 18, 2018 at 4:34 PM Phil Edworthy wrote:
+> > > To avoid all SoC peripheral drivers deferring their probes, both clock
+> > > and pinctrl drivers should already be probed. Since the pinctrl driver
+> > > requires a clock to access the registers, the clock driver should be
+> > > probed before the pinctrl driver.
 > > >
-> > > > The (not yet upstreamed) pinctrl driver uses postcore_initcall(), right?
-> > > No, the pinctrl driver uses subsys_initcall, but postcore_initcall or
-> > > arch_initcall may be better to make it clear about the dependencies.
+> > > Therefore, move the clock driver from subsys_initcall to core_initcall.
+> > >
+> > > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 > >
-> > if the pinctrl driver uses subsys_initcall(), ...
+> > Thanks for your patch!
+> Thanks for your review!
+>
+> > The (not yet upstreamed) pinctrl driver uses postcore_initcall(), right?
+> No, the pinctrl driver uses subsys_initcall, but postcore_initcall or
+> arch_initcall may be better to make it clear about the dependencies.
 
-> > > > > -subsys_initcall(r9a06g032_clocks_init);
-> > > > > +core_initcall(r9a06g032_clocks_init);
+if the pinctrl driver uses subsys_initcall(), ...
+
+> > > --- a/drivers/clk/renesas/r9a06g032-clocks.c
+> > > +++ b/drivers/clk/renesas/r9a06g032-clocks.c
+> > > @@ -877,17 +877,18 @@ static const struct of_device_id
+> > r9a06g032_match[] = {
+> > >         { }
+> > >  };
+> > >
+> > > -static struct platform_driver r9a06g032_clock_driver = {
+> > > +static struct platform_driver r9a06g032_clock_driver __refdata = {
+> > >         .driver         = {
+> > >                 .name   = "renesas,r9a06g032-sysctrl",
+> > >                 .of_match_table = r9a06g032_match,
+> > >         },
+> > > +       .probe = r9a06g032_clocks_probe,
+> > >  };
+> > >
+> > >  static int __init r9a06g032_clocks_init(void)  {
+> > > -       return platform_driver_probe(&r9a06g032_clock_driver,
+> > > -                       r9a06g032_clocks_probe);
+> > > +       platform_driver_register(&r9a06g032_clock_driver);
+> > > +       return 0;
+> That should be:
+> +       return platform_driver_register(&r9a06g032_clock_driver);
+>
+> > >  }
 > >
-> > ... using postcore_initcall() or arch_initcall() here, should work with
-> > platform_driver_probe()?
-> Nope, you have to use platform_driver_register() for DT based drivers.
-> subsys_initcall is the earliest you can use platform_driver_probe().
+> > Why are all of the above changes needed?
+> > Shouldn't the platform_driver_probe() keep on working?
+> > If it does not, it means the clock driver has some other dependency, and
+> > cannot be bound immediately.  This is potentially a dangerous situation, as
+> > r9a06g032_clocks_probe() is __init, but can still be called at any time later.
+> > Hence using platform_driver_probe() is the safe thing to do, possibly with a
+> > different reshuffling of the clock and pinctrl initcall priorities.
+> No, you cannot call platform_driver_probe() from core_initcall.
+> All drivers that are in core_initcall call platform_driver_register().
 
-So drivers/misc/atmel_tclib.c and drivers/pinctrl/pinctrl-coh901.c, which
-use arch_initcall(), cannot work?
+Hence they cannot have their probe function __init.
 
-If that is really true, you can still use subsys_initcall() in the clock driver,
-and subsys_initcall_sync() in the pinctrl driver.
+>
+> Thanks
+> Phil
+>
+> > > -subsys_initcall(r9a06g032_clocks_init);
+> > > +core_initcall(r9a06g032_clocks_init);
+
+... using postcore_initcall() or arch_initcall() here, should work with
+platform_driver_probe()?
 
 Gr{oetje,eeting}s,
 
