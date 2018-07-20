@@ -1,97 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:35934 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752606AbeGCNIc (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33574 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727518AbeGTMxj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Jul 2018 09:08:32 -0400
-Received: from rox.of.borg ([192.168.97.57])
-        by ayla.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1faL2k-0003Jc-JW
-        for linux-renesas-soc@vger.kernel.org; Tue, 03 Jul 2018 15:08:30 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1faL2k-0007gJ-HG
-        for linux-renesas-soc@vger.kernel.org; Tue, 03 Jul 2018 15:08:30 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+        Fri, 20 Jul 2018 08:53:39 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2018-07-03-v4.18-rc3
-Date: Tue,  3 Jul 2018 15:08:30 +0200
-Message-Id: <20180703130830.29482-1-geert+renesas@glider.be>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 3/5] soc: r9a06g032: don't build SMP files for non-SMP config
+Date: Fri, 20 Jul 2018 14:05:34 +0200
+Message-Id: <c83e9c4873d34aa8d9bbb90345fee0757b6233ef.1532087129.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1532087129.git.horms+renesas@verge.net.au>
+References: <cover.1532087129.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I have pushed renesas-drivers-2018-07-03-v4.18-rc3 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+From: Arnd Bergmann <arnd@arndb.de>
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging (a) the for-next branches
-of various subsystem trees and (b) branches with driver code submitted
-or planned for submission to maintainers into the development branch of
-Simon Horman's renesas.git tree.
+Without CONFIG_SMP, we get a build failure:
 
-Today's version is based on renesas-devel-20180702-v4.18-rc3.
+In file included from include/linux/byteorder/little_endian.h:5,
+                 from arch/arm/include/uapi/asm/byteorder.h:22,
+                 from include/asm-generic/bitops/le.h:6,
+                 from arch/arm/include/asm/bitops.h:342,
+                 from include/linux/bitops.h:18,
+                 from include/linux/kernel.h:11,
+                 from include/asm-generic/bug.h:18,
+                 from arch/arm/include/asm/bug.h:60,
+                 from include/linux/bug.h:5,
+                 from include/linux/io.h:23,
+                 from drivers/soc/renesas/r9a06g032-smp.c:11:
+drivers/soc/renesas/r9a06g032-smp.c: In function 'r9a06g032_smp_boot_secondary':
+drivers/soc/renesas/r9a06g032-smp.c:43:21: error: 'secondary_startup' undeclared (first use in this function)
+  writel(__pa_symbol(secondary_startup), cpu_bootaddr);
+                     ^~~~~~~~~~~~~~~~~
 
-Included branches with driver code:
-  - clk-renesas
-  - sh-pfc
-  - topic/bd9571-toggle-power-switch-v2
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/ipmmu-driver-v6
-  - git://linuxtv.org/pinchartl/media.git#drm-du-iommu-v1-20171115
-  - git://git.ragnatech.se/linux#for-renesas-drivers
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#tags/vsp1/du/interlaced/v4.5
+This makes the compilation of that file conditional on SMP support.
+It would probably be better for consistency to leave that file
+in arch/arm/mach-shmobile/, matching what we do for all other smp
+operations.
 
-Included fixes:
-  - pinctrl: sh-pfc: r8a77970: remove SH_PFC_PIN_CFG_DRIVE_STRENGTH flag
-  - dmaengine: rcar-dmac: Disable interrupts while stopping channels
+Fixes: cde4f86f9249 ("arm: shmobile: Add the R9A06G032 SMP enabler driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/soc/renesas/Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://git.freedesktop.org/git/drm/drm.git#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/media_tree.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
-  - git://git.infradead.org/users/vkoul/slave-dma.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
-  - git://github.com/bzolnier/linux.git#fbdev-for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
+index 44a0d6b10192..c37b0803c1b6 100644
+--- a/drivers/soc/renesas/Makefile
++++ b/drivers/soc/renesas/Makefile
+@@ -18,7 +18,9 @@ obj-$(CONFIG_SYSC_R8A77970)	+= r8a77970-sysc.o
+ obj-$(CONFIG_SYSC_R8A77980)	+= r8a77980-sysc.o
+ obj-$(CONFIG_SYSC_R8A77990)	+= r8a77990-sysc.o
+ obj-$(CONFIG_SYSC_R8A77995)	+= r8a77995-sysc.o
++ifdef CONFIG_SMP
+ obj-$(CONFIG_ARCH_R9A06G032)	+= r9a06g032-smp.o
++endif
+ 
+ # Family
+ obj-$(CONFIG_RST_RCAR)		+= rcar-rst.o
+-- 
+2.11.0
