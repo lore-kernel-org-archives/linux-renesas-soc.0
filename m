@@ -1,36 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58425 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727133AbeGTJIc (ORCPT
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:44941 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727028AbeGTISU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jul 2018 05:08:32 -0400
-Date: Fri, 20 Jul 2018 10:21:21 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: renesas: Include R-Car product name in DTSI
- files
-Message-ID: <20180720082121.nzumwrotoqla7aie@verge.net.au>
-References: <153199919069.10140.15895581107478774899.sendpatchset@little-apple>
+        Fri, 20 Jul 2018 04:18:20 -0400
+Received: by mail-ua0-f193.google.com with SMTP id k25-v6so6892186uao.11
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Jul 2018 00:31:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <153199919069.10140.15895581107478774899.sendpatchset@little-apple>
+References: <153199919069.10140.15895581107478774899.sendpatchset@little-apple>
+ <20180719125934.GA1432@bigcity.dyn.berto.se> <CANqRtoSSoenVr35wvEmxX5in+Mpt5A3-gkKyFDS0fMeTBiHczQ@mail.gmail.com>
+ <CAMuHMdUuNDf73sxfK6LuNZCjM7-N849qBRHobvojTot8PexH1w@mail.gmail.com> <CANqRtoRzqnhCnjLipFTnv9DcA9ehaf4d06WrqEJgOPyAR7XrFg@mail.gmail.com>
+In-Reply-To: <CANqRtoRzqnhCnjLipFTnv9DcA9ehaf4d06WrqEJgOPyAR7XrFg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 20 Jul 2018 09:31:12 +0200
+Message-ID: <CAMuHMdU-ZExtkWUU9hFcLRTT607JDF=TG3TWYetzv4fbJaJYiQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: Include R-Car product name in DTSI files
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jul 19, 2018 at 08:19:50PM +0900, Magnus Damm wrote:
-> From: Magnus Damm <damm+renesas@opensource.se>
-> 
-> Browsing the DTS for all the R-Car SoCs with similar part numbers
-> makes my head hurt, so to improve the user friendliness of the
-> DTS code base include R-Car product name in each DTSI file.
-> 
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Hi Magnus,
 
-Thanks Magnus,
+On Fri, Jul 20, 2018 at 5:05 AM Magnus Damm <magnus.damm@gmail.com> wrote:
+> On Fri, Jul 20, 2018 at 2:37 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+> > On Thu, Jul 19, 2018 at 7:16 PM Magnus Damm <magnus.damm@gmail.com> wrote:
+> >> On Thu, Jul 19, 2018 at 9:59 PM, Niklas Söderlund
+> >> <niklas.soderlund@ragnatech.se> wrote:
+> >> > On 2018-07-19 20:19:50 +0900, Magnus Damm wrote:
+> >> >> --- 0001/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+> >> >> +++ work/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi 2018-07-19 20:04:10.900607110 +0900
+> >> >> @@ -1,6 +1,6 @@
+> >> >>  // SPDX-License-Identifier: GPL-2.0
+> >> >>  /*
+> >> >> - * Device Tree Source for the r8a7795 ES1.x SoC
+> >> >> + * Device Tree Source for the R-Car H3 (R8A77950) ES1.x SoC
+> >> >
+> >> > I'm just curies why do you append a extra 0 to the part number here and
+> >> > for M3-W? Other then I think this change is good and will help me as
+> >> > well to map part number to product name :-)
+> >>
+> >> Good question!
+> >>
+> >> I should probably have mentioned in the patch description that the
+> >> names and part numbers come from the file
+> >> Documentation/devicetree/bindings/arm/shmobile.txt.
+> >
+> > To add to the confusion: R-Car H3 ES2.0 is actually R8A77951...
+>
+> What a mess! I wonder what ES3.0 is?
 
-I'm glad to hear its not just me!  This looks good but I will wait to see
-if there are other reviews before applying.
+I expect R-Car H3 ES3.0 to be an incremental (bug fix) evolution of R-Car
+H3 ES2.0 (which is IMHO a different SoC than R-Car H3 ES1.x).
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
