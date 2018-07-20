@@ -1,40 +1,150 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:43379 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727063AbeG3NZr (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33574 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727518AbeGTMxi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Jul 2018 09:25:47 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] dt-bindings: pwm: rcar: Add bindings for R-Car E3 support
-Date: Mon, 30 Jul 2018 20:49:51 +0900
-Message-Id: <1532951391-28792-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 20 Jul 2018 08:53:38 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/5] ARM: shmobile: Add the R9A06G032 SMP enabler driver
+Date: Fri, 20 Jul 2018 14:05:33 +0200
+Message-Id: <7416d4411361c79e10667c571b15eed18e811f44.1532087129.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1532087129.git.horms+renesas@verge.net.au>
+References: <cover.1532087129.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds bindings for R-Car E3. No driver update is needed.
+From: Michel Pollet <michel.pollet@bp.renesas.com>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+The Renesas R9A06G032 second CA7 is parked in a ROM pen at boot time, it
+equires a special enable method to get it started.
+
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/soc/renesas/Makefile        |  1 +
+ drivers/soc/renesas/r9a06g032-smp.c | 96 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 97 insertions(+)
+ create mode 100644 drivers/soc/renesas/r9a06g032-smp.c
 
-diff --git a/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt b/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
-index 35a3b97..e1ef6af 100644
---- a/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
-+++ b/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
-@@ -12,6 +12,7 @@ Required Properties:
-  - "renesas,pwm-r8a7795": for R-Car H3
-  - "renesas,pwm-r8a7796": for R-Car M3-W
-  - "renesas,pwm-r8a77965": for R-Car M3-N
-+ - "renesas,pwm-r8a77990": for R-Car E3
-  - "renesas,pwm-r8a77995": for R-Car D3
- - reg: base address and length of the registers block for the PWM.
- - #pwm-cells: should be 2. See pwm.txt in this directory for a description of
+diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
+index 7dc0f20d7907..44a0d6b10192 100644
+--- a/drivers/soc/renesas/Makefile
++++ b/drivers/soc/renesas/Makefile
+@@ -18,6 +18,7 @@ obj-$(CONFIG_SYSC_R8A77970)	+= r8a77970-sysc.o
+ obj-$(CONFIG_SYSC_R8A77980)	+= r8a77980-sysc.o
+ obj-$(CONFIG_SYSC_R8A77990)	+= r8a77990-sysc.o
+ obj-$(CONFIG_SYSC_R8A77995)	+= r8a77995-sysc.o
++obj-$(CONFIG_ARCH_R9A06G032)	+= r9a06g032-smp.o
+ 
+ # Family
+ obj-$(CONFIG_RST_RCAR)		+= rcar-rst.o
+diff --git a/drivers/soc/renesas/r9a06g032-smp.c b/drivers/soc/renesas/r9a06g032-smp.c
+new file mode 100644
+index 000000000000..a1926e8d73f2
+--- /dev/null
++++ b/drivers/soc/renesas/r9a06g032-smp.c
+@@ -0,0 +1,96 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * R9A06G032 Second CA7 enabler.
++ *
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
++ * Derived from actions,s500-smp
++ */
++
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/smp.h>
++
++/*
++ * The second CPU is parked in ROM at boot time. It requires waking it after
++ * writing an address into the BOOTADDR register of sysctrl.
++ *
++ * So the default value of the "cpu-release-addr" corresponds to BOOTADDR...
++ *
++ * *However* the BOOTADDR register is not available when the kernel
++ * starts in NONSEC mode.
++ *
++ * So for NONSEC mode, the bootloader re-parks the second CPU into a pen
++ * in SRAM, and changes the "cpu-release-addr" of linux's DT to a SRAM address,
++ * which is not restricted.
++ */
++
++static void __iomem *cpu_bootaddr;
++
++static DEFINE_SPINLOCK(cpu_lock);
++
++static int
++r9a06g032_smp_boot_secondary(unsigned int cpu,
++			     struct task_struct *idle)
++{
++	if (!cpu_bootaddr)
++		return -ENODEV;
++
++	spin_lock(&cpu_lock);
++
++	writel(__pa_symbol(secondary_startup), cpu_bootaddr);
++	arch_send_wakeup_ipi_mask(cpumask_of(cpu));
++
++	spin_unlock(&cpu_lock);
++
++	return 0;
++}
++
++static void __init r9a06g032_smp_prepare_cpus(unsigned int max_cpus)
++{
++	struct device_node *dn;
++	int ret = -EINVAL, dns;
++	u32 bootaddr;
++
++	dn = of_get_cpu_node(1, NULL);
++	if (!dn) {
++		pr_err("CPU#1: missing device tree node\n");
++		return;
++	}
++	/*
++	 * Determine the address from which the CPU is polling.
++	 * The bootloader *does* change this property.
++	 * Note: The property can be either 64 or 32 bits, so handle both cases
++	 */
++	if (of_find_property(dn, "cpu-release-addr", &dns)) {
++		if (dns == sizeof(u64)) {
++			u64 temp;
++
++			ret = of_property_read_u64(dn,
++						   "cpu-release-addr", &temp);
++			bootaddr = temp;
++		} else {
++			ret = of_property_read_u32(dn,
++						   "cpu-release-addr",
++						   &bootaddr);
++		}
++	}
++	of_node_put(dn);
++	if (ret) {
++		pr_err("CPU#1: invalid cpu-release-addr property\n");
++		return;
++	}
++	pr_info("CPU#1: cpu-release-addr %08x\n", bootaddr);
++
++	cpu_bootaddr = ioremap(bootaddr, sizeof(bootaddr));
++}
++
++static const struct smp_operations r9a06g032_smp_ops __initconst = {
++	.smp_prepare_cpus = r9a06g032_smp_prepare_cpus,
++	.smp_boot_secondary = r9a06g032_smp_boot_secondary,
++};
++
++CPU_METHOD_OF_DECLARE(r9a06g032_smp,
++		      "renesas,r9a06g032-smp", &r9a06g032_smp_ops);
 -- 
-1.9.1
+2.11.0
