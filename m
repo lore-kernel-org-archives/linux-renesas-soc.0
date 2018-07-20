@@ -1,93 +1,171 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay10.mail.gandi.net ([217.70.178.230]:59569 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934165AbeGDJBX (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33510 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727518AbeGTMxY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Jul 2018 05:01:23 -0400
-Date: Wed, 4 Jul 2018 11:01:18 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: mchehab@kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 0/2] media: i2c: mt9v111 sensor driver
-Message-ID: <20180704090118.GC4463@w540>
-References: <1528730253-25135-1-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="JwB53PgKC5A7+0Ej"
-Content-Disposition: inline
-In-Reply-To: <1528730253-25135-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 20 Jul 2018 08:53:24 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 5/9] ARM: dts: Renesas R9A06G032 base device tree file
+Date: Fri, 20 Jul 2018 14:05:13 +0200
+Message-Id: <7476f5964a37fcf1de9b0e65e459c21c1fc52572.1532086734.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1532086734.git.horms+renesas@verge.net.au>
+References: <cover.1532086734.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Michel Pollet <michel.pollet@bp.renesas.com>
 
---JwB53PgKC5A7+0Ej
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+This adds the Renesas R9A06G032 bare bone support.
 
-Hello linux-media list,
+This currently only handles the SYSCTRL block note,
+generic parts (gic, architected timer) and a UART.
 
-On Mon, Jun 11, 2018 at 05:17:31PM +0200, Jacopo Mondi wrote:
-> Hello,
->    this is a sensor level driver for Aptina MT9V111.
->
-> The driver supports YUYV_2X8 output formats and VGA,QVGA,QQVGA,CIF and QCIF
-> resolution.
->
-> The driver allows control of frame rate through s_frame_interval or
-> V4L2_CID_H/VBLANK control. In order to allow manual frame control, the chip
-> is initialized with auto-exposure control, auto white balancing and flickering
-> control disabled.
->
-> Tested VGA, QVGA QQVGA resolutions at 5, 10, 15 and 30 frame per second.
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[simon: updated MAINTAINERS file
+[simon: do not use r9a06g032-sysctrl.h as it is not in the renesas tree yet]
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ MAINTAINERS                      |   1 +
+ arch/arm/boot/dts/r9a06g032.dtsi | 113 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 114 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
 
-Gentle ping for this driver, as I have now sent a patch to add a user
-for it
-https://patchwork.kernel.org/patch/10505175/
-
-Thanks
-   j
-
->
-> Thanks
->    j
->
-> Jacopo Mondi (2):
->   dt-bindings: media: i2c: Document MT9V111 bindings
->   media: i2c: Add driver for Aptina MT9V111
->
->  .../bindings/media/i2c/aptina,mt9v111.txt          |   46 +
->  MAINTAINERS                                        |    8 +
->  drivers/media/i2c/Kconfig                          |   12 +
->  drivers/media/i2c/Makefile                         |    1 +
->  drivers/media/i2c/mt9v111.c                        | 1297 ++++++++++++++++++++
->  5 files changed, 1364 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.txt
->  create mode 100644 drivers/media/i2c/mt9v111.c
->
-> --
-> 2.7.4
->
-
---JwB53PgKC5A7+0Ej
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJbPIzeAAoJEHI0Bo8WoVY8MzAP/254585/SldQw+B3ZHU50Q9B
-nNGDfkMUOki6Y+nfOUuSHuErPrdYbCQo1JOXy7t7Yun2l5Ctb8qnQX2cohbPwHqV
-2IDewGNmPxmNIzAmhDw6TbjvDvkTY3+K5axnAVSF0VAe8bisHtTwPPpzyFr5rPgJ
-a56gSvu/F9+LJG4zaKnFyWt+CMT/UnuR7+VXC0CS8llX0qhe54gK4S+njC5CTICN
-S4hrSA24IcKFGZCzArDyndT3obxdUh0Wk9ipzHgrtIIBZyOfky+a2h9g7JtGeHr+
-DOb+l3l5kTkHJtR1CufRB93GrGDCkBFpBcsT7KerhThSZpGSAofX7ViiHgI/Ze2/
-8UlkwQUem5hFd/hq6CISQ7H5nEsijIIOjjOsYKv6Sv9aEr2vJhHYlr5PkY2oS333
-DyAssMrjSwbafEokI5hMxudCVaN/b40JhymSmPL9bVgkeOhvgFdzQ3OpgMaes0so
-6ni2QSZe8BHitJ4AH8QJOEivGlA0YI+4ABOz9TiBH2oZJzQyG8aM4JDGM6irnv4G
-JtYyMZ7HCZRzixCb9VuujNod/bOhcDEtPl+JyanG5k7aVEycnmetpuTk7LO54MPJ
-uJb2X8RIoWt57/qYT9KwOI+BWzErQIT3aBslLvfUYf/gX14VkCsW9hAsRBWU8B8z
-yUWow718UGGlQvFJjJnO
-=j6DM
------END PGP SIGNATURE-----
-
---JwB53PgKC5A7+0Ej--
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9d5eeff51b5f..4c85ac04872d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1969,6 +1969,7 @@ S:	Supported
+ F:	arch/arm/boot/dts/emev2*
+ F:	arch/arm/boot/dts/r7s*
+ F:	arch/arm/boot/dts/r8a*
++F:	arch/arm/boot/dts/r9a*
+ F:	arch/arm/boot/dts/sh*
+ F:	arch/arm/configs/shmobile_defconfig
+ F:	arch/arm/include/debug/renesas-scif.S
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+new file mode 100644
+index 000000000000..339d0958011e
+--- /dev/null
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -0,0 +1,113 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
++ *
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ */
++
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++
++/ {
++	compatible = "renesas,r9a06g032";
++	#address-cells = <1>;
++	#size-cells = <1>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <0>;
++			clocks = <&sysctrl 84>;
++		};
++
++		cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <1>;
++			clocks = <&sysctrl 84>;
++		};
++	};
++
++	ext_jtag_clk: extjtagclk {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		clock-frequency = <0>;
++	};
++
++	ext_mclk: extmclk {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		clock-frequency = <40000000>;
++	};
++
++	ext_rgmii_ref: extrgmiiref {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		clock-frequency = <0>;
++	};
++
++	ext_rtc_clk: extrtcclk {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		clock-frequency = <0>;
++	};
++
++	soc {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		interrupt-parent = <&gic>;
++		ranges;
++
++		sysctrl: system-controller@4000c000 {
++			compatible = "renesas,r9a06g032-sysctrl";
++			reg = <0x4000c000 0x1000>;
++			status = "okay";
++			#clock-cells = <1>;
++
++			clocks = <&ext_mclk>, <&ext_rtc_clk>,
++					<&ext_jtag_clk>, <&ext_rgmii_ref>;
++			clock-names = "mclk", "rtc", "jtag", "rgmii_ref_ext";
++		};
++
++		uart0: serial@40060000 {
++			compatible = "snps,dw-apb-uart";
++			reg = <0x40060000 0x400>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++			reg-shift = <2>;
++			reg-io-width = <4>;
++			clocks = <&sysctrl 146>;
++			clock-names = "baudclk";
++			status = "disabled";
++		};
++
++		gic: gic@44101000 {
++			compatible = "arm,cortex-a7-gic", "arm,gic-400";
++			interrupt-controller;
++			#interrupt-cells = <3>;
++			reg = <0x44101000 0x1000>, /* Distributer */
++			      <0x44102000 0x2000>, /* CPU interface */
++			      <0x44104000 0x2000>, /* Virt interface control */
++			      <0x44106000 0x2000>; /* Virt CPU interface */
++			interrupts =
++				<GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
++		};
++	};
++
++	timer {
++		compatible = "arm,cortex-a7-timer",
++			     "arm,armv7-timer";
++		interrupt-parent = <&gic>;
++		arm,cpu-registers-not-fw-configured;
++		always-on;
++		interrupts =
++			<GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++};
+-- 
+2.11.0
