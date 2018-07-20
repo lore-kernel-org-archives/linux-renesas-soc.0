@@ -1,81 +1,84 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 4/4] [WIP] ARM: shmobile: Enable ARM_GLOBAL_TIMER on Cortex-A9 MPCore SoCs
-Date: Tue, 31 Jul 2018 18:08:55 +0200
-Message-Id: <20180731160855.6758-5-geert+renesas@glider.be>
-In-Reply-To: <20180731160855.6758-1-geert+renesas@glider.be>
-References: <20180731160855.6758-1-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:33214 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727755AbeGTMvz (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 20 Jul 2018 08:51:55 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 8/9] arm64: dts: renesas: r8a77990: Enable USB3.0 host for Ebisu board
+Date: Fri, 20 Jul 2018 14:03:40 +0200
+Message-Id: <fe1bc94a275db82720c6055aa06f6ff87cbb8450.1532087303.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1532087303.git.horms+renesas@verge.net.au>
+References: <cover.1532087303.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SH-Mobile AG5 and R-Car H1 SoCs are based on the Cortex-A9 MPCore, which
-includes a global timer.
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Enable the ARM global timer on these SoCs, which will be used for:
-  - the scheduler clock, improving scheduler accuracy from 10 ms to 3 or
-    4 ns,
-  - delay loops, allowing removal of calls to shmobile_init_delay() from
-    the corresponding machine vectors.
+This patch adds and USB3.0 host device node and enable it for
+R-Car E3 Ebisu board.
 
-Note that when using an old DTB lacking the global timer, the kernel
-will still work.  However, loops-per-jiffies will no longer be preset,
-and the delay loop will need to be calibrated during boot.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-shmobile/Kconfig         | 2 ++
- arch/arm/mach-shmobile/setup-r8a7779.c | 1 -
- arch/arm/mach-shmobile/setup-sh73a0.c  | 1 -
- 3 files changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 12 ++++++++++++
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi      | 11 +++++++++++
+ 2 files changed, 23 insertions(+)
 
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index 94e9431d92b87405..d39ab39bba92b124 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -92,6 +92,7 @@ config ARCH_R8A7778
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+index 5e28c1b94b77..2bc3a4884b00 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+@@ -71,6 +71,11 @@
+ 		groups = "usb0_b";
+ 		function = "usb0";
+ 	};
++
++	usb30_pins: usb30 {
++		groups = "usb30";
++		function = "usb30";
++	};
+ };
  
- config ARCH_R8A7779
- 	bool "R-Car H1 (R8A77790)"
-+	select ARM_GLOBAL_TIMER
- 	select ARCH_RCAR_GEN1
+ &rwdt {
+@@ -88,3 +93,10 @@
  
- config ARCH_R8A7790
-@@ -133,5 +134,6 @@ config ARCH_RZN1
- config ARCH_SH73A0
- 	bool "SH-Mobile AG5 (R8A73A00)"
- 	select ARCH_RMOBILE
-+	select ARM_GLOBAL_TIMER
- 	select RENESAS_INTC_IRQPIN
- endif
-diff --git a/arch/arm/mach-shmobile/setup-r8a7779.c b/arch/arm/mach-shmobile/setup-r8a7779.c
-index b13ec9088ce5354c..86406e3f9b22e31f 100644
---- a/arch/arm/mach-shmobile/setup-r8a7779.c
-+++ b/arch/arm/mach-shmobile/setup-r8a7779.c
-@@ -72,7 +72,6 @@ static const char *const r8a7779_compat_dt[] __initconst = {
- DT_MACHINE_START(R8A7779_DT, "Generic R8A7779 (Flattened Device Tree)")
- 	.smp		= smp_ops(r8a7779_smp_ops),
- 	.map_io		= r8a7779_map_io,
--	.init_early	= shmobile_init_delay,
- 	.init_irq	= r8a7779_init_irq_dt,
- 	.init_late	= shmobile_init_late,
- 	.dt_compat	= r8a7779_compat_dt,
-diff --git a/arch/arm/mach-shmobile/setup-sh73a0.c b/arch/arm/mach-shmobile/setup-sh73a0.c
-index cc08aa752244764a..eb4a62fa42895ebe 100644
---- a/arch/arm/mach-shmobile/setup-sh73a0.c
-+++ b/arch/arm/mach-shmobile/setup-sh73a0.c
-@@ -56,7 +56,6 @@ static const char *const sh73a0_boards_compat_dt[] __initconst = {
- DT_MACHINE_START(SH73A0_DT, "Generic SH73A0 (Flattened Device Tree)")
- 	.smp		= smp_ops(sh73a0_smp_ops),
- 	.map_io		= sh73a0_map_io,
--	.init_early	= shmobile_init_delay,
- 	.init_machine	= sh73a0_generic_init,
- 	.init_late	= shmobile_init_late,
- 	.dt_compat	= sh73a0_boards_compat_dt,
+ 	status = "okay";
+ };
++
++&xhci0 {
++	pinctrl-0 = <&usb30_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index 28eccd1d3980..ae89260baad9 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -349,6 +349,17 @@
+ 			status = "disabled";
+ 		};
+ 
++		xhci0: usb@ee000000 {
++			compatible = "renesas,xhci-r8a77990",
++				     "renesas,rcar-gen3-xhci";
++			reg = <0 0xee000000 0 0xc00>;
++			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 328>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 328>;
++			status = "disabled";
++		};
++
+ 		ohci0: usb@ee080000 {
+ 			compatible = "generic-ohci";
+ 			reg = <0 0xee080000 0 0x100>;
 -- 
-2.17.1
-
+2.11.0
