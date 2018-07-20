@@ -1,43 +1,120 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:53080 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753323AbeGEOUR (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33510 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727518AbeGTMx1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Jul 2018 10:20:17 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 0/4] mmc: {tmio,renesas_sdhi}: fix tuning behavior
-Date: Thu,  5 Jul 2018 16:18:37 +0200
-Message-Id: <20180705141841.11121-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 20 Jul 2018 08:53:27 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 8/9] ARM: dts: gr-peach: Add GR-Peach audiocamerashield support
+Date: Fri, 20 Jul 2018 14:05:16 +0200
+Message-Id: <ed39717c7e197af70487b1abda322da9cc344719.1532086734.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1532086734.git.horms+renesas@verge.net.au>
+References: <cover.1532086734.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Tuning failed on my R-Car H3 ES2.0 board using latest mmc/next while the
-Renesas BSP kernel worked. After some digging I found patches in the BSP
-which remedied this and whit these applied tuning now works for me.
+Add device tree header for GR-Peach's audiocamerashield with MT9V111
+image sensor.
 
-I have done small fixes, updated commit messages and rebased on latest
-mmc/next but Hayakawa-san did all the real work.
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi | 79 +++++++++++++++++++++++
+ 1 file changed, 79 insertions(+)
+ create mode 100644 arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi
 
-Masaharu Hayakawa (4):
-  mmc: tmio: Fix tuning flow
-  mmc: tmio: Fix SCC error detection
-  mmc: renesas_sdhi: Fix sampling clock position selecting
-  mmc: renesas_sdhi: skip SCC error check when retuning
-
- drivers/mmc/host/renesas_sdhi_core.c | 20 ++++++++++++++++++++
- drivers/mmc/host/tmio_mmc_core.c     |  9 +++------
- 2 files changed, 23 insertions(+), 6 deletions(-)
-
+diff --git a/arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi b/arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi
+new file mode 100644
+index 000000000000..e31a9e3c18a2
+--- /dev/null
++++ b/arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi
+@@ -0,0 +1,79 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the GR-Peach audiocamera shield expansion board
++ *
++ * Copyright (C) 2017 Jacopo Mondi <jacopo+renesas@jmondi.org>
++ */
++
++#include "r7s72100.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
++
++/ {
++	/* On-board camera clock. */
++	camera_clk: camera_clk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <27000000>;
++	};
++};
++
++&pinctrl {
++	i2c1_pins: i2c1 {
++		/* P1_2 as SCL; P1_3 as SDA */
++		pinmux = <RZA1_PINMUX(1, 2, 1)>, <RZA1_PINMUX(1, 3, 1)>;
++	};
++
++	vio_pins: vio {
++		/* CEU pins: VIO_D[0-10], VIO_VD, VIO_HD, VIO_CLK */
++		pinmux = <RZA1_PINMUX(1, 0, 5)>, /* VIO_VD */
++			 <RZA1_PINMUX(1, 1, 5)>, /* VIO_HD */
++			 <RZA1_PINMUX(2, 0, 7)>, /* VIO_D0 */
++			 <RZA1_PINMUX(2, 1, 7)>, /* VIO_D1 */
++			 <RZA1_PINMUX(2, 2, 7)>, /* VIO_D2 */
++			 <RZA1_PINMUX(2, 3, 7)>, /* VIO_D3 */
++			 <RZA1_PINMUX(2, 4, 7)>, /* VIO_D4 */
++			 <RZA1_PINMUX(2, 5, 7)>, /* VIO_D5 */
++			 <RZA1_PINMUX(2, 6, 7)>, /* VIO_D6 */
++			 <RZA1_PINMUX(2, 7, 7)>, /* VIO_D7 */
++			 <RZA1_PINMUX(10, 0, 6)>; /* VIO_CLK */
++	};
++};
++
++&i2c1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c1_pins>;
++
++	status = "okay";
++	clock-frequency = <100000>;
++
++	camera@48 {
++		compatible = "aptina,mt9v111";
++		reg = <0x48>;
++
++		clocks = <&camera_clk>;
++
++		port {
++			mt9v111_out: endpoint {
++				remote-endpoint = <&ceu_in>;
++			};
++		};
++	};
++};
++
++&ceu {
++	pinctrl-names = "default";
++	pinctrl-0 = <&vio_pins>;
++
++	status = "okay";
++
++	port {
++		ceu_in: endpoint {
++			hsync-active = <1>;
++			vsync-active = <1>;
++			bus-width = <8>;
++			pclk-sample = <1>;
++			remote-endpoint = <&mt9v111_out>;
++		};
++	};
++};
 -- 
-2.17.0
+2.11.0
