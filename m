@@ -1,63 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:38236 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729354AbeGYUsL (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33574 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728252AbeGTMxl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jul 2018 16:48:11 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+        Fri, 20 Jul 2018 08:53:41 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] arm64: dts: r8a7795: salvator-xs: enable SATA
-Date: Wed, 25 Jul 2018 21:34:56 +0200
-Message-Id: <20180725193457.3999-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180725193457.3999-1-wsa+renesas@sang-engineering.com>
-References: <20180725193457.3999-1-wsa+renesas@sang-engineering.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 4/5] ARM: shmobile: r8a7779: hide unused r8a7779_platform_cpu_kill
+Date: Fri, 20 Jul 2018 14:05:35 +0200
+Message-Id: <8fc0d470bc77fa07632b471cec8207baf9704e32.1532087129.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1532087129.git.horms+renesas@verge.net.au>
+References: <cover.1532087129.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the nodes to enable SATA. Note that MD12 (SW12-7) must be switched
-off for that to work.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+After the cleanup in r8a7779_smp_prepare_cpus(), the only remaining caller of
+r8a7779_platform_cpu_kill() is in an ifdef, which leads to a build warning
+without CONFIG_HOTPLUG_CPU:
+
+arch/arm/mach-shmobile/smp-r8a7779.c:26:12: error: 'r8a7779_platform_cpu_kill' defined but not used [-Werror=unused-function]
+
+This moves the function inside of that #ifdef to avoid the warning.
+
+Fixes: 62f55ce683e3 ("ARM: shmobile: r8a7779: Stop powering down secondary CPUs during early boot")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/arm/mach-shmobile/smp-r8a7779.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-index 8ded64d0a4d5..3032bdb8c47d 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-@@ -152,6 +152,15 @@
- 	};
- };
+diff --git a/arch/arm/mach-shmobile/smp-r8a7779.c b/arch/arm/mach-shmobile/smp-r8a7779.c
+index b7fe1f489b08..0ed73b650c14 100644
+--- a/arch/arm/mach-shmobile/smp-r8a7779.c
++++ b/arch/arm/mach-shmobile/smp-r8a7779.c
+@@ -23,17 +23,6 @@
+ #define AVECR IOMEM(0xfe700040)
+ #define R8A7779_SCU_BASE 0xf0000000
  
-+&pca9654 {
-+	pcie_sata_switch {
-+		gpio-hog;
-+		gpios = <7 GPIO_ACTIVE_HIGH>;
-+		output-low; /* enable SATA by default */
-+		line-name = "PCIE/SATA switch";
-+	};
-+};
-+
- &pfc {
- 	usb2_pins: usb2 {
- 		groups = "usb2";
-@@ -176,6 +185,11 @@
- 	};
- };
+-static int r8a7779_platform_cpu_kill(unsigned int cpu)
+-{
+-	int ret = -EIO;
+-
+-	cpu = cpu_logical_map(cpu);
+-	if (cpu)
+-		ret = rcar_sysc_power_down_cpu(cpu);
+-
+-	return ret ? ret : 1;
+-}
+-
+ static int r8a7779_boot_secondary(unsigned int cpu, struct task_struct *idle)
+ {
+ 	int ret = -EIO;
+@@ -55,6 +44,17 @@ static void __init r8a7779_smp_prepare_cpus(unsigned int max_cpus)
+ }
  
-+	/* MD12 (SW12-7) must be set 'Off' which is not the default! */
-+&sata {
-+	status = "okay";
-+};
+ #ifdef CONFIG_HOTPLUG_CPU
++static int r8a7779_platform_cpu_kill(unsigned int cpu)
++{
++	int ret = -EIO;
 +
- &usb2_phy2 {
- 	pinctrl-0 = <&usb2_pins>;
- 	pinctrl-names = "default";
++	cpu = cpu_logical_map(cpu);
++	if (cpu)
++		ret = rcar_sysc_power_down_cpu(cpu);
++
++	return ret ? ret : 1;
++}
++
+ static int r8a7779_cpu_kill(unsigned int cpu)
+ {
+ 	if (shmobile_smp_scu_cpu_kill(cpu))
 -- 
 2.11.0
