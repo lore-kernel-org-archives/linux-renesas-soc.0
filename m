@@ -1,57 +1,41 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] arm64: dts: renesas: r8a77980: add Cortex-A53 PMU support
-To: Simon Horman <horms@verge.net.au>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from xavier.telenet-ops.be ([195.130.132.52]:33410 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728409AbeGTNGb (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 20 Jul 2018 09:06:31 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc: Simon Horman <horms@verge.net.au>, linux-serial@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
-Message-ID: <d8e355fd-46f5-3798-fe43-811471a75ab6@cogentembedded.com>
-Date: Wed, 25 Jul 2018 19:43:41 +0300
-MIME-Version: 1.0
-In-Reply-To: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] serial: sh-sci: Drop superfluous assignment in sci_request_dma()
+Date: Fri, 20 Jul 2018 14:18:26 +0200
+Message-Id: <20180720121826.29446-1-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the performance monitor unit (PMU) for the Cortex-A53 cores in
-the R8A77970 SoC's device tree.
+No later code uses the assigned value, so it can be dropped.
 
-Based on the original (and large) patch by Vladimir Barinov.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Reported-by: Simon Horman <horms@verge.net.au>
+Fixes: 2c4ee23530ffc022 ("serial: sh-sci: Postpone DMA release when falling back to PIO")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-The patch is against the 'renesas-devel-20180724-v4.18-rc6' tag of Simon
-Horman's 'renesas.git' repo.
+ drivers/tty/serial/sh-sci.c | 1 -
+ 1 file changed, 1 deletion(-)
 
- arch/arm64/boot/dts/renesas/r8a77980.dtsi |    9 +++++++++
- 1 file changed, 9 insertions(+)
-
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -98,6 +98,15 @@
- 		clock-frequency = <0>;
- 	};
- 
-+	pmu_a53 {
-+		compatible = "arm,cortex-a53-pmu";
-+		interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&a53_0>, <&a53_1>, <&a53_2>, <&a53_3>;
-+	};
-+
- 	psci {
- 		compatible = "arm,psci-1.0", "arm,psci-0.2";
- 		method = "smc";
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index f8e53ac5c17dfb94..6ff6f2bf3b9b749f 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1574,7 +1574,6 @@ static void sci_request_dma(struct uart_port *port)
+ 		if (dma_mapping_error(chan->device->dev, s->tx_dma_addr)) {
+ 			dev_warn(port->dev, "Failed mapping Tx DMA descriptor\n");
+ 			dma_release_channel(chan);
+-			chan = NULL;
+ 		} else {
+ 			dev_dbg(port->dev, "%s: mapped %lu@%p to %pad\n",
+ 				__func__, UART_XMIT_SIZE,
+-- 
+2.17.1
