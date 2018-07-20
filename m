@@ -1,144 +1,179 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:57474 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729675AbeGQVKV (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33214 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727755AbeGTMvy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jul 2018 17:10:21 -0400
-From: Kieran Bingham <kieran@ksquared.org.uk>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v5 00/11] R-Car DU Interlaced support through VSP1
-Date: Tue, 17 Jul 2018 21:35:42 +0100
-Message-Id: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Fri, 20 Jul 2018 08:51:54 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 7/9] arm64: dts: r8a77995: Add SCIF {0, 1, 3, 4, 5} and all HSCIF device nodes
+Date: Fri, 20 Jul 2018 14:03:38 +0200
+Message-Id: <2a674aa500d88adf00fcc69421cfbdd0a356e969.1532086279.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1532086279.git.horms+renesas@verge.net.au>
+References: <cover.1532086279.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-The Gen3 R-Car DU devices make use of the VSP to handle frame processing.
+This patch adds the device nodes for SCIF {0,1,3,4,5} and all HSCIF serial
+ports, incl. clocks, power domain and DMAs.
 
-In this series we implement support for handling interlaced pipelines by using
-the auto-fld feature of the VSP hardware.
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 118 ++++++++++++++++++++++++++++++
+ 1 file changed, 118 insertions(+)
 
-The implementation is preceded by some cleanup work and refactoring, through
-patches 1 to 6. These are trivial and could be collected earlier and
-independently if this series requires further revisions.
-
-Patch 7 makes a key distinctive change to remove all existing support for
-headerless display lists throughout the VSP1 driver, and ensures that all
-pipelines use the same code path. This simplifies the code and reduces
-opportunity for untested code paths to exist.
-
-Patches 8, 9 and 10 implement the relevant support in the VSP1 driver, before
-patch 11 finally enables the feature through the drm R-Car DU driver.
-
-This series is based upon the linux-media tree (master branch), and is
-available from the following URL:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git
-  tags/vsp1/du/interlaced/v5
-
-ChangeLog:
-
-v5:
- * media: vsp1: Use header display lists for all WPF outputs linked to the DU
-   - Fixed comments
-   - Re-aligned header_offset calculation
- * media: vsp1: Add support for extended display list headers
-   - Rename vsp1_dl_ext_header field names
-   - Rename @extended -> @extension
-   - Remove unnecessary VI6_DL_SWAP changes
-   - Rename @cmd_opcode -> @opcode
-   - Drop unused @data_size field
-   - Move iteration of WPF's inside vsp1_dlm_setup
-   - Rename vsp1_dl_ext_cmd_header -> vsp1_pre_ext_dl_body
-   - Rename vsp1_pre_ext_dl_body->cmd to vsp1_pre_ext_dl_body->opcode
-   - Rename vsp1_dl_ext_header->reserved0 to vsp1_dl_ext_header->padding
-   - vsp1_pre_ext_dl_body: Rename 'data' to 'address_set'
-   - vsp1_pre_ext_dl_body: Add struct documentation
-   - Document ordering of 16bit accesses for flags in vsp1_dl_ext_header
- * media: vsp1: Provide support for extended command pools
-   - Rename vsp1_dl_ext_cmd_header -> vsp1_pre_ext_dl_body
-   - fixup vsp1_cmd_pool structure documentation
-   - Rename dlm->autofld_cmds dlm->cmdpool
-   - Separate out the instatiation of vsp1_extended_commands
-   - Move initialisation of lock, and lists in vsp1_dl_cmd_pool_create to
-     immediately after allocation
-   - simplify vsp1_dlm_get_autofld_cmd
-   - Rename vsp1_dl_get_autofld_cmd() to vsp1_dl_get_pre_cmd() and moved
-     to "Display List Extended Command Management" section of vsp1_dl
- * media: vsp1: Support Interlaced display pipelines
-   - Obtain autofld cmd in vsp1_rpf_configure_autofld()
-   - Move VSP1_DL_EXT_AUTOFLD_INT to vsp1_regs.h
-   - Rename VSP1_DL_EXT_AUTOFLD_INT -> VI6_DL_EXT_AUTOFLD_INT
-   - move interlaced configuration parameter to pipe object
-   - autofld: Set cmd->flags in one single expression.
- * drm: rcar-du: Support interlaced video output through vsp1
-   - Fix commit title
-   - Document change to DSMR
-   - Configure through vsp1_du_setup_lif(), rather than
-     vsp1_du_atomic_update()
-
-v4.5:
- - Rebase to latest linux-media/master
-
-v4:
- - Move configure_partition() call changes into tlb-optimise-v9
-
-v3:
- - Rebased on top of TLB Optimise rework v8
- - Added the DL parameter back into the configure_partition() calls.
-   - This change could be moved into the TLB-Optimise series.
- - Document interlaced field in struct vsp1_du_atomic_config
-
-v2:
- - media: vsp1: use kernel __packed for structures
-    became:
-   media: vsp1: Remove packed attributes from aligned structures
-
- - media: vsp1: Add support for extended display list headers
-   - No longer declares structs __packed
-
- - media: vsp1: Provide support for extended command pools
-   - Fix spelling typo in commit message
-   - constify, and staticify the instantiation of vsp1_extended_commands
-   - s/autfld_cmds/autofld_cmds/
-   - staticify cmd pool functions (Thanks kbuild-bot)
-
- - media: vsp1: Support Interlaced display pipelines
-   - fix erroneous BIT value which enabled interlaced
-   - fix field handling at frame_end interrupt
-
-Kieran Bingham (11):
-  media: vsp1: drm: Fix minor grammar error
-  media: vsp1: Remove packed attributes from aligned structures
-  media: vsp1: Rename dl_child to dl_next
-  media: vsp1: Remove unused display list structure field
-  media: vsp1: Clean up DLM objects on error
-  media: vsp1: Provide VSP1 feature helper macro
-  media: vsp1: Use header display lists for all WPF outputs linked to the DU
-  media: vsp1: Add support for extended display list headers
-  media: vsp1: Provide support for extended command pools
-  media: vsp1: Support Interlaced display pipelines
-  drm: rcar-du: Support interlaced video output through vsp1
-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c  |   1 +-
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c   |   1 +-
- drivers/media/platform/vsp1/vsp1.h      |   3 +-
- drivers/media/platform/vsp1/vsp1_dl.c   | 432 +++++++++++++++++++------
- drivers/media/platform/vsp1/vsp1_dl.h   |  28 ++-
- drivers/media/platform/vsp1/vsp1_drm.c  |  18 +-
- drivers/media/platform/vsp1/vsp1_drv.c  |  20 +-
- drivers/media/platform/vsp1/vsp1_pipe.h |   2 +-
- drivers/media/platform/vsp1/vsp1_regs.h |   5 +-
- drivers/media/platform/vsp1/vsp1_rpf.c  |  72 +++-
- drivers/media/platform/vsp1/vsp1_wpf.c  |   6 +-
- include/media/vsp1.h                    |   2 +-
- 12 files changed, 480 insertions(+), 110 deletions(-)
-
-base-commit: 666e994aa2278e948e2492ee9d81b4df241e7222
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index 6c0a8217d40f..fe77bc43c447 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -242,6 +242,41 @@
+ 			resets = <&cpg 407>;
+ 		};
+ 
++		hscif0: serial@e6540000 {
++			compatible = "renesas,hscif-r8a77995",
++				     "renesas,rcar-gen3-hscif",
++				     "renesas,hscif";
++			reg = <0 0xe6540000 0 0x60>;
++			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 520>,
++				 <&cpg CPG_CORE R8A77995_CLK_S3D1C>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x31>, <&dmac1 0x30>,
++			       <&dmac2 0x31>, <&dmac2 0x30>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 520>;
++			status = "disabled";
++		};
++
++		hscif3: serial@e66a0000 {
++			compatible = "renesas,hscif-r8a77995",
++				     "renesas,rcar-gen3-hscif",
++				     "renesas,hscif";
++			reg = <0 0xe66a0000 0 0x60>;
++			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 517>,
++				 <&cpg CPG_CORE R8A77995_CLK_S3D1C>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x37>, <&dmac0 0x36>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 517>;
++			status = "disabled";
++		};
++
+ 		i2c0: i2c@e6500000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -605,6 +640,40 @@
+ 			status = "disabled";
+ 		};
+ 
++		scif0: serial@e6e60000 {
++			compatible = "renesas,scif-r8a77995",
++				     "renesas,rcar-gen3-scif", "renesas,scif";
++			reg = <0 0xe6e60000 0 64>;
++			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 207>,
++				 <&cpg CPG_CORE R8A77995_CLK_S3D1C>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
++			       <&dmac2 0x51>, <&dmac2 0x50>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 207>;
++			status = "disabled";
++		};
++
++		scif1: serial@e6e68000 {
++			compatible = "renesas,scif-r8a77995",
++				     "renesas,rcar-gen3-scif", "renesas,scif";
++			reg = <0 0xe6e68000 0 64>;
++			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 206>,
++				 <&cpg CPG_CORE R8A77995_CLK_S3D1C>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
++			       <&dmac2 0x53>, <&dmac2 0x52>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 206>;
++			status = "disabled";
++		};
++
+ 		scif2: serial@e6e88000 {
+ 			compatible = "renesas,scif-r8a77995",
+ 				     "renesas,rcar-gen3-scif", "renesas,scif";
+@@ -622,6 +691,55 @@
+ 			status = "disabled";
+ 		};
+ 
++		scif3: serial@e6c50000 {
++			compatible = "renesas,scif-r8a77995",
++				     "renesas,rcar-gen3-scif", "renesas,scif";
++			reg = <0 0xe6c50000 0 64>;
++			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 204>,
++				 <&cpg CPG_CORE R8A77995_CLK_S3D1C>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x57>, <&dmac0 0x56>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 204>;
++			status = "disabled";
++		};
++
++		scif4: serial@e6c40000 {
++			compatible = "renesas,scif-r8a77995",
++				     "renesas,rcar-gen3-scif", "renesas,scif";
++			reg = <0 0xe6c40000 0 64>;
++			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 203>,
++				 <&cpg CPG_CORE R8A77995_CLK_S3D1C>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x59>, <&dmac0 0x58>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 203>;
++			status = "disabled";
++		};
++
++		scif5: serial@e6f30000 {
++			compatible = "renesas,scif-r8a77995",
++				     "renesas,rcar-gen3-scif", "renesas,scif";
++			reg = <0 0xe6f30000 0 64>;
++			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 202>,
++				 <&cpg CPG_CORE R8A77995_CLK_S3D1C>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x5b>, <&dmac1 0x5a>,
++			       <&dmac2 0x5b>, <&dmac2 0x5a>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 202>;
++			status = "disabled";
++		};
++
+ 		msiof0: spi@e6e90000 {
+ 			compatible = "renesas,msiof-r8a77995",
+ 				     "renesas,rcar-gen3-msiof";
 -- 
-git-series 0.9.1
+2.11.0
