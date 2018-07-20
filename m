@@ -1,43 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45904 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732272AbeGJWZi (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33656 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727518AbeGTMyH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Jul 2018 18:25:38 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 0/2] i2c: recovery: add bus_free callback
-Date: Wed, 11 Jul 2018 00:24:21 +0200
-Message-Id: <20180710222423.7792-1-wsa+renesas@sang-engineering.com>
+        Fri, 20 Jul 2018 08:54:07 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/2] dt-bindings: cpu: Add Renesas R9A06G032 SMP enable method.
+Date: Fri, 20 Jul 2018 14:06:05 +0200
+Message-Id: <a7eaad7f7517ba7cdabfeb28fa05bae4e70b4b5a.1532081674.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1532081674.git.horms+renesas@verge.net.au>
+References: <cover.1532081674.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a new callback for IP cores which cannot report SDA directly but only a
-'bus free' state. Implement this for the Renesas R-Car driver.
+From: Michel Pollet <michel.pollet@bp.renesas.com>
 
-It has been tested with a Renesas Lager board (R-Car H2).
+Add a special enable method for second CA7 of the R9A06G032
 
-A branch (with further improvements) can be found here:
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ Documentation/devicetree/bindings/arm/cpus.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/recovery/write-byte-fix
-
-Looking forward to comments.
-
-Kind regards,
-
-   Wolfram
-
-Wolfram Sang (2):
-  i2c: recovery: add get_bus_free callback
-  i2c: rcar: use the new get_bus_free callback
-
- drivers/i2c/busses/i2c-rcar.c | 21 +++++++++++----------
- drivers/i2c/i2c-core-base.c   | 27 +++++++++++++++++++++++----
- include/linux/i2c.h           |  3 +++
- 3 files changed, 37 insertions(+), 14 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
+index 29e1dc5d506d..b395d1071240 100644
+--- a/Documentation/devicetree/bindings/arm/cpus.txt
++++ b/Documentation/devicetree/bindings/arm/cpus.txt
+@@ -219,6 +219,7 @@ described below.
+ 			    "qcom,kpss-acc-v1"
+ 			    "qcom,kpss-acc-v2"
+ 			    "renesas,apmu"
++			    "renesas,r9a06g032-smp"
+ 			    "rockchip,rk3036-smp"
+ 			    "rockchip,rk3066-smp"
+ 			    "ste,dbx500-smp"
 -- 
 2.11.0
