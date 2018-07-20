@@ -1,81 +1,70 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 2/2] i2c: rcar: use the new get_bus_free callback
-Date: Wed, 11 Jul 2018 00:24:23 +0200
-Message-Id: <20180710222423.7792-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180710222423.7792-1-wsa+renesas@sang-engineering.com>
-References: <20180710222423.7792-1-wsa+renesas@sang-engineering.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:17087 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728362AbeGTOp5 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 20 Jul 2018 10:45:57 -0400
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Simon Horman <horms@verge.net.au>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] clk: renesas: r9a06g032: Avoid needless probe deferring
+Date: Fri, 20 Jul 2018 13:57:22 +0000
+Message-ID: <TY1PR01MB176963BDA18D948161AAD264F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <1531924476-23261-1-git-send-email-phil.edworthy@renesas.com>
+ <CAMuHMdVEgj7kJFxNuR8w468FoGRaP_mEDv6JqB_7deuQjsed_Q@mail.gmail.com>
+ <TY1PR01MB1769588F9C53755C0FD56D98F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <CAMuHMdWqdg9KV4h_U-VZGVdOL6upUpDgqO7kwQh8tFQjDFh-Ug@mail.gmail.com>
+ <TY1PR01MB17697FBCBDC6296E7B2589C9F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <CAMuHMdVMGWWcFZvjgBWZAabxWXdtBeH4XLYaXZVkQ=rOaeCH0g@mail.gmail.com>
+In-Reply-To: <CAMuHMdVMGWWcFZvjgBWZAabxWXdtBeH4XLYaXZVkQ=rOaeCH0g@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To break out of recovery as early as possible, feed back the bus_free
-logic state.
-
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/busses/i2c-rcar.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index 5e310efd9446..76154747971e 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -179,8 +179,6 @@ static void rcar_i2c_set_scl(struct i2c_adapter *adap, int val)
- 	rcar_i2c_write(priv, ICMCR, priv->recovery_icmcr);
- };
- 
--/* No get_sda, because the HW only reports its bus free logic, not SDA itself */
--
- static void rcar_i2c_set_sda(struct i2c_adapter *adap, int val)
- {
- 	struct rcar_i2c_priv *priv = i2c_get_adapdata(adap);
-@@ -193,10 +191,19 @@ static void rcar_i2c_set_sda(struct i2c_adapter *adap, int val)
- 	rcar_i2c_write(priv, ICMCR, priv->recovery_icmcr);
- };
- 
-+static int rcar_i2c_get_bus_free(struct i2c_adapter *adap)
-+{
-+	struct rcar_i2c_priv *priv = i2c_get_adapdata(adap);
-+
-+	return !(rcar_i2c_read(priv, ICMCR) & FSDA);
-+
-+};
-+
- static struct i2c_bus_recovery_info rcar_i2c_bri = {
- 	.get_scl = rcar_i2c_get_scl,
- 	.set_scl = rcar_i2c_set_scl,
- 	.set_sda = rcar_i2c_set_sda,
-+	.get_bus_free = rcar_i2c_get_bus_free,
- 	.recover_bus = i2c_generic_scl_recovery,
- };
- static void rcar_i2c_init(struct rcar_i2c_priv *priv)
-@@ -211,7 +218,7 @@ static void rcar_i2c_init(struct rcar_i2c_priv *priv)
- 
- static int rcar_i2c_bus_barrier(struct rcar_i2c_priv *priv)
- {
--	int i, ret;
-+	int i;
- 
- 	for (i = 0; i < LOOP_TIMEOUT; i++) {
- 		/* make sure that bus is not busy */
-@@ -222,13 +229,7 @@ static int rcar_i2c_bus_barrier(struct rcar_i2c_priv *priv)
- 
- 	/* Waiting did not help, try to recover */
- 	priv->recovery_icmcr = MDBS | OBPC | FSDA | FSCL;
--	ret = i2c_recover_bus(&priv->adap);
--
--	/* No failure when recovering, so check bus busy bit again */
--	if (ret == 0)
--		ret = (rcar_i2c_read(priv, ICMCR) & FSDA) ? -EBUSY : 0;
--
--	return ret;
-+	return i2c_recover_bus(&priv->adap);
- }
- 
- static int rcar_i2c_clock_calculate(struct rcar_i2c_priv *priv, struct i2c_timings *t)
--- 
-2.11.0
+SGkgR2VlcnQsDQoNCk9uIDIwIEp1bHkgMjAxOCAxMzo0MSwgR2VlcnQgVXl0dGVyaG9ldmVuIHdy
+b3RlOg0KPiBPbiBGcmksIEp1bCAyMCwgMjAxOCBhdCAyOjI2IFBNIFBoaWwgRWR3b3J0aHkgd3Jv
+dGU6DQo+ID4gT24gMjAgSnVseSAyMDE4IDEzOjEyLCBHZWVydCBVeXR0ZXJob2V2ZW4gd3JvdGU6
+DQo+ID4gPiBPbiBGcmksIEp1bCAyMCwgMjAxOCBhdCAyOjA2IFBNIFBoaWwgRWR3b3J0aHkgIHdy
+b3RlOg0KPiA+ID4gPiBPbiAyMCBKdWx5IDIwMTggMTI6MjEsIEdlZXJ0IFV5dHRlcmhvZXZlbiB3
+cm90ZToNCj4gPiA+ID4gPiBPbiBXZWQsIEp1bCAxOCwgMjAxOCBhdCA0OjM0IFBNIFBoaWwgRWR3
+b3J0aHkgd3JvdGU6DQo+ID4gPiA+ID4gPiBUbyBhdm9pZCBhbGwgU29DIHBlcmlwaGVyYWwgZHJp
+dmVycyBkZWZlcnJpbmcgdGhlaXIgcHJvYmVzLA0KPiA+ID4gPiA+ID4gYm90aCBjbG9jayBhbmQg
+cGluY3RybCBkcml2ZXJzIHNob3VsZCBhbHJlYWR5IGJlIHByb2JlZC4gU2luY2UNCj4gPiA+ID4g
+PiA+IHRoZSBwaW5jdHJsIGRyaXZlciByZXF1aXJlcyBhIGNsb2NrIHRvIGFjY2VzcyB0aGUgcmVn
+aXN0ZXJzLA0KPiA+ID4gPiA+ID4gdGhlIGNsb2NrIGRyaXZlciBzaG91bGQgYmUgcHJvYmVkIGJl
+Zm9yZSB0aGUgcGluY3RybCBkcml2ZXIuDQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gVGhlcmVm
+b3JlLCBtb3ZlIHRoZSBjbG9jayBkcml2ZXIgZnJvbSBzdWJzeXNfaW5pdGNhbGwgdG8NCj4gY29y
+ZV9pbml0Y2FsbC4NCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBQaGls
+IEVkd29ydGh5IDxwaGlsLmVkd29ydGh5QHJlbmVzYXMuY29tPg0KPiA+ID4gPiA+DQo+ID4gPiA+
+ID4gVGhhbmtzIGZvciB5b3VyIHBhdGNoIQ0KPiA+ID4gPiBUaGFua3MgZm9yIHlvdXIgcmV2aWV3
+IQ0KPiA+ID4gPg0KPiA+ID4gPiA+IFRoZSAobm90IHlldCB1cHN0cmVhbWVkKSBwaW5jdHJsIGRy
+aXZlciB1c2VzIHBvc3Rjb3JlX2luaXRjYWxsKCksIHJpZ2h0Pw0KPiA+ID4gPiBObywgdGhlIHBp
+bmN0cmwgZHJpdmVyIHVzZXMgc3Vic3lzX2luaXRjYWxsLCBidXQgcG9zdGNvcmVfaW5pdGNhbGwN
+Cj4gPiA+ID4gb3IgYXJjaF9pbml0Y2FsbCBtYXkgYmUgYmV0dGVyIHRvIG1ha2UgaXQgY2xlYXIg
+YWJvdXQgdGhlIGRlcGVuZGVuY2llcy4NCj4gPiA+DQo+ID4gPiBpZiB0aGUgcGluY3RybCBkcml2
+ZXIgdXNlcyBzdWJzeXNfaW5pdGNhbGwoKSwgLi4uDQo+IA0KPiA+ID4gPiA+ID4gLXN1YnN5c19p
+bml0Y2FsbChyOWEwNmcwMzJfY2xvY2tzX2luaXQpOw0KPiA+ID4gPiA+ID4gK2NvcmVfaW5pdGNh
+bGwocjlhMDZnMDMyX2Nsb2Nrc19pbml0KTsNCj4gPiA+DQo+ID4gPiAuLi4gdXNpbmcgcG9zdGNv
+cmVfaW5pdGNhbGwoKSBvciBhcmNoX2luaXRjYWxsKCkgaGVyZSwgc2hvdWxkIHdvcmsNCj4gPiA+
+IHdpdGggcGxhdGZvcm1fZHJpdmVyX3Byb2JlKCk/DQo+ID4gTm9wZSwgeW91IGhhdmUgdG8gdXNl
+IHBsYXRmb3JtX2RyaXZlcl9yZWdpc3RlcigpIGZvciBEVCBiYXNlZCBkcml2ZXJzLg0KPiA+IHN1
+YnN5c19pbml0Y2FsbCBpcyB0aGUgZWFybGllc3QgeW91IGNhbiB1c2UgcGxhdGZvcm1fZHJpdmVy
+X3Byb2JlKCkuDQo+IA0KPiBTbyBkcml2ZXJzL21pc2MvYXRtZWxfdGNsaWIuYyBhbmQgZHJpdmVy
+cy9waW5jdHJsL3BpbmN0cmwtY29oOTAxLmMsIHdoaWNoIHVzZQ0KPiBhcmNoX2luaXRjYWxsKCks
+IGNhbm5vdCB3b3JrPw0KSG93IHRob3NlIGRyaXZlcnMgd29yayBJIGRvIG5vdCBrbm93LiBIb3dl
+dmVyLCBJIHRyaWVkIHdpdGggdGhlIHJ6bjEgY2xvY2sNCmRyaXZlciBhbmQgaXQgZG9lcyBub3Qg
+d29yay4NCg0KPiBJZiB0aGF0IGlzIHJlYWxseSB0cnVlLCB5b3UgY2FuIHN0aWxsIHVzZSBzdWJz
+eXNfaW5pdGNhbGwoKSBpbiB0aGUgY2xvY2sgZHJpdmVyLCBhbmQNCj4gc3Vic3lzX2luaXRjYWxs
+X3N5bmMoKSBpbiB0aGUgcGluY3RybCBkcml2ZXIuDQpUcnVlLCBJJ20gbm90IHN1cmUgaG93IHBl
+b3BsZSBkZWNpZGUgd2hpY2ggaW5pdGNhbGwgdG8gdXNlIGFuZCB3aGV0aGVyIHRoZQ0KX3N5bmMg
+dmFyaWFudHMgb2YgdGhlIGluaXRjYWxscyBoYXZlIGEgc3BlY2lhbCBtZWFuaW5nIG9yIGludGVu
+dGlvbi4gQXMgZmFyIGFzDQpJIGtub3cgdGhleSB3ZXJlIGludHJvZHVjZWQgZm9yIHRocmVhZGVk
+IHByb2Jlcywgc28gYXJlIHdlIHN1cHBvc2VkIHRvDQp1c2UgdGhlbSBmb3IgZHJpdmVyIGRlcGVu
+ZGVuY2llcyBsaWtlIHRoaXM/DQoNCkRvIHlvdSBrbm93IHdoeSB0aGUgcnphMSBwaW5jdHJsIGRy
+aXZlciBpcyBydW5uaW5nIGZyb20gY29yZV9pbml0Y2FsbCgpPw0KDQpUaGFua3MNClBoaWwNCg==
