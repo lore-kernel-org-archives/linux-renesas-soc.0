@@ -1,137 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:47432 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388155AbeGKOZo (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33214 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727408AbeGTMvl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:25:44 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 03/11] clk: renesas: r8a7796: Add OSC EXTAL predivider configuration
-Date: Wed, 11 Jul 2018 16:20:52 +0200
-Message-Id: <20180711142100.3765-4-geert+renesas@glider.be>
-In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
-References: <20180711142100.3765-1-geert+renesas@glider.be>
+        Fri, 20 Jul 2018 08:51:41 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/9] arm64: dts: renesas: r8a77990: Remove non-existing STBE region
+Date: Fri, 20 Jul 2018 14:03:32 +0200
+Message-Id: <4b03df5fc8c65659e41c3531b627ff615ed8ede9.1532087303.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1532087303.git.horms+renesas@verge.net.au>
+References: <cover.1532087303.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen3 Hardware Manual Rev.0.52 documents the relation between the
-MD13 and MD14 mode pins, and the OSC EXTAL predivider, as used by the
-OSC and RINT RCLK clocks.  Hence augment the configuration structure
-with all documented predivider values.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-According to R-Car Gen3 Hardware Manual Rev.0.53, the CPG_RCKCR
-register was removed in R-Car M3-W ES1.1.  Change the OSC and RINT
-clock definitions to use the OSC EXTAL predivider instead, which is
-supported on all R-Car M3-W SoC revisions.
+R-Car E3 does not have the Stream Buffer for EtherAVB-IF (STBE).
 
-Inspired by a patch in the BSP by Takeshi Kihara
-<takeshi.kihara.df@renesas.com>.
+Note that the RAVB driver does not use this region.
 
+Fixes: 913a78b575c313b8 ("arm64: dts: renesas: r8a77990: Add EthernetAVB device nodes")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 66 +++++++++++++-------------
- 1 file changed, 33 insertions(+), 33 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index dfb267a92f2a20d3..faa11bf5969a97ba 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -110,8 +110,8 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
- 	DEF_DIV6P1("mso",       R8A7796_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
- 	DEF_DIV6P1("hdmi",      R8A7796_CLK_HDMI,  CLK_PLL1_DIV4, 0x250),
- 
--	DEF_DIV6_RO("osc",      R8A7796_CLK_OSC,   CLK_EXTAL, CPG_RCKCR,  8),
--	DEF_DIV6_RO("r_int",    CLK_RINT,          CLK_EXTAL, CPG_RCKCR, 32),
-+	DEF_GEN3_OSC("osc",     R8A7796_CLK_OSC,   CLK_EXTAL,     8),
-+	DEF_GEN3_OSC("r_int",   CLK_RINT,          CLK_EXTAL,     32),
- 
- 	DEF_BASE("r",           R8A7796_CLK_R,     CLK_TYPE_GEN3_R, CLK_RINT),
- };
-@@ -255,25 +255,25 @@ static const unsigned int r8a7796_crit_mod_clks[] __initconst = {
-  */
- 
- /*
-- *   MD		EXTAL		PLL0	PLL1	PLL2	PLL3	PLL4
-+ *   MD		EXTAL		PLL0	PLL1	PLL2	PLL3	PLL4	OSC
-  * 14 13 19 17	(MHz)
-- *-------------------------------------------------------------------
-- * 0  0  0  0	16.66 x 1	x180	x192	x144	x192	x144
-- * 0  0  0  1	16.66 x 1	x180	x192	x144	x128	x144
-+ *-------------------------------------------------------------------------
-+ * 0  0  0  0	16.66 x 1	x180	x192	x144	x192	x144	/16
-+ * 0  0  0  1	16.66 x 1	x180	x192	x144	x128	x144	/16
-  * 0  0  1  0	Prohibited setting
-- * 0  0  1  1	16.66 x 1	x180	x192	x144	x192	x144
-- * 0  1  0  0	20    x 1	x150	x160	x120	x160	x120
-- * 0  1  0  1	20    x 1	x150	x160	x120	x106	x120
-+ * 0  0  1  1	16.66 x 1	x180	x192	x144	x192	x144	/16
-+ * 0  1  0  0	20    x 1	x150	x160	x120	x160	x120	/19
-+ * 0  1  0  1	20    x 1	x150	x160	x120	x106	x120	/19
-  * 0  1  1  0	Prohibited setting
-- * 0  1  1  1	20    x 1	x150	x160	x120	x160	x120
-- * 1  0  0  0	25    x 1	x120	x128	x96	x128	x96
-- * 1  0  0  1	25    x 1	x120	x128	x96	x84	x96
-+ * 0  1  1  1	20    x 1	x150	x160	x120	x160	x120	/19
-+ * 1  0  0  0	25    x 1	x120	x128	x96	x128	x96	/24
-+ * 1  0  0  1	25    x 1	x120	x128	x96	x84	x96	/24
-  * 1  0  1  0	Prohibited setting
-- * 1  0  1  1	25    x 1	x120	x128	x96	x128	x96
-- * 1  1  0  0	33.33 / 2	x180	x192	x144	x192	x144
-- * 1  1  0  1	33.33 / 2	x180	x192	x144	x128	x144
-+ * 1  0  1  1	25    x 1	x120	x128	x96	x128	x96	/24
-+ * 1  1  0  0	33.33 / 2	x180	x192	x144	x192	x144	/32
-+ * 1  1  0  1	33.33 / 2	x180	x192	x144	x128	x144	/32
-  * 1  1  1  0	Prohibited setting
-- * 1  1  1  1	33.33 / 2	x180	x192	x144	x192	x144
-+ * 1  1  1  1	33.33 / 2	x180	x192	x144	x192	x144	/32
-  */
- #define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 11) | \
- 					 (((md) & BIT(13)) >> 11) | \
-@@ -281,23 +281,23 @@ static const unsigned int r8a7796_crit_mod_clks[] __initconst = {
- 					 (((md) & BIT(17)) >> 17))
- 
- static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
--	/* EXTAL div	PLL1 mult/div	PLL3 mult/div */
--	{ 1,		192,	1,	192,	1,	},
--	{ 1,		192,	1,	128,	1,	},
--	{ 0, /* Prohibited setting */			},
--	{ 1,		192,	1,	192,	1,	},
--	{ 1,		160,	1,	160,	1,	},
--	{ 1,		160,	1,	106,	1,	},
--	{ 0, /* Prohibited setting */			},
--	{ 1,		160,	1,	160,	1,	},
--	{ 1,		128,	1,	128,	1,	},
--	{ 1,		128,	1,	84,	1,	},
--	{ 0, /* Prohibited setting */			},
--	{ 1,		128,	1,	128,	1,	},
--	{ 2,		192,	1,	192,	1,	},
--	{ 2,		192,	1,	128,	1,	},
--	{ 0, /* Prohibited setting */			},
--	{ 2,		192,	1,	192,	1,	},
-+	/* EXTAL div	PLL1 mult/div	PLL3 mult/div	OSC prediv */
-+	{ 1,		192,	1,	192,	1,	16,	},
-+	{ 1,		192,	1,	128,	1,	16,	},
-+	{ 0, /* Prohibited setting */				},
-+	{ 1,		192,	1,	192,	1,	16,	},
-+	{ 1,		160,	1,	160,	1,	19,	},
-+	{ 1,		160,	1,	106,	1,	19,	},
-+	{ 0, /* Prohibited setting */				},
-+	{ 1,		160,	1,	160,	1,	19,	},
-+	{ 1,		128,	1,	128,	1,	24,	},
-+	{ 1,		128,	1,	84,	1,	24,	},
-+	{ 0, /* Prohibited setting */				},
-+	{ 1,		128,	1,	128,	1,	24,	},
-+	{ 2,		192,	1,	192,	1,	32,	},
-+	{ 2,		192,	1,	128,	1,	32,	},
-+	{ 0, /* Prohibited setting */				},
-+	{ 2,		192,	1,	192,	1,	32,	},
- };
- 
- static int __init r8a7796_cpg_mssr_init(struct device *dev)
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index f8004608c595..615a0d2edffc 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -213,7 +213,7 @@
+ 		avb: ethernet@e6800000 {
+ 			compatible = "renesas,etheravb-r8a77990",
+ 				     "renesas,etheravb-rcar-gen3";
+-			reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
++			reg = <0 0xe6800000 0 0x800>;
+ 			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
 -- 
-2.17.1
+2.11.0
