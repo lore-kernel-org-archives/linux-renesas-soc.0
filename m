@@ -1,46 +1,63 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: mathias.nyman@intel.com, gregkh@linuxfoundation.org,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] dt-bindings: usb-xhci: Add r8a77990 support
-Date: Tue,  3 Jul 2018 19:51:47 +0900
-Message-Id: <1530615107-7733-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:33214 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728362AbeGTMvo (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 20 Jul 2018 08:51:44 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/9] arm64: dts: renesas: salvator-common: Fix adv7482 decimal unit addresses
+Date: Fri, 20 Jul 2018 14:03:33 +0200
+Message-Id: <c5a884838ce34681200b5a45b2330177036affd0.1532087303.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1532087303.git.horms+renesas@verge.net.au>
+References: <cover.1532087303.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds r8a77990 xhci support. The driver will use
-the fallback compatible string "renesas,rcar-gen3-xhci".
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+With recent dtc and W=1:
+
+    ...salvator-x.dtb: Warning (graph_port): /soc/i2c@e66d8000/video-receiver@70/port@10: graph node unit address error, expected "a"
+    ...salvator-x.dtb: Warning (graph_port): /soc/i2c@e66d8000/video-receiver@70/port@11: graph node unit address error, expected "b"
+
+Unit addresses are always hexadecimal (without prefix), while the bases
+of reg property values depend on their prefixes.
+
+Fixes: 908001d778eba06e ("arm64: dts: renesas: salvator-common: Add ADV7482 support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- After we applied the following patches, the driver will use
-the fallback compatible string "renesas,rcar-gen3-xhci" on
-r8a77990. (If we doesn't apply the patches, the driver cannot
-get the firmware name, and then the probe on r8a77990 failed.)
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- https://patchwork.kernel.org/patch/10503777/
- https://patchwork.kernel.org/patch/10503781/
-
- Documentation/devicetree/bindings/usb/usb-xhci.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/usb/usb-xhci.txt b/Documentation/devicetree/bindings/usb/usb-xhci.txt
-index bd1dd31..ac4cd0d 100644
---- a/Documentation/devicetree/bindings/usb/usb-xhci.txt
-+++ b/Documentation/devicetree/bindings/usb/usb-xhci.txt
-@@ -14,6 +14,7 @@ Required properties:
-     - "renesas,xhci-r8a7795" for r8a7795 SoC
-     - "renesas,xhci-r8a7796" for r8a7796 SoC
-     - "renesas,xhci-r8a77965" for r8a77965 SoC
-+    - "renesas,xhci-r8a77990" for r8a77990 SoC
-     - "renesas,rcar-gen2-xhci" for a generic R-Car Gen2 or RZ/G1 compatible
-       device
-     - "renesas,rcar-gen3-xhci" for a generic R-Car Gen3 compatible device
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index ce808d3f9f62..6439d05fd7ec 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -446,7 +446,7 @@
+ 			};
+ 		};
+ 
+-		port@10 {
++		port@a {
+ 			reg = <10>;
+ 
+ 			adv7482_txa: endpoint {
+@@ -456,7 +456,7 @@
+ 			};
+ 		};
+ 
+-		port@11 {
++		port@b {
+ 			reg = <11>;
+ 
+ 			adv7482_txb: endpoint {
 -- 
-1.9.1
-
+2.11.0
