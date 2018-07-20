@@ -1,38 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:41180 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731989AbeGTQSc (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:59098 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387877AbeGTNPz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jul 2018 12:18:32 -0400
-Received: by mail-lf1-f66.google.com with SMTP id v22-v6so2074053lfe.8
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Jul 2018 08:29:43 -0700 (PDT)
-Subject: Re: [PATCH 1/2] ata: sata_rcar: Provide a short-hand for &pdev->dev
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Tejun Heo <tj@kernel.org>
+        Fri, 20 Jul 2018 09:15:55 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Tejun Heo <tj@kernel.org>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-ide@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+        linux-ide@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/2] ata: sata_rcar: Provide a short-hand for &pdev->dev
+Date: Fri, 20 Jul 2018 14:27:38 +0200
+Message-Id: <20180720122739.30056-2-geert+renesas@glider.be>
+In-Reply-To: <20180720122739.30056-1-geert+renesas@glider.be>
 References: <20180720122739.30056-1-geert+renesas@glider.be>
- <20180720122739.30056-2-geert+renesas@glider.be>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <957405e7-a5b8-86d4-0bf4-2657ad7a0e02@cogentembedded.com>
-Date: Fri, 20 Jul 2018 18:29:40 +0300
-MIME-Version: 1.0
-In-Reply-To: <20180720122739.30056-2-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+No functional changes.
 
-On 07/20/2018 03:27 PM, Geert Uytterhoeven wrote:
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/ata/sata_rcar.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-> No functional changes.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[...]
-
-Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-MBR, Sergei
+diff --git a/drivers/ata/sata_rcar.c b/drivers/ata/sata_rcar.c
+index 6456e07db72a7ea4..f972c2c5ebd34aff 100644
+--- a/drivers/ata/sata_rcar.c
++++ b/drivers/ata/sata_rcar.c
+@@ -881,6 +881,7 @@ MODULE_DEVICE_TABLE(of, sata_rcar_match);
+ 
+ static int sata_rcar_probe(struct platform_device *pdev)
+ {
++	struct device *dev = &pdev->dev;
+ 	struct ata_host *host;
+ 	struct sata_rcar_priv *priv;
+ 	struct resource *mem;
+@@ -891,15 +892,14 @@ static int sata_rcar_probe(struct platform_device *pdev)
+ 	if (irq <= 0)
+ 		return -EINVAL;
+ 
+-	priv = devm_kzalloc(&pdev->dev, sizeof(struct sata_rcar_priv),
+-			   GFP_KERNEL);
++	priv = devm_kzalloc(dev, sizeof(struct sata_rcar_priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
+-	priv->type = (enum sata_rcar_type)of_device_get_match_data(&pdev->dev);
+-	priv->clk = devm_clk_get(&pdev->dev, NULL);
++	priv->type = (enum sata_rcar_type)of_device_get_match_data(dev);
++	priv->clk = devm_clk_get(dev, NULL);
+ 	if (IS_ERR(priv->clk)) {
+-		dev_err(&pdev->dev, "failed to get access to sata clock\n");
++		dev_err(dev, "failed to get access to sata clock\n");
+ 		return PTR_ERR(priv->clk);
+ 	}
+ 
+@@ -907,9 +907,9 @@ static int sata_rcar_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	host = ata_host_alloc(&pdev->dev, 1);
++	host = ata_host_alloc(dev, 1);
+ 	if (!host) {
+-		dev_err(&pdev->dev, "ata_host_alloc failed\n");
++		dev_err(dev, "ata_host_alloc failed\n");
+ 		ret = -ENOMEM;
+ 		goto cleanup;
+ 	}
+@@ -917,7 +917,7 @@ static int sata_rcar_probe(struct platform_device *pdev)
+ 	host->private_data = priv;
+ 
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	priv->base = devm_ioremap_resource(&pdev->dev, mem);
++	priv->base = devm_ioremap_resource(dev, mem);
+ 	if (IS_ERR(priv->base)) {
+ 		ret = PTR_ERR(priv->base);
+ 		goto cleanup;
+-- 
+2.17.1
