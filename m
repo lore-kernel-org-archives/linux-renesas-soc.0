@@ -1,35 +1,39 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:52328 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729836AbeGYVEh (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jul 2018 17:04:37 -0400
-Date: Wed, 25 Jul 2018 13:51:25 -0600
-From: Rob Herring <robh@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] serial: sh-sci: Document that serial aliases became
- optional
-Message-ID: <20180725195125.GA10356@rob-hp-laptop>
-References: <20180720121940.29616-1-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180720121940.29616-1-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] serial: sh-sci: Document that serial aliases became optional
+Date: Fri, 20 Jul 2018 14:19:40 +0200
+Message-Id: <20180720121940.29616-1-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jul 20, 2018 at 02:19:40PM +0200, Geert Uytterhoeven wrote:
-> Serial aliases are optional since commit 7678f4c20fa7670f ("serial:
-> sh-sci: Add support for dynamic instances").
-> Update the DT bindings to reflect this.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Serial aliases are optional since commit 7678f4c20fa7670f ("serial:
+sh-sci: Add support for dynamic instances").
+Update the DT bindings to reflect this.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+index 5c002bce8f4276e3..a7cda65501003746 100644
+--- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
++++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+@@ -90,7 +90,7 @@ Required properties:
+       - "scif_clk" for the optional external clock source for the frequency
+ 	divider (SCIF_CLK).
+ 
+-Note: Each enabled SCIx UART should have an alias correctly numbered in the
++Note: Each enabled SCIx UART may have an optional "serialN" alias in the
+ "aliases" node.
+ 
+ Optional properties:
+-- 
+2.17.1
+
