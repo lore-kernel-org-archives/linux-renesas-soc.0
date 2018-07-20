@@ -1,109 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45910 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732332AbeGJWZj (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33214 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728582AbeGTMvx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Jul 2018 18:25:39 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 1/2] i2c: recovery: add get_bus_free callback
-Date: Wed, 11 Jul 2018 00:24:22 +0200
-Message-Id: <20180710222423.7792-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180710222423.7792-1-wsa+renesas@sang-engineering.com>
-References: <20180710222423.7792-1-wsa+renesas@sang-engineering.com>
+        Fri, 20 Jul 2018 08:51:53 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 9/9] arm64: dts: renesas: r8a77980: add INTC-EX support
+Date: Fri, 20 Jul 2018 14:03:41 +0200
+Message-Id: <9a6c158f62ccdd37c921ec8b1484418bad5f7984.1532087303.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1532087303.git.horms+renesas@verge.net.au>
+References: <cover.1532087303.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some IP cores have an internal 'bus free' logic which may be more
-advanced than just checking if SDA is high. Add a separate callback to
-get this status. Filling it is optional.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Describe the INTC-EX interrupt controller in the R8A77980 device tree.
+
+Based on the original (and large) patch by Vladimir Barinov.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/i2c/i2c-core-base.c | 27 +++++++++++++++++++++++----
- include/linux/i2c.h         |  3 +++
- 2 files changed, 26 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index c7995efd58ea..59f8dfc5be36 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -158,6 +158,22 @@ static void set_sda_gpio_value(struct i2c_adapter *adap, int val)
- 	gpiod_set_value_cansleep(adap->bus_recovery_info->sda_gpiod, val);
- }
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+index 7beb1ce99d58..b8c9a56562f2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -234,6 +234,22 @@
+ 			#power-domain-cells = <1>;
+ 		};
  
-+static int i2c_generic_bus_free(struct i2c_adapter *adap)
-+{
-+	struct i2c_bus_recovery_info *bri = adap->bus_recovery_info;
-+	int ret = -EOPNOTSUPP;
++		intc_ex: interrupt-controller@e61c0000 {
++			compatible = "renesas,intc-ex-r8a77980", "renesas,irqc";
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			reg = <0 0xe61c0000 0 0x200>;
++			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 407>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 407>;
++		};
 +
-+	if (bri->get_bus_free)
-+		ret = bri->get_bus_free(adap);
-+	else if (bri->get_sda)
-+		ret = bri->get_sda(adap);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	return ret ? 0 : -EBUSY;
-+}
-+
- /*
-  * We are generating clock pulses. ndelay() determines durating of clk pulses.
-  * We will generate clock with rate 100 KHz and so duration of both clock levels
-@@ -169,7 +185,7 @@ static void set_sda_gpio_value(struct i2c_adapter *adap, int val)
- int i2c_generic_scl_recovery(struct i2c_adapter *adap)
- {
- 	struct i2c_bus_recovery_info *bri = adap->bus_recovery_info;
--	int i = 0, val = 1, ret = 0;
-+	int i = 0, val = 1, ret;
- 
- 	if (bri->prepare_recovery)
- 		bri->prepare_recovery(adap);
-@@ -207,14 +223,17 @@ int i2c_generic_scl_recovery(struct i2c_adapter *adap)
- 			bri->set_sda(adap, val);
- 		ndelay(RECOVERY_NDELAY / 2);
- 
--		/* Break if SDA is high */
--		if (val && bri->get_sda) {
--			ret = bri->get_sda(adap) ? 0 : -EBUSY;
-+		if (val) {
-+			ret = i2c_generic_bus_free(adap);
- 			if (ret == 0)
- 				break;
- 		}
- 	}
- 
-+	/* If we can't check bus status, assume recovery worked */
-+	if (ret == -EOPNOTSUPP)
-+		ret = 0;
-+
- 	if (bri->unprepare_recovery)
- 		bri->unprepare_recovery(adap);
- 
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index 9d1818c56775..60e224428a85 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -587,6 +587,8 @@ struct i2c_timings {
-  * @set_sda: This sets/clears the SDA line. This or get_sda() is mandatory for
-  *	generic SCL recovery. Populated internally, if sda_gpio is a valid GPIO,
-  *	for generic GPIO recovery.
-+ * @get_bus_free: Returns the bus free state as seen from the IP core in case it
-+ *	has a more complex internal logic than just reading SDA. Optional.
-  * @prepare_recovery: This will be called before starting recovery. Platform may
-  *	configure padmux here for SDA/SCL line or something else they want.
-  * @unprepare_recovery: This will be called after completing recovery. Platform
-@@ -601,6 +603,7 @@ struct i2c_bus_recovery_info {
- 	void (*set_scl)(struct i2c_adapter *adap, int val);
- 	int (*get_sda)(struct i2c_adapter *adap);
- 	void (*set_sda)(struct i2c_adapter *adap, int val);
-+	int (*get_bus_free)(struct i2c_adapter *adap);
- 
- 	void (*prepare_recovery)(struct i2c_adapter *adap);
- 	void (*unprepare_recovery)(struct i2c_adapter *adap);
+ 		i2c0: i2c@e6500000 {
+ 			compatible = "renesas,i2c-r8a77980",
+ 				     "renesas,rcar-gen3-i2c";
 -- 
 2.11.0
