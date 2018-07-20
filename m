@@ -1,84 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34438 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752759AbeGBHsl (ORCPT
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:38197 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728125AbeGTMf7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 Jul 2018 03:48:41 -0400
-Received: by mail-lj1-f194.google.com with SMTP id c12-v6so3507037ljj.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 02 Jul 2018 00:48:40 -0700 (PDT)
-Date: Mon, 2 Jul 2018 09:48:38 +0200
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: fix a null pointer dereference of drive
- strength information
-Message-ID: <20180702074838.GU5237@bigcity.dyn.berto.se>
-References: <20180627055959.21001-1-niklas.soderlund+renesas@ragnatech.se>
- <CAMuHMdVj3K=8XfAgVB5-HKC_nPRAtRcLuCnBkjErHiw3-b8U5w@mail.gmail.com>
- <20180628004101.GS5237@bigcity.dyn.berto.se>
- <CAMuHMdUzwPcXJWUQYsHygikZdqWasw-8xN23ZS0t0CG2KSdqiw@mail.gmail.com>
+        Fri, 20 Jul 2018 08:35:59 -0400
+Received: by mail-ua0-f194.google.com with SMTP id o11-v6so7279081uak.5
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Jul 2018 04:48:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdUzwPcXJWUQYsHygikZdqWasw-8xN23ZS0t0CG2KSdqiw@mail.gmail.com>
+References: <20171222201313.8466-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171222201313.8466-1-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 20 Jul 2018 13:47:54 +0200
+Message-ID: <CAMuHMdUNHtVfgdOtJHGv1e0w2uTfHO4OW-RNHtYa8aSPpPse4A@mail.gmail.com>
+Subject: Re: [RFC v2] arm64: dts: r8a7795: salvator-xs: enable SATA
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+Hi Wolfram,
 
-On 2018-06-28 08:57:40 +0200, Geert Uytterhoeven wrote:
-> Hi Niklas,
-> 
-> On Thu, Jun 28, 2018 at 2:41 AM Niklas S�derlund
-> <niklas.soderlund@ragnatech.se> wrote:
-> > On 2018-06-27 10:27:54 +0200, Geert Uytterhoeven wrote:
-> > > On Wed, Jun 27, 2018 at 8:01 AM Niklas S�derlund
-> > > <niklas.soderlund+renesas@ragnatech.se> wrote:
-> > > > Not all SoCs describes the drive strength registers. When reading the
-> > > > sysfs pinconf-pins file on such a SoC this results in a null pointer
-> > > > dereference. Protect against this dereference and allow reading of the
-> > > > pinconf-pins by adding a check if the drive strength registers are
-> > > > described or not.
-> > > >
-> > > > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-> > >
-> > > Thanks for your patch!
-> > >
-> > > > This was found on the Eagle board and is based on the latest
-> > > > renesas/devel branch.
-> > >
-> > > I think the real issue is pfc-r8a77990.c setting SH_PFC_PIN_CFG_DRIVE_STRENGTH
-> > > without providing sh_pfc.drive_regs[].
-> > > Without that flag set, sh_pfc_pinconf_validate(..., PIN_CONFIG_DRIVE_STRENGTH)
-> > > would cause an earlier failure.
-> >
-> > Ahh I see, thanks for the pointer. I will explore this option as it
-> > seems like a nicer solution, thanks!
-> 
-> To be 100% clear: the proper solution is to add the missing drive_regs[],
-> not to remove the flags ;-)
+Thanks for your patch!
 
-Normally I would agree with you, but V3M have no drive strength 
-registered described in the datasheet so in this instance I do think the 
-correct fix is to remove the flags :-)
+On Fri, Dec 22, 2017 at 9:13 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> SATA needs this GPIO hog, so is probably an overlay?
 
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> -- 
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+IMHO it can be part of the real board DTS, for the following reasons:
+  1. SATA is multiplexed with PCIE1, but the SATA connector is on-board,
+     while using PCIE1 requires plugging in an extension board in EXIO
+     Connector A.
+  2. PCIE1 is the default, for both MD12 and the PCIE-SATA switch, but I
+     assume that is only the case because Salvator-XS supports all of R-Car
+     H3 ES2, M3-W, and M3-N, while M3-W does not have SATA.
+
+Note that for the GPIO hog to survive s2ram, the pca9654 driver needs to
+be enhanced to restore its configuration after system resume.
+
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> --- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+> @@ -101,6 +101,19 @@
+>         };
+>  };
+>
+> +&pca9654 {
+
+Please insert this node just before &pfc, to preserve sort order.
+
+> +       pcie_sata_switch {
+> +               gpio-hog;
+> +               gpios = <7 0>;
+
+s/0/GPIO_ACTIVE_HIGH/?
+
+> +               output-low;
+> +               line-name = "PCIE/SATA switch";
+
+Perhaps add a comment saying MD12 must be 1 (SW12-7 must be off)?
+
+> +       };
+> +};
+> +
+> +&sata {
+> +       status = "okay";
+> +};
+> +
+>  &usb2_phy2 {
+>         pinctrl-0 = <&usb2_pins>;
+>         pinctrl-names = "default";
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Regards,
-Niklas S�derlund
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
