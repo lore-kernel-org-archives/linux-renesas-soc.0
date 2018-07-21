@@ -1,13 +1,22 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37290 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727873AbeGVMld (ORCPT
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45340 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727974AbeGUXSA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 22 Jul 2018 08:41:33 -0400
-Received: by mail-wr1-f66.google.com with SMTP id q10-v6so15191325wrd.4
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 22 Jul 2018 04:45:07 -0700 (PDT)
+        Sat, 21 Jul 2018 19:18:00 -0400
+Received: by mail-lf1-f65.google.com with SMTP id j143-v6so4002753lfj.12
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 21 Jul 2018 15:23:41 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <5842740e-e652-aa51-ec2b-51f37a011a07@gmail.com>
+References: <20180530101130.3566-1-marek.vasut+renesas@gmail.com>
+ <CAOesGMjmz41p5sF_xnC7gdSRNLaowXPW7Sk8HBZww_QSTvXV7g@mail.gmail.com>
+ <3b6f71da-8d63-1a63-dc61-05c12d52a2db@gmail.com> <CAOesGMhVbSGmkkF-Va6zwOB4xXxj=HpccKeFYgVLO4D86Vo4ow@mail.gmail.com>
+ <5842740e-e652-aa51-ec2b-51f37a011a07@gmail.com>
+From: Olof Johansson <olof@lixom.net>
+Date: Sat, 21 Jul 2018 15:23:39 -0700
+Message-ID: <CAOesGMhAeRLf2fyw-igPBBCzoehcyT9fckVGuY=r8rjmdy-szg@mail.gmail.com>
 Subject: Re: [PATCH] ARM: dts: rmobile: Drop MTD partitioning from DT
-To: Olof Johansson <olof@lixom.net>
+To: Marek Vasut <marek.vasut@gmail.com>
 Cc: Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Wolfram Sang <wsa@the-dreams.de>,
@@ -15,95 +24,94 @@ Cc: Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         Marek Vasut <marek.vasut+renesas@gmail.com>
-References: <20180530101130.3566-1-marek.vasut+renesas@gmail.com>
- <CAOesGMjmz41p5sF_xnC7gdSRNLaowXPW7Sk8HBZww_QSTvXV7g@mail.gmail.com>
- <3b6f71da-8d63-1a63-dc61-05c12d52a2db@gmail.com>
- <CAOesGMhVbSGmkkF-Va6zwOB4xXxj=HpccKeFYgVLO4D86Vo4ow@mail.gmail.com>
- <5842740e-e652-aa51-ec2b-51f37a011a07@gmail.com>
- <CAOesGMhAeRLf2fyw-igPBBCzoehcyT9fckVGuY=r8rjmdy-szg@mail.gmail.com>
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <9c77d8ae-637f-9713-83e3-3b40288b4b58@gmail.com>
-Date: Sun, 22 Jul 2018 12:10:08 +0200
-MIME-Version: 1.0
-In-Reply-To: <CAOesGMhAeRLf2fyw-igPBBCzoehcyT9fckVGuY=r8rjmdy-szg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 07/22/2018 12:23 AM, Olof Johansson wrote:
-[...]
->>>>> You end up with user space tools trying to parse the kernel command
->>>>> line to figure out what's on the flash, and other really bad habits.
->>>>> :(
->>>>
->>>> You should just read /proc/mtd , see
->>>> http://www.linux-mtd.infradead.org/doc/general.html
+On Sat, Jul 21, 2018 at 3:11 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> On 07/22/2018 12:01 AM, Olof Johansson wrote:
+>> On Sat, Jul 21, 2018 at 2:54 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>>> On 07/21/2018 11:47 PM, Olof Johansson wrote:
+>>>> Hi,
 >>>
->>> Sure, I know that but not everybody does, and they do it in bad ways
->>> if given the opportunity.
->>
->> That's what the documentation is for. I assume whoever is using MTD is
->> also capable of reading the documentation and thus avoiding such basic
->> mistakes.
-> 
-> Why read the docs when the information obviously is there when you grep it?
-
-To do things correctly of course.
-
-> I'm agreeing with you -- I've just seen it done wrong so many times.
-> Making it harder to make mistakes is always a good thing.
-
-If you follow this argument through, you could say we should start
-plucking out random files from /proc because someone might cluelessly
-misuse them. This might lead to a system that's hard to misuse indeed,
-but likely also quite useless.
-
->>>>> I'd strongly advice you to keep this in the board files, unless you
->>>>> have an actual real motivation for changing it. This patch does not
->>>>> provide one.
->>>>
->>>> Partitioning is not hardware description, it should not be in DT.
+>>> Hi,
 >>>
->>> Read my reply again. It's part of _platform_ description, and belongs in DT.
+>>>> On Wed, May 30, 2018 at 3:11 AM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>>>>> Drop the MTD partitioning from DT, since it does not describe HW
+>>>>> and to give way to a more flexible kernel command line partition
+>>>>> passing.
+>>>>>
+>>>>> To retain the original partitioning, assure you have enabled
+>>>>> CONFIG_MTD_CMDLINE_PARTS in your kernel config and add the
+>>>>> following to your kernel command line:
+>>>>>
+>>>>> lager:   mtdparts=spi0.0:256k(loader),4m(user),-(flash)
+>>>>> stout:   mtdparts=spi0.0:512k(loader),256k(uboot),256k(uboot-env),-(flash)
+>>>>> koelsch: mtdparts=spi0.0:512k(loader),5632k(user),-(flash)
+>>>>> porter:  mtdparts=spi0.0:256k(loader_prg),4m(user_prg),-(flash_fs)
+>>>>> wheat:   mtdparts=spi0.0:256k(loader),4m(user),-(flash)
+>>>>> gose:    mtdparts=spi0.0:256k(loader),4m(user),-(flash)
+>>>>> alt:     mtdparts=spi0.0:256k(loader),256k(system),-(user)
+>>>>> silk:    mtdparts=spi0.0:256k(loader),4m(user),-(flash)
+>>>>
+>>>> Having to specify on command line is such a nasty hack. I wish we
+>>>> could remove that, and at the very least not add it for anything new.
+>>>
+>>> Do you have a better suggestion ?
 >>
->> I can repartition the flash whichever way I want for my purposes, just
->> like I can repartition a harddrive. We don't have harddrive partitioning
->> in the DT, why should we have flash partitioning there ? How do those
->> differ ?
-> 
-> A drive can be auto-probed. We have partition tables on the disk that
-> self-describes the contents.
-> 
-> That doesn't exist on flashes, at least not usually. This is really
-> unfortunate, I wish we could change _that_ instead of argue here.
+>> Yes, keep it in DT.
+>
+> See below
+>
+>>>> You end up with user space tools trying to parse the kernel command
+>>>> line to figure out what's on the flash, and other really bad habits.
+>>>> :(
+>>>
+>>> You should just read /proc/mtd , see
+>>> http://www.linux-mtd.infradead.org/doc/general.html
+>>
+>> Sure, I know that but not everybody does, and they do it in bad ways
+>> if given the opportunity.
+>
+> That's what the documentation is for. I assume whoever is using MTD is
+> also capable of reading the documentation and thus avoiding such basic
+> mistakes.
 
-Technically it does. Consider the fact that those flashes have between
-4-64 MiB in size and sector size of 256 kiB . If you waste one sector on
-the 4 MiB flash for some sort of partition table, you waste 1/16th of
-the flash, which is a lot.
+Why read the docs when the information obviously is there when you grep it?
 
-The bootloader needs to know the flash layout and it must be in sync
-with the kernel, so there has to be some sort of communication channel
-between those two. I don't want to add handler for every possible
-bootloader that can be used on those platforms into the kernel though.
+I'm agreeing with you -- I've just seen it done wrong so many times.
+Making it harder to make mistakes is always a good thing.
 
-> If you repartition your disk, you need to change the command line
-> arguments to the kernel too. It's definitely not an argument to
-> keeping it on the command line instead.
+>>>> I'd strongly advice you to keep this in the board files, unless you
+>>>> have an actual real motivation for changing it. This patch does not
+>>>> provide one.
+>>>
+>>> Partitioning is not hardware description, it should not be in DT.
+>>
+>> Read my reply again. It's part of _platform_ description, and belongs in DT.
+>
+> I can repartition the flash whichever way I want for my purposes, just
+> like I can repartition a harddrive. We don't have harddrive partitioning
+> in the DT, why should we have flash partitioning there ? How do those
+> differ ?
 
-How so ? /dev/sdxy remains /dev/sdxy . Sure, you can use UUID and change
-it, but that's a specific case.
+A drive can be auto-probed. We have partition tables on the disk that
+self-describes the contents.
 
-> Also, you now have a dependencies between hardware description, probe
-> order and stable naming in the kernel, and the command line. With DT,
-> you have it all in one place, right next to the flash part. It doesn't
-> matter what name it gets probed at, and nobody needs to know the
-> mapping to get it right.
+That doesn't exist on flashes, at least not usually. This is really
+unfortunate, I wish we could change _that_ instead of argue here.
 
-In this case it doesn't matter either, since you have only one flash device.
+If you repartition your disk, you need to change the command line
+arguments to the kernel too. It's definitely not an argument to
+keeping it on the command line instead.
 
--- 
-Best regards,
-Marek Vasut
+Also, you now have a dependencies between hardware description, probe
+order and stable naming in the kernel, and the command line. With DT,
+you have it all in one place, right next to the flash part. It doesn't
+matter what name it gets probed at, and nobody needs to know the
+mapping to get it right.
+
+
+
+
+-Olof
