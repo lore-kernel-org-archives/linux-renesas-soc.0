@@ -1,65 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:41890 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727421AbeGSMGD (ORCPT
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:42810 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727974AbeGUXT2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Jul 2018 08:06:03 -0400
-Received: by mail-pl0-f65.google.com with SMTP id w8-v6so3512112ply.8
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Jul 2018 04:23:21 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Thu, 19 Jul 2018 20:25:25 +0900
-Message-Id: <153199952510.10548.10726518369494565858.sendpatchset@little-apple>
-Subject: [PATCH] arm64: dts: renesas: r8a77995: Attach the SYS-DMAC to the IPMMU
+        Sat, 21 Jul 2018 19:19:28 -0400
+Received: by mail-lf1-f67.google.com with SMTP id u202-v6so4005555lff.9
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 21 Jul 2018 15:25:08 -0700 (PDT)
+Date: Sat, 21 Jul 2018 14:49:00 -0700
+From: Olof Johansson <olof@lixom.net>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM Based SoC DT Bindings Updates for v4.19
+Message-ID: <20180721214900.pvr57t2t554vzg6u@localhost>
+References: <cover.1532081674.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1532081674.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Fri, Jul 20, 2018 at 02:06:04PM +0200, Simon Horman wrote:
+> Hi Olof, Hi Kevin, Hi Arnd,
+> 
+> Please consider these Renesas ARM based SoC DT bindings updates for v4.19.
+> 
+> 
+> The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
+> 
+>   Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+> 
+> are available in the git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt-bindings-for-v4.19
+> 
+> for you to fetch changes up to a7eaad7f7517ba7cdabfeb28fa05bae4e70b4b5a:
+> 
+>   dt-bindings: cpu: Add Renesas R9A06G032 SMP enable method. (2018-06-28 14:07:21 +0200)
+> 
+> ----------------------------------------------------------------
+> Renesas ARM Based SoC DT Bindings Updates for v4.19
+> 
+> Bindings relating to initial support for RZ/N1D (R9A06G032) SoC and its
+> RZN1D-DB board:
+> 
+> * Add Renesas R9A06G032 SMP enable method
+> 
+>   To be used to enable second CA7 CPU
 
-Hook up SYS-DMAC0, SYS-DMAC1 and SYS-DMAC2 to IPMMU-DS0 and IPMMU-DS1
-following the R-Car Gen3 Rev.1.00 (April 2018) datasheet.
+This is sort of redundant.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+> * Document SoC and Board bindings
 
- Based on renesas-drivers-2018-07-17-v4.18-rc5
+Merged, thanks.
 
- arch/arm64/boot/dts/renesas/r8a77995.dtsi |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
 
---- 0001/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a77995.dtsi	2018-07-19 19:57:01.350607110 +0900
-@@ -356,6 +356,10 @@
- 			resets = <&cpg 219>;
- 			#dma-cells = <1>;
- 			dma-channels = <8>;
-+			iommus = <&ipmmu_ds0 0>, <&ipmmu_ds0 1>,
-+			       <&ipmmu_ds0 2>, <&ipmmu_ds0 3>,
-+			       <&ipmmu_ds0 4>, <&ipmmu_ds0 5>,
-+			       <&ipmmu_ds0 6>, <&ipmmu_ds0 7>;
- 		};
- 
- 		dmac1: dma-controller@e7300000 {
-@@ -380,6 +384,10 @@
- 			resets = <&cpg 218>;
- 			#dma-cells = <1>;
- 			dma-channels = <8>;
-+			iommus = <&ipmmu_ds1 0>, <&ipmmu_ds1 1>,
-+			       <&ipmmu_ds1 2>, <&ipmmu_ds1 3>,
-+			       <&ipmmu_ds1 4>, <&ipmmu_ds1 5>,
-+			       <&ipmmu_ds1 6>, <&ipmmu_ds1 7>;
- 		};
- 
- 		dmac2: dma-controller@e7310000 {
-@@ -404,6 +412,10 @@
- 			resets = <&cpg 217>;
- 			#dma-cells = <1>;
- 			dma-channels = <8>;
-+			iommus = <&ipmmu_ds1 16>, <&ipmmu_ds1 17>,
-+			       <&ipmmu_ds1 18>, <&ipmmu_ds1 19>,
-+			       <&ipmmu_ds1 20>, <&ipmmu_ds1 21>,
-+			       <&ipmmu_ds1 22>, <&ipmmu_ds1 23>;
- 		};
- 
- 		ipmmu_ds0: mmu@e6740000 {
+-Olof
