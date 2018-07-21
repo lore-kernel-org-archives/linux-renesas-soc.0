@@ -1,187 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50808 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730451AbeGRNHf (ORCPT
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46480 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727974AbeGUXSy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Jul 2018 09:07:35 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Mark Brown <broonie@kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: bd9571mwv: Use "backup_mode" sysfs file instead of "wake_up"" to the regulator tree
-In-Reply-To: <20180716153052.1830-2-geert+renesas@glider.be>
-Message-Id: <E1fflaR-0007Uu-G7@debutante>
-Date: Wed, 18 Jul 2018 13:29:43 +0100
+        Sat, 21 Jul 2018 19:18:54 -0400
+Received: by mail-lf1-f66.google.com with SMTP id l16-v6so4003710lfc.13
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 21 Jul 2018 15:24:34 -0700 (PDT)
+Date: Sat, 21 Jul 2018 14:20:24 -0700
+From: Olof Johansson <olof@lixom.net>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [GIT PULL] Second Round of Renesas ARM Based SoC Updates for
+ v4.19
+Message-ID: <20180721212024.466rmmvqlg2zvfew@localhost>
+References: <cover.1532087129.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1532087129.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Fri, Jul 20, 2018 at 02:05:30PM +0200, Simon Horman wrote:
+> Hi Olof, Hi Kevin, Hi Arnd,
+> 
+> Please consider these second round of Renesas ARM based SoC updates for v4.19.
+> 
+> This pull request is based on the previous round of
+> such requests, tagged as renesas-arm-soc-for-v4.19,
+> which I have already sent a pull-request for.
+> 
+> 
+> The following changes since commit c44e182e537492baaa37303fc0ee299222fce921:
+> 
+>   ARM: shmobile: convert to SPDX identifier (2018-06-18 12:00:29 +0200)
+> 
+> are available in the git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm-soc2-for-v4.19
+> 
+> for you to fetch changes up to 54f464e0c91f10212fa5699bfef1f104ee7d2213:
+> 
+>   ARM: shmobile: Always enable ARCH_TIMER on SoCs with A7 and/or A15 (2018-07-20 13:44:10 +0200)
+> 
+> ----------------------------------------------------------------
+> Second Round of Renesas ARM Based SoC Updates for v4.19
+> 
+> * Always enable ARCH_TIMER on SoCs with A7 or A15
+> 
+>   All such SoCs have ARCH_TIMER so there is no need for it to be optional.
+>   This allows clean-up which is included in this change.
+> 
+> * Do not compile r8a7779_platform_cpu_kill when it is unused
+> 
+>   This avoids a warning by shuffling code into an existing #ifdef
+>   r8a7779 is the R-Car H1 SoC
+> 
+> * Add SMP enabler driver for the RZ/N1D (r9a06g032) SoC
+> 
+>   This is to allow SMP to be enabled via DT on the r9a06g032
+> 
+> * Stop compiling headsmp-apmu for non-SMP configs
+> 
+>   This is a minor clean-up allowing removal of an #ifdef
 
-   regulator: bd9571mwv: Use "backup_mode" sysfs file instead of "wake_up"
+Merged, thanks! Nice tag description.
 
-has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 02b3a073c12edc8cbc18e07e8880a32e78c1aee0 Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Mon, 16 Jul 2018 17:30:50 +0200
-Subject: [PATCH] regulator: bd9571mwv: Use "backup_mode" sysfs file instead of
- "wake_up"
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-Currently the BD9571MWV PMIC driver uses the standard "wake_up" sysfs
-file to control enablement of DDR Backup Mode.
-
-However, configuring DDR Backup Mode is not really equivalent to
-configuring the PMIC as a wake-up source.  To avoid confusion, use a
-custom "backup_mode" attribute file in sysfs instead.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/bd9571mwv-regulator.c | 52 ++++++++++++++++++++++---
- 1 file changed, 47 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/regulator/bd9571mwv-regulator.c b/drivers/regulator/bd9571mwv-regulator.c
-index be574eb444eb..1da36a6590c8 100644
---- a/drivers/regulator/bd9571mwv-regulator.c
-+++ b/drivers/regulator/bd9571mwv-regulator.c
-@@ -30,6 +30,7 @@ struct bd9571mwv_reg {
- 	/* DDR Backup Power */
- 	u8 bkup_mode_cnt_keepon;	/* from "rohm,ddr-backup-power" */
- 	u8 bkup_mode_cnt_saved;
-+	bool bkup_mode_enabled;
- 
- 	/* Power switch type */
- 	bool rstbmode_level;
-@@ -171,13 +172,40 @@ static int bd9571mwv_bkup_mode_write(struct bd9571mwv *bd, unsigned int mode)
- 	return 0;
- }
- 
-+static ssize_t backup_mode_show(struct device *dev,
-+				struct device_attribute *attr, char *buf)
-+{
-+	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%s\n", bdreg->bkup_mode_enabled ? "on" : "off");
-+}
-+
-+static ssize_t backup_mode_store(struct device *dev,
-+				 struct device_attribute *attr,
-+				 const char *buf, size_t count)
-+{
-+	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
-+	int ret;
-+
-+	if (!count)
-+		return 0;
-+
-+	ret = kstrtobool(buf, &bdreg->bkup_mode_enabled);
-+	if (ret)
-+		return ret;
-+
-+	return count;
-+}
-+
-+DEVICE_ATTR_RW(backup_mode);
-+
- static int bd9571mwv_suspend(struct device *dev)
- {
- 	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
- 	unsigned int mode;
- 	int ret;
- 
--	if (!device_may_wakeup(dev))
-+	if (!bdreg->bkup_mode_enabled)
- 		return 0;
- 
- 	/* Save DDR Backup Mode */
-@@ -204,7 +232,7 @@ static int bd9571mwv_resume(struct device *dev)
- {
- 	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
- 
--	if (!device_may_wakeup(dev))
-+	if (!bdreg->bkup_mode_enabled)
- 		return 0;
- 
- 	/* Restore DDR Backup Mode */
-@@ -215,9 +243,15 @@ static const struct dev_pm_ops bd9571mwv_pm  = {
- 	SET_SYSTEM_SLEEP_PM_OPS(bd9571mwv_suspend, bd9571mwv_resume)
- };
- 
-+static int bd9571mwv_regulator_remove(struct platform_device *pdev)
-+{
-+	device_remove_file(&pdev->dev, &dev_attr_backup_mode);
-+	return 0;
-+}
- #define DEV_PM_OPS	&bd9571mwv_pm
- #else
- #define DEV_PM_OPS	NULL
-+#define bd9571mwv_regulator_remove	NULL
- #endif /* CONFIG_PM_SLEEP */
- 
- static int bd9571mwv_regulator_probe(struct platform_device *pdev)
-@@ -270,14 +304,21 @@ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
-+#ifdef CONFIG_PM_SLEEP
- 	if (bdreg->bkup_mode_cnt_keepon) {
--		device_set_wakeup_capable(&pdev->dev, true);
-+		int ret;
-+
- 		/*
--		 * Wakeup is enabled by default in pulse mode, but needs
-+		 * Backup mode is enabled by default in pulse mode, but needs
- 		 * explicit user setup in level mode.
- 		 */
--		device_set_wakeup_enable(&pdev->dev, bdreg->rstbmode_pulse);
-+		bdreg->bkup_mode_enabled = bdreg->rstbmode_pulse;
-+
-+		ret = device_create_file(&pdev->dev, &dev_attr_backup_mode);
-+		if (ret)
-+			return ret;
- 	}
-+#endif /* CONFIG_PM_SLEEP */
- 
- 	return 0;
- }
-@@ -294,6 +335,7 @@ static struct platform_driver bd9571mwv_regulator_driver = {
- 		.pm = DEV_PM_OPS,
- 	},
- 	.probe = bd9571mwv_regulator_probe,
-+	.remove = bd9571mwv_regulator_remove,
- 	.id_table = bd9571mwv_regulator_id_table,
- };
- module_platform_driver(bd9571mwv_regulator_driver);
--- 
-2.18.0
+-Olof
