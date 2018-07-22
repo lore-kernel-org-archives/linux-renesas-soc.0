@@ -1,40 +1,118 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:38092 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729339AbeGYUaH (ORCPT
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39490 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730042AbeGVRPJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jul 2018 16:30:07 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-ide@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Tejun Heo <tj@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] ata: sata_rcar: Add r8a77965 support
-Date: Wed, 25 Jul 2018 21:16:55 +0200
-Message-Id: <20180725191655.3467-1-wsa+renesas@sang-engineering.com>
+        Sun, 22 Jul 2018 13:15:09 -0400
+Received: by mail-lj1-f193.google.com with SMTP id l15-v6so14874659lji.6
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 22 Jul 2018 09:17:57 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <9c77d8ae-637f-9713-83e3-3b40288b4b58@gmail.com>
+References: <20180530101130.3566-1-marek.vasut+renesas@gmail.com>
+ <CAOesGMjmz41p5sF_xnC7gdSRNLaowXPW7Sk8HBZww_QSTvXV7g@mail.gmail.com>
+ <3b6f71da-8d63-1a63-dc61-05c12d52a2db@gmail.com> <CAOesGMhVbSGmkkF-Va6zwOB4xXxj=HpccKeFYgVLO4D86Vo4ow@mail.gmail.com>
+ <5842740e-e652-aa51-ec2b-51f37a011a07@gmail.com> <CAOesGMhAeRLf2fyw-igPBBCzoehcyT9fckVGuY=r8rjmdy-szg@mail.gmail.com>
+ <9c77d8ae-637f-9713-83e3-3b40288b4b58@gmail.com>
+From: Olof Johansson <olof@lixom.net>
+Date: Sun, 22 Jul 2018 09:17:55 -0700
+Message-ID: <CAOesGMi=cYRoQSi_SKNEq7iMVCLU6jHypJkDz5vAgUJdS9WscA@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: rmobile: Drop MTD partitioning from DT
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Update the binding docs for Renesas R-Car M3-N. No driver changes are
-needed.
+On Sun, Jul 22, 2018 at 3:10 AM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> On 07/22/2018 12:23 AM, Olof Johansson wrote:
+> [...]
+>>>>>> You end up with user space tools trying to parse the kernel command
+>>>>>> line to figure out what's on the flash, and other really bad habits.
+>>>>>> :(
+>>>>>
+>>>>> You should just read /proc/mtd , see
+>>>>> http://www.linux-mtd.infradead.org/doc/general.html
+>>>>
+>>>> Sure, I know that but not everybody does, and they do it in bad ways
+>>>> if given the opportunity.
+>>>
+>>> That's what the documentation is for. I assume whoever is using MTD is
+>>> also capable of reading the documentation and thus avoiding such basic
+>>> mistakes.
+>>
+>> Why read the docs when the information obviously is there when you grep it?
+>
+> To do things correctly of course.
+>
+>> I'm agreeing with you -- I've just seen it done wrong so many times.
+>> Making it harder to make mistakes is always a good thing.
+>
+> If you follow this argument through, you could say we should start
+> plucking out random files from /proc because someone might cluelessly
+> misuse them. This might lead to a system that's hard to misuse indeed,
+> but likely also quite useless.
+>
+>>>>>> I'd strongly advice you to keep this in the board files, unless you
+>>>>>> have an actual real motivation for changing it. This patch does not
+>>>>>> provide one.
+>>>>>
+>>>>> Partitioning is not hardware description, it should not be in DT.
+>>>>
+>>>> Read my reply again. It's part of _platform_ description, and belongs in DT.
+>>>
+>>> I can repartition the flash whichever way I want for my purposes, just
+>>> like I can repartition a harddrive. We don't have harddrive partitioning
+>>> in the DT, why should we have flash partitioning there ? How do those
+>>> differ ?
+>>
+>> A drive can be auto-probed. We have partition tables on the disk that
+>> self-describes the contents.
+>>
+>> That doesn't exist on flashes, at least not usually. This is really
+>> unfortunate, I wish we could change _that_ instead of argue here.
+>
+> Technically it does. Consider the fact that those flashes have between
+> 4-64 MiB in size and sector size of 256 kiB . If you waste one sector on
+> the 4 MiB flash for some sort of partition table, you waste 1/16th of
+> the flash, which is a lot.
+>
+> The bootloader needs to know the flash layout and it must be in sync
+> with the kernel, so there has to be some sort of communication channel
+> between those two. I don't want to add handler for every possible
+> bootloader that can be used on those platforms into the kernel though.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- Documentation/devicetree/bindings/ata/sata_rcar.txt | 1 +
- 1 file changed, 1 insertion(+)
+The standard argument here, is always to have the bootloader patch up
+the device tree to make it represent the actual device. We do this all
+the time for things such as command line, memory sizes, ethernet
+addresses, etc. This is no different.
 
-diff --git a/Documentation/devicetree/bindings/ata/sata_rcar.txt b/Documentation/devicetree/bindings/ata/sata_rcar.txt
-index e20eac7a3087..4268e17d2411 100644
---- a/Documentation/devicetree/bindings/ata/sata_rcar.txt
-+++ b/Documentation/devicetree/bindings/ata/sata_rcar.txt
-@@ -8,6 +8,7 @@ Required properties:
- 			  - "renesas,sata-r8a7791" for R-Car M2-W
- 			  - "renesas,sata-r8a7793" for R-Car M2-N
- 			  - "renesas,sata-r8a7795" for R-Car H3
-+			  - "renesas,sata-r8a77965" for R-Car M3-N
- 			  - "renesas,rcar-gen2-sata" for a generic R-Car Gen2 compatible device
- 			  - "renesas,rcar-gen3-sata" for a generic R-Car Gen3 compatible device
- 			  - "renesas,rcar-sata" is deprecated
--- 
-2.11.0
+>> If you repartition your disk, you need to change the command line
+>> arguments to the kernel too. It's definitely not an argument to
+>> keeping it on the command line instead.
+>
+> How so ? /dev/sdxy remains /dev/sdxy . Sure, you can use UUID and change
+> it, but that's a specific case.
+>
+>> Also, you now have a dependencies between hardware description, probe
+>> order and stable naming in the kernel, and the command line. With DT,
+>> you have it all in one place, right next to the flash part. It doesn't
+>> matter what name it gets probed at, and nobody needs to know the
+>> mapping to get it right.
+>
+> In this case it doesn't matter either, since you have only one flash device.
+
+In this very narrow case maybe, but in general it's a horrible idea to
+encourage people to use the command line instead of device tree for
+this.
+
+I'm still waiting on a compelling argument to motivate why this patch
+should be applied. I don't think there is one, so let's not apply it.
+
+
+-Olof
