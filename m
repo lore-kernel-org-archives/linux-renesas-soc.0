@@ -1,62 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:42608 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932611AbeGDINC (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53230 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387854AbeGWNFZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Jul 2018 04:13:02 -0400
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S . Miller" <davem@davemloft.net>
-CC: Andrew Lunn <andrew@lunn.ch>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        <netdev@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>
-Subject: [PATCH v2 01/14] sh_eth: fix invalid context bug while calling auto-negotiation by ethtool
-Date: Wed, 4 Jul 2018 11:12:39 +0300
-Message-ID: <20180704081245.7395-2-vladimir_zapolskiy@mentor.com>
-In-Reply-To: <20180704081245.7395-1-vladimir_zapolskiy@mentor.com>
-References: <20180704081245.7395-1-vladimir_zapolskiy@mentor.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Mon, 23 Jul 2018 09:05:25 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 5/5] ARM: multi_v7_defconfig: Enable support for RZN1D-DB
+Date: Mon, 23 Jul 2018 14:04:22 +0200
+Message-Id: <b036e6420b9aed3498cbd0429f12300139cc5a28.1532346690.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1532346690.git.horms+renesas@verge.net.au>
+References: <cover.1532346690.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since commit 35b5f6b1a82b ("PHYLIB: Locking fixes for PHY I/O
-potentially sleeping") phy_start_aneg() function utilizes a mutex
-to serialize changes to phy state, however the helper function is
-called in atomic context.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The bug can be reproduced by running "ethtool -r" command, the bug
-is reported if CONFIG_DEBUG_ATOMIC_SLEEP build option is enabled.
+Enable support for the Renesas RZN1D-DB Board:
+  - RZ/N1D (R9A06G032) base SoC support.
 
-Fixes: dc19e4e5e02f ("sh: sh_eth: Add support ethtool")
-Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/net/ethernet/renesas/sh_eth.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index e9007b613f17..e8aca46bb925 100644
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -2265,18 +2265,10 @@ static void sh_eth_get_regs(struct net_device *ndev, struct ethtool_regs *regs,
- 
- static int sh_eth_nway_reset(struct net_device *ndev)
- {
--	struct sh_eth_private *mdp = netdev_priv(ndev);
--	unsigned long flags;
--	int ret;
--
- 	if (!ndev->phydev)
- 		return -ENODEV;
- 
--	spin_lock_irqsave(&mdp->lock, flags);
--	ret = phy_start_aneg(ndev->phydev);
--	spin_unlock_irqrestore(&mdp->lock, flags);
--
--	return ret;
-+	return phy_start_aneg(ndev->phydev);
- }
- 
- static u32 sh_eth_get_msglevel(struct net_device *ndev)
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 7e1c543162c3..874813d7c08e 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -98,6 +98,7 @@ CONFIG_ARCH_R8A7791=y
+ CONFIG_ARCH_R8A7792=y
+ CONFIG_ARCH_R8A7793=y
+ CONFIG_ARCH_R8A7794=y
++CONFIG_ARCH_R9A06G032=y
+ CONFIG_ARCH_SH73A0=y
+ CONFIG_ARCH_SUNXI=y
+ CONFIG_ARCH_SIRF=y
 -- 
-2.17.1
+2.11.0
