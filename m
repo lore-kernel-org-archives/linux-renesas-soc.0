@@ -1,60 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:51778 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:51260 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387712AbeGKQie (ORCPT
+        id S2388039AbeGWV3u (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jul 2018 12:38:34 -0400
+        Mon, 23 Jul 2018 17:29:50 -0400
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-gpio@vger.kernel.org
+To: linux-i2c@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] gpiolib: use better errno if get_direction is not available
-Date: Wed, 11 Jul 2018 18:33:19 +0200
-Message-Id: <20180711163319.28004-1-wsa+renesas@sang-engineering.com>
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 06/12] i2c: qup: use core to detect 'no zero length' quirk
+Date: Mon, 23 Jul 2018 22:26:10 +0200
+Message-Id: <20180723202617.15230-7-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
+References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-EINVAL is very generic, use ENOTSUPP in case the gpiochip does not
-provide this function. While removing the assignment from the 'status'
-variable, use better indentation in the declaration block.
+And don't reimplement in the driver.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
 
-I got puzzled by the EINVAL until I found out that gpio-rcar simply does not
-implement it.
+Only build tested.
 
-@Geert: any reason gpio-rcar is missing it? I would need it for the
-i2c-gpio-fault-injector.
+ drivers/i2c/busses/i2c-qup.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
- drivers/gpio/gpiolib.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index e11a3bb03820..18719f64e80b 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -210,15 +210,15 @@ static int gpiochip_find_base(int ngpio)
+diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
+index c86c3ae1318f..e09cd0775ae9 100644
+--- a/drivers/i2c/busses/i2c-qup.c
++++ b/drivers/i2c/busses/i2c-qup.c
+@@ -1088,11 +1088,6 @@ static int qup_i2c_xfer(struct i2c_adapter *adap,
+ 	writel(I2C_MINI_CORE | I2C_N_VAL, qup->base + QUP_CONFIG);
+ 
+ 	for (idx = 0; idx < num; idx++) {
+-		if (msgs[idx].len == 0) {
+-			ret = -EINVAL;
+-			goto out;
+-		}
+-
+ 		if (qup_i2c_poll_state_i2c_master(qup)) {
+ 			ret = -EIO;
+ 			goto out;
+@@ -1520,9 +1515,6 @@ qup_i2c_determine_mode_v2(struct qup_i2c_dev *qup,
+ 
+ 	/* All i2c_msgs should be transferred using either dma or cpu */
+ 	for (idx = 0; idx < num; idx++) {
+-		if (msgs[idx].len == 0)
+-			return -EINVAL;
+-
+ 		if (msgs[idx].flags & I2C_M_RD)
+ 			max_rx_len = max_t(unsigned int, max_rx_len,
+ 					   msgs[idx].len);
+@@ -1636,9 +1628,14 @@ static const struct i2c_algorithm qup_i2c_algo_v2 = {
+  * which limits the possible read to 256 (QUP_READ_LIMIT) bytes.
   */
- int gpiod_get_direction(struct gpio_desc *desc)
+ static const struct i2c_adapter_quirks qup_i2c_quirks = {
++	.flags = I2C_AQ_NO_ZERO_LEN,
+ 	.max_read_len = QUP_READ_LIMIT,
+ };
+ 
++static const struct i2c_adapter_quirks qup_i2c_quirks_v2 = {
++	.flags = I2C_AQ_NO_ZERO_LEN,
++};
++
+ static void qup_i2c_enable_clocks(struct qup_i2c_dev *qup)
  {
--	struct gpio_chip	*chip;
--	unsigned		offset;
--	int			status = -EINVAL;
-+	struct gpio_chip *chip;
-+	unsigned offset;
-+	int status;
- 
- 	chip = gpiod_to_chip(desc);
- 	offset = gpio_chip_hwgpio(desc);
- 
- 	if (!chip->get_direction)
--		return status;
-+		return -ENOTSUPP;
- 
- 	status = chip->get_direction(chip, offset);
- 	if (status > 0) {
+ 	clk_prepare_enable(qup->clk);
+@@ -1701,6 +1698,7 @@ static int qup_i2c_probe(struct platform_device *pdev)
+ 		is_qup_v1 = true;
+ 	} else {
+ 		qup->adap.algo = &qup_i2c_algo_v2;
++		qup->adap.quirks = &qup_i2c_quirks_v2;
+ 		is_qup_v1 = false;
+ 		if (acpi_match_device(qup_i2c_acpi_match, qup->dev))
+ 			goto nodma;
 -- 
 2.11.0
