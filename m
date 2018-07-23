@@ -1,35 +1,64 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:35926 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730393AbeGYWGW (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jul 2018 18:06:22 -0400
-Received: by mail-it0-f65.google.com with SMTP id p81-v6so10571148itp.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Jul 2018 13:52:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com> <20180723202617.15230-8-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180723202617.15230-8-wsa+renesas@sang-engineering.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 25 Jul 2018 22:52:46 +0200
-Message-ID: <CACRpkda26LhGi3_LBqMjA+oHNNdNa5NHkpvE4Sk6OdP_uH9-gQ@mail.gmail.com>
-Subject: Re: [PATCH 07/12] i2c: stu300: use core to detect 'no zero length' quirk
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 07/12] i2c: stu300: use core to detect 'no zero length' quirk
+Date: Mon, 23 Jul 2018 22:26:11 +0200
+Message-Id: <20180723202617.15230-8-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
+References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jul 23, 2018 at 10:26 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
+And don't reimplement in the driver.
 
-> And don't reimplement in the driver.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Only build tested.
 
-Yours,
-Linus Walleij
+ drivers/i2c/busses/i2c-stu300.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-stu300.c b/drivers/i2c/busses/i2c-stu300.c
+index fce52bdab2b7..5503fa171df0 100644
+--- a/drivers/i2c/busses/i2c-stu300.c
++++ b/drivers/i2c/busses/i2c-stu300.c
+@@ -673,12 +673,6 @@ static int stu300_xfer_msg(struct i2c_adapter *adap,
+ 			msg->addr, msg->len, msg->flags, stop);
+ 	}
+ 
+-	/* Zero-length messages are not supported by this hardware */
+-	if (msg->len == 0) {
+-		ret = -EINVAL;
+-		goto exit_disable;
+-	}
+-
+ 	/*
+ 	 * For some reason, sending the address sometimes fails when running
+ 	 * on  the 13 MHz clock. No interrupt arrives. This is a work around,
+@@ -863,6 +857,10 @@ static const struct i2c_algorithm stu300_algo = {
+ 	.functionality	= stu300_func,
+ };
+ 
++static const struct i2c_adapter_quirks stu300_quirks = {
++	.flags = I2C_AQ_NO_ZERO_LEN,
++};
++
+ static int stu300_probe(struct platform_device *pdev)
+ {
+ 	struct stu300_dev *dev;
+@@ -920,6 +918,8 @@ static int stu300_probe(struct platform_device *pdev)
+ 	adap->algo = &stu300_algo;
+ 	adap->dev.parent = &pdev->dev;
+ 	adap->dev.of_node = pdev->dev.of_node;
++	adap->quirks = &stu300_quirks;
++
+ 	i2c_set_adapdata(adap, dev);
+ 
+ 	/* i2c device drivers may be active on return from add_adapter() */
+-- 
+2.11.0
