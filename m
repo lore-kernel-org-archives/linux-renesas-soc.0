@@ -1,173 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:52206 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727147AbeGMKqe (ORCPT
+Received: from sauhun.de ([88.99.104.3]:51260 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388271AbeGWV3w (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Jul 2018 06:46:34 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Russell King <linux@armlinux.org.uk>
-CC: =?iso-8859-2?Q?=A3ukasz_Stelmach?= <l.stelmach@samsung.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "nico@linaro.org" <nico@linaro.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "cdall@linaro.org" <cdall@linaro.org>
-Subject: RE: [RFC PATCH] ARM: Debug kernel copy by printing
-Date: Fri, 13 Jul 2018 10:32:23 +0000
-Message-ID: <TY1PR01MB177010920A6FC7FC1B61358BC0580@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1530022595-6806-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1530022595-6806-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Mon, 23 Jul 2018 17:29:52 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Jun Nie <jun.nie@linaro.org>,
+        Baoyou Xie <baoyou.xie@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 09/12] i2c: zx2967: use core to detect 'no zero length' quirk
+Date: Mon, 23 Jul 2018 22:26:13 +0200
+Message-Id: <20180723202617.15230-10-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
+References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dear All,
+And don't reimplement in the driver.
 
-Has anybody had the chance to look into this? Does it make sense? Any feedb=
-ack at all?
-Thanks!
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Fab
+Only build tested.
 
-> Subject: [RFC PATCH] ARM: Debug kernel copy by printing
->
-> It may happen that when we relocate the kernel we corrupt other
-> sensible memory (e.g. the memory needed by U-Boot for dealing
-> with bootm command) while copying the kernel. If we overwrite
-> the content of the memory area used by U-Boot's command bootm
-> (described by U-Boot's parameters bootm_low and bootm_size),
-> the kernel won't be able to boot. Troubleshooting the problem
-> then is not straightforward.
->
-> This commit allows the user to easily print information on
-> where the kernel gets copied from/to in order to help with the
-> design of the system memory map (e.g. bootm_low and bootm_size)
-> at boot up.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-> Acked-by: Biju Das <biju.das@bp.renesas.com>
-> ---
-> Dear All,
->
-> shmobile_defconfig doesn't use kernel modules, everything gets
-> built-in. iwg20d and iwg22d platforms from iWave use uImage
-> to boot, DRAM starts at address 0x40000000, the kernel gets
-> loaded up in memory at address 0x40007fc0, bootm_low is
-> 0x40e00000, and bootm_size is 0x100000.
->
-> The kernel is getting larger and larger, so much so that during
-> the relocation the kernel is copying itself right where the
-> bootm memory area lives, preventing Linux from booting.
-> Here is what this patch prints when applied on top of tag
-> next-20180625 and running on the iwg22d:
->
-> C:0x400080C0-0x404922A0->0x40E90800-0x4131A9E0
->
-> The designer then has to pick up a suitable memory range for
-> bootm memory area to fix this, but the only way to successfully
-> achieve this is by knowing where the kernel is going to copy
-> itself in memory, so that he can stay clear of it.
->
-> Other platforms that use the same defconfig suffer from the same
-> issue (e.g. Koelsch et al.) as they have been designed some time
-> ago or the original BSP was based on an LTS kernel.
->
-> Debugging this basically requires a JTAG debugger at this stage.
->
-> Do you think this patch could be considered acceptable? If not,
-> what would be the best way to get useful/sensible/debug
-> information out of the kernel when the problem occours?
->
-> Comments welcome!
->
-> Thanks,
-> Fab
->
->  arch/arm/boot/compressed/head.S | 43 +++++++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 43 insertions(+)
->
-> diff --git a/arch/arm/boot/compressed/head.S b/arch/arm/boot/compressed/h=
-ead.S
-> index 517e0e1..6c7ccb4 100644
-> --- a/arch/arm/boot/compressed/head.S
-> +++ b/arch/arm/boot/compressed/head.S
-> @@ -114,6 +114,35 @@
->  #endif
->  .endm
->
-> +/*
-> + * Debug kernel copy by printing the memory addresses involved
-> + */
-> +.macro dbgkc, begin, end, cbegin, cend
-> +#ifdef DEBUG
-> +kputc   #'\n'
-> +kputc   #'C'
-> +kputc   #':'
-> +kputc   #'0'
-> +kputc   #'x'
-> +kphex   \begin, 8/* Start of compressed kernel */
-> +kputc#'-'
-> +kputc#'0'
-> +kputc#'x'
-> +kphex\end, 8/* End of compressed kernel */
-> +kputc#'-'
-> +kputc#'>'
-> +kputc   #'0'
-> +kputc   #'x'
-> +kphex   \cbegin, 8/* Start of kernel copy */
-> +kputc#'-'
-> +kputc#'0'
-> +kputc#'x'
-> +kphex\cend, 8/* End of kernel copy */
-> +kputc#'\n'
-> +kputc#'\r'
-> +#endif
-> +.endm
-> +
->  .section ".start", #alloc, #execinstr
->  /*
->   * sort out different calling conventions
-> @@ -450,6 +479,20 @@ dtb_check_done:
->  addr6, r9, r5
->  addr9, r9, r10
->
-> +#ifdef DEBUG
-> +sub     r10, r6, r5
-> +sub     r10, r9, r10
-> +/*
-> + * We are about to copy the kernel to a new memory area.
-> + * The boundaries of the new memory area can be found in
-> + * r10 and r9, whilst r5 and r6 contain the boundaries
-> + * of the memory we are going to copy.
-> + * Calling dbgkc will help with the printing of this
-> + * information.
-> + */
-> +dbgkcr5, r6, r10, r9
-> +#endif
-> +
->  1:ldmdbr6!, {r0 - r3, r10 - r12, lr}
->  cmpr6, r5
->  stmdbr9!, {r0 - r3, r10 - r12, lr}
-> --
-> 2.7.4
+ drivers/i2c/busses/i2c-zx2967.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+diff --git a/drivers/i2c/busses/i2c-zx2967.c b/drivers/i2c/busses/i2c-zx2967.c
+index 48281c1b30c6..b8f9e020d80e 100644
+--- a/drivers/i2c/busses/i2c-zx2967.c
++++ b/drivers/i2c/busses/i2c-zx2967.c
+@@ -281,9 +281,6 @@ static int zx2967_i2c_xfer_msg(struct zx2967_i2c *i2c,
+ 	int ret;
+ 	int i;
+ 
+-	if (msg->len == 0)
+-		return -EINVAL;
+-
+ 	zx2967_i2c_flush_fifos(i2c);
+ 
+ 	i2c->cur_trans = msg->buf;
+@@ -498,6 +495,10 @@ static const struct i2c_algorithm zx2967_i2c_algo = {
+ 	.functionality = zx2967_i2c_func,
+ };
+ 
++static const struct i2c_adapter_quirks zx2967_i2c_quirks = {
++	.flags = I2C_AQ_NO_ZERO_LEN,
++};
++
+ static const struct of_device_id zx2967_i2c_of_match[] = {
+ 	{ .compatible = "zte,zx296718-i2c", },
+ 	{ },
+@@ -568,6 +569,7 @@ static int zx2967_i2c_probe(struct platform_device *pdev)
+ 	strlcpy(i2c->adap.name, "zx2967 i2c adapter",
+ 		sizeof(i2c->adap.name));
+ 	i2c->adap.algo = &zx2967_i2c_algo;
++	i2c->adap.quirks = &zx2967_i2c_quirks;
+ 	i2c->adap.nr = pdev->id;
+ 	i2c->adap.dev.parent = &pdev->dev;
+ 	i2c->adap.dev.of_node = pdev->dev.of_node;
+-- 
+2.11.0
