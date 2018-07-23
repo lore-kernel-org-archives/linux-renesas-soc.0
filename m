@@ -1,72 +1,83 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-Date: Mon, 23 Jul 2018 19:50:47 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: Re: [PATCH 1/1] i2c: rcar: handle RXDMA HW behaviour on Gen3
-Message-ID: <20180723175047.2rie7zctuoyhfcys@ninjato>
-References: <20180628204538.866-1-wsa+renesas@sang-engineering.com>
- <20180628204538.866-2-wsa+renesas@sang-engineering.com>
- <CAMuHMdWEce9+Se0b0pH2Uvma68ozSXxiPGUu__XFFX=yBtmKjw@mail.gmail.com>
- <20180629075404.ivnaauv2hdir32ig@ninjato>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="etkrpj2vtdkmi6qi"
-Content-Disposition: inline
-In-Reply-To: <20180629075404.ivnaauv2hdir32ig@ninjato>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:53389 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387854AbeGWNHc (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 23 Jul 2018 09:07:32 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 5/8] ARM: dts: Renesas RZN1D-DB Board base file
+Date: Mon, 23 Jul 2018 14:06:23 +0200
+Message-Id: <df7112c9461458c2a2069e9a4a7962fd16bf62bf.1532345886.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1532345886.git.horms+renesas@verge.net.au>
+References: <cover.1532345886.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Michel Pollet <michel.pollet@bp.renesas.com>
 
---etkrpj2vtdkmi6qi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This adds a base device tree file for the RZN1-DB board, with only the
+basic support allowing the system to boot to a prompt. Only one UART is
+used, with only a single CPU running.
 
-On Fri, Jun 29, 2018 at 09:54:04AM +0200, Wolfram Sang wrote:
->=20
-> > > +       /* Gen3 needs a reset before allowing RXDMA once */
-> > > +       if (priv->devtype =3D=3D I2C_RCAR_GEN3) {
-> >=20
-> > So on R-Car Gen3 the device is always reset, even if no reads will be d=
-one?
-> > Or is that something you cannot check for at this point?
->=20
-> You got a point. I copied the behaviour from the BSP to do this as early
-> as possible. Still, it might be worthwhile to merge this into
-> rcar_i2c_request_dma() and move the call to it to the front. Will check.
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/Makefile                  |  1 +
+ arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts | 28 ++++++++++++++++++++++++++++
+ 2 files changed, 29 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
 
-I will apply this patch as is because it is easier to backport to stable
-this way.
-
-You are still right, we can do better and not issue a reset any time. To
-get there, though, I want two kinds of refactoring beforehand. And I
-think it is best to do this on top of this patch and refactor it along.
-BSP backporters can then decide if they want the refactored version or
-not.
-
-
---etkrpj2vtdkmi6qi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltWFXMACgkQFA3kzBSg
-KbbEhhAAn86pOX23DN9R+yBQt4tA4OtloaBaw77LmpQLA1+JoAR9mVRgExxipFUn
-gA/GzVLOuZHLJSLt1t+phaVJOlK7pYnjLCIlOAnKc3obUv94zNSdiEEdXIpdW2gU
-HtVymWVXlfUyi5CuozUhbkADwQvCfl+vsRSvpDRgEfTHDNbVkfaTxDRw2UBoBU6L
-O03Bc6imPHyh4k1YUYUDiLaZDA4XR3i3Y7leY/QI+aZ+uqwcnmm+l6If03KaOW/u
-kaEQm8oyL9XjypjR4KU80QP/KL6qxt/QH7buhqz1o/ZoPSdodoUpSGt0pdxcbmSi
-5eOFhnu+JlKd4g5NfW2nMfM+MSGFQkpOlGLqC3L+9ruN484drXqifc+vrdL4m/rg
-JWTeJqzRycMjJ639cO82WMKkK6L3MS0nMli9ia0iQJuGpvXHm8v6P77+B+N3Y8qR
-O2aS18ZOUok5O/GnvXS4u3+/VuA3Vxa+yClW1Lm7rEWj4HxpNBmtE/1OPQx8s3mp
-P5PSnYbKxaLGtWdHP98kTZwqOvFGkOdDxjv8PTCmBTIl9bMwFKzNLmgzztC0fXtj
-wuGXQ7KvcuUwyQ8lbUjETx4C/gptY5t289OxcoKon9kNqdT447iHxChNt7aPUvfW
-F83rh8388Fivo3spby4Z2RU5cmYrwhhsMgN3F2l7WSvHgYGg/b0=
-=MTbf
------END PGP SIGNATURE-----
-
---etkrpj2vtdkmi6qi--
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 37a3de760d40..c07f077d8e99 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -819,6 +819,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
+ 	r8a7793-gose.dtb \
+ 	r8a7794-alt.dtb \
+ 	r8a7794-silk.dtb \
++	r9a06g032-rzn1d400-db.dtb \
+ 	sh73a0-kzm9g.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += \
+ 	rv1108-evb.dtb \
+diff --git a/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+new file mode 100644
+index 000000000000..4e57ae2688fc
+--- /dev/null
++++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+@@ -0,0 +1,28 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the RZN1D-DB Board
++ *
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ */
++
++/dts-v1/;
++
++#include "r9a06g032.dtsi"
++
++/ {
++	model = "RZN1D-DB Board";
++	compatible = "renesas,rzn1d400-db", "renesas,r9a06g032";
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	aliases {
++		serial0 = &uart0;
++	};
++};
++
++&uart0 {
++	status = "okay";
++};
+-- 
+2.11.0
