@@ -1,78 +1,171 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44438 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388222AbeGWTSQ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53389 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387854AbeGWNH2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jul 2018 15:18:16 -0400
-Received: by mail-lj1-f195.google.com with SMTP id q127-v6so1326866ljq.11
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Jul 2018 11:15:49 -0700 (PDT)
-Subject: [PATCH 5/5] sh_eth: make sh_eth_tsu_{read|write}_entry() prototypes
- symmetric
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
-Cc: linux-renesas-soc@vger.kernel.org
-References: <24093fd0-1b9b-a211-f988-0272483185d6@cogentembedded.com>
-Message-ID: <93618d2e-86b6-e467-b577-632a25cb2c4c@cogentembedded.com>
-Date: Mon, 23 Jul 2018 21:15:47 +0300
-MIME-Version: 1.0
-In-Reply-To: <24093fd0-1b9b-a211-f988-0272483185d6@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Mon, 23 Jul 2018 09:07:28 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 4/8] ARM: dts: Renesas R9A06G032 base device tree file
+Date: Mon, 23 Jul 2018 14:06:22 +0200
+Message-Id: <769d7248a7aae5dace1c5c776c98b352d3d93617.1532345886.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1532345886.git.horms+renesas@verge.net.au>
+References: <cover.1532345886.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-sh_eth_tsu_read_entry() is still asymmetric with sh_eth_tsu_write_entry()
-WRT their prototypes -- make them symmetric by passing to the former a TSU
-register offset instead of its address and also adding the (now necessary)
-'ndev' parameter...
+From: Michel Pollet <michel.pollet@bp.renesas.com>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+This adds the Renesas R9A06G032 bare bone support.
 
+This currently only handles the SYSCTRL block note,
+generic parts (gic, architected timer) and a UART.
+
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[simon: updated MAINTAINERS file
+[simon: do not use r9a06g032-sysctrl.h as it is not in the renesas tree yet]
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/net/ethernet/renesas/sh_eth.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ MAINTAINERS                      |   1 +
+ arch/arm/boot/dts/r9a06g032.dtsi | 113 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 114 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
 
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.c
-@@ -2695,16 +2695,17 @@ static int sh_eth_tsu_write_entry(struct
- 	return 0;
- }
- 
--static void sh_eth_tsu_read_entry(void *reg, u8 *addr)
-+static void sh_eth_tsu_read_entry(struct net_device *ndev, u16 offset, u8 *addr)
- {
-+	struct sh_eth_private *mdp = netdev_priv(ndev);
- 	u32 val;
- 
--	val = ioread32(reg);
-+	val = ioread32(mdp->tsu_addr + offset);
- 	addr[0] = (val >> 24) & 0xff;
- 	addr[1] = (val >> 16) & 0xff;
- 	addr[2] = (val >> 8) & 0xff;
- 	addr[3] = val & 0xff;
--	val = ioread32(reg + 4);
-+	val = ioread32(mdp->tsu_addr + offset + 4);
- 	addr[4] = (val >> 8) & 0xff;
- 	addr[5] = val & 0xff;
- }
-@@ -2718,7 +2719,7 @@ static int sh_eth_tsu_find_entry(struct
- 	u8 c_addr[ETH_ALEN];
- 
- 	for (i = 0; i < SH_ETH_TSU_CAM_ENTRIES; i++, reg_offset += 8) {
--		sh_eth_tsu_read_entry(mdp->tsu_addr + reg_offset, c_addr);
-+		sh_eth_tsu_read_entry(ndev, reg_offset, c_addr);
- 		if (ether_addr_equal(addr, c_addr))
- 			return i;
- 	}
-@@ -2839,7 +2840,7 @@ static void sh_eth_tsu_purge_mcast(struc
- 		return;
- 
- 	for (i = 0; i < SH_ETH_TSU_CAM_ENTRIES; i++, reg_offset += 8) {
--		sh_eth_tsu_read_entry(mdp->tsu_addr + reg_offset, addr);
-+		sh_eth_tsu_read_entry(ndev, reg_offset, addr);
- 		if (is_multicast_ether_addr(addr))
- 			sh_eth_tsu_del_entry(ndev, addr);
- 	}
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9d5eeff51b5f..4c85ac04872d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1969,6 +1969,7 @@ S:	Supported
+ F:	arch/arm/boot/dts/emev2*
+ F:	arch/arm/boot/dts/r7s*
+ F:	arch/arm/boot/dts/r8a*
++F:	arch/arm/boot/dts/r9a*
+ F:	arch/arm/boot/dts/sh*
+ F:	arch/arm/configs/shmobile_defconfig
+ F:	arch/arm/include/debug/renesas-scif.S
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+new file mode 100644
+index 000000000000..339d0958011e
+--- /dev/null
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -0,0 +1,113 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
++ *
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ */
++
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++
++/ {
++	compatible = "renesas,r9a06g032";
++	#address-cells = <1>;
++	#size-cells = <1>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <0>;
++			clocks = <&sysctrl 84>;
++		};
++
++		cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <1>;
++			clocks = <&sysctrl 84>;
++		};
++	};
++
++	ext_jtag_clk: extjtagclk {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		clock-frequency = <0>;
++	};
++
++	ext_mclk: extmclk {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		clock-frequency = <40000000>;
++	};
++
++	ext_rgmii_ref: extrgmiiref {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		clock-frequency = <0>;
++	};
++
++	ext_rtc_clk: extrtcclk {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		clock-frequency = <0>;
++	};
++
++	soc {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		interrupt-parent = <&gic>;
++		ranges;
++
++		sysctrl: system-controller@4000c000 {
++			compatible = "renesas,r9a06g032-sysctrl";
++			reg = <0x4000c000 0x1000>;
++			status = "okay";
++			#clock-cells = <1>;
++
++			clocks = <&ext_mclk>, <&ext_rtc_clk>,
++					<&ext_jtag_clk>, <&ext_rgmii_ref>;
++			clock-names = "mclk", "rtc", "jtag", "rgmii_ref_ext";
++		};
++
++		uart0: serial@40060000 {
++			compatible = "snps,dw-apb-uart";
++			reg = <0x40060000 0x400>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++			reg-shift = <2>;
++			reg-io-width = <4>;
++			clocks = <&sysctrl 146>;
++			clock-names = "baudclk";
++			status = "disabled";
++		};
++
++		gic: gic@44101000 {
++			compatible = "arm,cortex-a7-gic", "arm,gic-400";
++			interrupt-controller;
++			#interrupt-cells = <3>;
++			reg = <0x44101000 0x1000>, /* Distributer */
++			      <0x44102000 0x2000>, /* CPU interface */
++			      <0x44104000 0x2000>, /* Virt interface control */
++			      <0x44106000 0x2000>; /* Virt CPU interface */
++			interrupts =
++				<GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
++		};
++	};
++
++	timer {
++		compatible = "arm,cortex-a7-timer",
++			     "arm,armv7-timer";
++		interrupt-parent = <&gic>;
++		arm,cpu-registers-not-fw-configured;
++		always-on;
++		interrupts =
++			<GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++};
+-- 
+2.11.0
