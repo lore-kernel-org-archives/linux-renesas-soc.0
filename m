@@ -1,198 +1,82 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 4/4] serial: sh-sci: Improve support for separate TEI and DRI interrupts
-Date: Fri, 27 Jul 2018 16:09:16 -0500
-Message-Id: <20180727210916.66642-5-chris.brandt@renesas.com>
-In-Reply-To: <20180727210916.66642-1-chris.brandt@renesas.com>
-References: <20180727210916.66642-1-chris.brandt@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+Date: Mon, 23 Jul 2018 22:46:10 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/12] i2c: rcar: use core to detect 'no zero length'
+ quirk
+Message-ID: <20180723204610.GH1432@bigcity.dyn.berto.se>
+References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
+ <20180723202617.15230-11-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180723202617.15230-11-wsa+renesas@sang-engineering.com>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some SCIF versions mux error and break interrupts together and then provide
-a separate interrupt ID for just TEI/DRI.
+Hi Wolfram,
 
-Allow all 6 types of interrupts to be specified via platform data (or DT)
-and for any signals that are muxed together (have the same interrupt
-number) simply register one handler.
+Thanks for your work.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- drivers/tty/serial/sh-sci.c | 90 ++++++++++++++++++++-------------------------
- 1 file changed, 40 insertions(+), 50 deletions(-)
+On 2018-07-23 22:26:14 +0200, Wolfram Sang wrote:
+> And don't reimplement in the driver.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index cb4f7d3e7192..a3519e8e4d13 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -65,7 +65,8 @@ enum {
- 	SCIx_RXI_IRQ,
- 	SCIx_TXI_IRQ,
- 	SCIx_BRI_IRQ,
--	SCIx_TEIDRI_IRQ,
-+	SCIx_DRI_IRQ,
-+	SCIx_TEI_IRQ,
- 	SCIx_NR_IRQS,
- 
- 	SCIx_MUX_IRQ = SCIx_NR_IRQS,	/* special case */
-@@ -77,9 +78,6 @@ enum {
- 	((port)->irqs[SCIx_ERI_IRQ] &&	\
- 	 ((port)->irqs[SCIx_RXI_IRQ] < 0))
- 
--#define SCIx_TEIDRI_IRQ_EXISTS(port)		\
--	((port)->irqs[SCIx_TEIDRI_IRQ] > 0)
--
- enum SCI_CLKS {
- 	SCI_FCK,		/* Functional Clock */
- 	SCI_SCK,		/* Optional External Clock */
-@@ -1685,14 +1683,23 @@ static irqreturn_t sci_tx_interrupt(int irq, void *ptr)
- 	return IRQ_HANDLED;
- }
- 
--static irqreturn_t sci_br_interrupt(int irq, void *ptr);
-+static irqreturn_t sci_br_interrupt(int irq, void *ptr)
-+{
-+	struct uart_port *port = ptr;
-+
-+	/* Handle BREAKs */
-+	sci_handle_breaks(port);
-+	sci_clear_SCxSR(port, SCxSR_BREAK_CLEAR(port));
-+
-+	return IRQ_HANDLED;
-+}
- 
- static irqreturn_t sci_er_interrupt(int irq, void *ptr)
- {
- 	struct uart_port *port = ptr;
- 	struct sci_port *s = to_sci_port(port);
- 
--	if (SCIx_TEIDRI_IRQ_EXISTS(s)) {
-+	if (s->irqs[SCIx_ERI_IRQ] == s->irqs[SCIx_BRI_IRQ]) {
- 		/* Break and Error interrupts are muxed */
- 		unsigned short ssr_status = serial_port_in(port, SCxSR);
- 
-@@ -1727,17 +1734,6 @@ static irqreturn_t sci_er_interrupt(int irq, void *ptr)
- 	return IRQ_HANDLED;
- }
- 
--static irqreturn_t sci_br_interrupt(int irq, void *ptr)
--{
--	struct uart_port *port = ptr;
--
--	/* Handle BREAKs */
--	sci_handle_breaks(port);
--	sci_clear_SCxSR(port, SCxSR_BREAK_CLEAR(port));
--
--	return IRQ_HANDLED;
--}
--
- static irqreturn_t sci_mpxed_interrupt(int irq, void *ptr)
- {
- 	unsigned short ssr_status, scr_status, err_enabled, orer_status = 0;
-@@ -1811,6 +1807,16 @@ static const struct sci_irq_desc {
- 		.handler = sci_br_interrupt,
- 	},
- 
-+	[SCIx_DRI_IRQ] = {
-+		.desc = "rx ready",
-+		.handler = sci_rx_interrupt,
-+	},
-+
-+	[SCIx_TEI_IRQ] = {
-+		.desc = "tx end",
-+		.handler = sci_tx_interrupt,
-+	},
-+
- 	/*
- 	 * Special muxed handler.
- 	 */
-@@ -1823,12 +1829,19 @@ static const struct sci_irq_desc {
- static int sci_request_irq(struct sci_port *port)
- {
- 	struct uart_port *up = &port->port;
--	int i, j, ret = 0;
-+	int i, j, w, ret = 0;
- 
- 	for (i = j = 0; i < SCIx_NR_IRQS; i++, j++) {
- 		const struct sci_irq_desc *desc;
- 		int irq;
- 
-+		/* Check if already registered (muxed) */
-+		for (w = 0; w < i; w++)
-+			if (port->irqs[w] == port->irqs[i])
-+				w = i + 1;
-+		if (w > i)
-+			continue;
-+
- 		if (SCIx_IRQ_IS_MUXED(port)) {
- 			i = SCIx_MUX_IRQ;
- 			irq = up->irq;
-@@ -1845,31 +1858,8 @@ static int sci_request_irq(struct sci_port *port)
- 
- 		desc = sci_irq_desc + i;
- 		port->irqstr[j] = NULL;
--		if (SCIx_TEIDRI_IRQ_EXISTS(port)) {
--			/*
--			 * ERI and BRI are muxed, just register ERI and
--			 * ignore BRI.
--			 * TEI and DRI are muxed, but only DRI
--			 * is enabled, so use RXI handler
--			 */
--			if (i == SCIx_ERI_IRQ)
--				port->irqstr[j] = kasprintf(GFP_KERNEL,
--							    "%s:err + break",
--							    dev_name(up->dev));
--			if (i == SCIx_BRI_IRQ)
--				continue;
--			if (i == SCIx_TEIDRI_IRQ) {
--				port->irqstr[j] = kasprintf(GFP_KERNEL,
--							    "%s:tx end + rx ready",
--							    dev_name(up->dev));
--				desc = sci_irq_desc + SCIx_RXI_IRQ;
--			}
--		}
--
--		if (!port->irqstr[j])
--			port->irqstr[j] = kasprintf(GFP_KERNEL, "%s:%s",
--						    dev_name(up->dev),
--						    desc->desc);
-+		port->irqstr[j] = kasprintf(GFP_KERNEL, "%s:%s",
-+					    dev_name(up->dev), desc->desc);
- 		if (!port->irqstr[j]) {
- 			ret = -ENOMEM;
- 			goto out_nomem;
-@@ -2842,17 +2832,17 @@ static int sci_init_single(struct platform_device *dev,
- 
- 	/* The SCI generates several interrupts. They can be muxed together or
- 	 * connected to different interrupt lines. In the muxed case only one
--	 * interrupt resource is specified. In the non-muxed case three or four
--	 * interrupt resources are specified, as the BRI interrupt is optional.
-+	 * interrupt resource is specified as there is only one interrupt ID.
-+	 * In the non-muxed case, up to 6 interrupt signals might be generated
-+	 * from the SCI, however those signals might have their own individual
-+	 * interrupt ID numbers, or muxed together with another interrupt.
- 	 */
- 	if (sci_port->irqs[0] < 0)
- 		return -ENXIO;
- 
--	if (sci_port->irqs[1] < 0) {
--		sci_port->irqs[1] = sci_port->irqs[0];
--		sci_port->irqs[2] = sci_port->irqs[0];
--		sci_port->irqs[3] = sci_port->irqs[0];
--	}
-+	if (sci_port->irqs[1] < 0)
-+		for (i = 1; i < ARRAY_SIZE(sci_port->irqs) - 1; i++)
-+			sci_port->irqs[i] = sci_port->irqs[0];
- 
- 	sci_port->params = sci_probe_regmap(p);
- 	if (unlikely(sci_port->params == NULL))
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+
+> ---
+> 
+>  drivers/i2c/busses/i2c-rcar.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
+> index 2688520110d1..791a4aa34fdd 100644
+> --- a/drivers/i2c/busses/i2c-rcar.c
+> +++ b/drivers/i2c/busses/i2c-rcar.c
+> @@ -796,14 +796,8 @@ static int rcar_i2c_master_xfer(struct i2c_adapter *adap,
+>  	if (ret < 0)
+>  		goto out;
+>  
+> -	for (i = 0; i < num; i++) {
+> -		/* This HW can't send STOP after address phase */
+> -		if (msgs[i].len == 0) {
+> -			ret = -EOPNOTSUPP;
+> -			goto out;
+> -		}
+> +	for (i = 0; i < num; i++)
+>  		rcar_i2c_request_dma(priv, msgs + i);
+> -	}
+>  
+>  	/* init first message */
+>  	priv->msg = msgs;
+> @@ -890,6 +884,10 @@ static const struct i2c_algorithm rcar_i2c_algo = {
+>  	.unreg_slave	= rcar_unreg_slave,
+>  };
+>  
+> +static const struct i2c_adapter_quirks rcar_i2c_quirks = {
+> +	.flags = I2C_AQ_NO_ZERO_LEN,
+> +};
+> +
+>  static const struct of_device_id rcar_i2c_dt_ids[] = {
+>  	{ .compatible = "renesas,i2c-r8a7778", .data = (void *)I2C_RCAR_GEN1 },
+>  	{ .compatible = "renesas,i2c-r8a7779", .data = (void *)I2C_RCAR_GEN1 },
+> @@ -943,6 +941,7 @@ static int rcar_i2c_probe(struct platform_device *pdev)
+>  	adap->dev.parent = dev;
+>  	adap->dev.of_node = dev->of_node;
+>  	adap->bus_recovery_info = &rcar_i2c_bri;
+> +	adap->quirks = &rcar_i2c_quirks;
+>  	i2c_set_adapdata(adap, priv);
+>  	strlcpy(adap->name, pdev->name, sizeof(adap->name));
+>  
+> -- 
+> 2.11.0
+> 
+
 -- 
-2.16.1
-
+Regards,
+Niklas S�derlund
