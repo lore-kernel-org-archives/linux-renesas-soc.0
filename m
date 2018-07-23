@@ -1,81 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:59098 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387877AbeGTNPz (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53230 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387854AbeGWNFY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jul 2018 09:15:55 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Tejun Heo <tj@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-ide@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] ata: sata_rcar: Provide a short-hand for &pdev->dev
-Date: Fri, 20 Jul 2018 14:27:38 +0200
-Message-Id: <20180720122739.30056-2-geert+renesas@glider.be>
-In-Reply-To: <20180720122739.30056-1-geert+renesas@glider.be>
-References: <20180720122739.30056-1-geert+renesas@glider.be>
+        Mon, 23 Jul 2018 09:05:24 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 4/5] ARM: shmobile: defconfig: Disable /sbin/hotplug fork-bomb
+Date: Mon, 23 Jul 2018 14:04:21 +0200
+Message-Id: <bbb94a120136c4d8e0076d107f39fda14666ea65.1532346690.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1532346690.git.horms+renesas@verge.net.au>
+References: <cover.1532346690.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-No functional changes.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+
+No recent mainstream system uses the /sbin/hotplug fork-bomb any more.
+Commit 7934779a69f1184f29d786b89e77dd14519bd226 ("Driver-Core: disable
+/sbin/hotplug by default") disabled it in Kconfig, but the various
+defconfigs weren't updated.
+
+According to the systemd requirements, this option must be disabled, as
+it slows down the system and confuses udev.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/ata/sata_rcar.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ arch/arm/configs/shmobile_defconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/ata/sata_rcar.c b/drivers/ata/sata_rcar.c
-index 6456e07db72a7ea4..f972c2c5ebd34aff 100644
---- a/drivers/ata/sata_rcar.c
-+++ b/drivers/ata/sata_rcar.c
-@@ -881,6 +881,7 @@ MODULE_DEVICE_TABLE(of, sata_rcar_match);
- 
- static int sata_rcar_probe(struct platform_device *pdev)
- {
-+	struct device *dev = &pdev->dev;
- 	struct ata_host *host;
- 	struct sata_rcar_priv *priv;
- 	struct resource *mem;
-@@ -891,15 +892,14 @@ static int sata_rcar_probe(struct platform_device *pdev)
- 	if (irq <= 0)
- 		return -EINVAL;
- 
--	priv = devm_kzalloc(&pdev->dev, sizeof(struct sata_rcar_priv),
--			   GFP_KERNEL);
-+	priv = devm_kzalloc(dev, sizeof(struct sata_rcar_priv), GFP_KERNEL);
- 	if (!priv)
- 		return -ENOMEM;
- 
--	priv->type = (enum sata_rcar_type)of_device_get_match_data(&pdev->dev);
--	priv->clk = devm_clk_get(&pdev->dev, NULL);
-+	priv->type = (enum sata_rcar_type)of_device_get_match_data(dev);
-+	priv->clk = devm_clk_get(dev, NULL);
- 	if (IS_ERR(priv->clk)) {
--		dev_err(&pdev->dev, "failed to get access to sata clock\n");
-+		dev_err(dev, "failed to get access to sata clock\n");
- 		return PTR_ERR(priv->clk);
- 	}
- 
-@@ -907,9 +907,9 @@ static int sata_rcar_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	host = ata_host_alloc(&pdev->dev, 1);
-+	host = ata_host_alloc(dev, 1);
- 	if (!host) {
--		dev_err(&pdev->dev, "ata_host_alloc failed\n");
-+		dev_err(dev, "ata_host_alloc failed\n");
- 		ret = -ENOMEM;
- 		goto cleanup;
- 	}
-@@ -917,7 +917,7 @@ static int sata_rcar_probe(struct platform_device *pdev)
- 	host->private_data = priv;
- 
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	priv->base = devm_ioremap_resource(&pdev->dev, mem);
-+	priv->base = devm_ioremap_resource(dev, mem);
- 	if (IS_ERR(priv->base)) {
- 		ret = PTR_ERR(priv->base);
- 		goto cleanup;
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index a0d88af9ec22..f8faf3729464 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -58,7 +58,6 @@ CONFIG_IP_PNP=y
+ CONFIG_IP_PNP_DHCP=y
+ CONFIG_CAN=y
+ CONFIG_CAN_RCAR=y
+-CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
+ CONFIG_DEVTMPFS=y
+ CONFIG_DEVTMPFS_MOUNT=y
+ CONFIG_DMA_CMA=y
 -- 
-2.17.1
+2.11.0
