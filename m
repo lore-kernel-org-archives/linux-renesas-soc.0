@@ -1,177 +1,120 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:41083 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731242AbeGQNa7 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53389 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387854AbeGWNHf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jul 2018 09:30:59 -0400
-Received: by mail-vk0-f67.google.com with SMTP id j11-v6so498598vke.8
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Jul 2018 05:58:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <1530874968-5960-1-git-send-email-sudeep.holla@arm.com> <1530874968-5960-6-git-send-email-sudeep.holla@arm.com>
-In-Reply-To: <1530874968-5960-6-git-send-email-sudeep.holla@arm.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 17 Jul 2018 14:58:14 +0200
-Message-ID: <CAMuHMdXw9My+P1UCJ19Qdjq4O9gY_0QVFZaw6C5Ytmpyac59Vw@mail.gmail.com>
-Subject: Re: [PATCH v3 5/7] arm64: smp: remove cpu and numa topology
- information when hotplugging out CPU
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Hanjun Guo <hanjun.guo@linaro.org>,
-        ganapatrao.kulkarni@cavium.com, morten.rasmussen@arm.com,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 23 Jul 2018 09:07:35 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 7/8] ARM: dts: gr-peach: Add GR-Peach audiocamerashield support
+Date: Mon, 23 Jul 2018 14:06:25 +0200
+Message-Id: <c85aabb841f5ed544b492544e8280f2a9c1cc647.1532345886.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1532345886.git.horms+renesas@verge.net.au>
+References: <cover.1532345886.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sudeep,
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-On Fri, Jul 6, 2018 at 1:04 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
-> We already repopulate the information on CPU hotplug-in, so we can safely
-> remove the CPU topology and NUMA cpumap information during CPU hotplug
-> out operation. This will help to provide the correct cpumask for
-> scheduler domains.
->
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Tested-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
-> Tested-by: Hanjun Guo <hanjun.guo@linaro.org>
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Add device tree header for GR-Peach's audiocamerashield with MT9V111
+image sensor.
 
-This is now commit 7f9545aa1a91a9a4 ("arm64: smp: remove cpu and numa
-topology information when hotplugging out CPU") in arm64/for-next/core, to
-which I bisected a PSCI checker regression on systems with two CPU clusters.
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi | 79 +++++++++++++++++++++++
+ 1 file changed, 79 insertions(+)
+ create mode 100644 arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi
 
-Dmesg on R-Car H3 (4xCA57+4xCA53) before/after:
-
-     psci_checker: PSCI checker started using 8 CPUs
-
-8 CPU cores detected.
-
-     psci_checker: Starting hotplug tests
-     psci_checker: Trying to turn off and on again all CPUs
-     CPU1: shutdown
-     psci: CPU1 killed.
-     CPU2: shutdown
-     psci: CPU2 killed.
-    -NOHZ: local_softirq_pending 55
-     CPU3: shutdown
-     psci: CPU3 killed.
-    -NOHZ: local_softirq_pending 51
-     CPU4: shutdown
-     psci: CPU4 killed.
-     NOHZ: local_softirq_pending 55
-     CPU5: shutdown
-     psci: CPU5 killed.
-     NOHZ: local_softirq_pending 55
-     CPU6: shutdown
-     psci: CPU6 killed.
-     NOHZ: local_softirq_pending 55
-     CPU7: shutdown
-     psci: CPU7 killed.
-     Detected PIPT I-cache on CPU1
-     CPU1: Booted secondary processor 0x0000000001 [0x411fd073]
-     Detected PIPT I-cache on CPU2
-     CPU2: Booted secondary processor 0x0000000002 [0x411fd073]
-     Detected PIPT I-cache on CPU3
-     CPU3: Booted secondary processor 0x0000000003 [0x411fd073]
-     Detected VIPT I-cache on CPU4
-     CPU4: Booted secondary processor 0x0000000100 [0x410fd034]
-     cpufreq: cpufreq_online: CPU4: Running at unlisted freq: 1198080 KHz
-     cpufreq: cpufreq_online: CPU4: Unlisted initial frequency changed
-to: 1200000 KHz
-     Detected VIPT I-cache on CPU5
-     CPU5: Booted secondary processor 0x0000000101 [0x410fd034]
-     Detected VIPT I-cache on CPU6
-     CPU6: Booted secondary processor 0x0000000102 [0x410fd034]
-     Detected VIPT I-cache on CPU7
-     CPU7: Booted secondary processor 0x0000000103 [0x410fd034]
-
-All but CPU0 tested, as expected.
-
-    psci_checker: Trying to turn off and on again group 0 (CPUs 0-3)
-
-4 big CPU cores detected.
-
-     CPU1: shutdown
-     psci: CPU1 killed.
-    -NOHZ: local_softirq_pending 55
-    +NOHZ: local_softirq_pending 51
-     CPU2: shutdown
-     psci: CPU2 killed.
-     NOHZ: local_softirq_pending 51
-     CPU3: shutdown
-     psci: CPU3 killed.
-     Detected PIPT I-cache on CPU1
-     CPU1: Booted secondary processor 0x0000000001 [0x411fd073]
-     Detected PIPT I-cache on CPU2
-     CPU2: Booted secondary processor 0x0000000002 [0x411fd073]
-     Detected PIPT I-cache on CPU3
-     CPU3: Booted secondary processor 0x0000000003 [0x411fd073]
-
-All but CPU0 tested, as expected.
-
-    psci_checker: Trying to turn off and on again group 1 (CPUs 4-7)
-
-4 LITTLE CPU cores detected.
-
-     CPU4: shutdown
-     psci: CPU4 killed.
-     NOHZ: local_softirq_pending 55
-    -CPU5: shutdown
-    -psci: CPU5 killed.
-    -NOHZ: local_softirq_pending 55
-    -CPU6: shutdown
-    -psci: CPU6 killed.
-    -NOHZ: local_softirq_pending 55
-    -CPU7: shutdown
-    -psci: CPU7 killed.
-     Detected VIPT I-cache on CPU4
-     CPU4: Booted secondary processor 0x0000000100 [0x410fd034]
-    -cpufreq: cpufreq_online: CPU4: Running at unlisted freq: 1198080 KHz
-    -cpufreq: cpufreq_online: CPU4: Unlisted initial frequency changed
-to: 1200000 KHz
-    -Detected VIPT I-cache on CPU5
-    -CPU5: Booted secondary processor 0x0000000101 [0x410fd034]
-    -Detected VIPT I-cache on CPU6
-    -CPU6: Booted secondary processor 0x0000000102 [0x410fd034]
-    -Detected VIPT I-cache on CPU7
-    -CPU7: Booted secondary processor 0x0000000103 [0x410fd034]
-
-Woops, CPU5-7 are not tested.
-
-    psci_checker: Hotplug tests passed OK
-
-
-> --- a/arch/arm64/kernel/smp.c
-> +++ b/arch/arm64/kernel/smp.c
-> @@ -279,6 +279,9 @@ int __cpu_disable(void)
->         if (ret)
->                 return ret;
->
-> +       remove_cpu_topology(cpu);
-> +       numa_remove_cpu(cpu);
-> +
->         /*
->          * Take this CPU offline.  Once we clear this, we can't return,
->          * and we must not schedule until we're ready to give up the cpu.
-
-A simple revert is not sufficient, as that causes
-
-    watchdog: BUG: soft lockup - CPU#2 stuck for 22s! [cpuhp/2:21]
-
-Do you have an idea how to fix this?
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi b/arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi
+new file mode 100644
+index 000000000000..e31a9e3c18a2
+--- /dev/null
++++ b/arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi
+@@ -0,0 +1,79 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the GR-Peach audiocamera shield expansion board
++ *
++ * Copyright (C) 2017 Jacopo Mondi <jacopo+renesas@jmondi.org>
++ */
++
++#include "r7s72100.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
++
++/ {
++	/* On-board camera clock. */
++	camera_clk: camera_clk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <27000000>;
++	};
++};
++
++&pinctrl {
++	i2c1_pins: i2c1 {
++		/* P1_2 as SCL; P1_3 as SDA */
++		pinmux = <RZA1_PINMUX(1, 2, 1)>, <RZA1_PINMUX(1, 3, 1)>;
++	};
++
++	vio_pins: vio {
++		/* CEU pins: VIO_D[0-10], VIO_VD, VIO_HD, VIO_CLK */
++		pinmux = <RZA1_PINMUX(1, 0, 5)>, /* VIO_VD */
++			 <RZA1_PINMUX(1, 1, 5)>, /* VIO_HD */
++			 <RZA1_PINMUX(2, 0, 7)>, /* VIO_D0 */
++			 <RZA1_PINMUX(2, 1, 7)>, /* VIO_D1 */
++			 <RZA1_PINMUX(2, 2, 7)>, /* VIO_D2 */
++			 <RZA1_PINMUX(2, 3, 7)>, /* VIO_D3 */
++			 <RZA1_PINMUX(2, 4, 7)>, /* VIO_D4 */
++			 <RZA1_PINMUX(2, 5, 7)>, /* VIO_D5 */
++			 <RZA1_PINMUX(2, 6, 7)>, /* VIO_D6 */
++			 <RZA1_PINMUX(2, 7, 7)>, /* VIO_D7 */
++			 <RZA1_PINMUX(10, 0, 6)>; /* VIO_CLK */
++	};
++};
++
++&i2c1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c1_pins>;
++
++	status = "okay";
++	clock-frequency = <100000>;
++
++	camera@48 {
++		compatible = "aptina,mt9v111";
++		reg = <0x48>;
++
++		clocks = <&camera_clk>;
++
++		port {
++			mt9v111_out: endpoint {
++				remote-endpoint = <&ceu_in>;
++			};
++		};
++	};
++};
++
++&ceu {
++	pinctrl-names = "default";
++	pinctrl-0 = <&vio_pins>;
++
++	status = "okay";
++
++	port {
++		ceu_in: endpoint {
++			hsync-active = <1>;
++			vsync-active = <1>;
++			bus-width = <8>;
++			pclk-sample = <1>;
++			remote-endpoint = <&mt9v111_out>;
++		};
++	};
++};
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.11.0
