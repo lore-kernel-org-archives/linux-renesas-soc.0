@@ -1,54 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53230 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387854AbeGWNFW (ORCPT
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:46980 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387883AbeGWNkd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:05:22 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Mon, 23 Jul 2018 09:40:33 -0400
+Received: by mail-oi0-f65.google.com with SMTP id y207-v6so773189oie.13
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Jul 2018 05:39:31 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <87r2jy4yfl.wl-kuninori.morimoto.gx@renesas.com>
+References: <1531856883-19645-1-git-send-email-ykaneko0929@gmail.com>
+ <1531856883-19645-3-git-send-email-ykaneko0929@gmail.com> <87r2jy4yfl.wl-kuninori.morimoto.gx@renesas.com>
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Date: Mon, 23 Jul 2018 21:39:30 +0900
+Message-ID: <CAH1o70Lj9JNKivgWx6Rb1K5SaxkaMuQn50f4e3+tKSuRCt9vhA@mail.gmail.com>
+Subject: Re: [PATCH/RFT 2/7] ASoC: rsnd: Document R-Car M3-N support
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/5] ARM: shmobile: defconfig: Enable support for RZN1D-DB
-Date: Mon, 23 Jul 2018 14:04:20 +0200
-Message-Id: <b540eba16fd0b0150774b0129fe7a150f10fed3d.1532346690.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1532346690.git.horms+renesas@verge.net.au>
-References: <cover.1532346690.git.horms+renesas@verge.net.au>
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Morimoto-san,
 
-Enable support for the Renesas RZN1D-DB Board:
-  - RZ/N1D (R9A06G032) base SoC support,
-  - Synopsys DesignWare 8250 serial port support.
+Thank you for your review.
+I will exclude this patch from the series and repost this as a single
+patch to ALSA SoC ML.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/configs/shmobile_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Best regards,
+Kaneko
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 152d16ad7c91..a0d88af9ec22 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -22,6 +22,7 @@ CONFIG_ARCH_R8A7791=y
- CONFIG_ARCH_R8A7792=y
- CONFIG_ARCH_R8A7793=y
- CONFIG_ARCH_R8A7794=y
-+CONFIG_ARCH_R9A06G032=y
- CONFIG_ARCH_SH73A0=y
- CONFIG_PL310_ERRATA_588369=y
- CONFIG_ARM_ERRATA_754322=y
-@@ -87,6 +88,7 @@ CONFIG_INPUT_ADXL34X=y
- # CONFIG_LEGACY_PTYS is not set
- CONFIG_SERIAL_8250=y
- CONFIG_SERIAL_8250_CONSOLE=y
-+CONFIG_SERIAL_8250_DW=y
- CONFIG_SERIAL_8250_EM=y
- CONFIG_SERIAL_SH_SCI=y
- CONFIG_I2C_CHARDEV=y
--- 
-2.11.0
+2018-07-20 8:12 GMT+09:00 Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>:
+>
+> Hi
+>
+> Thnak you for your patch
+>
+>> From: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+>>
+>> Document support for the sound modules in the Renesas M3-N (r8a77965)
+>> SoC.
+>>
+>> No driver update is needed.
+>>
+>> Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+>> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+>> ---
+>
+> Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>
+> But, I think this patch should go to ALSA SoC ML.
+>
+>
+>>  Documentation/devicetree/bindings/sound/renesas,rsnd.txt | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+>> index b86d790..9e764270 100644
+>> --- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+>> +++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+>> @@ -352,6 +352,7 @@ Required properties:
+>>                                   - "renesas,rcar_sound-r8a7794" (R-Car E2)
+>>                                   - "renesas,rcar_sound-r8a7795" (R-Car H3)
+>>                                   - "renesas,rcar_sound-r8a7796" (R-Car M3-W)
+>> +                                 - "renesas,rcar_sound-r8a77965" (R-Car M3-N)
+>>  - reg                                : Should contain the register physical address.
+>>                                 required register is
+>>                                  SRU/ADG/SSI      if generation1
+>> --
+>> 1.9.1
+>>
