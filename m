@@ -1,209 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53389 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:53230 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387854AbeGWNH0 (ORCPT
+        with ESMTP id S2387854AbeGWNFV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:07:26 -0400
+        Mon, 23 Jul 2018 09:05:21 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/8] ARM: dts: r8a77(43|9[013]): Add missing OPP properties for CPUs
-Date: Mon, 23 Jul 2018 14:06:20 +0200
-Message-Id: <8199e49ff1f654bbe8bed90fd6710bc097a89d02.1532345886.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1532345886.git.horms+renesas@verge.net.au>
-References: <cover.1532345886.git.horms+renesas@verge.net.au>
+Subject: [PATCH 1/5] ARM: shmobile: defconfig: Drop NET_VENDOR_<FOO>=n
+Date: Mon, 23 Jul 2018 14:04:18 +0200
+Message-Id: <49141c8248505bd45e77dd7673a952a14f8fd390.1532346690.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1532346690.git.horms+renesas@verge.net.au>
+References: <cover.1532346690.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The OPP properties, like "operating-points", should either be present
-for all the CPUs of a cluster or none. If these are present only for a
-subset of CPUs of a cluster then things will start falling apart as soon
-as the CPUs are brought online in a different order. For example, this
-will happen because the operating system looks for such properties in
-the CPU node it is trying to bring up, so that it can create an OPP
-table.
+Enabling NET_VENDOR_* Kconfig options does not directly affect the
+kernel, so there is no need to explicitly disable them.
+The individual network drivers under them are still disabled.
 
-Add such missing properties.
-
-Fix other missing properties (like, clock latency, voltage tolerance,
-etc) as well to make it all work.
-
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7743.dtsi |  9 +++++++++
- arch/arm/boot/dts/r8a7790.dtsi | 34 ++++++++++++++++++++++++++++++++--
- arch/arm/boot/dts/r8a7791.dtsi | 14 ++++++++++++--
- arch/arm/boot/dts/r8a7793.dtsi | 15 +++++++++++++--
- 4 files changed, 66 insertions(+), 6 deletions(-)
+ arch/arm/configs/shmobile_defconfig | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 142949d7066f..e4fb31c4f0ee 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -98,8 +98,17 @@
- 			reg = <1>;
- 			clock-frequency = <1500000000>;
- 			clocks = <&cpg CPG_CORE R8A7743_CLK_Z>;
-+			clock-latency = <300000>; /* 300 us */
- 			power-domains = <&sysc R8A7743_PD_CA15_CPU1>;
- 			next-level-cache = <&L2_CA15>;
-+
-+			/* kHz - uV - OPPs unknown yet */
-+			operating-points = <1500000 1000000>,
-+					   <1312500 1000000>,
-+					   <1125000 1000000>,
-+					   < 937500 1000000>,
-+					   < 750000 1000000>,
-+					   < 375000 1000000>;
- 		};
- 
- 		L2_CA15: cache-controller-0 {
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 4d06b154bd7e..c4324b1a2ec4 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -79,12 +79,12 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <0>;
- 			clock-frequency = <1300000000>;
--			voltage-tolerance = <1>; /* 1% */
- 			clocks = <&cpg CPG_CORE R8A7790_CLK_Z>;
--			clock-latency = <300000>; /* 300 us */
- 			power-domains = <&sysc R8A7790_PD_CA15_CPU0>;
- 			next-level-cache = <&L2_CA15>;
- 			capacity-dmips-mhz = <1024>;
-+			voltage-tolerance = <1>; /* 1% */
-+			clock-latency = <300000>; /* 300 us */
- 
- 			/* kHz - uV - OPPs unknown yet */
- 			operating-points = <1400000 1000000>,
-@@ -104,6 +104,16 @@
- 			power-domains = <&sysc R8A7790_PD_CA15_CPU1>;
- 			next-level-cache = <&L2_CA15>;
- 			capacity-dmips-mhz = <1024>;
-+			voltage-tolerance = <1>; /* 1% */
-+			clock-latency = <300000>; /* 300 us */
-+
-+			/* kHz - uV - OPPs unknown yet */
-+			operating-points = <1400000 1000000>,
-+					   <1225000 1000000>,
-+					   <1050000 1000000>,
-+					   < 875000 1000000>,
-+					   < 700000 1000000>,
-+					   < 350000 1000000>;
- 		};
- 
- 		cpu2: cpu@2 {
-@@ -115,6 +125,16 @@
- 			power-domains = <&sysc R8A7790_PD_CA15_CPU2>;
- 			next-level-cache = <&L2_CA15>;
- 			capacity-dmips-mhz = <1024>;
-+			voltage-tolerance = <1>; /* 1% */
-+			clock-latency = <300000>; /* 300 us */
-+
-+			/* kHz - uV - OPPs unknown yet */
-+			operating-points = <1400000 1000000>,
-+					   <1225000 1000000>,
-+					   <1050000 1000000>,
-+					   < 875000 1000000>,
-+					   < 700000 1000000>,
-+					   < 350000 1000000>;
- 		};
- 
- 		cpu3: cpu@3 {
-@@ -126,6 +146,16 @@
- 			power-domains = <&sysc R8A7790_PD_CA15_CPU3>;
- 			next-level-cache = <&L2_CA15>;
- 			capacity-dmips-mhz = <1024>;
-+			voltage-tolerance = <1>; /* 1% */
-+			clock-latency = <300000>; /* 300 us */
-+
-+			/* kHz - uV - OPPs unknown yet */
-+			operating-points = <1400000 1000000>,
-+					   <1225000 1000000>,
-+					   <1050000 1000000>,
-+					   < 875000 1000000>,
-+					   < 700000 1000000>,
-+					   < 350000 1000000>;
- 		};
- 
- 		cpu4: cpu@100 {
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 6e1dd7ad7bd6..d1d726a1364a 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -78,11 +78,11 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <0>;
- 			clock-frequency = <1500000000>;
--			voltage-tolerance = <1>; /* 1% */
- 			clocks = <&cpg CPG_CORE R8A7791_CLK_Z>;
--			clock-latency = <300000>; /* 300 us */
- 			power-domains = <&sysc R8A7791_PD_CA15_CPU0>;
- 			next-level-cache = <&L2_CA15>;
-+			voltage-tolerance = <1>; /* 1% */
-+			clock-latency = <300000>; /* 300 us */
- 
- 			/* kHz - uV - OPPs unknown yet */
- 			operating-points = <1500000 1000000>,
-@@ -101,6 +101,16 @@
- 			clocks = <&cpg CPG_CORE R8A7791_CLK_Z>;
- 			power-domains = <&sysc R8A7791_PD_CA15_CPU1>;
- 			next-level-cache = <&L2_CA15>;
-+			voltage-tolerance = <1>; /* 1% */
-+			clock-latency = <300000>; /* 300 us */
-+
-+			/* kHz - uV - OPPs unknown yet */
-+			operating-points = <1500000 1000000>,
-+					   <1312500 1000000>,
-+					   <1125000 1000000>,
-+					   < 937500 1000000>,
-+					   < 750000 1000000>,
-+					   < 375000 1000000>;
- 		};
- 
- 		L2_CA15: cache-controller-0 {
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 4abecfc0ca98..1e6439b85a6b 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -70,10 +70,10 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <0>;
- 			clock-frequency = <1500000000>;
--			voltage-tolerance = <1>; /* 1% */
- 			clocks = <&cpg CPG_CORE R8A7793_CLK_Z>;
--			clock-latency = <300000>; /* 300 us */
- 			power-domains = <&sysc R8A7793_PD_CA15_CPU0>;
-+			voltage-tolerance = <1>; /* 1% */
-+			clock-latency = <300000>; /* 300 us */
- 
- 			/* kHz - uV - OPPs unknown yet */
- 			operating-points = <1500000 1000000>,
-@@ -92,6 +92,17 @@
- 			clock-frequency = <1500000000>;
- 			clocks = <&cpg CPG_CORE R8A7793_CLK_Z>;
- 			power-domains = <&sysc R8A7793_PD_CA15_CPU1>;
-+			voltage-tolerance = <1>; /* 1% */
-+			clock-latency = <300000>; /* 300 us */
-+
-+			/* kHz - uV - OPPs unknown yet */
-+			operating-points = <1500000 1000000>,
-+					   <1312500 1000000>,
-+					   <1125000 1000000>,
-+					   < 937500 1000000>,
-+					   < 750000 1000000>,
-+					   < 375000 1000000>;
-+			next-level-cache = <&L2_CA15>;
- 		};
- 
- 		L2_CA15: cache-controller-0 {
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index b49887e86a3d..e30e51809cfc 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -72,22 +72,9 @@ CONFIG_BLK_DEV_SD=y
+ CONFIG_ATA=y
+ CONFIG_SATA_RCAR=y
+ CONFIG_NETDEVICES=y
+-# CONFIG_NET_VENDOR_ARC is not set
+-# CONFIG_NET_CADENCE is not set
+-# CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_VENDOR_CIRRUS is not set
+-# CONFIG_NET_VENDOR_FARADAY is not set
+-# CONFIG_NET_VENDOR_INTEL is not set
+-# CONFIG_NET_VENDOR_MARVELL is not set
+-# CONFIG_NET_VENDOR_MICREL is not set
+-# CONFIG_NET_VENDOR_NATSEMI is not set
+ CONFIG_SH_ETH=y
+ CONFIG_RAVB=y
+-# CONFIG_NET_VENDOR_SEEQ is not set
+ CONFIG_SMSC911X=y
+-# CONFIG_NET_VENDOR_STMICRO is not set
+-# CONFIG_NET_VENDOR_VIA is not set
+-# CONFIG_NET_VENDOR_WIZNET is not set
+ CONFIG_MICREL_PHY=y
+ CONFIG_SMSC_PHY=y
+ CONFIG_INPUT_EVDEV=y
 -- 
 2.11.0
