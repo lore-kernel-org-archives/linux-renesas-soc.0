@@ -1,83 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:55742 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388441AbeGKOZn (ORCPT
+Received: from sauhun.de ([88.99.104.3]:51256 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388149AbeGWV3w (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:25:43 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 05/11] clk: renesas: r8a77980: Add OSC predivider configuration and clock
-Date: Wed, 11 Jul 2018 16:20:54 +0200
-Message-Id: <20180711142100.3765-6-geert+renesas@glider.be>
-In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
-References: <20180711142100.3765-1-geert+renesas@glider.be>
+        Mon, 23 Jul 2018 17:29:52 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 08/12] i2c: tegra: use core to detect 'no zero length' quirk
+Date: Mon, 23 Jul 2018 22:26:12 +0200
+Message-Id: <20180723202617.15230-9-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
+References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen3 Hardware Manual Rev.0.54 documents the relation between the
-MD13 and MD14 mode pins, and the OSC EXTAL predivider, as used by the
-OSC clock.  Hence augment the configuration structure with all
-documented predivider values.
+And don't reimplement in the driver.
 
-Add the OSC clock using the configured predivider.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/clk/renesas/r8a77980-cpg-mssr.c | 24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clk/renesas/r8a77980-cpg-mssr.c b/drivers/clk/renesas/r8a77980-cpg-mssr.c
-index d7ebd9ec00594fc8..093677b8927800fa 100644
---- a/drivers/clk/renesas/r8a77980-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77980-cpg-mssr.c
-@@ -96,6 +96,8 @@ static const struct cpg_core_clk r8a77980_core_clks[] __initconst = {
- 	DEF_DIV6P1("canfd",	R8A77980_CLK_CANFD, CLK_PLL1_DIV4, 0x244),
- 	DEF_DIV6P1("csi0",	R8A77980_CLK_CSI0,  CLK_PLL1_DIV4, 0x00c),
- 	DEF_DIV6P1("mso",	R8A77980_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
-+
-+	DEF_GEN3_OSC("osc",	R8A77980_CLK_OSC,   CLK_EXTAL,     8),
+Only build tested.
+
+ drivers/i2c/busses/i2c-tegra.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 60c8561fbe65..437294ea2f0a 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -684,9 +684,6 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 
+ 	tegra_i2c_flush_fifos(i2c_dev);
+ 
+-	if (msg->len == 0)
+-		return -EINVAL;
+-
+ 	i2c_dev->msg_buf = msg->buf;
+ 	i2c_dev->msg_buf_remaining = msg->len;
+ 	i2c_dev->msg_err = I2C_ERR_NONE;
+@@ -831,6 +828,7 @@ static const struct i2c_algorithm tegra_i2c_algo = {
+ 
+ /* payload size is only 12 bit */
+ static const struct i2c_adapter_quirks tegra_i2c_quirks = {
++	.flags = I2C_AQ_NO_ZERO_LEN,
+ 	.max_read_len = 4096,
+ 	.max_write_len = 4096,
  };
- 
- static const struct mssr_mod_clk r8a77980_mod_clks[] __initconst = {
-@@ -171,23 +173,23 @@ static const unsigned int r8a77980_crit_mod_clks[] __initconst = {
-  */
- 
- /*
-- *   MD		EXTAL		PLL2	PLL1	PLL3
-+ *   MD		EXTAL		PLL2	PLL1	PLL3	OSC
-  * 14 13	(MHz)
-- * --------------------------------------------------
-- * 0  0		16.66 x 1	x240	x192	x192
-- * 0  1		20    x 1	x200	x160	x160
-- * 1  0		27    x 1	x148	x118	x118
-- * 1  1		33.33 / 2	x240	x192	x192
-+ * --------------------------------------------------------
-+ * 0  0		16.66 x 1	x240	x192	x192	/16
-+ * 0  1		20    x 1	x200	x160	x160	/19
-+ * 1  0		27    x 1	x148	x118	x118	/24
-+ * 1  1		33.33 / 2	x240	x192	x192	/32
-  */
- #define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 13) | \
- 					 (((md) & BIT(13)) >> 13))
- 
- static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[4] __initconst = {
--	/* EXTAL div	PLL1 mult/div	PLL3 mult/div */
--	{ 1,		192,	1,	192,	1,	},
--	{ 1,		160,	1,	160,	1,	},
--	{ 1,		118,	1,	118,	1,	},
--	{ 2,		192,	1,	192,	1,	},
-+	/* EXTAL div	PLL1 mult/div	PLL3 mult/div	OSC prediv */
-+	{ 1,		192,	1,	192,	1,	16,	},
-+	{ 1,		160,	1,	160,	1,	19,	},
-+	{ 1,		118,	1,	118,	1,	24,	},
-+	{ 2,		192,	1,	192,	1,	32,	},
- };
- 
- static int __init r8a77980_cpg_mssr_init(struct device *dev)
 -- 
-2.17.1
+2.11.0
