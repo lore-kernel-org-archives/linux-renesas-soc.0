@@ -1,16 +1,20 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:51248 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388070AbeGWV3s (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 23 Jul 2018 17:29:48 -0400
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-i2c@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 07/12] i2c: stu300: use core to detect 'no zero length' quirk
-Date: Mon, 23 Jul 2018 22:26:11 +0200
-Message-Id: <20180723202617.15230-8-wsa+renesas@sang-engineering.com>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 03/12] i2c: mxs: use core to detect 'no zero length' quirk
+Date: Mon, 23 Jul 2018 22:26:07 +0200
+Message-Id: <20180723202617.15230-4-wsa+renesas@sang-engineering.com>
 In-Reply-To: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
 References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 And don't reimplement in the driver.
@@ -20,45 +24,41 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Only build tested.
 
- drivers/i2c/busses/i2c-stu300.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/i2c/busses/i2c-mxs.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-stu300.c b/drivers/i2c/busses/i2c-stu300.c
-index fce52bdab2b7..5503fa171df0 100644
---- a/drivers/i2c/busses/i2c-stu300.c
-+++ b/drivers/i2c/busses/i2c-stu300.c
-@@ -673,12 +673,6 @@ static int stu300_xfer_msg(struct i2c_adapter *adap,
- 			msg->addr, msg->len, msg->flags, stop);
- 	}
+diff --git a/drivers/i2c/busses/i2c-mxs.c b/drivers/i2c/busses/i2c-mxs.c
+index 642c58946d8d..7d79317a1046 100644
+--- a/drivers/i2c/busses/i2c-mxs.c
++++ b/drivers/i2c/busses/i2c-mxs.c
+@@ -567,9 +567,6 @@ static int mxs_i2c_xfer_msg(struct i2c_adapter *adap, struct i2c_msg *msg,
+ 	dev_dbg(i2c->dev, "addr: 0x%04x, len: %d, flags: 0x%x, stop: %d\n",
+ 		msg->addr, msg->len, msg->flags, stop);
  
--	/* Zero-length messages are not supported by this hardware */
--	if (msg->len == 0) {
--		ret = -EINVAL;
--		goto exit_disable;
--	}
+-	if (msg->len == 0)
+-		return -EINVAL;
 -
  	/*
- 	 * For some reason, sending the address sometimes fails when running
- 	 * on  the 13 MHz clock. No interrupt arrives. This is a work around,
-@@ -863,6 +857,10 @@ static const struct i2c_algorithm stu300_algo = {
- 	.functionality	= stu300_func,
+ 	 * The MX28 I2C IP block can only do PIO READ for transfer of to up
+ 	 * 4 bytes of length. The write transfer is not limited as it can use
+@@ -683,6 +680,10 @@ static const struct i2c_algorithm mxs_i2c_algo = {
+ 	.functionality = mxs_i2c_func,
  };
  
-+static const struct i2c_adapter_quirks stu300_quirks = {
++static const struct i2c_adapter_quirks mxs_i2c_quirks = {
 +	.flags = I2C_AQ_NO_ZERO_LEN,
 +};
 +
- static int stu300_probe(struct platform_device *pdev)
+ static void mxs_i2c_derive_timing(struct mxs_i2c_dev *i2c, uint32_t speed)
  {
- 	struct stu300_dev *dev;
-@@ -920,6 +918,8 @@ static int stu300_probe(struct platform_device *pdev)
- 	adap->algo = &stu300_algo;
- 	adap->dev.parent = &pdev->dev;
+ 	/* The I2C block clock runs at 24MHz */
+@@ -854,6 +855,7 @@ static int mxs_i2c_probe(struct platform_device *pdev)
+ 	strlcpy(adap->name, "MXS I2C adapter", sizeof(adap->name));
+ 	adap->owner = THIS_MODULE;
+ 	adap->algo = &mxs_i2c_algo;
++	adap->quirks = &mxs_i2c_quirks;
+ 	adap->dev.parent = dev;
+ 	adap->nr = pdev->id;
  	adap->dev.of_node = pdev->dev.of_node;
-+	adap->quirks = &stu300_quirks;
-+
- 	i2c_set_adapdata(adap, dev);
- 
- 	/* i2c device drivers may be active on return from add_adapter() */
 -- 
 2.11.0
