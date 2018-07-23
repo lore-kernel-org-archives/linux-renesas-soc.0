@@ -1,89 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:36489 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752596AbeGCKsF (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53389 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387854AbeGWNHh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Jul 2018 06:48:05 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: mathias.nyman@intel.com, gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 3/3] usb: host: xhci-rcar: Add a condition check about PLL active
-Date: Tue,  3 Jul 2018 19:46:58 +0900
-Message-Id: <1530614818-7634-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1530614818-7634-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1530614818-7634-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Mon, 23 Jul 2018 09:07:37 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 8/8] ARM: dts: r8a77470: Use r8a77470-cpg-mssr binding definitions
+Date: Mon, 23 Jul 2018 14:06:26 +0200
+Message-Id: <c03e2f12a2967f1639ee53299b72922ee3472528.1532345886.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1532345886.git.horms+renesas@verge.net.au>
+References: <cover.1532345886.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds a condition check about the PLL acvice of this
-controller. Otherwise, the controller might cause hang when
-any USB clocks are not supplied yet and accesses the xHCI registers.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Replace the hardcoded clock indices by R8A77470_CLK_* symbols.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/usb/host/xhci-rcar.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ arch/arm/boot/dts/r8a77470.dtsi | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-rcar.c b/drivers/usb/host/xhci-rcar.c
-index 4a22f25..a6e4637 100644
---- a/drivers/usb/host/xhci-rcar.c
-+++ b/drivers/usb/host/xhci-rcar.c
-@@ -29,6 +29,7 @@
- MODULE_FIRMWARE(XHCI_RCAR_FIRMWARE_NAME_V3);
+diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
+index c85032f9605b..87d32d3e23de 100644
+--- a/arch/arm/boot/dts/r8a77470.dtsi
++++ b/arch/arm/boot/dts/r8a77470.dtsi
+@@ -7,7 +7,7 @@
  
- /*** Register Offset ***/
-+#define RCAR_USB3_AXH_STA	0x104	/* AXI Host Control Status */
- #define RCAR_USB3_INT_ENA	0x224	/* Interrupt Enable */
- #define RCAR_USB3_DL_CTRL	0x250	/* FW Download Control & Status */
- #define RCAR_USB3_FW_DATA0	0x258	/* FW Data0 */
-@@ -41,6 +42,12 @@
- #define RCAR_USB3_TX_POL	0xab8	/* USB3.0 TX Polarity */
- 
- /*** Register Settings ***/
-+/* AXI Host Control Status */
-+#define RCAR_USB3_AXH_STA_B3_PLL_ACTIVE		0x00010000
-+#define RCAR_USB3_AXH_STA_B2_PLL_ACTIVE		0x00000001
-+#define RCAR_USB3_AXH_STA_PLL_ACTIVE_MASK (RCAR_USB3_AXH_STA_B3_PLL_ACTIVE | \
-+					   RCAR_USB3_AXH_STA_B2_PLL_ACTIVE)
-+
- /* Interrupt Enable */
- #define RCAR_USB3_INT_XHC_ENA	0x00000001
- #define RCAR_USB3_INT_PME_ENA	0x00000002
-@@ -200,6 +207,22 @@ static int xhci_rcar_download_firmware(struct usb_hcd *hcd)
- 	return retval;
- }
- 
-+static bool xhci_rcar_wait_for_pll_active(struct usb_hcd *hcd)
-+{
-+	int timeout = 1000;
-+	u32 val, mask = RCAR_USB3_AXH_STA_PLL_ACTIVE_MASK;
-+
-+	while (timeout > 0) {
-+		val = readl(hcd->regs + RCAR_USB3_AXH_STA);
-+		if ((val & mask) == mask)
-+			return true;
-+		udelay(1);
-+		timeout--;
-+	}
-+
-+	return false;
-+}
-+
- /* This function needs to initialize a "phy" of usb before */
- int xhci_rcar_init_quirk(struct usb_hcd *hcd)
- {
-@@ -220,6 +243,9 @@ int xhci_rcar_init_quirk(struct usb_hcd *hcd)
- 			xhci_rcar_is_gen3(hcd->self.controller))
- 		xhci->quirks |= XHCI_NO_64BIT_SUPPORT;
- 
-+	if (!xhci_rcar_wait_for_pll_active(hcd))
-+		return -ETIMEDOUT;
-+
- 	return xhci_rcar_download_firmware(hcd);
- }
- 
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+-#include <dt-bindings/clock/renesas-cpg-mssr.h>
++#include <dt-bindings/clock/r8a77470-cpg-mssr.h>
+ / {
+ 	compatible = "renesas,r8a77470";
+ 	#address-cells = <2>;
+@@ -22,7 +22,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0>;
+ 			clock-frequency = <1000000000>;
+-			clocks = <&cpg CPG_CORE 0>;
++			clocks = <&cpg CPG_CORE R8A77470_CLK_Z2>;
+ 			power-domains = <&sysc 5>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
+@@ -209,7 +209,7 @@
+ 			reg = <0 0xe6e60000 0 0x40>;
+ 			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 721>,
+-				 <&cpg CPG_CORE 5>, <&scif_clk>;
++				 <&cpg CPG_CORE R8A77470_CLK_ZS>, <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
+ 			       <&dmac1 0x29>, <&dmac1 0x2a>;
+@@ -225,7 +225,7 @@
+ 			reg = <0 0xe6e68000 0 0x40>;
+ 			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 720>,
+-				 <&cpg CPG_CORE 5>, <&scif_clk>;
++				 <&cpg CPG_CORE R8A77470_CLK_ZS>, <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
+ 			       <&dmac1 0x2d>, <&dmac1 0x2e>;
+@@ -241,7 +241,7 @@
+ 			reg = <0 0xe6e58000 0 0x40>;
+ 			interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 719>,
+-				 <&cpg CPG_CORE 5>, <&scif_clk>;
++				 <&cpg CPG_CORE R8A77470_CLK_ZS>, <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
+ 			       <&dmac1 0x2b>, <&dmac1 0x2c>;
+@@ -257,7 +257,7 @@
+ 			reg = <0 0xe6ea8000 0 0x40>;
+ 			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 718>,
+-				 <&cpg CPG_CORE 5>, <&scif_clk>;
++				 <&cpg CPG_CORE R8A77470_CLK_ZS>, <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac0 0x2f>, <&dmac0 0x30>,
+ 			       <&dmac1 0x2f>, <&dmac1 0x30>;
+@@ -273,7 +273,7 @@
+ 			reg = <0 0xe6ee0000 0 0x40>;
+ 			interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 715>,
+-				 <&cpg CPG_CORE 5>, <&scif_clk>;
++				 <&cpg CPG_CORE R8A77470_CLK_ZS>, <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac0 0xfb>, <&dmac0 0xfc>,
+ 			       <&dmac1 0xfb>, <&dmac1 0xfc>;
+@@ -289,7 +289,7 @@
+ 			reg = <0 0xe6ee8000 0 0x40>;
+ 			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 714>,
+-				 <&cpg CPG_CORE 5>, <&scif_clk>;
++				 <&cpg CPG_CORE R8A77470_CLK_ZS>, <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac0 0xfd>, <&dmac0 0xfe>,
+ 			       <&dmac1 0xfd>, <&dmac1 0xfe>;
 -- 
-1.9.1
+2.11.0
