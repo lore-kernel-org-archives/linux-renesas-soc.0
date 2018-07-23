@@ -1,72 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:23160 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753512AbeGEOUT (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:47092 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388096AbeGWWIc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Jul 2018 10:20:19 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 3/4] mmc: renesas_sdhi: Fix sampling clock position selecting
-Date: Thu,  5 Jul 2018 16:18:40 +0200
-Message-Id: <20180705141841.11121-4-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180705141841.11121-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180705141841.11121-1-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 23 Jul 2018 18:08:32 -0400
+Date: Mon, 23 Jul 2018 23:05:29 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/12] i2c: quirks: add zero length checks
+Message-ID: <20180723210529.kvuu57jpdgmsipop@katana>
+References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
+ <20180723202617.15230-2-wsa+renesas@sang-engineering.com>
+ <20180723204418.GG1432@bigcity.dyn.berto.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zb5d6xp3oo53hkux"
+Content-Disposition: inline
+In-Reply-To: <20180723204418.GG1432@bigcity.dyn.berto.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
 
-When tuning each tap is issued CMD19 twice and the result of both runs
-recorded in host->taps. If the result is different between the two runs
-the wrong sampling clock position was selected. Fix this by merging the
-two runs and only keep the result for each tap if it was good in both
-sets.
+--zb5d6xp3oo53hkux
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-[Niklas: update commit message]
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
----
+> > Only build tested.
+>=20
+> Was this not tested when you also tested i2c-rcar and i2c-sh_mobile=20
+> drivers? In any case I think this change make much sens.
+>=20
+> Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
 
-* Changes since v1
-- Updated commit message after discussion with Wolfram.
-- Expanded comment in code to better explain why the results are merged.
----
- drivers/mmc/host/renesas_sdhi_core.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+You are right, of course. This text was added by a script and I forgot to
+remove it :( This code was tested!
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 384ae6cfa289e22c..589da18bd636c2f4 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -384,6 +384,19 @@ static int renesas_sdhi_select_tuning(struct tmio_mmc_host *host)
- 	/* Clear SCC_RVSREQ */
- 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_RVSREQ, 0);
- 
-+	/*
-+	 * When tuning CMD19 is issued twice for each tap, merge the
-+	 * result requiring the tap to be good in both runs before
-+	 * consider it for tuning selection.
-+	 */
-+	for (i = 0; i < host->tap_num * 2; i++) {
-+		if (!test_bit(i, host->taps)) {
-+			clear_bit(i % host->tap_num, host->taps);
-+			clear_bit((i % host->tap_num) + host->tap_num,
-+				  host->taps);
-+		}
-+	}
-+
- 	/*
- 	 * Find the longest consecutive run of successful probes.  If that
- 	 * is more than SH_MOBILE_SDHI_MAX_TAP probes long then use the
--- 
-2.17.0
+Thanks for the review!
+
+
+--zb5d6xp3oo53hkux
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltWQxQACgkQFA3kzBSg
+KbY2pQ//W7Fm+XWKAoXavMi9JC9SiqwNUN4+PF9X9wJfYWTWgXKuMim98ZInORhf
+07EOEePR6CT+4gj07FVsaWckwK6JVVaoHi4xU0aFQf9eqh0kwkZmNUglPxPDshgi
+yaBTdj7ILWGleVHYs0cxrs+dSJAFiaQiKgjxU153uDRQrp/3kGoB+9pgShlKDpNZ
+tmIlugqwgfWB2kkSfBj5tYqk1YpzRMK7EsBhxZY2bCbIXGvgZKZKX84KcAKmkYMT
+aMT+TQHMQ7FmIv+aiCrJ0bY8gsuBJRXxduzSMm0OO8llhtj3co/0Zuvy4YhGnK/5
+P6/z2JTdwJOhno8mIjcK/NazvrZGEDYMDh1UZwaBJSjcoQJp6CJ8se8tqYgfmSf6
+gHjsdZHEhZjuGkFFDYDMGRnapTohNQT+oY5cUM33RHO6G+ujNRSiNQgw9xaVpkWj
+fzeeGOdycp+ju3LTG9aS//TtvYmgLv4LYhVJUlyOFqDbHhPoHULuQZj91cn+Il8f
+iKkRK99w0BS5vsR3o+TENAFrRJYDPaFmbvp7uWNr1d7OHKS46PpEde+ZFqNws9W7
+M9ife5K+rQBw2OWY3k7Di2skevsAr1fSikUygpwBTbeB1M33cAQur/L1tWIgNxK+
+3oKUsb+h8nQnVDoDyCV7ML2dqrh8eKu/ILi2tD7BPv1HU3br/yw=
+=WBf1
+-----END PGP SIGNATURE-----
+
+--zb5d6xp3oo53hkux--
