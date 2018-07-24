@@ -1,62 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:40516 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727440AbeG3Qlx (ORCPT
+Received: from sauhun.de ([88.99.104.3]:55070 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388487AbeGXJpD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Jul 2018 12:41:53 -0400
-Received: by mail-it0-f68.google.com with SMTP id h23-v6so87437ita.5
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Jul 2018 08:06:28 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <20180721111449.10103-1-wsa+renesas@sang-engineering.com>
-References: <20180721111449.10103-1-wsa+renesas@sang-engineering.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 30 Jul 2018 17:06:27 +0200
-Message-ID: <CAPDyKFqdO6-R0dt2F1PsjJ3tb3xKvZtwBYdBBBUUwSc104F+VQ@mail.gmail.com>
+        Tue, 24 Jul 2018 05:45:03 -0400
+Date: Tue, 24 Jul 2018 10:39:39 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
 Subject: Re: [PATCH] mmc: renesas_sdhi: Add r8a77990 support
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <20180724083939.emxh26j7vumuc4du@ninjato>
+References: <20180721111449.10103-1-wsa+renesas@sang-engineering.com>
+ <20180723161719.zlalebcsp6uph3dp@verge.net.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gdicf346niubedeh"
+Content-Disposition: inline
+In-Reply-To: <20180723161719.zlalebcsp6uph3dp@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 21 July 2018 at 13:14, Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
-> This patch adds SDHI support for the R8A77990 SoC (R-Car E3). No driver changes
-> needed for anything except HS400 which we will enable separately later.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Thanks, applied for next!
+--gdicf346niubedeh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Kind regards
-Uffe
 
-> ---
->
-> Note: we shouldn't enable HS400 in the DTS files yet, since we don't have the 8
-> tap support. But I think we can enable basic support.
->
->  Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-> index 839f469f4525..c434200d19d5 100644
-> --- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-> +++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-> @@ -28,6 +28,7 @@ Required properties:
->                 "renesas,sdhi-r8a7796" - SDHI IP on R8A7796 SoC
->                 "renesas,sdhi-r8a77965" - SDHI IP on R8A77965 SoC
->                 "renesas,sdhi-r8a77980" - SDHI IP on R8A77980 SoC
-> +               "renesas,sdhi-r8a77990" - SDHI IP on R8A77990 SoC
->                 "renesas,sdhi-r8a77995" - SDHI IP on R8A77995 SoC
->                 "renesas,sdhi-shmobile" - a generic sh-mobile SDHI controller
->                 "renesas,rcar-gen1-sdhi" - a generic R-Car Gen1 SDHI controller
-> --
-> 2.11.0
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 8 tap support is included in the following patch which was accepted
+> for inclusion in upstream (search for 4TAP):
+>=20
+> 26eb2607fa28 ("mmc: renesas_sdhi: add eMMC HS400 mode support")
+
+Wow, sorry, I missed that :( I thought there were only 8 TAP preparations
+in there. Cool, will have a look...
+
+
+--gdicf346niubedeh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltW5csACgkQFA3kzBSg
+KbYCUg//XeOWR/rZ99Llj1WLuXSi9MJwiUFuCT/Y5evRlqrAlFEZAlkeTsrNnqBd
+dp+NUOb7bhtSqBjnlrTn3HffBV1/UIyF4yHrdkId35l2lNpWXS7lYqYWm6PyhVPE
+l8R2CD7h1BNH4EbfOQxKKe4NyimC5d4VHWn9NtCJj14gV/GA3+jCf33rRvFndvpJ
+BFTZtiSgP+ZBRbIHiRw6V/HPunTtJI6BcenQS4MGpj8gAeiiXaRCQvyIZIiyVrrn
+VgdV4giM/xhzcq+npsGq13iZuA5zwRwnm4f6QHkJJvzrAXnJy3g7yyYac8L1lw3F
+KMRQuIlYmbxmN/4XK71HGa22LYCWzNCqv71niCR+I8SVMlpbm1lCRmVTwGJEUzKV
+hp+SC3g4rX4Ap0Xv3EcJUkg5d5G13utEI1v0oBVnVKqnoG6SD3kQ3sB6Be9KBwtJ
+cj/EL7kyLmCkA0B/jkdpsJ9Ny2PtxozDuRlyTZXjurn6ANWS/s5a1x7DaB+K++Jm
+ILO0xrBo0beveCl/6jXSwJVfxmMoaJg6Y9ozcLxyKhLHn/7o+83ycrxVcQo5U9SD
+t+aUIvC30MuUFq0MrIJukEU93RMh2ltJMk7QjoP09gDpY4NnJtkHWGQ1xt+u53PC
+uW5Hs3fYOthDJuztQPj3RT3iuH76H6tWKRFOIhc8oktk9LunQQA=
+=7gGU
+-----END PGP SIGNATURE-----
+
+--gdicf346niubedeh--
