@@ -1,109 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33510 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727518AbeGTMxa (ORCPT
+Received: from sauhun.de ([88.99.104.3]:56684 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726270AbeGXOG4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jul 2018 08:53:30 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 9/9] ARM: dts: r8a77470: Use r8a77470-cpg-mssr binding definitions
-Date: Fri, 20 Jul 2018 14:05:17 +0200
-Message-Id: <8757b1eb3ff92012be1670a0f0d2cf9f3d9a17ff.1532086734.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1532086734.git.horms+renesas@verge.net.au>
-References: <cover.1532086734.git.horms+renesas@verge.net.au>
+        Tue, 24 Jul 2018 10:06:56 -0400
+Date: Tue, 24 Jul 2018 15:00:31 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 1/1] i2c: rcar: handle RXDMA HW behaviour on Gen3
+Message-ID: <20180724130031.3huqnlhe34f5w3zm@ninjato>
+References: <20180628204538.866-1-wsa+renesas@sang-engineering.com>
+ <20180628204538.866-2-wsa+renesas@sang-engineering.com>
+ <20180723175522.fo3bxauuwjg73vpf@ninjato>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="2rimdljxzgu6g3j3"
+Content-Disposition: inline
+In-Reply-To: <20180723175522.fo3bxauuwjg73vpf@ninjato>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Replace the hardcoded clock indices by R8A77470_CLK_* symbols.
+--2rimdljxzgu6g3j3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a77470.dtsi | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+On Mon, Jul 23, 2018 at 07:55:22PM +0200, Wolfram Sang wrote:
+> On Thu, Jun 28, 2018 at 10:45:38PM +0200, Wolfram Sang wrote:
+> > On Gen3, we can only do RXDMA once per transfer reliably. For that, we
+> > must reset the device, then we can have RXDMA once. This patch
+> > implements this. When there is no reset controller or the reset fails,
+> > RXDMA will be blocked completely. Otherwise, it will be disabled after
+> > the first RXDMA transfer. Based on a commit from the BSP by Hiromitsu
+> > Yamasaki, yet completely refactored to handle multiple read messages
+> > within one transfer.
+> >=20
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>=20
+> Applied to for-next, thanks!
 
-diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index c85032f9605b..87d32d3e23de 100644
---- a/arch/arm/boot/dts/r8a77470.dtsi
-+++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -7,7 +7,7 @@
- 
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
--#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+#include <dt-bindings/clock/r8a77470-cpg-mssr.h>
- / {
- 	compatible = "renesas,r8a77470";
- 	#address-cells = <2>;
-@@ -22,7 +22,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0>;
- 			clock-frequency = <1000000000>;
--			clocks = <&cpg CPG_CORE 0>;
-+			clocks = <&cpg CPG_CORE R8A77470_CLK_Z2>;
- 			power-domains = <&sysc 5>;
- 			next-level-cache = <&L2_CA7>;
- 		};
-@@ -209,7 +209,7 @@
- 			reg = <0 0xe6e60000 0 0x40>;
- 			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 721>,
--				 <&cpg CPG_CORE 5>, <&scif_clk>;
-+				 <&cpg CPG_CORE R8A77470_CLK_ZS>, <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
- 			       <&dmac1 0x29>, <&dmac1 0x2a>;
-@@ -225,7 +225,7 @@
- 			reg = <0 0xe6e68000 0 0x40>;
- 			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 720>,
--				 <&cpg CPG_CORE 5>, <&scif_clk>;
-+				 <&cpg CPG_CORE R8A77470_CLK_ZS>, <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
- 			       <&dmac1 0x2d>, <&dmac1 0x2e>;
-@@ -241,7 +241,7 @@
- 			reg = <0 0xe6e58000 0 0x40>;
- 			interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 719>,
--				 <&cpg CPG_CORE 5>, <&scif_clk>;
-+				 <&cpg CPG_CORE R8A77470_CLK_ZS>, <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
- 			       <&dmac1 0x2b>, <&dmac1 0x2c>;
-@@ -257,7 +257,7 @@
- 			reg = <0 0xe6ea8000 0 0x40>;
- 			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 718>,
--				 <&cpg CPG_CORE 5>, <&scif_clk>;
-+				 <&cpg CPG_CORE R8A77470_CLK_ZS>, <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0x2f>, <&dmac0 0x30>,
- 			       <&dmac1 0x2f>, <&dmac1 0x30>;
-@@ -273,7 +273,7 @@
- 			reg = <0 0xe6ee0000 0 0x40>;
- 			interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 715>,
--				 <&cpg CPG_CORE 5>, <&scif_clk>;
-+				 <&cpg CPG_CORE R8A77470_CLK_ZS>, <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0xfb>, <&dmac0 0xfc>,
- 			       <&dmac1 0xfb>, <&dmac1 0xfc>;
-@@ -289,7 +289,7 @@
- 			reg = <0 0xe6ee8000 0 0x40>;
- 			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 714>,
--				 <&cpg CPG_CORE 5>, <&scif_clk>;
-+				 <&cpg CPG_CORE R8A77470_CLK_ZS>, <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0xfd>, <&dmac0 0xfe>,
- 			       <&dmac1 0xfd>, <&dmac1 0xfe>;
--- 
-2.11.0
+Reverted it from for-next, added to for-current and added stable.
+
+
+--2rimdljxzgu6g3j3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltXIu8ACgkQFA3kzBSg
+KbaRAw//VyF6oIUdiAoqBo3EYb8Ke8iy3HkedosE2dV6yqLJQXmHdI6MR9Q3dXUS
+CIibSNhFYj6KvgepMP07Lexfxz92JhAPUlDtU+71sE2sKPYcf/qPyi5V6sjd+qpx
+7IOVHM/uVonUCY41bKEYMUZgJiaXKmqcokCMDIHqLxo6nhZ+tCwtRMqnpnP27L2E
+iQWrI8zctRRJiMf736FyFde9wAWt0S3mTodz4pymER2ZmrSArvuJlvXfDD4vO8ob
+Z2rjtCKNt072IpHhxiLZuq+6QT7P5euXlZ1XtEUBktvCcWAMMYIVia718svMCc1a
+RJ8Rfwz21eXxkz7elgPs7wPv/azzvG/HkIqkY9FmC6K8fjgYj57oVkpdqRC2PCJA
+065/oK3aBHCYO+jXOJqXHBT4vFgUVnBmd1B+w9Ba0kmAz7JKEfLmZLAL8mamPPSa
+MNauvc3gEbSFA9weYY2Gg+NtPFZK+WSYWi7PKfJe+KuCsuvoj9sgNnIPN0CCCQcr
+dLxTlQT46szeW/xJLTG4eDZIs04Gl1B+z5Tgj0hqHLOLy+UGc5RHt+E87l/8N6Ee
+ExZWBndbVnTif7usFbr3KbEGFkzw4XVoWyAMcwwHPfsg/Z1FyjzK1hMAqR7yw5u2
+tBH8zrj8UYww56SQ8pE39SHE/EWgaJ2uxX9SfKkTuU7jgZD7K/Y=
+=EQe2
+-----END PGP SIGNATURE-----
+
+--2rimdljxzgu6g3j3--
