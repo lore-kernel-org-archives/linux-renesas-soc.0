@@ -1,65 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:52140 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731771AbeGQPZk (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45057 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388249AbeGXMcp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jul 2018 11:25:40 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 1/4] mmc: tmio: Fix tuning flow
-Date: Tue, 17 Jul 2018 16:52:13 +0200
-Message-Id: <20180717145216.16840-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180717145216.16840-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180717145216.16840-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 24 Jul 2018 08:32:45 -0400
+Date: Tue, 24 Jul 2018 13:26:41 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: rcar: Correct SATA device sizes to 2 MiB
+Message-ID: <20180724112640.ed3qexa2lxkw4voi@verge.net.au>
+References: <20180720122857.30235-1-geert+renesas@glider.be>
+ <20180723155132.6q35flyugzjrv3pg@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180723155132.6q35flyugzjrv3pg@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+On Mon, Jul 23, 2018 at 05:51:33PM +0200, Simon Horman wrote:
+> On Fri, Jul 20, 2018 at 02:28:57PM +0200, Geert Uytterhoeven wrote:
+> > Update the SATA device nodes on R-Car H1, H2, and M2-W to use a 2 MiB
+> > I/O space, as specified in Rev.1.0 of the R-Car H1 and R-Car Gen2
+> > hardware user manuals.
+> > 
+> > See also commit e9f0089b2d8a3d45 ("arm64: dts: r8a7795: Correct SATA
+> > device size to 2MiB").
+> > 
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Thanks,
+> 
+> This looks fine to me but I will wait to see if there are other reviews
+> before applying.
+> 
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> 
 
-If the return value of mmc_send_tuning() is error other than -EILSEQ,
-the tuning fails and process goes out of for_loop. The correct
-processing is to judge their TAP as not good (NG) and continue.
-
-Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-[Niklas: update commit message]
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
----
-
-* Changes since v2
-- Use a intermediate variable instead of checking the return value of
-  mmc_send_tuning() in a if statement, suggested by Geert thanks!
-- Added tags from Wolfram.
-
-* Changes since v1
-- Change '!mmc_send_tuning()' to 'mmc_send_tuning() == 0'.
----
- drivers/mmc/host/tmio_mmc_core.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 416f9e078fda8b24..72ac806e0c762d83 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -818,8 +818,6 @@ static int tmio_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
- 			host->prepare_tuning(host, i % host->tap_num);
- 
- 		ret = mmc_send_tuning(mmc, opcode, NULL);
--		if (ret && ret != -EILSEQ)
--			goto out;
- 		if (ret == 0)
- 			set_bit(i, host->taps);
- 
--- 
-2.18.0
+Thanks again, applied for v4.20.
