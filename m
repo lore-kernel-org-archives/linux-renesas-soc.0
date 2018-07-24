@@ -1,42 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:55342 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932997AbeGDLnj (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45288 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388196AbeGXMpm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Jul 2018 07:43:39 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/5] ARM: shmobile: defconfig: Enable reset controller support
-Date: Wed,  4 Jul 2018 13:43:30 +0200
-Message-Id: <20180704114333.27584-3-geert+renesas@glider.be>
-In-Reply-To: <20180704114333.27584-1-geert+renesas@glider.be>
-References: <20180704114333.27584-1-geert+renesas@glider.be>
+        Tue, 24 Jul 2018 08:45:42 -0400
+Date: Tue, 24 Jul 2018 13:39:35 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] ARM: dts: iwg23s-sbc: Add pinctl support for scif1
+Message-ID: <20180724113934.lbqwpgbbhv4z4hcs@verge.net.au>
+References: <1532092411-7723-1-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdXbfVNgG4DvjMjSAQkPDBS-nhTfQ+acVfqZYgeuW-YSfg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXbfVNgG4DvjMjSAQkPDBS-nhTfQ+acVfqZYgeuW-YSfg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen2 and RZ/G1 SoCs can make use of the optional reset controller
-support in the Renesas CPG/MSSR driver.
+On Tue, Jul 24, 2018 at 08:59:18AM +0200, Geert Uytterhoeven wrote:
+> On Fri, Jul 20, 2018 at 3:19 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> > Adding pinctrl support for scif1 interface.
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 393697a54fb40e08..a08d0bcdca750d28 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -193,6 +193,7 @@ CONFIG_AK8975=y
- CONFIG_PWM=y
- CONFIG_PWM_RCAR=y
- CONFIG_PWM_RENESAS_TPU=y
-+CONFIG_RESET_CONTROLLER=y
- CONFIG_GENERIC_PHY=y
- CONFIG_PHY_RCAR_GEN2=y
- # CONFIG_DNOTIFY is not set
--- 
-2.17.1
+Thanks, applied for v4.20.
