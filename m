@@ -1,46 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33656 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:46317 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727518AbeGTMyH (ORCPT
+        with ESMTP id S2388241AbeGXN3U (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jul 2018 08:54:07 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/2] dt-bindings: cpu: Add Renesas R9A06G032 SMP enable method.
-Date: Fri, 20 Jul 2018 14:06:05 +0200
-Message-Id: <a7eaad7f7517ba7cdabfeb28fa05bae4e70b4b5a.1532081674.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1532081674.git.horms+renesas@verge.net.au>
-References: <cover.1532081674.git.horms+renesas@verge.net.au>
+        Tue, 24 Jul 2018 09:29:20 -0400
+Date: Tue, 24 Jul 2018 14:23:02 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Jacopo Mondi <jacopo@jmondi.org>, magnus.damm@gmail.com,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] ARM: shmobile: defconfig: Remove SOC_CAMERA
+Message-ID: <20180724122302.7zry3qiizevmchjt@verge.net.au>
+References: <1531920672-31153-1-git-send-email-jacopo@jmondi.org>
+ <20180719074405.znqjtno2l2a6exti@verge.net.au>
+ <54e7045b-c3b2-b625-22ab-3677d69ed93d@xs4all.nl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <54e7045b-c3b2-b625-22ab-3677d69ed93d@xs4all.nl>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Michel Pollet <michel.pollet@bp.renesas.com>
+On Thu, Jul 19, 2018 at 09:44:57AM +0200, Hans Verkuil wrote:
+> On 07/19/2018 09:44 AM, Simon Horman wrote:
+> > On Wed, Jul 18, 2018 at 03:31:12PM +0200, Jacopo Mondi wrote:
+> >> As the soc_camera framework is going to be deprecated soon, remove the
+> >> associated configuration options from shmobile defconfig.
+> >>
+> >> Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
+> >> ---
+> >> Hi Simon,
+> >>    I expect Hans to collect this patch as he did for SH defconfig ones.
+> >> Please let us know if that's not ok with you.
+> > 
+> > I'd slightly prefer if shmobile_defconfig changes went through me.
+> > My motivation is to reduce the chances of merge conflicts.
+> 
+> Feel free to take it!
+> 
+> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-Add a special enable method for second CA7 of the R9A06G032
-
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- Documentation/devicetree/bindings/arm/cpus.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
-index 29e1dc5d506d..b395d1071240 100644
---- a/Documentation/devicetree/bindings/arm/cpus.txt
-+++ b/Documentation/devicetree/bindings/arm/cpus.txt
-@@ -219,6 +219,7 @@ described below.
- 			    "qcom,kpss-acc-v1"
- 			    "qcom,kpss-acc-v2"
- 			    "renesas,apmu"
-+			    "renesas,r9a06g032-smp"
- 			    "rockchip,rk3036-smp"
- 			    "rockchip,rk3066-smp"
- 			    "ste,dbx500-smp"
--- 
-2.11.0
+Thanks, applied for v4.20.
