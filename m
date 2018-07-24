@@ -1,67 +1,66 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/5] dt-bindings: power: Add r8a774a1 SYSC power domain definitions
-Date: Mon, 30 Jul 2018 08:48:07 +0100
-Message-Id: <1532936891-25034-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1532936891-25034-1-git-send-email-biju.das@bp.renesas.com>
-References: <1532936891-25034-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:34753 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388495AbeGXP7B (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 24 Jul 2018 11:59:01 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v4 1/2] mmc: tmio: Fix tuning flow
+Date: Tue, 24 Jul 2018 16:51:37 +0200
+Message-Id: <20180724145138.26536-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180724145138.26536-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180724145138.26536-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds power domain indices for RZ/G2M.
+From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+If the return value of mmc_send_tuning() is error other than -EILSEQ,
+the tuning fails and process goes out of for_loop. The correct
+processing is to judge their TAP as not good (NG) and continue.
+
+Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+[Niklas: update commit message]
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+
 ---
- include/dt-bindings/power/r8a774a1-sysc.h | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
- create mode 100644 include/dt-bindings/power/r8a774a1-sysc.h
 
-diff --git a/include/dt-bindings/power/r8a774a1-sysc.h b/include/dt-bindings/power/r8a774a1-sysc.h
-new file mode 100644
-index 0000000..580f431
---- /dev/null
-+++ b/include/dt-bindings/power/r8a774a1-sysc.h
-@@ -0,0 +1,31 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A774A1_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A774A1_SYSC_H__
-+
-+/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
-+ */
-+
-+#define R8A774A1_PD_CA57_CPU0		 0
-+#define R8A774A1_PD_CA57_CPU1		 1
-+#define R8A774A1_PD_CA53_CPU0		 5
-+#define R8A774A1_PD_CA53_CPU1		 6
-+#define R8A774A1_PD_CA53_CPU2		 7
-+#define R8A774A1_PD_CA53_CPU3		 8
-+#define R8A774A1_PD_CA57_SCU		12
-+#define R8A774A1_PD_A3VC		14
-+#define R8A774A1_PD_3DG_A		17
-+#define R8A774A1_PD_3DG_B		18
-+#define R8A774A1_PD_CA53_SCU		21
-+#define R8A774A1_PD_A2VC0		25
-+#define R8A774A1_PD_A2VC1		26
-+
-+/* Always-on power area */
-+#define R8A774A1_PD_ALWAYS_ON		32
-+
-+#endif /* __DT_BINDINGS_POWER_R8A774A1_SYSC_H__ */
+* Changes since v2
+- Use a intermediate variable instead of checking the return value of
+  mmc_send_tuning() in a if statement, suggested by Geert thanks!
+- Added tags from Wolfram.
+
+* Changes since v1
+- Change '!mmc_send_tuning()' to 'mmc_send_tuning() == 0'.
+---
+ drivers/mmc/host/tmio_mmc_core.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 416f9e078fda8b24..72ac806e0c762d83 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -818,8 +818,6 @@ static int tmio_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
+ 			host->prepare_tuning(host, i % host->tap_num);
+ 
+ 		ret = mmc_send_tuning(mmc, opcode, NULL);
+-		if (ret && ret != -EILSEQ)
+-			goto out;
+ 		if (ret == 0)
+ 			set_bit(i, host->taps);
+ 
 -- 
-2.7.4
-
+2.18.0
