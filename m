@@ -1,39 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33375 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730086AbeGZOoE (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:6631 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388406AbeGXRAF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jul 2018 10:44:04 -0400
-Date: Thu, 26 Jul 2018 15:27:08 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+        Tue, 24 Jul 2018 13:00:05 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: Re: [PATCH 0/3] RZ/G2M SoC identification support
-Message-ID: <20180726132707.aa7bm7macynuzeou@verge.net.au>
-References: <1532447238-13486-1-git-send-email-biju.das@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1532447238-13486-1-git-send-email-biju.das@bp.renesas.com>
+Subject: [PATCH 0/3] RZ/G2M SoC identification support
+Date: Tue, 24 Jul 2018 16:47:15 +0100
+Message-Id: <1532447238-13486-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jul 24, 2018 at 04:47:15PM +0100, Biju Das wrote:
-> This patch series aims to add SoC identification support 
-> for RZ/G2M SoC. RZ/G2M SoC is similar to R-Car Gen3 M3-W SoC.
-> 
-> 
-> Biju Das (3):
->   dt-bindings: arm: Document RZ/G2M SoC DT bindings
->   arm64: Add Renesas R8A774A1 support
->   soc: renesas: Identify RZ/G2M
+This patch series aims to add SoC identification support 
+for RZ/G2M SoC. RZ/G2M SoC is similar to R-Car Gen3 M3-W SoC.
 
-Thanks, applied for v4.20.
+
+Biju Das (3):
+  dt-bindings: arm: Document RZ/G2M SoC DT bindings
+  arm64: Add Renesas R8A774A1 support
+  soc: renesas: Identify RZ/G2M
+
+ Documentation/devicetree/bindings/arm/shmobile.txt |  2 ++
+ arch/arm64/Kconfig.platforms                       |  6 +++++
+ drivers/soc/renesas/renesas-soc.c                  | 27 ++++++++++++++++------
+ 3 files changed, 28 insertions(+), 7 deletions(-)
+
+-- 
+2.7.4
