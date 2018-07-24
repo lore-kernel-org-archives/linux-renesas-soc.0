@@ -1,58 +1,75 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: hverkuil@xs4all.nl, mchehab@kernel.org, ysato@users.sourceforge.jp,
-        dalias@libc.org
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/9] sh: Remove soc_camera from defconfigs
-Date: Wed,  4 Jul 2018 12:15:37 +0200
-Message-Id: <1530699346-3235-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:12327 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388528AbeGXP7B (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 24 Jul 2018 11:59:01 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v4 2/2] mmc: renesas_sdhi: Fix sampling clock position selecting
+Date: Tue, 24 Jul 2018 16:51:38 +0200
+Message-Id: <20180724145138.26536-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180724145138.26536-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180724145138.26536-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Hans,
-   this series removes the last occurrencies of soc_camera from arch/sh, this
-time hopefully for real :)
+When tuning each tap is issued CMD19 twice and the result of both runs
+recorded in host->taps. If the result is different between the two runs
+the wrong sampling clock position was selected. Fix this by merging the
+two runs and only keep the result for each tap if it was good in both
+sets.
 
-I have updated defconfigs of the following boards to the last v4.18-rc2:
-- Migo-R
-- Ecovec24
-- SE7724
-- AP325RXA
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-and then enabled in defconfigs the new CEU driver with the associated image
-sensor and video decoder driver.
+---
 
-Finally, I removed a stale include from Migo-R board file to which you pointed
-me.
+* Changes since v2
+- Rewrote the change to use a less clumsy loop.  The patch is now
+  completely changed from Hayakawa-sans version and therefor I have also
+  claimed authorship.
+- Fixed spelling in comment as suggested by Geert.
 
-Boot-tested on Migo-R, compile tested only for other platforms.
+* Changes since v1
+- Updated commit message after discussion with Wolfram.
+- Expanded comment in code to better explain why the results are merged.
+---
+ drivers/mmc/host/renesas_sdhi_core.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-As usual, I'll let you pick this patches up, as this is work sparkled from
-multimedia related issues, or either have them get in though the SH
-maintainers tree if they prefer to.
-
-Thanks
-   j
-
-Jacopo Mondi (9):
-  sh: defconfig: migor: Update defconfig
-  sh: defconfig: migor: Enable CEU and sensor drivers
-  sh: defconfig: ecovec: Update defconfig
-  sh: defconfig: ecovec: Enable CEU and video drivers
-  sh: defconfig: se7724: Update defconfig
-  sh: defconfig: se7724: Enable CEU and sensor driver
-  sh: defconfig: ap325rxa: Update defconfig
-  sh: defconfig: ap325rxa: Enable CEU and sensor driver
-  sh: migor: Remove stale soc_camera include
-
- arch/sh/boards/mach-migor/setup.c  |  1 -
- arch/sh/configs/ap325rxa_defconfig | 29 +++++++----------------------
- arch/sh/configs/ecovec24_defconfig | 35 ++++++++---------------------------
- arch/sh/configs/migor_defconfig    | 31 ++++++++-----------------------
- arch/sh/configs/se7724_defconfig   | 30 ++++++------------------------
- 5 files changed, 29 insertions(+), 97 deletions(-)
-
---
-2.7.4
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index 384ae6cfa289e22c..777e32b0e410e850 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -384,6 +384,18 @@ static int renesas_sdhi_select_tuning(struct tmio_mmc_host *host)
+ 	/* Clear SCC_RVSREQ */
+ 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_RVSREQ, 0);
+ 
++	/*
++	 * When tuning CMD19 is issued twice for each tap, merge the
++	 * result requiring the tap to be good in both runs before
++	 * considering it for tuning selection.
++	 */
++	for (i = 0; i < host->tap_num * 2; i++) {
++		int offset = host->tap_num * (i < host->tap_num ? 1 : -1);
++
++		if (!test_bit(i, host->taps))
++			clear_bit(i + offset, host->taps);
++	}
++
+ 	/*
+ 	 * Find the longest consecutive run of successful probes.  If that
+ 	 * is more than SH_MOBILE_SDHI_MAX_TAP probes long then use the
+-- 
+2.18.0
