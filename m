@@ -1,270 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:6591 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730452AbeGZWqu (ORCPT
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:38704 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388297AbeGXOaV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jul 2018 18:46:50 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] v4l2-ctl: add support for SUBDEV_{G_STD,S_STD,QUERYSTD}
-Date: Thu, 26 Jul 2018 23:27:56 +0200
-Message-Id: <20180726212756.13289-1-niklas.soderlund@ragnatech.se>
+        Tue, 24 Jul 2018 10:30:21 -0400
+Date: Tue, 24 Jul 2018 16:23:51 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 2/2] media: i2c: Add driver for Aptina MT9V111
+Message-ID: <20180724132351.dvxgbd6o6ch2nium@valkosipuli.retiisi.org.uk>
+References: <1528730253-25135-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1528730253-25135-3-git-send-email-jacopo+renesas@jmondi.org>
+ <20180723142835.xl6qrj35lcv2e3vg@valkosipuli.retiisi.org.uk>
+ <20180724130845.GM6784@w540>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180724130845.GM6784@w540>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Hi Jacopo,
 
-Add four new options: --list-subdev-standards, --get-subdev-standard,
---set-subdev-standard and --get-subdev-detected-standard.
+On Tue, Jul 24, 2018 at 03:08:45PM +0200, jacopo mondi wrote:
+> > > diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+> > > index 341452f..0bd867d 100644
+> > > --- a/drivers/media/i2c/Kconfig
+> > > +++ b/drivers/media/i2c/Kconfig
+> > > @@ -841,6 +841,18 @@ config VIDEO_MT9V032
+> > >  	  This is a Video4Linux2 sensor-level driver for the Micron
+> > >  	  MT9V032 752x480 CMOS sensor.
+> > >
+> > > +config VIDEO_MT9V111
+> > > +	tristate "Aptina MT9V111 sensor support"
+> > > +	depends on I2C && VIDEO_V4L2
+> > > +	depends on MEDIA_CAMERA_SUPPORT
+> > > +	depends on OF
+> >
+> > Why OF? I see no effective OF dependencies in the driver.
+> >
+> 
+> Isn't the driver probing through OF?
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- utils/v4l2-ctl/v4l2-ctl-subdev.cpp | 158 +++++++++++++++++++++++++++++
- utils/v4l2-ctl/v4l2-ctl.cpp        |   4 +
- utils/v4l2-ctl/v4l2-ctl.h          |   4 +
- 3 files changed, 166 insertions(+)
+It may, but the driver is otherwise not technically limited to OF. ACPI
+could be used as well, for instance.
 
-diff --git a/utils/v4l2-ctl/v4l2-ctl-subdev.cpp b/utils/v4l2-ctl/v4l2-ctl-subdev.cpp
-index c1d3e5ad46f763fb..d08c04e787810516 100644
---- a/utils/v4l2-ctl/v4l2-ctl-subdev.cpp
-+++ b/utils/v4l2-ctl/v4l2-ctl-subdev.cpp
-@@ -48,6 +48,7 @@ static struct v4l2_subdev_frame_size_enum frmsize;
- static struct v4l2_subdev_frame_interval_enum frmival;
- static __u32 set_fps_pad;
- static double set_fps;
-+static v4l2_std_id standard;
- 
- void subdev_usage(void)
- {
-@@ -96,9 +97,88 @@ void subdev_usage(void)
- 	       "                     flags=le|ge|keep-config\n"
- 	       "  --set-subdev-fps pad=<pad>,fps=<fps> (for testing only, otherwise use media-ctl)\n"
- 	       "                     set the frame rate [VIDIOC_SUBDEV_S_FRAME_INTERVAL]\n"
-+	       "  --list-subdev-standards display supported video standards [VIDIOC_SUBDEV_ENUMSTD]\n"
-+	       "  --get-subdev-standard\n"
-+	       "                     query the video standard [VIDIOC_SUBDEV_G_STD]\n"
-+	       "  --set-subdev-standard <num>\n"
-+	       "                     set the video standard to <num> [VIDIOC_SUBDEV_S_STD]\n"
-+	       "                     <num> a numerical v4l2_std value, or one of:\n"
-+	       "                     pal or pal-X (X = B/G/H/N/Nc/I/D/K/M/60) (V4L2_STD_PAL)\n"
-+	       "                     ntsc or ntsc-X (X = M/J/K) (V4L2_STD_NTSC)\n"
-+	       "                     secam or secam-X (X = B/G/H/D/K/L/Lc) (V4L2_STD_SECAM)\n"
-+	       "  --get-subdev-detected-standard\n"
-+	       "                     display detected input video standard [VIDIOC_SUBDEV_QUERYSTD]\n"
- 	       );
- }
- 
-+static v4l2_std_id parse_pal(const char *pal)
-+{
-+	if (pal[0] == '-') {
-+		switch (tolower(pal[1])) {
-+		case '6':
-+			return V4L2_STD_PAL_60;
-+		case 'b':
-+		case 'g':
-+			return V4L2_STD_PAL_BG;
-+		case 'h':
-+			return V4L2_STD_PAL_H;
-+		case 'n':
-+			if (tolower(pal[2]) == 'c')
-+				return V4L2_STD_PAL_Nc;
-+			return V4L2_STD_PAL_N;
-+		case 'i':
-+			return V4L2_STD_PAL_I;
-+		case 'd':
-+		case 'k':
-+			return V4L2_STD_PAL_DK;
-+		case 'm':
-+			return V4L2_STD_PAL_M;
-+		}
-+	}
-+	fprintf(stderr, "pal specifier not recognised\n");
-+	subdev_usage();
-+	exit(1);
-+}
-+
-+static v4l2_std_id parse_secam(const char *secam)
-+{
-+	if (secam[0] == '-') {
-+		switch (tolower(secam[1])) {
-+		case 'b':
-+		case 'g':
-+		case 'h':
-+			return V4L2_STD_SECAM_B | V4L2_STD_SECAM_G | V4L2_STD_SECAM_H;
-+		case 'd':
-+		case 'k':
-+			return V4L2_STD_SECAM_DK;
-+		case 'l':
-+			if (tolower(secam[2]) == 'c')
-+				return V4L2_STD_SECAM_LC;
-+			return V4L2_STD_SECAM_L;
-+		}
-+	}
-+	fprintf(stderr, "secam specifier not recognised\n");
-+	subdev_usage();
-+	exit(1);
-+}
-+
-+static v4l2_std_id parse_ntsc(const char *ntsc)
-+{
-+	if (ntsc[0] == '-') {
-+		switch (tolower(ntsc[1])) {
-+		case 'm':
-+			return V4L2_STD_NTSC_M;
-+		case 'j':
-+			return V4L2_STD_NTSC_M_JP;
-+		case 'k':
-+			return V4L2_STD_NTSC_M_KR;
-+		}
-+	}
-+	fprintf(stderr, "ntsc specifier not recognised\n");
-+	subdev_usage();
-+	exit(1);
-+}
-+
- void subdev_cmd(int ch, char *optarg)
- {
- 	char *value, *subs;
-@@ -338,6 +418,33 @@ void subdev_cmd(int ch, char *optarg)
- 			}
- 		}
- 		break;
-+	case OptSetSubDevStandard:
-+		if (!strncasecmp(optarg, "pal", 3)) {
-+			if (optarg[3])
-+				standard = parse_pal(optarg + 3);
-+			else
-+				standard = V4L2_STD_PAL;
-+		}
-+		else if (!strncasecmp(optarg, "ntsc", 4)) {
-+			if (optarg[4])
-+				standard = parse_ntsc(optarg + 4);
-+			else
-+				standard = V4L2_STD_NTSC;
-+		}
-+		else if (!strncasecmp(optarg, "secam", 5)) {
-+			if (optarg[5])
-+				standard = parse_secam(optarg + 5);
-+			else
-+				standard = V4L2_STD_SECAM;
-+		}
-+		else if (isdigit(optarg[0])) {
-+			standard = strtol(optarg, 0L, 0) | (1ULL << 63);
-+		} else {
-+			fprintf(stderr, "Unknown standard '%s'\n", optarg);
-+			subdev_usage();
-+			exit(1);
-+		}
-+		break;
- 	default:
- 		break;
- 	}
-@@ -492,6 +599,19 @@ void subdev_set(int fd)
- 					fival.interval.denominator, fival.interval.numerator);
- 		}
- 	}
-+
-+	if (options[OptSetSubDevStandard]) {
-+		if (standard & (1ULL << 63)) {
-+			struct v4l2_standard vs;
-+
-+			vs.index = standard & 0xffff;
-+			if (test_ioctl(fd, VIDIOC_SUBDEV_ENUMSTD, &vs) >= 0) {
-+				standard = vs.id;
-+			}
-+		}
-+		if (doioctl(fd, VIDIOC_SUBDEV_S_STD, &standard) == 0)
-+			printf("Standard set to %08llx\n", (unsigned long long)standard);
-+	}
- }
- 
- void subdev_get(int fd)
-@@ -547,6 +667,20 @@ void subdev_get(int fd)
- 					fival.interval.denominator, fival.interval.numerator);
- 		}
- 	}
-+
-+	if (options[OptGetSubDevStandard]) {
-+		if (doioctl(fd, VIDIOC_SUBDEV_G_STD, &standard) == 0) {
-+			printf("Video Standard = 0x%08llx\n", (unsigned long long)standard);
-+			printf("\t%s\n", std2s(standard, "\n\t").c_str());
-+		}
-+	}
-+
-+	if (options[OptQuerySubDevStandard]) {
-+		if (doioctl(fd, VIDIOC_SUBDEV_QUERYSTD, &standard) == 0) {
-+			printf("Video Standard = 0x%08llx\n", (unsigned long long)standard);
-+			printf("\t%s\n", std2s(standard, "\n\t").c_str());
-+		}
-+	}
- }
- 
- static void print_mbus_code(__u32 code)
-@@ -637,4 +771,28 @@ void subdev_list(int fd)
- 			frmival.index++;
- 		}
- 	}
-+
-+	if (options[OptListSubDevStandards]) {
-+		struct v4l2_standard vs;
-+
-+		printf("ioctl: VIDIOC_SUBDEV_ENUMSTD\n");
-+		vs.index = 0;
-+		while (test_ioctl(fd, VIDIOC_SUBDEV_ENUMSTD, &vs) >= 0) {
-+			if (options[OptConcise]) {
-+				printf("\t%2d: 0x%016llX %s\n", vs.index,
-+						(unsigned long long)vs.id, vs.name);
-+			} else {
-+				if (vs.index)
-+					printf("\n");
-+				printf("\tIndex       : %d\n", vs.index);
-+				printf("\tID          : 0x%016llX\n", (unsigned long long)vs.id);
-+				printf("\tName        : %s\n", vs.name);
-+				printf("\tFrame period: %d/%d\n",
-+						vs.frameperiod.numerator,
-+						vs.frameperiod.denominator);
-+				printf("\tFrame lines : %d\n", vs.framelines);
-+			}
-+			vs.index++;
-+		}
-+	}
- }
-diff --git a/utils/v4l2-ctl/v4l2-ctl.cpp b/utils/v4l2-ctl/v4l2-ctl.cpp
-index 2a87c48f1dbee797..9b15c40c36393a96 100644
---- a/utils/v4l2-ctl/v4l2-ctl.cpp
-+++ b/utils/v4l2-ctl/v4l2-ctl.cpp
-@@ -271,6 +271,10 @@ static struct option long_options[] = {
- 	{"stream-out-user", optional_argument, 0, OptStreamOutUser},
- 	{"stream-out-dmabuf", no_argument, 0, OptStreamOutDmaBuf},
- 	{"list-patterns", no_argument, 0, OptListPatterns},
-+	{"list-subdev-standards", no_argument, 0, OptListSubDevStandards},
-+	{"get-subdev-standard", no_argument, 0, OptGetSubDevStandard},
-+	{"set-subdev-standard", required_argument, 0, OptSetSubDevStandard},
-+	{"get-subdev-detected-standard", no_argument, 0, OptQuerySubDevStandard},
- 	{0, 0, 0, 0}
- };
- 
-diff --git a/utils/v4l2-ctl/v4l2-ctl.h b/utils/v4l2-ctl/v4l2-ctl.h
-index e510d778deb04984..d99fa74c1244023d 100644
---- a/utils/v4l2-ctl/v4l2-ctl.h
-+++ b/utils/v4l2-ctl/v4l2-ctl.h
-@@ -124,6 +124,10 @@ enum Option {
- 	OptListSubDevMBusCodes,
- 	OptListSubDevFrameSizes,
- 	OptListSubDevFrameIntervals,
-+	OptListSubDevStandards,
-+	OptGetSubDevStandard,
-+	OptSetSubDevStandard,
-+	OptQuerySubDevStandard,
- 	OptListOutFields,
- 	OptClearClips,
- 	OptClearBitmap,
+> 
+> > > +	help
+> > > +	  This is a Video4Linux2 sensor-level driver for the Aptina/Micron
+> 
+> I'll change sensor-level to sensor, has you've been doing lately on
+> all other Kconfig entries
+
+Ack.
+
 -- 
-2.18.0
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
