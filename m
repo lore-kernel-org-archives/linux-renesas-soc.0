@@ -1,84 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:47286 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753605AbeGFJFu (ORCPT
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45582 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388522AbeGXQEr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jul 2018 05:05:50 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-sh@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 3/3] serial: sh-sci: Stop using deprecated dmaengine_terminate_all()
-Date: Fri,  6 Jul 2018 11:05:43 +0200
-Message-Id: <20180706090543.31625-4-geert+renesas@glider.be>
-In-Reply-To: <20180706090543.31625-1-geert+renesas@glider.be>
-References: <20180706090543.31625-1-geert+renesas@glider.be>
+        Tue, 24 Jul 2018 12:04:47 -0400
+Received: by mail-lf1-f66.google.com with SMTP id j143-v6so3184404lfj.12
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Jul 2018 07:57:54 -0700 (PDT)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Tue, 24 Jul 2018 16:57:52 +0200
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] mmc: renesas_sdhi: Fix sampling clock position
+ selecting
+Message-ID: <20180724145752.GM1432@bigcity.dyn.berto.se>
+References: <20180717145216.16840-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180717145216.16840-4-niklas.soderlund+renesas@ragnatech.se>
+ <20180724112634.amylptym4mkgh3ym@ninjato>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180724112634.amylptym4mkgh3ym@ninjato>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-As of commit b36f09c3c441a6e5 ("dmaengine: Add transfer termination
-synchronization support"), dmaengine_terminate_all() is deprecated.
+Hi Wolfram,
 
-Replace calls to dmaengine_terminate_all() in DMA release code by calls
-to dmaengine_terminate_sync(), as the latter waits until all running
-completion callbacks have finished.
+On 2018-07-24 13:26:34 +0200, Wolfram Sang wrote:
+> On Tue, Jul 17, 2018 at 04:52:15PM +0200, Niklas S�derlund wrote:
+> > When tuning each tap is issued CMD19 twice and the result of both runs
+> > recorded in host->taps. If the result is different between the two runs
+> > the wrong sampling clock position was selected. Fix this by merging the
+> > two runs and only keep the result for each tap if it was good in both
+> > sets.
+> > 
+> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> 
+> So, I tested this patch without having patch 2 applied and it worked:
+> 
+> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> 
+> Ulf, I think patches 1 & 3 are good and should be applied to 4.18 with
+> stable attached.
 
-Replace calls to dmaengine_terminate_all() in DMA failure paths by calls
-to dmaengine_terminate_async(), as these are usually done in atomic
-context.
+I have collected all tags and broken out 1 and 3 to a v4 of this series 
+for easy consumption for either you or Ulf. And I'm working on updating 
+2 and 4.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - No changes.
----
- drivers/tty/serial/sh-sci.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> And I wonder if it was easier if I'd send you pull requests now that we
+> are working with even more developers on SDHI? Simon, Niklas, what do
+> you think?
+> 
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 939749073e7bdb11..360664a9adf66632 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1220,7 +1220,7 @@ static void sci_rx_dma_release(struct sci_port *s)
- 
- 	s->chan_rx_saved = s->chan_rx = NULL;
- 	s->cookie_rx[0] = s->cookie_rx[1] = -EINVAL;
--	dmaengine_terminate_all(chan);
-+	dmaengine_terminate_sync(chan);
- 	dma_free_coherent(chan->device->dev, s->buf_len_rx * 2, s->rx_buf[0],
- 			  sg_dma_address(&s->sg_rx[0]));
- 	dma_release_channel(chan);
-@@ -1296,7 +1296,7 @@ static void sci_tx_dma_release(struct sci_port *s)
- 	cancel_work_sync(&s->work_tx);
- 	s->chan_tx_saved = s->chan_tx = NULL;
- 	s->cookie_tx = -EINVAL;
--	dmaengine_terminate_all(chan);
-+	dmaengine_terminate_sync(chan);
- 	dma_unmap_single(chan->device->dev, s->tx_dma_addr, UART_XMIT_SIZE,
- 			 DMA_TO_DEVICE);
- 	dma_release_channel(chan);
-@@ -1334,7 +1334,7 @@ static void sci_submit_rx(struct sci_port *s)
- 
- fail:
- 	if (i)
--		dmaengine_terminate_all(chan);
-+		dmaengine_terminate_async(chan);
- 	for (i = 0; i < 2; i++)
- 		s->cookie_rx[i] = -EINVAL;
- 	s->active_rx = -EINVAL;
-@@ -1452,7 +1452,7 @@ static enum hrtimer_restart rx_timer_fn(struct hrtimer *t)
- 	}
- 
- 	/* Handle incomplete DMA receive */
--	dmaengine_terminate_all(s->chan_rx);
-+	dmaengine_terminate_async(s->chan_rx);
- 	read = sg_dma_len(&s->sg_rx[active]) - state.residue;
- 
- 	if (read) {
+For me this approach would be great but as Simon points out maybe Ulf 
+have a different idea. If you end up collecting and sending pull 
+requests can you provide a public branch of the patches you have sent PR 
+for so I can base my work upon that to avoid potential merge conflicts?
+
 -- 
-2.17.1
+Regards,
+Niklas S�derlund
