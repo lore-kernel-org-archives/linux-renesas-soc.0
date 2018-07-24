@@ -1,59 +1,66 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:56716 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388302AbeGXOIR (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Jul 2018 10:08:17 -0400
-Date: Tue, 24 Jul 2018 15:01:52 +0200
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+Date: Tue, 24 Jul 2018 09:28:00 +0200
 From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        kernel@pengutronix.de, linux-kernel@vger.kernel.org
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@pengutronix.de
 Subject: Re: [PATCH/RFT 2/6] i2c: imx: use open drain for recovery GPIO
-Message-ID: <20180724130152.sisk6dplm74imak7@ninjato>
+Message-ID: <20180724072759.iirtq7qhydn4ep34@ninjato>
 References: <20180713210920.3648-1-wsa+renesas@sang-engineering.com>
  <20180713210920.3648-3-wsa+renesas@sang-engineering.com>
+ <1532350048.3163.101.camel@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="balstfvoi46gcqas"
+        protocol="application/pgp-signature"; boundary="skzrjsklhy4e4dwq"
 Content-Disposition: inline
-In-Reply-To: <20180713210920.3648-3-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <1532350048.3163.101.camel@pengutronix.de>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---balstfvoi46gcqas
+--skzrjsklhy4e4dwq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 13, 2018 at 11:09:14PM +0200, Wolfram Sang wrote:
-> I2C is open drain, so set up the GPIO accordingly.
+Hi Lucas,
+
+> I don't think this matters on any of the i.MX platforms, as the GPIO
+> pin configuration (including open-drain) is only taken from the DT
+> pinctrl, with the GPIO driver not being able to change any of those. On
+>  the flipside this results in a near zero probability of regressions.
+> ;)
+
+I see. Thanks for the heads up.
+
+> As this is obviously right even if it doesn't have any effect on
+> current software:
 >=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 
-Updated the commit message with the pinmux info from Lucas and applied
-to for-current, thanks!
+Thanks. Yeah, let's fix it. It might serve as an example for other
+people.
 
 
---balstfvoi46gcqas
+--skzrjsklhy4e4dwq
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltXI0AACgkQFA3kzBSg
-KbZw6RAAswbkKo8Lzz3CF3raJ5PXNAbc3n3ZOMLbKZ2cjxb0Wd10+jijXUsehtoe
-yWdNUxc0f91Brsap/Tg6SAK1FVXuYTiQyMk6WLT+1gx7ggkldMjXqryp6JYsvgb+
-OTJEd7cRjB48QIsGs7VNJtksd7MWpzuIaYYQQ44KHFf+yk28Uzx5l52ro/5tpHZN
-PPs35EyJgodlllV+xe3OJaJdJgO6piqDVMH7cRoue4JmzmrHVvDT/f7OOxIygp8J
-eShcSry6Cg4p/3G24ncrkyqcDIH+WhQvpTyYys7IaybGSKU/JfP6ARufojDej1ob
-S73BM65q5VltjfGPeI7gkJFBTAodP3Swa9WWHpRDLOBDUAIi/1eTckdaS6c5Kw8U
-bBLpsFnaYHJc6C1OQLZUIyoCFIp4BBAghs7/Gm2wtZlxQa2l4LjnXx0W8qMrWQj6
-rXuMeSsZTc6zICD153zJg+xCKsGvScrQ+dFFJlqwyWMWH8Gkuv7p8UFaA9E6Opat
-Vd4g13XIpudAMlqwTXZAj3/jyjjXqJQGGGlCB53v1EWHOk7XWrFYs60tvQMGKsPX
-GEPog5FYsrgtvrwxjc8a1GhnGVtk0vux+1EBpyTrXif35BDi0NkT9YqX4eYX7T3p
-YSl63o+jIHpi6swKssr7Dg7eNuPFP8OKZdde0fG3daCeSsvT8hc=
-=JNBs
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltW1P8ACgkQFA3kzBSg
+KbYdPhAAppSjM0SiZ8UDMEQHF9emyutkO1hSHCJ4vhBCqrOES9NpXTBRT3fmVwsl
+Sw6D1VwDETyIFIj4LNyZwBc//lLednhElmgPygr3TQoSjdNnoKlvoZ2+pwSDfFam
+Fulr2dfaNv/rlG+pin+ROGZN4SM2FHIPBUIflqK3xt8nkhNWCFVfVyseQBvTF60N
+RswcuVF/kke3ilsjnEONyZ3HzaL7XXFk5A0kjX7GRBbhYOqXoZbIpgxSU8IQ4Syw
+8kItgDn9DnrtnWjLg/HZsFD8FENPkXqMcei5fVnRZgDSzKHXn3wraZNe9adAjCHG
+CjuoKuCjLjSVrY35tb9lNWa8NYhEOPE8Avn922nlgS7kGn6ACX/vQUDbRPQxic9i
+C20/mTvh6IfhQpoyAsxAeqIMlxdX5n9IA+R0v8e/Az9Y/dTo6Pwl0YVeyPNmrbCd
+X28csVWqYu3tJ7Quizg/c6DeYl40G0RQgvQymtINNjEBnqK8nKAqu3KDqA8GLFe7
+R+RiDeN7Pf0mUVkUj0kZMcpyXwkBdzM6UvPnVaxTNbJQZMwk+Kx624VHWRyqJEON
+HQsMblFcFhmmNkXfeJdI7EiqkURq5TGgYh7vK7NOTevPuwYIewOhFzKVQzyaqQ9o
+Qgk3NTHfBA0gI1q72iRCVcQS4RB1pWFB7N+mDIKaeImzieMh+1M=
+=Msjr
 -----END PGP SIGNATURE-----
 
---balstfvoi46gcqas--
+--skzrjsklhy4e4dwq--
