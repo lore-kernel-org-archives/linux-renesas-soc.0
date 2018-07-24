@@ -1,46 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:44562 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729190AbeGZNBX (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:6631 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388406AbeGXRAJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jul 2018 09:01:23 -0400
-Received: by mail-ua0-f196.google.com with SMTP id k25-v6so853059uao.11
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Jul 2018 04:44:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <1532447238-13486-1-git-send-email-biju.das@bp.renesas.com> <1532447238-13486-3-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1532447238-13486-3-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 26 Jul 2018 13:44:43 +0200
-Message-ID: <CAMuHMdWj4L5H61DMvNxyDLJ5qrU20Wa=yonCy2MXG2CA0VfjzA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] arm64: Add Renesas R8A774A1 support
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Tue, 24 Jul 2018 13:00:09 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        linux-arm-kernel@lists.infradead.org,
         Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 2/3] arm64: Add Renesas R8A774A1 support
+Date: Tue, 24 Jul 2018 16:47:17 +0100
+Message-Id: <1532447238-13486-3-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1532447238-13486-1-git-send-email-biju.das@bp.renesas.com>
+References: <1532447238-13486-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jul 24, 2018 at 5:53 PM Biju Das <biju.das@bp.renesas.com> wrote:
-> Add configuration option for the RZ/G2M (R8A774A1) SoC.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+Add configuration option for the RZ/G2M (R8A774A1) SoC.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+---
+ arch/arm64/Kconfig.platforms | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index d5aeac3..6b9f487 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -178,6 +178,12 @@ config ARCH_RENESAS
+ 	help
+ 	  This enables support for the ARMv8 based Renesas SoCs.
+ 
++config ARCH_R8A774A1
++	bool "Renesas RZ/G2M SoC Platform"
++	depends on ARCH_RENESAS
++	help
++	  This enables support for the Renesas RZ/G2M SoC.
++
+ config ARCH_R8A7795
+ 	bool "Renesas R-Car H3 SoC Platform"
+ 	depends on ARCH_RENESAS
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.7.4
