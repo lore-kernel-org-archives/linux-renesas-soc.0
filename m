@@ -1,85 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:57500 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729675AbeGQVKW (ORCPT
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:42978 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388319AbeGXHyI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jul 2018 17:10:22 -0400
-From: Kieran Bingham <kieran@ksquared.org.uk>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v5 03/11] media: vsp1: Rename dl_child to dl_next
-Date: Tue, 17 Jul 2018 21:35:45 +0100
-Message-Id: <e3ebdd65a310975d6086ca0b260863653f83e2f9.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Tue, 24 Jul 2018 03:54:08 -0400
+MIME-Version: 1.0
+References: <24093fd0-1b9b-a211-f988-0272483185d6@cogentembedded.com> <6a15eddc-a30d-a4e8-aa0d-05ee2091e32a@cogentembedded.com>
+In-Reply-To: <6a15eddc-a30d-a4e8-aa0d-05ee2091e32a@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 24 Jul 2018 08:49:00 +0200
+Message-ID: <CAMuHMdUmTe6VTka5XMDmFH0Myd502ThOcYEj6D61GsB8UGTBwQ@mail.gmail.com>
+Subject: Re: [PATCH 3/5] sh_eth: call sh_eth_tsu_get_offset() from TSU
+ register accessors
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: netdev <netdev@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Hi Sergei,
 
-Both vsp1_dl_list_commit() and __vsp1_dl_list_put() walk the display
-list chain referencing the nodes as children, when in reality they are
-siblings.
+On Mon, Jul 23, 2018 at 8:13 PM Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> With sh_eth_tsu_get_offset() now actually returning TSU register's offset,
+> we  can at last use it in sh_eth_tsu_{read|write}(). Somehow this saves 248
+> bytes of object code with AArch64 gcc 4.8.5... :-)
 
-Update the terminology to 'dl_next' to be consistent with the
-vsp1_video_pipeline_run() usage.
+Adding two more users may be the trigger for gcc not to inline the
+function anymore?
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_dl.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 5da7988dd616..851ac26860ae 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -398,7 +398,7 @@ struct vsp1_dl_list *vsp1_dl_list_get(struct vsp1_dl_manager *dlm)
- /* This function must be called with the display list manager lock held.*/
- static void __vsp1_dl_list_put(struct vsp1_dl_list *dl)
- {
--	struct vsp1_dl_list *dl_child;
-+	struct vsp1_dl_list *dl_next;
- 
- 	if (!dl)
- 		return;
-@@ -408,8 +408,8 @@ static void __vsp1_dl_list_put(struct vsp1_dl_list *dl)
- 	 * hardware operation.
- 	 */
- 	if (dl->has_chain) {
--		list_for_each_entry(dl_child, &dl->chain, chain)
--			__vsp1_dl_list_put(dl_child);
-+		list_for_each_entry(dl_next, &dl->chain, chain)
-+			__vsp1_dl_list_put(dl_next);
- 	}
- 
- 	dl->has_chain = false;
-@@ -673,17 +673,17 @@ static void vsp1_dl_list_commit_singleshot(struct vsp1_dl_list *dl)
- void vsp1_dl_list_commit(struct vsp1_dl_list *dl, bool internal)
- {
- 	struct vsp1_dl_manager *dlm = dl->dlm;
--	struct vsp1_dl_list *dl_child;
-+	struct vsp1_dl_list *dl_next;
- 	unsigned long flags;
- 
- 	if (dlm->mode == VSP1_DL_MODE_HEADER) {
- 		/* Fill the header for the head and chained display lists. */
- 		vsp1_dl_list_fill_header(dl, list_empty(&dl->chain));
- 
--		list_for_each_entry(dl_child, &dl->chain, chain) {
--			bool last = list_is_last(&dl_child->chain, &dl->chain);
-+		list_for_each_entry(dl_next, &dl->chain, chain) {
-+			bool last = list_is_last(&dl_next->chain, &dl->chain);
- 
--			vsp1_dl_list_fill_header(dl_child, last);
-+			vsp1_dl_list_fill_header(dl_next, last);
- 		}
- 	}
- 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-git-series 0.9.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
