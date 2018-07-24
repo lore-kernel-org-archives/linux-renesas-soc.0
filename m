@@ -1,150 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33574 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727518AbeGTMxi (ORCPT
+Received: from sauhun.de ([88.99.104.3]:56716 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388302AbeGXOIR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jul 2018 08:53:38 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/5] ARM: shmobile: Add the R9A06G032 SMP enabler driver
-Date: Fri, 20 Jul 2018 14:05:33 +0200
-Message-Id: <7416d4411361c79e10667c571b15eed18e811f44.1532087129.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1532087129.git.horms+renesas@verge.net.au>
-References: <cover.1532087129.git.horms+renesas@verge.net.au>
+        Tue, 24 Jul 2018 10:08:17 -0400
+Date: Tue, 24 Jul 2018 15:01:52 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel@pengutronix.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH/RFT 2/6] i2c: imx: use open drain for recovery GPIO
+Message-ID: <20180724130152.sisk6dplm74imak7@ninjato>
+References: <20180713210920.3648-1-wsa+renesas@sang-engineering.com>
+ <20180713210920.3648-3-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="balstfvoi46gcqas"
+Content-Disposition: inline
+In-Reply-To: <20180713210920.3648-3-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Michel Pollet <michel.pollet@bp.renesas.com>
 
-The Renesas R9A06G032 second CA7 is parked in a ROM pen at boot time, it
-equires a special enable method to get it started.
+--balstfvoi46gcqas
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/soc/renesas/Makefile        |  1 +
- drivers/soc/renesas/r9a06g032-smp.c | 96 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 97 insertions(+)
- create mode 100644 drivers/soc/renesas/r9a06g032-smp.c
+On Fri, Jul 13, 2018 at 11:09:14PM +0200, Wolfram Sang wrote:
+> I2C is open drain, so set up the GPIO accordingly.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
-index 7dc0f20d7907..44a0d6b10192 100644
---- a/drivers/soc/renesas/Makefile
-+++ b/drivers/soc/renesas/Makefile
-@@ -18,6 +18,7 @@ obj-$(CONFIG_SYSC_R8A77970)	+= r8a77970-sysc.o
- obj-$(CONFIG_SYSC_R8A77980)	+= r8a77980-sysc.o
- obj-$(CONFIG_SYSC_R8A77990)	+= r8a77990-sysc.o
- obj-$(CONFIG_SYSC_R8A77995)	+= r8a77995-sysc.o
-+obj-$(CONFIG_ARCH_R9A06G032)	+= r9a06g032-smp.o
- 
- # Family
- obj-$(CONFIG_RST_RCAR)		+= rcar-rst.o
-diff --git a/drivers/soc/renesas/r9a06g032-smp.c b/drivers/soc/renesas/r9a06g032-smp.c
-new file mode 100644
-index 000000000000..a1926e8d73f2
---- /dev/null
-+++ b/drivers/soc/renesas/r9a06g032-smp.c
-@@ -0,0 +1,96 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * R9A06G032 Second CA7 enabler.
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
-+ * Derived from actions,s500-smp
-+ */
-+
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/smp.h>
-+
-+/*
-+ * The second CPU is parked in ROM at boot time. It requires waking it after
-+ * writing an address into the BOOTADDR register of sysctrl.
-+ *
-+ * So the default value of the "cpu-release-addr" corresponds to BOOTADDR...
-+ *
-+ * *However* the BOOTADDR register is not available when the kernel
-+ * starts in NONSEC mode.
-+ *
-+ * So for NONSEC mode, the bootloader re-parks the second CPU into a pen
-+ * in SRAM, and changes the "cpu-release-addr" of linux's DT to a SRAM address,
-+ * which is not restricted.
-+ */
-+
-+static void __iomem *cpu_bootaddr;
-+
-+static DEFINE_SPINLOCK(cpu_lock);
-+
-+static int
-+r9a06g032_smp_boot_secondary(unsigned int cpu,
-+			     struct task_struct *idle)
-+{
-+	if (!cpu_bootaddr)
-+		return -ENODEV;
-+
-+	spin_lock(&cpu_lock);
-+
-+	writel(__pa_symbol(secondary_startup), cpu_bootaddr);
-+	arch_send_wakeup_ipi_mask(cpumask_of(cpu));
-+
-+	spin_unlock(&cpu_lock);
-+
-+	return 0;
-+}
-+
-+static void __init r9a06g032_smp_prepare_cpus(unsigned int max_cpus)
-+{
-+	struct device_node *dn;
-+	int ret = -EINVAL, dns;
-+	u32 bootaddr;
-+
-+	dn = of_get_cpu_node(1, NULL);
-+	if (!dn) {
-+		pr_err("CPU#1: missing device tree node\n");
-+		return;
-+	}
-+	/*
-+	 * Determine the address from which the CPU is polling.
-+	 * The bootloader *does* change this property.
-+	 * Note: The property can be either 64 or 32 bits, so handle both cases
-+	 */
-+	if (of_find_property(dn, "cpu-release-addr", &dns)) {
-+		if (dns == sizeof(u64)) {
-+			u64 temp;
-+
-+			ret = of_property_read_u64(dn,
-+						   "cpu-release-addr", &temp);
-+			bootaddr = temp;
-+		} else {
-+			ret = of_property_read_u32(dn,
-+						   "cpu-release-addr",
-+						   &bootaddr);
-+		}
-+	}
-+	of_node_put(dn);
-+	if (ret) {
-+		pr_err("CPU#1: invalid cpu-release-addr property\n");
-+		return;
-+	}
-+	pr_info("CPU#1: cpu-release-addr %08x\n", bootaddr);
-+
-+	cpu_bootaddr = ioremap(bootaddr, sizeof(bootaddr));
-+}
-+
-+static const struct smp_operations r9a06g032_smp_ops __initconst = {
-+	.smp_prepare_cpus = r9a06g032_smp_prepare_cpus,
-+	.smp_boot_secondary = r9a06g032_smp_boot_secondary,
-+};
-+
-+CPU_METHOD_OF_DECLARE(r9a06g032_smp,
-+		      "renesas,r9a06g032-smp", &r9a06g032_smp_ops);
--- 
-2.11.0
+Updated the commit message with the pinmux info from Lucas and applied
+to for-current, thanks!
+
+
+--balstfvoi46gcqas
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltXI0AACgkQFA3kzBSg
+KbZw6RAAswbkKo8Lzz3CF3raJ5PXNAbc3n3ZOMLbKZ2cjxb0Wd10+jijXUsehtoe
+yWdNUxc0f91Brsap/Tg6SAK1FVXuYTiQyMk6WLT+1gx7ggkldMjXqryp6JYsvgb+
+OTJEd7cRjB48QIsGs7VNJtksd7MWpzuIaYYQQ44KHFf+yk28Uzx5l52ro/5tpHZN
+PPs35EyJgodlllV+xe3OJaJdJgO6piqDVMH7cRoue4JmzmrHVvDT/f7OOxIygp8J
+eShcSry6Cg4p/3G24ncrkyqcDIH+WhQvpTyYys7IaybGSKU/JfP6ARufojDej1ob
+S73BM65q5VltjfGPeI7gkJFBTAodP3Swa9WWHpRDLOBDUAIi/1eTckdaS6c5Kw8U
+bBLpsFnaYHJc6C1OQLZUIyoCFIp4BBAghs7/Gm2wtZlxQa2l4LjnXx0W8qMrWQj6
+rXuMeSsZTc6zICD153zJg+xCKsGvScrQ+dFFJlqwyWMWH8Gkuv7p8UFaA9E6Opat
+Vd4g13XIpudAMlqwTXZAj3/jyjjXqJQGGGlCB53v1EWHOk7XWrFYs60tvQMGKsPX
+GEPog5FYsrgtvrwxjc8a1GhnGVtk0vux+1EBpyTrXif35BDi0NkT9YqX4eYX7T3p
+YSl63o+jIHpi6swKssr7Dg7eNuPFP8OKZdde0fG3daCeSsvT8hc=
+=JNBs
+-----END PGP SIGNATURE-----
+
+--balstfvoi46gcqas--
