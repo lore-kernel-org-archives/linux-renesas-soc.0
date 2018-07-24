@@ -1,171 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53389 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:45120 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387854AbeGWNH2 (ORCPT
+        with ESMTP id S2388236AbeGXMep (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:07:28 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Tue, 24 Jul 2018 08:34:45 -0400
+Date: Tue, 24 Jul 2018 13:28:40 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 4/8] ARM: dts: Renesas R9A06G032 base device tree file
-Date: Mon, 23 Jul 2018 14:06:22 +0200
-Message-Id: <769d7248a7aae5dace1c5c776c98b352d3d93617.1532345886.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1532345886.git.horms+renesas@verge.net.au>
-References: <cover.1532345886.git.horms+renesas@verge.net.au>
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] ARM: dts: r8a77470: Add PFC support
+Message-ID: <20180724112840.exryuv3u3i7qb2ks@verge.net.au>
+References: <1532092186-3313-1-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdUODoVGqL=kudkdx2eMkAC9w1mm6Ue5hTeVuzSULH=Xww@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUODoVGqL=kudkdx2eMkAC9w1mm6Ue5hTeVuzSULH=Xww@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Michel Pollet <michel.pollet@bp.renesas.com>
+On Tue, Jul 24, 2018 at 08:55:51AM +0200, Geert Uytterhoeven wrote:
+> On Fri, Jul 20, 2018 at 3:15 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> > Define the generic R8A77470 part of the PFC device node.
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This adds the Renesas R9A06G032 bare bone support.
-
-This currently only handles the SYSCTRL block note,
-generic parts (gic, architected timer) and a UART.
-
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[simon: updated MAINTAINERS file
-[simon: do not use r9a06g032-sysctrl.h as it is not in the renesas tree yet]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- MAINTAINERS                      |   1 +
- arch/arm/boot/dts/r9a06g032.dtsi | 113 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 114 insertions(+)
- create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9d5eeff51b5f..4c85ac04872d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1969,6 +1969,7 @@ S:	Supported
- F:	arch/arm/boot/dts/emev2*
- F:	arch/arm/boot/dts/r7s*
- F:	arch/arm/boot/dts/r8a*
-+F:	arch/arm/boot/dts/r9a*
- F:	arch/arm/boot/dts/sh*
- F:	arch/arm/configs/shmobile_defconfig
- F:	arch/arm/include/debug/renesas-scif.S
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-new file mode 100644
-index 000000000000..339d0958011e
---- /dev/null
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -0,0 +1,113 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ */
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+/ {
-+	compatible = "renesas,r9a06g032";
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0>;
-+			clocks = <&sysctrl 84>;
-+		};
-+
-+		cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <1>;
-+			clocks = <&sysctrl 84>;
-+		};
-+	};
-+
-+	ext_jtag_clk: extjtagclk {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <0>;
-+	};
-+
-+	ext_mclk: extmclk {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <40000000>;
-+	};
-+
-+	ext_rgmii_ref: extrgmiiref {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <0>;
-+	};
-+
-+	ext_rtc_clk: extrtcclk {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <0>;
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		interrupt-parent = <&gic>;
-+		ranges;
-+
-+		sysctrl: system-controller@4000c000 {
-+			compatible = "renesas,r9a06g032-sysctrl";
-+			reg = <0x4000c000 0x1000>;
-+			status = "okay";
-+			#clock-cells = <1>;
-+
-+			clocks = <&ext_mclk>, <&ext_rtc_clk>,
-+					<&ext_jtag_clk>, <&ext_rgmii_ref>;
-+			clock-names = "mclk", "rtc", "jtag", "rgmii_ref_ext";
-+		};
-+
-+		uart0: serial@40060000 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x40060000 0x400>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&sysctrl 146>;
-+			clock-names = "baudclk";
-+			status = "disabled";
-+		};
-+
-+		gic: gic@44101000 {
-+			compatible = "arm,cortex-a7-gic", "arm,gic-400";
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			reg = <0x44101000 0x1000>, /* Distributer */
-+			      <0x44102000 0x2000>, /* CPU interface */
-+			      <0x44104000 0x2000>, /* Virt interface control */
-+			      <0x44106000 0x2000>; /* Virt CPU interface */
-+			interrupts =
-+				<GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,cortex-a7-timer",
-+			     "arm,armv7-timer";
-+		interrupt-parent = <&gic>;
-+		arm,cpu-registers-not-fw-configured;
-+		always-on;
-+		interrupts =
-+			<GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+};
--- 
-2.11.0
+Thanks, applied for v4.20.
