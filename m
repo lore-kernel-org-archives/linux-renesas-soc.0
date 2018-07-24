@@ -1,13 +1,7 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:44614 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728360AbeGYQUa (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jul 2018 12:20:30 -0400
-Received: by mail-lj1-f193.google.com with SMTP id q127-v6so6982863ljq.11
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Jul 2018 08:08:24 -0700 (PDT)
-Subject: Re: [PATCH] arm64: dts: renesas: r8a77980: add RWDT support
-To: Simon Horman <horms@verge.net.au>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Tue, 24 Jul 2018 13:45:53 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: linux-renesas-soc@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
@@ -16,39 +10,51 @@ Cc: linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>
-References: <20180724114552.aybrijeonsj2tmcw@verge.net.au>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <8f72716f-75b4-e8c0-3a77-9d709959e45d@cogentembedded.com>
-Date: Wed, 25 Jul 2018 18:08:21 +0300
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77980: add RWDT support
+Message-ID: <20180724114552.aybrijeonsj2tmcw@verge.net.au>
 MIME-Version: 1.0
-In-Reply-To: <20180724114552.aybrijeonsj2tmcw@verge.net.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVeyaU9iKnubhzkjN8Fd-Z-=r+yoF+_jGoFxDzPdwbSpQ@mail.gmail.com>
+ <4eb91e29-9c2f-6f7c-2b3c-983e41430e26@cogentembedded.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
-
-On 07/24/2018 02:45 PM, Simon Horman wrote:
-
-[...]
-> On Tue, Jul 24, 2018 at 09:01:59AM +0200, Geert Uytterhoeven wrote:
->> On Fri, Jul 20, 2018 at 9:21 PM Sergei Shtylyov
->> <sergei.shtylyov@cogentembedded.com> wrote:
->>> Describe RWDT in the R8A77980 SoC device tree.
->>>
->>> Enable RWDT on the Condor and V3H Starter Kit boards.
->>>
->>> Based on the original (and large) patch by Vladimir Barinov.
->>>
->>> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
->>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->>
->> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Mon, Jul 23, 2018 at 07:14:28PM +0300, Sergei Shtylyov wrote:
+> On 07/23/2018 07:08 PM, Simon Horman wrote:
 > 
-> Thanks, applied for v4.20.
+> >> Describe RWDT in the R8A77980 SoC device tree.
+> >>
+> >> Enable RWDT on the Condor and V3H Starter Kit boards.
+> >>
+> >> Based on the original (and large) patch by Vladimir Barinov.
+> >>
+> >> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> >> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >>
+> >> ---
+> >> The patch is against the 'renesas-devel-20180720-v4.18-rc5' of Simon Horman's
+> >> 'renesas.git' repo.  It depends on Geert Uytterhoeven's clock driver patches
+> >> (adding the RWDT clock) in order to work...
+> > 
+> > But it is safe to apply without those patches, right?
+> 
+>    The RWDT driver should just fail to probe with -ENOENT. 
 
-   Sorry, still not seeing any 'devel' branch updates... forgot to push?
+...
 
-MBR, Sergei
+On Tue, Jul 24, 2018 at 09:01:59AM +0200, Geert Uytterhoeven wrote:
+> On Fri, Jul 20, 2018 at 9:21 PM Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+> > Describe RWDT in the R8A77980 SoC device tree.
+> >
+> > Enable RWDT on the Condor and V3H Starter Kit boards.
+> >
+> > Based on the original (and large) patch by Vladimir Barinov.
+> >
+> > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Thanks, applied for v4.20.
