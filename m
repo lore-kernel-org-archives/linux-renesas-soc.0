@@ -1,6 +1,12 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-Subject: Re: [PATCH/RFT 1/6] i2c: designware: use open drain for recovery GPIO
-To: Wolfram Sang <wsa@the-dreams.de>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:54538 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388394AbeGXIbn (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 24 Jul 2018 04:31:43 -0400
+Date: Tue, 24 Jul 2018 09:26:37 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Phil Reid <preid@electromag.com.au>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         kernel@pengutronix.de,
@@ -8,72 +14,84 @@ Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         linux-kernel@vger.kernel.org
+Subject: Re: [PATCH/RFT 1/6] i2c: designware: use open drain for recovery GPIO
+Message-ID: <20180724072637.smhlrx4kpyh6hvwa@ninjato>
 References: <20180713210920.3648-1-wsa+renesas@sang-engineering.com>
  <20180713210920.3648-2-wsa+renesas@sang-engineering.com>
  <daaf702b-642f-e0fd-6a2e-7f0f817efba3@electromag.com.au>
  <20180717090920.zy6lkeqlcewhrfs5@ninjato>
  <b8d7c7aa-dbde-3037-4a1b-691bcf045131@electromag.com.au>
- <20180724072637.smhlrx4kpyh6hvwa@ninjato>
-From: Phil Reid <preid@electromag.com.au>
-Message-ID: <4163910a-f37b-5987-ecc2-074cebda753b@electromag.com.au>
-Date: Wed, 25 Jul 2018 11:26:29 +0800
 MIME-Version: 1.0
-In-Reply-To: <20180724072637.smhlrx4kpyh6hvwa@ninjato>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-AU
-Content-Transfer-Encoding: 7bit
-Sender: linux-i2c-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ofht27vhe5ktigiu"
+Content-Disposition: inline
+In-Reply-To: <b8d7c7aa-dbde-3037-4a1b-691bcf045131@electromag.com.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 24/07/2018 15:26, Wolfram Sang wrote:
-> Hi Phil,
-> 
->>> So, it is not possible to read SCL status then? Hmm, currently a working
->>> get_scl is required...
-> ...
->>> Well, I don't know much about this IP core and how/where it is used. I
->>> just wonder what happens if another user comes along using an
->>> open-drain GPIO. Is that possible?
->>>
->>> I assume it is the same with SDA? Non open-drain? Output only?
->>>
->>
->> Just had a closer look at how it's setup here.
->> Maybe the following helps.
-> 
-> Thanks for the detailed explanation. I am just afraid it is a litle too
-> detailed for me. I am not sure if I can read it correctly:
-> 
-> When you read the SCL/SDA GPIO, does it return the true state of the
-> SCL/SDA line or does it just reflect the value it was set to output?
-Yes it returns the true state of the output pin.
-I admit it's a bit odd from the classic GPIO point of view.
 
-> 
->> There's no concept of HiZ internally in the FPGA.
-> 
-> Which probably means SDA is to be treated the same as SCL -> push/pull.
-Yes. They're both driven push/pull, but the try state of the line is available.
+--ofht27vhe5ktigiu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
->> If there was some kinda of OpenDrain gpio driver that modelled a FET
->> driven by a push pull GPIO I guess it could be made to work.
-> 
-> Still, that sounds quite unlikely to me, so we can for now assume that
-> all designware users will have push/pull?
-I know of one other doing the same thing with the core in the Altera SocFPGA platform.
-As they put me on to this solution for doing the recovery when the i2c was routed thru the SOC's fpga.
+Hi Phil,
 
-In other hard configurations they may have a 'proper' GPIO available that needs to be OpenDrain.
+> > So, it is not possible to read SCL status then? Hmm, currently a working
+> > get_scl is required...
+=2E..
+> > Well, I don't know much about this IP core and how/where it is used. I
+> > just wonder what happens if another user comes along using an
+> > open-drain GPIO. Is that possible?
+> >=20
+> > I assume it is the same with SDA? Non open-drain? Output only?
+> >=20
+>=20
+> Just had a closer look at how it's setup here.
+> Maybe the following helps.
 
+Thanks for the detailed explanation. I am just afraid it is a litle too
+detailed for me. I am not sure if I can read it correctly:
 
+When you read the SCL/SDA GPIO, does it return the true state of the
+SCL/SDA line or does it just reflect the value it was set to output?
 
-> 
-> Disclaimer: I have zero experience with this core, I don't know how hard
-> it is to modify or which versions are out there.
-> 
+> There's no concept of HiZ internally in the FPGA.
+
+Which probably means SDA is to be treated the same as SCL -> push/pull.
+
+> If there was some kinda of OpenDrain gpio driver that modelled a FET
+> driven by a push pull GPIO I guess it could be made to work.
+
+Still, that sounds quite unlikely to me, so we can for now assume that
+all designware users will have push/pull?
+
+Disclaimer: I have zero experience with this core, I don't know how hard
+it is to modify or which versions are out there.
+
+Thanks for your help,
+
+   Wolfram
 
 
--- 
-Regards
-Phil Reid
+--ofht27vhe5ktigiu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltW1KkACgkQFA3kzBSg
+KbYqQA/7BLzkFJlpp83m/0LTH8LUFT1nWqSkrPjWGUw5PF91E91L4NNfHUHQLazy
+jDKPrnTqnCz3WPMHrPHeRWRXZXCdv6s172wI2ubd8Xt1mH1T2fwu4X1g4yvVfDZj
+xnF+Y0v9A/KVFTaM29rJo9pq6PAvJOip8haW3yC29+kF9tIJjBxkcJim0cZ4m7Yr
+WVK37EzDI6x2FRfGWG2cy5bxUCRldCnDEmrkXS37X2PPjB4I81gZKh2T1bTfP4ac
+VWwYMcNXfGpnNNBBB7ZftSdAq16hXCxIg/xyoM/xzfOxCMLWaEGeOJTQvzYyUkN1
+PkZ1TO2fTa2GyB1zfCvIIRFZxNiUmuNvIWFG7a81q1pkIpfd45GznplnyW95elji
+LkkcwBu0UL7vdEKXWsnF0qjqArKy/NtbSIMTRQHXc7Pazu1hlQkVhwVhFKBsrIFS
+0ylIQg4+eK5WMLGSuZgpfLw3GQascmbPb53Cny18O9lV20Cx4d3qrXdCefMFH3Df
+AF8XbcWELKzvVtrMrg1p9QtflCBYOx+Dq/tUzrDKU1Ufumamf9YBTPGkv4LMXJ0Y
+L7mqscD9RYZYn1RKAS5QB6cagz5i7dPrivreTyDPG4SdLHCqU4F4LAuhI/g/Aaxa
+muLCmtzU6y1vKOdgF3odUucqZeFKP2Nla0KzIJc3ubpnlfvwKTc=
+=1srA
+-----END PGP SIGNATURE-----
+
+--ofht27vhe5ktigiu--
