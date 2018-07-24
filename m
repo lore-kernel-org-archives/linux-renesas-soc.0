@@ -1,49 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:39858 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728095AbeGQJQx (ORCPT
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:46139 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388271AbeGXMi1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jul 2018 05:16:53 -0400
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: laurent.pinchart@ideasonboard.com, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH] drm/shmobile: Replace drm_dev_unref with drm_dev_put
-Date: Tue, 17 Jul 2018 10:45:18 +0200
-Message-Id: <20180717084518.17930-1-tzimmermann@suse.de>
+        Tue, 24 Jul 2018 08:38:27 -0400
+MIME-Version: 1.0
+References: <20180724111413.4056-1-horms+renesas@verge.net.au>
+In-Reply-To: <20180724111413.4056-1-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 24 Jul 2018 13:32:13 +0200
+Message-ID: <CAMuHMdVVGRPTGAR_YLvgKM6B8Z-in9u9=66TVN-MjJ8SiSiwjQ@mail.gmail.com>
+Subject: Re: [PATCH] thermal: rcar_thermal: avoid NULL dereference in absense
+ of IRQ resources
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Yoshihiro Kaneko <ykaneko0929@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch unifies the naming of DRM functions for reference counting
-of struct drm_device. The resulting code is more aligned with the rest
-of the Linux kernel interfaces.
+On Tue, Jul 24, 2018 at 1:15 PM Simon Horman <horms+renesas@verge.net.au> wrote:
+> Ensure that the base address used by a call to rcar_thermal_common_write()
+> may be NULL if the SOC supports interrupts for use with the thermal device
+> but none are defined in DT as is the case for R-Car H1 (r8a7779). Guard
+> against this condition to prevent a NULL dereference when the device is
+> probed.
+>
+> Tested on:
+> * R-Mobile APE6 (r8a73a4) / APE6EVM
+> * R-Car H1 (r8a7779) / Marzen
+> * R-Car H2 (r8a7790) / Lager
+> * R-Car M2-W (r8a7791) / Koelsch
+> * R-Car M2-N (r8a7793) / Gose
+> * R-Car D3 ES1.0 (r8a77995) / Draak
+>
+> Fixes: 1969d9dc2079 ("thermal: rcar_thermal: add r8a77995 support")
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
----
- drivers/gpu/drm/shmobile/shmob_drm_drv.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
-index 592572554eb0..8d1ff596c774 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_drv.c
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
-@@ -198,7 +198,7 @@ static int shmob_drm_remove(struct platform_device *pdev)
- 	drm_kms_helper_poll_fini(ddev);
- 	drm_mode_config_cleanup(ddev);
- 	drm_irq_uninstall(ddev);
--	drm_dev_unref(ddev);
-+	drm_dev_put(ddev);
- 
- 	return 0;
- }
-@@ -294,7 +294,7 @@ static int shmob_drm_probe(struct platform_device *pdev)
- 	drm_kms_helper_poll_fini(ddev);
- 	drm_mode_config_cleanup(ddev);
- err_free_drm_dev:
--	drm_dev_unref(ddev);
-+	drm_dev_put(ddev);
- 
- 	return ret;
- }
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.18.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
