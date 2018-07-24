@@ -1,105 +1,197 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:42276 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753518AbeGDGdF (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46146 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388172AbeGXNVa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Jul 2018 02:33:05 -0400
-Received: by mail-lf0-f68.google.com with SMTP id u202-v6so3462390lff.9
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 Jul 2018 23:33:04 -0700 (PDT)
-From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Date: Wed, 4 Jul 2018 08:33:02 +0200
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v2 2/2] v4l: Add support for STD ioctls on subdev nodes
-Message-ID: <20180704063302.GB5237@bigcity.dyn.berto.se>
-References: <20180517143016.13501-1-niklas.soderlund+renesas@ragnatech.se>
- <20180517143016.13501-3-niklas.soderlund+renesas@ragnatech.se>
- <20180628083732.3679d730@coco.lan>
- <536a05bd-372e-a509-a6b6-0a3e916e48ae@xs4all.nl>
+        Tue, 24 Jul 2018 09:21:30 -0400
+Date: Tue, 24 Jul 2018 14:15:14 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: renesas: Include R-Car product name in DTSI
+ files
+Message-ID: <20180724121514.lda5nfahag4akwsp@verge.net.au>
+References: <153199919069.10140.15895581107478774899.sendpatchset@little-apple>
+ <20180719125934.GA1432@bigcity.dyn.berto.se>
+ <CANqRtoSSoenVr35wvEmxX5in+Mpt5A3-gkKyFDS0fMeTBiHczQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <536a05bd-372e-a509-a6b6-0a3e916e48ae@xs4all.nl>
+In-Reply-To: <CANqRtoSSoenVr35wvEmxX5in+Mpt5A3-gkKyFDS0fMeTBiHczQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Mauro, Hans
-
-On 2018-06-28 14:47:05 +0200, Hans Verkuil wrote:
-> On 06/28/18 13:37, Mauro Carvalho Chehab wrote:
-> > Em Thu, 17 May 2018 16:30:16 +0200
-> > Niklas S�derlund         <niklas.soderlund+renesas@ragnatech.se> escreveu:
-> > 
-> >> There is no way to control the standard of subdevices which are part of
-> >> a media device. The ioctls which exists all target video devices
-> >> explicitly and the idea is that the video device should talk to the
-> >> subdevice. For subdevices part of a media graph this is not possible and
-> >> the standard must be controlled on the subdev device directly.
-> > 
-> > Why isn't it possible? A media pipeline should have at least a video
-> > devnode where the standard ioctls will be issued.
+On Fri, Jul 20, 2018 at 02:16:13AM +0900, Magnus Damm wrote:
+> Hi Niklas,
 > 
-> Not for an MC-centric device like the r-car or imx. It's why we have v4l-subdev
-> ioctls for the DV_TIMINGS API, but the corresponding SDTV standards API is
-> missing.
-
-I can only agree with Hans here, we already have this subdevice API for 
-DV_DIMINGS.
-
-    #define VIDIOC_SUBDEV_S_DV_TIMINGS              _IOWR('V', 87, struct v4l2_dv_timings)
-    #define VIDIOC_SUBDEV_G_DV_TIMINGS              _IOWR('V', 88, struct v4l2_dv_timings)
-    #define VIDIOC_SUBDEV_ENUM_DV_TIMINGS           _IOWR('V', 98, struct v4l2_enum_dv_timings)
-    #define VIDIOC_SUBDEV_QUERY_DV_TIMINGS          _IOR('V', 99, struct v4l2_dv_timings)
-    #define VIDIOC_SUBDEV_DV_TIMINGS_CAP            _IOWR('V', 100, struct v4l2_dv_timings_cap)
-
-And to me it both makes perfect sens to add this for SDTV ioctls and it 
-solves a real use case for me. Currently on the R-Car Gen3 boards which 
-uses a MC-centric model I have no way of controlling video standard of 
-my CVBS input. The adv748x driver defaults to NTSC which means when I 
-test using a PAL source I'm out of luck.
-
-Without a change that allows controlling the video standard of the 
-subdevice I don't see how this can be solved. As Hans have outlined 
-using the video device node to control the subdevices is not how things 
-are done for MC-centric setups.
-
-Mauro, after the discussion in this thread are you willing to take this 
-patch? If not I'm happy to keep working on scratching my itch, but a 
-solution where the video device node is used to set the standard of the 
-subdev I feel is the wrong way of doing things. Can you see a different  
-solution to my issue that works in a MC-centric environment?
-
+> On Thu, Jul 19, 2018 at 9:59 PM, Niklas Söderlund
+> <niklas.soderlund@ragnatech.se> wrote:
+> > Hi Magnus,
+> >
+> > Thanks for your patch.
+> >
+> > On 2018-07-19 20:19:50 +0900, Magnus Damm wrote:
+> >> From: Magnus Damm <damm+renesas@opensource.se>
+> >>
+> >> Browsing the DTS for all the R-Car SoCs with similar part numbers
+> >> makes my head hurt, so to improve the user friendliness of the
+> >> DTS code base include R-Car product name in each DTSI file.
+> >>
+> >> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> >> ---
+> >>
+> >>  Based on renesas-drivers-2018-07-17-v4.18-rc5
+> >>
+> >>  arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi |    2 +-
+> >>  arch/arm64/boot/dts/renesas/r8a7795.dtsi     |    2 +-
+> >>  arch/arm64/boot/dts/renesas/r8a7796.dtsi     |    2 +-
+> >>  arch/arm64/boot/dts/renesas/r8a77965.dtsi    |    2 +-
+> >>  arch/arm64/boot/dts/renesas/r8a77970.dtsi    |    2 +-
+> >>  arch/arm64/boot/dts/renesas/r8a77980.dtsi    |    2 +-
+> >>  arch/arm64/boot/dts/renesas/r8a77990.dtsi    |    2 +-
+> >>  arch/arm64/boot/dts/renesas/r8a77995.dtsi    |    2 +-
+> >>  8 files changed, 8 insertions(+), 8 deletions(-)
+> >>
+> >> --- 0001/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+> >> +++ work/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi 2018-07-19 20:04:10.900607110 +0900
+> >> @@ -1,6 +1,6 @@
+> >>  // SPDX-License-Identifier: GPL-2.0
+> >>  /*
+> >> - * Device Tree Source for the r8a7795 ES1.x SoC
+> >> + * Device Tree Source for the R-Car H3 (R8A77950) ES1.x SoC
+> >
+> > I'm just curies why do you append a extra 0 to the part number here and
+> > for M3-W? Other then I think this change is good and will help me as
+> > well to map part number to product name :-)
 > 
-> And in a complex scenario there is nothing preventing you from having multiple
-> SDTV inputs, some of which need PAL-BG, some SECAM, some NTSC (less likely)
-> which are all composed together (think security cameras or something like that).
+> Good question!
 > 
-> You definitely cannot set the standard from a video device. If nothing else,
-> it would be completely inconsistent with how HDMI inputs work.
-> 
-> The whole point of MC centric devices is that you *don't* control subdevs
-> from video nodes.
-> 
-> Regards,
-> 
-> 	Hans
-> 
-> > So, I don't see why you would need to explicitly set the standard inside
-> > a sub-device.
-> > 
-> > The way I see, inside a given pipeline, all subdevs should be using the
-> > same video standard (maybe except for a m2m device with would have some
-> > coded that would be doing format conversion).
-> > 
-> > Am I missing something?
-> > 
-> > Thanks,
-> > Mauro
-> > 
-> 
+> I should probably have mentioned in the patch description that the
+> names and part numbers come from the file
+> Documentation/devicetree/bindings/arm/shmobile.txt.
 
+Thanks, I have applied the following for v4.20.
+
+From: Magnus Damm <damm+renesas@opensource.se>
+Subject: [PATCH] arm64: dts: renesas: Include R-Car product name in DTSI files
+
+Browsing the DTS for all the R-Car SoCs with similar part numbers
+makes my head hurt, so to improve the user friendliness of the
+DTS code base include R-Car product name in each DTSI file.
+
+Product names are derived from
+Documentation/devicetree/bindings/arm/shmobile.txt
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 2 +-
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 2 +-
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi     | 2 +-
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi    | 2 +-
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi    | 2 +-
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi    | 2 +-
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi    | 2 +-
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi    | 2 +-
+ 8 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+index 7b2fbaec9aef..d915cff5b1b0 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Device Tree Source for the r8a7795 ES1.x SoC
++ * Device Tree Source for the R-Car H3 (R8A77950) ES1.x SoC
+  *
+  * Copyright (C) 2015 Renesas Electronics Corp.
+  */
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index fb9d08ad7659..aa0d4c8f6b04 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Device Tree Source for the r8a7795 SoC
++ * Device Tree Source for the R-Car H3 (R8A77950) SoC
+  *
+  * Copyright (C) 2015 Renesas Electronics Corp.
+  */
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index cbd35c00b4af..b93596c9c6b1 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Device Tree Source for the r8a7796 SoC
++ * Device Tree Source for the R-Car M3-W (R8A77960) SoC
+  *
+  * Copyright (C) 2016-2017 Renesas Electronics Corp.
+  */
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index 0cd44461a0bd..9c4f40589cbd 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Device Tree Source for the r8a77965 SoC
++ * Device Tree Source for the R-Car M3-N (R8A77965) SoC
+  *
+  * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
+  *
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+index 954168858fed..18d1aafe2e30 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Device Tree Source for the r8a77970 SoC
++ * Device Tree Source for the R-Car V3M (R8A77970) SoC
+  *
+  * Copyright (C) 2016-2017 Renesas Electronics Corp.
+  * Copyright (C) 2017 Cogent Embedded, Inc.
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+index 4a1097e32551..d3532fd4c94a 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Device Tree Source for the r8a77980 SoC
++ * Device Tree Source for the R-Car V3H (R8A77980) SoC
+  *
+  * Copyright (C) 2018 Renesas Electronics Corp.
+  * Copyright (C) 2018 Cogent Embedded, Inc.
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index ae89260baad9..2c8f1194e6b5 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /*
+- * Device Tree Source for the r8a77990 SoC
++ * Device Tree Source for the R-Car E3 (R8A77990) SoC
+  *
+  * Copyright (C) 2018 Renesas Electronics Corp.
+  */
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index fe77bc43c447..c94513ce5b9b 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Device Tree Source for the r8a77995 SoC
++ * Device Tree Source for the R-Car D3 (R8A77995) SoC
+  *
+  * Copyright (C) 2016 Renesas Electronics Corp.
+  * Copyright (C) 2017 Glider bvba
 -- 
-Regards,
-Niklas S�derlund
+2.11.0
