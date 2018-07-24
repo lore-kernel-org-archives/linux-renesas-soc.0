@@ -1,63 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:54710 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388390AbeGXIug (ORCPT
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:42646 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388329AbeGXIMR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Jul 2018 04:50:36 -0400
-Date: Tue, 24 Jul 2018 09:45:24 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Tue, 24 Jul 2018 04:12:17 -0400
+MIME-Version: 1.0
+References: <20180721111449.10103-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180721111449.10103-1-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 24 Jul 2018 09:07:04 +0200
+Message-ID: <CAMuHMdXCysjhXin0+cWijnJo2+G5kDCNJ+MgpWqCxV5UvwEfbA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: renesas_sdhi: Add r8a77990 support
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux MMC List <linux-mmc@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Subject: Re: [PATCH] mmc: renesas_sdhi: Add r8a77990 support
-Message-ID: <20180724074524.v6vixziojbao2ez5@ninjato>
-References: <20180721111449.10103-1-wsa+renesas@sang-engineering.com>
- <CAMuHMdXCysjhXin0+cWijnJo2+G5kDCNJ+MgpWqCxV5UvwEfbA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="dfhwccqs3coffif6"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXCysjhXin0+cWijnJo2+G5kDCNJ+MgpWqCxV5UvwEfbA@mail.gmail.com>
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
 
---dfhwccqs3coffif6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Sat, Jul 21, 2018 at 1:14 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> This patch adds SDHI support for the R8A77990 SoC (R-Car E3). No driver changes
+> needed for anything except HS400 which we will enable separately later.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
+This matches Table 70.1 ("Pin Configuration") of Section 70 ("SD Card/MMC
+Interfaces"), so
 
-> However, the figures at the top of Sections 70 and 70.2 indicate SDHI is not
-> available on R-Car E3 (and H3, M3-W, and M3-N)?!?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-When you look at other chapters, "not available" is usually printed in
-light gray. I am not sure what these different kinds of styles mean in
-chapter 70, yet I know that SDHI on D3 is a little different (no HS400).
-Perhaps it is an indication of that? I can't really tell because I don't
-know much about SDHI von V3x.
+However, the figures at the top of Sections 70 and 70.2 indicate SDHI is not
+available on R-Car E3 (and H3, M3-W, and M3-N)?!?
 
+Gr{oetje,eeting}s,
 
---dfhwccqs3coffif6
-Content-Type: application/pgp-signature; name="signature.asc"
+                        Geert
 
------BEGIN PGP SIGNATURE-----
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltW2RQACgkQFA3kzBSg
-KbboVhAArIC9dlfC0MFPu+kQxBNMYuT01V0De369U1+cQKi6Fc8tGXrm7CgZ+LVX
-DK4Nhw6NmuZ65K/VDIHz6w6XXDGkogUln1ycYpaB4xKL7p8YdMFpVqGc6YKWhEYf
-DaQYupbUXDD7sI4HmtVhiqF4gdIIoeEEZOuB7UJSPzrSMlcjJmRNixBIzgGKk3Rw
-MRYYrCnI+QAemLC9WopMONDRUPdePcLMYgyxScA5TvGotxP4X+LG9y4TGF/+IuwZ
-1HvKC2J0NQ9CVXujZYuidC3wiuUq6YXq84DPo2lJyaJ8evXVcri8zHnlhvuDcOXt
-5hi8JqvVbb2hu59Wc7eAO9MZskywBIxvSYr9TlrxWG+FuyH7oRl1LJvJsxTWCSQM
-A7DVr9CCSb9fKrfo469Kf+/8Pore86pbbvAX0IcSC9o2AzM63uroFI0+u5XkVF6p
-ThgftMOtU0WjMV9HvPX/9Y+zGVo7NP3BZW52T/n/xBBJUYwau6vSbP6/0Tjqg2mu
-73EFmLkcl91GQDnSGkq+3UPNHVWhR9kDPwGv2O8oIdEfXFepODhzc8+jGX/0Ku1f
-/noim4k46dXPYLmT1bfXSIRuD9h0/MDTM8O3XNtBDa6MSUHi+t8XIQiSVB80lh53
-gejTLHbgyG/xH/cpGN4GhEQOKSI4dtfM2ORPc/aYejp3gQ4Lxlg=
-=qCoh
------END PGP SIGNATURE-----
-
---dfhwccqs3coffif6--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
