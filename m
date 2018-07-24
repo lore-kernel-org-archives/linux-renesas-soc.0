@@ -1,18 +1,23 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f169.google.com ([209.85.217.169]:38011 "EHLO
-        mail-ua0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388506AbeGXPdF (ORCPT
+Received: from mail-vk0-f41.google.com ([209.85.213.41]:33020 "EHLO
+        mail-vk0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388395AbeGXPXt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Jul 2018 11:33:05 -0400
-Received: by mail-ua0-f169.google.com with SMTP id o11-v6so2868615uak.5
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Jul 2018 07:26:20 -0700 (PDT)
+        Tue, 24 Jul 2018 11:23:49 -0400
+Received: by mail-vk0-f41.google.com with SMTP id y70-v6so2107026vkc.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Jul 2018 07:17:08 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVFwG2t22+TX5kvZL-5NQ2BLA7kq6fbwSFjbqPkiU46Eg@mail.gmail.com>
+In-Reply-To: <CAMuHMdUzrd5i-U7Hk-sT3iD+a2S_oPZN3s07fWo7Ln95BYd55A@mail.gmail.com>
 References: <CAMuHMdUENK1Zwgv2_2yiyp9wfqgwb=N5yCUZHp-uQ0NU9pX=wQ@mail.gmail.com>
- <CAOtvUMc-MxerchqR9B-+yS5PEjRLvn0Nm21MUo_gaQq_MPeCVQ@mail.gmail.com> <CAMuHMdVFwG2t22+TX5kvZL-5NQ2BLA7kq6fbwSFjbqPkiU46Eg@mail.gmail.com>
+ <CAOtvUMc-MxerchqR9B-+yS5PEjRLvn0Nm21MUo_gaQq_MPeCVQ@mail.gmail.com>
+ <CAMuHMdVFwG2t22+TX5kvZL-5NQ2BLA7kq6fbwSFjbqPkiU46Eg@mail.gmail.com>
+ <CAOtvUMfNnhE-X_S+m6j2i3cVVk_7vwo=bsgWd7zPi5onGSoLyA@mail.gmail.com>
+ <CAOtvUMeU17v=GT3fo8uP0Lt=Wxp6jj4aD_xs87EqTiuxVOkTBA@mail.gmail.com>
+ <CAMuHMdWmm3_02BvQHfTSCVywQ-_W9_h62qBUr9datqycF40kUQ@mail.gmail.com>
+ <CAOtvUMcZBG-uw8r06=rBRkd+SL_9Pz1WV6zxRbcDj2DXC9Oa1Q@mail.gmail.com> <CAMuHMdUzrd5i-U7Hk-sT3iD+a2S_oPZN3s07fWo7Ln95BYd55A@mail.gmail.com>
 From: Gilad Ben-Yossef <gilad@benyossef.com>
-Date: Tue, 24 Jul 2018 17:26:19 +0300
-Message-ID: <CAOtvUMcq2PipfguwZhLdt-eG1Y=CY+W6tTXBKwUGHbFLz4ajtA@mail.gmail.com>
+Date: Tue, 24 Jul 2018 17:17:06 +0300
+Message-ID: <CAOtvUMfCjkhJ6FhkfFzW5=ZXSEn9dUf5KxtAOkE3mJtHgNv0qQ@mail.gmail.com>
 Subject: Re: CCREE performance on R-Car H3 + crash
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
@@ -22,69 +27,41 @@ Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jul 23, 2018 at 12:55 PM, Geert Uytterhoeven
+On Tue, Jul 24, 2018 at 10:51 AM, Geert Uytterhoeven
 <geert@linux-m68k.org> wrote:
 > Hi Gilad,
 >
-> CC linux-crypto for the crash log.
->
-> On Sun, Jul 22, 2018 at 7:28 AM Gilad Ben-Yossef <gilad@benyossef.com> wr=
+> On Tue, Jul 24, 2018 at 9:32 AM Gilad Ben-Yossef <gilad@benyossef.com> wr=
 ote:
->> On Thu, Jul 19, 2018 at 3:43 PM, Geert Uytterhoeven
->> <geert@linux-m68k.org> wrote:
->> > I've noticed CCREE is used with a LUKS-formatted disk, so I did some s=
-mall
->> > performance benchmarks.  The disk is an old 160 GiB SATA hard drive,
->> > connected to either Salvator-XS (R-Car H3 ES2.0) or Koelsch (R-Car M2-=
-W).
->> >
->> > hdparm -t /dev/sda (unencrypted data): 62 MB/s (both systems)
->> >
->> > hdparm -t /dev/dm-0 (encrypted data, LUKS AES):
->> >
->> >     salvator-xs (CCREE): 15 MB/s
->> >     salvator-xs (SW):    62 MB/s
->> >     koelsch (SW):        47 MB/s
->> >
->> > I'm a bit disappointment by the results when using crypto acceleration=
-.
->> > Apparently the in-kernel optimized arm64 implementation can decrypt at
->> > raw read speed, while CCREE can't keep up.
+...
+>> I've tried booting your tree and see the same behavior - "Unsupported
+>> data size" error message but no crash.
 >>
->> Interesting. What is the encryption sector size used?
+>> I'm running on an Savator-X R-Car H3 ES1.0 board.
+>>
+>> Not really sure how to proceed.
+>>
+>> Maybe you can send me your exact .config file?
 >
-> crypt_config.sector_size is 512.
+> I cannot reproduce the crash using renesas_defconfig + CONFIG_CRYPTO_DEV_=
+CCREE=3Dy
+> + CONFIG_CRYPTO_USER_API_SKCIPHER=3Dy.
 >
->> If it is he default of 512 bytes, you might want to try setting the
->> new block_size DM-Crypt option. I believe it will have a large effect
->> on the result.
+> I can reproduce it on Salvator-X with R-Car H3 ES1.0 and Salvator-XS with
+> R-Car H3 ES2.0 using the attached config.
 >
-> Where do I specifiy that option? I couldn't find it.
 
-It seems my memory of the config option name failed me,
-I was referring to the the sector_size and iv_large_sectors options
-of dm-crypt.
+OK, found what the problem was (SLAB vs. SLUB is what makes the
+problem manifest as a crash, I think).
+
+Just sent fixes to the crypto mailing list. I've spared the Renesas
+list since it's not really related to it but CCed you.
+I'd be delighted if you can give it a test.
 
 
+Thank you very much for reporting and assistance!
 
-> Is that compatible with the encrypted media that's already in use?
-
-No, if you created the media with 512 sector size than obviously trying to =
-mount
-with a different sector size will not work.
-
-There is a discussion right now in the MD mailing list about changes
-to DM-Crypt so that
-you don't have to change the sector size and still work with larger
-buffers if the HW supports
-auto increment the sector number in the IV, as CryptoCell indeed knows
-how to do in a newer
-revision of the HW than the one that is found in the R-Car, but that
-won't help us here, alas.
-
-Thanks,
 Gilad
-
 
 --=20
 Gilad Ben-Yossef
