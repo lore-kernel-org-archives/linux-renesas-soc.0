@@ -1,74 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:55736 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388391AbeGKOZn (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46197 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388265AbeGXNXe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:25:43 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 08/11] clk: renesas: r8a77990: Correct RCLK handling
-Date: Wed, 11 Jul 2018 16:20:57 +0200
-Message-Id: <20180711142100.3765-9-geert+renesas@glider.be>
-In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
-References: <20180711142100.3765-1-geert+renesas@glider.be>
+        Tue, 24 Jul 2018 09:23:34 -0400
+Date: Tue, 24 Jul 2018 14:17:17 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+Subject: Re: [PATCH v3 2/4] mmc: tmio: Fix SCC error detection
+Message-ID: <20180724121717.hw4oifpbtnfwbsxb@verge.net.au>
+References: <20180717145216.16840-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180717145216.16840-3-niklas.soderlund+renesas@ragnatech.se>
+ <20180724104459.pfggnsz5xlxq6peh@ninjato>
+ <20180724110331.usvbfd7vvs5xxd7l@verge.net.au>
+ <20180724111710.tioelozl6vq5ya4t@ninjato>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180724111710.tioelozl6vq5ya4t@ninjato>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-According to R-Car Gen3 Hardware Manual Rev.1.00, R-Car E3 has the
-RCLK Frequency Control Register (RCKCR), which determines the OSC and
-RINT predivider values, and selection of the RCLK clock source between
-RINT and the On-Chip Oscillator.
+On Tue, Jul 24, 2018 at 01:17:10PM +0200, Wolfram Sang wrote:
+> 
+> > > This patch breaks HS400 on my M3-N again :(
+> > > 
+> > 
+> > I think that may be because renesas_sdhi_check_scc_error needs
+> > to be taught about 8-tap HS400.
+> 
+> Right, so patch 2 kind of depends on patch 4?
 
-Hence change the OSC and RINT clock definitions to use the RCKCR
-divider, and add the missing On-Chip Oscillator and RCLK clock source
-switching logic.
+Yes, I think so. Sorry for missing that in my earlier review.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-As Figure 8.1g "Block Diagram of CPG (R-Car E3)" shows 1/61 and 1/4
-dividers after the On-Chip Oscillator, I assume the OCO runs at 8 MHz.
----
- drivers/clk/renesas/r8a77990-cpg-mssr.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/renesas/r8a77990-cpg-mssr.c b/drivers/clk/renesas/r8a77990-cpg-mssr.c
-index 9e14f1486fbb93cc..6fcc0abdb20c442d 100644
---- a/drivers/clk/renesas/r8a77990-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77990-cpg-mssr.c
-@@ -44,6 +44,8 @@ enum clk_ids {
- 	CLK_S2,
- 	CLK_S3,
- 	CLK_SDSRC,
-+	CLK_RINT,
-+	CLK_OCO,
- 
- 	/* Module Clocks */
- 	MOD_CLK_BASE
-@@ -100,8 +102,8 @@ static const struct cpg_core_clk r8a77990_core_clks[] __initconst = {
- 	DEF_FIXED("cl",        R8A77990_CLK_CL,    CLK_PLL1,      48, 1),
- 	DEF_FIXED("cp",        R8A77990_CLK_CP,    CLK_EXTAL,      2, 1),
- 	DEF_FIXED("cpex",      R8A77990_CLK_CPEX,  CLK_EXTAL,      4, 1),
--	DEF_FIXED("osc",       R8A77990_CLK_OSC,   CLK_EXTAL,    384, 1),
--	DEF_FIXED("r",         R8A77990_CLK_R,     CLK_EXTAL,   1536, 1),
-+	DEF_DIV6_RO("osc",     R8A77990_CLK_OSC,   CLK_EXTAL, CPG_RCKCR,  8),
-+	DEF_DIV6_RO("r_int",   CLK_RINT,           CLK_EXTAL, CPG_RCKCR, 32),
- 
- 	DEF_GEN3_PE("s0d6c",   R8A77990_CLK_S0D6C, CLK_S0, 6, CLK_PE, 2),
- 	DEF_GEN3_PE("s3d1c",   R8A77990_CLK_S3D1C, CLK_S3, 1, CLK_PE, 1),
-@@ -111,6 +113,9 @@ static const struct cpg_core_clk r8a77990_core_clks[] __initconst = {
- 	DEF_DIV6P1("canfd",    R8A77990_CLK_CANFD, CLK_PLL0D6, 0x244),
- 	DEF_DIV6P1("csi0",     R8A77990_CLK_CSI0,  CLK_PLL1D2, 0x00c),
- 	DEF_DIV6P1("mso",      R8A77990_CLK_MSO,   CLK_PLL1D2, 0x014),
-+
-+	DEF_RATE("oco",        CLK_OCO,            8 * 1000 * 1000),
-+	DEF_GEN3_RCKSEL("r",   R8A77990_CLK_R, CLK_RINT, 1, CLK_OCO, 61 * 4),
- };
- 
- static const struct mssr_mod_clk r8a77990_mod_clks[] __initconst = {
--- 
-2.17.1
+> Niklas, how is your status on reworking patch 4?
