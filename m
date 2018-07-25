@@ -1,70 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:57494 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729684AbeGQVKW (ORCPT
+Received: from sauhun.de ([88.99.104.3]:37978 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729202AbeGYUXr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jul 2018 17:10:22 -0400
-From: Kieran Bingham <kieran@ksquared.org.uk>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v5 02/11] media: vsp1: Remove packed attributes from aligned structures
-Date: Tue, 17 Jul 2018 21:35:44 +0100
-Message-Id: <bbb67734d09bc37971ce323570dfb085b7fec0dd.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.6efe8ff8efecd736e2aab039b2cf34d43e849939.1531857988.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Wed, 25 Jul 2018 16:23:47 -0400
+Date: Wed, 25 Jul 2018 21:10:45 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Tejun Heo <tj@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-ide@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/2] ata: sata_rcar: Provide a short-hand for &pdev->dev
+Message-ID: <20180725191045.nq3y7rqmcfi6nx7m@ninjato>
+References: <20180720122739.30056-1-geert+renesas@glider.be>
+ <20180720122739.30056-2-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3w5rvqtddcm7g6rh"
+Content-Disposition: inline
+In-Reply-To: <20180720122739.30056-2-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-The use of the packed attribute can cause a performance penalty for
-all accesses to the struct members, as the compiler will assume that the
-structure has the potential to have an unaligned base.
+--3w5rvqtddcm7g6rh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-These structures are all correctly aligned and contain no holes, thus
-the attribute is redundant and negatively impacts performance, so we
-remove the attributes entirely.
+On Fri, Jul 20, 2018 at 02:27:38PM +0200, Geert Uytterhoeven wrote:
+> No functional changes.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2
- - Remove attributes entirely
+For the record, works fine with the newly added SATA support for M3-N:
 
- drivers/media/platform/vsp1/vsp1_dl.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index d9b9cdd8fbe2..5da7988dd616 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -25,19 +25,19 @@
- struct vsp1_dl_header_list {
- 	u32 num_bytes;
- 	u32 addr;
--} __attribute__((__packed__));
-+};
- 
- struct vsp1_dl_header {
- 	u32 num_lists;
- 	struct vsp1_dl_header_list lists[8];
- 	u32 next_header;
- 	u32 flags;
--} __attribute__((__packed__));
-+};
- 
- struct vsp1_dl_entry {
- 	u32 addr;
- 	u32 data;
--} __attribute__((__packed__));
-+};
- 
- /**
-  * struct vsp1_dl_body - Display list body
--- 
-git-series 0.9.1
+
+--3w5rvqtddcm7g6rh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltYyzAACgkQFA3kzBSg
+KbY84g//X8UNijQxiw1t/0VfLl/hbUaaaS0sPaHTOYzDN1tBpxr66CgwOGMnjpZe
+ITXG3d0X9NNdLVrEXGTMOLqayvjk1dAV6TlZn7iE8/3gt/m5FjP9V1BWzF6gclCY
+dTm/Re1aXRLycyGQ3caYdA1yblSJlLipyByh/cW/ZvU5Tu1Ou0yhnjbQDDnA1xsh
+gF7mP5tRz956dA4P5G8vAgqihcea8ABEy4OI3VA+bwfRLCZB/BSsLjN4N68sOZbS
+scmWM5m5shAm0pKDfOy2KjFgeoHh+4SLOZxIRkue6mEG736YSycsHbkX6alyM6BB
++MFkKr9dThi0QwNcgDI2zvhzHeDGGT8hZLZtAZFos46GC/6i4nWaLTuyHlIXPf5N
+5juS13aC1FhEWqCIMv/kuFDjPb0j5AQCMzWBCgETIrDrchetdqk3u0uafwU6dlOr
+KbbOPyWf+dP66OCaGmCFO3fHt5ZiJ4bH7yyaa1gKQ8Bxu6L2gmLvGU2wlkDyc/Iw
+sMOn4+KtGO6UWlxcknhWl89dz5yDc+5r+KvV6wzH0UVrpJGF8AL+uw48/Za7RpqD
+SaBl7WHpk4SZ/8hmm9BYkot3/uUTplohiH4+1mD2Fa0cKEYbgnyXsSiyzxPeXas2
+UwRM5DdnS9WfzYjggWQr0QEriZ+sEXFWh1v/GX4r6u+nQb712uI=
+=egZh
+-----END PGP SIGNATURE-----
+
+--3w5rvqtddcm7g6rh--
