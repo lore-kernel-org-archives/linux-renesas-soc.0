@@ -1,39 +1,76 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel@pengutronix.de,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH/RFT 1/6] i2c: designware: use open drain for recovery GPIO
-Date: Fri, 13 Jul 2018 23:09:13 +0200
-Message-Id: <20180713210920.3648-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180713210920.3648-1-wsa+renesas@sang-engineering.com>
-References: <20180713210920.3648-1-wsa+renesas@sang-engineering.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:53195 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728452AbeGYO43 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 25 Jul 2018 10:56:29 -0400
+From: Jacopo Mondi <jacopo@jmondi.org>
+To: mchehab@kernel.org, sakari.ailus@iki.fi,
+        kieran.bingham@ideasonboard.com
+Cc: Jacopo Mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [v2 0/2] media: i2c: mt9v111 sensor driver
+Date: Wed, 25 Jul 2018 15:44:29 +0200
+Message-Id: <1532526271-19639-1-git-send-email-jacopo@jmondi.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I2C is open drain, so set up the GPIO accordingly.
+Hello,
+   this is a sensor level driver for Aptina MT9V111.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/busses/i2c-designware-master.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Compared to v1 the biggest difference is that now auto-exposure and
+auto-white-balancing are exposed through the v4l2-ctrl framework, and can be
+activated/deactivated by the user.
 
-diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
-index fc7c255c80af..a546db80f53e 100644
---- a/drivers/i2c/busses/i2c-designware-master.c
-+++ b/drivers/i2c/busses/i2c-designware-master.c
-@@ -665,7 +665,7 @@ static int i2c_dw_init_recovery_info(struct dw_i2c_dev *dev)
- 	struct gpio_desc *gpio;
- 	int r;
- 
--	gpio = devm_gpiod_get(dev->dev, "scl", GPIOD_OUT_HIGH);
-+	gpio = devm_gpiod_get(dev->dev, "scl", GPIOD_OUT_HIGH_OPEN_DRAIN);
- 	if (IS_ERR(gpio)) {
- 		r = PTR_ERR(gpio);
- 		if (r == -ENOENT || r == -ENOSYS)
--- 
-2.11.0
+For this reason, while auto-exposure algorithm still controls the frame rate in
+low light conditions, the driver now enables it by default and let the user
+disable it to more precisely control the framerate.
+
+(Most of the) comments from Sakari and Kieran have been addressed, see changelog
+for a more precise list.
+
+Tested VGA, QVGA QQVGA resolutions at 5, 10, 15 and 30 frame per second.
+
+v4l2-compliance fails on some tests, and I've not been able to identify what's
+wrong with the driver. Copy of the failures reported here below:
+
+fail: v4l2-test-subdevs.cpp(69): doioctl(node, VIDIOC_SUBDEV_ENUM_FRAME_INTERVAL, &fie) != EINVAL
+fail: v4l2-test-subdevs.cpp(180): ret && ret != ENOTTY
+fail: v4l2-test-subdevs.cpp(248): ret && ret != ENOTTY
+test Active VIDIOC_SUBDEV_ENUM_MBUS_CODE/FRAME_SIZE/FRAME_INTERVAL: FAIL
+
+I've found no mention of ENOTTY to be reported by enum_frame_interval in the
+documentation, but apparently v4l2-compliance checks for that.
+
+v1: https://lkml.org/lkml/2018/6/11/467
+
+Thanks
+   j
+
+v1 -> v2:
+- Addressed syntax mistakes pointed out by Kieran
+- Drop spinlock around address space change
+- Extend mutex to cover frame rate and format get/set operations
+- Add controls for auto-exposure and auto-white-balancing
+- Move MAINTAINERS modifications to bindings patch
+- Fix resolution in bindings document
+- Drop dependency on OF
+- Drop subdev 'open' function in favour of pad operation init_cfg and use a
+  default configuration to initialize the sensor
+- Turn off power if sensor identification fails
+
+Jacopo Mondi (2):
+  dt-bindings: media: i2c: Document MT9V111 bindings
+  media: i2c: Add driver for Aptina MT9V111
+
+ .../bindings/media/i2c/aptina,mt9v111.txt          |   46 +
+ MAINTAINERS                                        |    8 +
+ drivers/media/i2c/Kconfig                          |   11 +
+ drivers/media/i2c/Makefile                         |    1 +
+ drivers/media/i2c/mt9v111.c                        | 1299 ++++++++++++++++++++
+ 5 files changed, 1365 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.txt
+ create mode 100644 drivers/media/i2c/mt9v111.c
+
+--
+2.7.4
