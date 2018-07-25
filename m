@@ -1,68 +1,157 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:51266 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388201AbeGWV3y (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:58226 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729087AbeGYPqT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jul 2018 17:29:54 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
+        Wed, 25 Jul 2018 11:46:19 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Peter Maydell <peter.maydell@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc: Auger Eric <eric.auger@redhat.com>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 10/12] i2c: rcar: use core to detect 'no zero length' quirk
-Date: Mon, 23 Jul 2018 22:26:14 +0200
-Message-Id: <20180723202617.15230-11-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
-References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        qemu-arm@nongnu.org, qemu-devel@nongnu.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 1/4] vfio/platform: Make the vfio-platform device non-abstract
+Date: Wed, 25 Jul 2018 16:34:10 +0200
+Message-Id: <20180725143413.9728-2-geert+renesas@glider.be>
+In-Reply-To: <20180725143413.9728-1-geert+renesas@glider.be>
+References: <20180725143413.9728-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-And don't reimplement in the driver.
+From: Auger Eric <eric.auger@redhat.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Up to now the vfio-platform device has been abstract and could not be
+instantiated.  The integration of a new vfio platform device required
+creating a dummy derived device which only set the compatible string.
+
+Following the few vfio-platform device integrations we have seen the
+actual requested adaptation happens on device tree node creation
+(sysbus-fdt).
+
+Hence remove the abstract setting, and read the list of compatible
+values from sysfs if not set by a derived device.
+
+Update the amd-xgbe and calxeda-xgmac drivers to fill in the number of
+compatible values, as there can now be more than one.
+
+Note that sysbus-fdt does not support the instantiation of the
+vfio-platform device yet.
+
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
+[geert: Rebase, set user_creatable=true, use compatible values in sysfs
+	instead of user-supplied manufacturer/model options, reword]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+v3:
+  - Read all compatible values from sysfs instead of using user-supplied
+    manufacturer and model options,
+  - Reword patch description,
+  - Drop RFC state,
 
- drivers/i2c/busses/i2c-rcar.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+v2:
+  - No changes,
 
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index 2688520110d1..791a4aa34fdd 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -796,14 +796,8 @@ static int rcar_i2c_master_xfer(struct i2c_adapter *adap,
- 	if (ret < 0)
- 		goto out;
+v1:
+  - Rebase, Set user_creatable=true,
+
+v0:
+  - Original version from Eric.
+---
+ hw/vfio/amd-xgbe.c              |  1 +
+ hw/vfio/calxeda-xgmac.c         |  1 +
+ hw/vfio/platform.c              | 22 +++++++++++++++++++++-
+ include/hw/vfio/vfio-platform.h |  3 ++-
+ 4 files changed, 25 insertions(+), 2 deletions(-)
+
+diff --git a/hw/vfio/amd-xgbe.c b/hw/vfio/amd-xgbe.c
+index 0c4ec4ba25170366..ee64a3b4a2e45bf5 100644
+--- a/hw/vfio/amd-xgbe.c
++++ b/hw/vfio/amd-xgbe.c
+@@ -20,6 +20,7 @@ static void amd_xgbe_realize(DeviceState *dev, Error **errp)
+     VFIOAmdXgbeDeviceClass *k = VFIO_AMD_XGBE_DEVICE_GET_CLASS(dev);
  
--	for (i = 0; i < num; i++) {
--		/* This HW can't send STOP after address phase */
--		if (msgs[i].len == 0) {
--			ret = -EOPNOTSUPP;
--			goto out;
--		}
-+	for (i = 0; i < num; i++)
- 		rcar_i2c_request_dma(priv, msgs + i);
--	}
+     vdev->compat = g_strdup("amd,xgbe-seattle-v1a");
++    vdev->num_compat = 1;
  
- 	/* init first message */
- 	priv->msg = msgs;
-@@ -890,6 +884,10 @@ static const struct i2c_algorithm rcar_i2c_algo = {
- 	.unreg_slave	= rcar_unreg_slave,
+     k->parent_realize(dev, errp);
+ }
+diff --git a/hw/vfio/calxeda-xgmac.c b/hw/vfio/calxeda-xgmac.c
+index 24cee6d06512c1b6..e7767c4b021be566 100644
+--- a/hw/vfio/calxeda-xgmac.c
++++ b/hw/vfio/calxeda-xgmac.c
+@@ -20,6 +20,7 @@ static void calxeda_xgmac_realize(DeviceState *dev, Error **errp)
+     VFIOCalxedaXgmacDeviceClass *k = VFIO_CALXEDA_XGMAC_DEVICE_GET_CLASS(dev);
+ 
+     vdev->compat = g_strdup("calxeda,hb-xgmac");
++    vdev->num_compat = 1;
+ 
+     k->parent_realize(dev, errp);
+ }
+diff --git a/hw/vfio/platform.c b/hw/vfio/platform.c
+index 57c4a0ee2b58da70..e264555cd5dafb16 100644
+--- a/hw/vfio/platform.c
++++ b/hw/vfio/platform.c
+@@ -655,6 +655,25 @@ static void vfio_platform_realize(DeviceState *dev, Error **errp)
+         goto out;
+     }
+ 
++    if (!vdev->compat) {
++        gchar *contents;
++        gsize length;
++        char *tmp;
++
++        tmp = g_strdup_printf("%s/of_node/compatible", vbasedev->sysfsdev);
++        if (!g_file_get_contents(tmp, &contents, &length, NULL)) {
++            error_report("failed to load \"%s\"", tmp);
++            exit(1);
++        }
++        g_free(tmp);
++        vdev->compat = contents;
++        for (vdev->num_compat = 0; length; vdev->num_compat++) {
++            size_t skip = strlen(contents) + 1;
++            contents += skip;
++            length -= skip;
++        }
++    }
++
+     for (i = 0; i < vbasedev->num_regions; i++) {
+         if (vfio_region_mmap(vdev->regions[i])) {
+             error_report("%s mmap unsupported. Performance may be slow",
+@@ -700,6 +719,8 @@ static void vfio_platform_class_init(ObjectClass *klass, void *data)
+     dc->desc = "VFIO-based platform device assignment";
+     sbc->connect_irq_notifier = vfio_start_irqfd_injection;
+     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
++    /* Supported by TYPE_VIRT_MACHINE */
++    dc->user_creatable = true;
+ }
+ 
+ static const TypeInfo vfio_platform_dev_info = {
+@@ -708,7 +729,6 @@ static const TypeInfo vfio_platform_dev_info = {
+     .instance_size = sizeof(VFIOPlatformDevice),
+     .class_init = vfio_platform_class_init,
+     .class_size = sizeof(VFIOPlatformDeviceClass),
+-    .abstract   = true,
  };
  
-+static const struct i2c_adapter_quirks rcar_i2c_quirks = {
-+	.flags = I2C_AQ_NO_ZERO_LEN,
-+};
-+
- static const struct of_device_id rcar_i2c_dt_ids[] = {
- 	{ .compatible = "renesas,i2c-r8a7778", .data = (void *)I2C_RCAR_GEN1 },
- 	{ .compatible = "renesas,i2c-r8a7779", .data = (void *)I2C_RCAR_GEN1 },
-@@ -943,6 +941,7 @@ static int rcar_i2c_probe(struct platform_device *pdev)
- 	adap->dev.parent = dev;
- 	adap->dev.of_node = dev->of_node;
- 	adap->bus_recovery_info = &rcar_i2c_bri;
-+	adap->quirks = &rcar_i2c_quirks;
- 	i2c_set_adapdata(adap, priv);
- 	strlcpy(adap->name, pdev->name, sizeof(adap->name));
- 
+ static void register_vfio_platform_dev_type(void)
+diff --git a/include/hw/vfio/vfio-platform.h b/include/hw/vfio/vfio-platform.h
+index 9baaa2db09b84f3e..0ee10b1d71ed2503 100644
+--- a/include/hw/vfio/vfio-platform.h
++++ b/include/hw/vfio/vfio-platform.h
+@@ -54,7 +54,8 @@ typedef struct VFIOPlatformDevice {
+     QLIST_HEAD(, VFIOINTp) intp_list; /* list of IRQs */
+     /* queue of pending IRQs */
+     QSIMPLEQ_HEAD(pending_intp_queue, VFIOINTp) pending_intp_queue;
+-    char *compat; /* compatibility string */
++    char *compat; /* DT compatible values, separated by NUL */
++    unsigned int num_compat; /* number of compatible values */
+     uint32_t mmap_timeout; /* delay to re-enable mmaps after interrupt */
+     QEMUTimer *mmap_timer; /* allows fast-path resume after IRQ hit */
+     QemuMutex intp_mutex; /* protect the intp_list IRQ state */
 -- 
-2.11.0
+2.17.1
