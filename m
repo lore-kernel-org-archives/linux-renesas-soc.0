@@ -1,133 +1,79 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:56579 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752399AbeGCUlX (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Jul 2018 16:41:23 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: horms@verge.net.au, geert@linux-m68k.org
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-media@lists.infradead.org
-Subject: [PATCH] ARM: dts: gr-peach: Add GR-Peach audiocamerashield support
-Date: Tue,  3 Jul 2018 22:41:09 +0200
-Message-Id: <1530650469-29201-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+Subject: Re: [PATCH/RFT 1/6] i2c: designware: use open drain for recovery GPIO
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel@pengutronix.de,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+References: <20180713210920.3648-1-wsa+renesas@sang-engineering.com>
+ <20180713210920.3648-2-wsa+renesas@sang-engineering.com>
+ <daaf702b-642f-e0fd-6a2e-7f0f817efba3@electromag.com.au>
+ <20180717090920.zy6lkeqlcewhrfs5@ninjato>
+ <b8d7c7aa-dbde-3037-4a1b-691bcf045131@electromag.com.au>
+ <20180724072637.smhlrx4kpyh6hvwa@ninjato>
+From: Phil Reid <preid@electromag.com.au>
+Message-ID: <4163910a-f37b-5987-ecc2-074cebda753b@electromag.com.au>
+Date: Wed, 25 Jul 2018 11:26:29 +0800
+MIME-Version: 1.0
+In-Reply-To: <20180724072637.smhlrx4kpyh6hvwa@ninjato>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-AU
+Content-Transfer-Encoding: 7bit
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device tree header for GR-Peach's audiocamerashield with MT9V111
-image sensor.
+On 24/07/2018 15:26, Wolfram Sang wrote:
+> Hi Phil,
+> 
+>>> So, it is not possible to read SCL status then? Hmm, currently a working
+>>> get_scl is required...
+> ...
+>>> Well, I don't know much about this IP core and how/where it is used. I
+>>> just wonder what happens if another user comes along using an
+>>> open-drain GPIO. Is that possible?
+>>>
+>>> I assume it is the same with SDA? Non open-drain? Output only?
+>>>
+>>
+>> Just had a closer look at how it's setup here.
+>> Maybe the following helps.
+> 
+> Thanks for the detailed explanation. I am just afraid it is a litle too
+> detailed for me. I am not sure if I can read it correctly:
+> 
+> When you read the SCL/SDA GPIO, does it return the true state of the
+> SCL/SDA line or does it just reflect the value it was set to output?
+Yes it returns the true state of the output pin.
+I admit it's a bit odd from the classic GPIO point of view.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
+> 
+>> There's no concept of HiZ internally in the FPGA.
+> 
+> Which probably means SDA is to be treated the same as SCL -> push/pull.
+Yes. They're both driven push/pull, but the try state of the line is available.
 
-The GR-Peach audiocamera shield is an expansion board for the GR-Peach that
-comes with an MT9V111 camera module.
+> 
+>> If there was some kinda of OpenDrain gpio driver that modelled a FET
+>> driven by a push pull GPIO I guess it could be made to work.
+> 
+> Still, that sounds quite unlikely to me, so we can for now assume that
+> all designware users will have push/pull?
+I know of one other doing the same thing with the core in the Altera SocFPGA platform.
+As they put me on to this solution for doing the recovery when the i2c was routed thru the SOC's fpga.
 
-https://www.core.co.jp/product/m2m/gr-peach/audio-camera.html
-https://www.digikey.com/product-detail/en/renesas-electronics-america/YGRPEACHAUDIOCAMERASHIELD/YGRPEACHAUDIOCAMERASHIELD-ND/5800301
+In other hard configurations they may have a 'proper' GPIO available that needs to be OpenDrain.
 
-The series functionally depends on the already sent support for the MT9V111
-sensor, but does not have any compile time dependency on it (a checkpatch
-warning on the un-documented "aptina-mt9v111" compatible string apart).
 
-https://lkml.org/lkml/2018/6/11/469
 
-(copied the linux-media list to which I'll send a gentle ping for the
-driver later ;)
+> 
+> Disclaimer: I have zero experience with this core, I don't know how hard
+> it is to modify or which versions are out there.
+> 
 
-Thanks
-   j
----
- arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi | 79 +++++++++++++++++++++++
- 1 file changed, 79 insertions(+)
- create mode 100644 arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi
 
-diff --git a/arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi b/arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi
-new file mode 100644
-index 0000000..e31a9e3
---- /dev/null
-+++ b/arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi
-@@ -0,0 +1,79 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the GR-Peach audiocamera shield expansion board
-+ *
-+ * Copyright (C) 2017 Jacopo Mondi <jacopo+renesas@jmondi.org>
-+ */
-+
-+#include "r7s72100.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
-+
-+/ {
-+	/* On-board camera clock. */
-+	camera_clk: camera_clk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <27000000>;
-+	};
-+};
-+
-+&pinctrl {
-+	i2c1_pins: i2c1 {
-+		/* P1_2 as SCL; P1_3 as SDA */
-+		pinmux = <RZA1_PINMUX(1, 2, 1)>, <RZA1_PINMUX(1, 3, 1)>;
-+	};
-+
-+	vio_pins: vio {
-+		/* CEU pins: VIO_D[0-10], VIO_VD, VIO_HD, VIO_CLK */
-+		pinmux = <RZA1_PINMUX(1, 0, 5)>, /* VIO_VD */
-+			 <RZA1_PINMUX(1, 1, 5)>, /* VIO_HD */
-+			 <RZA1_PINMUX(2, 0, 7)>, /* VIO_D0 */
-+			 <RZA1_PINMUX(2, 1, 7)>, /* VIO_D1 */
-+			 <RZA1_PINMUX(2, 2, 7)>, /* VIO_D2 */
-+			 <RZA1_PINMUX(2, 3, 7)>, /* VIO_D3 */
-+			 <RZA1_PINMUX(2, 4, 7)>, /* VIO_D4 */
-+			 <RZA1_PINMUX(2, 5, 7)>, /* VIO_D5 */
-+			 <RZA1_PINMUX(2, 6, 7)>, /* VIO_D6 */
-+			 <RZA1_PINMUX(2, 7, 7)>, /* VIO_D7 */
-+			 <RZA1_PINMUX(10, 0, 6)>; /* VIO_CLK */
-+	};
-+};
-+
-+&i2c1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c1_pins>;
-+
-+	status = "okay";
-+	clock-frequency = <100000>;
-+
-+	camera@48 {
-+		compatible = "aptina,mt9v111";
-+		reg = <0x48>;
-+
-+		clocks = <&camera_clk>;
-+
-+		port {
-+			mt9v111_out: endpoint {
-+				remote-endpoint = <&ceu_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&ceu {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&vio_pins>;
-+
-+	status = "okay";
-+
-+	port {
-+		ceu_in: endpoint {
-+			hsync-active = <1>;
-+			vsync-active = <1>;
-+			bus-width = <8>;
-+			pclk-sample = <1>;
-+			remote-endpoint = <&mt9v111_out>;
-+		};
-+	};
-+};
---
-2.7.4
+-- 
+Regards
+Phil Reid
