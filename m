@@ -1,55 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:48410 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731956AbeGMV0D (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:46242 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729025AbeGYOZB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Jul 2018 17:26:03 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel@pengutronix.de,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH/RFT 0/6] i2c: recovery: fix GPIO usage for recovery
-Date: Fri, 13 Jul 2018 23:09:12 +0200
-Message-Id: <20180713210920.3648-1-wsa+renesas@sang-engineering.com>
+        Wed, 25 Jul 2018 10:25:01 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Magnus Damm <damm+renesas@opensource.se>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        iommu@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] iommu/ipmmu-vmsa: Fix allocation in atomic context
+Date: Wed, 25 Jul 2018 15:13:20 +0200
+Message-Id: <20180725131320.5994-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I have sent the last patch of this series before, but then I realized I need to
-convert all users of GPIO recovery before. I needed to make sure they all set
-the SDA GPIO to output, this is what patches 3-5 are doing. Which is also good
-for them because then they can send STOP at apropriate places when doing
-recovery.
+When attaching a device to an IOMMU group with
+CONFIG_DEBUG_ATOMIC_SLEEP=y:
 
-Then, I noticed that two drivers were not using the open drain mode for SCL
-which seems like a bug to me. So, patches 1+2 address that. I'd think those two
-are stable material.
+    BUG: sleeping function called from invalid context at mm/slab.h:421
+    in_atomic(): 1, irqs_disabled(): 128, pid: 61, name: kworker/1:1
+    ...
+    Call trace:
+     ...
+     arm_lpae_alloc_pgtable+0x114/0x184
+     arm_64_lpae_alloc_pgtable_s1+0x2c/0x128
+     arm_32_lpae_alloc_pgtable_s1+0x40/0x6c
+     alloc_io_pgtable_ops+0x60/0x88
+     ipmmu_attach_device+0x140/0x334
 
-Due to no hardware, I could only build test these patches. I'd be really
-looking forward to comments or tests of these patches.
+ipmmu_attach_device() takes a spinlock, while arm_lpae_alloc_pgtable()
+allocates memory using GFP_KERNEL.  Originally, the ipmmu-vmsa driver
+had its own custom page table allocation implementation using
+GFP_ATOMIC, hence the spinlock was fine.
 
-A branch can be found here:
+Fix this by replacing the spinlock by a mutex, like the arm-smmu driver
+does.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/recovery-sda-output
+Fixes: f20ed39f53145e45 ("iommu/ipmmu-vmsa: Use the ARM LPAE page table allocator")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+v2:
+  - Add Reviewed-by.
+---
+ drivers/iommu/ipmmu-vmsa.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-Thanks,
-
-   Wolfram
-
-
-Wolfram Sang (6):
-  i2c: designware: use open drain for recovery GPIO
-  i2c: imx: use open drain for recovery GPIO
-  i2c: designware: set SDA as output for recovery
-  i2c: davinci: set SDA as output for recovery
-  i2c: imx: set SDA as output for recovery
-  i2c: recovery: remove bogus check if SDA GPIO is set to output
-
- drivers/i2c/busses/i2c-davinci.c           | 3 ++-
- drivers/i2c/busses/i2c-designware-master.c | 4 ++--
- drivers/i2c/busses/i2c-imx.c               | 4 ++--
- drivers/i2c/i2c-core-base.c                | 4 +---
- 4 files changed, 7 insertions(+), 8 deletions(-)
-
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index 40ae6e87cb880223..ef566b4989d6e2f8 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -73,7 +73,7 @@ struct ipmmu_vmsa_domain {
+ 	struct io_pgtable_ops *iop;
+ 
+ 	unsigned int context_id;
+-	spinlock_t lock;			/* Protects mappings */
++	struct mutex mutex;			/* Protects mappings */
+ };
+ 
+ static struct ipmmu_vmsa_domain *to_vmsa_domain(struct iommu_domain *dom)
+@@ -595,7 +595,7 @@ static struct iommu_domain *__ipmmu_domain_alloc(unsigned type)
+ 	if (!domain)
+ 		return NULL;
+ 
+-	spin_lock_init(&domain->lock);
++	mutex_init(&domain->mutex);
+ 
+ 	return &domain->io_domain;
+ }
+@@ -641,7 +641,6 @@ static int ipmmu_attach_device(struct iommu_domain *io_domain,
+ 	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
+ 	struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
+ 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
+-	unsigned long flags;
+ 	unsigned int i;
+ 	int ret = 0;
+ 
+@@ -650,7 +649,7 @@ static int ipmmu_attach_device(struct iommu_domain *io_domain,
+ 		return -ENXIO;
+ 	}
+ 
+-	spin_lock_irqsave(&domain->lock, flags);
++	mutex_lock(&domain->mutex);
+ 
+ 	if (!domain->mmu) {
+ 		/* The domain hasn't been used yet, initialize it. */
+@@ -674,7 +673,7 @@ static int ipmmu_attach_device(struct iommu_domain *io_domain,
+ 	} else
+ 		dev_info(dev, "Reusing IPMMU context %u\n", domain->context_id);
+ 
+-	spin_unlock_irqrestore(&domain->lock, flags);
++	mutex_unlock(&domain->mutex);
+ 
+ 	if (ret < 0)
+ 		return ret;
 -- 
-2.11.0
+2.17.1
