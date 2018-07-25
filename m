@@ -1,182 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-09.nifty.com ([210.131.2.76]:54124 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731924AbeG0CeZ (ORCPT
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41632 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731168AbeGYXcP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jul 2018 22:34:25 -0400
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] mmc: tmio: allow DMA request hook to return error status
-Date: Fri, 27 Jul 2018 10:14:06 +0900
-Message-Id: <1532654046-11901-1-git-send-email-yamada.masahiro@socionext.com>
+        Wed, 25 Jul 2018 19:32:15 -0400
+Received: by mail-wr1-f68.google.com with SMTP id j5-v6so8769577wrr.8
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Jul 2018 15:18:31 -0700 (PDT)
+Subject: Re: [PATCH 1/9] ARM: dts: porter: Add missing PMIC nodes
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>
+References: <cover.1532086734.git.horms+renesas@verge.net.au>
+ <5058a96cb7e8dca97629c48084537fe5def8344f.1532086734.git.horms+renesas@verge.net.au>
+ <8312c88f-9ff8-454e-fad9-7bf403c28207@cogentembedded.com>
+ <1f7c894a-9ad6-2e4e-c144-de982c2ba4c8@gmail.com>
+ <CAMuHMdVVGBtBrZ=0356+ZXDeGwiW=Ayvhy3_+AOE-6P3Q8zR6Q@mail.gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <7ec532b3-7574-f437-fb9d-4d831cb8d43e@gmail.com>
+Date: Thu, 26 Jul 2018 00:17:08 +0200
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdVVGBtBrZ=0356+ZXDeGwiW=Ayvhy3_+AOE-6P3Q8zR6Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-dma_request_chan() may return ERR_PTR(-EPROBE_DEFER), but
-tmio_mmc_request_dma() cannot propagate it since it is a
-void function.
+On 07/23/2018 11:03 AM, Geert Uytterhoeven wrote:
+> Hi Marek,
 
-Change the return type to int so that the driver can retry
-probing later in case the DMA-engine driver is probed after
-the TMIO MMC driver.
+Hi,
 
-I moved the call for tmio_mmc_request_dma() up because it may
-fail now.  I also removed unneeded clearing of host->chan_{tx,rx}
-because (struct tmio_mmc_host) is allocated by kzalloc().
+> On Sun, Jul 22, 2018 at 2:07 PM Marek Vasut <marek.vasut@gmail.com> wrote:
+>> On 07/20/2018 06:38 PM, Sergei Shtylyov wrote:
+>>> On 07/20/2018 03:05 PM, Simon Horman wrote:
+>>>> From: Marek Vasut <marek.vasut@gmail.com>
+>>>>
+>>>> Add PMIC nodes to Porter and connect CPU DVFS supply. There is
+>>>> one DA9063L and one DA9210 on Porter, the only difference from
+>>>> the other boards is that DA9063L is at I2C address 0x5a rather
+>>>> than 0x58 .
+>>>>
+>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>>> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+>>>> ---
+>>>>  arch/arm/boot/dts/r8a7791-porter.dts | 33 +++++++++++++++++++++++++++++++++
+>>>>  1 file changed, 33 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
+>>>> index a01101b49d99..5f77d73d7462 100644
+>>>> --- a/arch/arm/boot/dts/r8a7791-porter.dts
+>>>> +++ b/arch/arm/boot/dts/r8a7791-porter.dts
+>>>> @@ -375,10 +375,43 @@
+>>>>      clock-frequency = <400000>;
+>>>>  };
+>>>>
+>>>> +&i2c6 {
+>>>> +    status = "okay";
+>>>> +    clock-frequency = <100000>;
+>>>> +
+>>>> +    pmic@5a {
+>>>> +            compatible = "dlg,da9063l";
+>>>> +            reg = <0x5a>;
+>>>> +            interrupt-parent = <&irqc0>;
+>>>> +            interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
+>>>> +            interrupt-controller;
+>>>
+>>>    Without a label and #interrupt-cells?
+>>
+>> Just like the other boards do. What's the problem here ?
+> 
+> Does it support external interrupt inputs? Or only the internal
+> interrupt sources?
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+The PMIC itself no, but the mfd subdevices do (ie. the GPIO block, for
+which we don't have driver), see drivers/mfd/da9063-irq.c .
 
- drivers/mmc/host/renesas_sdhi_internal_dmac.c |  4 +++-
- drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 14 ++++++++------
- drivers/mmc/host/tmio_mmc.h                   |  3 +--
- drivers/mmc/host/tmio_mmc_core.c              | 21 ++++++++++-----------
- 4 files changed, 22 insertions(+), 20 deletions(-)
+> If the former, it needs at  least #interrupt-cells (also in the DT bindings).
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index d032bd6..f3475a5 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -230,7 +230,7 @@ static void renesas_sdhi_internal_dmac_complete_tasklet_fn(unsigned long arg)
- 	spin_unlock_irq(&host->lock);
- }
- 
--static void
-+static int
- renesas_sdhi_internal_dmac_request_dma(struct tmio_mmc_host *host,
- 				       struct tmio_mmc_data *pdata)
- {
-@@ -245,6 +245,8 @@ renesas_sdhi_internal_dmac_request_dma(struct tmio_mmc_host *host,
- 	tasklet_init(&host->dma_issue,
- 		     renesas_sdhi_internal_dmac_issue_tasklet_fn,
- 		     (unsigned long)host);
-+
-+	return 0;
- }
- 
- static void
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index 4bb46c4..3f806f5 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -359,15 +359,15 @@ static void renesas_sdhi_sys_dmac_issue_tasklet_fn(unsigned long priv)
- 		dma_async_issue_pending(chan);
- }
- 
--static void renesas_sdhi_sys_dmac_request_dma(struct tmio_mmc_host *host,
--					      struct tmio_mmc_data *pdata)
-+static int renesas_sdhi_sys_dmac_request_dma(struct tmio_mmc_host *host,
-+					     struct tmio_mmc_data *pdata)
- {
- 	struct renesas_sdhi *priv = host_to_priv(host);
- 
- 	/* We can only either use DMA for both Tx and Rx or not use it at all */
- 	if (!host->pdev->dev.of_node &&
- 	    (!pdata->chan_priv_tx || !pdata->chan_priv_rx))
--		return;
-+		return 0;
- 
- 	if (!host->chan_tx && !host->chan_rx) {
- 		struct resource *res = platform_get_resource(host->pdev,
-@@ -377,7 +377,7 @@ static void renesas_sdhi_sys_dmac_request_dma(struct tmio_mmc_host *host,
- 		int ret;
- 
- 		if (!res)
--			return;
-+			return 0;
- 
- 		dma_cap_zero(mask);
- 		dma_cap_set(DMA_SLAVE, mask);
-@@ -389,7 +389,7 @@ static void renesas_sdhi_sys_dmac_request_dma(struct tmio_mmc_host *host,
- 			host->chan_tx);
- 
- 		if (!host->chan_tx)
--			return;
-+			return 0;
- 
- 		cfg.direction = DMA_MEM_TO_DEV;
- 		cfg.dst_addr = res->start +
-@@ -433,7 +433,7 @@ static void renesas_sdhi_sys_dmac_request_dma(struct tmio_mmc_host *host,
- 
- 	renesas_sdhi_sys_dmac_enable_dma(host, true);
- 
--	return;
-+	return 0;
- 
- ebouncebuf:
- ecfgrx:
-@@ -443,6 +443,8 @@ static void renesas_sdhi_sys_dmac_request_dma(struct tmio_mmc_host *host,
- ecfgtx:
- 	dma_release_channel(host->chan_tx);
- 	host->chan_tx = NULL;
-+
-+	return 0;
- }
- 
- static void renesas_sdhi_sys_dmac_release_dma(struct tmio_mmc_host *host)
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index e7d6513..d8383d4 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -115,8 +115,7 @@ struct tmio_mmc_host;
- struct tmio_mmc_dma_ops {
- 	void (*start)(struct tmio_mmc_host *host, struct mmc_data *data);
- 	void (*enable)(struct tmio_mmc_host *host, bool enable);
--	void (*request)(struct tmio_mmc_host *host,
--			struct tmio_mmc_data *pdata);
-+	int (*request)(struct tmio_mmc_host *host, struct tmio_mmc_data *pdata);
- 	void (*release)(struct tmio_mmc_host *host);
- 	void (*abort)(struct tmio_mmc_host *host);
- 	void (*dataend)(struct tmio_mmc_host *host);
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 3cb554c..09c2d0c 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -65,15 +65,13 @@ static inline void tmio_mmc_enable_dma(struct tmio_mmc_host *host, bool enable)
- 		host->dma_ops->enable(host, enable);
- }
- 
--static inline void tmio_mmc_request_dma(struct tmio_mmc_host *host,
--					struct tmio_mmc_data *pdata)
-+static inline int tmio_mmc_request_dma(struct tmio_mmc_host *host,
-+				       struct tmio_mmc_data *pdata)
- {
--	if (host->dma_ops) {
--		host->dma_ops->request(host, pdata);
--	} else {
--		host->chan_tx = NULL;
--		host->chan_rx = NULL;
--	}
-+	if (host->dma_ops)
-+		return host->dma_ops->request(host, pdata);
-+
-+	return 0;
- }
- 
- static inline void tmio_mmc_release_dma(struct tmio_mmc_host *host)
-@@ -1218,6 +1216,10 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
- 			return ret;
- 	}
- 
-+	ret = tmio_mmc_request_dma(_host, pdata);
-+	if (ret)
-+		return ret;
-+
- 	mmc->caps |= MMC_CAP_4_BIT_DATA | pdata->capabilities;
- 	mmc->caps2 |= pdata->capabilities2;
- 	mmc->max_segs = pdata->max_segs ? : 32;
-@@ -1286,9 +1288,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
- 	INIT_DELAYED_WORK(&_host->delayed_reset_work, tmio_mmc_reset_work);
- 	INIT_WORK(&_host->done, tmio_mmc_done_work);
- 
--	/* See if we also get DMA */
--	tmio_mmc_request_dma(_host, pdata);
--
- 	pm_runtime_set_active(&pdev->dev);
- 	pm_runtime_set_autosuspend_delay(&pdev->dev, 50);
- 	pm_runtime_use_autosuspend(&pdev->dev);
+[...]
 -- 
-2.7.4
+Best regards,
+Marek Vasut
