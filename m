@@ -1,96 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:44471 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726570AbeGLDJf (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:58224 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729093AbeGYPqS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jul 2018 23:09:35 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 1/2] ARM: shmobile: Add basic RZ/A2 SoC support
-Date: Wed, 11 Jul 2018 22:01:48 -0500
-Message-Id: <20180712030149.91385-2-chris.brandt@renesas.com>
-In-Reply-To: <20180712030149.91385-1-chris.brandt@renesas.com>
-References: <20180712030149.91385-1-chris.brandt@renesas.com>
+        Wed, 25 Jul 2018 11:46:18 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Peter Maydell <peter.maydell@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc: Auger Eric <eric.auger@redhat.com>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        qemu-arm@nongnu.org, qemu-devel@nongnu.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 3/4] hw/arm/virt: Allow dynamic sysbus devices again
+Date: Wed, 25 Jul 2018 16:34:12 +0200
+Message-Id: <20180725143413.9728-4-geert+renesas@glider.be>
+In-Reply-To: <20180725143413.9728-1-geert+renesas@glider.be>
+References: <20180725143413.9728-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the RZ/A2 SoC to the Renesas SoC collection.
+Allow the instantation of generic dynamic sysbus devices again, without
+the need to create a new device-specific vfio type.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+This is more or less a partial revert of commit 6f2062b9758ebc64
+("hw/arm/virt: Allow only supported dynamic sysbus devices").
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/mach-shmobile/Kconfig         |  6 ++++++
- arch/arm/mach-shmobile/Makefile        |  1 +
- arch/arm/mach-shmobile/setup-r7s9210.c | 27 +++++++++++++++++++++++++++
- 3 files changed, 34 insertions(+)
- create mode 100644 arch/arm/mach-shmobile/setup-r7s9210.c
+v3:
+  - Drop RFC state,
 
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index 0b67254eabb2..9338eb0d574f 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -54,6 +54,12 @@ config ARCH_R7S72100
- 	select SYS_SUPPORTS_SH_MTU2
- 	select RENESAS_OSTM
- 
-+config ARCH_R7S9210
-+	bool "RZ/A2 (R7S9210)"
-+	select PM
-+	select PM_GENERIC_DOMAINS
-+	select RENESAS_OSTM
-+
- config ARCH_R8A73A4
- 	bool "R-Mobile APE6 (R8A73A40)"
- 	select ARCH_RMOBILE
-diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
-index b33dc59d8698..5591646cb9bb 100644
---- a/arch/arm/mach-shmobile/Makefile
-+++ b/arch/arm/mach-shmobile/Makefile
-@@ -14,6 +14,7 @@ obj-$(CONFIG_ARCH_R8A7778)	+= setup-r8a7778.o
- obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o
- obj-$(CONFIG_ARCH_EMEV2)	+= setup-emev2.o
- obj-$(CONFIG_ARCH_R7S72100)	+= setup-r7s72100.o
-+obj-$(CONFIG_ARCH_R7S9210)	+= setup-r7s9210.o
- 
- # CPU reset vector handling objects
- cpu-y				:= platsmp.o headsmp.o
-diff --git a/arch/arm/mach-shmobile/setup-r7s9210.c b/arch/arm/mach-shmobile/setup-r7s9210.c
-new file mode 100644
-index 000000000000..573fb9955e7e
---- /dev/null
-+++ b/arch/arm/mach-shmobile/setup-r7s9210.c
-@@ -0,0 +1,27 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * r7s9210 processor support
-+ *
-+ * Copyright (C) 2018  Renesas Electronics Corporation
-+ * Copyright (C) 2018  Chris Brandt
-+ *
-+ */
-+
-+#include <linux/kernel.h>
-+
-+#include <asm/mach/arch.h>
-+
-+#include "common.h"
-+
-+static const char *const r7s9210_boards_compat_dt[] __initconst = {
-+	"renesas,r7s9210",
-+	NULL,
-+};
-+
-+DT_MACHINE_START(R7S72100_DT, "Generic R7S9210 (Flattened Device Tree)")
-+	.l2c_aux_val    = 0,
-+	.l2c_aux_mask   = ~0,
-+	.init_early	= shmobile_init_delay,
-+	.init_late	= shmobile_init_late,
-+	.dt_compat	= r7s9210_boards_compat_dt,
-+MACHINE_END
+v2:
+  - Restrict from TYPE_SYS_BUS_DEVICE to TYPE_VFIO_PLATFORM, as
+    suggested by Eric Auger.
+---
+ hw/arm/virt.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/hw/arm/virt.c b/hw/arm/virt.c
+index 281ddcdf6e26236d..24c1d8e28c7c4285 100644
+--- a/hw/arm/virt.c
++++ b/hw/arm/virt.c
+@@ -1724,6 +1724,7 @@ static void virt_machine_class_init(ObjectClass *oc, void *data)
+     machine_class_allow_dynamic_sysbus_dev(mc, TYPE_VFIO_CALXEDA_XGMAC);
+     machine_class_allow_dynamic_sysbus_dev(mc, TYPE_VFIO_AMD_XGBE);
+     machine_class_allow_dynamic_sysbus_dev(mc, TYPE_RAMFB_DEVICE);
++    machine_class_allow_dynamic_sysbus_dev(mc, TYPE_VFIO_PLATFORM);
+     mc->block_default_type = IF_VIRTIO;
+     mc->no_cdrom = 1;
+     mc->pci_allow_0_address = true;
 -- 
-2.16.1
+2.17.1
