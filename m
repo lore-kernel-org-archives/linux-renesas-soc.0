@@ -1,74 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:35752 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728592AbeGYNcf (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:8565 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728791AbeGYNWD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jul 2018 09:32:35 -0400
-Date: Wed, 25 Jul 2018 14:21:07 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        Wed, 25 Jul 2018 09:22:03 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-Subject: Re: [PATCH 1/2] mmc: renesas_sdhi: skip SCC error check when retuning
-Message-ID: <20180725122106.jzv6v3j2wrtqrt6t@ninjato>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 1/2] mmc: renesas_sdhi: skip SCC error check when retuning
+Date: Wed, 25 Jul 2018 14:10:30 +0200
+Message-Id: <20180725121031.24277-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180725121031.24277-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20180725121031.24277-1-niklas.soderlund+renesas@ragnatech.se>
- <20180725121031.24277-2-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="njjapftkbayseskz"
-Content-Disposition: inline
-In-Reply-To: <20180725121031.24277-2-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
 
---njjapftkbayseskz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Checking for SCC error during retuning is unnecessary.
 
-Hi Niklas,
+Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+[Niklas: fix small style issue]
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-> * Changes since v3
-> - Add check for 4TAP for HS400.
+---
 
-Is it the same in the BSP or where does this info come from?
+* Changes since v3
+- Add check for 4TAP for HS400.
 
+* Changes since v2
+- Added check for HS400 as it's now merged.
+- Added tags from Wolfram.
+---
+ drivers/mmc/host/renesas_sdhi_core.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-> +	if (!(host->mmc->ios.timing == MMC_TIMING_UHS_SDR104) &&
-> +	    !(host->mmc->ios.timing == MMC_TIMING_MMC_HS200) &&
-> +	    !(host->mmc->ios.timing == MMC_TIMING_MMC_HS400 &&
-> +	      !(host->pdata->flags & TMIO_MMC_HAVE_4TAP_HS400)))
-
-This becomes very hard to read. We need to simplify it.
-
-And can you bounce me your debugging mail from today again? I seem to
-have lost it :(
-
-Thanks,
-
-   Wolfram
-
---njjapftkbayseskz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltYay8ACgkQFA3kzBSg
-KbbWXw//cyTb+UAvAA8YVcEHWCbOPP5/dz8+3vt4ri2J4Wei7SmKmXa0G5qXPpw0
-Ix1srNxbOhGGsB/TTav9+1lMTLo8uminV6hdBb1uGX2gCs0r4sywziMxUh0N53PH
-VXKWhkTpwLsK7rWdyUYj81BP66dUSUffU4y38GhkcJ/SF0XII6A7jX6Dv7CeHxNM
-gBt8YaHL91Dj5g4kHg6iEVmVkba6XXyReHlGMy/nAWxFSNmWXFYKHQ6H0aBmTT36
-ejl7e4IDfkx7qiABnjaH48jEF+D2JiOyI1ujD+R0pkhshakI24CsNMkTZ9FCsd3L
-XALebXp1WLk56F2KZ1WE4It7e+OPC2K8EuWc8zF0T4RK2IUknEgIhXV73ghid23u
-JeCOVQMjacPJ26b5HlOcciNC8DugNzc+zMU7c3GppdAGKXH+/fe8xrT7W25heK/m
-tsp+mGgIpt8ZeNZyo268IpxUUTUqUcRod2uPo+tuGfZlJidGyDy7m7oh171QigqI
-5VTlFswCwwLQdFhRZC8+RAL5j4PmFG6BQoJCYo2qmRoomjEVx542ufpp+k18Z3zC
-JjWKUFoj/nJUyTVTWigSkxzlnCyJLThdj8jcLWyNt+Y8gxiJttz9TpTQA2nKVIH7
-0wpNiG/b+MsmsuSvung0dghBRd7jFHfX7GAj/xC06LeUo/mm5Y0=
-=+ujO
------END PGP SIGNATURE-----
-
---njjapftkbayseskz--
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index 777e32b0e410e850..2e0d2eafd62ebecf 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -444,6 +444,15 @@ static bool renesas_sdhi_check_scc_error(struct tmio_mmc_host *host)
+ {
+ 	struct renesas_sdhi *priv = host_to_priv(host);
+ 
++	if (!(host->mmc->ios.timing == MMC_TIMING_UHS_SDR104) &&
++	    !(host->mmc->ios.timing == MMC_TIMING_MMC_HS200) &&
++	    !(host->mmc->ios.timing == MMC_TIMING_MMC_HS400 &&
++	      !(host->pdata->flags & TMIO_MMC_HAVE_4TAP_HS400)))
++		return false;
++
++	if (host->mmc->doing_retune)
++		return false;
++
+ 	/* Check SCC error */
+ 	if (sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL) &
+ 	    SH_MOBILE_SDHI_SCC_RVSCNTL_RVSEN &&
+-- 
+2.18.0
