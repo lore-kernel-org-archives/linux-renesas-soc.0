@@ -1,125 +1,49 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53362 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387854AbeGWNHY (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:07:24 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 25 Jul 2018 18:08:36 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL v2] Renesas ARM Based SoC DT Updates for v4.19
-Date: Mon, 23 Jul 2018 14:04:47 +0200
-Message-Id: <cover.1532345886.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        linux-arm-kernel@lists.infradead.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77980: add RWDT support
+Message-ID: <20180725160835.4z3zmrfnfwrca5st@verge.net.au>
+References: <20180724114552.aybrijeonsj2tmcw@verge.net.au>
+ <8f72716f-75b4-e8c0-3a77-9d709959e45d@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8f72716f-75b4-e8c0-3a77-9d709959e45d@cogentembedded.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+On Wed, Jul 25, 2018 at 06:08:21PM +0300, Sergei Shtylyov wrote:
+> Hello!
+> 
+> On 07/24/2018 02:45 PM, Simon Horman wrote:
+> 
+> [...]
+> > On Tue, Jul 24, 2018 at 09:01:59AM +0200, Geert Uytterhoeven wrote:
+> >> On Fri, Jul 20, 2018 at 9:21 PM Sergei Shtylyov
+> >> <sergei.shtylyov@cogentembedded.com> wrote:
+> >>> Describe RWDT in the R8A77980 SoC device tree.
+> >>>
+> >>> Enable RWDT on the Condor and V3H Starter Kit boards.
+> >>>
+> >>> Based on the original (and large) patch by Vladimir Barinov.
+> >>>
+> >>> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> >>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >>
+> >> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > 
+> > Thanks, applied for v4.20.
+> 
+>    Sorry, still not seeing any 'devel' branch updates... forgot to push?
 
-Please consider these Renesas ARM based SoC DT updates for v4.19.
-
-Changes since v1:
-* Dropped patch which removes MTD partitioning from DT,
-  Olof requested more discussion of this
-* Trimmed text in tag, as per suggestions from Olof
-
-The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
-
-  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm-dt-for-v4.19
-
-for you to fetch changes up to c03e2f12a2967f1639ee53299b72922ee3472528:
-
-  ARM: dts: r8a77470: Use r8a77470-cpg-mssr binding definitions (2018-07-23 13:33:06 +0200)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC DT Updates for v4.19
-
-* RZ/G1C (r8a77470) SoC: Use r8a77470-cpg-mssr binding definitions
-* Add GR-Peach audio camera shield support with MT9V111 image sensor
-* Add initial support for RZ/N1D (r9a06g032) SoC and its RZN1D-DB board
-* Use SPDX identifiers in DT for all SoCs and boards
-* Add missing OPP properties for all CPUs on various SoCs
-* Add missing PMIC nodes to R-Car Gen2 M2-W (r8a7791) based porter board
-
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      ARM: dts: r8a77470: Use r8a77470-cpg-mssr binding definitions
-
-Jacopo Mondi (1):
-      ARM: dts: gr-peach: Add GR-Peach audiocamerashield support
-
-Marek Vasut (1):
-      ARM: dts: porter: Add missing PMIC nodes
-
-Michel Pollet (3):
-      ARM: dts: Renesas R9A06G032 base device tree file
-      ARM: dts: Renesas RZN1D-DB Board base file
-      ARM: dts: Renesas R9A06G032 SMP enable method
-
-Viresh Kumar (1):
-      ARM: dts: r8a77(43|9[013]): Add missing OPP properties for CPUs
-
-Wolfram Sang (1):
-      ARM: dts: convert to SPDX identifier for Renesas boards
-
- MAINTAINERS                                        |   1 +
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/emev2-kzm9d.dts                  |   5 +-
- arch/arm/boot/dts/emev2.dtsi                       |   5 +-
- arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi  |  79 ++++++++++++++
- arch/arm/boot/dts/iwg20d-q7-common.dtsi            |   5 +-
- arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi           |   5 +-
- arch/arm/boot/dts/r7s72100-genmai.dts              |   5 +-
- arch/arm/boot/dts/r7s72100-gr-peach.dts            |   5 +-
- arch/arm/boot/dts/r7s72100-rskrza1.dts             |   5 +-
- arch/arm/boot/dts/r7s72100.dtsi                    |   5 +-
- arch/arm/boot/dts/r8a73a4-ape6evm.dts              |   5 +-
- arch/arm/boot/dts/r8a73a4.dtsi                     |   5 +-
- arch/arm/boot/dts/r8a7740-armadillo800eva.dts      |   5 +-
- arch/arm/boot/dts/r8a7740.dtsi                     |   5 +-
- arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts    |   5 +-
- arch/arm/boot/dts/r8a7743-iwg20d-q7.dts            |   5 +-
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi              |   5 +-
- arch/arm/boot/dts/r8a7743-sk-rzg1m.dts             |   5 +-
- arch/arm/boot/dts/r8a7743.dtsi                     |  14 ++-
- .../arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts |   5 +-
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts        |   5 +-
- arch/arm/boot/dts/r8a7745-iwg22m.dtsi              |   5 +-
- arch/arm/boot/dts/r8a7745-sk-rzg1e.dts             |   5 +-
- arch/arm/boot/dts/r8a7745.dtsi                     |   5 +-
- arch/arm/boot/dts/r8a77470.dtsi                    |  16 +--
- arch/arm/boot/dts/r8a7778-bockw.dts                |   5 +-
- arch/arm/boot/dts/r8a7778.dtsi                     |   5 +-
- arch/arm/boot/dts/r8a7779-marzen.dts               |   5 +-
- arch/arm/boot/dts/r8a7779.dtsi                     |   5 +-
- arch/arm/boot/dts/r8a7790-lager.dts                |   5 +-
- arch/arm/boot/dts/r8a7790.dtsi                     |  39 +++++--
- arch/arm/boot/dts/r8a7791-koelsch.dts              |   5 +-
- arch/arm/boot/dts/r8a7791-porter.dts               |  38 ++++++-
- arch/arm/boot/dts/r8a7791.dtsi                     |  19 ++--
- arch/arm/boot/dts/r8a7792-blanche.dts              |   5 +-
- arch/arm/boot/dts/r8a7792-wheat.dts                |   5 +-
- arch/arm/boot/dts/r8a7792.dtsi                     |   5 +-
- arch/arm/boot/dts/r8a7793-gose.dts                 |   5 +-
- arch/arm/boot/dts/r8a7793.dtsi                     |  20 ++--
- arch/arm/boot/dts/r8a7794-alt.dts                  |   5 +-
- arch/arm/boot/dts/r8a7794-silk.dts                 |   5 +-
- arch/arm/boot/dts/r8a7794.dtsi                     |   5 +-
- arch/arm/boot/dts/r8a77xx-aa104xd12-panel.dtsi     |   5 +-
- arch/arm/boot/dts/r8a77xx-aa121td01-panel.dtsi     |   5 +-
- arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts        |  28 +++++
- arch/arm/boot/dts/r9a06g032.dtsi                   | 115 +++++++++++++++++++++
- arch/arm/boot/dts/sh73a0-kzm9g.dts                 |   5 +-
- arch/arm/boot/dts/sh73a0.dtsi                      |   5 +-
- 49 files changed, 374 insertions(+), 186 deletions(-)
- create mode 100644 arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi
- create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
- create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
+I did push but, as discussed elsewhere, it seems that there was a glitch
+in The Matrix. Updates are now there after repushing them.
