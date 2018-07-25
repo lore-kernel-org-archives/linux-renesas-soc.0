@@ -1,73 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:53964 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729531AbeGYPvU (ORCPT
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:22735 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728863AbeGYNWE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jul 2018 11:51:20 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 1/3] serial: sh-sci: Allow for compressed SCIF address space
-Date: Wed, 25 Jul 2018 09:38:48 -0500
-Message-Id: <20180725143850.32985-2-chris.brandt@renesas.com>
-In-Reply-To: <20180725143850.32985-1-chris.brandt@renesas.com>
-References: <20180725143850.32985-1-chris.brandt@renesas.com>
+        Wed, 25 Jul 2018 09:22:04 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 2/2] mmc: tmio: Fix SCC error detection
+Date: Wed, 25 Jul 2018 14:10:31 +0200
+Message-Id: <20180725121031.24277-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180725121031.24277-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180725121031.24277-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some devices with SCIx_SH4_SCIF_REGTYPE have no space between registers.
-Use the register area size to determine the spacing between register.
+From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+SDR104 and HS200 need to check for SCC error. If SCC error is detected,
+retuning is necessary.
+
+Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+[Niklas: update commit message]
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/tty/serial/sh-sci.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+ drivers/mmc/host/tmio_mmc_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index c181eb37f985..d9202ad1c9ca 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -315,15 +315,15 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
- 	[SCIx_SH4_SCIF_REGTYPE] = {
- 		.regs = {
- 			[SCSMR]		= { 0x00, 16 },
--			[SCBRR]		= { 0x04,  8 },
--			[SCSCR]		= { 0x08, 16 },
--			[SCxTDR]	= { 0x0c,  8 },
--			[SCxSR]		= { 0x10, 16 },
--			[SCxRDR]	= { 0x14,  8 },
--			[SCFCR]		= { 0x18, 16 },
--			[SCFDR]		= { 0x1c, 16 },
--			[SCSPTR]	= { 0x20, 16 },
--			[SCLSR]		= { 0x24, 16 },
-+			[SCBRR]		= { 0x02,  8 },
-+			[SCSCR]		= { 0x04, 16 },
-+			[SCxTDR]	= { 0x06,  8 },
-+			[SCxSR]		= { 0x08, 16 },
-+			[SCxRDR]	= { 0x0a,  8 },
-+			[SCFCR]		= { 0x0c, 16 },
-+			[SCFDR]		= { 0x0e, 16 },
-+			[SCSPTR]	= { 0x10, 16 },
-+			[SCLSR]		= { 0x12, 16 },
- 		},
- 		.fifosize = 16,
- 		.overrun_reg = SCLSR,
-@@ -2869,6 +2869,10 @@ static int sci_init_single(struct platform_device *dev,
- 			port->regshift = 1;
- 	}
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 72ac806e0c762d83..81883bc08524e441 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -920,8 +920,8 @@ static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
+ 	if (mrq->cmd->error || (mrq->data && mrq->data->error))
+ 		tmio_mmc_abort_dma(host);
  
-+	if (p->regtype == SCIx_SH4_SCIF_REGTYPE)
-+		if (sci_port->reg_size >= 0x20)
-+			port->regshift = 1;
-+
- 	/*
- 	 * The UART port needs an IRQ value, so we peg this to the RX IRQ
- 	 * for the multi-IRQ ports, which is where we are primarily
+-	if (host->check_scc_error)
+-		host->check_scc_error(host);
++	if (host->check_scc_error && host->check_scc_error(host))
++		mrq->cmd->error = -EILSEQ;
+ 
+ 	/* If SET_BLOCK_COUNT, continue with main command */
+ 	if (host->mrq && !mrq->cmd->error) {
 -- 
-2.16.1
+2.18.0
