@@ -1,47 +1,57 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:39976 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728741AbeGYSrI (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jul 2018 14:47:08 -0400
-MIME-Version: 1.0
-References: <2368353.xfo5beGC5E@wasted.cogentembedded.com> <d8e355fd-46f5-3798-fe43-811471a75ab6@cogentembedded.com>
-In-Reply-To: <d8e355fd-46f5-3798-fe43-811471a75ab6@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 25 Jul 2018 19:34:16 +0200
-Message-ID: <CAMuHMdXPYwC5pmY+HmT0TYTXpmy152pVtdanSPCZMX1xp0r76g@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: r8a77980: add Cortex-A53 PMU support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH] arm64: dts: renesas: r8a77980: add Cortex-A53 PMU support
+To: Simon Horman <horms@verge.net.au>,
+        linux-renesas-soc@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        linux-arm-kernel@lists.infradead.org
+References: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
+Message-ID: <d8e355fd-46f5-3798-fe43-811471a75ab6@cogentembedded.com>
+Date: Wed, 25 Jul 2018 19:43:41 +0300
+MIME-Version: 1.0
+In-Reply-To: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jul 25, 2018 at 6:44 PM Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Describe the performance monitor unit (PMU) for the Cortex-A53 cores in
-> the R8A77970 SoC's device tree.
+Describe the performance monitor unit (PMU) for the Cortex-A53 cores in
+the R8A77970 SoC's device tree.
 
-8?
+Based on the original (and large) patch by Vladimir Barinov.
 
-Can you hack up a check in checkpatch.pl to catch such mistakes? ;-)
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Gr{oetje,eeting}s,
+---
+The patch is against the 'renesas-devel-20180724-v4.18-rc6' tag of Simon
+Horman's 'renesas.git' repo.
 
-                        Geert
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -98,6 +98,15 @@
+ 		clock-frequency = <0>;
+ 	};
+ 
++	pmu_a53 {
++		compatible = "arm,cortex-a53-pmu";
++		interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&a53_0>, <&a53_1>, <&a53_2>, <&a53_3>;
++	};
++
+ 	psci {
+ 		compatible = "arm,psci-1.0", "arm,psci-0.2";
+ 		method = "smc";
