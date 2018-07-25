@@ -1,16 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:35490 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729937AbeGZNur (ORCPT
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:39976 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728741AbeGYSrI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jul 2018 09:50:47 -0400
+        Wed, 25 Jul 2018 14:47:08 -0400
 MIME-Version: 1.0
 References: <2368353.xfo5beGC5E@wasted.cogentembedded.com> <d8e355fd-46f5-3798-fe43-811471a75ab6@cogentembedded.com>
- <CAMuHMdXPYwC5pmY+HmT0TYTXpmy152pVtdanSPCZMX1xp0r76g@mail.gmail.com>
-In-Reply-To: <CAMuHMdXPYwC5pmY+HmT0TYTXpmy152pVtdanSPCZMX1xp0r76g@mail.gmail.com>
+In-Reply-To: <d8e355fd-46f5-3798-fe43-811471a75ab6@cogentembedded.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 26 Jul 2018 14:33:55 +0200
-Message-ID: <CAMuHMdV-6s+NizKhszaY8f2=L2QS8KgCBcKEjR_qvyrrV04uXw@mail.gmail.com>
+Date: Wed, 25 Jul 2018 19:34:16 +0200
+Message-ID: <CAMuHMdXPYwC5pmY+HmT0TYTXpmy152pVtdanSPCZMX1xp0r76g@mail.gmail.com>
 Subject: Re: [PATCH] arm64: dts: renesas: r8a77980: add Cortex-A53 PMU support
 To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Simon Horman <horms@verge.net.au>,
@@ -27,16 +26,14 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jul 25, 2018 at 7:34 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Wed, Jul 25, 2018 at 6:44 PM Sergei Shtylyov
-> <sergei.shtylyov@cogentembedded.com> wrote:
-> > Describe the performance monitor unit (PMU) for the Cortex-A53 cores in
-> > the R8A77970 SoC's device tree.
->
-> 8?
+On Wed, Jul 25, 2018 at 6:44 PM Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Describe the performance monitor unit (PMU) for the Cortex-A53 cores in
+> the R8A77970 SoC's device tree.
 
-With that fixes:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+8?
+
+Can you hack up a check in checkpatch.pl to catch such mistakes? ;-)
 
 Gr{oetje,eeting}s,
 
