@@ -1,40 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:36046 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729873AbeGZNcX (ORCPT
+Received: from sauhun.de ([88.99.104.3]:38092 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729339AbeGYUaH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jul 2018 09:32:23 -0400
-MIME-Version: 1.0
-References: <20180725191655.3467-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180725191655.3467-1-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 26 Jul 2018 14:15:38 +0200
-Message-ID: <CAMuHMdWiwHt2XkLC1-yRFoW3vtgAKdfZ33WL2-7wn_r1NoxTHw@mail.gmail.com>
-Subject: Re: [PATCH] ata: sata_rcar: Add r8a77965 support
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-ide@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Tejun Heo <tj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 25 Jul 2018 16:30:07 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-ide@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Tejun Heo <tj@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH] ata: sata_rcar: Add r8a77965 support
+Date: Wed, 25 Jul 2018 21:16:55 +0200
+Message-Id: <20180725191655.3467-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jul 25, 2018 at 9:17 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Update the binding docs for Renesas R-Car M3-N. No driver changes are
-> needed.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Update the binding docs for Renesas R-Car M3-N. No driver changes are
+needed.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ Documentation/devicetree/bindings/ata/sata_rcar.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/ata/sata_rcar.txt b/Documentation/devicetree/bindings/ata/sata_rcar.txt
+index e20eac7a3087..4268e17d2411 100644
+--- a/Documentation/devicetree/bindings/ata/sata_rcar.txt
++++ b/Documentation/devicetree/bindings/ata/sata_rcar.txt
+@@ -8,6 +8,7 @@ Required properties:
+ 			  - "renesas,sata-r8a7791" for R-Car M2-W
+ 			  - "renesas,sata-r8a7793" for R-Car M2-N
+ 			  - "renesas,sata-r8a7795" for R-Car H3
++			  - "renesas,sata-r8a77965" for R-Car M3-N
+ 			  - "renesas,rcar-gen2-sata" for a generic R-Car Gen2 compatible device
+ 			  - "renesas,rcar-gen3-sata" for a generic R-Car Gen3 compatible device
+ 			  - "renesas,rcar-sata" is deprecated
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.11.0
