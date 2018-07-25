@@ -1,79 +1,192 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:43444 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731231AbeGZQwp (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:47044 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729362AbeGYPqW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jul 2018 12:52:45 -0400
+        Wed, 25 Jul 2018 11:46:22 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+To: Peter Maydell <peter.maydell@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc: Auger Eric <eric.auger@redhat.com>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        qemu-arm@nongnu.org, qemu-devel@nongnu.org,
+        linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 00/11] clk: renesas: rcar-gen3: OSC and RCLK improvements
-Date: Thu, 26 Jul 2018 17:35:06 +0200
-Message-Id: <20180726153517.10020-1-geert+renesas@glider.be>
+Subject: [PATCH v3 4/4] hw/arm/sysbus-fdt: Add support for instantiating generic devices
+Date: Wed, 25 Jul 2018 16:34:13 +0200
+Message-Id: <20180725143413.9728-5-geert+renesas@glider.be>
+In-Reply-To: <20180725143413.9728-1-geert+renesas@glider.be>
+References: <20180725143413.9728-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+Add a fallback for instantiating generic devices without a type-specific
+or compatible-specific instantation method.  This will be used when no
+other match is found.
 
-This patch series contains various improvements for OSC and RCLK
-handling on R-Car Gen3 SoCs.
+The generic instantation method creates a device node with "reg" and
+(optional) "interrupts" properties, and copies the "compatible"
+property and other optional properties from the host.
+For now the following optional properties are copied, if found:
+  - "#gpio-cells",
+  - "gpio-controller",
+  - "#interrupt-cells",
+  - "interrupt-controller",
+  - "interrupt-names".
 
-Changes compared to v1:
-  - Add Reviewed-by,
-  - Fix OSC predivider for 27 MHz EXTAL on R-Car V3H,
-  - Rename "r_int" to ".r", and "oco" to ".oco", as they are internal
-    clocks,
-  - Gain a dependency on "[PATCH] clk: renesas: rcar-gen3: Rename rint
-    to .r".
+More can be added when needed.
 
-This has been tested on R-Car H3 ES1.0/ES2.0, R-Car M3-W ES1.0, R-Car
-D3, and R-Car E3.
-The R-Car V3H (r8a77980) patches were compile-tested only due to lack of
-hardware.
+This avoids having to write device-specific instantation methods for
+each and every "simple" device using only a set of generic properties.
+Devices that need more specialized handling can still provide their
+own instantation method.
 
-I intend to queue this in clk-renesas-for-v4.20.
+This has been tested on a Renesas Salvator-XS board with R-Car H3 ES2.0
+with SATA:
 
-Thanks!
+    -device vfio-platform,host=ee300000.sata
 
-Geert Uytterhoeven (11):
-  clk: renesas: rcar-gen3: Add support for OSC EXTAL predivider
-  clk: renesas: r8a7795: Add OSC EXTAL predivider configuration
-  clk: renesas: r8a7796: Add OSC EXTAL predivider configuration
-  clk: renesas: r8a77965: Add OSC EXTAL predivider configuration
-  clk: renesas: r8a77980: Add OSC predivider configuration and clock
-  clk: renesas: cpg-mssr: Add support for fixed rate clocks
-  clk: renesas: rcar-gen3: Add support for RCKSEL clock selection
-  clk: renesas: r8a77990: Correct RCLK handling
-  clk: renesas: r8a77995: Correct RCLK handling
-  clk: renesas: rcar-gen3: Add support for mode pin clock selection
-  clk: renesas: r8a77980: Add RCLK for watchdog timer
+and GPIO (needs VFIO No-IOMMU support):
 
- drivers/clk/renesas/r8a7795-cpg-mssr.c  | 66 ++++++++++++-------------
- drivers/clk/renesas/r8a7796-cpg-mssr.c  | 66 ++++++++++++-------------
- drivers/clk/renesas/r8a77965-cpg-mssr.c | 66 ++++++++++++-------------
- drivers/clk/renesas/r8a77980-cpg-mssr.c | 28 ++++++-----
- drivers/clk/renesas/r8a77990-cpg-mssr.c | 12 ++++-
- drivers/clk/renesas/r8a77995-cpg-mssr.c | 12 ++++-
- drivers/clk/renesas/rcar-gen3-cpg.c     | 40 +++++++++++----
- drivers/clk/renesas/rcar-gen3-cpg.h     | 24 +++++++--
- drivers/clk/renesas/renesas-cpg-mssr.c  |  5 ++
- drivers/clk/renesas/renesas-cpg-mssr.h  |  3 ++
- 10 files changed, 194 insertions(+), 128 deletions(-)
+    -device vfio-platform,host=e6055400.gpio
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v3:
+  - New.
+---
+ hw/arm/sysbus-fdt.c | 102 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 102 insertions(+)
+
+diff --git a/hw/arm/sysbus-fdt.c b/hw/arm/sysbus-fdt.c
+index 0e24c803a1c2c734..8040af00ccf131d7 100644
+--- a/hw/arm/sysbus-fdt.c
++++ b/hw/arm/sysbus-fdt.c
+@@ -415,6 +415,99 @@ static int add_amd_xgbe_fdt_node(SysBusDevice *sbdev, void *opaque)
+     return 0;
+ }
+ 
++static HostProperty generic_copied_properties[] = {
++    {"compatible", false},
++    {"#gpio-cells", true},
++    {"gpio-controller", true},
++    {"#interrupt-cells", true},
++    {"interrupt-controller", true},
++    {"interrupt-names", true},
++};
++
++/**
++ * add_generic_fdt_node
++ *
++ * Generates a generic DT node by copying properties from the host
++ */
++static int add_generic_fdt_node(SysBusDevice *sbdev, void *opaque)
++{
++    PlatformBusFDTData *data = opaque;
++    VFIOPlatformDevice *vdev = VFIO_PLATFORM_DEVICE(sbdev);
++    const char *parent_node = data->pbus_node_name;
++    void *guest_fdt = data->fdt, *host_fdt;
++    VFIODevice *vbasedev = &vdev->vbasedev;
++    char **node_path, *node_name, *dt_name;
++    PlatformBusDevice *pbus = data->pbus;
++    int i, irq_number;
++    uint32_t *reg_attr, *irq_attr;
++    uint64_t mmio_base;
++
++    host_fdt = load_device_tree_from_sysfs();
++
++    dt_name = sysfs_to_dt_name(vbasedev->name);
++    if (!dt_name) {
++        error_report("%s incorrect sysfs device name %s", __func__,
++                     vbasedev->name);
++        exit(1);
++    }
++    node_path = qemu_fdt_node_path(host_fdt, dt_name, vdev->compat,
++                                   &error_fatal);
++    if (!node_path || !node_path[0]) {
++        error_report("%s unable to retrieve node path for %s/%s", __func__,
++                     dt_name, vdev->compat);
++        exit(1);
++    }
++
++    if (node_path[1]) {
++        error_report("%s more than one node matching %s/%s!", __func__, dt_name,
++                     vdev->compat);
++        exit(1);
++    }
++
++    mmio_base = platform_bus_get_mmio_addr(pbus, sbdev, 0);
++    node_name = g_strdup_printf("%s/%s@%" PRIx64, parent_node,
++                               vbasedev->name, mmio_base);
++    qemu_fdt_add_subnode(guest_fdt, node_name);
++
++    /* Copy generic properties */
++    copy_properties_from_host(generic_copied_properties,
++                              ARRAY_SIZE(generic_copied_properties), host_fdt,
++                              guest_fdt, node_path[0], node_name);
++
++    /* Copy reg (remapped) */
++    reg_attr = g_new(uint32_t, vbasedev->num_regions * 2);
++    for (i = 0; i < vbasedev->num_regions; i++) {
++        mmio_base = platform_bus_get_mmio_addr(pbus, sbdev, i);
++        reg_attr[2 * i] = cpu_to_be32(mmio_base);
++        reg_attr[2 * i + 1] = cpu_to_be32(
++                                memory_region_size(vdev->regions[i]->mem));
++    }
++    qemu_fdt_setprop(guest_fdt, node_name, "reg", reg_attr,
++                     vbasedev->num_regions * 2 * sizeof(uint32_t));
++
++    /* Copy interrupts (remapped) */
++    if (vbasedev->num_irqs) {
++        irq_attr = g_new(uint32_t, vbasedev->num_irqs * 3);
++        for (i = 0; i < vbasedev->num_irqs; i++) {
++            irq_number = platform_bus_get_irqn(pbus, sbdev , i)
++                             + data->irq_start;
++            irq_attr[3 * i] = cpu_to_be32(GIC_FDT_IRQ_TYPE_SPI);
++            irq_attr[3 * i + 1] = cpu_to_be32(irq_number);
++            irq_attr[3 * i + 2] = cpu_to_be32(GIC_FDT_IRQ_FLAGS_LEVEL_HI);
++        }
++        qemu_fdt_setprop(guest_fdt, node_name, "interrupts",
++                         irq_attr, vbasedev->num_irqs * 3 * sizeof(uint32_t));
++        g_free(irq_attr);
++    }
++
++    g_free(reg_attr);
++    g_free(node_name);
++    g_strfreev(node_path);
++    g_free(dt_name);
++    g_free(host_fdt);
++    return 0;
++}
++
+ /* DT compatible matching */
+ static bool vfio_platform_match(SysBusDevice *sbdev,
+                                 const BindingEntry *entry)
+@@ -423,6 +516,11 @@ static bool vfio_platform_match(SysBusDevice *sbdev,
+     const char *compat;
+     unsigned int n;
+ 
++    if (!entry->compat) {
++        /* Generic DT fallback */
++        return true;
++    }
++
+     for (n = vdev->num_compat, compat = vdev->compat; n > 0;
+          n--, compat += strlen(compat) + 1) {
+         if (!strcmp(entry->compat, compat)) {
+@@ -459,6 +557,10 @@ static const BindingEntry bindings[] = {
+     VFIO_PLATFORM_BINDING("amd,xgbe-seattle-v1a", add_amd_xgbe_fdt_node),
+ #endif
+     TYPE_BINDING(TYPE_RAMFB_DEVICE, no_fdt_node),
++#ifdef CONFIG_LINUX
++    /* Generic DT fallback must be last */
++    VFIO_PLATFORM_BINDING(NULL, add_generic_fdt_node),
++#endif
+     TYPE_BINDING("", NULL), /* last element */
+ };
+ 
 -- 
 2.17.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
