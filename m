@@ -1,85 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45944 "EHLO pokefinder.org"
+Received: from foss.arm.com ([217.140.101.70]:39186 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732280AbeGJW2f (ORCPT
+        id S1728968AbeGYPAM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Jul 2018 18:28:35 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2] i2c: recovery: rename variable for easier understanding
-Date: Wed, 11 Jul 2018 00:27:22 +0200
-Message-Id: <20180710222722.7852-1-wsa+renesas@sang-engineering.com>
+        Wed, 25 Jul 2018 11:00:12 -0400
+Subject: Re: [PATCH/RFC] drivers/vfio: Allow type-1 IOMMU instantiation with
+ Renesas IPMMU-VMSA
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        kvm@vger.kernel.org, Magnus Damm <damm+renesas@opensource.se>,
+        linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+References: <20180725133451.7083-1-geert+renesas@glider.be>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <a0128032-9df5-2326-508b-57f02f4d0b74@arm.com>
+Date: Wed, 25 Jul 2018 14:48:23 +0100
+MIME-Version: 1.0
+In-Reply-To: <20180725133451.7083-1-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-While refactoring the routine before, it occured to me that this will
-make the code much easier to understand.
+Hi Geert,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+On 25/07/18 14:34, Geert Uytterhoeven wrote:
+> The Renesas IPMMU-VMSA driver is compatible with the notion of a type-1
+> IOMMU in VFIO.
+> 
+> This patch allows guests to use the VFIO_IOMMU_TYPE1 API on hosts
+> equipped with a Renesas VMSA-compatible IPMMU.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Lightly tested with sata_rcar on Renesas R-Car H3 ES2.0.
+> 
+> For testing, this patch and all prerequisites are available in the
+> topic/rcar3-virt-gpio-passthrough-v3 branch of my git repository at
+> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+> ---
+>   drivers/vfio/Kconfig | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/vfio/Kconfig b/drivers/vfio/Kconfig
+> index c84333eb5eb59bef..a3e21e7c066596d7 100644
+> --- a/drivers/vfio/Kconfig
+> +++ b/drivers/vfio/Kconfig
+> @@ -21,7 +21,8 @@ config VFIO_VIRQFD
+>   menuconfig VFIO
+>   	tristate "VFIO Non-Privileged userspace driver framework"
+>   	depends on IOMMU_API
+> -	select VFIO_IOMMU_TYPE1 if (X86 || S390 || ARM_SMMU || ARM_SMMU_V3)
+> +	select VFIO_IOMMU_TYPE1 if (X86 || S390 || ARM_SMMU || ARM_SMMU_V3 || \
+> +				    IPMMU_VMSA)
 
-Change since V1:
-* rebased to the new recovery refactoring
+I recall this came up in the context of virtio-iommu too[1], wherein we 
+decided that listing individual drivers was actually a bit silly and 
+this should simply have ARM || ARM64 for consistency. Looks like there's 
+even more justification now :)
 
-Branch is here:
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/recovery/write-byte-fix
+Robin.
 
- drivers/i2c/i2c-core-base.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+[1] https://www.mail-archive.com/kvmarm@lists.cs.columbia.edu/msg16235.html
 
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 59f8dfc5be36..57538d72f2e5 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -185,12 +185,12 @@ static int i2c_generic_bus_free(struct i2c_adapter *adap)
- int i2c_generic_scl_recovery(struct i2c_adapter *adap)
- {
- 	struct i2c_bus_recovery_info *bri = adap->bus_recovery_info;
--	int i = 0, val = 1, ret;
-+	int i = 0, scl = 1, ret;
- 
- 	if (bri->prepare_recovery)
- 		bri->prepare_recovery(adap);
- 
--	bri->set_scl(adap, val);
-+	bri->set_scl(adap, scl);
- 	if (bri->set_sda)
- 		bri->set_sda(adap, 1);
- 	ndelay(RECOVERY_NDELAY);
-@@ -199,7 +199,7 @@ int i2c_generic_scl_recovery(struct i2c_adapter *adap)
- 	 * By this time SCL is high, as we need to give 9 falling-rising edges
- 	 */
- 	while (i++ < RECOVERY_CLK_CNT * 2) {
--		if (val) {
-+		if (scl) {
- 			/* SCL shouldn't be low here */
- 			if (!bri->get_scl(adap)) {
- 				dev_err(&adap->dev,
-@@ -209,8 +209,8 @@ int i2c_generic_scl_recovery(struct i2c_adapter *adap)
- 			}
- 		}
- 
--		val = !val;
--		bri->set_scl(adap, val);
-+		scl = !scl;
-+		bri->set_scl(adap, scl);
- 
- 		/*
- 		 * If we can set SDA, we will always create STOP here to ensure
-@@ -220,10 +220,10 @@ int i2c_generic_scl_recovery(struct i2c_adapter *adap)
- 		 */
- 		ndelay(RECOVERY_NDELAY / 2);
- 		if (bri->set_sda)
--			bri->set_sda(adap, val);
-+			bri->set_sda(adap, scl);
- 		ndelay(RECOVERY_NDELAY / 2);
- 
--		if (val) {
-+		if (scl) {
- 			ret = i2c_generic_bus_free(adap);
- 			if (ret == 0)
- 				break;
--- 
-2.11.0
+>   	select ANON_INODES
+>   	help
+>   	  VFIO provides a framework for secure userspace device drivers.
+> 
