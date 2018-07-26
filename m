@@ -1,12 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:53874 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729510AbeGZODJ (ORCPT
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:38965 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729410AbeGZN2x (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jul 2018 10:03:09 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Simon Horman <horms@verge.net.au>,
+        Thu, 26 Jul 2018 09:28:53 -0400
+MIME-Version: 1.0
+References: <20180725212220.44525-1-chris.brandt@renesas.com> <20180725212220.44525-3-chris.brandt@renesas.com>
+In-Reply-To: <20180725212220.44525-3-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 26 Jul 2018 14:12:08 +0200
+Message-ID: <CAMuHMdW-it6EdNXLWwTY0PGicswXSEQ1HWWZ_SfWVaZSHMpOcA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] soc: renesas: identify RZ/A2
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -14,92 +20,173 @@ CC: Simon Horman <horms@verge.net.au>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
         <devicetree@vger.kernel.org>
-Subject: RE: [PATCH v2 2/3] soc: renesas: identify RZ/A2
-Date: Thu, 26 Jul 2018 12:46:22 +0000
-Message-ID: <TY1PR01MB15623C637A11DF8B661115B28A2B0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20180725212220.44525-1-chris.brandt@renesas.com>
- <20180725212220.44525-3-chris.brandt@renesas.com>
- <CAMuHMdW-it6EdNXLWwTY0PGicswXSEQ1HWWZ_SfWVaZSHMpOcA@mail.gmail.com>
-In-Reply-To: <CAMuHMdW-it6EdNXLWwTY0PGicswXSEQ1HWWZ_SfWVaZSHMpOcA@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgeW91ciByZXZpZXchDQoNCk9uIFRodXJzZGF5LCBKdWx5
-IDI2LCAyMDE4LCBHZWVydCBVeXR0ZXJob2V2ZW4gd3JvdGU6DQo+ID4gIHN0cnVjdCByZW5lc2Fz
-X2ZhbWlseSB7DQo+ID4gICAgICAgICBjb25zdCBjaGFyIG5hbWVbMTZdOw0KPiA+IC0gICAgICAg
-dTMyIHJlZzsgICAgICAgICAgICAgICAgICAgICAgICAvKiBDQ0NSIG9yIFBSUiwgaWYgbm90IGlu
-IERUICovDQo+ID4gKyAgICAgICB1MzIgcmVnOyAgICAgICAgICAgICAgICAgICAgICAgIC8qIEND
-Q1IsIFBSUiBvciBCU0lELCBpZiBub3QgaW4NCj4gRFQgKi8NCj4gPiArICAgICAgIHU4IHR5cGU7
-DQo+IA0KPiBUaGUgb25seSByZWFzb24gd2UgaGF2ZSB0aGUgcmVnIGZpZWxkIGluIHRoaXMgc3Ry
-dWN0IGlzIGJlY2F1c2Ugd2UgYWRkZWQNCj4gU29DIGlkZW50aWZpY2F0aW9uIGZvciBleGlzdGlu
-ZyBTb0NzLCB3aGljaCBkaWRuJ3QgaGF2ZSBQUlIgaW4gRFQgZnJvbSB0aGUNCj4gc3RhcnQuDQoN
-Ck9oLCB0aGF0J3Mgd2h5IHRoaXMgd2FzIGxpa2UgdGhhdC4gSSB3YXMgd29uZGVyaW5nIHdoeSB0
-aGUgZHVwbGljYXRpb24uDQoNCg0KPiBBcyBSWi9BMiBpcyBhIG5ldyBTb0MgZmFtaWx5LCB3ZSBj
-YW4gYXNzdW1lIHRoZXJlIHdpbGwgYWx3YXlzIGJlIGEgZGV2aWNlDQo+IG5vZGUgZm9yIHRoZSBC
-U0lELiAgSGVuY2UgSSB0aGluayBhbnkgY29kZSB0byBzdXBwb3J0IFJaL0EyIHdpdGhvdXQgQlNJ
-RA0KPiBpbg0KPiBEVCBjYW4gYmUgZHJvcHBlZCAoaW5jbC4gdGhlIHR5cGUgZmllbGQgYW5kIGVu
-dW1zLCBzZWUgYmVsb3cpLg0KDQpPSy4gSSdsbCBnZXQgcmlkIG9mIHRoZW0uDQo+ID4gICAgICAg
-ICBpZiAoY2hpcGlkKSB7DQo+ID4gICAgICAgICAgICAgICAgIHByb2R1Y3QgPSByZWFkbChjaGlw
-aWQpOw0KPiA+ICAgICAgICAgICAgICAgICBpb3VubWFwKGNoaXBpZCk7DQo+ID4gLSAgICAgICAg
-ICAgICAgIC8qIFItQ2FyIE0zLVcgRVMxLjEgaW5jb3JyZWN0bHkgaWRlbnRpZmllcyBhcyBFUzIu
-MCAqLw0KPiA+IC0gICAgICAgICAgICAgICBpZiAoKHByb2R1Y3QgJiAweDdmZmYpID09IDB4NTIx
-MCkNCj4gPiAtICAgICAgICAgICAgICAgICAgICAgICBwcm9kdWN0IF49IDB4MTE7DQo+ID4gLSAg
-ICAgICAgICAgICAgIGlmIChzb2MtPmlkICYmICgocHJvZHVjdCA+PiA4KSAmIDB4ZmYpICE9IHNv
-Yy0+aWQpIHsNCj4gPiAtICAgICAgICAgICAgICAgICAgICAgICBwcl93YXJuKCJTb0MgbWlzbWF0
-Y2ggKHByb2R1Y3QgPSAweCV4KVxuIiwNCj4gcHJvZHVjdCk7DQo+ID4gLSAgICAgICAgICAgICAg
-ICAgICAgICAgcmV0dXJuIC1FTk9ERVY7DQo+ID4gKw0KPiA+ICsgICAgICAgICAgICAgICBpZiAo
-cmVnX3R5cGUgPT0gVFlQRV9QUlIpIHsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAvKiBS
-LUNhciBNMy1XIEVTMS4xIGluY29ycmVjdGx5IGlkZW50aWZpZXMgYXMNCj4gRVMyLjAgKi8NCj4g
-PiArICAgICAgICAgICAgICAgICAgICAgICBpZiAoKHByb2R1Y3QgJiAweDdmZmYpID09IDB4NTIx
-MCkNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHByb2R1Y3QgXj0gMHgxMTsN
-Cj4gPiArICAgICAgICAgICAgICAgICAgICAgICBpZiAoc29jLT5pZCAmJiAoKHByb2R1Y3QgPj4g
-OCkgJiAweGZmKSAhPSBzb2MtDQo+ID5pZCkgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgcHJfd2FybigiU29DIG1pc21hdGNoIChwcm9kdWN0ID0NCj4gMHgleClcbiIsDQo+
-ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHByb2R1Y3QpOw0KPiA+
-ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIC1FTk9ERVY7DQo+ID4gKyAg
-ICAgICAgICAgICAgICAgICAgICAgfQ0KPiA+ICsgICAgICAgICAgICAgICB9IGVsc2UgaWYgKHJl
-Z190eXBlID09IFRZUEVfQlNJRCkgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGlmIChz
-b2MtPmlkICYmICgocHJvZHVjdCA+PiAxNikgJiAweGZmKSAhPSBzb2MtDQo+ID5pZCkgew0KPiA+
-ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcHJfd2FybigiU29DIG1pc21hdGNoIChw
-cm9kdWN0ID0NCj4gMHgleClcbiIsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIHByb2R1Y3QpOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-cmV0dXJuIC1FTk9ERVY7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgfQ0KPiA+ICAgICAg
-ICAgICAgICAgICB9DQo+ID4gICAgICAgICB9DQo+IA0KPiBUaGUgY29tcGxleGl0eSBpbiB0aGUg
-Y29kZSBhYm92ZSBsaWVzIGluIHRoZSBoYW5kbGluZyBvZiBib3RoIERUIGFuZA0KPiBub24tRFQg
-YmFzZWQgcHJvZHVjdCByZWdpc3RlcnMsIGFuZCB0aGUgcXVpcmsgZm9yIE0zLVcgRVMxLjEuDQo+
-IEFzIFJaL0EyIHdpbGwgYWx3YXlzIGhhdmUgaXQgaW4gRFQsIEkgdGhpbmsgaXQgbWFrZSBzZW5z
-ZSB0byBzaW1wbGlmeSBpdA0KPiBhcyBlLmcuDQo+IA0KPiAgICAgICAgIG5wID0gb2ZfZmluZF9j
-b21wYXRpYmxlX25vZGUoTlVMTCwgTlVMTCwgInJlbmVzYXMsYnNpZCIpOw0KPiAgICAgICAgIGlm
-IChucCkgew0KPiAgICAgICAgICAgICAgICAgLyogTmV3IEJTSUQgaGFuZGxpbmcgKi8NCj4gICAg
-ICAgICAgICAgICAgIC4uLi4NCj4gICAgICAgICB9IGVsc2Ugew0KPiAgICAgICAgICAgICAgICAg
-LyogT2xkIENDQ1IvUFJSIGhhbmRsaW5nIGZvciBEVCBhbmQgbm9uLURUICovDQo+ICAgICAgICAg
-ICAgICAgICAuLi4NCj4gICAgICAgICB9DQo+IA0KPiBQZXJoYXBzIGV2ZW4gdXNpbmcgImdvdG8g
-ZG9uZSIgaW5zdGVhZCBvZiB0aGUgImVsc2UiLCBzbyB5b3UgZG9uJ3QgaGF2ZSB0bw0KPiBpbmNy
-ZWFzZSBpbmRlbnRhdGlvbiBvZiB0aGUgb2xkIGNvZGU/DQoNClRoYW5rIHlvdSEgSSBsaWtlIHRo
-ZSBnb3RvIGlkZWEuIE1ha2VzIHRoaW5ncyBlYXNpZXIgdG8gcmVhZCBpbiBteSBvcGluaW9uLg0K
-DQoNCg0KPiA+IEBAIC0zMDIsNyArMzM4LDcgQEAgc3RhdGljIGludCBfX2luaXQgcmVuZXNhc19z
-b2NfaW5pdCh2b2lkKQ0KPiA+ICAgICAgICAgc29jX2Rldl9hdHRyLT5mYW1pbHkgPSBrc3RyZHVw
-X2NvbnN0KGZhbWlseS0+bmFtZSwgR0ZQX0tFUk5FTCk7DQo+ID4gICAgICAgICBzb2NfZGV2X2F0
-dHItPnNvY19pZCA9IGtzdHJkdXBfY29uc3Qoc3RyY2hyKG1hdGNoLT5jb21wYXRpYmxlLA0KPiAn
-LCcpICsgMSwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICBHRlBfS0VSTkVMKTsNCj4gPiAtICAgICAgIGlmIChjaGlwaWQpDQo+ID4gKyAgICAgICBpZiAo
-Y2hpcGlkICYmIChyZWdfdHlwZSA9PSBUWVBFX1BSUikpDQo+IA0KPiBpZiB5b3UgZG8NCj4gDQo+
-ICAgICAgICAgdW5zaWduZWQgaW50IGVzaGkgPSAwLCBlc2xvOw0KPiAgICAgICAgIC4uLg0KPiAg
-ICAgICAgIGlmICgvKiBDQ0NSL1BSUiAqLykgew0KPiAgICAgICAgICAgICAgICAgIGVzaGkgPSAo
-KHByb2R1Y3QgPj4gNCkgJiAweDBmKSArIDE7DQo+ICAgICAgICAgICAgICAgICAgZXNsbyA9IHBy
-b2R1Y3QgJiAweGY7DQo+ICAgICAgICAgfQ0KPiANCj4gdGhlbiB5b3UgY2FuIHJlcGxhY2UgdGhl
-IGNoZWNrIGJ5DQo+IA0KPiAgICAgICAgIGlmIChlc2hpKQ0KPiANCg0KT0suIEkgZ2V0IHdoYXQg
-eW91IG1lYW4uDQoNCg0KPiBCVFcsIHRoZSB0b3AgZm91ciBiaXRzIG9mIEJTSUQgc2VlbSB0byBp
-bmRpY2F0ZSB0aGUgY2hpcCB2ZXJzaW9uLg0KPiBQZXJoYXBzIHRoYXQgY29ycmVzcG9uZHMgdG8g
-dGhlIEVTIHZlcnNpb24gb24gUi1DYXI/DQoNCk5vdCBzdXJlLlRoZSB0aGluZyBpcyB0aGF0IHdl
-IGhhdmVuJ3QgaGFkIGEgcmV2aXNpb24geWV0IGZvciBSWi9BLA0Kc28gaXQgaGFzbid0IGJlZW4g
-dXNlZC4NClRoZXkgbWFkZSB0aGUgY2hpcHMgYW5kIHdoYXRldmVyIGJ1Z3Mgd2VyZSBpbiB0aGVy
-ZSBzdGF5ZWQuDQoNClRoZSBjbG9zZXN0IHRoaW5nIHRvIGEgcmV2aXNpb24gd2FzIFJaL0ExTCBh
-bmQgUlovQTFMVSAoJ1UnIGZvciB1cGRhdGVkKS4NCkJ1dCwgc2luY2UgdGhhdCBhZGRlZCBuZXcg
-SVAgbGlrZSB0aGUgSFcgSlBFRywgaXQgYmVjYW1lIGEgZGlmZmVyZW50DQpwYXJ0IG51bWJlciBh
-bmQgYSBuZXcgQlNJRCBudW1iZXI6DQogIFJaL0ExTDogIDA4MUE2NDQ3DQogIFJaL0ExTFU6IDA4
-MkY0NDQ3DQoNCkNocmlzDQoNCg==
+Hi Chris,
+
+On Wed, Jul 25, 2018 at 11:22 PM Chris Brandt <chris.brandt@renesas.com> wrote:
+> Add support for identifying the RZ/A2M (R7S9210) SoC.
+> Also add support for reading the BSID register which is a different format
+> than the PRR.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+
+Thanks for your patch!
+
+> --- a/drivers/soc/renesas/renesas-soc.c
+> +++ b/drivers/soc/renesas/renesas-soc.c
+> @@ -20,10 +20,15 @@
+>  #include <linux/string.h>
+>  #include <linux/sys_soc.h>
+>
+> +enum {
+> +       TYPE_PRR,
+> +       TYPE_BSID,
+> +};
+>
+>  struct renesas_family {
+>         const char name[16];
+> -       u32 reg;                        /* CCCR or PRR, if not in DT */
+> +       u32 reg;                        /* CCCR, PRR or BSID, if not in DT */
+> +       u8 type;
+
+The only reason we have the reg field in this struct is because we added
+SoC identification for existing SoCs, which didn't have PRR in DT from the
+start.
+As RZ/A2 is a new SoC family, we can assume there will always be a device
+node for the BSID.  Hence I think any code to support RZ/A2 without BSID in
+DT can be dropped (incl. the type field and enums, see below).
+
+>  };
+>
+>  static const struct renesas_family fam_rcar_gen1 __initconst __maybe_unused = {
+> @@ -46,8 +51,14 @@ static const struct renesas_family fam_rmobile __initconst __maybe_unused = {
+>         .reg    = 0xe600101c,           /* CCCR (Common Chip Code Register) */
+>  };
+>
+> -static const struct renesas_family fam_rza __initconst __maybe_unused = {
+> -       .name   = "RZ/A",
+> +static const struct renesas_family fam_rza1 __initconst __maybe_unused = {
+> +       .name   = "RZ/A1",
+> +};
+> +
+> +static const struct renesas_family fam_rza2 __initconst __maybe_unused = {
+> +       .name   = "RZ/A2",
+> +       .reg    = 0xfcfe8004,           /* BSID (Boundary Scan ID Register) */
+> +       .type   = TYPE_BSID,
+
+Hence please drop the reg and type initialization.
+
+> @@ -263,6 +282,7 @@ static int __init renesas_soc_init(void)
+>         struct soc_device *soc_dev;
+>         struct device_node *np;
+>         unsigned int product;
+> +       u8 reg_type = TYPE_PRR;
+>
+>         match = of_match_node(renesas_socs, of_root);
+>         if (!match)
+> @@ -271,23 +291,39 @@ static int __init renesas_soc_init(void)
+>         soc = match->data;
+>         family = soc->family;
+>
+> -       /* Try PRR first, then hardcoded fallback */
+> +       /* Try PRR and BSID first, then hardcoded fallback */
+>         np = of_find_compatible_node(NULL, NULL, "renesas,prr");
+> +       if (!np) {
+> +               np = of_find_compatible_node(NULL, NULL, "renesas,bsid");
+> +               if (np)
+> +                       reg_type = TYPE_BSID;
+> +       }
+>         if (np) {
+>                 chipid = of_iomap(np, 0);
+>                 of_node_put(np);
+>         } else if (soc->id) {
+>                 chipid = ioremap(family->reg, 4);
+> +               reg_type = family->type;
+>         }
+>         if (chipid) {
+>                 product = readl(chipid);
+>                 iounmap(chipid);
+> -               /* R-Car M3-W ES1.1 incorrectly identifies as ES2.0 */
+> -               if ((product & 0x7fff) == 0x5210)
+> -                       product ^= 0x11;
+> -               if (soc->id && ((product >> 8) & 0xff) != soc->id) {
+> -                       pr_warn("SoC mismatch (product = 0x%x)\n", product);
+> -                       return -ENODEV;
+> +
+> +               if (reg_type == TYPE_PRR) {
+> +                       /* R-Car M3-W ES1.1 incorrectly identifies as ES2.0 */
+> +                       if ((product & 0x7fff) == 0x5210)
+> +                               product ^= 0x11;
+> +                       if (soc->id && ((product >> 8) & 0xff) != soc->id) {
+> +                               pr_warn("SoC mismatch (product = 0x%x)\n",
+> +                                       product);
+> +                               return -ENODEV;
+> +                       }
+> +               } else if (reg_type == TYPE_BSID) {
+> +                       if (soc->id && ((product >> 16) & 0xff) != soc->id) {
+> +                               pr_warn("SoC mismatch (product = 0x%x)\n",
+> +                                       product);
+> +                               return -ENODEV;
+> +                       }
+>                 }
+>         }
+
+The complexity in the code above lies in the handling of both DT and
+non-DT based product registers, and the quirk for M3-W ES1.1.
+As RZ/A2 will always have it in DT, I think it make sense to simplify it
+as e.g.
+
+        np = of_find_compatible_node(NULL, NULL, "renesas,bsid");
+        if (np) {
+                /* New BSID handling */
+                ....
+        } else {
+                /* Old CCCR/PRR handling for DT and non-DT */
+                ...
+        }
+
+Perhaps even using "goto done" instead of the "else", so you don't have to
+increase indentation of the old code?
+
+> @@ -302,7 +338,7 @@ static int __init renesas_soc_init(void)
+>         soc_dev_attr->family = kstrdup_const(family->name, GFP_KERNEL);
+>         soc_dev_attr->soc_id = kstrdup_const(strchr(match->compatible, ',') + 1,
+>                                              GFP_KERNEL);
+> -       if (chipid)
+> +       if (chipid && (reg_type == TYPE_PRR))
+
+if you do
+
+        unsigned int eshi = 0, eslo;
+        ...
+        if (/* CCCR/PRR */) {
+                 eshi = ((product >> 4) & 0x0f) + 1;
+                 eslo = product & 0xf;
+        }
+
+then you can replace the check by
+
+        if (eshi)
+
+>                 soc_dev_attr->revision = kasprintf(GFP_KERNEL, "ES%u.%u",
+>                                                    ((product >> 4) & 0x0f) + 1,
+>                                                    product & 0xf);
+
+and format eshi, eslo.
+
+BTW, the top four bits of BSID seem to indicate the chip version.
+Perhaps that corresponds to the ES version on R-Car?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
