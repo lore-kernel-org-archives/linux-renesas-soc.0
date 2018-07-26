@@ -1,95 +1,46 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-Subject: Re: [PATCH v11 10/10] arch: sh: migor: Use new renesas-ceu camera
- driver
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, mchehab@kernel.org, festevam@gmail.com,
-        sakari.ailus@iki.fi, robh+dt@kernel.org, mark.rutland@arm.com,
-        pombredanne@nexb.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1519295846-11612-1-git-send-email-jacopo+renesas@jmondi.org>
- <1519295846-11612-11-git-send-email-jacopo+renesas@jmondi.org>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <3a262281-2f47-af79-970a-c8ec5ac82778@xs4all.nl>
-Date: Mon, 2 Jul 2018 12:11:59 +0200
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:44562 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729190AbeGZNBX (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 26 Jul 2018 09:01:23 -0400
+Received: by mail-ua0-f196.google.com with SMTP id k25-v6so853059uao.11
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Jul 2018 04:44:55 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1519295846-11612-11-git-send-email-jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: linux-media-owner@vger.kernel.org
+References: <1532447238-13486-1-git-send-email-biju.das@bp.renesas.com> <1532447238-13486-3-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1532447238-13486-3-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 26 Jul 2018 13:44:43 +0200
+Message-ID: <CAMuHMdWj4L5H61DMvNxyDLJ5qrU20Wa=yonCy2MXG2CA0VfjzA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] arm64: Add Renesas R8A774A1 support
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 22/02/18 11:37, Jacopo Mondi wrote:
-> Migo-R platform uses sh_mobile_ceu camera driver, which is now being
-> replaced by a proper V4L2 camera driver named 'renesas-ceu'.
-> 
-> Move Migo-R platform to use the v4l2 renesas-ceu camera driver
-> interface and get rid of soc_camera defined components used to register
-> sensor drivers and of platform specific enable/disable routines.
-> 
-> Register clock source and GPIOs for sensor drivers, so they can use
-> clock and gpio APIs.
-> 
-> Also, memory for CEU video buffers is now reserved with membocks APIs,
-> and need to be declared as dma_coherent during machine initialization to
-> remove that architecture specific part from CEU driver.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
-> ---
->  arch/sh/boards/mach-migor/setup.c      | 225 +++++++++++++++------------------
->  arch/sh/kernel/cpu/sh4a/clock-sh7722.c |   2 +-
->  2 files changed, 101 insertions(+), 126 deletions(-)
-> 
-> diff --git a/arch/sh/boards/mach-migor/setup.c b/arch/sh/boards/mach-migor/setup.c
-> index 0bcbe58..271dfc2 100644
-> --- a/arch/sh/boards/mach-migor/setup.c
-> +++ b/arch/sh/boards/mach-migor/setup.c
-> @@ -1,17 +1,16 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * Renesas System Solutions Asia Pte. Ltd - Migo-R
->   *
->   * Copyright (C) 2008 Magnus Damm
-> - *
-> - * This file is subject to the terms and conditions of the GNU General Public
-> - * License.  See the file "COPYING" in the main directory of this archive
-> - * for more details.
->   */
-> +#include <linux/clkdev.h>
->  #include <linux/init.h>
->  #include <linux/platform_device.h>
->  #include <linux/interrupt.h>
->  #include <linux/input.h>
->  #include <linux/input/sh_keysc.h>
-> +#include <linux/memblock.h>
->  #include <linux/mmc/host.h>
->  #include <linux/mtd/physmap.h>
->  #include <linux/mfd/tmio.h>
-> @@ -23,10 +22,11 @@
->  #include <linux/delay.h>
->  #include <linux/clk.h>
->  #include <linux/gpio.h>
-> +#include <linux/gpio/machine.h>
->  #include <linux/videodev2.h>
->  #include <linux/sh_intc.h>
->  #include <video/sh_mobile_lcdc.h>
-> -#include <media/drv-intf/sh_mobile_ceu.h>
-> +#include <media/drv-intf/renesas-ceu.h>
->  #include <media/i2c/ov772x.h>
->  #include <media/soc_camera.h>
+On Tue, Jul 24, 2018 at 5:53 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> Add configuration option for the RZ/G2M (R8A774A1) SoC.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 
-You left a stray soc_camera.h include here.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Can you make a patch that removes this and verify that everything compiles?
+Gr{oetje,eeting}s,
 
-I also see CONFIG_SOC_CAMERA in several arch/sh/configs/*_defconfig files.
-Should those be updated?
+                        Geert
 
-Regards,
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-	Hans
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
