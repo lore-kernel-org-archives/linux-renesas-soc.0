@@ -1,34 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33045 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729506AbeGZOVb (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:54178 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729510AbeGZOPO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jul 2018 10:21:31 -0400
-Date: Thu, 26 Jul 2018 15:04:40 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
+        Thu, 26 Jul 2018 10:15:14 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Simon Horman <horms@verge.net.au>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH v5 0/2] R-Car DU: Convert DT to new DU and LVDS bindings
-Message-ID: <20180726130435.lwbpduipzbxnlhhk@verge.net.au>
-References: <20180605095106.25586-1-laurent.pinchart+renesas@ideasonboard.com>
+Date: Thu, 26 Jul 2018 15:59:05 +0300
+Message-ID: <3087057.Oh1Kqk468t@avalon>
+In-Reply-To: <20180606084421.p4pce6isaplbr6rz@verge.net.au>
+References: <20180605095106.25586-1-laurent.pinchart+renesas@ideasonboard.com> <20180606084421.p4pce6isaplbr6rz@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180605095106.25586-1-laurent.pinchart+renesas@ideasonboard.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jun 05, 2018 at 12:51:04PM +0300, Laurent Pinchart wrote:
-> Hello,
-> 
-> This small patch series contains the last two remaining patches from
-> "[PATCH v4 00/16] R-Car DU: Convert LVDS code to bridge driver". Apart from
-> the individual SoC patches being squashed together as requested by the ARM-SoC
-> maintainers there's nothing special here.
-> 
-> Laurent Pinchart (2):
->   ARM: dts: rcar-gen2: Convert to new DU DT bindings
->   arm64: dts: renesas: Convert to new LVDS DT bindings
+Hi Simon,
 
-Sorry, this slipped through the cracks.
-Applied for v4.20.
+On Wednesday, 6 June 2018 11:44:22 EEST Simon Horman wrote:
+> On Tue, Jun 05, 2018 at 12:51:04PM +0300, Laurent Pinchart wrote:
+> > Hello,
+> > 
+> > This small patch series contains the last two remaining patches from
+> > "[PATCH v4 00/16] R-Car DU: Convert LVDS code to bridge driver". Apart
+> > from the individual SoC patches being squashed together as requested by
+> > the ARM-SoC maintainers there's nothing special here.
+> 
+> Hi,
+> 
+> This looks fine to me but I will wait to see if there are other reviews
+> before applying.
+> 
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+
+No other review, is it time to apply it ? Too late for v4.19 I assume ? :-(
+
+-- 
+Regards,
+
+Laurent Pinchart
