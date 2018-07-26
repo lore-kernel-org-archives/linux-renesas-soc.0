@@ -1,49 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:42052 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726475AbeGSMbl (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:45400 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731822AbeGZQwq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Jul 2018 08:31:41 -0400
-Received: by mail-pl0-f67.google.com with SMTP id z7-v6so1775363plo.9
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Jul 2018 04:48:54 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Thu, 19 Jul 2018 20:50:57 +0900
-Message-Id: <153200105784.13504.12882377600823578834.sendpatchset@little-apple>
-Subject: [PATCH/RFC 00/02] ravb: Duplex handling update
+        Thu, 26 Jul 2018 12:52:46 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 09/11] clk: renesas: r8a77995: Correct RCLK handling
+Date: Thu, 26 Jul 2018 17:35:15 +0200
+Message-Id: <20180726153517.10020-10-geert+renesas@glider.be>
+In-Reply-To: <20180726153517.10020-1-geert+renesas@glider.be>
+References: <20180726153517.10020-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-ravb: Duplex handling update
+According to R-Car Gen3 Hardware Manual Rev.1.00, R-Car D3 has the
+RCLK Frequency Control Register (RCKCR), which determines the OSC and
+RINT predivider values, and selection of the RCLK clock source between
+RINT and the On-Chip Oscillator.
 
-[PATCH/RFC 01/02] ravb: Do not announce 100Mbps HDX as supported
-[PATCH/RFC 02/02] ravb: Clean up duplex handling
+Hence change the OSC and RINT clock definitions to use the RCKCR
+divider, and add the missing On-Chip Oscillator and RCLK clock source
+switching logic.
 
-This series contains prototype-level code to update the Ethernet-AVB
-driver to improve duplex handling.
-
-Based on the latest data sheet for R-Car Gen3 [1] and R-Car Gen2 [2]
-the following information is part of the EthernetAVB-IF overview page:
-
-Transfer speed: Supports transfer at 100 and 1000 Mbps
-Mode: Full-duplex mode
-
-It seems that the driver implementation is not matching the information
-provided in the friendly data sheet, and on top of this during run-time
-when changing PHY configuration of the link partner the Ethernet-AVB PHY
-seems to want to announce unsupported modes.
-
-[1] R-Car Series, 3rd Generation Rev.1.00 (Apr 2018)
-[2] R-Car Series, 2nd Generation Rev.2.00 (Feb 2016)
-
-Not suitable for upstream merge yet - needs more discussion.
-
-Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+v2:
+  - Add Reviewed-by,
+  - Rename "r_int" to ".r", and "oco" to ".oco", as they are internal
+    clocks.
 
- Written on top of renesas-drivers-2018-07-17-v4.18-rc5
+As Figure 8.1f "Block Diagram of CPG (R-Car D3)" shows 1/61 and 1/4
+dividers after the On-Chip Oscillator, I assume the OCO runs at 8 MHz.
+---
+ drivers/clk/renesas/r8a77995-cpg-mssr.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
- drivers/net/ethernet/renesas/ravb.h      |    1 -
- drivers/net/ethernet/renesas/ravb_main.c |   30 +++---------------------------
- 2 files changed, 3 insertions(+), 28 deletions(-)
+diff --git a/drivers/clk/renesas/r8a77995-cpg-mssr.c b/drivers/clk/renesas/r8a77995-cpg-mssr.c
+index ea4cafbe6e851aca..49e6a0de54916e2d 100644
+--- a/drivers/clk/renesas/r8a77995-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77995-cpg-mssr.c
+@@ -46,6 +46,8 @@ enum clk_ids {
+ 	CLK_S3,
+ 	CLK_SDSRC,
+ 	CLK_SSPSRC,
++	CLK_RINT,
++	CLK_OCO,
+ 
+ 	/* Module Clocks */
+ 	MOD_CLK_BASE
+@@ -72,6 +74,10 @@ static const struct cpg_core_clk r8a77995_core_clks[] __initconst = {
+ 	DEF_FIXED(".s3",       CLK_S3,             CLK_PLL1,       6, 1),
+ 	DEF_FIXED(".sdsrc",    CLK_SDSRC,          CLK_PLL1,       2, 1),
+ 
++	DEF_DIV6_RO(".r",      CLK_RINT,           CLK_EXTAL, CPG_RCKCR, 32),
++
++	DEF_RATE(".oco",       CLK_OCO,            8 * 1000 * 1000),
++
+ 	/* Core Clock Outputs */
+ 	DEF_FIXED("z2",        R8A77995_CLK_Z2,    CLK_PLL0D3,     1, 1),
+ 	DEF_FIXED("ztr",       R8A77995_CLK_ZTR,   CLK_PLL1,       6, 1),
+@@ -90,8 +96,8 @@ static const struct cpg_core_clk r8a77995_core_clks[] __initconst = {
+ 
+ 	DEF_FIXED("cl",        R8A77995_CLK_CL,    CLK_PLL1,      48, 1),
+ 	DEF_FIXED("cp",        R8A77995_CLK_CP,    CLK_EXTAL,      2, 1),
+-	DEF_FIXED("osc",       R8A77995_CLK_OSC,   CLK_EXTAL,    384, 1),
+-	DEF_FIXED("r",         R8A77995_CLK_R,     CLK_EXTAL,   1536, 1),
++
++	DEF_DIV6_RO("osc",     R8A77995_CLK_OSC,   CLK_EXTAL, CPG_RCKCR,  8),
+ 
+ 	DEF_GEN3_PE("s1d4c",   R8A77995_CLK_S1D4C, CLK_S1, 4, CLK_PE, 2),
+ 	DEF_GEN3_PE("s3d1c",   R8A77995_CLK_S3D1C, CLK_S3, 1, CLK_PE, 1),
+@@ -102,6 +108,8 @@ static const struct cpg_core_clk r8a77995_core_clks[] __initconst = {
+ 
+ 	DEF_DIV6P1("canfd",    R8A77995_CLK_CANFD, CLK_PLL0D3,    0x244),
+ 	DEF_DIV6P1("mso",      R8A77995_CLK_MSO,   CLK_PLL1D2,    0x014),
++
++	DEF_GEN3_RCKSEL("r",   R8A77995_CLK_R, CLK_RINT, 1, CLK_OCO, 61 * 4),
+ };
+ 
+ static const struct mssr_mod_clk r8a77995_mod_clks[] __initconst = {
+-- 
+2.17.1
