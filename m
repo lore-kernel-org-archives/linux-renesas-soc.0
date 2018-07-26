@@ -1,42 +1,75 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:38038 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729354AbeGYU1Z (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jul 2018 16:27:25 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-clk@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Lars-Peter Clausen <lars@metafoo.de>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        Steve Longerbeam <steve_longerbeam@mentor.com>
 Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] clk: renesas: r8a77965: Add SATA clock
-Date: Wed, 25 Jul 2018 21:14:17 +0200
-Message-Id: <20180725191417.3313-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 1/2] adv7180: fix field type to V4L2_FIELD_ALTERNATE
+Date: Thu, 26 Jul 2018 12:27:15 +0200
+Message-Id: <20180726102716.1390-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180726102716.1390-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180726102716.1390-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+The ADV7180 and ADV7182 transmit whole fields, bottom field followed
+by top (or vice-versa, depending on detected video standard). So
+for chips that do not have support for explicitly setting the field
+mode via I2P, set the field mode to V4L2_FIELD_ALTERNATE.
 
-This patch adds SATA clock to the R8A77965 SoC.
+I2P converts fields into frames using an edge adaptive algorithm. The
+frame rate is the same as the 'field rate': e.g. X fields per second
+are now X frames per second.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[wsa: rebased to upstream base]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/clk/renesas/r8a77965-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/i2c/adv7180.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/renesas/r8a77965-cpg-mssr.c b/drivers/clk/renesas/r8a77965-cpg-mssr.c
-index 8fae5e9c4a77..98c97f2cc7cb 100644
---- a/drivers/clk/renesas/r8a77965-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77965-cpg-mssr.c
-@@ -192,6 +192,7 @@ static const struct mssr_mod_clk r8a77965_mod_clks[] __initconst = {
- 	DEF_MOD("vin1",			810,	R8A77965_CLK_S0D2),
- 	DEF_MOD("vin0",			811,	R8A77965_CLK_S0D2),
- 	DEF_MOD("etheravb",		812,	R8A77965_CLK_S0D6),
-+	DEF_MOD("sata0",		815,	R8A77965_CLK_S3D2),
- 	DEF_MOD("imr1",			822,	R8A77965_CLK_S0D2),
- 	DEF_MOD("imr0",			823,	R8A77965_CLK_S0D2),
+diff --git a/drivers/media/i2c/adv7180.c b/drivers/media/i2c/adv7180.c
+index 25d24a3f10a7cb4d..c2e24132e8c21d38 100644
+--- a/drivers/media/i2c/adv7180.c
++++ b/drivers/media/i2c/adv7180.c
+@@ -644,6 +644,9 @@ static int adv7180_mbus_fmt(struct v4l2_subdev *sd,
+ 	fmt->width = 720;
+ 	fmt->height = state->curr_norm & V4L2_STD_525_60 ? 480 : 576;
  
++	if (state->field == V4L2_FIELD_ALTERNATE)
++		fmt->height /= 2;
++
+ 	return 0;
+ }
+ 
+@@ -711,11 +714,11 @@ static int adv7180_set_pad_format(struct v4l2_subdev *sd,
+ 
+ 	switch (format->format.field) {
+ 	case V4L2_FIELD_NONE:
+-		if (!(state->chip_info->flags & ADV7180_FLAG_I2P))
+-			format->format.field = V4L2_FIELD_INTERLACED;
+-		break;
++		if (state->chip_info->flags & ADV7180_FLAG_I2P)
++			break;
++		/* fall through */
+ 	default:
+-		format->format.field = V4L2_FIELD_INTERLACED;
++		format->format.field = V4L2_FIELD_ALTERNATE;
+ 		break;
+ 	}
+ 
+@@ -1291,7 +1294,7 @@ static int adv7180_probe(struct i2c_client *client,
+ 		return -ENOMEM;
+ 
+ 	state->client = client;
+-	state->field = V4L2_FIELD_INTERLACED;
++	state->field = V4L2_FIELD_ALTERNATE;
+ 	state->chip_info = (struct adv7180_chip_info *)id->driver_data;
+ 
+ 	state->pwdn_gpio = devm_gpiod_get_optional(&client->dev, "powerdown",
 -- 
-2.11.0
+2.18.0
