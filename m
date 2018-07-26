@@ -1,19 +1,12 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:45369 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729915AbeGZOSQ (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:3708 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730147AbeGZNmD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jul 2018 10:18:16 -0400
-MIME-Version: 1.0
-References: <20180725143850.32985-1-chris.brandt@renesas.com>
- <CAMuHMdV=GDmte8uqi2hoy6Cu190uX6stdPkipmsDjan8L5oZRA@mail.gmail.com> <TYXPR01MB1568B3A6928B55E665AA626F8A2B0@TYXPR01MB1568.jpnprd01.prod.outlook.com>
-In-Reply-To: <TYXPR01MB1568B3A6928B55E665AA626F8A2B0@TYXPR01MB1568.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 26 Jul 2018 15:01:11 +0200
-Message-ID: <CAMuHMdX1piAAJeX+C=xr2ZG6Pe4_W+XH6ugURWny0rcJ3En0ew@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] serial: sh-sci: Add support for RZ/A2
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>,
+        Thu, 26 Jul 2018 09:42:03 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Greg KH <gregkh@linuxfoundation.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -22,40 +15,24 @@ Cc: Greg KH <gregkh@linuxfoundation.org>,
         <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset="UTF-8"
+Subject: RE: [PATCH v2 0/3] serial: sh-sci: Add support for RZ/A2
+Date: Thu, 26 Jul 2018 12:25:23 +0000
+Message-ID: <TYXPR01MB1568B3A6928B55E665AA626F8A2B0@TYXPR01MB1568.jpnprd01.prod.outlook.com>
+References: <20180725143850.32985-1-chris.brandt@renesas.com>
+ <CAMuHMdV=GDmte8uqi2hoy6Cu190uX6stdPkipmsDjan8L5oZRA@mail.gmail.com>
+In-Reply-To: <CAMuHMdV=GDmte8uqi2hoy6Cu190uX6stdPkipmsDjan8L5oZRA@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
-
-On Thu, Jul 26, 2018 at 2:25 PM Chris Brandt <Chris.Brandt@renesas.com> wrote:
-> On Thursday, July 26, 2018, Geert Uytterhoeven wrote:
-> > Thanks for your series!
-> >
-> > Unfortunately Greg has already applied your v1 (and my fix for a
-> > use-after-free), so either these have to be reverted first, or you have to
-> > rebase against tty-next.
->
-> I assume you would prefer the newer implementation I did.
->
-> In your opinion, which one would be better (revert or rebase)?
-
-[looking at the incremental differences]
-
-I think the easiest for Greg is to rebase, and send 3 patches:
-  1. Document interrupt order in bindings,
-  2. Unify SCIx_RZ_SCIFA_REGTYPE/SCIx_SH4_SCIF_REGTYPE regtypes,
-  3. Simplify interrupts.
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQsDQoNCk9uIFRodXJzZGF5LCBKdWx5IDI2LCAyMDE4LCBHZWVydCBVeXR0ZXJob2V2
+ZW4gd3JvdGU6DQo+IFRoYW5rcyBmb3IgeW91ciBzZXJpZXMhDQo+IA0KPiBVbmZvcnR1bmF0ZWx5
+IEdyZWcgaGFzIGFscmVhZHkgYXBwbGllZCB5b3VyIHYxIChhbmQgbXkgZml4IGZvciBhDQo+IHVz
+ZS1hZnRlci1mcmVlKSwgc28gZWl0aGVyIHRoZXNlIGhhdmUgdG8gYmUgcmV2ZXJ0ZWQgZmlyc3Qs
+IG9yIHlvdSBoYXZlIHRvDQo+IHJlYmFzZSBhZ2FpbnN0IHR0eS1uZXh0Lg0KDQpJIGFzc3VtZSB5
+b3Ugd291bGQgcHJlZmVyIHRoZSBuZXdlciBpbXBsZW1lbnRhdGlvbiBJIGRpZC4NCg0KSW4geW91
+ciBvcGluaW9uLCB3aGljaCBvbmUgd291bGQgYmUgYmV0dGVyIChyZXZlcnQgb3IgcmViYXNlKT8N
+Cg0KVGhhbmtzLA0KQ2hyaXMNCg0K
