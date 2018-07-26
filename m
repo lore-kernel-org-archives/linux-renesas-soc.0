@@ -1,91 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:44520 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388421AbeGKOZn (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:53874 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729510AbeGZODJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:25:43 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 10/11] clk: renesas: rcar-gen3: Add support for mode pin clock selection
-Date: Wed, 11 Jul 2018 16:20:59 +0200
-Message-Id: <20180711142100.3765-11-geert+renesas@glider.be>
-In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
-References: <20180711142100.3765-1-geert+renesas@glider.be>
+        Thu, 26 Jul 2018 10:03:09 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+Subject: RE: [PATCH v2 2/3] soc: renesas: identify RZ/A2
+Date: Thu, 26 Jul 2018 12:46:22 +0000
+Message-ID: <TY1PR01MB15623C637A11DF8B661115B28A2B0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+References: <20180725212220.44525-1-chris.brandt@renesas.com>
+ <20180725212220.44525-3-chris.brandt@renesas.com>
+ <CAMuHMdW-it6EdNXLWwTY0PGicswXSEQ1HWWZ_SfWVaZSHMpOcA@mail.gmail.com>
+In-Reply-To: <CAMuHMdW-it6EdNXLWwTY0PGicswXSEQ1HWWZ_SfWVaZSHMpOcA@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make the existing support for selecting between clean and SSCG clocks
-using MD12 more generic, to allow using other mode pins for arbitrary
-clock selection.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/rcar-gen3-cpg.c | 10 ++++------
- drivers/clk/renesas/rcar-gen3-cpg.h | 13 +++++++++----
- 2 files changed, 13 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 19a77822757d29de..4346fdeef01bbeae 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -539,16 +539,14 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 			parent = clks[cpg_clk_extalr];
- 		break;
- 
--	case CLK_TYPE_GEN3_PE:
-+	case CLK_TYPE_GEN3_MDSEL:
- 		/*
--		 * Peripheral clock with a fixed divider, selectable between
--		 * clean and spread spectrum parents using MD12
-+		 * Clock selectable between two parents and two fixed dividers
-+		 * using a mode pin
- 		 */
--		if (cpg_mode & BIT(12)) {
--			/* Clean */
-+		if (cpg_mode & BIT(core->offset)) {
- 			div = core->div & 0xffff;
- 		} else {
--			/* SCCG */
- 			parent = clks[core->parent >> 16];
- 			if (IS_ERR(parent))
- 				return ERR_CAST(parent);
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-index 214df713ce719991..01619242d8ca6384 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -20,7 +20,7 @@ enum rcar_gen3_clk_types {
- 	CLK_TYPE_GEN3_PLL4,
- 	CLK_TYPE_GEN3_SD,
- 	CLK_TYPE_GEN3_R,
--	CLK_TYPE_GEN3_PE,
-+	CLK_TYPE_GEN3_MDSEL,	/* Select parent/divider using mode pin */
- 	CLK_TYPE_GEN3_Z,
- 	CLK_TYPE_GEN3_Z2,
- 	CLK_TYPE_GEN3_OSC,	/* OSC EXTAL predivider and fixed divider */
-@@ -30,11 +30,16 @@ enum rcar_gen3_clk_types {
- #define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
- 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_SD, _parent, .offset = _offset)
- 
-+#define DEF_GEN3_MDSEL(_name, _id, _md, _parent0, _div0, _parent1, _div1) \
-+	DEF_BASE(_name, _id, CLK_TYPE_GEN3_MDSEL,	\
-+		 (_parent0) << 16 | (_parent1),		\
-+		 .div = (_div0) << 16 | (_div1), .offset = _md)
-+
- #define DEF_GEN3_PE(_name, _id, _parent_sscg, _div_sscg, _parent_clean, \
- 		    _div_clean) \
--	DEF_BASE(_name, _id, CLK_TYPE_GEN3_PE,			\
--		 (_parent_sscg) << 16 | (_parent_clean),	\
--		 .div = (_div_sscg) << 16 | (_div_clean))
-+	DEF_GEN3_MDSEL(_name, _id, 12, _parent_sscg, _div_sscg,	\
-+		       _parent_clean, _div_clean)
-+
- #define DEF_GEN3_OSC(_name, _id, _parent, _div)		\
- 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_OSC, _parent, .div = _div)
- 
--- 
-2.17.1
+SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgeW91ciByZXZpZXchDQoNCk9uIFRodXJzZGF5LCBKdWx5
+IDI2LCAyMDE4LCBHZWVydCBVeXR0ZXJob2V2ZW4gd3JvdGU6DQo+ID4gIHN0cnVjdCByZW5lc2Fz
+X2ZhbWlseSB7DQo+ID4gICAgICAgICBjb25zdCBjaGFyIG5hbWVbMTZdOw0KPiA+IC0gICAgICAg
+dTMyIHJlZzsgICAgICAgICAgICAgICAgICAgICAgICAvKiBDQ0NSIG9yIFBSUiwgaWYgbm90IGlu
+IERUICovDQo+ID4gKyAgICAgICB1MzIgcmVnOyAgICAgICAgICAgICAgICAgICAgICAgIC8qIEND
+Q1IsIFBSUiBvciBCU0lELCBpZiBub3QgaW4NCj4gRFQgKi8NCj4gPiArICAgICAgIHU4IHR5cGU7
+DQo+IA0KPiBUaGUgb25seSByZWFzb24gd2UgaGF2ZSB0aGUgcmVnIGZpZWxkIGluIHRoaXMgc3Ry
+dWN0IGlzIGJlY2F1c2Ugd2UgYWRkZWQNCj4gU29DIGlkZW50aWZpY2F0aW9uIGZvciBleGlzdGlu
+ZyBTb0NzLCB3aGljaCBkaWRuJ3QgaGF2ZSBQUlIgaW4gRFQgZnJvbSB0aGUNCj4gc3RhcnQuDQoN
+Ck9oLCB0aGF0J3Mgd2h5IHRoaXMgd2FzIGxpa2UgdGhhdC4gSSB3YXMgd29uZGVyaW5nIHdoeSB0
+aGUgZHVwbGljYXRpb24uDQoNCg0KPiBBcyBSWi9BMiBpcyBhIG5ldyBTb0MgZmFtaWx5LCB3ZSBj
+YW4gYXNzdW1lIHRoZXJlIHdpbGwgYWx3YXlzIGJlIGEgZGV2aWNlDQo+IG5vZGUgZm9yIHRoZSBC
+U0lELiAgSGVuY2UgSSB0aGluayBhbnkgY29kZSB0byBzdXBwb3J0IFJaL0EyIHdpdGhvdXQgQlNJ
+RA0KPiBpbg0KPiBEVCBjYW4gYmUgZHJvcHBlZCAoaW5jbC4gdGhlIHR5cGUgZmllbGQgYW5kIGVu
+dW1zLCBzZWUgYmVsb3cpLg0KDQpPSy4gSSdsbCBnZXQgcmlkIG9mIHRoZW0uDQo+ID4gICAgICAg
+ICBpZiAoY2hpcGlkKSB7DQo+ID4gICAgICAgICAgICAgICAgIHByb2R1Y3QgPSByZWFkbChjaGlw
+aWQpOw0KPiA+ICAgICAgICAgICAgICAgICBpb3VubWFwKGNoaXBpZCk7DQo+ID4gLSAgICAgICAg
+ICAgICAgIC8qIFItQ2FyIE0zLVcgRVMxLjEgaW5jb3JyZWN0bHkgaWRlbnRpZmllcyBhcyBFUzIu
+MCAqLw0KPiA+IC0gICAgICAgICAgICAgICBpZiAoKHByb2R1Y3QgJiAweDdmZmYpID09IDB4NTIx
+MCkNCj4gPiAtICAgICAgICAgICAgICAgICAgICAgICBwcm9kdWN0IF49IDB4MTE7DQo+ID4gLSAg
+ICAgICAgICAgICAgIGlmIChzb2MtPmlkICYmICgocHJvZHVjdCA+PiA4KSAmIDB4ZmYpICE9IHNv
+Yy0+aWQpIHsNCj4gPiAtICAgICAgICAgICAgICAgICAgICAgICBwcl93YXJuKCJTb0MgbWlzbWF0
+Y2ggKHByb2R1Y3QgPSAweCV4KVxuIiwNCj4gcHJvZHVjdCk7DQo+ID4gLSAgICAgICAgICAgICAg
+ICAgICAgICAgcmV0dXJuIC1FTk9ERVY7DQo+ID4gKw0KPiA+ICsgICAgICAgICAgICAgICBpZiAo
+cmVnX3R5cGUgPT0gVFlQRV9QUlIpIHsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAvKiBS
+LUNhciBNMy1XIEVTMS4xIGluY29ycmVjdGx5IGlkZW50aWZpZXMgYXMNCj4gRVMyLjAgKi8NCj4g
+PiArICAgICAgICAgICAgICAgICAgICAgICBpZiAoKHByb2R1Y3QgJiAweDdmZmYpID09IDB4NTIx
+MCkNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHByb2R1Y3QgXj0gMHgxMTsN
+Cj4gPiArICAgICAgICAgICAgICAgICAgICAgICBpZiAoc29jLT5pZCAmJiAoKHByb2R1Y3QgPj4g
+OCkgJiAweGZmKSAhPSBzb2MtDQo+ID5pZCkgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgcHJfd2FybigiU29DIG1pc21hdGNoIChwcm9kdWN0ID0NCj4gMHgleClcbiIsDQo+
+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHByb2R1Y3QpOw0KPiA+
+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIC1FTk9ERVY7DQo+ID4gKyAg
+ICAgICAgICAgICAgICAgICAgICAgfQ0KPiA+ICsgICAgICAgICAgICAgICB9IGVsc2UgaWYgKHJl
+Z190eXBlID09IFRZUEVfQlNJRCkgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGlmIChz
+b2MtPmlkICYmICgocHJvZHVjdCA+PiAxNikgJiAweGZmKSAhPSBzb2MtDQo+ID5pZCkgew0KPiA+
+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcHJfd2FybigiU29DIG1pc21hdGNoIChw
+cm9kdWN0ID0NCj4gMHgleClcbiIsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIHByb2R1Y3QpOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+cmV0dXJuIC1FTk9ERVY7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgfQ0KPiA+ICAgICAg
+ICAgICAgICAgICB9DQo+ID4gICAgICAgICB9DQo+IA0KPiBUaGUgY29tcGxleGl0eSBpbiB0aGUg
+Y29kZSBhYm92ZSBsaWVzIGluIHRoZSBoYW5kbGluZyBvZiBib3RoIERUIGFuZA0KPiBub24tRFQg
+YmFzZWQgcHJvZHVjdCByZWdpc3RlcnMsIGFuZCB0aGUgcXVpcmsgZm9yIE0zLVcgRVMxLjEuDQo+
+IEFzIFJaL0EyIHdpbGwgYWx3YXlzIGhhdmUgaXQgaW4gRFQsIEkgdGhpbmsgaXQgbWFrZSBzZW5z
+ZSB0byBzaW1wbGlmeSBpdA0KPiBhcyBlLmcuDQo+IA0KPiAgICAgICAgIG5wID0gb2ZfZmluZF9j
+b21wYXRpYmxlX25vZGUoTlVMTCwgTlVMTCwgInJlbmVzYXMsYnNpZCIpOw0KPiAgICAgICAgIGlm
+IChucCkgew0KPiAgICAgICAgICAgICAgICAgLyogTmV3IEJTSUQgaGFuZGxpbmcgKi8NCj4gICAg
+ICAgICAgICAgICAgIC4uLi4NCj4gICAgICAgICB9IGVsc2Ugew0KPiAgICAgICAgICAgICAgICAg
+LyogT2xkIENDQ1IvUFJSIGhhbmRsaW5nIGZvciBEVCBhbmQgbm9uLURUICovDQo+ICAgICAgICAg
+ICAgICAgICAuLi4NCj4gICAgICAgICB9DQo+IA0KPiBQZXJoYXBzIGV2ZW4gdXNpbmcgImdvdG8g
+ZG9uZSIgaW5zdGVhZCBvZiB0aGUgImVsc2UiLCBzbyB5b3UgZG9uJ3QgaGF2ZSB0bw0KPiBpbmNy
+ZWFzZSBpbmRlbnRhdGlvbiBvZiB0aGUgb2xkIGNvZGU/DQoNClRoYW5rIHlvdSEgSSBsaWtlIHRo
+ZSBnb3RvIGlkZWEuIE1ha2VzIHRoaW5ncyBlYXNpZXIgdG8gcmVhZCBpbiBteSBvcGluaW9uLg0K
+DQoNCg0KPiA+IEBAIC0zMDIsNyArMzM4LDcgQEAgc3RhdGljIGludCBfX2luaXQgcmVuZXNhc19z
+b2NfaW5pdCh2b2lkKQ0KPiA+ICAgICAgICAgc29jX2Rldl9hdHRyLT5mYW1pbHkgPSBrc3RyZHVw
+X2NvbnN0KGZhbWlseS0+bmFtZSwgR0ZQX0tFUk5FTCk7DQo+ID4gICAgICAgICBzb2NfZGV2X2F0
+dHItPnNvY19pZCA9IGtzdHJkdXBfY29uc3Qoc3RyY2hyKG1hdGNoLT5jb21wYXRpYmxlLA0KPiAn
+LCcpICsgMSwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICBHRlBfS0VSTkVMKTsNCj4gPiAtICAgICAgIGlmIChjaGlwaWQpDQo+ID4gKyAgICAgICBpZiAo
+Y2hpcGlkICYmIChyZWdfdHlwZSA9PSBUWVBFX1BSUikpDQo+IA0KPiBpZiB5b3UgZG8NCj4gDQo+
+ICAgICAgICAgdW5zaWduZWQgaW50IGVzaGkgPSAwLCBlc2xvOw0KPiAgICAgICAgIC4uLg0KPiAg
+ICAgICAgIGlmICgvKiBDQ0NSL1BSUiAqLykgew0KPiAgICAgICAgICAgICAgICAgIGVzaGkgPSAo
+KHByb2R1Y3QgPj4gNCkgJiAweDBmKSArIDE7DQo+ICAgICAgICAgICAgICAgICAgZXNsbyA9IHBy
+b2R1Y3QgJiAweGY7DQo+ICAgICAgICAgfQ0KPiANCj4gdGhlbiB5b3UgY2FuIHJlcGxhY2UgdGhl
+IGNoZWNrIGJ5DQo+IA0KPiAgICAgICAgIGlmIChlc2hpKQ0KPiANCg0KT0suIEkgZ2V0IHdoYXQg
+eW91IG1lYW4uDQoNCg0KPiBCVFcsIHRoZSB0b3AgZm91ciBiaXRzIG9mIEJTSUQgc2VlbSB0byBp
+bmRpY2F0ZSB0aGUgY2hpcCB2ZXJzaW9uLg0KPiBQZXJoYXBzIHRoYXQgY29ycmVzcG9uZHMgdG8g
+dGhlIEVTIHZlcnNpb24gb24gUi1DYXI/DQoNCk5vdCBzdXJlLlRoZSB0aGluZyBpcyB0aGF0IHdl
+IGhhdmVuJ3QgaGFkIGEgcmV2aXNpb24geWV0IGZvciBSWi9BLA0Kc28gaXQgaGFzbid0IGJlZW4g
+dXNlZC4NClRoZXkgbWFkZSB0aGUgY2hpcHMgYW5kIHdoYXRldmVyIGJ1Z3Mgd2VyZSBpbiB0aGVy
+ZSBzdGF5ZWQuDQoNClRoZSBjbG9zZXN0IHRoaW5nIHRvIGEgcmV2aXNpb24gd2FzIFJaL0ExTCBh
+bmQgUlovQTFMVSAoJ1UnIGZvciB1cGRhdGVkKS4NCkJ1dCwgc2luY2UgdGhhdCBhZGRlZCBuZXcg
+SVAgbGlrZSB0aGUgSFcgSlBFRywgaXQgYmVjYW1lIGEgZGlmZmVyZW50DQpwYXJ0IG51bWJlciBh
+bmQgYSBuZXcgQlNJRCBudW1iZXI6DQogIFJaL0ExTDogIDA4MUE2NDQ3DQogIFJaL0ExTFU6IDA4
+MkY0NDQ3DQoNCkNocmlzDQoNCg==
