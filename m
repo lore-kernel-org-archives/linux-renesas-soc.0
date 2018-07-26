@@ -1,71 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:51228 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388039AbeGWV3r (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:43484 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731750AbeGZQwp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jul 2018 17:29:47 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH 00/12] i2c: quirks: add zero length checks and update drivers
-Date: Mon, 23 Jul 2018 22:26:04 +0200
-Message-Id: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
+        Thu, 26 Jul 2018 12:52:45 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 11/11] clk: renesas: r8a77980: Add RCLK for watchdog timer
+Date: Thu, 26 Jul 2018 17:35:17 +0200
+Message-Id: <20180726153517.10020-12-geert+renesas@glider.be>
+In-Reply-To: <20180726153517.10020-1-geert+renesas@glider.be>
+References: <20180726153517.10020-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I had this idea for quite some time on my todo list but a soon to be
-implemented refactoring in the i2c-rcar driver now finally made me do it. Add a
-'can't do 0 length messages' quirk to the quirk infrastructure for and remove
-the manual handling from the drivers. This makes the quirk much more visible.
-(Quite some prominent vendors in that list) We also have a centralized place to
-handle updates to the quirk detection if that is ever needed.
+On R-Car V3H, RCLK can be switched between EXTALR and the On-Chip
+Oscillator using mode pin MD19.
 
-I have tested this with the i2c-rcar and i2c-sh_mobile driver on a Renesas
-SalvatorXS board equipped with M3-N (r8a77965).
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+---
+v2:
+  - Add Reviewed-by,
+  - Rename "oco" to ".oco", as it is an internal clock.
 
-A git branch can be found here:
+As Figure 8.1e "Block Diagram of CPG (R-Car V3H)" does not show any
+divider after the On-Chip Oscillator, I assume the OCO runs at 32768 Hz.
+If this turns out to be incorrect, the OCO clock rate and divider can be
+updated later without any impact, as the OCO is an internal clock.
+---
+ drivers/clk/renesas/r8a77980-cpg-mssr.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/quirk-no-zero-len
-
-Looking forward to comments, reviews, tests...
-
-Thanks,
-
-   Wolfram
-
-Wolfram Sang (12):
-  i2c: quirks: add zero length checks
-  i2c: designware-master: use core to detect 'no zero length' quirk
-  i2c: mxs: use core to detect 'no zero length' quirk
-  i2c: omap: use core to detect 'no zero length' quirk
-  i2c: pmcmsp: use core to detect 'no zero length' quirk
-  i2c: qup: use core to detect 'no zero length' quirk
-  i2c: stu300: use core to detect 'no zero length' quirk
-  i2c: tegra: use core to detect 'no zero length' quirk
-  i2c: zx2967: use core to detect 'no zero length' quirk
-  i2c: rcar: use core to detect 'no zero length' quirk
-  i2c: xlr: use core to detect 'no zero length' quirk
-  i2c: sh_mobile: use core to detect 'no zero length read' quirk
-
- drivers/i2c/busses/i2c-designware-master.c | 12 +++++-------
- drivers/i2c/busses/i2c-mxs.c               |  8 +++++---
- drivers/i2c/busses/i2c-omap.c              |  8 +++++---
- drivers/i2c/busses/i2c-pmcmsp.c            | 17 +----------------
- drivers/i2c/busses/i2c-qup.c               | 14 ++++++--------
- drivers/i2c/busses/i2c-rcar.c              | 13 ++++++-------
- drivers/i2c/busses/i2c-sh_mobile.c         | 10 +++++-----
- drivers/i2c/busses/i2c-stu300.c            | 12 ++++++------
- drivers/i2c/busses/i2c-tegra.c             |  4 +---
- drivers/i2c/busses/i2c-xlr.c               | 11 +++++------
- drivers/i2c/busses/i2c-zx2967.c            |  8 +++++---
- drivers/i2c/i2c-core-base.c                |  6 ++++++
- include/linux/i2c.h                        |  4 ++++
- 13 files changed, 60 insertions(+), 67 deletions(-)
-
+diff --git a/drivers/clk/renesas/r8a77980-cpg-mssr.c b/drivers/clk/renesas/r8a77980-cpg-mssr.c
+index a8b8d8613b46dd3c..acf2b4dded4c6cf0 100644
+--- a/drivers/clk/renesas/r8a77980-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77980-cpg-mssr.c
+@@ -41,6 +41,7 @@ enum clk_ids {
+ 	CLK_S2,
+ 	CLK_S3,
+ 	CLK_SDSRC,
++	CLK_OCO,
+ 
+ 	/* Module Clocks */
+ 	MOD_CLK_BASE
+@@ -64,6 +65,7 @@ static const struct cpg_core_clk r8a77980_core_clks[] __initconst = {
+ 	DEF_FIXED(".s2",	CLK_S2,		   CLK_PLL1_DIV2,  4, 1),
+ 	DEF_FIXED(".s3",	CLK_S3,		   CLK_PLL1_DIV2,  6, 1),
+ 	DEF_FIXED(".sdsrc",	CLK_SDSRC,	   CLK_PLL1_DIV2,  2, 1),
++	DEF_RATE(".oco",	CLK_OCO,           32768),
+ 
+ 	/* Core Clock Outputs */
+ 	DEF_FIXED("ztr",	R8A77980_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
+@@ -98,6 +100,7 @@ static const struct cpg_core_clk r8a77980_core_clks[] __initconst = {
+ 	DEF_DIV6P1("mso",	R8A77980_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
+ 
+ 	DEF_GEN3_OSC("osc",	R8A77980_CLK_OSC,   CLK_EXTAL,     8),
++	DEF_GEN3_MDSEL("r",	R8A77980_CLK_R, 29, CLK_EXTALR, 1, CLK_OCO, 1),
+ };
+ 
+ static const struct mssr_mod_clk r8a77980_mod_clks[] __initconst = {
+@@ -119,6 +122,7 @@ static const struct mssr_mod_clk r8a77980_mod_clks[] __initconst = {
+ 	DEF_MOD("tpu0",			 304,	R8A77980_CLK_S3D4),
+ 	DEF_MOD("sdif",			 314,	R8A77980_CLK_SD0),
+ 	DEF_MOD("pciec0",		 319,	R8A77980_CLK_S2D2),
++	DEF_MOD("rwdt",			 402,	R8A77980_CLK_R),
+ 	DEF_MOD("intc-ex",		 407,	R8A77980_CLK_CP),
+ 	DEF_MOD("intc-ap",		 408,	R8A77980_CLK_S0D3),
+ 	DEF_MOD("hscif3",		 517,	R8A77980_CLK_S3D1),
 -- 
-2.11.0
+2.17.1
