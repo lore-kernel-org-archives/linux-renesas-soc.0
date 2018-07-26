@@ -1,155 +1,175 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:53880 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726935AbeG3N2H (ORCPT
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:45574 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729106AbeGZLtF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Jul 2018 09:28:07 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] arm64: dts: renesas: r8a77990: Enable PWM for Ebisu board
-Date: Mon, 30 Jul 2018 20:52:11 +0900
-Message-Id: <1532951531-29188-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Thu, 26 Jul 2018 07:49:05 -0400
+Received: by mail-lj1-f196.google.com with SMTP id q5-v6so1047735ljh.12
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Jul 2018 03:32:51 -0700 (PDT)
+Date: Thu, 26 Jul 2018 12:32:48 +0200
+From: =?iso-8859-1?Q?=22Niklas_S=F6derlund=22?=
+        <niklas.soderlund@ragnatech.se>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran@ksquared.org.uk>,
+        Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 02/11] media: rcar-vin: convert to SPDX identifiers
+Message-ID: <20180726103248.GJ14991@bigcity.dyn.berto.se>
+References: <87h8kmd938.wl-kuninori.morimoto.gx@renesas.com>
+ <87effqd915.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87effqd915.wl-kuninori.morimoto.gx@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds PWM device nodes and enables PWM3 and PWM5 for
-R-Car E3 Ebisu board.
+Hi Morimoto-san,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- I have submitted dt-bindings for R-Car E3 (not merged into PWM subsystem yet):
- https://patchwork.kernel.org/patch/10548969/
+Thanks for your patch.
 
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 24 +++++++++
- arch/arm64/boot/dts/renesas/r8a77990.dtsi      | 70 ++++++++++++++++++++++++++
- 2 files changed, 94 insertions(+)
+On 2018-07-26 02:35:06 +0000, Kuninori Morimoto wrote:
+> 
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> Kconfig and Makefile doesn't have license line, thus,
+> these are GPL-2.0 as default.
+> All ohter files are GPL-2.0+ as original license.
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-index 2bc3a48..31934a3 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-@@ -67,6 +67,16 @@
- 		};
- 	};
- 
-+	pwm3_pins: pwm3 {
-+		groups = "pwm3_b";
-+		function = "pwm3";
-+	};
-+
-+	pwm5_pins: pwm5 {
-+		groups = "pwm5_a";
-+		function = "pwm5";
-+	};
-+
- 	usb0_pins: usb {
- 		groups = "usb0_b";
- 		function = "usb0";
-@@ -78,6 +88,20 @@
- 	};
- };
- 
-+&pwm3 {
-+	pinctrl-0 = <&pwm3_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&pwm5 {
-+	pinctrl-0 = <&pwm5_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
- &rwdt {
- 	timeout-sec = <60>;
- 	status = "okay";
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index 2c8f119..2ee0edf 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -337,6 +337,76 @@
- 			status = "disabled";
- 		};
- 
-+		pwm0: pwm@e6e30000 {
-+			compatible = "renesas,pwm-r8a77990", "renesas,pwm-rcar";
-+			reg = <0 0xe6e30000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm1: pwm@e6e31000 {
-+			compatible = "renesas,pwm-r8a77990", "renesas,pwm-rcar";
-+			reg = <0 0xe6e31000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm2: pwm@e6e32000 {
-+			compatible = "renesas,pwm-r8a77990", "renesas,pwm-rcar";
-+			reg = <0 0xe6e32000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm3: pwm@e6e33000 {
-+			compatible = "renesas,pwm-r8a77990", "renesas,pwm-rcar";
-+			reg = <0 0xe6e33000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm4: pwm@e6e34000 {
-+			compatible = "renesas,pwm-r8a77990", "renesas,pwm-rcar";
-+			reg = <0 0xe6e34000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm5: pwm@e6e35000 {
-+			compatible = "renesas,pwm-r8a77990", "renesas,pwm-rcar";
-+			reg = <0 0xe6e35000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm6: pwm@e6e36000 {
-+			compatible = "renesas,pwm-r8a77990", "renesas,pwm-rcar";
-+			reg = <0 0xe6e36000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
- 		scif2: serial@e6e88000 {
- 			compatible = "renesas,scif-r8a77990",
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
+Acked-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+
+> ---
+>  drivers/media/platform/rcar-vin/Kconfig     | 1 +
+>  drivers/media/platform/rcar-vin/Makefile    | 1 +
+>  drivers/media/platform/rcar-vin/rcar-core.c | 8 ++------
+>  drivers/media/platform/rcar-vin/rcar-dma.c  | 6 +-----
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 6 +-----
+>  drivers/media/platform/rcar-vin/rcar-vin.h  | 6 +-----
+>  6 files changed, 7 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/Kconfig b/drivers/media/platform/rcar-vin/Kconfig
+> index baf4eaf..e3eb8fe 100644
+> --- a/drivers/media/platform/rcar-vin/Kconfig
+> +++ b/drivers/media/platform/rcar-vin/Kconfig
+> @@ -1,3 +1,4 @@
+> +# SPDX-License-Identifier: GPL-2.0
+>  config VIDEO_RCAR_CSI2
+>  	tristate "R-Car MIPI CSI-2 Receiver"
+>  	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && OF
+> diff --git a/drivers/media/platform/rcar-vin/Makefile b/drivers/media/platform/rcar-vin/Makefile
+> index 5ab803d..00d809f 100644
+> --- a/drivers/media/platform/rcar-vin/Makefile
+> +++ b/drivers/media/platform/rcar-vin/Makefile
+> @@ -1,3 +1,4 @@
+> +# SPDX-License-Identifier: GPL-2.0
+>  rcar-vin-objs = rcar-core.o rcar-dma.o rcar-v4l2.o
+>  
+>  obj-$(CONFIG_VIDEO_RCAR_CSI2) += rcar-csi2.o
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index 8843367..ce09799 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -1,3 +1,4 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+>  /*
+>   * Driver for Renesas R-Car VIN
+>   *
+> @@ -7,11 +8,6 @@
+>   * Copyright (C) 2008 Magnus Damm
+>   *
+>   * Based on the soc-camera rcar_vin driver
+> - *
+> - * This program is free software; you can redistribute  it and/or modify it
+> - * under  the terms of  the GNU General  Public License as published by the
+> - * Free Software Foundation;  either version 2 of the  License, or (at your
+> - * option) any later version.
+>   */
+>  
+>  #include <linux/module.h>
+> @@ -1275,4 +1271,4 @@ module_platform_driver(rcar_vin_driver);
+>  
+>  MODULE_AUTHOR("Niklas S�derlund <niklas.soderlund@ragnatech.se>");
+>  MODULE_DESCRIPTION("Renesas R-Car VIN camera host driver");
+> -MODULE_LICENSE("GPL v2");
+> +MODULE_LICENSE("GPL");
+> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+> index 65917d2..84adebc 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> @@ -1,3 +1,4 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+>  /*
+>   * Driver for Renesas R-Car VIN
+>   *
+> @@ -7,11 +8,6 @@
+>   * Copyright (C) 2008 Magnus Damm
+>   *
+>   * Based on the soc-camera rcar_vin driver
+> - *
+> - * This program is free software; you can redistribute  it and/or modify it
+> - * under  the terms of  the GNU General  Public License as published by the
+> - * Free Software Foundation;  either version 2 of the  License, or (at your
+> - * option) any later version.
+>   */
+>  
+>  #include <linux/delay.h>
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> index f8f0519..37d35a2 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -1,3 +1,4 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+>  /*
+>   * Driver for Renesas R-Car VIN
+>   *
+> @@ -7,11 +8,6 @@
+>   * Copyright (C) 2008 Magnus Damm
+>   *
+>   * Based on the soc-camera rcar_vin driver
+> - *
+> - * This program is free software; you can redistribute  it and/or modify it
+> - * under  the terms of  the GNU General  Public License as published by the
+> - * Free Software Foundation;  either version 2 of the  License, or (at your
+> - * option) any later version.
+>   */
+>  
+>  #include <linux/pm_runtime.h>
+> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+> index 57117da..f684e47 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
+> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+> @@ -1,3 +1,4 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+>  /*
+>   * Driver for Renesas R-Car VIN
+>   *
+> @@ -7,11 +8,6 @@
+>   * Copyright (C) 2008 Magnus Damm
+>   *
+>   * Based on the soc-camera rcar_vin driver
+> - *
+> - * This program is free software; you can redistribute  it and/or modify it
+> - * under  the terms of  the GNU General  Public License as published by the
+> - * Free Software Foundation;  either version 2 of the  License, or (at your
+> - * option) any later version.
+>   */
+>  
+>  #ifndef __RCAR_VIN__
+> -- 
+> 2.7.4
+> 
+
 -- 
-1.9.1
+Regards,
+Niklas S�derlund
