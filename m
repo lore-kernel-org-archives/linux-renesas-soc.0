@@ -1,76 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:53195 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728452AbeGYO43 (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:46054 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731321AbeGZRZT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jul 2018 10:56:29 -0400
-From: Jacopo Mondi <jacopo@jmondi.org>
-To: mchehab@kernel.org, sakari.ailus@iki.fi,
-        kieran.bingham@ideasonboard.com
-Cc: Jacopo Mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [v2 0/2] media: i2c: mt9v111 sensor driver
-Date: Wed, 25 Jul 2018 15:44:29 +0200
-Message-Id: <1532526271-19639-1-git-send-email-jacopo@jmondi.org>
+        Thu, 26 Jul 2018 13:25:19 -0400
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180726152524.9393-1-geert+renesas@glider.be>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+References: <20180726152524.9393-1-geert+renesas@glider.be>
+Message-ID: <153262126901.48062.3465085338628890690@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: renesas: rcar-gen3: Rename rint to .r
+Date: Thu, 26 Jul 2018 09:07:49 -0700
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-   this is a sensor level driver for Aptina MT9V111.
+Quoting Geert Uytterhoeven (2018-07-26 08:25:24)
+> All other internal clock names have a period prepended.
+> =
 
-Compared to v1 the biggest difference is that now auto-exposure and
-auto-white-balancing are exposed through the v4l2-ctrl framework, and can be
-activated/deactivated by the user.
+> Hence rename the internal RCLK from "rint" to ".r", and move it to the
+> section where all other internal clocks are defined.
+> =
 
-For this reason, while auto-exposure algorithm still controls the frame rate in
-low light conditions, the driver now enables it by default and let the user
-disable it to more precisely control the framerate.
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-(Most of the) comments from Sakari and Kieran have been addressed, see changelog
-for a more precise list.
-
-Tested VGA, QVGA QQVGA resolutions at 5, 10, 15 and 30 frame per second.
-
-v4l2-compliance fails on some tests, and I've not been able to identify what's
-wrong with the driver. Copy of the failures reported here below:
-
-fail: v4l2-test-subdevs.cpp(69): doioctl(node, VIDIOC_SUBDEV_ENUM_FRAME_INTERVAL, &fie) != EINVAL
-fail: v4l2-test-subdevs.cpp(180): ret && ret != ENOTTY
-fail: v4l2-test-subdevs.cpp(248): ret && ret != ENOTTY
-test Active VIDIOC_SUBDEV_ENUM_MBUS_CODE/FRAME_SIZE/FRAME_INTERVAL: FAIL
-
-I've found no mention of ENOTTY to be reported by enum_frame_interval in the
-documentation, but apparently v4l2-compliance checks for that.
-
-v1: https://lkml.org/lkml/2018/6/11/467
-
-Thanks
-   j
-
-v1 -> v2:
-- Addressed syntax mistakes pointed out by Kieran
-- Drop spinlock around address space change
-- Extend mutex to cover frame rate and format get/set operations
-- Add controls for auto-exposure and auto-white-balancing
-- Move MAINTAINERS modifications to bindings patch
-- Fix resolution in bindings document
-- Drop dependency on OF
-- Drop subdev 'open' function in favour of pad operation init_cfg and use a
-  default configuration to initialize the sensor
-- Turn off power if sensor identification fails
-
-Jacopo Mondi (2):
-  dt-bindings: media: i2c: Document MT9V111 bindings
-  media: i2c: Add driver for Aptina MT9V111
-
- .../bindings/media/i2c/aptina,mt9v111.txt          |   46 +
- MAINTAINERS                                        |    8 +
- drivers/media/i2c/Kconfig                          |   11 +
- drivers/media/i2c/Makefile                         |    1 +
- drivers/media/i2c/mt9v111.c                        | 1299 ++++++++++++++++++++
- 5 files changed, 1365 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.txt
- create mode 100644 drivers/media/i2c/mt9v111.c
-
---
-2.7.4
+Acked-by: Stephen Boyd <sboyd@kernel.org>
