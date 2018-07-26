@@ -1,51 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33214 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728178AbeGTMvn (ORCPT
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:55253 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729111AbeGZLn7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jul 2018 08:51:43 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/9] arm64: dts: renesas: r8a77965: Add second port to rcar_sound placeholder
-Date: Fri, 20 Jul 2018 14:03:34 +0200
-Message-Id: <485f8b2824ef10f2a7b12d45a3f2b5c943aa1e04.1532087303.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1532087303.git.horms+renesas@verge.net.au>
-References: <cover.1532087303.git.horms+renesas@verge.net.au>
+        Thu, 26 Jul 2018 07:43:59 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Lars-Peter Clausen <lars@metafoo.de>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        Steve Longerbeam <steve_longerbeam@mentor.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 2/2] adv7180: add g_frame_interval support
+Date: Thu, 26 Jul 2018 12:27:16 +0200
+Message-Id: <20180726102716.1390-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180726102716.1390-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180726102716.1390-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This node is just a placeholder but fills that function better if it does
-not trigger build warnings. This update satisfies the requirement that
-nodes with #address-cells/#size-cells properties have more than one child
-node.
+Implement g_frame_interval to return the current standard's frame
+interval.
 
-This is flagged by dtc as follows:
- # make dtbs W=1
- arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning (graph_child_address): /soc/sound@ec500000/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
- arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dtb: Warning (graph_child_address): /soc/sound@ec500000/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/media/i2c/adv7180.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index be8631dff1b4..a37749caf40e 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -1269,6 +1269,9 @@
- 				port@0 {
- 					reg = <0>;
- 				};
-+				port@1 {
-+					reg = <1>;
-+				};
- 			};
- 		};
+diff --git a/drivers/media/i2c/adv7180.c b/drivers/media/i2c/adv7180.c
+index c2e24132e8c21d38..f72312efc471acd9 100644
+--- a/drivers/media/i2c/adv7180.c
++++ b/drivers/media/i2c/adv7180.c
+@@ -461,6 +461,22 @@ static int adv7180_g_std(struct v4l2_subdev *sd, v4l2_std_id *norm)
+ 	return 0;
+ }
  
++static int adv7180_g_frame_interval(struct v4l2_subdev *sd,
++				    struct v4l2_subdev_frame_interval *fi)
++{
++	struct adv7180_state *state = to_state(sd);
++
++	if (state->curr_norm & V4L2_STD_525_60) {
++		fi->interval.numerator = 1001;
++		fi->interval.denominator = 30000;
++	} else {
++		fi->interval.numerator = 1;
++		fi->interval.denominator = 25;
++	}
++
++	return 0;
++}
++
+ static void adv7180_set_power_pin(struct adv7180_state *state, bool on)
+ {
+ 	if (!state->pwdn_gpio)
+@@ -820,6 +836,7 @@ static int adv7180_subscribe_event(struct v4l2_subdev *sd,
+ static const struct v4l2_subdev_video_ops adv7180_video_ops = {
+ 	.s_std = adv7180_s_std,
+ 	.g_std = adv7180_g_std,
++	.g_frame_interval = adv7180_g_frame_interval,
+ 	.querystd = adv7180_querystd,
+ 	.g_input_status = adv7180_g_input_status,
+ 	.s_routing = adv7180_s_routing,
 -- 
-2.11.0
+2.18.0
