@@ -1,192 +1,149 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:47044 "EHLO
+Received: from xavier.telenet-ops.be ([195.130.132.52]:40412 "EHLO
         xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729362AbeGYPqW (ORCPT
+        with ESMTP id S1731600AbeGZQwq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jul 2018 11:46:22 -0400
+        Thu, 26 Jul 2018 12:52:46 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Peter Maydell <peter.maydell@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc: Auger Eric <eric.auger@redhat.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        qemu-arm@nongnu.org, qemu-devel@nongnu.org,
-        linux-renesas-soc@vger.kernel.org,
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 4/4] hw/arm/sysbus-fdt: Add support for instantiating generic devices
-Date: Wed, 25 Jul 2018 16:34:13 +0200
-Message-Id: <20180725143413.9728-5-geert+renesas@glider.be>
-In-Reply-To: <20180725143413.9728-1-geert+renesas@glider.be>
-References: <20180725143413.9728-1-geert+renesas@glider.be>
+Subject: [PATCH v2 02/11] clk: renesas: r8a7795: Add OSC EXTAL predivider configuration
+Date: Thu, 26 Jul 2018 17:35:08 +0200
+Message-Id: <20180726153517.10020-3-geert+renesas@glider.be>
+In-Reply-To: <20180726153517.10020-1-geert+renesas@glider.be>
+References: <20180726153517.10020-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a fallback for instantiating generic devices without a type-specific
-or compatible-specific instantation method.  This will be used when no
-other match is found.
+R-Car Gen3 Hardware Manual Rev.0.52 documents the relation between the
+MD13 and MD14 mode pins, and the OSC EXTAL predivider, as used by the
+OSC and RINT RCLK clocks.  Hence augment the configuration structure
+with all documented predivider values.
 
-The generic instantation method creates a device node with "reg" and
-(optional) "interrupts" properties, and copies the "compatible"
-property and other optional properties from the host.
-For now the following optional properties are copied, if found:
-  - "#gpio-cells",
-  - "gpio-controller",
-  - "#interrupt-cells",
-  - "interrupt-controller",
-  - "interrupt-names".
+According to R-Car Gen3 Hardware Manual Rev.0.53, the CPG_RCKCR
+register was removed in R-Car H3 ES2.0.  Change the OSC and RINT
+clock definitions to use the OSC EXTAL predivider instead, which is
+supported on all R-Car H3 SoC revisions.
 
-More can be added when needed.
-
-This avoids having to write device-specific instantation methods for
-each and every "simple" device using only a set of generic properties.
-Devices that need more specialized handling can still provide their
-own instantation method.
-
-This has been tested on a Renesas Salvator-XS board with R-Car H3 ES2.0
-with SATA:
-
-    -device vfio-platform,host=ee300000.sata
-
-and GPIO (needs VFIO No-IOMMU support):
-
-    -device vfio-platform,host=e6055400.gpio
+Inspired by a patch in the BSP by Takeshi Kihara
+<takeshi.kihara.df@renesas.com>.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v3:
-  - New.
+v2:
+  - Add Reviewed-by,
+  - Rebase.
 ---
- hw/arm/sysbus-fdt.c | 102 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 102 insertions(+)
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 66 +++++++++++++-------------
+ 1 file changed, 33 insertions(+), 33 deletions(-)
 
-diff --git a/hw/arm/sysbus-fdt.c b/hw/arm/sysbus-fdt.c
-index 0e24c803a1c2c734..8040af00ccf131d7 100644
---- a/hw/arm/sysbus-fdt.c
-+++ b/hw/arm/sysbus-fdt.c
-@@ -415,6 +415,99 @@ static int add_amd_xgbe_fdt_node(SysBusDevice *sbdev, void *opaque)
-     return 0;
- }
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index ccaea9e1849d9330..ca8cb0eed950161c 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -73,7 +73,7 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
+ 	DEF_FIXED(".s3",        CLK_S3,            CLK_PLL1_DIV2,  6, 1),
+ 	DEF_FIXED(".sdsrc",     CLK_SDSRC,         CLK_PLL1_DIV2,  2, 1),
  
-+static HostProperty generic_copied_properties[] = {
-+    {"compatible", false},
-+    {"#gpio-cells", true},
-+    {"gpio-controller", true},
-+    {"#interrupt-cells", true},
-+    {"interrupt-controller", true},
-+    {"interrupt-names", true},
-+};
-+
-+/**
-+ * add_generic_fdt_node
-+ *
-+ * Generates a generic DT node by copying properties from the host
-+ */
-+static int add_generic_fdt_node(SysBusDevice *sbdev, void *opaque)
-+{
-+    PlatformBusFDTData *data = opaque;
-+    VFIOPlatformDevice *vdev = VFIO_PLATFORM_DEVICE(sbdev);
-+    const char *parent_node = data->pbus_node_name;
-+    void *guest_fdt = data->fdt, *host_fdt;
-+    VFIODevice *vbasedev = &vdev->vbasedev;
-+    char **node_path, *node_name, *dt_name;
-+    PlatformBusDevice *pbus = data->pbus;
-+    int i, irq_number;
-+    uint32_t *reg_attr, *irq_attr;
-+    uint64_t mmio_base;
-+
-+    host_fdt = load_device_tree_from_sysfs();
-+
-+    dt_name = sysfs_to_dt_name(vbasedev->name);
-+    if (!dt_name) {
-+        error_report("%s incorrect sysfs device name %s", __func__,
-+                     vbasedev->name);
-+        exit(1);
-+    }
-+    node_path = qemu_fdt_node_path(host_fdt, dt_name, vdev->compat,
-+                                   &error_fatal);
-+    if (!node_path || !node_path[0]) {
-+        error_report("%s unable to retrieve node path for %s/%s", __func__,
-+                     dt_name, vdev->compat);
-+        exit(1);
-+    }
-+
-+    if (node_path[1]) {
-+        error_report("%s more than one node matching %s/%s!", __func__, dt_name,
-+                     vdev->compat);
-+        exit(1);
-+    }
-+
-+    mmio_base = platform_bus_get_mmio_addr(pbus, sbdev, 0);
-+    node_name = g_strdup_printf("%s/%s@%" PRIx64, parent_node,
-+                               vbasedev->name, mmio_base);
-+    qemu_fdt_add_subnode(guest_fdt, node_name);
-+
-+    /* Copy generic properties */
-+    copy_properties_from_host(generic_copied_properties,
-+                              ARRAY_SIZE(generic_copied_properties), host_fdt,
-+                              guest_fdt, node_path[0], node_name);
-+
-+    /* Copy reg (remapped) */
-+    reg_attr = g_new(uint32_t, vbasedev->num_regions * 2);
-+    for (i = 0; i < vbasedev->num_regions; i++) {
-+        mmio_base = platform_bus_get_mmio_addr(pbus, sbdev, i);
-+        reg_attr[2 * i] = cpu_to_be32(mmio_base);
-+        reg_attr[2 * i + 1] = cpu_to_be32(
-+                                memory_region_size(vdev->regions[i]->mem));
-+    }
-+    qemu_fdt_setprop(guest_fdt, node_name, "reg", reg_attr,
-+                     vbasedev->num_regions * 2 * sizeof(uint32_t));
-+
-+    /* Copy interrupts (remapped) */
-+    if (vbasedev->num_irqs) {
-+        irq_attr = g_new(uint32_t, vbasedev->num_irqs * 3);
-+        for (i = 0; i < vbasedev->num_irqs; i++) {
-+            irq_number = platform_bus_get_irqn(pbus, sbdev , i)
-+                             + data->irq_start;
-+            irq_attr[3 * i] = cpu_to_be32(GIC_FDT_IRQ_TYPE_SPI);
-+            irq_attr[3 * i + 1] = cpu_to_be32(irq_number);
-+            irq_attr[3 * i + 2] = cpu_to_be32(GIC_FDT_IRQ_FLAGS_LEVEL_HI);
-+        }
-+        qemu_fdt_setprop(guest_fdt, node_name, "interrupts",
-+                         irq_attr, vbasedev->num_irqs * 3 * sizeof(uint32_t));
-+        g_free(irq_attr);
-+    }
-+
-+    g_free(reg_attr);
-+    g_free(node_name);
-+    g_strfreev(node_path);
-+    g_free(dt_name);
-+    g_free(host_fdt);
-+    return 0;
-+}
-+
- /* DT compatible matching */
- static bool vfio_platform_match(SysBusDevice *sbdev,
-                                 const BindingEntry *entry)
-@@ -423,6 +516,11 @@ static bool vfio_platform_match(SysBusDevice *sbdev,
-     const char *compat;
-     unsigned int n;
+-	DEF_DIV6_RO(".r",       CLK_RINT,          CLK_EXTAL, CPG_RCKCR, 32),
++	DEF_GEN3_OSC(".r",      CLK_RINT,          CLK_EXTAL,      32),
  
-+    if (!entry->compat) {
-+        /* Generic DT fallback */
-+        return true;
-+    }
-+
-     for (n = vdev->num_compat, compat = vdev->compat; n > 0;
-          n--, compat += strlen(compat) + 1) {
-         if (!strcmp(entry->compat, compat)) {
-@@ -459,6 +557,10 @@ static const BindingEntry bindings[] = {
-     VFIO_PLATFORM_BINDING("amd,xgbe-seattle-v1a", add_amd_xgbe_fdt_node),
- #endif
-     TYPE_BINDING(TYPE_RAMFB_DEVICE, no_fdt_node),
-+#ifdef CONFIG_LINUX
-+    /* Generic DT fallback must be last */
-+    VFIO_PLATFORM_BINDING(NULL, add_generic_fdt_node),
-+#endif
-     TYPE_BINDING("", NULL), /* last element */
+ 	/* Core Clock Outputs */
+ 	DEF_BASE("z",           R8A7795_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
+@@ -113,7 +113,7 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
+ 	DEF_DIV6P1("mso",       R8A7795_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
+ 	DEF_DIV6P1("hdmi",      R8A7795_CLK_HDMI,  CLK_PLL1_DIV4, 0x250),
+ 
+-	DEF_DIV6_RO("osc",      R8A7795_CLK_OSC,   CLK_EXTAL, CPG_RCKCR,  8),
++	DEF_GEN3_OSC("osc",     R8A7795_CLK_OSC,   CLK_EXTAL,     8),
+ 
+ 	DEF_BASE("r",           R8A7795_CLK_R,     CLK_TYPE_GEN3_R, CLK_RINT),
+ };
+@@ -284,25 +284,25 @@ static const unsigned int r8a7795_crit_mod_clks[] __initconst = {
+  */
+ 
+ /*
+- *   MD		EXTAL		PLL0	PLL1	PLL2	PLL3	PLL4
++ *   MD		EXTAL		PLL0	PLL1	PLL2	PLL3	PLL4	OSC
+  * 14 13 19 17	(MHz)
+- *-------------------------------------------------------------------
+- * 0  0  0  0	16.66 x 1	x180	x192	x144	x192	x144
+- * 0  0  0  1	16.66 x 1	x180	x192	x144	x128	x144
++ *-------------------------------------------------------------------------
++ * 0  0  0  0	16.66 x 1	x180	x192	x144	x192	x144	/16
++ * 0  0  0  1	16.66 x 1	x180	x192	x144	x128	x144	/16
+  * 0  0  1  0	Prohibited setting
+- * 0  0  1  1	16.66 x 1	x180	x192	x144	x192	x144
+- * 0  1  0  0	20    x 1	x150	x160	x120	x160	x120
+- * 0  1  0  1	20    x 1	x150	x160	x120	x106	x120
++ * 0  0  1  1	16.66 x 1	x180	x192	x144	x192	x144	/16
++ * 0  1  0  0	20    x 1	x150	x160	x120	x160	x120	/19
++ * 0  1  0  1	20    x 1	x150	x160	x120	x106	x120	/19
+  * 0  1  1  0	Prohibited setting
+- * 0  1  1  1	20    x 1	x150	x160	x120	x160	x120
+- * 1  0  0  0	25    x 1	x120	x128	x96	x128	x96
+- * 1  0  0  1	25    x 1	x120	x128	x96	x84	x96
++ * 0  1  1  1	20    x 1	x150	x160	x120	x160	x120	/19
++ * 1  0  0  0	25    x 1	x120	x128	x96	x128	x96	/24
++ * 1  0  0  1	25    x 1	x120	x128	x96	x84	x96	/24
+  * 1  0  1  0	Prohibited setting
+- * 1  0  1  1	25    x 1	x120	x128	x96	x128	x96
+- * 1  1  0  0	33.33 / 2	x180	x192	x144	x192	x144
+- * 1  1  0  1	33.33 / 2	x180	x192	x144	x128	x144
++ * 1  0  1  1	25    x 1	x120	x128	x96	x128	x96	/24
++ * 1  1  0  0	33.33 / 2	x180	x192	x144	x192	x144	/32
++ * 1  1  0  1	33.33 / 2	x180	x192	x144	x128	x144	/32
+  * 1  1  1  0	Prohibited setting
+- * 1  1  1  1	33.33 / 2	x180	x192	x144	x192	x144
++ * 1  1  1  1	33.33 / 2	x180	x192	x144	x192	x144	/32
+  */
+ #define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 11) | \
+ 					 (((md) & BIT(13)) >> 11) | \
+@@ -310,23 +310,23 @@ static const unsigned int r8a7795_crit_mod_clks[] __initconst = {
+ 					 (((md) & BIT(17)) >> 17))
+ 
+ static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
+-	/* EXTAL div	PLL1 mult/div	PLL3 mult/div */
+-	{ 1,		192,	1,	192,	1,	},
+-	{ 1,		192,	1,	128,	1,	},
+-	{ 0, /* Prohibited setting */			},
+-	{ 1,		192,	1,	192,	1,	},
+-	{ 1,		160,	1,	160,	1,	},
+-	{ 1,		160,	1,	106,	1,	},
+-	{ 0, /* Prohibited setting */			},
+-	{ 1,		160,	1,	160,	1,	},
+-	{ 1,		128,	1,	128,	1,	},
+-	{ 1,		128,	1,	84,	1,	},
+-	{ 0, /* Prohibited setting */			},
+-	{ 1,		128,	1,	128,	1,	},
+-	{ 2,		192,	1,	192,	1,	},
+-	{ 2,		192,	1,	128,	1,	},
+-	{ 0, /* Prohibited setting */			},
+-	{ 2,		192,	1,	192,	1,	},
++	/* EXTAL div	PLL1 mult/div	PLL3 mult/div	OSC prediv */
++	{ 1,		192,	1,	192,	1,	16,	},
++	{ 1,		192,	1,	128,	1,	16,	},
++	{ 0, /* Prohibited setting */				},
++	{ 1,		192,	1,	192,	1,	16,	},
++	{ 1,		160,	1,	160,	1,	19,	},
++	{ 1,		160,	1,	106,	1,	19,	},
++	{ 0, /* Prohibited setting */				},
++	{ 1,		160,	1,	160,	1,	19,	},
++	{ 1,		128,	1,	128,	1,	24,	},
++	{ 1,		128,	1,	84,	1,	24,	},
++	{ 0, /* Prohibited setting */				},
++	{ 1,		128,	1,	128,	1,	24,	},
++	{ 2,		192,	1,	192,	1,	32,	},
++	{ 2,		192,	1,	128,	1,	32,	},
++	{ 0, /* Prohibited setting */				},
++	{ 2,		192,	1,	192,	1,	32,	},
  };
  
+ static const struct soc_device_attribute r8a7795es1[] __initconst = {
 -- 
 2.17.1
