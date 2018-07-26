@@ -1,124 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50772 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730369AbeGRNHe (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33904 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729888AbeGZPKb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Jul 2018 09:07:34 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Mark Brown <broonie@kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: bd9571mwv: Add support for toggle power switches" to the regulator tree
-In-Reply-To: <20180716153052.1830-3-geert+renesas@glider.be>
-Message-Id: <E1fflaP-0007Tt-AZ@debutante>
-Date: Wed, 18 Jul 2018 13:29:41 +0100
+        Thu, 26 Jul 2018 11:10:31 -0400
+Date: Thu, 26 Jul 2018 15:53:29 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77980: add Cortex-A53 PMU support
+Message-ID: <20180726135328.zmqanet4dns4vk5m@verge.net.au>
+References: <2368353.xfo5beGC5E@wasted.cogentembedded.com>
+ <d8e355fd-46f5-3798-fe43-811471a75ab6@cogentembedded.com>
+ <CAMuHMdXPYwC5pmY+HmT0TYTXpmy152pVtdanSPCZMX1xp0r76g@mail.gmail.com>
+ <CAMuHMdV-6s+NizKhszaY8f2=L2QS8KgCBcKEjR_qvyrrV04uXw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV-6s+NizKhszaY8f2=L2QS8KgCBcKEjR_qvyrrV04uXw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Thu, Jul 26, 2018 at 02:33:55PM +0200, Geert Uytterhoeven wrote:
+> On Wed, Jul 25, 2018 at 7:34 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Wed, Jul 25, 2018 at 6:44 PM Sergei Shtylyov
+> > <sergei.shtylyov@cogentembedded.com> wrote:
+> > > Describe the performance monitor unit (PMU) for the Cortex-A53 cores in
+> > > the R8A77970 SoC's device tree.
+> >
+> > 8?
+> 
+> With that fixes:
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-   regulator: bd9571mwv: Add support for toggle power switches
+Thanks, I have applied the following for v4.20.
 
-has been applied to the regulator tree at
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH] arm64: dts: renesas: r8a77980: add Cortex-A53 PMU support
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+Describe the performance monitor unit (PMU) for the Cortex-A53 cores in
+the R8A77980 SoC's device tree.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Based on the original (and large) patch by Vladimir Barinov.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From e436875f6f97708613976da75a92974f18998af9 Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Mon, 16 Jul 2018 17:30:51 +0200
-Subject: [PATCH] regulator: bd9571mwv: Add support for toggle power switches
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-Extend the existing support for backup mode to toggle power switches.
-With a toggle power switch (or level signal), the following steps must
-be followed exactly:
-   1. Configure PMIC for backup mode, to change the role of the
-      accessory power switch from a power switch to a wake-up switch,
-   2. Switch accessory power switch off, to prepare for system suspend,
-      which is a manual step not controlled by software,
-   3. Suspend system,
-   4. Switch accessory power switch on, to resume the system.
-
-Hence the PMIC is configured for backup mode when "on" or "1" is written
-to the PMIC's "backup_mode" virtual file in sysfs.  Conversely, writing
-"off" or "0" reverts the role of the accessory switch to a power
-switch.
-
-Unlike with momentary switches, backup mode is not enabled by default,
-as enabling it prevents the board from being powered off using the power
-switch, which may confuse the user.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/regulator/bd9571mwv-regulator.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/regulator/bd9571mwv-regulator.c b/drivers/regulator/bd9571mwv-regulator.c
-index 1da36a6590c8..c44613b9423b 100644
---- a/drivers/regulator/bd9571mwv-regulator.c
-+++ b/drivers/regulator/bd9571mwv-regulator.c
-@@ -185,6 +185,7 @@ static ssize_t backup_mode_store(struct device *dev,
- 				 const char *buf, size_t count)
- {
- 	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
-+	unsigned int mode;
- 	int ret;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+index d3532fd4c94a..1013da3e2ec4 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -98,6 +98,15 @@
+ 		clock-frequency = <0>;
+ 	};
  
- 	if (!count)
-@@ -194,6 +195,25 @@ static ssize_t backup_mode_store(struct device *dev,
- 	if (ret)
- 		return ret;
- 
-+	if (!bdreg->rstbmode_level)
-+		return count;
++	pmu_a53 {
++		compatible = "arm,cortex-a53-pmu";
++		interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&a53_0>, <&a53_1>, <&a53_2>, <&a53_3>;
++	};
 +
-+	/*
-+	 * Configure DDR Backup Mode, to change the role of the accessory power
-+	 * switch from a power switch to a wake-up switch, or vice versa
-+	 */
-+	ret = bd9571mwv_bkup_mode_read(bdreg->bd, &mode);
-+	if (ret)
-+		return ret;
-+
-+	mode &= ~BD9571MWV_BKUP_MODE_CNT_KEEPON_MASK;
-+	if (bdreg->bkup_mode_enabled)
-+		mode |= bdreg->bkup_mode_cnt_keepon;
-+
-+	ret = bd9571mwv_bkup_mode_write(bdreg->bd, mode);
-+	if (ret)
-+		return ret;
-+
- 	return count;
- }
- 
+ 	psci {
+ 		compatible = "arm,psci-1.0", "arm,psci-0.2";
+ 		method = "smc";
 -- 
-2.18.0
+2.11.0
