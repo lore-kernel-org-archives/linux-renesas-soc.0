@@ -1,61 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:49320 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726548AbeG3Owk (ORCPT
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:39449 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730173AbeGZNiz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Jul 2018 10:52:40 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 1/4] serial: sh-sci: Improve interrupts description
-Date: Mon, 30 Jul 2018 08:17:13 -0500
-Message-Id: <20180730131716.75484-2-chris.brandt@renesas.com>
-In-Reply-To: <20180730131716.75484-1-chris.brandt@renesas.com>
-References: <20180730131716.75484-1-chris.brandt@renesas.com>
+        Thu, 26 Jul 2018 09:38:55 -0400
+Received: by mail-vk0-f65.google.com with SMTP id e139-v6so678574vkf.6
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Jul 2018 05:22:19 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180725191804.3522-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180725191804.3522-1-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 26 Jul 2018 14:22:08 +0200
+Message-ID: <CAMuHMdW9OHUpdiCHoJU_Z0gMUMA+7J9f7ngK=m8DJ=DBVcALXA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: r8a77965: Add SATA controller node
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe interrupts property in more detail, especially when there are
-more than one interrupt.
+Hi Wolfram,
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+On Wed, Jul 25, 2018 at 9:18 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds SATA controller node for the R8A77965 SoC.
+
+Thanks for your patch!
+
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> [wsa: rebased to upstream base]
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- .../devicetree/bindings/serial/renesas,sci-serial.txt    | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-index a7cda6550100..eaca9da79d83 100644
---- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-+++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-@@ -73,7 +73,21 @@ Required properties:
-     family-specific and/or generic versions.
- 
-   - reg: Base address and length of the I/O registers used by the UART.
--  - interrupts: Must contain an interrupt-specifier for the SCIx interrupt.
-+  - interrupts: Must contain one or more interrupt-specifiers for the SCIx.
-+                If a single interrupt is expressed, then all events are
-+                multiplexed into this single interrupt.
-+
-+                If multiple interrupts are provided by the hardware, the order
-+                in which the interrupts are listed must match order below. Note
-+                that some HW interrupt events may be muxed together resulting
-+                in duplicate entries.
-+                The interrupt order is as follows:
-+                  1. Error (ERI)
-+                  2. Receive buffer full (RXI)
-+                  3. Transmit buffer empty (TXI)
-+                  4. Break (BRI)
-+                  5. Data Ready (DRI)
-+                  6. Transmit End (TEI)
- 
-   - clocks: Must contain a phandle and clock-specifier pair for each entry
-     in clock-names.
+> --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> @@ -908,6 +908,17 @@
+>                         status = "disabled";
+>                 };
+>
+> +               sata: sata@ee300000 {
+
+Please insert this node in between sd@ee160000 and
+interrupt-controller@f1010000, to preserve sort order (by unit address per
+device group first, by device index second).
+
+> +                       compatible = "renesas,sata-r8a77965",
+> +                                    "renesas,rcar-gen3-sata";
+> +                       reg = <0 0xee300000 0 0x200000>;
+> +                       interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&cpg CPG_MOD 815>;
+> +                       power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
+> +                       resets = <&cpg 815>;
+> +                       status = "disabled";
+> +               };
+> +
+>                 scif0: serial@e6e60000 {
+>                         compatible = "renesas,scif-r8a77965",
+>                                      "renesas,rcar-gen3-scif", "renesas,scif";
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.16.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
