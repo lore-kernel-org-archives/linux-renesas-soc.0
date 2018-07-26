@@ -1,69 +1,40 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 0/4] ARM: shmobile: Enable ARM_GLOBAL_TIMER on Cortex-A9 MPCore
-Date: Tue, 31 Jul 2018 18:08:51 +0200
-Message-Id: <20180731160855.6758-1-geert+renesas@glider.be>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Greg KH <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: RE: [PATCH v2 2/3] serial: sh-sci: Add support for separate TEI+DRI
+ interrupts
+Date: Thu, 26 Jul 2018 12:16:54 +0000
+Message-ID: <TYXPR01MB1568937DFF057AC653012AB78A2B0@TYXPR01MB1568.jpnprd01.prod.outlook.com>
+References: <20180725143850.32985-1-chris.brandt@renesas.com>
+ <20180725143850.32985-3-chris.brandt@renesas.com>
+ <CAMuHMdXxyAuhW-+Vh_TE7M+uFT6HYngg2BAg8inVJB6qhOuXmg@mail.gmail.com>
+In-Reply-To: <CAMuHMdXxyAuhW-+Vh_TE7M+uFT6HYngg2BAg8inVJB6qhOuXmg@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
-
-SH-Mobile AG5 and R-Car H1 SoCs are based on the Cortex-A9 MPCore, which
-includes an ARM global timer.
-
-Enable use of the global timer on these SoCs for scheduling and delay
-loops, with the following impact:
-  - Scheduler accuracy is increased from 10 ms to a few ns,
-  - Calls to shmobile_init_delay() to preset loops-per-jiffies can be
-    removed.
-    Note that when using an old DTB lacking the global timer, the kernel
-    will still work, but the delay loop will need to be calibrated
-    during boot.
-  - This also seems to get rid of lockdep warnings related to the sh_cmt
-    driver.
-
-We still need shmobile_init_delay() to setup loops-per-jiffies for other
-SoCs lacking an architectured or global timer:
-  - emev2: Cortex-A9 (MPCore version and global timer not documented),
-  - r7s72100: single-core Cortex-A9 MPCore r3p0 (global timer not
-    documented),
-  - r7s9210: single-core Cortex-A9 MPCore r4p1 (global timer not
-    documented),
-  - r8a7740: single-core Cortex-A9 r2p4,
-  - r8a7778: single-core Cortex-A9 r2p2-00rel0.
-
-This has been tested on KZM-A9-GT (SH-Mobile AG5) and Marzen (R-Car H1).
-
-Thanks for your comments!
-
-Geert Uytterhoeven (4):
-  ARM: dts: sh73a0: Rename twd clock to periph clock
-  ARM: dts: sh73a0: Add device node for ARM global timer
-  ARM: dts: r8a7779: Add device node for ARM global timer
-  [WIP] ARM: shmobile: Enable ARM_GLOBAL_TIMER on Cortex-A9 MPCore SoCs
-
- arch/arm/boot/dts/r8a7779.dtsi         |  8 ++++++++
- arch/arm/boot/dts/sh73a0.dtsi          | 11 +++++++++--
- arch/arm/mach-shmobile/Kconfig         |  2 ++
- arch/arm/mach-shmobile/setup-r8a7779.c |  1 -
- arch/arm/mach-shmobile/setup-sh73a0.c  |  1 -
- 5 files changed, 19 insertions(+), 4 deletions(-)
-
--- 
-2.17.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+SGkgR2VlcnQsDQoNCk9uIFRodXJzZGF5LCBKdWx5IDI2LCAyMDE4LCBHZWVydCBVeXR0ZXJob2V2
+ZW4gd3JvdGU6DQo+ID4gK3N0YXRpYyBpcnFyZXR1cm5fdCBzY2lfYnJfaW50ZXJydXB0KGludCBp
+cnEsIHZvaWQgKnB0cik7DQo+IA0KPiBZb3UgY2FuIGF2b2lkIHRoZSBmb3J3YXJkIGRlY2xhcmF0
+aW9uIGJ5IG1vdmluZyB0aGUgd2hvbGUgZnVuY3Rpb24gaGVyZS4NCg0KT0suDQoNCj4gPiBAQCAt
+MjgwOSw2ICsyODQ1LDggQEAgc3RhdGljIGludCBzY2lfaW5pdF9zaW5nbGUoc3RydWN0IHBsYXRm
+b3JtX2RldmljZQ0KPiAqZGV2LA0KPiA+ICAgICAgICAgICAgICAgICBzY2lfcG9ydC0+aXJxc1sx
+XSA9IHNjaV9wb3J0LT5pcnFzWzBdOw0KPiA+ICAgICAgICAgICAgICAgICBzY2lfcG9ydC0+aXJx
+c1syXSA9IHNjaV9wb3J0LT5pcnFzWzBdOw0KPiA+ICAgICAgICAgICAgICAgICBzY2lfcG9ydC0+
+aXJxc1szXSA9IHNjaV9wb3J0LT5pcnFzWzBdOw0KPiA+ICsgICAgICAgICAgICAgICBzY2lfcG9y
+dC0+aXJxc1s0XSA9IHNjaV9wb3J0LT5pcnFzWzBdOw0KPiA+ICsgICAgICAgICAgICAgICBzY2lf
+cG9ydC0+aXJxc1s1XSA9IHNjaV9wb3J0LT5pcnFzWzBdOw0KPiANCj4gWW91IG1heSB3YW50IHRv
+IHN0YXJ0IHVzaW5nIGEgbG9vcCBmcm9tIDEgdG8gQVJSQVlfU0laRShzY2lfcG9ydC0+aXJxcykg
+LQ0KPiAxDQo+IGluc3RlYWQuDQoNCk9LLCBJJ2xsIGNoYW5nZSBpdC4NCg0KQ2hyaXMNCg0K
