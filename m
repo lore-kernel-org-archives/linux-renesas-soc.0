@@ -1,7 +1,7 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:45328 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731773AbeGZQwq (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:43468 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731573AbeGZQwq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 26 Jul 2018 12:52:46 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
@@ -11,22 +11,17 @@ Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 01/11] clk: renesas: rcar-gen3: Add support for OSC EXTAL predivider
-Date: Thu, 26 Jul 2018 17:35:07 +0200
-Message-Id: <20180726153517.10020-2-geert+renesas@glider.be>
+Subject: [PATCH v2 10/11] clk: renesas: rcar-gen3: Add support for mode pin clock selection
+Date: Thu, 26 Jul 2018 17:35:16 +0200
+Message-Id: <20180726153517.10020-11-geert+renesas@glider.be>
 In-Reply-To: <20180726153517.10020-1-geert+renesas@glider.be>
 References: <20180726153517.10020-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a clock type and macro for defining clocks using the OSC EXTAL
-predivider combined with a fixed divider.
-
-On most R-Car Gen3 SoCs, the predivider value depends on mode pins, and
-thus must be specified in the configuration structure.
-
-Inspired by a patch in the BSP by Takeshi Kihara
-<takeshi.kihara.df@renesas.com>.
+Make the existing support for selecting between clean and SSCG clocks
+using MD12 more generic, to allow using other mode pins for arbitrary
+clock selection.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
@@ -34,56 +29,67 @@ Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 v2:
   - Add Reviewed-by.
 ---
- drivers/clk/renesas/rcar-gen3-cpg.c | 7 +++++++
- drivers/clk/renesas/rcar-gen3-cpg.h | 4 ++++
- 2 files changed, 11 insertions(+)
+ drivers/clk/renesas/rcar-gen3-cpg.c | 10 ++++------
+ drivers/clk/renesas/rcar-gen3-cpg.h | 13 +++++++++----
+ 2 files changed, 13 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 628b63b85d3f09c5..7533a51c679bfd54 100644
+index 19a77822757d29de..4346fdeef01bbeae 100644
 --- a/drivers/clk/renesas/rcar-gen3-cpg.c
 +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -563,6 +563,13 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 		return cpg_z_clk_register(core->name, __clk_get_name(parent),
- 					  base, CPG_FRQCRC_Z2FC_MASK);
+@@ -539,16 +539,14 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 			parent = clks[cpg_clk_extalr];
+ 		break;
  
-+	case CLK_TYPE_GEN3_OSC:
-+		/*
-+		 * Clock combining OSC EXTAL predivider and a fixed divider
-+		 */
-+		div = cpg_pll_config->osc_prediv * core->div;
-+		break;
-+
- 	default:
- 		return ERR_PTR(-EINVAL);
- 	}
+-	case CLK_TYPE_GEN3_PE:
++	case CLK_TYPE_GEN3_MDSEL:
+ 		/*
+-		 * Peripheral clock with a fixed divider, selectable between
+-		 * clean and spread spectrum parents using MD12
++		 * Clock selectable between two parents and two fixed dividers
++		 * using a mode pin
+ 		 */
+-		if (cpg_mode & BIT(12)) {
+-			/* Clean */
++		if (cpg_mode & BIT(core->offset)) {
+ 			div = core->div & 0xffff;
+ 		} else {
+-			/* SCCG */
+ 			parent = clks[core->parent >> 16];
+ 			if (IS_ERR(parent))
+ 				return ERR_CAST(parent);
 diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-index ea4f8fc3c4c972e7..d7d84d9e4a1c9c8b 100644
+index 7c49aebf9dd12490..04dc45d15874abf6 100644
 --- a/drivers/clk/renesas/rcar-gen3-cpg.h
 +++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -23,6 +23,7 @@ enum rcar_gen3_clk_types {
- 	CLK_TYPE_GEN3_PE,
+@@ -20,7 +20,7 @@ enum rcar_gen3_clk_types {
+ 	CLK_TYPE_GEN3_PLL4,
+ 	CLK_TYPE_GEN3_SD,
+ 	CLK_TYPE_GEN3_R,
+-	CLK_TYPE_GEN3_PE,
++	CLK_TYPE_GEN3_MDSEL,	/* Select parent/divider using mode pin */
  	CLK_TYPE_GEN3_Z,
  	CLK_TYPE_GEN3_Z2,
-+	CLK_TYPE_GEN3_OSC,	/* OSC EXTAL predivider and fixed divider */
- };
- 
+ 	CLK_TYPE_GEN3_OSC,	/* OSC EXTAL predivider and fixed divider */
+@@ -30,11 +30,16 @@ enum rcar_gen3_clk_types {
  #define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
-@@ -33,6 +34,8 @@ enum rcar_gen3_clk_types {
- 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_PE,			\
- 		 (_parent_sscg) << 16 | (_parent_clean),	\
- 		 .div = (_div_sscg) << 16 | (_div_clean))
-+#define DEF_GEN3_OSC(_name, _id, _parent, _div)		\
-+	DEF_BASE(_name, _id, CLK_TYPE_GEN3_OSC, _parent, .div = _div)
+ 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_SD, _parent, .offset = _offset)
  
- struct rcar_gen3_cpg_pll_config {
- 	u8 extal_div;
-@@ -40,6 +43,7 @@ struct rcar_gen3_cpg_pll_config {
- 	u8 pll1_div;
- 	u8 pll3_mult;
- 	u8 pll3_div;
-+	u8 osc_prediv;
- };
++#define DEF_GEN3_MDSEL(_name, _id, _md, _parent0, _div0, _parent1, _div1) \
++	DEF_BASE(_name, _id, CLK_TYPE_GEN3_MDSEL,	\
++		 (_parent0) << 16 | (_parent1),		\
++		 .div = (_div0) << 16 | (_div1), .offset = _md)
++
+ #define DEF_GEN3_PE(_name, _id, _parent_sscg, _div_sscg, _parent_clean, \
+ 		    _div_clean) \
+-	DEF_BASE(_name, _id, CLK_TYPE_GEN3_PE,			\
+-		 (_parent_sscg) << 16 | (_parent_clean),	\
+-		 .div = (_div_sscg) << 16 | (_div_clean))
++	DEF_GEN3_MDSEL(_name, _id, 12, _parent_sscg, _div_sscg,	\
++		       _parent_clean, _div_clean)
++
+ #define DEF_GEN3_OSC(_name, _id, _parent, _div)		\
+ 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_OSC, _parent, .div = _div)
  
- #define CPG_RCKCR	0x240
 -- 
 2.17.1
