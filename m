@@ -1,44 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:58520 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726744AbeGLQjW (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:40454 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731671AbeGZQwq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Jul 2018 12:39:22 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Peter Rosin <peda@axentia.se>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] i2c: recovery: remove bogus check if SDA GPIO is set to output
-Date: Thu, 12 Jul 2018 18:28:54 +0200
-Message-Id: <20180712162854.8280-1-wsa+renesas@sang-engineering.com>
+        Thu, 26 Jul 2018 12:52:46 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 06/11] clk: renesas: cpg-mssr: Add support for fixed rate clocks
+Date: Thu, 26 Jul 2018 17:35:12 +0200
+Message-Id: <20180726153517.10020-7-geert+renesas@glider.be>
+In-Reply-To: <20180726153517.10020-1-geert+renesas@glider.be>
+References: <20180726153517.10020-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This check did not work as intended. I2C is open drain, so this function
-will likely always have presented the GPIO as input because
-gpiod_get_direction doesn't know about open drain states. Remove this
-check for now. We can add it again once we know how to get more precise
-information about the GPIO.
+Add support for defining fixed rate clocks, to be used for on-chip
+oscillators.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/i2c/i2c-core-base.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+v2:
+  - Add Reviewed-by.
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 5 +++++
+ drivers/clk/renesas/renesas-cpg-mssr.h | 3 +++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 57538d72f2e5..4debf921ab5c 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -269,9 +269,7 @@ static void i2c_init_recovery(struct i2c_adapter *adap)
- 		bri->set_scl = set_scl_gpio_value;
- 		if (bri->sda_gpiod) {
- 			bri->get_sda = get_sda_gpio_value;
--			/* FIXME: add proper flag instead of '0' once available */
--			if (gpiod_get_direction(bri->sda_gpiod) == 0)
--				bri->set_sda = set_sda_gpio_value;
-+			bri->set_sda = set_sda_gpio_value;
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index f4b013e9352d9efc..e04338932786bc14 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -313,6 +313,11 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
  		}
- 		return;
- 	}
+ 		break;
+ 
++	case CLK_TYPE_FR:
++		clk = clk_register_fixed_rate(NULL, core->name, NULL, 0,
++					      core->mult);
++		break;
++
+ 	default:
+ 		if (info->cpg_clk_register)
+ 			clk = info->cpg_clk_register(dev, core, info,
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
+index 642f720b9b055337..87bb8f368d4ecd18 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.h
++++ b/drivers/clk/renesas/renesas-cpg-mssr.h
+@@ -38,6 +38,7 @@ enum clk_types {
+ 	CLK_TYPE_FF,		/* Fixed Factor Clock */
+ 	CLK_TYPE_DIV6P1,	/* DIV6 Clock with 1 parent clock */
+ 	CLK_TYPE_DIV6_RO,	/* DIV6 Clock read only with extra divisor */
++	CLK_TYPE_FR,		/* Fixed Rate Clock */
+ 
+ 	/* Custom definitions start here */
+ 	CLK_TYPE_CUSTOM,
+@@ -56,6 +57,8 @@ enum clk_types {
+ 	DEF_BASE(_name, _id, CLK_TYPE_DIV6P1, _parent, .offset = _offset)
+ #define DEF_DIV6_RO(_name, _id, _parent, _offset, _div)	\
+ 	DEF_BASE(_name, _id, CLK_TYPE_DIV6_RO, _parent, .offset = _offset, .div = _div, .mult = 1)
++#define DEF_RATE(_name, _id, _rate)	\
++	DEF_TYPE(_name, _id, CLK_TYPE_FR, .mult = _rate)
+ 
+     /*
+      * Definitions of Module Clocks
 -- 
-2.11.0
+2.17.1
