@@ -1,85 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33510 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727518AbeGTMxR (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:45346 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731776AbeGZQwq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jul 2018 08:53:17 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/9] ARM: dts: porter: Add missing PMIC nodes
-Date: Fri, 20 Jul 2018 14:05:09 +0200
-Message-Id: <5058a96cb7e8dca97629c48084537fe5def8344f.1532086734.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1532086734.git.horms+renesas@verge.net.au>
-References: <cover.1532086734.git.horms+renesas@verge.net.au>
+        Thu, 26 Jul 2018 12:52:46 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 05/11] clk: renesas: r8a77980: Add OSC predivider configuration and clock
+Date: Thu, 26 Jul 2018 17:35:11 +0200
+Message-Id: <20180726153517.10020-6-geert+renesas@glider.be>
+In-Reply-To: <20180726153517.10020-1-geert+renesas@glider.be>
+References: <20180726153517.10020-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Marek Vasut <marek.vasut@gmail.com>
+R-Car Gen3 Hardware Manual Rev.0.54 documents the relation between the
+MD13 and MD14 mode pins, and the OSC EXTAL predivider, as used by the
+OSC clock.  Hence augment the configuration structure with all
+documented predivider values.
 
-Add PMIC nodes to Porter and connect CPU DVFS supply. There is
-one DA9063L and one DA9210 on Porter, the only difference from
-the other boards is that DA9063L is at I2C address 0x5a rather
-than 0x58 .
+Add the OSC clock using the configured predivider.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7791-porter.dts | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+v2:
+  - Add Reviewed-by,
+  - Fix predivider for 27 MHz EXTAL (table under Table 8.2e wrongly
+    uses 25 MHz).
+---
+ drivers/clk/renesas/r8a77980-cpg-mssr.c | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-index a01101b49d99..5f77d73d7462 100644
---- a/arch/arm/boot/dts/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -375,10 +375,43 @@
- 	clock-frequency = <400000>;
+diff --git a/drivers/clk/renesas/r8a77980-cpg-mssr.c b/drivers/clk/renesas/r8a77980-cpg-mssr.c
+index d7ebd9ec00594fc8..a8b8d8613b46dd3c 100644
+--- a/drivers/clk/renesas/r8a77980-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77980-cpg-mssr.c
+@@ -96,6 +96,8 @@ static const struct cpg_core_clk r8a77980_core_clks[] __initconst = {
+ 	DEF_DIV6P1("canfd",	R8A77980_CLK_CANFD, CLK_PLL1_DIV4, 0x244),
+ 	DEF_DIV6P1("csi0",	R8A77980_CLK_CSI0,  CLK_PLL1_DIV4, 0x00c),
+ 	DEF_DIV6P1("mso",	R8A77980_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
++
++	DEF_GEN3_OSC("osc",	R8A77980_CLK_OSC,   CLK_EXTAL,     8),
  };
  
-+&i2c6 {
-+	status = "okay";
-+	clock-frequency = <100000>;
-+
-+	pmic@5a {
-+		compatible = "dlg,da9063l";
-+		reg = <0x5a>;
-+		interrupt-parent = <&irqc0>;
-+		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-controller;
-+
-+		wdt {
-+			compatible = "dlg,da9063-watchdog";
-+		};
-+	};
-+
-+	vdd_dvfs: regulator@68 {
-+		compatible = "dlg,da9210";
-+		reg = <0x68>;
-+		interrupt-parent = <&irqc0>;
-+		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+
-+		regulator-min-microvolt = <1000000>;
-+		regulator-max-microvolt = <1000000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+};
-+
- &sata0 {
- 	status = "okay";
+ static const struct mssr_mod_clk r8a77980_mod_clks[] __initconst = {
+@@ -171,23 +173,23 @@ static const unsigned int r8a77980_crit_mod_clks[] __initconst = {
+  */
+ 
+ /*
+- *   MD		EXTAL		PLL2	PLL1	PLL3
++ *   MD		EXTAL		PLL2	PLL1	PLL3	OSC
+  * 14 13	(MHz)
+- * --------------------------------------------------
+- * 0  0		16.66 x 1	x240	x192	x192
+- * 0  1		20    x 1	x200	x160	x160
+- * 1  0		27    x 1	x148	x118	x118
+- * 1  1		33.33 / 2	x240	x192	x192
++ * --------------------------------------------------------
++ * 0  0		16.66 x 1	x240	x192	x192	/16
++ * 0  1		20    x 1	x200	x160	x160	/19
++ * 1  0		27    x 1	x148	x118	x118	/26
++ * 1  1		33.33 / 2	x240	x192	x192	/32
+  */
+ #define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 13) | \
+ 					 (((md) & BIT(13)) >> 13))
+ 
+ static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[4] __initconst = {
+-	/* EXTAL div	PLL1 mult/div	PLL3 mult/div */
+-	{ 1,		192,	1,	192,	1,	},
+-	{ 1,		160,	1,	160,	1,	},
+-	{ 1,		118,	1,	118,	1,	},
+-	{ 2,		192,	1,	192,	1,	},
++	/* EXTAL div	PLL1 mult/div	PLL3 mult/div	OSC prediv */
++	{ 1,		192,	1,	192,	1,	16,	},
++	{ 1,		160,	1,	160,	1,	19,	},
++	{ 1,		118,	1,	118,	1,	26,	},
++	{ 2,		192,	1,	192,	1,	32,	},
  };
  
-+&cpu0 {
-+	cpu0-supply = <&vdd_dvfs>;
-+};
-+
- /* composite video input */
- &vin0 {
- 	status = "okay";
+ static int __init r8a77980_cpg_mssr_init(struct device *dev)
 -- 
-2.11.0
+2.17.1
