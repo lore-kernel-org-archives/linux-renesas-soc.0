@@ -1,12 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:51495 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729511AbeGZO1N (ORCPT
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:45369 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729915AbeGZOSQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jul 2018 10:27:13 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Greg KH <gregkh@linuxfoundation.org>,
+        Thu, 26 Jul 2018 10:18:16 -0400
+MIME-Version: 1.0
+References: <20180725143850.32985-1-chris.brandt@renesas.com>
+ <CAMuHMdV=GDmte8uqi2hoy6Cu190uX6stdPkipmsDjan8L5oZRA@mail.gmail.com> <TYXPR01MB1568B3A6928B55E665AA626F8A2B0@TYXPR01MB1568.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYXPR01MB1568B3A6928B55E665AA626F8A2B0@TYXPR01MB1568.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 26 Jul 2018 15:01:11 +0200
+Message-ID: <CAMuHMdX1piAAJeX+C=xr2ZG6Pe4_W+XH6ugURWny0rcJ3En0ew@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] serial: sh-sci: Add support for RZ/A2
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -15,26 +22,40 @@ CC: Greg KH <gregkh@linuxfoundation.org>,
         <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: RE: [PATCH v2 0/3] serial: sh-sci: Add support for RZ/A2
-Date: Thu, 26 Jul 2018 13:10:19 +0000
-Message-ID: <TY1PR01MB1562217F23D525E18002E1918A2B0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20180725143850.32985-1-chris.brandt@renesas.com>
- <CAMuHMdV=GDmte8uqi2hoy6Cu190uX6stdPkipmsDjan8L5oZRA@mail.gmail.com>
- <TYXPR01MB1568B3A6928B55E665AA626F8A2B0@TYXPR01MB1568.jpnprd01.prod.outlook.com>
- <CAMuHMdX1piAAJeX+C=xr2ZG6Pe4_W+XH6ugURWny0rcJ3En0ew@mail.gmail.com>
-In-Reply-To: <CAMuHMdX1piAAJeX+C=xr2ZG6Pe4_W+XH6ugURWny0rcJ3En0ew@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIFRodXJzZGF5LCBKdWx5IDI2LCAyMDE4LCBHZWVydCBVeXR0ZXJob2V2
-ZW4gd3JvdGU6DQo+ID4gSW4geW91ciBvcGluaW9uLCB3aGljaCBvbmUgd291bGQgYmUgYmV0dGVy
-IChyZXZlcnQgb3IgcmViYXNlKT8NCj4gDQo+IFtsb29raW5nIGF0IHRoZSBpbmNyZW1lbnRhbCBk
-aWZmZXJlbmNlc10NCj4gDQo+IEkgdGhpbmsgdGhlIGVhc2llc3QgZm9yIEdyZWcgaXMgdG8gcmVi
-YXNlLCBhbmQgc2VuZCAzIHBhdGNoZXM6DQo+ICAgMS4gRG9jdW1lbnQgaW50ZXJydXB0IG9yZGVy
-IGluIGJpbmRpbmdzLA0KPiAgIDIuIFVuaWZ5IFNDSXhfUlpfU0NJRkFfUkVHVFlQRS9TQ0l4X1NI
-NF9TQ0lGX1JFR1RZUEUgcmVndHlwZXMsDQo+ICAgMy4gU2ltcGxpZnkgaW50ZXJydXB0cy4NCg0K
-VGhhbmsgeW91IQ0KDQpDaHJpcw0KDQo=
+Hi Chris,
+
+On Thu, Jul 26, 2018 at 2:25 PM Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Thursday, July 26, 2018, Geert Uytterhoeven wrote:
+> > Thanks for your series!
+> >
+> > Unfortunately Greg has already applied your v1 (and my fix for a
+> > use-after-free), so either these have to be reverted first, or you have to
+> > rebase against tty-next.
+>
+> I assume you would prefer the newer implementation I did.
+>
+> In your opinion, which one would be better (revert or rebase)?
+
+[looking at the incremental differences]
+
+I think the easiest for Greg is to rebase, and send 3 patches:
+  1. Document interrupt order in bindings,
+  2. Unify SCIx_RZ_SCIFA_REGTYPE/SCIx_SH4_SCIF_REGTYPE regtypes,
+  3. Simplify interrupts.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
