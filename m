@@ -1,61 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:26738 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389211AbeG0WdU (ORCPT
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:38118 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729364AbeGZN6K (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jul 2018 18:33:20 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thu, 26 Jul 2018 09:58:10 -0400
+MIME-Version: 1.0
+References: <20180725143850.32985-1-chris.brandt@renesas.com>
+ <20180725143850.32985-2-chris.brandt@renesas.com> <CAMuHMdXxS3T+L4jf1nCJcYQx_mAZ7_u++6RkJxX2cUScijDAkw@mail.gmail.com>
+ <TYXPR01MB156868D7BA9D4048D8E255CE8A2B0@TYXPR01MB1568.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYXPR01MB156868D7BA9D4048D8E255CE8A2B0@TYXPR01MB1568.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 26 Jul 2018 14:41:17 +0200
+Message-ID: <CAMuHMdW=K6doLGP2w8pUxaHpKaZ9wKC4PPX1xr96WYXrxkH7pQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] serial: sh-sci: Allow for compressed SCIF address space
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 1/4] serial: sh-sci: Improve interrupts description
-Date: Fri, 27 Jul 2018 16:09:13 -0500
-Message-Id: <20180727210916.66642-2-chris.brandt@renesas.com>
-In-Reply-To: <20180727210916.66642-1-chris.brandt@renesas.com>
-References: <20180727210916.66642-1-chris.brandt@renesas.com>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe interrupts property in more detail, especially when there are
-more than one interrupt.
+Hi Chris,
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- .../devicetree/bindings/serial/renesas,sci-serial.txt    | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+On Thu, Jul 26, 2018 at 2:14 PM Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Thursday, July 26, 2018, Geert Uytterhoeven wrote:
+> > On Wed, Jul 25, 2018 at 4:39 PM Chris Brandt <chris.brandt@renesas.com>
+> > wrote:
+> > > Some devices with SCIx_SH4_SCIF_REGTYPE have no space between registers.
+> > > Use the register area size to determine the spacing between register.
+> > >
+> > > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> >
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Thank you.
+>
+> > > +       if (p->regtype == SCIx_SH4_SCIF_REGTYPE)
+> > > +               if (sci_port->reg_size >= 0x20)
+> > > +                       port->regshift = 1;
+> > > +
+> >
+> > So you have to be careful not to round up the reg size in DT to the next
+> > power of two (0x20), like you did for RZ/A1 (64 is used there).
+>
+> Me????
+> It was Wolfram that committed the RZ/A1 DT scif code back in 2014 ;)
 
-diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-index a7cda6550100..eaca9da79d83 100644
---- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-+++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-@@ -73,7 +73,21 @@ Required properties:
-     family-specific and/or generic versions.
- 
-   - reg: Base address and length of the I/O registers used by the UART.
--  - interrupts: Must contain an interrupt-specifier for the SCIx interrupt.
-+  - interrupts: Must contain one or more interrupt-specifiers for the SCIx.
-+                If a single interrupt is expressed, then all events are
-+                multiplexed into this single interrupt.
-+
-+                If multiple interrupts are provided by the hardware, the order
-+                in which the interrupts are listed must match order below. Note
-+                that some HW interrupt events may be muxed together resulting
-+                in duplicate entries.
-+                The interrupt order is as follows:
-+                  1. Error (ERI)
-+                  2. Receive buffer full (RXI)
-+                  3. Transmit buffer empty (TXI)
-+                  4. Break (BRI)
-+                  5. Data Ready (DRI)
-+                  6. Transmit End (TEI)
- 
-   - clocks: Must contain a phandle and clock-specifier pair for each entry
-     in clock-names.
+I stand corrected.
+
+(and RZLSP didn't use resources yet, but the old mapbase, so there are no
+ sizes ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.16.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
