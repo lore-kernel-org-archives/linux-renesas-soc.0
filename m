@@ -1,70 +1,31 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 3/3] serial: sh-sci: Document r7s9210 bindings
-Date: Wed, 25 Jul 2018 09:38:50 -0500
-Message-Id: <20180725143850.32985-4-chris.brandt@renesas.com>
-In-Reply-To: <20180725143850.32985-1-chris.brandt@renesas.com>
-References: <20180725143850.32985-1-chris.brandt@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:33451 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729406AbeGZOuK (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 26 Jul 2018 10:50:10 -0400
+Date: Thu, 26 Jul 2018 15:33:12 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] clk: renesas: r8a77965: Add SATA clock
+Message-ID: <20180726133312.3bwo6o72wptmxnt2@verge.net.au>
+References: <20180725191417.3313-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180725191417.3313-1-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add R7S9210 (RZ/A2) support.
-Also describe interrupts property in more detail.
+On Wed, Jul 25, 2018 at 09:14:17PM +0200, Wolfram Sang wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> 
+> This patch adds SATA clock to the R8A77965 SoC.
+> 
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> [wsa: rebased to upstream base]
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v2:
- * Add more details to interrupts property
- * Geert gave a Reviewed-by for V1, but then later said that was a
-   mistake because it was missing the interrupts description, so
-   I didn't include his Reviewed-by yet.
----
- .../devicetree/bindings/serial/renesas,sci-serial.txt   | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-index 106808b55b6d..5d0997a04697 100644
---- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-+++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-@@ -5,6 +5,7 @@ Required properties:
-   - compatible: Must contain one or more of the following:
- 
-     - "renesas,scif-r7s72100" for R7S72100 (RZ/A1H) SCIF compatible UART.
-+    - "renesas,scif-r7s9210" for R7S9210 (RZ/A2) SCIF compatible UART.
-     - "renesas,scifa-r8a73a4" for R8A73A4 (R-Mobile APE6) SCIFA compatible UART.
-     - "renesas,scifb-r8a73a4" for R8A73A4 (R-Mobile APE6) SCIFB compatible UART.
-     - "renesas,scifa-r8a7740" for R8A7740 (R-Mobile A1) SCIFA compatible UART.
-@@ -72,7 +73,21 @@ Required properties:
-     family-specific and/or generic versions.
- 
-   - reg: Base address and length of the I/O registers used by the UART.
--  - interrupts: Must contain an interrupt-specifier for the SCIx interrupt.
-+  - interrupts: Must contain one or more interrupt-specifiers for the SCIx.
-+                If a single interrupt is expressed, then all events are
-+                multiplexed into this single interrupt.
-+
-+                If multiple interrupts are provided by the hardware, the order
-+                in which the interrupts are listed must match order below. Note
-+                that some HW interrupt events may be muxed together resulting
-+                in duplicate entires.
-+                The interrupt order is as follows:
-+                  1. Error (ERI)
-+                  2. Receive buffer full (RXI)
-+                  3. Transmit buffer empty (TXI)
-+                  4. Break (BRI)
-+                  5. Data Ready (DRI)
-+                  6. Transmit End (TEI)
- 
-   - clocks: Must contain a phandle and clock-specifier pair for each entry
-     in clock-names.
--- 
-2.16.1
-
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
