@@ -1,136 +1,101 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:53904 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729560AbeG0LSZ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:18:25 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 2/4] ARM: dts: r8a77470: Add GPIO support
-Date: Fri, 27 Jul 2018 10:51:27 +0100
-Message-Id: <1532685089-35645-3-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1532685089-35645-1-git-send-email-biju.das@bp.renesas.com>
-References: <1532685089-35645-1-git-send-email-biju.das@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>
+CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        =?Windows-1252?Q?=22Niklas_S=F6derlund=22?=
+        <niklas.soderlund@ragnatech.se>,
+        Kieran Bingham <kieran@ksquared.org.uk>,
+        Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 04/11] media: rcar_drif: convert to SPDX identifiers
+Date: Fri, 27 Jul 2018 09:00:18 +0000
+Message-ID: <TY2PR01MB1962C868735DBDBE8C4AAF7CC32A0@TY2PR01MB1962.jpnprd01.prod.outlook.com>
+References: <87h8kmd938.wl-kuninori.morimoto.gx@renesas.com>
+ <87bmaud8zy.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87bmaud8zy.wl-kuninori.morimoto.gx@renesas.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe GPIO blocks in the R8A77470 device tree.
+Hi Morimoto-san,
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- arch/arm/boot/dts/r8a77470.dtsi | 90 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 90 insertions(+)
+Thank you for the patch and the information on MODULE_LICENSE.
 
-diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index af65fa0..c7c483f 100644
---- a/arch/arm/boot/dts/r8a77470.dtsi
-+++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -61,6 +61,96 @@
- 		#size-cells = <2>;
- 		ranges;
- 
-+		gpio0: gpio@e6050000 {
-+			compatible = "renesas,gpio-r8a77470",
-+				     "renesas,rcar-gen2-gpio";
-+			reg = <0 0xe6050000 0 0x50>;
-+			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 0 23>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 912>;
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 912>;
-+		};
-+
-+		gpio1: gpio@e6051000 {
-+			compatible = "renesas,gpio-r8a77470",
-+				     "renesas,rcar-gen2-gpio";
-+			reg = <0 0xe6051000 0 0x50>;
-+			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 32 23>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 911>;
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 911>;
-+		};
-+
-+		gpio2: gpio@e6052000 {
-+			compatible = "renesas,gpio-r8a77470",
-+				     "renesas,rcar-gen2-gpio";
-+			reg = <0 0xe6052000 0 0x50>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 64 32>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 910>;
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 910>;
-+		};
-+
-+		gpio3: gpio@e6053000 {
-+			compatible = "renesas,gpio-r8a77470",
-+				     "renesas,rcar-gen2-gpio";
-+			reg = <0 0xe6053000 0 0x50>;
-+			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 96 17>, <&pfc 17 123 3>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 909>;
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 909>;
-+		};
-+
-+		gpio4: gpio@e6054000 {
-+			compatible = "renesas,gpio-r8a77470",
-+				     "renesas,rcar-gen2-gpio";
-+			reg = <0 0xe6054000 0 0x50>;
-+			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 128 26>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 908>;
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 908>;
-+		};
-+
-+		gpio5: gpio@e6055000 {
-+			compatible = "renesas,gpio-r8a77470",
-+				     "renesas,rcar-gen2-gpio";
-+			reg = <0 0xe6055000 0 0x50>;
-+			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 160 32>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 907>;
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 907>;
-+		};
-+
- 		pfc: pin-controller@e6060000 {
- 			compatible = "renesas,pfc-r8a77470";
- 			reg = <0 0xe6060000 0 0x118>;
--- 
-2.7.4
+> -----Original Message-----
+> From: Kuninori Morimoto
+> Sent: Thursday, July 26, 2018 3:36 AM
+> To: Mauro Carvalho Chehab <mchehab@kernel.org>; Hans Verkuil
+> <hans.verkuil@cisco.com>
+> Cc: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>;
+> Laurent Pinchart <laurent.pinchart@ideasonboard.com>; "Niklas S=F6derlund=
+"
+> <niklas.soderlund@ragnatech.se>; Kieran Bingham <kieran@bingham.xyz>;
+> Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>; Gustavo A. R. Silva
+> <gustavo@embeddedor.com>; Al Viro <viro@zeniv.linux.org.uk>; Charles
+> Keepax <ckeepax@opensource.wolfsonmicro.com>; Jacopo Mondi
+> <jacopo+renesas@jmondi.org>; linux-media@vger.kernel.org; linux-renesas-
+> soc@vger.kernel.org
+> Subject: [PATCH 04/11] media: rcar_drif: convert to SPDX identifiers
+>=20
+>=20
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>=20
+> As original license mentioned, it is GPL-2.0+ in SPDX.
+> Then, MODULE_LICENSE() should be "GPL" instead of "GPL v2".
+> See ${LINUX}/include/linux/module.h
+>=20
+> 	"GPL"		[GNU Public License v2 or later]
+> 	"GPL v2"	[GNU Public License v2]
+>=20
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+
+Acked-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+
+> ---
+>  drivers/media/platform/rcar_drif.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/rcar_drif.c
+> b/drivers/media/platform/rcar_drif.c
+> index dc7e280..81413ab 100644
+> --- a/drivers/media/platform/rcar_drif.c
+> +++ b/drivers/media/platform/rcar_drif.c
+> @@ -1,13 +1,9 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+>  /*
+>   * R-Car Gen3 Digital Radio Interface (DRIF) driver
+>   *
+>   * Copyright (C) 2017 Renesas Electronics Corporation
+>   *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License as published by
+> - * the Free Software Foundation; either version 2 of the License, or
+> - * (at your option) any later version.
+> - *
+>   * This program is distributed in the hope that it will be useful,
+>   * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>   * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> @@ -1499,5 +1495,5 @@ module_platform_driver(rcar_drif_driver);
+>=20
+>  MODULE_DESCRIPTION("Renesas R-Car Gen3 DRIF driver");
+>  MODULE_ALIAS("platform:" RCAR_DRIF_DRV_NAME);
+> -MODULE_LICENSE("GPL v2");
+> +MODULE_LICENSE("GPL");
+>  MODULE_AUTHOR("Ramesh Shanmugasundaram
+> <ramesh.shanmugasundaram@bp.renesas.com>");
+> --
+> 2.7.4
+
+Thanks,
+Ramesh
