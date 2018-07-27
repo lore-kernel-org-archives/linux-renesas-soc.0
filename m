@@ -1,59 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34034 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726584AbeG3Mwy (ORCPT
+Received: from 8bytes.org ([81.169.241.247]:32836 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729445AbeG0JCb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Jul 2018 08:52:54 -0400
-Received: by mail-wr1-f67.google.com with SMTP id c13-v6so12442968wrt.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Jul 2018 04:18:23 -0700 (PDT)
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] ARM: shmobile: silk: Add DA9063 PMIC node
-Date: Mon, 30 Jul 2018 13:18:17 +0200
-Message-Id: <20180730111817.5636-1-marek.vasut+renesas@gmail.com>
+        Fri, 27 Jul 2018 05:02:31 -0400
+Date: Fri, 27 Jul 2018 09:41:52 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        iommu@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iommu/ipmmu-vmsa: Fix allocation in atomic context
+Message-ID: <20180727074152.bmso3y4lr53ixo2f@8bytes.org>
+References: <20180720161659.29800-1-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180720161659.29800-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add DA9063 PMIC node to the I2C bus.
+On Fri, Jul 20, 2018 at 06:16:59PM +0200, Geert Uytterhoeven wrote:
+> When attaching a device to an IOMMU group with
+> CONFIG_DEBUG_ATOMIC_SLEEP=y:
+> 
+>     BUG: sleeping function called from invalid context at mm/slab.h:421
+>     in_atomic(): 1, irqs_disabled(): 128, pid: 61, name: kworker/1:1
+>     ...
+>     Call trace:
+>      ...
+>      arm_lpae_alloc_pgtable+0x114/0x184
+>      arm_64_lpae_alloc_pgtable_s1+0x2c/0x128
+>      arm_32_lpae_alloc_pgtable_s1+0x40/0x6c
+>      alloc_io_pgtable_ops+0x60/0x88
+>      ipmmu_attach_device+0x140/0x334
+> 
+> ipmmu_attach_device() takes a spinlock, while arm_lpae_alloc_pgtable()
+> allocates memory using GFP_KERNEL.  Originally, the ipmmu-vmsa driver
+> had its own custom page table allocation implementation using
+> GFP_ATOMIC, hence the spinlock was fine.
+> 
+> Fix this by replacing the spinlock by a mutex, like the arm-smmu driver
+> does.
+> 
+> Fixes: f20ed39f53145e45 ("iommu/ipmmu-vmsa: Use the ARM LPAE page table allocator")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/iommu/ipmmu-vmsa.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
----
- arch/arm/boot/dts/r8a7794-silk.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
-index daec965889d3..bf7e8ffd1e69 100644
---- a/arch/arm/boot/dts/r8a7794-silk.dts
-+++ b/arch/arm/boot/dts/r8a7794-silk.dts
-@@ -403,6 +403,18 @@
- 	pinctrl-names = "i2c-hdmi";
- 
- 	clock-frequency = <400000>;
-+
-+	pmic@5a {
-+		compatible = "dlg,da9063";
-+		reg = <0x5a>;
-+		interrupt-parent = <&irqc0>;
-+		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-controller;
-+
-+		wdt {
-+			compatible = "dlg,da9063-watchdog";
-+		};
-+	};
- };
- 
- &mmcif0 {
--- 
-2.16.2
+Applied, thanks.
