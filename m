@@ -1,55 +1,71 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 3/3] dt-bindings: arm: Document RZ/A2 SoC DT bindings
-Date: Wed, 25 Jul 2018 16:22:20 -0500
-Message-Id: <20180725212220.44525-4-chris.brandt@renesas.com>
-In-Reply-To: <20180725212220.44525-1-chris.brandt@renesas.com>
-References: <20180725212220.44525-1-chris.brandt@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from perceval.ideasonboard.com ([213.167.242.64]:49816 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729445AbeG0KNh (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 27 Jul 2018 06:13:37 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: rcar-dmac: Make rcar_dmac_of_xlate() more robust
+Date: Fri, 27 Jul 2018 11:53:17 +0300
+Message-ID: <1565818.ujc0qXmH5O@avalon>
+In-Reply-To: <20180727084447.13984-1-geert+renesas@glider.be>
+References: <20180727084447.13984-1-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device tree bindings documentation for Renesas RZ/A2 (r7s9210) SoC.
-Also document new option for "renesas,bsid"
+Hi Geert,
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
- * added Reviewed-by
- * added renesas,bsid comment
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Thank you for the patch.
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 89b4a389fbc7..1b2e32171924 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -7,6 +7,8 @@ SoCs:
-     compatible = "renesas,emev2"
-   - RZ/A1H (R7S72100)
-     compatible = "renesas,r7s72100"
-+  - RZ/A2 (R7S9210)
-+    compatible = "renesas,r7s9210"
-   - SH-Mobile AG5 (R8A73A00/SH73A0)
-     compatible = "renesas,sh73a0"
-   - R-Mobile APE6 (R8A73A40)
-@@ -148,7 +150,7 @@ product and revision information.  If present, a device node for this register
- should be added.
- 
- Required properties:
--  - compatible: Must be "renesas,prr".
-+  - compatible: Must be "renesas,prr" or "renesas,bsid"
-   - reg: Base address and length of the register block.
- 
- 
+On Friday, 27 July 2018 11:44:47 EEST Geert Uytterhoeven wrote:
+> Add an upper bound check for the MID/RID value passed from DT via the
+> DMA spec.
+> 
+> This avoids writing to reserved bits in the DMARS registers in case of
+> an out-of-range value in DT.
+
+Is this really useful ? In the normal case, when information in DT is correct, 
+this will just add overhead. What do we really want to guard against ? If we 
+merge this change, how much further do we need to go ? What other values 
+provided in DT, such as reg addresses, do we need to validate them too ? 
+Functionally speaking this change does no harm, but it increases the kernel 
+size, add overhead at runtime, and only addresses a very limited range of 
+invalid DT issues.
+
+> Suggested-by: Renesas BSP team via Yoshihiro Shimoda
+> <yoshihiro.shimoda.uh@renesas.com> Signed-off-by: Geert Uytterhoeven
+> <geert+renesas@glider.be>
+> ---
+>  drivers/dma/sh/rcar-dmac.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+> index 72572320208dbb9a..73cf1053bed90244 100644
+> --- a/drivers/dma/sh/rcar-dmac.c
+> +++ b/drivers/dma/sh/rcar-dmac.c
+> @@ -1644,8 +1644,11 @@ static struct dma_chan *rcar_dmac_of_xlate(struct
+> of_phandle_args *dma_spec, struct dma_chan *chan;
+>  	dma_cap_mask_t mask;
+> 
+> -	if (dma_spec->args_count != 1)
+> +	if (dma_spec->args_count != 1 || dma_spec->args[0] > 0xff) {
+> +		pr_info("%s: invalid MID/RID 0x%x... for %pOF\n", __func__,
+> +			dma_spec->args[0], dma_spec->np);
+>  		return NULL;
+> +	}
+> 
+>  	/* Only slave DMA channels can be allocated via DT */
+>  	dma_cap_zero(mask);
+
 -- 
-2.16.1
+Regards,
 
+Laurent Pinchart
