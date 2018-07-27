@@ -1,70 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:36633 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726717AbeG3QuJ (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:61383 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730751AbeG0LSa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Jul 2018 12:50:09 -0400
-MIME-Version: 1.0
-References: <1532685089-35645-1-git-send-email-biju.das@bp.renesas.com> <1532685089-35645-5-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1532685089-35645-5-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 30 Jul 2018 17:14:30 +0200
-Message-ID: <CAMuHMdWmObVo=UNRkmdAKhmU+aSafi61ztc1digUSWY_gvrvYA@mail.gmail.com>
-Subject: Re: [PATCH 4/4] ARM: dts: iwg23s-sbc: Add pinctl support for EtherAVB
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Fri, 27 Jul 2018 07:18:30 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH 4/4] ARM: dts: iwg23s-sbc: Add pinctl support for EtherAVB
+Date: Fri, 27 Jul 2018 10:51:29 +0100
+Message-Id: <1532685089-35645-5-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1532685089-35645-1-git-send-email-biju.das@bp.renesas.com>
+References: <1532685089-35645-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Biju,
+Adding pinctrl support for EtherAVB interface.
 
-On Fri, Jul 27, 2018 at 11:57 AM Biju Das <biju.das@bp.renesas.com> wrote:
-> Adding pinctrl support for EtherAVB interface.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+This patch depends upon
+https://patchwork.kernel.org/patch/10546801/
+---
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Thanks for the update!
-
-> --- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-> +++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-
-> @@ -46,6 +49,11 @@
->  };
->
->  &pfc {
-> +       avb_pins: avb {
-> +               groups = "avb_mdio", "avb_gmii_tx_rx";
-
-avb_crs is wired, but deemed unused, right?
-
-In that case:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> +               function = "avb";
-> +       };
-> +
->         scif1_pins: scif1 {
->                 groups = "scif1_data_b";
->                 function = "scif1";
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+index 22da819..4ceff9c 100644
+--- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
++++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+@@ -28,6 +28,9 @@
+ };
+ 
+ &avb {
++	pinctrl-0 = <&avb_pins>;
++	pinctrl-names = "default";
++
+ 	phy-handle = <&phy3>;
+ 	phy-mode = "gmii";
+ 	renesas,no-ether-link;
+@@ -46,6 +49,11 @@
+ };
+ 
+ &pfc {
++	avb_pins: avb {
++		groups = "avb_mdio", "avb_gmii_tx_rx";
++		function = "avb";
++	};
++
+ 	scif1_pins: scif1 {
+ 		groups = "scif1_data_b";
+ 		function = "scif1";
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.7.4
