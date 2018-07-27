@@ -1,89 +1,136 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:45346 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731776AbeGZQwq (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:53904 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729560AbeG0LSZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jul 2018 12:52:46 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 05/11] clk: renesas: r8a77980: Add OSC predivider configuration and clock
-Date: Thu, 26 Jul 2018 17:35:11 +0200
-Message-Id: <20180726153517.10020-6-geert+renesas@glider.be>
-In-Reply-To: <20180726153517.10020-1-geert+renesas@glider.be>
-References: <20180726153517.10020-1-geert+renesas@glider.be>
+        Fri, 27 Jul 2018 07:18:25 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 2/4] ARM: dts: r8a77470: Add GPIO support
+Date: Fri, 27 Jul 2018 10:51:27 +0100
+Message-Id: <1532685089-35645-3-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1532685089-35645-1-git-send-email-biju.das@bp.renesas.com>
+References: <1532685089-35645-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen3 Hardware Manual Rev.0.54 documents the relation between the
-MD13 and MD14 mode pins, and the OSC EXTAL predivider, as used by the
-OSC clock.  Hence augment the configuration structure with all
-documented predivider values.
+Describe GPIO blocks in the R8A77470 device tree.
 
-Add the OSC clock using the configured predivider.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
-v2:
-  - Add Reviewed-by,
-  - Fix predivider for 27 MHz EXTAL (table under Table 8.2e wrongly
-    uses 25 MHz).
----
- drivers/clk/renesas/r8a77980-cpg-mssr.c | 24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
+ arch/arm/boot/dts/r8a77470.dtsi | 90 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 90 insertions(+)
 
-diff --git a/drivers/clk/renesas/r8a77980-cpg-mssr.c b/drivers/clk/renesas/r8a77980-cpg-mssr.c
-index d7ebd9ec00594fc8..a8b8d8613b46dd3c 100644
---- a/drivers/clk/renesas/r8a77980-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77980-cpg-mssr.c
-@@ -96,6 +96,8 @@ static const struct cpg_core_clk r8a77980_core_clks[] __initconst = {
- 	DEF_DIV6P1("canfd",	R8A77980_CLK_CANFD, CLK_PLL1_DIV4, 0x244),
- 	DEF_DIV6P1("csi0",	R8A77980_CLK_CSI0,  CLK_PLL1_DIV4, 0x00c),
- 	DEF_DIV6P1("mso",	R8A77980_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
+diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
+index af65fa0..c7c483f 100644
+--- a/arch/arm/boot/dts/r8a77470.dtsi
++++ b/arch/arm/boot/dts/r8a77470.dtsi
+@@ -61,6 +61,96 @@
+ 		#size-cells = <2>;
+ 		ranges;
+ 
++		gpio0: gpio@e6050000 {
++			compatible = "renesas,gpio-r8a77470",
++				     "renesas,rcar-gen2-gpio";
++			reg = <0 0xe6050000 0 0x50>;
++			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 0 23>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 912>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 912>;
++		};
 +
-+	DEF_GEN3_OSC("osc",	R8A77980_CLK_OSC,   CLK_EXTAL,     8),
- };
- 
- static const struct mssr_mod_clk r8a77980_mod_clks[] __initconst = {
-@@ -171,23 +173,23 @@ static const unsigned int r8a77980_crit_mod_clks[] __initconst = {
-  */
- 
- /*
-- *   MD		EXTAL		PLL2	PLL1	PLL3
-+ *   MD		EXTAL		PLL2	PLL1	PLL3	OSC
-  * 14 13	(MHz)
-- * --------------------------------------------------
-- * 0  0		16.66 x 1	x240	x192	x192
-- * 0  1		20    x 1	x200	x160	x160
-- * 1  0		27    x 1	x148	x118	x118
-- * 1  1		33.33 / 2	x240	x192	x192
-+ * --------------------------------------------------------
-+ * 0  0		16.66 x 1	x240	x192	x192	/16
-+ * 0  1		20    x 1	x200	x160	x160	/19
-+ * 1  0		27    x 1	x148	x118	x118	/26
-+ * 1  1		33.33 / 2	x240	x192	x192	/32
-  */
- #define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 13) | \
- 					 (((md) & BIT(13)) >> 13))
- 
- static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[4] __initconst = {
--	/* EXTAL div	PLL1 mult/div	PLL3 mult/div */
--	{ 1,		192,	1,	192,	1,	},
--	{ 1,		160,	1,	160,	1,	},
--	{ 1,		118,	1,	118,	1,	},
--	{ 2,		192,	1,	192,	1,	},
-+	/* EXTAL div	PLL1 mult/div	PLL3 mult/div	OSC prediv */
-+	{ 1,		192,	1,	192,	1,	16,	},
-+	{ 1,		160,	1,	160,	1,	19,	},
-+	{ 1,		118,	1,	118,	1,	26,	},
-+	{ 2,		192,	1,	192,	1,	32,	},
- };
- 
- static int __init r8a77980_cpg_mssr_init(struct device *dev)
++		gpio1: gpio@e6051000 {
++			compatible = "renesas,gpio-r8a77470",
++				     "renesas,rcar-gen2-gpio";
++			reg = <0 0xe6051000 0 0x50>;
++			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 32 23>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 911>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 911>;
++		};
++
++		gpio2: gpio@e6052000 {
++			compatible = "renesas,gpio-r8a77470",
++				     "renesas,rcar-gen2-gpio";
++			reg = <0 0xe6052000 0 0x50>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 64 32>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 910>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 910>;
++		};
++
++		gpio3: gpio@e6053000 {
++			compatible = "renesas,gpio-r8a77470",
++				     "renesas,rcar-gen2-gpio";
++			reg = <0 0xe6053000 0 0x50>;
++			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 96 17>, <&pfc 17 123 3>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 909>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 909>;
++		};
++
++		gpio4: gpio@e6054000 {
++			compatible = "renesas,gpio-r8a77470",
++				     "renesas,rcar-gen2-gpio";
++			reg = <0 0xe6054000 0 0x50>;
++			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 128 26>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 908>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 908>;
++		};
++
++		gpio5: gpio@e6055000 {
++			compatible = "renesas,gpio-r8a77470",
++				     "renesas,rcar-gen2-gpio";
++			reg = <0 0xe6055000 0 0x50>;
++			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 160 32>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 907>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 907>;
++		};
++
+ 		pfc: pin-controller@e6060000 {
+ 			compatible = "renesas,pfc-r8a77470";
+ 			reg = <0 0xe6060000 0 0x118>;
 -- 
-2.17.1
+2.7.4
