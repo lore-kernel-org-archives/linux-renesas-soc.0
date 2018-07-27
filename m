@@ -1,47 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:47421 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731220AbeGYWgM (ORCPT
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:45215 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729430AbeG0J1C (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jul 2018 18:36:12 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 0/3] ARM: shmobile: Add support for RZ/A2
-Date: Wed, 25 Jul 2018 16:22:17 -0500
-Message-Id: <20180725212220.44525-1-chris.brandt@renesas.com>
+        Fri, 27 Jul 2018 05:27:02 -0400
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdXvbWrt44T4Sr_bDjS1YFfqZ82JHpH7f00FKYBHntyWSg@mail.gmail.com>
+References: <1532654046-11901-1-git-send-email-yamada.masahiro@socionext.com> <CAMuHMdXvbWrt44T4Sr_bDjS1YFfqZ82JHpH7f00FKYBHntyWSg@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Fri, 27 Jul 2018 17:05:19 +0900
+Message-ID: <CAK7LNASVuNHXvyyf2_=4-QpxYosnRPCSOyicAs7WYtHfRLfkQw@mail.gmail.com>
+Subject: Re: [PATCH] mmc: tmio: allow DMA request hook to return error status
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Introduce RZ/A2 (R7S9210) as an SoC that can be selected.
+Hi Geert,
 
-There is no DT mainlined yet, so this is what the entry would look
-like for the BSID register:
+2018-07-27 16:51 GMT+09:00 Geert Uytterhoeven <geert@linux-m68k.org>:
+> Hi Yamada-san,
+>
+> On Fri, Jul 27, 2018 at 3:15 AM Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+>> dma_request_chan() may return ERR_PTR(-EPROBE_DEFER), but
+>> tmio_mmc_request_dma() cannot propagate it since it is a
+>> void function.
+>>
+>> Change the return type to int so that the driver can retry
+>> probing later in case the DMA-engine driver is probed after
+>> the TMIO MMC driver.
+>>
+>> I moved the call for tmio_mmc_request_dma() up because it may
+>> fail now.  I also removed unneeded clearing of host->chan_{tx,rx}
+>> because (struct tmio_mmc_host) is allocated by kzalloc().
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>
+> Thanks for your patch!
+>
+> Isn't the idea to fall back to PIO if the DMA-engine driver is not found?
+>
+> Unfortunately there's no way to distinguish between "DMA-engine hasn't been
+> probed yet" and "DMA-engine is not available" (e.g. CONFIG_RCAR_DMAC=n).
+> In both cases, dma_request_chan() will return -EPROBE_DEFER.
+> So if you treat this as an actual error, and propagate it, the following
+> will happen:
+>   - In case 1, the MMC driver will be reprobed successfully later.
+>   - In case 2,the MMC driver will never succeed.
+>
+> Or am I missing something?
 
-	bsid: chipid@fcfe8004 {
-		compatible = "renesas,bsid";
-		reg = <0xfcfe8004 4>;
-	};
+
+You are right.
+
+drivers/Makefile lists 'dma/' before 'mmc/',
+so this is not a real problem.
+
+I will let my driver fallback to PIO for any error.
+
+Thanks.
 
 
 
-Chris Brandt (3):
-  ARM: shmobile: Add basic RZ/A2 SoC support
-  soc: renesas: identify RZ/A2
-  dt-bindings: arm: Document RZ/A2 SoC DT bindings
 
- Documentation/devicetree/bindings/arm/shmobile.txt |  4 +-
- arch/arm/mach-shmobile/Kconfig                     |  6 +++
- arch/arm/mach-shmobile/Makefile                    |  1 +
- arch/arm/mach-shmobile/setup-r7s9210.c             | 27 ++++++++++
- drivers/soc/renesas/renesas-soc.c                  | 60 +++++++++++++++++-----
- 5 files changed, 85 insertions(+), 13 deletions(-)
- create mode 100644 arch/arm/mach-shmobile/setup-r7s9210.c
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
 
 -- 
-2.16.1
+Best Regards
+Masahiro Yamada
