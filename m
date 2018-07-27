@@ -1,80 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33574 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728252AbeGTMxl (ORCPT
+Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:52695 "EHLO
+        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726034AbeG0JV6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jul 2018 08:53:41 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 4/5] ARM: shmobile: r8a7779: hide unused r8a7779_platform_cpu_kill
-Date: Fri, 20 Jul 2018 14:05:35 +0200
-Message-Id: <8fc0d470bc77fa07632b471cec8207baf9704e32.1532087129.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1532087129.git.horms+renesas@verge.net.au>
-References: <cover.1532087129.git.horms+renesas@verge.net.au>
+        Fri, 27 Jul 2018 05:21:58 -0400
+Subject: Re: [PATCH 0/2] adv7180: fix format and frame interval
+From: Hans Verkuil <hverkuil@xs4all.nl>
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        linux-media@vger.kernel.org,
+        Steve Longerbeam <steve_longerbeam@mentor.com>
+Cc: linux-renesas-soc@vger.kernel.org
+References: <20180717123041.2862-1-niklas.soderlund+renesas@ragnatech.se>
+ <b32a1dfe-62ad-9f43-35fd-299d42a4c862@xs4all.nl>
+Message-ID: <bab2888a-4953-20b2-2e86-d6c10a62b76c@xs4all.nl>
+Date: Fri, 27 Jul 2018 10:01:14 +0200
+MIME-Version: 1.0
+In-Reply-To: <b32a1dfe-62ad-9f43-35fd-299d42a4c862@xs4all.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Arnd Bergmann <arnd@arndb.de>
+On 27/07/18 09:59, Hans Verkuil wrote:
+> Hi Niklas,
+> 
+> On 17/07/18 14:30, Niklas Söderlund wrote:
+>> Hi,
+>>
+>> These first patch fix a issue which was discussed back in 2016 that the 
+>> field format of the adv7180 should be V4L2_FIELD_ALTERNATE. While the 
+>> second patch adds support for the g_frame_interval video op.
+>>
+>> Work is loosely based on work by Steve Longerbeam posted in 2016. I have 
+>> talked to Steven and he have agreed to me taking over the patches as he 
+>> did not intend to continue his work on the original series.
+>>
+>> The series is based on the latest media-tree and tested on Renesas 
+>> Koelsch board.
+>>
+>> Niklas Söderlund (2):
+>>   adv7180: fix field type to V4L2_FIELD_ALTERNATE
+>>   adv7180: add g_frame_interval support
+>>
+>>  drivers/media/i2c/adv7180.c | 30 +++++++++++++++++++++++++-----
+>>  1 file changed, 25 insertions(+), 5 deletions(-)
+>>
+> 
+> I've accepted these patches, 
 
-After the cleanup in r8a7779_smp_prepare_cpus(), the only remaining caller of
-r8a7779_platform_cpu_kill() is in an ifdef, which leads to a build warning
-without CONFIG_HOTPLUG_CPU:
+Sorry, I replied to the v1, but I have accepted the v2 patches of course.
 
-arch/arm/mach-shmobile/smp-r8a7779.c:26:12: error: 'r8a7779_platform_cpu_kill' defined but not used [-Werror=unused-function]
+Regards,
 
-This moves the function inside of that #ifdef to avoid the warning.
+	Hans
 
-Fixes: 62f55ce683e3 ("ARM: shmobile: r8a7779: Stop powering down secondary CPUs during early boot")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/mach-shmobile/smp-r8a7779.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
-
-diff --git a/arch/arm/mach-shmobile/smp-r8a7779.c b/arch/arm/mach-shmobile/smp-r8a7779.c
-index b7fe1f489b08..0ed73b650c14 100644
---- a/arch/arm/mach-shmobile/smp-r8a7779.c
-+++ b/arch/arm/mach-shmobile/smp-r8a7779.c
-@@ -23,17 +23,6 @@
- #define AVECR IOMEM(0xfe700040)
- #define R8A7779_SCU_BASE 0xf0000000
- 
--static int r8a7779_platform_cpu_kill(unsigned int cpu)
--{
--	int ret = -EIO;
--
--	cpu = cpu_logical_map(cpu);
--	if (cpu)
--		ret = rcar_sysc_power_down_cpu(cpu);
--
--	return ret ? ret : 1;
--}
--
- static int r8a7779_boot_secondary(unsigned int cpu, struct task_struct *idle)
- {
- 	int ret = -EIO;
-@@ -55,6 +44,17 @@ static void __init r8a7779_smp_prepare_cpus(unsigned int max_cpus)
- }
- 
- #ifdef CONFIG_HOTPLUG_CPU
-+static int r8a7779_platform_cpu_kill(unsigned int cpu)
-+{
-+	int ret = -EIO;
-+
-+	cpu = cpu_logical_map(cpu);
-+	if (cpu)
-+		ret = rcar_sysc_power_down_cpu(cpu);
-+
-+	return ret ? ret : 1;
-+}
-+
- static int r8a7779_cpu_kill(unsigned int cpu)
- {
- 	if (shmobile_smp_scu_cpu_kill(cpu))
--- 
-2.11.0
+>but I was wondering if the code correctly
+> initializes the format? It sets the field in probe(), but where does it
+> set the initial format?
+> 
+> Should it implement the init_cfg op to initialize the pad configs?
+> 
+> Regards,
+> 
+> 	Hans
+> 
