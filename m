@@ -1,66 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:47840 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729655AbeGQKb6 (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:49430 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729489AbeG0JbI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:31:58 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Marc Zyngier <marc.zyngier@arm.com>
-CC: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: RE: [PATCH] dt-bindings: irqchip: renesas-irqc: Document r8a77470
- support
-Date: Tue, 17 Jul 2018 10:00:03 +0000
-Message-ID: <OSBPR01MB2103E15875336B7DDBBCF616B85C0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <1522318628-52821-1-git-send-email-biju.das@bp.renesas.com>
- <CAMuHMdUsO_jw5Lb4jDKk6H2Zn=4kJHhFp_fBArnaddkBXDQ24Q@mail.gmail.com>
- <OSBPR01MB2103FF4CF9F5477C8D47720CB8480@OSBPR01MB2103.jpnprd01.prod.outlook.com>
- <a56c23bb-bd53-f387-9d8f-f589e53fa077@arm.com>
-In-Reply-To: <a56c23bb-bd53-f387-9d8f-f589e53fa077@arm.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 27 Jul 2018 05:31:08 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>,
+        Kieran Bingham <kieran@ksquared.org.uk>,
+        Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 01/11] media: soc_camera_platform: convert to SPDX identifiers
+Date: Fri, 27 Jul 2018 11:10:56 +0300
+Message-ID: <4619955.cpvqdv7Lmf@avalon>
+In-Reply-To: <87sh45zex2.wl-kuninori.morimoto.gx@renesas.com>
+References: <87h8kmd938.wl-kuninori.morimoto.gx@renesas.com> <2222680.iWr5sPUPWG@avalon> <87sh45zex2.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gTWFyYywNCg0KU29ycnkgdG8gYm90aGVyIHlvdS4gIERvIHlvdSBnZXQgYSBjaGFuY2Ug
-dG8gc3luYyB1cCB3aXRoIFRob21hcyBmb3IgdGhpcyBwYXRjaCB0byBtYWtlIGl0IGludG8NCjQu
-MTg/DQoNClJlZ2FyZHMsDQpCaWp1DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4g
-RnJvbTogTWFyYyBaeW5naWVyIFttYWlsdG86bWFyYy56eW5naWVyQGFybS5jb21dDQo+IFNlbnQ6
-IDI3IEp1bmUgMjAxOCAwOTo1OA0KPiBUbzogQmlqdSBEYXMgPGJpanUuZGFzQGJwLnJlbmVzYXMu
-Y29tPg0KPiBDYzogVGhvbWFzIEdsZWl4bmVyIDx0Z2x4QGxpbnV0cm9uaXguZGU+OyBKYXNvbiBD
-b29wZXINCj4gPGphc29uQGxha2VkYWVtb24ubmV0PjsgUm9iIEhlcnJpbmcgPHJvYmgrZHRAa2Vy
-bmVsLm9yZz47IE1hcmsNCj4gUnV0bGFuZCA8bWFyay5ydXRsYW5kQGFybS5jb20+OyBHZWVydCBV
-eXR0ZXJob2V2ZW4NCj4gPGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPjsgU2ltb24gSG9ybWFuIDxo
-b3Jtc0B2ZXJnZS5uZXQuYXU+OyBDaHJpcw0KPiBQYXRlcnNvbiA8Q2hyaXMuUGF0ZXJzb24yQHJl
-bmVzYXMuY29tPjsgRmFicml6aW8gQ2FzdHJvDQo+IDxmYWJyaXppby5jYXN0cm9AYnAucmVuZXNh
-cy5jb20+OyBvcGVuIGxpc3Q6T1BFTiBGSVJNV0FSRSBBTkQNCj4gRkxBVFRFTkVEIERFVklDRSBU
-UkVFIEJJTkRJTkdTIDxkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZz47IExpbnV4LQ0KPiBSZW5l
-c2FzIDxsaW51eC1yZW5lc2FzLXNvY0B2Z2VyLmtlcm5lbC5vcmc+OyBHZWVydCBVeXR0ZXJob2V2
-ZW4NCj4gPGdlZXJ0QGxpbnV4LW02OGsub3JnPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBkdC1i
-aW5kaW5nczogaXJxY2hpcDogcmVuZXNhcy1pcnFjOiBEb2N1bWVudCByOGE3NzQ3MA0KPiBzdXBw
-b3J0DQo+DQo+IEhpIEJpanUsDQo+DQo+IE9uIDI3LzA2LzE4IDA5OjQzLCBCaWp1IERhcyB3cm90
-ZToNCj4gPiBIZWxsbyBNYXJjLA0KPiA+DQo+ID4gU29ycnkgdG8gYm90aGVyIHlvdS4gIEFyZSB5
-b3UgaGFwcHkgdG8gbWVyZ2UgdGhlIGJlbG93IHBhdGNoIHdpdGggNC4xOC0NCj4gcmMzPw0KPiA+
-IGh0dHBzOi8vd3d3LnNwaW5pY3MubmV0L2xpc3RzL2xpbnV4LXJlbmVzYXMtc29jL21zZzI1Nzg4
-Lmh0bWwNCj4NCj4gVGhpcyBpcyBvZGQuIEkgcXVldWVkIHRoYXQgaW4gQXByaWwgYXMgcGFydCBv
-ZiBhIHBvdGVudGlhbCBzZWNvbmQgc2V0IG9mIGZpeGVzIGZvcg0KPiA0LjE3LCBidXQgc29tZWhv
-dyBmYWlsZWQgdG8gZXZlciBzZW5kIHRoZSBwdWxsIHJlcXVlc3QgKGFuZCB0aGlzIHdhcyB0aGUg
-b25seQ0KPiBwYXRjaCBJIGhhZCBhdCB0aGF0IHBvaW50KS4NCj4NCj4gQXBvbG9naWVzIGZvciB0
-aGUgZGVsYXksIEknbGwgc3luYyB1cCB3aXRoIFRob21hcyBmb3IgdGhpcyBwYXRjaCB0byBtYWtl
-IGl0IGludG8NCj4gNC4xOC4NCj4NCj4gVGhhbmtzIGZvciB0aGUgaGVhZHMgdXAsDQo+DQo+IE0u
-DQo+IC0tDQo+IEphenogaXMgbm90IGRlYWQuIEl0IGp1c3Qgc21lbGxzIGZ1bm55Li4uDQoNCg0K
-DQpSZW5lc2FzIEVsZWN0cm9uaWNzIEV1cm9wZSBMdGQsIER1a2VzIE1lYWRvdywgTWlsbGJvYXJk
-IFJvYWQsIEJvdXJuZSBFbmQsIEJ1Y2tpbmdoYW1zaGlyZSwgU0w4IDVGSCwgVUsuIFJlZ2lzdGVy
-ZWQgaW4gRW5nbGFuZCAmIFdhbGVzIHVuZGVyIFJlZ2lzdGVyZWQgTm8uIDA0NTg2NzA5Lg0K
+Hi Morimoto-san,
+
+On Friday, 27 July 2018 03:49:20 EEST Kuninori Morimoto wrote:
+> Hi Laurent, Mauro
+> 
+> >>>> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> >>>> 
+> >>>> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> >>> ---
+> >>>> 
+> >>>>  drivers/media/platform/soc_camera/soc_camera_platform.c | 5 +----
+> >>>>  1 file changed, 1 insertion(+), 4 deletions(-)
+> >>> 
+> >>> I have second thoughts about this one. Is it worth switching to SPDX
+> >>> as we're in the process of removing soc-camera from the kernel ? If it
+> >>> is, shouldn't you also address the other soc-camera source files ? I
+> >>> would personally prefer not touching soc-camera as it won't be there
+> >>> for much longer.
+> >> 
+> >> I'd say that, if there are code there that will be converted and will
+> >> stay at the Kernel, the SPDX patchset is a good thing, as it makes
+> >> easier for the conversion, as it would mean one less thing to be
+> >> concerned with.
+> >> 
+> >> So, I'm inclined to apply this patch series.
+> > 
+> > My comment referred to this patch only, not the whole series. The rest of
+> > the series is totally fine, only soc_camera_platform.c doesn't seem worth
+> > touching to me as it's going away. As far as I know the only remaining
+> > user is sh_mobile_ceu_camera.c, which isn't used by any platform anymore.
+> > It's just a matter of dropping it (I think Jacopo has submitted a patch
+> > already), and then removing the drivers/media/platform/soc_camera/
+> > directory.
+> > 
+> > I've taken the whole series in my tree and collected acks, so I'll submit
+> > a pull request when we will decide what to do with patch 01/11.
+> 
+> I have no special opinion about it.
+> If you think it is not needed, please drop it.
+> 
+> soc_camera_platform is my (and Magnus's) driver of memories,
+> almost 10 years ago.
+> It is a littile bit lonely that it will disappear,
+> ut there is no problem.
+> Thanks soc_camera_platform
+
+I'll bake a cake with 10 candles before removing it :-)
+
+-- 
+Regards,
+
+Laurent Pinchart
