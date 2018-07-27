@@ -1,47 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:38392 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726500AbeG3LlC (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:61383 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729560AbeG0LS2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Jul 2018 07:41:02 -0400
-MIME-Version: 1.0
-References: <1532685089-35645-1-git-send-email-biju.das@bp.renesas.com> <1532685089-35645-4-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1532685089-35645-4-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 30 Jul 2018 12:06:36 +0200
-Message-ID: <CAMuHMdU0Bb2OCdO1+NuaDv-Tke29yNoJJ2RuO8AAmGkeXB0KAg@mail.gmail.com>
-Subject: Re: [PATCH 3/4] ARM: dts: iwg23s-sbc: specify EtherAVB PHY IRQ
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Fri, 27 Jul 2018 07:18:28 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH 3/4] ARM: dts: iwg23s-sbc: specify EtherAVB PHY IRQ
+Date: Fri, 27 Jul 2018 10:51:28 +0100
+Message-Id: <1532685089-35645-4-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1532685089-35645-1-git-send-email-biju.das@bp.renesas.com>
+References: <1532685089-35645-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jul 27, 2018 at 11:57 AM Biju Das <biju.das@bp.renesas.com> wrote:
-> Specify  EtherAVB PHY IRQ  in the board specific device tree, now that we
-> have GPIO support.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Specify  EtherAVB PHY IRQ  in the board specific device tree, now that we
+have GPIO support.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+index 56182ee..22da819 100644
+--- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
++++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+@@ -35,6 +35,8 @@
+ 
+ 	phy3: ethernet-phy@3 {
+ 		reg = <3>;
++		interrupt-parent = <&gpio5>;
++		interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
+ 		micrel,led-mode = <1>;
+ 	};
+ };
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.7.4
