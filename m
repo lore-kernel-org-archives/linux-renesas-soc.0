@@ -1,48 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:36742 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727504AbeGYPPY (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:26738 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389211AbeG0WdU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jul 2018 11:15:24 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Magnus Damm <damm+renesas@opensource.se>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
+        Fri, 27 Jul 2018 18:33:20 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC] iommu/ipmmu-vmsa: Whitelist SATA for IOMMU use and virtualization
-Date: Wed, 25 Jul 2018 16:03:24 +0200
-Message-Id: <20180725140324.8239-1-geert+renesas@glider.be>
+Cc: linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH 1/4] serial: sh-sci: Improve interrupts description
+Date: Fri, 27 Jul 2018 16:09:13 -0500
+Message-Id: <20180727210916.66642-2-chris.brandt@renesas.com>
+In-Reply-To: <20180727210916.66642-1-chris.brandt@renesas.com>
+References: <20180727210916.66642-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SATA on R-Car H3 ES2.0 works fine with the IOMMU.
-This is also needed for virtualization.
+Describe interrupts property in more detail, especially when there are
+more than one interrupt.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-For testing virtualization, this patch and all prerequisites are
-available in the topic/rcar3-virt-gpio-passthrough-v3 branch of my git
-repository at
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+ .../devicetree/bindings/serial/renesas,sci-serial.txt    | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
- drivers/iommu/ipmmu-vmsa.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index ef566b4989d6e2f8..f6f7b7e8cb982769 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -751,6 +751,9 @@ static int ipmmu_init_platform_device(struct device *dev,
+diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+index a7cda6550100..eaca9da79d83 100644
+--- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
++++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+@@ -73,7 +73,21 @@ Required properties:
+     family-specific and/or generic versions.
  
- static bool ipmmu_slave_whitelist(struct device *dev)
- {
-+	if (!strcmp(dev_name(dev), "ee300000.sata"))
-+		return true;
+   - reg: Base address and length of the I/O registers used by the UART.
+-  - interrupts: Must contain an interrupt-specifier for the SCIx interrupt.
++  - interrupts: Must contain one or more interrupt-specifiers for the SCIx.
++                If a single interrupt is expressed, then all events are
++                multiplexed into this single interrupt.
 +
- 	/* By default, do not allow use of IPMMU */
- 	return false;
- }
++                If multiple interrupts are provided by the hardware, the order
++                in which the interrupts are listed must match order below. Note
++                that some HW interrupt events may be muxed together resulting
++                in duplicate entries.
++                The interrupt order is as follows:
++                  1. Error (ERI)
++                  2. Receive buffer full (RXI)
++                  3. Transmit buffer empty (TXI)
++                  4. Break (BRI)
++                  5. Data Ready (DRI)
++                  6. Transmit End (TEI)
+ 
+   - clocks: Must contain a phandle and clock-specifier pair for each entry
+     in clock-names.
 -- 
-2.17.1
+2.16.1
