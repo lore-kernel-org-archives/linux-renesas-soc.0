@@ -1,44 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40696 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728918AbeGaKEC (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:33181 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727440AbeG3S4a (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 31 Jul 2018 06:04:02 -0400
-Received: by mail-lj1-f195.google.com with SMTP id j19-v6so12913865ljc.7
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 31 Jul 2018 01:24:50 -0700 (PDT)
-Subject: Re: [PATCH 2/3] drm: rcar-du: Rename var to a more precise name
-To: Jacopo Mondi <jacopo@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mon, 30 Jul 2018 14:56:30 -0400
+From: Jacopo Mondi <jacopo@jmondi.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         David Airlie <airlied@linux.ie>
-Cc: "open list:DRM DRIVERS FOR RENESAS" <dri-devel@lists.freedesktop.org>,
-        "open list:DRM DRIVERS FOR RENESAS"
-        <linux-renesas-soc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
+Cc: Jacopo Mondi <jacopo@jmondi.org>,
+        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR RENESAS),
+        linux-renesas-soc@vger.kernel.org (open list:DRM DRIVERS FOR RENESAS),
+        linux-kernel@vger.kernel.org (open list),
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH 2/3] drm: rcar-du: Rename var to a more precise name
+Date: Mon, 30 Jul 2018 19:20:13 +0200
+Message-Id: <1532971214-17962-3-git-send-email-jacopo@jmondi.org>
+In-Reply-To: <1532971214-17962-1-git-send-email-jacopo@jmondi.org>
 References: <1532971214-17962-1-git-send-email-jacopo@jmondi.org>
- <1532971214-17962-3-git-send-email-jacopo@jmondi.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <8104d980-f433-7fe8-d0d2-9028019332d9@cogentembedded.com>
-Date: Tue, 31 Jul 2018 11:24:48 +0300
-MIME-Version: 1.0
-In-Reply-To: <1532971214-17962-3-git-send-email-jacopo@jmondi.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+Rename the 'value' variable, only used to for writing to DMSR register to a
+more precise 'dmsr' name.
 
-On 7/30/2018 8:20 PM, Jacopo Mondi wrote:
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
+---
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-> Rename the 'value' variable, only used to for writing to DMSR register to a
-                                          ^^ not needed
-
-> more precise 'dmsr' name.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
-[...]
-
-MBR, Sergei
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+index 6d55cec..4d7907c 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+@@ -208,7 +208,7 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+ 	const struct drm_display_mode *mode = &rcrtc->crtc.state->adjusted_mode;
+ 	struct rcar_du_device *rcdu = rcrtc->group->dev;
+ 	unsigned long mode_clock = mode->clock * 1000;
+-	u32 value;
++	u32 dsmr;
+ 	u32 escr;
+ 
+ 	if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
+@@ -299,11 +299,11 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+ 	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? OTAR2 : OTAR, 0);
+ 
+ 	/* Signal polarities */
+-	value = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
+-	      | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? DSMR_HSL : 0)
+-	      | ((mode->flags & DRM_MODE_FLAG_INTERLACE) ? DSMR_ODEV : 0)
+-	      | DSMR_DIPM_DISP | DSMR_CSPM;
+-	rcar_du_crtc_write(rcrtc, DSMR, value);
++	dsmr = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
++	       | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? DSMR_HSL : 0)
++	       | ((mode->flags & DRM_MODE_FLAG_INTERLACE) ? DSMR_ODEV : 0)
++	       | DSMR_DIPM_DISP | DSMR_CSPM;
++	rcar_du_crtc_write(rcrtc, DSMR, dsmr);
+ 
+ 	/* Display timings */
+ 	rcar_du_crtc_write(rcrtc, HDSR, mode->htotal - mode->hsync_start - 19);
+-- 
+2.7.4
