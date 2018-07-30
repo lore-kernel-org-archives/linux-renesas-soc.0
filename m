@@ -1,75 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:12327 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388528AbeGXP7B (ORCPT
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34264 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726344AbeG3Jzq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Jul 2018 11:59:01 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v4 2/2] mmc: renesas_sdhi: Fix sampling clock position selecting
-Date: Tue, 24 Jul 2018 16:51:38 +0200
-Message-Id: <20180724145138.26536-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180724145138.26536-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180724145138.26536-1-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 30 Jul 2018 05:55:46 -0400
+Received: by mail-lf1-f66.google.com with SMTP id n96-v6so7512255lfi.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Jul 2018 01:21:54 -0700 (PDT)
+Date: Mon, 30 Jul 2018 10:21:52 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH] thermal: rcar_gen3_thermal: convert to SPDX identifiers
+Message-ID: <20180730082152.GC2867@bigcity.dyn.berto.se>
+References: <87h8khkvp4.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <87h8khkvp4.wl-kuninori.morimoto.gx@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When tuning each tap is issued CMD19 twice and the result of both runs
-recorded in host->taps. If the result is different between the two runs
-the wrong sampling clock position was selected. Fix this by merging the
-two runs and only keep the result for each tap if it was good in both
-sets.
+Hi Morimoto-san,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Thanks for your patch.
 
----
+On 2018-07-30 07:57:22 +0000, Kuninori Morimoto wrote:
+> 
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-* Changes since v2
-- Rewrote the change to use a less clumsy loop.  The patch is now
-  completely changed from Hayakawa-sans version and therefor I have also
-  claimed authorship.
-- Fixed spelling in comment as suggested by Geert.
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-* Changes since v1
-- Updated commit message after discussion with Wolfram.
-- Expanded comment in code to better explain why the results are merged.
----
- drivers/mmc/host/renesas_sdhi_core.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+> ---
+>  drivers/thermal/rcar_gen3_thermal.c | 11 +----------
+>  1 file changed, 1 insertion(+), 10 deletions(-)
+> 
+> diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+> index 766521e..7aed533 100644
+> --- a/drivers/thermal/rcar_gen3_thermal.c
+> +++ b/drivers/thermal/rcar_gen3_thermal.c
+> @@ -1,19 +1,10 @@
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   *  R-Car Gen3 THS thermal sensor driver
+>   *  Based on rcar_thermal.c and work from Hien Dang and Khiem Nguyen.
+>   *
+>   * Copyright (C) 2016 Renesas Electronics Corporation.
+>   * Copyright (C) 2016 Sang Engineering
+> - *
+> - *  This program is free software; you can redistribute it and/or modify
+> - *  it under the terms of the GNU General Public License as published by
+> - *  the Free Software Foundation; version 2 of the License.
+> - *
+> - *  This program is distributed in the hope that it will be useful, but
+> - *  WITHOUT ANY WARRANTY; without even the implied warranty of
+> - *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+> - *  General Public License for more details.
+> - *
+>   */
+>  #include <linux/delay.h>
+>  #include <linux/err.h>
+> -- 
+> 2.7.4
+> 
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 384ae6cfa289e22c..777e32b0e410e850 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -384,6 +384,18 @@ static int renesas_sdhi_select_tuning(struct tmio_mmc_host *host)
- 	/* Clear SCC_RVSREQ */
- 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_RVSREQ, 0);
- 
-+	/*
-+	 * When tuning CMD19 is issued twice for each tap, merge the
-+	 * result requiring the tap to be good in both runs before
-+	 * considering it for tuning selection.
-+	 */
-+	for (i = 0; i < host->tap_num * 2; i++) {
-+		int offset = host->tap_num * (i < host->tap_num ? 1 : -1);
-+
-+		if (!test_bit(i, host->taps))
-+			clear_bit(i + offset, host->taps);
-+	}
-+
- 	/*
- 	 * Find the longest consecutive run of successful probes.  If that
- 	 * is more than SH_MOBILE_SDHI_MAX_TAP probes long then use the
 -- 
-2.18.0
+Regards,
+Niklas S�derlund
