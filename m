@@ -1,47 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:42933 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932517AbeGDIQX (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:54195 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726370AbeG3J1y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Jul 2018 04:16:23 -0400
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S . Miller" <davem@davemloft.net>
-CC: Andrew Lunn <andrew@lunn.ch>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        <netdev@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>
-Subject: [PATCH v2 10/14] ravb: simplify link auto-negotiation by ethtool
-Date: Wed, 4 Jul 2018 11:16:08 +0300
-Message-ID: <20180704081612.7628-1-vladimir_zapolskiy@mentor.com>
-In-Reply-To: <20180704081245.7395-1-vladimir_zapolskiy@mentor.com>
-References: <20180704081245.7395-1-vladimir_zapolskiy@mentor.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Mon, 30 Jul 2018 05:27:54 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>, devicetree@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 4/5] clk: renesas: Add r8a774a1 CPG Core Clock Definitions
+Date: Mon, 30 Jul 2018 08:48:10 +0100
+Message-Id: <1532936891-25034-5-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1532936891-25034-1-git-send-email-biju.das@bp.renesas.com>
+References: <1532936891-25034-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-There is no need to call a heavyweight phy_start_aneg() for phy
-auto-negotiation by ethtool, the phy is already initialized and
-link auto-negotiation is started by calling phy_start() from
-ravb_phy_start() when a network device is opened.
+Add all RZ/G2M Clock Pulse Generator Core Clock Outputs, as listed in
+Table 8.2b ("List of Clocks [RZ/G2M]") of the RZ/G2M Hardware User's
+Manual.
 
-Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/dt-bindings/clock/r8a774a1-cpg-mssr.h | 59 +++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r8a774a1-cpg-mssr.h
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 40266fe01186..31913a469001 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1136,7 +1136,7 @@ static int ravb_nway_reset(struct net_device *ndev)
- 	int error = -ENODEV;
- 
- 	if (ndev->phydev)
--		error = phy_start_aneg(ndev->phydev);
-+		error = phy_restart_aneg(ndev->phydev);
- 
- 	return error;
- }
+diff --git a/include/dt-bindings/clock/r8a774a1-cpg-mssr.h b/include/dt-bindings/clock/r8a774a1-cpg-mssr.h
+new file mode 100644
+index 0000000..144c341
+--- /dev/null
++++ b/include/dt-bindings/clock/r8a774a1-cpg-mssr.h
+@@ -0,0 +1,59 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ */
++#ifndef __DT_BINDINGS_CLOCK_R8A774A1_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A774A1_CPG_MSSR_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a774a1 CPG Core Clocks */
++#define R8A774A1_CLK_Z			0
++#define R8A774A1_CLK_Z2			1
++#define R8A774A1_CLK_ZG			2
++#define R8A774A1_CLK_ZTR		3
++#define R8A774A1_CLK_ZTRD2		4
++#define R8A774A1_CLK_ZT			5
++#define R8A774A1_CLK_ZX			6
++#define R8A774A1_CLK_S0D1		7
++#define R8A774A1_CLK_S0D2		8
++#define R8A774A1_CLK_S0D3		9
++#define R8A774A1_CLK_S0D4		10
++#define R8A774A1_CLK_S0D6		11
++#define R8A774A1_CLK_S0D8		12
++#define R8A774A1_CLK_S0D12		13
++#define R8A774A1_CLK_S1D2		14
++#define R8A774A1_CLK_S1D4		15
++#define R8A774A1_CLK_S2D1		16
++#define R8A774A1_CLK_S2D2		17
++#define R8A774A1_CLK_S2D4		18
++#define R8A774A1_CLK_S3D1		19
++#define R8A774A1_CLK_S3D2		20
++#define R8A774A1_CLK_S3D4		21
++#define R8A774A1_CLK_LB			22
++#define R8A774A1_CLK_CL			23
++#define R8A774A1_CLK_ZB3		24
++#define R8A774A1_CLK_ZB3D2		25
++#define R8A774A1_CLK_ZB3D4		26
++#define R8A774A1_CLK_CR			27
++#define R8A774A1_CLK_CRD2		28
++#define R8A774A1_CLK_SD0H		29
++#define R8A774A1_CLK_SD0		30
++#define R8A774A1_CLK_SD1H		31
++#define R8A774A1_CLK_SD1		32
++#define R8A774A1_CLK_SD2H		33
++#define R8A774A1_CLK_SD2		34
++#define R8A774A1_CLK_SD3H		35
++#define R8A774A1_CLK_SD3		36
++#define R8A774A1_CLK_RPC		37
++#define R8A774A1_CLK_RPCD2		38
++#define R8A774A1_CLK_MSO		39
++#define R8A774A1_CLK_HDMI		40
++#define R8A774A1_CLK_CSI0		41
++#define R8A774A1_CLK_CP			42
++#define R8A774A1_CLK_POST2		43
++#define R8A774A1_CLK_CPEX		44
++#define R8A774A1_CLK_R			45
++#define R8A774A1_CLK_OSC		46
++
++#endif /* __DT_BINDINGS_CLOCK_R8A774A1_CPG_MSSR_H__ */
 -- 
-2.17.1
+2.7.4
