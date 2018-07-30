@@ -1,45 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:53004 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388222AbeGKRIz (ORCPT
+Received: from sauhun.de ([88.99.104.3]:43938 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726416AbeG3JIh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Jul 2018 13:08:55 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Mon, 30 Jul 2018 05:08:37 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 2/2] clk: renesas: mstp: Document R7S9210 support
-Date: Wed, 11 Jul 2018 12:03:13 -0500
-Message-Id: <20180711170313.80321-3-chris.brandt@renesas.com>
-In-Reply-To: <20180711170313.80321-1-chris.brandt@renesas.com>
-References: <20180711170313.80321-1-chris.brandt@renesas.com>
+Subject: [PATCH v2] arm64: dts: renesas: salvator-xs: enable SATA
+Date: Mon, 30 Jul 2018 09:34:56 +0200
+Message-Id: <20180730073456.3687-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Renesas R7S9210 SoC also has the CPG MSTP clocks.
+Add the nodes to enable SATA. Note that MD12 (SW12-7) must be switched
+off for that to work.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
-index da578ebdda28..bb470d9bc07f 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
-@@ -11,6 +11,7 @@ Required Properties:
+Changes since v1:
+	* fixed indentation (Thanks, Geert!)
+	* merged two patches into one (Thanks, Simon!)
+	* Added Geert's tag
+
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts  | 14 ++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts | 14 ++++++++++++++
+ 2 files changed, 28 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+index 8ded64d0a4d5..368be55eda4e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+@@ -152,6 +152,15 @@
+ 	};
+ };
  
-   - compatible: Must be one of the following
-     - "renesas,r7s72100-mstp-clocks" for R7S72100 (RZ) MSTP gate clocks
-+    - "renesas,r7s9210-mstp-clocks" for R7S9210 (RZ A2) MSTP gate clocks
-     - "renesas,r8a73a4-mstp-clocks" for R8A73A4 (R-Mobile APE6) MSTP gate clocks
-     - "renesas,r8a7740-mstp-clocks" for R8A7740 (R-Mobile A1) MSTP gate clocks
-     - "renesas,r8a7778-mstp-clocks" for R8A7778 (R-Car M1) MSTP gate clocks
++&pca9654 {
++	pcie_sata_switch {
++		gpio-hog;
++		gpios = <7 GPIO_ACTIVE_HIGH>;
++		output-low; /* enable SATA by default */
++		line-name = "PCIE/SATA switch";
++	};
++};
++
+ &pfc {
+ 	usb2_pins: usb2 {
+ 		groups = "usb2";
+@@ -176,6 +185,11 @@
+ 	};
+ };
+ 
++/* MD12 (SW12-7) must be set 'Off' which is not the default! */
++&sata {
++	status = "okay";
++};
++
+ &usb2_phy2 {
+ 	pinctrl-0 = <&usb2_pins>;
+ 	pinctrl-names = "default";
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
+index 9de4e3db1621..45016a06fab1 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
+@@ -47,3 +47,17 @@
+ &hdmi0_con {
+ 	remote-endpoint = <&rcar_dw_hdmi0_out>;
+ };
++
++&pca9654 {
++	pcie_sata_switch {
++		gpio-hog;
++		gpios = <7 GPIO_ACTIVE_HIGH>;
++		output-low; /* enable SATA by default */
++		line-name = "PCIE/SATA switch";
++	};
++};
++
++/* MD12 (SW12-7) must be set 'Off' which is not the default! */
++&sata {
++	status = "okay";
++};
 -- 
-2.16.1
+2.11.0
