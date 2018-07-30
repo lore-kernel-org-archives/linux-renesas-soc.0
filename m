@@ -1,69 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:35588 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388332AbeG0SQd (ORCPT
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:39109 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726535AbeG3PZv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Jul 2018 14:16:33 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3 2/2] dt-bindings: arm: Document RZ/A2 SoC DT bindings
-Date: Fri, 27 Jul 2018 11:53:33 -0500
-Message-Id: <20180727165333.60598-3-chris.brandt@renesas.com>
-In-Reply-To: <20180727165333.60598-1-chris.brandt@renesas.com>
-References: <20180727165333.60598-1-chris.brandt@renesas.com>
+        Mon, 30 Jul 2018 11:25:51 -0400
+Received: by mail-oi0-f67.google.com with SMTP id d189-v6so21302471oib.6
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Jul 2018 06:50:45 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20180725113000.11014-1-geert+renesas@glider.be>
+References: <20180725113000.11014-1-geert+renesas@glider.be>
+From: Peter Maydell <peter.maydell@linaro.org>
+Date: Mon, 30 Jul 2018 14:50:25 +0100
+Message-ID: <CAFEAcA8jw0d5BOHx_vMBM32w194mb3rkLmUyo5t1zRhpApgJZQ@mail.gmail.com>
+Subject: Re: [PATCH] hw/arm/sysbus-fdt: Fix assertion in copy_properties_from_host()
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Eric Auger <eric.auger@linaro.org>, qemu-arm <qemu-arm@nongnu.org>,
+        QEMU Developers <qemu-devel@nongnu.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device tree bindings documentation for Renesas RZ/A2 (r7s9210) SoC.
-Also document new option for "renesas,bsid"
+On 25 July 2018 at 12:30, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+> When copy_properties_from_host() ignores the error for an optional
+> property, it frees the error, but fails to reset it.
+>
+> Hence if two or more optional properties are missing, an assertion is
+> triggered:
+>
+>     util/error.c:57: error_setv: Assertion `*errp == NULL' failed.
+>
+> Fis this by resetting err to NULL after ignoring the error.
+>
+> Fixes: 9481cf2e5f2f2bb6 ("hw/arm/sysbus-fdt: helpers for clock node generation")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-* added "or Boundary Scan ID Register" to description
-v2:
- * added Reviewed-by
- * added renesas,bsid comment
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Thanks, applied to target-arm.next for 3.0.
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 89b4a389fbc7..882fe5a71db8 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -7,6 +7,8 @@ SoCs:
-     compatible = "renesas,emev2"
-   - RZ/A1H (R7S72100)
-     compatible = "renesas,r7s72100"
-+  - RZ/A2 (R7S9210)
-+    compatible = "renesas,r7s9210"
-   - SH-Mobile AG5 (R8A73A00/SH73A0)
-     compatible = "renesas,sh73a0"
-   - R-Mobile APE6 (R8A73A40)
-@@ -143,12 +145,12 @@ Boards:
-     compatible = "renesas,wheat", "renesas,r8a7792"
- 
- 
--Most Renesas ARM SoCs have a Product Register that allows to retrieve SoC
--product and revision information.  If present, a device node for this register
--should be added.
-+Most Renesas ARM SoCs have a Product Register or Boundary Scan ID Register that
-+allows to retrieve SoC product and revision information.  If present, a device
-+node for this register should be added.
- 
- Required properties:
--  - compatible: Must be "renesas,prr".
-+  - compatible: Must be "renesas,prr" or "renesas,bsid"
-   - reg: Base address and length of the register block.
- 
- 
--- 
-2.16.1
+-- PMM
