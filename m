@@ -1,40 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f182.google.com ([209.85.223.182]:37408 "EHLO
-        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030899AbeGAR1n (ORCPT
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:34952 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727113AbeG3Qhc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 1 Jul 2018 13:27:43 -0400
-Received: by mail-io0-f182.google.com with SMTP id s26-v6so12758660ioj.4
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 01 Jul 2018 10:27:43 -0700 (PDT)
-Subject: Re: [PATCH 4/4] serial: sh-sci: Stop RX FIFO timer during port
- shutdown
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-sh@vger.kernel.org
-References: <20180629142513.20743-1-geert+renesas@glider.be>
- <20180629142513.20743-8-geert+renesas@glider.be>
-From: Rob Landley <rob@landley.net>
-Message-ID: <c3d1884b-baab-241d-e4ee-745ed87dbb3b@landley.net>
-Date: Sun, 1 Jul 2018 12:27:40 -0500
+        Mon, 30 Jul 2018 12:37:32 -0400
 MIME-Version: 1.0
-In-Reply-To: <20180629142513.20743-8-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1532683322-30684-1-git-send-email-biju.das@bp.renesas.com> <OSBPR01MB2103966E65019705AC2C03B9B82A0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSBPR01MB2103966E65019705AC2C03B9B82A0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 30 Jul 2018 17:01:55 +0200
+Message-ID: <CAMuHMdVy9t5Fu5Yyzs_0+16boWgEJJC+J_BWXmg8dTP0dL0Jng@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a77470: Add EtherAVB pin groups
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 06/29/2018 09:25 AM, Geert Uytterhoeven wrote:
-> The RX FIFO timer may be armed when the port is shut down, hence the
-> timer function may still be called afterwards.
-> 
-> Fix this race condition by deleting the timer during port shutdown.
+Hi Biju,
 
-Will any of this make the qemu-system-sh4 serial console work again?
+On Fri, Jul 27, 2018 at 11:29 AM Biju Das <biju.das@bp.renesas.com> wrote:
+>
+> + sergie
+>
+> > -----Original Message-----
+> > From: Biju Das [mailto:biju.das@bp.renesas.com]
+> > Sent: 27 July 2018 10:22
+> > To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>; Geert
+> > Uytterhoeven <geert+renesas@glider.be>; Linus Walleij
+> > <linus.walleij@linaro.org>
+> > Cc: Biju Das <biju.das@bp.renesas.com>; linux-renesas-
+> > soc@vger.kernel.org; linux-gpio@vger.kernel.org; Simon Horman
+> > <horms@verge.net.au>; Chris Paterson <Chris.Paterson2@renesas.com>;
+> > Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Subject: [PATCH] pinctrl: sh-pfc: r8a77470: Add EtherAVB pin groups
+> >
+> > Add EtherAVB groups and functions definitions for R8A77470 SoC.
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > ---
+> > This patch is based on the following discussion https://www.mail-
+> > archive.com/linux-renesas-soc@vger.kernel.org/msg27480.html
+> >
+> > and
+> >
+> > https://en.wikipedia.org/wiki/Media-independent_interface
+> > ---
+> >  drivers/pinctrl/sh-pfc/pfc-r8a77470.c | 133
 
-Rob
+Thanks for the update!
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+I'll wait to see if Sergei has some comments before applying...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
