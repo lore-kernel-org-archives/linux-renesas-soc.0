@@ -1,53 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:55359 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727857AbeGPMrF (ORCPT
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:45381 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726490AbeG3JpJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Jul 2018 08:47:05 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        netdev@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 1/3] ravb: fix shadowing of symbol 'stats' in ravb_get_ethtool_stats()
-Date: Mon, 16 Jul 2018 14:19:25 +0200
-Message-Id: <20180716121927.21918-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180716121927.21918-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180716121927.21918-1-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 30 Jul 2018 05:45:09 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <87in4xkvra.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87in4xkvra.wl-kuninori.morimoto.gx@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 30 Jul 2018 10:11:07 +0200
+Message-ID: <CAMuHMdVA3djJtLGAqKrnxeydPhyxZ_T=yaKJT+4DZVQo=QDRJw@mail.gmail.com>
+Subject: Re: [PATCH] thermal: rcar_thermal: convert to SPDX identifiers
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Inside a loop in ravb_get_ethtool_stats() a variable 'stats' is declared
-resulting in the argument also named 'stats' to be shadowed. Fix this
-warning by renaming the unused argument 'stats' to 'estats'.
+On Mon, Jul 30, 2018 at 9:56 AM Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>
+> As original license mentioned, it is GPL-2.0 in SPDX.
+> Then, MODULE_LICENSE() should be "GPL v2" instead of "GPL".
+> See ${LINUX}/include/linux/module.h
+>
+>         "GPL"           [GNU Public License v2 or later]
+>         "GPL v2"        [GNU Public License v2]
+>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-This fixes the sparse warning:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-ravb_main.c:1225:36: originally declared here
-ravb_main.c:1233:41: warning: symbol 'stats' shadows an earlier one
+Gr{oetje,eeting}s,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/net/ethernet/renesas/ravb_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+                        Geert
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 4a7f54c8e7aaad7e..e5784f0eac3df57c 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1226,7 +1226,7 @@ static int ravb_get_sset_count(struct net_device *netdev, int sset)
- }
- 
- static void ravb_get_ethtool_stats(struct net_device *ndev,
--				   struct ethtool_stats *stats, u64 *data)
-+				   struct ethtool_stats *estats, u64 *data)
- {
- 	struct ravb_private *priv = netdev_priv(ndev);
- 	int i = 0;
 -- 
-2.17.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
