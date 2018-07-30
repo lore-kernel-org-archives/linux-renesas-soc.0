@@ -1,165 +1,116 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:10126 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726685AbeG3MTw (ORCPT
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:39319 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726755AbeG3LiI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Jul 2018 08:19:52 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Linus Walleij <linus.walleij@linaro.org>,
+        Mon, 30 Jul 2018 07:38:08 -0400
+MIME-Version: 1.0
+References: <1532685089-35645-1-git-send-email-biju.das@bp.renesas.com> <1532685089-35645-2-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1532685089-35645-2-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 30 Jul 2018 12:03:41 +0200
+Message-ID: <CAMuHMdVqSbeGCN-Oq0R2CY5fOoG3ncdc_MtAp6M5+SoW4xXQZw@mail.gmail.com>
+Subject: Re: [PATCH 1/4] gpio: rcar: Enhance gpio-ranges support
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 1/4] gpio: rcar: Enhance gpio-ranges support
-Date: Mon, 30 Jul 2018 10:45:22 +0000
-Message-ID: <OSBPR01MB2103324406693BA83C83DC36B82F0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <1532685089-35645-1-git-send-email-biju.das@bp.renesas.com>
- <1532685089-35645-2-git-send-email-biju.das@bp.renesas.com>
- <CAMuHMdVqSbeGCN-Oq0R2CY5fOoG3ncdc_MtAp6M5+SoW4xXQZw@mail.gmail.com>
-In-Reply-To: <CAMuHMdVqSbeGCN-Oq0R2CY5fOoG3ncdc_MtAp6M5+SoW4xXQZw@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrLg0KDQo+IC0tLS0tT3JpZ2luYWwg
-TWVzc2FnZS0tLS0tDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbiBbbWFpbHRvOmdlZXJ0QGxp
-bnV4LW02OGsub3JnXQ0KPiBTZW50OiAzMCBKdWx5IDIwMTggMTE6MDQNCj4gVG86IEJpanUgRGFz
-IDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT4NCj4gQ2M6IExpbnVzIFdhbGxlaWogPGxpbnVzLndh
-bGxlaWpAbGluYXJvLm9yZz47IG9wZW4gbGlzdDpHUElPIFNVQlNZU1RFTQ0KPiA8bGludXgtZ3Bp
-b0B2Z2VyLmtlcm5lbC5vcmc+OyBTaW1vbiBIb3JtYW4gPGhvcm1zQHZlcmdlLm5ldC5hdT47DQo+
-IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnQrcmVuZXNhc0BnbGlkZXIuYmU+OyBDaHJpcyBQYXRl
-cnNvbg0KPiA8Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29tPjsgRmFicml6aW8gQ2FzdHJvDQo+
-IDxmYWJyaXppby5jYXN0cm9AYnAucmVuZXNhcy5jb20+OyBMaW51eC1SZW5lc2FzIDxsaW51eC1y
-ZW5lc2FzLQ0KPiBzb2NAdmdlci5rZXJuZWwub3JnPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIDEv
-NF0gZ3BpbzogcmNhcjogRW5oYW5jZSBncGlvLXJhbmdlcyBzdXBwb3J0DQo+DQo+IEhpIEJpanUs
-DQo+DQo+IE9uIEZyaSwgSnVsIDI3LCAyMDE4IGF0IDExOjU3IEFNIEJpanUgRGFzIDxiaWp1LmRh
-c0BicC5yZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gRW5oYW5jZSBncGlvLXJhbmdlcyB0byBzdXBw
-b3J0IG1vcmUgdGhhbiBvbmUgZ3Bpby1yYW5nZS4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEJp
-anUgRGFzIDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT4NCj4gPiBSZXZpZXdlZC1ieTogRmFicml6
-aW8gQ2FzdHJvIDxmYWJyaXppby5jYXN0cm9AYnAucmVuZXNhcy5jb20+DQo+DQo+IFRoYW5rcyBm
-b3IgeW91ciBwYXRjaCENCj4NCj4gSG93ZXZlciwgSSdtIHdvbmRlcmluZyBpZiB0aGlzIHdvcmtz
-IGFzIGludGVuZGVkLCBhcyB0aGUgZGlzY29udGludWl0eSBpcyBub3QNCj4gaW4gdGhlIHBpbnMs
-IGJ1dCBpbiB0aGUgR1BJTyBiaXRzLg0KPg0KPiA+IC0tLQ0KPiA+IGNhdCAvc3lzL2tlcm5lbC9k
-ZWJ1Zy9waW5jdHJsL2U2MDYwMDAwLnBpbi1jb250cm9sbGVyLXNoLXBmYy9ncGlvLQ0KPiA+IEdQ
-SU8gcmFuZ2VzIGhhbmRsZWQ6DQo+ID4gMDogZTYwNTAwMDAuZ3BpbyBHUElPUyBbMTAwMSAtIDEw
-MjNdIFBJTlMgWzAgLSAyMl0NCj4gPiAwOiBlNjA1MTAwMC5ncGlvIEdQSU9TIFs5NzggLSAxMDAw
-XSBQSU5TIFszMiAtIDU0XQ0KPiA+IDA6IGU2MDUyMDAwLmdwaW8gR1BJT1MgWzk0NiAtIDk3N10g
-UElOUyBbNjQgLSA5NV0NCj4gPiAwOiBlNjA1MzAwMC5ncGlvIEdQSU9TIFs5MjYgLSA5NDJdIFBJ
-TlMgWzk2IC0gMTEyXQ0KPiA+IDE3OiBlNjA1MzAwMC5ncGlvIEdQSU9TIFs5NDMgLSA5NDVdIFBJ
-TlMgWzEyMyAtIDEyNV0NCj4NCj4gVGhlIGFib3ZlIHR3byBsaW5lcyBhcmUgdGhlIHJlc3VsdCBv
-ZjoNCj4NCj4gKyAgICAgICAgICAgICAgICAgICAgICAgZ3Bpby1yYW5nZXMgPSA8JnBmYyAwIDk2
-IDE3PiwgPCZwZmMgMTcgMTIzIDM+Ow0KPg0KPiA+IDA6IGU2MDU0MDAwLmdwaW8gR1BJT1MgWzkw
-MCAtIDkyNV0gUElOUyBbMTI4IC0gMTUzXQ0KPiA+IDA6IGU2MDU1MDAwLmdwaW8gR1BJT1MgWzg2
-OCAtIDg5OV0gUElOUyBbMTYwIC0gMTkxXQ0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL2dwaW8vZ3Bp
-by1yY2FyLmMgfCAxNSArKysrKysrKysrKystLS0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDEyIGlu
-c2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9ncGlvL2dwaW8tcmNhci5jIGIvZHJpdmVycy9ncGlvL2dwaW8tcmNhci5jIGluZGV4DQo+ID4g
-MzUwMzkwYy4uYTdiYmU3OCAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2dwaW8vZ3Bpby1yY2Fy
-LmMNCj4gPiArKysgYi9kcml2ZXJzL2dwaW8vZ3Bpby1yY2FyLmMNCj4gPiBAQCAtMzk5LDEzICsz
-OTksMjIgQEAgc3RhdGljIGludCBncGlvX3JjYXJfcGFyc2VfZHQoc3RydWN0DQo+IGdwaW9fcmNh
-cl9wcml2ICpwLCB1bnNpZ25lZCBpbnQgKm5waW5zKQ0KPiA+ICAgICAgICAgc3RydWN0IGRldmlj
-ZV9ub2RlICpucCA9IHAtPnBkZXYtPmRldi5vZl9ub2RlOw0KPiA+ICAgICAgICAgY29uc3Qgc3Ry
-dWN0IGdwaW9fcmNhcl9pbmZvICppbmZvOw0KPiA+ICAgICAgICAgc3RydWN0IG9mX3BoYW5kbGVf
-YXJncyBhcmdzOw0KPiA+IC0gICAgICAgaW50IHJldDsNCj4gPiArICAgICAgIGludCBpbmRleCA9
-IDAsIHJldDsNCj4gPg0KPiA+ICAgICAgICAgaW5mbyA9IG9mX2RldmljZV9nZXRfbWF0Y2hfZGF0
-YSgmcC0+cGRldi0+ZGV2KTsNCj4gPg0KPiA+IC0gICAgICAgcmV0ID0gb2ZfcGFyc2VfcGhhbmRs
-ZV93aXRoX2ZpeGVkX2FyZ3MobnAsICJncGlvLXJhbmdlcyIsIDMsIDAsDQo+ICZhcmdzKTsNCj4g
-PiAtICAgICAgICpucGlucyA9IHJldCA9PSAwID8gYXJncy5hcmdzWzJdIDogUkNBUl9NQVhfR1BJ
-T19QRVJfQkFOSzsNCj4gPiAgICAgICAgIHAtPmhhc19ib3RoX2VkZ2VfdHJpZ2dlciA9IGluZm8t
-Pmhhc19ib3RoX2VkZ2VfdHJpZ2dlcjsNCj4gPiArICAgICAgICpucGlucyA9IDA7DQo+ID4gKyAg
-ICAgICBmb3IgKDs7IGluZGV4KyspIHsNCj4gPiArICAgICAgICAgICAgICAgcmV0ID0gb2ZfcGFy
-c2VfcGhhbmRsZV93aXRoX2ZpeGVkX2FyZ3MobnAsICJncGlvLXJhbmdlcyIsIDMsDQo+ID4gKyAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpbmRl
-eCwgJmFyZ3MpOw0KPiA+ICsgICAgICAgICAgICAgICBpZiAocmV0KSB7DQo+ID4gKyAgICAgICAg
-ICAgICAgICAgICAgICAgaWYgKGluZGV4ID09IDApDQo+ID4gKyAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAqbnBpbnMgPSBSQ0FSX01BWF9HUElPX1BFUl9CQU5LOw0KPiA+ICsgICAgICAg
-ICAgICAgICAgICAgICAgIGJyZWFrOw0KPiA+ICsgICAgICAgICAgICAgICB9DQo+ID4gKyAgICAg
-ICAgICAgICAgICpucGlucyArPSBhcmdzLmFyZ3NbMl07DQo+ID4gKyAgICAgICB9DQo+DQo+IFNv
-IGFmdGVyIHRoaXMsICpucGlucyB3aWxsIGJlIHRoZSB0b3RhbCBudW1iZXIgb2YgR1BJT3MgcHJl
-c2VudCBpbiB0aGlzIGJhbmsNCj4gKDE3ICsgMyA9IDIwKSwgd2hpY2ggd2lsbCBiZSB1c2VkIGFz
-IGdwaW9fY2hpcC5uZ3Bpby4NCj4NCj4gQWxsIEdQSU8gb3BlcmF0aW9ucyB3aWxsIHVzZSB0aGUg
-cGFzc2VkIG9mZnNldCBhcyB0aGUgYml0IG51bWJlci4NCj4gZ3Bpb19yY2FyX3Jlc3VtZSgpIHdp
-bGwgcmVzdW1lIGJpdHMgMC4ubmdwaW8gLSAxIG9mIGVhY2ggcmVnaXN0ZXIuDQo+IGdwaW9fcmNh
-cl9zZXRfbXVsdGlwbGUoKSB1c2VzIEdFTk1BU0soY2hpcC0+bmdwaW8gLSAxLCAwKSBhcyB0aGUg
-YmFuaw0KPiBtYXNrLCBhbmQgdXNlcyBpdCB0byBtYXNrIG9mIGJpdHMgaW4gdGhlIHJlZ2lzdGVy
-cy4NCj4NCj4gSGVuY2UgYWxsIG9mIHRoZSBhYm92ZSBhc3N1bWVzIHRoZSByZWdpc3RlciBiaXRz
-IGZvciB0aGUgR1BJT3MgYXJlIDAuLjE5Lg0KPiBIb3dldmVyLCBhY2NvcmRpbmcgdG8gdGhlIGRh
-dGFzaGVldCwgdGhlIEdQSU9zIGluIGJhbmsgMyBhcmUgMC4uMTYgYW5kDQo+IDI3Li4yOS4gU28g
-YWNjZXNzaW5nIEdQSU9zIDE3Li4xOSBpbiB0aGUgYmFuayB3aWxsIHdyaXRlIHRvIGJpdHMgMTcu
-LjE5LCBub3QgdG8NCj4gMjcuLjI5IQ0KDQpJIGhhdmUgZG9uZSB0aGUgYmVsb3cgIEdQSU8gb3Bl
-cmF0aW9uIHVzaW5nIHN5c2ZzIHRvIGNoZWNrIHRoaXMuIChBcyBwZXIgdGhpcyBncGlvIDk0MyBt
-YXBwZWQgdG8gZ3Bpb2JpdCAxNyB3aGljaCByZXF1ZXN0IFBpbjEyMyhHUDNfMjcpDQpCdXQgSSBo
-YXZlbid0IGNoZWNrZWQgR1BJTyByZWdpc3RlcnMgdG8gY2hlY2sgd2hldGhlciBpdCBpcyBhY3R1
-YWxseSBzZXR0aW5nIHRoZSB2YWx1ZXMgdG8gIEdQM18xNyBvciBHUDNfMjcuIFdpbGwgY2hlY2sg
-dGhpcy4NCg0Kcm9vdEBpd2cyM3M6fiMgZWNobyA5NDMgPiAvc3lzL2NsYXNzL2dwaW8vZXhwb3J0
-DQpbICAgNTEuNzk2NTcwXSBzaC1wZmMgZTYwNjAwMDAucGluLWNvbnRyb2xsZXI6IHJlcXVlc3Qg
-cGluIDEyMyAoR1BfM18yNykgZm9yIGU2MDUzMDAwLmdwaW86OTQzDQpbICAgNTEuODA0OTYwXSBz
-aC1wZmMgZTYwNjAwMDAucGluLWNvbnRyb2xsZXI6IHdyaXRlX3JlZyBhZGRyID0gZTYwNjAwMTAs
-IHZhbHVlID0gMHgwLCBmaWVsZCA9IDQsIHJfd2lkdGggPSAzMiwgZl93aWR0aCA9IDENCg0KS2Vy
-bmVsIGxvZ3M6LQ0KLS0tLS0tLS0tLS0tLS0tLQ0KWyAgICAwLjExMDE1Nl0gZ3BpbyBncGlvY2hp
-cDM6IChlNjA1MzAwMC5ncGlvKTogY3JlYXRlZCBHUElPIHJhbmdlIDAtPjE2ID09PiBlNjA2MDAw
-MC5waW4tY29udHJvbGxlciBQSU4gOTYtPjExMg0KWyAgICAwLjExMDE4N10gZ3BpbyBncGlvY2hp
-cDM6IChlNjA1MzAwMC5ncGlvKTogY3JlYXRlZCBHUElPIHJhbmdlIDE3LT4xOSA9PT4gZTYwNjAw
-MDAucGluLWNvbnRyb2xsZXIgUElOIDEyMy0+MTI1DQpbICAgIDAuMTEwMzYzXSBncGlvIGdwaW9j
-aGlwMzogKGU2MDUzMDAwLmdwaW8pOiBhZGRlZCBHUElPIGNoYXJkZXYgKDI1NDozKQ0KWyAgICAw
-LjExMDQ2MF0gZ3Bpb2NoaXBfc2V0dXBfZGV2OiByZWdpc3RlcmVkIEdQSU9zIDkyNiB0byA5NDUg
-b24gZGV2aWNlOiBncGlvY2hpcDMgKGU2MDUzMDAwLmdwaW8pDQoNClBJbmNvbnRyb2wgIHJlbGF0
-ZWQgZm9yIEdQSU8gMw0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0K
-DQpwaW4gOTYgKEdQXzNfMCk6IChNVVggVU5DTEFJTUVEKSAoR1BJTyBVTkNMQUlNRUQpDQogcGlu
-IDk3IChHUF8zXzEpOiAoTVVYIFVOQ0xBSU1FRCkgKEdQSU8gVU5DTEFJTUVEKQ0KIHBpbiA5OCAo
-R1BfM18yKTogKE1VWCBVTkNMQUlNRUQpIChHUElPIFVOQ0xBSU1FRCkNCiBwaW4gOTkgKEdQXzNf
-Myk6IChNVVggVU5DTEFJTUVEKSAoR1BJTyBVTkNMQUlNRUQpDQogcGluIDEwMCAoR1BfM180KTog
-KE1VWCBVTkNMQUlNRUQpIChHUElPIFVOQ0xBSU1FRCkNCiBwaW4gMTAxIChHUF8zXzUpOiAoTVVY
-IFVOQ0xBSU1FRCkgKEdQSU8gVU5DTEFJTUVEKQ0KIHBpbiAxMDIgKEdQXzNfNik6IChNVVggVU5D
-TEFJTUVEKSAoR1BJTyBVTkNMQUlNRUQpDQogcGluIDEwMyAoR1BfM183KTogKE1VWCBVTkNMQUlN
-RUQpIChHUElPIFVOQ0xBSU1FRCkNCiBwaW4gMTA0IChHUF8zXzgpOiAoTVVYIFVOQ0xBSU1FRCkg
-KEdQSU8gVU5DTEFJTUVEKQ0KIHBpbiAxMDUgKEdQXzNfOSk6IChNVVggVU5DTEFJTUVEKSAoR1BJ
-TyBVTkNMQUlNRUQpDQogcGluIDEwNiAoR1BfM18xMCk6IChNVVggVU5DTEFJTUVEKSAoR1BJTyBV
-TkNMQUlNRUQpDQogcGluIDEwNyAoR1BfM18xMSk6IChNVVggVU5DTEFJTUVEKSAoR1BJTyBVTkNM
-QUlNRUQpDQogcGluIDEwOCAoR1BfM18xMik6IChNVVggVU5DTEFJTUVEKSAoR1BJTyBVTkNMQUlN
-RUQpDQogcGluIDEwOSAoR1BfM18xMyk6IChNVVggVU5DTEFJTUVEKSAoR1BJTyBVTkNMQUlNRUQp
-DQogcGluIDExMCAoR1BfM18xNCk6IChNVVggVU5DTEFJTUVEKSAoR1BJTyBVTkNMQUlNRUQpDQog
-cGluIDExMSAoR1BfM18xNSk6IChNVVggVU5DTEFJTUVEKSAoR1BJTyBVTkNMQUlNRUQpDQogcGlu
-IDExMiAoR1BfM18xNik6IChNVVggVU5DTEFJTUVEKSAoR1BJTyBVTkNMQUlNRUQpDQogcGluIDEy
-MyAoR1BfM18yNyk6IChNVVggVU5DTEFJTUVEKSAoR1BJTyBVTkNMQUlNRUQpDQogcGluIDEyNCAo
-R1BfM18yOCk6IChNVVggVU5DTEFJTUVEKSAoR1BJTyBVTkNMQUlNRUQpDQogcGluIDEyNSAoR1Bf
-M18yOSk6IChNVVggVU5DTEFJTUVEKSAoR1BJTyBVTkNMQUlNRUQpDQoNCnJhbmdlIHNlZW4gYnkg
-cGluIGNvbnRyb2wgZHJpdmVyDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tDQpjYXQgL3N5cy9rZXJuZWwvZGVidWcvcGluY3RybC9lNjA2MDAwMC5waW4tY29udHJv
-bGxlci1zaC1wZmMvZ3Bpby1yYW5nZXMNCg0KMDogZTYwNTAwMDAuZ3BpbyBHUElPUyBbMTAwMSAt
-IDEwMjNdIFBJTlMgWzAgLSAyMl0NCiAwOiBlNjA1MTAwMC5ncGlvIEdQSU9TIFs5NzggLSAxMDAw
-XSBQSU5TIFszMiAtIDU0XQ0KIDA6IGU2MDUyMDAwLmdwaW8gR1BJT1MgWzk0NiAtIDk3N10gUElO
-UyBbNjQgLSA5NV0NCiAwOiBlNjA1MzAwMC5ncGlvIEdQSU9TIFs5MjYgLSA5NDJdIFBJTlMgWzk2
-IC0gMTEyXQ0KIDE3OiBlNjA1MzAwMC5ncGlvIEdQSU9TIFs5NDMgLSA5NDVdIFBJTlMgWzEyMyAt
-IDEyNV0tLSA+IE5ldyBncGlvIHJhbmdlIG1hcHBpbmcgcGluIDEyMy0xMjUNCiAwOiBlNjA1NDAw
-MC5ncGlvIEdQSU9TIFs5MDAgLSA5MjVdIFBJTlMgWzEyOCAtIDE1M10NCiAwOiBlNjA1NTAwMC5n
-cGlvIEdQSU9TIFs4NjggLSA4OTldIFBJTlMgWzE2MCAtIDE5MV0NCg0KcmFuZ2Ugc2VlbiBieSBn
-cGlvIGRyaXZlcg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NClsgICAgMC4xMDU4ODNd
-IGdwaW9fcmNhciBlNjA1MDAwMC5ncGlvOiBkcml2aW5nIDIzIEdQSU9zDQpbICAgIDAuMTA2MzI4
-XSBncGlvX3JjYXIgZTYwNTEwMDAuZ3BpbzogZHJpdmluZyAyMyBHUElPcw0KWyAgICAwLjEwNjY4
-Ml0gZ3Bpb19yY2FyIGU2MDUyMDAwLmdwaW86IGRyaXZpbmcgMzIgR1BJT3MNClsgICAgMC4xMDcw
-MjhdIGdwaW9fcmNhciBlNjA1MzAwMC5ncGlvOiBkcml2aW5nIDIwIEdQSU9zDQpbICAgIDAuMTA3
-Mzg4XSBncGlvX3JjYXIgZTYwNTQwMDAuZ3BpbzogZHJpdmluZyAyNiBHUElPcw0KWyAgICAwLjEw
-NzcxOF0gZ3Bpb19yY2FyIGU2MDU1MDAwLmdwaW86IGRyaXZpbmcgMzIgR1BJT3MNCg0KUmVnYXJk
-cywNCkJpanUNCg0KPiBBIHNpbXBsZSB3YXkgdG8gd29yayBhcm91bmQgdGhpcyBpcyB0byBzZXQg
-bmdwaW9zIHRvIHRoZSBoaWdoZXN0IGJpdCBudW1iZXIgaW4NCj4gdXNlICsgMS4gQnV0IHlvdSBz
-dGlsbCBuZWVkIGEgbWVjaGFuaXNtIHRvIGF2b2lkIGFjY2Vzc2luZyB0aGUgdW51c2VkIGJpdHMg
-aW4NCj4gdGhlIGdhcCBiZXR3ZWVuIDE2IGFuZCAyNy4NCg0KPiA+DQo+ID4gICAgICAgICBpZiAo
-Km5waW5zID09IDAgfHwgKm5waW5zID4gUkNBUl9NQVhfR1BJT19QRVJfQkFOSykgew0KPiA+ICAg
-ICAgICAgICAgICAgICBkZXZfd2FybigmcC0+cGRldi0+ZGV2LA0KPg0KPiBHcntvZXRqZSxlZXRp
-bmd9cywNCj4NCj4gICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCj4NCj4gLS0NCj4gR2Vl
-cnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBn
-ZWVydEBsaW51eC0NCj4gbTY4ay5vcmcNCj4NCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3
-aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0KPiB3aGVu
-IEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNv
-bWV0aGluZyBsaWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0g
-TGludXMgVG9ydmFsZHMNCg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVr
-ZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9hZCwgQm91cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBT
-TDggNUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJl
-ZCBOby4gMDQ1ODY3MDkuDQo=
+Hi Biju,
+
+On Fri, Jul 27, 2018 at 11:57 AM Biju Das <biju.das@bp.renesas.com> wrote:
+> Enhance gpio-ranges to support more than one gpio-range.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+
+Thanks for your patch!
+
+However, I'm wondering if this works as intended, as the discontinuity is
+not in the pins, but in the GPIO bits.
+
+> ---
+> cat /sys/kernel/debug/pinctrl/e6060000.pin-controller-sh-pfc/gpio-
+> GPIO ranges handled:
+> 0: e6050000.gpio GPIOS [1001 - 1023] PINS [0 - 22]
+> 0: e6051000.gpio GPIOS [978 - 1000] PINS [32 - 54]
+> 0: e6052000.gpio GPIOS [946 - 977] PINS [64 - 95]
+> 0: e6053000.gpio GPIOS [926 - 942] PINS [96 - 112]
+> 17: e6053000.gpio GPIOS [943 - 945] PINS [123 - 125]
+
+The above two lines are the result of:
+
++                       gpio-ranges = <&pfc 0 96 17>, <&pfc 17 123 3>;
+
+> 0: e6054000.gpio GPIOS [900 - 925] PINS [128 - 153]
+> 0: e6055000.gpio GPIOS [868 - 899] PINS [160 - 191]
+> ---
+>  drivers/gpio/gpio-rcar.c | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+> index 350390c..a7bbe78 100644
+> --- a/drivers/gpio/gpio-rcar.c
+> +++ b/drivers/gpio/gpio-rcar.c
+> @@ -399,13 +399,22 @@ static int gpio_rcar_parse_dt(struct gpio_rcar_priv *p, unsigned int *npins)
+>         struct device_node *np = p->pdev->dev.of_node;
+>         const struct gpio_rcar_info *info;
+>         struct of_phandle_args args;
+> -       int ret;
+> +       int index = 0, ret;
+>
+>         info = of_device_get_match_data(&p->pdev->dev);
+>
+> -       ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0, &args);
+> -       *npins = ret == 0 ? args.args[2] : RCAR_MAX_GPIO_PER_BANK;
+>         p->has_both_edge_trigger = info->has_both_edge_trigger;
+> +       *npins = 0;
+> +       for (;; index++) {
+> +               ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3,
+> +                                                       index, &args);
+> +               if (ret) {
+> +                       if (index == 0)
+> +                               *npins = RCAR_MAX_GPIO_PER_BANK;
+> +                       break;
+> +               }
+> +               *npins += args.args[2];
+> +       }
+
+So after this, *npins will be the total number of GPIOs present in this bank
+(17 + 3 = 20), which will be used as gpio_chip.ngpio.
+
+All GPIO operations will use the passed offset as the bit number.
+gpio_rcar_resume() will resume bits 0..ngpio - 1 of each register.
+gpio_rcar_set_multiple() uses GENMASK(chip->ngpio - 1, 0) as the bank mask,
+and uses it to mask of bits in the registers.
+
+Hence all of the above assumes the register bits for the GPIOs are 0..19.
+However, according to the datasheet, the GPIOs in bank 3 are 0..16 and
+27..29. So accessing GPIOs 17..19 in the bank will write to bits 17..19,
+not to 27..29!
+
+A simple way to work around this is to set ngpios to the highest bit number
+in use + 1. But you still need a mechanism to avoid accessing the unused
+bits in the gap between 16 and 27.
+
+>
+>         if (*npins == 0 || *npins > RCAR_MAX_GPIO_PER_BANK) {
+>                 dev_warn(&p->pdev->dev,
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
