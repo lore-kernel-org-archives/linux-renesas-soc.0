@@ -1,42 +1,44 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel@pengutronix.de,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org
-Subject: [PATCH/RFT 6/6] i2c: recovery: remove bogus check if SDA GPIO is set to output
-Date: Fri, 13 Jul 2018 23:09:18 +0200
-Message-Id: <20180713210920.3648-7-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180713210920.3648-1-wsa+renesas@sang-engineering.com>
-References: <20180713210920.3648-1-wsa+renesas@sang-engineering.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:51618 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726771AbeG3Owi (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 30 Jul 2018 10:52:38 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v2 0/4] serial: sh-sci: Clean up previous RZ/A2 support
+Date: Mon, 30 Jul 2018 08:17:12 -0500
+Message-Id: <20180730131716.75484-1-chris.brandt@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This check did not work as intended. I2C is open drain, so this function
-will likely always have presented the GPIO as input because
-gpiod_get_direction doesn't know about open drain states. Remove this
-check for now. We can add it again once we know how to get more precise
-information about the GPIO.
+This patch series doesn't really provide much new functionality, but
+rather provides a cleaner solution for adding RZ/A2 support.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/i2c-core-base.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+This series applies on top of tty-next
 
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 301285c54603..7c5f012f561c 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -261,9 +261,7 @@ static void i2c_init_recovery(struct i2c_adapter *adap)
- 		bri->set_scl = set_scl_gpio_value;
- 		if (bri->sda_gpiod) {
- 			bri->get_sda = get_sda_gpio_value;
--			/* FIXME: add proper flag instead of '0' once available */
--			if (gpiod_get_direction(bri->sda_gpiod) == 0)
--				bri->set_sda = set_sda_gpio_value;
-+			bri->set_sda = set_sda_gpio_value;
- 		}
- 		return;
- 	}
+v2:
+* Incorporated feedback from Geert
+* Added Reviewed-by
+
+
+Chris Brandt (4):
+  serial: sh-sci: Improve interrupts description
+  serial: sh-sci: Allow for compressed SCIF address
+  serial: sh-sci: Remove SCIx_RZ_SCIFA_REGTYPE
+  serial: sh-sci: Improve support for separate TEI and DRI interrupts
+
+ .../bindings/serial/renesas,sci-serial.txt         |  16 ++-
+ drivers/tty/serial/sh-sci.c                        | 146 ++++++++-------------
+ include/linux/serial_sci.h                         |   1 -
+ 3 files changed, 70 insertions(+), 93 deletions(-)
+
 -- 
-2.11.0
+2.16.1
