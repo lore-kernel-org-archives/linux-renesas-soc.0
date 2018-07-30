@@ -1,57 +1,78 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+From: Biju Das <biju.das@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3 1/4] serial: sh-sci: Improve interrupts description
-Date: Tue, 31 Jul 2018 05:41:36 -0500
-Message-Id: <20180731104139.93291-2-chris.brandt@renesas.com>
-In-Reply-To: <20180731104139.93291-1-chris.brandt@renesas.com>
-References: <20180731104139.93291-1-chris.brandt@renesas.com>
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 3/5] soc: renesas: rcar-rst: Add support for RZ/G2M
+Date: Mon, 30 Jul 2018 08:48:09 +0100
+Message-Id: <1532936891-25034-4-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1532936891-25034-1-git-send-email-biju.das@bp.renesas.com>
+References: <1532936891-25034-1-git-send-email-biju.das@bp.renesas.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe interrupts property in more detail, especially when there are
-more than one interrupt.
-
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 ---
- .../devicetree/bindings/serial/renesas,sci-serial.txt    | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/reset/renesas,rst.txt | 1 +
+ drivers/soc/renesas/Kconfig                             | 6 +++---
+ drivers/soc/renesas/rcar-rst.c                          | 4 +++-
+ 3 files changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-index a7cda6550100..eaca9da79d83 100644
---- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-+++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-@@ -73,7 +73,21 @@ Required properties:
-     family-specific and/or generic versions.
+diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
+index 67e83b0..e4fe0ab 100644
+--- a/Documentation/devicetree/bindings/reset/renesas,rst.txt
++++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
+@@ -18,6 +18,7 @@ Required properties:
+ 		  - "renesas,r8a7743-rst" (RZ/G1M)
+ 		  - "renesas,r8a7745-rst" (RZ/G1E)
+ 		  - "renesas,r8a77470-rst" (RZ/G1C)
++		  - "renesas,r8a774a1-rst" (RZ/G2M)
+ 		  - "renesas,r8a7778-reset-wdt" (R-Car M1A)
+ 		  - "renesas,r8a7779-reset-wdt" (R-Car H1)
+ 		  - "renesas,r8a7790-rst" (R-Car H2)
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index d769330..00d4c9d 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -3,9 +3,9 @@ config SOC_RENESAS
+ 	default y if ARCH_RENESAS
+ 	select SOC_BUS
+ 	select RST_RCAR if ARCH_RCAR_GEN1 || ARCH_RCAR_GEN2 || \
+-			   ARCH_R8A7795 || ARCH_R8A7796 || ARCH_R8A77965 || \
+-			   ARCH_R8A77970 || ARCH_R8A77980 || ARCH_R8A77990 || \
+-			   ARCH_R8A77995
++			   ARCH_R8A774A1 || ARCH_R8A7795 || ARCH_R8A7796 || \
++			   ARCH_R8A77965 || ARCH_R8A77970 || ARCH_R8A77980 || \
++			   ARCH_R8A77990 || ARCH_R8A77995
+ 	select SYSC_R8A7743 if ARCH_R8A7743
+ 	select SYSC_R8A7745 if ARCH_R8A7745
+ 	select SYSC_R8A77470 if ARCH_R8A77470
+diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
+index d9c1034..a447873 100644
+--- a/drivers/soc/renesas/rcar-rst.c
++++ b/drivers/soc/renesas/rcar-rst.c
+@@ -41,10 +41,12 @@ static const struct rst_config rcar_rst_gen3 __initconst = {
+ };
  
-   - reg: Base address and length of the I/O registers used by the UART.
--  - interrupts: Must contain an interrupt-specifier for the SCIx interrupt.
-+  - interrupts: Must contain one or more interrupt-specifiers for the SCIx.
-+                If a single interrupt is expressed, then all events are
-+                multiplexed into this single interrupt.
-+
-+                If multiple interrupts are provided by the hardware, the order
-+                in which the interrupts are listed must match order below. Note
-+                that some HW interrupt events may be muxed together resulting
-+                in duplicate entries.
-+                The interrupt order is as follows:
-+                  1. Error (ERI)
-+                  2. Receive buffer full (RXI)
-+                  3. Transmit buffer empty (TXI)
-+                  4. Break (BRI)
-+                  5. Data Ready (DRI)
-+                  6. Transmit End (TEI)
- 
-   - clocks: Must contain a phandle and clock-specifier pair for each entry
-     in clock-names.
+ static const struct of_device_id rcar_rst_matches[] __initconst = {
+-	/* RZ/G is handled like R-Car Gen2 */
++	/* RZ/G1 is handled like R-Car Gen2 */
+ 	{ .compatible = "renesas,r8a7743-rst", .data = &rcar_rst_gen2 },
+ 	{ .compatible = "renesas,r8a7745-rst", .data = &rcar_rst_gen2 },
+ 	{ .compatible = "renesas,r8a77470-rst", .data = &rcar_rst_gen2 },
++	/* RZ/G2 is handled like R-Car Gen3 */
++	{ .compatible = "renesas,r8a774a1-rst", .data = &rcar_rst_gen3 },
+ 	/* R-Car Gen1 */
+ 	{ .compatible = "renesas,r8a7778-reset-wdt", .data = &rcar_rst_gen1 },
+ 	{ .compatible = "renesas,r8a7779-reset-wdt", .data = &rcar_rst_gen1 },
 -- 
-2.16.1
+2.7.4
 
