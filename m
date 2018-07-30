@@ -1,95 +1,169 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:43468 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731573AbeGZQwq (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:54195 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726370AbeG3J1u (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jul 2018 12:52:46 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Mon, 30 Jul 2018 05:27:50 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 10/11] clk: renesas: rcar-gen3: Add support for mode pin clock selection
-Date: Thu, 26 Jul 2018 17:35:16 +0200
-Message-Id: <20180726153517.10020-11-geert+renesas@glider.be>
-In-Reply-To: <20180726153517.10020-1-geert+renesas@glider.be>
-References: <20180726153517.10020-1-geert+renesas@glider.be>
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 2/5] soc: renesas: rcar-sysc: Add r8a774a1 support
+Date: Mon, 30 Jul 2018 08:48:08 +0100
+Message-Id: <1532936891-25034-3-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1532936891-25034-1-git-send-email-biju.das@bp.renesas.com>
+References: <1532936891-25034-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make the existing support for selecting between clean and SSCG clocks
-using MD12 more generic, to allow using other mode pins for arbitrary
-clock selection.
+Add support for RZ/G2M (R8A774A1) SoC power areas to the R-Car SYSC
+driver.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 ---
-v2:
-  - Add Reviewed-by.
----
- drivers/clk/renesas/rcar-gen3-cpg.c | 10 ++++------
- drivers/clk/renesas/rcar-gen3-cpg.h | 13 +++++++++----
- 2 files changed, 13 insertions(+), 10 deletions(-)
+ .../bindings/power/renesas,rcar-sysc.txt           |  1 +
+ drivers/soc/renesas/Kconfig                        |  5 +++
+ drivers/soc/renesas/Makefile                       |  1 +
+ drivers/soc/renesas/r8a774a1-sysc.c                | 45 ++++++++++++++++++++++
+ drivers/soc/renesas/rcar-sysc.c                    |  3 ++
+ drivers/soc/renesas/rcar-sysc.h                    |  1 +
+ 6 files changed, 56 insertions(+)
+ create mode 100644 drivers/soc/renesas/r8a774a1-sysc.c
 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 19a77822757d29de..4346fdeef01bbeae 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -539,16 +539,14 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 			parent = clks[cpg_clk_extalr];
- 		break;
+diff --git a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+index 180ae65..4e3ec6a 100644
+--- a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
++++ b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+@@ -10,6 +10,7 @@ Required properties:
+       - "renesas,r8a7743-sysc" (RZ/G1M)
+       - "renesas,r8a7745-sysc" (RZ/G1E)
+       - "renesas,r8a77470-sysc" (RZ/G1C)
++      - "renesas,r8a774a1-sysc" (RZ/G2M)
+       - "renesas,r8a7779-sysc" (R-Car H1)
+       - "renesas,r8a7790-sysc" (R-Car H2)
+       - "renesas,r8a7791-sysc" (R-Car M2-W)
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index 1d824cb..d769330 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -9,6 +9,7 @@ config SOC_RENESAS
+ 	select SYSC_R8A7743 if ARCH_R8A7743
+ 	select SYSC_R8A7745 if ARCH_R8A7745
+ 	select SYSC_R8A77470 if ARCH_R8A77470
++	select SYSC_R8A774A1 if ARCH_R8A774A1
+ 	select SYSC_R8A7779 if ARCH_R8A7779
+ 	select SYSC_R8A7790 if ARCH_R8A7790
+ 	select SYSC_R8A7791 if ARCH_R8A7791 || ARCH_R8A7793
+@@ -37,6 +38,10 @@ config SYSC_R8A77470
+ 	bool "RZ/G1C System Controller support" if COMPILE_TEST
+ 	select SYSC_RCAR
  
--	case CLK_TYPE_GEN3_PE:
-+	case CLK_TYPE_GEN3_MDSEL:
- 		/*
--		 * Peripheral clock with a fixed divider, selectable between
--		 * clean and spread spectrum parents using MD12
-+		 * Clock selectable between two parents and two fixed dividers
-+		 * using a mode pin
- 		 */
--		if (cpg_mode & BIT(12)) {
--			/* Clean */
-+		if (cpg_mode & BIT(core->offset)) {
- 			div = core->div & 0xffff;
- 		} else {
--			/* SCCG */
- 			parent = clks[core->parent >> 16];
- 			if (IS_ERR(parent))
- 				return ERR_CAST(parent);
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-index 7c49aebf9dd12490..04dc45d15874abf6 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -20,7 +20,7 @@ enum rcar_gen3_clk_types {
- 	CLK_TYPE_GEN3_PLL4,
- 	CLK_TYPE_GEN3_SD,
- 	CLK_TYPE_GEN3_R,
--	CLK_TYPE_GEN3_PE,
-+	CLK_TYPE_GEN3_MDSEL,	/* Select parent/divider using mode pin */
- 	CLK_TYPE_GEN3_Z,
- 	CLK_TYPE_GEN3_Z2,
- 	CLK_TYPE_GEN3_OSC,	/* OSC EXTAL predivider and fixed divider */
-@@ -30,11 +30,16 @@ enum rcar_gen3_clk_types {
- #define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
- 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_SD, _parent, .offset = _offset)
- 
-+#define DEF_GEN3_MDSEL(_name, _id, _md, _parent0, _div0, _parent1, _div1) \
-+	DEF_BASE(_name, _id, CLK_TYPE_GEN3_MDSEL,	\
-+		 (_parent0) << 16 | (_parent1),		\
-+		 .div = (_div0) << 16 | (_div1), .offset = _md)
++config SYSC_R8A774A1
++	bool "RZ/G2M System Controller support" if COMPILE_TEST
++	select SYSC_RCAR
 +
- #define DEF_GEN3_PE(_name, _id, _parent_sscg, _div_sscg, _parent_clean, \
- 		    _div_clean) \
--	DEF_BASE(_name, _id, CLK_TYPE_GEN3_PE,			\
--		 (_parent_sscg) << 16 | (_parent_clean),	\
--		 .div = (_div_sscg) << 16 | (_div_clean))
-+	DEF_GEN3_MDSEL(_name, _id, 12, _parent_sscg, _div_sscg,	\
-+		       _parent_clean, _div_clean)
+ config SYSC_R8A7779
+ 	bool "R-Car H1 System Controller support" if COMPILE_TEST
+ 	select SYSC_RCAR
+diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
+index c37b080..6adb9d6 100644
+--- a/drivers/soc/renesas/Makefile
++++ b/drivers/soc/renesas/Makefile
+@@ -6,6 +6,7 @@ obj-$(CONFIG_SOC_RENESAS)	+= renesas-soc.o
+ obj-$(CONFIG_SYSC_R8A7743)	+= r8a7743-sysc.o
+ obj-$(CONFIG_SYSC_R8A7745)	+= r8a7745-sysc.o
+ obj-$(CONFIG_SYSC_R8A77470)	+= r8a77470-sysc.o
++obj-$(CONFIG_SYSC_R8A774A1)	+= r8a774a1-sysc.o
+ obj-$(CONFIG_SYSC_R8A7779)	+= r8a7779-sysc.o
+ obj-$(CONFIG_SYSC_R8A7790)	+= r8a7790-sysc.o
+ obj-$(CONFIG_SYSC_R8A7791)	+= r8a7791-sysc.o
+diff --git a/drivers/soc/renesas/r8a774a1-sysc.c b/drivers/soc/renesas/r8a774a1-sysc.c
+new file mode 100644
+index 0000000..9db51ff
+--- /dev/null
++++ b/drivers/soc/renesas/r8a774a1-sysc.c
+@@ -0,0 +1,45 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Renesas RZ/G2M System Controller
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ *
++ * Based on Renesas R-Car M3-W System Controller
++ * Copyright (C) 2016 Glider bvba
++ */
 +
- #define DEF_GEN3_OSC(_name, _id, _parent, _div)		\
- 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_OSC, _parent, .div = _div)
- 
++#include <linux/bug.h>
++#include <linux/kernel.h>
++
++#include <dt-bindings/power/r8a774a1-sysc.h>
++
++#include "rcar-sysc.h"
++
++static const struct rcar_sysc_area r8a774a1_areas[] __initconst = {
++	{ "always-on",	    0, 0, R8A774A1_PD_ALWAYS_ON, -1, PD_ALWAYS_ON },
++	{ "ca57-scu",	0x1c0, 0, R8A774A1_PD_CA57_SCU,	R8A774A1_PD_ALWAYS_ON,
++	  PD_SCU },
++	{ "ca57-cpu0",	 0x80, 0, R8A774A1_PD_CA57_CPU0, R8A774A1_PD_CA57_SCU,
++	  PD_CPU_NOCR },
++	{ "ca57-cpu1",	 0x80, 1, R8A774A1_PD_CA57_CPU1, R8A774A1_PD_CA57_SCU,
++	  PD_CPU_NOCR },
++	{ "ca53-scu",	0x140, 0, R8A774A1_PD_CA53_SCU,	R8A774A1_PD_ALWAYS_ON,
++	  PD_SCU },
++	{ "ca53-cpu0",	0x200, 0, R8A774A1_PD_CA53_CPU0, R8A774A1_PD_CA53_SCU,
++	  PD_CPU_NOCR },
++	{ "ca53-cpu1",	0x200, 1, R8A774A1_PD_CA53_CPU1, R8A774A1_PD_CA53_SCU,
++	  PD_CPU_NOCR },
++	{ "ca53-cpu2",	0x200, 2, R8A774A1_PD_CA53_CPU2, R8A774A1_PD_CA53_SCU,
++	  PD_CPU_NOCR },
++	{ "ca53-cpu3",	0x200, 3, R8A774A1_PD_CA53_CPU3, R8A774A1_PD_CA53_SCU,
++	  PD_CPU_NOCR },
++	{ "a3vc",	0x380, 0, R8A774A1_PD_A3VC,	R8A774A1_PD_ALWAYS_ON },
++	{ "a2vc0",	0x3c0, 0, R8A774A1_PD_A2VC0,	R8A774A1_PD_A3VC },
++	{ "a2vc1",	0x3c0, 1, R8A774A1_PD_A2VC1,	R8A774A1_PD_A3VC },
++	{ "3dg-a",	0x100, 0, R8A774A1_PD_3DG_A,	R8A774A1_PD_ALWAYS_ON },
++	{ "3dg-b",	0x100, 1, R8A774A1_PD_3DG_B,	R8A774A1_PD_3DG_A },
++};
++
++const struct rcar_sysc_info r8a774a1_sysc_info __initconst = {
++	.areas = r8a774a1_areas,
++	.num_areas = ARRAY_SIZE(r8a774a1_areas),
++};
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index 029188e..fe32f7a 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -275,6 +275,9 @@ static const struct of_device_id rcar_sysc_matches[] __initconst = {
+ #ifdef CONFIG_SYSC_R8A77470
+ 	{ .compatible = "renesas,r8a77470-sysc", .data = &r8a77470_sysc_info },
+ #endif
++#ifdef CONFIG_SYSC_R8A774A1
++	{ .compatible = "renesas,r8a774a1-sysc", .data = &r8a774a1_sysc_info },
++#endif
+ #ifdef CONFIG_SYSC_R8A7779
+ 	{ .compatible = "renesas,r8a7779-sysc", .data = &r8a7779_sysc_info },
+ #endif
+diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
+index a22e7cf..33defe6 100644
+--- a/drivers/soc/renesas/rcar-sysc.h
++++ b/drivers/soc/renesas/rcar-sysc.h
+@@ -52,6 +52,7 @@ struct rcar_sysc_info {
+ extern const struct rcar_sysc_info r8a7743_sysc_info;
+ extern const struct rcar_sysc_info r8a7745_sysc_info;
+ extern const struct rcar_sysc_info r8a77470_sysc_info;
++extern const struct rcar_sysc_info r8a774a1_sysc_info;
+ extern const struct rcar_sysc_info r8a7779_sysc_info;
+ extern const struct rcar_sysc_info r8a7790_sysc_info;
+ extern const struct rcar_sysc_info r8a7791_sysc_info;
 -- 
-2.17.1
+2.7.4
