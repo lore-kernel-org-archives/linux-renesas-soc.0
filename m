@@ -1,63 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:33181 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727440AbeG3S4a (ORCPT
+Received: from sauhun.de ([88.99.104.3]:43906 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726416AbeG3JHW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Jul 2018 14:56:30 -0400
-From: Jacopo Mondi <jacopo@jmondi.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>
-Cc: Jacopo Mondi <jacopo@jmondi.org>,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR RENESAS),
-        linux-renesas-soc@vger.kernel.org (open list:DRM DRIVERS FOR RENESAS),
-        linux-kernel@vger.kernel.org (open list),
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: [PATCH 2/3] drm: rcar-du: Rename var to a more precise name
-Date: Mon, 30 Jul 2018 19:20:13 +0200
-Message-Id: <1532971214-17962-3-git-send-email-jacopo@jmondi.org>
-In-Reply-To: <1532971214-17962-1-git-send-email-jacopo@jmondi.org>
-References: <1532971214-17962-1-git-send-email-jacopo@jmondi.org>
+        Mon, 30 Jul 2018 05:07:22 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Simon Horman <horms@verge.net.au>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] arm64: dts: r8a77965: Add SATA controller node
+Date: Mon, 30 Jul 2018 09:33:38 +0200
+Message-Id: <20180730073338.3639-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Rename the 'value' variable, only used to for writing to DMSR register to a
-more precise 'dmsr' name.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
+This patch adds SATA controller node for the R8A77965 SoC.
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[wsa: rebased to upstream base]
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 6d55cec..4d7907c 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -208,7 +208,7 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 	const struct drm_display_mode *mode = &rcrtc->crtc.state->adjusted_mode;
- 	struct rcar_du_device *rcdu = rcrtc->group->dev;
- 	unsigned long mode_clock = mode->clock * 1000;
--	u32 value;
-+	u32 dsmr;
- 	u32 escr;
+Changes since v1:
+	* sorted it according to address (Thanks, Geert!)
+	* added Geert's tag
+
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index 0cd44461a0bd..bf22efb82cbf 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -1507,6 +1507,17 @@
+ 			status = "disabled";
+ 		};
  
- 	if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
-@@ -299,11 +299,11 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? OTAR2 : OTAR, 0);
- 
- 	/* Signal polarities */
--	value = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
--	      | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? DSMR_HSL : 0)
--	      | ((mode->flags & DRM_MODE_FLAG_INTERLACE) ? DSMR_ODEV : 0)
--	      | DSMR_DIPM_DISP | DSMR_CSPM;
--	rcar_du_crtc_write(rcrtc, DSMR, value);
-+	dsmr = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
-+	       | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? DSMR_HSL : 0)
-+	       | ((mode->flags & DRM_MODE_FLAG_INTERLACE) ? DSMR_ODEV : 0)
-+	       | DSMR_DIPM_DISP | DSMR_CSPM;
-+	rcar_du_crtc_write(rcrtc, DSMR, dsmr);
- 
- 	/* Display timings */
- 	rcar_du_crtc_write(rcrtc, HDSR, mode->htotal - mode->hsync_start - 19);
++		sata: sata@ee300000 {
++			compatible = "renesas,sata-r8a77965",
++				     "renesas,rcar-gen3-sata";
++			reg = <0 0xee300000 0 0x200000>;
++			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 815>;
++			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
++			resets = <&cpg 815>;
++			status = "disabled";
++		};
++
+ 		gic: interrupt-controller@f1010000 {
+ 			compatible = "arm,gic-400";
+ 			#interrupt-cells = <3>;
 -- 
-2.7.4
+2.11.0
