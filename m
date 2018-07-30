@@ -1,74 +1,108 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:51290 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388280AbeGWV3z (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jul 2018 17:29:55 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 11/12] i2c: xlr: use core to detect 'no zero length' quirk
-Date: Mon, 23 Jul 2018 22:26:15 +0200
-Message-Id: <20180723202617.15230-12-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
-References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Mon, 30 Jul 2018 09:29:06 -0300
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] v4l: vsp1: Fix deadlock in VSPDL DRM pipelines
+Message-ID: <20180730092906.4da35890@coco.lan>
+In-Reply-To: <3163968a-e24a-b8ad-5b3c-0a94aef12755@ideasonboard.com>
+References: <20180727171945.25603-1-laurent.pinchart+renesas@ideasonboard.com>
+        <3163968a-e24a-b8ad-5b3c-0a94aef12755@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-And don't reimplement in the driver.
+Em Sat, 28 Jul 2018 20:13:05 +0100
+Kieran Bingham <kieran.bingham@ideasonboard.com> escreveu:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+> Hi Laurent, Mauro,
+> 
+> I've cast my eyes through this, and the driver code it affects
+> 
+> On 27/07/18 18:19, Laurent Pinchart wrote:
+> > The VSP uses a lock to protect the BRU and BRS assignment when
+> > configuring pipelines. The lock is taken in vsp1_du_atomic_begin() and
+> > released in vsp1_du_atomic_flush(), as well as taken and released in
+> > vsp1_du_setup_lif(). This guards against multiple pipelines trying to
+> > assign the same BRU and BRS at the same time.
+> > 
+> > The DRM framework calls the .atomic_begin() operations in a loop over
+> > all CRTCs included in an atomic commit. On a VSPDL (the only VSP type
+> > where this matters), a single VSP instance handles two CRTCs, with a
+> > single lock. This results in a deadlock when the .atomic_begin()
+> > operation is called on the second CRTC.
+> > 
+> > The DRM framework serializes atomic commits that affect the same CRTCs,
+> > but doesn't know about two CRTCs sharing the same VSPDL. Two commits
+> > affecting the VSPDL LIF0 and LIF1 respectively can thus race each other,
+> > hence the need for a lock.
+> > 
+> > This could be fixed on the DRM side by forcing serialization of commits
+> > affecting CRTCs backed by the same VSPDL, but that would negatively
+> > affect performances, as the locking is only needed when the BRU and BRS
+> > need to be reassigned, which is an uncommon case.
+> > 
+> > The lock protects the whole .atomic_begin() to .atomic_flush() sequence.
+> > The only operation that can occur in-between is vsp1_du_atomic_update(),
+> > which doesn't touch the BRU and BRS, and thus doesn't need to be
+> > protected by the lock. We can thus only take the lock around the  
+> 
+> And I almost replied to say ... but what about vsp1_du_atomic_update()
+> before re-reading this paragraph :)
+> 
+> 
+> > pipeline setup calls in vsp1_du_atomic_flush(), which fixes the
+> > deadlock.
+> > 
+> > Fixes: f81f9adc4ee1 ("media: v4l: vsp1: Assign BRU and BRS to pipelines dynamically")
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>  
+> 
+> It makes me very happy to see the lock/unlock across separate functions
+> removed :)
+> 
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> 
+> > ---
+> >  drivers/media/platform/vsp1/vsp1_drm.c | 4 +---
+> >  1 file changed, 1 insertion(+), 3 deletions(-)
+> > 
+> > I've successfully tested the patch with kmstest --flip running with four
+> > outputs on a Salvator-XS board, as well as with the DU kms-test-brxalloc.py
+> > test. The deadlock is gone, and no race has been observed.
+> > 
+> > Mauro, this is a v4.18 regression fix. I'm sorry for sending it so late,
+> > I haven't noticed the issue earlier. Once Kieran reviews it (which should
+> > happen in the next few days), could you send it to Linus ? The breakage is
+> > pretty bad otherwise for people using both the VGA and LVDS outputs at the
+> > same time.
+> > 
+> > diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+> > index edb35a5c57ea..a99fc0ced7a7 100644
+> > --- a/drivers/media/platform/vsp1/vsp1_drm.c
+> > +++ b/drivers/media/platform/vsp1/vsp1_drm.c
+> > @@ -728,9 +728,6 @@ EXPORT_SYMBOL_GPL(vsp1_du_setup_lif);
+> >   */
+> >  void vsp1_du_atomic_begin(struct device *dev, unsigned int pipe_index)
+> >  {
+> > -	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
+> > -
+> > -	mutex_lock(&vsp1->drm->lock);
+> >  }
 
-Only build tested.
+As this is a regression fix, I'll apply it.
 
- drivers/i2c/busses/i2c-xlr.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+However, this function now does nothing. Please remove it on a next
+Kernel version, if it is not needed anymore (or add whatever it is
+needed to replace the lock).
 
-diff --git a/drivers/i2c/busses/i2c-xlr.c b/drivers/i2c/busses/i2c-xlr.c
-index 484bfa15d58e..34cd4b308540 100644
---- a/drivers/i2c/busses/i2c-xlr.c
-+++ b/drivers/i2c/busses/i2c-xlr.c
-@@ -173,9 +173,6 @@ static int xlr_i2c_tx(struct xlr_i2c_private *priv,  u16 len,
- 	u8 offset;
- 	u32 xfer;
- 
--	if (!len)
--		return -EOPNOTSUPP;
--
- 	offset = buf[0];
- 	xlr_i2c_wreg(priv->iobase, XLR_I2C_ADDR, offset);
- 	xlr_i2c_wreg(priv->iobase, XLR_I2C_DEVADDR, addr);
-@@ -241,9 +238,6 @@ static int xlr_i2c_rx(struct xlr_i2c_private *priv, u16 len, u8 *buf, u16 addr)
- 	unsigned long timeout, stoptime, checktime;
- 	int nbytes, timedout;
- 
--	if (!len)
--		return -EOPNOTSUPP;
--
- 	xlr_i2c_wreg(priv->iobase, XLR_I2C_CFG,
- 			XLR_I2C_CFG_NOADDR | priv->cfg->cfg_extra);
- 	xlr_i2c_wreg(priv->iobase, XLR_I2C_BYTECNT, len - 1);
-@@ -340,6 +334,10 @@ static const struct i2c_algorithm xlr_i2c_algo = {
- 	.functionality	= xlr_func,
- };
- 
-+static const struct i2c_adapter_quirks xlr_i2c_quirks = {
-+	.flags = I2C_AQ_NO_ZERO_LEN,
-+};
-+
- static const struct xlr_i2c_config xlr_i2c_config_default = {
- 	.status_busy	= XLR_I2C_BUS_BUSY,
- 	.cfg_extra	= 0,
-@@ -427,6 +425,7 @@ static int xlr_i2c_probe(struct platform_device *pdev)
- 	priv->adap.owner	= THIS_MODULE;
- 	priv->adap.algo_data	= priv;
- 	priv->adap.algo		= &xlr_i2c_algo;
-+	priv->adap.quirks	= &xlr_i2c_quirks;
- 	priv->adap.nr		= pdev->id;
- 	priv->adap.class	= I2C_CLASS_HWMON;
- 	snprintf(priv->adap.name, sizeof(priv->adap.name), "xlr-i2c");
--- 
-2.11.0
+Regards,
+Mauro
+
+Thanks,
+Mauro
