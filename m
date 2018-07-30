@@ -1,78 +1,190 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:59466 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726532AbeGLJJC (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:32793 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726752AbeG3S43 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Jul 2018 05:09:02 -0400
-Date: Thu, 12 Jul 2018 11:00:21 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-serial@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH 0/2] serial: sh-sci: Use pm_runtime_get_sync()/put()
-Message-ID: <20180712090021.a2e5p3t2mmoimtio@katana>
-References: <1523638854-21804-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <CAMuHMdXn3ngXNFFM6Zsi2-YftvKeWnBSCxoQHd7j3xxFnBORrA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="z4anosvar7oyar3d"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXn3ngXNFFM6Zsi2-YftvKeWnBSCxoQHd7j3xxFnBORrA@mail.gmail.com>
+        Mon, 30 Jul 2018 14:56:29 -0400
+From: Jacopo Mondi <jacopo@jmondi.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>
+Cc: Jacopo Mondi <jacopo@jmondi.org>,
+        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR RENESAS),
+        linux-renesas-soc@vger.kernel.org (open list:DRM DRIVERS FOR RENESAS),
+        linux-kernel@vger.kernel.org (open list),
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH 1/3] drm: rcar-du: Rework clock configuration based on hardware limits
+Date: Mon, 30 Jul 2018 19:20:12 +0200
+Message-Id: <1532971214-17962-2-git-send-email-jacopo@jmondi.org>
+In-Reply-To: <1532971214-17962-1-git-send-email-jacopo@jmondi.org>
+References: <1532971214-17962-1-git-send-email-jacopo@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
---z4anosvar7oyar3d
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The DU channels that have a display PLL (DPLL) can only use external
+clock sources, and don't have an internal clock divider (with the
+exception of H3 ES1.x where the post-divider is present and needs to be
+used as a workaround for a DPLL silicon issue).
 
-On Fri, Apr 13, 2018 at 07:27:59PM +0200, Geert Uytterhoeven wrote:
-> Hi Ulrich,
->=20
-> On Fri, Apr 13, 2018 at 7:00 PM, Ulrich Hecht
-> <ulrich.hecht+renesas@gmail.com> wrote:
-> > These patches make sure that the device is up while the suspend/resume =
-code
-> > is executed. Up-port from the BSP, tested not to break stuff.
-> >
-> > Hien Dang (2):
-> >   serial: sh-sci: Use pm_runtime_get_sync()/put() on suspend
-> >   serial: sh-sci: Use pm_runtime_get_sync()/put() on resume
->=20
-> I don't think it makes much sense to split this in two parts...
->=20
-> Furthermore, shouldn't this be handled by the serial core, calling
-> uart_change_pm()?
->=20
-> It looks like uart_resume_port() already changes the port's state to
-> enabled, while  uart_suspend_port() assumes the port is already enabled,
-> and disables it.
->=20
-> Perhaps handling is not correct for some code paths?
+Rework the clock configuration to take this into account, avoiding
+selection of non-existing clock sources or usage of a missing
+post-divider.
 
-Ulrich, what is your take on this?
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 122 ++++++++++++++++++---------------
+ 1 file changed, 67 insertions(+), 55 deletions(-)
 
-
---z4anosvar7oyar3d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltHGKEACgkQFA3kzBSg
-KbYgZA/+Imu76eHLkpWy8YW6qYosqIWDMaQkonim7BKRPnyp3lMddXiw25/nEmL8
-3dPoEa9P0m4UoawvA0uzqX1Cgt85zoCbkAi5mBQzs95FjGePgINsc44bqzVHjUkX
-8l4SMCM/ou+pWXRScJvqCxwx9IAQ+bZZS0gFailaSxuRGgq4DwlQvk3ZBZyr2e+E
-Zfi7mBXQslmCHfQ5ieeIUhPQw5gth6QZQDS7+AE4u3Vl/T2KyM4+v68datcajcXF
-VVm6k5ynaEksW3Ljf3GAqaQe4WxpOzavYdgSO2TzqGrbKqVoB0qmPrj2Q56D4D0d
-CFJcAI/b8Lk65l6otDsBCwnXyFaIGgGfsIiovlL29utawnh13hBLKr95KWaVLi2P
-XlqadW0/DXpMId5gJgem4rssQUmopPBEtuxGOhB6JReN+i7+r0t7cn5FsmECHK4X
-GCH3T6lXgKjh2B9QmDvEhWz0GGSImZP6QvGb7NvBxVTKsKr+hy0DC3ODpOuYwD5b
-L/nDVcZASTUptX2tNzKUDsVZjQaULe8qJpKhGZV4TI4Rxrbri5h01Ub0wCBLb/iL
-LoO13ojeBJNApR+7sN68HjWUwdlxQGJ74X3BcIxg6ZH7/wMloK5iy89A56BiBarL
-lhNesLWfZPKyR1ibrgq7oPu2BX8olt4TK6bK4accBve33L8uJ+s=
-=yAPH
------END PGP SIGNATURE-----
-
---z4anosvar7oyar3d--
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+index b52b3e8..6d55cec 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+@@ -208,78 +208,90 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+ 	const struct drm_display_mode *mode = &rcrtc->crtc.state->adjusted_mode;
+ 	struct rcar_du_device *rcdu = rcrtc->group->dev;
+ 	unsigned long mode_clock = mode->clock * 1000;
+-	unsigned long clk;
+ 	u32 value;
+ 	u32 escr;
+-	u32 div;
+ 
+-	/*
+-	 * Compute the clock divisor and select the internal or external dot
+-	 * clock based on the requested frequency.
+-	 */
+-	clk = clk_get_rate(rcrtc->clock);
+-	div = DIV_ROUND_CLOSEST(clk, mode_clock);
+-	div = clamp(div, 1U, 64U) - 1;
+-	escr = div | ESCR_DCLKSEL_CLKS;
+-
+-	if (rcrtc->extclock) {
++	if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
++		unsigned long target = mode_clock;
+ 		struct dpll_info dpll = { 0 };
+ 		unsigned long extclk;
+-		unsigned long extrate;
+-		unsigned long rate;
+-		u32 extdiv;
++		u32 dpllcr;
++		u32 div = 0;
+ 
+-		extclk = clk_get_rate(rcrtc->extclock);
+-		if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
+-			unsigned long target = mode_clock;
++		/*
++		 * DU channels that have a display PLL can't use the internal
++		 * system clock, and have no internal clock divider.
++		 */
+ 
+-			/*
+-			 * The H3 ES1.x exhibits dot clock duty cycle stability
+-			 * issues. We can work around them by configuring the
+-			 * DPLL to twice the desired frequency, coupled with a
+-			 * /2 post-divider. This isn't needed on other SoCs and
+-			 * breaks HDMI output on M3-W for a currently unknown
+-			 * reason, so restrict the workaround to H3 ES1.x.
+-			 */
+-			if (soc_device_match(rcar_du_r8a7795_es1))
+-				target *= 2;
++		if (WARN_ON(!rcrtc->extclock))
++			return;
+ 
+-			rcar_du_dpll_divider(rcrtc, &dpll, extclk, target);
+-			extclk = dpll.output;
++		/*
++		 * The H3 ES1.x exhibits dot clock duty cycle stability issues.
++		 * We can work around them by configuring the DPLL to twice the
++		 * desired frequency, coupled with a /2 post-divider. Restrict
++		 * the workaround to H3 ES1.x as ES2.0 and all other SoCs have
++		 * no post-divider when a display PLL is present (as shown by
++		 * the workaround breaking HDMI output on M3-W during testing).
++		 */
++		if (soc_device_match(rcar_du_r8a7795_es1)) {
++			target *= 2;
++			div = 1;
+ 		}
+ 
+-		extdiv = DIV_ROUND_CLOSEST(extclk, mode_clock);
+-		extdiv = clamp(extdiv, 1U, 64U) - 1;
++		extclk = clk_get_rate(rcrtc->extclock);
++		rcar_du_dpll_divider(rcrtc, &dpll, extclk, target);
+ 
+-		rate = clk / (div + 1);
+-		extrate = extclk / (extdiv + 1);
++		dpllcr = DPLLCR_CODE | DPLLCR_CLKE
++		       | DPLLCR_FDPLL(dpll.fdpll)
++		       | DPLLCR_N(dpll.n) | DPLLCR_M(dpll.m)
++		       | DPLLCR_STBY;
+ 
+-		if (abs((long)extrate - (long)mode_clock) <
+-		    abs((long)rate - (long)mode_clock)) {
++		if (rcrtc->index == 1)
++			dpllcr |= DPLLCR_PLCS1
++			       |  DPLLCR_INCS_DOTCLKIN1;
++		else
++			dpllcr |= DPLLCR_PLCS0
++			       |  DPLLCR_INCS_DOTCLKIN0;
+ 
+-			if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
+-				u32 dpllcr = DPLLCR_CODE | DPLLCR_CLKE
+-					   | DPLLCR_FDPLL(dpll.fdpll)
+-					   | DPLLCR_N(dpll.n) | DPLLCR_M(dpll.m)
+-					   | DPLLCR_STBY;
++		rcar_du_group_write(rcrtc->group, DPLLCR, dpllcr);
+ 
+-				if (rcrtc->index == 1)
+-					dpllcr |= DPLLCR_PLCS1
+-					       |  DPLLCR_INCS_DOTCLKIN1;
+-				else
+-					dpllcr |= DPLLCR_PLCS0
+-					       |  DPLLCR_INCS_DOTCLKIN0;
++		escr = ESCR_DCLKSEL_DCLKIN | div;
++	} else {
++		unsigned long clk;
++		u32 div;
+ 
+-				rcar_du_group_write(rcrtc->group, DPLLCR,
+-						    dpllcr);
+-			}
++		/*
++		 * Compute the clock divisor and select the internal or external
++		 * dot clock based on the requested frequency.
++		 */
++		clk = clk_get_rate(rcrtc->clock);
++		div = DIV_ROUND_CLOSEST(clk, mode_clock);
++		div = clamp(div, 1U, 64U) - 1;
+ 
+-			escr = ESCR_DCLKSEL_DCLKIN | extdiv;
+-		}
++		escr = ESCR_DCLKSEL_CLKS | div;
+ 
+-		dev_dbg(rcrtc->group->dev->dev,
+-			"mode clock %lu extrate %lu rate %lu ESCR 0x%08x\n",
+-			mode_clock, extrate, rate, escr);
++		if (rcrtc->extclock) {
++			unsigned long extclk;
++			unsigned long extrate;
++			unsigned long rate;
++			u32 extdiv;
++
++			extclk = clk_get_rate(rcrtc->extclock);
++			extdiv = DIV_ROUND_CLOSEST(extclk, mode_clock);
++			extdiv = clamp(extdiv, 1U, 64U) - 1;
++
++			extrate = extclk / (extdiv + 1);
++			rate = clk / (div + 1);
++
++			if (abs((long)extrate - (long)mode_clock) <
++			    abs((long)rate - (long)mode_clock))
++				escr = ESCR_DCLKSEL_DCLKIN | extdiv;
++
++			dev_dbg(rcrtc->group->dev->dev,
++				"mode clock %lu extrate %lu rate %lu ESCR 0x%08x\n",
++				mode_clock, extrate, rate, escr);
++		}
+ 	}
+ 
+ 	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? ESCR2 : ESCR,
+-- 
+2.7.4
