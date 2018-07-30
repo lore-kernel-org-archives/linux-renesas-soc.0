@@ -1,113 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33185 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727408AbeGTMvk (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:25542 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726370AbeG3J1n (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jul 2018 08:51:40 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
+        Mon, 30 Jul 2018 05:27:43 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Second Round of Renesas ARM64 Based SoC DT Updates for v4.19
-Date: Fri, 20 Jul 2018 14:03:40 +0200
-Message-Id: <cover.1532087303.git.horms+renesas@verge.net.au>
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 0/5] Add RZ/G2M SYSC/RST/Clock support
+Date: Mon, 30 Jul 2018 08:48:06 +0100
+Message-Id: <1532936891-25034-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+This patch series aims to add SYSC/RST/Clock support for 
+for RZ/G2M SoC. RZ/G2M SoC is similar to R-Car Gen3 M3-W SoC.
 
-Please consider these second round of Renesas ARM64 based SoC DT updates for v4.19.
+Biju Das (5):
+  dt-bindings: power: Add r8a774a1 SYSC power domain definitions
+  soc: renesas: rcar-sysc: Add r8a774a1 support
+  soc: renesas: rcar-rst: Add support for RZ/G2M
+  clk: renesas: Add r8a774a1 CPG Core Clock Definitions
+  clk: renesas: cpg-mssr: Add r8a774a1 support
 
-This pull request is based on the previous round of
-such requests, tagged as renesas-arm64-dt-for-v4.19,
-which I have already sent a pull-request for.
+ .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   9 +-
+ .../bindings/power/renesas,rcar-sysc.txt           |   1 +
+ .../devicetree/bindings/reset/renesas,rst.txt      |   1 +
+ drivers/clk/renesas/Kconfig                        |   5 +
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/r8a774a1-cpg-mssr.c            | 322 +++++++++++++++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
+ drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
+ drivers/soc/renesas/Kconfig                        |  11 +-
+ drivers/soc/renesas/Makefile                       |   1 +
+ drivers/soc/renesas/r8a774a1-sysc.c                |  45 +++
+ drivers/soc/renesas/rcar-rst.c                     |   4 +-
+ drivers/soc/renesas/rcar-sysc.c                    |   3 +
+ drivers/soc/renesas/rcar-sysc.h                    |   1 +
+ include/dt-bindings/clock/r8a774a1-cpg-mssr.h      |  59 ++++
+ include/dt-bindings/power/r8a774a1-sysc.h          |  31 ++
+ 16 files changed, 493 insertions(+), 8 deletions(-)
+ create mode 100644 drivers/clk/renesas/r8a774a1-cpg-mssr.c
+ create mode 100644 drivers/soc/renesas/r8a774a1-sysc.c
+ create mode 100644 include/dt-bindings/clock/r8a774a1-cpg-mssr.h
+ create mode 100644 include/dt-bindings/power/r8a774a1-sysc.h
 
-
-The following changes since commit 6b284a81307848b4331453b02cf7a33c09719d4b:
-
-  arm64: dts: renesas: r8a77995: Add MSIOF device nodes (2018-06-25 15:30:39 +0200)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt2-for-v4.19
-
-for you to fetch changes up to 9a6c158f62ccdd37c921ec8b1484418bad5f7984:
-
-  arm64: dts: renesas: r8a77980: add INTC-EX support (2018-07-20 13:47:34 +0200)
-
-----------------------------------------------------------------
-Second Round of Renesas ARM64 Based SoC DT Updates for v4.19
-
-Corrections:
-
-* Remove non-existing STBE region from Ether-AVB node in DT of
-  R-Car E3 (r8a77990) SoC
-
-  This region does not exist on this SoC
-
-Cleanups:
-
-* Consistently use rwdt as label for Renesas Watchdog Timer devices
-
-* Add second port to rcar_sound placeholder in DT of R-Car M3-N (r8a77965) SoC
-
-  Nodes with #address-cells/#size-cells should have more than one child node
-
-* Fix adv7482 decimal unit addresses in DT of Salvator-X and -XS boards
-
-  Addresses are assumed to be hex by dtc, thus it is not valid to use
-  decimal
-
-Enhancements:
-
-* Describe in DT:
-  - INTC-EX of R-Car V3H (r8a77980) SoC
-  - USB3.0 of R-Car E3 (r8a77980) SoC
-  - All SCIF and HSCIF devices of R-Car D3 (r8a77995) SoC.
-    Previously only SCIF2, used as the debug consile, was described.
-  - All IPMMU devicesof R-Car M3-N (r8a77965), V3H (r8a77980) and
-    E3 (r8a77990) SoCs
-
-* Enable USB3.0 in DT of R-Car E3 (r8a77980) based Ebisu board
-
-* Prefer HSCIF1 over SCIF1 in DT of Salvator-X and -XS boards
-
-  HSCIF is superior to SCIF (larger FIFOs, more accurate and wider
-  supported range of bitrates).
-
-----------------------------------------------------------------
-Geert Uytterhoeven (3):
-      arm64: dts: renesas: r8a77990: Remove non-existing STBE region
-      arm64: dts: renesas: salvator-common: Fix adv7482 decimal unit addresses
-      arm64: dts: renesas: salvator-common: Prefer HSCIF1 over SCIF1
-
-Magnus Damm (1):
-      arm64: dts: renesas: r8a779{65,80,90}: Add IPMMU devices nodes
-
-Sergei Shtylyov (1):
-      arm64: dts: renesas: r8a77980: add INTC-EX support
-
-Simon Horman (1):
-      arm64: dts: renesas: r8a77965: Add second port to rcar_sound placeholder
-
-Takeshi Kihara (1):
-      arm64: dts: renesas: r8a77995: Add SCIF {0,1,3,4,5} and all HSCIF device nodes
-
-Yoshihiro Shimoda (2):
-      arm64: dts: renesas: Unify the labels for RWDT
-      arm64: dts: renesas: r8a77990: Enable USB3.0 host for Ebisu board
-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi         |   2 +-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi         |   2 +-
- arch/arm64/boot/dts/renesas/r8a77965.dtsi        |  94 +++++++++++++++++-
- arch/arm64/boot/dts/renesas/r8a77980.dtsi        |  79 +++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts   |  12 +++
- arch/arm64/boot/dts/renesas/r8a77990.dtsi        |  95 +++++++++++++++++-
- arch/arm64/boot/dts/renesas/r8a77995.dtsi        | 118 +++++++++++++++++++++++
- arch/arm64/boot/dts/renesas/salvator-common.dtsi |  12 +--
- arch/arm64/boot/dts/renesas/ulcb.dtsi            |   2 +-
- 9 files changed, 405 insertions(+), 11 deletions(-)
+-- 
+2.7.4
