@@ -1,64 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:43462 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753643AbeGFJFu (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36024 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726661AbeG3QmJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Jul 2018 05:05:50 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-sh@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/3] serial: sh-sci: Stop TX DMA workqueue during port shutdown
-Date: Fri,  6 Jul 2018 11:05:42 +0200
-Message-Id: <20180706090543.31625-3-geert+renesas@glider.be>
-In-Reply-To: <20180706090543.31625-1-geert+renesas@glider.be>
-References: <20180706090543.31625-1-geert+renesas@glider.be>
+        Mon, 30 Jul 2018 12:42:09 -0400
+Received: by mail-it0-f67.google.com with SMTP id p81-v6so134351itp.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Jul 2018 08:06:45 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20180724145138.26536-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180724145138.26536-1-niklas.soderlund+renesas@ragnatech.se>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 30 Jul 2018 17:06:44 +0200
+Message-ID: <CAPDyKFrfEG18A1vqWS9vZkE+A1=04BdxQQistdiwK0i5WytDig@mail.gmail.com>
+Subject: Re: [PATCH v4 0/2] mmc: {tmio,renesas_sdhi}: fix tuning behavior
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The transmit DMA workqueue is never stopped, hence the work function may
-be called after the port has been shut down.
+On 24 July 2018 at 16:51, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> Hi,
+>
+> Tuning failed on my R-Car H3 ES2.0 board using latest mmc/next while the
+> Renesas BSP kernel worked. After some digging I found patches in the BSP
+> which remedied this and whit these applied tuning now works for me.
+>
+> I have done small fixes, updated commit messages and rebased on latest
+> mmc/next but Hayakawa-san did all the real work. This change helped me
+> to successfully tune a stubborn card I have had trouble in the past to
+> get to work.
+>
+> Since v3 of this patchset I have dropped 2 patches as they requier more
+> work as HS400 have been merged since the initial posting. These two
+> patches stand alone still fixes tuning issues so while work continues on
+> the dropped two these two are ready for upstream consumption.
+>
+> Masaharu Hayakawa (1):
+>   mmc: tmio: Fix tuning flow
+>
+> Niklas S=C3=B6derlund (1):
+>   mmc: renesas_sdhi: Fix sampling clock position selecting
+>
+>  drivers/mmc/host/renesas_sdhi_core.c | 12 ++++++++++++
+>  drivers/mmc/host/tmio_mmc_core.c     |  2 --
+>  2 files changed, 12 insertions(+), 2 deletions(-)
+>
+> --
+> 2.18.0
+>
 
-Fix this race condition by cancelling queued work, if any, before DMA
-release.  Don't initialize the work if DMA initialization failed, as it
-won't be used anyway.
+Thanks, applied for next!
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - No changes.
----
- drivers/tty/serial/sh-sci.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 674dc65454ae0684..939749073e7bdb11 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1293,6 +1293,7 @@ static void sci_tx_dma_release(struct sci_port *s)
- {
- 	struct dma_chan *chan = s->chan_tx_saved;
- 
-+	cancel_work_sync(&s->work_tx);
- 	s->chan_tx_saved = s->chan_tx = NULL;
- 	s->cookie_tx = -EINVAL;
- 	dmaengine_terminate_all(chan);
-@@ -1548,10 +1549,9 @@ static void sci_request_dma(struct uart_port *port)
- 				__func__, UART_XMIT_SIZE,
- 				port->state->xmit.buf, &s->tx_dma_addr);
- 
-+			INIT_WORK(&s->work_tx, work_fn_tx);
- 			s->chan_tx_saved = s->chan_tx = chan;
- 		}
--
--		INIT_WORK(&s->work_tx, work_fn_tx);
- 	}
- 
- 	chan = sci_request_dma_chan(port, DMA_DEV_TO_MEM);
--- 
-2.17.1
+Kind regards
+Uffe
