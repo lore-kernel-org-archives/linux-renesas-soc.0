@@ -1,45 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:58053 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731488AbeGQNEH (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:37128 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726584AbeG3MyQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jul 2018 09:04:07 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Lars-Peter Clausen <lars@metafoo.de>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        Steve Longerbeam <steve_longerbeam@mentor.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/2] adv7180: fix format and frame interval
-Date: Tue, 17 Jul 2018 14:30:39 +0200
-Message-Id: <20180717123041.2862-1-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 30 Jul 2018 08:54:16 -0400
+Received: by mail-wm0-f65.google.com with SMTP id n11-v6so13301383wmc.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Jul 2018 04:19:45 -0700 (PDT)
+Subject: Re: [PATCH V5] ARM: shmobile: Rework the PMIC IRQ line quirk
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms@verge.net.au>
+Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <20180611121513.9673-1-marek.vasut+renesas@gmail.com>
+ <20180613110647.ygg66nu36pcf6kpn@verge.net.au>
+ <CAMuHMdUsBNU-1y+_UfX6GKSC11pOB_BUhPKO-axUiO+BfgqVmw@mail.gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <a12bfba7-a7ff-413e-799c-f10e8dac78f5@gmail.com>
+Date: Mon, 30 Jul 2018 13:19:25 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdUsBNU-1y+_UfX6GKSC11pOB_BUhPKO-axUiO+BfgqVmw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On 06/13/2018 01:21 PM, Geert Uytterhoeven wrote:
+> Hi Simon,
+
 Hi,
 
-These first patch fix a issue which was discussed back in 2016 that the 
-field format of the adv7180 should be V4L2_FIELD_ALTERNATE. While the 
-second patch adds support for the g_frame_interval video op.
+> On Wed, Jun 13, 2018 at 1:06 PM Simon Horman <horms@verge.net.au> wrote:
+>> On Mon, Jun 11, 2018 at 02:15:13PM +0200, Marek Vasut wrote:
+>>> Rather than hard-coding the quirk topology, which stopped scaling,
+>>> parse the information from DT. The code looks for all compatible
+>>> PMICs -- da9063 and da9210 -- and checks if their IRQ line is tied
+>>> to the same pin. If so, the code sends a matching sequence to the
+>>> PMIC to deassert the IRQ.
+>>>
+>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>>> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>>> Cc: Simon Horman <horms+renesas@verge.net.au>
+>>> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>>> Cc: linux-renesas-soc@vger.kernel.org
+>>> Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>>> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be> (on Koelsch)
+>>
+>> This looks fine to me but I will wait to see if there are other reviews
+>> before applying.
+>>
+>> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Note that applying it now will break gose, as its DTS doesn't describe all
+> regulators yet.
 
-Work is loosely based on work by Steve Longerbeam posted in 2016. I have 
-talked to Steven and he have agreed to me taking over the patches as he 
-did not intend to continue his work on the original series.
-
-The series is based on the latest media-tree and tested on Renesas 
-Koelsch board.
-
-Niklas Söderlund (2):
-  adv7180: fix field type to V4L2_FIELD_ALTERNATE
-  adv7180: add g_frame_interval support
-
- drivers/media/i2c/adv7180.c | 30 +++++++++++++++++++++++++-----
- 1 file changed, 25 insertions(+), 5 deletions(-)
+https://patchwork.kernel.org/patch/10548919/ should fix this.
+https://patchwork.kernel.org/patch/10548923/ for Silk.
 
 -- 
-2.18.0
+Best regards,
+Marek Vasut
