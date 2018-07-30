@@ -1,46 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:40682 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728939AbeGYOWL (ORCPT
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34034 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726584AbeG3Mwy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Jul 2018 10:22:11 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: Magnus Damm <damm+renesas@opensource.se>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] iommu/ipmmu-vmsa: Clarify supported platforms
-Date: Wed, 25 Jul 2018 15:10:29 +0200
-Message-Id: <20180725131029.5643-1-geert+renesas@glider.be>
+        Mon, 30 Jul 2018 08:52:54 -0400
+Received: by mail-wr1-f67.google.com with SMTP id c13-v6so12442968wrt.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Jul 2018 04:18:23 -0700 (PDT)
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] ARM: shmobile: silk: Add DA9063 PMIC node
+Date: Mon, 30 Jul 2018 13:18:17 +0200
+Message-Id: <20180730111817.5636-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas IPMMU-VMSA driver supports not just R-Car H2 and M2 SoCs,
-but also other R-Car Gen2 and R-Car Gen3 SoCs.
+Add DA9063 PMIC node to the I2C bus.
 
-Drop a superfluous "Renesas" while at it.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
 ---
- drivers/iommu/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7794-silk.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-index 568ae81b0e99b67b..c69dc0b29b5df37f 100644
---- a/drivers/iommu/Kconfig
-+++ b/drivers/iommu/Kconfig
-@@ -306,8 +306,8 @@ config IPMMU_VMSA
- 	select IOMMU_IO_PGTABLE_LPAE
- 	select ARM_DMA_USE_IOMMU
- 	help
--	  Support for the Renesas VMSA-compatible IPMMU Renesas found in the
--	  R-Mobile APE6 and R-Car H2/M2 SoCs.
-+	  Support for the Renesas VMSA-compatible IPMMU found in the R-Mobile
-+	  APE6, R-Car Gen2, and R-Car Gen3 SoCs.
+diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
+index daec965889d3..bf7e8ffd1e69 100644
+--- a/arch/arm/boot/dts/r8a7794-silk.dts
++++ b/arch/arm/boot/dts/r8a7794-silk.dts
+@@ -403,6 +403,18 @@
+ 	pinctrl-names = "i2c-hdmi";
  
- 	  If unsure, say N.
+ 	clock-frequency = <400000>;
++
++	pmic@5a {
++		compatible = "dlg,da9063";
++		reg = <0x5a>;
++		interrupt-parent = <&irqc0>;
++		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-controller;
++
++		wdt {
++			compatible = "dlg,da9063-watchdog";
++		};
++	};
+ };
  
+ &mmcif0 {
 -- 
-2.17.1
+2.16.2
