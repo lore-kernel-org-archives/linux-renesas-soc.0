@@ -1,75 +1,102 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Lars-Peter Clausen <lars@metafoo.de>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        Steve Longerbeam <steve_longerbeam@mentor.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 1/2] adv7180: fix field type to V4L2_FIELD_ALTERNATE
-Date: Thu, 26 Jul 2018 12:27:15 +0200
-Message-Id: <20180726102716.1390-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180726102716.1390-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180726102716.1390-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:59559 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729034AbeG3Own (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 30 Jul 2018 10:52:43 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v2 3/4] serial: sh-sci: Remove SCIx_RZ_SCIFA_REGTYPE
+Date: Mon, 30 Jul 2018 08:17:15 -0500
+Message-Id: <20180730131716.75484-4-chris.brandt@renesas.com>
+In-Reply-To: <20180730131716.75484-1-chris.brandt@renesas.com>
+References: <20180730131716.75484-1-chris.brandt@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The ADV7180 and ADV7182 transmit whole fields, bottom field followed
-by top (or vice-versa, depending on detected video standard). So
-for chips that do not have support for explicitly setting the field
-mode via I2P, set the field mode to V4L2_FIELD_ALTERNATE.
+There is no more need for SCIx_RZ_SCIFA_REGTYPE now that
+SCIx_SH4_SCIF_REGTYPE can provide the same register/address definitions.
 
-I2P converts fields into frames using an edge adaptive algorithm. The
-frame rate is the same as the 'field rate': e.g. X fields per second
-are now X frames per second.
+Also, R7S9210 no longer needs a special compatible since the standard
+"renesas,scif" will work just fine.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/media/i2c/adv7180.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+v2:
+* add Reviewed-by
+---
+ drivers/tty/serial/sh-sci.c | 31 -------------------------------
+ include/linux/serial_sci.h  |  1 -
+ 2 files changed, 32 deletions(-)
 
-diff --git a/drivers/media/i2c/adv7180.c b/drivers/media/i2c/adv7180.c
-index 25d24a3f10a7cb4d..c2e24132e8c21d38 100644
---- a/drivers/media/i2c/adv7180.c
-+++ b/drivers/media/i2c/adv7180.c
-@@ -644,6 +644,9 @@ static int adv7180_mbus_fmt(struct v4l2_subdev *sd,
- 	fmt->width = 720;
- 	fmt->height = state->curr_norm & V4L2_STD_525_60 ? 480 : 576;
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index c29244f76057..54ea58bbe3c9 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -293,33 +293,6 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
+ 		.error_clear = SCIF_ERROR_CLEAR,
+ 	},
  
-+	if (state->field == V4L2_FIELD_ALTERNATE)
-+		fmt->height /= 2;
-+
- 	return 0;
- }
+-	/*
+-	 * The "SCIFA" that is in RZ/T and RZ/A2.
+-	 * It looks like a normal SCIF with FIFO data, but with a
+-	 * compressed address space. Also, the break out of interrupts
+-	 * are different: ERI/BRI, RXI, TXI, TEI, DRI.
+-	 */
+-	[SCIx_RZ_SCIFA_REGTYPE] = {
+-		.regs = {
+-			[SCSMR]		= { 0x00, 16 },
+-			[SCBRR]		= { 0x02,  8 },
+-			[SCSCR]		= { 0x04, 16 },
+-			[SCxTDR]	= { 0x06,  8 },
+-			[SCxSR]		= { 0x08, 16 },
+-			[SCxRDR]	= { 0x0A,  8 },
+-			[SCFCR]		= { 0x0C, 16 },
+-			[SCFDR]		= { 0x0E, 16 },
+-			[SCSPTR]	= { 0x10, 16 },
+-			[SCLSR]		= { 0x12, 16 },
+-		},
+-		.fifosize = 16,
+-		.overrun_reg = SCLSR,
+-		.overrun_mask = SCLSR_ORER,
+-		.sampling_rate_mask = SCI_SR(32),
+-		.error_mask = SCIF_DEFAULT_ERROR_MASK,
+-		.error_clear = SCIF_ERROR_CLEAR,
+-	},
+-
+ 	/*
+ 	 * Common SH-3 SCIF definitions.
+ 	 */
+@@ -3148,10 +3121,6 @@ static const struct of_device_id of_sci_match[] = {
+ 		.compatible = "renesas,scif-r7s72100",
+ 		.data = SCI_OF_DATA(PORT_SCIF, SCIx_SH2_SCIF_FIFODATA_REGTYPE),
+ 	},
+-	{
+-		.compatible = "renesas,scif-r7s9210",
+-		.data = SCI_OF_DATA(PORT_SCIF, SCIx_RZ_SCIFA_REGTYPE),
+-	},
+ 	/* Family-specific types */
+ 	{
+ 		.compatible = "renesas,rcar-gen1-scif",
+diff --git a/include/linux/serial_sci.h b/include/linux/serial_sci.h
+index 1c89611e0e06..c0e795d95477 100644
+--- a/include/linux/serial_sci.h
++++ b/include/linux/serial_sci.h
+@@ -36,7 +36,6 @@ enum {
+ 	SCIx_SH4_SCIF_FIFODATA_REGTYPE,
+ 	SCIx_SH7705_SCIF_REGTYPE,
+ 	SCIx_HSCIF_REGTYPE,
+-	SCIx_RZ_SCIFA_REGTYPE,
  
-@@ -711,11 +714,11 @@ static int adv7180_set_pad_format(struct v4l2_subdev *sd,
- 
- 	switch (format->format.field) {
- 	case V4L2_FIELD_NONE:
--		if (!(state->chip_info->flags & ADV7180_FLAG_I2P))
--			format->format.field = V4L2_FIELD_INTERLACED;
--		break;
-+		if (state->chip_info->flags & ADV7180_FLAG_I2P)
-+			break;
-+		/* fall through */
- 	default:
--		format->format.field = V4L2_FIELD_INTERLACED;
-+		format->format.field = V4L2_FIELD_ALTERNATE;
- 		break;
- 	}
- 
-@@ -1291,7 +1294,7 @@ static int adv7180_probe(struct i2c_client *client,
- 		return -ENOMEM;
- 
- 	state->client = client;
--	state->field = V4L2_FIELD_INTERLACED;
-+	state->field = V4L2_FIELD_ALTERNATE;
- 	state->chip_info = (struct adv7180_chip_info *)id->driver_data;
- 
- 	state->pwdn_gpio = devm_gpiod_get_optional(&client->dev, "powerdown",
+ 	SCIx_NR_REGTYPES,
+ };
 -- 
-2.18.0
+2.16.1
