@@ -1,65 +1,102 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:59828 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731819AbeGQPZo (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:12032 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727409AbeGaMWC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Jul 2018 11:25:44 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 4/4] mmc: renesas_sdhi: skip SCC error check when retuning
-Date: Tue, 17 Jul 2018 16:52:16 +0200
-Message-Id: <20180717145216.16840-5-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180717145216.16840-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180717145216.16840-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Tue, 31 Jul 2018 08:22:02 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v3 3/4] serial: sh-sci: Remove SCIx_RZ_SCIFA_REGTYPE
+Date: Tue, 31 Jul 2018 05:41:38 -0500
+Message-Id: <20180731104139.93291-4-chris.brandt@renesas.com>
+In-Reply-To: <20180731104139.93291-1-chris.brandt@renesas.com>
+References: <20180731104139.93291-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+There is no more need for SCIx_RZ_SCIFA_REGTYPE now that
+SCIx_SH4_SCIF_REGTYPE can provide the same register/address definitions.
 
-Checking for SCC error during retuning is unnecessary.
+Also, R7S9210 no longer needs a special compatible since the standard
+"renesas,scif" will work just fine.
 
-Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-[Niklas: fix small style issue]
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-
-* Changes since v2
-- Added check for HS400 as it's now merged.
-- Added tags from Wolfram.
+v2:
+* add Reviewed-by
 ---
- drivers/mmc/host/renesas_sdhi_core.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/tty/serial/sh-sci.c | 31 -------------------------------
+ include/linux/serial_sci.h  |  1 -
+ 2 files changed, 32 deletions(-)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 777e32b0e410e850..a21b347424f67c52 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -444,6 +444,14 @@ static bool renesas_sdhi_check_scc_error(struct tmio_mmc_host *host)
- {
- 	struct renesas_sdhi *priv = host_to_priv(host);
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index c29244f76057..54ea58bbe3c9 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -293,33 +293,6 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
+ 		.error_clear = SCIF_ERROR_CLEAR,
+ 	},
  
-+	if (!(host->mmc->ios.timing == MMC_TIMING_UHS_SDR104) &&
-+	    !(host->mmc->ios.timing == MMC_TIMING_MMC_HS200) &&
-+	    !(host->mmc->ios.timing == MMC_TIMING_MMC_HS400))
-+		return false;
-+
-+	if (host->mmc->doing_retune)
-+		return false;
-+
- 	/* Check SCC error */
- 	if (sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL) &
- 	    SH_MOBILE_SDHI_SCC_RVSCNTL_RVSEN &&
+-	/*
+-	 * The "SCIFA" that is in RZ/T and RZ/A2.
+-	 * It looks like a normal SCIF with FIFO data, but with a
+-	 * compressed address space. Also, the break out of interrupts
+-	 * are different: ERI/BRI, RXI, TXI, TEI, DRI.
+-	 */
+-	[SCIx_RZ_SCIFA_REGTYPE] = {
+-		.regs = {
+-			[SCSMR]		= { 0x00, 16 },
+-			[SCBRR]		= { 0x02,  8 },
+-			[SCSCR]		= { 0x04, 16 },
+-			[SCxTDR]	= { 0x06,  8 },
+-			[SCxSR]		= { 0x08, 16 },
+-			[SCxRDR]	= { 0x0A,  8 },
+-			[SCFCR]		= { 0x0C, 16 },
+-			[SCFDR]		= { 0x0E, 16 },
+-			[SCSPTR]	= { 0x10, 16 },
+-			[SCLSR]		= { 0x12, 16 },
+-		},
+-		.fifosize = 16,
+-		.overrun_reg = SCLSR,
+-		.overrun_mask = SCLSR_ORER,
+-		.sampling_rate_mask = SCI_SR(32),
+-		.error_mask = SCIF_DEFAULT_ERROR_MASK,
+-		.error_clear = SCIF_ERROR_CLEAR,
+-	},
+-
+ 	/*
+ 	 * Common SH-3 SCIF definitions.
+ 	 */
+@@ -3148,10 +3121,6 @@ static const struct of_device_id of_sci_match[] = {
+ 		.compatible = "renesas,scif-r7s72100",
+ 		.data = SCI_OF_DATA(PORT_SCIF, SCIx_SH2_SCIF_FIFODATA_REGTYPE),
+ 	},
+-	{
+-		.compatible = "renesas,scif-r7s9210",
+-		.data = SCI_OF_DATA(PORT_SCIF, SCIx_RZ_SCIFA_REGTYPE),
+-	},
+ 	/* Family-specific types */
+ 	{
+ 		.compatible = "renesas,rcar-gen1-scif",
+diff --git a/include/linux/serial_sci.h b/include/linux/serial_sci.h
+index 1c89611e0e06..c0e795d95477 100644
+--- a/include/linux/serial_sci.h
++++ b/include/linux/serial_sci.h
+@@ -36,7 +36,6 @@ enum {
+ 	SCIx_SH4_SCIF_FIFODATA_REGTYPE,
+ 	SCIx_SH7705_SCIF_REGTYPE,
+ 	SCIx_HSCIF_REGTYPE,
+-	SCIx_RZ_SCIFA_REGTYPE,
+ 
+ 	SCIx_NR_REGTYPES,
+ };
 -- 
-2.18.0
+2.16.1
