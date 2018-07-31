@@ -1,149 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:40412 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731600AbeGZQwq (ORCPT
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:39832 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729485AbeGaKWo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jul 2018 12:52:46 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 02/11] clk: renesas: r8a7795: Add OSC EXTAL predivider configuration
-Date: Thu, 26 Jul 2018 17:35:08 +0200
-Message-Id: <20180726153517.10020-3-geert+renesas@glider.be>
-In-Reply-To: <20180726153517.10020-1-geert+renesas@glider.be>
-References: <20180726153517.10020-1-geert+renesas@glider.be>
+        Tue, 31 Jul 2018 06:22:44 -0400
+MIME-Version: 1.0
+References: <20180725191546.3416-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180725191546.3416-1-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 31 Jul 2018 10:43:17 +0200
+Message-ID: <CAMuHMdXb62LQm8OFTYjv3UUzQkO+92of9T-Xp1X+56dfjwmP1g@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a77965: Add SATA pins, groups and functions
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen3 Hardware Manual Rev.0.52 documents the relation between the
-MD13 and MD14 mode pins, and the OSC EXTAL predivider, as used by the
-OSC and RINT RCLK clocks.  Hence augment the configuration structure
-with all documented predivider values.
+Hi Wolfram,
 
-According to R-Car Gen3 Hardware Manual Rev.0.53, the CPG_RCKCR
-register was removed in R-Car H3 ES2.0.  Change the OSC and RINT
-clock definitions to use the OSC EXTAL predivider instead, which is
-supported on all R-Car H3 SoC revisions.
+On Wed, Jul 25, 2018 at 9:15 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds SATA0 pin, group and function to the R8A77965 SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> [wsa: rebased to upstream base]
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Inspired by a patch in the BSP by Takeshi Kihara
-<takeshi.kihara.df@renesas.com>.
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
----
-v2:
-  - Add Reviewed-by,
-  - Rebase.
----
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 66 +++++++++++++-------------
- 1 file changed, 33 insertions(+), 33 deletions(-)
+> @@ -3664,6 +3685,11 @@ static const char * const du_groups[] = {
+>         "du_disp",
+>  };
+>
+> +static const char * const sata0_groups[] = {
+> +       "sata0_devslp_a",
+> +       "sata0_devslp_b",
+> +};
+> +
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index ccaea9e1849d9330..ca8cb0eed950161c 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -73,7 +73,7 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
- 	DEF_FIXED(".s3",        CLK_S3,            CLK_PLL1_DIV2,  6, 1),
- 	DEF_FIXED(".sdsrc",     CLK_SDSRC,         CLK_PLL1_DIV2,  2, 1),
- 
--	DEF_DIV6_RO(".r",       CLK_RINT,          CLK_EXTAL, CPG_RCKCR, 32),
-+	DEF_GEN3_OSC(".r",      CLK_RINT,          CLK_EXTAL,      32),
- 
- 	/* Core Clock Outputs */
- 	DEF_BASE("z",           R8A7795_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
-@@ -113,7 +113,7 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
- 	DEF_DIV6P1("mso",       R8A7795_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
- 	DEF_DIV6P1("hdmi",      R8A7795_CLK_HDMI,  CLK_PLL1_DIV4, 0x250),
- 
--	DEF_DIV6_RO("osc",      R8A7795_CLK_OSC,   CLK_EXTAL, CPG_RCKCR,  8),
-+	DEF_GEN3_OSC("osc",     R8A7795_CLK_OSC,   CLK_EXTAL,     8),
- 
- 	DEF_BASE("r",           R8A7795_CLK_R,     CLK_TYPE_GEN3_R, CLK_RINT),
- };
-@@ -284,25 +284,25 @@ static const unsigned int r8a7795_crit_mod_clks[] __initconst = {
-  */
- 
- /*
-- *   MD		EXTAL		PLL0	PLL1	PLL2	PLL3	PLL4
-+ *   MD		EXTAL		PLL0	PLL1	PLL2	PLL3	PLL4	OSC
-  * 14 13 19 17	(MHz)
-- *-------------------------------------------------------------------
-- * 0  0  0  0	16.66 x 1	x180	x192	x144	x192	x144
-- * 0  0  0  1	16.66 x 1	x180	x192	x144	x128	x144
-+ *-------------------------------------------------------------------------
-+ * 0  0  0  0	16.66 x 1	x180	x192	x144	x192	x144	/16
-+ * 0  0  0  1	16.66 x 1	x180	x192	x144	x128	x144	/16
-  * 0  0  1  0	Prohibited setting
-- * 0  0  1  1	16.66 x 1	x180	x192	x144	x192	x144
-- * 0  1  0  0	20    x 1	x150	x160	x120	x160	x120
-- * 0  1  0  1	20    x 1	x150	x160	x120	x106	x120
-+ * 0  0  1  1	16.66 x 1	x180	x192	x144	x192	x144	/16
-+ * 0  1  0  0	20    x 1	x150	x160	x120	x160	x120	/19
-+ * 0  1  0  1	20    x 1	x150	x160	x120	x106	x120	/19
-  * 0  1  1  0	Prohibited setting
-- * 0  1  1  1	20    x 1	x150	x160	x120	x160	x120
-- * 1  0  0  0	25    x 1	x120	x128	x96	x128	x96
-- * 1  0  0  1	25    x 1	x120	x128	x96	x84	x96
-+ * 0  1  1  1	20    x 1	x150	x160	x120	x160	x120	/19
-+ * 1  0  0  0	25    x 1	x120	x128	x96	x128	x96	/24
-+ * 1  0  0  1	25    x 1	x120	x128	x96	x84	x96	/24
-  * 1  0  1  0	Prohibited setting
-- * 1  0  1  1	25    x 1	x120	x128	x96	x128	x96
-- * 1  1  0  0	33.33 / 2	x180	x192	x144	x192	x144
-- * 1  1  0  1	33.33 / 2	x180	x192	x144	x128	x144
-+ * 1  0  1  1	25    x 1	x120	x128	x96	x128	x96	/24
-+ * 1  1  0  0	33.33 / 2	x180	x192	x144	x192	x144	/32
-+ * 1  1  0  1	33.33 / 2	x180	x192	x144	x128	x144	/32
-  * 1  1  1  0	Prohibited setting
-- * 1  1  1  1	33.33 / 2	x180	x192	x144	x192	x144
-+ * 1  1  1  1	33.33 / 2	x180	x192	x144	x192	x144	/32
-  */
- #define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 11) | \
- 					 (((md) & BIT(13)) >> 11) | \
-@@ -310,23 +310,23 @@ static const unsigned int r8a7795_crit_mod_clks[] __initconst = {
- 					 (((md) & BIT(17)) >> 17))
- 
- static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
--	/* EXTAL div	PLL1 mult/div	PLL3 mult/div */
--	{ 1,		192,	1,	192,	1,	},
--	{ 1,		192,	1,	128,	1,	},
--	{ 0, /* Prohibited setting */			},
--	{ 1,		192,	1,	192,	1,	},
--	{ 1,		160,	1,	160,	1,	},
--	{ 1,		160,	1,	106,	1,	},
--	{ 0, /* Prohibited setting */			},
--	{ 1,		160,	1,	160,	1,	},
--	{ 1,		128,	1,	128,	1,	},
--	{ 1,		128,	1,	84,	1,	},
--	{ 0, /* Prohibited setting */			},
--	{ 1,		128,	1,	128,	1,	},
--	{ 2,		192,	1,	192,	1,	},
--	{ 2,		192,	1,	128,	1,	},
--	{ 0, /* Prohibited setting */			},
--	{ 2,		192,	1,	192,	1,	},
-+	/* EXTAL div	PLL1 mult/div	PLL3 mult/div	OSC prediv */
-+	{ 1,		192,	1,	192,	1,	16,	},
-+	{ 1,		192,	1,	128,	1,	16,	},
-+	{ 0, /* Prohibited setting */				},
-+	{ 1,		192,	1,	192,	1,	16,	},
-+	{ 1,		160,	1,	160,	1,	19,	},
-+	{ 1,		160,	1,	106,	1,	19,	},
-+	{ 0, /* Prohibited setting */				},
-+	{ 1,		160,	1,	160,	1,	19,	},
-+	{ 1,		128,	1,	128,	1,	24,	},
-+	{ 1,		128,	1,	84,	1,	24,	},
-+	{ 0, /* Prohibited setting */				},
-+	{ 1,		128,	1,	128,	1,	24,	},
-+	{ 2,		192,	1,	192,	1,	32,	},
-+	{ 2,		192,	1,	128,	1,	32,	},
-+	{ 0, /* Prohibited setting */				},
-+	{ 2,		192,	1,	192,	1,	32,	},
- };
- 
- static const struct soc_device_attribute r8a7795es1[] __initconst = {
+Moving the above hunk to its correct destination while applying...
+
+>  static const char * const hscif0_groups[] = {
+>         "hscif0_data",
+>         "hscif0_clk",
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
