@@ -1,41 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:55766 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727243AbeGTKsG (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:28956 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727409AbeGaMV5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jul 2018 06:48:06 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] i2c: rcar: Add compatible support for r8a77990 (R-Car E3)
-Date: Fri, 20 Jul 2018 12:00:24 +0200
-Message-Id: <20180720100024.2314-1-wsa+renesas@sang-engineering.com>
+        Tue, 31 Jul 2018 08:21:57 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v3 0/4] serial: sh-sci: Clean up previous RZ/A2 support
+Date: Tue, 31 Jul 2018 05:41:35 -0500
+Message-Id: <20180731104139.93291-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+This patch series doesn't really provide much new functionality, but
+rather provides a cleaner solution for adding RZ/A2 support.
 
-This patch adds compatible string support for the Renesas R-Car E3
-(r8a77990) SoC.
+This series applies on top of tty-next
 
-Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- Documentation/devicetree/bindings/i2c/i2c-rcar.txt | 1 +
- 1 file changed, 1 insertion(+)
+v3:
+* removed a line of code that wasn't needed
+v2:
+* Incorporated feedback from Geert
+* Added Reviewed-by
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-rcar.txt b/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
-index 7ce8fae55537..7bb64846d6fd 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
-@@ -16,6 +16,7 @@ Required properties:
- 	"renesas,i2c-r8a77965" if the device is a part of a R8A77965 SoC.
- 	"renesas,i2c-r8a77970" if the device is a part of a R8A77970 SoC.
- 	"renesas,i2c-r8a77980" if the device is a part of a R8A77980 SoC.
-+	"renesas,i2c-r8a77990" if the device is a part of a R8A77990 SoC.
- 	"renesas,i2c-r8a77995" if the device is a part of a R8A77995 SoC.
- 	"renesas,rcar-gen1-i2c" for a generic R-Car Gen1 compatible device.
- 	"renesas,rcar-gen2-i2c" for a generic R-Car Gen2 or RZ/G1 compatible
+Chris Brandt (4):
+  serial: sh-sci: Improve interrupts description
+  serial: sh-sci: Allow for compressed SCIF address
+  serial: sh-sci: Remove SCIx_RZ_SCIFA_REGTYPE
+  serial: sh-sci: Improve support for separate TEI and DRI interrupts
+
+ .../bindings/serial/renesas,sci-serial.txt         |  16 ++-
+ drivers/tty/serial/sh-sci.c                        | 147 ++++++++-------------
+ include/linux/serial_sci.h                         |   1 -
+ 3 files changed, 70 insertions(+), 94 deletions(-)
+
 -- 
-2.11.0
+2.16.1
