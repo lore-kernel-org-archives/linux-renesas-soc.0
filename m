@@ -1,12 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:23128 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731119AbeGaMPd (ORCPT
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:37920 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731261AbeGaMGT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 31 Jul 2018 08:15:33 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Greg KH <gregkh@linuxfoundation.org>,
+        Tue, 31 Jul 2018 08:06:19 -0400
+MIME-Version: 1.0
+References: <20180730131716.75484-1-chris.brandt@renesas.com> <20180730131716.75484-5-chris.brandt@renesas.com>
+In-Reply-To: <20180730131716.75484-5-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 31 Jul 2018 12:26:26 +0200
+Message-ID: <CAMuHMdWfftK00Qndu3sxGgRnKcrU29Z_oAUK2e+kC25mu8bA3g@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] serial: sh-sci: Improve support for separate TEI
+ and DRI interrupts
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -15,25 +22,75 @@ CC: Greg KH <gregkh@linuxfoundation.org>,
         <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: RE: [PATCH v2 4/4] serial: sh-sci: Improve support for separate TEI
- and DRI interrupts
-Date: Tue, 31 Jul 2018 10:35:47 +0000
-Message-ID: <TY1PR01MB1562618259010A30E0E8F41D8A2E0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20180730131716.75484-1-chris.brandt@renesas.com>
- <20180730131716.75484-5-chris.brandt@renesas.com>
- <CAMuHMdWfftK00Qndu3sxGgRnKcrU29Z_oAUK2e+kC25mu8bA3g@mail.gmail.com>
-In-Reply-To: <CAMuHMdWfftK00Qndu3sxGgRnKcrU29Z_oAUK2e+kC25mu8bA3g@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCkFzIGFsd2F5cywgdGhhbmsgeW91IGZvciB5b3VyIHJldmlldy4NCg0KT24g
-VHVlc2RheSwgSnVseSAzMSwgMjAxOCwgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOg0KPiA+IEBA
-IC0xODQ1LDMxICsxODU4LDggQEAgc3RhdGljIGludCBzY2lfcmVxdWVzdF9pcnEoc3RydWN0IHNj
-aV9wb3J0ICpwb3J0KQ0KPiA+DQo+ID4gICAgICAgICAgICAgICAgIGRlc2MgPSBzY2lfaXJxX2Rl
-c2MgKyBpOw0KPiA+ICAgICAgICAgICAgICAgICBwb3J0LT5pcnFzdHJbal0gPSBOVUxMOw0KPiAN
-Cj4gVGhlIGFib3ZlIGxpbmUgY2FuIGJlIHJlbW92ZWQgYWdhaW4sIHRvby4NCg0KDQpHb29kIHBv
-aW50LiBUaGFuayB5b3UuDQoNCkkgd2lsbCB1cGRhdGUgaXQgbm93Lg0KDQpDaHJpcw0KDQo=
+Hi Chris,
+
+On Mon, Jul 30, 2018 at 3:17 PM Chris Brandt <chris.brandt@renesas.com> wrote:
+> Some SCIF versions mux error and break interrupts together and then provide
+> a separate interrupt ID for just TEI/DRI.
+>
+> Allow all 6 types of interrupts to be specified via platform data (or DT)
+> and for any signals that are muxed together (have the same interrupt
+> number) simply register one handler.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v2:
+> * Removed - 1 from loop
+> * Added Reviewed-by
+
+> --- a/drivers/tty/serial/sh-sci.c
+> +++ b/drivers/tty/serial/sh-sci.c
+
+> @@ -1845,31 +1858,8 @@ static int sci_request_irq(struct sci_port *port)
+>
+>                 desc = sci_irq_desc + i;
+>                 port->irqstr[j] = NULL;
+
+The above line can be removed again, too.
+
+> -               if (SCIx_TEIDRI_IRQ_EXISTS(port)) {
+> -                       /*
+> -                        * ERI and BRI are muxed, just register ERI and
+> -                        * ignore BRI.
+> -                        * TEI and DRI are muxed, but only DRI
+> -                        * is enabled, so use RXI handler
+> -                        */
+> -                       if (i == SCIx_ERI_IRQ)
+> -                               port->irqstr[j] = kasprintf(GFP_KERNEL,
+> -                                                           "%s:err + break",
+> -                                                           dev_name(up->dev));
+> -                       if (i == SCIx_BRI_IRQ)
+> -                               continue;
+> -                       if (i == SCIx_TEIDRI_IRQ) {
+> -                               port->irqstr[j] = kasprintf(GFP_KERNEL,
+> -                                                           "%s:tx end + rx ready",
+> -                                                           dev_name(up->dev));
+> -                               desc = sci_irq_desc + SCIx_RXI_IRQ;
+> -                       }
+> -               }
+> -
+> -               if (!port->irqstr[j])
+> -                       port->irqstr[j] = kasprintf(GFP_KERNEL, "%s:%s",
+> -                                                   dev_name(up->dev),
+> -                                                   desc->desc);
+> +               port->irqstr[j] = kasprintf(GFP_KERNEL, "%s:%s",
+> +                                           dev_name(up->dev), desc->desc);
+>                 if (!port->irqstr[j]) {
+>                         ret = -ENOMEM;
+>                         goto out_nomem;
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
