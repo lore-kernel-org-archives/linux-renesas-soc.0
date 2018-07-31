@@ -1,49 +1,55 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 0/2] mmc: tmio: rename variants to have consistent prefix
-Date: Thu, 26 Jul 2018 12:28:54 +0900
-Message-Id: <1532575736-20138-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:60726 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732404AbeGaRt6 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 31 Jul 2018 13:49:58 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 1/4] ARM: dts: sh73a0: Rename twd clock to periph clock
+Date: Tue, 31 Jul 2018 18:08:52 +0200
+Message-Id: <20180731160855.6758-2-geert+renesas@glider.be>
+In-Reply-To: <20180731160855.6758-1-geert+renesas@glider.be>
+References: <20180731160855.6758-1-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+The "TWD" clock is actually the Cortex-A9 MPCore "PERIPHCLK" clock,
+which not only clocks the private timers and watchdogs (TWD), but also
+the interrupt controller and global timer.
 
-Based on the former discussion:
-https://www.spinics.net/lists/linux-mmc/msg46952.html
+Hence rename it from "twd" to "periph".
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/sh73a0.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-Masahiro Yamada (2):
-  mmc: tmio: rename files and CONFIG options to have the same prefix
-  dt-binding: mmc: rename tmio_mmc.txt to renesas_sdhi.txt
-
- .../mmc/{tmio_mmc.txt => renesas_sdhi.txt}         |   11 +-
- MAINTAINERS                                        |    1 -
- arch/arm/configs/eseries_pxa_defconfig             |    2 +-
- arch/arm/configs/pxa_defconfig                     |    2 +-
- drivers/mmc/host/Kconfig                           |   25 +-
- drivers/mmc/host/Makefile                          |    8 +-
- drivers/mmc/host/tmio_mmc.c                        | 1415 ++++++++++++++++++--
- drivers/mmc/host/tmio_mmc_core.c                   | 1394 -------------------
- drivers/mmc/host/tmio_mmc_original.c               |  167 +++
- .../host/{renesas_sdhi_core.c => tmio_mmc_sdhi.c}  |    2 +-
- .../mmc/host/{renesas_sdhi.h => tmio_mmc_sdhi.h}   |    0
- ...ternal_dmac.c => tmio_mmc_sdhi_internal_dmac.c} |    2 +-
- ...as_sdhi_sys_dmac.c => tmio_mmc_sdhi_sys_dmac.c} |    2 +-
- 13 files changed, 1519 insertions(+), 1512 deletions(-)
- rename Documentation/devicetree/bindings/mmc/{tmio_mmc.txt => renesas_sdhi.txt} (86%)
- delete mode 100644 drivers/mmc/host/tmio_mmc_core.c
- create mode 100644 drivers/mmc/host/tmio_mmc_original.c
- rename drivers/mmc/host/{renesas_sdhi_core.c => tmio_mmc_sdhi.c} (99%)
- rename drivers/mmc/host/{renesas_sdhi.h => tmio_mmc_sdhi.h} (100%)
- rename drivers/mmc/host/{renesas_sdhi_internal_dmac.c => tmio_mmc_sdhi_internal_dmac.c} (99%)
- rename drivers/mmc/host/{renesas_sdhi_sys_dmac.c => tmio_mmc_sdhi_sys_dmac.c} (99%)
-
+diff --git a/arch/arm/boot/dts/sh73a0.dtsi b/arch/arm/boot/dts/sh73a0.dtsi
+index e8f0a07c45645737..b495a9d2f1118006 100644
+--- a/arch/arm/boot/dts/sh73a0.dtsi
++++ b/arch/arm/boot/dts/sh73a0.dtsi
+@@ -43,7 +43,7 @@
+ 		compatible = "arm,cortex-a9-twd-timer";
+ 		reg = <0xf0000600 0x20>;
+ 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_EDGE_RISING)>;
+-		clocks = <&twd_clk>;
++		clocks = <&periph_clk>;
+ 	};
+ 
+ 	gic: interrupt-controller@f0001000 {
+@@ -812,7 +812,7 @@
+ 			clock-div = <13>;
+ 			clock-mult = <1>;
+ 		};
+-		twd_clk: twd {
++		periph_clk: periph {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks SH73A0_CLK_Z>;
+ 			#clock-cells = <0>;
 -- 
-2.7.4
-
+2.17.1
