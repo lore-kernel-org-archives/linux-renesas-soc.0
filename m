@@ -1,85 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53389 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387854AbeGWNH1 (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:16897 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731366AbeGaMG3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Jul 2018 09:07:27 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Tue, 31 Jul 2018 08:06:29 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/8] ARM: dts: porter: Add missing PMIC nodes
-Date: Mon, 23 Jul 2018 14:06:19 +0200
-Message-Id: <5058a96cb7e8dca97629c48084537fe5def8344f.1532345886.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1532345886.git.horms+renesas@verge.net.au>
-References: <cover.1532345886.git.horms+renesas@verge.net.au>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: RE: [PATCH 4/4] ARM: dts: iwg23s-sbc: Add pinctl support for EtherAVB
+Date: Tue, 31 Jul 2018 10:26:44 +0000
+Message-ID: <OSBPR01MB2103464D423AFAA15A1BF0FBB82E0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <1532685089-35645-1-git-send-email-biju.das@bp.renesas.com>
+ <1532685089-35645-5-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdWmObVo=UNRkmdAKhmU+aSafi61ztc1digUSWY_gvrvYA@mail.gmail.com>
+In-Reply-To: <CAMuHMdWmObVo=UNRkmdAKhmU+aSafi61ztc1digUSWY_gvrvYA@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Marek Vasut <marek.vasut@gmail.com>
-
-Add PMIC nodes to Porter and connect CPU DVFS supply. There is
-one DA9063L and one DA9210 on Porter, the only difference from
-the other boards is that DA9063L is at I2C address 0x5a rather
-than 0x58 .
-
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7791-porter.dts | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-index a01101b49d99..5f77d73d7462 100644
---- a/arch/arm/boot/dts/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -375,10 +375,43 @@
- 	clock-frequency = <400000>;
- };
- 
-+&i2c6 {
-+	status = "okay";
-+	clock-frequency = <100000>;
-+
-+	pmic@5a {
-+		compatible = "dlg,da9063l";
-+		reg = <0x5a>;
-+		interrupt-parent = <&irqc0>;
-+		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-controller;
-+
-+		wdt {
-+			compatible = "dlg,da9063-watchdog";
-+		};
-+	};
-+
-+	vdd_dvfs: regulator@68 {
-+		compatible = "dlg,da9210";
-+		reg = <0x68>;
-+		interrupt-parent = <&irqc0>;
-+		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+
-+		regulator-min-microvolt = <1000000>;
-+		regulator-max-microvolt = <1000000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+};
-+
- &sata0 {
- 	status = "okay";
- };
- 
-+&cpu0 {
-+	cpu0-supply = <&vdd_dvfs>;
-+};
-+
- /* composite video input */
- &vin0 {
- 	status = "okay";
--- 
-2.11.0
+SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrLg0KDQogU3ViamVjdDogUmU6IFtQ
+QVRDSCA0LzRdIEFSTTogZHRzOiBpd2cyM3Mtc2JjOiBBZGQgcGluY3RsIHN1cHBvcnQgZm9yDQo+
+ID4gICZwZmMgew0KPiA+ICsgICAgICAgYXZiX3BpbnM6IGF2YiB7DQo+ID4gKyAgICAgICAgICAg
+ICAgIGdyb3VwcyA9ICJhdmJfbWRpbyIsICJhdmJfZ21paV90eF9yeCI7DQo+DQo+IGF2Yl9jcnMg
+aXMgd2lyZWQsIGJ1dCBkZWVtZWQgdW51c2VkLCByaWdodD8NCg0KWWVzLCBDUlMgaXMgbm90IHVz
+ZWQgaW4gZnVsbCBkdXBsZXggbW9kZS4NCg0KPiBJbiB0aGF0IGNhc2U6DQo+IFJldmlld2VkLWJ5
+OiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPg0KPg0KPiA+ICsg
+ICAgICAgICAgICAgICBmdW5jdGlvbiA9ICJhdmIiOw0KPiA+ICsgICAgICAgfTsNCj4gPiArDQo+
+ID4gICAgICAgICBzY2lmMV9waW5zOiBzY2lmMSB7DQo+ID4gICAgICAgICAgICAgICAgIGdyb3Vw
+cyA9ICJzY2lmMV9kYXRhX2IiOw0KPiA+ICAgICAgICAgICAgICAgICBmdW5jdGlvbiA9ICJzY2lm
+MSI7DQo+DQo+IEdye29ldGplLGVldGluZ31zLA0KPg0KPiAgICAgICAgICAgICAgICAgICAgICAg
+ICBHZWVydA0KPg0KDQoNCg0KUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgTHRkLCBEdWtlcyBN
+ZWFkb3csIE1pbGxib2FyZCBSb2FkLCBCb3VybmUgRW5kLCBCdWNraW5naGFtc2hpcmUsIFNMOCA1
+RkgsIFVLLiBSZWdpc3RlcmVkIGluIEVuZ2xhbmQgJiBXYWxlcyB1bmRlciBSZWdpc3RlcmVkIE5v
+LiAwNDU4NjcwOS4NCg==
