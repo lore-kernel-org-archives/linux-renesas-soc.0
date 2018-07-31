@@ -1,50 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:19238 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731176AbeGTODj (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:38820 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732281AbeGaRhF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Jul 2018 10:03:39 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH] ARM: dts: r8a77470: Add PFC support
-Date: Fri, 20 Jul 2018 14:09:46 +0100
-Message-Id: <1532092186-3313-1-git-send-email-biju.das@bp.renesas.com>
+        Tue, 31 Jul 2018 13:37:05 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] ARM: shmobile: r8a7779: Remove unused includes
+Date: Tue, 31 Jul 2018 17:56:02 +0200
+Message-Id: <20180731155602.5497-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the generic R8A77470 part of the PFC device node.
+Presumable unused since commit c99cd90d98a98aa1 ("ARM: shmobile:
+r8a7779: Remove legacy SoC code").
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Commit 73dacc3403436fc2 ("pinctrl: sh-pfc: Add r8a77470 PFC support") 
-is in Linus' tree
----
- arch/arm/boot/dts/r8a77470.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/mach-shmobile/setup-r8a7779.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index 9b218c3..af65fa0 100644
---- a/arch/arm/boot/dts/r8a77470.dtsi
-+++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -61,6 +61,11 @@
- 		#size-cells = <2>;
- 		ranges;
+diff --git a/arch/arm/mach-shmobile/setup-r8a7779.c b/arch/arm/mach-shmobile/setup-r8a7779.c
+index d589326099e01f6d..b13ec9088ce5354c 100644
+--- a/arch/arm/mach-shmobile/setup-r8a7779.c
++++ b/arch/arm/mach-shmobile/setup-r8a7779.c
+@@ -7,9 +7,7 @@
+  * Copyright (C) 2013  Cogent Embedded, Inc.
+  */
+ #include <linux/init.h>
+-#include <linux/irq.h>
+ #include <linux/irqchip.h>
+-#include <linux/irqchip/arm-gic.h>
  
-+		pfc: pin-controller@e6060000 {
-+			compatible = "renesas,pfc-r8a77470";
-+			reg = <0 0xe6060000 0 0x118>;
-+		};
-+
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a77470-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x1000>;
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
 -- 
-2.7.4
+2.17.1
