@@ -1,55 +1,84 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        devicetree@vger.kernel.org
-Subject: [PATCH 1/2] dt: snps,designware-i2c: Add clock bindings documentation
-Date: Mon, 16 Jul 2018 09:59:12 +0100
-Message-Id: <1531731553-22979-2-git-send-email-phil.edworthy@renesas.com>
-In-Reply-To: <1531731553-22979-1-git-send-email-phil.edworthy@renesas.com>
-References: <1531731553-22979-1-git-send-email-phil.edworthy@renesas.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:45181 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732269AbeGaRGY (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 31 Jul 2018 13:06:24 -0400
+Received: by mail-vk0-f65.google.com with SMTP id b78-v6so7705063vka.12
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 31 Jul 2018 08:25:34 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180725152244.fykhouzwpr5mmlpy@verge.net.au>
+In-Reply-To: <20180725152244.fykhouzwpr5mmlpy@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 31 Jul 2018 17:25:20 +0200
+Message-ID: <CAMuHMdUB5Nzab1cc+_i2akhebgpcaD=ivFLViUjE7k+4T0ez3g@mail.gmail.com>
+Subject: Re: [LTSI-dev] [GIT/RFC PULL LTSI-4.14] Renesas SoCs and Drivers to v4.18-rc6
+To: Simon Horman <horms@verge.net.au>
+Cc: ltsi-dev@lists.linuxfoundation.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The driver requires an undocumented clock property, so detail it.
-Add documentation for a separate bus clock.
+Hi Simon,
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
- Documentation/devicetree/bindings/i2c/i2c-designware.txt | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+On Wed, Jul 25, 2018 at 5:23 PM Simon Horman <horms@verge.net.au> wrote:
+> ** This series is for informational purposes only! **
+>
+> This series is comprised of backports to v4.14.57 of the components used by
+> Renesas SoCs to their standard as of v4.18-rc6, selected dependencies for
+> those backports and selected post-v4.18-rc6 fixes as detailed in the git
+> changelog text below.
+>
+> This is intended as dry-run of backports components used by
+> Renesas SoCs from v4.18 to v4.14.57.
+>
+> There are 1601 patches.
+>
+> As this work is for informational purposes I do not expect these patches
+> to be imported to quilt by Greg at this time. However, if you would like to
+> do so and rebasing would help please feel free to ask me to do so.
+>
+> I do plan to post an updated version of this work once the
+> LTSI-4.14 merge window opens. As part of that work I intend
+> to address the following known problems:
+>
+> * R-Car H1 / Marzen does not boot to user-space due to an upstream
+>   regression in the R-Car Thermal driver which I have posted a fix for.
+>
+>   "[PATCH] thermal: rcar_thermal: avoid NULL dereference in absense of IRQ
+>   resources"
+>
+> * "xhci: Fix use-after-free in xhci_free_virt_device" is already
+>   present in v4.14.57 and should be dropped from these backports.
+>
+> I have performed build testing of this backports on a wide range of
+> backports. And boot-to-userspace testing on a wide range of boards
+> based on Renesas SoCs. The only regression that testing highlighted
+> is that on Marzen as highlighted above.
+>
+>
+> The following changes since commit ecc160ece609498c946e73710e5c7c54c62b966a:
+>
+>   Linux 4.14.57 (2018-07-22 14:28:52 +0200)
+>
+> are available in the git repository at:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-backport.git backport/v4.14.57/snapshot-to-v4.18-rc6+fixes-flattened
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-designware.txt b/Documentation/devicetree/bindings/i2c/i2c-designware.txt
-index fbb0a6d..e9f4387 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-designware.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-designware.txt
-@@ -1,16 +1,21 @@
- * Synopsys DesignWare I2C
- 
- Required properties :
--
-  - compatible : should be "snps,designware-i2c"
-  - reg : Offset and length of the register set for the device
-  - interrupts : <IRQ> where IRQ is the interrupt number.
-+ - clocks : phandles for the clocks, see the description of clock-names below.
-+   The phandle for the "ic_clk" clock is required. The phandle for the "bus"
-+   clock is optional. If a single clock is specified but no clock-name, it is
-+   the "ic_clk" clock. If both clocks are listed, the "ic_clk" must be first.
- 
- Recommended properties :
--
-  - clock-frequency : desired I2C bus clock frequency in Hz.
- 
- Optional properties :
-+ - clock-names : Contains the names of the clocks:
-+    "ic_clk", for the core clock used to generate the external I2C clock.
-+    "bus", the bus clock, sometimes described as pclk, for register accesses.
-  - i2c-sda-hold-time-ns : should contain the SDA hold time in nanoseconds.
-    This option is only supported in hardware blocks version 1.11a or newer.
- 
+Thank you!
+
+I subjected this to the same testing I do for each renesas-drivers release.
+I have detected no regressions from v4.14.48, only increased functionality.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
