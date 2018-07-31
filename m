@@ -1,43 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:54178 "EHLO
+Received: from perceval.ideasonboard.com ([213.167.242.64]:49956 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729510AbeGZOPO (ORCPT
+        with ESMTP id S1732442AbeGaRhV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Jul 2018 10:15:14 -0400
+        Tue, 31 Jul 2018 13:37:21 -0400
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Simon Horman <horms@verge.net.au>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v5 0/2] R-Car DU: Convert DT to new DU and LVDS bindings
-Date: Thu, 26 Jul 2018 15:59:05 +0300
-Message-ID: <3087057.Oh1Kqk468t@avalon>
-In-Reply-To: <20180606084421.p4pce6isaplbr6rz@verge.net.au>
-References: <20180605095106.25586-1-laurent.pinchart+renesas@ideasonboard.com> <20180606084421.p4pce6isaplbr6rz@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Simon Horman <horms@verge.net.au>,
+        ltsi-dev@lists.linuxfoundation.org,
+        Hisao Munakata <hisao.munakata.vt@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [GIT/RFC PULL LTSI-4.14] Renesas SoCs and Drivers to v4.17
+Date: Tue, 31 Jul 2018 18:57:02 +0300
+Message-ID: <1706773.R0p0MegQh4@avalon>
+In-Reply-To: <CAMuHMdU=ydBv5RGTtQNSZZLs-zmGK1J__--e7ci+VKqD4QmEFQ@mail.gmail.com>
+References: <20180614113550.g7fwz3klcwvxfdlv@verge.net.au> <1616083.qxe8r8H64S@avalon> <CAMuHMdU=ydBv5RGTtQNSZZLs-zmGK1J__--e7ci+VKqD4QmEFQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+Hi Geert,
 
-On Wednesday, 6 June 2018 11:44:22 EEST Simon Horman wrote:
-> On Tue, Jun 05, 2018 at 12:51:04PM +0300, Laurent Pinchart wrote:
-> > Hello,
+On Tuesday, 31 July 2018 16:48:48 EEST Geert Uytterhoeven wrote:
+> On Wed, Jul 11, 2018 at 11:16 PM Laurent Pinchart wrote:
+> > On Thursday, 5 July 2018 13:55:00 EEST Geert Uytterhoeven wrote:
+> >> On Thu, Jun 14, 2018 at 1:36 PM Simon Horman <horms@verge.net.au> wrote:
+> >>> This series is comprised of backports to v4.14 of the following
 > > 
-> > This small patch series contains the last two remaining patches from
-> > "[PATCH v4 00/16] R-Car DU: Convert LVDS code to bridge driver". Apart
-> > from the individual SoC patches being squashed together as requested by
-> > the ARM-SoC maintainers there's nothing special here.
+> >>> components from their standard as of v4.16 to that of v4.17:
+> > [snip]
+> > 
+> >> I subjected it to the same testing I do for each renesas-drivers
+> >> release.
+> > 
+> >> Regressions from v4.14.48:
+> > [snip]
+> > 
+> >>   - Koelsch, Salvator-X (R-Car M3-W), Salvator-XS (R-Car H3 ES2.0):
+> >>         +rcar-du feb00000.display: no connector for encoder
+> >> 
+> >> /soc/lvds@feb90000, skipping
+> >> 
+> >>     Laurent: do you know what's missing?
+> > 
+> > That message is printed when no connector node is linked in DT through OF
+> > graph to the encoder DT node output port. That's expected in this case as
+> > we have an LVDS encoder, but not connected panel. However,
+> > rcar_du_encoders_init_one() should return before printing that message due
+> > to
+> > 
+> >         if (!of_device_is_available(entity)) {
+> >                 dev_dbg(rcdu->dev,
+> >                         "connected entity %pOF is disabled, skipping\n",
+> >                         entity);
+> >                 return -ENODEV;
+> >         }
+> > 
+> > as the LVDS encoder nodes in DT should be disabled.
 > 
-> Hi,
+> The LVDS encoder nodes were enabled in the following commits:
+>   - e5c3f4707f3956a2 ("ARM: dts: r8a7791: Convert to new LVDS DT bindings"),
+> for Koelsch and Porter, but none of them has a connected panel?
+>   - 15a1ff30d8f9bd83 ("ARM: dts: r8a7790: Convert to new LVDS DT bindings"),
+> for both LVDS instances on Lager, but the second one doesn't have a panel
+> connected?
 > 
-> This looks fine to me but I will wait to see if there are other reviews
-> before applying.
-> 
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> edb0c3affe5214a2 ("ARM: dts: r8a7793: Convert to new LVDS DT bindings")
+> for Gose did it right, though.
 
-No other review, is it time to apply it ? Too late for v4.19 I assume ? :-(
+You're right, disabling the LVDS encoders there would make sense. I'll submit 
+a patch to fix that.
 
 -- 
 Regards,
