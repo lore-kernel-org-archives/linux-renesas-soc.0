@@ -1,87 +1,61 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:57130 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732280AbeGaOdj (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 31 Jul 2018 10:33:39 -0400
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1fkU9V-0008Ft-Mp
-        for linux-renesas-soc@vger.kernel.org; Tue, 31 Jul 2018 14:53:25 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1fkU9V-0003Sw-KR
-        for linux-renesas-soc@vger.kernel.org; Tue, 31 Jul 2018 14:53:25 +0200
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2018-07-31-v4.18-rc7
-Date: Tue, 31 Jul 2018 14:53:25 +0200
-Message-Id: <20180731125325.13280-1-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 0/4] ARM: shmobile: Enable ARM_GLOBAL_TIMER on Cortex-A9 MPCore
+Date: Tue, 31 Jul 2018 18:08:51 +0200
+Message-Id: <20180731160855.6758-1-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I have pushed renesas-drivers-2018-07-31-v4.18-rc7 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+	Hi all,
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging (a) the for-next branches
-of various subsystem trees and (b) branches with driver code submitted
-or planned for submission to maintainers into the development branch of
-Simon Horman's renesas.git tree.
+SH-Mobile AG5 and R-Car H1 SoCs are based on the Cortex-A9 MPCore, which
+includes an ARM global timer.
 
-Today's version is based on renesas-devel-20180726-v4.18-rc6.
+Enable use of the global timer on these SoCs for scheduling and delay
+loops, with the following impact:
+  - Scheduler accuracy is increased from 10 ms to a few ns,
+  - Calls to shmobile_init_delay() to preset loops-per-jiffies can be
+    removed.
+    Note that when using an old DTB lacking the global timer, the kernel
+    will still work, but the delay loop will need to be calibrated
+    during boot.
+  - This also seems to get rid of lockdep warnings related to the sh_cmt
+    driver.
 
-Included branches with driver code:
-  - clk-renesas
-  - sh-pfc
-  - topic/serial-sh-sci-rz-a2-cleanup-v2
-  - git://linuxtv.org/pinchartl/media.git#drm-du-iommu-v1-20171115
-  - git://git.ragnatech.se/linux#for-renesas-drivers
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#tags/vsp1/du/interlaced/v5
+We still need shmobile_init_delay() to setup loops-per-jiffies for other
+SoCs lacking an architectured or global timer:
+  - emev2: Cortex-A9 (MPCore version and global timer not documented),
+  - r7s72100: single-core Cortex-A9 MPCore r3p0 (global timer not
+    documented),
+  - r7s9210: single-core Cortex-A9 MPCore r4p1 (global timer not
+    documented),
+  - r8a7740: single-core Cortex-A9 r2p4,
+  - r8a7778: single-core Cortex-A9 r2p2-00rel0.
 
-Included fixes:
-  - [LOCAL] arm64: defconfig: Update renesas_defconfig
+This has been tested on KZM-A9-GT (SH-Mobile AG5) and Marzen (R-Car H1).
 
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://git.freedesktop.org/git/drm/drm.git#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/media_tree.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
-  - git://git.infradead.org/users/vkoul/slave-dma.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
-  - git://github.com/bzolnier/linux.git#fbdev-for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+Thanks for your comments!
+
+Geert Uytterhoeven (4):
+  ARM: dts: sh73a0: Rename twd clock to periph clock
+  ARM: dts: sh73a0: Add device node for ARM global timer
+  ARM: dts: r8a7779: Add device node for ARM global timer
+  [WIP] ARM: shmobile: Enable ARM_GLOBAL_TIMER on Cortex-A9 MPCore SoCs
+
+ arch/arm/boot/dts/r8a7779.dtsi         |  8 ++++++++
+ arch/arm/boot/dts/sh73a0.dtsi          | 11 +++++++++--
+ arch/arm/mach-shmobile/Kconfig         |  2 ++
+ arch/arm/mach-shmobile/setup-r8a7779.c |  1 -
+ arch/arm/mach-shmobile/setup-sh73a0.c  |  1 -
+ 5 files changed, 19 insertions(+), 4 deletions(-)
+
+-- 
+2.17.1
 
 Gr{oetje,eeting}s,
 
