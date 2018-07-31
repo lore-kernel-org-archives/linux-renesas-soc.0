@@ -1,78 +1,32 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
+Date: Tue, 31 Jul 2018 16:14:04 -0600
+From: Rob Herring <robh@kernel.org>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 3/5] soc: renesas: rcar-rst: Add support for RZ/G2M
-Date: Mon, 30 Jul 2018 08:48:09 +0100
-Message-Id: <1532936891-25034-4-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1532936891-25034-1-git-send-email-biju.das@bp.renesas.com>
-References: <1532936891-25034-1-git-send-email-biju.das@bp.renesas.com>
+Subject: Re: [PATCH 1/3] dt-bindings: arm: Document RZ/G2M SoC DT bindings
+Message-ID: <20180731221404.GA21626@rob-hp-laptop>
+References: <1532447238-13486-1-git-send-email-biju.das@bp.renesas.com>
+ <1532447238-13486-2-git-send-email-biju.das@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1532447238-13486-2-git-send-email-biju.das@bp.renesas.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
----
- Documentation/devicetree/bindings/reset/renesas,rst.txt | 1 +
- drivers/soc/renesas/Kconfig                             | 6 +++---
- drivers/soc/renesas/rcar-rst.c                          | 4 +++-
- 3 files changed, 7 insertions(+), 4 deletions(-)
+On Tue, Jul 24, 2018 at 04:47:16PM +0100, Biju Das wrote:
+> Add device tree bindings documentation for Renesas RZ/G2M (r8a774a1) SoC.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+> ---
+>  Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+>  1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-index 67e83b0..e4fe0ab 100644
---- a/Documentation/devicetree/bindings/reset/renesas,rst.txt
-+++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-@@ -18,6 +18,7 @@ Required properties:
- 		  - "renesas,r8a7743-rst" (RZ/G1M)
- 		  - "renesas,r8a7745-rst" (RZ/G1E)
- 		  - "renesas,r8a77470-rst" (RZ/G1C)
-+		  - "renesas,r8a774a1-rst" (RZ/G2M)
- 		  - "renesas,r8a7778-reset-wdt" (R-Car M1A)
- 		  - "renesas,r8a7779-reset-wdt" (R-Car H1)
- 		  - "renesas,r8a7790-rst" (R-Car H2)
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index d769330..00d4c9d 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -3,9 +3,9 @@ config SOC_RENESAS
- 	default y if ARCH_RENESAS
- 	select SOC_BUS
- 	select RST_RCAR if ARCH_RCAR_GEN1 || ARCH_RCAR_GEN2 || \
--			   ARCH_R8A7795 || ARCH_R8A7796 || ARCH_R8A77965 || \
--			   ARCH_R8A77970 || ARCH_R8A77980 || ARCH_R8A77990 || \
--			   ARCH_R8A77995
-+			   ARCH_R8A774A1 || ARCH_R8A7795 || ARCH_R8A7796 || \
-+			   ARCH_R8A77965 || ARCH_R8A77970 || ARCH_R8A77980 || \
-+			   ARCH_R8A77990 || ARCH_R8A77995
- 	select SYSC_R8A7743 if ARCH_R8A7743
- 	select SYSC_R8A7745 if ARCH_R8A7745
- 	select SYSC_R8A77470 if ARCH_R8A77470
-diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
-index d9c1034..a447873 100644
---- a/drivers/soc/renesas/rcar-rst.c
-+++ b/drivers/soc/renesas/rcar-rst.c
-@@ -41,10 +41,12 @@ static const struct rst_config rcar_rst_gen3 __initconst = {
- };
- 
- static const struct of_device_id rcar_rst_matches[] __initconst = {
--	/* RZ/G is handled like R-Car Gen2 */
-+	/* RZ/G1 is handled like R-Car Gen2 */
- 	{ .compatible = "renesas,r8a7743-rst", .data = &rcar_rst_gen2 },
- 	{ .compatible = "renesas,r8a7745-rst", .data = &rcar_rst_gen2 },
- 	{ .compatible = "renesas,r8a77470-rst", .data = &rcar_rst_gen2 },
-+	/* RZ/G2 is handled like R-Car Gen3 */
-+	{ .compatible = "renesas,r8a774a1-rst", .data = &rcar_rst_gen3 },
- 	/* R-Car Gen1 */
- 	{ .compatible = "renesas,r8a7778-reset-wdt", .data = &rcar_rst_gen1 },
- 	{ .compatible = "renesas,r8a7779-reset-wdt", .data = &rcar_rst_gen1 },
--- 
-2.7.4
-
+Reviewed-by: Rob Herring <robh@kernel.org>
