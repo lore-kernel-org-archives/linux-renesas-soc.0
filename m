@@ -1,109 +1,111 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:55355 "EHLO
+Received: from relmlor3.renesas.com ([210.160.252.173]:59672 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727204AbeH2R1O (ORCPT
+        by vger.kernel.org with ESMTP id S2388673AbeHALQy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Aug 2018 13:27:14 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Wed, 1 Aug 2018 07:16:54 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 1/2] clocksource/drivers/ostm: Delay driver registration
-Date: Wed, 29 Aug 2018 08:29:53 -0500
-Message-Id: <20180829132954.64862-2-chris.brandt@renesas.com>
-In-Reply-To: <20180829132954.64862-1-chris.brandt@renesas.com>
-References: <20180829132954.64862-1-chris.brandt@renesas.com>
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: RE: [PATCH 5/5] clk: renesas: cpg-mssr: Add r8a774a1 support
+Date: Wed, 1 Aug 2018 09:31:57 +0000
+Message-ID: <OSBPR01MB2103CD9033D38A005C40E3E9B82D0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <1532936891-25034-1-git-send-email-biju.das@bp.renesas.com>
+ <1532936891-25034-6-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdV1vQkBg+d8HmNDVPZOBiH-tmRbmE+ZcWcnqMaP1zgWhg@mail.gmail.com>
+In-Reply-To: <CAMuHMdV1vQkBg+d8HmNDVPZOBiH-tmRbmE+ZcWcnqMaP1zgWhg@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The newer RZ/A clock control driver no longer registers all its clocks
-using DT, therefore the clocks required by this driver are no longer
-present at the beginning of boot.
-
-Because of this, TIMER_OF_DECLARE can no longer be used because this
-causes the driver to get probed too early before the parent clock exists,
-and the probe will fail with "ostm: Failed to get clock".
-
-So, we'll change this driver to register/probe during subsys_initcall which
-is after the appropriate clocks have been registered.
-
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- drivers/clocksource/renesas-ostm.c | 35 +++++++++++++++++++++++++++++++++--
- 1 file changed, 33 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clocksource/renesas-ostm.c b/drivers/clocksource/renesas-ostm.c
-index 6cffd7c6001a..fc5e4ac294b8 100644
---- a/drivers/clocksource/renesas-ostm.c
-+++ b/drivers/clocksource/renesas-ostm.c
-@@ -22,6 +22,7 @@
- #include <linux/interrupt.h>
- #include <linux/sched_clock.h>
- #include <linux/slab.h>
-+#include <linux/platform_device.h>
- 
- /*
-  * The OSTM contains independent channels.
-@@ -101,8 +102,12 @@ static u64 notrace ostm_read_sched_clock(void)
- static void __init ostm_init_sched_clock(struct ostm_device *ostm,
- 			unsigned long rate)
- {
-+	unsigned long flags;
-+
- 	system_clock = ostm->base + OSTM_CNT;
-+	local_irq_save(flags);
- 	sched_clock_register(ostm_read_sched_clock, 32, rate);
-+	local_irq_restore(flags);
- }
- 
- static int ostm_clock_event_next(unsigned long delta,
-@@ -192,9 +197,10 @@ static int __init ostm_init_clkevt(struct ostm_device *ostm, int irq,
- 	return 0;
- }
- 
--static int __init ostm_init(struct device_node *np)
-+static int __init ostm_probe(struct platform_device *pdev)
- {
- 	struct ostm_device *ostm;
-+	struct device_node *np = pdev->dev.of_node;
- 	int ret = -EFAULT;
- 	struct clk *ostm_clk = NULL;
- 	int irq;
-@@ -262,4 +268,29 @@ static int __init ostm_init(struct device_node *np)
- 	return 0;
- }
- 
--TIMER_OF_DECLARE(ostm, "renesas,ostm", ostm_init);
-+static const struct of_device_id ostm_of_table[] = {
-+	{
-+		.compatible = "renesas,ostm",
-+	},
-+	{ /* sentinel */ }
-+};
-+
-+static int ostm_remove(struct platform_device *pdev)
-+{
-+	return -EBUSY; /* cannot unregister clockevent and clocksource */
-+}
-+
-+static struct platform_driver ostm_device_driver = {
-+	.remove		= ostm_remove,
-+	.driver		= {
-+		.name	= "ostm",
-+		.of_match_table = of_match_ptr(ostm_of_table),
-+	},
-+};
-+
-+static int __init ostm_init(void)
-+{
-+	return platform_driver_probe(&ostm_device_driver, ostm_probe);
-+}
-+
-+subsys_initcall(ostm_init);
--- 
-2.16.1
+SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrLg0KDQo+IFN1YmplY3Q6IFJlOiBb
+UEFUQ0ggNS81XSBjbGs6IHJlbmVzYXM6IGNwZy1tc3NyOiBBZGQgcjhhNzc0YTEgc3VwcG9ydA0K
+Pg0KPiBIaSBCaWp1LA0KPg0KPiBPbiBNb24sIEp1bCAzMCwgMjAxOCBhdCA5OjU0IEFNIEJpanUg
+RGFzIDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gQWRkIFJaL0cyTSAoUjhB
+Nzc0QTEpIENsb2NrIFB1bHNlIEdlbmVyYXRvciAvIE1vZHVsZSBTdGFuZGJ5IGFuZA0KPiA+IFNv
+ZnR3YXJlIFJlc2V0IHN1cHBvcnQuDQo+ID4NCj4gPiBCYXNlZCBvbiB0aGUgVGFibGUgOC4yYiBv
+ZiAiUlovRyBTZXJpZXMsIDJuZCBHZW5lcmF0aW9uIFVzZXIncyBNYW51YWw6DQo+ID4gSGFyZHdh
+cmUgKChSZXYuIDAuNjEsIEp1bmUgMTIsIDIwMTgpIi4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6
+IEJpanUgRGFzIDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT4NCj4gPiBSZXZpZXdlZC1ieTogRmFi
+cml6aW8gQ2FzdHJvIDxmYWJyaXppby5jYXN0cm9AYnAucmVuZXNhcy5jb20+DQo+DQo+IFRoYW5r
+cyBmb3IgeW91ciBwYXRjaCENCj4NCj4gPiAtLS0gL2Rldi9udWxsDQo+ID4gKysrIGIvZHJpdmVy
+cy9jbGsvcmVuZXNhcy9yOGE3NzRhMS1jcGctbXNzci5jDQo+DQo+ID4gK3N0YXRpYyBjb25zdCBz
+dHJ1Y3QgY3BnX2NvcmVfY2xrIHI4YTc3NGExX2NvcmVfY2xrc1tdIF9faW5pdGNvbnN0ID0gew0K
+Pg0KPiA+ICsgICAgICAgREVGX0RJVjZfUk8oIm9zYyIsICAgICAgUjhBNzc0QTFfQ0xLX09TQywg
+ICBDTEtfRVhUQUwsDQo+IENQR19SQ0tDUiwgIDgpLA0KPiA+ICsgICAgICAgREVGX0RJVjZfUk8o
+InJfaW50IiwgICAgQ0xLX1JJTlQsICAgICAgICAgIENMS19FWFRBTCwgQ1BHX1JDS0NSLCAzMiks
+DQo+DQo+IFJaL0cyTSBkb2VzIG5vdCBoYXZlIHRoZSBDUEdfUkNLQ1IgcmVnaXN0ZXIuDQo+IFRo
+ZSBpbnRlcm5hbCBSIENMSyBpcyBhbiBpbnRlcm5hbCBjbG9jaywgaGVuY2UgcGxlYXNlIG5hbWUg
+aXQgIi5yIi4NCj4NCj4gUGxlYXNlIGhhdmUgYSBsb29rIGF0ICJjbGs6IHJlbmVzYXM6IHJjYXIt
+Z2VuMzogT1NDIGFuZCBSQ0xLIGltcHJvdmVtZW50cyINCj4gKGh0dHBzOi8vcGF0Y2h3b3JrLmtl
+cm5lbC5vcmcvcHJvamVjdC9saW51eC1yZW5lc2FzLXNvYy9saXN0Lz9zZXJpZXM9MjA2MykNCg0K
+V2lsbCBzZW5kIFYyIGluY29ycG9yYXRpbmcgdGhpcyBjaGFuZ2VzLg0KDQo+ID4gKy8qDQo+ID4g
+KyAqIENQRyBDbG9jayBEYXRhDQo+ID4gKyAqLw0KPiA+ICsNCj4gPiArLyoNCj4gPiArICogICBN
+RCAgICAgICAgICAgICAgICBFWFRBTCAgICAgICAgICAgUExMMCAgICBQTEwxICAgIFBMTDIgICAg
+UExMMyAgICBQTEw0DQo+ID4gKyAqIDE0IDEzIDE5IDE3IChNSHopDQo+ID4gKyAqLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LQ0KPiA+ICsgKiAwICAwICAwICAwICAxNi42NiB4IDEgICAgICAgeDE4MCAgICB4MTkyICAgIHgx
+NDQgICAgeDE5MiAgICB4MTQ0DQo+ID4gKyAqIDAgIDAgIDAgIDEgIDE2LjY2IHggMSAgICAgICB4
+MTgwICAgIHgxOTIgICAgeDE0NCAgICB4MTI4ICAgIHgxNDQNCj4gPiArICogMCAgMCAgMSAgMCAg
+UHJvaGliaXRlZCBzZXR0aW5nDQo+ID4gKyAqIDAgIDAgIDEgIDEgIDE2LjY2IHggMSAgICAgICB4
+MTgwICAgIHgxOTIgICAgeDE0NCAgICB4MTkyICAgIHgxNDQNCj4gPiArICogMCAgMSAgMCAgMCAg
+MjAgICAgeCAxICAgICAgIHgxNTAgICAgeDE2MCAgICB4MTIwICAgIHgxNjAgICAgeDEyMA0KPiA+
+ICsgKiAwICAxICAwICAxICAyMCAgICB4IDEgICAgICAgeDE1MCAgICB4MTYwICAgIHgxMjAgICAg
+eDEwNiAgICB4MTIwDQo+ID4gKyAqIDAgIDEgIDEgIDAgIFByb2hpYml0ZWQgc2V0dGluZw0KPiA+
+ICsgKiAwICAxICAxICAxICAyMCAgICB4IDEgICAgICAgeDE1MCAgICB4MTYwICAgIHgxMjAgICAg
+eDE2MCAgICB4MTIwDQo+ID4gKyAqIDEgIDAgIDAgIDAgIDI1ICAgIHggMSAgICAgICB4MTIwICAg
+IHgxMjggICAgeDk2ICAgICB4MTI4ICAgIHg5Ng0KPiA+ICsgKiAxICAwICAwICAxICAyNSAgICB4
+IDEgICAgICAgeDEyMCAgICB4MTI4ICAgIHg5NiAgICAgeDg0ICAgICB4OTYNCj4gPiArICogMSAg
+MCAgMSAgMCAgUHJvaGliaXRlZCBzZXR0aW5nDQo+ID4gKyAqIDEgIDAgIDEgIDEgIDI1ICAgIHgg
+MSAgICAgICB4MTIwICAgIHgxMjggICAgeDk2ICAgICB4MTI4ICAgIHg5Ng0KPiA+ICsgKiAxICAx
+ICAwICAwICAzMy4zMyAvIDIgICAgICAgeDE4MCAgICB4MTkyICAgIHgxNDQgICAgeDE5MiAgICB4
+MTQ0DQo+ID4gKyAqIDEgIDEgIDAgIDEgIDMzLjMzIC8gMiAgICAgICB4MTgwICAgIHgxOTIgICAg
+eDE0NCAgICB4MTI4ICAgIHgxNDQNCj4gPiArICogMSAgMSAgMSAgMCAgUHJvaGliaXRlZCBzZXR0
+aW5nDQo+ID4gKyAqIDEgIDEgIDEgIDEgIDMzLjMzIC8gMiAgICAgICB4MTgwICAgIHgxOTIgICAg
+eDE0NCAgICB4MTkyICAgIHgxNDQNCj4gPiArICovDQo+ID4gKyNkZWZpbmUgQ1BHX1BMTF9DT05G
+SUdfSU5ERVgobWQpICAgICAgICgoKChtZCkgJiBCSVQoMTQpKSA+PiAxMSkgfCBcDQo+ID4gKyAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAoKChtZCkgJiBCSVQoMTMpKSA+
+PiAxMSkgfCBcDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAo
+KChtZCkgJiBCSVQoMTkpKSA+PiAxOCkgfCBcDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAoKChtZCkgJiBCSVQoMTcpKSA+PiAxNykpDQo+ID4gKw0KPiA+ICtz
+dGF0aWMgY29uc3Qgc3RydWN0IHJjYXJfZ2VuM19jcGdfcGxsX2NvbmZpZyBjcGdfcGxsX2NvbmZp
+Z3NbMTZdDQo+IF9faW5pdGNvbnN0ID0gew0KPiA+ICsgICAgICAgLyogRVhUQUwgZGl2ICAgIFBM
+TDEgbXVsdC9kaXYgICBQTEwzIG11bHQvZGl2ICovDQo+ID4gKyAgICAgICB7IDEsICAgICAgICAg
+ICAgMTkyLCAgICAxLCAgICAgIDE5MiwgICAgMSwgICAgICB9LA0KPiA+ICsgICAgICAgeyAxLCAg
+ICAgICAgICAgIDE5MiwgICAgMSwgICAgICAxMjgsICAgIDEsICAgICAgfSwNCj4gPiArICAgICAg
+IHsgMCwgLyogUHJvaGliaXRlZCBzZXR0aW5nICovICAgICAgICAgICAgICAgICAgIH0sDQo+ID4g
+KyAgICAgICB7IDEsICAgICAgICAgICAgMTkyLCAgICAxLCAgICAgIDE5MiwgICAgMSwgICAgICB9
+LA0KPiA+ICsgICAgICAgeyAxLCAgICAgICAgICAgIDE2MCwgICAgMSwgICAgICAxNjAsICAgIDEs
+ICAgICAgfSwNCj4gPiArICAgICAgIHsgMSwgICAgICAgICAgICAxNjAsICAgIDEsICAgICAgMTA2
+LCAgICAxLCAgICAgIH0sDQo+ID4gKyAgICAgICB7IDAsIC8qIFByb2hpYml0ZWQgc2V0dGluZyAq
+LyAgICAgICAgICAgICAgICAgICB9LA0KPiA+ICsgICAgICAgeyAxLCAgICAgICAgICAgIDE2MCwg
+ICAgMSwgICAgICAxNjAsICAgIDEsICAgICAgfSwNCj4gPiArICAgICAgIHsgMSwgICAgICAgICAg
+ICAxMjgsICAgIDEsICAgICAgMTI4LCAgICAxLCAgICAgIH0sDQo+ID4gKyAgICAgICB7IDEsICAg
+ICAgICAgICAgMTI4LCAgICAxLCAgICAgIDg0LCAgICAgMSwgICAgICB9LA0KPiA+ICsgICAgICAg
+eyAwLCAvKiBQcm9oaWJpdGVkIHNldHRpbmcgKi8gICAgICAgICAgICAgICAgICAgfSwNCj4gPiAr
+ICAgICAgIHsgMSwgICAgICAgICAgICAxMjgsICAgIDEsICAgICAgMTI4LCAgICAxLCAgICAgIH0s
+DQo+ID4gKyAgICAgICB7IDIsICAgICAgICAgICAgMTkyLCAgICAxLCAgICAgIDE5MiwgICAgMSwg
+ICAgICB9LA0KPiA+ICsgICAgICAgeyAyLCAgICAgICAgICAgIDE5MiwgICAgMSwgICAgICAxMjgs
+ICAgIDEsICAgICAgfSwNCj4gPiArICAgICAgIHsgMCwgLyogUHJvaGliaXRlZCBzZXR0aW5nICov
+ICAgICAgICAgICAgICAgICAgIH0sDQo+ID4gKyAgICAgICB7IDIsICAgICAgICAgICAgMTkyLCAg
+ICAxLCAgICAgIDE5MiwgICAgMSwgICAgICB9LA0KPiA+ICt9Ow0KPg0KPiBQbGVhc2UgYWRkIHRo
+ZSBuZXcgT1NDIHByZWRpdmlkZXJzLiBZb3UncmUgZ29ubmEgbmVlZCB0aGVtIGZvciB0aGUNCj4g
+Y29ycmVjdGVkIE9TQyBjbG9jay4NCg0KV2lsbCBzZW5kIFYyIGluY29ycG9yYXRpbmcgdGhpcyBj
+aGFuZ2VzLg0KDQoNCg0KUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgTHRkLCBEdWtlcyBNZWFk
+b3csIE1pbGxib2FyZCBSb2FkLCBCb3VybmUgRW5kLCBCdWNraW5naGFtc2hpcmUsIFNMOCA1Rkgs
+IFVLLiBSZWdpc3RlcmVkIGluIEVuZ2xhbmQgJiBXYWxlcyB1bmRlciBSZWdpc3RlcmVkIE5vLiAw
+NDU4NjcwOS4NCg==
