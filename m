@@ -1,42 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:32474 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726942AbeH0TEF (ORCPT
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:43393 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733173AbeHAJuS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 27 Aug 2018 15:04:05 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 0/2] mmc: {tmio,renesas_sdhi}: retune if SCC error detected
-Date: Mon, 27 Aug 2018 17:13:19 +0200
-Message-Id: <20180827151321.18015-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 1 Aug 2018 05:50:18 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <1532936891-25034-1-git-send-email-biju.das@bp.renesas.com> <1532936891-25034-3-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1532936891-25034-3-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 1 Aug 2018 10:05:38 +0200
+Message-ID: <CAMuHMdVVfOS3XF=-cqFpUcWGfGT0yFUN==BvauNOWamad1EwEA@mail.gmail.com>
+Subject: Re: [PATCH 2/5] soc: renesas: rcar-sysc: Add r8a774a1 support
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+On Mon, Jul 30, 2018 at 9:54 AM Biju Das <biju.das@bp.renesas.com> wrote:
+> Add support for RZ/G2M (R8A774A1) SoC power areas to the R-Car SYSC
+> driver.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 
-These patches triggers a retune if a SCC error is detected. They where
-ported from the renesas BSP. Masaharu-san did all the real work I just
-ported them to upstream and did small fixups.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-These patches where broken out of my retuning series as more work where
-needed to adapt them to the recent HS400 series picked-up. It's tested
-on M3-N using both HS200 and HS400 and on H3 ES2.0 using HS200.
+Gr{oetje,eeting}s,
 
-Masaharu Hayakawa (2):
-  mmc: renesas_sdhi: skip SCC error check when retuning
-  mmc: tmio: Fix SCC error detection
+                        Geert
 
- drivers/mmc/host/renesas_sdhi_core.c | 13 +++++++++++++
- drivers/mmc/host/tmio_mmc_core.c     |  4 ++--
- 2 files changed, 15 insertions(+), 2 deletions(-)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
--- 
-2.18.0
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
