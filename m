@@ -1,71 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:9772 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727232AbeHaBnn (ORCPT
+Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:55302 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726972AbeHBBDJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Aug 2018 21:43:43 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2] mmc: renesas_sdhi_internal_dmac: set scatter/gather max segment size
-Date: Thu, 30 Aug 2018 23:38:43 +0200
-Message-Id: <20180830213843.14680-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 1 Aug 2018 21:03:09 -0400
+Date: Wed, 1 Aug 2018 19:03:44 -0400
+From: Rich Felker <dalias@libc.org>
+To: Rob Landley <rob@landley.net>
+Cc: Ulrich Hecht <uli@fpond.eu>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        qemu-devel@nongnu.org, linux-renesas-soc@vger.kernel.org,
+        linux-sh@vger.kernel.org
+Subject: Re: [PATCH QEMU] hw/char/sh_serial: Add timeout handling to unbreak
+ serial input
+Message-ID: <20180801230344.GJ1392@brightrain.aerifal.cx>
+References: <20180730130234.30020-1-geert+renesas@glider.be>
+ <1115027626.150336.1532963923061@webmail.strato.com>
+ <97622558-a520-6ab2-b61f-8038ae61b451@landley.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <97622558-a520-6ab2-b61f-8038ae61b451@landley.net>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Fix warning when running with CONFIG_DMA_API_DEBUG_SG=y by allocating a
-device_dma_parameters structure and filling in the max segment size. The
-size used is the result of a discussion with Renesas hardware engineers
-and unfortunately not found in the datasheet.
+On Tue, Jul 31, 2018 at 11:36:46AM -0500, Rob Landley wrote:
+> On 07/30/2018 10:18 AM, Ulrich Hecht wrote:>> On July 30, 2018 at 3:02 PM Geert
+> Uytterhoeven <geert+renesas@glider.be> wrote:
+> >> Fix this by adding basic timeout handling.  As the QEMU SCIF emulation
+> >> ignores any serial speed programming, the timeout value used conforms to
+> >> a default speed of 9600 bps, which is fine for any interative console.
+> >>
+> >> Reported-by: Rob Landley <rob@landley.net>
+> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > 
+> > Works for me, kernel 4.18-rc7 for rts7751r2dplus.
+> 
+> Works for me too.
+> 
+> Tested-by: Rob Landley <rob@landley.net>
 
-  renesas_sdhi_internal_dmac ee140000.sd: DMA-API: mapping sg segment
-  longer than device claims to support [len=126976] [max=65536A]
+Me too. This would be a very welcome fix for a longstanding and
+annoying problem.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Rich Felker <dalias@libc.org>
 
----
-
-* Changes since v1
-- Use devm_kzalloc() instead of a custom remove function to clean up.
----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index c9dab9ce1ed55174..715e0c5dc30e4ebf 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -308,12 +308,23 @@ static const struct soc_device_attribute gen3_soc_whitelist[] = {
- static int renesas_sdhi_internal_dmac_probe(struct platform_device *pdev)
- {
- 	const struct soc_device_attribute *soc = soc_device_match(gen3_soc_whitelist);
-+	struct device *dev = &pdev->dev;
- 
- 	if (!soc)
- 		return -ENODEV;
- 
- 	global_flags |= (unsigned long)soc->data;
- 
-+	if (!dev->dma_parms) {
-+		dev->dma_parms = devm_kzalloc(dev, sizeof(*dev->dma_parms),
-+					      GFP_KERNEL);
-+		if (!dev->dma_parms)
-+			return -ENOMEM;
-+	}
-+
-+	if (dma_set_max_seg_size(dev, 0xffffffff))
-+		dev_warn(dev, "Unable to set seg size\n");
-+
- 	return renesas_sdhi_probe(pdev, &renesas_sdhi_internal_dmac_dma_ops);
- }
- 
--- 
-2.18.0
+Rich
