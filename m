@@ -1,131 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33536 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727796AbeHLQLK (ORCPT
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:45079 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388896AbeHAOVH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 12 Aug 2018 12:11:10 -0400
-Received: by mail-wm0-f66.google.com with SMTP id r24-v6so5392838wmh.0
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 12 Aug 2018 06:33:05 -0700 (PDT)
-From: Eugeniu Rosca <roscaeugeniu@gmail.com>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Cc: Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <rosca.eugeniu@gmail.com>
-Subject: [PATCH v2 3/7] pinctrl: sh-pfc: r8a77965: Add HSCIF0 pins, groups, and functions
-Date: Sun, 12 Aug 2018 15:31:45 +0200
-Message-Id: <20180812133149.7710-3-erosca@de.adit-jv.com>
-In-Reply-To: <20180812133149.7710-1-erosca@de.adit-jv.com>
-References: <20180812133149.7710-1-erosca@de.adit-jv.com>
+        Wed, 1 Aug 2018 10:21:07 -0400
+MIME-Version: 1.0
+References: <1531924476-23261-1-git-send-email-phil.edworthy@renesas.com>
+ <CAMuHMdVEgj7kJFxNuR8w468FoGRaP_mEDv6JqB_7deuQjsed_Q@mail.gmail.com>
+ <TY1PR01MB1769588F9C53755C0FD56D98F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <CAMuHMdWqdg9KV4h_U-VZGVdOL6upUpDgqO7kwQh8tFQjDFh-Ug@mail.gmail.com>
+ <TY1PR01MB17697FBCBDC6296E7B2589C9F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <CAMuHMdVMGWWcFZvjgBWZAabxWXdtBeH4XLYaXZVkQ=rOaeCH0g@mail.gmail.com> <TY1PR01MB176963BDA18D948161AAD264F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY1PR01MB176963BDA18D948161AAD264F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 1 Aug 2018 14:35:19 +0200
+Message-ID: <CAMuHMdX4tyo5VyZ+-P-+os91-WR67wen=eoL1XAGdCe=KPEjNg@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r9a06g032: Avoid needless probe deferring
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Jacopo Mondi <jacopo@jmondi.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-According to R-Car Gen3 HW manual Rev.1.00 Apr 2018, M3-N SoC implements
-five (0..4) HSCIF channels, similar to H3, M3-W and E3.
+Hi Phil,
 
-The story behind this patch is tackling below dmesg warnings, which pop
-up when booting M3NULCB Kingfisher board:
+CC Jacopo
 
-$ dmesg | grep sh-pfc
-sh-pfc e6060000.pin-controller: r8a77965_pfc support registered
-sh-pfc e6060000.pin-controller: function 'hscif0' not supported
-sh-pfc e6060000.pin-controller: invalid function hscif0 in map table
-sh-pfc e6060000.pin-controller: function 'hscif0' not supported
-sh-pfc e6060000.pin-controller: invalid function hscif0 in map table
+On Fri, Jul 20, 2018 at 3:57 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
+> On 20 July 2018 13:41, Geert Uytterhoeven wrote:
+> > On Fri, Jul 20, 2018 at 2:26 PM Phil Edworthy wrote:
+> > > On 20 July 2018 13:12, Geert Uytterhoeven wrote:
+> > > > On Fri, Jul 20, 2018 at 2:06 PM Phil Edworthy  wrote:
+> > > > > On 20 July 2018 12:21, Geert Uytterhoeven wrote:
+> > > > > > On Wed, Jul 18, 2018 at 4:34 PM Phil Edworthy wrote:
+> > > > > > > To avoid all SoC peripheral drivers deferring their probes,
+> > > > > > > both clock and pinctrl drivers should already be probed. Since
+> > > > > > > the pinctrl driver requires a clock to access the registers,
+> > > > > > > the clock driver should be probed before the pinctrl driver.
+> > > > > > >
+> > > > > > > Therefore, move the clock driver from subsys_initcall to
+> > core_initcall.
+> > > > > > >
+> > > > > > > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> > > > > >
+> > > > > > Thanks for your patch!
+> > > > > Thanks for your review!
+> > > > >
+> > > > > > The (not yet upstreamed) pinctrl driver uses postcore_initcall(), right?
+> > > > > No, the pinctrl driver uses subsys_initcall, but postcore_initcall
+> > > > > or arch_initcall may be better to make it clear about the dependencies.
+> > > >
+> > > > if the pinctrl driver uses subsys_initcall(), ...
+> >
+> > > > > > > -subsys_initcall(r9a06g032_clocks_init);
+> > > > > > > +core_initcall(r9a06g032_clocks_init);
+> > > >
+> > > > ... using postcore_initcall() or arch_initcall() here, should work
+> > > > with platform_driver_probe()?
+> > > Nope, you have to use platform_driver_register() for DT based drivers.
+> > > subsys_initcall is the earliest you can use platform_driver_probe().
+> >
+> > So drivers/misc/atmel_tclib.c and drivers/pinctrl/pinctrl-coh901.c, which use
+> > arch_initcall(), cannot work?
+> How those drivers work I do not know. However, I tried with the rzn1 clock
+> driver and it does not work.
+>
+> > If that is really true, you can still use subsys_initcall() in the clock driver, and
+> > subsys_initcall_sync() in the pinctrl driver.
+> True, I'm not sure how people decide which initcall to use and whether the
+> _sync variants of the initcalls have a special meaning or intention. As far as
+> I know they were introduced for threaded probes, so are we supposed to
+> use them for driver dependencies like this?
+>
+> Do you know why the rza1 pinctrl driver is running from core_initcall()?
 
-To fix them, extract the HSCIF0 part from below v4.15-rc1 commits:
- - commit 7a362e3488cb ("pinctrl: sh-pfc: r8a7795: Add HSCIF pins, groups, and functions")
- - commit 0e4e4999aac1 ("pinctrl: sh-pfc: r8a7796: Add HSCIF pins, groups, and functions")
+Probably because it can?
+Note that drivers/clk/renesas/clk-rz.c uses CLK_OF_DECLARE().
 
-Note that `checkpatch --strict` throws several "CHECK: Please use a
-blank line after function/struct/union/enum declarations", which are
-ignored for the sake of staying in sync with the aforementioned commits.
+Gr{oetje,eeting}s,
 
-Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
----
-Changes in v2:
- - Newly added.
- - IMHO mirroring the mentioned H3 and M3-W sh-pfc commits *entirely* is
-   a better option to avoid work fragmentation, but I leave this
-   decision to the maintainer.
----
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 32 +++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+                        Geert
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-index d2bbee656381..fe16d194f69b 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-@@ -1758,6 +1758,28 @@ static const unsigned int du_disp_mux[] = {
- 	DU_DISP_MARK,
- };
- 
-+/* - HSCIF0 ----------------------------------------------------------------- */
-+static const unsigned int hscif0_data_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 13), RCAR_GP_PIN(5, 14),
-+};
-+static const unsigned int hscif0_data_mux[] = {
-+	HRX0_MARK, HTX0_MARK,
-+};
-+static const unsigned int hscif0_clk_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(5, 12),
-+};
-+static const unsigned int hscif0_clk_mux[] = {
-+	HSCK0_MARK,
-+};
-+static const unsigned int hscif0_ctrl_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(5, 16), RCAR_GP_PIN(5, 15),
-+};
-+static const unsigned int hscif0_ctrl_mux[] = {
-+	HRTS0_N_MARK, HCTS0_N_MARK,
-+};
- /* - I2C -------------------------------------------------------------------- */
- static const unsigned int i2c1_a_pins[] = {
- 	/* SDA, SCL */
-@@ -3169,6 +3191,9 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(du_oddf),
- 	SH_PFC_PIN_GROUP(du_cde),
- 	SH_PFC_PIN_GROUP(du_disp),
-+	SH_PFC_PIN_GROUP(hscif0_data),
-+	SH_PFC_PIN_GROUP(hscif0_clk),
-+	SH_PFC_PIN_GROUP(hscif0_ctrl),
- 	SH_PFC_PIN_GROUP(i2c1_a),
- 	SH_PFC_PIN_GROUP(i2c1_b),
- 	SH_PFC_PIN_GROUP(i2c2_a),
-@@ -3379,6 +3404,12 @@ static const char * const du_groups[] = {
- 	"du_disp",
- };
- 
-+static const char * const hscif0_groups[] = {
-+	"hscif0_data",
-+	"hscif0_clk",
-+	"hscif0_ctrl",
-+};
-+
- static const char * const i2c1_groups[] = {
- 	"i2c1_a",
- 	"i2c1_b",
-@@ -3651,6 +3682,7 @@ static const char * const usb30_groups[] = {
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(du),
-+	SH_PFC_FUNCTION(hscif0),
- 	SH_PFC_FUNCTION(i2c1),
- 	SH_PFC_FUNCTION(i2c2),
- 	SH_PFC_FUNCTION(i2c6),
--- 
-2.18.0
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
