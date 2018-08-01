@@ -1,114 +1,118 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 3/9] arm64: dts: renesas: r8a774a1: Add RZ/G2M thermal support
-Date: Thu, 23 Aug 2018 14:43:02 +0100
-Message-Id: <1535031788-19907-4-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1535031788-19907-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1535031788-19907-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.23]:12488 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388502AbeHANsa (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 1 Aug 2018 09:48:30 -0400
+Date: Wed, 1 Aug 2018 13:59:51 +0200 (CEST)
+From: Ulrich Hecht <uli@fpond.eu>
+To: jacopo mondi <jacopo@jmondi.org>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <531695573.235554.1533124791946@webmail.strato.com>
+In-Reply-To: <20180801103507.GA29238@w540>
+References: <1526386840-15368-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1526386840-15368-4-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <20180801103507.GA29238@w540>
+Subject: Re: [PATCH 3/5] arm64: dts: renesas: r8a77995: Add LVDS support
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
 
-Add thermal support for R8A774A1 (RZ/G2M) SoC.
+> On August 1, 2018 at 12:35 PM jacopo mondi <jacopo@jmondi.org> wrote:
+> 
+> 
+> Hi Ulrich,
+>    I know this series needs to be re-spin when the D3/E3 LVDS PLL
+> support will be added, but since I need it for testing on D3 the LVDS
+> interface reset support, I noticed a small issue which I thought it is
+> worth reporting.
+> 
+> On Tue, May 15, 2018 at 02:20:38PM +0200, Ulrich Hecht wrote:
+> > From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> >
+> > The r8a77995 D3 platform has 2 LVDS channels connected to the DU.
+> >
+> > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> > [uli: moved lvds* into the soc node, added PM domains, resets]
+> > Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> > ---
+> >  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 56 +++++++++++++++++++++++++++++++
+> >  1 file changed, 56 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> > index ba98865..8e78110d 100644
+> > --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> > @@ -757,12 +757,68 @@
+> >  				port@1 {
+> >  					reg = <1>;
+> >  					du_out_lvds0: endpoint {
+> > +						remote-endpoint = <&lvds0_in>;
+> >  					};
+> >  				};
+> >
+> >  				port@2 {
+> >  					reg = <2>;
+> >  					du_out_lvds1: endpoint {
+> > +						remote-endpoint = <&lvds1_in>;
+> > +					};
+> > +				};
+> > +			};
+> > +		};
+> > +
+> > +		lvds0: lvds-encoder@feb90000 {
+> > +			compatible = "renesas,r8a77995-lvds";
+> > +			reg = <0 0xfeb90000 0 0x20>;
+> > +			clocks = <&cpg CPG_MOD 727>;
+> > +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+> > +			resets = <&cpg 727>;
+> > +			status = "disabled";
+> > +
+> > +			ports {
+> > +				#address-cells = <1>;
+> > +				#size-cells = <0>;
+> > +
+> > +				port@0 {
+> > +					reg = <0>;
+> > +					lvds0_in: endpoint {
+> > +						remote-endpoint = <&du_out_lvds0>;
+> > +					};
+> > +				};
+> > +
+> > +				port@1 {
+> > +					reg = <1>;
+> > +					lvds0_out: endpoint {
+> > +					};
+> > +				};
+> > +			};
+> > +		};
+> > +
+> > +		lvds1: lvds-encoder@feb90100 {
+> > +			compatible = "renesas,r8a77995-lvds";
+> > +			reg = <0 0xfeb90100 0 0x20>;
+> > +			clocks = <&cpg CPG_MOD 727>;
+> > +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+> > +			resets = <&cpg 727>;
+> 
+> The LVDS-IF1 CPG reset is SRCR7[26], this I think this should be
+> <&cpg 726>
+> 
+> Please note that the most recent chip manual release has probably an
+> error at page 3180, section 37-32
+> 
+> 5. When display on in the LVDS0-IF, it is necessary to reset (SRCR7[27]) and reset clearing (SRSTCLR7[27])
+> LVDS0-IF module.
+> When display on in the LVDS1-IF, it is necessary to reset (SRCR7[26]) and reset clearing (SRSTCLR7[26])
+> LVDS0-IF module
+>     ^- This should probablt be LVDS1-IF
+> 
 
-Based on the work done for r8a7796 SoC.
+Thanks for the hint, I will keep this in mind.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 60 +++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index 5775451..9f42b7c 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -165,6 +165,21 @@
- 			#power-domain-cells = <1>;
- 		};
- 
-+		tsc: thermal@e6198000 {
-+			compatible = "renesas,r8a774a1-thermal";
-+			reg = <0 0xe6198000 0 0x100>,
-+			      <0 0xe61a0000 0 0x100>,
-+			      <0 0xe61a8000 0 0x100>;
-+			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 522>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 522>;
-+			#thermal-sensor-cells = <1>;
-+			status = "okay";
-+		};
-+
- 		intc_ex: interrupt-controller@e61c0000 {
- 			compatible = "renesas,intc-ex-r8a774a1", "renesas,irqc";
- 			#interrupt-cells = <2>;
-@@ -715,6 +730,51 @@
- 		};
- 	};
- 
-+	thermal-zones {
-+		sensor_thermal1: sensor-thermal1 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&tsc 0>;
-+
-+			trips {
-+				sensor1_crit: sensor1-crit {
-+					temperature = <120000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		sensor_thermal2: sensor-thermal2 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&tsc 1>;
-+
-+			trips {
-+				sensor2_crit: sensor2-crit {
-+					temperature = <120000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+
-+		};
-+
-+		sensor_thermal3: sensor-thermal3 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&tsc 2>;
-+
-+			trips {
-+				sensor3_crit: sensor3-crit {
-+					temperature = <120000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
-+
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
--- 
-2.7.4
+CU
+Uli
