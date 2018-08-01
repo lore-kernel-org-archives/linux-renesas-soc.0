@@ -1,68 +1,96 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35176 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388608AbeHGQdg (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:22060 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732512AbeHALSN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Aug 2018 12:33:36 -0400
-Subject: Re: [PATCH v3 3/4] hw/arm/virt: Allow dynamic sysbus devices again
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <20180725143413.9728-1-geert+renesas@glider.be>
- <20180725143413.9728-4-geert+renesas@glider.be>
-Cc: Magnus Damm <damm+renesas@opensource.se>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        qemu-arm@nongnu.org, qemu-devel@nongnu.org,
-        linux-renesas-soc@vger.kernel.org
-From: Auger Eric <eric.auger@redhat.com>
-Message-ID: <2d36dfa2-744b-1570-d2c2-51352ce98e23@redhat.com>
-Date: Tue, 7 Aug 2018 16:18:59 +0200
+        Wed, 1 Aug 2018 07:18:13 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 4/5] clk: renesas: Add r8a774a1 CPG Core Clock Definitions
+Date: Wed, 1 Aug 2018 09:33:17 +0000
+Message-ID: <OSBPR01MB2103E2813C539E4273493BDCB82D0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <1532936891-25034-1-git-send-email-biju.das@bp.renesas.com>
+ <1532936891-25034-5-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdX5NOvxjDUbG0be2e4fmRe5d0hXoi+cJ1B+5-6FHrRk_Q@mail.gmail.com>
+In-Reply-To: <CAMuHMdX5NOvxjDUbG0be2e4fmRe5d0hXoi+cJ1B+5-6FHrRk_Q@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <20180725143413.9728-4-geert+renesas@glider.be>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
-
-On 07/25/2018 04:34 PM, Geert Uytterhoeven wrote:
-> Allow the instantation of generic dynamic sysbus devices again, without
-> the need to create a new device-specific vfio type.
-The patch title and commit message need to be updated as we allow the
-dynamic instantiation of VFIO PLATFORM devices.
-
-Thanks
-
-Eric
-> 
-> This is more or less a partial revert of commit 6f2062b9758ebc64
-> ("hw/arm/virt: Allow only supported dynamic sysbus devices").
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v3:
->   - Drop RFC state,
-> 
-> v2:
->   - Restrict from TYPE_SYS_BUS_DEVICE to TYPE_VFIO_PLATFORM, as
->     suggested by Eric Auger.
-> ---
->  hw/arm/virt.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/hw/arm/virt.c b/hw/arm/virt.c
-> index 281ddcdf6e26236d..24c1d8e28c7c4285 100644
-> --- a/hw/arm/virt.c
-> +++ b/hw/arm/virt.c
-> @@ -1724,6 +1724,7 @@ static void virt_machine_class_init(ObjectClass *oc, void *data)
->      machine_class_allow_dynamic_sysbus_dev(mc, TYPE_VFIO_CALXEDA_XGMAC);
->      machine_class_allow_dynamic_sysbus_dev(mc, TYPE_VFIO_AMD_XGBE);
->      machine_class_allow_dynamic_sysbus_dev(mc, TYPE_RAMFB_DEVICE);
-> +    machine_class_allow_dynamic_sysbus_dev(mc, TYPE_VFIO_PLATFORM);
->      mc->block_default_type = IF_VIRTIO;
->      mc->no_cdrom = 1;
->      mc->pci_allow_0_address = true;
-> 
+SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrLg0KDQo+IFN1YmplY3Q6IFJlOiBb
+UEFUQ0ggNC81XSBjbGs6IHJlbmVzYXM6IEFkZCByOGE3NzRhMSBDUEcgQ29yZSBDbG9jaw0KPiBE
+ZWZpbml0aW9ucw0KPg0KPiBIaSBCaWp1LA0KPg0KPiBPbiBNb24sIEp1bCAzMCwgMjAxOCBhdCA5
+OjU0IEFNIEJpanUgRGFzIDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gQWRk
+IGFsbCBSWi9HMk0gQ2xvY2sgUHVsc2UgR2VuZXJhdG9yIENvcmUgQ2xvY2sgT3V0cHV0cywgYXMg
+bGlzdGVkIGluDQo+ID4gVGFibGUgOC4yYiAoIkxpc3Qgb2YgQ2xvY2tzIFtSWi9HMk1dIikgb2Yg
+dGhlIFJaL0cyTSBIYXJkd2FyZSBVc2VyJ3MNCj4gPiBNYW51YWwuDQo+ID4NCj4gPiBTaWduZWQt
+b2ZmLWJ5OiBCaWp1IERhcyA8YmlqdS5kYXNAYnAucmVuZXNhcy5jb20+DQo+ID4gUmV2aWV3ZWQt
+Ynk6IEZhYnJpemlvIENhc3RybyA8ZmFicml6aW8uY2FzdHJvQGJwLnJlbmVzYXMuY29tPg0KPg0K
+PiBUaGFua3MgZm9yIHlvdXIgcGF0Y2ghDQo+DQo+ID4gLS0tIC9kZXYvbnVsbA0KPiA+ICsrKyBi
+L2luY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2svcjhhNzc0YTEtY3BnLW1zc3IuaA0KPiA+IEBAIC0w
+LDAgKzEsNTkgQEANCj4gPiArLyogU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjANCj4g
+PiArICoNCj4gPiArICogQ29weXJpZ2h0IChDKSAyMDE4IFJlbmVzYXMgRWxlY3Ryb25pY3MgQ29y
+cC4NCj4gPiArICovDQo+ID4gKyNpZm5kZWYgX19EVF9CSU5ESU5HU19DTE9DS19SOEE3NzRBMV9D
+UEdfTVNTUl9IX18NCj4gPiArI2RlZmluZSBfX0RUX0JJTkRJTkdTX0NMT0NLX1I4QTc3NEExX0NQ
+R19NU1NSX0hfXw0KPiA+ICsNCj4gPiArI2luY2x1ZGUgPGR0LWJpbmRpbmdzL2Nsb2NrL3JlbmVz
+YXMtY3BnLW1zc3IuaD4NCj4gPiArDQo+ID4gKy8qIHI4YTc3NGExIENQRyBDb3JlIENsb2NrcyAq
+Lw0KPiA+ICsjZGVmaW5lIFI4QTc3NEExX0NMS19aICAgICAgICAgICAgICAgICAwDQo+ID4gKyNk
+ZWZpbmUgUjhBNzc0QTFfQ0xLX1oyICAgICAgICAgICAgICAgICAgICAgICAgMQ0KPiA+ICsjZGVm
+aW5lIFI4QTc3NEExX0NMS19aRyAgICAgICAgICAgICAgICAgICAgICAgIDINCj4gPiArI2RlZmlu
+ZSBSOEE3NzRBMV9DTEtfWlRSICAgICAgICAgICAgICAgMw0KPiA+ICsjZGVmaW5lIFI4QTc3NEEx
+X0NMS19aVFJEMiAgICAgICAgICAgICA0DQo+ID4gKyNkZWZpbmUgUjhBNzc0QTFfQ0xLX1pUICAg
+ICAgICAgICAgICAgICAgICAgICAgNQ0KPiA+ICsjZGVmaW5lIFI4QTc3NEExX0NMS19aWCAgICAg
+ICAgICAgICAgICAgICAgICAgIDYNCj4gPiArI2RlZmluZSBSOEE3NzRBMV9DTEtfUzBEMSAgICAg
+ICAgICAgICAgNw0KPiA+ICsjZGVmaW5lIFI4QTc3NEExX0NMS19TMEQyICAgICAgICAgICAgICA4
+DQo+ID4gKyNkZWZpbmUgUjhBNzc0QTFfQ0xLX1MwRDMgICAgICAgICAgICAgIDkNCj4gPiArI2Rl
+ZmluZSBSOEE3NzRBMV9DTEtfUzBENCAgICAgICAgICAgICAgMTANCj4gPiArI2RlZmluZSBSOEE3
+NzRBMV9DTEtfUzBENiAgICAgICAgICAgICAgMTENCj4gPiArI2RlZmluZSBSOEE3NzRBMV9DTEtf
+UzBEOCAgICAgICAgICAgICAgMTINCj4gPiArI2RlZmluZSBSOEE3NzRBMV9DTEtfUzBEMTIgICAg
+ICAgICAgICAgMTMNCj4gPiArI2RlZmluZSBSOEE3NzRBMV9DTEtfUzFEMiAgICAgICAgICAgICAg
+MTQNCj4gPiArI2RlZmluZSBSOEE3NzRBMV9DTEtfUzFENCAgICAgICAgICAgICAgMTUNCj4gPiAr
+I2RlZmluZSBSOEE3NzRBMV9DTEtfUzJEMSAgICAgICAgICAgICAgMTYNCj4gPiArI2RlZmluZSBS
+OEE3NzRBMV9DTEtfUzJEMiAgICAgICAgICAgICAgMTcNCj4gPiArI2RlZmluZSBSOEE3NzRBMV9D
+TEtfUzJENCAgICAgICAgICAgICAgMTgNCj4gPiArI2RlZmluZSBSOEE3NzRBMV9DTEtfUzNEMSAg
+ICAgICAgICAgICAgMTkNCj4gPiArI2RlZmluZSBSOEE3NzRBMV9DTEtfUzNEMiAgICAgICAgICAg
+ICAgMjANCj4gPiArI2RlZmluZSBSOEE3NzRBMV9DTEtfUzNENCAgICAgICAgICAgICAgMjENCj4g
+PiArI2RlZmluZSBSOEE3NzRBMV9DTEtfTEIgICAgICAgICAgICAgICAgICAgICAgICAyMg0KPiA+
+ICsjZGVmaW5lIFI4QTc3NEExX0NMS19DTCAgICAgICAgICAgICAgICAgICAgICAgIDIzDQo+ID4g
+KyNkZWZpbmUgUjhBNzc0QTFfQ0xLX1pCMyAgICAgICAgICAgICAgIDI0DQo+ID4gKyNkZWZpbmUg
+UjhBNzc0QTFfQ0xLX1pCM0QyICAgICAgICAgICAgIDI1DQo+ID4gKyNkZWZpbmUgUjhBNzc0QTFf
+Q0xLX1pCM0Q0ICAgICAgICAgICAgIDI2DQo+ID4gKyNkZWZpbmUgUjhBNzc0QTFfQ0xLX0NSICAg
+ICAgICAgICAgICAgICAgICAgICAgMjcNCj4gPiArI2RlZmluZSBSOEE3NzRBMV9DTEtfQ1JEMiAg
+ICAgICAgICAgICAgMjgNCj4gPiArI2RlZmluZSBSOEE3NzRBMV9DTEtfU0QwSCAgICAgICAgICAg
+ICAgMjkNCj4gPiArI2RlZmluZSBSOEE3NzRBMV9DTEtfU0QwICAgICAgICAgICAgICAgMzANCj4g
+PiArI2RlZmluZSBSOEE3NzRBMV9DTEtfU0QxSCAgICAgICAgICAgICAgMzENCj4gPiArI2RlZmlu
+ZSBSOEE3NzRBMV9DTEtfU0QxICAgICAgICAgICAgICAgMzINCj4gPiArI2RlZmluZSBSOEE3NzRB
+MV9DTEtfU0QySCAgICAgICAgICAgICAgMzMNCj4gPiArI2RlZmluZSBSOEE3NzRBMV9DTEtfU0Qy
+ICAgICAgICAgICAgICAgMzQNCj4gPiArI2RlZmluZSBSOEE3NzRBMV9DTEtfU0QzSCAgICAgICAg
+ICAgICAgMzUNCj4gPiArI2RlZmluZSBSOEE3NzRBMV9DTEtfU0QzICAgICAgICAgICAgICAgMzYN
+Cj4gPiArI2RlZmluZSBSOEE3NzRBMV9DTEtfUlBDICAgICAgICAgICAgICAgMzcNCj4gPiArI2Rl
+ZmluZSBSOEE3NzRBMV9DTEtfUlBDRDIgICAgICAgICAgICAgMzgNCj4gPiArI2RlZmluZSBSOEE3
+NzRBMV9DTEtfTVNPICAgICAgICAgICAgICAgMzkNCj4gPiArI2RlZmluZSBSOEE3NzRBMV9DTEtf
+SERNSSAgICAgICAgICAgICAgNDANCj4gPiArI2RlZmluZSBSOEE3NzRBMV9DTEtfQ1NJMCAgICAg
+ICAgICAgICAgNDENCj4gPiArI2RlZmluZSBSOEE3NzRBMV9DTEtfQ1AgICAgICAgICAgICAgICAg
+ICAgICAgICA0Mg0KPiA+ICsjZGVmaW5lIFI4QTc3NEExX0NMS19QT1NUMiAgICAgICAgICAgICA0
+Mw0KPg0KPiBQT1NUMiBpcyBhbiBpbnRlcm5hbCBjbG9jaywgd2hpY2ggZG9lc24ndCBuZWVkIHRv
+IGJlIHJlZmVycmVkIHRvIGZyb20gRFQuDQo+IFNvIHBsZWFzZSBkcm9wIGl0IGZyb20gdGhlIGJp
+bmRpbmdzLg0KDQpXaWxsIHNlbmQgVjIgd2l0aCB0aGUgYWJvdmUgZml4Lg0KDQo+ID4gKyNkZWZp
+bmUgUjhBNzc0QTFfQ0xLX0NQRVggICAgICAgICAgICAgIDQ0DQo+ID4gKyNkZWZpbmUgUjhBNzc0
+QTFfQ0xLX1IgICAgICAgICAgICAgICAgIDQ1DQo+ID4gKyNkZWZpbmUgUjhBNzc0QTFfQ0xLX09T
+QyAgICAgICAgICAgICAgIDQ2DQo+DQo+IFdpdGggdGhlIGFib3ZlIGZpeGVkOg0KPiBSZXZpZXdl
+ZC1ieTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5iZT4NCg0KUmVn
+YXJkcywNCkJpanUNCg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMg
+TWVhZG93LCBNaWxsYm9hcmQgUm9hZCwgQm91cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDgg
+NUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBO
+by4gMDQ1ODY3MDkuDQo=
