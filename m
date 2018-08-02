@@ -1,57 +1,58 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-Date: Sat, 4 Aug 2018 23:26:56 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:9561 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732141AbeHBPwX (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 2 Aug 2018 11:52:23 -0400
+Subject: Re: [PATCH 02/12] i2c: designware-master: use core to detect 'no zero
+ length' quirk
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/12] i2c: designware-master: use core to detect 'no
- zero length' quirk
-Message-ID: <20180804212656.vrxwte7rxf4d2gdp@ninjato>
 References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
  <20180723202617.15230-3-wsa+renesas@sang-engineering.com>
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Message-ID: <db46f7ba-0627-eb0b-9a93-40f26a82b0bf@linux.intel.com>
+Date: Thu, 2 Aug 2018 17:00:59 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rgvhazlkifihs3nj"
-Content-Disposition: inline
 In-Reply-To: <20180723202617.15230-3-wsa+renesas@sang-engineering.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
---rgvhazlkifihs3nj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Jul 23, 2018 at 10:26:06PM +0200, Wolfram Sang wrote:
+On 07/23/2018 11:26 PM, Wolfram Sang wrote:
 > And don't reimplement in the driver.
->=20
+> 
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> 
+> Only build tested.
+> 
+>   drivers/i2c/busses/i2c-designware-master.c | 12 +++++-------
+>   1 file changed, 5 insertions(+), 7 deletions(-)
+> 
+I tested this with patch 1 and I like it since with these patches the 
+test is done before firing up the HW, waiting for an interrupt and then 
+see the length is invalid for us.
 
-Applied to for-next, thanks!
+i2ctransfer -f 8 r0@0x10
 
+Before (with i2c_designware debugging on):
+[   15.607283] i2c_designware i2c_designware.1: i2c_dw_xfer: msgs: 1
+[   15.711988] i2c_designware i2c_designware.1: enabled=0x1 stat=0x10
+[   15.712002] i2c_designware i2c_designware.1: i2c_dw_xfer_msg: invalid 
+message length
+Error: Sending messages failed: Invalid argument
 
---rgvhazlkifihs3nj
-Content-Type: application/pgp-signature; name="signature.asc"
+After:
+[   25.838661] i2c i2c-8: adapter quirk: no zero length (addr 0x0010, 
+size 0, read)
+Error: Sending messages failed: Operation not supported
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltmGiAACgkQFA3kzBSg
-KbZqAA/+Padvqy7WQk3KaFaK7Q1G4J+N1wyxhjAZP0Zo54sfg8F8dmMx10uv0vo5
-Jbr+7wa93x7SuxmZwRAewPl0KayRq5RYbvUjuIfs/YkqVkkQtNbsteneewSGCfzf
-qTGMqis4OFQGwla07LBx9/tieNjrRtrweSGBdKcctVFn0qYAFqfUihTr8bfWZALM
-q+DaS07Z0MuSundK3cXl2d3NFI+eMjdMuRIzV+CboC+Iv7bh0lpbfiWwq1aUsSpR
-KqNiA00vEWSQG6hhaCQoo9ufzKYpv0uDY5jElpWwbfzD1SX2Uv8NKGCXnxaMAFsE
-ZFdnjTUhA/H6pXX6cdHELCLmb7E6HsUKtj1wzD6s7+BiWuhD803/kE+6717ddAy8
-GKcny26gHMbddWt+ySo4CxzzMfrXl3AHLUcsgLyQj2fcCvUd/KnBCscGUosNznHt
-ohC1gTLqdG1EptRB8mnpB82Ls8z8eyAiUX3JPN97wbj0EAFBj01SBftYQEFOQEI1
-w6ng0MEX+yDeL6AC8KlqrrjnIaPBtp5XaH2G546xJAzOKhXnaKlx90VpH2NRUGmr
-gPXe/ywKvLrOEwDzKdrbdhE+Wyr+SJyOU/h7CzOtSez4EbKyM4uxEATgsREdsv6V
-4Ze57I2TYfKIL2UX7dWoTXXswwrt/Dl8B5VLd9v8FxONSAFmpZI=
-=Qh4M
------END PGP SIGNATURE-----
-
---rgvhazlkifihs3nj--
+Tested-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
