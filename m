@@ -1,110 +1,30 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH 10/30] media: entity: Use routing information during graph traversal
-Date: Thu, 23 Aug 2018 15:25:24 +0200
-Message-Id: <20180823132544.521-11-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:48870 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387404AbeHBOYJ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 2 Aug 2018 10:24:09 -0400
+Date: Thu, 2 Aug 2018 14:33:07 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Magnus <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Laurent <laurent.pinchart@ideasonboard.com>,
+        iommu@lists.linux-foundation.org
+Subject: Re: [PATCH] iommu/ipmmu-vmsa: convert to SPDX identifiers
+Message-ID: <20180802123306.ate3g5qkcvx2e6zd@verge.net.au>
+References: <87600tee5p.wl-kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87600tee5p.wl-kuninori.morimoto.gx@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+On Thu, Aug 02, 2018 at 01:49:39AM +0000, Kuninori Morimoto wrote:
+> 
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Take internal routing information as reported by the entity has_route
-operation into account during graph traversal to avoid following
-unrelated links.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- drivers/media/media-entity.c | 44 ++++++++++++++++++++++--------------
- 1 file changed, 27 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-index 88c8b838b78b39aa..12d9fc9ee02f38f2 100644
---- a/drivers/media/media-entity.c
-+++ b/drivers/media/media-entity.c
-@@ -257,15 +257,6 @@ bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
- }
- EXPORT_SYMBOL_GPL(media_entity_has_route);
- 
--static struct media_pad *
--media_entity_other(struct media_pad *pad, struct media_link *link)
--{
--	if (link->source == pad)
--		return link->sink;
--	else
--		return link->source;
--}
--
- /* push an entity to traversal stack */
- static void stack_push(struct media_graph *graph, struct media_pad *pad)
- {
-@@ -336,7 +327,8 @@ static void media_graph_walk_iter(struct media_graph *graph)
- {
- 	struct media_pad *pad = stack_top(graph);
- 	struct media_link *link;
--	struct media_pad *next;
-+	struct media_pad *remote;
-+	struct media_pad *local;
- 
- 	link = list_entry(link_top(graph), typeof(*link), list);
- 
-@@ -350,23 +342,41 @@ static void media_graph_walk_iter(struct media_graph *graph)
- 		return;
- 	}
- 
--	/* Get the entity in the other end of the link . */
--	next = media_entity_other(pad, link);
-+	/*
-+	 * Get the local pad, the remote pad and the entity at the other
-+	 * end of the link.
-+	 */
-+	if (link->source->entity == pad->entity) {
-+		remote = link->sink;
-+		local = link->source;
-+	} else {
-+		remote = link->source;
-+		local = link->sink;
-+	}
-+
-+	/*
-+	 * Are the local pad and the pad we came from connected
-+	 * internally in the entity ?
-+	 */
-+	if (!media_entity_has_route(pad->entity, pad->index, local->index)) {
-+		link_top(graph) = link_top(graph)->next;
-+		return;
-+	}
- 
- 	/* Has the entity already been visited? */
--	if (media_entity_enum_test_and_set(&graph->ent_enum, next->entity)) {
-+	if (media_entity_enum_test_and_set(&graph->ent_enum, remote->entity)) {
- 		link_top(graph) = link_top(graph)->next;
- 		dev_dbg(pad->graph_obj.mdev->dev,
- 			"walk: skipping entity '%s' (already seen)\n",
--			next->entity->name);
-+			remote->entity->name);
- 		return;
- 	}
- 
- 	/* Push the new entity to stack and start over. */
- 	link_top(graph) = link_top(graph)->next;
--	stack_push(graph, next);
--	dev_dbg(next->graph_obj.mdev->dev, "walk: pushing '%s':%u on stack\n",
--		next->entity->name, next->index);
-+	stack_push(graph, remote);
-+	dev_dbg(remote->graph_obj.mdev->dev, "walk: pushing '%s':%u on stack\n",
-+		remote->entity->name, remote->index);
- }
- 
- struct media_pad *media_graph_walk_next(struct media_graph *graph)
--- 
-2.18.0
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
