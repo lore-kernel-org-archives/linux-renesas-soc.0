@@ -1,40 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.25]:13468 "EHLO
-        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726437AbeHQQWX (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:29250 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732531AbeHBQpo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Aug 2018 12:22:23 -0400
-From: Ulrich Hecht <uli+renesas@fpond.eu>
-To: linux-renesas-soc@vger.kernel.org
-Cc: horms@verge.net.au, wsa@the-dreams.de,
-        Ulrich Hecht <uli+renesas@fpond.eu>
-Subject: [PATCH 0/3] I2C0/3/5 pin control for H3 and M3-W
-Date: Fri, 17 Aug 2018 15:18:38 +0200
-Message-Id: <1534511921-19470-1-git-send-email-uli+renesas@fpond.eu>
+        Thu, 2 Aug 2018 12:45:44 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH v2 0/5] Add RZ/G2M SYSC/RST/Clock support
+Date: Thu,  2 Aug 2018 15:48:17 +0100
+Message-Id: <1533221302-44598-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+This patch series aims to add SYSC/RST/Clock support for 
+for RZ/G2M SoC. RZ/G2M SoC is similar to R-Car Gen3 M3-W SoC.
 
-This is an up-port from the BSP. Unfortunately I could not test these
-because none of those pins seem to be accessible on Salvator boards (not on
-ULCB either, AFAICT), so the best thing I can say is that they don't seem to
-break anything.
+----
+V1-->V2
+     * Incorporated review comments
+----
+Biju Das (5):
+  dt-bindings: power: Add r8a774a1 SYSC power domain definitions
+  soc: renesas: rcar-sysc: Add r8a774a1 support
+  soc: renesas: rcar-rst: Add support for RZ/G2M
+  clk: renesas: Add r8a774a1 CPG Core Clock Definitions
+  clk: renesas: cpg-mssr: Add r8a774a1 support
 
-CU
-Uli
-
-
-Takeshi Kihara (3):
-  pinctrl: sh-pfc: r8a7795: Add I2C{0,3,5} pins, groups and functions
-  pinctrl: sh-pfc: r8a7795-es1: Add I2C{0,3,5} pins, groups and
-    functions
-  pinctrl: sh-pfc: r8a7796: Add I2C{0,3,5} pins, groups and functions
-
- drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 103 ++++++++++++++++++++++++-------
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 101 +++++++++++++++++++++++-------
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c     | 100 ++++++++++++++++++++++++------
- 3 files changed, 242 insertions(+), 62 deletions(-)
+ .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   9 +-
+ .../bindings/power/renesas,rcar-sysc.txt           |   1 +
+ .../devicetree/bindings/reset/renesas,rst.txt      |   1 +
+ drivers/clk/renesas/Kconfig                        |   5 +
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/r8a774a1-cpg-mssr.c            | 323 +++++++++++++++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
+ drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
+ drivers/soc/renesas/Kconfig                        |  11 +-
+ drivers/soc/renesas/Makefile                       |   1 +
+ drivers/soc/renesas/r8a774a1-sysc.c                |  45 +++
+ drivers/soc/renesas/rcar-rst.c                     |   4 +-
+ drivers/soc/renesas/rcar-sysc.c                    |   3 +
+ drivers/soc/renesas/rcar-sysc.h                    |   1 +
+ include/dt-bindings/clock/r8a774a1-cpg-mssr.h      |  58 ++++
+ include/dt-bindings/power/r8a774a1-sysc.h          |  31 ++
+ 16 files changed, 493 insertions(+), 8 deletions(-)
+ create mode 100644 drivers/clk/renesas/r8a774a1-cpg-mssr.c
+ create mode 100644 drivers/soc/renesas/r8a774a1-sysc.c
+ create mode 100644 include/dt-bindings/clock/r8a774a1-cpg-mssr.h
+ create mode 100644 include/dt-bindings/power/r8a774a1-sysc.h
 
 -- 
 2.7.4
