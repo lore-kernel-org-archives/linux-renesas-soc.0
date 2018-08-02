@@ -1,42 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:6846 "EHLO
+Received: from relmlor3.renesas.com ([210.160.252.173]:28310 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727037AbeHQR4x (ORCPT
+        by vger.kernel.org with ESMTP id S1732552AbeHBQIw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Aug 2018 13:56:53 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+        Thu, 2 Aug 2018 12:08:52 -0400
+From: Biju Das <biju.das@bp.renesas.com>
 To: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+Cc: Biju Das <biju.das@bp.renesas.com>,
         Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] Add Thermal compatibility for r8a774a1
-Date: Fri, 17 Aug 2018 15:53:02 +0100
-Message-Id: <1534517584-14434-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH v2 4/5] ARM: dts: iwg23s-sbc: specify EtherAVB PHY IRQ
+Date: Thu,  2 Aug 2018 15:11:26 +0100
+Message-Id: <1533219087-33695-5-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1533219087-33695-1-git-send-email-biju.das@bp.renesas.com>
+References: <1533219087-33695-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dear All,
+Specify  EtherAVB PHY IRQ  in the board specific device tree, now that we
+have GPIO support.
 
-this series adds Thermal compatibility for RZ/G2M (a.k.a. R8A774A1).
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+V1-->V2
+    * No change
+    * compile time dependency on gpio dtsi patch
+---
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Cheers,
-Fab
-
-Fabrizio Castro (2):
-  thermal: rcar_gen3_thermal: Add r8a774a1 support
-  dt-bindings: thermal: rcar-gen3-thermal: Add r8a774a1 support
-
- Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt | 1 +
- drivers/thermal/rcar_gen3_thermal.c                             | 1 +
- 2 files changed, 2 insertions(+)
-
+diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+index 56182ee..22da819 100644
+--- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
++++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+@@ -35,6 +35,8 @@
+ 
+ 	phy3: ethernet-phy@3 {
+ 		reg = <3>;
++		interrupt-parent = <&gpio5>;
++		interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
+ 		micrel,led-mode = <1>;
+ 	};
+ };
 -- 
 2.7.4
