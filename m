@@ -1,90 +1,33 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] rcar-vin: add R8A77980 support
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>
-Message-ID: <e7afb623-799b-17b6-cb6b-8fd839ea660a@cogentembedded.com>
-Date: Mon, 6 Aug 2018 20:45:01 +0300
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:47463 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726977AbeHBMlU (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 2 Aug 2018 08:41:20 -0400
+Date: Thu, 2 Aug 2018 12:50:41 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: rcar-gen3: Rename rint to .r
+Message-ID: <20180802105040.raop4rmkl6nzsbcy@verge.net.au>
+References: <20180726152524.9393-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180726152524.9393-1-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the R8A77980 SoC support to the R-Car VIN driver.
+On Thu, Jul 26, 2018 at 05:25:24PM +0200, Geert Uytterhoeven wrote:
+> All other internal clock names have a period prepended.
+> 
+> Hence rename the internal RCLK from "rint" to ".r", and move it to the
+> section where all other internal clocks are defined.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> To be queued in clk-renesas-for-v4.20.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
----
-This patch is against the 'media_tree.git' repo's 'master' branch.
-
- Documentation/devicetree/bindings/media/rcar_vin.txt |    1 
- drivers/media/platform/rcar-vin/rcar-core.c          |   32 +++++++++++++++++++
- 2 files changed, 33 insertions(+)
-
-Index: media_tree/Documentation/devicetree/bindings/media/rcar_vin.txt
-===================================================================
---- media_tree.orig/Documentation/devicetree/bindings/media/rcar_vin.txt
-+++ media_tree/Documentation/devicetree/bindings/media/rcar_vin.txt
-@@ -23,6 +23,7 @@ on Gen3 platforms to a CSI-2 receiver.
-    - "renesas,vin-r8a7796" for the R8A7796 device
-    - "renesas,vin-r8a77965" for the R8A77965 device
-    - "renesas,vin-r8a77970" for the R8A77970 device
-+   - "renesas,vin-r8a77980" for the R8A77980 device
-    - "renesas,vin-r8a77995" for the R8A77995 device
-    - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 or RZ/G1 compatible
-      device.
-Index: media_tree/drivers/media/platform/rcar-vin/rcar-core.c
-===================================================================
---- media_tree.orig/drivers/media/platform/rcar-vin/rcar-core.c
-+++ media_tree/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -1097,6 +1097,34 @@ static const struct rvin_info rcar_info_
- 	.routes = rcar_info_r8a77995_routes,
- };
- 
-+static const struct rvin_group_route rcar_info_r8a77980_routes[] = {
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 0, .mask = BIT(0) | BIT(3) },
-+	{ .csi = RVIN_CSI40, .channel = 1, .vin = 0, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 1, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI40, .channel = 1, .vin = 1, .mask = BIT(1) | BIT(3) },
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 2, .mask = BIT(1) },
-+	{ .csi = RVIN_CSI40, .channel = 2, .vin = 2, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI40, .channel = 1, .vin = 3, .mask = BIT(0) },
-+	{ .csi = RVIN_CSI40, .channel = 3, .vin = 3, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI41, .channel = 0, .vin = 4, .mask = BIT(0) | BIT(3) },
-+	{ .csi = RVIN_CSI41, .channel = 1, .vin = 4, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI41, .channel = 0, .vin = 5, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI41, .channel = 1, .vin = 5, .mask = BIT(1) | BIT(3) },
-+	{ .csi = RVIN_CSI41, .channel = 0, .vin = 6, .mask = BIT(1) },
-+	{ .csi = RVIN_CSI41, .channel = 2, .vin = 6, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI41, .channel = 1, .vin = 7, .mask = BIT(0) },
-+	{ .csi = RVIN_CSI41, .channel = 3, .vin = 7, .mask = BIT(3) },
-+	{ /* Sentinel */ }
-+};
-+
-+static const struct rvin_info rcar_info_r8a77980 = {
-+	.model = RCAR_GEN3,
-+	.use_mc = true,
-+	.max_width = 4096,
-+	.max_height = 4096,
-+	.routes = rcar_info_r8a77980_routes,
-+};
-+
- static const struct of_device_id rvin_of_id_table[] = {
- 	{
- 		.compatible = "renesas,vin-r8a7778",
-@@ -1143,6 +1171,10 @@ static const struct of_device_id rvin_of
- 		.data = &rcar_info_r8a77970,
- 	},
- 	{
-+		.compatible = "renesas,vin-r8a77980",
-+		.data = &rcar_info_r8a77980,
-+	},
-+	{
- 		.compatible = "renesas,vin-r8a77995",
- 		.data = &rcar_info_r8a77995,
- 	},
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
