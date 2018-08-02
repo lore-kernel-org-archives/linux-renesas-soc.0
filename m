@@ -1,42 +1,62 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:46804 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727201AbeHaWVn (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 31 Aug 2018 18:21:43 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 0/3] drm: rcar-du: Update DU support
-Date: Fri, 31 Aug 2018 19:12:56 +0100
-Message-Id: <20180831181259.29529-1-kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH v2 5/5] ARM: dts: iwg23s-sbc: Add pinctl support for EtherAVB
+Date: Thu,  2 Aug 2018 15:11:27 +0100
+Message-Id: <1533219087-33695-6-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1533219087-33695-1-git-send-email-biju.das@bp.renesas.com>
+References: <1533219087-33695-1-git-send-email-biju.das@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-3 patches to remove current limitations in the DU.
-Image formats that the hardware is capable of were not listed in the
-driver, and are added by Koji Masuoka.
+Adding pinctrl support for EtherAVB interface.
 
-Frame sizes on Gen3 platforms were artificially limited to the Gen2
-framesizes, and so this has been lifted to support larger displays such
-as 4K outputs.
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+V1-->V2 
+     * No change
+     Depend onthe below patch
+       https://patchwork.kernel.org/patch/10546801/
+---
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Finally restrictions on the framebuffer strides and alignments are
-lifted due to the greater flexibility of the VSP.
-
-Kieran Bingham (1):
-  drm: rcar-du: Update Gen3 output limitations
-
-Koji Matsuoka (1):
-  drm: rcar-du: Add pixel format support
-
-Laurent Pinchart (1):
-  drm: rcar-du: Update framebuffer pitch and alignment limits for Gen3
-
- drivers/gpu/drm/rcar-du/rcar_du_kms.c | 81 ++++++++++++++++++++++-----
- 1 file changed, 67 insertions(+), 14 deletions(-)
-
+diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+index 22da819..4ceff9c 100644
+--- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
++++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+@@ -28,6 +28,9 @@
+ };
+ 
+ &avb {
++	pinctrl-0 = <&avb_pins>;
++	pinctrl-names = "default";
++
+ 	phy-handle = <&phy3>;
+ 	phy-mode = "gmii";
+ 	renesas,no-ether-link;
+@@ -46,6 +49,11 @@
+ };
+ 
+ &pfc {
++	avb_pins: avb {
++		groups = "avb_mdio", "avb_gmii_tx_rx";
++		function = "avb";
++	};
++
+ 	scif1_pins: scif1 {
+ 		groups = "scif1_data_b";
+ 		function = "scif1";
 -- 
-2.17.1
+2.7.4
+
