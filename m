@@ -1,131 +1,175 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:58495 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727305AbeHCSoR (ORCPT
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:46091 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727682AbeHCKJ3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Aug 2018 14:44:17 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-CC: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Fri, 3 Aug 2018 06:09:29 -0400
+MIME-Version: 1.0
+References: <1533219087-33695-1-git-send-email-biju.das@bp.renesas.com> <1533219087-33695-2-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1533219087-33695-2-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 3 Aug 2018 10:14:05 +0200
+Message-ID: <CAMuHMdW7rY9Vho4qpo=K9qoqR1bfn=6Xqb9h=T0CGfb+v=X11Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] gpio: rcar: Add GPIO hole support
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2 1/5] gpio: rcar: Add GPIO hole support
-Date: Fri, 3 Aug 2018 16:47:06 +0000
-Message-ID: <OSBPR01MB21039FF2E727B7E9CFC43E9DB8230@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <1533219087-33695-1-git-send-email-biju.das@bp.renesas.com>
- <1533219087-33695-2-git-send-email-biju.das@bp.renesas.com>
- <CAMuHMdW7rY9Vho4qpo=K9qoqR1bfn=6Xqb9h=T0CGfb+v=X11Q@mail.gmail.com>
-In-Reply-To: <CAMuHMdW7rY9Vho4qpo=K9qoqR1bfn=6Xqb9h=T0CGfb+v=X11Q@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MiAxLzVdIGdwaW86IHJjYXI6IEFk
-ZCBHUElPIGhvbGUgc3VwcG9ydA0KPiBPbiBUaHUsIEF1ZyAyLCAyMDE4IGF0IDQ6MTcgUE0gQmlq
-dSBEYXMgPGJpanUuZGFzQGJwLnJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiBHUElPIGhvbGUgaXMg
-cHJlc2VudCBpbiBSWi9HMUMgU29DLiBWYWxpZCBHUElPIHBpbnMgb24gYmFuazMgYXJlIGluDQo+
-ID4gdGhlIHJhbmdlIEdQM18wIHRvIEdQM18xNiBhbmQgR1AzXzI3IHRvIEdQM18yOS4gVGhlIEdQ
-SU8gcGlucw0KPiBiZXR3ZWVuDQo+ID4gR1AzXzE3IHRvIEdQM18yNiBhcmUgdW51c2VkLiBBZGQg
-c3VwcG9ydCBmb3IgaGFuZGxpbmcgdW51c2VkIEdQSU8ncy4NCj4gPg0KPiA+IFNpZ25lZC1vZmYt
-Ynk6IEJpanUgRGFzIDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT4NCj4gPiBSZXZpZXdlZC1ieTog
-RmFicml6aW8gQ2FzdHJvIDxmYWJyaXppby5jYXN0cm9AYnAucmVuZXNhcy5jb20+DQo+ID4gICAg
-ICAgICB1MzIgaW50bXNrOw0KPiA+ICsgICAgICAgdTMyIGdwaW9tc2s7DQo+DQo+IEkgdGhpbmsg
-eW91IGNhbiBkbyB3aXRob3V0IGFkZGluZyB0aGlzIHZhcmlhYmxlIChzZWUgYmVsb3cpLg0KDQog
-T0suDQoNCj4gPiAgfTsNCj4gPg0KPiA+ICBzdHJ1Y3QgZ3Bpb19yY2FyX3ByaXYgew0KPiA+IEBA
-IC0yNTIsNiArMjUzLDkgQEAgc3RhdGljIGludCBncGlvX3JjYXJfcmVxdWVzdChzdHJ1Y3QgZ3Bp
-b19jaGlwICpjaGlwLA0KPiB1bnNpZ25lZCBvZmZzZXQpDQo+ID4gICAgICAgICBzdHJ1Y3QgZ3Bp
-b19yY2FyX3ByaXYgKnAgPSBncGlvY2hpcF9nZXRfZGF0YShjaGlwKTsNCj4gPiAgICAgICAgIGlu
-dCBlcnJvcjsNCj4gPg0KPiA+ICsgICAgICAgaWYgKCFncGlvY2hpcF9saW5lX2lzX3ZhbGlkKGNo
-aXAsIG9mZnNldCkpDQo+ID4gKyAgICAgICAgICAgICAgIHJldHVybiAtRUlOVkFMOw0KPiA+ICsN
-Cj4NCj4gUGVyaGFwcyB0aGlzIGNoZWNrIHNob3VsZCBiZSBhZGRlZCB0byBncGlvZF9yZXF1ZXN0
-X2NvbW1pdCgpLCBzbyBub3QgYWxsDQo+IGRyaXZlcnMgKGN1cnJlbnRseSBkcml2ZXJzL3BpbmN0
-cmwvcWNvbS9waW5jdHJsLW1zbS5jKSBoYXZlIHRvIGNoZWNrIGl0DQo+IHRoZW1zZWx2ZXM/DQoN
-ClllcyBJIGFncmVlLiAgTGludXMsIHdoYXQgZG8geW91IHRoaW5rPw0KDQo+ID4gICAgICAgICBl
-cnJvciA9IHBtX3J1bnRpbWVfZ2V0X3N5bmMoJnAtPnBkZXYtPmRldik7DQo+ID4gICAgICAgICBp
-ZiAoZXJyb3IgPCAwKQ0KPiA+ICAgICAgICAgICAgICAgICByZXR1cm4gZXJyb3I7DQo+ID4gQEAg
-LTMxMyw2ICszMTcsOSBAQCBzdGF0aWMgdm9pZCBncGlvX3JjYXJfc2V0X211bHRpcGxlKHN0cnVj
-dCBncGlvX2NoaXANCj4gKmNoaXAsIHVuc2lnbmVkIGxvbmcgKm1hc2ssDQo+ID4gICAgICAgICB1
-bnNpZ25lZCBsb25nIGZsYWdzOw0KPiA+ICAgICAgICAgdTMyIHZhbCwgYmFua21hc2s7DQo+ID4N
-Cj4gPiArICAgICAgIGlmIChjaGlwLT52YWxpZF9tYXNrICYmIChtYXNrWzBdICYgcC0+YmFua19p
-bmZvLmdwaW9tc2spKQ0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm47DQo+ID4gKw0KPg0KPiBZ
-b3UgY2FuIHVzZSBjaGlwLT52YWxpZF9tYXNrWzBdIGluc3RlYWQgb2YgcC0+YmFua19pbmZvLmdw
-aW9tc2suDQo+IEhvd2V2ZXIsICBpbnN0ZWFkIG9mIHJldHVybmluZywgSSB3b3VsZCBqdXN0IGln
-bm9yZSBhbnkgaW52YWxpZCBiaXRzIHNldC4NCj4gQml0cyA+IGNoaXAtPm5ncGlvIGFyZSBhbHJl
-YWR5IGlnbm9yZWQgYmVsb3cuLi4NCj4NCj4gPiAgICAgICAgIGJhbmttYXNrID0gbWFza1swXSAm
-IEdFTk1BU0soY2hpcC0+bmdwaW8gLSAxLCAwKTsNCj4NCj4gLi4uIHNvIGp1c3QgYWRkOg0KPg0K
-PiAgICAgaWYgKGNoaXAtPnZhbGlkX21hc2spDQo+ICAgICAgICAgICAgIGJhbmttYXNrICY9IGNo
-aXAtPnZhbGlkX21hc2tbMF07DQoNCk9LLiBXaWxsIGRvIHRoaXMuDQoNCj4gSG93ZXZlciwgaWYg
-eW91IGZvcmNlIGdwaW9jaGlwLT5uZWVkX3ZhbGlkX21hc2sgPSB0cnVlLCB5b3UgY2FuIGp1c3Qg
-dXNlDQo+DQo+ICAgICBiYW5rbWFzayA9IG1hc2tbMF0gJiBjaGlwLT52YWxpZF9tYXNrWzBdOw0K
-PiB1bmNvbmRpdGlvbmFsbHkuDQo+DQo+ID4gICAgICAgICBpZiAoIWJhbmttYXNrKQ0KPiA+ICAg
-ICAgICAgICAgICAgICByZXR1cm47DQo+ID4gQEAgLTM5OSw3ICs0MDYsOCBAQCBzdGF0aWMgaW50
-IGdwaW9fcmNhcl9wYXJzZV9kdChzdHJ1Y3QgZ3Bpb19yY2FyX3ByaXYNCj4gKnAsIHVuc2lnbmVk
-IGludCAqbnBpbnMpDQo+ID4gICAgICAgICBzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wID0gcC0+cGRl
-di0+ZGV2Lm9mX25vZGU7DQo+ID4gICAgICAgICBjb25zdCBzdHJ1Y3QgZ3Bpb19yY2FyX2luZm8g
-KmluZm87DQo+ID4gICAgICAgICBzdHJ1Y3Qgb2ZfcGhhbmRsZV9hcmdzIGFyZ3M7DQo+ID4gLSAg
-ICAgICBpbnQgcmV0Ow0KPiA+ICsgICAgICAgaW50IHJldCwgbGVuLCBpOw0KPiA+ICsgICAgICAg
-dTMyIHN0YXJ0LCBjb3VudDsNCj4gPg0KPiA+ICAgICAgICAgaW5mbyA9IG9mX2RldmljZV9nZXRf
-bWF0Y2hfZGF0YSgmcC0+cGRldi0+ZGV2KTsNCj4gPg0KPiA+IEBAIC00MTQsNiArNDIyLDIyIEBA
-IHN0YXRpYyBpbnQgZ3Bpb19yY2FyX3BhcnNlX2R0KHN0cnVjdCBncGlvX3JjYXJfcHJpdg0KPiAq
-cCwgdW5zaWduZWQgaW50ICpucGlucykNCj4gPiAgICAgICAgICAgICAgICAgKm5waW5zID0gUkNB
-Ul9NQVhfR1BJT19QRVJfQkFOSzsNCj4gPiAgICAgICAgIH0NCj4gPg0KPiA+ICsgICAgICAgcC0+
-YmFua19pbmZvLmdwaW9tc2sgPSAwOw0KPiA+ICsgICAgICAgbGVuID0gb2ZfcHJvcGVydHlfY291
-bnRfdTMyX2VsZW1zKG5wLCAgImdwaW8tcmVzZXJ2ZWQtcmFuZ2VzIik7DQo+ID4gKyAgICAgICBp
-ZiAobGVuIDwgMCB8fCBsZW4gJSAyICE9IDApDQo+ID4gKyAgICAgICAgICAgICAgIHJldHVybiAw
-Ow0KPiA+ICsNCj4gPiArICAgICAgIGZvciAoaSA9IDA7IGkgPCBsZW47IGkgKz0gMikgew0KPiA+
-ICsgICAgICAgICAgICAgICBvZl9wcm9wZXJ0eV9yZWFkX3UzMl9pbmRleChucCwgImdwaW8tcmVz
-ZXJ2ZWQtcmFuZ2VzIiwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgaSwgJnN0YXJ0KTsNCj4gPiArICAgICAgICAgICAgICAgb2ZfcHJvcGVydHlfcmVhZF91
-MzJfaW5kZXgobnAsICJncGlvLXJlc2VydmVkLXJhbmdlcyIsDQo+ID4gKyAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIGkgKyAxLCAmY291bnQpOw0KPiA+ICsgICAgICAg
-ICAgICAgICBpZiAoc3RhcnQgPj0gKm5waW5zIHx8IHN0YXJ0ICsgY291bnQgPj0gKm5waW5zKQ0K
-PiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGNvbnRpbnVlOw0KPiA+ICsNCj4gPiArICAgICAg
-ICAgICAgICAgcC0+YmFua19pbmZvLmdwaW9tc2sgPSBHRU5NQVNLKHN0YXJ0ICsgY291bnQgLSAx
-LCBzdGFydCk7DQo+ID4gKyAgICAgICB9DQo+DQo+IG9mX2dwaW9jaGlwX2luaXRfdmFsaWRfbWFz
-aygpIGFscmVhZHkgZG9lcyB0aGUgc2FtZSwgZm9yIGNoaXAtPnZhbGlkX21hc2suDQoNCkN1cnJl
-bnRseSB3ZSBhcmUgbm90IHNldHRpbmcgICAiZ3Bpb19jaGlwLm9mX25vZGUiIHZhcmlhYmxlICBp
-biB0aGUgZHJpdmVyLg0KU28gdGhlIGJlbG93ICBmdW5jdGlvbiBpbiBncGlvY2hpcF9pbml0X3Zh
-bGlkX21hc2soKSAgIHdpbGwgcmV0dXJuIG5lZ2F0aXZlIHZhbHVlIGFuZCB3b24ndCBhbGxvY2F0
-ZSBtZW1vcnkgZm9yIHZhbGlkX21hc2suDQpzaXplID0gb2ZfcHJvcGVydHlfY291bnRfdTMyX2Vs
-ZW1zKG5wLCAgImdwaW8tcmVzZXJ2ZWQtcmFuZ2VzIik7DQoNCldlIG5lZWQgdG8gZWl0aGVyIHNl
-dCAgIiBvZl9ub2RlIiAgdmFyaWFibGUgIG9yICBwYXJzZSAiZ3Bpby1yZXNlcnZlZC1yYW5nZXMi
-IGFuZCBzZXQgIiBuZWVkX3ZhbGlkX21hc2s9dHJ1ZSA7Ig0Kc28gdGhhdCAgZ3Bpb2NoaXBfaW5p
-dF92YWxpZF9tYXNrKCkgd2lsbCBhbGxvY2F0ZSB0aGUgdmFsaWRfbWFzay4NCg0KPiA+ICsNCj4g
-PiAgICAgICAgIHJldHVybiAwOw0KPiA+ICB9DQo+ID4NCj4gPiBAQCAtNDcxLDYgKzQ5NSw3IEBA
-IHN0YXRpYyBpbnQgZ3Bpb19yY2FyX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UNCj4gKnBk
-ZXYpDQo+ID4gICAgICAgICBncGlvX2NoaXAtPm93bmVyID0gVEhJU19NT0RVTEU7DQo+ID4gICAg
-ICAgICBncGlvX2NoaXAtPmJhc2UgPSAtMTsNCj4gPiAgICAgICAgIGdwaW9fY2hpcC0+bmdwaW8g
-PSBucGluczsNCj4gPiArICAgICAgIGdwaW9fY2hpcC0+bmVlZF92YWxpZF9tYXNrID0gcC0+YmFu
-a19pbmZvLmdwaW9tc2sgPyB0cnVlIDoNCj4gPiArIGZhbHNlOw0KPg0KPiBncGlvY2hpcF9pbml0
-X3ZhbGlkX21hc2soKSBhbHJlYWR5IHNldHMgZ3Bpb19jaGlwLT5uZWVkX3ZhbGlkX21hc2sgdG8g
-dHJ1ZQ0KPiBpZiAiZ3Bpby1yZXNlcnZlZC1yYW5nZXMiIGlzIGRldGVjdGVkLg0KDQpUaGUgcGxh
-biBpcyAgdG8gc2V0ICAib2Zfbm9kZSIgIHZhcmlhYmxlIGluIGRyaXZlci4gU28gdGhhdCAgZ3Bp
-b2NoaXBfaW5pdF92YWxpZF9tYXNrKCkgc2V0cyBncGlvX2NoaXAtPm5lZWRfdmFsaWRfbWFzayB0
-byB0cnVlLg0KV2hhdCBpcyB5b3VyIG9waW5pb24gb24gdGhpcz8NCg0KPiBIb3dldmVyLCBzZXR0
-aW5nIGl0IHRvIHRydWUgdW5jb25kaXRpb25hbGx5IGFsbG93IHRvIHNpbXBsaWZ5DQo+IGdwaW9f
-cmNhcl9zZXRfbXVsdGlwbGUoKQ0KPiBhbmQgZ3Bpb19yY2FyX3Jlc3VtZSgpLg0KPg0KPiA+DQo+
-ID4gICAgICAgICBpcnFfY2hpcCA9ICZwLT5pcnFfY2hpcDsNCj4gPiAgICAgICAgIGlycV9jaGlw
-LT5uYW1lID0gbmFtZTsNCj4gPiBAQCAtNTUxLDYgKzU3Niw5IEBAIHN0YXRpYyBpbnQgZ3Bpb19y
-Y2FyX3Jlc3VtZShzdHJ1Y3QgZGV2aWNlICpkZXYpDQo+ID4NCj4gPiAgICAgICAgIGZvciAob2Zm
-c2V0ID0gMDsgb2Zmc2V0IDwgcC0+Z3Bpb19jaGlwLm5ncGlvOyBvZmZzZXQrKykgew0KPiA+ICAg
-ICAgICAgICAgICAgICBtYXNrID0gQklUKG9mZnNldCk7DQo+ID4gKyAgICAgICAgICAgICAgIGlm
-IChwLT5ncGlvX2NoaXAudmFsaWRfbWFzayAmJiAobWFzayAmIHAtPmJhbmtfaW5mby5ncGlvbXNr
-KSkNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBjb250aW51ZTsNCj4gPiArDQo+DQo+IEp1
-c3QgZG8gImlmICghZ3Bpb2NoaXBfbGluZV9pc192YWxpZChjaGlwLCBvZmZzZXQpKSBjb250aW51
-ZTsiIGF0IHRoZSB0b3Agb2YgdGhlDQo+IGxvb3A/DQoNCk9rLiBXaWxsIGRvIHRoaXMuDQoNCj4g
-SG93ZXZlciwgaWYgeW91IGZvcmNlIGdwaW9jaGlwLT5uZWVkX3ZhbGlkX21hc2sgPSB0cnVlLCB5
-b3UgY2FuIGp1c3QNCj4gcmVwbGFjZSB0aGUgIGhhbmQtY29kZWQgZm9yIGxvb3AgYnkgZm9yX2Vh
-Y2hfc2V0X2JpdCgpLg0KPg0KPiA+ICAgICAgICAgICAgICAgICAvKiBJL08gcGluICovDQo+ID4g
-ICAgICAgICAgICAgICAgIGlmICghKHAtPmJhbmtfaW5mby5pb2ludHNlbCAmIG1hc2spKSB7DQo+
-ID4gICAgICAgICAgICAgICAgICAgICAgICAgaWYgKHAtPmJhbmtfaW5mby5pbm91dHNlbCAmIG1h
-c2spDQoNClJlZ2FyZHMsDQpCaWp1DQoNCg0KDQpSZW5lc2FzIEVsZWN0cm9uaWNzIEV1cm9wZSBM
-dGQsIER1a2VzIE1lYWRvdywgTWlsbGJvYXJkIFJvYWQsIEJvdXJuZSBFbmQsIEJ1Y2tpbmdoYW1z
-aGlyZSwgU0w4IDVGSCwgVUsuIFJlZ2lzdGVyZWQgaW4gRW5nbGFuZCAmIFdhbGVzIHVuZGVyIFJl
-Z2lzdGVyZWQgTm8uIDA0NTg2NzA5Lg0K
+Hi Biju,
+
+On Thu, Aug 2, 2018 at 4:17 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> GPIO hole is present in RZ/G1C SoC. Valid GPIO pins on bank3 are in the
+> range GP3_0 to GP3_16 and GP3_27 to GP3_29. The GPIO pins between GP3_17
+> to GP3_26 are unused. Add support for handling unused GPIO's.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> ---
+> V1-->V2
+>     * Added gpio-reserved-ranges support for handling
+>       unused gpios.
+
+Thanks for the update!
+
+> --- a/drivers/gpio/gpio-rcar.c
+> +++ b/drivers/gpio/gpio-rcar.c
+> @@ -38,6 +38,7 @@ struct gpio_rcar_bank_info {
+>         u32 edglevel;
+>         u32 bothedge;
+>         u32 intmsk;
+> +       u32 gpiomsk;
+
+I think you can do without adding this variable (see below).
+
+>  };
+>
+>  struct gpio_rcar_priv {
+> @@ -252,6 +253,9 @@ static int gpio_rcar_request(struct gpio_chip *chip, unsigned offset)
+>         struct gpio_rcar_priv *p = gpiochip_get_data(chip);
+>         int error;
+>
+> +       if (!gpiochip_line_is_valid(chip, offset))
+> +               return -EINVAL;
+> +
+
+Perhaps this check should be added to gpiod_request_commit(), so not all
+drivers (currently drivers/pinctrl/qcom/pinctrl-msm.c) have to check it
+themselves?
+
+>         error = pm_runtime_get_sync(&p->pdev->dev);
+>         if (error < 0)
+>                 return error;
+> @@ -313,6 +317,9 @@ static void gpio_rcar_set_multiple(struct gpio_chip *chip, unsigned long *mask,
+>         unsigned long flags;
+>         u32 val, bankmask;
+>
+> +       if (chip->valid_mask && (mask[0] & p->bank_info.gpiomsk))
+> +               return;
+> +
+
+You can use chip->valid_mask[0] instead of p->bank_info.gpiomsk.
+However,  instead of returning, I would just ignore any invalid bits set.
+Bits > chip->ngpio are already ignored below...
+
+>         bankmask = mask[0] & GENMASK(chip->ngpio - 1, 0);
+
+... so just add:
+
+    if (chip->valid_mask)
+            bankmask &= chip->valid_mask[0];
+
+However, if you force gpiochip->need_valid_mask = true, you can just use
+
+    bankmask = mask[0] & chip->valid_mask[0];
+
+unconditionally.
+
+>         if (!bankmask)
+>                 return;
+> @@ -399,7 +406,8 @@ static int gpio_rcar_parse_dt(struct gpio_rcar_priv *p, unsigned int *npins)
+>         struct device_node *np = p->pdev->dev.of_node;
+>         const struct gpio_rcar_info *info;
+>         struct of_phandle_args args;
+> -       int ret;
+> +       int ret, len, i;
+> +       u32 start, count;
+>
+>         info = of_device_get_match_data(&p->pdev->dev);
+>
+> @@ -414,6 +422,22 @@ static int gpio_rcar_parse_dt(struct gpio_rcar_priv *p, unsigned int *npins)
+>                 *npins = RCAR_MAX_GPIO_PER_BANK;
+>         }
+>
+> +       p->bank_info.gpiomsk = 0;
+> +       len = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
+> +       if (len < 0 || len % 2 != 0)
+> +               return 0;
+> +
+> +       for (i = 0; i < len; i += 2) {
+> +               of_property_read_u32_index(np, "gpio-reserved-ranges",
+> +                                          i, &start);
+> +               of_property_read_u32_index(np, "gpio-reserved-ranges",
+> +                                          i + 1, &count);
+> +               if (start >= *npins || start + count >= *npins)
+> +                       continue;
+> +
+> +               p->bank_info.gpiomsk = GENMASK(start + count - 1, start);
+> +       }
+
+of_gpiochip_init_valid_mask() already does the same, for chip->valid_mask.
+
+> +
+>         return 0;
+>  }
+>
+> @@ -471,6 +495,7 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+>         gpio_chip->owner = THIS_MODULE;
+>         gpio_chip->base = -1;
+>         gpio_chip->ngpio = npins;
+> +       gpio_chip->need_valid_mask = p->bank_info.gpiomsk ? true : false;
+
+gpiochip_init_valid_mask() already sets gpio_chip->need_valid_mask to true
+if "gpio-reserved-ranges" is detected.
+However, setting it to true unconditionally allow to simplify
+gpio_rcar_set_multiple()
+and gpio_rcar_resume().
+
+>
+>         irq_chip = &p->irq_chip;
+>         irq_chip->name = name;
+> @@ -551,6 +576,9 @@ static int gpio_rcar_resume(struct device *dev)
+>
+>         for (offset = 0; offset < p->gpio_chip.ngpio; offset++) {
+>                 mask = BIT(offset);
+> +               if (p->gpio_chip.valid_mask && (mask & p->bank_info.gpiomsk))
+> +                       continue;
+> +
+
+Just do "if (!gpiochip_line_is_valid(chip, offset)) continue;" at the
+top of the loop?
+
+However, if you force gpiochip->need_valid_mask = true, you can just replace
+the  hand-coded for loop by for_each_set_bit().
+
+>                 /* I/O pin */
+>                 if (!(p->bank_info.iointsel & mask)) {
+>                         if (p->bank_info.inoutsel & mask)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
