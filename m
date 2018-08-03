@@ -1,80 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44752 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727796AbeHLQKw (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:50436 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727193AbeHCNde (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 12 Aug 2018 12:10:52 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r16-v6so12002202wrt.11
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 12 Aug 2018 06:32:47 -0700 (PDT)
-From: Eugeniu Rosca <roscaeugeniu@gmail.com>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Cc: Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <rosca.eugeniu@gmail.com>
-Subject: [PATCH v2 1/7] dt-bindings: arm: Document Renesas R-Car M3-N-based ULCB board
-Date: Sun, 12 Aug 2018 15:31:43 +0200
-Message-Id: <20180812133149.7710-1-erosca@de.adit-jv.com>
+        Fri, 3 Aug 2018 09:33:34 -0400
+From: Kieran Bingham <kieran@ksquared.org.uk>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v6 03/11] media: vsp1: Rename dl_child to dl_next
+Date: Fri,  3 Aug 2018 12:37:22 +0100
+Message-Id: <0444a36cb182f268eb7dfadd8ccab626cf033850.1533295631.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.7e4241408f077710d96e0cc06e039d1022fb0c8c.1533295631.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.7e4241408f077710d96e0cc06e039d1022fb0c8c.1533295631.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.7e4241408f077710d96e0cc06e039d1022fb0c8c.1533295631.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.7e4241408f077710d96e0cc06e039d1022fb0c8c.1533295631.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In harmony with ATF and U-Boot outputs [1] and [2], the new board is
-based on M3-N revision ES1.1 and the amount of memory present on SiP
-is 2GiB, contiguously addressed.
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-The amount of RAM is mentioned based on the assumption that it is
-encoded in the board id/string. There is some evidence supporting this
-in form of last-digit-mismatch between two R-Car H3 ES2.0 ULCB board
-ids, one with 4GiB and one with 8GiB of RAM (see [3]).
+Both vsp1_dl_list_commit() and __vsp1_dl_list_put() walk the display
+list chain referencing the nodes as children, when in reality they are
+siblings.
 
-[1] BL2: R-Car Gen3 Initial Program Loader(CA57) Rev.1.0.21
-    BL2: PRR is R-Car M3N Ver.1.1
+Update the terminology to 'dl_next' to be consistent with the
+vsp1_video_pipeline_run() usage.
 
-[2] U-Boot 2015.04-00295-*
-    CPU: Renesas Electronics R8A77965 rev 1.1
-    ---8<----
-    DRAM:  1.9 GiB
-    Bank #0: 0x048000000 - 0x0bfffffff, 1.9 GiB
-    ---8<----
-
-[3] https://patchwork.kernel.org/patch/10555957/#22169325
-
-Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
-Changes in v2:
- - [Jacopo Mondi] Emphasized the fact the amount of RAM is encoded in
-   the board id, so documenting it *is* relevant for this commit.
- - [Simon Horman]
-   - Renamed board name 's/M3-N ULCB/M3NULCB/'
-   - Renamed compatible string 's/renesas,ulcb/renesas,m3nulcb/'
- - Pushed all dt-bindings patches to the beginning of the series.
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/platform/vsp1/vsp1_dl.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index d8cf740132c6..03a314c7989d 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -106,6 +106,8 @@ Boards:
-     compatible = "renesas,lager", "renesas,r8a7790"
-   - M3ULCB (R-Car Starter Kit Pro, RTP0RC7796SKBX0010SA09 (M3 ES1.0))
-     compatible = "renesas,m3ulcb", "renesas,r8a7796"
-+  - M3NULCB (R-Car Starter Kit Pro, RTP0RC77965SKBX010SA00 (M3-N ES1.1))
-+    compatible = "renesas,m3nulcb", "renesas,r8a77965"
-   - Marzen (R0P7779A00010S)
-     compatible = "renesas,marzen", "renesas,r8a7779"
-   - Porter (M2-LCDP)
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index e4aae334f047..202bc0c6e484 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -399,7 +399,7 @@ struct vsp1_dl_list *vsp1_dl_list_get(struct vsp1_dl_manager *dlm)
+ /* This function must be called with the display list manager lock held.*/
+ static void __vsp1_dl_list_put(struct vsp1_dl_list *dl)
+ {
+-	struct vsp1_dl_list *dl_child;
++	struct vsp1_dl_list *dl_next;
+ 
+ 	if (!dl)
+ 		return;
+@@ -409,8 +409,8 @@ static void __vsp1_dl_list_put(struct vsp1_dl_list *dl)
+ 	 * hardware operation.
+ 	 */
+ 	if (dl->has_chain) {
+-		list_for_each_entry(dl_child, &dl->chain, chain)
+-			__vsp1_dl_list_put(dl_child);
++		list_for_each_entry(dl_next, &dl->chain, chain)
++			__vsp1_dl_list_put(dl_next);
+ 	}
+ 
+ 	dl->has_chain = false;
+@@ -674,17 +674,17 @@ static void vsp1_dl_list_commit_singleshot(struct vsp1_dl_list *dl)
+ void vsp1_dl_list_commit(struct vsp1_dl_list *dl, bool internal)
+ {
+ 	struct vsp1_dl_manager *dlm = dl->dlm;
+-	struct vsp1_dl_list *dl_child;
++	struct vsp1_dl_list *dl_next;
+ 	unsigned long flags;
+ 
+ 	if (dlm->mode == VSP1_DL_MODE_HEADER) {
+ 		/* Fill the header for the head and chained display lists. */
+ 		vsp1_dl_list_fill_header(dl, list_empty(&dl->chain));
+ 
+-		list_for_each_entry(dl_child, &dl->chain, chain) {
+-			bool last = list_is_last(&dl_child->chain, &dl->chain);
++		list_for_each_entry(dl_next, &dl->chain, chain) {
++			bool last = list_is_last(&dl_next->chain, &dl->chain);
+ 
+-			vsp1_dl_list_fill_header(dl_child, last);
++			vsp1_dl_list_fill_header(dl_next, last);
+ 		}
+ 	}
+ 
 -- 
-2.18.0
+git-series 0.9.1
