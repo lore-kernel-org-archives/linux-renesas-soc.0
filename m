@@ -1,113 +1,131 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:38980 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbeHDLZr (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:58495 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727305AbeHCSoR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 4 Aug 2018 07:25:47 -0400
-MIME-Version: 1.0
-References: <1533219087-33695-1-git-send-email-biju.das@bp.renesas.com>
- <1533219087-33695-2-git-send-email-biju.das@bp.renesas.com>
- <CAMuHMdW7rY9Vho4qpo=K9qoqR1bfn=6Xqb9h=T0CGfb+v=X11Q@mail.gmail.com> <OSBPR01MB21039FF2E727B7E9CFC43E9DB8230@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-In-Reply-To: <OSBPR01MB21039FF2E727B7E9CFC43E9DB8230@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Sat, 4 Aug 2018 11:25:29 +0200
-Message-ID: <CAMuHMdX8wsky2EiESFe4y_JeMengPgjTeXCyFh1TwcFCJkTD7A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] gpio: rcar: Add GPIO hole support
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Fri, 3 Aug 2018 14:44:17 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+CC: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: RE: [PATCH v2 1/5] gpio: rcar: Add GPIO hole support
+Date: Fri, 3 Aug 2018 16:47:06 +0000
+Message-ID: <OSBPR01MB21039FF2E727B7E9CFC43E9DB8230@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <1533219087-33695-1-git-send-email-biju.das@bp.renesas.com>
+ <1533219087-33695-2-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdW7rY9Vho4qpo=K9qoqR1bfn=6Xqb9h=T0CGfb+v=X11Q@mail.gmail.com>
+In-Reply-To: <CAMuHMdW7rY9Vho4qpo=K9qoqR1bfn=6Xqb9h=T0CGfb+v=X11Q@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Biju
-
-On Fri, Aug 3, 2018 at 6:47 PM Biju Das <biju.das@bp.renesas.com> wrote:
-> > Subject: Re: [PATCH v2 1/5] gpio: rcar: Add GPIO hole support
-> > On Thu, Aug 2, 2018 at 4:17 PM Biju Das <biju.das@bp.renesas.com> wrote:
-> > > GPIO hole is present in RZ/G1C SoC. Valid GPIO pins on bank3 are in
-> > > the range GP3_0 to GP3_16 and GP3_27 to GP3_29. The GPIO pins
-> > between
-> > > GP3_17 to GP3_26 are unused. Add support for handling unused GPIO's.
-> > >
-> > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> > > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-
-> > > @@ -414,6 +422,22 @@ static int gpio_rcar_parse_dt(struct gpio_rcar_priv
-> > *p, unsigned int *npins)
-> > >                 *npins = RCAR_MAX_GPIO_PER_BANK;
-> > >         }
-> > >
-> > > +       p->bank_info.gpiomsk = 0;
-> > > +       len = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
-> > > +       if (len < 0 || len % 2 != 0)
-> > > +               return 0;
-> > > +
-> > > +       for (i = 0; i < len; i += 2) {
-> > > +               of_property_read_u32_index(np, "gpio-reserved-ranges",
-> > > +                                          i, &start);
-> > > +               of_property_read_u32_index(np, "gpio-reserved-ranges",
-> > > +                                          i + 1, &count);
-> > > +               if (start >= *npins || start + count >= *npins)
-> > > +                       continue;
-> > > +
-> > > +               p->bank_info.gpiomsk = GENMASK(start + count - 1, start);
-> > > +       }
-> >
-> > of_gpiochip_init_valid_mask() already does the same, for chip->valid_mask.
->
-> Currently we are not setting   "gpio_chip.of_node" variable  in the driver.
-> So the below  function in gpiochip_init_valid_mask()   will return negative value and won't allocate memory for valid_mask.
-> size = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
-
-Nice catch, I had missed that!
-
-> We need to either set  " of_node"  variable  or  parse "gpio-reserved-ranges" and set " need_valid_mask=true ;"
-> so that  gpiochip_init_valid_mask() will allocate the valid_mask.
-
-Agreed.
-
->
-> > > +
-> > >         return 0;
-> > >  }
-> > >
-> > > @@ -471,6 +495,7 @@ static int gpio_rcar_probe(struct platform_device
-> > *pdev)
-> > >         gpio_chip->owner = THIS_MODULE;
-> > >         gpio_chip->base = -1;
-> > >         gpio_chip->ngpio = npins;
-> > > +       gpio_chip->need_valid_mask = p->bank_info.gpiomsk ? true :
-> > > + false;
-> >
-> > gpiochip_init_valid_mask() already sets gpio_chip->need_valid_mask to true
-> > if "gpio-reserved-ranges" is detected.
->
-> The plan is  to set  "of_node"  variable in driver. So that  gpiochip_init_valid_mask() sets gpio_chip->need_valid_mask to true.
-> What is your opinion on this?
-
-Sounds fine to me.
-
-You said on IRC that it currently crashes when "gpio-reserved-ranges" is used.
-IMHO that's something that should be fixed separately, possibly for v4.19.
-
-Looks like all other Renesas gpio drivers (some combined pinctrl/gpio), except
-for gpio-em.c, also fail to set gpio_chip.of_node. Will have a closer look...
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQsDQoNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MiAxLzVdIGdwaW86IHJjYXI6IEFk
+ZCBHUElPIGhvbGUgc3VwcG9ydA0KPiBPbiBUaHUsIEF1ZyAyLCAyMDE4IGF0IDQ6MTcgUE0gQmlq
+dSBEYXMgPGJpanUuZGFzQGJwLnJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiBHUElPIGhvbGUgaXMg
+cHJlc2VudCBpbiBSWi9HMUMgU29DLiBWYWxpZCBHUElPIHBpbnMgb24gYmFuazMgYXJlIGluDQo+
+ID4gdGhlIHJhbmdlIEdQM18wIHRvIEdQM18xNiBhbmQgR1AzXzI3IHRvIEdQM18yOS4gVGhlIEdQ
+SU8gcGlucw0KPiBiZXR3ZWVuDQo+ID4gR1AzXzE3IHRvIEdQM18yNiBhcmUgdW51c2VkLiBBZGQg
+c3VwcG9ydCBmb3IgaGFuZGxpbmcgdW51c2VkIEdQSU8ncy4NCj4gPg0KPiA+IFNpZ25lZC1vZmYt
+Ynk6IEJpanUgRGFzIDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT4NCj4gPiBSZXZpZXdlZC1ieTog
+RmFicml6aW8gQ2FzdHJvIDxmYWJyaXppby5jYXN0cm9AYnAucmVuZXNhcy5jb20+DQo+ID4gICAg
+ICAgICB1MzIgaW50bXNrOw0KPiA+ICsgICAgICAgdTMyIGdwaW9tc2s7DQo+DQo+IEkgdGhpbmsg
+eW91IGNhbiBkbyB3aXRob3V0IGFkZGluZyB0aGlzIHZhcmlhYmxlIChzZWUgYmVsb3cpLg0KDQog
+T0suDQoNCj4gPiAgfTsNCj4gPg0KPiA+ICBzdHJ1Y3QgZ3Bpb19yY2FyX3ByaXYgew0KPiA+IEBA
+IC0yNTIsNiArMjUzLDkgQEAgc3RhdGljIGludCBncGlvX3JjYXJfcmVxdWVzdChzdHJ1Y3QgZ3Bp
+b19jaGlwICpjaGlwLA0KPiB1bnNpZ25lZCBvZmZzZXQpDQo+ID4gICAgICAgICBzdHJ1Y3QgZ3Bp
+b19yY2FyX3ByaXYgKnAgPSBncGlvY2hpcF9nZXRfZGF0YShjaGlwKTsNCj4gPiAgICAgICAgIGlu
+dCBlcnJvcjsNCj4gPg0KPiA+ICsgICAgICAgaWYgKCFncGlvY2hpcF9saW5lX2lzX3ZhbGlkKGNo
+aXAsIG9mZnNldCkpDQo+ID4gKyAgICAgICAgICAgICAgIHJldHVybiAtRUlOVkFMOw0KPiA+ICsN
+Cj4NCj4gUGVyaGFwcyB0aGlzIGNoZWNrIHNob3VsZCBiZSBhZGRlZCB0byBncGlvZF9yZXF1ZXN0
+X2NvbW1pdCgpLCBzbyBub3QgYWxsDQo+IGRyaXZlcnMgKGN1cnJlbnRseSBkcml2ZXJzL3BpbmN0
+cmwvcWNvbS9waW5jdHJsLW1zbS5jKSBoYXZlIHRvIGNoZWNrIGl0DQo+IHRoZW1zZWx2ZXM/DQoN
+ClllcyBJIGFncmVlLiAgTGludXMsIHdoYXQgZG8geW91IHRoaW5rPw0KDQo+ID4gICAgICAgICBl
+cnJvciA9IHBtX3J1bnRpbWVfZ2V0X3N5bmMoJnAtPnBkZXYtPmRldik7DQo+ID4gICAgICAgICBp
+ZiAoZXJyb3IgPCAwKQ0KPiA+ICAgICAgICAgICAgICAgICByZXR1cm4gZXJyb3I7DQo+ID4gQEAg
+LTMxMyw2ICszMTcsOSBAQCBzdGF0aWMgdm9pZCBncGlvX3JjYXJfc2V0X211bHRpcGxlKHN0cnVj
+dCBncGlvX2NoaXANCj4gKmNoaXAsIHVuc2lnbmVkIGxvbmcgKm1hc2ssDQo+ID4gICAgICAgICB1
+bnNpZ25lZCBsb25nIGZsYWdzOw0KPiA+ICAgICAgICAgdTMyIHZhbCwgYmFua21hc2s7DQo+ID4N
+Cj4gPiArICAgICAgIGlmIChjaGlwLT52YWxpZF9tYXNrICYmIChtYXNrWzBdICYgcC0+YmFua19p
+bmZvLmdwaW9tc2spKQ0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm47DQo+ID4gKw0KPg0KPiBZ
+b3UgY2FuIHVzZSBjaGlwLT52YWxpZF9tYXNrWzBdIGluc3RlYWQgb2YgcC0+YmFua19pbmZvLmdw
+aW9tc2suDQo+IEhvd2V2ZXIsICBpbnN0ZWFkIG9mIHJldHVybmluZywgSSB3b3VsZCBqdXN0IGln
+bm9yZSBhbnkgaW52YWxpZCBiaXRzIHNldC4NCj4gQml0cyA+IGNoaXAtPm5ncGlvIGFyZSBhbHJl
+YWR5IGlnbm9yZWQgYmVsb3cuLi4NCj4NCj4gPiAgICAgICAgIGJhbmttYXNrID0gbWFza1swXSAm
+IEdFTk1BU0soY2hpcC0+bmdwaW8gLSAxLCAwKTsNCj4NCj4gLi4uIHNvIGp1c3QgYWRkOg0KPg0K
+PiAgICAgaWYgKGNoaXAtPnZhbGlkX21hc2spDQo+ICAgICAgICAgICAgIGJhbmttYXNrICY9IGNo
+aXAtPnZhbGlkX21hc2tbMF07DQoNCk9LLiBXaWxsIGRvIHRoaXMuDQoNCj4gSG93ZXZlciwgaWYg
+eW91IGZvcmNlIGdwaW9jaGlwLT5uZWVkX3ZhbGlkX21hc2sgPSB0cnVlLCB5b3UgY2FuIGp1c3Qg
+dXNlDQo+DQo+ICAgICBiYW5rbWFzayA9IG1hc2tbMF0gJiBjaGlwLT52YWxpZF9tYXNrWzBdOw0K
+PiB1bmNvbmRpdGlvbmFsbHkuDQo+DQo+ID4gICAgICAgICBpZiAoIWJhbmttYXNrKQ0KPiA+ICAg
+ICAgICAgICAgICAgICByZXR1cm47DQo+ID4gQEAgLTM5OSw3ICs0MDYsOCBAQCBzdGF0aWMgaW50
+IGdwaW9fcmNhcl9wYXJzZV9kdChzdHJ1Y3QgZ3Bpb19yY2FyX3ByaXYNCj4gKnAsIHVuc2lnbmVk
+IGludCAqbnBpbnMpDQo+ID4gICAgICAgICBzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wID0gcC0+cGRl
+di0+ZGV2Lm9mX25vZGU7DQo+ID4gICAgICAgICBjb25zdCBzdHJ1Y3QgZ3Bpb19yY2FyX2luZm8g
+KmluZm87DQo+ID4gICAgICAgICBzdHJ1Y3Qgb2ZfcGhhbmRsZV9hcmdzIGFyZ3M7DQo+ID4gLSAg
+ICAgICBpbnQgcmV0Ow0KPiA+ICsgICAgICAgaW50IHJldCwgbGVuLCBpOw0KPiA+ICsgICAgICAg
+dTMyIHN0YXJ0LCBjb3VudDsNCj4gPg0KPiA+ICAgICAgICAgaW5mbyA9IG9mX2RldmljZV9nZXRf
+bWF0Y2hfZGF0YSgmcC0+cGRldi0+ZGV2KTsNCj4gPg0KPiA+IEBAIC00MTQsNiArNDIyLDIyIEBA
+IHN0YXRpYyBpbnQgZ3Bpb19yY2FyX3BhcnNlX2R0KHN0cnVjdCBncGlvX3JjYXJfcHJpdg0KPiAq
+cCwgdW5zaWduZWQgaW50ICpucGlucykNCj4gPiAgICAgICAgICAgICAgICAgKm5waW5zID0gUkNB
+Ul9NQVhfR1BJT19QRVJfQkFOSzsNCj4gPiAgICAgICAgIH0NCj4gPg0KPiA+ICsgICAgICAgcC0+
+YmFua19pbmZvLmdwaW9tc2sgPSAwOw0KPiA+ICsgICAgICAgbGVuID0gb2ZfcHJvcGVydHlfY291
+bnRfdTMyX2VsZW1zKG5wLCAgImdwaW8tcmVzZXJ2ZWQtcmFuZ2VzIik7DQo+ID4gKyAgICAgICBp
+ZiAobGVuIDwgMCB8fCBsZW4gJSAyICE9IDApDQo+ID4gKyAgICAgICAgICAgICAgIHJldHVybiAw
+Ow0KPiA+ICsNCj4gPiArICAgICAgIGZvciAoaSA9IDA7IGkgPCBsZW47IGkgKz0gMikgew0KPiA+
+ICsgICAgICAgICAgICAgICBvZl9wcm9wZXJ0eV9yZWFkX3UzMl9pbmRleChucCwgImdwaW8tcmVz
+ZXJ2ZWQtcmFuZ2VzIiwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgaSwgJnN0YXJ0KTsNCj4gPiArICAgICAgICAgICAgICAgb2ZfcHJvcGVydHlfcmVhZF91
+MzJfaW5kZXgobnAsICJncGlvLXJlc2VydmVkLXJhbmdlcyIsDQo+ID4gKyAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIGkgKyAxLCAmY291bnQpOw0KPiA+ICsgICAgICAg
+ICAgICAgICBpZiAoc3RhcnQgPj0gKm5waW5zIHx8IHN0YXJ0ICsgY291bnQgPj0gKm5waW5zKQ0K
+PiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGNvbnRpbnVlOw0KPiA+ICsNCj4gPiArICAgICAg
+ICAgICAgICAgcC0+YmFua19pbmZvLmdwaW9tc2sgPSBHRU5NQVNLKHN0YXJ0ICsgY291bnQgLSAx
+LCBzdGFydCk7DQo+ID4gKyAgICAgICB9DQo+DQo+IG9mX2dwaW9jaGlwX2luaXRfdmFsaWRfbWFz
+aygpIGFscmVhZHkgZG9lcyB0aGUgc2FtZSwgZm9yIGNoaXAtPnZhbGlkX21hc2suDQoNCkN1cnJl
+bnRseSB3ZSBhcmUgbm90IHNldHRpbmcgICAiZ3Bpb19jaGlwLm9mX25vZGUiIHZhcmlhYmxlICBp
+biB0aGUgZHJpdmVyLg0KU28gdGhlIGJlbG93ICBmdW5jdGlvbiBpbiBncGlvY2hpcF9pbml0X3Zh
+bGlkX21hc2soKSAgIHdpbGwgcmV0dXJuIG5lZ2F0aXZlIHZhbHVlIGFuZCB3b24ndCBhbGxvY2F0
+ZSBtZW1vcnkgZm9yIHZhbGlkX21hc2suDQpzaXplID0gb2ZfcHJvcGVydHlfY291bnRfdTMyX2Vs
+ZW1zKG5wLCAgImdwaW8tcmVzZXJ2ZWQtcmFuZ2VzIik7DQoNCldlIG5lZWQgdG8gZWl0aGVyIHNl
+dCAgIiBvZl9ub2RlIiAgdmFyaWFibGUgIG9yICBwYXJzZSAiZ3Bpby1yZXNlcnZlZC1yYW5nZXMi
+IGFuZCBzZXQgIiBuZWVkX3ZhbGlkX21hc2s9dHJ1ZSA7Ig0Kc28gdGhhdCAgZ3Bpb2NoaXBfaW5p
+dF92YWxpZF9tYXNrKCkgd2lsbCBhbGxvY2F0ZSB0aGUgdmFsaWRfbWFzay4NCg0KPiA+ICsNCj4g
+PiAgICAgICAgIHJldHVybiAwOw0KPiA+ICB9DQo+ID4NCj4gPiBAQCAtNDcxLDYgKzQ5NSw3IEBA
+IHN0YXRpYyBpbnQgZ3Bpb19yY2FyX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UNCj4gKnBk
+ZXYpDQo+ID4gICAgICAgICBncGlvX2NoaXAtPm93bmVyID0gVEhJU19NT0RVTEU7DQo+ID4gICAg
+ICAgICBncGlvX2NoaXAtPmJhc2UgPSAtMTsNCj4gPiAgICAgICAgIGdwaW9fY2hpcC0+bmdwaW8g
+PSBucGluczsNCj4gPiArICAgICAgIGdwaW9fY2hpcC0+bmVlZF92YWxpZF9tYXNrID0gcC0+YmFu
+a19pbmZvLmdwaW9tc2sgPyB0cnVlIDoNCj4gPiArIGZhbHNlOw0KPg0KPiBncGlvY2hpcF9pbml0
+X3ZhbGlkX21hc2soKSBhbHJlYWR5IHNldHMgZ3Bpb19jaGlwLT5uZWVkX3ZhbGlkX21hc2sgdG8g
+dHJ1ZQ0KPiBpZiAiZ3Bpby1yZXNlcnZlZC1yYW5nZXMiIGlzIGRldGVjdGVkLg0KDQpUaGUgcGxh
+biBpcyAgdG8gc2V0ICAib2Zfbm9kZSIgIHZhcmlhYmxlIGluIGRyaXZlci4gU28gdGhhdCAgZ3Bp
+b2NoaXBfaW5pdF92YWxpZF9tYXNrKCkgc2V0cyBncGlvX2NoaXAtPm5lZWRfdmFsaWRfbWFzayB0
+byB0cnVlLg0KV2hhdCBpcyB5b3VyIG9waW5pb24gb24gdGhpcz8NCg0KPiBIb3dldmVyLCBzZXR0
+aW5nIGl0IHRvIHRydWUgdW5jb25kaXRpb25hbGx5IGFsbG93IHRvIHNpbXBsaWZ5DQo+IGdwaW9f
+cmNhcl9zZXRfbXVsdGlwbGUoKQ0KPiBhbmQgZ3Bpb19yY2FyX3Jlc3VtZSgpLg0KPg0KPiA+DQo+
+ID4gICAgICAgICBpcnFfY2hpcCA9ICZwLT5pcnFfY2hpcDsNCj4gPiAgICAgICAgIGlycV9jaGlw
+LT5uYW1lID0gbmFtZTsNCj4gPiBAQCAtNTUxLDYgKzU3Niw5IEBAIHN0YXRpYyBpbnQgZ3Bpb19y
+Y2FyX3Jlc3VtZShzdHJ1Y3QgZGV2aWNlICpkZXYpDQo+ID4NCj4gPiAgICAgICAgIGZvciAob2Zm
+c2V0ID0gMDsgb2Zmc2V0IDwgcC0+Z3Bpb19jaGlwLm5ncGlvOyBvZmZzZXQrKykgew0KPiA+ICAg
+ICAgICAgICAgICAgICBtYXNrID0gQklUKG9mZnNldCk7DQo+ID4gKyAgICAgICAgICAgICAgIGlm
+IChwLT5ncGlvX2NoaXAudmFsaWRfbWFzayAmJiAobWFzayAmIHAtPmJhbmtfaW5mby5ncGlvbXNr
+KSkNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBjb250aW51ZTsNCj4gPiArDQo+DQo+IEp1
+c3QgZG8gImlmICghZ3Bpb2NoaXBfbGluZV9pc192YWxpZChjaGlwLCBvZmZzZXQpKSBjb250aW51
+ZTsiIGF0IHRoZSB0b3Agb2YgdGhlDQo+IGxvb3A/DQoNCk9rLiBXaWxsIGRvIHRoaXMuDQoNCj4g
+SG93ZXZlciwgaWYgeW91IGZvcmNlIGdwaW9jaGlwLT5uZWVkX3ZhbGlkX21hc2sgPSB0cnVlLCB5
+b3UgY2FuIGp1c3QNCj4gcmVwbGFjZSB0aGUgIGhhbmQtY29kZWQgZm9yIGxvb3AgYnkgZm9yX2Vh
+Y2hfc2V0X2JpdCgpLg0KPg0KPiA+ICAgICAgICAgICAgICAgICAvKiBJL08gcGluICovDQo+ID4g
+ICAgICAgICAgICAgICAgIGlmICghKHAtPmJhbmtfaW5mby5pb2ludHNlbCAmIG1hc2spKSB7DQo+
+ID4gICAgICAgICAgICAgICAgICAgICAgICAgaWYgKHAtPmJhbmtfaW5mby5pbm91dHNlbCAmIG1h
+c2spDQoNClJlZ2FyZHMsDQpCaWp1DQoNCg0KDQpSZW5lc2FzIEVsZWN0cm9uaWNzIEV1cm9wZSBM
+dGQsIER1a2VzIE1lYWRvdywgTWlsbGJvYXJkIFJvYWQsIEJvdXJuZSBFbmQsIEJ1Y2tpbmdoYW1z
+aGlyZSwgU0w4IDVGSCwgVUsuIFJlZ2lzdGVyZWQgaW4gRW5nbGFuZCAmIFdhbGVzIHVuZGVyIFJl
+Z2lzdGVyZWQgTm8uIDA0NTg2NzA5Lg0K
