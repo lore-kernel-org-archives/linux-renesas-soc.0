@@ -1,63 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:17063 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729679AbeHFQir (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:5938 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727171AbeHCSzS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Aug 2018 12:38:47 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 1/2] mmc: renesas_sdhi: skip SCC error check when retuning
-Date: Mon,  6 Aug 2018 16:28:46 +0200
-Message-Id: <20180806142847.25971-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180806142847.25971-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180806142847.25971-1-niklas.soderlund+renesas@ragnatech.se>
+        Fri, 3 Aug 2018 14:55:18 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: RE: [PATCH v2 3/5] ARM: dts: r8a77470: Add GPIO support
+Date: Fri, 3 Aug 2018 16:58:04 +0000
+Message-ID: <OSBPR01MB210394FFC0AAF05676576582B8230@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <1533219087-33695-1-git-send-email-biju.das@bp.renesas.com>
+ <1533219087-33695-4-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdW62Mcgy+RSm4FeN3Aj98O4TkmopdRFji_7jX=vBY1jpw@mail.gmail.com>
+In-Reply-To: <CAMuHMdW62Mcgy+RSm4FeN3Aj98O4TkmopdRFji_7jX=vBY1jpw@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-
-Checking for SCC error during retuning is unnecessary.
-
-Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-[Niklas: fix small style issue]
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
----
-
-* Changes since v1
-- Use intermediate variable use_4tap to simplify check.
----
- drivers/mmc/host/renesas_sdhi_core.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 777e32b0e410e850..66e90f233cefcba5 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -443,6 +443,15 @@ static int renesas_sdhi_select_tuning(struct tmio_mmc_host *host)
- static bool renesas_sdhi_check_scc_error(struct tmio_mmc_host *host)
- {
- 	struct renesas_sdhi *priv = host_to_priv(host);
-+	bool use_4tap = host->pdata->flags & TMIO_MMC_HAVE_4TAP_HS400;
-+
-+	if (!(host->mmc->ios.timing == MMC_TIMING_UHS_SDR104) &&
-+	    !(host->mmc->ios.timing == MMC_TIMING_MMC_HS200) &&
-+	    !(host->mmc->ios.timing == MMC_TIMING_MMC_HS400 && !use_4tap))
-+		return false;
-+
-+	if (host->mmc->doing_retune)
-+		return false;
- 
- 	/* Check SCC error */
- 	if (sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL) &
--- 
-2.18.0
+SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrLg0KDQo+IC0tLS0tT3JpZ2luYWwg
+TWVzc2FnZS0tLS0tDQo+IEZyb206IGRldmljZXRyZWUtb3duZXJAdmdlci5rZXJuZWwub3JnIDxk
+ZXZpY2V0cmVlLQ0KPiBvd25lckB2Z2VyLmtlcm5lbC5vcmc+IE9uIEJlaGFsZiBPZiBHZWVydCBV
+eXR0ZXJob2V2ZW4NCj4gU2VudDogMDMgQXVndXN0IDIwMTggMTA6MTANCj4gVG86IEJpanUgRGFz
+IDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT4NCj4gQ2M6IFJvYiBIZXJyaW5nIDxyb2JoK2R0QGtl
+cm5lbC5vcmc+OyBNYXJrIFJ1dGxhbmQNCj4gPG1hcmsucnV0bGFuZEBhcm0uY29tPjsgU2ltb24g
+SG9ybWFuIDxob3Jtc0B2ZXJnZS5uZXQuYXU+OyBNYWdudXMNCj4gRGFtbSA8bWFnbnVzLmRhbW1A
+Z21haWwuY29tPjsgTGludXgtUmVuZXNhcyA8bGludXgtcmVuZXNhcy0NCj4gc29jQHZnZXIua2Vy
+bmVsLm9yZz47IG9wZW4gbGlzdDpPUEVOIEZJUk1XQVJFIEFORCBGTEFUVEVORUQgREVWSUNFDQo+
+IFRSRUUgQklORElOR1MgPGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnPjsgR2VlcnQgVXl0dGVy
+aG9ldmVuDQo+IDxnZWVydCtyZW5lc2FzQGdsaWRlci5iZT47IENocmlzIFBhdGVyc29uDQo+IDxD
+aHJpcy5QYXRlcnNvbjJAcmVuZXNhcy5jb20+OyBGYWJyaXppbyBDYXN0cm8NCj4gPGZhYnJpemlv
+LmNhc3Ryb0BicC5yZW5lc2FzLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MiAzLzVdIEFS
+TTogZHRzOiByOGE3NzQ3MDogQWRkIEdQSU8gc3VwcG9ydA0KPg0KPiBIaSBCaWp1LA0KPg0KPiBP
+biBUaHUsIEF1ZyAyLCAyMDE4IGF0IDQ6MTcgUE0gQmlqdSBEYXMgPGJpanUuZGFzQGJwLnJlbmVz
+YXMuY29tPiB3cm90ZToNCj4gPiBEZXNjcmliZSBHUElPIGJsb2NrcyBpbiB0aGUgUjhBNzc0NzAg
+ZGV2aWNlIHRyZWUuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBCaWp1IERhcyA8YmlqdS5kYXNA
+YnAucmVuZXNhcy5jb20+DQo+ID4gUmV2aWV3ZWQtYnk6IEZhYnJpemlvIENhc3RybyA8ZmFicml6
+aW8uY2FzdHJvQGJwLnJlbmVzYXMuY29tPg0KPg0KPiBUaGFua3MgZm9yIHlvdXIgcGF0Y2ghDQo+
+DQo+IFJldmlld2VkLWJ5OiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0K3JlbmVzYXNAZ2xpZGVy
+LmJlPg0KPg0KPiA+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL3I4YTc3NDcwLmR0c2kNCj4gPiAr
+KysgYi9hcmNoL2FybS9ib290L2R0cy9yOGE3NzQ3MC5kdHNpDQo+DQo+ID4gKyAgICAgICAgICAg
+ICAgIGdwaW8zOiBncGlvQGU2MDUzMDAwIHsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBj
+b21wYXRpYmxlID0gInJlbmVzYXMsZ3Bpby1yOGE3NzQ3MCIsDQo+ID4gKyAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICJyZW5lc2FzLHJjYXItZ2VuMi1ncGlvIjsNCj4gPiArICAg
+ICAgICAgICAgICAgICAgICAgICByZWcgPSA8MCAweGU2MDUzMDAwIDAgMHg1MD47DQo+ID4gKyAg
+ICAgICAgICAgICAgICAgICAgICAgaW50ZXJydXB0cyA9IDxHSUNfU1BJIDcgSVJRX1RZUEVfTEVW
+RUxfSElHSD47DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgI2dwaW8tY2VsbHMgPSA8Mj47
+DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgZ3Bpby1jb250cm9sbGVyOw0KPiA+ICsgICAg
+ICAgICAgICAgICAgICAgICAgIGdwaW8tcmVzZXJ2ZWQtcmFuZ2VzID0gPDE3IDEwPjsNCj4gPiAr
+ICAgICAgICAgICAgICAgICAgICAgICBncGlvLXJhbmdlcyA9IDwmcGZjIDAgOTYgMzA+Ow0KPg0K
+PiBJIHdvdWxkIHJldmVyc2UgdGhlIG9yZGVyIG9mIHRoZXNlIHR3byBwcm9wZXJ0aWVzLCBidXQg
+dGhhdCdzIHB1cmVseQ0KPiBjb3NtZXRpYy4NCg0KV2lsbCBzZW5kIFYzIHdpdGggdGhpcyBjaGFu
+Z2UuDQoNClJlZ2FyZHMsDQpCaWp1DQoNCg0KDQpSZW5lc2FzIEVsZWN0cm9uaWNzIEV1cm9wZSBM
+dGQsIER1a2VzIE1lYWRvdywgTWlsbGJvYXJkIFJvYWQsIEJvdXJuZSBFbmQsIEJ1Y2tpbmdoYW1z
+aGlyZSwgU0w4IDVGSCwgVUsuIFJlZ2lzdGVyZWQgaW4gRW5nbGFuZCAmIFdhbGVzIHVuZGVyIFJl
+Z2lzdGVyZWQgTm8uIDA0NTg2NzA5Lg0K
