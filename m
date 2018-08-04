@@ -1,53 +1,58 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] dt-bindings: watchdog: renesas-wdt: Document r8a774a1 support
-Date: Tue, 14 Aug 2018 13:33:48 +0100
-Message-Id: <1534250028-15770-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:59140 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728882AbeHDX3f (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sat, 4 Aug 2018 19:29:35 -0400
+Date: Sat, 4 Aug 2018 23:27:33 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/12] i2c: xlr: use core to detect 'no zero length' quirk
+Message-ID: <20180804212732.mpnplmon5x4vrwul@ninjato>
+References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
+ <20180723202617.15230-12-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tl2hkdq2cknu3aqc"
+Content-Disposition: inline
+In-Reply-To: <20180723202617.15230-12-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-RZ/G2M (R8A774A1) watchdog implementation is compatible with R-Car
-Gen3, therefore add relevant documentation.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
- Documentation/devicetree/bindings/watchdog/renesas-wdt.txt | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+--tl2hkdq2cknu3aqc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-index 5d47a26..9407212 100644
---- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-+++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-@@ -7,6 +7,7 @@ Required properties:
- 	       Examples with soctypes are:
- 		 - "renesas,r8a7743-wdt" (RZ/G1M)
- 		 - "renesas,r8a7745-wdt" (RZ/G1E)
-+		 - "renesas,r8a774a1-wdt" (RZ/G2M)
- 	         - "renesas,r8a7790-wdt" (R-Car H2)
- 	         - "renesas,r8a7791-wdt" (R-Car M2-W)
- 	         - "renesas,r8a7792-wdt" (R-Car V2H)
-@@ -21,8 +22,8 @@ Required properties:
- 	         - "renesas,r7s72100-wdt" (RZ/A1)
- 		The generic compatible string must be:
- 		 - "renesas,rza-wdt" for RZ/A
--		 - "renesas,rcar-gen2-wdt" for R-Car Gen2 and RZ/G
--		 - "renesas,rcar-gen3-wdt" for R-Car Gen3
-+		 - "renesas,rcar-gen2-wdt" for R-Car Gen2 and RZ/G1
-+		 - "renesas,rcar-gen3-wdt" for R-Car Gen3 and RZ/G2
- 
- - reg : Should contain WDT registers location and length
- - clocks : the clock feeding the watchdog timer.
--- 
-2.7.4
+On Mon, Jul 23, 2018 at 10:26:15PM +0200, Wolfram Sang wrote:
+> And don't reimplement in the driver.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Applied to for-next, thanks!
+
+
+--tl2hkdq2cknu3aqc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltmGkQACgkQFA3kzBSg
+KbZ7yg/9FwRRAAvhqlUjIccoPxACKuZrAmn+BehdJPlgzLKdj0Z5V58QsS2ZUGlt
+tqOpjnOx+hNWl+nmj5tG7ZSg42yBp2bP4z505BIzwaLNCAUd4isfHifikIfDjb32
+nxWjaXxSq9J+5Exn7yOd7gT6j7qOevQzoqasSdfacp+Sqy9wxIIcFd45u4IVX2jN
+GJo4it60+Cnp5OjqtkJzDiXr32ZLCCMJnIaZblLLC7zZoqm4iYN/pgpOowtWII78
+3Vs3IKyNb5m+XJaSTMXJ/o7Lsz7/M9in0cH6LGQTULZT2UVDQtszL09Rd96qzJHK
+9D8yWIvogcVPH0vg8mFF7Fbnn4wnQzAr06WMakkzjfp+rwCOn12QaWdE7K2W+i4I
+sjAAfcNXB1ke9j4pSVIT61Sq2GdnPkgXamHPy9QMO7YECqio+gTGqaWDpA9RBXuj
+C97ovUPyR0USRogX+pZqbTy1dBgAppl7Fv9BTBCa0EsIk0WLfJ1shP5z2R8oq4hs
+98hamO8YGrfY4Kr/jX+DDsHr8CO56fMsmCj19nBHN/BUrEhv0rx8+y7DHGcKcfYq
++xCxiZCPOcATEvDY7GDXJ6KWLddTjxrvICS82GhlTYl8fcoztrV7AEO/RJNzh2ML
+37XbDH7jAMZLyRcHYrM1dtmhvKvfi9gEKH0sbhtPPhLXsfosUJE=
+=cYN7
+-----END PGP SIGNATURE-----
+
+--tl2hkdq2cknu3aqc--
