@@ -1,50 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:44266 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388696AbeHAOB5 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:59130 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728882AbeHDX3N (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Aug 2018 10:01:57 -0400
-Received: by mail-vk0-f68.google.com with SMTP id 125-v6so9159992vke.11
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 01 Aug 2018 05:16:26 -0700 (PDT)
+        Sat, 4 Aug 2018 19:29:13 -0400
+Date: Sat, 4 Aug 2018 23:27:11 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/12] i2c: stu300: use core to detect 'no zero length'
+ quirk
+Message-ID: <20180804212711.kdldzxfrawbwdh54@ninjato>
+References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
+ <20180723202617.15230-8-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-References: <20180730111726.5526-1-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180730111726.5526-1-marek.vasut+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 1 Aug 2018 14:16:14 +0200
-Message-ID: <CAMuHMdUop4fUTbgh0iCQRWTNz_X49070qPKZc0iJ9xFvhi9RHA@mail.gmail.com>
-Subject: Re: [PATCH] ARM: shmobile: gose: Add DA9210 node for CPU DVFS
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ki5tidkcxh7bpgtd"
+Content-Disposition: inline
+In-Reply-To: <20180723202617.15230-8-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Marek,
 
-On Mon, Jul 30, 2018 at 1:17 PM Marek Vasut <marek.vasut@gmail.com> wrote:
-> Add DA9210 DVFS node to the I2C bus and link it to CPU0 for DVFS.
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+--ki5tidkcxh7bpgtd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for your patch!
+On Mon, Jul 23, 2018 at 10:26:11PM +0200, Wolfram Sang wrote:
+> And don't reimplement in the driver.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Oneline-summary prefix should be "ARM: dts: gose:".
+Applied to for-next, thanks!
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Gr{oetje,eeting}s,
+--ki5tidkcxh7bpgtd
+Content-Type: application/pgp-signature; name="signature.asc"
 
-                        Geert
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltmGi8ACgkQFA3kzBSg
+KbZMgg//Zg7VrasoqjzWslUas6Bel1LQdHNOheNgWq0zDiKlNEIXE+2/IhmDem48
+5MJqE2f9NDFnaEKnVnAJ0gCe+LoDHVXXtKz8pwPDHnb/eT9BJdAtGZ4Gu4AGm/C1
+XAejLzeOqrAft6p5RcuMQwouPPFjbEcP2KuOayqNA2rnmK5cux5W3eu3xr6uTgRv
+leN8/2wqdU53ilUutFV+zaKKH796Xxqj7es9oMAfjk+gGBBkikvDr9LR69ZPHj5R
+Br4rpF19+P/7Veu9/DL0Swt45syas4drivBauX8uekyv7hteEpEUHqzC7WMXHYhR
+eZtCitQy4CsyzT1sqxL77EXNn4M4dbV/fkVNbIwXoYmSbEf//UUuVKL/m+oanLbu
+XFBYY/yf7sxCa4f5zcy9h1+XAp/WcnVvXqq70u2m+qXOkdmHyVmWqzi9VbBMDpkF
+Bnn8jUh8bkvceSDFnkcWK/PgPhWuLtw7e26vy2MKN6kVwsdvuOmr3ujqrqpOl7ub
+78OZufB1iLmh3BvNAYzfWtL/X7/+ntMnEfH/w0CtwyXagQox8NOaR3u+vDxoF+E/
+ZenOGagl4dmRY5RLTiqYh6sMF57XX4AgnRLaPvxhVwdYh6412/zVBk/NQ/w63jw0
+oYZQ5olrJSgOd+btJYZ7YG3y6S8Ffx0HfKq6Pqslw5unBtKL5e8=
+=6eWJ
+-----END PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--ki5tidkcxh7bpgtd--
