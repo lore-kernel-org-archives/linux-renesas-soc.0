@@ -1,101 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-09.nifty.com ([210.131.2.76]:17415 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389276AbeHPKOQ (ORCPT
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45760 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729669AbeHEBPD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Aug 2018 06:14:16 -0400
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH v2 5/7] mmc: renesas_sdhi: merge clk_{start,stop} functions to set_clock
-Date: Thu, 16 Aug 2018 16:16:37 +0900
-Message-Id: <1534403799-10594-6-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1534403799-10594-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1534403799-10594-1-git-send-email-yamada.masahiro@socionext.com>
+        Sat, 4 Aug 2018 21:15:03 -0400
+Received: by mail-wr1-f68.google.com with SMTP id f12-v6so8766774wrv.12
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 04 Aug 2018 16:12:45 -0700 (PDT)
+From: Eugeniu Rosca <roscaeugeniu@gmail.com>
+To: Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Cc: Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Eugeniu Rosca <rosca.eugeniu@gmail.com>
+Subject: [PATCH 00/14] Add minimal DTS support for M3-N Starter Kit
+Date: Sun,  5 Aug 2018 01:11:00 +0200
+Message-Id: <20180804231114.21420-1-erosca@de.adit-jv.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-renesas_sdhi_clk_start() and renesas_sdhi_clk_stop() are now only
-called from renesas_sdhi_set_clock().  Merge them.
+Hello Renesas community,
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+This patch series arised during the bring-up of M3-N-based ULCB board.
+It adds minimal DTS support and documents some new DT bindings.
 
-Changes in v2: None
+It also does some collateral changes in the area of ULCB compatible
+strings, to avoid defining something like "renesas,m3nulcb". Similar to
+how "renesas,salvator-x{s}" compatibles are constructed, in my opinion,
+"renesas,(m3|m3n|h3)ulcb" should not use the SoC model in their name,
+for consistency.
 
- drivers/mmc/host/renesas_sdhi_core.c | 39 +++++++++++-------------------------
- 1 file changed, 12 insertions(+), 27 deletions(-)
+Another change done in preparation of the M3-N DTS commits is renaming
+the ULCB device trees:
+ - from "<SoC>-<SoC>ulcb*.dts"
+ - to   "<SoC>-ulcb*.dts"
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 1f4c82e..a15fb2e 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -155,35 +155,16 @@ static unsigned int renesas_sdhi_clk_update(struct tmio_mmc_host *host,
- 	return ret == 0 ? best_freq : clk_get_rate(priv->clk);
- }
- 
--static void renesas_sdhi_clk_start(struct tmio_mmc_host *host)
--{
--	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
--		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
--
--	/* HW engineers overrode docs: no sleep needed on R-Car2+ */
--	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
--		usleep_range(10000, 11000);
--}
--
--static void renesas_sdhi_clk_stop(struct tmio_mmc_host *host)
--{
--	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
--		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
--
--	/* HW engineers overrode docs: no sleep needed on R-Car2+ */
--	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
--		usleep_range(10000, 11000);
--}
--
- static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
- 				   unsigned int new_clock)
- {
- 	u32 clk = 0, clock;
- 
--	if (new_clock == 0) {
--		renesas_sdhi_clk_stop(host);
--		return;
--	}
-+	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
-+		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
-+
-+	if (new_clock == 0)
-+		goto out;
- 
- 	clock = renesas_sdhi_clk_update(host, new_clock) / 512;
- 
-@@ -194,13 +175,17 @@ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
- 	if ((host->pdata->flags & TMIO_MMC_CLK_ACTUAL) && ((clk >> 22) & 0x1))
- 		clk |= 0xff;
- 
--	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
--			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
- 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clk & CLK_CTL_DIV_MASK);
- 	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
- 		usleep_range(10000, 11000);
- 
--	renesas_sdhi_clk_start(host);
-+	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
-+		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
-+
-+out:
-+	/* HW engineers overrode docs: no sleep needed on R-Car2+ */
-+	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
-+		usleep_range(10000, 11000);
- }
- 
- static void renesas_sdhi_clk_disable(struct tmio_mmc_host *host)
+These patches have been tested on M3-N ULCB using v4.18-rc7 kernel.
+Any comments would be greatly appreciated.
+
+Best regards,
+Eugeniu.
+
+Eugeniu Rosca (14):
+  arm64: dts: renesas: Cut redundant <SoC> in *<SoC>-<SoC>ulcb*.dts
+  dt-bindings: arm: don't embed SoC name into the ULCB boards' compatible
+  arm64: dts: renesas: r8a7795-es1: ulcb: Use "renesas,ulcb" compatible
+  arm64: dts: renesas: r8a7795-es1: ulcb-kf: Use "renesas,ulcb" compatible
+  arm64: dts: renesas: r8a7795: ulcb: Use "renesas,ulcb" compatible
+  arm64: dts: renesas: r8a7795: ulcb-kf: Use "renesas,ulcb" compatible
+  arm64: dts: renesas: r8a7796: ulcb: Use "renesas,ulcb" compatible
+  arm64: dts: renesas: r8a7796: ulcb-kf: Use "renesas,ulcb" compatible
+  dt-bindings: arm: Document Renesas R-Car M3-N-based ULCB board
+  arm64: dts: renesas: r8a77965: ulcb: Initial device tree
+  dt-bindings: can: rcar_can: document r8a77965 can support
+  arm64: dts: renesas: r8a77965: add CAN support
+  arm64: dts: renesas: r8a77965: Add HSCIF0 device node
+  arm64: dts: renesas: r8a77965: ulcb-kf: Initial device tree
+
+ .../devicetree/bindings/arm/shmobile.txt      |  6 ++-
+ .../devicetree/bindings/net/can/rcar_can.txt  | 10 ++--
+ arch/arm64/boot/dts/renesas/Makefile          | 14 +++---
+ ...-h3ulcb-kf.dts => r8a7795-es1-ulcb-kf.dts} |  4 +-
+ ...95-es1-h3ulcb.dts => r8a7795-es1-ulcb.dts} |  2 +-
+ ...7795-h3ulcb-kf.dts => r8a7795-ulcb-kf.dts} |  4 +-
+ .../{r8a7795-h3ulcb.dts => r8a7795-ulcb.dts}  |  2 +-
+ ...7796-m3ulcb-kf.dts => r8a7796-ulcb-kf.dts} |  4 +-
+ .../{r8a7796-m3ulcb.dts => r8a7796-ulcb.dts}  |  2 +-
+ .../boot/dts/renesas/r8a77965-ulcb-kf.dts     | 20 ++++++++
+ arch/arm64/boot/dts/renesas/r8a77965-ulcb.dts | 37 ++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi     | 50 +++++++++++++++++++
+ 12 files changed, 135 insertions(+), 20 deletions(-)
+ rename arch/arm64/boot/dts/renesas/{r8a7795-es1-h3ulcb-kf.dts => r8a7795-es1-ulcb-kf.dts} (84%)
+ rename arch/arm64/boot/dts/renesas/{r8a7795-es1-h3ulcb.dts => r8a7795-es1-ulcb.dts} (94%)
+ rename arch/arm64/boot/dts/renesas/{r8a7795-h3ulcb-kf.dts => r8a7795-ulcb-kf.dts} (84%)
+ rename arch/arm64/boot/dts/renesas/{r8a7795-h3ulcb.dts => r8a7795-ulcb.dts} (96%)
+ rename arch/arm64/boot/dts/renesas/{r8a7796-m3ulcb-kf.dts => r8a7796-ulcb-kf.dts} (84%)
+ rename arch/arm64/boot/dts/renesas/{r8a7796-m3ulcb.dts => r8a7796-ulcb.dts} (95%)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a77965-ulcb-kf.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a77965-ulcb.dts
+
 -- 
-2.7.4
+2.18.0
