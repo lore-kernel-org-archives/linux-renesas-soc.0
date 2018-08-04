@@ -1,75 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:29250 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732531AbeHBQpq (ORCPT
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33584 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729669AbeHEBQL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Aug 2018 12:45:46 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
+        Sat, 4 Aug 2018 21:16:11 -0400
+Received: by mail-wr1-f65.google.com with SMTP id g6-v6so8829565wrp.0
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 04 Aug 2018 16:13:53 -0700 (PDT)
+From: Eugeniu Rosca <roscaeugeniu@gmail.com>
+To: Simon Horman <horms+renesas@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 1/5] dt-bindings: power: Add r8a774a1 SYSC power domain definitions
-Date: Thu,  2 Aug 2018 15:48:18 +0100
-Message-Id: <1533221302-44598-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1533221302-44598-1-git-send-email-biju.das@bp.renesas.com>
-References: <1533221302-44598-1-git-send-email-biju.das@bp.renesas.com>
+Cc: Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Eugeniu Rosca <rosca.eugeniu@gmail.com>
+Subject: [PATCH 08/14] arm64: dts: renesas: r8a7796: ulcb-kf: Use "renesas,ulcb" compatible
+Date: Sun,  5 Aug 2018 01:11:08 +0200
+Message-Id: <20180804231114.21420-9-erosca@de.adit-jv.com>
+In-Reply-To: <20180804231114.21420-1-erosca@de.adit-jv.com>
+References: <20180804231114.21420-1-erosca@de.adit-jv.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds power domain indices for RZ/G2M.
+Following the recent change in dt-bindings [1], switch from
+"renesas,m3ulcb" to "renesas,ulcb" compatible string.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-V1-->V2
-     * No change
----
- include/dt-bindings/power/r8a774a1-sysc.h | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
- create mode 100644 include/dt-bindings/power/r8a774a1-sysc.h
+[1] Documentation/devicetree/bindings/arm/shmobile.txt
 
-diff --git a/include/dt-bindings/power/r8a774a1-sysc.h b/include/dt-bindings/power/r8a774a1-sysc.h
-new file mode 100644
-index 0000000..580f431
---- /dev/null
-+++ b/include/dt-bindings/power/r8a774a1-sysc.h
-@@ -0,0 +1,31 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A774A1_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A774A1_SYSC_H__
-+
-+/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
-+ */
-+
-+#define R8A774A1_PD_CA57_CPU0		 0
-+#define R8A774A1_PD_CA57_CPU1		 1
-+#define R8A774A1_PD_CA53_CPU0		 5
-+#define R8A774A1_PD_CA53_CPU1		 6
-+#define R8A774A1_PD_CA53_CPU2		 7
-+#define R8A774A1_PD_CA53_CPU3		 8
-+#define R8A774A1_PD_CA57_SCU		12
-+#define R8A774A1_PD_A3VC		14
-+#define R8A774A1_PD_3DG_A		17
-+#define R8A774A1_PD_3DG_B		18
-+#define R8A774A1_PD_CA53_SCU		21
-+#define R8A774A1_PD_A2VC0		25
-+#define R8A774A1_PD_A2VC1		26
-+
-+/* Always-on power area */
-+#define R8A774A1_PD_ALWAYS_ON		32
-+
-+#endif /* __DT_BINDINGS_POWER_R8A774A1_SYSC_H__ */
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+---
+ arch/arm64/boot/dts/renesas/r8a7796-ulcb-kf.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-ulcb-kf.dts b/arch/arm64/boot/dts/renesas/r8a7796-ulcb-kf.dts
+index faa32c28eef7..5bd655c0355e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-ulcb-kf.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-ulcb-kf.dts
+@@ -14,6 +14,6 @@
+ 
+ / {
+ 	model = "Renesas M3ULCB Kingfisher board based on r8a7796";
+-	compatible = "shimafuji,kingfisher", "renesas,m3ulcb",
++	compatible = "shimafuji,kingfisher", "renesas,ulcb",
+ 		     "renesas,r8a7796";
+ };
 -- 
-2.7.4
+2.18.0
