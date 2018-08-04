@@ -1,53 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:28310 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732552AbeHBQIw (ORCPT
+Received: from sauhun.de ([88.99.104.3]:59110 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728882AbeHDX2y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Aug 2018 12:08:52 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v2 4/5] ARM: dts: iwg23s-sbc: specify EtherAVB PHY IRQ
-Date: Thu,  2 Aug 2018 15:11:26 +0100
-Message-Id: <1533219087-33695-5-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1533219087-33695-1-git-send-email-biju.das@bp.renesas.com>
-References: <1533219087-33695-1-git-send-email-biju.das@bp.renesas.com>
+        Sat, 4 Aug 2018 19:28:54 -0400
+Date: Sat, 4 Aug 2018 23:26:52 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/12] i2c: quirks: add zero length checks
+Message-ID: <20180804212652.xe6q2brc74pijvi6@ninjato>
+References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
+ <20180723202617.15230-2-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ss5syh2dz7ow7lq7"
+Content-Disposition: inline
+In-Reply-To: <20180723202617.15230-2-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Specify  EtherAVB PHY IRQ  in the board specific device tree, now that we
-have GPIO support.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-V1-->V2
-    * No change
-    * compile time dependency on gpio dtsi patch
----
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 2 ++
- 1 file changed, 2 insertions(+)
+--ss5syh2dz7ow7lq7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-index 56182ee..22da819 100644
---- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -35,6 +35,8 @@
- 
- 	phy3: ethernet-phy@3 {
- 		reg = <3>;
-+		interrupt-parent = <&gpio5>;
-+		interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
- 		micrel,led-mode = <1>;
- 	};
- };
--- 
-2.7.4
+On Mon, Jul 23, 2018 at 10:26:05PM +0200, Wolfram Sang wrote:
+> Some adapters do not support a message length of 0. Add this as a quirk
+> so drivers don't have to open code it.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Applied to for-next, thanks!
+
+
+--ss5syh2dz7ow7lq7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltmGhwACgkQFA3kzBSg
+KbYCuBAAqO909trDreplqkNEXwXpF+CJDdy0zwZ3jjlIrlCnnZ7xr5aYlOdS9uA2
+gyB7pL+rlbNHoQePk9suNfIkSAGiM0hm71ZoyoPVVU/o8jHRlT26UPVPXoB49LaK
+kOhgK5GdhaHWULjTczhwZzs97rrQnXXpfS/f4wl6RuwKUVX235zfPhgn/avJcC2M
+Y/GrPicQBenoRrmuZPPqmvlDL/T0LN0HhSF/ZvBYOQZnCMiY1DdmLiy9gwiiWBiy
+MgiHGiHDHbJ2GfvLfVrELXnId4gIQaPmCQ6ZZZep85xqS5rPxmvNtzzKZMb1NTK2
+lX6tBfG5ji9sx2u435Ha6CJh0KKVNLt6d5KAkRiEtQepCKb8WGw8skgx4jwOIhIs
+kYLRhRdba63NxM7ke2pi+TtBzq4pw7hmjJWbJO3402f67ulP4qttykTYEY/joB/E
++8IroXAHek2A3c7mcPKGNTv3uYu1Rt9pRUN5i99fDGEGQ2r8/ixZKdSA+7sJicXJ
+A2dd5vV+KcNtp9HiKzdGBa8PTU8etUu5hWKeOdstu2RT9PTrmNKm1yz5oKp8dxna
+DVe4x+b2fHDr+cxD0xvxLzvtFOQ6D/8halYL+0mCt4r5LRWJD8mMks8WlwPBiq0V
+qL25AHd8XNPh2uEcDbGIghh7D5qBRaHTdnI6bJN9qdttz686MMw=
+=KS6K
+-----END PGP SIGNATURE-----
+
+--ss5syh2dz7ow7lq7--
