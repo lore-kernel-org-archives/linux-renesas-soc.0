@@ -1,75 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:42580 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727282AbeH1TCZ (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:55240 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729669AbeHEBPz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Aug 2018 15:02:25 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/2] ARM: shmobile: Remove the ARCH_SHMOBILE Kconfig symbol
-Date: Tue, 28 Aug 2018 17:10:10 +0200
-Message-Id: <20180828151011.14065-2-geert+renesas@glider.be>
-In-Reply-To: <20180828151011.14065-1-geert+renesas@glider.be>
-References: <20180828151011.14065-1-geert+renesas@glider.be>
+        Sat, 4 Aug 2018 21:15:55 -0400
+Received: by mail-wm0-f68.google.com with SMTP id c14-v6so9992957wmb.4
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 04 Aug 2018 16:13:37 -0700 (PDT)
+From: Eugeniu Rosca <roscaeugeniu@gmail.com>
+To: Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Cc: Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Eugeniu Rosca <rosca.eugeniu@gmail.com>
+Subject: [PATCH 06/14] arm64: dts: renesas: r8a7795: ulcb-kf: Use "renesas,ulcb" compatible
+Date: Sun,  5 Aug 2018 01:11:06 +0200
+Message-Id: <20180804231114.21420-7-erosca@de.adit-jv.com>
+In-Reply-To: <20180804231114.21420-1-erosca@de.adit-jv.com>
+References: <20180804231114.21420-1-erosca@de.adit-jv.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-All drivers for Renesas ARM SoCs have gained proper ARCH_RENESAS
-platform dependencies.  Hence finish the conversion from ARCH_SHMOBILE
-to ARCH_RENESAS for Renesas 32-bit ARM SoCs, as started by commit
-9b5ba0df4ea4f940 ("ARM: shmobile: Introduce ARCH_RENESAS").
+Following the recent change in dt-bindings [1], switch from
+"renesas,h3ulcb" to "renesas,ulcb" compatible string.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+[1] Documentation/devicetree/bindings/arm/shmobile.txt
+
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
 ---
-v2:
-  - Add Acked-by,
-  - Drop RFC, now all dependencies have been merged,
-  - Rebase.
+ arch/arm64/boot/dts/renesas/r8a7795-ulcb-kf.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-JFTR, after this, the following symbols for drivers supporting only
-Renesas SuperH "SH-Mobile" SoCs can no longer be selected:
-  - CONFIG_KEYBOARD_SH_KEYSC,
-  - CONFIG_VIDEO_SH_VOU,
-  - CONFIG_DRM_SHMOBILE[*].
-(changes for a shmobile_defconfig .config)
-
-[*] CONFIG_DRM_SHMOBILE has a dependency on ARM, but it was never wired
-    up.
-    From the use of sh_mobile_meram, I guess it was meant for SH-Mobile
-    AP4 on Mackerel or AP4EVB, which are long gone.  So the only
-    remaining upstream platforms that could make use of it are legacy
-    SuperH SH-Mobile SoCs.
----
- arch/arm/mach-shmobile/Kconfig | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index 94e9431d92b87405..1dfe3b80bae9e4fd 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -1,6 +1,3 @@
--config ARCH_SHMOBILE
--	bool
--
- config PM_RMOBILE
- 	bool
- 	select PM
-@@ -30,7 +27,6 @@ config ARCH_RMOBILE
- menuconfig ARCH_RENESAS
- 	bool "Renesas ARM SoCs"
- 	depends on ARCH_MULTI_V7 && MMU
--	select ARCH_SHMOBILE
- 	select ARM_GIC
- 	select GPIOLIB
- 	select HAVE_ARM_SCU if SMP
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-ulcb-kf.dts b/arch/arm64/boot/dts/renesas/r8a7795-ulcb-kf.dts
+index 70a0c5332d54..5a3a79bd0849 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-ulcb-kf.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-ulcb-kf.dts
+@@ -14,6 +14,6 @@
+ 
+ / {
+ 	model = "Renesas H3ULCB Kingfisher board based on r8a7795 ES2.0+";
+-	compatible = "shimafuji,kingfisher", "renesas,h3ulcb",
++	compatible = "shimafuji,kingfisher", "renesas,ulcb",
+ 		     "renesas,r8a7795";
+ };
 -- 
-2.17.1
+2.18.0
