@@ -1,74 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:33556 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726969AbeHFMuL (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33185 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729669AbeHEBPl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Aug 2018 08:50:11 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Eugeniu Rosca <roscaeugeniu@gmail.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
+        Sat, 4 Aug 2018 21:15:41 -0400
+Received: by mail-wm0-f66.google.com with SMTP id r24-v6so8108868wmh.0
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 04 Aug 2018 16:13:23 -0700 (PDT)
+From: Eugeniu Rosca <roscaeugeniu@gmail.com>
+To: Simon Horman <horms+renesas@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
         Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Magnus Damm <damm+renesas@opensource.se>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        linux-renesas-soc@vger.kernel.org
+Cc: Eugeniu Rosca <erosca@de.adit-jv.com>,
         Eugeniu Rosca <rosca.eugeniu@gmail.com>
-Subject: Re: [PATCH 04/14] arm64: dts: renesas: r8a7795-es1: ulcb-kf: Use "renesas,ulcb" compatible
-Date: Mon, 06 Aug 2018 13:42:25 +0300
-Message-ID: <1889610.CmbOguoUMH@avalon>
-In-Reply-To: <20180804231114.21420-5-erosca@de.adit-jv.com>
-References: <20180804231114.21420-1-erosca@de.adit-jv.com> <20180804231114.21420-5-erosca@de.adit-jv.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Subject: [PATCH 04/14] arm64: dts: renesas: r8a7795-es1: ulcb-kf: Use "renesas,ulcb" compatible
+Date: Sun,  5 Aug 2018 01:11:04 +0200
+Message-Id: <20180804231114.21420-5-erosca@de.adit-jv.com>
+In-Reply-To: <20180804231114.21420-1-erosca@de.adit-jv.com>
+References: <20180804231114.21420-1-erosca@de.adit-jv.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Eugeniu,
+Following the recent change in dt-bindings [1], switch from
+"renesas,h3ulcb" to "renesas,ulcb" compatible string.
 
-Thank you for the patch.
+[1] Documentation/devicetree/bindings/arm/shmobile.txt
 
-On Sunday, 5 August 2018 02:11:04 EEST Eugeniu Rosca wrote:
-> Following the recent change in dt-bindings [1], switch from
-> "renesas,h3ulcb" to "renesas,ulcb" compatible string.
-> 
-> [1] Documentation/devicetree/bindings/arm/shmobile.txt
-> 
-> Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-> ---
->  arch/arm64/boot/dts/renesas/r8a7795-es1-ulcb-kf.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1-ulcb-kf.dts
-> b/arch/arm64/boot/dts/renesas/r8a7795-es1-ulcb-kf.dts index
-> 06deb67c36c8..7a5b1dc64090 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a7795-es1-ulcb-kf.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a7795-es1-ulcb-kf.dts
-> @@ -14,6 +14,6 @@
-> 
->  / {
->  	model = "Renesas H3ULCB Kingfisher board based on r8a7795 ES1.x";
-> -	compatible = "shimafuji,kingfisher", "renesas,h3ulcb",
-> +	compatible = "shimafuji,kingfisher", "renesas,ulcb",
->  		     "renesas,r8a7795";
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-es1-ulcb-kf.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This is unrelated to your patch, but due to the reason explained in my review 
-of 02/14, I think "shimafuji,kingfisher" should include the SoC name.
-
-This brings up the topic of how to describe boards that are made of an SoC 
-"module" board plugged into an expansion "motherboard".
-
->  };
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1-ulcb-kf.dts b/arch/arm64/boot/dts/renesas/r8a7795-es1-ulcb-kf.dts
+index 06deb67c36c8..7a5b1dc64090 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1-ulcb-kf.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1-ulcb-kf.dts
+@@ -14,6 +14,6 @@
+ 
+ / {
+ 	model = "Renesas H3ULCB Kingfisher board based on r8a7795 ES1.x";
+-	compatible = "shimafuji,kingfisher", "renesas,h3ulcb",
++	compatible = "shimafuji,kingfisher", "renesas,ulcb",
+ 		     "renesas,r8a7795";
+ };
 -- 
-Regards,
-
-Laurent Pinchart
+2.18.0
