@@ -1,15 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:51670 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729669AbeHEBQy (ORCPT
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:32825 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726647AbeHFBPD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 4 Aug 2018 21:16:54 -0400
-Received: by mail-wm0-f65.google.com with SMTP id y2-v6so10007369wma.1
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 04 Aug 2018 16:14:35 -0700 (PDT)
+        Sun, 5 Aug 2018 21:15:03 -0400
+Received: by mail-wr1-f68.google.com with SMTP id g6-v6so10640947wrp.0
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 05 Aug 2018 16:08:46 -0700 (PDT)
 From: Eugeniu Rosca <roscaeugeniu@gmail.com>
+Date: Mon, 6 Aug 2018 01:08:40 +0200
 To: Simon Horman <horms+renesas@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
         Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
@@ -17,63 +19,47 @@ To: Simon Horman <horms+renesas@verge.net.au>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Magnus Damm <damm+renesas@opensource.se>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Cc: Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <rosca.eugeniu@gmail.com>
-Subject: [PATCH 14/14] arm64: dts: renesas: r8a77965: ulcb-kf: Initial device tree
-Date: Sun,  5 Aug 2018 01:11:14 +0200
-Message-Id: <20180804231114.21420-15-erosca@de.adit-jv.com>
-In-Reply-To: <20180804231114.21420-1-erosca@de.adit-jv.com>
+        linux-renesas-soc@vger.kernel.org,
+        Eugeniu Rosca <rosca.eugeniu@gmail.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>
+Subject: Re: [PATCH 13/14] arm64: dts: renesas: r8a77965: Add HSCIF0 device
+ node
+Message-ID: <20180805230825.GA22714@x230>
 References: <20180804231114.21420-1-erosca@de.adit-jv.com>
+ <20180804231114.21420-14-erosca@de.adit-jv.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180804231114.21420-14-erosca@de.adit-jv.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
----
- arch/arm64/boot/dts/renesas/Makefile             |  1 +
- arch/arm64/boot/dts/renesas/r8a77965-ulcb-kf.dts | 20 ++++++++++++++++++++
- 2 files changed, 21 insertions(+)
+Hello Simon, Geert, Takeshi,
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index ad7be9a8ca56..3e2c5be65a14 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -9,6 +9,7 @@ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-ulcb-kf.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
- dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-x.dtb r8a77965-salvator-xs.dtb
- dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-ulcb.dtb
-+dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-ulcb-kf.dtb
- dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb r8a77970-v3msk.dtb
- dtb-$(CONFIG_ARCH_R8A77980) += r8a77980-condor.dtb r8a77980-v3hsk.dtb
- dtb-$(CONFIG_ARCH_R8A77990) += r8a77990-ebisu.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965-ulcb-kf.dts b/arch/arm64/boot/dts/renesas/r8a77965-ulcb-kf.dts
-new file mode 100644
-index 000000000000..5c719fb87d8b
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a77965-ulcb-kf.dts
-@@ -0,0 +1,20 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the M3-N ULCB Kingfisher board
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ * Copyright (C) 2018 Cogent Embedded, Inc.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+#include "r8a77965-ulcb.dts"
-+#include "ulcb-kf.dtsi"
-+
-+/ {
-+	model = "Renesas ULCB Kingfisher board based on r8a77965";
-+	compatible = "shimafuji,kingfisher", "renesas,ulcb",
-+		     "renesas,r8a77965";
-+};
--- 
-2.18.0
+On Sun, Aug 05, 2018 at 01:11:13AM +0200, Eugeniu Rosca wrote:
+> Add hscif0 node to avoid below r8a77965-ulcb-kf.dtb build failure:
+> Error: arch/arm64/boot/dts/renesas/ulcb-kf.dtsi:36.1-8 Label or path hscif0 not found
+> 
+> Inspired from v4.12-rc1 commits:
+>  - commit 68cd16107260 ("arm64: dts: r8a7796 dtsi: Add all HSCIF nodes")
+>  - commit 6d50bb893504 ("arm64: dts: r8a7796: Enable HSCIF DMA")
+>  - commit bec0948e810f ("arm64: dts: r8a7796: Add reset control properties")
+> 
+> Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77965.dtsi | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+
+I noticed that this patch (adding HSCIF0 node only) conflicts with
+below commit (adding all HSCIF nodes) from the "devel" branch of
+horms/renesas.git repository:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git/commit/?h=b8e3c8e17611
+
+Please, feel free to ignore my patch. It only ensures that this series
+doesn't break the "make dtbs" build.
+
+Thanks,
+Eugeniu.
