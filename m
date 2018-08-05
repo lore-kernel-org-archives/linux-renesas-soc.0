@@ -1,88 +1,104 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:12317 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730682AbeHWQ5z (ORCPT
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34100 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726556AbeHFAw1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Aug 2018 12:57:55 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 15/30] media: entity: Look for indirect routes
-Date: Thu, 23 Aug 2018 15:25:29 +0200
-Message-Id: <20180823132544.521-16-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
+        Sun, 5 Aug 2018 20:52:27 -0400
+Received: by mail-wr1-f67.google.com with SMTP id c13-v6so10591243wrt.1
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 05 Aug 2018 15:46:13 -0700 (PDT)
+From: Eugeniu Rosca <roscaeugeniu@gmail.com>
+Date: Mon, 6 Aug 2018 00:46:10 +0200
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Eugeniu Rosca <erosca@de.adit-jv.com>
+Subject: Re: [PATCH 14/14] arm64: dts: renesas: r8a77965: ulcb-kf: Initial
+ device tree
+Message-ID: <20180805224610.GB15682@x230>
+References: <20180804231114.21420-1-erosca@de.adit-jv.com>
+ <20180804231114.21420-15-erosca@de.adit-jv.com>
+ <20180805090136.GD9285@w540>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180805090136.GD9285@w540>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
+Hi Jacopo,
 
-Two pads are considered having an active route for the purpose of
-has_route() if an indirect active route can be found between the two pads.
-An simple example of this is that a source pad has an active route to
-another source pad if both of the pads have an active route to the same
-sink pad.
+On Sun, Aug 05, 2018 at 11:01:36AM +0200, jacopo mondi wrote:
+> Hi Eugeniu,
+> 
+> On Sun, Aug 05, 2018 at 01:11:14AM +0200, Eugeniu Rosca wrote:
+> > Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+> > ---
+> >  arch/arm64/boot/dts/renesas/Makefile             |  1 +
+> >  arch/arm64/boot/dts/renesas/r8a77965-ulcb-kf.dts | 20 ++++++++++++++++++++
+> >  2 files changed, 21 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+> > index ad7be9a8ca56..3e2c5be65a14 100644
+> > --- a/arch/arm64/boot/dts/renesas/Makefile
+> > +++ b/arch/arm64/boot/dts/renesas/Makefile
+> > @@ -9,6 +9,7 @@ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-ulcb-kf.dtb
+> >  dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
+> >  dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-x.dtb r8a77965-salvator-xs.dtb
+> >  dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-ulcb.dtb
+> > +dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-ulcb-kf.dtb
+> >  dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb r8a77970-v3msk.dtb
+> >  dtb-$(CONFIG_ARCH_R8A77980) += r8a77980-condor.dtb r8a77980-v3hsk.dtb
+> >  dtb-$(CONFIG_ARCH_R8A77990) += r8a77990-ebisu.dtb
+> > diff --git a/arch/arm64/boot/dts/renesas/r8a77965-ulcb-kf.dts b/arch/arm64/boot/dts/renesas/r8a77965-ulcb-kf.dts
+> > new file mode 100644
+> > index 000000000000..5c719fb87d8b
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/renesas/r8a77965-ulcb-kf.dts
+> > @@ -0,0 +1,20 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Device Tree Source for the M3-N ULCB Kingfisher board
+> > + *
+> > + * Copyright (C) 2018 Renesas Electronics Corp.
+> > + * Copyright (C) 2018 Cogent Embedded, Inc.
+> > + *
+> > + * This file is licensed under the terms of the GNU General Public License
+> > + * version 2.  This program is licensed "as is" without any warranty of any
+> > + * kind, whether express or implied.
+> > + */
+> 
+> Drop the license text please :)
 
-Make media_entity_has_route() return true in that case, and do not rely on
-drivers performing this by themselves.
+I will. Thanks!
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- drivers/media/media-entity.c | 32 +++++++++++++++++++++++++++++++-
- 1 file changed, 31 insertions(+), 1 deletion(-)
+> 
+> Thanks
+>   j
+> > +
+> > +#include "r8a77965-ulcb.dts"
+> > +#include "ulcb-kf.dtsi"
+> > +
+> > +/ {
+> > +	model = "Renesas ULCB Kingfisher board based on r8a77965";
+> > +	compatible = "shimafuji,kingfisher", "renesas,ulcb",
+> > +		     "renesas,r8a77965";
+> > +};
+> > --
+> > 2.18.0
+> >
 
-diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-index 3912bc75651fe0b7..29e732a130667ae9 100644
---- a/drivers/media/media-entity.c
-+++ b/drivers/media/media-entity.c
-@@ -240,6 +240,9 @@ EXPORT_SYMBOL_GPL(media_entity_pads_init);
- bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
- 			    unsigned int pad1)
- {
-+	unsigned int i;
-+	bool has_route;
-+
- 	if (pad0 >= entity->num_pads || pad1 >= entity->num_pads)
- 		return false;
- 
-@@ -253,7 +256,34 @@ bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
- 	    && entity->pads[pad1].flags & MEDIA_PAD_FL_SINK)
- 		swap(pad0, pad1);
- 
--	return entity->ops->has_route(entity, pad0, pad1);
-+	has_route = entity->ops->has_route(entity, pad0, pad1);
-+	/* A direct route is returned immediately */
-+	if (has_route ||
-+	    (entity->pads[pad0].flags & MEDIA_PAD_FL_SINK &&
-+	     entity->pads[pad1].flags & MEDIA_PAD_FL_SOURCE))
-+		return true;
-+
-+	/* Look for indirect routes */
-+	for (i = 0; i < entity->num_pads; i++) {
-+		if (i == pad0 || i == pad1)
-+			continue;
-+
-+		/*
-+		 * There are no direct routes between same types of
-+		 * pads, so skip checking this route
-+		 */
-+		if (!((entity->pads[pad0].flags ^ entity->pads[i].flags) &
-+		      (MEDIA_PAD_FL_SOURCE | MEDIA_PAD_FL_SINK)))
-+			continue;
-+
-+		/* Is there an indirect route? */
-+		if (entity->ops->has_route(entity, i, pad0) &&
-+		    entity->ops->has_route(entity, i, pad1))
-+			return true;
-+	}
-+
-+	return false;
-+
- }
- EXPORT_SYMBOL_GPL(media_entity_has_route);
- 
--- 
-2.18.0
+Best regards,
+Eugeniu.
