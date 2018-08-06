@@ -1,19 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:33301 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388852AbeHGKDP (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:55884 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728671AbeHFNGf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Aug 2018 06:03:15 -0400
+        Mon, 6 Aug 2018 09:06:35 -0400
+Received: by mail-it0-f67.google.com with SMTP id d10-v6so16804893itj.5
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 06 Aug 2018 03:58:04 -0700 (PDT)
 MIME-Version: 1.0
 References: <1533548881-35174-1-git-send-email-biju.das@bp.renesas.com>
 In-Reply-To: <1533548881-35174-1-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 7 Aug 2018 09:49:58 +0200
-Message-ID: <CAMuHMdVoTTO74y524wudUBcpZbQreofJsTOF3GK5qeHnssJawQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 6 Aug 2018 12:57:52 +0200
+Message-ID: <CACRpkdabfRiZ_gXc7Z44OzWDrCFHv1h1w=eX+-Yr8epab1oHkw@mail.gmail.com>
 Subject: Re: [PATCH] gpiolib: Fix of_node inconsistency
 To: Biju Das <biju.das@bp.renesas.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
@@ -23,7 +24,8 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Aug 6, 2018 at 11:54 AM Biju Das <biju.das@bp.renesas.com> wrote:
+On Mon, Aug 6, 2018 at 11:53 AM Biju Das <biju.das@bp.renesas.com> wrote:
+
 > Some platforms are not setting of_node in the driver. On these platforms
 > defining gpio-reserved-ranges on device tree leads to kernel crash.
 >
@@ -40,16 +42,12 @@ On Mon, Aug 6, 2018 at 11:54 AM Biju Das <biju.das@bp.renesas.com> wrote:
 >
 > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+After reading through context this seems like the right fix so patch applied!
 
-Gr{oetje,eeting}s,
+In the long run I want to get rid of this extra of_node in the chip, but it
+kind of requires every driver in the kernel to pass in a valid parent device
+representing the OF node. And there are so many hairy corner cases
+where they don't.
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
