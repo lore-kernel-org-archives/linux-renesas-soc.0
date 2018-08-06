@@ -1,49 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:34219 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727834AbeHFUsT (ORCPT
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:38023 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728601AbeHFTgl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Aug 2018 16:48:19 -0400
-MIME-Version: 1.0
-References: <20180806104200.29102-1-wsa+renesas@sang-engineering.com>
- <CAMuHMdWAg8VmXpx_R2ROO-PwjaoWFv6Sc8PpoJqePkXGNh9rvw@mail.gmail.com>
- <20180806145958.k7bt6buvekfbyxnw@ninjato> <CAMuHMdX5QcZOzGArJaZPoX1DMLMgCK97-2pZM2MCEL+Vs5SWPg@mail.gmail.com>
- <20180806170432.26uxlzaqvhtjcp6w@ninjato>
-In-Reply-To: <20180806170432.26uxlzaqvhtjcp6w@ninjato>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 6 Aug 2018 20:37:44 +0200
-Message-ID: <CAMuHMdX8ypugACi2bqL=z6Y0iXZv+C6z3hh3vKF-EQA-10f42g@mail.gmail.com>
-Subject: Re: [PATCH] ata: sata_rcar: exclude setting of PHY registers in Gen3
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-ide@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Mon, 6 Aug 2018 15:36:41 -0400
+Date: Mon, 6 Aug 2018 10:26:33 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-ide@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Tejun Heo <tj@kernel.org>,
         Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] ata: sata_rcar: exclude setting of PHY registers in Gen3
+Message-ID: <20180806172633.GD410235@devbig004.ftw2.facebook.com>
+References: <20180806104200.29102-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180806104200.29102-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
+On Mon, Aug 06, 2018 at 12:42:00PM +0200, Wolfram Sang wrote:
+> From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+> 
+> According to documentation, setting of PHY registers is unnecessary with
+> R-Car Gen3. The registers are not even described. So, don't initialize
+> them.
+> 
+> Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+> [wsa: updated commit message]
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-On Mon, Aug 6, 2018 at 7:04 PM Wolfram Sang <wsa@the-dreams.de> wrote:
-> > Please try without that step, or do "echo none > /sys/power/pm_test".
->
-> Did this now with a q'n'd hacked gpio driver (see below). Worked like a
-> charm. So, the sata_rcar patch under discussion here seems to be fine.
-> We only need the GPIO resume on specific boards. This is a seperate
-> task. D'accord?
+Applied to libata/for-4.19.
 
-Thanks for testing!
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Thanks.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+tejun
