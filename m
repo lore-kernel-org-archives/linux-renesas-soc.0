@@ -1,17 +1,14 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:63220 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727517AbeHFQCe (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:34068 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727004AbeHFNIg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Aug 2018 12:02:34 -0400
-Subject: Re: [PATCH 04/14] arm64: dts: renesas: r8a7795-es1: ulcb-kf: Use
- "renesas,ulcb" compatible
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-References: <20180804231114.21420-1-erosca@de.adit-jv.com>
- <20180804231114.21420-5-erosca@de.adit-jv.com> <1889610.CmbOguoUMH@avalon>
-CC: Simon Horman <horms+renesas@verge.net.au>,
+        Mon, 6 Aug 2018 09:08:36 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: kieran.bingham+renesas@ideasonboard.com,
+        kieran.bingham+renesas@ideasonboard.com
+Cc: Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
@@ -19,100 +16,80 @@ CC: Simon Horman <horms+renesas@verge.net.au>,
         Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Magnus Damm <damm+renesas@opensource.se>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        <linux-renesas-soc@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
         Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <rosca.eugeniu@gmail.com>,
-        <devicetree@vger.kernel.org>
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <5e95f9de-7111-53bc-dc2a-ba79f5075336@mentor.com>
-Date: Mon, 6 Aug 2018 16:53:08 +0300
+        Eugeniu Rosca <rosca.eugeniu@gmail.com>
+Subject: Re: [PATCH 04/14] arm64: dts: renesas: r8a7795-es1: ulcb-kf: Use "renesas,ulcb" compatible
+Date: Mon, 06 Aug 2018 14:00:45 +0300
+Message-ID: <6288376.Dh0aHR02zn@avalon>
+In-Reply-To: <e0f0c2dc-5d39-fd46-3ca1-4bb25881428c@ideasonboard.com>
+References: <20180804231114.21420-1-erosca@de.adit-jv.com> <c0315c63-a006-48fd-0565-8addfd82ab48@ideasonboard.com> <e0f0c2dc-5d39-fd46-3ca1-4bb25881428c@ideasonboard.com>
 MIME-Version: 1.0
-In-Reply-To: <1889610.CmbOguoUMH@avalon>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+Hi Kieran,
 
-[Adding Rob and DT ML]
-
-On 08/06/2018 01:42 PM, Laurent Pinchart wrote:
-> Hi Eugeniu,
+On Monday, 6 August 2018 13:49:59 EEST Kieran Bingham wrote:
+> On 06/08/18 11:45, Kieran Bingham wrote:
+> > On 06/08/18 11:42, Laurent Pinchart wrote:
+> >> On Sunday, 5 August 2018 02:11:04 EEST Eugeniu Rosca wrote:
+> >>> Following the recent change in dt-bindings [1], switch from
+> >>> "renesas,h3ulcb" to "renesas,ulcb" compatible string.
+> >>> 
+> >>> [1] Documentation/devicetree/bindings/arm/shmobile.txt
+> >>> 
+> >>> Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+> >>> ---
+> >>> 
+> >>>  arch/arm64/boot/dts/renesas/r8a7795-es1-ulcb-kf.dts | 2 +-
+> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>> 
+> >>> diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1-ulcb-kf.dts
+> >>> b/arch/arm64/boot/dts/renesas/r8a7795-es1-ulcb-kf.dts index
+> >>> 06deb67c36c8..7a5b1dc64090 100644
+> >>> --- a/arch/arm64/boot/dts/renesas/r8a7795-es1-ulcb-kf.dts
+> >>> +++ b/arch/arm64/boot/dts/renesas/r8a7795-es1-ulcb-kf.dts
+> >>> @@ -14,6 +14,6 @@
+> >>> 
+> >>>  / {
+> >>>  	model = "Renesas H3ULCB Kingfisher board based on r8a7795 ES1.x";
+> >>> 
+> >>> -	compatible = "shimafuji,kingfisher", "renesas,h3ulcb",
+> >>> +	compatible = "shimafuji,kingfisher", "renesas,ulcb",
+> >>>  		     "renesas,r8a7795";
+> >> 
+> >> This is unrelated to your patch, but due to the reason explained in my
+> >> review of 02/14, I think "shimafuji,kingfisher" should include the SoC
+> >> name.
+> >> 
+> >> This brings up the topic of how to describe boards that are made of an
+> >> SoC "module" board plugged into an expansion "motherboard".
+> > 
+> > Isn't it the point that the shimafuji board is agnostic to the SoC on
+> > the ULCB?
+> > 
+> > I presume the Kingfisher board is just the expansion board which would
+> > be identical regardless of if it was put on an H3 ULCB, or an M3 ULCB?
 > 
-> Thank you for the patch.
-> 
-> On Sunday, 5 August 2018 02:11:04 EEST Eugeniu Rosca wrote:
->> Following the recent change in dt-bindings [1], switch from
->> "renesas,h3ulcb" to "renesas,ulcb" compatible string.
->>
->> [1] Documentation/devicetree/bindings/arm/shmobile.txt
->>
->> Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
->> ---
->>  arch/arm64/boot/dts/renesas/r8a7795-es1-ulcb-kf.dts | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1-ulcb-kf.dts
->> b/arch/arm64/boot/dts/renesas/r8a7795-es1-ulcb-kf.dts index
->> 06deb67c36c8..7a5b1dc64090 100644
->> --- a/arch/arm64/boot/dts/renesas/r8a7795-es1-ulcb-kf.dts
->> +++ b/arch/arm64/boot/dts/renesas/r8a7795-es1-ulcb-kf.dts
->> @@ -14,6 +14,6 @@
->>
->>  / {
->>  	model = "Renesas H3ULCB Kingfisher board based on r8a7795 ES1.x";
->> -	compatible = "shimafuji,kingfisher", "renesas,h3ulcb",
->> +	compatible = "shimafuji,kingfisher", "renesas,ulcb",
->>  		     "renesas,r8a7795";
-> 
-> This is unrelated to your patch, but due to the reason explained in my review 
-> of 02/14, I think "shimafuji,kingfisher" should include the SoC name.
-> 
-> This brings up the topic of how to describe boards that are made of an SoC 
-> "module" board plugged into an expansion "motherboard".
-> 
+> In fact possibly the interesting point is that the kingfisher as an
+> expansion board is surely an 'overlay', rather than the board itself ?
 
-Diving into (probably shatteredly recollected by me) history, a board
-'compatible' property appears as a handle to deal with incomplete board
-description represented in DTB, so that arch code or drivers can catch on it
-and fill some board specific missing parts in runtime, commonly the related
-code takes a shape of quirks.
+In a way it's both. From an SoC point of view, the KingFisher board can be 
+seen as an expansion board. From a system point of view, it's a KingFisher 
+system.
 
-If we accept it, SoC specific drivers would take their interest in SoC model
-and revision, and out-of-SoC/platform/board drivers and legacy arch board
-code can look at a PCB board model variant. Note that for both separated
-but comparably large and important pieces of board/platform knowledge there
-is a single compatible property in use, namely the compatible property of
-the root node. Also note that both ePAPR and Devicetree Specification describe
-'compatible' property of the root node as a special one, as "a list of
-platform architectures with which this platform is compatible".
+If you built a car around an H3 ULCB, would you consider that to be an H3 with 
+a car extension, or a car with an H3 inside ? :-)
 
-In my opinion a better board representation would be to add a 'soc' device
-node as a child of the root node, and the former one has its own fixed
-compatible property, but a protocol based on such view has to be agreed
-and accepted firstly, and it falls into "forever unrealistic tasks" category.
+> >>>  };
 
-Today the SoC part of compatible property value is still in active use, and
-PCB\SoC part is almost abandoned, so I would propose to diminish the asset
-of the latter. Since both board/platform descriptions are alloyed in one
-list of values, I'd like to see a better description of acceptable values
-of 'compatible' property of the root node.
+-- 
+Regards,
 
-The common practice is to put SoC specific values into the right tail,
-and place (kind of optional) board specific values on the left, let's
-continue to follow it, but unrestrict SoC agnostic string names of boards
-and further board extensions, if PCB\SoC (or PCB\PCB for extension boards)
-are about identical. Anyway those values are mainly unused nowadays, so
-nothing is lost but another dimension in board/platform description and
-naming is avoided. I do understand that likely most of PCBs are very SoC
-centric, and the proposal shared above should not be considered as a rule,
-but rather as a reasonable and valid exception.
-
---
-Best wishes,
-Vladimir
+Laurent Pinchart
