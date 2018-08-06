@@ -1,43 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33359 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727099AbeHFRGP (ORCPT
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:37859 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726678AbeHFN3D (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Aug 2018 13:06:15 -0400
-Received: by mail-lf1-f67.google.com with SMTP id u14-v6so9329787lfu.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 06 Aug 2018 07:56:47 -0700 (PDT)
+        Mon, 6 Aug 2018 09:29:03 -0400
+MIME-Version: 1.0
+References: <20180806104200.29102-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180806104200.29102-1-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 6 Aug 2018 13:20:14 +0200
+Message-ID: <CAMuHMdWAg8VmXpx_R2ROO-PwjaoWFv6Sc8PpoJqePkXGNh9rvw@mail.gmail.com>
 Subject: Re: [PATCH] ata: sata_rcar: exclude setting of PHY registers in Gen3
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-ide@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-ide@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Tejun Heo <tj@kernel.org>,
         Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-References: <20180806104200.29102-1-wsa+renesas@sang-engineering.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <0f33b6af-24b7-84f4-3b7d-f3da337ba965@cogentembedded.com>
-Date: Mon, 6 Aug 2018 17:56:44 +0300
-MIME-Version: 1.0
-In-Reply-To: <20180806104200.29102-1-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 08/06/2018 01:42 PM, Wolfram Sang wrote:
+Hi Wolfram,
 
+On Mon, Aug 6, 2018 at 12:43 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
 > From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-> 
+>
 > According to documentation, setting of PHY registers is unnecessary with
 > R-Car Gen3. The registers are not even described. So, don't initialize
 > them.
-> 
+>
 > Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
 > [wsa: updated commit message]
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-[...]
 
-Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Thanks for your patch!
 
-MBR, Sergei
+> Tested with a Renesas R-Car M3N Salvator-XS board. I did a platform suspend to
+> check if the controller and PHY work properly after resume.
+
+"platform suspend"? Is that s2ram aka a full PSCI system suspend?
+I guess not, as it is supposed to fail without PCA9654 suspend/resume support...
+
+So more information is needed to convince me ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
