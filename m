@@ -1,51 +1,112 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:43393 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733173AbeHAJuS (ORCPT
+Received: from smtp1.de.adit-jv.com ([62.225.105.245]:43870 "EHLO
+        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727585AbeHFVu3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Aug 2018 05:50:18 -0400
-MIME-Version: 1.0
-References: <1532936891-25034-1-git-send-email-biju.das@bp.renesas.com> <1532936891-25034-3-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1532936891-25034-3-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 1 Aug 2018 10:05:38 +0200
-Message-ID: <CAMuHMdVVfOS3XF=-cqFpUcWGfGT0yFUN==BvauNOWamad1EwEA@mail.gmail.com>
-Subject: Re: [PATCH 2/5] soc: renesas: rcar-sysc: Add r8a774a1 support
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Mon, 6 Aug 2018 17:50:29 -0400
+Date: Mon, 6 Aug 2018 21:39:42 +0200
+From: Eugeniu Rosca <erosca@de.adit-jv.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+CC: Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Magnus Damm <damm+renesas@opensource.se>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        <linux-renesas-soc@vger.kernel.org>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>
+Subject: Re: [PATCH 11/14] dt-bindings: can: rcar_can: document r8a77965 can
+ support
+Message-ID: <20180806193942.GB5999@vmlxhi-102.adit-jv.com>
+References: <20180804231114.21420-1-erosca@de.adit-jv.com>
+ <20180804231114.21420-12-erosca@de.adit-jv.com>
+ <2e9af18f-7c96-0942-3b0f-b2b12968a5df@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <2e9af18f-7c96-0942-3b0f-b2b12968a5df@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jul 30, 2018 at 9:54 AM Biju Das <biju.das@bp.renesas.com> wrote:
-> Add support for RZ/G2M (R8A774A1) SoC power areas to the R-Car SYSC
-> driver.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+Hi Kieran,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Mon, Aug 06, 2018 at 11:56:56AM +0100, Kieran Bingham wrote:
+> Hi Eugeniu
+> 
+> On 05/08/18 00:11, Eugeniu Rosca wrote:
+> > After adding CAN support to arch/arm64/boot/dts/renesas/r8a77965.dtsi,
+> > checkpatch complained that the new compatible string
+> > "renesas,can-r8a77965" is not documented. Fix the warning.
+> > 
+> 
+> Thanks to the correct ordering of your patches, (you have this one
+> *before* adding the CAN support to r8a77965) This commit message seems
+> to be predicting the future somewhat.
+> 
+> Perhaps just a simpler commit message would suffice:
+> 
+> "Document the support for rcar_can on R8A77965 SoC devices."
 
-Gr{oetje,eeting}s,
+I like giving the true story behind the patch and the story was that I
+was hit by the checkpatch warning, fixed it and re-ordered the commits.
+But I will use your version if it sounds better to you.
 
-                        Geert
+> 
+> > Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+> > ---
+> >  Documentation/devicetree/bindings/net/can/rcar_can.txt | 10 +++++++---
+> >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+> > index 94a7f33ac5e9..23264451a5a4 100644
+> > --- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
+> > +++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+> > @@ -13,6 +13,7 @@ Required properties:
+> >  	      "renesas,can-r8a7794" if CAN controller is a part of R8A7794 SoC.
+> >  	      "renesas,can-r8a7795" if CAN controller is a part of R8A7795 SoC.
+> >  	      "renesas,can-r8a7796" if CAN controller is a part of R8A7796 SoC.
+> > +	      "renesas,can-r8a77965" if CAN controller is a part of R8A77965 SoC.
+> >  	      "renesas,rcar-gen1-can" for a generic R-Car Gen1 compatible device.
+> >  	      "renesas,rcar-gen2-can" for a generic R-Car Gen2 or RZ/G1
+> >  	      compatible device.
+> > @@ -28,9 +29,8 @@ Required properties:
+> >  - pinctrl-0: pin control group to be used for this controller.
+> >  - pinctrl-names: must be "default".
+> >  
+> > -Required properties for "renesas,can-r8a7795" and "renesas,can-r8a7796"
+> > -compatible:
+> > -In R8A7795 and R8A7796 SoCs, "clkp2" can be CANFD clock. This is a div6 clock
+> > +Required properties for compatibles [A], [B] and [C]:
+> > +For the denoted SoCs, "clkp2" can be CANFD clock. This is a div6 clock
+> 
+> 
+> This paragraph could be rewrapped...
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Will implement in v2.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> 
+> >  and can be used by both CAN and CAN FD controller at the same time. It needs to
+> >  be scaled to maximum frequency if any of these controllers use it. This is done
+> >  using the below properties:
+> > @@ -38,6 +38,10 @@ using the below properties:
+> >  - assigned-clocks: phandle of clkp2(CANFD) clock.
+> >  - assigned-clock-rates: maximum frequency of this clock.
+> >  
+> > +[A] "renesas,can-r8a7795"
+> > +[B] "renesas,can-r8a7796"
+> > +[C] "renesas,can-r8a77965"
+> > +>  Optional properties:
+> >  - renesas,can-clock-select: R-Car CAN Clock Source Select. Valid values are:
+> >  			    <0x0> (default) : Peripheral clock (clkp1)
+> > 
+> 
+
+Thanks,
+Eugeniu.
