@@ -1,55 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:8750 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728978AbeHNPTq (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:60694 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728440AbeHFLaz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Aug 2018 11:19:46 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] dt-bindings: gpio: rcar: Add r8a774a1 (RZ/G2M) support
-Date: Tue, 14 Aug 2018 13:32:37 +0100
-Message-Id: <1534249957-15543-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Mon, 6 Aug 2018 07:30:55 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>,
+        Kieran Bingham <kieran@ksquared.org.uk>,
+        Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/8] renesas: convert to SPDX
+Date: Mon, 06 Aug 2018 12:23:25 +0300
+Message-ID: <5725513.UuOhmpgbUg@avalon>
+In-Reply-To: <87h8k8nqcf.wl-kuninori.morimoto.gx@renesas.com>
+References: <87h8k8nqcf.wl-kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document Renesas' RZ/G2M (R8A774A1) GPIO blocks compatibility within the
-relevant dt-bindings.
+Hi Morimoto-san,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
- Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Thank you for the patches.
 
-diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-index 4018ee5..e82144a 100644
---- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-+++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-@@ -6,6 +6,7 @@ Required Properties:
-     - "renesas,gpio-r8a7743": for R8A7743 (RZ/G1M) compatible GPIO controller.
-     - "renesas,gpio-r8a7745": for R8A7745 (RZ/G1E) compatible GPIO controller.
-     - "renesas,gpio-r8a77470": for R8A77470 (RZ/G1C) compatible GPIO controller.
-+    - "renesas,gpio-r8a774a1": for R8A774A1 (RZ/G2M) compatible GPIO controller.
-     - "renesas,gpio-r8a7778": for R8A7778 (R-Car M1) compatible GPIO controller.
-     - "renesas,gpio-r8a7779": for R8A7779 (R-Car H1) compatible GPIO controller.
-     - "renesas,gpio-r8a7790": for R8A7790 (R-Car H2) compatible GPIO controller.
-@@ -22,7 +23,7 @@ Required Properties:
-     - "renesas,gpio-r8a77995": for R8A77995 (R-Car D3) compatible GPIO controller.
-     - "renesas,rcar-gen1-gpio": for a generic R-Car Gen1 GPIO controller.
-     - "renesas,rcar-gen2-gpio": for a generic R-Car Gen2 or RZ/G1 GPIO controller.
--    - "renesas,rcar-gen3-gpio": for a generic R-Car Gen3 GPIO controller.
-+    - "renesas,rcar-gen3-gpio": for a generic R-Car Gen3 or RZ/G2 GPIO controller.
-     - "renesas,gpio-rcar": deprecated.
- 
-     When compatible with the generic version nodes must list the
+On Monday, 6 August 2018 06:15:21 EEST Kuninori Morimoto wrote:
+> Hi Mauro, Hans, Laurent
+> 
+> These patches convert SPDX license on Renesas related drivers.
+> 
+> Kuninori Morimoto (8):
+>   media: vsp1: convert to SPDX identifiers
+>   media: rcar-fcp: convert to SPDX identifiers
+>   media: adv7180: convert to SPDX identifiers
+>   media: adv748x: convert to SPDX identifiers
+>   drm: shmobile: convert to SPDX identifiers
+>   drm: panel-lvds: convert to SPDX identifiers
+>   fbdev: sh7760fb: convert to SPDX identifiers
+>   backlight: as3711_bl: convert to SPDX identifiers
+
+For the whole series,
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+I'll take the vsp1 and rcar-fcp patches in my tree and send a pull request to 
+Mauro for v4.20. I will squash the shmobile patch with the previous one you 
+sent, take the panel-lvds patch in the same tree, and send a pull request to 
+Dave for v4.20.
+
+For the adv7180 and adv748x patches I expect Hans to handle them.
+
+The sh7760fb and the as3711 patches should be sent to the appropriate mailing 
+lists and maintainers.
+
+>  drivers/gpu/drm/panel/panel-lvds.c       |  6 +-----
+>  drivers/media/i2c/adv7180.c              | 11 +----------
+>  drivers/media/i2c/adv748x/adv748x-afe.c  |  6 +-----
+>  drivers/media/i2c/adv748x/adv748x-core.c |  8 ++------
+>  drivers/media/i2c/adv748x/adv748x-csi2.c |  6 +-----
+>  drivers/media/i2c/adv748x/adv748x-hdmi.c |  6 +-----
+>  drivers/media/i2c/adv748x/adv748x.h      |  6 +-----
+>  drivers/video/backlight/as3711_bl.c      |  7 ++-----
+>  drivers/video/fbdev/sh7760fb.c           |  7 ++-----
+>  include/linux/platform_data/shmob_drm.h  |  6 +-----
+>  include/media/rcar-fcp.h                 |  6 +-----
+>  include/media/vsp1.h                     |  6 +-----
+>  12 files changed, 15 insertions(+), 66 deletions(-)
+
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
