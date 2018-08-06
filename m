@@ -1,44 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:39541 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1733074AbeHFSUv (ORCPT
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:38643 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728626AbeHFQsN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Aug 2018 14:20:51 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mon, 6 Aug 2018 12:48:13 -0400
+MIME-Version: 1.0
+References: <20180806140755.24087-1-geert+renesas@glider.be>
+ <20180806140755.24087-5-geert+renesas@glider.be> <TY1PR01MB15621F645BA5AA48C6060F0D8A200@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY1PR01MB15621F645BA5AA48C6060F0D8A200@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 6 Aug 2018 16:38:36 +0200
+Message-ID: <CAMuHMdWfsdbmGUQPk4O=9jyPZ_tUEytO5z2XE6-TnagJ3taPVA@mail.gmail.com>
+Subject: Re: [PATCH/RFC 4/4] sh-sci: Derive regshift value from DT compatible value
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        "uli@fpond.eu" <uli@fpond.eu>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        uli@fpond.eu, Yoshinori Sato <ysato@users.sourceforge.jp>,
         Greg KH <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux-sh list <linux-sh@vger.kernel.org>,
         "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
-Subject: RE: [PATCH/RFC 4/4] sh-sci: Derive regshift value from DT compatible
- value
-Date: Mon, 6 Aug 2018 16:10:59 +0000
-Message-ID: <TY1PR01MB15622D51FC913D8A99A43AAF8A200@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20180806140755.24087-1-geert+renesas@glider.be>
- <20180806140755.24087-5-geert+renesas@glider.be>
- <TY1PR01MB15621F645BA5AA48C6060F0D8A200@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <CAMuHMdWfsdbmGUQPk4O=9jyPZ_tUEytO5z2XE6-TnagJ3taPVA@mail.gmail.com>
-In-Reply-To: <CAMuHMdWfsdbmGUQPk4O=9jyPZ_tUEytO5z2XE6-TnagJ3taPVA@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIE1vbmRheSwgQXVndXN0IDA2LCAyMDE4IDEsIEdlZXJ0IFV5dHRlcmhv
-ZXZlbiB3cm90ZToNCj4gQlRXLCBpdCB3b3VsZCBoYXZlIGJlZW4gdmVyeSB2YWx1YWJsZSB0byBr
-bm93IHRoYXQgZWFybHljb24gZGlkbid0IHdvcmssDQo+IGFzIHRoYXQNCj4gd291bGQgaGF2ZSBo
-ZWxwZWQgaW4gYXZvaWRpbmcgdGhlIGVhcmx5Y29uIGJyZWFrYWdlIG9uIG90aGVyIHBhcnRzLg0K
-DQpNeSBhcG9sb2dpZXMuDQoNCldoZW4gSSBoYWQgZmlyc3QgbG9va2VkIGF0IHRoaXMgbW9udGhz
-IGFnbywgSSBxdWlja2x5IHJlYWxpemVkIHRoYXQgDQplYXJseWNvbiB3YXMgbm90IGdvaW5nIHRv
-IHdvcmsgYmVjYXVzZSB0aGUgUlovQTIgU0NJRiB3YXMgbm90IGxpa2UgYWxsIHRoZSANCm90aGVy
-IFNDSUYgZGV2aWNlcy4NClNvIGluc3RlYWQgSSB3ZW50IHdpdGggYSBzaW1wbGUgMiBsaW5lIGNo
-YW5nZSB0byBERUJVR19MTC4gQWZ0ZXIgdGhhdCANCnBvaW50LCBJIGZvcmdvdCBhbGwgYWJvdXQg
-ZWFybHljb24gdW50aWwgSSBzYXcgeW91IG1lbnRpb24gaXQgdGhpcyBtb3JuaW5nLg0KDQoNCkNo
-cmlzDQoNCg==
+Hi Chris,
+
+On Mon, Aug 6, 2018 at 4:18 PM Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Monday, August 06, 2018 1, linux-sh-owner@vger.kernel.org wrote:
+> > Deriving the proper regshift value from the register block size is
+> > fragile (it may have been rounded up in DT, and the mapping granularity
+> > is usually PAGE_SIZE anyway), and turned out to be inappropriate for
+> > earlycon support (the size is not easily available).
+> >
+> > On DT systems, derive it from the compatible value instead.
+> > This requires adding an entry for RZ/A2 serial ports, which use an
+> > atypical regshift value.
+>
+> I had a simple patch to add support for CONFIG_DEBUG_LL for RZ/A2
+> because earlycon never worked because of RZ/A2's different register locations.
+
+Yeah, sci_probe_regmap() assumed the wrong regtype for your TYPE_SCIF
+port. You needed an OF_EARLYCON_DECLARE() line that also filled in
+the correct regtype.
+
+BTW, it would have been very valuable to know that earlycon didn't work, as that
+would have helped in avoiding the earlycon breakage on other parts.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
