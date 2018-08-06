@@ -1,64 +1,48 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] serial: sh-sci: Document r8a774a1 bindings
-Date: Tue, 14 Aug 2018 13:34:02 +0100
-Message-Id: <1534250042-15815-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from perceval.ideasonboard.com ([213.167.242.64]:35516 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728626AbeHFQsg (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 6 Aug 2018 12:48:36 -0400
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+To: linux-kernel@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        kbingham@kernel.org
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 3/4] MAINTAINERS: FDP1: Update e-mail address.
+Date: Mon,  6 Aug 2018 15:39:03 +0100
+Message-Id: <20180806143904.4716-3-kieran.bingham@ideasonboard.com>
+In-Reply-To: <20180806143904.4716-1-kieran.bingham@ideasonboard.com>
+References: <20180806143904.4716-1-kieran.bingham@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-RZ/G2M (R8A774A1) SoC also has the R-Car Gen3 compatible SCIF and
-HSCIF ports, so document the SoC specific bindings. While at it,
-update the RZ/G1 and RZ/G2 family specific strings description as
-outdated.
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+This entry was created with my personal e-mail address. Update with
+the correct work related account.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- .../devicetree/bindings/serial/renesas,sci-serial.txt      | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+Cc: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
 
-diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-index eaca9da..1994ab8 100644
---- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-+++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-@@ -20,6 +20,8 @@ Required properties:
-     - "renesas,hscif-r8a7745" for R8A7745 (RZ/G1E) HSCIF compatible UART.
-     - "renesas,scif-r8a77470" for R8A77470 (RZ/G1C) SCIF compatible UART.
-     - "renesas,hscif-r8a77470" for R8A77470 (RZ/G1C) HSCIF compatible UART.
-+    - "renesas,scif-r8a774a1" for R8A774A1 (RZ/G2M) SCIF compatible UART.
-+    - "renesas,hscif-r8a774a1" for R8A774A1 (RZ/G2M) HSCIF compatible UART.
-     - "renesas,scif-r8a7778" for R8A7778 (R-Car M1) SCIF compatible UART.
-     - "renesas,scif-r8a7779" for R8A7779 (R-Car H1) SCIF compatible UART.
-     - "renesas,scif-r8a7790" for R8A7790 (R-Car H2) SCIF compatible UART.
-@@ -55,13 +57,13 @@ Required properties:
-     - "renesas,scifa-sh73a0" for SH73A0 (SH-Mobile AG5) SCIFA compatible UART.
-     - "renesas,scifb-sh73a0" for SH73A0 (SH-Mobile AG5) SCIFB compatible UART.
-     - "renesas,rcar-gen1-scif" for R-Car Gen1 SCIF compatible UART,
--    - "renesas,rcar-gen2-scif" for R-Car Gen2 SCIF compatible UART,
--    - "renesas,rcar-gen3-scif" for R-Car Gen3 SCIF compatible UART,
--    - "renesas,rcar-gen2-scifa" for R-Car Gen2 SCIFA compatible UART,
--    - "renesas,rcar-gen2-scifb" for R-Car Gen2 SCIFB compatible UART,
-+    - "renesas,rcar-gen2-scif" for R-Car Gen2 and RZ/G1 SCIF compatible UART,
-+    - "renesas,rcar-gen3-scif" for R-Car Gen3 and RZ/G2 SCIF compatible UART,
-+    - "renesas,rcar-gen2-scifa" for R-Car Gen2 and RZ/G1 SCIFA compatible UART,
-+    - "renesas,rcar-gen2-scifb" for R-Car Gen2 and RZ/G1 SCIFB compatible UART,
-     - "renesas,rcar-gen1-hscif" for R-Car Gen1 HSCIF compatible UART,
--    - "renesas,rcar-gen2-hscif" for R-Car Gen2 HSCIF compatible UART,
--    - "renesas,rcar-gen3-hscif" for R-Car Gen3 HSCIF compatible UART,
-+    - "renesas,rcar-gen2-hscif" for R-Car Gen2 and RZ/G1 HSCIF compatible UART,
-+    - "renesas,rcar-gen3-hscif" for R-Car Gen3 and RZ/G2 HSCIF compatible UART,
-     - "renesas,scif" for generic SCIF compatible UART.
-     - "renesas,scifa" for generic SCIFA compatible UART.
-     - "renesas,scifb" for generic SCIFB compatible UART.
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6a30a5332b18..174c0c3da67e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8915,7 +8915,7 @@ F:	drivers/media/platform/rcar-fcp.c
+ F:	include/media/rcar-fcp.h
+ 
+ MEDIA DRIVERS FOR RENESAS - FDP1
+-M:	Kieran Bingham <kieran@bingham.xyz>
++M:	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+ L:	linux-media@vger.kernel.org
+ L:	linux-renesas-soc@vger.kernel.org
+ T:	git git://linuxtv.org/media_tree.git
 -- 
-2.7.4
+2.17.1
