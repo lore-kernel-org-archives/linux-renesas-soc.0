@@ -1,76 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:44866 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728349AbeHFTGa (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:35500 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728626AbeHFQse (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Aug 2018 15:06:30 -0400
-Received: by mail-lf1-f65.google.com with SMTP id g6-v6so9552436lfb.11
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 06 Aug 2018 09:56:31 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] rcar-csi2: add R8A77980 support
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Message-ID: <f6edfd44-7b08-e467-3486-795251816187@cogentembedded.com>
-Date: Mon, 6 Aug 2018 19:56:27 +0300
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Mon, 6 Aug 2018 12:48:34 -0400
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+To: linux-kernel@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        kbingham@kernel.org
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 1/4] MAINTAINERS: rcar-du: Add co-maintainer
+Date: Mon,  6 Aug 2018 15:39:01 +0100
+Message-Id: <20180806143904.4716-1-kieran.bingham@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the R-Car V3H (AKA R8A77980) SoC support to the R-Car CSI2 driver.
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Add myself as a co-maintainer for the Renesas DRM drivers.
 
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
-This patch is against the 'media_tree.git' repo's 'master' branch.
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
 
- Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt |    1 
- drivers/media/platform/rcar-vin/rcar-csi2.c                   |   11 ++++++++++
- 2 files changed, 12 insertions(+)
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-Index: media_tree/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
-===================================================================
---- media_tree.orig/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
-+++ media_tree/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
-@@ -12,6 +12,7 @@ Mandatory properties
-    - "renesas,r8a7796-csi2" for the R8A7796 device.
-    - "renesas,r8a77965-csi2" for the R8A77965 device.
-    - "renesas,r8a77970-csi2" for the R8A77970 device.
-+   - "renesas,r8a77980-csi2" for the R8A77980 device.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7cebd5bba8a8..c7cecb9201b3 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4764,6 +4764,7 @@ F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
  
-  - reg: the register base and size for the device registers
-  - interrupts: the interrupt for the device
-Index: media_tree/drivers/media/platform/rcar-vin/rcar-csi2.c
-===================================================================
---- media_tree.orig/drivers/media/platform/rcar-vin/rcar-csi2.c
-+++ media_tree/drivers/media/platform/rcar-vin/rcar-csi2.c
-@@ -959,6 +959,13 @@ static const struct rcar_csi2_info rcar_
- 	.confirm_start = rcsi2_confirm_start_v3m_e3,
- };
- 
-+static const struct rcar_csi2_info rcar_csi2_info_r8a77980 = {
-+	.init_phtw = rcsi2_init_phtw_h3_v3h_m3n,
-+	.hsfreqrange = hsfreqrange_h3_v3h_m3n,
-+	.csi0clkfreqrange = 0x20,
-+	.clear_ulps = true,
-+};
-+
- static const struct of_device_id rcar_csi2_of_table[] = {
- 	{
- 		.compatible = "renesas,r8a7795-csi2",
-@@ -976,6 +983,10 @@ static const struct of_device_id rcar_cs
- 		.compatible = "renesas,r8a77970-csi2",
- 		.data = &rcar_csi2_info_r8a77970,
- 	},
-+	{
-+		.compatible = "renesas,r8a77980-csi2",
-+		.data = &rcar_csi2_info_r8a77980,
-+	},
- 	{ /* sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, rcar_csi2_of_table);
+ DRM DRIVERS FOR RENESAS
+ M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
++M:	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+ L:	dri-devel@lists.freedesktop.org
+ L:	linux-renesas-soc@vger.kernel.org
+ T:	git git://linuxtv.org/pinchartl/fbdev
+-- 
+2.17.1
