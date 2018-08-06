@@ -1,33 +1,53 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Mon, 20 Aug 2018 17:24:55 -0500
-From: Rob Herring <robh@kernel.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46531 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728569AbeHFUec (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 6 Aug 2018 16:34:32 -0400
+Received: by mail-lf1-f65.google.com with SMTP id l16-v6so9729992lfc.13
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 06 Aug 2018 11:24:14 -0700 (PDT)
+Subject: Re: [PATCH] rcar-csi2: add R8A77980 support
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>
 Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: Re: [PATCH] rcar-csi2: add R8A77980 support
-Message-ID: <20180820222455.GA12251@bogus>
 References: <f6edfd44-7b08-e467-3486-795251816187@cogentembedded.com>
+ <20180806180250.GD1635@bigcity.dyn.berto.se>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <e2d1e9ea-f524-31f1-1561-2f0363981938@cogentembedded.com>
+Date: Mon, 6 Aug 2018 21:24:11 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f6edfd44-7b08-e467-3486-795251816187@cogentembedded.com>
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <20180806180250.GD1635@bigcity.dyn.berto.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Aug 06, 2018 at 07:56:27PM +0300, Sergei Shtylyov wrote:
-> Add the R-Car V3H (AKA R8A77980) SoC support to the R-Car CSI2 driver.
-> 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> ---
-> This patch is against the 'media_tree.git' repo's 'master' branch.
-> 
->  Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt |    1 
+Hello!
 
-Acked-by: Rob Herring <robh@kernel.org>
+On 08/06/2018 09:02 PM, Niklas Söderlund wrote:
 
->  drivers/media/platform/rcar-vin/rcar-csi2.c                   |   11 ++++++++++
->  2 files changed, 12 insertions(+)
+> On 2018-08-06 19:56:27 +0300, Sergei Shtylyov wrote:
+>> Add the R-Car V3H (AKA R8A77980) SoC support to the R-Car CSI2 driver.
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> It looks good but before I add my tag I would like to know if you tested 
+> this on a V3H?
+
+   No, have not tested the upstream patch, seemed too cumbersome (we did 
+test the BSP patch AFAIK).
+
+> In the past extending the R-Car CSI-2 receiver to a new 
+> SoC always caught some new corner case :-)
+> 
+> I don't have access to a V3H myself otherwise I would of course test it 
+> myself.
+
+   CSI-2 on the Condor board is connected to a pair of MAX9286 GMSL de-serializers
+which are connected to 4 (composite?) connectors... There's supposed to be sensor
+chip on the other side, AFAIK...
+
+MBR, Sergei
