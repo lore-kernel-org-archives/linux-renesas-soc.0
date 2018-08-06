@@ -1,60 +1,40 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 3/5] arm64: dts: renesas: r8a774a1: Add INTC-EX device node
-Date: Thu, 23 Aug 2018 09:58:49 +0100
-Message-Id: <1535014731-64472-4-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1535014731-64472-1-git-send-email-biju.das@bp.renesas.com>
-References: <1535014731-64472-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:42733 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727585AbeHFUbV (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 6 Aug 2018 16:31:21 -0400
+Date: Mon, 6 Aug 2018 11:21:01 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-ide@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] ata: sata_rcar: Add r8a77965 support
+Message-ID: <20180806182101.GG410235@devbig004.ftw2.facebook.com>
+References: <20180725191655.3467-1-wsa+renesas@sang-engineering.com>
+ <20180806180506.vs56wyjrqb35jkyl@katana>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180806180506.vs56wyjrqb35jkyl@katana>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for the Interrupt Controller for External Devices
-(INTC-EX) on RZ/G2M.
+On Mon, Aug 06, 2018 at 08:05:06PM +0200, Wolfram Sang wrote:
+> On Wed, Jul 25, 2018 at 09:16:55PM +0200, Wolfram Sang wrote:
+> > Update the binding docs for Renesas R-Car M3-N. No driver changes are
+> > needed.
+> > 
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> 
+> Tejun, could you pick this also for 4.19?
+> 
+> Thanks for picking the other patches already!
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Sure, applied to libata/for-4.19.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index 81fba7f..15d7785 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -144,6 +144,22 @@
- 			#power-domain-cells = <1>;
- 		};
- 
-+		intc_ex: interrupt-controller@e61c0000 {
-+			compatible = "renesas,intc-ex-r8a774a1", "renesas,irqc";
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			reg = <0 0xe61c0000 0 0x200>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 407>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 407>;
-+		};
-+
- 		hscif0: serial@e6540000 {
- 			compatible = "renesas,hscif-r8a774a1",
- 				     "renesas,rcar-gen3-hscif",
+Thanks.
+
 -- 
-2.7.4
+tejun
