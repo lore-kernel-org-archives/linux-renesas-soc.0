@@ -1,60 +1,43 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:29250 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732531AbeHBQpo (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Aug 2018 12:45:44 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v2 0/5] Add RZ/G2M SYSC/RST/Clock support
-Date: Thu,  2 Aug 2018 15:48:17 +0100
-Message-Id: <1533221302-44598-1-git-send-email-biju.das@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+To: linux-kernel@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        kbingham@kernel.org
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 2/4] MAINTAINERS: VSP1: Add co-maintainer
+Date: Mon,  6 Aug 2018 15:39:02 +0100
+Message-Id: <20180806143904.4716-2-kieran.bingham@ideasonboard.com>
+In-Reply-To: <20180806143904.4716-1-kieran.bingham@ideasonboard.com>
+References: <20180806143904.4716-1-kieran.bingham@ideasonboard.com>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch series aims to add SYSC/RST/Clock support for 
-for RZ/G2M SoC. RZ/G2M SoC is similar to R-Car Gen3 M3-W SoC.
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-----
-V1-->V2
-     * Incorporated review comments
-----
-Biju Das (5):
-  dt-bindings: power: Add r8a774a1 SYSC power domain definitions
-  soc: renesas: rcar-sysc: Add r8a774a1 support
-  soc: renesas: rcar-rst: Add support for RZ/G2M
-  clk: renesas: Add r8a774a1 CPG Core Clock Definitions
-  clk: renesas: cpg-mssr: Add r8a774a1 support
+Add myself as a co-maintainer for the Renesas VSP driver.
 
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   9 +-
- .../bindings/power/renesas,rcar-sysc.txt           |   1 +
- .../devicetree/bindings/reset/renesas,rst.txt      |   1 +
- drivers/clk/renesas/Kconfig                        |   5 +
- drivers/clk/renesas/Makefile                       |   1 +
- drivers/clk/renesas/r8a774a1-cpg-mssr.c            | 323 +++++++++++++++++++++
- drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
- drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
- drivers/soc/renesas/Kconfig                        |  11 +-
- drivers/soc/renesas/Makefile                       |   1 +
- drivers/soc/renesas/r8a774a1-sysc.c                |  45 +++
- drivers/soc/renesas/rcar-rst.c                     |   4 +-
- drivers/soc/renesas/rcar-sysc.c                    |   3 +
- drivers/soc/renesas/rcar-sysc.h                    |   1 +
- include/dt-bindings/clock/r8a774a1-cpg-mssr.h      |  58 ++++
- include/dt-bindings/power/r8a774a1-sysc.h          |  31 ++
- 16 files changed, 493 insertions(+), 8 deletions(-)
- create mode 100644 drivers/clk/renesas/r8a774a1-cpg-mssr.c
- create mode 100644 drivers/soc/renesas/r8a774a1-sysc.c
- create mode 100644 include/dt-bindings/clock/r8a774a1-cpg-mssr.h
- create mode 100644 include/dt-bindings/power/r8a774a1-sysc.h
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+---
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
 
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c7cecb9201b3..6a30a5332b18 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8935,6 +8935,7 @@ F:	drivers/media/platform/rcar-vin/
+ 
+ MEDIA DRIVERS FOR RENESAS - VSP1
+ M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
++M:	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+ L:	linux-media@vger.kernel.org
+ L:	linux-renesas-soc@vger.kernel.org
+ T:	git git://linuxtv.org/media_tree.git
 -- 
-2.7.4
+2.17.1
