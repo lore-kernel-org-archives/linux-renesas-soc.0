@@ -1,133 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:52196 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726879AbeHGLVP (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:32784 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730072AbeHFQRV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Aug 2018 07:21:15 -0400
-Reply-To: kieran.bingham+renesas@ideasonboard.com
-Subject: Re: [RFC 2/2] dt-bindings: media: i2c: Add bindings for IMI RDACM20
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <1528543805-23945-1-git-send-email-jacopo+renesas@jmondi.org>
- <1528543805-23945-3-git-send-email-jacopo+renesas@jmondi.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Message-ID: <0a53ce03-34ab-1439-6382-bb6feb7459b3@ideasonboard.com>
-Date: Tue, 7 Aug 2018 10:07:48 +0100
-MIME-Version: 1.0
-In-Reply-To: <1528543805-23945-3-git-send-email-jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Mon, 6 Aug 2018 12:17:21 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Chris Brandt <chris.brandt@renesas.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Ulrich Hecht <uli@fpond.eu>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-serial@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 2/4] sh-sci: Take into account regshift to fix earlycon breakage
+Date: Mon,  6 Aug 2018 16:07:53 +0200
+Message-Id: <20180806140755.24087-3-geert+renesas@glider.be>
+In-Reply-To: <20180806140755.24087-1-geert+renesas@glider.be>
+References: <20180806140755.24087-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
+With the compressed SCIF address range, the SCIF ports on most Renesas
+SoCs now use regshift 1.
 
-Thank you for sending your implementation of this. I'm dropping my DT
-bindings and taking yours.
+However, the earlycon setup code always assumes regshift zero, breaking
+earlycon on R-Car, RZ/A1, and RZ/G SoCs.
 
+Fix this by initializing regshift to 1 for the generic SCIF case, and
+adding a special entry for RZ/A2 SoCs that do need regshift 0.
 
-On 09/06/18 12:30, Jacopo Mondi wrote:
-> IMI D&D RDACM20 automotive platform is a Gigabit Multimedia Serial Link
-> (GMSL) camera transmitting video and I2C control messages on coax cable
-> physical link.
-> 
-> Document its device tree binding interface.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  .../devicetree/bindings/media/i2c/imi,rdacm20.txt  | 62 ++++++++++++++++++++++
->  1 file changed, 62 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 2d4dd0da45401c7a ("serial: sh-sci: Allow for compressed SCIF address")
+---
+Tested on R-Car Gen2 and Gen3.
 
-There's no update to the vendor-prefixes here to pull in the imi prefix.
-I'll bring over the version in my patch.
+This depends on the previous patch.  Else the kernel hangs when
+initializing SCIF0 (why??).
+---
+ drivers/tty/serial/sh-sci.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---
-Regards
-
-Kieran
-
-
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt b/Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
-> new file mode 100644
-> index 0000000..7fda068
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
-> @@ -0,0 +1,62 @@
-> +IMI D&D RDACM20 Automotive Camera Platform
-> +------------------------------------------
-> +
-> +The IMI D&D RDACM20 is a GMSL-compatible camera designed for automotive
-> +applications. It is encloses a Maxim Integrated MAX9271 GMSL serializer, an
-> +Omnivision OV10635 camera sensor and an embedded MCU, and connects to a remote
-> +GMSL endpoint through a coaxial cable.
-> +
-> +                                                     IMI RDACM20
-> + ---------------                               --------------------------------
-> +|      GMSL     |   <---  Video Stream        |       <- Video--------\        |
-> +|               |< ====== GMSL Link ======== >|MAX9271<- I2C bus-> <-->OV10635 |
-> +| de-serializer |   <---  I2C messages --->   |                   \<-->MCU     |
-> + ---------------                               --------------------------------
-
-
-I love the ascii art :D
-
-
-> +
-> +RDACM20 transmits video data generated by the embedded camera sensor on the
-> +GMSL serial channel to a remote GMSL de-serializer, as well as it receives and
-> +transmits I2C messages encapsulated in the GMSL bidirectional control channel.
-> +
-> +All I2C traffic received on the GMSL link not directed to the serializer is
-> +propagated on the local I2C bus to the embedded camera sensor and MCU. All
-> +I2C traffic generated on the local I2C bus not directed to the serializer is
-> +propagated to the remote de-serializer encapsulated in the GMSL control channel.
-> +
-> +Required Properties:
-> +
-> +- compatible: Shall be "imi,rdacm20".
-> +- reg: Pair of I2C device addresses, the first to be assigned to the serializer
-> +  the second to be assigned to the camera sensor.
-> +
-> +Connection to the remote GMSL endpoint are modeled using the OF graph bindings
-
-s/modeled/modelled/
-
-I'll fix that one :)
-
-
-> +in accordance with the video interface bindings defined in
-> +Documentation/devicetree/bindings/media/video-interfaces.txt.
-> +
-> +The device node contains a single "port" child node with a single "endpoint"
-> +sub-device.
-> +
-> +Required endpoint properties:
-> +
-> +- remote-endpoint: phandle to the remote GMSL endpoint sub-node in the remote
-> +  node port.
-> +
-> +Example:
-> +-------
-> +
-> +	i2c@0 {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		reg = <0>;
-> +
-> +		camera@51 {
-> +			compatible = "imi,rdacm20";
-> +			reg = <0x51 0x61>;
-> +
-> +			port {
-> +				rdacm20_out0: endpoint {
-> +					remote-endpoint = <&max9286_in0>;
-> +				};
-> +			};
-> +
-> +		};
-> +	};
-> 
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index cf3195bed0246a3d..caf4422d9e2e59e4 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -3390,9 +3390,17 @@ static int __init sci_early_console_setup(struct earlycon_device *device,
+ {
+ 	return early_console_setup(device, PORT_SCI);
+ }
++static int __init rza2_early_console_setup(struct earlycon_device *device,
++					  const char *opt)
++{
++	/* RZ/A2 uses the default regshift zero */
++	return early_console_setup(device, PORT_SCIF);
++}
+ static int __init scif_early_console_setup(struct earlycon_device *device,
+ 					  const char *opt)
+ {
++	/* Other plain SCIF variants */
++	device->port.regshift = 1;
+ 	return early_console_setup(device, PORT_SCIF);
+ }
+ static int __init scifa_early_console_setup(struct earlycon_device *device,
+@@ -3412,6 +3420,7 @@ static int __init hscif_early_console_setup(struct earlycon_device *device,
+ }
+ 
+ OF_EARLYCON_DECLARE(sci, "renesas,sci", sci_early_console_setup);
++OF_EARLYCON_DECLARE(scif, "renesas,scif-r7s9210", rza2_early_console_setup);
+ OF_EARLYCON_DECLARE(scif, "renesas,scif", scif_early_console_setup);
+ OF_EARLYCON_DECLARE(scifa, "renesas,scifa", scifa_early_console_setup);
+ OF_EARLYCON_DECLARE(scifb, "renesas,scifb", scifb_early_console_setup);
+-- 
+2.17.1
