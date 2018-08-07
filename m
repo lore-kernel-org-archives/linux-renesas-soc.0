@@ -1,52 +1,80 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: [PATCH] dt-bindings: net: ravb: Add support for r8a774a1 SoC
-Date: Tue, 14 Aug 2018 13:33:37 +0100
-Message-Id: <1534250017-15725-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from conuserg-08.nifty.com ([210.131.2.75]:39262 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727360AbeHGIa5 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 7 Aug 2018 04:30:57 -0400
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [v0.1 PATCH 6/7] mmc: renesas_sdhi: refactor CLK_CTL bit calculation
+Date: Tue,  7 Aug 2018 15:17:21 +0900
+Message-Id: <1533622642-13989-7-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document RZ/G2M (R8A774A1) SoC bindings.
+  for (clk = 0x80000080; new_clock >= (clock << 1); clk >>= 1)
+          clock <<= 1;
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+... is too tricky, hence I replaced with
+
+  roundup_pow_of_two(divisor) >> 2
+
+'(clk >> 22) & 0x1' is the bit test for the 1/1 divisor, but
+it is not clear.  'divisor <= 1' is easier to understand.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- Documentation/devicetree/bindings/net/renesas,ravb.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
-index 19740d0..da249b7 100644
---- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
-+++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
-@@ -16,6 +16,7 @@ Required properties:
-       - "renesas,etheravb-rcar-gen2" as a fallback for the above
- 		R-Car Gen2 and RZ/G1 devices.
+ drivers/mmc/host/renesas_sdhi_core.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index a15fb2e..98391e9 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -158,7 +158,8 @@ static unsigned int renesas_sdhi_clk_update(struct tmio_mmc_host *host,
+ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
+ 				   unsigned int new_clock)
+ {
+-	u32 clk = 0, clock;
++	unsigned int clock, divisor;
++	u32 clk = 0;
  
-+      - "renesas,etheravb-r8a774a1" for the R8A774A1 SoC.
-       - "renesas,etheravb-r8a7795" for the R8A7795 SoC.
-       - "renesas,etheravb-r8a7796" for the R8A7796 SoC.
-       - "renesas,etheravb-r8a77965" for the R8A77965 SoC.
-@@ -24,7 +25,7 @@ Required properties:
-       - "renesas,etheravb-r8a77990" for the R8A77990 SoC.
-       - "renesas,etheravb-r8a77995" for the R8A77995 SoC.
-       - "renesas,etheravb-rcar-gen3" as a fallback for the above
--		R-Car Gen3 devices.
-+		R-Car Gen3 and RZ/G2 devices.
+ 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
+ 		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+@@ -166,14 +167,18 @@ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
+ 	if (new_clock == 0)
+ 		goto out;
  
- 	When compatible with the generic version, nodes must list the
- 	SoC-specific version corresponding to the platform first followed by
+-	clock = renesas_sdhi_clk_update(host, new_clock) / 512;
++	clock = renesas_sdhi_clk_update(host, new_clock);
+ 
+-	for (clk = 0x80000080; new_clock >= (clock << 1); clk >>= 1)
+-		clock <<= 1;
++	divisor = clock / new_clock;
+ 
+-	/* 1/1 clock is option */
+-	if ((host->pdata->flags & TMIO_MMC_CLK_ACTUAL) && ((clk >> 22) & 0x1))
+-		clk |= 0xff;
++	/*
++	 * bit7 set: 1/512, ... bit0 set:1/4, all bits clear: 1/2
++	 * all bits set: 1/1 (Renesas-specific extension?)
++	 */
++	if ((host->pdata->flags & TMIO_MMC_CLK_ACTUAL) && divisor <= 1)
++		clk = 0xff;
++	else
++		clk = roundup_pow_of_two(divisor) >> 2;
+ 
+ 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clk & CLK_CTL_DIV_MASK);
+ 	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
 -- 
 2.7.4
