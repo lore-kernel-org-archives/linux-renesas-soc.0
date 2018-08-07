@@ -1,135 +1,100 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v2 3/5] ARM: dts: r8a77470: Add GPIO support
-Date: Thu,  2 Aug 2018 15:11:25 +0100
-Message-Id: <1533219087-33695-4-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1533219087-33695-1-git-send-email-biju.das@bp.renesas.com>
-References: <1533219087-33695-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from conuserg-08.nifty.com ([210.131.2.75]:39155 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727360AbeHGIaz (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 7 Aug 2018 04:30:55 -0400
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [v0.1 PATCH 5/7] mmc: renesas_sdhi: merge clk_{start,stop} functions to set_clock
+Date: Tue,  7 Aug 2018 15:17:20 +0900
+Message-Id: <1533622642-13989-6-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe GPIO blocks in the R8A77470 device tree.
+renesas_sdhi_clk_start() and renesas_sdhi_clk_stop() are now only
+called from renesas_sdhi_set_clock().  Merge them.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
-This patch has runtime depency on the gpio driver patch.
-gpioblock3 has gpio-reserved-ranges property.
----
- arch/arm/boot/dts/r8a77470.dtsi | 91 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 91 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index af65fa0..5af878b 100644
---- a/arch/arm/boot/dts/r8a77470.dtsi
-+++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -61,6 +61,97 @@
- 		#size-cells = <2>;
- 		ranges;
+ drivers/mmc/host/renesas_sdhi_core.c | 39 +++++++++++-------------------------
+ 1 file changed, 12 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index 1f4c82e..a15fb2e 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -155,35 +155,16 @@ static unsigned int renesas_sdhi_clk_update(struct tmio_mmc_host *host,
+ 	return ret == 0 ? best_freq : clk_get_rate(priv->clk);
+ }
  
-+		gpio0: gpio@e6050000 {
-+			compatible = "renesas,gpio-r8a77470",
-+				     "renesas,rcar-gen2-gpio";
-+			reg = <0 0xe6050000 0 0x50>;
-+			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 0 23>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 912>;
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 912>;
-+		};
+-static void renesas_sdhi_clk_start(struct tmio_mmc_host *host)
+-{
+-	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
+-		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+-
+-	/* HW engineers overrode docs: no sleep needed on R-Car2+ */
+-	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+-		usleep_range(10000, 11000);
+-}
+-
+-static void renesas_sdhi_clk_stop(struct tmio_mmc_host *host)
+-{
+-	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
+-		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+-
+-	/* HW engineers overrode docs: no sleep needed on R-Car2+ */
+-	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+-		usleep_range(10000, 11000);
+-}
+-
+ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
+ 				   unsigned int new_clock)
+ {
+ 	u32 clk = 0, clock;
+ 
+-	if (new_clock == 0) {
+-		renesas_sdhi_clk_stop(host);
+-		return;
+-	}
++	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
++		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
 +
-+		gpio1: gpio@e6051000 {
-+			compatible = "renesas,gpio-r8a77470",
-+				     "renesas,rcar-gen2-gpio";
-+			reg = <0 0xe6051000 0 0x50>;
-+			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 32 23>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 911>;
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 911>;
-+		};
++	if (new_clock == 0)
++		goto out;
+ 
+ 	clock = renesas_sdhi_clk_update(host, new_clock) / 512;
+ 
+@@ -194,13 +175,17 @@ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
+ 	if ((host->pdata->flags & TMIO_MMC_CLK_ACTUAL) && ((clk >> 22) & 0x1))
+ 		clk |= 0xff;
+ 
+-	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
+-			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+ 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clk & CLK_CTL_DIV_MASK);
+ 	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+ 		usleep_range(10000, 11000);
+ 
+-	renesas_sdhi_clk_start(host);
++	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
++		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
 +
-+		gpio2: gpio@e6052000 {
-+			compatible = "renesas,gpio-r8a77470",
-+				     "renesas,rcar-gen2-gpio";
-+			reg = <0 0xe6052000 0 0x50>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 64 32>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 910>;
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 910>;
-+		};
-+
-+		gpio3: gpio@e6053000 {
-+			compatible = "renesas,gpio-r8a77470",
-+				     "renesas,rcar-gen2-gpio";
-+			reg = <0 0xe6053000 0 0x50>;
-+			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-reserved-ranges = <17 10>;
-+			gpio-ranges = <&pfc 0 96 30>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 909>;
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 909>;
-+		};
-+
-+		gpio4: gpio@e6054000 {
-+			compatible = "renesas,gpio-r8a77470",
-+				     "renesas,rcar-gen2-gpio";
-+			reg = <0 0xe6054000 0 0x50>;
-+			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 128 26>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 908>;
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 908>;
-+		};
-+
-+		gpio5: gpio@e6055000 {
-+			compatible = "renesas,gpio-r8a77470",
-+				     "renesas,rcar-gen2-gpio";
-+			reg = <0 0xe6055000 0 0x50>;
-+			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 160 32>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 907>;
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 907>;
-+		};
-+
- 		pfc: pin-controller@e6060000 {
- 			compatible = "renesas,pfc-r8a77470";
- 			reg = <0 0xe6060000 0 0x118>;
++out:
++	/* HW engineers overrode docs: no sleep needed on R-Car2+ */
++	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
++		usleep_range(10000, 11000);
+ }
+ 
+ static void renesas_sdhi_clk_disable(struct tmio_mmc_host *host)
 -- 
 2.7.4
-
