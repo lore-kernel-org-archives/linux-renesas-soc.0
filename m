@@ -1,30 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47875 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727517AbeHBNHg (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:54930 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389938AbeHGURG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Aug 2018 09:07:36 -0400
-Date: Thu, 2 Aug 2018 13:16:51 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH] thermal: rcar_gen3_thermal: convert to SPDX identifiers
-Message-ID: <20180802111651.cd7joclktjmy6la2@verge.net.au>
-References: <87h8khkvp4.wl-kuninori.morimoto.gx@renesas.com>
+        Tue, 7 Aug 2018 16:17:06 -0400
+Date: Tue, 7 Aug 2018 12:01:34 -0600
+From: Rob Herring <robh@kernel.org>
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] ASoC: rsnd: Document R-Car M3-N support
+Message-ID: <20180807180134.GA6871@rob-hp-laptop>
+References: <1532551215-14868-1-git-send-email-ykaneko0929@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87h8khkvp4.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <1532551215-14868-1-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jul 30, 2018 at 07:57:22AM +0000, Kuninori Morimoto wrote:
+On Thu, Jul 26, 2018 at 05:40:15AM +0900, Yoshihiro Kaneko wrote:
+> From: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
 > 
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Document support for the sound modules in the Renesas M3-N (r8a77965)
+> SoC.
 > 
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> No driver update is needed.
+> 
+> Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> ---
+> 
+> This patch is based on the devel branch of Simon Horman's renesas tree.
+> 
+>  Documentation/devicetree/bindings/sound/renesas,rsnd.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Rob Herring <robh@kernel.org>
