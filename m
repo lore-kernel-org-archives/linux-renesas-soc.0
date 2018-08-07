@@ -1,44 +1,133 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 11/30] media: entity: Skip link validation for pads to which there is no route to
-Date: Thu, 23 Aug 2018 15:25:25 +0200
-Message-Id: <20180823132544.521-12-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from perceval.ideasonboard.com ([213.167.242.64]:52196 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726879AbeHGLVP (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 7 Aug 2018 07:21:15 -0400
+Reply-To: kieran.bingham+renesas@ideasonboard.com
+Subject: Re: [RFC 2/2] dt-bindings: media: i2c: Add bindings for IMI RDACM20
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <1528543805-23945-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1528543805-23945-3-git-send-email-jacopo+renesas@jmondi.org>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <0a53ce03-34ab-1439-6382-bb6feb7459b3@ideasonboard.com>
+Date: Tue, 7 Aug 2018 10:07:48 +0100
+MIME-Version: 1.0
+In-Reply-To: <1528543805-23945-3-git-send-email-jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
+Hi Jacopo,
 
-Links are validated along the pipeline which is about to start streaming.
-Not all the pads in entities that are traversed along that pipeline are
-part of the pipeline, however. Skip the link validation for such pads.
+Thank you for sending your implementation of this. I'm dropping my DT
+bindings and taking yours.
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- drivers/media/media-entity.c | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-index 12d9fc9ee02f38f2..0395d58b2e233d88 100644
---- a/drivers/media/media-entity.c
-+++ b/drivers/media/media-entity.c
-@@ -493,6 +493,11 @@ __must_check int __media_pipeline_start(struct media_pad *pad,
- 			struct media_pad *other_pad = link->sink->entity == entity
- 				? link->sink : link->source;
- 
-+			/* Ignore pads to which there is no route. */
-+			if (!media_entity_has_route(entity, pad->index,
-+						    other_pad->index))
-+				continue;
-+
- 			/* Mark that a pad is connected by a link. */
- 			bitmap_clear(has_no_links, other_pad->index, 1);
- 
--- 
-2.18.0
+On 09/06/18 12:30, Jacopo Mondi wrote:
+> IMI D&D RDACM20 automotive platform is a Gigabit Multimedia Serial Link
+> (GMSL) camera transmitting video and I2C control messages on coax cable
+> physical link.
+> 
+> Document its device tree binding interface.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  .../devicetree/bindings/media/i2c/imi,rdacm20.txt  | 62 ++++++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
+
+There's no update to the vendor-prefixes here to pull in the imi prefix.
+I'll bring over the version in my patch.
+
+--
+Regards
+
+Kieran
+
+
+> 
+> diff --git a/Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt b/Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
+> new file mode 100644
+> index 0000000..7fda068
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
+> @@ -0,0 +1,62 @@
+> +IMI D&D RDACM20 Automotive Camera Platform
+> +------------------------------------------
+> +
+> +The IMI D&D RDACM20 is a GMSL-compatible camera designed for automotive
+> +applications. It is encloses a Maxim Integrated MAX9271 GMSL serializer, an
+> +Omnivision OV10635 camera sensor and an embedded MCU, and connects to a remote
+> +GMSL endpoint through a coaxial cable.
+> +
+> +                                                     IMI RDACM20
+> + ---------------                               --------------------------------
+> +|      GMSL     |   <---  Video Stream        |       <- Video--------\        |
+> +|               |< ====== GMSL Link ======== >|MAX9271<- I2C bus-> <-->OV10635 |
+> +| de-serializer |   <---  I2C messages --->   |                   \<-->MCU     |
+> + ---------------                               --------------------------------
+
+
+I love the ascii art :D
+
+
+> +
+> +RDACM20 transmits video data generated by the embedded camera sensor on the
+> +GMSL serial channel to a remote GMSL de-serializer, as well as it receives and
+> +transmits I2C messages encapsulated in the GMSL bidirectional control channel.
+> +
+> +All I2C traffic received on the GMSL link not directed to the serializer is
+> +propagated on the local I2C bus to the embedded camera sensor and MCU. All
+> +I2C traffic generated on the local I2C bus not directed to the serializer is
+> +propagated to the remote de-serializer encapsulated in the GMSL control channel.
+> +
+> +Required Properties:
+> +
+> +- compatible: Shall be "imi,rdacm20".
+> +- reg: Pair of I2C device addresses, the first to be assigned to the serializer
+> +  the second to be assigned to the camera sensor.
+> +
+> +Connection to the remote GMSL endpoint are modeled using the OF graph bindings
+
+s/modeled/modelled/
+
+I'll fix that one :)
+
+
+> +in accordance with the video interface bindings defined in
+> +Documentation/devicetree/bindings/media/video-interfaces.txt.
+> +
+> +The device node contains a single "port" child node with a single "endpoint"
+> +sub-device.
+> +
+> +Required endpoint properties:
+> +
+> +- remote-endpoint: phandle to the remote GMSL endpoint sub-node in the remote
+> +  node port.
+> +
+> +Example:
+> +-------
+> +
+> +	i2c@0 {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		reg = <0>;
+> +
+> +		camera@51 {
+> +			compatible = "imi,rdacm20";
+> +			reg = <0x51 0x61>;
+> +
+> +			port {
+> +				rdacm20_out0: endpoint {
+> +					remote-endpoint = <&max9286_in0>;
+> +				};
+> +			};
+> +
+> +		};
+> +	};
+> 
