@@ -1,20 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:51524 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727140AbeHJXif (ORCPT
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:34053 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733160AbeHGKF5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Aug 2018 19:38:35 -0400
-Received: by mail-it0-f68.google.com with SMTP id e14-v6so4449675itf.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Aug 2018 14:07:03 -0700 (PDT)
+        Tue, 7 Aug 2018 06:05:57 -0400
 MIME-Version: 1.0
 References: <1533626118-26583-1-git-send-email-biju.das@bp.renesas.com>
 In-Reply-To: <1533626118-26583-1-git-send-email-biju.das@bp.renesas.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 10 Aug 2018 23:06:51 +0200
-Message-ID: <CACRpkdbXv8h4k-6WuOfmjFKiaSBGGP=r-1L69qUVkDZ2KJOhsA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Aug 2018 09:52:39 +0200
+Message-ID: <CAMuHMdWhK11pXfy_FUir+wwFdNgQrou9BhOA_4kWLb+MMF+M7Q@mail.gmail.com>
 Subject: Re: [PATCH] gpiolib: Avoid calling chip->request() for unused gpios
 To: Biju Das <biju.das@bp.renesas.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -25,15 +24,32 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Aug 7, 2018 at 9:21 AM Biju Das <biju.das@bp.renesas.com> wrote:
+Hi Biju,
 
+Thanks for your patch!
+
+On Tue, Aug 7, 2018 at 9:21 AM Biju Das <biju.das@bp.renesas.com> wrote:
 > Add a check for unused gpios to avoid chip->request() call to client
 > driver for unused gpios.
->
+
+"... so not every driver has to do this in its chip->request() callback."
+
+Note that currently no driver seems to check for this.
+I was mistaken in my earlier report about msm_pinmux_request
+(this is pinmux_ops.request(), not gpio_chip.request()).
+
 > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Patch applied with Geert's ACK.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Yours,
-Linus Walleij
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
