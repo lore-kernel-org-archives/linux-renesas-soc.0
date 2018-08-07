@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-09.nifty.com ([210.131.2.76]:47875 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726204AbeHWINb (ORCPT
+Received: from conuserg-08.nifty.com ([210.131.2.75]:39276 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388232AbeHGIa5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Aug 2018 04:13:31 -0400
+        Tue, 7 Aug 2018 04:30:57 -0400
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-mmc@vger.kernel.org
@@ -13,91 +13,53 @@ Cc: Ulf Hansson <ulf.hansson@linaro.org>,
         Jassi Brar <jaswinder.singh@linaro.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/6] mmc: renesas_sdhi: merge clk_{start,stop} functions to set_clock
-Date: Thu, 23 Aug 2018 13:44:19 +0900
-Message-Id: <1534999460-15111-6-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com>
+Subject: [v0.1 PATCH 1/7] mmc: tmio: replace tmio_mmc_clk_stop() calls with tmio_mmc_set_clock()
+Date: Tue,  7 Aug 2018 15:17:16 +0900
+Message-Id: <1533622642-13989-2-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-renesas_sdhi_clk_start() and renesas_sdhi_clk_stop() are now only
-called from renesas_sdhi_set_clock().  Merge them.
+tmio_mmc_clk_stop(host) is equivalent to tmio_mmc_set_clock(host, 0).
+This replacement is needed for the next commit.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
-Changes in v3: None
-Changes in v2: None
+ drivers/mmc/host/tmio_mmc_core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- drivers/mmc/host/renesas_sdhi_core.c | 38 ++++++++++++------------------------
- 1 file changed, 12 insertions(+), 26 deletions(-)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index cb6e889..0e88737 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -155,35 +155,17 @@ static unsigned int renesas_sdhi_clk_update(struct tmio_mmc_host *host,
- 	return ret == 0 ? best_freq : clk_get_rate(priv->clk);
- }
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 3cb554c..991b340 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -1032,7 +1032,7 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 	switch (ios->power_mode) {
+ 	case MMC_POWER_OFF:
+ 		tmio_mmc_power_off(host);
+-		tmio_mmc_clk_stop(host);
++		tmio_mmc_set_clock(host, 0);
+ 		break;
+ 	case MMC_POWER_UP:
+ 		tmio_mmc_power_on(host, ios->vdd);
+@@ -1269,7 +1269,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
+ 	if (pdata->flags & TMIO_MMC_SDIO_IRQ)
+ 		_host->sdio_irq_mask = TMIO_SDIO_MASK_ALL;
  
--static void renesas_sdhi_clk_start(struct tmio_mmc_host *host)
-+static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
-+				   unsigned int new_clock)
- {
--	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
--		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
--
--	/* HW engineers overrode docs: no sleep needed on R-Car2+ */
--	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
--		usleep_range(10000, 11000);
--}
-+	u32 clk = 0, clock;
+-	tmio_mmc_clk_stop(_host);
++	tmio_mmc_set_clock(_host, 0);
+ 	tmio_mmc_reset(_host);
  
--static void renesas_sdhi_clk_stop(struct tmio_mmc_host *host)
--{
- 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
- 		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+ 	_host->sdcard_irq_mask = sd_ctrl_read16_and_16_as_32(_host, CTL_IRQ_MASK);
+@@ -1353,7 +1353,7 @@ int tmio_mmc_host_runtime_suspend(struct device *dev)
+ 	tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_ALL);
  
--	/* HW engineers overrode docs: no sleep needed on R-Car2+ */
--	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
--		usleep_range(10000, 11000);
--}
--
--static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
--				   unsigned int new_clock)
--{
--	u32 clk = 0, clock;
-+	if (new_clock == 0)
-+		goto out;
+ 	if (host->clk_cache)
+-		tmio_mmc_clk_stop(host);
++		tmio_mmc_set_clock(host, 0);
  
--	if (new_clock == 0) {
--		renesas_sdhi_clk_stop(host);
--		return;
--	}
- 	/*
- 	 * Both HS400 and HS200/SD104 set 200MHz, but some devices need to
- 	 * set 400MHz to distinguish the CPG settings in HS400.
-@@ -206,13 +188,17 @@ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
- 			clk &= ~0xff;
- 	}
+ 	tmio_mmc_clk_disable(host);
  
--	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
--			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
- 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clk & CLK_CTL_DIV_MASK);
- 	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
- 		usleep_range(10000, 11000);
- 
--	renesas_sdhi_clk_start(host);
-+	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
-+		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
-+
-+out:
-+	/* HW engineers overrode docs: no sleep needed on R-Car2+ */
-+	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
-+		usleep_range(10000, 11000);
- }
- 
- static void renesas_sdhi_clk_disable(struct tmio_mmc_host *host)
 -- 
 2.7.4
