@@ -1,142 +1,210 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:35297 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733213AbeHGRrc (ORCPT
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35190 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388608AbeHGQdk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Aug 2018 13:47:32 -0400
-Received: by mail-ua0-f193.google.com with SMTP id q12-v6so16571719ual.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Aug 2018 08:32:40 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180725143413.9728-1-geert+renesas@glider.be>
- <20180725143413.9728-5-geert+renesas@glider.be> <e52bfdab-5c23-a617-8bef-0c17ab831ec1@redhat.com>
-In-Reply-To: <e52bfdab-5c23-a617-8bef-0c17ab831ec1@redhat.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 7 Aug 2018 17:32:27 +0200
-Message-ID: <CAMuHMdUuHcoZxFVFivBwD3LveeE8yQ+AnaWFr76kATG+rCzd=w@mail.gmail.com>
+        Tue, 7 Aug 2018 12:33:40 -0400
 Subject: Re: [PATCH v3 4/4] hw/arm/sysbus-fdt: Add support for instantiating
  generic devices
-To: Auger Eric <eric.auger@redhat.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
         Peter Maydell <peter.maydell@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <20180725143413.9728-1-geert+renesas@glider.be>
+ <20180725143413.9728-5-geert+renesas@glider.be>
+Cc: Magnus Damm <damm+renesas@opensource.se>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        qemu-arm <qemu-arm@nongnu.org>,
-        QEMU Developers <qemu-devel@nongnu.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        qemu-arm@nongnu.org, qemu-devel@nongnu.org,
+        linux-renesas-soc@vger.kernel.org
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <e52bfdab-5c23-a617-8bef-0c17ab831ec1@redhat.com>
+Date: Tue, 7 Aug 2018 16:19:03 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180725143413.9728-5-geert+renesas@glider.be>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Eric,
+Hi Geert,
 
-On Tue, Aug 7, 2018 at 4:19 PM Auger Eric <eric.auger@redhat.com> wrote:
-> On 07/25/2018 04:34 PM, Geert Uytterhoeven wrote:
-> > Add a fallback for instantiating generic devices without a type-specific
-> > or compatible-specific instantation method.  This will be used when no
-> > other match is found.
-> >
-> > The generic instantation method creates a device node with "reg" and
-> > (optional) "interrupts" properties, and copies the "compatible"
-> > property and other optional properties from the host.
-> > For now the following optional properties are copied, if found:
-> >   - "#gpio-cells",
-> >   - "gpio-controller",
-> >   - "#interrupt-cells",
-> >   - "interrupt-controller",
-> >   - "interrupt-names".
-> >
-> > More can be added when needed.
-> >
-> > This avoids having to write device-specific instantation methods for
-> instantiation
+On 07/25/2018 04:34 PM, Geert Uytterhoeven wrote:
+> Add a fallback for instantiating generic devices without a type-specific
+> or compatible-specific instantation method.  This will be used when no
+> other match is found.
+> 
+> The generic instantation method creates a device node with "reg" and
+> (optional) "interrupts" properties, and copies the "compatible"
+> property and other optional properties from the host.
+> For now the following optional properties are copied, if found:
+>   - "#gpio-cells",
+>   - "gpio-controller",
+>   - "#interrupt-cells",
+>   - "interrupt-controller",
+>   - "interrupt-names".
+> 
+> More can be added when needed.
+> 
+> This avoids having to write device-specific instantation methods for
+instantiation
+> each and every "simple" device using only a set of generic properties.
+> Devices that need more specialized handling can still provide their
+> own instantation method.
+> 
+> This has been tested on a Renesas Salvator-XS board with R-Car H3 ES2.0
+> with SATA:
+> 
+>     -device vfio-platform,host=ee300000.sata
+> 
+> and GPIO (needs VFIO No-IOMMU support):
+> 
+>     -device vfio-platform,host=e6055400.gpio
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v3:
+>   - New.
+> ---
+>  hw/arm/sysbus-fdt.c | 102 ++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 102 insertions(+)
+> 
+> diff --git a/hw/arm/sysbus-fdt.c b/hw/arm/sysbus-fdt.c
+> index 0e24c803a1c2c734..8040af00ccf131d7 100644
+> --- a/hw/arm/sysbus-fdt.c
+> +++ b/hw/arm/sysbus-fdt.c
+> @@ -415,6 +415,99 @@ static int add_amd_xgbe_fdt_node(SysBusDevice *sbdev, void *opaque)
+>      return 0;
+>  }
+>  
+> +static HostProperty generic_copied_properties[] = {
+> +    {"compatible", false},
+> +    {"#gpio-cells", true},
+> +    {"gpio-controller", true},
+> +    {"#interrupt-cells", true},
+> +    {"interrupt-controller", true},
+> +    {"interrupt-names", true},
+I think we would need to enumerate the other source properties which
+were not copied to the guest fdt and either warn the userspace those
+were omitted or fail. We may end up generating an incomplete guest dt
+node that may not work properly.
+> +};
+> +
+> +/**
+> + * add_generic_fdt_node
+> + *
+> + * Generates a generic DT node by copying properties from the host
+> + */
+> +static int add_generic_fdt_node(SysBusDevice *sbdev, void *opaque)
+> +{
+> +    PlatformBusFDTData *data = opaque;
+> +    VFIOPlatformDevice *vdev = VFIO_PLATFORM_DEVICE(sbdev);
+> +    const char *parent_node = data->pbus_node_name;
+> +    void *guest_fdt = data->fdt, *host_fdt;
+> +    VFIODevice *vbasedev = &vdev->vbasedev;
+> +    char **node_path, *node_name, *dt_name;
+> +    PlatformBusDevice *pbus = data->pbus;
+> +    int i, irq_number;
+> +    uint32_t *reg_attr, *irq_attr;
+> +    uint64_t mmio_base;
+> +
+> +    host_fdt = load_device_tree_from_sysfs();
+> +
+> +    dt_name = sysfs_to_dt_name(vbasedev->name);
+> +    if (!dt_name) {
+> +        error_report("%s incorrect sysfs device name %s", __func__,
+> +                     vbasedev->name);
+> +        exit(1);
+> +    }
+> +    node_path = qemu_fdt_node_path(host_fdt, dt_name, vdev->compat,
+> +                                   &error_fatal);
+> +    if (!node_path || !node_path[0]) {
+> +        error_report("%s unable to retrieve node path for %s/%s", __func__,
+> +                     dt_name, vdev->compat);
+> +        exit(1);
+> +    }
+> +
+> +    if (node_path[1]) {
+> +        error_report("%s more than one node matching %s/%s!", __func__, dt_name,
+> +                     vdev->compat);
+> +        exit(1);
+> +    }
+> +
+> +    mmio_base = platform_bus_get_mmio_addr(pbus, sbdev, 0);
+> +    node_name = g_strdup_printf("%s/%s@%" PRIx64, parent_node,
+> +                               vbasedev->name, mmio_base);
+> +    qemu_fdt_add_subnode(guest_fdt, node_name);
+> +
+> +    /* Copy generic properties */
+> +    copy_properties_from_host(generic_copied_properties,
+> +                              ARRAY_SIZE(generic_copied_properties), host_fdt,
+> +                              guest_fdt, node_path[0], node_name);
+> +
+> +    /* Copy reg (remapped) */
+> +    reg_attr = g_new(uint32_t, vbasedev->num_regions * 2);
+> +    for (i = 0; i < vbasedev->num_regions; i++) {
+> +        mmio_base = platform_bus_get_mmio_addr(pbus, sbdev, i);
+> +        reg_attr[2 * i] = cpu_to_be32(mmio_base);
+> +        reg_attr[2 * i + 1] = cpu_to_be32(
+> +                                memory_region_size(vdev->regions[i]->mem));
+> +    }
+> +    qemu_fdt_setprop(guest_fdt, node_name, "reg", reg_attr,
+> +                     vbasedev->num_regions * 2 * sizeof(uint32_t));
+> +
+> +    /* Copy interrupts (remapped) */
+> +    if (vbasedev->num_irqs) {
+> +        irq_attr = g_new(uint32_t, vbasedev->num_irqs * 3);
+> +        for (i = 0; i < vbasedev->num_irqs; i++) {
+> +            irq_number = platform_bus_get_irqn(pbus, sbdev , i)
+> +                             + data->irq_start;
+> +            irq_attr[3 * i] = cpu_to_be32(GIC_FDT_IRQ_TYPE_SPI);
+> +            irq_attr[3 * i + 1] = cpu_to_be32(irq_number);
+> +            irq_attr[3 * i + 2] = cpu_to_be32(GIC_FDT_IRQ_FLAGS_LEVEL_HI);
+I think this part is not generic enough. How can you assume the IRQs are
+level or edge? Can't you copy the source interrupt properties and just
+overwrite the IRQ number?
 
-Thanks, will fix.
+Thanks
 
-> > each and every "simple" device using only a set of generic properties.
-> > Devices that need more specialized handling can still provide their
-> > own instantation method.
-
-Arghl, one more.
-
-> > --- a/hw/arm/sysbus-fdt.c
-> > +++ b/hw/arm/sysbus-fdt.c
-> > @@ -415,6 +415,99 @@ static int add_amd_xgbe_fdt_node(SysBusDevice *sbdev, void *opaque)
-> >      return 0;
-> >  }
-> >
-> > +static HostProperty generic_copied_properties[] = {
-> > +    {"compatible", false},
-> > +    {"#gpio-cells", true},
-> > +    {"gpio-controller", true},
-> > +    {"#interrupt-cells", true},
-> > +    {"interrupt-controller", true},
-> > +    {"interrupt-names", true},
->
-> I think we would need to enumerate the other source properties which
-> were not copied to the guest fdt and either warn the userspace those
-> were omitted or fail. We may end up generating an incomplete guest dt
-> node that may not work properly.
-
-The list above is quite generic, so it is expected that some of the optional
-properties (marked "true") cannot be copied. Hence warning about them
-will be noisy, and confuse users.  Failing is definitely the wrong thing
-to do.
-
-If the host lacks a property that is mandatory for a specific device, the
-device won't have worked on the host before neither, right?
-
-The major issue remains that an incomplete guest DT node may be generated
-if the list above lacks certain needed properties, or if subnodes are
-needed.
-I expect the guest OS driver would complain about the missing parts, though.
-In that case, either the list should be extended, or a device-specific
-instantiation method should be written.
-
-> > +/**
-> > + * add_generic_fdt_node
-> > + *
-> > + * Generates a generic DT node by copying properties from the host
-> > + */
-> > +static int add_generic_fdt_node(SysBusDevice *sbdev, void *opaque)
-> > +{
-
-> > +    /* Copy interrupts (remapped) */
-> > +    if (vbasedev->num_irqs) {
-> > +        irq_attr = g_new(uint32_t, vbasedev->num_irqs * 3);
-> > +        for (i = 0; i < vbasedev->num_irqs; i++) {
-> > +            irq_number = platform_bus_get_irqn(pbus, sbdev , i)
-> > +                             + data->irq_start;
-> > +            irq_attr[3 * i] = cpu_to_be32(GIC_FDT_IRQ_TYPE_SPI);
-> > +            irq_attr[3 * i + 1] = cpu_to_be32(irq_number);
-> > +            irq_attr[3 * i + 2] = cpu_to_be32(GIC_FDT_IRQ_FLAGS_LEVEL_HI);
->
-> I think this part is not generic enough. How can you assume the IRQs are
-> level or edge? Can't you copy the source interrupt properties and just
-> overwrite the IRQ number?
-
-I have to check that. I wouldn't be surprised if the virtualized GIC supports
-only a subset of all possible flags and/or remaps interrupt types too.
-
-I see the AMD XGBE driver looks at VFIO_IRQ_INFO_AUTOMASKED to choose
-between GIC_FDT_IRQ_FLAGS_LEVEL_HI and GIC_FDT_IRQ_FLAGS_EDGE_LO_HI.
-The VFIO_IRQ_INFO_* don't seem to provide more details.
-There are also no users of GIC_FDT_IRQ_FLAGS_LEVEL_LO and
-GIC_FDT_IRQ_FLAGS_EDGE_HI_LO in the Qemu sources...
-
-So probably following the AMD XGBE example is the way forward?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Eric
+> +        }
+> +        qemu_fdt_setprop(guest_fdt, node_name, "interrupts",
+> +                         irq_attr, vbasedev->num_irqs * 3 * sizeof(uint32_t));
+> +        g_free(irq_attr);
+> +    }
+> +
+> +    g_free(reg_attr);
+> +    g_free(node_name);
+> +    g_strfreev(node_path);
+> +    g_free(dt_name);
+> +    g_free(host_fdt);
+> +    return 0;
+> +}
+> +
+>  /* DT compatible matching */
+>  static bool vfio_platform_match(SysBusDevice *sbdev,
+>                                  const BindingEntry *entry)
+> @@ -423,6 +516,11 @@ static bool vfio_platform_match(SysBusDevice *sbdev,
+>      const char *compat;
+>      unsigned int n;
+>  
+> +    if (!entry->compat) {
+> +        /* Generic DT fallback */
+> +        return true;
+> +    }
+> +
+>      for (n = vdev->num_compat, compat = vdev->compat; n > 0;
+>           n--, compat += strlen(compat) + 1) {
+>          if (!strcmp(entry->compat, compat)) {
+> @@ -459,6 +557,10 @@ static const BindingEntry bindings[] = {
+>      VFIO_PLATFORM_BINDING("amd,xgbe-seattle-v1a", add_amd_xgbe_fdt_node),
+>  #endif
+>      TYPE_BINDING(TYPE_RAMFB_DEVICE, no_fdt_node),
+> +#ifdef CONFIG_LINUX
+> +    /* Generic DT fallback must be last */
+> +    VFIO_PLATFORM_BINDING(NULL, add_generic_fdt_node),
+> +#endif
+>      TYPE_BINDING("", NULL), /* last element */
+>  };
+>  
+> 
