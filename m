@@ -1,44 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:46030 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727072AbeH1SFW (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:49856 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726418AbeHGKQU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Aug 2018 14:05:22 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+        Tue, 7 Aug 2018 06:16:20 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: dts: renesas: r8a77965: Fix clock/reset for usb2_phy1
-Date: Tue, 28 Aug 2018 16:13:27 +0200
-Message-Id: <20180828141327.6916-1-geert+renesas@glider.be>
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH v3 0/5] Add GPIO and EAVB Pinctrl support
+Date: Tue,  7 Aug 2018 08:57:01 +0100
+Message-Id: <1533628626-26503-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-usb2_phy1 accidentally uses the same clock/reset as usb2_phy0.
+This patch series aims to add GPIO and EAVB Pinctrl support for RZ/G1C SoC.
 
-Fixes: b5857630a829a8d5 ("arm64: dts: renesas: r8a77965: add usb2_phy nodes")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+----
+V1-->V2
+  * Add support for gpio-reserved-ranges 
+V2-->V3
+  * Updated binding documentation
+  * Rework based on Geert's comment.
+----
+Biju Das (5):
+  gpio: rcar: Add GPIO hole support
+  dt-bindings: gpio: rcar: Add gpio-reserved-ranges support
+  ARM: dts: r8a77470: Add GPIO support
+  ARM: dts: iwg23s-sbc: specify EtherAVB PHY IRQ
+  ARM: dts: iwg23s-sbc: Add pinctl support for EtherAVB
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 0567e0435e6e1d5c..776928518c9b0011 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -1530,9 +1530,9 @@
- 			compatible = "renesas,usb2-phy-r8a77965",
- 				     "renesas,rcar-gen3-usb2-phy";
- 			reg = <0 0xee0a0200 0 0x700>;
--			clocks = <&cpg CPG_MOD 703>;
-+			clocks = <&cpg CPG_MOD 702>;
- 			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
--			resets = <&cpg 703>;
-+			resets = <&cpg 702>;
- 			#phy-cells = <0>;
- 			status = "disabled";
- 		};
+ .../devicetree/bindings/gpio/renesas,gpio-rcar.txt | 61 ++++++++-------
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts          | 10 +++
+ arch/arm/boot/dts/r8a77470.dtsi                    | 91 ++++++++++++++++++++++
+ drivers/gpio/gpio-rcar.c                           |  6 ++
+ 4 files changed, 142 insertions(+), 26 deletions(-)
+
 -- 
-2.17.1
+2.7.4
