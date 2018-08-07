@@ -1,38 +1,47 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Tue, 7 Aug 2018 11:43:49 -0600
-From: Rob Herring <robh@kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:43042 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726286AbeHGKbt (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 7 Aug 2018 06:31:49 -0400
+MIME-Version: 1.0
+References: <1533628626-26503-1-git-send-email-biju.das@bp.renesas.com> <1533628626-26503-3-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1533628626-26503-3-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Aug 2018 10:18:25 +0200
+Message-ID: <CAMuHMdWaieE95uHXN1P2OAszo+W16oahyXA1oN3sEviOknozFw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/5] dt-bindings: gpio: rcar: Add gpio-reserved-ranges support
 To: Biju Das <biju.das@bp.renesas.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] dt-bindings: gpio: rcar: Add gpio-reserved-ranges
- support
-Message-ID: <20180807174349.GA10321@rob-hp-laptop>
-References: <1533628626-26503-1-git-send-email-biju.das@bp.renesas.com>
- <1533628626-26503-3-git-send-email-biju.das@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1533628626-26503-3-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Aug 07, 2018 at 08:57:03AM +0100, Biju Das wrote:
+On Tue, Aug 7, 2018 at 10:03 AM Biju Das <biju.das@bp.renesas.com> wrote:
 > Update the DT bindings documentation with the optional gpio-reserved-ranges
 > properties.
-> 
+>
 > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> ---
-> V2 --> V3
->   * Incorporated review comments.
-> ---
->  .../devicetree/bindings/gpio/renesas,gpio-rcar.txt | 61 +++++++++++++---------
->  1 file changed, 35 insertions(+), 26 deletions(-)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
