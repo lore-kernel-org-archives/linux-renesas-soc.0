@@ -1,59 +1,119 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:64621 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727423AbeH3Dby (ORCPT
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50582 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732619AbeHGRUn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Aug 2018 23:31:54 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v4 3/3] mmc: tmio: Fix SCC error detection
-Date: Thu, 30 Aug 2018 01:32:07 +0200
-Message-Id: <20180829233207.30646-4-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180829233207.30646-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180829233207.30646-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 7 Aug 2018 13:20:43 -0400
+Subject: Re: [Qemu-devel] [PATCH v3 1/4] vfio/platform: Make the vfio-platform
+ device non-abstract
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <20180725143413.9728-1-geert+renesas@glider.be>
+ <20180725143413.9728-2-geert+renesas@glider.be>
+ <276c2cab-659f-ad1a-d3a3-0e0df9a439c9@redhat.com>
+ <CAMuHMdUuWT+-7wGg2SYTvtQV0Cy64N5GYTB0b-3gXPS3KLoO2w@mail.gmail.com>
+Cc: Peter Maydell <peter.maydell@linaro.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        QEMU Developers <qemu-devel@nongnu.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        qemu-arm <qemu-arm@nongnu.org>
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <303a110d-7cb6-9003-e225-7f9d87d78811@redhat.com>
+Date: Tue, 7 Aug 2018 17:05:54 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdUuWT+-7wGg2SYTvtQV0Cy64N5GYTB0b-3gXPS3KLoO2w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+Hi Geert,
 
-SDR104, HS200 and HS400 need to check for SCC error. If SCC error is
-detected, retuning is necessary.
+On 08/07/2018 05:00 PM, Geert Uytterhoeven wrote:
+> Hi Eric,
+> 
+> On Tue, Aug 7, 2018 at 4:18 PM Auger Eric <eric.auger@redhat.com> wrote:
+>> On 07/25/2018 04:34 PM, Geert Uytterhoeven wrote:
+>>> From: Auger Eric <eric.auger@redhat.com>
+>>>
+>>> Up to now the vfio-platform device has been abstract and could not be
+>>> instantiated.  The integration of a new vfio platform device required
+>>> creating a dummy derived device which only set the compatible string.
+>>>
+>>> Following the few vfio-platform device integrations we have seen the
+>>> actual requested adaptation happens on device tree node creation
+>>> (sysbus-fdt).
+>>>
+>>> Hence remove the abstract setting, and read the list of compatible
+>>> values from sysfs if not set by a derived device.
+>>>
+>>> Update the amd-xgbe and calxeda-xgmac drivers to fill in the number of
+>>> compatible values, as there can now be more than one.
+>>>
+>>> Note that sysbus-fdt does not support the instantiation of the
+>>> vfio-platform device yet.
+>>>
+>>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>>> [geert: Rebase, set user_creatable=true, use compatible values in sysfs
+>>>       instead of user-supplied manufacturer/model options, reword]
+>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>> ---
+>>> v3:
+>>>   - Read all compatible values from sysfs instead of using user-supplied
+>>>     manufacturer and model options,
+>>>   - Reword patch description,
+>>>   - Drop RFC state,
+>>>
+>>> v2:
+>>>   - No changes,
+>>>
+>>> v1:
+>>>   - Rebase, Set user_creatable=true,
+>>>
+>>> v0:
+>>>   - Original version from Eric.
+> 
+>>> --- a/hw/vfio/platform.c
+>>> +++ b/hw/vfio/platform.c
+>>> @@ -655,6 +655,25 @@ static void vfio_platform_realize(DeviceState *dev, Error **errp)
+>>>          goto out;
+>>>      }
+>>>
+>>> +    if (!vdev->compat) {
+>>> +        gchar *contents;
+>>> +        gsize length;
+>>> +        char *tmp;
+>>> +
+>>> +        tmp = g_strdup_printf("%s/of_node/compatible", vbasedev->sysfsdev);
+>>> +        if (!g_file_get_contents(tmp, &contents, &length, NULL)) {
+>>> +            error_report("failed to load \"%s\"", tmp);
+>>> +            exit(1);
+>> You should set errp instead so that the error gets properly propagated.
+> 
+> Thanks, will do.
+> 
+>>> --- a/include/hw/vfio/vfio-platform.h
+>>> +++ b/include/hw/vfio/vfio-platform.h
+>>> @@ -54,7 +54,8 @@ typedef struct VFIOPlatformDevice {
+>>>      QLIST_HEAD(, VFIOINTp) intp_list; /* list of IRQs */
+>>>      /* queue of pending IRQs */
+>>>      QSIMPLEQ_HEAD(pending_intp_queue, VFIOINTp) pending_intp_queue;
+>>> -    char *compat; /* compatibility string */
+>>> +    char *compat; /* DT compatible values, separated by NUL */
+>> by NULL characters?
+> 
+> "NUL" is the character ('\0'), "NULL" is the pointer.
+Ah OK ;-)
 
-Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-[Niklas: update commit message]
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Thanks
 
----
-
-* Changes since v3
-- Updated commit message to mention also HS400.
----
- drivers/mmc/host/tmio_mmc_core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index d48cd0402087ab31..f05c3a622f090cd6 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -839,8 +839,8 @@ static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
- 	if (mrq->cmd->error || (mrq->data && mrq->data->error))
- 		tmio_mmc_abort_dma(host);
- 
--	if (host->check_scc_error)
--		host->check_scc_error(host);
-+	if (host->check_scc_error && host->check_scc_error(host))
-+		mrq->cmd->error = -EILSEQ;
- 
- 	/* If SET_BLOCK_COUNT, continue with main command */
- 	if (host->mrq && !mrq->cmd->error) {
--- 
-2.18.0
+Eric
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
