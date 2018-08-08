@@ -1,91 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:45079 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388896AbeHAOVH (ORCPT
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:41918 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726697AbeHHNZL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Aug 2018 10:21:07 -0400
+        Wed, 8 Aug 2018 09:25:11 -0400
 MIME-Version: 1.0
-References: <1531924476-23261-1-git-send-email-phil.edworthy@renesas.com>
- <CAMuHMdVEgj7kJFxNuR8w468FoGRaP_mEDv6JqB_7deuQjsed_Q@mail.gmail.com>
- <TY1PR01MB1769588F9C53755C0FD56D98F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
- <CAMuHMdWqdg9KV4h_U-VZGVdOL6upUpDgqO7kwQh8tFQjDFh-Ug@mail.gmail.com>
- <TY1PR01MB17697FBCBDC6296E7B2589C9F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
- <CAMuHMdVMGWWcFZvjgBWZAabxWXdtBeH4XLYaXZVkQ=rOaeCH0g@mail.gmail.com> <TY1PR01MB176963BDA18D948161AAD264F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY1PR01MB176963BDA18D948161AAD264F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <20180806140755.24087-1-geert+renesas@glider.be>
+ <20180806140755.24087-5-geert+renesas@glider.be> <TY1PR01MB15621F645BA5AA48C6060F0D8A200@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdWfsdbmGUQPk4O=9jyPZ_tUEytO5z2XE6-TnagJ3taPVA@mail.gmail.com>
+ <TY1PR01MB1562F2D2FD1BF47A80B044028A270@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdWgJrPRh8TRTrEjWsaRAhEQX0T7M5eBGP_z3Ft=T6FfDg@mail.gmail.com>
+ <TY1PR01MB1562BACED660584300228AA08A260@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdU4WW_Yx7P1rJjUNSaDXXcSGDAyqap1Gm9sVcDRgL09dg@mail.gmail.com> <TY1PR01MB1562EEC8C0F3AB19370AC6F98A260@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY1PR01MB1562EEC8C0F3AB19370AC6F98A260@TY1PR01MB1562.jpnprd01.prod.outlook.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 1 Aug 2018 14:35:19 +0200
-Message-ID: <CAMuHMdX4tyo5VyZ+-P-+os91-WR67wen=eoL1XAGdCe=KPEjNg@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r9a06g032: Avoid needless probe deferring
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+Date: Wed, 8 Aug 2018 13:05:46 +0200
+Message-ID: <CAMuHMdVbYak4N3RAR-kqT+m1981BdSnB2+SMmCnN0ffUrjKaVA@mail.gmail.com>
+Subject: Re: [PATCH/RFC 4/4] sh-sci: Derive regshift value from DT compatible value
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        uli@fpond.eu, Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Jacopo Mondi <jacopo@jmondi.org>
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Phil,
+Hi Chris,
 
-CC Jacopo
-
-On Fri, Jul 20, 2018 at 3:57 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
-> On 20 July 2018 13:41, Geert Uytterhoeven wrote:
-> > On Fri, Jul 20, 2018 at 2:26 PM Phil Edworthy wrote:
-> > > On 20 July 2018 13:12, Geert Uytterhoeven wrote:
-> > > > On Fri, Jul 20, 2018 at 2:06 PM Phil Edworthy  wrote:
-> > > > > On 20 July 2018 12:21, Geert Uytterhoeven wrote:
-> > > > > > On Wed, Jul 18, 2018 at 4:34 PM Phil Edworthy wrote:
-> > > > > > > To avoid all SoC peripheral drivers deferring their probes,
-> > > > > > > both clock and pinctrl drivers should already be probed. Since
-> > > > > > > the pinctrl driver requires a clock to access the registers,
-> > > > > > > the clock driver should be probed before the pinctrl driver.
-> > > > > > >
-> > > > > > > Therefore, move the clock driver from subsys_initcall to
-> > core_initcall.
-> > > > > > >
-> > > > > > > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> > > > > >
-> > > > > > Thanks for your patch!
-> > > > > Thanks for your review!
-> > > > >
-> > > > > > The (not yet upstreamed) pinctrl driver uses postcore_initcall(), right?
-> > > > > No, the pinctrl driver uses subsys_initcall, but postcore_initcall
-> > > > > or arch_initcall may be better to make it clear about the dependencies.
-> > > >
-> > > > if the pinctrl driver uses subsys_initcall(), ...
-> >
-> > > > > > > -subsys_initcall(r9a06g032_clocks_init);
-> > > > > > > +core_initcall(r9a06g032_clocks_init);
-> > > >
-> > > > ... using postcore_initcall() or arch_initcall() here, should work
-> > > > with platform_driver_probe()?
-> > > Nope, you have to use platform_driver_register() for DT based drivers.
-> > > subsys_initcall is the earliest you can use platform_driver_probe().
-> >
-> > So drivers/misc/atmel_tclib.c and drivers/pinctrl/pinctrl-coh901.c, which use
-> > arch_initcall(), cannot work?
-> How those drivers work I do not know. However, I tried with the rzn1 clock
-> driver and it does not work.
+On Wed, Aug 8, 2018 at 12:39 PM Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Wednesday, August 08, 2018, Geert Uytterhoeven wrote:
+> > BTW, I guess earlycon also works on RZ/A2 with current tty-next or
+> > latest renesas-drivers?
 >
-> > If that is really true, you can still use subsys_initcall() in the clock driver, and
-> > subsys_initcall_sync() in the pinctrl driver.
-> True, I'm not sure how people decide which initcall to use and whether the
-> _sync variants of the initcalls have a special meaning or intention. As far as
-> I know they were introduced for threaded probes, so are we supposed to
-> use them for driver dependencies like this?
->
-> Do you know why the rza1 pinctrl driver is running from core_initcall()?
+> I was using your RFC patches on top of the current renesas-drivers.
 
-Probably because it can?
-Note that drivers/clk/renesas/clk-rz.c uses CLK_OF_DECLARE().
+I meant without the RFC patch series.
 
 Gr{oetje,eeting}s,
 
                         Geert
 
---
+-- 
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
