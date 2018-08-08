@@ -1,49 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:26696 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727000AbeHHPBS (ORCPT
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:42116 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726733AbeHHOwP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Aug 2018 11:01:18 -0400
-From: Adnan Ali <adnan.ali@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Dmitry Shifrin <dmitry.shifrin@cogentembedded.com>,
+        Wed, 8 Aug 2018 10:52:15 -0400
+Received: by mail-lf1-f67.google.com with SMTP id u202-v6so1435103lff.9
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Aug 2018 05:32:44 -0700 (PDT)
+MIME-Version: 1.0
+References: <TYAPR01MB20648212DBBF5ECA75BD3FBCDA260@TYAPR01MB2064.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYAPR01MB20648212DBBF5ECA75BD3FBCDA260@TYAPR01MB2064.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 8 Aug 2018 14:32:29 +0200
+Message-ID: <CAMuHMdWxYfrdMVCYT3UmnRDLSmDn7RnCnJjLxhc9EDa5NErK5g@mail.gmail.com>
+Subject: Re: Fix RCAR-V3H SoC wrong IPSR9/10 registers
+To: adnan.ali@bp.renesas.com
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        dmitry.shifrin@cogentembedded.com,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        batareich batareich <vladimir.barinov@cogentembedded.com>
-Subject: RE: Fix RCAR-V3H SoC wrong IPSR9/10 registers
-Date: Wed, 8 Aug 2018 12:41:40 +0000
-Message-ID: <TYAPR01MB206461FCFEB57C956975187DDA260@TYAPR01MB2064.jpnprd01.prod.outlook.com>
-References: <TYAPR01MB20648212DBBF5ECA75BD3FBCDA260@TYAPR01MB2064.jpnprd01.prod.outlook.com>
- <CAMuHMdWxYfrdMVCYT3UmnRDLSmDn7RnCnJjLxhc9EDa5NErK5g@mail.gmail.com>
-In-Reply-To: <CAMuHMdWxYfrdMVCYT3UmnRDLSmDn7RnCnJjLxhc9EDa5NErK5g@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkNCg0KVGhhbmtzICBmb3IgeW91ciByZXZpZXcuIEknbSB1c2luZyBsaW5rIGZyb20gZWxpbnV4
-IG1heSBiZSBJIG5lZWQgdG8gc2VuZA0KSXQgdG8gc29tZW9uZSB3aG8ncyBtYWludGFpbmluZyB0
-aGlzIGJyYW5jaC4gSSBoYXZlIGlzc3VlcyBzZW5kaW5nDQpwYXRjaCBmcm9tICBjb29wZXJhdGUg
-ZG9tYWluIHZpYSBzZW5kLWVtYWlsLg0KDQpUaGlzIGZpbGUgaXMgY2FsbGVkIGRyaXZlcnMvcGlu
-Y3RybC9zaC1wZmMvcGZjLXI4YTc3OTgwLmMgaW4gdXBzdHJlYW0gTGludXguDQo+Pj4gVGhhbmtz
-DQoNCj4gICAgICAgfSwNCj4gICAgICAgeyBQSU5NVVhfQ0ZHX1JFRygiSVBTUjEwIiwgMHhlNjA2
-MDIyOCwgMzIsIDQpIHsNCj4gLSAgICAgICAgICAgICBJUDhfMzFfMjgNCj4gLSAgICAgICAgICAg
-ICBJUDhfMjdfMjQNCj4gLSAgICAgICAgICAgICBJUDhfMjNfMjANCj4gLSAgICAgICAgICAgICBJ
-UDhfMTlfMTYNCj4gLSAgICAgICAgICAgICBJUDhfMTVfMTINCj4gLSAgICAgICAgICAgICBJUDhf
-MTFfOA0KPiAtICAgICAgICAgICAgIElQOF83XzQNCj4gLSAgICAgICAgICAgICBJUDhfM18wIH0N
-Cj4gKyAgICAgICAgICAgICBJUDlfMzFfMjgNCj4gKyAgICAgICAgICAgICBJUDlfMjdfMjQNCj4g
-KyAgICAgICAgICAgICBJUDlfMjNfMjANCj4gKyAgICAgICAgICAgICBJUDlfMTlfMTYNCj4gKyAg
-ICAgICAgICAgICBJUDlfMTVfMTINCj4gKyAgICAgICAgICAgICBJUDlfMTFfOA0KPiArICAgICAg
-ICAgICAgIElQOV83XzQNCj4gKyAgICAgICAgICAgICBJUDlfM18wIH0NCg0KU2hvdWxkJ3QgdGhh
-dCBiZSBJUDEwXy4uLj8NCj4+PiBJIGFjY2lkZW50bHkgc2VudCB5b3Ugd3JvbmcgdmVyc2lvbiBv
-ZiBwYXRjaC4gSXRzIGZpeGVkIGluIG9yaWdpbmFsIHZlcnNpb24NCkkgaGF2ZS4NCg0KDQpSZWdh
-cmRzDQpBZG5hbg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEdtYkgsR2VzY2hhZWZ0
-c2Z1ZWhyZXIvUHJlc2lkZW50IDogTWljaGFlbCBIYW5uYXdhbGQsIFNpdHogZGVyIEdlc2VsbHNj
-aGFmdC9SZWdpc3RlcmVkIG9mZmljZTogRHVlc3NlbGRvcmYsIEFyY2FkaWFzdHJhc3NlIDEwLCA0
-MDQ3MiBEdWVzc2VsZG9yZiwgR2VybWFueSxIYW5kZWxzcmVnaXN0ZXIvQ29tbWVyY2lhbCBSZWdp
-c3RlcjogRHVlc3NlbGRvcmYsIEhSQiAzNzA4IFVTdC1JRE5yLi9UYXggaWRlbnRpZmljYXRpb24g
-bm8uOiBERSAxMTkzNTM0MDYgV0VFRS1SZWcuLU5yLi9XRUVFIHJlZy4gbm8uOiBERSAxNDk3ODY0
-Nw0K
+Hi Adnan,
+
+On Wed, Aug 8, 2018 at 1:39 PM Adnan Ali <adnan.ali@bp.renesas.com> wrote:
+> Please review this patch.
+
+Thanks for your patch!
+
+But please don't send patches as attachments. It makes review more difficult.
+
+> From 468b28ae35eb0b64db13e3d7d013abaf3734ae32 Mon Sep 17 00:00:00 2001
+> From: Adnan Ali <adnan.ali@bp.renesas.com>
+> Date: Wed, 8 Aug 2018 13:14:47 +0200
+> Subject: [PATCH] sh-pfc/pfc-r8a7798.c Fix RCAR-V3H condor wrong IPSR9/10 reg
+>  settings
+>
+> Signed-off-by: Adnan Ali <adnan.ali@bp.renesas.com>
+> ---
+>  drivers/pinctrl/sh-pfc/pfc-r8a7798.c | 32 ++++++++++++++++----------------
+>  1 file changed, 16 insertions(+), 16 deletions(-)
+>
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7798.c b/drivers/pinctrl/sh-pfc/pfc-r8a7798.c
+> index f6f159e..48584e0 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7798.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7798.c
+
+This file is called drivers/pinctrl/sh-pfc/pfc-r8a77980.c in upstream Linux.
+
+> @@ -3122,24 +3122,24 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+>               IP8_3_0 }
+>       },
+>       { PINMUX_CFG_REG("IPSR9", 0xe6060224, 32, 4) {
+> -             IP8_31_28
+> -             IP8_27_24
+> -             IP8_23_20
+> -             IP8_19_16
+> -             IP8_15_12
+> -             IP8_11_8
+> -             IP8_7_4
+> -             IP8_3_0 }
+> +             IP9_31_28
+> +             IP9_27_24
+> +             IP9_23_20
+> +             IP9_19_16
+> +             IP9_15_12
+> +             IP9_11_8
+> +             IP9_7_4
+> +             IP9_3_0 }
+
+This bug is not present in the upstream version:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pinctrl/sh-pfc/pfc-r8a77980.c#n2728
+
+>       },
+>       { PINMUX_CFG_REG("IPSR10", 0xe6060228, 32, 4) {
+> -             IP8_31_28
+> -             IP8_27_24
+> -             IP8_23_20
+> -             IP8_19_16
+> -             IP8_15_12
+> -             IP8_11_8
+> -             IP8_7_4
+> -             IP8_3_0 }
+> +             IP9_31_28
+> +             IP9_27_24
+> +             IP9_23_20
+> +             IP9_19_16
+> +             IP9_15_12
+> +             IP9_11_8
+> +             IP9_7_4
+> +             IP9_3_0 }
+
+Should't that be IP10_...?
+
+Also not present in the upstream version.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
