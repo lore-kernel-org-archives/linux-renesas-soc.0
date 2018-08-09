@@ -1,114 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:22662 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1733122AbeHFVXh (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45486 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727768AbeHINFz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Aug 2018 17:23:37 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 2/2] mmc: renesas_sdhi: align compatibility properties for H3 and M3-W
-Date: Mon,  6 Aug 2018 21:12:27 +0200
-Message-Id: <20180806191227.28401-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180806191227.28401-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180806191227.28401-1-niklas.soderlund+renesas@ragnatech.se>
+        Thu, 9 Aug 2018 09:05:55 -0400
+Date: Thu, 9 Aug 2018 12:41:35 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH v2] arm64: dts: r8a77965: Add SATA controller node
+Message-ID: <20180809104134.75e2gibsuayoni2x@verge.net.au>
+References: <20180730073338.3639-1-wsa+renesas@sang-engineering.com>
+ <20180802111352.3yxizsyuggfxwjz6@verge.net.au>
+ <CAMuHMdWcMO8CaLmBOa6f4c6yoLOu+yGc4eU+4F92Rc2zJUJu-Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWcMO8CaLmBOa6f4c6yoLOu+yGc4eU+4F92Rc2zJUJu-Q@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-It was though all ES revisions of H3 and M3-W SoCs required the
-TMIO_MMC_HAVE_4TAP_HS400 flag. Recent datasheet updates tells us this is
-not true, only early ES revisions of the SoC do.
+On Thu, Aug 02, 2018 at 01:31:52PM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Thu, Aug 2, 2018 at 1:13 PM Simon Horman <horms@verge.net.au> wrote:
+> > On Mon, Jul 30, 2018 at 09:33:38AM +0200, Wolfram Sang wrote:
+> > > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> > > This patch adds SATA controller node for the R8A77965 SoC.
+> > >
+> > > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> > > [wsa: rebased to upstream base]
+> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > > ---
+> > >
+> > > Changes since v1:
+> > >       * sorted it according to address (Thanks, Geert!)
+> > >       * added Geert's tag
+> > >
+> > >  arch/arm64/boot/dts/renesas/r8a77965.dtsi | 11 +++++++++++
+> > >  1 file changed, 11 insertions(+)
+> > >
+> > > diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> > > index 0cd44461a0bd..bf22efb82cbf 100644
+> > > --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> > > +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> > > @@ -1507,6 +1507,17 @@
+> > >                       status = "disabled";
+> > >               };
+> > >
+> > > +             sata: sata@ee300000 {
+> > > +                     compatible = "renesas,sata-r8a77965",
+> > > +                                  "renesas,rcar-gen3-sata";
+> > > +                     reg = <0 0xee300000 0 0x200000>;
+> > > +                     interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
+> > > +                     clocks = <&cpg CPG_MOD 815>;
+> > > +                     power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
+> > > +                     resets = <&cpg 815>;
+> > > +                     status = "disabled";
+> >
+> > Is it intentional that there is no iommus property here?
+> 
+> Because none of the other device nodes have iommus properties yet?
 
-Since quirk matching based on ES revisions is now used to handle the
-flag it's possible to align all Gen3 compatibility properties. This will
-allow later ES revisions of H3 and M3-W to use the correct 8-tap HS400
-mode.
+That is my unstated assumption too.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 20 ++-----------------
- drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 17 ++--------------
- 2 files changed, 4 insertions(+), 33 deletions(-)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 35cc0de6be67a515..d032bd63444d1029 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -82,22 +82,6 @@ static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
- 	},
- };
- 
--static const struct renesas_sdhi_of_data of_rcar_r8a7795_compatible = {
--	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
--			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2 |
--			  TMIO_MMC_HAVE_4TAP_HS400,
--	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
--			  MMC_CAP_CMD23,
--	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
--	.bus_shift	= 2,
--	.scc_offset	= 0x1000,
--	.taps		= rcar_gen3_scc_taps,
--	.taps_num	= ARRAY_SIZE(rcar_gen3_scc_taps),
--	/* DMAC can handle 0xffffffff blk count but only 1 segment */
--	.max_blk_count	= 0xffffffff,
--	.max_segs	= 1,
--};
--
- static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
- 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
- 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
-@@ -114,8 +98,8 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
- };
- 
- static const struct of_device_id renesas_sdhi_internal_dmac_of_match[] = {
--	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_r8a7795_compatible, },
--	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_r8a7795_compatible, },
-+	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
-+	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
- 	{ .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
- 	{},
- };
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index 890f192dedbdcc9c..4bb46c489d71f848 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -78,19 +78,6 @@ static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
- 	},
- };
- 
--static const struct renesas_sdhi_of_data of_rcar_r8a7795_compatible = {
--	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
--			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2 |
--			  TMIO_MMC_HAVE_4TAP_HS400,
--	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
--			  MMC_CAP_CMD23,
--	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
--	.bus_shift	= 2,
--	.scc_offset	= 0x1000,
--	.taps		= rcar_gen3_scc_taps,
--	.taps_num	= ARRAY_SIZE(rcar_gen3_scc_taps),
--};
--
- static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
- 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
- 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
-@@ -117,8 +104,8 @@ static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
- 	{ .compatible = "renesas,sdhi-r8a7792", .data = &of_rcar_gen2_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7793", .data = &of_rcar_gen2_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7794", .data = &of_rcar_gen2_compatible, },
--	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_r8a7795_compatible, },
--	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_r8a7795_compatible, },
-+	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
-+	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
- 	{ .compatible = "renesas,rcar-gen1-sdhi", .data = &of_rcar_gen1_compatible, },
- 	{ .compatible = "renesas,rcar-gen2-sdhi", .data = &of_rcar_gen2_compatible, },
- 	{ .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
--- 
-2.18.0
+I've gone ahead and applied this patch for v4.20.
