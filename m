@@ -1,62 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:44166 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726343AbeHCNJD (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45925 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727768AbeHIN0Q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Aug 2018 09:09:03 -0400
-MIME-Version: 1.0
-References: <20180629142513.20743-1-geert+renesas@glider.be>
- <20180629142513.20743-8-geert+renesas@glider.be> <c3d1884b-baab-241d-e4ee-745ed87dbb3b@landley.net>
- <CAMuHMdUu5Kgq6B3pE8SovP6Kv=gpWF7g8qSFTs2d0hoNo3TrEg@mail.gmail.com> <b5e03d7d-d7d5-4e31-5d9a-036521f30ff5@landley.net>
-In-Reply-To: <b5e03d7d-d7d5-4e31-5d9a-036521f30ff5@landley.net>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 3 Aug 2018 13:13:00 +0200
-Message-ID: <CAMuHMdUxS6=zkWLh30vz8o2YtjS43bt6CssW09yq+S62G77gmQ@mail.gmail.com>
-Subject: Re: [PATCH 4/4] serial: sh-sci: Stop RX FIFO timer during port shutdown
-To: Rob Landley <rob@landley.net>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Thu, 9 Aug 2018 09:26:16 -0400
+Date: Thu, 9 Aug 2018 13:01:52 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a77470: Add EtherAVB pin groups
+Message-ID: <20180809110151.rretzcdwejgaivew@verge.net.au>
+References: <1532683322-30684-1-git-send-email-biju.das@bp.renesas.com>
+ <20180802113049.ylypnhsshwz3ftcy@verge.net.au>
+ <CAMuHMdUyUf9z5a_3kifQG5bm0+voei6XCy2B_2fMue70oEm9=g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUyUf9z5a_3kifQG5bm0+voei6XCy2B_2fMue70oEm9=g@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jul 2, 2018 at 9:01 PM Rob Landley <rob@landley.net> wrote:
-> On 07/02/2018 04:50 AM, Geert Uytterhoeven wrote:
-> > On Sun, Jul 1, 2018 at 7:27 PM Rob Landley <rob@landley.net> wrote:
-> >> On 06/29/2018 09:25 AM, Geert Uytterhoeven wrote:
-> >>> The RX FIFO timer may be armed when the port is shut down, hence the
-> >>> timer function may still be called afterwards.
-> >>>
-> >>> Fix this race condition by deleting the timer during port shutdown.
-> >>
-> >> Will any of this make the qemu-system-sh4 serial console work again?
+On Thu, Aug 02, 2018 at 01:34:48PM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Thu, Aug 2, 2018 at 1:30 PM Simon Horman <horms@verge.net.au> wrote:
+> > On Fri, Jul 27, 2018 at 10:22:02AM +0100, Biju Das wrote:
+> > > Add EtherAVB groups and functions definitions for R8A77470 SoC.
+> > >
+> > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > > ---
+> > > This patch is based on the following discussion
+> > > https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg27480.html
+> > >
+> > > and
+> > >
+> > > https://en.wikipedia.org/wiki/Media-independent_interface
+> > > ---
+> > >  drivers/pinctrl/sh-pfc/pfc-r8a77470.c | 133 ++++++++++++++++++++++++++++++++++
+> > >  1 file changed, 133 insertions(+)
+> > >
+> > > diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77470.c b/drivers/pinctrl/sh-pfc/pfc-r8a77470.c
+> > > index 9d3ed43..995c959 100644
+> > > --- a/drivers/pinctrl/sh-pfc/pfc-r8a77470.c
+> > > +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77470.c
+> > > @@ -1093,6 +1093,110 @@ static const struct sh_pfc_pin pinmux_pins[] = {
+> > >       PINMUX_GPIO_GP_ALL(),
+> > >  };
+> > >
+> > > +/* - AVB -------------------------------------------------------------------- */
+> > > +static const unsigned int avb_col_pins[] = {
+> > > +     RCAR_GP_PIN(5, 18),
+> > > +};
 > >
-> > Probably not, as none of these patches touch the qemu source tree.
->
-> So we remain well into the second year of each project pointing the finger at
-> the other on this, and nothing getting fixed. And the workaround remains "run a
-> kernel from before February 2017 if you want a working serial console under qemu.
->
-> Good to know,
+> > I feel that I am missing something painfully obvious, but this does not
+> > seem to match page 4-36 of R01UH0695EJ0100 Rev.1.00 (Oct 13 2017).
+> 
+> Please check Function VIII (The table extends horizontally to page 4-37!).
 
-FTR, patch for qemu is "hw/char/sh_serial: Add timeout handling to unbreak
-serial input"
-(http://lists.nongnu.org/archive/html/qemu-devel/2018-07/msg05579.html)
+Thanks, that is the obvious thing that I was missing.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
