@@ -1,31 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:34758 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730014AbeHNBMk (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47076 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730119AbeHIOkE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Aug 2018 21:12:40 -0400
-Date: Mon, 13 Aug 2018 16:28:26 -0600
-From: Rob Herring <robh@kernel.org>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: thierry.reding@gmail.com, mark.rutland@arm.com,
-        linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: pwm: rcar: Add bindings for R-Car E3 support
-Message-ID: <20180813222826.GA15343@rob-hp-laptop>
-References: <1532951391-28792-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Thu, 9 Aug 2018 10:40:04 -0400
+Date: Thu, 9 Aug 2018 14:15:24 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Linux-SH <linux-sh@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 08/13] sh: sh4a: convert to SPDX identifiers
+Message-ID: <20180809121523.bfqxeterjp7ra5uh@verge.net.au>
+References: <874lg8p7d2.wl-kuninori.morimoto.gx@renesas.com>
+ <87sh3snsoe.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1532951391-28792-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <87sh3snsoe.wl-kuninori.morimoto.gx@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jul 30, 2018 at 08:49:51PM +0900, Yoshihiro Shimoda wrote:
-> This patch adds bindings for R-Car E3. No driver update is needed.
+On Mon, Aug 06, 2018 at 02:24:59AM +0000, Kuninori Morimoto wrote:
 > 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->  Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt | 1 +
->  1 file changed, 1 insertion(+)
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> This patch updates license to use SPDX-License-Identifier
+> instead of verbose license text.
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
