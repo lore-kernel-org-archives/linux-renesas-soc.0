@@ -1,58 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:9561 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732141AbeHBPwX (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47015 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730928AbeHIOie (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Aug 2018 11:52:23 -0400
-Subject: Re: [PATCH 02/12] i2c: designware-master: use core to detect 'no zero
- length' quirk
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
- <20180723202617.15230-3-wsa+renesas@sang-engineering.com>
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Message-ID: <db46f7ba-0627-eb0b-9a93-40f26a82b0bf@linux.intel.com>
-Date: Thu, 2 Aug 2018 17:00:59 +0300
+        Thu, 9 Aug 2018 10:38:34 -0400
+Date: Thu, 9 Aug 2018 14:13:53 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Linux-SH <linux-sh@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 06/13] sh: sh3: convert to SPDX identifiers
+Message-ID: <20180809121353.tfdadubj2tjlop3a@verge.net.au>
+References: <874lg8p7d2.wl-kuninori.morimoto.gx@renesas.com>
+ <87va8onspc.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <20180723202617.15230-3-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87va8onspc.wl-kuninori.morimoto.gx@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 07/23/2018 11:26 PM, Wolfram Sang wrote:
-> And don't reimplement in the driver.
+On Mon, Aug 06, 2018 at 02:24:24AM +0000, Kuninori Morimoto wrote:
 > 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 > 
-> Only build tested.
+> This patch updates license to use SPDX-License-Identifier
+> instead of verbose license text.
 > 
->   drivers/i2c/busses/i2c-designware-master.c | 12 +++++-------
->   1 file changed, 5 insertions(+), 7 deletions(-)
-> 
-I tested this with patch 1 and I like it since with these patches the 
-test is done before firing up the HW, waiting for an interrupt and then 
-see the length is invalid for us.
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-i2ctransfer -f 8 r0@0x10
-
-Before (with i2c_designware debugging on):
-[   15.607283] i2c_designware i2c_designware.1: i2c_dw_xfer: msgs: 1
-[   15.711988] i2c_designware i2c_designware.1: enabled=0x1 stat=0x10
-[   15.712002] i2c_designware i2c_designware.1: i2c_dw_xfer_msg: invalid 
-message length
-Error: Sending messages failed: Invalid argument
-
-After:
-[   25.838661] i2c i2c-8: adapter quirk: no zero length (addr 0x0010, 
-size 0, read)
-Error: Sending messages failed: Operation not supported
-
-Tested-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
