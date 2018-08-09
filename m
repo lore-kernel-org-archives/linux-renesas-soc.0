@@ -1,51 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:50909 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727263AbeHKN7K (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46377 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727768AbeHIN6X (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 11 Aug 2018 09:59:10 -0400
-Received: by mail-wm0-f68.google.com with SMTP id s12-v6so4325244wmc.0
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 11 Aug 2018 04:25:15 -0700 (PDT)
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] ARM: dts: stout: Add DA9063 OnKey node
-Date: Sat, 11 Aug 2018 13:25:10 +0200
-Message-Id: <20180811112510.18299-1-marek.vasut+renesas@gmail.com>
+        Thu, 9 Aug 2018 09:58:23 -0400
+Date: Thu, 9 Aug 2018 13:33:52 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Linux-SH <linux-sh@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 03/13] sh: include: convert to SPDX identifiers
+Message-ID: <20180809113352.efd6sebwroq6ake2@verge.net.au>
+References: <874lg8p7d2.wl-kuninori.morimoto.gx@renesas.com>
+ <87zhy0nsqj.wl-kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87zhy0nsqj.wl-kuninori.morimoto.gx@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add DA9063 OnKey subnode to DA9063 PMIC node on Stout.
+On Mon, Aug 06, 2018 at 02:23:41AM +0000, Kuninori Morimoto wrote:
+> 
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> This patch updates license to use SPDX-License-Identifier
+> instead of verbose license text.
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
----
- arch/arm/boot/dts/r8a7790-stout.dts | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7790-stout.dts b/arch/arm/boot/dts/r8a7790-stout.dts
-index a13a92c26645..629da4cee1b9 100644
---- a/arch/arm/boot/dts/r8a7790-stout.dts
-+++ b/arch/arm/boot/dts/r8a7790-stout.dts
-@@ -318,6 +318,10 @@
- 		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
- 		interrupt-controller;
- 
-+		onkey {
-+			compatible = "dlg,da9063-onkey";
-+		};
-+
- 		rtc {
- 			compatible = "dlg,da9063-rtc";
- 		};
--- 
-2.16.2
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
