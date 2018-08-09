@@ -1,60 +1,41 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/6] dt-bindings: rcar-gen3-phy-usb2: Add r8a774a1 support
-Date: Fri, 24 Aug 2018 08:56:10 +0100
-Message-Id: <1535097375-5561-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1535097375-5561-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1535097375-5561-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:46289 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727786AbeHINxo (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 9 Aug 2018 09:53:44 -0400
+Date: Thu, 9 Aug 2018 13:29:14 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Linux-SH <linux-sh@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 02/13] sh: drivers: convert to SPDX identifiers
+Message-ID: <20180809112914.wlax73qw7sowdlky@verge.net.au>
+References: <874lg8p7d2.wl-kuninori.morimoto.gx@renesas.com>
+ <871sbcp7be.wl-kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <871sbcp7be.wl-kuninori.morimoto.gx@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document RZ/G2M (R8A774A1) SoC bindings.
+On Mon, Aug 06, 2018 at 02:23:25AM +0000, Kuninori Morimoto wrote:
+> 
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> This patch updates license to use SPDX-License-Identifier
+> instead of verbose license text.
+> 
+> As original license mentioned, it is GPL-2.0 in SPDX.
+> Then, MODULE_LICENSE() should be "GPL v2" instead of "GPL".
+> See ${LINUX}/include/linux/module.h
+> 
+> 	"GPL"		[GNU Public License v2 or later]
+> 	"GPL v2"	[GNU Public License v2]
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
- Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-index fb4a204..6a4b5b6 100644
---- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-+++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-@@ -1,10 +1,12 @@
- * Renesas R-Car generation 3 USB 2.0 PHY
- 
- This file provides information on what the device node for the R-Car generation
--3 USB 2.0 PHY contains.
-+3 and RZ/G2 USB 2.0 PHY contain.
- 
- Required properties:
--- compatible: "renesas,usb2-phy-r8a7795" if the device is a part of an R8A7795
-+- compatible: "renesas,usb2-phy-r8a774a1" if the device is a part of an R8A774A1
-+	      SoC.
-+	      "renesas,usb2-phy-r8a7795" if the device is a part of an R8A7795
- 	      SoC.
- 	      "renesas,usb2-phy-r8a7796" if the device is a part of an R8A7796
- 	      SoC.
-@@ -14,7 +16,8 @@ Required properties:
- 	      R8A77990 SoC.
- 	      "renesas,usb2-phy-r8a77995" if the device is a part of an
- 	      R8A77995 SoC.
--	      "renesas,rcar-gen3-usb2-phy" for a generic R-Car Gen3 compatible device.
-+	      "renesas,rcar-gen3-usb2-phy" for a generic R-Car Gen3 or RZ/G2
-+	      compatible device.
- 
- 	      When compatible with the generic version, nodes must list the
- 	      SoC-specific version corresponding to the platform first
--- 
-2.7.4
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
