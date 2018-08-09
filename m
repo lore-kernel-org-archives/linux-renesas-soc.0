@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47015 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:46971 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730928AbeHIOie (ORCPT
+        with ESMTP id S1730032AbeHIOhy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Aug 2018 10:38:34 -0400
-Date: Thu, 9 Aug 2018 14:13:53 +0200
+        Thu, 9 Aug 2018 10:37:54 -0400
+Date: Thu, 9 Aug 2018 14:13:13 +0200
 From: Simon Horman <horms@verge.net.au>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
@@ -12,7 +12,7 @@ Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
         Linux-SH <linux-sh@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Subject: Re: [PATCH 06/13] sh: sh3: convert to SPDX identifiers
-Message-ID: <20180809121353.tfdadubj2tjlop3a@verge.net.au>
+Message-ID: <20180809121308.pg3p35ibbxtmibdy@verge.net.au>
 References: <874lg8p7d2.wl-kuninori.morimoto.gx@renesas.com>
  <87va8onspc.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
