@@ -1,208 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:59960 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730151AbeHWRFA (ORCPT
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:35440 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729931AbeHILVY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Aug 2018 13:05:00 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] dmaengine: use SPDX identifier for Renesas drivers
-Date: Thu, 23 Aug 2018 15:34:54 +0200
-Message-Id: <20180823133456.4748-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180823133456.4748-1-wsa+renesas@sang-engineering.com>
-References: <20180823133456.4748-1-wsa+renesas@sang-engineering.com>
+        Thu, 9 Aug 2018 07:21:24 -0400
+Received: by mail-ua0-f194.google.com with SMTP id q12-v6so5481727ual.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 09 Aug 2018 01:57:33 -0700 (PDT)
+MIME-Version: 1.0
+References: <TYAPR01MB206446052847E74261A2F116DA250@TYAPR01MB2064.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYAPR01MB206446052847E74261A2F116DA250@TYAPR01MB2064.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 9 Aug 2018 10:57:20 +0200
+Message-ID: <CAMuHMdVG0hpW+0839esXCnAuYpXL754+8ffzXsXETS=cKBMMYg@mail.gmail.com>
+Subject: Re: [V2]Fix RCAR-V3H SoC wrong IPSR9/10 registers
+To: adnan.ali@bp.renesas.com
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        dmitry.shifrin@cogentembedded.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Hi Adnan,
 
-Change since V1: s/GPL-2.0-or-later/GPL-2.0+/
+On Thu, Aug 9, 2018 at 10:52 AM Adnan Ali <adnan.ali@bp.renesas.com> wrote:
+> Please review this V2 patch. This patch belongs to branch from elinux.org for V3H condor.
 
- drivers/dma/nbpfaxi.c          | 5 +----
- drivers/dma/sh/shdma-arm.h     | 5 +----
- drivers/dma/sh/shdma-base.c    | 5 +----
- drivers/dma/sh/shdma-of.c      | 5 +----
- drivers/dma/sh/shdma-r8a73a4.c | 5 +----
- drivers/dma/sh/shdma.h         | 6 +-----
- drivers/dma/sh/shdmac.c        | 6 +-----
- drivers/dma/sh/sudmac.c        | 5 +----
- drivers/dma/sh/usb-dmac.c      | 5 +----
- 9 files changed, 9 insertions(+), 38 deletions(-)
+Still sent as an attachment?
+And it is still not applicable to upstream, as the bug is not present
+in upstream.
 
-diff --git a/drivers/dma/nbpfaxi.c b/drivers/dma/nbpfaxi.c
-index 8c7b2e8703da..38d251b198b8 100644
---- a/drivers/dma/nbpfaxi.c
-+++ b/drivers/dma/nbpfaxi.c
-@@ -1,10 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 2013-2014 Renesas Electronics Europe Ltd.
-  * Author: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of version 2 of the GNU General Public License as
-- * published by the Free Software Foundation.
-  */
- 
- #include <linux/bitmap.h>
-diff --git a/drivers/dma/sh/shdma-arm.h b/drivers/dma/sh/shdma-arm.h
-index a1b0ef45d6a2..7459f9a13b5b 100644
---- a/drivers/dma/sh/shdma-arm.h
-+++ b/drivers/dma/sh/shdma-arm.h
-@@ -1,11 +1,8 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Renesas SuperH DMA Engine support
-  *
-  * Copyright (C) 2013 Renesas Electronics, Inc.
-- *
-- * This is free software; you can redistribute it and/or modify it under the
-- * terms of version 2 the GNU General Public License as published by the Free
-- * Software Foundation.
-  */
- 
- #ifndef SHDMA_ARM_H
-diff --git a/drivers/dma/sh/shdma-base.c b/drivers/dma/sh/shdma-base.c
-index 6b5626e299b2..c51de498b5b4 100644
---- a/drivers/dma/sh/shdma-base.c
-+++ b/drivers/dma/sh/shdma-base.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Dmaengine driver base library for DMA controllers, found on SH-based SoCs
-  *
-@@ -7,10 +8,6 @@
-  * Copyright (C) 2009 Nobuhiro Iwamatsu <iwamatsu.nobuhiro@renesas.com>
-  * Copyright (C) 2009 Renesas Solutions, Inc. All rights reserved.
-  * Copyright (C) 2007 Freescale Semiconductor, Inc. All rights reserved.
-- *
-- * This is free software; you can redistribute it and/or modify
-- * it under the terms of version 2 of the GNU General Public License as
-- * published by the Free Software Foundation.
-  */
- 
- #include <linux/delay.h>
-diff --git a/drivers/dma/sh/shdma-of.c b/drivers/dma/sh/shdma-of.c
-index f999f9b0d314..be89dd894328 100644
---- a/drivers/dma/sh/shdma-of.c
-+++ b/drivers/dma/sh/shdma-of.c
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * SHDMA Device Tree glue
-  *
-  * Copyright (C) 2013 Renesas Electronics Inc.
-  * Author: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-- *
-- * This is free software; you can redistribute it and/or modify
-- * it under the terms of version 2 of the GNU General Public License as
-- * published by the Free Software Foundation.
-  */
- 
- #include <linux/dmaengine.h>
-diff --git a/drivers/dma/sh/shdma-r8a73a4.c b/drivers/dma/sh/shdma-r8a73a4.c
-index 96ea3828c3eb..ddc9a3578353 100644
---- a/drivers/dma/sh/shdma-r8a73a4.c
-+++ b/drivers/dma/sh/shdma-r8a73a4.c
-@@ -1,11 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Renesas SuperH DMA Engine support for r8a73a4 (APE6) SoCs
-  *
-  * Copyright (C) 2013 Renesas Electronics, Inc.
-- *
-- * This is free software; you can redistribute it and/or modify it under the
-- * terms of version 2 the GNU General Public License as published by the Free
-- * Software Foundation.
-  */
- #include <linux/sh_dma.h>
- 
-diff --git a/drivers/dma/sh/shdma.h b/drivers/dma/sh/shdma.h
-index 2c0a969adc9f..bfb69909bd19 100644
---- a/drivers/dma/sh/shdma.h
-+++ b/drivers/dma/sh/shdma.h
-@@ -1,14 +1,10 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * Renesas SuperH DMA Engine support
-  *
-  * Copyright (C) 2009 Nobuhiro Iwamatsu <iwamatsu.nobuhiro@renesas.com>
-  * Copyright (C) 2009 Renesas Solutions, Inc. All rights reserved.
-  *
-- * This is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-  */
- #ifndef __DMA_SHDMA_H
- #define __DMA_SHDMA_H
-diff --git a/drivers/dma/sh/shdmac.c b/drivers/dma/sh/shdmac.c
-index 04a74e0a95b7..7971ea275387 100644
---- a/drivers/dma/sh/shdmac.c
-+++ b/drivers/dma/sh/shdmac.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * Renesas SuperH DMA Engine support
-  *
-@@ -8,11 +9,6 @@
-  * Copyright (C) 2009 Renesas Solutions, Inc. All rights reserved.
-  * Copyright (C) 2007 Freescale Semiconductor, Inc. All rights reserved.
-  *
-- * This is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-  * - DMA of SuperH does not have Hardware DMA chain mode.
-  * - MAX DMA size is 16MB.
-  *
-diff --git a/drivers/dma/sh/sudmac.c b/drivers/dma/sh/sudmac.c
-index 69b9564dc9d9..30cc3553cb8b 100644
---- a/drivers/dma/sh/sudmac.c
-+++ b/drivers/dma/sh/sudmac.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Renesas SUDMAC support
-  *
-@@ -8,10 +9,6 @@
-  * Copyright (C) 2009 Nobuhiro Iwamatsu <iwamatsu.nobuhiro@renesas.com>
-  * Copyright (C) 2009 Renesas Solutions, Inc. All rights reserved.
-  * Copyright (C) 2007 Freescale Semiconductor, Inc. All rights reserved.
-- *
-- * This is free software; you can redistribute it and/or modify
-- * it under the terms of version 2 of the GNU General Public License as
-- * published by the Free Software Foundation.
-  */
- 
- #include <linux/dmaengine.h>
-diff --git a/drivers/dma/sh/usb-dmac.c b/drivers/dma/sh/usb-dmac.c
-index 1bb1a8e09025..7f7184c3cf95 100644
---- a/drivers/dma/sh/usb-dmac.c
-+++ b/drivers/dma/sh/usb-dmac.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Renesas USB DMA Controller Driver
-  *
-@@ -6,10 +7,6 @@
-  * based on rcar-dmac.c
-  * Copyright (C) 2014 Renesas Electronics Inc.
-  * Author: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-- *
-- * This is free software; you can redistribute it and/or modify
-- * it under the terms of version 2 of the GNU General Public License as
-- * published by the Free Software Foundation.
-  */
- 
- #include <linux/delay.h>
+I'm sorry, I can only take patches for upstream.
+I do not maintain any source tree at elinux.org (which tree? AFAIK
+there's no git repo
+at elinux.org?).
+
+Thanks for your understanding!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
