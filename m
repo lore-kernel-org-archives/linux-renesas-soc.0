@@ -1,43 +1,34 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-To: linux-kernel@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        kbingham@kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/4] MAINTAINERS: VSP1: Add co-maintainer
-Date: Mon,  6 Aug 2018 15:39:02 +0100
-Message-Id: <20180806143904.4716-2-kieran.bingham@ideasonboard.com>
-In-Reply-To: <20180806143904.4716-1-kieran.bingham@ideasonboard.com>
-References: <20180806143904.4716-1-kieran.bingham@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:47315 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727786AbeHIOxU (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 9 Aug 2018 10:53:20 -0400
+Date: Thu, 9 Aug 2018 14:28:36 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Linux-SH <linux-sh@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 10/13] sh: shmobile: convert to SPDX identifiers
+Message-ID: <20180809122835.tj4vx7jdnxop3d7g@verge.net.au>
+References: <874lg8p7d2.wl-kuninori.morimoto.gx@renesas.com>
+ <87pnywnsnf.wl-kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87pnywnsnf.wl-kuninori.morimoto.gx@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On Mon, Aug 06, 2018 at 02:25:35AM +0000, Kuninori Morimoto wrote:
+> 
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> This patch updates license to use SPDX-License-Identifier
+> instead of verbose license text.
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Add myself as a co-maintainer for the Renesas VSP driver.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c7cecb9201b3..6a30a5332b18 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8935,6 +8935,7 @@ F:	drivers/media/platform/rcar-vin/
- 
- MEDIA DRIVERS FOR RENESAS - VSP1
- M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-+M:	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
- L:	linux-media@vger.kernel.org
- L:	linux-renesas-soc@vger.kernel.org
- T:	git git://linuxtv.org/media_tree.git
--- 
-2.17.1
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
