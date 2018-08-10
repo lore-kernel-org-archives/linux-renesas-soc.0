@@ -1,72 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33211 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727803AbeHVVs0 (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:33292 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727570AbeHJQDD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 22 Aug 2018 17:48:26 -0400
-Received: by mail-lf1-f68.google.com with SMTP id c7-v6so2112631lfe.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 22 Aug 2018 11:22:28 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v2] mmc: renesas_sdhi_internal_dmac: mask DMAC interrupts
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Message-ID: <624fec83-0190-18b4-1d80-b59b1bc964b2@cogentembedded.com>
-Date: Wed, 22 Aug 2018 21:22:26 +0300
+        Fri, 10 Aug 2018 12:03:03 -0400
+Received: by mail-wm0-f68.google.com with SMTP id r24-v6so1505500wmh.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 10 Aug 2018 06:33:07 -0700 (PDT)
+From: Eugeniu Rosca <roscaeugeniu@gmail.com>
+Date: Fri, 10 Aug 2018 15:33:02 +0200
+To: Simon Horman <horms@verge.net.au>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Eugeniu Rosca <erosca@de.adit-jv.com>
+Subject: Re: [PATCH 01/14] arm64: dts: renesas: Cut redundant <SoC> in
+ *<SoC>-<SoC>ulcb*.dts
+Message-ID: <20180810133251.GA27396@x230>
+References: <20180804231114.21420-1-erosca@de.adit-jv.com>
+ <20180804231114.21420-2-erosca@de.adit-jv.com>
+ <1772124.crYColn4IV@avalon>
+ <20180810112248.f7hfvknbb6sdkm4o@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180810112248.f7hfvknbb6sdkm4o@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I have encountered an interrupt storm during the eMMC chip probing (and
-the chip finally didn't get detected).  It turned out that U-Boot left
-the SDHI DMA interrupts enabled while the Linux driver didn't use those.
-Masking those interrupts in renesas_sdhi_internal_dmac_request_dma() gets
-rid of both issues...
+Hi Simon, Laurent,
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Fri, Aug 10, 2018 at 01:22:49PM +0200, Simon Horman wrote:
+> On Mon, Aug 06, 2018 at 01:35:08PM +0300, Laurent Pinchart wrote:
+[snip]
+> > The naming convention is roughly <soc>-<board>.dts. For instance, in r8a7795-
+> > h3ulcb.dts, the SoC is R8A7795 and the board "H3 ULCB". With the proposed 
+> > rename we would break that convention.
+> > 
+> > However, the name ULCB itself (which stands for Ultra Low Cost Board) might 
+> > already not follow the naming convention, as the boards are officially called 
+> > R-Car Starter Kit (Pro and Premier). The V3M and V3H "low-cost" boards reflect 
+> > that properly, with their .dts files named r8a77970-v3msk.dts and r8a77970-
+> > v3hsk.dts respectively.
+> > 
+> > I'm not opposed to simplifying the file names, but I think we should then 
+> > decide on a simpler convention. In particular the H3/M3 and V3 .dts files 
+> > should in my opinion follow the same convention.
+> > 
+> > I'll now let others comment on this as I don't have such a strong opinion on 
+> > this topic.
+> 
+> At this point I'd prefer to keep the current, albeit imperfect scheme,
+> and avoid churn.
 
----
-The patch is against Ulf Hansson's 'mmc.git' repo's 'fixes' branch.
+To be able to push a v2, I interpret this input as using below strings
+for the newly supported M3-N Starter Kit board:
+ - r8a77965-m3nulcb.dts and r8a77965-m3nulcb-kf.dts for device tree sources
+ - "renesas,m3nulcb" for compatible string
+ - M3NULCB for board name in the shmobile.txt DT bindings
 
-Changes in version 2:
-- fixed #define INFO{1|2}_RESERVED_BITS, rename them to INFO{1|2}_MASK_CLEAR,
-  and moved them higher;
-- shortened the comment before masking the DMAC interrupts;
-- fixed up the excess whitespace in the patch dsescription.
+I still think there is some redundancy in this naming scheme, but I can
+live with that.
 
- drivers/mmc/host/renesas_sdhi_internal_dmac.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
-
-Index: renesas/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-===================================================================
---- renesas.orig/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ renesas/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -49,10 +49,12 @@
- 
- /* DM_CM_INFO1 and DM_CM_INFO1_MASK */
- #define INFO1_CLEAR		0
-+#define INFO1_MASK_CLEAR	GENMASK_ULL(31, 0)
- #define INFO1_DTRANEND1		BIT(17)
- #define INFO1_DTRANEND0		BIT(16)
- 
- /* DM_CM_INFO2 and DM_CM_INFO2_MASK */
-+#define INFO2_MASK_CLEAR	GENMASK_ULL(31, 0)
- #define INFO2_DTRANERR1		BIT(17)
- #define INFO2_DTRANERR0		BIT(16)
- 
-@@ -236,6 +238,12 @@ renesas_sdhi_internal_dmac_request_dma(s
- {
- 	struct renesas_sdhi *priv = host_to_priv(host);
- 
-+	/* Disable DMAC interrupts, we don't use them */
-+	renesas_sdhi_internal_dmac_dm_write(host, DM_CM_INFO1_MASK,
-+					    INFO1_MASK_CLEAR);
-+	renesas_sdhi_internal_dmac_dm_write(host, DM_CM_INFO2_MASK,
-+					    INFO2_MASK_CLEAR);
-+
- 	/* Each value is set to non-zero to assume "enabling" each DMA */
- 	host->chan_rx = host->chan_tx = (void *)0xdeadbeaf;
- 
+Thanks,
+Eugeniu.
