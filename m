@@ -1,75 +1,40 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-Date: Sat, 4 Aug 2018 23:23:14 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 00/12] i2c: quirks: add zero length checks and update
- drivers
-Message-ID: <20180804212314.oelyhfqxclhatjev@ninjato>
-References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:37187 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726963AbeHJNjS (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 10 Aug 2018 09:39:18 -0400
+Date: Fri, 10 Aug 2018 13:09:48 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] dt-bindings: power: Add r8a774a1 SYSC power
+ domain definitions
+Message-ID: <20180810110947.kamga2xzjh4k3vdy@verge.net.au>
+References: <1533221302-44598-1-git-send-email-biju.das@bp.renesas.com>
+ <1533221302-44598-2-git-send-email-biju.das@bp.renesas.com>
+ <20180809110758.rrlatabqt2v5suqd@verge.net.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7aewi4gtlzfrpl7f"
-Content-Disposition: inline
-In-Reply-To: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
-Sender: linux-i2c-owner@vger.kernel.org
-List-ID: <linux-renesas-soc.vger.kernel.org>
-
-
---7aewi4gtlzfrpl7f
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20180809110758.rrlatabqt2v5suqd@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jul 23, 2018 at 10:26:04PM +0200, Wolfram Sang wrote:
-> I had this idea for quite some time on my todo list but a soon to be
-> implemented refactoring in the i2c-rcar driver now finally made me do it.=
- Add a
-> 'can't do 0 length messages' quirk to the quirk infrastructure for and re=
-move
-> the manual handling from the drivers. This makes the quirk much more visi=
-ble.
-> (Quite some prominent vendors in that list) We also have a centralized pl=
-ace to
-> handle updates to the quirk detection if that is ever needed.
->=20
-> I have tested this with the i2c-rcar and i2c-sh_mobile driver on a Renesas
-> SalvatorXS board equipped with M3-N (r8a77965).
->=20
-> A git branch can be found here:
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/quirk-no-=
-zero-len
->=20
-> Looking forward to comments, reviews, tests...
+On Thu, Aug 09, 2018 at 01:07:59PM +0200, Simon Horman wrote:
+> On Thu, Aug 02, 2018 at 03:48:18PM +0100, Biju Das wrote:
+> > This patch adds power domain indices for RZ/G2M.
+> > 
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-I applied all the patches which either got acks from the maintainers or
-have no maintainers. I'll reply individually to which I applied. I will
-wait some more for other acks before I'll resend next cycle.
-
-
---7aewi4gtlzfrpl7f
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltmGUIACgkQFA3kzBSg
-KbarZw/+MqkSaLU5cZh0Ej4pjwuIe4JAPI/uPWDVkXNyeIEo6+WbzoIPFzkDd4ud
-K07Rpa875ilzbCF4/arvTbuad4WCjckKF637IAiwL7iZFN8viwwqSTP14jskIp9r
-Ikn4s/dKyNNBUyE46Kxl2myhL2KSLES6mHyOq03dEjcykqgAauC+y86iyGU8203N
-66KiZQx9Bj5cY8PCOWFNn0xFCfA7EkBRi2bC1dp9w2KHbY1JTt3Iyj5sXzGCQbgw
-bqwDq7ME1jtODtiPH/BlGyM6VEe1F06Jn0+meccy6831dJfFtTJgWxYQ91jB9jSg
-HcurYXJGeRf89M71jvL7udcNu7SrUNydD3M3sADqDMq7qejhpk1BQ4N2JyIvFWoN
-f4l3ZuXiAdwDVkEtJZ0fMV3ZnXYtESI41YqzxAPPXza3QAS3qGR8J0rJN+gOmfxC
-wOuvgM7RQLqIh1Wye/6ac3PxJzlMoYiZXUcMsJ3ljHxRrqVagJb20UBij8ip5mJ/
-mp+OrI/noPN15A4Cha5QJvcxTKeIyJD9HsVx4kndTQuoGTxqc3SfctDzyN/9BJ0V
-FquyU4BUnHetzVdIpK5nLzKIYRyR8lCa7LTYcDJzOQ5Nh/D3O4DUvA/akYTrxeik
-/hvcc90N4bvC6EUdceb1baqX0LFOcKZaKo5PGTdZs01kzGPXg5c=
-=vEPg
------END PGP SIGNATURE-----
-
---7aewi4gtlzfrpl7f--
+Now applied for v4.20.
