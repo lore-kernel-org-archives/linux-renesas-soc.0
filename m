@@ -1,70 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:37385 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbeHTNcC (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:46264 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727545AbeHJSK6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Aug 2018 09:32:02 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, geert@linux-m68k.org,
-        horms@verge.net.au
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        kieran.bingham+renesas@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se, damm+renesas@opensource.se,
-        ulrich.hecht+renesas@gmail.com, linux-renesas-soc@vger.kernel.org,
-        linux-media@vger.kernel.org
-Subject: [RFT 2/8] media: rcar-vin: Add support for R-Car R8A77990
-Date: Mon, 20 Aug 2018 12:16:36 +0200
-Message-Id: <1534760202-20114-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1534760202-20114-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1534760202-20114-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 10 Aug 2018 14:10:58 -0400
+MIME-Version: 1.0
+References: <1533221794-59181-1-git-send-email-biju.das@bp.renesas.com>
+ <5b6cc306.1c69fb81.25824.1225@mx.google.com> <OSBPR01MB21036ED37D495C23FE0ABFB9B8240@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSBPR01MB21036ED37D495C23FE0ABFB9B8240@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 10 Aug 2018 09:40:23 -0600
+Message-ID: <CAL_Jsq+ApABam=zc-peomPd-7hZ4zf0zvd=vPzdUmTXP80MXog@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] clk: renesas: Add r8a774a1 CPG Core Clock Definitions
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
+        <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add R-Car E3 R8A77990 SoC to the rcar-vin supported ones.
-Based on the experimental patch from Magnus Damm.
+On Fri, Aug 10, 2018 at 1:35 AM Biju Das <biju.das@bp.renesas.com> wrote:
+>
+> Hi Rob,
+>
+>
+> > Subject: Re: [PATCH v2 4/5] clk: renesas: Add r8a774a1 CPG Core Clock
+> > Definitions
+> >
+> > Hi, this is an automated email from Rob's (experimental) review bot. I found
+> > a couple of common problems with your patch. Please see below.
+>
+> Do I need to send another patch? The mail says " Rob's (experimental) review bot".
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+"experimental" in the sense it may not work right. Such as they all
+triggered spam filters. But I checked all these mails before they went
+out, so the comments are correct.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 8843367..907985d 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -1089,6 +1089,22 @@ static const struct rvin_info rcar_info_r8a77970 = {
- 	.routes = rcar_info_r8a77970_routes,
- };
+> Previously for RZ/G1C upstreaming I have submitted the patches in similar fashion.
+> Is anything changed?
 
-+static const struct rvin_group_route rcar_info_r8a77990_routes[] = {
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 4, .mask = BIT(0) | BIT(3) },
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 5, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI40, .channel = 1, .vin = 4, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI40, .channel = 1, .vin = 5, .mask = BIT(1) | BIT(3) },
-+	{ /* Sentinel */ }
-+};
-+
-+static const struct rvin_info rcar_info_r8a77990 = {
-+	.model = RCAR_GEN3,
-+	.use_mc = true,
-+	.max_width = 4096,
-+	.max_height = 4096,
-+	.routes = rcar_info_r8a77990_routes,
-+};
-+
- static const struct rvin_group_route rcar_info_r8a77995_routes[] = {
- 	{ /* Sentinel */ }
- };
-@@ -1147,6 +1163,10 @@ static const struct of_device_id rvin_of_id_table[] = {
- 		.data = &rcar_info_r8a77970,
- 	},
- 	{
-+		.compatible = "renesas,vin-r8a77990",
-+		.data = &rcar_info_r8a77990,
-+	},
-+	{
- 		.compatible = "renesas,vin-r8a77995",
- 		.data = &rcar_info_r8a77995,
- 	},
---
-2.7.4
+Yes, I'm tired of manually providing these comments. If there's no
+other comments though, then it is fine to apply as is.
+
+Rob
