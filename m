@@ -1,85 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.81]:20687 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727037AbeHQQXJ (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45700 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727733AbeHLTDE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Aug 2018 12:23:09 -0400
-From: Ulrich Hecht <uli+renesas@fpond.eu>
-To: linux-renesas-soc@vger.kernel.org
-Cc: horms@verge.net.au, geert@linux-m68k.org,
-        khiem.nguyen.xt@rvc.renesas.com, dien.pham.ry@renesas.com,
-        takeshi.kihara.df@renesas.com, Ulrich Hecht <uli+renesas@fpond.eu>
-Subject: [PATCH 2/5] arm64: dts: r8a7795: Add cpuidle support for CA53 cores
-Date: Fri, 17 Aug 2018 15:19:25 +0200
-Message-Id: <1534511968-19634-3-git-send-email-uli+renesas@fpond.eu>
-In-Reply-To: <1534511968-19634-1-git-send-email-uli+renesas@fpond.eu>
-References: <1534511968-19634-1-git-send-email-uli+renesas@fpond.eu>
+        Sun, 12 Aug 2018 15:03:04 -0400
+Date: Sun, 12 Aug 2018 18:24:29 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [v0.1 PATCH 0/7] mmc: tmio: refactor TMIO core a bit and add
+ UniPhier SD/eMMC controller support
+Message-ID: <20180812162428.GA888@kunai>
+References: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Dien Pham <dien.pham.ry@renesas.com>
+Hi Yamada-san,
 
-Enables cpuidle (core shutdown) support for R-Car H3 CA53 cores.
+> Add UniPhier SD/eMMC controller support.
+> 
+> As a preparation, I changed tmio_mmc_set_clock() to a platform hook.
+> The clock rate setting is platform-specific, and UniPhier variants
+> will add another way.  I thought it would be better to split this
+> to a hook to avoid a mess.
 
-Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Thanks for this series! I see you did not base it on the renaming
+patches. I think is a good decision because it would be a complicated
+dependency. I had a glimpse on the patches and the new hook looks good
+to me. I want to do full review and testing within the next two weeks.
+Then, I can also comment about re-implementing the internal DMA core
+handling vs. factorizing it out. It may be fine this way, I simply can't
+tell now.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 64ab88a..23f10d3 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -175,6 +175,7 @@
- 			power-domains = <&sysc R8A7795_PD_CA53_CPU0>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
-+			cpu-idle-states = <&CPU_SLEEP_1>;
- 			clocks =<&cpg CPG_CORE R8A7795_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
- 		};
-@@ -186,6 +187,7 @@
- 			power-domains = <&sysc R8A7795_PD_CA53_CPU1>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
-+			cpu-idle-states = <&CPU_SLEEP_1>;
- 			clocks =<&cpg CPG_CORE R8A7795_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
- 		};
-@@ -197,6 +199,7 @@
- 			power-domains = <&sysc R8A7795_PD_CA53_CPU2>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
-+			cpu-idle-states = <&CPU_SLEEP_1>;
- 			clocks =<&cpg CPG_CORE R8A7795_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
- 		};
-@@ -208,6 +211,7 @@
- 			power-domains = <&sysc R8A7795_PD_CA53_CPU3>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
-+			cpu-idle-states = <&CPU_SLEEP_1>;
- 			clocks =<&cpg CPG_CORE R8A7795_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
- 		};
-@@ -238,6 +242,16 @@
- 				min-residency-us = <4000>;
- 				status = "okay";
- 			};
-+
-+			CPU_SLEEP_1: cpu-sleep-1 {
-+				compatible = "arm,idle-state";
-+				arm,psci-suspend-param = <0x0010000>;
-+				local-timer-stop;
-+				entry-latency-us = <700>;
-+				exit-latency-us = <700>;
-+				min-residency-us = <5000>;
-+				status = "okay";
-+			};
- 		};
- 	};
- 
--- 
-2.7.4
+Regards,
+
+   Wolfram
+
+> 
+> 
+> 
+> Masahiro Yamada (7):
+>   mmc: tmio: replace tmio_mmc_clk_stop() calls with tmio_mmc_set_clock()
+>   mmc: tmio: move tmio_mmc_set_clock() to platform hook
+>   dt-bindings: mmc: add DT binding for UniPhier SD/eMMC controller
+>   mmc: uniphier-sd: add UniPhier SD/eMMC controller driver
+>   mmc: renesas_sdhi: merge clk_{start,stop} functions to set_clock
+>   mmc: renesas_sdhi: refactor CLK_CTL bit calculation
+>   mmc: tmio: refactor CLK_CTL bit calculation
+> 
+>  .../devicetree/bindings/mmc/uniphier-sd.txt        |  60 ++
+>  MAINTAINERS                                        |   1 +
+>  drivers/mmc/host/Kconfig                           |  10 +
+>  drivers/mmc/host/Makefile                          |   1 +
+>  drivers/mmc/host/renesas_sdhi_core.c               |  40 +-
+>  drivers/mmc/host/tmio_mmc.c                        |  56 ++
+>  drivers/mmc/host/tmio_mmc.h                        |   4 +-
+>  drivers/mmc/host/tmio_mmc_core.c                   |  79 +--
+>  drivers/mmc/host/uniphier-sd.c                     | 694 +++++++++++++++++++++
+>  9 files changed, 869 insertions(+), 76 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/mmc/uniphier-sd.txt
+>  create mode 100644 drivers/mmc/host/uniphier-sd.c
+> 
+> -- 
+> 2.7.4
+> 
