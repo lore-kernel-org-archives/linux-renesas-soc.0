@@ -1,24 +1,22 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:47525 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726683AbeHTRAi (ORCPT
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45738 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728978AbeHNTNV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Aug 2018 13:00:38 -0400
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Marek Vasut <marek.vasut@gmail.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        Tue, 14 Aug 2018 15:13:21 -0400
+Date: Tue, 14 Aug 2018 17:25:22 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Marek Vasut <marek.vasut@gmail.com>, linux-pci@vger.kernel.org,
+        Phil Edworthy <phil.edworthy@renesas.com>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa@the-dreams.de>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH V2 4/5] PCI: rcar: Support runtime PM, link state L1
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH V2 4/5] PCI: rcar: Support runtime PM, link state L1
  handling
-Date: Mon, 20 Aug 2018 13:44:48 +0000
-Message-ID: <TY1PR01MB176994051783997958BAB14AF5320@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+Message-ID: <20180814162522.GA4986@e107981-ln.cambridge.arm.com>
 References: <20171110215843.432-1-marek.vasut+renesas@gmail.com>
  <20171110215843.432-5-marek.vasut+renesas@gmail.com>
  <20171117174906.GB22599@red-moon>
@@ -28,131 +26,150 @@ References: <20171110215843.432-1-marek.vasut+renesas@gmail.com>
  <20180613135308.GB201807@bhelgaas-glaptop.roam.corp.google.com>
  <20180613155252.GA12210@e107981-ln.cambridge.arm.com>
  <20180613172559.GC201807@bhelgaas-glaptop.roam.corp.google.com>
- <1d543b91-ac4f-7b61-4b2c-d8865e06d31e@gmail.com>
- <9b91bbd9-64df-764e-e553-a37463549a92@gmail.com>
-In-Reply-To: <9b91bbd9-64df-764e-e553-a37463549a92@gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180613172559.GC201807@bhelgaas-glaptop.roam.corp.google.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8sDQoNClNvcnJ5IGZvciB0aGUgZGVsYXkuDQoNCk9uIDA4IEF1Z3VzdCAyMDE4IDE0OjMw
-LCBNYXJlayBWYXN1dCB3cm90ZToNCj4gT24gMDcvMjUvMjAxOCAxMTowOCBQTSwgTWFyZWsgVmFz
-dXQgd3JvdGU6DQo+ID4gT24gMDYvMTMvMjAxOCAwNzoyNSBQTSwgQmpvcm4gSGVsZ2FhcyB3cm90
-ZToNCj4gPj4gT24gV2VkLCBKdW4gMTMsIDIwMTggYXQgMDQ6NTI6NTJQTSArMDEwMCwgTG9yZW56
-byBQaWVyYWxpc2kgd3JvdGU6DQo+ID4+PiBPbiBXZWQsIEp1biAxMywgMjAxOCBhdCAwODo1Mzow
-OEFNIC0wNTAwLCBCam9ybiBIZWxnYWFzIHdyb3RlOg0KPiA+Pj4+IE9uIFdlZCwgSnVuIDEzLCAy
-MDE4IGF0IDAxOjU0OjUxQU0gKzAyMDAsIE1hcmVrIFZhc3V0IHdyb3RlOg0KPiA+Pj4+PiBPbiAw
-Ni8xMS8yMDE4IDAzOjU5IFBNLCBCam9ybiBIZWxnYWFzIHdyb3RlOg0KPiA+Pj4+Pj4gT24gU3Vu
-LCBKdW4gMTAsIDIwMTggYXQgMDM6NTc6MTBQTSArMDIwMCwgTWFyZWsgVmFzdXQgd3JvdGU6DQo+
-ID4+Pj4+Pj4gT24gMTEvMTcvMjAxNyAwNjo0OSBQTSwgTG9yZW56byBQaWVyYWxpc2kgd3JvdGU6
-DQo+ID4+Pj4+Pj4+IE9uIEZyaSwgTm92IDEwLCAyMDE3IGF0IDEwOjU4OjQyUE0gKzAxMDAsIE1h
-cmVrIFZhc3V0IHdyb3RlOg0KPiA+Pj4+Pj4+Pj4gRnJvbTogUGhpbCBFZHdvcnRoeSA8cGhpbC5l
-ZHdvcnRoeUByZW5lc2FzLmNvbT4NCj4gPj4+Pj4+Pj4+DQo+ID4+Pj4+Pj4+PiBNb3N0IFBDSWUg
-aG9zdCBjb250cm9sbGVycyBzdXBwb3J0IEwwcyBhbmQgTDEgcG93ZXIgc3RhdGVzIHZpYQ0KPiBB
-U1BNLg0KPiA+Pj4+Pj4+Pj4gVGhlIFItQ2FyIGhhcmR3YXJlIG9ubHkgc3VwcG9ydHMgTDBzLCBz
-byB3aGVuIHRoZSBzeXN0ZW0NCj4gPj4+Pj4+Pj4+IHN1c3BlbmRzIGFuZCByZXN1bWVzIHdlIGhh
-dmUgdG8gbWFudWFsbHkgaGFuZGxlIEwxLg0KPiA+Pj4+Pj4+Pj4gV2hlbiB0aGUgc3lzdGVtIHN1
-c3BlbmRzLCBjYXJkcyBjYW4gcHV0IHRoZW1zZWx2ZXMgaW50byBMMQ0KPiBhbmQNCj4gPj4+Pj4+
-Pj4+IHNlbmQgYQ0KPiA+Pj4+Pj4+Pg0KPiA+Pj4+Pj4+PiBJIGFzc3VtZWQgTDEgZW50cnkgaGFz
-IHRvIGJlIG5lZ290aWF0ZWQgZGVwZW5kaW5nIHVwb24gdGhlIFBDSWUNCj4gPj4+Pj4+Pj4gaGll
-cmFyY2h5IGNhcGFiaWxpdGllcywgSSB3b3VsZCBhcHByZWNpYXRlIGlmIHlvdSBjYW4gZXhwbGFp
-bg0KPiA+Pj4+Pj4+PiB0byBtZSB3aGF0J3MgdGhlIHJvb3QgY2F1c2Ugb2YgdGhlIGlzc3VlIHBs
-ZWFzZS4NCj4gPj4+Pj4+Pg0KPiA+Pj4+Pj4+IFlvdSBzaG91bGQgcHJvYmFibHkgaWdub3JlIHRo
-ZSBzdXNwZW5kL3Jlc3VtZSBwYXJ0IGFsdG9nZXRoZXIuDQo+ID4+Pj4+Pj4gVGhlIGlzc3VlIGhl
-cmUgaXMgdGhhdCB0aGUgY2FyZHMgY2FuIGVudGVyIEwxIHN0YXRlLCB3aGlsZSB0aGUNCj4gPj4+
-Pj4+PiBjb250cm9sbGVyIHdvbid0IGRvIHRoYXQgYXV0b21hdGljYWxseSwgaXQgY2FuIG9ubHkg
-ZGV0ZWN0IHRoYXQgdGhlDQo+IGxpbmsgd2VudCBpbnRvIEwxIHN0YXRlLg0KPiA+Pj4+Pj4+IElm
-IHRoYXQgaGFwcGVucyx0aGUgZHJpdmVyIG11c3QgbWFudWFsbHkgcHV0IHRoZSBjb250cm9sbGVy
-IHRvIEwxDQo+IHN0YXRlLg0KPiA+Pj4+Pj4+IFRoZSBjb250cm9sbGVyIGNhbiB0cmFuc2l0aW9u
-IG91dCBvZiBMMSBzdGF0ZSBhdXRvbWF0aWNhbGx5IHRob3VnaC4NCj4gPj4+Pj4+DQo+ID4+Pj4+
-PiBGcm9tIGVhcmxpZXIgZGlzY3Vzc2lvbiBJIHRob3VnaHQgdGhlIFItQ2FyIHJvb3QgcG9ydCBk
-aWQgbm90DQo+ID4+Pj4+PiBhZHZlcnRpc2UgTDEgc3VwcG9ydC4NCj4gPj4+Pj4NCj4gPj4+Pj4g
-V2hpY2ggZGlzY3Vzc2lvbiA/IFRoaXMgb25lIG9yIHNvbWV3aGVyZSBlbHNlID8NCj4gPj4+Pg0K
-PiA+Pj4+DQo+IGh0dHBzOi8vbGttbC5rZXJuZWwub3JnL3IvSEsyUFIwNjAxTUIxMzkzRDkxN0Qz
-NDNFNjM2MzQ4NENBNjhGNUNCMA0KPiBADQo+ID4+Pj4gSEsyUFIwNjAxTUIxMzkzLmFwY3ByZDA2
-LnByb2Qub3V0bG9vay5jb20NCj4gPj4+Pg0KPiA+Pj4+IFJlLXJlYWRpbmcgdGhhdCwgSSB0aGlu
-ayBJIHNlZSBteSBtaXN1bmRlcnN0YW5kaW5nLiAgSSB3YXMgb25seQ0KPiA+Pj4+IGNvbnNpZGVy
-aW5nIEwxIGluIHRoZSBBU1BNIGNvbnRleHQuICBJIGRpZG4ndCByZWFsaXplIHRoZSBMMQ0KPiA+
-Pj4+IGltcGxpY2F0aW9ucyBvZiBkZXZpY2VzIGJlaW5nIGluIHN0YXRlcyBvdGhlciB0aGFuIEQw
-Lg0KPiA+Pj4+DQo+ID4+Pj4gT2J2aW91c2x5IEwxIHN1cHBvcnQgZm9yIEFTUE0gaXMgb3B0aW9u
-YWwgYW5kIGFkdmVydGlzZWQgdmlhIExpbmsNCj4gPj4+PiBDYXBhYmlsaXRpZXMuICBCdXQgcGVy
-IFBDSWUgcjQuMCwgc2VjIDUuMiwgTDEgc3VwcG9ydCBpcyByZXF1aXJlZA0KPiA+Pj4+IGZvciBQ
-Q0ktUE0gY29tcGF0aWJsZSBwb3dlciBtYW5hZ2VtZW50LCBhbmQgaXMgZW50ZXJlZCAid2hlbmV2
-ZXINCj4gPj4+PiBhbGwgRnVuY3Rpb25zIC4uLiBhcmUgcHJvZ3JhbW1lZCB0byBhIEQtc3RhdGUg
-b3RoZXIgdGhhbiBEMC4iDQo+ID4+Pj4NCj4gPj4+PiBTbyBJIGd1ZXNzIHRoaXMgbWVhbnMgKmV2
-ZXJ5KiBkZXZpY2UgaXMgc3VwcG9zZWQgdG8gc3VwcG9ydCBMMSB3aGVuDQo+ID4+Pj4gaXQgaXMg
-aW4gYSBub24tRDAgcG93ZXIgc3RhdGUuICBJIHRoaW5rICp0aGlzKiBpcyB0aGUgY2FzZSB5b3Un
-cmUNCj4gPj4+PiBzb2x2aW5nLg0KPiA+Pj4+DQo+ID4+Pj4gQSBsaXR0bGUgbW9yZSBvZiB0aGlz
-IGRldGFpbCwgZS5nLiwgdGhhdCB0aGlzIGlzc3VlIGhhcyBub3RoaW5nIHRvDQo+ID4+Pj4gZG8g
-d2l0aCBBU1BNLCBpdCdzIHByb2JhYmx5IGFuIFItQ2FyIGVycmF0dW0gdGhhdCB0aGUgUkMgY2Fu
-J3QNCj4gPj4+PiB0cmFuc2l0aW9uIGZyb20gTDEgdG8gTDAsIGV0Yy4sIGluIHRoZSBjaGFuZ2Vs
-b2cgd291bGQgcmVhbGx5IGhlbHANCj4gPj4+PiBjbGVhciB0aGluZ3MgdXAgZm9yIG1lLg0KPiA+
-Pj4NCj4gPj4+IEkgdGhpbmsgdGhhdCB0aGUgaXNzdWUgaXMgcmVsYXRlZCB0byB0aGUgTDAtPkwx
-IHRyYW5zaXRpb24gdXBvbg0KPiA+Pj4gc3lzdGVtIHN1c3BlbmQgKGllIHRoZSBrZXJuZWwgbXVz
-dCBmb3JjZSB0aGUgY29udHJvbGxlciBpbnRvIEwxIHdoZW4NCj4gPj4+IGFsbCBkZXZpY2VzIGFy
-ZSBpbiBhIHNsZWVwIHN0YXRlKSBhbmQgZm9yIHRoaXMgc3BlY2lmaWMgcmVhc29uIEkNCj4gPj4+
-IHN0aWxsIHRoaW5rIHRoYXQgY2hlY2tpbmcgZm9yIGEgUE1fRW50ZXJfTDEgRExMUCByZWNlcHRp
-b24gYW5kIGRvaW5nDQo+ID4+PiB0aGUgTDAtPkwxIHRyYW5zaXRpb24gd2l0aGluIGEgY29uZmln
-IGFjY2VzcyBpcyB3cm9uZyBhbmQgcHJvbmUgdG8NCj4gPj4+IGVycm9yICh3aGF0J3MgdGhlIHJh
-dGlvbmFsZSBiZWhpbmQgdGhhdCA/KSwgdGhpcyBvdWdodCB0byBiZSBkb25lDQo+ID4+PiB1c2lu
-ZyBQTSBtZXRob2RzIGluIHRoZSBob3N0IGNvbnRyb2xsZXIgZHJpdmVyLg0KPiA+Pg0KPiA+PiBC
-dXQgZG9lc24ndCB0aGUgcHJvYmxlbSBoYXBwZW4gd2hlbmV2ZXIgdGhlIGxpbmsgZ29lcyB0byBM
-MSwgZm9yIGFueQ0KPiA+PiByZWFzb24/ICBFLmcuLCBydW50aW1lIHBvd2VyIG1hbmFnZW1lbnQg
-bWlnaHQgcHV0IGFuIGVuZHBvaW50IGluIEQzDQo+ID4+IGV2ZW4gaWYgd2UncmUgbm90IGRvaW5n
-IGEgd2hvbGUgc3lzdGVtIHN1c3BlbmQuICBBIHVzZXIgY291bGQgZXZlbg0KPiA+PiBmb3JjZSB0
-aGUgZW5kcG9pbnQgdG8gRDMgYnkgd3JpdGluZyB0byBQQ0lfUE1fQ1RSTCB3aXRoICJzZXRwY2ki
-LiAgSWYNCj4gPj4gdGhhdCdzIHRoZSBjYXNlLCBJIGRvbid0IHRoaW5rIHRoZSBob3N0IGNvbnRy
-b2xsZXIgUE0gbWV0aG9kcyB3aWxsIGJlDQo+ID4+IGVub3VnaCB0byB3b3JrIGFyb3VuZCB0aGUg
-aXNzdWUuDQo+ID4NCj4gPiBJIHRoaW5rIHNvLCBpdCdzIHRoZSBsaW5rIHRoYXQgZ29lcyBpbnRv
-IEwxIHN0YXRlIGFuZCB0aGlzIGNhbiBoYXBwZW4NCj4gPiB3aXRob3V0IGFueSBhY3Rpb24gZnJv
-bSB0aGUgY29udHJvbGxlciBzaWRlLg0KPiA+DQo+ID4+IFRoZSBjb21tZW50IGluIHRoZSBwYXRj
-aCAoIklmIHdlIGFyZSBub3QgaW4gTDEgbGluayBzdGF0ZSBhbmQgd2UgaGF2ZQ0KPiA+PiByZWNl
-aXZlZCBQTV9FTlRFUl9MMSBETExQLCB0cmFuc2l0aW9uIHRvIEwxIGxpbmsgc3RhdGUiKSBzdWdn
-ZXN0cw0KPiA+PiB0aGF0IHRoZSBSLUNhciBob3N0IGRvZXNuJ3QgaGFuZGxlIHN0ZXAgMTAgaW4g
-UENJZSByNC4wLCBzZWMgNS4zLjIuMQ0KPiA+PiBjb3JyZWN0bHksIGkuZS4sIGl0IGRvZXNuJ3Qg
-Y29tcGxldGUgdGhlIHRyYW5zaXRpb24gb2YgdGhlIGxpbmsgdG8gTDEuDQo+ID4+DQo+ID4+IFB1
-dHRpbmcgdGhpcyB3b3JrYXJvdW5kIGluIHRoZSBjb25maWcgYWNjZXNzb3IgbWFrZXMgc2Vuc2Ug
-dG8gbWUNCj4gPj4gYmVjYXVzZSBpbiB0aGlzIHNpdHVhdGlvbiB0aGUgZW5kcG9pbnQgdGhpbmtz
-IGl0J3MgaW4gTDEgYW5kIGl0IHdvbid0DQo+ID4+IHJlY2VpdmUgVExQcyBmb3IgY29uZmlnIGFj
-Y2Vzc2VzLiAgQXBwYXJlbnRseSBmb3JjaW5nIHRoZSBSUCB0byBMMQ0KPiA+PiBjb21wbGV0ZXMg
-dGhlIEwxIGVudHJ5LCBhbmQgdGhlIFJQIGNvcnJlY3RseSBoYW5kbGVzIHRoZSAiRXhpdCBmcm9t
-DQo+ID4+IEwxIFN0YXRlIiAoc2VjIDUuMy4yLjIpIHRoYXQncyByZXF1aXJlZCB3aGVuIHRoZSBS
-UCBuZWVkcyB0byBzZW5kIGENCj4gPj4gVExQIHRvIHRoZSBlbmRwb2ludC4NClRoYXQgbXkgdW5k
-ZXJzdGFuZGluZy4NCg0KPiA+PiBJIHRoaW5rIHRoZXJlJ3Mgc3RpbGwgYSBwb3RlbnRpYWwgaXNz
-dWUgaWYgdGhlIGVuZHBvaW50IGdvZXMgdG8gYQ0KPiA+PiBub24tRDAgc3RhdGUsIHRoZSBsaW5r
-IGlzIHN0dWNrIGluIHRoaXMgdHJhbnNpdGlvbmFsIHN0YXRlIChlbmRwb2ludA0KPiA+PiB0aGlu
-a3MgaXQncyBMMSwgUlAgdGhpbmtzIGl0J3MgTDApLCBhbmQgdGhlICplbmRwb2ludCogd2FudHMg
-dG8gZXhpdA0KPiA+PiBMMSwgZS5nLiwgc28gaXQgY2FuIHNlbmQgYSBQTUUgbWVzc2FnZSBmb3Ig
-YSB3YWtldXAuICBJIGRvbid0IGtub3cNCj4gPj4gd2hhdCBoYXBwZW5zIHRoZW4uDQo+ID4NCj4g
-PiBJcyB0aGVyZSBzb21lIGhhcmR3YXJlIHdoaWNoIEkgY2FuIHVzZSB0byBzaW11bGF0ZSB0aGlz
-IHNpdHVhdGlvbiA/DQo+ID4NCj4gPj4gSWYgdGhlcmUgd2VyZSBhIHJlYWwgZXJyYXR1bSB3cml0
-ZXVwIGZvciB0aGlzLCBpdCB3b3VsZCBwcm9iYWJseQ0KPiA+PiBkaXNjdXNzIHRoaXMgc2l0dWF0
-aW9uLg0KPiA+DQo+ID4gSSB3ZW50IHRocm91Z2ggdGhlIGxhdGVzdCBlcnJhdGEgc2hlZXQgYW5k
-IGRvbid0IHNlZSBhbnl0aGluZy4gVGhlDQo+ID4gZGF0YXNoZWV0IG9ubHkgbWVudGlvbnMgdGhh
-dCBMMC9MMHMvTDEgaXMgc3VwcG9ydGVkIGFuZCBMMiBpcyBub3QNCj4gc3VwcG9ydGVkLg0KPg0K
-PiA+IE1heWJlIFBoaWwgY2FuIGNvbW1lbnQgb24gdGhpcyB0b28gPw0KVGhlcmUgaXMgbm8gZXJy
-YXRhIGZvciB0aGlzIHRoYXQgSSBrbm93IG9mLg0KDQpUaGUgcmNhciBSUCBzdXBwb3J0cyBMMC9M
-MHMvTDEgaW4gaGFyZHdhcmUsIGJ1dCBvbmx5IHN1cHBvcnRzIEwwcyB2aWEgQVNQTSwNCmkuZS4g
-eW91IG5lZWQgc29mdHdhcmUgdG8gcG9rZSBzb21lIHJlZ2lzdGVycyB0byBtYWtlIHRoZSBSUCB0
-cmFuc2l0aW9uIHRvIEwxLg0KDQpIb3dldmVyLCBib3RoIGJlZm9yZSBhbmQgYWZ0ZXIgdGhpcyBw
-YXRjaCwgdGhlIFJQIGRvZXMgbm90IHRyYW5zaXRpb24gTDENCndoZW4gdGhlIGVuZHBvaW50cyBj
-aGFuZ2UgdG8gTDEuDQpUaGlzIHBhdGNoIG9ubHkgdHJhbnNpdGlvbnMgdGhlIFJQIHRvIEwxIGR1
-cmluZyBhY2Nlc3NpbmcgYSBjYXJkJ3MgY29uZmlnDQpyZWdpc3RlcnMsIGlmIHRoZSBSUCBpcyBu
-b3QgaW4gTDEgbGluayBzdGF0ZSBhbmQgaGFzIHJlY2VpdmVkIFBNX0VOVEVSX0wxIERMTFANCihl
-LmcuIHJlc3VtZSkuIEFmdGVyIHRoaXMsIHRoZSBoYXJkd2FyZSB3aWxsIGhhbmRsZSB0aGUgdHJh
-bnNpdGlvbiBvdXQgb2YgTDEuDQoNClRoZSByZWxldmFudCBwYXJ0IG9mIHRoZSByY2FyIG1hbnVh
-bCBzYXlzOg0KIkFmdGVyIGEgcmVjb3ZlcnkgdG8gTDAsIGlmIHRoZSBkZXZpY2UgaXMgaW4gdGhl
-IE5vbi1EMCBzdGF0ZSBhbmQgUE1fRW50ZXJfTDEgRExMUCBpcyB0cmFuc21pdHRlZCBmcm9tIHRo
-ZSBkb3duc3RyZWFtIGRldmljZSwgc29mdHdhcmUgc2hvdWxkIGNvbmZpcm0gdGhhdCBoYXJkd2Fy
-ZSBpcyBpbiB0aGUgTDAgc3RhdGUgKFBNU1IuUE1TVEFURSA9IEwwKSBhbmQgaW5pdGlhdGUgdGhl
-IEwxIHRyYW5zaXRpb24gc2VxdWVuY2UgYWdhaW4gKHdyaXRlIDEgdG8gUE1DVExSLkwxSUFUTiku
-IEluIHRoaXMgY2FzZSwgdGhlIHNlcXVlbmNlIGlzOiBMMCDihpIgTDEg4oaSIEwwIHJlY292ZXJ5
-IOKGkiBMMSBhZ2Fpbi4iDQoNCkkgZG9u4oCZdCB0aGluayB0aGUgcG90ZW50aWFsIGlzc3VlIHRo
-YXQgQmpvcm4gdGFsa2VkIGFib3V0IGNhbiBoYXBwZW4NCmJlY2F1c2UgdGhlIFJQIGRvZXMgZ28g
-aW50byBMMS4gSSBjb3VsZCBiZSB3cm9uZyB0aG91Z2guLi4NCg0KVGhlIGRyaXZlciBzaG91bGQg
-YWxzbyBoYXZlIGEgcnVudGltZS1QTSBob29rIHRvIHRyYW5zaXRpb24gdG8gTDEgb24gDQpzdXNw
-ZW5kIGluIG9yZGVyIHRvIHNhdmUgcG93ZXIuIEhvd2V2ZXIsIHRoYXQgaXMgc29tZXdoYXQgc2Vw
-YXJhdGUNCnRvIHRoZSBwcm9ibGVtIHRoZSBwYXRjaCBmaXhlcy4NCg0KUGhpbA0K
+On Wed, Jun 13, 2018 at 12:25:59PM -0500, Bjorn Helgaas wrote:
+
+<snip>
+
+> Putting this workaround in the config accessor makes sense to me
+> because in this situation the endpoint thinks it's in L1 and it won't
+> receive TLPs for config accesses.  Apparently forcing the RP to L1
+> completes the L1 entry, and the RP correctly handles the "Exit from L1
+> State" (sec 5.3.2.2) that's required when the RP needs to send a TLP
+> to the endpoint.
+> 
+> I think there's still a potential issue if the endpoint goes to a
+> non-D0 state, the link is stuck in this transitional state (endpoint
+> thinks it's L1, RP thinks it's L0), and the *endpoint* wants to exit
+> L1, e.g., so it can send a PME message for a wakeup.  I don't know
+> what happens then.
+
+What is not clear to me is whether the endpoint link state can really be
+in electrical idle (so ready for L1) if it has not received a
+PM_Request_Ack DLLP from the host controller.
+
+It is not clear whether the host controller sends it upon PM_Enter_L1
+DLLP reception (ie does it actually carry out step 9 in PCIe specs
+5.3.2.1 "Entry into L1 state") or it has to be coerced into L1 to send
+it.
+
+I agree with Bjorn that this is not clear at all and it boils down to
+how HW is designed. We need to understand what "Endpoint in L1, RP in
+L0" means in this context and for that we need an errata document
+otherwise that's impossible to untangle.
+
+Lorenzo
+
+> If there were a real erratum writeup for this, it would probably
+> discuss this situation.
+> 
+> > > > > If that's the case, we shouldn't enable L1
+> > > > > entry on a card.  Is the core ASPM code doing something wrong here?
+> > > > 
+> > > > I can double-check, am I looking for some particular register in the
+> > > > PCIe space ?
+> > > > 
+> > > > >>>> PM_ENTER_L1 DLLP to the host controller. At this point, we can no longer
+> > > > >>>> access the card's config registers.
+> > > > >>>>
+> > > > >>>> The R-Car host controller will handle taking cards out of L1 as long as
+> > > > >>>> the host controller has also been transitioned to L1 link state.
+> > > > >>>
+> > > > >>> I wonder why this can't be done in a PM restore hook but that's not
+> > > > >>> really where my question is.
+> > > > >>
+> > > > >> I suspect because the link can be in L1 during startup too?
+> > > > >>
+> > > > >>>> Ideally, we would detect the PM_ENTER_L1 DLLP using an interrupt and
+> > > > >>>> transition the host to L1 immediately. However, this patch just ensures
+> > > > >>>> that we can talk to cards after they have gone into L1.
+> > > > >>>
+> > > > >>>> When attempting a config access, it checks to see if the card has gone
+> > > > >>>> into L1, and if so, does the same for the host controller.
+> > > > >>>>
+> > > > >>>> This is based on a patch by Hien Dang <hien.dang.eb@rvc.renesas.com>
+> > > > >>>>
+> > > > >>>> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> > > > >>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> > > > >>>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > > >>>> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+> > > > >>>> Cc: Simon Horman <horms+renesas@verge.net.au>
+> > > > >>>> Cc: Wolfram Sang <wsa@the-dreams.de>
+> > > > >>>> Cc: linux-renesas-soc@vger.kernel.org
+> > > > >>>> ---
+> > > > >>>> V2: - Drop extra parenthesis
+> > > > >>>>     - Use GENMASK()
+> > > > >>>>     - Fix comment "The HW will handle coming of of L1.", s/of of/out of/
+> > > > >>>> ---
+> > > > >>>>  drivers/pci/host/pcie-rcar.c | 24 ++++++++++++++++++++++++
+> > > > >>>>  1 file changed, 24 insertions(+)
+> > > > >>>>
+> > > > >>>> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+> > > > >>>> index ab61829db389..068bf9067ec1 100644
+> > > > >>>> --- a/drivers/pci/host/pcie-rcar.c
+> > > > >>>> +++ b/drivers/pci/host/pcie-rcar.c
+> > > > >>>> @@ -92,6 +92,13 @@
+> > > > >>>>  #define MACCTLR			0x011058
+> > > > >>>>  #define  SPEED_CHANGE		BIT(24)
+> > > > >>>>  #define  SCRAMBLE_DISABLE	BIT(27)
+> > > > >>>> +#define PMSR			0x01105c
+> > > > >>>> +#define  L1FAEG			BIT(31)
+> > > > >>>> +#define  PM_ENTER_L1RX		BIT(23)
+> > > > >>>> +#define  PMSTATE		GENMASK(18, 16)
+> > > > >>>> +#define  PMSTATE_L1		GENMASK(17, 16)
+> > > > >>>> +#define PMCTLR			0x011060
+> > > > >>>> +#define  L1_INIT		BIT(31)
+> > > > >>>>  #define MACS2R			0x011078
+> > > > >>>>  #define MACCGSPSETR		0x011084
+> > > > >>>>  #define  SPCNGRSN		BIT(31)
+> > > > >>>> @@ -191,6 +198,7 @@ static int rcar_pcie_config_access(struct rcar_pcie *pcie,
+> > > > >>>>  		unsigned int devfn, int where, u32 *data)
+> > > > >>>>  {
+> > > > >>>>  	int dev, func, reg, index;
+> > > > >>>> +	u32 val;
+> > > > >>>>  
+> > > > >>>>  	dev = PCI_SLOT(devfn);
+> > > > >>>>  	func = PCI_FUNC(devfn);
+> > > > >>>> @@ -232,6 +240,22 @@ static int rcar_pcie_config_access(struct rcar_pcie *pcie,
+> > > > >>>>  	if (pcie->root_bus_nr < 0)
+> > > > >>>>  		return PCIBIOS_DEVICE_NOT_FOUND;
+> > > > >>>>  
+> > > > >>>> +	/*
+> > > > >>>> +	 * If we are not in L1 link state and we have received PM_ENTER_L1 DLLP,
+> > > > >>>> +	 * transition to L1 link state. The HW will handle coming out of L1.
+> > > > >>>> +	 */
+> > > > >>>> +	val = rcar_pci_read_reg(pcie, PMSR);
+> > > > >>>> +	if (val & PM_ENTER_L1RX && (val & PMSTATE) != PMSTATE_L1) {
+> > > > >>>> +		rcar_pci_write_reg(pcie, L1_INIT, PMCTLR);
+> > > > >>>> +
+> > > > >>>> +		/* Wait until we are in L1 */
+> > > > >>>> +		while (!(val & L1FAEG))
+> > > > >>>> +			val = rcar_pci_read_reg(pcie, PMSR);
+> > > > >>>> +
+> > > > >>>> +		/* Clear flags indicating link has transitioned to L1 */
+> > > > >>>> +		rcar_pci_write_reg(pcie, L1FAEG | PM_ENTER_L1RX, PMSR);
+> > > > >>>> +	}
+> > > > >>>
+> > > > >>> I do not get why you need to add the DLLP check for _every_ given config
+> > > > >>> access and how/why it is just related to suspend/resume and not eg cold
+> > > > >>> boot (I supposed it is because devices can enter L1 upon suspend(?)), I
+> > > > >>> would ask you please to provide a thorough explanation so that I can
+> > > > >>> actually review this patch (the commit log must be rewritten nonetheless,
+> > > > >>> I do not think it is clear, at least it is not for me).
+> > > > >>
+> > > > >> See above
+> > > > >>
+> > > > >> -- 
+> > > > >> Best regards,
+> > > > >> Marek Vasut
+> > > > 
+> > > > 
+> > > > -- 
+> > > > Best regards,
+> > > > Marek Vasut
