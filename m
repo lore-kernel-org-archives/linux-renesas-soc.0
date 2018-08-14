@@ -1,104 +1,123 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34625 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389292AbeHPLd4 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Aug 2018 07:33:56 -0400
-Received: by mail-lf1-f66.google.com with SMTP id o72-v6so648307lfk.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Aug 2018 01:37:00 -0700 (PDT)
-Date: Thu, 16 Aug 2018 10:36:58 +0200
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        mchehab@kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Reply-To: kieran.bingham@ideasonboard.com
 Subject: Re: [PATCH v3] dt-bindings: media: adv748x: Document re-mappable
  addresses
-Message-ID: <20180816083658.GP1635@bigcity.dyn.berto.se>
+To: Rob Herring <robh@kernel.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
+        <linux-renesas-soc@vger.kernel.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 References: <20180809192944.7371-1-kieran.bingham@ideasonboard.com>
+ <20180813174544.GA11379@rob-hp-laptop>
+ <dedade62-91ed-2c92-dac7-fe4a8f9d9452@ideasonboard.com>
+ <CAL_JsqJQNtRNq+b3sJ4eEse1pzWy3F-WgbDF7=t-TrvFx6WcUQ@mail.gmail.com>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <e5f252b8-3188-b7a6-71fe-3c88be08d809@ideasonboard.com>
+Date: Tue, 14 Aug 2018 10:00:07 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <CAL_JsqJQNtRNq+b3sJ4eEse1pzWy3F-WgbDF7=t-TrvFx6WcUQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180809192944.7371-1-kieran.bingham@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+Hi Rob,
 
-Thanks for your patch.
+On 13/08/18 23:48, Rob Herring wrote:
+> On Mon, Aug 13, 2018 at 1:17 PM Kieran Bingham
+> <kieran.bingham@ideasonboard.com> wrote:
+>>
+>> On 13/08/18 18:45, Rob Herring wrote:
+>>> On Thu, Aug 09, 2018 at 08:29:44PM +0100, Kieran Bingham wrote:
+>>>> The ADV748x supports configurable slave addresses for its I2C pages.
+>>>> Document the page names, and provide an example for setting each of the
+>>>> pages explicitly.
+>>>
+>>> It would be good to say why you need this.
+>>
+>> In fact - I should probably have added a fixes tag here, which would
+>> have added more context:
+>>
+>> Fixes: 67537fe960e5 ("media: i2c: adv748x: Add support for
+>> i2c_new_secondary_device")
+> 
+> That doesn't really explain things from a DT perspective.
+> 
+>> Should I repost with this fixes tag?
+>> Or can it be collected with the RB tag?
+> 
+> I'll leave that to Hans.
+> 
+>>> The only use I can think of
+>>> is if there are other devices on the bus and you need to make sure the
+>>> addresses don't conflict.
+>>
+>> Yes, precisely. This driver has 'slave pages' which are created and
+>> mapped by the driver. The device has default addresses which are used by
+>> the driver - but it's very easy for these to conflict with other devices
+>> on the same I2C bus.
+>>
+>> Because the mappings are simply a software construct, we have a means to
+>> specify the desired mappings through DT at the board level - which
+>> allows the boards to ensure that conflicts do not appear.
+>>
+>>
+>>> Arguably, that information could be figured out without this in DT.
+>>
+>> How so ?
+>>
+>> Scanning the bus is error prone, and dependant upon driver state (and
+>> presence), and we have no means currently of requesting 'free/unused'
+>> addresses from the I2C core framework.
+> 
+> True. But assuming all devices are in DT, then you just need to scan
+> the child nodes of the bus and get a map of the used addresses. Though
+> if you had 2 or more devices like this, then you'd need to maintain
+> s/w allocated addresses too. It could all be maintained with a bitmap
+> which you initialize with addresses in DT.
 
-On 2018-08-09 20:29:44 +0100, Kieran Bingham wrote:
-> The ADV748x supports configurable slave addresses for its I2C pages.
-> Document the page names, and provide an example for setting each of the
-> pages explicitly.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+We do indeed have cases with platforms which use the same device
+populated twice:
 
-Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+See 1d26a5217187 ("ARM: dts: wheat: Fix ADV7513 address usage")
 
-> 
-> ---
-> v2:
->  - Fix commit message
->  - Extend documentation for the "required property" reg:
-> 
-> v3
->  - Fix missing comment from Laurent.
->  - correct the reg descrption
-> ---
->  .../devicetree/bindings/media/i2c/adv748x.txt    | 16 ++++++++++++++--
->  1 file changed, 14 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/adv748x.txt b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-> index 21ffb5ed8183..25a02496f4ba 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-> +++ b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-> @@ -10,7 +10,11 @@ Required Properties:
->      - "adi,adv7481" for the ADV7481
->      - "adi,adv7482" for the ADV7482
->  
-> -  - reg: I2C slave address
-> +  - reg: I2C slave addresses
-> +    The ADV748x has up to twelve 256-byte maps that can be accessed via the
-> +    main I2C ports. Each map has it own I2C address and acts as a standard
-> +    slave device on the I2C bus. The main address is mandatory, others are
-> +    optional and remain at default values if not specified.
->  
->  Optional Properties:
->  
-> @@ -18,6 +22,11 @@ Optional Properties:
->  		     "intrq3". All interrupts are optional. The "intrq3" interrupt
->  		     is only available on the adv7481
->    - interrupts: Specify the interrupt lines for the ADV748x
-> +  - reg-names : Names of maps with programmable addresses.
-> +		It shall contain all maps needing a non-default address.
-> +		Possible map names are:
-> +		  "main", "dpll", "cp", "hdmi", "edid", "repeater",
-> +		  "infoframe", "cbus", "cec", "sdp", "txa", "txb"
->  
->  The device node must contain one 'port' child node per device input and output
->  port, in accordance with the video interface bindings defined in
-> @@ -47,7 +56,10 @@ Example:
->  
->  	video-receiver@70 {
->  		compatible = "adi,adv7482";
-> -		reg = <0x70>;
-> +		reg = <0x70 0x71 0x72 0x73 0x74 0x75
-> +		       0x60 0x61 0x62 0x63 0x64 0x65>;
-> +		reg-names = "main", "dpll", "cp", "hdmi", "edid", "repeater",
-> +			    "infoframe", "cbus", "cec", "sdp", "txa", "txb";
->  
->  		#address-cells = <1>;
->  		#size-cells = <0>;
-> -- 
-> 2.17.1
-> 
+In that instance, a hardware bug means that if one of the two instances
+of the ADV7513 goes into standby, it will respond to it's default
+hardware slave map addresses. So because of this we must map *both*
+instances to be non defaults. (and ideally, we'd want to mark the actual
+defaults as unused - but - unusable; alas we don't have a means to do
+that yet)
+
+
+In the instance of this device (the adv748x) it has a default mapping at
+address 0x30 for the CBUS page. We have an expansion board, which adds
+GMSL cameras to the same board - of which reside on the same I2C bus -
+and are fixed to use 0x30 as the base address for one of the components.
+(Which even that then gets re-mapped - but it must be available to
+perform the remap in the first place)
+
+So we even have this concept of an address which is 'mostly' unused, but
+must be available for use at certain stages of the probe sequences.
+(There are 8 cameras attached, all with that same 0x30 address)
+
+
+The GMSL expansion is an 'overlay' (it's actually just an include file
+currently, but it /should/ be a DTO), and so I use this functionality to
+remap the ADV748x maps to a 'free' block of address space.
+
+Adding that patch [0] ([PATCH] arm64: dts: renesas: salvator-common:
+adv748x: Override secondary addresses) was what led me to notice that I
+had not updated the DT documentation for the feature, leading to this
+patch :)
+
+[0] https://www.spinics.net/lists/linux-renesas-soc/msg31194.html
 
 -- 
-Regards,
-Niklas S�derlund
+Regards
+--
+Kieran
