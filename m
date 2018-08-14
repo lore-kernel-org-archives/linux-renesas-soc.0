@@ -1,40 +1,37 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-References: <1532936891-25034-1-git-send-email-biju.das@bp.renesas.com> <1532936891-25034-4-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1532936891-25034-4-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 1 Aug 2018 10:46:58 +0200
-Message-ID: <CAMuHMdVyuJQj5S03aMMN-LWNLrUk_XEote4uEpwD1wsfQ5yfsw@mail.gmail.com>
-Subject: Re: [PATCH 3/5] soc: renesas: rcar-rst: Add support for RZ/G2M
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
+Date: Tue, 14 Aug 2018 14:15:02 -0600
+From: Rob Herring <robh@kernel.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [v0.1 PATCH 3/7] dt-bindings: mmc: add DT binding for UniPhier
+ SD/eMMC controller
+Message-ID: <20180814201502.GA26094@rob-hp-laptop>
+References: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
+ <1533622642-13989-4-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1533622642-13989-4-git-send-email-yamada.masahiro@socionext.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jul 30, 2018 at 9:54 AM Biju Das <biju.das@bp.renesas.com> wrote:
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+On Tue,  7 Aug 2018 15:17:18 +0900, Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+> This SD/eMMC controller is used for UniPhier SoC family.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+> 
+>  .../devicetree/bindings/mmc/uniphier-sd.txt        | 60 ++++++++++++++++++++++
+>  1 file changed, 60 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mmc/uniphier-sd.txt
+> 
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Reviewed-by: Rob Herring <robh@kernel.org>
