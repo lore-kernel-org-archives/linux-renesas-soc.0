@@ -1,78 +1,74 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.84]:34996 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726826AbeHQQXJ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Aug 2018 12:23:09 -0400
-From: Ulrich Hecht <uli+renesas@fpond.eu>
-To: linux-renesas-soc@vger.kernel.org
-Cc: horms@verge.net.au, geert@linux-m68k.org,
-        khiem.nguyen.xt@rvc.renesas.com, dien.pham.ry@renesas.com,
-        takeshi.kihara.df@renesas.com, Ulrich Hecht <uli+renesas@fpond.eu>
-Subject: [PATCH 3/5] arm64: dts: r8a7796: Add cpuidle support for CA57 cores
-Date: Fri, 17 Aug 2018 15:19:26 +0200
-Message-Id: <1534511968-19634-4-git-send-email-uli+renesas@fpond.eu>
-In-Reply-To: <1534511968-19634-1-git-send-email-uli+renesas@fpond.eu>
-References: <1534511968-19634-1-git-send-email-uli+renesas@fpond.eu>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Reply-To: kieran.bingham+renesas@ideasonboard.com
+Subject: Re: [PATCH/RFC 1/2] media: dt-bindings: adv748x: Fix decimal unit
+ addresses
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        devicetree@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <1528984088-24801-1-git-send-email-geert+renesas@glider.be>
+ <1528984088-24801-2-git-send-email-geert+renesas@glider.be>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <ec3c39d5-17a6-50f2-b54d-d30c89aadf1f@ideasonboard.com>
+Date: Thu, 16 Aug 2018 09:40:50 +0100
+MIME-Version: 1.0
+In-Reply-To: <1528984088-24801-2-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+Hi Geert,
 
-Enable cpuidle (core shutdown) support for R-Car M3-W CA57 cores.
+On 14/06/18 14:48, Geert Uytterhoeven wrote:
+> With recent dtc and W=1:
+> 
+>     Warning (graph_port): video-receiver@70/port@10: graph node unit address error, expected "a"
+>     Warning (graph_port): video-receiver@70/port@11: graph node unit address error, expected "b"
+> 
+> Unit addresses are always hexadecimal (without prefix), while the bases
+> of reg property values depend on their prefixes.
+> 
+> Fixes: e69595170b1cad85 ("media: adv748x: Add adv7481, adv7482 bindings")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  Documentation/devicetree/bindings/media/i2c/adv748x.txt | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/i2c/adv748x.txt b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
+> index 21ffb5ed818302ff..54d1d3bc186949fa 100644
+> --- a/Documentation/devicetree/bindings/media/i2c/adv748x.txt
+> +++ b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
+> @@ -73,7 +73,7 @@ Example:
+>  			};
+>  		};
+>  
+> -		port@10 {
+> +		port@a {
+>  			reg = <10>;
+>  
+>  			adv7482_txa: endpoint {
+> @@ -83,7 +83,7 @@ Example:
+>  			};
+>  		};
+>  
+> -		port@11 {
+> +		port@b {
+>  			reg = <11>;
+>  
+>  			adv7482_txb: endpoint {
+> 
 
-Parameters were found after evaluation by gaku.inami.xw@bp.renesas.com; they
-help to keep the performance and reduce the power consumption.
+Just looking back through these patches, to make sure they get integrated.
 
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[dien.pham.ry: Apply new cpuidle parameters]
-Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
-Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Having read yours and Robs responses, I do agree that this is a correct fix.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 258a327..3d30b05 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -134,6 +134,7 @@
- 			power-domains = <&sysc R8A7796_PD_CA57_CPU0>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
-+			cpu-idle-states = <&CPU_SLEEP_0>;
- 			clocks =<&cpg CPG_CORE R8A7796_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
- 			#cooling-cells = <2>;
-@@ -146,6 +147,7 @@
- 			power-domains = <&sysc R8A7796_PD_CA57_CPU1>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
-+			cpu-idle-states = <&CPU_SLEEP_0>;
- 			clocks =<&cpg CPG_CORE R8A7796_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
- 			#cooling-cells = <2>;
-@@ -208,6 +210,20 @@
- 			cache-unified;
- 			cache-level = <2>;
- 		};
-+
-+		idle-states {
-+			entry-method = "psci";
-+
-+			CPU_SLEEP_0: cpu-sleep-0 {
-+				compatible = "arm,idle-state";
-+				arm,psci-suspend-param = <0x0010000>;
-+				local-timer-stop;
-+				entry-latency-us = <400>;
-+				exit-latency-us = <500>;
-+				min-residency-us = <4000>;
-+				status = "okay";
-+			};
-+		};
- 	};
- 
- 	extal_clk: extal {
--- 
-2.7.4
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
