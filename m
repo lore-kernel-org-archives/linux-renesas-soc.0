@@ -1,64 +1,99 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:33622 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726293AbeHTWZq (ORCPT
+Received: from conuserg-09.nifty.com ([210.131.2.76]:17026 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389123AbeHPKOB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Aug 2018 18:25:46 -0400
-Date: Mon, 20 Aug 2018 21:08:55 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
+        Thu, 16 Aug 2018 06:14:01 -0400
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
         Jassi Brar <jaswinder.singh@linaro.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 3/7] dt-bindings: mmc: add DT binding for UniPhier
- SD/eMMC controller
-Message-ID: <20180820190855.gen3dnjs4rhz4npx@ninjato>
+        linux-renesas-soc@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH v2 3/7] dt-bindings: mmc: add DT binding for UniPhier SD/eMMC controller
+Date: Thu, 16 Aug 2018 16:16:35 +0900
+Message-Id: <1534403799-10594-4-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1534403799-10594-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1534403799-10594-1-git-send-email-yamada.masahiro@socionext.com>
- <1534403799-10594-4-git-send-email-yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="smjpajpanxb7n5vu"
-Content-Disposition: inline
-In-Reply-To: <1534403799-10594-4-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+This SD/eMMC controller is used for UniPhier SoC family.
 
---smjpajpanxb7n5vu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
 
-On Thu, Aug 16, 2018 at 04:16:35PM +0900, Masahiro Yamada wrote:
-> This SD/eMMC controller is used for UniPhier SoC family.
->=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+Changes in v2:
+  - Rename compatible "socionext,uniphier-sd-v3.1b"
+    to "socionext,uniphier-sd-v3.1.1"
 
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+ .../devicetree/bindings/mmc/uniphier-sd.txt        | 55 ++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mmc/uniphier-sd.txt
 
-
---smjpajpanxb7n5vu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlt7EcYACgkQFA3kzBSg
-Kbb3Yw/9HD4ZKV6Ao1rXzs7nkr7nsJaU+fZuKE+a41QGXP7Z/hVjrnT7v/mD+zTy
-RZQI9mgCzpjPRp3GhXzO8/WKCfUk8vian3Vr79Ek+hDRzlf87cHg67yXlflDg6RO
-iHmBWfxKLriTZXSucanzOpEYKo+w1lUKDBkN6BWwyUn5nly387P/8C3+kNIkvSnS
-F1C1yD0/ptGXakZywvQzrNx8rhi9yKurw7MdJP8lncnvb0ZreJ/suudWz2WvDzMy
-KT6Veo7ACDQfs07nfdcrlhdBg6N6+oXVkH9WY6C6eb3K9eUpGAZq7wBDkPz8NgBv
-aFAGZdF4LAubS4by36w2rgkfAA82hiBWdmQcBX6+UG9vKIURtRd9pQG89YuSbs1k
-D9z/SWR9xfm/LrcsLTdnQDy7OUV3PttVwky7aksYFt3lJg0dw4k6FfzOL7QYi9cd
-Io6kXvVC+tMqy3gISRv+HklvGjUNAho+T89IeJNb5Q1XML+t7ranaEBW88C8RN0p
-nABXIj/VBNqCLagvWnLQQtTz2gKCIOldJdynkZ0ry2xo+wBKg8otkvmBv43n7s3n
-p1gV5PUB1cYFBZ+PbMr/YW3CCix74/2U73UzC9ohdY5Hi5uqPseT032+gx7vNq78
-wmzf6FEKgMfM9E9S5Cph/rH9vwS3rVuzEM/IqjfLRmri3ifz76M=
-=WdS0
------END PGP SIGNATURE-----
-
---smjpajpanxb7n5vu--
+diff --git a/Documentation/devicetree/bindings/mmc/uniphier-sd.txt b/Documentation/devicetree/bindings/mmc/uniphier-sd.txt
+new file mode 100644
+index 0000000..e1d6587
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mmc/uniphier-sd.txt
+@@ -0,0 +1,55 @@
++UniPhier SD/eMMC controller
++
++Required properties:
++- compatible: should be one of the following:
++    "socionext,uniphier-sd-v2.91"  - IP version 2.91
++    "socionext,uniphier-sd-v3.1"   - IP version 3.1
++    "socionext,uniphier-sd-v3.1.1" - IP version 3.1.1
++- reg: offset and length of the register set for the device.
++- interrupts: a single interrupt specifier.
++- clocks: a single clock specifier of the controller clock.
++- reset-names: should contain the following:
++    "host"   - mandatory for all versions
++    "bridge" - should exist only for "socionext,uniphier-sd-v2.91"
++    "hw"     - should exist if eMMC hw reset line is available
++- resets: a list of reset specifiers, corresponding to the reset-names
++
++Optional properties:
++- pinctrl-names: if present, should contain the following:
++    "default" - should exist for all instances
++    "uhs"     - should exist for SD instance with UHS support
++- pinctrl-0: pin control state for the default mode
++- pinctrl-1: pin control state for the UHS mode
++- dma-names: should be "rx-tx" if present.
++  This property can exist only for "socionext,uniphier-sd-v2.91".
++- dmas: a single DMA channel specifier
++  This property can exist only for "socionext,uniphier-sd-v2.91".
++- bus-width: see mmc.txt
++- cap-sd-highspeed: see mmc.txt
++- cap-mmc-highspeed: see mmc.txt
++- sd-uhs-sdr12: see mmc.txt
++- sd-uhs-sdr25: see mmc.txt
++- sd-uhs-sdr50: see mmc.txt
++- cap-mmc-hw-reset: should exist if reset-names contains "hw". see mmc.txt
++- non-removable: see mmc.txt
++
++Example:
++
++	sd: sdhc@5a400000 {
++		compatible = "socionext,uniphier-sd-v2.91";
++		reg = <0x5a400000 0x200>;
++		interrupts = <0 76 4>;
++		pinctrl-names = "default", "uhs";
++		pinctrl-0 = <&pinctrl_sd>;
++		pinctrl-1 = <&pinctrl_sd_uhs>;
++		clocks = <&mio_clk 0>;
++		reset-names = "host", "bridge";
++		resets = <&mio_rst 0>, <&mio_rst 3>;
++		dma-names = "rx-tx";
++		dmas = <&dmac 4>;
++		bus-width = <4>;
++		cap-sd-highspeed;
++		sd-uhs-sdr12;
++		sd-uhs-sdr25;
++		sd-uhs-sdr50;
++	};
+-- 
+2.7.4
