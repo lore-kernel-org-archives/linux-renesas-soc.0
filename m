@@ -1,23 +1,22 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-08.nifty.com ([210.131.2.75]:39265 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733061AbeHGIa6 (ORCPT
+Received: from conuserg-09.nifty.com ([210.131.2.76]:17406 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389275AbeHPKOP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Aug 2018 04:30:58 -0400
+        Thu, 16 Aug 2018 06:14:15 -0400
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
+To: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
         Jassi Brar <jaswinder.singh@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [v0.1 PATCH 7/7] mmc: tmio: refactor CLK_CTL bit calculation
-Date: Tue,  7 Aug 2018 15:17:22 +0900
-Message-Id: <1533622642-13989-8-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH v2 7/7] mmc: tmio: refactor CLK_CTL bit calculation
+Date: Thu, 16 Aug 2018 16:16:39 +0900
+Message-Id: <1534403799-10594-8-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1534403799-10594-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1534403799-10594-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -33,6 +32,8 @@ it is not clear.  'divisor <= 1' is easier to understand.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
+
+Changes in v2: None
 
  drivers/mmc/host/tmio_mmc.c | 18 +++++++++++++-----
  1 file changed, 13 insertions(+), 5 deletions(-)
