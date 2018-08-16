@@ -1,154 +1,104 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:51485 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726148AbeHTNcT (ORCPT
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34625 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389292AbeHPLd4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Aug 2018 09:32:19 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, geert@linux-m68k.org,
-        horms@verge.net.au, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        kieran.bingham+renesas@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se, damm+renesas@opensource.se,
-        ulrich.hecht+renesas@gmail.com, linux-renesas-soc@vger.kernel.org,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Subject: [RFT 6/8] arm64: dts: r8a77990: Add VIN and CSI-2 device nodes
-Date: Mon, 20 Aug 2018 12:16:40 +0200
-Message-Id: <1534760202-20114-7-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1534760202-20114-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1534760202-20114-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 16 Aug 2018 07:33:56 -0400
+Received: by mail-lf1-f66.google.com with SMTP id o72-v6so648307lfk.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Aug 2018 01:37:00 -0700 (PDT)
+Date: Thu, 16 Aug 2018 10:36:58 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        mchehab@kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] dt-bindings: media: adv748x: Document re-mappable
+ addresses
+Message-ID: <20180816083658.GP1635@bigcity.dyn.berto.se>
+References: <20180809192944.7371-1-kieran.bingham@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180809192944.7371-1-kieran.bingham@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Hi Kieran,
 
-Add device nodes for VIN4, VIN5 and CSI40 to R-Car E3 R8A77990 device tree.
+Thanks for your patch.
 
-Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
-Compared to other SoCs, VIN4 and VIN5 on E3 have a single endpoint.
-If I describe with a unit address, I get a DTC warning
+On 2018-08-09 20:29:44 +0100, Kieran Bingham wrote:
+> The ADV748x supports configurable slave addresses for its I2C pages.
+> Document the page names, and provide an example for setting each of the
+> pages explicitly.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-arch/arm64/boot/dts/renesas/r8a77990-ebisu.dtb: Warning (graph_child_address): /soc/video@e6ef4000/ports/port@1: graph node has single child node 'endpoint@0', #address-cells/#size-cells are not necessary
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-So I removed the unit address, hoping this won't break the VIN DT parsing
-routine
+> 
+> ---
+> v2:
+>  - Fix commit message
+>  - Extend documentation for the "required property" reg:
+> 
+> v3
+>  - Fix missing comment from Laurent.
+>  - correct the reg descrption
+> ---
+>  .../devicetree/bindings/media/i2c/adv748x.txt    | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/i2c/adv748x.txt b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
+> index 21ffb5ed8183..25a02496f4ba 100644
+> --- a/Documentation/devicetree/bindings/media/i2c/adv748x.txt
+> +++ b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
+> @@ -10,7 +10,11 @@ Required Properties:
+>      - "adi,adv7481" for the ADV7481
+>      - "adi,adv7482" for the ADV7482
+>  
+> -  - reg: I2C slave address
+> +  - reg: I2C slave addresses
+> +    The ADV748x has up to twelve 256-byte maps that can be accessed via the
+> +    main I2C ports. Each map has it own I2C address and acts as a standard
+> +    slave device on the I2C bus. The main address is mandatory, others are
+> +    optional and remain at default values if not specified.
+>  
+>  Optional Properties:
+>  
+> @@ -18,6 +22,11 @@ Optional Properties:
+>  		     "intrq3". All interrupts are optional. The "intrq3" interrupt
+>  		     is only available on the adv7481
+>    - interrupts: Specify the interrupt lines for the ADV748x
+> +  - reg-names : Names of maps with programmable addresses.
+> +		It shall contain all maps needing a non-default address.
+> +		Possible map names are:
+> +		  "main", "dpll", "cp", "hdmi", "edid", "repeater",
+> +		  "infoframe", "cbus", "cec", "sdp", "txa", "txb"
+>  
+>  The device node must contain one 'port' child node per device input and output
+>  port, in accordance with the video interface bindings defined in
+> @@ -47,7 +56,10 @@ Example:
+>  
+>  	video-receiver@70 {
+>  		compatible = "adi,adv7482";
+> -		reg = <0x70>;
+> +		reg = <0x70 0x71 0x72 0x73 0x74 0x75
+> +		       0x60 0x61 0x62 0x63 0x64 0x65>;
+> +		reg-names = "main", "dpll", "cp", "hdmi", "edid", "repeater",
+> +			    "infoframe", "cbus", "cec", "sdp", "txa", "txb";
+>  
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+> -- 
+> 2.17.1
+> 
 
- 				#size-cells = <0>;
-
- 				port@1 {
--					#address-cells = <1>;
--					#size-cells = <0>;
--
- 					reg = <1>;
-
--					vin4csi40: endpoint@0 {
--						reg = <0>;
-+					vin4csi40: endpoint {
- 						remote-endpoint= <&csi40vin4>;
- 					};
- 				};
-
-Just pointing it out in case somethine goes bad when testing.
-
-
----
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 79 +++++++++++++++++++++++++++++++
- 1 file changed, 79 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index 2c8f119..b7d498b 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -337,6 +337,85 @@
- 			status = "disabled";
- 		};
-
-+		csi40: csi2@feaa0000 {
-+			compatible = "renesas,r8a77990-csi2", "renesas,rcar-gen3-csi2";
-+			reg = <0 0xfeaa0000 0 0x10000>;
-+			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 716>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 716>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					csi40vin4: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&vin4csi40>;
-+					};
-+					csi40vin5: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&vin5csi40>;
-+					};
-+				};
-+			};
-+		};
-+
-+		vin4: video@e6ef4000 {
-+			compatible = "renesas,vin-r8a77990";
-+			reg = <0 0xe6ef4000 0 0x1000>;
-+			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 807>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 807>;
-+			renesas,id = <4>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					vin4csi40: endpoint {
-+						remote-endpoint= <&csi40vin4>;
-+					};
-+				};
-+			};
-+		};
-+
-+		vin5: video@e6ef5000 {
-+			compatible = "renesas,vin-r8a77990";
-+			reg = <0 0xe6ef5000 0 0x1000>;
-+			interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 806>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 806>;
-+			renesas,id = <5>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					vin5csi40: endpoint {
-+						remote-endpoint= <&csi40vin5>;
-+					};
-+				};
-+			};
-+		};
-+
- 		scif2: serial@e6e88000 {
- 			compatible = "renesas,scif-r8a77990",
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
---
-2.7.4
+-- 
+Regards,
+Niklas S�derlund
