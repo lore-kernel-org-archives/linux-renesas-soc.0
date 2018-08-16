@@ -1,39 +1,30 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-References: <1532936891-25034-1-git-send-email-biju.das@bp.renesas.com> <1532936891-25034-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1532936891-25034-2-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 1 Aug 2018 10:01:02 +0200
-Message-ID: <CAMuHMdW_R0Nt_u62fHneYjJc+-W-VqUhfwCt7MmiHjR_BiqntA@mail.gmail.com>
-Subject: Re: [PATCH 1/5] dt-bindings: power: Add r8a774a1 SYSC power domain definitions
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Date: Thu, 16 Aug 2018 12:09:57 -0700 (PDT)
+Message-Id: <20180816.120957.215136707226032537.davem@davemloft.net>
+To: fabrizio.castro@bp.renesas.com
+Cc: robh+dt@kernel.org, mark.rutland@arm.com,
+        sergei.shtylyov@cogentembedded.com, geert+renesas@glider.be,
+        horms+renesas@verge.net.au, biju.das@bp.renesas.com,
+        yoshihiro.shimoda.uh@renesas.com, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, horms@verge.net.au,
+        Chris.Paterson2@renesas.com
+Subject: Re: [PATCH] dt-bindings: net: ravb: Add support for r8a774a1 SoC
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1534250017-15725-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1534250017-15725-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jul 30, 2018 at 9:54 AM Biju Das <biju.das@bp.renesas.com> wrote:
-> This patch adds power domain indices for RZ/G2M.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Date: Tue, 14 Aug 2018 13:33:37 +0100
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Document RZ/G2M (R8A774A1) SoC bindings.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Applied, thanks.
