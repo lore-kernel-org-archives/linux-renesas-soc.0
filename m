@@ -1,64 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:33570 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726293AbeHTWYQ (ORCPT
+Received: from conuserg-09.nifty.com ([210.131.2.76]:17013 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389266AbeHPKOA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Aug 2018 18:24:16 -0400
-Date: Mon, 20 Aug 2018 21:07:26 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
+        Thu, 16 Aug 2018 06:14:00 -0400
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
         Jassi Brar <jaswinder.singh@linaro.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 1/7] mmc: tmio: replace tmio_mmc_clk_stop() calls with
- tmio_mmc_set_clock()
-Message-ID: <20180820190725.77kn5j4urkwa55kp@ninjato>
+        linux-renesas-soc@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH v2 1/7] mmc: tmio: replace tmio_mmc_clk_stop() calls with tmio_mmc_set_clock()
+Date: Thu, 16 Aug 2018 16:16:33 +0900
+Message-Id: <1534403799-10594-2-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1534403799-10594-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1534403799-10594-1-git-send-email-yamada.masahiro@socionext.com>
- <1534403799-10594-2-git-send-email-yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="d43a37bvm6nxnnv6"
-Content-Disposition: inline
-In-Reply-To: <1534403799-10594-2-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+tmio_mmc_clk_stop(host) is equivalent to tmio_mmc_set_clock(host, 0).
+This replacement is needed for the next commit.
 
---d43a37bvm6nxnnv6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-On Thu, Aug 16, 2018 at 04:16:33PM +0900, Masahiro Yamada wrote:
-> tmio_mmc_clk_stop(host) is equivalent to tmio_mmc_set_clock(host, 0).
-> This replacement is needed for the next commit.
->=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Changes in v2: None
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+ drivers/mmc/host/tmio_mmc_core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-
---d43a37bvm6nxnnv6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlt7EW0ACgkQFA3kzBSg
-KbYU9RAAj6K+KIslWWDX0nM/d/V74J+v+cQWaXDONqZsegona8jLholQ6MBSEgFF
-jCvkKpJVK7Lt5TGPPJ8h1l5orvGmBGh0GuUCZpRUply26NXG0D460TdUad0wKBLO
-myzPS0aRHc8i/ANiqj+5oCBLDPrzKPUJ67NAGw1giHam8vxgcEf3KwNkfkvAZi1o
-fGosUJB8ys5NDctM7rW7CJavvoZBGOjuWvohslu/5VacdJllwfpLokSL0NhpF+vu
-sgHCmBziwEQN9PwtP3vNrnlnh0t6WAEm3zALq+i9aH0lV8E5u7KiQg0+sKW9Gva+
-nS+qr1/8Tn4lj9UmqtXoWElAZJhASnHOwae9qZNgN4v7HUeVX3PI2dwAsZNPNjBc
-XbcWh8BJ+pnGurTRywVcztesnjmK5uu4rsFljrfIFTeqGYTseKJH+PPrj4yAXeE1
-y/zq1SFHMtr88yIw5dT9uBb1QNbACd54Is7Ck+3gXDwqE96+smE/oXyNV21ZJXVF
-8agINiBUUM6DkYGyafA4yG2HUv98Vli4MXYe/Fkota5NsRNvGop1uI/BxXXV9HF6
-1edYIiyguZPunrDk3a54wMCSnuZa7BgRDl/PIqwGPx5fztBKKzm3mbdWR+R42LWJ
-AOjbo3YH/lxZyKUHYSJSNn1RhVdOBVKEv7pkOt+nkXJHWny9FoE=
-=8k0o
------END PGP SIGNATURE-----
-
---d43a37bvm6nxnnv6--
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 3cb554c..991b340 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -1032,7 +1032,7 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 	switch (ios->power_mode) {
+ 	case MMC_POWER_OFF:
+ 		tmio_mmc_power_off(host);
+-		tmio_mmc_clk_stop(host);
++		tmio_mmc_set_clock(host, 0);
+ 		break;
+ 	case MMC_POWER_UP:
+ 		tmio_mmc_power_on(host, ios->vdd);
+@@ -1269,7 +1269,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
+ 	if (pdata->flags & TMIO_MMC_SDIO_IRQ)
+ 		_host->sdio_irq_mask = TMIO_SDIO_MASK_ALL;
+ 
+-	tmio_mmc_clk_stop(_host);
++	tmio_mmc_set_clock(_host, 0);
+ 	tmio_mmc_reset(_host);
+ 
+ 	_host->sdcard_irq_mask = sd_ctrl_read16_and_16_as_32(_host, CTL_IRQ_MASK);
+@@ -1353,7 +1353,7 @@ int tmio_mmc_host_runtime_suspend(struct device *dev)
+ 	tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_ALL);
+ 
+ 	if (host->clk_cache)
+-		tmio_mmc_clk_stop(host);
++		tmio_mmc_set_clock(host, 0);
+ 
+ 	tmio_mmc_clk_disable(host);
+ 
+-- 
+2.7.4
