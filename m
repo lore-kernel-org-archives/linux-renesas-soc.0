@@ -1,44 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:36754 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728379AbeH2PnS (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:49197 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbeHQM5Z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Aug 2018 11:43:18 -0400
-Received: by mail-io0-f193.google.com with SMTP id q5-v6so4216830iop.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Aug 2018 04:46:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <1534249957-15543-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1534249957-15543-1-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 29 Aug 2018 13:46:34 +0200
-Message-ID: <CACRpkdZVr1Y0NbX15jaS95MOptqS71miGF0Umj4iEFffwS3-hQ@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: gpio: rcar: Add r8a774a1 (RZ/G2M) support
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+        Fri, 17 Aug 2018 08:57:25 -0400
+Date: Fri, 17 Aug 2018 11:54:35 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Rob Herring <robh@kernel.org>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: gpio: rcar: Add r8a774a1 (RZ/G2M) support
+Message-ID: <20180817095434.n4ly5h4gr55a7rzg@verge.net.au>
+References: <1534249957-15543-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20180815201301.GA27866@rob-hp-laptop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180815201301.GA27866@rob-hp-laptop>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Aug 14, 2018 at 2:32 PM Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
+On Wed, Aug 15, 2018 at 02:13:01PM -0600, Rob Herring wrote:
+> On Tue, 14 Aug 2018 13:32:37 +0100, Fabrizio Castro wrote:
+> > Document Renesas' RZ/G2M (R8A774A1) GPIO blocks compatibility within the
+> > relevant dt-bindings.
+> > 
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> > ---
+> >  Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-> Document Renesas' RZ/G2M (R8A774A1) GPIO blocks compatibility within the
-> relevant dt-bindings.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-
-Patch applied with the ACKs.
-
-Yours,
-Linus Walleij
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
