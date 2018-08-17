@@ -1,46 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:39827 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726942AbeH0TDL (ORCPT
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.25]:13468 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726437AbeHQQWX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 27 Aug 2018 15:03:11 -0400
-Received: by mail-ua1-f66.google.com with SMTP id g18-v6so9742286uam.6
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Aug 2018 08:16:09 -0700 (PDT)
-MIME-Version: 1.0
-References: <1534511921-19470-1-git-send-email-uli+renesas@fpond.eu>
-In-Reply-To: <1534511921-19470-1-git-send-email-uli+renesas@fpond.eu>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 27 Aug 2018 17:15:55 +0200
-Message-ID: <CAMuHMdX4etTkVn=wt8CKES_=3E2f-hQ6WK1EaUTK3CUETLtuFw@mail.gmail.com>
-Subject: Re: [PATCH 0/3] I2C0/3/5 pin control for H3 and M3-W
-To: uli+renesas@fpond.eu
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 17 Aug 2018 12:22:23 -0400
+From: Ulrich Hecht <uli+renesas@fpond.eu>
+To: linux-renesas-soc@vger.kernel.org
+Cc: horms@verge.net.au, wsa@the-dreams.de,
+        Ulrich Hecht <uli+renesas@fpond.eu>
+Subject: [PATCH 0/3] I2C0/3/5 pin control for H3 and M3-W
+Date: Fri, 17 Aug 2018 15:18:38 +0200
+Message-Id: <1534511921-19470-1-git-send-email-uli+renesas@fpond.eu>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Uli,
+Hi!
 
-On Fri, Aug 17, 2018 at 3:19 PM Ulrich Hecht <uli+renesas@fpond.eu> wrote:
-> This is an up-port from the BSP. Unfortunately I could not test these
-> because none of those pins seem to be accessible on Salvator boards (not on
-> ULCB either, AFAICT), so the best thing I can say is that they don't seem to
-> break anything.
+This is an up-port from the BSP. Unfortunately I could not test these
+because none of those pins seem to be accessible on Salvator boards (not on
+ULCB either, AFAICT), so the best thing I can say is that they don't seem to
+break anything.
 
-For Salvator-X(S):
-  1. If you set SW5 and SW6 to their center positions, you can access I2C3 on
-     EXIO Connector D.
-  2. I2C5 is available on test points CP45/46.
+CU
+Uli
 
-Gr{oetje,eeting}s,
 
-                        Geert
+Takeshi Kihara (3):
+  pinctrl: sh-pfc: r8a7795: Add I2C{0,3,5} pins, groups and functions
+  pinctrl: sh-pfc: r8a7795-es1: Add I2C{0,3,5} pins, groups and
+    functions
+  pinctrl: sh-pfc: r8a7796: Add I2C{0,3,5} pins, groups and functions
+
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 103 ++++++++++++++++++++++++-------
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 101 +++++++++++++++++++++++-------
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c     | 100 ++++++++++++++++++++++++------
+ 3 files changed, 242 insertions(+), 62 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.7.4
