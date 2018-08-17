@@ -1,74 +1,85 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Reply-To: kieran.bingham+renesas@ideasonboard.com
-Subject: Re: [PATCH/RFC 1/2] media: dt-bindings: adv748x: Fix decimal unit
- addresses
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        devicetree@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-References: <1528984088-24801-1-git-send-email-geert+renesas@glider.be>
- <1528984088-24801-2-git-send-email-geert+renesas@glider.be>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Message-ID: <ec3c39d5-17a6-50f2-b54d-d30c89aadf1f@ideasonboard.com>
-Date: Thu, 16 Aug 2018 09:40:50 +0100
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from perceval.ideasonboard.com ([213.167.242.64]:43762 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727544AbeHQUMj (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 17 Aug 2018 16:12:39 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>, Jacopo Mondi <jacopo@jmondi.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: [PATCH v2 4/4] media: i2c: Add RDACM20 driver
+Date: Fri, 17 Aug 2018 20:09:19 +0300
+Message-ID: <5524303.kLxU94kiUG@avalon>
+In-Reply-To: <20180808165559.29957-5-kieran.bingham@ideasonboard.com>
+References: <20180808165559.29957-1-kieran.bingham@ideasonboard.com> <20180808165559.29957-5-kieran.bingham@ideasonboard.com>
 MIME-Version: 1.0
-In-Reply-To: <1528984088-24801-2-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+Hi Kieran,
 
-On 14/06/18 14:48, Geert Uytterhoeven wrote:
-> With recent dtc and W=1:
-> 
->     Warning (graph_port): video-receiver@70/port@10: graph node unit address error, expected "a"
->     Warning (graph_port): video-receiver@70/port@11: graph node unit address error, expected "b"
-> 
-> Unit addresses are always hexadecimal (without prefix), while the bases
-> of reg property values depend on their prefixes.
-> 
-> Fixes: e69595170b1cad85 ("media: adv748x: Add adv7481, adv7482 bindings")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thank you for the patch.
+
+On Wednesday, 8 August 2018 19:55:59 EEST Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>=20
+> The RDACM20 is a GMSL camera supporting 1280x800 resolution images
+> developed by IMI based on an Omnivision 10635 sensor and a Maxim MAX9271
+> GMSL serializer.
+>=20
+> The GMSL link carries power, control (I2C) and video data over a
+> single coax cable.
+>=20
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.co=
+m>
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>=20
 > ---
->  Documentation/devicetree/bindings/media/i2c/adv748x.txt | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/adv748x.txt b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-> index 21ffb5ed818302ff..54d1d3bc186949fa 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-> +++ b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-> @@ -73,7 +73,7 @@ Example:
->  			};
->  		};
->  
-> -		port@10 {
-> +		port@a {
->  			reg = <10>;
->  
->  			adv7482_txa: endpoint {
-> @@ -83,7 +83,7 @@ Example:
->  			};
->  		};
->  
-> -		port@11 {
-> +		port@b {
->  			reg = <11>;
->  
->  			adv7482_txb: endpoint {
-> 
+> v2:
+>  - Fix MAINTAINERS entry
+>=20
+>  MAINTAINERS                         |  10 +
+>  drivers/media/i2c/Kconfig           |  11 +
+>  drivers/media/i2c/Makefile          |   1 +
+>  drivers/media/i2c/rdacm20-ov10635.h | 953 ++++++++++++++++++++++++++++
+>  drivers/media/i2c/rdacm20.c         | 635 ++++++++++++++++++
+>  5 files changed, 1610 insertions(+)
+>  create mode 100644 drivers/media/i2c/rdacm20-ov10635.h
+>  create mode 100644 drivers/media/i2c/rdacm20.c
 
-Just looking back through these patches, to make sure they get integrated.
+[snip]
 
-Having read yours and Robs responses, I do agree that this is a correct fix.
+> diff --git a/drivers/media/i2c/rdacm20.c b/drivers/media/i2c/rdacm20.c
+> new file mode 100644
+> index 000000000000..352c54902d1c
+> --- /dev/null
+> +++ b/drivers/media/i2c/rdacm20.c
+> @@ -0,0 +1,635 @@
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+[snip]
+
+> +MODULE_DESCRIPTION("SoC Camera driver for MAX9286<->MAX9271<->OV10635");
+
+You probably want to fix this. Apart from that, the code looks good to me a=
+s a=20
+first driver version, knowing that we will continue development and=20
+refactoring to try and separate the OV10635 and MAX9271 code.
+
+> +MODULE_AUTHOR("Vladimir Barinov");
+> +MODULE_LICENSE("GPL");
+
+=2D-=20
+Regards,
+
+Laurent Pinchart
