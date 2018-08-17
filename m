@@ -1,63 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:60586 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726880AbeHTUDn (ORCPT
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42301 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726288AbeHQXXw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Aug 2018 16:03:43 -0400
-Date: Mon, 20 Aug 2018 18:47:18 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/2] mmc: renesas_sdhi_internal_dmac: fix typo in
+        Fri, 17 Aug 2018 19:23:52 -0400
+Received: by mail-lj1-f195.google.com with SMTP id f1-v6so7269988ljc.9
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Aug 2018 13:19:04 -0700 (PDT)
+Subject: [PATCH 1/2] mmc: renesas_sdhi_internal_dmac: fix typo in
  DM_CM_DTRAN_MODE.BUS_WIDTH field name
-Message-ID: <20180820164718.3mqaej56tcl5jna2@ninjato>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
 References: <0f984d54-77bc-44b2-4c4a-79a158bbc7e2@cogentembedded.com>
- <f93ace85-6e2a-fec0-b73c-9101bdde60eb@cogentembedded.com>
+Message-ID: <f93ace85-6e2a-fec0-b73c-9101bdde60eb@cogentembedded.com>
+Date: Fri, 17 Aug 2018 23:19:02 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6gfoe7j6hcrfg7bg"
-Content-Disposition: inline
-In-Reply-To: <f93ace85-6e2a-fec0-b73c-9101bdde60eb@cogentembedded.com>
+In-Reply-To: <0f984d54-77bc-44b2-4c4a-79a158bbc7e2@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Fix a stray underscore in the DM_CM_DTRAN_MODE.BUS_WIDTH register field
+name.
 
---6gfoe7j6hcrfg7bg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-On Fri, Aug 17, 2018 at 11:19:02PM +0300, Sergei Shtylyov wrote:
-> Fix a stray underscore in the DM_CM_DTRAN_MODE.BUS_WIDTH register field
-> name.
->=20
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+---
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Yes, I noticed this, too recently
-
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---6gfoe7j6hcrfg7bg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlt68JYACgkQFA3kzBSg
-KbZV3A/+JVogUsDI+WP16mL7+5fCv8qPbPitfdXCFOsI31GnMjtRlhJ+RhtkJ108
-0Wlixh5CZDjLdWda5ANvHvNsPgUg3APL9gyFhOoGR3jBznD+lzOrO0t9NesL0NYi
-ZK/tiFja9zP5cU3YGUzAq6rgNqHcjmfY1kJE4oUnGNO3jcZnJGgQy2j7l/BnzivJ
-GQ9XDNm78ZrgVnlc+kJWGE4KaD1kFA141xgSKdt5ST8+gSI9yXwf+/nKmV0KUvgY
-34ppEs9Pqf0yxTtZZVUlOJxuGo3nNUU9WmA8wZ9xCfRY/Rubr//Z1BK3CPG5mOkU
-jlljBULwiJF2cfCDaxWqls5sk+OVcv/TYzS95Hb1sYCBouivcLEX9JL6h0IDnQQl
-OL80+YhcFhGEL+FS/CLyuYTyh4Gd6rjw7nNmVaAtgNIU42CoyKinj7XnT14UGOgj
-jkrW+IvvyqZXSqD32IeLT1o2ufX428cnjk6xo6CxNKHVw4/Ej3YvlF1JW2ulk1LJ
-ux5nc6RnOLJhn24jVLl/7fwhaBfMQgOnDnTKnMfCNOi5UfOBJFIijLLXb3MOKB7S
-LjtFFIkMGmpp6xq3lGJMyjSbv3OxqiJ0r80px21Wp2KQOs8JbQQPHSN1hfBD+yzi
-NEchuvJwNJE2Uy2U4v2oE8ASb1aX2D1pZFVFGR9b/bvK07VdTDI=
-=0+JC
------END PGP SIGNATURE-----
-
---6gfoe7j6hcrfg7bg--
+Index: mmc/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+===================================================================
+--- mmc.orig/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ mmc/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -36,7 +36,7 @@
+ /* DM_CM_DTRAN_MODE */
+ #define DTRAN_MODE_CH_NUM_CH0	0	/* "downstream" = for write commands */
+ #define DTRAN_MODE_CH_NUM_CH1	BIT(16)	/* "uptream" = for read commands */
+-#define DTRAN_MODE_BUS_WID_TH	(BIT(5) | BIT(4))
++#define DTRAN_MODE_BUS_WIDTH	(BIT(5) | BIT(4))
+ #define DTRAN_MODE_ADDR_MODE	BIT(0)	/* 1 = Increment address */
+ 
+ /* DM_CM_DTRAN_CTRL */
+@@ -172,7 +172,7 @@ renesas_sdhi_internal_dmac_start_dma(str
+ 				     struct mmc_data *data)
+ {
+ 	struct scatterlist *sg = host->sg_ptr;
+-	u32 dtran_mode = DTRAN_MODE_BUS_WID_TH | DTRAN_MODE_ADDR_MODE;
++	u32 dtran_mode = DTRAN_MODE_BUS_WIDTH | DTRAN_MODE_ADDR_MODE;
+ 
+ 	if (!dma_map_sg(&host->pdev->dev, sg, host->sg_len,
+ 			mmc_get_dma_dir(data)))
