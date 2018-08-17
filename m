@@ -1,129 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:48200 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730055AbeHFQRV (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:48116 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725845AbeHQLtQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Aug 2018 12:17:21 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Chris Brandt <chris.brandt@renesas.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Ulrich Hecht <uli@fpond.eu>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-serial@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 3/4] Revert "serial: sh-sci: Compute the regshift value for SCI ports"
-Date: Mon,  6 Aug 2018 16:07:54 +0200
-Message-Id: <20180806140755.24087-4-geert+renesas@glider.be>
-In-Reply-To: <20180806140755.24087-1-geert+renesas@glider.be>
-References: <20180806140755.24087-1-geert+renesas@glider.be>
+        Fri, 17 Aug 2018 07:49:16 -0400
+Date: Fri, 17 Aug 2018 10:46:40 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Rob Herring <robh@kernel.org>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        devicetree@vger.kernel.org,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
+        <linux-renesas-soc@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH v2 2/5] soc: renesas: rcar-sysc: Add r8a774a1 support
+Message-ID: <20180817084639.kp2kasqsl676ejsb@verge.net.au>
+References: <1533221599-52948-1-git-send-email-biju.das@bp.renesas.com>
+ <5b6cc303.1c69fb81.26116.320b@mx.google.com>
+ <OSBPR01MB2103F54A22AD3A78011F2446B8240@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+ <20180810111328.5w3nizvuaashxi6h@verge.net.au>
+ <CAL_JsqJZiypRkwKJPBYUR-FOyMJLiM0qKdt9LK1QEHgQ1Vp6Mw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqJZiypRkwKJPBYUR-FOyMJLiM0qKdt9LK1QEHgQ1Vp6Mw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This reverts commit dfc80387aefb78161f83732804c6d01c89c24595.
+On Fri, Aug 10, 2018 at 09:50:15AM -0600, Rob Herring wrote:
+> On Fri, Aug 10, 2018 at 5:13 AM Simon Horman <horms@verge.net.au> wrote:
+> >
+> > On Fri, Aug 10, 2018 at 07:37:18AM +0000, Biju Das wrote:
+> > > Hi Rob,
+> > >
+> > > > Subject: Re: [PATCH v2 2/5] soc: renesas: rcar-sysc: Add r8a774a1 support
+> > > >
+> > > > Hi, this is an automated email from Rob's (experimental) review bot. I found
+> > > > a couple of common problems with your patch. Please see below.
+> > >
+> > > Do I need to send another patch? The mail says " Rob's (experimental)
+> > > review bot".  Previously for RZ/G1C upstreaming I have submitted the
+> > > patches in similar fashion.  Is anything changed?
+> >
+> > Yes, indeed.
+> >
+> > At one point I was enforcing such a split but as it did not seem to be a
+> > universal practice I stopped doing so.  I'd like some clear guidance from
+> > Rob if he'd like this split to occur going forwards.
+> 
+> I've generally not asked for either of these on 1 (or few) line
+> changes or if I had no other comments on the patch. But for automated
+> checking I'm not going to try to make that distinction. So, still up
+> to whomever applies them.
+> 
+> BTW, I'm adding the splitting patches check to checkpatch.pl too.
 
-Deriving the proper regshift value from the register block size is
-fragile, as it may have been rounded up.
-
-Furthermore we will need plat_sci_port.regshift again.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/sh/kernel/cpu/sh3/setup-sh770x.c |  1 +
- arch/sh/kernel/cpu/sh4/setup-sh7750.c |  3 ++-
- arch/sh/kernel/cpu/sh4/setup-sh7760.c | 10 ++--------
- drivers/tty/serial/sh-sci.c           |  8 +-------
- include/linux/serial_sci.h            |  1 +
- 5 files changed, 7 insertions(+), 16 deletions(-)
-
-diff --git a/arch/sh/kernel/cpu/sh3/setup-sh770x.c b/arch/sh/kernel/cpu/sh3/setup-sh770x.c
-index 59a88611df55ac8f..592cd9ab30c4272f 100644
---- a/arch/sh/kernel/cpu/sh3/setup-sh770x.c
-+++ b/arch/sh/kernel/cpu/sh3/setup-sh770x.c
-@@ -111,6 +111,7 @@ static struct platform_device rtc_device = {
- static struct plat_sci_port scif0_platform_data = {
- 	.type		= PORT_SCI,
- 	.ops		= &sh770x_sci_port_ops,
-+	.regshift	= 1,
- };
- 
- static struct resource scif0_resources[] = {
-diff --git a/arch/sh/kernel/cpu/sh4/setup-sh7750.c b/arch/sh/kernel/cpu/sh4/setup-sh7750.c
-index 57d30689204d03b9..d98a55416306baef 100644
---- a/arch/sh/kernel/cpu/sh4/setup-sh7750.c
-+++ b/arch/sh/kernel/cpu/sh4/setup-sh7750.c
-@@ -39,10 +39,11 @@ static struct platform_device rtc_device = {
- 
- static struct plat_sci_port sci_platform_data = {
- 	.type		= PORT_SCI,
-+	.regshift	= 2,
- };
- 
- static struct resource sci_resources[] = {
--	DEFINE_RES_MEM(0xffe00000, 0x20),
-+	DEFINE_RES_MEM(0xffe00000, 0x100),
- 	DEFINE_RES_IRQ(evt2irq(0x4e0)),
- };
- 
-diff --git a/arch/sh/kernel/cpu/sh4/setup-sh7760.c b/arch/sh/kernel/cpu/sh4/setup-sh7760.c
-index e51fe1734e1368e8..0c0cdfc69dcc3e33 100644
---- a/arch/sh/kernel/cpu/sh4/setup-sh7760.c
-+++ b/arch/sh/kernel/cpu/sh4/setup-sh7760.c
-@@ -200,18 +200,12 @@ static struct platform_device scif2_device = {
- };
- 
- static struct plat_sci_port scif3_platform_data = {
--	/*
--	 * This is actually a SIM card module serial port, based on an SCI with
--	 * additional registers. The sh-sci driver doesn't support the SIM port
--	 * type, declare it as a SCI. Don't declare the additional registers in
--	 * the memory resource or the driver will compute an incorrect regshift
--	 * value.
--	 */
- 	.type		= PORT_SCI,
-+	.regshift	= 2,
- };
- 
- static struct resource scif3_resources[] = {
--	DEFINE_RES_MEM(0xfe480000, 0x10),
-+	DEFINE_RES_MEM(0xfe480000, 0x100),
- 	DEFINE_RES_IRQ(evt2irq(0xc00)),
- 	DEFINE_RES_IRQ(evt2irq(0xc20)),
- 	DEFINE_RES_IRQ(evt2irq(0xc40)),
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index caf4422d9e2e59e4..955c057dff6e8c78 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -2895,15 +2895,9 @@ static int sci_init_single(struct platform_device *dev,
- 
- 	port->type		= p->type;
- 	port->flags		= UPF_FIXED_PORT | UPF_BOOT_AUTOCONF | p->flags;
-+	port->regshift		= p->regshift;
- 	port->fifosize		= sci_port->params->fifosize;
- 
--	if (port->type == PORT_SCI) {
--		if (sci_port->reg_size >= 0x20)
--			port->regshift = 2;
--		else
--			port->regshift = 1;
--	}
--
- 	if (regtype == SCIx_SH4_SCIF_REGTYPE)
- 		if (sci_port->reg_size >= 0x20)
- 			port->regshift = 1;
-diff --git a/include/linux/serial_sci.h b/include/linux/serial_sci.h
-index c0e795d95477daea..eebb12fc473f49a2 100644
---- a/include/linux/serial_sci.h
-+++ b/include/linux/serial_sci.h
-@@ -57,6 +57,7 @@ struct plat_sci_port {
- 	/*
- 	 * Platform overrides if necessary, defaults otherwise.
- 	 */
-+	unsigned char	regshift;
- 	unsigned char	regtype;
- 
- 	struct plat_sci_port_ops	*ops;
--- 
-2.17.1
+Thanks, it sounds to me that splitting things will be the cleanest
+approach for future patches. We'll see how that goes.
