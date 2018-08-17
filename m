@@ -1,13 +1,13 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp1.de.adit-jv.com ([62.225.105.245]:43622 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726815AbeHQTAv (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:42268 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726355AbeHQQr5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Aug 2018 15:00:51 -0400
-Date: Fri, 17 Aug 2018 17:56:47 +0200
-From: Eugeniu Rosca <erosca@de.adit-jv.com>
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-CC: Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Fri, 17 Aug 2018 12:47:57 -0400
+Reply-To: kieran.bingham+renesas@ideasonboard.com
+Subject: Re: [PATCH v2 2/7] dt-bindings: can: rcar_can: document r8a77965 can
+ support
+To: Eugeniu Rosca <roscaeugeniu@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
@@ -20,50 +20,74 @@ CC: Eugeniu Rosca <roscaeugeniu@gmail.com>,
         Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        <linux-renesas-soc@vger.kernel.org>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-Subject: Re: [PATCH v2 2/7] dt-bindings: can: rcar_can: document r8a77965 can
- support
-Message-ID: <20180817155647.GA7057@vmlxhi-102.adit-jv.com>
+        linux-renesas-soc@vger.kernel.org
+Cc: Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Eugeniu Rosca <rosca.eugeniu@gmail.com>
 References: <20180812133149.7710-1-erosca@de.adit-jv.com>
  <20180812133149.7710-2-erosca@de.adit-jv.com>
- <7f6c5c87-bcee-51dd-66a4-a47798397e7f@ideasonboard.com>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <7f6c5c87-bcee-51dd-66a4-a47798397e7f@ideasonboard.com>
+Date: Fri, 17 Aug 2018 14:44:25 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <7f6c5c87-bcee-51dd-66a4-a47798397e7f@ideasonboard.com>
+In-Reply-To: <20180812133149.7710-2-erosca@de.adit-jv.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Kieran,
+Hi Eugeniu
 
-On Fri, Aug 17, 2018 at 02:44:25PM +0100, Kieran Bingham wrote:
-> Hi Eugeniu
-> 
-> Thank you for the patch.
-> 
-> On 12/08/18 14:31, Eugeniu Rosca wrote:
-> > Document the support for rcar_can on R8A77965 SoC devices.
-> > Add R8A77965 to the list of SoCs which require the "assigned-clocks" and
-> > "assigned-clock-rates" properties (thanks, Sergei). Rewrap text.
-> 
-> I don't think you needed to say you rewrapped the text in the commit log
-> - but it's fine :)
+Thank you for the patch.
 
-IMHO "Rewrap text" is pretty much from the same category as "no
-functional change was intended". As a reviewer, I would take these
-details in the commit description any day (and sometimes I would NAK a
-patch which lacks these details), since they precisely express the goals
-set by the author and make reviewer's life easier.
+On 12/08/18 14:31, Eugeniu Rosca wrote:
+> Document the support for rcar_can on R8A77965 SoC devices.
+> Add R8A77965 to the list of SoCs which require the "assigned-clocks" and
+> "assigned-clock-rates" properties (thanks, Sergei). Rewrap text.
 
-But, of course, preferences vary and therefore I won't elaborate on that
-too much.
+I don't think you needed to say you rewrapped the text in the commit log
+- but it's fine :)
 
-> 
-> > Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-> 
-> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> 
 
-Best regards,
-Eugeniu.
+> Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+> ---
+> Changes in v2:
+>  - [Kieran Bingham] Simplified commit description. Rewrapped text.
+>  - [Sergei Shtylyov] Replaced footnotes with inline text.
+>  - Pushed all dt-bindings patches to the beginning of the series.
+> ---
+>  Documentation/devicetree/bindings/net/can/rcar_can.txt | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+> index 94a7f33ac5e9..60daa878c9a2 100644
+> --- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
+> +++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+> @@ -13,6 +13,7 @@ Required properties:
+>  	      "renesas,can-r8a7794" if CAN controller is a part of R8A7794 SoC.
+>  	      "renesas,can-r8a7795" if CAN controller is a part of R8A7795 SoC.
+>  	      "renesas,can-r8a7796" if CAN controller is a part of R8A7796 SoC.
+> +	      "renesas,can-r8a77965" if CAN controller is a part of R8A77965 SoC.
+>  	      "renesas,rcar-gen1-can" for a generic R-Car Gen1 compatible device.
+>  	      "renesas,rcar-gen2-can" for a generic R-Car Gen2 or RZ/G1
+>  	      compatible device.
+> @@ -28,11 +29,10 @@ Required properties:
+>  - pinctrl-0: pin control group to be used for this controller.
+>  - pinctrl-names: must be "default".
+>  
+> -Required properties for "renesas,can-r8a7795" and "renesas,can-r8a7796"
+> -compatible:
+> -In R8A7795 and R8A7796 SoCs, "clkp2" can be CANFD clock. This is a div6 clock
+> -and can be used by both CAN and CAN FD controller at the same time. It needs to
+> -be scaled to maximum frequency if any of these controllers use it. This is done
+> +Required properties for R8A7795, R8A7796 and R8A77965:
+> +For the denoted SoCs, "clkp2" can be CANFD clock. This is a div6 clock and can
+> +be used by both CAN and CAN FD controller at the same time. It needs to be
+> +scaled to maximum frequency if any of these controllers use it. This is done
+>  using the below properties:
+>  
+>  - assigned-clocks: phandle of clkp2(CANFD) clock.
+> 
