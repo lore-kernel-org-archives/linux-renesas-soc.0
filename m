@@ -1,56 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:43585 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726529AbeHXN6d (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:48249 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725845AbeHQL4e (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Aug 2018 09:58:33 -0400
-From: Jacopo Mondi <jacopo@jmondi.org>
-To: niklas.soderlund@ragnatech.se
-Cc: Jacopo Mondi <jacopo@jmondi.org>, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 1/4] vin-tests: Add support for D3 Draak
-Date: Fri, 24 Aug 2018 12:24:19 +0200
-Message-Id: <1535106262-13004-2-git-send-email-jacopo@jmondi.org>
-In-Reply-To: <1535106262-13004-1-git-send-email-jacopo@jmondi.org>
-References: <1535106262-13004-1-git-send-email-jacopo@jmondi.org>
+        Fri, 17 Aug 2018 07:56:34 -0400
+Date: Fri, 17 Aug 2018 10:53:57 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: stout: Add DA9063 OnKey node
+Message-ID: <20180817085357.fbz77n6ckfjtkkl2@verge.net.au>
+References: <20180811112510.18299-1-marek.vasut+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180811112510.18299-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for D3 Draak board.
+On Sat, Aug 11, 2018 at 01:25:10PM +0200, Marek Vasut wrote:
+> Add DA9063 OnKey subnode to DA9063 PMIC node on Stout.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+>  arch/arm/boot/dts/r8a7790-stout.dts | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-Draak has its HDMI input connected to an ADV7612 which connects to VIN4
-parallel data inputs.
+Thanks Marek,
 
-Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
----
- scripts/boards.sh | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/scripts/boards.sh b/scripts/boards.sh
-index 26fdab9..7eb3a27 100644
---- a/scripts/boards.sh
-+++ b/scripts/boards.sh
-@@ -29,6 +29,13 @@ case $info in
-         # for V3M, but results in an image.
-         parallelformat="YUYV8_1X16"
-         ;;
-+    "Renesas Draak board based on r8a77995")
-+        gen="gen3"
-+        vins="4"
-+        parallelname="adv7612 0-004c"
-+        # FIXME: This is a hackfor D3, but results in an image.
-+        parallelformat="YUYV8_1X16"
-+        ;;
-     "Koelsch")
-         gen="gen2"
- 
-@@ -70,6 +77,8 @@ if [[ "$gen" == "gen3" ]]; then
- 
-         txaname="adv748x 0-0070 txa"
-         txbname="adv748x 0-0070 txb"
-+    elif [[ "$info" == "Renesas Draak board based on r8a77995" ]]; then
-+        hdminame="adv7612 0-004c"
-     else
-         cvbsname="adv748x 4-0070 afe"
-         hdminame="adv748x 4-0070 hdmi"
--- 
-2.7.4
+applied for v4.20.
