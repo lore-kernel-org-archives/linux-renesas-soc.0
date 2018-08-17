@@ -1,95 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34025 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729669AbeHEBQk (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:22629 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725845AbeHQMFv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 4 Aug 2018 21:16:40 -0400
-Received: by mail-wm0-f66.google.com with SMTP id l2-v6so8141337wme.1
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 04 Aug 2018 16:14:21 -0700 (PDT)
-From: Eugeniu Rosca <roscaeugeniu@gmail.com>
-To: Simon Horman <horms+renesas@verge.net.au>,
+        Fri, 17 Aug 2018 08:05:51 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Simon Horman <horms@verge.net.au>
+CC: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Cc: Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <rosca.eugeniu@gmail.com>
-Subject: [PATCH 12/14] arm64: dts: renesas: r8a77965: add CAN support
-Date: Sun,  5 Aug 2018 01:11:12 +0200
-Message-Id: <20180804231114.21420-13-erosca@de.adit-jv.com>
-In-Reply-To: <20180804231114.21420-1-erosca@de.adit-jv.com>
-References: <20180804231114.21420-1-erosca@de.adit-jv.com>
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: RE: [PATCH v3 5/5] ARM: dts: iwg23s-sbc: Add pinctl support for
+ EtherAVB
+Date: Fri, 17 Aug 2018 09:03:08 +0000
+Message-ID: <OSBPR01MB210363D03733F02F6515105CB83D0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <1533628626-26503-1-git-send-email-biju.das@bp.renesas.com>
+ <1533628626-26503-6-git-send-email-biju.das@bp.renesas.com>
+ <20180810121231.776wrl3cozakpsao@verge.net.au>
+ <OSBPR01MB2103211FDAC790771BFFB765B8240@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+ <20180817084445.3iud4quiwvawhkbf@verge.net.au>
+In-Reply-To: <20180817084445.3iud4quiwvawhkbf@verge.net.au>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-According to R-Car Gen3 HW manual rev0.55E, R-Car M3-N has two CAN
-interfaces, similar to H3, M3-W and other SoCs from the same family.
+Hi Simon,
 
-Add CAN nodes to avoid below r8a77965-ulcb-kf.dtb build failure:
-Error: arch/arm64/boot/dts/renesas/ulcb-kf.dtsi:19.1-6 Label or path can0 not found
-Error: arch/arm64/boot/dts/renesas/ulcb-kf.dtsi:25.1-6 Label or path can1 not found
+Thanks for the feedback.
 
-CAN support is inspired from below commits:
- - v4.7 commit 308b7e4ba62e ("arm64: dts: r8a7795: Add CAN support")
- - v4.11 commit 909c16252415 ("arm64: dts: r8a7796: Add CAN support")
- - v4.12 commit bec0948e810f ("arm64: dts: r8a7796: Add reset control properties")
+> -----Original Message-----
+> From: devicetree-owner@vger.kernel.org <devicetree-
+> owner@vger.kernel.org> On Behalf Of Simon Horman
+> Sent: 17 August 2018 09:45
+> To: Biju Das <biju.das@bp.renesas.com>
+> Cc: Rob Herring <robh+dt@kernel.org>; Mark Rutland
+> <mark.rutland@arm.com>; Magnus Damm <magnus.damm@gmail.com>;
+> linux-renesas-soc@vger.kernel.org; devicetree@vger.kernel.org; Geert
+> Uytterhoeven <geert+renesas@glider.be>; Chris Paterson
+> <Chris.Paterson2@renesas.com>; Fabrizio Castro
+> <fabrizio.castro@bp.renesas.com>
+> Subject: Re: [PATCH v3 5/5] ARM: dts: iwg23s-sbc: Add pinctl support for
+> EtherAVB
+>
+> On Fri, Aug 10, 2018 at 01:47:12PM +0000, Biju Das wrote:
+> > Hello Simon,
+> >
+> > Thanks for the feedback.
+> >
+> > > Subject: Re: [PATCH v3 5/5] ARM: dts: iwg23s-sbc: Add pinctl support
+> > > for EtherAVB
+> > >
+> > > On Tue, Aug 07, 2018 at 08:57:06AM +0100, Biju Das wrote:
+> > > > Adding pinctrl support for EtherAVB interface.
+> > > >
+> > > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > > > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > > ---
+> > > > V1-->V2
+> > > >      * No change
+> > > > V2-->V3
+> > > >      * No change
+> > > >      Depend onthe below patch
+> > > >        https://patchwork.kernel.org/patch/10546801/
+> > >
+> > > What is the effect of applying this patch without that dependency
+> present?
+> >
+> > No build dependency. Only driver probe will fail during run time.
+> > [    0.838091] ravb: probe of e6800000.ethernet failed with error -22
+>
+> Thanks, but does the driver probe fail without this patch?
 
-Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+Drive probe works ok without  this patch.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 486aecacb22a..cb8f8573d9ef 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -656,6 +656,38 @@
- 			status = "disabled";
- 		};
- 
-+		can0: can@e6c30000 {
-+			compatible = "renesas,can-r8a77965",
-+				     "renesas,rcar-gen3-can";
-+			reg = <0 0xe6c30000 0 0x1000>;
-+			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 916>,
-+			       <&cpg CPG_CORE R8A77965_CLK_CANFD>,
-+			       <&can_clk>;
-+			clock-names = "clkp1", "clkp2", "can_clk";
-+			assigned-clocks = <&cpg CPG_CORE R8A77965_CLK_CANFD>;
-+			assigned-clock-rates = <40000000>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 916>;
-+			status = "disabled";
-+		};
-+
-+		can1: can@e6c38000 {
-+			compatible = "renesas,can-r8a77965",
-+				     "renesas,rcar-gen3-can";
-+			reg = <0 0xe6c38000 0 0x1000>;
-+			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 915>,
-+			       <&cpg CPG_CORE R8A77965_CLK_CANFD>,
-+			       <&can_clk>;
-+			clock-names = "clkp1", "clkp2", "can_clk";
-+			assigned-clocks = <&cpg CPG_CORE R8A77965_CLK_CANFD>;
-+			assigned-clock-rates = <40000000>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 915>;
-+			status = "disabled";
-+		};
-+
- 		pwm0: pwm@e6e30000 {
- 			compatible = "renesas,pwm-r8a77965", "renesas,pwm-rcar";
- 			reg = <0 0xe6e30000 0 8>;
--- 
-2.18.0
+> If so I'd rather hold off on this until v4.21.
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
