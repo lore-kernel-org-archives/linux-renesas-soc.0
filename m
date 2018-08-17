@@ -1,67 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:39531 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726641AbeHTSmd (ORCPT
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.84]:34996 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726826AbeHQQXJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Aug 2018 14:42:33 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        ulrich.hecht+renesas@gmail.com, kieran.bingham@ideasonboard.com,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR RENESAS),
-        linux-renesas-soc@vger.kernel.org (open list:DRM DRIVERS FOR RENESAS)
-Subject: [PATCH v2 0/2] drm: rcar-du: Rework clock configuration
-Date: Mon, 20 Aug 2018 17:26:15 +0200
-Message-Id: <1534778777-6002-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 17 Aug 2018 12:23:09 -0400
+From: Ulrich Hecht <uli+renesas@fpond.eu>
+To: linux-renesas-soc@vger.kernel.org
+Cc: horms@verge.net.au, geert@linux-m68k.org,
+        khiem.nguyen.xt@rvc.renesas.com, dien.pham.ry@renesas.com,
+        takeshi.kihara.df@renesas.com, Ulrich Hecht <uli+renesas@fpond.eu>
+Subject: [PATCH 3/5] arm64: dts: r8a7796: Add cpuidle support for CA57 cores
+Date: Fri, 17 Aug 2018 15:19:26 +0200
+Message-Id: <1534511968-19634-4-git-send-email-uli+renesas@fpond.eu>
+In-Reply-To: <1534511968-19634-1-git-send-email-uli+renesas@fpond.eu>
+References: <1534511968-19634-1-git-send-email-uli+renesas@fpond.eu>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-  second round for improved input dot clock selection procedure for R-Car DU
-peripheral.
+From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
 
-Please refer to the v1 cover letter for the background:
-https://lkml.org/lkml/2018/7/30/702
+Enable cpuidle (core shutdown) support for R-Car M3-W CA57 cores.
 
-compared to v1 I have squashed the small patch I initially separated from
-Laurent's one, and have closed a comment on alignment from Kieran there.
+Parameters were found after evaluation by gaku.inami.xw@bp.renesas.com; they
+help to keep the performance and reduce the power consumption.
 
-The second patch has been greatly simplified, not taking into account
-non-rounded clock rates provided by the external clock source. In this way the
-only rates to compared are the CPG generated one and the one provided by the
-external clock source.
+Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[dien.pham.ry: Apply new cpuidle parameters]
+Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
+Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-Tested on M3-W Salvator-X board with VGA output in 1920x1080 mode.
-
-With this patch applied:
- rcar-du feb00000.display: mode clock 148500000 ext rate 148500000
- rcar-du feb00000.display: rcar_du_crtc_set_display_timing: ESCR 0x0000000
-
-The requested pixel clock is opportunely provided by the external clock source.
-
-Without this patch:
- rcar-du feb00000.display: mode clock 148500000 extrate 108000000 rate 133333328 ESCR 0x00100002
-
-The requested pixel clock is approximated by the CPG generated clock to 133,3
-MHz, which for some monitor is not enough to correctly display any output.
-
-Thanks
-  j
-
-Jacopo Mondi (1):
-  drm: rcar-du: Improve non-DPLL clock selection
-
-Laurent Pinchart (1):
-  drm: rcar-du: Rework clock configuration based on hardware limits
-
-v1 -> v2:
-- Squash v1' [1/3] and [2/3]
-- Simplify [3/3] only taking into account rounded rates provided by the external
-  clock source.
-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 143 +++++++++++++++++++--------------
- 1 file changed, 83 insertions(+), 60 deletions(-)
-
---
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 258a327..3d30b05 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -134,6 +134,7 @@
+ 			power-domains = <&sysc R8A7796_PD_CA57_CPU0>;
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&CPU_SLEEP_0>;
+ 			clocks =<&cpg CPG_CORE R8A7796_CLK_Z>;
+ 			operating-points-v2 = <&cluster0_opp>;
+ 			#cooling-cells = <2>;
+@@ -146,6 +147,7 @@
+ 			power-domains = <&sysc R8A7796_PD_CA57_CPU1>;
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&CPU_SLEEP_0>;
+ 			clocks =<&cpg CPG_CORE R8A7796_CLK_Z>;
+ 			operating-points-v2 = <&cluster0_opp>;
+ 			#cooling-cells = <2>;
+@@ -208,6 +210,20 @@
+ 			cache-unified;
+ 			cache-level = <2>;
+ 		};
++
++		idle-states {
++			entry-method = "psci";
++
++			CPU_SLEEP_0: cpu-sleep-0 {
++				compatible = "arm,idle-state";
++				arm,psci-suspend-param = <0x0010000>;
++				local-timer-stop;
++				entry-latency-us = <400>;
++				exit-latency-us = <500>;
++				min-residency-us = <4000>;
++				status = "okay";
++			};
++		};
+ 	};
+ 
+ 	extal_clk: extal {
+-- 
 2.7.4
