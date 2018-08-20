@@ -1,56 +1,37 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 25/30] adv748x: csi2: only allow formats on sink pads
-Date: Thu, 23 Aug 2018 15:25:39 +0200
-Message-Id: <20180823132544.521-26-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:37366 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726119AbeHUB5k (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 20 Aug 2018 21:57:40 -0400
+Date: Mon, 20 Aug 2018 17:40:10 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: laurent.pinchart@ideasonboard.com, geert@linux-m68k.org,
+        horms@verge.net.au, robh+dt@kernel.org, mark.rutland@arm.com,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        kieran.bingham+renesas@ideasonboard.com,
+        niklas.soderlund+renesas@ragnatech.se, damm+renesas@opensource.se,
+        ulrich.hecht+renesas@gmail.com, linux-renesas-soc@vger.kernel.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [RFT 3/8] dt-bindings: media: rcar-csi2: Add R8A77990
+Message-ID: <20180820224010.GA9308@bogus>
+References: <1534760202-20114-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1534760202-20114-4-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1534760202-20114-4-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Once the CSI-2 subdevice of the ADV748X becomes aware of multiplexed
-streams the format of the source pad is of no value as it carries
-multiple streams. Prepare for this by explicitly denying setting a
-format on anything but the sink pad.
+On Mon, 20 Aug 2018 12:16:37 +0200, Jacopo Mondi wrote:
+> Add compatible string for R-Car E3 R8A77990 to the list of supported SoCs.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/i2c/adv748x/adv748x-csi2.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
-index b759a7e22fbc98df..9f736da2ad60160f 100644
---- a/drivers/media/i2c/adv748x/adv748x-csi2.c
-+++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
-@@ -172,6 +172,9 @@ static int adv748x_csi2_get_format(struct v4l2_subdev *sd,
- 	struct adv748x_state *state = tx->state;
- 	struct v4l2_mbus_framefmt *mbusformat;
- 
-+	if (sdformat->pad != ADV748X_CSI2_SINK)
-+		return -EINVAL;
-+
- 	mbusformat = adv748x_csi2_get_pad_format(sd, cfg, sdformat->pad,
- 						 sdformat->which);
- 	if (!mbusformat)
-@@ -195,6 +198,9 @@ static int adv748x_csi2_set_format(struct v4l2_subdev *sd,
- 	struct v4l2_mbus_framefmt *mbusformat;
- 	int ret = 0;
- 
-+	if (sdformat->pad != ADV748X_CSI2_SINK)
-+		return -EINVAL;
-+
- 	mbusformat = adv748x_csi2_get_pad_format(sd, cfg, sdformat->pad,
- 						 sdformat->which);
- 	if (!mbusformat)
--- 
-2.18.0
+Reviewed-by: Rob Herring <robh@kernel.org>
