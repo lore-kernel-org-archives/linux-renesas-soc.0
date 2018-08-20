@@ -1,87 +1,97 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:60748 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726033AbeHTUSz (ORCPT
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:38721 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726106AbeHTUIm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Aug 2018 16:18:55 -0400
-Date: Mon, 20 Aug 2018 19:02:28 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+        Mon, 20 Aug 2018 16:08:42 -0400
+Received: by mail-lf1-f66.google.com with SMTP id i7-v6so1835104lfh.5
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Aug 2018 09:52:17 -0700 (PDT)
+Subject: Re: [PATCH] mmc: renesas_sdhi_internal_dmac: mask DMAC interrupts
+To: Wolfram Sang <wsa@the-dreams.de>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] mmc: renesas_sdhi_internal_dmac: mask DMAC interrupts
-Message-ID: <20180820170228.xf5e3lpovwav5zqo@ninjato>
 References: <711ef434-1208-4a9b-1c0d-519395251531@cogentembedded.com>
  <20180820163856.cqp62em4ccerf7x5@ninjato>
- <027a20b0-5047-2d89-76f7-55dec7a67dba@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <027a20b0-5047-2d89-76f7-55dec7a67dba@cogentembedded.com>
+Date: Mon, 20 Aug 2018 19:52:14 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="uwrbrfjzoryhny4e"
-Content-Disposition: inline
-In-Reply-To: <027a20b0-5047-2d89-76f7-55dec7a67dba@cogentembedded.com>
+In-Reply-To: <20180820163856.cqp62em4ccerf7x5@ninjato>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hello!
 
---uwrbrfjzoryhny4e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 08/20/2018 07:38 PM, Wolfram Sang wrote:
 
+>> I have encountered an interrupt storm during the eMMC chip probing (and
+>> the chip finally didn't get detected). It turned out  that U-Boot  left
+>> the SDHI DMA interrupts enabled while the Linux  driver didn't use those.
+>> Masking those interrupts in renesas_sdhi_internal_dmac_request_dma() gets
+>> rid  of both  issues...
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> Thanks for fixing this issue.
+> 
+>>
+>> ---
+>> The patch is against Ulf Hansson's 'mmc.git' repo's 'fixes' branch.
+>>
+>>  drivers/mmc/host/renesas_sdhi_internal_dmac.c |   11 +++++++++++
+>>  1 file changed, 11 insertions(+)
+>>
+>> Index: mmc/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+>> ===================================================================
+>> --- mmc.orig/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+>> +++ mmc/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+>> @@ -51,10 +51,12 @@
+>>  #define INFO1_CLEAR		0
+>>  #define INFO1_DTRANEND1		BIT(17)
+>>  #define INFO1_DTRANEND0		BIT(16)
+>> +#define INFO1_RESERVED_BITS	GENMASK_ULL(32, 0)
+> 
+> 31?
 
-> >>  /* DM_CM_INFO2 and DM_CM_INFO2_MASK */
-> >>  #define INFO2_DTRANERR1		BIT(17)
-> >>  #define INFO2_DTRANERR0		BIT(16)
-> >> +#define INFO2_RESERVED_BITS	GENMASK_ULL(32, 0)
-> >=20
-> > Same as above. Maybe we even need one define only?
->=20
->    No, I think 2 separate regs deserve 2 separate masks.
+   Indeed. Than RST_RESERVED_BITS (from which I copied w/o much thinking)
+is also wrong!
 
-Whatever. I am not into bike-shedding. It works, too.
+> Also, RESERVED_BITS is not quite proper. Not all of those bits are
+> reserved. Maybe CLEAR_MASK?
 
-> >> +	/*
-> >> +	 * We don't use the DMA interrupts,  but they might have been enabled
-> >> +	 * by a bootloader,  so mask them to avoid an interrupt storm...
-> >> +	 */
-> >=20
-> > Two spaces after ',' looks odd to me. Also, no need for "..."
->=20
->    Both are my preferences. Yes, I probably should have worked in the
-> typesetting industry... :-)=20
+   Indeed, would seem better... but RST_RESERVED_BITS also needs fixing then...
 
-But where is the continuation of "..."?
+>>  /* DM_CM_INFO2 and DM_CM_INFO2_MASK */
+>>  #define INFO2_DTRANERR1		BIT(17)
+>>  #define INFO2_DTRANERR0		BIT(16)
+>> +#define INFO2_RESERVED_BITS	GENMASK_ULL(32, 0)
+> 
+> Same as above. Maybe we even need one define only?
 
-> > I'd even think with a name like CLEAR_MASK, the comment could even go.
->=20
->    Disagree here. The register #defines don't provide enough info on what=
-'s
-> going on...
+   No, I think 2 separate regs deserve 2 separate masks.
 
-Masking out all interrupts at the beginning is pretty standard behaviour
-in my book. Well, at least, please shorten it to sth like "Disable
-interrupts, we don't use them".
+>> +	/*
+>> +	 * We don't use the DMA interrupts,  but they might have been enabled
+>> +	 * by a bootloader,  so mask them to avoid an interrupt storm...
+>> +	 */
+> 
+> Two spaces after ',' looks odd to me. Also, no need for "..."
 
+   Both are my preferences. Yes, I probably should have worked in the
+typesetting industry... :-) 
 
---uwrbrfjzoryhny4e
-Content-Type: application/pgp-signature; name="signature.asc"
+> I'd even think with a name like CLEAR_MASK, the comment could even go.
 
------BEGIN PGP SIGNATURE-----
+   Disagree here. The register #defines don't provide enough info on what's
+going on...
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlt69CQACgkQFA3kzBSg
-KbbkRBAAjeecZo8bLqk84AUywnCpAmXcCCOJXWXLBO/3XfnM5xxeRYvhigQLThDs
-p65fMjdiqYxBj7+qzyQLSDsgZdTYxwqGefgG0R+Q6/eS25WcbVthJp/E0sDjtrGH
-IJftF3rvmfs6K0Nq+UnEN4czTk3DykZwp1nt+9CIq50iA7XPDXuvR90t2gIQdoQV
-2w49nMJmxxlKGl2QjvfLZA1cvBJASPeSfNnuXL3yPMo0iUJ4gCkSxxt4fv8Hk16s
-Zdt7iaCVRBshY1+i92k7EzbgNxmj+HwPLGQZ0Kx7FNdvl1BhuENXqFgKbu2e7Ltv
-nBfpKe7QXyKKmeeUxCjrrLgtAA//iTv6LKusedfG/Xxdf0PQFl+++s1pKp2fyygc
-VRKMVCqOPDHyCQM6vvnAuhJBalPM2wLzMA0lf2oc4MKFUiksp77vzbQY0EpqkBLY
-+JOpr6Bmm68CHVzaImnzexgnttnP1quGJ5yOOC6TEamkLwO8pkAXrr5to7xKplU5
-AaPkTM//pfu7OmmwoY954PlZA9YuI7Fh/fSP9WO1GMeIRW1VRIzwdINcKGig9/8i
-gH+mRNUF+Lr1En+Lvhvw9kWBp0YxiZ/1hAmt+G57FIiTMwf7DB0PMu7GzlPvoOA2
-cxFnysxAMa1UOyrvwvDmnaKnkSAsW7oBMmgZAVoFbhvSRxSsfcE=
-=pecU
------END PGP SIGNATURE-----
+>> +	renesas_sdhi_internal_dmac_dm_write(host, DM_CM_INFO1_MASK,
+>> +					    INFO1_RESERVED_BITS);
+>> +	renesas_sdhi_internal_dmac_dm_write(host, DM_CM_INFO2_MASK,
+>> +					    INFO2_RESERVED_BITS);
 
---uwrbrfjzoryhny4e--
+MBR, Sergei
