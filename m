@@ -1,96 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:34890 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728311AbeHFQRV (ORCPT
+Received: from sauhun.de ([88.99.104.3]:33704 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726293AbeHTWaO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Aug 2018 12:17:21 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Chris Brandt <chris.brandt@renesas.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Ulrich Hecht <uli@fpond.eu>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-serial@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 1/4] sh-sci: Use a separate sci_port for earlycon
-Date: Mon,  6 Aug 2018 16:07:52 +0200
-Message-Id: <20180806140755.24087-2-geert+renesas@glider.be>
-In-Reply-To: <20180806140755.24087-1-geert+renesas@glider.be>
-References: <20180806140755.24087-1-geert+renesas@glider.be>
+        Mon, 20 Aug 2018 18:30:14 -0400
+Date: Mon, 20 Aug 2018 21:13:22 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 5/7] mmc: renesas_sdhi: merge clk_{start,stop}
+ functions to set_clock
+Message-ID: <20180820191322.d57qoylkenpm2qhd@ninjato>
+References: <1534403799-10594-1-git-send-email-yamada.masahiro@socionext.com>
+ <1534403799-10594-6-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ovoi5rmutmduozyi"
+Content-Disposition: inline
+In-Reply-To: <1534403799-10594-6-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshinori Sato <ysato@users.sourceforge.jp>
 
-The first sh-sci port and earlycon use the same sci_port.
-Hence after the initialization of the first port, earlycon may die.
+--ovoi5rmutmduozyi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fis this by assigning a separate sci_port for earlycon.
+On Thu, Aug 16, 2018 at 04:16:37PM +0900, Masahiro Yamada wrote:
+> renesas_sdhi_clk_start() and renesas_sdhi_clk_stop() are now only
+> called from renesas_sdhi_set_clock().  Merge them.
 
-Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
-[geert: Rebased, reworded]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-I still don't fully understand why Sato-san needed this for H8/300, and
-we never needed it on Renesas ARM SoCs before.
+I can see the benefit of this change...
 
-Also, I don't like the early index.
----
- drivers/tty/serial/sh-sci.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+>  static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
+>  				   unsigned int new_clock)
+>  {
+>  	u32 clk =3D 0, clock;
+> =20
+> -	if (new_clock =3D=3D 0) {
+> -		renesas_sdhi_clk_stop(host);
+> -		return;
+> -	}
+> +	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
+> +		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+> +
+> +	if (new_clock =3D=3D 0)
+> +		goto out;
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index ac4424bf6b136cc4..cf3195bed0246a3d 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -164,6 +164,8 @@ struct sci_port {
- #define SCI_NPORTS CONFIG_SERIAL_SH_SCI_NR_UARTS
- 
- static struct sci_port sci_ports[SCI_NPORTS];
-+#define EARLY_INDEX 256
-+static struct sci_port earlycon_port;
- static unsigned long sci_ports_in_use;
- static struct uart_driver sci_uart_driver;
- 
-@@ -2941,12 +2943,16 @@ static void serial_console_putchar(struct uart_port *port, int ch)
- static void serial_console_write(struct console *co, const char *s,
- 				 unsigned count)
- {
--	struct sci_port *sci_port = &sci_ports[co->index];
--	struct uart_port *port = &sci_port->port;
- 	unsigned short bits, ctrl, ctrl_temp;
-+	struct sci_port *sci_port;
-+	struct uart_port *port;
- 	unsigned long flags;
- 	int locked = 1;
- 
-+	sci_port = (co->index != EARLY_INDEX) ?
-+		&sci_ports[co->index] : &earlycon_port;
-+	port = &sci_port->port;
-+
- #if defined(SUPPORT_SYSRQ)
- 	if (port->sysrq)
- 		locked = 0;
-@@ -3367,12 +3373,13 @@ static int __init early_console_setup(struct earlycon_device *device,
- 	device->port.serial_in = sci_serial_in;
- 	device->port.serial_out	= sci_serial_out;
- 	device->port.type = type;
--	memcpy(&sci_ports[0].port, &device->port, sizeof(struct uart_port));
-+	device->con->index = EARLY_INDEX;
-+	memcpy(&earlycon_port.port, &device->port, sizeof(struct uart_port));
- 	port_cfg.type = type;
--	sci_ports[0].cfg = &port_cfg;
--	sci_ports[0].params = sci_probe_regmap(&port_cfg);
--	port_cfg.scscr = sci_serial_in(&sci_ports[0].port, SCSCR);
--	sci_serial_out(&sci_ports[0].port, SCSCR,
-+	earlycon_port.cfg = &port_cfg;
-+	earlycon_port.params = sci_probe_regmap(&port_cfg);
-+	port_cfg.scscr = sci_serial_in(&earlycon_port.port, SCSCR);
-+	sci_serial_out(&earlycon_port.port, SCSCR,
- 		       SCSCR_RE | SCSCR_TE | port_cfg.scscr);
- 
- 	device->con->write = serial_console_write;
--- 
-2.17.1
+=2E.. yet there is a slight change in that we disable the clock a tad
+earlier now. I need to check the datasheets tomorrow what is exactly
+documented and report back.
+
+
+--ovoi5rmutmduozyi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlt7EtIACgkQFA3kzBSg
+Kbbwxg/9EAwOxzkpKMG1NSGkdJI11fIqowddtLRrZRn56U1/ppAZeV0QCyJ2xHnj
+Au27VG6YSZFNLwE0oUoBuhP1DCaWBteiIw5HVguZp7pkzeCbrBFvai9di913PseK
+KUXOPdMuv8tOuw3f85tr8zFoKCIfhw0sByCqYfPbkGukcZdVEmyIKkGMPRvXoKHf
+K/+t7zHejSbj7hVlIuGcVw3zibZMx0DZD8WMgzF23xfTmPk8XM0c8jpbmc7tX1a8
+mwdTzz55OPYgetFYbBOr6a+mjuZtgfgMP9YKud75ufPGhu3VClXsTeyJ7gbUDZDA
+GMyJnfLrceITJLgZ3Nzv+uEbkKD+DrYlKeiUkjZcmoZywQkVy2UgHn4HohythaJo
+js1xJkxQqwAAPfgUm5QKEoC6NGXieHz7qtKeEni2qGAZAJZJbbwWDO2qW1UflixE
+RjRNi8YN/gPVZ70QTYYRH6BPdwAgmxSx4q/SNmJVJNFdanl58x2TK4An3BrBSD7X
+HLxZ86wyxfDcY2yWYwErehjBV4F7vR+CAyxvZaC+uWse4lhvBjBoMVKwJ8ruRB9M
+EXrd5+M8BX4vroZszLqxxrXnB4YJjNPl1SXsAx48QIUlMzw/Hv82iW+KAQoLyKW1
+tQ1YYC1PP40ubm1qcY5dKvMvBSsYn+cbzKQw5uHSX0btUAIlmX0=
+=9jYi
+-----END PGP SIGNATURE-----
+
+--ovoi5rmutmduozyi--
