@@ -1,119 +1,172 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:12102 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730611AbeHWQ5q (ORCPT
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:59623 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbeHTNc0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Aug 2018 12:57:46 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 04/30] v4l: mc: Start walk from a specific pad in use count calculation
-Date: Thu, 23 Aug 2018 15:25:18 +0200
-Message-Id: <20180823132544.521-5-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 20 Aug 2018 09:32:26 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: laurent.pinchart@ideasonboard.com, geert@linux-m68k.org,
+        horms@verge.net.au, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        kieran.bingham+renesas@ideasonboard.com,
+        niklas.soderlund+renesas@ragnatech.se, damm+renesas@opensource.se,
+        ulrich.hecht+renesas@gmail.com, linux-renesas-soc@vger.kernel.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [RFT 8/8] arm64: dts: renesas: ebisu: Add HDMI and CVBS input
+Date: Mon, 20 Aug 2018 12:16:42 +0200
+Message-Id: <1534760202-20114-9-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1534760202-20114-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1534760202-20114-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
+Add HDMI and CVBS inputs device nodes to R-Car E3 Ebisu board.
 
-With the addition of the recent has_route() media entity op, the pads of a
-media entity are no longer all interconnected. This has to be taken into
-account in power management.
+Both HDMI and CVBS inputs are connected to an ADV7482 video decoder hooked to
+the SoC CSI-2 receiver port.
 
-Prepare for the addition of a helper function supporting S_ROUTING.
-
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- drivers/media/v4l2-core/v4l2-mc.c | 25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
+The upported BSP patch:
+https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-bsp.git/commit/?id=97287065b27d987f96a33bfbbd52586ac091ee6d
+described the ADV7482 output as 'adv7482_txa_cp' and 'adv7482_txa_sd'.
 
-diff --git a/drivers/media/v4l2-core/v4l2-mc.c b/drivers/media/v4l2-core/v4l2-mc.c
-index d923bb344b6aeb97..f702cac5205b3447 100644
---- a/drivers/media/v4l2-core/v4l2-mc.c
-+++ b/drivers/media/v4l2-core/v4l2-mc.c
-@@ -251,17 +251,16 @@ EXPORT_SYMBOL_GPL(v4l_vb2q_enable_media_source);
- 
- /*
-  * pipeline_pm_use_count - Count the number of users of a pipeline
-- * @entity: The entity
-+ * @pad: The pad
-  *
-  * Return the total number of users of all video device nodes in the pipeline.
-  */
--static int pipeline_pm_use_count(struct media_entity *entity,
--	struct media_graph *graph)
-+static int pipeline_pm_use_count(struct media_pad *pad,
-+				 struct media_graph *graph)
- {
--	struct media_pad *pad;
- 	int use = 0;
- 
--	media_graph_walk_start(graph, entity->pads);
-+	media_graph_walk_start(graph, pad);
- 
- 	while ((pad = media_graph_walk_next(graph))) {
- 		if (is_media_entity_v4l2_video_device(pad->entity))
-@@ -307,7 +306,7 @@ static int pipeline_pm_power_one(struct media_entity *entity, int change)
- 
- /*
-  * pipeline_pm_power - Apply power change to all entities in a pipeline
-- * @entity: The entity
-+ * @pad: The pad
-  * @change: Use count change
-  *
-  * Walk the pipeline to update the use count and the power state of all non-node
-@@ -315,16 +314,16 @@ static int pipeline_pm_power_one(struct media_entity *entity, int change)
-  *
-  * Return 0 on success or a negative error code on failure.
-  */
--static int pipeline_pm_power(struct media_entity *entity, int change,
-+static int pipeline_pm_power(struct media_pad *pad, int change,
- 	struct media_graph *graph)
- {
--	struct media_pad *tmp_pad, *pad;
-+	struct media_pad *tmp_pad, *first = pad;
- 	int ret = 0;
- 
- 	if (!change)
- 		return 0;
- 
--	media_graph_walk_start(graph, entity->pads);
-+	media_graph_walk_start(graph, pad);
- 
- 	while (!ret && (pad = media_graph_walk_next(graph)))
- 		if (is_media_entity_v4l2_subdev(pad->entity))
-@@ -333,7 +332,7 @@ static int pipeline_pm_power(struct media_entity *entity, int change,
- 	if (!ret)
- 		return ret;
- 
--	media_graph_walk_start(graph, entity->pads);
-+	media_graph_walk_start(graph, first);
- 
- 	while ((tmp_pad = media_graph_walk_next(graph))
- 	       && tmp_pad != pad)
-@@ -356,7 +355,7 @@ int v4l2_pipeline_pm_use(struct media_entity *entity, int use)
- 	WARN_ON(entity->use_count < 0);
- 
- 	/* Apply power change to connected non-nodes. */
--	ret = pipeline_pm_power(entity, change, &mdev->pm_count_walk);
-+	ret = pipeline_pm_power(entity->pads, change, &mdev->pm_count_walk);
- 	if (ret < 0)
- 		entity->use_count -= change;
- 
-@@ -370,8 +369,8 @@ int v4l2_pipeline_link_notify(struct media_link *link, u32 flags,
- 			      unsigned int notification)
- {
- 	struct media_graph *graph = &link->graph_obj.mdev->pm_count_walk;
--	struct media_entity *source = link->source->entity;
--	struct media_entity *sink = link->sink->entity;
-+	struct media_pad *source = link->source;
-+	struct media_pad *sink = link->sink;
- 	int source_use;
- 	int sink_use;
- 	int ret = 0;
--- 
-2.18.0
+This seems wrong to me, as per Ebisu's schematics, the TXA output channel is a
+single one and it is routed to CSI40 input. The BSP patch connects two
+endpoints, with differente 'data-lanes' values to the same CSI input, and this
+seems odd to me.
+
+There is an issue here that the mainline ADV748x drivers does not support
+dynamic routing, and thus HDMI is always routed to TXA and analogue inputs to
+TXB, but that's a separate issue and DTS should only describe which connections
+are in place in the board, so I didn't include the adv748x's 'port@11' defined
+in the BSP patch (which is also wrong as it should be port@b, and the 11th port
+described TXB, not a different input routing to port@a).
+
+Please have a look and confirm my understanding.
+Thanks
+  j
+---
+ arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 86 ++++++++++++++++++++++++++
+ 1 file changed, 86 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+index 2bc3a48..d2faf3e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+@@ -28,6 +28,29 @@
+ 		/* first 128MB is reserved for secure area. */
+ 		reg = <0x0 0x48000000 0x0 0x38000000>;
+ 	};
++
++	cvbs-in {
++		compatible = "composite-video-connector";
++		label = "CVBS IN";
++
++		port {
++			cvbs_con: endpoint {
++				remote-endpoint = <&adv7482_ain7>;
++			};
++		};
++	};
++
++	hdmi-in {
++		compatible = "hdmi-connector";
++		label = "HDMI IN";
++		type = "a";
++
++		port {
++			hdmi_in_con: endpoint {
++				remote-endpoint = <&adv7482_hdmi>;
++			};
++		};
++	};
+ };
+
+ &avb {
+@@ -47,6 +70,22 @@
+ 	};
+ };
+
++&csi40 {
++	status = "okay";
++
++	ports {
++		port@0 {
++			reg = <0>;
++
++			csi40_in: endpoint {
++				clock-lanes = <0>;
++				data-lanes = <1 2>;
++				remote-endpoint = <&adv7482_txa>;
++			};
++		};
++	};
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -55,6 +94,49 @@
+ 	clock-frequency = <48000000>;
+ };
+
++&i2c0 {
++	status = "okay";
++
++	video-receiver@70 {
++		compatible = "adi,adv7482";
++		reg = <0x70>;
++
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		interrupt-parent = <&gpio0>;
++		interrupt-names = "intrq1", "intrq2";
++		interrupts = <7 IRQ_TYPE_LEVEL_LOW>,
++			     <17 IRQ_TYPE_LEVEL_LOW>;
++
++		port@7 {
++			reg = <7>;
++
++			adv7482_ain7: endpoint {
++				remote-endpoint = <&cvbs_con>;
++			};
++		};
++
++		port@8 {
++			reg = <8>;
++
++			adv7482_hdmi: endpoint {
++				remote-endpoint = <&hdmi_in_con>;
++			};
++		};
++
++		port@a {
++			reg = <0xa>;
++
++			adv7482_txa: endpoint {
++				clock-lanes = <0>;
++				data-lanes = <1 2>;
++				remote-endpoint = <&csi40_in>;
++			};
++		};
++	};
++};
++
+ &ohci0 {
+ 	status = "okay";
+ };
+@@ -94,6 +176,10 @@
+ 	status = "okay";
+ };
+
++&vin4 {
++	status = "okay";
++};
++
+ &xhci0 {
+ 	pinctrl-0 = <&usb30_pins>;
+ 	pinctrl-names = "default";
+--
+2.7.4
