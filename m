@@ -1,70 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:60788 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726228AbeHTUZR (ORCPT
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:34097 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726141AbeHTUSy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Aug 2018 16:25:17 -0400
-Date: Mon, 20 Aug 2018 19:08:48 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+        Mon, 20 Aug 2018 16:18:54 -0400
+Received: by mail-lf1-f67.google.com with SMTP id g9-v6so6194589lfh.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Aug 2018 10:02:28 -0700 (PDT)
+Subject: Re: [PATCH] mmc: tmio_mmc_core: don't claim spurious interrupts
+To: Wolfram Sang <wsa@the-dreams.de>
 Cc: linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] mmc: tmio_mmc_core: don't claim spurious interrupts
-Message-ID: <20180820170848.r6apoqynen54y3dl@ninjato>
 References: <f2295f99-2354-a2ad-5013-0501ecb0d3a1@cogentembedded.com>
  <20180820165528.nuf3rmckuu7d4zqs@ninjato>
- <ee36da1b-e2a6-41d6-2ec9-08a091621166@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <ee36da1b-e2a6-41d6-2ec9-08a091621166@cogentembedded.com>
+Date: Mon, 20 Aug 2018 20:02:25 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="r5jlitrknvufmuvr"
-Content-Disposition: inline
-In-Reply-To: <ee36da1b-e2a6-41d6-2ec9-08a091621166@cogentembedded.com>
+In-Reply-To: <20180820165528.nuf3rmckuu7d4zqs@ninjato>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On 08/20/2018 07:55 PM, Wolfram Sang wrote:
 
---r5jlitrknvufmuvr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>> I have encountered an interrupt storm  during the eMMC chip probing (and
+>> the chip finally didn't get detected). It  turned out  that U-Boot  left
+>> the DMAC interrupts enabled while the  Linux driver didn't use those.
+>> The SDHI driver's interrupt handler somehow  assumes that, even if a
+>> SDIO interrupt didn't happen, it should return IRQ_HANDLED. I think that
+>> if none of the enabled interrupts happened and got handled, we should
+>> return IRQ_NONE -- that  way the kernel IRQ code recoginizes a spurious
+>> interrupt and masks  it  off pretty quickly...
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> Can be argued.
 
+   You get interrupt storm anyway, just not as quickly stopped as with this fix
+(I hadn't understood *how* it gets finally stopped, I only know there's ~600000
+interrupts before it gets quiet instead of 100000 with IRQ_NONE).
 
-> > Should come after Yamada-san's patches, I'd think.
->=20
->    What are these?
+> Should come after Yamada-san's patches, I'd think.
 
-A more complex series adding another SDHI user.
+   What are these?
 
-> > BTW Sergei, did you test with SDIO devices?
->=20
->    No. But I really think the current code is borked. If you don't have a=
-n interrupt
-> to handle, you should idicate that.
+> BTW Sergei, did you test with SDIO devices?
 
-I think the patch is justified, I am not talking about that. I just
-wondered if you tested it. So, you are not missing something in the SDIO
-code path which you changed.
+   No. But I really think the current code is borked. If you don't have an interrupt
+to handle, you should idicate that.
 
-
---r5jlitrknvufmuvr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlt69aAACgkQFA3kzBSg
-KbYL3g/+NIQ16/tFpCNm+bSOH+WaX5MYCfhbTOkp30MzUKOuULYVLWYaJzno9Bm3
-GpgQAZZdiGDsuVDIUEbWx2/LJZQwlixM3BVPgvqGXn+ZEXRSA5M4ApN+nPjTXDPo
-q4a5hImMRh4Ce0HMlYege3pQU9Ncy1v63j8vQxp4pu36arqj0bzsJnIPF47vN/Kq
-ySwHB3q8Ek9SDXSABEL7ja86P9rJ4RWbjd23kvKBaxjKRLxQqchpQ+3ejNpzTkoj
-N/o/woWenCF5JbADbDNWFPjjjXUOswtovtb3g596w8PSyuT2lvZrQ1nmyVruJPyz
-8/CzgsgWgkGW5Exy01HaneGOp46zxPU1dzc88oR/o/+ZMd13pjVcp3SNWzojnhSA
-NlDq26QNMJ1fvb3xee1pKUulO+1xBY0VB/igJ2Isb1+Y4rSa+z94ePvVq/iLRCmS
-SYbiaQamxxExxibcQQIJg2H3FXZn7ix8J39O/odeNHp3e7M3kLZhdLcNA5ejjctU
-Kh+I9t0OkRESyGj+W+xfIyKJ3o70C3/eLUWA3NmGXGe8/kWRzo7Duj9N+Ta5OIkA
-dHXL6SwrG0mCZVIvy39mP0KKi947w1P0FqKYICEyp6culk6QImpC71ZNHVjpY+IB
-Nj97KmDMuHzQgJWsNlelsHrRFNRMS51aPA2JkGx7mft8Eh6A3NI=
-=8KYZ
------END PGP SIGNATURE-----
-
---r5jlitrknvufmuvr--
+MBR, Sergei
