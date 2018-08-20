@@ -1,81 +1,218 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:45496 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbeH1QC0 (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:38662 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726060AbeHTNoZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Aug 2018 12:02:26 -0400
-Received: by mail-vk0-f67.google.com with SMTP id b78-v6so626770vka.12
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Aug 2018 05:11:03 -0700 (PDT)
+        Mon, 20 Aug 2018 09:44:25 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo@jmondi.org>
+Cc: David Airlie <airlied@linux.ie>,
+        "open list:DRM DRIVERS FOR RENESAS" <dri-devel@lists.freedesktop.org>,
+        "open list:DRM DRIVERS FOR RENESAS"
+        <linux-renesas-soc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] drm: rcar-du: Improve non-DPLL clock selection
+Date: Mon, 20 Aug 2018 13:30:15 +0300
+Message-ID: <9138336.Hrcea1LzHI@avalon>
+In-Reply-To: <1532971214-17962-4-git-send-email-jacopo@jmondi.org>
+References: <1532971214-17962-1-git-send-email-jacopo@jmondi.org> <1532971214-17962-4-git-send-email-jacopo@jmondi.org>
 MIME-Version: 1.0
-References: <95d0db34-713d-8206-00c2-ee9a42aab823@cogentembedded.com> <1611fe94-07dd-fc8b-e94f-143e1ed26a17@cogentembedded.com>
-In-Reply-To: <1611fe94-07dd-fc8b-e94f-143e1ed26a17@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 28 Aug 2018 14:10:52 +0200
-Message-ID: <CAMuHMdVqGBo4uXtzNeLyD4f3CKeQzmgdJNs4N2ZB7MDosU+t4w@mail.gmail.com>
-Subject: vsps and channel indices (was: Re: [PATCH v3 1/2] arm64: dts:
- renesas: r8a77980: add FCPVD/VSPD/DU/LVDS support)
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Kieran Bingham <kbingham@kernel.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei, Laurent, Kieran,
+Hi Jacopo,
 
-On Wed, Jun 13, 2018 at 10:11 PM Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Describe the interconnected FCPVD0, VSPD0, DU, and LVDS0 devices in the
-> R8A77980 device tree...
->
-> Based on the original (and large) patch by Vladimir Barinov.
->
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Thank you for the patch.
 
-> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-> +++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+On Monday, 30 July 2018 20:20:14 EEST Jacopo Mondi wrote:
+> DU channels not equipped with a DPLL use an internal (aka SoC provided) or
+> external clock source combined with an internal divider to generate the
+> desired output dot clock frequency.
+> 
+> The current clock selection procedure does not fully exploit the ability
+> of external clock sources to generate the exact dot clock frequency by
+> themselves, but relies instead on tuning the internal DU clock divider
+> only, resulting in a less precise clock generation process.
+> 
+> When possible, and desirable, ask the external clock source for the exact
+> output dot clock frequency, and test all available clock sources (internally
+> generated clock, externally generated clock rounded to the closest possible
+> frequency, and not rounded externally generated clock) to better
+> approximate the desired output dot clock.
 
-> +               du: display@feb00000 {
-> +                       compatible = "renesas,du-r8a77980",
-> +                                    "renesas,du-r8a77970";
-> +                       reg = <0 0xfeb00000 0 0x80000>;
-> +                       interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks = <&cpg CPG_MOD 724>;
-> +                       clock-names = "du.0";
-> +                       power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-> +                       resets = <&cpg 724>;
-> +                       vsps = <&vspd0>;
+I don't think you need to care about the "not rounded externally generated 
+clock" (which incidentally isn't really about rounding, but about requesting a 
+specific rate), for two reasons.
 
-According to the bindings, the vsps property should also contain a
-channel index.
+The first one is that I don't think using whatever rate is currently 
+programmed for the external clock will lead to a better result. There's no 
+real reason why the current external rate would be better, other than possibly 
+just chance, and I don't think we should rely on chance.
 
-Laurent added the indices to r8a7795.dtsi, but r8a7795-es.dtsi overrides
-that with a version without the indices.
-Kieran included the indices when adding DU support for r8a77965 and
-r8a77995.
+The second reason is that it would lead to a non-deterministic behaviour. The 
+system will boot with a default clock rate for the external source, but as 
+soon as you set a mode, that rate could change, and will never revert back to 
+the default. The second mode you will set will thus depend for its clock 
+selection on the modes previously set, generating all kind of bugs difficult 
+to reproduce.
 
-r8a7796.dtsi, r8a77970.dtsi, and r8a77980.dtsi lack the indices.
+> This patch specifically targets platforms (like Salvator-X[S] and ULCBs)
+> where the DU's input dotclock.in is generated by the versaclock VC5 clock
+> source, which is capable of generating the exact rate the DU needs as pixel
+> clock output.
+> 
+> This patch fixes higher resolution modes wich requires an high pixel clock
+> output currently not working on non-HDMI DU channel (as VGA 1920x1080@60Hz).
+> 
+> Fixes: 1b30dbde8 "drm: rcar-du: Add support for external pixel clock"
+> 
+> Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 96 ++++++++++++++++++++++++------
+>  1 file changed, 73 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c index 4d7907c..0dfb28ff 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> @@ -207,12 +207,12 @@ static void rcar_du_crtc_set_display_timing(struct
+> rcar_du_crtc *rcrtc) {
+>  	const struct drm_display_mode *mode = &rcrtc->crtc.state->adjusted_mode;
+>  	struct rcar_du_device *rcdu = rcrtc->group->dev;
+> -	unsigned long mode_clock = mode->clock * 1000;
+> +	unsigned long mode_pixelclock = mode->clock * 1000;
+>  	u32 dsmr;
+>  	u32 escr;
+> 
+>  	if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
+> -		unsigned long target = mode_clock;
+> +		unsigned long target = mode_pixelclock;
+>  		struct dpll_info dpll = { 0 };
+>  		unsigned long extclk;
+>  		u32 dpllcr;
+> @@ -258,42 +258,92 @@ static void rcar_du_crtc_set_display_timing(struct
+> rcar_du_crtc *rcrtc)
+> 
+>  		escr = ESCR_DCLKSEL_DCLKIN | div;
+>  	} else {
+> -		unsigned long clk;
+> +		struct du_clkin_desc {
+> +			unsigned long dist;
+> +			unsigned long rate;
+> +			struct clk *clk;
+> +			u32 escr;
+> +		} du_clkins[3];
+> +		struct du_clkin_desc *du_clkin = du_clkins;
+> +		struct du_clkin_desc *clkin_best;
+> +		unsigned long best = -1UL;
+> +		unsigned long pixelclock;
+> +		unsigned long cpgrate;
+>  		u32 div;
+> 
+>  		/*
+>  		 * Compute the clock divisor and select the internal or external
+>  		 * dot clock based on the requested frequency.
+>  		 */
+> -		clk = clk_get_rate(rcrtc->clock);
+> -		div = DIV_ROUND_CLOSEST(clk, mode_clock);
+> -		div = clamp(div, 1U, 64U) - 1;
+> +		cpgrate = clk_get_rate(rcrtc->clock);
+> +		div = clamp(DIV_ROUND_CLOSEST(cpgrate, mode_pixelclock),
+> +			    1UL, 64UL) - 1;
+> +		pixelclock = cpgrate / (div + 1);
+> 
+> -		escr = ESCR_DCLKSEL_CLKS | div;
+> +		du_clkin->dist = abs(pixelclock - mode_pixelclock);
+> +		du_clkin->escr = ESCR_DCLKSEL_CLKS | div;
+> +		du_clkin->clk = rcrtc->clock;
+> +		du_clkin->rate = cpgrate;
+> +		clkin_best = du_clkin;
+> 
+>  		if (rcrtc->extclock) {
+> -			unsigned long extclk;
+> +			unsigned long roundrate;
+>  			unsigned long extrate;
+> -			unsigned long rate;
+> -			u32 extdiv;
+> -
+> -			extclk = clk_get_rate(rcrtc->extclock);
+> -			extdiv = DIV_ROUND_CLOSEST(extclk, mode_clock);
+> -			extdiv = clamp(extdiv, 1U, 64U) - 1;
+> 
+> -			extrate = extclk / (extdiv + 1);
+> -			rate = clk / (div + 1);
+> -
+> -			if (abs((long)extrate - (long)mode_clock) <
+> -			    abs((long)rate - (long)mode_clock))
+> -				escr = ESCR_DCLKSEL_DCLKIN | extdiv;
+> +			/*
+> +			 * If an external clock source is present ask it
+> +			 * for the exact dot clock rate, and test all possible
+> +			 * combinations (internal, external rounded, external
+> +			 * not rounded) to achieve the best possible clock
+> +			 * accuracy.
+> +			 */
+> +			extrate = clk_get_rate(rcrtc->extclock);
+> +			roundrate = clk_round_rate(rcrtc->extclock,
+> +						   mode_pixelclock);
+> +
+> +			if (roundrate == mode_pixelclock) {
+> +				/* We can't do better than this... */
+> +				clk_set_rate(rcrtc->extclock, roundrate);
+> +				escr = ESCR_DCLKSEL_DCLKIN;
+> +				goto set_escr;
+> +			}
+> 
+> -			dev_dbg(rcrtc->group->dev->dev,
+> -				"mode clock %lu extrate %lu rate %lu ESCR 0x%08x\n",
+> -				mode_clock, extrate, rate, escr);
+> +			/* Test the external clock 'plain' rate. */
+> +			du_clkin++;
+> +			div = clamp(DIV_ROUND_CLOSEST(extrate, mode_pixelclock),
+> +				    1UL, 64UL) - 1;
+> +			pixelclock = extrate / (div + 1);
+> +			du_clkin->dist = abs(pixelclock - mode_pixelclock);
+> +			du_clkin->escr = ESCR_DCLKSEL_DCLKIN | div;
+> +			du_clkin->clk = rcrtc->extclock;
+> +			du_clkin->rate = extrate;
 
-Commit fd57d77f9c649cf9 ("dt-bindings: display: rcar-du: Add a VSP channel
-index to the vsps DT property") says a backwards-compatibility mode can be
-implemented, but I fail to see how this can work, as rcar_du_vsps_init()
-will just return an error, which is propagated.
+If we remove this option, there will only be two options to compare, and I 
+think it would then be possible to keep the current code structure to simplify 
+this patch.
 
-What am I missing?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
+> +			/* Test the external clock 'rounded' rate. */
+> +			du_clkin++;
+> +			div = clamp(DIV_ROUND_CLOSEST(roundrate, mode_pixelclock),
+> +				    1UL, 64UL) - 1;
+> +			pixelclock = roundrate / (div + 1);
+> +			du_clkin->dist = abs(pixelclock - mode_pixelclock);
+> +			du_clkin->escr = ESCR_DCLKSEL_DCLKIN | div;
+> +			du_clkin->clk = rcrtc->extclock;
+> +			du_clkin->rate = roundrate;
+> +
+> +			/* Find out the best approximation we got. */
+> +			for (; du_clkin >= du_clkins; --du_clkin) {
+> +				if (du_clkin->dist < best) {
+> +					best = du_clkin->dist;
+> +					clkin_best = du_clkin;
+> +				}
+> +			}
+> +			clk_set_rate(clkin_best->clk, clkin_best->rate);
+>  		}
+> +
+> +		escr = clkin_best->escr;
+>  	}
+> 
+> +set_escr:
+> +	dev_err(rcrtc->group->dev->dev, "%s: ESCR 0x%08x\n", __func__, escr);
+> +
+>  	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? ESCR2 : ESCR,
+>  			    escr);
+>  	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? OTAR2 : OTAR, 0);
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Regards,
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
