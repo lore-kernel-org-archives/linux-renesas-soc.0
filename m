@@ -1,66 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:46954 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727040AbeH1TEm (ORCPT
+Received: from sauhun.de ([88.99.104.3]:59100 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726250AbeHTQG0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Aug 2018 15:04:42 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ARM: dts: r9a06g032: Use r9a06g032-sysctrl binding definitions
-Date: Tue, 28 Aug 2018 17:12:31 +0200
-Message-Id: <20180828151231.16177-1-geert+renesas@glider.be>
+        Mon, 20 Aug 2018 12:06:26 -0400
+Date: Mon, 20 Aug 2018 14:50:53 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Subject: Re: [PATCH 2/2] i2c: rcar: implement STOP and REP_START according to
+ docs
+Message-ID: <20180820125053.tsgx2cuteewlcgm4@ninjato>
+References: <20180808075928.31107-1-wsa+renesas@sang-engineering.com>
+ <20180808075928.31107-3-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="aiis4tm7d3hxa4gs"
+Content-Disposition: inline
+In-Reply-To: <20180808075928.31107-3-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Replace the hardcoded clock indices by R9A06G032_CLK_* symbols.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r9a06g032.dtsi | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+--aiis4tm7d3hxa4gs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index afe29c95a006e8fa..3e45375b79aa9c0d 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -7,6 +7,7 @@
-  */
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/r9a06g032-sysctrl.h>
- 
- / {
- 	compatible = "renesas,r9a06g032";
-@@ -21,14 +22,14 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a7";
- 			reg = <0>;
--			clocks = <&sysctrl 84>;
-+			clocks = <&sysctrl R9A06G032_CLK_A7MP>;
- 		};
- 
- 		cpu@1 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a7";
- 			reg = <1>;
--			clocks = <&sysctrl 84>;
-+			clocks = <&sysctrl R9A06G032_CLK_A7MP>;
- 			enable-method = "renesas,r9a06g032-smp";
- 			cpu-release-addr = <0 0x4000c204>;
- 		};
-@@ -82,7 +83,7 @@
- 			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
--			clocks = <&sysctrl 146>;
-+			clocks = <&sysctrl R9A06G032_CLK_UART0>;
- 			clock-names = "baudclk";
- 			status = "disabled";
- 		};
--- 
-2.17.1
+On Wed, Aug 08, 2018 at 09:59:28AM +0200, Wolfram Sang wrote:
+> When doing a REP_START after a read message, the driver used to trigger
+> a STOP first which would then be overwritten by REP_START. This was the
+> only stable method found when doing the last refactoring. However, this
+> was not in accordance with the documentation.
+>=20
+> After research from our BSP team and myself, we now can implement a
+> version which works and is according to the documentation. The new
+> approach ensures the ICMCR register is only changed when really needed.
+>=20
+> Tested on a R-Car Gen2 (H2) and Gen3 with DMA (M3N).
+>=20
+> Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Applied to for-next, thanks!
+
+
+--aiis4tm7d3hxa4gs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlt6uS0ACgkQFA3kzBSg
+KbbX/g/9FxrWEcjwL0G3OnIf7y+hOISEnO/UJ3Z1K+HrLLMRWTI1Mzdln9m9OEfc
+CAxzu0YeinIF/JaHBC/QLXL9xNzNIqnBrI5q9u46c0PF45Irk9daaCurHo0PA7Hi
+a0SNfeorj5tdiIWVBjpYfI1KemBNG5ud5KYsEV74vIGwXgyfG57N4j6OReHnbEN6
+/m3l/EEZV5yaXNG0QzKXsuj7qd1weYHQBOoH9fULx9MwZ7ZXWYWe9EElLdZXWaK7
+Til9yppStWNvlwGJZX2/S6WHEXgLlDShTosjswiruqfM/PfopvaPRkJ+aIxbqjlv
+Uz+cUIfdtQytm9Th5W663JA7zVJkivu5F9I96Fb4HezN6j7JBESdIk4XsSguCILB
+P7Tmz5m2s9z3nSPjUFMiC4uLFEdmsaiu568wV45hB9vZgfn1quI5AilvN1lcxCSs
+nTLXvxJKoUkkP80Uhy0pJ4KjpU7WzukGVev93HBencb/+EAQIvNibW0K7Xa1dn+F
+8XRykvrfsTWShaHuuzTjxt1VwI3lMpAUmXcD8tz/eygmZypA1xdvZuORcOV3il0u
+CitEFQD7kJ/gfsV9hYcAfk8ZI4fslMdiH6F6qLmPVzVvV1ii1ji477GfESBXKv1+
+mZuNaInN0hg7XZP4xCLUmYmgkXihb6ZKHj4N5+9ry4l0p6zg6H8=
+=+o0K
+-----END PGP SIGNATURE-----
+
+--aiis4tm7d3hxa4gs--
