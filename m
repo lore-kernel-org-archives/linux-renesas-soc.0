@@ -1,21 +1,23 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36878 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726590AbeHURl2 (ORCPT
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:33007 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726498AbeHUBsm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 Aug 2018 13:41:28 -0400
-Date: Tue, 21 Aug 2018 15:38:34 +0200
-From: Simon Horman <horms@verge.net.au>
+        Mon, 20 Aug 2018 21:48:42 -0400
+Date: Mon, 20 Aug 2018 17:31:14 -0500
+From: Rob Herring <robh@kernel.org>
 To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
+Cc: Joerg Roedel <joro@8bytes.org>,
         Mark Rutland <mark.rutland@arm.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 2/2] dt-bindings: iommu: ipmmu-vmsa: Add r8a774a1 support
-Message-ID: <20180821133834.geidxrwv2mjbz6sn@verge.net.au>
+Message-ID: <20180820223114.GA29387@bogus>
 References: <1534516265-10059-1-git-send-email-fabrizio.castro@bp.renesas.com>
  <1534516265-10059-3-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
@@ -25,10 +27,16 @@ In-Reply-To: <1534516265-10059-3-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Aug 17, 2018 at 03:31:05PM +0100, Fabrizio Castro wrote:
+On Fri, 17 Aug 2018 15:31:05 +0100, Fabrizio Castro wrote:
 > Document RZ/G2M (R8A774A1) SoC bindings.
 > 
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> ---
+> This patch applies on top of next-20180817
+> 
+>  Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Rob Herring <robh@kernel.org>
