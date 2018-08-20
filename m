@@ -1,54 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:26875 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725736AbeHUGQB (ORCPT
+Received: from sauhun.de ([88.99.104.3]:33552 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726293AbeHTWYC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 Aug 2018 02:16:01 -0400
-MIME-Version: 1.0
-In-Reply-To: <20180820190709.qilhem7bjqnvgtt2@ninjato>
-References: <1534403799-10594-1-git-send-email-yamada.masahiro@socionext.com> <20180820190709.qilhem7bjqnvgtt2@ninjato>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Tue, 21 Aug 2018 11:57:00 +0900
-Message-ID: <CAK7LNARxJro1wL5RJ92XFykSfcC0jdgr+xvvqgLTtE=VBARekg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/7] mmc: tmio: refactor TMIO core a bit and add
- UniPhier SD/eMMC controller support
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>,
+        Mon, 20 Aug 2018 18:24:02 -0400
+Date: Mon, 20 Aug 2018 21:07:09 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Jassi Brar <jaswinder.singh@linaro.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 0/7] mmc: tmio: refactor TMIO core a bit and add
+ UniPhier SD/eMMC controller support
+Message-ID: <20180820190709.qilhem7bjqnvgtt2@ninjato>
+References: <1534403799-10594-1-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ab4t57ivvbv4cfvz"
+Content-Disposition: inline
+In-Reply-To: <1534403799-10594-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
+
+--ab4t57ivvbv4cfvz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 
-2018-08-21 4:07 GMT+09:00 Wolfram Sang <wsa@the-dreams.de>:
->
-> So, today I did test these patches successfully on a Gen3 board (M3-N)
-> and reviewed half of the patches. I will continue tomorrow with
-> reviewing and testing more boards.
->
-> In a nutshell, things look good so far.
->
+So, today I did test these patches successfully on a Gen3 board (M3-N)
+and reviewed half of the patches. I will continue tomorrow with
+reviewing and testing more boards.
+
+In a nutshell, things look good so far.
 
 
-Thanks for the review!
+--ab4t57ivvbv4cfvz
+Content-Type: application/pgp-signature; name="signature.asc"
 
-But, this version is not applicable to Linus' tree
-due to commit db924bba47c80.
+-----BEGIN PGP SIGNATURE-----
 
-Resolving the conflict is not trivial.
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlt7EVkACgkQFA3kzBSg
+KbZ/xQ/+OE7fO2CGMJ4PGq3vAqAF2m5wpTSY1iD1NkbwTjgdZjy1MmWQxPMSNkxV
+TRZt4mI1Ddc3i3amYW2dO3saS3yRqwyr5yMpis9Z25oQqd9ckP6rZLI3BQC5gfoh
+EokKJPhVrcbjGypgzbXEEzZ6Bb/wfwfplryIVtmN9uEG8ixnZizgMsYhvhIuDvGw
+CAuJwtELp0jloGh2UIGCt/ly1uy3m8uJqgPtGf5gs86D42oa5AQkc2XvINkaQjbL
+ZqM6DRNBHhjiDvnW/uWKwhuSMuGJCIiOlfQbATK6hJoro0gqdqIVHldbCTXKcUsm
+BfMKZjIUta6kyWxKCld9DE90zVuEAWDxqzzS+E1QtKHZ/+oHsKa8eBn9BNT6RlML
+wKJ8M8Lrs9idgpL/bI9WJOImLF9kRBOmnvzLXpfzZ5VqAzdDFt82FRSZRjOmahH5
+2s8M70uNhNmYu6XNtpuZRaBnU0R3LXl/9UNglcrw17088VH7ZEirDeXOBJkzwZRK
+fH9AO2wQOflpc8N8N/pxNyzv3LBwqlF+tEle8gcY3E0RlvJDUUjA/4hRAQKlmxa0
+/bGBXFSqpMBmqcxsiUktzTFiNrGWGPHwlYTvSLfI7AJIGYqncCERVifuCJd3WnnO
+zGkl/if/cQSeaDkFrCzylH6oRJlPhbSnuelIaAl2rVPrKqVfdAE=
+=8e2t
+-----END PGP SIGNATURE-----
 
-
-I will rebase and send v3,
-but I do not understand the quirks
-Renesas is adding to the TMIO core code.
-
-
--- 
-Best Regards
-Masahiro Yamada
+--ab4t57ivvbv4cfvz--
