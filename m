@@ -1,55 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:34097 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726141AbeHTUSy (ORCPT
+Received: from sauhun.de ([88.99.104.3]:60682 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726077AbeHTULz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Aug 2018 16:18:54 -0400
-Received: by mail-lf1-f67.google.com with SMTP id g9-v6so6194589lfh.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Aug 2018 10:02:28 -0700 (PDT)
-Subject: Re: [PATCH] mmc: tmio_mmc_core: don't claim spurious interrupts
-To: Wolfram Sang <wsa@the-dreams.de>
+        Mon, 20 Aug 2018 16:11:55 -0400
+Date: Mon, 20 Aug 2018 18:55:29 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] mmc: tmio_mmc_core: don't claim spurious interrupts
+Message-ID: <20180820165528.nuf3rmckuu7d4zqs@ninjato>
 References: <f2295f99-2354-a2ad-5013-0501ecb0d3a1@cogentembedded.com>
- <20180820165528.nuf3rmckuu7d4zqs@ninjato>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <ee36da1b-e2a6-41d6-2ec9-08a091621166@cogentembedded.com>
-Date: Mon, 20 Aug 2018 20:02:25 +0300
 MIME-Version: 1.0
-In-Reply-To: <20180820165528.nuf3rmckuu7d4zqs@ninjato>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uvmq54rzifx6jyaz"
+Content-Disposition: inline
+In-Reply-To: <f2295f99-2354-a2ad-5013-0501ecb0d3a1@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 08/20/2018 07:55 PM, Wolfram Sang wrote:
 
->> I have encountered an interrupt storm  during the eMMC chip probing (and
->> the chip finally didn't get detected). It  turned out  that U-Boot  left
->> the DMAC interrupts enabled while the  Linux driver didn't use those.
->> The SDHI driver's interrupt handler somehow  assumes that, even if a
->> SDIO interrupt didn't happen, it should return IRQ_HANDLED. I think that
->> if none of the enabled interrupts happened and got handled, we should
->> return IRQ_NONE -- that  way the kernel IRQ code recoginizes a spurious
->> interrupt and masks  it  off pretty quickly...
->>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> Can be argued.
+--uvmq54rzifx6jyaz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-   You get interrupt storm anyway, just not as quickly stopped as with this fix
-(I hadn't understood *how* it gets finally stopped, I only know there's ~600000
-interrupts before it gets quiet instead of 100000 with IRQ_NONE).
+On Fri, Aug 17, 2018 at 02:41:02PM +0300, Sergei Shtylyov wrote:
+> I have encountered an interrupt storm  during the eMMC chip probing (and
+> the chip finally didn't get detected). It  turned out  that U-Boot  left
+> the DMAC interrupts enabled while the  Linux driver didn't use those.
+> The SDHI driver's interrupt handler somehow  assumes that, even if a
+> SDIO interrupt didn't happen, it should return IRQ_HANDLED. I think that
+> if none of the enabled interrupts happened and got handled, we should
+> return IRQ_NONE -- that  way the kernel IRQ code recoginizes a spurious
+> interrupt and masks  it  off pretty quickly...
+>=20
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-> Should come after Yamada-san's patches, I'd think.
+Can be argued. Should come after Yamada-san's patches, I'd think. BTW
+Sergei, did you test with SDIO devices?
 
-   What are these?
 
-> BTW Sergei, did you test with SDIO devices?
+--uvmq54rzifx6jyaz
+Content-Type: application/pgp-signature; name="signature.asc"
 
-   No. But I really think the current code is borked. If you don't have an interrupt
-to handle, you should idicate that.
+-----BEGIN PGP SIGNATURE-----
 
-MBR, Sergei
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlt68oAACgkQFA3kzBSg
+KbaqAhAAlLVL7O676PV0bGpyDfv88PGb3HfHn1SNmYsT/vhk6+3KX9nz87jX7shN
+xkjcrvrDhsqAOHgqq9smxoLHv+gZLvwF4nj+BQ/Iv4Brg1KrfshQDj+K3H3RyZai
+1iE2ot/cN//LEbvCenNuPjWRjGN0eL29FYrUUjC8bmEBk9KOTX3qkoUDgjixuhSo
+wVreEClYhIVqosG8IdwhLLY/NSHMDKJI/5LBWgHvxVWjNGGgexgMbbPtLcsQicK3
+Z6r+b/GZqv/2GK+XqoiEn+T2oA9tzQnDAsnRM2Lhkqcc4XOACQdfuCNb80BFiNpH
+dXU/7OwCGSJZ8sY9BNEr/O9QqN2dXB7jrowzojybesFWR2ypnVbT7M+EcTPILm/y
+I4XVE1CZFcPvffsqJwqvr4YflqvXNibKR22w/AdQvRXhrZd1IptXGnEEpH0se+0W
+mwa+XiFqI04L7JMUZuoFlcV39/IgWTSH490S0Z1vz+fZxGeFpF1pwWROGKCUdE9r
+uKdvTPHmhGoq8fwOZx+Rc9Elkl9UlIjf9eukgM4/NHh+mOj6ZYx9Nen/1w6PTwsu
+eGOQgTWU3vjq/wgCqNKvBSHMKOZRAy5vt3Q3Yt+LuajXh2nMP6N5Bd4NdB6EoCIO
+AtQTumd39V5gHL4JDB0V9kYYFDJd4JiKjubtxS4/j+CF3LSpv0Y=
+=MEjg
+-----END PGP SIGNATURE-----
+
+--uvmq54rzifx6jyaz--
