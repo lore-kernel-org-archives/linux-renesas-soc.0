@@ -1,99 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-09.nifty.com ([210.131.2.76]:17026 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389123AbeHPKOB (ORCPT
+Received: from sauhun.de ([88.99.104.3]:60748 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726033AbeHTUSz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Aug 2018 06:14:01 -0400
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
+        Mon, 20 Aug 2018 16:18:55 -0400
+Date: Mon, 20 Aug 2018 19:02:28 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH v2 3/7] dt-bindings: mmc: add DT binding for UniPhier SD/eMMC controller
-Date: Thu, 16 Aug 2018 16:16:35 +0900
-Message-Id: <1534403799-10594-4-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1534403799-10594-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1534403799-10594-1-git-send-email-yamada.masahiro@socionext.com>
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] mmc: renesas_sdhi_internal_dmac: mask DMAC interrupts
+Message-ID: <20180820170228.xf5e3lpovwav5zqo@ninjato>
+References: <711ef434-1208-4a9b-1c0d-519395251531@cogentembedded.com>
+ <20180820163856.cqp62em4ccerf7x5@ninjato>
+ <027a20b0-5047-2d89-76f7-55dec7a67dba@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uwrbrfjzoryhny4e"
+Content-Disposition: inline
+In-Reply-To: <027a20b0-5047-2d89-76f7-55dec7a67dba@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This SD/eMMC controller is used for UniPhier SoC family.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
+--uwrbrfjzoryhny4e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes in v2:
-  - Rename compatible "socionext,uniphier-sd-v3.1b"
-    to "socionext,uniphier-sd-v3.1.1"
 
- .../devicetree/bindings/mmc/uniphier-sd.txt        | 55 ++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mmc/uniphier-sd.txt
+> >>  /* DM_CM_INFO2 and DM_CM_INFO2_MASK */
+> >>  #define INFO2_DTRANERR1		BIT(17)
+> >>  #define INFO2_DTRANERR0		BIT(16)
+> >> +#define INFO2_RESERVED_BITS	GENMASK_ULL(32, 0)
+> >=20
+> > Same as above. Maybe we even need one define only?
+>=20
+>    No, I think 2 separate regs deserve 2 separate masks.
 
-diff --git a/Documentation/devicetree/bindings/mmc/uniphier-sd.txt b/Documentation/devicetree/bindings/mmc/uniphier-sd.txt
-new file mode 100644
-index 0000000..e1d6587
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/uniphier-sd.txt
-@@ -0,0 +1,55 @@
-+UniPhier SD/eMMC controller
-+
-+Required properties:
-+- compatible: should be one of the following:
-+    "socionext,uniphier-sd-v2.91"  - IP version 2.91
-+    "socionext,uniphier-sd-v3.1"   - IP version 3.1
-+    "socionext,uniphier-sd-v3.1.1" - IP version 3.1.1
-+- reg: offset and length of the register set for the device.
-+- interrupts: a single interrupt specifier.
-+- clocks: a single clock specifier of the controller clock.
-+- reset-names: should contain the following:
-+    "host"   - mandatory for all versions
-+    "bridge" - should exist only for "socionext,uniphier-sd-v2.91"
-+    "hw"     - should exist if eMMC hw reset line is available
-+- resets: a list of reset specifiers, corresponding to the reset-names
-+
-+Optional properties:
-+- pinctrl-names: if present, should contain the following:
-+    "default" - should exist for all instances
-+    "uhs"     - should exist for SD instance with UHS support
-+- pinctrl-0: pin control state for the default mode
-+- pinctrl-1: pin control state for the UHS mode
-+- dma-names: should be "rx-tx" if present.
-+  This property can exist only for "socionext,uniphier-sd-v2.91".
-+- dmas: a single DMA channel specifier
-+  This property can exist only for "socionext,uniphier-sd-v2.91".
-+- bus-width: see mmc.txt
-+- cap-sd-highspeed: see mmc.txt
-+- cap-mmc-highspeed: see mmc.txt
-+- sd-uhs-sdr12: see mmc.txt
-+- sd-uhs-sdr25: see mmc.txt
-+- sd-uhs-sdr50: see mmc.txt
-+- cap-mmc-hw-reset: should exist if reset-names contains "hw". see mmc.txt
-+- non-removable: see mmc.txt
-+
-+Example:
-+
-+	sd: sdhc@5a400000 {
-+		compatible = "socionext,uniphier-sd-v2.91";
-+		reg = <0x5a400000 0x200>;
-+		interrupts = <0 76 4>;
-+		pinctrl-names = "default", "uhs";
-+		pinctrl-0 = <&pinctrl_sd>;
-+		pinctrl-1 = <&pinctrl_sd_uhs>;
-+		clocks = <&mio_clk 0>;
-+		reset-names = "host", "bridge";
-+		resets = <&mio_rst 0>, <&mio_rst 3>;
-+		dma-names = "rx-tx";
-+		dmas = <&dmac 4>;
-+		bus-width = <4>;
-+		cap-sd-highspeed;
-+		sd-uhs-sdr12;
-+		sd-uhs-sdr25;
-+		sd-uhs-sdr50;
-+	};
--- 
-2.7.4
+Whatever. I am not into bike-shedding. It works, too.
+
+> >> +	/*
+> >> +	 * We don't use the DMA interrupts,  but they might have been enabled
+> >> +	 * by a bootloader,  so mask them to avoid an interrupt storm...
+> >> +	 */
+> >=20
+> > Two spaces after ',' looks odd to me. Also, no need for "..."
+>=20
+>    Both are my preferences. Yes, I probably should have worked in the
+> typesetting industry... :-)=20
+
+But where is the continuation of "..."?
+
+> > I'd even think with a name like CLEAR_MASK, the comment could even go.
+>=20
+>    Disagree here. The register #defines don't provide enough info on what=
+'s
+> going on...
+
+Masking out all interrupts at the beginning is pretty standard behaviour
+in my book. Well, at least, please shorten it to sth like "Disable
+interrupts, we don't use them".
+
+
+--uwrbrfjzoryhny4e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlt69CQACgkQFA3kzBSg
+KbbkRBAAjeecZo8bLqk84AUywnCpAmXcCCOJXWXLBO/3XfnM5xxeRYvhigQLThDs
+p65fMjdiqYxBj7+qzyQLSDsgZdTYxwqGefgG0R+Q6/eS25WcbVthJp/E0sDjtrGH
+IJftF3rvmfs6K0Nq+UnEN4czTk3DykZwp1nt+9CIq50iA7XPDXuvR90t2gIQdoQV
+2w49nMJmxxlKGl2QjvfLZA1cvBJASPeSfNnuXL3yPMo0iUJ4gCkSxxt4fv8Hk16s
+Zdt7iaCVRBshY1+i92k7EzbgNxmj+HwPLGQZ0Kx7FNdvl1BhuENXqFgKbu2e7Ltv
+nBfpKe7QXyKKmeeUxCjrrLgtAA//iTv6LKusedfG/Xxdf0PQFl+++s1pKp2fyygc
+VRKMVCqOPDHyCQM6vvnAuhJBalPM2wLzMA0lf2oc4MKFUiksp77vzbQY0EpqkBLY
++JOpr6Bmm68CHVzaImnzexgnttnP1quGJ5yOOC6TEamkLwO8pkAXrr5to7xKplU5
+AaPkTM//pfu7OmmwoY954PlZA9YuI7Fh/fSP9WO1GMeIRW1VRIzwdINcKGig9/8i
+gH+mRNUF+Lr1En+Lvhvw9kWBp0YxiZ/1hAmt+G57FIiTMwf7DB0PMu7GzlPvoOA2
+cxFnysxAMa1UOyrvwvDmnaKnkSAsW7oBMmgZAVoFbhvSRxSsfcE=
+=pecU
+-----END PGP SIGNATURE-----
+
+--uwrbrfjzoryhny4e--
