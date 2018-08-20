@@ -1,132 +1,174 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:39477 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726641AbeHTSmh (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:36058 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725954AbeHTLxe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Aug 2018 14:42:37 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        ulrich.hecht+renesas@gmail.com, kieran.bingham@ideasonboard.com,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR RENESAS),
-        linux-renesas-soc@vger.kernel.org (open list:DRM DRIVERS FOR RENESAS),
-        Jacopo Mondi <jacopo@jmondi.org>
-Subject: [PATCH v2 2/2] drm: rcar-du: Improve non-DPLL clock selection
-Date: Mon, 20 Aug 2018 17:26:17 +0200
-Message-Id: <1534778777-6002-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1534778777-6002-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1534778777-6002-1-git-send-email-jacopo+renesas@jmondi.org>
+        Mon, 20 Aug 2018 07:53:34 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ulrich Hecht <uli+renesas@fpond.eu>
+Cc: linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        jacopo+renesas@jmondi.org, kieran.bingham+renesas@ideasonboard.com
+Subject: Re: [PROTO][PATCH 02/10] drm: rcar-du: Add r8a77995 device support
+Date: Mon, 20 Aug 2018 11:39:44 +0300
+Message-ID: <12609537.6v2WhfLlsh@avalon>
+In-Reply-To: <1534254604-24204-3-git-send-email-uli+renesas@fpond.eu>
+References: <1534254604-24204-1-git-send-email-uli+renesas@fpond.eu> <1534254604-24204-3-git-send-email-uli+renesas@fpond.eu>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Jacopo Mondi <jacopo@jmondi.org>
+Hi Ulrich,
 
-DU channels not equipped with a DPLL use an internal (aka SoC provided) or
-external clock source combined with an internal divider to generate the
-desired output dot clock frequency.
+Thank you for the patch.
 
-The current clock selection procedure does not fully exploit the ability
-of external clock sources to generate the exact dot clock frequency by
-themselves, but relies instead on tuning the internal DU clock divider
-only, resulting in a less precise clock generation process.
+On Tuesday, 14 August 2018 16:49:56 EEST Ulrich Hecht wrote:
+> Add support for the R-Car D3 (R8A77995) SoC to the R-Car DU driver.
+> 
+> Based on patch by Koji Matsuoka <koji.matsuoka.xm@renesas.com>.
+> 
+> Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.c  | 17 ++++++-----------
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c   | 26 ++++++++++++++++++++++++++
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.h   |  1 +
+>  drivers/gpu/drm/rcar-du/rcar_du_group.c |  3 ++-
+>  4 files changed, 35 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c index cd6803a..9153e7a 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> @@ -53,14 +53,6 @@ static void rcar_du_crtc_clr(struct rcar_du_crtc *rcrtc,
+> u32 reg, u32 clr) rcar_du_read(rcdu, rcrtc->mmio_offset + reg) & ~clr);
+>  }
+> 
+> -static void rcar_du_crtc_set(struct rcar_du_crtc *rcrtc, u32 reg, u32 set)
+> -{
+> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
+> -
+> -	rcar_du_write(rcdu, rcrtc->mmio_offset + reg,
+> -		      rcar_du_read(rcdu, rcrtc->mmio_offset + reg) | set);
+> -}
+> -
+>  static void rcar_du_crtc_clr_set(struct rcar_du_crtc *rcrtc, u32 reg,
+>  				 u32 clr, u32 set)
+>  {
+> @@ -527,7 +519,8 @@ static void rcar_du_crtc_start(struct rcar_du_crtc
+> *rcrtc) * actively driven).
+>  	 */
+>  	interlaced = rcrtc->crtc.mode.flags & DRM_MODE_FLAG_INTERLACE;
+> -	rcar_du_crtc_clr_set(rcrtc, DSYSR, DSYSR_TVM_MASK | DSYSR_SCM_MASK,
+> +	rcar_du_crtc_clr_set(rcrtc, DSYSR,
+> +			     DSYSR_TVM_MASK | DSYSR_SCM_MASK | DSYSR_ILTS,
 
-When possible, and desirable, ask the external clock source for the exact
-output dot clock frequency, and test the returned frequency against the
-internally generated one to better approximate the desired output dot clock.
+The ILTS bit defaults to 0 so this shouldn't be needed. However, we never 
+initialize the DSYSR register completely but only modify bits. It would be 
+safer to write all bits at init time. I'll write a separate patch.
 
-This patch specifically targets platforms (like Salvator-X[S] and ULCBs)
-where the DU's input dotclock.in is generated by the versaclock VC5 clock
-source, which is capable of generating the exact rate the DU needs as pixel
-clock output.
+>  			     (interlaced ? DSYSR_SCM_INT_VIDEO : 0) |
+>  			     DSYSR_TVM_MASTER);
+> 
+> @@ -596,7 +589,9 @@ static void rcar_du_crtc_stop(struct rcar_du_crtc
+> *rcrtc) * Select switch sync mode. This stops display operation and
+> configures * the HSYNC and VSYNC signals as inputs.
+>  	 */
+> -	rcar_du_crtc_clr_set(rcrtc, DSYSR, DSYSR_TVM_MASK, DSYSR_TVM_SWITCH);
+> +	rcar_du_crtc_clr_set(rcrtc, DSYSR, DSYSR_TVM_MASK | DSYSR_ILTS,
+> +		rcar_du_needs(rcrtc->group->dev, RCAR_DU_QUIRK_TVM_MASTER_ONLY) ?
+> +		DSYSR_TVM_MASTER : DSYSR_TVM_SWITCH);
 
-This patch fixes higher resolution modes wich requires an high pixel clock
-output currently not working on non-HDMI DU channel (as VGA 1920x1080@60Hz).
+Now this is a problem. The driver uses switch mode as a way to disable the 
+display output, as the display enable bits in the DSYSR register cover a group 
+of two DU channels. TVM switch mode was the only workaround I found to be able 
+to disable the display output. If the D3 and E3 SoCs don't implement TVM 
+switch mode we need a different mechanism.
 
-Fixes: 1b30dbde8 "drm: rcar-du: Add support for external pixel clock"
-Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 53 ++++++++++++++++++++--------------
- 1 file changed, 32 insertions(+), 21 deletions(-)
+>  	rcar_du_group_start_stop(rcrtc->group, false);
+>  }
+> @@ -744,7 +739,7 @@ static int rcar_du_crtc_enable_vblank(struct drm_crtc
+> *crtc) struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
+> 
+>  	rcar_du_crtc_write(rcrtc, DSRCR, DSRCR_VBCL);
+> -	rcar_du_crtc_set(rcrtc, DIER, DIER_VBE);
+> +	rcar_du_crtc_clr_set(rcrtc, DIER, DIER_TVE | DIER_FRE, DIER_VBE);
+>  	rcrtc->vblank_enable = true;
+> 
+>  	return 0;
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_drv.c index 56f9472..5c2f764 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> @@ -294,6 +294,31 @@ static const struct rcar_du_device_info
+> rcar_du_r8a77970_info = { .num_lvds = 1,
+>  };
+> 
+> +static const struct rcar_du_device_info rcar_du_r8a77995_info = {
+> +	.gen = 3,
+> +	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+> +		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+> +		  | RCAR_DU_FEATURE_VSP1_SOURCE,
+> +	.quirks = RCAR_DU_QUIRK_TVM_MASTER_ONLY,
+> +	.channels_mask = BIT(1) | BIT(0),
+> +	.routes = {
+> +		/* R8A77995 has two LVDS output and one RGB output. */
+> +		[RCAR_DU_OUTPUT_DPAD0] = {
+> +			.possible_crtcs = BIT(0) | BIT(1),
+> +			.port = 0,
+> +		},
+> +		[RCAR_DU_OUTPUT_LVDS0] = {
+> +			.possible_crtcs = BIT(0),
+> +			.port = 1,
+> +		},
+> +		[RCAR_DU_OUTPUT_LVDS1] = {
+> +			.possible_crtcs = BIT(1),
+> +			.port = 2,
+> +		},
+> +	},
+> +	.num_lvds = 2,
+> +};
+> +
+>  static const struct of_device_id rcar_du_of_table[] = {
+>  	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
+>  	{ .compatible = "renesas,du-r8a7745", .data = &rzg1_du_r8a7745_info },
+> @@ -307,6 +332,7 @@ static const struct of_device_id rcar_du_of_table[] = {
+>  	{ .compatible = "renesas,du-r8a7796", .data = &rcar_du_r8a7796_info },
+>  	{ .compatible = "renesas,du-r8a77965", .data = &rcar_du_r8a77965_info },
+>  	{ .compatible = "renesas,du-r8a77970", .data = &rcar_du_r8a77970_info },
+> +	{ .compatible = "renesas,du-r8a77995", .data = &rcar_du_r8a77995_info },
+>  	{ }
+>  };
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> b/drivers/gpu/drm/rcar-du/rcar_du_drv.h index b3a25e8..6257405 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> @@ -32,6 +32,7 @@ struct rcar_du_device;
+>  #define RCAR_DU_FEATURE_VSP1_SOURCE	(1 << 2)	/* Has inputs from VSP1 */
+> 
+>  #define RCAR_DU_QUIRK_ALIGN_128B	(1 << 0)	/* Align pitches to 128 bytes 
+*/
+> +#define RCAR_DU_QUIRK_TVM_MASTER_ONLY	(1 << 1)	/* Does not have TV
+> switch/sync modes */
+> 
+>  /*
+>   * struct rcar_du_output_routing - Output routing specification
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_group.c index d539cb2..9a0a694 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
+> @@ -178,7 +178,8 @@ void rcar_du_group_put(struct rcar_du_group *rgrp)
+>  static void __rcar_du_group_start_stop(struct rcar_du_group *rgrp, bool
+> start) {
+>  	rcar_du_group_write(rgrp, DSYSR,
+> -		(rcar_du_group_read(rgrp, DSYSR) & ~(DSYSR_DRES | DSYSR_DEN)) |
+> +		(rcar_du_group_read(rgrp, DSYSR) &
+> +		 ~(DSYSR_DRES | DSYSR_DEN | DSYSR_ILTS)) |
+>  		(start ? DSYSR_DEN : DSYSR_DRES));
+>  }
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 077e681..98ae697 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -258,42 +258,53 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+-- 
+Regards,
 
- 		escr = ESCR_DCLKSEL_DCLKIN | div;
- 	} else {
--		unsigned long clk;
-+		unsigned long dotclkin_rate;
-+		struct clk *dotclkin_clk;
-+		unsigned long cpg_dist;
- 		u32 div;
-
- 		/*
- 		 * Compute the clock divisor and select the internal or external
- 		 * dot clock based on the requested frequency.
- 		 */
--		clk = clk_get_rate(rcrtc->clock);
--		div = DIV_ROUND_CLOSEST(clk, mode_clock);
--		div = clamp(div, 1U, 64U) - 1;
--
-+		dotclkin_clk = rcrtc->clock;
-+		dotclkin_rate = clk_get_rate(rcrtc->clock);
-+		div = clamp(DIV_ROUND_CLOSEST(dotclkin_rate, mode_clock),
-+			    1UL, 64UL) - 1;
-+		cpg_dist = abs(dotclkin_rate / (div + 1) - mode_clock);
- 		escr = ESCR_DCLKSEL_CLKS | div;
-
- 		if (rcrtc->extclock) {
--			unsigned long extclk;
--			unsigned long extrate;
--			unsigned long rate;
--			u32 extdiv;
--
--			extclk = clk_get_rate(rcrtc->extclock);
--			extdiv = DIV_ROUND_CLOSEST(extclk, mode_clock);
--			extdiv = clamp(extdiv, 1U, 64U) - 1;
-+			unsigned long ext_rate;
-+			unsigned long ext_dist;
-
--			extrate = extclk / (extdiv + 1);
--			rate = clk / (div + 1);
-+			/*
-+			 * If an external clock source is present ask it
-+			 * for the exact dot clock rate, and test the
-+			 * returned value against the cpg provided one.
-+			 */
-+			ext_rate = clk_round_rate(rcrtc->extclock,
-+						  mode_clock);
-
--			if (abs((long)extrate - (long)mode_clock) <
--			    abs((long)rate - (long)mode_clock))
--				escr = ESCR_DCLKSEL_DCLKIN | extdiv;
-+			div = clamp(DIV_ROUND_CLOSEST(ext_rate, mode_clock),
-+				    1UL, 64UL) - 1;
-+			ext_dist = abs(ext_rate / (div + 1) - mode_clock);
-
--			dev_dbg(rcrtc->group->dev->dev,
--				"mode clock %lu extrate %lu rate %lu ESCR 0x%08x\n",
--				mode_clock, extrate, rate, escr);
-+			if (ext_dist < cpg_dist) {
-+				dotclkin_clk = rcrtc->extclock;
-+				dotclkin_rate = ext_rate;
-+				escr = ESCR_DCLKSEL_DCLKIN | div;
-+			}
- 		}
-+
-+		dev_dbg(rcrtc->group->dev->dev,	"mode clock %lu %s rate %lu\n",
-+			mode_clock, dotclkin_clk == rcrtc->clock ? "cpg" : "ext",
-+			dotclkin_rate);
-+		clk_set_rate(dotclkin_clk, dotclkin_rate);
- 	}
-
-+	dev_dbg(rcrtc->group->dev->dev, "%s: ESCR 0x%08x\n", __func__, escr);
-+
- 	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? ESCR2 : ESCR,
- 			    escr);
- 	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? OTAR2 : OTAR, 0);
---
-2.7.4
+Laurent Pinchart
