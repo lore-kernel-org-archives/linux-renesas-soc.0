@@ -1,46 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46910 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726300AbeHRVRC (ORCPT
+Received: from sauhun.de ([88.99.104.3]:33622 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726293AbeHTWZq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 18 Aug 2018 17:17:02 -0400
-Received: by mail-lj1-f195.google.com with SMTP id 203-v6so8692824ljj.13
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 18 Aug 2018 11:08:29 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] mmc: renesas_sdhi_internal_dmac: add R8A77970 to whitelist
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Message-ID: <fd225e1d-5215-df96-055a-07c9a14f41e7@cogentembedded.com>
-Date: Sat, 18 Aug 2018 21:08:26 +0300
+        Mon, 20 Aug 2018 18:25:46 -0400
+Date: Mon, 20 Aug 2018 21:08:55 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 3/7] dt-bindings: mmc: add DT binding for UniPhier
+ SD/eMMC controller
+Message-ID: <20180820190855.gen3dnjs4rhz4npx@ninjato>
+References: <1534403799-10594-1-git-send-email-yamada.masahiro@socionext.com>
+ <1534403799-10594-4-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="smjpajpanxb7n5vu"
+Content-Disposition: inline
+In-Reply-To: <1534403799-10594-4-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I've successfully tested eMMC  on the V3H Starter Kit board. R8A77970 SoC
-has a single SDHI core anyway, so can't be  a subject to the known RX DMA
-errata...
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+--smjpajpanxb7n5vu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
----
-This patch is against the 'next' branch of Ulf Hansson's 'mmc.git' repo.
+On Thu, Aug 16, 2018 at 04:16:35PM +0900, Masahiro Yamada wrote:
+> This SD/eMMC controller is used for UniPhier SoC family.
+>=20
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
- drivers/mmc/host/renesas_sdhi_internal_dmac.c |    1 +
- 1 file changed, 1 insertion(+)
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Index: mmc/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-===================================================================
---- mmc.orig/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ mmc/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -293,6 +293,7 @@ static const struct soc_device_attribute
- 	{ .soc_id = "r8a7795" },
- 	{ .soc_id = "r8a7796" },
- 	{ .soc_id = "r8a77965" },
-+	{ .soc_id = "r8a77970" },
- 	{ .soc_id = "r8a77980" },
- 	{ .soc_id = "r8a77995" },
- 	{ /* sentinel */ }
+
+--smjpajpanxb7n5vu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlt7EcYACgkQFA3kzBSg
+Kbb3Yw/9HD4ZKV6Ao1rXzs7nkr7nsJaU+fZuKE+a41QGXP7Z/hVjrnT7v/mD+zTy
+RZQI9mgCzpjPRp3GhXzO8/WKCfUk8vian3Vr79Ek+hDRzlf87cHg67yXlflDg6RO
+iHmBWfxKLriTZXSucanzOpEYKo+w1lUKDBkN6BWwyUn5nly387P/8C3+kNIkvSnS
+F1C1yD0/ptGXakZywvQzrNx8rhi9yKurw7MdJP8lncnvb0ZreJ/suudWz2WvDzMy
+KT6Veo7ACDQfs07nfdcrlhdBg6N6+oXVkH9WY6C6eb3K9eUpGAZq7wBDkPz8NgBv
+aFAGZdF4LAubS4by36w2rgkfAA82hiBWdmQcBX6+UG9vKIURtRd9pQG89YuSbs1k
+D9z/SWR9xfm/LrcsLTdnQDy7OUV3PttVwky7aksYFt3lJg0dw4k6FfzOL7QYi9cd
+Io6kXvVC+tMqy3gISRv+HklvGjUNAho+T89IeJNb5Q1XML+t7ranaEBW88C8RN0p
+nABXIj/VBNqCLagvWnLQQtTz2gKCIOldJdynkZ0ry2xo+wBKg8otkvmBv43n7s3n
+p1gV5PUB1cYFBZ+PbMr/YW3CCix74/2U73UzC9ohdY5Hi5uqPseT032+gx7vNq78
+wmzf6FEKgMfM9E9S5Cph/rH9vwS3rVuzEM/IqjfLRmri3ifz76M=
+=WdS0
+-----END PGP SIGNATURE-----
+
+--smjpajpanxb7n5vu--
