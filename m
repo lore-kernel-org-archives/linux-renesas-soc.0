@@ -1,45 +1,228 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:17924 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387411AbeHAJEl (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:45714 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726024AbeHTTeP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Aug 2018 05:04:41 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 1/4] gpio: rcar: Enhance gpio-ranges support
-Date: Wed, 1 Aug 2018 07:20:20 +0000
-Message-ID: <TYAPR01MB211178DDD3B0C636DACEE539B82D0@TYAPR01MB2111.jpnprd01.prod.outlook.com>
-References: <1532685089-35645-1-git-send-email-biju.das@bp.renesas.com>
- <1532685089-35645-2-git-send-email-biju.das@bp.renesas.com>
- <CAMuHMdVqSbeGCN-Oq0R2CY5fOoG3ncdc_MtAp6M5+SoW4xXQZw@mail.gmail.com>
-In-Reply-To: <CAMuHMdVqSbeGCN-Oq0R2CY5fOoG3ncdc_MtAp6M5+SoW4xXQZw@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 20 Aug 2018 15:34:15 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] drm: rcar-du: Add interlaced feature flag
+Date: Mon, 20 Aug 2018 19:18:53 +0300
+Message-ID: <39356236.PLB3j3kIjK@avalon>
+In-Reply-To: <20180820160044.15783-3-kieran.bingham+renesas@ideasonboard.com>
+References: <20180820160044.15783-1-kieran.bingham+renesas@ideasonboard.com> <20180820160044.15783-3-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCj4gU3ViamVjdDogUmU6IFtQQVRDSCAxLzRdIGdwaW86IHJjYXI6IEVuaGFu
-Y2UgZ3Bpby1yYW5nZXMgc3VwcG9ydA0KDQo+IEEgc2ltcGxlIHdheSB0byB3b3JrIGFyb3VuZCB0
-aGlzIGlzIHRvIHNldCBuZ3Bpb3MgdG8gdGhlIGhpZ2hlc3QgYml0IG51bWJlciBpbg0KPiB1c2Ug
-KyAxLiBCdXQgeW91IHN0aWxsIG5lZWQgYSBtZWNoYW5pc20gdG8gYXZvaWQgYWNjZXNzaW5nIHRo
-ZSB1bnVzZWQgYml0cyBpbg0KPiB0aGUgZ2FwIGJldHdlZW4gMTYgYW5kIDI3Lg0KPg0KSSB3aWxs
-IHNlbmQgVjIgd2l0aCBmb2xsb3dpbmcgY2hhbmdlcw0KDQoxKSBEdCBiaW5kaW5nIHJlbGF0ZWQg
-dG8gY2hhbmdlcyBmb3IgYWRkaW5nIG9wdGlvbmFsIHByb3BlcnR5ICIgZ3Bpby1yZXNlcnZlZC1y
-YW5nZXMiIG9uIHJlbmVzYXMgYmluZGluZyBkb2N1bWVudGF0aW9uDQoyKSBTb0MgRHRzaSB3aXRo
-ICAiIGdwaW8tcmFuZ2VzID0gPCZwZmMgMCA5NiAzMD4iDQozKSBTb0MgRHRzaSB3aXRoIiBncGlv
-LXJlc2VydmVkLXJhbmdlcyA9IDwxNyAxMD4iIHdoaWNoIGRlZmluZXMgdW51c2VkIGdwaW9zDQo0
-KSBIYW5kbGUgdW51c2VkIGdwaW9zIGluDQogICAgICAgYSkgZ3Bpb19yY2FyX3JlcXVlc3QNCiAg
-ICAgICBiKSBncGlvX3JjYXJfc2V0X211bHRpcGxlDQogICAgICAgYykgIGdwaW9fcmNhcl9yZXN1
-bWUNCg0KUmVnYXJkcywNCkJpanUNCg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0
-ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9hZCwgQm91cm5lIEVuZCwgQnVja2luZ2hhbXNo
-aXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5kZXIgUmVn
-aXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
+Hi Kieran,
+
+Thank you for the patch.
+
+On Monday, 20 August 2018 19:00:44 EEST Kieran Bingham wrote:
+> Upcoming implementations of the R-Car DU have removed support for
+> interlaced display pipelines. Provide a means to determine this based on
+> the feature flags of the hardware configuration structs.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+and applied to my tree.
+
+> ---
+> 
+> This could be a feature to designate that there is no interlaced
+> support, which would then negate the need to add extra feature flags to
+> the existing targets... But that's a 'non-feature' rather than a
+> 'feature', so this way at least reads better.
+> 
+> Tested on Salvator-XS (H3) by removing the flag and verifying interlaced
+> modes are rejected.
+> 
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 14 +++++++++++
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c  | 32 +++++++++++++++++---------
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.h  |  1 +
+>  3 files changed, 36 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c index 15dc9caa128b..4b43d8329695
+> 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> @@ -684,11 +684,25 @@ static void rcar_du_crtc_atomic_flush(struct drm_crtc
+> *crtc, rcar_du_vsp_atomic_flush(rcrtc);
+>  }
+> 
+> +enum drm_mode_status rcar_du_crtc_mode_valid(struct drm_crtc *crtc,
+> +				   const struct drm_display_mode *mode)
+> +{
+> +	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
+> +	struct rcar_du_device *rcdu = rcrtc->group->dev;
+> +	bool interlaced = mode->flags & DRM_MODE_FLAG_INTERLACE;
+> +
+> +	if (interlaced && !rcar_du_has(rcdu, RCAR_DU_FEATURE_INTERLACED))
+> +		return MODE_NO_INTERLACE;
+> +
+> +	return MODE_OK;
+> +}
+> +
+>  static const struct drm_crtc_helper_funcs crtc_helper_funcs = {
+>  	.atomic_begin = rcar_du_crtc_atomic_begin,
+>  	.atomic_flush = rcar_du_crtc_atomic_flush,
+>  	.atomic_enable = rcar_du_crtc_atomic_enable,
+>  	.atomic_disable = rcar_du_crtc_atomic_disable,
+> +	.mode_valid = rcar_du_crtc_mode_valid,
+>  };
+> 
+>  static struct drm_crtc_state *
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_drv.c index 02aee6cb0e53..49f2ae80d0f5
+> 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> @@ -39,7 +39,8 @@
+>  static const struct rcar_du_device_info rzg1_du_r8a7743_info = {
+>  	.gen = 2,
+>  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+> -		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
+> +		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+> +		  | RCAR_DU_FEATURE_INTERLACED,
+>  	.channels_mask = BIT(1) | BIT(0),
+>  	.routes = {
+>  		/*
+> @@ -60,7 +61,8 @@ static const struct rcar_du_device_info
+> rzg1_du_r8a7743_info = { static const struct rcar_du_device_info
+> rzg1_du_r8a7745_info = {
+>  	.gen = 2,
+>  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+> -		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
+> +		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+> +		  | RCAR_DU_FEATURE_INTERLACED,
+>  	.channels_mask = BIT(1) | BIT(0),
+>  	.routes = {
+>  		/*
+> @@ -79,7 +81,7 @@ static const struct rcar_du_device_info
+> rzg1_du_r8a7745_info = {
+> 
+>  static const struct rcar_du_device_info rcar_du_r8a7779_info = {
+>  	.gen = 2,
+> -	.features = 0,
+> +	.features = RCAR_DU_FEATURE_INTERLACED,
+>  	.channels_mask = BIT(1) | BIT(0),
+>  	.routes = {
+>  		/*
+> @@ -100,7 +102,8 @@ static const struct rcar_du_device_info
+> rcar_du_r8a7779_info = { static const struct rcar_du_device_info
+> rcar_du_r8a7790_info = {
+>  	.gen = 2,
+>  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+> -		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
+> +		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+> +		  | RCAR_DU_FEATURE_INTERLACED,
+>  	.quirks = RCAR_DU_QUIRK_ALIGN_128B,
+>  	.channels_mask = BIT(2) | BIT(1) | BIT(0),
+>  	.routes = {
+> @@ -128,7 +131,8 @@ static const struct rcar_du_device_info
+> rcar_du_r8a7790_info = { static const struct rcar_du_device_info
+> rcar_du_r8a7791_info = {
+>  	.gen = 2,
+>  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+> -		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
+> +		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+> +		  | RCAR_DU_FEATURE_INTERLACED,
+>  	.channels_mask = BIT(1) | BIT(0),
+>  	.routes = {
+>  		/*
+> @@ -150,7 +154,8 @@ static const struct rcar_du_device_info
+> rcar_du_r8a7791_info = { static const struct rcar_du_device_info
+> rcar_du_r8a7792_info = {
+>  	.gen = 2,
+>  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+> -		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
+> +		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+> +		  | RCAR_DU_FEATURE_INTERLACED,
+>  	.channels_mask = BIT(1) | BIT(0),
+>  	.routes = {
+>  		/* R8A7792 has two RGB outputs. */
+> @@ -168,7 +173,8 @@ static const struct rcar_du_device_info
+> rcar_du_r8a7792_info = { static const struct rcar_du_device_info
+> rcar_du_r8a7794_info = {
+>  	.gen = 2,
+>  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+> -		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
+> +		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+> +		  | RCAR_DU_FEATURE_INTERLACED,
+>  	.channels_mask = BIT(1) | BIT(0),
+>  	.routes = {
+>  		/*
+> @@ -190,7 +196,8 @@ static const struct rcar_du_device_info
+> rcar_du_r8a7795_info = { .gen = 3,
+>  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+> 
+>  		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+> 
+> -		  | RCAR_DU_FEATURE_VSP1_SOURCE,
+> +		  | RCAR_DU_FEATURE_VSP1_SOURCE
+> +		  | RCAR_DU_FEATURE_INTERLACED,
+>  	.channels_mask = BIT(3) | BIT(2) | BIT(1) | BIT(0),
+>  	.routes = {
+>  		/*
+> @@ -222,7 +229,8 @@ static const struct rcar_du_device_info
+> rcar_du_r8a7796_info = { .gen = 3,
+>  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+> 
+>  		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+> 
+> -		  | RCAR_DU_FEATURE_VSP1_SOURCE,
+> +		  | RCAR_DU_FEATURE_VSP1_SOURCE
+> +		  | RCAR_DU_FEATURE_INTERLACED,
+>  	.channels_mask = BIT(2) | BIT(1) | BIT(0),
+>  	.routes = {
+>  		/*
+> @@ -250,7 +258,8 @@ static const struct rcar_du_device_info
+> rcar_du_r8a77965_info = { .gen = 3,
+>  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+> 
+>  		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+> 
+> -		  | RCAR_DU_FEATURE_VSP1_SOURCE,
+> +		  | RCAR_DU_FEATURE_VSP1_SOURCE
+> +		  | RCAR_DU_FEATURE_INTERLACED,
+>  	.channels_mask = BIT(3) | BIT(1) | BIT(0),
+>  	.routes = {
+>  		/*
+> @@ -278,7 +287,8 @@ static const struct rcar_du_device_info
+> rcar_du_r8a77970_info = { .gen = 3,
+>  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+> 
+>  		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+> 
+> -		  | RCAR_DU_FEATURE_VSP1_SOURCE,
+> +		  | RCAR_DU_FEATURE_VSP1_SOURCE
+> +		  | RCAR_DU_FEATURE_INTERLACED,
+>  	.channels_mask = BIT(0),
+>  	.routes = {
+>  		/* R8A77970 has one RGB output and one LVDS output. */
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> b/drivers/gpu/drm/rcar-du/rcar_du_drv.h index 78ea20abfb30..c4a66130a603
+> 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> @@ -30,6 +30,7 @@ struct rcar_du_device;
+>  #define RCAR_DU_FEATURE_CRTC_IRQ_CLOCK	BIT(0)	/* Per-CRTC IRQ and clock */
+>  #define RCAR_DU_FEATURE_EXT_CTRL_REGS	BIT(1)	/* Has extended control
+> registers */ #define RCAR_DU_FEATURE_VSP1_SOURCE	BIT(2)	/* Has inputs from
+> VSP1 */ +#define RCAR_DU_FEATURE_INTERLACED	BIT(3)	/* HW supports
+> interlaced */
+> 
+>  #define RCAR_DU_QUIRK_ALIGN_128B	BIT(0)	/* Align pitches to 128 bytes */
+
+-- 
+Regards,
+
+Laurent Pinchart
