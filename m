@@ -1,69 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:36766 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727951AbeHQT6T (ORCPT
+Received: from mail-pf1-f171.google.com ([209.85.210.171]:38962 "EHLO
+        mail-pf1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726662AbeHTSPs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Aug 2018 15:58:19 -0400
-Received: by mail-lj1-f194.google.com with SMTP id u7-v6so6888093lji.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Aug 2018 09:54:12 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] mmc: renesas_sdhi_internal_dmac: mask DMAC interrupts
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Message-ID: <711ef434-1208-4a9b-1c0d-519395251531@cogentembedded.com>
-Date: Fri, 17 Aug 2018 19:54:09 +0300
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Mon, 20 Aug 2018 14:15:48 -0400
+Received: by mail-pf1-f171.google.com with SMTP id j8-v6so6899692pff.6
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Aug 2018 07:59:49 -0700 (PDT)
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Date: Mon, 20 Aug 2018 23:59:45 +0900
+Message-Id: <153477718520.16950.10138071667883935510.sendpatchset@octo>
+In-Reply-To: <153477717610.16950.5787705338176325405.sendpatchset@octo>
+References: <153477717610.16950.5787705338176325405.sendpatchset@octo>
+Subject: [PATCH/RFC v2 01/02] ravb: Do not announce HDX as supported
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I have encountered an interrupt storm during the eMMC chip probing (and
-the chip finally didn't get detected). It turned out  that U-Boot  left
-the SDHI DMA interrupts enabled while the Linux  driver didn't use those.
-Masking those interrupts in renesas_sdhi_internal_dmac_request_dma() gets
-rid  of both  issues...
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+According to the data sheet the Ethernet-AVB hardware in R-Car Gen3
+and R-Car Gen2 SoCs do not support half duplex operation. So update
+the driver to mark 100Mbit and 1Gbps HDX as unsupported.
 
+Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
+Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 ---
-The patch is against Ulf Hansson's 'mmc.git' repo's 'fixes' branch.
 
- drivers/mmc/host/renesas_sdhi_internal_dmac.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ Written on top of next-20180820
 
-Index: mmc/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-===================================================================
---- mmc.orig/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ mmc/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -51,10 +51,12 @@
- #define INFO1_CLEAR		0
- #define INFO1_DTRANEND1		BIT(17)
- #define INFO1_DTRANEND0		BIT(16)
-+#define INFO1_RESERVED_BITS	GENMASK_ULL(32, 0)
+ drivers/net/ethernet/renesas/ravb_main.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+--- 0001/drivers/net/ethernet/renesas/ravb_main.c
++++ work/drivers/net/ethernet/renesas/ravb_main.c	2018-08-20 23:42:46.670859449 +0900
+@@ -1076,8 +1076,9 @@ static int ravb_phy_init(struct net_devi
+ 		netdev_info(ndev, "limited PHY to 100Mbit/s\n");
+ 	}
  
- /* DM_CM_INFO2 and DM_CM_INFO2_MASK */
- #define INFO2_DTRANERR1		BIT(17)
- #define INFO2_DTRANERR0		BIT(16)
-+#define INFO2_RESERVED_BITS	GENMASK_ULL(32, 0)
+-	/* 10BASE is not supported */
+-	phydev->supported &= ~PHY_10BT_FEATURES;
++	/* Neither 10BASE nor half duplex are supported */
++	phydev->supported &= ~(PHY_10BT_FEATURES | SUPPORTED_100baseT_Half |
++			       SUPPORTED_1000baseT_Half);
  
- /*
-  * Specification of this driver:
-@@ -236,6 +238,15 @@ renesas_sdhi_internal_dmac_request_dma(s
- {
- 	struct renesas_sdhi *priv = host_to_priv(host);
- 
-+	/*
-+	 * We don't use the DMA interrupts,  but they might have been enabled
-+	 * by a bootloader,  so mask them to avoid an interrupt storm...
-+	 */
-+	renesas_sdhi_internal_dmac_dm_write(host, DM_CM_INFO1_MASK,
-+					    INFO1_RESERVED_BITS);
-+	renesas_sdhi_internal_dmac_dm_write(host, DM_CM_INFO2_MASK,
-+					    INFO2_RESERVED_BITS);
-+
- 	/* Each value is set to non-zero to assume "enabling" each DMA */
- 	host->chan_rx = host->chan_tx = (void *)0xdeadbeaf;
+ 	phy_attached_info(phydev);
  
