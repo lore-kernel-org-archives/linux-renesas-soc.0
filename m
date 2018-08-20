@@ -1,50 +1,108 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f172.google.com ([209.85.208.172]:36930 "EHLO
-        mail-lj1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726681AbeHTSrB (ORCPT
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42630 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726010AbeHTSP6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Aug 2018 14:47:01 -0400
-Received: by mail-lj1-f172.google.com with SMTP id v9-v6so11904949ljk.4
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Aug 2018 08:30:54 -0700 (PDT)
-Subject: Re: [PATCH/RFC v2 02/02] ravb: Clean up duplex handling
-To: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
+        Mon, 20 Aug 2018 14:15:58 -0400
+Received: by mail-pg1-f195.google.com with SMTP id y4-v6so6911569pgp.9
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Aug 2018 07:59:58 -0700 (PDT)
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Date: Mon, 20 Aug 2018 23:59:54 +0900
+Message-Id: <153477719422.16950.5969632005010865481.sendpatchset@octo>
+In-Reply-To: <153477717610.16950.5787705338176325405.sendpatchset@octo>
 References: <153477717610.16950.5787705338176325405.sendpatchset@octo>
- <153477719422.16950.5969632005010865481.sendpatchset@octo>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <d6987037-4bba-2027-9783-0aa330fa2d7d@cogentembedded.com>
-Date: Mon, 20 Aug 2018 18:30:52 +0300
-MIME-Version: 1.0
-In-Reply-To: <153477719422.16950.5969632005010865481.sendpatchset@octo>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH/RFC v2 02/02] ravb: Clean up duplex handling
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 08/20/2018 05:59 PM, Magnus Damm wrote:
+From: Magnus Damm <damm+renesas@opensource.se>
 
-> From: Magnus Damm <damm+renesas@opensource.se>
-> 
-> Since only full-duplex operation is supported by the
-> hardware, remove duplex handling code and keep the
-> register setting of ECMR.DM fixed at 1.
-> 
-> This updates the driver implementation to follow the
-> data sheet text "This bit should always be set to 1."
-> 
-> Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
+Since only full-duplex operation is supported by the
+hardware, remove duplex handling code and keep the
+register setting of ECMR.DM fixed at 1.
 
-  Fixes: tag should precede sign-off.
+This updates the driver implementation to follow the
+data sheet text "This bit should always be set to 1."
 
-[...]
+Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
+---
 
-   You missed to add this from the previous review:
+ Written on top of next-20180820
 
-Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+ drivers/net/ethernet/renesas/ravb.h      |    1 -
+ drivers/net/ethernet/renesas/ravb_main.c |   19 +------------------
+ 2 files changed, 1 insertion(+), 19 deletions(-)
 
-   The net.git repo is always open, so you can post these patches to netdev
-already...
-
-MBR, Sergei
+--- 0001/drivers/net/ethernet/renesas/ravb.h
++++ work/drivers/net/ethernet/renesas/ravb.h	2018-08-20 23:45:02.203442052 +0900
+@@ -1027,7 +1027,6 @@ struct ravb_private {
+ 	phy_interface_t phy_interface;
+ 	int msg_enable;
+ 	int speed;
+-	int duplex;
+ 	int emac_irq;
+ 	enum ravb_chip_id chip_id;
+ 	int rx_irqs[NUM_RX_QUEUE];
+--- 0002/drivers/net/ethernet/renesas/ravb_main.c
++++ work/drivers/net/ethernet/renesas/ravb_main.c	2018-08-20 23:48:17.840945347 +0900
+@@ -85,13 +85,6 @@ static int ravb_config(struct net_device
+ 	return error;
+ }
+ 
+-static void ravb_set_duplex(struct net_device *ndev)
+-{
+-	struct ravb_private *priv = netdev_priv(ndev);
+-
+-	ravb_modify(ndev, ECMR, ECMR_DM, priv->duplex ? ECMR_DM : 0);
+-}
+-
+ static void ravb_set_rate(struct net_device *ndev)
+ {
+ 	struct ravb_private *priv = netdev_priv(ndev);
+@@ -401,13 +394,11 @@ error:
+ /* E-MAC init function */
+ static void ravb_emac_init(struct net_device *ndev)
+ {
+-	struct ravb_private *priv = netdev_priv(ndev);
+-
+ 	/* Receive frame limit set register */
+ 	ravb_write(ndev, ndev->mtu + ETH_HLEN + VLAN_HLEN + ETH_FCS_LEN, RFLR);
+ 
+ 	/* EMAC Mode: PAUSE prohibition; Duplex; RX Checksum; TX; RX */
+-	ravb_write(ndev, ECMR_ZPF | (priv->duplex ? ECMR_DM : 0) |
++	ravb_write(ndev, ECMR_ZPF | ECMR_DM |
+ 		   (ndev->features & NETIF_F_RXCSUM ? ECMR_RCSC : 0) |
+ 		   ECMR_TE | ECMR_RE, ECMR);
+ 
+@@ -989,12 +980,6 @@ static void ravb_adjust_link(struct net_
+ 		ravb_rcv_snd_disable(ndev);
+ 
+ 	if (phydev->link) {
+-		if (phydev->duplex != priv->duplex) {
+-			new_state = true;
+-			priv->duplex = phydev->duplex;
+-			ravb_set_duplex(ndev);
+-		}
+-
+ 		if (phydev->speed != priv->speed) {
+ 			new_state = true;
+ 			priv->speed = phydev->speed;
+@@ -1009,7 +994,6 @@ static void ravb_adjust_link(struct net_
+ 		new_state = true;
+ 		priv->link = 0;
+ 		priv->speed = 0;
+-		priv->duplex = -1;
+ 	}
+ 
+ 	/* Enable TX and RX right over here, if E-MAC change is ignored */
+@@ -1039,7 +1023,6 @@ static int ravb_phy_init(struct net_devi
+ 
+ 	priv->link = 0;
+ 	priv->speed = 0;
+-	priv->duplex = -1;
+ 
+ 	/* Try connecting to PHY */
+ 	pn = of_parse_phandle(np, "phy-handle", 0);
