@@ -1,28 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49436 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727396AbeHVM5p (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45312 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727777AbeHVBYu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 22 Aug 2018 08:57:45 -0400
-Date: Wed, 22 Aug 2018 11:33:35 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        Tue, 21 Aug 2018 21:24:50 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/11] pwm: use SPDX identifier for Renesas drivers
-Message-ID: <20180822093335.kwuan66y2awf67j4@verge.net.au>
+Subject: [PATCH 08/11] pwm: use SPDX identifier for Renesas drivers
+Date: Wed, 22 Aug 2018 00:02:21 +0200
+Message-Id: <20180821220233.9202-9-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
 References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
- <20180821220233.9202-9-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180821220233.9202-9-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 22, 2018 at 12:02:21AM +0200, Wolfram Sang wrote:
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+To be applied individually per subsystem tree. Morimoto-san, could you maybe
+ack this with your Renesas address?
+
+ drivers/pwm/pwm-rcar.c        |  5 +----
+ drivers/pwm/pwm-renesas-tpu.c | 10 +---------
+ 2 files changed, 2 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
+index 748f614d5375..a41812fc6f95 100644
+--- a/drivers/pwm/pwm-rcar.c
++++ b/drivers/pwm/pwm-rcar.c
+@@ -1,11 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * R-Car PWM Timer driver
+  *
+  * Copyright (C) 2015 Renesas Electronics Corporation
+- *
+- * This is free software; you can redistribute it and/or modify
+- * it under the terms of version 2 of the GNU General Public License as
+- * published by the Free Software Foundation.
+  */
+ 
+ #include <linux/clk.h>
+diff --git a/drivers/pwm/pwm-renesas-tpu.c b/drivers/pwm/pwm-renesas-tpu.c
+index 29267d12fb4c..4a855a21b782 100644
+--- a/drivers/pwm/pwm-renesas-tpu.c
++++ b/drivers/pwm/pwm-renesas-tpu.c
+@@ -1,16 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * R-Mobile TPU PWM driver
+  *
+  * Copyright (C) 2012 Renesas Solutions Corp.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #include <linux/clk.h>
+-- 
+2.11.0
