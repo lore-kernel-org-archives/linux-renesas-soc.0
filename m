@@ -1,40 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:20464 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732699AbeHNQh6 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36878 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726590AbeHURla (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Aug 2018 12:37:58 -0400
-From: Ulrich Hecht <uli+renesas@fpond.eu>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        jacopo+renesas@jmondi.org, kieran.bingham+renesas@ideasonboard.com,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Subject: [PROTO][PATCH 01/10] drm: rcar-du: Add clk_set_rate for external clock device
-Date: Tue, 14 Aug 2018 15:49:55 +0200
-Message-Id: <1534254604-24204-2-git-send-email-uli+renesas@fpond.eu>
-In-Reply-To: <1534254604-24204-1-git-send-email-uli+renesas@fpond.eu>
-References: <1534254604-24204-1-git-send-email-uli+renesas@fpond.eu>
+        Tue, 21 Aug 2018 13:41:30 -0400
+Date: Tue, 21 Aug 2018 15:35:47 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] dt-bindings: thermal: rcar-gen3-thermal: Add
+ r8a774a1 support
+Message-ID: <20180821133547.3s4stv6peqhjkm6x@verge.net.au>
+References: <1534517584-14434-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1534517584-14434-3-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1534517584-14434-3-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+On Fri, Aug 17, 2018 at 03:53:04PM +0100, Fabrizio Castro wrote:
+> Document RZ/G2M (R8A774A1) SoC bindings.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index b52b3e8..cd6803a 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -229,6 +229,7 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 		unsigned long rate;
- 		u32 extdiv;
- 
-+		clk_set_rate(rcrtc->extclock, mode_clock);
- 		extclk = clk_get_rate(rcrtc->extclock);
- 		if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
- 			unsigned long target = mode_clock;
--- 
-2.7.4
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
