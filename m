@@ -1,51 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:45501 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726628AbeHVCHa (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45312 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727777AbeHVBYs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 Aug 2018 22:07:30 -0400
-MIME-Version: 1.0
-In-Reply-To: <20180821220233.9202-6-wsa+renesas@sang-engineering.com>
-References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com> <20180821220233.9202-6-wsa+renesas@sang-engineering.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 21 Aug 2018 19:45:24 -0300
-Message-ID: <CAOMZO5AkVNiYMGdED9erL=YMaKcmtS5BzZxw2gO1KLXEaPnD7A@mail.gmail.com>
-Subject: Re: [PATCH 05/11] can: rcar: use SPDX identifier for Renesas drivers
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        Tue, 21 Aug 2018 21:24:48 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Wolfgang Grandegger <wg@grandegger.com>,
         Marc Kleine-Budde <mkl@pengutronix.de>,
         "David S. Miller" <davem@davemloft.net>, linux-can@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 05/11] can: rcar: use SPDX identifier for Renesas drivers
+Date: Wed, 22 Aug 2018 00:02:18 +0200
+Message-Id: <20180821220233.9202-6-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
+References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-On Tue, Aug 21, 2018 at 7:02 PM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->
-> To be applied individually per subsystem tree. Morimoto-san, could you maybe
-> ack this with your Renesas address?
->
->  drivers/net/can/rcar/rcar_can.c   | 6 +-----
->  drivers/net/can/rcar/rcar_canfd.c | 6 +-----
->  2 files changed, 2 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/net/can/rcar/rcar_can.c b/drivers/net/can/rcar/rcar_can.c
-> index 11662f479e76..051bf4ef4be2 100644
-> --- a/drivers/net/can/rcar/rcar_can.c
-> +++ b/drivers/net/can/rcar/rcar_can.c
-> @@ -1,12 +1,8 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
+To be applied individually per subsystem tree. Morimoto-san, could you maybe
+ack this with your Renesas address?
 
-According to Documentation/process/license-rules.rst the format should
-be like this instead:
+ drivers/net/can/rcar/rcar_can.c   | 6 +-----
+ drivers/net/can/rcar/rcar_canfd.c | 6 +-----
+ 2 files changed, 2 insertions(+), 10 deletions(-)
 
-// SPDX-License-Identifier: GPL-2.0+
+diff --git a/drivers/net/can/rcar/rcar_can.c b/drivers/net/can/rcar/rcar_can.c
+index 11662f479e76..051bf4ef4be2 100644
+--- a/drivers/net/can/rcar/rcar_can.c
++++ b/drivers/net/can/rcar/rcar_can.c
+@@ -1,12 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
+ /* Renesas R-Car CAN device driver
+  *
+  * Copyright (C) 2013 Cogent Embedded, Inc. <source@cogentembedded.com>
+  * Copyright (C) 2013 Renesas Solutions Corp.
+- *
+- * This program is free software; you can redistribute  it and/or modify it
+- * under  the terms of  the GNU General  Public License as published by the
+- * Free Software Foundation;  either version 2 of the  License, or (at your
+- * option) any later version.
+  */
+ 
+ #include <linux/module.h>
+diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
+index 602c19e23f05..09a5b038a9f0 100644
+--- a/drivers/net/can/rcar/rcar_canfd.c
++++ b/drivers/net/can/rcar/rcar_canfd.c
+@@ -1,11 +1,7 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
+ /* Renesas R-Car CAN FD device driver
+  *
+  * Copyright (C) 2015 Renesas Electronics Corp.
+- *
+- * This program is free software; you can redistribute  it and/or modify it
+- * under  the terms of  the GNU General  Public License as published by the
+- * Free Software Foundation;  either version 2 of the  License, or (at your
+- * option) any later version.
+  */
+ 
+ /* The R-Car CAN FD controller can operate in either one of the below two modes
+-- 
+2.11.0
