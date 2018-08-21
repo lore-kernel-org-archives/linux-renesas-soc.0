@@ -1,77 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:58784 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727059AbeHUNMf (ORCPT
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:59329 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726253AbeHUKEF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 Aug 2018 09:12:35 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>,
-        Kirill Kapranov <kirill.kapranov@compulab.co.il>
-Cc: linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH -next] spi: Fix double IDR allocation with DT aliases
-Date: Tue, 21 Aug 2018 11:53:03 +0200
-Message-Id: <20180821095303.27664-1-geert+renesas@glider.be>
+        Tue, 21 Aug 2018 06:04:05 -0400
+Date: Tue, 21 Aug 2018 08:45:05 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com, geert@linux-m68k.org,
+        horms@verge.net.au, mark.rutland@arm.com,
+        kieran.bingham+renesas@ideasonboard.com,
+        niklas.soderlund+renesas@ragnatech.se, damm+renesas@opensource.se,
+        ulrich.hecht+renesas@gmail.com, linux-renesas-soc@vger.kernel.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [RFT 1/8] media: dt-bindings: media: rcar-vin: Add R8A77990
+ support
+Message-ID: <20180821064505.GG30122@w540>
+References: <1534760202-20114-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1534760202-20114-2-git-send-email-jacopo+renesas@jmondi.org>
+ <20180820223947.GA7090@bogus>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="RMedoP2+Pr6Rq0N2"
+Content-Disposition: inline
+In-Reply-To: <20180820223947.GA7090@bogus>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If the SPI bus number is provided by a DT alias, idr_alloc() is called
-twice, leading to:
 
-    WARNING: CPU: 1 PID: 1 at drivers/spi/spi.c:2179 spi_register_controller+0x11c/0x5d8
-    couldn't get idr
+--RMedoP2+Pr6Rq0N2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Fix this by moving the handling of fixed SPI bus numbers up, before the
-DT handling code fills in ctlr->bus_num.
+Hi Rob,
 
-Fixes: 1a4327fbf4554d5b ("spi: fix IDR collision on systems with both fixed and dynamic SPI bus numbers")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Seen on e.g. r8a7791/koelsch, breaking both RSPI and MSIOF.
----
- drivers/spi/spi.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+On Mon, Aug 20, 2018 at 05:39:47PM -0500, Rob Herring wrote:
+> On Mon, Aug 20, 2018 at 12:16:35PM +0200, Jacopo Mondi wrote:
+> > Add compatible string for R-Car E3 R8A77990 to the list of SoCs supported by
+> > rcar-vin driver.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> >  Documentation/devicetree/bindings/media/rcar_vin.txt | 1 +
+> >  1 file changed, 1 insertion(+)
+>
+> Why the inconsistent subjects for patches 1 and 3?
+>
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index a00d006d4c3a1c5a..9da0bc5a036cfff6 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -2143,8 +2143,17 @@ int spi_register_controller(struct spi_controller *ctlr)
- 	 */
- 	if (ctlr->num_chipselect == 0)
- 		return -EINVAL;
--	/* allocate dynamic bus number using Linux idr */
--	if ((ctlr->bus_num < 0) && ctlr->dev.of_node) {
-+	if (ctlr->bus_num >= 0) {
-+		/* devices with a fixed bus num must check-in with the num */
-+		mutex_lock(&board_lock);
-+		id = idr_alloc(&spi_master_idr, ctlr, ctlr->bus_num,
-+			ctlr->bus_num + 1, GFP_KERNEL);
-+		mutex_unlock(&board_lock);
-+		if (WARN(id < 0, "couldn't get idr"))
-+			return id == -ENOSPC ? -EBUSY : id;
-+		ctlr->bus_num = id;
-+	} else if (ctlr->dev.of_node) {
-+		/* allocate dynamic bus number using Linux idr */
- 		id = of_alias_get_id(ctlr->dev.of_node, "spi");
- 		if (id >= 0) {
- 			ctlr->bus_num = id;
-@@ -2170,15 +2179,6 @@ int spi_register_controller(struct spi_controller *ctlr)
- 		if (WARN(id < 0, "couldn't get idr"))
- 			return id;
- 		ctlr->bus_num = id;
--	} else {
--		/* devices with a fixed bus num must check-in with the num */
--		mutex_lock(&board_lock);
--		id = idr_alloc(&spi_master_idr, ctlr, ctlr->bus_num,
--			ctlr->bus_num + 1, GFP_KERNEL);
--		mutex_unlock(&board_lock);
--		if (WARN(id < 0, "couldn't get idr"))
--			return id == -ENOSPC ? -EBUSY : id;
--		ctlr->bus_num = id;
- 	}
- 	INIT_LIST_HEAD(&ctlr->queue);
- 	spin_lock_init(&ctlr->queue_lock);
--- 
-2.17.1
+Beacause I initially used "dt-bindings: media" for both then later realized all
+other patches were "media: dt-bindings" and just fixed the first one :/
+
+Sorry for being sloppy, I'll fix in v2.
+
+Thanks
+   j
+
+> Otherwise,
+>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+
+--RMedoP2+Pr6Rq0N2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJbe7TwAAoJEHI0Bo8WoVY8xcgQAKhEC4GHbxL0yVJIXXeG4FNT
+GIJGR6kWEhIU8R14ziJ10jajqJQVWKWk9c8S6awbquMiMAnpjMn3U1VYI5gww/oJ
+1axpikUxpEGr0+8uzCG43GINkDgp2ngN5DgkAIxYb7RmQPxPFcHy9We7IY/m0FlO
++RIA9ab28Di+npfIYsphkAtTB9xuzpAxWVlN2o7LFDLazuwnJ7y99Yt3f1/ZKj5L
+tHweeQ8Z4muo4OIkx01nXkjSfsY0dZnj4DvrrZ3utWl90K8RXnfb0az7y91CTzcT
+GJEM/2igk+UpKUCNzYnI05NxxTCHwrxvPae8OhalCEx85ZAye6naoBnkgayjg7sx
+Ik6mr+v9pTJ4HWBrPPHJ54xhlYkluAdsWPi590x5cs8OYqlkcyeyMRpR7Zl2arZU
+PJ2imTtUMx9zUMbctzSF5T+HpKfWyVY5f3xWlvM9wT9ghl9gasDK6eyQe4NiQrOA
+mfkTonpLb7DQt6G/uw3hKQHYk73h2xNMzRVP5ODTKi4gXWe8tvX/ZyzwUScKqNIR
+Zk2NzlMqza0VHYkFMEfLbVZ/siuhp3iCUpIDlTtxt1r/Ll8mH03PJbX2TfWARt41
+wtFPRmaiw3y+rnj0mwRX70S6uZdGT53eIos3+dYqo5YMJfobmdMjqljGPO5+nRt4
+PiVG+MV9Hb3eSd3X0+nd
+=WqRU
+-----END PGP SIGNATURE-----
+
+--RMedoP2+Pr6Rq0N2--
