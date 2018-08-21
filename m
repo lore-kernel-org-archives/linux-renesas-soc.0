@@ -1,13 +1,12 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:51164 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727038AbeHUSws (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:21128 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726343AbeHUMSB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 Aug 2018 14:52:48 -0400
-Date: Tue, 21 Aug 2018 16:32:03 +0100
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Marek Vasut <marek.vasut@gmail.com>,
+        Tue, 21 Aug 2018 08:18:01 -0400
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC: Marek Vasut <marek.vasut@gmail.com>,
         Bjorn Helgaas <helgaas@kernel.org>,
         "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
@@ -16,10 +15,13 @@ Cc: Marek Vasut <marek.vasut@gmail.com>,
         Wolfram Sang <wsa@the-dreams.de>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH V2 4/5] PCI: rcar: Support runtime PM, link state L1
+Subject: RE: [PATCH V2 4/5] PCI: rcar: Support runtime PM, link state L1
  handling
-Message-ID: <20180821153203.GB29550@e107981-ln.cambridge.arm.com>
-References: <20180611135912.GD75679@bhelgaas-glaptop.roam.corp.google.com>
+Date: Tue, 21 Aug 2018 08:58:38 +0000
+Message-ID: <TY1PR01MB1769D7656974C9EF15948159F5310@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <20171117174906.GB22599@red-moon>
+ <3e0bc374-d296-675c-f290-256cc530feb7@gmail.com>
+ <20180611135912.GD75679@bhelgaas-glaptop.roam.corp.google.com>
  <77d1eaf8-e180-f5f5-50f0-34c45e72c553@gmail.com>
  <20180613135308.GB201807@bhelgaas-glaptop.roam.corp.google.com>
  <20180613155252.GA12210@e107981-ln.cambridge.arm.com>
@@ -28,105 +30,55 @@ References: <20180611135912.GD75679@bhelgaas-glaptop.roam.corp.google.com>
  <9b91bbd9-64df-764e-e553-a37463549a92@gmail.com>
  <TY1PR01MB176994051783997958BAB14AF5320@TY1PR01MB1769.jpnprd01.prod.outlook.com>
  <20180820144733.GA24413@red-moon>
- <TY1PR01MB1769D7656974C9EF15948159F5310@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+In-Reply-To: <20180820144733.GA24413@red-moon>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TY1PR01MB1769D7656974C9EF15948159F5310@TY1PR01MB1769.jpnprd01.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Aug 21, 2018 at 08:58:38AM +0000, Phil Edworthy wrote:
-> Hi Lorenzo,
-> 
-> On 20 August 2018 15:48 Lorenzo Pieralisi wrote:
-> > On Mon, Aug 20, 2018 at 01:44:48PM +0000, Phil Edworthy wrote:
-> > 
-> > [...]
-> > 
-> > > However, both before and after this patch, the RP does not transition
-> > > L1 when the endpoints change to L1.
-> > > This patch only transitions the RP to L1 during accessing a card's
-> > > config registers, if the RP is not in L1 link state and has received
-> > > PM_ENTER_L1 DLLP (e.g. resume). After this, the hardware will handle
-> > > the transition out of L1.
-> > >
-> > > The relevant part of the rcar manual says: "After a recovery to L0, if
-> > > the device is in the Non-D0 state and PM_Enter_L1 DLLP is transmitted
-> > > from the downstream device, software should confirm that hardware is
-> > > in the L0 state (PMSR.PMSTATE = L0) and initiate the L1 transition
-> > > sequence again (write 1 to PMCTLR.L1IATN). In this case, the sequence
-> > > is: L0 ??? L1 ??? L0 recovery ??? L1 again."
-> > 
-> > Can you map these FSM steps to this patch code please ? I would like to
-> > understand what Link state maps to which command written and when.
-> I don't think I can because we are not initially entering L1. Looking at this
-> again, I think this section of the manual only helps in indicating how to 
-> detect we should have gone into L1 and how to poke the HW to initiate the
-> transition to L1.
-> 
-> On system suspend, the EP sends PM_Enter_L1 DLLP and enters L1 state.
-
-I am still struggling to understand what "EP enters L1 state" means. A
-link in L1 means both ends of the link are in electrical idle, it is a
-two-way handshake, see PCI express specifications 5.3.2.1 "Entry into
-the L1 state".
-
-> The rcar RP cannot enter L1 by HW alone, so is still in L0.
-
-See above.
-
-> The only way out of this from the PCIe spec FSM is for both EP and RP
-> to enter the Recovery state.
-> The patch simply detects that we should have gone into L1, and so initiates
-> that state change, and the HW will then handle the transition from L1 to
-> Recovery and then on to L0.
-
-That I can understand, I reckon it is to "reset" the RP link state
-machine to a "sane" state.
-
-> > > I don't think the potential issue that Bjorn talked about can happen
-> > > because the RP does go into L1. I could be wrong though...
-> > 
-> > I do not understand this paragraph, mind elaborating on it ?
-> As rcar RP only supports D0 and D3hot/cold, (the manual says it supports
-> D3cold, but I cannot see how if it doesn't support L2 or L3 states), if you
-> force the link to D3, we can only be in L1 state.
-
-D3 is a device state, not a link state. I still do not understand this
-statement.
-
-The link between RP and EP can enter L1 when all functions in the EP
-are in a device state != D0 but, as I mentioned above, it is still
-unclear what happens in this platform since I do not get what state
-in the PCI spec 5.3.2.1 state machine the RP Link state machine is
-in.
-
-If we programme the device into any D-state and the device wants to
-send a PME message _before_ we reset the RP state machine with the
-procedure described in this thread, what happens ? Or, more explicitly,
-what are in _HW_ the states of upstream and downstream link state
-machines when the EP is put in, say, D1 ?
-
-That's in short our question. I would be happy to get to the bottom
-of this since it is an interesting issue we are facing, we need
-HW details, I can apply Marek's patch but I would be happier if I get
-the whole picture first.
-
-Thanks,
-Lorenzo
-
-> 
-> 
-> > > The driver should also have a runtime-PM hook to transition to L1 on
-> > > suspend in order to save power. However, that is somewhat separate to
-> > > the problem the patch fixes.
-> > 
-> > Yes that's a separate patch.
-> > 
-> > Thanks for chiming in, let's try to get to the bottom of this thread.
-> > 
-> > Lorenzo
-> 
-> Thanks
-> Phil
+SGkgTG9yZW56bywNCg0KT24gMjAgQXVndXN0IDIwMTggMTU6NDggTG9yZW56byBQaWVyYWxpc2kg
+d3JvdGU6DQo+IE9uIE1vbiwgQXVnIDIwLCAyMDE4IGF0IDAxOjQ0OjQ4UE0gKzAwMDAsIFBoaWwg
+RWR3b3J0aHkgd3JvdGU6DQo+IA0KPiBbLi4uXQ0KPiANCj4gPiBIb3dldmVyLCBib3RoIGJlZm9y
+ZSBhbmQgYWZ0ZXIgdGhpcyBwYXRjaCwgdGhlIFJQIGRvZXMgbm90IHRyYW5zaXRpb24NCj4gPiBM
+MSB3aGVuIHRoZSBlbmRwb2ludHMgY2hhbmdlIHRvIEwxLg0KPiA+IFRoaXMgcGF0Y2ggb25seSB0
+cmFuc2l0aW9ucyB0aGUgUlAgdG8gTDEgZHVyaW5nIGFjY2Vzc2luZyBhIGNhcmQncw0KPiA+IGNv
+bmZpZyByZWdpc3RlcnMsIGlmIHRoZSBSUCBpcyBub3QgaW4gTDEgbGluayBzdGF0ZSBhbmQgaGFz
+IHJlY2VpdmVkDQo+ID4gUE1fRU5URVJfTDEgRExMUCAoZS5nLiByZXN1bWUpLiBBZnRlciB0aGlz
+LCB0aGUgaGFyZHdhcmUgd2lsbCBoYW5kbGUNCj4gPiB0aGUgdHJhbnNpdGlvbiBvdXQgb2YgTDEu
+DQo+ID4NCj4gPiBUaGUgcmVsZXZhbnQgcGFydCBvZiB0aGUgcmNhciBtYW51YWwgc2F5czogIkFm
+dGVyIGEgcmVjb3ZlcnkgdG8gTDAsIGlmDQo+ID4gdGhlIGRldmljZSBpcyBpbiB0aGUgTm9uLUQw
+IHN0YXRlIGFuZCBQTV9FbnRlcl9MMSBETExQIGlzIHRyYW5zbWl0dGVkDQo+ID4gZnJvbSB0aGUg
+ZG93bnN0cmVhbSBkZXZpY2UsIHNvZnR3YXJlIHNob3VsZCBjb25maXJtIHRoYXQgaGFyZHdhcmUg
+aXMNCj4gPiBpbiB0aGUgTDAgc3RhdGUgKFBNU1IuUE1TVEFURSA9IEwwKSBhbmQgaW5pdGlhdGUg
+dGhlIEwxIHRyYW5zaXRpb24NCj4gPiBzZXF1ZW5jZSBhZ2FpbiAod3JpdGUgMSB0byBQTUNUTFIu
+TDFJQVROKS4gSW4gdGhpcyBjYXNlLCB0aGUgc2VxdWVuY2UNCj4gPiBpczogTDAg4oaSIEwxIOKG
+kiBMMCByZWNvdmVyeSDihpIgTDEgYWdhaW4uIg0KPiANCj4gQ2FuIHlvdSBtYXAgdGhlc2UgRlNN
+IHN0ZXBzIHRvIHRoaXMgcGF0Y2ggY29kZSBwbGVhc2UgPyBJIHdvdWxkIGxpa2UgdG8NCj4gdW5k
+ZXJzdGFuZCB3aGF0IExpbmsgc3RhdGUgbWFwcyB0byB3aGljaCBjb21tYW5kIHdyaXR0ZW4gYW5k
+IHdoZW4uDQpJIGRvbuKAmXQgdGhpbmsgSSBjYW4gYmVjYXVzZSB3ZSBhcmUgbm90IGluaXRpYWxs
+eSBlbnRlcmluZyBMMS4gTG9va2luZyBhdCB0aGlzDQphZ2FpbiwgSSB0aGluayB0aGlzIHNlY3Rp
+b24gb2YgdGhlIG1hbnVhbCBvbmx5IGhlbHBzIGluIGluZGljYXRpbmcgaG93IHRvIA0KZGV0ZWN0
+IHdlIHNob3VsZCBoYXZlIGdvbmUgaW50byBMMSBhbmQgaG93IHRvIHBva2UgdGhlIEhXIHRvIGlu
+aXRpYXRlIHRoZQ0KdHJhbnNpdGlvbiB0byBMMS4NCg0KT24gc3lzdGVtIHN1c3BlbmQsIHRoZSBF
+UCBzZW5kcyBQTV9FbnRlcl9MMSBETExQIGFuZCBlbnRlcnMgTDEgc3RhdGUuDQpUaGUgcmNhciBS
+UCBjYW5ub3QgZW50ZXIgTDEgYnkgSFcgYWxvbmUsIHNvIGlzIHN0aWxsIGluIEwwLiBUaGUgb25s
+eSB3YXkgb3V0DQpvZiB0aGlzIGZyb20gdGhlIFBDSWUgc3BlYyBGU00gaXMgZm9yIGJvdGggRVAg
+YW5kIFJQIHRvIGVudGVyIHRoZSBSZWNvdmVyeQ0Kc3RhdGUuDQpUaGUgcGF0Y2ggc2ltcGx5IGRl
+dGVjdHMgdGhhdCB3ZSBzaG91bGQgaGF2ZSBnb25lIGludG8gTDEsIGFuZCBzbyBpbml0aWF0ZXMN
+CnRoYXQgc3RhdGUgY2hhbmdlLCBhbmQgdGhlIEhXIHdpbGwgdGhlbiBoYW5kbGUgdGhlIHRyYW5z
+aXRpb24gZnJvbSBMMSB0bw0KUmVjb3ZlcnkgYW5kIHRoZW4gb24gdG8gTDAuDQoNCg0KPiA+IEkg
+ZG9u4oCZdCB0aGluayB0aGUgcG90ZW50aWFsIGlzc3VlIHRoYXQgQmpvcm4gdGFsa2VkIGFib3V0
+IGNhbiBoYXBwZW4NCj4gPiBiZWNhdXNlIHRoZSBSUCBkb2VzIGdvIGludG8gTDEuIEkgY291bGQg
+YmUgd3JvbmcgdGhvdWdoLi4uDQo+IA0KPiBJIGRvIG5vdCB1bmRlcnN0YW5kIHRoaXMgcGFyYWdy
+YXBoLCBtaW5kIGVsYWJvcmF0aW5nIG9uIGl0ID8NCkFzIHJjYXIgUlAgb25seSBzdXBwb3J0cyBE
+MCBhbmQgRDNob3QvY29sZCwgKHRoZSBtYW51YWwgc2F5cyBpdCBzdXBwb3J0cw0KRDNjb2xkLCBi
+dXQgSSBjYW5ub3Qgc2VlIGhvdyBpZiBpdCBkb2VzbuKAmXQgc3VwcG9ydCBMMiBvciBMMyBzdGF0
+ZXMpLCBpZiB5b3UNCmZvcmNlIHRoZSBsaW5rIHRvIEQzLCB3ZSBjYW4gb25seSBiZSBpbiBMMSBz
+dGF0ZS4NCg0KDQo+ID4gVGhlIGRyaXZlciBzaG91bGQgYWxzbyBoYXZlIGEgcnVudGltZS1QTSBo
+b29rIHRvIHRyYW5zaXRpb24gdG8gTDEgb24NCj4gPiBzdXNwZW5kIGluIG9yZGVyIHRvIHNhdmUg
+cG93ZXIuIEhvd2V2ZXIsIHRoYXQgaXMgc29tZXdoYXQgc2VwYXJhdGUgdG8NCj4gPiB0aGUgcHJv
+YmxlbSB0aGUgcGF0Y2ggZml4ZXMuDQo+IA0KPiBZZXMgdGhhdCdzIGEgc2VwYXJhdGUgcGF0Y2gu
+DQo+IA0KPiBUaGFua3MgZm9yIGNoaW1pbmcgaW4sIGxldCdzIHRyeSB0byBnZXQgdG8gdGhlIGJv
+dHRvbSBvZiB0aGlzIHRocmVhZC4NCj4gDQo+IExvcmVuem8NCg0KVGhhbmtzDQpQaGlsDQo=
