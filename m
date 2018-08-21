@@ -1,56 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:41331 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728345AbeH3QmN (ORCPT
+Received: from sauhun.de ([88.99.104.3]:41742 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726743AbeHURCE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Aug 2018 12:42:13 -0400
-Received: by mail-vk0-f68.google.com with SMTP id j14-v6so4149239vke.8
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Aug 2018 05:40:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180730073456.3687-1-wsa+renesas@sang-engineering.com>
- <CAMuHMdXLxhudW_s-FmtADt0a9-qd501s0Ckm=FTY97mxGH5GBw@mail.gmail.com> <20180821134147.sn4xzw4hn63r2cqm@ninjato>
-In-Reply-To: <20180821134147.sn4xzw4hn63r2cqm@ninjato>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 30 Aug 2018 14:40:03 +0200
-Message-ID: <CAMuHMdVxuzdORq=dicgaGNfh+8Yzh5w7NoT8_WCFbn7QSad86A@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: dts: renesas: salvator-xs: enable SATA
-To: Wolfram Sang <wsa@the-dreams.de>
+        Tue, 21 Aug 2018 13:02:04 -0400
+Date: Tue, 21 Aug 2018 15:41:47 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Simon Horman <horms@verge.net.au>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v2] arm64: dts: renesas: salvator-xs: enable SATA
+Message-ID: <20180821134147.sn4xzw4hn63r2cqm@ninjato>
+References: <20180730073456.3687-1-wsa+renesas@sang-engineering.com>
+ <CAMuHMdXLxhudW_s-FmtADt0a9-qd501s0Ckm=FTY97mxGH5GBw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tg7r3damxywq27dz"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXLxhudW_s-FmtADt0a9-qd501s0Ckm=FTY97mxGH5GBw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
 
-On Tue, Aug 21, 2018 at 3:41 PM Wolfram Sang <wsa@the-dreams.de> wrote:
-> > > +/* MD12 (SW12-7) must be set 'Off' which is not the default! */
-> >
-> > Upon reading this again, I think this comment is confusing: the 'Off' refers
-> > to the switch position, not to the MD12 logic value, while the parentheses
-> > suggest otherwise.
-> >
-> > What about the following?
-> >
-> >     SW12-7 must be set 'Off' (MD12 set to 1), which is not the default!
->
-> I'd leave the ',' away but otherwise:
->
-> Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->
-> Shall I send an incremental patch or do you want to do it?
+--tg7r3damxywq27dz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sent, preacked ;-)
 
-Gr{oetje,eeting}s,
+> > +/* MD12 (SW12-7) must be set 'Off' which is not the default! */
+>=20
+> Upon reading this again, I think this comment is confusing: the 'Off' ref=
+ers
+> to the switch position, not to the MD12 logic value, while the parentheses
+> suggest otherwise.
+>=20
+> What about the following?
+>=20
+>     SW12-7 must be set 'Off' (MD12 set to 1), which is not the default!
 
-                        Geert
+I'd leave the ',' away but otherwise:
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Shall I send an incremental patch or do you want to do it?
+
+
+--tg7r3damxywq27dz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlt8FpcACgkQFA3kzBSg
+Kbajig//XD1xAxpD6j/vZ6IEggATpLsubR+QNoblN46VJax5nm4WzvO/a/1abVk2
+CQZ/mn8bgSk22vlt2NpmojpejXYx0sCCvJAkMx55rthwFztfQUo2tIgsUN50Mlrw
+dN4jnY0DZOA+Xv032lWLSgydHyYlgaHH3g/BM5mAm8CrTKjcpUjOxH7Zz8ocvzMT
+joStpRKxyUvAOef6FW+jTPdN5h1k1gvtAQtA0rLNLgetBxA7FgxQyU4b/gFtGLnh
+fg8bsa9bmldTADXH9GyKuD+/8D8zwqEvepfCFlkAgmK+Sc9zww5pF/2Mgl0fuM00
+ow/pGFzhjhcPiWfsXoVM/zpU1zJMzSc+PHHVA+1DygBAQeJLWlq4lavPFpthHuCu
+RJH8b1JZFjWOrrNCQ+ACye3uOherBUn0b5IiZJQIcZbQcMr45mtPvpp9AsYMe1pb
+NeEoz58EViPziOospo00dfAwSWwzQIBvj8HLqg2mxsHBQZmXda1ALTg7nNqxvmnN
+VUptqdOH7a4nF55r8kG2wn+cNBV9S4vb7vJOSxt6alA13sx5D2DuI3W+dx/Qthm8
+SSlK4YJVN5kRR+iZMWN/gC6bUQ4zJGqtivAUZRfIXc2dv23qInj+DCCyqUgrQ7Ea
+se8nG18t+60jp09xCT11RyGf0xvIvWkH1RzzPUT5iD0VdXRnScM=
+=PeFH
+-----END PGP SIGNATURE-----
+
+--tg7r3damxywq27dz--
