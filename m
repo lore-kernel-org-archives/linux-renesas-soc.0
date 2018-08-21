@@ -1,127 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:58158 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727245AbeH1TCW (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:24416 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727027AbeHUVY5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Aug 2018 15:02:22 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/2] arm64: renesas: Remove the ARCH_SHMOBILE Kconfig symbol
-Date: Tue, 28 Aug 2018 17:10:11 +0200
-Message-Id: <20180828151011.14065-3-geert+renesas@glider.be>
-In-Reply-To: <20180828151011.14065-1-geert+renesas@glider.be>
-References: <20180828151011.14065-1-geert+renesas@glider.be>
+        Tue, 21 Aug 2018 17:24:57 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+CC: Nicolas Pitre <nicolas.pitre@linaro.org>,
+        =?iso-8859-2?Q?=A3ukasz_Stelmach?= <l.stelmach@samsung.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "cdall@linaro.org" <cdall@linaro.org>
+Subject: RE: [RFC PATCH] ARM: Debug kernel copy by printing
+Date: Tue, 21 Aug 2018 18:03:25 +0000
+Message-ID: <TY1PR01MB1770D9DACFC1635FA380EC34C0310@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1530022595-6806-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <TY1PR01MB177010920A6FC7FC1B61358BC0580@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+ <nycvar.YSQ.7.76.1807171552380.20892@knanqh.ubzr>
+ <TY1PR01MB1770DD78CD0DC472245FA6E9C0310@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+ <20180821170252.GA30658@n2100.armlinux.org.uk>
+In-Reply-To: <20180821170252.GA30658@n2100.armlinux.org.uk>
+Content-Language: en-US
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Kconfig symbol for Renesas 64-bit ARM SoCs has always been
-ARCH_RENESAS, with ARCH_SHMOBILE being selected to reuse drivers shared
-with Renesas 32-bit ARM and/or Renesas SuperH SH-Mobile SoCs.
+> Subject: Re: [RFC PATCH] ARM: Debug kernel copy by printing
+>
+> On Tue, Aug 21, 2018 at 04:56:19PM +0000, Fabrizio Castro wrote:
+> > Thank you Nicolas.
+> >
+> > Russel, does it look ok to you? Do you think you can apply this patch?
+>        ^^
+> Grr, please be more careful in the future, thanks.
 
-Commit 9b5ba0df4ea4f940 ("ARM: shmobile: Introduce ARCH_RENESAS")
-started the conversion from ARCH_SHMOBILE to ARCH_RENESAS for Renesas
-32-bit SoCs.  Now all drivers for Renesas ARM SoCs have gained proper
-ARCH_RENESAS platform dependencies, there is no longer a need to select
-ARCH_SHMOBILE.
+Oooops, I am very sorry Russell! I'll be more careful the next time.
 
-With ARCH_SHMOBILE gone, move the ARCH_RENESAS section up, to restore
-alphabetical sort order.
+>
+> Patches need to end up in my patch system, otherwise they're likely to
+> be lost.  Details in my signature below.  Thanks.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
----
-v2:
-  - Add Acked-by,
-  - Drop RFC, now all dependencies have been merged,
-  - Move ARCH_SYNQUACER after ARCH_STRATIX10,
-  - Rebase.
+I have put the patch on your system now.
 
-JFTR, after this, the following symbols for drivers supporting only
-Renesas SuperH "SH-Mobile" SoCs can no longer be selected:
-  - CONFIG_KEYBOARD_SH_KEYSC,
-  - CONFIG_VIDEO_SH_VOU,
-  - CONFIG_VIDEO_RENESAS_CEU.
-(changes for a renesas_defconfig .config)
----
- arch/arm64/Kconfig.platforms | 44 ++++++++++++++++--------------------
- 1 file changed, 20 insertions(+), 24 deletions(-)
+Thank you,
+Fab
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 531ea508aa6ba3f4..52610071fdc189bf 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -152,32 +152,8 @@ config ARCH_REALTEK
- 	  This enables support for the ARMv8 based Realtek chipsets,
- 	  like the RTD1295.
- 
--config ARCH_ROCKCHIP
--	bool "Rockchip Platforms"
--	select ARCH_HAS_RESET_CONTROLLER
--	select GPIOLIB
--	select PINCTRL
--	select PINCTRL_ROCKCHIP
--	select PM
--	select ROCKCHIP_TIMER
--	help
--	  This enables support for the ARMv8 based Rockchip chipsets,
--	  like the RK3368.
--
--config ARCH_SEATTLE
--	bool "AMD Seattle SoC Family"
--	help
--	  This enables support for AMD Seattle SOC Family
--
--config ARCH_SHMOBILE
--	bool
--
--config ARCH_SYNQUACER
--	bool "Socionext SynQuacer SoC Family"
--
- config ARCH_RENESAS
- 	bool "Renesas SoC Platforms"
--	select ARCH_SHMOBILE
- 	select PINCTRL
- 	select PM
- 	select PM_GENERIC_DOMAINS
-@@ -234,11 +210,31 @@ config ARCH_R8A77995
- 	help
- 	  This enables support for the Renesas R-Car D3 SoC.
- 
-+config ARCH_ROCKCHIP
-+	bool "Rockchip Platforms"
-+	select ARCH_HAS_RESET_CONTROLLER
-+	select GPIOLIB
-+	select PINCTRL
-+	select PINCTRL_ROCKCHIP
-+	select PM
-+	select ROCKCHIP_TIMER
-+	help
-+	  This enables support for the ARMv8 based Rockchip chipsets,
-+	  like the RK3368.
-+
-+config ARCH_SEATTLE
-+	bool "AMD Seattle SoC Family"
-+	help
-+	  This enables support for AMD Seattle SOC Family
-+
- config ARCH_STRATIX10
- 	bool "Altera's Stratix 10 SoCFPGA Family"
- 	help
- 	  This enables support for Altera's Stratix 10 SoCFPGA Family.
- 
-+config ARCH_SYNQUACER
-+	bool "Socionext SynQuacer SoC Family"
-+
- config ARCH_TEGRA
- 	bool "NVIDIA Tegra SoC Family"
- 	select ARCH_HAS_RESET_CONTROLLER
--- 
-2.17.1
+>
+> --
+> RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+> FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down 630kbp=
+s up
+> According to speedtest.net: 13Mbps down 490kbps up
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
