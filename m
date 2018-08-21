@@ -1,66 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-09.nifty.com ([210.131.2.76]:17013 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389266AbeHPKOA (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:25230 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725731AbeHUFRc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Aug 2018 06:14:00 -0400
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH v2 1/7] mmc: tmio: replace tmio_mmc_clk_stop() calls with tmio_mmc_set_clock()
-Date: Thu, 16 Aug 2018 16:16:33 +0900
-Message-Id: <1534403799-10594-2-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1534403799-10594-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1534403799-10594-1-git-send-email-yamada.masahiro@socionext.com>
+        Tue, 21 Aug 2018 01:17:32 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: "balbi@kernel.org" <balbi@kernel.org>
+CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Subject: RE: [PATCH] usb: Change usb_of_get_companion_dev() place to
+ usb/common
+Date: Tue, 21 Aug 2018 01:59:26 +0000
+Message-ID: <OSBPR01MB2293D762881D192E7C4CAC46D8310@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+References: <1534734626-16767-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1534734626-16767-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-tmio_mmc_clk_stop(host) is equivalent to tmio_mmc_set_clock(host, 0).
-This replacement is needed for the next commit.
+Hi,
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+> From: Yoshihiro Shimoda, Sent: Monday, August 20, 2018 12:10 PM
+>=20
+> Since renesas_usb3 udc driver calls usb_of_get_companion_dev()
+> which is on usb/core/of.c, build error like below happens if we
+> disable CONFIG_USB because the usb/core/ needs CONFIG_USB:
+>=20
+> ERROR: "usb_of_get_companion_dev" [drivers/usb/gadget/udc/renesas_usb3.ko=
+] undefined!
+>=20
+> According to the usb/gadget/Kconfig, "NOTE:  Gadget support
+> ** DOES NOT ** depend on host-side CONFIG_USB !!".
+> So, to fix the issue, this patch changes the usb_of_get_companion_dev()
+> place from usb/core/of.c to usb/common/common.c to be called by both
+> host and gadget.
+>=20
+> Reported-by: John Garry <john.garry@huawei.com>
+> Fixes: 39facfa01c9f ("usb: gadget: udc: renesas_usb3: Add register of usb=
+ role switch")
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Changes in v2: None
+On other email thread [1], Arnd said I have his Ack on this patch.
+So,
 
- drivers/mmc/host/tmio_mmc_core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 3cb554c..991b340 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1032,7 +1032,7 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
- 	switch (ios->power_mode) {
- 	case MMC_POWER_OFF:
- 		tmio_mmc_power_off(host);
--		tmio_mmc_clk_stop(host);
-+		tmio_mmc_set_clock(host, 0);
- 		break;
- 	case MMC_POWER_UP:
- 		tmio_mmc_power_on(host, ios->vdd);
-@@ -1269,7 +1269,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
- 	if (pdata->flags & TMIO_MMC_SDIO_IRQ)
- 		_host->sdio_irq_mask = TMIO_SDIO_MASK_ALL;
- 
--	tmio_mmc_clk_stop(_host);
-+	tmio_mmc_set_clock(_host, 0);
- 	tmio_mmc_reset(_host);
- 
- 	_host->sdcard_irq_mask = sd_ctrl_read16_and_16_as_32(_host, CTL_IRQ_MASK);
-@@ -1353,7 +1353,7 @@ int tmio_mmc_host_runtime_suspend(struct device *dev)
- 	tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_ALL);
- 
- 	if (host->clk_cache)
--		tmio_mmc_clk_stop(host);
-+		tmio_mmc_set_clock(host, 0);
- 
- 	tmio_mmc_clk_disable(host);
- 
--- 
-2.7.4
+[1]
+https://lkml.org/lkml/2018/8/20/216
+
+Best regards,
+Yoshihiro Shimoda
