@@ -1,58 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:12172 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730671AbeHWQ5u (ORCPT
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.21]:12999 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726315AbeHULWE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Aug 2018 12:57:50 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
+        Tue, 21 Aug 2018 07:22:04 -0400
+Date: Tue, 21 Aug 2018 10:02:16 +0200 (CEST)
+From: Ulrich Hecht <uli@fpond.eu>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH 07/30] media: entity: Add has_route entity operation
-Date: Thu, 23 Aug 2018 15:25:21 +0200
-Message-Id: <20180823132544.521-8-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
+        Ulrich Hecht <uli+renesas@fpond.eu>
+Cc: linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        jacopo+renesas@jmondi.org, kieran.bingham+renesas@ideasonboard.com
+Message-ID: <2030933634.365867.1534838536486@webmail.strato.com>
+In-Reply-To: <6267174.iQv7XvWJ3u@avalon>
+References: <1534254604-24204-1-git-send-email-uli+renesas@fpond.eu>
+ <6267174.iQv7XvWJ3u@avalon>
+Subject: Re: [PROTO][PATCH 00/10] R-Car D3 LVDS/HDMI support (with PLL)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-The optional operation can be used by entities to report whether two
-pads are internally connected.
+> On August 20, 2018 at 11:50 AM Laurent Pinchart <laurent.pinchart@ideasonboard.com> wrote:
+> On Tuesday, 14 August 2018 16:49:54 EEST Ulrich Hecht wrote:
+> > Instructions for testing this are found at
+> > https://elinux.org/User:Uli/D3_HDMI_Test, including links to git trees based
+> > on renesas-drivers and drm-next, as well as config files for each.
+> 
+> The instructions there end with
+> 
+> "4. Boot kernel and observe activity on HDMI display."
+> 
+> Does "activity" mean that I can expect a working HDMI output with a proper 
+> image on the display ? :-)
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- include/media/media-entity.h | 5 +++++
- 1 file changed, 5 insertions(+)
+Yes, you can. :)
 
-diff --git a/include/media/media-entity.h b/include/media/media-entity.h
-index 532c438b9eb862c5..07df1b8d85a3c1ba 100644
---- a/include/media/media-entity.h
-+++ b/include/media/media-entity.h
-@@ -193,6 +193,9 @@ struct media_pad {
-  * @link_validate:	Return whether a link is valid from the entity point of
-  *			view. The media_pipeline_start() function
-  *			validates all links by calling this operation. Optional.
-+ * @has_route:		Return whether a route exists inside the entity between
-+ *			two given pads. Optional. If the operation isn't
-+ *			implemented all pads will be considered as connected.
-  *
-  * .. note::
-  *
-@@ -205,6 +208,8 @@ struct media_entity_operations {
- 			  const struct media_pad *local,
- 			  const struct media_pad *remote, u32 flags);
- 	int (*link_validate)(struct media_link *link);
-+	bool (*has_route)(struct media_entity *entity, unsigned int pad0,
-+			  unsigned int pad1);
- };
- 
- /**
--- 
-2.18.0
+CU
+Uli
