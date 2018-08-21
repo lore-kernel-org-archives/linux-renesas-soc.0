@@ -1,44 +1,84 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:50869 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728546AbeHVOzf (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 22 Aug 2018 10:55:35 -0400
-Date: Wed, 22 Aug 2018 13:31:00 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: [PATCH 2/2] arm64: dts: renesas: v3msk: add eMMC support
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] arm64: dts: renesas: v3msk: add eMMC support
-Message-ID: <20180822113100.edpyplj2kteomr2j@verge.net.au>
 References: <1af46bf9-d9e5-8dcf-0ac7-a85e7348a34e@cogentembedded.com>
- <9da672a2-0269-4860-8912-189414b43d4c@cogentembedded.com>
+Message-ID: <9da672a2-0269-4860-8912-189414b43d4c@cogentembedded.com>
+Date: Tue, 21 Aug 2018 22:50:31 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9da672a2-0269-4860-8912-189414b43d4c@cogentembedded.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <1af46bf9-d9e5-8dcf-0ac7-a85e7348a34e@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Aug 21, 2018 at 10:50:31PM +0300, Sergei Shtylyov wrote:
-> Add the eMMC chip support for the V3M Started Kit board.
-> 
-> Based on the original (and large) patches by Vladimir Barinov.
-> 
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Add the eMMC chip support for the V3M Started Kit board.
 
-Thanks,
+Based on the original (and large) patches by Vladimir Barinov.
 
-This looks fine to me but I will wait to see if there are other reviews
-before applying.
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts |   26 +++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-I am, however, curious to know about HS200.
-Is it supported on the v3msk? If so, do you have any plans to enable it?
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
++++ renesas/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
+@@ -51,6 +51,15 @@
+ 		regulator-always-on;
+ 	};
+ 
++	vcc_vddq_vin0: regulator-2 {
++		compatible = "regulator-fixed";
++		regulator-name = "VCC_VDDQ_VIN0";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
+ 	lvds-decoder {
+ 		compatible = "thine,thc63lvd1024";
+ 		vcc-supply = <&vcc_d3_3v>;
+@@ -128,6 +137,12 @@
+ 		function = "i2c0";
+ 	};
+ 
++	mmc_pins: mmc_3_3v {
++		groups = "mmc_data8", "mmc_ctrl";
++		function = "mmc";
++		power-source = <3300>;
++	};
++
+ 	scif0_pins: scif0 {
+ 		groups = "scif0_data";
+ 		function = "scif0";
+@@ -192,6 +207,17 @@
+ 	};
+ };
+ 
++&mmc0 {
++	pinctrl-0 = <&mmc_pins>;
++	pinctrl-names = "default";
++
++	vmmc-supply = <&vcc_d3_3v>;
++	vqmmc-supply = <&vcc_vddq_vin0>;
++	bus-width = <8>;
++	non-removable;
++	status = "okay";
++};
++
+ &scif0 {
+ 	pinctrl-0 = <&scif0_pins>;
+ 	pinctrl-names = "default";
