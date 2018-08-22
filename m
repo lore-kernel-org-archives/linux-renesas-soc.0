@@ -1,30 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49545 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbeHVNBC (ORCPT
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41905 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728283AbeHVMU2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 22 Aug 2018 09:01:02 -0400
-Date: Wed, 22 Aug 2018 11:36:51 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        Wed, 22 Aug 2018 08:20:28 -0400
+Received: by mail-lj1-f195.google.com with SMTP id y17-v6so850422ljy.8
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 22 Aug 2018 01:56:29 -0700 (PDT)
 Subject: Re: [PATCH 06/11] net: ethernet: renesas: use SPDX identifier for
  Renesas drivers
-Message-ID: <20180822093651.2wqh5ahsobnsbupv@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
  <20180821220233.9202-7-wsa+renesas@sang-engineering.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <cfec965a-5a6a-8277-3f67-58be912f73a0@cogentembedded.com>
+Date: Wed, 22 Aug 2018 11:56:25 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20180821220233.9202-7-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 22, 2018 at 12:02:19AM +0200, Wolfram Sang wrote:
+Hello!
+
+On 8/22/2018 1:02 AM, Wolfram Sang wrote:
+
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+[...]
+
+Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+MBR, Sergei
