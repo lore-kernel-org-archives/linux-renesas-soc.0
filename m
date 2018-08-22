@@ -1,110 +1,28 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45262 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726762AbeHVBYo (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:49419 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727396AbeHVM50 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 Aug 2018 21:24:44 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        dmaengine@vger.kernel.org, linux-can@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH 00/11] tree-wide: use SPDX identifier for Renesas drivers
-Date: Wed, 22 Aug 2018 00:02:13 +0200
-Message-Id: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
+        Wed, 22 Aug 2018 08:57:26 -0400
+Date: Wed, 22 Aug 2018 11:33:17 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/11] spi: use SPDX identifier for Renesas drivers
+Message-ID: <20180822093317.tzx2ujo7znol5wrz@verge.net.au>
+References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
+ <20180821220233.9202-11-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180821220233.9202-11-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Here is my first batch of SPDX conversion patches. Mostly low hanging fruits,
-only a handful of drivers needed corrections in MODULE_LICENSE, too.
+On Wed, Aug 22, 2018 at 12:02:23AM +0200, Wolfram Sang wrote:
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-checkpatch is happy as well.
-
-I think an ack from Morimoto-san with his Renesas email address would be nice
-to make it more official? Still, I *am* contracted by Renesas.
-
-Thanks,
-
-   Wolfram
-
-Wolfram Sang (11):
-  clk: renesas: use SPDX identifier for Renesas drivers
-  dmaengine: use SPDX identifier for Renesas drivers
-  i2c: use SPDX identifier for Renesas drivers
-  mmc: use SPDX identifier for Renesas drivers
-  can: rcar: use SPDX identifier for Renesas drivers
-  net: ethernet: renesas: use SPDX identifier for Renesas drivers
-  phy: renesas: use SPDX identifier for Renesas drivers
-  pwm: use SPDX identifier for Renesas drivers
-  soc: renesas: use SPDX identifier for Renesas drivers
-  spi: use SPDX identifier for Renesas drivers
-  watchdog: use SPDX identifier for Renesas drivers
-
- drivers/clk/renesas/clk-div6.c                |  5 +----
- drivers/clk/renesas/r8a7795-cpg-mssr.c        |  5 +----
- drivers/clk/renesas/r8a7796-cpg-mssr.c        |  5 +----
- drivers/clk/renesas/r8a77995-cpg-mssr.c       |  5 +----
- drivers/clk/renesas/rcar-gen3-cpg.c           |  5 +----
- drivers/clk/renesas/rcar-usb2-clock-sel.c     |  5 +----
- drivers/clk/renesas/renesas-cpg-mssr.c        |  5 +----
- drivers/clk/renesas/renesas-cpg-mssr.h        |  5 +----
- drivers/dma/nbpfaxi.c                         |  5 +----
- drivers/dma/sh/shdma-arm.h                    |  5 +----
- drivers/dma/sh/shdma-base.c                   |  5 +----
- drivers/dma/sh/shdma-of.c                     |  5 +----
- drivers/dma/sh/shdma-r8a73a4.c                |  5 +----
- drivers/dma/sh/shdma.h                        |  6 +-----
- drivers/dma/sh/shdmac.c                       |  6 +-----
- drivers/dma/sh/sudmac.c                       |  5 +----
- drivers/dma/sh/usb-dmac.c                     |  5 +----
- drivers/i2c/busses/i2c-emev2.c                |  5 +----
- drivers/i2c/busses/i2c-highlander.c           |  5 +----
- drivers/i2c/busses/i2c-rcar.c                 | 10 +---------
- drivers/i2c/busses/i2c-riic.c                 |  5 +----
- drivers/i2c/busses/i2c-sh_mobile.c            | 10 +---------
- drivers/mmc/host/renesas_sdhi.h               |  5 +----
- drivers/mmc/host/renesas_sdhi_core.c          |  5 +----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c |  5 +----
- drivers/mmc/host/renesas_sdhi_sys_dmac.c      |  5 +----
- drivers/mmc/host/sh_mmcif.c                   |  7 ++-----
- drivers/mmc/host/tmio_mmc.c                   |  5 +----
- drivers/mmc/host/tmio_mmc.h                   |  6 +-----
- drivers/mmc/host/tmio_mmc_core.c              |  5 +----
- drivers/mmc/host/usdhi6rol0.c                 |  5 +----
- drivers/net/can/rcar/rcar_can.c               |  6 +-----
- drivers/net/can/rcar/rcar_canfd.c             |  6 +-----
- drivers/net/ethernet/renesas/ravb.h           |  5 +----
- drivers/net/ethernet/renesas/ravb_main.c      |  5 +----
- drivers/net/ethernet/renesas/sh_eth.c         | 13 +------------
- drivers/net/ethernet/renesas/sh_eth.h         | 13 +------------
- drivers/phy/renesas/phy-rcar-gen2.c           |  5 +----
- drivers/phy/renesas/phy-rcar-gen3-usb2.c      |  5 +----
- drivers/phy/renesas/phy-rcar-gen3-usb3.c      |  5 +----
- drivers/pwm/pwm-rcar.c                        |  5 +----
- drivers/pwm/pwm-renesas-tpu.c                 | 10 +---------
- drivers/soc/renesas/r8a7743-sysc.c            |  5 +----
- drivers/soc/renesas/r8a7745-sysc.c            |  5 +----
- drivers/soc/renesas/r8a7779-sysc.c            |  5 +----
- drivers/soc/renesas/r8a7790-sysc.c            |  5 +----
- drivers/soc/renesas/r8a7791-sysc.c            |  5 +----
- drivers/soc/renesas/r8a7792-sysc.c            |  5 +----
- drivers/soc/renesas/r8a7794-sysc.c            |  5 +----
- drivers/soc/renesas/r8a7795-sysc.c            |  5 +----
- drivers/soc/renesas/r8a7796-sysc.c            |  5 +----
- drivers/soc/renesas/r8a77970-sysc.c           |  5 +----
- drivers/soc/renesas/r8a77995-sysc.c           |  5 +----
- drivers/soc/renesas/rcar-sysc.h               |  5 +----
- drivers/soc/renesas/renesas-soc.c             | 10 +---------
- drivers/spi/spi-rspi.c                        | 10 +---------
- drivers/spi/spi-sh-hspi.c                     | 12 ++----------
- drivers/spi/spi-sh-msiof.c                    |  6 +-----
- drivers/spi/spi-sh.c                          | 12 ++----------
- drivers/watchdog/renesas_wdt.c                |  5 +----
- 60 files changed, 63 insertions(+), 300 deletions(-)
-
--- 
-2.11.0
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
