@@ -1,42 +1,38 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] dt-bindings: mmc: tmio_mmc: document Renesas R8A77970
- bindings
-To: Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>
-Message-ID: <5a57cacd-2fdc-f1ab-d59f-859a709356cc@cogentembedded.com>
-Date: Tue, 21 Aug 2018 22:14:12 +0300
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:49747 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728299AbeHVNRT (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 22 Aug 2018 09:17:19 -0400
+Date: Wed, 22 Aug 2018 11:53:05 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH v2] arm64: dts: renesas: Initial r8a774a1 SoC device tree
+Message-ID: <20180822095304.bmhcl2unelx7e22y@verge.net.au>
+References: <1534164108-19983-1-git-send-email-biju.das@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1534164108-19983-1-git-send-email-biju.das@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the R-Car V3M (R8A77970) SoC in the R-Car SDHI bindings -- it's
-the usual R-Car gen3 compatible controller with the internal DMA engine.
+On Mon, Aug 13, 2018 at 01:41:48PM +0100, Biju Das wrote:
+> Basic support for the RZ/G2M SoC.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Thanks Biju,
 
----
-This patch is against the 'next' branch of Ulf Hansson's 'mmc.git' repo.
-
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt |    1 +
- 1 file changed, 1 insertion(+)
-
-Index: mmc/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-===================================================================
---- mmc.orig/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-+++ mmc/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-@@ -27,6 +27,7 @@ Required properties:
- 		"renesas,sdhi-r8a7795" - SDHI IP on R8A7795 SoC
- 		"renesas,sdhi-r8a7796" - SDHI IP on R8A7796 SoC
- 		"renesas,sdhi-r8a77965" - SDHI IP on R8A77965 SoC
-+		"renesas,sdhi-r8a77970" - SDHI IP on R8A77970 SoC
- 		"renesas,sdhi-r8a77980" - SDHI IP on R8A77980 SoC
- 		"renesas,sdhi-r8a77990" - SDHI IP on R8A77990 SoC
- 		"renesas,sdhi-r8a77995" - SDHI IP on R8A77995 SoC
+applied for v4.20.
