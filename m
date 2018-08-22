@@ -1,30 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49518 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728315AbeHVM7c (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:42788 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727989AbeHVJUy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 22 Aug 2018 08:59:32 -0400
-Date: Wed, 22 Aug 2018 11:35:22 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        Wed, 22 Aug 2018 05:20:54 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+CC: Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
         Kishon Vijay Abraham I <kishon@ti.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/11] phy: renesas: use SPDX identifier for Renesas
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 07/11] phy: renesas: use SPDX identifier for Renesas
  drivers
-Message-ID: <20180822093522.3fzxgvukweutlqhj@verge.net.au>
+Date: Wed, 22 Aug 2018 05:57:29 +0000
+Message-ID: <OSBPR01MB22937B2576B9712C0721DD0FD8300@OSBPR01MB2293.jpnprd01.prod.outlook.com>
 References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
  <20180821220233.9202-8-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20180821220233.9202-8-wsa+renesas@sang-engineering.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 22, 2018 at 12:02:20AM +0200, Wolfram Sang wrote:
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hi Wolfram-san,
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> From: Wolfram Sang, Sent: Wednesday, August 22, 2018 7:02 AM
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+
+Thank you for the patch!
+
+Acked-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+
+Best regards,
+Yoshihiro Shimoda
