@@ -1,208 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:37625 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726641AbeHTSme (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:50304 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726849AbeHVOHC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Aug 2018 14:42:34 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        ulrich.hecht+renesas@gmail.com, kieran.bingham@ideasonboard.com,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR RENESAS),
-        linux-renesas-soc@vger.kernel.org (open list:DRM DRIVERS FOR RENESAS),
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: [PATCH v2 1/2] drm: rcar-du: Rework clock configuration based on hardware limits
-Date: Mon, 20 Aug 2018 17:26:16 +0200
-Message-Id: <1534778777-6002-2-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1534778777-6002-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1534778777-6002-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 22 Aug 2018 10:07:02 -0400
+Date: Wed, 22 Aug 2018 12:42:38 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] drm: rcar-du: Refactor Feature and Quirk definitions
+Message-ID: <20180822104237.crfrf52wkb2zazgt@verge.net.au>
+References: <20180820160044.15783-1-kieran.bingham+renesas@ideasonboard.com>
+ <20180820160044.15783-2-kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180820160044.15783-2-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+On Mon, Aug 20, 2018 at 05:00:43PM +0100, Kieran Bingham wrote:
+> These flags are represented by bit fields. To make this clear, utilise
+> the BIT() macro.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> ---
+> This patch fails checkpatch's 80-char limit, due to the line comments
+> extending across the 80-char boundary on RCAR_DU_FEATURE_EXT_CTRL_REGS
+> 
+> To preserve formatting - this warning has been ignored.
 
-The DU channels that have a display PLL (DPLL) can only use external
-clock sources, and don't have an internal clock divider (with the
-exception of H3 ES1.x where the post-divider is present and needs to be
-used as a workaround for a DPLL silicon issue).
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Rework the clock configuration to take this into account, avoiding
-selection of non-existing clock sources or usage of a missing
-post-divider.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 134 ++++++++++++++++++---------------
- 1 file changed, 73 insertions(+), 61 deletions(-)
-
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index b52b3e8..077e681 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -208,78 +208,90 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 	const struct drm_display_mode *mode = &rcrtc->crtc.state->adjusted_mode;
- 	struct rcar_du_device *rcdu = rcrtc->group->dev;
- 	unsigned long mode_clock = mode->clock * 1000;
--	unsigned long clk;
--	u32 value;
-+	u32 dsmr;
- 	u32 escr;
--	u32 div;
- 
--	/*
--	 * Compute the clock divisor and select the internal or external dot
--	 * clock based on the requested frequency.
--	 */
--	clk = clk_get_rate(rcrtc->clock);
--	div = DIV_ROUND_CLOSEST(clk, mode_clock);
--	div = clamp(div, 1U, 64U) - 1;
--	escr = div | ESCR_DCLKSEL_CLKS;
--
--	if (rcrtc->extclock) {
-+	if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
-+		unsigned long target = mode_clock;
- 		struct dpll_info dpll = { 0 };
- 		unsigned long extclk;
--		unsigned long extrate;
--		unsigned long rate;
--		u32 extdiv;
-+		u32 dpllcr;
-+		u32 div = 0;
- 
--		extclk = clk_get_rate(rcrtc->extclock);
--		if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
--			unsigned long target = mode_clock;
-+		/*
-+		 * DU channels that have a display PLL can't use the internal
-+		 * system clock, and have no internal clock divider.
-+		 */
- 
--			/*
--			 * The H3 ES1.x exhibits dot clock duty cycle stability
--			 * issues. We can work around them by configuring the
--			 * DPLL to twice the desired frequency, coupled with a
--			 * /2 post-divider. This isn't needed on other SoCs and
--			 * breaks HDMI output on M3-W for a currently unknown
--			 * reason, so restrict the workaround to H3 ES1.x.
--			 */
--			if (soc_device_match(rcar_du_r8a7795_es1))
--				target *= 2;
-+		if (WARN_ON(!rcrtc->extclock))
-+			return;
- 
--			rcar_du_dpll_divider(rcrtc, &dpll, extclk, target);
--			extclk = dpll.output;
-+		/*
-+		 * The H3 ES1.x exhibits dot clock duty cycle stability issues.
-+		 * We can work around them by configuring the DPLL to twice the
-+		 * desired frequency, coupled with a /2 post-divider. Restrict
-+		 * the workaround to H3 ES1.x as ES2.0 and all other SoCs have
-+		 * no post-divider when a display PLL is present (as shown by
-+		 * the workaround breaking HDMI output on M3-W during testing).
-+		 */
-+		if (soc_device_match(rcar_du_r8a7795_es1)) {
-+			target *= 2;
-+			div = 1;
- 		}
- 
--		extdiv = DIV_ROUND_CLOSEST(extclk, mode_clock);
--		extdiv = clamp(extdiv, 1U, 64U) - 1;
-+		extclk = clk_get_rate(rcrtc->extclock);
-+		rcar_du_dpll_divider(rcrtc, &dpll, extclk, target);
- 
--		rate = clk / (div + 1);
--		extrate = extclk / (extdiv + 1);
-+		dpllcr = DPLLCR_CODE | DPLLCR_CLKE
-+		       | DPLLCR_FDPLL(dpll.fdpll)
-+		       | DPLLCR_N(dpll.n) | DPLLCR_M(dpll.m)
-+		       | DPLLCR_STBY;
- 
--		if (abs((long)extrate - (long)mode_clock) <
--		    abs((long)rate - (long)mode_clock)) {
-+		if (rcrtc->index == 1)
-+			dpllcr |= DPLLCR_PLCS1
-+			       |  DPLLCR_INCS_DOTCLKIN1;
-+		else
-+			dpllcr |= DPLLCR_PLCS0
-+			       |  DPLLCR_INCS_DOTCLKIN0;
- 
--			if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
--				u32 dpllcr = DPLLCR_CODE | DPLLCR_CLKE
--					   | DPLLCR_FDPLL(dpll.fdpll)
--					   | DPLLCR_N(dpll.n) | DPLLCR_M(dpll.m)
--					   | DPLLCR_STBY;
-+		rcar_du_group_write(rcrtc->group, DPLLCR, dpllcr);
- 
--				if (rcrtc->index == 1)
--					dpllcr |= DPLLCR_PLCS1
--					       |  DPLLCR_INCS_DOTCLKIN1;
--				else
--					dpllcr |= DPLLCR_PLCS0
--					       |  DPLLCR_INCS_DOTCLKIN0;
-+		escr = ESCR_DCLKSEL_DCLKIN | div;
-+	} else {
-+		unsigned long clk;
-+		u32 div;
- 
--				rcar_du_group_write(rcrtc->group, DPLLCR,
--						    dpllcr);
--			}
-+		/*
-+		 * Compute the clock divisor and select the internal or external
-+		 * dot clock based on the requested frequency.
-+		 */
-+		clk = clk_get_rate(rcrtc->clock);
-+		div = DIV_ROUND_CLOSEST(clk, mode_clock);
-+		div = clamp(div, 1U, 64U) - 1;
- 
--			escr = ESCR_DCLKSEL_DCLKIN | extdiv;
--		}
-+		escr = ESCR_DCLKSEL_CLKS | div;
- 
--		dev_dbg(rcrtc->group->dev->dev,
--			"mode clock %lu extrate %lu rate %lu ESCR 0x%08x\n",
--			mode_clock, extrate, rate, escr);
-+		if (rcrtc->extclock) {
-+			unsigned long extclk;
-+			unsigned long extrate;
-+			unsigned long rate;
-+			u32 extdiv;
-+
-+			extclk = clk_get_rate(rcrtc->extclock);
-+			extdiv = DIV_ROUND_CLOSEST(extclk, mode_clock);
-+			extdiv = clamp(extdiv, 1U, 64U) - 1;
-+
-+			extrate = extclk / (extdiv + 1);
-+			rate = clk / (div + 1);
-+
-+			if (abs((long)extrate - (long)mode_clock) <
-+			    abs((long)rate - (long)mode_clock))
-+				escr = ESCR_DCLKSEL_DCLKIN | extdiv;
-+
-+			dev_dbg(rcrtc->group->dev->dev,
-+				"mode clock %lu extrate %lu rate %lu ESCR 0x%08x\n",
-+				mode_clock, extrate, rate, escr);
-+		}
- 	}
- 
- 	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? ESCR2 : ESCR,
-@@ -287,11 +299,11 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? OTAR2 : OTAR, 0);
- 
- 	/* Signal polarities */
--	value = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
--	      | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? DSMR_HSL : 0)
--	      | ((mode->flags & DRM_MODE_FLAG_INTERLACE) ? DSMR_ODEV : 0)
--	      | DSMR_DIPM_DISP | DSMR_CSPM;
--	rcar_du_crtc_write(rcrtc, DSMR, value);
-+	dsmr = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
-+	     | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? DSMR_HSL : 0)
-+	     | ((mode->flags & DRM_MODE_FLAG_INTERLACE) ? DSMR_ODEV : 0)
-+	     | DSMR_DIPM_DISP | DSMR_CSPM;
-+	rcar_du_crtc_write(rcrtc, DSMR, dsmr);
- 
- 	/* Display timings */
- 	rcar_du_crtc_write(rcrtc, HDSR, mode->htotal - mode->hsync_start - 19);
--- 
-2.7.4
+> 
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.h | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> index b3a25e8e07d0..78ea20abfb30 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> @@ -27,11 +27,11 @@ struct drm_device;
+>  struct drm_fbdev_cma;
+>  struct rcar_du_device;
+>  
+> -#define RCAR_DU_FEATURE_CRTC_IRQ_CLOCK	(1 << 0)	/* Per-CRTC IRQ and clock */
+> -#define RCAR_DU_FEATURE_EXT_CTRL_REGS	(1 << 1)	/* Has extended control registers */
+> -#define RCAR_DU_FEATURE_VSP1_SOURCE	(1 << 2)	/* Has inputs from VSP1 */
+> +#define RCAR_DU_FEATURE_CRTC_IRQ_CLOCK	BIT(0)	/* Per-CRTC IRQ and clock */
+> +#define RCAR_DU_FEATURE_EXT_CTRL_REGS	BIT(1)	/* Has extended control registers */
+> +#define RCAR_DU_FEATURE_VSP1_SOURCE	BIT(2)	/* Has inputs from VSP1 */
+>  
+> -#define RCAR_DU_QUIRK_ALIGN_128B	(1 << 0)	/* Align pitches to 128 bytes */
+> +#define RCAR_DU_QUIRK_ALIGN_128B	BIT(0)	/* Align pitches to 128 bytes */
+>  
+>  /*
+>   * struct rcar_du_output_routing - Output routing specification
+> -- 
+> 2.17.1
+> 
