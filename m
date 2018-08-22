@@ -1,44 +1,29 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:28660 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728927AbeHWMdz (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:50206 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726849AbeHVN5B (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:33:55 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 0/5] Add SYS-DMAC/INTC-EX/[H]SCIF/EAVB/RWDT support
-Date: Thu, 23 Aug 2018 09:58:46 +0100
-Message-Id: <1535014731-64472-1-git-send-email-biju.das@bp.renesas.com>
+        Wed, 22 Aug 2018 09:57:01 -0400
+Date: Wed, 22 Aug 2018 12:32:38 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: Update tree location for the Renesas DRM
+ drivers
+Message-ID: <20180822103237.oig5ozsa2ib22g43@verge.net.au>
+References: <20180819221413.1031-1-laurent.pinchart+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180819221413.1031-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch series aims to add support for SYS-DMAC/INTC-EX/SCIF/HSCIF/
-EAVB/RWDT on RZ/G2M SoC dtsi.
+On Mon, Aug 20, 2018 at 01:14:13AM +0300, Laurent Pinchart wrote:
+> The fbdev git tree referenced in the MAINTAINERS file doesn't exist
+> anymore. Update the location to point to the new git tree.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-THis patch series based on renesas-devel-20180822-v4.18.
-
-Biju Das (3):
-  arm64: dts: renesas: r8a774a1: Add SYS-DMAC controller nodes
-  arm64: dts: renesas: r8a774a1: Add INTC-EX device node
-  arm64: dts: renesas: r8a774a1: Add RWDT node
-
-Fabrizio Castro (2):
-  arm64: dts: renesas: r8a774a1: Add SCIF and HSCIF nodes
-  arm64: dts: renesas: r8a774a1: Add Ethernet AVB node
-
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 358 ++++++++++++++++++++++++++++++
- 1 file changed, 358 insertions(+)
-
--- 
-2.7.4
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
