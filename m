@@ -1,57 +1,31 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:45754 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727226AbeH1NPG (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:49371 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728171AbeHVMw0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Aug 2018 09:15:06 -0400
-MIME-Version: 1.0
-References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com> <20180821220233.9202-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180821220233.9202-2-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 28 Aug 2018 11:24:09 +0200
-Message-ID: <CAMuHMdWcrpzit40X_z_hJrCSgupnnucPF0nciPiAiJP8EOX+TA@mail.gmail.com>
-Subject: Re: [PATCH 01/11] clk: renesas: use SPDX identifier for Renesas drivers
+        Wed, 22 Aug 2018 08:52:26 -0400
+Date: Wed, 22 Aug 2018 11:28:17 +0200
+From: Simon Horman <horms@verge.net.au>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+Cc: linux-renesas-soc@vger.kernel.org,
         Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/11] clk: renesas: use SPDX identifier for Renesas
+ drivers
+Message-ID: <20180822092817.3lfpvpri3pdvqdql@verge.net.au>
+References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
+ <20180821220233.9202-2-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180821220233.9202-2-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
-
-On Wed, Aug 22, 2018 at 12:02 AM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
+On Wed, Aug 22, 2018 at 12:02:14AM +0200, Wolfram Sang wrote:
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Thanks for your patch!
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
->  drivers/clk/renesas/clk-div6.c            | 5 +----
->  drivers/clk/renesas/r8a7795-cpg-mssr.c    | 5 +----
->  drivers/clk/renesas/r8a7796-cpg-mssr.c    | 5 +----
->  drivers/clk/renesas/r8a77995-cpg-mssr.c   | 5 +----
->  drivers/clk/renesas/rcar-gen3-cpg.c       | 5 +----
->  drivers/clk/renesas/rcar-usb2-clock-sel.c | 5 +----
->  drivers/clk/renesas/renesas-cpg-mssr.c    | 5 +----
->  drivers/clk/renesas/renesas-cpg-mssr.h    | 5 +----
->  8 files changed, 8 insertions(+), 32 deletions(-)
-
-Any specific reason you skipped all other files in that directory?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
