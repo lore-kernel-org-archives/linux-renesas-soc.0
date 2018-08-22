@@ -1,49 +1,33 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Kieran Bingham <kieran@ksquared.org.uk>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v6 04/11] media: vsp1: Remove unused display list structure field
-Date: Fri,  3 Aug 2018 12:37:23 +0100
-Message-Id: <8eef78f4faf05ed07d0c99d51a4e1e335927d105.1533295631.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.7e4241408f077710d96e0cc06e039d1022fb0c8c.1533295631.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.7e4241408f077710d96e0cc06e039d1022fb0c8c.1533295631.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.7e4241408f077710d96e0cc06e039d1022fb0c8c.1533295631.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.7e4241408f077710d96e0cc06e039d1022fb0c8c.1533295631.git-series.kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:50274 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726849AbeHVOEr (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 22 Aug 2018 10:04:47 -0400
+Date: Wed, 22 Aug 2018 12:40:23 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77965: Attach the SYS-DMAC to
+ the IPMMU
+Message-ID: <20180822104022.tyfctyfol73uyn7n@verge.net.au>
+References: <153477467683.10333.4519731916058341587.sendpatchset@octo>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <153477467683.10333.4519731916058341587.sendpatchset@octo>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On Mon, Aug 20, 2018 at 11:17:56PM +0900, Magnus Damm wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+> 
+> For R-Car M3-N hook up SYS-DMAC0, SYS-DMAC1 and SYS-DMAC2 to
+> IPMMU-DS0 and IPMMU-DS1 in same way as for R-Car M3-W.
+> This follows the R-Car Gen3 Rev.1.00 (April 2018) datasheet.
+> 
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 
-The vsp1 reference in the vsp1_dl_body structure is not used.
-Remove it.
+Thanks Magnus,
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_dl.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 202bc0c6e484..199843a73df1 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -45,7 +45,6 @@ struct vsp1_dl_entry {
-  * @free: entry in the pool free body list
-  * @refcnt: reference tracking for the body
-  * @pool: pool to which this body belongs
-- * @vsp1: the VSP1 device
-  * @entries: array of entries
-  * @dma: DMA address of the entries
-  * @size: size of the DMA memory in bytes
-@@ -59,7 +58,6 @@ struct vsp1_dl_body {
- 	refcount_t refcnt;
- 
- 	struct vsp1_dl_body_pool *pool;
--	struct vsp1_device *vsp1;
- 
- 	struct vsp1_dl_entry *entries;
- 	dma_addr_t dma;
--- 
-git-series 0.9.1
+applied for v4.20.
