@@ -1,47 +1,56 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 23/30] v4l: Add stream to frame descriptor
-Date: Thu, 23 Aug 2018 15:25:37 +0200
-Message-Id: <20180823132544.521-24-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f195.google.com ([209.85.223.195]:39875 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728523AbeHVNM2 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 22 Aug 2018 09:12:28 -0400
+Received: by mail-io0-f195.google.com with SMTP id l7-v6so963429iok.6
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 22 Aug 2018 02:48:19 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1534250074-15890-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1534250074-15890-1-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 22 Aug 2018 11:48:18 +0200
+Message-ID: <CAPDyKFq3=gF941BZ9DCcjkg95mDEMMV8k+6856k6t2P=KObaNw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Add SDHI support to r8a774a1
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
+On 14 August 2018 at 14:34, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> Dear All,
+>
+> this series aims at documenting SDHI support for RZ/G2M (a.k.a. R8A774A1).
+>
+> Cheers,
+> Fab
+>
+> Fabrizio Castro (2):
+>   mmc: renesas_sdhi_internal_dmac: Whitelist r8a774a1
+>   mmc: renesas_sdhi: Add r8a774a1 support
+>
+>  Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 4 +++-
+>  drivers/mmc/host/renesas_sdhi_internal_dmac.c      | 1 +
+>  2 files changed, 4 insertions(+), 1 deletion(-)
+>
+> --
+> 2.7.4
+>
 
-The stream field identifies the stream this frame descriptor applies to in
-routing configuration across a multiplexed link.
+Thanks, queued for v4.20!
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- include/media/v4l2-subdev.h | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
-index ffd98e4f368358a6..5fbce1932107a990 100644
---- a/include/media/v4l2-subdev.h
-+++ b/include/media/v4l2-subdev.h
-@@ -347,6 +347,7 @@ enum v4l2_mbus_frame_desc_flags {
-  * struct v4l2_mbus_frame_desc_entry - media bus frame description structure
-  *
-  * @flags:	bitmask flags, as defined by &enum v4l2_mbus_frame_desc_flags.
-+ * @stream:	stream in routing configuration
-  * @pixelcode:	media bus pixel code, valid if @flags
-  *		%FRAME_DESC_FL_BLOB is not set.
-  * @length:	number of octets per frame, valid if @flags
-@@ -356,6 +357,7 @@ enum v4l2_mbus_frame_desc_flags {
-  */
- struct v4l2_mbus_frame_desc_entry {
- 	enum v4l2_mbus_frame_desc_flags flags;
-+	u32 stream;
- 	u32 pixelcode;
- 	u32 length;
- 	union {
--- 
-2.18.0
+Kind regards
+Uffe
