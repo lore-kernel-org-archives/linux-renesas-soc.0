@@ -1,33 +1,29 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47463 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:49407 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726977AbeHBMlU (ORCPT
+        with ESMTP id S1727396AbeHVM47 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Aug 2018 08:41:20 -0400
-Date: Thu, 2 Aug 2018 12:50:41 +0200
+        Wed, 22 Aug 2018 08:56:59 -0400
+Date: Wed, 22 Aug 2018 11:32:49 +0200
 From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: rcar-gen3: Rename rint to .r
-Message-ID: <20180802105040.raop4rmkl6nzsbcy@verge.net.au>
-References: <20180726152524.9393-1-geert+renesas@glider.be>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/11] soc: renesas: use SPDX identifier for Renesas
+ drivers
+Message-ID: <20180822093249.z6tdp3j3mpoz5r5h@verge.net.au>
+References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
+ <20180821220233.9202-10-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180726152524.9393-1-geert+renesas@glider.be>
+In-Reply-To: <20180821220233.9202-10-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jul 26, 2018 at 05:25:24PM +0200, Geert Uytterhoeven wrote:
-> All other internal clock names have a period prepended.
-> 
-> Hence rename the internal RCLK from "rint" to ".r", and move it to the
-> section where all other internal clocks are defined.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> To be queued in clk-renesas-for-v4.20.
+On Wed, Aug 22, 2018 at 12:02:22AM +0200, Wolfram Sang wrote:
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
