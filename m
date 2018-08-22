@@ -1,58 +1,36 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:50216 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729669AbeHEBPs (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:50946 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728052AbeHVO7B (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 4 Aug 2018 21:15:48 -0400
-Received: by mail-wm0-f66.google.com with SMTP id s12-v6so10016166wmc.0
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 04 Aug 2018 16:13:30 -0700 (PDT)
-From: Eugeniu Rosca <roscaeugeniu@gmail.com>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Cc: Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <rosca.eugeniu@gmail.com>
-Subject: [PATCH 05/14] arm64: dts: renesas: r8a7795: ulcb: Use "renesas,ulcb" compatible
-Date: Sun,  5 Aug 2018 01:11:05 +0200
-Message-Id: <20180804231114.21420-6-erosca@de.adit-jv.com>
-In-Reply-To: <20180804231114.21420-1-erosca@de.adit-jv.com>
-References: <20180804231114.21420-1-erosca@de.adit-jv.com>
+        Wed, 22 Aug 2018 10:59:01 -0400
+Date: Wed, 22 Aug 2018 13:34:25 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/2] drm: rcar-du: convert to SPDX identifiers
+Message-ID: <20180822113425.birg2lqemxzpcuoq@verge.net.au>
+References: <87ftz7f9v4.wl-kuninori.morimoto.gx@renesas.com>
+ <87eferf9u4.wl-kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87eferf9u4.wl-kuninori.morimoto.gx@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Following the recent change in dt-bindings [1], switch from
-"renesas,h3ulcb" to "renesas,ulcb" compatible string.
+On Wed, Aug 22, 2018 at 01:57:19AM +0000, Kuninori Morimoto wrote:
+> 
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> This patch updates license to use SPDX-License-Identifier
+> instead of verbose license text.
+> 
+> Kconfig doesn't have license line, thus, it is GPL-2.0 as default.
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-[1] Documentation/devicetree/bindings/arm/shmobile.txt
-
-Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
----
- arch/arm64/boot/dts/renesas/r8a7795-ulcb.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-ulcb.dts
-index 0afe777973de..9cccdef23634 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-ulcb.dts
-@@ -15,7 +15,7 @@
- 
- / {
- 	model = "Renesas H3ULCB board based on r8a7795 ES2.0+";
--	compatible = "renesas,h3ulcb", "renesas,r8a7795";
-+	compatible = "renesas,ulcb", "renesas,r8a7795";
- 
- 	memory@48000000 {
- 		device_type = "memory";
--- 
-2.18.0
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
