@@ -1,81 +1,234 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-09.nifty.com ([210.131.2.76]:17394 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389265AbeHPKOP (ORCPT
+Received: from mail-io0-f169.google.com ([209.85.223.169]:32786 "EHLO
+        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728603AbeHVNNT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Aug 2018 06:14:15 -0400
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH v2 6/7] mmc: renesas_sdhi: refactor CLK_CTL bit calculation
-Date: Thu, 16 Aug 2018 16:16:38 +0900
-Message-Id: <1534403799-10594-7-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1534403799-10594-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1534403799-10594-1-git-send-email-yamada.masahiro@socionext.com>
+        Wed, 22 Aug 2018 09:13:19 -0400
+Received: by mail-io0-f169.google.com with SMTP id r196-v6so989026iod.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 22 Aug 2018 02:49:10 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20180821220233.9202-5-wsa+renesas@sang-engineering.com>
+References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com> <20180821220233.9202-5-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 22 Aug 2018 11:49:09 +0200
+Message-ID: <CAPDyKFpb3kOYh5tms8Q=f=M-+597jyFZSj8dwr5cRz+VHqs_OA@mail.gmail.com>
+Subject: Re: [PATCH 04/11] mmc: use SPDX identifier for Renesas drivers
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-  for (clk = 0x80000080; new_clock >= (clock << 1); clk >>= 1)
-          clock <<= 1;
+On 22 August 2018 at 00:02, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-... is too tricky, hence I replaced with
+Thanks, queued for v4.20!
 
-  roundup_pow_of_two(divisor) >> 2
+> ---
+>
+> To be applied individually per subsystem tree. Morimoto-san, could you maybe
+> ack this with your Renesas address?
 
-'(clk >> 22) & 0x1' is the bit test for the 1/1 divisor, but
-it is not clear.  'divisor <= 1' is easier to understand.
+I will add his ack when he sends it.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Kind regards
+Uffe
 
-Changes in v2: None
-
- drivers/mmc/host/renesas_sdhi_core.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index a15fb2e..98391e9 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -158,7 +158,8 @@ static unsigned int renesas_sdhi_clk_update(struct tmio_mmc_host *host,
- static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
- 				   unsigned int new_clock)
- {
--	u32 clk = 0, clock;
-+	unsigned int clock, divisor;
-+	u32 clk = 0;
- 
- 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
- 		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
-@@ -166,14 +167,18 @@ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
- 	if (new_clock == 0)
- 		goto out;
- 
--	clock = renesas_sdhi_clk_update(host, new_clock) / 512;
-+	clock = renesas_sdhi_clk_update(host, new_clock);
- 
--	for (clk = 0x80000080; new_clock >= (clock << 1); clk >>= 1)
--		clock <<= 1;
-+	divisor = clock / new_clock;
- 
--	/* 1/1 clock is option */
--	if ((host->pdata->flags & TMIO_MMC_CLK_ACTUAL) && ((clk >> 22) & 0x1))
--		clk |= 0xff;
-+	/*
-+	 * bit7 set: 1/512, ... bit0 set:1/4, all bits clear: 1/2
-+	 * all bits set: 1/1 (Renesas-specific extension?)
-+	 */
-+	if ((host->pdata->flags & TMIO_MMC_CLK_ACTUAL) && divisor <= 1)
-+		clk = 0xff;
-+	else
-+		clk = roundup_pow_of_two(divisor) >> 2;
- 
- 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clk & CLK_CTL_DIV_MASK);
- 	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
--- 
-2.7.4
+>
+>  drivers/mmc/host/renesas_sdhi.h               | 5 +----
+>  drivers/mmc/host/renesas_sdhi_core.c          | 5 +----
+>  drivers/mmc/host/renesas_sdhi_internal_dmac.c | 5 +----
+>  drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 5 +----
+>  drivers/mmc/host/sh_mmcif.c                   | 7 ++-----
+>  drivers/mmc/host/tmio_mmc.c                   | 5 +----
+>  drivers/mmc/host/tmio_mmc.h                   | 6 +-----
+>  drivers/mmc/host/tmio_mmc_core.c              | 5 +----
+>  drivers/mmc/host/usdhi6rol0.c                 | 5 +----
+>  9 files changed, 10 insertions(+), 38 deletions(-)
+>
+> diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
+> index f13f798d8506..da1e49c45bec 100644
+> --- a/drivers/mmc/host/renesas_sdhi.h
+> +++ b/drivers/mmc/host/renesas_sdhi.h
+> @@ -1,12 +1,9 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+>  /*
+>   * Renesas Mobile SDHI
+>   *
+>   * Copyright (C) 2017 Horms Solutions Ltd., Simon Horman
+>   * Copyright (C) 2017 Renesas Electronics Corporation
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 as
+> - * published by the Free Software Foundation.
+>   */
+>
+>  #ifndef RENESAS_SDHI_H
+> diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+> index 777e32b0e410..68ece2f183cf 100644
+> --- a/drivers/mmc/host/renesas_sdhi_core.c
+> +++ b/drivers/mmc/host/renesas_sdhi_core.c
+> @@ -1,3 +1,4 @@
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * Renesas SDHI
+>   *
+> @@ -6,10 +7,6 @@
+>   * Copyright (C) 2016-17 Horms Solutions, Simon Horman
+>   * Copyright (C) 2009 Magnus Damm
+>   *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 as
+> - * published by the Free Software Foundation.
+> - *
+>   * Based on "Compaq ASIC3 support":
+>   *
+>   * Copyright 2001 Compaq Computer Corporation.
+> diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> index 35cc0de6be67..a3e03c473bb2 100644
+> --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> @@ -1,12 +1,9 @@
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * DMA support for Internal DMAC with SDHI SD/SDIO controller
+>   *
+>   * Copyright (C) 2016-17 Renesas Electronics Corporation
+>   * Copyright (C) 2016-17 Horms Solutions, Simon Horman
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 as
+> - * published by the Free Software Foundation.
+>   */
+>
+>  #include <linux/bitops.h>
+> diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+> index 890f192dedbd..f5fcbb5dc8cd 100644
+> --- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+> +++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+> @@ -1,3 +1,4 @@
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * DMA support use of SYS DMAC with SDHI SD/SDIO controller
+>   *
+> @@ -5,10 +6,6 @@
+>   * Copyright (C) 2016-17 Sang Engineering, Wolfram Sang
+>   * Copyright (C) 2017 Horms Solutions, Simon Horman
+>   * Copyright (C) 2010-2011 Guennadi Liakhovetski
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 as
+> - * published by the Free Software Foundation.
+>   */
+>
+>  #include <linux/device.h>
+> diff --git a/drivers/mmc/host/sh_mmcif.c b/drivers/mmc/host/sh_mmcif.c
+> index 4c2a1f8ddbf3..81bd9afb0980 100644
+> --- a/drivers/mmc/host/sh_mmcif.c
+> +++ b/drivers/mmc/host/sh_mmcif.c
+> @@ -1,12 +1,9 @@
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * MMCIF eMMC driver.
+>   *
+>   * Copyright (C) 2010 Renesas Solutions Corp.
+>   * Yusuke Goda <yusuke.goda.sx@renesas.com>
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License as published by
+> - * the Free Software Foundation; either version 2 of the License.
+>   */
+>
+>  /*
+> @@ -1573,6 +1570,6 @@ static struct platform_driver sh_mmcif_driver = {
+>  module_platform_driver(sh_mmcif_driver);
+>
+>  MODULE_DESCRIPTION("SuperH on-chip MMC/eMMC interface driver");
+> -MODULE_LICENSE("GPL");
+> +MODULE_LICENSE("GPL v2");
+>  MODULE_ALIAS("platform:" DRIVER_NAME);
+>  MODULE_AUTHOR("Yusuke Goda <yusuke.goda.sx@renesas.com>");
+> diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
+> index 43a2ea5cff24..36d8e7db00e6 100644
+> --- a/drivers/mmc/host/tmio_mmc.c
+> +++ b/drivers/mmc/host/tmio_mmc.c
+> @@ -1,3 +1,4 @@
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * Driver for the MMC / SD / SDIO cell found in:
+>   *
+> @@ -7,10 +8,6 @@
+>   * Copyright (C) 2017 Horms Solutions, Simon Horman
+>   * Copyright (C) 2007 Ian Molton
+>   * Copyright (C) 2004 Ian Molton
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 as
+> - * published by the Free Software Foundation.
+>   */
+>
+>  #include <linux/device.h>
+> diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+> index 5d141f79e175..efa5a1e3e5af 100644
+> --- a/drivers/mmc/host/tmio_mmc.h
+> +++ b/drivers/mmc/host/tmio_mmc.h
+> @@ -1,3 +1,4 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+>  /*
+>   * Driver for the MMC / SD / SDIO cell found in:
+>   *
+> @@ -8,11 +9,6 @@
+>   * Copyright (C) 2016-17 Horms Solutions, Simon Horman
+>   * Copyright (C) 2007 Ian Molton
+>   * Copyright (C) 2004 Ian Molton
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 as
+> - * published by the Free Software Foundation.
+> - *
+>   */
+>
+>  #ifndef TMIO_MMC_H
+> diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+> index 261b4d62d2b1..b750f6372dc2 100644
+> --- a/drivers/mmc/host/tmio_mmc_core.c
+> +++ b/drivers/mmc/host/tmio_mmc_core.c
+> @@ -1,3 +1,4 @@
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * Driver for the MMC / SD / SDIO IP found in:
+>   *
+> @@ -10,10 +11,6 @@
+>   * Copyright (C) 2007 Ian Molton
+>   * Copyright (C) 2004 Ian Molton
+>   *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 as
+> - * published by the Free Software Foundation.
+> - *
+>   * This driver draws mainly on scattered spec sheets, Reverse engineering
+>   * of the toshiba e800  SD driver and some parts of the 2.4 ASIC3 driver (4 bit
+>   * support). (Further 4 bit support from a later datasheet).
+> diff --git a/drivers/mmc/host/usdhi6rol0.c b/drivers/mmc/host/usdhi6rol0.c
+> index cdfeb15b6f05..cd8b1b9d4d8a 100644
+> --- a/drivers/mmc/host/usdhi6rol0.c
+> +++ b/drivers/mmc/host/usdhi6rol0.c
+> @@ -1,10 +1,7 @@
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * Copyright (C) 2013-2014 Renesas Electronics Europe Ltd.
+>   * Author: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of version 2 of the GNU General Public License as
+> - * published by the Free Software Foundation.
+>   */
+>
+>  #include <linux/clk.h>
+> --
+> 2.11.0
+>
