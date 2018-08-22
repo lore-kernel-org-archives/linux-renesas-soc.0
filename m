@@ -1,44 +1,80 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/6] dt-bindings: dmaengine: usb-dmac: Add binding for r8a774a1
-Date: Fri, 24 Aug 2018 08:56:13 +0100
-Message-Id: <1535097375-5561-5-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1535097375-5561-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1535097375-5561-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:53356 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726098AbeHVXCV (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 22 Aug 2018 19:02:21 -0400
+Date: Wed, 22 Aug 2018 21:36:03 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>, linux-can@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 05/11] can: rcar: use SPDX identifier for Renesas drivers
+Message-ID: <20180822193603.e27diao5nhuiarv6@katana>
+References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
+ <20180821220233.9202-6-wsa+renesas@sang-engineering.com>
+ <CAOMZO5AkVNiYMGdED9erL=YMaKcmtS5BzZxw2gO1KLXEaPnD7A@mail.gmail.com>
+ <20180822063005.535lytz7hl32rsha@katana>
+ <CAOMZO5BiAyDMSR=2Y-4-1ftNuVtRS59sSJd_cdFmzX=0kgF0Bw@mail.gmail.com>
+ <CAOFm3uF9_rbELx0aYLDXpDnZfi2Z11V1Z4Ktw+DDJT62o2S1kQ@mail.gmail.com>
+ <20180822193133.GA1613@kroah.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cuvtzae5euf5uwje"
+Content-Disposition: inline
+In-Reply-To: <20180822193133.GA1613@kroah.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
 
-This patch adds binding for r8a774a1 (RZ/G2M).
+--cuvtzae5euf5uwje
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt b/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
-index 482e543..417ca90 100644
---- a/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
-+++ b/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
-@@ -5,6 +5,7 @@ Required Properties:
- 	Examples with soctypes are:
- 	  - "renesas,r8a7743-usb-dmac" (RZ/G1M)
- 	  - "renesas,r8a7745-usb-dmac" (RZ/G1E)
-+	  - "renesas,r8a774a1-usb-dmac" (RZ/G2M)
- 	  - "renesas,r8a7790-usb-dmac" (R-Car H2)
- 	  - "renesas,r8a7791-usb-dmac" (R-Car M2-W)
- 	  - "renesas,r8a7793-usb-dmac" (R-Car M2-N)
--- 
-2.7.4
+> > IMHO we should always treat and use the
+> > Documentation/process/license-rules.rst as the reference and not SPDX
+> > proper who moves at its own pace and evolves its specs and license ids
+> > independently of where we stand in the kernel.
+> > If this is not right Doc patches are welcomed!
+> > In this is very specific case this has been discussed on list a few
+> > times. If I recall correctly Thomas also had an opinion on this...
+> > So you are correct and this should be for now:
+> > // SPDX-License-Identifier: GPL-2.0+
+>=20
+> That is correct, stick with that format/version for now please.
+
+OK, will fix.
+
+
+--cuvtzae5euf5uwje
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlt9ux8ACgkQFA3kzBSg
+KbbiRxAAlhkmV25yoF3Y+2aYMAerBVNfqJI43ETS9UoOoOEhr40sD6ER5DeYEd5A
+SppRU23pFHEGhALZOZJ6seB7h9aOIr97POfCuvPJltUw4NOd9Bh/Vz+M3yDHpYv0
+giWuF+i+UOUDl9TF83Q536xL+UFyS27oNSk3S5WAM+9KFk1Krr92oZZQz46X/NqA
+K8WUcEdF4bloQ6AhV1IWX4goCq+/v0OV94QVYdh3EoYICY6S905sY+angWu5ap89
+QLKxAeNbsvqN4CMod0D2to3MvOtL9UkJn4YTi/tJTY+qc7WPuK1LmNwHcy5ZyS9b
+qp3LID7GjWGQ+aPYhhnldyLm1fgtWAoqTjeMw8mKTP9Phi01A6q0HguW+WNfYY1u
+ZU9XMa2pwZKP00gkNZ6X0HqQAWQv6qhUVD+YaLBNL6WNA3Q2lsPVaEqTfY88lLkO
+F/+CQbjpnUM92u/FUOB7gEHafdL1Svx3Ay7o2dtnlBqwx6R3SMP/r8uOmjUoLl1V
+gbZFjXhygkK+hcXEcdWi/NfYSsnfb9rZaqOLqEfjg9GCFSPmxqD+CKR6lWEVrXN7
+7q97N3LfHsy5ghz3VCkefCfffbOCBigcrNCN2+QQepu8MRb5Lz4iKGV/Cg/mbcgC
+2+tdecT4t2NHlxIvybfrLna1bTIteWss9P6Sx4NdtU+nzL8Q2E0=
+=IaDB
+-----END PGP SIGNATURE-----
+
+--cuvtzae5euf5uwje--
