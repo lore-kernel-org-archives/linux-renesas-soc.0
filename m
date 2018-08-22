@@ -1,46 +1,30 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] dt-bindings: thermal: rcar-gen3-thermal: Add r8a774a1 support
-Date: Fri, 17 Aug 2018 15:53:04 +0100
-Message-Id: <1534517584-14434-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1534517584-14434-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1534517584-14434-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:49518 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728315AbeHVM7c (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 22 Aug 2018 08:59:32 -0400
+Date: Wed, 22 Aug 2018 11:35:22 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/11] phy: renesas: use SPDX identifier for Renesas
+ drivers
+Message-ID: <20180822093522.3fzxgvukweutlqhj@verge.net.au>
+References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
+ <20180821220233.9202-8-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180821220233.9202-8-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document RZ/G2M (R8A774A1) SoC bindings.
+On Wed, Aug 22, 2018 at 12:02:20AM +0200, Wolfram Sang wrote:
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
-This patch applies on top of next-20180817
-
- Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
-index cfa154b..098bf95 100644
---- a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
-+++ b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
-@@ -7,6 +7,7 @@ inside the LSI.
- Required properties:
- - compatible		: "renesas,<soctype>-thermal",
- 			  Examples with soctypes are:
-+			    - "renesas,r8a774a1-thermal" (RZ/G2M)
- 			    - "renesas,r8a7795-thermal" (R-Car H3)
- 			    - "renesas,r8a7796-thermal" (R-Car M3-W)
- 			    - "renesas,r8a77965-thermal" (R-Car M3-N)
--- 
-2.7.4
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
