@@ -1,66 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:2087 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725816AbeHQRfH (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:12294 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730756AbeHWQ5y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Aug 2018 13:35:07 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        iommu@lists.linux-foundation.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/2] iommu/ipmmu-vmsa: Hook up R8A774A1 DT maching code
-Date: Fri, 17 Aug 2018 15:31:04 +0100
-Message-Id: <1534516265-10059-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1534516265-10059-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1534516265-10059-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Thu, 23 Aug 2018 12:57:54 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 14/30] media: entity: Add debug information in graph walk route check
+Date: Thu, 23 Aug 2018 15:25:28 +0200
+Message-Id: <20180823132544.521-15-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for RZ/G2M (R8A774A1) SoC IPMMUs.
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 ---
-This patch applies on top of renesas-drivers-2018-07-31-v4.18-rc7
+ drivers/media/media-entity.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
- drivers/iommu/ipmmu-vmsa.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 51af2c5..cf5cfcf 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -761,6 +761,7 @@ static bool ipmmu_slave_whitelist(struct device *dev)
- }
+diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
+index c11cf684b336f87e..3912bc75651fe0b7 100644
+--- a/drivers/media/media-entity.c
++++ b/drivers/media/media-entity.c
+@@ -360,6 +360,9 @@ static void media_graph_walk_iter(struct media_graph *graph)
+ 	 */
+ 	if (!media_entity_has_route(pad->entity, pad->index, local->index)) {
+ 		link_top(graph) = link_top(graph)->next;
++		dev_dbg(pad->graph_obj.mdev->dev,
++			"walk: skipping \"%s\":%u -> %u (no route)\n",
++			pad->entity->name, pad->index, local->index);
+ 		return;
+ 	}
  
- static const struct soc_device_attribute soc_rcar_gen3[] = {
-+	{ .soc_id = "r8a774a1", },
- 	{ .soc_id = "r8a7795", },
- 	{ .soc_id = "r8a7796", },
- 	{ .soc_id = "r8a77965", },
-@@ -942,6 +943,9 @@ static const struct of_device_id ipmmu_of_ids[] = {
- 		.compatible = "renesas,ipmmu-vmsa",
- 		.data = &ipmmu_features_default,
- 	}, {
-+		.compatible = "renesas,ipmmu-r8a774a1",
-+		.data = &ipmmu_features_rcar_gen3,
-+	}, {
- 		.compatible = "renesas,ipmmu-r8a7795",
- 		.data = &ipmmu_features_rcar_gen3,
- 	}, {
-@@ -1143,6 +1147,7 @@ subsys_initcall(ipmmu_init);
- module_exit(ipmmu_exit);
- 
- IOMMU_OF_DECLARE(ipmmu_vmsa_iommu_of, "renesas,ipmmu-vmsa");
-+IOMMU_OF_DECLARE(ipmmu_r8a774a1_iommu_of, "renesas,ipmmu-r8a774a1");
- IOMMU_OF_DECLARE(ipmmu_r8a7795_iommu_of, "renesas,ipmmu-r8a7795");
- IOMMU_OF_DECLARE(ipmmu_r8a7796_iommu_of, "renesas,ipmmu-r8a7796");
- IOMMU_OF_DECLARE(ipmmu_r8a77965_iommu_of, "renesas,ipmmu-r8a77965");
 -- 
-2.7.4
+2.18.0
