@@ -1,138 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:60806 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729756AbeHFQRU (ORCPT
+Received: from conuserg-09.nifty.com ([210.131.2.76]:47942 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728475AbeHWINe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Aug 2018 12:17:20 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Chris Brandt <chris.brandt@renesas.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Ulrich Hecht <uli@fpond.eu>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-serial@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 4/4] sh-sci: Derive regshift value from DT compatible value
-Date: Mon,  6 Aug 2018 16:07:55 +0200
-Message-Id: <20180806140755.24087-5-geert+renesas@glider.be>
-In-Reply-To: <20180806140755.24087-1-geert+renesas@glider.be>
-References: <20180806140755.24087-1-geert+renesas@glider.be>
+        Thu, 23 Aug 2018 04:13:34 -0400
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 3/6] dt-bindings: mmc: add DT binding for UniPhier SD/eMMC controller
+Date: Thu, 23 Aug 2018 13:44:17 +0900
+Message-Id: <1534999460-15111-4-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Deriving the proper regshift value from the register block size is
-fragile (it may have been rounded up in DT, and the mapping granularity
-is usually PAGE_SIZE anyway), and turned out to be inappropriate for
-earlycon support (the size is not easily available).
+This SD/eMMC controller is used for UniPhier SoC family.
 
-On DT systems, derive it from the compatible value instead.
-This requires adding an entry for RZ/A2 serial ports, which use an
-atypical regshift value.
-
-On non-DT systems the regshift value is still derived from the register
-block size, as before.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-  - Sato-san: I assume this fixes SCI on H8/300, too?
-    Cfr. your patch "serial: sh-sci: byte allocated register support"
-    (https://www.spinics.net/lists/linux-sh/msg53175.html).
 
-  - Getting rid of the regshift setup for non-DT systems probably means
-    we'll have to add ".regshift = 1" to each and every SH board file
-    describing SCIF serial ports :-(
+Changes in v3: None
+Changes in v2:
+  - Rename compatible "socionext,uniphier-sd-v3.1b"
+    to "socionext,uniphier-sd-v3.1.1"
 
-Any other suggestions?
----
- drivers/tty/serial/sh-sci.c | 32 ++++++++++++++++++++------------
- 1 file changed, 20 insertions(+), 12 deletions(-)
+ .../devicetree/bindings/mmc/uniphier-sd.txt        | 55 ++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mmc/uniphier-sd.txt
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 955c057dff6e8c78..c4342e61b8db72c3 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -2898,9 +2898,10 @@ static int sci_init_single(struct platform_device *dev,
- 	port->regshift		= p->regshift;
- 	port->fifosize		= sci_port->params->fifosize;
- 
--	if (regtype == SCIx_SH4_SCIF_REGTYPE)
-+	if (!dev->dev.of_node && regtype == SCIx_SH4_SCIF_REGTYPE) {
- 		if (sci_port->reg_size >= 0x20)
- 			port->regshift = 1;
-+	}
- 
- 	/*
- 	 * The UART port needs an IRQ value, so we peg this to the RX IRQ
-@@ -3100,43 +3101,49 @@ static int sci_remove(struct platform_device *dev)
- }
- 
- 
--#define SCI_OF_DATA(type, regtype)	(void *)((type) << 16 | (regtype))
-+#define SCI_OF_DATA(type, regtype, regshift)	\
-+			(void *)((type) << 16 | (regtype) << 8 | (regshift))
- #define SCI_OF_TYPE(data)		((unsigned long)(data) >> 16)
--#define SCI_OF_REGTYPE(data)		((unsigned long)(data) & 0xffff)
-+#define SCI_OF_REGTYPE(data)		(((unsigned long)(data) >> 8) & 0xff)
-+#define SCI_OF_REGSHIFT(data)		((unsigned long)(data) & 0xff)
- 
- static const struct of_device_id of_sci_match[] = {
- 	/* SoC-specific types */
- 	{
- 		.compatible = "renesas,scif-r7s72100",
--		.data = SCI_OF_DATA(PORT_SCIF, SCIx_SH2_SCIF_FIFODATA_REGTYPE),
-+		.data = SCI_OF_DATA(PORT_SCIF, SCIx_SH2_SCIF_FIFODATA_REGTYPE,
-+				    0),
-+	}, {
-+		.compatible = "renesas,scif-r7s9210",
-+		.data = SCI_OF_DATA(PORT_SCIF, SCIx_SH4_SCIF_REGTYPE, 0),
- 	},
- 	/* Family-specific types */
- 	{
- 		.compatible = "renesas,rcar-gen1-scif",
--		.data = SCI_OF_DATA(PORT_SCIF, SCIx_SH4_SCIF_BRG_REGTYPE),
-+		.data = SCI_OF_DATA(PORT_SCIF, SCIx_SH4_SCIF_BRG_REGTYPE, 0),
- 	}, {
- 		.compatible = "renesas,rcar-gen2-scif",
--		.data = SCI_OF_DATA(PORT_SCIF, SCIx_SH4_SCIF_BRG_REGTYPE),
-+		.data = SCI_OF_DATA(PORT_SCIF, SCIx_SH4_SCIF_BRG_REGTYPE, 0),
- 	}, {
- 		.compatible = "renesas,rcar-gen3-scif",
--		.data = SCI_OF_DATA(PORT_SCIF, SCIx_SH4_SCIF_BRG_REGTYPE),
-+		.data = SCI_OF_DATA(PORT_SCIF, SCIx_SH4_SCIF_BRG_REGTYPE, 0),
- 	},
- 	/* Generic types */
- 	{
- 		.compatible = "renesas,scif",
--		.data = SCI_OF_DATA(PORT_SCIF, SCIx_SH4_SCIF_REGTYPE),
-+		.data = SCI_OF_DATA(PORT_SCIF, SCIx_SH4_SCIF_REGTYPE, 1),
- 	}, {
- 		.compatible = "renesas,scifa",
--		.data = SCI_OF_DATA(PORT_SCIFA, SCIx_SCIFA_REGTYPE),
-+		.data = SCI_OF_DATA(PORT_SCIFA, SCIx_SCIFA_REGTYPE, 0),
- 	}, {
- 		.compatible = "renesas,scifb",
--		.data = SCI_OF_DATA(PORT_SCIFB, SCIx_SCIFB_REGTYPE),
-+		.data = SCI_OF_DATA(PORT_SCIFB, SCIx_SCIFB_REGTYPE, 0),
- 	}, {
- 		.compatible = "renesas,hscif",
--		.data = SCI_OF_DATA(PORT_HSCIF, SCIx_HSCIF_REGTYPE),
-+		.data = SCI_OF_DATA(PORT_HSCIF, SCIx_HSCIF_REGTYPE, 0),
- 	}, {
- 		.compatible = "renesas,sci",
--		.data = SCI_OF_DATA(PORT_SCI, SCIx_SCI_REGTYPE),
-+		.data = SCI_OF_DATA(PORT_SCI, SCIx_SCI_REGTYPE, 0),
- 	}, {
- 		/* Terminator */
- 	},
-@@ -3179,6 +3186,7 @@ static struct plat_sci_port *sci_parse_dt(struct platform_device *pdev,
- 
- 	p->type = SCI_OF_TYPE(data);
- 	p->regtype = SCI_OF_REGTYPE(data);
-+	p->regshift = SCI_OF_REGSHIFT(data);
- 
- 	sp->has_rtscts = of_property_read_bool(np, "uart-has-rtscts");
- 
+diff --git a/Documentation/devicetree/bindings/mmc/uniphier-sd.txt b/Documentation/devicetree/bindings/mmc/uniphier-sd.txt
+new file mode 100644
+index 0000000..e1d6587
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mmc/uniphier-sd.txt
+@@ -0,0 +1,55 @@
++UniPhier SD/eMMC controller
++
++Required properties:
++- compatible: should be one of the following:
++    "socionext,uniphier-sd-v2.91"  - IP version 2.91
++    "socionext,uniphier-sd-v3.1"   - IP version 3.1
++    "socionext,uniphier-sd-v3.1.1" - IP version 3.1.1
++- reg: offset and length of the register set for the device.
++- interrupts: a single interrupt specifier.
++- clocks: a single clock specifier of the controller clock.
++- reset-names: should contain the following:
++    "host"   - mandatory for all versions
++    "bridge" - should exist only for "socionext,uniphier-sd-v2.91"
++    "hw"     - should exist if eMMC hw reset line is available
++- resets: a list of reset specifiers, corresponding to the reset-names
++
++Optional properties:
++- pinctrl-names: if present, should contain the following:
++    "default" - should exist for all instances
++    "uhs"     - should exist for SD instance with UHS support
++- pinctrl-0: pin control state for the default mode
++- pinctrl-1: pin control state for the UHS mode
++- dma-names: should be "rx-tx" if present.
++  This property can exist only for "socionext,uniphier-sd-v2.91".
++- dmas: a single DMA channel specifier
++  This property can exist only for "socionext,uniphier-sd-v2.91".
++- bus-width: see mmc.txt
++- cap-sd-highspeed: see mmc.txt
++- cap-mmc-highspeed: see mmc.txt
++- sd-uhs-sdr12: see mmc.txt
++- sd-uhs-sdr25: see mmc.txt
++- sd-uhs-sdr50: see mmc.txt
++- cap-mmc-hw-reset: should exist if reset-names contains "hw". see mmc.txt
++- non-removable: see mmc.txt
++
++Example:
++
++	sd: sdhc@5a400000 {
++		compatible = "socionext,uniphier-sd-v2.91";
++		reg = <0x5a400000 0x200>;
++		interrupts = <0 76 4>;
++		pinctrl-names = "default", "uhs";
++		pinctrl-0 = <&pinctrl_sd>;
++		pinctrl-1 = <&pinctrl_sd_uhs>;
++		clocks = <&mio_clk 0>;
++		reset-names = "host", "bridge";
++		resets = <&mio_rst 0>, <&mio_rst 3>;
++		dma-names = "rx-tx";
++		dmas = <&dmac 4>;
++		bus-width = <4>;
++		cap-sd-highspeed;
++		sd-uhs-sdr12;
++		sd-uhs-sdr25;
++		sd-uhs-sdr50;
++	};
 -- 
-2.17.1
+2.7.4
