@@ -1,44 +1,60 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35455 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726510AbeHXM26 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Aug 2018 08:28:58 -0400
-Date: Fri, 24 Aug 2018 10:55:13 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: Re: [PATCH 3/5] arm64: dts: renesas: r8a774a1: Add INTC-EX device
- node
-Message-ID: <20180824085513.zdefsnewmpp6bzal@verge.net.au>
+Subject: [PATCH 3/5] arm64: dts: renesas: r8a774a1: Add INTC-EX device node
+Date: Thu, 23 Aug 2018 09:58:49 +0100
+Message-Id: <1535014731-64472-4-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1535014731-64472-1-git-send-email-biju.das@bp.renesas.com>
 References: <1535014731-64472-1-git-send-email-biju.das@bp.renesas.com>
- <1535014731-64472-4-git-send-email-biju.das@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1535014731-64472-4-git-send-email-biju.das@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Aug 23, 2018 at 09:58:49AM +0100, Biju Das wrote:
-> Add support for the Interrupt Controller for External Devices
-> (INTC-EX) on RZ/G2M.
-> 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Add support for the Interrupt Controller for External Devices
+(INTC-EX) on RZ/G2M.
 
-Thanks,
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-This looks fine to me but I will wait to see if there are other reviews
-before applying.
-
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index 81fba7f..15d7785 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -144,6 +144,22 @@
+ 			#power-domain-cells = <1>;
+ 		};
+ 
++		intc_ex: interrupt-controller@e61c0000 {
++			compatible = "renesas,intc-ex-r8a774a1", "renesas,irqc";
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			reg = <0 0xe61c0000 0 0x200>;
++			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 407>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 407>;
++		};
++
+ 		hscif0: serial@e6540000 {
+ 			compatible = "renesas,hscif-r8a774a1",
+ 				     "renesas,rcar-gen3-hscif",
+-- 
+2.7.4
