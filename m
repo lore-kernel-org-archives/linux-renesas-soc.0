@@ -1,81 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:11726 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728501AbeHWSsd (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:8867 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726274AbeHWTDb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Aug 2018 14:48:33 -0400
+        Thu, 23 Aug 2018 15:03:31 -0400
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Joerg Roedel <joro@8bytes.org>,
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        iommu@lists.linux-foundation.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 1/2] iommu/ipmmu-vmsa: Hook up R8A774A1 DT maching code
-Date: Thu, 23 Aug 2018 15:18:10 +0000
-Message-ID: <TY1PR01MB1770AE1D3751F092C15F553FC0370@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1534516265-10059-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1534516265-10059-2-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAMuHMdUe=p42Bp6xgmvrNwPKs=VHUP2BezDBPPn9KgPawvOtgA@mail.gmail.com>
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 1/2] iommu/ipmmu-vmsa: Hook up R8A774A1 DT maching code
+Date: Thu, 23 Aug 2018 16:33:04 +0100
+Message-Id: <1535038384-27080-1-git-send-email-fabrizio.castro@bp.renesas.com>
 In-Reply-To: <CAMuHMdUe=p42Bp6xgmvrNwPKs=VHUP2BezDBPPn9KgPawvOtgA@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+References: <CAMuHMdUe=p42Bp6xgmvrNwPKs=VHUP2BezDBPPn9KgPawvOtgA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gR2VlcnQsDQoNClRoYW5rIHlvdSBmb3IgdGhlIGZlZWRiYWNrIGFuZCB3ZWxjb21lIGJh
-Y2shDQoNCj4gU3ViamVjdDogUmU6IFtQQVRDSCAxLzJdIGlvbW11L2lwbW11LXZtc2E6IEhvb2sg
-dXAgUjhBNzc0QTEgRFQgbWFjaGluZyBjb2RlDQo+DQo+IEhpIEZhYnJpemlvLA0KPg0KPiBPbiBG
-cmksIEF1ZyAxNywgMjAxOCBhdCA0OjMxIFBNIEZhYnJpemlvIENhc3Rybw0KPiA8ZmFicml6aW8u
-Y2FzdHJvQGJwLnJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiBBZGQgc3VwcG9ydCBmb3IgUlovRzJN
-IChSOEE3NzRBMSkgU29DIElQTU1Vcy4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEZhYnJpemlv
-IENhc3RybyA8ZmFicml6aW8uY2FzdHJvQGJwLnJlbmVzYXMuY29tPg0KPiA+IFJldmlld2VkLWJ5
-OiBCaWp1IERhcyA8YmlqdS5kYXNAYnAucmVuZXNhcy5jb20+DQo+ID4gLS0tDQo+ID4gVGhpcyBw
-YXRjaCBhcHBsaWVzIG9uIHRvcCBvZiByZW5lc2FzLWRyaXZlcnMtMjAxOC0wNy0zMS12NC4xOC1y
-YzcNCj4gPg0KPiA+ICBkcml2ZXJzL2lvbW11L2lwbW11LXZtc2EuYyB8IDUgKysrKysNCj4gPiAg
-MSBmaWxlIGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvaW9tbXUvaXBtbXUtdm1zYS5jIGIvZHJpdmVycy9pb21tdS9pcG1tdS12bXNhLmMNCj4g
-PiBpbmRleCA1MWFmMmM1Li5jZjVjZmNmIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvaW9tbXUv
-aXBtbXUtdm1zYS5jDQo+ID4gKysrIGIvZHJpdmVycy9pb21tdS9pcG1tdS12bXNhLmMNCj4gPiBA
-QCAtNzYxLDYgKzc2MSw3IEBAIHN0YXRpYyBib29sIGlwbW11X3NsYXZlX3doaXRlbGlzdChzdHJ1
-Y3QgZGV2aWNlICpkZXYpDQo+ID4gIH0NCj4gPg0KPiA+ICBzdGF0aWMgY29uc3Qgc3RydWN0IHNv
-Y19kZXZpY2VfYXR0cmlidXRlIHNvY19yY2FyX2dlbjNbXSA9IHsNCj4gPiArICAgICAgIHsgLnNv
-Y19pZCA9ICJyOGE3NzRhMSIsIH0sDQo+ID4gICAgICAgICB7IC5zb2NfaWQgPSAicjhhNzc5NSIs
-IH0sDQo+ID4gICAgICAgICB7IC5zb2NfaWQgPSAicjhhNzc5NiIsIH0sDQo+ID4gICAgICAgICB7
-IC5zb2NfaWQgPSAicjhhNzc5NjUiLCB9LA0KPiA+IEBAIC05NDIsNiArOTQzLDkgQEAgc3RhdGlj
-IGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgaXBtbXVfb2ZfaWRzW10gPSB7DQo+ID4gICAgICAg
-ICAgICAgICAgIC5jb21wYXRpYmxlID0gInJlbmVzYXMsaXBtbXUtdm1zYSIsDQo+ID4gICAgICAg
-ICAgICAgICAgIC5kYXRhID0gJmlwbW11X2ZlYXR1cmVzX2RlZmF1bHQsDQo+ID4gICAgICAgICB9
-LCB7DQo+ID4gKyAgICAgICAgICAgICAgIC5jb21wYXRpYmxlID0gInJlbmVzYXMsaXBtbXUtcjhh
-Nzc0YTEiLA0KPiA+ICsgICAgICAgICAgICAgICAuZGF0YSA9ICZpcG1tdV9mZWF0dXJlc19yY2Fy
-X2dlbjMsDQo+ID4gKyAgICAgICB9LCB7DQo+ID4gICAgICAgICAgICAgICAgIC5jb21wYXRpYmxl
-ID0gInJlbmVzYXMsaXBtbXUtcjhhNzc5NSIsDQo+ID4gICAgICAgICAgICAgICAgIC5kYXRhID0g
-JmlwbW11X2ZlYXR1cmVzX3JjYXJfZ2VuMywNCj4gPiAgICAgICAgIH0sIHsNCj4gPiBAQCAtMTE0
-Myw2ICsxMTQ3LDcgQEAgc3Vic3lzX2luaXRjYWxsKGlwbW11X2luaXQpOw0KPiA+ICBtb2R1bGVf
-ZXhpdChpcG1tdV9leGl0KTsNCj4gPg0KPiA+ICBJT01NVV9PRl9ERUNMQVJFKGlwbW11X3Ztc2Ff
-aW9tbXVfb2YsICJyZW5lc2FzLGlwbW11LXZtc2EiKTsNCj4gPiArSU9NTVVfT0ZfREVDTEFSRShp
-cG1tdV9yOGE3NzRhMV9pb21tdV9vZiwgInJlbmVzYXMsaXBtbXUtcjhhNzc0YTEiKTsNCj4gPiAg
-SU9NTVVfT0ZfREVDTEFSRShpcG1tdV9yOGE3Nzk1X2lvbW11X29mLCAicmVuZXNhcyxpcG1tdS1y
-OGE3Nzk1Iik7DQo+ID4gIElPTU1VX09GX0RFQ0xBUkUoaXBtbXVfcjhhNzc5Nl9pb21tdV9vZiwg
-InJlbmVzYXMsaXBtbXUtcjhhNzc5NiIpOw0KPiA+ICBJT01NVV9PRl9ERUNMQVJFKGlwbW11X3I4
-YTc3OTY1X2lvbW11X29mLCAicmVuZXNhcyxpcG1tdS1yOGE3Nzk2NSIpOw0KPg0KPiBUaGUgSU9N
-TVVfT0ZfREVDTEFSRSgpIGxpbmVzIHdpbGwgYmUgZ29uZSB2NC4xOC1yYzEuDQoNCkkgY2FuIHNl
-ZSB0aGUgY29uZmxpY3Qgbm93LCB0aGVyZWZvcmUgSSBhbSBnb2luZyB0byBzZW5kIGEgdjIuIEkn
-bGwgYmUgYmFzaW5nIHRoZSBwYXRjaA0Kb24gdG9wIG9mIHJlbmVzYXMtZHJpdmVycy0yMDE4LTA3
-LTMxLXY0LjE4LXJjNyBhZ2FpbiwgYnV0IHRoaXMgdGltZSBJJ2xsIGRyb3AgdGhlDQpJT01NVV9P
-Rl9ERUNMQVJFIGxpbmUsIGhvcGVmdWxseSB0aGlzIHdpbGwgaGVscC4NCg0KVGhhbmtzLA0KRmFi
-DQoNCj4NCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+DQo+ICAgICAgICAgICAgICAgICAgICAgICAg
-IEdlZXJ0DQo+DQo+IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2Yg
-TGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5vcmcNCj4NCj4gSW4gcGVyc29u
-YWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBo
-YWNrZXIuIEJ1dA0KPiB3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkg
-InByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgLS0gTGludXMgVG9ydmFsZHMNCg0KDQoNClJlbmVzYXMgRWxlY3Ryb25p
-Y3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9hZCwgQm91cm5lIEVuZCwg
-QnVja2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBFbmdsYW5kICYgV2Fs
-ZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
+Add support for RZ/G2M (R8A774A1) SoC IPMMUs.
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+---
+v1-v2:
+* taken out IOMMU_OF_DECLARE
+
+ drivers/iommu/ipmmu-vmsa.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index 51af2c5..331562f 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -761,6 +761,7 @@ static bool ipmmu_slave_whitelist(struct device *dev)
+ }
+ 
+ static const struct soc_device_attribute soc_rcar_gen3[] = {
++	{ .soc_id = "r8a774a1", },
+ 	{ .soc_id = "r8a7795", },
+ 	{ .soc_id = "r8a7796", },
+ 	{ .soc_id = "r8a77965", },
+@@ -942,6 +943,9 @@ static const struct of_device_id ipmmu_of_ids[] = {
+ 		.compatible = "renesas,ipmmu-vmsa",
+ 		.data = &ipmmu_features_default,
+ 	}, {
++		.compatible = "renesas,ipmmu-r8a774a1",
++		.data = &ipmmu_features_rcar_gen3,
++	}, {
+ 		.compatible = "renesas,ipmmu-r8a7795",
+ 		.data = &ipmmu_features_rcar_gen3,
+ 	}, {
+-- 
+2.7.4
