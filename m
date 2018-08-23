@@ -1,47 +1,114 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47963 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726802AbeH0Mj4 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 27 Aug 2018 08:39:56 -0400
-Date: Mon, 27 Aug 2018 10:54:08 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Biju Das <biju.das@bp.renesas.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: Re: [PATCH 3/9] arm64: dts: renesas: r8a774a1: Add RZ/G2M thermal
- support
-Message-ID: <20180827085408.4gtujftx6nd7b5xb@verge.net.au>
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 3/9] arm64: dts: renesas: r8a774a1: Add RZ/G2M thermal support
+Date: Thu, 23 Aug 2018 14:43:02 +0100
+Message-Id: <1535031788-19907-4-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1535031788-19907-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1535031788-19907-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1535031788-19907-4-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1535031788-19907-4-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Aug 23, 2018 at 02:43:02PM +0100, Fabrizio Castro wrote:
-> From: Biju Das <biju.das@bp.renesas.com>
-> 
-> Add thermal support for R8A774A1 (RZ/G2M) SoC.
-> 
-> Based on the work done for r8a7796 SoC.
-> 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+From: Biju Das <biju.das@bp.renesas.com>
 
-Thanks,
+Add thermal support for R8A774A1 (RZ/G2M) SoC.
 
-This looks fine to me but I will wait to see if there are other reviews
-before applying.
+Based on the work done for r8a7796 SoC.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 60 +++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index 5775451..9f42b7c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -165,6 +165,21 @@
+ 			#power-domain-cells = <1>;
+ 		};
+ 
++		tsc: thermal@e6198000 {
++			compatible = "renesas,r8a774a1-thermal";
++			reg = <0 0xe6198000 0 0x100>,
++			      <0 0xe61a0000 0 0x100>,
++			      <0 0xe61a8000 0 0x100>;
++			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 522>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 522>;
++			#thermal-sensor-cells = <1>;
++			status = "okay";
++		};
++
+ 		intc_ex: interrupt-controller@e61c0000 {
+ 			compatible = "renesas,intc-ex-r8a774a1", "renesas,irqc";
+ 			#interrupt-cells = <2>;
+@@ -715,6 +730,51 @@
+ 		};
+ 	};
+ 
++	thermal-zones {
++		sensor_thermal1: sensor-thermal1 {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++			thermal-sensors = <&tsc 0>;
++
++			trips {
++				sensor1_crit: sensor1-crit {
++					temperature = <120000>;
++					hysteresis = <1000>;
++					type = "critical";
++				};
++			};
++		};
++
++		sensor_thermal2: sensor-thermal2 {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++			thermal-sensors = <&tsc 1>;
++
++			trips {
++				sensor2_crit: sensor2-crit {
++					temperature = <120000>;
++					hysteresis = <1000>;
++					type = "critical";
++				};
++			};
++
++		};
++
++		sensor_thermal3: sensor-thermal3 {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++			thermal-sensors = <&tsc 2>;
++
++			trips {
++				sensor3_crit: sensor3-crit {
++					temperature = <120000>;
++					hysteresis = <1000>;
++					type = "critical";
++				};
++			};
++		};
++	};
++
+ 	timer {
+ 		compatible = "arm,armv8-timer";
+ 		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+-- 
+2.7.4
