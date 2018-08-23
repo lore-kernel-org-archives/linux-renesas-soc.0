@@ -1,35 +1,64 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:49340 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726120AbeH1I1V (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Aug 2018 04:27:21 -0400
-From: Nguyen An Hoan <na-hoan@jinso.co.jp>
-To: broonie@kernel.org, linux-renesas-soc@vger.kernel.org,
-        geert+renesas@glider.be
-Cc: magnus.damm@gmail.com, kuninori.morimoto.gx@renesas.com,
-        yoshihiro.shimoda.uh@renesas.com, h-inayoshi@jinso.co.jp,
-        nv-dung@jinso.co.jp, cv-dong@jinso.co.jp, na-hoan@jinso.co.jp
-Subject: [RESEND PATCH 0/2] Add support Audio's pins for r8a77965.
-Date: Tue, 28 Aug 2018 13:37:17 +0900
-Message-Id: <1535431039-2749-1-git-send-email-na-hoan@jinso.co.jp>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 24/30] adv748x: csi2: add translation from pixelcode to CSI-2 datatype
+Date: Thu, 23 Aug 2018 15:25:38 +0200
+Message-Id: <20180823132544.521-25-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hoan Nguyen An <na-hoan@jinso.co.jp>
+Prepare to implement frame descriptors to support multiplexed streams by
+adding a function to map pixelcode to CSI-2 datatype. This is needed to
+properly be able to fill out the struct v4l2_mbus_frame_desc.
 
-Morimoto-san, Geert-san: Thank you for your comments. These are the patches that I added Signed-off-by.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/i2c/adv748x/adv748x-csi2.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-These patches based on the file drivers/pinctrl/sh-pfc/pfc-r8a7796.c.
-Although the current renesas-drives tree r8a77965.dtsi has not yet configured for the Sound-driver, but I have manually configured and tested for this.
-Patches were be tested.
-
-Hoan Nguyen An (2):
-  pinctrl: sh-pfc: r8a77965: add Audio clock pin support
-  pinctrl: sh-pfc: r8a77965: add Audio SSI pin support
-
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 392 ++++++++++++++++++++++++++++++++++
- 1 file changed, 392 insertions(+)
-
+diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
+index 469be87a3761feb5..b759a7e22fbc98df 100644
+--- a/drivers/media/i2c/adv748x/adv748x-csi2.c
++++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
+@@ -18,6 +18,28 @@
+ 
+ #include "adv748x.h"
+ 
++struct adv748x_csi2_format {
++	unsigned int code;
++	unsigned int datatype;
++};
++
++static const struct adv748x_csi2_format adv748x_csi2_formats[] = {
++	{ .code = MEDIA_BUS_FMT_RGB888_1X24,    .datatype = 0x24, },
++	{ .code = MEDIA_BUS_FMT_UYVY8_1X16,     .datatype = 0x1e, },
++	{ .code = MEDIA_BUS_FMT_UYVY8_2X8,      .datatype = 0x1e, },
++	{ .code = MEDIA_BUS_FMT_YUYV10_2X10,    .datatype = 0x1e, },
++};
++
++static unsigned int adv748x_csi2_code_to_datatype(unsigned int code)
++{
++	unsigned int i;
++
++	for (i = 0; i < ARRAY_SIZE(adv748x_csi2_formats); i++)
++		if (adv748x_csi2_formats[i].code == code)
++			return adv748x_csi2_formats[i].datatype;
++	return 0;
++}
++
+ static bool is_txa(struct adv748x_csi2 *tx)
+ {
+ 	return tx == &tx->state->txa;
 -- 
-2.7.4
+2.18.0
