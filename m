@@ -1,69 +1,56 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45312 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727777AbeHVBYs (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 Aug 2018 21:24:48 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 05/11] can: rcar: use SPDX identifier for Renesas drivers
-Date: Wed, 22 Aug 2018 00:02:18 +0200
-Message-Id: <20180821220233.9202-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
-References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 25/30] adv748x: csi2: only allow formats on sink pads
+Date: Thu, 23 Aug 2018 15:25:39 +0200
+Message-Id: <20180823132544.521-26-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Once the CSI-2 subdevice of the ADV748X becomes aware of multiplexed
+streams the format of the source pad is of no value as it carries
+multiple streams. Prepare for this by explicitly denying setting a
+format on anything but the sink pad.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
+ drivers/media/i2c/adv748x/adv748x-csi2.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-To be applied individually per subsystem tree. Morimoto-san, could you maybe
-ack this with your Renesas address?
-
- drivers/net/can/rcar/rcar_can.c   | 6 +-----
- drivers/net/can/rcar/rcar_canfd.c | 6 +-----
- 2 files changed, 2 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/net/can/rcar/rcar_can.c b/drivers/net/can/rcar/rcar_can.c
-index 11662f479e76..051bf4ef4be2 100644
---- a/drivers/net/can/rcar/rcar_can.c
-+++ b/drivers/net/can/rcar/rcar_can.c
-@@ -1,12 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
- /* Renesas R-Car CAN device driver
-  *
-  * Copyright (C) 2013 Cogent Embedded, Inc. <source@cogentembedded.com>
-  * Copyright (C) 2013 Renesas Solutions Corp.
-- *
-- * This program is free software; you can redistribute  it and/or modify it
-- * under  the terms of  the GNU General  Public License as published by the
-- * Free Software Foundation;  either version 2 of the  License, or (at your
-- * option) any later version.
-  */
+diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
+index b759a7e22fbc98df..9f736da2ad60160f 100644
+--- a/drivers/media/i2c/adv748x/adv748x-csi2.c
++++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
+@@ -172,6 +172,9 @@ static int adv748x_csi2_get_format(struct v4l2_subdev *sd,
+ 	struct adv748x_state *state = tx->state;
+ 	struct v4l2_mbus_framefmt *mbusformat;
  
- #include <linux/module.h>
-diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
-index 602c19e23f05..09a5b038a9f0 100644
---- a/drivers/net/can/rcar/rcar_canfd.c
-+++ b/drivers/net/can/rcar/rcar_canfd.c
-@@ -1,11 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
- /* Renesas R-Car CAN FD device driver
-  *
-  * Copyright (C) 2015 Renesas Electronics Corp.
-- *
-- * This program is free software; you can redistribute  it and/or modify it
-- * under  the terms of  the GNU General  Public License as published by the
-- * Free Software Foundation;  either version 2 of the  License, or (at your
-- * option) any later version.
-  */
++	if (sdformat->pad != ADV748X_CSI2_SINK)
++		return -EINVAL;
++
+ 	mbusformat = adv748x_csi2_get_pad_format(sd, cfg, sdformat->pad,
+ 						 sdformat->which);
+ 	if (!mbusformat)
+@@ -195,6 +198,9 @@ static int adv748x_csi2_set_format(struct v4l2_subdev *sd,
+ 	struct v4l2_mbus_framefmt *mbusformat;
+ 	int ret = 0;
  
- /* The R-Car CAN FD controller can operate in either one of the below two modes
++	if (sdformat->pad != ADV748X_CSI2_SINK)
++		return -EINVAL;
++
+ 	mbusformat = adv748x_csi2_get_pad_format(sd, cfg, sdformat->pad,
+ 						 sdformat->which);
+ 	if (!mbusformat)
 -- 
-2.11.0
+2.18.0
