@@ -1,103 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.84]:31381 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732753AbeHNQiB (ORCPT
+Received: from conuserg-09.nifty.com ([210.131.2.76]:47260 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728201AbeHWINK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Aug 2018 12:38:01 -0400
-From: Ulrich Hecht <uli+renesas@fpond.eu>
-To: laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        jacopo+renesas@jmondi.org, kieran.bingham+renesas@ideasonboard.com,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Subject: [PROTO][PATCH 06/10] drm: rcar-du: Fix procedure for extal and dotclkin selection
-Date: Tue, 14 Aug 2018 15:50:00 +0200
-Message-Id: <1534254604-24204-7-git-send-email-uli+renesas@fpond.eu>
-In-Reply-To: <1534254604-24204-1-git-send-email-uli+renesas@fpond.eu>
-References: <1534254604-24204-1-git-send-email-uli+renesas@fpond.eu>
+        Thu, 23 Aug 2018 04:13:10 -0400
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/6] mmc: tmio: replace tmio_mmc_clk_stop() calls with tmio_mmc_set_clock()
+Date: Thu, 23 Aug 2018 13:44:15 +0900
+Message-Id: <1534999460-15111-2-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+tmio_mmc_clk_stop(host) is equivalent to tmio_mmc_set_clock(host, 0).
+This replacement is needed for the next commit.
 
-This patch corrects that the extal clock used with the fixed value
-is acquired from the device tree.
-Also, it is possible to select extal or dotclkin for R8A77995 and
-R8A77990. This patch adds its selection procedure.
-
-Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c   | 12 ++++++++++++
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h   |  2 ++
- drivers/gpu/drm/rcar-du/rcar_lvds_regs.h |  4 +---
- 3 files changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index a903456..4e22d40 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -942,10 +942,22 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int swindex,
- 		return PTR_ERR(rcrtc->clock);
- 	}
+Changes in v3: None
+Changes in v2: None
+
+ drivers/mmc/host/tmio_mmc_core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 261b4d6..5717ffa 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -1043,7 +1043,7 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 	switch (ios->power_mode) {
+ 	case MMC_POWER_OFF:
+ 		tmio_mmc_power_off(host);
+-		tmio_mmc_clk_stop(host);
++		tmio_mmc_set_clock(host, 0);
+ 		break;
+ 	case MMC_POWER_UP:
+ 		tmio_mmc_power_on(host, ios->vdd);
+@@ -1310,7 +1310,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
+ 	if (pdata->flags & TMIO_MMC_SDIO_IRQ)
+ 		_host->sdio_irq_mask = TMIO_SDIO_MASK_ALL;
  
-+	sprintf(clk_name, "extal");
-+	clk = devm_clk_get(rcdu->dev, clk_name);
-+	if (!IS_ERR(clk)) {
-+		rcrtc->extclock = clk;
-+		rcrtc->extal_use = true;
-+	} else if (PTR_ERR(rcrtc->clock) == -EPROBE_DEFER) {
-+		dev_info(rcdu->dev, "can't get extal clock %u\n",
-+			 hwindex);
-+		return -EPROBE_DEFER;
-+	}
-+
- 	sprintf(clk_name, "dclkin.%u", hwindex);
- 	clk = devm_clk_get(rcdu->dev, clk_name);
- 	if (!IS_ERR(clk)) {
- 		rcrtc->extclock = clk;
-+		rcrtc->extal_use = false;
- 	} else if (PTR_ERR(rcrtc->clock) == -EPROBE_DEFER) {
- 		dev_info(rcdu->dev, "can't get external clock %u\n", hwindex);
- 		return -EPROBE_DEFER;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-index 65de551..fa27104 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-@@ -45,6 +45,7 @@ struct rcar_du_vsp;
-  * @vsp: VSP feeding video to this CRTC
-  * @vsp_pipe: index of the VSP pipeline feeding video to this CRTC
-  * @lvds_ch: index of LVDS
-+ * @extal_use: extal clock use
-  */
- struct rcar_du_crtc {
- 	struct drm_crtc crtc;
-@@ -69,6 +70,7 @@ struct rcar_du_crtc {
- 	struct rcar_du_vsp *vsp;
- 	unsigned int vsp_pipe;
- 	int lvds_ch;
-+	bool extal_use;
- };
+-	tmio_mmc_clk_stop(_host);
++	tmio_mmc_set_clock(_host, 0);
+ 	tmio_mmc_reset(_host);
  
- #define to_rcar_crtc(c)	container_of(c, struct rcar_du_crtc, crtc)
-diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds_regs.h b/drivers/gpu/drm/rcar-du/rcar_lvds_regs.h
-index e37db95..4899062 100644
---- a/drivers/gpu/drm/rcar-du/rcar_lvds_regs.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_lvds_regs.h
-@@ -46,15 +46,13 @@
- #define LVDPLLCR_PLLDIVCNT_148M		(0x046c1 << 0)
- #define LVDPLLCR_PLLDIVCNT_MASK		(0x7ffff << 0)
+ 	_host->sdcard_irq_mask = sd_ctrl_read16_and_16_as_32(_host, CTL_IRQ_MASK);
+@@ -1394,7 +1394,7 @@ int tmio_mmc_host_runtime_suspend(struct device *dev)
+ 	tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_ALL);
  
--/* R-Car D3 */
- #define LVDPLLCR_PLLON			(1 << 22)
- #define LVDPLLCR_PLLSEL_PLL0		(0 << 20)
- #define LVDPLLCR_PLLSEL_LVX		(1 << 20)
- #define LVDPLLCR_PLLSEL_PLL1		(2 << 20)
- #define LVDPLLCR_CKSEL_LVX		(1 << 17)
- #define LVDPLLCR_CKSEL_EXTAL		(3 << 17)
--#define LVDPLLCR_CKSEL_DU_DOTCLKIN0	(5 << 17)
--#define LVDPLLCR_CKSEL_DU_DOTCLKIN1	(7 << 17)
-+#define LVDPLLCR_CKSEL_DU_DOTCLKIN(n)	((5 + (n) * 2) << 17)
- #define LVDPLLCR_OCKSEL_7		(0 << 16)
- #define LVDPLLCR_OCKSEL_NOT_DIVIDED	(1 << 16)
- #define LVDPLLCR_STP_CLKOUTE1_DIS	(0 << 14)
+ 	if (host->clk_cache)
+-		tmio_mmc_clk_stop(host);
++		tmio_mmc_set_clock(host, 0);
+ 
+ 	tmio_mmc_clk_disable(host);
+ 
 -- 
 2.7.4
