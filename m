@@ -1,52 +1,110 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:22636 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728198AbeHFVXg (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Aug 2018 17:23:36 -0400
+Return-Path: <linux-media-owner@vger.kernel.org>
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/2] mmc: renesas_sdhi: extend quirk selection to handle ES revisions
-Date: Mon,  6 Aug 2018 21:12:25 +0200
-Message-Id: <20180806191227.28401-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Michal Simek <michal.simek@xilinx.com>
+Subject: [PATCH 10/30] media: entity: Use routing information during graph traversal
+Date: Thu, 23 Aug 2018 15:25:24 +0200
+Message-Id: <20180823132544.521-11-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Recent datasheet updates have made it clear that some quirks are not SoC 
-specific but SoC + ES version specific. Currently the quirks are 
-selected using compatibility values but whit this new information that 
-is not enough.
+Take internal routing information as reported by the entity has_route
+operation into account during graph traversal to avoid following
+unrelated links.
 
-This small series adds support to select quirks based on SoC + ES 
-revision using soc_device_match(). It handles the only quirk upstreamed 
-so far, selection of 4-taps for HS400 mode on R-CarH3(ES1.0,ES2.0) and 
-R-CarM3W(ES1.0,ES1.1).
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+---
+ drivers/media/media-entity.c | 44 ++++++++++++++++++++++--------------
+ 1 file changed, 27 insertions(+), 17 deletions(-)
 
-As this solution makes the compatible selection method obsolete it is 
-removed and all Gen3 compat values now points to the same data 
-structure. The specific compats for H3 and M3-W are however kept in the 
-driver for backward compatibility.
-
-Based on mmc/next and tested on H3 ES2.0 and M3-N.
-
-Niklas Söderlund (2):
-  mmc: renesas_sdhi: handle 4tap hs400 mode quirk based on SoC revision
-  mmc: renesas_sdhi: align compatibility properties for H3 and M3-W
-
- drivers/mmc/host/renesas_sdhi_core.c          | 26 +++++++++++++++++++
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 20 ++------------
- drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 17 ++----------
- 3 files changed, 30 insertions(+), 33 deletions(-)
-
+diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
+index 88c8b838b78b39aa..12d9fc9ee02f38f2 100644
+--- a/drivers/media/media-entity.c
++++ b/drivers/media/media-entity.c
+@@ -257,15 +257,6 @@ bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
+ }
+ EXPORT_SYMBOL_GPL(media_entity_has_route);
+ 
+-static struct media_pad *
+-media_entity_other(struct media_pad *pad, struct media_link *link)
+-{
+-	if (link->source == pad)
+-		return link->sink;
+-	else
+-		return link->source;
+-}
+-
+ /* push an entity to traversal stack */
+ static void stack_push(struct media_graph *graph, struct media_pad *pad)
+ {
+@@ -336,7 +327,8 @@ static void media_graph_walk_iter(struct media_graph *graph)
+ {
+ 	struct media_pad *pad = stack_top(graph);
+ 	struct media_link *link;
+-	struct media_pad *next;
++	struct media_pad *remote;
++	struct media_pad *local;
+ 
+ 	link = list_entry(link_top(graph), typeof(*link), list);
+ 
+@@ -350,23 +342,41 @@ static void media_graph_walk_iter(struct media_graph *graph)
+ 		return;
+ 	}
+ 
+-	/* Get the entity in the other end of the link . */
+-	next = media_entity_other(pad, link);
++	/*
++	 * Get the local pad, the remote pad and the entity at the other
++	 * end of the link.
++	 */
++	if (link->source->entity == pad->entity) {
++		remote = link->sink;
++		local = link->source;
++	} else {
++		remote = link->source;
++		local = link->sink;
++	}
++
++	/*
++	 * Are the local pad and the pad we came from connected
++	 * internally in the entity ?
++	 */
++	if (!media_entity_has_route(pad->entity, pad->index, local->index)) {
++		link_top(graph) = link_top(graph)->next;
++		return;
++	}
+ 
+ 	/* Has the entity already been visited? */
+-	if (media_entity_enum_test_and_set(&graph->ent_enum, next->entity)) {
++	if (media_entity_enum_test_and_set(&graph->ent_enum, remote->entity)) {
+ 		link_top(graph) = link_top(graph)->next;
+ 		dev_dbg(pad->graph_obj.mdev->dev,
+ 			"walk: skipping entity '%s' (already seen)\n",
+-			next->entity->name);
++			remote->entity->name);
+ 		return;
+ 	}
+ 
+ 	/* Push the new entity to stack and start over. */
+ 	link_top(graph) = link_top(graph)->next;
+-	stack_push(graph, next);
+-	dev_dbg(next->graph_obj.mdev->dev, "walk: pushing '%s':%u on stack\n",
+-		next->entity->name, next->index);
++	stack_push(graph, remote);
++	dev_dbg(remote->graph_obj.mdev->dev, "walk: pushing '%s':%u on stack\n",
++		remote->entity->name, remote->index);
+ }
+ 
+ struct media_pad *media_graph_walk_next(struct media_graph *graph)
 -- 
 2.18.0
