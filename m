@@ -1,100 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-08.nifty.com ([210.131.2.75]:39155 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727360AbeHGIaz (ORCPT
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:12172 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730671AbeHWQ5u (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Aug 2018 04:30:55 -0400
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [v0.1 PATCH 5/7] mmc: renesas_sdhi: merge clk_{start,stop} functions to set_clock
-Date: Tue,  7 Aug 2018 15:17:20 +0900
-Message-Id: <1533622642-13989-6-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
+        Thu, 23 Aug 2018 12:57:50 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Michal Simek <michal.simek@xilinx.com>
+Subject: [PATCH 07/30] media: entity: Add has_route entity operation
+Date: Thu, 23 Aug 2018 15:25:21 +0200
+Message-Id: <20180823132544.521-8-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-renesas_sdhi_clk_start() and renesas_sdhi_clk_stop() are now only
-called from renesas_sdhi_set_clock().  Merge them.
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+The optional operation can be used by entities to report whether two
+pads are internally connected.
+
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 ---
+ include/media/media-entity.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
- drivers/mmc/host/renesas_sdhi_core.c | 39 +++++++++++-------------------------
- 1 file changed, 12 insertions(+), 27 deletions(-)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 1f4c82e..a15fb2e 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -155,35 +155,16 @@ static unsigned int renesas_sdhi_clk_update(struct tmio_mmc_host *host,
- 	return ret == 0 ? best_freq : clk_get_rate(priv->clk);
- }
+diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+index 532c438b9eb862c5..07df1b8d85a3c1ba 100644
+--- a/include/media/media-entity.h
++++ b/include/media/media-entity.h
+@@ -193,6 +193,9 @@ struct media_pad {
+  * @link_validate:	Return whether a link is valid from the entity point of
+  *			view. The media_pipeline_start() function
+  *			validates all links by calling this operation. Optional.
++ * @has_route:		Return whether a route exists inside the entity between
++ *			two given pads. Optional. If the operation isn't
++ *			implemented all pads will be considered as connected.
+  *
+  * .. note::
+  *
+@@ -205,6 +208,8 @@ struct media_entity_operations {
+ 			  const struct media_pad *local,
+ 			  const struct media_pad *remote, u32 flags);
+ 	int (*link_validate)(struct media_link *link);
++	bool (*has_route)(struct media_entity *entity, unsigned int pad0,
++			  unsigned int pad1);
+ };
  
--static void renesas_sdhi_clk_start(struct tmio_mmc_host *host)
--{
--	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
--		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
--
--	/* HW engineers overrode docs: no sleep needed on R-Car2+ */
--	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
--		usleep_range(10000, 11000);
--}
--
--static void renesas_sdhi_clk_stop(struct tmio_mmc_host *host)
--{
--	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
--		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
--
--	/* HW engineers overrode docs: no sleep needed on R-Car2+ */
--	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
--		usleep_range(10000, 11000);
--}
--
- static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
- 				   unsigned int new_clock)
- {
- 	u32 clk = 0, clock;
- 
--	if (new_clock == 0) {
--		renesas_sdhi_clk_stop(host);
--		return;
--	}
-+	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
-+		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
-+
-+	if (new_clock == 0)
-+		goto out;
- 
- 	clock = renesas_sdhi_clk_update(host, new_clock) / 512;
- 
-@@ -194,13 +175,17 @@ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
- 	if ((host->pdata->flags & TMIO_MMC_CLK_ACTUAL) && ((clk >> 22) & 0x1))
- 		clk |= 0xff;
- 
--	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
--			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
- 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clk & CLK_CTL_DIV_MASK);
- 	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
- 		usleep_range(10000, 11000);
- 
--	renesas_sdhi_clk_start(host);
-+	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
-+		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
-+
-+out:
-+	/* HW engineers overrode docs: no sleep needed on R-Car2+ */
-+	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
-+		usleep_range(10000, 11000);
- }
- 
- static void renesas_sdhi_clk_disable(struct tmio_mmc_host *host)
+ /**
 -- 
-2.7.4
+2.18.0
