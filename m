@@ -1,87 +1,119 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:32792 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729818AbeHFQRV (ORCPT
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:12102 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730611AbeHWQ5q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Aug 2018 12:17:21 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Chris Brandt <chris.brandt@renesas.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Ulrich Hecht <uli@fpond.eu>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-serial@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 0/4] sh-sci : Do not derive regshift from regsize
-Date: Mon,  6 Aug 2018 16:07:51 +0200
-Message-Id: <20180806140755.24087-1-geert+renesas@glider.be>
+        Thu, 23 Aug 2018 12:57:46 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 04/30] v4l: mc: Start walk from a specific pad in use count calculation
+Date: Thu, 23 Aug 2018 15:25:18 +0200
+Message-Id: <20180823132544.521-5-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-This RFC patch series was sparked by noticing that commit 2d4dd0da45401c7a
-("serial: sh-sci: Allow for compressed SCIF address") broke earlycon
-support on most Renesas ARM SoCs using SCIF ports, and by the fragility of
-deriving regshift from the register block size (which may be rounded up):
-  1. The first patch is an old patch from Sato-san, which I never really
-     understood.  But it turned out to be a dependency for patch 2.
-  2. Patch 2 makes sure regshift is initialized when using earlycon,
-     unbreaking the serial console on e.g. R-Car Gen2 and Gen3.
-  3. Patch 3 reverts the patch that started deriving regshift from the
-     register block size, and that removed the plat_sci_port.regshift
-     field.  Which is a field I needed again in patch 4.
-  4. Patch 4 removes the remaining regshift derivations on DT platforms.
- (5. I didn't bother writing patch 5, which involves adding .regshift
-     initializations to all SH board files that need it.)
+With the addition of the recent has_route() media entity op, the pads of a
+media entity are no longer all interconnected. This has to be taken into
+account in power management.
 
-However, I'm not happy with the end result, so please DO NOT apply this!
-As I spent almost a full day on this, and would still like to know the
-story about "sh-sci: Use a separate sci_port for earlycon", I decided to
-post it anyway.
+Prepare for the addition of a helper function supporting S_ROUTING.
 
-As earlycon will be broken in v4.19-rc1 on RZ/A1, RZ/G, and R-Car, assuming
-no other actions are taken, an alternative solution would be to:
-  1. Revert commit 7acece71a517cad8 ("serial: sh-sci: Remove
-     SCIx_RZ_SCIFA_REGTYPE"),
-  2. Revert commit 2d4dd0da45401c7a ("serial: sh-sci: Allow for compressed
-     SCIF address") alternative,
-  3. Add an OF_EARLYCON_DECLARE() for RZ/A2, to fix earlycon on RZ/A2.
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+---
+ drivers/media/v4l2-core/v4l2-mc.c | 25 ++++++++++++-------------
+ 1 file changed, 12 insertions(+), 13 deletions(-)
 
-What do you think?
-Thanks for your comments!
-
-P.S. Apparently SCIx_SH4_SCIF_REGTYPE and SCIx_SH2_SCIF_FIFODATA_REGTYPE
-     are identical?
-
-Geert Uytterhoeven (3):
-  [RFC] sh-sci: Take into account regshift to fix earlycon breakage
-  [RFC] Revert "serial: sh-sci: Compute the regshift value for SCI
-    ports"
-  [RFC] sh-sci: Derive regshift value from DT compatible value
-
-Yoshinori Sato (1):
-  [RFC] sh-sci: Use a separate sci_port for earlycon
-
- arch/sh/kernel/cpu/sh3/setup-sh770x.c |  1 +
- arch/sh/kernel/cpu/sh4/setup-sh7750.c |  3 +-
- arch/sh/kernel/cpu/sh4/setup-sh7760.c | 10 +---
- drivers/tty/serial/sh-sci.c           | 68 +++++++++++++++++----------
- include/linux/serial_sci.h            |  1 +
- 5 files changed, 49 insertions(+), 34 deletions(-)
-
+diff --git a/drivers/media/v4l2-core/v4l2-mc.c b/drivers/media/v4l2-core/v4l2-mc.c
+index d923bb344b6aeb97..f702cac5205b3447 100644
+--- a/drivers/media/v4l2-core/v4l2-mc.c
++++ b/drivers/media/v4l2-core/v4l2-mc.c
+@@ -251,17 +251,16 @@ EXPORT_SYMBOL_GPL(v4l_vb2q_enable_media_source);
+ 
+ /*
+  * pipeline_pm_use_count - Count the number of users of a pipeline
+- * @entity: The entity
++ * @pad: The pad
+  *
+  * Return the total number of users of all video device nodes in the pipeline.
+  */
+-static int pipeline_pm_use_count(struct media_entity *entity,
+-	struct media_graph *graph)
++static int pipeline_pm_use_count(struct media_pad *pad,
++				 struct media_graph *graph)
+ {
+-	struct media_pad *pad;
+ 	int use = 0;
+ 
+-	media_graph_walk_start(graph, entity->pads);
++	media_graph_walk_start(graph, pad);
+ 
+ 	while ((pad = media_graph_walk_next(graph))) {
+ 		if (is_media_entity_v4l2_video_device(pad->entity))
+@@ -307,7 +306,7 @@ static int pipeline_pm_power_one(struct media_entity *entity, int change)
+ 
+ /*
+  * pipeline_pm_power - Apply power change to all entities in a pipeline
+- * @entity: The entity
++ * @pad: The pad
+  * @change: Use count change
+  *
+  * Walk the pipeline to update the use count and the power state of all non-node
+@@ -315,16 +314,16 @@ static int pipeline_pm_power_one(struct media_entity *entity, int change)
+  *
+  * Return 0 on success or a negative error code on failure.
+  */
+-static int pipeline_pm_power(struct media_entity *entity, int change,
++static int pipeline_pm_power(struct media_pad *pad, int change,
+ 	struct media_graph *graph)
+ {
+-	struct media_pad *tmp_pad, *pad;
++	struct media_pad *tmp_pad, *first = pad;
+ 	int ret = 0;
+ 
+ 	if (!change)
+ 		return 0;
+ 
+-	media_graph_walk_start(graph, entity->pads);
++	media_graph_walk_start(graph, pad);
+ 
+ 	while (!ret && (pad = media_graph_walk_next(graph)))
+ 		if (is_media_entity_v4l2_subdev(pad->entity))
+@@ -333,7 +332,7 @@ static int pipeline_pm_power(struct media_entity *entity, int change,
+ 	if (!ret)
+ 		return ret;
+ 
+-	media_graph_walk_start(graph, entity->pads);
++	media_graph_walk_start(graph, first);
+ 
+ 	while ((tmp_pad = media_graph_walk_next(graph))
+ 	       && tmp_pad != pad)
+@@ -356,7 +355,7 @@ int v4l2_pipeline_pm_use(struct media_entity *entity, int use)
+ 	WARN_ON(entity->use_count < 0);
+ 
+ 	/* Apply power change to connected non-nodes. */
+-	ret = pipeline_pm_power(entity, change, &mdev->pm_count_walk);
++	ret = pipeline_pm_power(entity->pads, change, &mdev->pm_count_walk);
+ 	if (ret < 0)
+ 		entity->use_count -= change;
+ 
+@@ -370,8 +369,8 @@ int v4l2_pipeline_link_notify(struct media_link *link, u32 flags,
+ 			      unsigned int notification)
+ {
+ 	struct media_graph *graph = &link->graph_obj.mdev->pm_count_walk;
+-	struct media_entity *source = link->source->entity;
+-	struct media_entity *sink = link->sink->entity;
++	struct media_pad *source = link->source;
++	struct media_pad *sink = link->sink;
+ 	int source_use;
+ 	int sink_use;
+ 	int ret = 0;
 -- 
-2.17.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.18.0
