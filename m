@@ -1,111 +1,106 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:22649 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732889AbeHFVXg (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Aug 2018 17:23:36 -0400
+Return-Path: <linux-media-owner@vger.kernel.org>
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 1/2] mmc: renesas_sdhi: handle 4tap hs400 mode quirk based on SoC revision
-Date: Mon,  6 Aug 2018 21:12:26 +0200
-Message-Id: <20180806191227.28401-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180806191227.28401-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180806191227.28401-1-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 30/30] rcar-csi2: expose the subdevice internal routing
+Date: Thu, 23 Aug 2018 15:25:44 +0200
+Message-Id: <20180823132544.521-31-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Latest datasheet makes it clear that not all ES revisions of the H3 and
-M3-W have the 4-tap HS400 mode quirk, currently the quirk is set
-unconditionally for these two SoCs. Prepare to handle the quirk based on
-SoC revision instead of compatibility value by using soc_device_match()
-and set the TMIO_MMC_HAVE_4TAP_HS400 flag explicitly.
-
-The reason for adding a new quirks struct instead of just a flag is that
-looking ahead it seems more quirks needs to be handled in a SoC revision
-basis.
+Expose the subdevice internal routing from the single multiplexed sink
+pad to its source pads by implementing .get_routing(). This information
+is used to do link validation at stream start and allows user-space to
+view the route configuration.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/mmc/host/renesas_sdhi_core.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-csi2.c | 53 +++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 66e90f233cefcba5..781a31592330f872 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -35,6 +35,7 @@
- #include <linux/pinctrl/consumer.h>
- #include <linux/pinctrl/pinctrl-state.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/sys_soc.h>
- 
- #include "renesas_sdhi.h"
- #include "tmio_mmc.h"
-@@ -48,6 +49,10 @@
- #define SDHI_VER_GEN3_SD	0xcc10
- #define SDHI_VER_GEN3_SDMMC	0xcd10
- 
-+struct renesas_sdhi_quirks {
-+	bool hs400_4taps;
-+};
-+
- static void renesas_sdhi_sdbuf_width(struct tmio_mmc_host *host, int width)
- {
- 	u32 val;
-@@ -555,11 +560,25 @@ static void renesas_sdhi_enable_dma(struct tmio_mmc_host *host, bool enable)
- 	renesas_sdhi_sdbuf_width(host, enable ? width : 16);
+diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+index 467722007b328e4e..1cd17f4091946cad 100644
+--- a/drivers/media/platform/rcar-vin/rcar-csi2.c
++++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+@@ -342,6 +342,14 @@ static int rcsi2_pad_to_vc(unsigned int pad)
+ 	return pad - RCAR_CSI2_SOURCE_VC0;
  }
  
-+static const struct renesas_sdhi_quirks sdhi_quirks_h3_m3w = {
-+	.hs400_4taps = true,
-+};
++static int rcsi2_vc_to_pad(unsigned int vc)
++{
++	if (vc > 3)
++		return -EINVAL;
 +
-+static const struct soc_device_attribute sdhi_quirks_match[]  = {
-+	{ .soc_id = "r8a7795", .revision = "ES1.*", .data = &sdhi_quirks_h3_m3w },
-+	{ .soc_id = "r8a7795", .revision = "ES2.0", .data = &sdhi_quirks_h3_m3w },
-+	{ .soc_id = "r8a7796", .revision = "ES1.0", .data = &sdhi_quirks_h3_m3w },
-+	{ .soc_id = "r8a7796", .revision = "ES1.1", .data = &sdhi_quirks_h3_m3w },
-+	{ /* Sentinel. */ },
-+};
++	return vc + RCAR_CSI2_SOURCE_VC0;
++}
 +
- int renesas_sdhi_probe(struct platform_device *pdev,
- 		       const struct tmio_mmc_dma_ops *dma_ops)
- {
- 	struct tmio_mmc_data *mmd = pdev->dev.platform_data;
-+	const struct renesas_sdhi_quirks *quirks = NULL;
- 	const struct renesas_sdhi_of_data *of_data;
-+	const struct soc_device_attribute *attr;
- 	struct tmio_mmc_data *mmc_data;
- 	struct tmio_mmc_dma *dma_priv;
- 	struct tmio_mmc_host *host;
-@@ -569,6 +588,10 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ struct rcar_csi2_info {
+ 	int (*init_phtw)(struct rcar_csi2 *priv, unsigned int mbps);
+ 	int (*confirm_start)(struct rcar_csi2 *priv);
+@@ -705,9 +713,54 @@ static const struct v4l2_subdev_video_ops rcar_csi2_video_ops = {
+ 	.s_stream = rcsi2_s_stream,
+ };
  
- 	of_data = of_device_get_match_data(&pdev->dev);
- 
-+	attr = soc_device_match(sdhi_quirks_match);
-+	if (attr)
-+		quirks = attr->data;
++static int rcsi2_get_routing(struct v4l2_subdev *sd,
++				 struct v4l2_subdev_routing *routing)
++{
++	struct rcar_csi2 *priv = sd_to_csi2(sd);
++	struct v4l2_mbus_frame_desc fd;
++	struct v4l2_subdev_route *r = routing->routes;
++	unsigned int i;
++	int ret;
 +
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!res)
- 		return -EINVAL;
-@@ -634,6 +657,9 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 	host->multi_io_quirk	= renesas_sdhi_multi_io_quirk;
- 	host->dma_ops		= dma_ops;
- 
-+	if (quirks && quirks->hs400_4taps)
-+		mmc_data->flags |= TMIO_MMC_HAVE_4TAP_HS400;
++	/* Get information about multiplexed link */
++	ret = rcsi2_get_remote_frame_desc(priv, &fd);
++	if (ret)
++		return ret;
 +
- 	/* For some SoC, we disable internal WP. GPIO may override this */
- 	if (mmc_can_gpio_ro(host->mmc))
- 		mmc_data->capabilities2 &= ~MMC_CAP2_NO_WRITE_PROTECT;
++	if (routing->num_routes < fd.num_entries) {
++		routing->num_routes = fd.num_entries;
++		return -ENOSPC;
++	}
++
++	routing->num_routes = fd.num_entries;
++
++	for (i = 0; i < fd.num_entries; i++) {
++		struct v4l2_mbus_frame_desc_entry *entry = &fd.entry[i];
++		int source_pad;
++
++		source_pad = rcsi2_vc_to_pad(entry->bus.csi2.channel);
++		if (source_pad < 0) {
++			dev_err(priv->dev, "Virtual Channel out of range: %u\n",
++				entry->bus.csi2.channel);
++			return -ENOSPC;
++		}
++
++		r->sink_pad = RCAR_CSI2_SINK;
++		r->sink_stream = entry->stream;
++		r->source_pad = source_pad;
++		r->source_stream = 0;
++		r->flags = V4L2_SUBDEV_ROUTE_FL_ACTIVE |
++			V4L2_SUBDEV_ROUTE_FL_IMMUTABLE;
++		r++;
++	}
++
++	return 0;
++}
++
+ static const struct v4l2_subdev_pad_ops rcar_csi2_pad_ops = {
+ 	.set_fmt = rcsi2_set_pad_format,
+ 	.get_fmt = rcsi2_get_pad_format,
++	.get_routing = rcsi2_get_routing,
+ };
+ 
+ static const struct v4l2_subdev_ops rcar_csi2_subdev_ops = {
 -- 
 2.18.0
