@@ -1,40 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f46.google.com ([209.85.167.46]:36587 "EHLO
-        mail-lf1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726626AbeHUXJo (ORCPT
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:12213 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730693AbeHWQ5v (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 Aug 2018 19:09:44 -0400
-Received: by mail-lf1-f46.google.com with SMTP id c21-v6so4683906lfh.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 21 Aug 2018 12:48:12 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 0/2] Add R8A77980/Condor eMMC support
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Message-ID: <1af46bf9-d9e5-8dcf-0ac7-a85e7348a34e@cogentembedded.com>
-Date: Tue, 21 Aug 2018 22:48:09 +0300
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Thu, 23 Aug 2018 12:57:51 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 09/30] media: entity: Swap pads if route is checked from source to sink
+Date: Thu, 23 Aug 2018 15:25:23 +0200
+Message-Id: <20180823132544.521-10-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Here's the set of 2 patches against Simon Horman's 'renesas.git' repo's
-'renesas-devel-20180810-v4.18-rc7' tag. We're adding the R8A77970 MMC0
-(SDHI2) device nodes and then enable eMMC support on the V3M Starter Kit
-board. The SDHI (w/internal DMA) driver patch white-listing the R8A77970
-was posted last Saturday; the R8A77970 CPG/MSSR driver patch and the SDHI
-bindings patch have been posted earlier today.
+This way the pads are always passed to the has_route() op sink pad first.
+Makes sense.
 
-[1/2] arm64: dts: renesas: r8a77970: add MMC support
-[2/2] arm64: dts: renesas: v3msk: add eMMC support
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+---
+ drivers/media/media-entity.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-WBR, Sergei
+diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
+index 2e5958732a9735cf..88c8b838b78b39aa 100644
+--- a/drivers/media/media-entity.c
++++ b/drivers/media/media-entity.c
+@@ -249,6 +249,10 @@ bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
+ 	if (!entity->ops || !entity->ops->has_route)
+ 		return true;
+ 
++	if (entity->pads[pad0].flags & MEDIA_PAD_FL_SOURCE
++	    && entity->pads[pad1].flags & MEDIA_PAD_FL_SINK)
++		swap(pad0, pad1);
++
+ 	return entity->ops->has_route(entity, pad0, pad1);
+ }
+ EXPORT_SYMBOL_GPL(media_entity_has_route);
+-- 
+2.18.0
