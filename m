@@ -1,72 +1,189 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:51040 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728449AbeH3S7L (ORCPT
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:12057 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730568AbeHWQ5n (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Aug 2018 14:59:11 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: dts: renesas: r8a77990: Add BRG support to SCIF2
-Date: Thu, 30 Aug 2018 16:56:35 +0200
-Message-Id: <20180830145635.7659-1-geert+renesas@glider.be>
+        Thu, 23 Aug 2018 12:57:43 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 02/30] media: entity: Use pads instead of entities in the media graph walk stack
+Date: Thu, 23 Aug 2018 15:25:16 +0200
+Message-Id: <20180823132544.521-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Add the device node for the external SCIF_CLK, and describe the clock
-inputs for the Baud Rate Generator for External Clock (BRG) for SCIF2,
-which can increase serial clock accuracy.
+Change the media graph walk stack structure to use media pads instead of
+using media entities. In addition to the entity, the pad contains the
+information which pad in the entity are being dealt with.
 
-The presence of the SCIF_CLK crystal and its clock frequency depend on
-the actual board.
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[geert: Enhance patch description]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 ---
-Note: The Ebisu board does not provide SCIF_CLK.  However, using the BRG
-      increases the serial console's clock accurary from 115200+541 bps
-      to 115200-257 bps.
----
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ drivers/media/media-entity.c | 53 ++++++++++++++++++------------------
+ include/media/media-entity.h |  6 ++--
+ 2 files changed, 29 insertions(+), 30 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index e2c2d1480a68cf1b..6198768264bece81 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -63,6 +63,13 @@
- 		method = "smc";
- 	};
+diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
+index 70679d186944a117..c5dcae6d0caf92ec 100644
+--- a/drivers/media/media-entity.c
++++ b/drivers/media/media-entity.c
+@@ -237,40 +237,39 @@ EXPORT_SYMBOL_GPL(media_entity_pads_init);
+  * Graph traversal
+  */
  
-+	/* External SCIF clock - to be overridden by boards that provide it */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
- 	soc: soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&gic>;
-@@ -412,8 +419,11 @@
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
- 			reg = <0 0xe6e88000 0 64>;
- 			interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 310>;
--			clock-names = "fck";
-+			clocks = <&cpg CPG_MOD 310>,
-+				 <&cpg CPG_CORE R8A77990_CLK_S3D1C>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+
- 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 310>;
- 			status = "disabled";
+-static struct media_entity *
+-media_entity_other(struct media_entity *entity, struct media_link *link)
++static struct media_pad *
++media_entity_other(struct media_pad *pad, struct media_link *link)
+ {
+-	if (link->source->entity == entity)
+-		return link->sink->entity;
++	if (link->source == pad)
++		return link->sink;
+ 	else
+-		return link->source->entity;
++		return link->source;
+ }
+ 
+ /* push an entity to traversal stack */
+-static void stack_push(struct media_graph *graph,
+-		       struct media_entity *entity)
++static void stack_push(struct media_graph *graph, struct media_pad *pad)
+ {
+ 	if (graph->top == MEDIA_ENTITY_ENUM_MAX_DEPTH - 1) {
+ 		WARN_ON(1);
+ 		return;
+ 	}
+ 	graph->top++;
+-	graph->stack[graph->top].link = entity->links.next;
+-	graph->stack[graph->top].entity = entity;
++	graph->stack[graph->top].link = pad->entity->links.next;
++	graph->stack[graph->top].pad = pad;
+ }
+ 
+-static struct media_entity *stack_pop(struct media_graph *graph)
++static struct media_pad *stack_pop(struct media_graph *graph)
+ {
+-	struct media_entity *entity;
++	struct media_pad *pad;
+ 
+-	entity = graph->stack[graph->top].entity;
++	pad = graph->stack[graph->top].pad;
+ 	graph->top--;
+ 
+-	return entity;
++	return pad;
+ }
+ 
+ #define link_top(en)	((en)->stack[(en)->top].link)
+-#define stack_top(en)	((en)->stack[(en)->top].entity)
++#define stack_top(en)	((en)->stack[(en)->top].pad)
+ 
+ /**
+  * media_graph_walk_init - Allocate resources for graph walk
+@@ -306,8 +305,8 @@ void media_graph_walk_start(struct media_graph *graph, struct media_pad *pad)
+ 	media_entity_enum_set(&graph->ent_enum, pad->entity);
+ 
+ 	graph->top = 0;
+-	graph->stack[graph->top].entity = NULL;
+-	stack_push(graph, pad->entity);
++	graph->stack[graph->top].pad = NULL;
++	stack_push(graph, pad);
+ 	dev_dbg(pad->graph_obj.mdev->dev,
+ 		"begin graph walk at '%s':%u\n", pad->entity->name, pad->index);
+ }
+@@ -315,16 +314,16 @@ EXPORT_SYMBOL_GPL(media_graph_walk_start);
+ 
+ static void media_graph_walk_iter(struct media_graph *graph)
+ {
+-	struct media_entity *entity = stack_top(graph);
++	struct media_pad *pad = stack_top(graph);
+ 	struct media_link *link;
+-	struct media_entity *next;
++	struct media_pad *next;
+ 
+ 	link = list_entry(link_top(graph), typeof(*link), list);
+ 
+ 	/* The link is not enabled so we do not follow. */
+ 	if (!(link->flags & MEDIA_LNK_FL_ENABLED)) {
+ 		link_top(graph) = link_top(graph)->next;
+-		dev_dbg(entity->graph_obj.mdev->dev,
++		dev_dbg(pad->graph_obj.mdev->dev,
+ 			"walk: skipping disabled link '%s':%u -> '%s':%u\n",
+ 			link->source->entity->name, link->source->index,
+ 			link->sink->entity->name, link->sink->index);
+@@ -332,22 +331,22 @@ static void media_graph_walk_iter(struct media_graph *graph)
+ 	}
+ 
+ 	/* Get the entity in the other end of the link . */
+-	next = media_entity_other(entity, link);
++	next = media_entity_other(pad, link);
+ 
+ 	/* Has the entity already been visited? */
+-	if (media_entity_enum_test_and_set(&graph->ent_enum, next)) {
++	if (media_entity_enum_test_and_set(&graph->ent_enum, next->entity)) {
+ 		link_top(graph) = link_top(graph)->next;
+-		dev_dbg(entity->graph_obj.mdev->dev,
++		dev_dbg(pad->graph_obj.mdev->dev,
+ 			"walk: skipping entity '%s' (already seen)\n",
+-			next->name);
++			next->entity->name);
+ 		return;
+ 	}
+ 
+ 	/* Push the new entity to stack and start over. */
+ 	link_top(graph) = link_top(graph)->next;
+ 	stack_push(graph, next);
+-	dev_dbg(entity->graph_obj.mdev->dev, "walk: pushing '%s' on stack\n",
+-		next->name);
++	dev_dbg(next->graph_obj.mdev->dev, "walk: pushing '%s':%u on stack\n",
++		next->entity->name, next->index);
+ }
+ 
+ struct media_entity *media_graph_walk_next(struct media_graph *graph)
+@@ -362,10 +361,10 @@ struct media_entity *media_graph_walk_next(struct media_graph *graph)
+ 	 * top of the stack until no more entities on the level can be
+ 	 * found.
+ 	 */
+-	while (link_top(graph) != &stack_top(graph)->links)
++	while (link_top(graph) != &stack_top(graph)->entity->links)
+ 		media_graph_walk_iter(graph);
+ 
+-	entity = stack_pop(graph);
++	entity = stack_pop(graph)->entity;
+ 	dev_dbg(entity->graph_obj.mdev->dev,
+ 		"walk: returning entity '%s'\n", entity->name);
+ 
+diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+index 20ff038c8aeff4b8..c844a677a1cfbb0d 100644
+--- a/include/media/media-entity.h
++++ b/include/media/media-entity.h
+@@ -86,16 +86,16 @@ struct media_entity_enum {
+  * struct media_graph - Media graph traversal state
+  *
+  * @stack:		Graph traversal stack; the stack contains information
+- *			on the path the media entities to be walked and the
++ *			on the path the media pads to be walked and the
+  *			links through which they were reached.
+- * @stack.entity:	pointer to &struct media_entity at the graph.
++ * @stack.pad:		pointer to &struct media_pad at the graph.
+  * @stack.link:		pointer to &struct list_head.
+  * @ent_enum:		Visited entities
+  * @top:		The top of the stack
+  */
+ struct media_graph {
+ 	struct {
+-		struct media_entity *entity;
++		struct media_pad *pad;
+ 		struct list_head *link;
+ 	} stack[MEDIA_ENTITY_ENUM_MAX_DEPTH];
+ 
 -- 
-2.17.1
+2.18.0
