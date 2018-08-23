@@ -1,68 +1,103 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45188 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726507AbeH2MgS (ORCPT
+Received: from conuserg-09.nifty.com ([210.131.2.76]:47875 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726204AbeHWINb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Aug 2018 08:36:18 -0400
-Date: Wed, 29 Aug 2018 10:40:27 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        Thu, 23 Aug 2018 04:13:31 -0400
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
         linux-renesas-soc@vger.kernel.org,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Jassi Brar <jaswinder.singh@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] mmc: renesas_sdhi: merge clk_{start,stop}
- functions to set_clock
-Message-ID: <20180829084027.6bymirtwvb4oiye2@ninjato>
+Subject: [PATCH v3 5/6] mmc: renesas_sdhi: merge clk_{start,stop} functions to set_clock
+Date: Thu, 23 Aug 2018 13:44:19 +0900
+Message-Id: <1534999460-15111-6-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com>
- <1534999460-15111-6-git-send-email-yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="5hvbzvoscyba3qyo"
-Content-Disposition: inline
-In-Reply-To: <1534999460-15111-6-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+renesas_sdhi_clk_start() and renesas_sdhi_clk_stop() are now only
+called from renesas_sdhi_set_clock().  Merge them.
 
---5hvbzvoscyba3qyo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-On Thu, Aug 23, 2018 at 01:44:19PM +0900, Masahiro Yamada wrote:
-> renesas_sdhi_clk_start() and renesas_sdhi_clk_stop() are now only
-> called from renesas_sdhi_set_clock().  Merge them.
->=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Changes in v3: None
+Changes in v2: None
 
-Nice cleanup, works fine, and I don't see any issues with the
-datasheets. Thanks!
+ drivers/mmc/host/renesas_sdhi_core.c | 38 ++++++++++++------------------------
+ 1 file changed, 12 insertions(+), 26 deletions(-)
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---5hvbzvoscyba3qyo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluGW/sACgkQFA3kzBSg
-Kbb1jg//Y3mpILZagitNh8Wly47dk54Leo3sO4RFOWHTHtPYH5Wf+NEb+9AG9B8s
-yXE11YuK0+UN+PBIibCnCw7b/HnUbMF70sBtx+8BmU/Bxonan1qljAvDOA8Mj6RG
-VHrLu9o1AbNkNGkThbv3Jz6JGXiqxXdIRhpHd2kKJaMA+FYsFgpjXRoUeia6xJyk
-HlEQWiBb5X1EH5zppXX+zQt1DyKf1eQkN0w8HudJcGRsIju2KQtVgt1I7go8ZWki
-5R4O2RiM6JPLyHSuHWPdhf6mdtBDVxAPaIOl65NlfSQrEkKJq6jaYe+NS3pi05nN
-rbcywEEhOcFMYwoGhzRbKeDuFGoqCOMVDED4uHTxiDoYcd/kDa8xgwoRcuKxPT58
-bGUNF1G1yoOwXh0nXMNg2AgPwq6ijJfrSHNmb0u4RSx2C0mDCUiJENvPredx/k3y
-Ndo3B3R7hYZJHBw5fOEkt695bdx43HLG9y7fIKDbwf+rpP+ch/caKZAyaRsWJmxS
-3hyYUxoIDcIGNmew+vLChbJlophTcuYkWp2Gy5cTGfFl6xf6KgOLFLieOil3u4oF
-/iYcBeNwRc/zpA9QBihC+xTGCwabn9419ZHOa+1+I1v57t88ZBELmJIBtuJVq7EG
-VIeKg085sFhrDWL1xAkdMDvlkWUUiZ4D5bjI9gk3v4N1saVNWYo=
-=MxpU
------END PGP SIGNATURE-----
-
---5hvbzvoscyba3qyo--
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index cb6e889..0e88737 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -155,35 +155,17 @@ static unsigned int renesas_sdhi_clk_update(struct tmio_mmc_host *host,
+ 	return ret == 0 ? best_freq : clk_get_rate(priv->clk);
+ }
+ 
+-static void renesas_sdhi_clk_start(struct tmio_mmc_host *host)
++static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
++				   unsigned int new_clock)
+ {
+-	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
+-		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+-
+-	/* HW engineers overrode docs: no sleep needed on R-Car2+ */
+-	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+-		usleep_range(10000, 11000);
+-}
++	u32 clk = 0, clock;
+ 
+-static void renesas_sdhi_clk_stop(struct tmio_mmc_host *host)
+-{
+ 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
+ 		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+ 
+-	/* HW engineers overrode docs: no sleep needed on R-Car2+ */
+-	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+-		usleep_range(10000, 11000);
+-}
+-
+-static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
+-				   unsigned int new_clock)
+-{
+-	u32 clk = 0, clock;
++	if (new_clock == 0)
++		goto out;
+ 
+-	if (new_clock == 0) {
+-		renesas_sdhi_clk_stop(host);
+-		return;
+-	}
+ 	/*
+ 	 * Both HS400 and HS200/SD104 set 200MHz, but some devices need to
+ 	 * set 400MHz to distinguish the CPG settings in HS400.
+@@ -206,13 +188,17 @@ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
+ 			clk &= ~0xff;
+ 	}
+ 
+-	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
+-			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+ 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clk & CLK_CTL_DIV_MASK);
+ 	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+ 		usleep_range(10000, 11000);
+ 
+-	renesas_sdhi_clk_start(host);
++	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
++		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
++
++out:
++	/* HW engineers overrode docs: no sleep needed on R-Car2+ */
++	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
++		usleep_range(10000, 11000);
+ }
+ 
+ static void renesas_sdhi_clk_disable(struct tmio_mmc_host *host)
+-- 
+2.7.4
