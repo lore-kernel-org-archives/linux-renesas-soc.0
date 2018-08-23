@@ -1,85 +1,47 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH 08/30] media: entity: Add media_has_route() function
-Date: Thu, 23 Aug 2018 15:25:22 +0200
-Message-Id: <20180823132544.521-9-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f65.google.com ([209.85.214.65]:51830 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728582AbeHWOM1 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 23 Aug 2018 10:12:27 -0400
+Received: by mail-it0-f65.google.com with SMTP id e14-v6so6918810itf.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Aug 2018 03:43:21 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <06154a74-e06b-8a5e-6828-c96946a3ef15@cogentembedded.com>
+References: <624fec83-0190-18b4-1d80-b59b1bc964b2@cogentembedded.com>
+ <20180822193700.nzwxfhmgloslfkzx@katana> <06154a74-e06b-8a5e-6828-c96946a3ef15@cogentembedded.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 23 Aug 2018 12:43:20 +0200
+Message-ID: <CAPDyKFpgXT9udOYLmRchvMQ-oCo8ZBY18iCaae1zVbT1=YuWQw@mail.gmail.com>
+Subject: Re: [PATCH v2] mmc: renesas_sdhi_internal_dmac: mask DMAC interrupts
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+On 22 August 2018 at 22:07, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> On 08/22/2018 10:37 PM, Wolfram Sang wrote:
+>
+>>> I have encountered an interrupt storm during the eMMC chip probing (and
+>>> the chip finally didn't get detected).  It turned out that U-Boot left
+>>> the SDHI DMA interrupts enabled while the Linux driver didn't use those.
+>>> Masking those interrupts in renesas_sdhi_internal_dmac_request_dma() gets
+>>> rid of both issues...
+>>>
+>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>
+>> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> Fixes: 2a68ea7896e3 ("mmc: renesas-sdhi: add support for R-Car Gen3 SDHI DMAC")
+>
+> MBR, Sergei
 
-This is a wrapper around the media entity has_route operation.
+Applied for fixes, thanks!
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- drivers/media/media-entity.c | 16 ++++++++++++++++
- include/media/media-entity.h | 17 +++++++++++++++++
- 2 files changed, 33 insertions(+)
-
-diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-index 2722c38a822d7787..2e5958732a9735cf 100644
---- a/drivers/media/media-entity.c
-+++ b/drivers/media/media-entity.c
-@@ -237,6 +237,22 @@ EXPORT_SYMBOL_GPL(media_entity_pads_init);
-  * Graph traversal
-  */
- 
-+bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
-+			    unsigned int pad1)
-+{
-+	if (pad0 >= entity->num_pads || pad1 >= entity->num_pads)
-+		return false;
-+
-+	if (pad0 == pad1)
-+		return true;
-+
-+	if (!entity->ops || !entity->ops->has_route)
-+		return true;
-+
-+	return entity->ops->has_route(entity, pad0, pad1);
-+}
-+EXPORT_SYMBOL_GPL(media_entity_has_route);
-+
- static struct media_pad *
- media_entity_other(struct media_pad *pad, struct media_link *link)
- {
-diff --git a/include/media/media-entity.h b/include/media/media-entity.h
-index 07df1b8d85a3c1ba..53f293415fc39ab1 100644
---- a/include/media/media-entity.h
-+++ b/include/media/media-entity.h
-@@ -871,6 +871,23 @@ int media_entity_get_fwnode_pad(struct media_entity *entity,
- __must_check int media_graph_walk_init(
- 	struct media_graph *graph, struct media_device *mdev);
- 
-+/**
-+ * media_entity_has_route - Check if two entity pads are connected internally
-+ *
-+ * @entity: The entity
-+ * @pad0: The first pad index
-+ * @pad1: The second pad index
-+ *
-+ * This function can be used to check whether two pads of an entity are
-+ * connected internally in the entity.
-+ *
-+ * The caller must hold entity->graph_obj.mdev->mutex.
-+ *
-+ * Return: true if the pads are connected internally and false otherwise.
-+ */
-+bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
-+			    unsigned int pad1);
-+
- /**
-  * media_graph_walk_cleanup - Release resources used by graph walk.
-  *
--- 
-2.18.0
+Kind regards
+Uffe
