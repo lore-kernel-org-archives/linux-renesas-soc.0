@@ -1,47 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:40989 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbeH1FmK (ORCPT
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:36874 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731021AbeHWOpy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Aug 2018 01:42:10 -0400
-From: Rob Herring <robh@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] ARM: shmobile: Convert to using %pOFn instead of device_node.name
-Date: Mon, 27 Aug 2018 20:52:03 -0500
-Message-Id: <20180828015252.28511-2-robh@kernel.org>
-In-Reply-To: <20180828015252.28511-1-robh@kernel.org>
-References: <20180828015252.28511-1-robh@kernel.org>
+        Thu, 23 Aug 2018 10:45:54 -0400
+Received: by mail-lf1-f66.google.com with SMTP id j8-v6so3782562lfb.4
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Aug 2018 04:16:40 -0700 (PDT)
+Subject: Re: [PATCH] mmc: renesas_sdhi_internal_dmac: fix #define
+ RST_RESERVED_BITS
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <d5574b7b-9bb6-1f24-f2b4-2036c66a2924@cogentembedded.com>
+ <20180822193844.tefn3ky2vlskfcwd@katana>
+ <0309adb6-c261-f9cf-528b-208950db208f@cogentembedded.com>
+ <20180822194505.xqji57ef4oy3ciit@katana>
+ <0021705d-a647-20ce-7314-d9830f02ea0a@cogentembedded.com>
+ <CAPDyKFrGyNi1HeLSUWfr8-8Rsgr=wWHYvLa7YeaGp=0hXZQv9Q@mail.gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <5914aa75-f0e0-6f2c-0912-94d39e318ca1@cogentembedded.com>
+Date: Thu, 23 Aug 2018 14:16:37 +0300
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFrGyNi1HeLSUWfr8-8Rsgr=wWHYvLa7YeaGp=0hXZQv9Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In preparation to remove the node name pointer from struct device_node,
-convert printf users to use the %pOFn format specifier.
+On 08/23/2018 01:43 PM, Ulf Hansson wrote:
 
-Cc: Simon Horman <horms@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- arch/arm/mach-shmobile/pm-rmobile.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>> The DM_CM_RST register actually has bits 0-31 defaulting to 1s and bits
+>>>>>> 32-63 defaulting to 0s -- fix off-by-one in #define RST_RESERVED_BITS.
+>>>>>>
+>>>>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>>>>
+>>>>> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>>>>>
+>>>>> Suggesting stable.
+>>>>
+>>>>    Stable looks at the Fixes: tags now. Should I add that?
+>>>
+>>> Yes, that would be great IMHO.
+>>
+>> Fixes: 2a68ea7896e3 ("mmc: renesas-sdhi: add support for R-Car Gen3 SDHI DMAC")
+>>
+>>    Hopefully, Ulf uses patchwork. :-)
+> 
+> I do. However, fixes tags doesn't seem to get picked up. Anyway, it's
 
-diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/arch/arm/mach-shmobile/pm-rmobile.c
-index e348bcfe389d..9dd6cadcd900 100644
---- a/arch/arm/mach-shmobile/pm-rmobile.c
-+++ b/arch/arm/mach-shmobile/pm-rmobile.c
-@@ -189,7 +189,7 @@ static void __init add_special_pd(struct device_node *np, enum pd_types type)
- 		return;
- 	}
- 
--	pr_debug("Special PM domain %s type %d for %pOF\n", pd->name, type, np);
-+	pr_debug("Special PM domain %pOFn type %d for %pOF\n", pd, type, np);
- 
- 	special_pds[num_special_pds].pd = pd;
- 	special_pds[num_special_pds].type = type;
--- 
-2.17.1
+   I figured after writing... only patchwork.ozlabs.org seems to pick those up.
+
+> easy for me to add them.
+> 
+> Applied for fixes, thanks!
+
+   Thank you!
+
+> Kind regards
+> Uffe
+
+MBR, Sergei
