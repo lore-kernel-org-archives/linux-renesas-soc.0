@@ -1,30 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35934 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726382AbeHXMwk (ORCPT
+Received: from sauhun.de ([88.99.104.3]:59972 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727226AbeHWRE6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Aug 2018 08:52:40 -0400
-Date: Fri, 24 Aug 2018 11:18:51 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        Thu, 23 Aug 2018 13:04:58 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Wolfgang Grandegger <wg@grandegger.com>,
         Marc Kleine-Budde <mkl@pengutronix.de>,
         "David S. Miller" <davem@davemloft.net>, linux-can@vger.kernel.org,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] can: rcar: use SPDX identifier for Renesas drivers
-Message-ID: <20180824091850.eiezbkbb5zdpaedw@verge.net.au>
+Subject: [PATCH v2 2/2] can: rcar: use SPDX identifier for Renesas drivers
+Date: Thu, 23 Aug 2018 15:34:55 +0200
+Message-Id: <20180823133456.4748-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180823133456.4748-1-wsa+renesas@sang-engineering.com>
 References: <20180823133456.4748-1-wsa+renesas@sang-engineering.com>
- <20180823133456.4748-3-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180823133456.4748-3-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Aug 23, 2018 at 03:34:55PM +0200, Wolfram Sang wrote:
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Change since V1: s/GPL-2.0-or-later/GPL-2.0+/
+
+ drivers/net/can/rcar/rcar_can.c   | 6 +-----
+ drivers/net/can/rcar/rcar_canfd.c | 6 +-----
+ 2 files changed, 2 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/net/can/rcar/rcar_can.c b/drivers/net/can/rcar/rcar_can.c
+index 11662f479e76..06f90a0fdc93 100644
+--- a/drivers/net/can/rcar/rcar_can.c
++++ b/drivers/net/can/rcar/rcar_can.c
+@@ -1,12 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /* Renesas R-Car CAN device driver
+  *
+  * Copyright (C) 2013 Cogent Embedded, Inc. <source@cogentembedded.com>
+  * Copyright (C) 2013 Renesas Solutions Corp.
+- *
+- * This program is free software; you can redistribute  it and/or modify it
+- * under  the terms of  the GNU General  Public License as published by the
+- * Free Software Foundation;  either version 2 of the  License, or (at your
+- * option) any later version.
+  */
+ 
+ #include <linux/module.h>
+diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
+index 602c19e23f05..05410008aa6b 100644
+--- a/drivers/net/can/rcar/rcar_canfd.c
++++ b/drivers/net/can/rcar/rcar_canfd.c
+@@ -1,11 +1,7 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /* Renesas R-Car CAN FD device driver
+  *
+  * Copyright (C) 2015 Renesas Electronics Corp.
+- *
+- * This program is free software; you can redistribute  it and/or modify it
+- * under  the terms of  the GNU General  Public License as published by the
+- * Free Software Foundation;  either version 2 of the  License, or (at your
+- * option) any later version.
+  */
+ 
+ /* The R-Car CAN FD controller can operate in either one of the below two modes
+-- 
+2.11.0
