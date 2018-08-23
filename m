@@ -1,46 +1,50 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:35500 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728626AbeHFQse (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Aug 2018 12:48:34 -0400
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-To: linux-kernel@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        kbingham@kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/4] MAINTAINERS: rcar-du: Add co-maintainer
-Date: Mon,  6 Aug 2018 15:39:01 +0100
-Message-Id: <20180806143904.4716-1-kieran.bingham@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 21/30] v4l: Add bus type to frame descriptors
+Date: Thu, 23 Aug 2018 15:25:35 +0200
+Message-Id: <20180823132544.521-22-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Add myself as a co-maintainer for the Renesas DRM drivers.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 ---
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
+ include/media/v4l2-subdev.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7cebd5bba8a8..c7cecb9201b3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4764,6 +4764,7 @@ F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
+index 5acaeeb9b3cacefa..ac1f7ee4cdb978ad 100644
+--- a/include/media/v4l2-subdev.h
++++ b/include/media/v4l2-subdev.h
+@@ -349,12 +349,21 @@ struct v4l2_mbus_frame_desc_entry {
  
- DRM DRIVERS FOR RENESAS
- M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-+M:	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
- L:	dri-devel@lists.freedesktop.org
- L:	linux-renesas-soc@vger.kernel.org
- T:	git git://linuxtv.org/pinchartl/fbdev
+ #define V4L2_FRAME_DESC_ENTRY_MAX	4
+ 
++enum {
++	V4L2_MBUS_FRAME_DESC_TYPE_PLATFORM,
++	V4L2_MBUS_FRAME_DESC_TYPE_PARALLEL,
++	V4L2_MBUS_FRAME_DESC_TYPE_CCP2,
++	V4L2_MBUS_FRAME_DESC_TYPE_CSI2,
++};
++
+ /**
+  * struct v4l2_mbus_frame_desc - media bus data frame description
++ * @type: type of the bus (V4L2_MBUS_FRAME_DESC_TYPE_*)
+  * @entry: frame descriptors array
+  * @num_entries: number of entries in @entry array
+  */
+ struct v4l2_mbus_frame_desc {
++	u32 type;
+ 	struct v4l2_mbus_frame_desc_entry entry[V4L2_FRAME_DESC_ENTRY_MAX];
+ 	unsigned short num_entries;
+ };
 -- 
-2.17.1
+2.18.0
