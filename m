@@ -1,189 +1,124 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:12057 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730568AbeHWQ5n (ORCPT
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:12572 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731034AbeHWQ6G (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Aug 2018 12:57:43 -0400
+        Thu, 23 Aug 2018 12:58:06 -0400
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 02/30] media: entity: Use pads instead of entities in the media graph walk stack
-Date: Thu, 23 Aug 2018 15:25:16 +0200
-Message-Id: <20180823132544.521-3-niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 28/30] adv748x: afe: add routing support
+Date: Thu, 23 Aug 2018 15:25:42 +0200
+Message-Id: <20180823132544.521-29-niklas.soderlund+renesas@ragnatech.se>
 In-Reply-To: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
+The adv748x afe has eight analog sink pads, currently one of them is
+chosen to be the active route based on device tree configuration. With
+the new routing API it's possible to expose and change which of the
+eight sink pads are routed to the source pad.
 
-Change the media graph walk stack structure to use media pads instead of
-using media entities. In addition to the entity, the pad contains the
-information which pad in the entity are being dealt with.
-
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/media/media-entity.c | 53 ++++++++++++++++++------------------
- include/media/media-entity.h |  6 ++--
- 2 files changed, 29 insertions(+), 30 deletions(-)
+ drivers/media/i2c/adv748x/adv748x-afe.c | 65 +++++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
 
-diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-index 70679d186944a117..c5dcae6d0caf92ec 100644
---- a/drivers/media/media-entity.c
-+++ b/drivers/media/media-entity.c
-@@ -237,40 +237,39 @@ EXPORT_SYMBOL_GPL(media_entity_pads_init);
-  * Graph traversal
-  */
+diff --git a/drivers/media/i2c/adv748x/adv748x-afe.c b/drivers/media/i2c/adv748x/adv748x-afe.c
+index edd25e895e5dec3c..dac0e9e385e7791a 100644
+--- a/drivers/media/i2c/adv748x/adv748x-afe.c
++++ b/drivers/media/i2c/adv748x/adv748x-afe.c
+@@ -43,6 +43,9 @@
+ #define ADV748X_AFE_STD_PAL_SECAM			0xe
+ #define ADV748X_AFE_STD_PAL_SECAM_PED			0xf
  
--static struct media_entity *
--media_entity_other(struct media_entity *entity, struct media_link *link)
-+static struct media_pad *
-+media_entity_other(struct media_pad *pad, struct media_link *link)
++#define ADV748X_AFE_ROUTES_MAX ((ADV748X_AFE_SINK_AIN7 - \
++				ADV748X_AFE_SINK_AIN0) + 1)
++
+ static int adv748x_afe_read_ro_map(struct adv748x_state *state, u8 reg)
  {
--	if (link->source->entity == entity)
--		return link->sink->entity;
-+	if (link->source == pad)
-+		return link->sink;
- 	else
--		return link->source->entity;
-+		return link->source;
+ 	int ret;
+@@ -387,10 +390,72 @@ static int adv748x_afe_set_format(struct v4l2_subdev *sd,
+ 	return 0;
  }
  
- /* push an entity to traversal stack */
--static void stack_push(struct media_graph *graph,
--		       struct media_entity *entity)
-+static void stack_push(struct media_graph *graph, struct media_pad *pad)
- {
- 	if (graph->top == MEDIA_ENTITY_ENUM_MAX_DEPTH - 1) {
- 		WARN_ON(1);
- 		return;
- 	}
- 	graph->top++;
--	graph->stack[graph->top].link = entity->links.next;
--	graph->stack[graph->top].entity = entity;
-+	graph->stack[graph->top].link = pad->entity->links.next;
-+	graph->stack[graph->top].pad = pad;
- }
++static int adv748x_afe_get_routing(struct v4l2_subdev *sd,
++				   struct v4l2_subdev_routing *routing)
++{
++	struct adv748x_afe *afe = adv748x_sd_to_afe(sd);
++	struct v4l2_subdev_route *r = routing->routes;
++	unsigned int i;
++
++	/* There is one possible route from each sink */
++	if (routing->num_routes < ADV748X_AFE_ROUTES_MAX) {
++		routing->num_routes = ADV748X_AFE_ROUTES_MAX;
++		return -ENOSPC;
++	}
++
++	routing->num_routes = ADV748X_AFE_ROUTES_MAX;
++
++	for (i = ADV748X_AFE_SINK_AIN0; i <= ADV748X_AFE_SINK_AIN7; i++) {
++		r->sink_pad = i;
++		r->sink_stream = 0;
++		r->source_pad = ADV748X_AFE_SOURCE;
++		r->source_stream = 0;
++		r->flags = afe->input == i ? V4L2_SUBDEV_ROUTE_FL_ACTIVE : 0;
++		r++;
++	}
++
++	return 0;
++}
++
++static int adv748x_afe_set_routing(struct v4l2_subdev *sd,
++				   struct v4l2_subdev_routing *routing)
++{
++	struct adv748x_afe *afe = adv748x_sd_to_afe(sd);
++	struct v4l2_subdev_route *r = routing->routes;
++	int input = -1;
++	unsigned int i;
++
++	if (routing->num_routes > ADV748X_AFE_ROUTES_MAX)
++		return -ENOSPC;
++
++	for (i = 0; i < routing->num_routes; i++) {
++		if (r->sink_pad > ADV748X_AFE_SINK_AIN7 ||
++		    r->sink_stream != 0 ||
++		    r->source_pad != ADV748X_AFE_SOURCE ||
++		    r->source_stream != 0)
++			return -EINVAL;
++
++		if (r->flags & V4L2_SUBDEV_ROUTE_FL_ACTIVE) {
++			if (input != -1)
++				return -EMLINK;
++
++			input = r->sink_pad;
++		}
++		r++;
++	}
++
++	if (input != -1)
++		afe->input = input;
++
++	return 0;
++}
++
+ static const struct v4l2_subdev_pad_ops adv748x_afe_pad_ops = {
+ 	.enum_mbus_code = adv748x_afe_enum_mbus_code,
+ 	.set_fmt = adv748x_afe_set_format,
+ 	.get_fmt = adv748x_afe_get_format,
++	.get_routing = adv748x_afe_get_routing,
++	.set_routing = adv748x_afe_set_routing,
+ };
  
--static struct media_entity *stack_pop(struct media_graph *graph)
-+static struct media_pad *stack_pop(struct media_graph *graph)
- {
--	struct media_entity *entity;
-+	struct media_pad *pad;
- 
--	entity = graph->stack[graph->top].entity;
-+	pad = graph->stack[graph->top].pad;
- 	graph->top--;
- 
--	return entity;
-+	return pad;
- }
- 
- #define link_top(en)	((en)->stack[(en)->top].link)
--#define stack_top(en)	((en)->stack[(en)->top].entity)
-+#define stack_top(en)	((en)->stack[(en)->top].pad)
- 
- /**
-  * media_graph_walk_init - Allocate resources for graph walk
-@@ -306,8 +305,8 @@ void media_graph_walk_start(struct media_graph *graph, struct media_pad *pad)
- 	media_entity_enum_set(&graph->ent_enum, pad->entity);
- 
- 	graph->top = 0;
--	graph->stack[graph->top].entity = NULL;
--	stack_push(graph, pad->entity);
-+	graph->stack[graph->top].pad = NULL;
-+	stack_push(graph, pad);
- 	dev_dbg(pad->graph_obj.mdev->dev,
- 		"begin graph walk at '%s':%u\n", pad->entity->name, pad->index);
- }
-@@ -315,16 +314,16 @@ EXPORT_SYMBOL_GPL(media_graph_walk_start);
- 
- static void media_graph_walk_iter(struct media_graph *graph)
- {
--	struct media_entity *entity = stack_top(graph);
-+	struct media_pad *pad = stack_top(graph);
- 	struct media_link *link;
--	struct media_entity *next;
-+	struct media_pad *next;
- 
- 	link = list_entry(link_top(graph), typeof(*link), list);
- 
- 	/* The link is not enabled so we do not follow. */
- 	if (!(link->flags & MEDIA_LNK_FL_ENABLED)) {
- 		link_top(graph) = link_top(graph)->next;
--		dev_dbg(entity->graph_obj.mdev->dev,
-+		dev_dbg(pad->graph_obj.mdev->dev,
- 			"walk: skipping disabled link '%s':%u -> '%s':%u\n",
- 			link->source->entity->name, link->source->index,
- 			link->sink->entity->name, link->sink->index);
-@@ -332,22 +331,22 @@ static void media_graph_walk_iter(struct media_graph *graph)
- 	}
- 
- 	/* Get the entity in the other end of the link . */
--	next = media_entity_other(entity, link);
-+	next = media_entity_other(pad, link);
- 
- 	/* Has the entity already been visited? */
--	if (media_entity_enum_test_and_set(&graph->ent_enum, next)) {
-+	if (media_entity_enum_test_and_set(&graph->ent_enum, next->entity)) {
- 		link_top(graph) = link_top(graph)->next;
--		dev_dbg(entity->graph_obj.mdev->dev,
-+		dev_dbg(pad->graph_obj.mdev->dev,
- 			"walk: skipping entity '%s' (already seen)\n",
--			next->name);
-+			next->entity->name);
- 		return;
- 	}
- 
- 	/* Push the new entity to stack and start over. */
- 	link_top(graph) = link_top(graph)->next;
- 	stack_push(graph, next);
--	dev_dbg(entity->graph_obj.mdev->dev, "walk: pushing '%s' on stack\n",
--		next->name);
-+	dev_dbg(next->graph_obj.mdev->dev, "walk: pushing '%s':%u on stack\n",
-+		next->entity->name, next->index);
- }
- 
- struct media_entity *media_graph_walk_next(struct media_graph *graph)
-@@ -362,10 +361,10 @@ struct media_entity *media_graph_walk_next(struct media_graph *graph)
- 	 * top of the stack until no more entities on the level can be
- 	 * found.
- 	 */
--	while (link_top(graph) != &stack_top(graph)->links)
-+	while (link_top(graph) != &stack_top(graph)->entity->links)
- 		media_graph_walk_iter(graph);
- 
--	entity = stack_pop(graph);
-+	entity = stack_pop(graph)->entity;
- 	dev_dbg(entity->graph_obj.mdev->dev,
- 		"walk: returning entity '%s'\n", entity->name);
- 
-diff --git a/include/media/media-entity.h b/include/media/media-entity.h
-index 20ff038c8aeff4b8..c844a677a1cfbb0d 100644
---- a/include/media/media-entity.h
-+++ b/include/media/media-entity.h
-@@ -86,16 +86,16 @@ struct media_entity_enum {
-  * struct media_graph - Media graph traversal state
-  *
-  * @stack:		Graph traversal stack; the stack contains information
-- *			on the path the media entities to be walked and the
-+ *			on the path the media pads to be walked and the
-  *			links through which they were reached.
-- * @stack.entity:	pointer to &struct media_entity at the graph.
-+ * @stack.pad:		pointer to &struct media_pad at the graph.
-  * @stack.link:		pointer to &struct list_head.
-  * @ent_enum:		Visited entities
-  * @top:		The top of the stack
-  */
- struct media_graph {
- 	struct {
--		struct media_entity *entity;
-+		struct media_pad *pad;
- 		struct list_head *link;
- 	} stack[MEDIA_ENTITY_ENUM_MAX_DEPTH];
- 
+ /* -----------------------------------------------------------------------------
 -- 
 2.18.0
