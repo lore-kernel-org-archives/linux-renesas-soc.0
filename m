@@ -1,72 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45242 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727099AbeH2MpG (ORCPT
+Received: from conuserg-09.nifty.com ([210.131.2.76]:47906 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728238AbeHWINc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Aug 2018 08:45:06 -0400
-Date: Wed, 29 Aug 2018 10:49:13 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        Thu, 23 Aug 2018 04:13:32 -0400
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
         linux-renesas-soc@vger.kernel.org,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Jassi Brar <jaswinder.singh@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/6] mmc: tmio: refactor CLK_CTL bit calculation
-Message-ID: <20180829084913.fgdrigpeu3vi7vqs@ninjato>
+Subject: [PATCH v3 6/6] mmc: tmio: refactor CLK_CTL bit calculation
+Date: Thu, 23 Aug 2018 13:44:20 +0900
+Message-Id: <1534999460-15111-7-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com>
- <1534999460-15111-7-git-send-email-yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pznduqydquaabgg3"
-Content-Disposition: inline
-In-Reply-To: <1534999460-15111-7-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+  for (clk = 0x80000080; new_clock >= (clock << 1); clk >>= 1)
+          clock <<= 1;
 
---pznduqydquaabgg3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+... is too tricky, hence I replaced with
 
+  roundup_pow_of_two(divisor) >> 2
 
-> +	if (divisor <= 1) {
-> +		clk_sel = 1;
-> +		clk = 0;
-> +	} else {
-> +		clk_sel = 0;
-> +		/* bit7 set: 1/512, ... bit0 set:1/4, all bits clear: 1/2 */
-> +		clk = roundup_pow_of_two(divisor) >> 2;
-> +	}
+'(clk >> 22) & 0x1' is the bit test for the 1/1 divisor, but
+it is not clear.  'divisor <= 1' is easier to understand.
 
-What about
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-	clk_sel = (divisor <= 1);
-	clk = clk_sel ? 0 : (roundup_pow_of_two(divisor) >> 2)
+Changes in v3: None
+Changes in v2: None
 
-More concise, but I think still readable. I don't mind super much,
-though.
+ drivers/mmc/host/tmio_mmc.c | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
-
---pznduqydquaabgg3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluGXgkACgkQFA3kzBSg
-Kbawzw//cevnWqN2we7+wnmAITrE0rMxOUPFT0P8nDc/r98bsBxxSw7WHr8Sm527
-7gzrdc7oM78IozpZIX3pd0YfdrKWbN2vEW698a5qSczi3DIhhBWPgfQNQJ0DrX6N
-INY828lP6/eTm5N53QSEn7Xic4Y1DzSPWL+DPbH3S/HZCNcrOB4dSb89mpqurW+P
-EdzL35ro3V19VHGJ1cp6JBCevR9J62cCRox2x0EwsRdgVFfL8tnnHVPzRNoFyI8x
-sNqcW1o15xLoKwhJQjZjX3U8ofNrDYTjOCGjuk3N7Qe0DHJh3caVSOkX6PYbw3Ob
-m7EL+gU6gJAWbMrv+TilDiJDm3nEpoIU+Lr1gD3VRZBmTwD/UMqoTif0Rm+5g7La
-lk6HPFgstRkvLdKmcUzCpbipmrgnGc0RTuwtGdpTperOH3eq4u/MH2p83M4qAezL
-o/q/jJNSpzH1XSnfWzS2tkh9bgbTYbI5YwYohIzbWuPfW+7m1BhPsgaUvyWjD5sE
-A0p3Pxadvw6WOKHxkmfISzU09RyFt8m8DzbM4mDcFp3/Cjb/bWuyotYPvuZOjLJS
-S9cr4WahvILZ5J2OIGdg8+FIuwRMO0D7y8SKmtOkAqH9cOsMvGPZfdAMxDFvwBJo
-ysNzt9eZroXfkNY84z1sdJ5v3OleH1BBVzbs5APP+PfA/XjYl6Y=
-=r6vt
------END PGP SIGNATURE-----
-
---pznduqydquaabgg3--
+diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
+index b031a77..e04c322 100644
+--- a/drivers/mmc/host/tmio_mmc.c
++++ b/drivers/mmc/host/tmio_mmc.c
+@@ -48,19 +48,27 @@ static void tmio_mmc_clk_stop(struct tmio_mmc_host *host)
+ static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
+ 			       unsigned int new_clock)
+ {
+-	u32 clk = 0, clock;
++	unsigned int clock, divisor;
++	u32 clk = 0;
++	int clk_sel;
+ 
+ 	if (new_clock == 0) {
+ 		tmio_mmc_clk_stop(host);
+ 		return;
+ 	}
+ 
+-	clock = host->mmc->f_min;
++	divisor = host->pdata->hclk / new_clock;
+ 
+-	for (clk = 0x80000080; new_clock >= (clock << 1); clk >>= 1)
+-		clock <<= 1;
++	if (divisor <= 1) {
++		clk_sel = 1;
++		clk = 0;
++	} else {
++		clk_sel = 0;
++		/* bit7 set: 1/512, ... bit0 set:1/4, all bits clear: 1/2 */
++		clk = roundup_pow_of_two(divisor) >> 2;
++	}
+ 
+-	host->pdata->set_clk_div(host->pdev, (clk >> 22) & 1);
++	host->pdata->set_clk_div(host->pdev, clk_sel);
+ 
+ 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
+ 			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+-- 
+2.7.4
