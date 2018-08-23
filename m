@@ -1,55 +1,44 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:10409 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726544AbeHQSCZ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Aug 2018 14:02:25 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] spi: sh-msiof: Add r8a774a1 support
-Date: Fri, 17 Aug 2018 15:58:34 +0100
-Message-Id: <1534517914-15406-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 11/30] media: entity: Skip link validation for pads to which there is no route to
+Date: Thu, 23 Aug 2018 15:25:25 +0200
+Message-Id: <20180823132544.521-12-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document RZ/G2M (R8A774A1) SoC bindings.
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Links are validated along the pipeline which is about to start streaming.
+Not all the pads in entities that are traversed along that pipeline are
+part of the pipeline, however. Skip the link validation for such pads.
+
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 ---
-This patch applies on top of next-20180817
+ drivers/media/media-entity.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
- Documentation/devicetree/bindings/spi/sh-msiof.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/spi/sh-msiof.txt b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-index bfbc203..8f7bb6a 100644
---- a/Documentation/devicetree/bindings/spi/sh-msiof.txt
-+++ b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-@@ -3,6 +3,7 @@ Renesas MSIOF spi controller
- Required properties:
- - compatible           : "renesas,msiof-r8a7743" (RZ/G1M)
- 			 "renesas,msiof-r8a7745" (RZ/G1E)
-+			 "renesas,msiof-r8a774a1" (RZ/G2M)
- 			 "renesas,msiof-r8a7790" (R-Car H2)
- 			 "renesas,msiof-r8a7791" (R-Car M2-W)
- 			 "renesas,msiof-r8a7792" (R-Car V2H)
-@@ -14,7 +15,7 @@ Required properties:
- 			 "renesas,msiof-sh73a0" (SH-Mobile AG5)
- 			 "renesas,sh-mobile-msiof" (generic SH-Mobile compatibile device)
- 			 "renesas,rcar-gen2-msiof" (generic R-Car Gen2 and RZ/G1 compatible device)
--			 "renesas,rcar-gen3-msiof" (generic R-Car Gen3 compatible device)
-+			 "renesas,rcar-gen3-msiof" (generic R-Car Gen3 and RZ/G2 compatible device)
- 			 "renesas,sh-msiof"      (deprecated)
+diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
+index 12d9fc9ee02f38f2..0395d58b2e233d88 100644
+--- a/drivers/media/media-entity.c
++++ b/drivers/media/media-entity.c
+@@ -493,6 +493,11 @@ __must_check int __media_pipeline_start(struct media_pad *pad,
+ 			struct media_pad *other_pad = link->sink->entity == entity
+ 				? link->sink : link->source;
  
- 			 When compatible with the generic version, nodes
++			/* Ignore pads to which there is no route. */
++			if (!media_entity_has_route(entity, pad->index,
++						    other_pad->index))
++				continue;
++
+ 			/* Mark that a pad is connected by a link. */
+ 			bitmap_clear(has_no_links, other_pad->index, 1);
+ 
 -- 
-2.7.4
+2.18.0
