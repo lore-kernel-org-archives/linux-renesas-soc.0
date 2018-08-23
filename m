@@ -1,103 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-08.nifty.com ([210.131.2.75]:39875 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728125AbeHGIbT (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:12317 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730682AbeHWQ5z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Aug 2018 04:31:19 -0400
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [v0.1 PATCH 3/7] dt-bindings: mmc: add DT binding for UniPhier SD/eMMC controller
-Date: Tue,  7 Aug 2018 15:17:18 +0900
-Message-Id: <1533622642-13989-4-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1533622642-13989-1-git-send-email-yamada.masahiro@socionext.com>
+        Thu, 23 Aug 2018 12:57:55 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 15/30] media: entity: Look for indirect routes
+Date: Thu, 23 Aug 2018 15:25:29 +0200
+Message-Id: <20180823132544.521-16-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This SD/eMMC controller is used for UniPhier SoC family.
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Two pads are considered having an active route for the purpose of
+has_route() if an indirect active route can be found between the two pads.
+An simple example of this is that a source pad has an active route to
+another source pad if both of the pads have an active route to the same
+sink pad.
+
+Make media_entity_has_route() return true in that case, and do not rely on
+drivers performing this by themselves.
+
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 ---
+ drivers/media/media-entity.c | 32 +++++++++++++++++++++++++++++++-
+ 1 file changed, 31 insertions(+), 1 deletion(-)
 
- .../devicetree/bindings/mmc/uniphier-sd.txt        | 60 ++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mmc/uniphier-sd.txt
-
-diff --git a/Documentation/devicetree/bindings/mmc/uniphier-sd.txt b/Documentation/devicetree/bindings/mmc/uniphier-sd.txt
-new file mode 100644
-index 0000000..49dd0fc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/uniphier-sd.txt
-@@ -0,0 +1,60 @@
-+UniPhier SD/eMMC controller
+diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
+index 3912bc75651fe0b7..29e732a130667ae9 100644
+--- a/drivers/media/media-entity.c
++++ b/drivers/media/media-entity.c
+@@ -240,6 +240,9 @@ EXPORT_SYMBOL_GPL(media_entity_pads_init);
+ bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
+ 			    unsigned int pad1)
+ {
++	unsigned int i;
++	bool has_route;
 +
-+Required properties:
-+- compatible: should be one of the following:
-+    "socionext,uniphier-sd-v2.91" - IP version 2.91
-+    "socionext,uniphier-sd-v3.1"  - IP version 3.1
-+    "socionext,uniphier-sd-v3.1b" - IP version 3.1 (bug-fix ver.) [1]
-+- reg: offset and length of the register set for the device.
-+- interrupts: a single interrupt specifier.
-+- clocks: a single clock specifier of the controller clock.
-+- reset-names: should contain the following:
-+    "host"   - mandatory for all versions
-+    "bridge" - should exist only for "socionext,uniphier-sd-v2.91"
-+    "hw"     - should exist if eMMC hw reset line is available
-+- resets: a list of reset specifiers, corresponding to the reset-names
+ 	if (pad0 >= entity->num_pads || pad1 >= entity->num_pads)
+ 		return false;
+ 
+@@ -253,7 +256,34 @@ bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
+ 	    && entity->pads[pad1].flags & MEDIA_PAD_FL_SINK)
+ 		swap(pad0, pad1);
+ 
+-	return entity->ops->has_route(entity, pad0, pad1);
++	has_route = entity->ops->has_route(entity, pad0, pad1);
++	/* A direct route is returned immediately */
++	if (has_route ||
++	    (entity->pads[pad0].flags & MEDIA_PAD_FL_SINK &&
++	     entity->pads[pad1].flags & MEDIA_PAD_FL_SOURCE))
++		return true;
 +
-+[1] There are two different controller cores for version 3.1.  The early
-+    release had a bug in the DMA RX channel.  The issue was fixed later,
-+    but the version number was not incremented.  Hence, the latter has
-+    'b' at the end of its compatible string.
++	/* Look for indirect routes */
++	for (i = 0; i < entity->num_pads; i++) {
++		if (i == pad0 || i == pad1)
++			continue;
 +
-+Optional properties:
-+- pinctrl-names: if present, should contain the following:
-+    "default" - should exist for all instances
-+    "uhs"     - should exist for SD instance with UHS support
-+- pinctrl-0: pin control state for the default mode
-+- pinctrl-1: pin control state for the UHS mode
-+- dma-names: should be "rx-tx" if present.
-+  This property can exist only for "socionext,uniphier-sd-v2.91".
-+- dmas: a single DMA channel specifier
-+  This property can exist only for "socionext,uniphier-sd-v2.91".
-+- bus-width: see mmc.txt
-+- cap-sd-highspeed: see mmc.txt
-+- cap-mmc-highspeed: see mmc.txt
-+- sd-uhs-sdr12: see mmc.txt
-+- sd-uhs-sdr25: see mmc.txt
-+- sd-uhs-sdr50: see mmc.txt
-+- cap-mmc-hw-reset: should exist if reset-names contains "hw". see mmc.txt
-+- non-removable: see mmc.txt
++		/*
++		 * There are no direct routes between same types of
++		 * pads, so skip checking this route
++		 */
++		if (!((entity->pads[pad0].flags ^ entity->pads[i].flags) &
++		      (MEDIA_PAD_FL_SOURCE | MEDIA_PAD_FL_SINK)))
++			continue;
 +
-+Example:
++		/* Is there an indirect route? */
++		if (entity->ops->has_route(entity, i, pad0) &&
++		    entity->ops->has_route(entity, i, pad1))
++			return true;
++	}
 +
-+	sd: sdhc@5a400000 {
-+		compatible = "socionext,uniphier-sd-v2.91";
-+		reg = <0x5a400000 0x200>;
-+		interrupts = <0 76 4>;
-+		pinctrl-names = "default", "uhs";
-+		pinctrl-0 = <&pinctrl_sd>;
-+		pinctrl-1 = <&pinctrl_sd_uhs>;
-+		clocks = <&mio_clk 0>;
-+		reset-names = "host", "bridge";
-+		resets = <&mio_rst 0>, <&mio_rst 3>;
-+		dma-names = "rx-tx";
-+		dmas = <&dmac 4>;
-+		bus-width = <4>;
-+		cap-sd-highspeed;
-+		sd-uhs-sdr12;
-+		sd-uhs-sdr25;
-+		sd-uhs-sdr50;
-+	};
++	return false;
++
+ }
+ EXPORT_SYMBOL_GPL(media_entity_has_route);
+ 
 -- 
-2.7.4
+2.18.0
