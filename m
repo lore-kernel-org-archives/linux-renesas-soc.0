@@ -1,64 +1,396 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:59482 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727222AbeHaNBh (ORCPT
+Received: from conuserg-09.nifty.com ([210.131.2.76]:47263 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728238AbeHWINM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 31 Aug 2018 09:01:37 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Gilad Ben-Yossef <gilad@benyossef.com>,
+        Thu, 23 Aug 2018 04:13:12 -0400
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
         linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: dts: renesas: r8a7795: Move arm_cc630p node
-Date: Fri, 31 Aug 2018 10:54:57 +0200
-Message-Id: <20180831085457.3940-1-geert+renesas@glider.be>
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 2/6] mmc: tmio: move tmio_mmc_set_clock() to platform hook
+Date: Thu, 23 Aug 2018 13:44:16 +0900
+Message-Id: <1534999460-15111-3-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To preserve by-address-per-group sort order.
+tmio_mmc_set_clock() is full of quirks because different SoC vendors
+extended this in different ways.
 
-Fixes: 0f6d237cafda2e06 ("arm64: dts: renesas: r8a7795: add ccree to device tree")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The original IP defines the divisor range 1/2 ... 1/512.
+
+ bit 7 is set:    1/512
+ bit 6 is set:    1/256
+   ...
+ bit 0 is set:    1/4
+ all bits clear:  1/2
+
+It is platform-dependent how to achieve the 1/1 clock.
+
+I guess the TMIO-MFD variant uses the clock selector outside of this IP,
+as far as I see tmio_core_mmc_clk_div() in drivers/mfd/tmio_core.c
+
+I guess bit[7:0]=0xff is Renesas-specific extension.
+
+Socionext (and Panasonic) uses bit 10 (CLKSEL) for 1/1.  Also, newer
+versions of UniPhier SoC variants use bit 16 for 1/1024.
+
+host->clk_update() is only used by the Renesas variants, whereas
+host->set_clk_div() is only used by the TMIO-MFD variants.
+
+To cope with this mess, promote tmio_mmc_set_clock() to a new
+platform hook ->set_clock(), and melt the old two hooks into it.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index de4f40d118d3fa65..0c6d8859cae397c9 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -525,15 +525,6 @@
- 			status = "disabled";
- 		};
+Changes in v3:
+  - Rebase
+
+Changes in v2: None
+
+ drivers/mmc/host/renesas_sdhi_core.c | 62 +++++++++++++++++++++++-
+ drivers/mmc/host/tmio_mmc.c          | 48 +++++++++++++++++++
+ drivers/mmc/host/tmio_mmc.h          |  4 +-
+ drivers/mmc/host/tmio_mmc_core.c     | 92 +++---------------------------------
+ 4 files changed, 117 insertions(+), 89 deletions(-)
+
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index 777e32b..cb6e889 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -155,6 +155,66 @@ static unsigned int renesas_sdhi_clk_update(struct tmio_mmc_host *host,
+ 	return ret == 0 ? best_freq : clk_get_rate(priv->clk);
+ }
  
--		arm_cc630p: crypto@e6601000 {
--			compatible = "arm,cryptocell-630p-ree";
--			interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
--			reg = <0x0 0xe6601000 0 0x1000>;
--			clocks = <&cpg CPG_MOD 229>;
--			resets = <&cpg 229>;
--			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
--		};
--
- 		i2c3: i2c@e66d0000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -805,6 +796,15 @@
- 			status = "disabled";
- 		};
- 
-+		arm_cc630p: crypto@e6601000 {
-+			compatible = "arm,cryptocell-630p-ree";
-+			interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
-+			reg = <0x0 0xe6601000 0 0x1000>;
-+			clocks = <&cpg CPG_MOD 229>;
-+			resets = <&cpg 229>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+		};
++static void renesas_sdhi_clk_start(struct tmio_mmc_host *host)
++{
++	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
++		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
 +
- 		dmac0: dma-controller@e6700000 {
- 			compatible = "renesas,dmac-r8a7795",
- 				     "renesas,rcar-dmac";
++	/* HW engineers overrode docs: no sleep needed on R-Car2+ */
++	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
++		usleep_range(10000, 11000);
++}
++
++static void renesas_sdhi_clk_stop(struct tmio_mmc_host *host)
++{
++	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
++		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
++
++	/* HW engineers overrode docs: no sleep needed on R-Car2+ */
++	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
++		usleep_range(10000, 11000);
++}
++
++static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
++				   unsigned int new_clock)
++{
++	u32 clk = 0, clock;
++
++	if (new_clock == 0) {
++		renesas_sdhi_clk_stop(host);
++		return;
++	}
++	/*
++	 * Both HS400 and HS200/SD104 set 200MHz, but some devices need to
++	 * set 400MHz to distinguish the CPG settings in HS400.
++	 */
++	if (host->mmc->ios.timing == MMC_TIMING_MMC_HS400 &&
++	    host->pdata->flags & TMIO_MMC_HAVE_4TAP_HS400 &&
++	    new_clock == 200000000)
++		new_clock = 400000000;
++
++	clock = renesas_sdhi_clk_update(host, new_clock) / 512;
++
++	for (clk = 0x80000080; new_clock >= (clock << 1); clk >>= 1)
++		clock <<= 1;
++
++	/* 1/1 clock is option */
++	if ((host->pdata->flags & TMIO_MMC_CLK_ACTUAL) && ((clk >> 22) & 0x1)) {
++		if (!(host->mmc->ios.timing == MMC_TIMING_MMC_HS400))
++			clk |= 0xff;
++		else
++			clk &= ~0xff;
++	}
++
++	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
++			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
++	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clk & CLK_CTL_DIV_MASK);
++	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
++		usleep_range(10000, 11000);
++
++	renesas_sdhi_clk_start(host);
++}
++
+ static void renesas_sdhi_clk_disable(struct tmio_mmc_host *host)
+ {
+ 	struct renesas_sdhi *priv = host_to_priv(host);
+@@ -620,8 +680,8 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 
+ 	host->write16_hook	= renesas_sdhi_write16_hook;
+ 	host->clk_enable	= renesas_sdhi_clk_enable;
+-	host->clk_update	= renesas_sdhi_clk_update;
+ 	host->clk_disable	= renesas_sdhi_clk_disable;
++	host->set_clock		= renesas_sdhi_set_clock;
+ 	host->multi_io_quirk	= renesas_sdhi_multi_io_quirk;
+ 	host->dma_ops		= dma_ops;
+ 
+diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
+index 43a2ea5..b031a77 100644
+--- a/drivers/mmc/host/tmio_mmc.c
++++ b/drivers/mmc/host/tmio_mmc.c
+@@ -13,6 +13,7 @@
+  * published by the Free Software Foundation.
+  */
+ 
++#include <linux/delay.h>
+ #include <linux/device.h>
+ #include <linux/mfd/core.h>
+ #include <linux/mfd/tmio.h>
+@@ -23,6 +24,52 @@
+ 
+ #include "tmio_mmc.h"
+ 
++static void tmio_mmc_clk_start(struct tmio_mmc_host *host)
++{
++	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
++		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
++
++	usleep_range(10000, 11000);
++	sd_ctrl_write16(host, CTL_CLK_AND_WAIT_CTL, 0x0100);
++	usleep_range(10000, 11000);
++}
++
++static void tmio_mmc_clk_stop(struct tmio_mmc_host *host)
++{
++	sd_ctrl_write16(host, CTL_CLK_AND_WAIT_CTL, 0x0000);
++	usleep_range(10000, 11000);
++
++	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
++		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
++
++	usleep_range(10000, 11000);
++}
++
++static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
++			       unsigned int new_clock)
++{
++	u32 clk = 0, clock;
++
++	if (new_clock == 0) {
++		tmio_mmc_clk_stop(host);
++		return;
++	}
++
++	clock = host->mmc->f_min;
++
++	for (clk = 0x80000080; new_clock >= (clock << 1); clk >>= 1)
++		clock <<= 1;
++
++	host->pdata->set_clk_div(host->pdev, (clk >> 22) & 1);
++
++	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
++			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
++	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clk & CLK_CTL_DIV_MASK);
++	usleep_range(10000, 11000);
++
++	tmio_mmc_clk_start(host);
++}
++
+ #ifdef CONFIG_PM_SLEEP
+ static int tmio_mmc_suspend(struct device *dev)
+ {
+@@ -100,6 +147,7 @@ static int tmio_mmc_probe(struct platform_device *pdev)
+ 
+ 	/* SD control register space size is 0x200, 0x400 for bus_shift=1 */
+ 	host->bus_shift = resource_size(res) >> 10;
++	host->set_clock = tmio_mmc_set_clock;
+ 
+ 	host->mmc->f_max = pdata->hclk;
+ 	host->mmc->f_min = pdata->hclk / 512;
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index 5d141f7..e6aa13a 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -133,7 +133,6 @@ struct tmio_mmc_host {
+ 
+ 	/* Callbacks for clock / power control */
+ 	void (*set_pwr)(struct platform_device *host, int state);
+-	void (*set_clk_div)(struct platform_device *host, int state);
+ 
+ 	/* pio related stuff */
+ 	struct scatterlist      *sg_ptr;
+@@ -170,10 +169,9 @@ struct tmio_mmc_host {
+ 
+ 	/* Mandatory callback */
+ 	int (*clk_enable)(struct tmio_mmc_host *host);
++	void (*set_clock)(struct tmio_mmc_host *host, unsigned int clock);
+ 
+ 	/* Optional callbacks */
+-	unsigned int (*clk_update)(struct tmio_mmc_host *host,
+-				   unsigned int new_clock);
+ 	void (*clk_disable)(struct tmio_mmc_host *host);
+ 	int (*multi_io_quirk)(struct mmc_card *card,
+ 			      unsigned int direction, int blk_size);
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 5717ffa..0611824 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -160,83 +160,6 @@ static void tmio_mmc_enable_sdio_irq(struct mmc_host *mmc, int enable)
+ 	}
+ }
+ 
+-static void tmio_mmc_clk_start(struct tmio_mmc_host *host)
+-{
+-	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
+-		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+-
+-	/* HW engineers overrode docs: no sleep needed on R-Car2+ */
+-	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+-		usleep_range(10000, 11000);
+-
+-	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG) {
+-		sd_ctrl_write16(host, CTL_CLK_AND_WAIT_CTL, 0x0100);
+-		usleep_range(10000, 11000);
+-	}
+-}
+-
+-static void tmio_mmc_clk_stop(struct tmio_mmc_host *host)
+-{
+-	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG) {
+-		sd_ctrl_write16(host, CTL_CLK_AND_WAIT_CTL, 0x0000);
+-		usleep_range(10000, 11000);
+-	}
+-
+-	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
+-		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+-
+-	/* HW engineers overrode docs: no sleep needed on R-Car2+ */
+-	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+-		usleep_range(10000, 11000);
+-}
+-
+-static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
+-			       unsigned int new_clock)
+-{
+-	u32 clk = 0, clock;
+-
+-	if (new_clock == 0) {
+-		tmio_mmc_clk_stop(host);
+-		return;
+-	}
+-	/*
+-	 * Both HS400 and HS200/SD104 set 200MHz, but some devices need to
+-	 * set 400MHz to distinguish the CPG settings in HS400.
+-	 */
+-	if (host->mmc->ios.timing == MMC_TIMING_MMC_HS400 &&
+-	    host->pdata->flags & TMIO_MMC_HAVE_4TAP_HS400 &&
+-	    new_clock == 200000000)
+-		new_clock = 400000000;
+-
+-	if (host->clk_update)
+-		clock = host->clk_update(host, new_clock) / 512;
+-	else
+-		clock = host->mmc->f_min;
+-
+-	for (clk = 0x80000080; new_clock >= (clock << 1); clk >>= 1)
+-		clock <<= 1;
+-
+-	/* 1/1 clock is option */
+-	if ((host->pdata->flags & TMIO_MMC_CLK_ACTUAL) &&
+-	    ((clk >> 22) & 0x1)) {
+-		if (!(host->mmc->ios.timing == MMC_TIMING_MMC_HS400))
+-			clk |= 0xff;
+-		else
+-			clk &= ~0xff;
+-	}
+-
+-	if (host->set_clk_div)
+-		host->set_clk_div(host->pdev, (clk >> 22) & 1);
+-
+-	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
+-			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+-	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clk & CLK_CTL_DIV_MASK);
+-	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+-		usleep_range(10000, 11000);
+-
+-	tmio_mmc_clk_start(host);
+-}
+-
+ static void tmio_mmc_reset(struct tmio_mmc_host *host)
+ {
+ 	/* FIXME - should we set stop clock reg here */
+@@ -1043,15 +966,15 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 	switch (ios->power_mode) {
+ 	case MMC_POWER_OFF:
+ 		tmio_mmc_power_off(host);
+-		tmio_mmc_set_clock(host, 0);
++		host->set_clock(host, 0);
+ 		break;
+ 	case MMC_POWER_UP:
+ 		tmio_mmc_power_on(host, ios->vdd);
+-		tmio_mmc_set_clock(host, ios->clock);
++		host->set_clock(host, ios->clock);
+ 		tmio_mmc_set_bus_width(host, ios->bus_width);
+ 		break;
+ 	case MMC_POWER_ON:
+-		tmio_mmc_set_clock(host, ios->clock);
++		host->set_clock(host, ios->clock);
+ 		tmio_mmc_set_bus_width(host, ios->bus_width);
+ 		break;
+ 	}
+@@ -1237,7 +1160,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
+ 	int ret;
+ 
+ 	/*
+-	 * Check the sanity of mmc->f_min to prevent tmio_mmc_set_clock() from
++	 * Check the sanity of mmc->f_min to prevent host->set_clock() from
+ 	 * looping forever...
+ 	 */
+ 	if (mmc->f_min == 0)
+@@ -1247,7 +1170,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
+ 		_host->write16_hook = NULL;
+ 
+ 	_host->set_pwr = pdata->set_pwr;
+-	_host->set_clk_div = pdata->set_clk_div;
+ 
+ 	ret = tmio_mmc_init_ocr(_host);
+ 	if (ret < 0)
+@@ -1310,7 +1232,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
+ 	if (pdata->flags & TMIO_MMC_SDIO_IRQ)
+ 		_host->sdio_irq_mask = TMIO_SDIO_MASK_ALL;
+ 
+-	tmio_mmc_set_clock(_host, 0);
++	_host->set_clock(_host, 0);
+ 	tmio_mmc_reset(_host);
+ 
+ 	_host->sdcard_irq_mask = sd_ctrl_read16_and_16_as_32(_host, CTL_IRQ_MASK);
+@@ -1394,7 +1316,7 @@ int tmio_mmc_host_runtime_suspend(struct device *dev)
+ 	tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_ALL);
+ 
+ 	if (host->clk_cache)
+-		tmio_mmc_set_clock(host, 0);
++		host->set_clock(host, 0);
+ 
+ 	tmio_mmc_clk_disable(host);
+ 
+@@ -1415,7 +1337,7 @@ int tmio_mmc_host_runtime_resume(struct device *dev)
+ 	tmio_mmc_clk_enable(host);
+ 
+ 	if (host->clk_cache)
+-		tmio_mmc_set_clock(host, host->clk_cache);
++		host->set_clock(host, host->clk_cache);
+ 
+ 	if (host->native_hotplug)
+ 		tmio_mmc_enable_mmc_irqs(host,
 -- 
-2.17.1
+2.7.4
