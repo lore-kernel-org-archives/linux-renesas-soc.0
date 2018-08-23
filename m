@@ -1,124 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:22425 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727655AbeHWQhj (ORCPT
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:44386 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726083AbeHWNXR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Aug 2018 12:37:39 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S. Miller" <davem@davemloft.net>, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/3][can-next] can: rcar_can: Fix erroneous registration
-Date: Thu, 23 Aug 2018 14:07:31 +0100
-Message-Id: <1535029653-7418-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1535029653-7418-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1535029653-7418-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Thu, 23 Aug 2018 09:23:17 -0400
+Received: by mail-ua1-f68.google.com with SMTP id l2-v6so2837794uaf.11
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Aug 2018 02:54:22 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180819194455.25096-1-laurent.pinchart+renesas@ideasonboard.com> <20180822102950.v5bgqw52wuz6casn@verge.net.au>
+In-Reply-To: <20180822102950.v5bgqw52wuz6casn@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 23 Aug 2018 11:54:10 +0200
+Message-ID: <CAMuHMdVkf+==3GN-h2fxomgnmPDkvQEvi1zwzwA+n65Wf10yEA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: salvator-common: Add GPIO keys support
+To: Simon Horman <horms@verge.net.au>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Assigning 2 to "renesas,can-clock-select" tricks the driver into
-registering the CAN interface, even though we don't want that.
-This patch fixes this problem and also allows for architectures
-missing some of the clocks (e.g. RZ/G2) to behave as expected.
+Hi Simon,
 
-Fixes: 862e2b6af9413b43 ("can: rcar_can: support all input clocks")
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <Chris.Paterson2@renesas.com>
----
+On Wed, Aug 22, 2018 at 12:30 PM Simon Horman <horms@verge.net.au> wrote:
+> On Sun, Aug 19, 2018 at 10:44:55PM +0300, Laurent Pinchart wrote:
+> > The Salvator-X and XS boards have a 4 lines DIP switch and 3 push
+> > buttons connected to SoC GPIOs, meant to be used as general-purpose test
+> > keys. Add a corresponding node in DT, mapping (semi-randomly) the DIP
+>
+> Arbitrary may be a better word choice than random.
+>
+> > switch to keys 1-4 and the push buttons to keys A-C.
+> >
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-This patch applies on linux-can-next-for-4.19-20180727
+> > --- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
 
- drivers/net/can/rcar/rcar_can.c | 43 +++++++++++++++++++++++++++++++++--------
- 1 file changed, 35 insertions(+), 8 deletions(-)
+> > +             key-a {
+> > +                     gpios = <&gpio6 11 GPIO_ACTIVE_LOW>;
+> > +                     linux,code = <KEY_A>;
+> > +                     label = "TSW0";
+>
+> What does the 'T' in 'TSW' stand for? Toggle?
 
-diff --git a/drivers/net/can/rcar/rcar_can.c b/drivers/net/can/rcar/rcar_can.c
-index 11662f4..fbd9284 100644
---- a/drivers/net/can/rcar/rcar_can.c
-+++ b/drivers/net/can/rcar/rcar_can.c
-@@ -21,9 +21,13 @@
- #include <linux/clk.h>
- #include <linux/can/platform/rcar_can.h>
- #include <linux/of.h>
-+#include <linux/of_device.h>
- 
- #define RCAR_CAN_DRV_NAME	"rcar_can"
- 
-+#define RCAR_SUPPORTED_CLOCKS	(BIT(CLKR_CLKP1) | BIT(CLKR_CLKP2) | \
-+				 BIT(CLKR_CLKEXT))
-+
- /* Mailbox configuration:
-  * mailbox 60 - 63 - Rx FIFO mailboxes
-  * mailbox 56 - 59 - Tx FIFO mailboxes
-@@ -745,10 +749,12 @@ static int rcar_can_probe(struct platform_device *pdev)
- 	u32 clock_select = CLKR_CLKP1;
- 	int err = -ENODEV;
- 	int irq;
-+	uintptr_t allowed_clks = RCAR_SUPPORTED_CLOCKS;
- 
- 	if (pdev->dev.of_node) {
- 		of_property_read_u32(pdev->dev.of_node,
- 				     "renesas,can-clock-select", &clock_select);
-+		allowed_clks = (uintptr_t)of_device_get_match_data(&pdev->dev);
- 	} else {
- 		pdata = dev_get_platdata(&pdev->dev);
- 		if (!pdata) {
-@@ -789,7 +795,7 @@ static int rcar_can_probe(struct platform_device *pdev)
- 		goto fail_clk;
- 	}
- 
--	if (clock_select >= ARRAY_SIZE(clock_names)) {
-+	if (!(BIT(clock_select) & allowed_clks)) {
- 		err = -EINVAL;
- 		dev_err(&pdev->dev, "invalid CAN clock selected\n");
- 		goto fail_clk;
-@@ -899,13 +905,34 @@ static int __maybe_unused rcar_can_resume(struct device *dev)
- static SIMPLE_DEV_PM_OPS(rcar_can_pm_ops, rcar_can_suspend, rcar_can_resume);
- 
- static const struct of_device_id rcar_can_of_table[] __maybe_unused = {
--	{ .compatible = "renesas,can-r8a7778" },
--	{ .compatible = "renesas,can-r8a7779" },
--	{ .compatible = "renesas,can-r8a7790" },
--	{ .compatible = "renesas,can-r8a7791" },
--	{ .compatible = "renesas,rcar-gen1-can" },
--	{ .compatible = "renesas,rcar-gen2-can" },
--	{ .compatible = "renesas,rcar-gen3-can" },
-+	{
-+		.compatible = "renesas,can-r8a7778",
-+		.data = (void *)RCAR_SUPPORTED_CLOCKS,
-+	},
-+	{
-+		.compatible = "renesas,can-r8a7779",
-+		.data = (void *)RCAR_SUPPORTED_CLOCKS,
-+	},
-+	{
-+		.compatible = "renesas,can-r8a7790",
-+		.data = (void *)RCAR_SUPPORTED_CLOCKS,
-+	},
-+	{
-+		.compatible = "renesas,can-r8a7791",
-+		.data = (void *)RCAR_SUPPORTED_CLOCKS,
-+	},
-+	{
-+		.compatible = "renesas,rcar-gen1-can",
-+		.data = (void *)RCAR_SUPPORTED_CLOCKS,
-+	},
-+	{
-+		.compatible = "renesas,rcar-gen2-can",
-+		.data = (void *)RCAR_SUPPORTED_CLOCKS,
-+	},
-+	{
-+		.compatible = "renesas,rcar-gen3-can",
-+		.data = (void *)RCAR_SUPPORTED_CLOCKS,
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, rcar_can_of_table);
+Tact Switch, cfr. the schematics.
+
+> > @@ -567,6 +625,11 @@
+> >               function = "intc_ex";
+> >       };
+> >
+> > +     keys_pins: keys {
+> > +             pins = "GP_5_17", "GP_5_20", "GP_5_22";
+>
+> I am curious to know why only some of the pins used above appear here.
+
+GP5_23 has an external 100K pull-up, GP5_{17,20,22} don't.
+GP6_1[123] have external 1K + 2K pull-upps.
+
+>
+> > +             bias-pull-up;
+> > +     };
+> > +
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
