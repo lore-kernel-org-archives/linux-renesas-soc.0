@@ -1,84 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:37018 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728626AbeHFR67 (ORCPT
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:12258 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730682AbeHWQ5x (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Aug 2018 13:58:59 -0400
-Subject: Re: [PATCH 2/3] drm: rcar-du: Rename var to a more precise name
-To: Jacopo Mondi <jacopo@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>
-Cc: "open list:DRM DRIVERS FOR RENESAS" <dri-devel@lists.freedesktop.org>,
-        "open list:DRM DRIVERS FOR RENESAS"
-        <linux-renesas-soc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-References: <1532971214-17962-1-git-send-email-jacopo@jmondi.org>
- <1532971214-17962-3-git-send-email-jacopo@jmondi.org>
-Reply-To: kieran.bingham+renesas@ideasonboard.com
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Message-ID: <8ddd8179-a0c7-1fbe-0390-ea8fd8c0ff7b@ideasonboard.com>
-Date: Mon, 6 Aug 2018 16:49:12 +0100
-MIME-Version: 1.0
-In-Reply-To: <1532971214-17962-3-git-send-email-jacopo@jmondi.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Thu, 23 Aug 2018 12:57:53 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 12/30] media: entity: Add an iterator helper for connected pads
+Date: Thu, 23 Aug 2018 15:25:26 +0200
+Message-Id: <20180823132544.521-13-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Thankyou for the patch,
+Add a helper macro for iterating over pads that are connected through
+enabled routes. This can be used to find all the connected pads within an
+entity, for instance starting from the pad which has been obtained during
+the graph walk.
 
-On 30/07/18 18:20, Jacopo Mondi wrote:
-> Rename the 'value' variable, only used to for writing to DMSR register to a
-> more precise 'dmsr' name.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
-> ---
->  drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> index 6d55cec..4d7907c 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> @@ -208,7 +208,7 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
->  	const struct drm_display_mode *mode = &rcrtc->crtc.state->adjusted_mode;
->  	struct rcar_du_device *rcdu = rcrtc->group->dev;
->  	unsigned long mode_clock = mode->clock * 1000;
-> -	u32 value;
-> +	u32 dsmr;
->  	u32 escr;
->  
->  	if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
-> @@ -299,11 +299,11 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
->  	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? OTAR2 : OTAR, 0);
->  
->  	/* Signal polarities */
-> -	value = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
-> -	      | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? DSMR_HSL : 0)
-> -	      | ((mode->flags & DRM_MODE_FLAG_INTERLACE) ? DSMR_ODEV : 0)
-> -	      | DSMR_DIPM_DISP | DSMR_CSPM;
-> -	rcar_du_crtc_write(rcrtc, DSMR, value);
-> +	dsmr = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
-> +	       | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? DSMR_HSL : 0)
-> +	       | ((mode->flags & DRM_MODE_FLAG_INTERLACE) ? DSMR_ODEV : 0)
-> +	       | DSMR_DIPM_DISP | DSMR_CSPM;
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+---
+ include/media/media-entity.h | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-Quite nit-picky I'm afraid, but here, you have increased the indent such
-that the '|' operator is now aligned with the first '(', rather than the
-'=' as used by the rest of the driver.
-
-Was this intentional ?
-
-I think it should be brought forwards to align under the '=' to match.
-
-
-> +	rcar_du_crtc_write(rcrtc, DSMR, dsmr);
->  
->  	/* Display timings */
->  	rcar_du_crtc_write(rcrtc, HDSR, mode->htotal - mode->hsync_start - 19);
-> 
+diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+index 53f293415fc39ab1..169cf47982a0b1fa 100644
+--- a/include/media/media-entity.h
++++ b/include/media/media-entity.h
+@@ -888,6 +888,33 @@ __must_check int media_graph_walk_init(
+ bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
+ 			    unsigned int pad1);
+ 
++static inline struct media_pad *__media_entity_for_routed_pads_next(
++	struct media_pad *start, struct media_pad *iter)
++{
++	struct media_entity *entity = start->entity;
++
++	while (iter < &entity->pads[entity->num_pads] &&
++	       !media_entity_has_route(entity, start->index, iter->index))
++		iter++;
++
++	return iter;
++}
++
++/**
++ * media_entity_for_routed_pads - Iterate over entity pads connected by routes
++ *
++ * @start: The stating pad
++ * @iter: The iterator pad
++ *
++ * Iterate over all pads connected through routes from a given pad
++ * within an entity. The iteration will include the starting pad itself.
++ */
++#define media_entity_for_routed_pads(start, iter)			\
++	for (iter = __media_entity_for_routed_pads_next(		\
++		     start, (start)->entity->pads);			\
++	     iter < &(start)->entity->pads[(start)->entity->num_pads];	\
++	     iter = __media_entity_for_routed_pads_next(start, iter + 1))
++
+ /**
+  * media_graph_walk_cleanup - Release resources used by graph walk.
+  *
+-- 
+2.18.0
