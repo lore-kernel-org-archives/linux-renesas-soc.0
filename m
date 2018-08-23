@@ -1,38 +1,40 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, geert@linux-m68k.org,
-        horms@verge.net.au, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        kieran.bingham+renesas@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se, damm+renesas@opensource.se,
-        ulrich.hecht+renesas@gmail.com, linux-renesas-soc@vger.kernel.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [RFT 3/8] dt-bindings: media: rcar-csi2: Add R8A77990
-Date: Mon, 20 Aug 2018 12:16:37 +0200
-Message-Id: <1534760202-20114-4-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1534760202-20114-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1534760202-20114-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:59952 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727226AbeHWRE5 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 23 Aug 2018 13:04:57 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        dmaengine@vger.kernel.org, linux-can@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH v2 0/2] tree-wide: use SPDX identifier for Renesas drivers
+Date: Thu, 23 Aug 2018 15:34:53 +0200
+Message-Id: <20180823133456.4748-1-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add compatible string for R-Car E3 R8A77990 to the list of supported SoCs.
+I am resending only the patches which needed the s/GPL-2.0-or-later/GPL-2.0+/
+replacement. I fixed that and checkpatch is still happy.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt | 1 +
- 1 file changed, 1 insertion(+)
+Wolfram Sang (2):
+  dmaengine: use SPDX identifier for Renesas drivers
+  can: rcar: use SPDX identifier for Renesas drivers
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt b/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
-index 2d385b6..2824489 100644
---- a/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
-+++ b/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
-@@ -12,6 +12,7 @@ Mandatory properties
-    - "renesas,r8a7796-csi2" for the R8A7796 device.
-    - "renesas,r8a77965-csi2" for the R8A77965 device.
-    - "renesas,r8a77970-csi2" for the R8A77970 device.
-+   - "renesas,r8a77990-csi2" for the R8A77990 device.
+ drivers/dma/nbpfaxi.c             | 5 +----
+ drivers/dma/sh/shdma-arm.h        | 5 +----
+ drivers/dma/sh/shdma-base.c       | 5 +----
+ drivers/dma/sh/shdma-of.c         | 5 +----
+ drivers/dma/sh/shdma-r8a73a4.c    | 5 +----
+ drivers/dma/sh/shdma.h            | 6 +-----
+ drivers/dma/sh/shdmac.c           | 6 +-----
+ drivers/dma/sh/sudmac.c           | 5 +----
+ drivers/dma/sh/usb-dmac.c         | 5 +----
+ drivers/net/can/rcar/rcar_can.c   | 6 +-----
+ drivers/net/can/rcar/rcar_canfd.c | 6 +-----
+ 11 files changed, 11 insertions(+), 48 deletions(-)
 
-  - reg: the register base and size for the device registers
-  - interrupts: the interrupt for the device
---
-2.7.4
+-- 
+2.11.0
