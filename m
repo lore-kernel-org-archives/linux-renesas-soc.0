@@ -1,34 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:59656 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727877AbeH2R1P (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34847 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726353AbeHXL6e (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Aug 2018 13:27:15 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 0/2] clocksource: ostm: Add support for RZ/A2
-Date: Wed, 29 Aug 2018 08:29:52 -0500
-Message-Id: <20180829132954.64862-1-chris.brandt@renesas.com>
+        Fri, 24 Aug 2018 07:58:34 -0400
+Date: Fri, 24 Aug 2018 10:24:57 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/2] arm64: dts: renesas: v3msk: add eMMC support
+Message-ID: <20180824082456.d25w3kxyvkyouboh@verge.net.au>
+References: <1af46bf9-d9e5-8dcf-0ac7-a85e7348a34e@cogentembedded.com>
+ <9da672a2-0269-4860-8912-189414b43d4c@cogentembedded.com>
+ <20180822113100.edpyplj2kteomr2j@verge.net.au>
+ <9f94612a-5035-b006-f6af-6bafb7ff91f3@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9f94612a-5035-b006-f6af-6bafb7ff91f3@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Modify the driver to take into accound clock drivers that are not 100% DT,
-and also update the binding documentation.
+On Wed, Aug 22, 2018 at 05:43:11PM +0300, Sergei Shtylyov wrote:
+> On 08/22/2018 02:31 PM, Simon Horman wrote:
+> 
+> >> Add the eMMC chip support for the V3M Started Kit board.
+> >>
+> >> Based on the original (and large) patches by Vladimir Barinov.
+> >>
+> >> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> >> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > 
+> > Thanks,
+> > 
+> > This looks fine to me but I will wait to see if there are other reviews
+> > before applying.
+> > 
+> > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> > 
+> > I am, however, curious to know about HS200.
+> > Is it supported on the v3msk? If so, do you have any plans to enable it?
+> 
+>    As I've already said, the eMMC chip only receives 3.3V on all its voltage inputs.
 
-Chris Brandt (2):
-  clocksource/drivers/ostm: Delay driver registration
-  dt-bindings: timer: ostm: Add R7S9210 support
+Thanks Sergei, got it.
 
- .../devicetree/bindings/timer/renesas,ostm.txt     |  3 +-
- drivers/clocksource/renesas-ostm.c                 | 35 ++++++++++++++++++++--
- 2 files changed, 35 insertions(+), 3 deletions(-)
-
--- 
-2.16.1
+I have applied this for v4.20.
