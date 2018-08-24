@@ -1,35 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38317 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727876AbeH3QKz (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:35152 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726969AbeHXLaK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Aug 2018 12:10:55 -0400
-Date: Thu, 30 Aug 2018 14:09:01 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Fri, 24 Aug 2018 07:30:10 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/6] dt-bindings: usb: renesas_usbhs: Add r8a774a1 support
-Message-ID: <20180830120901.uy572tza34dk3tin@verge.net.au>
+Subject: [PATCH 5/6] dt-bindings: usb: renesas_usbhs: Add r8a774a1 support
+Date: Fri, 24 Aug 2018 08:56:14 +0100
+Message-Id: <1535097375-5561-6-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1535097375-5561-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1535097375-5561-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1535097375-5561-6-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1535097375-5561-6-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Aug 24, 2018 at 08:56:14AM +0100, Fabrizio Castro wrote:
-> Document RZ/G2M (R8A774A1) SoC bindings.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Document RZ/G2M (R8A774A1) SoC bindings.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/usb/renesas_usbhs.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
+index 43960fa..087140a 100644
+--- a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
++++ b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
+@@ -5,6 +5,7 @@ Required properties:
+ 
+ 	- "renesas,usbhs-r8a7743" for r8a7743 (RZ/G1M) compatible device
+ 	- "renesas,usbhs-r8a7745" for r8a7745 (RZ/G1E) compatible device
++	- "renesas,usbhs-r8a774a1" for r8a774a1 (RZ/G2M) compatible device
+ 	- "renesas,usbhs-r8a7790" for r8a7790 (R-Car H2) compatible device
+ 	- "renesas,usbhs-r8a7791" for r8a7791 (R-Car M2-W) compatible device
+ 	- "renesas,usbhs-r8a7792" for r8a7792 (R-Car V2H) compatible device
+@@ -16,7 +17,7 @@ Required properties:
+ 	- "renesas,usbhs-r8a77995" for r8a77995 (R-Car D3) compatible device
+ 	- "renesas,usbhs-r7s72100" for r7s72100 (RZ/A1) compatible device
+ 	- "renesas,rcar-gen2-usbhs" for R-Car Gen2 or RZ/G1 compatible devices
+-	- "renesas,rcar-gen3-usbhs" for R-Car Gen3 compatible device
++	- "renesas,rcar-gen3-usbhs" for R-Car Gen3 or RZ/G2 compatible devices
+ 	- "renesas,rza1-usbhs" for RZ/A1 compatible device
+ 
+ 	When compatible with the generic version, nodes must list the
+-- 
+2.7.4
