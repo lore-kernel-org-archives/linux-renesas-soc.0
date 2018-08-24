@@ -1,109 +1,148 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:5255 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726510AbeHXNzT (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:21910 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726243AbeHXNHY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Aug 2018 09:55:19 -0400
+        Fri, 24 Aug 2018 09:07:24 -0400
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
+CC: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v3 9/9] arm64: dts: renesas: r8a774a1: Add FCPF and FCPV instances
-Date: Fri, 24 Aug 2018 11:21:14 +0100
-Message-Id: <1535106074-14032-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <TY1PR01MB17700155CB2AB613EA824D6FC0360@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <TY1PR01MB17700155CB2AB613EA824D6FC0360@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+Subject: RE: [PATCH v2 9/9] arm64: dts: renesas: r8a774a1: Add FCPF and FCPV
+ instances
+Date: Fri, 24 Aug 2018 09:33:30 +0000
+Message-ID: <TY1PR01MB17700155CB2AB613EA824D6FC0360@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <c27a266e-3eaa-a879-85ab-0e0aeb5f8b31@cogentembedded.com>
+ <1535103029-10576-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1535103029-10576-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add FCPF and FCPV instances to the r8a774a1 dtsi, similarly
-to what was done for the r8a7796 with commit 41dbbf0c5b4e
-("arm64: dts: r8a7796: Add FCPF and FCPV instances"),
-commit 69490bc9665d ("arm64: dts: renesas: r8a7796: Point
-FDP1 via FCPF to IPMMU-VI0"), and commit cef942d0bd89 ("arm64:
-dts: renesas: r8a7796: Point VSPI via FCPVI to IPMMU-VC0").
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
-v2->v3:
-* further improvements to the changelog to please checkpatch
 
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 52 +++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+> -----Original Message-----
+> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Sent: 24 August 2018 10:30
+> To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>; Rob Herring <ro=
+bh+dt@kernel.org>; Mark Rutland
+> <mark.rutland@arm.com>; Catalin Marinas <catalin.marinas@arm.com>; Will D=
+eacon <will.deacon@arm.com>
+> Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>; Simon Horman <horms=
+@verge.net.au>; Magnus Damm
+> <magnus.damm@gmail.com>; linux-renesas-soc@vger.kernel.org; devicetree@vg=
+er.kernel.org; linux-arm-
+> kernel@lists.infradead.org; Geert Uytterhoeven <geert+renesas@glider.be>;=
+ Chris Paterson <Chris.Paterson2@renesas.com>; Biju
+> Das <biju.das@bp.renesas.com>
+> Subject: [PATCH v2 9/9] arm64: dts: renesas: r8a774a1: Add FCPF and FCPV =
+instances
+>
+> Add FCPF and FCPV instances to the r8a774a1 dtsi, similarly
+> to what was done for the r8a7796 with commits 41dbbf0c5 ("arm64: dts:
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index f23bbfd..5b2ee60 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -1260,6 +1260,58 @@
- 			resets = <&cpg 408>;
- 		};
- 
-+		fcpf0: fcp@fe950000 {
-+			compatible = "renesas,fcpf";
-+			reg = <0 0xfe950000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 615>;
-+			power-domains = <&sysc 14>;
-+			resets = <&cpg 615>;
-+		};
-+
-+		fcpvb0: fcp@fe96f000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfe96f000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 607>;
-+			power-domains = <&sysc 14>;
-+			resets = <&cpg 607>;
-+		};
-+
-+		fcpvd0: fcp@fea27000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea27000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 603>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 603>;
-+			iommus = <&ipmmu_vi0 8>;
-+		};
-+
-+		fcpvd1: fcp@fea2f000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea2f000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 602>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 602>;
-+			iommus = <&ipmmu_vi0 9>;
-+		};
-+
-+		fcpvd2: fcp@fea37000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea37000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 601>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 601>;
-+			iommus = <&ipmmu_vi0 10>;
-+		};
-+
-+		fcpvi0: fcp@fe9af000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfe9af000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 611>;
-+			power-domains = <&sysc 14>;
-+			resets = <&cpg 611>;
-+			iommus = <&ipmmu_vc0 19>;
-+		};
-+
- 		prr: chipid@fff00044 {
- 			compatible = "renesas,prr";
- 			reg = <0 0xfff00044 0 4>;
--- 
-2.7.4
+Scratch that! Will send a v3!
+
+> r8a7796: Add FCPF and FCPV instances"), 69490bc9665d ("arm64: dts:
+> renesas: r8a7796: Point FDP1 via FCPF to IPMMU-VI0"), and cef942d0bd89
+> ("arm64: dts: renesas: r8a7796: Point VSPI via FCPVI to IPMMU-VC0").
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> ---
+> v1->v2:
+> * moved SHA1 hex to 12 digits as per Sergei comment
+>
+>  arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 52 +++++++++++++++++++++++++=
+++++++
+>  1 file changed, 52 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/=
+dts/renesas/r8a774a1.dtsi
+> index f23bbfd..5b2ee60 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+> @@ -1260,6 +1260,58 @@
+>  resets =3D <&cpg 408>;
+>  };
+>
+> +fcpf0: fcp@fe950000 {
+> +compatible =3D "renesas,fcpf";
+> +reg =3D <0 0xfe950000 0 0x200>;
+> +clocks =3D <&cpg CPG_MOD 615>;
+> +power-domains =3D <&sysc 14>;
+> +resets =3D <&cpg 615>;
+> +};
+> +
+> +fcpvb0: fcp@fe96f000 {
+> +compatible =3D "renesas,fcpv";
+> +reg =3D <0 0xfe96f000 0 0x200>;
+> +clocks =3D <&cpg CPG_MOD 607>;
+> +power-domains =3D <&sysc 14>;
+> +resets =3D <&cpg 607>;
+> +};
+> +
+> +fcpvd0: fcp@fea27000 {
+> +compatible =3D "renesas,fcpv";
+> +reg =3D <0 0xfea27000 0 0x200>;
+> +clocks =3D <&cpg CPG_MOD 603>;
+> +power-domains =3D <&sysc 32>;
+> +resets =3D <&cpg 603>;
+> +iommus =3D <&ipmmu_vi0 8>;
+> +};
+> +
+> +fcpvd1: fcp@fea2f000 {
+> +compatible =3D "renesas,fcpv";
+> +reg =3D <0 0xfea2f000 0 0x200>;
+> +clocks =3D <&cpg CPG_MOD 602>;
+> +power-domains =3D <&sysc 32>;
+> +resets =3D <&cpg 602>;
+> +iommus =3D <&ipmmu_vi0 9>;
+> +};
+> +
+> +fcpvd2: fcp@fea37000 {
+> +compatible =3D "renesas,fcpv";
+> +reg =3D <0 0xfea37000 0 0x200>;
+> +clocks =3D <&cpg CPG_MOD 601>;
+> +power-domains =3D <&sysc 32>;
+> +resets =3D <&cpg 601>;
+> +iommus =3D <&ipmmu_vi0 10>;
+> +};
+> +
+> +fcpvi0: fcp@fe9af000 {
+> +compatible =3D "renesas,fcpv";
+> +reg =3D <0 0xfe9af000 0 0x200>;
+> +clocks =3D <&cpg CPG_MOD 611>;
+> +power-domains =3D <&sysc 14>;
+> +resets =3D <&cpg 611>;
+> +iommus =3D <&ipmmu_vc0 19>;
+> +};
+> +
+>  prr: chipid@fff00044 {
+>  compatible =3D "renesas,prr";
+>  reg =3D <0 0xfff00044 0 4>;
+> --
+> 2.7.4
+
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
