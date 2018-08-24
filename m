@@ -1,43 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35013 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726120AbeH1RJV (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:61190 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726546AbeHXOYV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Aug 2018 13:09:21 -0400
-Date: Tue, 28 Aug 2018 15:17:39 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+        Fri, 24 Aug 2018 10:24:21 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: Re: [PATCH 2/3] arm64: dts: renesas: r8a774a1: Add USB-DMAC and
- HSUSB device nodes
-Message-ID: <20180828131738.rqhiamruboaggxfz@verge.net.au>
+Subject: [PATCH 2/3] arm64: dts: renesas: r8a774a1: Add USB-DMAC and HSUSB device nodes
+Date: Fri, 24 Aug 2018 11:43:48 +0100
+Message-Id: <1535107429-5458-3-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1535107429-5458-1-git-send-email-biju.das@bp.renesas.com>
 References: <1535107429-5458-1-git-send-email-biju.das@bp.renesas.com>
- <1535107429-5458-3-git-send-email-biju.das@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1535107429-5458-3-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Aug 24, 2018 at 11:43:48AM +0100, Biju Das wrote:
-> Add usb dmac and hsusb device nodes on RZ/G2M SoC dtsi.
-> 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Add usb dmac and hsusb device nodes on RZ/G2M SoC dtsi.
 
-Thanks,
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 45 +++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-This looks fine to me but I will wait to see if there are other reviews
-before applying.
-
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index a794089..0c1bae7 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -596,6 +596,51 @@
+ 			status = "disabled";
+ 		};
+ 
++		hsusb: usb@e6590000 {
++			compatible = "renesas,usbhs-r8a774a1",
++				     "renesas,rcar-gen3-usbhs";
++			reg = <0 0xe6590000 0 0x100>;
++			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 704>;
++			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
++			       <&usb_dmac1 0>, <&usb_dmac1 1>;
++			dma-names = "ch0", "ch1", "ch2", "ch3";
++			renesas,buswait = <11>;
++			phys = <&usb2_phy0>;
++			phy-names = "usb";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 704>;
++			status = "disabled";
++		};
++
++		usb_dmac0: dma-controller@e65a0000 {
++			compatible = "renesas,r8a774a1-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65a0000 0 0x100>;
++			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 330>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 330>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
++		usb_dmac1: dma-controller@e65b0000 {
++			compatible = "renesas,r8a774a1-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65b0000 0 0x100>;
++			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 331>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 331>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
+ 		dmac0: dma-controller@e6700000 {
+ 			compatible = "renesas,dmac-r8a774a1",
+ 				     "renesas,rcar-dmac";
+-- 
+2.7.4
