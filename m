@@ -1,18 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:43634 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727293AbeH2U2T (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35915 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726407AbeHXMwK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Aug 2018 16:28:19 -0400
-Date: Wed, 29 Aug 2018 22:00:28 +0530
-From: Vinod <vkoul@kernel.org>
+        Fri, 24 Aug 2018 08:52:10 -0400
+Date: Fri, 24 Aug 2018 11:18:21 +0200
+From: Simon Horman <horms@verge.net.au>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc: linux-renesas-soc@vger.kernel.org,
         Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
         Dan Williams <dan.j.williams@intel.com>,
-        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v2 1/2] dmaengine: use SPDX identifier for Renesas drivers
-Message-ID: <20180829163028.GK2388@vkoul-mobl>
+Message-ID: <20180824091821.z5wieg7mltdbqqf5@verge.net.au>
 References: <20180823133456.4748-1-wsa+renesas@sang-engineering.com>
  <20180823133456.4748-2-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
@@ -22,10 +23,7 @@ In-Reply-To: <20180823133456.4748-2-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 23-08-18, 15:34, Wolfram Sang wrote:
+On Thu, Aug 23, 2018 at 03:34:54PM +0200, Wolfram Sang wrote:
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Applied, thanks
-
--- 
-~Vinod
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
