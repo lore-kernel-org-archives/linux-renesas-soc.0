@@ -1,61 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:33638 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727062AbeHHTwP (ORCPT
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:20734 "EHLO
+        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726244AbeHXIZf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Aug 2018 15:52:15 -0400
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-To: mchehab@kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH] dt-bindings: media: adv748x: Document secondary addresses
-Date: Wed,  8 Aug 2018 18:31:28 +0100
-Message-Id: <20180808173128.6400-1-kieran.bingham@ideasonboard.com>
+        Fri, 24 Aug 2018 04:25:35 -0400
+From: Nguyen An Hoan <na-hoan@jinso.co.jp>
+To: broonie@kernel.org, linux-renesas-soc@vger.kernel.org,
+        geert+renesas@glider.be
+Cc: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
+        h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp, cv-dong@jinso.co.jp,
+        na-hoan@jinso.co.jp
+Subject: [PATCH 0/2]  Add support fdp1 device for Salvator-XS M3-N
+Date: Fri, 24 Aug 2018 13:52:27 +0900
+Message-Id: <1535086349-10657-1-git-send-email-na-hoan@jinso.co.jp>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The ADV748x supports configurable slave addresses for its I2C pages.
-Document the page names, and example for setting each of the pages
-excplicitly.
+From: Hoan Nguyen An <na-hoan@jinso.co.jp>
 
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
----
- .../devicetree/bindings/media/i2c/adv748x.txt          | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+These patches add fdp1 device support for M3-N r8a77965 board.
+Please review for me, thank you!
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/adv748x.txt b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-index 21ffb5ed8183..9515d8ad0e31 100644
---- a/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-+++ b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-@@ -18,6 +18,11 @@ Optional Properties:
- 		     "intrq3". All interrupts are optional. The "intrq3" interrupt
- 		     is only available on the adv7481
-   - interrupts: Specify the interrupt lines for the ADV748x
-+  - reg-names : Names of maps with programmable addresses.
-+		It can contain any map needed a non-default address.
-+		Possible map names are:
-+		  "main", "dpll", "cp", "hdmi", "edid", "repeater",
-+		  "infoframe", "cbus", "cec", "sdp", "txa", "txb"
- 
- The device node must contain one 'port' child node per device input and output
- port, in accordance with the video interface bindings defined in
-@@ -47,7 +52,10 @@ Example:
- 
- 	video-receiver@70 {
- 		compatible = "adi,adv7482";
--		reg = <0x70>;
-+		reg = <0x70 0x71 0x72 0x73 0x74 0x75
-+		       0x60 0x61 0x62 0x63 0x64 0x65>;
-+		reg-names = "main", "dpll", "cp", "hdmi", "edid", "repeater",
-+			    "infoframe", "cbus", "cec", "sdp", "txa", "txb";
- 
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+Hoan Nguyen An (2):
+  arm64: dts: r8a77965: add FDP1 device nodes
+  clk: renesas: r8a77965: Add FDP clock
+
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 10 ++++++++++
+ drivers/clk/renesas/r8a77965-cpg-mssr.c   |  1 +
+ 2 files changed, 11 insertions(+)
+
 -- 
-2.17.1
+2.7.4
