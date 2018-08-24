@@ -1,69 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-09.nifty.com ([210.131.2.76]:47260 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728201AbeHWINK (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35049 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726274AbeHXMCi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Aug 2018 04:13:10 -0400
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/6] mmc: tmio: replace tmio_mmc_clk_stop() calls with tmio_mmc_set_clock()
-Date: Thu, 23 Aug 2018 13:44:15 +0900
-Message-Id: <1534999460-15111-2-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com>
+        Fri, 24 Aug 2018 08:02:38 -0400
+Date: Fri, 24 Aug 2018 10:28:59 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Linux-SH <linux-sh@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 13/13] sh: lib: convert to SPDX identifiers
+Message-ID: <20180824082859.26zu3yzga42aghgp@verge.net.au>
+References: <87k1ohdcqu.wl-kuninori.morimoto.gx@renesas.com>
+ <871sapdckc.wl-kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <871sapdckc.wl-kuninori.morimoto.gx@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-tmio_mmc_clk_stop(host) is equivalent to tmio_mmc_set_clock(host, 0).
-This replacement is needed for the next commit.
+On Thu, Aug 23, 2018 at 02:53:31AM +0000, Kuninori Morimoto wrote:
+> 
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> This patch updates license to use SPDX-License-Identifier
+> instead of verbose license text.
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-
-Changes in v3: None
-Changes in v2: None
-
- drivers/mmc/host/tmio_mmc_core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 261b4d6..5717ffa 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1043,7 +1043,7 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
- 	switch (ios->power_mode) {
- 	case MMC_POWER_OFF:
- 		tmio_mmc_power_off(host);
--		tmio_mmc_clk_stop(host);
-+		tmio_mmc_set_clock(host, 0);
- 		break;
- 	case MMC_POWER_UP:
- 		tmio_mmc_power_on(host, ios->vdd);
-@@ -1310,7 +1310,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
- 	if (pdata->flags & TMIO_MMC_SDIO_IRQ)
- 		_host->sdio_irq_mask = TMIO_SDIO_MASK_ALL;
- 
--	tmio_mmc_clk_stop(_host);
-+	tmio_mmc_set_clock(_host, 0);
- 	tmio_mmc_reset(_host);
- 
- 	_host->sdcard_irq_mask = sd_ctrl_read16_and_16_as_32(_host, CTL_IRQ_MASK);
-@@ -1394,7 +1394,7 @@ int tmio_mmc_host_runtime_suspend(struct device *dev)
- 	tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_ALL);
- 
- 	if (host->clk_cache)
--		tmio_mmc_clk_stop(host);
-+		tmio_mmc_set_clock(host, 0);
- 
- 	tmio_mmc_clk_disable(host);
- 
--- 
-2.7.4
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
