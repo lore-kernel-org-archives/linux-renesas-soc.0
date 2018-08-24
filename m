@@ -1,37 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38287 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728140AbeH3QK0 (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:56162 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726969AbeHXLaB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Aug 2018 12:10:26 -0400
-Date: Thu, 30 Aug 2018 14:08:33 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Fri, 24 Aug 2018 07:30:01 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Kishon Vijay Abraham I <kishon@ti.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        devicetree@vger.kernel.org,
+        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6] dt-bindings: rcar-gen3-phy-usb3: Add r8a774a1 support
-Message-ID: <20180830120832.pvdcqoscz6rjiygi@verge.net.au>
+Subject: [PATCH 2/6] dt-bindings: rcar-gen3-phy-usb3: Add r8a774a1 support
+Date: Fri, 24 Aug 2018 08:56:11 +0100
+Message-Id: <1535097375-5561-3-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1535097375-5561-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1535097375-5561-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1535097375-5561-3-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1535097375-5561-3-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Aug 24, 2018 at 08:56:11AM +0100, Fabrizio Castro wrote:
-> Document RZ/G2M (R8A774A1) SoC bindings.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Document RZ/G2M (R8A774A1) SoC bindings.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
+index 47dd296..9d98266 100644
+--- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
++++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
+@@ -1,20 +1,22 @@
+ * Renesas R-Car generation 3 USB 3.0 PHY
+ 
+ This file provides information on what the device node for the R-Car generation
+-3 USB 3.0 PHY contains.
++3 and RZ/G2 USB 3.0 PHY contain.
+ If you want to enable spread spectrum clock (ssc), you should use USB_EXTAL
+ instead of USB3_CLK. However, if you don't want to these features, you don't
+ need this driver.
+ 
+ Required properties:
+-- compatible: "renesas,r8a7795-usb3-phy" if the device is a part of an R8A7795
++- compatible: "renesas,r8a774a1-usb3-phy" if the device is a part of an R8A774A1
++	      SoC.
++	      "renesas,r8a7795-usb3-phy" if the device is a part of an R8A7795
+ 	      SoC.
+ 	      "renesas,r8a7796-usb3-phy" if the device is a part of an R8A7796
+ 	      SoC.
+ 	      "renesas,r8a77965-usb3-phy" if the device is a part of an
+ 	      R8A77965 SoC.
+-	      "renesas,rcar-gen3-usb3-phy" for a generic R-Car Gen3 compatible
+-	      device.
++	      "renesas,rcar-gen3-usb3-phy" for a generic R-Car Gen3 or RZ/G2
++	      compatible device.
+ 
+ 	      When compatible with the generic version, nodes must list the
+ 	      SoC-specific version corresponding to the platform first
+-- 
+2.7.4
