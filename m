@@ -1,128 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45320 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727778AbeHVBYu (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:46674 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727147AbeHXPD7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 Aug 2018 21:24:50 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 06/11] net: ethernet: renesas: use SPDX identifier for Renesas drivers
-Date: Wed, 22 Aug 2018 00:02:19 +0200
-Message-Id: <20180821220233.9202-7-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
-References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
+        Fri, 24 Aug 2018 11:03:59 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 0/2] Add R-Car V3H (R8A77980) support to the R-Car LVDS driver
+Date: Fri, 24 Aug 2018 14:29:42 +0300
+Message-ID: <1941633.yX5tMUPcR0@avalon>
+In-Reply-To: <a5aae3ff-2585-8eb6-82ef-dc3677eb5abb@cogentembedded.com>
+References: <ef3c6b7e-98f2-7012-71c5-6693e6e48999@cogentembedded.com> <a5aae3ff-2585-8eb6-82ef-dc3677eb5abb@cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Hi Sergei,
 
-To be applied individually per subsystem tree. Morimoto-san, could you maybe
-ack this with your Renesas address?
+On Thursday, 23 August 2018 19:53:33 EEST Sergei Shtylyov wrote:
+> On 06/05/2018 11:25 PM, Sergei Shtylyov wrote:
+> > Here's the set of 2 patches against the 'drm-next' branch of the 'drm.git'
+> > repo. The purpose of these patches is to add the R-Car V3H (R8A77980)
+> > support to the R-Car LVDS driver.
+> > 
+> > [1/2] dt-bindings: display: renesas: lvds: document R8A77980 bindings
+> > [2/2] drm: rcar-du: lvds: add R8A77980 support
+> 
+>    Laurent, I'm not seeing these patches merged... they are 2.5 months old
+> without a comment! :-(
 
- drivers/net/ethernet/renesas/ravb.h      |  5 +----
- drivers/net/ethernet/renesas/ravb_main.c |  5 +----
- drivers/net/ethernet/renesas/sh_eth.c    | 13 +------------
- drivers/net/ethernet/renesas/sh_eth.h    | 13 +------------
- 4 files changed, 4 insertions(+), 32 deletions(-)
+Thank you for pinging me, I've now applied both patches to my tree and will 
+push include them in my v4.20 pull request.
 
-diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index b81f4faf7b10..1470fc12282b 100644
---- a/drivers/net/ethernet/renesas/ravb.h
-+++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /* Renesas Ethernet AVB device driver
-  *
-  * Copyright (C) 2014-2015 Renesas Electronics Corporation
-@@ -5,10 +6,6 @@
-  * Copyright (C) 2015-2016 Cogent Embedded, Inc. <source@cogentembedded.com>
-  *
-  * Based on the SuperH Ethernet driver
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License version 2,
-- * as published by the Free Software Foundation.
-  */
- 
- #ifndef __RAVB_H__
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index c06f2df895c2..aff5516b781e 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /* Renesas Ethernet AVB device driver
-  *
-  * Copyright (C) 2014-2015 Renesas Electronics Corporation
-@@ -5,10 +6,6 @@
-  * Copyright (C) 2015-2016 Cogent Embedded, Inc. <source@cogentembedded.com>
-  *
-  * Based on the SuperH Ethernet driver
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License version 2,
-- * as published by the Free Software Foundation.
-  */
- 
- #include <linux/cache.h>
-diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index 5573199c4536..ad4433d59237 100644
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*  SuperH Ethernet device driver
-  *
-  *  Copyright (C) 2014 Renesas Electronics Corporation
-@@ -5,18 +6,6 @@
-  *  Copyright (C) 2008-2014 Renesas Solutions Corp.
-  *  Copyright (C) 2013-2017 Cogent Embedded, Inc.
-  *  Copyright (C) 2014 Codethink Limited
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under the terms and conditions of the GNU General Public License,
-- *  version 2, as published by the Free Software Foundation.
-- *
-- *  This program is distributed in the hope it will be useful, but WITHOUT
-- *  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- *  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- *  more details.
-- *
-- *  The full GNU General Public License is included in this distribution in
-- *  the file called "COPYING".
-  */
- 
- #include <linux/module.h>
-diff --git a/drivers/net/ethernet/renesas/sh_eth.h b/drivers/net/ethernet/renesas/sh_eth.h
-index f94be99cf400..0c18650bbfe6 100644
---- a/drivers/net/ethernet/renesas/sh_eth.h
-+++ b/drivers/net/ethernet/renesas/sh_eth.h
-@@ -1,19 +1,8 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*  SuperH Ethernet device driver
-  *
-  *  Copyright (C) 2006-2012 Nobuhiro Iwamatsu
-  *  Copyright (C) 2008-2012 Renesas Solutions Corp.
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under the terms and conditions of the GNU General Public License,
-- *  version 2, as published by the Free Software Foundation.
-- *
-- *  This program is distributed in the hope it will be useful, but WITHOUT
-- *  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- *  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- *  more details.
-- *
-- *  The full GNU General Public License is included in this distribution in
-- *  the file called "COPYING".
-  */
- 
- #ifndef __SH_ETH_H__
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
