@@ -1,77 +1,103 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:40006 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726868AbeH0QQy (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:13245 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726423AbeHXMzv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 27 Aug 2018 12:16:54 -0400
-MIME-Version: 1.0
-References: <1535029653-7418-1-git-send-email-fabrizio.castro@bp.renesas.com> <1535029653-7418-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1535029653-7418-3-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 27 Aug 2018 14:30:14 +0200
-Message-ID: <CAMuHMdWEPwG6=MEtYKREfqyow=bz__p+Qj28kXufbXc37u8p9A@mail.gmail.com>
-Subject: Re: [PATCH 2/3][can-next] can: rcar_can: Add RZ/G2 support
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Wolfgang Grandegger <wg@grandegger.com>,
+        Fri, 24 Aug 2018 08:55:51 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Simon Horman <horms@verge.net.au>
+CC: Wolfgang Grandegger <wg@grandegger.com>,
         Marc Kleine-Budde <mkl@pengutronix.de>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S. Miller" <davem@davemloft.net>, linux-can@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 2/3][can-next] can: rcar_can: Add RZ/G2 support
+Date: Fri, 24 Aug 2018 09:22:01 +0000
+Message-ID: <TY1PR01MB1770D9C711DECB0A87AEBC34C0360@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1535029653-7418-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1535029653-7418-3-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20180824091648.nishwazvmyolmeae@verge.net.au>
+In-Reply-To: <20180824091648.nishwazvmyolmeae@verge.net.au>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Fabrizio,
+Hello Simon,
 
-(Usually the DT patch goes before the driver patch)
+Thank you for your feedback!
 
-On Thu, Aug 23, 2018 at 3:08 PM Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> RZ/G2 devices don't have clkp2, therefore this commit adds a
-> generic compatible string for them to allow for proper checking
-> during probe.
+> Subject: Re: [PATCH 2/3][can-next] can: rcar_can: Add RZ/G2 support
 >
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Chris Paterson <Chris.Paterson2@renesas.com>
-
-Thanks for your patch!
-
-> --- a/drivers/net/can/rcar/rcar_can.c
-> +++ b/drivers/net/can/rcar/rcar_can.c
-> @@ -27,6 +27,7 @@
+> On Thu, Aug 23, 2018 at 02:07:32PM +0100, Fabrizio Castro wrote:
+> > RZ/G2 devices don't have clkp2, therefore this commit adds a
+> > generic compatible string for them to allow for proper checking
+> > during probe.
+> >
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Signed-off-by: Chris Paterson <Chris.Paterson2@renesas.com>
 >
->  #define RCAR_SUPPORTED_CLOCKS  (BIT(CLKR_CLKP1) | BIT(CLKR_CLKP2) | \
->                                  BIT(CLKR_CLKEXT))
-> +#define RZG2_SUPPORTED_CLOCKS  (BIT(CLKR_CLKP1) | BIT(CLKR_CLKEXT))
 >
->  /* Mailbox configuration:
->   * mailbox 60 - 63 - Rx FIFO mailboxes
-> @@ -933,6 +934,10 @@ static const struct of_device_id rcar_can_of_table[] __maybe_unused = {
->                 .compatible = "renesas,rcar-gen3-can",
->                 .data = (void *)RCAR_SUPPORTED_CLOCKS,
->         },
-> +       {
-> +               .compatible = "renesas,rzg-gen2-can",
-> +               .data = (void *)RZG2_SUPPORTED_CLOCKS,
-> +       },
->         { }
+> Are we sure these clocks are for all RZ/G2 SoCs?
 
-I think this patch is not needed, cfr. my reply to the
-first^H^H^H^H^Hthird patch
-in your series.
+Section 52.1.1 of the HW manual and Figure 52.1 state this.
 
-Gr{oetje,eeting}s,
+Thanks,
+Fab
 
-                        Geert
+>
+> If so
+>
+>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+>
+>
+> > ---
+> >
+> > This patch applies on linux-can-next-for-4.19-20180727
+> >
+> >  drivers/net/can/rcar/rcar_can.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/drivers/net/can/rcar/rcar_can.c b/drivers/net/can/rcar/rca=
+r_can.c
+> > index fbd9284..397208e 100644
+> > --- a/drivers/net/can/rcar/rcar_can.c
+> > +++ b/drivers/net/can/rcar/rcar_can.c
+> > @@ -27,6 +27,7 @@
+> >
+> >  #define RCAR_SUPPORTED_CLOCKS(BIT(CLKR_CLKP1) | BIT(CLKR_CLKP2) | \
+> >   BIT(CLKR_CLKEXT))
+> > +#define RZG2_SUPPORTED_CLOCKS(BIT(CLKR_CLKP1) | BIT(CLKR_CLKEXT))
+> >
+> >  /* Mailbox configuration:
+> >   * mailbox 60 - 63 - Rx FIFO mailboxes
+> > @@ -933,6 +934,10 @@ static const struct of_device_id rcar_can_of_table=
+[] __maybe_unused =3D {
+> >  .compatible =3D "renesas,rcar-gen3-can",
+> >  .data =3D (void *)RCAR_SUPPORTED_CLOCKS,
+> >  },
+> > +{
+> > +.compatible =3D "renesas,rzg-gen2-can",
+> > +.data =3D (void *)RZG2_SUPPORTED_CLOCKS,
+> > +},
+> >  { }
+> >  };
+> >  MODULE_DEVICE_TABLE(of, rcar_can_of_table);
+> > --
+> > 2.7.4
+> >
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
