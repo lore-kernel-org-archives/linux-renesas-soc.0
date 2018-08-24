@@ -1,42 +1,180 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33376 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726504AbeHXTnF (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 24 Aug 2018 15:43:05 -0400
+Received: by mail-lf1-f67.google.com with SMTP id c7-v6so7097577lfe.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 24 Aug 2018 09:07:46 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH] sh_eth: Add R7S9210 support
+To: Chris Brandt <chris.brandt@renesas.com>,
         "David S . Miller" <davem@davemloft.net>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: RE: [PATCH] sh_eth: Add R7S9210 support
-Date: Mon, 27 Aug 2018 17:30:17 +0000
-Message-ID: <TY1PR01MB1562269EC6BE932742A119938A0B0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
 References: <20180822205705.20835-1-chris.brandt@renesas.com>
- <8efee9e2-2c2c-b02b-db8d-a421a8928448@cogentembedded.com>
-In-Reply-To: <8efee9e2-2c2c-b02b-db8d-a421a8928448@cogentembedded.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Message-ID: <8efee9e2-2c2c-b02b-db8d-a421a8928448@cogentembedded.com>
+Date: Fri, 24 Aug 2018 19:07:43 +0300
 MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <20180822205705.20835-1-chris.brandt@renesas.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgU2VyZ2VpLA0KDQpPbiBGcmlkYXksIEF1Z3VzdCAyNCwgMjAxOCAxLCBsaW51eC1yZW5lc2Fz
-LXNvYy1vd25lckB2Z2VyLmtlcm5lbC5vcmcgd3JvdGU6DQo+IE9uIDA4LzIyLzIwMTggMTE6NTcg
-UE0sIENocmlzIEJyYW5kdCB3cm90ZToNCj4gPiArc3RhdGljIGNvbnN0IHUxNiBzaF9ldGhfb2Zm
-c2V0X2Zhc3RfcnphMltTSF9FVEhfTUFYX1JFR0lTVEVSX09GRlNFVF0gPQ0KPiB7DQo+ID4gKwlT
-SF9FVEhfT0ZGU0VUX0RFRkFVTFRTLA0KPiA+ICsNCiAgIChzbmlwKQ0KPiA+ICsJW1JGQ1JdCQk9
-IDB4MDFmNCwNCj4gPiArCVtNQUZDUl0JCT0gMHgwMWY4LA0KPiA+ICt9Ow0KPiA+ICsNCj4gDQo+
-ICAgIFRoaXMgYXJyYXkgaXMgYWJzb2x1dGVseSB0aGUgc2FtZSBhcyBzaF9ldGhfb2Zmc2V0X2Zh
-c3Rfc2g0W10sIGV4Y2VwdA0KPiB0aGUgbGF0dGVyDQo+IGlzIChtb3JlIG9yIGxlc3MpIHNvcnRl
-ZC4NCg0KWW91J3JlIHJpZ2h0LiBJJ2xsIGp1c3QgdXNlIHNoX2V0aF9vZmZzZXRfZmFzdF9zaDRb
-XS4NCg0KDQo+ID4gKw0KPiA+ICsJc3dpdGNoIChtZHAtPnNwZWVkKSB7DQo+ID4gKwljYXNlIDEw
-OiAvKiAxMEJBU0UgKi8NCj4gPiArCQlzaF9ldGhfbW9kaWZ5KG5kZXYsIEVDTVIsIFJUTSwgMCk7
-DQo+ID4gKwkJYnJlYWs7DQo+ID4gKwljYXNlIDEwMDovKiAxMDBCQVNFICovDQo+ID4gKwkJc2hf
-ZXRoX21vZGlmeShuZGV2LCBFQ01SLCBSVE0sIFJUTSk7DQo+ID4gKwkJYnJlYWs7DQo+ID4gKwl9
-DQo+ID4gK30NCj4gPiArDQo+IA0KPiAgIFNlZW1zIHRoZSBzYW1lIGFzIHNoX2V0aF9zZXRfcmF0
-ZV9yY2FyKCksIGV4Y2VwdCBmb3IgdGhlIGJpdCBuYW1lLi4uDQoNCllvdSdyZSByaWdodC4NCkkg
-bG9va2VkIGF0IHRoZSBvdGhlciBzaF9ldGhfc2V0X3JhdGVfeHh4KCkgYnV0IGRpZG4ndCBzZWVt
-IHRvIGZpbmQgb25lIA0KdGhhdCBtYXRjaGVkLg0KQnV0LCBzaF9ldGhfc2V0X3JhdGVfcmNhcigp
-IGRvZXMgbWF0Y2guIEknbGwgdXNlIHRoYXQgb25lLg0KDQoNClRoYW5rcywNCkNocmlzDQoNCg==
+On 08/22/2018 11:57 PM, Chris Brandt wrote:
+
+> Add support for the R7S9210 which is part of the RZ/A2 series.
+
+   Is the manual publicly available? I tried to find it on Renesas' website
+but it appears royally broken...
+
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> ---
+>  Documentation/devicetree/bindings/net/sh_eth.txt |   1 +
+>  drivers/net/ethernet/renesas/sh_eth.c            | 107 +++++++++++++++++++++++
+>  drivers/net/ethernet/renesas/sh_eth.h            |   1 +
+>  3 files changed, 109 insertions(+)
+> 
+[...]
+> diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+> index 5573199c4536..f3a575e56ae4 100644
+> --- a/drivers/net/ethernet/renesas/sh_eth.c
+> +++ b/drivers/net/ethernet/renesas/sh_eth.c
+> @@ -216,6 +216,59 @@ static const u16 sh_eth_offset_fast_rz[SH_ETH_MAX_REGISTER_OFFSET] = {
+>  	[RXALCR0]	= 0x008C,
+>  };
+>  
+> +static const u16 sh_eth_offset_fast_rza2[SH_ETH_MAX_REGISTER_OFFSET] = {
+> +	SH_ETH_OFFSET_DEFAULTS,
+> +
+> +	[EDMR]		= 0x0000,
+> +	[EDTRR]		= 0x0008,
+> +	[EDRRR]		= 0x0010,
+> +	[EESR]		= 0x0028,
+> +	[EESIPR]	= 0x0030,
+> +	[TDLAR]		= 0x0018,
+> +	[TBRAR]		= 0x00d4,
+> +	[TDFAR]		= 0x00d8,
+> +	[RDLAR]		= 0x0020,
+> +	[RBWAR]		= 0x00c8,
+> +	[RDFAR]		= 0x00cc,
+> +	[TRSCER]	= 0x0038,
+> +	[RMFCR]		= 0x0040,
+> +	[TFTR]		= 0x0048,
+> +	[FDR]		= 0x0050,
+> +	[RMCR]		= 0x0058,
+> +	[TFUCR]		= 0x0064,
+> +	[RFOCR]		= 0x0068,
+> +	[RPADIR]	= 0x0078,
+> +	[TRIMD]		= 0x007c,
+> +	[FCFTR]		= 0x0070,
+> +
+> +	[ECMR]		= 0x0100,
+> +	[RFLR]		= 0x0108,
+> +	[ECSR]		= 0x0110,
+> +	[ECSIPR]	= 0x0118,
+> +	[PIR]		= 0x0120,
+> +	[PSR]		= 0x0128,
+> +	[RDMLR]		= 0x0140,
+> +	[IPGR]		= 0x0150,
+> +	[APR]		= 0x0154,
+> +	[MPR]		= 0x0158,
+> +	[RFCF]		= 0x0160,
+> +	[TPAUSER]	= 0x0164,
+> +	[TPAUSECR]	= 0x0168,
+> +	[BCFRR]		= 0x016c,
+> +	[MAHR]		= 0x01c0,
+> +	[MALR]		= 0x01c8,
+> +	[TROCR]		= 0x01d0,
+> +	[CDCR]		= 0x01d4,
+> +	[LCCR]		= 0x01d8,
+> +	[CNDCR]		= 0x01dc,
+> +	[CEFCR]		= 0x01e4,
+> +	[FRECR]		= 0x01e8,
+> +	[TSFRCR]	= 0x01ec,
+> +	[TLFRCR]	= 0x01f0,
+> +	[RFCR]		= 0x01f4,
+> +	[MAFCR]		= 0x01f8,
+> +};
+> +
+
+   This array is absolutely the same as sh_eth_offset_fast_sh4[], except the latter
+is (more or less) sorted.
+
+>  static const u16 sh_eth_offset_fast_rcar[SH_ETH_MAX_REGISTER_OFFSET] = {
+>  	SH_ETH_OFFSET_DEFAULTS,
+>  
+> @@ -635,6 +688,56 @@ static struct sh_eth_cpu_data r7s72100_data = {
+>  	.no_tx_cntrs	= 1,
+>  };
+>  
+> +/* R7S9210 */
+> +static void sh_eth_set_rate_r7s9210(struct net_device *ndev)
+> +{
+> +	struct sh_eth_private *mdp = netdev_priv(ndev);
+> +	unsigned long RTM = 0x00000004;
+
+  Use #define, please.
+
+> +
+> +	switch (mdp->speed) {
+> +	case 10: /* 10BASE */
+> +		sh_eth_modify(ndev, ECMR, RTM, 0);
+> +		break;
+> +	case 100:/* 100BASE */
+> +		sh_eth_modify(ndev, ECMR, RTM, RTM);
+> +		break;
+> +	}
+> +}
+> +
+
+  Seems the same as sh_eth_set_rate_rcar(), except for the bit name...
+
+> +static struct sh_eth_cpu_data r7s9210_data = {
+> +	.soft_reset	= sh_eth_soft_reset,
+> +
+> +	.set_duplex	= sh_eth_set_duplex,
+> +	.set_rate	= sh_eth_set_rate_r7s9210,
+> +
+> +	.register_type	= SH_ETH_REG_FAST_RZA2,
+> +
+> +	.edtrr_trns	= EDTRR_TRNS_ETHER,
+> +	.ecsr_value	= ECSR_ICD,
+> +	.ecsipr_value	= ECSIPR_ICDIP,
+> +	.eesipr_value	= EESIPR_TWBIP | EESIPR_TABTIP | EESIPR_RABTIP |
+> +			  EESIPR_RFCOFIP | EESIPR_ECIIP | EESIPR_FTCIP |
+> +			  EESIPR_TDEIP | EESIPR_TFUFIP | EESIPR_FRIP |
+> +			  EESIPR_RDEIP | EESIPR_RFOFIP | EESIPR_CNDIP |
+> +			  EESIPR_DLCIP | EESIPR_CDIP | EESIPR_TROIP |
+> +			  EESIPR_RMAFIP | EESIPR_RRFIP | EESIPR_RTLFIP |
+> +			  EESIPR_RTSFIP | EESIPR_PREIP | EESIPR_CERFIP,
+> +
+> +	.tx_check	= EESR_FTC | EESR_CND | EESR_DLC | EESR_CD | EESR_TRO,
+> +	.eesr_err_check	= EESR_TWB | EESR_TABT | EESR_RABT | EESR_RFE |
+> +			  EESR_RDE | EESR_RFRMER | EESR_TFE | EESR_TDE,
+> +
+> +	.fdr_value	= 0x0000070f,
+> +
+> +	.apr		= 1,
+> +	.mpr		= 1,
+> +	.tpauser	= 1,
+> +	.hw_swap	= 1,
+> +	.rpadir		= 1,
+> +	.no_ade		= 1,
+> +	.xdfar_rw	= 1,
+> +};
+> +
+
+   Can't check these w/o the manual...
+
+>  static void sh_eth_chip_reset_r8a7740(struct net_device *ndev)
+>  {
+>  	sh_eth_chip_reset(ndev);
+[...]
+
+MNR, Sergei
