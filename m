@@ -1,105 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-09.nifty.com ([210.131.2.76]:47942 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728475AbeHWINe (ORCPT
+Received: from relay10.mail.gandi.net ([217.70.178.230]:55379 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726462AbeHXOJM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Aug 2018 04:13:34 -0400
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 3/6] dt-bindings: mmc: add DT binding for UniPhier SD/eMMC controller
-Date: Thu, 23 Aug 2018 13:44:17 +0900
-Message-Id: <1534999460-15111-4-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com>
+        Fri, 24 Aug 2018 10:09:12 -0400
+Date: Fri, 24 Aug 2018 12:35:07 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: niklas soderlund <niklas.soderlund@ragnatech.se>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Testing HDMI on E3
+Message-ID: <20180824103507.GG26480@w540>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="Yia77v5a8fyVHJSl"
+Content-Disposition: inline
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This SD/eMMC controller is used for UniPhier SoC family.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+--Yia77v5a8fyVHJSl
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Changes in v3: None
-Changes in v2:
-  - Rename compatible "socionext,uniphier-sd-v3.1b"
-    to "socionext,uniphier-sd-v3.1.1"
+Hi Laurent
+   +Niklas in CC for support
+   +renesas-socs to document the procedure
 
- .../devicetree/bindings/mmc/uniphier-sd.txt        | 55 ++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mmc/uniphier-sd.txt
+In order to test HDMI capture on D3 and Salvator-x boards, I have
+always used Niklas' great vin-tests suite
+git://git.ragnatech.se/vin-tests
 
-diff --git a/Documentation/devicetree/bindings/mmc/uniphier-sd.txt b/Documentation/devicetree/bindings/mmc/uniphier-sd.txt
-new file mode 100644
-index 0000000..e1d6587
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/uniphier-sd.txt
-@@ -0,0 +1,55 @@
-+UniPhier SD/eMMC controller
-+
-+Required properties:
-+- compatible: should be one of the following:
-+    "socionext,uniphier-sd-v2.91"  - IP version 2.91
-+    "socionext,uniphier-sd-v3.1"   - IP version 3.1
-+    "socionext,uniphier-sd-v3.1.1" - IP version 3.1.1
-+- reg: offset and length of the register set for the device.
-+- interrupts: a single interrupt specifier.
-+- clocks: a single clock specifier of the controller clock.
-+- reset-names: should contain the following:
-+    "host"   - mandatory for all versions
-+    "bridge" - should exist only for "socionext,uniphier-sd-v2.91"
-+    "hw"     - should exist if eMMC hw reset line is available
-+- resets: a list of reset specifiers, corresponding to the reset-names
-+
-+Optional properties:
-+- pinctrl-names: if present, should contain the following:
-+    "default" - should exist for all instances
-+    "uhs"     - should exist for SD instance with UHS support
-+- pinctrl-0: pin control state for the default mode
-+- pinctrl-1: pin control state for the UHS mode
-+- dma-names: should be "rx-tx" if present.
-+  This property can exist only for "socionext,uniphier-sd-v2.91".
-+- dmas: a single DMA channel specifier
-+  This property can exist only for "socionext,uniphier-sd-v2.91".
-+- bus-width: see mmc.txt
-+- cap-sd-highspeed: see mmc.txt
-+- cap-mmc-highspeed: see mmc.txt
-+- sd-uhs-sdr12: see mmc.txt
-+- sd-uhs-sdr25: see mmc.txt
-+- sd-uhs-sdr50: see mmc.txt
-+- cap-mmc-hw-reset: should exist if reset-names contains "hw". see mmc.txt
-+- non-removable: see mmc.txt
-+
-+Example:
-+
-+	sd: sdhc@5a400000 {
-+		compatible = "socionext,uniphier-sd-v2.91";
-+		reg = <0x5a400000 0x200>;
-+		interrupts = <0 76 4>;
-+		pinctrl-names = "default", "uhs";
-+		pinctrl-0 = <&pinctrl_sd>;
-+		pinctrl-1 = <&pinctrl_sd_uhs>;
-+		clocks = <&mio_clk 0>;
-+		reset-names = "host", "bridge";
-+		resets = <&mio_rst 0>, <&mio_rst 3>;
-+		dma-names = "rx-tx";
-+		dmas = <&dmac 4>;
-+		bus-width = <4>;
-+		cap-sd-highspeed;
-+		sd-uhs-sdr12;
-+		sd-uhs-sdr25;
-+		sd-uhs-sdr50;
-+	};
--- 
-2.7.4
+And I suggest to do the same for E3.
+
+* Add E3 support to vin-tests/boards.sh
+  E3 has a video input pipeline similar to Salvator-X, and HDMI input
+  connected to an adv7482, connected to a CSI-2 port, then to VIN.
+
+  I cannot tell the exact entity names, but it is easy enough for you
+  to find them out.
+
+  I think you only need to tweak vin-tests/boards.sh to add Ebisu
+  board there (look at my series doing that for D3, for E3 it's even
+  simpler). Once the board is recognized, you can use other scripts.
+
+* Set EDID on the HDMI port
+  #vin-tests/set-edid
+  You need to cross-compile vin-tests/src/edid/ in advance
+
+  If this succeeds, the board is recognized.
+
+* Capture with yavta
+  Run
+  #vin-tests/yavta-hdmi $VIN_INSTANCE
+
+  The script configure links and set formats on all entities along the
+  pipeline. At this point, I think the better thing to do is to try,
+  see where it fails and adjust the entity names as required. Again,
+  being this a 'standard' Gen3 capture pipeline, it should be easy
+  enough.
+
+- Before all that, I hope my Ebisu support series creates a proper media
+  graph with all entities in place. No need to tell you, but check
+  with media-ctl if everything looks correct for the E3 board.
+
+Hope this helps.
+   j
+
+--Yia77v5a8fyVHJSl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJbf99bAAoJEHI0Bo8WoVY8QrgP/3CqvGE4589bMFuuQMTpJA4v
+imY29Tt0y6+Ft+nmGsmgmi2zAmT+TAcvzQwfieRDO6e634lc5b+xjNL8Wi1edfIW
+MoiYkxCO7WQheP0BJeW7RQDYzfaHfQedUyjZ2Pov84Cj/Wd6L8DwNcrpSRRxfXo8
+yXYX1/URnIXVIcSH9SFoiJDDwoHZfgF+rbdy6hPJLDrCrAHPKNv8KbxegnjA1zvb
+Ts73zhljd0ZMyl3AgbjZFtfLakian+LT6xxDh6ENPbzdSNLcjEUs39GzjloG9Ysl
+Y9UIv3Zlqp9h1+6joFJ4f7i61wUajLMiIw6XZCHbBfo52OnyUCd4shaws1j813vY
+cSvagQ92DQhLbkI+loGhS0z5bWpl+Y8VO+rjNIlH5usd245rk3HcmSHwpmvQLQFt
+Fsh0i/2DF7Izgh7jVAGsvsyhM/n1GFn/Kpyv56Mgo+WbnEc64W2cr7VZSdoJ75Jo
+Iq+FdaOYQOtcbj+zkJwSz5Yf9goJYYabjBhxOtfgXpXGYePGksQTQWoSX0livUtv
+O8SW3tvNKKXNm6Yx61bRA0TkS7oPprKXzpa6nPO5NMaLHd7phY2Fa4N2ZBsDAcBd
++Pk9rW/diQIsAmkZSL0TqgidGFxcogCNwpJb0EHNBMIciVlnnt9bQzPqhNaGPCJ6
+we//hCjBu9MyyjLwZuC3
+=0QCH
+-----END PGP SIGNATURE-----
+
+--Yia77v5a8fyVHJSl--
