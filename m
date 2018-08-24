@@ -1,56 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:12527 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728273AbeH3RPr (ORCPT
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.21]:22842 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726382AbeHXMqf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Aug 2018 13:15:47 -0400
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v2 3/3] ARM: dts: r9a06g032: Add pinctrl node
-Date: Thu, 30 Aug 2018 14:12:55 +0100
-Message-Id: <1535634775-19365-4-git-send-email-phil.edworthy@renesas.com>
-In-Reply-To: <1535634775-19365-1-git-send-email-phil.edworthy@renesas.com>
-References: <1535634775-19365-1-git-send-email-phil.edworthy@renesas.com>
+        Fri, 24 Aug 2018 08:46:35 -0400
+From: Ulrich Hecht <uli+renesas@fpond.eu>
+To: devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de,
+        geert@linux-m68k.org, linux-spi@vger.kernel.org,
+        Ulrich Hecht <uli+renesas@fpond.eu>
+Subject: [RESEND PATCH] spi: sh-msiof: Document R-Car D3 support
+Date: Fri, 24 Aug 2018 11:12:31 +0200
+Message-Id: <1535101951-11221-1-git-send-email-uli+renesas@fpond.eu>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This provides a pinctrl driver for the Renesas R9A06G032 SoC
+Document support for the MSIOF module in the Renesas D3 (r8a77995) SoC.
 
-Based on a patch originally written by Michel Pollet at Renesas.
+No driver update is needed.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v2:
- - Add "renesas,rzn1-pinctrl" compatible fallback string
- - Register size corrected.
----
- arch/arm/boot/dts/r9a06g032.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+This patch fell by the wayside, probably because I forgot to cc devicetree.
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index 1bc1f36..282ec11 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -165,6 +165,14 @@
- 			status = "disabled";
- 		};
- 
-+		pinctrl: pin-controller@40067000 {
-+			compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
-+			reg = <0x40067000 0x1000>, <0x51000000 0x480>;
-+			clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
-+			clock-names = "bus";
-+			status = "okay";
-+		};
-+
- 		gic: gic@44101000 {
- 			compatible = "arm,cortex-a7-gic", "arm,gic-400";
- 			interrupt-controller;
+CU
+Uli
+
+
+ Documentation/devicetree/bindings/spi/sh-msiof.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/spi/sh-msiof.txt b/Documentation/devicetree/bindings/spi/sh-msiof.txt
+index bfbc203..fd15715 100644
+--- a/Documentation/devicetree/bindings/spi/sh-msiof.txt
++++ b/Documentation/devicetree/bindings/spi/sh-msiof.txt
+@@ -11,6 +11,7 @@ Required properties:
+ 			 "renesas,msiof-r8a7795" (R-Car H3)
+ 			 "renesas,msiof-r8a7796" (R-Car M3-W)
+ 			 "renesas,msiof-r8a77965" (R-Car M3-N)
++			 "renesas,msiof-r8a77995" (R-Car D3)
+ 			 "renesas,msiof-sh73a0" (SH-Mobile AG5)
+ 			 "renesas,sh-mobile-msiof" (generic SH-Mobile compatibile device)
+ 			 "renesas,rcar-gen2-msiof" (generic R-Car Gen2 and RZ/G1 compatible device)
 -- 
 2.7.4
