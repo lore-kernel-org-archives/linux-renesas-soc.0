@@ -1,46 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:59656 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728144AbeH2R1Q (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:50125 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726883AbeH0QWR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Aug 2018 13:27:16 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 2/2] dt-bindings: timer: ostm: Add R7S9210 support
-Date: Wed, 29 Aug 2018 08:29:54 -0500
-Message-Id: <20180829132954.64862-3-chris.brandt@renesas.com>
-In-Reply-To: <20180829132954.64862-1-chris.brandt@renesas.com>
-References: <20180829132954.64862-1-chris.brandt@renesas.com>
+        Mon, 27 Aug 2018 12:22:17 -0400
+Date: Mon, 27 Aug 2018 14:35:44 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4] arm64: dts: renesas: condor/v3hsk: add DU/LVDS/HDMI
+ support
+Message-ID: <20180827123544.awqip3mbevjvzh7i@verge.net.au>
+References: <95d0db34-713d-8206-00c2-ee9a42aab823@cogentembedded.com>
+ <fe3794e1-2452-d1af-5c30-203fcbb9932e@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fe3794e1-2452-d1af-5c30-203fcbb9932e@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R7S9210 belongs to the RZ/A2 SoC series
+On Thu, Aug 23, 2018 at 07:59:20PM +0300, Sergei Shtylyov wrote:
+> Define the Condor/V3HSK board dependent parts of the DU and  LVDS device
+> nodes. Also add the device nodes for Thine THC63LVD1024 LVDS decoder and
+> Analog Devices ADV7511W HDMI transmitter...
+> 
+> Based on the original (and large) patch by Vladimir Barinov.
+> 
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Reviewed-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+> ---
+> The patch is against the 'renesas-devel-20180822-v4.18' tag of Simon Horman's
+> 'renesas.git' repo. The only driver support still unmerged seems to be the
+> R8A77980 LVDS support patches...
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- Documentation/devicetree/bindings/timer/renesas,ostm.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/timer/renesas,ostm.txt b/Documentation/devicetree/bindings/timer/renesas,ostm.txt
-index be3ae0fdf775..81a78f8bcf17 100644
---- a/Documentation/devicetree/bindings/timer/renesas,ostm.txt
-+++ b/Documentation/devicetree/bindings/timer/renesas,ostm.txt
-@@ -9,7 +9,8 @@ Channels are independent from each other.
- Required Properties:
- 
-   - compatible: must be one or more of the following:
--    - "renesas,r7s72100-ostm" for the r7s72100 OSTM
-+    - "renesas,r7s72100-ostm" for the R7S72100 (RZ/A1) OSTM
-+    - "renesas,r7s9210-ostm" for the R7S9210 (RZ/A2) OSTM
-     - "renesas,ostm" for any OSTM
- 		This is a fallback for the above renesas,*-ostm entries
- 
--- 
-2.16.1
+Thanks, applied for v4.20.
