@@ -1,18 +1,19 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Thu, 30 Aug 2018 14:09:28 +0200
-From: Simon Horman <horms@verge.net.au>
+Date: Mon, 27 Aug 2018 10:24:02 +0530
+From: Vinod <vkoul@kernel.org>
 To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 4/6] dt-bindings: dmaengine: usb-dmac: Add binding for
  r8a774a1
-Message-ID: <20180830120928.uint4se2lfh2eklh@verge.net.au>
+Message-ID: <20180827045402.GQ2388@vkoul-mobl>
 References: <1535097375-5561-1-git-send-email-fabrizio.castro@bp.renesas.com>
  <1535097375-5561-5-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
@@ -22,12 +23,12 @@ In-Reply-To: <1535097375-5561-5-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Aug 24, 2018 at 08:56:13AM +0100, Fabrizio Castro wrote:
+On 24-08-18, 08:56, Fabrizio Castro wrote:
 > From: Biju Das <biju.das@bp.renesas.com>
 > 
 > This patch adds binding for r8a774a1 (RZ/G2M).
-> 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Vinod Koul <vkoul@kernel.org>
+
+-- 
+~Vinod
