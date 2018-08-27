@@ -1,291 +1,140 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:60262 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725858AbeHQGnv (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:50327 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726976AbeH0QjQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Aug 2018 02:43:51 -0400
-From: Nguyen An Hoan <na-hoan@jinso.co.jp>
-To: linux-renesas-soc@vger.kernel.org, broonie@kernel.org,
-        geert+renesas@glider.be
-Cc: kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
-        h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp, cv-dong@jinso.co.jp
-Subject: [PATCH 2/2] pinctrl: sh-pfc: r8a77965: add Audio SSI pin support
-Date: Fri, 17 Aug 2018 12:02:38 +0900
-Message-Id: <1534474958-13417-3-git-send-email-na-hoan@jinso.co.jp>
-In-Reply-To: <1534474958-13417-1-git-send-email-na-hoan@jinso.co.jp>
-References: <1534474958-13417-1-git-send-email-na-hoan@jinso.co.jp>
+        Mon, 27 Aug 2018 12:39:16 -0400
+Date: Mon, 27 Aug 2018 14:52:39 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH/RFT] arm64: dts: renesas: r8a77965: Add OPPs table for
+ cpu devices
+Message-ID: <20180827125238.ayaw7z3odnkzid4d@verge.net.au>
+References: <1534255961-23326-1-git-send-email-ykaneko0929@gmail.com>
+ <20180822144113.s7prdezkj5c3xjqm@verge.net.au>
+ <20180824082327.5my3j4zujckqbe65@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180824082327.5my3j4zujckqbe65@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hoan Nguyen An <na-hoan@jinso.co.jp>
+On Fri, Aug 24, 2018 at 10:23:28AM +0200, Simon Horman wrote:
+> On Wed, Aug 22, 2018 at 04:41:18PM +0200, Simon Horman wrote:
+> > On Tue, Aug 14, 2018 at 11:12:41PM +0900, Yoshihiro Kaneko wrote:
+> > > From: Dien Pham <dien.pham.ry@renesas.com>
+> > > 
+> > > This patch adds OPPs table for CA57{0,1} cpu devices
+> > > 
+> > > Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
+> > > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> > > Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> > 
+> > Tested on r8a77965/Salvator-XS
+> > 
+> > I see that CPUFreq is activated, that sysfs reports 3 possible
+> > CPU speeds; 1.5, 1.0 and 0.50GHz. That current CPU frequency can be manipulated
+> > by setting the maximum CPU frequency in sysfs. And that the frequency
+> > of Z clock changes accordingly.
+> > 
+> > Tested-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> I have applied this for v4.20.
 
+I noticed that this patch included unit numbers for the opps nodes.
+This is not correct as there is no bus that the nodes live on.
+I fixed this using s/@/-/.
+The result is below:
+
+>From cd889b86ce3fba300ce82b0ec22bf310cd2f361d Mon Sep 17 00:00:00 2001
+From: Dien Pham <dien.pham.ry@renesas.com>
+Date: Tue, 14 Aug 2018 23:12:41 +0900
+Subject: [PATCH] arm64: dts: renesas: r8a77965: Add OPPs table for cpu devices
+
+This patch adds OPPs table for CA57{0,1} cpu devices
+
+Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Tested-by: Simon Horman <horms+renesas@verge.net.au>
+[simon: do not give nodes unit names as they have no bus addresses]
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 232 ++++++++++++++++++++++++++++++++++
- 1 file changed, 232 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 44 +++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-index 46241c0..dfdd982 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-@@ -3517,6 +3517,184 @@ static const unsigned int sdhi3_ds_mux[] = {
- 	SD3_DS_MARK,
- };
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index e7128fb65e33..5ce978502ee9 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -60,6 +60,46 @@
+ 		clock-frequency = <0>;
+ 	};
  
-+/* - SSI -------------------------------------------------------------------- */
-+static const unsigned int ssi0_data_pins[] = {
-+	/* SDATA */
-+	RCAR_GP_PIN(6, 2),
-+};
-+static const unsigned int ssi0_data_mux[] = {
-+	SSI_SDATA0_MARK,
-+};
-+static const unsigned int ssi01239_ctrl_pins[] = {
-+	/* SCK, WS */
-+	RCAR_GP_PIN(6, 0), RCAR_GP_PIN(6, 1),
-+};
-+static const unsigned int ssi01239_ctrl_mux[] = {
-+	SSI_SCK01239_MARK, SSI_WS01239_MARK,
-+};
-+static const unsigned int ssi1_data_a_pins[] = {
-+	/* SDATA */
-+	RCAR_GP_PIN(6, 3),
-+};
-+static const unsigned int ssi1_data_a_mux[] = {
-+	SSI_SDATA1_A_MARK,
-+};
-+static const unsigned int ssi1_data_b_pins[] = {
-+	/* SDATA */
-+	RCAR_GP_PIN(5, 12),
-+};
-+static const unsigned int ssi1_data_b_mux[] = {
-+	SSI_SDATA1_B_MARK,
-+};
-+static const unsigned int ssi1_ctrl_a_pins[] = {
-+	/* SCK, WS */
-+	RCAR_GP_PIN(6, 26), RCAR_GP_PIN(6, 27),
-+};
-+static const unsigned int ssi1_ctrl_a_mux[] = {
-+	SSI_SCK1_A_MARK, SSI_WS1_A_MARK,
-+};
-+static const unsigned int ssi1_ctrl_b_pins[] = {
-+	/* SCK, WS */
-+	RCAR_GP_PIN(6, 4), RCAR_GP_PIN(6, 21),
-+};
-+static const unsigned int ssi1_ctrl_b_mux[] = {
-+	SSI_SCK1_B_MARK, SSI_WS1_B_MARK,
-+};
-+static const unsigned int ssi2_data_a_pins[] = {
-+	/* SDATA */
-+	RCAR_GP_PIN(6, 4),
-+};
-+static const unsigned int ssi2_data_a_mux[] = {
-+	SSI_SDATA2_A_MARK,
-+};
-+static const unsigned int ssi2_data_b_pins[] = {
-+	/* SDATA */
-+	RCAR_GP_PIN(5, 13),
-+};
-+static const unsigned int ssi2_data_b_mux[] = {
-+	SSI_SDATA2_B_MARK,
-+};
-+static const unsigned int ssi2_ctrl_a_pins[] = {
-+	/* SCK, WS */
-+	RCAR_GP_PIN(5, 19), RCAR_GP_PIN(5, 21),
-+};
-+static const unsigned int ssi2_ctrl_a_mux[] = {
-+	SSI_SCK2_A_MARK, SSI_WS2_A_MARK,
-+};
-+static const unsigned int ssi2_ctrl_b_pins[] = {
-+	/* SCK, WS */
-+	RCAR_GP_PIN(6, 28), RCAR_GP_PIN(6, 29),
-+};
-+static const unsigned int ssi2_ctrl_b_mux[] = {
-+	SSI_SCK2_B_MARK, SSI_WS2_B_MARK,
-+};
-+static const unsigned int ssi3_data_pins[] = {
-+	/* SDATA */
-+	RCAR_GP_PIN(6, 7),
-+};
-+static const unsigned int ssi3_data_mux[] = {
-+	SSI_SDATA3_MARK,
-+};
-+static const unsigned int ssi349_ctrl_pins[] = {
-+	/* SCK, WS */
-+	RCAR_GP_PIN(6, 5), RCAR_GP_PIN(6, 6),
-+};
-+static const unsigned int ssi349_ctrl_mux[] = {
-+	SSI_SCK349_MARK, SSI_WS349_MARK,
-+};
-+static const unsigned int ssi4_data_pins[] = {
-+	/* SDATA */
-+	RCAR_GP_PIN(6, 10),
-+};
-+static const unsigned int ssi4_data_mux[] = {
-+	SSI_SDATA4_MARK,
-+};
-+static const unsigned int ssi4_ctrl_pins[] = {
-+	/* SCK, WS */
-+	RCAR_GP_PIN(6, 8), RCAR_GP_PIN(6, 9),
-+};
-+static const unsigned int ssi4_ctrl_mux[] = {
-+	SSI_SCK4_MARK, SSI_WS4_MARK,
-+};
-+static const unsigned int ssi5_data_pins[] = {
-+	/* SDATA */
-+	RCAR_GP_PIN(6, 13),
-+};
-+static const unsigned int ssi5_data_mux[] = {
-+	SSI_SDATA5_MARK,
-+};
-+static const unsigned int ssi5_ctrl_pins[] = {
-+	/* SCK, WS */
-+	RCAR_GP_PIN(6, 11), RCAR_GP_PIN(6, 12),
-+};
-+static const unsigned int ssi5_ctrl_mux[] = {
-+	SSI_SCK5_MARK, SSI_WS5_MARK,
-+};
-+static const unsigned int ssi6_data_pins[] = {
-+	/* SDATA */
-+	RCAR_GP_PIN(6, 16),
-+};
-+static const unsigned int ssi6_data_mux[] = {
-+	SSI_SDATA6_MARK,
-+};
-+static const unsigned int ssi6_ctrl_pins[] = {
-+	/* SCK, WS */
-+	RCAR_GP_PIN(6, 14), RCAR_GP_PIN(6, 15),
-+};
-+static const unsigned int ssi6_ctrl_mux[] = {
-+	SSI_SCK6_MARK, SSI_WS6_MARK,
-+};
-+static const unsigned int ssi7_data_pins[] = {
-+	/* SDATA */
-+	RCAR_GP_PIN(6, 19),
-+};
-+static const unsigned int ssi7_data_mux[] = {
-+	SSI_SDATA7_MARK,
-+};
-+static const unsigned int ssi78_ctrl_pins[] = {
-+	/* SCK, WS */
-+	RCAR_GP_PIN(6, 17), RCAR_GP_PIN(6, 18),
-+};
-+static const unsigned int ssi78_ctrl_mux[] = {
-+	SSI_SCK78_MARK, SSI_WS78_MARK,
-+};
-+static const unsigned int ssi8_data_pins[] = {
-+	/* SDATA */
-+	RCAR_GP_PIN(6, 20),
-+};
-+static const unsigned int ssi8_data_mux[] = {
-+	SSI_SDATA8_MARK,
-+};
-+static const unsigned int ssi9_data_a_pins[] = {
-+	/* SDATA */
-+	RCAR_GP_PIN(6, 21),
-+};
-+static const unsigned int ssi9_data_a_mux[] = {
-+	SSI_SDATA9_A_MARK,
-+};
-+static const unsigned int ssi9_data_b_pins[] = {
-+	/* SDATA */
-+	RCAR_GP_PIN(5, 14),
-+};
-+static const unsigned int ssi9_data_b_mux[] = {
-+	SSI_SDATA9_B_MARK,
-+};
-+static const unsigned int ssi9_ctrl_a_pins[] = {
-+	/* SCK, WS */
-+	RCAR_GP_PIN(5, 15), RCAR_GP_PIN(5, 16),
-+};
-+static const unsigned int ssi9_ctrl_a_mux[] = {
-+	SSI_SCK9_A_MARK, SSI_WS9_A_MARK,
-+};
-+static const unsigned int ssi9_ctrl_b_pins[] = {
-+	/* SCK, WS */
-+	RCAR_GP_PIN(6, 30), RCAR_GP_PIN(6, 31),
-+};
-+static const unsigned int ssi9_ctrl_b_mux[] = {
-+	SSI_SCK9_B_MARK, SSI_WS9_B_MARK,
-+};
++	cluster0_opp: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
 +
++		opp-500000000 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <830000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <830000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1500000000 {
++			opp-hz = /bits/ 64 <1500000000>;
++			opp-microvolt = <830000>;
++			clock-latency-ns = <300000>;
++			opp-suspend;
++		};
++		opp-1600000000 {
++			opp-hz = /bits/ 64 <1600000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++		opp-1700000000 {
++			opp-hz = /bits/ 64 <1700000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++		opp-1800000000 {
++			opp-hz = /bits/ 64 <1800000000>;
++			opp-microvolt = <960000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++	};
 +
- /* - USB0 ------------------------------------------------------------------- */
- static const unsigned int usb0_pins[] = {
- 	/* PWEN, OVC */
-@@ -3794,6 +3972,31 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(sdhi3_cd),
- 	SH_PFC_PIN_GROUP(sdhi3_wp),
- 	SH_PFC_PIN_GROUP(sdhi3_ds),
-+	SH_PFC_PIN_GROUP(ssi0_data),
-+	SH_PFC_PIN_GROUP(ssi01239_ctrl),
-+	SH_PFC_PIN_GROUP(ssi1_data_a),
-+	SH_PFC_PIN_GROUP(ssi1_data_b),
-+	SH_PFC_PIN_GROUP(ssi1_ctrl_a),
-+	SH_PFC_PIN_GROUP(ssi1_ctrl_b),
-+	SH_PFC_PIN_GROUP(ssi2_data_a),
-+	SH_PFC_PIN_GROUP(ssi2_data_b),
-+	SH_PFC_PIN_GROUP(ssi2_ctrl_a),
-+	SH_PFC_PIN_GROUP(ssi2_ctrl_b),
-+	SH_PFC_PIN_GROUP(ssi3_data),
-+	SH_PFC_PIN_GROUP(ssi349_ctrl),
-+	SH_PFC_PIN_GROUP(ssi4_data),
-+	SH_PFC_PIN_GROUP(ssi4_ctrl),
-+	SH_PFC_PIN_GROUP(ssi5_data),
-+	SH_PFC_PIN_GROUP(ssi5_ctrl),
-+	SH_PFC_PIN_GROUP(ssi6_data),
-+	SH_PFC_PIN_GROUP(ssi6_ctrl),
-+	SH_PFC_PIN_GROUP(ssi7_data),
-+	SH_PFC_PIN_GROUP(ssi78_ctrl),
-+	SH_PFC_PIN_GROUP(ssi8_data),
-+	SH_PFC_PIN_GROUP(ssi9_data_a),
-+	SH_PFC_PIN_GROUP(ssi9_data_b),
-+	SH_PFC_PIN_GROUP(ssi9_ctrl_a),
-+	SH_PFC_PIN_GROUP(ssi9_ctrl_b),
- 	SH_PFC_PIN_GROUP(usb0),
- 	SH_PFC_PIN_GROUP(usb1),
- 	SH_PFC_PIN_GROUP(usb30),
-@@ -4149,6 +4352,34 @@ static const char * const sdhi3_groups[] = {
- 	"sdhi3_ds",
- };
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -71,6 +111,8 @@
+ 			power-domains = <&sysc R8A77965_PD_CA57_CPU0>;
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
++			clocks =<&cpg CPG_CORE R8A77965_CLK_Z>;
++			operating-points-v2 = <&cluster0_opp>;
+ 		};
  
-+static const char * const ssi_groups[] = {
-+	"ssi0_data",
-+	"ssi01239_ctrl",
-+	"ssi1_data_a",
-+	"ssi1_data_b",
-+	"ssi1_ctrl_a",
-+	"ssi1_ctrl_b",
-+	"ssi2_data_a",
-+	"ssi2_data_b",
-+	"ssi2_ctrl_a",
-+	"ssi2_ctrl_b",
-+	"ssi3_data",
-+	"ssi349_ctrl",
-+	"ssi4_data",
-+	"ssi4_ctrl",
-+	"ssi5_data",
-+	"ssi5_ctrl",
-+	"ssi6_data",
-+	"ssi6_ctrl",
-+	"ssi7_data",
-+	"ssi78_ctrl",
-+	"ssi8_data",
-+	"ssi9_data_a",
-+	"ssi9_data_b",
-+	"ssi9_ctrl_a",
-+	"ssi9_ctrl_b",
-+};
-+
- static const char * const usb0_groups[] = {
- 	"usb0",
- };
-@@ -4197,6 +4428,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(sdhi1),
- 	SH_PFC_FUNCTION(sdhi2),
- 	SH_PFC_FUNCTION(sdhi3),
-+	SH_PFC_FUNCTION(ssi),
- 	SH_PFC_FUNCTION(usb0),
- 	SH_PFC_FUNCTION(usb1),
- 	SH_PFC_FUNCTION(usb30),
+ 		a57_1: cpu@1 {
+@@ -80,6 +122,8 @@
+ 			power-domains = <&sysc R8A77965_PD_CA57_CPU1>;
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
++			clocks =<&cpg CPG_CORE R8A77965_CLK_Z>;
++			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+ 		L2_CA57: cache-controller-0 {
 -- 
-2.7.4
+2.11.0
