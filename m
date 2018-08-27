@@ -1,79 +1,96 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp1.de.adit-jv.com ([62.225.105.245]:44777 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728087AbeH3O42 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Aug 2018 10:56:28 -0400
-From: Eugeniu Rosca <erosca@de.adit-jv.com>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: <linux-renesas-soc@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        Veeraiyan Chidambaram <veeraiyan.chidambaram@in.bosch.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: [PATCH 2/3] usb: renesas_usbhs: enable DVSE interrupt
-Date: Thu, 30 Aug 2018 12:54:02 +0200
-Message-ID: <20180830105403.17964-2-erosca@de.adit-jv.com>
-In-Reply-To: <20180830105403.17964-1-erosca@de.adit-jv.com>
-References: <20180830105403.17964-1-erosca@de.adit-jv.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH v3 net-next] dt-bindings: can: rcar_can: document r8a77965
+ support
+To: Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        Magnus Damm <damm+renesas@opensource.se>,
+        linux-renesas-soc@vger.kernel.org
+Cc: Eugeniu Rosca <rosca.eugeniu@gmail.com>
+References: <20180820144910.13210-1-erosca@de.adit-jv.com>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Message-ID: <50048177-96ad-cbda-6845-20ffc32d025a@pengutronix.de>
+Date: Mon, 27 Aug 2018 12:08:48 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <20180820144910.13210-1-erosca@de.adit-jv.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="Pp5T66Z99ZxcVB9IwNZ4PG0BvxMSqMINL"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Commit [1] enabled the possibility of checking the DVST (Device State
-Transition) bit of INTSTS0 (Interrupt Status Register 0) and calling
-the irq_dev_state() handler if the DVST bit is set. But neither
-commit [1] nor commit [2] actually enabled the DVSE (Device State
-Transition Interrupt Enable) bit in the INTENB0 (Interrupt Enable
-Register 0). As a consequence, irq_dev_state() handler is getting
-called as a side effect of other (non-DVSE) interrupts being fired,
-which definitely can't be relied upon, if DVST notifications are of
-any value.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--Pp5T66Z99ZxcVB9IwNZ4PG0BvxMSqMINL
+Content-Type: multipart/mixed; boundary="oQmXeZryxUKAtmIPFQcQER1eeXcarDjMN";
+ protected-headers="v1"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Eugeniu Rosca <erosca@de.adit-jv.com>,
+ Simon Horman <horms+renesas@verge.net.au>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+ Wolfgang Grandegger <wg@grandegger.com>,
+ "David S . Miller" <davem@davemloft.net>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, linux-can@vger.kernel.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ Magnus Damm <damm+renesas@opensource.se>, linux-renesas-soc@vger.kernel.org
+Cc: Eugeniu Rosca <rosca.eugeniu@gmail.com>
+Message-ID: <50048177-96ad-cbda-6845-20ffc32d025a@pengutronix.de>
+Subject: Re: [PATCH v3 net-next] dt-bindings: can: rcar_can: document r8a77965
+ support
+References: <20180820144910.13210-1-erosca@de.adit-jv.com>
+In-Reply-To: <20180820144910.13210-1-erosca@de.adit-jv.com>
 
-Why this doesn't hurt is because usbhsg_irq_dev_state() currently
-doesn't do much except of a dev_dbg(). Once more work is added to
-the handler (e.g. detecting device "Suspended" state and notifying
-other USB gadget components about it), enabling DVSE becomes a hard
-requirement. Do it in a standalone commit for better visibility and
-clear explanation.
+--oQmXeZryxUKAtmIPFQcQER1eeXcarDjMN
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: quoted-printable
 
-[1] f1407d5c6624 ("usb: renesas_usbhs: Add Renesas USBHS common code")
-[2] 2f98382dcdfe ("usb: renesas_usbhs: Add Renesas USBHS Gadget")
+On 08/20/2018 04:49 PM, Eugeniu Rosca wrote:
+> From: Eugeniu Rosca <rosca.eugeniu@gmail.com>
+>=20
+> Document the support for rcar_can on R8A77965 SoC devices.
+> Add R8A77965 to the list of SoCs which require the "assigned-clocks" an=
+d
+> "assigned-clock-rates" properties (thanks, Sergei).
+>=20
+> Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
----
- drivers/usb/renesas_usbhs/mod.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+Added to linux-can.
 
-diff --git a/drivers/usb/renesas_usbhs/mod.c b/drivers/usb/renesas_usbhs/mod.c
-index 585568279174..a8ed3c7e19ca 100644
---- a/drivers/usb/renesas_usbhs/mod.c
-+++ b/drivers/usb/renesas_usbhs/mod.c
-@@ -348,10 +348,6 @@ void usbhs_irq_callback_update(struct usbhs_priv *priv, struct usbhs_mod *mod)
- 	 *	usbhs_interrupt
- 	 */
- 
--	/*
--	 * it don't enable DVSE (intenb0) here
--	 * but "mod->irq_dev_state" will be called.
--	 */
- 	if (info->irq_vbus)
- 		intenb0 |= VBSE;
- 
-@@ -362,6 +358,9 @@ void usbhs_irq_callback_update(struct usbhs_priv *priv, struct usbhs_mod *mod)
- 		if (mod->irq_ctrl_stage)
- 			intenb0 |= CTRE;
- 
-+		if (mod->irq_dev_state)
-+			intenb0 |= DVSE;
-+
- 		if (mod->irq_empty && mod->irq_bempsts) {
- 			usbhs_write(priv, BEMPENB, mod->irq_bempsts);
- 			intenb0 |= BEMPE;
--- 
-2.18.0
+Marc
+
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+
+
+--oQmXeZryxUKAtmIPFQcQER1eeXcarDjMN--
+
+--Pp5T66Z99ZxcVB9IwNZ4PG0BvxMSqMINL
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAluDzbAACgkQk9IU1zQo
+ZfEnIggAs4IOW445SX/69c3fzd0iXrMZgeTpPXxaTKnnzH9i+LokV4h1cmI8g04I
+m+3XFmP4fIkqVOGTQCVEil7EOtdbbWm9iVp+ppAaF3hPyvitlfkWBeKgNYr4Oyg6
+EKrMA6p7Ojm0ZD9z3/C+Qb0CLLRSN6hEktXs2T1dHLpB4kJ4gBd+47pTsTJY1t3R
+dIY2KqXbs5JOcAvaZVPXF9KpEnJplssUzi14JHxN4ILlCE+aIO70srL0qiGJST8N
+5tzt7DscxCaWxQZTFaITrnZaiJDrl1SzifOKVbEpcgOn49/D7LzD8zRJCIte0uLR
+Wp2OCuvUg6ahtmtKf8JzIczRruZZ5g==
+=TlUy
+-----END PGP SIGNATURE-----
+
+--Pp5T66Z99ZxcVB9IwNZ4PG0BvxMSqMINL--
