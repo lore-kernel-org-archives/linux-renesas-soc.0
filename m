@@ -1,67 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:56162 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726969AbeHXLaB (ORCPT
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:39827 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726942AbeH0TDL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Aug 2018 07:30:01 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/6] dt-bindings: rcar-gen3-phy-usb3: Add r8a774a1 support
-Date: Fri, 24 Aug 2018 08:56:11 +0100
-Message-Id: <1535097375-5561-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1535097375-5561-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1535097375-5561-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Mon, 27 Aug 2018 15:03:11 -0400
+Received: by mail-ua1-f66.google.com with SMTP id g18-v6so9742286uam.6
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 27 Aug 2018 08:16:09 -0700 (PDT)
+MIME-Version: 1.0
+References: <1534511921-19470-1-git-send-email-uli+renesas@fpond.eu>
+In-Reply-To: <1534511921-19470-1-git-send-email-uli+renesas@fpond.eu>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 27 Aug 2018 17:15:55 +0200
+Message-ID: <CAMuHMdX4etTkVn=wt8CKES_=3E2f-hQ6WK1EaUTK3CUETLtuFw@mail.gmail.com>
+Subject: Re: [PATCH 0/3] I2C0/3/5 pin control for H3 and M3-W
+To: uli+renesas@fpond.eu
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document RZ/G2M (R8A774A1) SoC bindings.
+Hi Uli,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
- Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+On Fri, Aug 17, 2018 at 3:19 PM Ulrich Hecht <uli+renesas@fpond.eu> wrote:
+> This is an up-port from the BSP. Unfortunately I could not test these
+> because none of those pins seem to be accessible on Salvator boards (not on
+> ULCB either, AFAICT), so the best thing I can say is that they don't seem to
+> break anything.
 
-diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
-index 47dd296..9d98266 100644
---- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
-+++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
-@@ -1,20 +1,22 @@
- * Renesas R-Car generation 3 USB 3.0 PHY
- 
- This file provides information on what the device node for the R-Car generation
--3 USB 3.0 PHY contains.
-+3 and RZ/G2 USB 3.0 PHY contain.
- If you want to enable spread spectrum clock (ssc), you should use USB_EXTAL
- instead of USB3_CLK. However, if you don't want to these features, you don't
- need this driver.
- 
- Required properties:
--- compatible: "renesas,r8a7795-usb3-phy" if the device is a part of an R8A7795
-+- compatible: "renesas,r8a774a1-usb3-phy" if the device is a part of an R8A774A1
-+	      SoC.
-+	      "renesas,r8a7795-usb3-phy" if the device is a part of an R8A7795
- 	      SoC.
- 	      "renesas,r8a7796-usb3-phy" if the device is a part of an R8A7796
- 	      SoC.
- 	      "renesas,r8a77965-usb3-phy" if the device is a part of an
- 	      R8A77965 SoC.
--	      "renesas,rcar-gen3-usb3-phy" for a generic R-Car Gen3 compatible
--	      device.
-+	      "renesas,rcar-gen3-usb3-phy" for a generic R-Car Gen3 or RZ/G2
-+	      compatible device.
- 
- 	      When compatible with the generic version, nodes must list the
- 	      SoC-specific version corresponding to the platform first
+For Salvator-X(S):
+  1. If you set SW5 and SW6 to their center positions, you can access I2C3 on
+     EXIO Connector D.
+  2. I2C5 is available on test points CP45/46.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
