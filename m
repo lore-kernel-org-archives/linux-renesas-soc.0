@@ -1,81 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-09.nifty.com ([210.131.2.76]:47906 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728238AbeHWINc (ORCPT
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:33688 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726942AbeH0TEp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Aug 2018 04:13:32 -0400
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 6/6] mmc: tmio: refactor CLK_CTL bit calculation
-Date: Thu, 23 Aug 2018 13:44:20 +0900
-Message-Id: <1534999460-15111-7-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com>
+        Mon, 27 Aug 2018 15:04:45 -0400
+MIME-Version: 1.0
+References: <1534168353-4177-1-git-send-email-biju.das@bp.renesas.com> <1534168353-4177-2-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1534168353-4177-2-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 27 Aug 2018 17:17:30 +0200
+Message-ID: <CAMuHMdV33g03y3V9AS+oBqrEa93SNvEsLFjqN9hffBrJiRujFg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: sh-pfc: Document r8a774a1 PFC support
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-  for (clk = 0x80000080; new_clock >= (clock << 1); clk >>= 1)
-          clock <<= 1;
+On Mon, Aug 13, 2018 at 3:58 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> Document PFC support for the R8A774A1 SoC.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-... is too tricky, hence I replaced with
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.2.0.
 
-  roundup_pow_of_two(divisor) >> 2
+Gr{oetje,eeting}s,
 
-'(clk >> 22) & 0x1' is the bit test for the 1/1 divisor, but
-it is not clear.  'divisor <= 1' is easier to understand.
+                        Geert
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
-Changes in v3: None
-Changes in v2: None
-
- drivers/mmc/host/tmio_mmc.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
-index b031a77..e04c322 100644
---- a/drivers/mmc/host/tmio_mmc.c
-+++ b/drivers/mmc/host/tmio_mmc.c
-@@ -48,19 +48,27 @@ static void tmio_mmc_clk_stop(struct tmio_mmc_host *host)
- static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
- 			       unsigned int new_clock)
- {
--	u32 clk = 0, clock;
-+	unsigned int clock, divisor;
-+	u32 clk = 0;
-+	int clk_sel;
- 
- 	if (new_clock == 0) {
- 		tmio_mmc_clk_stop(host);
- 		return;
- 	}
- 
--	clock = host->mmc->f_min;
-+	divisor = host->pdata->hclk / new_clock;
- 
--	for (clk = 0x80000080; new_clock >= (clock << 1); clk >>= 1)
--		clock <<= 1;
-+	if (divisor <= 1) {
-+		clk_sel = 1;
-+		clk = 0;
-+	} else {
-+		clk_sel = 0;
-+		/* bit7 set: 1/512, ... bit0 set:1/4, all bits clear: 1/2 */
-+		clk = roundup_pow_of_two(divisor) >> 2;
-+	}
- 
--	host->pdata->set_clk_div(host->pdev, (clk >> 22) & 1);
-+	host->pdata->set_clk_div(host->pdev, clk_sel);
- 
- 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
- 			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
