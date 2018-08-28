@@ -1,223 +1,104 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:49373 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726120AbeH1I10 (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:31836 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727216AbeH1MvS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Aug 2018 04:27:26 -0400
-From: Nguyen An Hoan <na-hoan@jinso.co.jp>
-To: broonie@kernel.org, linux-renesas-soc@vger.kernel.org,
-        geert+renesas@glider.be
-Cc: magnus.damm@gmail.com, kuninori.morimoto.gx@renesas.com,
-        yoshihiro.shimoda.uh@renesas.com, h-inayoshi@jinso.co.jp,
-        nv-dung@jinso.co.jp, cv-dong@jinso.co.jp, na-hoan@jinso.co.jp
-Subject: [PATCH 1/2] pinctrl: sh-pfc: r8a77965: add Audio clock pin support
-Date: Tue, 28 Aug 2018 13:37:18 +0900
-Message-Id: <1535431039-2749-2-git-send-email-na-hoan@jinso.co.jp>
-In-Reply-To: <1535431039-2749-1-git-send-email-na-hoan@jinso.co.jp>
-References: <1535431039-2749-1-git-send-email-na-hoan@jinso.co.jp>
+        Tue, 28 Aug 2018 08:51:18 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+CC: Fengguang Wu <fengguang.wu@intel.com>,
+        Chris Brandt <Chris.Brandt@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] usb: host: xhci-rcar: Add support for r8a774a1
+Date: Tue, 28 Aug 2018 09:00:33 +0000
+Message-ID: <OSBPR01MB2103E0823C2C53C3D572F41DB80A0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <1535105808-11401-1-git-send-email-biju.das@bp.renesas.com>
+ <OSBPR01MB229391181806670F0A150B88D80B0@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSBPR01MB229391181806670F0A150B88D80B0@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hoan Nguyen An <na-hoan@jinso.co.jp>
+Hi Shimoda-San,
 
-Add Audio clock pin support for r8a77965
+Thanks for the feedback.
 
-Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
----
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 160 ++++++++++++++++++++++++++++++++++
- 1 file changed, 160 insertions(+)
+> Subject: RE: [PATCH] usb: host: xhci-rcar: Add support for r8a774a1
+>
+> Hi Biju-san,
+>
+> Thank you for the patch!
+>
+> > From: Biju Das, Sent: Friday, August 24, 2018 7:17 PM
+> >
+> > This patch adds support for r8a774a1 (RZ/G2M).
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > ---
+> >  drivers/usb/host/xhci-rcar.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/drivers/usb/host/xhci-rcar.c
+> > b/drivers/usb/host/xhci-rcar.c index f33ffc2..c906b13 100644
+> > --- a/drivers/usb/host/xhci-rcar.c
+> > +++ b/drivers/usb/host/xhci-rcar.c
+> > @@ -72,6 +72,10 @@
+> MODULE_FIRMWARE(XHCI_RCAR_FIRMWARE_NAME_V3);
+> >
+> >  static const struct soc_device_attribute rcar_quirks_match[]  =3D {
+> >  {
+> > +.soc_id =3D "r8a774a1",
+> > +.data =3D (void *)RCAR_XHCI_FIRMWARE_V3,
+> > +},
+> > +{
+>
+> I also don't think you need this patch actually because you submitted add=
+ing
+> a bindings patch for usb-xhci [1] and it had "renesas,rcar-gen3-xhci" for
+> RZ/G2.
+> In other words, if a xhci node of RZ/G2 dtsi has "renesas,rcar-gen3-xhci"
+> compatible, this can probe the xhci-plat/rcar driver with the firmware V3=
+.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-index 72ccd1a..46241c0 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-@@ -1575,6 +1575,128 @@ static const struct sh_pfc_pin pinmux_pins[] = {
- 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 30, ASEBRK, CFG_FLAGS),
- };
- 
-+/* - AUDIO CLOCK ------------------------------------------------------------ */
-+static const unsigned int audio_clk_a_a_pins[] = {
-+	/* CLK A */
-+	RCAR_GP_PIN(6, 22),
-+};
-+static const unsigned int audio_clk_a_a_mux[] = {
-+	AUDIO_CLKA_A_MARK,
-+};
-+static const unsigned int audio_clk_a_b_pins[] = {
-+	/* CLK A */
-+	RCAR_GP_PIN(5, 4),
-+};
-+static const unsigned int audio_clk_a_b_mux[] = {
-+	AUDIO_CLKA_B_MARK,
-+};
-+static const unsigned int audio_clk_a_c_pins[] = {
-+	/* CLK A */
-+	RCAR_GP_PIN(5, 19),
-+};
-+static const unsigned int audio_clk_a_c_mux[] = {
-+	AUDIO_CLKA_C_MARK,
-+};
-+static const unsigned int audio_clk_b_a_pins[] = {
-+	/* CLK B */
-+	RCAR_GP_PIN(5, 12),
-+};
-+static const unsigned int audio_clk_b_a_mux[] = {
-+	AUDIO_CLKB_A_MARK,
-+};
-+static const unsigned int audio_clk_b_b_pins[] = {
-+	/* CLK B */
-+	RCAR_GP_PIN(6, 23),
-+};
-+static const unsigned int audio_clk_b_b_mux[] = {
-+	AUDIO_CLKB_B_MARK,
-+};
-+static const unsigned int audio_clk_c_a_pins[] = {
-+	/* CLK C */
-+	RCAR_GP_PIN(5, 21),
-+};
-+static const unsigned int audio_clk_c_a_mux[] = {
-+	AUDIO_CLKC_A_MARK,
-+};
-+static const unsigned int audio_clk_c_b_pins[] = {
-+	/* CLK C */
-+	RCAR_GP_PIN(5, 0),
-+};
-+static const unsigned int audio_clk_c_b_mux[] = {
-+	AUDIO_CLKC_B_MARK,
-+};
-+static const unsigned int audio_clkout_a_pins[] = {
-+	/* CLKOUT */
-+	RCAR_GP_PIN(5, 18),
-+};
-+static const unsigned int audio_clkout_a_mux[] = {
-+	AUDIO_CLKOUT_A_MARK,
-+};
-+static const unsigned int audio_clkout_b_pins[] = {
-+	/* CLKOUT */
-+	RCAR_GP_PIN(6, 28),
-+};
-+static const unsigned int audio_clkout_b_mux[] = {
-+	AUDIO_CLKOUT_B_MARK,
-+};
-+static const unsigned int audio_clkout_c_pins[] = {
-+	/* CLKOUT */
-+	RCAR_GP_PIN(5, 3),
-+};
-+static const unsigned int audio_clkout_c_mux[] = {
-+	AUDIO_CLKOUT_C_MARK,
-+};
-+static const unsigned int audio_clkout_d_pins[] = {
-+	/* CLKOUT */
-+	RCAR_GP_PIN(5, 21),
-+};
-+static const unsigned int audio_clkout_d_mux[] = {
-+	AUDIO_CLKOUT_D_MARK,
-+};
-+static const unsigned int audio_clkout1_a_pins[] = {
-+	/* CLKOUT1 */
-+	RCAR_GP_PIN(5, 15),
-+};
-+static const unsigned int audio_clkout1_a_mux[] = {
-+	AUDIO_CLKOUT1_A_MARK,
-+};
-+static const unsigned int audio_clkout1_b_pins[] = {
-+	/* CLKOUT1 */
-+	RCAR_GP_PIN(6, 29),
-+};
-+static const unsigned int audio_clkout1_b_mux[] = {
-+	AUDIO_CLKOUT1_B_MARK,
-+};
-+static const unsigned int audio_clkout2_a_pins[] = {
-+	/* CLKOUT2 */
-+	RCAR_GP_PIN(5, 16),
-+};
-+static const unsigned int audio_clkout2_a_mux[] = {
-+	AUDIO_CLKOUT2_A_MARK,
-+};
-+static const unsigned int audio_clkout2_b_pins[] = {
-+	/* CLKOUT2 */
-+	RCAR_GP_PIN(6, 30),
-+};
-+static const unsigned int audio_clkout2_b_mux[] = {
-+	AUDIO_CLKOUT2_B_MARK,
-+};
-+
-+static const unsigned int audio_clkout3_a_pins[] = {
-+	/* CLKOUT3 */
-+	RCAR_GP_PIN(5, 19),
-+};
-+static const unsigned int audio_clkout3_a_mux[] = {
-+	AUDIO_CLKOUT3_A_MARK,
-+};
-+static const unsigned int audio_clkout3_b_pins[] = {
-+	/* CLKOUT3 */
-+	RCAR_GP_PIN(6, 31),
-+};
-+static const unsigned int audio_clkout3_b_mux[] = {
-+	AUDIO_CLKOUT3_B_MARK,
-+};
-+
- /* - EtherAVB --------------------------------------------------------------- */
- static const unsigned int avb_link_pins[] = {
- 	/* AVB_LINK */
-@@ -3426,6 +3548,23 @@ static const unsigned int usb30_mux[] = {
- };
- 
- static const struct sh_pfc_pin_group pinmux_groups[] = {
-+	SH_PFC_PIN_GROUP(audio_clk_a_a),
-+	SH_PFC_PIN_GROUP(audio_clk_a_b),
-+	SH_PFC_PIN_GROUP(audio_clk_a_c),
-+	SH_PFC_PIN_GROUP(audio_clk_b_a),
-+	SH_PFC_PIN_GROUP(audio_clk_b_b),
-+	SH_PFC_PIN_GROUP(audio_clk_c_a),
-+	SH_PFC_PIN_GROUP(audio_clk_c_b),
-+	SH_PFC_PIN_GROUP(audio_clkout_a),
-+	SH_PFC_PIN_GROUP(audio_clkout_b),
-+	SH_PFC_PIN_GROUP(audio_clkout_c),
-+	SH_PFC_PIN_GROUP(audio_clkout_d),
-+	SH_PFC_PIN_GROUP(audio_clkout1_a),
-+	SH_PFC_PIN_GROUP(audio_clkout1_b),
-+	SH_PFC_PIN_GROUP(audio_clkout2_a),
-+	SH_PFC_PIN_GROUP(audio_clkout2_b),
-+	SH_PFC_PIN_GROUP(audio_clkout3_a),
-+	SH_PFC_PIN_GROUP(audio_clkout3_b),
- 	SH_PFC_PIN_GROUP(avb_link),
- 	SH_PFC_PIN_GROUP(avb_magic),
- 	SH_PFC_PIN_GROUP(avb_phy_int),
-@@ -3660,6 +3799,26 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(usb30),
- };
- 
-+static const char * const audio_clk_groups[] = {
-+	"audio_clk_a_a",
-+	"audio_clk_a_b",
-+	"audio_clk_a_c",
-+	"audio_clk_b_a",
-+	"audio_clk_b_b",
-+	"audio_clk_c_a",
-+	"audio_clk_c_b",
-+	"audio_clkout_a",
-+	"audio_clkout_b",
-+	"audio_clkout_c",
-+	"audio_clkout_d",
-+	"audio_clkout1_a",
-+	"audio_clkout1_b",
-+	"audio_clkout2_a",
-+	"audio_clkout2_b",
-+	"audio_clkout3_a",
-+	"audio_clkout3_b",
-+};
-+
- static const char * const avb_groups[] = {
- 	"avb_link",
- 	"avb_magic",
-@@ -4003,6 +4162,7 @@ static const char * const usb30_groups[] = {
- };
- 
- static const struct sh_pfc_function pinmux_functions[] = {
-+	SH_PFC_FUNCTION(audio_clk),
- 	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(du),
- 	SH_PFC_FUNCTION(hscif0),
--- 
-2.7.4
+ I agree. We don't need this patch, after the introduction of   ed8603e1112=
+4
+(" usb: host: xhci-rcar: Simplify getting the firmware name for R-Car Gen3"=
+)  and  fc72aa83b4a7
+("usb: host: xhci-plat: add firmware_name for R-Car Gen3") which is present=
+ in renesas-devel-20180827-4.19-rc1.
+
+This above patch was missing in our internal development branch which is ba=
+sed on renesas-dev-20180810.
+
+> [1]
+> https://patchwork.kernel.org/patch/10574887/
+>
+> Best regards,
+> Yoshihiro Shimoda
+>
+> >  .soc_id =3D "r8a7795", .revision =3D "ES1.*",
+> >  .data =3D (void *)RCAR_XHCI_FIRMWARE_V2,
+> >  },
+> > --
+> > 2.7.4
+
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
