@@ -1,165 +1,90 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47938 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727705AbeH2BCF (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 28 Aug 2018 21:02:05 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH] arm64: dts: renesas: r8a774a1: Add GPIO device nodes
-Date: Thu, 23 Aug 2018 15:18:18 +0100
-Message-Id: <1535033898-23610-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org
+Subject: Applied "spi: sh-msiof: Add r8a774a1 support" to the spi tree
+In-Reply-To: <1534517914-15406-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-Id: <20180828205635.E7107440095@finisterre.ee.mobilebroadband>
+Date: Tue, 28 Aug 2018 21:56:35 +0100 (BST)
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add GPIO device nodes to the DT of the r8a774a1 SoC.
+The patch
+
+   spi: sh-msiof: Add r8a774a1 support
+
+has been applied to the spi tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 864822235f1897219409ec1f0af076fcc9057c57 Mon Sep 17 00:00:00 2001
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Date: Fri, 17 Aug 2018 15:58:34 +0100
+Subject: [PATCH] spi: sh-msiof: Add r8a774a1 support
+
+Document RZ/G2M (R8A774A1) SoC bindings.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
+ Documentation/devicetree/bindings/spi/sh-msiof.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-This patch depends on:
-https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg30549.html
-
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 120 ++++++++++++++++++++++++++++++
- 1 file changed, 120 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index b9d2da4..5d0109a 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -200,6 +200,126 @@
- 			status = "disabled";
- 		};
+diff --git a/Documentation/devicetree/bindings/spi/sh-msiof.txt b/Documentation/devicetree/bindings/spi/sh-msiof.txt
+index bfbc2035fb6b..8f7bb6aaff2e 100644
+--- a/Documentation/devicetree/bindings/spi/sh-msiof.txt
++++ b/Documentation/devicetree/bindings/spi/sh-msiof.txt
+@@ -3,6 +3,7 @@ Renesas MSIOF spi controller
+ Required properties:
+ - compatible           : "renesas,msiof-r8a7743" (RZ/G1M)
+ 			 "renesas,msiof-r8a7745" (RZ/G1E)
++			 "renesas,msiof-r8a774a1" (RZ/G2M)
+ 			 "renesas,msiof-r8a7790" (R-Car H2)
+ 			 "renesas,msiof-r8a7791" (R-Car M2-W)
+ 			 "renesas,msiof-r8a7792" (R-Car V2H)
+@@ -14,7 +15,7 @@ Required properties:
+ 			 "renesas,msiof-sh73a0" (SH-Mobile AG5)
+ 			 "renesas,sh-mobile-msiof" (generic SH-Mobile compatibile device)
+ 			 "renesas,rcar-gen2-msiof" (generic R-Car Gen2 and RZ/G1 compatible device)
+-			 "renesas,rcar-gen3-msiof" (generic R-Car Gen3 compatible device)
++			 "renesas,rcar-gen3-msiof" (generic R-Car Gen3 and RZ/G2 compatible device)
+ 			 "renesas,sh-msiof"      (deprecated)
  
-+		gpio0: gpio@e6050000 {
-+			compatible = "renesas,gpio-r8a774a1",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6050000 0 0x50>;
-+			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 0 16>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 912>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 912>;
-+		};
-+
-+		gpio1: gpio@e6051000 {
-+			compatible = "renesas,gpio-r8a774a1",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6051000 0 0x50>;
-+			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 32 29>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 911>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 911>;
-+		};
-+
-+		gpio2: gpio@e6052000 {
-+			compatible = "renesas,gpio-r8a774a1",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6052000 0 0x50>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 64 15>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 910>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 910>;
-+		};
-+
-+		gpio3: gpio@e6053000 {
-+			compatible = "renesas,gpio-r8a774a1",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6053000 0 0x50>;
-+			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 96 16>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 909>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 909>;
-+		};
-+
-+		gpio4: gpio@e6054000 {
-+			compatible = "renesas,gpio-r8a774a1",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6054000 0 0x50>;
-+			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 128 18>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 908>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 908>;
-+		};
-+
-+		gpio5: gpio@e6055000 {
-+			compatible = "renesas,gpio-r8a774a1",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6055000 0 0x50>;
-+			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 160 26>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 907>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 907>;
-+		};
-+
-+		gpio6: gpio@e6055400 {
-+			compatible = "renesas,gpio-r8a774a1",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6055400 0 0x50>;
-+			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 192 32>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 906>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 906>;
-+		};
-+
-+		gpio7: gpio@e6055800 {
-+			compatible = "renesas,gpio-r8a774a1",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6055800 0 0x50>;
-+			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 224 4>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 905>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 905>;
-+		};
-+
- 		pfc: pin-controller@e6060000 {
- 			compatible = "renesas,pfc-r8a774a1";
- 			reg = <0 0xe6060000 0 0x50c>;
+ 			 When compatible with the generic version, nodes
 -- 
-2.7.4
+2.18.0
