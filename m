@@ -1,39 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:58669 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725816AbeHQRex (ORCPT
+Received: from mail-pl1-f171.google.com ([209.85.214.171]:43779 "EHLO
+        mail-pl1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726998AbeH2Ak3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Aug 2018 13:34:53 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] Add IPMMU compatibility for r8a774a1
-Date: Fri, 17 Aug 2018 15:31:03 +0100
-Message-Id: <1534516265-10059-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Tue, 28 Aug 2018 20:40:29 -0400
+Date: Tue, 28 Aug 2018 13:47:04 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [RFC PATCH v2 1/4] watchdog: core: add mechanism to prevent
+ removing if NOWAYOUT
+Message-ID: <20180828204704.GA31691@roeck-us.net>
+References: <20180828191416.7781-1-wsa+renesas@sang-engineering.com>
+ <20180828191416.7781-2-wsa+renesas@sang-engineering.com>
+ <20180828193320.GA22656@roeck-us.net>
+ <20180828200739.ghu5trdp7jq6ixiz@katana>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180828200739.ghu5trdp7jq6ixiz@katana>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dear All,
+On Tue, Aug 28, 2018 at 10:07:40PM +0200, Wolfram Sang wrote:
+> Hi Guenter,
+> 
+> > > +		__driver.remove = NULL; \
+> > 
+> > Does that really do any good ? If I understand correctly, the only
+> > impact is that the platform driver remove function will believe that
+> > nothing needs to be done on removal. See platform_drv_remove().
+> 
+> This might be biased for my use case. Not calling remove will also leave
+> the clock for that module enabled. But true, the platform device will be
+> removed and without proper cleanup, there could be dangling pointers.
+> 
 
-this series adds IPMMU compatibility for the RZ/G2M (a.k.a. R8A774A1).
+For many drivers the watchdog device would not be removed. That would
+indeed be fatal.
 
-Cheers,
-Fab
+> In general, what do you think of this approach if we'd left out the
+> above line?
+> 
 
-Fabrizio Castro (2):
-  iommu/ipmmu-vmsa: Hook up R8A774A1 DT maching code
-  dt-bindings: iommu: ipmmu-vmsa: Add r8a774a1 support
+LGTM without that line.
 
- Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt | 1 +
- drivers/iommu/ipmmu-vmsa.c                                     | 5 +++++
- 2 files changed, 6 insertions(+)
-
--- 
-2.7.4
+Thanks,
+Guenter
