@@ -1,54 +1,223 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:38388 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726979AbeH1LTw (ORCPT
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:49373 "EHLO
+        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726120AbeH1I10 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Aug 2018 07:19:52 -0400
-Received: by mail-vk0-f67.google.com with SMTP id h200-v6so295069vke.5
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Aug 2018 00:29:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <1535431039-2749-1-git-send-email-na-hoan@jinso.co.jp> <1535431039-2749-2-git-send-email-na-hoan@jinso.co.jp>
-In-Reply-To: <1535431039-2749-2-git-send-email-na-hoan@jinso.co.jp>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 28 Aug 2018 09:29:21 +0200
-Message-ID: <CAMuHMdWev4GW6EwrtMyVZ-k+s9_tg6d-yyYvsy_KOc+WLOwxBA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a77965: add Audio clock pin support
-To: Hoan Nguyen An <na-hoan@jinso.co.jp>
-Cc: Mark Brown <broonie@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
-        =?UTF-8?B?RHVuZ++8muS6uuOCvQ==?= <nv-dung@jinso.co.jp>,
-        =?UTF-8?B?44Kr44Kq44O744O044Kh44Oz44O744OJ44Oz?=
-        <cv-dong@jinso.co.jp>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 28 Aug 2018 04:27:26 -0400
+From: Nguyen An Hoan <na-hoan@jinso.co.jp>
+To: broonie@kernel.org, linux-renesas-soc@vger.kernel.org,
+        geert+renesas@glider.be
+Cc: magnus.damm@gmail.com, kuninori.morimoto.gx@renesas.com,
+        yoshihiro.shimoda.uh@renesas.com, h-inayoshi@jinso.co.jp,
+        nv-dung@jinso.co.jp, cv-dong@jinso.co.jp, na-hoan@jinso.co.jp
+Subject: [PATCH 1/2] pinctrl: sh-pfc: r8a77965: add Audio clock pin support
+Date: Tue, 28 Aug 2018 13:37:18 +0900
+Message-Id: <1535431039-2749-2-git-send-email-na-hoan@jinso.co.jp>
+In-Reply-To: <1535431039-2749-1-git-send-email-na-hoan@jinso.co.jp>
+References: <1535431039-2749-1-git-send-email-na-hoan@jinso.co.jp>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Hoan,
+From: Hoan Nguyen An <na-hoan@jinso.co.jp>
 
-On Tue, Aug 28, 2018 at 6:37 AM Nguyen An Hoan <na-hoan@jinso.co.jp> wrote:
-> From: Hoan Nguyen An <na-hoan@jinso.co.jp>
->
-> Add Audio clock pin support for r8a77965
->
-> Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
+Add Audio clock pin support for r8a77965
 
-Thanks for the update!
+Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 160 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 160 insertions(+)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v4.20.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+index 72ccd1a..46241c0 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+@@ -1575,6 +1575,128 @@ static const struct sh_pfc_pin pinmux_pins[] = {
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 30, ASEBRK, CFG_FLAGS),
+ };
+ 
++/* - AUDIO CLOCK ------------------------------------------------------------ */
++static const unsigned int audio_clk_a_a_pins[] = {
++	/* CLK A */
++	RCAR_GP_PIN(6, 22),
++};
++static const unsigned int audio_clk_a_a_mux[] = {
++	AUDIO_CLKA_A_MARK,
++};
++static const unsigned int audio_clk_a_b_pins[] = {
++	/* CLK A */
++	RCAR_GP_PIN(5, 4),
++};
++static const unsigned int audio_clk_a_b_mux[] = {
++	AUDIO_CLKA_B_MARK,
++};
++static const unsigned int audio_clk_a_c_pins[] = {
++	/* CLK A */
++	RCAR_GP_PIN(5, 19),
++};
++static const unsigned int audio_clk_a_c_mux[] = {
++	AUDIO_CLKA_C_MARK,
++};
++static const unsigned int audio_clk_b_a_pins[] = {
++	/* CLK B */
++	RCAR_GP_PIN(5, 12),
++};
++static const unsigned int audio_clk_b_a_mux[] = {
++	AUDIO_CLKB_A_MARK,
++};
++static const unsigned int audio_clk_b_b_pins[] = {
++	/* CLK B */
++	RCAR_GP_PIN(6, 23),
++};
++static const unsigned int audio_clk_b_b_mux[] = {
++	AUDIO_CLKB_B_MARK,
++};
++static const unsigned int audio_clk_c_a_pins[] = {
++	/* CLK C */
++	RCAR_GP_PIN(5, 21),
++};
++static const unsigned int audio_clk_c_a_mux[] = {
++	AUDIO_CLKC_A_MARK,
++};
++static const unsigned int audio_clk_c_b_pins[] = {
++	/* CLK C */
++	RCAR_GP_PIN(5, 0),
++};
++static const unsigned int audio_clk_c_b_mux[] = {
++	AUDIO_CLKC_B_MARK,
++};
++static const unsigned int audio_clkout_a_pins[] = {
++	/* CLKOUT */
++	RCAR_GP_PIN(5, 18),
++};
++static const unsigned int audio_clkout_a_mux[] = {
++	AUDIO_CLKOUT_A_MARK,
++};
++static const unsigned int audio_clkout_b_pins[] = {
++	/* CLKOUT */
++	RCAR_GP_PIN(6, 28),
++};
++static const unsigned int audio_clkout_b_mux[] = {
++	AUDIO_CLKOUT_B_MARK,
++};
++static const unsigned int audio_clkout_c_pins[] = {
++	/* CLKOUT */
++	RCAR_GP_PIN(5, 3),
++};
++static const unsigned int audio_clkout_c_mux[] = {
++	AUDIO_CLKOUT_C_MARK,
++};
++static const unsigned int audio_clkout_d_pins[] = {
++	/* CLKOUT */
++	RCAR_GP_PIN(5, 21),
++};
++static const unsigned int audio_clkout_d_mux[] = {
++	AUDIO_CLKOUT_D_MARK,
++};
++static const unsigned int audio_clkout1_a_pins[] = {
++	/* CLKOUT1 */
++	RCAR_GP_PIN(5, 15),
++};
++static const unsigned int audio_clkout1_a_mux[] = {
++	AUDIO_CLKOUT1_A_MARK,
++};
++static const unsigned int audio_clkout1_b_pins[] = {
++	/* CLKOUT1 */
++	RCAR_GP_PIN(6, 29),
++};
++static const unsigned int audio_clkout1_b_mux[] = {
++	AUDIO_CLKOUT1_B_MARK,
++};
++static const unsigned int audio_clkout2_a_pins[] = {
++	/* CLKOUT2 */
++	RCAR_GP_PIN(5, 16),
++};
++static const unsigned int audio_clkout2_a_mux[] = {
++	AUDIO_CLKOUT2_A_MARK,
++};
++static const unsigned int audio_clkout2_b_pins[] = {
++	/* CLKOUT2 */
++	RCAR_GP_PIN(6, 30),
++};
++static const unsigned int audio_clkout2_b_mux[] = {
++	AUDIO_CLKOUT2_B_MARK,
++};
++
++static const unsigned int audio_clkout3_a_pins[] = {
++	/* CLKOUT3 */
++	RCAR_GP_PIN(5, 19),
++};
++static const unsigned int audio_clkout3_a_mux[] = {
++	AUDIO_CLKOUT3_A_MARK,
++};
++static const unsigned int audio_clkout3_b_pins[] = {
++	/* CLKOUT3 */
++	RCAR_GP_PIN(6, 31),
++};
++static const unsigned int audio_clkout3_b_mux[] = {
++	AUDIO_CLKOUT3_B_MARK,
++};
++
+ /* - EtherAVB --------------------------------------------------------------- */
+ static const unsigned int avb_link_pins[] = {
+ 	/* AVB_LINK */
+@@ -3426,6 +3548,23 @@ static const unsigned int usb30_mux[] = {
+ };
+ 
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
++	SH_PFC_PIN_GROUP(audio_clk_a_a),
++	SH_PFC_PIN_GROUP(audio_clk_a_b),
++	SH_PFC_PIN_GROUP(audio_clk_a_c),
++	SH_PFC_PIN_GROUP(audio_clk_b_a),
++	SH_PFC_PIN_GROUP(audio_clk_b_b),
++	SH_PFC_PIN_GROUP(audio_clk_c_a),
++	SH_PFC_PIN_GROUP(audio_clk_c_b),
++	SH_PFC_PIN_GROUP(audio_clkout_a),
++	SH_PFC_PIN_GROUP(audio_clkout_b),
++	SH_PFC_PIN_GROUP(audio_clkout_c),
++	SH_PFC_PIN_GROUP(audio_clkout_d),
++	SH_PFC_PIN_GROUP(audio_clkout1_a),
++	SH_PFC_PIN_GROUP(audio_clkout1_b),
++	SH_PFC_PIN_GROUP(audio_clkout2_a),
++	SH_PFC_PIN_GROUP(audio_clkout2_b),
++	SH_PFC_PIN_GROUP(audio_clkout3_a),
++	SH_PFC_PIN_GROUP(audio_clkout3_b),
+ 	SH_PFC_PIN_GROUP(avb_link),
+ 	SH_PFC_PIN_GROUP(avb_magic),
+ 	SH_PFC_PIN_GROUP(avb_phy_int),
+@@ -3660,6 +3799,26 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(usb30),
+ };
+ 
++static const char * const audio_clk_groups[] = {
++	"audio_clk_a_a",
++	"audio_clk_a_b",
++	"audio_clk_a_c",
++	"audio_clk_b_a",
++	"audio_clk_b_b",
++	"audio_clk_c_a",
++	"audio_clk_c_b",
++	"audio_clkout_a",
++	"audio_clkout_b",
++	"audio_clkout_c",
++	"audio_clkout_d",
++	"audio_clkout1_a",
++	"audio_clkout1_b",
++	"audio_clkout2_a",
++	"audio_clkout2_b",
++	"audio_clkout3_a",
++	"audio_clkout3_b",
++};
++
+ static const char * const avb_groups[] = {
+ 	"avb_link",
+ 	"avb_magic",
+@@ -4003,6 +4162,7 @@ static const char * const usb30_groups[] = {
+ };
+ 
+ static const struct sh_pfc_function pinmux_functions[] = {
++	SH_PFC_FUNCTION(audio_clk),
+ 	SH_PFC_FUNCTION(avb),
+ 	SH_PFC_FUNCTION(du),
+ 	SH_PFC_FUNCTION(hscif0),
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.7.4
