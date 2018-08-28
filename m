@@ -1,69 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:44524 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727573AbeHaSsk (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:38086 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727054AbeH1TCV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 31 Aug 2018 14:48:40 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        mchehab@kernel.org
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 2/6] media: vsp1: Correct the pitch on multiplanar formats
-Date: Fri, 31 Aug 2018 15:40:40 +0100
-Message-Id: <20180831144044.31713-3-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <20180831144044.31713-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20180831144044.31713-1-kieran.bingham+renesas@ideasonboard.com>
+        Tue, 28 Aug 2018 15:02:21 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 0/2] arm: renesas: Remove the ARCH_SHMOBILE Kconfig symbol
+Date: Tue, 28 Aug 2018 17:10:09 +0200
+Message-Id: <20180828151011.14065-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-DRM pipelines now support tri-planar as well as packed formats with
-YCbCr, however the pitch calculation was not updated to support this.
+	Hi all,
 
-Correct this by adjusting the bytesperline accordingly when 3 planes are
-used.
+Commit 9b5ba0df4ea4f940 ("ARM: shmobile: Introduce ARCH_RENESAS") started
+the conversion from ARCH_SHMOBILE to ARCH_RENESAS for Renesas ARM SoCs.
+Now all dependencies have been merged, this patch series completes the
+conversion by removing the ARCH_SHMOBILE Kconfig symbols on ARM and ARM64.
 
-Fixes: 7863ac504bc5 ("drm: rcar-du: Add tri-planar memory formats support")
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_drm.c | 10 ++++++++++
- include/media/vsp1.h                   |  2 +-
- 2 files changed, 11 insertions(+), 1 deletion(-)
+Changes compared to v1:
+  - Drop updates of dependencies for drivers, all merged.
 
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-index b9c0f695d002..b9afd98f6867 100644
---- a/drivers/media/platform/vsp1/vsp1_drm.c
-+++ b/drivers/media/platform/vsp1/vsp1_drm.c
-@@ -814,6 +814,16 @@ int vsp1_du_atomic_update(struct device *dev, unsigned int pipe_index,
- 	rpf->format.num_planes = fmtinfo->planes;
- 	rpf->format.plane_fmt[0].bytesperline = cfg->pitch;
- 	rpf->format.plane_fmt[1].bytesperline = cfg->pitch;
-+
-+	/*
-+	 * Packed YUV formats are subsampled, but the packing of two components
-+	 * into a single plane compensates for this leaving the bytesperline
-+	 * to be the correct value. For multiplanar formats we must adjust the
-+	 * pitch accordingly.
-+	 */
-+	if (fmtinfo->planes == 3)
-+		rpf->format.plane_fmt[1].bytesperline /= fmtinfo->hsub;
-+
- 	rpf->alpha = cfg->alpha;
- 
- 	rpf->mem.addr[0] = cfg->mem[0];
-diff --git a/include/media/vsp1.h b/include/media/vsp1.h
-index 3093b9cb9067..0ce19b595cc7 100644
---- a/include/media/vsp1.h
-+++ b/include/media/vsp1.h
-@@ -46,7 +46,7 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
- /**
-  * struct vsp1_du_atomic_config - VSP atomic configuration parameters
-  * @pixelformat: plane pixel format (V4L2 4CC)
-- * @pitch: line pitch in bytes, for all planes
-+ * @pitch: line pitch in bytes
-  * @mem: DMA memory address for each plane of the frame buffer
-  * @src: source rectangle in the frame buffer (integer coordinates)
-  * @dst: destination rectangle on the display (integer coordinates)
+Thanks!
+
+Geert Uytterhoeven (2):
+  ARM: shmobile: Remove the ARCH_SHMOBILE Kconfig symbol
+  arm64: renesas: Remove the ARCH_SHMOBILE Kconfig symbol
+
+ arch/arm/mach-shmobile/Kconfig |  4 ----
+ arch/arm64/Kconfig.platforms   | 44 ++++++++++++++++------------------
+ 2 files changed, 20 insertions(+), 28 deletions(-)
+
 -- 
 2.17.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
