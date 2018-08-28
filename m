@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38834 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:34819 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728339AbeH3QaH (ORCPT
+        with ESMTP id S1726998AbeH1Qzw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Aug 2018 12:30:07 -0400
-Date: Thu, 30 Aug 2018 14:28:08 +0200
+        Tue, 28 Aug 2018 12:55:52 -0400
+Date: Tue, 28 Aug 2018 15:04:13 +0200
 From: Simon Horman <horms@verge.net.au>
 To: Biju Das <biju.das@bp.renesas.com>
 Cc: Rob Herring <robh+dt@kernel.org>,
@@ -19,7 +19,7 @@ Cc: Rob Herring <robh+dt@kernel.org>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Subject: Re: [PATCH 1/3] arm64: dts: renesas: r8a774a1: Add USB2.0 phy and
  host(EHCI/OHCI) device nodes
-Message-ID: <20180830122808.4eiaiedjpenm6u7k@verge.net.au>
+Message-ID: <20180828130413.bz4nzqvo2rfzhq6j@verge.net.au>
 References: <1535107429-5458-1-git-send-email-biju.das@bp.renesas.com>
  <1535107429-5458-2-git-send-email-biju.das@bp.renesas.com>
 MIME-Version: 1.0
@@ -35,4 +35,4 @@ On Fri, Aug 24, 2018 at 11:43:47AM +0100, Biju Das wrote:
 > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Thanks, applied for v4.20.
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
