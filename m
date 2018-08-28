@@ -1,87 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:39444 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727238AbeH3Mpf (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33784 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727212AbeH1Pke (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Aug 2018 08:45:35 -0400
-Received: by mail-ua1-f67.google.com with SMTP id g18-v6so5011415uam.6
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Aug 2018 01:44:31 -0700 (PDT)
+        Tue, 28 Aug 2018 11:40:34 -0400
+Date: Tue, 28 Aug 2018 13:49:14 +0200
+From: Simon Horman <horms@verge.net.au>
+To: ltsi-dev@lists.linuxfoundation.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [GIT PULL LTSI-4.14] LTSI-v4.14 Backport or I2C R-Car Fix
+Message-ID: <20180828114913.w4c6u3c2dpmxx772@verge.net.au>
 MIME-Version: 1.0
-References: <20180828114913.w4c6u3c2dpmxx772@verge.net.au>
-In-Reply-To: <20180828114913.w4c6u3c2dpmxx772@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 30 Aug 2018 10:44:19 +0200
-Message-ID: <CAMuHMdU_hGvKOUgAyML28eXkS7kkwdM51-q74hEvjfOhWdUjHg@mail.gmail.com>
-Subject: Re: [GIT PULL LTSI-4.14] LTSI-v4.14 Backport or I2C R-Car Fix
-To: Simon Horman <horms@verge.net.au>
-Cc: ltsi-dev@lists.linuxfoundation.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+Hi,
 
-On Tue, Aug 28, 2018 at 1:49 PM Simon Horman <horms@verge.net.au> wrote:
-> This is intended as a submission to LTSI-4.14. It is the backport
-> of a fix for the R-Car I2C driver, and its dependency, both of which
-> are present in linux-next 20180821.
->
-> This pull-request is based on
-> "[GIT PULL LTSI-4.14] Renesas SoCs and Drivers to v4.18-rc8",
-> tagged as backport/v4.14.61/snapshot-to-v4.18-rc8+fixes-flattened,
-> which I have already sent a pull-request for.
->
-> There are 2 patches.
->
-> I have performed build testing of this backports on a wide range of
-> defconfigs and I am not aware of any regressions over v4.14.40 (the
-> baseline chosen when this work began).
->
->
-> The following changes since commit cc88cfdc0571385f098e82db47f5a16b6f44726e:
->
->   i2c: rcar: use the new get_bus_free callback (2018-08-09 17:22:00 +0200)
->
-> are available in the git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-backport.git backport/v4.14.61/snapshot-to-v4.18+fixes-flattened
->
-> for you to fetch changes up to 4d4605e5c137ed9a53582e573118cbc16b82cbf1:
->
->   i2c: rcar: implement STOP and REP_START according to docs (2018-08-28 13:35:06 +0200)
->
-> ----------------------------------------------------------------
-> LTSI-v4.14 Backport or I2C R-Car Fix
->
-> Base:
-> * v4.14.61
-> * Backports of components for Renesas SoCs to v4.18
->
-> Backport of post-v4.18 fix for i2c-rcar:
-> * implement STOP and REP_START according to docs
->
-> Dependency of above
-> * Refactor private flags of i2c-rcar driver
->
-> ----------------------------------------------------------------
-> Wolfram Sang (2):
->       i2c: rcar: refactor private flags
->       i2c: rcar: implement STOP and REP_START according to docs
->
->  drivers/i2c/busses/i2c-rcar.c | 39 +++++++++++++++++++++++----------------
->  1 file changed, 23 insertions(+), 16 deletions(-)
+This is intended as a submission to LTSI-4.14. It is the backport
+of a fix for the R-Car I2C driver, and its dependency, both of which
+are present in linux-next 20180821.
 
-Thank you, looks good to me.
+This pull-request is based on
+"[GIT PULL LTSI-4.14] Renesas SoCs and Drivers to v4.18-rc8",
+tagged as backport/v4.14.61/snapshot-to-v4.18-rc8+fixes-flattened,
+which I have already sent a pull-request for.
 
-Gr{oetje,eeting}s,
+There are 2 patches.
 
-                        Geert
+I have performed build testing of this backports on a wide range of
+defconfigs and I am not aware of any regressions over v4.14.40 (the
+baseline chosen when this work began).
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+The following changes since commit cc88cfdc0571385f098e82db47f5a16b6f44726e:
+
+  i2c: rcar: use the new get_bus_free callback (2018-08-09 17:22:00 +0200)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-backport.git backport/v4.14.61/snapshot-to-v4.18+fixes-flattened
+
+for you to fetch changes up to 4d4605e5c137ed9a53582e573118cbc16b82cbf1:
+
+  i2c: rcar: implement STOP and REP_START according to docs (2018-08-28 13:35:06 +0200)
+
+----------------------------------------------------------------
+LTSI-v4.14 Backport or I2C R-Car Fix
+
+Base:
+* v4.14.61
+* Backports of components for Renesas SoCs to v4.18
+
+Backport of post-v4.18 fix for i2c-rcar:
+* implement STOP and REP_START according to docs
+
+Dependency of above
+* Refactor private flags of i2c-rcar driver
+
+----------------------------------------------------------------
+Wolfram Sang (2):
+      i2c: rcar: refactor private flags
+      i2c: rcar: implement STOP and REP_START according to docs
+
+ drivers/i2c/busses/i2c-rcar.c | 39 +++++++++++++++++++++++----------------
+ 1 file changed, 23 insertions(+), 16 deletions(-)
