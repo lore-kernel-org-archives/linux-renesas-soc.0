@@ -1,65 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:42040 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727054AbeH2ApA (ORCPT
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:45754 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727226AbeH1NPG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Aug 2018 20:45:00 -0400
-Date: Tue, 28 Aug 2018 22:51:34 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Tue, 28 Aug 2018 09:15:06 -0400
+MIME-Version: 1.0
+References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com> <20180821220233.9202-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180821220233.9202-2-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 28 Aug 2018 11:24:09 +0200
+Message-ID: <CAMuHMdWcrpzit40X_z_hJrCSgupnnucPF0nciPiAiJP8EOX+TA@mail.gmail.com>
+Subject: Re: [PATCH 01/11] clk: renesas: use SPDX identifier for Renesas drivers
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 01/11] clk: renesas: use SPDX identifier for Renesas
- drivers
-Message-ID: <20180828205134.3bmxpeex5d3la2f6@katana>
-References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
- <20180821220233.9202-2-wsa+renesas@sang-engineering.com>
- <CAMuHMdWcrpzit40X_z_hJrCSgupnnucPF0nciPiAiJP8EOX+TA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rkq5zhg47yznmgpf"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWcrpzit40X_z_hJrCSgupnnucPF0nciPiAiJP8EOX+TA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
 
---rkq5zhg47yznmgpf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Wed, Aug 22, 2018 at 12:02 AM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
+Thanks for your patch!
 
-> Any specific reason you skipped all other files in that directory?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-In the first batch, I only worked on files where 'git grep' returned
-success on somthing like '(c).*Renesas'. In a later batch, I wanted to
-work on Renesas specific directories.
+>  drivers/clk/renesas/clk-div6.c            | 5 +----
+>  drivers/clk/renesas/r8a7795-cpg-mssr.c    | 5 +----
+>  drivers/clk/renesas/r8a7796-cpg-mssr.c    | 5 +----
+>  drivers/clk/renesas/r8a77995-cpg-mssr.c   | 5 +----
+>  drivers/clk/renesas/rcar-gen3-cpg.c       | 5 +----
+>  drivers/clk/renesas/rcar-usb2-clock-sel.c | 5 +----
+>  drivers/clk/renesas/renesas-cpg-mssr.c    | 5 +----
+>  drivers/clk/renesas/renesas-cpg-mssr.h    | 5 +----
+>  8 files changed, 8 insertions(+), 32 deletions(-)
 
+Any specific reason you skipped all other files in that directory?
 
---rkq5zhg47yznmgpf
-Content-Type: application/pgp-signature; name="signature.asc"
+Gr{oetje,eeting}s,
 
------BEGIN PGP SIGNATURE-----
+                        Geert
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluFtdEACgkQFA3kzBSg
-KbYFyQ/8Dp/bfqlHVUcnwpC982Up9FAPDJKHj1br6UCzV9sheqU4eq3KkdVw8scs
-Oz6olEAIYP+egqh3PVpy1XVDb8146btFla9PLt0v7/8zrJNUKUU0Wjm6QZaWMMaT
-iHse7ub7oK2UfpTuTB9+fvzeu1B70SMUTAwWVxrzwG5RybM/HeUUUv5paSwT6fSi
-IB8VKDGphK3IQ0K/qndbAC5V7huK+4Av5wlrT7P1A7EOyLnxCMa9YUUcVjE2zktd
-k8kVlbs0uM/zpTuB7yShXugJQVvDUk6uenKmfgmxC9vRMAMoIGJmzFadnmnZyIac
-uegytGCsM08EWZ4RIyJU6HKI5gxbA4I8Reaji203vO4HmH9YJsf50DdUaMSRMy/+
-q+1uZ3YgkMwKNMqlVxbCwBUapoWOLgky0lLOBTaC24T3HHGDtPBX+6yz6UI/Rwtx
-ARAf663APOsGlkrz5QJWvIsILDVznFECLied+L6JcZwX9G5b3bQIDyS5qcFRb5EZ
-QH20AXWugMC+g4oIQsKrJA8MmJ3CozirZDhHJyDuTAkmRYzLQp7PoWFdsUotxeDF
-DJOeNMBCNDVPR9uIjl1/XfEXNDF1h9aom3MZQHyUsoJ8fL0Y/MKBXw5noZueOa1T
-oXsY9HkTy2MSw+mAK1xrPj6QFVOTFZI2gbXRu5puhCBFHeilVAM=
-=1x73
------END PGP SIGNATURE-----
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---rkq5zhg47yznmgpf--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
