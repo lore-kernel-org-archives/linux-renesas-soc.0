@@ -1,108 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39303 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728790AbeH3RJ5 (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:39760 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726998AbeH1SC4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Aug 2018 13:09:57 -0400
-Date: Thu, 30 Aug 2018 15:07:48 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: r8a7796: Fix whitespace around assignments
-Message-ID: <20180830130747.6qdj27szbfj2kltt@verge.net.au>
-References: <20180828141059.6280-1-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180828141059.6280-1-geert+renesas@glider.be>
+        Tue, 28 Aug 2018 14:02:56 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] arm64: dts: r8a7796: Fix whitespace around assignments
+Date: Tue, 28 Aug 2018 16:10:59 +0200
+Message-Id: <20180828141059.6280-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Aug 28, 2018 at 04:10:59PM +0200, Geert Uytterhoeven wrote:
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  arch/arm64/boot/dts/renesas/r8a774a1.dtsi    |  4 +-
->  arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 16 +++----
->  arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 48 ++++++++++----------
->  arch/arm64/boot/dts/renesas/r8a7796.dtsi     | 48 ++++++++++----------
->  arch/arm64/boot/dts/renesas/r8a77965.dtsi    | 36 +++++++--------
->  arch/arm64/boot/dts/renesas/r8a77970.dtsi    |  8 ++--
->  arch/arm64/boot/dts/renesas/r8a77980.dtsi    | 16 +++----
->  arch/arm64/boot/dts/renesas/ulcb-kf.dtsi     |  2 +-
->  8 files changed, 89 insertions(+), 89 deletions(-)
-
-Thanks Geert,
-
-I took the liberty of updating the subject with s/r8a7796/renesas/
-and fixing a few more cases, likely ones that slipped in after you prepared
-this patch (and are currently only local to my tree).
-
-The incremental diff is:
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index 2798c4c9cf94..010a9958693d 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -1455,7 +1455,7 @@
- 			clocks = <&cpg CPG_MOD 703>;
- 			phys = <&usb2_phy0>;
- 			phy-names = "usb";
--			companion= <&ohci0>;
-+			companion = <&ohci0>;
- 			power-domains = <&sysc 32>;
- 			resets = <&cpg 703>;
- 			status = "disabled";
-@@ -1468,7 +1468,7 @@
- 			clocks = <&cpg CPG_MOD 702>;
- 			phys = <&usb2_phy1>;
- 			phy-names = "usb";
--			companion= <&ohci1>;
-+			companion = <&ohci1>;
- 			power-domains = <&sysc 32>;
- 			resets = <&cpg 702>;
- 			status = "disabled";
-diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-index 8bf3091a899c..1b316d79df88 100644
---- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-@@ -127,7 +127,7 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		reg = <0x71>;
--		reset-gpios= <&gpio3 15 GPIO_ACTIVE_LOW>;
-+		reset-gpios = <&gpio3 15 GPIO_ACTIVE_LOW>;
- 	};
- };
- 
-
-The resulting patch is as follows:
-
-
->From d44e5fc06910d21cc131d3b2a860fe0a669aefbe Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Tue, 28 Aug 2018 16:10:59 +0200
-Subject: [PATCH] arm64: dts: renesas: Fix whitespace around assignments
-
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[simon: updated for a few new cases]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi    |  8 ++---
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 16 +++++-----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 48 ++++++++++++++--------------
- arch/arm64/boot/dts/renesas/r8a7796.dtsi     | 48 ++++++++++++++--------------
- arch/arm64/boot/dts/renesas/r8a77965.dtsi    | 36 ++++++++++-----------
- arch/arm64/boot/dts/renesas/r8a77970.dtsi    |  8 ++---
- arch/arm64/boot/dts/renesas/r8a77980.dtsi    | 16 +++++-----
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi    |  4 +-
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 16 +++----
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 48 ++++++++++----------
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi     | 48 ++++++++++----------
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi    | 36 +++++++--------
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi    |  8 ++--
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi    | 16 +++----
  arch/arm64/boot/dts/renesas/ulcb-kf.dtsi     |  2 +-
- 8 files changed, 91 insertions(+), 91 deletions(-)
+ 8 files changed, 89 insertions(+), 89 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index d9005cbce581..010a9958693d 100644
+index 8e63e9aee4563883..7094c6ccde66fdee 100644
 --- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -66,7 +66,7 @@
+@@ -55,7 +55,7 @@
  			power-domains = <&sysc 0>;
  			next-level-cache = <&L2_CA57>;
  			enable-method = "psci";
@@ -111,7 +40,7 @@ index d9005cbce581..010a9958693d 100644
  		};
  
  		a57_1: cpu@1 {
-@@ -76,7 +76,7 @@
+@@ -65,7 +65,7 @@
  			power-domains = <&sysc 1>;
  			next-level-cache = <&L2_CA57>;
  			enable-method = "psci";
@@ -119,27 +48,9 @@ index d9005cbce581..010a9958693d 100644
 +			clocks = <&cpg CPG_CORE 0>;
  		};
  
- 		a53_0: cpu@100 {
-@@ -1455,7 +1455,7 @@
- 			clocks = <&cpg CPG_MOD 703>;
- 			phys = <&usb2_phy0>;
- 			phy-names = "usb";
--			companion= <&ohci0>;
-+			companion = <&ohci0>;
- 			power-domains = <&sysc 32>;
- 			resets = <&cpg 703>;
- 			status = "disabled";
-@@ -1468,7 +1468,7 @@
- 			clocks = <&cpg CPG_MOD 702>;
- 			phys = <&usb2_phy1>;
- 			phy-names = "usb";
--			companion= <&ohci1>;
-+			companion = <&ohci1>;
- 			power-domains = <&sysc 32>;
- 			resets = <&cpg 702>;
- 			status = "disabled";
+ 		L2_CA57: cache-controller-0 {
 diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index d915cff5b1b0..0fb84c219b2f 100644
+index d915cff5b1b02cc5..0fb84c219b2feaca 100644
 --- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
 @@ -232,7 +232,7 @@
@@ -215,7 +126,7 @@ index d915cff5b1b0..0fb84c219b2f 100644
  		};
  	};
 diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index efc24770c0fd..c417d4a098df 100644
+index efc24770c0fdaa35..c417d4a098df4c86 100644
 --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
 @@ -123,7 +123,7 @@
@@ -403,7 +314,7 @@ index efc24770c0fd..c417d4a098df 100644
  				};
  			};
 diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 258a3271b002..28a0794a4190 100644
+index 258a3271b002517f..28a0794a41906ebd 100644
 --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
 @@ -134,7 +134,7 @@
@@ -591,7 +502,7 @@ index 258a3271b002..28a0794a4190 100644
  			resets = <&cpg 702>;
  			status = "disabled";
 diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 5ce978502ee9..83f469d6a680 100644
+index 0567e0435e6e1d5c..6e8acbf3c5c8cf94 100644
 --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
 @@ -111,7 +111,7 @@
@@ -725,7 +636,7 @@ index 5ce978502ee9..83f469d6a680 100644
  				};
  			};
 diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index b71f3eca35bd..f4b02707390f 100644
+index b71f3eca35bd6a5b..f4b02707390fb4d6 100644
 --- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
 @@ -567,7 +567,7 @@
@@ -765,10 +676,10 @@ index b71f3eca35bd..f4b02707390f 100644
  				};
  			};
 diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-index d58e9f2c9883..fc2a1d62d773 100644
+index c099053cf5feeb27..b55db5de96f22a86 100644
 --- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -617,7 +617,7 @@
+@@ -600,7 +600,7 @@
  
  					vin0csi40: endpoint@2 {
  						reg = <2>;
@@ -777,7 +688,7 @@ index d58e9f2c9883..fc2a1d62d773 100644
  					};
  				};
  			};
-@@ -644,7 +644,7 @@
+@@ -627,7 +627,7 @@
  
  					vin1csi40: endpoint@2 {
  						reg = <2>;
@@ -786,7 +697,7 @@ index d58e9f2c9883..fc2a1d62d773 100644
  					};
  				};
  			};
-@@ -671,7 +671,7 @@
+@@ -654,7 +654,7 @@
  
  					vin2csi40: endpoint@2 {
  						reg = <2>;
@@ -795,7 +706,7 @@ index d58e9f2c9883..fc2a1d62d773 100644
  					};
  				};
  			};
-@@ -698,7 +698,7 @@
+@@ -681,7 +681,7 @@
  
  					vin3csi40: endpoint@2 {
  						reg = <2>;
@@ -804,7 +715,7 @@ index d58e9f2c9883..fc2a1d62d773 100644
  					};
  				};
  			};
-@@ -725,7 +725,7 @@
+@@ -708,7 +708,7 @@
  
  					vin4csi41: endpoint@2 {
  						reg = <2>;
@@ -813,7 +724,7 @@ index d58e9f2c9883..fc2a1d62d773 100644
  					};
  				};
  			};
-@@ -752,7 +752,7 @@
+@@ -735,7 +735,7 @@
  
  					vin5csi41: endpoint@2 {
  						reg = <2>;
@@ -822,7 +733,7 @@ index d58e9f2c9883..fc2a1d62d773 100644
  					};
  				};
  			};
-@@ -779,7 +779,7 @@
+@@ -762,7 +762,7 @@
  
  					vin6csi41: endpoint@2 {
  						reg = <2>;
@@ -831,7 +742,7 @@ index d58e9f2c9883..fc2a1d62d773 100644
  					};
  				};
  			};
-@@ -806,7 +806,7 @@
+@@ -789,7 +789,7 @@
  
  					vin7csi41: endpoint@2 {
  						reg = <2>;
@@ -841,7 +752,7 @@ index d58e9f2c9883..fc2a1d62d773 100644
  				};
  			};
 diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-index 8bf3091a899c..1b316d79df88 100644
+index 8bf3091a899c81ce..1b316d79df88ca50 100644
 --- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
 +++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
 @@ -127,7 +127,7 @@
@@ -854,4 +765,4 @@ index 8bf3091a899c..1b316d79df88 100644
  };
  
 -- 
-2.11.0
+2.17.1
