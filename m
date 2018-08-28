@@ -1,59 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:53871 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726529AbeHXN6e (ORCPT
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:39695 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726439AbeH1LUc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Aug 2018 09:58:34 -0400
-From: Jacopo Mondi <jacopo@jmondi.org>
-To: niklas.soderlund@ragnatech.se
-Cc: Jacopo Mondi <jacopo@jmondi.org>, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 3/4] vin-tests: Add capture format for parallel input
-Date: Fri, 24 Aug 2018 12:24:21 +0200
-Message-Id: <1535106262-13004-4-git-send-email-jacopo@jmondi.org>
-In-Reply-To: <1535106262-13004-1-git-send-email-jacopo@jmondi.org>
-References: <1535106262-13004-1-git-send-email-jacopo@jmondi.org>
+        Tue, 28 Aug 2018 07:20:32 -0400
+Received: by mail-vk0-f66.google.com with SMTP id e139-v6so293487vkf.6
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Aug 2018 00:30:14 -0700 (PDT)
+MIME-Version: 1.0
+References: <1535431039-2749-1-git-send-email-na-hoan@jinso.co.jp> <1535431039-2749-3-git-send-email-na-hoan@jinso.co.jp>
+In-Reply-To: <1535431039-2749-3-git-send-email-na-hoan@jinso.co.jp>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 28 Aug 2018 09:30:01 +0200
+Message-ID: <CAMuHMdV8OLKGGJ6-moD9ndNUDMxxUidxDHXZNuyPeXLPW3dfSg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a77965: add Audio SSI pin support
+To: Hoan Nguyen An <na-hoan@jinso.co.jp>
+Cc: Mark Brown <broonie@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
+        =?UTF-8?B?RHVuZ++8muS6uuOCvQ==?= <nv-dung@jinso.co.jp>,
+        =?UTF-8?B?44Kr44Kq44O744O044Kh44Oz44O744OJ44Oz?=
+        <cv-dong@jinso.co.jp>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add configurable capture format to propagate_parallel() function.
-The capture format is the image format set on the VIN nodes.
+On Tue, Aug 28, 2018 at 6:37 AM Nguyen An Hoan <na-hoan@jinso.co.jp> wrote:
+> From: Hoan Nguyen An <na-hoan@jinso.co.jp>
+>
+> Add Audio SSI pin support for r8a77965
+>
+> Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
 
-Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
----
- scripts/boards.sh    | 2 ++
- scripts/vin-tests.sh | 2 +-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.20.
 
-diff --git a/scripts/boards.sh b/scripts/boards.sh
-index 7eb3a27..b379af6 100644
---- a/scripts/boards.sh
-+++ b/scripts/boards.sh
-@@ -28,6 +28,7 @@ case $info in
-         # FIXME: This is a hack and not the correct mbus format
-         # for V3M, but results in an image.
-         parallelformat="YUYV8_1X16"
-+	parallel_captureformat="RGB565"
-         ;;
-     "Renesas Draak board based on r8a77995")
-         gen="gen3"
-@@ -35,6 +36,7 @@ case $info in
-         parallelname="adv7612 0-004c"
-         # FIXME: This is a hackfor D3, but results in an image.
-         parallelformat="YUYV8_1X16"
-+	parallel_captureformat="RGB565"
-         ;;
-     "Koelsch")
-         gen="gen2"
-diff --git a/scripts/vin-tests.sh b/scripts/vin-tests.sh
-index 0c5b29a..e7b7a48 100644
---- a/scripts/vin-tests.sh
-+++ b/scripts/vin-tests.sh
-@@ -111,5 +111,5 @@ mc_propagate_parallel() {
-     echo "format: $format size: $size/$vinsize field: $field/$vinfield vdev: $vdev"
- 
-     $mediactl -d $mdev -V "$cam [fmt:$format/$size field:$field]"
--    yavta -f RGB565 -s $vinsize --field $vinfield $vdev
-+    yavta -f $parallel_captureformat -s $vinsize --field $vinfield $vdev
- }
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
