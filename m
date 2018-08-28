@@ -1,71 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:11047 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726942AbeH0TEH (ORCPT
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37648 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726998AbeH2AWY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 27 Aug 2018 15:04:07 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 1/2] mmc: renesas_sdhi: skip SCC error check when retuning
-Date: Mon, 27 Aug 2018 17:13:20 +0200
-Message-Id: <20180827151321.18015-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180827151321.18015-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180827151321.18015-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Tue, 28 Aug 2018 20:22:24 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: rsnd: Add r8a774a1 support" to the asoc tree
+In-Reply-To: <1534869748-26661-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-Id: <20180828202856.DEDB2440078@finisterre.ee.mobilebroadband>
+Date: Tue, 28 Aug 2018 21:28:56 +0100 (BST)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+The patch
 
-Checking for SCC error during retuning is unnecessary.
+   ASoC: rsnd: Add r8a774a1 support
 
-Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-[Niklas: fix small style issue]
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+has been applied to the asoc tree at
 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 6fbf9d8e2793b81dd5f8738999163582ce61dba7 Mon Sep 17 00:00:00 2001
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Date: Tue, 21 Aug 2018 17:42:28 +0100
+Subject: [PATCH] ASoC: rsnd: Add r8a774a1 support
+
+Document RZ/G2M (R8A774A1) SoC bindings.
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
+ Documentation/devicetree/bindings/sound/renesas,rsnd.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-* Changes since v2
-- Add comment to describe why checking SCC errors when using 4 taps is
-  not needed.
-
-* Changes since v1
-- Use intermediate variable use_4tap to simplify check.
----
- drivers/mmc/host/renesas_sdhi_core.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 777e32b0e410e850..4427f0e7058f3ee5 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -443,6 +443,19 @@ static int renesas_sdhi_select_tuning(struct tmio_mmc_host *host)
- static bool renesas_sdhi_check_scc_error(struct tmio_mmc_host *host)
- {
- 	struct renesas_sdhi *priv = host_to_priv(host);
-+	bool use_4tap = host->pdata->flags & TMIO_MMC_HAVE_4TAP_HS400;
-+
-+	/*
-+	 * Skip checking SCC errors when running on 4 taps in HS400 mode as
-+	 * any retuning would still result in the same 4 taps being used.
-+	 */
-+	if (!(host->mmc->ios.timing == MMC_TIMING_UHS_SDR104) &&
-+	    !(host->mmc->ios.timing == MMC_TIMING_MMC_HS200) &&
-+	    !(host->mmc->ios.timing == MMC_TIMING_MMC_HS400 && !use_4tap))
-+		return false;
-+
-+	if (host->mmc->doing_retune)
-+		return false;
- 
- 	/* Check SCC error */
- 	if (sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL) &
+diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+index 9e764270c36b..8083f0d8f263 100644
+--- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
++++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+@@ -340,10 +340,11 @@ Required properties:
+ - compatible			: "renesas,rcar_sound-<soctype>", fallbacks
+ 				  "renesas,rcar_sound-gen1" if generation1, and
+ 				  "renesas,rcar_sound-gen2" if generation2 (or RZ/G1)
+-				  "renesas,rcar_sound-gen3" if generation3
++				  "renesas,rcar_sound-gen3" if generation3 (or RZ/G2)
+ 				  Examples with soctypes are:
+ 				    - "renesas,rcar_sound-r8a7743" (RZ/G1M)
+ 				    - "renesas,rcar_sound-r8a7745" (RZ/G1E)
++				    - "renesas,rcar_sound-r8a774a1" (RZ/G2M)
+ 				    - "renesas,rcar_sound-r8a7778" (R-Car M1A)
+ 				    - "renesas,rcar_sound-r8a7779" (R-Car H1)
+ 				    - "renesas,rcar_sound-r8a7790" (R-Car H2)
 -- 
 2.18.0
