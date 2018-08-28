@@ -1,36 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:3362 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728172AbeHMJmL (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:40544 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727169AbeH1NrK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Aug 2018 05:42:11 -0400
-From: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
-To: Simon Horman <horms@verge.net.au>,
-        "ltsi-dev@lists.linuxfoundation.org"
-        <ltsi-dev@lists.linuxfoundation.org>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Khiem Nguyen <khiem.nguyen.xt@renesas.com>
-Subject: RE: [LTSI-dev] [GIT PULL LTSI-4.14] Renesas SoCs and Drivers to
-        v4.18-rc8
-Date: Mon, 13 Aug 2018 07:01:12 +0000
-Message-ID: <TYXPR01MB1518C6FA9560CD45BF7684F9A8390@TYXPR01MB1518.jpnprd01.prod.outlook.com>
-References: <20180810122602.5w2tackcqwoeclj6@verge.net.au>
-In-Reply-To: <20180810122602.5w2tackcqwoeclj6@verge.net.au>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 28 Aug 2018 09:47:10 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Simon Horman <horms@verge.net.au>
+Cc: Nguyen An Hoan <na-hoan@jinso.co.jp>, broonie@kernel.org,
+        linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be,
+        magnus.damm@gmail.com, kuninori.morimoto.gx@renesas.com,
+        yoshihiro.shimoda.uh@renesas.com, h-inayoshi@jinso.co.jp,
+        nv-dung@jinso.co.jp, cv-dong@jinso.co.jp
+Subject: Re: [PATCH 1/2] arm64: dts: r8a77965: add FDP1 device nodes
+Date: Tue, 28 Aug 2018 12:56:18 +0300
+Message-ID: <23995298.iSy7kN2eB8@avalon>
+In-Reply-To: <20180827125704.jg4zuj2pfjykbcga@verge.net.au>
+References: <1535086349-10657-1-git-send-email-na-hoan@jinso.co.jp> <8040588.1BRXcikCUd@avalon> <20180827125704.jg4zuj2pfjykbcga@verge.net.au>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgU2ltb24sDQoNCj4gICBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2Vy
-bmVsL2dpdC9ob3Jtcy9yZW5lc2FzLWJhY2twb3J0LmdpdA0KPiBiYWNrcG9ydC92NC4xNC42MS9z
-bmFwc2hvdC10by12NC4xOC1yYzgrZml4ZXMtZmxhdHRlbmVkDQo+IA0KPiBmb3IgeW91IHRvIGZl
-dGNoIGNoYW5nZXMgdXAgdG8gMzI0Y2JiNmYzYzE5YjI1YmRiMTc5YmQxZTU2OGUyN2E0YjM1Yzdl
-ZDoNCj4gDQo+ICAgdGhlcm1hbDogcmNhcl90aGVybWFsOiBhdm9pZCBOVUxMIGRlcmVmZXJlbmNl
-IGluIGFic2VuY2Ugb2YgSVJRIHJlc291cmNlcw0KPiAoMjAxOC0wOC0wMyAxNTowNDoyNCArMDIw
-MCkNCg0KSSBjb3VsZCBub3QgZmluZCBlaXRoZXIgdGhlIHRhZyBvciB0aGUgY29tbWl0IElEIGlu
-IHJlbmVzYXMtYmFja3BvcnQgZ2l0IHJlcG8uDQpDb3VsZCB5b3UgaGVscCBjb25maXJtIGl0ID8N
-Cg0KQmVzdCByZWdhcmRzLA0KS0hJRU0gTmd1eWVuDQo=
+Hi Simon,
+
+On Monday, 27 August 2018 15:57:05 EEST Simon Horman wrote:
+> On Fri, Aug 24, 2018 at 11:45:52AM +0300, Laurent Pinchart wrote:
+> > On Friday, 24 August 2018 07:52:28 EEST Nguyen An Hoan wrote:
+> > > From: Hoan Nguyen An <na-hoan@jinso.co.jp>
+> > 
+> > You're missing a commit message. I agree that for simple patches like this
+> > one the subject line often contains enough information, but adding a
+> > commit message is still a good practice that we try to enforce through
+> > the kernel. For instance, looking at git history for r8a7796, you could
+> > use
+> > 
+> > "The r8a77965 has a single FDP1 instance."
+> > 
+> > > Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
+> > 
+> > Apart from that,
+> > 
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > 
+> > Simon, could you update the commit message when taking this patch in your
+> > tree, to avoid the need for a v2 ?
+> 
+> Yes, can do.
+> 
+> Can I confirm that it is safe, from a regression point of view,
+> to apply this patch without patch 2/2?
+
+As far as I know it is safe, yes.
+
+-- 
+Regards,
+
+Laurent Pinchart
