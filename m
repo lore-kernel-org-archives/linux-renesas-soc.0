@@ -1,75 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:20049 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728273AbeH3RPI (ORCPT
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53618 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726996AbeH2APH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Aug 2018 13:15:08 -0400
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v2 0/3] Renesas R9A06G032 PINCTRL Driver 
-Date: Thu, 30 Aug 2018 14:12:52 +0100
-Message-Id: <1535634775-19365-1-git-send-email-phil.edworthy@renesas.com>
+        Tue, 28 Aug 2018 20:15:07 -0400
+Date: Tue, 28 Aug 2018 21:21:39 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] ASoC: rsnd: Add device tree binding for r8a77990
+Message-ID: <20180828202139.GS2414@sirena.org.uk>
+References: <1534492435-17859-1-git-send-email-ykaneko0929@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="oyi3v9V9xafcEDI/"
+Content-Disposition: inline
+In-Reply-To: <1534492435-17859-1-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This implements the pinctrl driver for the RZ/N1 family of devices, including
-the R9A06G032 (RZ/N1D) device.
 
-One area that is likely to be contentious is the use of 'virtual pins' for the 
-MDIO pinmuxing. The driver uses two pins (170 and 171) that don't exist on the 
-device to configure the MDIO source within the RZ/N1 devices. On these devices, 
-there are two Ethernet MACs, a 5-Port Switch, numerous industrial Ethernet 
-peripherals, any of which can be the MDIO source. Configuring the MDIO source 
-could be done without the virtual pins, e.g. by extending the functions to 
-cover all MDIO variants (a total of 32 additional functions), but this would 
-allow users to misconfigure individual MDIO pins, rather than assign all MDIO 
-pins to a MDIO source. The choice of how to implement this will affect the
-DT bindings.
+--oyi3v9V9xafcEDI/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This series was originally written by Michel Pollet whilst at Renesas, and I
-have taken over this work.
+On Fri, Aug 17, 2018 at 04:53:55PM +0900, Yoshihiro Kaneko wrote:
+> From: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+>=20
+> This patch adds the device tree binding of the r8a77990 SoC.
 
-One point from Michel's v1 series:
-"Note, I used renesas,rzn1-pinmux node to specify the pinmux constants,
-and I also don't use some of the properties documented in
-pinctrl-bindings.txt on purpose, as they are too limited for my use
-(I need to be able to set, clear, ignore or reset level, pull up/down
-and function as the pinmux might be set by another OS/core running
-concurently)."
+This doesn't apply against current code, please check and resend.
 
-Patch 0003 should really be applied after patch:
- "ARM: dts: r9a06g032: Correct UART and add all other UARTs", see
- https://www.spinics.net/lists/arm-kernel/msg673525.html
+--oyi3v9V9xafcEDI/
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Main changes:
-v2:
- - Change to generic rzn1 family driver, instead of device specific.
- - Review comments fixed.
- - Fix error handling during probe
+-----BEGIN PGP SIGNATURE-----
 
-Phil Edworthy (3):
-  dt-bindings: pinctrl: renesas,rzn1-pinctrl: documentation
-  pinctrl: renesas: Renesas RZ/N1 pinctrl driver
-  ARM: dts: r9a06g032: Add pinctrl node
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluFrtIACgkQJNaLcl1U
+h9ClfAf+O2o/7L+w1QvcY+uoOe/dwe7BR8AmMXdZ5Sbni6eE/qPA/hyE0Hk/1mR2
+c0H3ntx431LSJy5damd7YqVEXpewKWDFNGbfjzdBf2G2Y8hwGKxcJyG3oxZMJhr0
+aANN8KVEYA2M5GwH2jTLpaGnQLIU8pea8mLwn7D4VemEzHJ3WrOaTpil4mPM4fEo
+iZqNiWlErd2yckJ8xmi3XZeDuFl0S1Tj52MGvFWI+UDwIAmhoGIRrCjpz3KaeKwt
+NpjQaWgw+y0NRElCSDKSRlIe/zojocN9WUnUxDE5P35HC2Oqwf2zH2KsfVdrizFr
+ho9bXRwjBSRlRh/DdVLmE/2SYlQIBQ==
+=mqMU
+-----END PGP SIGNATURE-----
 
- .../bindings/pinctrl/renesas,rzn1-pinctrl.txt      |  97 +++
- arch/arm/boot/dts/r9a06g032.dtsi                   |   8 +
- drivers/pinctrl/Kconfig                            |  10 +
- drivers/pinctrl/Makefile                           |   1 +
- drivers/pinctrl/pinctrl-rzn1.c                     | 844 +++++++++++++++++++++
- include/dt-bindings/pinctrl/rzn1-pinctrl.h         | 191 +++++
- 6 files changed, 1151 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
- create mode 100644 drivers/pinctrl/pinctrl-rzn1.c
- create mode 100644 include/dt-bindings/pinctrl/rzn1-pinctrl.h
-
--- 
-2.7.4
+--oyi3v9V9xafcEDI/--
