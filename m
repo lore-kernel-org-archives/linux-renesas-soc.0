@@ -1,57 +1,30 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:38388 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728713AbeH3QkI (ORCPT
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:17131 "EHLO
+        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727293AbeH2N3j (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Aug 2018 12:40:08 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: dts: renesas: salvator-xs: Improve SATA switch settings comments
-Date: Thu, 30 Aug 2018 14:38:07 +0200
-Message-Id: <20180830123807.19353-1-geert+renesas@glider.be>
+        Wed, 29 Aug 2018 09:29:39 -0400
+From: Nguyen An Hoan <na-hoan@jinso.co.jp>
+To: broonie@kernel.org, linux-renesas-soc@vger.kernel.org,
+        geert+renesas@glider.be
+Cc: yoshihiro.shimoda.uh@renesas.com, magnus.damm@gmail.com,
+        kuninori.morimoto.gx@renesas.com, h-inayoshi@jinso.co.jp,
+        nv-dung@jinso.co.jp, cv-dong@jinso.co.jp, na-hoan@jinso.co.jp
+Subject: [PATCH] Add PWM-2 channel support for Salvator-X
+Date: Wed, 29 Aug 2018 18:33:26 +0900
+Message-Id: <1535535207-2800-1-git-send-email-na-hoan@jinso.co.jp>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The comments describing the non-default switch settings to use SATA are
-confusing: 'Off' refers to the switch position, not to the MD12 logic
-value, while the parentheses suggest otherwise.  Rephrase to fix this.
+From: Hoan Nguyen An <na-hoan@jinso.co.jp>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts  | 2 +-
- arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Since the Salvator-X boards have 2 PWM channels, this patch adds the PWM-2 channel, I tested by measuring the output signal at CN28-pin30.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-index ba3357636fdb0fea..cf08a119eec093cd 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-@@ -184,7 +184,7 @@
- 	};
- };
- 
--/* MD12 (SW12-7) must be set 'Off' which is not the default! */
-+/* SW12-7 must be set 'Off' (MD12 set to 1) which is not the default! */
- &sata {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
-index 45016a06fab1cd5d..f03a5e9e0c427e0d 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
-@@ -57,7 +57,7 @@
- 	};
- };
- 
--/* MD12 (SW12-7) must be set 'Off' which is not the default! */
-+/* SW12-7 must be set 'Off' (MD12 set to 1) which is not the default! */
- &sata {
- 	status = "okay";
- };
+Hoan Nguyen An (1):
+  arm64: dts: salvator-common: Add PWM-2 channel
+
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
 -- 
-2.17.1
+2.7.4
