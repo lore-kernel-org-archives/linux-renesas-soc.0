@@ -1,116 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:32949 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728115AbeH3QcT (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45188 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726507AbeH2MgS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Aug 2018 12:32:19 -0400
-Received: by mail-io0-f196.google.com with SMTP id r196-v6so7395787iod.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Aug 2018 05:30:23 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1534999460-15111-6-git-send-email-yamada.masahiro@socionext.com>
-References: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com> <1534999460-15111-6-git-send-email-yamada.masahiro@socionext.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 30 Aug 2018 14:30:23 +0200
-Message-ID: <CAPDyKFp-ziw_4zQGAj06YtHZbToiOenWXgxNLpsToPDtuU9tPw@mail.gmail.com>
-Subject: Re: [PATCH v3 5/6] mmc: renesas_sdhi: merge clk_{start,stop}
- functions to set_clock
+        Wed, 29 Aug 2018 08:36:18 -0400
+Date: Wed, 29 Aug 2018 10:40:27 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
 To: Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Jassi Brar <jaswinder.singh@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/6] mmc: renesas_sdhi: merge clk_{start,stop}
+ functions to set_clock
+Message-ID: <20180829084027.6bymirtwvb4oiye2@ninjato>
+References: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com>
+ <1534999460-15111-6-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5hvbzvoscyba3qyo"
+Content-Disposition: inline
+In-Reply-To: <1534999460-15111-6-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 23 August 2018 at 06:44, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+
+--5hvbzvoscyba3qyo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Aug 23, 2018 at 01:44:19PM +0900, Masahiro Yamada wrote:
 > renesas_sdhi_clk_start() and renesas_sdhi_clk_stop() are now only
 > called from renesas_sdhi_set_clock().  Merge them.
->
+>=20
 > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Applied for next, thanks!
+Nice cleanup, works fine, and I don't see any issues with the
+datasheets. Thanks!
 
-Kind regards
-Uffe
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-> ---
->
-> Changes in v3: None
-> Changes in v2: None
->
->  drivers/mmc/host/renesas_sdhi_core.c | 38 ++++++++++++------------------------
->  1 file changed, 12 insertions(+), 26 deletions(-)
->
-> diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-> index cb6e889..0e88737 100644
-> --- a/drivers/mmc/host/renesas_sdhi_core.c
-> +++ b/drivers/mmc/host/renesas_sdhi_core.c
-> @@ -155,35 +155,17 @@ static unsigned int renesas_sdhi_clk_update(struct tmio_mmc_host *host,
->         return ret == 0 ? best_freq : clk_get_rate(priv->clk);
->  }
->
-> -static void renesas_sdhi_clk_start(struct tmio_mmc_host *host)
-> +static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
-> +                                  unsigned int new_clock)
->  {
-> -       sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
-> -               sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
-> -
-> -       /* HW engineers overrode docs: no sleep needed on R-Car2+ */
-> -       if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
-> -               usleep_range(10000, 11000);
-> -}
-> +       u32 clk = 0, clock;
->
-> -static void renesas_sdhi_clk_stop(struct tmio_mmc_host *host)
-> -{
->         sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
->                 sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
->
-> -       /* HW engineers overrode docs: no sleep needed on R-Car2+ */
-> -       if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
-> -               usleep_range(10000, 11000);
-> -}
-> -
-> -static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
-> -                                  unsigned int new_clock)
-> -{
-> -       u32 clk = 0, clock;
-> +       if (new_clock == 0)
-> +               goto out;
->
-> -       if (new_clock == 0) {
-> -               renesas_sdhi_clk_stop(host);
-> -               return;
-> -       }
->         /*
->          * Both HS400 and HS200/SD104 set 200MHz, but some devices need to
->          * set 400MHz to distinguish the CPG settings in HS400.
-> @@ -206,13 +188,17 @@ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
->                         clk &= ~0xff;
->         }
->
-> -       sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
-> -                       sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
->         sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clk & CLK_CTL_DIV_MASK);
->         if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
->                 usleep_range(10000, 11000);
->
-> -       renesas_sdhi_clk_start(host);
-> +       sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
-> +               sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
-> +
-> +out:
-> +       /* HW engineers overrode docs: no sleep needed on R-Car2+ */
-> +       if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
-> +               usleep_range(10000, 11000);
->  }
->
->  static void renesas_sdhi_clk_disable(struct tmio_mmc_host *host)
-> --
-> 2.7.4
->
+
+--5hvbzvoscyba3qyo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluGW/sACgkQFA3kzBSg
+Kbb1jg//Y3mpILZagitNh8Wly47dk54Leo3sO4RFOWHTHtPYH5Wf+NEb+9AG9B8s
+yXE11YuK0+UN+PBIibCnCw7b/HnUbMF70sBtx+8BmU/Bxonan1qljAvDOA8Mj6RG
+VHrLu9o1AbNkNGkThbv3Jz6JGXiqxXdIRhpHd2kKJaMA+FYsFgpjXRoUeia6xJyk
+HlEQWiBb5X1EH5zppXX+zQt1DyKf1eQkN0w8HudJcGRsIju2KQtVgt1I7go8ZWki
+5R4O2RiM6JPLyHSuHWPdhf6mdtBDVxAPaIOl65NlfSQrEkKJq6jaYe+NS3pi05nN
+rbcywEEhOcFMYwoGhzRbKeDuFGoqCOMVDED4uHTxiDoYcd/kDa8xgwoRcuKxPT58
+bGUNF1G1yoOwXh0nXMNg2AgPwq6ijJfrSHNmb0u4RSx2C0mDCUiJENvPredx/k3y
+Ndo3B3R7hYZJHBw5fOEkt695bdx43HLG9y7fIKDbwf+rpP+ch/caKZAyaRsWJmxS
+3hyYUxoIDcIGNmew+vLChbJlophTcuYkWp2Gy5cTGfFl6xf6KgOLFLieOil3u4oF
+/iYcBeNwRc/zpA9QBihC+xTGCwabn9419ZHOa+1+I1v57t88ZBELmJIBtuJVq7EG
+VIeKg085sFhrDWL1xAkdMDvlkWUUiZ4D5bjI9gk3v4N1saVNWYo=
+=MxpU
+-----END PGP SIGNATURE-----
+
+--5hvbzvoscyba3qyo--
