@@ -1,52 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-09.nifty.com ([210.131.2.76]:16941 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389123AbeHPKN6 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45118 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727190AbeH2MW4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Aug 2018 06:13:58 -0400
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+        Wed, 29 Aug 2018 08:22:56 -0400
+Date: Wed, 29 Aug 2018 10:27:09 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
         Jassi Brar <jaswinder.singh@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH v2 0/7] mmc: tmio: refactor TMIO core a bit and add UniPhier SD/eMMC controller support
-Date: Thu, 16 Aug 2018 16:16:32 +0900
-Message-Id: <1534403799-10594-1-git-send-email-yamada.masahiro@socionext.com>
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 0/6] mmc: tmio: refactor TMIO core a bit and add
+ UniPhier SD/eMMC controller support
+Message-ID: <20180829082708.2li4opnruodugo36@ninjato>
+References: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com>
+ <CAPDyKFore4GkGyMn-4VA-2h1MbNp9sQ0Szif+Mjj5qtM-7autw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cebslwlmy6zsog4x"
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFore4GkGyMn-4VA-2h1MbNp9sQ0Szif+Mjj5qtM-7autw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
-Add UniPhier SD/eMMC controller support.
+--cebslwlmy6zsog4x
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-As a preparation, I changed tmio_mmc_set_clock() to a platform hook.
-The clock rate setting is platform-specific, and UniPhier variants
-will add another way.  I thought it would be better to split this
-to a hook to avoid a mess.
+On Thu, Aug 23, 2018 at 12:43:31PM +0200, Ulf Hansson wrote:
+> On 23 August 2018 at 06:44, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+> >
+> > Add UniPhier SD/eMMC controller support.
+> >
+> > As a preparation, I changed tmio_mmc_set_clock() to a platform hook.
+> > The clock rate setting is platform-specific, and UniPhier variants
+> > will add another way.  I thought it would be better to split this
+> > to a hook to avoid a mess.
+> >
+> > V3 is rebase on top of Linus' tree.
+>=20
+> I have queued patch 1 -> 4, waiting for further reviews for patch 5 and 6.
 
-Masahiro Yamada (7):
-  mmc: tmio: replace tmio_mmc_clk_stop() calls with tmio_mmc_set_clock()
-  mmc: tmio: move tmio_mmc_set_clock() to platform hook
-  dt-bindings: mmc: add DT binding for UniPhier SD/eMMC controller
-  mmc: uniphier-sd: add UniPhier SD/eMMC controller driver
-  mmc: renesas_sdhi: merge clk_{start,stop} functions to set_clock
-  mmc: renesas_sdhi: refactor CLK_CTL bit calculation
-  mmc: tmio: refactor CLK_CTL bit calculation
+I have re-tested patches 1-4 as applied to mmc/next and it all works
+fine. For those
 
- .../devicetree/bindings/mmc/uniphier-sd.txt        |  55 ++
- MAINTAINERS                                        |   1 +
- drivers/mmc/host/Kconfig                           |  10 +
- drivers/mmc/host/Makefile                          |   1 +
- drivers/mmc/host/renesas_sdhi_core.c               |  40 +-
- drivers/mmc/host/tmio_mmc.c                        |  56 ++
- drivers/mmc/host/tmio_mmc.h                        |   4 +-
- drivers/mmc/host/tmio_mmc_core.c                   |  79 +--
- drivers/mmc/host/uniphier-sd.c                     | 695 +++++++++++++++++++++
- 9 files changed, 865 insertions(+), 76 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mmc/uniphier-sd.txt
- create mode 100644 drivers/mmc/host/uniphier-sd.c
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
--- 
-2.7.4
+Now, going to check patches 5+6...
+
+> > I dropped 6/7 because Renesas added more quirks
+> > in the current MW.
+
+Totally fine. We need to cleanup HS400 support more, then we can try the
+simplification you did for tmio_mmc.c, too. Thanks!
+
+
+--cebslwlmy6zsog4x
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluGWNgACgkQFA3kzBSg
+KbZx3w//Wl0REQpw7bHVLUNFsr+rZYLXxVh2tOiagstUyLIo0LEbSWgT8v1wD2FM
+f/fAVq0/YABZRHJdF8T8yq7nsHicxhkbEmQEmrAfpYOL6HOCm9U3YiMZXuKx+NFZ
+mex9FRk3VyqPKDeKoYNvMoFSVkQeWwAB1WqKxgym0AmbggLK/mg2ehNQHrMYMCVE
+p1u6rTNEkx48nDvmsO/zOU6Nm9y7A59+dBjLz94Fzm85+Xq2daSKiOysERXEgep/
+plj22wcdeIoFMSZTl6hrB6n9wAhQeAferpvJQ74sE3Zd9QTcAujylS4SxGC62F2p
+Pz3rO7Dm31xuI/3jwm4UnPqXqEooeO7N90NoX8oeaTOpITLCHst9o7u2dbL8EYUL
+epQCGH/4eLarrYm89bQ2VxOz6ELoiRajVpeZo2naThKFT3YILRNc666C3YpfEbDj
+a/cBh3j9MiqkkjsfMuFXrPhSoA5/Z0LvEbQ6tI0N383NIgqGif2w5uKudvOl+tdL
+s4seGwFYFAs+SA55IeabRMKIB0SGlzEIjIJEyCb4mfA3gyrs83xdUHqVDYvULCGu
+/YRqwFZLltX27jxvgO4TrTH2Ad37BM2i8thINpSsgp5tyz42ZPiZalhghlnxhsYD
+unrToWX16xTd6yf/vQTtopZ7lbCbPQTNuILCXxENBRA9rYM6YKU=
+=7Y8v
+-----END PGP SIGNATURE-----
+
+--cebslwlmy6zsog4x--
