@@ -1,104 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:51507 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731828AbeHWRNl (ORCPT
+Received: from sauhun.de ([88.99.104.3]:47938 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727204AbeH2Vdq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Aug 2018 13:13:41 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 9/9] arm64: dts: renesas: r8a774a1: Add FCPF and FCPV instances
-Date: Thu, 23 Aug 2018 14:43:08 +0100
-Message-Id: <1535031788-19907-10-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1535031788-19907-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1535031788-19907-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Wed, 29 Aug 2018 17:33:46 -0400
+Date: Wed, 29 Aug 2018 19:35:42 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+Subject: Re: [PATCH v3 1/2] mmc: renesas_sdhi: skip SCC error check when
+ retuning
+Message-ID: <20180829173542.cunvctla37ujufta@ninjato>
+References: <20180827151321.18015-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180827151321.18015-2-niklas.soderlund+renesas@ragnatech.se>
+ <20180829071604.ougz57qvpliwodep@ninjato>
+ <20180829152541.GI15572@bigcity.dyn.berto.se>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="kdxxijalhsz4iyoq"
+Content-Disposition: inline
+In-Reply-To: <20180829152541.GI15572@bigcity.dyn.berto.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add FCPF and FCPV instances to the r8a774a1 dtsi, similarly
-to what was done for the r8a7796 with commits 41dbbf0c5 ("arm64: dts:
-r8a7796: Add FCPF and FCPV instances"), 69490bc96 ("arm64: dts:
-renesas: r8a7796: Point FDP1 via FCPF to IPMMU-VI0"), and cef942d0b
-("arm64: dts: renesas: r8a7796: Point VSPI via FCPVI to IPMMU-VC0").
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 52 +++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+--kdxxijalhsz4iyoq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index f23bbfd..5b2ee60 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -1260,6 +1260,58 @@
- 			resets = <&cpg 408>;
- 		};
- 
-+		fcpf0: fcp@fe950000 {
-+			compatible = "renesas,fcpf";
-+			reg = <0 0xfe950000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 615>;
-+			power-domains = <&sysc 14>;
-+			resets = <&cpg 615>;
-+		};
-+
-+		fcpvb0: fcp@fe96f000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfe96f000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 607>;
-+			power-domains = <&sysc 14>;
-+			resets = <&cpg 607>;
-+		};
-+
-+		fcpvd0: fcp@fea27000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea27000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 603>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 603>;
-+			iommus = <&ipmmu_vi0 8>;
-+		};
-+
-+		fcpvd1: fcp@fea2f000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea2f000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 602>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 602>;
-+			iommus = <&ipmmu_vi0 9>;
-+		};
-+
-+		fcpvd2: fcp@fea37000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea37000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 601>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 601>;
-+			iommus = <&ipmmu_vi0 10>;
-+		};
-+
-+		fcpvi0: fcp@fe9af000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfe9af000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 611>;
-+			power-domains = <&sysc 14>;
-+			resets = <&cpg 611>;
-+			iommus = <&ipmmu_vc0 19>;
-+		};
-+
- 		prr: chipid@fff00044 {
- 			compatible = "renesas,prr";
- 			reg = <0 0xfff00044 0 4>;
--- 
-2.7.4
+Hi Niklas,
+
+> I tested it on M3-W ES1.0 and it H3 ES2.0 and it works as I expect it to=
+=20
+> do, but forcing a retune due to SCC error is beyond my skill-set. I=20
+> checked the documentation and can't find anything contradicting=20
+> Shimoda-sans information from the HW team. So to the best of my=20
+> knowledge this is correct. On the other hand I can't find anything in=20
+> the documentation which supports the claim from the HW team.
+
+Sorry for not being precise. With "verifying" I didn't mean at runtime,
+but checking if documentation supports this information from the HW
+team.
+
+> If you have any tips on how to better test this I'm more then happy to=20
+> do the work. Also would you like me to post a v4 addressing Ulf's=20
+> comment or wait until we are convinced this is the right path forward?
+
+As you say it is in accordance with the docs, please send v4 with Ulf's
+comments addressed.
+
+Thanks,
+
+   Wolfram
+
+
+--kdxxijalhsz4iyoq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluG2WoACgkQFA3kzBSg
+KbZKPw/8DCXjSt4To0xshUuw408Vx8WQzJ9btMFemuNP1UA8LiaufkPp0EyLjh4E
+69LGaZFW/rX+NWQCWAT3mrb1JJ2fsHjzR5N7v7bcpa4K1igdUaDM6drp6ZrTAXe2
+D0z9qX9EWuQnXDVIKrs7sNiL1jyn8naCHZN7Ty2j1XNoIf4EkUIQI+VMH7CUGBPW
+nnFwm6TtObBAEPBDupoL1WvFK6yZQLEyoS1cb+It2D5XeIZ1FkXx8bmHE13jPq+f
+DQBW7uW7Nx7LAkpGH6IVuicgqh74ysxyr+ISGPm8yjHMdd5hT1ASuApqavmmK7DF
+9+kAzqblB2nRGDbY2xncxOTR603DslbKFte3fSOzWSXNxKqE/o+cWEBDi6n/onHT
+K3nPxwjIweycRHv2mGxVC/ukEOuQNh5g9jEJe4LxILXTfZTMqf9GKHKo21mA4H2A
+pwdT3eHYXDbM+XD4MvQCwvc/VgIp0uwxy1rZOiLF8RA4JL1V8ZIhXc30n04K/sgu
+20kOh2A782+T/00Tpj54IZNfZnjGV8znmENV4paaFX4+djWnK1EaUC7hxIdFC8f2
+fXr0wJn1M48HVkx3fkDYMA1HjZJ3Hr9chNUQKt08bT6gB6zgbAakzMs2J4PQEqeW
+wwTGENx6AeoAr+Gliw0cv8n4M1hb5KWsJjYKIew8QGATgi0JBlU=
+=fwNw
+-----END PGP SIGNATURE-----
+
+--kdxxijalhsz4iyoq--
