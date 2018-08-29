@@ -1,68 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47814 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727517AbeHBNEh (ORCPT
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:42251 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727278AbeH3Dnn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Aug 2018 09:04:37 -0400
-Date: Thu, 2 Aug 2018 13:13:52 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH v2] arm64: dts: r8a77965: Add SATA controller node
-Message-ID: <20180802111352.3yxizsyuggfxwjz6@verge.net.au>
-References: <20180730073338.3639-1-wsa+renesas@sang-engineering.com>
+        Wed, 29 Aug 2018 23:43:43 -0400
+Received: by mail-lj1-f196.google.com with SMTP id f1-v6so5774798ljc.9
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Aug 2018 16:44:23 -0700 (PDT)
+Date: Thu, 30 Aug 2018 01:44:21 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: jacopo mondi <jacopo@jmondi.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
+        horms@verge.net.au, kieran.bingham+renesas@ideasonboard.com,
+        damm+renesas@opensource.se, ulrich.hecht+renesas@gmail.com,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [RFT 0/8] arm64: dts: renesas: Ebisu: Add HDMI and CVBS input
+Message-ID: <20180829234421.GB28374@bigcity.dyn.berto.se>
+References: <1534760202-20114-1-git-send-email-jacopo+renesas@jmondi.org>
+ <20180827094956.GA3566@w540>
+ <20180827132345.GC15572@bigcity.dyn.berto.se>
+ <4076708.qWth0rfBdu@avalon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180730073338.3639-1-wsa+renesas@sang-engineering.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4076708.qWth0rfBdu@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jul 30, 2018 at 09:33:38AM +0200, Wolfram Sang wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> 
-> This patch adds SATA controller node for the R8A77965 SoC.
-> 
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> [wsa: rebased to upstream base]
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> Changes since v1:
-> 	* sorted it according to address (Thanks, Geert!)
-> 	* added Geert's tag
-> 
->  arch/arm64/boot/dts/renesas/r8a77965.dtsi | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> index 0cd44461a0bd..bf22efb82cbf 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> @@ -1507,6 +1507,17 @@
->  			status = "disabled";
->  		};
->  
-> +		sata: sata@ee300000 {
-> +			compatible = "renesas,sata-r8a77965",
-> +				     "renesas,rcar-gen3-sata";
-> +			reg = <0 0xee300000 0 0x200000>;
-> +			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 815>;
-> +			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-> +			resets = <&cpg 815>;
-> +			status = "disabled";
+Hi Jacopo and Laurent,
 
-Is it intentional that there is no iommus property here?
+On 2018-08-28 13:40:34 +0300, Laurent Pinchart wrote:
 
-> +		};
-> +
->  		gic: interrupt-controller@f1010000 {
->  			compatible = "arm,gic-400";
->  			#interrupt-cells = <3>;
-> -- 
-> 2.11.0
+[snip]
+
+> > >>> - The media_device_ops or at least the .link_notify() callback 
+> > >>> of that
+> > >>>   struct must be changed so not one driver in the media graph is
+> > >>>   responsible for all links. In this case rcar-vin provides the
+> > >>>   callback and rcar-vin should not judge which links between the
+> > >>>   adv748x subdevices are OK to enable/disable. Currently the links
+> > >>>   between the adv748x subdevices are immutably enabled to avoid this
+> > >>>   particular problem.
+> > >> 
+> > >> Uh, I didn't get this :/ Care to elaborate more?
+> > > 
+> > > I'm thinking if it is not enough to just provide a .link_setup()
+> > > callback to the (enabled) csi-2 sink pads of the adv748x and handle
+> > > routing between the afe/hdmi sources and that sink, without the vin's
+> > > registered link_notify playing any role in that.
+> > 
+> > That is my point, the v4l2 framework needs work to allow all drivers to
+> > provide a .link_setup() callback. And this as you describe will conflict
+> > with the current solution where there is only one possible such
+> > callback. So in addition to being able to have multiple such callbacks
+> > the current drivers implementing one would need to be updated to ignore
+> > links which it do not care about.
 > 
+> Isn't this already possible ? We have a single top-level .link_notify() 
+> operation at the media device level, but also .link_setup() operations for 
+> each entity.
+
+You are both right this is possible today, my bad. I had confused 
+link_notify() and link_setup() and thought they where the same and that 
+there could be only one implementation in struct media_device_ops which 
+handled all link changes.
+
+I'm happy to be proven wrong here as it will allow the adv748x to change 
+links between its subdevices :-) Jacopo thanks for being persistent 
+here!
+
+-- 
+Regards,
+Niklas S�derlund
