@@ -1,62 +1,51 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v2 5/5] ARM: dts: iwg23s-sbc: Add pinctl support for EtherAVB
-Date: Thu,  2 Aug 2018 15:11:27 +0100
-Message-Id: <1533219087-33695-6-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1533219087-33695-1-git-send-email-biju.das@bp.renesas.com>
-References: <1533219087-33695-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:44848 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727072AbeH2LiS (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 29 Aug 2018 07:38:18 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-watchdog@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH v3 0/4] watchdog: prevent removing a driver if NOWAYOUT
+Date: Wed, 29 Aug 2018 09:42:37 +0200
+Message-Id: <20180829074241.1943-1-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Adding pinctrl support for EtherAVB interface.
+So, here is my second approach, now avoiding probe() and targetting the init
+call. To avoid boilerplate, I introduced macros similar to module_driver(). It
+still feels a little adventurous because of hard-coding
+'.driver.suppress_bind_attts' in the macro and trusting various driver types
+(like platform and PCI) to follow this structure.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-V1-->V2 
-     * No change
-     Depend onthe below patch
-       https://patchwork.kernel.org/patch/10546801/
----
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Having all this said, it works nicely on my Renesas Salvator-XS (R-Car M3-N).
+build bot is happy. A git branch can be found here:
 
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-index 22da819..4ceff9c 100644
---- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -28,6 +28,9 @@
- };
- 
- &avb {
-+	pinctrl-0 = <&avb_pins>;
-+	pinctrl-names = "default";
-+
- 	phy-handle = <&phy3>;
- 	phy-mode = "gmii";
- 	renesas,no-ether-link;
-@@ -46,6 +49,11 @@
- };
- 
- &pfc {
-+	avb_pins: avb {
-+		groups = "avb_mdio", "avb_gmii_tx_rx";
-+		function = "avb";
-+	};
-+
- 	scif1_pins: scif1 {
- 		groups = "scif1_data_b";
- 		function = "scif1";
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/wdt-suppress-attr
+
+Looking forward to comments.
+
+Thanks,
+
+   Wolfram
+
+Changes since V2:
+	* keep the remove callback valid
+	* remove 'if' from macro
+
+Wolfram Sang (4):
+  watchdog: core: add mechanism to prevent removing if NOWAYOUT
+  watchdog: renesas_wdt: avoid removing if NOWAYOUT
+  watchdog: core: add module_watchdog_pci_driver()
+  watchdog: i6300esb: avoid removing if NOWAYOUT
+
+ drivers/watchdog/i6300esb.c    |  2 +-
+ drivers/watchdog/renesas_wdt.c |  2 +-
+ include/linux/watchdog.h       | 21 +++++++++++++++++++++
+ 3 files changed, 23 insertions(+), 2 deletions(-)
+
 -- 
-2.7.4
-
+2.11.0
