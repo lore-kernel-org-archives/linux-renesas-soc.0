@@ -1,59 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:59110 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728882AbeHDX2y (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:52076 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727190AbeH2MnY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 4 Aug 2018 19:28:54 -0400
-Date: Sat, 4 Aug 2018 23:26:52 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/12] i2c: quirks: add zero length checks
-Message-ID: <20180804212652.xe6q2brc74pijvi6@ninjato>
-References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
- <20180723202617.15230-2-wsa+renesas@sang-engineering.com>
+        Wed, 29 Aug 2018 08:43:24 -0400
+Received: by mail-it0-f65.google.com with SMTP id e14-v6so6581902itf.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Aug 2018 01:47:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ss5syh2dz7ow7lq7"
-Content-Disposition: inline
-In-Reply-To: <20180723202617.15230-2-wsa+renesas@sang-engineering.com>
+References: <1533628626-26503-1-git-send-email-biju.das@bp.renesas.com> <1533628626-26503-2-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1533628626-26503-2-git-send-email-biju.das@bp.renesas.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 29 Aug 2018 10:47:21 +0200
+Message-ID: <CACRpkdYDJAEmAR6DVofa5g8EbQZ_Vjp7rdEZcL-X9Z4d9VzXQg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/5] gpio: rcar: Add GPIO hole support
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Tue, Aug 7, 2018 at 10:03 AM Biju Das <biju.das@bp.renesas.com> wrote:
 
---ss5syh2dz7ow7lq7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> GPIO hole is present in RZ/G1C SoC. Valid GPIO pins on bank3 are in the
+> range GP3_0 to GP3_16 and GP3_27 to GP3_29. The GPIO pins between GP3_17
+> to GP3_26 are unused. Add support for handling unused GPIO's.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-On Mon, Jul 23, 2018 at 10:26:05PM +0200, Wolfram Sang wrote:
-> Some adapters do not support a message length of 0. Add this as a quirk
-> so drivers don't have to open code it.
->=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Patch applied with Geert's review tag.
 
-Applied to for-next, thanks!
-
-
---ss5syh2dz7ow7lq7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltmGhwACgkQFA3kzBSg
-KbYCuBAAqO909trDreplqkNEXwXpF+CJDdy0zwZ3jjlIrlCnnZ7xr5aYlOdS9uA2
-gyB7pL+rlbNHoQePk9suNfIkSAGiM0hm71ZoyoPVVU/o8jHRlT26UPVPXoB49LaK
-kOhgK5GdhaHWULjTczhwZzs97rrQnXXpfS/f4wl6RuwKUVX235zfPhgn/avJcC2M
-Y/GrPicQBenoRrmuZPPqmvlDL/T0LN0HhSF/ZvBYOQZnCMiY1DdmLiy9gwiiWBiy
-MgiHGiHDHbJ2GfvLfVrELXnId4gIQaPmCQ6ZZZep85xqS5rPxmvNtzzKZMb1NTK2
-lX6tBfG5ji9sx2u435Ha6CJh0KKVNLt6d5KAkRiEtQepCKb8WGw8skgx4jwOIhIs
-kYLRhRdba63NxM7ke2pi+TtBzq4pw7hmjJWbJO3402f67ulP4qttykTYEY/joB/E
-+8IroXAHek2A3c7mcPKGNTv3uYu1Rt9pRUN5i99fDGEGQ2r8/ixZKdSA+7sJicXJ
-A2dd5vV+KcNtp9HiKzdGBa8PTU8etUu5hWKeOdstu2RT9PTrmNKm1yz5oKp8dxna
-DVe4x+b2fHDr+cxD0xvxLzvtFOQ6D/8halYL+0mCt4r5LRWJD8mMks8WlwPBiq0V
-qL25AHd8XNPh2uEcDbGIghh7D5qBRaHTdnI6bJN9qdttz686MMw=
-=KS6K
------END PGP SIGNATURE-----
-
---ss5syh2dz7ow7lq7--
+Yours,
+Linus Walleij
