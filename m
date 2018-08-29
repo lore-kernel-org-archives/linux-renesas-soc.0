@@ -1,132 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:34640 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727284AbeH1SiS (ORCPT
+Received: from sauhun.de ([88.99.104.3]:44620 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727156AbeH2LHh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Aug 2018 14:38:18 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] [LOCAL] arm64: defconfig: Refresh renesas_defconfig for v4.19-rc1
-Date: Tue, 28 Aug 2018 16:46:15 +0200
-Message-Id: <20180828144615.9851-1-geert+renesas@glider.be>
+        Wed, 29 Aug 2018 07:07:37 -0400
+Date: Wed, 29 Aug 2018 09:12:04 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mmc: renesas_sdhi: handle 4tap hs400 mode quirk
+ based on SoC revision
+Message-ID: <20180829071204.sjxbmwmsivwiitwb@ninjato>
+References: <20180806191227.28401-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180806191227.28401-2-niklas.soderlund+renesas@ragnatech.se>
+ <CAMuHMdXstt90ZEOv5nxgDd5jV_Ux98tsYoVr_U=hSZrHYb=dfQ@mail.gmail.com>
+ <20180827152911.GE15572@bigcity.dyn.berto.se>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="u6pc5iygb3i5zpjc"
+Content-Disposition: inline
+In-Reply-To: <20180827152911.GE15572@bigcity.dyn.berto.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Refresh the defconfig for Renesas R-Car Gen3 boards:
-  - Move options that have moved,
-  - Remove CONFIG_PCIE_DW_PLAT_HOST (auto-disabled),
-  - Remove CONFIG_DEBUG_FS (auto-enabled).
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/configs/renesas_defconfig | 40 +++++++++++++---------------
- 1 file changed, 19 insertions(+), 21 deletions(-)
+--u6pc5iygb3i5zpjc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
-index e2336fd21e355726..4d831eb8dedd409a 100644
---- a/arch/arm64/configs/renesas_defconfig
-+++ b/arch/arm64/configs/renesas_defconfig
-@@ -4,6 +4,7 @@ CONFIG_POSIX_MQUEUE=y
- CONFIG_AUDIT=y
- CONFIG_NO_HZ_IDLE=y
- CONFIG_HIGH_RES_TIMERS=y
-+CONFIG_PREEMPT=y
- CONFIG_IRQ_TIME_ACCOUNTING=y
- CONFIG_BSD_PROCESS_ACCT=y
- CONFIG_BSD_PROCESS_ACCT_V3=y
-@@ -27,9 +28,6 @@ CONFIG_SCHED_AUTOGROUP=y
- CONFIG_BLK_DEV_INITRD=y
- # CONFIG_COMPAT_BRK is not set
- CONFIG_PROFILING=y
--CONFIG_JUMP_LABEL=y
--CONFIG_BLK_DEV_INTEGRITY=y
--# CONFIG_IOSCHED_DEADLINE is not set
- CONFIG_ARCH_RENESAS=y
- CONFIG_ARCH_R8A774A1=y
- CONFIG_ARCH_R8A7795=y
-@@ -46,7 +44,6 @@ CONFIG_PCI_IOV=y
- CONFIG_HOTPLUG_PCI=y
- CONFIG_PCIE_RCAR=y
- CONFIG_PCI_HOST_GENERIC=y
--# CONFIG_PCIE_DW_PLAT_HOST is not set
- # CONFIG_CAVIUM_ERRATUM_22375 is not set
- # CONFIG_CAVIUM_ERRATUM_23154 is not set
- # CONFIG_CAVIUM_ERRATUM_27456 is not set
-@@ -58,17 +55,12 @@ CONFIG_PCI_HOST_GENERIC=y
- # CONFIG_HISILICON_ERRATUM_161600802 is not set
- CONFIG_ARM64_VA_BITS_48=y
- CONFIG_SCHED_MC=y
--CONFIG_PREEMPT=y
--CONFIG_KSM=y
--CONFIG_TRANSPARENT_HUGEPAGE=y
--CONFIG_CMA=y
- CONFIG_SECCOMP=y
- CONFIG_KEXEC=y
- CONFIG_CRASH_DUMP=y
- CONFIG_XEN=y
- # CONFIG_ARM64_LSE_ATOMICS is not set
- # CONFIG_ARM64_RAS_EXTN is not set
--# CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
- CONFIG_COMPAT=y
- CONFIG_HIBERNATION=y
- CONFIG_WQ_POWER_EFFICIENT_DEFAULT=y
-@@ -77,6 +69,22 @@ CONFIG_ARM_CPUIDLE=y
- CONFIG_CPU_FREQ=y
- CONFIG_CPUFREQ_DT=y
- CONFIG_ARM_BIG_LITTLE_CPUFREQ=y
-+# CONFIG_DMIID is not set
-+CONFIG_VIRTUALIZATION=y
-+CONFIG_KVM=y
-+CONFIG_ARM64_CRYPTO=y
-+CONFIG_CRYPTO_SHA1_ARM64_CE=y
-+CONFIG_CRYPTO_SHA2_ARM64_CE=y
-+CONFIG_CRYPTO_GHASH_ARM64_CE=y
-+CONFIG_CRYPTO_AES_ARM64_CE_CCM=y
-+CONFIG_CRYPTO_AES_ARM64_CE_BLK=y
-+CONFIG_JUMP_LABEL=y
-+CONFIG_BLK_DEV_INTEGRITY=y
-+# CONFIG_IOSCHED_DEADLINE is not set
-+# CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
-+CONFIG_KSM=y
-+CONFIG_TRANSPARENT_HUGEPAGE=y
-+CONFIG_CMA=y
- CONFIG_NET=y
- CONFIG_PACKET=y
- CONFIG_UNIX=y
-@@ -294,7 +302,6 @@ CONFIG_PHY_RCAR_GEN3_USB2=y
- CONFIG_PHY_RCAR_GEN3_USB3=y
- CONFIG_TEE=y
- CONFIG_OPTEE=y
--# CONFIG_DMIID is not set
- CONFIG_EXT4_FS=y
- CONFIG_EXT4_FS_POSIX_ACL=y
- CONFIG_FANOTIFY=y
-@@ -312,21 +319,12 @@ CONFIG_NFS_V4_2=y
- CONFIG_ROOT_NFS=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
--CONFIG_VIRTUALIZATION=y
--CONFIG_KVM=y
-+CONFIG_CRYPTO_ANSI_CPRNG=y
-+# CONFIG_CRYPTO_DEV_VIRTIO is not set
- CONFIG_PRINTK_TIME=y
--CONFIG_DEBUG_FS=y
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_DEBUG_KERNEL=y
- # CONFIG_SCHED_DEBUG is not set
- # CONFIG_DEBUG_PREEMPT is not set
- CONFIG_PROVE_LOCKING=y
- # CONFIG_FTRACE is not set
--CONFIG_CRYPTO_ANSI_CPRNG=y
--# CONFIG_CRYPTO_DEV_VIRTIO is not set
--CONFIG_ARM64_CRYPTO=y
--CONFIG_CRYPTO_SHA1_ARM64_CE=y
--CONFIG_CRYPTO_SHA2_ARM64_CE=y
--CONFIG_CRYPTO_GHASH_ARM64_CE=y
--CONFIG_CRYPTO_AES_ARM64_CE_CCM=y
--CONFIG_CRYPTO_AES_ARM64_CE_BLK=y
--- 
-2.17.1
+
+> I think this design is less messy as the quirks gets added in=20
+> renesas_sdhi_core.c instead of needing to keep=20
+> renesas_sdhi_internal_dmac.c and renesas_sdhi_sys_dmac.c in sync with=20
+> the quirks.
+>=20
+> Wolfram what do you think about this design?
+
+I wonder if we can improve it if we base it on top of Yamada-san's
+latest patch series? For example, I never liked TMIO_MMC_HAVE_4TAP_HS400
+which is totally Renesas SDHI specific to be in the TMIO_* namespace.
+Given Yamada-san's refactoring, that code went from the generic TMIO
+code to Renesas specific code.
+
+I am sure we can remove TMIO_MMC_HAVE_4TAP_HS400 then, and wonder if we
+can't add a simpler quirk handling on top of it. The latter is a gut
+feeling, I haven't researched it.
+
+Niklas, can you have a look?
+
+[1] "[PATCH v3 0/6] mmc: tmio: refactor TMIO core a bit and add UniPhier
+SD/eMMC controller support"
+
+
+--u6pc5iygb3i5zpjc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluGRzgACgkQFA3kzBSg
+KbZ7tQ/+P/97fXTi/1rVGxEaKjCKSPFeiopqvdCyM3hmlQldWj1YahzIcrcYF6aL
+sy7eR1O/9eFFEC4RY79ESgwL+zKFsdxbomxDR/jpuxOH3CWu8zGzxAqRosJcPDgS
+JuAgq+56xBNQACeb7UJFB8iLzOZwYGkyw/l7uDIYHwD9Lov2o0HXBAqsmC6Fvr0V
+h5oOniHAzaKBINerorR7ZXNOJc3fN4s4zKm0GRDa0H+DhfAAb/SuCiF23k3KkUSQ
+1soc5dCV6kvUIIa2vKo7Vp5lqyJPh9h4qxfwBxDb7u6eFX6311CAj585ecHCBKdS
+s/3CEpIxBzHY/Y7+6SlOPK3FTN+NLw/K10fLWilG6kbTM4va7WHE9N51jcta6HVw
+UcZ7nP2bFY88mm/1/4geCxD8PUauJRGTNwAzMGrlk52KknEchxzWsOHl7wf6m46L
++OOnkzY61ZBIWRHN9AqOEuB36mKmuihwb1mpRrqiO7XeMuEPeYSnNOjr+BfeNmJE
+fDip5GISIFMQM3oCyA3lPq64IdVTSr+CNcNd0RKjV4PUI4RNBVyF6CB/25JK4NHJ
+0CeEuY2nkSK6ls97Js7Ur75wWGJ8EMrf98CEiPnWnw6xwlXgyBVwR7Etkh5uX3Bb
+5+QJqFdxfUBzS4rzk0+iwSWyuji60+fQ96h38rgrWDkueD/uDyY=
+=Ehs4
+-----END PGP SIGNATURE-----
+
+--u6pc5iygb3i5zpjc--
