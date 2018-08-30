@@ -1,49 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:44524 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728760AbeHaSsl (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36679 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727782AbeH3Naj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 31 Aug 2018 14:48:41 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        mchehab@kernel.org
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 4/6] media: vsp1: Document max_width restriction on SRU
-Date: Fri, 31 Aug 2018 15:40:42 +0100
-Message-Id: <20180831144044.31713-5-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <20180831144044.31713-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20180831144044.31713-1-kieran.bingham+renesas@ideasonboard.com>
+        Thu, 30 Aug 2018 09:30:39 -0400
+Received: by mail-wm0-f68.google.com with SMTP id j192-v6so1279789wmj.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Aug 2018 02:29:24 -0700 (PDT)
+Subject: Re: [PATCH 0/4] clocksource: convert to SPDX for Renesas
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+References: <87a7pff8jq.wl-kuninori.morimoto.gx@renesas.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <3fd74aa2-9025-7163-a408-cb2c8a76aec2@linaro.org>
+Date: Thu, 30 Aug 2018 11:29:22 +0200
+MIME-Version: 1.0
+In-Reply-To: <87a7pff8jq.wl-kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The SRU is currently restricted to 256 pixels as part of the current
-partition algorithm. Document that the actual capability of this
-component is 288 pixels, but don't increase the implementation.
+On 22/08/2018 04:25, Kuninori Morimoto wrote:
+> 
+> Hi Daniel, Thomas
+> 
+> These convert license to SPDX style on clocksource for Renesas
+> 
+> Kuninori Morimoto (4):
+>   clocksource: renesas-ostm: convert to SPDX identifiers
+>   clocksource: sh_cmt: convert to SPDX identifiers
+>   clocksource: sh_mtu2: convert to SPDX identifiers
+>   clocksource: sh_tmu: convert to SPDX identifiers
+> 
+>  drivers/clocksource/renesas-ostm.c | 11 +----------
+>  drivers/clocksource/sh_cmt.c       | 10 +---------
+>  drivers/clocksource/sh_mtu2.c      | 10 +---------
+>  drivers/clocksource/sh_tmu.c       | 10 +---------
+>  4 files changed, 4 insertions(+), 37 deletions(-)
 
-The extended partition algorithm may later choose to utilise a larger
-input to support overlapping partitions.
+Series applied for 4.20
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_sru.c | 4 ++++
- 1 file changed, 4 insertions(+)
+nit: in the future can you stick to the format:
 
-diff --git a/drivers/media/platform/vsp1/vsp1_sru.c b/drivers/media/platform/vsp1/vsp1_sru.c
-index f277700e5cc2..2a40e09b9aa7 100644
---- a/drivers/media/platform/vsp1/vsp1_sru.c
-+++ b/drivers/media/platform/vsp1/vsp1_sru.c
-@@ -314,6 +314,10 @@ static unsigned int sru_max_width(struct vsp1_entity *entity,
- 	output = vsp1_entity_get_pad_format(&sru->entity, sru->entity.config,
- 					    SRU_PAD_SOURCE);
- 
-+	/*
-+	 * The maximum width of the SRU is 288 input pixels, but to support the
-+	 * partition algorithm, this is currently kept at 256.
-+	 */
- 	if (input->width != output->width)
- 		return 512;
- 	else
+clocksource/drivers/<timer>: [A-Z].*
+
+Thanks
+
+  -- Daniel
+
+
 -- 
-2.17.1
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
