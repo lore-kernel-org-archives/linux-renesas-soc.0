@@ -1,43 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44876 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727072AbeH2LiT (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:40331 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729048AbeH3Sny (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Aug 2018 07:38:19 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-watchdog@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH v3 3/4] watchdog: core: add module_watchdog_pci_driver()
-Date: Wed, 29 Aug 2018 09:42:40 +0200
-Message-Id: <20180829074241.1943-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180829074241.1943-1-wsa+renesas@sang-engineering.com>
-References: <20180829074241.1943-1-wsa+renesas@sang-engineering.com>
+        Thu, 30 Aug 2018 14:43:54 -0400
+Date: Thu, 30 Aug 2018 16:41:22 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77965: Fix HS-USB compatible
+Message-ID: <20180830144121.iiambdyg3xam4vj2@verge.net.au>
+References: <20180828135702.3748-1-geert+renesas@glider.be>
+ <OSBPR01MB22935B8A7C939E2E185CA868D8080@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <OSBPR01MB22935B8A7C939E2E185CA868D8080@OSBPR01MB2293.jpnprd01.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Allow PCI drivers to prevent removing if NOWAYOUT, too.
+On Thu, Aug 30, 2018 at 03:04:06AM +0000, Yoshihiro Shimoda wrote:
+> Hi Geert-san,
+> 
+> > From: Geert Uytterhoeven, Sent: Tuesday, August 28, 2018 10:57 PM
+> > 
+> > Should be "renesas,usbhs-r8a77965", not "renesas,usbhs-r8a7796".
+> > 
+> > Fixes: a06e8af801760a98 ("arm64: dts: renesas: r8a77965: add HS-USB node")
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Thank you for the patch!
+> 
+> Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Note: This is only a build-tested proof-of-concept!
-
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- include/linux/watchdog.h | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/include/linux/watchdog.h b/include/linux/watchdog.h
-index c8ecbc53c807..7f097d6f94d4 100644
---- a/include/linux/watchdog.h
-+++ b/include/linux/watchdog.h
-@@ -233,4 +233,8 @@ module_exit(__driver##_exit)
- 	module_watchdog_driver(__platform_driver, platform_driver_register, \
- 				platform_driver_unregister, __nowayout)
- 
-+#define module_watchdog_pci_driver(__pci_driver, __nowayout) \
-+	module_watchdog_driver(__pci_driver, pci_register_driver, \
-+				pci_unregister_driver, __nowayout)
-+
- #endif  /* ifndef _LINUX_WATCHDOG_H */
--- 
-2.11.0
+Thanks Geert, thanks Shimoda-san, applied for v4.20.
