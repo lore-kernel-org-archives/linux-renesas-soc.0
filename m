@@ -1,210 +1,116 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35190 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388608AbeHGQdk (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:32949 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728115AbeH3QcT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Aug 2018 12:33:40 -0400
-Subject: Re: [PATCH v3 4/4] hw/arm/sysbus-fdt: Add support for instantiating
- generic devices
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <20180725143413.9728-1-geert+renesas@glider.be>
- <20180725143413.9728-5-geert+renesas@glider.be>
-Cc: Magnus Damm <damm+renesas@opensource.se>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        qemu-arm@nongnu.org, qemu-devel@nongnu.org,
-        linux-renesas-soc@vger.kernel.org
-From: Auger Eric <eric.auger@redhat.com>
-Message-ID: <e52bfdab-5c23-a617-8bef-0c17ab831ec1@redhat.com>
-Date: Tue, 7 Aug 2018 16:19:03 +0200
+        Thu, 30 Aug 2018 12:32:19 -0400
+Received: by mail-io0-f196.google.com with SMTP id r196-v6so7395787iod.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Aug 2018 05:30:23 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180725143413.9728-5-geert+renesas@glider.be>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1534999460-15111-6-git-send-email-yamada.masahiro@socionext.com>
+References: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com> <1534999460-15111-6-git-send-email-yamada.masahiro@socionext.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 30 Aug 2018 14:30:23 +0200
+Message-ID: <CAPDyKFp-ziw_4zQGAj06YtHZbToiOenWXgxNLpsToPDtuU9tPw@mail.gmail.com>
+Subject: Re: [PATCH v3 5/6] mmc: renesas_sdhi: merge clk_{start,stop}
+ functions to set_clock
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+On 23 August 2018 at 06:44, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> renesas_sdhi_clk_start() and renesas_sdhi_clk_stop() are now only
+> called from renesas_sdhi_set_clock().  Merge them.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-On 07/25/2018 04:34 PM, Geert Uytterhoeven wrote:
-> Add a fallback for instantiating generic devices without a type-specific
-> or compatible-specific instantation method.  This will be used when no
-> other match is found.
-> 
-> The generic instantation method creates a device node with "reg" and
-> (optional) "interrupts" properties, and copies the "compatible"
-> property and other optional properties from the host.
-> For now the following optional properties are copied, if found:
->   - "#gpio-cells",
->   - "gpio-controller",
->   - "#interrupt-cells",
->   - "interrupt-controller",
->   - "interrupt-names".
-> 
-> More can be added when needed.
-> 
-> This avoids having to write device-specific instantation methods for
-instantiation
-> each and every "simple" device using only a set of generic properties.
-> Devices that need more specialized handling can still provide their
-> own instantation method.
-> 
-> This has been tested on a Renesas Salvator-XS board with R-Car H3 ES2.0
-> with SATA:
-> 
->     -device vfio-platform,host=ee300000.sata
-> 
-> and GPIO (needs VFIO No-IOMMU support):
-> 
->     -device vfio-platform,host=e6055400.gpio
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Applied for next, thanks!
+
+Kind regards
+Uffe
+
 > ---
-> v3:
->   - New.
-> ---
->  hw/arm/sysbus-fdt.c | 102 ++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 102 insertions(+)
-> 
-> diff --git a/hw/arm/sysbus-fdt.c b/hw/arm/sysbus-fdt.c
-> index 0e24c803a1c2c734..8040af00ccf131d7 100644
-> --- a/hw/arm/sysbus-fdt.c
-> +++ b/hw/arm/sysbus-fdt.c
-> @@ -415,6 +415,99 @@ static int add_amd_xgbe_fdt_node(SysBusDevice *sbdev, void *opaque)
->      return 0;
+>
+> Changes in v3: None
+> Changes in v2: None
+>
+>  drivers/mmc/host/renesas_sdhi_core.c | 38 ++++++++++++------------------------
+>  1 file changed, 12 insertions(+), 26 deletions(-)
+>
+> diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+> index cb6e889..0e88737 100644
+> --- a/drivers/mmc/host/renesas_sdhi_core.c
+> +++ b/drivers/mmc/host/renesas_sdhi_core.c
+> @@ -155,35 +155,17 @@ static unsigned int renesas_sdhi_clk_update(struct tmio_mmc_host *host,
+>         return ret == 0 ? best_freq : clk_get_rate(priv->clk);
 >  }
->  
-> +static HostProperty generic_copied_properties[] = {
-> +    {"compatible", false},
-> +    {"#gpio-cells", true},
-> +    {"gpio-controller", true},
-> +    {"#interrupt-cells", true},
-> +    {"interrupt-controller", true},
-> +    {"interrupt-names", true},
-I think we would need to enumerate the other source properties which
-were not copied to the guest fdt and either warn the userspace those
-were omitted or fail. We may end up generating an incomplete guest dt
-node that may not work properly.
-> +};
+>
+> -static void renesas_sdhi_clk_start(struct tmio_mmc_host *host)
+> +static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
+> +                                  unsigned int new_clock)
+>  {
+> -       sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
+> -               sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+> -
+> -       /* HW engineers overrode docs: no sleep needed on R-Car2+ */
+> -       if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+> -               usleep_range(10000, 11000);
+> -}
+> +       u32 clk = 0, clock;
+>
+> -static void renesas_sdhi_clk_stop(struct tmio_mmc_host *host)
+> -{
+>         sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
+>                 sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+>
+> -       /* HW engineers overrode docs: no sleep needed on R-Car2+ */
+> -       if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+> -               usleep_range(10000, 11000);
+> -}
+> -
+> -static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
+> -                                  unsigned int new_clock)
+> -{
+> -       u32 clk = 0, clock;
+> +       if (new_clock == 0)
+> +               goto out;
+>
+> -       if (new_clock == 0) {
+> -               renesas_sdhi_clk_stop(host);
+> -               return;
+> -       }
+>         /*
+>          * Both HS400 and HS200/SD104 set 200MHz, but some devices need to
+>          * set 400MHz to distinguish the CPG settings in HS400.
+> @@ -206,13 +188,17 @@ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
+>                         clk &= ~0xff;
+>         }
+>
+> -       sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
+> -                       sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+>         sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clk & CLK_CTL_DIV_MASK);
+>         if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+>                 usleep_range(10000, 11000);
+>
+> -       renesas_sdhi_clk_start(host);
+> +       sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
+> +               sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
 > +
-> +/**
-> + * add_generic_fdt_node
-> + *
-> + * Generates a generic DT node by copying properties from the host
-> + */
-> +static int add_generic_fdt_node(SysBusDevice *sbdev, void *opaque)
-> +{
-> +    PlatformBusFDTData *data = opaque;
-> +    VFIOPlatformDevice *vdev = VFIO_PLATFORM_DEVICE(sbdev);
-> +    const char *parent_node = data->pbus_node_name;
-> +    void *guest_fdt = data->fdt, *host_fdt;
-> +    VFIODevice *vbasedev = &vdev->vbasedev;
-> +    char **node_path, *node_name, *dt_name;
-> +    PlatformBusDevice *pbus = data->pbus;
-> +    int i, irq_number;
-> +    uint32_t *reg_attr, *irq_attr;
-> +    uint64_t mmio_base;
-> +
-> +    host_fdt = load_device_tree_from_sysfs();
-> +
-> +    dt_name = sysfs_to_dt_name(vbasedev->name);
-> +    if (!dt_name) {
-> +        error_report("%s incorrect sysfs device name %s", __func__,
-> +                     vbasedev->name);
-> +        exit(1);
-> +    }
-> +    node_path = qemu_fdt_node_path(host_fdt, dt_name, vdev->compat,
-> +                                   &error_fatal);
-> +    if (!node_path || !node_path[0]) {
-> +        error_report("%s unable to retrieve node path for %s/%s", __func__,
-> +                     dt_name, vdev->compat);
-> +        exit(1);
-> +    }
-> +
-> +    if (node_path[1]) {
-> +        error_report("%s more than one node matching %s/%s!", __func__, dt_name,
-> +                     vdev->compat);
-> +        exit(1);
-> +    }
-> +
-> +    mmio_base = platform_bus_get_mmio_addr(pbus, sbdev, 0);
-> +    node_name = g_strdup_printf("%s/%s@%" PRIx64, parent_node,
-> +                               vbasedev->name, mmio_base);
-> +    qemu_fdt_add_subnode(guest_fdt, node_name);
-> +
-> +    /* Copy generic properties */
-> +    copy_properties_from_host(generic_copied_properties,
-> +                              ARRAY_SIZE(generic_copied_properties), host_fdt,
-> +                              guest_fdt, node_path[0], node_name);
-> +
-> +    /* Copy reg (remapped) */
-> +    reg_attr = g_new(uint32_t, vbasedev->num_regions * 2);
-> +    for (i = 0; i < vbasedev->num_regions; i++) {
-> +        mmio_base = platform_bus_get_mmio_addr(pbus, sbdev, i);
-> +        reg_attr[2 * i] = cpu_to_be32(mmio_base);
-> +        reg_attr[2 * i + 1] = cpu_to_be32(
-> +                                memory_region_size(vdev->regions[i]->mem));
-> +    }
-> +    qemu_fdt_setprop(guest_fdt, node_name, "reg", reg_attr,
-> +                     vbasedev->num_regions * 2 * sizeof(uint32_t));
-> +
-> +    /* Copy interrupts (remapped) */
-> +    if (vbasedev->num_irqs) {
-> +        irq_attr = g_new(uint32_t, vbasedev->num_irqs * 3);
-> +        for (i = 0; i < vbasedev->num_irqs; i++) {
-> +            irq_number = platform_bus_get_irqn(pbus, sbdev , i)
-> +                             + data->irq_start;
-> +            irq_attr[3 * i] = cpu_to_be32(GIC_FDT_IRQ_TYPE_SPI);
-> +            irq_attr[3 * i + 1] = cpu_to_be32(irq_number);
-> +            irq_attr[3 * i + 2] = cpu_to_be32(GIC_FDT_IRQ_FLAGS_LEVEL_HI);
-I think this part is not generic enough. How can you assume the IRQs are
-level or edge? Can't you copy the source interrupt properties and just
-overwrite the IRQ number?
-
-Thanks
-
-Eric
-> +        }
-> +        qemu_fdt_setprop(guest_fdt, node_name, "interrupts",
-> +                         irq_attr, vbasedev->num_irqs * 3 * sizeof(uint32_t));
-> +        g_free(irq_attr);
-> +    }
-> +
-> +    g_free(reg_attr);
-> +    g_free(node_name);
-> +    g_strfreev(node_path);
-> +    g_free(dt_name);
-> +    g_free(host_fdt);
-> +    return 0;
-> +}
-> +
->  /* DT compatible matching */
->  static bool vfio_platform_match(SysBusDevice *sbdev,
->                                  const BindingEntry *entry)
-> @@ -423,6 +516,11 @@ static bool vfio_platform_match(SysBusDevice *sbdev,
->      const char *compat;
->      unsigned int n;
->  
-> +    if (!entry->compat) {
-> +        /* Generic DT fallback */
-> +        return true;
-> +    }
-> +
->      for (n = vdev->num_compat, compat = vdev->compat; n > 0;
->           n--, compat += strlen(compat) + 1) {
->          if (!strcmp(entry->compat, compat)) {
-> @@ -459,6 +557,10 @@ static const BindingEntry bindings[] = {
->      VFIO_PLATFORM_BINDING("amd,xgbe-seattle-v1a", add_amd_xgbe_fdt_node),
->  #endif
->      TYPE_BINDING(TYPE_RAMFB_DEVICE, no_fdt_node),
-> +#ifdef CONFIG_LINUX
-> +    /* Generic DT fallback must be last */
-> +    VFIO_PLATFORM_BINDING(NULL, add_generic_fdt_node),
-> +#endif
->      TYPE_BINDING("", NULL), /* last element */
->  };
->  
-> 
+> +out:
+> +       /* HW engineers overrode docs: no sleep needed on R-Car2+ */
+> +       if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+> +               usleep_range(10000, 11000);
+>  }
+>
+>  static void renesas_sdhi_clk_disable(struct tmio_mmc_host *host)
+> --
+> 2.7.4
+>
