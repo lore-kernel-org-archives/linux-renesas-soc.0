@@ -1,48 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.84]:20256 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725800AbeHQQ0O (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:19892 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727042AbeH3HBR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Aug 2018 12:26:14 -0400
-From: Ulrich Hecht <uli+renesas@fpond.eu>
-To: linux-renesas-soc@vger.kernel.org
-Cc: horms@verge.net.au, geert@linux-m68k.org,
-        khiem.nguyen.xt@rvc.renesas.com, dien.pham.ry@renesas.com,
-        takeshi.kihara.df@renesas.com, Ulrich Hecht <uli+renesas@fpond.eu>
-Subject: [PATCH 0/5] H3/M3-W cpuidle support
-Date: Fri, 17 Aug 2018 15:19:23 +0200
-Message-Id: <1534511968-19634-1-git-send-email-uli+renesas@fpond.eu>
+        Thu, 30 Aug 2018 03:01:17 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 0/6] Document r8a774a1 USB bindings
+Date: Thu, 30 Aug 2018 03:01:15 +0000
+Message-ID: <OSBPR01MB22938FC34C6AD58FF8A5B285D8080@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+References: <1535097375-5561-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1535097375-5561-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+Hi Fabrizio-san,
 
-This series adds CPU idle support for H3 and M3-W. It's a straight
-up-port from the BSP.
+> From: Fabrizio Castro, Sent: Friday, August 24, 2018 4:56 PM
+> To: Vinod Koul <vkoul@kernel.org>; Rob Herring <robh+dt@kernel.org>; Mark=
+ Rutland <mark.rutland@arm.com>
+> Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>; Greg Kroah-Hartman =
+<gregkh@linuxfoundation.org>; Kishon Vijay
+> Abraham I <kishon@ti.com>; Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesa=
+s.com>; Biju Das <biju.das@bp.renesas.com>;
+> dmaengine@vger.kernel.org; devicetree@vger.kernel.org; linux-usb@vger.ker=
+nel.org; Simon Horman <horms@verge.net.au>;
+> Geert Uytterhoeven <geert+renesas@glider.be>; Chris Paterson <Chris.Pater=
+son2@renesas.com>;
+> linux-renesas-soc@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: [PATCH 0/6] Document r8a774a1 USB bindings
+>=20
+> Dear All,
+>=20
+> this series aims at documenting USB related dt-bindings for the
+> r8a774a1.
+>=20
+> Applies on next-20180823.
+>=20
+> Thanks,
+> Fab
+>=20
+> Biju Das (1):
+>   dt-bindings: dmaengine: usb-dmac: Add binding for r8a774a1
+>=20
+> Fabrizio Castro (5):
+>   dt-bindings: rcar-gen3-phy-usb2: Add r8a774a1 support
+>   dt-bindings: rcar-gen3-phy-usb3: Add r8a774a1 support
+>   dt-bindings: usb-xhci: Add r8a774a1 support
+>   dt-bindings: usb: renesas_usbhs: Add r8a774a1 support
+>   usb: gadget: udc: renesas_usb3: Add r8a774a1 support
 
-The part that disables cpuidle for the CA53 cores on M3ULCB is a bit
-dodgy. Is it a valid assumption that all M3ULCB boards have an ES1.0
-SoC?
+Thank you for the patch.
+For this series:
 
-CU
-Uli
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-
-Dien Pham (2):
-  arm64: dts: r8a7795: Add cpuidle support for CA53 cores
-  arm64: dts: r8a7796: Add cpuidle support for CA53 cores
-
-Khiem Nguyen (2):
-  arm64: dts: r8a7795: Add cpuidle support for CA57 cores
-  arm64: dts: r8a7796: Add cpuidle support for CA57 cores
-
-Takeshi Kihara (1):
-  arm64: dts: r8a7796-m3ulcb: Disable cpuidle support for CA53 cores
-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi       | 32 ++++++++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts | 22 ++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a7796.dtsi       | 30 ++++++++++++++++++++++++
- 3 files changed, 84 insertions(+)
-
--- 
-2.7.4
+Best regards,
+Yoshihiro Shimoda
