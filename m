@@ -1,97 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:44476 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727572AbeHaRR0 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38424 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727876AbeH3QRA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 31 Aug 2018 13:17:26 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] clk: renesas: Updates for v4.20
-Date: Fri, 31 Aug 2018 15:09:58 +0200
-Message-Id: <20180831130958.6744-1-geert+renesas@glider.be>
+        Thu, 30 Aug 2018 12:17:00 -0400
+Date: Thu, 30 Aug 2018 14:15:04 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: Re: [PATCH 2/5] arm64: dts: renesas: r8a774a1: Add SCIF and HSCIF
+ nodes
+Message-ID: <20180830121504.52kz775f47eiosrx@verge.net.au>
+References: <1535014731-64472-1-git-send-email-biju.das@bp.renesas.com>
+ <1535014731-64472-3-git-send-email-biju.das@bp.renesas.com>
+ <20180824085257.uq4a34a3a6bw5w6g@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180824085257.uq4a34a3a6bw5w6g@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Mike, Stephen,
+On Fri, Aug 24, 2018 at 10:52:57AM +0200, Simon Horman wrote:
+> On Thu, Aug 23, 2018 at 09:58:48AM +0100, Biju Das wrote:
+> > From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > 
+> > Add the device nodes for all RZ/G2M SCIF and HSCIF serial ports,
+> > incl. clocks, power domains and DMAs.
+> > According to the HW user manual, SCIF[015] and HSCIF[012] are
+> > connected to both SYS-DMAC1 and SYS-DMAC2, while SCIF[34] and
+> > HSCIF[34] are connected to SYS-DMAC0.
+> > 
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> 
+> Thanks,
+> 
+> This looks fine to me but I will wait to see if there are other reviews
+> before applying.
 
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
-
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.20-tag1
-
-for you to fetch changes up to b30c862f2a72002c06df23d05c2ca6b49148c4d4:
-
-  clk: renesas: r8a77990: Add missing I2C7 clock (2018-08-31 10:33:59 +0200)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v4.20
-
-  - Improve OSC and RCLK (watchdog) handling on R-Car Gen3 SoCs,
-  - Add support for SATA and Fine Display Processor (FDP) clocks on
-    R-Car M3-N,
-  - Add support for the new RZ/G2M (r8a774a1) SoC,
-  - Small fixes and clean ups.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Biju Das (2):
-      clk: renesas: Add r8a774a1 CPG Core Clock Definitions
-      clk: renesas: cpg-mssr: Add r8a774a1 support
-
-Geert Uytterhoeven (13):
-      clk: renesas: rcar-gen3: Rename rint to .r
-      clk: renesas: rcar-gen3: Add support for OSC EXTAL predivider
-      clk: renesas: r8a7795: Add OSC EXTAL predivider configuration
-      clk: renesas: r8a7796: Add OSC EXTAL predivider configuration
-      clk: renesas: r8a77965: Add OSC EXTAL predivider configuration
-      clk: renesas: r8a77980: Add OSC predivider configuration and clock
-      clk: renesas: cpg-mssr: Add support for fixed rate clocks
-      clk: renesas: rcar-gen3: Add support for RCKSEL clock selection
-      clk: renesas: r8a77990: Correct RCLK handling
-      clk: renesas: r8a77995: Correct RCLK handling
-      clk: renesas: rcar-gen3: Add support for mode pin clock selection
-      clk: renesas: r8a77980: Add RCLK for watchdog timer
-      clk: renesas: r8a77990: Add missing I2C7 clock
-
-Hoan Nguyen An (1):
-      clk: renesas: r8a77965: Add FDP clock
-
-Takeshi Kihara (1):
-      clk: renesas: r8a77965: Add SATA clock
-
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   9 +-
- drivers/clk/renesas/Kconfig                        |   5 +
- drivers/clk/renesas/Makefile                       |   1 +
- drivers/clk/renesas/r8a774a1-cpg-mssr.c            | 323 +++++++++++++++++++++
- drivers/clk/renesas/r8a7795-cpg-mssr.c             |  67 ++---
- drivers/clk/renesas/r8a7796-cpg-mssr.c             |  67 ++---
- drivers/clk/renesas/r8a77965-cpg-mssr.c            |  69 ++---
- drivers/clk/renesas/r8a77980-cpg-mssr.c            |  28 +-
- drivers/clk/renesas/r8a77990-cpg-mssr.c            |  13 +-
- drivers/clk/renesas/r8a77995-cpg-mssr.c            |  12 +-
- drivers/clk/renesas/rcar-gen3-cpg.c                |  40 ++-
- drivers/clk/renesas/rcar-gen3-cpg.h                |  24 +-
- drivers/clk/renesas/renesas-cpg-mssr.c             |  11 +
- drivers/clk/renesas/renesas-cpg-mssr.h             |   4 +
- include/dt-bindings/clock/r8a774a1-cpg-mssr.h      |  58 ++++
- 15 files changed, 599 insertions(+), 132 deletions(-)
- create mode 100644 drivers/clk/renesas/r8a774a1-cpg-mssr.c
- create mode 100644 include/dt-bindings/clock/r8a774a1-cpg-mssr.h
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Thanks again, applied for v4.20.
