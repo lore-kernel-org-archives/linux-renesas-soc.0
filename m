@@ -1,49 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:35657 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727324AbeH3B3G (ORCPT
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:42392 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726690AbeHaCfG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Aug 2018 21:29:06 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux-foundation.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] dma-mapping: fix return type of dma_set_max_seg_size()
-Date: Wed, 29 Aug 2018 23:29:21 +0200
-Message-Id: <20180829212921.10665-1-niklas.soderlund+renesas@ragnatech.se>
+        Thu, 30 Aug 2018 22:35:06 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20180830125404.21192-1-geert+renesas@glider.be> <TY1PR01MB1562E58C07A892AC7CF7438B8A080@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY1PR01MB1562E58C07A892AC7CF7438B8A080@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 31 Aug 2018 00:30:30 +0200
+Message-ID: <CAMuHMdVgRQsOiQ-M3CGZZK1wdx3smY6MgkkokdSuw3iBm8zPrQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] serial: sh-sci: Fix earlycon on Renesas ARM platforms
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        uli+renesas@fpond.eu,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The function dma_set_max_seg_size() can return either 0 on success or
--EIO on error. Change its return type from unsigned int to int to
-capture this.
+Hi Chris,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- include/linux/dma-mapping.h | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+On Thu, Aug 30, 2018 at 8:52 PM Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Thursday, August 30, 2018, Geert Uytterhoeven wrote:
+> > Earlycon for RZ/A2 (which is a new platform) will be fixed later in a
+> > separate patch.
+>
+> I assume something like this:
 
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index 1db6a6b46d0d3dbd..669cde2fa8723ac5 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -674,8 +674,7 @@ static inline unsigned int dma_get_max_seg_size(struct device *dev)
- 	return SZ_64K;
- }
- 
--static inline unsigned int dma_set_max_seg_size(struct device *dev,
--						unsigned int size)
-+static inline int dma_set_max_seg_size(struct device *dev, unsigned int size)
- {
- 	if (dev->dma_parms) {
- 		dev->dma_parms->max_segment_size = size;
+Exactly!
+
+> (which works for me)
+
+Thanks for checking!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.18.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
