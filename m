@@ -1,54 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:60456 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727061AbeHHKSH (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:38496 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728848AbeH3Q4I (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Aug 2018 06:18:07 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 1/2] i2c: rcar: refactor private flags
-Date: Wed,  8 Aug 2018 09:59:27 +0200
-Message-Id: <20180808075928.31107-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180808075928.31107-1-wsa+renesas@sang-engineering.com>
-References: <20180808075928.31107-1-wsa+renesas@sang-engineering.com>
+        Thu, 30 Aug 2018 12:56:08 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulrich Hecht <uli+renesas@fpond.eu>,
+        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/2] Revert "serial: sh-sci: Remove SCIx_RZ_SCIFA_REGTYPE"
+Date: Thu, 30 Aug 2018 14:54:03 +0200
+Message-Id: <20180830125404.21192-2-geert+renesas@glider.be>
+In-Reply-To: <20180830125404.21192-1-geert+renesas@glider.be>
+References: <20180830125404.21192-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use BIT macro to avoid shift-31-problem, indent a little more and use
-GENMASK to make it easier to add new flags.
+This reverts commit 7acece71a517cad83a0842a94d94c13f271b680c.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/i2c/busses/i2c-rcar.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/tty/serial/sh-sci.c | 31 +++++++++++++++++++++++++++++++
+ include/linux/serial_sci.h  |  1 +
+ 2 files changed, 32 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index 791a4aa34fdd..a9f1880e2eae 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -19,6 +19,7 @@
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
-  */
-+#include <linux/bitops.h>
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/dmaengine.h>
-@@ -112,9 +113,9 @@
- #define ID_ARBLOST	(1 << 3)
- #define ID_NACK		(1 << 4)
- /* persistent flags */
--#define ID_P_NO_RXDMA	(1 << 30) /* HW forbids RXDMA sometimes */
--#define ID_P_PM_BLOCKED	(1 << 31)
--#define ID_P_MASK	(ID_P_PM_BLOCKED | ID_P_NO_RXDMA)
-+#define ID_P_NO_RXDMA		BIT(30) /* HW forbids RXDMA sometimes */
-+#define ID_P_PM_BLOCKED		BIT(31)
-+#define ID_P_MASK		GENMASK(31, 30)
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index ac4424bf6b136cc4..5d42c9a63001575a 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -291,6 +291,33 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
+ 		.error_clear = SCIF_ERROR_CLEAR,
+ 	},
  
- enum rcar_i2c_type {
- 	I2C_RCAR_GEN1,
++	/*
++	 * The "SCIFA" that is in RZ/T and RZ/A2.
++	 * It looks like a normal SCIF with FIFO data, but with a
++	 * compressed address space. Also, the break out of interrupts
++	 * are different: ERI/BRI, RXI, TXI, TEI, DRI.
++	 */
++	[SCIx_RZ_SCIFA_REGTYPE] = {
++		.regs = {
++			[SCSMR]		= { 0x00, 16 },
++			[SCBRR]		= { 0x02,  8 },
++			[SCSCR]		= { 0x04, 16 },
++			[SCxTDR]	= { 0x06,  8 },
++			[SCxSR]		= { 0x08, 16 },
++			[SCxRDR]	= { 0x0A,  8 },
++			[SCFCR]		= { 0x0C, 16 },
++			[SCFDR]		= { 0x0E, 16 },
++			[SCSPTR]	= { 0x10, 16 },
++			[SCLSR]		= { 0x12, 16 },
++		},
++		.fifosize = 16,
++		.overrun_reg = SCLSR,
++		.overrun_mask = SCLSR_ORER,
++		.sampling_rate_mask = SCI_SR(32),
++		.error_mask = SCIF_DEFAULT_ERROR_MASK,
++		.error_clear = SCIF_ERROR_CLEAR,
++	},
++
+ 	/*
+ 	 * Common SH-3 SCIF definitions.
+ 	 */
+@@ -3110,6 +3137,10 @@ static const struct of_device_id of_sci_match[] = {
+ 		.compatible = "renesas,scif-r7s72100",
+ 		.data = SCI_OF_DATA(PORT_SCIF, SCIx_SH2_SCIF_FIFODATA_REGTYPE),
+ 	},
++	{
++		.compatible = "renesas,scif-r7s9210",
++		.data = SCI_OF_DATA(PORT_SCIF, SCIx_RZ_SCIFA_REGTYPE),
++	},
+ 	/* Family-specific types */
+ 	{
+ 		.compatible = "renesas,rcar-gen1-scif",
+diff --git a/include/linux/serial_sci.h b/include/linux/serial_sci.h
+index c0e795d95477daea..1c89611e0e0634ae 100644
+--- a/include/linux/serial_sci.h
++++ b/include/linux/serial_sci.h
+@@ -36,6 +36,7 @@ enum {
+ 	SCIx_SH4_SCIF_FIFODATA_REGTYPE,
+ 	SCIx_SH7705_SCIF_REGTYPE,
+ 	SCIx_HSCIF_REGTYPE,
++	SCIx_RZ_SCIFA_REGTYPE,
+ 
+ 	SCIx_NR_REGTYPES,
+ };
 -- 
-2.11.0
+2.17.1
