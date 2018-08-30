@@ -1,58 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38104 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729669AbeHEBQE (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:39800 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728812AbeH3Qc0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 4 Aug 2018 21:16:04 -0400
-Received: by mail-wm0-f67.google.com with SMTP id t25-v6so10250376wmi.3
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 04 Aug 2018 16:13:45 -0700 (PDT)
-From: Eugeniu Rosca <roscaeugeniu@gmail.com>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Cc: Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <rosca.eugeniu@gmail.com>
-Subject: [PATCH 07/14] arm64: dts: renesas: r8a7796: ulcb: Use "renesas,ulcb" compatible
-Date: Sun,  5 Aug 2018 01:11:07 +0200
-Message-Id: <20180804231114.21420-8-erosca@de.adit-jv.com>
-In-Reply-To: <20180804231114.21420-1-erosca@de.adit-jv.com>
-References: <20180804231114.21420-1-erosca@de.adit-jv.com>
+        Thu, 30 Aug 2018 12:32:26 -0400
+Received: by mail-it0-f68.google.com with SMTP id h1-v6so2422186itj.4
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Aug 2018 05:30:30 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1534999460-15111-7-git-send-email-yamada.masahiro@socionext.com>
+References: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com> <1534999460-15111-7-git-send-email-yamada.masahiro@socionext.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 30 Aug 2018 14:30:29 +0200
+Message-ID: <CAPDyKFpHHviQevw_rH3LzT7jMeLuYOyhmGD6+TwDx4AmfsDeuw@mail.gmail.com>
+Subject: Re: [PATCH v3 6/6] mmc: tmio: refactor CLK_CTL bit calculation
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Following the recent change in dt-bindings [1], switch from
-"renesas,m3ulcb" to "renesas,ulcb" compatible string.
+On 23 August 2018 at 06:44, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>   for (clk = 0x80000080; new_clock >= (clock << 1); clk >>= 1)
+>           clock <<= 1;
+>
+> ... is too tricky, hence I replaced with
+>
+>   roundup_pow_of_two(divisor) >> 2
+>
+> '(clk >> 22) & 0x1' is the bit test for the 1/1 divisor, but
+> it is not clear.  'divisor <= 1' is easier to understand.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-[1] Documentation/devicetree/bindings/arm/shmobile.txt
+Applied for next, thanks!
 
-Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
----
- arch/arm64/boot/dts/renesas/r8a7796-ulcb.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Kind regards
+Uffe
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-ulcb.dts
-index daee1f1a3f68..c7f5ddd70a5c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-ulcb.dts
-@@ -15,7 +15,7 @@
- 
- / {
- 	model = "Renesas M3ULCB board based on r8a7796";
--	compatible = "renesas,m3ulcb", "renesas,r8a7796";
-+	compatible = "renesas,ulcb", "renesas,r8a7796";
- 
- 	memory@48000000 {
- 		device_type = "memory";
--- 
-2.18.0
+> ---
+>
+> Changes in v3: None
+> Changes in v2: None
+>
+>  drivers/mmc/host/tmio_mmc.c | 18 +++++++++++++-----
+>  1 file changed, 13 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
+> index b031a77..e04c322 100644
+> --- a/drivers/mmc/host/tmio_mmc.c
+> +++ b/drivers/mmc/host/tmio_mmc.c
+> @@ -48,19 +48,27 @@ static void tmio_mmc_clk_stop(struct tmio_mmc_host *host)
+>  static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
+>                                unsigned int new_clock)
+>  {
+> -       u32 clk = 0, clock;
+> +       unsigned int clock, divisor;
+> +       u32 clk = 0;
+> +       int clk_sel;
+>
+>         if (new_clock == 0) {
+>                 tmio_mmc_clk_stop(host);
+>                 return;
+>         }
+>
+> -       clock = host->mmc->f_min;
+> +       divisor = host->pdata->hclk / new_clock;
+>
+> -       for (clk = 0x80000080; new_clock >= (clock << 1); clk >>= 1)
+> -               clock <<= 1;
+> +       if (divisor <= 1) {
+> +               clk_sel = 1;
+> +               clk = 0;
+> +       } else {
+> +               clk_sel = 0;
+> +               /* bit7 set: 1/512, ... bit0 set:1/4, all bits clear: 1/2 */
+> +               clk = roundup_pow_of_two(divisor) >> 2;
+> +       }
+>
+> -       host->pdata->set_clk_div(host->pdev, (clk >> 22) & 1);
+> +       host->pdata->set_clk_div(host->pdev, clk_sel);
+>
+>         sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
+>                         sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+> --
+> 2.7.4
+>
