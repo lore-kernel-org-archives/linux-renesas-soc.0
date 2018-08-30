@@ -1,70 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:44248 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727448AbeHaRsg (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38683 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728441AbeH3QZD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 31 Aug 2018 13:48:36 -0400
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [VSP-Tests: PATCH] vsp-lib: Provide command line argument parsing
-Date: Fri, 31 Aug 2018 14:40:58 +0100
-Message-Id: <20180831134058.27454-1-kieran.bingham@ideasonboard.com>
+        Thu, 30 Aug 2018 12:25:03 -0400
+Date: Thu, 30 Aug 2018 14:23:06 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: Re: [PATCH 5/9] arm64: dts: renesas: r8a774a1: Add all MSIOF nodes
+Message-ID: <20180830122306.abbzvcma26jsztwo@verge.net.au>
+References: <1535031788-19907-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1535031788-19907-6-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20180827090552.676szw35asab7j4a@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180827090552.676szw35asab7j4a@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Extend the vsp-lib to support command line parsing for all tests.  The
-arguments parsed here should be common to all tests, and initially
-provide shell level verbose debug output, and the option to easily keep
-frames output by the VSP1.
+On Mon, Aug 27, 2018 at 11:05:52AM +0200, Simon Horman wrote:
+> On Thu, Aug 23, 2018 at 02:43:04PM +0100, Fabrizio Castro wrote:
+> > From: Biju Das <biju.das@bp.renesas.com>
+> > 
+> > Add the device nodes for all MSIOF SPI controllers on RZ/G2M SoC.
+> > 
+> > Based on several similar patches of the R8A7796 device tree
+> > by Geert Uytterhoeven <geert+renesas@glider.be>
+> > and Simon Horman <horms+renesas@verge.net.au>.
+> > 
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> 
+> Thanks,
+> 
+> This looks fine to me but I will wait to see if there are other reviews
+> before applying.
 
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
----
- scripts/vsp-lib.sh | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
-
-diff --git a/scripts/vsp-lib.sh b/scripts/vsp-lib.sh
-index 0f3992a7827e..6a0f4af5eaf5 100755
---- a/scripts/vsp-lib.sh
-+++ b/scripts/vsp-lib.sh
-@@ -1094,3 +1094,37 @@ test_complete() {
- test_run() {
- 	test_main | ./logger.sh error >> $logfile
- }
-+
-+# ------------------------------------------------------------------------------
-+# Common argument parsing
-+#
-+# non-recognised arguements are restored, to allow tests
-+# to implement their own parsing if necessary.
-+
-+POSITIONAL=()
-+while [[ $# -gt 0 ]]
-+do
-+case $1 in
-+	-x|--debug)
-+		set -x;
-+		shift
-+		;;
-+	-k|--keep-frames)
-+		export VSP_KEEP_FRAMES=1
-+		shift
-+		;;
-+	-h|--help)
-+		echo "$(basename $0): VSP Test library"
-+		echo "  -x|--debug          enable shell debug"
-+		echo "  -k|--keep-frames    keep generated and captured frames"
-+		echo "  -h|--help           this help"
-+		exit
-+		shift
-+		;;
-+	*)    # unknown option
-+		POSITIONAL+=("$1") # save it in an array for later
-+		shift # past argument
-+		;;
-+esac
-+done
-+set -- "${POSITIONAL[@]}" # restore positional parameters
--- 
-2.17.1
+Thanks again, applied for v4.20.
