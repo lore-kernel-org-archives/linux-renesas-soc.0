@@ -1,101 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:50430 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727323AbeHCNdd (ORCPT
+Received: from sauhun.de ([88.99.104.3]:52800 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727988AbeH3N7O (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Aug 2018 09:33:33 -0400
-From: Kieran Bingham <kieran@ksquared.org.uk>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v6 02/11] media: vsp1: use kernel __packed for structures
-Date: Fri,  3 Aug 2018 12:37:21 +0100
-Message-Id: <3f7e17bc411842379495b3bd3e96a367582f8d65.1533295631.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.7e4241408f077710d96e0cc06e039d1022fb0c8c.1533295631.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.7e4241408f077710d96e0cc06e039d1022fb0c8c.1533295631.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.7e4241408f077710d96e0cc06e039d1022fb0c8c.1533295631.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.7e4241408f077710d96e0cc06e039d1022fb0c8c.1533295631.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Thu, 30 Aug 2018 09:59:14 -0400
+Date: Thu, 30 Aug 2018 11:57:52 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+Subject: Re: [PATCH v4 2/3] mmc: renesas_sdhi: skip SCC error check when
+ retuning
+Message-ID: <20180830095752.l3bgsm2ou4lio22c@ninjato>
+References: <20180829233207.30646-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180829233207.30646-3-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4ql2bt7yaemlwaqk"
+Content-Disposition: inline
+In-Reply-To: <20180829233207.30646-3-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-The kernel provides a __packed definition to abstract away from the
-compiler specific attributes tag.
+--4ql2bt7yaemlwaqk
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Convert all packed structures in VSP1 to use it.
+On Thu, Aug 30, 2018 at 01:32:06AM +0200, Niklas S=C3=B6derlund wrote:
+> From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+>=20
+> Checking for SCC error during retuning is unnecessary.
+>=20
+> Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+> [Niklas: fix small style issue]
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
 
-The GCC documentation [0] describes this attribute as "the structure or
-union is placed to minimize the memory required".
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-The Keil compiler documentation at [1] warns that the use of this
-attribute can cause a performance penalty in the event that the compiler
-can not deduce the allignment of each field.
 
-Careful examination of the object code generated both with and without
-this attribute shows that these structures are accessed identically and
-are not affected by any performance penalty. The structures are
-correctly aligned and padded to match the needs of the hardware already.
+--4ql2bt7yaemlwaqk
+Content-Type: application/pgp-signature; name="signature.asc"
 
-This patch does not serve to make a decision as to the use of the
-attribute, but purely to clean up the code to use the kernel defined
-abstraction as per [2].
+-----BEGIN PGP SIGNATURE-----
 
-[0] https://gcc.gnu.org/onlinedocs/gcc/Common-Type-Attributes.html#index-packed-type-attribute
-[1] http://www.keil.com/support/man/docs/armcc/armcc_chr1359124230195.htm
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/compiler-gcc.h?h=v4.16-rc5#n92
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluHv6AACgkQFA3kzBSg
+KbaTpQ//d8ajOWOFjNBaNQOkfiBiL12iSbS9z5FsvjtOHvjjdoFP6oY5ASztvzD7
+CP150uWm6H17cqJX+NBNyLWFdyFBNWX6CaGVB4Fiu6Bdz5hHWeopfsI09tzocJxP
+4Qv4ZQNG/r0YfFSIOZ2sUlR9JzeCW4vZOPJ53K03+GPUNbBqV5H5Z1C5rfJhmTCv
+vVGJ36yhQZX0OTPrqLM5Cq10DwRd/xQEbfIwxyBQP3AjTnbnBjpoxopM5cvRgpOq
+l/qVOxPv8LjisLr4Cz0wtH43NxCIynKHmZ+rPxYKxVyUJDcNKXBacNMGnQaQ2Hme
+oACjvxjDO7JQyVV2z/QVQhNecZCW/t3NUN7JA67fmkbfN12j1fbgWlPZLNRQRJKf
+QrTVPqr7NEBOnmtdxcsAv52/JWu9J/8yZOVpof3GBvFBGmExgJH2+/YXF/hDADMB
+9kVd2+hwRTULKyyqb5tmNyjrz2S6bUV3DcmImnC4DmXrg/GIcaKUzmrLPcLYeptn
+7lzcBSCgNB77MDVpUZVpN96oIbYLkzfE6nGu8kkW0uwVfA5lrqiDdSpi/2E6XGqU
+fYcwPyN0EQ3ceOuRlkpdyFV7v/tvIGYCJ1pFESujsdgWV2U7yJgq3l+JPVt3pih2
+IxoM8HzVmEmbGeBW39z31qlfKzIb+DPDxKHTXX4wXFH/GN1lDho=
+=lC2U
+-----END PGP SIGNATURE-----
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
----
-
-This patch had some lengthy discussion about the use of the packed
-attribute. In the end, after discussing further with Laurent, we decided
-that as no performance impact occurs on the VSP1 driver (object code
-generated is identical), and that as this attribute clearly marks
-structures which are read by the VSP1, we can just keep it.
-
-This patch neither adds, nor removes the attribute - but purely adapts
-to using the linux macro as defined at [2] to ensure that compiler
-specifics are abstracted out. And in particular I feel that __packed is
-cleaner than __attribute__((__packed__))
-
-v2:
- - Remove attributes entirely
-
-v6:
- - Re-added the attributes (back to v1 of this patch)
-
- drivers/media/platform/vsp1/vsp1_dl.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 10a24bde2299..e4aae334f047 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -25,19 +25,19 @@
- struct vsp1_dl_header_list {
- 	u32 num_bytes;
- 	u32 addr;
--} __attribute__((__packed__));
-+} __packed;
- 
- struct vsp1_dl_header {
- 	u32 num_lists;
- 	struct vsp1_dl_header_list lists[8];
- 	u32 next_header;
- 	u32 flags;
--} __attribute__((__packed__));
-+} __packed;
- 
- struct vsp1_dl_entry {
- 	u32 addr;
- 	u32 data;
--} __attribute__((__packed__));
-+} __packed;
- 
- /**
-  * struct vsp1_dl_body - Display list body
--- 
-git-series 0.9.1
+--4ql2bt7yaemlwaqk--
