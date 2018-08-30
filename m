@@ -1,145 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45356 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727777AbeHVBYz (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:40370 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729785AbeH3SrU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 Aug 2018 21:24:55 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 10/11] spi: use SPDX identifier for Renesas drivers
-Date: Wed, 22 Aug 2018 00:02:23 +0200
-Message-Id: <20180821220233.9202-11-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
-References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
+        Thu, 30 Aug 2018 14:47:20 -0400
+Date: Thu, 30 Aug 2018 16:44:47 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77965: Fix clock/reset for
+ usb2_phy1
+Message-ID: <20180830144446.26ndpzc7sycstyzs@verge.net.au>
+References: <20180828141327.6916-1-geert+renesas@glider.be>
+ <OSBPR01MB22938CB79DF68D66A40D7E9DD8080@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <OSBPR01MB22938CB79DF68D66A40D7E9DD8080@OSBPR01MB2293.jpnprd01.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+On Thu, Aug 30, 2018 at 03:04:48AM +0000, Yoshihiro Shimoda wrote:
+> Hi Geert-san,
+> 
+> > From: Geert Uytterhoeven, Sent: Tuesday, August 28, 2018 11:13 PM
+> > 
+> > usb2_phy1 accidentally uses the same clock/reset as usb2_phy0.
+> > 
+> > Fixes: b5857630a829a8d5 ("arm64: dts: renesas: r8a77965: add usb2_phy nodes")
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Thank you for the patch!
+> 
+> Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-To be applied individually per subsystem tree. Morimoto-san, could you maybe
-ack this with your Renesas address?
-
- drivers/spi/spi-rspi.c     | 10 +---------
- drivers/spi/spi-sh-hspi.c  | 12 ++----------
- drivers/spi/spi-sh-msiof.c |  6 +-----
- drivers/spi/spi-sh.c       | 12 ++----------
- 4 files changed, 6 insertions(+), 34 deletions(-)
-
-diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
-index 95dc4d78618d..018dec2fac4b 100644
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * SH RSPI driver
-  *
-@@ -6,15 +7,6 @@
-  *
-  * Based on spi-sh.c:
-  * Copyright (C) 2011 Renesas Solutions Corp.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- 
- #include <linux/module.h>
-diff --git a/drivers/spi/spi-sh-hspi.c b/drivers/spi/spi-sh-hspi.c
-index 20e800e70442..dc0926e43665 100644
---- a/drivers/spi/spi-sh-hspi.c
-+++ b/drivers/spi/spi-sh-hspi.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * SuperH HSPI bus driver
-  *
-@@ -7,15 +8,6 @@
-  * Based on pxa2xx_spi.c:
-  * Copyright (C) 2011 Renesas Solutions Corp.
-  * Copyright (C) 2005 Stephen Street / StreetFire Sound Labs
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- 
- #include <linux/clk.h>
-@@ -316,6 +308,6 @@ static struct platform_driver hspi_driver = {
- module_platform_driver(hspi_driver);
- 
- MODULE_DESCRIPTION("SuperH HSPI bus driver");
--MODULE_LICENSE("GPL");
-+MODULE_LICENSE("GPL v2");
- MODULE_AUTHOR("Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>");
- MODULE_ALIAS("platform:sh-hspi");
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 539d6d1a277a..3eb7bcd33f22 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -1,14 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * SuperH MSIOF SPI Master Interface
-  *
-  * Copyright (c) 2009 Magnus Damm
-  * Copyright (C) 2014 Renesas Electronics Corporation
-  * Copyright (C) 2014-2017 Glider bvba
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-  */
- 
- #include <linux/bitmap.h>
-diff --git a/drivers/spi/spi-sh.c b/drivers/spi/spi-sh.c
-index 50e0ea9acf8b..f1ee58208216 100644
---- a/drivers/spi/spi-sh.c
-+++ b/drivers/spi/spi-sh.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * SH SPI bus driver
-  *
-@@ -5,15 +6,6 @@
-  *
-  * Based on pxa2xx_spi.c:
-  * Copyright (C) 2005 Stephen Street / StreetFire Sound Labs
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- 
- #include <linux/module.h>
-@@ -522,6 +514,6 @@ static struct platform_driver spi_sh_driver = {
- module_platform_driver(spi_sh_driver);
- 
- MODULE_DESCRIPTION("SH SPI bus driver");
--MODULE_LICENSE("GPL");
-+MODULE_LICENSE("GPL v2");
- MODULE_AUTHOR("Yoshihiro Shimoda");
- MODULE_ALIAS("platform:sh_spi");
--- 
-2.11.0
+Thanks Geert, thanks Shimoda-san, applied for v4.20.
