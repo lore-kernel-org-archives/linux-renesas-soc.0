@@ -1,49 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:64592 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727149AbeH3Dbx (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38660 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728623AbeH3QYH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Aug 2018 23:31:53 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v4 1/3] mmc: core: add helper to see if a host is doing a retune
-Date: Thu, 30 Aug 2018 01:32:05 +0200
-Message-Id: <20180829233207.30646-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180829233207.30646-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180829233207.30646-1-niklas.soderlund+renesas@ragnatech.se>
+        Thu, 30 Aug 2018 12:24:07 -0400
+Date: Thu, 30 Aug 2018 14:22:09 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH 4/9] arm64: dts: renesas: r8a774a1: Add IPMMU device nodes
+Message-ID: <20180830122209.b6mcbqp4667v3tor@verge.net.au>
+References: <1535031788-19907-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1535031788-19907-5-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20180827090236.efu5ezcy4yjecgf3@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180827090236.efu5ezcy4yjecgf3@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a helper to allow host drivers checking if a retune is in progress.
+On Mon, Aug 27, 2018 at 11:02:36AM +0200, Simon Horman wrote:
+> On Thu, Aug 23, 2018 at 02:43:03PM +0100, Fabrizio Castro wrote:
+> > Add r8a774a1 IPMMU nodes.
+> > 
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> 
+> Thanks,
+> 
+> This looks fine to me but I will wait to see if there are other reviews
+> before applying.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- include/linux/mmc/host.h | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-index beed7121c7818b74..2a5fe75dd0821d03 100644
---- a/include/linux/mmc/host.h
-+++ b/include/linux/mmc/host.h
-@@ -569,6 +569,11 @@ static inline bool mmc_can_retune(struct mmc_host *host)
- 	return host->can_retune == 1;
- }
- 
-+static inline bool mmc_doing_retune(struct mmc_host *host)
-+{
-+	return host->doing_retune == 1;
-+}
-+
- static inline enum dma_data_direction mmc_get_dma_dir(struct mmc_data *data)
- {
- 	return data->flags & MMC_DATA_WRITE ? DMA_TO_DEVICE : DMA_FROM_DEVICE;
--- 
-2.18.0
+Thanks again, applied for v4.20.
