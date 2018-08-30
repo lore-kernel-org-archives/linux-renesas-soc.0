@@ -1,82 +1,112 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp1.de.adit-jv.com ([62.225.105.245]:50790 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726024AbeHTSF4 (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:36252 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726592AbeH3UP0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Aug 2018 14:05:56 -0400
-From: Eugeniu Rosca <erosca@de.adit-jv.com>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        <linux-renesas-soc@vger.kernel.org>
-CC: Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <rosca.eugeniu@gmail.com>
-Subject: [PATCH v3 net-next] dt-bindings: can: rcar_can: document r8a77965 support
-Date: Mon, 20 Aug 2018 16:49:10 +0200
-Message-ID: <20180820144910.13210-1-erosca@de.adit-jv.com>
+        Thu, 30 Aug 2018 16:15:26 -0400
+Reply-To: kieran.bingham+renesas@ideasonboard.com,
+          kieran.bingham+renesas@ideasonboard.com
+Subject: Re: [PATCH 2/3] drm: rcar-du: Write ESCR register per channel
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: "open list:DRM DRIVERS FOR RENESAS"
+        <linux-renesas-soc@vger.kernel.org>,
+        "open list:DRM DRIVERS FOR RENESAS" <dri-devel@lists.freedesktop.org>
+References: <1534922509-15197-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1534922509-15197-3-git-send-email-jacopo+renesas@jmondi.org>
+ <88cc862b-cb07-8b1d-63ca-08f0c67f2337@ideasonboard.com>
+Message-ID: <dcf2c007-c4e6-e82b-cb3c-cee6f6a8af1d@ideasonboard.com>
+Date: Thu, 30 Aug 2018 17:12:29 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <88cc862b-cb07-8b1d-63ca-08f0c67f2337@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Eugeniu Rosca <rosca.eugeniu@gmail.com>
+Hi Jacopo,
 
-Document the support for rcar_can on R8A77965 SoC devices.
-Add R8A77965 to the list of SoCs which require the "assigned-clocks" and
-"assigned-clock-rates" properties (thanks, Sergei).
+On 30/08/18 17:00, Kieran Bingham wrote:
+> Hi Jacopo,
+> 
+> On 22/08/18 08:21, Jacopo Mondi wrote:
+>> The ESCR registers offset definition is confusing, as each channel is
+>> equipped with an ESCR register instance, but the names suggest only ESCR and
+>> ESCR2 are taken into account.
+>>
+>> Rename the offsets to a name that includes the channels they apply to, and
+>> write them to each channel with 'rcar_du_crtc_write()'.
+>>
+>> Cosmetic patch, no functional changes intended.
+> 
+> Noted, ...
+> 
+>>
+>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>> ---
+>>  drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 3 +--
+>>  drivers/gpu/drm/rcar-du/rcar_du_regs.h | 4 ++--
+>>  2 files changed, 3 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+>> index 5454884..714c1fc 100644
+>> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+>> @@ -294,8 +294,7 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+>>  		}
+>>  	}
+>>  
+>> -	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? ESCR2 : ESCR,
+>> -			    escr);
+>> +	rcar_du_crtc_write(rcrtc, rcrtc->index % 2 ? ESCR13 : ESCR02, escr);
 
-Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
-Changes in v3:
- - [Simon Horman] Added more recipients.
- - [Simon Horman] Dropped redundant "can" word in summary line.
- - [Simon Horman] Added Reviewed-by.
- - [Kieran Bingham] Added Reviewed-by.
-Changes in v2:
- - [Kieran Bingham] Simplified commit description. Rewrapped text.
- - [Sergei Shtylyov] Replaced footnotes with inline text.
- - Pushed all dt-bindings patches to the beginning of the series.
----
- Documentation/devicetree/bindings/net/can/rcar_can.txt | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+>>  	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? OTAR2 : OTAR, 0);
+>>  
+>>  	/* Signal polarities */
+>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_regs.h b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
+>> index 9dfd220..ebc4aea 100644
+>> --- a/drivers/gpu/drm/rcar-du/rcar_du_regs.h
+>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
+>> @@ -492,8 +492,8 @@
+>>   * External Synchronization Control Registers
+>>   */
+>>  
+>> -#define ESCR			0x10000
+>> -#define ESCR2			0x31000
+>> +#define ESCR02			0x10000
+>> +#define ESCR13			0x01000
+> 
+> Assertion failed at:
+>  ASSERT(ESCR2 == ESCR13)
+> 
+> This looks intentional ?
+> but that makes this a bit more than a cosmetic change?
 
-diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-index 94a7f33ac5e9..60daa878c9a2 100644
---- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
-+++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-@@ -13,6 +13,7 @@ Required properties:
- 	      "renesas,can-r8a7794" if CAN controller is a part of R8A7794 SoC.
- 	      "renesas,can-r8a7795" if CAN controller is a part of R8A7795 SoC.
- 	      "renesas,can-r8a7796" if CAN controller is a part of R8A7796 SoC.
-+	      "renesas,can-r8a77965" if CAN controller is a part of R8A77965 SoC.
- 	      "renesas,rcar-gen1-can" for a generic R-Car Gen1 compatible device.
- 	      "renesas,rcar-gen2-can" for a generic R-Car Gen2 or RZ/G1
- 	      compatible device.
-@@ -28,11 +29,10 @@ Required properties:
- - pinctrl-0: pin control group to be used for this controller.
- - pinctrl-names: must be "default".
- 
--Required properties for "renesas,can-r8a7795" and "renesas,can-r8a7796"
--compatible:
--In R8A7795 and R8A7796 SoCs, "clkp2" can be CANFD clock. This is a div6 clock
--and can be used by both CAN and CAN FD controller at the same time. It needs to
--be scaled to maximum frequency if any of these controllers use it. This is done
-+Required properties for R8A7795, R8A7796 and R8A77965:
-+For the denoted SoCs, "clkp2" can be CANFD clock. This is a div6 clock and can
-+be used by both CAN and CAN FD controller at the same time. It needs to be
-+scaled to maximum frequency if any of these controllers use it. This is done
- using the below properties:
- 
- - assigned-clocks: phandle of clkp2(CANFD) clock.
--- 
-2.18.0
+Aha - sorry - I see.
+
+It looks like the '0x3' from '0x31000' was providing the offset into the
+group I assume.
+
+
+I'm surprised an equivalent offset wasn't removed from the ESCR02.
+
+But I assume this is handled by the change of "rcar_du_crtc_write() ->
+rcar_du_group_write()"?
+
+Regards
+
+Kieran
+
+
+
+> 
+> 
+> 
+> 
+>>  #define ESCR_DCLKOINV		(1 << 25)
+>>  #define ESCR_DCLKSEL_DCLKIN	(0 << 20)
+>>  #define ESCR_DCLKSEL_CLKS	(1 << 20)
+>>
+> 
