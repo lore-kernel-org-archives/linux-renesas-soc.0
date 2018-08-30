@@ -1,119 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:55586 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726086AbeHSW4n (ORCPT
+Received: from smtp1.de.adit-jv.com ([62.225.105.245]:44764 "EHLO
+        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728087AbeH3O4U (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 19 Aug 2018 18:56:43 -0400
-Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2F025CD
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 19 Aug 2018 21:44:05 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] arm64: dts: renesas: salvator-common: Add GPIO keys support
-Date: Sun, 19 Aug 2018 22:44:55 +0300
-Message-Id: <20180819194455.25096-1-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 30 Aug 2018 10:56:20 -0400
+From: Eugeniu Rosca <erosca@de.adit-jv.com>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: <linux-renesas-soc@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        Veeraiyan Chidambaram <veeraiyan.chidambaram@in.bosch.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>
+Subject: [PATCH 1/3] usb: renesas_usbhs: simplify usbhs_status_get_device_state()
+Date: Thu, 30 Aug 2018 12:54:01 +0200
+Message-ID: <20180830105403.17964-1-erosca@de.adit-jv.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Salvator-X and XS boards have a 4 lines DIP switch and 3 push
-buttons connected to SoC GPIOs, meant to be used as general-purpose test
-keys. Add a corresponding node in DT, mapping (semi-randomly) the DIP
-switch to keys 1-4 and the push buttons to keys A-C.
+Similar to usbhs_status_get_ctrl_stage(), *_get_device_state() is not
+supposed to return any error code since its return value is the DVSQ
+bitfield of the INTSTS0 register. According to SoC HW manual rev1.00,
+every single value of DVSQ[2:0] is valid and none is an error:
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+----8<----
+Device State
+000: Powered state
+001: Default state
+010: Address state
+011: Configuration state
+1xx: Suspended state
+----8<----
+
+Hence, simplify the function body. The motivation behind dropping the
+switch/case construct is being able to implement reading the suspended
+state. The latter (based on the above DVSQ[2:0] description) doesn't
+have a unique value, but is rather a list of states (which makes
+switch/case less suitable for reading/validating it):
+
+100: (Suspended) Powered state
+101: (Suspended) Default state
+110: (Suspended) Address state
+111: (Suspended) Configuration state
+
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
 ---
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 63 ++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+ drivers/usb/renesas_usbhs/mod.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index 7d3d866a0063..77d626baa9f3 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -29,6 +29,7 @@
+diff --git a/drivers/usb/renesas_usbhs/mod.c b/drivers/usb/renesas_usbhs/mod.c
+index 28965ef4f824..585568279174 100644
+--- a/drivers/usb/renesas_usbhs/mod.c
++++ b/drivers/usb/renesas_usbhs/mod.c
+@@ -179,17 +179,7 @@ void usbhs_mod_remove(struct usbhs_priv *priv)
   */
+ int usbhs_status_get_device_state(struct usbhs_irq_state *irq_state)
+ {
+-	int state = irq_state->intsts0 & DVSQ_MASK;
+-
+-	switch (state) {
+-	case POWER_STATE:
+-	case DEFAULT_STATE:
+-	case ADDRESS_STATE:
+-	case CONFIGURATION_STATE:
+-		return state;
+-	}
+-
+-	return -EIO;
++	return (int)irq_state->intsts0 & DVSQ_MASK;
+ }
  
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
- 
- / {
- 	aliases {
-@@ -86,6 +87,63 @@
- 		};
- 	};
- 
-+	keys {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-0 = <&keys_pins>;
-+		pinctrl-names = "default";
-+
-+		key-1 {
-+			gpios = <&gpio5 17 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_1>;
-+			label = "SW4-1";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+		key-2 {
-+			gpios = <&gpio5 20 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_2>;
-+			label = "SW4-2";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+		key-3 {
-+			gpios = <&gpio5 22 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_3>;
-+			label = "SW4-3";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+		key-4 {
-+			gpios = <&gpio5 23 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_4>;
-+			label = "SW4-4";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+		key-a {
-+			gpios = <&gpio6 11 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_A>;
-+			label = "TSW0";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+		key-b {
-+			gpios = <&gpio6 12 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_B>;
-+			label = "TSW1";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+		key-c {
-+			gpios = <&gpio6 13 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_C>;
-+			label = "TSW2";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+	};
-+
- 	reg_1p8v: regulator0 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-1.8V";
-@@ -567,6 +625,11 @@
- 		function = "intc_ex";
- 	};
- 
-+	keys_pins: keys {
-+		pins = "GP_5_17", "GP_5_20", "GP_5_22";
-+		bias-pull-up;
-+	};
-+
- 	pwm1_pins: pwm1 {
- 		groups = "pwm1_a";
- 		function = "pwm1";
+ int usbhs_status_get_ctrl_stage(struct usbhs_irq_state *irq_state)
 -- 
-Regards,
-
-Laurent Pinchart
+2.18.0
