@@ -1,219 +1,36 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:60262 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725858AbeHQGnt (ORCPT
+Received: from shards.monkeyblade.net ([23.128.96.9]:39278 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725758AbeH3FKO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Aug 2018 02:43:49 -0400
-From: Nguyen An Hoan <na-hoan@jinso.co.jp>
-To: linux-renesas-soc@vger.kernel.org, broonie@kernel.org,
-        geert+renesas@glider.be
-Cc: kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
-        h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp, cv-dong@jinso.co.jp
-Subject: [PATCH 1/2] pinctrl: sh-pfc: r8a77965: add Audio clock pin support
-Date: Fri, 17 Aug 2018 12:02:37 +0900
-Message-Id: <1534474958-13417-2-git-send-email-na-hoan@jinso.co.jp>
-In-Reply-To: <1534474958-13417-1-git-send-email-na-hoan@jinso.co.jp>
-References: <1534474958-13417-1-git-send-email-na-hoan@jinso.co.jp>
+        Thu, 30 Aug 2018 01:10:14 -0400
+Date: Wed, 29 Aug 2018 18:10:40 -0700 (PDT)
+Message-Id: <20180829.181040.651557151634587416.davem@davemloft.net>
+To: chris.brandt@renesas.com
+Cc: sergei.shtylyov@cogentembedded.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        horms+renesas@verge.net.au
+Subject: Re: [PATCH v2] sh_eth: Add R7S9210 support
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180827174202.80750-1-chris.brandt@renesas.com>
+References: <20180827174202.80750-1-chris.brandt@renesas.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hoan Nguyen An <na-hoan@jinso.co.jp>
+From: Chris Brandt <chris.brandt@renesas.com>
+Date: Mon, 27 Aug 2018 12:42:02 -0500
 
----
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 160 ++++++++++++++++++++++++++++++++++
- 1 file changed, 160 insertions(+)
+> Add support for the R7S9210 which is part of the RZ/A2 series.
+> 
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> ---
+> v2:
+>  * Use sh_eth_offset_fast_sh4 instead of sh_eth_offset_fast_rza2
+>  * Use sh_eth_set_rate_rcar instead of sh_eth_set_rate_r7s9210()
+>  * Removed enum SH_ETH_REG_FAST_RZA2
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-index 72ccd1a..46241c0 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-@@ -1575,6 +1575,128 @@ static const struct sh_pfc_pin pinmux_pins[] = {
- 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 30, ASEBRK, CFG_FLAGS),
- };
- 
-+/* - AUDIO CLOCK ------------------------------------------------------------ */
-+static const unsigned int audio_clk_a_a_pins[] = {
-+	/* CLK A */
-+	RCAR_GP_PIN(6, 22),
-+};
-+static const unsigned int audio_clk_a_a_mux[] = {
-+	AUDIO_CLKA_A_MARK,
-+};
-+static const unsigned int audio_clk_a_b_pins[] = {
-+	/* CLK A */
-+	RCAR_GP_PIN(5, 4),
-+};
-+static const unsigned int audio_clk_a_b_mux[] = {
-+	AUDIO_CLKA_B_MARK,
-+};
-+static const unsigned int audio_clk_a_c_pins[] = {
-+	/* CLK A */
-+	RCAR_GP_PIN(5, 19),
-+};
-+static const unsigned int audio_clk_a_c_mux[] = {
-+	AUDIO_CLKA_C_MARK,
-+};
-+static const unsigned int audio_clk_b_a_pins[] = {
-+	/* CLK B */
-+	RCAR_GP_PIN(5, 12),
-+};
-+static const unsigned int audio_clk_b_a_mux[] = {
-+	AUDIO_CLKB_A_MARK,
-+};
-+static const unsigned int audio_clk_b_b_pins[] = {
-+	/* CLK B */
-+	RCAR_GP_PIN(6, 23),
-+};
-+static const unsigned int audio_clk_b_b_mux[] = {
-+	AUDIO_CLKB_B_MARK,
-+};
-+static const unsigned int audio_clk_c_a_pins[] = {
-+	/* CLK C */
-+	RCAR_GP_PIN(5, 21),
-+};
-+static const unsigned int audio_clk_c_a_mux[] = {
-+	AUDIO_CLKC_A_MARK,
-+};
-+static const unsigned int audio_clk_c_b_pins[] = {
-+	/* CLK C */
-+	RCAR_GP_PIN(5, 0),
-+};
-+static const unsigned int audio_clk_c_b_mux[] = {
-+	AUDIO_CLKC_B_MARK,
-+};
-+static const unsigned int audio_clkout_a_pins[] = {
-+	/* CLKOUT */
-+	RCAR_GP_PIN(5, 18),
-+};
-+static const unsigned int audio_clkout_a_mux[] = {
-+	AUDIO_CLKOUT_A_MARK,
-+};
-+static const unsigned int audio_clkout_b_pins[] = {
-+	/* CLKOUT */
-+	RCAR_GP_PIN(6, 28),
-+};
-+static const unsigned int audio_clkout_b_mux[] = {
-+	AUDIO_CLKOUT_B_MARK,
-+};
-+static const unsigned int audio_clkout_c_pins[] = {
-+	/* CLKOUT */
-+	RCAR_GP_PIN(5, 3),
-+};
-+static const unsigned int audio_clkout_c_mux[] = {
-+	AUDIO_CLKOUT_C_MARK,
-+};
-+static const unsigned int audio_clkout_d_pins[] = {
-+	/* CLKOUT */
-+	RCAR_GP_PIN(5, 21),
-+};
-+static const unsigned int audio_clkout_d_mux[] = {
-+	AUDIO_CLKOUT_D_MARK,
-+};
-+static const unsigned int audio_clkout1_a_pins[] = {
-+	/* CLKOUT1 */
-+	RCAR_GP_PIN(5, 15),
-+};
-+static const unsigned int audio_clkout1_a_mux[] = {
-+	AUDIO_CLKOUT1_A_MARK,
-+};
-+static const unsigned int audio_clkout1_b_pins[] = {
-+	/* CLKOUT1 */
-+	RCAR_GP_PIN(6, 29),
-+};
-+static const unsigned int audio_clkout1_b_mux[] = {
-+	AUDIO_CLKOUT1_B_MARK,
-+};
-+static const unsigned int audio_clkout2_a_pins[] = {
-+	/* CLKOUT2 */
-+	RCAR_GP_PIN(5, 16),
-+};
-+static const unsigned int audio_clkout2_a_mux[] = {
-+	AUDIO_CLKOUT2_A_MARK,
-+};
-+static const unsigned int audio_clkout2_b_pins[] = {
-+	/* CLKOUT2 */
-+	RCAR_GP_PIN(6, 30),
-+};
-+static const unsigned int audio_clkout2_b_mux[] = {
-+	AUDIO_CLKOUT2_B_MARK,
-+};
-+
-+static const unsigned int audio_clkout3_a_pins[] = {
-+	/* CLKOUT3 */
-+	RCAR_GP_PIN(5, 19),
-+};
-+static const unsigned int audio_clkout3_a_mux[] = {
-+	AUDIO_CLKOUT3_A_MARK,
-+};
-+static const unsigned int audio_clkout3_b_pins[] = {
-+	/* CLKOUT3 */
-+	RCAR_GP_PIN(6, 31),
-+};
-+static const unsigned int audio_clkout3_b_mux[] = {
-+	AUDIO_CLKOUT3_B_MARK,
-+};
-+
- /* - EtherAVB --------------------------------------------------------------- */
- static const unsigned int avb_link_pins[] = {
- 	/* AVB_LINK */
-@@ -3426,6 +3548,23 @@ static const unsigned int usb30_mux[] = {
- };
- 
- static const struct sh_pfc_pin_group pinmux_groups[] = {
-+	SH_PFC_PIN_GROUP(audio_clk_a_a),
-+	SH_PFC_PIN_GROUP(audio_clk_a_b),
-+	SH_PFC_PIN_GROUP(audio_clk_a_c),
-+	SH_PFC_PIN_GROUP(audio_clk_b_a),
-+	SH_PFC_PIN_GROUP(audio_clk_b_b),
-+	SH_PFC_PIN_GROUP(audio_clk_c_a),
-+	SH_PFC_PIN_GROUP(audio_clk_c_b),
-+	SH_PFC_PIN_GROUP(audio_clkout_a),
-+	SH_PFC_PIN_GROUP(audio_clkout_b),
-+	SH_PFC_PIN_GROUP(audio_clkout_c),
-+	SH_PFC_PIN_GROUP(audio_clkout_d),
-+	SH_PFC_PIN_GROUP(audio_clkout1_a),
-+	SH_PFC_PIN_GROUP(audio_clkout1_b),
-+	SH_PFC_PIN_GROUP(audio_clkout2_a),
-+	SH_PFC_PIN_GROUP(audio_clkout2_b),
-+	SH_PFC_PIN_GROUP(audio_clkout3_a),
-+	SH_PFC_PIN_GROUP(audio_clkout3_b),
- 	SH_PFC_PIN_GROUP(avb_link),
- 	SH_PFC_PIN_GROUP(avb_magic),
- 	SH_PFC_PIN_GROUP(avb_phy_int),
-@@ -3660,6 +3799,26 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(usb30),
- };
- 
-+static const char * const audio_clk_groups[] = {
-+	"audio_clk_a_a",
-+	"audio_clk_a_b",
-+	"audio_clk_a_c",
-+	"audio_clk_b_a",
-+	"audio_clk_b_b",
-+	"audio_clk_c_a",
-+	"audio_clk_c_b",
-+	"audio_clkout_a",
-+	"audio_clkout_b",
-+	"audio_clkout_c",
-+	"audio_clkout_d",
-+	"audio_clkout1_a",
-+	"audio_clkout1_b",
-+	"audio_clkout2_a",
-+	"audio_clkout2_b",
-+	"audio_clkout3_a",
-+	"audio_clkout3_b",
-+};
-+
- static const char * const avb_groups[] = {
- 	"avb_link",
- 	"avb_magic",
-@@ -4003,6 +4162,7 @@ static const char * const usb30_groups[] = {
- };
- 
- static const struct sh_pfc_function pinmux_functions[] = {
-+	SH_PFC_FUNCTION(audio_clk),
- 	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(du),
- 	SH_PFC_FUNCTION(hscif0),
--- 
-2.7.4
+Applied.
