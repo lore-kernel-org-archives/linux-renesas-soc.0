@@ -1,59 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:19145 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728927AbeHWMeL (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38865 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728115AbeH3Qav (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:34:11 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
+        Thu, 30 Aug 2018 12:30:51 -0400
+Date: Thu, 30 Aug 2018 14:28:52 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
+        Will Deacon <will.deacon@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 5/5] arm64: dts: renesas: r8a774a1: Add RWDT node
-Date: Thu, 23 Aug 2018 09:58:51 +0100
-Message-Id: <1535014731-64472-6-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1535014731-64472-1-git-send-email-biju.das@bp.renesas.com>
-References: <1535014731-64472-1-git-send-email-biju.das@bp.renesas.com>
+Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a774a1: Add USB3.0 device
+ nodes
+Message-ID: <20180830122852.y5qls5qgiilogypj@verge.net.au>
+References: <1535107429-5458-1-git-send-email-biju.das@bp.renesas.com>
+ <1535107429-5458-4-git-send-email-biju.das@bp.renesas.com>
+ <20180828134201.npegmd2js66db5rt@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180828134201.npegmd2js66db5rt@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the Watchdog Timer (RWDT) controller on the Renesas
-RZ/G2M (r8a774a1) SoC.
+On Tue, Aug 28, 2018 at 03:42:05PM +0200, Simon Horman wrote:
+> On Fri, Aug 24, 2018 at 11:43:49AM +0100, Biju Das wrote:
+> > Add usb3.0 phy, host and function device nodes on RZ/G2M SoC dtsi.
+> > 
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> 
+> Thanks,
+> 
+> This looks fine to me but I will wait to see if there are other reviews
+> before applying.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index b771211..b9a3818 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -123,6 +123,16 @@
- 		#size-cells = <2>;
- 		ranges;
- 
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a774a1-wdt",
-+				     "renesas,rcar-gen3-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
-+		};
-+
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a774a1-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x0bb0>;
--- 
-2.7.4
+Thanks again, applied for v4.20.
