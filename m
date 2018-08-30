@@ -1,52 +1,48 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2] arm64: dts: renesas: condor/v3hsk: add
- DU/LVDS/HDMI support
-To: Simon Horman <horms@verge.net.au>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:38516 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728120AbeH3QTz (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 30 Aug 2018 12:19:55 -0400
+Date: Thu, 30 Aug 2018 14:17:59 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <95d0db34-713d-8206-00c2-ee9a42aab823@cogentembedded.com>
- <c78f1228-afb0-54cf-5d9e-5c812b678de3@cogentembedded.com>
- <20180614072426.vq42mmb3gsmv6z5k@verge.net.au>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <5e60a349-3b80-f930-59cd-43b0f2e71238@cogentembedded.com>
-Date: Mon, 13 Aug 2018 14:14:25 +0300
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a774a1: Add pinctrl device node
+Message-ID: <20180830121759.njcy4ivjizkxowu2@verge.net.au>
+References: <1535033596-22351-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20180827074732.5mm2tiqtuut2gahe@verge.net.au>
 MIME-Version: 1.0
-In-Reply-To: <20180614072426.vq42mmb3gsmv6z5k@verge.net.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180827074732.5mm2tiqtuut2gahe@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
-
-On 06/14/2018 10:24 AM, Simon Horman wrote:
-
->> Define the Condor/V3HSK board dependent parts of the DU and  LVDS device
->> nodes. Also add the device nodes for Thine THC63LVD1024 LVDS decoder and
->> Analog Devices ADV7511W HDMI transmitter...
->>
->> Based on the original (and large) patch by Vladimir Barinov.
->>
->> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->>
->> ---
->> Changes in version 2:
->> - added the V3HSK DT update, reworded the description, renamed the patch;
->> - added a space between the HDMI node name and a brace.
->>
->>  arch/arm64/boot/dts/renesas/r8a77980-condor.dts |  106 +++++++++++++++++++++
->>  arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts  |  120 ++++++++++++++++++++++++
+On Mon, Aug 27, 2018 at 09:47:37AM +0200, Simon Horman wrote:
+> On Thu, Aug 23, 2018 at 03:13:16PM +0100, Fabrizio Castro wrote:
+> > This patch adds pinctrl device node for R8A774A1 SoC.
+> > 
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> > ---
+> > 
+> > This patch depends on:
+> > https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg30339.html
+> > https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg30539.html
 > 
-> Laurent, could you review this?
+> Thanks,
+> 
+> This looks fine to me but I will wait to see if there are other reviews
+> before applying.
 
-   2 months have passed and no review so far...
-
-MBR, Sergei
+Thanks again, applied for v4.20.
