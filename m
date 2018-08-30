@@ -1,85 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40904 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727796AbeHLQLe (ORCPT
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:39444 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727238AbeH3Mpf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 12 Aug 2018 12:11:34 -0400
-Received: by mail-wm0-f66.google.com with SMTP id y9-v6so6240690wma.5
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 12 Aug 2018 06:33:29 -0700 (PDT)
-From: Eugeniu Rosca <roscaeugeniu@gmail.com>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Cc: Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <rosca.eugeniu@gmail.com>
-Subject: [PATCH v2 6/7] arm64: dts: renesas: r8a77965: Add HSCIF0 device node
-Date: Sun, 12 Aug 2018 15:31:48 +0200
-Message-Id: <20180812133149.7710-6-erosca@de.adit-jv.com>
-In-Reply-To: <20180812133149.7710-1-erosca@de.adit-jv.com>
-References: <20180812133149.7710-1-erosca@de.adit-jv.com>
+        Thu, 30 Aug 2018 08:45:35 -0400
+Received: by mail-ua1-f67.google.com with SMTP id g18-v6so5011415uam.6
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Aug 2018 01:44:31 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180828114913.w4c6u3c2dpmxx772@verge.net.au>
+In-Reply-To: <20180828114913.w4c6u3c2dpmxx772@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 30 Aug 2018 10:44:19 +0200
+Message-ID: <CAMuHMdU_hGvKOUgAyML28eXkS7kkwdM51-q74hEvjfOhWdUjHg@mail.gmail.com>
+Subject: Re: [GIT PULL LTSI-4.14] LTSI-v4.14 Backport or I2C R-Car Fix
+To: Simon Horman <horms@verge.net.au>
+Cc: ltsi-dev@lists.linuxfoundation.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Fix below DTC error:
-Error: arch/arm64/boot/dts/renesas/ulcb-kf.dtsi:36.1-8 Label or path hscif0 not found
+Hi Simon,
 
-The DTC error occurs *after* the addition of r8a77965-m3nulcb-kf.dts.
-Fix it beforehand.
+On Tue, Aug 28, 2018 at 1:49 PM Simon Horman <horms@verge.net.au> wrote:
+> This is intended as a submission to LTSI-4.14. It is the backport
+> of a fix for the R-Car I2C driver, and its dependency, both of which
+> are present in linux-next 20180821.
+>
+> This pull-request is based on
+> "[GIT PULL LTSI-4.14] Renesas SoCs and Drivers to v4.18-rc8",
+> tagged as backport/v4.14.61/snapshot-to-v4.18-rc8+fixes-flattened,
+> which I have already sent a pull-request for.
+>
+> There are 2 patches.
+>
+> I have performed build testing of this backports on a wide range of
+> defconfigs and I am not aware of any regressions over v4.14.40 (the
+> baseline chosen when this work began).
+>
+>
+> The following changes since commit cc88cfdc0571385f098e82db47f5a16b6f44726e:
+>
+>   i2c: rcar: use the new get_bus_free callback (2018-08-09 17:22:00 +0200)
+>
+> are available in the git repository at:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-backport.git backport/v4.14.61/snapshot-to-v4.18+fixes-flattened
+>
+> for you to fetch changes up to 4d4605e5c137ed9a53582e573118cbc16b82cbf1:
+>
+>   i2c: rcar: implement STOP and REP_START according to docs (2018-08-28 13:35:06 +0200)
+>
+> ----------------------------------------------------------------
+> LTSI-v4.14 Backport or I2C R-Car Fix
+>
+> Base:
+> * v4.14.61
+> * Backports of components for Renesas SoCs to v4.18
+>
+> Backport of post-v4.18 fix for i2c-rcar:
+> * implement STOP and REP_START according to docs
+>
+> Dependency of above
+> * Refactor private flags of i2c-rcar driver
+>
+> ----------------------------------------------------------------
+> Wolfram Sang (2):
+>       i2c: rcar: refactor private flags
+>       i2c: rcar: implement STOP and REP_START according to docs
+>
+>  drivers/i2c/busses/i2c-rcar.c | 39 +++++++++++++++++++++++----------------
+>  1 file changed, 23 insertions(+), 16 deletions(-)
 
-Inspired from v4.12-rc1 commits:
- - commit 68cd16107260 ("arm64: dts: r8a7796 dtsi: Add all HSCIF nodes")
- - commit 6d50bb893504 ("arm64: dts: r8a7796: Enable HSCIF DMA")
- - commit bec0948e810f ("arm64: dts: r8a7796: Add reset control properties")
+Thank you, looks good to me.
 
-Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
----
-Changes in v2:
- - Slightly improved the commit description.
- - Note that this commit could be replaced by
-   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git/commit/?h=b8e3c8e17611
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 4da479d3c226..d04a8b671cc2 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -451,6 +451,24 @@
- 			status = "disabled";
- 		};
- 
-+		hscif0: serial@e6540000 {
-+			compatible = "renesas,hscif-r8a77965",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe6540000 0 0x60>;
-+			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 520>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x31>, <&dmac1 0x30>,
-+			       <&dmac2 0x31>, <&dmac2 0x30>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 520>;
-+			status = "disabled";
-+		};
-+
- 		hsusb: usb@e6590000 {
- 			compatible = "renesas,usbhs-r8a7796",
- 				     "renesas,rcar-gen3-usbhs";
+                        Geert
+
 -- 
-2.18.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
