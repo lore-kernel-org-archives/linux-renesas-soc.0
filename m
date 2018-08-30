@@ -1,144 +1,63 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 6/9] arm64: dts: renesas: r8a774a1: Add Cortex-A53 CPU cores
-Date: Thu, 23 Aug 2018 14:43:05 +0100
-Message-Id: <1535031788-19907-7-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1535031788-19907-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1535031788-19907-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f194.google.com ([209.85.223.194]:43826 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728812AbeH3Qcd (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 30 Aug 2018 12:32:33 -0400
+Received: by mail-io0-f194.google.com with SMTP id y10-v6so7359661ioa.10
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Aug 2018 05:30:38 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20180830121438.12588-1-wsa+renesas@sang-engineering.com>
+References: <20180830121438.12588-1-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 30 Aug 2018 14:30:37 +0200
+Message-ID: <CAPDyKFpzg4wHwsCGbExg3mQxhEVbxcZFOL+WRyP627YnFVRmPA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: tmio: more concise clk calculation
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+On 30 August 2018 at 14:14, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Concise, but still readable.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-This patch adds definitions for L2 cache for the Cortex-A53 CPU
-cores (512 KiB in size, organized as 32 KiB x 16 ways), adds
-Cortex-A53 CPU cores (setting a total of 6 cores, 2 x Cortex-A57
-+ 4 x Cortex-A53), and finally enables the performance monitor
-unit for the Cortex-A53 cores on the R8A774A1 SoC.
+Applied for next, thanks!
 
-Based on work done for r8a7796 SoC.
+Kind regards
+Uffe
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 66 ++++++++++++++++++++++++++++---
- 1 file changed, 61 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index 856bd37..1d847cf 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -79,12 +79,59 @@
- 			clocks =<&cpg CPG_CORE 0>;
- 		};
- 
-+		a53_0: cpu@100 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0x100>;
-+			device_type = "cpu";
-+			power-domains = <&sysc 5>;
-+			next-level-cache = <&L2_CA53>;
-+			enable-method = "psci";
-+			clocks =<&cpg CPG_CORE 1>;
-+		};
-+
-+		a53_1: cpu@101 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0x101>;
-+			device_type = "cpu";
-+			power-domains = <&sysc 6>;
-+			next-level-cache = <&L2_CA53>;
-+			enable-method = "psci";
-+			clocks =<&cpg CPG_CORE 1>;
-+		};
-+
-+		a53_2: cpu@102 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0x102>;
-+			device_type = "cpu";
-+			power-domains = <&sysc 7>;
-+			next-level-cache = <&L2_CA53>;
-+			enable-method = "psci";
-+			clocks =<&cpg CPG_CORE 1>;
-+		};
-+
-+		a53_3: cpu@103 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0x103>;
-+			device_type = "cpu";
-+			power-domains = <&sysc 8>;
-+			next-level-cache = <&L2_CA53>;
-+			enable-method = "psci";
-+			clocks =<&cpg CPG_CORE 1>;
-+		};
-+
- 		L2_CA57: cache-controller-0 {
- 			compatible = "cache";
- 			power-domains = <&sysc 12>;
- 			cache-unified;
- 			cache-level = <2>;
- 		};
-+
-+		L2_CA53: cache-controller-1 {
-+			compatible = "cache";
-+			power-domains = <&sysc 21>;
-+			cache-unified;
-+			cache-level = <2>;
-+		};
- 	};
- 
- 	extal_clk: extal {
-@@ -108,6 +155,15 @@
- 		clock-frequency = <0>;
- 	};
- 
-+	pmu_a53 {
-+		compatible = "arm,cortex-a53-pmu";
-+		interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&a53_0>, <&a53_1>, <&a53_2>, <&a53_3>;
-+	};
-+
- 	pmu_a57 {
- 		compatible = "arm,cortex-a57-pmu";
- 		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-@@ -852,7 +908,7 @@
- 			      <0x0 0xf1040000 0 0x20000>,
- 			      <0x0 0xf1060000 0 0x20000>;
- 			interrupts = <GIC_PPI 9
--					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-+					(GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_HIGH)>;
- 			clocks = <&cpg CPG_MOD 408>;
- 			clock-names = "clk";
- 			power-domains = <&sysc 32>;
-@@ -912,10 +968,10 @@
- 
- 	timer {
- 		compatible = "arm,armv8-timer";
--		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>;
- 	};
- 
- 	/* External USB clocks - can be overridden by the board */
--- 
-2.7.4
+> ---
+>  drivers/mmc/host/tmio_mmc.c | 11 +++--------
+>  1 file changed, 3 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
+> index 0ae9ba1ee01b..0ae100e62b57 100644
+> --- a/drivers/mmc/host/tmio_mmc.c
+> +++ b/drivers/mmc/host/tmio_mmc.c
+> @@ -56,14 +56,9 @@ static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
+>
+>         divisor = host->pdata->hclk / new_clock;
+>
+> -       if (divisor <= 1) {
+> -               clk_sel = 1;
+> -               clk = 0;
+> -       } else {
+> -               clk_sel = 0;
+> -               /* bit7 set: 1/512, ... bit0 set:1/4, all bits clear: 1/2 */
+> -               clk = roundup_pow_of_two(divisor) >> 2;
+> -       }
+> +       /* bit7 set: 1/512, ... bit0 set: 1/4, all bits clear: 1/2 */
+> +       clk_sel = (divisor <= 1);
+> +       clk = clk_sel ? 0 : (roundup_pow_of_two(divisor) >> 2);
+>
+>         host->pdata->set_clk_div(host->pdev, clk_sel);
+>
+> --
+> 2.11.0
+>
