@@ -1,196 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45276 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727440AbeHVBYn (ORCPT
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:41331 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728345AbeH3QmN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 Aug 2018 21:24:43 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 01/11] clk: renesas: use SPDX identifier for Renesas drivers
-Date: Wed, 22 Aug 2018 00:02:14 +0200
-Message-Id: <20180821220233.9202-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
-References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
+        Thu, 30 Aug 2018 12:42:13 -0400
+Received: by mail-vk0-f68.google.com with SMTP id j14-v6so4149239vke.8
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Aug 2018 05:40:15 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180730073456.3687-1-wsa+renesas@sang-engineering.com>
+ <CAMuHMdXLxhudW_s-FmtADt0a9-qd501s0Ckm=FTY97mxGH5GBw@mail.gmail.com> <20180821134147.sn4xzw4hn63r2cqm@ninjato>
+In-Reply-To: <20180821134147.sn4xzw4hn63r2cqm@ninjato>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 30 Aug 2018 14:40:03 +0200
+Message-ID: <CAMuHMdVxuzdORq=dicgaGNfh+8Yzh5w7NoT8_WCFbn7QSad86A@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: renesas: salvator-xs: enable SATA
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Hi Wolfram,
 
-To be applied individually per subsystem tree. Morimoto-san, could you maybe
-ack this with your Renesas address?
+On Tue, Aug 21, 2018 at 3:41 PM Wolfram Sang <wsa@the-dreams.de> wrote:
+> > > +/* MD12 (SW12-7) must be set 'Off' which is not the default! */
+> >
+> > Upon reading this again, I think this comment is confusing: the 'Off' refers
+> > to the switch position, not to the MD12 logic value, while the parentheses
+> > suggest otherwise.
+> >
+> > What about the following?
+> >
+> >     SW12-7 must be set 'Off' (MD12 set to 1), which is not the default!
+>
+> I'd leave the ',' away but otherwise:
+>
+> Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> Shall I send an incremental patch or do you want to do it?
 
- drivers/clk/renesas/clk-div6.c            | 5 +----
- drivers/clk/renesas/r8a7795-cpg-mssr.c    | 5 +----
- drivers/clk/renesas/r8a7796-cpg-mssr.c    | 5 +----
- drivers/clk/renesas/r8a77995-cpg-mssr.c   | 5 +----
- drivers/clk/renesas/rcar-gen3-cpg.c       | 5 +----
- drivers/clk/renesas/rcar-usb2-clock-sel.c | 5 +----
- drivers/clk/renesas/renesas-cpg-mssr.c    | 5 +----
- drivers/clk/renesas/renesas-cpg-mssr.h    | 5 +----
- 8 files changed, 8 insertions(+), 32 deletions(-)
+Sent, preacked ;-)
 
-diff --git a/drivers/clk/renesas/clk-div6.c b/drivers/clk/renesas/clk-div6.c
-index 9febbf42c3df..6643733952a6 100644
---- a/drivers/clk/renesas/clk-div6.c
-+++ b/drivers/clk/renesas/clk-div6.c
-@@ -1,13 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * r8a7790 Common Clock Framework support
-  *
-  * Copyright (C) 2013  Renesas Solutions Corp.
-  *
-  * Contact: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-  */
- 
- #include <linux/clk-provider.h>
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index ca8cb0eed950..119c02440726 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * r8a7795 Clock Pulse Generator / Module Standby and Software Reset
-  *
-@@ -6,10 +7,6 @@
-  * Based on clk-rcar-gen3.c
-  *
-  * Copyright (C) 2015 Renesas Electronics Corp.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-  */
- 
- #include <linux/device.h>
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 7e98fb8b1074..10567386e6dd 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * r8a7796 Clock Pulse Generator / Module Standby and Software Reset
-  *
-@@ -7,10 +8,6 @@
-  *
-  * Copyright (C) 2015 Glider bvba
-  * Copyright (C) 2015 Renesas Electronics Corp.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-  */
- 
- #include <linux/device.h>
-diff --git a/drivers/clk/renesas/r8a77995-cpg-mssr.c b/drivers/clk/renesas/r8a77995-cpg-mssr.c
-index 49e6a0de5491..47e60e3dbe05 100644
---- a/drivers/clk/renesas/r8a77995-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77995-cpg-mssr.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * r8a77995 Clock Pulse Generator / Module Standby and Software Reset
-  *
-@@ -7,10 +8,6 @@
-  *
-  * Copyright (C) 2015 Glider bvba
-  * Copyright (C) 2015 Renesas Electronics Corp.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-  */
- 
- #include <linux/device.h>
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 4346fdeef01b..4ba38f98cc7b 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * R-Car Gen3 Clock Pulse Generator
-  *
-@@ -6,10 +7,6 @@
-  * Based on clk-rcar-gen3.c
-  *
-  * Copyright (C) 2015 Renesas Electronics Corp.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-  */
- 
- #include <linux/bug.h>
-diff --git a/drivers/clk/renesas/rcar-usb2-clock-sel.c b/drivers/clk/renesas/rcar-usb2-clock-sel.c
-index 6cd030a58964..b241f9ca3d71 100644
---- a/drivers/clk/renesas/rcar-usb2-clock-sel.c
-+++ b/drivers/clk/renesas/rcar-usb2-clock-sel.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Renesas R-Car USB2.0 clock selector
-  *
-@@ -6,10 +7,6 @@
-  * Based on renesas-cpg-mssr.c
-  *
-  * Copyright (C) 2015 Glider bvba
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-  */
- 
- #include <linux/clk.h>
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index f90b0d0ba46a..1a0c15896894 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Renesas Clock Pulse Generator / Module Standby and Software Reset
-  *
-@@ -7,10 +8,6 @@
-  *
-  * Copyright (C) 2013 Ideas On Board SPRL
-  * Copyright (C) 2015 Renesas Electronics Corp.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-  */
- 
- #include <linux/clk.h>
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
-index 2e1730bc5ef2..874a4fb9f010 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.h
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-@@ -1,11 +1,8 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Renesas Clock Pulse Generator / Module Standby and Software Reset
-  *
-  * Copyright (C) 2015 Glider bvba
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-  */
- 
- #ifndef __CLK_RENESAS_CPG_MSSR_H__
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
