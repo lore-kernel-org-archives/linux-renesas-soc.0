@@ -1,58 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:34697 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725836AbeH3XXI (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38702 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728441AbeH3QZi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Aug 2018 19:23:08 -0400
-Received: by mail-lj1-f196.google.com with SMTP id f8-v6so8190403ljk.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Aug 2018 12:19:27 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] clocksource: sh_cmt: fixup for 64-bit machines
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-renesas-soc@vger.kernel.org
-Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
-        Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
-        linux-sh@vger.kernel.org
-Message-ID: <8aa6d2cd-68f9-eae4-cba0-222c1511eb9d@cogentembedded.com>
-Date: Thu, 30 Aug 2018 22:19:24 +0300
+        Thu, 30 Aug 2018 12:25:38 -0400
+Date: Thu, 30 Aug 2018 14:23:40 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: Re: [PATCH 6/9] arm64: dts: renesas: r8a774a1: Add Cortex-A53 CPU
+ cores
+Message-ID: <20180830122340.2viwqv3hitpemu3g@verge.net.au>
+References: <1535031788-19907-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1535031788-19907-7-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20180827090833.h3rtup4lqo36brgb@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180827090833.h3rtup4lqo36brgb@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When trying to use CMT for clockevents on R-Car gen3 SoCs, I noticed that
-the maximum delta (in ns) for the broadcast timer was diplayed as 1000 in
-/proc/timer_list.  It turned out that when calculating it, the driver did
-shift left 1 by 32 (causing what I think was undefined behaviour) getting
-1 as a result. Using 1UL instead fixed the maximum delta and did even fix
-switching an active clocksource to a CMT channel (which caused the system
-to go non-interactive before).
+On Mon, Aug 27, 2018 at 11:08:33AM +0200, Simon Horman wrote:
+> On Thu, Aug 23, 2018 at 02:43:05PM +0100, Fabrizio Castro wrote:
+> > From: Biju Das <biju.das@bp.renesas.com>
+> > 
+> > This patch adds definitions for L2 cache for the Cortex-A53 CPU
+> > cores (512 KiB in size, organized as 32 KiB x 16 ways), adds
+> > Cortex-A53 CPU cores (setting a total of 6 cores, 2 x Cortex-A57
+> > + 4 x Cortex-A53), and finally enables the performance monitor
+> > unit for the Cortex-A53 cores on the R8A774A1 SoC.
+> > 
+> > Based on work done for r8a7796 SoC.
+> > 
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> 
+> Thanks,
+> 
+> This looks fine to me but I will wait to see if there are other reviews
+> before applying.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
----
-This patch is against the 'tip.git' repo's 'timers/core' branch.
-
-I am not sure whether the CMT driver was ever used on SH64; on R-Car gen3
-(ARM64) I'm only enabling this driver now, so not sure how urgent is this...
-
- drivers/clocksource/sh_cmt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-Index: tip/drivers/clocksource/sh_cmt.c
-===================================================================
---- tip.orig/drivers/clocksource/sh_cmt.c
-+++ tip/drivers/clocksource/sh_cmt.c
-@@ -891,7 +891,7 @@ static int sh_cmt_setup_channel(struct s
- 	if (cmt->info->width == (sizeof(ch->max_match_value) * 8))
- 		ch->max_match_value = ~0;
- 	else
--		ch->max_match_value = (1 << cmt->info->width) - 1;
-+		ch->max_match_value = (1UL << cmt->info->width) - 1;
- 
- 	ch->match_value = ch->max_match_value;
- 	raw_spin_lock_init(&ch->lock);
+Thanks again, applied for v4.20.
