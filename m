@@ -1,37 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:39100 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727146AbeH1OMu (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38438 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727876AbeH3QR3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Aug 2018 10:12:50 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-watchdog@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 0/2] watchdog: fix OOPS when using stop_on_unregister and use it for R-Car
-Date: Tue, 28 Aug 2018 12:13:46 +0200
-Message-Id: <20180828101348.12443-1-wsa+renesas@sang-engineering.com>
+        Thu, 30 Aug 2018 12:17:29 -0400
+Date: Thu, 30 Aug 2018 14:15:33 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH 3/5] arm64: dts: renesas: r8a774a1: Add INTC-EX device
+ node
+Message-ID: <20180830121533.bfi3khilszvwmngg@verge.net.au>
+References: <1535014731-64472-1-git-send-email-biju.das@bp.renesas.com>
+ <1535014731-64472-4-git-send-email-biju.das@bp.renesas.com>
+ <20180824085513.zdefsnewmpp6bzal@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180824085513.zdefsnewmpp6bzal@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I wanted to activate 'stop_on_unregister' for the Renesas R-Car driver (see
-patch 2) and stumbled over an OOPS when using it. So, patch 1 addresses this
-problem to the best of my knowledge. Looking forward to comments.
+On Fri, Aug 24, 2018 at 10:55:13AM +0200, Simon Horman wrote:
+> On Thu, Aug 23, 2018 at 09:58:49AM +0100, Biju Das wrote:
+> > Add support for the Interrupt Controller for External Devices
+> > (INTC-EX) on RZ/G2M.
+> > 
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> 
+> Thanks,
+> 
+> This looks fine to me but I will wait to see if there are other reviews
+> before applying.
 
-Happy hacking,
-
-   Wolfram
-
-
-Wolfram Sang (2):
-  watchdog: core: fix null pointer dereference when releasing cdev
-  watchdog: renesas_wdt: stop when unregistering
-
- drivers/watchdog/renesas_wdt.c  |  1 +
- drivers/watchdog/watchdog_dev.c | 10 +++++-----
- 2 files changed, 6 insertions(+), 5 deletions(-)
-
--- 
-2.11.0
+Thanks again, applied for v4.20.
