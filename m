@@ -1,63 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:22425 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727655AbeHWQhn (ORCPT
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:39830 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727626AbeH3L75 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Aug 2018 12:37:43 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S. Miller" <davem@davemloft.net>, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Thu, 30 Aug 2018 07:59:57 -0400
+Received: by mail-ua1-f68.google.com with SMTP id g18-v6so4938415uam.6
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Aug 2018 00:59:03 -0700 (PDT)
+MIME-Version: 1.0
+References: <1535535207-2800-1-git-send-email-na-hoan@jinso.co.jp> <1535535207-2800-2-git-send-email-na-hoan@jinso.co.jp>
+In-Reply-To: <1535535207-2800-2-git-send-email-na-hoan@jinso.co.jp>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 30 Aug 2018 09:58:51 +0200
+Message-ID: <CAMuHMdVQZnUQg+QaBYLe35nO4gJcth9-PVWg6GhFWk1B2_q0Qw@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: salvator-common: Add PWM-2 channel
+To: Hoan Nguyen An <na-hoan@jinso.co.jp>
+Cc: Mark Brown <broonie@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/3][can-next] can: rcar_can: Add RZ/G2 support
-Date: Thu, 23 Aug 2018 14:07:32 +0100
-Message-Id: <1535029653-7418-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1535029653-7418-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1535029653-7418-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
+        =?UTF-8?B?RHVuZ++8muS6uuOCvQ==?= <nv-dung@jinso.co.jp>,
+        =?UTF-8?B?44Kr44Kq44O744O044Kh44Oz44O744OJ44Oz?=
+        <cv-dong@jinso.co.jp>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-RZ/G2 devices don't have clkp2, therefore this commit adds a
-generic compatible string for them to allow for proper checking
-during probe.
+Hi Hoan,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <Chris.Paterson2@renesas.com>
----
+On Wed, Aug 29, 2018 at 11:33 AM Nguyen An Hoan <na-hoan@jinso.co.jp> wrote:
+> From: Hoan Nguyen An <na-hoan@jinso.co.jp>
+>
+> Add PWM-2 channel(CN28 - pin30) support for Salvator-X
 
-This patch applies on linux-can-next-for-4.19-20180727
+Thanks for your patch!
 
- drivers/net/can/rcar/rcar_can.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Please explain why this is useful. Usually we do not enable random functionality
+on expansion connectors.
 
-diff --git a/drivers/net/can/rcar/rcar_can.c b/drivers/net/can/rcar/rcar_can.c
-index fbd9284..397208e 100644
---- a/drivers/net/can/rcar/rcar_can.c
-+++ b/drivers/net/can/rcar/rcar_can.c
-@@ -27,6 +27,7 @@
- 
- #define RCAR_SUPPORTED_CLOCKS	(BIT(CLKR_CLKP1) | BIT(CLKR_CLKP2) | \
- 				 BIT(CLKR_CLKEXT))
-+#define RZG2_SUPPORTED_CLOCKS	(BIT(CLKR_CLKP1) | BIT(CLKR_CLKEXT))
- 
- /* Mailbox configuration:
-  * mailbox 60 - 63 - Rx FIFO mailboxes
-@@ -933,6 +934,10 @@ static const struct of_device_id rcar_can_of_table[] __maybe_unused = {
- 		.compatible = "renesas,rcar-gen3-can",
- 		.data = (void *)RCAR_SUPPORTED_CLOCKS,
- 	},
-+	{
-+		.compatible = "renesas,rzg-gen2-can",
-+		.data = (void *)RZG2_SUPPORTED_CLOCKS,
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, rcar_can_of_table);
+In this case, this even has an (undocumented) impact on on-board devices,
+as the signal is also connected to the BD9571MWV PMIC.
+(Perhaps that was the actual intention of this patch? ;-) If yes,
+please explain)
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
