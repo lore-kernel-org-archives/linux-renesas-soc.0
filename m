@@ -1,63 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:33370 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727062AbeHHSyZ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38615 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728747AbeH3QXB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Aug 2018 14:54:25 -0400
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-To: mchehab@kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Thu, 30 Aug 2018 12:23:01 -0400
+Date: Thu, 30 Aug 2018 14:21:03 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v2] dt-bindings: media: adv7604: Fix slave map documentation
-Date: Wed,  8 Aug 2018 17:33:51 +0100
-Message-Id: <20180808163351.28852-1-kieran.bingham@ideasonboard.com>
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH 1/9] arm64: dts: renesas: r8a774a1: Add SDHI nodes
+Message-ID: <20180830122103.jvbbooqop2qtyeqp@verge.net.au>
+References: <1535031788-19907-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1535031788-19907-2-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1535031788-19907-2-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The reg-names property in the documentation is missing an '='. Add it.
+On Thu, Aug 23, 2018 at 02:43:00PM +0100, Fabrizio Castro wrote:
+> Add SDHI nodes to the DT of the r8a774a1 SoC.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 
-Fixes: 9feb786876c7 ("media: dt-bindings: media: adv7604: Extend
-bindings to allow specifying slave map addresses")
-
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-
----
-v2:
- - Commit title changed to prefix as "dt-bindings: media:"
-
-If this is collected through a DT tree, I assume therefore this will be
-fine, but if it is to go through the media-tree, please update as
-necessaary to prevent the redundant dual "media:" tagging.
-
-(I'll leave it to the maintainers to decide whose tree thise should go
-through)
-
-Thanks
-
-Kieran
-
- Documentation/devicetree/bindings/media/i2c/adv7604.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/media/i2c/adv7604.txt b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-index dcf57e7c60eb..b3e688b77a38 100644
---- a/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-+++ b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-@@ -66,7 +66,7 @@ Example:
- 		 * other maps will retain their default addresses.
- 		 */
- 		reg = <0x4c>, <0x66>;
--		reg-names "main", "edid";
-+		reg-names = "main", "edid";
- 
- 		reset-gpios = <&ioexp 0 GPIO_ACTIVE_LOW>;
- 		hpd-gpios = <&ioexp 2 GPIO_ACTIVE_HIGH>;
--- 
-2.17.1
+Thanks again, applied for v4.20.
