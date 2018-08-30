@@ -1,82 +1,32 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:44258 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728428AbeHaRsx (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:40019 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728273AbeH3SOi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 31 Aug 2018 13:48:53 -0400
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [VSP-Tests: PATCH] tests: Provide copy test to validate 1xN streams
-Date: Fri, 31 Aug 2018 14:41:16 +0100
-Message-Id: <20180831134116.27510-1-kieran.bingham@ideasonboard.com>
+        Thu, 30 Aug 2018 14:14:38 -0400
+Date: Thu, 30 Aug 2018 16:12:15 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ARM: shmobile: defconfig: Refresh shmobile_defconfig for
+ v4.19-rc1
+Message-ID: <20180830141214.xi7xw2tfgqjnhjbf@verge.net.au>
+References: <20180828145646.12014-1-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180828145646.12014-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Validate that a 1xN stream can be read through the RPF and written
-through the WPF.
+On Tue, Aug 28, 2018 at 04:56:46PM +0200, Geert Uytterhoeven wrote:
+> Refresh the defconfig for Renesas ARM boards:
+>   - Move options that have moved,
+>   - Remove CONFIG_HAVE_ARM_ARCH_TIMER (auto-enabled),
+>   - Remove ENABLE_WARN_DEPRECATED (removed).
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The test framework does not currently support processing images where
-the stride does not match the output width - so the testing is currently
-limited to testing only the vertical direction in this aspect.
-
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
----
- tests/vsp-unit-test-0025.sh | 45 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
- create mode 100755 tests/vsp-unit-test-0025.sh
-
-diff --git a/tests/vsp-unit-test-0025.sh b/tests/vsp-unit-test-0025.sh
-new file mode 100755
-index 000000000000..5c8980c40d89
---- /dev/null
-+++ b/tests/vsp-unit-test-0025.sh
-@@ -0,0 +1,45 @@
-+#!/bin/sh
-+
-+#
-+# Test pipelines which have a single pixel dimension. Use a RPF -> UDS -> WPF
-+# pipeline with identical input and output formats to generate our output.
-+#
-+
-+. ./vsp-lib.sh
-+
-+features="rpf.0 uds wpf.0"
-+formats="RGB24 ARGB32"
-+
-+# Input is directly copied to the output. No change in format or size.
-+test_copy() {
-+	local format=$1
-+	local insize=$2
-+
-+	test_start "copying $insize in $format"
-+
-+	pipe_configure rpf-wpf 0 0
-+	format_configure rpf-wpf 0 0 $format $insize $format
-+
-+	vsp_runner rpf.0 &
-+	vsp_runner wpf.0
-+
-+	local result=$(compare_frames)
-+
-+	test_complete $result
-+}
-+
-+test_main() {
-+	local format
-+
-+	for format in $formats ; do
-+		test_copy $format 1024x768
-+		test_copy $format 128x128
-+		test_copy $format 128x1
-+
-+		# Skipped : Test framework does not yet support strides != width
-+		#test_copy $format 1x128
-+	done
-+}
-+
-+test_init $0 "$features"
-+test_run
--- 
-2.17.1
+Thanks Geert, applied for v4.20.
