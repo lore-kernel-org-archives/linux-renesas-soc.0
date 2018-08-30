@@ -1,32 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:40497 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727359AbeH3SzC (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:48768 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728713AbeH3QlU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Aug 2018 14:55:02 -0400
-Date: Thu, 30 Aug 2018 16:52:26 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: renesas: salvator-xs: Improve SATA switch
- settings comments
-Message-ID: <20180830145225.y7tqdmdpzzdoe6r3@verge.net.au>
-References: <20180830123807.19353-1-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180830123807.19353-1-geert+renesas@glider.be>
+        Thu, 30 Aug 2018 12:41:20 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] arm64: dts: renesas: salvator-xs: Improve SATA switch settings comments
+Date: Thu, 30 Aug 2018 14:39:19 +0200
+Message-Id: <20180830123919.19542-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Aug 30, 2018 at 02:38:07PM +0200, Geert Uytterhoeven wrote:
-> The comments describing the non-default switch settings to use SATA are
-> confusing: 'Off' refers to the switch position, not to the MD12 logic
-> value, while the parentheses suggest otherwise.  Rephrase to fix this.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+The comments describing the non-default switch settings to use SATA are
+confusing: 'Off' refers to the switch position, not to the MD12 logic
+value, while the parentheses suggest otherwise.  Rephrase to fix this.
 
-Thanks Geert, thanks Wolfram, applied for v4.20.
+Fixes: bec000784d5bb571 ("arm64: dts: renesas: salvator-xs: enable SATA")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts  | 2 +-
+ arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+index ba3357636fdb0fea..cf08a119eec093cd 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+@@ -184,7 +184,7 @@
+ 	};
+ };
+ 
+-/* MD12 (SW12-7) must be set 'Off' which is not the default! */
++/* SW12-7 must be set 'Off' (MD12 set to 1) which is not the default! */
+ &sata {
+ 	status = "okay";
+ };
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
+index 45016a06fab1cd5d..f03a5e9e0c427e0d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
+@@ -57,7 +57,7 @@
+ 	};
+ };
+ 
+-/* MD12 (SW12-7) must be set 'Off' which is not the default! */
++/* SW12-7 must be set 'Off' (MD12 set to 1) which is not the default! */
+ &sata {
+ 	status = "okay";
+ };
+-- 
+2.17.1
