@@ -1,115 +1,144 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:9492 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727191AbeHaLvB (ORCPT
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:44077 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727233AbeHaL23 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 31 Aug 2018 07:51:01 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Felipe Balbi <balbi@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Fri, 31 Aug 2018 07:28:29 -0400
+MIME-Version: 1.0
+References: <1535698119-10132-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1535698119-10132-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1535698119-10132-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 31 Aug 2018 09:22:12 +0200
+Message-ID: <CAMuHMdXLCnOGvPNrBKoxh_ZzYTUZbp2XtLr-Pu6DDd5_9cXGiQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] usb: renesas_usbhs: Add multiple clocks management
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Felipe Balbi <balbi@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Greg KH <gregkh@linuxfoundation.org>,
         USB list <linux-usb@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
         <devicetree@vger.kernel.org>
-Subject: RE: [PATCH 3/3] usb: renesas_usbhs: Add multiple clocks management
-Date: Fri, 31 Aug 2018 07:44:47 +0000
-Message-ID: <OSBPR01MB2293A732CA9114788949150BD80F0@OSBPR01MB2293.jpnprd01.prod.outlook.com>
-References: <1535698119-10132-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1535698119-10132-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdXLCnOGvPNrBKoxh_ZzYTUZbp2XtLr-Pu6DDd5_9cXGiQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdXLCnOGvPNrBKoxh_ZzYTUZbp2XtLr-Pu6DDd5_9cXGiQ@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbiwgU2VudDogRnJpZGF5
-LCBBdWd1c3QgMzEsIDIwMTggNDoyMiBQTQ0KPiANCj4gSGkgU2hpbW9kYS1zYW4sDQo+IA0KPiBP
-biBGcmksIEF1ZyAzMSwgMjAxOCBhdCA4OjUwIEFNIFlvc2hpaGlybyBTaGltb2RhDQo+IDx5b3No
-aWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gUi1DYXIgR2VuMyBuZWVk
-cyB0byBlbmFibGUgY2xvY2tzIG9mIGJvdGggaG9zdCBhbmQgcGVyaXBoZXJhbC4NCj4gPiBTaW5j
-ZSBbZW9daGNpLXBsYXRmb3JtIGRpc2FibGVzIHRoZSByZXNldChzKSB3aGVuIHRoZSBkcml2ZXJz
-IGFyZQ0KPiA+IHJlbW92ZWQsIHJlbmVzYXNfdXNiaHMgZHJpdmVyIGRvZXNuJ3Qgd29yayBjb3Jy
-ZWN0bHkuIFRvIGZpeCB0aGlzDQo+ID4gaXNzdWUsIHRoaXMgcGF0Y2ggYWRkcyBtdWx0aXBsZSBj
-bG9ja3MgbWFuYWdlbWVudCBvbiB0aGlzDQo+ID4gcmVuZXNhc191c2JocyBkcml2ZXIuDQo+ID4N
-Cj4gPiBTaWduZWQtb2ZmLWJ5OiBZb3NoaWhpcm8gU2hpbW9kYSA8eW9zaGloaXJvLnNoaW1vZGEu
-dWhAcmVuZXNhcy5jb20+DQo+IA0KPiBUaGFua3MgZm9yIHlvdXIgcGF0Y2ghDQoNClRoYW5rIHlv
-dSBmb3IgeW91ciByZXZpZXchDQoNCj4gPiAtLS0gYS9kcml2ZXJzL3VzYi9yZW5lc2FzX3VzYmhz
-L2NvbW1vbi5jDQo+ID4gKysrIGIvZHJpdmVycy91c2IvcmVuZXNhc191c2Jocy9jb21tb24uYw0K
-PiA+IEBAIC01LDYgKzUsNyBAQA0KPiA+ICAgKiBDb3B5cmlnaHQgKEMpIDIwMTEgUmVuZXNhcyBT
-b2x1dGlvbnMgQ29ycC4NCj4gPiAgICogS3VuaW5vcmkgTW9yaW1vdG8gPGt1bmlub3JpLm1vcmlt
-b3RvLmd4QHJlbmVzYXMuY29tPg0KPiA+ICAgKi8NCj4gPiArI2luY2x1ZGUgPGxpbnV4L2Nsay5o
-Pg0KPiA+ICAjaW5jbHVkZSA8bGludXgvZXJyLmg+DQo+ID4gICNpbmNsdWRlIDxsaW51eC9ncGlv
-Lmg+DQo+ID4gICNpbmNsdWRlIDxsaW51eC9pby5oPg0KPiA+IEBAIC0zMzYsMTEgKzMzNywyMyBA
-QCBzdGF0aWMgdm9pZCB1c2Joc2NfcG93ZXJfY3RybChzdHJ1Y3QgdXNiaHNfcHJpdiAqcHJpdiwg
-aW50IGVuYWJsZSkNCj4gPiAgew0KPiA+ICAgICAgICAgc3RydWN0IHBsYXRmb3JtX2RldmljZSAq
-cGRldiA9IHVzYmhzX3ByaXZfdG9fcGRldihwcml2KTsNCj4gPiAgICAgICAgIHN0cnVjdCBkZXZp
-Y2UgKmRldiA9IHVzYmhzX3ByaXZfdG9fZGV2KHByaXYpOw0KPiA+ICsgICAgICAgaW50IHJldDsN
-Cj4gPg0KPiA+ICAgICAgICAgaWYgKGVuYWJsZSkgew0KPiA+ICAgICAgICAgICAgICAgICAvKiBl
-bmFibGUgUE0gKi8NCj4gPiAgICAgICAgICAgICAgICAgcG1fcnVudGltZV9nZXRfc3luYyhkZXYp
-Ow0KPiA+DQo+ID4gKyAgICAgICAgICAgICAgIC8qIGVuYWJsZSBjbGtzIGlmIGV4aXN0ICovDQo+
-ID4gKyAgICAgICAgICAgICAgIGlmIChwcml2LT5jbGtzKSB7DQo+ID4gKyAgICAgICAgICAgICAg
-ICAgICAgICAgcmV0ID0gY2xrX2J1bGtfcHJlcGFyZShwcml2LT5udW1fY2xrcywgcHJpdi0+Y2xr
-cyk7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgaWYgKCFyZXQpIHsNCj4gPiArICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIHJldCA9IGNsa19idWxrX2VuYWJsZShwcml2LT5udW1f
-Y2xrcywNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICBwcml2LT5jbGtzKTsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-IGlmIChyZXQpDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHJl
-dHVybjsNCj4gDQo+IGNsa19idWxrX3ByZXBhcmVfZW5hYmxlKCksIHdoaWNoIGFsc28gdGFrZXMg
-Y2FyZSBvZiB1bnByZXBhcmluZyBhbGwNCj4gY2xvY2tzIGlmIGFueSBjbG9jayBmYWlscyB0byBl
-bmFibGVkLg0KDQpPb3BzISBJJ2xsIGZpeCB0aGlzIGluIHYyLg0KDQo+ID4gKyAgICAgICAgICAg
-ICAgICAgICAgICAgfQ0KPiA+ICsgICAgICAgICAgICAgICB9DQo+ID4gKw0KPiA+ICAgICAgICAg
-ICAgICAgICAvKiBlbmFibGUgcGxhdGZvcm0gcG93ZXIgKi8NCj4gPiAgICAgICAgICAgICAgICAg
-dXNiaHNfcGxhdGZvcm1fY2FsbChwcml2LCBwb3dlcl9jdHJsLCBwZGV2LCBwcml2LT5iYXNlLCBl
-bmFibGUpOw0KPiA+DQo+ID4gQEAgLTM1Myw2ICszNjYsMTIgQEAgc3RhdGljIHZvaWQgdXNiaHNj
-X3Bvd2VyX2N0cmwoc3RydWN0IHVzYmhzX3ByaXYgKnByaXYsIGludCBlbmFibGUpDQo+ID4gICAg
-ICAgICAgICAgICAgIC8qIGRpc2FibGUgcGxhdGZvcm0gcG93ZXIgKi8NCj4gPiAgICAgICAgICAg
-ICAgICAgdXNiaHNfcGxhdGZvcm1fY2FsbChwcml2LCBwb3dlcl9jdHJsLCBwZGV2LCBwcml2LT5i
-YXNlLCBlbmFibGUpOw0KPiA+DQo+ID4gKyAgICAgICAgICAgICAgIC8qIGRpc2FibGUgY2xrcyBp
-ZiBleGlzdCAqLw0KPiA+ICsgICAgICAgICAgICAgICBpZiAocHJpdi0+Y2xrcykgew0KPiA+ICsg
-ICAgICAgICAgICAgICAgICAgICAgIGNsa19idWxrX2Rpc2FibGUocHJpdi0+bnVtX2Nsa3MsIHBy
-aXYtPmNsa3MpOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGNsa19idWxrX3VucHJlcGFy
-ZShwcml2LT5udW1fY2xrcywgcHJpdi0+Y2xrcyk7DQo+IA0KPiBjbGtfYnVsa19kaXNhYmxlX3Vu
-cHJlcGFyZSgpDQoNClRoYW5rIHlvdSBmb3IgdGhlIGluZGljYXRlLiBJJ2xsIGZpeCB0aGlzIGlu
-IHYyLg0KDQo+ID4gKyAgICAgICAgICAgICAgIH0NCj4gPiArDQo+ID4gICAgICAgICAgICAgICAg
-IC8qIGRpc2FibGUgUE0gKi8NCj4gPiAgICAgICAgICAgICAgICAgcG1fcnVudGltZV9wdXRfc3lu
-YyhkZXYpOw0KPiA+ICAgICAgICAgfQ0KPiA+IEBAIC01MzQsNiArNTUzLDExIEBAIHN0YXRpYyBz
-dHJ1Y3QgcmVuZXNhc191c2Joc19wbGF0Zm9ybV9pbmZvICp1c2Joc19wYXJzZV9kdChzdHJ1Y3Qg
-ZGV2aWNlICpkZXYpDQo+ID4gICAgICAgICByZXR1cm4gaW5mbzsNCj4gPiAgfQ0KPiA+DQo+ID4g
-K3N0YXRpYyBjb25zdCBzdHJ1Y3QgY2xrX2J1bGtfZGF0YSB1c2Joc19yY2FyM19jbGtzW10gPSB7
-DQo+ID4gKyAgICAgICB7IC5pZCA9ICJoc3VzYiIgfSwNCj4gPiArICAgICAgIHsgLmlkID0gImVo
-Y2kvb2hjaSIgfSwNCj4gPiArfTsNCj4gDQo+IFRoaXMgc3RydWN0dXJlIGNvbnRhaW5zIHNwYWNl
-IGZvciB0aGUgY2xvY2sgcG9pbnRlcnMsIHdoaWNoIGFyZSBub3QgcmVhbGx5DQo+IG5lZWRlZCBo
-ZXJlICh0aGUgc3RydWN0IGlzIGNvcGllZCkuDQo+IA0KPiBQZXJoYXBzIHlvdSBjYW4gcmVwbGFj
-ZSAic3RydWN0IGNsa19idWxrX2RhdGEgKmNsa3MiIGluIHN0cnVjdCB1c2Joc19wcml2DQo+IHJl
-cGxhY2UgYnkgInN0cnVjdCBjbGtfYnVsa19kYXRhIGNsa3NbMl0iLCAuLi4NCj4gDQo+ID4gKw0K
-PiA+ICBzdGF0aWMgaW50IHVzYmhzX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYp
-DQo+ID4gIHsNCj4gPiAgICAgICAgIHN0cnVjdCByZW5lc2FzX3VzYmhzX3BsYXRmb3JtX2luZm8g
-KmluZm8gPSByZW5lc2FzX3VzYmhzX2dldF9pbmZvKHBkZXYpOw0KPiA+IEBAIC02MjAsNiArNjQ0
-LDE1IEBAIHN0YXRpYyBpbnQgdXNiaHNfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRl
-dikNCj4gPiAgICAgICAgICAgICAgICAgYnJlYWs7DQo+ID4gICAgICAgICB9DQo+ID4NCj4gPiAr
-ICAgICAgIGlmIChwcml2LT5kcGFyYW0udHlwZSA9PSBVU0JIU19UWVBFX1JDQVJfR0VOMyB8fA0K
-PiA+ICsgICAgICAgICAgIHByaXYtPmRwYXJhbS50eXBlID09IFVTQkhTX1RZUEVfUkNBUl9HRU4z
-X1dJVEhfUExMKSB7DQo+ID4gKyAgICAgICAgICAgICAgIHByaXYtPmNsa3MgPSBkZXZtX2ttZW1k
-dXAoJnBkZXYtPmRldiwgdXNiaHNfcmNhcjNfY2xrcywNCj4gPiArICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICBzaXplb2YodXNiaHNfcmNhcjNfY2xrcyksIEdGUF9LRVJO
-RUwpOw0KPiA+ICsgICAgICAgICAgICAgICBpZiAoIXByaXYtPmNsa3MpDQo+ID4gKyAgICAgICAg
-ICAgICAgICAgICAgICAgcmV0dXJuIC1FTk9NRU07DQo+IA0KPiAuLi4gYW5kIGluc3RlYWQgb2Yg
-YWxsb2NhdGluZy9jb3B5aW5nLCBmaWxsIGluIHRoZSBjbG9jayBuYW1lcyBoZXJlOg0KPiANCj4g
-ICAgIHByaXYtPmNsa3NbMF0uaWQgPSAiaHN1c2IiOw0KPiAgICAgcHJpdi0+Y2xrc1sxXS5pZCA9
-ICJlaGNpL29oY2kiOw0KPiANCj4gQXMgcHJpdi0+Y2xrcyB3aWxsIG5vIGxvbmdlciBiZSBhIHBv
-aW50ZXIsIGFsbCBjaGVja3MgZm9yIGl0IHNob3VsZCBiZQ0KPiByZXBsYWNlZCBieSBjaGVja3Mg
-Zm9yIHByaXYtPm51bV9jbGtzLg0KPiANCj4gV2hhdCBkbyB5b3UgdGhpbms/DQoNCkkgdGhpbmsg
-eW91ciBzdWdnZXN0aW9uIGlzIGJldHRlciB0aGFuIHRoaXMgcGF0Y2guIFNvLCBJJ2xsIG1vZGlm
-eSB0aGUgY29kZSBpbiB2Mi4NCg0KQmVzdCByZWdhcmRzLA0KWW9zaGloaXJvIFNoaW1vZGENCg0K
-PiBHcntvZXRqZSxlZXRpbmd9cywNCj4gDQo+ICAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0
-DQo+IA0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4
-IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LW02OGsub3JnDQo+IA0KPiBJbiBwZXJzb25hbCBj
-b252ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tl
-ci4gQnV0DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJv
-Z3JhbW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4gICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0K
+Hi Shimoda-san,
+
+On Fri, Aug 31, 2018 at 8:50 AM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> R-Car Gen3 needs to enable clocks of both host and peripheral.
+> Since [eo]hci-platform disables the reset(s) when the drivers are
+> removed, renesas_usbhs driver doesn't work correctly. To fix this
+> issue, this patch adds multiple clocks management on this
+> renesas_usbhs driver.
+>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+
+Thanks for your patch!
+
+> --- a/drivers/usb/renesas_usbhs/common.c
+> +++ b/drivers/usb/renesas_usbhs/common.c
+> @@ -5,6 +5,7 @@
+>   * Copyright (C) 2011 Renesas Solutions Corp.
+>   * Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>   */
+> +#include <linux/clk.h>
+>  #include <linux/err.h>
+>  #include <linux/gpio.h>
+>  #include <linux/io.h>
+> @@ -336,11 +337,23 @@ static void usbhsc_power_ctrl(struct usbhs_priv *priv, int enable)
+>  {
+>         struct platform_device *pdev = usbhs_priv_to_pdev(priv);
+>         struct device *dev = usbhs_priv_to_dev(priv);
+> +       int ret;
+>
+>         if (enable) {
+>                 /* enable PM */
+>                 pm_runtime_get_sync(dev);
+>
+> +               /* enable clks if exist */
+> +               if (priv->clks) {
+> +                       ret = clk_bulk_prepare(priv->num_clks, priv->clks);
+> +                       if (!ret) {
+> +                               ret = clk_bulk_enable(priv->num_clks,
+> +                                                     priv->clks);
+> +                               if (ret)
+> +                                       return;
+
+clk_bulk_prepare_enable(), which also takes care of unpreparing all
+clocks if any clock fails to enabled.
+
+> +                       }
+> +               }
+> +
+>                 /* enable platform power */
+>                 usbhs_platform_call(priv, power_ctrl, pdev, priv->base, enable);
+>
+> @@ -353,6 +366,12 @@ static void usbhsc_power_ctrl(struct usbhs_priv *priv, int enable)
+>                 /* disable platform power */
+>                 usbhs_platform_call(priv, power_ctrl, pdev, priv->base, enable);
+>
+> +               /* disable clks if exist */
+> +               if (priv->clks) {
+> +                       clk_bulk_disable(priv->num_clks, priv->clks);
+> +                       clk_bulk_unprepare(priv->num_clks, priv->clks);
+
+clk_bulk_disable_unprepare()
+
+> +               }
+> +
+>                 /* disable PM */
+>                 pm_runtime_put_sync(dev);
+>         }
+> @@ -534,6 +553,11 @@ static struct renesas_usbhs_platform_info *usbhs_parse_dt(struct device *dev)
+>         return info;
+>  }
+>
+> +static const struct clk_bulk_data usbhs_rcar3_clks[] = {
+> +       { .id = "hsusb" },
+> +       { .id = "ehci/ohci" },
+> +};
+
+This structure contains space for the clock pointers, which are not really
+needed here (the struct is copied).
+
+Perhaps you can replace "struct clk_bulk_data *clks" in struct usbhs_priv
+replace by "struct clk_bulk_data clks[2]", ...
+
+> +
+>  static int usbhs_probe(struct platform_device *pdev)
+>  {
+>         struct renesas_usbhs_platform_info *info = renesas_usbhs_get_info(pdev);
+> @@ -620,6 +644,15 @@ static int usbhs_probe(struct platform_device *pdev)
+>                 break;
+>         }
+>
+> +       if (priv->dparam.type == USBHS_TYPE_RCAR_GEN3 ||
+> +           priv->dparam.type == USBHS_TYPE_RCAR_GEN3_WITH_PLL) {
+> +               priv->clks = devm_kmemdup(&pdev->dev, usbhs_rcar3_clks,
+> +                                         sizeof(usbhs_rcar3_clks), GFP_KERNEL);
+> +               if (!priv->clks)
+> +                       return -ENOMEM;
+
+... and instead of allocating/copying, fill in the clock names here:
+
+    priv->clks[0].id = "hsusb";
+    priv->clks[1].id = "ehci/ohci";
+
+As priv->clks will no longer be a pointer, all checks for it should be
+replaced by checks for priv->num_clks.
+
+What do you think?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
