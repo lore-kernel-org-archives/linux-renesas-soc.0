@@ -1,92 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:12399 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730821AbeHWQ56 (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:46826 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727212AbeHaWVp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Aug 2018 12:57:58 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 19/30] v4l: subdev: Improve link format validation debug messages
-Date: Thu, 23 Aug 2018 15:25:33 +0200
-Message-Id: <20180823132544.521-20-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
+        Fri, 31 Aug 2018 18:21:45 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 2/3] drm: rcar-du: Add pixel format support
+Date: Fri, 31 Aug 2018 19:12:58 +0100
+Message-Id: <20180831181259.29529-3-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <20180831181259.29529-1-kieran.bingham+renesas@ideasonboard.com>
+References: <20180831181259.29529-1-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
+From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
 
-The existing link format validation failure debug message in media-entity.c
-helped to poinpoint the point of failure but provided no additional
-information what's wrong. Tell the user exactly why the validation failed.
+This patch supports pixel format of RGB332, ARGB4444, XRGB4444,
+BGR888, RGB888, BGRA8888, BGRX8888 and YVYU.
+VYUY pixel format is not supported by H/W specification.
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
 ---
- drivers/media/v4l2-core/v4l2-subdev.c | 40 ++++++++++++++++++++++-----
- 1 file changed, 33 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
-index 1f480ff6c29b4c0c..31f67daeadc1eaf2 100644
---- a/drivers/media/v4l2-core/v4l2-subdev.c
-+++ b/drivers/media/v4l2-core/v4l2-subdev.c
-@@ -618,21 +618,47 @@ int v4l2_subdev_link_validate_default(struct v4l2_subdev *sd,
- 				      struct v4l2_subdev_format *source_fmt,
- 				      struct v4l2_subdev_format *sink_fmt)
- {
-+	bool pass = true;
-+
- 	/* The width, height and code must match. */
--	if (source_fmt->format.width != sink_fmt->format.width
--	    || source_fmt->format.height != sink_fmt->format.height
--	    || source_fmt->format.code != sink_fmt->format.code)
--		return -EPIPE;
-+	if (source_fmt->format.width != sink_fmt->format.width) {
-+		dev_dbg(sd->entity.graph_obj.mdev->dev,
-+			"%s: width does not match (source %u, sink %u)\n",
-+			__func__,
-+			source_fmt->format.width, sink_fmt->format.width);
-+		pass = false;
-+	}
-+
-+	if (source_fmt->format.height != sink_fmt->format.height) {
-+		dev_dbg(sd->entity.graph_obj.mdev->dev,
-+			"%s: height does not match (source %u, sink %u)\n",
-+			__func__,
-+			source_fmt->format.height, sink_fmt->format.height);
-+		pass = false;
-+	}
-+
-+	if (source_fmt->format.code != sink_fmt->format.code) {
-+		dev_dbg(sd->entity.graph_obj.mdev->dev,
-+			"%s: media bus code does not match (source 0x%8.8x, sink 0x%8.8x)\n",
-+			__func__,
-+			source_fmt->format.code, sink_fmt->format.code);
-+		pass = false;
-+	}
- 
- 	/* The field order must match, or the sink field order must be NONE
- 	 * to support interlaced hardware connected to bridges that support
- 	 * progressive formats only.
- 	 */
- 	if (source_fmt->format.field != sink_fmt->format.field &&
--	    sink_fmt->format.field != V4L2_FIELD_NONE)
--		return -EPIPE;
-+	    sink_fmt->format.field != V4L2_FIELD_NONE) {
-+		dev_dbg(sd->entity.graph_obj.mdev->dev,
-+			"%s: field does not match (source %u, sink %u)\n",
-+			__func__,
-+			source_fmt->format.field, sink_fmt->format.field);
-+		pass = false;
-+	}
- 
--	return 0;
-+	return pass ? 0 : -EPIPE;
- }
- EXPORT_SYMBOL_GPL(v4l2_subdev_link_validate_default);
+This patch does not remove existing support for multiplanar YVUY, even
+though the hardware does not explicitly provide it, because we support
+it through software by swapping the plane buffers.
+
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c | 32 +++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+index 7c7aff8cdf77..d1bd174ec893 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -124,6 +124,38 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
+ 		.fourcc = DRM_FORMAT_YVU444,
+ 		.bpp = 24,
+ 		.planes = 3,
++	}, {
++		.fourcc = DRM_FORMAT_RGB332,
++		.bpp = 8,
++		.planes = 1,
++	}, {
++		.fourcc = DRM_FORMAT_ARGB4444,
++		.bpp = 16,
++		.planes = 1,
++	}, {
++		.fourcc = DRM_FORMAT_XRGB4444,
++		.bpp = 16,
++		.planes = 1,
++	}, {
++		.fourcc = DRM_FORMAT_BGR888,
++		.bpp = 24,
++		.planes = 1,
++	}, {
++		.fourcc = DRM_FORMAT_RGB888,
++		.bpp = 24,
++		.planes = 1,
++	}, {
++		.fourcc = DRM_FORMAT_BGRA8888,
++		.bpp = 32,
++		.planes = 1,
++	}, {
++		.fourcc = DRM_FORMAT_BGRX8888,
++		.bpp = 32,
++		.planes = 1,
++	}, {
++		.fourcc = DRM_FORMAT_YVYU,
++		.bpp = 16,
++		.planes = 1,
+ 	},
+ };
  
 -- 
-2.18.0
+2.17.1
