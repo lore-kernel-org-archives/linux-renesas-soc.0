@@ -1,106 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:33031 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727203AbeHaK4V (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:44248 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727448AbeHaRsg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 31 Aug 2018 06:56:21 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/3] usb: renesas_usbhs: Add reset_control
-Date: Fri, 31 Aug 2018 15:48:37 +0900
-Message-Id: <1535698119-10132-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1535698119-10132-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1535698119-10132-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 31 Aug 2018 13:48:36 -0400
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [VSP-Tests: PATCH] vsp-lib: Provide command line argument parsing
+Date: Fri, 31 Aug 2018 14:40:58 +0100
+Message-Id: <20180831134058.27454-1-kieran.bingham@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen3 needs to deassert resets of both host and peripheral.
-Since [eo]hci-platform is possible to assert the reset(s) when
-the probing failed, renesas_usbhs driver doesn't work correctly
-regardless of finished probing. To fix this issue, this patch adds
-reset_control on this renesas_usbhs driver.
+Extend the vsp-lib to support command line parsing for all tests.  The
+arguments parsed here should be common to all tests, and initially
+provide shell level verbose debug output, and the option to easily keep
+frames output by the VSP1.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 ---
- drivers/usb/renesas_usbhs/common.c | 12 ++++++++++++
- drivers/usb/renesas_usbhs/common.h |  2 ++
- 2 files changed, 14 insertions(+)
+ scripts/vsp-lib.sh | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
-index 4310df4..1d355d5 100644
---- a/drivers/usb/renesas_usbhs/common.c
-+++ b/drivers/usb/renesas_usbhs/common.c
-@@ -12,6 +12,7 @@
- #include <linux/of_device.h>
- #include <linux/of_gpio.h>
- #include <linux/pm_runtime.h>
-+#include <linux/reset.h>
- #include <linux/slab.h>
- #include <linux/sysfs.h>
- #include "common.h"
-@@ -574,6 +575,10 @@ static int usbhs_probe(struct platform_device *pdev)
- 			return PTR_ERR(priv->edev);
- 	}
- 
-+	priv->rsts = devm_reset_control_array_get_optional_shared(&pdev->dev);
-+	if (IS_ERR(priv->rsts))
-+		return PTR_ERR(priv->rsts);
+diff --git a/scripts/vsp-lib.sh b/scripts/vsp-lib.sh
+index 0f3992a7827e..6a0f4af5eaf5 100755
+--- a/scripts/vsp-lib.sh
++++ b/scripts/vsp-lib.sh
+@@ -1094,3 +1094,37 @@ test_complete() {
+ test_run() {
+ 	test_main | ./logger.sh error >> $logfile
+ }
 +
- 	/*
- 	 * care platform info
- 	 */
-@@ -658,6 +663,10 @@ static int usbhs_probe(struct platform_device *pdev)
- 	/* dev_set_drvdata should be called after usbhs_mod_init */
- 	platform_set_drvdata(pdev, priv);
- 
-+	ret = reset_control_deassert(priv->rsts);
-+	if (ret)
-+		goto probe_fail_rst;
++# ------------------------------------------------------------------------------
++# Common argument parsing
++#
++# non-recognised arguements are restored, to allow tests
++# to implement their own parsing if necessary.
 +
- 	/*
- 	 * deviece reset here because
- 	 * USB device might be used in boot loader.
-@@ -711,6 +720,8 @@ static int usbhs_probe(struct platform_device *pdev)
- 	return ret;
- 
- probe_end_mod_exit:
-+	reset_control_assert(priv->rsts);
-+probe_fail_rst:
- 	usbhs_mod_remove(priv);
- probe_end_fifo_exit:
- 	usbhs_fifo_remove(priv);
-@@ -739,6 +750,7 @@ static int usbhs_remove(struct platform_device *pdev)
- 	pm_runtime_disable(&pdev->dev);
- 
- 	usbhs_platform_call(priv, hardware_exit, pdev);
-+	reset_control_assert(priv->rsts);
- 	usbhs_mod_remove(priv);
- 	usbhs_fifo_remove(priv);
- 	usbhs_pipe_remove(priv);
-diff --git a/drivers/usb/renesas_usbhs/common.h b/drivers/usb/renesas_usbhs/common.h
-index 6137f79..bce7d35 100644
---- a/drivers/usb/renesas_usbhs/common.h
-+++ b/drivers/usb/renesas_usbhs/common.h
-@@ -10,6 +10,7 @@
- 
- #include <linux/extcon.h>
- #include <linux/platform_device.h>
-+#include <linux/reset.h>
- #include <linux/usb/renesas_usbhs.h>
- 
- struct usbhs_priv;
-@@ -277,6 +278,7 @@ struct usbhs_priv {
- 	struct usbhs_fifo_info fifo_info;
- 
- 	struct phy *phy;
-+	struct reset_control *rsts;
- };
- 
- /*
++POSITIONAL=()
++while [[ $# -gt 0 ]]
++do
++case $1 in
++	-x|--debug)
++		set -x;
++		shift
++		;;
++	-k|--keep-frames)
++		export VSP_KEEP_FRAMES=1
++		shift
++		;;
++	-h|--help)
++		echo "$(basename $0): VSP Test library"
++		echo "  -x|--debug          enable shell debug"
++		echo "  -k|--keep-frames    keep generated and captured frames"
++		echo "  -h|--help           this help"
++		exit
++		shift
++		;;
++	*)    # unknown option
++		POSITIONAL+=("$1") # save it in an array for later
++		shift # past argument
++		;;
++esac
++done
++set -- "${POSITIONAL[@]}" # restore positional parameters
 -- 
-1.9.1
+2.17.1
