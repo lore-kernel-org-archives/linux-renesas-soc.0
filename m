@@ -1,161 +1,191 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:43077 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726947AbeH0POg (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 27 Aug 2018 11:14:36 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com,
-        kieran.bingham+renesas@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Subject: [PATCH 1/2] media: i2c: adv748x: Support probing a single output
-Date: Mon, 27 Aug 2018 13:28:04 +0200
-Message-Id: <1535369285-26032-2-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1535369285-26032-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1535369285-26032-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 6/6] media: vsp1: use periods at the end of comment sentences
+Date: Fri, 31 Aug 2018 15:40:44 +0100
+Message-Id: <20180831144044.31713-7-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <20180831144044.31713-1-kieran.bingham+renesas@ideasonboard.com>
+References: <20180831144044.31713-1-kieran.bingham+renesas@ideasonboard.com>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently the adv748x driver refuses to probe if both its output endpoints
-(TXA and TXB) are not connected.
+The style of this driver uses periods at the end of sentences in
+comments, but it is applied inconsitently.
 
-Make the driver support probing with (at least) one output endpoint connected
-and protect the cleanup function from accessing un-initialized fields.
+Update a selection of comments which were discovered to be missing their
+period. Also fix the spelling of one usage of 'instantiate'
 
-Following patches will fix other user of un-initialized TXs in the driver,
-such as power management functions.
-
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/media/i2c/adv748x/adv748x-core.c | 38 +++++++++++++++++++++++++-------
- drivers/media/i2c/adv748x/adv748x-csi2.c | 17 ++++----------
- drivers/media/i2c/adv748x/adv748x.h      |  2 ++
- 3 files changed, 36 insertions(+), 21 deletions(-)
+ drivers/media/platform/vsp1/vsp1_brx.c    | 4 ++--
+ drivers/media/platform/vsp1/vsp1_drv.c    | 6 +++---
+ drivers/media/platform/vsp1/vsp1_entity.c | 2 +-
+ drivers/media/platform/vsp1/vsp1_rpf.c    | 4 ++--
+ drivers/media/platform/vsp1/vsp1_sru.c    | 2 +-
+ drivers/media/platform/vsp1/vsp1_uds.c    | 6 +++---
+ drivers/media/platform/vsp1/vsp1_video.c  | 2 +-
+ drivers/media/platform/vsp1/vsp1_wpf.c    | 2 +-
+ 8 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
-index 6ca88daa..78d5996 100644
---- a/drivers/media/i2c/adv748x/adv748x-core.c
-+++ b/drivers/media/i2c/adv748x/adv748x-core.c
-@@ -654,6 +654,24 @@ static int adv748x_probe(struct i2c_client *client,
- 		goto err_cleanup_clients;
+diff --git a/drivers/media/platform/vsp1/vsp1_brx.c b/drivers/media/platform/vsp1/vsp1_brx.c
+index 359917b5d842..5e50178b057d 100644
+--- a/drivers/media/platform/vsp1/vsp1_brx.c
++++ b/drivers/media/platform/vsp1/vsp1_brx.c
+@@ -153,7 +153,7 @@ static int brx_set_format(struct v4l2_subdev *subdev,
+ 	format = vsp1_entity_get_pad_format(&brx->entity, config, fmt->pad);
+ 	*format = fmt->format;
+ 
+-	/* Reset the compose rectangle */
++	/* Reset the compose rectangle. */
+ 	if (fmt->pad != brx->entity.source_pad) {
+ 		struct v4l2_rect *compose;
+ 
+@@ -164,7 +164,7 @@ static int brx_set_format(struct v4l2_subdev *subdev,
+ 		compose->height = format->height;
  	}
  
-+	/*
-+	 * We can not use container_of to get back to the state with two TXs;
-+	 * Initialize the TXs's fields unconditionally on the endpoint
-+	 * presence to access them later.
-+	 */
-+	state->txa.state = state->txb.state = state;
-+	state->txa.page = ADV748X_PAGE_TXA;
-+	state->txb.page = ADV748X_PAGE_TXB;
-+	state->txa.port = ADV748X_PORT_TXA;
-+	state->txb.port = ADV748X_PORT_TXB;
-+
-+	if (!is_tx_enabled(&state->txa) &&
-+	    !is_tx_enabled(&state->txb)) {
-+		ret = -ENODEV;
-+		adv_err(state, "No output endpoint defined\n");
-+		goto err_cleanup_clients;
-+	}
-+
- 	/* SW reset ADV748X to its default values */
- 	ret = adv748x_reset(state);
- 	if (ret) {
-@@ -676,17 +694,21 @@ static int adv748x_probe(struct i2c_client *client,
+-	/* Propagate the format code to all pads */
++	/* Propagate the format code to all pads. */
+ 	if (fmt->pad == BRX_PAD_SINK(0)) {
+ 		unsigned int i;
+ 
+diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
+index b6619c9c18bb..249963cb2ec0 100644
+--- a/drivers/media/platform/vsp1/vsp1_drv.c
++++ b/drivers/media/platform/vsp1/vsp1_drv.c
+@@ -802,7 +802,7 @@ static int vsp1_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, vsp1);
+ 
+-	/* I/O and IRQ resources (clock managed by the clock PM domain) */
++	/* I/O and IRQ resources (clock managed by the clock PM domain). */
+ 	io = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	vsp1->mmio = devm_ioremap_resource(&pdev->dev, io);
+ 	if (IS_ERR(vsp1->mmio))
+@@ -821,7 +821,7 @@ static int vsp1_probe(struct platform_device *pdev)
+ 		return ret;
  	}
  
- 	/* Initialise TXA */
--	ret = adv748x_csi2_init(state, &state->txa);
--	if (ret) {
--		adv_err(state, "Failed to probe TXA");
--		goto err_cleanup_afe;
-+	if (is_tx_enabled(&state->txa)) {
-+		ret = adv748x_csi2_init(state, &state->txa);
-+		if (ret) {
-+			adv_err(state, "Failed to probe TXA");
-+			goto err_cleanup_afe;
-+		}
- 	}
+-	/* FCP (optional) */
++	/* FCP (optional). */
+ 	fcp_node = of_parse_phandle(pdev->dev.of_node, "renesas,fcp", 0);
+ 	if (fcp_node) {
+ 		vsp1->fcp = rcar_fcp_get(fcp_node);
+@@ -869,7 +869,7 @@ static int vsp1_probe(struct platform_device *pdev)
  
- 	/* Initialise TXB */
--	ret = adv748x_csi2_init(state, &state->txb);
--	if (ret) {
--		adv_err(state, "Failed to probe TXB");
--		goto err_cleanup_txa;
-+	if (is_tx_enabled(&state->txb)) {
-+		ret = adv748x_csi2_init(state, &state->txb);
-+		if (ret) {
-+			adv_err(state, "Failed to probe TXB");
-+			goto err_cleanup_txa;
-+		}
- 	}
+ 	dev_dbg(&pdev->dev, "IP version 0x%08x\n", vsp1->version);
  
- 	return 0;
-diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
-index 469be87..709cdea 100644
---- a/drivers/media/i2c/adv748x/adv748x-csi2.c
-+++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
-@@ -266,20 +266,8 @@ static int adv748x_csi2_init_controls(struct adv748x_csi2 *tx)
+-	/* Instanciate entities */
++	/* Instantiate entities. */
+ 	ret = vsp1_create_entities(vsp1);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "failed to create entities\n");
+diff --git a/drivers/media/platform/vsp1/vsp1_entity.c b/drivers/media/platform/vsp1/vsp1_entity.c
+index 36a29e13109e..a54ab528b060 100644
+--- a/drivers/media/platform/vsp1/vsp1_entity.c
++++ b/drivers/media/platform/vsp1/vsp1_entity.c
+@@ -404,7 +404,7 @@ int vsp1_subdev_set_pad_format(struct v4l2_subdev *subdev,
+ 	format = vsp1_entity_get_pad_format(entity, config, entity->source_pad);
+ 	*format = fmt->format;
  
- int adv748x_csi2_init(struct adv748x_state *state, struct adv748x_csi2 *tx)
- {
--	struct device_node *ep;
- 	int ret;
+-	/* Reset the crop and compose rectangles */
++	/* Reset the crop and compose rectangles. */
+ 	selection = vsp1_entity_get_pad_selection(entity, config, fmt->pad,
+ 						  V4L2_SEL_TGT_CROP);
+ 	selection->left = 0;
+diff --git a/drivers/media/platform/vsp1/vsp1_rpf.c b/drivers/media/platform/vsp1/vsp1_rpf.c
+index f8005b60b9d2..616afa7e165f 100644
+--- a/drivers/media/platform/vsp1/vsp1_rpf.c
++++ b/drivers/media/platform/vsp1/vsp1_rpf.c
+@@ -108,7 +108,7 @@ static void rpf_configure_stream(struct vsp1_entity *entity,
+ 	vsp1_rpf_write(rpf, dlb, VI6_RPF_INFMT, infmt);
+ 	vsp1_rpf_write(rpf, dlb, VI6_RPF_DSWAP, fmtinfo->swap);
  
--	/* We can not use container_of to get back to the state with two TXs */
--	tx->state = state;
--	tx->page = is_txa(tx) ? ADV748X_PAGE_TXA : ADV748X_PAGE_TXB;
--
--	ep = state->endpoints[is_txa(tx) ? ADV748X_PORT_TXA : ADV748X_PORT_TXB];
--	if (!ep) {
--		adv_err(state, "No endpoint found for %s\n",
--				is_txa(tx) ? "txa" : "txb");
--		return -ENODEV;
--	}
--
- 	/* Initialise the virtual channel */
- 	adv748x_csi2_set_virtual_channel(tx, 0);
+-	/* Output location */
++	/* Output location. */
+ 	if (pipe->brx) {
+ 		const struct v4l2_rect *compose;
  
-@@ -288,7 +276,7 @@ int adv748x_csi2_init(struct adv748x_state *state, struct adv748x_csi2 *tx)
- 			    is_txa(tx) ? "txa" : "txb");
+@@ -309,7 +309,7 @@ static void rpf_configure_partition(struct vsp1_entity *entity,
  
- 	/* Ensure that matching is based upon the endpoint fwnodes */
--	tx->sd.fwnode = of_fwnode_handle(ep);
-+	tx->sd.fwnode = of_fwnode_handle(state->endpoints[tx->port]);
+ 	/*
+ 	 * Interlaced pipelines will use the extended pre-cmd to process
+-	 * SRCM_ADDR_{Y,C0,C1}
++	 * SRCM_ADDR_{Y,C0,C1}.
+ 	 */
+ 	if (pipe->interlaced) {
+ 		vsp1_rpf_configure_autofld(rpf, dl);
+diff --git a/drivers/media/platform/vsp1/vsp1_sru.c b/drivers/media/platform/vsp1/vsp1_sru.c
+index 2a40e09b9aa7..f48b085b5b5e 100644
+--- a/drivers/media/platform/vsp1/vsp1_sru.c
++++ b/drivers/media/platform/vsp1/vsp1_sru.c
+@@ -339,7 +339,7 @@ static void sru_partition(struct vsp1_entity *entity,
+ 	output = vsp1_entity_get_pad_format(&sru->entity, sru->entity.config,
+ 					    SRU_PAD_SOURCE);
  
- 	/* Register internal ops for incremental subdev registration */
- 	tx->sd.internal_ops = &adv748x_csi2_internal_ops;
-@@ -321,6 +309,9 @@ int adv748x_csi2_init(struct adv748x_state *state, struct adv748x_csi2 *tx)
+-	/* Adapt if SRUx2 is enabled */
++	/* Adapt if SRUx2 is enabled. */
+ 	if (input->width != output->width) {
+ 		window->width /= 2;
+ 		window->left /= 2;
+diff --git a/drivers/media/platform/vsp1/vsp1_uds.c b/drivers/media/platform/vsp1/vsp1_uds.c
+index 7c11651db5d4..c704bdaf4edc 100644
+--- a/drivers/media/platform/vsp1/vsp1_uds.c
++++ b/drivers/media/platform/vsp1/vsp1_uds.c
+@@ -314,13 +314,13 @@ static void uds_configure_partition(struct vsp1_entity *entity,
+ 	output = vsp1_entity_get_pad_format(&uds->entity, uds->entity.config,
+ 					    UDS_PAD_SOURCE);
  
- void adv748x_csi2_cleanup(struct adv748x_csi2 *tx)
- {
-+	if (!is_tx_enabled(tx))
-+		return;
-+
- 	v4l2_async_unregister_subdev(&tx->sd);
- 	media_entity_cleanup(&tx->sd.entity);
- 	v4l2_ctrl_handler_free(&tx->ctrl_hdl);
-diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
-index 65f8374..1cf46c40 100644
---- a/drivers/media/i2c/adv748x/adv748x.h
-+++ b/drivers/media/i2c/adv748x/adv748x.h
-@@ -82,6 +82,7 @@ struct adv748x_csi2 {
- 	struct adv748x_state *state;
- 	struct v4l2_mbus_framefmt format;
- 	unsigned int page;
-+	unsigned int port;
+-	/* Input size clipping */
++	/* Input size clipping. */
+ 	vsp1_uds_write(uds, dlb, VI6_UDS_HSZCLIP, VI6_UDS_HSZCLIP_HCEN |
+ 		       (0 << VI6_UDS_HSZCLIP_HCL_OFST_SHIFT) |
+ 		       (partition->uds_sink.width
+ 				<< VI6_UDS_HSZCLIP_HCL_SIZE_SHIFT));
  
- 	struct media_pad pads[ADV748X_CSI2_NR_PADS];
- 	struct v4l2_ctrl_handler ctrl_hdl;
-@@ -91,6 +92,7 @@ struct adv748x_csi2 {
+-	/* Output size clipping */
++	/* Output size clipping. */
+ 	vsp1_uds_write(uds, dlb, VI6_UDS_CLIP_SIZE,
+ 		       (partition->uds_source.width
+ 				<< VI6_UDS_CLIP_SIZE_HSIZE_SHIFT) |
+@@ -374,7 +374,7 @@ static void uds_partition(struct vsp1_entity *entity,
+ 	const struct v4l2_mbus_framefmt *output;
+ 	const struct v4l2_mbus_framefmt *input;
  
- #define notifier_to_csi2(n) container_of(n, struct adv748x_csi2, notifier)
- #define adv748x_sd_to_csi2(sd) container_of(sd, struct adv748x_csi2, sd)
-+#define is_tx_enabled(_tx) ((_tx)->state->endpoints[(_tx)->port] != NULL)
+-	/* Initialise the partition state */
++	/* Initialise the partition state. */
+ 	partition->uds_sink = *window;
+ 	partition->uds_source = *window;
  
- enum adv748x_hdmi_pads {
- 	ADV748X_HDMI_SINK,
+diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
+index 9404d7968371..c114cc4d2349 100644
+--- a/drivers/media/platform/vsp1/vsp1_video.c
++++ b/drivers/media/platform/vsp1/vsp1_video.c
+@@ -891,7 +891,7 @@ static void vsp1_video_cleanup_pipeline(struct vsp1_pipeline *pipe)
+ 	pipe->stream_config = NULL;
+ 	pipe->configured = false;
+ 
+-	/* Release our partition table allocation */
++	/* Release our partition table allocation. */
+ 	kfree(pipe->part_table);
+ 	pipe->part_table = NULL;
+ }
+diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c b/drivers/media/platform/vsp1/vsp1_wpf.c
+index c2a1a7f97e26..32bb207b2007 100644
+--- a/drivers/media/platform/vsp1/vsp1_wpf.c
++++ b/drivers/media/platform/vsp1/vsp1_wpf.c
+@@ -317,7 +317,7 @@ static void wpf_configure_stream(struct vsp1_entity *entity,
+ 
+ 	vsp1_wpf_write(wpf, dlb, VI6_WPF_SRCRPF, srcrpf);
+ 
+-	/* Enable interrupts */
++	/* Enable interrupts. */
+ 	vsp1_dl_body_write(dlb, VI6_WPF_IRQ_STA(wpf->entity.index), 0);
+ 	vsp1_dl_body_write(dlb, VI6_WPF_IRQ_ENB(wpf->entity.index),
+ 			   VI6_WFP_IRQ_ENB_DFEE);
 -- 
-2.7.4
+2.17.1
