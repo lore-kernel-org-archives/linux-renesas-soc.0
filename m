@@ -1,71 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:59612 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727370AbeHaNvX (ORCPT
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:42538 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727178AbeHaMQc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 31 Aug 2018 09:51:23 -0400
-Date: Fri, 31 Aug 2018 11:44:39 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Fri, 31 Aug 2018 08:16:32 -0400
+MIME-Version: 1.0
+References: <20180830213843.14680-1-niklas.soderlund+renesas@ragnatech.se>
+ <CAMuHMdWTPNxUQ+Go-CPe3KZqr9eoLTaegbvE2OdmwHhBi6n+hg@mail.gmail.com> <20180831075703.GG28374@bigcity.dyn.berto.se>
+In-Reply-To: <20180831075703.GG28374@bigcity.dyn.berto.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 31 Aug 2018 10:10:04 +0200
+Message-ID: <CAMuHMdWa-c1QcYN_moyck4J1Dte3LyEHfRZ5Ai915UX82CxbPw@mail.gmail.com>
+Subject: Re: [PATCH v2] mmc: renesas_sdhi_internal_dmac: set scatter/gather
+ max segment size
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Linux MMC List <linux-mmc@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v2] mmc: renesas_sdhi_internal_dmac: set scatter/gather
- max segment size
-Message-ID: <20180831094439.ldljak3bnmehh6vs@ninjato>
-References: <20180830213843.14680-1-niklas.soderlund+renesas@ragnatech.se>
- <CAMuHMdWTPNxUQ+Go-CPe3KZqr9eoLTaegbvE2OdmwHhBi6n+hg@mail.gmail.com>
- <20180831075703.GG28374@bigcity.dyn.berto.se>
- <CAMuHMdWa-c1QcYN_moyck4J1Dte3LyEHfRZ5Ai915UX82CxbPw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rhwxbaancjexfv4x"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWa-c1QcYN_moyck4J1Dte3LyEHfRZ5Ai915UX82CxbPw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Niklas,
 
---rhwxbaancjexfv4x
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Fri, Aug 31, 2018 at 9:57 AM Niklas Söderlund
+<niklas.soderlund@ragnatech.se> wrote:
+> On 2018-08-31 00:10:28 +0200, Geert Uytterhoeven wrote:
+> > On Thu, Aug 30, 2018 at 11:39 PM Niklas Söderlund
+> > <niklas.soderlund+renesas@ragnatech.se> wrote:
+> > > Fix warning when running with CONFIG_DMA_API_DEBUG_SG=y by allocating a
+> > > device_dma_parameters structure and filling in the max segment size. The
+> > > size used is the result of a discussion with Renesas hardware engineers
+> > > and unfortunately not found in the datasheet.
+> > >
+> > >   renesas_sdhi_internal_dmac ee140000.sd: DMA-API: mapping sg segment
+> > >   longer than device claims to support [len=126976] [max=65536A]
 
+> > > --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> > > +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> > > @@ -308,12 +308,23 @@ static const struct soc_device_attribute gen3_soc_whitelist[] = {
+> > >  static int renesas_sdhi_internal_dmac_probe(struct platform_device *pdev)
+> > >  {
+> > >         const struct soc_device_attribute *soc = soc_device_match(gen3_soc_whitelist);
+> > > +       struct device *dev = &pdev->dev;
+> > >
+> > >         if (!soc)
+> > >                 return -ENODEV;
+> > >
+> > >         global_flags |= (unsigned long)soc->data;
+> > >
+> > > +       if (!dev->dma_parms) {
+> >
+> > I guess dev->dma_parms is retained on unbind/rebind?
+> >
+> > > +               dev->dma_parms = devm_kzalloc(dev, sizeof(*dev->dma_parms),
+> > > +                                             GFP_KERNEL);
+> >
+> > But by using devm_kzalloc(), the memory will be freed, and lead to reuse after
+> > free?
+>
+> I don't know how the unbind/rebind behaves in this regard. In v1 of this
 
-> As a comment in the other thread said you should not set it multiple times,
-> probably the best solution is to:
->   (a) check if dev->dma_parms is already set, and if not:
->       (b) allocate using plain kzalloc() (with a comment why!),
->       (c) not free the memory nor reset dev->dma_parms (with a comment why!).
+I expect the struct device to be retained. You can check with sysfs unbind/bind,
+and CONFIG_DEBUG_SLAB=y to enable poisoning on free (or just print
+the value found for less spectacular behavior ;-)
 
-Quite clumsy if done per driver, or?
+> patch I used kzalloc() and a remove function to free the memory and
+> reset the dev->dma_parms pointe to NULL. Do you think that is the
+> correct approach here?
 
-If this is the intended behaviour, then there is something to improve
-with the dma_params API, or? If something which is meant to have a
-lifecycle same as the device but needs to get set during probe/remove
-lifecycle, this calls for at least a helper function which hides all
-these details?
+As a comment in the other thread said you should not set it multiple times,
+probably the best solution is to:
+  (a) check if dev->dma_parms is already set, and if not:
+      (b) allocate using plain kzalloc() (with a comment why!),
+      (c) not free the memory nor reset dev->dma_parms (with a comment why!).
 
+Gr{oetje,eeting}s,
 
---rhwxbaancjexfv4x
-Content-Type: application/pgp-signature; name="signature.asc"
+                        Geert
 
------BEGIN PGP SIGNATURE-----
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluJDgMACgkQFA3kzBSg
-Kbaj5w//Y/NqIe0KcEY7tobNHJc6H6axM7Qj6/mKJLygX/Dv/ylSOds88DXv7hpu
-Ckx+yofOcpnWag/6qXkyvk9Cm+iA6SFjEVkOmJW90bYxOJPUy7GihutIWvfwhkdD
-x9w7iHqwMaQkadj3gYHdVNobc4/V49UKhOzLdEIh/ube7BypIEVq390BRsBJQGWc
-phxA/HcdkTj7z0Ax2lLR3E8Hc/ekVwhMnjM3blP0uKl/Lt169CO53IMWEkmwKcIL
-s58K6XJbkmaGa125WKyIFs3px/iLy6EFwu6ihW1HbR89eon0GOS/obLoTW/UZWCf
-FVk0kJAUPO3Rvl0eS+Z5oQgskgPCia24W7pHjHd8FsSn57Om/UmDPIwLI4meZoNG
-TXG4tTSKLl7j18dLlCmHfxnGBAvr1/3pdiFKFTJ2M+xW4yUZa2MTVK1jxYqfgseA
-GNVBXoT1yYjYvrbnzyIRGvPpq4bja/9v838JO4lNAlM6Gwq8HSsaWO3tVyfb/r9S
-dds9WdB1EjWN7R5PhycOGQQaIp+26xDb6S3p0c9PTMbMH+J6yeCHba8eqDceK5RP
-B9i99bjEFnbWKVQkt07rEa07JkrhfbW7ylh0iTjFwVa0zwcGR33yEl8Fn7lDX2ju
-U+DpGASdR2tLCWeXQY4AGImTk18FK3CXQZj/cFr/EDMmRnvsFOk=
-=2Qx3
------END PGP SIGNATURE-----
-
---rhwxbaancjexfv4x--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
