@@ -1,193 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:52110 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727359AbeH3Szs (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:55922 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727326AbeHaV0q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 Aug 2018 14:55:48 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
+        Fri, 31 Aug 2018 17:26:46 -0400
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180831130958.6744-1-geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: dts: renesas: r8a77990: Use CPG/MSSR and SYSC binding definitions
-Date: Thu, 30 Aug 2018 16:52:20 +0200
-Message-Id: <20180830145220.6708-1-geert+renesas@glider.be>
+References: <20180831130958.6744-1-geert+renesas@glider.be>
+Message-ID: <153573589776.93865.14597877971955583633@swboyd.mtv.corp.google.com>
+Subject: Re: [git pull] clk: renesas: Updates for v4.20
+Date: Fri, 31 Aug 2018 10:18:17 -0700
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the SoC-specific CPG/MSSR include file to allow future use of
-R8A77990_CLK_* symbols.
-Replace the hardcoded power domain indices by R8A77990_PD_* symbols.
+Quoting Geert Uytterhoeven (2018-08-31 06:09:58)
+>         Hi Mike, Stephen,
+> =
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 36 +++++++++++------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+> The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343f=
+f3:
+> =
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index 2ee0edfb18d4b9d6..e2c2d1480a68cf1b 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -5,7 +5,7 @@
-  * Copyright (C) 2018 Renesas Electronics Corp.
-  */
- 
--#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+#include <dt-bindings/clock/r8a77990-cpg-mssr.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/power/r8a77990-sysc.h>
- 
-@@ -22,7 +22,7 @@
- 			compatible = "arm,cortex-a53", "arm,armv8";
- 			reg = <0>;
- 			device_type = "cpu";
--			power-domains = <&sysc 5>;
-+			power-domains = <&sysc R8A77990_PD_CA53_CPU0>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
- 		};
-@@ -31,14 +31,14 @@
- 			compatible = "arm,cortex-a53", "arm,armv8";
- 			reg = <1>;
- 			device_type = "cpu";
--			power-domains = <&sysc 6>;
-+			power-domains = <&sysc R8A77990_PD_CA53_CPU1>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
- 		};
- 
- 		L2_CA53: cache-controller-0 {
- 			compatible = "cache";
--			power-domains = <&sysc 21>;
-+			power-domains = <&sysc R8A77990_PD_CA53_SCU>;
- 			cache-unified;
- 			cache-level = <2>;
- 		};
-@@ -75,7 +75,7 @@
- 				     "renesas,rcar-gen3-wdt";
- 			reg = <0 0xe6020000 0 0x0c>;
- 			clocks = <&cpg CPG_MOD 402>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 402>;
- 			status = "disabled";
- 		};
-@@ -91,7 +91,7 @@
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 912>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 912>;
- 		};
- 
-@@ -106,7 +106,7 @@
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 911>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 911>;
- 		};
- 
-@@ -121,7 +121,7 @@
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 910>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 910>;
- 		};
- 
-@@ -136,7 +136,7 @@
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 909>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 909>;
- 		};
- 
-@@ -151,7 +151,7 @@
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 908>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 908>;
- 		};
- 
-@@ -166,7 +166,7 @@
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 907>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 907>;
- 		};
- 
-@@ -181,7 +181,7 @@
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 906>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 906>;
- 		};
- 
-@@ -329,7 +329,7 @@
- 					  "ch20", "ch21", "ch22", "ch23",
- 					  "ch24";
- 			clocks = <&cpg CPG_MOD 812>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			phy-mode = "rgmii";
- 			#address-cells = <1>;
-@@ -414,7 +414,7 @@
- 			interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 310>;
- 			clock-names = "fck";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 310>;
- 			status = "disabled";
- 		};
-@@ -437,7 +437,7 @@
- 			clocks = <&cpg CPG_MOD 703>;
- 			phys = <&usb2_phy0>;
- 			phy-names = "usb";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 703>;
- 			status = "disabled";
- 		};
-@@ -450,7 +450,7 @@
- 			phys = <&usb2_phy0>;
- 			phy-names = "usb";
- 			companion = <&ohci0>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 703>;
- 			status = "disabled";
- 		};
-@@ -461,7 +461,7 @@
- 			reg = <0 0xee080200 0 0x700>;
- 			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 703>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 703>;
- 			#phy-cells = <0>;
- 			status = "disabled";
-@@ -480,7 +480,7 @@
- 					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
- 			clocks = <&cpg CPG_MOD 408>;
- 			clock-names = "clk";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 408>;
- 		};
- 
--- 
-2.17.1
+>   Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+> =
+
+> are available in the Git repository at:
+> =
+
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/clk-renesas-for-v4.20-tag1
+> =
+
+> for you to fetch changes up to b30c862f2a72002c06df23d05c2ca6b49148c4d4:
+> =
+
+>   clk: renesas: r8a77990: Add missing I2C7 clock (2018-08-31 10:33:59 +02=
+00)
+> =
+
+
+Pulled. Thanks.
