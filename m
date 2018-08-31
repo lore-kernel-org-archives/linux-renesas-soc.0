@@ -1,44 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:54930 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389938AbeHGURG (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:42394 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727363AbeHaOaz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Aug 2018 16:17:06 -0400
-Date: Tue, 7 Aug 2018 12:01:34 -0600
-From: Rob Herring <robh@kernel.org>
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] ASoC: rsnd: Document R-Car M3-N support
-Message-ID: <20180807180134.GA6871@rob-hp-laptop>
-References: <1532551215-14868-1-git-send-email-ykaneko0929@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1532551215-14868-1-git-send-email-ykaneko0929@gmail.com>
+        Fri, 31 Aug 2018 10:30:55 -0400
+From: Kieran Bingham <kieran@ksquared.org.uk>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [VSP-Tests: PATCH] tests: add pseudo platform test
+Date: Fri, 31 Aug 2018 11:23:59 +0100
+Message-Id: <20180831102359.18335-1-kieran@bingham.xyz>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jul 26, 2018 at 05:40:15AM +0900, Yoshihiro Kaneko wrote:
-> From: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-> 
-> Document support for the sound modules in the Renesas M3-N (r8a77965)
-> SoC.
-> 
-> No driver update is needed.
-> 
-> Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-> ---
-> 
-> This patch is based on the devel branch of Simon Horman's renesas tree.
-> 
->  Documentation/devicetree/bindings/sound/renesas,rsnd.txt | 1 +
->  1 file changed, 1 insertion(+)
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-Acked-by: Rob Herring <robh@kernel.org>
+Provide an initial test which can run as part of the test suite.
+This test will report the platform and kernel version, along with
+the identified paths of required utilities.
+
+This will aid in ensuring that required tools are available on a
+running platform - and report the kernel and platform details in
+any test suite output for clarification of results.
+
+Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+---
+
+This addition allows extra information to be recorded about the system
+when running the tests in a batch (or in future automated testing)
+
+Ideally - we would report the version of each tool as well, allowing any
+issues to be fully recreated.
+
+
+ tests/vsp-unit-test-0000.sh | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+ create mode 100755 tests/vsp-unit-test-0000.sh
+
+diff --git a/tests/vsp-unit-test-0000.sh b/tests/vsp-unit-test-0000.sh
+new file mode 100755
+index 000000000000..144cfc677b32
+--- /dev/null
++++ b/tests/vsp-unit-test-0000.sh
+@@ -0,0 +1,20 @@
++#!/bin/sh
++
++# Report testing conditions
++
++model=`cat /sys/firmware/devicetree/base/model`
++
++echo "Test Conditions:"
++
++function check_all() {
++	echo "  Platform: " "$model"
++	echo "  Kernel release: " `uname -r`
++	echo "  convert: " `which convert`
++	echo "  compare: " `which compare`
++	echo "  killall: " `which killall`
++	echo "  raw2rgbpnm: " `which raw2rgbpnm`
++	echo "  stress: " `which stress`
++	echo "  yavta: " `which yavta`
++}
++
++check_all | column -ts ":"
+-- 
+2.17.1
