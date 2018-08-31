@@ -1,60 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:37571 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731957AbeHNPUC (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:58991 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727294AbeHaOli (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Aug 2018 11:20:02 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] dt-bindings: i2c: rcar: Add r8a774a1 support
-Date: Tue, 14 Aug 2018 13:32:55 +0100
-Message-Id: <1534249975-15588-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Fri, 31 Aug 2018 10:41:38 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 2/3] dt-bindings: usb: renesas_usbhs: add clock-names property
+Date: Fri, 31 Aug 2018 19:32:58 +0900
+Message-Id: <1535711579-15169-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1535711579-15169-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1535711579-15169-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document RZ/G2M (R8A774A1) I2C compatibility with the relevant driver
-dt-bindings.
+R-Car Gen3 needs to enable clocks of both host and peripheral.
+Otherwise, other side device cannot work correctly. So, this patch
+adds a property of clock-names for R-Car Gen3 as an optional.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- Documentation/devicetree/bindings/i2c/i2c-rcar.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/usb/renesas_usbhs.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-rcar.txt b/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
-index 7bb6484..39cd21d 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
-@@ -4,6 +4,7 @@ Required properties:
- - compatible:
- 	"renesas,i2c-r8a7743" if the device is a part of a R8A7743 SoC.
- 	"renesas,i2c-r8a7745" if the device is a part of a R8A7745 SoC.
-+	"renesas,i2c-r8a774a1" if the device is a part of a R8A774A1 SoC.
- 	"renesas,i2c-r8a7778" if the device is a part of a R8A7778 SoC.
- 	"renesas,i2c-r8a7779" if the device is a part of a R8A7779 SoC.
- 	"renesas,i2c-r8a7790" if the device is a part of a R8A7790 SoC.
-@@ -21,7 +22,8 @@ Required properties:
- 	"renesas,rcar-gen1-i2c" for a generic R-Car Gen1 compatible device.
- 	"renesas,rcar-gen2-i2c" for a generic R-Car Gen2 or RZ/G1 compatible
- 				device.
--	"renesas,rcar-gen3-i2c" for a generic R-Car Gen3 compatible device.
-+	"renesas,rcar-gen3-i2c" for a generic R-Car Gen3 or RZ/G2 compatible
-+				device.
- 	"renesas,i2c-rcar" (deprecated)
+diff --git a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
+index 087140a..a8fa3ec 100644
+--- a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
++++ b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
+@@ -37,6 +37,8 @@ Optional properties:
+   - dmas: Must contain a list of references to DMA specifiers.
+   - dma-names : named "ch%d", where %d is the channel number ranging from zero
+                 to the number of channels (DnFIFOs) minus one.
++  - clock-names: For a "renesas,rcar-gen3-usbhs" compatible device,
++		 "hsusb" and "ehci/ohci" can be set.
  
- 	When compatible with the generic version, nodes must list the
+ Example:
+ 	usbhs: usb@e6590000 {
 -- 
-2.7.4
+1.9.1
