@@ -1,56 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:37897 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731858AbeHWRnR (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52514 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727475AbeHaRrm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Aug 2018 13:43:17 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH] arm64: dts: renesas: r8a774a1: Add pinctrl device node
-Date: Thu, 23 Aug 2018 15:13:16 +0100
-Message-Id: <1535033596-22351-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Fri, 31 Aug 2018 13:47:42 -0400
+Date: Fri, 31 Aug 2018 15:40:06 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77990: Add BRG support to SCIF2
+Message-ID: <20180831134005.fx4unlmn3tkiw5ug@verge.net.au>
+References: <20180830145635.7659-1-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180830145635.7659-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds pinctrl device node for R8A774A1 SoC.
+On Thu, Aug 30, 2018 at 04:56:35PM +0200, Geert Uytterhoeven wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> 
+> Add the device node for the external SCIF_CLK, and describe the clock
+> inputs for the Baud Rate Generator for External Clock (BRG) for SCIF2,
+> which can increase serial clock accuracy.
+> 
+> The presence of the SCIF_CLK crystal and its clock frequency depend on
+> the actual board.
+> 
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> [geert: Enhance patch description]
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Note: The Ebisu board does not provide SCIF_CLK.  However, using the BRG
+>       increases the serial console's clock accurary from 115200+541 bps
+>       to 115200-257 bps.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
-
-This patch depends on:
-https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg30339.html
-https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg30539.html
-
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index 5b2ee60..b9d2da4 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -200,6 +200,11 @@
- 			status = "disabled";
- 		};
- 
-+		pfc: pin-controller@e6060000 {
-+			compatible = "renesas,pfc-r8a774a1";
-+			reg = <0 0xe6060000 0 0x50c>;
-+		};
-+
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a774a1-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x0bb0>;
--- 
-2.7.4
+Thanks Geert, applied for v4.20.
