@@ -1,47 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:42864 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726321AbeHQK4a (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:44516 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727724AbeHaSsj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Aug 2018 06:56:30 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: Mark Brown <broonie@kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] ASoC: rsnd: Add device tree binding for r8a77990
-Date: Fri, 17 Aug 2018 16:53:55 +0900
-Message-Id: <1534492435-17859-1-git-send-email-ykaneko0929@gmail.com>
+        Fri, 31 Aug 2018 14:48:39 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 1/6] media: vsp1: Remove artificial pixel limitation
+Date: Fri, 31 Aug 2018 15:40:39 +0100
+Message-Id: <20180831144044.31713-2-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <20180831144044.31713-1-kieran.bingham+renesas@ideasonboard.com>
+References: <20180831144044.31713-1-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+The VSP1 has a minimum width and height of a single pixel, with the
+exception of pixel formats with sub-sampling.
 
-This patch adds the device tree binding of the r8a77990 SoC.
+Remove the artificial minimum width and minimum height limitation, and
+instead clamp the minimum dimensions based upon the sub-sampling
+parameter of that dimension.
 
-Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
+ drivers/media/platform/vsp1/vsp1_video.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-This patch is based on the devel branch of Simon Horman's renesas tree.
-
- Documentation/devicetree/bindings/sound/renesas,rsnd.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-index b86d790..07aba8d 100644
---- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-+++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-@@ -352,6 +352,7 @@ Required properties:
- 				    - "renesas,rcar_sound-r8a7794" (R-Car E2)
- 				    - "renesas,rcar_sound-r8a7795" (R-Car H3)
- 				    - "renesas,rcar_sound-r8a7796" (R-Car M3-W)
-+				    - "renesas,rcar_sound-r8a77990" (R-Car E3)
- - reg				: Should contain the register physical address.
- 				  required register is
- 				   SRU/ADG/SSI      if generation1
+diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
+index 81d47a09d7bc..e78eadd0295b 100644
+--- a/drivers/media/platform/vsp1/vsp1_video.c
++++ b/drivers/media/platform/vsp1/vsp1_video.c
+@@ -38,9 +38,7 @@
+ #define VSP1_VIDEO_DEF_WIDTH		1024
+ #define VSP1_VIDEO_DEF_HEIGHT		768
+ 
+-#define VSP1_VIDEO_MIN_WIDTH		2U
+ #define VSP1_VIDEO_MAX_WIDTH		8190U
+-#define VSP1_VIDEO_MIN_HEIGHT		2U
+ #define VSP1_VIDEO_MAX_HEIGHT		8190U
+ 
+ /* -----------------------------------------------------------------------------
+@@ -136,9 +134,8 @@ static int __vsp1_video_try_format(struct vsp1_video *video,
+ 	height = round_down(height, info->vsub);
+ 
+ 	/* Clamp the width and height. */
+-	pix->width = clamp(width, VSP1_VIDEO_MIN_WIDTH, VSP1_VIDEO_MAX_WIDTH);
+-	pix->height = clamp(height, VSP1_VIDEO_MIN_HEIGHT,
+-			    VSP1_VIDEO_MAX_HEIGHT);
++	pix->width = clamp(width, info->hsub, VSP1_VIDEO_MAX_WIDTH);
++	pix->height = clamp(height, info->vsub, VSP1_VIDEO_MAX_HEIGHT);
+ 
+ 	/*
+ 	 * Compute and clamp the stride and image size. While not documented in
 -- 
-1.9.1
+2.17.1
