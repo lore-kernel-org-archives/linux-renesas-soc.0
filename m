@@ -1,60 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:44516 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727724AbeHaSsj (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:7148 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727334AbeHaMT1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 31 Aug 2018 14:48:39 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        mchehab@kernel.org
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 1/6] media: vsp1: Remove artificial pixel limitation
-Date: Fri, 31 Aug 2018 15:40:39 +0100
-Message-Id: <20180831144044.31713-2-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <20180831144044.31713-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20180831144044.31713-1-kieran.bingham+renesas@ideasonboard.com>
+        Fri, 31 Aug 2018 08:19:27 -0400
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+CC: Jacopo Mondi <jacopo@jmondi.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Simon Horman <horms@verge.net.au>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 3/3] ARM: dts: r9a06g032: Add pinctrl node
+Date: Fri, 31 Aug 2018 08:13:07 +0000
+Message-ID: <TY1PR01MB1769AF7EB0152AF03B7B77C3F50F0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <1535634775-19365-4-git-send-email-phil.edworthy@renesas.com>
+ <201808310827.o3GAs37i%fengguang.wu@intel.com>
+In-Reply-To: <201808310827.o3GAs37i%fengguang.wu@intel.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The VSP1 has a minimum width and height of a single pixel, with the
-exception of pixel formats with sub-sampling.
 
-Remove the artificial minimum width and minimum height limitation, and
-instead clamp the minimum dimensions based upon the sub-sampling
-parameter of that dimension.
+On 31 August 2018 01:51 kbuild test robot wrote:
+> Hi Phil,
+>=20
+> Thank you for the patch! Yet something to improve:
+>=20
+> [auto build test ERROR on pinctrl/devel] [also build test ERROR on v4.19-=
+rc1
+> next-20180830] [if your patch is applied to the wrong git tree, please dr=
+op us
+> a note to help improve the system]
+>=20
+> url:    https://github.com/0day-ci/linux/commits/Phil-Edworthy/Renesas-
+> R9A06G032-PINCTRL-Driver/20180831-050708
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-
+> pinctrl.git devel
+> config: arm-mvebu_v5_defconfig (attached as .config)
+> compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-
+> tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         GCC_VERSION=3D7.2.0 make.cross ARCH=3Darm
+>=20
+> All errors (new ones prefixed by >>):
+>=20
+> >> Error: arch/arm/boot/dts/r9a06g032.dtsi:93.23-24 syntax error
+>    FATAL ERROR: Unable to parse input tree
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_video.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+This error is because the patch depends on a patch from Geert:
+"ARM: dts: r9a06g032: Use r9a06g032-sysctrl binding definitions"
+https://patchwork.kernel.org/patch/10578707/
 
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index 81d47a09d7bc..e78eadd0295b 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -38,9 +38,7 @@
- #define VSP1_VIDEO_DEF_WIDTH		1024
- #define VSP1_VIDEO_DEF_HEIGHT		768
- 
--#define VSP1_VIDEO_MIN_WIDTH		2U
- #define VSP1_VIDEO_MAX_WIDTH		8190U
--#define VSP1_VIDEO_MIN_HEIGHT		2U
- #define VSP1_VIDEO_MAX_HEIGHT		8190U
- 
- /* -----------------------------------------------------------------------------
-@@ -136,9 +134,8 @@ static int __vsp1_video_try_format(struct vsp1_video *video,
- 	height = round_down(height, info->vsub);
- 
- 	/* Clamp the width and height. */
--	pix->width = clamp(width, VSP1_VIDEO_MIN_WIDTH, VSP1_VIDEO_MAX_WIDTH);
--	pix->height = clamp(height, VSP1_VIDEO_MIN_HEIGHT,
--			    VSP1_VIDEO_MAX_HEIGHT);
-+	pix->width = clamp(width, info->hsub, VSP1_VIDEO_MAX_WIDTH);
-+	pix->height = clamp(height, info->vsub, VSP1_VIDEO_MAX_HEIGHT);
- 
- 	/*
- 	 * Compute and clamp the stride and image size. While not documented in
--- 
-2.17.1
+BR
+Phil
