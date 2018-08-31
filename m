@@ -1,19 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:58991 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727294AbeHaOli (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:33031 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727200AbeHaK4T (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 31 Aug 2018 10:41:38 -0400
+        Fri, 31 Aug 2018 06:56:19 -0400
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
 Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 2/3] dt-bindings: usb: renesas_usbhs: add clock-names property
-Date: Fri, 31 Aug 2018 19:32:58 +0900
-Message-Id: <1535711579-15169-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1535711579-15169-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1535711579-15169-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/3] dt-bindings: usb: renesas_usbhs: add clock-names property
+Date: Fri, 31 Aug 2018 15:48:38 +0900
+Message-Id: <1535698119-10132-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1535698119-10132-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1535698119-10132-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
