@@ -1,78 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:41584 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726010AbeHTRdu (ORCPT
+Received: from sauhun.de ([88.99.104.3]:60192 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726990AbeHaPL7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Aug 2018 13:33:50 -0400
-Received: by mail-pl0-f65.google.com with SMTP id p4-v6so3644702pll.8
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Aug 2018 07:18:01 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Mon, 20 Aug 2018 23:17:56 +0900
-Message-Id: <153477467683.10333.4519731916058341587.sendpatchset@octo>
-Subject: [PATCH] arm64: dts: renesas: r8a77965: Attach the SYS-DMAC to the IPMMU
+        Fri, 31 Aug 2018 11:11:59 -0400
+Date: Fri, 31 Aug 2018 13:04:59 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2] mmc: renesas_sdhi_internal_dmac: set scatter/gather
+ max segment size
+Message-ID: <20180831110459.gv77k7v3pl2k65kd@ninjato>
+References: <20180830213843.14680-1-niklas.soderlund+renesas@ragnatech.se>
+ <CAMuHMdWTPNxUQ+Go-CPe3KZqr9eoLTaegbvE2OdmwHhBi6n+hg@mail.gmail.com>
+ <20180831075703.GG28374@bigcity.dyn.berto.se>
+ <CAMuHMdWa-c1QcYN_moyck4J1Dte3LyEHfRZ5Ai915UX82CxbPw@mail.gmail.com>
+ <20180831094439.ldljak3bnmehh6vs@ninjato>
+ <CAMuHMdX9p2sgQhpgbLmW4KGRyxEsbXD4=OEfm3QfM-cyLKK84A@mail.gmail.com>
+ <20180831103524.enm2v7zeysngqsdw@ninjato>
+ <20180831104907.GH28374@bigcity.dyn.berto.se>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tzs3uoa3gt3bsfhp"
+Content-Disposition: inline
+In-Reply-To: <20180831104907.GH28374@bigcity.dyn.berto.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
 
-For R-Car M3-N hook up SYS-DMAC0, SYS-DMAC1 and SYS-DMAC2 to
-IPMMU-DS0 and IPMMU-DS1 in same way as for R-Car M3-W.
-This follows the R-Car Gen3 Rev.1.00 (April 2018) datasheet.
+--tzs3uoa3gt3bsfhp
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+On Fri, Aug 31, 2018 at 12:49:08PM +0200, Niklas S=C3=B6derlund wrote:
+> On 2018-08-31 12:35:24 +0200, Wolfram Sang wrote:
+> >=20
+> > > Promote drivers/gpu/drm/exynos/exynos_drm_iommu.c:configure_dma_max_s=
+eg_size()
+> > > to a generic helper?
+> >=20
+> > Yes!
+> >=20
+> If that is promoted should not
+> drivers/gpu/drm/exynos/exynos_drm_iommu.c:clear_dma_max_seg_size() also=
+=20
+> be promoted? And if so should this patch revert back to v1 with a custom=
+=20
+> remove function which clears and free the dma_parms ?
 
- Developed on top of renesas-devel-20180810-v4.18-rc7
- 
- arch/arm64/boot/dts/renesas/r8a77965.dtsi |   24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+My preference would be easy to use helpers for drivers because this is
+easy to get wrong. I think we need to discuss with the creators of that
+API:
 
---- 0001/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a77965.dtsi	2018-08-20 23:11:52.655712775 +0900
-@@ -634,6 +634,14 @@
- 			resets = <&cpg 219>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_ds0 0>, <&ipmmu_ds0 1>,
-+			       <&ipmmu_ds0 2>, <&ipmmu_ds0 3>,
-+			       <&ipmmu_ds0 4>, <&ipmmu_ds0 5>,
-+			       <&ipmmu_ds0 6>, <&ipmmu_ds0 7>,
-+			       <&ipmmu_ds0 8>, <&ipmmu_ds0 9>,
-+			       <&ipmmu_ds0 10>, <&ipmmu_ds0 11>,
-+			       <&ipmmu_ds0 12>, <&ipmmu_ds0 13>,
-+			       <&ipmmu_ds0 14>, <&ipmmu_ds0 15>;
- 		};
- 
- 		dmac1: dma-controller@e7300000 {
-@@ -668,6 +676,14 @@
- 			resets = <&cpg 218>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_ds1 0>, <&ipmmu_ds1 1>,
-+			       <&ipmmu_ds1 2>, <&ipmmu_ds1 3>,
-+			       <&ipmmu_ds1 4>, <&ipmmu_ds1 5>,
-+			       <&ipmmu_ds1 6>, <&ipmmu_ds1 7>,
-+			       <&ipmmu_ds1 8>, <&ipmmu_ds1 9>,
-+			       <&ipmmu_ds1 10>, <&ipmmu_ds1 11>,
-+			       <&ipmmu_ds1 12>, <&ipmmu_ds1 13>,
-+			       <&ipmmu_ds1 14>, <&ipmmu_ds1 15>;
- 		};
- 
- 		dmac2: dma-controller@e7310000 {
-@@ -702,6 +718,14 @@
- 			resets = <&cpg 217>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_ds1 16>, <&ipmmu_ds1 17>,
-+			       <&ipmmu_ds1 18>, <&ipmmu_ds1 19>,
-+			       <&ipmmu_ds1 20>, <&ipmmu_ds1 21>,
-+			       <&ipmmu_ds1 22>, <&ipmmu_ds1 23>,
-+			       <&ipmmu_ds1 24>, <&ipmmu_ds1 25>,
-+			       <&ipmmu_ds1 26>, <&ipmmu_ds1 27>,
-+			       <&ipmmu_ds1 28>, <&ipmmu_ds1 29>,
-+			       <&ipmmu_ds1 30>, <&ipmmu_ds1 31>;
- 		};
- 
- 		ipmmu_ds0: mmu@e6740000 {
+a) if the drm/exynos driver does the right thing(tm)
+b) if these functions should be generic helpers
+c) when to clear the pointer (a bit related to a))
+
+Niklas, do you have an interest to do that? Or would you rather go with
+SDHI hacking? :) I can do it, too.
+
+
+--tzs3uoa3gt3bsfhp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluJINsACgkQFA3kzBSg
+KbYZJw//Zk4lTkgHVi2GcNFSQXm7BWdk26cbTPe3iRUarTLz5ijZpkmelFz8TjHd
+KROlSWQ/lsRNk04HuaJywqyWAl5JyuDqnnxIF8nXYf4tu/TuJmw51UkYnn/GVg7a
+F8Xl2ffvFmKvW1gGrSNesOMHbZu7O+9Dk0oa9qunYj0//p7zi/SFiz9lT/81op6O
+VgMRubyEj/a8PveGki8fD3WOmFWC/ubj6WMDADDIstPlk63vqdOQA6He0NtIy1lg
+4jGyiDKKElay0k4+zofEHaVal005v1NnSSZ7aaFrbwRJl7BDfc9Itp8bjiKedyg7
+0vTdaKDrcCSk2RdmSSsOVapaT9qu3bnOfpCf/28N3yuzu1l0mQhTRS75yTXF9pXz
+pEai6v/OEGME9pNUOho3efNiRApRMeh0Q215t7uj1Ylb6PhyZFxeQ5lUvue5rcgQ
+P1mrE/V/FBaFdMBkLvc+lOwAg9JpSLbKZp71p1V6O+okSf2asIkSn6FJ7/jwJV28
+YTQiSaF7NA4AdN7oAIzirLE7OvEHEQF7QEujaMJ4WtOQm7EYrb4zbKHd5mQbiFnR
+ytg6dQQlsL5q5quMdyup7KtJPTSVJS4gzIGJzrQRNkh3VtYnZo9fOGcgsOEvJNgK
+IMUBwVD+sYBx4fp8F2o4+nsadJM/Bp0bbddypfqhODyYJ2r9WdQ=
+=+L6I
+-----END PGP SIGNATURE-----
+
+--tzs3uoa3gt3bsfhp--
