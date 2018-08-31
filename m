@@ -1,16 +1,16 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:44354 "EHLO
+Received: from perceval.ideasonboard.com ([213.167.242.64]:44258 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728861AbeHaSKE (ORCPT
+        with ESMTP id S1728428AbeHaRsx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 31 Aug 2018 14:10:04 -0400
+        Fri, 31 Aug 2018 13:48:53 -0400
 From: Kieran Bingham <kieran.bingham@ideasonboard.com>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [VSP-Tests: PATCH v2] tests: Provide copy test to validate 1xN streams
-Date: Fri, 31 Aug 2018 15:02:22 +0100
-Message-Id: <20180831140222.28028-1-kieran.bingham@ideasonboard.com>
+Subject: [VSP-Tests: PATCH] tests: Provide copy test to validate 1xN streams
+Date: Fri, 31 Aug 2018 14:41:16 +0100
+Message-Id: <20180831134116.27510-1-kieran.bingham@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -29,14 +29,14 @@ Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
 diff --git a/tests/vsp-unit-test-0025.sh b/tests/vsp-unit-test-0025.sh
 new file mode 100755
-index 000000000000..57a1fac6e369
+index 000000000000..5c8980c40d89
 --- /dev/null
 +++ b/tests/vsp-unit-test-0025.sh
 @@ -0,0 +1,45 @@
 +#!/bin/sh
 +
 +#
-+# Test pipelines which have a single pixel dimension. Use a RPF -> WPF
++# Test pipelines which have a single pixel dimension. Use a RPF -> UDS -> WPF
 +# pipeline with identical input and output formats to generate our output.
 +#
 +
