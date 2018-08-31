@@ -1,60 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:17156 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727293AbeH2N3n (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:44510 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727573AbeHaSsi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Aug 2018 09:29:43 -0400
-From: Nguyen An Hoan <na-hoan@jinso.co.jp>
-To: broonie@kernel.org, linux-renesas-soc@vger.kernel.org,
-        geert+renesas@glider.be
-Cc: yoshihiro.shimoda.uh@renesas.com, magnus.damm@gmail.com,
-        kuninori.morimoto.gx@renesas.com, h-inayoshi@jinso.co.jp,
-        nv-dung@jinso.co.jp, cv-dong@jinso.co.jp, na-hoan@jinso.co.jp
-Subject: [PATCH] arm64: dts: salvator-common: Add PWM-2 channel
-Date: Wed, 29 Aug 2018 18:33:27 +0900
-Message-Id: <1535535207-2800-2-git-send-email-na-hoan@jinso.co.jp>
-In-Reply-To: <1535535207-2800-1-git-send-email-na-hoan@jinso.co.jp>
-References: <1535535207-2800-1-git-send-email-na-hoan@jinso.co.jp>
+        Fri, 31 Aug 2018 14:48:38 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 0/6] VSP1 Updates
+Date: Fri, 31 Aug 2018 15:40:38 +0100
+Message-Id: <20180831144044.31713-1-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hoan Nguyen An <na-hoan@jinso.co.jp>
+An assorted selection of fixes and updates for the VSP1 to improve code
+quality and remove incorrect limitations.
 
-Add PWM-2 channel(CN28 - pin30) support for Salvator-X
+The SRU and UDS are capable of larger partitions, as part of the
+partition algorithm - but we only document this support for now, as
+updating it should be done in consideration with the overlap and phase
+corrections necessary.
 
-Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
----
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Kieran Bingham (6):
+  media: vsp1: Remove artificial pixel limitation
+  media: vsp1: Correct the pitch on multiplanar formats
+  media: vsp1: Implement partition algorithm restrictions
+  media: vsp1: Document max_width restriction on SRU
+  media: vsp1: Document max_width restriction on UDS
+  media: vsp1: use periods at the end of comment sentences
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index 7d3d866..1234f91 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -572,6 +572,11 @@
- 		function = "pwm1";
- 	};
- 
-+	pwm2_pins: pwm2 {
-+		groups = "pwm2_a";
-+		function = "pwm2";
-+	};	
-+	
- 	scif1_pins: scif1 {
- 		groups = "scif1_data_a", "scif1_ctrl";
- 		function = "scif1";
-@@ -669,6 +674,12 @@
- 	status = "okay";
- };
- 
-+&pwm2 {
-+	pinctrl-0 = <&pwm2_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
- &rcar_sound {
- 	pinctrl-0 = <&sound_pins &sound_clk_pins>;
- 	pinctrl-names = "default";
+ drivers/media/platform/vsp1/vsp1_brx.c    |  4 +--
+ drivers/media/platform/vsp1/vsp1_drm.c    | 10 ++++++
+ drivers/media/platform/vsp1/vsp1_drv.c    |  6 ++--
+ drivers/media/platform/vsp1/vsp1_entity.c |  2 +-
+ drivers/media/platform/vsp1/vsp1_rpf.c    |  4 +--
+ drivers/media/platform/vsp1/vsp1_sru.c    | 13 ++++++--
+ drivers/media/platform/vsp1/vsp1_sru.h    |  1 +
+ drivers/media/platform/vsp1/vsp1_uds.c    | 14 +++++++--
+ drivers/media/platform/vsp1/vsp1_video.c  | 38 ++++++++++++++++++-----
+ drivers/media/platform/vsp1/vsp1_wpf.c    |  2 +-
+ include/media/vsp1.h                      |  2 +-
+ 11 files changed, 73 insertions(+), 23 deletions(-)
+
 -- 
-2.7.4
+2.17.1
