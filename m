@@ -1,50 +1,49 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 21/30] v4l: Add bus type to frame descriptors
-Date: Thu, 23 Aug 2018 15:25:35 +0200
-Message-Id: <20180823132544.521-22-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:33050 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726791AbeIAADr (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 31 Aug 2018 20:03:47 -0400
+Received: by mail-lf1-f66.google.com with SMTP id m26-v6so10881083lfb.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 31 Aug 2018 12:54:46 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH] arm64: enable CMT/TMU support for Renesas SoC
+To: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Message-ID: <ebd7d1f7-d99b-f0a1-f05e-d822254b2e86@cogentembedded.com>
+Date: Fri, 31 Aug 2018 22:54:42 +0300
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
+Renesas R-Car gen3 SoCs have both CMT and TMU timers, so we have to enable
+building them in Kconfig.platforms (as they don't normally have the prompts
+in Kconfig).
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
- include/media/v4l2-subdev.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+The patch is against the ARM64 repo's 'for-next/core' branch.
 
-diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
-index 5acaeeb9b3cacefa..ac1f7ee4cdb978ad 100644
---- a/include/media/v4l2-subdev.h
-+++ b/include/media/v4l2-subdev.h
-@@ -349,12 +349,21 @@ struct v4l2_mbus_frame_desc_entry {
+ arch/arm64/Kconfig.platforms |    2 ++
+ 1 file changed, 2 insertions(+)
+
+Index: linux/arch/arm64/Kconfig.platforms
+===================================================================
+--- linux.orig/arch/arm64/Kconfig.platforms
++++ linux/arch/arm64/Kconfig.platforms
+@@ -175,6 +175,8 @@ config ARCH_RENESAS
+ 	select PM_GENERIC_DOMAINS
+ 	select RENESAS_IRQC
+ 	select SOC_BUS
++	select SYS_SUPPORTS_SH_CMT
++	select SYS_SUPPORTS_SH_TMU
+ 	help
+ 	  This enables support for the ARMv8 based Renesas SoCs.
  
- #define V4L2_FRAME_DESC_ENTRY_MAX	4
- 
-+enum {
-+	V4L2_MBUS_FRAME_DESC_TYPE_PLATFORM,
-+	V4L2_MBUS_FRAME_DESC_TYPE_PARALLEL,
-+	V4L2_MBUS_FRAME_DESC_TYPE_CCP2,
-+	V4L2_MBUS_FRAME_DESC_TYPE_CSI2,
-+};
-+
- /**
-  * struct v4l2_mbus_frame_desc - media bus data frame description
-+ * @type: type of the bus (V4L2_MBUS_FRAME_DESC_TYPE_*)
-  * @entry: frame descriptors array
-  * @num_entries: number of entries in @entry array
-  */
- struct v4l2_mbus_frame_desc {
-+	u32 type;
- 	struct v4l2_mbus_frame_desc_entry entry[V4L2_FRAME_DESC_ENTRY_MAX];
- 	unsigned short num_entries;
- };
--- 
-2.18.0
