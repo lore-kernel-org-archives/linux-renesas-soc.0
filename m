@@ -1,49 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:44510 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727573AbeHaSsi (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:54253 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727739AbeHaOlk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 31 Aug 2018 14:48:38 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        mchehab@kernel.org
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 0/6] VSP1 Updates
-Date: Fri, 31 Aug 2018 15:40:38 +0100
-Message-Id: <20180831144044.31713-1-kieran.bingham+renesas@ideasonboard.com>
+        Fri, 31 Aug 2018 10:41:40 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 1/3] usb: renesas_usbhs: Add reset_control
+Date: Fri, 31 Aug 2018 19:32:57 +0900
+Message-Id: <1535711579-15169-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1535711579-15169-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1535711579-15169-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-An assorted selection of fixes and updates for the VSP1 to improve code
-quality and remove incorrect limitations.
+R-Car Gen3 needs to deassert resets of both host and peripheral.
+Since [eo]hci-platform is possible to assert the reset(s) when
+the probing failed, renesas_usbhs driver doesn't work correctly
+regardless of finished probing. To fix this issue, this patch adds
+reset_control on this renesas_usbhs driver.
 
-The SRU and UDS are capable of larger partitions, as part of the
-partition algorithm - but we only document this support for now, as
-updating it should be done in consideration with the overlap and phase
-corrections necessary.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/usb/renesas_usbhs/common.c | 12 ++++++++++++
+ drivers/usb/renesas_usbhs/common.h |  2 ++
+ 2 files changed, 14 insertions(+)
 
-Kieran Bingham (6):
-  media: vsp1: Remove artificial pixel limitation
-  media: vsp1: Correct the pitch on multiplanar formats
-  media: vsp1: Implement partition algorithm restrictions
-  media: vsp1: Document max_width restriction on SRU
-  media: vsp1: Document max_width restriction on UDS
-  media: vsp1: use periods at the end of comment sentences
-
- drivers/media/platform/vsp1/vsp1_brx.c    |  4 +--
- drivers/media/platform/vsp1/vsp1_drm.c    | 10 ++++++
- drivers/media/platform/vsp1/vsp1_drv.c    |  6 ++--
- drivers/media/platform/vsp1/vsp1_entity.c |  2 +-
- drivers/media/platform/vsp1/vsp1_rpf.c    |  4 +--
- drivers/media/platform/vsp1/vsp1_sru.c    | 13 ++++++--
- drivers/media/platform/vsp1/vsp1_sru.h    |  1 +
- drivers/media/platform/vsp1/vsp1_uds.c    | 14 +++++++--
- drivers/media/platform/vsp1/vsp1_video.c  | 38 ++++++++++++++++++-----
- drivers/media/platform/vsp1/vsp1_wpf.c    |  2 +-
- include/media/vsp1.h                      |  2 +-
- 11 files changed, 73 insertions(+), 23 deletions(-)
-
+diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
+index 4310df4..1d355d5 100644
+--- a/drivers/usb/renesas_usbhs/common.c
++++ b/drivers/usb/renesas_usbhs/common.c
+@@ -12,6 +12,7 @@
+ #include <linux/of_device.h>
+ #include <linux/of_gpio.h>
+ #include <linux/pm_runtime.h>
++#include <linux/reset.h>
+ #include <linux/slab.h>
+ #include <linux/sysfs.h>
+ #include "common.h"
+@@ -574,6 +575,10 @@ static int usbhs_probe(struct platform_device *pdev)
+ 			return PTR_ERR(priv->edev);
+ 	}
+ 
++	priv->rsts = devm_reset_control_array_get_optional_shared(&pdev->dev);
++	if (IS_ERR(priv->rsts))
++		return PTR_ERR(priv->rsts);
++
+ 	/*
+ 	 * care platform info
+ 	 */
+@@ -658,6 +663,10 @@ static int usbhs_probe(struct platform_device *pdev)
+ 	/* dev_set_drvdata should be called after usbhs_mod_init */
+ 	platform_set_drvdata(pdev, priv);
+ 
++	ret = reset_control_deassert(priv->rsts);
++	if (ret)
++		goto probe_fail_rst;
++
+ 	/*
+ 	 * deviece reset here because
+ 	 * USB device might be used in boot loader.
+@@ -711,6 +720,8 @@ static int usbhs_probe(struct platform_device *pdev)
+ 	return ret;
+ 
+ probe_end_mod_exit:
++	reset_control_assert(priv->rsts);
++probe_fail_rst:
+ 	usbhs_mod_remove(priv);
+ probe_end_fifo_exit:
+ 	usbhs_fifo_remove(priv);
+@@ -739,6 +750,7 @@ static int usbhs_remove(struct platform_device *pdev)
+ 	pm_runtime_disable(&pdev->dev);
+ 
+ 	usbhs_platform_call(priv, hardware_exit, pdev);
++	reset_control_assert(priv->rsts);
+ 	usbhs_mod_remove(priv);
+ 	usbhs_fifo_remove(priv);
+ 	usbhs_pipe_remove(priv);
+diff --git a/drivers/usb/renesas_usbhs/common.h b/drivers/usb/renesas_usbhs/common.h
+index 6137f79..bce7d35 100644
+--- a/drivers/usb/renesas_usbhs/common.h
++++ b/drivers/usb/renesas_usbhs/common.h
+@@ -10,6 +10,7 @@
+ 
+ #include <linux/extcon.h>
+ #include <linux/platform_device.h>
++#include <linux/reset.h>
+ #include <linux/usb/renesas_usbhs.h>
+ 
+ struct usbhs_priv;
+@@ -277,6 +278,7 @@ struct usbhs_priv {
+ 	struct usbhs_fifo_info fifo_info;
+ 
+ 	struct phy *phy;
++	struct reset_control *rsts;
+ };
+ 
+ /*
 -- 
-2.17.1
+1.9.1
