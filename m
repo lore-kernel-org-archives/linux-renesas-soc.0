@@ -1,54 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:39146 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727177AbeH1OUO (ORCPT
+Received: from mail-qt0-f174.google.com ([209.85.216.174]:33310 "EHLO
+        mail-qt0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727793AbeHaQ10 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Aug 2018 10:20:14 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-watchdog@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH] watchdog: HACK: disable bind attributes with NOWAYOUT
-Date: Tue, 28 Aug 2018 12:29:06 +0200
-Message-Id: <20180828102906.12840-1-wsa@the-dreams.de>
+        Fri, 31 Aug 2018 12:27:26 -0400
+Date: Fri, 31 Aug 2018 08:20:07 -0400
+From: Rob Herring <robh@kernel.org>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] dt-bindings: usb-xhci: Add r8a774a1 support
+Message-ID: <20180831122007.GA25698@bogus>
+References: <1535097375-5561-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1535097375-5561-4-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1535097375-5561-4-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-With NOWAYOUT, prevent bind/unbind possibilities in SYSFS.
-Proof-of-concept, not for upstream yet.
+On Fri, 24 Aug 2018 08:56:12 +0100, Fabrizio Castro wrote:
+> Document RZ/G2M (R8A774A1) SoC bindings.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> ---
+>  Documentation/devicetree/bindings/usb/usb-xhci.txt | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-
-So, this is really an RFC to check if something like this is considered useful
-or not. If so, we probably need to do it differently because modifying the
-parent's driver is likely a layering violation. We could add the driver to
-modify as an optional parameter to watchdog_set_nowayout(). I wouldn't favor
-another seperate function to configure this, but am open for discussion.
-
-Thanks,
-
-   Wolfram
-
- include/linux/watchdog.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/watchdog.h b/include/linux/watchdog.h
-index 44985c4a1e86..241de0fa0010 100644
---- a/include/linux/watchdog.h
-+++ b/include/linux/watchdog.h
-@@ -143,8 +143,10 @@ static inline bool watchdog_hw_running(struct watchdog_device *wdd)
- /* Use the following function to set the nowayout feature */
- static inline void watchdog_set_nowayout(struct watchdog_device *wdd, bool nowayout)
- {
--	if (nowayout)
-+	if (nowayout) {
- 		set_bit(WDOG_NO_WAY_OUT, &wdd->status);
-+		wdd->parent->driver->suppress_bind_attrs = true;
-+	}
- }
- 
- /* Use the following function to stop the watchdog on reboot */
--- 
-2.11.0
+Reviewed-by: Rob Herring <robh@kernel.org>
