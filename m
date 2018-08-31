@@ -1,58 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:49215 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbeHXN6f (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:44524 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727573AbeHaSsk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Aug 2018 09:58:35 -0400
-From: Jacopo Mondi <jacopo@jmondi.org>
-To: niklas.soderlund@ragnatech.se
-Cc: Jacopo Mondi <jacopo@jmondi.org>, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 4/4] vin-tests: yavta-hdmi: Add VIN4 and parallel link
-Date: Fri, 24 Aug 2018 12:24:22 +0200
-Message-Id: <1535106262-13004-5-git-send-email-jacopo@jmondi.org>
-In-Reply-To: <1535106262-13004-1-git-send-email-jacopo@jmondi.org>
-References: <1535106262-13004-1-git-send-email-jacopo@jmondi.org>
+        Fri, 31 Aug 2018 14:48:40 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 2/6] media: vsp1: Correct the pitch on multiplanar formats
+Date: Fri, 31 Aug 2018 15:40:40 +0100
+Message-Id: <20180831144044.31713-3-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <20180831144044.31713-1-kieran.bingham+renesas@ideasonboard.com>
+References: <20180831144044.31713-1-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for VIN4 to yavta-hdmi and check if format propagation should
-go through 'mc_propagate_parallel()' if the HDMI receiver chip is an
-ADV7612 one.
+DRM pipelines now support tri-planar as well as packed formats with
+YCbCr, however the pitch calculation was not updated to support this.
 
-Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
+Correct this by adjusting the bytesperline accordingly when 3 planes are
+used.
+
+Fixes: 7863ac504bc5 ("drm: rcar-du: Add tri-planar memory formats support")
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- yavta-hdmi | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/media/platform/vsp1/vsp1_drm.c | 10 ++++++++++
+ include/media/vsp1.h                   |  2 +-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/yavta-hdmi b/yavta-hdmi
-index fdec546..2e3b625 100755
---- a/yavta-hdmi
-+++ b/yavta-hdmi
-@@ -33,14 +33,23 @@ case $vc in
-         dev=/dev/$vin3
-         csipad=4
-         ;;
-+    4)
-+        vinname=$vinname4
-+        dev=/dev/$vin4
-+        ;;
-     *)
-         echo "Unkown VC '$vc'"
-         exit 1
- esac
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+index b9c0f695d002..b9afd98f6867 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -814,6 +814,16 @@ int vsp1_du_atomic_update(struct device *dev, unsigned int pipe_index,
+ 	rpf->format.num_planes = fmtinfo->planes;
+ 	rpf->format.plane_fmt[0].bytesperline = cfg->pitch;
+ 	rpf->format.plane_fmt[1].bytesperline = cfg->pitch;
++
++	/*
++	 * Packed YUV formats are subsampled, but the packing of two components
++	 * into a single plane compensates for this leaving the bytesperline
++	 * to be the correct value. For multiplanar formats we must adjust the
++	 * pitch accordingly.
++	 */
++	if (fmtinfo->planes == 3)
++		rpf->format.plane_fmt[1].bytesperline /= fmtinfo->hsub;
++
+ 	rpf->alpha = cfg->alpha;
  
- mc_reset
--mc_set_link "$csi40name" $csipad "$vinname" 1
--mc_propagate_format "$hdminame" 1 "$txaname" 0 "$csi40name" $csipad "$vinname"
-+if [[ "$hdminame" == "adv7612 0-004c" ]]; then
-+	mc_set_link "$hdminame" 1  "$vinname" 1
-+	mc_propagate_parallel "$vinname"
-+else
-+	mc_set_link "$csi40name" $csipad "$vinname" 1
-+	mc_propagate_format "$hdminame" 1 "$txaname" 0 "$csi40name" $csipad "$vinname"
-+fi
- 
- out=/tmp/vin-tests
- rm -fr $out
+ 	rpf->mem.addr[0] = cfg->mem[0];
+diff --git a/include/media/vsp1.h b/include/media/vsp1.h
+index 3093b9cb9067..0ce19b595cc7 100644
+--- a/include/media/vsp1.h
++++ b/include/media/vsp1.h
+@@ -46,7 +46,7 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+ /**
+  * struct vsp1_du_atomic_config - VSP atomic configuration parameters
+  * @pixelformat: plane pixel format (V4L2 4CC)
+- * @pitch: line pitch in bytes, for all planes
++ * @pitch: line pitch in bytes
+  * @mem: DMA memory address for each plane of the frame buffer
+  * @src: source rectangle in the frame buffer (integer coordinates)
+  * @dst: destination rectangle on the display (integer coordinates)
 -- 
-2.7.4
+2.17.1
