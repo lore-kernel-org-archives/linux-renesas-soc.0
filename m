@@ -1,70 +1,43 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:33418 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727072AbeH1SHf (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Aug 2018 14:07:35 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: dts: renesas: v3hsk: Move lvds0 node
-Date: Tue, 28 Aug 2018 16:15:40 +0200
-Message-Id: <20180828141540.7193-1-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Fri, 31 Aug 2018 15:25:58 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com,
+        mchehab@kernel.org, ysato@users.sourceforge.jp, dalias@libc.org,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5] Remove sh_mobile_ceu_camera from arch/sh
+Message-ID: <20180831122558.zv7537uyfw5pcnqj@valkosipuli.retiisi.org.uk>
+References: <1527525431-22852-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527525431-22852-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To preserve alphabetical sort order.
+Hi Jacopo,
 
-Fixes: 4edac426aff11a37 ("arm64: dts: renesas: condor/v3hsk: add DU/LVDS/HDMI support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- .../arm64/boot/dts/renesas/r8a77980-v3hsk.dts | 24 +++++++++----------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+On Mon, May 28, 2018 at 06:37:06PM +0200, Jacopo Mondi wrote:
+> Hello,
+>     this series removes dependencies on the soc_camera based
+> sh_mobile_ceu_camera driver from 3 board files in arch/sh and from one
+> sensor driver used by one of those boards.
+> 
+> Hans, this means there are no more user of the soc_camera framework that I know
+> of in Linux, and I guess we can now plan of to remove that framework.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts b/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-index 44ab7344f8aa4922..dd14a41b32cdf242 100644
---- a/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-@@ -119,18 +119,6 @@
- 	};
- };
- 
--&lvds0 {
--	status = "okay";
--
--	ports {
--		port@1 {
--			lvds0_out: endpoint {
--				remote-endpoint = <&thc63lvd1024_in>;
--			};
--		};
--	};
--};
--
- &i2c0 {
- 	pinctrl-0 = <&i2c0_pins>;
- 	pinctrl-names = "default";
-@@ -177,6 +165,18 @@
- 	};
- };
- 
-+&lvds0 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			lvds0_out: endpoint {
-+				remote-endpoint = <&thc63lvd1024_in>;
-+			};
-+		};
-+	};
-+};
-+
- &pfc {
- 	gether_pins: gether {
- 		groups = "gether_mdio_a", "gether_rgmii",
+What's the status of this set? I think it'd be nice to get it in; the CEU
+driver is the last using SoC camera framework.
+
+I guess an ack from the SH folks would be needed for these patches to go
+through the media tree.
+
+On the sensor driver patches --- please just move the files. The CEU was
+the last that it was possible to use the drivers with.
+
 -- 
-2.17.1
+Kind regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
