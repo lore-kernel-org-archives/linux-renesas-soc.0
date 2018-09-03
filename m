@@ -1,51 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:39292 "EHLO
+Received: from relmlor4.renesas.com ([210.160.252.174]:35163 "EHLO
         relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726704AbeIZREN (ORCPT
+        by vger.kernel.org with ESMTP id S1727049AbeICSRN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Sep 2018 13:04:13 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH] dt-bindings: arm: Document iW-RainboW-G20D-Qseven-RZG1N board
-Date: Wed, 26 Sep 2018 11:44:46 +0100
-Message-Id: <1537958686-10062-1-git-send-email-biju.das@bp.renesas.com>
+        Mon, 3 Sep 2018 14:17:13 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: RE: [PATCH 2/2] watchdog: renesas_wdt: stop when unregistering
+Date: Mon, 3 Sep 2018 13:56:51 +0000
+Message-ID: <TYXPR01MB17757C93A747366F5A1B3CDCC00C0@TYXPR01MB1775.jpnprd01.prod.outlook.com>
+References: <20180828101348.12443-1-wsa+renesas@sang-engineering.com>
+ <20180828101348.12443-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180828101348.12443-3-wsa+renesas@sang-engineering.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the iW-RainboW-G20D-Qseven-RZG1N device tree bindings,
-listing it as a supported board.
+> Subject: [PATCH 2/2] watchdog: renesas_wdt: stop when unregistering
+>
+> We want to go into a sane state when unregistering. Currently, it
+> happens that the watchdog stops when unbinding because of RuntimePM
+> stopping the core clock. When rebinding, the core clock gets reactivated
+> and the watchdog fires even though it hasn't been opened by userspace
+> yet. Strange scenario, yes, but sane state is much preferred anyhow.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
----
-*) This patch is tested against linux-next and depend upon the below patch
-   https://patchwork.kernel.org/patch/10615399/
-*) Details of this board can be found in below link
-   https://www.iwavesystems.com/rz-g1m-qseven-development-kit.html
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- 1 file changed, 2 insertions(+)
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 4cfb567..144f045a 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -101,6 +101,8 @@ Boards:
-     compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7743"
-   - iWave Systems RZ/G1M Qseven System On Module (iW-RainboW-G20M-Qseven)
-     compatible = "iwave,g20m", "renesas,r8a7743"
-+  - iWave Systems RZ/G1N Qseven Development Platform (iW-RainboW-G20D-Qseven)
-+    compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7744"
-   - iWave Systems RZ/G1N Qseven System On Module (iW-RainboW-G20M-Qseven)
-     compatible = "iwave,g20m", "renesas,r8a7744"
-   - Kingfisher (SBEV-RCAR-KF-M03)
--- 
-2.7.4
+> ---
+>  drivers/watchdog/renesas_wdt.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wd=
+t.c
+> index 88d81feba4e6..f45cb183fa75 100644
+> --- a/drivers/watchdog/renesas_wdt.c
+> +++ b/drivers/watchdog/renesas_wdt.c
+> @@ -234,6 +234,7 @@ static int rwdt_probe(struct platform_device *pdev)
+>  watchdog_set_drvdata(&priv->wdev, priv);
+>  watchdog_set_nowayout(&priv->wdev, nowayout);
+>  watchdog_set_restart_priority(&priv->wdev, 0);
+> +watchdog_stop_on_unregister(&priv->wdev);
+>
+>  /* This overrides the default timeout only if DT configuration was found=
+ */
+>  ret =3D watchdog_init_timeout(&priv->wdev, 0, &pdev->dev);
+> --
+> 2.11.0
+
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
