@@ -1,76 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:34724 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726872AbeINQTb (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:60569 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727057AbeICSPE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Sep 2018 12:19:31 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] drm: rcar-du: Update Gen3 output limitations
-Date: Fri, 14 Sep 2018 14:05:44 +0300
-Message-ID: <4037354.l5ltzbp0ev@avalon>
-In-Reply-To: <20180831181259.29529-2-kieran.bingham+renesas@ideasonboard.com>
-References: <20180831181259.29529-1-kieran.bingham+renesas@ideasonboard.com> <20180831181259.29529-2-kieran.bingham+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+        Mon, 3 Sep 2018 14:15:04 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: RE: [PATCH 1/2] watchdog: core: fix null pointer dereference when
+ releasing cdev
+Date: Mon, 3 Sep 2018 13:54:43 +0000
+Message-ID: <TYXPR01MB17752F4F15CD7BC4080C14F2C00C0@TYXPR01MB1775.jpnprd01.prod.outlook.com>
+References: <20180828101348.12443-1-wsa+renesas@sang-engineering.com>
+ <20180828101348.12443-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180828101348.12443-2-wsa+renesas@sang-engineering.com>
+Content-Language: en-US
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+> Subject: [PATCH 1/2] watchdog: core: fix null pointer dereference when re=
+leasing cdev
+>
+> watchdog_stop() calls watchdog_update_worker() which needs a valid
+> wdd->wd_data pointer. So, when unregistering the cdev, clear the
+> pointers after we call watchdog_stop(), not before.
+>
+> Fixes: bb292ac1c602 ("watchdog: Introduce watchdog_stop_on_unregister hel=
+per")
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Thank you for the patch.
-
-On Friday, 31 August 2018 21:12:57 EEST Kieran Bingham wrote:
-> The R-Car Gen3 DU utilises the VSP1 hardware for memory access. The
-> limits on the RPF and WPF in this pipeline are 8190x8190.
-> 
-> Update the supported maximum sizes accordingly.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-and applied to my tree.
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
 > ---
->  drivers/gpu/drm/rcar-du/rcar_du_kms.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> b/drivers/gpu/drm/rcar-du/rcar_du_kms.c index ed7fa3204892..7c7aff8cdf77
-> 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> @@ -512,12 +512,22 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
-> 
->  	dev->mode_config.min_width = 0;
->  	dev->mode_config.min_height = 0;
-> -	dev->mode_config.max_width = 4095;
-> -	dev->mode_config.max_height = 2047;
->  	dev->mode_config.normalize_zpos = true;
->  	dev->mode_config.funcs = &rcar_du_mode_config_funcs;
->  	dev->mode_config.helper_private = &rcar_du_mode_config_helper;
-> 
-> +	if (rcdu->info->gen < 3) {
-> +		dev->mode_config.max_width = 4095;
-> +		dev->mode_config.max_height = 2047;
-> +	} else {
-> +		/*
-> +		 * The Gen3 DU uses the VSP1 for memory access, and is limited
-> +		 * to frame sizes of 8190x8190.
-> +		 */
-> +		dev->mode_config.max_width = 8190;
-> +		dev->mode_config.max_height = 8190;
-> +	}
+>  drivers/watchdog/watchdog_dev.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/watchdog/watchdog_dev.c b/drivers/watchdog/watchdog_=
+dev.c
+> index ffbdc4642ea5..f6c24b22b37c 100644
+> --- a/drivers/watchdog/watchdog_dev.c
+> +++ b/drivers/watchdog/watchdog_dev.c
+> @@ -1019,16 +1019,16 @@ static void watchdog_cdev_unregister(struct watch=
+dog_device *wdd)
+>  old_wd_data =3D NULL;
+>  }
+>
+> -mutex_lock(&wd_data->lock);
+> -wd_data->wdd =3D NULL;
+> -wdd->wd_data =3D NULL;
+> -mutex_unlock(&wd_data->lock);
+> -
+>  if (watchdog_active(wdd) &&
+>      test_bit(WDOG_STOP_ON_UNREGISTER, &wdd->status)) {
+>  watchdog_stop(wdd);
+>  }
+>
+> +mutex_lock(&wd_data->lock);
+> +wd_data->wdd =3D NULL;
+> +wdd->wd_data =3D NULL;
+> +mutex_unlock(&wd_data->lock);
 > +
->  	rcdu->num_crtcs = hweight8(rcdu->info->channels_mask);
-> 
->  	ret = rcar_du_properties_init(rcdu);
+>  hrtimer_cancel(&wd_data->timer);
+>  kthread_cancel_work_sync(&wd_data->work);
+>
+> --
+> 2.11.0
 
--- 
-Regards,
 
-Laurent Pinchart
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
