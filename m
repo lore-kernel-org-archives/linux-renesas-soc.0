@@ -1,83 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:58258 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727806AbeIENwt (ORCPT
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:36096 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726023AbeICPSq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Sep 2018 09:52:49 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>
-Cc: Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-sh@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/4] spi: sh-msiof: Fix invalid SPI use during system suspend
-Date: Wed,  5 Sep 2018 10:49:36 +0200
-Message-Id: <20180905084939.7401-2-geert+renesas@glider.be>
-In-Reply-To: <20180905084939.7401-1-geert+renesas@glider.be>
-References: <20180905084939.7401-1-geert+renesas@glider.be>
+        Mon, 3 Sep 2018 11:18:46 -0400
+MIME-Version: 1.0
+References: <8aa6d2cd-68f9-eae4-cba0-222c1511eb9d@cogentembedded.com> <CAMuHMdVZq3rUTWwQPn9nUmmLw2hDo6L1ifPMPL8Q5dTES5A=ng@mail.gmail.com>
+In-Reply-To: <CAMuHMdVZq3rUTWwQPn9nUmmLw2hDo6L1ifPMPL8Q5dTES5A=ng@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 3 Sep 2018 12:58:55 +0200
+Message-ID: <CAMuHMdXVsHRdVoJYPiVvFagdpxrYJs0svPxjMRZorwMgxM5KcA@mail.gmail.com>
+Subject: Re: [PATCH] clocksource: sh_cmt: fixup for 64-bit machines
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        andrey.gusakov@cogentembedded.com,
+        Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
+        Linux-sh list <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+Hi Sergei,
 
-If the SPI queue is running during system suspend, the system may lock
-up.
+On Fri, Aug 31, 2018 at 11:05 AM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Thu, Aug 30, 2018 at 9:19 PM Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+> > When trying to use CMT for clockevents on R-Car gen3 SoCs, I noticed that
+> > the maximum delta (in ns) for the broadcast timer was diplayed as 1000 in
+> > /proc/timer_list.  It turned out that when calculating it, the driver did
+> > shift left 1 by 32 (causing what I think was undefined behaviour) getting
+> > 1 as a result. Using 1UL instead fixed the maximum delta and did even fix
+> > switching an active clocksource to a CMT channel (which caused the system
+> > to go non-interactive before).
+> >
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >
+> > ---
+> > This patch is against the 'tip.git' repo's 'timers/core' branch.
+> >
+> > I am not sure whether the CMT driver was ever used on SH64; on R-Car gen3
+> > (ARM64) I'm only enabling this driver now, so not sure how urgent is this...
+> >
+> >  drivers/clocksource/sh_cmt.c |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > Index: tip/drivers/clocksource/sh_cmt.c
+> > ===================================================================
+> > --- tip.orig/drivers/clocksource/sh_cmt.c
+> > +++ tip/drivers/clocksource/sh_cmt.c
+> > @@ -891,7 +891,7 @@ static int sh_cmt_setup_channel(struct s
+> >         if (cmt->info->width == (sizeof(ch->max_match_value) * 8))
+> >                 ch->max_match_value = ~0;
+> >         else
+> > -               ch->max_match_value = (1 << cmt->info->width) - 1;
+> > +               ch->max_match_value = (1UL << cmt->info->width) - 1;
+> >
+> >         ch->match_value = ch->max_match_value;
+> >         raw_spin_lock_init(&ch->lock);
+>
+> Shouldn't all those fields/variables be changed from "unsigned long" to "u32",
+> as they really should match the CMT's register sizes?
 
-Fix this by stopping/restarting the queue during system suspend/resume
-by calling spi_master_suspend()/spi_master_resume() from the PM
-callbacks.  In-kernel users will receive an -ESHUTDOWN error while
-system suspend/resume is in progress.
+To clarify: the if-check above is intended to catch a shift by 32. But it
+fails to do that on 64-bit platforms, as max_match_value is unsigned long,
+and its size thus depends on the platform, while the CMT's register sizes
+are fixed to 32-bit.
 
-Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-[geert: Cleanup, reword]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/spi/spi-sh-msiof.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Hence please fix the real bug (abuse of unsigned long for 32-bit values all
+over the place), instead of papering over it.
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 539d6d1a277a6179..bfe4e6d4f7bff66c 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -1426,12 +1426,37 @@ static const struct platform_device_id spi_driver_ids[] = {
- };
- MODULE_DEVICE_TABLE(platform, spi_driver_ids);
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int sh_msiof_spi_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct sh_msiof_spi_priv *p = platform_get_drvdata(pdev);
-+
-+	return spi_master_suspend(p->master);
-+}
-+
-+static int sh_msiof_spi_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct sh_msiof_spi_priv *p = platform_get_drvdata(pdev);
-+
-+	return spi_master_resume(p->master);
-+}
-+
-+static SIMPLE_DEV_PM_OPS(sh_msiof_spi_pm_ops, sh_msiof_spi_suspend,
-+			 sh_msiof_spi_resume);
-+#define DEV_PM_OPS	&sh_msiof_spi_pm_ops
-+#else
-+#define DEV_PM_OPS	NULL
-+#endif /* CONFIG_PM_SLEEP */
-+
- static struct platform_driver sh_msiof_spi_drv = {
- 	.probe		= sh_msiof_spi_probe,
- 	.remove		= sh_msiof_spi_remove,
- 	.id_table	= spi_driver_ids,
- 	.driver		= {
- 		.name		= "spi_sh_msiof",
-+		.pm		= DEV_PM_OPS,
- 		.of_match_table = of_match_ptr(sh_msiof_match),
- 	},
- };
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
