@@ -1,45 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:31074 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725851AbeIFKZp (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:47422 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730616AbeICVqW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Sep 2018 06:25:45 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3 2/3] dt-bindings: usb: renesas_usbhs: add clock-names property
-Date: Thu,  6 Sep 2018 14:50:13 +0900
-Message-Id: <1536213014-1325-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1536213014-1325-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1536213014-1325-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Mon, 3 Sep 2018 17:46:22 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mark Brown <broonie@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ulrich Hecht <uli+renesas@fpond.eu>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] spi: sh-msiof: Document R-Car E3 support
+Date: Mon,  3 Sep 2018 19:25:12 +0200
+Message-Id: <20180903172512.6242-3-geert+renesas@glider.be>
+In-Reply-To: <20180903172512.6242-1-geert+renesas@glider.be>
+References: <20180903172512.6242-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen3 needs to enable clocks of both host and peripheral.
-Otherwise, other side device cannot work correctly. So, this patch
-adds a property of clock-names for R-Car Gen3 as an optional.
+Document support for the MSIOF module in the Renesas R-Car E3 (r8a77990)
+SoC.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+No driver update is needed.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/usb/renesas_usbhs.txt | 2 ++
- 1 file changed, 2 insertions(+)
+As per SPI subsystem policy, the "spi: sh-msiof:" prefix is used.
 
-diff --git a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
-index 087140a..a8fa3ec 100644
---- a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
-+++ b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
-@@ -37,6 +37,8 @@ Optional properties:
-   - dmas: Must contain a list of references to DMA specifiers.
-   - dma-names : named "ch%d", where %d is the channel number ranging from zero
-                 to the number of channels (DnFIFOs) minus one.
-+  - clock-names: For a "renesas,rcar-gen3-usbhs" compatible device,
-+		 "hsusb" and "ehci/ohci" can be set.
- 
- Example:
- 	usbhs: usb@e6590000 {
+ Documentation/devicetree/bindings/spi/sh-msiof.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/spi/sh-msiof.txt b/Documentation/devicetree/bindings/spi/sh-msiof.txt
+index fd157155f219bb17..ca5181afee5ef170 100644
+--- a/Documentation/devicetree/bindings/spi/sh-msiof.txt
++++ b/Documentation/devicetree/bindings/spi/sh-msiof.txt
+@@ -11,6 +11,7 @@ Required properties:
+ 			 "renesas,msiof-r8a7795" (R-Car H3)
+ 			 "renesas,msiof-r8a7796" (R-Car M3-W)
+ 			 "renesas,msiof-r8a77965" (R-Car M3-N)
++			 "renesas,msiof-r8a77990" (R-Car E3)
+ 			 "renesas,msiof-r8a77995" (R-Car D3)
+ 			 "renesas,msiof-sh73a0" (SH-Mobile AG5)
+ 			 "renesas,sh-mobile-msiof" (generic SH-Mobile compatibile device)
 -- 
-1.9.1
+2.17.1
