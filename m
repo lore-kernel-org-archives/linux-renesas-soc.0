@@ -1,45 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:35444 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726345AbeI1TXv (ORCPT
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:34554 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725898AbeICMHS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 15:23:51 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Mon, 3 Sep 2018 08:07:18 -0400
+MIME-Version: 1.0
+References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com> <32394fbc-1b10-5708-2769-38cc2eff5042@cogentembedded.com>
+In-Reply-To: <32394fbc-1b10-5708-2769-38cc2eff5042@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 3 Sep 2018 09:48:10 +0200
+Message-ID: <CAMuHMdV8tkGMgezJWx3C6FFVBOfa+XcSE=DhNPWXSD4zQhy-TA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a77980: add CMT clocks
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] dt-bindings: spi: rspi: Add r8a7744 to the compatible list
-Date: Fri, 28 Sep 2018 13:53:04 +0100
-Message-Id: <1538139184-53756-1-git-send-email-biju.das@bp.renesas.com>
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document RZ/G1N (r8a7744) SoC specific bindings.
+On Sat, Sep 1, 2018 at 8:54 PM Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Now that RCLK has been added by Geert, we can add the CMT module clocks.
+>
+> Based on the original (and large) patch by Vladimir Barinov.
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
----
-This patch is tested against linux-next next-20180928
----
- Documentation/devicetree/bindings/spi/spi-rspi.txt | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v4.20 with s/add/Add/.
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-rspi.txt b/Documentation/devicetree/bindings/spi/spi-rspi.txt
-index dd5c36a..fc97ad6 100644
---- a/Documentation/devicetree/bindings/spi/spi-rspi.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-rspi.txt
-@@ -13,6 +13,7 @@ Required properties:
- 			- "renesas,rspi-r7s72100" (RZ/A1H)
- 			- "renesas,rspi-r7s9210" (RZ/A2)
- 			- "renesas,qspi-r8a7743" (RZ/G1M)
-+			- "renesas,qspi-r8a7744" (RZ/G1N)
- 			- "renesas,qspi-r8a7745" (RZ/G1E)
- 			- "renesas,qspi-r8a7790" (R-Car H2)
- 			- "renesas,qspi-r8a7791" (R-Car M2-W)
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
