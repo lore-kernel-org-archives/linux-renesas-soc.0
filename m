@@ -1,42 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:45213 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728003AbeIEOGR (ORCPT
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:49659 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726023AbeICPpV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Sep 2018 10:06:17 -0400
-MIME-Version: 1.0
-References: <1535634775-19365-1-git-send-email-phil.edworthy@renesas.com>
- <20180903103358.GC20333@w540> <TY1PR01MB17697F04004A7C8CF1D21CC1F50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY1PR01MB17697F04004A7C8CF1D21CC1F50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Sep 2018 11:36:40 +0200
-Message-ID: <CAMuHMdU-CcckKueeT5r9-jCoNr0H5KhzrAMbL4LeFta_fAqWuA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] Renesas R9A06G032 PINCTRL Driver
+        Mon, 3 Sep 2018 11:45:21 -0400
+Date: Mon, 3 Sep 2018 13:25:17 +0200
+From: jacopo mondi <jacopo@jmondi.org>
 To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Jacopo Mondi <jacopo@jmondi.org>,
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Simon Horman <horms@verge.net.au>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/3] Renesas R9A06G032 PINCTRL Driver
+Message-ID: <20180903112517.GE20333@w540>
+References: <1535634775-19365-1-git-send-email-phil.edworthy@renesas.com>
+ <20180903103358.GC20333@w540>
+ <TY1PR01MB17697F04004A7C8CF1D21CC1F50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="Zrag5V6pnZGjLKiw"
+Content-Disposition: inline
+In-Reply-To: <TY1PR01MB17697F04004A7C8CF1D21CC1F50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+
+--Zrag5V6pnZGjLKiw
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
 Hi Phil,
 
-On Mon, Sep 3, 2018 at 1:03 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
+On Mon, Sep 03, 2018 at 11:03:18AM +0000, Phil Edworthy wrote:
+> Hi Jacopo,
+>
 > On 03 September 2018 11:34, jacopo mondi wrote:
 > > On Thu, Aug 30, 2018 at 02:12:52PM +0100, Phil Edworthy wrote:
-> > > This implements the pinctrl driver for the RZ/N1 family of devices, including
+> > > This implements the pinctrl driver for the RZ/N1 family of devices, i=
+ncluding
 > > > the R9A06G032 (RZ/N1D) device.
 > > >
-> > > One area that is likely to be contentious is the use of 'virtual pins' for the
-> > > MDIO pinmuxing. The driver uses two pins (170 and 171) that don't exist on
+> > > One area that is likely to be contentious is the use of 'virtual pins=
+' for the
+> > > MDIO pinmuxing. The driver uses two pins (170 and 171) that don't exi=
+st on
 > > the
 > > > device to configure the MDIO source within the RZ/N1 devices. On these
 > > devices,
@@ -44,18 +58,24 @@ On Mon, Sep 3, 2018 at 1:03 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
 > > Ethernet
 > > > peripherals, any of which can be the MDIO source. Configuring the MDIO
 > > source
-> > > could be done without the virtual pins, e.g. by extending the functions to
-> > > cover all MDIO variants (a total of 32 additional functions), but this would
-> > > allow users to misconfigure individual MDIO pins, rather than assign all
+> > > could be done without the virtual pins, e.g. by extending the functio=
+ns to
+> > > cover all MDIO variants (a total of 32 additional functions), but thi=
+s would
+> > > allow users to misconfigure individual MDIO pins, rather than assign =
+all
 > > MDIO
-> > > pins to a MDIO source. The choice of how to implement this will affect the
+> > > pins to a MDIO source. The choice of how to implement this will affec=
+t the
 > > > DT bindings.
 > > >
-> > > This series was originally written by Michel Pollet whilst at Renesas, and I
+> > > This series was originally written by Michel Pollet whilst at Renesas=
+, and I
 > > > have taken over this work.
 > > >
 > > > One point from Michel's v1 series:
-> > > "Note, I used renesas,rzn1-pinmux node to specify the pinmux constants,
+> > > "Note, I used renesas,rzn1-pinmux node to specify the pinmux constant=
+s,
 > > > and I also don't use some of the properties documented in
 > > > pinctrl-bindings.txt on purpose, as they are too limited for my use
 > > > (I need to be able to set, clear, ignore or reset level, pull up/down
@@ -64,7 +84,8 @@ On Mon, Sep 3, 2018 at 1:03 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
 > > >
 > >
 > > I start by saying that I don't know this HW pin controller well, so
-> > I might be missing something, but as commented on the original series from
+> > I might be missing something, but as commented on the original series f=
+rom
 > > Micheal, I still don't see why you need a custom property here...
 > >
 > > My understanding, looking at this comment and the header provided by
@@ -82,9 +103,10 @@ On Mon, Sep 3, 2018 at 1:03 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
 > > Your example:
 > >          &pinctrl {
 > >                  pinsuart0: pinsuart0 {
-> >                          renesas,rzn1-pinmux-ids = <
+> >                          renesas,rzn1-pinmux-ids =3D <
 > >                                  RZN1_MUX(103, UART0_I)  /* UART0_TXD */
-> >                                  RZN1_MUX_PUP(104, UART0_I)      /* UART0_RXD */
+> >                                  RZN1_MUX_PUP(104, UART0_I)      /* UAR=
+T0_RXD */
 > >                          >;
 > >                  };
 > >          };
@@ -94,11 +116,13 @@ On Mon, Sep 3, 2018 at 1:03 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
 > >          &pinctrl {
 > >                  pinsuart0: uart0  {
 > >                         pinsuart_tx0 {
-> >                                 pinmux = <103, UART0_I>;  /* UART0_TXD */
+> >                                 pinmux =3D <103, UART0_I>;  /* UART0_TX=
+D */
 > >                         };
 > >
 > >                         pinsuart_rx0 {
-> >                                  pinmux = <104, UART0_I>; /* UART0_RXD */
+> >                                  pinmux =3D <104, UART0_I>; /* UART0_RX=
+D */
 > >                                  bias-pull-up;
 > >                         };
 > >                  };
@@ -112,30 +136,86 @@ On Mon, Sep 3, 2018 at 1:03 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
 > >
 > >         &pinctrl {
 > >                 pinsuart_conf: uart0 {
-> >                         pins = <103, 104>;
+> >                         pins =3D <103, 104>;
 > >                         bias-pull-up;
 > >                  };
 > >          };
 >
-> Sorry I didn’t address your point.
+> Sorry I didn=E2=80=99t address your point.
 > The only reason we want to use new properties is so the driver can process
-> dts files that have been generated from an existing PinMux App. That output
+> dts files that have been generated from an existing PinMux App. That outp=
+ut
 > is used by VxWorks as well as our out-of-tree Linux port. If that is not a
 > good enough reason to add new properties, then I can't see any technical
 > reason not to use the existing bindings.
-> The use with another OS running on a different core should not be a barrier
+
+I see. I step back then and let this to be handled by the pinctrl
+subsystem people and maintainer :)
+
+Thanks
+   j
+
+> The use with another OS running on a different core should not be a barri=
+er
 > as it must not use the same pins as Linux.
+>
+> Thanks
+> Phil
+>
+> > Thanks
+> >   j
+> >
+> > > Patch 0003 should really be applied after patch:
+> > >  "ARM: dts: r9a06g032: Correct UART and add all other UARTs", see
+> > >  https://www.spinics.net/lists/arm-kernel/msg673525.html
+> > >
+> > > Main changes:
+> > > v2:
+> > >  - Change to generic rzn1 family driver, instead of device specific.
+> > >  - Review comments fixed.
+> > >  - Fix error handling during probe
+> > >
+> > > Phil Edworthy (3):
+> > >   dt-bindings: pinctrl: renesas,rzn1-pinctrl: documentation
+> > >   pinctrl: renesas: Renesas RZ/N1 pinctrl driver
+> > >   ARM: dts: r9a06g032: Add pinctrl node
+> > >
+> > >  .../bindings/pinctrl/renesas,rzn1-pinctrl.txt      |  97 +++
+> > >  arch/arm/boot/dts/r9a06g032.dtsi                   |   8 +
+> > >  drivers/pinctrl/Kconfig                            |  10 +
+> > >  drivers/pinctrl/Makefile                           |   1 +
+> > >  drivers/pinctrl/pinctrl-rzn1.c                     | 844 +++++++++++=
+++++++++++
+> > >  include/dt-bindings/pinctrl/rzn1-pinctrl.h         | 191 +++++
+> > >  6 files changed, 1151 insertions(+)
+> > >  create mode 100644
+> > Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
+> > >  create mode 100644 drivers/pinctrl/pinctrl-rzn1.c
+> > >  create mode 100644 include/dt-bindings/pinctrl/rzn1-pinctrl.h
+> > >
+> > > --
+> > > 2.7.4
+> > >
 
-Have the VxWorks DT bindings been submitted for review to the devicetree
-mailing list?
+--Zrag5V6pnZGjLKiw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Gr{oetje,eeting}s,
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-                        Geert
+iQIcBAEBAgAGBQJbjRodAAoJEHI0Bo8WoVY8Ql4P/R+Ts1bZCraK4kn9Rs9H4lHT
+dVtkCclhwdU8Cj2cy0hQZUogBCF3GQqlg3Doxol9x7fxp/Rg0rC5PDsngex1wUrr
+v3vo/KDyk9yFAbwAtIduJDqxE/XN0q0q3hRYOWUPmxMicsR+YilBHW6k9tMZjIY4
+JBau5cTZ9rundJOGwpUajeEMRH4LNE4EH0zATC2UYQfIenuza+fpJgSUr+eG9c4l
+esH5P+VuefcgCNuvjjGXGsIqd4FhZ/w2jHud/5BuyR/BgiXVYROPczbBJTpXknu4
+mCgL13becNQVxoX7C0KZ0K5eOmioMX2kz1iHhUN6kpyzfixLoLAUKuSHRDhM30l3
+zbE3gIhwELl5RPkkp1YUNvRTfCbc9mpP/Ij0k+mTlzA9Ldf09Y2CUrXPCTWHkEtK
+QX7aNfaUuOpf6dnfa1tSuBO4O7DApft/jWqn+5F7vaX71AvV2ZkUbHKlGZukkx1N
+T237cD51dqkcs/IyX+qI/gefsZE17I/X+47EDN54CohVlER0PjlQBhbKHqU2wiLQ
+xmSXYxPaldIFmzXdpw4mnmiJZPrRFuAcK3cQWVXu/mBThPIhVx4MAWhM0nOSTANL
+4z+fiT16NwiJrqfi6rOPyYJHML6HQDDrBqPCWPpGlj357gXpj3kl7H1qM9Sd8qxE
+6rLfMpCdcJuQqmUYZEe7
+=Taz7
+-----END PGP SIGNATURE-----
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--Zrag5V6pnZGjLKiw--
