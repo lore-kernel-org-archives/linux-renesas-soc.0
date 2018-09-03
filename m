@@ -1,88 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:34314 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726868AbeINPji (ORCPT
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:46668 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725866AbeICMC3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Sep 2018 11:39:38 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: mchehab@kernel.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6] media: vsp1: Correct the pitch on multiplanar formats
-Date: Fri, 14 Sep 2018 13:25:59 +0300
-Message-ID: <4407219.HP1UPh24hA@avalon>
-In-Reply-To: <20180831144044.31713-3-kieran.bingham+renesas@ideasonboard.com>
-References: <20180831144044.31713-1-kieran.bingham+renesas@ideasonboard.com> <20180831144044.31713-3-kieran.bingham+renesas@ideasonboard.com>
+        Mon, 3 Sep 2018 08:02:29 -0400
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com> <4f401a77-ae41-5a6e-3e10-51dad300e183@cogentembedded.com>
+In-Reply-To: <4f401a77-ae41-5a6e-3e10-51dad300e183@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 3 Sep 2018 09:43:21 +0200
+Message-ID: <CAMuHMdVA1VXzouJcz2-cJUStsirErt4ROEszRZ9tPLXFzsSROw@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: renesas: r8a77970: add SD0H/SD0 clocks for SDHI
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+Hi Sergei,
 
-Thank you for the patch.
-
-On Friday, 31 August 2018 17:40:40 EEST Kieran Bingham wrote:
-> DRM pipelines now support tri-planar as well as packed formats with
-> YCbCr, however the pitch calculation was not updated to support this.
-> 
-> Correct this by adjusting the bytesperline accordingly when 3 planes are
-> used.
-> 
-> Fixes: 7863ac504bc5 ("drm: rcar-du: Add tri-planar memory formats support")
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-I already have a similar patch from Matsuoka-san in my tree, please see 
-https://patchwork.kernel.org/patch/10425565/. I'll update it with the fixes 
-tag.
-
+On Sat, Sep 1, 2018 at 10:12 PM Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> On R-Car V3M (AKA R8A77970), the SD0CKCR is laid out differently than on
+> the other R-Car gen3 SoCs. In fact, the layout is the same as on R-Car gen2
+> SoCs, so we'll need to copy the divisor tables from the R-Car gen2 driver.
+> We'll also need to support the SoC specific clock types, thus we're adding
+> CLK_TYPE_GEN3_SOC_BASE at the end of 'enum rcar_gen3_clk_types', declare
+> SD0H/SDH clocks in 'enum r8a77970_clk_types', and handle those clocks in
+> the overridden cpg_clk_register() method; then, finally, add the SD-IF
+> module clock (derived from the SD0 clock).
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>
 > ---
->  drivers/media/platform/vsp1/vsp1_drm.c | 10 ++++++++++
->  include/media/vsp1.h                   |  2 +-
->  2 files changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/vsp1/vsp1_drm.c
-> b/drivers/media/platform/vsp1/vsp1_drm.c index b9c0f695d002..b9afd98f6867
-> 100644
-> --- a/drivers/media/platform/vsp1/vsp1_drm.c
-> +++ b/drivers/media/platform/vsp1/vsp1_drm.c
-> @@ -814,6 +814,16 @@ int vsp1_du_atomic_update(struct device *dev, unsigned
-> int pipe_index, rpf->format.num_planes = fmtinfo->planes;
->  	rpf->format.plane_fmt[0].bytesperline = cfg->pitch;
->  	rpf->format.plane_fmt[1].bytesperline = cfg->pitch;
-> +
-> +	/*
-> +	 * Packed YUV formats are subsampled, but the packing of two components
-> +	 * into a single plane compensates for this leaving the bytesperline
-> +	 * to be the correct value. For multiplanar formats we must adjust the
-> +	 * pitch accordingly.
-> +	 */
-> +	if (fmtinfo->planes == 3)
-> +		rpf->format.plane_fmt[1].bytesperline /= fmtinfo->hsub;
-> +
->  	rpf->alpha = cfg->alpha;
-> 
->  	rpf->mem.addr[0] = cfg->mem[0];
-> diff --git a/include/media/vsp1.h b/include/media/vsp1.h
-> index 3093b9cb9067..0ce19b595cc7 100644
-> --- a/include/media/vsp1.h
-> +++ b/include/media/vsp1.h
-> @@ -46,7 +46,7 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int
-> pipe_index, /**
->   * struct vsp1_du_atomic_config - VSP atomic configuration parameters
->   * @pixelformat: plane pixel format (V4L2 4CC)
-> - * @pitch: line pitch in bytes, for all planes
-> + * @pitch: line pitch in bytes
+> This patch is against the 'clk-renesas' branch of Geert's 'renesas-drivers.git'
+> repo.
+>
+> Changes in version 2:
+> - made r8a77970_cpg_clk_register() *static*;
+> - #define'd CPG_SD0CKCR and used it instead of the bare number.
 
-Should I update the above-mentioned patch with this as well ? How about 
-phrasing it as "line pitch in bytes for the first plane" ?
+Thanks for the update!
 
->   * @mem: DMA memory address for each plane of the frame buffer
->   * @src: source rectangle in the frame buffer (integer coordinates)
->   * @dst: destination rectangle on the display (integer coordinates)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v4.20, with s/add/Add/ in the
+oneline-summary,
+and
+
+> +static struct clk * __init r8a77970_cpg_clk_register(struct device *dev,
+
+... the TAB after "static" replaced by a space.
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Regards,
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Laurent Pinchart
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
