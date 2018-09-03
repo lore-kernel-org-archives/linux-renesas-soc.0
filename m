@@ -1,118 +1,29 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58126 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726487AbeIEQQM (ORCPT
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:29885 "EHLO
+        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbeICFjI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Sep 2018 12:16:12 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-Cc: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>, stable@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-sh@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: sh-msiof: Fix invalid SPI use during system suspend" to the spi tree
-In-Reply-To: <20180905084939.7401-2-geert+renesas@glider.be>
-Message-Id: <20180905114612.5DC1711229D0@debutante.sirena.org.uk>
-Date: Wed,  5 Sep 2018 12:46:12 +0100 (BST)
+        Mon, 3 Sep 2018 01:39:08 -0400
+From: Nguyen An Hoan <na-hoan@jinso.co.jp>
+To: broonie@kernel.org, linux-renesas-soc@vger.kernel.org,
+        geert+renesas@glider.be
+Cc: magnus.damm@gmail.com, kuninori.morimoto.gx@renesas.com,
+        yoshihiro.shimoda.uh@renesas.com, h-inayoshi@jinso.co.jp,
+        nv-dung@jinso.co.jp, cv-dong@jinso.co.jp, na-hoan@jinso.co.jp
+Subject: Re: [1/2] pinctrl: sh-pfc: r8a77965: add Audio clock pin support
+Date: Mon,  3 Sep 2018 10:21:15 +0900
+Message-Id: <1535937675-7836-1-git-send-email-na-hoan@jinso.co.jp>
+In-Reply-To: <1535431039-2749-2-git-send-email-na-hoan@jinso.co.jp>
+References: <1535431039-2749-2-git-send-email-na-hoan@jinso.co.jp>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
 
-   spi: sh-msiof: Fix invalid SPI use during system suspend
+Geert-san,
 
-has been applied to the spi tree at
+> Thanks for the update!
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in sh-pfc-for-v4.20.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From ffa69d6a16f686efe45269342474e421f2aa58b2 Mon Sep 17 00:00:00 2001
-From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-Date: Wed, 5 Sep 2018 10:49:36 +0200
-Subject: [PATCH] spi: sh-msiof: Fix invalid SPI use during system suspend
-
-If the SPI queue is running during system suspend, the system may lock
-up.
-
-Fix this by stopping/restarting the queue during system suspend/resume
-by calling spi_master_suspend()/spi_master_resume() from the PM
-callbacks.  In-kernel users will receive an -ESHUTDOWN error while
-system suspend/resume is in progress.
-
-Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-[geert: Cleanup, reword]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
----
- drivers/spi/spi-sh-msiof.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
-
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 539d6d1a277a..bfe4e6d4f7bf 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -1426,12 +1426,37 @@ static const struct platform_device_id spi_driver_ids[] = {
- };
- MODULE_DEVICE_TABLE(platform, spi_driver_ids);
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int sh_msiof_spi_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct sh_msiof_spi_priv *p = platform_get_drvdata(pdev);
-+
-+	return spi_master_suspend(p->master);
-+}
-+
-+static int sh_msiof_spi_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct sh_msiof_spi_priv *p = platform_get_drvdata(pdev);
-+
-+	return spi_master_resume(p->master);
-+}
-+
-+static SIMPLE_DEV_PM_OPS(sh_msiof_spi_pm_ops, sh_msiof_spi_suspend,
-+			 sh_msiof_spi_resume);
-+#define DEV_PM_OPS	&sh_msiof_spi_pm_ops
-+#else
-+#define DEV_PM_OPS	NULL
-+#endif /* CONFIG_PM_SLEEP */
-+
- static struct platform_driver sh_msiof_spi_drv = {
- 	.probe		= sh_msiof_spi_probe,
- 	.remove		= sh_msiof_spi_remove,
- 	.id_table	= spi_driver_ids,
- 	.driver		= {
- 		.name		= "spi_sh_msiof",
-+		.pm		= DEV_PM_OPS,
- 		.of_match_table = of_match_ptr(sh_msiof_match),
- 	},
- };
--- 
-2.19.0.rc1
+Thank you very much for your helps!
