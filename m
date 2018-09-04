@@ -1,150 +1,138 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com,
-        kieran.bingham+renesas@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Subject: [PATCH v2 5/5] media: i2c: adv748x: Register all input subdevices
-Date: Wed,  5 Sep 2018 17:27:11 +0200
-Message-Id: <1536161231-25221-6-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1536161231-25221-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1536161231-25221-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from perceval.ideasonboard.com ([213.167.242.64]:60974 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727035AbeIDQfc (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 4 Sep 2018 12:35:32 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 09/16] drm: rcar-du: Cache DSYSR value to ensure known initial value
+Date: Tue,  4 Sep 2018 15:10:20 +0300
+Message-Id: <20180904121027.24031-10-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180904121027.24031-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180904121027.24031-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The input subdevice registration, being the link between adv728x's inputs
-and outputs fixed, happens at output subdevice registration time. In the
-current design the TXA output subdevice 'registered()' callback registers
-the HDMI input subdevice and the TXB output subdevice 'registered()' callback
-registers the AFE input subdevice instead. Media links are created
-accordingly to the fixed routing.
+DSYSR is a DU channel register that also contains group fields. It is
+thus written to by both the group and CRTC code, using read-update-write
+sequences. As the register isn't initialized explicitly at startup time,
+this can lead to invalid or otherwise unexpected values being written to
+some of the fields if they have been modified by the firmware or just
+not reset properly.
 
-As the adv748x driver can now probe with at least a single output port
-enabled an input subdevice linked to a disabled output is never registered
-to the media graph. Fix this by having the first registered output subdevice
-register all the available input subdevices.
+To fix this we can write a fully known value to the DSYSR register when
+turning a channel's functional clock on. However, the mix of group and
+channel fields complicate this. A simpler solution is to cache the
+register and initialize the cached value to the desired hardware
+defaults.
 
-This change is necessary to have dynamic routing between the adv748x inputs
-and outputs implemented.
-
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/media/i2c/adv748x/adv748x-csi2.c | 85 +++++++++++++++-----------------
- 1 file changed, 40 insertions(+), 45 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c  | 16 ++++++++--------
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.h  |  5 +++++
+ drivers/gpu/drm/rcar-du/rcar_du_group.c |  7 ++++---
+ 3 files changed, 17 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
-index 9e9df51..fd4aa9d 100644
---- a/drivers/media/i2c/adv748x/adv748x-csi2.c
-+++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
-@@ -24,42 +24,6 @@ static int adv748x_csi2_set_virtual_channel(struct adv748x_csi2 *tx,
- 	return tx_write(tx, ADV748X_CSI_VC_REF, vc << ADV748X_CSI_VC_REF_SHIFT);
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+index 39d2fee6d7b8..1903e8e5e617 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+@@ -57,13 +57,12 @@ static void rcar_du_crtc_set(struct rcar_du_crtc *rcrtc, u32 reg, u32 set)
+ 		      rcar_du_read(rcdu, rcrtc->mmio_offset + reg) | set);
  }
  
--/**
-- * adv748x_csi2_register_link : Register and link internal entities
-- *
-- * @tx: CSI2 private entity
-- * @v4l2_dev: Video registration device
-- * @src: Source subdevice to establish link
-- * @src_pad: Pad number of source to link to this @tx
-- *
-- * Ensure that the subdevice is registered against the v4l2_device, and link the
-- * source pad to the sink pad of the CSI2 bus entity.
-- */
--static int adv748x_csi2_register_link(struct adv748x_csi2 *tx,
--				      struct v4l2_device *v4l2_dev,
--				      struct v4l2_subdev *src,
--				      unsigned int src_pad)
--{
--	int enabled = MEDIA_LNK_FL_ENABLED;
--	int ret;
--
--	/*
--	 * Dynamic linking of the AFE is not supported.
--	 * Register the links as immutable.
--	 */
--	enabled |= MEDIA_LNK_FL_IMMUTABLE;
--
--	if (!src->v4l2_dev) {
--		ret = v4l2_device_register_subdev(v4l2_dev, src);
--		if (ret)
--			return ret;
--	}
--
--	return media_create_pad_link(&src->entity, src_pad,
--				     &tx->sd.entity, ADV748X_CSI2_SINK,
--				     enabled);
--}
--
- /* -----------------------------------------------------------------------------
-  * v4l2_subdev_internal_ops
-  *
-@@ -72,25 +36,56 @@ static int adv748x_csi2_registered(struct v4l2_subdev *sd)
+-static void rcar_du_crtc_clr_set(struct rcar_du_crtc *rcrtc, u32 reg,
+-				 u32 clr, u32 set)
++void rcar_du_crtc_dsysr_clr_set(struct rcar_du_crtc *rcrtc, u32 clr, u32 set)
  {
- 	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
- 	struct adv748x_state *state = tx->state;
-+	struct v4l2_subdev *src_sd;
-+	unsigned int src_pad;
-+	int ret;
+ 	struct rcar_du_device *rcdu = rcrtc->group->dev;
+-	u32 value = rcar_du_read(rcdu, rcrtc->mmio_offset + reg);
  
- 	adv_dbg(state, "Registered %s (%s)", is_txa(tx) ? "TXA":"TXB",
- 			sd->name);
- 
-+	/* The first registered CSI-2 registers all input subdevices. */
-+	src_sd = &state->hdmi.sd;
-+	if (!src_sd->v4l2_dev && is_hdmi_enabled(state)) {
-+		ret = v4l2_device_register_subdev(sd->v4l2_dev, src_sd);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	src_sd = &state->afe.sd;
-+	if (!src_sd->v4l2_dev && is_afe_enabled(state)) {
-+		ret = v4l2_device_register_subdev(sd->v4l2_dev, src_sd);
-+		if (ret)
-+			goto err_unregister_hdmi;
-+	}
-+
- 	/*
- 	 * The adv748x hardware allows the AFE to route through the TXA, however
- 	 * this is not currently supported in this driver.
- 	 *
- 	 * Link HDMI->TXA, and AFE->TXB directly.
- 	 */
--	if (is_txa(tx) && is_hdmi_enabled(state))
--		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
--						  &state->hdmi.sd,
--						  ADV748X_HDMI_SOURCE);
--	if (!is_txa(tx) && is_afe_enabled(state))
--		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
--						  &state->afe.sd,
--						  ADV748X_AFE_SOURCE);
--	return 0;
-+	if (is_txa(tx)) {
-+		if (!is_hdmi_enabled(state))
-+			return 0;
-+
-+		src_sd = &state->hdmi.sd;
-+		src_pad = ADV748X_HDMI_SOURCE;
-+	} else {
-+		if (!is_afe_enabled(state))
-+			return 0;
-+
-+		src_sd = &state->afe.sd;
-+		src_pad = ADV748X_AFE_SOURCE;
-+	}
-+
-+	/* Dynamic linking is not supported, register the links as immutable. */
-+	return media_create_pad_link(&src_sd->entity, src_pad, &sd->entity,
-+				     ADV748X_CSI2_SINK, MEDIA_LNK_FL_ENABLED |
-+				     MEDIA_LNK_FL_IMMUTABLE);
-+err_unregister_hdmi:
-+	v4l2_device_unregister_subdev(&state->hdmi.sd);
-+
-+	return ret;
+-	rcar_du_write(rcdu, rcrtc->mmio_offset + reg, (value & ~clr) | set);
++	rcrtc->dsysr = (rcrtc->dsysr & ~clr) | set;
++	rcar_du_write(rcdu, rcrtc->mmio_offset + DSYSR, rcrtc->dsysr);
  }
  
- static const struct v4l2_subdev_internal_ops adv748x_csi2_internal_ops = {
+ /* -----------------------------------------------------------------------------
+@@ -576,9 +575,9 @@ static void rcar_du_crtc_start(struct rcar_du_crtc *rcrtc)
+ 	 * actively driven).
+ 	 */
+ 	interlaced = rcrtc->crtc.mode.flags & DRM_MODE_FLAG_INTERLACE;
+-	rcar_du_crtc_clr_set(rcrtc, DSYSR, DSYSR_TVM_MASK | DSYSR_SCM_MASK,
+-			     (interlaced ? DSYSR_SCM_INT_VIDEO : 0) |
+-			     DSYSR_TVM_MASTER);
++	rcar_du_crtc_dsysr_clr_set(rcrtc, DSYSR_TVM_MASK | DSYSR_SCM_MASK,
++				   (interlaced ? DSYSR_SCM_INT_VIDEO : 0) |
++				   DSYSR_TVM_MASTER);
+ 
+ 	rcar_du_group_start_stop(rcrtc->group, true);
+ }
+@@ -645,7 +644,7 @@ static void rcar_du_crtc_stop(struct rcar_du_crtc *rcrtc)
+ 	 * Select switch sync mode. This stops display operation and configures
+ 	 * the HSYNC and VSYNC signals as inputs.
+ 	 */
+-	rcar_du_crtc_clr_set(rcrtc, DSYSR, DSYSR_TVM_MASK, DSYSR_TVM_SWITCH);
++	rcar_du_crtc_dsysr_clr_set(rcrtc, DSYSR_TVM_MASK, DSYSR_TVM_SWITCH);
+ 
+ 	rcar_du_group_start_stop(rcrtc->group, false);
+ }
+@@ -1016,6 +1015,7 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int swindex,
+ 	rcrtc->group = rgrp;
+ 	rcrtc->mmio_offset = mmio_offsets[hwindex];
+ 	rcrtc->index = hwindex;
++	rcrtc->dsysr = (rcrtc->index % 2 ? 0 : DSYSR_DRES) | DSYSR_TVM_TVSYNC;
+ 
+ 	if (rcar_du_has(rcdu, RCAR_DU_FEATURE_VSP1_SOURCE))
+ 		primary = &rcrtc->vsp->planes[rcrtc->vsp_pipe].plane;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+index f353a63d3ddf..5f0af21ce9e1 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+@@ -30,6 +30,7 @@ struct rcar_du_vsp;
+  * @mmio_offset: offset of the CRTC registers in the DU MMIO block
+  * @index: CRTC software and hardware index
+  * @initialized: whether the CRTC has been initialized and clocks enabled
++ * @dsysr: cached value of the DSYSR register
+  * @vblank_enable: whether vblank events are enabled on this CRTC
+  * @event: event to post when the pending page flip completes
+  * @flip_wait: wait queue used to signal page flip completion
+@@ -50,6 +51,8 @@ struct rcar_du_crtc {
+ 	unsigned int index;
+ 	bool initialized;
+ 
++	u32 dsysr;
++
+ 	bool vblank_enable;
+ 	struct drm_pending_vblank_event *event;
+ 	wait_queue_head_t flip_wait;
+@@ -100,4 +103,6 @@ void rcar_du_crtc_route_output(struct drm_crtc *crtc,
+ 			       enum rcar_du_output output);
+ void rcar_du_crtc_finish_page_flip(struct rcar_du_crtc *rcrtc);
+ 
++void rcar_du_crtc_dsysr_clr_set(struct rcar_du_crtc *rcrtc, u32 clr, u32 set);
++
+ #endif /* __RCAR_DU_CRTC_H__ */
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
+index f38703e7a10d..d85f0a1c1581 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
+@@ -202,9 +202,10 @@ void rcar_du_group_put(struct rcar_du_group *rgrp)
+ 
+ static void __rcar_du_group_start_stop(struct rcar_du_group *rgrp, bool start)
+ {
+-	rcar_du_group_write(rgrp, DSYSR,
+-		(rcar_du_group_read(rgrp, DSYSR) & ~(DSYSR_DRES | DSYSR_DEN)) |
+-		(start ? DSYSR_DEN : DSYSR_DRES));
++	struct rcar_du_crtc *rcrtc = &rgrp->dev->crtcs[rgrp->index * 2];
++
++	rcar_du_crtc_dsysr_clr_set(rcrtc, DSYSR_DRES | DSYSR_DEN,
++				   start ? DSYSR_DEN : DSYSR_DRES);
+ }
+ 
+ void rcar_du_group_start_stop(struct rcar_du_group *rgrp, bool start)
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
