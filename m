@@ -1,80 +1,113 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:60569 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727057AbeICSPE (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Sep 2018 14:15:04 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: RE: [PATCH 1/2] watchdog: core: fix null pointer dereference when
- releasing cdev
-Date: Mon, 3 Sep 2018 13:54:43 +0000
-Message-ID: <TYXPR01MB17752F4F15CD7BC4080C14F2C00C0@TYXPR01MB1775.jpnprd01.prod.outlook.com>
-References: <20180828101348.12443-1-wsa+renesas@sang-engineering.com>
- <20180828101348.12443-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180828101348.12443-2-wsa+renesas@sang-engineering.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Tue, 4 Sep 2018 12:04:00 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, hverkuil@xs4all.nl,
+        laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
+        ysato@users.sourceforge.jp, dalias@libc.org,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5] Remove sh_mobile_ceu_camera from arch/sh
+Message-ID: <20180904100400.GA28160@w540>
+References: <1527525431-22852-1-git-send-email-jacopo+renesas@jmondi.org>
+ <20180831122558.zv7537uyfw5pcnqj@valkosipuli.retiisi.org.uk>
+ <20180903072234.GA4116@w540>
+ <20180904093358.GK20333@w540>
+ <20180904094319.om6qp5rc3k66ukrd@valkosipuli.retiisi.org.uk>
 MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="J2SCkAp4GZ/dPZZf"
+Content-Disposition: inline
+In-Reply-To: <20180904094319.om6qp5rc3k66ukrd@valkosipuli.retiisi.org.uk>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-> Subject: [PATCH 1/2] watchdog: core: fix null pointer dereference when re=
-leasing cdev
->
-> watchdog_stop() calls watchdog_update_worker() which needs a valid
-> wdd->wd_data pointer. So, when unregistering the cdev, clear the
-> pointers after we call watchdog_stop(), not before.
->
-> Fixes: bb292ac1c602 ("watchdog: Introduce watchdog_stop_on_unregister hel=
-per")
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+--J2SCkAp4GZ/dPZZf
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-> ---
->  drivers/watchdog/watchdog_dev.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+Hi Sakari,
+
+On Tue, Sep 04, 2018 at 12:43:19PM +0300, Sakari Ailus wrote:
+> On Tue, Sep 04, 2018 at 11:33:58AM +0200, jacopo mondi wrote:
+> > Hi again Sakari,
+> >    sorry, I'm confusing you
+> >
+> > On Mon, Sep 03, 2018 at 09:22:34AM +0200, jacopo mondi wrote:
+> > > Hi Sakari,
+> > >
+> > > On Fri, Aug 31, 2018 at 03:25:58PM +0300, Sakari Ailus wrote:
+> > > > Hi Jacopo,
+> > > >
+> > > > On Mon, May 28, 2018 at 06:37:06PM +0200, Jacopo Mondi wrote:
+> > > > > Hello,
+> > > > >     this series removes dependencies on the soc_camera based
+> > > > > sh_mobile_ceu_camera driver from 3 board files in arch/sh and from one
+> > > > > sensor driver used by one of those boards.
+> > > > >
+> > > > > Hans, this means there are no more user of the soc_camera framework that I know
+> > > > > of in Linux, and I guess we can now plan of to remove that framework.
+> > > >
+> > > > What's the status of this set? I think it'd be nice to get it in; the CEU
+> > > > driver is the last using SoC camera framework.
+> > > >
+> >
+> > The series went in in the media tree in late June and I now see it in
+> > v4.19-rc2.
 >
-> diff --git a/drivers/watchdog/watchdog_dev.c b/drivers/watchdog/watchdog_=
-dev.c
-> index ffbdc4642ea5..f6c24b22b37c 100644
-> --- a/drivers/watchdog/watchdog_dev.c
-> +++ b/drivers/watchdog/watchdog_dev.c
-> @@ -1019,16 +1019,16 @@ static void watchdog_cdev_unregister(struct watch=
-dog_device *wdd)
->  old_wd_data =3D NULL;
->  }
+> Oh; I missed this entirely. I thought it'd be merge later as there were
+> comments. Anyway it's good it's in. :-)
 >
-> -mutex_lock(&wd_data->lock);
-> -wd_data->wdd =3D NULL;
-> -wdd->wd_data =3D NULL;
-> -mutex_unlock(&wd_data->lock);
-> -
->  if (watchdog_active(wdd) &&
->      test_bit(WDOG_STOP_ON_UNREGISTER, &wdd->status)) {
->  watchdog_stop(wdd);
->  }
+> >
+> > Sorry for the confusion.
+> >
+> > The other soc_camera series which is pending for approval is the one
+> > removing dependencies on the framework from some SH defconfigs:
+> > https://lkml.org/lkml/2018/7/4/323
 >
-> +mutex_lock(&wd_data->lock);
-> +wd_data->wdd =3D NULL;
-> +wdd->wd_data =3D NULL;
-> +mutex_unlock(&wd_data->lock);
-> +
->  hrtimer_cancel(&wd_data->timer);
->  kthread_cancel_work_sync(&wd_data->work);
+> Given this series is in the current Linus's tree, that seems like a
+> no-brainer now.
+
+Why I don't see it? (just pulled v4.19-rc2).
+The only patch that has been collected from that series is
+"media: sh: migor: Remove stale soc_camera include"
+
+I don't see the defconfig related ones though.
+
+>
+> >
+> > Mauro was exitant to take this one through the media tree, and he's
+> > probably right SH maintainers should at least ack the series. So far,
+> > I haven't heard from them.
+> >
+> > I'll try to rebase it on latest version and re-send.
+>
+> If you have further changes, please make them in separate patches.
 >
 > --
-> 2.11.0
+> Sakari Ailus
+> e-mail: sakari.ailus@iki.fi
 
+--J2SCkAp4GZ/dPZZf
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
+iQIcBAEBAgAGBQJbjliQAAoJEHI0Bo8WoVY8GOEP/31Mg/WFqloSaLBUrZa/UcGA
+19/Ewd+7Djfjgc0+r6gqFtHyvARY7lhKVK++5WcZT9GBX1jRXv0tfoCzm9KoY6Rh
+MwhJnwYRTS5+hQfRVD7PAk2g89SptrTBbos2uwBjxtCLSErg8W3luS42KwsMjCfk
+CEYf7fbIYKkoa4YaLH08yhI3rjbvLUJhb0xAweqXf0hRDwQVgMHn0hkBJTwJIBsT
+WgeGa+xfKyfV7x0sY41mUea6R2IVl3zdHm61QPTgEyYMJdv9KnTt4qoe1JOAF5pK
+2TykLPQ5L6r6LwBLPAdWtBJHHiqr744qcdEQyeQIerwtEmYJyASy4NSrDFzBD4Rr
+qsRLUqNZqvgN5fBdT/BVBsiW57V1dE62AeT5QamZBrmujV/uoTWjzAy84Bv+5pSm
+ieBVR0KVITWWwWTaS5LDihLg8JtTTJeyXNRQjL48P8eZipdqeakooLn3z0FCclGM
+nU/DEm/qre4ZnPn4ajBOGDptJWJHOPWAQHbEH84hB/S2cRwHlKcf64yPy0B3oynw
+aaLch46iYKMiaL1ES2VnmW+R92VC7F80Euc/z9zis2nKTypckZd1exztJslQN23+
+B+rCB1z+wDnXdzZq6PWtEl0CHC4s8Z3WwA1S1A/lUGqHb9jUbsTNei+H+5rxMPxI
+ybHs9khWWN7CIXX0Lx/A
+=CrMl
+-----END PGP SIGNATURE-----
 
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+--J2SCkAp4GZ/dPZZf--
