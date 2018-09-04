@@ -1,66 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:59052 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726389AbeIFOLI (ORCPT
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.21]:36262 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbeIDLxV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Sep 2018 10:11:08 -0400
-Date: Thu, 6 Sep 2018 11:36:28 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/3] ARM: dts: r9a06g032: Add pinctrl node
-Message-ID: <20180906093628.e6v4pu3lpubf54e4@verge.net.au>
-References: <1535634775-19365-4-git-send-email-phil.edworthy@renesas.com>
- <201808310827.o3GAs37i%fengguang.wu@intel.com>
- <TY1PR01MB1769AF7EB0152AF03B7B77C3F50F0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+        Tue, 4 Sep 2018 07:53:21 -0400
+Date: Tue, 4 Sep 2018 09:29:24 +0200 (CEST)
+From: Ulrich Hecht <uli@fpond.eu>
+To: Wolfram Sang <wsa@the-dreams.de>, Mark Brown <broonie@kernel.org>
+Cc: Ulrich Hecht <uli+renesas@fpond.eu>, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
+        linux-spi@vger.kernel.org
+Message-ID: <1827947028.947358.1536046165147@webmail.strato.com>
+In-Reply-To: <20180904072017.GA996@kunai>
+References: <1535101951-11221-1-git-send-email-uli+renesas@fpond.eu>
+ <20180903092819.2d2sh6dvusmwwey3@ninjato>
+ <20180903110219.GB10302@sirena.org.uk> <20180904072017.GA996@kunai>
+Subject: Re: [RESEND PATCH] spi: sh-msiof: Document R-Car D3 support
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TY1PR01MB1769AF7EB0152AF03B7B77C3F50F0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Aug 31, 2018 at 08:13:07AM +0000, Phil Edworthy wrote:
-> 
-> On 31 August 2018 01:51 kbuild test robot wrote:
-> > Hi Phil,
-> > 
-> > Thank you for the patch! Yet something to improve:
-> > 
-> > [auto build test ERROR on pinctrl/devel] [also build test ERROR on v4.19-rc1
-> > next-20180830] [if your patch is applied to the wrong git tree, please drop us
-> > a note to help improve the system]
-> > 
-> > url:    https://github.com/0day-ci/linux/commits/Phil-Edworthy/Renesas-
-> > R9A06G032-PINCTRL-Driver/20180831-050708
-> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-
-> > pinctrl.git devel
-> > config: arm-mvebu_v5_defconfig (attached as .config)
-> > compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
-> > reproduce:
-> >         wget https://raw.githubusercontent.com/intel/lkp-
-> > tests/master/sbin/make.cross -O ~/bin/make.cross
-> >         chmod +x ~/bin/make.cross
-> >         # save the attached .config to linux build tree
-> >         GCC_VERSION=7.2.0 make.cross ARCH=arm
-> > 
-> > All errors (new ones prefixed by >>):
-> > 
-> > >> Error: arch/arm/boot/dts/r9a06g032.dtsi:93.23-24 syntax error
-> >    FATAL ERROR: Unable to parse input tree
-> 
-> This error is because the patch depends on a patch from Geert:
-> "ARM: dts: r9a06g032: Use r9a06g032-sysctrl binding definitions"
-> https://patchwork.kernel.org/patch/10578707/
 
-Thanks Phil,
+> On September 4, 2018 at 9:20 AM Wolfram Sang <wsa@the-dreams.de> wrote:
+> 
+> 
+> On Mon, Sep 03, 2018 at 12:02:19PM +0100, Mark Brown wrote:
+> > On Mon, Sep 03, 2018 at 11:28:19AM +0200, Wolfram Sang wrote:
+> > > On Fri, Aug 24, 2018 at 11:12:31AM +0200, Ulrich Hecht wrote:
+> > 
+> > > > This patch fell by the wayside, probably because I forgot to cc devicetree.
+> > 
+> > > Yeah, this is good practice. Yet, I'd think this goes upstream via the
+> > > SPI tree? Ccing Mark, he prefers to be Cced explicitly.
+> > 
+> > Yes, if I don't get sent a copy of patches I'm not going to see them:
+> > 
+> > As documented in SubmittingPatches please send patches to the 
+> > maintainers for the code you would like to change.  The normal kernel
+> > workflow is that people apply patches from their inboxes, if they aren't
+> > copied they are likely to not see the patch at all and it is much more
+> > difficult to apply patches.
+> 
+> Uli, can you resend?
 
-got it. I would like to wait for the binding to be acked before
-applying this patch.
+Geert has already done so, together with the corresponding change for E3.
+
+CU
+Uli
