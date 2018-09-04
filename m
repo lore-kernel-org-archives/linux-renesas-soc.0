@@ -1,86 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:56479 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726724AbeIMOpo (ORCPT
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53536 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726052AbeIDUsr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:45:44 -0400
-Date: Thu, 13 Sep 2018 11:37:00 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: linux-kernel@vger.kernel.org, kbingham@kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/4] MAINTAINERS: rcar-du: Add co-maintainer
-Message-ID: <20180913093700.GZ28160@w540>
-References: <20180806143904.4716-1-kieran.bingham@ideasonboard.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="pWT/WNRdoJORH3Bm"
-Content-Disposition: inline
-In-Reply-To: <20180806143904.4716-1-kieran.bingham@ideasonboard.com>
+        Tue, 4 Sep 2018 16:48:47 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ulrich Hecht <uli+renesas@fpond.eu>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-spi@vger.kernel.org
+Subject: Applied "spi: sh-msiof: Document R-Car E3 support" to the spi tree
+In-Reply-To: <20180903172512.6242-3-geert+renesas@glider.be>
+Message-Id: <20180904162253.4D07411227D8@debutante.sirena.org.uk>
+Date: Tue,  4 Sep 2018 17:22:53 +0100 (BST)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+The patch
 
---pWT/WNRdoJORH3Bm
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+   spi: sh-msiof: Document R-Car E3 support
 
-Hi Kieran, Laurent
+has been applied to the spi tree at
 
-On Mon, Aug 06, 2018 at 03:39:01PM +0100, Kieran Bingham wrote:
-> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->
-> Add myself as a co-maintainer for the Renesas DRM drivers.
->
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> ---
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-renesas-soc@vger.kernel.org
->
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 7cebd5bba8a8..c7cecb9201b3 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4764,6 +4764,7 @@ F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
->
->  DRM DRIVERS FOR RENESAS
->  M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> +M:	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->  L:	dri-devel@lists.freedesktop.org
->  L:	linux-renesas-soc@vger.kernel.org
->  T:	git git://linuxtv.org/pinchartl/fbdev
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
-Am I wrong or this git repository isn't actual anymore for DU?
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-> --
-> 2.17.1
->
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
---pWT/WNRdoJORH3Bm
-Content-Type: application/pgp-signature; name="signature.asc"
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-iQIcBAEBAgAGBQJbmi+7AAoJEHI0Bo8WoVY8FO4P/2nYQQeiNOwV5u+Gcsg5qmDW
-SMwiBIOnYKakvPMFd9r53qkFRuLQBBL/LQUuniR9XJkkYKxOakW3XjrzkAAp9Aw7
-u59m0E5AAQ51Mj4b70WITctpJBuR8Pbb3no0If+iSNejg5wnc1O25S3kRipeJUDn
-3ynzUYqw0uFYtYPGPb8/fxDNTfOahVsU4QUh3SGduVzKrwojcaC2MXweabAVN082
-uyq0874XfvItoMEc7u7SK4ON7VFGVHMlREGzv9yPJ0jIF7v/Sl278U9rPey6K3Jw
-Adatg9XvCpp2R+fau8xeAPbS2tLy9qdsDecMjqHarle83W4A7JlI55h3reCxcION
-s6akr5e4bzSe9EUZNr2oZtIfe+sC7TmIAw1psMqp0TMTrDzou9cTFVAf2XLdZ+ts
-C03VNlWL8QOt++fdiaHPmd9odnl2VY/cVsdJhUA9JiokFW+ecxUfrF7fOIxmh0jn
-hXwTeeFl+oaxn3Bfrb7A++d+1f4FrQekfce1UmKBqD2gdIl+DiVTP8J/44JTQ4ae
-BzGITPcr8gAyhwRSSTcyHlj3F2KrorhqqfX7VM5kpQsintDw+VjwKGDk+mzKts9h
-2IaxZOdoudBHHPUe5Mpgl+JVEdW5SqDD2TpSX/jbR2b0dzWK0SaIa5Kxe7RWlrTU
-2Gy0cz9a267LHE7ylH5K
-=oxN4
------END PGP SIGNATURE-----
+Thanks,
+Mark
 
---pWT/WNRdoJORH3Bm--
+>From 3806112c9ecb4c958581808e0a4040d5de47216a Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Mon, 3 Sep 2018 19:25:12 +0200
+Subject: [PATCH] spi: sh-msiof: Document R-Car E3 support
+
+Document support for the MSIOF module in the Renesas R-Car E3 (r8a77990)
+SoC.
+
+No driver update is needed.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ Documentation/devicetree/bindings/spi/sh-msiof.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/spi/sh-msiof.txt b/Documentation/devicetree/bindings/spi/sh-msiof.txt
+index 8b53e986eef6..27b48f07ca97 100644
+--- a/Documentation/devicetree/bindings/spi/sh-msiof.txt
++++ b/Documentation/devicetree/bindings/spi/sh-msiof.txt
+@@ -12,6 +12,7 @@ Required properties:
+ 			 "renesas,msiof-r8a7795" (R-Car H3)
+ 			 "renesas,msiof-r8a7796" (R-Car M3-W)
+ 			 "renesas,msiof-r8a77965" (R-Car M3-N)
++			 "renesas,msiof-r8a77990" (R-Car E3)
+ 			 "renesas,msiof-r8a77995" (R-Car D3)
+ 			 "renesas,msiof-sh73a0" (SH-Mobile AG5)
+ 			 "renesas,sh-mobile-msiof" (generic SH-Mobile compatibile device)
+-- 
+2.19.0.rc1
