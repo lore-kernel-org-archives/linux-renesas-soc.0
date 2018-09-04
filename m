@@ -1,193 +1,232 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:14148 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727629AbeIGNGC (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:60974 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727320AbeIDQfg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Sep 2018 09:06:02 -0400
-From: Nguyen An Hoan <na-hoan@jinso.co.jp>
-To: broonie@kernel.org, linux-renesas-soc@vger.kernel.org,
-        horms+renesas@verge.net.au, geert+renesas@glider.be
-Cc: kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
-        magnus.damm@gmail.com, h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp,
-        cv-dong@jinso.co.jp, na-hoan@jinso.co.jp
-Subject: [PATCH 3/4] arm64: dts: r8a77995-draak: Enable Audio
-Date: Fri,  7 Sep 2018 17:25:42 +0900
-Message-Id: <1536308743-29573-4-git-send-email-na-hoan@jinso.co.jp>
-In-Reply-To: <1536308743-29573-1-git-send-email-na-hoan@jinso.co.jp>
-References: <1536308743-29573-1-git-send-email-na-hoan@jinso.co.jp>
+        Tue, 4 Sep 2018 12:35:36 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 15/16] arm64: dts: renesas: r8a77990: ebisu: Enable VGA and HDMI outputs
+Date: Tue,  4 Sep 2018 15:10:26 +0300
+Message-Id: <20180904121027.24031-16-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180904121027.24031-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180904121027.24031-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hoan Nguyen An <na-hoan@jinso.co.jp>
+Add the LVDS decoder, HDMI encoder, VGA encoder and HDMI and VGA
+connectors, and wire up the display-related nodes with clocks, pinmux
+and regulators.
 
-This patch enables Audio support for the D3 Draak board on the R8A77995
+The LVDS0 and LVDS1 encoders can use the DU_DOTCLKIN0, DU_DOTCLKIN1 and
+EXTAL externals clocks. Two of them are provided to the SoC on the Ebisu
+board, hook them up in DT.
 
-Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 123 +++++++++++++++++++++++++
- 1 file changed, 123 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 166 +++++++++++++++++++++++++
+ 1 file changed, 166 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index a8e8f26..0f17335 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -83,6 +83,12 @@
- 		reg = <0x0 0x48000000 0x0 0x18000000>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+index 2bc3a4884b00..772ea8843d84 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+@@ -28,6 +28,88 @@
+ 		/* first 128MB is reserved for secure area. */
+ 		reg = <0x0 0x48000000 0x0 0x38000000>;
  	};
- 
-+	x19_clk: x19_clk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <24576000>;
-+	};
 +
- 	reg_1p8v: regulator0 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-1.8V";
-@@ -101,6 +107,36 @@
- 		regulator-always-on;
- 	};
- 
-+	audio_clkout: audio-clkout {
-+		/*
-+		 * This is same as <&rcar_sound 0>
-+		 * but needed to avoid cs2000/rcar_sound probe dead-lock
-+		 */
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <11289600>;
-+	};
++	hdmi-out {
++		compatible = "hdmi-connector";
++		type = "a";
 +
-+	rsnd_ak4613: sound {
-+		compatible = "simple-scu-audio-card";
-+
-+		simple-audio-card,name = "rsnd-ak4613";
-+		simple-audio-card,format = "left_j";
-+		simple-audio-card,bitclock-master = <&sndcpu>;
-+		simple-audio-card,frame-master = <&sndcpu>;
-+
-+		simple-audio-card,prefix = "ak4613";
-+		simple-audio-card,routing = "ak4613 Playback", "DAI0 Playback",
-+		"DAI0 Capture", "ak4613 Capture";
-+		sndcpu: simple-audio-card,cpu {
-+			sound-dai = <&rcar_sound>;
-+		};
-+
-+		sndcodec: simple-audio-card,codec {
-+			 sound-dai = <&ak4613>;
++		port {
++			hdmi_con_out: endpoint {
++				remote-endpoint = <&adv7511_out>;
++			};
 +		};
 +	};
 +
- 	x12_clk: x12 {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
-@@ -162,6 +198,16 @@
- 		power-source = <1800>;
- 	};
- 
-+	sound_pins: sound {
-+		groups = "ssi3_data", "ssi34_ctrl", "ssi4_data_a";
-+		function = "ssi";
++	lvds-decoder {
++		compatible = "thine,thc63lvd1024";
++		vcc-supply = <&reg_3p3v>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				thc63lvd1024_in: endpoint {
++					remote-endpoint = <&lvds0_out>;
++				};
++			};
++
++			port@2 {
++				reg = <2>;
++				thc63lvd1024_out: endpoint {
++					remote-endpoint = <&adv7511_in>;
++				};
++			};
++		};
 +	};
 +
-+	sound_clk_pins: sound_clk {
-+		groups = "audio_clk_a", "audio_clk_b", "audio_clkout", "audio_clkout1";
-+		function = "audio_clk";
++	vga {
++		compatible = "vga-connector";
++
++		port {
++			vga_in: endpoint {
++				remote-endpoint = <&adv7123_out>;
++			};
++		};
 +	};
 +
- 	usb0_pins: usb0 {
- 		groups = "usb0";
- 		function = "usb0";
-@@ -184,6 +230,33 @@
- 		pagesize = <8>;
- 	};
- 
-+	ak4613: codec@10 {
-+		compatible = "asahi-kasei,ak4613";
-+		#sound-dai-cells = <0>;
-+		reg = <0x10>;
-+		clocks = <&rcar_sound 3>;
++	vga-encoder {
++		compatible = "adi,adv7123";
 +
-+		asahi-kasei,in1-single-end;
-+		asahi-kasei,in2-single-end;
-+		asahi-kasei,out1-single-end;
-+		asahi-kasei,out2-single-end;
-+		asahi-kasei,out3-single-end;
-+		asahi-kasei,out4-single-end;
-+		asahi-kasei,out5-single-end;
-+		asahi-kasei,out6-single-end;
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7123_in: endpoint {
++					remote-endpoint = <&du_out_rgb>;
++				};
++			};
++			port@1 {
++				reg = <1>;
++				adv7123_out: endpoint {
++					remote-endpoint = <&vga_in>;
++				};
++			};
++		};
 +	};
 +
-+	cs2000: clk-multiplier@4f {
++	reg_3p3v: regulator1 {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	x13_clk: x13 {
++		compatible = "fixed-clock";
 +		#clock-cells = <0>;
-+		compatible = "cirrus,cs2000-cp";
-+		reg = <0x4f>;
-+		clocks = <&audio_clkout>, <&x19_clk>;
-+		clock-names = "clk_in", "ref_clk";
-+
-+		assigned-clocks = <&cs2000>;
-+		assigned-clock-rates = <24576000>; /* 1/1 divide */
++		clock-frequency = <74250000>;
 +	};
-+
- 	composite-in@20 {
- 		compatible = "adi,adv7180cp";
- 		reg = <0x20>;
-@@ -352,6 +425,56 @@
- 	status = "okay";
  };
  
-+&rcar_sound {
-+	pinctrl-0 = <&sound_pins &sound_clk_pins>;
+ &avb {
+@@ -47,6 +129,25 @@
+ 	};
+ };
+ 
++&du {
++	pinctrl-0 = <&du_pins>;
 +	pinctrl-names = "default";
-+
-+	/* Single DAI */
-+	#sound-dai-cells = <0>;
-+
-+	/* audio_clkout0/1/2/3 */
-+	#clock-cells = <1>;
-+	clock-frequency = <12288000 11289600>;
-+	clkout-lr-synchronous;
-+
 +	status = "okay";
 +
-+	/* update <audio_clk_b> to <cs2000> */
-+	clocks = <&cpg CPG_MOD 1005>,
-+		 <&cpg CPG_MOD 1005>, <&cpg CPG_MOD 1005>,
-+		 <&cpg CPG_MOD 1005>, <&cpg CPG_MOD 1005>,
-+		 <&cpg CPG_MOD 1005>, <&cpg CPG_MOD 1011>,
-+		 <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1005>,
-+		 <&cpg CPG_MOD 1005>, <&cpg CPG_MOD 1005>,
-+		 <&cpg CPG_MOD 1017>, <&cpg CPG_MOD 1017>,
-+		 <&cpg CPG_MOD 1017>, <&cpg CPG_MOD 1025>,
-+		 <&cpg CPG_MOD 1026>, <&cpg CPG_MOD 1017>,
-+		 <&cpg CPG_MOD 1017>, <&cpg CPG_MOD 1017>,
-+		 <&cpg CPG_MOD 1017>, <&cpg CPG_MOD 1017>,
-+		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
-+		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
-+		 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
-+		 <&cs2000>, <&audio_clk_b>,
-+		 <&cpg CPG_CORE R8A77995_CLK_ZA2>;
++	clocks = <&cpg CPG_MOD 724>,
++		 <&cpg CPG_MOD 723>,
++		 <&x13_clk>;
++	clock-names = "du.0", "du.1", "dclkin.0";
 +
-+	rcar_sound,dai {
-+
-+		dai0 {
-+		    playback = <&ssi3 &src5 &dvc0>;
-+		    capture  = <&ssi4 &src6 &dvc1>;
++	ports {
++		port@0 {
++			endpoint {
++				remote-endpoint = <&adv7123_in>;
++			};
 +		};
 +	};
-+
 +};
 +
-+&ssi4 {
-+	shared-pin;
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -55,6 +156,66 @@
+ 	clock-frequency = <48000000>;
+ };
+ 
++&i2c0 {
++	status = "okay";
++
++	hdmi-encoder@39 {
++		compatible = "adi,adv7511w";
++		reg = <0x39>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <1 IRQ_TYPE_LEVEL_LOW>;
++
++		adi,input-depth = <8>;
++		adi,input-colorspace = "rgb";
++		adi,input-clock = "1x";
++		adi,input-style = <1>;
++		adi,input-justification = "evenly";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7511_in: endpoint {
++					remote-endpoint = <&thc63lvd1024_out>;
++				};
++			};
++
++			port@1 {
++				reg = <1>;
++				adv7511_out: endpoint {
++					remote-endpoint = <&hdmi_con_out>;
++				};
++			};
++		};
++	};
 +};
 +
-+&audio_clk_b {
-+	clock-frequency = <22579200>;
++&lvds0 {
++	status = "okay";
++
++	clocks = <&cpg CPG_MOD 727>,
++		 <&x13_clk>,
++		 <&extal_clk>;
++	clock-names = "fck", "dclkin.0", "extal";
++
++	ports {
++		port@1 {
++			lvds0_out: endpoint {
++				remote-endpoint = <&thc63lvd1024_in>;
++			};
++		};
++	};
 +};
 +
- &vin4 {
- 	pinctrl-0 = <&vin4_pins_cvbs>;
- 	pinctrl-names = "default";
++&lvds1 {
++	clocks = <&cpg CPG_MOD 727>,
++		 <&x13_clk>,
++		 <&extal_clk>;
++	clock-names = "fck", "dclkin.0", "extal";
++};
++
+ &ohci0 {
+ 	status = "okay";
+ };
+@@ -67,6 +228,11 @@
+ 		};
+ 	};
+ 
++	du_pins: du {
++		groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
++		function = "du";
++	};
++
+ 	usb0_pins: usb {
+ 		groups = "usb0_b";
+ 		function = "usb0";
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
