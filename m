@@ -1,121 +1,125 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:27890 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726105AbeIFOoA (ORCPT
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:44209 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725900AbeIER3e (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Sep 2018 10:44:00 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Simon Horman <horms@verge.net.au>,
+        Wed, 5 Sep 2018 13:29:34 -0400
+Received: by mail-ua1-f67.google.com with SMTP id m11-v6so5664297uao.11
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Sep 2018 05:59:23 -0700 (PDT)
+MIME-Version: 1.0
+References: <1535703651-5152-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1535703651-5152-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 5 Sep 2018 14:59:10 +0200
+Message-ID: <CAMuHMdVWWUZ5b+2E0=xqADfFsuCY1=7L+uY3m+onz9Hr2OUaXw@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: revise properties for usb 2.0
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] arm64: dts: renesas: revise properties for usb 2.0
-Date: Thu, 6 Sep 2018 10:09:13 +0000
-Message-ID: <OSBPR01MB2293C3CA56DA335829E4381BD8010@OSBPR01MB2293.jpnprd01.prod.outlook.com>
-References: <1535703651-5152-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdVWWUZ5b+2E0=xqADfFsuCY1=7L+uY3m+onz9Hr2OUaXw@mail.gmail.com>
-In-Reply-To: <CAMuHMdVWWUZ5b+2E0=xqADfFsuCY1=7L+uY3m+onz9Hr2OUaXw@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbiwgU2VudDogV2VkbmVz
-ZGF5LCBTZXB0ZW1iZXIgNSwgMjAxOCA5OjU5IFBNDQo+IA0KPiBIaSBTaGltb2RhLXNhbiwNCj4g
-DQo+IE9uIEZyaSwgQXVnIDMxLCAyMDE4IGF0IDEwOjIyIEFNIFlvc2hpaGlybyBTaGltb2RhDQo+
-IDx5b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gUi1DYXIgR2Vu
-MyBuZWVkcyB0byBlbmFibGUvZGVhc3NlcnQgY2xvY2tzL3Jlc2V0cyBvZiBib3RoIHVzYiAyLjAN
-Cj4gPiBob3N0IChpbmNsdWRlZCBwaHkpIGFuZCBwZXJpcGhlcmFsLiBPdGhlcndpc2UsIG90aGVy
-IHNpZGUgZGV2aWNlDQo+ID4gY2Fubm90IHdvcmsgY29ycmVjdGx5LiBTbywgdGhpcyBwYXRjaCBy
-ZXZpc2VzIHByb3BlcnRpZXMgb2YgY2xvY2tzDQo+ID4gYW5kIHJlc2V0cy4gQWZ0ZXIgdGhhdCwg
-ZWFjaCBkZXZpY2UgZHJpdmVyIGNhbiBlbmFibGUvZGVhc3NlcnQNCj4gPiBjbG9ja3MvcmVzZXRz
-IGJ5IGl0cyBzZWxmLg0KPiA+DQo+ID4gTm90ZXM6DQo+ID4gIC0gVG8gd29yayB0aGUgcmVuZXNh
-c191c2JocyBkcml2ZXIgY29ycmVjdGx5IHdoZW4gaG9zdCBzaWRlIGRyaXZlcnMNCj4gPiAgICBh
-cmUgZGlzYWJsZWQgYW5kIHRoZSByZW5lc2FzX3VzYmhzIGRyaXZlciBkb2Vzbid0IGhhdmUgbXVs
-dGlwbGUNCj4gPiAgICBjbG9jayBtYW5hZ2VtZW50LCB0aGlzIHBhdGNoIGRvZXNuJ3QgY2hhbmdl
-IHRoZSBvcmRlciBvZiB0aGUgY2xvY2tzDQo+ID4gICAgcHJvcGVydHkgaW4gZWFjaCBoc3VzYiBu
-b2RlLg0KPiA+ICAtIFRoaXMgcGF0Y2ggZG9lc24ndCBoYXZlIGFueSBzaWRlLWVmZmVjdHMgZXZl
-biBpZiB0aGUgcmVuZXNhc191c2Jocw0KPiA+ICAgIGRyaXZlciBkb2Vzbid0IGhhdmUgcmVzZXRf
-Y29udHJvbCBhbmQgbXVsdGlwbGUgY2xvY2sgbWFuYWdlbWVudC4NCj4gPg0KPiA+IFNpZ25lZC1v
-ZmYtYnk6IFlvc2hpaGlybyBTaGltb2RhIDx5b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNv
-bT4NCj4gDQo+IFRoYW5rcyBmb3IgeW91ciBwYXRjaCENCj4gDQo+IEknbSBhIGJpdCBjb25mdXNl
-ZCBhYm91dCB0aGUgSFMtVVNCIDwtPiBFSENJL09IQ0kgdG9wb2xvZ3kuDQo+IENhbiB5b3UgcGxl
-YXNlIGV4cGxhaW4/DQo+IA0KPiBUaGFua3MhDQoNCkhTLVVTQiA8LT4gRUhDSS9PSENJIHRvcG9s
-b2d5IG9uIFItQ2FyIEgzIGlzOg0KDQogRUhDSS9PSENJIGNoMC8zIC0tLSstLS0gUEhZIChpcyBp
-bmNsdWRlZCBvbiB0aGUgRUhDSS9PSENJKSAtLS0gRXh0ZXJuYWwgcGlucw0KIEhTLVVTQiBjaDAv
-MyAgICAtLS0rDQoNCiBFSENJIGNoMS8yICAgICAgLS0tLS0tLSBQSFkgKGlzIGluY2x1ZGVkIG9u
-IHRoZSBFSENJL09IQ0kpIC0tLSBFeHRlcm5hbCBwaW5zDQogIyBUaGVzZSBjaGFubmVscyBkb24n
-dCBoYXZlIEhTLVVTQi4NCg0KQW5kIG1vZHVsZSBzdG9wcyBhbmQgcmVzZXRzIG9mIEhTLVVTQiBh
-bmQgRUhDSS9PSENJIHRvcG9sb2d5IG9uIFItQ2FyIEgzIGlzOg0KDQogTVNUUC9SU1Q3MDMgLS0t
-KyhPUiktLS0rLS0tIEVIQ0kvT0hDSSBjaDANCiBNU1RQL1JTVDcwNCAtLS0rICAgICAgICstLS0g
-SFMtVVNCIGNoMA0KDQogTVNUUC9SU1Q3MDIgLS0tLS0tLS0tLS0tLS0tIEVIQ0kvT0hDSSBjaDEN
-CiBNU1RQL1JTVDcwMSAtLS0tLS0tLS0tLS0tLS0gRUhDSS9PSENJIGNoMg0KDQogTVNUUC9SU1Q3
-MDAgLS0tKyhPUiktLS0rLS0tIEVIQ0kvT0hDSSBjaDMNCiBNU1RQL1JTVDcwNSAtLS0rICAgICAg
-ICstLS0gSFMtVVNCIGNoMw0KDQpTaG91bGQgSSBkZXNjcmliZSB0aGVzZSB0b3BvbG9neSBvbiB0
-aGUgY29tbWl0IGxvZyBvciBzb21ld2hlcmU/DQoNCj4gPiAtLS0gYS9hcmNoL2FybTY0L2Jvb3Qv
-ZHRzL3JlbmVzYXMvcjhhNzc5NS5kdHNpDQo+ID4gKysrIGIvYXJjaC9hcm02NC9ib290L2R0cy9y
-ZW5lc2FzL3I4YTc3OTUuZHRzaQ0KPiA+IEBAIC03MDcsNyArNzA3LDggQEANCj4gPiAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgInJlbmVzYXMscmNhci1nZW4zLXVzYmhzIjsN
-Cj4gPiAgICAgICAgICAgICAgICAgICAgICAgICByZWcgPSA8MCAweGU2NTkwMDAwIDAgMHgxMDA+
-Ow0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgIGludGVycnVwdHMgPSA8R0lDX1NQSSAxMDcg
-SVJRX1RZUEVfTEVWRUxfSElHSD47DQo+ID4gLSAgICAgICAgICAgICAgICAgICAgICAgY2xvY2tz
-ID0gPCZjcGcgQ1BHX01PRCA3MDQ+Ow0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGNsb2Nr
-cyA9IDwmY3BnIENQR19NT0QgNzA0PiwgPCZjcGcgQ1BHX01PRCA3MDM+Ow0KPiA+ICsgICAgICAg
-ICAgICAgICAgICAgICAgIGNsb2NrLW5hbWVzID0gImhzdXNiIiwgImVoY2kvb2hjaSI7DQo+IA0K
-PiA3MDMgaXMgRUhDSS9PSENJMC4gV2hhdCBhYm91dCBFSENJL09IQ0kxIGFuZCBFSENJL09IQ0ky
-Pw0KDQpFSENJL09IQ0kxIGFuZCBFSENJL09IQ0kyIGRvbid0IG5lZWQgYmVjYXVzZSB0aGV5IGFy
-ZSBub3QgcmVsYXRlZCB0byB0aGUgSFMtVVNCMC4NCg0KPiA+ICAgICAgICAgICAgICAgICAgICAg
-ICAgIGRtYXMgPSA8JnVzYl9kbWFjMCAwPiwgPCZ1c2JfZG1hYzAgMT4sDQo+ID4gICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgIDwmdXNiX2RtYWMxIDA+LCA8JnVzYl9kbWFjMSAxPjsNCj4g
-PiAgICAgICAgICAgICAgICAgICAgICAgICBkbWEtbmFtZXMgPSAiY2gwIiwgImNoMSIsICJjaDIi
-LCAiY2gzIjsNCj4gPiBAQCAtNzE1LDcgKzcxNiw3IEBADQo+ID4gICAgICAgICAgICAgICAgICAg
-ICAgICAgcGh5cyA9IDwmdXNiMl9waHkwPjsNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICBw
-aHktbmFtZXMgPSAidXNiIjsNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICBwb3dlci1kb21h
-aW5zID0gPCZzeXNjIFI4QTc3OTVfUERfQUxXQVlTX09OPjsNCj4gPiAtICAgICAgICAgICAgICAg
-ICAgICAgICByZXNldHMgPSA8JmNwZyA3MDQ+Ow0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
-IHJlc2V0cyA9IDwmY3BnIDcwND4sIDwmY3BnIDcwMz47DQo+ID4gICAgICAgICAgICAgICAgICAg
-ICAgICAgc3RhdHVzID0gImRpc2FibGVkIjsNCj4gPiAgICAgICAgICAgICAgICAgfTsNCj4gPg0K
-PiA+IEBAIC03MjQsNyArNzI1LDggQEANCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgInJlbmVzYXMscmNhci1nZW4zLXVzYmhzIjsNCj4gPiAgICAgICAgICAgICAgICAg
-ICAgICAgICByZWcgPSA8MCAweGU2NTljMDAwIDAgMHgxMDA+Ow0KPiA+ICAgICAgICAgICAgICAg
-ICAgICAgICAgIGludGVycnVwdHMgPSA8R0lDX1NQSSAzNyBJUlFfVFlQRV9MRVZFTF9ISUdIPjsN
-Cj4gPiAtICAgICAgICAgICAgICAgICAgICAgICBjbG9ja3MgPSA8JmNwZyBDUEdfTU9EIDcwNT47
-DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgY2xvY2tzID0gPCZjcGcgQ1BHX01PRCA3MDU+
-LCA8JmNwZyBDUEdfTU9EIDcwMD47DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgY2xvY2st
-bmFtZXMgPSAiaHN1c2IiLCAiZWhjaS9vaGNpIjsNCj4gDQo+IFNvIHRoaXMgb25lIGlzIGxpbmtl
-ZCB0byBFSENJL09IQ0kzPw0KDQpZZXMuDQoNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICBk
-bWFzID0gPCZ1c2JfZG1hYzIgMD4sIDwmdXNiX2RtYWMyIDE+LA0KPiA+ICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICA8JnVzYl9kbWFjMyAwPiwgPCZ1c2JfZG1hYzMgMT47DQo+ID4gICAg
-ICAgICAgICAgICAgICAgICAgICAgZG1hLW5hbWVzID0gImNoMCIsICJjaDEiLCAiY2gyIiwgImNo
-MyI7DQo+ID4gQEAgLTczMiw3ICs3MzQsNyBAQA0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAg
-IHBoeXMgPSA8JnVzYjJfcGh5Mz47DQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgcGh5LW5h
-bWVzID0gInVzYiI7DQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgcG93ZXItZG9tYWlucyA9
-IDwmc3lzYyBSOEE3Nzk1X1BEX0FMV0FZU19PTj47DQo+ID4gLSAgICAgICAgICAgICAgICAgICAg
-ICAgcmVzZXRzID0gPCZjcGcgNzA1PjsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICByZXNl
-dHMgPSA8JmNwZyA3MDU+LCA8JmNwZyA3MDA+Ow0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAg
-IHN0YXR1cyA9ICJkaXNhYmxlZCI7DQo+ID4gICAgICAgICAgICAgICAgIH07DQo+ID4NCj4gPiBA
-QCAtMjA5OCwxMSArMjEwMCwxMSBAQA0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgIGNvbXBh
-dGlibGUgPSAiZ2VuZXJpYy1vaGNpIjsNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICByZWcg
-PSA8MCAweGVlMDgwMDAwIDAgMHgxMDA+Ow0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgIGlu
-dGVycnVwdHMgPSA8R0lDX1NQSSAxMDggSVJRX1RZUEVfTEVWRUxfSElHSD47DQo+ID4gLSAgICAg
-ICAgICAgICAgICAgICAgICAgY2xvY2tzID0gPCZjcGcgQ1BHX01PRCA3MDM+Ow0KPiA+ICsgICAg
-ICAgICAgICAgICAgICAgICAgIGNsb2NrcyA9IDwmY3BnIENQR19NT0QgNzAzPiwgPCZjcGcgQ1BH
-X01PRCA3MDQ+Ow0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgIHBoeXMgPSA8JnVzYjJfcGh5
-MD47DQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgcGh5LW5hbWVzID0gInVzYiI7DQo+ID4g
-ICAgICAgICAgICAgICAgICAgICAgICAgcG93ZXItZG9tYWlucyA9IDwmc3lzYyBSOEE3Nzk1X1BE
-X0FMV0FZU19PTj47DQo+ID4gLSAgICAgICAgICAgICAgICAgICAgICAgcmVzZXRzID0gPCZjcGcg
-NzAzPjsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICByZXNldHMgPSA8JmNwZyA3MDM+LCA8
-JmNwZyA3MDQ+Ow0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgIHN0YXR1cyA9ICJkaXNhYmxl
-ZCI7DQo+ID4gICAgICAgICAgICAgICAgIH07DQo+IA0KPiBUaGUgYWJvdmUgaXMgZm9yIHRoZSBv
-aGNpMCBub2RlLg0KPiBXaGF0IGFib3V0IG9oY2kxIGFuZCBvaGNpMj8NCj4gDQo+IFNhbWUgZm9y
-IGVoY2kgYmVsb3cuDQoNCltvZV1oY2lbMTJdIGRvbid0IGhhdmUgSFMtVVNCLiBTbywgd2UgZG9u
-J3QgbmVlZCB0byByZXZpc2UgdGhlbS4NCg0KQmVzdCByZWdhcmRzLA0KWW9zaGloaXJvIFNoaW1v
-ZGENCg0KPiBHcntvZXRqZSxlZXRpbmd9cywNCj4gDQo+ICAgICAgICAgICAgICAgICAgICAgICAg
-IEdlZXJ0DQo+IA0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9m
-IExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LW02OGsub3JnDQo+IA0KPiBJbiBwZXJz
-b25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBh
-IGhhY2tlci4gQnV0DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNh
-eSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4gICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0K
+Hi Shimoda-san,
+
+On Fri, Aug 31, 2018 at 10:22 AM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> R-Car Gen3 needs to enable/deassert clocks/resets of both usb 2.0
+> host (included phy) and peripheral. Otherwise, other side device
+> cannot work correctly. So, this patch revises properties of clocks
+> and resets. After that, each device driver can enable/deassert
+> clocks/resets by its self.
+>
+> Notes:
+>  - To work the renesas_usbhs driver correctly when host side drivers
+>    are disabled and the renesas_usbhs driver doesn't have multiple
+>    clock management, this patch doesn't change the order of the clocks
+>    property in each hsusb node.
+>  - This patch doesn't have any side-effects even if the renesas_usbhs
+>    driver doesn't have reset_control and multiple clock management.
+>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+
+Thanks for your patch!
+
+I'm a bit confused about the HS-USB <-> EHCI/OHCI topology.
+Can you please explain?
+
+Thanks!
+
+> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> @@ -707,7 +707,8 @@
+>                                      "renesas,rcar-gen3-usbhs";
+>                         reg = <0 0xe6590000 0 0x100>;
+>                         interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
+> -                       clocks = <&cpg CPG_MOD 704>;
+> +                       clocks = <&cpg CPG_MOD 704>, <&cpg CPG_MOD 703>;
+> +                       clock-names = "hsusb", "ehci/ohci";
+
+703 is EHCI/OHCI0. What about EHCI/OHCI1 and EHCI/OHCI2?
+
+>                         dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
+>                                <&usb_dmac1 0>, <&usb_dmac1 1>;
+>                         dma-names = "ch0", "ch1", "ch2", "ch3";
+> @@ -715,7 +716,7 @@
+>                         phys = <&usb2_phy0>;
+>                         phy-names = "usb";
+>                         power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+> -                       resets = <&cpg 704>;
+> +                       resets = <&cpg 704>, <&cpg 703>;
+>                         status = "disabled";
+>                 };
+>
+> @@ -724,7 +725,8 @@
+>                                      "renesas,rcar-gen3-usbhs";
+>                         reg = <0 0xe659c000 0 0x100>;
+>                         interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
+> -                       clocks = <&cpg CPG_MOD 705>;
+> +                       clocks = <&cpg CPG_MOD 705>, <&cpg CPG_MOD 700>;
+> +                       clock-names = "hsusb", "ehci/ohci";
+
+So this one is linked to EHCI/OHCI3?
+
+>                         dmas = <&usb_dmac2 0>, <&usb_dmac2 1>,
+>                                <&usb_dmac3 0>, <&usb_dmac3 1>;
+>                         dma-names = "ch0", "ch1", "ch2", "ch3";
+> @@ -732,7 +734,7 @@
+>                         phys = <&usb2_phy3>;
+>                         phy-names = "usb";
+>                         power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+> -                       resets = <&cpg 705>;
+> +                       resets = <&cpg 705>, <&cpg 700>;
+>                         status = "disabled";
+>                 };
+>
+> @@ -2098,11 +2100,11 @@
+>                         compatible = "generic-ohci";
+>                         reg = <0 0xee080000 0 0x100>;
+>                         interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+> -                       clocks = <&cpg CPG_MOD 703>;
+> +                       clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>;
+>                         phys = <&usb2_phy0>;
+>                         phy-names = "usb";
+>                         power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+> -                       resets = <&cpg 703>;
+> +                       resets = <&cpg 703>, <&cpg 704>;
+>                         status = "disabled";
+>                 };
+
+The above is for the ohci0 node.
+What about ohci1 and ohci2?
+
+Same for ehci below.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
