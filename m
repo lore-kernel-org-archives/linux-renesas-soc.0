@@ -1,81 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58158 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729111AbeI1Qp4 (ORCPT
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:39006 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbeIESAN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:45:56 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC Updates for v4.20
-Date: Fri, 28 Sep 2018 12:22:47 +0200
-Message-Id: <cover.1538123953.git.horms+renesas@verge.net.au>
+        Wed, 5 Sep 2018 14:00:13 -0400
+Received: by mail-ua1-f65.google.com with SMTP id g18-v6so5776278uam.6
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Sep 2018 06:29:57 -0700 (PDT)
+MIME-Version: 1.0
+References: <1534511968-19634-1-git-send-email-uli+renesas@fpond.eu> <1534511968-19634-2-git-send-email-uli+renesas@fpond.eu>
+In-Reply-To: <1534511968-19634-2-git-send-email-uli+renesas@fpond.eu>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 5 Sep 2018 15:29:44 +0200
+Message-ID: <CAMuHMdW=UD1XT5yvuvk9dBf50RpSqK4sO2Z-0tEBYWa4_TasSA@mail.gmail.com>
+Subject: Re: [PATCH 1/5] arm64: dts: r8a7795: Add cpuidle support for CA57 cores
+To: uli+renesas@fpond.eu
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>,
+        dien.pham.ry@renesas.com,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Hi Uli,
 
-Please consider these Renesas ARM based SoC updates for v4.20.
+On Fri, Aug 17, 2018 at 3:19 PM Ulrich Hecht <uli+renesas@fpond.eu> wrote:
+> From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+>
+> Enable cpuidle (core shutdown) support for R-Car H3 CA57 cores.
+>
+> Parameters were found after evaluation by gaku.inami.xw@bp.renesas.com; they
+> help to keep the performance and reduce the power consumption.
+>
+> Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+> [dien.pham.ry: Apply new cpuidle parameters]
+> Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+
+Thanks for your patch!
 
 
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
 
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+> @@ -221,6 +225,20 @@
+>                         cache-unified;
+>                         cache-level = <2>;
+>                 };
+> +
+> +               idle-states {
+> +                       entry-method = "psci";
+> +
+> +                       CPU_SLEEP_0: cpu-sleep-0 {
+> +                               compatible = "arm,idle-state";
+> +                               arm,psci-suspend-param = <0x0010000>;
+> +                               local-timer-stop;
+> +                               entry-latency-us = <400>;
+> +                               exit-latency-us = <500>;
+> +                               min-residency-us = <4000>;
+> +                               status = "okay";
 
-are available in the git repository at:
+Usually we just don't specify status for "virtual" nodes (applies to the
+other patches, too).
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm-soc-for-v4.20
+> +                       };
+> +               };
+>         };
 
-for you to fetch changes up to 6d14d4d313d09dabdb06b4a9f4e5fe4305051e9b:
+Gr{oetje,eeting}s,
 
-  ARM: shmobile: Rework the PMIC IRQ line quirk (2018-09-19 11:11:46 +0200)
+                        Geert
 
-----------------------------------------------------------------
-Renesas ARM Based SoC Updates for v4.20
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-* Rework the PMIC IRQ line quirk to use DT rather than hard coded topology
-* Convert to SPDX identifiers
-* Convert to using %pOFn instead of device_node.name
-* Remove the no longer needed ARCH_SHMOBILE Kconfig symbol
-* RZ/G1N (r8a7744) SoC: Add basic SoC and debug-ll support
-* R-Car H1 (r8a7779) SoC: remove unused includes
-
-----------------------------------------------------------------
-Biju Das (2):
-      ARM: shmobile: r8a7744: Basic SoC support
-      ARM: debug-ll: Add support for r8a7744
-
-Geert Uytterhoeven (2):
-      ARM: shmobile: r8a7779: Remove unused includes
-      ARM: shmobile: Remove the ARCH_SHMOBILE Kconfig symbol
-
-Kuninori Morimoto (1):
-      ARM: shmobile: convert to SPDX identifiers
-
-Marek Vasut (1):
-      ARM: shmobile: Rework the PMIC IRQ line quirk
-
-Rob Herring (1):
-      ARM: shmobile: Convert to using %pOFn instead of device_node.name
-
- arch/arm/Kconfig.debug                             |   9 +-
- arch/arm/mach-shmobile/Kconfig                     |  10 +-
- arch/arm/mach-shmobile/headsmp-scu.S               |  13 +-
- arch/arm/mach-shmobile/headsmp.S                   |   7 +-
- arch/arm/mach-shmobile/platsmp-scu.c               |   5 +-
- arch/arm/mach-shmobile/platsmp.c                   |   5 +-
- arch/arm/mach-shmobile/pm-rcar-gen2.c              |   5 +-
- arch/arm/mach-shmobile/pm-rmobile.c                |   7 +-
- arch/arm/mach-shmobile/pm-rmobile.h                |   7 +-
- arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c | 139 ++++++++++++++++-----
- arch/arm/mach-shmobile/setup-r8a7779.c             |   2 -
- arch/arm/mach-shmobile/setup-rcar-gen2.c           |   2 +
- arch/arm/mach-shmobile/smp-sh73a0.c                |  10 +-
- arch/arm/mach-shmobile/suspend.c                   |   5 +-
- arch/arm/mach-shmobile/timer.c                     |  10 +-
- 15 files changed, 137 insertions(+), 99 deletions(-)
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
