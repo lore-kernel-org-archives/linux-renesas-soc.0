@@ -1,113 +1,104 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbeIMOUD (ORCPT
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57826 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725900AbeIEQQA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:20:03 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 30/58] arm64: dts: renesas: r8a774a1: Add RZ/G2M thermal support
-Date: Thu, 13 Sep 2018 11:09:25 +0200
-Message-Id: <a4165904fd346e13d84bb67b0072e24ecd7f1937.1536828567.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
-References: <cover.1536828567.git.horms+renesas@verge.net.au>
+        Wed, 5 Sep 2018 12:16:00 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mark Brown <broonie@kernel.org>, stable@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Applied "spi: rspi: Fix interrupted DMA transfers" to the spi tree
+In-Reply-To: <20180905084939.7401-5-geert+renesas@glider.be>
+Message-Id: <20180905114559.E12A811229D0@debutante.sirena.org.uk>
+Date: Wed,  5 Sep 2018 12:45:59 +0100 (BST)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+The patch
 
-Add thermal support for R8A774A1 (RZ/G2M) SoC.
+   spi: rspi: Fix interrupted DMA transfers
 
-Based on the work done for r8a7796 SoC.
+has been applied to the spi tree at
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 8dbbaa47b96f6ea5f09f922b4effff3c505cd8cf Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Wed, 5 Sep 2018 10:49:39 +0200
+Subject: [PATCH] spi: rspi: Fix interrupted DMA transfers
+
+When interrupted, wait_event_interruptible_timeout() returns
+-ERESTARTSYS, and the SPI transfer in progress will fail, as expected:
+
+    m25p80 spi0.0: SPI transfer failed: -512
+    spi_master spi0: failed to transfer one message from queue
+
+However, as the underlying DMA transfers may not have completed, all
+subsequent SPI transfers may start to fail:
+
+    spi_master spi0: receive timeout
+    qspi_transfer_out_in() returned -110
+    m25p80 spi0.0: SPI transfer failed: -110
+    spi_master spi0: failed to transfer one message from queue
+
+Fix this by calling dmaengine_terminate_all() not only for timeouts, but
+also for errors.
+
+This can be reproduced on r8a7991/koelsch, using "hd /dev/mtd0" followed
+by CTRL-C.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 ---
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 60 +++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+ drivers/spi/spi-rspi.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index ced254601364..02620c89e004 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -290,6 +290,21 @@
- 			#power-domain-cells = <1>;
- 		};
+diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+index f93a4587e3fb..b37de1d991d6 100644
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -598,11 +598,13 @@ static int rspi_dma_transfer(struct rspi_data *rspi, struct sg_table *tx,
  
-+		tsc: thermal@e6198000 {
-+			compatible = "renesas,r8a774a1-thermal";
-+			reg = <0 0xe6198000 0 0x100>,
-+			      <0 0xe61a0000 0 0x100>,
-+			      <0 0xe61a8000 0 0x100>;
-+			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 522>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 522>;
-+			#thermal-sensor-cells = <1>;
-+			status = "okay";
-+		};
-+
- 		intc_ex: interrupt-controller@e61c0000 {
- 			compatible = "renesas,intc-ex-r8a774a1", "renesas,irqc";
- 			#interrupt-cells = <2>;
-@@ -840,6 +855,51 @@
- 		};
- 	};
- 
-+	thermal-zones {
-+		sensor_thermal1: sensor-thermal1 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&tsc 0>;
-+
-+			trips {
-+				sensor1_crit: sensor1-crit {
-+					temperature = <120000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		sensor_thermal2: sensor-thermal2 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&tsc 1>;
-+
-+			trips {
-+				sensor2_crit: sensor2-crit {
-+					temperature = <120000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+
-+		};
-+
-+		sensor_thermal3: sensor-thermal3 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&tsc 2>;
-+
-+			trips {
-+				sensor3_crit: sensor3-crit {
-+					temperature = <120000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
-+
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+ 	ret = wait_event_interruptible_timeout(rspi->wait,
+ 					       rspi->dma_callbacked, HZ);
+-	if (ret > 0 && rspi->dma_callbacked)
++	if (ret > 0 && rspi->dma_callbacked) {
+ 		ret = 0;
+-	else if (!ret) {
+-		dev_err(&rspi->master->dev, "DMA timeout\n");
+-		ret = -ETIMEDOUT;
++	} else {
++		if (!ret) {
++			dev_err(&rspi->master->dev, "DMA timeout\n");
++			ret = -ETIMEDOUT;
++		}
+ 		if (tx)
+ 			dmaengine_terminate_all(rspi->master->dma_tx);
+ 		if (rx)
 -- 
-2.11.0
+2.19.0.rc1
