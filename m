@@ -1,53 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:42431 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727203AbeIFMov (ORCPT
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:42487 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726335AbeIEVaz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Sep 2018 08:44:51 -0400
-From: Chris Paterson <Chris.Paterson2@renesas.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "linux-renesas-soc@vger.kernel.org"
+        Wed, 5 Sep 2018 17:30:55 -0400
+Received: by mail-lf1-f66.google.com with SMTP id z11-v6so6591732lff.9
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Sep 2018 09:59:51 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH] clk: renesas: r8a77970: add CMT clocks
+To: "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH] clk: renesas: r8a77970: add CMT clocks
-Date: Thu, 6 Sep 2018 08:10:33 +0000
-Message-ID: <TYAPR01MB2285DBEDCDFFDF824D45C78FB7010@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+        linux-clk@vger.kernel.org
 References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com>
- <d7c78a11-b876-0587-c684-88f1865f0260@cogentembedded.com>
-In-Reply-To: <d7c78a11-b876-0587-c684-88f1865f0260@cogentembedded.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Message-ID: <d7c78a11-b876-0587-c684-88f1865f0260@cogentembedded.com>
+Date: Wed, 5 Sep 2018 19:59:48 +0300
 MIME-Version: 1.0
+In-Reply-To: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gU2VyZ2VpLA0KDQo+IEZyb206IGxpbnV4LXJlbmVzYXMtc29jLW93bmVyQHZnZXIua2Vy
-bmVsLm9yZyA8bGludXgtcmVuZXNhcy1zb2MtDQo+IG93bmVyQHZnZXIua2VybmVsLm9yZz4gT24g
-QmVoYWxmIE9mIFNlcmdlaSBTaHR5bHlvdg0KPiBTZW50OiAwNSBTZXB0ZW1iZXIgMjAxOCAxODow
-MA0KPiANCj4gQWRkIHRoZSBSOEE3Nzk3MCBDTVQgbW9kdWxlIGNsb2Nrcy4NCj4gDQo+IEJhc2Vk
-IG9uIHRoZSBvcmlnaW5hbCAoYW5kIGxhcmdlKSBwYXRjaCBieSBWbGFkaW1pciBCYXJpbm92Lg0K
-PiANCj4gU2lnbmVkLW9mZi1ieTogVmxhZGltaXIgQmFyaW5vdiA8dmxhZGltaXIuYmFyaW5vdkBj
-b2dlbnRlbWJlZGRlZC5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IFNlcmdlaSBTaHR5bHlvdiA8c2Vy
-Z2VpLnNodHlseW92QGNvZ2VudGVtYmVkZGVkLmNvbT4NCg0KUmV2aWV3ZWQtYnk6IENocmlzIFBh
-dGVyc29uIDxjaHJpcy5wYXRlcnNvbjJAcmVuZXNhcy5jb20+DQoNCktpbmQgcmVnYXJkcywgQ2hy
-aXMNCg0KPiANCj4gLS0tDQo+ICBkcml2ZXJzL2Nsay9yZW5lc2FzL3I4YTc3OTcwLWNwZy1tc3Ny
-LmMgfCAgICA0ICsrKysNCj4gIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKykNCj4gDQo+
-IEluZGV4OiByZW5lc2FzL2RyaXZlcnMvY2xrL3JlbmVzYXMvcjhhNzc5NzAtY3BnLW1zc3IuYw0K
-PiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09DQo+ID09PT09PT09PQ0KPiAtLS0gcmVuZXNhcy5vcmlnL2RyaXZlcnMvY2xrL3JlbmVzYXMv
-cjhhNzc5NzAtY3BnLW1zc3IuYw0KPiArKysgcmVuZXNhcy9kcml2ZXJzL2Nsay9yZW5lc2FzL3I4
-YTc3OTcwLWNwZy1tc3NyLmMNCj4gQEAgLTExOCw2ICsxMTgsMTAgQEAgc3RhdGljIGNvbnN0IHN0
-cnVjdCBtc3NyX21vZF9jbGsgcjhhNzc5Nw0KPiAgCURFRl9NT0QoIm1maXMiLAkJCSAyMTMsDQo+
-IAlSOEE3Nzk3MF9DTEtfUzJEMiksDQo+ICAJREVGX01PRCgic3lzLWRtYWMyIiwJCSAyMTcsDQo+
-IAlSOEE3Nzk3MF9DTEtfUzJEMSksDQo+ICAJREVGX01PRCgic3lzLWRtYWMxIiwJCSAyMTgsDQo+
-IAlSOEE3Nzk3MF9DTEtfUzJEMSksDQo+ICsJREVGX01PRCgiY210MyIsCQkJIDMwMCwJUjhBNzc5
-NzBfQ0xLX1IpLA0KPiArCURFRl9NT0QoImNtdDIiLAkJCSAzMDEsCVI4QTc3OTcwX0NMS19SKSwN
-Cj4gKwlERUZfTU9EKCJjbXQxIiwJCQkgMzAyLAlSOEE3Nzk3MF9DTEtfUiksDQo+ICsJREVGX01P
-RCgiY210MCIsCQkJIDMwMywJUjhBNzc5NzBfQ0xLX1IpLA0KPiAgCURFRl9NT0QoInNkLWlmIiwJ
-CSAzMTQsCVI4QTc3OTcwX0NMS19TRDApLA0KPiAgCURFRl9NT0QoInJ3ZHQiLAkJCSA0MDIsCVI4
-QTc3OTcwX0NMS19SKSwNCj4gIAlERUZfTU9EKCJpbnRjLWV4IiwJCSA0MDcsCVI4QTc3OTcwX0NM
-S19DUCksDQo=
+Add the R8A77970 CMT module clocks.
+
+Based on the original (and large) patch by Vladimir Barinov.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+---
+ drivers/clk/renesas/r8a77970-cpg-mssr.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+Index: renesas/drivers/clk/renesas/r8a77970-cpg-mssr.c
+===================================================================
+--- renesas.orig/drivers/clk/renesas/r8a77970-cpg-mssr.c
++++ renesas/drivers/clk/renesas/r8a77970-cpg-mssr.c
+@@ -118,6 +118,10 @@ static const struct mssr_mod_clk r8a7797
+ 	DEF_MOD("mfis",			 213,	R8A77970_CLK_S2D2),
+ 	DEF_MOD("sys-dmac2",		 217,	R8A77970_CLK_S2D1),
+ 	DEF_MOD("sys-dmac1",		 218,	R8A77970_CLK_S2D1),
++	DEF_MOD("cmt3",			 300,	R8A77970_CLK_R),
++	DEF_MOD("cmt2",			 301,	R8A77970_CLK_R),
++	DEF_MOD("cmt1",			 302,	R8A77970_CLK_R),
++	DEF_MOD("cmt0",			 303,	R8A77970_CLK_R),
+ 	DEF_MOD("sd-if",		 314,	R8A77970_CLK_SD0),
+ 	DEF_MOD("rwdt",			 402,	R8A77970_CLK_R),
+ 	DEF_MOD("intc-ex",		 407,	R8A77970_CLK_CP),
