@@ -1,61 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:38890 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728230AbeIMU1X (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:55176 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728135AbeIENwt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 16:27:23 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: iommu@lists.linux-foundation.org,
-        Robin Murphy <robin.murphy@arm.com>,
-        Christoph Hellwig <hch@lst.de>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 0/3] dma-mapping: clear dangling pointers consistently
-Date: Thu, 13 Sep 2018 17:17:13 +0200
-Message-Id: <20180913151716.6333-1-wsa+renesas@sang-engineering.com>
+        Wed, 5 Sep 2018 09:52:49 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mark Brown <broonie@kernel.org>
+Cc: Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-sh@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/4] spi: sh-msiof: Fix handling of write value for SISTR register
+Date: Wed,  5 Sep 2018 10:49:37 +0200
+Message-Id: <20180905084939.7401-3-geert+renesas@glider.be>
+In-Reply-To: <20180905084939.7401-1-geert+renesas@glider.be>
+References: <20180905084939.7401-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When working with dma_set_max_seg_size(), I noticed issues with a
-dangling dma_parms pointer. I saw Christoph just worked on handling
-something similar for the dma_ops pointer, too. I came up with three
-patches on top of Christoph's work which I send out for discussion here:
+From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
 
-Patch 1 fixes a meanwhile stale comment.
+This patch changes writing to the SISTR register according to the H/W
+user's manual.
 
-Patch 2 makes clearing the dma_ops pointer more consistent because it
-was missed on the custom ARM implementation to the best of my knowledge.
+The TDREQ bit and RDREQ bits of SISTR are read-only, and must be written
+their initial values of zero.
 
-Patch 3 generalizes teardown_dma_ops to teardown_dma, so that clearing
-dma_parms can be added there.
+Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+[geert: reword]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/spi/spi-sh-msiof.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-All these patches are based on the dma-mapping for-next branch. They are
-build tested and runtime tested on a Renesas Salvator-XS board (R-Car
-M3-N, ARM64) and Renesas Lager board (R-Car H2, ARM32).
-
-A branch containing these (and dma_parms additions for the above boards)
-can be found here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/sdhi/set_max_seg
-
-Looking forward to opinions.
-
-Regards,
-
-   Wolfram
-
-
-Wolfram Sang (3):
-  ARM: dma-mapping: update comment about handling dma_ops when detaching
-    from IOMMU
-  dma-mapping: clear dma_ops pointer also on ARM
-  dma-mapping: clear dma_parms on teardown, too
-
- arch/arm/mm/dma-mapping.c   | 8 ++++----
- include/linux/dma-mapping.h | 6 ++++--
- 2 files changed, 8 insertions(+), 6 deletions(-)
-
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index bfe4e6d4f7bff66c..101cd6aae2ea520a 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -397,7 +397,8 @@ static void sh_msiof_spi_set_mode_regs(struct sh_msiof_spi_priv *p,
+ 
+ static void sh_msiof_reset_str(struct sh_msiof_spi_priv *p)
+ {
+-	sh_msiof_write(p, STR, sh_msiof_read(p, STR));
++	sh_msiof_write(p, STR,
++		       sh_msiof_read(p, STR) & ~(STR_TDREQ | STR_RDREQ));
+ }
+ 
+ static void sh_msiof_spi_write_fifo_8(struct sh_msiof_spi_priv *p,
 -- 
-2.18.0
+2.17.1
