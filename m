@@ -1,47 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:4933 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727799AbeIJOr3 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38853 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726071AbeIEPTn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:47:29 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v4 2/3] dt-bindings: usb: renesas_usbhs: add clock-names property
-Date: Mon, 10 Sep 2018 18:52:19 +0900
-Message-Id: <1536573140-24123-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1536573140-24123-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1536573140-24123-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 5 Sep 2018 11:19:43 -0400
+Date: Wed, 5 Sep 2018 12:49:58 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Ulrich Hecht <uli+renesas@fpond.eu>,
+        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a77990: Add MSIOF pins, groups and
+ functions
+Message-ID: <20180905104957.klna45k723ow7lql@verge.net.au>
+References: <20180903173230.7245-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180903173230.7245-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen3 needs to enable clocks of both host and peripheral.
-Otherwise, other side device cannot work correctly. So, this patch
-adds a property of clock-names for R-Car Gen3 as an optional.
+On Mon, Sep 03, 2018 at 07:32:30PM +0200, Geert Uytterhoeven wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> 
+> This patch adds MSIOF{0,1,2,3} pins, groups and functions to
+> the R8A77990 SoC.
+> 
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> To be queued in sh-pfc-for-v4.20.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- Documentation/devicetree/bindings/usb/renesas_usbhs.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
-index 087140a..dbdb92c 100644
---- a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
-+++ b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
-@@ -26,7 +26,9 @@ Required properties:
- 
-   - reg: Base address and length of the register for the USBHS
-   - interrupts: Interrupt specifier for the USBHS
--  - clocks: A list of phandle + clock specifier pairs
-+  - clocks: A list of phandle + clock specifier pairs. In case of
-+	    "renesas,rcar-gen3-usbhs" compatible device, first clock should be
-+	    peripheral and second one should be host.
- 
- Optional properties:
-   - renesas,buswait: Integer to use BUSWAIT register
--- 
-1.9.1
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
