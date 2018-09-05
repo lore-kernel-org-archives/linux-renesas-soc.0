@@ -1,21 +1,21 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42666 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727168AbeIWBwS (ORCPT
+Received: from mail-lj1-f182.google.com ([209.85.208.182]:44075 "EHLO
+        mail-lj1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727586AbeIFA7C (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 22 Sep 2018 21:52:18 -0400
-Received: by mail-lf1-f65.google.com with SMTP id d7-v6so9933394lfj.9
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 22 Sep 2018 12:57:32 -0700 (PDT)
+        Wed, 5 Sep 2018 20:59:02 -0400
+Received: by mail-lj1-f182.google.com with SMTP id q127-v6so7358183ljq.11
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Sep 2018 13:27:12 -0700 (PDT)
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] dt-bindings: pwm: renesas: tpu: document R8A779{7|8}0
- bindings
-To: Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org
-Message-ID: <ea104bc7-ee9a-b638-36da-6c6af1e622be@cogentembedded.com>
-Date: Sat, 22 Sep 2018 22:57:29 +0300
+Subject: [PATCH 0/2] Add R-Car gen3 SoC support to the CMT driver
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>
+Message-ID: <3ce24bfe-1edb-1a92-8847-ff998ac86d16@cogentembedded.com>
+Date: Wed, 5 Sep 2018 23:27:09 +0300
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-MW
@@ -23,30 +23,13 @@ Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the R-Car V3{M|H} (R8A779{7|8}0) SoC in the Renesas TPU bindings;
-the TPU hardware in those is the Renesas standard 4-channel timer pulse
-unit.
+Hello!
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Here's the set of 2 patches against the 'tip.git' repo's 'timers/core' branch
+plus the driver fixup for the 64-bit machines posted recently. We're adding
+support for the CMT0 and CMT1 found in the R-Car gen3 SoCs.
 
----
-This patch is against Linus' repo plus the bindings fix just reposted...
+[1/2] clocksource: sh_cmt: properly line-wrap sh_cmt_of_table[] initializer
+[2/2] clocksource: sh_cmt: add R-Car gen3 support
 
- Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt |    4 ++++
- 1 file changed, 4 insertions(+)
-
-Index: linux/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt
-===================================================================
---- linux.orig/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt
-+++ linux/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt
-@@ -8,6 +8,10 @@ Required Properties:
-     - "renesas,tpu-r8a7743": for R8A7743 (RZ/G1M) compatible PWM controller.
-     - "renesas,tpu-r8a7745": for R8A7745 (RZ/G1E) compatible PWM controller.
-     - "renesas,tpu-r8a7790": for R8A7790 (R-Car H2) compatible PWM controller.
-+    - "renesas,tpu-r8a77970": for R8A77970 (R-Car V3M) compatible PWM
-+			      controller.
-+    - "renesas,tpu-r8a77980": for R8A77980 (R-Car V3H) compatible PWM
-+			      controller.
-     - "renesas,tpu": for the generic TPU PWM controller; this is a fallback for
- 		     the entries listed above.
- 
+MBR, Sergei
