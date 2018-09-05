@@ -1,67 +1,81 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Felipe Balbi <balbi@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:45427 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726340AbeIESa1 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 5 Sep 2018 14:30:27 -0400
+MIME-Version: 1.0
+References: <1535711579-15169-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1535711579-15169-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1535711579-15169-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 5 Sep 2018 15:59:54 +0200
+Message-ID: <CAMuHMdWroi7SDj+hrLYqwctHMZEzA8bC=VgykvPtUwy5Eqfx+A@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] usb: renesas_usbhs: Add multiple clocks management
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Felipe Balbi <balbi@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Greg KH <gregkh@linuxfoundation.org>,
         USB list <linux-usb@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
         <devicetree@vger.kernel.org>
-Subject: RE: [PATCH v2 3/3] usb: renesas_usbhs: Add multiple clocks management
-Date: Thu, 6 Sep 2018 03:19:19 +0000
-Message-ID: <OSBPR01MB2293650D5F80FC6470E6415DD8010@OSBPR01MB2293.jpnprd01.prod.outlook.com>
-References: <1535711579-15169-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1535711579-15169-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdWroi7SDj+hrLYqwctHMZEzA8bC=VgykvPtUwy5Eqfx+A@mail.gmail.com>
-In-Reply-To: <CAMuHMdWroi7SDj+hrLYqwctHMZEzA8bC=VgykvPtUwy5Eqfx+A@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbiwgU2VudDogV2VkbmVz
-ZGF5LCBTZXB0ZW1iZXIgNSwgMjAxOCAxMTowMCBQTQ0KPiANCj4gSGkgU2hpbW9kYS1zYW4sDQo+
-IA0KPiBPbiBGcmksIEF1ZyAzMSwgMjAxOCBhdCAxMjozNiBQTSBZb3NoaWhpcm8gU2hpbW9kYQ0K
-PiA8eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+IHdyb3RlOg0KPiA+IFItQ2FyIEdl
-bjMgbmVlZHMgdG8gZW5hYmxlIGNsb2NrcyBvZiBib3RoIGhvc3QgYW5kIHBlcmlwaGVyYWwuDQo+
-ID4gU2luY2UgW2VvXWhjaS1wbGF0Zm9ybSBkaXNhYmxlcyB0aGUgcmVzZXQocykgd2hlbiB0aGUg
-ZHJpdmVycyBhcmUNCj4gPiByZW1vdmVkLCByZW5lc2FzX3VzYmhzIGRyaXZlciBkb2Vzbid0IHdv
-cmsgY29ycmVjdGx5LiBUbyBmaXggdGhpcw0KPiA+IGlzc3VlLCB0aGlzIHBhdGNoIGFkZHMgbXVs
-dGlwbGUgY2xvY2tzIG1hbmFnZW1lbnQgb24gdGhpcw0KPiA+IHJlbmVzYXNfdXNiaHMgZHJpdmVy
-Lg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogWW9zaGloaXJvIFNoaW1vZGEgPHlvc2hpaGlyby5z
-aGltb2RhLnVoQHJlbmVzYXMuY29tPg0KPiANCj4gVGhhbmtzIGZvciB5b3VyIHBhdGNoIQ0KPiAN
-Cj4gPiAtLS0gYS9kcml2ZXJzL3VzYi9yZW5lc2FzX3VzYmhzL2NvbW1vbi5jDQo+ID4gKysrIGIv
-ZHJpdmVycy91c2IvcmVuZXNhc191c2Jocy9jb21tb24uYw0KPiANCj4gPiBAQCAtMzM2LDExICsz
-MzcsMjYgQEAgc3RhdGljIHZvaWQgdXNiaHNjX3Bvd2VyX2N0cmwoc3RydWN0IHVzYmhzX3ByaXYg
-KnByaXYsIGludCBlbmFibGUpDQo+ID4gIHsNCj4gPiAgICAgICAgIHN0cnVjdCBwbGF0Zm9ybV9k
-ZXZpY2UgKnBkZXYgPSB1c2Joc19wcml2X3RvX3BkZXYocHJpdik7DQo+ID4gICAgICAgICBzdHJ1
-Y3QgZGV2aWNlICpkZXYgPSB1c2Joc19wcml2X3RvX2Rldihwcml2KTsNCj4gPiArICAgICAgIGlu
-dCByZXQ7DQo+ID4NCj4gPiAgICAgICAgIGlmIChlbmFibGUpIHsNCj4gPiAgICAgICAgICAgICAg
-ICAgLyogZW5hYmxlIFBNICovDQo+ID4gICAgICAgICAgICAgICAgIHBtX3J1bnRpbWVfZ2V0X3N5
-bmMoZGV2KTsNCj4gPg0KPiA+ICsgICAgICAgICAgICAgICAvKiBlbmFibGUgY2xrcyBpZiBleGlz
-dCAqLw0KPiA+ICsgICAgICAgICAgICAgICBpZiAocHJpdi0+bnVtX2Nsa3MpIHsNCj4gPiArICAg
-ICAgICAgICAgICAgICAgICAgICByZXQgPSBjbGtfYnVsa19wcmVwYXJlKHByaXYtPm51bV9jbGtz
-LCBwcml2LT5jbGtzKTsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBpZiAoIXJldCkgew0K
-PiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmV0ID0gY2xrX2J1bGtfZW5hYmxl
-KHByaXYtPm51bV9jbGtzLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgIHByaXYtPmNsa3MpOw0KPiA+ICsgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgaWYgKHJldCkgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICBjbGtfYnVsa191bnByZXBhcmUocHJpdi0+bnVtX2Nsa3MsDQo+ID4gKyAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwcml2
-LT5jbGtzKTsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmV0
-dXJuOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfQ0KPiA+ICsgICAgICAg
-ICAgICAgICAgICAgICAgIH0NCj4gDQo+IEkgdGhpbmsgeW91IG1pc3VuZGVyc3Rvb2QgbXkgY29t
-bWVudDogeW91IGNhbiByZXBsYWNlIHRoZSBjYWxscyB0bw0KPiBjbGtfYnVsa19wcmVwYXJlKCkg
-YW5kIGNsa19idWxrX2VuYWJsZSgpIGJ5IGEgc2luZ2xlIGNhbGwgdG8NCj4gY2xrX2J1bGtfcHJl
-cGFyZV9lbmFibGUoKS4NCg0KT29wcyEgSSBvdmVybG9va2VkIHRoZSBjbGtfYnVsa19wcmVwYXJl
-X2VuYWJsZSgpLi4NCkknbGwgc3VibWl0IHYzIHBhdGNoLg0KDQpCZXN0IHJlZ2FyZHMsDQpZb3No
-aWhpcm8gU2hpbW9kYQ0KDQo+IA0KPiBHcntvZXRqZSxlZXRpbmd9cywNCj4gDQo+ICAgICAgICAg
-ICAgICAgICAgICAgICAgIEdlZXJ0DQo+IA0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0g
-VGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LW02OGsub3Jn
-DQo+IA0KPiBJbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3BsZSwg
-SSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5h
-bGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4g
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0K
+Hi Shimoda-san,
+
+On Fri, Aug 31, 2018 at 12:36 PM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> R-Car Gen3 needs to enable clocks of both host and peripheral.
+> Since [eo]hci-platform disables the reset(s) when the drivers are
+> removed, renesas_usbhs driver doesn't work correctly. To fix this
+> issue, this patch adds multiple clocks management on this
+> renesas_usbhs driver.
+>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+
+Thanks for your patch!
+
+> --- a/drivers/usb/renesas_usbhs/common.c
+> +++ b/drivers/usb/renesas_usbhs/common.c
+
+> @@ -336,11 +337,26 @@ static void usbhsc_power_ctrl(struct usbhs_priv *priv, int enable)
+>  {
+>         struct platform_device *pdev = usbhs_priv_to_pdev(priv);
+>         struct device *dev = usbhs_priv_to_dev(priv);
+> +       int ret;
+>
+>         if (enable) {
+>                 /* enable PM */
+>                 pm_runtime_get_sync(dev);
+>
+> +               /* enable clks if exist */
+> +               if (priv->num_clks) {
+> +                       ret = clk_bulk_prepare(priv->num_clks, priv->clks);
+> +                       if (!ret) {
+> +                               ret = clk_bulk_enable(priv->num_clks,
+> +                                                     priv->clks);
+> +                               if (ret) {
+> +                                       clk_bulk_unprepare(priv->num_clks,
+> +                                                          priv->clks);
+> +                                       return;
+> +                               }
+> +                       }
+
+I think you misunderstood my comment: you can replace the calls to
+clk_bulk_prepare() and clk_bulk_enable() by a single call to
+clk_bulk_prepare_enable().
+
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
