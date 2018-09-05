@@ -1,174 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:60974 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727285AbeIDQff (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:58258 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727806AbeIENwt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Sep 2018 12:35:35 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Subject: [PATCH 12/16] arm64: dts: renesas: r8a77990: Add I2C device nodes
-Date: Tue,  4 Sep 2018 15:10:23 +0300
-Message-Id: <20180904121027.24031-13-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180904121027.24031-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180904121027.24031-1-laurent.pinchart+renesas@ideasonboard.com>
+        Wed, 5 Sep 2018 09:52:49 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mark Brown <broonie@kernel.org>
+Cc: Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-sh@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/4] spi: sh-msiof: Fix invalid SPI use during system suspend
+Date: Wed,  5 Sep 2018 10:49:36 +0200
+Message-Id: <20180905084939.7401-2-geert+renesas@glider.be>
+In-Reply-To: <20180905084939.7401-1-geert+renesas@glider.be>
+References: <20180905084939.7401-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
 
-Add device nodes for I2C ch{0,1,2,3,4,5,6,7} to R-Car E3 R8A77990 device
-tree.
+If the SPI queue is running during system suspend, the system may lock
+up.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Fix this by stopping/restarting the queue during system suspend/resume
+by calling spi_master_suspend()/spi_master_resume() from the PM
+callbacks.  In-kernel users will receive an -ESHUTDOWN error while
+system suspend/resume is in progress.
+
+Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+[geert: Cleanup, reword]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 123 ++++++++++++++++++++++++++++++
- 1 file changed, 123 insertions(+)
+ drivers/spi/spi-sh-msiof.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index ae89260baad9..abb14af76c0e 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -14,6 +14,17 @@
- 	#address-cells = <2>;
- 	#size-cells = <2>;
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index 539d6d1a277a6179..bfe4e6d4f7bff66c 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -1426,12 +1426,37 @@ static const struct platform_device_id spi_driver_ids[] = {
+ };
+ MODULE_DEVICE_TABLE(platform, spi_driver_ids);
  
-+	aliases {
-+		i2c0 = &i2c0;
-+		i2c1 = &i2c1;
-+		i2c2 = &i2c2;
-+		i2c3 = &i2c3;
-+		i2c4 = &i2c4;
-+		i2c5 = &i2c5;
-+		i2c6 = &i2c6;
-+		i2c7 = &i2c7;
-+	};
++#ifdef CONFIG_PM_SLEEP
++static int sh_msiof_spi_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct sh_msiof_spi_priv *p = platform_get_drvdata(pdev);
 +
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -185,6 +196,118 @@
- 			resets = <&cpg 906>;
- 		};
- 
-+		i2c0: i2c@e6500000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a77990",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe6500000 0 0x40>;
-+			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 931>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 931>;
-+			i2c-scl-internal-delay-ns = <110>;
-+			status = "disabled";
-+		};
++	return spi_master_suspend(p->master);
++}
 +
-+		i2c1: i2c@e6508000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a77990",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe6508000 0 0x40>;
-+			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 930>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 930>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
++static int sh_msiof_spi_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct sh_msiof_spi_priv *p = platform_get_drvdata(pdev);
 +
-+		i2c2: i2c@e6510000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a77990",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe6510000 0 0x40>;
-+			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 929>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 929>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
++	return spi_master_resume(p->master);
++}
 +
-+		i2c3: i2c@e66d0000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a77990",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe66d0000 0 0x40>;
-+			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 928>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 928>;
-+			i2c-scl-internal-delay-ns = <110>;
-+			status = "disabled";
-+		};
++static SIMPLE_DEV_PM_OPS(sh_msiof_spi_pm_ops, sh_msiof_spi_suspend,
++			 sh_msiof_spi_resume);
++#define DEV_PM_OPS	&sh_msiof_spi_pm_ops
++#else
++#define DEV_PM_OPS	NULL
++#endif /* CONFIG_PM_SLEEP */
 +
-+		i2c4: i2c@e66d8000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a77990",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe66d8000 0 0x40>;
-+			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 927>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 927>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
-+
-+		i2c5: i2c@e66e0000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a77990",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe66e0000 0 0x40>;
-+			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 919>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 919>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
-+
-+		i2c6: i2c@e66e8000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a77990",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe66e8000 0 0x40>;
-+			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 918>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 918>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
-+
-+		i2c7: i2c@e6690000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a77990",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe6690000 0 0x40>;
-+			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 1003>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 1003>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
-+
- 		pfc: pin-controller@e6060000 {
- 			compatible = "renesas,pfc-r8a77990";
- 			reg = <0 0xe6060000 0 0x508>;
+ static struct platform_driver sh_msiof_spi_drv = {
+ 	.probe		= sh_msiof_spi_probe,
+ 	.remove		= sh_msiof_spi_remove,
+ 	.id_table	= spi_driver_ids,
+ 	.driver		= {
+ 		.name		= "spi_sh_msiof",
++		.pm		= DEV_PM_OPS,
+ 		.of_match_table = of_match_ptr(sh_msiof_match),
+ 	},
+ };
 -- 
-Regards,
-
-Laurent Pinchart
+2.17.1
