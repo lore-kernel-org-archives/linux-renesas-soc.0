@@ -1,101 +1,29 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:39095 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbeIMOTM (ORCPT
+        with ESMTP id S1726463AbeIEP0v (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:19:12 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 36/58] arm64: dts: renesas: r8a774a1: Add FCPF and FCPV instances
-Date: Thu, 13 Sep 2018 11:09:31 +0200
-Message-Id: <282419526ad7ba3d0ff5e53c20a5f4f5a273197f.1536828567.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
-References: <cover.1536828567.git.horms+renesas@verge.net.au>
+        Wed, 5 Sep 2018 11:26:51 -0400
+Date: Wed, 5 Sep 2018 12:57:05 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Ulrich Hecht <uli+renesas@fpond.eu>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77990: Add all MSIOF nodes
+Message-ID: <20180905105705.u52o6dj3dcvqdhel@verge.net.au>
+References: <20180903173000.6877-1-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180903173000.6877-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+On Mon, Sep 03, 2018 at 07:30:00PM +0200, Geert Uytterhoeven wrote:
+> Add the device nodes for all MSIOF SPI controllers, incl. clocks, power
+> domains, and resets properties.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add FCPF and FCPV instances to the r8a774a1 dtsi, similarly
-to what was done for the r8a7796 with commit 41dbbf0c5b4e
-("arm64: dts: r8a7796: Add FCPF and FCPV instances"),
-commit 69490bc9665d ("arm64: dts: renesas: r8a7796: Point
-FDP1 via FCPF to IPMMU-VI0"), and commit cef942d0bd89 ("arm64:
-dts: renesas: r8a7796: Point VSPI via FCPVI to IPMMU-VC0").
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 52 +++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index 50c9265aa1c4..5d0109a376c2 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -1385,6 +1385,58 @@
- 			resets = <&cpg 408>;
- 		};
- 
-+		fcpf0: fcp@fe950000 {
-+			compatible = "renesas,fcpf";
-+			reg = <0 0xfe950000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 615>;
-+			power-domains = <&sysc 14>;
-+			resets = <&cpg 615>;
-+		};
-+
-+		fcpvb0: fcp@fe96f000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfe96f000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 607>;
-+			power-domains = <&sysc 14>;
-+			resets = <&cpg 607>;
-+		};
-+
-+		fcpvd0: fcp@fea27000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea27000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 603>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 603>;
-+			iommus = <&ipmmu_vi0 8>;
-+		};
-+
-+		fcpvd1: fcp@fea2f000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea2f000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 602>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 602>;
-+			iommus = <&ipmmu_vi0 9>;
-+		};
-+
-+		fcpvd2: fcp@fea37000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea37000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 601>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 601>;
-+			iommus = <&ipmmu_vi0 10>;
-+		};
-+
-+		fcpvi0: fcp@fe9af000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfe9af000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 611>;
-+			power-domains = <&sysc 14>;
-+			resets = <&cpg 611>;
-+			iommus = <&ipmmu_vc0 19>;
-+		};
-+
- 		prr: chipid@fff00044 {
- 			compatible = "renesas,prr";
- 			reg = <0 0xfff00044 0 4>;
--- 
-2.11.0
+Thanks Geert, applied for v4.20.
