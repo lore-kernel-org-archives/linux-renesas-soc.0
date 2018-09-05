@@ -1,471 +1,302 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:34850 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731235AbeICVxn (ORCPT
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:48219 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727234AbeIET6H (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:53:43 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Ulrich Hecht <uli+renesas@fpond.eu>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: sh-pfc: r8a77990: Add MSIOF pins, groups and functions
-Date: Mon,  3 Sep 2018 19:32:30 +0200
-Message-Id: <20180903173230.7245-1-geert+renesas@glider.be>
+        Wed, 5 Sep 2018 15:58:07 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: laurent.pinchart@ideasonboard.com,
+        kieran.bingham+renesas@ideasonboard.com,
+        niklas.soderlund+renesas@ragnatech.se
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+Subject: [PATCH v2 0/5] media: adv748x: Allow probe with a single output endpoint
+Date: Wed,  5 Sep 2018 17:27:06 +0200
+Message-Id: <1536161231-25221-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hello Laurent, Kieran, Niklas,
+   to address the Ebisu board use case, this series allows the adv748x driver
+to probe with a single output connection defined.
 
-This patch adds MSIOF{0,1,2,3} pins, groups and functions to
-the R8A77990 SoC.
+Compared to v1, which included only 2 patches this series is slighly bigger,
+as it addresses a few more issues.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in sh-pfc-for-v4.20.
+The first two patches are similar in intent to the v1's one. I have included
+when possible, Kieran's comments.
 
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 405 ++++++++++++++++++++++++++
- 1 file changed, 405 insertions(+)
+Patch 3 implements what we have discussed offline: only active CSI-2 output
+should be powered up.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-index 6e9a8bc336452995..97becb2955a93567 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-@@ -1595,6 +1595,325 @@ static const unsigned int i2c7_b_mux[] = {
- 	SCL7_B_MARK, SDA7_B_MARK,
+Patch 4 makes sure the HDMI or AFE subdevice registration only happens if
+the corresponding input port is described in device tree.
+
+Finally, patch 5 addresses a design choiche which becomes problematics if
+an output port might be disabled, as the corresponding input subdevice never
+gets registered. While as long as we have fixed routing in place this is a
+minor thing, worth to be fixed anyhow imo, but becomes more relevant if we
+aim to implement dynamic routing of adv748x input/outputs.
+
+I have tested in 3 conditions on Salvator-X M3-W:
+- AFE input not registered
+- TXB not registered (Ebisu use case)
+- AFE and TXB not registered
+
+Pasted here below, the adv748x media graph for each test.
+
+1)  AFE input not registered
+----------------------------- HOST --------------------------------------------
+$git diff
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index 7d3d866..06c20ba 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -69,7 +69,6 @@
+
+                port {
+                        cvbs_con: endpoint {
+-                               remote-endpoint = <&adv7482_ain7>;
+                        };
+                };
+        };
+@@ -430,14 +429,6 @@
+                interrupts = <30 IRQ_TYPE_LEVEL_LOW>,
+                             <31 IRQ_TYPE_LEVEL_LOW>;
+
+-               port@7 {
+-                       reg = <7>;
+-
+-                       adv7482_ain7: endpoint {
+-                               remote-endpoint = <&cvbs_con>;
+-                       };
+-               };
+-
+                port@8 {
+                        reg = <8>;
+
+
+-------------------------- TARGET ---------------------------------------------
+[root@alarm ~]# media-ctl -p -d /dev/media2
+...
+- entity 7: adv748x 4-0070 txa (2 pads, 2 links)
+            type V4L2 subdev subtype Unknown flags 0
+            device node name /dev/v4l-subdev21
+        pad0: Sink
+                [fmt:unknown/0x0]
+                <- "adv748x 4-0070 hdmi":1 [ENABLED,IMMUTABLE]
+        pad1: Source
+                [fmt:unknown/0x0]
+                -> "rcar_csi2 feaa0000.csi2":0 [ENABLED,IMMUTABLE]
+
+- entity 10: adv748x 4-0070 hdmi (2 pads, 1 link)
+             type V4L2 subdev subtype Unknown flags 0
+             device node name /dev/v4l-subdev20
+        pad0: Sink
+                [dv.caps:BT.656/1120 min:640x480@13000000 max:1920x1200@162000000 stds:CEA-861,DMT caps:progressive]
+        pad1: Source
+                [fmt:RGB888_1X24/1280x720 field:none colorspace:srgb]
+                [dv.caps:BT.656/1120 min:640x480@13000000 max:1920x1200@162000000 stds:CEA-861,DMT caps:progressive]
+                [dv.query:no-link]
+                [dv.current:BT.656/1120 1280x720p30 (3300x750) stds:CEA-861 flags:can-reduce-fps,CE-video,has-cea861-vic]
+                -> "adv748x 4-0070 txa":0 [ENABLED,IMMUTABLE]
+
+- entity 23: adv748x 4-0070 txb (2 pads, 1 link)
+             type V4L2 subdev subtype Unknown flags 0
+             device node name /dev/v4l-subdev23
+        pad0: Sink
+                [fmt:unknown/0x0]
+        pad1: Source
+                [fmt:unknown/0x0]
+                -> "rcar_csi2 fea80000.csi2":0 [ENABLED,IMMUTABLE]
+...
+
+2) TXB not registered (Ebisu use case)
+----------------------------- HOST --------------------------------------------
+$git diff
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index 7d3d866..3123633 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -281,7 +281,7 @@
  };
- 
-+/* - MSIOF0 ----------------------------------------------------------------- */
-+static const unsigned int msiof0_clk_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(5, 10),
-+};
-+
-+static const unsigned int msiof0_clk_mux[] = {
-+	MSIOF0_SCK_MARK,
-+};
-+
-+static const unsigned int msiof0_sync_pins[] = {
-+	/* SYNC */
-+	RCAR_GP_PIN(5, 13),
-+};
-+
-+static const unsigned int msiof0_sync_mux[] = {
-+	MSIOF0_SYNC_MARK,
-+};
-+
-+static const unsigned int msiof0_ss1_pins[] = {
-+	/* SS1 */
-+	RCAR_GP_PIN(5, 14),
-+};
-+
-+static const unsigned int msiof0_ss1_mux[] = {
-+	MSIOF0_SS1_MARK,
-+};
-+
-+static const unsigned int msiof0_ss2_pins[] = {
-+	/* SS2 */
-+	RCAR_GP_PIN(5, 15),
-+};
-+
-+static const unsigned int msiof0_ss2_mux[] = {
-+	MSIOF0_SS2_MARK,
-+};
-+
-+static const unsigned int msiof0_txd_pins[] = {
-+	/* TXD */
-+	RCAR_GP_PIN(5, 12),
-+};
-+
-+static const unsigned int msiof0_txd_mux[] = {
-+	MSIOF0_TXD_MARK,
-+};
-+
-+static const unsigned int msiof0_rxd_pins[] = {
-+	/* RXD */
-+	RCAR_GP_PIN(5, 11),
-+};
-+
-+static const unsigned int msiof0_rxd_mux[] = {
-+	MSIOF0_RXD_MARK,
-+};
-+
-+/* - MSIOF1 ----------------------------------------------------------------- */
-+static const unsigned int msiof1_clk_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(1, 19),
-+};
-+
-+static const unsigned int msiof1_clk_mux[] = {
-+	MSIOF1_SCK_MARK,
-+};
-+
-+static const unsigned int msiof1_sync_pins[] = {
-+	/* SYNC */
-+	RCAR_GP_PIN(1, 16),
-+};
-+
-+static const unsigned int msiof1_sync_mux[] = {
-+	MSIOF1_SYNC_MARK,
-+};
-+
-+static const unsigned int msiof1_ss1_pins[] = {
-+	/* SS1 */
-+	RCAR_GP_PIN(1, 14),
-+};
-+
-+static const unsigned int msiof1_ss1_mux[] = {
-+	MSIOF1_SS1_MARK,
-+};
-+
-+static const unsigned int msiof1_ss2_pins[] = {
-+	/* SS2 */
-+	RCAR_GP_PIN(1, 15),
-+};
-+
-+static const unsigned int msiof1_ss2_mux[] = {
-+	MSIOF1_SS2_MARK,
-+};
-+
-+static const unsigned int msiof1_txd_pins[] = {
-+	/* TXD */
-+	RCAR_GP_PIN(1, 18),
-+};
-+
-+static const unsigned int msiof1_txd_mux[] = {
-+	MSIOF1_TXD_MARK,
-+};
-+
-+static const unsigned int msiof1_rxd_pins[] = {
-+	/* RXD */
-+	RCAR_GP_PIN(1, 17),
-+};
-+
-+static const unsigned int msiof1_rxd_mux[] = {
-+	MSIOF1_RXD_MARK,
-+};
-+
-+/* - MSIOF2 ----------------------------------------------------------------- */
-+static const unsigned int msiof2_clk_a_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(0, 8),
-+};
-+
-+static const unsigned int msiof2_clk_a_mux[] = {
-+	MSIOF2_SCK_A_MARK,
-+};
-+
-+static const unsigned int msiof2_sync_a_pins[] = {
-+	/* SYNC */
-+	RCAR_GP_PIN(0, 9),
-+};
-+
-+static const unsigned int msiof2_sync_a_mux[] = {
-+	MSIOF2_SYNC_A_MARK,
-+};
-+
-+static const unsigned int msiof2_ss1_a_pins[] = {
-+	/* SS1 */
-+	RCAR_GP_PIN(0, 15),
-+};
-+
-+static const unsigned int msiof2_ss1_a_mux[] = {
-+	MSIOF2_SS1_A_MARK,
-+};
-+
-+static const unsigned int msiof2_ss2_a_pins[] = {
-+	/* SS2 */
-+	RCAR_GP_PIN(0, 14),
-+};
-+
-+static const unsigned int msiof2_ss2_a_mux[] = {
-+	MSIOF2_SS2_A_MARK,
-+};
-+
-+static const unsigned int msiof2_txd_a_pins[] = {
-+	/* TXD */
-+	RCAR_GP_PIN(0, 11),
-+};
-+
-+static const unsigned int msiof2_txd_a_mux[] = {
-+	MSIOF2_TXD_A_MARK,
-+};
-+
-+static const unsigned int msiof2_rxd_a_pins[] = {
-+	/* RXD */
-+	RCAR_GP_PIN(0, 10),
-+};
-+
-+static const unsigned int msiof2_rxd_a_mux[] = {
-+	MSIOF2_RXD_A_MARK,
-+};
-+
-+static const unsigned int msiof2_clk_b_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(1, 13),
-+};
-+
-+static const unsigned int msiof2_clk_b_mux[] = {
-+	MSIOF2_SCK_B_MARK,
-+};
-+
-+static const unsigned int msiof2_sync_b_pins[] = {
-+	/* SYNC */
-+	RCAR_GP_PIN(1, 10),
-+};
-+
-+static const unsigned int msiof2_sync_b_mux[] = {
-+	MSIOF2_SYNC_B_MARK,
-+};
-+
-+static const unsigned int msiof2_ss1_b_pins[] = {
-+	/* SS1 */
-+	RCAR_GP_PIN(1, 16),
-+};
-+
-+static const unsigned int msiof2_ss1_b_mux[] = {
-+	MSIOF2_SS1_B_MARK,
-+};
-+
-+static const unsigned int msiof2_ss2_b_pins[] = {
-+	/* SS2 */
-+	RCAR_GP_PIN(1, 12),
-+};
-+
-+static const unsigned int msiof2_ss2_b_mux[] = {
-+	MSIOF2_SS2_B_MARK,
-+};
-+
-+static const unsigned int msiof2_txd_b_pins[] = {
-+	/* TXD */
-+	RCAR_GP_PIN(1, 15),
-+};
-+
-+static const unsigned int msiof2_txd_b_mux[] = {
-+	MSIOF2_TXD_B_MARK,
-+};
-+
-+static const unsigned int msiof2_rxd_b_pins[] = {
-+	/* RXD */
-+	RCAR_GP_PIN(1, 14),
-+};
-+
-+static const unsigned int msiof2_rxd_b_mux[] = {
-+	MSIOF2_RXD_B_MARK,
-+};
-+
-+/* - MSIOF3 ----------------------------------------------------------------- */
-+static const unsigned int msiof3_clk_a_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(0, 0),
-+};
-+
-+static const unsigned int msiof3_clk_a_mux[] = {
-+	MSIOF3_SCK_A_MARK,
-+};
-+
-+static const unsigned int msiof3_sync_a_pins[] = {
-+	/* SYNC */
-+	RCAR_GP_PIN(0, 1),
-+};
-+
-+static const unsigned int msiof3_sync_a_mux[] = {
-+	MSIOF3_SYNC_A_MARK,
-+};
-+
-+static const unsigned int msiof3_ss1_a_pins[] = {
-+	/* SS1 */
-+	RCAR_GP_PIN(0, 15),
-+};
-+
-+static const unsigned int msiof3_ss1_a_mux[] = {
-+	MSIOF3_SS1_A_MARK,
-+};
-+
-+static const unsigned int msiof3_ss2_a_pins[] = {
-+	/* SS2 */
-+	RCAR_GP_PIN(0, 4),
-+};
-+
-+static const unsigned int msiof3_ss2_a_mux[] = {
-+	MSIOF3_SS2_A_MARK,
-+};
-+
-+static const unsigned int msiof3_txd_a_pins[] = {
-+	/* TXD */
-+	RCAR_GP_PIN(0, 3),
-+};
-+
-+static const unsigned int msiof3_txd_a_mux[] = {
-+	MSIOF3_TXD_A_MARK,
-+};
-+
-+static const unsigned int msiof3_rxd_a_pins[] = {
-+	/* RXD */
-+	RCAR_GP_PIN(0, 2),
-+};
-+
-+static const unsigned int msiof3_rxd_a_mux[] = {
-+	MSIOF3_RXD_A_MARK,
-+};
-+
-+static const unsigned int msiof3_clk_b_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(1, 5),
-+};
-+
-+static const unsigned int msiof3_clk_b_mux[] = {
-+	MSIOF3_SCK_B_MARK,
-+};
-+
-+static const unsigned int msiof3_sync_b_pins[] = {
-+	/* SYNC */
-+	RCAR_GP_PIN(1, 4),
-+};
-+
-+static const unsigned int msiof3_sync_b_mux[] = {
-+	MSIOF3_SYNC_B_MARK,
-+};
-+
-+static const unsigned int msiof3_ss1_b_pins[] = {
-+	/* SS1 */
-+	RCAR_GP_PIN(1, 0),
-+};
-+
-+static const unsigned int msiof3_ss1_b_mux[] = {
-+	MSIOF3_SS1_B_MARK,
-+};
-+
-+static const unsigned int msiof3_txd_b_pins[] = {
-+	/* TXD */
-+	RCAR_GP_PIN(1, 7),
-+};
-+
-+static const unsigned int msiof3_txd_b_mux[] = {
-+	MSIOF3_TXD_B_MARK,
-+};
-+
-+static const unsigned int msiof3_rxd_b_pins[] = {
-+	/* RXD */
-+	RCAR_GP_PIN(1, 6),
-+};
-+
-+static const unsigned int msiof3_rxd_b_mux[] = {
-+	MSIOF3_RXD_B_MARK,
-+};
-+
- /* - PWM0 --------------------------------------------------------------------*/
- static const unsigned int pwm0_a_pins[] = {
- 	/* PWM */
-@@ -2102,6 +2421,41 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(i2c6_b),
- 	SH_PFC_PIN_GROUP(i2c7_a),
- 	SH_PFC_PIN_GROUP(i2c7_b),
-+	SH_PFC_PIN_GROUP(msiof0_clk),
-+	SH_PFC_PIN_GROUP(msiof0_sync),
-+	SH_PFC_PIN_GROUP(msiof0_ss1),
-+	SH_PFC_PIN_GROUP(msiof0_ss2),
-+	SH_PFC_PIN_GROUP(msiof0_txd),
-+	SH_PFC_PIN_GROUP(msiof0_rxd),
-+	SH_PFC_PIN_GROUP(msiof1_clk),
-+	SH_PFC_PIN_GROUP(msiof1_sync),
-+	SH_PFC_PIN_GROUP(msiof1_ss1),
-+	SH_PFC_PIN_GROUP(msiof1_ss2),
-+	SH_PFC_PIN_GROUP(msiof1_txd),
-+	SH_PFC_PIN_GROUP(msiof1_rxd),
-+	SH_PFC_PIN_GROUP(msiof2_clk_a),
-+	SH_PFC_PIN_GROUP(msiof2_sync_a),
-+	SH_PFC_PIN_GROUP(msiof2_ss1_a),
-+	SH_PFC_PIN_GROUP(msiof2_ss2_a),
-+	SH_PFC_PIN_GROUP(msiof2_txd_a),
-+	SH_PFC_PIN_GROUP(msiof2_rxd_a),
-+	SH_PFC_PIN_GROUP(msiof2_clk_b),
-+	SH_PFC_PIN_GROUP(msiof2_sync_b),
-+	SH_PFC_PIN_GROUP(msiof2_ss1_b),
-+	SH_PFC_PIN_GROUP(msiof2_ss2_b),
-+	SH_PFC_PIN_GROUP(msiof2_txd_b),
-+	SH_PFC_PIN_GROUP(msiof2_rxd_b),
-+	SH_PFC_PIN_GROUP(msiof3_clk_a),
-+	SH_PFC_PIN_GROUP(msiof3_sync_a),
-+	SH_PFC_PIN_GROUP(msiof3_ss1_a),
-+	SH_PFC_PIN_GROUP(msiof3_ss2_a),
-+	SH_PFC_PIN_GROUP(msiof3_txd_a),
-+	SH_PFC_PIN_GROUP(msiof3_rxd_a),
-+	SH_PFC_PIN_GROUP(msiof3_clk_b),
-+	SH_PFC_PIN_GROUP(msiof3_sync_b),
-+	SH_PFC_PIN_GROUP(msiof3_ss1_b),
-+	SH_PFC_PIN_GROUP(msiof3_txd_b),
-+	SH_PFC_PIN_GROUP(msiof3_rxd_b),
- 	SH_PFC_PIN_GROUP(pwm0_a),
- 	SH_PFC_PIN_GROUP(pwm0_b),
- 	SH_PFC_PIN_GROUP(pwm1_a),
-@@ -2210,6 +2564,53 @@ static const char * const i2c7_groups[] = {
- 	"i2c7_b",
+
+ &csi20 {
+-       status = "okay";
++       status = "disabled";
+
+        ports {
+                port@0 {
+@@ -289,7 +289,6 @@
+                        csi20_in: endpoint {
+                                clock-lanes = <0>;
+                                data-lanes = <1>;
+-                               remote-endpoint = <&adv7482_txb>;
+                        };
+                };
+        };
+@@ -455,16 +454,6 @@
+                                remote-endpoint = <&csi40_in>;
+                        };
+                };
+-
+-               port@b {
+-                       reg = <11>;
+-
+-                       adv7482_txb: endpoint {
+-                               clock-lanes = <0>;
+-                               data-lanes = <1>;
+-                               remote-endpoint = <&csi20_in>;
+-                       };
+-               };
+        };
  };
- 
-+static const char * const msiof0_groups[] = {
-+	"msiof0_clk",
-+	"msiof0_sync",
-+	"msiof0_ss1",
-+	"msiof0_ss2",
-+	"msiof0_txd",
-+	"msiof0_rxd",
-+};
-+
-+static const char * const msiof1_groups[] = {
-+	"msiof1_clk",
-+	"msiof1_sync",
-+	"msiof1_ss1",
-+	"msiof1_ss2",
-+	"msiof1_txd",
-+	"msiof1_rxd",
-+};
-+
-+static const char * const msiof2_groups[] = {
-+	"msiof2_clk_a",
-+	"msiof2_sync_a",
-+	"msiof2_ss1_a",
-+	"msiof2_ss2_a",
-+	"msiof2_txd_a",
-+	"msiof2_rxd_a",
-+	"msiof2_clk_b",
-+	"msiof2_sync_b",
-+	"msiof2_ss1_b",
-+	"msiof2_ss2_b",
-+	"msiof2_txd_b",
-+	"msiof2_rxd_b",
-+};
-+
-+static const char * const msiof3_groups[] = {
-+	"msiof3_clk_a",
-+	"msiof3_sync_a",
-+	"msiof3_ss1_a",
-+	"msiof3_ss2_a",
-+	"msiof3_txd_a",
-+	"msiof3_rxd_a",
-+	"msiof3_clk_b",
-+	"msiof3_sync_b",
-+	"msiof3_ss1_b",
-+	"msiof3_txd_b",
-+	"msiof3_rxd_b",
-+};
-+
- static const char * const pwm0_groups[] = {
- 	"pwm0_a",
- 	"pwm0_b",
-@@ -2318,6 +2719,10 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(i2c5),
- 	SH_PFC_FUNCTION(i2c6),
- 	SH_PFC_FUNCTION(i2c7),
-+	SH_PFC_FUNCTION(msiof0),
-+	SH_PFC_FUNCTION(msiof1),
-+	SH_PFC_FUNCTION(msiof2),
-+	SH_PFC_FUNCTION(msiof3),
- 	SH_PFC_FUNCTION(pwm0),
- 	SH_PFC_FUNCTION(pwm1),
- 	SH_PFC_FUNCTION(pwm2),
--- 
-2.17.1
+
+-------------------------- TARGET ---------------------------------------------
+[root@alarm ~]# media-ctl -p -d /dev/media2
+...
+- entity 7: adv748x 4-0070 txa (2 pads, 2 links)
+            type V4L2 subdev subtype Unknown flags 0
+            device node name /dev/v4l-subdev22
+        pad0: Sink
+                [fmt:unknown/0x0]
+                <- "adv748x 4-0070 hdmi":1 [ENABLED,IMMUTABLE]
+        pad1: Source
+                [fmt:unknown/0x0]
+                -> "rcar_csi2 feaa0000.csi2":0 [ENABLED,IMMUTABLE]
+
+- entity 10: adv748x 4-0070 hdmi (2 pads, 1 link)
+             type V4L2 subdev subtype Unknown flags 0
+             device node name /dev/v4l-subdev20
+        pad0: Sink
+                [dv.caps:BT.656/1120 min:640x480@13000000 max:1920x1200@162000000 stds:CEA-861,DMT caps:progressive]
+        pad1: Source
+                [fmt:RGB888_1X24/1280x720 field:none colorspace:srgb]
+                [dv.caps:BT.656/1120 min:640x480@13000000 max:1920x1200@162000000 stds:CEA-861,DMT caps:progressive]
+                [dv.query:no-link]
+                [dv.current:BT.656/1120 1280x720p30 (3300x750) stds:CEA-861 flags:can-reduce-fps,CE-video,has-cea861-vic]
+                -> "adv748x 4-0070 txa":0 [ENABLED,IMMUTABLE]
+
+- entity 13: adv748x 4-0070 afe (9 pads, 0 link)
+             type V4L2 subdev subtype Decoder flags 0
+             device node name /dev/v4l-subdev21
+        pad0: Sink
+        pad1: Sink
+        pad2: Sink
+        pad3: Sink
+        pad4: Sink
+        pad5: Sink
+        pad6: Sink
+        pad7: Sink
+        pad8: Source
+                [fmt:UYVY8_2X8/720x240 field:alternate colorspace:smpte170m]
+...
+
+3) AFE and TXB not registered
+----------------------------- HOST --------------------------------------------
+$git diff
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index 7d3d866..9f1b079 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -69,7 +69,6 @@
+
+                port {
+                        cvbs_con: endpoint {
+-                               remote-endpoint = <&adv7482_ain7>;
+                        };
+                };
+        };
+@@ -281,7 +280,7 @@
+ };
+
+ &csi20 {
+-       status = "okay";
++       status = "disabled";
+
+        ports {
+                port@0 {
+@@ -289,7 +288,6 @@
+                        csi20_in: endpoint {
+                                clock-lanes = <0>;
+                                data-lanes = <1>;
+-                               remote-endpoint = <&adv7482_txb>;
+                        };
+                };
+        };
+@@ -430,14 +428,6 @@
+                interrupts = <30 IRQ_TYPE_LEVEL_LOW>,
+                             <31 IRQ_TYPE_LEVEL_LOW>;
+
+-               port@7 {
+-                       reg = <7>;
+-
+-                       adv7482_ain7: endpoint {
+-                               remote-endpoint = <&cvbs_con>;
+-                       };
+-               };
+-
+                port@8 {
+                        reg = <8>;
+
+@@ -455,16 +445,6 @@
+                                remote-endpoint = <&csi40_in>;
+                        };
+                };
+-
+-               port@b {
+-                       reg = <11>;
+-
+-                       adv7482_txb: endpoint {
+-                               clock-lanes = <0>;
+-                               data-lanes = <1>;
+-                               remote-endpoint = <&csi20_in>;
+-                       };
+-               };
+        };
+ };
+
+-------------------------- TARGET ---------------------------------------------
+[root@alarm ~]# media-ctl -p -d /dev/media2
+...
+- entity 7: adv748x 4-0070 txa (2 pads, 2 links)
+            type V4L2 subdev subtype Unknown flags 0
+            device node name /dev/v4l-subdev21
+        pad0: Sink
+                [fmt:unknown/0x0]
+                <- "adv748x 4-0070 hdmi":1 [ENABLED,IMMUTABLE]
+        pad1: Source
+                [fmt:unknown/0x0]
+                -> "rcar_csi2 feaa0000.csi2":0 [ENABLED,IMMUTABLE]
+
+- entity 10: adv748x 4-0070 hdmi (2 pads, 1 link)
+             type V4L2 subdev subtype Unknown flags 0
+             device node name /dev/v4l-subdev20
+        pad0: Sink
+                [dv.caps:BT.656/1120 min:640x480@13000000 max:1920x1200@162000000 stds:CEA-861,DMT caps:progressive]
+        pad1: Source
+                [fmt:RGB888_1X24/1280x720 field:none colorspace:srgb]
+                [dv.caps:BT.656/1120 min:640x480@13000000 max:1920x1200@162000000 stds:CEA-861,DMT caps:progressive]
+                [dv.query:no-link]
+                [dv.current:BT.656/1120 1280x720p30 (3300x750) stds:CEA-861 flags:can-reduce-fps,CE-video,has-cea861-vic]
+                -> "adv748x 4-0070 txa":0 [ENABLED,IMMUTABLE]
+..
+
+
+
+Jacopo Mondi (5):
+  media: i2c: adv748x: Support probing a single output
+  media: i2c: adv748x: Handle TX[A|B] power management
+  media: i2c: adv748x: Conditionally enable only CSI-2 outputs
+  media: i2c: adv748x: Register only enabled inputs
+  media: i2c: adv748x: Register all input subdevices
+
+ drivers/media/i2c/adv748x/adv748x-afe.c  |   2 +-
+ drivers/media/i2c/adv748x/adv748x-core.c |  83 +++++++++++++------------
+ drivers/media/i2c/adv748x/adv748x-csi2.c | 102 +++++++++++++------------------
+ drivers/media/i2c/adv748x/adv748x-hdmi.c |   2 +-
+ drivers/media/i2c/adv748x/adv748x.h      |  19 ++++--
+ 5 files changed, 102 insertions(+), 106 deletions(-)
+
+--
+2.7.4
