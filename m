@@ -1,69 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:50718 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725990AbeICNrj (ORCPT
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:45410 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726071AbeIESI2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Sep 2018 09:47:39 -0400
-Date: Mon, 3 Sep 2018 11:28:19 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulrich Hecht <uli+renesas@fpond.eu>,
-        Mark Brown <broonie@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        geert@linux-m68k.org, linux-spi@vger.kernel.org
-Subject: Re: [RESEND PATCH] spi: sh-msiof: Document R-Car D3 support
-Message-ID: <20180903092819.2d2sh6dvusmwwey3@ninjato>
-References: <1535101951-11221-1-git-send-email-uli+renesas@fpond.eu>
+        Wed, 5 Sep 2018 14:08:28 -0400
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jmn7syzf5f6nso37"
-Content-Disposition: inline
-In-Reply-To: <1535101951-11221-1-git-send-email-uli+renesas@fpond.eu>
+References: <20180711170313.80321-1-chris.brandt@renesas.com> <20180711170313.80321-3-chris.brandt@renesas.com>
+In-Reply-To: <20180711170313.80321-3-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 5 Sep 2018 15:37:58 +0200
+Message-ID: <CAMuHMdUEjAkX8sm7w5MG9sW+s9VrHg_c42a8UkEQmdOZXN4swQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: renesas: mstp: Document R7S9210 support
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Chris,
 
---jmn7syzf5f6nso37
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jul 11, 2018 at 7:03 PM Chris Brandt <chris.brandt@renesas.com> wrote:
+>
+> Renesas R7S9210 SoC also has the CPG MSTP clocks.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
-On Fri, Aug 24, 2018 at 11:12:31AM +0200, Ulrich Hecht wrote:
-> Document support for the MSIOF module in the Renesas D3 (r8a77995) SoC.
->=20
-> No driver update is needed.
->=20
-> Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+FTR, I consider this superseded by "[PATCH v3] clk: renesas: cpg-mssr: Add
+R7S9210 support" (https://www.spinics.net/lists/linux-clk/msg29669.html).
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Gr{oetje,eeting}s,
 
-> ---
-> This patch fell by the wayside, probably because I forgot to cc devicetre=
-e.
+                        Geert
 
-Yeah, this is good practice. Yet, I'd think this goes upstream via the
-SPI tree? Ccing Mark, he prefers to be Cced explicitly.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
---jmn7syzf5f6nso37
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluM/q8ACgkQFA3kzBSg
-Kba4rQ/+McZwLif0qPygg1zMfUKg8bvZC2w7hf4jBnWM0pIXUp7rGfV5id2y9CSq
-najz/yRDD0t+T0u7Bfs73/gULoD3/0PG+JLygFPfYUplBRUcPbnxyTf9sf/8w4ZH
-oRJGNKxW9fb0FzI1ygtiUfTQKmkZV8bkTCL4UwpZOV5ROKXYm6AX2zZBAeg1GrM+
-X2xEViMV3zZJvSQu2/FT76gWJkmlHg0i+nZGvHSeKZwT6ALc8wqa6S2LopchGrs+
-b2NXIhHOOoMFUeu54f2g1cBvD6lFb1JPhwat7bGpJSfxDms0Dzl3vMPmjZIlnqXL
-JJVviWjuo16DCGT3qD92OO9A5xYxfUhRAOLndAdl+z8rIjfy+yI5V6+X0Uah0/kX
-bu19x+7MGwFAo4qvrfGknxYHGBN9diokfF+TWnusKDpsx6cJoho68z5A/ktgZIM3
-EAbhEanZgPKYT9z9NKy6WdSOeLDFo6JAsJHKRxKOCvvfxSRGUESsr0l06+SKLZRK
-j4VTwGJw6SpIoL2WmwnSQEEG3w8GcK4ZYgqtJzzxh0LZ7HOuA8j6qhRHHhNNe7hZ
-WWv0vqpm8iwCV0rkKM/Nj3ckCqeuwEY8BinMW3w7qaR4pedEtQ8Tq+XPjjqfhUmK
-fZqeKNF2KJEklCMGIhfHUOQyKceLrIy9TLw9ny9gvzfjPO49ENk=
-=sn3O
------END PGP SIGNATURE-----
-
---jmn7syzf5f6nso37--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
