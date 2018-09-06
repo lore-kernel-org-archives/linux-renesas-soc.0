@@ -1,60 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:39250 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728170AbeIENwt (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:20942 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726131AbeIFUsK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Sep 2018 09:52:49 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>
-Cc: Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-sh@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/4] spi: renesas: Miscellaneous fixes
-Date: Wed,  5 Sep 2018 10:49:35 +0200
-Message-Id: <20180905084939.7401-1-geert+renesas@glider.be>
+        Thu, 6 Sep 2018 16:48:10 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: RE: [PATCH] watchdog: rza_wdt: Extend clock sources for RZ/A2
+Date: Thu, 6 Sep 2018 16:11:49 +0000
+Message-ID: <TY1PR01MB15625EA79950C5CCFFA1C3E28A010@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+References: <20180905173743.47938-1-chris.brandt@renesas.com>
+ <CAMuHMdUK7OSYwE85F-1Pw4gQfDR9JJ5-_cPCk=BRiV5pzt=DCw@mail.gmail.com>
+ <TY1PR01MB15628F6B1EE72F7CCB4307938A010@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY1PR01MB15628F6B1EE72F7CCB4307938A010@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Mark,
-
-This series contains a set of miscellaneous fixes for Renesas MSIOF and
-RSPI SPI controllers:
-  - The SPI queue must be stopped during s2idle/s2ram,
-  - Interrupted DMA transfers must be terminated properly,
-  - Read-only register bits must be written zero.
-
-They have been tested on r8a7791/koelsch (RSPI, s2ram),
-r8a77965/salvator-xs (MSIOF, s2idle/s2ram), and r8a77990/ebisu (MSIOF,
-s2idle).
-
-Thanks!
-
-Gaku Inami (1):
-  spi: sh-msiof: Fix invalid SPI use during system suspend
-
-Geert Uytterhoeven (2):
-  spi: rspi: Fix invalid SPI use during system suspend
-  spi: rspi: Fix interrupted DMA transfers
-
-Hiromitsu Yamasaki (1):
-  spi: sh-msiof: Fix handling of write value for SISTR register
-
- drivers/spi/spi-rspi.c     | 34 ++++++++++++++++++++++++++++++----
- drivers/spi/spi-sh-msiof.c | 28 +++++++++++++++++++++++++++-
- 2 files changed, 57 insertions(+), 5 deletions(-)
-
--- 
-2.17.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+SGkgR2VlcnQsDQoNCkNvcnJlY3Rpb246DQoNCk9uIFRodXJzZGF5LCBTZXB0ZW1iZXIgMDYsIDIw
+MTgsIENocmlzIEJyYW5kdCB3cm90ZToNCj4gPiBCVFcsIGlzIHRoZSBSWi9BMiBXRFQgY29tcGF0
+aWJsZSB3aXRoIHRoZSBSWi9BMSBXRFQsIGkuZS4gZG9lcyBpdCB3b3JrDQo+ID4gd2l0aCB0aGUg
+dW5tb2RpZmllZCBkcml2ZXI/IElmIG5vdCwgInJlbmVzYXMscnphLXdkdCIgbXVzdCBub3QgYmUg
+dXNlZA0KPiBhcw0KPiA+IGENCj4gPiBmYWxsYmFjay4NCj4gDQo+IEkgd291bGQgc2F5IGl0IGlz
+IG5vdCwgYmVjYXVzZSB0aGUgZGl2aWRlcnMgYXJlIGRpZmZlcmVudCAobWVhbmluZyB0aGUNCj4g
+Y2FsY3VsYXRlZCB0aW1lb3V0cyB3b3VsZCBub3QgYmUgY29ycmVjdCkuDQoNCkFjdHVhbGx5LCB0
+aGUgY2xvY2sgZGl2aWRlcnMgYXJlIHRoZSBzYW1lIGZvciB0aGUgZmlyc3QgdGhyZWUgYml0cyAN
+CmJldHdlZW4gUlovQTEgYW5kIFJaL0EyLiBTbyB5b3UgY291bGQgdXNlICJyZW5lc2FzLHJ6YS13
+ZHQiIHdpdGggYW4gUlovQTIgYW5kDQppdCB3b3VsZCB3b3JrIGV4YWN0bHkgdGhlIHNhbWUgYXMg
+UlovQTEuDQoNCg0KQ2hyaXMNCg0KDQo=
