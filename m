@@ -1,157 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:34949 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726824AbeIQQ6E (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:22018 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725885AbeIFKZq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Sep 2018 12:58:04 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com,
-        kieran.bingham+renesas@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Subject: [PATCH v3 1/4] media: i2c: adv748x: Support probing a single output
-Date: Mon, 17 Sep 2018 13:30:54 +0200
-Message-Id: <1537183857-29173-2-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1537183857-29173-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1537183857-29173-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 6 Sep 2018 06:25:46 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v3 1/3] usb: renesas_usbhs: Add reset_control
+Date: Thu,  6 Sep 2018 14:50:12 +0900
+Message-Id: <1536213014-1325-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1536213014-1325-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1536213014-1325-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently the adv748x driver will fail to probe unless both of it's
-output endpoints (TXA and TXB) are connected.
+R-Car Gen3 needs to deassert resets of both host and peripheral.
+Since [eo]hci-platform is possible to assert the reset(s) when
+the probing failed, renesas_usbhs driver doesn't work correctly
+regardless of finished probing. To fix this issue, this patch adds
+reset_control on this renesas_usbhs driver.
 
-Make the driver support probing provided that there is at least one
-input, and one output connected and protect the clean-up function from
-accessing un-initialized fields.
-
-Following patches will fix other uses of un-initialized TXs in the driver,
-such as power management functions.
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/media/i2c/adv748x/adv748x-core.c | 25 ++++++++++++++++++++++---
- drivers/media/i2c/adv748x/adv748x-csi2.c | 18 ++++++------------
- drivers/media/i2c/adv748x/adv748x.h      |  2 ++
- 3 files changed, 30 insertions(+), 15 deletions(-)
+ drivers/usb/renesas_usbhs/common.c | 12 ++++++++++++
+ drivers/usb/renesas_usbhs/common.h |  2 ++
+ 2 files changed, 14 insertions(+)
 
-diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
-index 6ca88daa..65c3024 100644
---- a/drivers/media/i2c/adv748x/adv748x-core.c
-+++ b/drivers/media/i2c/adv748x/adv748x-core.c
-@@ -569,7 +569,8 @@ static int adv748x_parse_dt(struct adv748x_state *state)
- {
- 	struct device_node *ep_np = NULL;
- 	struct of_endpoint ep;
--	bool found = false;
-+	bool out_found = false;
-+	bool in_found = false;
- 
- 	for_each_endpoint_of_node(state->dev->of_node, ep_np) {
- 		of_graph_parse_endpoint(ep_np, &ep);
-@@ -592,10 +593,17 @@ static int adv748x_parse_dt(struct adv748x_state *state)
- 		of_node_get(ep_np);
- 		state->endpoints[ep.port] = ep_np;
- 
--		found = true;
-+		/*
-+		 * At least one input endpoint and one output endpoint shall
-+		 * be defined.
-+		 */
-+		if (ep.port < ADV748X_PORT_TXA)
-+			in_found = true;
-+		else
-+			out_found = true;
+diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
+index 4310df4..1d355d5 100644
+--- a/drivers/usb/renesas_usbhs/common.c
++++ b/drivers/usb/renesas_usbhs/common.c
+@@ -12,6 +12,7 @@
+ #include <linux/of_device.h>
+ #include <linux/of_gpio.h>
+ #include <linux/pm_runtime.h>
++#include <linux/reset.h>
+ #include <linux/slab.h>
+ #include <linux/sysfs.h>
+ #include "common.h"
+@@ -574,6 +575,10 @@ static int usbhs_probe(struct platform_device *pdev)
+ 			return PTR_ERR(priv->edev);
  	}
  
--	return found ? 0 : -ENODEV;
-+	return in_found && out_found ? 0 : -ENODEV;
- }
- 
- static void adv748x_dt_cleanup(struct adv748x_state *state)
-@@ -627,6 +635,17 @@ static int adv748x_probe(struct i2c_client *client,
- 	state->i2c_clients[ADV748X_PAGE_IO] = client;
- 	i2c_set_clientdata(client, state);
- 
-+	/*
-+	 * We can not use container_of to get back to the state with two TXs;
-+	 * Initialize the TXs's fields unconditionally on the endpoint
-+	 * presence to access them later.
-+	 */
-+	state->txa.state = state->txb.state = state;
-+	state->txa.page = ADV748X_PAGE_TXA;
-+	state->txb.page = ADV748X_PAGE_TXB;
-+	state->txa.port = ADV748X_PORT_TXA;
-+	state->txb.port = ADV748X_PORT_TXB;
++	priv->rsts = devm_reset_control_array_get_optional_shared(&pdev->dev);
++	if (IS_ERR(priv->rsts))
++		return PTR_ERR(priv->rsts);
 +
- 	/* Discover and process ports declared by the Device tree endpoints */
- 	ret = adv748x_parse_dt(state);
- 	if (ret) {
-diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
-index 469be87..556e13c 100644
---- a/drivers/media/i2c/adv748x/adv748x-csi2.c
-+++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
-@@ -266,19 +266,10 @@ static int adv748x_csi2_init_controls(struct adv748x_csi2 *tx)
+ 	/*
+ 	 * care platform info
+ 	 */
+@@ -658,6 +663,10 @@ static int usbhs_probe(struct platform_device *pdev)
+ 	/* dev_set_drvdata should be called after usbhs_mod_init */
+ 	platform_set_drvdata(pdev, priv);
  
- int adv748x_csi2_init(struct adv748x_state *state, struct adv748x_csi2 *tx)
- {
--	struct device_node *ep;
- 	int ret;
- 
--	/* We can not use container_of to get back to the state with two TXs */
--	tx->state = state;
--	tx->page = is_txa(tx) ? ADV748X_PAGE_TXA : ADV748X_PAGE_TXB;
--
--	ep = state->endpoints[is_txa(tx) ? ADV748X_PORT_TXA : ADV748X_PORT_TXB];
--	if (!ep) {
--		adv_err(state, "No endpoint found for %s\n",
--				is_txa(tx) ? "txa" : "txb");
--		return -ENODEV;
--	}
-+	if (!is_tx_enabled(tx))
-+		return 0;
- 
- 	/* Initialise the virtual channel */
- 	adv748x_csi2_set_virtual_channel(tx, 0);
-@@ -288,7 +279,7 @@ int adv748x_csi2_init(struct adv748x_state *state, struct adv748x_csi2 *tx)
- 			    is_txa(tx) ? "txa" : "txb");
- 
- 	/* Ensure that matching is based upon the endpoint fwnodes */
--	tx->sd.fwnode = of_fwnode_handle(ep);
-+	tx->sd.fwnode = of_fwnode_handle(state->endpoints[tx->port]);
- 
- 	/* Register internal ops for incremental subdev registration */
- 	tx->sd.internal_ops = &adv748x_csi2_internal_ops;
-@@ -321,6 +312,9 @@ int adv748x_csi2_init(struct adv748x_state *state, struct adv748x_csi2 *tx)
- 
- void adv748x_csi2_cleanup(struct adv748x_csi2 *tx)
- {
-+	if (!is_tx_enabled(tx))
-+		return;
++	ret = reset_control_deassert(priv->rsts);
++	if (ret)
++		goto probe_fail_rst;
 +
- 	v4l2_async_unregister_subdev(&tx->sd);
- 	media_entity_cleanup(&tx->sd.entity);
- 	v4l2_ctrl_handler_free(&tx->ctrl_hdl);
-diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
-index 65f8374..1cf46c40 100644
---- a/drivers/media/i2c/adv748x/adv748x.h
-+++ b/drivers/media/i2c/adv748x/adv748x.h
-@@ -82,6 +82,7 @@ struct adv748x_csi2 {
- 	struct adv748x_state *state;
- 	struct v4l2_mbus_framefmt format;
- 	unsigned int page;
-+	unsigned int port;
+ 	/*
+ 	 * deviece reset here because
+ 	 * USB device might be used in boot loader.
+@@ -711,6 +720,8 @@ static int usbhs_probe(struct platform_device *pdev)
+ 	return ret;
  
- 	struct media_pad pads[ADV748X_CSI2_NR_PADS];
- 	struct v4l2_ctrl_handler ctrl_hdl;
-@@ -91,6 +92,7 @@ struct adv748x_csi2 {
+ probe_end_mod_exit:
++	reset_control_assert(priv->rsts);
++probe_fail_rst:
+ 	usbhs_mod_remove(priv);
+ probe_end_fifo_exit:
+ 	usbhs_fifo_remove(priv);
+@@ -739,6 +750,7 @@ static int usbhs_remove(struct platform_device *pdev)
+ 	pm_runtime_disable(&pdev->dev);
  
- #define notifier_to_csi2(n) container_of(n, struct adv748x_csi2, notifier)
- #define adv748x_sd_to_csi2(sd) container_of(sd, struct adv748x_csi2, sd)
-+#define is_tx_enabled(_tx) ((_tx)->state->endpoints[(_tx)->port] != NULL)
+ 	usbhs_platform_call(priv, hardware_exit, pdev);
++	reset_control_assert(priv->rsts);
+ 	usbhs_mod_remove(priv);
+ 	usbhs_fifo_remove(priv);
+ 	usbhs_pipe_remove(priv);
+diff --git a/drivers/usb/renesas_usbhs/common.h b/drivers/usb/renesas_usbhs/common.h
+index 6137f79..bce7d35 100644
+--- a/drivers/usb/renesas_usbhs/common.h
++++ b/drivers/usb/renesas_usbhs/common.h
+@@ -10,6 +10,7 @@
  
- enum adv748x_hdmi_pads {
- 	ADV748X_HDMI_SINK,
+ #include <linux/extcon.h>
+ #include <linux/platform_device.h>
++#include <linux/reset.h>
+ #include <linux/usb/renesas_usbhs.h>
+ 
+ struct usbhs_priv;
+@@ -277,6 +278,7 @@ struct usbhs_priv {
+ 	struct usbhs_fifo_info fifo_info;
+ 
+ 	struct phy *phy;
++	struct reset_control *rsts;
+ };
+ 
+ /*
 -- 
-2.7.4
+1.9.1
