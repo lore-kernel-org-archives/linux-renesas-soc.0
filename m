@@ -1,76 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:34837 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728047AbeIFUKS (ORCPT
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:43116 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729735AbeIFTOK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Sep 2018 16:10:18 -0400
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Simon Horman <horms@verge.net.au>,
+        Thu, 6 Sep 2018 15:14:10 -0400
+MIME-Version: 1.0
+References: <1535622742-6237-1-git-send-email-phil.edworthy@renesas.com>
+In-Reply-To: <1535622742-6237-1-git-send-email-phil.edworthy@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 6 Sep 2018 16:38:07 +0200
+Message-ID: <CAMuHMdVSLaaJmLEnke-iPSrgkRa4SUQyAnm_Tw9TPs3KcekFFA@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: r9a06g032: Correct UART and add all other UARTs
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
         <devicetree@vger.kernel.org>
-Subject: RE: [PATCH] ARM: dts: r9a06g032: Correct UART and add all other UARTs
-Date: Thu, 6 Sep 2018 15:34:07 +0000
-Message-ID: <TY1PR01MB1769A5DF4ECDAA51090BA207F5010@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <1535622742-6237-1-git-send-email-phil.edworthy@renesas.com>
- <CAMuHMdVSLaaJmLEnke-iPSrgkRa4SUQyAnm_Tw9TPs3KcekFFA@mail.gmail.com>
-In-Reply-To: <CAMuHMdVSLaaJmLEnke-iPSrgkRa4SUQyAnm_Tw9TPs3KcekFFA@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIDA2IFNlcHRlbWJlciAyMDE4IDE1OjM4IEdlZXJ0IFV5dHRlcmhvZXZl
-biB3cm90ZToNCj4gT24gVGh1LCBBdWcgMzAsIDIwMTggYXQgMTE6NTIgQU0gUGhpbCBFZHdvcnRo
-eSB3cm90ZToNCj4gPiAtIFVBUlQwIHdhcyBtaXNzaW5nIHRoZSBidXMgY2xvY2sgKCJhcGJfcGNs
-ayIpLg0KPiA+IC0gTm93IHRoYXQgdGhlIHJlbGV2YW50IHJ6bjEgYmluZGluZ3MgaGF2ZSBiZWVu
-IGFkZGVkLCByZXBsYWNlIHRoZQ0KPiBTeW5vcHN5cw0KPiA+ICAgY29tcGF0IHN0cmluZyB3aXRo
-IHRoZSByem4xIHN0cmluZ3MuDQo+ID4gLSBBZGQgYWxsIHRoZSBvdGhlciBVQVJUcy4NCj4gPg0K
-PiA+IFNpZ25lZC1vZmYtYnk6IFBoaWwgRWR3b3J0aHkgPHBoaWwuZWR3b3J0aHlAcmVuZXNhcy5j
-b20+DQo+IA0KPiBUaGFua3MgZm9yIHlvdXIgcGF0Y2ghDQpBbmQgdGhhbmtzIGZvciB5b3VyIHJl
-dmlldyENCiANCj4gUmV2aWV3ZWQtYnk6IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnQrcmVuZXNh
-c0BnbGlkZXIuYmU+DQo+IA0KPiBCdXQgYSBmZXcgbm90ZXMvcXVlc3Rpb25zIGJlbG93Lg0KPiAN
-Cj4gPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9yOWEwNmcwMzIuZHRzaQ0KPiA+ICsrKyBiL2Fy
-Y2gvYXJtL2Jvb3QvZHRzL3I5YTA2ZzAzMi5kdHNpDQo+ID4gQEAgLTc4LDEzICs3OCw5MCBAQA0K
-PiA+ICAgICAgICAgICAgICAgICB9Ow0KPiA+DQo+ID4gICAgICAgICAgICAgICAgIHVhcnQwOiBz
-ZXJpYWxANDAwNjAwMDAgew0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgIGNvbXBhdGlibGUg
-PSAic25wcyxkdy1hcGItdWFydCI7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgY29tcGF0
-aWJsZSA9ICJyZW5lc2FzLHI5YTA2ZzAzMi11YXJ0IiwgInJlbmVzYXMscnpuMS11YXJ0IjsNCj4g
-DQo+IEFwcGFyZW50bHkgbm90IGFsbCA4IFVBUlRzIGFyZSBpZGVudGljYWw6IHRoZSBmaXJzdCAz
-IGRvbid0IGhhdmUgRE1BLCB0aGUNCj4gbGFzdCA1IGRvLCBhbmQgdGhleSBoYXZlIG1vcmUgcmVn
-aXN0ZXJzLg0KPiANCj4gQXJlIHlvdSBzdXJlIG5vIGRpZmZlcmVudCBjb21wYXRpYmxlIHZhbHVl
-cyBhcmUgbmVlZGVkIHRvIGRpc3Rpbmd1aXNoDQo+IGJldHdlZW4gdGhlbT8NCj4gQ2FuIHlvdSBo
-YW5kbGUgdGhlbSBwdXJlbHkgYmFzZWQgb24gdGhlIHByZXNlbmNlIG9yIGFic2VuY2Ugb2YNCj4g
-ImRtYXMiIHByb3BlcnRpZXMgKHdoaWNoIGFyZSBub3QgeWV0IHByZXNlbnQpPw0KWWVzLCBJIGFt
-IHByZXR0eSBzdXJlLi4uIHRoZSBleHRyYSByZWdpc3RlcnMgZm9yIHRoZSBsYXN0IDUgdWFydHMg
-YXJlIG9ubHkgZG1hDQpyZWxhdGVkIGFuZCB3ZSBoYXZlIGJlZW4gdXNpbmcgdGhlIHN0YW5kYXJk
-IFN5bm9wc3lzIGRyaXZlciBvbiB0aGUgb3RoZXINCjMgdWFydHMgd2l0aG91dCBpc3N1ZSBmb3Ig
-c29tZSB0aW1lLg0KDQo+IEFjY29yZGluZyB0byBjb21taXQgNzJiMDUwNWYwODMwZGY5NSAoImR0
-OiBzZXJpYWw6IEFkZCBSZW5lc2FzIFJaL04xDQo+IGJpbmRpbmcgZG9jdW1lbnRhdGlvbiIpLCB0
-aGUgU3lub3BzaXMgY29tcGF0aWJsZSBzdHJpbmcgd291bGQgd29yayBpZiB5b3UNCj4gYXJlIG5v
-dCB1c2luZyBETUEsIHNvIHBlcmhhcHMgaXQgc2hvdWxkIGJlIGFkZGVkIGZvciB0aGUgcG9ydHMg
-dGhhdCBjYW5ub3QNCj4gZG8gRE1BPw0KTWFrZXMgc2Vuc2UsIEkgd2lsbCBtYWtlIHRoZW06DQpj
-b21wYXRpYmxlID0gInJlbmVzYXMscjlhMDZnMDMyLXVhcnQiLCAicmVuZXNhcyxyem4xLXVhcnQi
-LCAic25wcyxkdy1hcGItdWFydCI7DQoNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICByZWcg
-PSA8MHg0MDA2MDAwMCAweDQwMD47DQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgaW50ZXJy
-dXB0cyA9IDxHSUNfU1BJIDYgSVJRX1RZUEVfTEVWRUxfSElHSD47DQo+ID4gICAgICAgICAgICAg
-ICAgICAgICAgICAgcmVnLXNoaWZ0ID0gPDI+Ow0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAg
-IHJlZy1pby13aWR0aCA9IDw0PjsNCj4gPiAtICAgICAgICAgICAgICAgICAgICAgICBjbG9ja3Mg
-PSA8JnN5c2N0cmwgUjlBMDZHMDMyX0NMS19VQVJUMD47DQo+ID4gLSAgICAgICAgICAgICAgICAg
-ICAgICAgY2xvY2stbmFtZXMgPSAiYmF1ZGNsayI7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAg
-ICAgY2xvY2tzID0gPCZzeXNjdHJsIFI5QTA2RzAzMl9DTEtfVUFSVDA+LCA8JnN5c2N0cmwNCj4g
-UjlBMDZHMDMyX0hDTEtfVUFSVDA+Ow0KPiANCj4gSXQncyBhIHBpdHkgdGhlIGNsb2NrIG5hbWVz
-IGRvbid0IG1hdGNoIHRoZSBkYXRhc2hlZXQsIGJ1dCB0aGUgb3V0cHV0IGZyb20NCj4gdGhlIGlu
-dGVybmFsIFJlbmVzYXMgdG9vbHMuIFNvIEkgaGF2ZSB0byB0cnVzdCB5b3UgdG8gbm90IGxpc3Qg
-dGhlbQ0KPiBpbiB0aGUgd3Jvbmcgb3JkZXIuDQpUcnVlLi4uIE5vdGUgdGhhdCBhbGwgYnVzIGNs
-b2NrcyByZXF1aXJlZCB0byBhY2Nlc3MgdGhlIHBlcmlwaGVyYWwncyByZWdpc3RlcnMNCmFyZSAn
-SENMSycsIG90aGVyIGNsb2NrcyBzdWNoIGFzIGJhdWQgY2xrcyBhcmUgJ0NMSycuDQoNCj4gPiAr
-ICAgICAgICAgICAgICAgICAgICAgICBjbG9jay1uYW1lcyA9ICJiYXVkY2xrIiwgImFwYl9wY2xr
-IjsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBzdGF0dXMgPSAiZGlzYWJsZWQiOw0KPiA+
-ICsgICAgICAgICAgICAgICB9Ow0KDQpUaGFua3MNClBoaWwNCg==
+Hi Phil,
+
+On Thu, Aug 30, 2018 at 11:52 AM Phil Edworthy
+<phil.edworthy@renesas.com> wrote:
+> - UART0 was missing the bus clock ("apb_pclk").
+> - Now that the relevant rzn1 bindings have been added, replace the Synopsys
+>   compat string with the rzn1 strings.
+> - Add all the other UARTs.
+>
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+
+Thanks for your patch!
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+But a few notes/questions below.
+
+> --- a/arch/arm/boot/dts/r9a06g032.dtsi
+> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
+> @@ -78,13 +78,90 @@
+>                 };
+>
+>                 uart0: serial@40060000 {
+> -                       compatible = "snps,dw-apb-uart";
+> +                       compatible = "renesas,r9a06g032-uart", "renesas,rzn1-uart";
+
+Apparently not all 8 UARTs are identical: the first 3 don't have DMA, the
+last 5 do, and they have more registers.
+
+Are you sure no different compatible values are needed to distinguish
+between them?
+Can you handle them purely based on the presence or absence of
+"dmas" properties (which are not yet present)?
+
+According to commit 72b0505f0830df95 ("dt: serial: Add Renesas RZ/N1
+binding documentation"), the Synopsis compatible string would work if you
+are not using DMA, so perhaps it should be added for the ports that cannot
+do DMA?
+
+>                         reg = <0x40060000 0x400>;
+>                         interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
+>                         reg-shift = <2>;
+>                         reg-io-width = <4>;
+> -                       clocks = <&sysctrl R9A06G032_CLK_UART0>;
+> -                       clock-names = "baudclk";
+> +                       clocks = <&sysctrl R9A06G032_CLK_UART0>, <&sysctrl R9A06G032_HCLK_UART0>;
+
+It's a pity the clock names don't match the datasheet, but the output from
+the internal Renesas tools. So I have to trust you to not list them
+in the wrong order.
+
+> +                       clock-names = "baudclk", "apb_pclk";
+> +                       status = "disabled";
+> +               };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
