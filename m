@@ -1,42 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:42364 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389596AbeIUSRM (ORCPT
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:35410 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729350AbeIFSwi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Sep 2018 14:17:12 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 4/5] dt-bindings: usb: renesas_usbhs: add bindings for r8a77990
-Date: Fri, 21 Sep 2018 21:26:31 +0900
-Message-Id: <1537532792-20376-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1537532792-20376-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1537532792-20376-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Thu, 6 Sep 2018 14:52:38 -0400
+Received: by mail-ua1-f68.google.com with SMTP id m26-v6so8858227uap.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 06 Sep 2018 07:16:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <1536237659-20535-1-git-send-email-ykaneko0929@gmail.com>
+In-Reply-To: <1536237659-20535-1-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 6 Sep 2018 16:16:41 +0200
+Message-ID: <CAMuHMdV3_qUZxXv1LC6hVrOaHTcDh_Kq660fw-it=c+=gbcWcw@mail.gmail.com>
+Subject: Re: [PATCH/RFT v2] pinctrl: sh-pfc: r8a77995: Add MSIOF pins, groups
+ and functions
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds bindings for r8a77990 (R-Car E3).
+Hi Kaneko-san,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- Documentation/devicetree/bindings/usb/renesas_usbhs.txt | 1 +
- 1 file changed, 1 insertion(+)
+On Thu, Sep 6, 2018 at 2:41 PM Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds MSIOF{0,1,2,3} pins, groups and functions to R8A77995 SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> [ykaneko0929@gmail.com: fix the order of definitions]
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> ---
+>
+> This patch is based on the sh-pfc branch of Geert Uytterhoeven's
+> renesas-drivers tree.
+>
+> v2 [Yoshihiro Kaneko]
+> * As suggested by Geert Uytterhoeven
+>   Fix the order of definitions.
 
-diff --git a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
-index 15fb3b3..a649329 100644
---- a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
-+++ b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
-@@ -14,6 +14,7 @@ Required properties:
- 	- "renesas,usbhs-r8a7795" for r8a7795 (R-Car H3) compatible device
- 	- "renesas,usbhs-r8a7796" for r8a7796 (R-Car M3-W) compatible device
- 	- "renesas,usbhs-r8a77965" for r8a77965 (R-Car M3-N) compatible device
-+	- "renesas,usbhs-r8a77990" for r8a77990 (R-Car E3) compatible device
- 	- "renesas,usbhs-r8a77995" for r8a77995 (R-Car D3) compatible device
- 	- "renesas,usbhs-r7s72100" for r7s72100 (RZ/A1) compatible device
- 	- "renesas,rcar-gen2-usbhs" for R-Car Gen2 or RZ/G1 compatible devices
+Thanks for the update!
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.2.0.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-1.9.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
