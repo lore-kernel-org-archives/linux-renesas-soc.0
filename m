@@ -1,81 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:45427 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726340AbeIESa1 (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:24806 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726031AbeIFXOk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Sep 2018 14:30:27 -0400
-MIME-Version: 1.0
-References: <1535711579-15169-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1535711579-15169-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1535711579-15169-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Sep 2018 15:59:54 +0200
-Message-ID: <CAMuHMdWroi7SDj+hrLYqwctHMZEzA8bC=VgykvPtUwy5Eqfx+A@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] usb: renesas_usbhs: Add multiple clocks management
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Felipe Balbi <balbi@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Thu, 6 Sep 2018 19:14:40 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v2 0/2] watchdog: Add support for RZ/A2 wdt
+Date: Thu,  6 Sep 2018 13:37:36 -0500
+Message-Id: <20180906183738.81238-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Shimoda-san,
-
-On Fri, Aug 31, 2018 at 12:36 PM Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> R-Car Gen3 needs to enable clocks of both host and peripheral.
-> Since [eo]hci-platform disables the reset(s) when the drivers are
-> removed, renesas_usbhs driver doesn't work correctly. To fix this
-> issue, this patch adds multiple clocks management on this
-> renesas_usbhs driver.
->
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-
-Thanks for your patch!
-
-> --- a/drivers/usb/renesas_usbhs/common.c
-> +++ b/drivers/usb/renesas_usbhs/common.c
-
-> @@ -336,11 +337,26 @@ static void usbhsc_power_ctrl(struct usbhs_priv *priv, int enable)
->  {
->         struct platform_device *pdev = usbhs_priv_to_pdev(priv);
->         struct device *dev = usbhs_priv_to_dev(priv);
-> +       int ret;
->
->         if (enable) {
->                 /* enable PM */
->                 pm_runtime_get_sync(dev);
->
-> +               /* enable clks if exist */
-> +               if (priv->num_clks) {
-> +                       ret = clk_bulk_prepare(priv->num_clks, priv->clks);
-> +                       if (!ret) {
-> +                               ret = clk_bulk_enable(priv->num_clks,
-> +                                                     priv->clks);
-> +                               if (ret) {
-> +                                       clk_bulk_unprepare(priv->num_clks,
-> +                                                          priv->clks);
-> +                                       return;
-> +                               }
-> +                       }
-
-I think you misunderstood my comment: you can replace the calls to
-clk_bulk_prepare() and clk_bulk_enable() by a single call to
-clk_bulk_prepare_enable().
+Slightly modify the rza_wdt.c driver and update the binding docs.
 
 
-Gr{oetje,eeting}s,
+Chris Brandt (2):
+  watchdog: rza_wdt: Support longer timeouts
+  dt-bindings: watchdog: renesas-wdt: Add support for R7S9210
 
-                        Geert
+ .../devicetree/bindings/watchdog/renesas-wdt.txt   |  1 +
+ drivers/watchdog/rza_wdt.c                         | 81 +++++++++++++++++-----
+ 2 files changed, 64 insertions(+), 18 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.16.1
