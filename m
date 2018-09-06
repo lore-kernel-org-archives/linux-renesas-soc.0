@@ -1,44 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:44968 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725929AbeIFPlF (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:39079 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727963AbeIFMkS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Sep 2018 11:41:05 -0400
-MIME-Version: 1.0
-References: <3ce24bfe-1edb-1a92-8847-ff998ac86d16@cogentembedded.com> <bccdf54a-70ba-ea8e-275f-9382dab5f1d4@cogentembedded.com>
-In-Reply-To: <bccdf54a-70ba-ea8e-275f-9382dab5f1d4@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 6 Sep 2018 13:05:58 +0200
-Message-ID: <CAMuHMdVUsWGfXWN9FEUjMZhCicJidrBJ4vcba5giAmAQkGd66Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clocksource: sh_cmt: properly line-wrap
+        Thu, 6 Sep 2018 08:40:18 -0400
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
+Subject: RE: [PATCH 1/2] clocksource: sh_cmt: properly line-wrap
  sh_cmt_of_table[] initializer
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Date: Thu, 6 Sep 2018 08:06:00 +0000
+Message-ID: <TYAPR01MB228540A45918F0F7976FA0EAB7010@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+References: <3ce24bfe-1edb-1a92-8847-ff998ac86d16@cogentembedded.com>
+ <bccdf54a-70ba-ea8e-275f-9382dab5f1d4@cogentembedded.com>
+In-Reply-To: <bccdf54a-70ba-ea8e-275f-9382dab5f1d4@cogentembedded.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Sep 5, 2018 at 10:31 PM Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> There's no good reason for the sh_cmt_of_table[] initializer to
-> violate the 80-column limit, especially after the commit 8d50e9476bb4
-> ("clocksource/drivers/sh_cmt: Mark "renesas,cmt-48-gen2" deprecated")
-> partially fixed it -- fix the R-Car gen2 related entries as well.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGVsbG8gU2VyZ2VpLA0KDQo+IEZyb206IGxpbnV4LXNoLW93bmVyQHZnZXIua2VybmVsLm9yZyA8
+bGludXgtc2gtb3duZXJAdmdlci5rZXJuZWwub3JnPg0KPiBPbiBCZWhhbGYgT2YgU2VyZ2VpIFNo
+dHlseW92DQo+IFNlbnQ6IDA1IFNlcHRlbWJlciAyMDE4IDIxOjMxDQo+IA0KPiBUaGVyZSdzIG5v
+IGdvb2QgcmVhc29uIGZvciB0aGUgc2hfY210X29mX3RhYmxlW10gaW5pdGlhbGl6ZXIgdG8gdmlv
+bGF0ZSB0aGUgODAtDQo+IGNvbHVtbiBsaW1pdCwgZXNwZWNpYWxseSBhZnRlciB0aGUgY29tbWl0
+IDhkNTBlOTQ3NmJiNA0KPiAoImNsb2Nrc291cmNlL2RyaXZlcnMvc2hfY210OiBNYXJrICJyZW5l
+c2FzLGNtdC00OC1nZW4yIiBkZXByZWNhdGVkIikNCj4gcGFydGlhbGx5IGZpeGVkIGl0IC0tIGZp
+eCB0aGUgUi1DYXIgZ2VuMiByZWxhdGVkIGVudHJpZXMgYXMgd2VsbC4NCg0KU2VlbXMgc2Vuc2li
+bGUgdG8gbWUuDQoNClJldmlld2VkLWJ5OiBDaHJpcyBQYXRlcnNvbiA8Y2hyaXMucGF0ZXJzb24y
+QHJlbmVzYXMuY29tPg0KDQpLaW5kIHJlZ2FyZHMsIENocmlzDQoNCj4gDQo+IFNpZ25lZC1vZmYt
+Ynk6IFNlcmdlaSBTaHR5bHlvdiA8c2VyZ2VpLnNodHlseW92QGNvZ2VudGVtYmVkZGVkLmNvbT4N
+Cj4gDQo+IC0tLQ0KPiAgZHJpdmVycy9jbG9ja3NvdXJjZS9zaF9jbXQuYyB8ICAgMTAgKysrKysr
+KystLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkN
+Cj4gDQo+IEluZGV4OiByZW5lc2FzL2RyaXZlcnMvY2xvY2tzb3VyY2Uvc2hfY210LmMNCj4gPT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQ0K
+PiA9PT09PT09PT0NCj4gLS0tIHJlbmVzYXMub3JpZy9kcml2ZXJzL2Nsb2Nrc291cmNlL3NoX2Nt
+dC5jDQo+ICsrKyByZW5lc2FzL2RyaXZlcnMvY2xvY2tzb3VyY2Uvc2hfY210LmMNCj4gQEAgLTkz
+Nyw4ICs5MzcsMTQgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgc2hfY210Xw0K
+PiAgCQkuY29tcGF0aWJsZSA9ICJyZW5lc2FzLGNtdC00OC1nZW4yIiwNCj4gIAkJLmRhdGEgPSAm
+c2hfY210X2luZm9bU0hfQ01UMF9SQ0FSX0dFTjJdDQo+ICAJfSwNCj4gLQl7IC5jb21wYXRpYmxl
+ID0gInJlbmVzYXMscmNhci1nZW4yLWNtdDAiLCAuZGF0YSA9DQo+ICZzaF9jbXRfaW5mb1tTSF9D
+TVQwX1JDQVJfR0VOMl0gfSwNCj4gLQl7IC5jb21wYXRpYmxlID0gInJlbmVzYXMscmNhci1nZW4y
+LWNtdDEiLCAuZGF0YSA9DQo+ICZzaF9jbXRfaW5mb1tTSF9DTVQxX1JDQVJfR0VOMl0gfSwNCj4g
+Kwl7DQo+ICsJCS5jb21wYXRpYmxlID0gInJlbmVzYXMscmNhci1nZW4yLWNtdDAiLA0KPiArCQku
+ZGF0YSA9ICZzaF9jbXRfaW5mb1tTSF9DTVQwX1JDQVJfR0VOMl0NCj4gKwl9LA0KPiArCXsNCj4g
+KwkJLmNvbXBhdGlibGUgPSAicmVuZXNhcyxyY2FyLWdlbjItY210MSIsDQo+ICsJCS5kYXRhID0g
+JnNoX2NtdF9pbmZvW1NIX0NNVDFfUkNBUl9HRU4yXQ0KPiArCX0sDQo+ICAJeyB9DQo+ICB9Ow0K
+PiAgTU9EVUxFX0RFVklDRV9UQUJMRShvZiwgc2hfY210X29mX3RhYmxlKTsNCg==
