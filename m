@@ -1,38 +1,64 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:13991 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbeIGNFr (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Sep 2018 09:05:47 -0400
-From: Nguyen An Hoan <na-hoan@jinso.co.jp>
-To: broonie@kernel.org, linux-renesas-soc@vger.kernel.org,
-        horms+renesas@verge.net.au, geert+renesas@glider.be
-Cc: kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
-        magnus.damm@gmail.com, h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp,
-        cv-dong@jinso.co.jp, na-hoan@jinso.co.jp
-Subject: [PATCH 0/4] Enable Audio support for the Draak D3 board on r8a77995.
-Date: Fri,  7 Sep 2018 17:25:39 +0900
-Message-Id: <1536308743-29573-1-git-send-email-na-hoan@jinso.co.jp>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Felipe Balbi <balbi@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+Subject: RE: [PATCH v3 3/3] usb: renesas_usbhs: Add multiple clocks management
+Date: Thu, 6 Sep 2018 12:09:46 +0000
+Message-ID: <OSBPR01MB2293B264BC79AA974CE6F7F4D8010@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+References: <1536213014-1325-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1536213014-1325-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdWCKSBydcbFwKqGi9azVARFr-0YboC65Zgde24FJVeZZQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdWCKSBydcbFwKqGi9azVARFr-0YboC65Zgde24FJVeZZQ@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hoan Nguyen An <na-hoan@jinso.co.jp>
-
-These patches enable Audio support for the Draak D3 board on the r8a77995 SoC.
-Since Sound has a clock source for ADG from ZA2, add ZA2 clock.
-
-Thanks you for reading!
-
-Hoan Nguyen An (4):
-  arm64: dts: r8a77995: Add Audio DMAC node
-  arm64: dts: r8a77995: Add Audio device nodes
-  arm64: dts: r8a77995-draak: Enable Audio
-  clk: renesas: r8a77995: Add ZA2 clock
-
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 123 ++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77995.dtsi      | 217 +++++++++++++++++++++++++
- drivers/clk/renesas/r8a77995-cpg-mssr.c        |   1 +
- 3 files changed, 341 insertions(+)
-
--- 
-2.7.4
+SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbiwgU2VudDogVGh1cnNk
+YXksIFNlcHRlbWJlciA2LCAyMDE4IDQ6MjggUE0NCj4gDQo+IEhpIFNoaW1vZGEtc2FuLA0KPiAN
+Cj4gT24gVGh1LCBTZXAgNiwgMjAxOCBhdCA3OjUyIEFNIFlvc2hpaGlybyBTaGltb2RhDQo+IDx5
+b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gUi1DYXIgR2VuMyBu
+ZWVkcyB0byBlbmFibGUgY2xvY2tzIG9mIGJvdGggaG9zdCBhbmQgcGVyaXBoZXJhbC4NCj4gPiBT
+aW5jZSBbZW9daGNpLXBsYXRmb3JtIGRpc2FibGVzIHRoZSByZXNldChzKSB3aGVuIHRoZSBkcml2
+ZXJzIGFyZQ0KPiA+IHJlbW92ZWQsIHJlbmVzYXNfdXNiaHMgZHJpdmVyIGRvZXNuJ3Qgd29yayBj
+b3JyZWN0bHkuIFRvIGZpeCB0aGlzDQo+ID4gaXNzdWUsIHRoaXMgcGF0Y2ggYWRkcyBtdWx0aXBs
+ZSBjbG9ja3MgbWFuYWdlbWVudCBvbiB0aGlzDQo+ID4gcmVuZXNhc191c2JocyBkcml2ZXIuDQo+
+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBZb3NoaWhpcm8gU2hpbW9kYSA8eW9zaGloaXJvLnNoaW1v
+ZGEudWhAcmVuZXNhcy5jb20+DQo+IA0KPiA+IC0tLSBhL2RyaXZlcnMvdXNiL3JlbmVzYXNfdXNi
+aHMvY29tbW9uLmMNCj4gPiArKysgYi9kcml2ZXJzL3VzYi9yZW5lc2FzX3VzYmhzL2NvbW1vbi5j
+DQo+IA0KPiA+IEBAIC02NjcsNiArNjg0LDEyIEBAIHN0YXRpYyBpbnQgdXNiaHNfcHJvYmUoc3Ry
+dWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gPiAgICAgICAgIGlmIChyZXQpDQo+ID4gICAg
+ICAgICAgICAgICAgIGdvdG8gcHJvYmVfZmFpbF9yc3Q7DQo+ID4NCj4gPiArICAgICAgIGlmIChw
+cml2LT5udW1fY2xrcykgew0KPiA+ICsgICAgICAgICAgICAgICByZXQgPSBjbGtfYnVsa19nZXQo
+JnBkZXYtPmRldiwgcHJpdi0+bnVtX2Nsa3MsIHByaXYtPmNsa3MpOw0KPiANCj4gKGluc3BpcmVk
+IGJ5IE1vcmltb3RvLXNhbikgY2xrX2J1bGtfZ2V0KCkgaXMgYSBuby1vcCBpZiBudW1fY2xrcyBp
+cyB6ZXJvLg0KDQpUaGF0J3MgcmlnaHQuIFRoYW5rIHlvdSBmb3IgeW91ciBjb21tZW50Lg0KDQo+
+ID4gKyAgICAgICAgICAgICAgIGlmIChyZXQgPT0gLUVQUk9CRV9ERUZFUikNCj4gDQo+IFdoeSB0
+aGlzIHNwZWNpYWwgaGFuZGxpbmcgZm9yIC1FUFJPQkVfREVGRVIgb25seT8NCj4gU2hvdWxkbid0
+IGFsbCBlcnJvcnMgYmUgY29uc2lkZXJlZCBmYXRhbD8NCj4gDQo+IFBlcmhhcHMgdGhpcyBpcyBu
+ZWVkZWQgZm9yIGJhY2t3YXJkcyBjb21wYXRpYmlsaXR5IHdpdGggb2xkIERUPw0KDQpZZXMsIHRo
+aXMgaXMgbmVlZGVkIGZvciBiYWNrd2FyZCBzIGNvbXBhdGliaWxpdHkgd2l0aCBvbGQgRFQuDQoN
+Cj4gSW4gdGhhdCBjYXNlLCB5b3Ugc2hvdWxkIGRvIG1vcmUgdGhvcm91Z2ggY2hlY2tpbmcgKGZp
+cnN0IGNsb2NrIHNob3VsZA0KPiBleGlzdCwgc2Vjb25kIHNob3VsZCByZXR1cm4gLUVOT0VOVCku
+DQoNCkkgdW5kZXJzdG9vZCBpdC4gKEZvciBiYWNrd2FyZHMgY29tcGF0aWJpbGl0eSB3aXRoIG9s
+ZCBEVCwgaWYgc2Vjb25kIGNsb2NrDQpyZXR1cm5zIC1FTk9FTlQsIHRoZSBkcml2ZXIgc2hvdWxk
+IGRvIGEgc3BlY2lhbCBoYW5kbGluZy4pDQpJJ2xsIGZpeCB0aGlzIHBhdGNoLg0KDQpCZXN0IHJl
+Z2FyZHMsDQpZb3NoaWhpcm8gU2hpbW9kYQ0KDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAg
+Z290byBwcm9iZV9mYWlsX2Nsa3M7DQo+ID4gKyAgICAgICB9DQo+ID4gKw0KPiA+ICAgICAgICAg
+LyoNCj4gPiAgICAgICAgICAqIGRldmllY2UgcmVzZXQgaGVyZSBiZWNhdXNlDQo+ID4gICAgICAg
+ICAgKiBVU0IgZGV2aWNlIG1pZ2h0IGJlIHVzZWQgaW4gYm9vdCBsb2FkZXIuDQo+IA0KPiBHcntv
+ZXRqZSxlZXRpbmd9cywNCj4gDQo+ICAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+IA0K
+PiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9u
+ZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LW02OGsub3JnDQo+IA0KPiBJbiBwZXJzb25hbCBjb252ZXJz
+YXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0
+DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1l
+ciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAtLSBMaW51cyBUb3J2YWxkcw0K
