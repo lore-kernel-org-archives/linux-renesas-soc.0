@@ -1,42 +1,45 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:43674 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726295AbeIFPk3 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 6 Sep 2018 11:40:29 -0400
+MIME-Version: 1.0
+References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com> <d7c78a11-b876-0587-c684-88f1865f0260@cogentembedded.com>
+In-Reply-To: <d7c78a11-b876-0587-c684-88f1865f0260@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 6 Sep 2018 13:05:20 +0200
+Message-ID: <CAMuHMdUu8YFTo=7ieCz3CPA=MjE64WS_Vb08zNZ5GNV-m6hoVA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a77970: add CMT clocks
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 0/3] Add basic definitions for RZ/G2E
-Date: Mon, 10 Sep 2018 12:53:47 +0100
-Message-Id: <1536580430-17432-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dear All,
+On Wed, Sep 5, 2018 at 6:59 PM Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add the R8A77970 CMT module clocks.
+>
+> Based on the original (and large) patch by Vladimir Barinov.
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-this series adds basic identification for the RZ/G2E (a.k.a.
-r8a774c0).
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v4.2.0.
 
-It applies on top of renesas-devel-20180906-v4.19-rc2.
+Gr{oetje,eeting}s,
 
-Thanks,
-Fab
-
-Fabrizio Castro (3):
-  dt-bindings: arm: Document RZ/G2E SoC DT bindings
-  arm64: Add Renesas R8A774C0 support
-  soc: renesas: Identify RZ/G2E
-
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- arch/arm64/Kconfig.platforms                       | 6 ++++++
- drivers/soc/renesas/renesas-soc.c                  | 8 ++++++++
- 3 files changed, 16 insertions(+)
+                        Geert
 
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
