@@ -1,45 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:43674 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726295AbeIFPk3 (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:42431 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727203AbeIFMov (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Sep 2018 11:40:29 -0400
-MIME-Version: 1.0
-References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com> <d7c78a11-b876-0587-c684-88f1865f0260@cogentembedded.com>
-In-Reply-To: <d7c78a11-b876-0587-c684-88f1865f0260@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 6 Sep 2018 13:05:20 +0200
-Message-ID: <CAMuHMdUu8YFTo=7ieCz3CPA=MjE64WS_Vb08zNZ5GNV-m6hoVA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a77970: add CMT clocks
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Thu, 6 Sep 2018 08:44:51 -0400
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH] clk: renesas: r8a77970: add CMT clocks
+Date: Thu, 6 Sep 2018 08:10:33 +0000
+Message-ID: <TYAPR01MB2285DBEDCDFFDF824D45C78FB7010@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com>
+ <d7c78a11-b876-0587-c684-88f1865f0260@cogentembedded.com>
+In-Reply-To: <d7c78a11-b876-0587-c684-88f1865f0260@cogentembedded.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Sep 5, 2018 at 6:59 PM Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add the R8A77970 CMT module clocks.
->
-> Based on the original (and large) patch by Vladimir Barinov.
->
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in clk-renesas-for-v4.2.0.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGVsbG8gU2VyZ2VpLA0KDQo+IEZyb206IGxpbnV4LXJlbmVzYXMtc29jLW93bmVyQHZnZXIua2Vy
+bmVsLm9yZyA8bGludXgtcmVuZXNhcy1zb2MtDQo+IG93bmVyQHZnZXIua2VybmVsLm9yZz4gT24g
+QmVoYWxmIE9mIFNlcmdlaSBTaHR5bHlvdg0KPiBTZW50OiAwNSBTZXB0ZW1iZXIgMjAxOCAxODow
+MA0KPiANCj4gQWRkIHRoZSBSOEE3Nzk3MCBDTVQgbW9kdWxlIGNsb2Nrcy4NCj4gDQo+IEJhc2Vk
+IG9uIHRoZSBvcmlnaW5hbCAoYW5kIGxhcmdlKSBwYXRjaCBieSBWbGFkaW1pciBCYXJpbm92Lg0K
+PiANCj4gU2lnbmVkLW9mZi1ieTogVmxhZGltaXIgQmFyaW5vdiA8dmxhZGltaXIuYmFyaW5vdkBj
+b2dlbnRlbWJlZGRlZC5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IFNlcmdlaSBTaHR5bHlvdiA8c2Vy
+Z2VpLnNodHlseW92QGNvZ2VudGVtYmVkZGVkLmNvbT4NCg0KUmV2aWV3ZWQtYnk6IENocmlzIFBh
+dGVyc29uIDxjaHJpcy5wYXRlcnNvbjJAcmVuZXNhcy5jb20+DQoNCktpbmQgcmVnYXJkcywgQ2hy
+aXMNCg0KPiANCj4gLS0tDQo+ICBkcml2ZXJzL2Nsay9yZW5lc2FzL3I4YTc3OTcwLWNwZy1tc3Ny
+LmMgfCAgICA0ICsrKysNCj4gIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKykNCj4gDQo+
+IEluZGV4OiByZW5lc2FzL2RyaXZlcnMvY2xrL3JlbmVzYXMvcjhhNzc5NzAtY3BnLW1zc3IuYw0K
+PiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09DQo+ID09PT09PT09PQ0KPiAtLS0gcmVuZXNhcy5vcmlnL2RyaXZlcnMvY2xrL3JlbmVzYXMv
+cjhhNzc5NzAtY3BnLW1zc3IuYw0KPiArKysgcmVuZXNhcy9kcml2ZXJzL2Nsay9yZW5lc2FzL3I4
+YTc3OTcwLWNwZy1tc3NyLmMNCj4gQEAgLTExOCw2ICsxMTgsMTAgQEAgc3RhdGljIGNvbnN0IHN0
+cnVjdCBtc3NyX21vZF9jbGsgcjhhNzc5Nw0KPiAgCURFRl9NT0QoIm1maXMiLAkJCSAyMTMsDQo+
+IAlSOEE3Nzk3MF9DTEtfUzJEMiksDQo+ICAJREVGX01PRCgic3lzLWRtYWMyIiwJCSAyMTcsDQo+
+IAlSOEE3Nzk3MF9DTEtfUzJEMSksDQo+ICAJREVGX01PRCgic3lzLWRtYWMxIiwJCSAyMTgsDQo+
+IAlSOEE3Nzk3MF9DTEtfUzJEMSksDQo+ICsJREVGX01PRCgiY210MyIsCQkJIDMwMCwJUjhBNzc5
+NzBfQ0xLX1IpLA0KPiArCURFRl9NT0QoImNtdDIiLAkJCSAzMDEsCVI4QTc3OTcwX0NMS19SKSwN
+Cj4gKwlERUZfTU9EKCJjbXQxIiwJCQkgMzAyLAlSOEE3Nzk3MF9DTEtfUiksDQo+ICsJREVGX01P
+RCgiY210MCIsCQkJIDMwMywJUjhBNzc5NzBfQ0xLX1IpLA0KPiAgCURFRl9NT0QoInNkLWlmIiwJ
+CSAzMTQsCVI4QTc3OTcwX0NMS19TRDApLA0KPiAgCURFRl9NT0QoInJ3ZHQiLAkJCSA0MDIsCVI4
+QTc3OTcwX0NMS19SKSwNCj4gIAlERUZfTU9EKCJpbnRjLWV4IiwJCSA0MDcsCVI4QTc3OTcwX0NM
+S19DUCksDQo=
