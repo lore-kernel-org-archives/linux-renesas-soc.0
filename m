@@ -1,127 +1,67 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:49404 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726031AbeIFKZr (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Sep 2018 06:25:47 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3 3/3] usb: renesas_usbhs: Add multiple clocks management
-Date: Thu,  6 Sep 2018 14:50:14 +0900
-Message-Id: <1536213014-1325-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1536213014-1325-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1536213014-1325-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Felipe Balbi <balbi@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+Subject: RE: [PATCH v2 3/3] usb: renesas_usbhs: Add multiple clocks management
+Date: Thu, 6 Sep 2018 03:19:19 +0000
+Message-ID: <OSBPR01MB2293650D5F80FC6470E6415DD8010@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+References: <1535711579-15169-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1535711579-15169-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdWroi7SDj+hrLYqwctHMZEzA8bC=VgykvPtUwy5Eqfx+A@mail.gmail.com>
+In-Reply-To: <CAMuHMdWroi7SDj+hrLYqwctHMZEzA8bC=VgykvPtUwy5Eqfx+A@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen3 needs to enable clocks of both host and peripheral.
-Since [eo]hci-platform disables the reset(s) when the drivers are
-removed, renesas_usbhs driver doesn't work correctly. To fix this
-issue, this patch adds multiple clocks management on this
-renesas_usbhs driver.
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/usb/renesas_usbhs/common.c | 25 +++++++++++++++++++++++++
- drivers/usb/renesas_usbhs/common.h |  3 +++
- 2 files changed, 28 insertions(+)
-
-diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
-index 1d355d5..d1e37cc 100644
---- a/drivers/usb/renesas_usbhs/common.c
-+++ b/drivers/usb/renesas_usbhs/common.c
-@@ -5,6 +5,7 @@
-  * Copyright (C) 2011 Renesas Solutions Corp.
-  * Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-  */
-+#include <linux/clk.h>
- #include <linux/err.h>
- #include <linux/gpio.h>
- #include <linux/io.h>
-@@ -341,6 +342,11 @@ static void usbhsc_power_ctrl(struct usbhs_priv *priv, int enable)
- 		/* enable PM */
- 		pm_runtime_get_sync(dev);
- 
-+		/* enable clks if exist */
-+		if (priv->num_clks &&
-+		    clk_bulk_prepare_enable(priv->num_clks, priv->clks))
-+			return;
-+
- 		/* enable platform power */
- 		usbhs_platform_call(priv, power_ctrl, pdev, priv->base, enable);
- 
-@@ -353,6 +359,10 @@ static void usbhsc_power_ctrl(struct usbhs_priv *priv, int enable)
- 		/* disable platform power */
- 		usbhs_platform_call(priv, power_ctrl, pdev, priv->base, enable);
- 
-+		/* disable clks if exist */
-+		if (priv->num_clks)
-+			clk_bulk_disable_unprepare(priv->num_clks, priv->clks);
-+
- 		/* disable PM */
- 		pm_runtime_put_sync(dev);
- 	}
-@@ -620,6 +630,13 @@ static int usbhs_probe(struct platform_device *pdev)
- 		break;
- 	}
- 
-+	if (priv->dparam.type == USBHS_TYPE_RCAR_GEN3 ||
-+	    priv->dparam.type == USBHS_TYPE_RCAR_GEN3_WITH_PLL) {
-+		priv->clks[0].id = "hsusb";
-+		priv->clks[1].id = "ehci/ohci";
-+		priv->num_clks = ARRAY_SIZE(priv->clks);
-+	};
-+
- 	/* set driver callback functions for platform */
- 	dfunc			= &info->driver_callback;
- 	dfunc->notify_hotplug	= usbhsc_drvcllbck_notify_hotplug;
-@@ -667,6 +684,12 @@ static int usbhs_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto probe_fail_rst;
- 
-+	if (priv->num_clks) {
-+		ret = clk_bulk_get(&pdev->dev, priv->num_clks, priv->clks);
-+		if (ret == -EPROBE_DEFER)
-+			goto probe_fail_clks;
-+	}
-+
- 	/*
- 	 * deviece reset here because
- 	 * USB device might be used in boot loader.
-@@ -720,6 +743,8 @@ static int usbhs_probe(struct platform_device *pdev)
- 	return ret;
- 
- probe_end_mod_exit:
-+	clk_bulk_put(priv->num_clks, priv->clks);
-+probe_fail_clks:
- 	reset_control_assert(priv->rsts);
- probe_fail_rst:
- 	usbhs_mod_remove(priv);
-diff --git a/drivers/usb/renesas_usbhs/common.h b/drivers/usb/renesas_usbhs/common.h
-index bce7d35..6e7c5f2 100644
---- a/drivers/usb/renesas_usbhs/common.h
-+++ b/drivers/usb/renesas_usbhs/common.h
-@@ -8,6 +8,7 @@
- #ifndef RENESAS_USB_DRIVER_H
- #define RENESAS_USB_DRIVER_H
- 
-+#include <linux/clk.h>
- #include <linux/extcon.h>
- #include <linux/platform_device.h>
- #include <linux/reset.h>
-@@ -279,6 +280,8 @@ struct usbhs_priv {
- 
- 	struct phy *phy;
- 	struct reset_control *rsts;
-+	struct clk_bulk_data clks[2];
-+	int num_clks;
- };
- 
- /*
--- 
-1.9.1
+SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbiwgU2VudDogV2VkbmVz
+ZGF5LCBTZXB0ZW1iZXIgNSwgMjAxOCAxMTowMCBQTQ0KPiANCj4gSGkgU2hpbW9kYS1zYW4sDQo+
+IA0KPiBPbiBGcmksIEF1ZyAzMSwgMjAxOCBhdCAxMjozNiBQTSBZb3NoaWhpcm8gU2hpbW9kYQ0K
+PiA8eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+IHdyb3RlOg0KPiA+IFItQ2FyIEdl
+bjMgbmVlZHMgdG8gZW5hYmxlIGNsb2NrcyBvZiBib3RoIGhvc3QgYW5kIHBlcmlwaGVyYWwuDQo+
+ID4gU2luY2UgW2VvXWhjaS1wbGF0Zm9ybSBkaXNhYmxlcyB0aGUgcmVzZXQocykgd2hlbiB0aGUg
+ZHJpdmVycyBhcmUNCj4gPiByZW1vdmVkLCByZW5lc2FzX3VzYmhzIGRyaXZlciBkb2Vzbid0IHdv
+cmsgY29ycmVjdGx5LiBUbyBmaXggdGhpcw0KPiA+IGlzc3VlLCB0aGlzIHBhdGNoIGFkZHMgbXVs
+dGlwbGUgY2xvY2tzIG1hbmFnZW1lbnQgb24gdGhpcw0KPiA+IHJlbmVzYXNfdXNiaHMgZHJpdmVy
+Lg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogWW9zaGloaXJvIFNoaW1vZGEgPHlvc2hpaGlyby5z
+aGltb2RhLnVoQHJlbmVzYXMuY29tPg0KPiANCj4gVGhhbmtzIGZvciB5b3VyIHBhdGNoIQ0KPiAN
+Cj4gPiAtLS0gYS9kcml2ZXJzL3VzYi9yZW5lc2FzX3VzYmhzL2NvbW1vbi5jDQo+ID4gKysrIGIv
+ZHJpdmVycy91c2IvcmVuZXNhc191c2Jocy9jb21tb24uYw0KPiANCj4gPiBAQCAtMzM2LDExICsz
+MzcsMjYgQEAgc3RhdGljIHZvaWQgdXNiaHNjX3Bvd2VyX2N0cmwoc3RydWN0IHVzYmhzX3ByaXYg
+KnByaXYsIGludCBlbmFibGUpDQo+ID4gIHsNCj4gPiAgICAgICAgIHN0cnVjdCBwbGF0Zm9ybV9k
+ZXZpY2UgKnBkZXYgPSB1c2Joc19wcml2X3RvX3BkZXYocHJpdik7DQo+ID4gICAgICAgICBzdHJ1
+Y3QgZGV2aWNlICpkZXYgPSB1c2Joc19wcml2X3RvX2Rldihwcml2KTsNCj4gPiArICAgICAgIGlu
+dCByZXQ7DQo+ID4NCj4gPiAgICAgICAgIGlmIChlbmFibGUpIHsNCj4gPiAgICAgICAgICAgICAg
+ICAgLyogZW5hYmxlIFBNICovDQo+ID4gICAgICAgICAgICAgICAgIHBtX3J1bnRpbWVfZ2V0X3N5
+bmMoZGV2KTsNCj4gPg0KPiA+ICsgICAgICAgICAgICAgICAvKiBlbmFibGUgY2xrcyBpZiBleGlz
+dCAqLw0KPiA+ICsgICAgICAgICAgICAgICBpZiAocHJpdi0+bnVtX2Nsa3MpIHsNCj4gPiArICAg
+ICAgICAgICAgICAgICAgICAgICByZXQgPSBjbGtfYnVsa19wcmVwYXJlKHByaXYtPm51bV9jbGtz
+LCBwcml2LT5jbGtzKTsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBpZiAoIXJldCkgew0K
+PiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmV0ID0gY2xrX2J1bGtfZW5hYmxl
+KHByaXYtPm51bV9jbGtzLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIHByaXYtPmNsa3MpOw0KPiA+ICsgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgaWYgKHJldCkgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICBjbGtfYnVsa191bnByZXBhcmUocHJpdi0+bnVtX2Nsa3MsDQo+ID4gKyAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwcml2
+LT5jbGtzKTsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmV0
+dXJuOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfQ0KPiA+ICsgICAgICAg
+ICAgICAgICAgICAgICAgIH0NCj4gDQo+IEkgdGhpbmsgeW91IG1pc3VuZGVyc3Rvb2QgbXkgY29t
+bWVudDogeW91IGNhbiByZXBsYWNlIHRoZSBjYWxscyB0bw0KPiBjbGtfYnVsa19wcmVwYXJlKCkg
+YW5kIGNsa19idWxrX2VuYWJsZSgpIGJ5IGEgc2luZ2xlIGNhbGwgdG8NCj4gY2xrX2J1bGtfcHJl
+cGFyZV9lbmFibGUoKS4NCg0KT29wcyEgSSBvdmVybG9va2VkIHRoZSBjbGtfYnVsa19wcmVwYXJl
+X2VuYWJsZSgpLi4NCkknbGwgc3VibWl0IHYzIHBhdGNoLg0KDQpCZXN0IHJlZ2FyZHMsDQpZb3No
+aWhpcm8gU2hpbW9kYQ0KDQo+IA0KPiBHcntvZXRqZSxlZXRpbmd9cywNCj4gDQo+ICAgICAgICAg
+ICAgICAgICAgICAgICAgIEdlZXJ0DQo+IA0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0g
+VGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LW02OGsub3Jn
+DQo+IA0KPiBJbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3BsZSwg
+SSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5h
+bGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4g
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0K
