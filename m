@@ -1,75 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:42364 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389684AbeIUSRI (ORCPT
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:37678 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726541AbeIFOBQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Sep 2018 14:17:08 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/5] Revert "usb: renesas_usbhs: set the mode by using extcon state for non-otg channel"
-Date: Fri, 21 Sep 2018 21:26:29 +0900
-Message-Id: <1537532792-20376-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1537532792-20376-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1537532792-20376-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Thu, 6 Sep 2018 10:01:16 -0400
+Received: by mail-ua1-f68.google.com with SMTP id y10-v6so8175250uao.4
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 06 Sep 2018 02:26:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <1536092527-5950-1-git-send-email-ykaneko0929@gmail.com> <20180906091827.jauhvbq6cudanlzl@verge.net.au>
+In-Reply-To: <20180906091827.jauhvbq6cudanlzl@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 6 Sep 2018 11:26:29 +0200
+Message-ID: <CAMuHMdUci+P9YqDpfmeBP1peKT+a4b9FbF4FSv-9Wq2n87bZdA@mail.gmail.com>
+Subject: Re: [PATCH/RFT] arm64: dts: renesas: r8a77995-draak: Add MSIOF ch2
+ pins support
+To: Simon Horman <horms@verge.net.au>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This reverts commit cd14247d5c14b9b20bb3d3dfcaa899ca22c8dccc.
+Hi Simon,
 
-R-Car D3 can use OTG mode in fact. So, the commit doesn't need anymore.
+On Thu, Sep 6, 2018 at 11:18 AM Simon Horman <horms@verge.net.au> wrote:
+> On Wed, Sep 05, 2018 at 05:22:07AM +0900, Yoshihiro Kaneko wrote:
+> > From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+> >
+> > This patch adds support for MSIOF ch2 pinctrl to use the LVDS Control
+> > Connector (CN41) for the Draak board on the R8A77995 SoC.
+> >
+> > Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+> > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> > [ykaneko0929@gmail.com: deleted the unused reference to 'msiof_ref_clk']
+> > Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+>
+> Hi Kaneko-san,
+>
+> sorry about this but I think we should drop this patch as
+> it is my understanding that msiof2 is not used on the Draak board.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/usb/renesas_usbhs/rcar3.c | 15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
+The connector is described in the Hardware Manual as "LVDS CONT connector"
+in the LVDS chaper, but it is not clear to me what exactly is supposed to
+be connected to it, and how standard it is.
+Laurent: do you know more?
 
-diff --git a/drivers/usb/renesas_usbhs/rcar3.c b/drivers/usb/renesas_usbhs/rcar3.c
-index b9a8453..50e5fb5 100644
---- a/drivers/usb/renesas_usbhs/rcar3.c
-+++ b/drivers/usb/renesas_usbhs/rcar3.c
-@@ -27,7 +27,6 @@
-  * Remarks: bit[31:11] and bit[9:6] should be 0
-  */
- #define UGCTRL2_RESERVED_3	0x00000001	/* bit[3:0] should be B'0001 */
--#define UGCTRL2_USB0SEL_EHCI	0x00000010
- #define UGCTRL2_USB0SEL_HSUSB	0x00000020
- #define UGCTRL2_USB0SEL_OTG	0x00000030
- #define UGCTRL2_VBUSSEL		0x00000400
-@@ -50,14 +49,6 @@ static void usbhs_rcar3_set_ugctrl2(struct usbhs_priv *priv, u32 val)
- 	usbhs_write32(priv, UGCTRL2, val | UGCTRL2_RESERVED_3);
- }
- 
--static void usbhs_rcar3_set_usbsel(struct usbhs_priv *priv, bool ehci)
--{
--	if (ehci)
--		usbhs_rcar3_set_ugctrl2(priv, UGCTRL2_USB0SEL_EHCI);
--	else
--		usbhs_rcar3_set_ugctrl2(priv, UGCTRL2_USB0SEL_HSUSB);
--}
--
- static int usbhs_rcar3_power_ctrl(struct platform_device *pdev,
- 				void __iomem *base, int enable)
- {
-@@ -83,14 +74,10 @@ static int usbhs_rcar3_power_and_pll_ctrl(struct platform_device *pdev,
- 	struct usbhs_priv *priv = usbhs_pdev_to_priv(pdev);
- 	u32 val;
- 	int timeout = 1000;
--	bool is_host = false;
- 
- 	if (enable) {
- 		usbhs_write32(priv, UGCTRL, 0);	/* release PLLRESET */
--		if (priv->edev)
--			is_host = extcon_get_state(priv->edev, EXTCON_USB_HOST);
--
--		usbhs_rcar3_set_usbsel(priv, is_host);
-+		usbhs_rcar3_set_ugctrl2(priv, UGCTRL2_USB0SEL_HSUSB);
- 
- 		usbhs_bset(priv, LPSTS, LPSTS_SUSPM, LPSTS_SUSPM);
- 		do {
+Note that Ebisu has the same connector, but the signals are shared with
+SW4, making them mutually exclusive.
+The Ebisu Hardware Manual does mention the connector, but not in the
+Display Output (LVDS) chapter.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-1.9.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
