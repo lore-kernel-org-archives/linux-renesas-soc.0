@@ -1,58 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:8261 "EHLO
+Received: from relmlor4.renesas.com ([210.160.252.174]:58739 "EHLO
         relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726295AbeITLgp (ORCPT
+        by vger.kernel.org with ESMTP id S1726400AbeIFPSK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Sep 2018 07:36:45 -0400
+        Thu, 6 Sep 2018 11:18:10 -0400
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Simon Horman <horms@verge.net.au>
-CC: "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Subject: RE: [PATCH] arm64: dts: renesas: revise properties for usb 2.0
-Date: Thu, 20 Sep 2018 05:55:00 +0000
-Message-ID: <OSBPR01MB22938356A189FF10698CDBC4D8130@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+Date: Thu, 6 Sep 2018 10:43:08 +0000
+Message-ID: <OSBPR01MB2293ABF15F00E5B1029D1046D8010@OSBPR01MB2293.jpnprd01.prod.outlook.com>
 References: <1535703651-5152-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <20180905103326.lsn57rilweolpews@verge.net.au>
-In-Reply-To: <20180905103326.lsn57rilweolpews@verge.net.au>
+ <CAMuHMdVWWUZ5b+2E0=xqADfFsuCY1=7L+uY3m+onz9Hr2OUaXw@mail.gmail.com>
+ <OSBPR01MB2293C3CA56DA335829E4381BD8010@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+ <CAMuHMdVvscpSDX6X_j7c02RPV_6E8Df1Gz7Ci4Ssi46Pf5ehxA@mail.gmail.com>
+In-Reply-To: <CAMuHMdVvscpSDX6X_j7c02RPV_6E8Df1Gz7Ci4Ssi46Pf5ehxA@mail.gmail.com>
 Content-Language: ja-JP
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon-san,
-
-> From: Simon Horman, Sent: Wednesday, September 5, 2018 7:33 PM
->=20
-> On Fri, Aug 31, 2018 at 05:20:51PM +0900, Yoshihiro Shimoda wrote:
-> > R-Car Gen3 needs to enable/deassert clocks/resets of both usb 2.0
-> > host (included phy) and peripheral. Otherwise, other side device
-> > cannot work correctly. So, this patch revises properties of clocks
-> > and resets. After that, each device driver can enable/deassert
-> > clocks/resets by its self.
-> >
-> > Notes:
-> >  - To work the renesas_usbhs driver correctly when host side drivers
-> >    are disabled and the renesas_usbhs driver doesn't have multiple
-> >    clock management, this patch doesn't change the order of the clocks
-> >    property in each hsusb node.
-> >  - This patch doesn't have any side-effects even if the renesas_usbhs
-> >    driver doesn't have reset_control and multiple clock management.
-> >
-> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
->=20
-> Thanks Shimoda-san,
->=20
-> This looks fine to me but I will wait to see if there are other reviews
-> before applying.
->=20
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
-Thank you for your review!
-However, since clock-names will be not used by renesas_usbhs driver,
-I'll submit v2 patch to remove the properties.
-
-Best regards,
-Yoshihiro Shimoda
+SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbiwgU2VudDogVGh1cnNk
+YXksIFNlcHRlbWJlciA2LCAyMDE4IDc6MTkgUE0NCj4gDQo+IEhpIFNoaW1vZGEtc2FuLA0KPiAN
+Cj4gT24gVGh1LCBTZXAgNiwgMjAxOCBhdCAxMjowOSBQTSBZb3NoaWhpcm8gU2hpbW9kYQ0KPiA8
+eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+IHdyb3RlOg0KPiA+ID4gRnJvbTogR2Vl
+cnQgVXl0dGVyaG9ldmVuLCBTZW50OiBXZWRuZXNkYXksIFNlcHRlbWJlciA1LCAyMDE4IDk6NTkg
+UE0NCj4gPiA+IE9uIEZyaSwgQXVnIDMxLCAyMDE4IGF0IDEwOjIyIEFNIFlvc2hpaGlybyBTaGlt
+b2RhDQo+ID4gPiA8eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+IHdyb3RlOg0KPiA+
+ID4gPiBSLUNhciBHZW4zIG5lZWRzIHRvIGVuYWJsZS9kZWFzc2VydCBjbG9ja3MvcmVzZXRzIG9m
+IGJvdGggdXNiIDIuMA0KPiA+ID4gPiBob3N0IChpbmNsdWRlZCBwaHkpIGFuZCBwZXJpcGhlcmFs
+LiBPdGhlcndpc2UsIG90aGVyIHNpZGUgZGV2aWNlDQo+ID4gPiA+IGNhbm5vdCB3b3JrIGNvcnJl
+Y3RseS4gU28sIHRoaXMgcGF0Y2ggcmV2aXNlcyBwcm9wZXJ0aWVzIG9mIGNsb2Nrcw0KPiA+ID4g
+PiBhbmQgcmVzZXRzLiBBZnRlciB0aGF0LCBlYWNoIGRldmljZSBkcml2ZXIgY2FuIGVuYWJsZS9k
+ZWFzc2VydA0KPiA+ID4gPiBjbG9ja3MvcmVzZXRzIGJ5IGl0cyBzZWxmLg0KPiA+ID4gPg0KPiA+
+ID4gPiBOb3RlczoNCj4gPiA+ID4gIC0gVG8gd29yayB0aGUgcmVuZXNhc191c2JocyBkcml2ZXIg
+Y29ycmVjdGx5IHdoZW4gaG9zdCBzaWRlIGRyaXZlcnMNCj4gPiA+ID4gICAgYXJlIGRpc2FibGVk
+IGFuZCB0aGUgcmVuZXNhc191c2JocyBkcml2ZXIgZG9lc24ndCBoYXZlIG11bHRpcGxlDQo+ID4g
+PiA+ICAgIGNsb2NrIG1hbmFnZW1lbnQsIHRoaXMgcGF0Y2ggZG9lc24ndCBjaGFuZ2UgdGhlIG9y
+ZGVyIG9mIHRoZSBjbG9ja3MNCj4gPiA+ID4gICAgcHJvcGVydHkgaW4gZWFjaCBoc3VzYiBub2Rl
+Lg0KPiA+ID4gPiAgLSBUaGlzIHBhdGNoIGRvZXNuJ3QgaGF2ZSBhbnkgc2lkZS1lZmZlY3RzIGV2
+ZW4gaWYgdGhlIHJlbmVzYXNfdXNiaHMNCj4gPiA+ID4gICAgZHJpdmVyIGRvZXNuJ3QgaGF2ZSBy
+ZXNldF9jb250cm9sIGFuZCBtdWx0aXBsZSBjbG9jayBtYW5hZ2VtZW50Lg0KPiA+ID4gPg0KPiA+
+ID4gPiBTaWduZWQtb2ZmLWJ5OiBZb3NoaWhpcm8gU2hpbW9kYSA8eW9zaGloaXJvLnNoaW1vZGEu
+dWhAcmVuZXNhcy5jb20+DQo+ID4gPg0KPiA+ID4gVGhhbmtzIGZvciB5b3VyIHBhdGNoIQ0KPiA+
+ID4NCj4gPiA+IEknbSBhIGJpdCBjb25mdXNlZCBhYm91dCB0aGUgSFMtVVNCIDwtPiBFSENJL09I
+Q0kgdG9wb2xvZ3kuDQo+ID4gPiBDYW4geW91IHBsZWFzZSBleHBsYWluPw0KPiA+ID4NCj4gPiA+
+IFRoYW5rcyENCj4gPg0KPiA+IEhTLVVTQiA8LT4gRUhDSS9PSENJIHRvcG9sb2d5IG9uIFItQ2Fy
+IEgzIGlzOg0KPiA+DQo+ID4gIEVIQ0kvT0hDSSBjaDAvMyAtLS0rLS0tIFBIWSAoaXMgaW5jbHVk
+ZWQgb24gdGhlIEVIQ0kvT0hDSSkgLS0tIEV4dGVybmFsIHBpbnMNCj4gPiAgSFMtVVNCIGNoMC8z
+ICAgIC0tLSsNCj4gPg0KPiA+ICBFSENJIGNoMS8yICAgICAgLS0tLS0tLSBQSFkgKGlzIGluY2x1
+ZGVkIG9uIHRoZSBFSENJL09IQ0kpIC0tLSBFeHRlcm5hbCBwaW5zDQo+ID4gICMgVGhlc2UgY2hh
+bm5lbHMgZG9uJ3QgaGF2ZSBIUy1VU0IuDQo+IA0KPiBUaGFua3MsIHRoYXQncyB0aGUgcGFydCBp
+cyBtaXNzZWQsIGFuZCBjb3VsZG4ndCBmaW5kIGltbWVkaWF0ZWx5IGluIHRoZQ0KPiBIVyBtYW51
+YWwuDQoNClRoYXQncyB0cnVlLi4uDQoNCj4gU28gSFMtVVNCIGlzIHRoZSB1c2IgZGV2aWNlICgi
+Z2FkZ2V0IikgcGFydCwgYW5kIEVIQ0kvT0hDSSBpcyB0aGUNCj4gdXNiIGhvc3QgcGFydD8NCg0K
+VGhhdCdzIHJpZ2h0Lg0KDQo+ID4NCj4gPiBBbmQgbW9kdWxlIHN0b3BzIGFuZCByZXNldHMgb2Yg
+SFMtVVNCIGFuZCBFSENJL09IQ0kgdG9wb2xvZ3kgb24gUi1DYXIgSDMgaXM6DQo+ID4NCj4gPiAg
+TVNUUC9SU1Q3MDMgLS0tKyhPUiktLS0rLS0tIEVIQ0kvT0hDSSBjaDANCj4gPiAgTVNUUC9SU1Q3
+MDQgLS0tKyAgICAgICArLS0tIEhTLVVTQiBjaDANCj4gPg0KPiA+ICBNU1RQL1JTVDcwMiAtLS0t
+LS0tLS0tLS0tLS0gRUhDSS9PSENJIGNoMQ0KPiA+ICBNU1RQL1JTVDcwMSAtLS0tLS0tLS0tLS0t
+LS0gRUhDSS9PSENJIGNoMg0KPiA+DQo+ID4gIE1TVFAvUlNUNzAwIC0tLSsoT1IpLS0tKy0tLSBF
+SENJL09IQ0kgY2gzDQo+ID4gIE1TVFAvUlNUNzA1IC0tLSsgICAgICAgKy0tLSBIUy1VU0IgY2gz
+DQo+ID4NCj4gPiBTaG91bGQgSSBkZXNjcmliZSB0aGVzZSB0b3BvbG9neSBvbiB0aGUgY29tbWl0
+IGxvZyBvciBzb21ld2hlcmU/DQo+IA0KPiBZZXMsIEkgdGhpbmsgdGhhdCB3b3VsZCBiZSBoZWxw
+ZnVsLg0KDQpJIGdvdCBpdC4gSSdsbCBzdWJtaXQgdjIgcGF0Y2ggdG9tb3Jyb3cgb3IgbGF0ZXIu
+DQoNCkJlc3QgcmVnYXJkcywNCllvc2hpaGlybyBTaGltb2RhDQoNCj4gVGhhbmtzIQ0KPiANCj4g
+R3J7b2V0amUsZWV0aW5nfXMsDQo+IA0KPiAgICAgICAgICAgICAgICAgICAgICAgICBHZWVydA0K
+PiANCj4gLS0NCj4gR2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBi
+ZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51eC1tNjhrLm9yZw0KPiANCj4gSW4gcGVyc29uYWwgY29u
+dmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIu
+IEJ1dA0KPiB3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dy
+YW1tZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgLS0gTGludXMgVG9ydmFsZHMNCg==
