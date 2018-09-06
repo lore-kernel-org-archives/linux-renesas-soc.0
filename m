@@ -1,368 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:21271 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727216AbeI0USH (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:56915 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725850AbeIFJQW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Sep 2018 16:18:07 -0400
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        devicetree@vger.kernel.org
-Subject: [PATCH v6 1/3] dt-bindings: pinctrl: renesas,rzn1-pinctrl: documentation
-Date: Thu, 27 Sep 2018 14:59:20 +0100
-Message-Id: <20180927135922.12015-2-phil.edworthy@renesas.com>
-In-Reply-To: <20180927135922.12015-1-phil.edworthy@renesas.com>
-References: <20180927135922.12015-1-phil.edworthy@renesas.com>
+        Thu, 6 Sep 2018 05:16:22 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: "balbi@kernel.org" <balbi@kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        John Garry <john.garry@huawei.com>
+Subject: RE: [PATCH] usb: Change usb_of_get_companion_dev() place to
+ usb/common
+Date: Thu, 6 Sep 2018 04:42:47 +0000
+Message-ID: <OSBPR01MB22938980AD699D73E501A352D8010@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+References: <1534734626-16767-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <OSBPR01MB2293D762881D192E7C4CAC46D8310@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSBPR01MB2293D762881D192E7C4CAC46D8310@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas RZ/N1 device family PINCTRL node description.
+Hi Greg, Felipe,
+(Add John's email to CC)
 
-Based on a patch originally written by Michel Pollet at Renesas.
+> From: Yoshihiro Shimoda, Sent: Tuesday, August 21, 2018 10:59 AM
+>=20
+> Hi,
+>=20
+> > From: Yoshihiro Shimoda, Sent: Monday, August 20, 2018 12:10 PM
+> >
+> > Since renesas_usb3 udc driver calls usb_of_get_companion_dev()
+> > which is on usb/core/of.c, build error like below happens if we
+> > disable CONFIG_USB because the usb/core/ needs CONFIG_USB:
+> >
+> > ERROR: "usb_of_get_companion_dev" [drivers/usb/gadget/udc/renesas_usb3.=
+ko] undefined!
+> >
+> > According to the usb/gadget/Kconfig, "NOTE:  Gadget support
+> > ** DOES NOT ** depend on host-side CONFIG_USB !!".
+> > So, to fix the issue, this patch changes the usb_of_get_companion_dev()
+> > place from usb/core/of.c to usb/common/common.c to be called by both
+> > host and gadget.
+> >
+> > Reported-by: John Garry <john.garry@huawei.com>
+> > Fixes: 39facfa01c9f ("usb: gadget: udc: renesas_usb3: Add register of u=
+sb role switch")
+> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+>=20
+> On other email thread [1], Arnd said I have his Ack on this patch.
+> So,
+>=20
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+>=20
+> [1]
+> https://lkml.org/lkml/2018/8/20/216
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
-v6:
- - Instead of combining the pin nr and func into a single element, use
-   a pair of 8-bit elements.
+I'm afraid but, would you apply this patch for linux v4.19?
 
-v5:
- - 'Optional generic properties' => 'Optional generic pinconf properties'
-
-v4:
- - Add alternative way to use the pinmux prop.
- - Remove mention of gpios.
-
-v3:
- - Use standard bindings
- - Change the way the functions are defined so it is easy to check
-   against the hardware numbering.
- - Add functions for the MDIO source peripheral instead of using
-   virtual pins.
-
-v2:
- - Change filename to generic rzn1, instead of device specific.
- - Add "renesas,rzn1-pinctrl" compatible fallback string.
- - Example register size corrected.
- - Typos fixed.
- - Changes suggested by Jacopo Mondi.
- - rzn1-pinctrl.h squashed into this as requested by Rob Herring.
----
- .../bindings/pinctrl/renesas,rzn1-pinctrl.txt | 155 ++++++++++++++++++
- include/dt-bindings/pinctrl/rzn1-pinctrl.h    | 135 +++++++++++++++
- 2 files changed, 290 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
- create mode 100644 include/dt-bindings/pinctrl/rzn1-pinctrl.h
-
-diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
-new file mode 100644
-index 000000000000..ca747b3b7455
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
-@@ -0,0 +1,155 @@
-+Renesas RZ/N1 SoC Pinctrl node description.
-+
-+Pin controller node
-+-------------------
-+Required properties:
-+- compatible: SoC-specific compatible string "renesas,<soc-specific>-pinctrl"
-+  followed by "renesas,rzn1-pinctrl" as fallback. The SoC-specific compatible
-+  strings must be one of:
-+	"renesas,r9a06g032-pinctrl" for RZ/N1D
-+	"renesas,r9a06g033-pinctrl" for RZ/N1S
-+- reg: Address base and length of the memory area where the pin controller
-+  hardware is mapped to.
-+- clocks: phandle for the clock, see the description of clock-names below.
-+- clock-names: Contains the name of the clock:
-+    "bus", the bus clock, sometimes described as pclk, for register accesses.
-+
-+Example:
-+	pinctrl: pin-controller@40067000 {
-+	    compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
-+	    reg = <0x40067000 0x1000>, <0x51000000 0x480>;
-+	    clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
-+	    clock-names = "bus";
-+	};
-+
-+Sub-nodes
-+---------
-+
-+The child nodes of the pin controller node describe a pin multiplexing
-+function.
-+
-+- Pin multiplexing sub-nodes:
-+  A pin multiplexing sub-node describes how to configure a set of
-+  (or a single) pin in some desired alternate function mode.
-+  A single sub-node may define several pin configurations.
-+  Please refer to pinctrl-bindings.txt to get to know more on generic
-+  pin properties usage.
-+
-+  The allowed generic formats for a pin multiplexing sub-node are the
-+  following ones:
-+
-+  node-1 {
-+      pinmux = /bits/ 8 <PIN_NR MUX_FUNC>, <PIN_NR MUX_FUNC>, ... ;
-+      GENERIC_PINCONFIG;
-+  };
-+
-+  node-2 {
-+      sub-node-1 {
-+          pinmux = /bits/ 8 <PIN_NR MUX_FUNC>, <PIN_NR MUX_FUNC>, ... ;
-+          GENERIC_PINCONFIG;
-+      };
-+
-+      sub-node-2 {
-+          pinmux = /bits/ 8 <PIN_NR MUX_FUNC>, <PIN_NR MUX_FUNC>, ... ;
-+          GENERIC_PINCONFIG;
-+      };
-+
-+      ...
-+
-+      sub-node-n {
-+          pinmux = /bits/ 8 <PIN_NR MUX_FUNC>, <PIN_NR MUX_FUNC>, ... ;
-+          GENERIC_PINCONFIG;
-+      };
-+  };
-+
-+  node-3 {
-+      pinmux = /bits/ 8 <PIN_NR MUX_FUNC>, <PIN_NR MUX_FUNC>, ... ;
-+      GENERIC_PINCONFIG;
-+
-+      sub-node-1 {
-+          pinmux = /bits/ 8 <PIN_NR MUX_FUNC>, <PIN_NR MUX_FUNC>, ... ;
-+          GENERIC_PINCONFIG;
-+      };
-+
-+      ...
-+
-+      sub-node-n {
-+          pinmux = /bits/ 8 <PIN_NR MUX_FUNC>, <PIN_NR MUX_FUNC>, ... ;
-+          GENERIC_PINCONFIG;
-+      };
-+  };
-+
-+  Use the latter two formats when pins part of the same logical group need to
-+  have different generic pin configuration flags applied. Note that the generic
-+  pinconfig in node-3 does not apply to the sub-nodes.
-+
-+  Client sub-nodes shall refer to pin multiplexing sub-nodes using the phandle
-+  of the most external one.
-+
-+  Eg.
-+
-+  client-1 {
-+      ...
-+      pinctrl-0 = <&node-1>;
-+      ...
-+  };
-+
-+  client-2 {
-+      ...
-+      pinctrl-0 = <&node-2>;
-+      ...
-+  };
-+
-+  Required properties:
-+    - pinmux:
-+      8-bit integer array consisting of PIN_NR pin number and MUX_FUNC pairs.
-+      When a pin has to be configured in alternate function mode, use this
-+      property to identify the pin by its global index, and provide its
-+      alternate function configuration number.
-+      When multiple pins are required to be configured as part of the same
-+      alternate function they shall be specified as members of the same
-+      argument list of a single "pinmux" property.
-+      PIN_NR directly corresponds to the pl_gpio pin number and MUX_FUNC is
-+      one of the alternate function identifiers defined in:
-+      <include/dt-bindings/pinctrl/rzn1-pinctrl.h>
-+      These identifiers collapse the IO Multiplex Configuration Level 1 and
-+      Level 2 numbers that are detailed in the hardware reference manual into a
-+      single number. The identifiers for Level 2 are simply offset by 10.
-+      Additional identifiers are provided to specify the MDIO source peripheral.
-+
-+  Optional generic pinconf properties:
-+    - bias-disable		- disable any pin bias
-+    - bias-pull-up		- pull up the pin with 50 KOhm
-+    - bias-pull-down		- pull down the pin with 50 KOhm
-+    - bias-high-impedance	- high impedance mode
-+    - drive-strength		- sink or source at most 4, 6, 8 or 12 mA
-+
-+  Example:
-+  A serial communication interface with a TX output pin and an RX input pin.
-+
-+  &pinctrl {
-+	pins_uart0: pins_uart0 {
-+		pinmux = /bits/ 8 <
-+			103 RZN1_FUNC_UART0_I	/* UART0_TXD */
-+			104 RZN1_FUNC_UART0_I	/* UART0_RXD */
-+		>;
-+	};
-+  };
-+
-+  Example 2:
-+  Here we set the pull up on the RXD pin of the UART.
-+
-+  &pinctrl {
-+	pins_uart0: pins_uart0 {
-+		pinmux = /bits/ 8 <
-+			103 RZN1_FUNC_UART0_I		/* UART0_TXD */
-+		>;
-+
-+		pins_uart6_rx {
-+			pinmux = /bits/ 8 <
-+				104 RZN1_FUNC_UART0_I	/* UART0_RXD */
-+			>;
-+			bias-pull-up;
-+		};
-+	};
-+  };
-diff --git a/include/dt-bindings/pinctrl/rzn1-pinctrl.h b/include/dt-bindings/pinctrl/rzn1-pinctrl.h
-new file mode 100644
-index 000000000000..03ab28986939
---- /dev/null
-+++ b/include/dt-bindings/pinctrl/rzn1-pinctrl.h
-@@ -0,0 +1,135 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Defines macros and constants for Renesas RZ/N1 pin controller pin
-+ * muxing functions.
-+ */
-+#ifndef __DT_BINDINGS_RZN1_PINCTRL_H
-+#define __DT_BINDINGS_RZN1_PINCTRL_H
-+
-+/*
-+ * Given the different levels of muxing on the SoC, it was decided to
-+ * 'linearize' them into one numerical space. So mux level 1, 2 and the MDIO
-+ * muxes are all represented by one single value.
-+ *
-+ * You can derive the hardware value pretty easily too, as
-+ * 0...9   are Level 1
-+ * 10...71 are Level 2. The Level 2 mux will be set to this
-+ *         value - RZN1_FUNC_L2_OFFSET, and the Level 1 mux will be
-+ *         set accordingly.
-+ * 72...103 are for the 2 MDIO muxes.
-+ */
-+#define RZN1_FUNC_HIGHZ				0
-+#define RZN1_FUNC_0L				1
-+#define RZN1_FUNC_CLK_ETH_MII_RGMII_RMII	2
-+#define RZN1_FUNC_CLK_ETH_NAND			3
-+#define RZN1_FUNC_QSPI				4
-+#define RZN1_FUNC_SDIO				5
-+#define RZN1_FUNC_LCD				6
-+#define RZN1_FUNC_LCD_E				7
-+#define RZN1_FUNC_MSEBIM			8
-+#define RZN1_FUNC_MSEBIS			9
-+#define RZN1_FUNC_L2_OFFSET			10	/* I'm Special */
-+
-+#define RZN1_FUNC_HIGHZ1			(RZN1_FUNC_L2_OFFSET + 0)
-+#define RZN1_FUNC_ETHERCAT			(RZN1_FUNC_L2_OFFSET + 1)
-+#define RZN1_FUNC_SERCOS3			(RZN1_FUNC_L2_OFFSET + 2)
-+#define RZN1_FUNC_SDIO_E			(RZN1_FUNC_L2_OFFSET + 3)
-+#define RZN1_FUNC_ETH_MDIO			(RZN1_FUNC_L2_OFFSET + 4)
-+#define RZN1_FUNC_ETH_MDIO_E1			(RZN1_FUNC_L2_OFFSET + 5)
-+#define RZN1_FUNC_USB				(RZN1_FUNC_L2_OFFSET + 6)
-+#define RZN1_FUNC_MSEBIM_E			(RZN1_FUNC_L2_OFFSET + 7)
-+#define RZN1_FUNC_MSEBIS_E			(RZN1_FUNC_L2_OFFSET + 8)
-+#define RZN1_FUNC_RSV				(RZN1_FUNC_L2_OFFSET + 9)
-+#define RZN1_FUNC_RSV_E				(RZN1_FUNC_L2_OFFSET + 10)
-+#define RZN1_FUNC_RSV_E1			(RZN1_FUNC_L2_OFFSET + 11)
-+#define RZN1_FUNC_UART0_I			(RZN1_FUNC_L2_OFFSET + 12)
-+#define RZN1_FUNC_UART0_I_E			(RZN1_FUNC_L2_OFFSET + 13)
-+#define RZN1_FUNC_UART1_I			(RZN1_FUNC_L2_OFFSET + 14)
-+#define RZN1_FUNC_UART1_I_E			(RZN1_FUNC_L2_OFFSET + 15)
-+#define RZN1_FUNC_UART2_I			(RZN1_FUNC_L2_OFFSET + 16)
-+#define RZN1_FUNC_UART2_I_E			(RZN1_FUNC_L2_OFFSET + 17)
-+#define RZN1_FUNC_UART0				(RZN1_FUNC_L2_OFFSET + 18)
-+#define RZN1_FUNC_UART0_E			(RZN1_FUNC_L2_OFFSET + 19)
-+#define RZN1_FUNC_UART1				(RZN1_FUNC_L2_OFFSET + 20)
-+#define RZN1_FUNC_UART1_E			(RZN1_FUNC_L2_OFFSET + 21)
-+#define RZN1_FUNC_UART2				(RZN1_FUNC_L2_OFFSET + 22)
-+#define RZN1_FUNC_UART2_E			(RZN1_FUNC_L2_OFFSET + 23)
-+#define RZN1_FUNC_UART3				(RZN1_FUNC_L2_OFFSET + 24)
-+#define RZN1_FUNC_UART3_E			(RZN1_FUNC_L2_OFFSET + 25)
-+#define RZN1_FUNC_UART4				(RZN1_FUNC_L2_OFFSET + 26)
-+#define RZN1_FUNC_UART4_E			(RZN1_FUNC_L2_OFFSET + 27)
-+#define RZN1_FUNC_UART5				(RZN1_FUNC_L2_OFFSET + 28)
-+#define RZN1_FUNC_UART5_E			(RZN1_FUNC_L2_OFFSET + 29)
-+#define RZN1_FUNC_UART6				(RZN1_FUNC_L2_OFFSET + 30)
-+#define RZN1_FUNC_UART6_E			(RZN1_FUNC_L2_OFFSET + 31)
-+#define RZN1_FUNC_UART7				(RZN1_FUNC_L2_OFFSET + 32)
-+#define RZN1_FUNC_UART7_E			(RZN1_FUNC_L2_OFFSET + 33)
-+#define RZN1_FUNC_SPI0_M			(RZN1_FUNC_L2_OFFSET + 34)
-+#define RZN1_FUNC_SPI0_M_E			(RZN1_FUNC_L2_OFFSET + 35)
-+#define RZN1_FUNC_SPI1_M			(RZN1_FUNC_L2_OFFSET + 36)
-+#define RZN1_FUNC_SPI1_M_E			(RZN1_FUNC_L2_OFFSET + 37)
-+#define RZN1_FUNC_SPI2_M			(RZN1_FUNC_L2_OFFSET + 38)
-+#define RZN1_FUNC_SPI2_M_E			(RZN1_FUNC_L2_OFFSET + 39)
-+#define RZN1_FUNC_SPI3_M			(RZN1_FUNC_L2_OFFSET + 40)
-+#define RZN1_FUNC_SPI3_M_E			(RZN1_FUNC_L2_OFFSET + 41)
-+#define RZN1_FUNC_SPI4_S			(RZN1_FUNC_L2_OFFSET + 42)
-+#define RZN1_FUNC_SPI4_S_E			(RZN1_FUNC_L2_OFFSET + 43)
-+#define RZN1_FUNC_SPI5_S			(RZN1_FUNC_L2_OFFSET + 44)
-+#define RZN1_FUNC_SPI5_S_E			(RZN1_FUNC_L2_OFFSET + 45)
-+#define RZN1_FUNC_SGPIO0_M			(RZN1_FUNC_L2_OFFSET + 46)
-+#define RZN1_FUNC_SGPIO1_M			(RZN1_FUNC_L2_OFFSET + 47)
-+#define RZN1_FUNC_GPIO				(RZN1_FUNC_L2_OFFSET + 48)
-+#define RZN1_FUNC_CAN				(RZN1_FUNC_L2_OFFSET + 49)
-+#define RZN1_FUNC_I2C				(RZN1_FUNC_L2_OFFSET + 50)
-+#define RZN1_FUNC_SAFE				(RZN1_FUNC_L2_OFFSET + 51)
-+#define RZN1_FUNC_PTO_PWM			(RZN1_FUNC_L2_OFFSET + 52)
-+#define RZN1_FUNC_PTO_PWM1			(RZN1_FUNC_L2_OFFSET + 53)
-+#define RZN1_FUNC_PTO_PWM2			(RZN1_FUNC_L2_OFFSET + 54)
-+#define RZN1_FUNC_PTO_PWM3			(RZN1_FUNC_L2_OFFSET + 55)
-+#define RZN1_FUNC_PTO_PWM4			(RZN1_FUNC_L2_OFFSET + 56)
-+#define RZN1_FUNC_DELTA_SIGMA			(RZN1_FUNC_L2_OFFSET + 57)
-+#define RZN1_FUNC_SGPIO2_M			(RZN1_FUNC_L2_OFFSET + 58)
-+#define RZN1_FUNC_SGPIO3_M			(RZN1_FUNC_L2_OFFSET + 59)
-+#define RZN1_FUNC_SGPIO4_S			(RZN1_FUNC_L2_OFFSET + 60)
-+#define RZN1_FUNC_MAC_MTIP_SWITCH		(RZN1_FUNC_L2_OFFSET + 61)
-+
-+#define RZN1_FUNC_MDIO_OFFSET			(RZN1_FUNC_L2_OFFSET + 62)
-+/* These are MDIO0 peripherals for the RZN1_FUNC_ETH_MDIO function */
-+#define RZN1_FUNC_MDIO0_HIGHZ			(RZN1_FUNC_MDIO_OFFSET + 0)
-+#define RZN1_FUNC_MDIO0_GMAC0			(RZN1_FUNC_MDIO_OFFSET + 1)
-+#define RZN1_FUNC_MDIO0_GMAC1			(RZN1_FUNC_MDIO_OFFSET + 2)
-+#define RZN1_FUNC_MDIO0_ECAT			(RZN1_FUNC_MDIO_OFFSET + 3)
-+#define RZN1_FUNC_MDIO0_S3_MDIO0		(RZN1_FUNC_MDIO_OFFSET + 4)
-+#define RZN1_FUNC_MDIO0_S3_MDIO1		(RZN1_FUNC_MDIO_OFFSET + 5)
-+#define RZN1_FUNC_MDIO0_HWRTOS			(RZN1_FUNC_MDIO_OFFSET + 6)
-+#define RZN1_FUNC_MDIO0_SWITCH			(RZN1_FUNC_MDIO_OFFSET + 7)
-+/* These are MDIO0 peripherals for the RZN1_FUNC_ETH_MDIO_E1 function */
-+#define RZN1_FUNC_MDIO0_E1_HIGHZ		(RZN1_FUNC_MDIO_OFFSET + 8)
-+#define RZN1_FUNC_MDIO0_E1_GMAC0		(RZN1_FUNC_MDIO_OFFSET + 9)
-+#define RZN1_FUNC_MDIO0_E1_GMAC1		(RZN1_FUNC_MDIO_OFFSET + 10)
-+#define RZN1_FUNC_MDIO0_E1_ECAT			(RZN1_FUNC_MDIO_OFFSET + 11)
-+#define RZN1_FUNC_MDIO0_E1_S3_MDIO0		(RZN1_FUNC_MDIO_OFFSET + 12)
-+#define RZN1_FUNC_MDIO0_E1_S3_MDIO1		(RZN1_FUNC_MDIO_OFFSET + 13)
-+#define RZN1_FUNC_MDIO0_E1_HWRTOS		(RZN1_FUNC_MDIO_OFFSET + 14)
-+#define RZN1_FUNC_MDIO0_E1_SWITCH		(RZN1_FUNC_MDIO_OFFSET + 15)
-+
-+/* These are MDIO1 peripherals for the RZN1_FUNC_ETH_MDIO function */
-+#define RZN1_FUNC_MDIO1_HIGHZ			(RZN1_FUNC_MDIO_OFFSET + 16)
-+#define RZN1_FUNC_MDIO1_GMAC0			(RZN1_FUNC_MDIO_OFFSET + 17)
-+#define RZN1_FUNC_MDIO1_GMAC1			(RZN1_FUNC_MDIO_OFFSET + 18)
-+#define RZN1_FUNC_MDIO1_ECAT			(RZN1_FUNC_MDIO_OFFSET + 19)
-+#define RZN1_FUNC_MDIO1_S3_MDIO0		(RZN1_FUNC_MDIO_OFFSET + 20)
-+#define RZN1_FUNC_MDIO1_S3_MDIO1		(RZN1_FUNC_MDIO_OFFSET + 21)
-+#define RZN1_FUNC_MDIO1_HWRTOS			(RZN1_FUNC_MDIO_OFFSET + 22)
-+#define RZN1_FUNC_MDIO1_SWITCH			(RZN1_FUNC_MDIO_OFFSET + 23)
-+/* These are MDIO1 peripherals for the RZN1_FUNC_ETH_MDIO_E1 function */
-+#define RZN1_FUNC_MDIO1_E1_HIGHZ		(RZN1_FUNC_MDIO_OFFSET + 24)
-+#define RZN1_FUNC_MDIO1_E1_GMAC0		(RZN1_FUNC_MDIO_OFFSET + 25)
-+#define RZN1_FUNC_MDIO1_E1_GMAC1		(RZN1_FUNC_MDIO_OFFSET + 26)
-+#define RZN1_FUNC_MDIO1_E1_ECAT			(RZN1_FUNC_MDIO_OFFSET + 27)
-+#define RZN1_FUNC_MDIO1_E1_S3_MDIO0		(RZN1_FUNC_MDIO_OFFSET + 28)
-+#define RZN1_FUNC_MDIO1_E1_S3_MDIO1		(RZN1_FUNC_MDIO_OFFSET + 29)
-+#define RZN1_FUNC_MDIO1_E1_HWRTOS		(RZN1_FUNC_MDIO_OFFSET + 30)
-+#define RZN1_FUNC_MDIO1_E1_SWITCH		(RZN1_FUNC_MDIO_OFFSET + 31)
-+
-+#endif /* __DT_BINDINGS_RZN1_PINCTRL_H */
--- 
-2.17.1
+Best regards,
+Yoshihiro Shimoda
