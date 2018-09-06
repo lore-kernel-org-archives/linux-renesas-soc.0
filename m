@@ -1,64 +1,77 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Felipe Balbi <balbi@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:41225 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725929AbeIFMCb (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 6 Sep 2018 08:02:31 -0400
+MIME-Version: 1.0
+References: <1536213014-1325-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1536213014-1325-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1536213014-1325-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 6 Sep 2018 09:28:14 +0200
+Message-ID: <CAMuHMdWCKSBydcbFwKqGi9azVARFr-0YboC65Zgde24FJVeZZQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] usb: renesas_usbhs: Add multiple clocks management
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Felipe Balbi <balbi@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Greg KH <gregkh@linuxfoundation.org>,
         USB list <linux-usb@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
         <devicetree@vger.kernel.org>
-Subject: RE: [PATCH v3 3/3] usb: renesas_usbhs: Add multiple clocks management
-Date: Thu, 6 Sep 2018 12:09:46 +0000
-Message-ID: <OSBPR01MB2293B264BC79AA974CE6F7F4D8010@OSBPR01MB2293.jpnprd01.prod.outlook.com>
-References: <1536213014-1325-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1536213014-1325-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdWCKSBydcbFwKqGi9azVARFr-0YboC65Zgde24FJVeZZQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdWCKSBydcbFwKqGi9azVARFr-0YboC65Zgde24FJVeZZQ@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbiwgU2VudDogVGh1cnNk
-YXksIFNlcHRlbWJlciA2LCAyMDE4IDQ6MjggUE0NCj4gDQo+IEhpIFNoaW1vZGEtc2FuLA0KPiAN
-Cj4gT24gVGh1LCBTZXAgNiwgMjAxOCBhdCA3OjUyIEFNIFlvc2hpaGlybyBTaGltb2RhDQo+IDx5
-b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gUi1DYXIgR2VuMyBu
-ZWVkcyB0byBlbmFibGUgY2xvY2tzIG9mIGJvdGggaG9zdCBhbmQgcGVyaXBoZXJhbC4NCj4gPiBT
-aW5jZSBbZW9daGNpLXBsYXRmb3JtIGRpc2FibGVzIHRoZSByZXNldChzKSB3aGVuIHRoZSBkcml2
-ZXJzIGFyZQ0KPiA+IHJlbW92ZWQsIHJlbmVzYXNfdXNiaHMgZHJpdmVyIGRvZXNuJ3Qgd29yayBj
-b3JyZWN0bHkuIFRvIGZpeCB0aGlzDQo+ID4gaXNzdWUsIHRoaXMgcGF0Y2ggYWRkcyBtdWx0aXBs
-ZSBjbG9ja3MgbWFuYWdlbWVudCBvbiB0aGlzDQo+ID4gcmVuZXNhc191c2JocyBkcml2ZXIuDQo+
-ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBZb3NoaWhpcm8gU2hpbW9kYSA8eW9zaGloaXJvLnNoaW1v
-ZGEudWhAcmVuZXNhcy5jb20+DQo+IA0KPiA+IC0tLSBhL2RyaXZlcnMvdXNiL3JlbmVzYXNfdXNi
-aHMvY29tbW9uLmMNCj4gPiArKysgYi9kcml2ZXJzL3VzYi9yZW5lc2FzX3VzYmhzL2NvbW1vbi5j
-DQo+IA0KPiA+IEBAIC02NjcsNiArNjg0LDEyIEBAIHN0YXRpYyBpbnQgdXNiaHNfcHJvYmUoc3Ry
-dWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gPiAgICAgICAgIGlmIChyZXQpDQo+ID4gICAg
-ICAgICAgICAgICAgIGdvdG8gcHJvYmVfZmFpbF9yc3Q7DQo+ID4NCj4gPiArICAgICAgIGlmIChw
-cml2LT5udW1fY2xrcykgew0KPiA+ICsgICAgICAgICAgICAgICByZXQgPSBjbGtfYnVsa19nZXQo
-JnBkZXYtPmRldiwgcHJpdi0+bnVtX2Nsa3MsIHByaXYtPmNsa3MpOw0KPiANCj4gKGluc3BpcmVk
-IGJ5IE1vcmltb3RvLXNhbikgY2xrX2J1bGtfZ2V0KCkgaXMgYSBuby1vcCBpZiBudW1fY2xrcyBp
-cyB6ZXJvLg0KDQpUaGF0J3MgcmlnaHQuIFRoYW5rIHlvdSBmb3IgeW91ciBjb21tZW50Lg0KDQo+
-ID4gKyAgICAgICAgICAgICAgIGlmIChyZXQgPT0gLUVQUk9CRV9ERUZFUikNCj4gDQo+IFdoeSB0
-aGlzIHNwZWNpYWwgaGFuZGxpbmcgZm9yIC1FUFJPQkVfREVGRVIgb25seT8NCj4gU2hvdWxkbid0
-IGFsbCBlcnJvcnMgYmUgY29uc2lkZXJlZCBmYXRhbD8NCj4gDQo+IFBlcmhhcHMgdGhpcyBpcyBu
-ZWVkZWQgZm9yIGJhY2t3YXJkcyBjb21wYXRpYmlsaXR5IHdpdGggb2xkIERUPw0KDQpZZXMsIHRo
-aXMgaXMgbmVlZGVkIGZvciBiYWNrd2FyZCBzIGNvbXBhdGliaWxpdHkgd2l0aCBvbGQgRFQuDQoN
-Cj4gSW4gdGhhdCBjYXNlLCB5b3Ugc2hvdWxkIGRvIG1vcmUgdGhvcm91Z2ggY2hlY2tpbmcgKGZp
-cnN0IGNsb2NrIHNob3VsZA0KPiBleGlzdCwgc2Vjb25kIHNob3VsZCByZXR1cm4gLUVOT0VOVCku
-DQoNCkkgdW5kZXJzdG9vZCBpdC4gKEZvciBiYWNrd2FyZHMgY29tcGF0aWJpbGl0eSB3aXRoIG9s
-ZCBEVCwgaWYgc2Vjb25kIGNsb2NrDQpyZXR1cm5zIC1FTk9FTlQsIHRoZSBkcml2ZXIgc2hvdWxk
-IGRvIGEgc3BlY2lhbCBoYW5kbGluZy4pDQpJJ2xsIGZpeCB0aGlzIHBhdGNoLg0KDQpCZXN0IHJl
-Z2FyZHMsDQpZb3NoaWhpcm8gU2hpbW9kYQ0KDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAg
-Z290byBwcm9iZV9mYWlsX2Nsa3M7DQo+ID4gKyAgICAgICB9DQo+ID4gKw0KPiA+ICAgICAgICAg
-LyoNCj4gPiAgICAgICAgICAqIGRldmllY2UgcmVzZXQgaGVyZSBiZWNhdXNlDQo+ID4gICAgICAg
-ICAgKiBVU0IgZGV2aWNlIG1pZ2h0IGJlIHVzZWQgaW4gYm9vdCBsb2FkZXIuDQo+IA0KPiBHcntv
-ZXRqZSxlZXRpbmd9cywNCj4gDQo+ICAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+IA0K
-PiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9u
-ZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LW02OGsub3JnDQo+IA0KPiBJbiBwZXJzb25hbCBjb252ZXJz
-YXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0
-DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1l
-ciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAtLSBMaW51cyBUb3J2YWxkcw0K
+Hi Shimoda-san,
+
+On Thu, Sep 6, 2018 at 7:52 AM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> R-Car Gen3 needs to enable clocks of both host and peripheral.
+> Since [eo]hci-platform disables the reset(s) when the drivers are
+> removed, renesas_usbhs driver doesn't work correctly. To fix this
+> issue, this patch adds multiple clocks management on this
+> renesas_usbhs driver.
+>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+
+> --- a/drivers/usb/renesas_usbhs/common.c
+> +++ b/drivers/usb/renesas_usbhs/common.c
+
+> @@ -667,6 +684,12 @@ static int usbhs_probe(struct platform_device *pdev)
+>         if (ret)
+>                 goto probe_fail_rst;
+>
+> +       if (priv->num_clks) {
+> +               ret = clk_bulk_get(&pdev->dev, priv->num_clks, priv->clks);
+
+(inspired by Morimoto-san) clk_bulk_get() is a no-op if num_clks is zero.
+
+
+> +               if (ret == -EPROBE_DEFER)
+
+Why this special handling for -EPROBE_DEFER only?
+Shouldn't all errors be considered fatal?
+
+Perhaps this is needed for backwards compatibility with old DT?
+In that case, you should do more thorough checking (first clock should
+exist, second should return -ENOENT).
+
+> +                       goto probe_fail_clks;
+> +       }
+> +
+>         /*
+>          * deviece reset here because
+>          * USB device might be used in boot loader.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
