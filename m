@@ -1,62 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34550 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbeIMORX (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:22018 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725850AbeIFKZo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:17:23 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 07/13] ARM: dts: silk: Add DA9063 PMIC node
-Date: Thu, 13 Sep 2018 11:08:30 +0200
-Message-Id: <bce6d67d035eeaea20dcee12b1362cebde6d9b35.1536824376.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1536824376.git.horms+renesas@verge.net.au>
-References: <cover.1536824376.git.horms+renesas@verge.net.au>
+        Thu, 6 Sep 2018 06:25:44 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v3 0/3] usb: renesas_usbhs: add reset_control and multiple clocks management
+Date: Thu,  6 Sep 2018 14:50:11 +0900
+Message-Id: <1536213014-1325-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Marek Vasut <marek.vasut@gmail.com>
+This patch set is based on Felipe's usb.git / testing/next branch
+(the commit id is 5b394b2ddf0347bef56e50c69a58773c94343ff3) with
+the following patch:
+  https://patchwork.kernel.org/patch/10574875/
 
-Add DA9063 PMIC node to the I2C bus.
+Changes from v2:
+ - Use clk_bulk_enable_prepare() instead of two functions on patch 3/3.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7794-silk.dts | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+Changes from v1:
+ - Fix error path on patch 3/3.
+ - Use clk_bulk_disable_unprepare() instead of two functions on patch 3/3.
+ - Use staic array of struct clk_bulk_data instead of a pointer on patch 3/3.
 
-diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
-index daec965889d3..6ea60e1faf75 100644
---- a/arch/arm/boot/dts/r8a7794-silk.dts
-+++ b/arch/arm/boot/dts/r8a7794-silk.dts
-@@ -405,6 +405,23 @@
- 	clock-frequency = <400000>;
- };
- 
-+&i2c7 {
-+	status = "okay";
-+	clock-frequency = <100000>;
-+
-+	pmic@58 {
-+		compatible = "dlg,da9063";
-+		reg = <0x58>;
-+		interrupt-parent = <&gpio3>;
-+		interrupts = <31 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-controller;
-+
-+		wdt {
-+			compatible = "dlg,da9063-watchdog";
-+		};
-+	};
-+};
-+
- &mmcif0 {
- 	pinctrl-0 = <&mmcif0_pins>;
- 	pinctrl-names = "default";
+Yoshihiro Shimoda (3):
+  usb: renesas_usbhs: Add reset_control
+  dt-bindings: usb: renesas_usbhs: add clock-names property
+  usb: renesas_usbhs: Add multiple clocks management
+
+ .../devicetree/bindings/usb/renesas_usbhs.txt      |  2 ++
+ drivers/usb/renesas_usbhs/common.c                 | 37 ++++++++++++++++++++++
+ drivers/usb/renesas_usbhs/common.h                 |  5 +++
+ 3 files changed, 44 insertions(+)
+
 -- 
-2.11.0
+1.9.1
