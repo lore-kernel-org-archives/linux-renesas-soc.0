@@ -1,76 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:28316 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727329AbeIQOKs (ORCPT
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48642 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728173AbeIGPoD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Sep 2018 10:10:48 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
+        Fri, 7 Sep 2018 11:44:03 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 2/2] ARM: dts: r8a77470: Add APMU node and second CPU core
-Date: Mon, 17 Sep 2018 09:44:10 +0100
-Message-Id: <1537173850-5310-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1537173850-5310-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1537173850-5310-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: rsnd: Add device tree binding for r8a77990" to the asoc tree
+In-Reply-To: <1536240513-22172-1-git-send-email-ykaneko0929@gmail.com>
+Message-Id: <20180907110329.173DA1122A6D@debutante.sirena.org.uk>
+Date: Fri,  7 Sep 2018 12:03:29 +0100 (BST)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add DT node for the Advanced Power Management Unit (APMU), add the
-second CPU core, and use "renesas,apmu" as "enable-method".
+The patch
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+   ASoC: rsnd: Add device tree binding for r8a77990
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From e058a4033240d30192124d6bf32b78e9a1f8975c Mon Sep 17 00:00:00 2001
+From: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Date: Thu, 6 Sep 2018 22:28:33 +0900
+Subject: [PATCH] ASoC: rsnd: Add device tree binding for r8a77990
+
+This patch adds the device tree binding of the r8a77990 SoC.
+
+Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/boot/dts/r8a77470.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ Documentation/devicetree/bindings/sound/renesas,rsnd.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index c053a28..9aba350 100644
---- a/arch/arm/boot/dts/r8a77470.dtsi
-+++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -17,6 +17,7 @@
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "renesas,apmu";
- 
- 		cpu0: cpu@0 {
- 			device_type = "cpu";
-@@ -28,6 +29,15 @@
- 			next-level-cache = <&L2_CA7>;
- 		};
- 
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <1>;
-+			clock-frequency = <1000000000>;
-+			clocks = <&cpg CPG_CORE R8A77470_CLK_Z2>;
-+			power-domains = <&sysc R8A77470_PD_CA7_CPU1>;
-+			next-level-cache = <&L2_CA7>;
-+		};
- 
- 		L2_CA7: cache-controller-0 {
- 			compatible = "cache";
-@@ -167,6 +177,12 @@
- 			#reset-cells = <1>;
- 		};
- 
-+		apmu@e6151000 {
-+			compatible = "renesas,r8a77470-apmu", "renesas,apmu";
-+			reg = <0 0xe6151000 0 0x188>;
-+			cpus = <&cpu0 &cpu1>;
-+		};
-+
- 		rst: reset-controller@e6160000 {
- 			compatible = "renesas,r8a77470-rst";
- 			reg = <0 0xe6160000 0 0x100>;
+diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+index 8083f0d8f263..f4688c508be6 100644
+--- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
++++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+@@ -354,6 +354,7 @@ Required properties:
+ 				    - "renesas,rcar_sound-r8a7795" (R-Car H3)
+ 				    - "renesas,rcar_sound-r8a7796" (R-Car M3-W)
+ 				    - "renesas,rcar_sound-r8a77965" (R-Car M3-N)
++				    - "renesas,rcar_sound-r8a77990" (R-Car E3)
+ - reg				: Should contain the register physical address.
+ 				  required register is
+ 				   SRU/ADG/SSI      if generation1
 -- 
-2.7.4
+2.19.0.rc1
