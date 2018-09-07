@@ -1,86 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57950 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727477AbeIEQQE (ORCPT
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:14081 "EHLO
+        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727742AbeIGNFx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Sep 2018 12:16:04 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>, stable@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-sh@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: sh-msiof: Fix handling of write value for SISTR register" to the spi tree
-In-Reply-To: <20180905084939.7401-3-geert+renesas@glider.be>
-Message-Id: <20180905114608.0D63011229D0@debutante.sirena.org.uk>
-Date: Wed,  5 Sep 2018 12:46:08 +0100 (BST)
+        Fri, 7 Sep 2018 09:05:53 -0400
+From: Nguyen An Hoan <na-hoan@jinso.co.jp>
+To: broonie@kernel.org, linux-renesas-soc@vger.kernel.org,
+        horms+renesas@verge.net.au, geert+renesas@glider.be
+Cc: kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
+        magnus.damm@gmail.com, h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp,
+        cv-dong@jinso.co.jp, na-hoan@jinso.co.jp
+Subject: [PATCH 1/4] arm64: dts: r8a77995: Add Audio DMAC node
+Date: Fri,  7 Sep 2018 17:25:40 +0900
+Message-Id: <1536308743-29573-2-git-send-email-na-hoan@jinso.co.jp>
+In-Reply-To: <1536308743-29573-1-git-send-email-na-hoan@jinso.co.jp>
+References: <1536308743-29573-1-git-send-email-na-hoan@jinso.co.jp>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+From: Hoan Nguyen An <na-hoan@jinso.co.jp>
 
-   spi: sh-msiof: Fix handling of write value for SISTR register
+This patch adds Audio-DMAC{0} node for the R8A77995
 
-has been applied to the spi tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 31a5fae4c5a009898da6d177901d5328051641ff Mon Sep 17 00:00:00 2001
-From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-Date: Wed, 5 Sep 2018 10:49:37 +0200
-Subject: [PATCH] spi: sh-msiof: Fix handling of write value for SISTR register
-
-This patch changes writing to the SISTR register according to the H/W
-user's manual.
-
-The TDREQ bit and RDREQ bits of SISTR are read-only, and must be written
-their initial values of zero.
-
-Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-[geert: reword]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
 ---
- drivers/spi/spi-sh-msiof.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 34 +++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index bfe4e6d4f7bf..101cd6aae2ea 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -397,7 +397,8 @@ static void sh_msiof_spi_set_mode_regs(struct sh_msiof_spi_priv *p,
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index 625ba2b..42d8dff 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -453,6 +453,40 @@
+ 			       <&ipmmu_ds1 22>, <&ipmmu_ds1 23>;
+ 		};
  
- static void sh_msiof_reset_str(struct sh_msiof_spi_priv *p)
- {
--	sh_msiof_write(p, STR, sh_msiof_read(p, STR));
-+	sh_msiof_write(p, STR,
-+		       sh_msiof_read(p, STR) & ~(STR_TDREQ | STR_RDREQ));
- }
- 
- static void sh_msiof_spi_write_fifo_8(struct sh_msiof_spi_priv *p,
++		audma0: dma-controller@ec700000 {
++			compatible = "renesas,dmac-r8a77995",
++				     "renesas,rcar-dmac";
++			reg = <0 0xec700000 0 0x10000>;
++			interrupts = <GIC_SPI 350 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					"ch0", "ch1", "ch2", "ch3",
++					"ch4", "ch5", "ch6", "ch7",
++					"ch8", "ch9", "ch10", "ch11",
++					"ch12", "ch13", "ch14", "ch15";
++			clocks = <&cpg CPG_MOD 502>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 502>;
++			#dma-cells = <1>;
++			dma-channels = <16>;
++		};
++
+ 		ipmmu_ds0: mmu@e6740000 {
+ 			compatible = "renesas,ipmmu-r8a77995";
+ 			reg = <0 0xe6740000 0 0x1000>;
 -- 
-2.19.0.rc1
+2.7.4
