@@ -1,18 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39010 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726880AbeIHVD4 (ORCPT
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34309 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726187AbeIHAXU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 8 Sep 2018 17:03:56 -0400
-Date: Sat, 8 Sep 2018 09:17:37 -0700
+        Fri, 7 Sep 2018 20:23:20 -0400
+Date: Fri, 7 Sep 2018 12:40:53 -0700
 From: Guenter Roeck <linux@roeck-us.net>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-watchdog@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: watchdog: renesas_wdt: convert to SPDX identifiers
-Message-ID: <20180908161737.GA31407@roeck-us.net>
+        linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH] watchdog: renesas_wdt: convert to SPDX identifiers
+Message-ID: <20180907194053.GB3515@roeck-us.net>
 References: <87y3ceoygh.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -22,19 +21,15 @@ Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 On Fri, Sep 07, 2018 at 02:10:58AM +0000, Kuninori Morimoto wrote:
+> 
 > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 > 
 > This patch updates license to use SPDX-License-Identifier
 > instead of verbose license text.
 > 
 > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-Hmmm .. any chance for you folks to synchronize with each other ?
-I already have "watchdog: use SPDX identifier for Renesas drivers",
-submitted by Wolfram Sang a couple of weeks ago.
-
-Guenter
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
 > ---
 >  drivers/watchdog/renesas_wdt.c | 5 +----
@@ -58,3 +53,6 @@ Guenter
 >   */
 >  #include <linux/bitops.h>
 >  #include <linux/clk.h>
+> -- 
+> 2.7.4
+> 
