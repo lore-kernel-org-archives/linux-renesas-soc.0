@@ -1,81 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44366 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727750AbeIFBEA (ORCPT
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:38322 "EHLO
+        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727069AbeIGNvb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Sep 2018 21:04:00 -0400
-Received: by mail-lj1-f196.google.com with SMTP id q127-v6so7368392ljq.11
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Sep 2018 13:32:09 -0700 (PDT)
-Subject: [PATCH 2/2] clocksource: sh_cmt: add R-Car gen3 support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org
-References: <3ce24bfe-1edb-1a92-8847-ff998ac86d16@cogentembedded.com>
-Message-ID: <dc0446c7-e63b-17f1-45ed-e544b5602b9e@cogentembedded.com>
-Date: Wed, 5 Sep 2018 23:32:07 +0300
-MIME-Version: 1.0
-In-Reply-To: <3ce24bfe-1edb-1a92-8847-ff998ac86d16@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Fri, 7 Sep 2018 09:51:31 -0400
+From: Nguyen An Hoan <na-hoan@jinso.co.jp>
+To: broonie@kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: arm64: dts: salvator-common: Add PWM-2 channel
+Date: Fri,  7 Sep 2018 18:11:24 +0900
+Message-Id: <1536311484-31465-1-git-send-email-na-hoan@jinso.co.jp>
+In-Reply-To: <1535535207-2800-2-git-send-email-na-hoan@jinso.co.jp>
+References: <1535535207-2800-2-git-send-email-na-hoan@jinso.co.jp>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for the R-Car gen3 CMT0 and CMT1 bindings -- they seem to be
-the same CMT0 and CMT1 as in R-Car gen2 SoCs. Also document R8A779{7|8}
-bindings as these are the R-Car gen3 SoCs for which the initial support
-was done.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Dear Geert-san, Thank you very much for your comments!
+CC: Simon-san
 
----
- Documentation/devicetree/bindings/timer/renesas,cmt.txt |    7 +++++++
- drivers/clocksource/sh_cmt.c                            |    8 ++++++++
- 2 files changed, 15 insertions(+)
+> Hi Hoan,
+> 
+> On Wed, Aug 29, 2018 at 11:33 AM Nguyen An Hoan <na-hoan@jinso.co.jp> wrote:
+> > From: Hoan Nguyen An <na-hoan@jinso.co.jp>
+> >
+> > Add PWM-2 channel(CN28 - pin30) support for Salvator-X
+> 
+> Thanks for your patch!
+> 
+> Please explain why this is useful. Usually we do not enable random functionality
+> on expansion connectors.
 
-Index: renesas/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-===================================================================
---- renesas.orig/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-+++ renesas/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-@@ -34,6 +34,10 @@ Required Properties:
-     - "renesas,r8a7793-cmt1" for the 48-bit CMT1 device included in r8a7793.
-     - "renesas,r8a7794-cmt0" for the 32-bit CMT0 device included in r8a7794.
-     - "renesas,r8a7794-cmt1" for the 48-bit CMT1 device included in r8a7794.
-+    - "renesas,r8a77970-cmt0" for the 32-bit CMT0 device included in r8a77970.
-+    - "renesas,r8a77970-cmt1" for the 48-bit CMT1 device included in r8a77970.
-+    - "renesas,r8a77980-cmt0" for the 32-bit CMT0 device included in r8a77980.
-+    - "renesas,r8a77980-cmt1" for the 48-bit CMT1 device included in r8a77980.
- 
-     - "renesas,rcar-gen2-cmt0" for 32-bit CMT0 devices included in R-Car Gen2
- 		and RZ/G1.
-@@ -41,6 +45,9 @@ Required Properties:
- 		and RZ/G1.
- 		These are fallbacks for r8a73a4, R-Car Gen2 and RZ/G1 entries
- 		listed above.
-+    - "renesas,rcar-gen3-cmt0" for 32-bit CMT0 devices included in R-Car Gen3.
-+    - "renesas,rcar-gen3-cmt1" for 48-bit CMT1 devices included in R-Car Gen3.
-+		These are fallbacks for R-Car Gen3 entries listed above.
- 
-   - reg: base address and length of the registers block for the timer module.
-   - interrupts: interrupt-specifier for the timer, one per channel.
-Index: renesas/drivers/clocksource/sh_cmt.c
-===================================================================
---- renesas.orig/drivers/clocksource/sh_cmt.c
-+++ renesas/drivers/clocksource/sh_cmt.c
-@@ -945,6 +945,14 @@ static const struct of_device_id sh_cmt_
- 		.compatible = "renesas,rcar-gen2-cmt1",
- 		.data = &sh_cmt_info[SH_CMT1_RCAR_GEN2]
- 	},
-+	{
-+		.compatible = "renesas,rcar-gen3-cmt0",
-+		.data = &sh_cmt_info[SH_CMT0_RCAR_GEN2]
-+	},
-+	{
-+		.compatible = "renesas,rcar-gen3-cmt1",
-+		.data = &sh_cmt_info[SH_CMT1_RCAR_GEN2]
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, sh_cmt_of_table);
+> In this case, this even has an (undocumented) impact on on-board devices,
+> as the signal is also connected to the BD9571MWV PMIC.
+> (Perhaps that was the actual intention of this patch? ;-) If yes,
+> please explain)
+
+> Thanks!
+
+> Gr{oetje,eeting}s,
+
+>                         Geert
+> 
+
+
+On this issue, with H3/M3 SoC there are 7 PWM channels but only 2 channels are supported: PWM1, PWM2. 
+While PWM1 is connected to CN19 for LVDS service. So only remaining PWM2, 
+I think simple, if you want to generate a signal with variable frequency and pulse width using M3/H3 (I used for testting Addition Tasks) 
+then forced to use PWM2. Although I'm not sure the H3/M3 boards are not purposeful to use the PWM functions.
+
+Thanks you!
+Hoan
