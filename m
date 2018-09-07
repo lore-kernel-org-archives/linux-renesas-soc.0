@@ -1,67 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:42374 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727128AbeIOCGU (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:35248 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727705AbeIGTtu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Sep 2018 22:06:20 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Geert Uytterhoeven <geert@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [GIT PULL FOR renesas-drivers] pinchartl-media/v4l2/vsp1/next
-Date: Fri, 14 Sep 2018 21:50:07 +0100
-Message-Id: <20180914205007.12905-1-kieran.bingham+renesas@ideasonboard.com>
+        Fri, 7 Sep 2018 15:49:50 -0400
+MIME-Version: 1.0
+References: <20180828015252.28511-1-robh@kernel.org> <20180828015252.28511-12-robh@kernel.org>
+In-Reply-To: <20180828015252.28511-12-robh@kernel.org>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 7 Sep 2018 10:08:18 -0500
+Message-ID: <CAL_JsqLR_jsVScGBp0cMfhNJrw4bYOAychWX3Ejw1DBzTpRK+A@mail.gmail.com>
+Subject: Re: [PATCH] clk: Convert to using %pOFn instead of device_node.name
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
+        <linux-renesas-soc@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+On Mon, Aug 27, 2018 at 8:53 PM Rob Herring <robh@kernel.org> wrote:
+>
+> In preparation to remove the node name pointer from struct device_node,
+> convert printf users to use the %pOFn format specifier.
 
-Please consider including this release in renesas-drivers.
 
---
-Regards
+> @@ -492,8 +492,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+>
+>         provider->base = of_iomap(node, 0);
+>
+> -       provider->clkdm_name = kmalloc(strlen(node->parent->name) + 3,
+> -                                      GFP_KERNEL);
+> +       provider->clkdm_name = kasprintf(GFP_KERNEL, "%pOFnxxx", node->parent);
 
-Kieran
+Turns out xxx was a bad choice as the %p handler eats all alphanumeric
+characters. Looks like this has already been applied, so I will send a
+fix.
 
-The following changes since commit 78cf8c842c111df656c63b5d04997ea4e40ef26a:
-
-  media: drxj: fix spelling mistake in fall-through annotations (2018-09-12 11:21:52 -0400)
-
-are available in the Git repository at:
-
-  git://linuxtv.org/pinchartl/media.git pinchartl-media/v4l2/vsp1/next
-
-for you to fetch changes up to 4a6fcd855184d0d928bb833f1062bd19a0c9b57a:
-
-  media: vsp1: Document max_width restriction on UDS (2018-09-14 17:35:25 +0300)
-
-----------------------------------------------------------------
-Kieran Bingham (5):
-      MAINTAINERS: VSP1: Add co-maintainer
-      media: vsp1: Remove artificial minimum width/height limitation
-      media: vsp1: use periods at the end of comment sentences
-      media: vsp1: Document max_width restriction on SRU
-      media: vsp1: Document max_width restriction on UDS
-
-Koji Matsuoka (1):
-      media: vsp1: Fix YCbCr planar formats pitch calculation
-
-Laurent Pinchart (2):
-      media: vsp1: Fix vsp1_regs.h license header
-      media: vsp1: Update LIF buffer thresholds
-
- MAINTAINERS                               |  1 +
- drivers/media/platform/vsp1/vsp1_brx.c    |  4 ++--
- drivers/media/platform/vsp1/vsp1_drm.c    | 11 ++++++++++-
- drivers/media/platform/vsp1/vsp1_drv.c    |  6 +++---
- drivers/media/platform/vsp1/vsp1_entity.c |  2 +-
- drivers/media/platform/vsp1/vsp1_lif.c    | 29 +++++++++++++++++++++++++----
- drivers/media/platform/vsp1/vsp1_regs.h   |  2 +-
- drivers/media/platform/vsp1/vsp1_rpf.c    |  4 ++--
- drivers/media/platform/vsp1/vsp1_sru.c    |  7 ++++++-
- drivers/media/platform/vsp1/vsp1_uds.c    | 14 +++++++++++---
- drivers/media/platform/vsp1/vsp1_video.c  |  9 +++------
- drivers/media/platform/vsp1/vsp1_wpf.c    |  2 +-
- include/media/vsp1.h                      |  2 +-
- 13 files changed, 67 insertions(+), 26 deletions(-)
+Rob
