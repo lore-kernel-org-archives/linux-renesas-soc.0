@@ -1,14 +1,14 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:38322 "EHLO
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:11073 "EHLO
         www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727069AbeIGNvb (ORCPT
+        with ESMTP id S1725843AbeIGNok (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Sep 2018 09:51:31 -0400
+        Fri, 7 Sep 2018 09:44:40 -0400
 From: Nguyen An Hoan <na-hoan@jinso.co.jp>
 To: broonie@kernel.org, linux-renesas-soc@vger.kernel.org
 Subject: Re: arm64: dts: salvator-common: Add PWM-2 channel
-Date: Fri,  7 Sep 2018 18:11:24 +0900
-Message-Id: <1536311484-31465-1-git-send-email-na-hoan@jinso.co.jp>
+Date: Fri,  7 Sep 2018 18:04:34 +0900
+Message-Id: <1536311074-31302-1-git-send-email-na-hoan@jinso.co.jp>
 In-Reply-To: <1535535207-2800-2-git-send-email-na-hoan@jinso.co.jp>
 References: <1535535207-2800-2-git-send-email-na-hoan@jinso.co.jp>
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -43,10 +43,7 @@ CC: Simon-san
 > 
 
 
-On this issue, with H3/M3 SoC there are 7 PWM channels but only 2 channels are supported: PWM1, PWM2. 
-While PWM1 is connected to CN19 for LVDS service. So only remaining PWM2, 
-I think simple, if you want to generate a signal with variable frequency and pulse width using M3/H3 (I used for testting Addition Tasks) 
-then forced to use PWM2. Although I'm not sure the H3/M3 boards are not purposeful to use the PWM functions.
+On this issue, with H3/M3 SoC there are 7 PWM channels but only 2 channels are supported: PWM1, PWM2. While PWM1 is connected to CN19 for LVDS service. So only remaining PWM2, I think simple, if you want to generate a signal with variable frequency and pulse width using M3/H3 (I used for testting Addition Tasks) then forced to use PWM2. Although I'm not sure the H3/M3 boards are not purposeful to use the PWM functions.
 
 Thanks you!
 Hoan
