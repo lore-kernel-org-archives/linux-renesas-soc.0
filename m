@@ -1,113 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57892 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbeIEQQE (ORCPT
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46327 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727690AbeIGN45 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Sep 2018 12:16:04 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Mark Brown <broonie@kernel.org>, stable@vger.kernel.org,
+        Fri, 7 Sep 2018 09:56:57 -0400
+Received: by mail-lj1-f195.google.com with SMTP id 203-v6so11670580ljj.13
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 07 Sep 2018 02:16:55 -0700 (PDT)
+Subject: Re: [PATCH] ethernet: renesas: convert to SPDX identifiers
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Mark Brown <broonie@kernel.org>,
-        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Applied "spi: rspi: Fix invalid SPI use during system suspend" to the spi tree
-In-Reply-To: <20180905084939.7401-4-geert+renesas@glider.be>
-Message-Id: <20180905114603.E093011229D0@debutante.sirena.org.uk>
-Date: Wed,  5 Sep 2018 12:46:03 +0100 (BST)
+        Robin Murphy <robin.murphy@arm.com>,
+        netdev <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <875zziqdem.wl-kuninori.morimoto.gx@renesas.com>
+ <d55d4d25-9966-cf34-7258-97009a9fa5ce@cogentembedded.com>
+ <CAMuHMdVJ+3cX5hMntJ=YJwA48gju+PEcsh-NQmpDRMCnAVG=zw@mail.gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <e31177ec-0846-8ec8-58b7-9a01e8122cad@cogentembedded.com>
+Date: Fri, 7 Sep 2018 12:16:52 +0300
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdVJ+3cX5hMntJ=YJwA48gju+PEcsh-NQmpDRMCnAVG=zw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On 9/7/2018 12:11 PM, Geert Uytterhoeven wrote:
 
-   spi: rspi: Fix invalid SPI use during system suspend
+>> On 9/7/2018 5:02 AM, Kuninori Morimoto wrote:
+>>> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>>>
+>>> This patch updates license to use SPDX-License-Identifier
+>>> instead of verbose license text.
+>>>
+>>> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>>> ---
+>>>    drivers/net/ethernet/renesas/Kconfig    | 1 +
+>>>    drivers/net/ethernet/renesas/Makefile   | 1 +
+>>>    drivers/net/ethernet/renesas/ravb_ptp.c | 6 +-----
+>>>    3 files changed, 3 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/drivers/net/ethernet/renesas/Kconfig b/drivers/net/ethernet/renesas/Kconfig
+>>> index f3f7477..bb0ebdf 100644
+>>> --- a/drivers/net/ethernet/renesas/Kconfig
+>>> +++ b/drivers/net/ethernet/renesas/Kconfig
+>>> @@ -1,3 +1,4 @@
+>>> +# SPDX-License-Identifier: GPL-2.0
+>>>    #
+>>>    # Renesas device configuration
+>>>    #
+>>
+>>      There was no license at all on this file...
+> 
+> So it's licensed under GPL-2.0.
+> Cfr. e.g. commit 7328c8f48d1895b3 ("PCI: Add SPDX GPL-2.0 when no license
+> was specified")
 
-has been applied to the spi tree at
+    OK, but then does the patch description match what is being done?
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+> Gr{oetje,eeting}s,
+> 
+>                          Geert
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From c1ca59c22c56930b377a665fdd1b43351887830b Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Wed, 5 Sep 2018 10:49:38 +0200
-Subject: [PATCH] spi: rspi: Fix invalid SPI use during system suspend
-
-If the SPI queue is running during system suspend, the system may lock
-up.
-
-Fix this by stopping/restarting the queue during system suspend/resume,
-by calling spi_master_suspend()/spi_master_resume() from the PM
-callbacks.  In-kernel users will receive an -ESHUTDOWN error while
-system suspend/resume is in progress.
-
-Based on a patch for sh-msiof by Gaku Inami.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
----
- drivers/spi/spi-rspi.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
-
-diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
-index 95dc4d78618d..f93a4587e3fb 100644
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -1350,12 +1350,36 @@ static const struct platform_device_id spi_driver_ids[] = {
- 
- MODULE_DEVICE_TABLE(platform, spi_driver_ids);
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int rspi_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct rspi_data *rspi = platform_get_drvdata(pdev);
-+
-+	return spi_master_suspend(rspi->master);
-+}
-+
-+static int rspi_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct rspi_data *rspi = platform_get_drvdata(pdev);
-+
-+	return spi_master_resume(rspi->master);
-+}
-+
-+static SIMPLE_DEV_PM_OPS(rspi_pm_ops, rspi_suspend, rspi_resume);
-+#define DEV_PM_OPS	&rspi_pm_ops
-+#else
-+#define DEV_PM_OPS	NULL
-+#endif /* CONFIG_PM_SLEEP */
-+
- static struct platform_driver rspi_driver = {
- 	.probe =	rspi_probe,
- 	.remove =	rspi_remove,
- 	.id_table =	spi_driver_ids,
- 	.driver		= {
- 		.name = "renesas_spi",
-+		.pm = DEV_PM_OPS,
- 		.of_match_table = of_match_ptr(rspi_of_match),
- 	},
- };
--- 
-2.19.0.rc1
+MBR, Sergei
