@@ -1,69 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:36086 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727491AbeIQQcw (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:52670 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728684AbeIJTcc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Sep 2018 12:32:52 -0400
-Received: by mail-lf1-f65.google.com with SMTP id z207-v6so1092568lff.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Sep 2018 04:05:59 -0700 (PDT)
-Date: Mon, 17 Sep 2018 13:05:57 +0200
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mon, 10 Sep 2018 15:32:32 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
         linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: Re: [PATCH 2/5] media: rcar-csi2: Enable support for r8a774a1
-Message-ID: <20180917110557.GQ18450@bigcity.dyn.berto.se>
+Subject: [PATCH 2/5] media: rcar-csi2: Enable support for r8a774a1
+Date: Mon, 10 Sep 2018 15:31:15 +0100
+Message-Id: <1536589878-26218-3-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1536589878-26218-1-git-send-email-biju.das@bp.renesas.com>
 References: <1536589878-26218-1-git-send-email-biju.das@bp.renesas.com>
- <1536589878-26218-3-git-send-email-biju.das@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1536589878-26218-3-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Biju,
+Add the MIPI CSI-2 driver support for RZ/G2M(r8a774a1) SoC.
+The CSI-2 module of RZ/G2M is similar to R-Car M3-W.
 
-Thanks for your work.
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+ drivers/media/platform/rcar-vin/rcar-csi2.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-On 2018-09-10 15:31:15 +0100, Biju Das wrote:
-> Add the MIPI CSI-2 driver support for RZ/G2M(r8a774a1) SoC.
-> The CSI-2 module of RZ/G2M is similar to R-Car M3-W.
-> 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-
-Acked-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-
-> ---
->  drivers/media/platform/rcar-vin/rcar-csi2.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> index daef72d..65c7efb 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> @@ -953,6 +953,10 @@ static const struct rcar_csi2_info rcar_csi2_info_r8a77970 = {
->  
->  static const struct of_device_id rcar_csi2_of_table[] = {
->  	{
-> +		.compatible = "renesas,r8a774a1-csi2",
-> +		.data = &rcar_csi2_info_r8a7796,
-> +	},
-> +	{
->  		.compatible = "renesas,r8a7795-csi2",
->  		.data = &rcar_csi2_info_r8a7795,
->  	},
-> -- 
-> 2.7.4
-> 
-
+diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+index daef72d..65c7efb 100644
+--- a/drivers/media/platform/rcar-vin/rcar-csi2.c
++++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+@@ -953,6 +953,10 @@ static const struct rcar_csi2_info rcar_csi2_info_r8a77970 = {
+ 
+ static const struct of_device_id rcar_csi2_of_table[] = {
+ 	{
++		.compatible = "renesas,r8a774a1-csi2",
++		.data = &rcar_csi2_info_r8a7796,
++	},
++	{
+ 		.compatible = "renesas,r8a7795-csi2",
+ 		.data = &rcar_csi2_info_r8a7795,
+ 	},
 -- 
-Regards,
-Niklas S�derlund
+2.7.4
