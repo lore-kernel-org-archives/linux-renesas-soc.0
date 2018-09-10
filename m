@@ -1,58 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34550 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbeIMORU (ORCPT
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:32852 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726603AbeIJXQF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:17:20 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 05/13] ARM: dts: rcar-gen2: Convert to new DU DT bindings
-Date: Thu, 13 Sep 2018 11:08:28 +0200
-Message-Id: <b8ca3668a328b08eea1ed74dc11f72968b2e8032.1536824376.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1536824376.git.horms+renesas@verge.net.au>
-References: <cover.1536824376.git.horms+renesas@verge.net.au>
+        Mon, 10 Sep 2018 19:16:05 -0400
+Received: by mail-lj1-f196.google.com with SMTP id s12-v6so18765624ljj.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Sep 2018 11:20:43 -0700 (PDT)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Mon, 10 Sep 2018 20:20:41 +0200
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: laurent.pinchart@ideasonboard.com, geert@linux-m68k.org,
+        horms@verge.net.au, kieran.bingham+renesas@ideasonboard.com,
+        damm+renesas@opensource.se, ulrich.hecht+renesas@gmail.com,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 4/8] media: rcar-csi2: Add R8A77990 support
+Message-ID: <20180910182041.GH18450@bigcity.dyn.berto.se>
+References: <1536161385-25562-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1536161385-25562-5-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1536161385-25562-5-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Hi Jacopo,
 
-The DU DT bindings have been updated to drop the reg-names property.
-Update the r8a7792 and r8a7794 device trees accordingly.
+Thanks for your patch.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7792.dtsi | 1 -
- arch/arm/boot/dts/r8a7794.dtsi | 1 -
- 2 files changed, 2 deletions(-)
+On 2018-09-05 17:29:41 +0200, Jacopo Mondi wrote:
+> Add support for R-Car E3 R8A77965 to R-Car CSI-2 driver.
+> Based on the experimental patch from Magnus Damm.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index 63a978ec81cc..52d16a260db0 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -829,7 +829,6 @@
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a7792";
- 			reg = <0 0xfeb00000 0 0x40000>;
--			reg-names = "du";
- 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 724>,
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index ea2ca4bdaf1c..886135a273cb 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -1349,7 +1349,6 @@
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a7794";
- 			reg = <0 0xfeb00000 0 0x40000>;
--			reg-names = "du";
- 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>;
+Acked-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+
+> ---
+>  drivers/media/platform/rcar-vin/rcar-csi2.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> index dc5ae80..f82b668 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> @@ -959,6 +959,11 @@ static const struct rcar_csi2_info rcar_csi2_info_r8a77970 = {
+>  	.confirm_start = rcsi2_confirm_start_v3m_e3,
+>  };
+>  
+> +static const struct rcar_csi2_info rcar_csi2_info_r8a77990 = {
+> +	.init_phtw = rcsi2_init_phtw_v3m_e3,
+> +	.confirm_start = rcsi2_confirm_start_v3m_e3,
+> +};
+> +
+>  static const struct of_device_id rcar_csi2_of_table[] = {
+>  	{
+>  		.compatible = "renesas,r8a7795-csi2",
+> @@ -976,6 +981,10 @@ static const struct of_device_id rcar_csi2_of_table[] = {
+>  		.compatible = "renesas,r8a77970-csi2",
+>  		.data = &rcar_csi2_info_r8a77970,
+>  	},
+> +	{
+> +		.compatible = "renesas,r8a77990-csi2",
+> +		.data = &rcar_csi2_info_r8a77990,
+> +	},
+>  	{ /* sentinel */ },
+>  };
+>  MODULE_DEVICE_TABLE(of, rcar_csi2_of_table);
+> -- 
+> 2.7.4
+> 
+
 -- 
-2.11.0
+Regards,
+Niklas S�derlund
