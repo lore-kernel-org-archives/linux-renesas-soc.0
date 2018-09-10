@@ -1,40 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52382 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726761AbeIKSae (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:18788 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727411AbeIJPgz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Sep 2018 14:30:34 -0400
-Date: Tue, 11 Sep 2018 15:31:10 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Mon, 10 Sep 2018 11:36:55 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Biju Das <biju.das@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 1/3][can-next] can: rcar_can: Fix erroneous
- registration
-Message-ID: <20180911133110.hwlqzwltdkngdcvp@verge.net.au>
+Subject: [PATCH v2 1/3][can-next] can: rcar_can: Fix erroneous registration
+Date: Mon, 10 Sep 2018 11:43:13 +0100
+Message-Id: <1536576195-11520-2-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1536576195-11520-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1536576195-11520-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1536576195-11520-2-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1536576195-11520-2-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Sep 10, 2018 at 11:43:13AM +0100, Fabrizio Castro wrote:
-> Assigning 2 to "renesas,can-clock-select" tricks the driver into
-> registering the CAN interface, even though we don't want that.
-> This patch improves one of the checks to prevent that from happening.
-> 
-> Fixes: 862e2b6af9413b43 ("can: rcar_can: support all input clocks")
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Chris Paterson <Chris.Paterson2@renesas.com>
+Assigning 2 to "renesas,can-clock-select" tricks the driver into
+registering the CAN interface, even though we don't want that.
+This patch improves one of the checks to prevent that from happening.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Fixes: 862e2b6af9413b43 ("can: rcar_can: support all input clocks")
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Chris Paterson <Chris.Paterson2@renesas.com>
+---
+
+v1->v2:
+* dropped id specific data as per Geert's comments
+
+This patch applies on top of linux-can-next-for-4.19-20180727.
+
+ drivers/net/can/rcar/rcar_can.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/can/rcar/rcar_can.c b/drivers/net/can/rcar/rcar_can.c
+index 11662f4..771a460 100644
+--- a/drivers/net/can/rcar/rcar_can.c
++++ b/drivers/net/can/rcar/rcar_can.c
+@@ -24,6 +24,9 @@
+ 
+ #define RCAR_CAN_DRV_NAME	"rcar_can"
+ 
++#define RCAR_SUPPORTED_CLOCKS	(BIT(CLKR_CLKP1) | BIT(CLKR_CLKP2) | \
++				 BIT(CLKR_CLKEXT))
++
+ /* Mailbox configuration:
+  * mailbox 60 - 63 - Rx FIFO mailboxes
+  * mailbox 56 - 59 - Tx FIFO mailboxes
+@@ -789,7 +792,7 @@ static int rcar_can_probe(struct platform_device *pdev)
+ 		goto fail_clk;
+ 	}
+ 
+-	if (clock_select >= ARRAY_SIZE(clock_names)) {
++	if (!(BIT(clock_select) & RCAR_SUPPORTED_CLOCKS)) {
+ 		err = -EINVAL;
+ 		dev_err(&pdev->dev, "invalid CAN clock selected\n");
+ 		goto fail_clk;
+-- 
+2.7.4
