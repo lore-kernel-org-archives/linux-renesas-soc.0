@@ -1,67 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:50359 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727825AbeISUCD (ORCPT
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:39670 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727695AbeIJTFB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Sep 2018 16:02:03 -0400
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v4 0/3] Renesas R9A06G032 PINCTRL Driver
-Date: Wed, 19 Sep 2018 15:23:43 +0100
-Message-Id: <20180919142346.25468-1-phil.edworthy@renesas.com>
+        Mon, 10 Sep 2018 15:05:01 -0400
+MIME-Version: 1.0
+References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com> <d06fcbaf-020f-d78f-2535-d50d8eb43915@cogentembedded.com>
+In-Reply-To: <d06fcbaf-020f-d78f-2535-d50d8eb43915@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 10 Sep 2018 16:10:32 +0200
+Message-ID: <CAMuHMdX_RGXLT16Qzr0AGdZcRRAtNuuJ-cTkvVDMEUAM3eCa2Q@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a77970: add TMU clocks
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This implements the pinctrl driver for the RZ/N1 family of devices, including
-the R9A06G032 (RZ/N1D) device.
+On Thu, Sep 6, 2018 at 10:28 PM Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> The TMU clocks weren't present in the original R8A77970 patch by Daisuke
+> Matsushita, they were added in a later BSP version...
+>
+> Based on the original (and large) patch by Vladimir Barinov.
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-This series was originally written by Michel Pollet whilst at Renesas, and I
-have taken over this work.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v4.20.
 
-Main changes:
-v4:
- - Address Jacopo's comments
- - Add alternative way to use the pinmux prop.
- - Remove mention of gpios.
- - Implement pin_config_group_get()
- - Fix function to get pin configs, i.e. return -EINVAL when disabled.
+Gr{oetje,eeting}s,
 
-v3:
- - Use standard DT props instead of proprietary ones.
- - Replace virtual pins used for MDIO muxing with extra funcs.
- - Use pinctrl_utils funcs to handle the maps.
- - Remove the dbg functions to keep things simple.
- - Change the way the functions are defined so it is easy to check
-   against the hardware numbering.
-
-v2:
- - Change to generic rzn1 family driver, instead of device specific.
- - Review comments fixed.
- - Fix error handling during probe
-
-Phil Edworthy (3):
-  dt-bindings: pinctrl: renesas,rzn1-pinctrl: documentation
-  pinctrl: renesas: Renesas RZ/N1 pinctrl driver
-  ARM: dts: r9a06g032: Add pinctrl node
-
- .../bindings/pinctrl/renesas,rzn1-pinctrl.txt | 153 +++
- arch/arm/boot/dts/r9a06g032.dtsi              |   8 +
- drivers/pinctrl/Kconfig                       |  10 +
- drivers/pinctrl/Makefile                      |   1 +
- drivers/pinctrl/pinctrl-rzn1.c                | 951 ++++++++++++++++++
- include/dt-bindings/pinctrl/rzn1-pinctrl.h    | 141 +++
- 6 files changed, 1264 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
- create mode 100644 drivers/pinctrl/pinctrl-rzn1.c
- create mode 100644 include/dt-bindings/pinctrl/rzn1-pinctrl.h
+                        Geert
 
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
