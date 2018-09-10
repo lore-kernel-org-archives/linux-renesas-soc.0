@@ -1,13 +1,12 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45746 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726603AbeIKAjH (ORCPT
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:35881 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728063AbeIKAZv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Sep 2018 20:39:07 -0400
-Received: by mail-lj1-f194.google.com with SMTP id u83-v6so18898548lje.12
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Sep 2018 12:43:28 -0700 (PDT)
+        Mon, 10 Sep 2018 20:25:51 -0400
+Received: by mail-lf1-f67.google.com with SMTP id x207-v6so18430966lff.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Sep 2018 12:30:15 -0700 (PDT)
 Subject: Re: [PATCH 2/2] clocksource: sh_cmt: add R-Car gen3 support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 To: Chris Paterson <Chris.Paterson2@renesas.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -19,38 +18,44 @@ Cc: "linux-renesas-soc@vger.kernel.org"
 References: <3ce24bfe-1edb-1a92-8847-ff998ac86d16@cogentembedded.com>
  <dc0446c7-e63b-17f1-45ed-e544b5602b9e@cogentembedded.com>
  <TYAPR01MB228578C6DE61F93B96761B40B7010@TYAPR01MB2285.jpnprd01.prod.outlook.com>
- <8cbf8657-8213-5772-1d32-cc9d2bb139c7@cogentembedded.com>
-Message-ID: <50ffce47-ae18-727d-de1c-8ba5fcf8118c@cogentembedded.com>
-Date: Mon, 10 Sep 2018 22:43:25 +0300
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <8cbf8657-8213-5772-1d32-cc9d2bb139c7@cogentembedded.com>
+Date: Mon, 10 Sep 2018 22:30:11 +0300
 MIME-Version: 1.0
-In-Reply-To: <8cbf8657-8213-5772-1d32-cc9d2bb139c7@cogentembedded.com>
+In-Reply-To: <TYAPR01MB228578C6DE61F93B96761B40B7010@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 09/10/2018 10:30 PM, Sergei Shtylyov wrote:
+Hello!
 
->>> From: devicetree-owner@vger.kernel.org <devicetree-
->>> owner@vger.kernel.org> On Behalf Of Sergei Shtylyov
->>> Sent: 05 September 2018 21:32
->>>
->>> Add support for the R-Car gen3 CMT0 and CMT1 bindings -- they seem to be
->>> the same CMT0 and CMT1 as in R-Car gen2 SoCs. Also document R8A779{7|8}
->>> bindings as these are the R-Car gen3 SoCs for which the initial support was
->>> done.
+On 09/06/2018 11:06 AM, Chris Paterson wrote:
+
+>> From: devicetree-owner@vger.kernel.org <devicetree-
+>> owner@vger.kernel.org> On Behalf Of Sergei Shtylyov
+>> Sent: 05 September 2018 21:32
 >>
->> Is it allowed to combine the bindings doc update with the driver change? (I usually get a checkpatch warning for this).
+>> Add support for the R-Car gen3 CMT0 and CMT1 bindings -- they seem to be
+>> the same CMT0 and CMT1 as in R-Car gen2 SoCs. Also document R8A779{7|8}
+>> bindings as these are the R-Car gen3 SoCs for which the initial support was
+>> done.
 > 
->    I don't (and have double checked that this patch is checkpatch-clean).
+> Is it allowed to combine the bindings doc update with the driver change? (I usually get a checkpatch warning for this).
 
-   Hm... triple checking has revealed something new: the patch is good only in the context
-of tip.git, 4.19-rc3 based branch from renesas.git complains about the binding not being
-in a separate patch. Well, I have to comply... :-)
+   I don't (and have double checked that this patch is checkpatch-clean).
 
-[...]
+> It it's not a problem:
 
->> Kind regards, Chris
+   Let's hear what Rob says...
+   However note that Documentation/devicetree/bindings/timer/ is
+listed under the CLOCKSOURCE, CLOCKEVENT DRIVERS entry in MAINTAINERS. 
+
+> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+
+   Thank you!
+
+> Kind regards, Chris
 
 MBR, Sergei
