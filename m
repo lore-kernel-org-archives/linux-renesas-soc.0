@@ -1,10 +1,16 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: Re: [PATCH v2 0/3] Add can support to RZ/G2M
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:18788 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727411AbeIJPgv (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 10 Sep 2018 11:36:51 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -14,82 +20,34 @@ Cc: "David S. Miller" <davem@davemloft.net>,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Biju Das <biju.das@bp.renesas.com>
-References: <1536576195-11520-1-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Message-ID: <cf75b506-f63c-0689-900f-6bfb11caff30@pengutronix.de>
-Date: Thu, 27 Sep 2018 12:45:01 +0200
-MIME-Version: 1.0
-In-Reply-To: <1536576195-11520-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="m0iQ2IPV8OBaGyAPQoOUNmfhIgqQ66gYg"
-Sender: devicetree-owner@vger.kernel.org
+Subject: [PATCH v2 0/3] Add can support to RZ/G2M
+Date: Mon, 10 Sep 2018 11:43:12 +0100
+Message-Id: <1536576195-11520-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---m0iQ2IPV8OBaGyAPQoOUNmfhIgqQ66gYg
-Content-Type: multipart/mixed; boundary="us9iOL7kiYRQy0r1oTb9vTZJ0sFVXFgpH";
- protected-headers="v1"
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
- Wolfgang Grandegger <wg@grandegger.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
- Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
- Chris Paterson <Chris.Paterson2@renesas.com>, linux-can@vger.kernel.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Biju Das <biju.das@bp.renesas.com>
-Message-ID: <cf75b506-f63c-0689-900f-6bfb11caff30@pengutronix.de>
-Subject: Re: [PATCH v2 0/3] Add can support to RZ/G2M
-References: <1536576195-11520-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1536576195-11520-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Dear All,
 
---us9iOL7kiYRQy0r1oTb9vTZJ0sFVXFgpH
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: quoted-printable
+this series contains all that's necessary to add CAN support
+for RZ/G2M (a.k.a. r8a774a1).
 
-On 09/10/2018 12:43 PM, Fabrizio Castro wrote:
-> Dear All,
->=20
-> this series contains all that's necessary to add CAN support
-> for RZ/G2M (a.k.a. r8a774a1).
->=20
-> v1-v2:
-> * applied Geert's comments
+v1-v2:
+* applied Geert's comments
 
-Added 1/3 and 2/3 to linux-can.
+Thanks,
+Fab
 
-Tnx.
-Marc
+Chris Paterson (1):
+  arm64: dts: renesas: r8a774a1: Add CAN nodes
 
---=20
-Pengutronix e.K.                  | Marc Kleine-Budde           |
-Industrial Linux Solutions        | Phone: +49-231-2826-924     |
-Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
-Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+Fabrizio Castro (2):
+  can: rcar_can: Fix erroneous registration
+  dt-bindings: can: rcar_can: Add r8a774a1 support
 
+ .../devicetree/bindings/net/can/rcar_can.txt       | 18 +++++++++++-----
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi          | 24 ++++++++++++++++++++++
+ drivers/net/can/rcar/rcar_can.c                    |  5 ++++-
+ 3 files changed, 41 insertions(+), 6 deletions(-)
 
---us9iOL7kiYRQy0r1oTb9vTZJ0sFVXFgpH--
-
---m0iQ2IPV8OBaGyAPQoOUNmfhIgqQ66gYg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAlustK0ACgkQk9IU1zQo
-ZfGiXwgAysK8Givh2HTxAHe03Sn2ivUgDrR5z0fNERlaYvXUm1mD2x1+4ZNSOqSH
-z4XORv1mNOhuOwTnNdVUxQWnIsslnWFpN77OHOEakNJ3JBkWI4G4zNQYjjYbvfes
-688KUDYs5GdM5k1Bo9Wl7kyrDFZRUYUFLPAqeFaOx6vtBcHCCvNWXLFWCZ9MaU89
-yoMFPK9VaF6lj57XkFQh6M9bMdvHNuMpJyqjBptNl8CdPfUEyckznLodM11mqndy
-LGrrt1JER35n/tu7DYOfzjgSaaSq+wYFUjshrjTdq/6RKuyVlZ/I8+XXJwzs7FpQ
-25bnt1pj3RKT+HshbEGwxH6Fti8spA==
-=t7Pr
------END PGP SIGNATURE-----
-
---m0iQ2IPV8OBaGyAPQoOUNmfhIgqQ66gYg--
+-- 
+2.7.4
