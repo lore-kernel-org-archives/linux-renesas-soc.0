@@ -1,44 +1,32 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:22018 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725850AbeIFKZo (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33115 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728159AbeIJSGh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Sep 2018 06:25:44 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3 0/3] usb: renesas_usbhs: add reset_control and multiple clocks management
-Date: Thu,  6 Sep 2018 14:50:11 +0900
-Message-Id: <1536213014-1325-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Mon, 10 Sep 2018 14:06:37 -0400
+Date: Mon, 10 Sep 2018 15:12:32 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-pwm@vger.kernel.org
+Subject: Re: [PATCH] pwm: renesas-tpu: convert to SPDX identifiers
+Message-ID: <20180910131232.dhxscdwtn276aik7@verge.net.au>
+References: <8736umqd8s.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8736umqd8s.wl-kuninori.morimoto.gx@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set is based on Felipe's usb.git / testing/next branch
-(the commit id is 5b394b2ddf0347bef56e50c69a58773c94343ff3) with
-the following patch:
-  https://patchwork.kernel.org/patch/10574875/
+On Fri, Sep 07, 2018 at 02:06:15AM +0000, Kuninori Morimoto wrote:
+> 
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> This patch updates license to use SPDX-License-Identifier
+> instead of verbose license text.
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Changes from v2:
- - Use clk_bulk_enable_prepare() instead of two functions on patch 3/3.
-
-Changes from v1:
- - Fix error path on patch 3/3.
- - Use clk_bulk_disable_unprepare() instead of two functions on patch 3/3.
- - Use staic array of struct clk_bulk_data instead of a pointer on patch 3/3.
-
-Yoshihiro Shimoda (3):
-  usb: renesas_usbhs: Add reset_control
-  dt-bindings: usb: renesas_usbhs: add clock-names property
-  usb: renesas_usbhs: Add multiple clocks management
-
- .../devicetree/bindings/usb/renesas_usbhs.txt      |  2 ++
- drivers/usb/renesas_usbhs/common.c                 | 37 ++++++++++++++++++++++
- drivers/usb/renesas_usbhs/common.h                 |  5 +++
- 3 files changed, 44 insertions(+)
-
--- 
-1.9.1
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
