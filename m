@@ -1,70 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:39260 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728167AbeIENwu (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:44613 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727614AbeIJOjM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Sep 2018 09:52:50 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>
-Cc: Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-sh@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/4] spi: rspi: Fix interrupted DMA transfers
-Date: Wed,  5 Sep 2018 10:49:39 +0200
-Message-Id: <20180905084939.7401-5-geert+renesas@glider.be>
-In-Reply-To: <20180905084939.7401-1-geert+renesas@glider.be>
-References: <20180905084939.7401-1-geert+renesas@glider.be>
+        Mon, 10 Sep 2018 10:39:12 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 2/3][can-next] can: rcar_can: Add RZ/G2 support
+Date: Mon, 10 Sep 2018 09:45:55 +0000
+Message-ID: <TY1PR01MB1770ADFC4F0E69D07264DC05C0050@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1535029653-7418-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1535029653-7418-3-git-send-email-fabrizio.castro@bp.renesas.com>
+ <CAMuHMdWEPwG6=MEtYKREfqyow=bz__p+Qj28kXufbXc37u8p9A@mail.gmail.com>
+In-Reply-To: <CAMuHMdWEPwG6=MEtYKREfqyow=bz__p+Qj28kXufbXc37u8p9A@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When interrupted, wait_event_interruptible_timeout() returns
--ERESTARTSYS, and the SPI transfer in progress will fail, as expected:
-
-    m25p80 spi0.0: SPI transfer failed: -512
-    spi_master spi0: failed to transfer one message from queue
-
-However, as the underlying DMA transfers may not have completed, all
-subsequent SPI transfers may start to fail:
-
-    spi_master spi0: receive timeout
-    qspi_transfer_out_in() returned -110
-    m25p80 spi0.0: SPI transfer failed: -110
-    spi_master spi0: failed to transfer one message from queue
-
-Fix this by calling dmaengine_terminate_all() not only for timeouts, but
-also for errors.
-
-This can be reproduced on r8a7991/koelsch, using "hd /dev/mtd0" followed
-by CTRL-C.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/spi/spi-rspi.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
-index 45faa390747b1166..98a839d286b8e82b 100644
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -598,11 +598,13 @@ static int rspi_dma_transfer(struct rspi_data *rspi, struct sg_table *tx,
- 
- 	ret = wait_event_interruptible_timeout(rspi->wait,
- 					       rspi->dma_callbacked, HZ);
--	if (ret > 0 && rspi->dma_callbacked)
-+	if (ret > 0 && rspi->dma_callbacked) {
- 		ret = 0;
--	else if (!ret) {
--		dev_err(&rspi->master->dev, "DMA timeout\n");
--		ret = -ETIMEDOUT;
-+	} else {
-+		if (!ret) {
-+			dev_err(&rspi->master->dev, "DMA timeout\n");
-+			ret = -ETIMEDOUT;
-+		}
- 		if (tx)
- 			dmaengine_terminate_all(rspi->master->dma_tx);
- 		if (rx)
--- 
-2.17.1
+SGVsbG8gR2VlcnQsDQoNClRoYW5rIHlvdSBmb3IgeW91ciBmZWVkYmFjay4NCg0KPiBTdWJqZWN0
+OiBSZTogW1BBVENIIDIvM11bY2FuLW5leHRdIGNhbjogcmNhcl9jYW46IEFkZCBSWi9HMiBzdXBw
+b3J0DQo+DQo+IEhpIEZhYnJpemlvLA0KPg0KPiAoVXN1YWxseSB0aGUgRFQgcGF0Y2ggZ29lcyBi
+ZWZvcmUgdGhlIGRyaXZlciBwYXRjaCkNCj4NCj4gT24gVGh1LCBBdWcgMjMsIDIwMTggYXQgMzow
+OCBQTSBGYWJyaXppbyBDYXN0cm8NCj4gPGZhYnJpemlvLmNhc3Ryb0BicC5yZW5lc2FzLmNvbT4g
+d3JvdGU6DQo+ID4gUlovRzIgZGV2aWNlcyBkb24ndCBoYXZlIGNsa3AyLCB0aGVyZWZvcmUgdGhp
+cyBjb21taXQgYWRkcyBhDQo+ID4gZ2VuZXJpYyBjb21wYXRpYmxlIHN0cmluZyBmb3IgdGhlbSB0
+byBhbGxvdyBmb3IgcHJvcGVyIGNoZWNraW5nDQo+ID4gZHVyaW5nIHByb2JlLg0KPiA+DQo+ID4g
+U2lnbmVkLW9mZi1ieTogRmFicml6aW8gQ2FzdHJvIDxmYWJyaXppby5jYXN0cm9AYnAucmVuZXNh
+cy5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogQ2hyaXMgUGF0ZXJzb24gPENocmlzLlBhdGVyc29u
+MkByZW5lc2FzLmNvbT4NCj4NCj4gVGhhbmtzIGZvciB5b3VyIHBhdGNoIQ0KPg0KPiA+IC0tLSBh
+L2RyaXZlcnMvbmV0L2Nhbi9yY2FyL3JjYXJfY2FuLmMNCj4gPiArKysgYi9kcml2ZXJzL25ldC9j
+YW4vcmNhci9yY2FyX2Nhbi5jDQo+ID4gQEAgLTI3LDYgKzI3LDcgQEANCj4gPg0KPiA+ICAjZGVm
+aW5lIFJDQVJfU1VQUE9SVEVEX0NMT0NLUyAgKEJJVChDTEtSX0NMS1AxKSB8IEJJVChDTEtSX0NM
+S1AyKSB8IFwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBCSVQoQ0xLUl9D
+TEtFWFQpKQ0KPiA+ICsjZGVmaW5lIFJaRzJfU1VQUE9SVEVEX0NMT0NLUyAgKEJJVChDTEtSX0NM
+S1AxKSB8IEJJVChDTEtSX0NMS0VYVCkpDQo+ID4NCj4gPiAgLyogTWFpbGJveCBjb25maWd1cmF0
+aW9uOg0KPiA+ICAgKiBtYWlsYm94IDYwIC0gNjMgLSBSeCBGSUZPIG1haWxib3hlcw0KPiA+IEBA
+IC05MzMsNiArOTM0LDEwIEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIHJjYXJf
+Y2FuX29mX3RhYmxlW10gX19tYXliZV91bnVzZWQgPSB7DQo+ID4gICAgICAgICAgICAgICAgIC5j
+b21wYXRpYmxlID0gInJlbmVzYXMscmNhci1nZW4zLWNhbiIsDQo+ID4gICAgICAgICAgICAgICAg
+IC5kYXRhID0gKHZvaWQgKilSQ0FSX1NVUFBPUlRFRF9DTE9DS1MsDQo+ID4gICAgICAgICB9LA0K
+PiA+ICsgICAgICAgew0KPiA+ICsgICAgICAgICAgICAgICAuY29tcGF0aWJsZSA9ICJyZW5lc2Fz
+LHJ6Zy1nZW4yLWNhbiIsDQo+ID4gKyAgICAgICAgICAgICAgIC5kYXRhID0gKHZvaWQgKilSWkcy
+X1NVUFBPUlRFRF9DTE9DS1MsDQo+ID4gKyAgICAgICB9LA0KPiA+ICAgICAgICAgeyB9DQo+DQo+
+IEkgdGhpbmsgdGhpcyBwYXRjaCBpcyBub3QgbmVlZGVkLCBjZnIuIG15IHJlcGx5IHRvIHRoZQ0K
+PiBmaXJzdF5IXkheSF5IXkh0aGlyZCBwYXRjaA0KPiBpbiB5b3VyIHNlcmllcy4NCg0KSSBhbSBk
+cm9wcGluZyB0aGlzIHBhdGNoLg0KDQpUaGFua3MsDQpGYWINCg0KPg0KPiBHcntvZXRqZSxlZXRp
+bmd9cywNCj4NCj4gICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCj4NCj4gLS0NCj4gR2Vl
+cnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBn
+ZWVydEBsaW51eC1tNjhrLm9yZw0KPg0KPiBJbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGgg
+dGVjaG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0DQo+IHdoZW4gSSdt
+IHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRo
+aW5nIGxpa2UgdGhhdC4NCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLSBMaW51
+cyBUb3J2YWxkcw0KDQoNCg0KUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgTHRkLCBEdWtlcyBN
+ZWFkb3csIE1pbGxib2FyZCBSb2FkLCBCb3VybmUgRW5kLCBCdWNraW5naGFtc2hpcmUsIFNMOCA1
+RkgsIFVLLiBSZWdpc3RlcmVkIGluIEVuZ2xhbmQgJiBXYWxlcyB1bmRlciBSZWdpc3RlcmVkIE5v
+LiAwNDU4NjcwOS4NCg==
