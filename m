@@ -1,55 +1,196 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:55259 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726824AbeIQQ6B (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:45268 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727353AbeIJOra (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Sep 2018 12:58:01 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com,
-        kieran.bingham+renesas@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Subject: [PATCH v3 0/4] media: adv748x: Allow probe with a single output endpoint
-Date: Mon, 17 Sep 2018 13:30:53 +0200
-Message-Id: <1537183857-29173-1-git-send-email-jacopo+renesas@jmondi.org>
+        Mon, 10 Sep 2018 10:47:30 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v4 3/3] usb: renesas_usbhs: Add multiple clocks management
+Date: Mon, 10 Sep 2018 18:52:20 +0900
+Message-Id: <1536573140-24123-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1536573140-24123-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1536573140-24123-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Laurent, Kieran, Niklas,
-   to address the Ebisu board use case, this series allows the adv748x driver
-to probe with a single output connection defined.
+R-Car Gen3 needs to enable clocks of both host and peripheral.
+Since [eo]hci-platform disables the reset(s) when the drivers are
+removed, renesas_usbhs driver doesn't work correctly. To fix this
+issue, this patch adds multiple clocks management on this
+renesas_usbhs driver.
 
-Compared to v2, I have dropped the last patch, as without any dynamic routing
-support it is not that helpful, and I've fixed most of commit messages as
-suggested by Kieran.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/usb/renesas_usbhs/common.c | 88 ++++++++++++++++++++++++++++++++++++++
+ drivers/usb/renesas_usbhs/common.h |  2 +
+ 2 files changed, 90 insertions(+)
 
-I have tested in 3 conditions on Salvator-X M3-W:
-- AFE input not registered
-- TXB not registered (Ebisu use case)
-- AFE and TXB not registered
-
-Let me know if I can help testing this on Ebisu.
-
-Thanks
-   j
-
-v2 -> v3:
-- Drop v2 patch [5/5]
-- Add Kieran's tags and modify commit messages as he suggested
-
-Jacopo Mondi (4):
-  media: i2c: adv748x: Support probing a single output
-  media: i2c: adv748x: Handle TX[A|B] power management
-  media: i2c: adv748x: Conditionally enable only CSI-2 outputs
-  media: i2c: adv748x: Register only enabled inputs
-
- drivers/media/i2c/adv748x/adv748x-afe.c  |  2 +-
- drivers/media/i2c/adv748x/adv748x-core.c | 83 +++++++++++++++++---------------
- drivers/media/i2c/adv748x/adv748x-csi2.c | 29 ++++-------
- drivers/media/i2c/adv748x/adv748x-hdmi.c |  2 +-
- drivers/media/i2c/adv748x/adv748x.h      | 19 ++++++--
- 5 files changed, 68 insertions(+), 67 deletions(-)
-
---
-2.7.4
+diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
+index 1d355d5..d6c39ba 100644
+--- a/drivers/usb/renesas_usbhs/common.c
++++ b/drivers/usb/renesas_usbhs/common.c
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2011 Renesas Solutions Corp.
+  * Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+  */
++#include <linux/clk.h>
+ #include <linux/err.h>
+ #include <linux/gpio.h>
+ #include <linux/io.h>
+@@ -291,6 +292,79 @@ static void usbhsc_set_buswait(struct usbhs_priv *priv)
+ 		usbhs_bset(priv, BUSWAIT, 0x000F, wait);
+ }
+ 
++static bool usbhsc_is_multi_clks(struct usbhs_priv *priv)
++{
++	if (priv->dparam.type == USBHS_TYPE_RCAR_GEN3 ||
++	    priv->dparam.type == USBHS_TYPE_RCAR_GEN3_WITH_PLL)
++		return true;
++
++	return false;
++}
++
++static int usbhsc_clk_get(struct device *dev, struct usbhs_priv *priv)
++{
++	if (!usbhsc_is_multi_clks(priv))
++		return 0;
++
++	/* The first clock should exist */
++	priv->clks[0] = of_clk_get(dev->of_node, 0);
++	if (IS_ERR(priv->clks[0]))
++		return PTR_ERR(priv->clks[0]);
++
++	/*
++	 * To backward compatibility with old DT, this driver checks the return
++	 * value if it's -ENOENT or not.
++	 */
++	priv->clks[1] = of_clk_get(dev->of_node, 1);
++	if (PTR_ERR(priv->clks[1]) == -ENOENT)
++		priv->clks[1] = NULL;
++	else if (IS_ERR(priv->clks[1]))
++		return PTR_ERR(priv->clks[1]);
++
++	return 0;
++}
++
++static void usbhsc_clk_put(struct usbhs_priv *priv)
++{
++	int i;
++
++	if (!usbhsc_is_multi_clks(priv))
++		return;
++
++	for (i = 0; i < ARRAY_SIZE(priv->clks); i++)
++		clk_put(priv->clks[i]);
++}
++
++static int usbhsc_clk_prepare_enable(struct usbhs_priv *priv)
++{
++	int i, ret;
++
++	if (!usbhsc_is_multi_clks(priv))
++		return 0;
++
++	for (i = 0; i < ARRAY_SIZE(priv->clks); i++) {
++		ret = clk_prepare_enable(priv->clks[i]);
++		if (ret) {
++			while (--i >= 0)
++				clk_disable_unprepare(priv->clks[i]);
++			return ret;
++		}
++	}
++
++	return ret;
++}
++
++static void usbhsc_clk_disable_unprepare(struct usbhs_priv *priv)
++{
++	int i;
++
++	if (!usbhsc_is_multi_clks(priv))
++		return;
++
++	for (i = 0; i < ARRAY_SIZE(priv->clks); i++)
++		clk_disable_unprepare(priv->clks[i]);
++}
++
+ /*
+  *		platform default param
+  */
+@@ -341,6 +415,10 @@ static void usbhsc_power_ctrl(struct usbhs_priv *priv, int enable)
+ 		/* enable PM */
+ 		pm_runtime_get_sync(dev);
+ 
++		/* enable clks */
++		if (usbhsc_clk_prepare_enable(priv))
++			return;
++
+ 		/* enable platform power */
+ 		usbhs_platform_call(priv, power_ctrl, pdev, priv->base, enable);
+ 
+@@ -353,6 +431,9 @@ static void usbhsc_power_ctrl(struct usbhs_priv *priv, int enable)
+ 		/* disable platform power */
+ 		usbhs_platform_call(priv, power_ctrl, pdev, priv->base, enable);
+ 
++		/* disable clks */
++		usbhsc_clk_disable_unprepare(priv);
++
+ 		/* disable PM */
+ 		pm_runtime_put_sync(dev);
+ 	}
+@@ -667,6 +748,10 @@ static int usbhs_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto probe_fail_rst;
+ 
++	ret = usbhsc_clk_get(&pdev->dev, priv);
++	if (ret)
++		goto probe_fail_clks;
++
+ 	/*
+ 	 * deviece reset here because
+ 	 * USB device might be used in boot loader.
+@@ -720,6 +805,8 @@ static int usbhs_probe(struct platform_device *pdev)
+ 	return ret;
+ 
+ probe_end_mod_exit:
++	usbhsc_clk_put(priv);
++probe_fail_clks:
+ 	reset_control_assert(priv->rsts);
+ probe_fail_rst:
+ 	usbhs_mod_remove(priv);
+@@ -750,6 +837,7 @@ static int usbhs_remove(struct platform_device *pdev)
+ 	pm_runtime_disable(&pdev->dev);
+ 
+ 	usbhs_platform_call(priv, hardware_exit, pdev);
++	usbhsc_clk_put(priv);
+ 	reset_control_assert(priv->rsts);
+ 	usbhs_mod_remove(priv);
+ 	usbhs_fifo_remove(priv);
+diff --git a/drivers/usb/renesas_usbhs/common.h b/drivers/usb/renesas_usbhs/common.h
+index bce7d35..555b3e7 100644
+--- a/drivers/usb/renesas_usbhs/common.h
++++ b/drivers/usb/renesas_usbhs/common.h
+@@ -8,6 +8,7 @@
+ #ifndef RENESAS_USB_DRIVER_H
+ #define RENESAS_USB_DRIVER_H
+ 
++#include <linux/clk.h>
+ #include <linux/extcon.h>
+ #include <linux/platform_device.h>
+ #include <linux/reset.h>
+@@ -279,6 +280,7 @@ struct usbhs_priv {
+ 
+ 	struct phy *phy;
+ 	struct reset_control *rsts;
++	struct clk *clks[2];
+ };
+ 
+ /*
+-- 
+1.9.1
