@@ -1,68 +1,40 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:50005 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727240AbeI0US2 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Sep 2018 16:18:28 -0400
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v6 3/3] ARM: dts: r9a06g032: Add pinctrl node
-Date: Thu, 27 Sep 2018 14:59:22 +0100
-Message-Id: <20180927135922.12015-4-phil.edworthy@renesas.com>
-In-Reply-To: <20180927135922.12015-1-phil.edworthy@renesas.com>
-References: <20180927135922.12015-1-phil.edworthy@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Biju Das <biju.das@bp.renesas.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 0/5] Add VIN support to RZ/G2M
+Date: Mon, 10 Sep 2018 15:31:13 +0100
+Message-Id: <1536589878-26218-1-git-send-email-biju.das@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This provides a pinctrl driver for the Renesas R9A06G032 SoC
+This patch series aims to add VIN support for RZ/G2M SoC.
+RZ/G2M SoC is similar to R-Car Gen3 M3-W SoC.
 
-Based on a patch originally written by Michel Pollet at Renesas.
+This patchset is based on media_tree git and 
+renesas-devel-20180906-v4.19-rc2.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
-v6:
- - No changes.
+Biju Das (5):
+  media: dt-bindings: media: rcar-csi2: Add r8a774a1 support
+  media: rcar-csi2: Enable support for r8a774a1
+  media: dt-bindings: media: rcar_vin: Add r8a774a1 support
+  media: rcar-vin: Enable support for r8a774a1
+  arm64: dts: renesas: r8a774a1: Add VIN and CSI-2 nodes
 
-v5:
- - No changes.
+ .../devicetree/bindings/media/rcar_vin.txt         |   5 +-
+ .../bindings/media/renesas,rcar-csi2.txt           |   5 +-
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi          | 367 +++++++++++++++++++++
+ drivers/media/platform/rcar-vin/rcar-core.c        |   4 +
+ drivers/media/platform/rcar-vin/rcar-csi2.c        |   4 +
+ 5 files changed, 381 insertions(+), 4 deletions(-)
 
-v4:
- - No changes.
-
-v3:
- - No changes.
-
-v2:
- - Add "renesas,rzn1-pinctrl" compatible fallback string
- - Register size corrected.
----
- arch/arm/boot/dts/r9a06g032.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index eaf94976ed6d..2322268bc862 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -165,6 +165,14 @@
- 			status = "disabled";
- 		};
- 
-+		pinctrl: pin-controller@40067000 {
-+			compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
-+			reg = <0x40067000 0x1000>, <0x51000000 0x480>;
-+			clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
-+			clock-names = "bus";
-+			status = "okay";
-+		};
-+
- 		gic: gic@44101000 {
- 			compatible = "arm,cortex-a7-gic", "arm,gic-400";
- 			interrupt-controller;
 -- 
-2.17.1
+2.7.4
