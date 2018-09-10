@@ -1,76 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:14081 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727742AbeIGNFx (ORCPT
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45746 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726603AbeIKAjH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Sep 2018 09:05:53 -0400
-From: Nguyen An Hoan <na-hoan@jinso.co.jp>
-To: broonie@kernel.org, linux-renesas-soc@vger.kernel.org,
-        horms+renesas@verge.net.au, geert+renesas@glider.be
-Cc: kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
-        magnus.damm@gmail.com, h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp,
-        cv-dong@jinso.co.jp, na-hoan@jinso.co.jp
-Subject: [PATCH 1/4] arm64: dts: r8a77995: Add Audio DMAC node
-Date: Fri,  7 Sep 2018 17:25:40 +0900
-Message-Id: <1536308743-29573-2-git-send-email-na-hoan@jinso.co.jp>
-In-Reply-To: <1536308743-29573-1-git-send-email-na-hoan@jinso.co.jp>
-References: <1536308743-29573-1-git-send-email-na-hoan@jinso.co.jp>
+        Mon, 10 Sep 2018 20:39:07 -0400
+Received: by mail-lj1-f194.google.com with SMTP id u83-v6so18898548lje.12
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Sep 2018 12:43:28 -0700 (PDT)
+Subject: Re: [PATCH 2/2] clocksource: sh_cmt: add R-Car gen3 support
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Chris Paterson <Chris.Paterson2@renesas.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
+References: <3ce24bfe-1edb-1a92-8847-ff998ac86d16@cogentembedded.com>
+ <dc0446c7-e63b-17f1-45ed-e544b5602b9e@cogentembedded.com>
+ <TYAPR01MB228578C6DE61F93B96761B40B7010@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+ <8cbf8657-8213-5772-1d32-cc9d2bb139c7@cogentembedded.com>
+Message-ID: <50ffce47-ae18-727d-de1c-8ba5fcf8118c@cogentembedded.com>
+Date: Mon, 10 Sep 2018 22:43:25 +0300
+MIME-Version: 1.0
+In-Reply-To: <8cbf8657-8213-5772-1d32-cc9d2bb139c7@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hoan Nguyen An <na-hoan@jinso.co.jp>
+On 09/10/2018 10:30 PM, Sergei Shtylyov wrote:
 
-This patch adds Audio-DMAC{0} node for the R8A77995
+>>> From: devicetree-owner@vger.kernel.org <devicetree-
+>>> owner@vger.kernel.org> On Behalf Of Sergei Shtylyov
+>>> Sent: 05 September 2018 21:32
+>>>
+>>> Add support for the R-Car gen3 CMT0 and CMT1 bindings -- they seem to be
+>>> the same CMT0 and CMT1 as in R-Car gen2 SoCs. Also document R8A779{7|8}
+>>> bindings as these are the R-Car gen3 SoCs for which the initial support was
+>>> done.
+>>
+>> Is it allowed to combine the bindings doc update with the driver change? (I usually get a checkpatch warning for this).
+> 
+>    I don't (and have double checked that this patch is checkpatch-clean).
 
-Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 34 +++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+   Hm... triple checking has revealed something new: the patch is good only in the context
+of tip.git, 4.19-rc3 based branch from renesas.git complains about the binding not being
+in a separate patch. Well, I have to comply... :-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 625ba2b..42d8dff 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -453,6 +453,40 @@
- 			       <&ipmmu_ds1 22>, <&ipmmu_ds1 23>;
- 		};
- 
-+		audma0: dma-controller@ec700000 {
-+			compatible = "renesas,dmac-r8a77995",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xec700000 0 0x10000>;
-+			interrupts = <GIC_SPI 350 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7",
-+					"ch8", "ch9", "ch10", "ch11",
-+					"ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 502>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 502>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
-+		};
-+
- 		ipmmu_ds0: mmu@e6740000 {
- 			compatible = "renesas,ipmmu-r8a77995";
- 			reg = <0 0xe6740000 0 0x1000>;
--- 
-2.7.4
+[...]
+
+>> Kind regards, Chris
+
+MBR, Sergei
