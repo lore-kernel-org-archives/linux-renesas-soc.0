@@ -1,71 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:7529 "EHLO
+Received: from relmlor4.renesas.com ([210.160.252.174]:11181 "EHLO
         relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726404AbeIZPXC (ORCPT
+        by vger.kernel.org with ESMTP id S1726569AbeIKPfd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Sep 2018 11:23:02 -0400
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Tue, 11 Sep 2018 11:35:33 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Mark Rutland <mark.rutland@arm.com>
-Cc: Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v5 0/3] Renesas R9A06G032 PINCTRL Driver
-Date: Wed, 26 Sep 2018 10:10:50 +0100
-Message-Id: <20180926091053.21255-1-phil.edworthy@renesas.com>
+Cc: Biju Das <biju.das@bp.renesas.com>, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 0/2] Add RZ/G1N PFC driver.
+Date: Tue, 11 Sep 2018 11:30:03 +0100
+Message-Id: <1536661805-36464-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This implements the pinctrl driver for the RZ/N1 family of devices, including
-the R9A06G032 (RZ/N1D) device.
+This patch series aims to add support for RZ/G1N (R8A7744) PFC driver.
 
-This series was originally written by Michel Pollet whilst at Renesas, and I
-have taken over this work.
+RZ/G1N SoC is similar to RZ/G1M and R-Car Gen2 M2-W/M2-N SoC.
 
-Main changes:
-v5:
- - Address Jacopo's further comments
- - Address Geert's comments
+This patchset is based on renesas-devel-20180906-v4.19-rc2.
 
-v4:
- - Address Jacopo's comments
- - Add alternative way to use the pinmux prop.
- - Remove mention of gpios.
- - Implement pin_config_group_get()
- - Fix function to get pin configs, i.e. return -EINVAL when disabled.
+Biju Das (2):
+  dt-bindings: pinctrl: sh-pfc: Document r8a7744 PFC support
+  pinctrl: sh-pfc: r8a7791: Add r8a7744 support
 
-v3:
- - Use standard DT props instead of proprietary ones.
- - Replace virtual pins used for MDIO muxing with extra funcs.
- - Use pinctrl_utils funcs to handle the maps.
- - Remove the dbg functions to keep things simple.
- - Change the way the functions are defined so it is easy to check
-   against the hardware numbering.
-
-v2:
- - Change to generic rzn1 family driver, instead of device specific.
- - Review comments fixed.
- - Fix error handling during probe
-
-Phil Edworthy (3):
-  dt-bindings: pinctrl: renesas,rzn1-pinctrl: documentation
-  pinctrl: renesas: Renesas RZ/N1 pinctrl driver
-  ARM: dts: r9a06g032: Add pinctrl node
-
- .../bindings/pinctrl/renesas,rzn1-pinctrl.txt | 153 +++
- arch/arm/boot/dts/r9a06g032.dtsi              |   8 +
- drivers/pinctrl/Kconfig                       |  10 +
- drivers/pinctrl/Makefile                      |   1 +
- drivers/pinctrl/pinctrl-rzn1.c                | 948 ++++++++++++++++++
- include/dt-bindings/pinctrl/rzn1-pinctrl.h    | 141 +++
- 6 files changed, 1261 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
- create mode 100644 drivers/pinctrl/pinctrl-rzn1.c
- create mode 100644 include/dt-bindings/pinctrl/rzn1-pinctrl.h
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |  1 +
+ drivers/pinctrl/sh-pfc/Kconfig                     |  5 +++++
+ drivers/pinctrl/sh-pfc/Makefile                    |  1 +
+ drivers/pinctrl/sh-pfc/core.c                      |  6 ++++++
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c               | 22 ++++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/sh_pfc.h                    |  1 +
+ 6 files changed, 36 insertions(+)
 
 -- 
-2.17.1
+2.7.4
