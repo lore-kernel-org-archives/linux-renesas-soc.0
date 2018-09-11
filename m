@@ -1,49 +1,36 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        mchehab@kernel.org
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v2 2/2] media: vsp1: Document max_width restriction on UDS
-Date: Fri, 14 Sep 2018 15:26:52 +0100
-Message-Id: <20180914142652.30484-2-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <20180914142652.30484-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20180914142652.30484-1-kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:52689 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727796AbeIKSmJ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 11 Sep 2018 14:42:09 -0400
+Date: Tue, 11 Sep 2018 15:42:42 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] ARM: shmobile: convert to SPDX identifiers
+Message-ID: <20180911134241.4qklfcvbylmda3s4@verge.net.au>
+References: <87h8j2qeaw.wl-kuninori.morimoto.gx@renesas.com>
+ <CAMuHMdWN18-_N61WpdFN5OTHzev1aW+e0Nni+gSnGVm9dWAzUQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWN18-_N61WpdFN5OTHzev1aW+e0Nni+gSnGVm9dWAzUQ@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The UDS is currently restricted based on a partition size of 256 pixels.
-Document the actual restrictions, but don't increase the implementation.
+On Mon, Sep 10, 2018 at 03:12:36PM +0200, Geert Uytterhoeven wrote:
+> On Fri, Sep 7, 2018 at 5:00 AM Kuninori Morimoto
+> <kuninori.morimoto.gx@renesas.com> wrote:
+> > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> >
+> > This patch updates license to use SPDX-License-Identifier
+> > instead of verbose license text.
+> >
+> > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The extended partition algorithm may later choose to utilise a larger
-partition size to support overlapping partitions which will improve the
-quality of the output images.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_uds.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/media/platform/vsp1/vsp1_uds.c b/drivers/media/platform/vsp1/vsp1_uds.c
-index 75c613050151..e8340de85813 100644
---- a/drivers/media/platform/vsp1/vsp1_uds.c
-+++ b/drivers/media/platform/vsp1/vsp1_uds.c
-@@ -342,6 +342,14 @@ static unsigned int uds_max_width(struct vsp1_entity *entity,
- 					    UDS_PAD_SOURCE);
- 	hscale = output->width / input->width;
- 
-+	/*
-+	 * The maximum width of the UDS is 304 pixels. These are input pixels
-+	 * in the event of up-scaling, and output pixels in the event of
-+	 * downscaling.
-+	 *
-+	 * To support overlapping parition windows we clamp at units of 256 and
-+	 * the remaining pixels are reserved.
-+	 */
- 	if (hscale <= 2)
- 		return 256;
- 	else if (hscale <= 4)
--- 
-2.17.1
+Thanks, applied for v4.20.
