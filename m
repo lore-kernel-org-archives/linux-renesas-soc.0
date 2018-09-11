@@ -1,41 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42825 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726552AbeILPJM (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:3111 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726722AbeIKPSX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Sep 2018 11:09:12 -0400
-Date: Wed, 12 Sep 2018 12:05:19 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Tue, 11 Sep 2018 11:18:23 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>, devicetree@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 04/10] dt-bindings: reset: rcar-rst: Document r8a7744
- reset module
-Message-ID: <20180912100518.lth3p5cpl5f4lai4@verge.net.au>
+Subject: [PATCH 04/10] dt-bindings: reset: rcar-rst: Document r8a7744 reset module
+Date: Tue, 11 Sep 2018 11:12:45 +0100
+Message-Id: <1536660771-32278-5-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1536660771-32278-1-git-send-email-biju.das@bp.renesas.com>
 References: <1536660771-32278-1-git-send-email-biju.das@bp.renesas.com>
- <1536660771-32278-5-git-send-email-biju.das@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1536660771-32278-5-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Sep 11, 2018 at 11:12:45AM +0100, Biju Das wrote:
-> Document bindings for the RZ/G1N (R8A7744) reset module.
-> 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Document bindings for the RZ/G1N (R8A7744) reset module.
 
-Thanks,
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/reset/renesas,rst.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-This looks fine to me but I will wait to see if there are other reviews
-before applying.
-
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
+index e4fe0ab..d0edd4677 100644
+--- a/Documentation/devicetree/bindings/reset/renesas,rst.txt
++++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
+@@ -16,6 +16,7 @@ Required properties:
+ 		  - "renesas,<soctype>-rst" for R-Car Gen2 and Gen3, and RZ/G
+ 		Examples with soctypes are:
+ 		  - "renesas,r8a7743-rst" (RZ/G1M)
++		  - "renesas,r8a7744-rst" (RZ/G1N)
+ 		  - "renesas,r8a7745-rst" (RZ/G1E)
+ 		  - "renesas,r8a77470-rst" (RZ/G1C)
+ 		  - "renesas,r8a774a1-rst" (RZ/G2M)
+-- 
+2.7.4
