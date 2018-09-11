@@ -1,87 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:53036 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbeIMOT1 (ORCPT
+        with ESMTP id S1727009AbeIKSw0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:19:27 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Tue, 11 Sep 2018 14:52:26 -0400
+Date: Tue, 11 Sep 2018 15:52:56 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 19/58] arm64: dts: renesas: v3msk: add eMMC support
-Date: Thu, 13 Sep 2018 11:09:14 +0200
-Message-Id: <8d9923b3a2f6c0e4ad3f9d9cad6e9010cf0d67e6.1536828567.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
-References: <cover.1536828567.git.horms+renesas@verge.net.au>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH 3/3] soc: renesas: Identify RZ/G2E
+Message-ID: <20180911135255.reccumenxuv3kijz@verge.net.au>
+References: <1536580430-17432-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1536580430-17432-4-git-send-email-fabrizio.castro@bp.renesas.com>
+ <CAMuHMdWUGGH=S4d1QW=1FYGbjpjF3cD87d+T2h-GNZcLAzswvg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWUGGH=S4d1QW=1FYGbjpjF3cD87d+T2h-GNZcLAzswvg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Mon, Sep 10, 2018 at 04:36:14PM +0200, Geert Uytterhoeven wrote:
+> On Mon, Sep 10, 2018 at 1:54 PM Fabrizio Castro
+> <fabrizio.castro@bp.renesas.com> wrote:
+> > Add support for identifying the RZ/G2E (r8a774c0) SoC.
+> >
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add the eMMC chip support for the V3M Started Kit board.
-
-Based on the original (and large) patches by Vladimir Barinov.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts b/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-index 8eac8ca6550b..0dbcb4cccc18 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-@@ -51,6 +51,15 @@
- 		regulator-always-on;
- 	};
- 
-+	vcc_vddq_vin0: regulator-2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VCC_VDDQ_VIN0";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
- 	lvds-decoder {
- 		compatible = "thine,thc63lvd1024";
- 		vcc-supply = <&vcc_d3_3v>;
-@@ -128,6 +137,12 @@
- 		function = "i2c0";
- 	};
- 
-+	mmc_pins: mmc_3_3v {
-+		groups = "mmc_data8", "mmc_ctrl";
-+		function = "mmc";
-+		power-source = <3300>;
-+	};
-+
- 	scif0_pins: scif0 {
- 		groups = "scif0_data";
- 		function = "scif0";
-@@ -192,6 +207,17 @@
- 	};
- };
- 
-+&mmc0 {
-+	pinctrl-0 = <&mmc_pins>;
-+	pinctrl-names = "default";
-+
-+	vmmc-supply = <&vcc_d3_3v>;
-+	vqmmc-supply = <&vcc_vddq_vin0>;
-+	bus-width = <8>;
-+	non-removable;
-+	status = "okay";
-+};
-+
- &scif0 {
- 	pinctrl-0 = <&scif0_pins>;
- 	pinctrl-names = "default";
--- 
-2.11.0
+Thanks, applied for v4.20.
