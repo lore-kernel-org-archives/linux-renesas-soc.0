@@ -1,72 +1,196 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:51532 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726738AbeIJOtk (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:46763 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726546AbeIKNrQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:49:40 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: RE: [PATCH] arm64: dts: renesas: r8a774a1: Add CAN nodes
-Date: Mon, 10 Sep 2018 09:56:18 +0000
-Message-ID: <TY1PR01MB17706300DDF78B3067DC779DC0050@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1535034166-24798-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAMuHMdUL0Ck=6er8rvx_kCSi7KR9kjBqjNRiLOL41nxeJXQG-w@mail.gmail.com>
-In-Reply-To: <CAMuHMdUL0Ck=6er8rvx_kCSi7KR9kjBqjNRiLOL41nxeJXQG-w@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 11 Sep 2018 09:47:16 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v5 3/3] usb: renesas_usbhs: Add multiple clocks management
+Date: Tue, 11 Sep 2018 17:47:05 +0900
+Message-Id: <1536655625-10550-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1536655625-10550-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1536655625-10550-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gR2VlcnQsDQoNClRoYW5rIHlvdSBmb3IgeW91ciBmZWVkYmFjay4NCg0KPiBTdWJqZWN0
-OiBSZTogW1BBVENIXSBhcm02NDogZHRzOiByZW5lc2FzOiByOGE3NzRhMTogQWRkIENBTiBub2Rl
-cw0KPg0KPiBIaSBGYWJyaXppbywNCj4NCj4gT24gVGh1LCBBdWcgMjMsIDIwMTggYXQgNDoyMiBQ
-TSBGYWJyaXppbyBDYXN0cm8NCj4gPGZhYnJpemlvLmNhc3Ryb0BicC5yZW5lc2FzLmNvbT4gd3Jv
-dGU6DQo+ID4gRnJvbTogQ2hyaXMgUGF0ZXJzb24gPGNocmlzLnBhdGVyc29uMkByZW5lc2FzLmNv
-bT4NCj4gPg0KPiA+IEFkZCB0aGUgZGV2aWNlIG5vZGVzIGZvciBib3RoIFJaL0cyTSBDQU4gY2hh
-bm5lbHMuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBDaHJpcyBQYXRlcnNvbiA8Y2hyaXMucGF0
-ZXJzb24yQHJlbmVzYXMuY29tPg0KPiA+IFJldmlld2VkLWJ5OiBCaWp1IERhcyA8YmlqdS5kYXNA
-YnAucmVuZXNhcy5jb20+DQo+ID4gLS0tDQo+ID4NCj4gPiBUaGlzIHBhdGNoIGRlcGVuZHMgb246
-DQo+ID4gaHR0cHM6Ly9sa21sLm9yZy9sa21sLzIwMTgvOC8yMy8xMDQ5DQo+ID4gaHR0cHM6Ly93
-d3cubWFpbC1hcmNoaXZlLmNvbS9saW51eC1yZW5lc2FzLXNvY0B2Z2VyLmtlcm5lbC5vcmcvbXNn
-MzA1NTAuaHRtbA0KPiA+DQo+ID4NCj4gPiAgYXJjaC9hcm02NC9ib290L2R0cy9yZW5lc2FzL3I4
-YTc3NGExLmR0c2kgfCAyNCArKysrKysrKysrKysrKysrKysrKysrKysNCj4gPiAgMSBmaWxlIGNo
-YW5nZWQsIDI0IGluc2VydGlvbnMoKykNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9hcmNoL2FybTY0
-L2Jvb3QvZHRzL3JlbmVzYXMvcjhhNzc0YTEuZHRzaSBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvcmVu
-ZXNhcy9yOGE3NzRhMS5kdHNpDQo+ID4gaW5kZXggNWQwMTA5YS4uY2QyMDRmNSAxMDA2NDQNCj4g
-PiAtLS0gYS9hcmNoL2FybTY0L2Jvb3QvZHRzL3JlbmVzYXMvcjhhNzc0YTEuZHRzaQ0KPiA+ICsr
-KyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvcmVuZXNhcy9yOGE3NzRhMS5kdHNpDQo+ID4gQEAgLTgx
-Niw2ICs4MTYsMzAgQEANCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICBzdGF0dXMgPSAiZGlz
-YWJsZWQiOw0KPiA+ICAgICAgICAgICAgICAgICB9Ow0KPiA+DQo+ID4gKyAgICAgICAgICAgICAg
-IGNhbjA6IGNhbkBlNmMzMDAwMCB7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgY29tcGF0
-aWJsZSA9ICJyZW5lc2FzLGNhbi1yOGE3NzRhMSIsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICJyZW5lc2FzLHJ6Zy1nZW4yLWNhbiI7DQo+DQo+IFBsZWFzZSBkb24n
-dCBpbnRyb2R1Y2UgInJlbmVzYXMscnpnLWdlbjItY2FuIiwgY2ZyLiBteSBjb21tZW50cyBpbg0K
-PiBodHRwczovL2xvcmUua2VybmVsLm9yZy9sa21sL0NBTXVITWRXUHVxZlhPZ2hfLXFwOHE2d0FU
-VTNMal9XcFgwYkFPeFBCWDc2U0t2eVhDUUBtYWlsLmdtYWlsLmNvbS8NCg0KQWdyZWVkLCB3aWxs
-IHNlbmQgYSB2Mi4NCg0KVGhhbmtzLA0KRmFiDQoNCj4NCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+
-DQo+ICAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+DQo+IC0tDQo+IEdlZXJ0IFV5dHRl
-cmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGlu
-dXgtbTY4ay5vcmcNCj4NCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNh
-bCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0KPiB3aGVuIEknbSB0YWxraW5n
-IHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBsaWtl
-IHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGludXMgVG9ydmFs
-ZHMNCg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBN
-aWxsYm9hcmQgUm9hZCwgQm91cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4g
-UmVnaXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3
-MDkuDQo=
+R-Car Gen3 needs to enable clocks of both host and peripheral.
+Since [eo]hci-platform disables the reset(s) when the drivers are
+removed, renesas_usbhs driver doesn't work correctly. To fix this
+issue, this patch adds multiple clocks management on this
+renesas_usbhs driver.
+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/usb/renesas_usbhs/common.c | 88 ++++++++++++++++++++++++++++++++++++++
+ drivers/usb/renesas_usbhs/common.h |  2 +
+ 2 files changed, 90 insertions(+)
+
+diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
+index 1d355d5..d6c39ba 100644
+--- a/drivers/usb/renesas_usbhs/common.c
++++ b/drivers/usb/renesas_usbhs/common.c
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2011 Renesas Solutions Corp.
+  * Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+  */
++#include <linux/clk.h>
+ #include <linux/err.h>
+ #include <linux/gpio.h>
+ #include <linux/io.h>
+@@ -291,6 +292,79 @@ static void usbhsc_set_buswait(struct usbhs_priv *priv)
+ 		usbhs_bset(priv, BUSWAIT, 0x000F, wait);
+ }
+ 
++static bool usbhsc_is_multi_clks(struct usbhs_priv *priv)
++{
++	if (priv->dparam.type == USBHS_TYPE_RCAR_GEN3 ||
++	    priv->dparam.type == USBHS_TYPE_RCAR_GEN3_WITH_PLL)
++		return true;
++
++	return false;
++}
++
++static int usbhsc_clk_get(struct device *dev, struct usbhs_priv *priv)
++{
++	if (!usbhsc_is_multi_clks(priv))
++		return 0;
++
++	/* The first clock should exist */
++	priv->clks[0] = of_clk_get(dev->of_node, 0);
++	if (IS_ERR(priv->clks[0]))
++		return PTR_ERR(priv->clks[0]);
++
++	/*
++	 * To backward compatibility with old DT, this driver checks the return
++	 * value if it's -ENOENT or not.
++	 */
++	priv->clks[1] = of_clk_get(dev->of_node, 1);
++	if (PTR_ERR(priv->clks[1]) == -ENOENT)
++		priv->clks[1] = NULL;
++	else if (IS_ERR(priv->clks[1]))
++		return PTR_ERR(priv->clks[1]);
++
++	return 0;
++}
++
++static void usbhsc_clk_put(struct usbhs_priv *priv)
++{
++	int i;
++
++	if (!usbhsc_is_multi_clks(priv))
++		return;
++
++	for (i = 0; i < ARRAY_SIZE(priv->clks); i++)
++		clk_put(priv->clks[i]);
++}
++
++static int usbhsc_clk_prepare_enable(struct usbhs_priv *priv)
++{
++	int i, ret;
++
++	if (!usbhsc_is_multi_clks(priv))
++		return 0;
++
++	for (i = 0; i < ARRAY_SIZE(priv->clks); i++) {
++		ret = clk_prepare_enable(priv->clks[i]);
++		if (ret) {
++			while (--i >= 0)
++				clk_disable_unprepare(priv->clks[i]);
++			return ret;
++		}
++	}
++
++	return ret;
++}
++
++static void usbhsc_clk_disable_unprepare(struct usbhs_priv *priv)
++{
++	int i;
++
++	if (!usbhsc_is_multi_clks(priv))
++		return;
++
++	for (i = 0; i < ARRAY_SIZE(priv->clks); i++)
++		clk_disable_unprepare(priv->clks[i]);
++}
++
+ /*
+  *		platform default param
+  */
+@@ -341,6 +415,10 @@ static void usbhsc_power_ctrl(struct usbhs_priv *priv, int enable)
+ 		/* enable PM */
+ 		pm_runtime_get_sync(dev);
+ 
++		/* enable clks */
++		if (usbhsc_clk_prepare_enable(priv))
++			return;
++
+ 		/* enable platform power */
+ 		usbhs_platform_call(priv, power_ctrl, pdev, priv->base, enable);
+ 
+@@ -353,6 +431,9 @@ static void usbhsc_power_ctrl(struct usbhs_priv *priv, int enable)
+ 		/* disable platform power */
+ 		usbhs_platform_call(priv, power_ctrl, pdev, priv->base, enable);
+ 
++		/* disable clks */
++		usbhsc_clk_disable_unprepare(priv);
++
+ 		/* disable PM */
+ 		pm_runtime_put_sync(dev);
+ 	}
+@@ -667,6 +748,10 @@ static int usbhs_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto probe_fail_rst;
+ 
++	ret = usbhsc_clk_get(&pdev->dev, priv);
++	if (ret)
++		goto probe_fail_clks;
++
+ 	/*
+ 	 * deviece reset here because
+ 	 * USB device might be used in boot loader.
+@@ -720,6 +805,8 @@ static int usbhs_probe(struct platform_device *pdev)
+ 	return ret;
+ 
+ probe_end_mod_exit:
++	usbhsc_clk_put(priv);
++probe_fail_clks:
+ 	reset_control_assert(priv->rsts);
+ probe_fail_rst:
+ 	usbhs_mod_remove(priv);
+@@ -750,6 +837,7 @@ static int usbhs_remove(struct platform_device *pdev)
+ 	pm_runtime_disable(&pdev->dev);
+ 
+ 	usbhs_platform_call(priv, hardware_exit, pdev);
++	usbhsc_clk_put(priv);
+ 	reset_control_assert(priv->rsts);
+ 	usbhs_mod_remove(priv);
+ 	usbhs_fifo_remove(priv);
+diff --git a/drivers/usb/renesas_usbhs/common.h b/drivers/usb/renesas_usbhs/common.h
+index bce7d35..555b3e7 100644
+--- a/drivers/usb/renesas_usbhs/common.h
++++ b/drivers/usb/renesas_usbhs/common.h
+@@ -8,6 +8,7 @@
+ #ifndef RENESAS_USB_DRIVER_H
+ #define RENESAS_USB_DRIVER_H
+ 
++#include <linux/clk.h>
+ #include <linux/extcon.h>
+ #include <linux/platform_device.h>
+ #include <linux/reset.h>
+@@ -279,6 +280,7 @@ struct usbhs_priv {
+ 
+ 	struct phy *phy;
+ 	struct reset_control *rsts;
++	struct clk *clks[2];
+ };
+ 
+ /*
+-- 
+1.9.1
