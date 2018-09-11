@@ -1,81 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57700 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729111AbeI1Qnt (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:46763 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726645AbeIKNrS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:43:49 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 09/14] arm64: dts: renesas: r8a779{7|8}0: add TPU support
-Date: Fri, 28 Sep 2018 12:20:20 +0200
-Message-Id: <dd809b7de27cff710658febdde65304ec1a3ea82.1538125184.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1538125184.git.horms+renesas@verge.net.au>
-References: <cover.1538125184.git.horms+renesas@verge.net.au>
+        Tue, 11 Sep 2018 09:47:18 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v5 1/3] usb: renesas_usbhs: Add reset_control
+Date: Tue, 11 Sep 2018 17:47:03 +0900
+Message-Id: <1536655625-10550-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1536655625-10550-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1536655625-10550-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+R-Car Gen3 needs to deassert resets of both host and peripheral.
+Since [eo]hci-platform is possible to assert the reset(s) when
+the probing failed, renesas_usbhs driver doesn't work correctly
+regardless of finished probing. To fix this issue, this patch adds
+reset_control on this renesas_usbhs driver.
 
-Describe TPU in the R8A779{7|8}0 device trees.
-
-Based on the original (and large) patches by Vladimir Barinov.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 10 ++++++++++
- arch/arm64/boot/dts/renesas/r8a77980.dtsi | 11 +++++++++++
- 2 files changed, 21 insertions(+)
+ drivers/usb/renesas_usbhs/common.c | 12 ++++++++++++
+ drivers/usb/renesas_usbhs/common.h |  2 ++
+ 2 files changed, 14 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index 934a15f9171f..cba7885cf7c3 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -614,6 +614,16 @@
- 			status = "disabled";
- 		};
+diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
+index 4310df4..1d355d5 100644
+--- a/drivers/usb/renesas_usbhs/common.c
++++ b/drivers/usb/renesas_usbhs/common.c
+@@ -12,6 +12,7 @@
+ #include <linux/of_device.h>
+ #include <linux/of_gpio.h>
+ #include <linux/pm_runtime.h>
++#include <linux/reset.h>
+ #include <linux/slab.h>
+ #include <linux/sysfs.h>
+ #include "common.h"
+@@ -574,6 +575,10 @@ static int usbhs_probe(struct platform_device *pdev)
+ 			return PTR_ERR(priv->edev);
+ 	}
  
-+		tpu: pwm@e6e80000 {
-+			compatible = "renesas,tpu-r8a77970", "renesas,tpu";
-+			reg = <0 0xe6e80000 0 0x148>;
-+			interrupts = <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 304>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 304>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
- 
- 		vin0: video@e6ef0000 {
- 			compatible = "renesas,vin-r8a77970";
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-index ba1d281deb07..d4952b527d14 100644
---- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -666,6 +666,17 @@
- 			status = "disabled";
- 		};
- 
-+		tpu: pwm@e6e80000 {
-+			compatible = "renesas,tpu-r8a77980", "renesas,tpu";
-+			reg = <0 0xe6e80000 0 0x148>;
-+			interrupts = <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 304>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 304>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
++	priv->rsts = devm_reset_control_array_get_optional_shared(&pdev->dev);
++	if (IS_ERR(priv->rsts))
++		return PTR_ERR(priv->rsts);
 +
- 		vin0: video@e6ef0000 {
- 			compatible = "renesas,vin-r8a77980";
- 			reg = <0 0xe6ef0000 0 0x1000>;
+ 	/*
+ 	 * care platform info
+ 	 */
+@@ -658,6 +663,10 @@ static int usbhs_probe(struct platform_device *pdev)
+ 	/* dev_set_drvdata should be called after usbhs_mod_init */
+ 	platform_set_drvdata(pdev, priv);
+ 
++	ret = reset_control_deassert(priv->rsts);
++	if (ret)
++		goto probe_fail_rst;
++
+ 	/*
+ 	 * deviece reset here because
+ 	 * USB device might be used in boot loader.
+@@ -711,6 +720,8 @@ static int usbhs_probe(struct platform_device *pdev)
+ 	return ret;
+ 
+ probe_end_mod_exit:
++	reset_control_assert(priv->rsts);
++probe_fail_rst:
+ 	usbhs_mod_remove(priv);
+ probe_end_fifo_exit:
+ 	usbhs_fifo_remove(priv);
+@@ -739,6 +750,7 @@ static int usbhs_remove(struct platform_device *pdev)
+ 	pm_runtime_disable(&pdev->dev);
+ 
+ 	usbhs_platform_call(priv, hardware_exit, pdev);
++	reset_control_assert(priv->rsts);
+ 	usbhs_mod_remove(priv);
+ 	usbhs_fifo_remove(priv);
+ 	usbhs_pipe_remove(priv);
+diff --git a/drivers/usb/renesas_usbhs/common.h b/drivers/usb/renesas_usbhs/common.h
+index 6137f79..bce7d35 100644
+--- a/drivers/usb/renesas_usbhs/common.h
++++ b/drivers/usb/renesas_usbhs/common.h
+@@ -10,6 +10,7 @@
+ 
+ #include <linux/extcon.h>
+ #include <linux/platform_device.h>
++#include <linux/reset.h>
+ #include <linux/usb/renesas_usbhs.h>
+ 
+ struct usbhs_priv;
+@@ -277,6 +278,7 @@ struct usbhs_priv {
+ 	struct usbhs_fifo_info fifo_info;
+ 
+ 	struct phy *phy;
++	struct reset_control *rsts;
+ };
+ 
+ /*
 -- 
-2.11.0
+1.9.1
