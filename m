@@ -1,20 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:44017 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729040AbeI1QHO (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52866 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbeIKSqx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:07:14 -0400
-MIME-Version: 1.0
-References: <1536580430-17432-1-git-send-email-fabrizio.castro@bp.renesas.com> <1536580430-17432-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1536580430-17432-2-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 28 Sep 2018 11:44:07 +0200
-Message-ID: <CAMuHMdVmkLSVoUPX8QcPp5AWeae7iD4Vpz8QjA3nJw=T4J7Pkg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: arm: Document RZ/G2E SoC DT bindings
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+        Tue, 11 Sep 2018 14:46:53 -0400
+Date: Tue, 11 Sep 2018 15:47:24 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
@@ -22,45 +17,27 @@ Cc: Rob Herring <robh+dt@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH 1/3] dt-bindings: arm: Document RZ/G2E SoC DT bindings
+Message-ID: <20180911134724.wfztj66ovvrao32x@verge.net.au>
+References: <1536580430-17432-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1536580430-17432-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <CAMuHMdVUz7Ss0a_zyDWdeaRjBJ5aXwryjQCsw-r2nFZKsHDdbg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVUz7Ss0a_zyDWdeaRjBJ5aXwryjQCsw-r2nFZKsHDdbg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Sep 10, 2018 at 1:54 PM Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> Add device tree bindings documentation for Renesas RZ/G2E (r8a774c0)
-> SoC.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-> ---
->  Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-> index 4a03a6b..f5e0f82 100644
-> --- a/Documentation/devicetree/bindings/arm/shmobile.txt
-> +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-> @@ -27,6 +27,8 @@ SoCs:
->      compatible = "renesas,r8a77470"
->    - RZ/G2M (R8A774A1)
->      compatible = "renesas,r8a774a1"
-> +  - RZ/G2E (RA8774C0)
+On Mon, Sep 10, 2018 at 04:34:14PM +0200, Geert Uytterhoeven wrote:
+> On Mon, Sep 10, 2018 at 1:54 PM Fabrizio Castro
+> <fabrizio.castro@bp.renesas.com> wrote:
+> > Add device tree bindings documentation for Renesas RZ/G2E (r8a774c0)
+> > SoC.
+> >
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Silly typo no one noticed before: s/A8/8A/
-
-> +    compatible = "renesas,r8a774c0"
->    - R-Car M1A (R8A77781)
->      compatible = "renesas,r8a7778"
->    - R-Car H1 (R8A77790)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks, applied for v4.20.
