@@ -1,199 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbeIMOTn (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:56426 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726970AbeILPp6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:19:43 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Wed, 12 Sep 2018 11:45:58 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 49/58] arm64: dts: renesas: r8a77990: Use CPG/MSSR and SYSC binding definitions
-Date: Thu, 13 Sep 2018 11:09:44 +0200
-Message-Id: <83e7d2ec0d7bd57666c6f8fd210255e0ec155c38.1536828567.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
-References: <cover.1536828567.git.horms+renesas@verge.net.au>
+        Biju Das <biju.das@bp.renesas.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: [PATCH 0/3] Add clocks to r8a774c0
+Date: Wed, 12 Sep 2018 11:41:51 +0100
+Message-Id: <1536748914-27416-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Dear All,
 
-Use the SoC-specific CPG/MSSR include file to allow future use of
-R8A77990_CLK_* symbols.
-Replace the hardcoded power domain indices by R8A77990_PD_* symbols.
+this series adds clock support for the RZ/G2E (a.k.a. r8a774c0),
+and applies on top of renesas-devel-20180910-v4.19-rc3.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 36 +++++++++++++++----------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+Thanks,
+Fab
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index 2ee0edfb18d4..e2c2d1480a68 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -5,7 +5,7 @@
-  * Copyright (C) 2018 Renesas Electronics Corp.
-  */
- 
--#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+#include <dt-bindings/clock/r8a77990-cpg-mssr.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/power/r8a77990-sysc.h>
- 
-@@ -22,7 +22,7 @@
- 			compatible = "arm,cortex-a53", "arm,armv8";
- 			reg = <0>;
- 			device_type = "cpu";
--			power-domains = <&sysc 5>;
-+			power-domains = <&sysc R8A77990_PD_CA53_CPU0>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
- 		};
-@@ -31,14 +31,14 @@
- 			compatible = "arm,cortex-a53", "arm,armv8";
- 			reg = <1>;
- 			device_type = "cpu";
--			power-domains = <&sysc 6>;
-+			power-domains = <&sysc R8A77990_PD_CA53_CPU1>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
- 		};
- 
- 		L2_CA53: cache-controller-0 {
- 			compatible = "cache";
--			power-domains = <&sysc 21>;
-+			power-domains = <&sysc R8A77990_PD_CA53_SCU>;
- 			cache-unified;
- 			cache-level = <2>;
- 		};
-@@ -75,7 +75,7 @@
- 				     "renesas,rcar-gen3-wdt";
- 			reg = <0 0xe6020000 0 0x0c>;
- 			clocks = <&cpg CPG_MOD 402>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 402>;
- 			status = "disabled";
- 		};
-@@ -91,7 +91,7 @@
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 912>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 912>;
- 		};
- 
-@@ -106,7 +106,7 @@
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 911>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 911>;
- 		};
- 
-@@ -121,7 +121,7 @@
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 910>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 910>;
- 		};
- 
-@@ -136,7 +136,7 @@
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 909>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 909>;
- 		};
- 
-@@ -151,7 +151,7 @@
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 908>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 908>;
- 		};
- 
-@@ -166,7 +166,7 @@
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 907>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 907>;
- 		};
- 
-@@ -181,7 +181,7 @@
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 906>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 906>;
- 		};
- 
-@@ -329,7 +329,7 @@
- 					  "ch20", "ch21", "ch22", "ch23",
- 					  "ch24";
- 			clocks = <&cpg CPG_MOD 812>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			phy-mode = "rgmii";
- 			#address-cells = <1>;
-@@ -414,7 +414,7 @@
- 			interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 310>;
- 			clock-names = "fck";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 310>;
- 			status = "disabled";
- 		};
-@@ -437,7 +437,7 @@
- 			clocks = <&cpg CPG_MOD 703>;
- 			phys = <&usb2_phy0>;
- 			phy-names = "usb";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 703>;
- 			status = "disabled";
- 		};
-@@ -450,7 +450,7 @@
- 			phys = <&usb2_phy0>;
- 			phy-names = "usb";
- 			companion = <&ohci0>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 703>;
- 			status = "disabled";
- 		};
-@@ -461,7 +461,7 @@
- 			reg = <0 0xee080200 0 0x700>;
- 			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 703>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 703>;
- 			#phy-cells = <0>;
- 			status = "disabled";
-@@ -480,7 +480,7 @@
- 					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
- 			clocks = <&cpg CPG_MOD 408>;
- 			clock-names = "clk";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 408>;
- 		};
- 
+
+Fabrizio Castro (3):
+  clk: renesas: Add r8a774c0 CPG Core Clock Definitions
+  clk: renesas: cpg-mssr: Add r8a774c0 support
+  dt-bindings: clock: renesas: cpg-mssr: Document r8a774c0
+
+ .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   7 +-
+ drivers/clk/renesas/Kconfig                        |   5 +
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/r8a774c0-cpg-mssr.c            | 286 +++++++++++++++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
+ drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
+ include/dt-bindings/clock/r8a774c0-cpg-mssr.h      |  60 +++++
+ 7 files changed, 363 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/clk/renesas/r8a774c0-cpg-mssr.c
+ create mode 100644 include/dt-bindings/clock/r8a774c0-cpg-mssr.h
+
 -- 
-2.11.0
+2.7.4
