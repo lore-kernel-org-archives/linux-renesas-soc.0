@@ -1,110 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbeIMOTJ (ORCPT
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:40478 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726672AbeILRky (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:19:09 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 32/58] arm64: dts: renesas: r8a774a1: Add all MSIOF nodes
-Date: Thu, 13 Sep 2018 11:09:27 +0200
-Message-Id: <c512110d64a00cc0714061d54261b0f03c7202be.1536828567.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
-References: <cover.1536828567.git.horms+renesas@verge.net.au>
+        Wed, 12 Sep 2018 13:40:54 -0400
+Received: by mail-ua1-f67.google.com with SMTP id 101-v6so1494709uav.7
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Sep 2018 05:36:34 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180810122602.5w2tackcqwoeclj6@verge.net.au> <TYXPR01MB1518C6FA9560CD45BF7684F9A8390@TYXPR01MB1518.jpnprd01.prod.outlook.com>
+ <20180817091956.vm77iv73cwkkjelv@verge.net.au> <20180817093854.dz6xqwqcf4z7ncxu@verge.net.au>
+ <20180817105237.7tnijrheywh3fx46@verge.net.au>
+In-Reply-To: <20180817105237.7tnijrheywh3fx46@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 12 Sep 2018 14:36:21 +0200
+Message-ID: <CAMuHMdVK8GYXfW=f=5VntHozN__gvuGZLbcxPSHL5ueiis3DbA@mail.gmail.com>
+Subject: Re: [LTSI-dev] [GIT PULL LTSI-4.14] Renesas SoCs and Drivers to v4.18-rc8
+To: Simon Horman <horms@verge.net.au>
+Cc: Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+        ltsi-dev@lists.linuxfoundation.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+Hi Simon,
 
-Add the device nodes for all MSIOF SPI controllers on RZ/G2M SoC.
+On Fri, Aug 17, 2018 at 12:53 PM Simon Horman <horms@verge.net.au> wrote:
+> please find the details of the corrected tag below:
+>
+>
+> The following changes since commit 2ae6c0413b4768f9d8fc6f718a732f9dae014b67:
+>
+>   Linux 4.14.61 (2018-08-06 16:20:52 +0200)
+>
+> are available in the git repository at:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-backport.git backport/v4.14.61/snapshot-to-v4.18-rc8+fixes-flattened
+>
+> for you to fetch changes up to cc88cfdc0571385f098e82db47f5a16b6f44726e:
+>
+>   i2c: rcar: use the new get_bus_free callback (2018-08-09 17:22:00 +0200)
+>
+> ----------------------------------------------------------------
+> LTSI-v4.14 Backports for Renesas SoCs (to v4.18-rc8)
+>
+> Base:
+> * v4.14.61
+> * Similar backport of components for Renesas SoCs to v4.17
+>
+> Backports of the following components to their standard as of v4.18-rc8:
 
-Based on several similar patches of the R8A7796 device tree
-by Geert Uytterhoeven <geert+renesas@glider.be>
-and Simon Horman <horms+renesas@verge.net.au>.
+> * pcie-rcar
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 62 +++++++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+The backports of 3a8f77e48666a39a ("PCI: OF: Add generic function to parse
+and allocate PCI resources") and f7e1c6461e04afb8 ("PCI: rcar: Reuse
+generic pci_parse_request_of_pci_ranges() function") had to be adjusted, as
+v4.14.67 gained commit 0e66392d985c4595 ("PCI: OF: Fix I/O space page
+leak"), which is different from the upstream solution due to dependencies.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index 8589122e3c94..f379de8404cb 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -857,6 +857,68 @@
- 			status = "disabled";
- 		};
- 
-+		msiof0: spi@e6e90000 {
-+			compatible = "renesas,msiof-r8a774a1",
-+				     "renesas,rcar-gen3-msiof";
-+			reg = <0 0xe6e90000 0 0x0064>;
-+			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 211>;
-+			dmas = <&dmac1 0x41>, <&dmac1 0x40>,
-+			       <&dmac2 0x41>, <&dmac2 0x40>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 211>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof1: spi@e6ea0000 {
-+			compatible = "renesas,msiof-r8a774a1",
-+				     "renesas,rcar-gen3-msiof";
-+			reg = <0 0xe6ea0000 0 0x0064>;
-+			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 210>;
-+			dmas = <&dmac1 0x43>, <&dmac1 0x42>,
-+			       <&dmac2 0x43>, <&dmac2 0x42>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 210>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof2: spi@e6c00000 {
-+			compatible = "renesas,msiof-r8a774a1",
-+				     "renesas,rcar-gen3-msiof";
-+			reg = <0 0xe6c00000 0 0x0064>;
-+			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 209>;
-+			dmas = <&dmac0 0x45>, <&dmac0 0x44>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 209>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof3: spi@e6c10000 {
-+			compatible = "renesas,msiof-r8a774a1",
-+				     "renesas,rcar-gen3-msiof";
-+			reg = <0 0xe6c10000 0 0x0064>;
-+			interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 208>;
-+			dmas = <&dmac0 0x47>, <&dmac0 0x46>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 208>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		sdhi0: sd@ee100000 {
- 			compatible = "renesas,sdhi-r8a774a1",
- 				     "renesas,rcar-gen3-sdhi";
+Resulting change:
+
+--- a/drivers/pci/of.c
++++ b/drivers/pci/of.c
+@@ -112,7 +112,7 @@ int pci_parse_request_of_pci_ranges(struct device *dev,
+
+                switch (resource_type(res)) {
+                case IORESOURCE_IO:
+-                       err = pci_remap_iospace(res, iobase);
++                       err = devm_pci_remap_iospace(dev, res, iobase);
+                        if (err) {
+                                dev_warn(dev, "error %d: failed to map
+resource %pR\n",
+                                         err, res);
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
