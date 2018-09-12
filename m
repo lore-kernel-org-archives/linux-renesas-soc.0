@@ -1,48 +1,61 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:35927 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727134AbeINRQn (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Sep 2018 13:16:43 -0400
-MIME-Version: 1.0
-References: <c94a4ad6-93ee-05e4-e2c1-e8d24d3bc75e@cogentembedded.com> <42923b22-9ce9-b9cc-c569-0e364b63b783@cogentembedded.com>
-In-Reply-To: <42923b22-9ce9-b9cc-c569-0e364b63b783@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 14 Sep 2018 14:02:20 +0200
-Message-ID: <CAMuHMdUtb9v-AJW1u-OxuO9um6-ri3W0h8scC4eR8+tusp+noQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] dt-bindings: timer: renesas: cmt: document R-Car
- gen3 support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: [PATCH v2 2/3] dt-bindings: timer: renesas: cmt: document R-Car gen3
+ support
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
         Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+References: <c94a4ad6-93ee-05e4-e2c1-e8d24d3bc75e@cogentembedded.com>
+Message-ID: <42923b22-9ce9-b9cc-c569-0e364b63b783@cogentembedded.com>
+Date: Wed, 12 Sep 2018 23:15:28 +0300
+MIME-Version: 1.0
+In-Reply-To: <c94a4ad6-93ee-05e4-e2c1-e8d24d3bc75e@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Sep 12, 2018 at 10:16 PM Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Document support for the R-Car gen3 CMT types 0/1 bindings -- they seem
-> to be the same CMT types 0/1 as in the R-Car gen2 SoCs.
->
-> Also document R8A779{7|8}0 bindings as these are the R-Car gen3 SoCs for
-> which the initial support was done.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Document support for the R-Car gen3 CMT types 0/1 bindings -- they seem
+to be the same CMT types 0/1 as in the R-Car gen2 SoCs.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Also document R8A779{7|8}0 bindings as these are the R-Car gen3 SoCs for
+which the initial support was done.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-                        Geert
+---
+Changes in version 2:
+- new patch, split from the next one.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ Documentation/devicetree/bindings/timer/renesas,cmt.txt |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: tip/Documentation/devicetree/bindings/timer/renesas,cmt.txt
+===================================================================
+--- tip.orig/Documentation/devicetree/bindings/timer/renesas,cmt.txt
++++ tip/Documentation/devicetree/bindings/timer/renesas,cmt.txt
+@@ -34,6 +34,10 @@ Required Properties:
+     - "renesas,r8a7793-cmt1" for the 48-bit CMT1 device included in r8a7793.
+     - "renesas,r8a7794-cmt0" for the 32-bit CMT0 device included in r8a7794.
+     - "renesas,r8a7794-cmt1" for the 48-bit CMT1 device included in r8a7794.
++    - "renesas,r8a77970-cmt0" for the 32-bit CMT0 device included in r8a77970.
++    - "renesas,r8a77970-cmt1" for the 48-bit CMT1 device included in r8a77970.
++    - "renesas,r8a77980-cmt0" for the 32-bit CMT0 device included in r8a77980.
++    - "renesas,r8a77980-cmt1" for the 48-bit CMT1 device included in r8a77980.
+ 
+     - "renesas,rcar-gen2-cmt0" for 32-bit CMT0 devices included in R-Car Gen2
+ 		and RZ/G1.
+@@ -41,6 +45,9 @@ Required Properties:
+ 		and RZ/G1.
+ 		These are fallbacks for r8a73a4, R-Car Gen2 and RZ/G1 entries
+ 		listed above.
++    - "renesas,rcar-gen3-cmt0" for 32-bit CMT0 devices included in R-Car Gen3.
++    - "renesas,rcar-gen3-cmt1" for 48-bit CMT1 devices included in R-Car Gen3.
++		These are fallbacks for R-Car Gen3 entries listed above.
+ 
+   - reg: base address and length of the registers block for the timer module.
+   - interrupts: interrupt-specifier for the timer, one per channel.
