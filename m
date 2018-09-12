@@ -1,47 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:45998 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726221AbeILRJc (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:41698 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726138AbeILOqt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Sep 2018 13:09:32 -0400
-MIME-Version: 1.0
-References: <878t4eqdkw.wl-kuninori.morimoto.gx@renesas.com>
- <20180911074802.GO2634@vkoul-mobl> <CAMuHMdUGqS0PgS72LFTZS9GmgWZJDjOcTjfxnC4fLCVwbJeA5g@mail.gmail.com>
- <20180912094255.GI2766@vkoul-mobl>
-In-Reply-To: <20180912094255.GI2766@vkoul-mobl>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 12 Sep 2018 14:05:06 +0200
-Message-ID: <CAMuHMdVweROjzjkUf2qhs8scdN0Hu2i+ZaxKdKmMOZ32hxM4eA@mail.gmail.com>
-Subject: Re: [PATCH] dma: sh: convert to SPDX identifiers
-To: vkoul@kernel.org
+        Wed, 12 Sep 2018 10:46:49 -0400
+Date: Wed, 12 Sep 2018 15:12:55 +0530
+From: Vinod <vkoul@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Dan Williams <dan.j.williams@intel.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>,
         dmaengine@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] dma: sh: convert to SPDX identifiers
+Message-ID: <20180912094255.GI2766@vkoul-mobl>
+References: <878t4eqdkw.wl-kuninori.morimoto.gx@renesas.com>
+ <20180911074802.GO2634@vkoul-mobl>
+ <CAMuHMdUGqS0PgS72LFTZS9GmgWZJDjOcTjfxnC4fLCVwbJeA5g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUGqS0PgS72LFTZS9GmgWZJDjOcTjfxnC4fLCVwbJeA5g@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Vinod,
+On 11-09-18, 10:17, Geert Uytterhoeven wrote:
+> Hi Vinod,
+> 
+> On Tue, Sep 11, 2018 at 9:48 AM Vinod <vkoul@kernel.org> wrote:
+> > On 07-09-18, 01:58, Kuninori Morimoto wrote:
+> > > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> > >
+> > > This patch updates license to use SPDX-License-Identifier
+> > > instead of verbose license text.
+> >
+> > Thanks but the style is not consistent in files :(
+> >
+> > Can we use one only?
+> 
+> Please read
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/license-rules.rst#n69
+> 
+>     2. Style:
+> 
+>        The SPDX license identifier is added in form of a comment.  The comment
+>        style depends on the file type::
+> 
+>           C source: // SPDX-License-Identifier: <SPDX License Expression>
+>           C header: /* SPDX-License-Identifier: <SPDX License Expression> */
 
-On Wed, Sep 12, 2018 at 11:43 AM Vinod <vkoul@kernel.org> wrote:
-> Btw I have sent the series for dma_slave_config direction removal, sh/
-> drivers turned to be bit more, can you guys take care of it please?
+Right and I missed patch is doing for both c & h files, my bad
 
-I'm sorry, I can't seem to find that.
-Can you please provide a link to the patch series?
+Applying this now.
 
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Btw I have sent the series for dma_slave_config direction removal, sh/
+drivers turned to be bit more, can you guys take care of it please?
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+~Vinod
