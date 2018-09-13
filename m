@@ -1,60 +1,164 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:29972 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727124AbeIQWE1 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbeIMOTi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Sep 2018 18:04:27 -0400
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v3 0/3] Renesas R9A06G032 PINCTRL Driver
-Date: Mon, 17 Sep 2018 17:36:06 +0100
-Message-Id: <20180917163609.30457-1-phil.edworthy@renesas.com>
+        Thu, 13 Sep 2018 10:19:38 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 27/58] arm64: dts: renesas: r8a774a1: Add GPIO device nodes
+Date: Thu, 13 Sep 2018 11:09:22 +0200
+Message-Id: <53ae5809d306bca13b2d444871374515e08c7dff.1536828567.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
+References: <cover.1536828567.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This implements the pinctrl driver for the RZ/N1 family of devices, including
-the R9A06G032 (RZ/N1D) device.
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-This series was originally written by Michel Pollet whilst at Renesas, and I
-have taken over this work.
+Add GPIO device nodes to the DT of the r8a774a1 SoC.
 
-Main changes:
-v3:
- - Use standard DT props instead of proprietary ones.
- - Replace virtual pins used for MDIO muxing with extra funcs.
- - Use pinctrl_utils funcs to handle the maps.
- - Remove the dbg functions to keep things simple.
- - Change the way the functions are defined so it is easy to check
-   against the hardware numbering.
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 120 ++++++++++++++++++++++++++++++
+ 1 file changed, 120 insertions(+)
 
-v2:
- - Change to generic rzn1 family driver, instead of device specific.
- - Review comments fixed.
- - Fix error handling during probe
-
-Phil Edworthy (3):
-  dt-bindings: pinctrl: renesas,rzn1-pinctrl: documentation
-  pinctrl: renesas: Renesas RZ/N1 pinctrl driver
-  ARM: dts: r9a06g032: Add pinctrl node
-
- .../bindings/pinctrl/renesas,rzn1-pinctrl.txt | 129 +++
- arch/arm/boot/dts/r9a06g032.dtsi              |   8 +
- drivers/pinctrl/Kconfig                       |  10 +
- drivers/pinctrl/Makefile                      |   1 +
- drivers/pinctrl/pinctrl-rzn1.c                | 926 ++++++++++++++++++
- include/dt-bindings/pinctrl/rzn1-pinctrl.h    | 141 +++
- 6 files changed, 1215 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
- create mode 100644 drivers/pinctrl/pinctrl-rzn1.c
- create mode 100644 include/dt-bindings/pinctrl/rzn1-pinctrl.h
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index c956bf7ecde9..4c251c48619b 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -133,6 +133,126 @@
+ 			status = "disabled";
+ 		};
+ 
++		gpio0: gpio@e6050000 {
++			compatible = "renesas,gpio-r8a774a1",
++				     "renesas,rcar-gen3-gpio";
++			reg = <0 0xe6050000 0 0x50>;
++			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 0 16>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 912>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 912>;
++		};
++
++		gpio1: gpio@e6051000 {
++			compatible = "renesas,gpio-r8a774a1",
++				     "renesas,rcar-gen3-gpio";
++			reg = <0 0xe6051000 0 0x50>;
++			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 32 29>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 911>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 911>;
++		};
++
++		gpio2: gpio@e6052000 {
++			compatible = "renesas,gpio-r8a774a1",
++				     "renesas,rcar-gen3-gpio";
++			reg = <0 0xe6052000 0 0x50>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 64 15>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 910>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 910>;
++		};
++
++		gpio3: gpio@e6053000 {
++			compatible = "renesas,gpio-r8a774a1",
++				     "renesas,rcar-gen3-gpio";
++			reg = <0 0xe6053000 0 0x50>;
++			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 96 16>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 909>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 909>;
++		};
++
++		gpio4: gpio@e6054000 {
++			compatible = "renesas,gpio-r8a774a1",
++				     "renesas,rcar-gen3-gpio";
++			reg = <0 0xe6054000 0 0x50>;
++			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 128 18>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 908>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 908>;
++		};
++
++		gpio5: gpio@e6055000 {
++			compatible = "renesas,gpio-r8a774a1",
++				     "renesas,rcar-gen3-gpio";
++			reg = <0 0xe6055000 0 0x50>;
++			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 160 26>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 907>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 907>;
++		};
++
++		gpio6: gpio@e6055400 {
++			compatible = "renesas,gpio-r8a774a1",
++				     "renesas,rcar-gen3-gpio";
++			reg = <0 0xe6055400 0 0x50>;
++			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 192 32>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 906>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 906>;
++		};
++
++		gpio7: gpio@e6055800 {
++			compatible = "renesas,gpio-r8a774a1",
++				     "renesas,rcar-gen3-gpio";
++			reg = <0 0xe6055800 0 0x50>;
++			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 224 4>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 905>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 905>;
++		};
++
+ 		pfc: pin-controller@e6060000 {
+ 			compatible = "renesas,pfc-r8a774a1";
+ 			reg = <0 0xe6060000 0 0x50c>;
 -- 
-2.17.1
+2.11.0
