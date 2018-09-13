@@ -1,178 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:60972 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727035AbeIDQf3 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbeIMOTM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Sep 2018 12:35:29 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 06/16] drm: rcar-du: Perform the initial CRTC setup from rcar_du_crtc_get()
-Date: Tue,  4 Sep 2018 15:10:17 +0300
-Message-Id: <20180904121027.24031-7-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180904121027.24031-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180904121027.24031-1-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 13 Sep 2018 10:19:12 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 36/58] arm64: dts: renesas: r8a774a1: Add FCPF and FCPV instances
+Date: Thu, 13 Sep 2018 11:09:31 +0200
+Message-Id: <282419526ad7ba3d0ff5e53c20a5f4f5a273197f.1536828567.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
+References: <cover.1536828567.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The rcar_du_crtc_get() function is always immediately followed by a call
-to rcar_du_crtc_setup(). Call the later from the former to simplify the
-code, and add a comment to explain how the get and put calls are
-balanced.
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Add FCPF and FCPV instances to the r8a774a1 dtsi, similarly
+to what was done for the r8a7796 with commit 41dbbf0c5b4e
+("arm64: dts: r8a7796: Add FCPF and FCPV instances"),
+commit 69490bc9665d ("arm64: dts: renesas: r8a7796: Point
+FDP1 via FCPF to IPMMU-VI0"), and commit cef942d0bd89 ("arm64:
+dts: renesas: r8a7796: Point VSPI via FCPVI to IPMMU-VC0").
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 107 +++++++++++++++++----------------
- 1 file changed, 56 insertions(+), 51 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 52 +++++++++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 4c9572d7ea89..1d81eb244441 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -66,39 +66,6 @@ static void rcar_du_crtc_clr_set(struct rcar_du_crtc *rcrtc, u32 reg,
- 	rcar_du_write(rcdu, rcrtc->mmio_offset + reg, (value & ~clr) | set);
- }
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index 50c9265aa1c4..5d0109a376c2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -1385,6 +1385,58 @@
+ 			resets = <&cpg 408>;
+ 		};
  
--static int rcar_du_crtc_get(struct rcar_du_crtc *rcrtc)
--{
--	int ret;
--
--	ret = clk_prepare_enable(rcrtc->clock);
--	if (ret < 0)
--		return ret;
--
--	ret = clk_prepare_enable(rcrtc->extclock);
--	if (ret < 0)
--		goto error_clock;
--
--	ret = rcar_du_group_get(rcrtc->group);
--	if (ret < 0)
--		goto error_group;
--
--	return 0;
--
--error_group:
--	clk_disable_unprepare(rcrtc->extclock);
--error_clock:
--	clk_disable_unprepare(rcrtc->clock);
--	return ret;
--}
--
--static void rcar_du_crtc_put(struct rcar_du_crtc *rcrtc)
--{
--	rcar_du_group_put(rcrtc->group);
--
--	clk_disable_unprepare(rcrtc->extclock);
--	clk_disable_unprepare(rcrtc->clock);
--}
--
- /* -----------------------------------------------------------------------------
-  * Hardware Setup
-  */
-@@ -546,6 +513,51 @@ static void rcar_du_crtc_setup(struct rcar_du_crtc *rcrtc)
- 	drm_crtc_vblank_on(&rcrtc->crtc);
- }
- 
-+static int rcar_du_crtc_get(struct rcar_du_crtc *rcrtc)
-+{
-+	int ret;
++		fcpf0: fcp@fe950000 {
++			compatible = "renesas,fcpf";
++			reg = <0 0xfe950000 0 0x200>;
++			clocks = <&cpg CPG_MOD 615>;
++			power-domains = <&sysc 14>;
++			resets = <&cpg 615>;
++		};
 +
-+	/*
-+	 * Guard against double-get, as the function is called from both the
-+	 * .atomic_enable() and .atomic_begin() handlers.
-+	 */
-+	if (rcrtc->initialized)
-+		return 0;
++		fcpvb0: fcp@fe96f000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfe96f000 0 0x200>;
++			clocks = <&cpg CPG_MOD 607>;
++			power-domains = <&sysc 14>;
++			resets = <&cpg 607>;
++		};
 +
-+	ret = clk_prepare_enable(rcrtc->clock);
-+	if (ret < 0)
-+		return ret;
++		fcpvd0: fcp@fea27000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea27000 0 0x200>;
++			clocks = <&cpg CPG_MOD 603>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 603>;
++			iommus = <&ipmmu_vi0 8>;
++		};
 +
-+	ret = clk_prepare_enable(rcrtc->extclock);
-+	if (ret < 0)
-+		goto error_clock;
++		fcpvd1: fcp@fea2f000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea2f000 0 0x200>;
++			clocks = <&cpg CPG_MOD 602>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 602>;
++			iommus = <&ipmmu_vi0 9>;
++		};
 +
-+	ret = rcar_du_group_get(rcrtc->group);
-+	if (ret < 0)
-+		goto error_group;
++		fcpvd2: fcp@fea37000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea37000 0 0x200>;
++			clocks = <&cpg CPG_MOD 601>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 601>;
++			iommus = <&ipmmu_vi0 10>;
++		};
 +
-+	rcar_du_crtc_setup(rcrtc);
-+	rcrtc->initialized = true;
++		fcpvi0: fcp@fe9af000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfe9af000 0 0x200>;
++			clocks = <&cpg CPG_MOD 611>;
++			power-domains = <&sysc 14>;
++			resets = <&cpg 611>;
++			iommus = <&ipmmu_vc0 19>;
++		};
 +
-+	return 0;
-+
-+error_group:
-+	clk_disable_unprepare(rcrtc->extclock);
-+error_clock:
-+	clk_disable_unprepare(rcrtc->clock);
-+	return ret;
-+}
-+
-+static void rcar_du_crtc_put(struct rcar_du_crtc *rcrtc)
-+{
-+	rcar_du_group_put(rcrtc->group);
-+
-+	clk_disable_unprepare(rcrtc->extclock);
-+	clk_disable_unprepare(rcrtc->clock);
-+
-+	rcrtc->initialized = false;
-+}
-+
- static void rcar_du_crtc_start(struct rcar_du_crtc *rcrtc)
- {
- 	bool interlaced;
-@@ -639,16 +651,7 @@ static void rcar_du_crtc_atomic_enable(struct drm_crtc *crtc,
- {
- 	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
- 
--	/*
--	 * If the CRTC has already been setup by the .atomic_begin() handler we
--	 * can skip the setup stage.
--	 */
--	if (!rcrtc->initialized) {
--		rcar_du_crtc_get(rcrtc);
--		rcar_du_crtc_setup(rcrtc);
--		rcrtc->initialized = true;
--	}
--
-+	rcar_du_crtc_get(rcrtc);
- 	rcar_du_crtc_start(rcrtc);
- }
- 
-@@ -667,7 +670,6 @@ static void rcar_du_crtc_atomic_disable(struct drm_crtc *crtc,
- 	}
- 	spin_unlock_irq(&crtc->dev->event_lock);
- 
--	rcrtc->initialized = false;
- 	rcrtc->outputs = 0;
- }
- 
-@@ -680,14 +682,17 @@ static void rcar_du_crtc_atomic_begin(struct drm_crtc *crtc,
- 
- 	/*
- 	 * If a mode set is in progress we can be called with the CRTC disabled.
--	 * We then need to first setup the CRTC in order to configure planes.
--	 * The .atomic_enable() handler will notice and skip the CRTC setup.
-+	 * We thus need to first get and setup the CRTC in order to configure
-+	 * planes. We must *not* put the CRTC in .atomic_flush(), as it must be
-+	 * kept awake until the .atomic_enable() call that will follow. The get
-+	 * operation in .atomic_enable() will in that case be a no-op, and the
-+	 * CRTC will be put later in .atomic_disable().
-+	 *
-+	 * If a mode set is not in progress the CRTC is enabled, and the
-+	 * following get call will be a no-op. There is thus no need to belance
-+	 * it in .atomic_flush() either.
- 	 */
--	if (!rcrtc->initialized) {
--		rcar_du_crtc_get(rcrtc);
--		rcar_du_crtc_setup(rcrtc);
--		rcrtc->initialized = true;
--	}
-+	rcar_du_crtc_get(rcrtc);
- 
- 	if (rcar_du_has(rcrtc->group->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
- 		rcar_du_vsp_atomic_begin(rcrtc);
+ 		prr: chipid@fff00044 {
+ 			compatible = "renesas,prr";
+ 			reg = <0 0xfff00044 0 4>;
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
