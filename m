@@ -1,65 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:62573 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726404AbeIZPXk (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34550 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbeIMORX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Sep 2018 11:23:40 -0400
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v5 3/3] ARM: dts: r9a06g032: Add pinctrl node
-Date: Wed, 26 Sep 2018 10:10:53 +0100
-Message-Id: <20180926091053.21255-4-phil.edworthy@renesas.com>
-In-Reply-To: <20180926091053.21255-1-phil.edworthy@renesas.com>
-References: <20180926091053.21255-1-phil.edworthy@renesas.com>
+        Thu, 13 Sep 2018 10:17:23 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 07/13] ARM: dts: silk: Add DA9063 PMIC node
+Date: Thu, 13 Sep 2018 11:08:30 +0200
+Message-Id: <bce6d67d035eeaea20dcee12b1362cebde6d9b35.1536824376.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1536824376.git.horms+renesas@verge.net.au>
+References: <cover.1536824376.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This provides a pinctrl driver for the Renesas R9A06G032 SoC
+From: Marek Vasut <marek.vasut@gmail.com>
 
-Based on a patch originally written by Michel Pollet at Renesas.
+Add DA9063 PMIC node to the I2C bus.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v5:
- - No changes.
+ arch/arm/boot/dts/r8a7794-silk.dts | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-v4:
- - No changes.
-
-v3:
- - No changes.
-
-v2:
- - Add "renesas,rzn1-pinctrl" compatible fallback string
- - Register size corrected.
----
- arch/arm/boot/dts/r9a06g032.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index eaf94976ed6d..2322268bc862 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -165,6 +165,14 @@
- 			status = "disabled";
- 		};
+diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
+index daec965889d3..6ea60e1faf75 100644
+--- a/arch/arm/boot/dts/r8a7794-silk.dts
++++ b/arch/arm/boot/dts/r8a7794-silk.dts
+@@ -405,6 +405,23 @@
+ 	clock-frequency = <400000>;
+ };
  
-+		pinctrl: pin-controller@40067000 {
-+			compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
-+			reg = <0x40067000 0x1000>, <0x51000000 0x480>;
-+			clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
-+			clock-names = "bus";
-+			status = "okay";
-+		};
++&i2c7 {
++	status = "okay";
++	clock-frequency = <100000>;
 +
- 		gic: gic@44101000 {
- 			compatible = "arm,cortex-a7-gic", "arm,gic-400";
- 			interrupt-controller;
++	pmic@58 {
++		compatible = "dlg,da9063";
++		reg = <0x58>;
++		interrupt-parent = <&gpio3>;
++		interrupts = <31 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-controller;
++
++		wdt {
++			compatible = "dlg,da9063-watchdog";
++		};
++	};
++};
++
+ &mmcif0 {
+ 	pinctrl-0 = <&mmcif0_pins>;
+ 	pinctrl-names = "default";
 -- 
-2.17.1
+2.11.0
