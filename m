@@ -1,58 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:36693 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728087AbeIJQrq (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbeIMOTP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Sep 2018 12:47:46 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 3/3] soc: renesas: Identify RZ/G2E
-Date: Mon, 10 Sep 2018 12:53:50 +0100
-Message-Id: <1536580430-17432-4-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1536580430-17432-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1536580430-17432-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Thu, 13 Sep 2018 10:19:15 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 38/58] arm64: dts: renesas: r8a774a1: Add USB-DMAC and HSUSB device nodes
+Date: Thu, 13 Sep 2018 11:09:33 +0200
+Message-Id: <ed898d4fc19d279e508440c6156fe31755865af1.1536828567.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
+References: <cover.1536828567.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for identifying the RZ/G2E (r8a774c0) SoC.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Add usb dmac and hsusb device nodes on RZ/G2M SoC dtsi.
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/soc/renesas/renesas-soc.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 45 +++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
-index ce19b27..d9a30b5 100644
---- a/drivers/soc/renesas/renesas-soc.c
-+++ b/drivers/soc/renesas/renesas-soc.c
-@@ -124,6 +124,11 @@ static const struct renesas_soc soc_rz_g2m __initconst __maybe_unused = {
- 	.id	= 0x52,
- };
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index 11113868f51e..b42117486b77 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -596,6 +596,51 @@
+ 			status = "disabled";
+ 		};
  
-+static const struct renesas_soc soc_rz_g2e __initconst __maybe_unused = {
-+	.family	= &fam_rzg2,
-+	.id	= 0x57,
-+};
++		hsusb: usb@e6590000 {
++			compatible = "renesas,usbhs-r8a774a1",
++				     "renesas,rcar-gen3-usbhs";
++			reg = <0 0xe6590000 0 0x100>;
++			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 704>;
++			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
++			       <&usb_dmac1 0>, <&usb_dmac1 1>;
++			dma-names = "ch0", "ch1", "ch2", "ch3";
++			renesas,buswait = <11>;
++			phys = <&usb2_phy0>;
++			phy-names = "usb";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 704>;
++			status = "disabled";
++		};
 +
- static const struct renesas_soc soc_rcar_m1a __initconst __maybe_unused = {
- 	.family	= &fam_rcar_gen1,
- };
-@@ -230,6 +235,9 @@ static const struct of_device_id renesas_socs[] __initconst = {
- #ifdef CONFIG_ARCH_R8A774A1
- 	{ .compatible = "renesas,r8a774a1",	.data = &soc_rz_g2m },
- #endif
-+#ifdef CONFIG_ARCH_R8A774C0
-+	{ .compatible = "renesas,r8a774c0",	.data = &soc_rz_g2e },
-+#endif
- #ifdef CONFIG_ARCH_R8A7778
- 	{ .compatible = "renesas,r8a7778",	.data = &soc_rcar_m1a },
- #endif
++		usb_dmac0: dma-controller@e65a0000 {
++			compatible = "renesas,r8a774a1-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65a0000 0 0x100>;
++			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 330>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 330>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
++		usb_dmac1: dma-controller@e65b0000 {
++			compatible = "renesas,r8a774a1-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65b0000 0 0x100>;
++			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 331>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 331>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
+ 		dmac0: dma-controller@e6700000 {
+ 			compatible = "renesas,dmac-r8a774a1",
+ 				     "renesas,rcar-dmac";
 -- 
-2.7.4
+2.11.0
