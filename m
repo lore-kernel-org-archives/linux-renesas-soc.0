@@ -1,51 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:54546 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727858AbeIQUlM (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726835AbeIMOS6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Sep 2018 16:41:12 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Russell King <linux@armlinux.org.uk>
-Cc: Biju Das <biju.das@bp.renesas.com>, Arnd Bergmann <arnd@arndb.de>,
-        Stefan Agner <stefan@agner.ch>, Eric Anholt <eric@anholt.net>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Tony Lindgren <tony@atomide.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Olof Johansson <olof@lixom.net>,
-        linux-arm-kernel@lists.infradead.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] ARM: multi_v7_defconfig: Enable r8a7744 SoC
-Date: Mon, 17 Sep 2018 16:06:29 +0100
-Message-Id: <1537196790-4775-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1537196790-4775-1-git-send-email-biju.das@bp.renesas.com>
-References: <1537196790-4775-1-git-send-email-biju.das@bp.renesas.com>
+        Thu, 13 Sep 2018 10:18:58 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 18/58] arm64: dts: renesas: r8a77970: add MMC support
+Date: Thu, 13 Sep 2018 11:09:13 +0200
+Message-Id: <979e32b5265d6b42a568e950c5b5e2f6ab283ff3.1536828567.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
+References: <cover.1536828567.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable recently added r8a7744 (RZ/G1N) SoC.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Define the generic R8A77970 part of the MMC0 (SDHI2) device node.
+
+Based on the original (and large) patches by Vladimir Barinov.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index dec755c..2b2cf6a 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -79,6 +79,7 @@ CONFIG_ARCH_R7S72100=y
- CONFIG_ARCH_R8A73A4=y
- CONFIG_ARCH_R8A7740=y
- CONFIG_ARCH_R8A7743=y
-+CONFIG_ARCH_R8A7744=y
- CONFIG_ARCH_R8A7745=y
- CONFIG_ARCH_R8A77470=y
- CONFIG_ARCH_R8A7778=y
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+index 6c0832f23811..b71f3eca35bd 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -754,6 +754,18 @@
+ 			#iommu-cells = <1>;
+ 		};
+ 
++		mmc0: mmc@ee140000 {
++			compatible = "renesas,sdhi-r8a77970",
++				     "renesas,rcar-gen3-sdhi";
++			reg = <0 0xee140000 0 0x2000>;
++			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 314>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 314>;
++			max-frequency = <200000000>;
++			status = "disabled";
++		};
++
+ 		gic: interrupt-controller@f1010000 {
+ 			compatible = "arm,gic-400";
+ 			#interrupt-cells = <3>;
 -- 
-2.7.4
+2.11.0
