@@ -1,234 +1,136 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:54388 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2390267AbeIUVKf (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34550 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbeIMOR1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Sep 2018 17:10:35 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 1/2] clk: renesas: cpg-mssr: Add early clock support
-Date: Fri, 21 Sep 2018 10:20:53 -0500
-Message-Id: <20180921152054.117774-2-chris.brandt@renesas.com>
-In-Reply-To: <20180921152054.117774-1-chris.brandt@renesas.com>
-References: <20180921152054.117774-1-chris.brandt@renesas.com>
+        Thu, 13 Sep 2018 10:17:27 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 08/13] ARM: dts: r8a77470: Add GPIO support
+Date: Thu, 13 Sep 2018 11:08:31 +0200
+Message-Id: <5fcd4bfe03913301bab34e2934c838eb4173a475.1536824376.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1536824376.git.horms+renesas@verge.net.au>
+References: <cover.1536824376.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for SoCs that need to register core and module clocks early in
-order to use OF drivers that exclusively use macros such as
-TIMER_OF_DECLARE.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Describe GPIO blocks in the R8A77470 device tree.
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/clk/renesas/renesas-cpg-mssr.c | 106 ++++++++++++++++++++++++++-------
- drivers/clk/renesas/renesas-cpg-mssr.h |   6 ++
- 2 files changed, 91 insertions(+), 21 deletions(-)
+ arch/arm/boot/dts/r8a77470.dtsi | 91 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 91 insertions(+)
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 3df764d3ab20..b4be3cc18505 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -127,6 +127,7 @@ struct cpg_mssr_priv {
- 	struct device *dev;
- 	void __iomem *base;
- 	spinlock_t rmw_lock;
-+	struct device_node *np;
+diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
+index af65fa031d84..c053a28cd132 100644
+--- a/arch/arm/boot/dts/r8a77470.dtsi
++++ b/arch/arm/boot/dts/r8a77470.dtsi
+@@ -61,6 +61,97 @@
+ 		#size-cells = <2>;
+ 		ranges;
  
- 	struct clk **clks;
- 	unsigned int num_core_clks;
-@@ -141,6 +142,7 @@ struct cpg_mssr_priv {
- 	} smstpcr_saved[ARRAY_SIZE(smstpcr)];
- };
- 
-+struct cpg_mssr_priv *early_priv;
- 
- /**
-  * struct mstp_clock - MSTP gating clock
-@@ -316,7 +318,7 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
- 
- 	switch (core->type) {
- 	case CLK_TYPE_IN:
--		clk = of_clk_get_by_name(priv->dev->of_node, core->name);
-+		clk = of_clk_get_by_name(priv->np, core->name);
- 		break;
- 
- 	case CLK_TYPE_FF:
-@@ -877,42 +879,49 @@ static const struct dev_pm_ops cpg_mssr_pm = {
- #define DEV_PM_OPS	NULL
- #endif /* CONFIG_PM_SLEEP && CONFIG_ARM_PSCI_FW */
- 
--static int __init cpg_mssr_probe(struct platform_device *pdev)
-+static int cpg_mssr_common_init(struct device *dev, struct device_node *np,
-+				const struct cpg_mssr_info *info)
- {
--	struct device *dev = &pdev->dev;
--	struct device_node *np = dev->of_node;
--	const struct cpg_mssr_info *info;
- 	struct cpg_mssr_priv *priv;
- 	unsigned int nclks, i;
--	struct resource *res;
--	struct clk **clks;
-+	struct clk **clks = NULL;
- 	int error;
-+	bool early_init = dev ? false : true;
- 
--	info = of_device_get_match_data(dev);
- 	if (info->init) {
- 		error = info->init(dev);
- 		if (error)
- 			return error;
- 	}
- 
--	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
- 		return -ENOMEM;
- 
-+	/* np is saved because dev->of_node doesn't exists during early init */
-+	priv->np = np;
++		gpio0: gpio@e6050000 {
++			compatible = "renesas,gpio-r8a77470",
++				     "renesas,rcar-gen2-gpio";
++			reg = <0 0xe6050000 0 0x50>;
++			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 0 23>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 912>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 912>;
++		};
 +
- 	priv->dev = dev;
- 	spin_lock_init(&priv->rmw_lock);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	priv->base = devm_ioremap_resource(dev, res);
--	if (IS_ERR(priv->base))
--		return PTR_ERR(priv->base);
-+	priv->base = of_iomap(np, 0);
-+	if (IS_ERR(priv->base)) {
-+		error = PTR_ERR(priv->base);
-+		goto out_err;
-+	}
- 
- 	nclks = info->num_total_core_clks + info->num_hw_mod_clks;
--	clks = devm_kmalloc_array(dev, nclks, sizeof(*clks), GFP_KERNEL);
--	if (!clks)
--		return -ENOMEM;
-+	clks = kmalloc_array(nclks, sizeof(*clks), GFP_KERNEL);
-+	if (!clks) {
-+		error = -ENOMEM;
-+		goto out_err;
-+	}
++		gpio1: gpio@e6051000 {
++			compatible = "renesas,gpio-r8a77470",
++				     "renesas,rcar-gen2-gpio";
++			reg = <0 0xe6051000 0 0x50>;
++			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 32 23>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 911>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 911>;
++		};
 +
-+	if (early_init)
-+		early_priv = priv;
-+	else
-+		dev_set_drvdata(dev, priv);
- 
--	dev_set_drvdata(dev, priv);
- 	priv->clks = clks;
- 	priv->num_core_clks = info->num_total_core_clks;
- 	priv->num_mod_clks = info->num_hw_mod_clks;
-@@ -923,16 +932,71 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
- 	for (i = 0; i < nclks; i++)
- 		clks[i] = ERR_PTR(-ENOENT);
- 
-+	error = of_clk_add_provider(np, cpg_mssr_clk_src_twocell_get, priv);
-+	if (error)
-+		goto out_err;
++		gpio2: gpio@e6052000 {
++			compatible = "renesas,gpio-r8a77470",
++				     "renesas,rcar-gen2-gpio";
++			reg = <0 0xe6052000 0 0x50>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 64 32>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 910>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 910>;
++		};
 +
-+	return 0;
++		gpio3: gpio@e6053000 {
++			compatible = "renesas,gpio-r8a77470",
++				     "renesas,rcar-gen2-gpio";
++			reg = <0 0xe6053000 0 0x50>;
++			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 96 30>;
++			gpio-reserved-ranges = <17 10>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 909>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 909>;
++		};
 +
-+out_err:
-+	kfree(clks);
-+	if (priv->base)
-+		iounmap(priv->base);
-+	kfree(priv);
++		gpio4: gpio@e6054000 {
++			compatible = "renesas,gpio-r8a77470",
++				     "renesas,rcar-gen2-gpio";
++			reg = <0 0xe6054000 0 0x50>;
++			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 128 26>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 908>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 908>;
++		};
 +
-+	return error;
-+}
++		gpio5: gpio@e6055000 {
++			compatible = "renesas,gpio-r8a77470",
++				     "renesas,rcar-gen2-gpio";
++			reg = <0 0xe6055000 0 0x50>;
++			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 160 32>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 907>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 907>;
++		};
 +
-+void __init cpg_mssr_early_init(struct device_node *np,
-+				const struct cpg_mssr_info *info)
-+{
-+	int error;
-+	int i;
-+
-+	error = cpg_mssr_common_init(NULL, np, info);
-+	if (error)
-+		return;
-+
-+	for (i = 0; i < info->num_early_core_clks; i++)
-+		cpg_mssr_register_core_clk(&info->early_core_clks[i], info,
-+					   early_priv);
-+
-+	for (i = 0; i < info->num_early_mod_clks; i++)
-+		cpg_mssr_register_mod_clk(&info->early_mod_clks[i], info,
-+					  early_priv);
-+
-+}
-+
-+static int __init cpg_mssr_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	const struct cpg_mssr_info *info;
-+	struct cpg_mssr_priv *priv;
-+	unsigned int i;
-+	int error;
-+
-+	info = of_device_get_match_data(dev);
-+
-+	if (early_priv) {
-+		priv = early_priv;
-+		priv->dev = &pdev->dev;
-+	} else {
-+		error = cpg_mssr_common_init(dev, dev->of_node, info);
-+	}
-+
-+	if (error)
-+		return error;
-+
-+	if (!early_priv)
-+		dev_set_drvdata(dev, priv);
-+
- 	for (i = 0; i < info->num_core_clks; i++)
- 		cpg_mssr_register_core_clk(&info->core_clks[i], info, priv);
- 
- 	for (i = 0; i < info->num_mod_clks; i++)
- 		cpg_mssr_register_mod_clk(&info->mod_clks[i], info, priv);
- 
--	error = of_clk_add_provider(np, cpg_mssr_clk_src_twocell_get, priv);
--	if (error)
--		return error;
--
- 	error = devm_add_action_or_reset(dev,
- 					 cpg_mssr_del_clk_provider,
- 					 np);
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
-index ae0ab0f164f3..cfce0627b5b8 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.h
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-@@ -119,12 +119,16 @@ struct cpg_mssr_info {
- 	unsigned int num_core_clks;
- 	unsigned int last_dt_core_clk;
- 	unsigned int num_total_core_clks;
-+	const struct cpg_core_clk *early_core_clks;
-+	unsigned int num_early_core_clks;
- 	bool stbyctrl;
- 
- 	/* Module Clocks */
- 	const struct mssr_mod_clk *mod_clks;
- 	unsigned int num_mod_clks;
- 	unsigned int num_hw_mod_clks;
-+	const struct mssr_mod_clk *early_mod_clks;
-+	unsigned int num_early_mod_clks;
- 
- 	/* Critical Module Clocks that should not be disabled */
- 	const unsigned int *crit_mod_clks;
-@@ -160,6 +164,8 @@ extern const struct cpg_mssr_info r8a77980_cpg_mssr_info;
- extern const struct cpg_mssr_info r8a77990_cpg_mssr_info;
- extern const struct cpg_mssr_info r8a77995_cpg_mssr_info;
- 
-+void __init cpg_mssr_early_init(struct device_node *np,
-+				const struct cpg_mssr_info *info);
- 
-     /*
-      * Helpers for fixing up clock tables depending on SoC revision
+ 		pfc: pin-controller@e6060000 {
+ 			compatible = "renesas,pfc-r8a77470";
+ 			reg = <0 0xe6060000 0 0x118>;
 -- 
-2.16.1
+2.11.0
