@@ -1,55 +1,96 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:27700 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726546AbeIKNrL (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34529 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbeIMORQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Sep 2018 09:47:11 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v5 0/3] usb: renesas_usbhs: add reset_control and multiple clocks management
-Date: Tue, 11 Sep 2018 17:47:02 +0900
-Message-Id: <1536655625-10550-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Thu, 13 Sep 2018 10:17:16 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 01/13] ARM: dts: rcar: Correct SATA device sizes to 2 MiB
+Date: Thu, 13 Sep 2018 11:08:24 +0200
+Message-Id: <441f61e3aa9e7386731ce1405044d484bd81f911.1536824376.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1536824376.git.horms+renesas@verge.net.au>
+References: <cover.1536824376.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set is based on Felipe's usb.git / testing/next branch
-(the commit id is 5b394b2ddf0347bef56e50c69a58773c94343ff3) with
-the following patch:
-  https://patchwork.kernel.org/patch/10574875/
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Changes from v4:
- - Revise the dt-bindings to add how many clocks are required and expect
-   for "renesas,rcar-gen3-usbhs".
+Update the SATA device nodes on R-Car H1, H2, and M2-W to use a 2 MiB
+I/O space, as specified in Rev.1.0 of the R-Car H1 and R-Car Gen2
+hardware user manuals.
 
-Changes from v3:
- - Change the dt-bindings not to use clock-names in patch 2.
- - To achieve backward compatibility with old DT, the driver should get
-   the first clock and the second clock is an optional.
- - Add "clk_put" calling in the remove function.
+See also commit e9f0089b2d8a3d45 ("arm64: dts: r8a7795: Correct SATA
+device size to 2MiB").
 
-Changes from v2:
- - Use clk_bulk_enable_prepare() instead of two functions on patch 3/3.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7779.dtsi | 2 +-
+ arch/arm/boot/dts/r8a7790.dtsi | 4 ++--
+ arch/arm/boot/dts/r8a7791.dtsi | 4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-Changes from v1:
- - Fix error path on patch 3/3.
- - Use clk_bulk_disable_unprepare() instead of two functions on patch 3/3.
- - Use staic array of struct clk_bulk_data instead of a pointer on patch 3/3.
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index 6b997bc016ee..03919714645a 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -344,7 +344,7 @@
  
-
-Yoshihiro Shimoda (3):
-  usb: renesas_usbhs: Add reset_control
-  dt-bindings: usb: renesas_usbhs: add clock-names property
-  usb: renesas_usbhs: Add multiple clocks management
-
- .../devicetree/bindings/usb/renesas_usbhs.txt      |   6 +-
- drivers/usb/renesas_usbhs/common.c                 | 100 +++++++++++++++++++++
- drivers/usb/renesas_usbhs/common.h                 |   4 +
- 3 files changed, 109 insertions(+), 1 deletion(-)
-
+ 	sata: sata@fc600000 {
+ 		compatible = "renesas,sata-r8a7779", "renesas,rcar-sata";
+-		reg = <0xfc600000 0x2000>;
++		reg = <0xfc600000 0x200000>;
+ 		interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7779_CLK_SATA>;
+ 		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 0925bdca438f..52a757f47bf0 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1559,7 +1559,7 @@
+ 		sata0: sata@ee300000 {
+ 			compatible = "renesas,sata-r8a7790",
+ 				     "renesas,rcar-gen2-sata";
+-			reg = <0 0xee300000 0 0x2000>;
++			reg = <0 0xee300000 0 0x200000>;
+ 			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 815>;
+ 			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+@@ -1570,7 +1570,7 @@
+ 		sata1: sata@ee500000 {
+ 			compatible = "renesas,sata-r8a7790",
+ 				     "renesas,rcar-gen2-sata";
+-			reg = <0 0xee500000 0 0x2000>;
++			reg = <0 0xee500000 0 0x200000>;
+ 			interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 814>;
+ 			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 991ac6feedd5..25b6a99dd87a 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -1543,7 +1543,7 @@
+ 		sata0: sata@ee300000 {
+ 			compatible = "renesas,sata-r8a7791",
+ 				     "renesas,rcar-gen2-sata";
+-			reg = <0 0xee300000 0 0x2000>;
++			reg = <0 0xee300000 0 0x200000>;
+ 			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 815>;
+ 			power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+@@ -1554,7 +1554,7 @@
+ 		sata1: sata@ee500000 {
+ 			compatible = "renesas,sata-r8a7791",
+ 				     "renesas,rcar-gen2-sata";
+-			reg = <0 0xee500000 0 0x2000>;
++			reg = <0 0xee500000 0 0x200000>;
+ 			interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 814>;
+ 			power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
 -- 
-1.9.1
+2.11.0
