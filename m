@@ -1,69 +1,55 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-Date: Mon, 17 Sep 2018 13:17:48 +0200
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: Re: [PATCH] rcar-csi2: add R8A77980 support
-Message-ID: <20180917111748.GT18450@bigcity.dyn.berto.se>
-References: <f6edfd44-7b08-e467-3486-795251816187@cogentembedded.com>
- <20180806180250.GD1635@bigcity.dyn.berto.se>
- <e2d1e9ea-f524-31f1-1561-2f0363981938@cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e2d1e9ea-f524-31f1-1561-2f0363981938@cogentembedded.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:34550 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbeIMORW (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 13 Sep 2018 10:17:22 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 04/13] ARM: dts: iwg23s-sbc: Add pinctl support for scif1
+Date: Thu, 13 Sep 2018 11:08:27 +0200
+Message-Id: <01a12d4975fb09c10f64cb551d4903dacd032b79.1536824376.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1536824376.git.horms+renesas@verge.net.au>
+References: <cover.1536824376.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+From: Biju Das <biju.das@bp.renesas.com>
 
-On 2018-08-06 21:24:11 +0300, Sergei Shtylyov wrote:
-> Hello!
-> 
-> On 08/06/2018 09:02 PM, Niklas S�derlund wrote:
-> 
-> > On 2018-08-06 19:56:27 +0300, Sergei Shtylyov wrote:
-> >> Add the R-Car V3H (AKA R8A77980) SoC support to the R-Car CSI2 driver.
-> >>
-> >> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> > 
-> > It looks good but before I add my tag I would like to know if you tested 
-> > this on a V3H?
-> 
->    No, have not tested the upstream patch, seemed too cumbersome (we did 
-> test the BSP patch AFAIK).
+Adding pinctrl support for scif1 interface.
 
-Did you find time to test this change? I think it looks good but I would 
-feel a lot better about this change if I knew it was tested :-) More 
-often then not have we shaken a bug out of the rcar-{csi2,vin} tree by 
-adding support for a new SoC.
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Also if you for some reason need to resend this series could you split 
-the DT documentation and driver changes in two separate patches?
-
-> 
-> > In the past extending the R-Car CSI-2 receiver to a new 
-> > SoC always caught some new corner case :-)
-> > 
-> > I don't have access to a V3H myself otherwise I would of course test it 
-> > myself.
-> 
->    CSI-2 on the Condor board is connected to a pair of MAX9286 GMSL de-serializers
-> which are connected to 4 (composite?) connectors... There's supposed to be sensor
-> chip on the other side, AFAIK...
-
-There is experimental patches which are tested on V3M that uses the 
-MAX9286 GMSL setup if you feel brave and want to try and extend them to 
-cover V3H ;-P
-
-> 
-> MBR, Sergei
-
+diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+index e3585daafdd6..56182eec81fb 100644
+--- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
++++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+@@ -43,6 +43,16 @@
+ 	clock-frequency = <20000000>;
+ };
+ 
++&pfc {
++	scif1_pins: scif1 {
++		groups = "scif1_data_b";
++		function = "scif1";
++	};
++};
++
+ &scif1 {
++	pinctrl-0 = <&scif1_pins>;
++	pinctrl-names = "default";
++
+ 	status = "okay";
+ };
 -- 
-Regards,
-Niklas S�derlund
+2.11.0
