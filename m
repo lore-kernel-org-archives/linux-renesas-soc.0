@@ -1,167 +1,148 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:59414 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728127AbeINOY0 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbeIMOTv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Sep 2018 10:24:26 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, Ulrich Hecht <uli@fpond.eu>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v2 16/16] arm64: dts: renesas: r8a77995: draak: Enable HDMI display output
-Date: Fri, 14 Sep 2018 12:10:46 +0300
-Message-Id: <20180914091046.483-17-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180914091046.483-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180914091046.483-1-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 13 Sep 2018 10:19:51 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Yoshihiro Kaneko <ykaneko0929@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 55/58] arm64: dts: renesas: r8a77990: Add SYS-DMAC device nodes
+Date: Thu, 13 Sep 2018 11:09:50 +0200
+Message-Id: <3943e8967ad2e00fae114a334f88d5b366c6f809.1536828567.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
+References: <cover.1536828567.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ulrich Hecht <uli+renesas@fpond.eu>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Adds LVDS decoder, HDMI encoder and connector for the Draak board.
+This patch adds SYS-DMAC{0,1,2} device nodes for the R8A77990 SoC.
 
-The LVDS0 and LVDS1 encoders can use the DU_DOTCLKIN0, DU_DOTCLKIN1 and
-EXTAL externals clocks. Two of them are provided to the SoC on the Draak
-board, hook them up in DT.
-
-Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 98 +++++++++++++++++++++++++-
- 1 file changed, 97 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi | 102 ++++++++++++++++++++++++++++++
+ 1 file changed, 102 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index a8e8f2669d4c..3055c39bbe07 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -2,7 +2,7 @@
- /*
-  * Device Tree Source for the Draak board
-  *
-- * Copyright (C) 2016 Renesas Electronics Corp.
-+ * Copyright (C) 2016-2018 Renesas Electronics Corp.
-  * Copyright (C) 2017 Glider bvba
-  */
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index 58610b048ed4..5ce268cda03b 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -341,6 +341,108 @@
+ 			#power-domain-cells = <1>;
+ 		};
  
-@@ -24,6 +24,41 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	lvds-decoder {
-+		compatible = "thine,thc63lvd1024";
-+		vcc-supply = <&reg_3p3v>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				thc63lvd1024_in: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+				thc63lvd1024_out: endpoint {
-+					remote-endpoint = <&adv7511_in>;
-+				};
-+			};
++		dmac0: dma-controller@e6700000 {
++			compatible = "renesas,dmac-r8a77990",
++				     "renesas,rcar-dmac";
++			reg = <0 0xe6700000 0 0x10000>;
++			interrupts = <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					"ch0", "ch1", "ch2", "ch3",
++					"ch4", "ch5", "ch6", "ch7",
++					"ch8", "ch9", "ch10", "ch11",
++					"ch12", "ch13", "ch14", "ch15";
++			clocks = <&cpg CPG_MOD 219>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 219>;
++			#dma-cells = <1>;
++			dma-channels = <16>;
 +		};
-+	};
 +
-+	hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_out: endpoint {
-+				remote-endpoint = <&adv7511_out>;
-+			};
++		dmac1: dma-controller@e7300000 {
++			compatible = "renesas,dmac-r8a77990",
++				     "renesas,rcar-dmac";
++			reg = <0 0xe7300000 0 0x10000>;
++			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 319 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					"ch0", "ch1", "ch2", "ch3",
++					"ch4", "ch5", "ch6", "ch7",
++					"ch8", "ch9", "ch10", "ch11",
++					"ch12", "ch13", "ch14", "ch15";
++			clocks = <&cpg CPG_MOD 218>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 218>;
++			#dma-cells = <1>;
++			dma-channels = <16>;
 +		};
-+	};
 +
- 	vga {
- 		compatible = "vga-connector";
- 
-@@ -218,6 +253,43 @@
- 
- 	};
- 
-+	hdmi-encoder@39 {
-+		compatible = "adi,adv7511w";
-+		reg = <0x39>, <0x3f>, <0x38>, <0x3c>;
-+		reg-names = "main", "edid", "packet", "cec";
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <28 IRQ_TYPE_LEVEL_LOW>;
-+
-+		/* Depends on LVDS */
-+		max-clock = <135000000>;
-+		min-vrefresh = <50>;
-+
-+		adi,input-depth = <8>;
-+		adi,input-colorspace = "rgb";
-+		adi,input-clock = "1x";
-+		adi,input-style = <1>;
-+		adi,input-justification = "evenly";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7511_in: endpoint {
-+					remote-endpoint = <&thc63lvd1024_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				adv7511_out: endpoint {
-+					remote-endpoint = <&hdmi_con_out>;
-+				};
-+			};
++		dmac2: dma-controller@e7310000 {
++			compatible = "renesas,dmac-r8a77990",
++				     "renesas,rcar-dmac";
++			reg = <0 0xe7310000 0 0x10000>;
++			interrupts = <GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 419 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 420 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 426 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 427 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 428 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 429 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 430 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 431 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 397 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					"ch0", "ch1", "ch2", "ch3",
++					"ch4", "ch5", "ch6", "ch7",
++					"ch8", "ch9", "ch10", "ch11",
++					"ch12", "ch13", "ch14", "ch15";
++			clocks = <&cpg CPG_MOD 217>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 217>;
++			#dma-cells = <1>;
++			dma-channels = <16>;
 +		};
-+	};
 +
- 	hdmi-decoder@4c {
- 		compatible = "adi,adv7612";
- 		reg = <0x4c>;
-@@ -281,6 +353,30 @@
- 	};
- };
- 
-+&lvds0 {
-+	status = "okay";
-+
-+	clocks = <&cpg CPG_MOD 727>,
-+		 <&x12_clk>,
-+		 <&extal_clk>;
-+	clock-names = "fck", "dclkin.0", "extal";
-+
-+	ports {
-+		port@1 {
-+			lvds0_out: endpoint {
-+				remote-endpoint = <&thc63lvd1024_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&lvds1 {
-+	clocks = <&cpg CPG_MOD 727>,
-+		 <&x12_clk>,
-+		 <&extal_clk>;
-+	clock-names = "fck", "dclkin.0", "extal";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
+ 		ipmmu_ds0: mmu@e6740000 {
+ 			compatible = "renesas,ipmmu-r8a77990";
+ 			reg = <0 0xe6740000 0 0x1000>;
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
