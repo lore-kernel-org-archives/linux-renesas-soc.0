@@ -1,128 +1,163 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:11181 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726613AbeIKPfj (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34550 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbeIMORS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Sep 2018 11:35:39 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 2/2] pinctrl: sh-pfc: r8a7791: Add r8a7744 support
-Date: Tue, 11 Sep 2018 11:30:05 +0100
-Message-Id: <1536661805-36464-3-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1536661805-36464-1-git-send-email-biju.das@bp.renesas.com>
-References: <1536661805-36464-1-git-send-email-biju.das@bp.renesas.com>
+        Thu, 13 Sep 2018 10:17:18 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 02/13] ARM: dts: r8a77470: Use r8a77470-sysc binding definitions
+Date: Thu, 13 Sep 2018 11:08:25 +0200
+Message-Id: <f892c0c70ecad58d096ed5bd54a650fa9c770d74.1536824376.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1536824376.git.horms+renesas@verge.net.au>
+References: <cover.1536824376.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Renesas RZ/G1N (R8A7744) is pin compatible with R-Car M2-W/N (R8A7791/3)
-and RZ/G1M.
+From: Biju Das <biju.das@bp.renesas.com>
+
+Replace the hardcoded power domain indices by R8A77470_PD_* symbols.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/pinctrl/sh-pfc/Kconfig       |  5 +++++
- drivers/pinctrl/sh-pfc/Makefile      |  1 +
- drivers/pinctrl/sh-pfc/core.c        |  6 ++++++
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 22 ++++++++++++++++++++++
- drivers/pinctrl/sh-pfc/sh_pfc.h      |  1 +
- 5 files changed, 35 insertions(+)
+ arch/arm/boot/dts/r8a77470.dtsi | 27 ++++++++++++++-------------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/Kconfig b/drivers/pinctrl/sh-pfc/Kconfig
-index 6a7254c..5fad61c 100644
---- a/drivers/pinctrl/sh-pfc/Kconfig
-+++ b/drivers/pinctrl/sh-pfc/Kconfig
-@@ -39,6 +39,11 @@ config PINCTRL_PFC_R8A7743
- 	depends on ARCH_R8A7743
- 	select PINCTRL_SH_PFC
+diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
+index 87d32d3e23de..9b218c3ffdbd 100644
+--- a/arch/arm/boot/dts/r8a77470.dtsi
++++ b/arch/arm/boot/dts/r8a77470.dtsi
+@@ -8,6 +8,7 @@
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/clock/r8a77470-cpg-mssr.h>
++#include <dt-bindings/power/r8a77470-sysc.h>
+ / {
+ 	compatible = "renesas,r8a77470";
+ 	#address-cells = <2>;
+@@ -23,7 +24,7 @@
+ 			reg = <0>;
+ 			clock-frequency = <1000000000>;
+ 			clocks = <&cpg CPG_CORE R8A77470_CLK_Z2>;
+-			power-domains = <&sysc 5>;
++			power-domains = <&sysc R8A77470_PD_CA7_CPU0>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
  
-+config PINCTRL_PFC_R8A7744
-+	def_bool y
-+	depends on ARCH_R8A7744
-+	select PINCTRL_SH_PFC
-+
- config PINCTRL_PFC_R8A7745
-         def_bool y
-         depends on ARCH_R8A7745
-diff --git a/drivers/pinctrl/sh-pfc/Makefile b/drivers/pinctrl/sh-pfc/Makefile
-index 9510a48..b14cf6a 100644
---- a/drivers/pinctrl/sh-pfc/Makefile
-+++ b/drivers/pinctrl/sh-pfc/Makefile
-@@ -5,6 +5,7 @@ obj-$(CONFIG_PINCTRL_PFC_EMEV2)	+= pfc-emev2.o
- obj-$(CONFIG_PINCTRL_PFC_R8A73A4)	+= pfc-r8a73a4.o
- obj-$(CONFIG_PINCTRL_PFC_R8A7740)	+= pfc-r8a7740.o
- obj-$(CONFIG_PINCTRL_PFC_R8A7743)	+= pfc-r8a7791.o
-+obj-$(CONFIG_PINCTRL_PFC_R8A7744)	+= pfc-r8a7791.o
- obj-$(CONFIG_PINCTRL_PFC_R8A7745)	+= pfc-r8a7794.o
- obj-$(CONFIG_PINCTRL_PFC_R8A77470)	+= pfc-r8a77470.o
- obj-$(CONFIG_PINCTRL_PFC_R8A774A1)	+= pfc-r8a7796.o
-diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index 0122471..74c533a 100644
---- a/drivers/pinctrl/sh-pfc/core.c
-+++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -497,6 +497,12 @@ static const struct of_device_id sh_pfc_of_table[] = {
- 		.data = &r8a7743_pinmux_info,
- 	},
- #endif
-+#ifdef CONFIG_PINCTRL_PFC_R8A7744
-+	{
-+		.compatible = "renesas,pfc-r8a7744",
-+		.data = &r8a7744_pinmux_info,
-+	},
-+#endif
- #ifdef CONFIG_PINCTRL_PFC_R8A7745
- 	{
- 		.compatible = "renesas,pfc-r8a7745",
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index 5811784..0371ef1 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -6634,6 +6634,28 @@ const struct sh_pfc_soc_info r8a7743_pinmux_info = {
- };
- #endif
+@@ -32,7 +33,7 @@
+ 			compatible = "cache";
+ 			cache-unified;
+ 			cache-level = <2>;
+-			power-domains = <&sysc 21>;
++			power-domains = <&sysc R8A77470_PD_CA7_SCU>;
+ 		};
+ 	};
  
-+#ifdef CONFIG_PINCTRL_PFC_R8A7744
-+const struct sh_pfc_soc_info r8a7744_pinmux_info = {
-+	.name = "r8a77440_pfc",
-+	.ops = &r8a7791_pinmux_ops,
-+	.unlock_reg = 0xe6060000, /* PMMR */
-+
-+	.function = { PINMUX_FUNCTION_BEGIN, PINMUX_FUNCTION_END },
-+
-+	.pins = pinmux_pins,
-+	.nr_pins = ARRAY_SIZE(pinmux_pins),
-+	.groups = pinmux_groups.common,
-+	.nr_groups = ARRAY_SIZE(pinmux_groups.common),
-+	.functions = pinmux_functions.common,
-+	.nr_functions = ARRAY_SIZE(pinmux_functions.common),
-+
-+	.cfg_regs = pinmux_config_regs,
-+
-+	.pinmux_data = pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
-+};
-+#endif
-+
- #ifdef CONFIG_PINCTRL_PFC_R8A7791
- const struct sh_pfc_soc_info r8a7791_pinmux_info = {
- 	.name = "r8a77910_pfc",
-diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index 1d491d1..353f4af 100644
---- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -273,6 +273,7 @@ extern const struct sh_pfc_soc_info emev2_pinmux_info;
- extern const struct sh_pfc_soc_info r8a73a4_pinmux_info;
- extern const struct sh_pfc_soc_info r8a7740_pinmux_info;
- extern const struct sh_pfc_soc_info r8a7743_pinmux_info;
-+extern const struct sh_pfc_soc_info r8a7744_pinmux_info;
- extern const struct sh_pfc_soc_info r8a7745_pinmux_info;
- extern const struct sh_pfc_soc_info r8a77470_pinmux_info;
- extern const struct sh_pfc_soc_info r8a774a1_pinmux_info;
+@@ -97,7 +98,7 @@
+ 				     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 407>;
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
+ 			resets = <&cpg 407>;
+ 		};
+ 
+@@ -151,7 +152,7 @@
+ 					  "ch12", "ch13", "ch14";
+ 			clocks = <&cpg CPG_MOD 219>;
+ 			clock-names = "fck";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
+ 			resets = <&cpg 219>;
+ 			#dma-cells = <1>;
+ 			dma-channels = <15>;
+@@ -184,7 +185,7 @@
+ 					  "ch12", "ch13", "ch14";
+ 			clocks = <&cpg CPG_MOD 218>;
+ 			clock-names = "fck";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
+ 			resets = <&cpg 218>;
+ 			#dma-cells = <1>;
+ 			dma-channels = <15>;
+@@ -196,7 +197,7 @@
+ 			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
+ 			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 812>;
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
+ 			resets = <&cpg 812>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -214,7 +215,7 @@
+ 			dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
+ 			       <&dmac1 0x29>, <&dmac1 0x2a>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
+ 			resets = <&cpg 721>;
+ 			status = "disabled";
+ 		};
+@@ -230,7 +231,7 @@
+ 			dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
+ 			       <&dmac1 0x2d>, <&dmac1 0x2e>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
+ 			resets = <&cpg 720>;
+ 			status = "disabled";
+ 		};
+@@ -246,7 +247,7 @@
+ 			dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
+ 			       <&dmac1 0x2b>, <&dmac1 0x2c>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
+ 			resets = <&cpg 719>;
+ 			status = "disabled";
+ 		};
+@@ -262,7 +263,7 @@
+ 			dmas = <&dmac0 0x2f>, <&dmac0 0x30>,
+ 			       <&dmac1 0x2f>, <&dmac1 0x30>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
+ 			resets = <&cpg 718>;
+ 			status = "disabled";
+ 		};
+@@ -278,7 +279,7 @@
+ 			dmas = <&dmac0 0xfb>, <&dmac0 0xfc>,
+ 			       <&dmac1 0xfb>, <&dmac1 0xfc>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
+ 			resets = <&cpg 715>;
+ 			status = "disabled";
+ 		};
+@@ -294,7 +295,7 @@
+ 			dmas = <&dmac0 0xfd>, <&dmac0 0xfe>,
+ 			       <&dmac1 0xfd>, <&dmac1 0xfe>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
+ 			resets = <&cpg 714>;
+ 			status = "disabled";
+ 		};
+@@ -309,7 +310,7 @@
+ 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
+ 			clocks = <&cpg CPG_MOD 408>;
+ 			clock-names = "clk";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
+ 			resets = <&cpg 408>;
+ 		};
+ 
 -- 
-2.7.4
+2.11.0
