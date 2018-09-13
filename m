@@ -1,72 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbeIMOTo (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:35547 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729831AbeIMTJj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:19:44 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 50/58] arm64: dts: renesas: r8a77990: Add BRG support to SCIF2
-Date: Thu, 13 Sep 2018 11:09:45 +0200
-Message-Id: <103db9b539567073de2200a8a0a725646610865d.1536828567.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
-References: <cover.1536828567.git.horms+renesas@verge.net.au>
+        Thu, 13 Sep 2018 15:09:39 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: sakari.ailus@linux.intel.com, mchehab@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, slongerbeam@gmail.com,
+        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 0/3] media: renesas-ceu: Introduce default mbus configuration
+Date: Thu, 13 Sep 2018 15:59:48 +0200
+Message-Id: <1536847191-17175-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hi Sakari,
+   this is an attempt to use the newly introduce ability to specify default
+configurations for media device drivers.
 
-Add the device node for the external SCIF_CLK, and describe the clock
-inputs for the Baud Rate Generator for External Clock (BRG) for SCIF2,
-which can increase serial clock accuracy.
+This patch depends on your and Steve's work at:
+<URL:https://git.linuxtv.org/sailus/media_tree.git/log/?h=v4l2-fwnode-next>
 
-The presence of the SCIF_CLK crystal and its clock frequency depend on
-the actual board.
+I also updated the DT bindings as you suggested, documenting all other
+properties the CEU interface allows to configure.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[geert: Enhance patch description]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+Thanks
+  j
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index e2c2d1480a68..6198768264be 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -63,6 +63,13 @@
- 		method = "smc";
- 	};
- 
-+	/* External SCIF clock - to be overridden by boards that provide it */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
- 	soc: soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&gic>;
-@@ -412,8 +419,11 @@
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
- 			reg = <0 0xe6e88000 0 64>;
- 			interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 310>;
--			clock-names = "fck";
-+			clocks = <&cpg CPG_MOD 310>,
-+				 <&cpg CPG_CORE R8A77990_CLK_S3D1C>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+
- 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 310>;
- 			status = "disabled";
--- 
-2.11.0
+Jacopo Mondi (3):
+  dt-bindings: media: renesas-ceu: Refer to video-interfaces.txt
+  dt-bindings: media: renesas-ceu: Add more endpoint properties
+  media: renesas-ceu: Use default mbus settings
+
+ .../devicetree/bindings/media/renesas,ceu.txt        | 14 +++++++++-----
+ arch/arm/boot/dts/gr-peach-audiocamerashield.dtsi    |  4 ----
+ drivers/media/platform/renesas-ceu.c                 | 20 +++++++++++---------
+ 3 files changed, 20 insertions(+), 18 deletions(-)
+
+--
+2.7.4
