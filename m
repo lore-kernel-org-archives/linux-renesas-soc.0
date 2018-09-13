@@ -1,71 +1,94 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:34729 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726835AbeIMOSc (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 13 Sep 2018 10:18:32 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH] ARM: dts: iwg20d-q7-common: Move pciec node out of common dtsi
-Date: Fri, 21 Sep 2018 15:07:55 +0100
-Message-Id: <1537538875-62836-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 01/58] arm64: dts: renesas: r8a77980: add RWDT support
+Date: Thu, 13 Sep 2018 11:08:56 +0200
+Message-Id: <bcee502ceb6c0dcbc7ccd460ed7040c3d6998c3e.1536828567.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
+References: <cover.1536828567.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-PCIe is not populated by default on iWave RZ/G1N board. RZ/G1N board
-is almost identical to RZ/G1M. In order to reuse the common dtsi for
-both the boards, it is required to move pcie node from common dtsi
-to board specific dts.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Describe RWDT in the R8A77980 SoC device tree.
+
+Enable RWDT on the Condor and V3H Starter Kit boards.
+
+Based on the original (and large) patch by Vladimir Barinov.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/iwg20d-q7-common.dtsi         | 4 ----
- arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts | 4 ++++
- arch/arm/boot/dts/r8a7743-iwg20d-q7.dts         | 4 ++++
- 3 files changed, 8 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77980-condor.dts |  5 +++++
+ arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts  |  5 +++++
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi       | 10 ++++++++++
+ 3 files changed, 20 insertions(+)
 
-diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-index 5cae74e..ca9154dd 100644
---- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-+++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-@@ -160,10 +160,6 @@
- 	clock-frequency = <100000000>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980-condor.dts b/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+index 9f25c407dfd7..494f4ef37a4e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+@@ -156,6 +156,11 @@
+ 	};
  };
  
--&pciec {
--	status = "okay";
--};
--
- &pfc {
- 	can0_pins: can0 {
- 		groups = "can0_data_d";
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts
-index 3275451..0d006ae 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts
-+++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts
-@@ -14,3 +14,7 @@
- 	model = "iW-RainboW-G20D-Q7 RZ/G1M based plus camera daughter board";
- 	compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7743";
- };
-+
-+&pciec {
++&rwdt {
++	timeout-sec = <60>;
 +	status = "okay";
 +};
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-index b683db4..498e223 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-+++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-@@ -13,3 +13,7 @@
- 	model = "iWave Systems RainboW-G20D-Qseven board based on RZ/G1M";
- 	compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7743";
- };
 +
-+&pciec {
+ &scif0 {
+ 	pinctrl-0 = <&scif0_pins>, <&scif_clk_pins>;
+ 	pinctrl-names = "default";
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts b/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
+index 9dac42f8f804..9147d8564557 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
+@@ -71,6 +71,11 @@
+ 	};
+ };
+ 
++&rwdt {
++	timeout-sec = <60>;
 +	status = "okay";
 +};
++
+ &scif0 {
+ 	pinctrl-0 = <&scif0_pins>, <&scif_clk_pins>;
+ 	pinctrl-names = "default";
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+index b8c9a56562f2..4a1097e32551 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -118,6 +118,16 @@
+ 		#size-cells = <2>;
+ 		ranges;
+ 
++		rwdt: watchdog@e6020000 {
++			compatible = "renesas,r8a77980-wdt",
++				     "renesas,rcar-gen3-wdt";
++			reg = <0 0xe6020000 0 0x0c>;
++			clocks = <&cpg CPG_MOD 402>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 402>;
++			status = "disabled";
++		};
++
+ 		gpio0: gpio@e6050000 {
+ 			compatible = "renesas,gpio-r8a77980",
+ 				     "renesas,rcar-gen3-gpio";
 -- 
-2.7.4
+2.11.0
