@@ -1,47 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbeIMOTg (ORCPT
+Received: from sauhun.de ([88.99.104.3]:38890 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728230AbeIMU1X (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:19:36 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 46/58] arm64: dts: renesas: r8a77965: Fix HS-USB compatible
-Date: Thu, 13 Sep 2018 11:09:41 +0200
-Message-Id: <99584d93e301d820d817bba2eb77b9152e13009c.1536828567.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
-References: <cover.1536828567.git.horms+renesas@verge.net.au>
+        Thu, 13 Sep 2018 16:27:23 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: iommu@lists.linux-foundation.org,
+        Robin Murphy <robin.murphy@arm.com>,
+        Christoph Hellwig <hch@lst.de>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 0/3] dma-mapping: clear dangling pointers consistently
+Date: Thu, 13 Sep 2018 17:17:13 +0200
+Message-Id: <20180913151716.6333-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+When working with dma_set_max_seg_size(), I noticed issues with a
+dangling dma_parms pointer. I saw Christoph just worked on handling
+something similar for the dma_ops pointer, too. I came up with three
+patches on top of Christoph's work which I send out for discussion here:
 
-Should be "renesas,usbhs-r8a77965", not "renesas,usbhs-r8a7796".
+Patch 1 fixes a meanwhile stale comment.
 
-Fixes: a06e8af801760a98 ("arm64: dts: renesas: r8a77965: add HS-USB node")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch 2 makes clearing the dma_ops pointer more consistent because it
+was missed on the custom ARM implementation to the best of my knowledge.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 7f477a15fa59..108f53cfef5c 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -589,7 +589,7 @@
- 		};
- 
- 		hsusb: usb@e6590000 {
--			compatible = "renesas,usbhs-r8a7796",
-+			compatible = "renesas,usbhs-r8a77965",
- 				     "renesas,rcar-gen3-usbhs";
- 			reg = <0 0xe6590000 0 0x100>;
- 			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
+Patch 3 generalizes teardown_dma_ops to teardown_dma, so that clearing
+dma_parms can be added there.
+
+All these patches are based on the dma-mapping for-next branch. They are
+build tested and runtime tested on a Renesas Salvator-XS board (R-Car
+M3-N, ARM64) and Renesas Lager board (R-Car H2, ARM32).
+
+A branch containing these (and dma_parms additions for the above boards)
+can be found here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/sdhi/set_max_seg
+
+Looking forward to opinions.
+
+Regards,
+
+   Wolfram
+
+
+Wolfram Sang (3):
+  ARM: dma-mapping: update comment about handling dma_ops when detaching
+    from IOMMU
+  dma-mapping: clear dma_ops pointer also on ARM
+  dma-mapping: clear dma_parms on teardown, too
+
+ arch/arm/mm/dma-mapping.c   | 8 ++++----
+ include/linux/dma-mapping.h | 6 ++++--
+ 2 files changed, 8 insertions(+), 6 deletions(-)
+
 -- 
-2.11.0
+2.18.0
