@@ -1,57 +1,240 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:57086 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727281AbeIYPxo (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbeIMOTb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Sep 2018 11:53:44 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>, linux-spi@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] spi: spi-mem: Fix inverted logic in op sanity check
-Date: Tue, 25 Sep 2018 11:46:55 +0200
-Message-Id: <20180925094655.11438-1-geert+renesas@glider.be>
+        Thu, 13 Sep 2018 10:19:31 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 22/58] arm64: dts: renesas: r8a774a1: Add SCIF and HSCIF nodes
+Date: Thu, 13 Sep 2018 11:09:17 +0200
+Message-Id: <3a3933a4fa36430a46fa7a6f9bfa7eaa19dd9dfe.1536828567.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
+References: <cover.1536828567.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On r8a7791/koelsch:
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-    m25p80 spi0.0: error -22 reading 9f
-    m25p80: probe of spi0.0 failed with error -22
+Add the device nodes for all RZ/G2M SCIF and HSCIF serial ports,
+incl. clocks, power domains and DMAs.
+According to the HW user manual, SCIF[015] and HSCIF[012] are
+connected to both SYS-DMAC1 and SYS-DMAC2, while SCIF[34] and
+HSCIF[34] are connected to SYS-DMAC0.
 
-Apparently the logic in spi_mem_check_op() is wrong, rejecting the
-spi-mem operation if any buswidth is valid, instead of invalid.
-
-Fixes: 380583227c0c7f52 ("spi: spi-mem: Add extra sanity checks on the op param")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/spi/spi-mem.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 185 ++++++++++++++++++++++++++++++
+ 1 file changed, 185 insertions(+)
 
-diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
-index cc3d425aae56c634..62a7b80801d22098 100644
---- a/drivers/spi/spi-mem.c
-+++ b/drivers/spi/spi-mem.c
-@@ -169,10 +169,10 @@ static int spi_mem_check_op(const struct spi_mem_op *op)
- 	    (op->data.nbytes && !op->data.buswidth))
- 		return -EINVAL;
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index 4a4cf352208e..81fba7f19d44 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -144,6 +144,94 @@
+ 			#power-domain-cells = <1>;
+ 		};
  
--	if (spi_mem_buswidth_is_valid(op->cmd.buswidth) ||
--	    spi_mem_buswidth_is_valid(op->addr.buswidth) ||
--	    spi_mem_buswidth_is_valid(op->dummy.buswidth) ||
--	    spi_mem_buswidth_is_valid(op->data.buswidth))
-+	if (!spi_mem_buswidth_is_valid(op->cmd.buswidth) ||
-+	    !spi_mem_buswidth_is_valid(op->addr.buswidth) ||
-+	    !spi_mem_buswidth_is_valid(op->dummy.buswidth) ||
-+	    !spi_mem_buswidth_is_valid(op->data.buswidth))
- 		return -EINVAL;
++		hscif0: serial@e6540000 {
++			compatible = "renesas,hscif-r8a774a1",
++				     "renesas,rcar-gen3-hscif",
++				     "renesas,hscif";
++			reg = <0 0xe6540000 0 0x60>;
++			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 520>,
++				 <&cpg CPG_CORE 19>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x31>, <&dmac1 0x30>,
++			       <&dmac2 0x31>, <&dmac2 0x30>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 520>;
++			status = "disabled";
++		};
++
++		hscif1: serial@e6550000 {
++			compatible = "renesas,hscif-r8a774a1",
++				     "renesas,rcar-gen3-hscif",
++				     "renesas,hscif";
++			reg = <0 0xe6550000 0 0x60>;
++			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 519>,
++				 <&cpg CPG_CORE 19>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x33>, <&dmac1 0x32>,
++			       <&dmac2 0x33>, <&dmac2 0x32>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 519>;
++			status = "disabled";
++		};
++
++		hscif2: serial@e6560000 {
++			compatible = "renesas,hscif-r8a774a1",
++				     "renesas,rcar-gen3-hscif",
++				     "renesas,hscif";
++			reg = <0 0xe6560000 0 0x60>;
++			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 518>,
++				 <&cpg CPG_CORE 19>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x35>, <&dmac1 0x34>,
++			       <&dmac2 0x35>, <&dmac2 0x34>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 518>;
++			status = "disabled";
++		};
++
++		hscif3: serial@e66a0000 {
++			compatible = "renesas,hscif-r8a774a1",
++				     "renesas,rcar-gen3-hscif",
++				     "renesas,hscif";
++			reg = <0 0xe66a0000 0 0x60>;
++			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 517>,
++				 <&cpg CPG_CORE 19>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x37>, <&dmac0 0x36>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 517>;
++			status = "disabled";
++		};
++
++		hscif4: serial@e66b0000 {
++			compatible = "renesas,hscif-r8a774a1",
++				     "renesas,rcar-gen3-hscif",
++				     "renesas,hscif";
++			reg = <0 0xe66b0000 0 0x60>;
++			interrupts = <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 516>,
++				 <&cpg CPG_CORE 19>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x39>, <&dmac0 0x38>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 516>;
++			status = "disabled";
++		};
++
+ 		dmac0: dma-controller@e6700000 {
+ 			compatible = "renesas,dmac-r8a774a1",
+ 				     "renesas,rcar-dmac";
+@@ -246,6 +334,103 @@
+ 			dma-channels = <16>;
+ 		};
  
- 	return 0;
++		scif0: serial@e6e60000 {
++			compatible = "renesas,scif-r8a774a1",
++				     "renesas,rcar-gen3-scif", "renesas,scif";
++			reg = <0 0xe6e60000 0 0x40>;
++			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 207>,
++				 <&cpg CPG_CORE 19>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
++			       <&dmac2 0x51>, <&dmac2 0x50>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 207>;
++			status = "disabled";
++		};
++
++		scif1: serial@e6e68000 {
++			compatible = "renesas,scif-r8a774a1",
++				     "renesas,rcar-gen3-scif", "renesas,scif";
++			reg = <0 0xe6e68000 0 0x40>;
++			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 206>,
++				 <&cpg CPG_CORE 19>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
++			       <&dmac2 0x53>, <&dmac2 0x52>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 206>;
++			status = "disabled";
++		};
++
++		scif2: serial@e6e88000 {
++			compatible = "renesas,scif-r8a774a1",
++				     "renesas,rcar-gen3-scif", "renesas,scif";
++			reg = <0 0xe6e88000 0 0x40>;
++			interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 310>,
++				 <&cpg CPG_CORE 19>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 310>;
++			status = "disabled";
++		};
++
++		scif3: serial@e6c50000 {
++			compatible = "renesas,scif-r8a774a1",
++				     "renesas,rcar-gen3-scif", "renesas,scif";
++			reg = <0 0xe6c50000 0 0x40>;
++			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 204>,
++				 <&cpg CPG_CORE 19>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x57>, <&dmac0 0x56>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 204>;
++			status = "disabled";
++		};
++
++		scif4: serial@e6c40000 {
++			compatible = "renesas,scif-r8a774a1",
++				     "renesas,rcar-gen3-scif", "renesas,scif";
++			reg = <0 0xe6c40000 0 0x40>;
++			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 203>,
++				 <&cpg CPG_CORE 19>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x59>, <&dmac0 0x58>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 203>;
++			status = "disabled";
++		};
++
++		scif5: serial@e6f30000 {
++			compatible = "renesas,scif-r8a774a1",
++				     "renesas,rcar-gen3-scif", "renesas,scif";
++			reg = <0 0xe6f30000 0 0x40>;
++			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 202>,
++				 <&cpg CPG_CORE 19>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x5b>, <&dmac1 0x5a>,
++			       <&dmac2 0x5b>, <&dmac2 0x5a>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 202>;
++			status = "disabled";
++		};
++
+ 		gic: interrupt-controller@f1010000 {
+ 			compatible = "arm,gic-400";
+ 			#interrupt-cells = <3>;
 -- 
-2.17.1
+2.11.0
