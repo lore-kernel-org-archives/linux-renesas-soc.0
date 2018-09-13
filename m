@@ -1,75 +1,143 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com,
-        kieran.bingham+renesas@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Subject: [PATCH v3 4/4] media: i2c: adv748x: Register only enabled inputs
-Date: Mon, 17 Sep 2018 13:30:57 +0200
-Message-Id: <1537183857-29173-5-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1537183857-29173-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1537183857-29173-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbeIMOUE (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 13 Sep 2018 10:20:04 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 33/58] arm64: dts: renesas: r8a774a1: Add Cortex-A53 CPU cores
+Date: Thu, 13 Sep 2018 11:09:28 +0200
+Message-Id: <09f49bcf6f5a62467f4fcda59d6bc38f24d97c36.1536828567.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
+References: <cover.1536828567.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The adv748x assumes input endpoints are always enabled, and registers
-a subdevice for each of them when the corresponding output subdevice
-is registered.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Fix this by conditionally registering the input subdevice only if it is
-actually described in device tree.
+This patch adds definitions for L2 cache for the Cortex-A53 CPU
+cores (512 KiB in size, organized as 32 KiB x 16 ways), adds
+Cortex-A53 CPU cores (setting a total of 6 cores, 2 x Cortex-A57
++ 4 x Cortex-A53), and finally enables the performance monitor
+unit for the Cortex-A53 cores on the R8A774A1 SoC.
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Based on work done for r8a7796 SoC.
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/i2c/adv748x/adv748x-csi2.c |  6 +++---
- drivers/media/i2c/adv748x/adv748x.h      | 10 ++++++++++
- 2 files changed, 13 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 66 ++++++++++++++++++++++++++++---
+ 1 file changed, 61 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
-index 034fd93..9e9df51 100644
---- a/drivers/media/i2c/adv748x/adv748x-csi2.c
-+++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
-@@ -82,15 +82,15 @@ static int adv748x_csi2_registered(struct v4l2_subdev *sd)
- 	 *
- 	 * Link HDMI->TXA, and AFE->TXB directly.
- 	 */
--	if (is_txa(tx)) {
-+	if (is_txa(tx) && is_hdmi_enabled(state))
- 		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
- 						  &state->hdmi.sd,
- 						  ADV748X_HDMI_SOURCE);
--	} else {
-+	if (!is_txa(tx) && is_afe_enabled(state))
- 		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
- 						  &state->afe.sd,
- 						  ADV748X_AFE_SOURCE);
--	}
-+	return 0;
- }
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index f379de8404cb..dde188004283 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -79,12 +79,59 @@
+ 			clocks =<&cpg CPG_CORE 0>;
+ 		};
  
- static const struct v4l2_subdev_internal_ops adv748x_csi2_internal_ops = {
-diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
-index eeadf05..a34004e 100644
---- a/drivers/media/i2c/adv748x/adv748x.h
-+++ b/drivers/media/i2c/adv748x/adv748x.h
-@@ -94,6 +94,16 @@ struct adv748x_csi2 {
- #define adv748x_sd_to_csi2(sd) container_of(sd, struct adv748x_csi2, sd)
- #define is_tx_enabled(_tx) ((_tx)->state->endpoints[(_tx)->port] != NULL)
- #define is_txa(_tx) ((_tx) == &(_tx)->state->txa)
-+#define is_afe_enabled(_state)					\
-+	((_state)->endpoints[ADV748X_PORT_AIN0] != NULL ||	\
-+	 (_state)->endpoints[ADV748X_PORT_AIN1] != NULL ||	\
-+	 (_state)->endpoints[ADV748X_PORT_AIN2] != NULL ||	\
-+	 (_state)->endpoints[ADV748X_PORT_AIN3] != NULL ||	\
-+	 (_state)->endpoints[ADV748X_PORT_AIN4] != NULL ||	\
-+	 (_state)->endpoints[ADV748X_PORT_AIN5] != NULL ||	\
-+	 (_state)->endpoints[ADV748X_PORT_AIN6] != NULL ||	\
-+	 (_state)->endpoints[ADV748X_PORT_AIN7] != NULL)
-+#define is_hdmi_enabled(_state) ((_state)->endpoints[ADV748X_PORT_HDMI] != NULL)
++		a53_0: cpu@100 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			reg = <0x100>;
++			device_type = "cpu";
++			power-domains = <&sysc 5>;
++			next-level-cache = <&L2_CA53>;
++			enable-method = "psci";
++			clocks =<&cpg CPG_CORE 1>;
++		};
++
++		a53_1: cpu@101 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			reg = <0x101>;
++			device_type = "cpu";
++			power-domains = <&sysc 6>;
++			next-level-cache = <&L2_CA53>;
++			enable-method = "psci";
++			clocks =<&cpg CPG_CORE 1>;
++		};
++
++		a53_2: cpu@102 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			reg = <0x102>;
++			device_type = "cpu";
++			power-domains = <&sysc 7>;
++			next-level-cache = <&L2_CA53>;
++			enable-method = "psci";
++			clocks =<&cpg CPG_CORE 1>;
++		};
++
++		a53_3: cpu@103 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			reg = <0x103>;
++			device_type = "cpu";
++			power-domains = <&sysc 8>;
++			next-level-cache = <&L2_CA53>;
++			enable-method = "psci";
++			clocks =<&cpg CPG_CORE 1>;
++		};
++
+ 		L2_CA57: cache-controller-0 {
+ 			compatible = "cache";
+ 			power-domains = <&sysc 12>;
+ 			cache-unified;
+ 			cache-level = <2>;
+ 		};
++
++		L2_CA53: cache-controller-1 {
++			compatible = "cache";
++			power-domains = <&sysc 21>;
++			cache-unified;
++			cache-level = <2>;
++		};
+ 	};
  
- enum adv748x_hdmi_pads {
- 	ADV748X_HDMI_SINK,
+ 	extal_clk: extal {
+@@ -108,6 +155,15 @@
+ 		clock-frequency = <0>;
+ 	};
+ 
++	pmu_a53 {
++		compatible = "arm,cortex-a53-pmu";
++		interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&a53_0>, <&a53_1>, <&a53_2>, <&a53_3>;
++	};
++
+ 	pmu_a57 {
+ 		compatible = "arm,cortex-a57-pmu";
+ 		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
+@@ -977,7 +1033,7 @@
+ 			      <0x0 0xf1040000 0 0x20000>,
+ 			      <0x0 0xf1060000 0 0x20000>;
+ 			interrupts = <GIC_PPI 9
+-					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
++					(GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_HIGH)>;
+ 			clocks = <&cpg CPG_MOD 408>;
+ 			clock-names = "clk";
+ 			power-domains = <&sysc 32>;
+@@ -1037,10 +1093,10 @@
+ 
+ 	timer {
+ 		compatible = "arm,armv8-timer";
+-		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+-				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+-				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+-				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
++		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>;
+ 	};
+ 
+ 	/* External USB clocks - can be overridden by the board */
 -- 
-2.7.4
+2.11.0
