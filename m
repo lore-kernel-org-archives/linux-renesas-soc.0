@@ -1,44 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43372 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727329AbeIQOFz (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726835AbeIMOSz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Sep 2018 10:05:55 -0400
-Received: by mail-pg1-f193.google.com with SMTP id v66-v6so7306852pgb.10
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Sep 2018 01:39:31 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
+        Thu, 13 Sep 2018 10:18:55 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Mon, 17 Sep 2018 17:39:30 +0900
-Message-Id: <153717357067.480.7556586771925219502.sendpatchset@octo>
-In-Reply-To: <153717356234.480.6698281193817518888.sendpatchset@octo>
-References: <153717356234.480.6698281193817518888.sendpatchset@octo>
-Subject: [PATCH 01/03] dt-bindings: arm: consistently name SH-Mobile AG5 as R8A73A00
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 14/58] arm64: dts: renesas: r8a77965: Attach the SYS-DMAC to the IPMMU
+Date: Thu, 13 Sep 2018 11:09:09 +0200
+Message-Id: <4d76ad7d9de05506f1ee9a7b22416440468be090.1536828567.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
+References: <cover.1536828567.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm@opensource.se>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Update the description of the AG5 entry to follow same style as other SoCs.
+For R-Car M3-N hook up SYS-DMAC0, SYS-DMAC1 and SYS-DMAC2 to
+IPMMU-DS0 and IPMMU-DS1 in same way as for R-Car M3-W.
+This follows the R-Car Gen3 Rev.1.00 (April 2018) datasheet.
 
-The actual DT binding remains unchanged.
-
-Signed-off-by: Magnus Damm <damm@opensource.se>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
- Developed on top of renesas-devel-20180914-v4.19-rc3
-
- Documentation/devicetree/bindings/arm/shmobile.txt |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- 0001/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ work/Documentation/devicetree/bindings/arm/shmobile.txt	2018-09-17 13:00:41.773502304 +0900
-@@ -9,7 +9,7 @@ SoCs:
-     compatible = "renesas,r7s72100"
-   - RZ/A2 (R7S9210)
-     compatible = "renesas,r7s9210"
--  - SH-Mobile AG5 (R8A73A00/SH73A0)
-+  - SH-Mobile AG5 (R8A73A00)
-     compatible = "renesas,sh73a0"
-   - R-Mobile APE6 (R8A73A40)
-     compatible = "renesas,r8a73a4"
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index 52205be430d0..7a75c351edd2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -634,6 +634,14 @@
+ 			resets = <&cpg 219>;
+ 			#dma-cells = <1>;
+ 			dma-channels = <16>;
++			iommus = <&ipmmu_ds0 0>, <&ipmmu_ds0 1>,
++			       <&ipmmu_ds0 2>, <&ipmmu_ds0 3>,
++			       <&ipmmu_ds0 4>, <&ipmmu_ds0 5>,
++			       <&ipmmu_ds0 6>, <&ipmmu_ds0 7>,
++			       <&ipmmu_ds0 8>, <&ipmmu_ds0 9>,
++			       <&ipmmu_ds0 10>, <&ipmmu_ds0 11>,
++			       <&ipmmu_ds0 12>, <&ipmmu_ds0 13>,
++			       <&ipmmu_ds0 14>, <&ipmmu_ds0 15>;
+ 		};
+ 
+ 		dmac1: dma-controller@e7300000 {
+@@ -668,6 +676,14 @@
+ 			resets = <&cpg 218>;
+ 			#dma-cells = <1>;
+ 			dma-channels = <16>;
++			iommus = <&ipmmu_ds1 0>, <&ipmmu_ds1 1>,
++			       <&ipmmu_ds1 2>, <&ipmmu_ds1 3>,
++			       <&ipmmu_ds1 4>, <&ipmmu_ds1 5>,
++			       <&ipmmu_ds1 6>, <&ipmmu_ds1 7>,
++			       <&ipmmu_ds1 8>, <&ipmmu_ds1 9>,
++			       <&ipmmu_ds1 10>, <&ipmmu_ds1 11>,
++			       <&ipmmu_ds1 12>, <&ipmmu_ds1 13>,
++			       <&ipmmu_ds1 14>, <&ipmmu_ds1 15>;
+ 		};
+ 
+ 		dmac2: dma-controller@e7310000 {
+@@ -702,6 +718,14 @@
+ 			resets = <&cpg 217>;
+ 			#dma-cells = <1>;
+ 			dma-channels = <16>;
++			iommus = <&ipmmu_ds1 16>, <&ipmmu_ds1 17>,
++			       <&ipmmu_ds1 18>, <&ipmmu_ds1 19>,
++			       <&ipmmu_ds1 20>, <&ipmmu_ds1 21>,
++			       <&ipmmu_ds1 22>, <&ipmmu_ds1 23>,
++			       <&ipmmu_ds1 24>, <&ipmmu_ds1 25>,
++			       <&ipmmu_ds1 26>, <&ipmmu_ds1 27>,
++			       <&ipmmu_ds1 28>, <&ipmmu_ds1 29>,
++			       <&ipmmu_ds1 30>, <&ipmmu_ds1 31>;
+ 		};
+ 
+ 		ipmmu_ds0: mmu@e6740000 {
+-- 
+2.11.0
