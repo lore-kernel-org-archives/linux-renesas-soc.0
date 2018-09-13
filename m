@@ -1,55 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:28767 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389517AbeIURnw (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34550 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbeIMORa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Sep 2018 13:43:52 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 0/4] Add SDHI2 support to iwg23s
-Date: Fri, 21 Sep 2018 12:55:07 +0100
-Message-Id: <1537530911-443-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Thu, 13 Sep 2018 10:17:30 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 10/13] ARM: dts: silk: Add DA9063 RTC and OnKey node
+Date: Thu, 13 Sep 2018 11:08:33 +0200
+Message-Id: <d688a83aa6e33654d14d1d79e59a340ed4d08332.1536824376.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1536824376.git.horms+renesas@verge.net.au>
+References: <cover.1536824376.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dear All,
+From: Marek Vasut <marek.vasut@gmail.com>
 
-this series adds SDHI2 support to the iwg23s.
-The RZ/G1C (the SoC powering the iwg23s) is slightly different from
-the other R-Car and RZ/G1 devices, in the sense that this device uses
-only one bit of the POC Control Register to control the voltage of the
-entire interface, as opposed to one bit per pin.
-There is a discussion on the ML that is going on about this:
-https://patchwork.kernel.org/patch/10604395/
-and the patches from this series implement "option 2".
+Add DA9063 RTC and OnKey subnode to DA9063 PMIC node on Silk.
 
-Thanks,
-Fab
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7794-silk.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Fabrizio Castro (4):
-  dt-bindings: mmc: renesas_sdhi: Add r8a77470 support
-  pinctrl: sh-pfc: r8a77470: Add SDHI2 voltage switch
-  ARM: dts: r8a77470: Add SDHI2 support
-  ARM: dts: iwg23s-sbc: Add uSD card support
-
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt |  1 +
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts          | 49 ++++++++++++++++++++++
- arch/arm/boot/dts/r8a77470.dtsi                    | 15 +++++++
- drivers/pinctrl/sh-pfc/pfc-r8a77470.c              | 32 +++++++++++++-
- 4 files changed, 96 insertions(+), 1 deletion(-)
-
+diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
+index 6ea60e1faf75..60e91ebfa65d 100644
+--- a/arch/arm/boot/dts/r8a7794-silk.dts
++++ b/arch/arm/boot/dts/r8a7794-silk.dts
+@@ -416,6 +416,14 @@
+ 		interrupts = <31 IRQ_TYPE_LEVEL_LOW>;
+ 		interrupt-controller;
+ 
++		onkey {
++			compatible = "dlg,da9063-onkey";
++		};
++
++		rtc {
++			compatible = "dlg,da9063-rtc";
++		};
++
+ 		wdt {
+ 			compatible = "dlg,da9063-watchdog";
+ 		};
 -- 
-2.7.4
+2.11.0
