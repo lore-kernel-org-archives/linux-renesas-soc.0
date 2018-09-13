@@ -1,90 +1,117 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:44137 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726366AbeIETuc (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbeIMOT7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Sep 2018 15:50:32 -0400
-MIME-Version: 1.0
-References: <1536042803-6152-1-git-send-email-neeraju@codeaurora.org>
- <alpine.DEB.2.21.1809051244500.1416@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1809051419580.1416@nanos.tec.linutronix.de> <20180905145353.GA14069@e107155-lin>
-In-Reply-To: <20180905145353.GA14069@e107155-lin>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Sep 2018 17:19:40 +0200
-Message-ID: <CAMuHMdUEVt0JW6XV9zOx53Rv3C9Za-5hjg=J6TpWgUxHWcctjQ@mail.gmail.com>
-Subject: Re: [PATCH] cpu/hotplug: Fix rollback during error-out in takedown_cpu()
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Neeraj Upadhyay <neeraju@codeaurora.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, dzickus@redhat.com,
-        Brendan Jackman <brendan.jackman@arm.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        sramana@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 13 Sep 2018 10:19:59 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 31/58] arm64: dts: renesas: r8a774a1: Add IPMMU device nodes
+Date: Thu, 13 Sep 2018 11:09:26 +0200
+Message-Id: <8f507babc617050e7502849d008ddab548efa9c1.1536828567.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
+References: <cover.1536828567.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sudeep,
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Thanks for the CC!
+Add r8a774a1 IPMMU nodes.
 
-On Wed, Sep 5, 2018 at 4:54 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
-> On Wed, Sep 05, 2018 at 02:23:46PM +0200, Thomas Gleixner wrote:
-> > On Wed, 5 Sep 2018, Thomas Gleixner wrote:
-> > > On Tue, 4 Sep 2018, Neeraj Upadhyay wrote:
-> > > >   ret = cpuhp_down_callbacks(cpu, st, target);
-> > > >   if (ret && st->state > CPUHP_TEARDOWN_CPU && st->state < prev_state) {
-> > > > -         cpuhp_reset_state(st, prev_state);
-> > > > +         /*
-> > > > +          * As st->last is not set, cpuhp_reset_state() increments
-> > > > +          * st->state, which results in CPUHP_AP_SMPBOOT_THREADS being
-> > > > +          * skipped during rollback. So, don't use it here.
-> > > > +          */
-> > > > +         st->rollback = true;
-> > > > +         st->target = prev_state;
-> > > > +         st->bringup = !st->bringup;
-> > >
-> > > No, this is just papering over the actual problem.
-> > >
-> > > The state inconsistency happens in take_cpu_down() when it returns with a
-> > > failure from __cpu_disable() because that returns with state = TEARDOWN_CPU
-> > > and st->state is then incremented in undo_cpu_down().
-> > >
-> > > That's the real issue and we need to analyze the whole cpu_down rollback
-> > > logic first.
-> >
-> > And looking closer this is a general issue. Just that the TEARDOWN state
-> > makes it simple to observe. It's universaly broken, when the first teardown
-> > callback fails because, st->state is only decremented _AFTER_ the callback
-> > returns success, but undo_cpu_down() increments unconditionally.
-> >
-> > Patch below.
->
-> This patch fixes the issue reported @[1]. Lorenzo did some debugging and
-> I wanted to have a look at it at some point but this discussion drew my
-> attention and sounded very similar[2]. So I did a quick test with this
-> patch and it fixes the issue.
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 73 +++++++++++++++++++++++++++++++
+ 1 file changed, 73 insertions(+)
 
-> [1] https://lore.kernel.org/lkml/CAMuHMdVg868LgL5xTg5Dp5rReKxoo+8fRy+ETJiMxGWZCp+hWw@mail.gmail.com/
-> [2] https://lore.kernel.org/lkml/20180823131505.GA31558@red-moon/
-
-Thomas' patch fixes the issue for me:
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index 02620c89e004..8589122e3c94 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -642,6 +642,79 @@
+ 			dma-channels = <16>;
+ 		};
+ 
++		ipmmu_ds0: mmu@e6740000 {
++			compatible = "renesas,ipmmu-r8a774a1";
++			reg = <0 0xe6740000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 0>;
++			power-domains = <&sysc 32>;
++			#iommu-cells = <1>;
++		};
++
++		ipmmu_ds1: mmu@e7740000 {
++			compatible = "renesas,ipmmu-r8a774a1";
++			reg = <0 0xe7740000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 1>;
++			power-domains = <&sysc 32>;
++			#iommu-cells = <1>;
++		};
++
++		ipmmu_hc: mmu@e6570000 {
++			compatible = "renesas,ipmmu-r8a774a1";
++			reg = <0 0xe6570000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 2>;
++			power-domains = <&sysc 32>;
++			#iommu-cells = <1>;
++		};
++
++		ipmmu_mm: mmu@e67b0000 {
++			compatible = "renesas,ipmmu-r8a774a1";
++			reg = <0 0xe67b0000 0 0x1000>;
++			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
++			power-domains = <&sysc 32>;
++			#iommu-cells = <1>;
++		};
++
++		ipmmu_mp: mmu@ec670000 {
++			compatible = "renesas,ipmmu-r8a774a1";
++			reg = <0 0xec670000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 4>;
++			power-domains = <&sysc 32>;
++			#iommu-cells = <1>;
++		};
++
++		ipmmu_pv0: mmu@fd800000 {
++			compatible = "renesas,ipmmu-r8a774a1";
++			reg = <0 0xfd800000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 5>;
++			power-domains = <&sysc 32>;
++			#iommu-cells = <1>;
++		};
++
++		ipmmu_pv1: mmu@fd950000 {
++			compatible = "renesas,ipmmu-r8a774a1";
++			reg = <0 0xfd950000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 6>;
++			power-domains = <&sysc 32>;
++			#iommu-cells = <1>;
++		};
++
++		ipmmu_vc0: mmu@fe6b0000 {
++			compatible = "renesas,ipmmu-r8a774a1";
++			reg = <0 0xfe6b0000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 8>;
++			power-domains = <&sysc 14>;
++			#iommu-cells = <1>;
++		};
++
++		ipmmu_vi0: mmu@febd0000 {
++			compatible = "renesas,ipmmu-r8a774a1";
++			reg = <0 0xfebd0000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 9>;
++			power-domains = <&sysc 32>;
++			#iommu-cells = <1>;
++		};
++
+ 		avb: ethernet@e6800000 {
+ 			compatible = "renesas,etheravb-r8a774a1",
+ 				     "renesas,etheravb-rcar-gen3";
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.11.0
