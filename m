@@ -1,76 +1,117 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:34274 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726966AbeINPgm (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbeIMOTN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Sep 2018 11:36:42 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: mchehab@kernel.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] media: vsp1: Remove artificial pixel limitation
-Date: Fri, 14 Sep 2018 13:23:04 +0300
-Message-ID: <3874771.GdJIGdZf8f@avalon>
-In-Reply-To: <20180831144044.31713-2-kieran.bingham+renesas@ideasonboard.com>
-References: <20180831144044.31713-1-kieran.bingham+renesas@ideasonboard.com> <20180831144044.31713-2-kieran.bingham+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Thu, 13 Sep 2018 10:19:13 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 37/58] arm64: dts: renesas: r8a774a1: Add USB2.0 phy and host(EHCI/OHCI) device nodes
+Date: Thu, 13 Sep 2018 11:09:32 +0200
+Message-Id: <4c2c2fb9987601b5dd7de3ccd70dc2270434b351.1536828567.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
+References: <cover.1536828567.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+From: Biju Das <biju.das@bp.renesas.com>
 
-Thank you for the patch.
+Add USB2.0 phy and host (EHCI/OHCI) device nodes on RZ/G2M SoC dtsi.
 
-On Friday, 31 August 2018 17:40:39 EEST Kieran Bingham wrote:
-> The VSP1 has a minimum width and height of a single pixel, with the
-> exception of pixel formats with sub-sampling.
-> 
-> Remove the artificial minimum width and minimum height limitation, and
-> instead clamp the minimum dimensions based upon the sub-sampling
-> parameter of that dimension.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 73 +++++++++++++++++++++++++++++++
+ 1 file changed, 73 insertions(+)
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-and applied to my tree.
-
-> ---
->  drivers/media/platform/vsp1/vsp1_video.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/media/platform/vsp1/vsp1_video.c
-> b/drivers/media/platform/vsp1/vsp1_video.c index 81d47a09d7bc..e78eadd0295b
-> 100644
-> --- a/drivers/media/platform/vsp1/vsp1_video.c
-> +++ b/drivers/media/platform/vsp1/vsp1_video.c
-> @@ -38,9 +38,7 @@
->  #define VSP1_VIDEO_DEF_WIDTH		1024
->  #define VSP1_VIDEO_DEF_HEIGHT		768
-> 
-> -#define VSP1_VIDEO_MIN_WIDTH		2U
->  #define VSP1_VIDEO_MAX_WIDTH		8190U
-> -#define VSP1_VIDEO_MIN_HEIGHT		2U
->  #define VSP1_VIDEO_MAX_HEIGHT		8190U
-> 
->  /*
-> ---------------------------------------------------------------------------
-> -- @@ -136,9 +134,8 @@ static int __vsp1_video_try_format(struct vsp1_video
-> *video, height = round_down(height, info->vsub);
-> 
->  	/* Clamp the width and height. */
-> -	pix->width = clamp(width, VSP1_VIDEO_MIN_WIDTH, VSP1_VIDEO_MAX_WIDTH);
-> -	pix->height = clamp(height, VSP1_VIDEO_MIN_HEIGHT,
-> -			    VSP1_VIDEO_MAX_HEIGHT);
-> +	pix->width = clamp(width, info->hsub, VSP1_VIDEO_MAX_WIDTH);
-> +	pix->height = clamp(height, info->vsub, VSP1_VIDEO_MAX_HEIGHT);
-> 
->  	/*
->  	 * Compute and clamp the stride and image size. While not documented in
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index 5d0109a376c2..11113868f51e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -1320,6 +1320,79 @@
+ 			dma-channels = <16>;
+ 		};
+ 
++		ohci0: usb@ee080000 {
++			compatible = "generic-ohci";
++			reg = <0 0xee080000 0 0x100>;
++			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 703>;
++			phys = <&usb2_phy0>;
++			phy-names = "usb";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 703>;
++			status = "disabled";
++		};
++
++		ohci1: usb@ee0a0000 {
++			compatible = "generic-ohci";
++			reg = <0 0xee0a0000 0 0x100>;
++			interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 702>;
++			phys = <&usb2_phy1>;
++			phy-names = "usb";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 702>;
++			status = "disabled";
++		};
++
++		ehci0: usb@ee080100 {
++			compatible = "generic-ehci";
++			reg = <0 0xee080100 0 0x100>;
++			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 703>;
++			phys = <&usb2_phy0>;
++			phy-names = "usb";
++			companion= <&ohci0>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 703>;
++			status = "disabled";
++		};
++
++		ehci1: usb@ee0a0100 {
++			compatible = "generic-ehci";
++			reg = <0 0xee0a0100 0 0x100>;
++			interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 702>;
++			phys = <&usb2_phy1>;
++			phy-names = "usb";
++			companion= <&ohci1>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 702>;
++			status = "disabled";
++		};
++
++		usb2_phy0: usb-phy@ee080200 {
++			compatible = "renesas,usb2-phy-r8a774a1",
++				     "renesas,rcar-gen3-usb2-phy";
++			reg = <0 0xee080200 0 0x700>;
++			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 703>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 703>;
++			#phy-cells = <0>;
++			status = "disabled";
++		};
++
++		usb2_phy1: usb-phy@ee0a0200 {
++			compatible = "renesas,usb2-phy-r8a774a1",
++				     "renesas,rcar-gen3-usb2-phy";
++			reg = <0 0xee0a0200 0 0x700>;
++			clocks = <&cpg CPG_MOD 702>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 702>;
++			#phy-cells = <0>;
++			status = "disabled";
++		};
++
+ 		sdhi0: sd@ee100000 {
+ 			compatible = "renesas,sdhi-r8a774a1",
+ 				     "renesas,rcar-gen3-sdhi";
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
