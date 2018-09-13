@@ -1,99 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726835AbeIMOSq (ORCPT
+        with ESMTP id S1726835AbeIMOS4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:18:46 -0400
+        Thu, 13 Sep 2018 10:18:56 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 08/58] arm64: dts: renesas: r8a779{7|8}0: move CAN clock node
-Date: Thu, 13 Sep 2018 11:09:03 +0200
-Message-Id: <18281dec2ba086b93bee2dd5f9ee0e3633d25a8d.1536828567.git.horms+renesas@verge.net.au>
+Subject: [PATCH 16/58] arm64: dts: renesas: r8a77965: m3nulcb: Initial device tree
+Date: Thu, 13 Sep 2018 11:09:11 +0200
+Message-Id: <83ff28c74b525aa33f42b829538017d3e8658e69.1536828567.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
 References: <cover.1536828567.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Eugeniu Rosca <roscaeugeniu@gmail.com>
 
-The CAN clock node should precede the "cpus" node in the R8A779{7|8}0
-device  trees,  according to  the alphanumeric node sorting rule...
+Allow the bare M3-N-based ULCB board to boot.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 14 +++++++-------
- arch/arm64/boot/dts/renesas/r8a77980.dtsi | 14 +++++++-------
- 2 files changed, 14 insertions(+), 14 deletions(-)
+ arch/arm64/boot/dts/renesas/Makefile             |  1 +
+ arch/arm64/boot/dts/renesas/r8a77965-m3nulcb.dts | 33 ++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a77965-m3nulcb.dts
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index 18d1aafe2e30..6c0832f23811 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -24,6 +24,13 @@
- 		i2c4 = &i2c4;
- 	};
- 
-+	/* External CAN clock - to be overridden by boards that provide it */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 9e2394bc3c62..eb158d1f90e9 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -8,6 +8,7 @@ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-m3ulcb-kf.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
+ dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-x.dtb r8a77965-salvator-xs.dtb
++dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-m3nulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb r8a77970-v3msk.dtb
+ dtb-$(CONFIG_ARCH_R8A77980) += r8a77980-condor.dtb r8a77980-v3hsk.dtb
+ dtb-$(CONFIG_ARCH_R8A77990) += r8a77990-ebisu.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965-m3nulcb.dts b/arch/arm64/boot/dts/renesas/r8a77965-m3nulcb.dts
+new file mode 100644
+index 000000000000..964078b6cc49
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a77965-m3nulcb.dts
+@@ -0,0 +1,33 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the M3NULCB (R-Car Starter Kit Pro) board
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ * Copyright (C) 2018 Cogent Embedded, Inc.
++ */
 +
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -82,13 +89,6 @@
- 		method = "smc";
- 	};
- 
--	/* External CAN clock - to be overridden by boards that provide it */
--	can_clk: can {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <0>;
--	};
--
- 	/* External SCIF clock - to be overridden by boards that provide it */
- 	scif_clk: scif {
- 		compatible = "fixed-clock";
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-index fbfe65476443..4bc99d6763ce 100644
---- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -25,6 +25,13 @@
- 		i2c5 = &i2c5;
- 	};
- 
-+	/* External CAN clock - to be overridden by boards that provide it */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
++/dts-v1/;
++#include "r8a77965.dtsi"
++#include "ulcb.dtsi"
 +
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -77,13 +84,6 @@
- 		};
- 	};
- 
--	/* External CAN clock - to be overridden by boards that provide it */
--	can_clk: can {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <0>;
--	};
--
- 	extal_clk: extal {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
++/ {
++	model = "Renesas M3NULCB board based on r8a77965";
++	compatible = "renesas,m3nulcb", "renesas,r8a77965";
++
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x78000000>;
++	};
++};
++
++&du {
++	clocks = <&cpg CPG_MOD 724>,
++		 <&cpg CPG_MOD 723>,
++		 <&cpg CPG_MOD 721>,
++		 <&versaclock5 1>,
++		 <&versaclock5 3>,
++		 <&versaclock5 2>;
++	clock-names = "du.0", "du.1", "du.3",
++		      "dclkin.0", "dclkin.1", "dclkin.3";
++};
 -- 
 2.11.0
