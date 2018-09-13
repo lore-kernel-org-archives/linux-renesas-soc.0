@@ -1,147 +1,178 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43775 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726507AbeIEAtR (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726835AbeIMOSn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Sep 2018 20:49:17 -0400
-Received: by mail-pg1-f195.google.com with SMTP id v66-v6so2199651pgb.10
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 04 Sep 2018 13:22:34 -0700 (PDT)
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+        Thu, 13 Sep 2018 10:18:43 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH/RFT] arm64: dts: renesas: r8a77990: Add SYS-DMAC device nodes
-Date: Wed,  5 Sep 2018 05:22:27 +0900
-Message-Id: <1536092547-6000-1-git-send-email-ykaneko0929@gmail.com>
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 07/58] arm64: dts: renesas: r8a77980: move IPMMU nodes
+Date: Thu, 13 Sep 2018 11:09:02 +0200
+Message-Id: <f14bfabc5472ebc637a9ed8c5bc4ab7b77db209f.1536828567.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
+References: <cover.1536828567.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-This patch adds SYS-DMAC{0,1,2} device nodes for the R8A77990 SoC.
+The IPMMU nodes should follow the GEther node, not the CAN-FD node,
+according to the <unit-address> part of the startng IPMMU-DS1 node.
+While moving the nodes, also do sort them by label alphanumerically...
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi | 126 +++++++++++++++---------------
+ 1 file changed, 63 insertions(+), 63 deletions(-)
 
-This patch is based on the devel branch of Simon Horman's renesas tree.
-
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 102 ++++++++++++++++++++++++++++++
- 1 file changed, 102 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index 6198768..09e7b2f 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -218,6 +218,108 @@
- 			#power-domain-cells = <1>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+index 1013da3e2ec4..fbfe65476443 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -462,69 +462,6 @@
+ 			};
  		};
  
-+		dmac0: dma-controller@e6700000 {
-+			compatible = "renesas,dmac-r8a77990",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe6700000 0 0x10000>;
-+			interrupts = <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7",
-+					"ch8", "ch9", "ch10", "ch11",
-+					"ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 219>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 219>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
+-		ipmmu_ds1: mmu@e7740000 {
+-			compatible = "renesas,ipmmu-r8a77980";
+-			reg = <0 0xe7740000 0 0x1000>;
+-			renesas,ipmmu-main = <&ipmmu_mm 0>;
+-			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+-			#iommu-cells = <1>;
+-		};
+-
+-		ipmmu_vip0: mmu@e7b00000 {
+-			compatible = "renesas,ipmmu-r8a77980";
+-			reg = <0 0xe7b00000 0 0x1000>;
+-			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+-			#iommu-cells = <1>;
+-		};
+-
+-		ipmmu_vip1: mmu@e7960000 {
+-			compatible = "renesas,ipmmu-r8a77980";
+-			reg = <0 0xe7960000 0 0x1000>;
+-			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+-			#iommu-cells = <1>;
+-		};
+-
+-		ipmmu_ir: mmu@ff8b0000 {
+-			compatible = "renesas,ipmmu-r8a77980";
+-			reg = <0 0xff8b0000 0 0x1000>;
+-			renesas,ipmmu-main = <&ipmmu_mm 3>;
+-			power-domains = <&sysc R8A77980_PD_A3IR>;
+-			#iommu-cells = <1>;
+-		};
+-
+-		ipmmu_mm: mmu@e67b0000 {
+-			compatible = "renesas,ipmmu-r8a77980";
+-			reg = <0 0xe67b0000 0 0x1000>;
+-			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
+-			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+-			#iommu-cells = <1>;
+-		};
+-
+-		ipmmu_rt: mmu@ffc80000 {
+-			compatible = "renesas,ipmmu-r8a77980";
+-			reg = <0 0xffc80000 0 0x1000>;
+-			renesas,ipmmu-main = <&ipmmu_mm 10>;
+-			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+-			#iommu-cells = <1>;
+-		};
+-
+-		ipmmu_vc0: mmu@fe6b0000 {
+-			compatible = "renesas,ipmmu-r8a77980";
+-			reg = <0 0xfe6b0000 0 0x1000>;
+-			renesas,ipmmu-main = <&ipmmu_mm 12>;
+-			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+-			#iommu-cells = <1>;
+-		};
+-
+-		ipmmu_vi0: mmu@febd0000 {
+-			compatible = "renesas,ipmmu-r8a77980";
+-			reg = <0 0xfebd0000 0 0x1000>;
+-			renesas,ipmmu-main = <&ipmmu_mm 14>;
+-			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+-			#iommu-cells = <1>;
+-		};
+-
+ 		avb: ethernet@e6800000 {
+ 			compatible = "renesas,etheravb-r8a77980",
+ 				     "renesas,etheravb-rcar-gen3";
+@@ -722,6 +659,69 @@
+ 			status = "disabled";
+ 		};
+ 
++		ipmmu_ds1: mmu@e7740000 {
++			compatible = "renesas,ipmmu-r8a77980";
++			reg = <0 0xe7740000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 0>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
 +		};
 +
-+		dmac1: dma-controller@e7300000 {
-+			compatible = "renesas,dmac-r8a77990",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe7300000 0 0x10000>;
-+			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 319 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7",
-+					"ch8", "ch9", "ch10", "ch11",
-+					"ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 218>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 218>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
++		ipmmu_ir: mmu@ff8b0000 {
++			compatible = "renesas,ipmmu-r8a77980";
++			reg = <0 0xff8b0000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 3>;
++			power-domains = <&sysc R8A77980_PD_A3IR>;
++			#iommu-cells = <1>;
 +		};
 +
-+		dmac2: dma-controller@e7310000 {
-+			compatible = "renesas,dmac-r8a77990",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe7310000 0 0x10000>;
-+			interrupts = <GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 419 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 420 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 426 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 427 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 428 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 429 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 430 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 431 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 397 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7",
-+					"ch8", "ch9", "ch10", "ch11",
-+					"ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 217>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 217>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
++		ipmmu_mm: mmu@e67b0000 {
++			compatible = "renesas,ipmmu-r8a77980";
++			reg = <0 0xe67b0000 0 0x1000>;
++			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
 +		};
 +
- 		ipmmu_ds0: mmu@e6740000 {
- 			compatible = "renesas,ipmmu-r8a77990";
- 			reg = <0 0xe6740000 0 0x1000>;
++		ipmmu_rt: mmu@ffc80000 {
++			compatible = "renesas,ipmmu-r8a77980";
++			reg = <0 0xffc80000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 10>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++		};
++
++		ipmmu_vc0: mmu@fe6b0000 {
++			compatible = "renesas,ipmmu-r8a77980";
++			reg = <0 0xfe6b0000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 12>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++		};
++
++		ipmmu_vi0: mmu@febd0000 {
++			compatible = "renesas,ipmmu-r8a77980";
++			reg = <0 0xfebd0000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 14>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++		};
++
++		ipmmu_vip0: mmu@e7b00000 {
++			compatible = "renesas,ipmmu-r8a77980";
++			reg = <0 0xe7b00000 0 0x1000>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++		};
++
++		ipmmu_vip1: mmu@e7960000 {
++			compatible = "renesas,ipmmu-r8a77980";
++			reg = <0 0xe7960000 0 0x1000>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++		};
++
+ 		mmc0: mmc@ee140000 {
+ 			compatible = "renesas,sdhi-r8a77980",
+ 				     "renesas,rcar-gen3-sdhi";
 -- 
-1.9.1
+2.11.0
