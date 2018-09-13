@@ -1,53 +1,90 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Stefan Lengfeld <contact@stefanchrist.eu>,
-        preid@electromag.com.au, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Keerthy <j-keerthy@ti.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 1/4] i2c: core: remove outdated DEBUG output
-Date: Thu, 20 Sep 2018 18:14:20 +0200
-Message-Id: <20180920161423.13990-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180920161423.13990-1-wsa+renesas@sang-engineering.com>
-References: <20180920161423.13990-1-wsa+renesas@sang-engineering.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726835AbeIMOTD (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 13 Sep 2018 10:19:03 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 24/58] arm64: dts: renesas: r8a774a1: Add Ethernet AVB node
+Date: Thu, 13 Sep 2018 11:09:19 +0200
+Message-Id: <71bddde2a2dfcba2c2caad35d6933345960907e5.1536828567.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
+References: <cover.1536828567.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The usefulness of this debug output is questionable. It covers only
-direct i2c_transfer calls and no SMBUS calls, neither direct nor
-emulated ones. And the latter one is largely used in the kernel, so a
-lot of stuff is missed. Also, we have a proper tracing mechanism for all
-these kinds of transfers in place for years now. Remove this old one.
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This patch adds the SoC specific part of the Ethernet AVB
+device tree node.
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/i2c/i2c-core-base.c | 10 ----------
- 1 file changed, 10 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 45 +++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 9ee9a15e7134..c2b352c46fae 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -1940,16 +1940,6 @@ int i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
- 	 */
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index 15d7785fb177..b771211a8444 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -350,6 +350,51 @@
+ 			dma-channels = <16>;
+ 		};
  
- 	if (adap->algo->master_xfer) {
--#ifdef DEBUG
--		for (ret = 0; ret < num; ret++) {
--			dev_dbg(&adap->dev,
--				"master_xfer[%d] %c, addr=0x%02x, len=%d%s\n",
--				ret, (msgs[ret].flags & I2C_M_RD) ? 'R' : 'W',
--				msgs[ret].addr, msgs[ret].len,
--				(msgs[ret].flags & I2C_M_RECV_LEN) ? "+" : "");
--		}
--#endif
--
- 		if (in_atomic() || irqs_disabled()) {
- 			ret = i2c_trylock_bus(adap, I2C_LOCK_SEGMENT);
- 			if (!ret)
++		avb: ethernet@e6800000 {
++			compatible = "renesas,etheravb-r8a774a1",
++				     "renesas,etheravb-rcar-gen3";
++			reg = <0 0xe6800000 0 0x800>;
++			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7",
++					  "ch8", "ch9", "ch10", "ch11",
++					  "ch12", "ch13", "ch14", "ch15",
++					  "ch16", "ch17", "ch18", "ch19",
++					  "ch20", "ch21", "ch22", "ch23",
++					  "ch24";
++			clocks = <&cpg CPG_MOD 812>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 812>;
++			phy-mode = "rgmii";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		scif0: serial@e6e60000 {
+ 			compatible = "renesas,scif-r8a774a1",
+ 				     "renesas,rcar-gen3-scif", "renesas,scif";
 -- 
-2.18.0
+2.11.0
