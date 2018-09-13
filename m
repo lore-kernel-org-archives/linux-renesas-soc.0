@@ -1,230 +1,115 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726835AbeIMOSx (ORCPT
+        with ESMTP id S1726680AbeIMOTL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:18:53 -0400
+        Thu, 13 Sep 2018 10:19:11 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 13/58] arm64: dts: renesas: Initial r8a774a1 SoC device tree
-Date: Thu, 13 Sep 2018 11:09:08 +0200
-Message-Id: <90493b09df41a9c1dd0bf315e81d03b4212384f9.1536828567.git.horms+renesas@verge.net.au>
+Subject: [PATCH 34/58] arm64: dts: renesas: r8a774a1: Add PWM device nodes
+Date: Thu, 13 Sep 2018 11:09:29 +0200
+Message-Id: <9567a8566850936688c08a6392a3324631f9daeb.1536828567.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
 References: <cover.1536828567.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Basic support for the RZ/G2M SoC.
+This patch adds PWM[0123456] device nodes to the RZ/G2M (a.k.a R8A774A1)
+device tree.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 190 ++++++++++++++++++++++++++++++
- 1 file changed, 190 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 70 +++++++++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-new file mode 100644
-index 000000000000..8e63e9aee456
---- /dev/null
+index dde188004283..c9ac545f08f3 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -0,0 +1,190 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the r8a774a1 SoC
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
-+
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/ {
-+	compatible = "renesas,r8a774a1";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	/*
-+	 * The external audio clocks are configured as 0 Hz fixed frequency
-+	 * clocks by default.
-+	 * Boards that provide audio clocks should override them.
-+	 */
-+	audio_clk_a: audio_clk_a {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	audio_clk_b: audio_clk_b {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	audio_clk_c: audio_clk_c {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External CAN clock - to be overridden by boards that provide it */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		a57_0: cpu@0 {
-+			compatible = "arm,cortex-a57", "arm,armv8";
-+			reg = <0x0>;
-+			device_type = "cpu";
-+			power-domains = <&sysc 0>;
-+			next-level-cache = <&L2_CA57>;
-+			enable-method = "psci";
-+			clocks =<&cpg CPG_CORE 0>;
-+		};
-+
-+		a57_1: cpu@1 {
-+			compatible = "arm,cortex-a57", "arm,armv8";
-+			reg = <0x1>;
-+			device_type = "cpu";
-+			power-domains = <&sysc 1>;
-+			next-level-cache = <&L2_CA57>;
-+			enable-method = "psci";
-+			clocks =<&cpg CPG_CORE 0>;
-+		};
-+
-+		L2_CA57: cache-controller-0 {
-+			compatible = "cache";
-+			power-domains = <&sysc 12>;
-+			cache-unified;
-+			cache-level = <2>;
-+		};
-+	};
-+
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board */
-+		clock-frequency = <0>;
-+	};
-+
-+	extalr_clk: extalr {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External PCIe clock - can be overridden by the board */
-+	pcie_bus_clk: pcie_bus {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	pmu_a57 {
-+		compatible = "arm,cortex-a57-pmu";
-+		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&a57_0>, <&a57_1>;
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-1.0", "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	/* External SCIF clock - to be overridden by boards that provide it */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		cpg: clock-controller@e6150000 {
-+			compatible = "renesas,r8a774a1-cpg-mssr";
-+			reg = <0 0xe6150000 0 0x0bb0>;
-+			clocks = <&extal_clk>, <&extalr_clk>;
-+			clock-names = "extal", "extalr";
-+			#clock-cells = <2>;
-+			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
-+		};
-+
-+		rst: reset-controller@e6160000 {
-+			compatible = "renesas,r8a774a1-rst";
-+			reg = <0 0xe6160000 0 0x018c>;
-+		};
-+
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a774a1-sysc";
-+			reg = <0 0xe6180000 0 0x0400>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		gic: interrupt-controller@f1010000 {
-+			compatible = "arm,gic-400";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0x0 0xf1010000 0 0x1000>,
-+			      <0x0 0xf1020000 0 0x20000>,
-+			      <0x0 0xf1040000 0 0x20000>,
-+			      <0x0 0xf1060000 0 0x20000>;
-+			interrupts = <GIC_PPI 9
-+					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-+			clocks = <&cpg CPG_MOD 408>;
-+			clock-names = "clk";
+@@ -816,6 +816,76 @@
+ 			status = "disabled";
+ 		};
+ 
++		pwm0: pwm@e6e30000 {
++			compatible = "renesas,pwm-r8a774a1", "renesas,pwm-rcar";
++			reg = <0 0xe6e30000 0 0x8>;
++			#pwm-cells = <2>;
++			clocks = <&cpg CPG_MOD 523>;
++			resets = <&cpg 523>;
 +			power-domains = <&sysc 32>;
-+			resets = <&cpg 408>;
++			status = "disabled";
 +		};
 +
-+		prr: chipid@fff00044 {
-+			compatible = "renesas,prr";
-+			reg = <0 0xfff00044 0 4>;
++		pwm1: pwm@e6e31000 {
++			compatible = "renesas,pwm-r8a774a1", "renesas,pwm-rcar";
++			reg = <0 0xe6e31000 0 0x8>;
++			#pwm-cells = <2>;
++			clocks = <&cpg CPG_MOD 523>;
++			resets = <&cpg 523>;
++			power-domains = <&sysc 32>;
++			status = "disabled";
 +		};
-+	};
 +
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
++		pwm2: pwm@e6e32000 {
++			compatible = "renesas,pwm-r8a774a1", "renesas,pwm-rcar";
++			reg = <0 0xe6e32000 0 0x8>;
++			#pwm-cells = <2>;
++			clocks = <&cpg CPG_MOD 523>;
++			resets = <&cpg 523>;
++			power-domains = <&sysc 32>;
++			status = "disabled";
++		};
 +
-+	/* External USB clocks - can be overridden by the board */
-+	usb3s0_clk: usb3s0 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
++		pwm3: pwm@e6e33000 {
++			compatible = "renesas,pwm-r8a774a1", "renesas,pwm-rcar";
++			reg = <0 0xe6e33000 0 0x8>;
++			#pwm-cells = <2>;
++			clocks = <&cpg CPG_MOD 523>;
++			resets = <&cpg 523>;
++			power-domains = <&sysc 32>;
++			status = "disabled";
++		};
 +
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+};
++		pwm4: pwm@e6e34000 {
++			compatible = "renesas,pwm-r8a774a1", "renesas,pwm-rcar";
++			reg = <0 0xe6e34000 0 0x8>;
++			#pwm-cells = <2>;
++			clocks = <&cpg CPG_MOD 523>;
++			resets = <&cpg 523>;
++			power-domains = <&sysc 32>;
++			status = "disabled";
++		};
++
++		pwm5: pwm@e6e35000 {
++			compatible = "renesas,pwm-r8a774a1", "renesas,pwm-rcar";
++			reg = <0 0xe6e35000 0 0x8>;
++			#pwm-cells = <2>;
++			clocks = <&cpg CPG_MOD 523>;
++			resets = <&cpg 523>;
++			power-domains = <&sysc 32>;
++			status = "disabled";
++		};
++
++		pwm6: pwm@e6e36000 {
++			compatible = "renesas,pwm-r8a774a1", "renesas,pwm-rcar";
++			reg = <0 0xe6e36000 0 0x8>;
++			#pwm-cells = <2>;
++			clocks = <&cpg CPG_MOD 523>;
++			resets = <&cpg 523>;
++			power-domains = <&sysc 32>;
++			status = "disabled";
++		};
++
+ 		scif0: serial@e6e60000 {
+ 			compatible = "renesas,scif-r8a774a1",
+ 				     "renesas,rcar-gen3-scif", "renesas,scif";
 -- 
 2.11.0
