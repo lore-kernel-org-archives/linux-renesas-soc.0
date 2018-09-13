@@ -1,146 +1,163 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726835AbeIMOTC (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:51394 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727598AbeINCgi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:19:02 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 21/58] arm64: dts: renesas: r8a774a1: Add SYS-DMAC controller nodes
-Date: Thu, 13 Sep 2018 11:09:16 +0200
-Message-Id: <37a61e4d9f9486bfccd699bb1d52ebbea0019ac4.1536828567.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
-References: <cover.1536828567.git.horms+renesas@verge.net.au>
+        Thu, 13 Sep 2018 22:36:38 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 08/16] drm: rcar-du: Enable configurable DPAD0 routing on Gen3
+Date: Fri, 14 Sep 2018 00:25:32 +0300
+Message-ID: <3457296.bcsaz67t6o@avalon>
+In-Reply-To: <20180911154653.GW28160@w540>
+References: <20180904121027.24031-1-laurent.pinchart+renesas@ideasonboard.com> <20180904121027.24031-9-laurent.pinchart+renesas@ideasonboard.com> <20180911154653.GW28160@w540>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+Hi Jacopo,
 
-Add sys-dmac[0-2] device nodes for RZ/G2M (r8a774a1) SoC.
+Thank you for the patch.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 102 ++++++++++++++++++++++++++++++
- 1 file changed, 102 insertions(+)
+On Tuesday, 11 September 2018 18:46:53 EEST jacopo mondi wrote:
+> On Tue, Sep 04, 2018 at 03:10:19PM +0300, Laurent Pinchart wrote:
+> > All Gen3 SoCs supported so far have a fixed association between DPAD0
+> > and DU channels, which led to hardcoding that association when writing
+> > the corresponding hardware register. The D3 and E3 will break that
+> > mechanism as DPAD0 can be dynamically connected to either DU0 or DU1.
+> > 
+> > Make DPAD0 routing dynamic on Gen3. To ensure a valid hardware
+> > configuration when the DU starts without the RGB output enabled, DPAD0
+> > is associated at initialization time to the first DU channel that it can
+> > be connected to. This makes no change on Gen2 as all Gen2 SoCs can
+> > connected DPAD0 to DU0, which is the current implicit default value.
+> > 
+> > As the DPAD0 source is always 0 when a single source is possible on
+> > Gen2, we can also simplify the Gen2 code in the same function to remove
+> > a conditional check.
+> 
+> Does this patch only prepares for routing to be mad dynamic or it is
+> already supported?
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index 8e63e9aee456..4a4cf352208e 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -144,6 +144,108 @@
- 			#power-domain-cells = <1>;
- 		};
- 
-+		dmac0: dma-controller@e6700000 {
-+			compatible = "renesas,dmac-r8a774a1",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe6700000 0 0x10000>;
-+			interrupts = <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7",
-+					"ch8", "ch9", "ch10", "ch11",
-+					"ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 219>;
-+			clock-names = "fck";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 219>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
-+		};
-+
-+		dmac1: dma-controller@e7300000 {
-+			compatible = "renesas,dmac-r8a774a1",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe7300000 0 0x10000>;
-+			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 319 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7",
-+					"ch8", "ch9", "ch10", "ch11",
-+					"ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 218>;
-+			clock-names = "fck";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 218>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
-+		};
-+
-+		dmac2: dma-controller@e7310000 {
-+			compatible = "renesas,dmac-r8a774a1",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe7310000 0 0x10000>;
-+			interrupts = <GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 419 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 420 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 426 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 427 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 428 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 429 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 430 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 431 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 397 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7",
-+					"ch8", "ch9", "ch10", "ch11",
-+					"ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 217>;
-+			clock-names = "fck";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 217>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
-+		};
-+
- 		gic: interrupt-controller@f1010000 {
- 			compatible = "arm,gic-400";
- 			#interrupt-cells = <3>;
+It's already dynamic. We support dynamic routing of the DPAD (RGB) output on 
+Gen2. On Gen3 all the SoCs supported so far could only route one CRTC to the 
+DPAD output, so the routing wasn't very dynamic, but the register still had to 
+be programmed accordingly. This patch reuses the existing dynamic routing that 
+we use on Gen2 for Gen3.
+
+> I am missing where those dynamic association happens, as I see the
+> possible dpad0 source being changed in 'rcar_du_crtc_route_output()'
+> which is in turn called by the mode set operation
+> 'rcar_du_crtc_route_output()'.
+> 
+> But at the same time, I only see the routing register DEFR8 being
+> written by rcar_du_group_setup_defr8() called by the group route setup
+> operation rcar_du_group_set_routing() called at crtc setup time only.
+> 
+> Would the mode set operation on the encoder being supporsed to go to
+> the group's set_routing operation? Or does DEFR8 configuration happens
+> with a different call path?
+
+Your analysis of the code flow is right. The reason why we don't write DEFR8 
+directly is that changes to the register only take effect when the group is 
+disabled (lovely hardware design, isn't it ?). The driver relies on the fact 
+that changing the routing involves disabling and enabling CRTCs, but the 
+mechanism is fragile, and it might even be buggy.
+
+The RGB output on D3 and E3 isn't officially supported by this patch series, 
+so I already plan to revisit the code later and hopefully clean it.
+
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> > 
+> >  drivers/gpu/drm/rcar-du/rcar_du_group.c | 17 ++++++-----------
+> >  drivers/gpu/drm/rcar-du/rcar_du_kms.c   | 12 ++++++++++++
+> >  2 files changed, 18 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c
+> > b/drivers/gpu/drm/rcar-du/rcar_du_group.c index
+> > 4c62841eff2f..f38703e7a10d 100644
+> > --- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
+> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
+> > @@ -56,8 +56,6 @@ static void rcar_du_group_setup_pins(struct
+> > rcar_du_group *rgrp)
+> >  static void rcar_du_group_setup_defr8(struct rcar_du_group *rgrp)
+> >  {
+> >  	struct rcar_du_device *rcdu = rgrp->dev;
+> > -	unsigned int possible_crtcs =
+> > -		rcdu->info->routes[RCAR_DU_OUTPUT_DPAD0].possible_crtcs;
+> >  	u32 defr8 = DEFR8_CODE;
+> >  	
+> >  	if (rcdu->info->gen < 3) {
+> > @@ -69,21 +67,18 @@ static void rcar_du_group_setup_defr8(struct
+> > rcar_du_group *rgrp)
+> >  		 * DU instances that support it.
+> >  		 */
+> >  		if (rgrp->index == 0) {
+> > -			if (possible_crtcs > 1)
+> > -				defr8 |= DEFR8_DRGBS_DU(rcdu->dpad0_source);
+> > +			defr8 |= DEFR8_DRGBS_DU(rcdu->dpad0_source);
+> >  			if (rgrp->dev->vspd1_sink == 2)
+> >  				defr8 |= DEFR8_VSCS;
+> >  		}
+> >  	} else {
+> >  		/*
+> > -		 * On Gen3 VSPD routing can't be configured, but DPAD routing
+> > -		 * needs to be set despite having a single option available.
+> > +		 * On Gen3 VSPD routing can't be configured, and DPAD routing
+> > +		 * is set in the group corresponding to the DPAD output (no Gen3
+> > +		 * SoC has multiple DPAD sources belonging to separate groups).
+> >  		 */
+> > -		unsigned int rgb_crtc = ffs(possible_crtcs) - 1;
+> > -		struct rcar_du_crtc *crtc = &rcdu->crtcs[rgb_crtc];
+> > -
+> > -		if (crtc->index / 2 == rgrp->index)
+> > -			defr8 |= DEFR8_DRGBS_DU(crtc->index);
+> > +		if (rgrp->index == rcdu->dpad0_source / 2)
+> > +			defr8 |= DEFR8_DRGBS_DU(rcdu->dpad0_source);
+> >  	}
+> >  	
+> >  	rcar_du_group_write(rgrp, DEFR8, defr8);
+> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> > b/drivers/gpu/drm/rcar-du/rcar_du_kms.c index ed7fa3204892..bd01197700c5
+> > 100644
+> > --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> > @@ -501,6 +501,7 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
+> >  	struct drm_device *dev = rcdu->ddev;
+> >  	struct drm_encoder *encoder;
+> >  	struct drm_fbdev_cma *fbdev;
+> > +	unsigned int dpad0_sources;
+> >  	unsigned int num_encoders;
+> >  	unsigned int num_groups;
+> >  	unsigned int swindex;
+> > @@ -613,6 +614,17 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
+> >  		encoder->possible_clones = (1 << num_encoders) - 1;
+> >  	}
+> > 
+> > +	/*
+> > +	 * Initialize the default DPAD0 source to the index of the first DU
+> > +	 * channel that can be connected to DPAD0. The exact value doesn't
+> > +	 * matter as it should be overwritten by mode setting for the RGB
+> > +	 * output, but it is nonetheless required to ensure a valid initial
+> > +	 * hardware configuration on Gen3 where DU0 can't always be connected
+> > to
+> > +	 * DPAD0.
+> > +	 */
+> > +	dpad0_sources = rcdu->info->
+> > routes[RCAR_DU_OUTPUT_DPAD0].possible_crtcs;
+> > +	rcdu->dpad0_source = ffs(dpad0_sources) - 1;
+> > +
+> >  	drm_mode_config_reset(dev);
+> >  	
+> >  	drm_kms_helper_poll_init(dev);
+
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
