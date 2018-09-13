@@ -1,33 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from verein.lst.de ([213.95.11.211]:57695 "EHLO newverein.lst.de"
+Received: from sauhun.de ([88.99.104.3]:38928 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727013AbeINS02 (ORCPT
+        id S1728291AbeIMU1Y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Sep 2018 14:26:28 -0400
-Date: Fri, 14 Sep 2018 15:12:04 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: iommu@lists.linux-foundation.org,
+        Thu, 13 Sep 2018 16:27:24 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: iommu@lists.linux-foundation.org,
         Robin Murphy <robin.murphy@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        linux-renesas-soc@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+Cc: linux-renesas-soc@vger.kernel.org,
         Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 2/3] dma-mapping: clear dma_ops pointer also on ARM
-Message-ID: <20180914131204.GA27141@lst.de>
-References: <20180913151716.6333-1-wsa+renesas@sang-engineering.com> <20180913151716.6333-3-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180913151716.6333-3-wsa+renesas@sang-engineering.com>
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 2/3] dma-mapping: clear dma_ops pointer also on ARM
+Date: Thu, 13 Sep 2018 17:17:15 +0200
+Message-Id: <20180913151716.6333-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180913151716.6333-1-wsa+renesas@sang-engineering.com>
+References: <20180913151716.6333-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Sep 13, 2018 at 05:17:15PM +0200, Wolfram Sang wrote:
-> The generic fallback of arch_teardown_dma_ops() clears the dma_ops
-> pointer but the ARM specific version does not. Rename the generic one,
-> so it can be called from ARM specific one, too. This will ensure
-> consistent behaviour.
+The generic fallback of arch_teardown_dma_ops() clears the dma_ops
+pointer but the ARM specific version does not. Rename the generic one,
+so it can be called from ARM specific one, too. This will ensure
+consistent behaviour.
 
-Hmm.  I'd rather remove your new generic version entirely and move
-the ops clearing into the two callers.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ arch/arm/mm/dma-mapping.c   | 6 +++---
+ include/linux/dma-mapping.h | 5 +++--
+ 2 files changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+index e3b04786838f..466b0242e8af 100644
+--- a/arch/arm/mm/dma-mapping.c
++++ b/arch/arm/mm/dma-mapping.c
+@@ -2396,8 +2396,8 @@ void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
+ 
+ void arch_teardown_dma_ops(struct device *dev)
+ {
+-	if (!dev->archdata.dma_ops_setup)
+-		return;
++	if (dev->archdata.dma_ops_setup)
++		arm_teardown_iommu_dma_ops(dev);
+ 
+-	arm_teardown_iommu_dma_ops(dev);
++	generic_teardown_dma_ops(dev);
+ }
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index eafd6f318e78..020512cb7f0e 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -663,11 +663,12 @@ static inline void arch_setup_dma_ops(struct device *dev, u64 dma_base,
+ 				      bool coherent) { }
+ #endif
+ 
+-#ifndef arch_teardown_dma_ops
+-static inline void arch_teardown_dma_ops(struct device *dev)
++static inline void generic_teardown_dma_ops(struct device *dev)
+ {
+ 	dev->dma_ops = NULL;
+ }
++#ifndef arch_teardown_dma_ops
++#define arch_teardown_dma_ops generic_teardown_dma_ops
+ #endif
+ 
+ static inline unsigned int dma_get_max_seg_size(struct device *dev)
+-- 
+2.18.0
