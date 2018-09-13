@@ -1,69 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbeIMOTp (ORCPT
+        with ESMTP id S1726680AbeIMOTQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:19:45 -0400
+        Thu, 13 Sep 2018 10:19:16 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Biju Das <biju.das@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 51/58] arm64: dts: renesas: r8a7795: Move arm_cc630p node
-Date: Thu, 13 Sep 2018 11:09:46 +0200
-Message-Id: <8db067d55335dcfb4be9cc6e5f561129b1fd5863.1536828567.git.horms+renesas@verge.net.au>
+Subject: [PATCH 39/58] arm64: dts: renesas: r8a774a1: Add USB3.0 device nodes
+Date: Thu, 13 Sep 2018 11:09:34 +0200
+Message-Id: <453240f6657a6f87dd59e39c1f0d2655d40f112c.1536828567.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
 References: <cover.1536828567.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Biju Das <biju.das@bp.renesas.com>
 
-To preserve by-address-per-group sort order.
+Add usb3.0 phy, host and function device nodes on RZ/G2M SoC dtsi.
 
-Fixes: 0f6d237cafda2e06 ("arm64: dts: renesas: r8a7795: add ccree to device tree")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 35 +++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index c417d4a098df..abb361e41ef6 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -525,15 +525,6 @@
- 			status = "disabled";
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index b42117486b77..d2c67f36884d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -641,6 +641,19 @@
+ 			dma-channels = <2>;
  		};
  
--		arm_cc630p: crypto@e6601000 {
--			compatible = "arm,cryptocell-630p-ree";
--			interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
--			reg = <0x0 0xe6601000 0 0x1000>;
--			clocks = <&cpg CPG_MOD 229>;
--			resets = <&cpg 229>;
--			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
--		};
--
- 		i2c3: i2c@e66d0000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -805,6 +796,15 @@
- 			status = "disabled";
- 		};
- 
-+		arm_cc630p: crypto@e6601000 {
-+			compatible = "arm,cryptocell-630p-ree";
-+			interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
-+			reg = <0x0 0xe6601000 0 0x1000>;
-+			clocks = <&cpg CPG_MOD 229>;
-+			resets = <&cpg 229>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++		usb3_phy0: usb-phy@e65ee000 {
++			compatible = "renesas,r8a774a1-usb3-phy",
++				     "renesas,rcar-gen3-usb3-phy";
++			reg = <0 0xe65ee000 0 0x90>;
++			clocks = <&cpg CPG_MOD 328>, <&usb3s0_clk>,
++				 <&usb_extal_clk>;
++			clock-names = "usb3-if", "usb3s_clk", "usb_extal";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 328>;
++			#phy-cells = <0>;
++			status = "disabled";
 +		};
 +
  		dmac0: dma-controller@e6700000 {
- 			compatible = "renesas,dmac-r8a7795",
+ 			compatible = "renesas,dmac-r8a774a1",
  				     "renesas,rcar-dmac";
+@@ -1365,6 +1378,28 @@
+ 			dma-channels = <16>;
+ 		};
+ 
++		xhci0: usb@ee000000 {
++			compatible = "renesas,xhci-r8a774a1",
++				     "renesas,rcar-gen3-xhci";
++			reg = <0 0xee000000 0 0xc00>;
++			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 328>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 328>;
++			status = "disabled";
++		};
++
++		usb3_peri0: usb@ee020000 {
++			compatible = "renesas,r8a774a1-usb3-peri",
++				     "renesas,rcar-gen3-usb3-peri";
++			reg = <0 0xee020000 0 0x400>;
++			interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 328>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 328>;
++			status = "disabled";
++		};
++
+ 		ohci0: usb@ee080000 {
+ 			compatible = "generic-ohci";
+ 			reg = <0 0xee080000 0 0x100>;
 -- 
 2.11.0
