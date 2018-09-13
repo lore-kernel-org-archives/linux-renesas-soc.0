@@ -1,39 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:28316 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727329AbeIQOKn (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34550 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbeIMORY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Sep 2018 10:10:43 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
+        Thu, 13 Sep 2018 10:17:24 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 0/2] Add APMU support to r8a77470
-Date: Mon, 17 Sep 2018 09:44:08 +0100
-Message-Id: <1537173850-5310-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Marek Vasut <marek.vasut@gmail.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 06/13] ARM: dts: gose: Add DA9210 node for CPU DVFS
+Date: Thu, 13 Sep 2018 11:08:29 +0200
+Message-Id: <d17f45eb718172088e3460fc9fadc735b1df8a20.1536824376.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1536824376.git.horms+renesas@verge.net.au>
+References: <cover.1536824376.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dear All,
+From: Marek Vasut <marek.vasut@gmail.com>
 
-this series adds APMU support to the RZ/G1C (a.k.a. r8a77470).
+Add DA9210 DVFS node to the I2C bus and link it to CPU0 for DVFS.
 
-Thanks,
-Fab
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7793-gose.dts | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-Fabrizio Castro (2):
-  dt-bindings: apmu: Document r8a77470 support
-  ARM: dts: r8a77470: Add APMU node and second CPU core
-
- Documentation/devicetree/bindings/power/renesas,apmu.txt |  1 +
- arch/arm/boot/dts/r8a77470.dtsi                          | 16 ++++++++++++++++
- 2 files changed, 17 insertions(+)
-
+diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+index 6b2f3a4fd13d..f51601af89a2 100644
+--- a/arch/arm/boot/dts/r8a7793-gose.dts
++++ b/arch/arm/boot/dts/r8a7793-gose.dts
+@@ -596,6 +596,10 @@
+ 	status = "okay";
+ };
+ 
++&cpu0 {
++	cpu0-supply = <&vdd_dvfs>;
++};
++
+ &rwdt {
+ 	timeout-sec = <60>;
+ 	status = "okay";
+@@ -725,6 +729,18 @@
+ 			compatible = "dlg,da9063-watchdog";
+ 		};
+ 	};
++
++	vdd_dvfs: regulator@68 {
++		compatible = "dlg,da9210";
++		reg = <0x68>;
++		interrupt-parent = <&irqc0>;
++		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++
++		regulator-min-microvolt = <1000000>;
++		regulator-max-microvolt = <1000000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
+ };
+ 
+ &i2c4 {
 -- 
-2.7.4
+2.11.0
