@@ -1,50 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:56426 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726970AbeILPp6 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34550 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbeIMOR0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Sep 2018 11:45:58 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Biju Das <biju.das@bp.renesas.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: [PATCH 0/3] Add clocks to r8a774c0
-Date: Wed, 12 Sep 2018 11:41:51 +0100
-Message-Id: <1536748914-27416-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Thu, 13 Sep 2018 10:17:26 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 11/13] ARM: dts: stout: Add DA9063 OnKey node
+Date: Thu, 13 Sep 2018 11:08:34 +0200
+Message-Id: <180814bb9cd217e7cefc76f817c6f316dcd1e195.1536824376.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1536824376.git.horms+renesas@verge.net.au>
+References: <cover.1536824376.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dear All,
+From: Marek Vasut <marek.vasut@gmail.com>
 
-this series adds clock support for the RZ/G2E (a.k.a. r8a774c0),
-and applies on top of renesas-devel-20180910-v4.19-rc3.
+Add DA9063 OnKey subnode to DA9063 PMIC node on Stout.
 
-Thanks,
-Fab
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7790-stout.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-
-Fabrizio Castro (3):
-  clk: renesas: Add r8a774c0 CPG Core Clock Definitions
-  clk: renesas: cpg-mssr: Add r8a774c0 support
-  dt-bindings: clock: renesas: cpg-mssr: Document r8a774c0
-
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   7 +-
- drivers/clk/renesas/Kconfig                        |   5 +
- drivers/clk/renesas/Makefile                       |   1 +
- drivers/clk/renesas/r8a774c0-cpg-mssr.c            | 286 +++++++++++++++++++++
- drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
- drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
- include/dt-bindings/clock/r8a774c0-cpg-mssr.h      |  60 +++++
- 7 files changed, 363 insertions(+), 3 deletions(-)
- create mode 100644 drivers/clk/renesas/r8a774c0-cpg-mssr.c
- create mode 100644 include/dt-bindings/clock/r8a774c0-cpg-mssr.h
-
+diff --git a/arch/arm/boot/dts/r8a7790-stout.dts b/arch/arm/boot/dts/r8a7790-stout.dts
+index a13a92c26645..629da4cee1b9 100644
+--- a/arch/arm/boot/dts/r8a7790-stout.dts
++++ b/arch/arm/boot/dts/r8a7790-stout.dts
+@@ -318,6 +318,10 @@
+ 		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
+ 		interrupt-controller;
+ 
++		onkey {
++			compatible = "dlg,da9063-onkey";
++		};
++
+ 		rtc {
+ 			compatible = "dlg,da9063-rtc";
+ 		};
 -- 
-2.7.4
+2.11.0
