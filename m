@@ -1,123 +1,199 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:60956 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727035AbeIDQfZ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbeIMOTn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Sep 2018 12:35:25 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Jacopo Mondi <jacopo@jmondi.org>, Ulrich Hecht <uli@fpond.eu>
-Subject: [PATCH 00/16] R-Car D3/E3 display support (with LVDS PLL)
-Date: Tue,  4 Sep 2018 15:10:11 +0300
-Message-Id: <20180904121027.24031-1-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 13 Sep 2018 10:19:43 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 49/58] arm64: dts: renesas: r8a77990: Use CPG/MSSR and SYSC binding definitions
+Date: Thu, 13 Sep 2018 11:09:44 +0200
+Message-Id: <83e7d2ec0d7bd57666c6f8fd210255e0ec155c38.1536828567.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
+References: <cover.1536828567.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello everybody,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch series adds display support for the D3 and E3 SoCs, and in
-particular the Draak and Ebisu boards.
+Use the SoC-specific CPG/MSSR include file to allow future use of
+R8A77990_CLK_* symbols.
+Replace the hardcoded power domain indices by R8A77990_PD_* symbols.
 
-The code is based on Ulrich's "[PROTO][PATCH 00/10] R-Car D3 LVDS/HDMI support
-(with PLL)" series previously posted to the dri-devel and linux-renesas-soc
-mailing lists. It has been extensively reworked and partly rewritten, and
-support for E3 and Ebisu has been added.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi | 36 +++++++++++++++----------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
 
-The DU in the D3 and E3 SoCs has no internal PLL. In order to achieve precise
-pixel clock rates (required, among other use cases, for HDMI operation), the
-PLL from the internal LVDS encoder must be programmed and its output clock
-routed back to the DU.
-
-The series starts with update to the DU and LVDS encoder DT bindings to add E3
-(R8A77990) support (patches 01/16 and 02/16) and new clock sources for the
-LVDS encoder (patch 03/16).
-
-The next patch (04/16) adds a .mode_valid() operation to the thc63lvd1024
-driver, to reject modes outside of the LVDS decoder's pixel clock operating
-range (8 MHz to 135 MHz). The patch can be merged on its own separately from
-this series.
-
-Patch (05/16) adds support for D3 and E3 to the LVDS encoder driver. Compared
-to the already supported SoCs, D3 and E3 use a different initialization
-sequence and have a different PLL architecture, with more options for the
-input clock.
-
-The next five patches (06/16 to 10/16) perform small reworks or add support
-for miscellaneous missing features and limitations of the DU, to be followed
-by patch 11/16 that adds support for the D3 and E3 to the DU driver.
-
-Finally patches 12/16 to 16/16 enable display for the D3 and E3 boards in DT.
-Patch 12/16 adds support for the I2C controllers in the E3 DT, and will likely
-be merged separately from this series. Patch 13/16 adds all the display IP
-cores (FCP, VSP, DU and LVDS encoders) to the E3 DT, while patch 14/16 adds
-(and wires up) the missing LVDS encoders to the D3 DT. Patches 15/16 and 16/16
-then enable display output for the Ebisu and Draak boards respectively.
-
-I believe the patch series to be ready for upstreaming (after fixing the
-issues found during review of course). There is no big hack in the code, and I
-haven't noticed any regression. A few issues are still unsolved, such as how
-to disable display outputs independently on D3 and E3, and usage of the LVDS
-PLL for the RGB output, but those are not regressions and shouldn't in my
-opinion be considered as show stoppers.
-
-The patches are available from
-
-	git://linuxtv.org/pinchartl/media.git drm/du/lvds-pll
-
-with an additional patch for E3 pinctrl that is required for testing and has
-been queued by Geert for v4.20 already.
-
-I have successfully tested the series with the HDMI output of the Ebisu board.
-Ulrich, Jacopo, could you test it on D3 if you have time ? You only need to
-run kmstest or modetest to display an image on the HDMI output.
-
-Kieran Bingham (1):
-  arm64: dts: renesas: r8a77995: Add LVDS support
-
-Laurent Pinchart (12):
-  dt-bindings: display: renesas: du: Document r8a77990 bindings
-  dt-bindings: display: renesas: lvds: Document r8a77990 bindings
-  dt-bindings: display: renesas: lvds: Add EXTAL and DU_DOTCLKIN clocks
-  drm: bridge: thc63: Restrict modes based on hardware operating
-    frequency
-  drm: rcar-du: lvds: D3/E3 support
-  drm: rcar-du: Perform the initial CRTC setup from rcar_du_crtc_get()
-  drm: rcar-du: Use LVDS PLL clock as dot clock when possible
-  drm: rcar-du: Enable configurable DPAD0 routing on Gen3
-  drm: rcar-du: Cache DSYSR value to ensure known initial value
-  drm: rcar-du: Don't use TV sync mode when not supported by the
-    hardware
-  arm64: dts: renesas: r8a77990: Add display output support
-  arm64: dts: renesas: r8a77990: ebisu: Enable VGA and HDMI outputs
-
-Takeshi Kihara (1):
-  arm64: dts: renesas: r8a77990: Add I2C device nodes
-
-Ulrich Hecht (2):
-  drm: rcar-du: Add r8a77990 and r8a77995 device support
-  arm64: dts: renesas: r8a77995: draak: Enable HDMI display output
-
- .../bindings/display/bridge/renesas,lvds.txt       |  13 +-
- .../devicetree/bindings/display/renesas,du.txt     |   2 +
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts     | 166 ++++++++++
- arch/arm64/boot/dts/renesas/r8a77990.dtsi          | 290 ++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts     |  98 +++++-
- arch/arm64/boot/dts/renesas/r8a77995.dtsi          |  56 ++++
- drivers/gpu/drm/bridge/thc63lvd1024.c              |  18 +
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c             | 136 ++++----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h             |   5 +
- drivers/gpu/drm/rcar-du/rcar_du_drv.c              |  63 +++-
- drivers/gpu/drm/rcar-du/rcar_du_drv.h              |   3 +
- drivers/gpu/drm/rcar-du/rcar_du_group.c            |  88 +++--
- drivers/gpu/drm/rcar-du/rcar_du_kms.c              |  12 +
- drivers/gpu/drm/rcar-du/rcar_lvds.c                | 365 ++++++++++++++++++---
- drivers/gpu/drm/rcar-du/rcar_lvds_regs.h           |  43 ++-
- 15 files changed, 1210 insertions(+), 148 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index 2ee0edfb18d4..e2c2d1480a68 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -5,7 +5,7 @@
+  * Copyright (C) 2018 Renesas Electronics Corp.
+  */
+ 
+-#include <dt-bindings/clock/renesas-cpg-mssr.h>
++#include <dt-bindings/clock/r8a77990-cpg-mssr.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/power/r8a77990-sysc.h>
+ 
+@@ -22,7 +22,7 @@
+ 			compatible = "arm,cortex-a53", "arm,armv8";
+ 			reg = <0>;
+ 			device_type = "cpu";
+-			power-domains = <&sysc 5>;
++			power-domains = <&sysc R8A77990_PD_CA53_CPU0>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
+ 		};
+@@ -31,14 +31,14 @@
+ 			compatible = "arm,cortex-a53", "arm,armv8";
+ 			reg = <1>;
+ 			device_type = "cpu";
+-			power-domains = <&sysc 6>;
++			power-domains = <&sysc R8A77990_PD_CA53_CPU1>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
+ 		};
+ 
+ 		L2_CA53: cache-controller-0 {
+ 			compatible = "cache";
+-			power-domains = <&sysc 21>;
++			power-domains = <&sysc R8A77990_PD_CA53_SCU>;
+ 			cache-unified;
+ 			cache-level = <2>;
+ 		};
+@@ -75,7 +75,7 @@
+ 				     "renesas,rcar-gen3-wdt";
+ 			reg = <0 0xe6020000 0 0x0c>;
+ 			clocks = <&cpg CPG_MOD 402>;
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 402>;
+ 			status = "disabled";
+ 		};
+@@ -91,7 +91,7 @@
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 912>;
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 912>;
+ 		};
+ 
+@@ -106,7 +106,7 @@
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 911>;
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 911>;
+ 		};
+ 
+@@ -121,7 +121,7 @@
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 910>;
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 910>;
+ 		};
+ 
+@@ -136,7 +136,7 @@
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 909>;
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 909>;
+ 		};
+ 
+@@ -151,7 +151,7 @@
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 908>;
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 908>;
+ 		};
+ 
+@@ -166,7 +166,7 @@
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 907>;
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 907>;
+ 		};
+ 
+@@ -181,7 +181,7 @@
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 906>;
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 906>;
+ 		};
+ 
+@@ -329,7 +329,7 @@
+ 					  "ch20", "ch21", "ch22", "ch23",
+ 					  "ch24";
+ 			clocks = <&cpg CPG_MOD 812>;
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 812>;
+ 			phy-mode = "rgmii";
+ 			#address-cells = <1>;
+@@ -414,7 +414,7 @@
+ 			interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 310>;
+ 			clock-names = "fck";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 310>;
+ 			status = "disabled";
+ 		};
+@@ -437,7 +437,7 @@
+ 			clocks = <&cpg CPG_MOD 703>;
+ 			phys = <&usb2_phy0>;
+ 			phy-names = "usb";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 703>;
+ 			status = "disabled";
+ 		};
+@@ -450,7 +450,7 @@
+ 			phys = <&usb2_phy0>;
+ 			phy-names = "usb";
+ 			companion = <&ohci0>;
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 703>;
+ 			status = "disabled";
+ 		};
+@@ -461,7 +461,7 @@
+ 			reg = <0 0xee080200 0 0x700>;
+ 			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 703>;
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 703>;
+ 			#phy-cells = <0>;
+ 			status = "disabled";
+@@ -480,7 +480,7 @@
+ 					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
+ 			clocks = <&cpg CPG_MOD 408>;
+ 			clock-names = "clk";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 408>;
+ 		};
+ 
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
