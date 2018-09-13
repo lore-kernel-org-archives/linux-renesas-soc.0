@@ -1,49 +1,114 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:40960 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728004AbeIJQLJ (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:50354 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727623AbeIMUzN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Sep 2018 12:11:09 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: gregkh@linuxfoundation.org, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        Thu, 13 Sep 2018 16:55:13 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Peter Maydell <peter.maydell@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc: Auger Eric <eric.auger@redhat.com>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        qemu-arm@nongnu.org, qemu-devel@nongnu.org,
         linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/2] dt-bindings: usb: ohci: Add clocks description for R-Car Gen3
-Date: Mon, 10 Sep 2018 20:15:48 +0900
-Message-Id: <1536578148-27656-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1536578148-27656-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1536578148-27656-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 0/3] vfio/sysbus-fdt: Prepare for Generic DT Pass-Through
+Date: Thu, 13 Sep 2018 17:44:55 +0200
+Message-Id: <20180913154458.23939-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds detailed information of an optional property "clocks"
-description for R-Car Gen3.
+	Hi all,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- Documentation/devicetree/bindings/usb/usb-ohci.txt | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+This patch series prepares for exporting generic devices in DT using
+vfio-platform, providing direct access from a QEMU+KVM guest to the
+exported devices.
 
-diff --git a/Documentation/devicetree/bindings/usb/usb-ohci.txt b/Documentation/devicetree/bindings/usb/usb-ohci.txt
-index a8d2103..aaaa525 100644
---- a/Documentation/devicetree/bindings/usb/usb-ohci.txt
-+++ b/Documentation/devicetree/bindings/usb/usb-ohci.txt
-@@ -12,7 +12,11 @@ Optional properties:
- - no-big-frame-no : boolean, set if frame_no lives in bits [15:0] of HCCA
- - remote-wakeup-connected: remote wakeup is wired on the platform
- - num-ports : u32, to override the detected port count
--- clocks : a list of phandle + clock specifier pairs
-+- clocks : a list of phandle + clock specifier pairs. In case of Renesas
-+	   R-Car Gen3 SoCs:
-+	   - if a host only channel: first clock should be host.
-+	   - if a USB DRD channel: first clock should be host and second one
-+				   should be peripheral.
- - phys : see usb-hcd.txt in the current directory
- - resets : a list of phandle + reset specifier pairs
- 
+  - Patches 1-2 (submitted before by Eric Auger) make the vfio-platform
+    device non-abstract, incl. matching using a compatible string.
+  - Patch 3 allows dynamic vfio-platform devices again, without needing to
+    create device-specific vfio types for each and every new device.
+
+This will avoid having to write device-specific instantation methods for
+each and every "simple" device using only a set of generic properties.
+Devices that need more specialized handling will still be able provide
+their own instantation methods.
+
+Note that this series no longer contains "[PATCH 4/4] hw/arm/sysbus-fdt:
+Add support for instantiating generic devices", following advice from Eric
+Auger, as that patch needs more safeguards.  Hence this series now contains
+only preparative work.
+
+Changes compared to v4 ("hw/arm/sysbus-fdt: Generic DT Pass-Through"),
+http://lists.nongnu.org/archive/html/qemu-devel/2018-07/msg05006.html):
+  - Propagate g_file_get_contents() errors through errp,
+  - Add Tested-by (with amd-xgbe),
+  - s/From now on/Soon/ in patch description,
+  - s/sysbus/vfio-platform/ in patch description,
+  - Postpone "[PATCH 4/4] hw/arm/sysbus-fdt: Add support for instantiating
+    generic devices".
+
+Changes compared to v2 (not submitted to the mailing list):
+  - Use the compatible values from sysfs instead of user-supplied
+    manufacturer and model options,
+  - Replace "hw/arm/sysbus-fdt: Enable rcar-gen3-gpio dynamic
+    instatiation" by generic "hw/arm/sysbus-fdt: Add support for
+    instantiating generic devices",
+  - Reword patch descriptions,
+  - Drop RFC state,
+  - Drop "vfio: No-IOMMU mode support".
+
+Changes compared to v1 ("R-Car Gen3 GPIO Pass-Through Prototype (QEMU)",
+https://lists.gnu.org/archive/html/qemu-devel/2018-02/msg02716.html):
+  - Restrict dynamic sysbus devices to TYPE_VFIO_PLATFORM, as suggested
+    by Eric Auger.
+
+Thanks!
+
+For testing, this patch series, and the postponed "hw/arm/sysbus-fdt: Add
+support for instantiating generic devices" are available in the
+topic/rcar3-virt-gpio-passthrough-v4 branch of my git repository at
+https://github.com/geertu/qemu.git.
+
+This has been tested on a Renesas Salvator-XS board with R-Car H3 ES2.0
+with SATA:
+
+    -device vfio-platform,host=ee300000.sata
+
+and GPIO (needs VFIO No-IOMMU support):
+
+    -device vfio-platform,host=e6055400.gpio
+
+Thanks for applying!
+
+Auger Eric (2):
+  vfio/platform: Make the vfio-platform device non-abstract
+  hw/arm/sysbus-fdt: Allow device matching with DT compatible value
+
+Geert Uytterhoeven (1):
+  hw/arm/virt: Allow dynamic vfio-platform devices again
+
+ hw/arm/sysbus-fdt.c             | 61 +++++++++++++++++++++++++--------
+ hw/arm/virt.c                   |  1 +
+ hw/vfio/amd-xgbe.c              |  1 +
+ hw/vfio/calxeda-xgmac.c         |  1 +
+ hw/vfio/platform.c              | 24 ++++++++++++-
+ include/hw/vfio/vfio-platform.h |  3 +-
+ 6 files changed, 75 insertions(+), 16 deletions(-)
+
 -- 
-1.9.1
+2.17.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
