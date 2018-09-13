@@ -1,81 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:39006 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbeIESAN (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbeIMOTp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Sep 2018 14:00:13 -0400
-Received: by mail-ua1-f65.google.com with SMTP id g18-v6so5776278uam.6
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Sep 2018 06:29:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <1534511968-19634-1-git-send-email-uli+renesas@fpond.eu> <1534511968-19634-2-git-send-email-uli+renesas@fpond.eu>
-In-Reply-To: <1534511968-19634-2-git-send-email-uli+renesas@fpond.eu>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Sep 2018 15:29:44 +0200
-Message-ID: <CAMuHMdW=UD1XT5yvuvk9dBf50RpSqK4sO2Z-0tEBYWa4_TasSA@mail.gmail.com>
-Subject: Re: [PATCH 1/5] arm64: dts: r8a7795: Add cpuidle support for CA57 cores
-To: uli+renesas@fpond.eu
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>,
-        dien.pham.ry@renesas.com,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 13 Sep 2018 10:19:45 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 51/58] arm64: dts: renesas: r8a7795: Move arm_cc630p node
+Date: Thu, 13 Sep 2018 11:09:46 +0200
+Message-Id: <8db067d55335dcfb4be9cc6e5f561129b1fd5863.1536828567.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
+References: <cover.1536828567.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Uli,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Fri, Aug 17, 2018 at 3:19 PM Ulrich Hecht <uli+renesas@fpond.eu> wrote:
-> From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
->
-> Enable cpuidle (core shutdown) support for R-Car H3 CA57 cores.
->
-> Parameters were found after evaluation by gaku.inami.xw@bp.renesas.com; they
-> help to keep the performance and reduce the power consumption.
->
-> Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-> [dien.pham.ry: Apply new cpuidle parameters]
-> Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+To preserve by-address-per-group sort order.
 
-Thanks for your patch!
+Fixes: 0f6d237cafda2e06 ("arm64: dts: renesas: r8a7795: add ccree to device tree")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-
-> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-
-> @@ -221,6 +225,20 @@
->                         cache-unified;
->                         cache-level = <2>;
->                 };
-> +
-> +               idle-states {
-> +                       entry-method = "psci";
-> +
-> +                       CPU_SLEEP_0: cpu-sleep-0 {
-> +                               compatible = "arm,idle-state";
-> +                               arm,psci-suspend-param = <0x0010000>;
-> +                               local-timer-stop;
-> +                               entry-latency-us = <400>;
-> +                               exit-latency-us = <500>;
-> +                               min-residency-us = <4000>;
-> +                               status = "okay";
-
-Usually we just don't specify status for "virtual" nodes (applies to the
-other patches, too).
-
-> +                       };
-> +               };
->         };
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index c417d4a098df..abb361e41ef6 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -525,15 +525,6 @@
+ 			status = "disabled";
+ 		};
+ 
+-		arm_cc630p: crypto@e6601000 {
+-			compatible = "arm,cryptocell-630p-ree";
+-			interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
+-			reg = <0x0 0xe6601000 0 0x1000>;
+-			clocks = <&cpg CPG_MOD 229>;
+-			resets = <&cpg 229>;
+-			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+-		};
+-
+ 		i2c3: i2c@e66d0000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -805,6 +796,15 @@
+ 			status = "disabled";
+ 		};
+ 
++		arm_cc630p: crypto@e6601000 {
++			compatible = "arm,cryptocell-630p-ree";
++			interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0x0 0xe6601000 0 0x1000>;
++			clocks = <&cpg CPG_MOD 229>;
++			resets = <&cpg 229>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++		};
++
+ 		dmac0: dma-controller@e6700000 {
+ 			compatible = "renesas,dmac-r8a7795",
+ 				     "renesas,rcar-dmac";
+-- 
+2.11.0
