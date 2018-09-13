@@ -1,51 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35574 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727864AbeIQOMt (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34550 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbeIMORU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Sep 2018 10:12:49 -0400
-Received: by mail-pg1-f196.google.com with SMTP id 7-v6so7334299pgf.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Sep 2018 01:46:24 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
+        Thu, 13 Sep 2018 10:17:20 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Mon, 17 Sep 2018 17:46:23 +0900
-Message-Id: <153717398326.578.15513023441673714711.sendpatchset@octo>
-Subject: [PATCH/RFC] iommu/ipmmu-vmsa: R-Car E3 SYS-DMAC whitelist prototype
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 05/13] ARM: dts: rcar-gen2: Convert to new DU DT bindings
+Date: Thu, 13 Sep 2018 11:08:28 +0200
+Message-Id: <b8ca3668a328b08eea1ed74dc11f72968b2e8032.1536824376.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1536824376.git.horms+renesas@verge.net.au>
+References: <cover.1536824376.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm@opensource.se>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-For testing purpose enable IPMMU for SYS-DMAC0, SYS-DMAC1 and SYS-DMAC2
-on R-Car E3. Not for upstream merge.
+The DU DT bindings have been updated to drop the reg-names property.
+Update the r8a7792 and r8a7794 device trees accordingly.
 
-Not-Yet-Signed-off-by: Magnus Damm <damm@opensource.se>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm/boot/dts/r8a7792.dtsi | 1 -
+ arch/arm/boot/dts/r8a7794.dtsi | 1 -
+ 2 files changed, 2 deletions(-)
 
- Applies on top of renesas-devel-20180914-v4.19-rc3
-
- drivers/iommu/ipmmu-vmsa.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
---- 0001/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2018-09-17 17:09:36.083484128 +0900
-@@ -756,6 +756,18 @@ static int ipmmu_init_platform_device(st
- 
- static bool ipmmu_slave_whitelist(struct device *dev)
- {
-+	/* R-Car E3 SYS-DMAC0 (Channel 0-15) */
-+	if (!strcmp(dev_name(dev), "e6700000.dma-controller"))
-+		return true;
-+
-+	/* R-Car E3 SYS-DMAC1 (Channel 16-31) */
-+	if (!strcmp(dev_name(dev), "e7300000.dma-controller"))
-+		return true;
-+
-+	/* R-Car E3 SYS-DMAC2 (Channel 32-47) */
-+	if (!strcmp(dev_name(dev), "e7310000.dma-controller"))
-+		return true;
-+
- 	/* By default, do not allow use of IPMMU */
- 	return false;
- }
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index 63a978ec81cc..52d16a260db0 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -829,7 +829,6 @@
+ 		du: display@feb00000 {
+ 			compatible = "renesas,du-r8a7792";
+ 			reg = <0 0xfeb00000 0 0x40000>;
+-			reg-names = "du";
+ 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 724>,
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index ea2ca4bdaf1c..886135a273cb 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -1349,7 +1349,6 @@
+ 		du: display@feb00000 {
+ 			compatible = "renesas,du-r8a7794";
+ 			reg = <0 0xfeb00000 0 0x40000>;
+-			reg-names = "du";
+ 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>;
+-- 
+2.11.0
