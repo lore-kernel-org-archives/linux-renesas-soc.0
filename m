@@ -1,220 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57700 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:32885 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729111AbeI1Qnv (ORCPT
+        with ESMTP id S1727803AbeINSof (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:43:51 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 10/14] arm64: dts: renesas: r8a77990: Add display output support
-Date: Fri, 28 Sep 2018 12:20:21 +0200
-Message-Id: <13ee2bfc5444c8950d3c74bd47ff2a7b53c34aa6.1538125184.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1538125184.git.horms+renesas@verge.net.au>
-References: <cover.1538125184.git.horms+renesas@verge.net.au>
+        Fri, 14 Sep 2018 14:44:35 -0400
+Date: Fri, 14 Sep 2018 15:30:00 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH 2/3] soc: renesas: rcar-sysc: Add r8a774c0 support
+Message-ID: <20180914132959.b4ib2rwgb3dlv6qa@verge.net.au>
+References: <1536590488-23270-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1536590488-23270-3-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20180912085841.rwdvzls2jkpibp3h@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180912085841.rwdvzls2jkpibp3h@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+On Wed, Sep 12, 2018 at 10:58:41AM +0200, Simon Horman wrote:
+> On Mon, Sep 10, 2018 at 03:41:27PM +0100, Fabrizio Castro wrote:
+> > Add support for the RZ/G2E (R8A774C0) SoC power areas to the
+> > R-Car SYSC driver.
+> > 
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> 
+> Thanks,
+> 
+> This looks fine to me but I will wait to see if there are other reviews
+> before applying.
+> 
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-The R8A77990 (E3) platform has one RGB output and two LVDS outputs
-connected to the DU. Add the DT nodes for the DU, LVDS encoders and
-supporting VSP and FCP.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 167 ++++++++++++++++++++++++++++++
- 1 file changed, 167 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index 0c726ea5d315..9509dc05665f 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -843,6 +843,82 @@
- 			resets = <&cpg 408>;
- 		};
- 
-+		vspb0: vsp@fe960000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfe960000 0 0x8000>;
-+			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 626>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 626>;
-+			renesas,fcp = <&fcpvb0>;
-+		};
-+
-+		fcpvb0: fcp@fe96f000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfe96f000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 607>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 607>;
-+			iommus = <&ipmmu_vp0 5>;
-+		};
-+
-+		vspi0: vsp@fe9a0000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfe9a0000 0 0x8000>;
-+			interrupts = <GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 631>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 631>;
-+			renesas,fcp = <&fcpvi0>;
-+		};
-+
-+		fcpvi0: fcp@fe9af000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfe9af000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 611>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 611>;
-+			iommus = <&ipmmu_vp0 8>;
-+		};
-+
-+		vspd0: vsp@fea20000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfea20000 0 0x7000>;
-+			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 623>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 623>;
-+			renesas,fcp = <&fcpvd0>;
-+		};
-+
-+		fcpvd0: fcp@fea27000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea27000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 603>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 603>;
-+			iommus = <&ipmmu_vi0 8>;
-+		};
-+
-+		vspd1: vsp@fea28000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfea28000 0 0x7000>;
-+			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 622>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 622>;
-+			renesas,fcp = <&fcpvd1>;
-+		};
-+
-+		fcpvd1: fcp@fea2f000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea2f000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 602>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 602>;
-+			iommus = <&ipmmu_vi0 9>;
-+		};
-+
- 		csi40: csi2@feaa0000 {
- 			compatible = "renesas,r8a77990-csi2", "renesas,rcar-gen3-csi2";
- 			reg = <0 0xfeaa0000 0 0x10000>;
-@@ -874,6 +950,97 @@
- 			};
- 		};
- 
-+		du: display@feb00000 {
-+			compatible = "renesas,du-r8a77990";
-+			reg = <0 0xfeb00000 0 0x80000>;
-+			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 724>,
-+				 <&cpg CPG_MOD 723>;
-+			clock-names = "du.0", "du.1";
-+			vsps = <&vspd0 0 &vspd1 0>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					du_out_rgb: endpoint {
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					du_out_lvds0: endpoint {
-+						remote-endpoint = <&lvds0_in>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+					du_out_lvds1: endpoint {
-+						remote-endpoint = <&lvds1_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		lvds0: lvds-encoder@feb90000 {
-+			compatible = "renesas,r8a77990-lvds";
-+			reg = <0 0xfeb90000 0 0x20>;
-+			clocks = <&cpg CPG_MOD 727>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 727>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					lvds0_in: endpoint {
-+						remote-endpoint = <&du_out_lvds0>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					lvds0_out: endpoint {
-+					};
-+				};
-+			};
-+		};
-+
-+		lvds1: lvds-encoder@feb90100 {
-+			compatible = "renesas,r8a77990-lvds";
-+			reg = <0 0xfeb90100 0 0x20>;
-+			clocks = <&cpg CPG_MOD 727>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 726>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					lvds1_in: endpoint {
-+						remote-endpoint = <&du_out_lvds1>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					lvds1_out: endpoint {
-+					};
-+				};
-+			};
-+		};
-+
- 		prr: chipid@fff00044 {
- 			compatible = "renesas,prr";
- 			reg = <0 0xfff00044 0 4>;
--- 
-2.11.0
+Thanks again, applied for v4.20.
