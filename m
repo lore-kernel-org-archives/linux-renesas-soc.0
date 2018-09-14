@@ -1,17 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:34836 "EHLO
+Received: from perceval.ideasonboard.com ([213.167.242.64]:34780 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726872AbeINQay (ORCPT
+        with ESMTP id S1726695AbeINQZC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Sep 2018 12:30:54 -0400
+        Fri, 14 Sep 2018 12:25:02 -0400
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Koji Matsuoka <koji.matsuoka.xm@renesas.com>
 Subject: Re: [PATCH 2/3] drm: rcar-du: Add pixel format support
-Date: Fri, 14 Sep 2018 14:17:06 +0300
-Message-ID: <3865052.iN5JJav0kF@avalon>
+Date: Fri, 14 Sep 2018 14:11:13 +0300
+Message-ID: <9318122.8LJjaKzHaP@avalon>
 In-Reply-To: <20180831181259.29529-3-kieran.bingham+renesas@ideasonboard.com>
 References: <20180831181259.29529-1-kieran.bingham+renesas@ideasonboard.com> <20180831181259.29529-3-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
@@ -22,16 +22,18 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Kieran,
 
+Thank you for the patch.
+
+How about renaming the subject line to "Add support for missing pixel formats" 
+?
+
 On Friday, 31 August 2018 21:12:58 EEST Kieran Bingham wrote:
 > From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
 > 
 > This patch supports pixel format of RGB332, ARGB4444, XRGB4444,
 > BGR888, RGB888, BGRA8888, BGRX8888 and YVYU.
 > VYUY pixel format is not supported by H/W specification.
-
-Should VYUY be removed from rcar_du_vsp.c ? This can be done in a separate 
-patch.
-
+> 
 > Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
 > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 > 
@@ -88,6 +90,12 @@ patch.
 >  	},
 >  };
 
+I would list the RGB formats first, followed by the packed YUV format, and 
+then the multiplanar YUV formats. With this changed,
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+If you're fine with the changes there's no need to resubmit.
 
 -- 
 Regards,
