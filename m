@@ -1,49 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:31344 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728520AbeIJTch (ORCPT
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:43109 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727013AbeINSQX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Sep 2018 15:32:37 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
+        Fri, 14 Sep 2018 14:16:23 -0400
+MIME-Version: 1.0
+References: <1536661805-36464-1-git-send-email-biju.das@bp.renesas.com> <1536661805-36464-2-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1536661805-36464-2-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 14 Sep 2018 15:01:48 +0200
+Message-ID: <CAMuHMdUD1tVKHd2dKDz7CT-sAJ=YFaLLMRz-16gmR2PK+QbKTA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: sh-pfc: Document r8a7744 PFC support
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 4/5] media: rcar-vin: Enable support for r8a774a1
-Date: Mon, 10 Sep 2018 15:31:17 +0100
-Message-Id: <1536589878-26218-5-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1536589878-26218-1-git-send-email-biju.das@bp.renesas.com>
-References: <1536589878-26218-1-git-send-email-biju.das@bp.renesas.com>
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the SoC specific information for RZ/G2M(r8a774a1) SoC.
-The VIN module of RZ/G2M is similar to R-Car M3-W.
+On Tue, Sep 11, 2018 at 12:36 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> Document PFC support for the RZ/G1N (R8A7744) SoC.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.20.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index d3072e1..c0c84d1 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -995,6 +995,10 @@ static const struct rvin_info rcar_info_r8a77970 = {
- 
- static const struct of_device_id rvin_of_id_table[] = {
- 	{
-+		.compatible = "renesas,vin-r8a774a1",
-+		.data = &rcar_info_r8a7796,
-+	},
-+	{
- 		.compatible = "renesas,vin-r8a7778",
- 		.data = &rcar_info_m1,
- 	},
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
