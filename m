@@ -1,195 +1,103 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbeIMOTG (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:34656 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727839AbeINQNI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:19:06 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 29/58] arm64: dts: renesas: r8a774a1: Add I2C and IIC-DVFS support
-Date: Thu, 13 Sep 2018 11:09:24 +0200
-Message-Id: <c674e8a78c6cda14ab83c8d4342e96893c465cb3.1536828567.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
-References: <cover.1536828567.git.horms+renesas@verge.net.au>
+        Fri, 14 Sep 2018 12:13:08 -0400
+Reply-To: kieran.bingham+renesas@ideasonboard.com
+Subject: Re: [PATCH 2/6] media: vsp1: Correct the pitch on multiplanar formats
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: mchehab@kernel.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180831144044.31713-1-kieran.bingham+renesas@ideasonboard.com>
+ <20180831144044.31713-3-kieran.bingham+renesas@ideasonboard.com>
+ <4407219.HP1UPh24hA@avalon>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <8e97bc7f-57b9-e9fd-e304-9e8158530ca4@ideasonboard.com>
+Date: Fri, 14 Sep 2018 11:59:05 +0100
+MIME-Version: 1.0
+In-Reply-To: <4407219.HP1UPh24hA@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+Hi Laurent,
 
-Add the I2C[0-6] and IIC Bus Interface for DVFS (IIC for DVFS)
-devices nodes to the r8a774a1 device tree.
+On 14/09/18 11:25, Laurent Pinchart wrote:
+> Hi Kieran,
+> 
+> Thank you for the patch.
+> 
+> On Friday, 31 August 2018 17:40:40 EEST Kieran Bingham wrote:
+>> DRM pipelines now support tri-planar as well as packed formats with
+>> YCbCr, however the pitch calculation was not updated to support this.
+>>
+>> Correct this by adjusting the bytesperline accordingly when 3 planes are
+>> used.
+>>
+>> Fixes: 7863ac504bc5 ("drm: rcar-du: Add tri-planar memory formats support")
+>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> I already have a similar patch from Matsuoka-san in my tree, please see 
+> https://patchwork.kernel.org/patch/10425565/. I'll update it with the fixes 
+> tag.
+> 
+>> ---
+>>  drivers/media/platform/vsp1/vsp1_drm.c | 10 ++++++++++
+>>  include/media/vsp1.h                   |  2 +-
+>>  2 files changed, 11 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/media/platform/vsp1/vsp1_drm.c
+>> b/drivers/media/platform/vsp1/vsp1_drm.c index b9c0f695d002..b9afd98f6867
+>> 100644
+>> --- a/drivers/media/platform/vsp1/vsp1_drm.c
+>> +++ b/drivers/media/platform/vsp1/vsp1_drm.c
+>> @@ -814,6 +814,16 @@ int vsp1_du_atomic_update(struct device *dev, unsigned
+>> int pipe_index, rpf->format.num_planes = fmtinfo->planes;
+>>  	rpf->format.plane_fmt[0].bytesperline = cfg->pitch;
+>>  	rpf->format.plane_fmt[1].bytesperline = cfg->pitch;
+>> +
+>> +	/*
+>> +	 * Packed YUV formats are subsampled, but the packing of two components
+>> +	 * into a single plane compensates for this leaving the bytesperline
+>> +	 * to be the correct value. For multiplanar formats we must adjust the
+>> +	 * pitch accordingly.
+>> +	 */
+>> +	if (fmtinfo->planes == 3)
+>> +		rpf->format.plane_fmt[1].bytesperline /= fmtinfo->hsub;
+>> +
+>>  	rpf->alpha = cfg->alpha;
+>>
+>>  	rpf->mem.addr[0] = cfg->mem[0];
+>> diff --git a/include/media/vsp1.h b/include/media/vsp1.h
+>> index 3093b9cb9067..0ce19b595cc7 100644
+>> --- a/include/media/vsp1.h
+>> +++ b/include/media/vsp1.h
+>> @@ -46,7 +46,7 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int
+>> pipe_index, /**
+>>   * struct vsp1_du_atomic_config - VSP atomic configuration parameters
+>>   * @pixelformat: plane pixel format (V4L2 4CC)
+>> - * @pitch: line pitch in bytes, for all planes
+>> + * @pitch: line pitch in bytes
+> 
+> Should I update the above-mentioned patch with this as well ? How about 
+> phrasing it as "line pitch in bytes for the first plane" ?
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 142 ++++++++++++++++++++++++++++++
- 1 file changed, 142 insertions(+)
+Yes, your suggestion sounds fine.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index 51ac94f266ae..ced254601364 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -14,6 +14,17 @@
- 	#address-cells = <2>;
- 	#size-cells = <2>;
- 
-+	aliases {
-+		i2c0 = &i2c0;
-+		i2c1 = &i2c1;
-+		i2c2 = &i2c2;
-+		i2c3 = &i2c3;
-+		i2c4 = &i2c4;
-+		i2c5 = &i2c5;
-+		i2c6 = &i2c6;
-+		i2c7 = &i2c_dvfs;
-+	};
-+
- 	/*
- 	 * The external audio clocks are configured as 0 Hz fixed frequency
- 	 * clocks by default.
-@@ -295,6 +306,137 @@
- 			resets = <&cpg 407>;
- 		};
- 
-+		i2c0: i2c@e6500000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a774a1",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe6500000 0 0x40>;
-+			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 931>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 931>;
-+			dmas = <&dmac1 0x91>, <&dmac1 0x90>,
-+			       <&dmac2 0x91>, <&dmac2 0x90>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			i2c-scl-internal-delay-ns = <110>;
-+			status = "disabled";
-+		};
-+
-+		i2c1: i2c@e6508000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a774a1",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe6508000 0 0x40>;
-+			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 930>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 930>;
-+			dmas = <&dmac1 0x93>, <&dmac1 0x92>,
-+			       <&dmac2 0x93>, <&dmac2 0x92>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
-+
-+		i2c2: i2c@e6510000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a774a1",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe6510000 0 0x40>;
-+			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 929>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 929>;
-+			dmas = <&dmac1 0x95>, <&dmac1 0x94>,
-+			       <&dmac2 0x95>, <&dmac2 0x94>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
-+
-+		i2c3: i2c@e66d0000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a774a1",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe66d0000 0 0x40>;
-+			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 928>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 928>;
-+			dmas = <&dmac0 0x97>, <&dmac0 0x96>;
-+			dma-names = "tx", "rx";
-+			i2c-scl-internal-delay-ns = <110>;
-+			status = "disabled";
-+		};
-+
-+		i2c4: i2c@e66d8000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a774a1",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe66d8000 0 0x40>;
-+			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 927>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 927>;
-+			dmas = <&dmac0 0x99>, <&dmac0 0x98>;
-+			dma-names = "tx", "rx";
-+			i2c-scl-internal-delay-ns = <110>;
-+			status = "disabled";
-+		};
-+
-+		i2c5: i2c@e66e0000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a774a1",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe66e0000 0 0x40>;
-+			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 919>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 919>;
-+			dmas = <&dmac0 0x9b>, <&dmac0 0x9a>;
-+			dma-names = "tx", "rx";
-+			i2c-scl-internal-delay-ns = <110>;
-+			status = "disabled";
-+		};
-+
-+		i2c6: i2c@e66e8000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a774a1",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe66e8000 0 0x40>;
-+			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 918>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 918>;
-+			dmas = <&dmac0 0x9d>, <&dmac0 0x9c>;
-+			dma-names = "tx", "rx";
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
-+
-+		i2c_dvfs: i2c@e60b0000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,iic-r8a774a1",
-+				     "renesas,rcar-gen3-iic",
-+				     "renesas,rmobile-iic";
-+			reg = <0 0xe60b0000 0 0x425>;
-+			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 926>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 926>;
-+			dmas = <&dmac0 0x11>, <&dmac0 0x10>;
-+			dma-names = "tx", "rx";
-+			status = "disabled";
-+		};
-+
- 		hscif0: serial@e6540000 {
- 			compatible = "renesas,hscif-r8a774a1",
- 				     "renesas,rcar-gen3-hscif",
--- 
-2.11.0
+The patch at [0] looks good to me as a fix for this issue.
+
+for: "v4l: vsp1: Fix YCbCr planar formats pitch calculation" [0]
+With the fixes tag, and documentation updated:
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+[0]  https://patchwork.kernel.org/patch/10425565
+
+> 
+>>   * @mem: DMA memory address for each plane of the frame buffer
+>>   * @src: source rectangle in the frame buffer (integer coordinates)
+>>   * @dst: destination rectangle on the display (integer coordinates)
+> 
