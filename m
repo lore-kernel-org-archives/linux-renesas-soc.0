@@ -1,75 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:46280 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727676AbeINV1I (ORCPT
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:33714 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727134AbeINR31 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Sep 2018 17:27:08 -0400
-Date: Fri, 14 Sep 2018 18:11:56 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Fri, 14 Sep 2018 13:29:27 -0400
+MIME-Version: 1.0
+References: <20180913151716.6333-1-wsa+renesas@sang-engineering.com> <20180913151716.6333-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180913151716.6333-2-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 14 Sep 2018 14:15:01 +0200
+Message-ID: <CAMuHMdV_xpj62BkqwoTAaaugM3BkDRQTC=E0cEDqKBg3sUYNBg@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/3] ARM: dma-mapping: update comment about handling
+ dma_ops when detaching from IOMMU
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux IOMMU <iommu@lists.linux-foundation.org>,
         Robin Murphy <robin.murphy@arm.com>,
         Christoph Hellwig <hch@lst.de>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 1/3] ARM: dma-mapping: update comment about handling
- dma_ops when detaching from IOMMU
-Message-ID: <20180914161156.GB906@kunai>
-References: <20180913151716.6333-1-wsa+renesas@sang-engineering.com>
- <20180913151716.6333-2-wsa+renesas@sang-engineering.com>
- <CAMuHMdV_xpj62BkqwoTAaaugM3BkDRQTC=E0cEDqKBg3sUYNBg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="yNb1oOkm5a9FJOVX"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdV_xpj62BkqwoTAaaugM3BkDRQTC=E0cEDqKBg3sUYNBg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Thu, Sep 13, 2018 at 5:18 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Update the comment because we don't set the pointer to NULL anymore.
+> Also use the correct pointer name 'dma_ops' instead of 'dma_map_ops'.
+>
+> Fixes: 1874619a7df4 ("ARM: dma-mapping: Set proper DMA ops in arm_iommu_detach_device()")
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
---yNb1oOkm5a9FJOVX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Nice catch!
 
-On Fri, Sep 14, 2018 at 02:15:01PM +0200, Geert Uytterhoeven wrote:
-> On Thu, Sep 13, 2018 at 5:18 PM Wolfram Sang
-> <wsa+renesas@sang-engineering.com> wrote:
-> > Update the comment because we don't set the pointer to NULL anymore.
-> > Also use the correct pointer name 'dma_ops' instead of 'dma_map_ops'.
-> >
-> > Fixes: 1874619a7df4 ("ARM: dma-mapping: Set proper DMA ops in arm_iommu=
-_detach_device()")
-> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->=20
-> Nice catch!
->=20
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks, so I sent this seperately via ALKML now.
+Gr{oetje,eeting}s,
 
+                        Geert
 
---yNb1oOkm5a9FJOVX
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlub3cwACgkQFA3kzBSg
-KbZBbRAAr9FUPBM/xafVRAtQivVuRwm9hR8mLRKPGHRuj6GBiEIcwH50OokDvsrS
-vH4PiT6mXjS7HEkQ+N9INFIKJNibcj62IUZyVXe2GIEUft6A1xVeronjv/278Yg9
-ExDON7xo3xR2FPapTDKrsEPKhc9r20DGlaHnOoHl8cRDvTeHaUdVIck74kV+irby
-Fz0x2OGNeMo+5iW9NuodQdmGWJZKNDjisSd3jl/0BVp6skLt38NId3HHY0H1IbI8
-2sVBVOgFZ17gQxAV4I3iu3XMjJWpWhXt3gNIBhp/duK1/N61SURd0x8dfYGUdLVi
-s7LpGsv4x16mp4Vl1oSkwqSLfgHTOKoBS1hRei90nAkFLS1CuHNdJoKoo7yQpxX2
-E+WqccOQiKkhMaepGxmycUDzTfslNEsVG2FV/pyZ9SoDJQE/iTXKrllcttpitfyf
-6X9NOqeunyRJDyBseqS3zsCMivD20197ZOG0yu/wv+ixzlVSKCGUljUPlqx00S3H
-Sa1+JiKPr7yRneb4T7IdEAE5pUr+flxDXHWu85676AUAmbxN2JVnwGzRJ2BgSnGf
-6bE4dhAkLSPOd18UzsZeu/Tj61Ys8xLzagA1Akq4uHWkpegTa/23qIfccDzN1G6d
-Vl96IMyXBXNE7zbBwvXzq+SNtrJe46XWPLoJcKu4/Z+iGVaouJI=
-=+tnW
------END PGP SIGNATURE-----
-
---yNb1oOkm5a9FJOVX--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
