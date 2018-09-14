@@ -1,48 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41704 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725854AbeICJs0 (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:34484 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727655AbeINP4O (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Sep 2018 05:48:26 -0400
+        Fri, 14 Sep 2018 11:56:14 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: mchehab@kernel.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] media: vsp1: Document max_width restriction on SRU
+Date: Fri, 14 Sep 2018 13:42:31 +0300
+Message-ID: <2947729.faakk1MfnN@avalon>
+In-Reply-To: <20180831144044.31713-5-kieran.bingham+renesas@ideasonboard.com>
+References: <20180831144044.31713-1-kieran.bingham+renesas@ideasonboard.com> <20180831144044.31713-5-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-References: <20180828015252.28511-1-robh@kernel.org> <20180828015252.28511-12-robh@kernel.org>
-In-Reply-To: <20180828015252.28511-12-robh@kernel.org>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 3 Sep 2018 13:29:39 +0800
-Message-ID: <CAGb2v64axajQmvjt4Ht=3AG2Ybou_VP7v_m6mk4aa7CKyPDYbg@mail.gmail.com>
-Subject: Re: [PATCH] clk: Convert to using %pOFn instead of device_node.name
-To: Rob Herring <robh@kernel.org>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/SHMOBILE ARM..." <linux-renesas-soc@vger.kernel.org>,
-        "open list:OMAP2+ SUPPORT" <linux-omap@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Aug 28, 2018 at 9:53 AM Rob Herring <robh@kernel.org> wrote:
->
-> In preparation to remove the node name pointer from struct device_node,
-> convert printf users to use the %pOFn format specifier.
->
-> Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-renesas-soc@vger.kernel.org
-> Cc: linux-omap@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+Hi Kieran,
+
+Thank you for the patch.
+
+On Friday, 31 August 2018 17:40:42 EEST Kieran Bingham wrote:
+> The SRU is currently restricted to 256 pixels as part of the current
+> partition algorithm. Document that the actual capability of this
+> component is 288 pixels, but don't increase the implementation.
+> 
+> The extended partition algorithm may later choose to utilise a larger
+> input to support overlapping partitions.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 > ---
+>  drivers/media/platform/vsp1/vsp1_sru.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_sru.c
+> b/drivers/media/platform/vsp1/vsp1_sru.c index f277700e5cc2..2a40e09b9aa7
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_sru.c
+> +++ b/drivers/media/platform/vsp1/vsp1_sru.c
+> @@ -314,6 +314,10 @@ static unsigned int sru_max_width(struct vsp1_entity
+> *entity, output = vsp1_entity_get_pad_format(&sru->entity,
+> sru->entity.config, SRU_PAD_SOURCE);
+> 
+> +	/*
+> +	 * The maximum width of the SRU is 288 input pixels, but to support the
+> +	 * partition algorithm, this is currently kept at 256.
+> +	 */
 
->  drivers/clk/sunxi/clk-mod0.c        |  6 +++---
->  drivers/clk/sunxi/clk-sun9i-core.c  | 20 ++++++++++----------
->  drivers/clk/sunxi/clk-sunxi.c       |  4 ++--
+s/maximum width/maximum input width/
 
-For the sunxi bits,
+I think you should also explain why we restrict it to 256 pixels (unless I'm 
+mistaken the idea is that up to 32 pixels can be used for overlapping 
+partitions, so each partition will process up to 256 useful pixels).
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Patch 5/6 should also be updated in a similar way to better document the 
+rationale.
+
+>  	if (input->width != output->width)
+>  		return 512;
+>  	else
+
+-- 
+Regards,
+
+Laurent Pinchart
