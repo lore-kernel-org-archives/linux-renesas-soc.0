@@ -1,48 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:14472 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389839AbeIUSRO (ORCPT
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:40398 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727982AbeINSFw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Sep 2018 14:17:14 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 5/5] usb: renesas_usbhs: add support for R-Car E3
-Date: Fri, 21 Sep 2018 21:26:32 +0900
-Message-Id: <1537532792-20376-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1537532792-20376-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1537532792-20376-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Fri, 14 Sep 2018 14:05:52 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <1536660771-32278-1-git-send-email-biju.das@bp.renesas.com> <1536660771-32278-7-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1536660771-32278-7-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 14 Sep 2018 14:51:18 +0200
+Message-ID: <CAMuHMdX3X1oe0aOtW5emfO97_jmbmP8t8RpSsft_Kv_j8SsSzg@mail.gmail.com>
+Subject: Re: [PATCH 06/10] dt-bindings: clock: renesas: cpg-mssr: Document
+ r8a7744 binding
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds support for R-Car E3. This SoC needs to release
-the PLL reset by the UGCTRL register like R-Car D3. So, this patch
-adds a usbhs_of_match entry for this SoC with
-"USBHS_TYPE_RCAR_GEN3_WITH_PLL".
+On Tue, Sep 11, 2018 at 12:19 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> Add binding documentation for the RZ/G1N (R8A7744) Clock Pulse
+> Generator driver.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/usb/renesas_usbhs/common.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v4.20.
 
-diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
-index 522cc09..a3e1290 100644
---- a/drivers/usb/renesas_usbhs/common.c
-+++ b/drivers/usb/renesas_usbhs/common.c
-@@ -560,6 +560,10 @@ static int usbhsc_drvcllbck_notify_hotplug(struct platform_device *pdev)
- 		.data = (void *)USBHS_TYPE_RCAR_GEN3,
- 	},
- 	{
-+		.compatible = "renesas,usbhs-r8a77990",
-+		.data = (void *)USBHS_TYPE_RCAR_GEN3_WITH_PLL,
-+	},
-+	{
- 		.compatible = "renesas,usbhs-r8a77995",
- 		.data = (void *)USBHS_TYPE_RCAR_GEN3_WITH_PLL,
- 	},
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-1.9.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
