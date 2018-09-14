@@ -1,60 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57867 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729193AbeI1Qoa (ORCPT
+Received: from sauhun.de ([88.99.104.3]:46280 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727676AbeINV1I (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:44:30 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM64 Based SoC SoC Updates for v4.20
-Date: Fri, 28 Sep 2018 12:21:17 +0200
-Message-Id: <cover.1538127537.git.horms+renesas@verge.net.au>
+        Fri, 14 Sep 2018 17:27:08 -0400
+Date: Fri, 14 Sep 2018 18:11:56 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 1/3] ARM: dma-mapping: update comment about handling
+ dma_ops when detaching from IOMMU
+Message-ID: <20180914161156.GB906@kunai>
+References: <20180913151716.6333-1-wsa+renesas@sang-engineering.com>
+ <20180913151716.6333-2-wsa+renesas@sang-engineering.com>
+ <CAMuHMdV_xpj62BkqwoTAaaugM3BkDRQTC=E0cEDqKBg3sUYNBg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="yNb1oOkm5a9FJOVX"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV_xpj62BkqwoTAaaugM3BkDRQTC=E0cEDqKBg3sUYNBg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
 
-Please consider these Renesas ARM64 based SoC SoC updates for v4.20.
+--yNb1oOkm5a9FJOVX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Sep 14, 2018 at 02:15:01PM +0200, Geert Uytterhoeven wrote:
+> On Thu, Sep 13, 2018 at 5:18 PM Wolfram Sang
+> <wsa+renesas@sang-engineering.com> wrote:
+> > Update the comment because we don't set the pointer to NULL anymore.
+> > Also use the correct pointer name 'dma_ops' instead of 'dma_map_ops'.
+> >
+> > Fixes: 1874619a7df4 ("ARM: dma-mapping: Set proper DMA ops in arm_iommu=
+_detach_device()")
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>=20
+> Nice catch!
+>=20
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Thanks, so I sent this seperately via ALKML now.
 
 
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+--yNb1oOkm5a9FJOVX
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+-----BEGIN PGP SIGNATURE-----
 
-are available in the git repository at:
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlub3cwACgkQFA3kzBSg
+KbZBbRAAr9FUPBM/xafVRAtQivVuRwm9hR8mLRKPGHRuj6GBiEIcwH50OokDvsrS
+vH4PiT6mXjS7HEkQ+N9INFIKJNibcj62IUZyVXe2GIEUft6A1xVeronjv/278Yg9
+ExDON7xo3xR2FPapTDKrsEPKhc9r20DGlaHnOoHl8cRDvTeHaUdVIck74kV+irby
+Fz0x2OGNeMo+5iW9NuodQdmGWJZKNDjisSd3jl/0BVp6skLt38NId3HHY0H1IbI8
+2sVBVOgFZ17gQxAV4I3iu3XMjJWpWhXt3gNIBhp/duK1/N61SURd0x8dfYGUdLVi
+s7LpGsv4x16mp4Vl1oSkwqSLfgHTOKoBS1hRei90nAkFLS1CuHNdJoKoo7yQpxX2
+E+WqccOQiKkhMaepGxmycUDzTfslNEsVG2FV/pyZ9SoDJQE/iTXKrllcttpitfyf
+6X9NOqeunyRJDyBseqS3zsCMivD20197ZOG0yu/wv+ixzlVSKCGUljUPlqx00S3H
+Sa1+JiKPr7yRneb4T7IdEAE5pUr+flxDXHWu85676AUAmbxN2JVnwGzRJ2BgSnGf
+6bE4dhAkLSPOd18UzsZeu/Tj61Ys8xLzagA1Akq4uHWkpegTa/23qIfccDzN1G6d
+Vl96IMyXBXNE7zbBwvXzq+SNtrJe46XWPLoJcKu4/Z+iGVaouJI=
+=+tnW
+-----END PGP SIGNATURE-----
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-soc-for-v4.20
-
-for you to fetch changes up to 692dce77dfb71b5eaf896d3cdc7ef72f70631b14:
-
-  arm64: Add Renesas R8A774C0 support (2018-09-11 15:50:57 +0200)
-
-----------------------------------------------------------------
-Renesas ARM64 Based SoC SoC Updates for v4.20
-
-* Add support for RZ/G2E (r8a774c0) and RZ/G2M (r8a774a1) SoCs
-* Enable Compare Match Timer (CMT) and Timer Unit (TMU)
-  for Renesas SoCs
-* Remove no longer needed ARCH_SHMOBILE Kconfig symbol
-
-----------------------------------------------------------------
-Biju Das (1):
-      arm64: Add Renesas R8A774A1 support
-
-Fabrizio Castro (1):
-      arm64: Add Renesas R8A774C0 support
-
-Geert Uytterhoeven (1):
-      arm64: renesas: Remove the ARCH_SHMOBILE Kconfig symbol
-
-Sergei Shtylyov (1):
-      arm64: enable CMT/TMU support for Renesas SoC
-
- arch/arm64/Kconfig.platforms | 58 ++++++++++++++++++++++++++------------------
- 1 file changed, 34 insertions(+), 24 deletions(-)
+--yNb1oOkm5a9FJOVX--
