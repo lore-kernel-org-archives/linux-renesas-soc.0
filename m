@@ -1,44 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:30583 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728859AbeIQUxJ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:32954 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727672AbeINSsb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Sep 2018 16:53:09 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Fri, 14 Sep 2018 14:48:31 -0400
+Date: Fri, 14 Sep 2018 15:33:54 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        devicetree@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] dt-bindings: rcar-dmac: Document r8a7744 support
-Date: Mon, 17 Sep 2018 16:18:16 +0100
-Message-Id: <1537197496-22345-1-git-send-email-biju.das@bp.renesas.com>
+Subject: Re: [PATCH 3/3] dt-bindings: power: rcar-sysc: Document r8a774c0 sysc
+Message-ID: <20180914133354.uxfa3fw6ctakv2gq@verge.net.au>
+References: <1536590488-23270-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1536590488-23270-4-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20180912085914.js7t7pgcwh2gywha@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180912085914.js7t7pgcwh2gywha@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Renesas RZ/G SoC also have the R-Car gen2/3 compatible DMA controllers.
-Document RZ/G1N (also known as R8A7744) SoC bindings.
+On Wed, Sep 12, 2018 at 10:59:14AM +0200, Simon Horman wrote:
+> On Mon, Sep 10, 2018 at 03:41:28PM +0100, Fabrizio Castro wrote:
+> > Document bindings for the RZ/G2E (a.k.a. R8A774C0) system
+> > controller.
+> > 
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> 
+> Thanks,
+> 
+> This looks fine to me but I will wait to see if there are other reviews
+> before applying.
+> 
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-index 946229c..a5a7c3f 100644
---- a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-+++ b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-@@ -17,6 +17,7 @@ Required Properties:
- - compatible: "renesas,dmac-<soctype>", "renesas,rcar-dmac" as fallback.
- 	      Examples with soctypes are:
- 		- "renesas,dmac-r8a7743" (RZ/G1M)
-+		- "renesas,dmac-r8a7744" (RZ/G1N)
- 		- "renesas,dmac-r8a7745" (RZ/G1E)
- 		- "renesas,dmac-r8a77470" (RZ/G1C)
- 		- "renesas,dmac-r8a7790" (R-Car H2)
--- 
-2.7.4
+Thanks again, applied for v4.20.
