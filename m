@@ -1,85 +1,236 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:48132 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726807AbeIOUD5 (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:43535 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727611AbeINTLt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 15 Sep 2018 16:03:57 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [GIT PULL FOR renesas-drivers] D3 and E3 HDMI output support
-Date: Sat, 15 Sep 2018 17:44:55 +0300
-Message-ID: <1562156.yf6H1RoyJV@avalon>
+        Fri, 14 Sep 2018 15:11:49 -0400
+Date: Fri, 14 Sep 2018 15:56:56 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>
+Cc: "open list:DRM DRIVERS FOR RENESAS" <dri-devel@lists.freedesktop.org>,
+        "open list:DRM DRIVERS FOR RENESAS"
+        <linux-renesas-soc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: Re: [PATCH 1/3] drm: rcar-du: Rework clock configuration based on
+ hardware limits
+Message-ID: <20180914135656.GA16851@w540>
+References: <1532971214-17962-1-git-send-email-jacopo@jmondi.org>
+ <1532971214-17962-2-git-send-email-jacopo@jmondi.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="9amGYk9869ThD9tj"
+Content-Disposition: inline
+In-Reply-To: <1532971214-17962-2-git-send-email-jacopo@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
 
-The following changes since commit 6e1637c91742570ff873433ed27227933b792af4:
+--9amGYk9869ThD9tj
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-  drm: rcar-du: Remove packed VYUY support (2018-09-15 17:28:34 +0300)
+Hi Laurent,
 
-are available in the Git repository at:
+On Mon, Jul 30, 2018 at 07:20:12PM +0200, Jacopo Mondi wrote:
+> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+>
+> The DU channels that have a display PLL (DPLL) can only use external
+> clock sources, and don't have an internal clock divider (with the
+> exception of H3 ES1.x where the post-divider is present and needs to be
+> used as a workaround for a DPLL silicon issue).
+>
+> Rework the clock configuration to take this into account, avoiding
+> selection of non-existing clock sources or usage of a missing
+> post-divider.
+>
 
-  git://linuxtv.org/pinchartl/media.git for/renesas-drivers
+I have based my work on non-DPLL channel selection on this patch, but
+always forgot to add my:
+Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-for you to fetch changes up to d7e0cb47e1d06d3033812281fe98528d1713ec16:
+Thanks
+   j
 
-  Merge tag 'drm-du-dt-lvds-pll-v1-20180915' into for/renesas-drivers 
-(2018-09-15 17:38:05 +0300)
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 122 ++++++++++++++++++---------------
+>  1 file changed, 67 insertions(+), 55 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> index b52b3e8..6d55cec 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> @@ -208,78 +208,90 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+>  	const struct drm_display_mode *mode = &rcrtc->crtc.state->adjusted_mode;
+>  	struct rcar_du_device *rcdu = rcrtc->group->dev;
+>  	unsigned long mode_clock = mode->clock * 1000;
+> -	unsigned long clk;
+>  	u32 value;
+>  	u32 escr;
+> -	u32 div;
+>
+> -	/*
+> -	 * Compute the clock divisor and select the internal or external dot
+> -	 * clock based on the requested frequency.
+> -	 */
+> -	clk = clk_get_rate(rcrtc->clock);
+> -	div = DIV_ROUND_CLOSEST(clk, mode_clock);
+> -	div = clamp(div, 1U, 64U) - 1;
+> -	escr = div | ESCR_DCLKSEL_CLKS;
+> -
+> -	if (rcrtc->extclock) {
+> +	if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
+> +		unsigned long target = mode_clock;
+>  		struct dpll_info dpll = { 0 };
+>  		unsigned long extclk;
+> -		unsigned long extrate;
+> -		unsigned long rate;
+> -		u32 extdiv;
+> +		u32 dpllcr;
+> +		u32 div = 0;
+>
+> -		extclk = clk_get_rate(rcrtc->extclock);
+> -		if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
+> -			unsigned long target = mode_clock;
+> +		/*
+> +		 * DU channels that have a display PLL can't use the internal
+> +		 * system clock, and have no internal clock divider.
+> +		 */
+>
+> -			/*
+> -			 * The H3 ES1.x exhibits dot clock duty cycle stability
+> -			 * issues. We can work around them by configuring the
+> -			 * DPLL to twice the desired frequency, coupled with a
+> -			 * /2 post-divider. This isn't needed on other SoCs and
+> -			 * breaks HDMI output on M3-W for a currently unknown
+> -			 * reason, so restrict the workaround to H3 ES1.x.
+> -			 */
+> -			if (soc_device_match(rcar_du_r8a7795_es1))
+> -				target *= 2;
+> +		if (WARN_ON(!rcrtc->extclock))
+> +			return;
+>
+> -			rcar_du_dpll_divider(rcrtc, &dpll, extclk, target);
+> -			extclk = dpll.output;
+> +		/*
+> +		 * The H3 ES1.x exhibits dot clock duty cycle stability issues.
+> +		 * We can work around them by configuring the DPLL to twice the
+> +		 * desired frequency, coupled with a /2 post-divider. Restrict
+> +		 * the workaround to H3 ES1.x as ES2.0 and all other SoCs have
+> +		 * no post-divider when a display PLL is present (as shown by
+> +		 * the workaround breaking HDMI output on M3-W during testing).
+> +		 */
+> +		if (soc_device_match(rcar_du_r8a7795_es1)) {
+> +			target *= 2;
+> +			div = 1;
+>  		}
+>
+> -		extdiv = DIV_ROUND_CLOSEST(extclk, mode_clock);
+> -		extdiv = clamp(extdiv, 1U, 64U) - 1;
+> +		extclk = clk_get_rate(rcrtc->extclock);
+> +		rcar_du_dpll_divider(rcrtc, &dpll, extclk, target);
+>
+> -		rate = clk / (div + 1);
+> -		extrate = extclk / (extdiv + 1);
+> +		dpllcr = DPLLCR_CODE | DPLLCR_CLKE
+> +		       | DPLLCR_FDPLL(dpll.fdpll)
+> +		       | DPLLCR_N(dpll.n) | DPLLCR_M(dpll.m)
+> +		       | DPLLCR_STBY;
+>
+> -		if (abs((long)extrate - (long)mode_clock) <
+> -		    abs((long)rate - (long)mode_clock)) {
+> +		if (rcrtc->index == 1)
+> +			dpllcr |= DPLLCR_PLCS1
+> +			       |  DPLLCR_INCS_DOTCLKIN1;
+> +		else
+> +			dpllcr |= DPLLCR_PLCS0
+> +			       |  DPLLCR_INCS_DOTCLKIN0;
+>
+> -			if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
+> -				u32 dpllcr = DPLLCR_CODE | DPLLCR_CLKE
+> -					   | DPLLCR_FDPLL(dpll.fdpll)
+> -					   | DPLLCR_N(dpll.n) | DPLLCR_M(dpll.m)
+> -					   | DPLLCR_STBY;
+> +		rcar_du_group_write(rcrtc->group, DPLLCR, dpllcr);
+>
+> -				if (rcrtc->index == 1)
+> -					dpllcr |= DPLLCR_PLCS1
+> -					       |  DPLLCR_INCS_DOTCLKIN1;
+> -				else
+> -					dpllcr |= DPLLCR_PLCS0
+> -					       |  DPLLCR_INCS_DOTCLKIN0;
+> +		escr = ESCR_DCLKSEL_DCLKIN | div;
+> +	} else {
+> +		unsigned long clk;
+> +		u32 div;
+>
+> -				rcar_du_group_write(rcrtc->group, DPLLCR,
+> -						    dpllcr);
+> -			}
+> +		/*
+> +		 * Compute the clock divisor and select the internal or external
+> +		 * dot clock based on the requested frequency.
+> +		 */
+> +		clk = clk_get_rate(rcrtc->clock);
+> +		div = DIV_ROUND_CLOSEST(clk, mode_clock);
+> +		div = clamp(div, 1U, 64U) - 1;
+>
+> -			escr = ESCR_DCLKSEL_DCLKIN | extdiv;
+> -		}
+> +		escr = ESCR_DCLKSEL_CLKS | div;
+>
+> -		dev_dbg(rcrtc->group->dev->dev,
+> -			"mode clock %lu extrate %lu rate %lu ESCR 0x%08x\n",
+> -			mode_clock, extrate, rate, escr);
+> +		if (rcrtc->extclock) {
+> +			unsigned long extclk;
+> +			unsigned long extrate;
+> +			unsigned long rate;
+> +			u32 extdiv;
+> +
+> +			extclk = clk_get_rate(rcrtc->extclock);
+> +			extdiv = DIV_ROUND_CLOSEST(extclk, mode_clock);
+> +			extdiv = clamp(extdiv, 1U, 64U) - 1;
+> +
+> +			extrate = extclk / (extdiv + 1);
+> +			rate = clk / (div + 1);
+> +
+> +			if (abs((long)extrate - (long)mode_clock) <
+> +			    abs((long)rate - (long)mode_clock))
+> +				escr = ESCR_DCLKSEL_DCLKIN | extdiv;
+> +
+> +			dev_dbg(rcrtc->group->dev->dev,
+> +				"mode clock %lu extrate %lu rate %lu ESCR 0x%08x\n",
+> +				mode_clock, extrate, rate, escr);
+> +		}
+>  	}
+>
+>  	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? ESCR2 : ESCR,
+> --
+> 2.7.4
+>
 
-Please note that the for/renesas-drivers branch is a merge of a code and a DT 
-branch (available under the drm-du-lvds-pll-v1-20180915 and drm-du-dt-lvds-
-pll-v1-20180915 tags respectively). Those two branches have different bases 
-(drm-next from Dave's tree and devel from Simon's tree respectively), I've 
-thus edited the diffstat below manually.
+--9amGYk9869ThD9tj
+Content-Type: application/pgp-signature; name="signature.asc"
 
-----------------------------------------------------------------
-Kieran Bingham (1):
-      arm64: dts: renesas: r8a77995: Add LVDS support
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Laurent Pinchart (14):
-      arm64: dts: renesas: r8a77990: Add display output support
-      arm64: dts: renesas: r8a77990: ebisu: Enable VGA and HDMI outputs
-      pinctrl: sh-pfc: r8a77990: Add DU pins, groups and function
-      dt-bindings: display: renesas: du: Document r8a77990 bindings
-      dt-bindings: display: renesas: lvds: Document r8a77990 bindings
-      dt-bindings: display: renesas: lvds: Add EXTAL and DU_DOTCLKIN clocks
-      drm: bridge: thc63: Restrict modes based on hardware operating frequency
-      drm: rcar-du: lvds: D3/E3 support
-      drm: rcar-du: Perform the initial CRTC setup from rcar_du_crtc_get()
-      drm: rcar-du: Use LVDS PLL clock as dot clock when possible
-      drm: rcar-du: Enable configurable DPAD0 routing on Gen3
-      drm: rcar-du: Cache DSYSR value to ensure known initial value
-      drm: rcar-du: Don't use TV sync mode when not supported by the hardware
-      Merge tag 'drm-du-dt-lvds-pll-v1-20180915' into for/renesas-drivers
+iQIcBAEBAgAGBQJbm74oAAoJEHI0Bo8WoVY8AtMP/j9fNx3Qojpi5p7MYoAGc9oO
+npHdPWeJTXytR0RZZgA5jX/3F8hNNQJnrGnYXjEumDXXROETElWWpKcvN+OpFFpE
+fq9LlCyWL/rLtvlLH4/a2kKqmyQveKJTS+zrCmV0MEtCdBEaLkJqdtLheqYmj2C7
+pxDqOAVRO2UopEU17/zhjARMFCqr/75zFIj7VK342l+2I7FRrVecxIj0tB04koVH
+lgy1sM8VfAeO1xoKG7ztfMK+IpkeVFZKl0Yd3e5lvnVPt9UDLHIurizVUAnj6o6Z
+8LKVxEPPV82W0m+MgFyajKwrG+mGS0iT7ad6cIPetIKhEeudAbG6dMuiUR45HEh+
+mGpEFooyIKEpluXZdQgMQr4xzIlB6UNIs/8N1AuJ1MrqrIVH6nRUM8kNAugVF55v
+YGcN/GKXr1nu7RlIO7QoLSORHVbs0A+8TIE926MEJo38O95mzkb5GkjKp7ehpDIB
+7Bsvar9o0E1axNaZiUpb0hmTRk2Q767OXtOxlSw6ySLTp1Za3Nwx1GsF44BobySa
+a1ELlUI3gYYiHB2EPJFs2BEE/QyfYU6YtPag2DW6OAPizpukl6AmLAqj3/EzdV/d
+kI/iTJX6K5SoLO/DAwpzlr08Esey9foR9blMs9Cpzy1PgQns7Kn9MMHgR7wAehqZ
+ZertYauJ3BAf2NXy/b1C
+=rDoR
+-----END PGP SIGNATURE-----
 
-Ulrich Hecht (2):
-      arm64: dts: renesas: r8a77995: draak: Enable HDMI display output
-      drm: rcar-du: Add r8a77990 and r8a77995 device support
-
- Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt |   13 
- Documentation/devicetree/bindings/display/renesas,du.txt          |    2 
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts                    |  166 ++++
- arch/arm64/boot/dts/renesas/r8a77990.dtsi                         |  167 ++++
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts                    |   98 ++
- arch/arm64/boot/dts/renesas/r8a77995.dtsi                         |   56 +
- drivers/gpu/drm/bridge/thc63lvd1024.c                             |   18 
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c                            |  136 ++-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h                            |    5 
- drivers/gpu/drm/rcar-du/rcar_du_drv.c                             |   63 +
- drivers/gpu/drm/rcar-du/rcar_du_drv.h                             |    3 
- drivers/gpu/drm/rcar-du/rcar_du_group.c                           |   88 +-
- drivers/gpu/drm/rcar-du/rcar_du_kms.c                             |   12 
- drivers/gpu/drm/rcar-du/rcar_lvds.c                               |  355 +++-
- drivers/gpu/drm/rcar-du/rcar_lvds_regs.h                          |   43 +
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c                             |  110 +++
- 16 files changed, 1187 insertions(+), 148 deletions(-)
-
--- 
-Regards,
-
-Laurent Pinchart
+--9amGYk9869ThD9tj--
