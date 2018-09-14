@@ -1,150 +1,61 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:48323 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726497AbeIEWJM (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Sep 2018 18:09:12 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc: linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH] watchdog: rza_wdt: Extend clock sources for RZ/A2
-Date: Wed,  5 Sep 2018 12:37:43 -0500
-Message-Id: <20180905173743.47938-1-chris.brandt@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] media: vsp1: Document max_width restriction on UDS
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+References: <20180914142652.30484-1-kieran.bingham+renesas@ideasonboard.com>
+ <20180914142652.30484-2-kieran.bingham+renesas@ideasonboard.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <07c61a65-51fd-f01a-2f96-d9eac1e7c098@cogentembedded.com>
+Date: Fri, 14 Sep 2018 19:56:37 +0300
+MIME-Version: 1.0
+In-Reply-To: <20180914142652.30484-2-kieran.bingham+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The RZ/A2 watchdog timer extends the clock source options in order to give
-you longer timeout options.
+Hello!
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- drivers/watchdog/rza_wdt.c | 75 ++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 59 insertions(+), 16 deletions(-)
+On 09/14/2018 05:26 PM, Kieran Bingham wrote:
 
-diff --git a/drivers/watchdog/rza_wdt.c b/drivers/watchdog/rza_wdt.c
-index e618218d2374..78e0d61519ec 100644
---- a/drivers/watchdog/rza_wdt.c
-+++ b/drivers/watchdog/rza_wdt.c
-@@ -38,8 +38,37 @@ struct rza_wdt {
- 	struct watchdog_device wdev;
- 	void __iomem *base;
- 	struct clk *clk;
-+	bool ext_cks;
-+	u8 count;
-+	u8 cks;
-+	u8 timeout;
- };
- 
-+static void rza_wdt_calc_timeout(struct rza_wdt *priv, int timeout)
-+{
-+	int rate = clk_get_rate(priv->clk);
-+	u16 counter;
-+
-+	if (priv->ext_cks) {
-+		/* Add the 1 to deal with the inevitable fraction */
-+		counter = ((timeout * rate) /  4194304) + 1;
-+		if (counter > 255)
-+			counter = 0;
-+
-+		priv->cks = 0xF;
-+		priv->count = 256 - counter;
-+	} else {
-+		/* Start timer with longest timeout */
-+		priv->cks = 7;
-+		priv->count = 0;
-+	}
-+
-+	priv->timeout = timeout;
-+
-+	pr_debug("%s: timeout set to %d (WTCNT=%d)\n", __func__,
-+		 timeout, priv->count);
-+}
-+
- static int rza_wdt_start(struct watchdog_device *wdev)
- {
- 	struct rza_wdt *priv = watchdog_get_drvdata(wdev);
-@@ -51,13 +80,12 @@ static int rza_wdt_start(struct watchdog_device *wdev)
- 	readb(priv->base + WRCSR);
- 	writew(WRCSR_CLEAR_WOVF, priv->base + WRCSR);
- 
--	/*
--	 * Start timer with slowest clock source and reset option enabled.
--	 */
-+	rza_wdt_calc_timeout(priv, wdev->timeout);
-+
- 	writew(WRCSR_MAGIC | WRCSR_RSTE, priv->base + WRCSR);
--	writew(WTCNT_MAGIC | 0, priv->base + WTCNT);
--	writew(WTCSR_MAGIC | WTSCR_WT | WTSCR_TME | WTSCR_CKS(7),
--	       priv->base + WTCSR);
-+	writew(WTCNT_MAGIC | priv->count, priv->base + WTCNT);
-+	writew(WTCSR_MAGIC | WTSCR_WT | WTSCR_TME |
-+	       WTSCR_CKS(priv->cks), priv->base + WTCSR);
- 
- 	return 0;
- }
-@@ -75,7 +103,12 @@ static int rza_wdt_ping(struct watchdog_device *wdev)
- {
- 	struct rza_wdt *priv = watchdog_get_drvdata(wdev);
- 
--	writew(WTCNT_MAGIC | 0, priv->base + WTCNT);
-+	if (priv->timeout != wdev->timeout)
-+		rza_wdt_calc_timeout(priv, wdev->timeout);
-+
-+	writew(WTCNT_MAGIC | priv->count, priv->base + WTCNT);
-+
-+	pr_debug("%s: timeout = %d\n", __func__, wdev->timeout);
- 
- 	return 0;
- }
-@@ -130,6 +163,7 @@ static int rza_wdt_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	unsigned long rate;
- 	int ret;
-+	struct device_node *np = pdev->dev.of_node;
- 
- 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
-@@ -150,20 +184,29 @@ static int rza_wdt_probe(struct platform_device *pdev)
- 		return -ENOENT;
- 	}
- 
--	/* Assume slowest clock rate possible (CKS=7) */
--	rate /= 16384;
-+	if (of_device_is_compatible(np, "renesas,r7s9210-wdt"))
-+		priv->ext_cks = true;
- 
- 	priv->wdev.info = &rza_wdt_ident,
- 	priv->wdev.ops = &rza_wdt_ops,
- 	priv->wdev.parent = &pdev->dev;
- 
--	/*
--	 * Since the max possible timeout of our 8-bit count register is less
--	 * than a second, we must use max_hw_heartbeat_ms.
--	 */
--	priv->wdev.max_hw_heartbeat_ms = (1000 * U8_MAX) / rate;
--	dev_dbg(&pdev->dev, "max hw timeout of %dms\n",
--		 priv->wdev.max_hw_heartbeat_ms);
-+	if (priv->ext_cks) {
-+		/* Assume slowest clock rate possible (CKS=0xF) */
-+		priv->wdev.max_timeout = (4194304 * U8_MAX) / rate;
-+	} else {
-+		/* Assume slowest clock rate possible (CKS=7) */
-+		rate /= 16384;
-+
-+		/*
-+		 * Since the max possible timeout of our 8-bit count
-+		 * register is less than a second, we must use
-+		 * max_hw_heartbeat_ms.
-+		 */
-+		priv->wdev.max_hw_heartbeat_ms = (1000 * U8_MAX) / rate;
-+		dev_dbg(&pdev->dev, "max hw timeout of %dms\n",
-+			 priv->wdev.max_hw_heartbeat_ms);
-+	}
- 
- 	priv->wdev.min_timeout = 1;
- 	priv->wdev.timeout = DEFAULT_TIMEOUT;
--- 
-2.16.1
+> The UDS is currently restricted based on a partition size of 256 pixels.
+> Document the actual restrictions, but don't increase the implementation.
+> 
+> The extended partition algorithm may later choose to utilise a larger
+> partition size to support overlapping partitions which will improve the
+> quality of the output images.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> ---
+>  drivers/media/platform/vsp1/vsp1_uds.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_uds.c b/drivers/media/platform/vsp1/vsp1_uds.c
+> index 75c613050151..e8340de85813 100644
+> --- a/drivers/media/platform/vsp1/vsp1_uds.c
+> +++ b/drivers/media/platform/vsp1/vsp1_uds.c
+> @@ -342,6 +342,14 @@ static unsigned int uds_max_width(struct vsp1_entity *entity,
+>  					    UDS_PAD_SOURCE);
+>  	hscale = output->width / input->width;
+>  
+> +	/*
+> +	 * The maximum width of the UDS is 304 pixels. These are input pixels
+> +	 * in the event of up-scaling, and output pixels in the event of
+> +	 * downscaling.
+> +	 *
+> +	 * To support overlapping parition windows we clamp at units of 256 and
+
+   Partition.
+
+> +	 * the remaining pixels are reserved.
+> +	 */
+>  	if (hscale <= 2)
+>  		return 256;
+>  	else if (hscale <= 4)
+
+MBR, Sergei
