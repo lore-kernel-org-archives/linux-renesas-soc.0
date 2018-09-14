@@ -1,50 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34550 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbeIMORT (ORCPT
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:56895 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727709AbeINNKa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:17:19 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/13] ARM: dts: r8a77470: Add PFC support
-Date: Thu, 13 Sep 2018 11:08:26 +0200
-Message-Id: <0ea1a4d2c92a65aea6acc2397938cd01b053bc38.1536824376.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1536824376.git.horms+renesas@verge.net.au>
-References: <cover.1536824376.git.horms+renesas@verge.net.au>
+        Fri, 14 Sep 2018 09:10:30 -0400
+Date: Fri, 14 Sep 2018 09:57:11 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 02/16] dt-bindings: display: renesas: lvds: Document
+ r8a77990 bindings
+Message-ID: <20180914075711.GJ11509@w540>
+References: <20180904121027.24031-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20180904121027.24031-3-laurent.pinchart+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="u3W6riq+uV6J42Ub"
+Content-Disposition: inline
+In-Reply-To: <20180904121027.24031-3-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
 
-Define the generic R8A77470 part of the PFC device node.
+--u3W6riq+uV6J42Ub
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a77470.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+Hi Laurent,
 
-diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index 9b218c3ffdbd..af65fa031d84 100644
---- a/arch/arm/boot/dts/r8a77470.dtsi
-+++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -61,6 +61,11 @@
- 		#size-cells = <2>;
- 		ranges;
- 
-+		pfc: pin-controller@e6060000 {
-+			compatible = "renesas,pfc-r8a77470";
-+			reg = <0 0xe6060000 0 0x118>;
-+		};
-+
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a77470-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x1000>;
--- 
-2.11.0
+On Tue, Sep 04, 2018 at 03:10:13PM +0300, Laurent Pinchart wrote:
+> The E3 (r8a77990) supports two LVDS channels. Extend the binding to
+> support them.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>  Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+> index 5a4e379bb414..13af7e2ac7e8 100644
+> --- a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+> +++ b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+> @@ -15,6 +15,7 @@ Required properties:
+>    - "renesas,r8a7796-lvds" for R8A7796 (R-Car M3-W) compatible LVDS encoders
+>    - "renesas,r8a77970-lvds" for R8A77970 (R-Car V3M) compatible LVDS encoders
+>    - "renesas,r8a77980-lvds" for R8A77980 (R-Car V3H) compatible LVDS encoders
+> +  - "renesas,r8a77990-lvds" for R8A77990 (R-Car E3) compatible LVDS encoders
+>    - "renesas,r8a77995-lvds" for R8A77995 (R-Car D3) compatible LVDS encoders
+>
+>  - reg: Base address and length for the memory-mapped registers
+> --
+> Regards,
+>
+Thanks,
+
+Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+
+> Laurent Pinchart
+>
+
+--u3W6riq+uV6J42Ub
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJbm2nXAAoJEHI0Bo8WoVY8LxkP/i05SUXlCrraWDiSpTvM71Ss
+m09cOwIMX05YMXrPCXSyeR4N11jfvw64DnVjBpQ+tJTjNiSCNKipUBNDmsJX4tQj
+cCkWJRut6vMrSFnO1r/yRHj9zcm6mudqX/G/jkyV7/61qr8/aDMcjH+EMZ/usZan
+WxEwEpXmbZ5s/UEt61A1g7UkAMZRF5Sdr3XumlN8g9k3Caq+IAixqsa9C7gITGZj
+u7jcSCRvjkaZ3k2KiboSdhJTwVcNoAT+qPNSiAWu28/6ETcmJ2ey0CrG/GF7YZBN
+jInmsaurmwR4snogIzr8P10YqLd//teNMwGdPQKYanVgjk9xK7IaayvBDYW3UR4K
+a2Wrph+nKjTaQ45zimTcK65aSyGrrfntOI3PegUpn3hoXiFiHmTmTePbMj3hpHw1
+syEap3ko/K8iETQZwiub0maHNMCK1wT/9iC8/8YrtI3t/d0gQuwDDjRLA3WXdJ1M
+5ylMHoCrUqGFtj37ApL1lykN7g1LE6cnWmjv9HhD05y0YuRkKiea0AQi6noKcXZc
+qzkL5Sm+tNzjKrXR6j/CTc9KkH0sG+4jydSXzzw2PLbv6IgzFobOQd2qbZFagK8u
+7a7zwtKXdZ63E2aPMn3Fj3YcA1shnnKVVnp9PcgYHgXeh/HgodLQG/LPRBaoIPQC
+XCI2p8rP5ZnWSjpomdwK
+=AiFR
+-----END PGP SIGNATURE-----
+
+--u3W6riq+uV6J42Ub--
