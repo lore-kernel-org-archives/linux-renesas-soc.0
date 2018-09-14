@@ -1,83 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57700 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729118AbeI1Qnh (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:36460 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727013AbeINTPK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:43:37 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/14] arm64: dts: renesas: r8a77990: Attach the SYS-DMAC to the IPMMU
-Date: Fri, 28 Sep 2018 12:20:14 +0200
-Message-Id: <f0f9f7a6baacddc8da10ca714f2aa12c08a079fb.1538125184.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1538125184.git.horms+renesas@verge.net.au>
-References: <cover.1538125184.git.horms+renesas@verge.net.au>
+        Fri, 14 Sep 2018 15:15:10 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: kieran.bingham+renesas@ideasonboard.com
+Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm: rcar-du: Remove packed VYUY support
+Date: Fri, 14 Sep 2018 17:00:43 +0300
+Message-ID: <2071986.YnXjGQr2Jv@avalon>
+In-Reply-To: <7d2740f2-923c-4b5d-0d1e-c24fb4a8bceb@ideasonboard.com>
+References: <20180914132149.26354-1-kieran.bingham+renesas@ideasonboard.com> <1759929.4apJ9N5u4E@avalon> <7d2740f2-923c-4b5d-0d1e-c24fb4a8bceb@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm@opensource.se>
+Hi Kieran,
 
-For R-Car E3 hook up SYS-DMAC0, SYS-DMAC1 and SYS-DMAC2 to
-IPMMU-DS0 and IPMMU-DS1 in same way as for R-Car H3.
-This follows the R-Car Gen3 Rev.1.00 (April 2018) datasheet.
+On Friday, 14 September 2018 16:55:38 EEST Kieran Bingham wrote:
+> On 14/09/18 14:51, Laurent Pinchart wrote:
+> > On Friday, 14 September 2018 16:21:49 EEST Kieran Bingham wrote:
+> >> The Gen3 VSP used by the DU for display does not support packed the VYUY
+> >> pixel format. Gen2 VSP hardware is able to process this format, but it
+> >> is not officially supported there either and thus it's output can not be
+> >> guaranteed.
+> > 
+> > I think we could guarantee proper operation on Gen2, but as DU + VSP
+> > operation isn't enabled in the drivers by default, and as the VYUY format
+> > isn't a strategic target, I think we can ignore that.
+> > 
+> > How about updating the commit message as follows ?
+> > 
+> > "The Gen3 VSP used by the DU for display does not support packed the VYUY
+> 
+> s/packed the/the packed/
+> 
+> Which was a fault in my original text :)
+> 
+> > pixel format. Gen2 VSP hardware is able to process this format, but DU +
+> > VSP operation isn't enabled on Gen2, and VYUY isn't a strategic format,
+> > so it can be ignored."
+> 
+> That sounds fine to me, though I don't think we would even need to state
+> that 'VYUY isn't a strategic format' once it's simply not available on
+> the only platform that is enabled to use the VSP. But I don't object to
+> stating it otherwise.
 
-Signed-off-by: Magnus Damm <damm@opensource.se>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+It could be enabled in the drivers (I have out-of-tree patches for testing 
+purpose), so the fact that we don't need the format is still important I 
+think.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index 5ce268cda03b..2cb5c19b8a7c 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -373,6 +373,14 @@
- 			resets = <&cpg 219>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_ds0 0>, <&ipmmu_ds0 1>,
-+			       <&ipmmu_ds0 2>, <&ipmmu_ds0 3>,
-+			       <&ipmmu_ds0 4>, <&ipmmu_ds0 5>,
-+			       <&ipmmu_ds0 6>, <&ipmmu_ds0 7>,
-+			       <&ipmmu_ds0 8>, <&ipmmu_ds0 9>,
-+			       <&ipmmu_ds0 10>, <&ipmmu_ds0 11>,
-+			       <&ipmmu_ds0 12>, <&ipmmu_ds0 13>,
-+			       <&ipmmu_ds0 14>, <&ipmmu_ds0 15>;
- 		};
- 
- 		dmac1: dma-controller@e7300000 {
-@@ -407,6 +415,14 @@
- 			resets = <&cpg 218>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_ds1 0>, <&ipmmu_ds1 1>,
-+			       <&ipmmu_ds1 2>, <&ipmmu_ds1 3>,
-+			       <&ipmmu_ds1 4>, <&ipmmu_ds1 5>,
-+			       <&ipmmu_ds1 6>, <&ipmmu_ds1 7>,
-+			       <&ipmmu_ds1 8>, <&ipmmu_ds1 9>,
-+			       <&ipmmu_ds1 10>, <&ipmmu_ds1 11>,
-+			       <&ipmmu_ds1 12>, <&ipmmu_ds1 13>,
-+			       <&ipmmu_ds1 14>, <&ipmmu_ds1 15>;
- 		};
- 
- 		dmac2: dma-controller@e7310000 {
-@@ -441,6 +457,14 @@
- 			resets = <&cpg 217>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_ds1 16>, <&ipmmu_ds1 17>,
-+			       <&ipmmu_ds1 18>, <&ipmmu_ds1 19>,
-+			       <&ipmmu_ds1 20>, <&ipmmu_ds1 21>,
-+			       <&ipmmu_ds1 22>, <&ipmmu_ds1 23>,
-+			       <&ipmmu_ds1 24>, <&ipmmu_ds1 25>,
-+			       <&ipmmu_ds1 26>, <&ipmmu_ds1 27>,
-+			       <&ipmmu_ds1 28>, <&ipmmu_ds1 29>,
-+			       <&ipmmu_ds1 30>, <&ipmmu_ds1 31>;
- 		};
- 
- 		ipmmu_ds0: mmu@e6740000 {
+> >> Remove the format from the capabilities of the DU driver.
+> >> 
+> >> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> > 
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > 
+> >> ---
+> >> 
+> >>  drivers/gpu/drm/rcar-du/rcar_du_vsp.c | 2 --
+> >>  1 file changed, 2 deletions(-)
+> >> 
+> >> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> >> b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c index 4480243813ec..4576119e7777
+> >> 100644
+> >> --- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> >> +++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> >> @@ -126,7 +126,6 @@ static const u32 formats_kms[] = {
+> >>  	DRM_FORMAT_ARGB8888,
+> >>  	DRM_FORMAT_XRGB8888,
+> >>  	DRM_FORMAT_UYVY,
+> >> -	DRM_FORMAT_VYUY,
+> >>  	DRM_FORMAT_YUYV,
+> >>  	DRM_FORMAT_YVYU,
+> >>  	DRM_FORMAT_NV12,
+> >> @@ -155,7 +154,6 @@ static const u32 formats_v4l2[] = {
+> >>  	V4L2_PIX_FMT_ABGR32,
+> >>  	V4L2_PIX_FMT_XBGR32,
+> >>  	V4L2_PIX_FMT_UYVY,
+> >> -	V4L2_PIX_FMT_VYUY,
+> >>  	V4L2_PIX_FMT_YUYV,
+> >>  	V4L2_PIX_FMT_YVYU,
+> >>  	V4L2_PIX_FMT_NV12M,
+
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
