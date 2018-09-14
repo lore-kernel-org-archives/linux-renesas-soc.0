@@ -1,32 +1,30 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:46096 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727640AbeINTsG (ORCPT
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:43610 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727746AbeINRAX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Sep 2018 15:48:06 -0400
-Received: by mail-qt0-f196.google.com with SMTP id l42-v6so8863802qtf.13
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Sep 2018 07:33:19 -0700 (PDT)
-Subject: Re: [PATCH v3] clocksource: sh_cmt: fixup for 64-bit machines
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-renesas-soc@vger.kernel.org
-Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
-        Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
-        linux-sh@vger.kernel.org
-References: <46a8a01b-e849-6d62-3c61-fbae48f34e58@cogentembedded.com>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <7340b1af-933d-cc4f-5973-e2ab7e068698@linaro.org>
-Date: Fri, 14 Sep 2018 16:33:16 +0200
+        Fri, 14 Sep 2018 13:00:23 -0400
 MIME-Version: 1.0
+References: <46a8a01b-e849-6d62-3c61-fbae48f34e58@cogentembedded.com>
 In-Reply-To: <46a8a01b-e849-6d62-3c61-fbae48f34e58@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 14 Sep 2018 13:46:03 +0200
+Message-ID: <CAMuHMdXaKvzd8JMZcy1=TMYeyAL0FTKB6pC9yOeyRbCUAg9Ctw@mail.gmail.com>
+Subject: Re: [PATCH v3] clocksource: sh_cmt: fixup for 64-bit machines
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        andrey.gusakov@cogentembedded.com,
+        Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
+        Linux-sh list <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 08/09/2018 22:54, Sergei Shtylyov wrote:
+On Sat, Sep 8, 2018 at 10:54 PM Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
 > When trying to use CMT for clockevents on R-Car gen3 SoCs, I noticed
 > that 'max_delta_ns' for the broadcast timer (CMT) was shown as 1000 in
 > /proc/timer_list. It turned out that when calculating it, the driver did
@@ -38,14 +36,14 @@ On 08/09/2018 22:54, Sergei Shtylyov wrote:
 > instead fixed 'max_delta_ns' and even fixed the switching an active
 > clocksource to CMT (which caused the system to turn non-interactive
 > before).
-> 
+>
 > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
+>
 > ---
 > This patch is against the 'tip.git' repo's 'timers/core' branch.
 > The CMT driver wasn't ever used on SH64; on R-Car gen3 (ARM64) I'm only
 > enabling building of this driver now, so not sure how urgent is this...
-> 
+>
 > Changes in version 3:
 > - made the 'overflow_bit' and 'clear_bits' members of 'struct sh_cmt_info'
 >   'u32';
@@ -55,20 +53,18 @@ On 08/09/2018 22:54, Sergei Shtylyov wrote:
 > - made the 'has_wrapped' local variables 'u32' in sh_cmt_clocksource_read()
 >   and sh_cmt_clock_event_program_verify();
 > - fixed a typo in the patch description.
-> 
-> Changes in version 2:
-> - completely redid the patch, fixing abuse of *unsigned long* for the CMT
->   register values.
-> 
->  drivers/clocksource/sh_cmt.c |   72 +++++++++++++++++++------------------------
->  1 file changed, 33 insertions(+), 39 deletions(-)
-> 
 
-Applied for 4.20, thanks.
+Thanks for the update!
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
