@@ -1,36 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f42.google.com ([209.85.167.42]:39071 "EHLO
-        mail-lf1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726797AbeIMBQi (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:34208 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726898AbeINP2M (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Sep 2018 21:16:38 -0400
-Received: by mail-lf1-f42.google.com with SMTP id v77-v6so2817189lfa.6
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Sep 2018 13:10:29 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v2 0/3] Add R-Car gen3 SoC support to the CMT driver
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>
-Message-ID: <c94a4ad6-93ee-05e4-e2c1-e8d24d3bc75e@cogentembedded.com>
-Date: Wed, 12 Sep 2018 23:10:26 +0300
+        Fri, 14 Sep 2018 11:28:12 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-kernel@vger.kernel.org, kbingham@kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/4] MAINTAINERS: rcar-du: Add co-maintainer
+Date: Fri, 14 Sep 2018 13:14:36 +0300
+Message-ID: <1670376.fKoVCqDDkR@avalon>
+In-Reply-To: <20180913093700.GZ28160@w540>
+References: <20180806143904.4716-1-kieran.bingham@ideasonboard.com> <20180913093700.GZ28160@w540>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+Hi Jacopo,
 
-Here's the set of 3 patches against the 'tip.git' repo's 'timers/core' branch
-plus the CMT driver fixups for the 32/64-bit machines posted recently. We're
-adding support for the CMT types0/1 found in the R-Car gen3 SoCs.
+On Thursday, 13 September 2018 12:37:00 EEST jacopo mondi wrote:
+> Hi Kieran, Laurent
+> 
+> On Mon, Aug 06, 2018 at 03:39:01PM +0100, Kieran Bingham wrote:
+> > From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> > 
+> > Add myself as a co-maintainer for the Renesas DRM drivers.
+> > 
+> > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> > ---
+> > Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Cc: dri-devel@lists.freedesktop.org
+> > Cc: linux-renesas-soc@vger.kernel.org
+> > 
+> >  MAINTAINERS | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 7cebd5bba8a8..c7cecb9201b3 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -4764,6 +4764,7 @@
+> > F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.
+> > txt
+> >  DRM DRIVERS FOR RENESAS
+> >  M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > +M:	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> >  L:	dri-devel@lists.freedesktop.org
+> >  L:	linux-renesas-soc@vger.kernel.org
+> >  T:	git git://linuxtv.org/pinchartl/fbdev
+> 
+> Am I wrong or this git repository isn't actual anymore for DU?
 
-[1/3] clocksource: sh_cmt: properly line-wrap sh_cmt_of_table[] initializer
-[2/3] dt-bindings: timer: renesas: cmt: document R-Car gen3 support
-[3/3] clocksource: sh_cmt: add R-Car gen3 support
+You're right, the fix will be in my pull request for v4.20.
 
-MBR, Sergei
+-- 
+Regards,
+
+Laurent Pinchart
