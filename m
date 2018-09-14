@@ -1,87 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:38762 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389914AbeIURn5 (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:36868 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728065AbeINUDa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Sep 2018 13:43:57 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 4/8] phy: renesas: rcar-gen3-usb2: Check a property to use otg pins
-Date: Fri, 21 Sep 2018 20:53:20 +0900
-Message-Id: <1537530804-19399-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1537530804-19399-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1537530804-19399-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Fri, 14 Sep 2018 16:03:30 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: mchehab@kernel.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v2 1/2] media: vsp1: Document max_width restriction on SRU
+Date: Fri, 14 Sep 2018 17:48:51 +0300
+Message-ID: <3654115.xQLpRLqA9F@avalon>
+In-Reply-To: <20180914142652.30484-1-kieran.bingham+renesas@ideasonboard.com>
+References: <20180914142652.30484-1-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since All R-Car Gen3 SoCs have dedicated otg pins actually but
-some boards don't use the otg pins (e.g. R-Car D3 Draak and R-Car E3
-Ebisu), the driver should not choose SoC model base by using
-rcar_gen3_phy_usb2_match_table's data. So, this patch checks a
-"renesas,no-otg-pins" property to set the "uses_otg_pins".
+Hi Kieran,
 
-Note that since r8a77995-draak.dts and r8a77990-ebisu.dts don't have
-'dr_mode = "otg";' for now, if we apply this patch, no behavior
-changes (the value of "uses_otg_pins" is false).
+Thank you for the patch.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 24 ++++++------------------
- 1 file changed, 6 insertions(+), 18 deletions(-)
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index d69317e..856056e 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -78,8 +78,6 @@
- #define USB2_ADPCTRL_IDPULLUP		BIT(5)	/* 1 = ID sampling is enabled */
- #define USB2_ADPCTRL_DRVVBUS		BIT(4)
- 
--#define RCAR_GEN3_PHY_HAS_DEDICATED_PINS	1
--
- struct rcar_gen3_chan {
- 	void __iomem *base;
- 	struct extcon_dev *extcon;
-@@ -385,21 +383,10 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
- }
- 
- static const struct of_device_id rcar_gen3_phy_usb2_match_table[] = {
--	{
--		.compatible = "renesas,usb2-phy-r8a7795",
--		.data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
--	},
--	{
--		.compatible = "renesas,usb2-phy-r8a7796",
--		.data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
--	},
--	{
--		.compatible = "renesas,usb2-phy-r8a77965",
--		.data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
--	},
--	{
--		.compatible = "renesas,rcar-gen3-usb2-phy",
--	},
-+	{ .compatible = "renesas,usb2-phy-r8a7795" },
-+	{ .compatible = "renesas,usb2-phy-r8a7796" },
-+	{ .compatible = "renesas,usb2-phy-r8a77965" },
-+	{ .compatible = "renesas,rcar-gen3-usb2-phy" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, rcar_gen3_phy_usb2_match_table);
-@@ -445,7 +432,8 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	if (of_usb_get_dr_mode_by_phy(dev->of_node, 0) == USB_DR_MODE_OTG) {
- 		int ret;
- 
--		channel->uses_otg_pins = (uintptr_t)of_device_get_match_data(dev);
-+		channel->uses_otg_pins = !of_property_read_bool(dev->of_node,
-+							"renesas,no-otg-pins");
- 		channel->extcon = devm_extcon_dev_allocate(dev,
- 							rcar_gen3_phy_cable);
- 		if (IS_ERR(channel->extcon))
+On Friday, 14 September 2018 17:26:51 EEST Kieran Bingham wrote:
+> The SRU is currently restricted to 256 pixels as part of the current
+> partition algorithm. Document that the actual capability of this
+> component is 288 pixels, but don't increase the implementation.
+> 
+> The extended partition algorithm may later choose to utilise a larger
+> input to support overlapping partitions which will improve the quality
+> of the output images.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> ---
+>  drivers/media/platform/vsp1/vsp1_sru.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_sru.c
+> b/drivers/media/platform/vsp1/vsp1_sru.c index d216707f64c9..19f91eb81134
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_sru.c
+> +++ b/drivers/media/platform/vsp1/vsp1_sru.c
+> @@ -314,6 +314,11 @@ static unsigned int sru_max_width(struct vsp1_entity
+> *entity, output = vsp1_entity_get_pad_format(&sru->entity,
+> sru->entity.config, SRU_PAD_SOURCE);
+> 
+> +	/*
+> +	 * The maximum input width of the SRU is 288 input pixels, but 32
+> +	 * pixels are reserved to support overlapping partition windows when
+> +	 * scaling.
+> +	 */
+>  	if (input->width != output->width)
+>  		return 512;
+>  	else
+
+
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
