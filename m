@@ -1,63 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57939 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729193AbeI1Qoq (ORCPT
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:37908 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726831AbeINMJs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:44:46 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC Defconfig Updates for v4.20
-Date: Fri, 28 Sep 2018 12:21:37 +0200
-Message-Id: <cover.1538122547.git.horms+renesas@verge.net.au>
+        Fri, 14 Sep 2018 08:09:48 -0400
+MIME-Version: 1.0
+References: <87efe9ls4n.wl-kuninori.morimoto.gx@renesas.com>
+ <CAMuHMdVkQ8vio3O7VWyoWnVrY8Y8_YRWxQeXDwJ48iTxzujWdA@mail.gmail.com>
+ <87in3at0mv.wl-kuninori.morimoto.gx@renesas.com> <CAMuHMdWQ4=A6jptiGT4jsyR1H0+Z4sPBdJwOAwGc7GVPw4xAAQ@mail.gmail.com>
+ <87lg84ucrr.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87lg84ucrr.wl-kuninori.morimoto.gx@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 14 Sep 2018 08:56:31 +0200
+Message-ID: <CAMuHMdWHGE0R_qeKCstcCiSc6YYC8GAqX1ZcsyafWP=DmTJgLA@mail.gmail.com>
+Subject: Re: of_dma_request_slave_channel() failed ?
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Vinod Koul <vinod.koul@intel.com>, dmaengine@vger.kernel.org,
+        Joerg Roedel <joro@8bytes.org>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Hi Morimoto-san,
 
-Please consider these Renesas ARM based SoC defconfig updates for v4.20.
+On Fri, Sep 14, 2018 at 2:53 AM Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> > > Before 6c92d5a2744e2761 patch, driver will forcibly ignore
+> > > non-SSI modules, and try to use PIO mode.
+> > > I'm not sure it is "kindly support" or "overkill support".
+> > >
+> > > After this patch, it needs DMA, otherwise, probe will be failed.
+> > > DT shouldn't have non-SSI modules if you want to use PIO mode.
+> > >
+> > >         + /* use PIO mode */
+> > >         - playback = <&ssi0 &src0 &dvc0>;
+> > >         + playback = <&ssi0>;
+> >
+> > OK, so falling back to PIO was really a "best effort" fallback, and the user
+> > should really enable DMA?
+>
+> Yeah, I'm thinking this is better.
+> PIO fallback is of course "nice to have" if possible.
+> But, because of this new iommu patch, keeping this feature
+> needs "big complicated patch", and we can get "small effect" I think.
+> Thus, I think this is the time to remove this feature.
+> Can you agree ?
 
+You're the rcar-sound expert ;-)
+If you think there's not much value in keeping PIO fallback, it can be
+removed.
 
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+We can change behavior once these dependency issues have been resolved
+in a generic way.
 
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+Gr{oetje,eeting}s,
 
-are available in the git repository at:
+                        Geert
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm-defconfig-for-v4.20
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-for you to fetch changes up to c26eb6f34c9ea56ed795785ecb7938f008dfed1e:
-
-  ARM: shmobile: defconfig: Enable r8a7744 SoC (2018-09-19 10:40:47 +0200)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC Defconfig Updates for v4.20
-
-* shmobile and multi_v7 defconfigs:
-  - Enable recently upstreamed r8a7744 SoC
-  - Enable FDP1 (Fine Display processor) present on R-Car Gen2 and RZ/G1 SoCs
-* shmobile defconfig (only):
-  - Refresh for v4.19-rc1
-  - Remove soon to be deprecated SOC_CAMERA
-
-----------------------------------------------------------------
-Biju Das (2):
-      ARM: multi_v7_defconfig: Enable r8a7744 SoC
-      ARM: shmobile: defconfig: Enable r8a7744 SoC
-
-Geert Uytterhoeven (3):
-      ARM: shmobile: defconfig: Refresh shmobile_defconfig for v4.19-rc1
-      ARM: shmobile: defconfig: Enable VIDEO_RENESAS_FDP1
-      ARM: multi_v7_defconfig: Enable VIDEO_RENESAS_FDP1
-
-Jacopo Mondi (1):
-      ARM: shmobile: defconfig: Remove SOC_CAMERA
-
- arch/arm/configs/multi_v7_defconfig | 2 ++
- arch/arm/configs/shmobile_defconfig | 8 +++-----
- 2 files changed, 5 insertions(+), 5 deletions(-)
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
