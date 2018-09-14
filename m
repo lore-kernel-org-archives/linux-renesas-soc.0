@@ -1,41 +1,84 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:32863 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727623AbeINSnx (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 14 Sep 2018 14:43:53 -0400
+Date: Fri, 14 Sep 2018 15:29:18 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Biju Das <biju.das@bp.renesas.com>, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: pinctrl: sh-pfc: Document r8a7744 PFC support
-Date: Tue, 11 Sep 2018 11:30:04 +0100
-Message-Id: <1536661805-36464-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1536661805-36464-1-git-send-email-biju.das@bp.renesas.com>
-References: <1536661805-36464-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: power: Add r8a774c0 SYSC power domain
+ definitions
+Message-ID: <20180914132913.22ely2tshyrtchyk@verge.net.au>
+References: <1536590488-23270-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1536590488-23270-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20180912084219.krefscb47b2j4bs6@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180912084219.krefscb47b2j4bs6@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document PFC support for the RZ/G1N (R8A7744) SoC.
+On Wed, Sep 12, 2018 at 10:42:20AM +0200, Simon Horman wrote:
+> On Mon, Sep 10, 2018 at 03:41:26PM +0100, Fabrizio Castro wrote:
+> > This patch adds power domain indices for RZ/G2E.
+> > 
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> 
+> Thanks Fabrizio,
+> 
+> This looks fine to me but I will wait to see if there are other reviews
+> before applying.
+> 
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt | 1 +
- 1 file changed, 1 insertion(+)
+Thanks again, applied for v4.20.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
-index 01c6f5f..564725d 100644
---- a/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
-@@ -14,6 +14,7 @@ Required Properties:
-     - "renesas,pfc-r8a73a4": for R8A73A4 (R-Mobile APE6) compatible pin-controller.
-     - "renesas,pfc-r8a7740": for R8A7740 (R-Mobile A1) compatible pin-controller.
-     - "renesas,pfc-r8a7743": for R8A7743 (RZ/G1M) compatible pin-controller.
-+    - "renesas,pfc-r8a7744": for R8A7744 (RZ/G1N) compatible pin-controller.
-     - "renesas,pfc-r8a7745": for R8A7745 (RZ/G1E) compatible pin-controller.
-     - "renesas,pfc-r8a77470": for R8A77470 (RZ/G1C) compatible pin-controller.
-     - "renesas,pfc-r8a774a1": for R8A774A1 (RZ/G2M) compatible pin-controller.
--- 
-2.7.4
+> > ---
+> >  include/dt-bindings/power/r8a774c0-sysc.h | 25 +++++++++++++++++++++++++
+> >  1 file changed, 25 insertions(+)
+> >  create mode 100644 include/dt-bindings/power/r8a774c0-sysc.h
+> > 
+> > diff --git a/include/dt-bindings/power/r8a774c0-sysc.h b/include/dt-bindings/power/r8a774c0-sysc.h
+> > new file mode 100644
+> > index 0000000..9922d4c
+> > --- /dev/null
+> > +++ b/include/dt-bindings/power/r8a774c0-sysc.h
+> > @@ -0,0 +1,25 @@
+> > +/* SPDX-License-Identifier: GPL-2.0
+> > + *
+> > + * Copyright (C) 2018 Renesas Electronics Corp.
+> > + */
+> > +#ifndef __DT_BINDINGS_POWER_R8A774C0_SYSC_H__
+> > +#define __DT_BINDINGS_POWER_R8A774C0_SYSC_H__
+> > +
+> > +/*
+> > + * These power domain indices match the numbers of the interrupt bits
+> > + * representing the power areas in the various Interrupt Registers
+> > + * (e.g. SYSCISR, Interrupt Status Register)
+> > + */
+> > +
+> > +#define R8A774C0_PD_CA53_CPU0		5
+> > +#define R8A774C0_PD_CA53_CPU1		6
+> > +#define R8A774C0_PD_A3VC		14
+> > +#define R8A774C0_PD_3DG_A		17
+> > +#define R8A774C0_PD_3DG_B		18
+> > +#define R8A774C0_PD_CA53_SCU		21
+> > +#define R8A774C0_PD_A2VC1		26
+> > +
+> > +/* Always-on power area */
+> > +#define R8A774C0_PD_ALWAYS_ON		32
+> > +
+> > +#endif /* __DT_BINDINGS_POWER_R8A774C0_SYSC_H__ */
+> > -- 
+> > 2.7.4
+> > 
+> 
