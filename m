@@ -1,47 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:21695 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728357AbeIJUEY (ORCPT
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:35425 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728210AbeINShl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Sep 2018 16:04:24 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: reset: rcar-rst: Document r8a774c0 rst
-Date: Mon, 10 Sep 2018 16:09:40 +0100
-Message-Id: <1536592181-25649-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1536592181-25649-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1536592181-25649-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Fri, 14 Sep 2018 14:37:41 -0400
+Received: by mail-vk1-f195.google.com with SMTP id w193-v6so1531606vke.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Sep 2018 06:23:12 -0700 (PDT)
+MIME-Version: 1.0
+References: <87bm9aqdvs.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87bm9aqdvs.wl-kuninori.morimoto.gx@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 14 Sep 2018 15:22:59 +0200
+Message-ID: <CAMuHMdVeWxyOAeFTA=U_EvJjdsMsmBfOLa9etnPR3h8AZ9_9NQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: renesas: convert to SPDX identifiers
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document bindings for the RZ/G2E (a.k.a. R8A774C0) reset
-module.
+On Fri, Sep 7, 2018 at 5:02 AM Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>
+> This patch updates license to use SPDX-License-Identifier
+> instead of verbose license text on Renesas related headers.
+>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
- Documentation/devicetree/bindings/reset/renesas,rst.txt | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v4.20, with "clock: " added to the oneline
+summary.
 
-diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-index e4fe0ab..25e6db5 100644
---- a/Documentation/devicetree/bindings/reset/renesas,rst.txt
-+++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-@@ -19,6 +19,7 @@ Required properties:
- 		  - "renesas,r8a7745-rst" (RZ/G1E)
- 		  - "renesas,r8a77470-rst" (RZ/G1C)
- 		  - "renesas,r8a774a1-rst" (RZ/G2M)
-+		  - "renesas,r8a774c0-rst" (RZ/G2E)
- 		  - "renesas,r8a7778-reset-wdt" (R-Car M1A)
- 		  - "renesas,r8a7779-reset-wdt" (R-Car H1)
- 		  - "renesas,r8a7790-rst" (R-Car H2)
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
