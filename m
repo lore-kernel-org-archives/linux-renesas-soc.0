@@ -1,88 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:60932 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726799AbeITV6r (ORCPT
+Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:54757 "EHLO
+        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726618AbeINOBQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Sep 2018 17:58:47 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Stefan Lengfeld <contact@stefanchrist.eu>,
-        preid@electromag.com.au, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Keerthy <j-keerthy@ti.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 2/4] i2c: core: remove level of indentation in i2c_transfer
-Date: Thu, 20 Sep 2018 18:14:21 +0200
-Message-Id: <20180920161423.13990-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180920161423.13990-1-wsa+renesas@sang-engineering.com>
-References: <20180920161423.13990-1-wsa+renesas@sang-engineering.com>
+        Fri, 14 Sep 2018 10:01:16 -0400
+Subject: Re: [PATCH 1/3] rcar-vin: align format width with hardware limits
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+References: <20180914021345.9277-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180914021345.9277-2-niklas.soderlund+renesas@ragnatech.se>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <6676e7fa-5548-7c3e-25f0-19bf6b03ed42@xs4all.nl>
+Date: Fri, 14 Sep 2018 10:47:41 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180914021345.9277-2-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Using the common kernel pattern to bail out at the beginning if some
-conditions are not met, we can save a level of indentation. No
-functional change.
+On 09/14/2018 04:13 AM, Niklas Söderlund wrote:
+> The Gen3 datasheets lists specific alignment restrictions compared to
+> Gen2. This was overlooked when adding Gen3 support as no problematic
+> configuration was encountered. However when adding support for Gen3 Up
+> Down Scaler (UDS) strange issues could be observed for odd widths
+> without taking this limit into consideration.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> index dc77682b47857c97..2fc2a05eaeacb134 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -673,6 +673,21 @@ static void rvin_mc_try_format(struct rvin_dev *vin,
+>  	pix->quantization = V4L2_MAP_QUANTIZATION_DEFAULT(true, pix->colorspace,
+>  							  pix->ycbcr_enc);
+>  
+> +	switch (vin->format.pixelformat) {
+> +	case V4L2_PIX_FMT_NV16:
+> +		pix->width = ALIGN(pix->width, 0x80);
+> +		break;
+> +	case V4L2_PIX_FMT_YUYV:
+> +	case V4L2_PIX_FMT_UYVY:
+> +	case V4L2_PIX_FMT_RGB565:
+> +	case V4L2_PIX_FMT_XRGB555:
+> +		pix->width = ALIGN(pix->width, 0x40);
+> +		break;
+> +	default:
+> +		pix->width = ALIGN(pix->width, 0x20);
+> +		break;
+> +	}
+> +
+>  	rvin_format_align(vin, pix);
+>  }
+>  
+> 
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/i2c-core-base.c | 33 ++++++++++++++++-----------------
- 1 file changed, 16 insertions(+), 17 deletions(-)
+This looks weird. So for NV16 the width must be a multiple of 128,
+do I read that correctly?
 
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index c2b352c46fae..799776c6d421 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -1922,6 +1922,11 @@ int i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
- {
- 	int ret;
- 
-+	if (!adap->algo->master_xfer) {
-+		dev_dbg(&adap->dev, "I2C level transfers not supported\n");
-+		return -EOPNOTSUPP;
-+	}
-+
- 	/* REVISIT the fault reporting model here is weak:
- 	 *
- 	 *  - When we get an error after receiving N bytes from a slave,
-@@ -1938,25 +1943,19 @@ int i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
- 	 *    one (discarding status on the second message) or errno
- 	 *    (discarding status on the first one).
- 	 */
--
--	if (adap->algo->master_xfer) {
--		if (in_atomic() || irqs_disabled()) {
--			ret = i2c_trylock_bus(adap, I2C_LOCK_SEGMENT);
--			if (!ret)
--				/* I2C activity is ongoing. */
--				return -EAGAIN;
--		} else {
--			i2c_lock_bus(adap, I2C_LOCK_SEGMENT);
--		}
--
--		ret = __i2c_transfer(adap, msgs, num);
--		i2c_unlock_bus(adap, I2C_LOCK_SEGMENT);
--
--		return ret;
-+	if (in_atomic() || irqs_disabled()) {
-+		ret = i2c_trylock_bus(adap, I2C_LOCK_SEGMENT);
-+		if (!ret)
-+			/* I2C activity is ongoing. */
-+			return -EAGAIN;
- 	} else {
--		dev_dbg(&adap->dev, "I2C level transfers not supported\n");
--		return -EOPNOTSUPP;
-+		i2c_lock_bus(adap, I2C_LOCK_SEGMENT);
- 	}
-+
-+	ret = __i2c_transfer(adap, msgs, num);
-+	i2c_unlock_bus(adap, I2C_LOCK_SEGMENT);
-+
-+	return ret;
- }
- EXPORT_SYMBOL(i2c_transfer);
- 
--- 
-2.18.0
+Are you sure you don't mean bytesperline?
+
+And if it really is the width, doesn't this place very big constraints
+on the vin driver? If you don't want/need the UDS, then I can imagine
+that you don't want these alignments.
+
+Regards,
+
+	Hans
