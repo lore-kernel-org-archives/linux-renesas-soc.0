@@ -1,49 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:20694 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389879AbeIURnz (ORCPT
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:46096 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727640AbeINTsG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Sep 2018 13:43:55 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/8] phy: renesas: rcar-gen3-usb2: fix vbus_ctrl for role sysfs
-Date: Fri, 21 Sep 2018 20:53:18 +0900
-Message-Id: <1537530804-19399-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1537530804-19399-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1537530804-19399-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Fri, 14 Sep 2018 15:48:06 -0400
+Received: by mail-qt0-f196.google.com with SMTP id l42-v6so8863802qtf.13
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Sep 2018 07:33:19 -0700 (PDT)
+Subject: Re: [PATCH v3] clocksource: sh_cmt: fixup for 64-bit machines
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-renesas-soc@vger.kernel.org
+Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
+        Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
+        linux-sh@vger.kernel.org
+References: <46a8a01b-e849-6d62-3c61-fbae48f34e58@cogentembedded.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <7340b1af-933d-cc4f-5973-e2ab7e068698@linaro.org>
+Date: Fri, 14 Sep 2018 16:33:16 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <46a8a01b-e849-6d62-3c61-fbae48f34e58@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch fixes and issue that the vbus_ctrl is disabled by
-rcar_gen3_init_from_a_peri_to_a_host(), so a usb host cannot
-supply the vbus.
+On 08/09/2018 22:54, Sergei Shtylyov wrote:
+> When trying to use CMT for clockevents on R-Car gen3 SoCs, I noticed
+> that 'max_delta_ns' for the broadcast timer (CMT) was shown as 1000 in
+> /proc/timer_list. It turned out that when calculating it, the driver did
+> 1 << 32 (causing what I think was undefined behavior) resulting in a zero
+> delta, later clamped to 1000 by cev_delta2ns(). The root cause turned out
+> to be that the driver abused *unsigned long* for the CMT register values
+> (which are 16/32-bit), so that the calculation of 'ch->max_match_value'
+> in sh_cmt_setup_channel() used the wrong branch. Using more proper 'u32'
+> instead fixed 'max_delta_ns' and even fixed the switching an active
+> clocksource to CMT (which caused the system to turn non-interactive
+> before).
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> ---
+> This patch is against the 'tip.git' repo's 'timers/core' branch.
+> The CMT driver wasn't ever used on SH64; on R-Car gen3 (ARM64) I'm only
+> enabling building of this driver now, so not sure how urgent is this...
+> 
+> Changes in version 3:
+> - made the 'overflow_bit' and 'clear_bits' members of 'struct sh_cmt_info'
+>   'u32';
+> - made the 2nd parameter of sh_cmt_write_cmstr() 'u32';
+> - made the result, the 2nd parameter, and 'o{1|2}' local variables of
+>   sh_cmt_get_counter() 'u32';
+> - made the 'has_wrapped' local variables 'u32' in sh_cmt_clocksource_read()
+>   and sh_cmt_clock_event_program_verify();
+> - fixed a typo in the patch description.
+> 
+> Changes in version 2:
+> - completely redid the patch, fixing abuse of *unsigned long* for the CMT
+>   register values.
+> 
+>  drivers/clocksource/sh_cmt.c |   72 +++++++++++++++++++------------------------
+>  1 file changed, 33 insertions(+), 39 deletions(-)
+> 
 
-Note that this condition will exit when the otg irq happens
-even if we don't apply this patch.
+Applied for 4.20, thanks.
 
-Fixes: 9bb86777fb71 ("phy: rcar-gen3-usb2: add sysfs for usb role swap")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 3d57ea1..a6db25c 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -195,7 +195,7 @@ static void rcar_gen3_init_from_a_peri_to_a_host(struct rcar_gen3_chan *ch)
- 	val = readl(usb2_base + USB2_OBINTEN);
- 	writel(val & ~USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
- 
--	rcar_gen3_enable_vbus_ctrl(ch, 0);
-+	rcar_gen3_enable_vbus_ctrl(ch, 1);
- 	rcar_gen3_init_for_host(ch);
- 
- 	writel(val | USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
 -- 
-1.9.1
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
