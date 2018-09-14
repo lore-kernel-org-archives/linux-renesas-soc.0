@@ -1,45 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57961 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729376AbeI1Qow (ORCPT
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:45733 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727672AbeINSJ7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:44:52 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Fri, 14 Sep 2018 14:09:59 -0400
+MIME-Version: 1.0
+References: <1536660771-32278-1-git-send-email-biju.das@bp.renesas.com> <1536660771-32278-8-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1536660771-32278-8-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 14 Sep 2018 14:55:24 +0200
+Message-ID: <CAMuHMdWqe5Xy-UK_i0VKcvZV5sb6nYy4Rkd3EMpLMavadrvAuQ@mail.gmail.com>
+Subject: Re: [PATCH 07/10] clk: renesas: Add r8a7744 CPG Core Clock Definitions
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 4/6] ARM: multi_v7_defconfig: Enable VIDEO_RENESAS_FDP1
-Date: Fri, 28 Sep 2018 12:21:37 +0200
-Message-Id: <3ff7ee8a972ac7379bd74af4dc203359320e7c75.1538122547.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1538122547.git.horms+renesas@verge.net.au>
-References: <cover.1538122547.git.horms+renesas@verge.net.au>
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Tue, Sep 11, 2018 at 12:19 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> Add all RZ/G1N Clock Pulse Generator Core Clock Outputs, as listed in
+> Table 7.2b ("List of Clocks [RZ/G1M/N]") of the RZ/G1 Hardware User's
+> Manual.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-R-Car Gen2 (and RZ/G1) SoCs have a Fine Display Processor, hence enable
-support for it.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v4.20.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index fc33444e94f0..dec755c939bb 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -584,6 +584,7 @@ CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC=m
- CONFIG_VIDEO_STI_BDISP=m
- CONFIG_VIDEO_STI_HVA=m
- CONFIG_VIDEO_STI_DELTA=m
-+CONFIG_VIDEO_RENESAS_FDP1=m
- CONFIG_VIDEO_RENESAS_JPU=m
- CONFIG_VIDEO_RENESAS_VSP1=m
- CONFIG_V4L_TEST_DRIVERS=y
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
