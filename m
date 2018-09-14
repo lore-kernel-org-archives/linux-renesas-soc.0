@@ -1,85 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:50399 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726208AbeIYOWl (ORCPT
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:46550 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727749AbeINSDW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Sep 2018 10:22:41 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-CC: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Fri, 14 Sep 2018 14:03:22 -0400
+MIME-Version: 1.0
+References: <1536660771-32278-1-git-send-email-biju.das@bp.renesas.com> <1536660771-32278-11-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1536660771-32278-11-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 14 Sep 2018 14:48:49 +0200
+Message-ID: <CAMuHMdWXd6zUQv7Xxws3S4Q3M=Sm+FfEOe=O=rEJONZD9PkoNQ@mail.gmail.com>
+Subject: Re: [PATCH 10/10] cpufreq: dt: Add support for r8a7744
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Viresh Kumar <viresh.kumar@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 10/10] cpufreq: dt: Add support for r8a7744
-Date: Tue, 25 Sep 2018 08:16:12 +0000
-Message-ID: <OSBPR01MB210321CC4B7E174296D2A4BAB8160@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <1536660771-32278-1-git-send-email-biju.das@bp.renesas.com>
- <1536660771-32278-11-git-send-email-biju.das@bp.renesas.com>
- <CAJZ5v0j_oiTuuGvZDH=GRvtbW+KAUu4BC-3bRNFKGtJ7SDhnQg@mail.gmail.com>
- <OSBPR01MB2103890901C983870042C9A6B8040@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-In-Reply-To: <OSBPR01MB2103890901C983870042C9A6B8040@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgUmFmZWFsLA0KDQpTb3JyeSB0byBib3RoZXIgeW91LiAgQXJlIHlvdSBoYXBweSB0byBtZXJn
-ZSB0aGUgYmVsb3cgcGF0Y2ggd2l0aCA0LjIwDQoNCmh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5v
-cmcvcGF0Y2gvMTA1OTU0NTEvDQoNClJlZ2FyZHMsDQpCaWp1DQoNCj4gLS0tLS1PcmlnaW5hbCBN
-ZXNzYWdlLS0tLS0NCj4gRnJvbTogQmlqdSBEYXMNCj4gU2VudDogMTEgU2VwdGVtYmVyIDIwMTgg
-MTI6MTENCj4gVG86IFJhZmFlbCBKLiBXeXNvY2tpIDxyYWZhZWxAa2VybmVsLm9yZz4NCj4gQ2M6
-IFJhZmFlbCBKLiBXeXNvY2tpIDxyandAcmp3eXNvY2tpLm5ldD47IFZpcmVzaCBLdW1hcg0KPiA8
-dmlyZXNoLmt1bWFyQGxpbmFyby5vcmc+OyBMaW51eCBQTSA8bGludXgtcG1Admdlci5rZXJuZWwu
-b3JnPjsgU2ltb24NCj4gSG9ybWFuIDxob3Jtc0B2ZXJnZS5uZXQuYXU+OyBHZWVydCBVeXR0ZXJo
-b2V2ZW4NCj4gPGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPjsgQ2hyaXMgUGF0ZXJzb24NCj4gPENo
-cmlzLlBhdGVyc29uMkByZW5lc2FzLmNvbT47IEZhYnJpemlvIENhc3Rybw0KPiA8ZmFicml6aW8u
-Y2FzdHJvQGJwLnJlbmVzYXMuY29tPjsgTGludXgtUmVuZXNhcyA8bGludXgtcmVuZXNhcy0NCj4g
-c29jQHZnZXIua2VybmVsLm9yZz4NCj4gU3ViamVjdDogUkU6IFtQQVRDSCAxMC8xMF0gY3B1ZnJl
-cTogZHQ6IEFkZCBzdXBwb3J0IGZvciByOGE3NzQ0DQo+DQo+IEhpIFJhZmFlbCwNCj4NCj4gVGhh
-bmtzIGZvciB0aGUgZmVlZGJhY2suDQo+DQo+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0N
-Cj4gPiBGcm9tOiBSYWZhZWwgSi4gV3lzb2NraSA8cmFmYWVsQGtlcm5lbC5vcmc+DQo+ID4gU2Vu
-dDogMTEgU2VwdGVtYmVyIDIwMTggMTE6NTkNCj4gPiBUbzogQmlqdSBEYXMgPGJpanUuZGFzQGJw
-LnJlbmVzYXMuY29tPg0KPiA+IENjOiBSYWZhZWwgSi4gV3lzb2NraSA8cmp3QHJqd3lzb2NraS5u
-ZXQ+OyBWaXJlc2ggS3VtYXINCj4gPiA8dmlyZXNoLmt1bWFyQGxpbmFyby5vcmc+OyBMaW51eCBQ
-TSA8bGludXgtcG1Admdlci5rZXJuZWwub3JnPjsgU2ltb24NCj4gPiBIb3JtYW4gPGhvcm1zQHZl
-cmdlLm5ldC5hdT47IEdlZXJ0IFV5dHRlcmhvZXZlbg0KPiA+IDxnZWVydCtyZW5lc2FzQGdsaWRl
-ci5iZT47IENocmlzIFBhdGVyc29uDQo+ID4gPENocmlzLlBhdGVyc29uMkByZW5lc2FzLmNvbT47
-IEZhYnJpemlvIENhc3Rybw0KPiA+IDxmYWJyaXppby5jYXN0cm9AYnAucmVuZXNhcy5jb20+OyBM
-aW51eC1SZW5lc2FzIDxsaW51eC1yZW5lc2FzLQ0KPiA+IHNvY0B2Z2VyLmtlcm5lbC5vcmc+DQo+
-ID4gU3ViamVjdDogUmU6IFtQQVRDSCAxMC8xMF0gY3B1ZnJlcTogZHQ6IEFkZCBzdXBwb3J0IGZv
-ciByOGE3NzQ0DQo+ID4NCj4gPiBPbiBUdWUsIFNlcCAxMSwgMjAxOCBhdCAxMjoyMCBQTSBCaWp1
-IERhcyA8YmlqdS5kYXNAYnAucmVuZXNhcy5jb20+DQo+ID4gd3JvdGU6DQo+ID4gPg0KPiA+ID4g
-QWRkIHRoZSBjb21wYXRpYmxlIHN0cmluZ3MgZm9yIHN1cHBvcnRpbmcgdGhlIGdlbmVyaWMgY3B1
-ZnJlcSBkcml2ZXINCj4gPiA+IG9uIHRoZSBSZW5lc2FzIFJaL0cxTiAoUjhBNzc0NCkgU29DLg0K
-PiA+ID4NCj4gPiA+IFNpZ25lZC1vZmYtYnk6IEJpanUgRGFzIDxiaWp1LmRhc0BicC5yZW5lc2Fz
-LmNvbT4NCj4gPiA+IFJldmlld2VkLWJ5OiBGYWJyaXppbyBDYXN0cm8gPGZhYnJpemlvLmNhc3Ry
-b0BicC5yZW5lc2FzLmNvbT4NCj4gPiA+IC0tLQ0KPiA+ID4gIGRyaXZlcnMvY3B1ZnJlcS9jcHVm
-cmVxLWR0LXBsYXRkZXYuYyB8IDEgKw0KPiA+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlv
-bigrKQ0KPiA+ID4NCj4gPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2NwdWZyZXEvY3B1ZnJlcS1k
-dC1wbGF0ZGV2LmMNCj4gPiA+IGIvZHJpdmVycy9jcHVmcmVxL2NwdWZyZXEtZHQtcGxhdGRldi5j
-DQo+ID4gPiBpbmRleCBmZTE0YzU3Li44MDVmOGEwIDEwMDY0NA0KPiA+ID4gLS0tIGEvZHJpdmVy
-cy9jcHVmcmVxL2NwdWZyZXEtZHQtcGxhdGRldi5jDQo+ID4gPiArKysgYi9kcml2ZXJzL2NwdWZy
-ZXEvY3B1ZnJlcS1kdC1wbGF0ZGV2LmMNCj4gPiA+IEBAIC01OCw2ICs1OCw3IEBAIHN0YXRpYyBj
-b25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIHdoaXRlbGlzdFtdDQo+ID4gPiBfX2luaXRjb25zdA0K
-PiA+ID0gew0KPiA+ID4gICAgICAgICB7IC5jb21wYXRpYmxlID0gInJlbmVzYXMscjhhNzNhNCIs
-IH0sDQo+ID4gPiAgICAgICAgIHsgLmNvbXBhdGlibGUgPSAicmVuZXNhcyxyOGE3NzQwIiwgfSwN
-Cj4gPiA+ICAgICAgICAgeyAuY29tcGF0aWJsZSA9ICJyZW5lc2FzLHI4YTc3NDMiLCB9LA0KPiA+
-ID4gKyAgICAgICB7IC5jb21wYXRpYmxlID0gInJlbmVzYXMscjhhNzc0NCIsIH0sDQo+ID4gPiAg
-ICAgICAgIHsgLmNvbXBhdGlibGUgPSAicmVuZXNhcyxyOGE3NzQ1IiwgfSwNCj4gPiA+ICAgICAg
-ICAgeyAuY29tcGF0aWJsZSA9ICJyZW5lc2FzLHI4YTc3NzgiLCB9LA0KPiA+ID4gICAgICAgICB7
-IC5jb21wYXRpYmxlID0gInJlbmVzYXMscjhhNzc3OSIsIH0sDQo+ID4gPiAtLQ0KPiA+DQo+ID4g
-U2luY2UgdGhpcyBpcyB0aGUgbGFzdCBwYXRjaCBpbiBhIHNlcmllcyBvZiAxMCwgZG8geW91IHdh
-bnQgbWUgdG8NCj4gPiBhcHBseSBpdCBvciBzaG91bGQgaXQgZ28gaW4gYWxvbmcgd2l0aCB0aGUg
-cmVzdD8NCj4NCj4gUGxlYXNlIGFwcGx5IHRoZSBwYXRjaC4gQWxyZWFkeSBiaW5kaW5nIHBhdGNo
-IGlzIGF2YWlsYWJsZSB3aXRoIGNmYjlmOTM0MzdlYg0KPiAoIkFSTTogc2htb2JpbGU6IERvY3Vt
-ZW50IFJaL0cxTiBTb0MgRFQgYmluZGluZyIpLg0KPg0KPiBSZWdhcmRzLA0KPiBCaWp1DQo+DQoN
-Cg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxs
-Ym9hcmQgUm9hZCwgQm91cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVn
-aXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDku
-DQo=
+On Tue, Sep 11, 2018 at 12:20 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> Add the compatible strings for supporting the generic cpufreq driver on
+> the Renesas RZ/G1N (R8A7744) SoC.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
