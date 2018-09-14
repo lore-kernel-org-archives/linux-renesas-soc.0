@@ -1,176 +1,100 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:59414 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727994AbeINOYT (ORCPT
+Received: from smtp1.de.adit-jv.com ([62.225.105.245]:47513 "EHLO
+        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726748AbeIOAGx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Sep 2018 10:24:19 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, Ulrich Hecht <uli@fpond.eu>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v2 07/16] drm: rcar-du: Use LVDS PLL clock as dot clock when possible
-Date: Fri, 14 Sep 2018 12:10:37 +0300
-Message-Id: <20180914091046.483-8-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180914091046.483-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180914091046.483-1-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 14 Sep 2018 20:06:53 -0400
+Date: Fri, 14 Sep 2018 20:50:51 +0200
+From: Eugeniu Rosca <erosca@de.adit-jv.com>
+To: Jia He <hejianet@gmail.com>, Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+CC: Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Philip Derrin <philip@cog.systems>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>,
+        Steve Capper <steve.capper@arm.com>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Kemi Wang <kemi.wang@intel.com>,
+        Petr Tesarik <ptesarik@suse.com>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Daniel Vacek <neelx@redhat.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, Jia He <jia.he@hxt-semitech.com>,
+        "George G. Davis" <george_davis@mentor.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Andy Lowe <andy_lowe@mentor.com>,
+        <linux-renesas-soc@vger.kernel.org>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>
+Subject: Re: [PATCH v11 0/3] remain and optimize memblock_next_valid_pfn on
+ arm and arm64
+Message-ID: <20180914185051.GA22530@vmlxhi-102.adit-jv.com>
+References: <1534907237-2982-1-git-send-email-jia.he@hxt-semitech.com>
+ <CAKv+Gu9u8RcrzSHdgXiqHS9HK1aSrjbPxVUSCP0DT4erAhx0pw@mail.gmail.com>
+ <20180907144447.GD12788@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180907144447.GD12788@arm.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On selected SoCs, the DU can use the clock output by the LVDS encoder
-PLL as its input dot clock. This feature is optional, but on the D3 and
-E3 SoC it is often the only way to obtain a precise dot clock frequency,
-as the other available clocks (CPG-generated clock and external clock)
-usually have fixed rates.
++ Renesas people
 
-Add a DU model information field to describe which DU channels can use
-the LVDS PLL output clock as their input clock, and configure clock
-routing accordingly.
+Hello Will, hello Ard, 
 
-This feature is available on H2, M2-W, M2-N, D3 and E3 SoCs, with D3 and
-E3 being the primary targets. It is left disabled in this commit, and
-will be enabled per-SoC after careful testing.
+On Fri, Sep 07, 2018 at 03:44:47PM +0100, Will Deacon wrote:
+> On Thu, Sep 06, 2018 at 01:24:22PM +0200, Ard Biesheuvel wrote:
+> > OK so we can summarize the benefits of this series as follows:
+> > - boot time on a virtual model of a Samurai CPU drops from 109 to 62 seconds
+> > - boot time on a QDF2400 arm64 server with 96 GB of RAM drops by ~15
+> > *milliseconds*
+> > 
+> > Google was not very helpful in figuring out what a Samurai CPU is and
+> > why we should care about the boot time of Linux running on a virtual
+> > model of it, and the 15 ms speedup is not that compelling either.
+> > 
+> > Apologies to Jia that it took 11 revisions to reach this conclusion,
+> > but in /my/ opinion, tweaking the fragile memblock/pfn handling code
+> > for this reason is totally unjustified, and we're better off
+> > disregarding these patches.
+> 
+> Oh, we're talking about a *simulator* for the significant boot time
+> improvement here? I didn't realise that, so I agree that the premise of
+> this patch set looks pretty questionable given how much "fun" we've had
+> with the memmap on arm and arm64.
+> 
+> Will
 
-At the hardware level, clock routing is configured at runtime in two
-steps, first selecting an internal dot clock between the LVDS PLL clock
-and the external DOTCLKIN clock, and then selecting between the internal
-dot clock and the CPG-generated clock. The first part requires stopping
-the whole DU group in order for the change to take effect, thus causing
-flickering on the screen. For this reason we currently hardcode the
-clock source to the LVDS PLL clock if available, and allow flicker-free
-selection of the external DOTCLKIN clock or CPG-generated clock
-otherwise. A more dynamic clock selection process can be implemented
-later if the need arises.
+Similar to https://lkml.org/lkml/2018/1/24/420, my measurements show that
+the boot time of R-Car H3-ES2.0 Salvator-X (having 4GiB RAM) is decreased
+by ~135-140ms with this patch-set applied on top of v4.19-rc3.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c  |  8 +++++
- drivers/gpu/drm/rcar-du/rcar_du_drv.h   |  2 ++
- drivers/gpu/drm/rcar-du/rcar_du_group.c | 64 +++++++++++++++++++++++++--------
- 3 files changed, 59 insertions(+), 15 deletions(-)
+I agree that in the Desktop realm you would barely perceive the 140ms
+difference, but saving 140ms on the automotive SoC (designed for products
+which must comply with 2s-to-rear-view-camera NHTSA US regulations) *is*
+significant.
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index c89751c26f9c..2f8776c1ec8f 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -261,6 +261,14 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 		rcar_du_group_write(rcrtc->group, DPLLCR, dpllcr);
- 
- 		escr = ESCR_DCLKSEL_DCLKIN | div;
-+	} else if (rcdu->info->lvds_clk_mask & BIT(rcrtc->index)) {
-+		/*
-+		 * Use the LVDS PLL output as the dot clock when outputting to
-+		 * the LVDS encoder on an SoC that supports this clock routing
-+		 * option. We use the clock directly in that case, without any
-+		 * additional divider.
-+		 */
-+		escr = ESCR_DCLKSEL_DCLKIN;
- 	} else {
- 		struct du_clk_params params = { .diff = (unsigned long)-1 };
- 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-index fef9ea5c22f3..ebba9aefba6a 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-@@ -53,6 +53,7 @@ struct rcar_du_output_routing {
-  * @routes: array of CRTC to output routes, indexed by output (RCAR_DU_OUTPUT_*)
-  * @num_lvds: number of internal LVDS encoders
-  * @dpll_mask: bit mask of DU channels equipped with a DPLL
-+ * @lvds_clk_mask: bitmask of channels that can use the LVDS clock as dot clock
-  */
- struct rcar_du_device_info {
- 	unsigned int gen;
-@@ -62,6 +63,7 @@ struct rcar_du_device_info {
- 	struct rcar_du_output_routing routes[RCAR_DU_OUTPUT_MAX];
- 	unsigned int num_lvds;
- 	unsigned int dpll_mask;
-+	unsigned int lvds_clk_mask;
- };
- 
- #define RCAR_DU_MAX_CRTCS		4
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-index ef2c177afb6d..4c62841eff2f 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-@@ -89,6 +89,54 @@ static void rcar_du_group_setup_defr8(struct rcar_du_group *rgrp)
- 	rcar_du_group_write(rgrp, DEFR8, defr8);
- }
- 
-+static void rcar_du_group_setup_didsr(struct rcar_du_group *rgrp)
-+{
-+	struct rcar_du_device *rcdu = rgrp->dev;
-+	struct rcar_du_crtc *rcrtc;
-+	unsigned int num_crtcs = 0;
-+	unsigned int i;
-+	u32 didsr;
-+
-+	/*
-+	 * Configure input dot clock routing with a hardcoded configuration. If
-+	 * the DU channel can use the LVDS encoder output clock as the dot
-+	 * clock, do so. Otherwise route DU_DOTCLKINn signal to DUn.
-+	 *
-+	 * Each channel can then select between the dot clock configured here
-+	 * and the clock provided by the CPG through the ESCR register.
-+	 */
-+	if (rcdu->info->gen < 3 && rgrp->index == 0) {
-+		/*
-+		 * On Gen2 a single register in the first group controls dot
-+		 * clock selection for all channels.
-+		 */
-+		rcrtc = rcdu->crtcs;
-+		num_crtcs = rcdu->num_crtcs;
-+	} else if (rcdu->info->gen == 3 && rgrp->num_crtcs > 1) {
-+		/*
-+		 * On Gen3 dot clocks are setup through per-group registers,
-+		 * only available when the group has two channels.
-+		 */
-+		rcrtc = &rcdu->crtcs[rgrp->index * 2];
-+		num_crtcs = rgrp->num_crtcs;
-+	}
-+
-+	if (!num_crtcs)
-+		return;
-+
-+	didsr = DIDSR_CODE;
-+	for (i = 0; i < num_crtcs; ++i, ++rcrtc) {
-+		if (rcdu->info->lvds_clk_mask & BIT(rcrtc->index))
-+			didsr |= DIDSR_LCDS_LVDS0(i)
-+			      |  DIDSR_PDCS_CLK(i, 0);
-+		else
-+			didsr |= DIDSR_LCDS_DCLKIN(i)
-+			      |  DIDSR_PDCS_CLK(i, 0);
-+	}
-+
-+	rcar_du_group_write(rgrp, DIDSR, didsr);
-+}
-+
- static void rcar_du_group_setup(struct rcar_du_group *rgrp)
- {
- 	struct rcar_du_device *rcdu = rgrp->dev;
-@@ -106,21 +154,7 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
- 
- 	if (rcar_du_has(rgrp->dev, RCAR_DU_FEATURE_EXT_CTRL_REGS)) {
- 		rcar_du_group_setup_defr8(rgrp);
--
--		/*
--		 * Configure input dot clock routing. We currently hardcode the
--		 * configuration to routing DOTCLKINn to DUn. Register fields
--		 * depend on the DU generation, but the resulting value is 0 in
--		 * all cases.
--		 *
--		 * On Gen2 a single register in the first group controls dot
--		 * clock selection for all channels, while on Gen3 dot clocks
--		 * are setup through per-group registers, only available when
--		 * the group has two channels.
--		 */
--		if ((rcdu->info->gen < 3 && rgrp->index == 0) ||
--		    (rcdu->info->gen == 3 &&  rgrp->num_crtcs > 1))
--			rcar_du_group_write(rgrp, DIDSR, DIDSR_CODE);
-+		rcar_du_group_setup_didsr(rgrp);
- 	}
- 
- 	if (rcdu->info->gen >= 3)
--- 
-Regards,
+FWIW, cppcheck and `checkpatch --strict` report style issues for
+patches #2 and #3. I hope these can be fixed and the review process
+can go on? From functional standpoint, I did some dynamic testing on
+H3-Salvator-X with UBSAN/KASAN=y and didn't observe any regressions, so:
 
-Laurent Pinchart
+Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+
+Best regards,
+Eugeniu.
