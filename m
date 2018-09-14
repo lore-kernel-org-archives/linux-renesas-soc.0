@@ -1,40 +1,39 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 0/5] Add VIN support to RZ/G2M
-Date: Mon, 10 Sep 2018 15:31:13 +0100
-Message-Id: <1536589878-26218-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:33000 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727384AbeINSvt (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 14 Sep 2018 14:51:49 -0400
+Date: Fri, 14 Sep 2018 15:37:12 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: renesas: Remove unneeded status from thermal
+ nodes
+Message-ID: <20180914133706.3n2s7upsyevdox6c@verge.net.au>
+References: <20180911143730.9230-1-geert+renesas@glider.be>
+ <20180912093454.3mlevy6b4252wpsz@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180912093454.3mlevy6b4252wpsz@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch series aims to add VIN support for RZ/G2M SoC.
-RZ/G2M SoC is similar to R-Car Gen3 M3-W SoC.
+On Wed, Sep 12, 2018 at 11:34:56AM +0200, Simon Horman wrote:
+> On Tue, Sep 11, 2018 at 04:37:30PM +0200, Geert Uytterhoeven wrote:
+> > The thermal device is supposed to be always enabled.  As the default
+> > value of the status property is "okay", there is no need to make this
+> > explicit in SoC-specific .dtsi files where no override is involved.
+> > 
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Thanks,
+> 
+> This looks fine to me but I will wait to see if there are other reviews
+> before applying.
 
-This patchset is based on media_tree git and 
-renesas-devel-20180906-v4.19-rc2.
-
-Biju Das (5):
-  media: dt-bindings: media: rcar-csi2: Add r8a774a1 support
-  media: rcar-csi2: Enable support for r8a774a1
-  media: dt-bindings: media: rcar_vin: Add r8a774a1 support
-  media: rcar-vin: Enable support for r8a774a1
-  arm64: dts: renesas: r8a774a1: Add VIN and CSI-2 nodes
-
- .../devicetree/bindings/media/rcar_vin.txt         |   5 +-
- .../bindings/media/renesas,rcar-csi2.txt           |   5 +-
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi          | 367 +++++++++++++++++++++
- drivers/media/platform/rcar-vin/rcar-core.c        |   4 +
- drivers/media/platform/rcar-vin/rcar-csi2.c        |   4 +
- 5 files changed, 381 insertions(+), 4 deletions(-)
-
--- 
-2.7.4
+Thanks again, applied for v4.20.
