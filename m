@@ -1,67 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57700 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729118AbeI1Qni (ORCPT
+Received: from mail-qt0-f181.google.com ([209.85.216.181]:33612 "EHLO
+        mail-qt0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728064AbeINTtE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:43:38 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 04/14] arm64: dts: renesas: r8a77980: Attach the SYS-DMAC to the IPMMU
-Date: Fri, 28 Sep 2018 12:20:15 +0200
-Message-Id: <d59b0784f1e64ad84756b485c622e3ee0712b946.1538125184.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1538125184.git.horms+renesas@verge.net.au>
-References: <cover.1538125184.git.horms+renesas@verge.net.au>
+        Fri, 14 Sep 2018 15:49:04 -0400
+Received: by mail-qt0-f181.google.com with SMTP id r37-v6so8935838qtc.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Sep 2018 07:34:17 -0700 (PDT)
+Subject: Re: [PATCH v2 0/3] Add R-Car gen3 SoC support to the CMT driver
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>
+References: <c94a4ad6-93ee-05e4-e2c1-e8d24d3bc75e@cogentembedded.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <4283320b-2f6f-0b77-a8d8-734f6540bc49@linaro.org>
+Date: Fri, 14 Sep 2018 16:34:14 +0200
+MIME-Version: 1.0
+In-Reply-To: <c94a4ad6-93ee-05e4-e2c1-e8d24d3bc75e@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm@opensource.se>
+On 12/09/2018 22:10, Sergei Shtylyov wrote:
+> Hello!
+> 
+> Here's the set of 3 patches against the 'tip.git' repo's 'timers/core' branch
+> plus the CMT driver fixups for the 32/64-bit machines posted recently. We're
+> adding support for the CMT types0/1 found in the R-Car gen3 SoCs.
+> 
+> [1/3] clocksource: sh_cmt: properly line-wrap sh_cmt_of_table[] initializer
+> [2/3] dt-bindings: timer: renesas: cmt: document R-Car gen3 support
+> [3/3] clocksource: sh_cmt: add R-Car gen3 support
 
-For R-Car V3H hook up SYS-DMAC1 and SYS-DMAC2 to IPMMU-DS1 to match
-information in the R-Car Gen3 Rev.1.00 (April 2018) datasheet.
+Applied for 4.20, thanks.
 
-Signed-off-by: Magnus Damm <damm@opensource.se>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77980.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-index fc2a1d62d773..c6134bc51ebe 100644
---- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -924,6 +924,14 @@
- 			resets = <&cpg 218>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_ds1 0>, <&ipmmu_ds1 1>,
-+			       <&ipmmu_ds1 2>, <&ipmmu_ds1 3>,
-+			       <&ipmmu_ds1 4>, <&ipmmu_ds1 5>,
-+			       <&ipmmu_ds1 6>, <&ipmmu_ds1 7>,
-+			       <&ipmmu_ds1 8>, <&ipmmu_ds1 9>,
-+			       <&ipmmu_ds1 10>, <&ipmmu_ds1 11>,
-+			       <&ipmmu_ds1 12>, <&ipmmu_ds1 13>,
-+			       <&ipmmu_ds1 14>, <&ipmmu_ds1 15>;
- 		};
- 
- 		dmac2: dma-controller@e7310000 {
-@@ -958,6 +966,14 @@
- 			resets = <&cpg 217>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_ds1 16>, <&ipmmu_ds1 17>,
-+			       <&ipmmu_ds1 18>, <&ipmmu_ds1 19>,
-+			       <&ipmmu_ds1 20>, <&ipmmu_ds1 21>,
-+			       <&ipmmu_ds1 22>, <&ipmmu_ds1 23>,
-+			       <&ipmmu_ds1 24>, <&ipmmu_ds1 25>,
-+			       <&ipmmu_ds1 26>, <&ipmmu_ds1 27>,
-+			       <&ipmmu_ds1 28>, <&ipmmu_ds1 29>,
-+			       <&ipmmu_ds1 30>, <&ipmmu_ds1 31>;
- 		};
- 
- 		gether: ethernet@e7400000 {
 -- 
-2.11.0
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
