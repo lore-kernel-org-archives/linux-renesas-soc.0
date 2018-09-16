@@ -1,54 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:47416 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730614AbeICVqW (ORCPT
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:34379 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726140AbeIPGQZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:46:22 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
+        Sun, 16 Sep 2018 02:16:25 -0400
+Date: Sat, 15 Sep 2018 17:55:23 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Ulrich Hecht <uli+renesas@fpond.eu>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] spi: sh-msiof: Document R-Car D3 and E3 support
-Date: Mon,  3 Sep 2018 19:25:10 +0200
-Message-Id: <20180903172512.6242-1-geert+renesas@glider.be>
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: Re: [v4,2/2] dt-bindings: watchdog: renesas-wdt: Add support for
+ R7S9210
+Message-ID: <20180916005523.GA31712@roeck-us.net>
+References: <20180910195233.25296-3-chris.brandt@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180910195233.25296-3-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Mark,
+On Mon, Sep 10, 2018 at 02:52:33PM -0500, Chris Brandt wrote:
+> Document support for RZ/A2
+> 
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
-This patch series documents support for the MSIOF module in the Renesas
-R-Car D3 (r8a77995) and E3 (r8a77990) SoCs.  No driver update is needed.
- 
-R-Car D3 support was tested by Ulrich on the Draak development board.
-R-Car E3 support was tested by me on the Ebisu development board.
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-As my patch for E3 depends on Ulrich's (not yet applied) patch for D3, I
-took the libert to include it.
-
-Thanks!
-
-Geert Uytterhoeven (1):
-  spi: sh-msiof: Document R-Car E3 support
-
-Ulrich Hecht (1):
-  spi: sh-msiof: Document R-Car D3 support
-
- Documentation/devicetree/bindings/spi/sh-msiof.txt | 2 ++
- 1 file changed, 2 insertions(+)
-
--- 
-2.17.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+> ---
+>  Documentation/devicetree/bindings/watchdog/renesas-wdt.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+> index 5d47a262474c..45a709dd0345 100644
+> --- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+> +++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+> @@ -19,6 +19,7 @@ Required properties:
+>  	         - "renesas,r8a77990-wdt" (R-Car E3)
+>  	         - "renesas,r8a77995-wdt" (R-Car D3)
+>  	         - "renesas,r7s72100-wdt" (RZ/A1)
+> +	         - "renesas,r7s9210-wdt"  (RZ/A2)
+>  		The generic compatible string must be:
+>  		 - "renesas,rza-wdt" for RZ/A
+>  		 - "renesas,rcar-gen2-wdt" for R-Car Gen2 and RZ/G
