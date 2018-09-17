@@ -1,55 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:37230 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732545AbeISVfj (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36896 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727329AbeIQN4E (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Sep 2018 17:35:39 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: Alexandru-Cosmin Gheorghe <Alexandru-Cosmin.Gheorghe@arm.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 1/2] drm/atomic: Initialise planes with opaque alpha values
-Date: Wed, 19 Sep 2018 16:56:58 +0100
-Message-Id: <20180919155700.10342-2-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <20180919155700.10342-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20180919155700.10342-1-kieran.bingham+renesas@ideasonboard.com>
+        Mon, 17 Sep 2018 09:56:04 -0400
+Date: Mon, 17 Sep 2018 10:29:39 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rob Herring <robh@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        devicetree@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 01/10] dt-bindings: power: rcar-sysc: Document r8a7744
+ SYSC binding
+Message-ID: <20180917082938.bkd4nvjokyfv6vf2@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5b9f3f77.1c69fb81.ffb47.1086@mx.google.com>
+ <CAMuHMdUEOZH3m59CcajgRX7G-t0gjYZ0DDUkxdrVOfnKKQvxZg@mail.gmail.com>
+ <20180912094259.54pxh3vwkoripua7@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Planes without an alpha property, using __drm_atomic_helper_plane_reset
-will have their plane state alpha initialised as zero, which represents
-a transparent alpha.
+On Wed, Sep 12, 2018 at 11:43:00AM +0200, Simon Horman wrote:
+> On Tue, Sep 11, 2018 at 11:12:42AM +0100, Biju Das wrote:
+> > Add binding documentation for the RZ/G1N (R8A7744) SYSC block.
+> > 
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> 
+> Thanks,
+> 
+> This looks fine to me but I will wait to see if there are other reviews
+> before applying.
 
-If this value is then used for the plane, it may not be visible by
-default, and thus doesn't represent a good initialisation state.
 
-Update the default state->alpha value to DRM_BLEND_ALPHA_OPAQUE
-unconditionally when the plane is reset.
+Thanks again,
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/gpu/drm/drm_atomic_helper.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+applied for v4.20.
 
-diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-index 3cf1aa132778..e49b22381048 100644
---- a/drivers/gpu/drm/drm_atomic_helper.c
-+++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -3569,9 +3569,7 @@ void __drm_atomic_helper_plane_reset(struct drm_plane *plane,
- 	state->plane = plane;
- 	state->rotation = DRM_MODE_ROTATE_0;
- 
--	/* Reset the alpha value to fully opaque if it matters */
--	if (plane->alpha_property)
--		state->alpha = plane->alpha_property->values[1];
-+	state->alpha = DRM_BLEND_ALPHA_OPAQUE;
- 	state->pixel_blend_mode = DRM_MODE_BLEND_PREMULTI;
- 
- 	plane->state = state;
--- 
-2.17.1
+On Fri, Sep 14, 2018 at 02:25:36PM +0200, Geert Uytterhoeven wrote:
+> On Tue, Sep 11, 2018 at 12:19 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> > Add binding documentation for the RZ/G1N (R8A7744) SYSC block.
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
+
+On Mon, Sep 17, 2018 at 01:45:26AM -0400, Rob Herring wrote:
+> On Tue, 11 Sep 2018 11:12:42 +0100, Biju Das wrote:
+> > Add binding documentation for the RZ/G1N (R8A7744) SYSC block.
+> > 
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > ---
+> >  Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> 
