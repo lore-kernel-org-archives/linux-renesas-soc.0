@@ -1,35 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:19507 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726026AbeIGGBR (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36859 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727329AbeIQNwi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Sep 2018 02:01:17 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        Mon, 17 Sep 2018 09:52:38 -0400
+Date: Mon, 17 Sep 2018 10:26:14 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
         linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3 0/2] Add support for RZ/A2 wdt
-Date: Thu,  6 Sep 2018 20:22:41 -0500
-Message-Id: <20180907012243.86603-1-chris.brandt@renesas.com>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH 2/2] soc: renesas: rcar-rst: Add support for RZ/G2E
+Message-ID: <20180917082613.b2jumibnrcvwsxwd@verge.net.au>
+References: <1536592181-25649-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1536592181-25649-3-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20180912090420.xvpadxzyjh2o53s6@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180912090420.xvpadxzyjh2o53s6@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Slightly modify the rza_wdt.c driver and update the binding docs.
+On Wed, Sep 12, 2018 at 11:04:20AM +0200, Simon Horman wrote:
+> On Mon, Sep 10, 2018 at 04:09:41PM +0100, Fabrizio Castro wrote:
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> 
+> Thanks,
+> 
+> This looks fine to me but I will wait to see if there are other reviews
+> before applying.
 
-
-Chris Brandt (2):
-  watchdog: rza_wdt: Support longer timeouts
-  dt-bindings: watchdog: renesas-wdt: Add support for R7S9210
-
- .../devicetree/bindings/watchdog/renesas-wdt.txt   |  1 +
- drivers/watchdog/rza_wdt.c                         | 81 +++++++++++++++++-----
- 2 files changed, 64 insertions(+), 18 deletions(-)
-
--- 
-2.16.1
+Thanks again, applied for v4.20.
