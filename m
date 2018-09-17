@@ -1,43 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:42012 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726169AbeIQQsr (ORCPT
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39580 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727329AbeIQOGN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Sep 2018 12:48:47 -0400
-Received: by mail-ua1-f65.google.com with SMTP id w7-v6so10227665uan.9
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Sep 2018 04:21:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <153717356234.480.6698281193817518888.sendpatchset@octo> <153717358781.480.8395569978640568774.sendpatchset@octo>
-In-Reply-To: <153717358781.480.8395569978640568774.sendpatchset@octo>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 17 Sep 2018 13:21:42 +0200
-Message-ID: <CAMuHMdU_eToCxqeK=efdJNpLeNTBeRunUx+jOc7j_wdX+aZX9A@mail.gmail.com>
-Subject: Re: [PATCH 03/03] arm: dts: R-Car Gen1 board comment update
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 17 Sep 2018 10:06:13 -0400
+Received: by mail-pf1-f194.google.com with SMTP id j8-v6so7222054pff.6
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Sep 2018 01:39:49 -0700 (PDT)
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Date: Mon, 17 Sep 2018 17:39:47 +0900
+Message-Id: <153717358781.480.8395569978640568774.sendpatchset@octo>
+In-Reply-To: <153717356234.480.6698281193817518888.sendpatchset@octo>
+References: <153717356234.480.6698281193817518888.sendpatchset@octo>
+Subject: [PATCH 03/03] arm: dts: R-Car Gen1 board comment update
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Sep 17, 2018 at 10:39 AM Magnus Damm <magnus.damm@gmail.com> wrote:
-> From: Magnus Damm <damm@opensource.se>
->
-> Include R-Car Gen1 product names for Bock-W and Marzen.
->
-> The product names are taken from:
-> Documentation/devicetree/bindings/arm/shmobile.txt
->
-> Signed-off-by: Magnus Damm <damm@opensource.se>
+From: Magnus Damm <damm@opensource.se>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Include R-Car Gen1 product names for Bock-W and Marzen.
 
-Gr{oetje,eeting}s,
+The product names are taken from:
+Documentation/devicetree/bindings/arm/shmobile.txt
 
-                        Geert
+Signed-off-by: Magnus Damm <damm@opensource.se>
+---
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ Developed on top of renesas-devel-20180914-v4.19-rc3
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+ arch/arm/boot/dts/r8a7778-bockw.dts  |    2 +-
+ arch/arm/boot/dts/r8a7779-marzen.dts |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+--- 0001/arch/arm/boot/dts/r8a7778-bockw.dts
++++ work/arch/arm/boot/dts/r8a7778-bockw.dts	2018-09-17 12:47:10.561971790 +0900
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Reference Device Tree Source for the Bock-W board
++ * Reference Device Tree Source for the R-Car M1A (R8A77781) Bock-W board
+  *
+  * Copyright (C) 2013  Renesas Solutions Corp.
+  * Copyright (C) 2013  Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+--- 0001/arch/arm/boot/dts/r8a7779-marzen.dts
++++ work/arch/arm/boot/dts/r8a7779-marzen.dts	2018-09-17 12:47:35.744292059 +0900
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Device Tree Source for the Marzen board
++ * Device Tree Source for the R-Car H1 (R8A77790) Marzen board
+  *
+  * Copyright (C) 2013 Renesas Solutions Corp.
+  * Copyright (C) 2013 Simon Horman
