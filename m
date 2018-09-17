@@ -1,33 +1,31 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:52610 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728332AbeIYBHv (ORCPT
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:19784 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726753AbeIQQUU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Sep 2018 21:07:51 -0400
-Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH v2 03/16] dt-bindings: display: renesas: lvds: Add EXTAL
- and DU_DOTCLKIN clocks
+        Mon, 17 Sep 2018 12:20:20 -0400
+Date: Mon, 17 Sep 2018 12:53:29 +0200 (CEST)
+From: Ulrich Hecht <uli@fpond.eu>
 To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, Ulrich Hecht <uli@fpond.eu>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <1034918710.239795.1537181609239@webmail.strato.com>
+In-Reply-To: <20180914091046.483-4-laurent.pinchart+renesas@ideasonboard.com>
 References: <20180914091046.483-1-laurent.pinchart+renesas@ideasonboard.com>
  <20180914091046.483-4-laurent.pinchart+renesas@ideasonboard.com>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <54b0f049-9053-ae61-8100-9ab1c9bfeee5@ideasonboard.com>
-Date: Mon, 24 Sep 2018 20:04:11 +0100
+Subject: Re: [PATCH v2 03/16] dt-bindings: display: renesas: lvds: Add EXTAL
+ and DU_DOTCLKIN clocks
 MIME-Version: 1.0
-In-Reply-To: <20180914091046.483-4-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
 
-Thank you for the patch,
-
-On 14/09/18 10:10, Laurent Pinchart wrote:
+> On September 14, 2018 at 11:10 AM Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com> wrote:
+> 
+> 
 > On the D3 and E3 SoCs, the LVDS encoder can derive its internal pixel
 > clock from an externally supplied clock, either through the EXTAL pin or
 > through one of the DU_DOTCLKINx pins. Add corresponding clocks to the DT
@@ -68,17 +66,11 @@ On 14/09/18 10:10, Laurent Pinchart wrote:
 > +    numerical index.
 > +  - When the clocks property only contains the functional clock, the
 > +    clock-names property may be omitted.
-
-This all reads well to me.
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
 >  - resets: A phandle + reset specifier for the module reset
 >  
 >  Required nodes:
-> 
 
--- 
-Regards
---
-Kieran
+Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+
+CU
+Uli
