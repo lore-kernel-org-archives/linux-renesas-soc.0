@@ -1,207 +1,39 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com,
-        kieran.bingham+renesas@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Subject: [PATCH v3 2/4] media: i2c: adv748x: Handle TX[A|B] power management
-Date: Mon, 17 Sep 2018 13:30:55 +0200
-Message-Id: <1537183857-29173-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1537183857-29173-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1537183857-29173-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:37199 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727166AbeIQOOe (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 17 Sep 2018 10:14:34 -0400
+Date: Mon, 17 Sep 2018 10:48:05 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH 09/10] ARM: shmobile: r8a7744: Basic SoC support
+Message-ID: <20180917084804.kwv3iab6mnemhsz2@verge.net.au>
+References: <1536660771-32278-1-git-send-email-biju.das@bp.renesas.com>
+ <1536660771-32278-10-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdXTnV0rWRUGjJ9bf6GZ67bR0VvuGhgEOZnJQ=vWb6pLNA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXTnV0rWRUGjJ9bf6GZ67bR0VvuGhgEOZnJQ=vWb6pLNA@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-As the driver is now allowed to probe with a single output endpoint,
-power management routines shall now take into account the case a CSI-2 TX
-is not enabled.
+On Fri, Sep 14, 2018 at 02:48:18PM +0200, Geert Uytterhoeven wrote:
+> On Tue, Sep 11, 2018 at 12:19 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> > Add minimal support for the RZ/G1N (R8A7744) SoC.
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Unify the adv748x_tx_power() routine to handle transparently TXA and TXB,
-and enable the CSI-2 outputs conditionally.
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/media/i2c/adv748x/adv748x-afe.c  |  2 +-
- drivers/media/i2c/adv748x/adv748x-core.c | 52 +++++++++++++-------------------
- drivers/media/i2c/adv748x/adv748x-csi2.c |  5 ---
- drivers/media/i2c/adv748x/adv748x-hdmi.c |  2 +-
- drivers/media/i2c/adv748x/adv748x.h      |  7 ++---
- 5 files changed, 25 insertions(+), 43 deletions(-)
-
-diff --git a/drivers/media/i2c/adv748x/adv748x-afe.c b/drivers/media/i2c/adv748x/adv748x-afe.c
-index edd25e8..6d78105 100644
---- a/drivers/media/i2c/adv748x/adv748x-afe.c
-+++ b/drivers/media/i2c/adv748x/adv748x-afe.c
-@@ -286,7 +286,7 @@ static int adv748x_afe_s_stream(struct v4l2_subdev *sd, int enable)
- 			goto unlock;
- 	}
- 
--	ret = adv748x_txb_power(state, enable);
-+	ret = adv748x_tx_power(&state->txb, enable);
- 	if (ret)
- 		goto unlock;
- 
-diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
-index 65c3024..72a6692 100644
---- a/drivers/media/i2c/adv748x/adv748x-core.c
-+++ b/drivers/media/i2c/adv748x/adv748x-core.c
-@@ -292,33 +292,16 @@ static const struct adv748x_reg_value adv748x_power_down_txb_1lane[] = {
- 	{ADV748X_PAGE_EOR, 0xff, 0xff}	/* End of register table */
- };
- 
--int adv748x_txa_power(struct adv748x_state *state, bool on)
-+int adv748x_tx_power(struct adv748x_csi2 *tx, bool on)
- {
-+	struct adv748x_state *state = tx->state;
-+	const struct adv748x_reg_value *reglist;
- 	int val;
- 
--	val = txa_read(state, ADV748X_CSI_FS_AS_LS);
--	if (val < 0)
--		return val;
--
--	/*
--	 * This test against BIT(6) is not documented by the datasheet, but was
--	 * specified in the downstream driver.
--	 * Track with a WARN_ONCE to determine if it is ever set by HW.
--	 */
--	WARN_ONCE((on && val & ADV748X_CSI_FS_AS_LS_UNKNOWN),
--			"Enabling with unknown bit set");
--
--	if (on)
--		return adv748x_write_regs(state, adv748x_power_up_txa_4lane);
--
--	return adv748x_write_regs(state, adv748x_power_down_txa_4lane);
--}
--
--int adv748x_txb_power(struct adv748x_state *state, bool on)
--{
--	int val;
-+	if (!is_tx_enabled(tx))
-+		return 0;
- 
--	val = txb_read(state, ADV748X_CSI_FS_AS_LS);
-+	val = tx_read(tx, ADV748X_CSI_FS_AS_LS);
- 	if (val < 0)
- 		return val;
- 
-@@ -331,9 +314,13 @@ int adv748x_txb_power(struct adv748x_state *state, bool on)
- 			"Enabling with unknown bit set");
- 
- 	if (on)
--		return adv748x_write_regs(state, adv748x_power_up_txb_1lane);
-+		reglist = is_txa(tx) ? adv748x_power_up_txa_4lane :
-+				       adv748x_power_up_txb_1lane;
-+	else
-+		reglist = is_txa(tx) ? adv748x_power_down_txa_4lane :
-+				       adv748x_power_down_txb_1lane;
- 
--	return adv748x_write_regs(state, adv748x_power_down_txb_1lane);
-+	return adv748x_write_regs(state, reglist);
- }
- 
- /* -----------------------------------------------------------------------------
-@@ -482,6 +469,7 @@ static const struct adv748x_reg_value adv748x_init_txb_1lane[] = {
- static int adv748x_reset(struct adv748x_state *state)
- {
- 	int ret;
-+	u8 regval = ADV748X_IO_10_PIX_OUT_EN;
- 
- 	ret = adv748x_write_regs(state, adv748x_sw_reset);
- 	if (ret < 0)
-@@ -496,22 +484,24 @@ static int adv748x_reset(struct adv748x_state *state)
- 	if (ret)
- 		return ret;
- 
--	adv748x_txa_power(state, 0);
-+	adv748x_tx_power(&state->txa, 0);
- 
- 	/* Init and power down TXB */
- 	ret = adv748x_write_regs(state, adv748x_init_txb_1lane);
- 	if (ret)
- 		return ret;
- 
--	adv748x_txb_power(state, 0);
-+	adv748x_tx_power(&state->txb, 0);
- 
- 	/* Disable chip powerdown & Enable HDMI Rx block */
- 	io_write(state, ADV748X_IO_PD, ADV748X_IO_PD_RX_EN);
- 
--	/* Enable 4-lane CSI Tx & Pixel Port */
--	io_write(state, ADV748X_IO_10, ADV748X_IO_10_CSI4_EN |
--				       ADV748X_IO_10_CSI1_EN |
--				       ADV748X_IO_10_PIX_OUT_EN);
-+	/* Conditionally enable TXa and TXb. */
-+	if (is_tx_enabled(&state->txa))
-+		regval |= ADV748X_IO_10_CSI4_EN;
-+	if (is_tx_enabled(&state->txb))
-+		regval |= ADV748X_IO_10_CSI1_EN;
-+	io_write(state, ADV748X_IO_10, regval);
- 
- 	/* Use vid_std and v_freq as freerun resolution for CP */
- 	cp_clrset(state, ADV748X_CP_CLMP_POS, ADV748X_CP_CLMP_POS_DIS_AUTO,
-diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
-index 556e13c..034fd93 100644
---- a/drivers/media/i2c/adv748x/adv748x-csi2.c
-+++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
-@@ -18,11 +18,6 @@
- 
- #include "adv748x.h"
- 
--static bool is_txa(struct adv748x_csi2 *tx)
--{
--	return tx == &tx->state->txa;
--}
--
- static int adv748x_csi2_set_virtual_channel(struct adv748x_csi2 *tx,
- 					    unsigned int vc)
- {
-diff --git a/drivers/media/i2c/adv748x/adv748x-hdmi.c b/drivers/media/i2c/adv748x/adv748x-hdmi.c
-index aecc2a8..abb6568 100644
---- a/drivers/media/i2c/adv748x/adv748x-hdmi.c
-+++ b/drivers/media/i2c/adv748x/adv748x-hdmi.c
-@@ -362,7 +362,7 @@ static int adv748x_hdmi_s_stream(struct v4l2_subdev *sd, int enable)
- 
- 	mutex_lock(&state->mutex);
- 
--	ret = adv748x_txa_power(state, enable);
-+	ret = adv748x_tx_power(&state->txa, enable);
- 	if (ret)
- 		goto done;
- 
-diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
-index 1cf46c40..eeadf05 100644
---- a/drivers/media/i2c/adv748x/adv748x.h
-+++ b/drivers/media/i2c/adv748x/adv748x.h
-@@ -93,6 +93,7 @@ struct adv748x_csi2 {
- #define notifier_to_csi2(n) container_of(n, struct adv748x_csi2, notifier)
- #define adv748x_sd_to_csi2(sd) container_of(sd, struct adv748x_csi2, sd)
- #define is_tx_enabled(_tx) ((_tx)->state->endpoints[(_tx)->port] != NULL)
-+#define is_txa(_tx) ((_tx) == &(_tx)->state->txa)
- 
- enum adv748x_hdmi_pads {
- 	ADV748X_HDMI_SINK,
-@@ -378,9 +379,6 @@ int adv748x_write_block(struct adv748x_state *state, int client_page,
- #define cp_write(s, r, v) adv748x_write(s, ADV748X_PAGE_CP, r, v)
- #define cp_clrset(s, r, m, v) cp_write(s, r, (cp_read(s, r) & ~m) | v)
- 
--#define txa_read(s, r) adv748x_read(s, ADV748X_PAGE_TXA, r)
--#define txb_read(s, r) adv748x_read(s, ADV748X_PAGE_TXB, r)
--
- #define tx_read(t, r) adv748x_read(t->state, t->page, r)
- #define tx_write(t, r, v) adv748x_write(t->state, t->page, r, v)
- 
-@@ -400,8 +398,7 @@ void adv748x_subdev_init(struct v4l2_subdev *sd, struct adv748x_state *state,
- int adv748x_register_subdevs(struct adv748x_state *state,
- 			     struct v4l2_device *v4l2_dev);
- 
--int adv748x_txa_power(struct adv748x_state *state, bool on);
--int adv748x_txb_power(struct adv748x_state *state, bool on);
-+int adv748x_tx_power(struct adv748x_csi2 *tx, bool on);
- 
- int adv748x_afe_init(struct adv748x_afe *afe);
- void adv748x_afe_cleanup(struct adv748x_afe *afe);
--- 
-2.7.4
+Thanks, applied for v4.20.
