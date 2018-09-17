@@ -1,386 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:36114 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbeIMOT4 (ORCPT
+        with ESMTP id S1726652AbeIQMfu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:19:56 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 57/58] arm64: dts: renesas: draak: Sort device nodes
-Date: Thu, 13 Sep 2018 11:09:52 +0200
-Message-Id: <7acc17b1a3e96d1e541c48abd89fa74d1e752f15.1536828567.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
-References: <cover.1536828567.git.horms+renesas@verge.net.au>
+        Mon, 17 Sep 2018 08:35:50 -0400
+Date: Mon, 17 Sep 2018 09:09:38 +0200
+From: Simon Horman <horms@verge.net.au>
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
+        kieran.bingham+renesas@ideasonboard.com,
+        niklas.soderlund+renesas@ragnatech.se, damm+renesas@opensource.se,
+        ulrich.hecht+renesas@gmail.com, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 8/8] arm64: dts: renesas: ebisu: Add HDMI and CVBS
+ input
+Message-ID: <20180917070934.5nstt2ch4vu2mwx3@verge.net.au>
+References: <1536161385-25562-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1536161385-25562-9-git-send-email-jacopo+renesas@jmondi.org>
+ <2026479.hHFyJyWhrN@avalon>
+ <20180912092950.us5wtr7x7vci6xr5@verge.net.au>
+ <20180912110821.GX28160@w540>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180912110821.GX28160@w540>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, Sep 12, 2018 at 01:08:21PM +0200, jacopo mondi wrote:
+> Hi Simon,
+> 
+> On Wed, Sep 12, 2018 at 11:29:51AM +0200, Simon Horman wrote:
+> > On Mon, Sep 10, 2018 at 05:21:08PM +0300, Laurent Pinchart wrote:
+> > > Hi Jacopo,
+> > >
+> > > Thank you for the patch.
+> > >
+> > > On Wednesday, 5 September 2018 18:29:45 EEST Jacopo Mondi wrote:
+> > > > Add HDMI and CVBS inputs device nodes to R-Car E3 Ebisu board.
+> > > >
+> > > > Both HDMI and CVBS inputs are connected to an ADV7482 video decoder hooked
+> > > > to the SoC CSI-2 receiver port.
+> > > >
+> > > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > >
+> > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> >
+> > Jacopo,
+> >
+> > I assume that this patch depends on 7/8.
+> > Please repost this patch when you repost that one,
+> > addressing Laurent's feedback.
+> 
+> Sorry, I'm now confused :)
+> I don't see any pending comment on [7/8] nor on this one ([8/8]).
+> [7/8] has been applied to your "arm64-dt-for-v4.20" branch already
+> (just checked).
+> 
+> I have a small comment on [6/8] and one open question on [5/8]. All
+> the other patches have been reviewed/acked already.
+> 
+> To sum up: do you want me to repost [7/8] when re-sending this series?
 
-- Device nodes with unit addresses are sorted by unit address,
-  - Device nodes without unit addresses and references are sorted
-    alphabetically.
+No need.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 276 ++++++++++++-------------
- 1 file changed, 138 insertions(+), 138 deletions(-)
+I now see that 6/8 and 7/8 are in my tree.  And that this patch, 8/8, has
+now been reviewed so I have applied it too.  So I think all the patches in
+this series targeted at my tree have now been applied.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index a8e8f2669d4c..e39b73005381 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -24,38 +24,6 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
--	vga {
--		compatible = "vga-connector";
--
--		port {
--			vga_in: endpoint {
--				remote-endpoint = <&adv7123_out>;
--			};
--		};
--	};
--
--	vga-encoder {
--		compatible = "adi,adv7123";
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				adv7123_in: endpoint {
--					remote-endpoint = <&du_out_rgb>;
--				};
--			};
--			port@1 {
--				reg = <1>;
--				adv7123_out: endpoint {
--					remote-endpoint = <&vga_in>;
--				};
--			};
--		};
--	};
--
- 	composite-in {
- 		compatible = "composite-video-connector";
- 
-@@ -101,76 +69,86 @@
- 		regulator-always-on;
- 	};
- 
--	x12_clk: x12 {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <74250000>;
--	};
--};
--
--&extal_clk {
--	clock-frequency = <48000000>;
--};
-+	vga {
-+		compatible = "vga-connector";
- 
--&pfc {
--	avb0_pins: avb {
--		mux {
--			groups = "avb0_link", "avb0_mdio", "avb0_mii";
--			function = "avb0";
-+		port {
-+			vga_in: endpoint {
-+				remote-endpoint = <&adv7123_out>;
-+			};
- 		};
- 	};
- 
--	du_pins: du {
--		groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
--		function = "du";
--	};
-+	vga-encoder {
-+		compatible = "adi,adv7123";
- 
--	i2c0_pins: i2c0 {
--		groups = "i2c0";
--		function = "i2c0";
--	};
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
- 
--	i2c1_pins: i2c1 {
--		groups = "i2c1";
--		function = "i2c1";
-+			port@0 {
-+				reg = <0>;
-+				adv7123_in: endpoint {
-+					remote-endpoint = <&du_out_rgb>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+				adv7123_out: endpoint {
-+					remote-endpoint = <&vga_in>;
-+				};
-+			};
-+		};
- 	};
- 
--	pwm0_pins: pwm0 {
--		groups = "pwm0_c";
--		function = "pwm0";
-+	x12_clk: x12 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <74250000>;
- 	};
-+};
- 
--	pwm1_pins: pwm1 {
--		groups = "pwm1_c";
--		function = "pwm1";
--	};
-+&avb {
-+	pinctrl-0 = <&avb0_pins>;
-+	pinctrl-names = "default";
-+	renesas,no-ether-link;
-+	phy-handle = <&phy0>;
-+	phy-mode = "rgmii-txid";
-+	status = "okay";
- 
--	scif2_pins: scif2 {
--		groups = "scif2_data";
--		function = "scif2";
-+	phy0: ethernet-phy@0 {
-+		rxc-skew-ps = <1500>;
-+		reg = <0>;
-+		interrupt-parent = <&gpio5>;
-+		interrupts = <19 IRQ_TYPE_LEVEL_LOW>;
- 	};
-+};
- 
--	sdhi2_pins: sd2 {
--		groups = "mmc_data8", "mmc_ctrl";
--		function = "mmc";
--		power-source = <1800>;
--	};
-+&du {
-+	pinctrl-0 = <&du_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
- 
--	sdhi2_pins_uhs: sd2_uhs {
--		groups = "mmc_data8", "mmc_ctrl";
--		function = "mmc";
--		power-source = <1800>;
--	};
-+	clocks = <&cpg CPG_MOD 724>,
-+		 <&cpg CPG_MOD 723>,
-+		 <&x12_clk>;
-+	clock-names = "du.0", "du.1", "dclkin.0";
- 
--	usb0_pins: usb0 {
--		groups = "usb0";
--		function = "usb0";
-+	ports {
-+		port@0 {
-+			endpoint {
-+				remote-endpoint = <&adv7123_in>;
-+			};
-+		};
- 	};
-+};
- 
--	vin4_pins_cvbs: vin4 {
--		groups = "vin4_data8", "vin4_sync", "vin4_clk";
--		function = "vin4";
--	};
-+&ehci0 {
-+	status = "okay";
-+};
-+
-+&extal_clk {
-+	clock-frequency = <48000000>;
- };
- 
- &i2c0 {
-@@ -178,12 +156,6 @@
- 	pinctrl-names = "default";
- 	status = "okay";
- 
--	eeprom@50 {
--		compatible = "rohm,br24t01", "atmel,24c01";
--		reg = <0x50>;
--		pagesize = <8>;
--	};
--
- 	composite-in@20 {
- 		compatible = "adi,adv7180cp";
- 		reg = <0x20>;
-@@ -254,6 +226,12 @@
- 			};
- 		};
- 	};
-+
-+	eeprom@50 {
-+		compatible = "rohm,br24t01", "atmel,24c01";
-+		reg = <0x50>;
-+		pagesize = <8>;
-+	};
- };
- 
- &i2c1 {
-@@ -262,47 +240,88 @@
- 	status = "okay";
- };
- 
--&du {
--	pinctrl-0 = <&du_pins>;
--	pinctrl-names = "default";
-+&ohci0 {
- 	status = "okay";
-+};
- 
--	clocks = <&cpg CPG_MOD 724>,
--		 <&cpg CPG_MOD 723>,
--		 <&x12_clk>;
--	clock-names = "du.0", "du.1", "dclkin.0";
--
--	ports {
--		port@0 {
--			endpoint {
--				remote-endpoint = <&adv7123_in>;
--			};
-+&pfc {
-+	avb0_pins: avb {
-+		mux {
-+			groups = "avb0_link", "avb0_mdio", "avb0_mii";
-+			function = "avb0";
- 		};
- 	};
--};
- 
--&ehci0 {
--	status = "okay";
-+	du_pins: du {
-+		groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
-+		function = "du";
-+	};
-+
-+	i2c0_pins: i2c0 {
-+		groups = "i2c0";
-+		function = "i2c0";
-+	};
-+
-+	i2c1_pins: i2c1 {
-+		groups = "i2c1";
-+		function = "i2c1";
-+	};
-+
-+	pwm0_pins: pwm0 {
-+		groups = "pwm0_c";
-+		function = "pwm0";
-+	};
-+
-+	pwm1_pins: pwm1 {
-+		groups = "pwm1_c";
-+		function = "pwm1";
-+	};
-+
-+	scif2_pins: scif2 {
-+		groups = "scif2_data";
-+		function = "scif2";
-+	};
-+
-+	sdhi2_pins: sd2 {
-+		groups = "mmc_data8", "mmc_ctrl";
-+		function = "mmc";
-+		power-source = <1800>;
-+	};
-+
-+	sdhi2_pins_uhs: sd2_uhs {
-+		groups = "mmc_data8", "mmc_ctrl";
-+		function = "mmc";
-+		power-source = <1800>;
-+	};
-+
-+	usb0_pins: usb0 {
-+		groups = "usb0";
-+		function = "usb0";
-+	};
-+
-+	vin4_pins_cvbs: vin4 {
-+		groups = "vin4_data8", "vin4_sync", "vin4_clk";
-+		function = "vin4";
-+	};
- };
- 
--&ohci0 {
-+&pwm0 {
-+	pinctrl-0 = <&pwm0_pins>;
-+	pinctrl-names = "default";
-+
- 	status = "okay";
- };
- 
--&avb {
--	pinctrl-0 = <&avb0_pins>;
-+&pwm1 {
-+	pinctrl-0 = <&pwm1_pins>;
- 	pinctrl-names = "default";
--	renesas,no-ether-link;
--	phy-handle = <&phy0>;
--	phy-mode = "rgmii-txid";
-+
- 	status = "okay";
-+};
- 
--	phy0: ethernet-phy@0 {
--		rxc-skew-ps = <1500>;
--		reg = <0>;
--		interrupt-parent = <&gpio5>;
--		interrupts = <19 IRQ_TYPE_LEVEL_LOW>;
--	};
-+&rwdt {
-+	timeout-sec = <60>;
-+	status = "okay";
- };
- 
- &scif2 {
-@@ -333,25 +352,6 @@
- 	status = "okay";
- };
- 
--&pwm0 {
--	pinctrl-0 = <&pwm0_pins>;
--	pinctrl-names = "default";
--
--	status = "okay";
--};
--
--&pwm1 {
--	pinctrl-0 = <&pwm1_pins>;
--	pinctrl-names = "default";
--
--	status = "okay";
--};
--
--&rwdt {
--	timeout-sec = <60>;
--	status = "okay";
--};
--
- &vin4 {
- 	pinctrl-0 = <&vin4_pins_cvbs>;
- 	pinctrl-names = "default";
--- 
-2.11.0
+Please consider a follow-up patch to address the review of 6/8.
