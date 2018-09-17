@@ -1,41 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:34210 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727140AbeIRMpi (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:61660 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727329AbeIQXzV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Sep 2018 08:45:38 -0400
-MIME-Version: 1.0
-References: <20180917182623.29221-1-chris.brandt@renesas.com>
-In-Reply-To: <20180917182623.29221-1-chris.brandt@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 18 Sep 2018 09:14:10 +0200
-Message-ID: <CAMuHMdUtAGM1ZK-Hw-uFwrv2f+jgWoYz-yM1Gd44-6sSCOxkFA@mail.gmail.com>
-Subject: Re: [PATCH] serial: sh-sci: Add earlycon for R7S9210
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 17 Sep 2018 19:55:21 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH] serial: sh-sci: Add earlycon for R7S9210
+Date: Mon, 17 Sep 2018 13:26:23 -0500
+Message-Id: <20180917182623.29221-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Sep 17, 2018 at 8:26 PM Chris Brandt <chris.brandt@renesas.com> wrote:
-> Since the register offsets are different for RZ/A2 SCIF, we need
-> to declare a separate string for it.
->
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Since the register offsets are different for RZ/A2 SCIF, we need
+to declare a separate string for it.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+To be applied on top of Geert's patches:
+ *  [PATCH 1/2] Revert "serial: sh-sci: Remove SCIx_RZ_SCIFA_REGTYPE"
+ *  [PATCH 2/2] Revert "serial: sh-sci: Allow for compressed SCIF address"
+---
+ drivers/tty/serial/sh-sci.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index ab3f6e91853d..426241da2e44 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -3414,6 +3414,12 @@ static int __init scif_early_console_setup(struct earlycon_device *device,
+ {
+ 	return early_console_setup(device, PORT_SCIF);
+ }
++static int __init rzscifa_early_console_setup(struct earlycon_device *device,
++					  const char *opt)
++{
++	port_cfg.regtype = SCIx_RZ_SCIFA_REGTYPE;
++	return early_console_setup(device, PORT_SCIF);
++}
+ static int __init scifa_early_console_setup(struct earlycon_device *device,
+ 					  const char *opt)
+ {
+@@ -3432,6 +3438,7 @@ static int __init hscif_early_console_setup(struct earlycon_device *device,
+ 
+ OF_EARLYCON_DECLARE(sci, "renesas,sci", sci_early_console_setup);
+ OF_EARLYCON_DECLARE(scif, "renesas,scif", scif_early_console_setup);
++OF_EARLYCON_DECLARE(scif, "renesas,scif-r7s9210", rzscifa_early_console_setup);
+ OF_EARLYCON_DECLARE(scifa, "renesas,scifa", scifa_early_console_setup);
+ OF_EARLYCON_DECLARE(scifb, "renesas,scifb", scifb_early_console_setup);
+ OF_EARLYCON_DECLARE(hscif, "renesas,hscif", hscif_early_console_setup);
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.16.1
