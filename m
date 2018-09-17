@@ -1,257 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58192 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729111AbeI1QqK (ORCPT
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:42250 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727484AbeIQNJu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:46:10 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 7/7] ARM: shmobile: Rework the PMIC IRQ line quirk
-Date: Fri, 28 Sep 2018 12:22:49 +0200
-Message-Id: <6d14d4d313d09dabdb06b4a9f4e5fe4305051e9b.1538123953.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1538123953.git.horms+renesas@verge.net.au>
-References: <cover.1538123953.git.horms+renesas@verge.net.au>
+        Mon, 17 Sep 2018 09:09:50 -0400
+Received: by mail-ua1-f66.google.com with SMTP id w7-v6so9976901uan.9
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Sep 2018 00:43:38 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180914210304.30843-1-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <20180914210304.30843-1-kieran.bingham+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 17 Sep 2018 09:43:26 +0200
+Message-ID: <CAMuHMdV_xnOe8O1YNddu-c-yZybdD8mW5tFaKy=KpuYDK-Eruw@mail.gmail.com>
+Subject: Re: [GIT PULL FOR renesas-drivers] du/2018q3
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Marek Vasut <marek.vasut@gmail.com>
+Hi Kieran,
 
-Rather than hard-coding the quirk topology, which stopped scaling,
-parse the information from DT. The code looks for all compatible
-PMICs -- da9063 and da9210 -- and checks if their IRQ line is tied
-to the same pin. If so, the code sends a matching sequence to the
-PMIC to deassert the IRQ.
+On Fri, Sep 14, 2018 at 11:03 PM Kieran Bingham
+<kieran.bingham+renesas@ideasonboard.com> wrote:
+> Please consider including this release in renesas-drivers.
+>
+> Please note - unlike the previous VSP1 pull request, which is a direct request
+> of Laurent's v4l2/vsp1/next, this one is actually a branch on my tree.
+>
+> This pull request covers both Laurent's drm/du/next and one extra commit in my
+> tree. It's a temporary fix. I expect either Laurent will pick up the revert, or
+> we may have a better fix by the time you do a renesas-drivers release.
+>
+> Please feel free to drop this and use Laurent's updated drm/du/next branch as
+> necessary.
+>
+>
+> --
+> Regards
+>
+> Kieran
+>
+> The following changes since commit 2dc7bad71cd310dc94d1c9907909324dd2b0618f:
+>
+>   Merge tag 'drm-misc-next-2018-09-13' of git://anongit.freedesktop.org/drm/drm-misc into drm-next (2018-09-14 09:43:16 +1000)
+>
+> are available in the Git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git du/2018q3
+>
+> for you to fetch changes up to ebf4cb8acd5fff350500dae25a8e868c79e25b40:
+>
+>   drm: rcar-du: Revert "drm: rcar-du: Use __drm_atomic_helper_plane_reset instead of copying the logic" (2018-09-14 20:50:19 +0100)
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be> (on Koelsch)
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c | 139 ++++++++++++++++-----
- 1 file changed, 110 insertions(+), 29 deletions(-)
+Thank you, merges cleanly into next-20180913.
 
-diff --git a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-index 21ebc7678ffd..8e50daa99151 100644
---- a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-@@ -23,11 +23,12 @@
- #include <linux/i2c.h>
- #include <linux/init.h>
- #include <linux/io.h>
-+#include <linux/list.h>
- #include <linux/notifier.h>
- #include <linux/of.h>
-+#include <linux/of_irq.h>
- #include <linux/mfd/da9063/registers.h>
- 
--
- #define IRQC_BASE		0xe61c0000
- #define IRQC_MONITOR		0x104	/* IRQn Signal Level Monitor Register */
- 
-@@ -36,34 +37,45 @@
- /* start of DA9210 System Control and Event Registers */
- #define DA9210_REG_MASK_A		0x54
- 
-+struct regulator_quirk {
-+	struct list_head		list;
-+	const struct of_device_id	*id;
-+	struct of_phandle_args		irq_args;
-+	struct i2c_msg			i2c_msg;
-+	bool				shared;	/* IRQ line is shared */
-+};
-+
-+static LIST_HEAD(quirk_list);
- static void __iomem *irqc;
- 
- /* first byte sets the memory pointer, following are consecutive reg values */
- static u8 da9063_irq_clr[] = { DA9063_REG_IRQ_MASK_A, 0xff, 0xff, 0xff, 0xff };
- static u8 da9210_irq_clr[] = { DA9210_REG_MASK_A, 0xff, 0xff };
- 
--static struct i2c_msg da9xxx_msgs[3] = {
--	{
--		.addr = 0x58,
--		.len = ARRAY_SIZE(da9063_irq_clr),
--		.buf = da9063_irq_clr,
--	}, {
--		.addr = 0x68,
--		.len = ARRAY_SIZE(da9210_irq_clr),
--		.buf = da9210_irq_clr,
--	}, {
--		.addr = 0x70,
--		.len = ARRAY_SIZE(da9210_irq_clr),
--		.buf = da9210_irq_clr,
--	},
-+static struct i2c_msg da9063_msg = {
-+	.len = ARRAY_SIZE(da9063_irq_clr),
-+	.buf = da9063_irq_clr,
-+};
-+
-+static struct i2c_msg da9210_msg = {
-+	.len = ARRAY_SIZE(da9210_irq_clr),
-+	.buf = da9210_irq_clr,
-+};
-+
-+static const struct of_device_id rcar_gen2_quirk_match[] = {
-+	{ .compatible = "dlg,da9063", .data = &da9063_msg },
-+	{ .compatible = "dlg,da9210", .data = &da9210_msg },
-+	{},
- };
- 
- static int regulator_quirk_notify(struct notifier_block *nb,
- 				  unsigned long action, void *data)
- {
-+	struct regulator_quirk *pos, *tmp;
- 	struct device *dev = data;
- 	struct i2c_client *client;
- 	static bool done;
-+	int ret;
- 	u32 mon;
- 
- 	if (done)
-@@ -80,17 +92,20 @@ static int regulator_quirk_notify(struct notifier_block *nb,
- 	client = to_i2c_client(dev);
- 	dev_dbg(dev, "Detected %s\n", client->name);
- 
--	if ((client->addr == 0x58 && !strcmp(client->name, "da9063")) ||
--	    (client->addr == 0x68 && !strcmp(client->name, "da9210")) ||
--	    (client->addr == 0x70 && !strcmp(client->name, "da9210"))) {
--		int ret, len;
-+	/*
-+	 * Send message to all PMICs that share an IRQ line to deassert it.
-+	 *
-+	 * WARNING: This works only if all the PMICs are on the same I2C bus.
-+	 */
-+	list_for_each_entry(pos, &quirk_list, list) {
-+		if (!pos->shared)
-+			continue;
- 
--		/* There are two DA9210 on Stout, one on the other boards. */
--		len = of_machine_is_compatible("renesas,stout") ? 3 : 2;
-+		dev_info(&client->dev, "clearing %s@0x%02x interrupts\n",
-+			 pos->id->compatible, pos->i2c_msg.addr);
- 
--		dev_info(&client->dev, "clearing da9063/da9210 interrupts\n");
--		ret = i2c_transfer(client->adapter, da9xxx_msgs, len);
--		if (ret != len)
-+		ret = i2c_transfer(client->adapter, &pos->i2c_msg, 1);
-+		if (ret != 1)
- 			dev_err(&client->dev, "i2c error %d\n", ret);
- 	}
- 
-@@ -103,6 +118,11 @@ static int regulator_quirk_notify(struct notifier_block *nb,
- remove:
- 	dev_info(dev, "IRQ2 is not asserted, removing quirk\n");
- 
-+	list_for_each_entry_safe(pos, tmp, &quirk_list, list) {
-+		list_del(&pos->list);
-+		kfree(pos);
-+	}
-+
- 	done = true;
- 	iounmap(irqc);
- 	return 0;
-@@ -114,7 +134,12 @@ static struct notifier_block regulator_quirk_nb = {
- 
- static int __init rcar_gen2_regulator_quirk(void)
- {
--	u32 mon;
-+	struct regulator_quirk *quirk, *pos, *tmp;
-+	struct of_phandle_args *argsa, *argsb;
-+	const struct of_device_id *id;
-+	struct device_node *np;
-+	u32 mon, addr;
-+	int ret;
- 
- 	if (!of_machine_is_compatible("renesas,koelsch") &&
- 	    !of_machine_is_compatible("renesas,lager") &&
-@@ -122,22 +147,78 @@ static int __init rcar_gen2_regulator_quirk(void)
- 	    !of_machine_is_compatible("renesas,gose"))
- 		return -ENODEV;
- 
-+	for_each_matching_node_and_match(np, rcar_gen2_quirk_match, &id) {
-+		if (!of_device_is_available(np))
-+			break;
-+
-+		ret = of_property_read_u32(np, "reg", &addr);
-+		if (ret)	/* Skip invalid entry and continue */
-+			continue;
-+
-+		quirk = kzalloc(sizeof(*quirk), GFP_KERNEL);
-+		if (!quirk) {
-+			ret = -ENOMEM;
-+			goto err_mem;
-+		}
-+
-+		argsa = &quirk->irq_args;
-+		memcpy(&quirk->i2c_msg, id->data, sizeof(quirk->i2c_msg));
-+
-+		quirk->id = id;
-+		quirk->i2c_msg.addr = addr;
-+
-+		ret = of_irq_parse_one(np, 0, argsa);
-+		if (ret) {	/* Skip invalid entry and continue */
-+			kfree(quirk);
-+			continue;
-+		}
-+
-+		list_for_each_entry(pos, &quirk_list, list) {
-+			argsb = &pos->irq_args;
-+
-+			if (argsa->args_count != argsb->args_count)
-+				continue;
-+
-+			ret = memcmp(argsa->args, argsb->args,
-+				     argsa->args_count *
-+				     sizeof(argsa->args[0]));
-+			if (!ret) {
-+				pos->shared = true;
-+				quirk->shared = true;
-+			}
-+		}
-+
-+		list_add_tail(&quirk->list, &quirk_list);
-+	}
-+
- 	irqc = ioremap(IRQC_BASE, PAGE_SIZE);
--	if (!irqc)
--		return -ENOMEM;
-+	if (!irqc) {
-+		ret = -ENOMEM;
-+		goto err_mem;
-+	}
- 
- 	mon = ioread32(irqc + IRQC_MONITOR);
- 	if (mon & REGULATOR_IRQ_MASK) {
- 		pr_debug("%s: IRQ2 is not asserted, not installing quirk\n",
- 			 __func__);
--		iounmap(irqc);
--		return 0;
-+		ret = 0;
-+		goto err_free;
- 	}
- 
- 	pr_info("IRQ2 is asserted, installing da9063/da9210 regulator quirk\n");
- 
- 	bus_register_notifier(&i2c_bus_type, &regulator_quirk_nb);
- 	return 0;
-+
-+err_free:
-+	iounmap(irqc);
-+err_mem:
-+	list_for_each_entry_safe(pos, tmp, &quirk_list, list) {
-+		list_del(&pos->list);
-+		kfree(pos);
-+	}
-+
-+	return ret;
- }
- 
- arch_initcall(rcar_gen2_regulator_quirk);
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
