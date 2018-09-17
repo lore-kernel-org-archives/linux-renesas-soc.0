@@ -1,37 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:37225 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727562AbeIQOPt (ORCPT
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43330 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727691AbeIQOFq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Sep 2018 10:15:49 -0400
-Date: Mon, 17 Sep 2018 10:49:20 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 00/03] Further product name updates
-Message-ID: <20180917084919.yp7t4p3joxqfbxqa@verge.net.au>
-References: <153717356234.480.6698281193817518888.sendpatchset@octo>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <153717356234.480.6698281193817518888.sendpatchset@octo>
+        Mon, 17 Sep 2018 10:05:46 -0400
+Received: by mail-pl1-f193.google.com with SMTP id 38-v6so1366556plc.10
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Sep 2018 01:39:23 -0700 (PDT)
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Date: Mon, 17 Sep 2018 17:39:22 +0900
+Message-Id: <153717356234.480.6698281193817518888.sendpatchset@octo>
+Subject: [PATCH 00/03] Further product name updates
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Sep 17, 2018 at 05:39:22PM +0900, Magnus Damm wrote:
-> Further product name updates
-> 
-> [PATCH 01/03] dt-bindings: arm: consistently name SH-Mobile AG5 as R8A73A00
-> [PATCH 02/03] arm: dts: Include R-Car Gen2 product name in DTSI files
-> [PATCH 03/03] arm: dts: R-Car Gen1 board comment update
-> 
-> Clean up and update the DTS/DTSI files and SoC DT binding documentation.
-> 
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Further product name updates
 
-Thanks Magnus,
+[PATCH 01/03] dt-bindings: arm: consistently name SH-Mobile AG5 as R8A73A00
+[PATCH 02/03] arm: dts: Include R-Car Gen2 product name in DTSI files
+[PATCH 03/03] arm: dts: R-Car Gen1 board comment update
 
-This looks fine to me but I will wait to see if there are other reviews
-before applying.
+Clean up and update the DTS/DTSI files and SoC DT binding documentation.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
+
+ Developed on top of renesas-devel-20180914-v4.19-rc3
+
+ Documentation/devicetree/bindings/arm/shmobile.txt |    2 +-
+ arch/arm/boot/dts/r8a7778-bockw.dts                |    2 +-
+ arch/arm/boot/dts/r8a7779-marzen.dts               |    2 +-
+ arch/arm/boot/dts/r8a7790.dtsi                     |    2 +-
+ arch/arm/boot/dts/r8a7791.dtsi                     |    2 +-
+ arch/arm/boot/dts/r8a7792.dtsi                     |    2 +-
+ arch/arm/boot/dts/r8a7793.dtsi                     |    2 +-
+ arch/arm/boot/dts/r8a7794.dtsi                     |    2 +-
+ 8 files changed, 8 insertions(+), 8 deletions(-)
