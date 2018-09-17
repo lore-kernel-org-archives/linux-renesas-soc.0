@@ -1,162 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:42318 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726819AbeIMUzN (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:37172 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727864AbeIQON0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 16:55:13 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Peter Maydell <peter.maydell@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc: Auger Eric <eric.auger@redhat.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        qemu-arm@nongnu.org, qemu-devel@nongnu.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 1/3] vfio/platform: Make the vfio-platform device non-abstract
-Date: Thu, 13 Sep 2018 17:44:56 +0200
-Message-Id: <20180913154458.23939-2-geert+renesas@glider.be>
-In-Reply-To: <20180913154458.23939-1-geert+renesas@glider.be>
-References: <20180913154458.23939-1-geert+renesas@glider.be>
+        Mon, 17 Sep 2018 10:13:26 -0400
+Date: Mon, 17 Sep 2018 10:46:57 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rob Herring <robh@kernel.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 04/10] dt-bindings: reset: rcar-rst: Document r8a7744
+ reset module
+Message-ID: <20180917084656.zxe2zulnccqlxx2n@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5b9f3f7c.1c69fb81.d0271.2b38@mx.google.com>
+ <CAMuHMdWyrsfQodVSTfSLTKS15thTzUGDdUPLReVJ9GgbJ9rB1Q@mail.gmail.com>
+ <20180912100518.lth3p5cpl5f4lai4@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Auger Eric <eric.auger@redhat.com>
+On Wed, Sep 12, 2018 at 12:05:19PM +0200, Simon Horman wrote:
+> On Tue, Sep 11, 2018 at 11:12:45AM +0100, Biju Das wrote:
+> > Document bindings for the RZ/G1N (R8A7744) reset module.
+> > 
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> 
+> Thanks,
+> 
+> This looks fine to me but I will wait to see if there are other reviews
+> before applying.
+> 
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Up to now the vfio-platform device has been abstract and could not be
-instantiated.  The integration of a new vfio platform device required
-creating a dummy derived device which only set the compatible string.
+Thanks again,
 
-Following the few vfio-platform device integrations we have seen the
-actual requested adaptation happens on device tree node creation
-(sysbus-fdt).
+applied for v4.20.
 
-Hence remove the abstract setting, and read the list of compatible
-values from sysfs if not set by a derived device.
+On Fri, Sep 14, 2018 at 02:32:33PM +0200, Geert Uytterhoeven wrote:
+> On Tue, Sep 11, 2018 at 12:19 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> > Document bindings for the RZ/G1N (R8A7744) reset module.
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
 
-Update the amd-xgbe and calxeda-xgmac drivers to fill in the number of
-compatible values, as there can now be more than one.
-
-Note that sysbus-fdt does not support the instantiation of the
-vfio-platform device yet.
-
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
-[geert: Rebase, set user_creatable=true, use compatible values in sysfs
-	instead of user-supplied manufacturer/model options, reword]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4:
-  - Propagate g_file_get_contents() errors through errp,
-
-v3:
-  - Read all compatible values from sysfs instead of using user-supplied
-    manufacturer and model options,
-  - Reword patch description,
-  - Drop RFC state,
-
-v2:
-  - No changes,
-
-v1:
-  - Rebase, Set user_creatable=true,
-
-v0:
-  - Original version from Eric.
----
- hw/vfio/amd-xgbe.c              |  1 +
- hw/vfio/calxeda-xgmac.c         |  1 +
- hw/vfio/platform.c              | 24 +++++++++++++++++++++++-
- include/hw/vfio/vfio-platform.h |  3 ++-
- 4 files changed, 27 insertions(+), 2 deletions(-)
-
-diff --git a/hw/vfio/amd-xgbe.c b/hw/vfio/amd-xgbe.c
-index 0c4ec4ba25170366..ee64a3b4a2e45bf5 100644
---- a/hw/vfio/amd-xgbe.c
-+++ b/hw/vfio/amd-xgbe.c
-@@ -20,6 +20,7 @@ static void amd_xgbe_realize(DeviceState *dev, Error **errp)
-     VFIOAmdXgbeDeviceClass *k = VFIO_AMD_XGBE_DEVICE_GET_CLASS(dev);
- 
-     vdev->compat = g_strdup("amd,xgbe-seattle-v1a");
-+    vdev->num_compat = 1;
- 
-     k->parent_realize(dev, errp);
- }
-diff --git a/hw/vfio/calxeda-xgmac.c b/hw/vfio/calxeda-xgmac.c
-index 24cee6d06512c1b6..e7767c4b021be566 100644
---- a/hw/vfio/calxeda-xgmac.c
-+++ b/hw/vfio/calxeda-xgmac.c
-@@ -20,6 +20,7 @@ static void calxeda_xgmac_realize(DeviceState *dev, Error **errp)
-     VFIOCalxedaXgmacDeviceClass *k = VFIO_CALXEDA_XGMAC_DEVICE_GET_CLASS(dev);
- 
-     vdev->compat = g_strdup("calxeda,hb-xgmac");
-+    vdev->num_compat = 1;
- 
-     k->parent_realize(dev, errp);
- }
-diff --git a/hw/vfio/platform.c b/hw/vfio/platform.c
-index 57c4a0ee2b58da70..894333c602eb6fd2 100644
---- a/hw/vfio/platform.c
-+++ b/hw/vfio/platform.c
-@@ -655,6 +655,27 @@ static void vfio_platform_realize(DeviceState *dev, Error **errp)
-         goto out;
-     }
- 
-+    if (!vdev->compat) {
-+        GError *gerr = NULL;
-+        gchar *contents;
-+        gsize length;
-+        char *path;
-+
-+        path = g_strdup_printf("%s/of_node/compatible", vbasedev->sysfsdev);
-+        if (!g_file_get_contents(path, &contents, &length, &gerr)) {
-+            error_setg(errp, "%s", gerr->message);
-+            g_error_free(gerr);
-+            return;
-+        }
-+        g_free(path);
-+        vdev->compat = contents;
-+        for (vdev->num_compat = 0; length; vdev->num_compat++) {
-+            size_t skip = strlen(contents) + 1;
-+            contents += skip;
-+            length -= skip;
-+        }
-+    }
-+
-     for (i = 0; i < vbasedev->num_regions; i++) {
-         if (vfio_region_mmap(vdev->regions[i])) {
-             error_report("%s mmap unsupported. Performance may be slow",
-@@ -700,6 +721,8 @@ static void vfio_platform_class_init(ObjectClass *klass, void *data)
-     dc->desc = "VFIO-based platform device assignment";
-     sbc->connect_irq_notifier = vfio_start_irqfd_injection;
-     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
-+    /* Supported by TYPE_VIRT_MACHINE */
-+    dc->user_creatable = true;
- }
- 
- static const TypeInfo vfio_platform_dev_info = {
-@@ -708,7 +731,6 @@ static const TypeInfo vfio_platform_dev_info = {
-     .instance_size = sizeof(VFIOPlatformDevice),
-     .class_init = vfio_platform_class_init,
-     .class_size = sizeof(VFIOPlatformDeviceClass),
--    .abstract   = true,
- };
- 
- static void register_vfio_platform_dev_type(void)
-diff --git a/include/hw/vfio/vfio-platform.h b/include/hw/vfio/vfio-platform.h
-index 9baaa2db09b84f3e..0ee10b1d71ed2503 100644
---- a/include/hw/vfio/vfio-platform.h
-+++ b/include/hw/vfio/vfio-platform.h
-@@ -54,7 +54,8 @@ typedef struct VFIOPlatformDevice {
-     QLIST_HEAD(, VFIOINTp) intp_list; /* list of IRQs */
-     /* queue of pending IRQs */
-     QSIMPLEQ_HEAD(pending_intp_queue, VFIOINTp) pending_intp_queue;
--    char *compat; /* compatibility string */
-+    char *compat; /* DT compatible values, separated by NUL */
-+    unsigned int num_compat; /* number of compatible values */
-     uint32_t mmap_timeout; /* delay to re-enable mmaps after interrupt */
-     QEMUTimer *mmap_timer; /* allows fast-path resume after IRQ hit */
-     QemuMutex intp_mutex; /* protect the intp_list IRQ state */
--- 
-2.17.1
+On Mon, Sep 17, 2018 at 01:45:31AM -0400, Rob Herring wrote:
+> On Tue, 11 Sep 2018 11:12:45 +0100, Biju Das wrote:
+> > Document bindings for the RZ/G1N (R8A7744) reset module.
+> > 
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > ---
+> >  Documentation/devicetree/bindings/reset/renesas,rst.txt | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> 
