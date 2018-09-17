@@ -1,108 +1,103 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:59414 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728127AbeINOYY (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:40331 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728000AbeIRADf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Sep 2018 10:24:24 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, Ulrich Hecht <uli@fpond.eu>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v2 14/16] arm64: dts: renesas: r8a77995: Add LVDS support
-Date: Fri, 14 Sep 2018 12:10:44 +0300
-Message-Id: <20180914091046.483-15-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180914091046.483-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180914091046.483-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 17 Sep 2018 20:03:35 -0400
+Received: by mail-it0-f66.google.com with SMTP id h23-v6so12268063ita.5
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Sep 2018 11:35:01 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20180913144708.12085-1-wsa+renesas@sang-engineering.com>
+References: <20180913144708.12085-1-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 17 Sep 2018 20:35:01 +0200
+Message-ID: <CAPDyKFoZ1pPZzMdZvT3b6Su3KfiSuy2whdFw+FULAKENsdZ8Vg@mail.gmail.com>
+Subject: Re: [PATCH v3] mmc: renesas_sdhi_internal_dmac: set scatter/gather
+ max segment size
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On 13 September 2018 at 16:47, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> From: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
+>
+> Fix warning when running with CONFIG_DMA_API_DEBUG_SG=3Dy by allocating a
+> device_dma_parameters structure and filling in the max segment size. The
+> size used is the result of a discussion with Renesas hardware engineers
+> and unfortunately not found in the datasheet.
+>
+>   renesas_sdhi_internal_dmac ee140000.sd: DMA-API: mapping sg segment
+>   longer than device claims to support [len=3D126976] [max=3D65536]
+>
+> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
+> [wsa: simplified some logic after validating intended dma_parms life cycl=
+e
+>       and added comment]
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-The r8a77995 D3 platform has 2 LVDS channels connected to the DU.
+Applied for next, thanks!
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-[uli: moved lvds* into the soc node, added PM domains, resets]
-Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 56 +++++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+Kind regards
+Uffe
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index fe77bc43c447..32c473143b19 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -960,12 +960,68 @@
- 				port@1 {
- 					reg = <1>;
- 					du_out_lvds0: endpoint {
-+						remote-endpoint = <&lvds0_in>;
- 					};
- 				};
- 
- 				port@2 {
- 					reg = <2>;
- 					du_out_lvds1: endpoint {
-+						remote-endpoint = <&lvds1_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		lvds0: lvds-encoder@feb90000 {
-+			compatible = "renesas,r8a77995-lvds";
-+			reg = <0 0xfeb90000 0 0x20>;
-+			clocks = <&cpg CPG_MOD 727>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 727>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					lvds0_in: endpoint {
-+						remote-endpoint = <&du_out_lvds0>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					lvds0_out: endpoint {
-+					};
-+				};
-+			};
-+		};
-+
-+		lvds1: lvds-encoder@feb90100 {
-+			compatible = "renesas,r8a77995-lvds";
-+			reg = <0 0xfeb90100 0 0x20>;
-+			clocks = <&cpg CPG_MOD 727>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 726>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					lvds1_in: endpoint {
-+						remote-endpoint = <&du_out_lvds1>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					lvds1_out: endpoint {
- 					};
- 				};
- 			};
--- 
-Regards,
-
-Laurent Pinchart
+> ---
+>
+> After discussing with DMA maintainers [1], this really seems the intended=
+ way
+> of using dma_parms. Took Niklas patch V2 and simplified the logic a bit m=
+ore
+> given the information from above (but I'll still tackle the dangling poin=
+ter
+> issue in the DMA core seperately).
+>
+> [1] https://www.spinics.net/lists/iommu/msg29861.html
+>
+>  drivers/mmc/host/renesas_sdhi_internal_dmac.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/=
+host/renesas_sdhi_internal_dmac.c
+> index ca0b43973769..e0823acaa3c2 100644
+> --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> @@ -309,12 +309,20 @@ static const struct soc_device_attribute gen3_soc_w=
+hitelist[] =3D {
+>  static int renesas_sdhi_internal_dmac_probe(struct platform_device *pdev=
+)
+>  {
+>         const struct soc_device_attribute *soc =3D soc_device_match(gen3_=
+soc_whitelist);
+> +       struct device *dev =3D &pdev->dev;
+>
+>         if (!soc)
+>                 return -ENODEV;
+>
+>         global_flags |=3D (unsigned long)soc->data;
+>
+> +       dev->dma_parms =3D devm_kzalloc(dev, sizeof(*dev->dma_parms), GFP=
+_KERNEL);
+> +       if (!dev->dma_parms)
+> +               return -ENOMEM;
+> +
+> +       /* value is max of SD_SECCNT. Confirmed by HW engineers */
+> +       dma_set_max_seg_size(dev, 0xffffffff);
+> +
+>         return renesas_sdhi_probe(pdev, &renesas_sdhi_internal_dmac_dma_o=
+ps);
+>  }
+>
+> --
+> 2.11.0
+>
