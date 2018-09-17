@@ -1,59 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58325 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729116AbeI1QrU (ORCPT
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:46390 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728065AbeIQQeH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:47:20 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC DT Bindings Updates for v4.20
-Date: Fri, 28 Sep 2018 12:23:48 +0200
-Message-Id: <cover.1538129305.git.horms+renesas@verge.net.au>
+        Mon, 17 Sep 2018 12:34:07 -0400
+Received: by mail-lj1-f193.google.com with SMTP id 203-v6so12753055ljj.13
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Sep 2018 04:07:14 -0700 (PDT)
+Date: Mon, 17 Sep 2018 13:07:12 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH 3/5] media: dt-bindings: media: rcar_vin: Add r8a774a1
+ support
+Message-ID: <20180917110712.GR18450@bigcity.dyn.berto.se>
+References: <1536589878-26218-1-git-send-email-biju.das@bp.renesas.com>
+ <1536589878-26218-4-git-send-email-biju.das@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1536589878-26218-4-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Hi Biju,
 
-Please consider these Renesas ARM based SoC DT bindings updates for v4.20.
+Thanks for your patch.
 
+On 2018-09-10 15:31:16 +0100, Biju Das wrote:
+> Document RZ/G2M (R8A774A1) SoC bindings.
+> 
+> The RZ/G2M SoC is similar to R-Car M3-W (R8A7796).
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+Acked-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+> ---
+>  Documentation/devicetree/bindings/media/rcar_vin.txt | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
+> index 2f42005..8c81689 100644
+> --- a/Documentation/devicetree/bindings/media/rcar_vin.txt
+> +++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
+> @@ -12,6 +12,7 @@ on Gen3 platforms to a CSI-2 receiver.
+>   - compatible: Must be one or more of the following
+>     - "renesas,vin-r8a7743" for the R8A7743 device
+>     - "renesas,vin-r8a7745" for the R8A7745 device
+> +   - "renesas,vin-r8a774a1" for the R8A774A1 device
+>     - "renesas,vin-r8a7778" for the R8A7778 device
+>     - "renesas,vin-r8a7779" for the R8A7779 device
+>     - "renesas,vin-r8a7790" for the R8A7790 device
+> @@ -58,9 +59,9 @@ The per-board settings Gen2 platforms:
+>      - data-enable-active: polarity of CLKENB signal, see [1] for
+>        description. Default is active high.
+>  
+> -The per-board settings Gen3 platforms:
+> +The per-board settings Gen3 and RZ/G2 platforms:
+>  
+> -Gen3 platforms can support both a single connected parallel input source
+> +Gen3 and RZ/G2 platforms can support both a single connected parallel input source
+>  from external SoC pins (port@0) and/or multiple parallel input sources
+>  from local SoC CSI-2 receivers (port@1) depending on SoC.
+>  
+> -- 
+> 2.7.4
+> 
 
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt-bindings-for-v4.20
-
-for you to fetch changes up to 39c0e5a8746cfbfb87e86761337c807e7faea134:
-
-  dt-bindings: arm: Document RZ/G2E SoC DT bindings (2018-09-12 10:27:16 +0200)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC DT Bindings Updates for v4.20
-
-* Document bindings for:
-  - RZ/G2E (r8a774c0), RZ/G2M (r8a774a1) and RZ/A2 (r7s9210) SoCs
-  - R-Car M3-N (r8a77965) SoC based ULCB board
-
-----------------------------------------------------------------
-Biju Das (1):
-      dt-bindings: arm: Document RZ/G2M SoC DT bindings
-
-Chris Brandt (1):
-      dt-bindings: arm: Document RZ/A2 SoC DT bindings
-
-Eugeniu Rosca (1):
-      dt-bindings: arm: Document Renesas R-Car M3-N-based ULCB board
-
-Fabrizio Castro (1):
-      dt-bindings: arm: Document RZ/G2E SoC DT bindings
-
- Documentation/devicetree/bindings/arm/shmobile.txt | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+-- 
+Regards,
+Niklas S�derlund
