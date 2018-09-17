@@ -1,137 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:31376 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727593AbeIJOiV (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36137 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726652AbeIQMgu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Sep 2018 10:38:21 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+        Mon, 17 Sep 2018 08:36:50 -0400
+Date: Mon, 17 Sep 2018 09:10:42 +0200
+From: Simon Horman <horms@verge.net.au>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 1/3][can-next] can: rcar_can: Fix erroneous registration
-Date: Mon, 10 Sep 2018 09:45:00 +0000
-Message-ID: <TY1PR01MB17707F01D3C3D6D0FD0D552BC0050@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1535029653-7418-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1535029653-7418-2-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAMuHMdWrfuLF7h_-yYnCsUBryJUody_WuhqN_2jEQZu-V8khJw@mail.gmail.com>
-In-Reply-To: <CAMuHMdWrfuLF7h_-yYnCsUBryJUody_WuhqN_2jEQZu-V8khJw@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Subject: Re: [PATCH] arm64: dts: renesas: salvator-common: Add GPIO keys
+ support
+Message-ID: <20180917071041.jobxfznnla3mnuga@verge.net.au>
+References: <20180819194455.25096-1-laurent.pinchart+renesas@ideasonboard.com>
+ <CAMuHMdW4ium4s97+1iOHkhBGw3LdfPyfxXq4_7ic+VtXzRpE2g@mail.gmail.com>
+ <20180906094231.eccvg2asl7kgotu2@verge.net.au>
+ <2032675.nQfVxexfDx@avalon>
+ <20180912102534.vrocfv2mdrjuk2ev@verge.net.au>
+ <CAMuHMdU0NqdN7efjDMcabXuWAFJy3eQSFHWxcjYaRMjz=+vKJQ@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdU0NqdN7efjDMcabXuWAFJy3eQSFHWxcjYaRMjz=+vKJQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gR2VlcnQsDQoNCkkgYW0gc29ycnkgZm9yIHRoZSBsYXRlIHJlcGx5Lg0KVGhhbmsgeW91
-IGZvciB5b3VyIGZlZWRiYWNrLg0KDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMS8zXVtjYW4tbmV4
-dF0gY2FuOiByY2FyX2NhbjogRml4IGVycm9uZW91cyByZWdpc3RyYXRpb24NCj4NCj4gSGkgRmFi
-cml6aW8sDQo+DQo+IE9uIFRodSwgQXVnIDIzLCAyMDE4IGF0IDM6MDggUE0gRmFicml6aW8gQ2Fz
-dHJvDQo+IDxmYWJyaXppby5jYXN0cm9AYnAucmVuZXNhcy5jb20+IHdyb3RlOg0KPiA+IEFzc2ln
-bmluZyAyIHRvICJyZW5lc2FzLGNhbi1jbG9jay1zZWxlY3QiIHRyaWNrcyB0aGUgZHJpdmVyIGlu
-dG8NCj4gPiByZWdpc3RlcmluZyB0aGUgQ0FOIGludGVyZmFjZSwgZXZlbiB0aG91Z2ggd2UgZG9u
-J3Qgd2FudCB0aGF0Lg0KPiA+IFRoaXMgcGF0Y2ggZml4ZXMgdGhpcyBwcm9ibGVtIGFuZCBhbHNv
-IGFsbG93cyBmb3IgYXJjaGl0ZWN0dXJlcw0KPiA+IG1pc3Npbmcgc29tZSBvZiB0aGUgY2xvY2tz
-IChlLmcuIFJaL0cyKSB0byBiZWhhdmUgYXMgZXhwZWN0ZWQuDQo+DQo+IEkgdGhpbmsgdGhlIGZp
-eCBmb3IgdGhlIHNlY29uZCBpc3N1ZSBpcyBub3QgbmVlZGVkIChzZWUgbXkgcmVwbHkgdG8gdGhl
-IG90aGVyDQo+IHBhdGNoKS4NCj4NCj4gPiBGaXhlczogODYyZTJiNmFmOTQxM2I0MyAoImNhbjog
-cmNhcl9jYW46IHN1cHBvcnQgYWxsIGlucHV0IGNsb2NrcyIpDQo+ID4gU2lnbmVkLW9mZi1ieTog
-RmFicml6aW8gQ2FzdHJvIDxmYWJyaXppby5jYXN0cm9AYnAucmVuZXNhcy5jb20+DQo+ID4gU2ln
-bmVkLW9mZi1ieTogQ2hyaXMgUGF0ZXJzb24gPENocmlzLlBhdGVyc29uMkByZW5lc2FzLmNvbT4N
-Cj4gPiAtLS0NCj4gPg0KPiA+IFRoaXMgcGF0Y2ggYXBwbGllcyBvbiBsaW51eC1jYW4tbmV4dC1m
-b3ItNC4xOS0yMDE4MDcyNw0KPiA+DQo+ID4gIGRyaXZlcnMvbmV0L2Nhbi9yY2FyL3JjYXJfY2Fu
-LmMgfCA0MyArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0tLQ0KPiA+ICAx
-IGZpbGUgY2hhbmdlZCwgMzUgaW5zZXJ0aW9ucygrKSwgOCBkZWxldGlvbnMoLSkNCj4gPg0KPiA+
-IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9jYW4vcmNhci9yY2FyX2Nhbi5jIGIvZHJpdmVycy9u
-ZXQvY2FuL3JjYXIvcmNhcl9jYW4uYw0KPiA+IGluZGV4IDExNjYyZjQuLmZiZDkyODQgMTAwNjQ0
-DQo+ID4gLS0tIGEvZHJpdmVycy9uZXQvY2FuL3JjYXIvcmNhcl9jYW4uYw0KPiA+ICsrKyBiL2Ry
-aXZlcnMvbmV0L2Nhbi9yY2FyL3JjYXJfY2FuLmMNCj4gPiBAQCAtMjEsOSArMjEsMTMgQEANCj4g
-PiAgI2luY2x1ZGUgPGxpbnV4L2Nsay5oPg0KPiA+ICAjaW5jbHVkZSA8bGludXgvY2FuL3BsYXRm
-b3JtL3JjYXJfY2FuLmg+DQo+ID4gICNpbmNsdWRlIDxsaW51eC9vZi5oPg0KPiA+ICsjaW5jbHVk
-ZSA8bGludXgvb2ZfZGV2aWNlLmg+DQo+ID4NCj4gPiAgI2RlZmluZSBSQ0FSX0NBTl9EUlZfTkFN
-RSAgICAgICJyY2FyX2NhbiINCj4gPg0KPiA+ICsjZGVmaW5lIFJDQVJfU1VQUE9SVEVEX0NMT0NL
-UyAgKEJJVChDTEtSX0NMS1AxKSB8IEJJVChDTEtSX0NMS1AyKSB8IFwNCj4gPiArICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICBCSVQoQ0xLUl9DTEtFWFQpKQ0KPiA+ICsNCj4gPiAgLyog
-TWFpbGJveCBjb25maWd1cmF0aW9uOg0KPiA+ICAgKiBtYWlsYm94IDYwIC0gNjMgLSBSeCBGSUZP
-IG1haWxib3hlcw0KPiA+ICAgKiBtYWlsYm94IDU2IC0gNTkgLSBUeCBGSUZPIG1haWxib3hlcw0K
-PiA+IEBAIC03NDUsMTAgKzc0OSwxMiBAQCBzdGF0aWMgaW50IHJjYXJfY2FuX3Byb2JlKHN0cnVj
-dCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ID4gICAgICAgICB1MzIgY2xvY2tfc2VsZWN0ID0g
-Q0xLUl9DTEtQMTsNCj4gPiAgICAgICAgIGludCBlcnIgPSAtRU5PREVWOw0KPiA+ICAgICAgICAg
-aW50IGlycTsNCj4gPiArICAgICAgIHVpbnRwdHJfdCBhbGxvd2VkX2Nsa3MgPSBSQ0FSX1NVUFBP
-UlRFRF9DTE9DS1M7DQo+ID4NCj4gPiAgICAgICAgIGlmIChwZGV2LT5kZXYub2Zfbm9kZSkgew0K
-PiA+ICAgICAgICAgICAgICAgICBvZl9wcm9wZXJ0eV9yZWFkX3UzMihwZGV2LT5kZXYub2Zfbm9k
-ZSwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgInJlbmVzYXMsY2Fu
-LWNsb2NrLXNlbGVjdCIsICZjbG9ja19zZWxlY3QpOw0KPg0KPg0KPiA+ICsgICAgICAgICAgICAg
-ICBhbGxvd2VkX2Nsa3MgPSAodWludHB0cl90KW9mX2RldmljZV9nZXRfbWF0Y2hfZGF0YSgmcGRl
-di0+ZGV2KTsNCj4gPiAgICAgICAgIH0gZWxzZSB7DQo+ID4gICAgICAgICAgICAgICAgIHBkYXRh
-ID0gZGV2X2dldF9wbGF0ZGF0YSgmcGRldi0+ZGV2KTsNCj4gPiAgICAgICAgICAgICAgICAgaWYg
-KCFwZGF0YSkgew0KPiA+IEBAIC03ODksNyArNzk1LDcgQEAgc3RhdGljIGludCByY2FyX2Nhbl9w
-cm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiA+ICAgICAgICAgICAgICAgICBn
-b3RvIGZhaWxfY2xrOw0KPiA+ICAgICAgICAgfQ0KPiA+DQo+ID4gLSAgICAgICBpZiAoY2xvY2tf
-c2VsZWN0ID49IEFSUkFZX1NJWkUoY2xvY2tfbmFtZXMpKSB7DQo+ID4gKyAgICAgICBpZiAoIShC
-SVQoY2xvY2tfc2VsZWN0KSAmIGFsbG93ZWRfY2xrcykpIHsNCj4NCj4gSGVuY2UgeW91IGNhbiBq
-dXN0IHVzZSBSQ0FSX1NVUFBPUlRFRF9DTE9DS1MgZGlyZWN0bHksDQo+IG9yIGJldHRlciwganVz
-dCBjaGVjayBjbG9ja19uYW1lc1tjbG9ja19zZWxlY3RdICE9IE5VTEwsIC4uLg0KDQpJIHJhdGhl
-ciB1c2UgUkNBUl9TVVBQT1JURURfQ0xPQ0tTIHRoZW4sIGl0J3Mgc2FmZXIuIEknbGwgc2VuZCBh
-IHYyIGZvciB5b3UgdG8gbG9vayBhdC4NCg0KPg0KPiA+ICAgICAgICAgICAgICAgICBlcnIgPSAt
-RUlOVkFMOw0KPiA+ICAgICAgICAgICAgICAgICBkZXZfZXJyKCZwZGV2LT5kZXYsICJpbnZhbGlk
-IENBTiBjbG9jayBzZWxlY3RlZFxuIik7DQo+ID4gICAgICAgICAgICAgICAgIGdvdG8gZmFpbF9j
-bGs7DQo+ID4gQEAgLTg5OSwxMyArOTA1LDM0IEBAIHN0YXRpYyBpbnQgX19tYXliZV91bnVzZWQg
-cmNhcl9jYW5fcmVzdW1lKHN0cnVjdCBkZXZpY2UgKmRldikNCj4gPiAgc3RhdGljIFNJTVBMRV9E
-RVZfUE1fT1BTKHJjYXJfY2FuX3BtX29wcywgcmNhcl9jYW5fc3VzcGVuZCwgcmNhcl9jYW5fcmVz
-dW1lKTsNCj4gPg0KPiA+ICBzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCByY2FyX2Nh
-bl9vZl90YWJsZVtdIF9fbWF5YmVfdW51c2VkID0gew0KPiA+IC0gICAgICAgeyAuY29tcGF0aWJs
-ZSA9ICJyZW5lc2FzLGNhbi1yOGE3Nzc4IiB9LA0KPiA+IC0gICAgICAgeyAuY29tcGF0aWJsZSA9
-ICJyZW5lc2FzLGNhbi1yOGE3Nzc5IiB9LA0KPiA+IC0gICAgICAgeyAuY29tcGF0aWJsZSA9ICJy
-ZW5lc2FzLGNhbi1yOGE3NzkwIiB9LA0KPiA+IC0gICAgICAgeyAuY29tcGF0aWJsZSA9ICJyZW5l
-c2FzLGNhbi1yOGE3NzkxIiB9LA0KPiA+IC0gICAgICAgeyAuY29tcGF0aWJsZSA9ICJyZW5lc2Fz
-LHJjYXItZ2VuMS1jYW4iIH0sDQo+ID4gLSAgICAgICB7IC5jb21wYXRpYmxlID0gInJlbmVzYXMs
-cmNhci1nZW4yLWNhbiIgfSwNCj4gPiAtICAgICAgIHsgLmNvbXBhdGlibGUgPSAicmVuZXNhcyxy
-Y2FyLWdlbjMtY2FuIiB9LA0KPiA+ICsgICAgICAgew0KPiA+ICsgICAgICAgICAgICAgICAuY29t
-cGF0aWJsZSA9ICJyZW5lc2FzLGNhbi1yOGE3Nzc4IiwNCj4gPiArICAgICAgICAgICAgICAgLmRh
-dGEgPSAodm9pZCAqKVJDQVJfU1VQUE9SVEVEX0NMT0NLUywNCj4gPiArICAgICAgIH0sDQo+ID4g
-KyAgICAgICB7DQo+ID4gKyAgICAgICAgICAgICAgIC5jb21wYXRpYmxlID0gInJlbmVzYXMsY2Fu
-LXI4YTc3NzkiLA0KPiA+ICsgICAgICAgICAgICAgICAuZGF0YSA9ICh2b2lkICopUkNBUl9TVVBQ
-T1JURURfQ0xPQ0tTLA0KPiA+ICsgICAgICAgfSwNCj4gPiArICAgICAgIHsNCj4gPiArICAgICAg
-ICAgICAgICAgLmNvbXBhdGlibGUgPSAicmVuZXNhcyxjYW4tcjhhNzc5MCIsDQo+ID4gKyAgICAg
-ICAgICAgICAgIC5kYXRhID0gKHZvaWQgKilSQ0FSX1NVUFBPUlRFRF9DTE9DS1MsDQo+ID4gKyAg
-ICAgICB9LA0KPiA+ICsgICAgICAgew0KPiA+ICsgICAgICAgICAgICAgICAuY29tcGF0aWJsZSA9
-ICJyZW5lc2FzLGNhbi1yOGE3NzkxIiwNCj4gPiArICAgICAgICAgICAgICAgLmRhdGEgPSAodm9p
-ZCAqKVJDQVJfU1VQUE9SVEVEX0NMT0NLUywNCj4gPiArICAgICAgIH0sDQo+ID4gKyAgICAgICB7
-DQo+ID4gKyAgICAgICAgICAgICAgIC5jb21wYXRpYmxlID0gInJlbmVzYXMscmNhci1nZW4xLWNh
-biIsDQo+ID4gKyAgICAgICAgICAgICAgIC5kYXRhID0gKHZvaWQgKilSQ0FSX1NVUFBPUlRFRF9D
-TE9DS1MsDQo+ID4gKyAgICAgICB9LA0KPiA+ICsgICAgICAgew0KPiA+ICsgICAgICAgICAgICAg
-ICAuY29tcGF0aWJsZSA9ICJyZW5lc2FzLHJjYXItZ2VuMi1jYW4iLA0KPiA+ICsgICAgICAgICAg
-ICAgICAuZGF0YSA9ICh2b2lkICopUkNBUl9TVVBQT1JURURfQ0xPQ0tTLA0KPiA+ICsgICAgICAg
-fSwNCj4gPiArICAgICAgIHsNCj4gPiArICAgICAgICAgICAgICAgLmNvbXBhdGlibGUgPSAicmVu
-ZXNhcyxyY2FyLWdlbjMtY2FuIix6DQo+ID4gKyAgICAgICAgICAgICAgIC5kYXRhID0gKHZvaWQg
-KilSQ0FSX1NVUFBPUlRFRF9DTE9DS1MsDQo+ID4gKyAgICAgICB9LA0KPiA+ICAgICAgICAgeyB9
-DQo+DQo+IC4uLiBhbmQgYWxsIG9mIHRoZSBhYm92ZSBjYW4gZHJvcHBlZC4NCj4NCj4gPiAgfTsN
-Cj4gPiAgTU9EVUxFX0RFVklDRV9UQUJMRShvZiwgcmNhcl9jYW5fb2ZfdGFibGUpOw0KPg0KPiBC
-VFcsIHdoeSBkb2VzIHRoZSBjdXN0b20gInJlbmVzYXMsY2FuLWNsb2NrLXNlbGVjdCIgZXhpc3Q/
-DQo+IElmIGd1ZXNzIHRoZSBzdGFuZGFyZCAiYXNzaWduZWQtY2xvY2stcGFyZW50cyIgd2Fzbid0
-IHN1aXRhYmxlIGJlY2F1c2UgdGhlcmUncw0KPiBubyBhY3R1YWwgZGVmaW5lZCBjbG9jayBmb3Ig
-d2hpY2ggeW91IGNhbiBjaGFuZ2UgdGhlIHBhcmVudD8NCj4NCj4gV2h5IGRvIHlvdSBuZWVkIG1h
-bnVhbCBzZWxlY3Rpb24/IENhbid0IHRoZSBkcml2ZXIganVzdCBwaWNrIHRoZSBtb3N0IHN1aXRh
-YmxlDQo+IGF2YWlsYWJsZSBjbG9jaywgbGlrZSBvdGhlciBkcml2ZXJzIChlLmcuIHNoLXNjaSkg
-ZG8/DQoNClBsZWFzZSBoYXZlIGEgbG9vayBhdCA4NjJlMmI2YWY5NDEgKCJjYW46IHJjYXJfY2Fu
-OiBzdXBwb3J0IGFsbCBpbnB1dCBjbG9ja3MiKS4NCk1heWJlIHRoaXMgY291bGQgYmUgaW1wcm92
-ZWQgaW4gdGhlIGZ1dHVyZT8NCg0KVGhhbmtzLA0KRmFiDQoNCj4NCj4gR3J7b2V0amUsZWV0aW5n
-fXMsDQo+DQo+ICAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+DQo+IC0tDQo+IEdlZXJ0
-IFV5dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2Vl
-cnRAbGludXgtbTY4ay5vcmcNCj4NCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3aXRoIHRl
-Y2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0KPiB3aGVuIEknbSB0
-YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGlu
-ZyBsaWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGludXMg
-VG9ydmFsZHMNCg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVh
-ZG93LCBNaWxsYm9hcmQgUm9hZCwgQm91cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDggNUZI
-LCBVSy4gUmVnaXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4g
-MDQ1ODY3MDkuDQo=
+On Wed, Sep 12, 2018 at 01:59:53PM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Wed, Sep 12, 2018 at 12:25 PM Simon Horman <horms@verge.net.au> wrote:
+> > On Thu, Sep 06, 2018 at 12:59:20PM +0300, Laurent Pinchart wrote:
+> > > On Thursday, 6 September 2018 12:42:32 EEST Simon Horman wrote:
+> > > > On Thu, Aug 23, 2018 at 11:58:54AM +0200, Geert Uytterhoeven wrote:
+> > > > > On Sun, Aug 19, 2018 at 9:44 PM Laurent Pinchart wrote:
+> > > > >> The Salvator-X and XS boards have a 4 lines DIP switch and 3 push
+> > > > >> buttons connected to SoC GPIOs, meant to be used as general-purpose test
+> > > > >> keys. Add a corresponding node in DT, mapping (semi-randomly) the DIP
+> > > > >> switch to keys 1-4 and the push buttons to keys A-C.
+> > > > >>
+> > > > >> Signed-off-by: Laurent Pinchart
+> > > > >> <laurent.pinchart+renesas@ideasonboard.com>
+> > > > >
+> > > > > Given GP6_1[123] are not just wired to the 3 push buttons, but also to 3
+> > > > > LEDs, I wonder if we shouldn't postpone that part until Linux can handle
+> > > > > GPIOs connected to both?
+> > > >
+> > > > Laurent, any thoughts on that?
+> > >
+> > > Right now the GPIOs are not wired in DT, and we're thus without a way to
+> > > interface to both LEDs and push buttons. While I agree that an ideal
+> > > solution would be to support both, I think that moving from nothing to
+> > > support for push buttons would be a step forward already.
+> >
+> > I tend to agree. Geert, what are your thoughts?
+> 
+> Fine for me.
+> 
+> Just one more bikeshedding question: what's most useful, buttons or LEDs? ;-)
+
+Lets go with the buttons.
+
+Applied for v4.20.
