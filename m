@@ -1,56 +1,75 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:43471 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726968AbeIAXH0 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 1 Sep 2018 19:07:26 -0400
-Received: by mail-lf1-f68.google.com with SMTP id h64-v6so12337775lfi.10
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 01 Sep 2018 11:54:30 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] clk: renesas: r8a77980: add CMT clocks
-To: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org
-References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com>
-Message-ID: <32394fbc-1b10-5708-2769-38cc2eff5042@cogentembedded.com>
-Date: Sat, 1 Sep 2018 21:54:27 +0300
-MIME-Version: 1.0
-In-Reply-To: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: laurent.pinchart@ideasonboard.com,
+        kieran.bingham+renesas@ideasonboard.com,
+        niklas.soderlund+renesas@ragnatech.se
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+Subject: [PATCH v3 4/4] media: i2c: adv748x: Register only enabled inputs
+Date: Mon, 17 Sep 2018 13:30:57 +0200
+Message-Id: <1537183857-29173-5-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1537183857-29173-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1537183857-29173-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Now that RCLK has been added by Geert, we can add the CMT module clocks.
+The adv748x assumes input endpoints are always enabled, and registers
+a subdevice for each of them when the corresponding output subdevice
+is registered.
 
-Based on the original (and large) patch by Vladimir Barinov.
+Fix this by conditionally registering the input subdevice only if it is
+actually described in device tree.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
-This patch is against the 'clk-renesas' branch of Geert's 'renesas-drivers.git'
-repo.
+ drivers/media/i2c/adv748x/adv748x-csi2.c |  6 +++---
+ drivers/media/i2c/adv748x/adv748x.h      | 10 ++++++++++
+ 2 files changed, 13 insertions(+), 3 deletions(-)
 
- drivers/clk/renesas/r8a77980-cpg-mssr.c |    4 ++++
- 1 file changed, 4 insertions(+)
-
-Index: renesas-drivers/drivers/clk/renesas/r8a77980-cpg-mssr.c
-===================================================================
---- renesas-drivers.orig/drivers/clk/renesas/r8a77980-cpg-mssr.c
-+++ renesas-drivers/drivers/clk/renesas/r8a77980-cpg-mssr.c
-@@ -119,6 +119,10 @@ static const struct mssr_mod_clk r8a7798
- 	DEF_MOD("msiof0",		 211,	R8A77980_CLK_MSO),
- 	DEF_MOD("sys-dmac2",		 217,	R8A77980_CLK_S0D3),
- 	DEF_MOD("sys-dmac1",		 218,	R8A77980_CLK_S0D3),
-+	DEF_MOD("cmt3",			 300,	R8A77980_CLK_R),
-+	DEF_MOD("cmt2",			 301,	R8A77980_CLK_R),
-+	DEF_MOD("cmt1",			 302,	R8A77980_CLK_R),
-+	DEF_MOD("cmt0",			 303,	R8A77980_CLK_R),
- 	DEF_MOD("tpu0",			 304,	R8A77980_CLK_S3D4),
- 	DEF_MOD("sdif",			 314,	R8A77980_CLK_SD0),
- 	DEF_MOD("pciec0",		 319,	R8A77980_CLK_S2D2),
+diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
+index 034fd93..9e9df51 100644
+--- a/drivers/media/i2c/adv748x/adv748x-csi2.c
++++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
+@@ -82,15 +82,15 @@ static int adv748x_csi2_registered(struct v4l2_subdev *sd)
+ 	 *
+ 	 * Link HDMI->TXA, and AFE->TXB directly.
+ 	 */
+-	if (is_txa(tx)) {
++	if (is_txa(tx) && is_hdmi_enabled(state))
+ 		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
+ 						  &state->hdmi.sd,
+ 						  ADV748X_HDMI_SOURCE);
+-	} else {
++	if (!is_txa(tx) && is_afe_enabled(state))
+ 		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
+ 						  &state->afe.sd,
+ 						  ADV748X_AFE_SOURCE);
+-	}
++	return 0;
+ }
+ 
+ static const struct v4l2_subdev_internal_ops adv748x_csi2_internal_ops = {
+diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
+index eeadf05..a34004e 100644
+--- a/drivers/media/i2c/adv748x/adv748x.h
++++ b/drivers/media/i2c/adv748x/adv748x.h
+@@ -94,6 +94,16 @@ struct adv748x_csi2 {
+ #define adv748x_sd_to_csi2(sd) container_of(sd, struct adv748x_csi2, sd)
+ #define is_tx_enabled(_tx) ((_tx)->state->endpoints[(_tx)->port] != NULL)
+ #define is_txa(_tx) ((_tx) == &(_tx)->state->txa)
++#define is_afe_enabled(_state)					\
++	((_state)->endpoints[ADV748X_PORT_AIN0] != NULL ||	\
++	 (_state)->endpoints[ADV748X_PORT_AIN1] != NULL ||	\
++	 (_state)->endpoints[ADV748X_PORT_AIN2] != NULL ||	\
++	 (_state)->endpoints[ADV748X_PORT_AIN3] != NULL ||	\
++	 (_state)->endpoints[ADV748X_PORT_AIN4] != NULL ||	\
++	 (_state)->endpoints[ADV748X_PORT_AIN5] != NULL ||	\
++	 (_state)->endpoints[ADV748X_PORT_AIN6] != NULL ||	\
++	 (_state)->endpoints[ADV748X_PORT_AIN7] != NULL)
++#define is_hdmi_enabled(_state) ((_state)->endpoints[ADV748X_PORT_HDMI] != NULL)
+ 
+ enum adv748x_hdmi_pads {
+ 	ADV748X_HDMI_SINK,
+-- 
+2.7.4
