@@ -1,271 +1,112 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42674 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726163AbeISOMD (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:58744 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727170AbeIQP1n (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Sep 2018 10:12:03 -0400
-Date: Wed, 19 Sep 2018 10:35:07 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Ulrich Hecht <uli@fpond.eu>,
+        Mon, 17 Sep 2018 11:27:43 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Simon Horman <horms@verge.net.au>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>, uli@fpond.eu,
         Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: Re: [PATCH v2 13/16] arm64: dts: renesas: r8a77990: Add display
- output support
-Message-ID: <20180919083506.xuilcubl54q5djxr@verge.net.au>
-References: <20180914091046.483-1-laurent.pinchart+renesas@ideasonboard.com>
- <2120896.ul16WsBFq5@avalon>
- <2010332.BWU5Iuuyd0@avalon>
- <1591567.fSGLneYn9d@avalon>
+Subject: Re: [PATCH v2 13/16] arm64: dts: renesas: r8a77990: Add display output support
+Date: Mon, 17 Sep 2018 13:01:15 +0300
+Message-ID: <5915801.JlFAhZJqeN@avalon>
+In-Reply-To: <CAMuHMdW+K8A+xcfqt9KQ6nDzL9j_-XLi5Td3FPP6VMPNK0ni4A@mail.gmail.com>
+References: <20180914091046.483-1-laurent.pinchart+renesas@ideasonboard.com> <3481349.HLygXACKyS@avalon> <CAMuHMdW+K8A+xcfqt9KQ6nDzL9j_-XLi5Td3FPP6VMPNK0ni4A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1591567.fSGLneYn9d@avalon>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Sep 17, 2018 at 11:59:32AM +0300, Laurent Pinchart wrote:
-> On Monday, 17 September 2018 11:54:04 EEST Laurent Pinchart wrote:
-> > Hi Simon,
-> > 
-> > On Monday, 17 September 2018 11:47:15 EEST Laurent Pinchart wrote:
-> > > On Monday, 17 September 2018 11:14:20 EEST Simon Horman wrote:
-> > > > On Mon, Sep 17, 2018 at 09:50:55AM +0200, Simon Horman wrote:
-> > > > > On Fri, Sep 14, 2018 at 12:10:43PM +0300, Laurent Pinchart wrote:
-> > > > > > The R8A77990 (E3) platform has one RGB output and two LVDS outputs
-> > > > > > connected to the DU. Add the DT nodes for the DU, LVDS encoders and
-> > > > > > supporting VSP and FCP.
-> > > > > > 
-> > > > > > Signed-off-by: Laurent Pinchart
-> > > > > > <laurent.pinchart+renesas@ideasonboard.com>
-> > > > > > Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > > > > > ---
-> > > > > > 
-> > > > > >  arch/arm64/boot/dts/renesas/r8a77990.dtsi | 167
-> > > > > >  +++++++++++++++++++++++
-> > > > > >  1 file changed, 167 insertions(+)
-> > > > > > 
-> > > > > > diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> > > > > > b/arch/arm64/boot/dts/renesas/r8a77990.dtsi index
-> > > > > > abb14af76c0e..600074ca3ee5 100644
-> > > > > > --- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> > > > > > +++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> > > > > > @@ -537,6 +537,173 @@
-> > > > > > 
-> > > > > >  			resets = <&cpg 408>;
-> > > > > >  		
-> > > > > >  		};
-> > > > > 
-> > > > > These nodes should be placed after the gic to preserve the sorting
-> > > > > of nodes by bus address and then IP block.
-> > > > > 
-> > > > > > +		vspb0: vsp@fe960000 {
-> > > > > > +			compatible = "renesas,vsp2";
-> > > > > > +			reg = <0 0xfe960000 0 0x8000>;
-> > > > > > +			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
-> > > > > > +			clocks = <&cpg CPG_MOD 626>;
-> > > > > > +			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-> > > > > > +			resets = <&cpg 626>;
-> > > > > > +			renesas,fcp = <&fcpvb0>;
-> > > > > > +		};
-> > > > > > +
-> > > > > > +		fcpvb0: fcp@fe96f000 {
-> > > > > > +			compatible = "renesas,fcpv";
-> > > > > > +			reg = <0 0xfe96f000 0 0x200>;
-> > > > > > +			clocks = <&cpg CPG_MOD 607>;
-> > > > > > +			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-> > > > > > +			resets = <&cpg 607>;
-> > > > > > +			iommus = <&ipmmu_vp0 5>;
-> > > > > > +		};
-> > > > > > +
-> > > > > > +		vspi0: vsp@fe9a0000 {
-> > > > > > +			compatible = "renesas,vsp2";
-> > > > > > +			reg = <0 0xfe9a0000 0 0x8000>;
-> > > > > > +			interrupts = <GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>;
-> > > > > > +			clocks = <&cpg CPG_MOD 622>;
-> > > > > 
-> > > > > R-Car Series, 3rd Generation, v1.00, Table Table 8A.21 indicates
-> > > > > that this clock should be <&cpg CPG_MOD 631>. The clock above is
-> > > > > (according to my reading of the documentation) correctly
-> > > > > used for vspd1 below.
-> > > > > 
-> > > > > > +			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-> > > > > > +			resets = <&cpg 631>;
-> > > > > > +			renesas,fcp = <&fcpvi0>;
-> > > > > > +		};
-> > > > > > +
-> > > > > > +		fcpvi0: fcp@fe9af000 {
-> > > > > > +			compatible = "renesas,fcpv";
-> > > > > > +			reg = <0 0xfe9af000 0 0x200>;
-> > > > > > +			clocks = <&cpg CPG_MOD 611>;
-> > > > > > +			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-> > > > > > +			resets = <&cpg 611>;
-> > > > > > +			iommus = <&ipmmu_vp0 8>;
-> > > > > > +		};
-> > > > > > +
-> > > > > > +		vspd0: vsp@fea20000 {
-> > > > > > +			compatible = "renesas,vsp2";
-> > > > > > +			reg = <0 0xfea20000 0 0x7000>;
-> > > > > > +			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
-> > > > > > +			clocks = <&cpg CPG_MOD 623>;
-> > > > > > +			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-> > > > > > +			resets = <&cpg 623>;
-> > > > > > +			renesas,fcp = <&fcpvd0>;
-> > > > > > +		};
-> > > > > > +
-> > > > > > +		fcpvd0: fcp@fea27000 {
-> > > > > > +			compatible = "renesas,fcpv";
-> > > > > > +			reg = <0 0xfea27000 0 0x200>;
-> > > > > > +			clocks = <&cpg CPG_MOD 603>;
-> > > > > > +			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-> > > > > > +			resets = <&cpg 603>;
-> > > > > > +			iommus = <&ipmmu_vi0 8>;
-> > > > > > +		};
-> > > > > > +
-> > > > > > +		vspd1: vsp@fea28000 {
-> > > > > > +			compatible = "renesas,vsp2";
-> > > > > > +			reg = <0 0xfea28000 0 0x7000>;
-> > > > > > +			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
-> > > > > > +			clocks = <&cpg CPG_MOD 622>;
-> > > > > > +			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-> > > > > > +			resets = <&cpg 622>;
-> > > > > > +			renesas,fcp = <&fcpvd1>;
-> > > > > > +		};
-> > > > > > +
-> > > > > > +		fcpvd1: fcp@fea2f000 {
-> > > > > > +			compatible = "renesas,fcpv";
-> > > > > > +			reg = <0 0xfea2f000 0 0x200>;
-> > > > > > +			clocks = <&cpg CPG_MOD 602>;
-> > > > > > +			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-> > > > > > +			resets = <&cpg 602>;
-> > > > > > +			iommus = <&ipmmu_vi0 9>;
-> > > > > > +		};
-> > > > > > +
-> > > > > > +		du: display@feb00000 {
-> > > > > > +			compatible = "renesas,du-r8a77990";
-> > > > > > +			reg = <0 0xfeb00000 0 0x80000>;
-> > > > > > +			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
-> > > > > > +				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
-> > > > > > +			clocks = <&cpg CPG_MOD 724>,
-> > > > > > +				 <&cpg CPG_MOD 723>;
-> > > > > > +			clock-names = "du.0", "du.1";
-> > > > > > +			vsps = <&vspd0 0 &vspd1 0>;
-> > > > > > +			status = "disabled";
-> > > > > > +
-> > > > > > +			ports {
-> > > > > > +				#address-cells = <1>;
-> > > > > > +				#size-cells = <0>;
-> > > > > > +
-> > > > > > +				port@0 {
-> > > > > > +					reg = <0>;
-> > > > > > +					du_out_rgb: endpoint {
-> > > > > > +					};
-> > > > > > +				};
-> > > > > > +
-> > > > > > +				port@1 {
-> > > > > > +					reg = <1>;
-> > > > > > +					du_out_lvds0: endpoint {
-> > > > > > +						remote-endpoint = <&lvds0_in>;
-> > > > > > +					};
-> > > > > > +				};
-> > > > > > +
-> > > > > > +				port@2 {
-> > > > > > +					reg = <2>;
-> > > > > > +					du_out_lvds1: endpoint {
-> > > > > > +						remote-endpoint = <&lvds1_in>;
-> > > > > > +					};
-> > > > > > +				};
-> > > > > > +			};
-> > > > > > +		};
-> > > > > > +
-> > > > > > +		lvds0: lvds-encoder@feb90000 {
-> > > > > > +			compatible = "renesas,r8a77990-lvds";
-> > > > > > +			reg = <0 0xfeb90000 0 0x20>;
-> > > > > > +			clocks = <&cpg CPG_MOD 727>;
-> > > > > > +			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-> > > > > > +			resets = <&cpg 727>;
-> > > > > > +			status = "disabled";
-> > > > > > +
-> > > > > > +			ports {
-> > > > > > +				#address-cells = <1>;
-> > > > > > +				#size-cells = <0>;
-> > > > > > +
-> > > > > > +				port@0 {
-> > > > > > +					reg = <0>;
-> > > > > > +					lvds0_in: endpoint {
-> > > > > > +						remote-endpoint = <&du_out_lvds0>;
-> > > > > > +					};
-> > > > > > +				};
-> > > > > > +
-> > > > > > +				port@1 {
-> > > > > > +					reg = <1>;
-> > > > > > +					lvds0_out: endpoint {
-> > > > > > +					};
-> > > > > > +				};
-> > > > > > +			};
-> > > > > > +		};
-> > > > > > +
-> > > > > > +		lvds1: lvds-encoder@feb90100 {
-> > > > > > +			compatible = "renesas,r8a77990-lvds";
-> > > > > > +			reg = <0 0xfeb90100 0 0x20>;
-> > > > > > +			clocks = <&cpg CPG_MOD 727>;
-> > > > > > +			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-> > > > > > +			resets = <&cpg 726>;
-> > > > 
-> > > > Also, is the missmatch between the index for the clock and reset
-> > > > intentional?
-> > > 
-> > > It is. According to the datasheet, the two LVDS encoders have different
-> > > module stop bits, but share the same reset (lovely hardware design, it
-> > > will be fun to support that in the driver :-S).
-> > 
-> > Sorry, I got it wrong. it's bit 725 that is shared between the two LVDS
-> > encoders, to reset the two LVDS PLLs together. The encoders themselves still
-> > have independent reset bits. I'll fix this.
-> 
-> And of course it's the clock you were commenting on, not the reset. *sigh*
-> 
-> According to the datasheets the two LVDS encoders share one MSTP. Whether 
-> that's a mistake in the documentation or not I can't tell yet, as I have only 
-> tested LVDS0.
+Hi Geert,
 
-Could we follow-up with the HW team?
-I'm not opposed to taking the patch with this portion as-is
-but it would be good to clarify this somehow.
+On Monday, 17 September 2018 12:48:12 EEST Geert Uytterhoeven wrote:
+> On Mon, Sep 17, 2018 at 11:09 AM Laurent Pinchart wrote:
+> > On Monday, 17 September 2018 11:51:06 EEST Simon Horman wrote:
+> >> On Mon, Sep 17, 2018 at 11:38:43AM +0300, Laurent Pinchart wrote:
+> >>> On Monday, 17 September 2018 10:50:55 EEST Simon Horman wrote:
+> >>>> On Fri, Sep 14, 2018 at 12:10:43PM +0300, Laurent Pinchart wrote:
+> >>>>> The R8A77990 (E3) platform has one RGB output and two LVDS outputs
+> >>>>> connected to the DU. Add the DT nodes for the DU, LVDS encoders
+> >>>>> and supporting VSP and FCP.
+> >>>>> 
+> >>>>> Signed-off-by: Laurent Pinchart
+> >>>>> <laurent.pinchart+renesas@ideasonboard.com>
+> >>>>> Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >>>>> ---
+> >>>>> 
+> >>>>>  arch/arm64/boot/dts/renesas/r8a77990.dtsi | 167 +++++++++++++++++
+> >>>>>  1 file changed, 167 insertions(+)
+> >>>>> 
+> >>>>> diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+> >>>>> b/arch/arm64/boot/dts/renesas/r8a77990.dtsi index
+> >>>>> abb14af76c0e..600074ca3ee5 100644
+> >>>>> --- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+> >>>>> +++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+> >>>>> @@ -537,6 +537,173 @@
+> >>>>>                         resets = <&cpg 408>;
+> >>>>>                 };
+> >>>> 
+> >>>> These nodes should be placed after the gic to preserve the sorting
+> >>>> of nodes by bus address and then IP block.
+> >>> 
+> >>> Aren't they already ? :-)
+> >> 
+> >> Git didn't seem to think so. But its not a big deal,
+> >> I can fix this up locally.
+> > 
+> > Did it apply the below hunk to a different location ? 408 is the gic,
+> > isn't it ?
+> 
+> The "-U <n>" option (with <n> sufficiently large) of "git diff" and "git
+> show" is a great help for inspecting DT changes.
 
-> > > > > > +			status = "disabled";
-> > > > > > +
-> > > > > > +			ports {
-> > > > > > +				#address-cells = <1>;
-> > > > > > +				#size-cells = <0>;
-> > > > > > +
-> > > > > > +				port@0 {
-> > > > > > +					reg = <0>;
-> > > > > > +					lvds1_in: endpoint {
-> > > > > > +						remote-endpoint = <&du_out_lvds1>;
-> > > > > > +					};
-> > > > > > +				};
-> > > > > > +
-> > > > > > +				port@1 {
-> > > > > > +					reg = <1>;
-> > > > > > +					lvds1_out: endpoint {
-> > > > > > +					};
-> > > > > > +				};
-> > > > > > +			};
-> > > > > > +		};
-> > > > > > +
-> > > > > > 
-> > > > > >  		prr: chipid@fff00044 {
-> > > > > >  		
-> > > > > >  			compatible = "renesas,prr";
-> > > > > >  			reg = <0 0xfff00044 0 4>;
-> 
-> 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
-> 
-> 
-> 
+I know. This is what I have in my tree:
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/
+renesas/r8a77990.dtsi
+index abb14af76c0e..935bb313d29f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -522,32 +522,199 @@
+ 
+ 		gic: interrupt-controller@f1010000 {
+ 			compatible = "arm,gic-400";
+ 			#interrupt-cells = <3>;
+ 			#address-cells = <0>;
+ 			interrupt-controller;
+ 			reg = <0x0 0xf1010000 0 0x1000>,
+ 			      <0x0 0xf1020000 0 0x20000>,
+ 			      <0x0 0xf1040000 0 0x20000>,
+ 			      <0x0 0xf1060000 0 0x20000>;
+ 			interrupts = <GIC_PPI 9
+ 					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
+ 			clocks = <&cpg CPG_MOD 408>;
+ 			clock-names = "clk";
+ 			power-domains = <&sysc 32>;
+ 			resets = <&cpg 408>;
+ 		};
+ 
++		vspb0: vsp@fe960000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfe960000 0 0x8000>;
++			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 626>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 626>;
++			renesas,fcp = <&fcpvb0>;
++		};
+
+[snip]
+
+so I don't see where the problem that Simon pointed out is, especially given 
+that I took care to sort nodes out properly this time.
+
+-- 
+Regards,
+
+Laurent Pinchart
