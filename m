@@ -1,112 +1,99 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:60972 "EHLO
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59714 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727280AbeIDQfb (ORCPT
+        with ESMTP id S1728459AbeIQRuU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Sep 2018 12:35:31 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 08/16] drm: rcar-du: Enable configurable DPAD0 routing on Gen3
-Date: Tue,  4 Sep 2018 15:10:19 +0300
-Message-Id: <20180904121027.24031-9-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180904121027.24031-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180904121027.24031-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 17 Sep 2018 13:50:20 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ulrich Hecht <uli@fpond.eu>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v2 04/16] drm: bridge: thc63: Restrict modes based on hardware operating frequency
+Date: Mon, 17 Sep 2018 15:23:28 +0300
+Message-ID: <3450184.KxzLXOijW3@avalon>
+In-Reply-To: <891115091.239809.1537181623129@webmail.strato.com>
+References: <20180914091046.483-1-laurent.pinchart+renesas@ideasonboard.com> <20180914091046.483-5-laurent.pinchart+renesas@ideasonboard.com> <891115091.239809.1537181623129@webmail.strato.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-All Gen3 SoCs supported so far have a fixed association between DPAD0
-and DU channels, which led to hardcoding that association when writing
-the corresponding hardware register. The D3 and E3 will break that
-mechanism as DPAD0 can be dynamically connected to either DU0 or DU1.
+Hi Ulrich,
 
-Make DPAD0 routing dynamic on Gen3. To ensure a valid hardware
-configuration when the DU starts without the RGB output enabled, DPAD0
-is associated at initialization time to the first DU channel that it can
-be connected to. This makes no change on Gen2 as all Gen2 SoCs can
-connected DPAD0 to DU0, which is the current implicit default value.
+On Monday, 17 September 2018 13:53:43 EEST Ulrich Hecht wrote:
+> > On September 14, 2018 at 11:10 AM Laurent Pinchart wrote:
+> > 
+> > The THC63LVD1024 is restricted to a pixel clock frequency in the range
+> > of 8 to 135 MHz. Implement the bridge .mode_valid() operation
+> > accordingly.
+> > 
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> > Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+> > Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> > 
+> >  drivers/gpu/drm/bridge/thc63lvd1024.c | 18 ++++++++++++++++++
+> >  1 file changed, 18 insertions(+)
+> > 
+> > diff --git a/drivers/gpu/drm/bridge/thc63lvd1024.c
+> > b/drivers/gpu/drm/bridge/thc63lvd1024.c index c8b9edd5a7f4..63609ba16b6d
+> > 100644
+> > --- a/drivers/gpu/drm/bridge/thc63lvd1024.c
+> > +++ b/drivers/gpu/drm/bridge/thc63lvd1024.c
+> > @@ -45,6 +45,23 @@ static int thc63_attach(struct drm_bridge *bridge)
+> >  	return drm_bridge_attach(bridge->encoder, thc63->next, bridge);
+> >  }
+> > 
+> > +static enum drm_mode_status thc63_mode_valid(struct drm_bridge *bridge,
+> > +					const struct drm_display_mode *mode)
+> > +{
+> > +	/*
+> > +	 * The THC63LVD0124 clock frequency range is 8 to 135 MHz in single-in,
+> 
+> That should be THC63LVD1024.
 
-As the DPAD0 source is always 0 when a single source is possible on
-Gen2, we can also simplify the Gen2 code in the same function to remove
-a conditional check.
+Will be fixed in v3.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_group.c | 17 ++++++-----------
- drivers/gpu/drm/rcar-du/rcar_du_kms.c   | 12 ++++++++++++
- 2 files changed, 18 insertions(+), 11 deletions(-)
+> > +	 * single-out mode.
+> 
+> For the input clock (that's what we're talking about, right?), that also
+> applies to single-in/dual-out. Maybe just omit the "single-out" clause?
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-index 4c62841eff2f..f38703e7a10d 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-@@ -56,8 +56,6 @@ static void rcar_du_group_setup_pins(struct rcar_du_group *rgrp)
- static void rcar_du_group_setup_defr8(struct rcar_du_group *rgrp)
- {
- 	struct rcar_du_device *rcdu = rgrp->dev;
--	unsigned int possible_crtcs =
--		rcdu->info->routes[RCAR_DU_OUTPUT_DPAD0].possible_crtcs;
- 	u32 defr8 = DEFR8_CODE;
- 
- 	if (rcdu->info->gen < 3) {
-@@ -69,21 +67,18 @@ static void rcar_du_group_setup_defr8(struct rcar_du_group *rgrp)
- 		 * DU instances that support it.
- 		 */
- 		if (rgrp->index == 0) {
--			if (possible_crtcs > 1)
--				defr8 |= DEFR8_DRGBS_DU(rcdu->dpad0_source);
-+			defr8 |= DEFR8_DRGBS_DU(rcdu->dpad0_source);
- 			if (rgrp->dev->vspd1_sink == 2)
- 				defr8 |= DEFR8_VSCS;
- 		}
- 	} else {
- 		/*
--		 * On Gen3 VSPD routing can't be configured, but DPAD routing
--		 * needs to be set despite having a single option available.
-+		 * On Gen3 VSPD routing can't be configured, and DPAD routing
-+		 * is set in the group corresponding to the DPAD output (no Gen3
-+		 * SoC has multiple DPAD sources belonging to separate groups).
- 		 */
--		unsigned int rgb_crtc = ffs(possible_crtcs) - 1;
--		struct rcar_du_crtc *crtc = &rcdu->crtcs[rgb_crtc];
--
--		if (crtc->index / 2 == rgrp->index)
--			defr8 |= DEFR8_DRGBS_DU(crtc->index);
-+		if (rgrp->index == rcdu->dpad0_source / 2)
-+			defr8 |= DEFR8_DRGBS_DU(rcdu->dpad0_source);
- 	}
- 
- 	rcar_du_group_write(rgrp, DEFR8, defr8);
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index ed7fa3204892..bd01197700c5 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -501,6 +501,7 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
- 	struct drm_device *dev = rcdu->ddev;
- 	struct drm_encoder *encoder;
- 	struct drm_fbdev_cma *fbdev;
-+	unsigned int dpad0_sources;
- 	unsigned int num_encoders;
- 	unsigned int num_groups;
- 	unsigned int swindex;
-@@ -613,6 +614,17 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
- 		encoder->possible_clones = (1 << num_encoders) - 1;
- 	}
- 
-+	/*
-+	 * Initialize the default DPAD0 source to the index of the first DU
-+	 * channel that can be connected to DPAD0. The exact value doesn't
-+	 * matter as it should be overwritten by mode setting for the RGB
-+	 * output, but it is nonetheless required to ensure a valid initial
-+	 * hardware configuration on Gen3 where DU0 can't always be connected to
-+	 * DPAD0.
-+	 */
-+	dpad0_sources = rcdu->info->routes[RCAR_DU_OUTPUT_DPAD0].possible_crtcs;
-+	rcdu->dpad0_source = ffs(dpad0_sources) - 1;
-+
- 	drm_mode_config_reset(dev);
- 
- 	drm_kms_helper_poll_init(dev);
+Good point, I'll change that in v3.
+
+> > Note that the limits depends on the mode and will
+> > +	 * need to be adjusted accordingly.
+> > +	 */
+> 
+> I don't quite understand. Does that refer to the THC63 mode, or the DRM
+> mode?
+
+This refers to the THC63 mode, I'll clarify this in v3 as well.
+
+> > +	if (mode->clock < 8000)
+> > +		return MODE_CLOCK_LOW;
+> > +
+> > +	if (mode->clock > 135000)
+> > +		return MODE_CLOCK_HIGH;
+> > +
+> > +	return MODE_OK;
+> > +}
+> > +
+> >  static void thc63_enable(struct drm_bridge *bridge)
+> >  {
+> >  	struct thc63_dev *thc63 = to_thc63(bridge);
+> > @@ -77,6 +94,7 @@ static void thc63_disable(struct drm_bridge *bridge)
+> > 
+> >  static const struct drm_bridge_funcs thc63_bridge_func = {
+> >  	.attach	= thc63_attach,
+> > +	.mode_valid = thc63_mode_valid,
+> >  	.enable = thc63_enable,
+> >  	.disable = thc63_disable,
+> >  };
+
 -- 
 Regards,
 
