@@ -1,103 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:34780 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbeINQZC (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:29972 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727124AbeIQWE1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Sep 2018 12:25:02 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        Mon, 17 Sep 2018 18:04:27 -0400
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Jacopo Mondi <jacopo@jmondi.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Subject: Re: [PATCH 2/3] drm: rcar-du: Add pixel format support
-Date: Fri, 14 Sep 2018 14:11:13 +0300
-Message-ID: <9318122.8LJjaKzHaP@avalon>
-In-Reply-To: <20180831181259.29529-3-kieran.bingham+renesas@ideasonboard.com>
-References: <20180831181259.29529-1-kieran.bingham+renesas@ideasonboard.com> <20180831181259.29529-3-kieran.bingham+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH v3 0/3] Renesas R9A06G032 PINCTRL Driver
+Date: Mon, 17 Sep 2018 17:36:06 +0100
+Message-Id: <20180917163609.30457-1-phil.edworthy@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+This implements the pinctrl driver for the RZ/N1 family of devices, including
+the R9A06G032 (RZ/N1D) device.
 
-Thank you for the patch.
+This series was originally written by Michel Pollet whilst at Renesas, and I
+have taken over this work.
 
-How about renaming the subject line to "Add support for missing pixel formats" 
-?
+Main changes:
+v3:
+ - Use standard DT props instead of proprietary ones.
+ - Replace virtual pins used for MDIO muxing with extra funcs.
+ - Use pinctrl_utils funcs to handle the maps.
+ - Remove the dbg functions to keep things simple.
+ - Change the way the functions are defined so it is easy to check
+   against the hardware numbering.
 
-On Friday, 31 August 2018 21:12:58 EEST Kieran Bingham wrote:
-> From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-> 
-> This patch supports pixel format of RGB332, ARGB4444, XRGB4444,
-> BGR888, RGB888, BGRA8888, BGRX8888 and YVYU.
-> VYUY pixel format is not supported by H/W specification.
-> 
-> Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> 
-> ---
-> 
-> This patch does not remove existing support for multiplanar YVUY, even
-> though the hardware does not explicitly provide it, because we support
-> it through software by swapping the plane buffers.
-> 
->  drivers/gpu/drm/rcar-du/rcar_du_kms.c | 32 +++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> b/drivers/gpu/drm/rcar-du/rcar_du_kms.c index 7c7aff8cdf77..d1bd174ec893
-> 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> @@ -124,6 +124,38 @@ static const struct rcar_du_format_info
-> rcar_du_format_infos[] = { .fourcc = DRM_FORMAT_YVU444,
->  		.bpp = 24,
->  		.planes = 3,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_RGB332,
-> +		.bpp = 8,
-> +		.planes = 1,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_ARGB4444,
-> +		.bpp = 16,
-> +		.planes = 1,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_XRGB4444,
-> +		.bpp = 16,
-> +		.planes = 1,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_BGR888,
-> +		.bpp = 24,
-> +		.planes = 1,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_RGB888,
-> +		.bpp = 24,
-> +		.planes = 1,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_BGRA8888,
-> +		.bpp = 32,
-> +		.planes = 1,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_BGRX8888,
-> +		.bpp = 32,
-> +		.planes = 1,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_YVYU,
-> +		.bpp = 16,
-> +		.planes = 1,
->  	},
->  };
+v2:
+ - Change to generic rzn1 family driver, instead of device specific.
+ - Review comments fixed.
+ - Fix error handling during probe
 
-I would list the RGB formats first, followed by the packed YUV format, and 
-then the multiplanar YUV formats. With this changed,
+Phil Edworthy (3):
+  dt-bindings: pinctrl: renesas,rzn1-pinctrl: documentation
+  pinctrl: renesas: Renesas RZ/N1 pinctrl driver
+  ARM: dts: r9a06g032: Add pinctrl node
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-If you're fine with the changes there's no need to resubmit.
+ .../bindings/pinctrl/renesas,rzn1-pinctrl.txt | 129 +++
+ arch/arm/boot/dts/r9a06g032.dtsi              |   8 +
+ drivers/pinctrl/Kconfig                       |  10 +
+ drivers/pinctrl/Makefile                      |   1 +
+ drivers/pinctrl/pinctrl-rzn1.c                | 926 ++++++++++++++++++
+ include/dt-bindings/pinctrl/rzn1-pinctrl.h    | 141 +++
+ 6 files changed, 1215 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
+ create mode 100644 drivers/pinctrl/pinctrl-rzn1.c
+ create mode 100644 include/dt-bindings/pinctrl/rzn1-pinctrl.h
 
 -- 
-Regards,
-
-Laurent Pinchart
+2.17.1
