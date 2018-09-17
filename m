@@ -1,65 +1,30 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:12555 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728127AbeIJTgH (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36755 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727185AbeIQNsD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Sep 2018 15:36:07 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Mon, 17 Sep 2018 09:48:03 -0400
+Date: Mon, 17 Sep 2018 10:21:40 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/3] dt-bindings: power: Add r8a774c0 SYSC power domain definitions
-Date: Mon, 10 Sep 2018 15:41:26 +0100
-Message-Id: <1536590488-23270-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1536590488-23270-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1536590488-23270-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH v2 3/3] clocksource: sh_cmt: add R-Car gen3 support
+Message-ID: <20180917082139.lhno7joipugljhiu@verge.net.au>
+References: <c94a4ad6-93ee-05e4-e2c1-e8d24d3bc75e@cogentembedded.com>
+ <7d32fc9c-903d-1cb3-fdd7-d9165e0016ac@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7d32fc9c-903d-1cb3-fdd7-d9165e0016ac@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds power domain indices for RZ/G2E.
+On Wed, Sep 12, 2018 at 11:17:37PM +0300, Sergei Shtylyov wrote:
+> Add support for the R-Car gen3 CMT types 0/1 -- they seem to be the same
+> CMT types 0/1 as in R-Car gen2 SoCs.
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
- include/dt-bindings/power/r8a774c0-sysc.h | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
- create mode 100644 include/dt-bindings/power/r8a774c0-sysc.h
-
-diff --git a/include/dt-bindings/power/r8a774c0-sysc.h b/include/dt-bindings/power/r8a774c0-sysc.h
-new file mode 100644
-index 0000000..9922d4c
---- /dev/null
-+++ b/include/dt-bindings/power/r8a774c0-sysc.h
-@@ -0,0 +1,25 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A774C0_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A774C0_SYSC_H__
-+
-+/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
-+ */
-+
-+#define R8A774C0_PD_CA53_CPU0		5
-+#define R8A774C0_PD_CA53_CPU1		6
-+#define R8A774C0_PD_A3VC		14
-+#define R8A774C0_PD_3DG_A		17
-+#define R8A774C0_PD_3DG_B		18
-+#define R8A774C0_PD_CA53_SCU		21
-+#define R8A774C0_PD_A2VC1		26
-+
-+/* Always-on power area */
-+#define R8A774C0_PD_ALWAYS_ON		32
-+
-+#endif /* __DT_BINDINGS_POWER_R8A774C0_SYSC_H__ */
--- 
-2.7.4
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
