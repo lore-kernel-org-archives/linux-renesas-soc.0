@@ -1,52 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:47008 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730611AbeICVqW (ORCPT
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:35271 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727010AbeIQNCZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:46:22 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ulrich Hecht <uli+renesas@fpond.eu>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] spi: sh-msiof: Document R-Car D3 support
-Date: Mon,  3 Sep 2018 19:25:11 +0200
-Message-Id: <20180903172512.6242-2-geert+renesas@glider.be>
-In-Reply-To: <20180903172512.6242-1-geert+renesas@glider.be>
-References: <20180903172512.6242-1-geert+renesas@glider.be>
+        Mon, 17 Sep 2018 09:02:25 -0400
+Received: by mail-vk1-f196.google.com with SMTP id w193-v6so2762725vke.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Sep 2018 00:36:15 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180914205007.12905-1-kieran.bingham+renesas@ideasonboard.com> <d4feb5d0-7a21-29e6-5761-0ef696d4bc42@ideasonboard.com>
+In-Reply-To: <d4feb5d0-7a21-29e6-5761-0ef696d4bc42@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 17 Sep 2018 09:36:03 +0200
+Message-ID: <CAMuHMdVKB8+Da4-Zb_wbVGag3id9qv4jQTn2Fbv=U3kKxQHBNQ@mail.gmail.com>
+Subject: Re: [GIT PULL FOR renesas-drivers] pinchartl-media/v4l2/vsp1/next
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ulrich Hecht <uli+renesas@fpond.eu>
+Hi Kieran,
 
-Document support for the MSIOF module in the Renesas R-Car D3 (r8a77995)
-SoC.
+On Fri, Sep 14, 2018 at 11:04 PM Kieran Bingham
+<kieran.bingham@ideasonboard.com> wrote:
+> On 14/09/18 21:50, Kieran Bingham wrote:
+> > Please consider including this release in renesas-drivers.
 
-No driver update is needed.
+> > The following changes since commit 78cf8c842c111df656c63b5d04997ea4e40ef26a:
+> >
+> >   media: drxj: fix spelling mistake in fall-through annotations (2018-09-12 11:21:52 -0400)
+> >
+> > are available in the Git repository at:
+> >
+> >   git://linuxtv.org/pinchartl/media.git pinchartl-media/v4l2/vsp1/next
+>
+> Sorry - my local reference to laurent's branch snuck in there.
+>
+> This should of course be:
+>
+>    git://linuxtv.org/pinchartl/media.git v4l2/vsp1/next
 
-Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-As per SPI subsystem policy, the "spi: sh-msiof:" prefix is used.
+Thanks, merges cleanly into next-20180913.
 
- Documentation/devicetree/bindings/spi/sh-msiof.txt | 1 +
- 1 file changed, 1 insertion(+)
+> > for you to fetch changes up to 4a6fcd855184d0d928bb833f1062bd19a0c9b57a:
 
-diff --git a/Documentation/devicetree/bindings/spi/sh-msiof.txt b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-index bfbc2035fb6bfaf6..fd157155f219bb17 100644
---- a/Documentation/devicetree/bindings/spi/sh-msiof.txt
-+++ b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-@@ -11,6 +11,7 @@ Required properties:
- 			 "renesas,msiof-r8a7795" (R-Car H3)
- 			 "renesas,msiof-r8a7796" (R-Car M3-W)
- 			 "renesas,msiof-r8a77965" (R-Car M3-N)
-+			 "renesas,msiof-r8a77995" (R-Car D3)
- 			 "renesas,msiof-sh73a0" (SH-Mobile AG5)
- 			 "renesas,sh-mobile-msiof" (generic SH-Mobile compatibile device)
- 			 "renesas,rcar-gen2-msiof" (generic R-Car Gen2 and RZ/G1 compatible device)
--- 
-2.17.1
+However, the above commit hash doesn't match? The diffstat below does.
+So far for sending other people's pull requests? ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
