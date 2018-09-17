@@ -1,94 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34729 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:36834 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726835AbeIMOSc (ORCPT
+        with ESMTP id S1727193AbeIQNwA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:18:32 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 01/58] arm64: dts: renesas: r8a77980: add RWDT support
-Date: Thu, 13 Sep 2018 11:08:56 +0200
-Message-Id: <bcee502ceb6c0dcbc7ccd460ed7040c3d6998c3e.1536828567.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
-References: <cover.1536828567.git.horms+renesas@verge.net.au>
+        Mon, 17 Sep 2018 09:52:00 -0400
+Date: Mon, 17 Sep 2018 10:25:36 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: reset: rcar-rst: Document r8a774c0 rst
+Message-ID: <20180917082536.q5vkhgzr3pno2zle@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5b9f3f76.1c69fb81.21f5b.5535@mx.google.com>
+ <1536919741.4112.4.camel@pengutronix.de>
+ <20180912090428.uhchjukjopblz5ui@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Wed, Sep 12, 2018 at 11:04:28AM +0200, Simon Horman wrote:
+> On Mon, Sep 10, 2018 at 04:09:40PM +0100, Fabrizio Castro wrote:
+> > Document bindings for the RZ/G2E (a.k.a. R8A774C0) reset
+> > module.
+> > 
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> 
+> Thanks,
+> 
+> This looks fine to me but I will wait to see if there are other reviews
+> before applying.
+> 
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Describe RWDT in the R8A77980 SoC device tree.
+Thanks again, applied for v4.20.
 
-Enable RWDT on the Condor and V3H Starter Kit boards.
+On Fri, Sep 14, 2018 at 12:09:01PM +0200, Philipp Zabel wrote:
+> On Mon, 2018-09-10 at 16:09 +0100, Fabrizio Castro wrote:
+> > Document bindings for the RZ/G2E (a.k.a. R8A774C0) reset
+> > module.
+> > 
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> > ---
+> >  Documentation/devicetree/bindings/reset/renesas,rst.txt | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
+> > index e4fe0ab..25e6db5 100644
+> > --- a/Documentation/devicetree/bindings/reset/renesas,rst.txt
+> > +++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
+> > @@ -19,6 +19,7 @@ Required properties:
+> >  		  - "renesas,r8a7745-rst" (RZ/G1E)
+> >  		  - "renesas,r8a77470-rst" (RZ/G1C)
+> >  		  - "renesas,r8a774a1-rst" (RZ/G2M)
+> > +		  - "renesas,r8a774c0-rst" (RZ/G2E)
+> >  		  - "renesas,r8a7778-reset-wdt" (R-Car M1A)
+> >  		  - "renesas,r8a7779-reset-wdt" (R-Car H1)
+> >  		  - "renesas,r8a7790-rst" (R-Car H2)
+> 
+> Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+> 
+> regards
+> Philipp
+> 
 
-Based on the original (and large) patch by Vladimir Barinov.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77980-condor.dts |  5 +++++
- arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts  |  5 +++++
- arch/arm64/boot/dts/renesas/r8a77980.dtsi       | 10 ++++++++++
- 3 files changed, 20 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980-condor.dts b/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-index 9f25c407dfd7..494f4ef37a4e 100644
---- a/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-@@ -156,6 +156,11 @@
- 	};
- };
- 
-+&rwdt {
-+	timeout-sec = <60>;
-+	status = "okay";
-+};
-+
- &scif0 {
- 	pinctrl-0 = <&scif0_pins>, <&scif_clk_pins>;
- 	pinctrl-names = "default";
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts b/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-index 9dac42f8f804..9147d8564557 100644
---- a/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-@@ -71,6 +71,11 @@
- 	};
- };
- 
-+&rwdt {
-+	timeout-sec = <60>;
-+	status = "okay";
-+};
-+
- &scif0 {
- 	pinctrl-0 = <&scif0_pins>, <&scif_clk_pins>;
- 	pinctrl-names = "default";
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-index b8c9a56562f2..4a1097e32551 100644
---- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -118,6 +118,16 @@
- 		#size-cells = <2>;
- 		ranges;
- 
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a77980-wdt",
-+				     "renesas,rcar-gen3-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
-+		};
-+
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a77980",
- 				     "renesas,rcar-gen3-gpio";
--- 
-2.11.0
+On Mon, Sep 17, 2018 at 01:45:25AM -0400, Rob Herring wrote:
+> On Mon, 10 Sep 2018 16:09:40 +0100, Fabrizio Castro wrote:
+> > Document bindings for the RZ/G2E (a.k.a. R8A774C0) reset
+> > module.
+> > 
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> > ---
+> >  Documentation/devicetree/bindings/reset/renesas,rst.txt | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> 
