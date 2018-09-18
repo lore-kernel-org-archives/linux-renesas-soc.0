@@ -1,152 +1,67 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-Date: Fri, 28 Sep 2018 18:58:52 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 15/30] media: entity: Look for indirect routes
-Message-ID: <20180928165852.GD20786@w540>
-References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
- <20180823132544.521-16-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:4452 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730198AbeIRWEl (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 18 Sep 2018 18:04:41 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Arnd Bergmann <arnd.bergmann@linaro.org>,
+        Mark Brown <broonie@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH 1/2] clocksource/drivers/ostm: Delay driver registration
+Date: Tue, 18 Sep 2018 16:31:10 +0000
+Message-ID: <TY1PR01MB156214499E27FA05B215C7128A1D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+References: <20180829132954.64862-1-chris.brandt@renesas.com>
+ <1ff04fa1-ee3b-6095-bcd8-f16dbb99b57a@linaro.org>
+ <TY1PR01MB156202DC354E70F1C8C5B18A8A090@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <c16b82c0-e675-8f86-19e6-75cb5995813b@linaro.org>
+ <CAMuHMdX9nXYan-m14k6h7OU1UCGW_irDLvMMi==dnM0cdUR_nA@mail.gmail.com>
+ <c4bd550f-5319-9d92-a30a-1d12fc9bbcab@linaro.org>
+ <CAMuHMdUs-YNQk1wmbqQvz_n9xq04=gkyL1uBJdg9ExA9Lmg5uw@mail.gmail.com>
+ <a160b76b-8dca-81e8-e958-d8b92bdc8928@linaro.org>
+ <CAMuHMdV3Ai+CLHBJ_GH9d=JN0cmiaQT3eSfNGRgiiMffgK7stg@mail.gmail.com>
+ <ba334f02-ac37-0908-ec0c-da8a6459fab4@linaro.org>
+ <TYXPR01MB1568B71126AB4A2BDB78BF1F8A000@TYXPR01MB1568.jpnprd01.prod.outlook.com>
+ <CAL_JsqJ84FW8a8eaHPsJAM9R3tYVzOJxp7=Fq+xWzBPVV03fhg@mail.gmail.com>
+ <TY1PR01MB15621F2C9CC30B20BF5E09A18A050@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAL_JsqJorfOhuwiRk9vbfZ_6B8s-EM7k+RTJmC4La76NzY5tuw@mail.gmail.com>
+ <TY1PR01MB15629984AA415D4F876B86038A040@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <e4b750b4-2e99-ac24-d7aa-db05a6872a8b@linaro.org>
+ <CAMuHMdWOc=p-y4cB=8Y5+HRxRdVqXxE7TaSXkcOO9AMaB+1Mqg@mail.gmail.com>
+ <TY1PR01MB15627A875767E1428E6C7DCE8A1A0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdXy=NXgqc0p5x+dp6u45LkYENNA6mjECwnOYOURE_+yCg@mail.gmail.com>
+ <TY1PR01MB1562DB2A1F955F52807F8AC88A1E0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdWOR91HWNGnQAfkjesg_89=AuxUy0RnE3R7=3=KZ_0Kyg@mail.gmail.com>
+ <TY1PR01MB15621E4C1E84A6E3BC4B94CF8A1D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdV1LvTrf3jw+JMkAC=skxB48--AYm_eJtZJqt9374Sd3w@mail.gmail.com>
+ <TY1PR01MB15625BAD12E2CB56AB47ACE88A1D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdVfa1yz=N=KCwXO=4TGGB113mTYqtB=0iYiaQVoTC260Q@mail.gmail.com>
+ <TY1PR01MB1562ED7502A2D183B5A981588A1D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdWMtLSzP7nC+C=ND1O4BQY6DFzTFspchjwtsTGTqTURog@mail.gmail.com>
+In-Reply-To: <CAMuHMdWMtLSzP7nC+C=ND1O4BQY6DFzTFspchjwtsTGTqTURog@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="WChQLJJJfbwij+9x"
-Content-Disposition: inline
-In-Reply-To: <20180823132544.521-16-niklas.soderlund+renesas@ragnatech.se>
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
---WChQLJJJfbwij+9x
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Sakari,
-
-On Thu, Aug 23, 2018 at 03:25:29PM +0200, Niklas S=C3=B6derlund wrote:
-> From: Sakari Ailus <sakari.ailus@linux.intel.com>
->
-> Two pads are considered having an active route for the purpose of
-> has_route() if an indirect active route can be found between the two pads.
-> An simple example of this is that a source pad has an active route to
-> another source pad if both of the pads have an active route to the same
-> sink pad.
->
-> Make media_entity_has_route() return true in that case, and do not rely on
-> drivers performing this by themselves.
->
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> ---
->  drivers/media/media-entity.c | 32 +++++++++++++++++++++++++++++++-
->  1 file changed, 31 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-> index 3912bc75651fe0b7..29e732a130667ae9 100644
-> --- a/drivers/media/media-entity.c
-> +++ b/drivers/media/media-entity.c
-> @@ -240,6 +240,9 @@ EXPORT_SYMBOL_GPL(media_entity_pads_init);
->  bool media_entity_has_route(struct media_entity *entity, unsigned int pa=
-d0,
->  			    unsigned int pad1)
->  {
-> +	unsigned int i;
-> +	bool has_route;
-> +
->  	if (pad0 >=3D entity->num_pads || pad1 >=3D entity->num_pads)
->  		return false;
->
-> @@ -253,7 +256,34 @@ bool media_entity_has_route(struct media_entity *ent=
-ity, unsigned int pad0,
->  	    && entity->pads[pad1].flags & MEDIA_PAD_FL_SINK)
->  		swap(pad0, pad1);
->
-> -	return entity->ops->has_route(entity, pad0, pad1);
-> +	has_route =3D entity->ops->has_route(entity, pad0, pad1);
-> +	/* A direct route is returned immediately */
-> +	if (has_route ||
-> +	    (entity->pads[pad0].flags & MEDIA_PAD_FL_SINK &&
-> +	     entity->pads[pad1].flags & MEDIA_PAD_FL_SOURCE))
-
-I'm not sure I get why you're using the || condition here.
-
-I suspect it is in order to make sure the driver implementation of
-ops->has_route() only checks for direct links, but wouldn't it be
-better to clarify the function semantics instead of catching
-'non-direct' routes returned here?
-
-More generally, why not call ops->has_route() only in case pad0 and
-pad1 have different type, and check for indirect links otherwise?
-
-> +		return true;
-> +
-> +	/* Look for indirect routes */
-> +	for (i =3D 0; i < entity->num_pads; i++) {
-> +		if (i =3D=3D pad0 || i =3D=3D pad1)
-> +			continue;
-
-This is correct, but the following check catches this condition as
-well I think.
-
-I assume if we fall down here pad0 and pad1 are of the same type and
-if 'i' is one of the two pads it will have the same type as pad0, and
-you're checking for this here below.
-
-> +
-> +		/*
-> +		 * There are no direct routes between same types of
-> +		 * pads, so skip checking this route
-> +		 */
-> +		if (!((entity->pads[pad0].flags ^ entity->pads[i].flags) &
-> +		      (MEDIA_PAD_FL_SOURCE | MEDIA_PAD_FL_SINK)))
-> +			continue;
-> +
-> +		/* Is there an indirect route? */
-> +		if (entity->ops->has_route(entity, i, pad0) &&
-> +		    entity->ops->has_route(entity, i, pad1))
-
-What guarantees here that i is a sink and pad0/pad1 are sources? It seems
-the 'has_route' operation wants this, otherwise I don't see a reason
-for "[PATCH 09/30] media: entity: Swap pads if route is checked from
-source to sink". Did I miss something from that patch?
-
-Sorry, lot of questions. I might be confused :/
-Thanks
-   j
-
-> +			return true;
-> +	}
-> +
-> +	return false;
-> +
->  }
->  EXPORT_SYMBOL_GPL(media_entity_has_route);
->
-> --
-> 2.18.0
->
-
---WChQLJJJfbwij+9x
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJbrl3MAAoJEHI0Bo8WoVY8Q9oP/3qs2IMsPtykULrV1RUnfW/j
-ukeSGZVahuT+GCji/eq6CgfOFMppkXhGj/RmhyIHEXR34E/WIvziWzSDpwgNaJbg
-mNRC7J/H94fDrPiLMG3UhgrVnb8VKeleUf9leRtl0zp0lr2v4wPx5g3iKIf/nxIv
-NJcUgp1Ls/ZNRVE/dcMxBi89dbG0BL9+tZf1SVzsEXLbzurcIxpq7BUMJPe5ZreO
-/XeyklZJhuu07SNDsn+R4ZVeqfsBGzYkdNQvF2l2vxuoXEvgYNrrpci4VxL0tkVC
-6ZNxdar5wAItVYM5B5vbFRlXWsbpu08VRVNioqgWcQJxGXIrBNOvThRg4AAoA5nP
-/WzVhRHhTKL0sa2tq/L/3Lo99YFSY3DWnc4jpA85+bfyWflRNmm49kqjh/zKVgwE
-a773PwV6M9zrwy/qotP9Ymu/Kbk2uh3RFHn/vmTaJtstttjYiICDUSVycPgOjs89
-/rYyU9Irvi4u9KSIdhpvBpghKqZZwN8Fd5oYkDiLcj8nxR0784L4e9WmJndx2eDW
-FyNrtxXTy5r53/ViKcv5VYRfyBIkXkmxrCkUWeB31dc7/dP6i5rPqF8hSU+aOHw6
-Rxfsv8OMwN/LiUw2vMvIHYxV4L3AjgyEecpCL3iWrIYZyinLvVwqmIv2J0fjtyXO
-jeSjVt/lCj6CB/tCVH+m
-=fMMl
------END PGP SIGNATURE-----
-
---WChQLJJJfbwij+9x--
+SGkgR2VlcnQsDQoNCk9uIFR1ZXNkYXksIFNlcHRlbWJlciAxOCwgMjAxOCAxLCBHZWVydCBVeXR0
+ZXJob2V2ZW4gd3JvdGU6DQo+ID4gU28gSSBzZWUgd2hhdCB0aGUgbWVkaWF0ZWsgaXMgZG9pbmcs
+IGJ1dCBJIGNhbid0IHNlZW0gdG8gcmVwcm9kdWNlIGl0Lg0KPiBJDQo+ID4gbXVzdCBiZSBtaXNz
+aW5nIHNvbWV0aGluZy4NCj4gDQo+IEl0J3MgdXNpbmcgQ0xLX09GX0RFQ0xBUkVfRFJJVkVSKCks
+IHdoaWNoIGNsZWFycyBPRl9QT1BVTEFURUQ6DQoNCll1cCwgdGhhdCdzIHdoYXQgSSB3YXMgbWlz
+c2luZy4NCldvcmtzIG5vdy4NClRoYW5rcyENCg0KU28gYXQgdGhpcyBwb2ludCwgSSBndWVzcyBJ
+J2xsIG1vdmUgYXdheSBmcm9tIHBhdGNoaW5nIHRoZSB0aW1lciBkcml2ZXIgDQphbmQgZ28gYmFj
+ayB0byBmb2N1c2luZyBvbiB0aGUgY2xvY2sgZHJpdmVyLg0KDQoNCkNocmlzDQoNCg==
