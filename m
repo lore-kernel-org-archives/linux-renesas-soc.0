@@ -1,169 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57700 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729111AbeI1Qny (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:10213 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729197AbeIRTVE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:43:54 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Ulrich Hecht <uli+renesas@fpond.eu>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 13/14] arm64: dts: renesas: r8a77995: draak: Enable HDMI display output
-Date: Fri, 28 Sep 2018 12:20:24 +0200
-Message-Id: <bcf3003438ea464594f668a61cf2344a7f82f91c.1538125184.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1538125184.git.horms+renesas@verge.net.au>
-References: <cover.1538125184.git.horms+renesas@verge.net.au>
+        Tue, 18 Sep 2018 15:21:04 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 0/5] Add I2C4/DU0/QSPI0/SDHI2/USB to r8a77470
+Date: Tue, 18 Sep 2018 14:47:53 +0100
+Message-Id: <1537278478-1744-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ulrich Hecht <uli+renesas@fpond.eu>
+Dear All,
 
-Adds LVDS decoder, HDMI encoder and connector for the Draak board.
+this series adds I2C4/DU0/QSPI0/SDHI2/USB0/USB1 pin groups and
+functions to the RZ/G1C (a.k.a. r8a77470).
 
-The LVDS0 and LVDS1 encoders can use the DU_DOTCLKIN0, DU_DOTCLKIN1 and
-EXTAL externals clocks. Two of them are provided to the SoC on the Draak
-board, hook them up in DT.
+Thanks,
+Fab
 
-Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 98 +++++++++++++++++++++++++-
- 1 file changed, 97 insertions(+), 1 deletion(-)
+Fabrizio Castro (5):
+  pinctrl: sh-pfc: r8a77470: Add I2C4 pin groups
+  pinctrl: sh-pfc: r8a77470: Add DU0 pin groups
+  pinctrl: sh-pfc: r8a77470: Add QSPI0 pin groups
+  pinctrl: sh-pfc: r8a77470: Add SDHI2 pin groups
+  pinctrl: sh-pfc: r8a77470: Add USB pin groups
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index e39b73005381..2405eaad0296 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -2,7 +2,7 @@
- /*
-  * Device Tree Source for the Draak board
-  *
-- * Copyright (C) 2016 Renesas Electronics Corp.
-+ * Copyright (C) 2016-2018 Renesas Electronics Corp.
-  * Copyright (C) 2017 Glider bvba
-  */
- 
-@@ -45,6 +45,41 @@
- 		};
- 	};
- 
-+	hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_out: endpoint {
-+				remote-endpoint = <&adv7511_out>;
-+			};
-+		};
-+	};
-+
-+	lvds-decoder {
-+		compatible = "thine,thc63lvd1024";
-+		vcc-supply = <&reg_3p3v>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				thc63lvd1024_in: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+				thc63lvd1024_out: endpoint {
-+					remote-endpoint = <&adv7511_in>;
-+				};
-+			};
-+		};
-+	};
-+
- 	memory@48000000 {
- 		device_type = "memory";
- 		/* first 128MB is reserved for secure area. */
-@@ -190,6 +225,43 @@
- 
- 	};
- 
-+	hdmi-encoder@39 {
-+		compatible = "adi,adv7511w";
-+		reg = <0x39>, <0x3f>, <0x38>, <0x3c>;
-+		reg-names = "main", "edid", "packet", "cec";
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <28 IRQ_TYPE_LEVEL_LOW>;
-+
-+		/* Depends on LVDS */
-+		max-clock = <135000000>;
-+		min-vrefresh = <50>;
-+
-+		adi,input-depth = <8>;
-+		adi,input-colorspace = "rgb";
-+		adi,input-clock = "1x";
-+		adi,input-style = <1>;
-+		adi,input-justification = "evenly";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7511_in: endpoint {
-+					remote-endpoint = <&thc63lvd1024_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				adv7511_out: endpoint {
-+					remote-endpoint = <&hdmi_con_out>;
-+				};
-+			};
-+		};
-+	};
-+
- 	hdmi-decoder@4c {
- 		compatible = "adi,adv7612";
- 		reg = <0x4c>;
-@@ -240,6 +312,30 @@
- 	status = "okay";
- };
- 
-+&lvds0 {
-+	status = "okay";
-+
-+	clocks = <&cpg CPG_MOD 727>,
-+		 <&x12_clk>,
-+		 <&extal_clk>;
-+	clock-names = "fck", "dclkin.0", "extal";
-+
-+	ports {
-+		port@1 {
-+			lvds0_out: endpoint {
-+				remote-endpoint = <&thc63lvd1024_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&lvds1 {
-+	clocks = <&cpg CPG_MOD 727>,
-+		 <&x12_clk>,
-+		 <&extal_clk>;
-+	clock-names = "fck", "dclkin.0", "extal";
-+};
-+
- &ohci0 {
- 	status = "okay";
- };
+ drivers/pinctrl/sh-pfc/pfc-r8a77470.c | 275 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 275 insertions(+)
+
 -- 
-2.11.0
+2.7.4
