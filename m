@@ -1,41 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f173.google.com ([209.85.208.173]:39649 "EHLO
-        mail-lj1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729185AbeIROmG (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:50185 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727432AbeIRHUK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Sep 2018 10:42:06 -0400
-Received: by mail-lj1-f173.google.com with SMTP id l15-v6so1058987lji.6
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Sep 2018 02:10:24 -0700 (PDT)
-Subject: Re: [PATCH 3/3] i2c: adv748x: fix typo in comment for TXB CSI-2
- transmitter power down
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Tue, 18 Sep 2018 03:20:10 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Jacopo Mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 3/3] i2c: adv748x: fix typo in comment for TXB CSI-2 transmitter power down
+Date: Tue, 18 Sep 2018 03:45:09 +0200
+Message-Id: <20180918014509.6394-4-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180918014509.6394-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20180918014509.6394-1-niklas.soderlund+renesas@ragnatech.se>
- <20180918014509.6394-4-niklas.soderlund+renesas@ragnatech.se>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <2db11189-0ddd-e1ee-1446-505813784ada@cogentembedded.com>
-Date: Tue, 18 Sep 2018 12:10:22 +0300
 MIME-Version: 1.0
-In-Reply-To: <20180918014509.6394-4-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 9/18/2018 4:45 AM, Niklas Söderlund wrote:
+Fix copy-and-past error in comment for TXB CSI-2 transmitter power down
+sequence.
 
-> Fix copy-and-past error in comment for TXB CSI-2 transmitter power down
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/i2c/adv748x/adv748x-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-    -paste. :-)
-
-> sequence.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-[...]
-
-MBR, Sergei
+diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
+index 9a82cdf301bccb41..86cb38f4d7cc11c6 100644
+--- a/drivers/media/i2c/adv748x/adv748x-core.c
++++ b/drivers/media/i2c/adv748x/adv748x-core.c
+@@ -299,7 +299,7 @@ static const struct adv748x_reg_value adv748x_power_down_txb_1lane[] = {
+ 
+ 	{ADV748X_PAGE_TXB, 0x31, 0x82},	/* ADI Required Write */
+ 	{ADV748X_PAGE_TXB, 0x1e, 0x00},	/* ADI Required Write */
+-	{ADV748X_PAGE_TXB, 0x00, 0x81},	/* Enable 4-lane MIPI */
++	{ADV748X_PAGE_TXB, 0x00, 0x81},	/* Enable 1-lane MIPI */
+ 	{ADV748X_PAGE_TXB, 0xda, 0x01},	/* i2c_mipi_pll_en - 1'b1 */
+ 	{ADV748X_PAGE_TXB, 0xc1, 0x3b},	/* ADI Required Write */
+ 
+-- 
+2.18.0
