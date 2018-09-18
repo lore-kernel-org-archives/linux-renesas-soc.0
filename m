@@ -1,50 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:36668 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726908AbeINTlm (ORCPT
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:45554 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726759AbeIRNaR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Sep 2018 15:41:42 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        mchehab@kernel.org
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v2 1/2] media: vsp1: Document max_width restriction on SRU
-Date: Fri, 14 Sep 2018 15:26:51 +0100
-Message-Id: <20180914142652.30484-1-kieran.bingham+renesas@ideasonboard.com>
+        Tue, 18 Sep 2018 09:30:17 -0400
+MIME-Version: 1.0
+References: <1536748914-27416-1-git-send-email-fabrizio.castro@bp.renesas.com> <1536748914-27416-2-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1536748914-27416-2-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Sep 2018 09:58:39 +0200
+Message-ID: <CAMuHMdUEPoEdfrPCRDODgQb4gDfKEXVzg5OTx8_f0xunqsKP7Q@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: renesas: Add r8a774c0 CPG Core Clock Definitions
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The SRU is currently restricted to 256 pixels as part of the current
-partition algorithm. Document that the actual capability of this
-component is 288 pixels, but don't increase the implementation.
+On Wed, Sep 12, 2018 at 12:42 PM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> Add all RZ/G2E (a.k.a. R8A774C0) Clock Pulse Generator Core
+> Clock Outputs, as listed in Table 8.2g ("List of Clocks
+> [RZ/G2E]") of the RZ/G2 Hardware User's Manual.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 
-The extended partition algorithm may later choose to utilise a larger
-input to support overlapping partitions which will improve the quality
-of the output images.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v4.20.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_sru.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/media/platform/vsp1/vsp1_sru.c b/drivers/media/platform/vsp1/vsp1_sru.c
-index d216707f64c9..19f91eb81134 100644
---- a/drivers/media/platform/vsp1/vsp1_sru.c
-+++ b/drivers/media/platform/vsp1/vsp1_sru.c
-@@ -314,6 +314,11 @@ static unsigned int sru_max_width(struct vsp1_entity *entity,
- 	output = vsp1_entity_get_pad_format(&sru->entity, sru->entity.config,
- 					    SRU_PAD_SOURCE);
- 
-+	/*
-+	 * The maximum input width of the SRU is 288 input pixels, but 32
-+	 * pixels are reserved to support overlapping partition windows when
-+	 * scaling.
-+	 */
- 	if (input->width != output->width)
- 		return 512;
- 	else
+                        Geert
+
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
