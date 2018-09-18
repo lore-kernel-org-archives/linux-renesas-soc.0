@@ -1,54 +1,112 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:28585 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2390180AbeIUX1N (ORCPT
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37831 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727756AbeIRR46 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Sep 2018 19:27:13 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Tue, 18 Sep 2018 13:56:58 -0400
+Received: by mail-wr1-f68.google.com with SMTP id u12-v6so1878372wrr.4
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Sep 2018 05:24:35 -0700 (PDT)
+Subject: Re: [PATCH V5] ARM: shmobile: Rework the PMIC IRQ line quirk
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: [PATCH 3/4] dt-bindings: i2c: sh_mobile: Document r8a7744 support
-Date: Fri, 21 Sep 2018 18:37:00 +0100
-Message-Id: <1537551421-4259-4-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1537551421-4259-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1537551421-4259-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <20180611121513.9673-1-marek.vasut+renesas@gmail.com>
+ <CAMuHMdUuUwP2NAkHFsnuLigRRfEJVa8xBQ5Ee-jxU9MK8_8PZA@mail.gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <b450eb7b-3846-9b79-0e5f-6ebf185fbd5d@gmail.com>
+Date: Tue, 18 Sep 2018 14:24:32 +0200
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdUuUwP2NAkHFsnuLigRRfEJVa8xBQ5Ee-jxU9MK8_8PZA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+On 09/05/2018 01:55 PM, Geert Uytterhoeven wrote:
+> Hi Marek,
+> 
+> On Mon, Jun 11, 2018 at 2:15 PM Marek Vasut <marek.vasut@gmail.com> wrote:
+>> Rather than hard-coding the quirk topology, which stopped scaling,
+>> parse the information from DT. The code looks for all compatible
+>> PMICs -- da9063 and da9210 -- and checks if their IRQ line is tied
+>> to the same pin. If so, the code sends a matching sequence to the
+>> PMIC to deassert the IRQ.
+>>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>> Cc: Simon Horman <horms+renesas@verge.net.au>
+>> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> Cc: linux-renesas-soc@vger.kernel.org
+>> Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be> (on Koelsch)
+>> ---
+>> V2: - Replace the DT shared IRQ check loop with memcmp()
+>>     - Send the I2C message to deassert the IRQ line to all PMICs
+>>       in the list with shared IRQ line instead of just one
+>>     - Add comment that this works only in case all the PMICs are
+>>       on the same I2C bus
+>> V3: - Drop the addr = 0x00 init
+>>     - Drop reinit of argsa in rcar_gen2_regulator_quirk
+>> V4: - Squash regulator_quirk on single line
+>>     - Drop !np check in for_each_matching_node_and_match()
+>>     - Use argsa in of_irq_parse_one
+>> V5: - Check kzalloc failure
+>>     - Rename da...._msgs to da...._msg
+>>     - Don't reinit quirk->shared
+> 
+> Thanks for the update!
+> 
+>> --- a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+>> +++ b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+> 
+>> @@ -122,7 +142,12 @@ static struct notifier_block regulator_quirk_nb = {
+>>
+>>  static int __init rcar_gen2_regulator_quirk(void)
+>>  {
+>> -       u32 mon;
+>> +       struct regulator_quirk *quirk, *pos, *tmp;
+>> +       struct of_phandle_args *argsa, *argsb;
+>> +       const struct of_device_id *id;
+>> +       struct device_node *np;
+>> +       u32 mon, addr;
+>> +       int ret;
+>>
+>>         if (!of_machine_is_compatible("renesas,koelsch") &&
+>>             !of_machine_is_compatible("renesas,lager") &&
+>> @@ -130,22 +155,76 @@ static int __init rcar_gen2_regulator_quirk(void)
+>>             !of_machine_is_compatible("renesas,gose"))
+>>                 return -ENODEV;
+>>
+>> +       for_each_matching_node_and_match(np, rcar_gen2_quirk_match, &id) {
+>> +               if (!of_device_is_available(np))
+>> +                       break;
+>> +
+>> +               quirk = kzalloc(sizeof(*quirk), GFP_KERNEL);
+>> +               if (!quirk) {
+>> +                       ret = -ENOMEM;
+>> +                       goto err_mem;
+>> +               }
+>> +
+>> +               argsa = &quirk->irq_args;
+>> +               memcpy(&quirk->i2c_msg, id->data, sizeof(quirk->i2c_msg));
+>> +
+>> +               ret = of_property_read_u32(np, "reg", &addr);
+>> +               if (ret)
+>> +                       return ret;
+> 
+> I think it's safer to skip this entry and continue, after calling
+> kfree(quirk), of course.
 
-Document i2c Device Tree support for RZ/G1N (R8A7744) SoC, which is
-compatible with R-Car Gen2 SoC family.
+This can be shifted above the kzalloc() . That said, I sent V6, so
+please review it one more time.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt b/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
-index 872673a..d81b626 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
-@@ -5,6 +5,7 @@ Required properties:
- 			- "renesas,iic-r8a73a4" (R-Mobile APE6)
- 			- "renesas,iic-r8a7740" (R-Mobile A1)
- 			- "renesas,iic-r8a7743" (RZ/G1M)
-+			- "renesas,iic-r8a7744" (RZ/G1N)
- 			- "renesas,iic-r8a7745" (RZ/G1E)
- 			- "renesas,iic-r8a774a1" (RZ/G2M)
- 			- "renesas,iic-r8a7790" (R-Car H2)
 -- 
-2.7.4
+Best regards,
+Marek Vasut
