@@ -1,57 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:53855 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726866AbeILS5h (ORCPT
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:42849 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728828AbeIRQnw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Sep 2018 14:57:37 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Alex Elder <elder@linaro.org>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Olof Johansson <olof@lixom.net>,
-        linux-arm-kernel@lists.infradead.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: defconfig: enable R8A774C0 SoC
-Date: Wed, 12 Sep 2018 14:52:50 +0100
-Message-Id: <1536760371-17300-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Tue, 18 Sep 2018 12:43:52 -0400
+Received: by mail-vs1-f68.google.com with SMTP id s188-v6so470644vss.9
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Sep 2018 04:11:46 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180918100932.16304-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180918100932.16304-1-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Sep 2018 13:11:34 +0200
+Message-ID: <CAMuHMdXXTOmCEGb+=b9y4vFBBhesk-QvTgdYgwGSXo5TkX_TNA@mail.gmail.com>
+Subject: Re: [PATCH RFT] serial: sh-sci: Add r8a77990 support
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable the Renesas RZ/G2E (R8A774C0) SoC in the ARM64 defconfig.
+Hi Wolfram,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
-This patch applies on top of next-20180912
+On Tue, Sep 18, 2018 at 12:09 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+>
+> This patch adds the R-Car E3 serial documentation.
+>
+> Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 47d7665..a8bce1b 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -51,6 +51,7 @@ CONFIG_ARCH_SEATTLE=y
- CONFIG_ARCH_SYNQUACER=y
- CONFIG_ARCH_RENESAS=y
- CONFIG_ARCH_R8A774A1=y
-+CONFIG_ARCH_R8A774C0=y
- CONFIG_ARCH_R8A7795=y
- CONFIG_ARCH_R8A7796=y
- CONFIG_ARCH_R8A77965=y
+> ---
+>
+> I cannot test this. But we have other devices added for E3 meanwhile, so
+> people surely used a console to do that? Can somebody confirm this?
+> After that I'll send a proper patch to linux-serial list, too.
+
+SCIF is definitely working.
+HSCIF0 can be muxed to the same pins as the console (SCIF2), so you
+can actually test this using remote access, after upporting the pfc part ;-)
+
+For local users: on E3, the QSPI pins (on 2.54mm headers on Ebisu) are
+not single-use, but can be muxed to HSCIF, too.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
