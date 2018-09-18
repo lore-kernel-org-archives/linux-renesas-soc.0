@@ -1,26 +1,29 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:47866 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725877AbeISIqQ (ORCPT
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45732 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730290AbeIRWaQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Sep 2018 04:46:16 -0400
-Date: Tue, 18 Sep 2018 20:10:26 -0700 (PDT)
-Message-Id: <20180918.201026.764474223291614125.davem@redhat.com>
-To: horms+renesas@verge.net.au
-Cc: sergei.shtylyov@cogentembedded.com, magnus.damm@gmail.com,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+        Tue, 18 Sep 2018 18:30:16 -0400
+Received: by mail-lj1-f194.google.com with SMTP id u83-v6so2405744lje.12
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Sep 2018 09:56:48 -0700 (PDT)
 Subject: Re: [PATCH v3 net-next] ravb: do not write 1 to reserved bits
-From: David Miller <davem@redhat.com>
-In-Reply-To: <20180918102226.8017-1-horms+renesas@verge.net.au>
+To: Simon Horman <horms+renesas@verge.net.au>,
+        David Miller <davem@davemloft.net>
+Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
 References: <20180918102226.8017-1-horms+renesas@verge.net.au>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <56bacfca-e2a9-fbad-77cc-5c06d10f0648@cogentembedded.com>
+Date: Tue, 18 Sep 2018 19:56:45 +0300
+MIME-Version: 1.0
+In-Reply-To: <20180918102226.8017-1-horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Simon Horman <horms+renesas@verge.net.au>
-Date: Tue, 18 Sep 2018 12:22:26 +0200
+On 09/18/2018 01:22 PM, Simon Horman wrote:
 
 > From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
 > 
@@ -38,4 +41,6 @@ Date: Tue, 18 Sep 2018 12:22:26 +0200
 > Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
 > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-I've decided to apply this to 'net', let me know if this is a problem.
+   BTW, perhaps this should be merged into net.git instead? DaveM, your call? :-)
+
+MBR, Sergei
