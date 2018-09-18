@@ -1,71 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:58251 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726824AbeIQQ6G (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55432 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726254AbeIRM1n (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Sep 2018 12:58:06 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com,
-        kieran.bingham+renesas@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Subject: [PATCH v3 3/4] media: i2c: adv748x: Conditionally enable only CSI-2 outputs
-Date: Mon, 17 Sep 2018 13:30:56 +0200
-Message-Id: <1537183857-29173-4-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1537183857-29173-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1537183857-29173-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 18 Sep 2018 08:27:43 -0400
+Date: Tue, 18 Sep 2018 08:56:26 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: David Miller <davem@davemloft.net>,
+        Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Subject: Re: [PATCH net-next] ravb: do not write 1 to reserved bits
+Message-ID: <20180918065603.gtogr3q5puyjxf7k@verge.net.au>
+References: <20180917151911.25450-1-horms+renesas@verge.net.au>
+ <12758acf-6444-47eb-ad74-170034959bd7@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <12758acf-6444-47eb-ad74-170034959bd7@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The ADV748x has two CSI-2 output port and one TTL input/output port for
-digital video reception/transmission. The TTL digital pad is unconditionally
-enabled during the device reset even if not used. Same goes for the TXA
-and TXB CSI-2 outputs, which are enabled by the initial settings blob
-programmed into the chip.
+On Mon, Sep 17, 2018 at 08:58:52PM +0300, Sergei Shtylyov wrote:
+> On 09/17/2018 06:19 PM, Simon Horman wrote:
+> 
+> > From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> > 
+> > EtherAVB hardware requires 0 to be written to status register bits in
+> > order to clear them, however, care must be taken not to:
+> > 
+> > 1. Clear other bits, by writing zero to them
+> > 2. Write one to reserved bits
+> > 
+> > This patch corrects the ravb driver with respect to the second point above.
+> > This is done by defining reserved bit masks for the affected registers and,
+> > after auditing the code, ensure all sites that may write a one to a
+> > reserved bit use are suitably masked.
+> > 
+> > Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > ---
+> > v2 [Simon Horman]
+> > * Cover ravb_timestamp_interrupt() by this change
+> > * Use enum value rather than #define for reserved masks
+> > * Reword changelog
+> > 
+> > v1 [Kazuya Mizuguchi]
+> > ---
+> >  drivers/net/ethernet/renesas/ravb.h      |  6 ++++++
+> >  drivers/net/ethernet/renesas/ravb_main.c | 11 ++++++-----
+> >  drivers/net/ethernet/renesas/ravb_ptp.c  |  2 +-
+> >  3 files changed, 13 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
+> > index 1470fc12282b..bca219edcf94 100644
+> > --- a/drivers/net/ethernet/renesas/ravb.h
+> > +++ b/drivers/net/ethernet/renesas/ravb.h
+> > @@ -428,6 +428,7 @@ enum EIS_BIT {
+> >  	EIS_CULF1	= 0x00000080,
+> >  	EIS_TFFF	= 0x00000100,
+> >  	EIS_QFS		= 0x00010000,
+> > +	EIS_RESERVED	= (u32)(GENMASK(31, 17) | GENMASK(15, 11)),
+> 
+>    Are you sure those (u32) casts are necessary? Happily builds in both 32- and 64-bit
+> mode without them... 
+> 
+> [...]
+> > @@ -528,6 +530,7 @@ enum RIS2_BIT {
+> >  	RIS2_QFF16	= 0x00010000,
+> >  	RIS2_QFF17	= 0x00020000,
+> >  	RIS2_RFFF	= 0x80000000,
+> > +	RIS2_RESERVED	= (u32)GENMASK_ULL(30, 18),
+> 
+>    Why GENMASK_ULL() suddenly? Doesn't seem needed at all...
+> 
+> [...]
+> > @@ -544,6 +547,8 @@ enum TIS_BIT {
+> >  	TIS_FTF1	= 0x00000002,	/* Undocumented? */
+> >  	TIS_TFUF	= 0x00000100,
+> >  	TIS_TFWF	= 0x00000200,
+> > +	TIS_RESERVED	= (u32)(GENMASK_ULL(31, 20) | GENMASK_ULL(15, 12) | \
+> > +				GENMASK_ULL(7, 4))
+> 
+>    Same question.
 
-In order to improve power saving, do not enable unused output interfaces:
-keep TTL output disabled, as it is not used, and drop CSI-2 output enabling
-from the initial settings list, as they get conditionally enabled later.
+Thanks Sergei,
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/media/i2c/adv748x/adv748x-core.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
-
-diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
-index 72a6692..7b79b0c 100644
---- a/drivers/media/i2c/adv748x/adv748x-core.c
-+++ b/drivers/media/i2c/adv748x/adv748x-core.c
-@@ -386,8 +386,6 @@ static const struct adv748x_reg_value adv748x_init_txa_4lane[] = {
- 
- 	{ADV748X_PAGE_IO, 0x0c, 0xe0},	/* Enable LLC_DLL & Double LLC Timing */
- 	{ADV748X_PAGE_IO, 0x0e, 0xdd},	/* LLC/PIX/SPI PINS TRISTATED AUD */
--	/* Outputs Enabled */
--	{ADV748X_PAGE_IO, 0x10, 0xa0},	/* Enable 4-lane CSI Tx & Pixel Port */
- 
- 	{ADV748X_PAGE_TXA, 0x00, 0x84},	/* Enable 4-lane MIPI */
- 	{ADV748X_PAGE_TXA, 0x00, 0xa4},	/* Set Auto DPHY Timing */
-@@ -441,10 +439,6 @@ static const struct adv748x_reg_value adv748x_init_txb_1lane[] = {
- 	{ADV748X_PAGE_SDP, 0x31, 0x12},	/* ADI Required Write */
- 	{ADV748X_PAGE_SDP, 0xe6, 0x4f},  /* V bit end pos manually in NTSC */
- 
--	/* Enable 1-Lane MIPI Tx, */
--	/* enable pixel output and route SD through Pixel port */
--	{ADV748X_PAGE_IO, 0x10, 0x70},
--
- 	{ADV748X_PAGE_TXB, 0x00, 0x81},	/* Enable 1-lane MIPI */
- 	{ADV748X_PAGE_TXB, 0x00, 0xa1},	/* Set Auto DPHY Timing */
- 	{ADV748X_PAGE_TXB, 0xd2, 0x40},	/* ADI Required Write */
-@@ -469,7 +463,7 @@ static const struct adv748x_reg_value adv748x_init_txb_1lane[] = {
- static int adv748x_reset(struct adv748x_state *state)
- {
- 	int ret;
--	u8 regval = ADV748X_IO_10_PIX_OUT_EN;
-+	u8 regval = 0;
- 
- 	ret = adv748x_write_regs(state, adv748x_sw_reset);
- 	if (ret < 0)
--- 
-2.7.4
+I agree GENMASK() without any cast should be sufficient in all
+of the above cases. I'll respin accordingly.
