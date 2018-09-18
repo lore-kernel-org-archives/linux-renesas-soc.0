@@ -1,191 +1,96 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] arm64: dts: renesas: r8a779{7|8}0: add TMU support
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>
-References: <fb4eb097-40aa-82df-68c7-9b727c858a8b@cogentembedded.com>
-Message-ID: <a3846f74-78b4-bf4a-9231-961c5b16091c@cogentembedded.com>
-Date: Fri, 7 Sep 2018 23:14:40 +0300
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relay10.mail.gandi.net ([217.70.178.230]:58797 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728575AbeIRTGg (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 18 Sep 2018 15:06:36 -0400
+Date: Tue, 18 Sep 2018 15:33:53 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Simon Horman <horms@verge.net.au>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/3] pinctrl: renesas: Renesas RZ/N1 pinctrl driver
+Message-ID: <20180918133353.GT16851@w540>
+References: <20180917163609.30457-1-phil.edworthy@renesas.com>
+ <20180917163609.30457-3-phil.edworthy@renesas.com>
+ <20180918104330.GO16851@w540>
+ <TY1PR01MB17695F174D9083C0E625494FF51D0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <fb4eb097-40aa-82df-68c7-9b727c858a8b@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="XSEVMyPRvc8xgDhM"
+Content-Disposition: inline
+In-Reply-To: <TY1PR01MB17695F174D9083C0E625494FF51D0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe TMUs in the R8A779{7|8}0 device trees.
 
-Based on the original (and large) patches by Vladimir Barinov.
+--XSEVMyPRvc8xgDhM
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hi Phil,
 
----
-This patch is against the 'renesas-devel-20180906-v4.19-rc2' branch of
-Simon Horman's 'renesas.git' repo plus the R8A779{7|8}0 DT patch adding
-the CMT support).
+On Tue, Sep 18, 2018 at 11:55:16AM +0000, Phil Edworthy wrote:
+> Hi Jacopo,
+>
 
-The R8A779{7|8}0 TMU DT binding update have been just posted...
+[snip]
 
- arch/arm64/boot/dts/renesas/r8a77970.dtsi |   66 ++++++++++++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77980.dtsi |   66 ++++++++++++++++++++++++++++++
- 2 files changed, 132 insertions(+)
+> > > +
+> > > +/*
+> > > + * Structure detailing the HW registers on the RZ/N1 devices.
+> > > + * Both the Level 1 mux registers and Level 2 mux registers have the
+> > > +same
+> > > + * structure. The only difference is that Level 2 has additional MDIO
+> > > +registers
+> > > + * at the end.
+> > > + */
+> > > +struct rzn1_pinctrl_regs {
+> > > +	union {
+> > > +		u32	conf[170];
+> > > +		u8	pad0[0x400];
+> >
+> > Is pad0 actually used?
+> No, it's just to implement the padding. Would you prefer not using a union
+> here?
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -316,6 +316,72 @@
- 			resets = <&cpg 407>;
- 		};
- 
-+		tmu0: timer@e61e0000 {
-+			compatible = "renesas,tmu-r8a77970", "renesas,tmu";
-+			reg = <0 0xe61e0000 0 0x30>;
-+			interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 125>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 125>;
-+			status = "disabled";
-+		};
-+
-+		tmu1: timer@e6fc0000 {
-+			compatible = "renesas,tmu-r8a77970", "renesas,tmu";
-+			reg = <0 0xe6fc0000 0 0x30>;
-+			interrupts = <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 124>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 124>;
-+			status = "disabled";
-+		};
-+
-+		tmu2: timer@e6fd0000 {
-+			compatible = "renesas,tmu-r8a77970", "renesas,tmu";
-+			reg = <0 0xe6fd0000 0 0x30>;
-+			interrupts = <GIC_SPI 303 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 123>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 123>;
-+			status = "disabled";
-+		};
-+
-+		tmu3: timer@e6fe0000 {
-+			compatible = "renesas,tmu-r8a7797", "renesas,tmu";
-+			reg = <0 0xe6fe0000 0 0x30>;
-+			interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 122>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 122>;
-+			status = "disabled";
-+		};
-+
-+		tmu4: timer@ffc00000 {
-+			compatible = "renesas,tmu-r8a7797", "renesas,tmu";
-+			reg = <0 0xffc00000 0 0x30>;
-+			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 369 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 121>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 121>;
-+			status = "disabled";
-+		};
-+
- 		i2c0: i2c@e6500000 {
- 			compatible = "renesas,i2c-r8a77970",
- 				     "renesas,rcar-gen3-i2c";
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -346,6 +346,72 @@
- 			resets = <&cpg 407>;
- 		};
- 
-+		tmu0: timer@e61e0000 {
-+			compatible = "renesas,tmu-r8a77980", "renesas,tmu";
-+			reg = <0 0xe61e0000 0 0x30>;
-+			interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 125>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 125>;
-+			status = "disabled";
-+		};
-+
-+		tmu1: timer@e6fc0000 {
-+			compatible = "renesas,tmu-r8a77980", "renesas,tmu";
-+			reg = <0 0xe6fc0000 0 0x30>;
-+			interrupts = <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 124>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 124>;
-+			status = "disabled";
-+		};
-+
-+		tmu2: timer@e6fd0000 {
-+			compatible = "renesas,tmu-r8a77980", "renesas,tmu";
-+			reg = <0 0xe6fd0000 0 0x30>;
-+			interrupts = <GIC_SPI 303 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 123>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 123>;
-+			status = "disabled";
-+		};
-+
-+		tmu3: timer@e6fe0000 {
-+			compatible = "renesas,tmu-r8a77980", "renesas,tmu";
-+			reg = <0 0xe6fe0000 0 0x30>;
-+			interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 122>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 122>;
-+			status = "disabled";
-+		};
-+
-+		tmu4: timer@ffc00000 {
-+			compatible = "renesas,tmu-r8a77980", "renesas,tmu";
-+			reg = <0 0xffc00000 0 0x30>;
-+			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 121>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 121>;
-+			status = "disabled";
-+		};
-+
- 		i2c0: i2c@e6500000 {
- 			compatible = "renesas,i2c-r8a77980",
- 				     "renesas,rcar-gen3-i2c";
+Oh, I did the math wrong, to me it was (32*170 > 8*400) but it's
+actually (32*170 < 8*1024).
+
+Also using a struct to define the memory region layout confused me and
+I was about to ask "WHY ARE YOU RESERVING MEMORY HERE???" but this
+type is just used for pointers, and it makes accessing HW locations
+nicer actually (thanks Geert for having saved me a silly comment on this).
+
+Cheers
+   j
+
+
+--XSEVMyPRvc8xgDhM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJboP7BAAoJEHI0Bo8WoVY8v6QP/0FfpEDFS4ePrHBtSd0qDdhH
+NSVFPt/fcmYXLyQRbLeA/W143cahf9ITSE1TfKGYJXqVGlVccwlSiud+7FKjTYMO
+tYFKraEhodmAew7jlf+Bnx5Yrhh6UOPgBq8kOXG8mAFlMitmOKWkc2O9R18Z7THS
+PeBtPzltIr6/0eZioxCuo+NbRxwtG9EA0bbcWTeymzGPebsDoOz+0uD7UER/fA5o
+kAxmb0cnIoSYh3c8DYBMt5awontuldtLH2sjMva4AEPf1C/kRVZopTKHC9HclCJe
+gtnQ0IwjGlyeWeR6R8pWFL6h4LlpE5G9l9mReLR2NaWJo/m0wP2SSN57Tyk1MS28
+SErxHu2SJurK9aoWaMPlpqlNXk96FBRfRhqpbvxoNM4xwczWINojYMMd+Nz4N1Rn
+RHhJCq1KVY6nk80E7KkR/8hM0WPL0/G37u8X06L+DwFD4zygzVmjdk9wJuPLeWdf
+l/mGWX3pFYVRPcOHORHLl3uREmAcbxXcW3Gj7hz16CphnlEnSqVfpf55Mji8oHNg
+H4LCNqvmwXo2CUU4yEiXmJhxC0ulGC+ihqnI1CSg6qTq43CrP/u3CX9EHjMJEb7k
+3HdFQhdD14Uo6uNyfd9gkJL9ao+s9wiyNt3fQXpnwjo9AWhObQLiPeYv4NTnTuzV
+vY2NGzZnoNTHZfQpHuXx
+=oeFZ
+-----END PGP SIGNATURE-----
+
+--XSEVMyPRvc8xgDhM--
