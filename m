@@ -1,54 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:43158 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726817AbeI0Rui (ORCPT
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:39641 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727365AbeISOXx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Sep 2018 13:50:38 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/3] thermal: rcar_thermal: Prevent doing work after unbind
-Date: Thu, 27 Sep 2018 13:32:34 +0200
-Message-Id: <20180927113235.30354-3-geert+renesas@glider.be>
-In-Reply-To: <20180927113235.30354-1-geert+renesas@glider.be>
-References: <20180927113235.30354-1-geert+renesas@glider.be>
+        Wed, 19 Sep 2018 10:23:53 -0400
+MIME-Version: 1.0
+References: <1536759062-11970-1-git-send-email-fabrizio.castro@bp.renesas.com> <1536759062-11970-3-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1536759062-11970-3-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 19 Sep 2018 10:46:48 +0200
+Message-ID: <CAMuHMdWq+gxp1u0ezLt7EFvTLykgQjCY+nXxtAmfCETnesfX9A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a77990: Add R8A774C0 PFC support
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When testing bind/unbind on r8a7791/koelsch:
+On Wed, Sep 12, 2018 at 3:31 PM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> Renesas RZ/G2E (a.k.a. r8a774c0) is pin compatible with R-Car
+> E3 (a.k.a. r8a77990), however it doesn't have several automotive
+> specific peripherals. Add a r8a77990 specific pin groups/functions
+> along with common pin groups/functions for supporting both r8a77990
+> and r8a774c0 SoCs.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 
-    WARNING: CPU: 1 PID: 697 at lib/debugobjects.c:329 debug_print_object+0x8c/0xb4
-    ODEBUG: free active (active state 0) object type: timer_list hint: delayed_work_timer_fn+0x0/0x10
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.20.
 
-This happens if the workqueue runs after the device has been unbound.
-Fix this by cancelling any queued work during remove.
+Gr{oetje,eeting}s,
 
-Fixes: e0a5172e9eec7f0d ("thermal: rcar: add interrupt support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/thermal/rcar_thermal.c | 1 +
- 1 file changed, 1 insertion(+)
+                        Geert
 
-diff --git a/drivers/thermal/rcar_thermal.c b/drivers/thermal/rcar_thermal.c
-index ea132e122b174757..616ba2fccf410d3b 100644
---- a/drivers/thermal/rcar_thermal.c
-+++ b/drivers/thermal/rcar_thermal.c
-@@ -453,6 +453,7 @@ static int rcar_thermal_remove(struct platform_device *pdev)
- 
- 	rcar_thermal_for_each_priv(priv, common) {
- 		rcar_thermal_irq_disable(priv);
-+		cancel_delayed_work_sync(&priv->work);
- 		if (priv->chip->use_of_thermal)
- 			thermal_remove_hwmon_sysfs(priv->zone);
- 		else
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
