@@ -1,79 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:49791 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727234AbeIET6L (ORCPT
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:38525 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727772AbeISSOu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Sep 2018 15:58:11 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com,
-        kieran.bingham+renesas@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Subject: [PATCH v2 4/5] media: i2c: adv748x: Register only enabled inputs
-Date: Wed,  5 Sep 2018 17:27:10 +0200
-Message-Id: <1536161231-25221-5-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1536161231-25221-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1536161231-25221-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 19 Sep 2018 14:14:50 -0400
+Received: by mail-ua1-f67.google.com with SMTP id o11-v6so2593875uak.5
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Sep 2018 05:37:05 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180919121831.313-1-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180919121831.313-1-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 19 Sep 2018 14:36:52 +0200
+Message-ID: <CAMuHMdWUDnNktK-h8RvUuhF-5EMLf_0U4MOPt=8-KLOaABTaoQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a77990: Add PWM pins, groups and functions
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The adv748x assumes input endpoints are always enabled, and registers
-a subdevice for each of them everytime the corresponding output subdevice
-is registered.
+Hi Laurent,
 
-Fix this by conditionally register the input subdevice only if it is
-actually described in device tree.
+On Wed, Sep 19, 2018 at 2:18 PM Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> The R8A77990 (E3) SoC has 7 PWM outputs, add pins, groups and functions
+> for all of them.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/media/i2c/adv748x/adv748x-csi2.c |  6 +++---
- drivers/media/i2c/adv748x/adv748x.h      | 10 ++++++++++
- 2 files changed, 13 insertions(+), 3 deletions(-)
+Thanks for yur patch, but PWm has already been added, cfr.
+https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?h=sh-pfc-for-v4.20&id=951ae7cb068ffdc53afe6cb532aa5a3f215beaa2
 
-diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
-index 034fd93..9e9df51 100644
---- a/drivers/media/i2c/adv748x/adv748x-csi2.c
-+++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
-@@ -82,15 +82,15 @@ static int adv748x_csi2_registered(struct v4l2_subdev *sd)
- 	 *
- 	 * Link HDMI->TXA, and AFE->TXB directly.
- 	 */
--	if (is_txa(tx)) {
-+	if (is_txa(tx) && is_hdmi_enabled(state))
- 		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
- 						  &state->hdmi.sd,
- 						  ADV748X_HDMI_SOURCE);
--	} else {
-+	if (!is_txa(tx) && is_afe_enabled(state))
- 		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
- 						  &state->afe.sd,
- 						  ADV748X_AFE_SOURCE);
--	}
-+	return 0;
- }
- 
- static const struct v4l2_subdev_internal_ops adv748x_csi2_internal_ops = {
-diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
-index eeadf05..a34004e 100644
---- a/drivers/media/i2c/adv748x/adv748x.h
-+++ b/drivers/media/i2c/adv748x/adv748x.h
-@@ -94,6 +94,16 @@ struct adv748x_csi2 {
- #define adv748x_sd_to_csi2(sd) container_of(sd, struct adv748x_csi2, sd)
- #define is_tx_enabled(_tx) ((_tx)->state->endpoints[(_tx)->port] != NULL)
- #define is_txa(_tx) ((_tx) == &(_tx)->state->txa)
-+#define is_afe_enabled(_state)					\
-+	((_state)->endpoints[ADV748X_PORT_AIN0] != NULL ||	\
-+	 (_state)->endpoints[ADV748X_PORT_AIN1] != NULL ||	\
-+	 (_state)->endpoints[ADV748X_PORT_AIN2] != NULL ||	\
-+	 (_state)->endpoints[ADV748X_PORT_AIN3] != NULL ||	\
-+	 (_state)->endpoints[ADV748X_PORT_AIN4] != NULL ||	\
-+	 (_state)->endpoints[ADV748X_PORT_AIN5] != NULL ||	\
-+	 (_state)->endpoints[ADV748X_PORT_AIN6] != NULL ||	\
-+	 (_state)->endpoints[ADV748X_PORT_AIN7] != NULL)
-+#define is_hdmi_enabled(_state) ((_state)->endpoints[ADV748X_PORT_HDMI] != NULL)
- 
- enum adv748x_hdmi_pads {
- 	ADV748X_HDMI_SINK,
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
+
+> +/* - PWM3 --------------------------------------------------------------------*/
+> +static const unsigned int pwm3_a_pins[] = {
+> +       /* PWM */
+> +       RCAR_GP_PIN(1, 1),
+> +};
+> +static const unsigned int pwm3_a_mux[] = {
+> +       PWM3_A_MARK,
+> +};
+> +static const unsigned int pwm3_b_pins[] = {
+> +       /* PWM */
+> +       RCAR_GP_PIN(2, 5),
+
+Should be 1, 5.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
