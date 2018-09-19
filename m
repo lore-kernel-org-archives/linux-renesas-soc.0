@@ -1,132 +1,137 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Message-ID: <1537435641.4156.1.camel@pengutronix.de>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:41962 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731661AbeISVGy (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 19 Sep 2018 17:06:54 -0400
 Subject: Re: [PATCH/RFC v4 1/2] reset: Add support for dedicated reset
  controls
-From: Philipp Zabel <p.zabel@pengutronix.de>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Auger Eric <eric.auger@redhat.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Alex Williamson <alex.williamson@redhat.com>,
         KVM list <kvm@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
         <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Date: Thu, 20 Sep 2018 11:27:21 +0200
-In-Reply-To: <CAMuHMdWSO6JcBRmmpwCPz0u-85ZC3ffZkNbdd8DjokJT2opAtw@mail.gmail.com>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 References: <20180917163955.19023-1-geert+renesas@glider.be>
-         <20180917163955.19023-2-geert+renesas@glider.be>
-         <1537369098.6816.6.camel@pengutronix.de>
-         <CAMuHMdWSO6JcBRmmpwCPz0u-85ZC3ffZkNbdd8DjokJT2opAtw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+ <20180917163955.19023-2-geert+renesas@glider.be>
+ <727f9a0b-79bb-dea9-1da7-12ef58e8081b@redhat.com>
+ <CAMuHMdUFY8CMfb9P=8Tox31_dUzau-jB7YHgYo6jffQ4L7GBqA@mail.gmail.com>
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <6a0b6cc8-d299-0f9b-46bc-ebbd9e5b76e9@redhat.com>
+Date: Wed, 19 Sep 2018 17:28:20 +0200
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdUFY8CMfb9P=8Tox31_dUzau-jB7YHgYo6jffQ4L7GBqA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Geert,
 
-On Wed, 2018-09-19 at 17:24 +0200, Geert Uytterhoeven wrote:
-> On Wed, Sep 19, 2018 at 4:58 PM Philipp Zabel <p.zabel@pengutronix.de> wrote:
-[...]
-> > I consider requesting exclusive access to a shared reset line a misuse
-> > of the API. Are there such cases? Can they be fixed?
+On 9/19/18 3:16 PM, Geert Uytterhoeven wrote:
+> Hi Eric,
 > 
-> I guess there are plenty.
-
-I did a cursory search for drivers that request exclusive reset controls
-for resets that have multiple phandle references in the corresponding
-DT. So far I have found none.
-
-> Whether a line is shared or dedicated depends on SoC integration.
->
-> The issue is that a driver requesting exclusive access has no way to know
-> if the reset line is dedicated to its device or not. If no other
-> driver requested the reset control (most drivers don't use reset
-> controls), it will succeed.
-
-True. It would be great to have a way to make sure an exclusive request
-for a shared reset line never succeeds.
-
-> > > Sometimes a driver needs to reset a specific hardware block, and be 100%
-> > > sure it has no impact on other hardware blocks.  This is e.g. the case
-> > > for virtualization with device pass-through, where the host wants to
-> > > reset any exported device before and after exporting it for use by the
-> > > guest, for isolation.
-> > > 
-> > > Hence a new flag for dedicated resets is added to the internal methods,
-> > > with a new public reset_control_get_dedicated() method, to obtain an
-> > > exclusive handle to a reset that is dedicated to one specific hardware
-> > > block.
-> > 
-> > I'm not sure a new flag is necessary, this is what exclusive resets
-> > should be.
+> On Wed, Sep 19, 2018 at 2:09 PM Auger Eric <eric.auger@redhat.com> wrote:
+>> On 9/17/18 6:39 PM, Geert Uytterhoeven wrote:
+>>> In some SoCs multiple hardware blocks may share a reset control.
+>>> The existing reset control API for shared resets will only assert such a
+>>> reset when the drivers for all hardware blocks agree.
+>>> The existing exclusive reset control API still allows to assert such a
+>>> reset, but that impacts all other hardware blocks sharing the reset.
+>>>
+>>> Sometimes a driver needs to reset a specific hardware block, and be 100%
+>>> sure it has no impact on other hardware blocks.  This is e.g. the case
+>>> for virtualization with device pass-through, where the host wants to
+>>> reset any exported device before and after exporting it for use by the
+>>> guest, for isolation.
+>>>
+>>> Hence a new flag for dedicated resets is added to the internal methods,
+>>> with a new public reset_control_get_dedicated() method, to obtain an
+>>> exclusive handle to a reset that is dedicated to one specific hardware
+>>> block.
+>>>
+>>> This supports both DT-based and lookup-based reset controls.
+>>>
+>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>> ---
+>>> v4:
+>>>   - New.
+>>>
+>>> Notes:
+>>>   - Dedicated lookup-based reset controls were not tested,
+>>>   - Several internal functions now take 3 boolean flags, and should
+>>>     probably be converted to take a bitmask instead,
+>>>   - I think __device_reset() should call __reset_control_get() with
+>>>     dedicated=true.  However, that will impact existing users,
+>>
+>> why should it?
 > 
-> So perhaps the check should be done for the existing exclusive resets
-> instead, without adding a new flag?
-
-That would be my preference, if possible.
-
-> > Also I fear there will be confusion about the difference between
-> > exclusive (refering to the reset control) and dedicated (refering to
-> > the reset line) reset controls.
+> device_reset{,_optional}() are supposed to reset the passed device.
+> If the reset is not dedicated, doing so will reset other devices, too.
+ok, that's not obvious too me but I am not familiar enough with the API
+and existing callers.
 > 
-> Indeed, exclusive has multiple meanings here:
->   1. Exclusive vs. shared access to the reset control,
->   2. Reset line is dedicated to a single device, or shared with multiple
->      devices.
-
-2. is the more important factor, and that's what I have in mind when
-talking about exclusive vs. shared resets. Admittedly, the kernel doc
-comments only mention 1.
-
-> If we can simplify (exclusive == dedicated, 1.shared == 2.shared), life
-> can become simpler.
-
-Well, it still has to be possible for drivers to request 1.shared
-control over a dedicated reset line, just because the same driver may
-work on multiple SoCs, only some of which have that reset line 2.shared.
-But if we could make sure that exclusive requests are only possible for
-dedicated reset lines, I'd be happier.
-
-> > >   - I think __device_reset() should call __reset_control_get() with
-> > >     dedicated=true.  However, that will impact existing users,
-> > 
-> > Which ones? And how?
+>>> --- a/drivers/reset/core.c
+>>> +++ b/drivers/reset/core.c
+>>> @@ -459,9 +459,38 @@ static void __reset_control_put_internal(struct reset_control *rstc)
+>>>       kref_put(&rstc->refcnt, __reset_control_release);
+>>>  }
+>>>
+>>> +static bool __of_reset_is_dedicated(const struct device_node *node,
+>>> +                                 const struct of_phandle_args args)
+>>> +{
+>>> +     struct of_phandle_args args2;
+>>> +     struct device_node *node2;
+>>> +     int index, ret;
+>>> +
+>>> +     for_each_node_with_property(node2, "resets") {
+>>> +             if (node == node2)
+>>> +                     continue;
+>>> +
+>>> +             for (index = 0; ; index++) {
+>>> +                     ret = of_parse_phandle_with_args(node2, "resets",
+>>> +                                                      "#reset-cells", index,
+>>> +                                                      &args2);
+>>> +                     if (ret)
+>>> +                             break;
+>>> +
+>>> +                     if (args2.np == args.np &&
+>>> +                         args2.args_count == args.args_count &&
+>>> +                         !memcmp(args2.args, args.args,
+>>> +                                 args.args_count * sizeof(args.args[0])))
+>>> +                             return false;
+>> You need to call of_node_put(args2.np) (see of_parse_phandle_with_args
+>> kernel doc)
 > 
-> I didn't actually check which drivers.
-> If a reset is not dedicated, device_reset{,_optional}() will suddenly
-> start to fail if
-> a reset turns out to be not dedicated.
-> Well, currently the device will be reset multiple times, so people would
-> already have noticed...
-
-Exactly. Naive exclusive control, as currently implemented, is bound to
-fail if the reset line is shared. I am not aware of any cases where this
-currently happens.
-Of course there could always be those fragile cases where something just
-works by accident and lucky timing.
-
-[...]
-> > I want to hear the device tree maintainers' opinion about this.
-> > I'd very much like to have such a check for exclusive resets, but my
-> > understanding is that we are not allowed to make the assumption that
-> > other nodes' "reset" properties follow the common reset signal device
-> > tree bindings.
-> > 
-> > Maybe this is something that should be checked in a device tree
-> > validation step?
+> Thanks, nice catch!
 > 
-> We already have SoCs where reset lines are shared among multiple on-chip
-> devices. So dtc validation won't work, and a runtime check is needed.
+>> Isn't it sufficient to check device_node handles are equal?
+> 
+> That would make it work with #reset-cells == 0 only.
+> If #reset-cells > 0, the reset line specifier includes extra arguments.
+> 
+> On the Renesas SoCs I'm using, there's a single reset controller, so
+> args.np is always the same.  The actual reset line is specified by
+> args.args[0].  See the "resets" properties in e.g.
+> https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/tree/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+OK get it now. Thank you for the explanations.
 
-Right, the dtb would have to be validated against driver code to get the
-information whether a given phandle might be requested exclusively at
-some point.
+Best Regards
 
-It would be better if this could be checked at runtime.
-
-regards
-Philipp
+Eric
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
