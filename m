@@ -1,81 +1,176 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58325 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729116AbeI1Qq4 (ORCPT
+Received: from mx1.redhat.com ([209.132.183.28]:37754 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728059AbeISPLc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:46:56 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 06/21] soc: renesas: rcar-rst: Add support for RZ/G2M
-Date: Fri, 28 Sep 2018 12:23:21 +0200
-Message-Id: <3116d859e7b15d3740afd44c975cdb34a4c1246e.1538128711.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1538128711.git.horms+renesas@verge.net.au>
-References: <cover.1538128711.git.horms+renesas@verge.net.au>
+        Wed, 19 Sep 2018 11:11:32 -0400
+Subject: Re: [PATCH v4 1/3] vfio/platform: Make the vfio-platform device
+ non-abstract
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc: Magnus Damm <damm+renesas@opensource.se>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        qemu-arm@nongnu.org, qemu-devel@nongnu.org,
+        linux-renesas-soc@vger.kernel.org
+References: <20180913154458.23939-1-geert+renesas@glider.be>
+ <20180913154458.23939-2-geert+renesas@glider.be>
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <5376dc54-2845-4f23-9581-ff5447a00cdc@redhat.com>
+Date: Wed, 19 Sep 2018 11:34:21 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180913154458.23939-2-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- Documentation/devicetree/bindings/reset/renesas,rst.txt | 1 +
- drivers/soc/renesas/Kconfig                             | 6 +++---
- drivers/soc/renesas/rcar-rst.c                          | 4 +++-
- 3 files changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-index 67e83b02e10b..e4fe0ab294bf 100644
---- a/Documentation/devicetree/bindings/reset/renesas,rst.txt
-+++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-@@ -18,6 +18,7 @@ Required properties:
- 		  - "renesas,r8a7743-rst" (RZ/G1M)
- 		  - "renesas,r8a7745-rst" (RZ/G1E)
- 		  - "renesas,r8a77470-rst" (RZ/G1C)
-+		  - "renesas,r8a774a1-rst" (RZ/G2M)
- 		  - "renesas,r8a7778-reset-wdt" (R-Car M1A)
- 		  - "renesas,r8a7779-reset-wdt" (R-Car H1)
- 		  - "renesas,r8a7790-rst" (R-Car H2)
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index d769330b640e..00d4c9db1981 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -3,9 +3,9 @@ config SOC_RENESAS
- 	default y if ARCH_RENESAS
- 	select SOC_BUS
- 	select RST_RCAR if ARCH_RCAR_GEN1 || ARCH_RCAR_GEN2 || \
--			   ARCH_R8A7795 || ARCH_R8A7796 || ARCH_R8A77965 || \
--			   ARCH_R8A77970 || ARCH_R8A77980 || ARCH_R8A77990 || \
--			   ARCH_R8A77995
-+			   ARCH_R8A774A1 || ARCH_R8A7795 || ARCH_R8A7796 || \
-+			   ARCH_R8A77965 || ARCH_R8A77970 || ARCH_R8A77980 || \
-+			   ARCH_R8A77990 || ARCH_R8A77995
- 	select SYSC_R8A7743 if ARCH_R8A7743
- 	select SYSC_R8A7745 if ARCH_R8A7745
- 	select SYSC_R8A77470 if ARCH_R8A77470
-diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
-index d9c1034e70e9..a447873ce182 100644
---- a/drivers/soc/renesas/rcar-rst.c
-+++ b/drivers/soc/renesas/rcar-rst.c
-@@ -41,10 +41,12 @@ static const struct rst_config rcar_rst_gen3 __initconst = {
- };
- 
- static const struct of_device_id rcar_rst_matches[] __initconst = {
--	/* RZ/G is handled like R-Car Gen2 */
-+	/* RZ/G1 is handled like R-Car Gen2 */
- 	{ .compatible = "renesas,r8a7743-rst", .data = &rcar_rst_gen2 },
- 	{ .compatible = "renesas,r8a7745-rst", .data = &rcar_rst_gen2 },
- 	{ .compatible = "renesas,r8a77470-rst", .data = &rcar_rst_gen2 },
-+	/* RZ/G2 is handled like R-Car Gen3 */
-+	{ .compatible = "renesas,r8a774a1-rst", .data = &rcar_rst_gen3 },
- 	/* R-Car Gen1 */
- 	{ .compatible = "renesas,r8a7778-reset-wdt", .data = &rcar_rst_gen1 },
- 	{ .compatible = "renesas,r8a7779-reset-wdt", .data = &rcar_rst_gen1 },
--- 
-2.11.0
+On 9/13/18 5:44 PM, Geert Uytterhoeven wrote:
+> From: Auger Eric <eric.auger@redhat.com>
+> 
+> Up to now the vfio-platform device has been abstract and could not be
+> instantiated.  The integration of a new vfio platform device required
+> creating a dummy derived device which only set the compatible string.
+> 
+> Following the few vfio-platform device integrations we have seen the
+> actual requested adaptation happens on device tree node creation
+> (sysbus-fdt).
+> 
+> Hence remove the abstract setting, and read the list of compatible
+> values from sysfs if not set by a derived device.
+> 
+> Update the amd-xgbe and calxeda-xgmac drivers to fill in the number of
+> compatible values, as there can now be more than one.
+> 
+> Note that sysbus-fdt does not support the instantiation of the
+> vfio-platform device yet.
+> 
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> [geert: Rebase, set user_creatable=true, use compatible values in sysfs
+> 	instead of user-supplied manufacturer/model options, reword]
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v4:
+>   - Propagate g_file_get_contents() errors through errp,
+> 
+> v3:
+>   - Read all compatible values from sysfs instead of using user-supplied
+>     manufacturer and model options,
+>   - Reword patch description,
+>   - Drop RFC state,
+> 
+> v2:
+>   - No changes,
+> 
+> v1:
+>   - Rebase, Set user_creatable=true,
+> 
+> v0:
+>   - Original version from Eric.
+> ---
+>  hw/vfio/amd-xgbe.c              |  1 +
+>  hw/vfio/calxeda-xgmac.c         |  1 +
+>  hw/vfio/platform.c              | 24 +++++++++++++++++++++++-
+>  include/hw/vfio/vfio-platform.h |  3 ++-
+>  4 files changed, 27 insertions(+), 2 deletions(-)
+> 
+> diff --git a/hw/vfio/amd-xgbe.c b/hw/vfio/amd-xgbe.c
+> index 0c4ec4ba25170366..ee64a3b4a2e45bf5 100644
+> --- a/hw/vfio/amd-xgbe.c
+> +++ b/hw/vfio/amd-xgbe.c
+> @@ -20,6 +20,7 @@ static void amd_xgbe_realize(DeviceState *dev, Error **errp)
+>      VFIOAmdXgbeDeviceClass *k = VFIO_AMD_XGBE_DEVICE_GET_CLASS(dev);
+>  
+>      vdev->compat = g_strdup("amd,xgbe-seattle-v1a");
+> +    vdev->num_compat = 1;
+>  
+>      k->parent_realize(dev, errp);
+>  }
+> diff --git a/hw/vfio/calxeda-xgmac.c b/hw/vfio/calxeda-xgmac.c
+> index 24cee6d06512c1b6..e7767c4b021be566 100644
+> --- a/hw/vfio/calxeda-xgmac.c
+> +++ b/hw/vfio/calxeda-xgmac.c
+> @@ -20,6 +20,7 @@ static void calxeda_xgmac_realize(DeviceState *dev, Error **errp)
+>      VFIOCalxedaXgmacDeviceClass *k = VFIO_CALXEDA_XGMAC_DEVICE_GET_CLASS(dev);
+>  
+>      vdev->compat = g_strdup("calxeda,hb-xgmac");
+> +    vdev->num_compat = 1;
+>  
+>      k->parent_realize(dev, errp);
+>  }
+> diff --git a/hw/vfio/platform.c b/hw/vfio/platform.c
+> index 57c4a0ee2b58da70..894333c602eb6fd2 100644
+> --- a/hw/vfio/platform.c
+> +++ b/hw/vfio/platform.c
+> @@ -655,6 +655,27 @@ static void vfio_platform_realize(DeviceState *dev, Error **errp)
+>          goto out;
+>      }
+>  
+> +    if (!vdev->compat) {
+> +        GError *gerr = NULL;
+> +        gchar *contents;
+> +        gsize length;
+> +        char *path;
+> +
+> +        path = g_strdup_printf("%s/of_node/compatible", vbasedev->sysfsdev);
+> +        if (!g_file_get_contents(path, &contents, &length, &gerr)) {
+> +            error_setg(errp, "%s", gerr->message);
+> +            g_error_free(gerr);
+leaks path
+> +            return;
+> +        }
+> +        g_free(path);
+> +        vdev->compat = contents;
+> +        for (vdev->num_compat = 0; length; vdev->num_compat++) {
+> +            size_t skip = strlen(contents) + 1;
+> +            contents += skip;
+> +            length -= skip;
+> +        }
+> +    }
+> +
+>      for (i = 0; i < vbasedev->num_regions; i++) {
+>          if (vfio_region_mmap(vdev->regions[i])) {
+>              error_report("%s mmap unsupported. Performance may be slow",
+> @@ -700,6 +721,8 @@ static void vfio_platform_class_init(ObjectClass *klass, void *data)
+>      dc->desc = "VFIO-based platform device assignment";
+>      sbc->connect_irq_notifier = vfio_start_irqfd_injection;
+>      set_bit(DEVICE_CATEGORY_MISC, dc->categories);
+> +    /* Supported by TYPE_VIRT_MACHINE */
+> +    dc->user_creatable = true;
+>  }
+>  
+>  static const TypeInfo vfio_platform_dev_info = {
+> @@ -708,7 +731,6 @@ static const TypeInfo vfio_platform_dev_info = {
+>      .instance_size = sizeof(VFIOPlatformDevice),
+>      .class_init = vfio_platform_class_init,
+>      .class_size = sizeof(VFIOPlatformDeviceClass),
+> -    .abstract   = true,
+>  };
+>  
+>  static void register_vfio_platform_dev_type(void)
+> diff --git a/include/hw/vfio/vfio-platform.h b/include/hw/vfio/vfio-platform.h
+> index 9baaa2db09b84f3e..0ee10b1d71ed2503 100644
+> --- a/include/hw/vfio/vfio-platform.h
+> +++ b/include/hw/vfio/vfio-platform.h
+> @@ -54,7 +54,8 @@ typedef struct VFIOPlatformDevice {
+>      QLIST_HEAD(, VFIOINTp) intp_list; /* list of IRQs */
+>      /* queue of pending IRQs */
+>      QSIMPLEQ_HEAD(pending_intp_queue, VFIOINTp) pending_intp_queue;
+> -    char *compat; /* compatibility string */
+> +    char *compat; /* DT compatible values, separated by NUL */
+> +    unsigned int num_compat; /* number of compatible values */
+>      uint32_t mmap_timeout; /* delay to re-enable mmaps after interrupt */
+>      QEMUTimer *mmap_timer; /* allows fast-path resume after IRQ hit */
+>      QemuMutex intp_mutex; /* protect the intp_list IRQ state */
+> 
+With leak fix,
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
+
+Thanks
+
+Eric
