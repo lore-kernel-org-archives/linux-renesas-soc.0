@@ -1,78 +1,187 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53536 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726052AbeIDUsr (ORCPT
+Received: from mx1.redhat.com ([209.132.183.28]:52794 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728059AbeISPLe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Sep 2018 16:48:47 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ulrich Hecht <uli+renesas@fpond.eu>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: sh-msiof: Document R-Car E3 support" to the spi tree
-In-Reply-To: <20180903172512.6242-3-geert+renesas@glider.be>
-Message-Id: <20180904162253.4D07411227D8@debutante.sirena.org.uk>
-Date: Tue,  4 Sep 2018 17:22:53 +0100 (BST)
+        Wed, 19 Sep 2018 11:11:34 -0400
+Subject: Re: [PATCH v4 2/3] hw/arm/sysbus-fdt: Allow device matching with DT
+ compatible value
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc: Magnus Damm <damm+renesas@opensource.se>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        qemu-arm@nongnu.org, qemu-devel@nongnu.org,
+        linux-renesas-soc@vger.kernel.org
+References: <20180913154458.23939-1-geert+renesas@glider.be>
+ <20180913154458.23939-3-geert+renesas@glider.be>
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <94e4b5cf-cf33-e239-da88-e513db19fbab@redhat.com>
+Date: Wed, 19 Sep 2018 11:34:24 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180913154458.23939-3-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Hi Geert,
 
-   spi: sh-msiof: Document R-Car E3 support
+On 9/13/18 5:44 PM, Geert Uytterhoeven wrote:
+> From: Auger Eric <eric.auger@redhat.com>
+> 
+> Up to now we have relied on the device type to identify a device tree
+> node creation function.  Since we would like the vfio-platform device to
+> be instantiatable with different compatible strings we introduce the
+s/instantiatable/instantiable
+> capability to specialize the node creation depending on actual
+> compatible value.
+> 
+> NodeCreationPair is renamed into BindingEntry. The struct is enhanced
+> with compat and match_fn() fields.  We introduce a new matching function
+> adapted to the vfio-platform generic device.
+> 
+> Soon, the AMD XGBE can be instantiated with either manner, i.e.:
+> 
+>     -device vfio-amd-xgbe,host=e0900000.xgmac
+> 
+> or using the new option line:
+> 
+>     -device vfio-platform,host=e0900000.xgmac
+> 
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> [geert: Match using compatible values in sysfs instead of user-supplied
+> 	manufacturer/model options, reword]
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Tested-by: Eric Auger <eric.auger@redhat.com>
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
 
-has been applied to the spi tree at
+Feel free to add my T-b on the whole series (tested with amd_xgbe)
+Tested-by: Eric Auger <eric.auger@redhat.com>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+Thanks
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 3806112c9ecb4c958581808e0a4040d5de47216a Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Mon, 3 Sep 2018 19:25:12 +0200
-Subject: [PATCH] spi: sh-msiof: Document R-Car E3 support
-
-Document support for the MSIOF module in the Renesas R-Car E3 (r8a77990)
-SoC.
-
-No driver update is needed.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/devicetree/bindings/spi/sh-msiof.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/spi/sh-msiof.txt b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-index 8b53e986eef6..27b48f07ca97 100644
---- a/Documentation/devicetree/bindings/spi/sh-msiof.txt
-+++ b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-@@ -12,6 +12,7 @@ Required properties:
- 			 "renesas,msiof-r8a7795" (R-Car H3)
- 			 "renesas,msiof-r8a7796" (R-Car M3-W)
- 			 "renesas,msiof-r8a77965" (R-Car M3-N)
-+			 "renesas,msiof-r8a77990" (R-Car E3)
- 			 "renesas,msiof-r8a77995" (R-Car D3)
- 			 "renesas,msiof-sh73a0" (SH-Mobile AG5)
- 			 "renesas,sh-mobile-msiof" (generic SH-Mobile compatibile device)
--- 
-2.19.0.rc1
+Eric
+> ---
+> v4:
+>   - Add Tested-by (with amd-xgbe),
+>   - s/From now on/Soon/ in patch description,
+> 
+> v3:
+>   - Match using the compatible values from sysfs instead of using
+>     user-supplied manufacturer and model options,
+>   - Reword patch description,
+>   - Drop RFC state,
+> 
+> v2:
+>   - No changes,
+> 
+> v1:
+>   - No changes,
+> 
+> v0:
+>   - Original version from Eric.
+> ---
+>  hw/arm/sysbus-fdt.c | 61 ++++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 47 insertions(+), 14 deletions(-)
+> 
+> diff --git a/hw/arm/sysbus-fdt.c b/hw/arm/sysbus-fdt.c
+> index 43d6a7bb48ddc351..0e24c803a1c2c734 100644
+> --- a/hw/arm/sysbus-fdt.c
+> +++ b/hw/arm/sysbus-fdt.c
+> @@ -50,11 +50,13 @@ typedef struct PlatformBusFDTData {
+>      PlatformBusDevice *pbus;
+>  } PlatformBusFDTData;
+>  
+> -/* struct that associates a device type name and a node creation function */
+> -typedef struct NodeCreationPair {
+> +/* struct that allows to match a device and create its FDT node */
+> +typedef struct BindingEntry {
+>      const char *typename;
+> -    int (*add_fdt_node_fn)(SysBusDevice *sbdev, void *opaque);
+> -} NodeCreationPair;
+> +    const char *compat;
+> +    int  (*add_fn)(SysBusDevice *sbdev, void *opaque);
+> +    bool (*match_fn)(SysBusDevice *sbdev, const struct BindingEntry *combo);
+> +} BindingEntry;
+>  
+>  /* helpers */
+>  
+> @@ -413,6 +415,27 @@ static int add_amd_xgbe_fdt_node(SysBusDevice *sbdev, void *opaque)
+>      return 0;
+>  }
+>  
+> +/* DT compatible matching */
+> +static bool vfio_platform_match(SysBusDevice *sbdev,
+> +                                const BindingEntry *entry)
+> +{
+> +    VFIOPlatformDevice *vdev = VFIO_PLATFORM_DEVICE(sbdev);
+> +    const char *compat;
+> +    unsigned int n;
+> +
+> +    for (n = vdev->num_compat, compat = vdev->compat; n > 0;
+> +         n--, compat += strlen(compat) + 1) {
+> +        if (!strcmp(entry->compat, compat)) {
+> +            return true;
+> +        }
+> +    }
+> +
+> +    return false;
+> +}
+> +
+> +#define VFIO_PLATFORM_BINDING(compat, add_fn) \
+> +    {TYPE_VFIO_PLATFORM, (compat), (add_fn), vfio_platform_match}
+> +
+>  #endif /* CONFIG_LINUX */
+>  
+>  static int no_fdt_node(SysBusDevice *sbdev, void *opaque)
+> @@ -420,14 +443,23 @@ static int no_fdt_node(SysBusDevice *sbdev, void *opaque)
+>      return 0;
+>  }
+>  
+> -/* list of supported dynamic sysbus devices */
+> -static const NodeCreationPair add_fdt_node_functions[] = {
+> +/* Device type based matching */
+> +static bool type_match(SysBusDevice *sbdev, const BindingEntry *entry)
+> +{
+> +    return !strcmp(object_get_typename(OBJECT(sbdev)), entry->typename);
+> +}
+> +
+> +#define TYPE_BINDING(type, add_fn) {(type), NULL, (add_fn), type_match}
+> +
+> +/* list of supported dynamic sysbus bindings */
+> +static const BindingEntry bindings[] = {
+>  #ifdef CONFIG_LINUX
+> -    {TYPE_VFIO_CALXEDA_XGMAC, add_calxeda_midway_xgmac_fdt_node},
+> -    {TYPE_VFIO_AMD_XGBE, add_amd_xgbe_fdt_node},
+> +    TYPE_BINDING(TYPE_VFIO_CALXEDA_XGMAC, add_calxeda_midway_xgmac_fdt_node),
+> +    TYPE_BINDING(TYPE_VFIO_AMD_XGBE, add_amd_xgbe_fdt_node),
+> +    VFIO_PLATFORM_BINDING("amd,xgbe-seattle-v1a", add_amd_xgbe_fdt_node),
+>  #endif
+> -    {TYPE_RAMFB_DEVICE, no_fdt_node},
+> -    {"", NULL}, /* last element */
+> +    TYPE_BINDING(TYPE_RAMFB_DEVICE, no_fdt_node),
+> +    TYPE_BINDING("", NULL), /* last element */
+>  };
+>  
+>  /* Generic Code */
+> @@ -446,10 +478,11 @@ static void add_fdt_node(SysBusDevice *sbdev, void *opaque)
+>  {
+>      int i, ret;
+>  
+> -    for (i = 0; i < ARRAY_SIZE(add_fdt_node_functions); i++) {
+> -        if (!strcmp(object_get_typename(OBJECT(sbdev)),
+> -                    add_fdt_node_functions[i].typename)) {
+> -            ret = add_fdt_node_functions[i].add_fdt_node_fn(sbdev, opaque);
+> +    for (i = 0; i < ARRAY_SIZE(bindings); i++) {
+> +        const BindingEntry *iter = &bindings[i];
+> +
+> +        if (iter->match_fn(sbdev, iter)) {
+> +            ret = iter->add_fn(sbdev, opaque);
+>              assert(!ret);
+>              return;
+>          }
+> 
