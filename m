@@ -1,62 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:27507 "EHLO
+Received: from relmlor4.renesas.com ([210.160.252.174]:14466 "EHLO
         relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727825AbeISUCh (ORCPT
+        by vger.kernel.org with ESMTP id S1727770AbeISPEv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Sep 2018 16:02:37 -0400
+        Wed, 19 Sep 2018 11:04:51 -0400
 From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo@jmondi.org>,
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Simon Horman <horms@verge.net.au>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v4 3/3] ARM: dts: r9a06g032: Add pinctrl node
-Date: Wed, 19 Sep 2018 15:23:46 +0100
-Message-Id: <20180919142346.25468-4-phil.edworthy@renesas.com>
-In-Reply-To: <20180919142346.25468-1-phil.edworthy@renesas.com>
-References: <20180919142346.25468-1-phil.edworthy@renesas.com>
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3 3/3] ARM: dts: r9a06g032: Add pinctrl node
+Date: Wed, 19 Sep 2018 09:27:43 +0000
+Message-ID: <TY1PR01MB1769B445E15C05F342ABCCACF51C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <20180917163609.30457-1-phil.edworthy@renesas.com>
+ <20180917163609.30457-4-phil.edworthy@renesas.com>
+ <20180919091524.rgbk4m6ht34idkpd@verge.net.au>
+ <TY1PR01MB17690D4C023EB9B4A5164A2AF51C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <CAMuHMdXhDcfXe7ohuO2s4MKHFPc-Z4TRjaTJv-MG0MHga=2viQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdXhDcfXe7ohuO2s4MKHFPc-Z4TRjaTJv-MG0MHga=2viQ@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This provides a pinctrl driver for the Renesas R9A06G032 SoC
-
-Based on a patch originally written by Michel Pollet at Renesas.
-
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
-v4:
- - No changes.
-
-v3:
- - No changes.
-
-v2:
- - Add "renesas,rzn1-pinctrl" compatible fallback string
- - Register size corrected.
----
- arch/arm/boot/dts/r9a06g032.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index eaf94976ed6d..2322268bc862 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -165,6 +165,14 @@
- 			status = "disabled";
- 		};
- 
-+		pinctrl: pin-controller@40067000 {
-+			compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
-+			reg = <0x40067000 0x1000>, <0x51000000 0x480>;
-+			clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
-+			clock-names = "bus";
-+			status = "okay";
-+		};
-+
- 		gic: gic@44101000 {
- 			compatible = "arm,cortex-a7-gic", "arm,gic-400";
- 			interrupt-controller;
--- 
-2.17.1
+SGkgR2VlcnQsDQoNCk9uIDE5IFNlcHRlbWJlciAyMDE4IDEwOjI0IEdlZXJ0IFV5dHRlcmhvZXZl
+biB3cm90ZToNCj4gT24gV2VkLCBTZXAgMTksIDIwMTggYXQgMTE6MTggQU0gUGhpbCBFZHdvcnRo
+eSAgd3JvdGU6DQo+ID4gT24gMTkgU2VwdGVtYmVyIDIwMTggMTA6MTUgU2ltb24gSG9ybWFuIHdy
+b3RlOg0KPiA+ID4gT24gTW9uLCBTZXAgMTcsIDIwMTggYXQgMDU6MzY6MDlQTSArMDEwMCwgUGhp
+bCBFZHdvcnRoeSB3cm90ZToNCj4gPiA+ID4gVGhpcyBwcm92aWRlcyBhIHBpbmN0cmwgZHJpdmVy
+IGZvciB0aGUgUmVuZXNhcyBSOUEwNkcwMzIgU29DDQo+ID4gPiA+DQo+ID4gPiA+IEJhc2VkIG9u
+IGEgcGF0Y2ggb3JpZ2luYWxseSB3cml0dGVuIGJ5IE1pY2hlbCBQb2xsZXQgYXQgUmVuZXNhcy4N
+Cj4gPiA+ID4NCj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogUGhpbCBFZHdvcnRoeSA8cGhpbC5lZHdv
+cnRoeUByZW5lc2FzLmNvbT4NCj4gPiA+DQo+ID4gPiBUaGFua3MgUGhpbCwgSSB3aWxsIGRlZmVy
+IHRoaXMgcGF0Y2ggcGVuZGluZyBhY2NlcHRhbmNlIG9mIHRoZSBiaW5kaW5ncy4NCj4gPiA+IFBs
+ZWFzZSBjb250aW51ZSB0byByZXBvc3QgdGhpcyBwYXRjaCB3aXRoIHVwZGF0ZXMgdG8gdGhlIGJp
+bmRpbmdzIG9yDQo+ID4gPiBvdGhlcndpc2UgcGluZyBtZSBvbmNlIHRoZXkgaGF2ZSBiZWVuIGFj
+Y2VwdGVkLg0KPiA+IFRoYW5rcywgaG93ZXZlciBJIHdpbGwgc2VuZCBhIG5ldyB2ZXJzaW9uIG9m
+IHRoaXMgcGF0Y2ggdG8gcmVtb3ZlIHRoZQ0KPiA+IGNsb2NrLW5hbWVzIHByb3AgYXMgaXQgaXMg
+bm90IG5lZWRlZC4NCj4gDQo+IEkgaGF2ZW4ndCByZXZpZXdlZCB0aGUgYmluZGluZ3MgcGF0Y2gg
+eWV0LCBidXQgaXQncyBhIGdvb2QgaWRlYSB0byBoYXZlDQo+IGNsb2NrLW5hbWVzLCBldmVuIGZv
+ciBhIHNpbmdsZSBjbG9jay4NCj4gSXQgbWFrZXMgbGlmZSBlYXNpZXIgaWYgdGhlIHNhbWUgbW9k
+dWxlIGlzIHJldXNlZCBvciBlbmhhbmNlZCBpbiBhIGxhdGVyIFNvQywNCj4gd2l0aCBtb3JlIGNs
+b2NrIGlucHV0cy4NCk9rLCBJJ2xsIHB1dCBpdCBiYWNrIDopDQoNCkkgc2hvdWxkIGJlIGFibGUg
+dG8gZ2V0IGEgbmV3IHZlcnNpb24gb3V0IHRvZGF5IHNvIHlvdSBtYXkgd2FudCB0byBkZWxheQ0K
+eW91ciByZXZpZXcgdW50aWwgdGhlbi4NCg0KVGhhbmtzDQpQaGlsDQo=
