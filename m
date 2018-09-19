@@ -1,60 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:47828 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728357AbeIJUE1 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:42642 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727669AbeISOIY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Sep 2018 16:04:27 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 2/2] soc: renesas: rcar-rst: Add support for RZ/G2E
-Date: Mon, 10 Sep 2018 16:09:41 +0100
-Message-Id: <1536592181-25649-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1536592181-25649-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1536592181-25649-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Wed, 19 Sep 2018 10:08:24 -0400
+Date: Wed, 19 Sep 2018 10:31:31 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 02/03] arm: dts: Include R-Car Gen2 product name in DTSI
+ files
+Message-ID: <20180919083130.7jnou4gpweyy43rg@verge.net.au>
+References: <153717356234.480.6698281193817518888.sendpatchset@octo>
+ <153717357933.480.16204445206291701317.sendpatchset@octo>
+ <CAMuHMdVzxOvxuO9UCbhkpFd-fj9mhE_j53uFVEULa03=8c5rXQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVzxOvxuO9UCbhkpFd-fj9mhE_j53uFVEULa03=8c5rXQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
- drivers/soc/renesas/Kconfig    | 6 +++---
- drivers/soc/renesas/rcar-rst.c | 1 +
- 2 files changed, 4 insertions(+), 3 deletions(-)
+On Mon, Sep 17, 2018 at 01:22:22PM +0200, Geert Uytterhoeven wrote:
+> On Mon, Sep 17, 2018 at 10:39 AM Magnus Damm <magnus.damm@gmail.com> wrote:
+> > From: Magnus Damm <damm@opensource.se>
+> >
+> > Improve the user friendliness of the DTS code base by including the
+> > R-Car product name in each R-Car Gen2 DTSI file.
+> >
+> > The product names are taken from:
+> > Documentation/devicetree/bindings/arm/shmobile.txt
+> >
+> > Signed-off-by: Magnus Damm <damm@opensource.se>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index 163e666..614d767 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -3,9 +3,9 @@ config SOC_RENESAS
- 	default y if ARCH_RENESAS
- 	select SOC_BUS
- 	select RST_RCAR if ARCH_RCAR_GEN1 || ARCH_RCAR_GEN2 || \
--			   ARCH_R8A774A1 || ARCH_R8A7795 || ARCH_R8A7796 || \
--			   ARCH_R8A77965 || ARCH_R8A77970 || ARCH_R8A77980 || \
--			   ARCH_R8A77990 || ARCH_R8A77995
-+			   ARCH_R8A774A1 || ARCH_R8A774C0 || ARCH_R8A7795 || \
-+			   ARCH_R8A7796 || ARCH_R8A77965 || ARCH_R8A77970 || \
-+			   ARCH_R8A77980 || ARCH_R8A77990 || ARCH_R8A77995
- 	select SYSC_R8A7743 if ARCH_R8A7743
- 	select SYSC_R8A7745 if ARCH_R8A7745
- 	select SYSC_R8A77470 if ARCH_R8A77470
-diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
-index a447873..d5e31f4 100644
---- a/drivers/soc/renesas/rcar-rst.c
-+++ b/drivers/soc/renesas/rcar-rst.c
-@@ -47,6 +47,7 @@ static const struct of_device_id rcar_rst_matches[] __initconst = {
- 	{ .compatible = "renesas,r8a77470-rst", .data = &rcar_rst_gen2 },
- 	/* RZ/G2 is handled like R-Car Gen3 */
- 	{ .compatible = "renesas,r8a774a1-rst", .data = &rcar_rst_gen3 },
-+	{ .compatible = "renesas,r8a774c0-rst", .data = &rcar_rst_gen3 },
- 	/* R-Car Gen1 */
- 	{ .compatible = "renesas,r8a7778-reset-wdt", .data = &rcar_rst_gen1 },
- 	{ .compatible = "renesas,r8a7779-reset-wdt", .data = &rcar_rst_gen1 },
--- 
-2.7.4
+Thanks, applied for v4.20.
