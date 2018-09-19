@@ -1,53 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:35122 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728211AbeINH0g (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:42726 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727056AbeISOSV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Sep 2018 03:26:36 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/3] rcar-vin: add support for UDS (Up Down Scaler)
-Date: Fri, 14 Sep 2018 04:13:42 +0200
-Message-Id: <20180914021345.9277-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 19 Sep 2018 10:18:21 -0400
+Date: Wed, 19 Sep 2018 10:41:25 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, Stefan Agner <stefan@agner.ch>,
+        Eric Anholt <eric@anholt.net>,
+        Tony Lindgren <tony@atomide.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Olof Johansson <olof@lixom.net>,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] ARM: multi_v7_defconfig: Enable r8a7744 SoC
+Message-ID: <20180919084125.6nawupex6rid6zj6@verge.net.au>
+References: <1537196790-4775-1-git-send-email-biju.das@bp.renesas.com>
+ <1537196790-4775-2-git-send-email-biju.das@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1537196790-4775-2-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+On Mon, Sep 17, 2018 at 04:06:29PM +0100, Biju Das wrote:
+> Enable recently added r8a7744 (RZ/G1N) SoC.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-This series adds support for Renesas R-Car Gen3 VIN Up Down Scaler 
-(UDS). Some VIN instances have access to a often shared UDS which can be 
-used to scale the captured image up or down. If the scaler is shared it 
-can only be used exclusively by one VIN at a time, switching in runtime 
-and detection if a UDS are in use is supported in this series. If the 
-user tries to start a capture on a VIN which would require the use of a 
-scaler but that scaler is in use -EBUSY is returned.
-
-Patch 1/3 fix a format alignment issue found when working with UDS 
-support. While patch 2/3 ands the UDS logic and 3/3 defines which VIN on 
-which SoC have access to a UDS and how it's shared.
-
-The series is based on top of media-tree/master and is tested on R-Car 
-Gen3 H3, M3-W, M3-N and Gen2 Koelsch (checking for regressions as Gen2 
-have no UDS).
-
-Niklas Söderlund (3):
-  rcar-vin: align format width with hardware limits
-  rcar-vin: add support for UDS (Up Down Scaler)
-  rcar-vin: declare which VINs can use a Up Down Scaler (UDS)
-
- drivers/media/platform/rcar-vin/rcar-core.c |  18 +++
- drivers/media/platform/rcar-vin/rcar-dma.c  | 134 +++++++++++++++++++-
- drivers/media/platform/rcar-vin/rcar-v4l2.c |  15 +++
- drivers/media/platform/rcar-vin/rcar-vin.h  |  24 ++++
- 4 files changed, 185 insertions(+), 6 deletions(-)
-
--- 
-2.18.0
+Thanks, applied to the renesas tree for v4.20.
