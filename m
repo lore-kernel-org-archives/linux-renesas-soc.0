@@ -1,73 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:42490 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbeIMOTT (ORCPT
+        with ESMTP id S1726972AbeISNwR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:19:19 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 42/58] arm64: dts: renesas: r8a77965: m3nulcb-kf: Initial device tree
-Date: Thu, 13 Sep 2018 11:09:37 +0200
-Message-Id: <c41fc11850782c2e4115af683793bbb111c2d0ff.1536828567.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
-References: <cover.1536828567.git.horms+renesas@verge.net.au>
+        Wed, 19 Sep 2018 09:52:17 -0400
+Date: Wed, 19 Sep 2018 10:15:26 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77990: Attach the SYS-DMAC to
+ the IPMMU
+Message-ID: <20180919081525.ubxvhewbspmnmgtk@verge.net.au>
+References: <153717238926.32742.16468076576808713610.sendpatchset@octo>
+ <20180917083907.j57ldjnxxhb6fji7@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180917083907.j57ldjnxxhb6fji7@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Eugeniu Rosca <roscaeugeniu@gmail.com>
+On Mon, Sep 17, 2018 at 10:39:08AM +0200, Simon Horman wrote:
+> On Mon, Sep 17, 2018 at 05:19:49PM +0900, Magnus Damm wrote:
+> > From: Magnus Damm <damm@opensource.se>
+> > 
+> > For R-Car E3 hook up SYS-DMAC0, SYS-DMAC1 and SYS-DMAC2 to
+> > IPMMU-DS0 and IPMMU-DS1 in same way as for R-Car H3.
+> > This follows the R-Car Gen3 Rev.1.00 (April 2018) datasheet.
+> > 
+> > Signed-off-by: Magnus Damm <damm@opensource.se>
+> > ---
+> > 
+> >  Developed on top of renesas-devel-20180914-v4.19-rc3
+> 
+> Thanks Magnus,
+> 
+> This looks fine to me but I will wait to see if there are other reviews
+> before applying.
 
-This is based on the existing KF device tree sources:
-$ ls -1 arch/arm64/boot/dts/renesas/*-kf.dts
-arch/arm64/boot/dts/renesas/r8a7795-es1-h3ulcb-kf.dts
-arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-kf.dts
-arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dts
-
-Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/Makefile                |  1 +
- arch/arm64/boot/dts/renesas/r8a77965-m3nulcb-kf.dts | 16 ++++++++++++++++
- 2 files changed, 17 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a77965-m3nulcb-kf.dts
-
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index eb158d1f90e9..a8ce6594342d 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -9,6 +9,7 @@ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-m3ulcb-kf.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
- dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-x.dtb r8a77965-salvator-xs.dtb
- dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-m3nulcb.dtb
-+dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-m3nulcb-kf.dtb
- dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb r8a77970-v3msk.dtb
- dtb-$(CONFIG_ARCH_R8A77980) += r8a77980-condor.dtb r8a77980-v3hsk.dtb
- dtb-$(CONFIG_ARCH_R8A77990) += r8a77990-ebisu.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965-m3nulcb-kf.dts b/arch/arm64/boot/dts/renesas/r8a77965-m3nulcb-kf.dts
-new file mode 100644
-index 000000000000..dadad97051b9
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a77965-m3nulcb-kf.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the M3NULCB Kingfisher board
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ * Copyright (C) 2018 Cogent Embedded, Inc.
-+ */
-+
-+#include "r8a77965-m3nulcb.dts"
-+#include "ulcb-kf.dtsi"
-+
-+/ {
-+	model = "Renesas M3NULCB Kingfisher board based on r8a77965";
-+	compatible = "shimafuji,kingfisher", "renesas,m3nulcb",
-+		     "renesas,r8a77965";
-+};
--- 
-2.11.0
+Thanks again, applied for v4.20.
