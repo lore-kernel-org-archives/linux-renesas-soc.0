@@ -1,96 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:50973 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727013AbeINTNT (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:50424 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387404AbeITRF1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Sep 2018 15:13:19 -0400
-Date: Fri, 14 Sep 2018 15:58:37 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: David Airlie <airlied@linux.ie>, ulrich.hecht+renesas@gmail.com,
-        kieran.bingham@ideasonboard.com,
-        "open list:DRM DRIVERS FOR RENESAS" <dri-devel@lists.freedesktop.org>,
-        "open list:DRM DRIVERS FOR RENESAS"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 0/4] drm: rcar-du: Update to SoC manual revision 1.00
-Message-ID: <20180914135837.GB16851@w540>
-References: <1535037134-373-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 20 Sep 2018 13:05:27 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Alexandru-Cosmin Gheorghe <Alexandru-Cosmin.Gheorghe@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] drm: rcar-du: Enable alpha property on primary planes
+Date: Thu, 20 Sep 2018 14:22:38 +0300
+Message-ID: <1604918.OXgyMDt7RE@avalon>
+In-Reply-To: <20180919155700.10342-3-kieran.bingham+renesas@ideasonboard.com>
+References: <20180919155700.10342-1-kieran.bingham+renesas@ideasonboard.com> <20180919155700.10342-3-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="z6Eq5LdranGa6ru8"
-Content-Disposition: inline
-In-Reply-To: <1535037134-373-1-git-send-email-jacopo+renesas@jmondi.org>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Kieran,
 
---z6Eq5LdranGa6ru8
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Thank you for the patch.
 
-Hi Laurent,
+On Wednesday, 19 September 2018 18:56:59 EEST Kieran Bingham wrote:
+> If the alpha property is not added to a plane, a default value will be
+> used, which can result in a non-visible layer if the alpha is
+> initialised as 0.
+> 
+> Provide an alpha blend property on all planes.
+> 
+> Fixes: 161ad653d6c9 ("drm: rcar-du: Use __drm_atomic_helper_plane_reset
+> instead of copying the logic")
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_plane.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_plane.c index 9e07758a755c..72399a19d8a6
+> 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+> @@ -783,13 +783,18 @@ int rcar_du_planes_init(struct rcar_du_group *rgrp)
+>  		drm_plane_helper_add(&plane->plane,
+>  				     &rcar_du_plane_helper_funcs);
+> 
+> +		/*
+> +		 * The alpha property needs to be initialised on all planes
+> +		 * to ensure the correct setting at the output.
+> +		 */
+> +		drm_plane_create_alpha_property(&plane->plane);
+> +
 
-On Thu, Aug 23, 2018 at 05:12:10PM +0200, Jacopo Mondi wrote:
-> Hello Laurent,
->    Revision 1.00 has brought several updates on how to handle some registers
-> in the DU. In particular
->
-> - ESCR cannot be written for channels with a DPLL
-> - OTAR cannot be written for channels without a digital output pad
-> - routing superimposition processor output to pincontrollers through DORCR2
->   register cannot be performed for channels of group 1
-> - The plane super-imposition register PnMR can be written to groups with more
->   than 1 channel.
->
-> Patches applied on top of your latest drm/du/next branch.
+As mentioned in the cover letter, both patches in this series fix the issue at 
+hand. The first patch is more generic as it will fix it for all drivers, while 
+this patch is specific to the R-Car DU driver. It however makes sense to merge 
+it, as it adds alpha support to the primary plane, which can be useful.
 
-Could you please consider including this series in your tree?
+Once the first patch gets merged, the above comment won't be correct anymore. 
+I wonder whether we shouldn't change the patch description and comment to 
+focus on usage of the alpha property for primary planes, and not on the bug 
+fix. What's your opinion ?
 
-Thanks
-  j
->
-> Tested on Salvator-X M3-W with VGA and HDMI output.
-> Tested on Salvator-XS M3-N with VGA and HDMI output.
-> No visible regression, but if you have ideas on how to better verify this
-> please let me know.
->
-> Thanks
->    j
->
-> Jacopo Mondi (4):
->   drm: rcar-du: Do not write ESCR for DPLL channels
->   drm: rcar-du: Write OTAR for DPAD channels only
->   drm: rcar-du: Fix handling of DORCR for group 1
->   drm: rcar-du: Fix handling of PnMR register
->
->  drivers/gpu/drm/rcar-du/rcar_du_crtc.c  | 18 +++++++++++-------
->  drivers/gpu/drm/rcar-du/rcar_du_group.c | 19 ++++++++++++++++---
->  drivers/gpu/drm/rcar-du/rcar_du_plane.c | 13 +++++++++++--
->  3 files changed, 38 insertions(+), 12 deletions(-)
->
-> --
-> 2.7.4
->
+>  		if (type == DRM_PLANE_TYPE_PRIMARY)
+>  			continue;
+> 
+>  		drm_object_attach_property(&plane->plane.base,
+>  					   rcdu->props.colorkey,
+>  					   RCAR_DU_COLORKEY_NONE);
+> -		drm_plane_create_alpha_property(&plane->plane);
+>  		drm_plane_create_zpos_property(&plane->plane, 1, 1, 7);
+>  	}
 
---z6Eq5LdranGa6ru8
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+Regards,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJbm76NAAoJEHI0Bo8WoVY8CYUP/jAx8TG3N3aHQviKBiZNm0Tl
-/Fu5rqPh5lZXbuDPpZcgrsuVee9S6O/wyKc6IVKgtKD11c/FzpZL/Hwg88suU1Sx
-r6yBoU41CxAieVcCSX+azGTYjdrMlhsq1498nCWqZ1cxmMf3SBSrbIybbpgsXs48
-tMfHMlExgyoRzKS0UTeryRQcn/STQzM5PY/mOGxp0DFT8pttodILOnxSwtO4Cxbo
-RLXlz7EhOrhycyjHJduKmb1yLM7XtIj9Ma2WzhFXPwTIEIJnCG7CkYE2GIc+tjZU
-vY8rVir2syx2m+onVug/MjzVWT7af7f329aBDbb7tTKel7Cp59pNABfM1Few5R98
-XkohUttBcSA3tKZgSOlm9Ngw/JnZZ/Yle4xBm5S3EamoKgeORGRDATTeEqejNa1E
-FWenChwWOyzgqpOWRHDy2jqWxLuyXiK6M4kUvY5IOYfR1jtUdy6eKRY1yGS1e4Jc
-E/W/l6zMsEkkkAgRPi83X8sZnsOHor7TLI6+02qnkiOLPlXPJySDSyWjrzijSK0r
-aauMioY8+y2OA5KM5bU3dFqd8SrjlPAiwX0/WW9xwvOobJMFkuyR9Tspt2rO0dRe
-tBuMnsC/g6lHOTfOZkeqX7Q12vmsVTL6aVzMN0H1VaJ/lGNsATT/YRXKE4VZxwG9
-bP4UruB5OGs1jcX8yxgl
-=kbnB
------END PGP SIGNATURE-----
-
---z6Eq5LdranGa6ru8--
+Laurent Pinchart
