@@ -1,114 +1,92 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-Subject: Re: [RFC PATCH 4/4] i2c: core: introduce master_xfer_irqless callback
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:60980 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728096AbeITV6t (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 20 Sep 2018 17:58:49 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
         Stefan Lengfeld <contact@stefanchrist.eu>,
         preid@electromag.com.au, linux-omap@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, Keerthy <j-keerthy@ti.com>,
         Tero Kristo <t-kristo@ti.com>,
         Grygorii Strashko <grygorii.strashko@ti.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 4/4] i2c: core: introduce master_xfer_irqless callback
+Date: Thu, 20 Sep 2018 18:14:23 +0200
+Message-Id: <20180920161423.13990-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180920161423.13990-1-wsa+renesas@sang-engineering.com>
 References: <20180920161423.13990-1-wsa+renesas@sang-engineering.com>
- <20180920161423.13990-5-wsa+renesas@sang-engineering.com>
-From: Peter Rosin <peda@axentia.se>
-Message-ID: <ca62f8b1-26e2-2b40-d8ce-39a920d90063@axentia.se>
-Date: Thu, 20 Sep 2018 19:41:05 +0200
-MIME-Version: 1.0
-In-Reply-To: <20180920161423.13990-5-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: linux-i2c-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 2018-09-20 18:14, Wolfram Sang wrote:
-> We had the request to access devices very late when interrupts are not
-> available anymore multiple times now. Mostly to prepare shutdown or
+We had the request to access devices very late when interrupts are not
+available anymore multiple times now. Mostly to prepare shutdown or
+reboot. Allow adapters to specify a specific callback for this case.
+Note that we fall back to the generic master_xfer callback if this new
+irqless one is not present. This is intentional to preserve the previous
+behaviour and avoid regressions. Because there are drivers not using
+interrupts or because it might have worked "accidently" before.
 
-The first sentence is a bit backwards, I'd rephrase like so:
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/i2c/i2c-core-base.c |  6 +++++-
+ include/linux/i2c.h         | 10 +++++++---
+ 2 files changed, 12 insertions(+), 4 deletions(-)
 
-Multiple times now we've had the request to access devices very late, when
-interrupts are no longer available.
-
-> reboot. Allow adapters to specify a specific callback for this case.
-> Note that we fall back to the generic master_xfer callback if this new
-> irqless one is not present. This is intentional to preserve the previous
-> behaviour and avoid regressions. Because there are drivers not using
-> interrupts or because it might have worked "accidently" before.
-
-accidentally
-
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->  drivers/i2c/i2c-core-base.c |  6 +++++-
->  include/linux/i2c.h         | 10 +++++++---
->  2 files changed, 12 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-> index 904b4d2ebefa..f827446c3089 100644
-> --- a/drivers/i2c/i2c-core-base.c
-> +++ b/drivers/i2c/i2c-core-base.c
-> @@ -1887,7 +1887,11 @@ int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
->  	/* Retry automatically on arbitration loss */
->  	orig_jiffies = jiffies;
->  	for (ret = 0, try = 0; try <= adap->retries; try++) {
-> -		ret = adap->algo->master_xfer(adap, msgs, num);
-> +		if ((in_atomic() || irqs_disabled()) && adap->algo->master_xfer_irqless)
-> +			ret = adap->algo->master_xfer_irqless(adap, msgs, num);
-> +		else
-> +			ret = adap->algo->master_xfer(adap, msgs, num);
-> +
->  		if (ret != -EAGAIN)
->  			break;
->  		if (time_after(jiffies, orig_jiffies + adap->timeout))
-> diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-> index 65b4eaed1d96..11e615123bd0 100644
-> --- a/include/linux/i2c.h
-> +++ b/include/linux/i2c.h
-> @@ -498,6 +498,8 @@ i2c_register_board_info(int busnum, struct i2c_board_info const *info,
->   * @master_xfer: Issue a set of i2c transactions to the given I2C adapter
->   *   defined by the msgs array, with num messages available to transfer via
->   *   the adapter specified by adap.
-> + * @master_xfer_irqless: same as master_xfer. Yet, not using any interrupts
-
-"Same" (with capital 'S') to match the other entries. Also, should it
-not be @master_xfer to help the tools do the right thing?
-
-> + *   so e.g. PMICs can be accessed very late before shutdown
-
-Trailing period.
-
-I'm fine with this change, but should it not wait until there is a user?
-(I think there is one in the wings, so that's a very weak objection...)
-
-Acked-by: Peter Rosin <peda@axentia.se>
-
-
->   * @smbus_xfer: Issue smbus transactions to the given I2C adapter. If this
->   *   is not present, then the bus layer will try and convert the SMBus calls
->   *   into I2C transfers instead.
-> @@ -511,9 +513,9 @@ i2c_register_board_info(int busnum, struct i2c_board_info const *info,
->   * be addressed using the same bus algorithms - i.e. bit-banging or the PCF8584
->   * to name two of the most common.
->   *
-> - * The return codes from the @master_xfer field should indicate the type of
-> - * error code that occurred during the transfer, as documented in the kernel
-> - * Documentation file Documentation/i2c/fault-codes.
-> + * The return codes from the @master_xfer{_irqless} field should indicate the
-> + * type of error code that occurred during the transfer, as documented in the
-> + * Kernel Documentation file Documentation/i2c/fault-codes.
->   */
->  struct i2c_algorithm {
->  	/* If an adapter algorithm can't do I2C-level access, set master_xfer
-> @@ -524,6 +526,8 @@ struct i2c_algorithm {
->  	   processed, or a negative value on error */
->  	int (*master_xfer)(struct i2c_adapter *adap, struct i2c_msg *msgs,
->  			   int num);
-> +	int (*master_xfer_irqless)(struct i2c_adapter *adap,
-> +				   struct i2c_msg *msgs, int num);
->  	int (*smbus_xfer) (struct i2c_adapter *adap, u16 addr,
->  			   unsigned short flags, char read_write,
->  			   u8 command, int size, union i2c_smbus_data *data);
-> 
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index 904b4d2ebefa..f827446c3089 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -1887,7 +1887,11 @@ int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
+ 	/* Retry automatically on arbitration loss */
+ 	orig_jiffies = jiffies;
+ 	for (ret = 0, try = 0; try <= adap->retries; try++) {
+-		ret = adap->algo->master_xfer(adap, msgs, num);
++		if ((in_atomic() || irqs_disabled()) && adap->algo->master_xfer_irqless)
++			ret = adap->algo->master_xfer_irqless(adap, msgs, num);
++		else
++			ret = adap->algo->master_xfer(adap, msgs, num);
++
+ 		if (ret != -EAGAIN)
+ 			break;
+ 		if (time_after(jiffies, orig_jiffies + adap->timeout))
+diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+index 65b4eaed1d96..11e615123bd0 100644
+--- a/include/linux/i2c.h
++++ b/include/linux/i2c.h
+@@ -498,6 +498,8 @@ i2c_register_board_info(int busnum, struct i2c_board_info const *info,
+  * @master_xfer: Issue a set of i2c transactions to the given I2C adapter
+  *   defined by the msgs array, with num messages available to transfer via
+  *   the adapter specified by adap.
++ * @master_xfer_irqless: same as master_xfer. Yet, not using any interrupts
++ *   so e.g. PMICs can be accessed very late before shutdown
+  * @smbus_xfer: Issue smbus transactions to the given I2C adapter. If this
+  *   is not present, then the bus layer will try and convert the SMBus calls
+  *   into I2C transfers instead.
+@@ -511,9 +513,9 @@ i2c_register_board_info(int busnum, struct i2c_board_info const *info,
+  * be addressed using the same bus algorithms - i.e. bit-banging or the PCF8584
+  * to name two of the most common.
+  *
+- * The return codes from the @master_xfer field should indicate the type of
+- * error code that occurred during the transfer, as documented in the kernel
+- * Documentation file Documentation/i2c/fault-codes.
++ * The return codes from the @master_xfer{_irqless} field should indicate the
++ * type of error code that occurred during the transfer, as documented in the
++ * Kernel Documentation file Documentation/i2c/fault-codes.
+  */
+ struct i2c_algorithm {
+ 	/* If an adapter algorithm can't do I2C-level access, set master_xfer
+@@ -524,6 +526,8 @@ struct i2c_algorithm {
+ 	   processed, or a negative value on error */
+ 	int (*master_xfer)(struct i2c_adapter *adap, struct i2c_msg *msgs,
+ 			   int num);
++	int (*master_xfer_irqless)(struct i2c_adapter *adap,
++				   struct i2c_msg *msgs, int num);
+ 	int (*smbus_xfer) (struct i2c_adapter *adap, u16 addr,
+ 			   unsigned short flags, char read_write,
+ 			   u8 command, int size, union i2c_smbus_data *data);
+-- 
+2.18.0
