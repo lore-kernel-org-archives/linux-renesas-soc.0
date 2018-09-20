@@ -1,44 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ve1eur01on0090.outbound.protection.outlook.com ([104.47.1.90]:42560
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727771AbeITXLD (ORCPT
+Received: from sauhun.de ([88.99.104.3]:60932 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726799AbeITV6r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Sep 2018 19:11:03 -0400
-Subject: Re: [RFC PATCH 2/4] i2c: core: remove level of indentation in
- i2c_transfer
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org
+        Thu, 20 Sep 2018 17:58:47 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
         Stefan Lengfeld <contact@stefanchrist.eu>,
         preid@electromag.com.au, linux-omap@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, Keerthy <j-keerthy@ti.com>,
         Tero Kristo <t-kristo@ti.com>,
         Grygorii Strashko <grygorii.strashko@ti.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 2/4] i2c: core: remove level of indentation in i2c_transfer
+Date: Thu, 20 Sep 2018 18:14:21 +0200
+Message-Id: <20180920161423.13990-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180920161423.13990-1-wsa+renesas@sang-engineering.com>
 References: <20180920161423.13990-1-wsa+renesas@sang-engineering.com>
- <20180920161423.13990-3-wsa+renesas@sang-engineering.com>
-From: Peter Rosin <peda@axentia.se>
-Message-ID: <c7ee2547-1b3b-3e43-e933-234516031770@axentia.se>
-Date: Thu, 20 Sep 2018 19:26:21 +0200
-MIME-Version: 1.0
-In-Reply-To: <20180920161423.13990-3-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 2018-09-20 18:14, Wolfram Sang wrote:
-> Using the common kernel pattern to bail out at the beginning if some
-> conditions are not met, we can save a level of indentation. No
-> functional change.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Using the common kernel pattern to bail out at the beginning if some
+conditions are not met, we can save a level of indentation. No
+functional change.
 
-Yes please!
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/i2c/i2c-core-base.c | 33 ++++++++++++++++-----------------
+ 1 file changed, 16 insertions(+), 17 deletions(-)
 
-Acked-by: Peter Rosin <peda@axentia.se>
-
-Cheers,
-Peter
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index c2b352c46fae..799776c6d421 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -1922,6 +1922,11 @@ int i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
+ {
+ 	int ret;
+ 
++	if (!adap->algo->master_xfer) {
++		dev_dbg(&adap->dev, "I2C level transfers not supported\n");
++		return -EOPNOTSUPP;
++	}
++
+ 	/* REVISIT the fault reporting model here is weak:
+ 	 *
+ 	 *  - When we get an error after receiving N bytes from a slave,
+@@ -1938,25 +1943,19 @@ int i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
+ 	 *    one (discarding status on the second message) or errno
+ 	 *    (discarding status on the first one).
+ 	 */
+-
+-	if (adap->algo->master_xfer) {
+-		if (in_atomic() || irqs_disabled()) {
+-			ret = i2c_trylock_bus(adap, I2C_LOCK_SEGMENT);
+-			if (!ret)
+-				/* I2C activity is ongoing. */
+-				return -EAGAIN;
+-		} else {
+-			i2c_lock_bus(adap, I2C_LOCK_SEGMENT);
+-		}
+-
+-		ret = __i2c_transfer(adap, msgs, num);
+-		i2c_unlock_bus(adap, I2C_LOCK_SEGMENT);
+-
+-		return ret;
++	if (in_atomic() || irqs_disabled()) {
++		ret = i2c_trylock_bus(adap, I2C_LOCK_SEGMENT);
++		if (!ret)
++			/* I2C activity is ongoing. */
++			return -EAGAIN;
+ 	} else {
+-		dev_dbg(&adap->dev, "I2C level transfers not supported\n");
+-		return -EOPNOTSUPP;
++		i2c_lock_bus(adap, I2C_LOCK_SEGMENT);
+ 	}
++
++	ret = __i2c_transfer(adap, msgs, num);
++	i2c_unlock_bus(adap, I2C_LOCK_SEGMENT);
++
++	return ret;
+ }
+ EXPORT_SYMBOL(i2c_transfer);
+ 
+-- 
+2.18.0
