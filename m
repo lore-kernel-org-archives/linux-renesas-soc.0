@@ -1,33 +1,50 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35781 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727588AbeIYNh1 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Sep 2018 09:37:27 -0400
-Date: Tue, 25 Sep 2018 09:31:10 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 6/8] phy: renesas: rcar-gen3-usb2: change a condition
- "dr_mode"
-Message-ID: <20180925073109.ovgy7sky5y2t43xi@verge.net.au>
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 6/8] phy: renesas: rcar-gen3-usb2: change a condition "dr_mode"
+Date: Fri, 21 Sep 2018 20:53:22 +0900
+Message-Id: <1537530804-19399-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1537530804-19399-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1537530804-19399-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1537530804-19399-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1537530804-19399-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Sep 21, 2018 at 08:53:22PM +0900, Yoshihiro Shimoda wrote:
-> This patch changes a condition about dr_mode. If a device node has
-> any dr_mode ("host", "peripheral" or "otg"), this driver allows to
-> set "is_otg_channel" to true. Also, this patch keeps the dr_mode
-> value for future use.
-> 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+This patch changes a condition about dr_mode. If a device node has
+any dr_mode ("host", "peripheral" or "otg"), this driver allows to
+set "is_otg_channel" to true. Also, this patch keeps the dr_mode
+value for future use.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index e7eaed9..93ab860 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -84,6 +84,7 @@ struct rcar_gen3_chan {
+ 	struct phy *phy;
+ 	struct regulator *vbus;
+ 	struct work_struct work;
++	enum usb_dr_mode dr_mode;
+ 	bool extcon_host;
+ 	bool uses_otg_pins;
+ };
+@@ -436,7 +437,8 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 			dev_err(dev, "No irq handler (%d)\n", irq);
+ 	}
+ 
+-	if (of_usb_get_dr_mode_by_phy(dev->of_node, 0) == USB_DR_MODE_OTG) {
++	channel->dr_mode = of_usb_get_dr_mode_by_phy(dev->of_node, 0);
++	if (channel->dr_mode != USB_DR_MODE_UNKNOWN) {
+ 		int ret;
+ 
+ 		channel->uses_otg_pins = !of_property_read_bool(dev->of_node,
+-- 
+1.9.1
