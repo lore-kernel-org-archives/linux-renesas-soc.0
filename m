@@ -1,47 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:47422 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730616AbeICVqW (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:61440 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389883AbeIURn4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:46:22 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ulrich Hecht <uli+renesas@fpond.eu>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] spi: sh-msiof: Document R-Car E3 support
-Date: Mon,  3 Sep 2018 19:25:12 +0200
-Message-Id: <20180903172512.6242-3-geert+renesas@glider.be>
-In-Reply-To: <20180903172512.6242-1-geert+renesas@glider.be>
-References: <20180903172512.6242-1-geert+renesas@glider.be>
+        Fri, 21 Sep 2018 13:43:56 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 0/8] phy: renesas: rcar-gen3-usb2: re-design for all R-Car Gen3 SoCs
+Date: Fri, 21 Sep 2018 20:53:16 +0900
+Message-Id: <1537530804-19399-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document support for the MSIOF module in the Renesas R-Car E3 (r8a77990)
-SoC.
+This patch set is based on the linux-phy / next branch (the commit id is
+53706a1168631fa5bf2e6d47de4647ea7e69f270).
 
-No driver update is needed.
+Since all R-Car Gen3 SoCs have dedicated otg pins in fact,
+the previous code was not good to handle it. So, this patch set
+changes the design for all R-Car Gen3 SoCs.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-As per SPI subsystem policy, the "spi: sh-msiof:" prefix is used.
 
- Documentation/devicetree/bindings/spi/sh-msiof.txt | 1 +
- 1 file changed, 1 insertion(+)
+Yoshihiro Shimoda (8):
+  dt-bindings: rcar-gen3-phy-usb2: add no-otg-pins property
+  phy: renesas: rcar-gen3-usb2: fix vbus_ctrl for role sysfs
+  phy: renesas: rcar-gen3-usb2: Rename has_otg_pins to uses_otg_pins
+  phy: renesas: rcar-gen3-usb2: Check a property to use otg pins
+  phy: renesas: rcar-gen3-usb2: unify OBINTEN handling
+  phy: renesas: rcar-gen3-usb2: change a condition "dr_mode"
+  phy: renesas: rcar-gen3-usb2: add conditions for uses_otg_pins ==
+    false
+  phy: renesas: rcar-gen3-usb2: add is_otg_channel to use "role" sysfs
 
-diff --git a/Documentation/devicetree/bindings/spi/sh-msiof.txt b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-index fd157155f219bb17..ca5181afee5ef170 100644
---- a/Documentation/devicetree/bindings/spi/sh-msiof.txt
-+++ b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-@@ -11,6 +11,7 @@ Required properties:
- 			 "renesas,msiof-r8a7795" (R-Car H3)
- 			 "renesas,msiof-r8a7796" (R-Car M3-W)
- 			 "renesas,msiof-r8a77965" (R-Car M3-N)
-+			 "renesas,msiof-r8a77990" (R-Car E3)
- 			 "renesas,msiof-r8a77995" (R-Car D3)
- 			 "renesas,msiof-sh73a0" (SH-Mobile AG5)
- 			 "renesas,sh-mobile-msiof" (generic SH-Mobile compatibile device)
+ .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |  2 +
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c           | 80 +++++++++++++---------
+ 2 files changed, 48 insertions(+), 34 deletions(-)
+
 -- 
-2.17.1
+1.9.1
