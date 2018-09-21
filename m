@@ -1,40 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:47228 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726937AbeIZUdf (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:33301 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727554AbeIUSZl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Sep 2018 16:33:35 -0400
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83FF6214C5
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 26 Sep 2018 14:20:23 +0000 (UTC)
-Received: by mail-wm1-f45.google.com with SMTP id b19-v6so2499500wme.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 26 Sep 2018 07:20:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180919142346.25468-1-phil.edworthy@renesas.com> <20180919142346.25468-2-phil.edworthy@renesas.com>
-In-Reply-To: <20180919142346.25468-2-phil.edworthy@renesas.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 26 Sep 2018 09:20:06 -0500
-Message-ID: <CABGGisxnAgbkLp7GMZcNeoTDOrg125pcy_9whGhu5KyUzPXZog@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] dt-bindings: pinctrl: renesas,rzn1-pinctrl: documentation
-To: phil.edworthy@renesas.com
+        Fri, 21 Sep 2018 14:25:41 -0400
+Date: Fri, 21 Sep 2018 14:36:52 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Phil Edworthy <phil.edworthy@renesas.com>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, jacopo@jmondi.org,
+        Mark Rutland <mark.rutland@arm.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] dt-bindings: pinctrl: renesas,rzn1-pinctrl:
+ documentation
+Message-ID: <20180921123652.GH16851@w540>
+References: <20180919142346.25468-1-phil.edworthy@renesas.com>
+ <20180919142346.25468-2-phil.edworthy@renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="oWj5HoUXCVjyUFuT"
+Content-Disposition: inline
+In-Reply-To: <20180919142346.25468-2-phil.edworthy@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-DT bindings should be sent to DT list.
 
-On Wed, Sep 19, 2018 at 9:24 AM Phil Edworthy <phil.edworthy@renesas.com> wrote:
->
+--oWj5HoUXCVjyUFuT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+
+Hi Phil,
+
+On Wed, Sep 19, 2018 at 03:23:44PM +0100, Phil Edworthy wrote:
 > The Renesas RZ/N1 device family PINCTRL node description.
 >
 > Based on a patch originally written by Michel Pollet at Renesas.
@@ -80,8 +80,8 @@ On Wed, Sep 19, 2018 at 9:24 AM Phil Edworthy <phil.edworthy@renesas.com> wrote:
 > +- compatible: SoC-specific compatible string "renesas,<soc-specific>-pinctrl"
 > +  followed by "renesas,rzn1-pinctrl" as fallback. The SoC-specific compatible
 > +  strings must be one of:
-> +       "renesas,r9a06g032-pinctrl" for RZ/N1D
-> +       "renesas,r9a06g033-pinctrl" for RZ/N1S
+> +	"renesas,r9a06g032-pinctrl" for RZ/N1D
+> +	"renesas,r9a06g033-pinctrl" for RZ/N1S
 > +- reg: Address base and length of the memory area where the pin controller
 > +  hardware is mapped to.
 > +- clocks: phandle for the clock, see the description of clock-names below.
@@ -89,12 +89,12 @@ On Wed, Sep 19, 2018 at 9:24 AM Phil Edworthy <phil.edworthy@renesas.com> wrote:
 > +    "bus", the bus clock, sometimes described as pclk, for register accesses.
 > +
 > +Example:
-> +       pinctrl: pin-controller@40067000 {
-> +           compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
-> +           reg = <0x40067000 0x1000>, <0x51000000 0x480>;
-> +           clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
-> +           clock-names = "bus";
-> +       };
+> +	pinctrl: pin-controller@40067000 {
+> +	    compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
+> +	    reg = <0x40067000 0x1000>, <0x51000000 0x480>;
+> +	    clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
+> +	    clock-names = "bus";
+> +	};
 > +
 > +Sub-nodes
 > +---------
@@ -152,6 +152,9 @@ On Wed, Sep 19, 2018 at 9:24 AM Phil Edworthy <phil.edworthy@renesas.com> wrote:
 > +          GENERIC_PINCONFIG;
 > +      };
 > +  };
+
+I can't think a use case for this format, but it doesn't hurt I guess
+
 > +
 > +  Use the latter two formats when pins part of the same logical group need to
 > +  have different generic pin configuration flags applied. Note that the generic
@@ -194,36 +197,44 @@ On Wed, Sep 19, 2018 at 9:24 AM Phil Edworthy <phil.edworthy@renesas.com> wrote:
 > +      Additional identifiers are provided to specify the MDIO source peripheral.
 > +
 > +  Optional generic properties:
-> +    - bias-disable             - disable any pin bias
-> +    - bias-pull-up             - pull up the pin with 50 KOhm
-> +    - bias-pull-down           - pull down the pin with 50 KOhm
-> +    - bias-high-impedance      - high impedance mode
-> +    - drive-strength           - sink or source at most 4, 6, 8 or 12 mA
+Optional generic pinconf properties
+
+Minors apart, please add my:
+Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+
+Thanks
+   j
+
+> +    - bias-disable		- disable any pin bias
+> +    - bias-pull-up		- pull up the pin with 50 KOhm
+> +    - bias-pull-down		- pull down the pin with 50 KOhm
+> +    - bias-high-impedance	- high impedance mode
+> +    - drive-strength		- sink or source at most 4, 6, 8 or 12 mA
 > +
 > +  Example:
 > +  A serial communication interface with a TX output pin and an RX input pin.
 > +
 > +  &pinctrl {
-> +       pins_uart0: pins_uart0 {
-> +               pinmux = <
-> +                       RZN1_MUX(103, UART0_I)  /* UART0_TXD */
-> +                       RZN1_MUX(104, UART0_I)  /* UART0_RXD */
-> +               >;
-> +       };
+> +	pins_uart0: pins_uart0 {
+> +		pinmux = <
+> +			RZN1_MUX(103, UART0_I)	/* UART0_TXD */
+> +			RZN1_MUX(104, UART0_I)	/* UART0_RXD */
+> +		>;
+> +	};
 > +  };
 > +
 > +  Example 2:
 > +  Here we set the pull up on the RXD pin of the UART.
 > +
 > +  &pinctrl {
-> +       pins_uart0: pins_uart0 {
-> +               pinmux = <RZN1_MUX(103, UART0_I)>;      /* UART0_TXD */
+> +	pins_uart0: pins_uart0 {
+> +		pinmux = <RZN1_MUX(103, UART0_I)>;	/* UART0_TXD */
 > +
-> +               pins_uart6_rx {
-> +                       pinmux = <RZN1_MUX(104, UART0_I)>;      /* UART0_RXD */
-> +                       bias-pull-up;
-> +               };
-> +       };
+> +		pins_uart6_rx {
+> +			pinmux = <RZN1_MUX(104, UART0_I)>;	/* UART0_RXD */
+> +			bias-pull-up;
+> +		};
+> +	};
 > +  };
 > diff --git a/include/dt-bindings/pinctrl/rzn1-pinctrl.h b/include/dt-bindings/pinctrl/rzn1-pinctrl.h
 > new file mode 100644
@@ -240,17 +251,8 @@ On Wed, Sep 19, 2018 at 9:24 AM Phil Edworthy <phil.edworthy@renesas.com> wrote:
 > +#define __DT_BINDINGS_RZN1_PINCTRL_H
 > +
 > +#define RZN1_MUX(_gpio, _func) \
-> +       (((RZN1_FUNC_##_func) << 8) | (_gpio))
-
-I'm not a fan of token pasting and it also goes against kernel style.
-If every other Renesas platform is doing this, then fine. Otherwise,
-you can express it in pretty much the same (source) space:
-
-pinmux = <RZN1_MUX_UART0_I 104>;
-
-Yes, this is 2 cells instead of 1, but if you care about space, you
-can use 8 or 16 bit size.
-
+> +	(((RZN1_FUNC_##_func) << 8) | (_gpio))
+> +
 > +/*
 > + * Given the different levels of muxing on the SoC, it was decided to
 > + * 'linearize' them into one numerical space. So mux level 1, 2 and the MDIO
@@ -262,132 +264,148 @@ can use 8 or 16 bit size.
 > + *         value - RZN1_FUNC_L2_OFFSET, and the Level 1 mux will be
 > + *         set accordingly.
 > + * 72...103 are for the 2 MDIO muxes.
-
-Whatever works best for the driver, but wouldn't aligning the levels
-to power of 2 make decoding a bit easier? 0-15 for level 1, 16-127 for
-2, 128+ for MDIO.
-
-Rob
-
 > + */
-> +#define RZN1_FUNC_HIGHZ                                0
-> +#define RZN1_FUNC_0L                           1
-> +#define RZN1_FUNC_CLK_ETH_MII_RGMII_RMII       2
-> +#define RZN1_FUNC_CLK_ETH_NAND                 3
-> +#define RZN1_FUNC_QSPI                         4
-> +#define RZN1_FUNC_SDIO                         5
-> +#define RZN1_FUNC_LCD                          6
-> +#define RZN1_FUNC_LCD_E                                7
-> +#define RZN1_FUNC_MSEBIM                       8
-> +#define RZN1_FUNC_MSEBIS                       9
-> +#define RZN1_FUNC_L2_OFFSET                    10      /* I'm Special */
+> +#define RZN1_FUNC_HIGHZ				0
+> +#define RZN1_FUNC_0L				1
+> +#define RZN1_FUNC_CLK_ETH_MII_RGMII_RMII	2
+> +#define RZN1_FUNC_CLK_ETH_NAND			3
+> +#define RZN1_FUNC_QSPI				4
+> +#define RZN1_FUNC_SDIO				5
+> +#define RZN1_FUNC_LCD				6
+> +#define RZN1_FUNC_LCD_E				7
+> +#define RZN1_FUNC_MSEBIM			8
+> +#define RZN1_FUNC_MSEBIS			9
+> +#define RZN1_FUNC_L2_OFFSET			10	/* I'm Special */
 > +
-> +#define RZN1_FUNC_HIGHZ1                       (RZN1_FUNC_L2_OFFSET + 0)
-> +#define RZN1_FUNC_ETHERCAT                     (RZN1_FUNC_L2_OFFSET + 1)
-> +#define RZN1_FUNC_SERCOS3                      (RZN1_FUNC_L2_OFFSET + 2)
-> +#define RZN1_FUNC_SDIO_E                       (RZN1_FUNC_L2_OFFSET + 3)
-> +#define RZN1_FUNC_ETH_MDIO                     (RZN1_FUNC_L2_OFFSET + 4)
-> +#define RZN1_FUNC_ETH_MDIO_E1                  (RZN1_FUNC_L2_OFFSET + 5)
-> +#define RZN1_FUNC_USB                          (RZN1_FUNC_L2_OFFSET + 6)
-> +#define RZN1_FUNC_MSEBIM_E                     (RZN1_FUNC_L2_OFFSET + 7)
-> +#define RZN1_FUNC_MSEBIS_E                     (RZN1_FUNC_L2_OFFSET + 8)
-> +#define RZN1_FUNC_RSV                          (RZN1_FUNC_L2_OFFSET + 9)
-> +#define RZN1_FUNC_RSV_E                                (RZN1_FUNC_L2_OFFSET + 10)
-> +#define RZN1_FUNC_RSV_E1                       (RZN1_FUNC_L2_OFFSET + 11)
-> +#define RZN1_FUNC_UART0_I                      (RZN1_FUNC_L2_OFFSET + 12)
-> +#define RZN1_FUNC_UART0_I_E                    (RZN1_FUNC_L2_OFFSET + 13)
-> +#define RZN1_FUNC_UART1_I                      (RZN1_FUNC_L2_OFFSET + 14)
-> +#define RZN1_FUNC_UART1_I_E                    (RZN1_FUNC_L2_OFFSET + 15)
-> +#define RZN1_FUNC_UART2_I                      (RZN1_FUNC_L2_OFFSET + 16)
-> +#define RZN1_FUNC_UART2_I_E                    (RZN1_FUNC_L2_OFFSET + 17)
-> +#define RZN1_FUNC_UART0                                (RZN1_FUNC_L2_OFFSET + 18)
-> +#define RZN1_FUNC_UART0_E                      (RZN1_FUNC_L2_OFFSET + 19)
-> +#define RZN1_FUNC_UART1                                (RZN1_FUNC_L2_OFFSET + 20)
-> +#define RZN1_FUNC_UART1_E                      (RZN1_FUNC_L2_OFFSET + 21)
-> +#define RZN1_FUNC_UART2                                (RZN1_FUNC_L2_OFFSET + 22)
-> +#define RZN1_FUNC_UART2_E                      (RZN1_FUNC_L2_OFFSET + 23)
-> +#define RZN1_FUNC_UART3                                (RZN1_FUNC_L2_OFFSET + 24)
-> +#define RZN1_FUNC_UART3_E                      (RZN1_FUNC_L2_OFFSET + 25)
-> +#define RZN1_FUNC_UART4                                (RZN1_FUNC_L2_OFFSET + 26)
-> +#define RZN1_FUNC_UART4_E                      (RZN1_FUNC_L2_OFFSET + 27)
-> +#define RZN1_FUNC_UART5                                (RZN1_FUNC_L2_OFFSET + 28)
-> +#define RZN1_FUNC_UART5_E                      (RZN1_FUNC_L2_OFFSET + 29)
-> +#define RZN1_FUNC_UART6                                (RZN1_FUNC_L2_OFFSET + 30)
-> +#define RZN1_FUNC_UART6_E                      (RZN1_FUNC_L2_OFFSET + 31)
-> +#define RZN1_FUNC_UART7                                (RZN1_FUNC_L2_OFFSET + 32)
-> +#define RZN1_FUNC_UART7_E                      (RZN1_FUNC_L2_OFFSET + 33)
-> +#define RZN1_FUNC_SPI0_M                       (RZN1_FUNC_L2_OFFSET + 34)
-> +#define RZN1_FUNC_SPI0_M_E                     (RZN1_FUNC_L2_OFFSET + 35)
-> +#define RZN1_FUNC_SPI1_M                       (RZN1_FUNC_L2_OFFSET + 36)
-> +#define RZN1_FUNC_SPI1_M_E                     (RZN1_FUNC_L2_OFFSET + 37)
-> +#define RZN1_FUNC_SPI2_M                       (RZN1_FUNC_L2_OFFSET + 38)
-> +#define RZN1_FUNC_SPI2_M_E                     (RZN1_FUNC_L2_OFFSET + 39)
-> +#define RZN1_FUNC_SPI3_M                       (RZN1_FUNC_L2_OFFSET + 40)
-> +#define RZN1_FUNC_SPI3_M_E                     (RZN1_FUNC_L2_OFFSET + 41)
-> +#define RZN1_FUNC_SPI4_S                       (RZN1_FUNC_L2_OFFSET + 42)
-> +#define RZN1_FUNC_SPI4_S_E                     (RZN1_FUNC_L2_OFFSET + 43)
-> +#define RZN1_FUNC_SPI5_S                       (RZN1_FUNC_L2_OFFSET + 44)
-> +#define RZN1_FUNC_SPI5_S_E                     (RZN1_FUNC_L2_OFFSET + 45)
-> +#define RZN1_FUNC_SGPIO0_M                     (RZN1_FUNC_L2_OFFSET + 46)
-> +#define RZN1_FUNC_SGPIO1_M                     (RZN1_FUNC_L2_OFFSET + 47)
-> +#define RZN1_FUNC_GPIO                         (RZN1_FUNC_L2_OFFSET + 48)
-> +#define RZN1_FUNC_CAN                          (RZN1_FUNC_L2_OFFSET + 49)
-> +#define RZN1_FUNC_I2C                          (RZN1_FUNC_L2_OFFSET + 50)
-> +#define RZN1_FUNC_SAFE                         (RZN1_FUNC_L2_OFFSET + 51)
-> +#define RZN1_FUNC_PTO_PWM                      (RZN1_FUNC_L2_OFFSET + 52)
-> +#define RZN1_FUNC_PTO_PWM1                     (RZN1_FUNC_L2_OFFSET + 53)
-> +#define RZN1_FUNC_PTO_PWM2                     (RZN1_FUNC_L2_OFFSET + 54)
-> +#define RZN1_FUNC_PTO_PWM3                     (RZN1_FUNC_L2_OFFSET + 55)
-> +#define RZN1_FUNC_PTO_PWM4                     (RZN1_FUNC_L2_OFFSET + 56)
-> +#define RZN1_FUNC_DELTA_SIGMA                  (RZN1_FUNC_L2_OFFSET + 57)
-> +#define RZN1_FUNC_SGPIO2_M                     (RZN1_FUNC_L2_OFFSET + 58)
-> +#define RZN1_FUNC_SGPIO3_M                     (RZN1_FUNC_L2_OFFSET + 59)
-> +#define RZN1_FUNC_SGPIO4_S                     (RZN1_FUNC_L2_OFFSET + 60)
-> +#define RZN1_FUNC_MAC_MTIP_SWITCH              (RZN1_FUNC_L2_OFFSET + 61)
+> +#define RZN1_FUNC_HIGHZ1			(RZN1_FUNC_L2_OFFSET + 0)
+> +#define RZN1_FUNC_ETHERCAT			(RZN1_FUNC_L2_OFFSET + 1)
+> +#define RZN1_FUNC_SERCOS3			(RZN1_FUNC_L2_OFFSET + 2)
+> +#define RZN1_FUNC_SDIO_E			(RZN1_FUNC_L2_OFFSET + 3)
+> +#define RZN1_FUNC_ETH_MDIO			(RZN1_FUNC_L2_OFFSET + 4)
+> +#define RZN1_FUNC_ETH_MDIO_E1			(RZN1_FUNC_L2_OFFSET + 5)
+> +#define RZN1_FUNC_USB				(RZN1_FUNC_L2_OFFSET + 6)
+> +#define RZN1_FUNC_MSEBIM_E			(RZN1_FUNC_L2_OFFSET + 7)
+> +#define RZN1_FUNC_MSEBIS_E			(RZN1_FUNC_L2_OFFSET + 8)
+> +#define RZN1_FUNC_RSV				(RZN1_FUNC_L2_OFFSET + 9)
+> +#define RZN1_FUNC_RSV_E				(RZN1_FUNC_L2_OFFSET + 10)
+> +#define RZN1_FUNC_RSV_E1			(RZN1_FUNC_L2_OFFSET + 11)
+> +#define RZN1_FUNC_UART0_I			(RZN1_FUNC_L2_OFFSET + 12)
+> +#define RZN1_FUNC_UART0_I_E			(RZN1_FUNC_L2_OFFSET + 13)
+> +#define RZN1_FUNC_UART1_I			(RZN1_FUNC_L2_OFFSET + 14)
+> +#define RZN1_FUNC_UART1_I_E			(RZN1_FUNC_L2_OFFSET + 15)
+> +#define RZN1_FUNC_UART2_I			(RZN1_FUNC_L2_OFFSET + 16)
+> +#define RZN1_FUNC_UART2_I_E			(RZN1_FUNC_L2_OFFSET + 17)
+> +#define RZN1_FUNC_UART0				(RZN1_FUNC_L2_OFFSET + 18)
+> +#define RZN1_FUNC_UART0_E			(RZN1_FUNC_L2_OFFSET + 19)
+> +#define RZN1_FUNC_UART1				(RZN1_FUNC_L2_OFFSET + 20)
+> +#define RZN1_FUNC_UART1_E			(RZN1_FUNC_L2_OFFSET + 21)
+> +#define RZN1_FUNC_UART2				(RZN1_FUNC_L2_OFFSET + 22)
+> +#define RZN1_FUNC_UART2_E			(RZN1_FUNC_L2_OFFSET + 23)
+> +#define RZN1_FUNC_UART3				(RZN1_FUNC_L2_OFFSET + 24)
+> +#define RZN1_FUNC_UART3_E			(RZN1_FUNC_L2_OFFSET + 25)
+> +#define RZN1_FUNC_UART4				(RZN1_FUNC_L2_OFFSET + 26)
+> +#define RZN1_FUNC_UART4_E			(RZN1_FUNC_L2_OFFSET + 27)
+> +#define RZN1_FUNC_UART5				(RZN1_FUNC_L2_OFFSET + 28)
+> +#define RZN1_FUNC_UART5_E			(RZN1_FUNC_L2_OFFSET + 29)
+> +#define RZN1_FUNC_UART6				(RZN1_FUNC_L2_OFFSET + 30)
+> +#define RZN1_FUNC_UART6_E			(RZN1_FUNC_L2_OFFSET + 31)
+> +#define RZN1_FUNC_UART7				(RZN1_FUNC_L2_OFFSET + 32)
+> +#define RZN1_FUNC_UART7_E			(RZN1_FUNC_L2_OFFSET + 33)
+> +#define RZN1_FUNC_SPI0_M			(RZN1_FUNC_L2_OFFSET + 34)
+> +#define RZN1_FUNC_SPI0_M_E			(RZN1_FUNC_L2_OFFSET + 35)
+> +#define RZN1_FUNC_SPI1_M			(RZN1_FUNC_L2_OFFSET + 36)
+> +#define RZN1_FUNC_SPI1_M_E			(RZN1_FUNC_L2_OFFSET + 37)
+> +#define RZN1_FUNC_SPI2_M			(RZN1_FUNC_L2_OFFSET + 38)
+> +#define RZN1_FUNC_SPI2_M_E			(RZN1_FUNC_L2_OFFSET + 39)
+> +#define RZN1_FUNC_SPI3_M			(RZN1_FUNC_L2_OFFSET + 40)
+> +#define RZN1_FUNC_SPI3_M_E			(RZN1_FUNC_L2_OFFSET + 41)
+> +#define RZN1_FUNC_SPI4_S			(RZN1_FUNC_L2_OFFSET + 42)
+> +#define RZN1_FUNC_SPI4_S_E			(RZN1_FUNC_L2_OFFSET + 43)
+> +#define RZN1_FUNC_SPI5_S			(RZN1_FUNC_L2_OFFSET + 44)
+> +#define RZN1_FUNC_SPI5_S_E			(RZN1_FUNC_L2_OFFSET + 45)
+> +#define RZN1_FUNC_SGPIO0_M			(RZN1_FUNC_L2_OFFSET + 46)
+> +#define RZN1_FUNC_SGPIO1_M			(RZN1_FUNC_L2_OFFSET + 47)
+> +#define RZN1_FUNC_GPIO				(RZN1_FUNC_L2_OFFSET + 48)
+> +#define RZN1_FUNC_CAN				(RZN1_FUNC_L2_OFFSET + 49)
+> +#define RZN1_FUNC_I2C				(RZN1_FUNC_L2_OFFSET + 50)
+> +#define RZN1_FUNC_SAFE				(RZN1_FUNC_L2_OFFSET + 51)
+> +#define RZN1_FUNC_PTO_PWM			(RZN1_FUNC_L2_OFFSET + 52)
+> +#define RZN1_FUNC_PTO_PWM1			(RZN1_FUNC_L2_OFFSET + 53)
+> +#define RZN1_FUNC_PTO_PWM2			(RZN1_FUNC_L2_OFFSET + 54)
+> +#define RZN1_FUNC_PTO_PWM3			(RZN1_FUNC_L2_OFFSET + 55)
+> +#define RZN1_FUNC_PTO_PWM4			(RZN1_FUNC_L2_OFFSET + 56)
+> +#define RZN1_FUNC_DELTA_SIGMA			(RZN1_FUNC_L2_OFFSET + 57)
+> +#define RZN1_FUNC_SGPIO2_M			(RZN1_FUNC_L2_OFFSET + 58)
+> +#define RZN1_FUNC_SGPIO3_M			(RZN1_FUNC_L2_OFFSET + 59)
+> +#define RZN1_FUNC_SGPIO4_S			(RZN1_FUNC_L2_OFFSET + 60)
+> +#define RZN1_FUNC_MAC_MTIP_SWITCH		(RZN1_FUNC_L2_OFFSET + 61)
 > +
-> +#define RZN1_FUNC_MDIO_OFFSET                  (RZN1_FUNC_L2_OFFSET + 62)
+> +#define RZN1_FUNC_MDIO_OFFSET			(RZN1_FUNC_L2_OFFSET + 62)
 > +
 > +/* These are MDIO0 peripherals for the RZN1_FUNC_ETH_MDIO function */
-> +#define RZN1_FUNC_MDIO0_HIGHZ                  (RZN1_FUNC_MDIO_OFFSET + 0)
-> +#define RZN1_FUNC_MDIO0_GMAC0                  (RZN1_FUNC_MDIO_OFFSET + 1)
-> +#define RZN1_FUNC_MDIO0_GMAC1                  (RZN1_FUNC_MDIO_OFFSET + 2)
-> +#define RZN1_FUNC_MDIO0_ECAT                   (RZN1_FUNC_MDIO_OFFSET + 3)
-> +#define RZN1_FUNC_MDIO0_S3_MDIO0               (RZN1_FUNC_MDIO_OFFSET + 4)
-> +#define RZN1_FUNC_MDIO0_S3_MDIO1               (RZN1_FUNC_MDIO_OFFSET + 5)
-> +#define RZN1_FUNC_MDIO0_HWRTOS                 (RZN1_FUNC_MDIO_OFFSET + 6)
-> +#define RZN1_FUNC_MDIO0_SWITCH                 (RZN1_FUNC_MDIO_OFFSET + 7)
+> +#define RZN1_FUNC_MDIO0_HIGHZ			(RZN1_FUNC_MDIO_OFFSET + 0)
+> +#define RZN1_FUNC_MDIO0_GMAC0			(RZN1_FUNC_MDIO_OFFSET + 1)
+> +#define RZN1_FUNC_MDIO0_GMAC1			(RZN1_FUNC_MDIO_OFFSET + 2)
+> +#define RZN1_FUNC_MDIO0_ECAT			(RZN1_FUNC_MDIO_OFFSET + 3)
+> +#define RZN1_FUNC_MDIO0_S3_MDIO0		(RZN1_FUNC_MDIO_OFFSET + 4)
+> +#define RZN1_FUNC_MDIO0_S3_MDIO1		(RZN1_FUNC_MDIO_OFFSET + 5)
+> +#define RZN1_FUNC_MDIO0_HWRTOS			(RZN1_FUNC_MDIO_OFFSET + 6)
+> +#define RZN1_FUNC_MDIO0_SWITCH			(RZN1_FUNC_MDIO_OFFSET + 7)
 > +/* These are MDIO0 peripherals for the RZN1_FUNC_ETH_MDIO_E1 function */
-> +#define RZN1_FUNC_MDIO0_E1_HIGHZ               (RZN1_FUNC_MDIO_OFFSET + 8)
-> +#define RZN1_FUNC_MDIO0_E1_GMAC0               (RZN1_FUNC_MDIO_OFFSET + 9)
-> +#define RZN1_FUNC_MDIO0_E1_GMAC1               (RZN1_FUNC_MDIO_OFFSET + 10)
-> +#define RZN1_FUNC_MDIO0_E1_ECAT                        (RZN1_FUNC_MDIO_OFFSET + 11)
-> +#define RZN1_FUNC_MDIO0_E1_S3_MDIO0            (RZN1_FUNC_MDIO_OFFSET + 12)
-> +#define RZN1_FUNC_MDIO0_E1_S3_MDIO1            (RZN1_FUNC_MDIO_OFFSET + 13)
-> +#define RZN1_FUNC_MDIO0_E1_HWRTOS              (RZN1_FUNC_MDIO_OFFSET + 14)
-> +#define RZN1_FUNC_MDIO0_E1_SWITCH              (RZN1_FUNC_MDIO_OFFSET + 15)
+> +#define RZN1_FUNC_MDIO0_E1_HIGHZ		(RZN1_FUNC_MDIO_OFFSET + 8)
+> +#define RZN1_FUNC_MDIO0_E1_GMAC0		(RZN1_FUNC_MDIO_OFFSET + 9)
+> +#define RZN1_FUNC_MDIO0_E1_GMAC1		(RZN1_FUNC_MDIO_OFFSET + 10)
+> +#define RZN1_FUNC_MDIO0_E1_ECAT			(RZN1_FUNC_MDIO_OFFSET + 11)
+> +#define RZN1_FUNC_MDIO0_E1_S3_MDIO0		(RZN1_FUNC_MDIO_OFFSET + 12)
+> +#define RZN1_FUNC_MDIO0_E1_S3_MDIO1		(RZN1_FUNC_MDIO_OFFSET + 13)
+> +#define RZN1_FUNC_MDIO0_E1_HWRTOS		(RZN1_FUNC_MDIO_OFFSET + 14)
+> +#define RZN1_FUNC_MDIO0_E1_SWITCH		(RZN1_FUNC_MDIO_OFFSET + 15)
 > +
 > +/* These are MDIO1 peripherals for the RZN1_FUNC_ETH_MDIO function */
-> +#define RZN1_FUNC_MDIO1_HIGHZ                  (RZN1_FUNC_MDIO_OFFSET + 16)
-> +#define RZN1_FUNC_MDIO1_GMAC0                  (RZN1_FUNC_MDIO_OFFSET + 17)
-> +#define RZN1_FUNC_MDIO1_GMAC1                  (RZN1_FUNC_MDIO_OFFSET + 18)
-> +#define RZN1_FUNC_MDIO1_ECAT                   (RZN1_FUNC_MDIO_OFFSET + 19)
-> +#define RZN1_FUNC_MDIO1_S3_MDIO0               (RZN1_FUNC_MDIO_OFFSET + 20)
-> +#define RZN1_FUNC_MDIO1_S3_MDIO1               (RZN1_FUNC_MDIO_OFFSET + 21)
-> +#define RZN1_FUNC_MDIO1_HWRTOS                 (RZN1_FUNC_MDIO_OFFSET + 22)
-> +#define RZN1_FUNC_MDIO1_SWITCH                 (RZN1_FUNC_MDIO_OFFSET + 23)
+> +#define RZN1_FUNC_MDIO1_HIGHZ			(RZN1_FUNC_MDIO_OFFSET + 16)
+> +#define RZN1_FUNC_MDIO1_GMAC0			(RZN1_FUNC_MDIO_OFFSET + 17)
+> +#define RZN1_FUNC_MDIO1_GMAC1			(RZN1_FUNC_MDIO_OFFSET + 18)
+> +#define RZN1_FUNC_MDIO1_ECAT			(RZN1_FUNC_MDIO_OFFSET + 19)
+> +#define RZN1_FUNC_MDIO1_S3_MDIO0		(RZN1_FUNC_MDIO_OFFSET + 20)
+> +#define RZN1_FUNC_MDIO1_S3_MDIO1		(RZN1_FUNC_MDIO_OFFSET + 21)
+> +#define RZN1_FUNC_MDIO1_HWRTOS			(RZN1_FUNC_MDIO_OFFSET + 22)
+> +#define RZN1_FUNC_MDIO1_SWITCH			(RZN1_FUNC_MDIO_OFFSET + 23)
 > +/* These are MDIO1 peripherals for the RZN1_FUNC_ETH_MDIO_E1 function */
-> +#define RZN1_FUNC_MDIO1_E1_HIGHZ               (RZN1_FUNC_MDIO_OFFSET + 24)
-> +#define RZN1_FUNC_MDIO1_E1_GMAC0               (RZN1_FUNC_MDIO_OFFSET + 25)
-> +#define RZN1_FUNC_MDIO1_E1_GMAC1               (RZN1_FUNC_MDIO_OFFSET + 26)
-> +#define RZN1_FUNC_MDIO1_E1_ECAT                        (RZN1_FUNC_MDIO_OFFSET + 27)
-> +#define RZN1_FUNC_MDIO1_E1_S3_MDIO0            (RZN1_FUNC_MDIO_OFFSET + 28)
-> +#define RZN1_FUNC_MDIO1_E1_S3_MDIO1            (RZN1_FUNC_MDIO_OFFSET + 29)
-> +#define RZN1_FUNC_MDIO1_E1_HWRTOS              (RZN1_FUNC_MDIO_OFFSET + 30)
-> +#define RZN1_FUNC_MDIO1_E1_SWITCH              (RZN1_FUNC_MDIO_OFFSET + 31)
+> +#define RZN1_FUNC_MDIO1_E1_HIGHZ		(RZN1_FUNC_MDIO_OFFSET + 24)
+> +#define RZN1_FUNC_MDIO1_E1_GMAC0		(RZN1_FUNC_MDIO_OFFSET + 25)
+> +#define RZN1_FUNC_MDIO1_E1_GMAC1		(RZN1_FUNC_MDIO_OFFSET + 26)
+> +#define RZN1_FUNC_MDIO1_E1_ECAT			(RZN1_FUNC_MDIO_OFFSET + 27)
+> +#define RZN1_FUNC_MDIO1_E1_S3_MDIO0		(RZN1_FUNC_MDIO_OFFSET + 28)
+> +#define RZN1_FUNC_MDIO1_E1_S3_MDIO1		(RZN1_FUNC_MDIO_OFFSET + 29)
+> +#define RZN1_FUNC_MDIO1_E1_HWRTOS		(RZN1_FUNC_MDIO_OFFSET + 30)
+> +#define RZN1_FUNC_MDIO1_E1_SWITCH		(RZN1_FUNC_MDIO_OFFSET + 31)
 > +
-> +#define RZN1_FUNC_MAX                          (RZN1_FUNC_MDIO_OFFSET + 32)
+> +#define RZN1_FUNC_MAX				(RZN1_FUNC_MDIO_OFFSET + 32)
 > +
 > +#endif /* __DT_BINDINGS_RZN1_PINCTRL_H */
 > --
 > 2.17.1
 >
+
+--oWj5HoUXCVjyUFuT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJbpOXkAAoJEHI0Bo8WoVY8cUwP/3BDRFIzvvn/wvP3R2HjqkI1
+l1gfxuc00/Vo15kKCMkGzdXIS1JxTxJkQmGEEeIYbBk2adY4POgb4sweDakscKkX
+vtowbQi99fcrzJgo6YwCTAMMkqcEzG/Zdab36Wja4Gl5XOr4XhnJmaEFovBdP3yV
+TL9zKMuE4HOWkP0tYCaeU7zqlbJGsvaM71raxZDdIoLBxWUmC+EmZu9ChYK4GZYx
+6Ff2ZZlcIEy3U2GtFGMKOrIbfCUvE+vrN52Wzib7c19S+tSafNEajVs0E6/8eEBC
+NsqNyh5Mqrd+50TH9sHrOVgqqMHF43Pn931AfEVeR3HX30t3BzPlrBQUs03qlm9H
+rxlH0eeLfpDej+oeNVz7EaZWkx8HDJX4A9QlMH1gwwLldAA5Cu7I0SrbeNP8QFJ8
+aySKhaSunXwTZ1g2J6d8lAFPRQONVLgY88XJ9nu69ftu5Upo6WSb+1ni0z9Qo9wA
+K60RrYWCpkc2g+Z4pobtnqbKsuzlZWwhVboOQ+uQxTz9+6LAg1XHDqo2dnymG+Kd
+UzSSPGlTSxCWetizdVO09/lweNTOAUDt1LELouCgIsDQ8nNu0ffG0vSDEo+tikxR
+UwMZ0yjzR+kTE5443NusRVrn9FbcWRJAHjMrvlL48SLqc8B4rjv4Y7E9RYPvhd1I
+kA/WKM7Hv2Gz3YVmfY4o
+=EWGh
+-----END PGP SIGNATURE-----
+
+--oWj5HoUXCVjyUFuT--
