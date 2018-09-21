@@ -1,44 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:61440 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389883AbeIURn4 (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:51117 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389545AbeIUX1D (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Sep 2018 13:43:56 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Fri, 21 Sep 2018 19:27:03 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/8] phy: renesas: rcar-gen3-usb2: re-design for all R-Car Gen3 SoCs
-Date: Fri, 21 Sep 2018 20:53:16 +0900
-Message-Id: <1537530804-19399-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: [PATCH 0/4] Add RZ/G1C and RZ/G1N I2C related support
+Date: Fri, 21 Sep 2018 18:36:57 +0100
+Message-Id: <1537551421-4259-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set is based on the linux-phy / next branch (the commit id is
-53706a1168631fa5bf2e6d47de4647ea7e69f270).
+Dear All,
 
-Since all R-Car Gen3 SoCs have dedicated otg pins in fact,
-the previous code was not good to handle it. So, this patch set
-changes the design for all R-Car Gen3 SoCs.
+this series documents the I2C controllers found in the RZ/G1C and
+RZ/G1N, and also adds I2C4 support to the RZ/G1C SoC specific dtsi.
 
+Thanks,
+Fab
 
-Yoshihiro Shimoda (8):
-  dt-bindings: rcar-gen3-phy-usb2: add no-otg-pins property
-  phy: renesas: rcar-gen3-usb2: fix vbus_ctrl for role sysfs
-  phy: renesas: rcar-gen3-usb2: Rename has_otg_pins to uses_otg_pins
-  phy: renesas: rcar-gen3-usb2: Check a property to use otg pins
-  phy: renesas: rcar-gen3-usb2: unify OBINTEN handling
-  phy: renesas: rcar-gen3-usb2: change a condition "dr_mode"
-  phy: renesas: rcar-gen3-usb2: add conditions for uses_otg_pins ==
-    false
-  phy: renesas: rcar-gen3-usb2: add is_otg_channel to use "role" sysfs
+Biju Das (2):
+  dt-bindings: i2c: rcar: Document r8a7744 support
+  dt-bindings: i2c: sh_mobile: Document r8a7744 support
 
- .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |  2 +
- drivers/phy/renesas/phy-rcar-gen3-usb2.c           | 80 +++++++++++++---------
- 2 files changed, 48 insertions(+), 34 deletions(-)
+Fabrizio Castro (2):
+  dt-bindings: i2c: rcar: Add r8a77470 support
+  ARM: dts: r8a77470: Add I2C4 support
+
+ Documentation/devicetree/bindings/i2c/i2c-rcar.txt      |  2 ++
+ Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt |  1 +
+ arch/arm/boot/dts/r8a77470.dtsi                         | 14 ++++++++++++++
+ 3 files changed, 17 insertions(+)
 
 -- 
-1.9.1
+2.7.4
