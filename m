@@ -1,76 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:35640 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726487AbeIESZF (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:14189 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389239AbeIUNqg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Sep 2018 14:25:05 -0400
+        Fri, 21 Sep 2018 09:46:36 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Simon Horman <horms@verge.net.au>
+CC: "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] arm64: dts: renesas: revise properties for usb 2.0
+Date: Fri, 21 Sep 2018 07:58:50 +0000
+Message-ID: <OSBPR01MB2293BCE48444CE298390093AD8120@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+References: <1535703651-5152-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20180905103326.lsn57rilweolpews@verge.net.au>
+ <OSBPR01MB22938356A189FF10698CDBC4D8130@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+ <20180921073712.p2iqas3pspsoci3w@verge.net.au>
+In-Reply-To: <20180921073712.p2iqas3pspsoci3w@verge.net.au>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20180829074241.1943-1-wsa+renesas@sang-engineering.com>
- <20180829074241.1943-2-wsa+renesas@sang-engineering.com> <20180829205535.GA30332@anatevka.americas.hpqcorp.net>
-In-Reply-To: <20180829205535.GA30332@anatevka.americas.hpqcorp.net>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Sep 2018 15:54:32 +0200
-Message-ID: <CAMuHMdVZ_TPLFqj1fkdW6uPm_urDYHKk9Rp8hXd_9gm-0CXcuA@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 1/4] watchdog: core: add mechanism to prevent
- removing if NOWAYOUT
-To: Jerry.Hoemann@hpe.com
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jerry,
+Hi Simon-san,
 
-On Wed, Aug 29, 2018 at 10:55 PM Jerry Hoemann <jerry.hoemann@hpe.com> wrote:
-> On Wed, Aug 29, 2018 at 09:42:38AM +0200, Wolfram Sang wrote:
-> > To prevent removing if NOWAYOUT, we invalidate the .remove function and
-> > suppress the bind/unbind attributes in sysfs. These are driver
-> > capabilities, so we need to set it up at runtime during init. To avoid
-> > boilerplate, introduce module_watchdog_driver() similar to
-> > module_driver(). On top of that, we then build
-> > module_watchdog_platform_driver(). Others may follow, if needed.
+> From: Simon Horman, Sent: Friday, September 21, 2018 4:37 PM
+>=20
+> On Thu, Sep 20, 2018 at 05:55:00AM +0000, Yoshihiro Shimoda wrote:
+> > Hi Simon-san,
 > >
-> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > ---
-> >  include/linux/watchdog.h | 17 +++++++++++++++++
-> >  1 file changed, 17 insertions(+)
+> > > From: Simon Horman, Sent: Wednesday, September 5, 2018 7:33 PM
+> > >
+> > > On Fri, Aug 31, 2018 at 05:20:51PM +0900, Yoshihiro Shimoda wrote:
+> > > > R-Car Gen3 needs to enable/deassert clocks/resets of both usb 2.0
+> > > > host (included phy) and peripheral. Otherwise, other side device
+> > > > cannot work correctly. So, this patch revises properties of clocks
+> > > > and resets. After that, each device driver can enable/deassert
+> > > > clocks/resets by its self.
+> > > >
+> > > > Notes:
+> > > >  - To work the renesas_usbhs driver correctly when host side driver=
+s
+> > > >    are disabled and the renesas_usbhs driver doesn't have multiple
+> > > >    clock management, this patch doesn't change the order of the clo=
+cks
+> > > >    property in each hsusb node.
+> > > >  - This patch doesn't have any side-effects even if the renesas_usb=
+hs
+> > > >    driver doesn't have reset_control and multiple clock management.
+> > > >
+> > > > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > >
+> > > Thanks Shimoda-san,
+> > >
+> > > This looks fine to me but I will wait to see if there are other revie=
+ws
+> > > before applying.
+> > >
+> > > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 > >
-> > diff --git a/include/linux/watchdog.h b/include/linux/watchdog.h
-> > index 44985c4a1e86..c8ecbc53c807 100644
-> > --- a/include/linux/watchdog.h
-> > +++ b/include/linux/watchdog.h
-> > @@ -216,4 +216,21 @@ extern void watchdog_unregister_device(struct watchdog_device *);
-> >  /* devres register variant */
-> >  int devm_watchdog_register_device(struct device *dev, struct watchdog_device *);
-> >
-> > +#define module_watchdog_driver(__driver, __register, __unregister, __nowayout, ...) \
-> > +static int __init __driver##_init(void) \
-> > +{ \
-> > +     __driver.driver.suppress_bind_attrs = !!(__nowayout); \
-> > +     return __register(&(__driver)  ##__VA_ARGS__); \
-> > +} \
->
-> Sorry, I'm not familiar w/ this level of detail of the driver interface.
->
-> Is the intent of the proposed changes to prevent the unload of
-> a module if it was loaded with the "nowayout" parameter?
->
-> If so, I thought the WD "nowayout" semantic was only supposed to be in effect
-> after /dev/watchdog was opened.  The proposed change looks like it makes the
-> "nowayout" semantic take effect before /dev/watchdog is opened.
+> > Thank you for your review!
+> > However, since clock-names will be not used by renesas_usbhs driver,
+> > I'll submit v2 patch to remove the properties.
+>=20
+> Thanks, I'll wait for v2.
 
-Thanks, that's IMHO a very valid point.
+I submitted v2 patch:
+https://patchwork.kernel.org/patch/10609245/
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Yoshihiro Shimoda
