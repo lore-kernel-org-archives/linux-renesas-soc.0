@@ -1,43 +1,55 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:28767 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389517AbeIURnw (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 21 Sep 2018 13:43:52 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>, linux-serial@vger.kernel.org,
-        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] dt-bindings: serial: sh-sci: Document r8a7744 bindings
-Date: Fri, 21 Sep 2018 15:45:54 +0100
-Message-Id: <1537541154-54306-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 0/4] Add SDHI2 support to iwg23s
+Date: Fri, 21 Sep 2018 12:55:07 +0100
+Message-Id: <1537530911-443-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-RZ/G1N (R8A7744) SoC also has the R-Car gen2 compatible SCIF, SCIFA,
-SCIFB, and HSCIF ports, so document the SoC specific bindings.
+Dear All,
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+this series adds SDHI2 support to the iwg23s.
+The RZ/G1C (the SoC powering the iwg23s) is slightly different from
+the other R-Car and RZ/G1 devices, in the sense that this device uses
+only one bit of the POC Control Register to control the voltage of the
+entire interface, as opposed to one bit per pin.
+There is a discussion on the ML that is going on about this:
+https://patchwork.kernel.org/patch/10604395/
+and the patches from this series implement "option 2".
 
-diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-index eaca9da..723abe0 100644
---- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-+++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-@@ -14,6 +14,10 @@ Required properties:
-     - "renesas,scifa-r8a7743" for R8A7743 (RZ/G1M) SCIFA compatible UART.
-     - "renesas,scifb-r8a7743" for R8A7743 (RZ/G1M) SCIFB compatible UART.
-     - "renesas,hscif-r8a7743" for R8A7743 (RZ/G1M) HSCIF compatible UART.
-+    - "renesas,scif-r8a7744" for R8A7744 (RZ/G1N) SCIF compatible UART.
-+    - "renesas,scifa-r8a7744" for R8A7744 (RZ/G1N) SCIFA compatible UART.
-+    - "renesas,scifb-r8a7744" for R8A7744 (RZ/G1N) SCIFB compatible UART.
-+    - "renesas,hscif-r8a7744" for R8A7744 (RZ/G1N) HSCIF compatible UART.
-     - "renesas,scif-r8a7745" for R8A7745 (RZ/G1E) SCIF compatible UART.
-     - "renesas,scifa-r8a7745" for R8A7745 (RZ/G1E) SCIFA compatible UART.
-     - "renesas,scifb-r8a7745" for R8A7745 (RZ/G1E) SCIFB compatible UART.
+Thanks,
+Fab
+
+Fabrizio Castro (4):
+  dt-bindings: mmc: renesas_sdhi: Add r8a77470 support
+  pinctrl: sh-pfc: r8a77470: Add SDHI2 voltage switch
+  ARM: dts: r8a77470: Add SDHI2 support
+  ARM: dts: iwg23s-sbc: Add uSD card support
+
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt |  1 +
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts          | 49 ++++++++++++++++++++++
+ arch/arm/boot/dts/r8a77470.dtsi                    | 15 +++++++
+ drivers/pinctrl/sh-pfc/pfc-r8a77470.c              | 32 +++++++++++++-
+ 4 files changed, 96 insertions(+), 1 deletion(-)
+
 -- 
 2.7.4
