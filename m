@@ -1,143 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbeIMOUE (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:51817 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388909AbeIUVrP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:20:04 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Fri, 21 Sep 2018 17:47:15 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Wolfram Sang <wsa@the-dreams.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 33/58] arm64: dts: renesas: r8a774a1: Add Cortex-A53 CPU cores
-Date: Thu, 13 Sep 2018 11:09:28 +0200
-Message-Id: <09f49bcf6f5a62467f4fcda59d6bc38f24d97c36.1536828567.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
-References: <cover.1536828567.git.horms+renesas@verge.net.au>
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: RE: [PATCH 4/5] pinctrl: sh-pfc: r8a77470: Add SDHI2 pin groups
+Date: Fri, 21 Sep 2018 15:57:28 +0000
+Message-ID: <TY1PR01MB177016F137E3E469AF73223DC0120@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1537278478-1744-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1537278478-1744-5-git-send-email-fabrizio.castro@bp.renesas.com>
+ <CAMuHMdVaU3f=Vi=VZYZPhUxoPkDo5oBjDZFnPjY1i-P9xPbEQA@mail.gmail.com>
+ <TY1PR01MB1770EE6046C6FD96C17DB829C01C0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+ <CAMuHMdW2XGA_jUCOqZ5x5m7Vx_r0NeKJW=_zunVSvXX9sApXEQ@mail.gmail.com>
+ <20180921154741.GB1124@kunai>
+In-Reply-To: <20180921154741.GB1124@kunai>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+Hello Wolfram,
 
-This patch adds definitions for L2 cache for the Cortex-A53 CPU
-cores (512 KiB in size, organized as 32 KiB x 16 ways), adds
-Cortex-A53 CPU cores (setting a total of 6 cores, 2 x Cortex-A57
-+ 4 x Cortex-A53), and finally enables the performance monitor
-unit for the Cortex-A53 cores on the R8A774A1 SoC.
+Thank you for your feedback!
 
-Based on work done for r8a7796 SoC.
+> -----Original Message-----
+> From: Wolfram Sang <wsa@the-dreams.de>
+> Sent: 21 September 2018 16:48
+> To: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>; Laurent Pinchart <l=
+aurent.pinchart@ideasonboard.com>; Geert Uytterhoeven
+> <geert+renesas@glider.be>; Linus Walleij <linus.walleij@linaro.org>; Linu=
+x-Renesas <linux-renesas-soc@vger.kernel.org>; open
+> list:GPIO SUBSYSTEM <linux-gpio@vger.kernel.org>; Simon Horman <horms@ver=
+ge.net.au>; Chris Paterson
+> <Chris.Paterson2@renesas.com>; Biju Das <biju.das@bp.renesas.com>; Wolfra=
+m Sang <wsa+renesas@sang-engineering.com>
+> Subject: Re: [PATCH 4/5] pinctrl: sh-pfc: r8a77470: Add SDHI2 pin groups
+>
+>
+> > > 2) Specify SH_PFC_PIN_CFG_IO_VOLTAGE for every line that belongs to
+> > > the interface, keep the SD card pin groups as specified by this
+> > > patch, map all of the pins to the same bit in the POC register (as
+> > > per pin_to_pocctrl is concerned), and the board specific device tree
+> > > definitions would look like every other RZ/G1 or R-Car Gen2 boards
+> > > that support SDR* The only downside would be that the kernel would
+> > > read-modify-write the POC Control Register with the same value for
+> > > every line in the interface.
+>
+> I don't think this multiple RMW is a problem.
+>
+> > This looks the most sensible solution to me: just map in your
+> > .pin_to_pocctrl() method all pins of the interface to the single bit.
+>
+> I didn't fully get if this one bit controls only the CLK wire or all the
+> relevant wires? I assume it is the latter one. For that, option 2) is
+> totally fine with me.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 66 ++++++++++++++++++++++++++++---
- 1 file changed, 61 insertions(+), 5 deletions(-)
+It is not super clear what the intended behaviour is from the HW User's man=
+ual indeed,
+but I have tested SDR50 and it seems to be working fine, which would indica=
+te that the
+control bit in the POC Control Register is actually controlling all of the =
+lines of the
+interface, and not just the CLK pin.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index f379de8404cb..dde188004283 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -79,12 +79,59 @@
- 			clocks =<&cpg CPG_CORE 0>;
- 		};
- 
-+		a53_0: cpu@100 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0x100>;
-+			device_type = "cpu";
-+			power-domains = <&sysc 5>;
-+			next-level-cache = <&L2_CA53>;
-+			enable-method = "psci";
-+			clocks =<&cpg CPG_CORE 1>;
-+		};
-+
-+		a53_1: cpu@101 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0x101>;
-+			device_type = "cpu";
-+			power-domains = <&sysc 6>;
-+			next-level-cache = <&L2_CA53>;
-+			enable-method = "psci";
-+			clocks =<&cpg CPG_CORE 1>;
-+		};
-+
-+		a53_2: cpu@102 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0x102>;
-+			device_type = "cpu";
-+			power-domains = <&sysc 7>;
-+			next-level-cache = <&L2_CA53>;
-+			enable-method = "psci";
-+			clocks =<&cpg CPG_CORE 1>;
-+		};
-+
-+		a53_3: cpu@103 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0x103>;
-+			device_type = "cpu";
-+			power-domains = <&sysc 8>;
-+			next-level-cache = <&L2_CA53>;
-+			enable-method = "psci";
-+			clocks =<&cpg CPG_CORE 1>;
-+		};
-+
- 		L2_CA57: cache-controller-0 {
- 			compatible = "cache";
- 			power-domains = <&sysc 12>;
- 			cache-unified;
- 			cache-level = <2>;
- 		};
-+
-+		L2_CA53: cache-controller-1 {
-+			compatible = "cache";
-+			power-domains = <&sysc 21>;
-+			cache-unified;
-+			cache-level = <2>;
-+		};
- 	};
- 
- 	extal_clk: extal {
-@@ -108,6 +155,15 @@
- 		clock-frequency = <0>;
- 	};
- 
-+	pmu_a53 {
-+		compatible = "arm,cortex-a53-pmu";
-+		interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&a53_0>, <&a53_1>, <&a53_2>, <&a53_3>;
-+	};
-+
- 	pmu_a57 {
- 		compatible = "arm,cortex-a57-pmu";
- 		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-@@ -977,7 +1033,7 @@
- 			      <0x0 0xf1040000 0 0x20000>,
- 			      <0x0 0xf1060000 0 0x20000>;
- 			interrupts = <GIC_PPI 9
--					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-+					(GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_HIGH)>;
- 			clocks = <&cpg CPG_MOD 408>;
- 			clock-names = "clk";
- 			power-domains = <&sysc 32>;
-@@ -1037,10 +1093,10 @@
- 
- 	timer {
- 		compatible = "arm,armv8-timer";
--		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>;
- 	};
- 
- 	/* External USB clocks - can be overridden by the board */
--- 
-2.11.0
+Thanks,
+Fab
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
