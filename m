@@ -1,43 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:11181 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726569AbeIKPfd (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43273 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725898AbeIUN0q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Sep 2018 11:35:33 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 0/2] Add RZ/G1N PFC driver.
-Date: Tue, 11 Sep 2018 11:30:03 +0100
-Message-Id: <1536661805-36464-1-git-send-email-biju.das@bp.renesas.com>
+        Fri, 21 Sep 2018 09:26:46 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 668D625B755
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Sep 2018 17:39:07 +1000 (AEST)
+Date: Fri, 21 Sep 2018 09:39:05 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: [ANNOUNCE] Renesas tree closing for v4.20
+Message-ID: <20180921073904.cjyiya2xjqcrsjfe@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch series aims to add support for RZ/G1N (R8A7744) PFC driver.
+Hi,
 
-RZ/G1N SoC is similar to RZ/G1M and R-Car Gen2 M2-W/M2-N SoC.
+I would like to stop accepting non-bug-fix patches for v4.20 on Wednesday
+26th September (next week)
+and get the last pull requests posted by the end of next week.
+This is in order for them to be sent before the release of v4.19-rc6, the
+deadline set by the ARM SoC maintainers.  As patches should ideally
+progress from the renesas tree into linux-next before sending pull requests
+there is a few days lead time involved.
 
-This patchset is based on renesas-devel-20180906-v4.19-rc2.
+Once the tree has closed for v4.20 I intend to begin queueing up patches
+for v4.21 as they are ready.
 
-Biju Das (2):
-  dt-bindings: pinctrl: sh-pfc: Document r8a7744 PFC support
-  pinctrl: sh-pfc: r8a7791: Add r8a7744 support
-
- .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |  1 +
- drivers/pinctrl/sh-pfc/Kconfig                     |  5 +++++
- drivers/pinctrl/sh-pfc/Makefile                    |  1 +
- drivers/pinctrl/sh-pfc/core.c                      |  6 ++++++
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c               | 22 ++++++++++++++++++++++
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |  1 +
- 6 files changed, 36 insertions(+)
-
--- 
-2.7.4
+Happy hacking!
