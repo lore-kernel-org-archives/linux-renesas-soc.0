@@ -1,47 +1,47 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58179 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729111AbeI1QqB (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:46:01 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/7] ARM: shmobile: Convert to using %pOFn instead of device_node.name
-Date: Fri, 28 Sep 2018 12:22:45 +0200
-Message-Id: <b9fad74bfe767aa924d5e329ab3c9a92b20f6b91.1538123953.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1538123953.git.horms+renesas@verge.net.au>
-References: <cover.1538123953.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Russell King <linux@armlinux.org.uk>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 4/5] drm: rcar-du: Add R8A7744 support
+Date: Fri, 21 Sep 2018 19:08:30 +0100
+Message-Id: <1537553311-8831-5-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1537553311-8831-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1537553311-8831-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Rob Herring <robh@kernel.org>
+From: Biju Das <biju.das@bp.renesas.com>
 
-In preparation to remove the node name pointer from struct device_node,
-convert printf users to use the %pOFn format specifier.
+Add support for the R8A7744 DU (which is very similar to the R8A7743 DU);
+it has 1 DPAD (RGB) output and 1 LVDS output.
 
-Signed-off-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm/mach-shmobile/pm-rmobile.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/arch/arm/mach-shmobile/pm-rmobile.c
-index e348bcfe389d..9dd6cadcd900 100644
---- a/arch/arm/mach-shmobile/pm-rmobile.c
-+++ b/arch/arm/mach-shmobile/pm-rmobile.c
-@@ -189,7 +189,7 @@ static void __init add_special_pd(struct device_node *np, enum pd_types type)
- 		return;
- 	}
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+index c07d3f1..2c3d0e5 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+@@ -321,6 +321,7 @@ static const struct rcar_du_device_info rcar_du_r8a77970_info = {
  
--	pr_debug("Special PM domain %s type %d for %pOF\n", pd->name, type, np);
-+	pr_debug("Special PM domain %pOFn type %d for %pOF\n", pd, type, np);
- 
- 	special_pds[num_special_pds].pd = pd;
- 	special_pds[num_special_pds].type = type;
+ static const struct of_device_id rcar_du_of_table[] = {
+ 	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
++	{ .compatible = "renesas,du-r8a7744", .data = &rzg1_du_r8a7743_info },
+ 	{ .compatible = "renesas,du-r8a7745", .data = &rzg1_du_r8a7745_info },
+ 	{ .compatible = "renesas,du-r8a77470", .data = &rzg1_du_r8a77470_info },
+ 	{ .compatible = "renesas,du-r8a7779", .data = &rcar_du_r8a7779_info },
 -- 
-2.11.0
+2.7.4
