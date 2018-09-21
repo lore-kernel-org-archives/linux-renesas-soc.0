@@ -1,70 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:51908 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726039AbeIWAhs (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:61440 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2390027AbeIURn5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 22 Sep 2018 20:37:48 -0400
-Date: Sat, 22 Sep 2018 20:43:13 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        Fri, 21 Sep 2018 13:43:57 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-gpio@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: Re: [PATCH 1/4] dt-bindings: mmc: renesas_sdhi: Add r8a77470 support
-Message-ID: <20180922184313.GC841@kunai>
+Subject: [PATCH 1/4] dt-bindings: mmc: renesas_sdhi: Add r8a77470 support
+Date: Fri, 21 Sep 2018 12:55:08 +0100
+Message-Id: <1537530911-443-2-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1537530911-443-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1537530911-443-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1537530911-443-2-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="/e2eDi0V/xtL+Mc8"
-Content-Disposition: inline
-In-Reply-To: <1537530911-443-2-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Document SDHI support for the RZ/G1C (a.k.a. R8A77470) SoC.
 
---/e2eDi0V/xtL+Mc8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Fri, Sep 21, 2018 at 12:55:08PM +0100, Fabrizio Castro wrote:
-> Document SDHI support for the RZ/G1C (a.k.a. R8A77470) SoC.
->=20
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---/e2eDi0V/xtL+Mc8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlumjUEACgkQFA3kzBSg
-KbZSPw//YOKGiuUpbwSQEawEP6l1ZCpvRItY61iu7qJbk7g9VU9YN6MT3lOzpcCL
-dy6hhP6E+HAPxAvgMmeG8ZhmjN4SiXmG48On29IcKWdcyCECT2VarylhkjMg9n9O
-hUxr7XXbQEND1K/FcN84CqNFaQlhRB56UzBnaSmSYLTqZ6mSNF2Q/OjTcLlekPwZ
-OktJth680r+kSE8vzyN89aDPxqw4xJcJJoAXnEUGabQuDuQ2sQGfZew+W4uMP7Mk
-Yda2pzBkUZ8FfXYtfCPKeZjlGtDFWybUoGQd56w2+9I3lZOeOOmTPw+RxBdKKKML
-gDkbHv9uWilTNZ64zVFH/WOrcgGWJKRplKZR1YD4cXY2x9qOpkvJjgss/1VHarhx
-QPtxWn7teuUXJmDQ+yQsbrC0BeCyq6h+hrAfYhbbrZPKQx3uXJ5JgKFa5UDBiFqg
-jpEA+fELrAN8rKglyHzenShfDbh/nAART5/G5oY4eijHC8vUGcUd+nOs9pRodddI
-VH5RSfDUXuQTR5Ii+4ltECuBCRjJaXo3TRkuXnUQtQIXH2A12dkNxz3c30vetSZe
-APDMG/ot6bTnFsXG1iIFatf+xZX8QS4zNFYVBdFjTJLHzyzuHPi5XEdy8VL6gQgl
-M1Ne0D/JHQ8OUbZ5OU45p4Ay4BTAdA84OU9E+pdKk2l2hTGdbAU=
-=Vrmp
------END PGP SIGNATURE-----
-
---/e2eDi0V/xtL+Mc8--
+diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+index c434200..8f3a113 100644
+--- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
++++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+@@ -17,6 +17,7 @@ Required properties:
+ 		"renesas,sdhi-r8a7740" - SDHI IP on R8A7740 SoC
+ 		"renesas,sdhi-r8a7743" - SDHI IP on R8A7743 SoC
+ 		"renesas,sdhi-r8a7745" - SDHI IP on R8A7745 SoC
++		"renesas,sdhi-r8a77470" - SDHI IP on R8A77470 SoC
+ 		"renesas,sdhi-r8a7778" - SDHI IP on R8A7778 SoC
+ 		"renesas,sdhi-r8a7779" - SDHI IP on R8A7779 SoC
+ 		"renesas,sdhi-r8a7790" - SDHI IP on R8A7790 SoC
+-- 
+2.7.4
