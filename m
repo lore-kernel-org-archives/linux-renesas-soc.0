@@ -1,43 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:59147 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725880AbeIFOQj (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:42364 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389684AbeIUSRI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Sep 2018 10:16:39 -0400
-Date: Thu, 6 Sep 2018 11:41:58 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Subject: Re: [PATCH] arm64: dts: renesas: enable SDR104 on R-Car Gen3
-Message-ID: <20180906094158.ckail4qj2semyaj3@verge.net.au>
-References: <20180821190356.32070-1-wsa+renesas@sang-engineering.com>
- <20180822112203.mhai5bpucabkjpxj@verge.net.au>
+        Fri, 21 Sep 2018 14:17:08 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/5] Revert "usb: renesas_usbhs: set the mode by using extcon state for non-otg channel"
+Date: Fri, 21 Sep 2018 21:26:29 +0900
+Message-Id: <1537532792-20376-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1537532792-20376-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1537532792-20376-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180822112203.mhai5bpucabkjpxj@verge.net.au>
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 22, 2018 at 01:22:03PM +0200, Simon Horman wrote:
-> On Tue, Aug 21, 2018 at 09:03:56PM +0200, Wolfram Sang wrote:
-> > Successfully tested on H3 ES1.0 and ES2.0, M3-W ES1.0, and M3-N ES1.0.
-> > Even previously stubborn cards work fine. Transfer rates were >60MB/s.
-> > 
-> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > ---
-> > 
-> > The problems I reported last week were simply me booting the wrong kernel on H3
-> > ES1.0 :(
-> 
-> :)
-> 
-> Thanks,
-> 
-> This looks fine to me but I will wait to see if there are other reviews
-> before applying.
+This reverts commit cd14247d5c14b9b20bb3d3dfcaa899ca22c8dccc.
 
-Thanks again Wolfram,
+R-Car D3 can use OTG mode in fact. So, the commit doesn't need anymore.
 
-applied for v4.20.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/usb/renesas_usbhs/rcar3.c | 15 +--------------
+ 1 file changed, 1 insertion(+), 14 deletions(-)
+
+diff --git a/drivers/usb/renesas_usbhs/rcar3.c b/drivers/usb/renesas_usbhs/rcar3.c
+index b9a8453..50e5fb5 100644
+--- a/drivers/usb/renesas_usbhs/rcar3.c
++++ b/drivers/usb/renesas_usbhs/rcar3.c
+@@ -27,7 +27,6 @@
+  * Remarks: bit[31:11] and bit[9:6] should be 0
+  */
+ #define UGCTRL2_RESERVED_3	0x00000001	/* bit[3:0] should be B'0001 */
+-#define UGCTRL2_USB0SEL_EHCI	0x00000010
+ #define UGCTRL2_USB0SEL_HSUSB	0x00000020
+ #define UGCTRL2_USB0SEL_OTG	0x00000030
+ #define UGCTRL2_VBUSSEL		0x00000400
+@@ -50,14 +49,6 @@ static void usbhs_rcar3_set_ugctrl2(struct usbhs_priv *priv, u32 val)
+ 	usbhs_write32(priv, UGCTRL2, val | UGCTRL2_RESERVED_3);
+ }
+ 
+-static void usbhs_rcar3_set_usbsel(struct usbhs_priv *priv, bool ehci)
+-{
+-	if (ehci)
+-		usbhs_rcar3_set_ugctrl2(priv, UGCTRL2_USB0SEL_EHCI);
+-	else
+-		usbhs_rcar3_set_ugctrl2(priv, UGCTRL2_USB0SEL_HSUSB);
+-}
+-
+ static int usbhs_rcar3_power_ctrl(struct platform_device *pdev,
+ 				void __iomem *base, int enable)
+ {
+@@ -83,14 +74,10 @@ static int usbhs_rcar3_power_and_pll_ctrl(struct platform_device *pdev,
+ 	struct usbhs_priv *priv = usbhs_pdev_to_priv(pdev);
+ 	u32 val;
+ 	int timeout = 1000;
+-	bool is_host = false;
+ 
+ 	if (enable) {
+ 		usbhs_write32(priv, UGCTRL, 0);	/* release PLLRESET */
+-		if (priv->edev)
+-			is_host = extcon_get_state(priv->edev, EXTCON_USB_HOST);
+-
+-		usbhs_rcar3_set_usbsel(priv, is_host);
++		usbhs_rcar3_set_ugctrl2(priv, UGCTRL2_USB0SEL_HSUSB);
+ 
+ 		usbhs_bset(priv, LPSTS, LPSTS_SUSPM, LPSTS_SUSPM);
+ 		do {
+-- 
+1.9.1
