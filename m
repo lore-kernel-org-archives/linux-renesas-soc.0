@@ -1,105 +1,54 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Rob Herring <robh@kernel.org>
-To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 05/21] ARM: shmobile: use for_each_of_cpu_node iterator
-Date: Wed,  5 Sep 2018 14:37:22 -0500
-Message-Id: <20180905193738.19325-6-robh@kernel.org>
-In-Reply-To: <20180905193738.19325-1-robh@kernel.org>
-References: <20180905193738.19325-1-robh@kernel.org>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:43012 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725887AbeIUNKv (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 21 Sep 2018 09:10:51 -0400
+Date: Fri, 21 Sep 2018 09:23:13 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: r8a77990: Fix incorrect PLL0 divider in
+ comment
+Message-ID: <20180921072312.vjzbjie32hzsqxll@verge.net.au>
+References: <20180919145042.8429-1-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180919145042.8429-1-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the for_each_of_cpu_node iterator to iterate over cpu nodes. This
-has the side effect of defaulting to iterating using "cpu" node names in
-preference to the deprecated (for FDT) device_type == "cpu".
+On Wed, Sep 19, 2018 at 04:50:42PM +0200, Geert Uytterhoeven wrote:
+> PLL0 runs at 4.8 GHz, i.e. EXTAL x 100.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Cc: Simon Horman <horms@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org
-Signed-off-by: Rob Herring <robh@kernel.org>
----
-Please ack and I will take via the DT tree. This is dependent on the
-first 2 patches.
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
- arch/arm/mach-shmobile/pm-rcar-gen2.c |  8 ++------
- arch/arm/mach-shmobile/pm-rmobile.c   |  2 +-
- arch/arm/mach-shmobile/timer.c        | 10 ++--------
- 3 files changed, 5 insertions(+), 15 deletions(-)
-
-diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
-index 345af3ebcc3a..7efe95bd584f 100644
---- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
-@@ -50,7 +50,7 @@ void __init rcar_gen2_pm_init(void)
- 	void __iomem *p;
- 	u32 bar;
- 	static int once;
--	struct device_node *np, *cpus;
-+	struct device_node *np;
- 	bool has_a7 = false;
- 	bool has_a15 = false;
- 	struct resource res;
-@@ -59,11 +59,7 @@ void __init rcar_gen2_pm_init(void)
- 	if (once++)
- 		return;
-
--	cpus = of_find_node_by_path("/cpus");
--	if (!cpus)
--		return;
--
--	for_each_child_of_node(cpus, np) {
-+	for_each_of_cpu_node(np) {
- 		if (of_device_is_compatible(np, "arm,cortex-a15"))
- 			has_a15 = true;
- 		else if (of_device_is_compatible(np, "arm,cortex-a7"))
-diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/arch/arm/mach-shmobile/pm-rmobile.c
-index e348bcfe389d..94fdeef11b81 100644
---- a/arch/arm/mach-shmobile/pm-rmobile.c
-+++ b/arch/arm/mach-shmobile/pm-rmobile.c
-@@ -202,7 +202,7 @@ static void __init get_special_pds(void)
- 	const struct of_device_id *id;
-
- 	/* PM domains containing CPUs */
--	for_each_node_by_type(np, "cpu")
-+	for_each_of_cpu_node(np)
- 		add_special_pd(np, PD_CPU);
-
- 	/* PM domain containing console */
-diff --git a/arch/arm/mach-shmobile/timer.c b/arch/arm/mach-shmobile/timer.c
-index 828e8aea037e..e48b0939693f 100644
---- a/arch/arm/mach-shmobile/timer.c
-+++ b/arch/arm/mach-shmobile/timer.c
-@@ -22,22 +22,16 @@
-
- void __init shmobile_init_delay(void)
- {
--	struct device_node *np, *cpus;
-+	struct device_node *np;
- 	u32 max_freq = 0;
-
--	cpus = of_find_node_by_path("/cpus");
--	if (!cpus)
--		return;
--
--	for_each_child_of_node(cpus, np) {
-+	for_each_of_cpu_node(np) {
- 		u32 freq;
-
- 		if (!of_property_read_u32(np, "clock-frequency", &freq))
- 			max_freq = max(max_freq, freq);
- 	}
-
--	of_node_put(cpus);
--
- 	if (!max_freq)
- 		return;
-
---
-2.17.1
+> ---
+> To be queued in clk-renesas-for-v4.20.
+> 
+>  drivers/clk/renesas/r8a77990-cpg-mssr.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/renesas/r8a77990-cpg-mssr.c b/drivers/clk/renesas/r8a77990-cpg-mssr.c
+> index 7e000d0705891a3f..9eb80180eea0b1a6 100644
+> --- a/drivers/clk/renesas/r8a77990-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a77990-cpg-mssr.c
+> @@ -250,8 +250,8 @@ static const unsigned int r8a77990_crit_mod_clks[] __initconst = {
+>  /*
+>   * MD19		EXTAL (MHz)	PLL0		PLL1		PLL3
+>   *--------------------------------------------------------------------
+> - * 0		48 x 1		x100/4		x100/3		x100/3
+> - * 1		48 x 1		x100/4		x100/3		 x58/3
+> + * 0		48 x 1		x100/1		x100/3		x100/3
+> + * 1		48 x 1		x100/1		x100/3		 x58/3
+>   */
+>  #define CPG_PLL_CONFIG_INDEX(md)	(((md) & BIT(19)) >> 19)
+>  
+> -- 
+> 2.17.1
+> 
