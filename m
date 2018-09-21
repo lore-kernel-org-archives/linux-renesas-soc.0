@@ -1,60 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:34440 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729316AbeI1SBZ (ORCPT
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44318 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728149AbeIUXL5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 14:01:25 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: dts: renesas: r8a77990: Add INTC-EX device node
-Date: Fri, 28 Sep 2018 13:37:56 +0200
-Message-Id: <20180928113756.17572-1-geert+renesas@glider.be>
+        Fri, 21 Sep 2018 19:11:57 -0400
+Date: Fri, 21 Sep 2018 10:21:59 -0700
+From: Mark Brown <broonie@kernel.org>
+To: Nguyen An Hoan <na-hoan@jinso.co.jp>
+Cc: linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be,
+        laurent.pinchart@ideasonboard.com,
+        kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
+        magnus.damm@gmail.com, h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp,
+        cv-dong@jinso.co.jp
+Subject: Re: [PATCH] drm: rcar-du: fix probe error when DRM_RCAR_DW_HDMI
+ disabled
+Message-ID: <20180921172159.GF20825@sirena.org.uk>
+References: <1537530543-29518-1-git-send-email-na-hoan@jinso.co.jp>
+ <1537530543-29518-2-git-send-email-na-hoan@jinso.co.jp>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="uTRFFR9qmiCqR05s"
+Content-Disposition: inline
+In-Reply-To: <1537530543-29518-2-git-send-email-na-hoan@jinso.co.jp>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-This patch adds a device node for the Interrupt Controller for External
-Devices (INTC-EX) on R-Car E3, which serves external IRQ pins IRQ[0-5].
+--uTRFFR9qmiCqR05s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Tested on Ebisu using IRQ1 and IRQ2 on CP49 and EXIO E.
----
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+On Fri, Sep 21, 2018 at 08:49:03PM +0900, Nguyen An Hoan wrote:
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index 5c1d6321a5d22a18..a175b5dd04ce3475 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -341,6 +341,22 @@
- 			#power-domain-cells = <1>;
- 		};
- 
-+		intc_ex: interrupt-controller@e61c0000 {
-+			compatible = "renesas,intc-ex-r8a77990", "renesas,irqc";
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			reg = <0 0xe61c0000 0 0x200>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 407>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 407>;
-+		};
-+
- 		dmac0: dma-controller@e6700000 {
- 			compatible = "renesas,dmac-r8a77990",
- 				     "renesas,rcar-dmac";
--- 
-2.17.1
+> @@ -66,8 +66,15 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+>  	/* Locate the DRM bridge from the encoder DT node. */
+>  	bridge =3D of_drm_find_bridge(enc_node);
+>  	if (!bridge) {
+> +#if IS_ENABLED(CONFIG_DRM_RCAR_DW_HDMI)
+>  		ret =3D -EPROBE_DEFER;
+>  		goto done;
+> +#else
+> +		if (output =3D=3D RCAR_DU_OUTPUT_HDMI0 ||=20
+> +		    output =3D=3D RCAR_DU_OUTPUT_HDMI1)
+> +		    ret =3D 0;
+> +		    goto done;
+> +#endif
+>  	}
+
+This seems to make sense to me assuming there's no other encoder that
+could possibly connected though I'm not 100% up to speed on the DRM
+subsystem so it's possible I'm missing some framework feature that
+should help here.  I'm not a DRM expert though.
+
+--uTRFFR9qmiCqR05s
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlulKLYACgkQJNaLcl1U
+h9DZowf/XnbJhYYcMuzOMXViBh736tQYCCbUy8FYtFOMV8xgUR7m65dsAdiJzwEB
+0Mmj8gALMyN3PXZ9ZwDVfX0vigMgwpvTonR9falz8i1k86OBqYOvoaIjDL27LHjG
+Q0k2gUvoRlmcdUo4+thIODkbQnaaFZ27tFSPC6Qd3FeJJqPCHSoNPGUvecZ6hOSD
+FdJoOIuuYB6arqTP3taxNYP4rdzAH9v5kApKFEeLJemeDodxcPJvUxmXdaUl8hsL
+ZY0pRM/AG5lsi2fYawwztBEBotkx86BGMORZwO7IHtQfwWbgh1wDBylaMKK534KU
+MKkJClF/9kDKWnNosNleIM5lFXND5Q==
+=zP+u
+-----END PGP SIGNATURE-----
+
+--uTRFFR9qmiCqR05s--
