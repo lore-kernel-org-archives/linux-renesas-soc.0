@@ -1,107 +1,54 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:46921 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728006AbeIXWxT (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Sep 2018 18:53:19 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 2/3] clk: renesas: r7s9210: Convert some clocks to early
-Date: Mon, 24 Sep 2018 11:49:36 -0500
-Message-Id: <20180924164937.36536-3-chris.brandt@renesas.com>
-In-Reply-To: <20180924164937.36536-1-chris.brandt@renesas.com>
-References: <20180924164937.36536-1-chris.brandt@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 2/5] dt-bindings: display: renesas: du: Document the r8a7744 bindings
+Date: Fri, 21 Sep 2018 19:08:28 +0100
+Message-Id: <1537553311-8831-3-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1537553311-8831-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1537553311-8831-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The OSTM timer driver for RZ/A2 uses TIMER_OF_DECLARE which requires the
-ostm module clocks to be registers early in boot.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v2:
- * List early clocks first
- * Remove unnecessary comments
- * Removed new function r7s9210_update_clk_table (to be included in a
-   separate patch)
----
- drivers/clk/renesas/r7s9210-cpg-mssr.c | 32 ++++++++++++++++++++++++++------
- 1 file changed, 26 insertions(+), 6 deletions(-)
+Document the RZ/G1N (R8A7744) SoC in the R-Car DU bindings.
 
-diff --git a/drivers/clk/renesas/r7s9210-cpg-mssr.c b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-index bd1dd4ff2051..7ab9030ef8b9 100644
---- a/drivers/clk/renesas/r7s9210-cpg-mssr.c
-+++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-@@ -53,7 +53,7 @@ enum clk_ids {
- 	MOD_CLK_BASE
- };
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/display/renesas,du.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
+index 2b28ae2..aad9cf1 100644
+--- a/Documentation/devicetree/bindings/display/renesas,du.txt
++++ b/Documentation/devicetree/bindings/display/renesas,du.txt
+@@ -4,6 +4,7 @@ Required Properties:
  
--static struct cpg_core_clk r7s9210_core_clks[] = {
-+static struct cpg_core_clk r7s9210_early_core_clks[] = {
- 	/* External Clock Inputs */
- 	DEF_INPUT("extal",     CLK_EXTAL),
- 
-@@ -61,20 +61,26 @@ static struct cpg_core_clk r7s9210_core_clks[] = {
- 	DEF_BASE(".main",       CLK_MAIN, CLK_TYPE_RZA_MAIN, CLK_EXTAL),
- 	DEF_BASE(".pll",       CLK_PLL, CLK_TYPE_RZA_PLL, CLK_MAIN),
- 
-+	/* Core Clock Outputs */
-+	DEF_FIXED("p1c",    R7S9210_CLK_P1C,   CLK_PLL,         16, 1),
-+};
-+
-+static const struct mssr_mod_clk r7s9210_early_mod_clks[] __initconst = {
-+	DEF_MOD_STB("ostm2",	 34,	R7S9210_CLK_P1C),
-+	DEF_MOD_STB("ostm1",	 35,	R7S9210_CLK_P1C),
-+	DEF_MOD_STB("ostm0",	 36,	R7S9210_CLK_P1C),
-+};
-+
-+static struct cpg_core_clk r7s9210_core_clks[] = {
- 	/* Core Clock Outputs */
- 	DEF_FIXED("i",      R7S9210_CLK_I,     CLK_PLL,          2, 1),
- 	DEF_FIXED("g",      R7S9210_CLK_G,     CLK_PLL,          4, 1),
- 	DEF_FIXED("b",      R7S9210_CLK_B,     CLK_PLL,          8, 1),
- 	DEF_FIXED("p1",     R7S9210_CLK_P1,    CLK_PLL,         16, 1),
--	DEF_FIXED("p1c",    R7S9210_CLK_P1C,   CLK_PLL,         16, 1),
- 	DEF_FIXED("p0",     R7S9210_CLK_P0,    CLK_PLL,         32, 1),
- };
- 
- static const struct mssr_mod_clk r7s9210_mod_clks[] __initconst = {
--	DEF_MOD_STB("ostm2",	 34,	R7S9210_CLK_P1C),
--	DEF_MOD_STB("ostm1",	 35,	R7S9210_CLK_P1C),
--	DEF_MOD_STB("ostm0",	 36,	R7S9210_CLK_P1C),
--
- 	DEF_MOD_STB("scif4",	 43,	R7S9210_CLK_P1C),
- 	DEF_MOD_STB("scif3",	 44,	R7S9210_CLK_P1C),
- 	DEF_MOD_STB("scif2",	 45,	R7S9210_CLK_P1C),
-@@ -170,6 +176,12 @@ struct clk * __init rza2_cpg_clk_register(struct device *dev,
- }
- 
- const struct cpg_mssr_info r7s9210_cpg_mssr_info __initconst = {
-+	/* Early Clocks */
-+	.early_core_clks = r7s9210_early_core_clks,
-+	.num_early_core_clks = ARRAY_SIZE(r7s9210_early_core_clks),
-+	.early_mod_clks = r7s9210_early_mod_clks,
-+	.num_early_mod_clks = ARRAY_SIZE(r7s9210_early_mod_clks),
-+
- 	/* Core Clocks */
- 	.core_clks = r7s9210_core_clks,
- 	.num_core_clks = ARRAY_SIZE(r7s9210_core_clks),
-@@ -187,3 +199,11 @@ const struct cpg_mssr_info r7s9210_cpg_mssr_info __initconst = {
- 	/* RZ/A2 has Standby Control Registers */
- 	.stbyctrl = true,
- };
-+
-+static void __init r7s9210_cpg_mssr_early_init(struct device_node *np)
-+{
-+	cpg_mssr_early_init(np, &r7s9210_cpg_mssr_info);
-+}
-+
-+CLK_OF_DECLARE_DRIVER(cpg_mstp_clks, "renesas,r7s9210-cpg-mssr",
-+		      r7s9210_cpg_mssr_early_init);
+   - compatible: must be one of the following.
+     - "renesas,du-r8a7743" for R8A7743 (RZ/G1M) compatible DU
++    - "renesas,du-r8a7744" for R8A7744 (RZ/G1N) compatible DU
+     - "renesas,du-r8a7745" for R8A7745 (RZ/G1E) compatible DU
+     - "renesas,du-r8a77470" for R8A77470 (RZ/G1C) compatible DU
+     - "renesas,du-r8a7779" for R8A7779 (R-Car H1) compatible DU
+@@ -51,6 +52,7 @@ corresponding to each DU output.
+                         Port0          Port1          Port2          Port3
+ -----------------------------------------------------------------------------
+  R8A7743 (RZ/G1M)       DPAD 0         LVDS 0         -              -
++ R8A7744 (RZ/G1N)       DPAD 0         LVDS 0         -              -
+  R8A7745 (RZ/G1E)       DPAD 0         DPAD 1         -              -
+  R8A77470 (RZ/G1C)      DPAD 0         DPAD 1         LVDS 0         -
+  R8A7779 (R-Car H1)     DPAD 0         DPAD 1         -              -
 -- 
-2.16.1
+2.7.4
