@@ -1,100 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41944 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727667AbeIRPrx (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:42364 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388909AbeIUSRL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Sep 2018 11:47:53 -0400
-Date: Tue, 18 Sep 2018 11:15:55 +0100
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-pci@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH][RFC] PCI: rcar: Add bus notifier so we can limit the DMA
- range
-Message-ID: <20180918101555.GB26886@e107981-ln.cambridge.arm.com>
-References: <20180521220514.30256-1-marek.vasut+renesas@gmail.com>
+        Fri, 21 Sep 2018 14:17:11 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 3/5] usb: renesas_usbhs: rcar3: Use OTG mode for R-Car D3
+Date: Fri, 21 Sep 2018 21:26:30 +0900
+Message-Id: <1537532792-20376-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1537532792-20376-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1537532792-20376-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180521220514.30256-1-marek.vasut+renesas@gmail.com>
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, May 22, 2018 at 12:05:14AM +0200, Marek Vasut wrote:
-> From: Phil Edworthy <phil.edworthy@renesas.com>
-> 
-> The PCIe DMA controller on RCar Gen2 and earlier is on 32bit bus,
-> so limit the DMA range to 32bit.
-> 
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Phil Edworthy <phil.edworthy@renesas.com>
-> Cc: Simon Horman <horms+renesas@verge.net.au>
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Cc: linux-renesas-soc@vger.kernel.org
-> To: linux-pci@vger.kernel.org
-> ---
-> NOTE: I'm aware of https://patchwork.kernel.org/patch/9495895/ , but the
->       discussion seems to have gone way off, so I'm sending this as a
->       RFC. Any feedback on how to do this limiting properly would be nice.
-> ---
->  drivers/pci/host/pcie-rcar.c | 28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
+Since R-Car D3 can use OTG mode, this patch changes the UGCTRL2
+value to UGCTRL2_USB0SEL_OTG and UGCTRL2_VBUSSEL like other R-Car
+Gen3 SoCs.
 
-The issue solved by this patch was solved in a more generic way through
-this series:
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/usb/renesas_usbhs/rcar3.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-https://lists.linuxfoundation.org/pipermail/iommu/2018-July/028792.html
-
-I will therefore drop this patch from the PCI patch queue.
-
-Thanks,
-Lorenzo
-
-> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-> index c3eab0b95290..db2b16f40bc1 100644
-> --- a/drivers/pci/host/pcie-rcar.c
-> +++ b/drivers/pci/host/pcie-rcar.c
-> @@ -1325,3 +1325,31 @@ static struct platform_driver rcar_pcie_driver = {
->  	.probe = rcar_pcie_probe,
->  };
->  builtin_platform_driver(rcar_pcie_driver);
-> +
-> +static int rcar_pcie_pci_notifier(struct notifier_block *nb,
-> +			    unsigned long action, void *data)
-> +{
-> +	struct device *dev = data;
-> +
-> +	switch (action) {
-> +	case BUS_NOTIFY_BOUND_DRIVER:
-> +		/* Force the DMA mask to lower 32-bits */
-> +		dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
-> +		break;
-> +	default:
-> +		return NOTIFY_DONE;
-> +	}
-> +
-> +	return NOTIFY_OK;
-> +}
-> +
-> +static struct notifier_block device_nb = {
-> +	.notifier_call = rcar_pcie_pci_notifier,
-> +};
-> +
-> +static int __init register_rcar_pcie_pci_notifier(void)
-> +{
-> +	return bus_register_notifier(&pci_bus_type, &device_nb);
-> +}
-> +
-> +arch_initcall(register_rcar_pcie_pci_notifier);
-> -- 
-> 2.16.2
-> 
+diff --git a/drivers/usb/renesas_usbhs/rcar3.c b/drivers/usb/renesas_usbhs/rcar3.c
+index 50e5fb5..aa38204 100644
+--- a/drivers/usb/renesas_usbhs/rcar3.c
++++ b/drivers/usb/renesas_usbhs/rcar3.c
+@@ -77,7 +77,8 @@ static int usbhs_rcar3_power_and_pll_ctrl(struct platform_device *pdev,
+ 
+ 	if (enable) {
+ 		usbhs_write32(priv, UGCTRL, 0);	/* release PLLRESET */
+-		usbhs_rcar3_set_ugctrl2(priv, UGCTRL2_USB0SEL_HSUSB);
++		usbhs_rcar3_set_ugctrl2(priv,
++					UGCTRL2_USB0SEL_OTG | UGCTRL2_VBUSSEL);
+ 
+ 		usbhs_bset(priv, LPSTS, LPSTS_SUSPM, LPSTS_SUSPM);
+ 		do {
+-- 
+1.9.1
