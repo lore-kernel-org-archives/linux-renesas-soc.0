@@ -1,92 +1,124 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:60980 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728096AbeITV6t (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:42935 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726160AbeIUNCm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Sep 2018 17:58:49 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Stefan Lengfeld <contact@stefanchrist.eu>,
-        preid@electromag.com.au, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Keerthy <j-keerthy@ti.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 4/4] i2c: core: introduce master_xfer_irqless callback
-Date: Thu, 20 Sep 2018 18:14:23 +0200
-Message-Id: <20180920161423.13990-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180920161423.13990-1-wsa+renesas@sang-engineering.com>
-References: <20180920161423.13990-1-wsa+renesas@sang-engineering.com>
+        Fri, 21 Sep 2018 09:02:42 -0400
+Date: Fri, 21 Sep 2018 09:15:00 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH 2/2] ARM: dts: r8a77470: Add APMU node and second CPU core
+Message-ID: <20180921071459.uui2tv47lnountuf@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TY1PR01MB1770F47F0A5C7B8C4F55B44FC01C0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+ <TY1PR01MB1770A0F466B1CAFE68CD7C0CC01C0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+ <TY1PR01MB17703699454A72F7923F467AC01C0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We had the request to access devices very late when interrupts are not
-available anymore multiple times now. Mostly to prepare shutdown or
-reboot. Allow adapters to specify a specific callback for this case.
-Note that we fall back to the generic master_xfer callback if this new
-irqless one is not present. This is intentional to preserve the previous
-behaviour and avoid regressions. Because there are drivers not using
-interrupts or because it might have worked "accidently" before.
+Hi Fabrizio, Hi Geert,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/i2c-core-base.c |  6 +++++-
- include/linux/i2c.h         | 10 +++++++---
- 2 files changed, 12 insertions(+), 4 deletions(-)
+On Wed, Sep 19, 2018 at 10:21:13AM +0000, Fabrizio Castro wrote:
+> Hello Geert,
+> 
+> Thank you for your feedback.
+> 
+> > Subject: Re: [PATCH 2/2] ARM: dts: r8a77470: Add APMU node and second CPU core
+> >
+> > Perhaps "ARM: dts: r8a77470: Add SMP support"?
+> 
+> Your proposal is with me, Simon do you want me to send a v2 for this?
 
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 904b4d2ebefa..f827446c3089 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -1887,7 +1887,11 @@ int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
- 	/* Retry automatically on arbitration loss */
- 	orig_jiffies = jiffies;
- 	for (ret = 0, try = 0; try <= adap->retries; try++) {
--		ret = adap->algo->master_xfer(adap, msgs, num);
-+		if ((in_atomic() || irqs_disabled()) && adap->algo->master_xfer_irqless)
-+			ret = adap->algo->master_xfer_irqless(adap, msgs, num);
-+		else
-+			ret = adap->algo->master_xfer(adap, msgs, num);
-+
- 		if (ret != -EAGAIN)
- 			break;
- 		if (time_after(jiffies, orig_jiffies + adap->timeout))
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index 65b4eaed1d96..11e615123bd0 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -498,6 +498,8 @@ i2c_register_board_info(int busnum, struct i2c_board_info const *info,
-  * @master_xfer: Issue a set of i2c transactions to the given I2C adapter
-  *   defined by the msgs array, with num messages available to transfer via
-  *   the adapter specified by adap.
-+ * @master_xfer_irqless: same as master_xfer. Yet, not using any interrupts
-+ *   so e.g. PMICs can be accessed very late before shutdown
-  * @smbus_xfer: Issue smbus transactions to the given I2C adapter. If this
-  *   is not present, then the bus layer will try and convert the SMBus calls
-  *   into I2C transfers instead.
-@@ -511,9 +513,9 @@ i2c_register_board_info(int busnum, struct i2c_board_info const *info,
-  * be addressed using the same bus algorithms - i.e. bit-banging or the PCF8584
-  * to name two of the most common.
-  *
-- * The return codes from the @master_xfer field should indicate the type of
-- * error code that occurred during the transfer, as documented in the kernel
-- * Documentation file Documentation/i2c/fault-codes.
-+ * The return codes from the @master_xfer{_irqless} field should indicate the
-+ * type of error code that occurred during the transfer, as documented in the
-+ * Kernel Documentation file Documentation/i2c/fault-codes.
-  */
- struct i2c_algorithm {
- 	/* If an adapter algorithm can't do I2C-level access, set master_xfer
-@@ -524,6 +526,8 @@ struct i2c_algorithm {
- 	   processed, or a negative value on error */
- 	int (*master_xfer)(struct i2c_adapter *adap, struct i2c_msg *msgs,
- 			   int num);
-+	int (*master_xfer_irqless)(struct i2c_adapter *adap,
-+				   struct i2c_msg *msgs, int num);
- 	int (*smbus_xfer) (struct i2c_adapter *adap, u16 addr,
- 			   unsigned short flags, char read_write,
- 			   u8 command, int size, union i2c_smbus_data *data);
--- 
-2.18.0
+Thanks, I have applied this for v4.20 with the updated subject
+and Geert's review tag.
+
+> >
+> > On Mon, Sep 17, 2018 at 10:44 AM Fabrizio Castro
+> > <fabrizio.castro@bp.renesas.com> wrote:
+> > > Add DT node for the Advanced Power Management Unit (APMU), add the
+> > > second CPU core, and use "renesas,apmu" as "enable-method".
+> > >
+> > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> >
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+...
+
+On Wed, Sep 19, 2018 at 10:24:00AM +0000, Fabrizio Castro wrote:
+> Hello Simon,
+> 
+> Thank you for your feedback.
+> 
+> > Subject: Re: [PATCH 2/2] ARM: dts: r8a77470: Add APMU node and second CPU core
+> >
+> > On Mon, Sep 17, 2018 at 10:53:16AM +0200, Geert Uytterhoeven wrote:
+> > > Perhaps "ARM: dts: r8a77470: Add SMP support"?
+> > >
+> > > On Mon, Sep 17, 2018 at 10:44 AM Fabrizio Castro
+> > > <fabrizio.castro@bp.renesas.com> wrote:
+> > > > Add DT node for the Advanced Power Management Unit (APMU), add the
+> > > > second CPU core, and use "renesas,apmu" as "enable-method".
+> > > >
+> > > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > > > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> > >
+> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >
+> > I would like to ask to what extent this has been tested with respect to
+> > CPU hotplug, suspend to RAM, and combinations thereof.
+> 
+> Both CPU hotplug and STR were tested on their own and combined, I haven't encountered any issue so far.
+
+On Wed, Sep 19, 2018 at 10:32:24AM +0000, Fabrizio Castro wrote:
+> Hello Simon,
+> 
+> Thank you for your feedback.
+> 
+> > Subject: Re: [PATCH 2/2] ARM: dts: r8a77470: Add APMU node and second CPU core
+> >
+> > On Wed, Sep 19, 2018 at 10:25:42AM +0200, Simon Horman wrote:
+> > > On Mon, Sep 17, 2018 at 10:53:16AM +0200, Geert Uytterhoeven wrote:
+> > > > Perhaps "ARM: dts: r8a77470: Add SMP support"?
+> > > >
+> > > > On Mon, Sep 17, 2018 at 10:44 AM Fabrizio Castro
+> > > > <fabrizio.castro@bp.renesas.com> wrote:
+> > > > > Add DT node for the Advanced Power Management Unit (APMU), add the
+> > > > > second CPU core, and use "renesas,apmu" as "enable-method".
+> > > > >
+> > > > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > > > > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> > > >
+> > > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > >
+> > > I would like to ask to what extent this has been tested with respect to
+> > > CPU hotplug, suspend to RAM, and combinations thereof.
+> >
+> > And any details of firmware, bootloader, ... version stacks where this is
+> > supported.
+> 
+> iW-RainboW-G23S SPI_LOADER(DDR3) V1.00 2016.03.25
+> U-Boot 2013.01.01-gaa28b1d-dirty (Feb 01 2018 - 22:55:39)
+> 
+> # cat /sys/devices/soc0/revision
+> ES2.0
+> 
+> I hope this helps.
+
+Thanks for your follow-up on the testing and environment,
+it does indeed help to give me confidence when applying this patch.
+
+
+...
