@@ -1,15 +1,14 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:60088 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725751AbeJAFEz (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:41737 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728744AbeIXWVd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 1 Oct 2018 01:04:55 -0400
-Date: Mon, 1 Oct 2018 00:30:07 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+        Mon, 24 Sep 2018 18:21:33 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+CC: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -17,59 +16,51 @@ Cc: Rob Herring <robh+dt@kernel.org>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
         Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: Re: [PATCH 1/4] dt-bindings: i2c: rcar: Add r8a77470 support
-Message-ID: <20180930223007.GA1059@kunai>
+Subject: RE: [PATCH 1/4] dt-bindings: i2c: rcar: Add r8a77470 support
+Date: Mon, 24 Sep 2018 16:18:31 +0000
+Message-ID: <TY1PR01MB1770B27F16CE9004C620F366C0170@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 References: <1537551421-4259-1-git-send-email-fabrizio.castro@bp.renesas.com>
  <1537551421-4259-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20180924085904.xa76egqvowg5gkjs@verge.net.au>
+ <TY1PR01MB1770C5200D068C52EA140B4CC0170@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+ <20180924155250.GA2988@kunai>
+In-Reply-To: <20180924155250.GA2988@kunai>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="HlL+5n6rz5pIUxbD"
-Content-Disposition: inline
-In-Reply-To: <1537551421-4259-2-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hello Wolfram,
 
---HlL+5n6rz5pIUxbD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Subject: Re: [PATCH 1/4] dt-bindings: i2c: rcar: Add r8a77470 support
+>
+>
+> > > It seems to me that the RZ/G1C has some extra registers described
+> > > for I2C when compared with both other RZ/G1 and R-Car Gen2 SoCs.
+> >
+> > Exactly. The extra registers found with the RZ/G1C I2C controller are
+> > also found in R-Car Gen3, but the driver doesn't handle them. R-Car
+> > Gen3 has more registers on top of those found with the RZ/G1C.
+>
+> I don't have he RZ documentation yet, could you name which ones are Gen3
+> only?
 
-On Fri, Sep 21, 2018 at 06:36:58PM +0100, Fabrizio Castro wrote:
-> Although the I2C IP found in the RZ/G1C is not exactly the same
-> as the one found in the R-Car Gen2 family or R-Car Gen3 family,
-> it can still be considered as compatible with R-Car Gen2 from
-> a software perpective.
-> This patch therefore documents the SoC specific compatible string,
-> and the compatibility with Gen2 fallback is retained.
->=20
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+ICDMAER and ICFBSCR are the registers found in R-Car Gen3 but not in RZ/G1C=
+.
 
-Applied to for-next, thanks!
+Thanks,
+Fab
 
 
---HlL+5n6rz5pIUxbD
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluxTmcACgkQFA3kzBSg
-KbYTNg//dRQfmZfdQwU23LsXsVU/nFP7RSgIUt/J6hUTGLu0XkdR9M1ZCznIstAn
-n7nQ7HwM/7GBC81cAyrMMDXW4R8HY6sdJxEdeQyVaUVyUwXWUMPSt96kUuFh9kt9
-ZWEJfQjAAnmwZIB1tJ6+r+f2c2ZA6FXTi7ZXem197d7jWASia14hIvFEUSELMPao
-MwO4UO2e/+irH0gpA5m+mJBhHN4F+DOkmRQ83o+aWkU9Nl/LiSHFBC/A0O2nkXxV
-p2xHGhz9LLJhLQylfb5PxkWnjSkDYntr1z022rrfqW2Rl+mAd3PYyLTy9ktE9Z5T
-KkOzh4QMCfACYfB0DYw8rXeSLdapAtkLpIuo33aSjjjY+BfzoyvjOn4hI+SiZMqi
-9GpxUEPIhA9mRUU7F/TvUYhxxyIvvzLhOcNd+55GSgmg4TErbH9T2C/yiP5tJguM
-hblAmmvdG1Aee1JTQdXcJE5mlVL4gSlhmrVzZ/NMSKg2hb3t/ad4JFGUrVYNxhCe
-3C3ZOyJZJUCFMElpQPpn6Mpk4t8TxfKX92ZLvSaiWE7oWSTGm9EMW7TxBlshKRsC
-MSOxLGlKSzbW0mRkOJQIzxdhNRTEfad0GGhwlZYjdQupUVwrJHpDLqtXm+7uhJwf
-6ybHn2wpRZs11kF1FUHylte6gWEMgh1TCofrXnBhpzFQBHEvryQ=
-=b+ft
------END PGP SIGNATURE-----
-
---HlL+5n6rz5pIUxbD--
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
