@@ -1,43 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:43958 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731661AbeISU3C (ORCPT
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:35867 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726139AbeIXPVQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Sep 2018 16:29:02 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: r8a77990: Fix incorrect PLL0 divider in comment
-Date: Wed, 19 Sep 2018 16:50:42 +0200
-Message-Id: <20180919145042.8429-1-geert+renesas@glider.be>
+        Mon, 24 Sep 2018 11:21:16 -0400
+MIME-Version: 1.0
+References: <1537541154-54306-1-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1537541154-54306-1-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 24 Sep 2018 11:19:57 +0200
+Message-ID: <CAMuHMdXKm6Ha9Y2OgNp=cCEk8VPnVsTttrYpfbuhQbfKzUsGjg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: serial: sh-sci: Document r8a7744 bindings
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-PLL0 runs at 4.8 GHz, i.e. EXTAL x 100.
+On Fri, Sep 21, 2018 at 4:52 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> RZ/G1N (R8A7744) SoC also has the R-Car gen2 compatible SCIF, SCIFA,
+> SCIFB, and HSCIF ports, so document the SoC specific bindings.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in clk-renesas-for-v4.20.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
- drivers/clk/renesas/r8a77990-cpg-mssr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/clk/renesas/r8a77990-cpg-mssr.c b/drivers/clk/renesas/r8a77990-cpg-mssr.c
-index 7e000d0705891a3f..9eb80180eea0b1a6 100644
---- a/drivers/clk/renesas/r8a77990-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77990-cpg-mssr.c
-@@ -250,8 +250,8 @@ static const unsigned int r8a77990_crit_mod_clks[] __initconst = {
- /*
-  * MD19		EXTAL (MHz)	PLL0		PLL1		PLL3
-  *--------------------------------------------------------------------
-- * 0		48 x 1		x100/4		x100/3		x100/3
-- * 1		48 x 1		x100/4		x100/3		 x58/3
-+ * 0		48 x 1		x100/1		x100/3		x100/3
-+ * 1		48 x 1		x100/1		x100/3		 x58/3
-  */
- #define CPG_PLL_CONFIG_INDEX(md)	(((md) & BIT(19)) >> 19)
- 
+                        Geert
+
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
