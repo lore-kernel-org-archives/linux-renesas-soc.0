@@ -1,43 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:59414 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726618AbeINOYO (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54355 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728954AbeIXVhP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Sep 2018 10:24:14 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, Ulrich Hecht <uli@fpond.eu>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v2 02/16] dt-bindings: display: renesas: lvds: Document r8a77990 bindings
-Date: Fri, 14 Sep 2018 12:10:32 +0300
-Message-Id: <20180914091046.483-3-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180914091046.483-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180914091046.483-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 24 Sep 2018 17:37:15 -0400
+Date: Mon, 24 Sep 2018 17:34:27 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH 4/4] ARM: dts: iwg23s-sbc: Add uSD card support
+Message-ID: <20180924153426.entl4tkypuaqs3sz@verge.net.au>
+References: <1537530911-443-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1537530911-443-5-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20180924091348.gf462j2n7yuf4tif@verge.net.au>
+ <TY1PR01MB1770ADB65DD3BDF479C43276C0170@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+ <CAMuHMdVs+EnPndpPm6cw4oXm4bnwJ15G=ac_f2Xbe_w=i8CBnA@mail.gmail.com>
+ <TY1PR01MB1770B98D83C2CC1C602E503DC0170@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TY1PR01MB1770B98D83C2CC1C602E503DC0170@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The E3 (r8a77990) supports two LVDS channels. Extend the binding to
-support them.
+On Mon, Sep 24, 2018 at 03:09:49PM +0000, Fabrizio Castro wrote:
+> Hello Geert,
+> 
+> Thank you for your feedback.
+> 
+> > Subject: Re: [PATCH 4/4] ARM: dts: iwg23s-sbc: Add uSD card support
+> >
+> > Hi Fabrizio,
+> >
+> > On Mon, Sep 24, 2018 at 11:30 AM Fabrizio Castro
+> > <fabrizio.castro@bp.renesas.com> wrote:
+> > > > -----Original Message-----
+> > > > From: Simon Horman <horms@verge.net.au>
+> > > > Sent: 24 September 2018 10:14
+> > > > To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > > > Cc: Ulf Hansson <ulf.hansson@linaro.org>; Rob Herring <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>; Laurent
+> > > > Pinchart <laurent.pinchart@ideasonboard.com>; Geert Uytterhoeven <geert+renesas@glider.be>; Linus Walleij
+> > > > <linus.walleij@linaro.org>; Wolfram Sang <wsa+renesas@sang-engineering.com>; Magnus Damm <magnus.damm@gmail.com>;
+> > > > linux-mmc@vger.kernel.org; devicetree@vger.kernel.org; linux-renesas-soc@vger.kernel.org; linux-gpio@vger.kernel.org; Chris
+> > > > Paterson <Chris.Paterson2@renesas.com>; Biju Das <biju.das@bp.renesas.com>
+> > > > Subject: Re: [PATCH 4/4] ARM: dts: iwg23s-sbc: Add uSD card support
+> > > >
+> > > > On Fri, Sep 21, 2018 at 12:55:11PM +0100, Fabrizio Castro wrote:
+> > > > > Add uSD card support to the iwg23s single board computer powered
+> > > > > by the RZ/G1C SoC (a.k.a. r8a77470).
+> > > > >
+> > > > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > > > > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> > > > > ---
+> > > > > Hello Simon,
+> > > > >
+> > > > > this patch can only be taken after patch "pinctrl: sh-pfc: r8a77470:
+> > > > > Add SDHI2 voltage switch" from this series appears on a release candidate
+> > > > > or a release.
+> > > >
+> > > > What is the nature of that dependency. Does adding this patch without
+> > > > its dependency cause a regression?
+> > >
+> > > Since the SDHI2 pins definition contain "power-source" property, adding this
+> > > patch without its dependency will cause an error at boot up as the kernel
+> > > would be looking for flag SH_PFC_PIN_CFG_IO_VOLTAGE for each pin contained
+> > > in sdhi2_pins and sdhi2_pins_uhs, and since that particular flag would be missing
+> > > (as such a definition comes from patch "pinctrl: sh-pfc: r8a77470: Add SDHI2 voltage
+> > > switch") the SD card would not be functional, but this won't have any impact on
+> > > the rest of the system.
+> >
+> > But that won't be a regression, as currently there's no support for
+> > SDHI2 anyway,
+> > right? All pieces will start working when both the pinctrl and DTS support will
+> > be merged together.
+> 
+> Exactly, it won't be a regression, you'd just get weird messages from the kernel, that's all.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-index 5a4e379bb414..13af7e2ac7e8 100644
---- a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-+++ b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-@@ -15,6 +15,7 @@ Required properties:
-   - "renesas,r8a7796-lvds" for R8A7796 (R-Car M3-W) compatible LVDS encoders
-   - "renesas,r8a77970-lvds" for R8A77970 (R-Car V3M) compatible LVDS encoders
-   - "renesas,r8a77980-lvds" for R8A77980 (R-Car V3H) compatible LVDS encoders
-+  - "renesas,r8a77990-lvds" for R8A77990 (R-Car E3) compatible LVDS encoders
-   - "renesas,r8a77995-lvds" for R8A77995 (R-Car D3) compatible LVDS encoders
- 
- - reg: Base address and length for the memory-mapped registers
--- 
-Regards,
-
-Laurent Pinchart
+That is fine. But lets finalise the discussion of the bindings before
+I apply this patch.
