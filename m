@@ -1,71 +1,67 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58192 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729111AbeI1QqH (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:46:07 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa@the-dreams.de>
+CC: Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 5/7] ARM: shmobile: r8a7744: Basic SoC support
-Date: Fri, 28 Sep 2018 12:22:47 +0200
-Message-Id: <bc8871536246e489407a7114a597c0a2a72de895.1538123953.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1538123953.git.horms+renesas@verge.net.au>
-References: <cover.1538123953.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: RE: [PATCH 2/4] pinctrl: sh-pfc: r8a77470: Add SDHI2 voltage switch
+Date: Mon, 24 Sep 2018 18:36:50 +0000
+Message-ID: <TY1PR01MB1770FECBBBEE83BC9D356624C0170@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1537530911-443-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1537530911-443-3-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20180922184443.GD841@kunai>
+ <CAMuHMdXjuJT6=fAkCtJYxu95sMjMsxZgt2ASc-4+DBWAcYOHhQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdXjuJT6=fAkCtJYxu95sMjMsxZgt2ASc-4+DBWAcYOHhQ@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
-
-Add minimal support for the RZ/G1N (R8A7744) SoC.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/mach-shmobile/Kconfig           | 5 +++++
- arch/arm/mach-shmobile/setup-rcar-gen2.c | 2 ++
- 2 files changed, 7 insertions(+)
-
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index cc6ab0dde937..9dac7b11460f 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -69,6 +69,11 @@ config ARCH_R8A7743
- 	select ARCH_RCAR_GEN2
- 	select ARM_ERRATA_798181 if SMP
- 
-+config ARCH_R8A7744
-+	bool "RZ/G1N (R8A77440)"
-+	select ARCH_RCAR_GEN2
-+	select ARM_ERRATA_798181 if SMP
-+
- config ARCH_R8A7745
- 	bool "RZ/G1E (R8A77450)"
- 	select ARCH_RCAR_GEN2
-diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-index 013acc97795c..eea60b20c6b4 100644
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -25,6 +25,7 @@
- static const struct of_device_id cpg_matches[] __initconst = {
- 	{ .compatible = "renesas,rcar-gen2-cpg-clocks", },
- 	{ .compatible = "renesas,r8a7743-cpg-mssr", .data = "extal" },
-+	{ .compatible = "renesas,r8a7744-cpg-mssr", .data = "extal" },
- 	{ .compatible = "renesas,r8a7790-cpg-mssr", .data = "extal" },
- 	{ .compatible = "renesas,r8a7791-cpg-mssr", .data = "extal" },
- 	{ .compatible = "renesas,r8a7793-cpg-mssr", .data = "extal" },
-@@ -193,6 +194,7 @@ MACHINE_END
- 
- static const char * const rz_g1_boards_compat_dt[] __initconst = {
- 	"renesas,r8a7743",
-+	"renesas,r8a7744",
- 	"renesas,r8a7745",
- 	"renesas,r8a77470",
- 	NULL,
--- 
-2.11.0
+SGVsbG8gR2VlcnQsIGhlbGxvIFdvbGZyYW0sDQoNClRoYW5rIHlvdSBib3RoIGZvciB5b3VyIGZl
+ZWRiYWNrLg0KDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMi80XSBwaW5jdHJsOiBzaC1wZmM6IHI4
+YTc3NDcwOiBBZGQgU0RISTIgdm9sdGFnZSBzd2l0Y2gNCj4NCj4gT24gU2F0LCBTZXAgMjIsIDIw
+MTggYXQgODo0NCBQTSBXb2xmcmFtIFNhbmcgPHdzYUB0aGUtZHJlYW1zLmRlPiB3cm90ZToNCj4g
+PiBPbiBGcmksIFNlcCAyMSwgMjAxOCBhdCAxMjo1NTowOVBNICswMTAwLCBGYWJyaXppbyBDYXN0
+cm8gd3JvdGU6DQo+ID4gPiBBZGQgU0hfUEZDX1BJTl9DRkdfSU9fVk9MVEFHRSBkZWZpbml0aW9u
+IGZvciB0aGUgU0RISTIgcGlucw0KPiA+ID4gY2FwYWJsZSBvZiBzd2l0Y2hpbmcgdm9sdGFnZS4g
+UGxlYXNlIG5vdGUgdGhhdCB3aXRoIHRoZQ0KPiA+ID4gUlovRzFDIG9ubHkgMSBiaXQgb2YgdGhl
+IFBPQyBDb250cm9sIFJlZ2lzdGVyIGlzIHVzZWQgdG8NCj4gPiA+IGNvbnRyb2wgZWFjaCBpbnRl
+cmZhY2UuDQo+ID4gPg0KPiA+ID4gU2lnbmVkLW9mZi1ieTogRmFicml6aW8gQ2FzdHJvIDxmYWJy
+aXppby5jYXN0cm9AYnAucmVuZXNhcy5jb20+DQo+ID4gPiBSZXZpZXdlZC1ieTogQmlqdSBEYXMg
+PGJpanUuZGFzQGJwLnJlbmVzYXMuY29tPg0KPiA+DQo+ID4gSW4gZ2VuZXJhbDoNCj4gPg0KPiA+
+IEFja2VkLWJ5OiBXb2xmcmFtIFNhbmcgPHdzYStyZW5lc2FzQHNhbmctZW5naW5lZXJpbmcuY29t
+Pg0KPiA+DQo+ID4gPiArICAgICBpZiAoX2JhbmsgPT0gNCAmJiBfcGluID49IDE0ICYmIF9waW4g
+PD0gMTkpDQo+ID4gPiArICAgICAgICAgICAgIHJldHVybiAxOw0KPiA+ID4gKw0KPiA+ID4gKyAg
+ICAgcmV0dXJuIC1FSU5WQUw7DQo+ID4NCj4gPiBJJ2QgbGlrZSBhIHRhZCBiZXR0ZXIgdG8gYmFp
+bCBvdXQgb24gdGhlIGVycm9yIGNhc2UgYW5kIGhhdmUgdGhlIG1haW4NCj4gPiBwYXRoIHJldHVy
+bmluZyBvbiB0aGUgZ29vZCBjYXNlLCBidXQgbm8gc3Ryb25nIG9waW5pb24uLi4NCj4NCj4gQW5k
+IHdlIGhhdmUgdGhlc2UgbmljZSBSQ0FSX0dQX1BJTigpIG1hY3JvcyB0byBjaGVjayBwaW4gcmFu
+Z2VzLg0KPiBQbGVhc2UgaGF2ZSBhIGxvb2sgYXQgdGhlIGZsb3cgaW4gZS5nLiByOGE3Nzk1X3Bp
+bl90b19wb2NjdHJsKCkuDQoNCkknbGwgc2VuZCBhIHYyIHRvIGFkZHJlc3MgdGhpcywgdGhhbmsg
+eW91IGZvciBwb2ludGluZyBtZSB0byB0aGUgcmlnaHQgZGlyZWN0aW9uLg0KDQpDaGVlcnMsDQpG
+YWINCg0KPg0KPiBHcntvZXRqZSxlZXRpbmd9cywNCj4NCj4gICAgICAgICAgICAgICAgICAgICAg
+ICAgR2VlcnQNCj4NCj4gLS0NCj4gR2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBv
+ZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51eC1tNjhrLm9yZw0KPg0KPiBJbiBwZXJz
+b25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBh
+IGhhY2tlci4gQnV0DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNh
+eSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4gICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0KDQoNCg0KUmVuZXNhcyBFbGVjdHJv
+bmljcyBFdXJvcGUgTHRkLCBEdWtlcyBNZWFkb3csIE1pbGxib2FyZCBSb2FkLCBCb3VybmUgRW5k
+LCBCdWNraW5naGFtc2hpcmUsIFNMOCA1RkgsIFVLLiBSZWdpc3RlcmVkIGluIEVuZ2xhbmQgJiBX
+YWxlcyB1bmRlciBSZWdpc3RlcmVkIE5vLiAwNDU4NjcwOS4NCg==
