@@ -1,31 +1,31 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:32107 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbeIZWJP (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:45024 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725982AbeIXRUa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Sep 2018 18:09:15 -0400
-Date: Wed, 26 Sep 2018 17:55:38 +0200 (CEST)
-From: Ulrich Hecht <uli@fpond.eu>
+        Mon, 24 Sep 2018 13:20:30 -0400
+Reply-To: kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH v2 09/16] drm: rcar-du: Cache DSYSR value to ensure known
+ initial value
 To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <77059748.327359.1537977338265@webmail.strato.com>
-In-Reply-To: <20180914091046.483-10-laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, Ulrich Hecht <uli@fpond.eu>
 References: <20180914091046.483-1-laurent.pinchart+renesas@ideasonboard.com>
  <20180914091046.483-10-laurent.pinchart+renesas@ideasonboard.com>
-Subject: Re: [PATCH v2 09/16] drm: rcar-du: Cache DSYSR value to ensure
- known initial value
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <9b5633b1-1c74-06d3-9131-33cd8b22aa89@ideasonboard.com>
+Date: Mon, 24 Sep 2018 12:18:51 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180914091046.483-10-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Laurent,
 
-> On September 14, 2018 at 11:10 AM Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com> wrote:
-> 
-> 
+On 14/09/18 10:10, Laurent Pinchart wrote:
 > DSYSR is a DU channel register that also contains group fields. It is
 > thus written to by both the group and CRTC code, using read-update-write
 > sequences. As the register isn't initialized explicitly at startup time,
@@ -38,9 +38,15 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 > channel fields complicate this. A simpler solution is to cache the
 > register and initialize the cached value to the desired hardware
 > defaults.
-> 
+
+Great, this looks good to me, and is less overhead than pulling in a
+full reg-cache when we only need a single register handled.
+
 > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 > Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
 > ---
 >  drivers/gpu/drm/rcar-du/rcar_du_crtc.c  | 16 ++++++++--------
 >  drivers/gpu/drm/rcar-du/rcar_du_crtc.h  |  5 +++++
@@ -144,9 +150,9 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 >  }
 >  
 >  void rcar_du_group_start_stop(struct rcar_du_group *rgrp, bool start)
-> -- 
+> 
 
-Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
-
-CU
-Uli
+-- 
+Regards
+--
+Kieran
