@@ -1,48 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34550 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:54279 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbeIMOR0 (ORCPT
+        with ESMTP id S1726400AbeIXVex (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:17:26 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 11/13] ARM: dts: stout: Add DA9063 OnKey node
-Date: Thu, 13 Sep 2018 11:08:34 +0200
-Message-Id: <180814bb9cd217e7cefc76f817c6f316dcd1e195.1536824376.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1536824376.git.horms+renesas@verge.net.au>
-References: <cover.1536824376.git.horms+renesas@verge.net.au>
+        Mon, 24 Sep 2018 17:34:53 -0400
+Date: Mon, 24 Sep 2018 17:32:05 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: pwm: renesas: tpu: fix "compatible" prop
+ description
+Message-ID: <20180924153204.4mym2yuz7upvp6cs@verge.net.au>
+References: <2aaa98bd-475c-08dd-ee34-d41fb960952e@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2aaa98bd-475c-08dd-ee34-d41fb960952e@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Marek Vasut <marek.vasut@gmail.com>
+On Fri, Sep 21, 2018 at 11:45:24PM +0300, Sergei Shtylyov wrote:
+> The "compatible" property description contradicts even the example given:
+> it only says that there must be a single value while the example has the
+> fallback value too -- which makes much more sense. Moreover, the generic
+> property value is misdocumented as being R-Car (and RZ/G1) specific...
+> 
+> Fixes: 382457e562bb ("pwm: renesas-tpu: Add DT support")
+> Fixes: 3ba111a01822 ("dt-bindings: pwm: renesas-tpu: Document r8a774[35] support")
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> ---
+> This patch is against Linus' repo -- the 'fixes' branch in Thierry Reding's
+> repo is very outdated...
 
-Add DA9063 OnKey subnode to DA9063 PMIC node on Stout.
-
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7790-stout.dts | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7790-stout.dts b/arch/arm/boot/dts/r8a7790-stout.dts
-index a13a92c26645..629da4cee1b9 100644
---- a/arch/arm/boot/dts/r8a7790-stout.dts
-+++ b/arch/arm/boot/dts/r8a7790-stout.dts
-@@ -318,6 +318,10 @@
- 		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
- 		interrupt-controller;
- 
-+		onkey {
-+			compatible = "dlg,da9063-onkey";
-+		};
-+
- 		rtc {
- 			compatible = "dlg,da9063-rtc";
- 		};
--- 
-2.11.0
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
