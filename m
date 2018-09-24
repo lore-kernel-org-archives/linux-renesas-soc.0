@@ -1,6 +1,16 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Mon, 1 Oct 2018 00:30:13 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:46442 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725982AbeIXPay (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 24 Sep 2018 11:30:54 -0400
+MIME-Version: 1.0
+References: <1537551421-4259-1-git-send-email-fabrizio.castro@bp.renesas.com> <1537551421-4259-3-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1537551421-4259-3-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 24 Sep 2018 11:29:33 +0200
+Message-ID: <CAMuHMdV8c_DkG5MWS-GVHENWgYSgck3dcx3PZxFXVhocZVudqQ@mail.gmail.com>
+Subject: Re: [PATCH 2/4] dt-bindings: i2c: rcar: Document r8a7744 support
 To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -12,57 +22,34 @@ Cc: Rob Herring <robh+dt@kernel.org>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
         Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: Re: [PATCH 2/4] dt-bindings: i2c: rcar: Document r8a7744 support
-Message-ID: <20180930223013.GB1059@kunai>
-References: <1537551421-4259-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1537551421-4259-3-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cmJC7u66zC7hs+87"
-Content-Disposition: inline
-In-Reply-To: <1537551421-4259-3-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
---cmJC7u66zC7hs+87
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Sep 21, 2018 at 06:36:59PM +0100, Fabrizio Castro wrote:
+On Fri, Sep 21, 2018 at 7:37 PM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
 > From: Biju Das <biju.das@bp.renesas.com>
->=20
+>
 > Document i2c Device Tree support for RZ/G1N (R8A7744) SoC, which is
 > compatible with R-Car Gen2 SoC family.
->=20
+>
 > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Applied to for-next, thanks!
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Gr{oetje,eeting}s,
 
---cmJC7u66zC7hs+87
-Content-Type: application/pgp-signature; name="signature.asc"
+                        Geert
 
------BEGIN PGP SIGNATURE-----
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluxTnUACgkQFA3kzBSg
-KbaOKg/9EDPG73jTswc8ZMGG8yNNc7P5JX6WwX9xl1eDjg6IP4smhIp3FM1nI+Sw
-KMykyp2VYPyhkJQQHMz4Ro3kWQV2WSU4KJzur+Mgilcbor3neIAzZ5HtFSKyFBxu
-fI7J8UX807KYxELv3e3pc59zBf9j+Rz6wpNbc4WuB2OqmLryGEHzFID6lFIFNfXG
-USaHGafGnbV+0ikh61pTNAnFylFd5KYXJ2wsRuU1PSEn1DwNSQVSakRtl1dyLcqi
-R0US2T0lLT2lH45KYWhaGbR2YXwtGIjzhu3O+mo2xwVcilv7h1e4znRjsse+u0yv
-6eXkllS/ycuOREM7bIACYfJ7H30HaNptqJrD2e3IJEa1gRLoFH9K3YQ0Jj+zWeDP
-6QHlX49xDp3We6z1cT97BWiCmviDXuatfx5IJ7G56B197eW9FdBX0I1MzlYiwZmh
-Fz5QUXl71GhxITTRl+mf19KHvD8t3Sz0iavWDWSoq5gZWqKS6MmZPK29X6IsUyLH
-lKN8/aHuJyFSiXlwwmZ45Npzj/tSut1JnwVU+ovtlxigF1SGgt6W8ANCvZv11Ie0
-HFIKFesrmHPiCCu3+pz9UYw3UmmfRMFVALt/Tt7Kj4wc5s1VNf6WSvbwC25wG8N4
-CWDMtM8Z2yeX0ggz9vtZiFSXI9/Y9crHFwk7TdpFCW0nyEESd48=
-=a4HU
------END PGP SIGNATURE-----
-
---cmJC7u66zC7hs+87--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
