@@ -1,107 +1,47 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:60972 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727320AbeIDQff (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Sep 2018 12:35:35 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 14/16] arm64: dts: renesas: r8a77995: Add LVDS support
-Date: Tue,  4 Sep 2018 15:10:25 +0300
-Message-Id: <20180904121027.24031-15-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180904121027.24031-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180904121027.24031-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+References: <20180922150252.18754-1-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180922150252.18754-1-marek.vasut+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 24 Sep 2018 11:28:51 +0200
+Message-ID: <CAMuHMdVpQobZWGdJ5aBfhNfvspsWVxtH_dgoqW-0b_wFvi6XYw@mail.gmail.com>
+Subject: Re: [PATCH] DT: pci: rcar-pci: document R8A77990 bindings
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-pci <linux-pci@vger.kernel.org>, tho.vu.wh@rvc.renesas.com,
+        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Rob Herring <robh@kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On Sat, Sep 22, 2018 at 5:02 PM Marek Vasut <marek.vasut@gmail.com> wrote:
+> From: Tho Vu <tho.vu.wh@rvc.renesas.com>
+>
+> Document the R-Car E3 (R8A77990) SoC in the R-Car PCIe bindings.
+>
+> Signed-off-by: Tho Vu <tho.vu.wh@rvc.renesas.com>
+> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-The r8a77995 D3 platform has 2 LVDS channels connected to the DU.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-[uli: moved lvds* into the soc node, added PM domains, resets]
-Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 56 +++++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index fe77bc43c447..32c473143b19 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -960,12 +960,68 @@
- 				port@1 {
- 					reg = <1>;
- 					du_out_lvds0: endpoint {
-+						remote-endpoint = <&lvds0_in>;
- 					};
- 				};
- 
- 				port@2 {
- 					reg = <2>;
- 					du_out_lvds1: endpoint {
-+						remote-endpoint = <&lvds1_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		lvds0: lvds-encoder@feb90000 {
-+			compatible = "renesas,r8a77995-lvds";
-+			reg = <0 0xfeb90000 0 0x20>;
-+			clocks = <&cpg CPG_MOD 727>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 727>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					lvds0_in: endpoint {
-+						remote-endpoint = <&du_out_lvds0>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					lvds0_out: endpoint {
-+					};
-+				};
-+			};
-+		};
-+
-+		lvds1: lvds-encoder@feb90100 {
-+			compatible = "renesas,r8a77995-lvds";
-+			reg = <0 0xfeb90100 0 0x20>;
-+			clocks = <&cpg CPG_MOD 727>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 726>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					lvds1_in: endpoint {
-+						remote-endpoint = <&du_out_lvds1>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					lvds1_out: endpoint {
- 					};
- 				};
- 			};
+                        Geert
+
 -- 
-Regards,
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Laurent Pinchart
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
