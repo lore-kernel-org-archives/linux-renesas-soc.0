@@ -1,80 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54554 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726043AbeI1FAC (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54192 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728387AbeIXV0u (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 01:00:02 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mon, 24 Sep 2018 17:26:50 -0400
+Date: Mon, 24 Sep 2018 17:24:04 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: rsnd: Add r8a7744 support" to the asoc tree
-In-Reply-To: <1538056285-18621-1-git-send-email-biju.das@bp.renesas.com>
-Message-Id: <20180927223918.83F5F440078@finisterre.ee.mobilebroadband>
-Date: Thu, 27 Sep 2018 23:39:18 +0100 (BST)
+        Biju Das <biju.das@bp.renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: Re: [PATCH 4/4] ARM: dts: r8a77470: Add I2C4 support
+Message-ID: <20180924152403.zlgwvmi5jvfnmcq7@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUBNcV7DM1wQd=oT2Lt5QUbpO=YwnrbXF27PAbOqhW8tA@mail.gmail.com>
+ <20180924090436.pkw666kkr327wdjp@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Mon, Sep 24, 2018 at 11:04:39AM +0200, Simon Horman wrote:
+> On Sat, Sep 22, 2018 at 08:39:29PM +0200, Wolfram Sang wrote:
+> > On Fri, Sep 21, 2018 at 06:37:01PM +0100, Fabrizio Castro wrote:
+> > > Add I2C4 support to RZ/G1C (a.k.a. r8a77470) SoC specific
+> > > device tree.
+> > > 
+> > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> > 
+> > Looks sane to me
+> > 
+> > Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> 
+> Likewise, but I'd like some feedback on my comment on patch 1/4
+> before applying this.
 
-   ASoC: rsnd: Add r8a7744 support
+Thanks for the feedback on patch 1/4.
+I have queued this patch up for v4.20.
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 765f50d464457c6a397506b3f3dc58dacc227c6d Mon Sep 17 00:00:00 2001
-From: Biju Das <biju.das@bp.renesas.com>
-Date: Thu, 27 Sep 2018 14:51:25 +0100
-Subject: [PATCH] ASoC: rsnd: Add r8a7744 support
-
-Document RZ/G1N (R8A7744) SoC bindings.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/devicetree/bindings/sound/renesas,rsnd.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-index f4688c508be6..d92b705e7917 100644
---- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-+++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-@@ -343,6 +343,7 @@ Required properties:
- 				  "renesas,rcar_sound-gen3" if generation3 (or RZ/G2)
- 				  Examples with soctypes are:
- 				    - "renesas,rcar_sound-r8a7743" (RZ/G1M)
-+				    - "renesas,rcar_sound-r8a7744" (RZ/G1N)
- 				    - "renesas,rcar_sound-r8a7745" (RZ/G1E)
- 				    - "renesas,rcar_sound-r8a774a1" (RZ/G2M)
- 				    - "renesas,rcar_sound-r8a7778" (R-Car M1A)
--- 
-2.19.0
+On Mon, Sep 24, 2018 at 11:58:15AM +0200, Geert Uytterhoeven wrote:
+> On Fri, Sep 21, 2018 at 7:37 PM Fabrizio Castro
+> <fabrizio.castro@bp.renesas.com> wrote:
+> > Add I2C4 support to RZ/G1C (a.k.a. r8a77470) SoC specific
+> > device tree.
+> >
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
