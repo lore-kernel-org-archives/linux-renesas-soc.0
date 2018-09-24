@@ -1,31 +1,31 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:29980 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727192AbeIZWJ2 (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:45088 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727524AbeIXR2F (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Sep 2018 18:09:28 -0400
-Date: Wed, 26 Sep 2018 17:55:49 +0200 (CEST)
-From: Ulrich Hecht <uli@fpond.eu>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <2070066196.327364.1537977350002@webmail.strato.com>
-In-Reply-To: <20180914091046.483-11-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180914091046.483-1-laurent.pinchart+renesas@ideasonboard.com>
- <20180914091046.483-11-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 24 Sep 2018 13:28:05 -0400
+Reply-To: kieran.bingham@ideasonboard.com
 Subject: Re: [PATCH v2 10/16] drm: rcar-du: Don't use TV sync mode when not
  supported by the hardware
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org, Ulrich Hecht <uli@fpond.eu>
+References: <20180914091046.483-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20180914091046.483-11-laurent.pinchart+renesas@ideasonboard.com>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <7d881603-b8bb-079a-5afc-26773a5379ef@ideasonboard.com>
+Date: Mon, 24 Sep 2018 12:26:23 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180914091046.483-11-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Laurent,
 
-> On September 14, 2018 at 11:10 AM Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com> wrote:
-> 
-> 
+On 14/09/18 10:10, Laurent Pinchart wrote:
 > The official way to stop the display is to clear the display enable
 > (DEN) bit in the DSYSR register, but that operates at a group level and
 > affects the two channels in the group. To disable channels selectively,
@@ -38,11 +38,24 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 > 
 > In the meantime, condition the switch to TV sync mode to the
 > availability of the feature, to avoid writing an invalid value to the
-> DSYSR register. The display output will turn blank as all planes are
+> DSYSR register.
+
+(Perhaps for leading into the next sentence)
+
+When the feature is unavailable ...
+> The display output will turn blank as all planes are
 > disabled when stopping the CRTC.
+
+Otherwise your sentence sounds like it will affect existing platforms.
+
 > 
 > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 > Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+
+But that's a minor and possibly not relevant nit so:
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
 > ---
 >  drivers/gpu/drm/rcar-du/rcar_du_crtc.c |  7 ++++++-
 >  drivers/gpu/drm/rcar-du/rcar_du_drv.c  | 33 ++++++++++++++++++++++-----------
@@ -194,9 +207,9 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 >  
 >  #define RCAR_DU_QUIRK_ALIGN_128B	BIT(0)	/* Align pitches to 128 bytes */
 >  
-> -- 
+> 
 
-Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
-
-CU
-Uli
+-- 
+Regards
+--
+Kieran
