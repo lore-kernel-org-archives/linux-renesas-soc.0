@@ -1,106 +1,32 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:46763 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726645AbeIKNrS (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54289 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbeIXVfD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Sep 2018 09:47:18 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v5 1/3] usb: renesas_usbhs: Add reset_control
-Date: Tue, 11 Sep 2018 17:47:03 +0900
-Message-Id: <1536655625-10550-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1536655625-10550-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1536655625-10550-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Mon, 24 Sep 2018 17:35:03 -0400
+Date: Mon, 24 Sep 2018 17:32:15 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: pwm: renesas: tpu: document R8A779{7|8}0
+ bindings
+Message-ID: <20180924153215.xhaeyhv5d7kbvnqu@verge.net.au>
+References: <ea104bc7-ee9a-b638-36da-6c6af1e622be@cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea104bc7-ee9a-b638-36da-6c6af1e622be@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen3 needs to deassert resets of both host and peripheral.
-Since [eo]hci-platform is possible to assert the reset(s) when
-the probing failed, renesas_usbhs driver doesn't work correctly
-regardless of finished probing. To fix this issue, this patch adds
-reset_control on this renesas_usbhs driver.
+On Sat, Sep 22, 2018 at 10:57:29PM +0300, Sergei Shtylyov wrote:
+> Document the R-Car V3{M|H} (R8A779{7|8}0) SoC in the Renesas TPU bindings;
+> the TPU hardware in those is the Renesas standard 4-channel timer pulse
+> unit.
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/usb/renesas_usbhs/common.c | 12 ++++++++++++
- drivers/usb/renesas_usbhs/common.h |  2 ++
- 2 files changed, 14 insertions(+)
-
-diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
-index 4310df4..1d355d5 100644
---- a/drivers/usb/renesas_usbhs/common.c
-+++ b/drivers/usb/renesas_usbhs/common.c
-@@ -12,6 +12,7 @@
- #include <linux/of_device.h>
- #include <linux/of_gpio.h>
- #include <linux/pm_runtime.h>
-+#include <linux/reset.h>
- #include <linux/slab.h>
- #include <linux/sysfs.h>
- #include "common.h"
-@@ -574,6 +575,10 @@ static int usbhs_probe(struct platform_device *pdev)
- 			return PTR_ERR(priv->edev);
- 	}
- 
-+	priv->rsts = devm_reset_control_array_get_optional_shared(&pdev->dev);
-+	if (IS_ERR(priv->rsts))
-+		return PTR_ERR(priv->rsts);
-+
- 	/*
- 	 * care platform info
- 	 */
-@@ -658,6 +663,10 @@ static int usbhs_probe(struct platform_device *pdev)
- 	/* dev_set_drvdata should be called after usbhs_mod_init */
- 	platform_set_drvdata(pdev, priv);
- 
-+	ret = reset_control_deassert(priv->rsts);
-+	if (ret)
-+		goto probe_fail_rst;
-+
- 	/*
- 	 * deviece reset here because
- 	 * USB device might be used in boot loader.
-@@ -711,6 +720,8 @@ static int usbhs_probe(struct platform_device *pdev)
- 	return ret;
- 
- probe_end_mod_exit:
-+	reset_control_assert(priv->rsts);
-+probe_fail_rst:
- 	usbhs_mod_remove(priv);
- probe_end_fifo_exit:
- 	usbhs_fifo_remove(priv);
-@@ -739,6 +750,7 @@ static int usbhs_remove(struct platform_device *pdev)
- 	pm_runtime_disable(&pdev->dev);
- 
- 	usbhs_platform_call(priv, hardware_exit, pdev);
-+	reset_control_assert(priv->rsts);
- 	usbhs_mod_remove(priv);
- 	usbhs_fifo_remove(priv);
- 	usbhs_pipe_remove(priv);
-diff --git a/drivers/usb/renesas_usbhs/common.h b/drivers/usb/renesas_usbhs/common.h
-index 6137f79..bce7d35 100644
---- a/drivers/usb/renesas_usbhs/common.h
-+++ b/drivers/usb/renesas_usbhs/common.h
-@@ -10,6 +10,7 @@
- 
- #include <linux/extcon.h>
- #include <linux/platform_device.h>
-+#include <linux/reset.h>
- #include <linux/usb/renesas_usbhs.h>
- 
- struct usbhs_priv;
-@@ -277,6 +278,7 @@ struct usbhs_priv {
- 	struct usbhs_fifo_info fifo_info;
- 
- 	struct phy *phy;
-+	struct reset_control *rsts;
- };
- 
- /*
--- 
-1.9.1
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
