@@ -1,20 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:40829 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726218AbeIXP7m (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:49635 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727435AbeIXPFr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Sep 2018 11:59:42 -0400
-MIME-Version: 1.0
-References: <1537551421-4259-1-git-send-email-fabrizio.castro@bp.renesas.com> <1537551421-4259-5-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1537551421-4259-5-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 24 Sep 2018 11:58:15 +0200
-Message-ID: <CAMuHMdUBNcV7DM1wQd=oT2Lt5QUbpO=YwnrbXF27PAbOqhW8tA@mail.gmail.com>
-Subject: Re: [PATCH 4/4] ARM: dts: r8a77470: Add I2C4 support
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+        Mon, 24 Sep 2018 11:05:47 -0400
+Date: Mon, 24 Sep 2018 11:04:39 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -22,32 +17,32 @@ Cc: Rob Herring <robh+dt@kernel.org>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
         Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH 4/4] ARM: dts: r8a77470: Add I2C4 support
+Message-ID: <20180924090436.pkw666kkr327wdjp@verge.net.au>
+References: <1537551421-4259-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1537551421-4259-5-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20180922183929.GB841@kunai>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180922183929.GB841@kunai>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Sep 21, 2018 at 7:37 PM Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> Add I2C4 support to RZ/G1C (a.k.a. r8a77470) SoC specific
-> device tree.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+On Sat, Sep 22, 2018 at 08:39:29PM +0200, Wolfram Sang wrote:
+> On Fri, Sep 21, 2018 at 06:37:01PM +0100, Fabrizio Castro wrote:
+> > Add I2C4 support to RZ/G1C (a.k.a. r8a77470) SoC specific
+> > device tree.
+> > 
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> 
+> Looks sane to me
+> 
+> Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Likewise, but I'd like some feedback on my comment on patch 1/4
+before applying this.
