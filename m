@@ -1,130 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:45376 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729998AbeIRWJQ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54448 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729885AbeIXVky (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Sep 2018 18:09:16 -0400
-Date: Tue, 18 Sep 2018 22:09:03 +0530
-From: Souptick Joarder <jrdr.linux@gmail.com>
-To: gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        sean@poorly.run, airlied@linux.ie,
-        laurent.pinchart@ideasonboard.com, daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] drm/rcar-du: Convert drm_atomic_helper_suspend/resume()
-Message-ID: <20180918163903.GA11172@jordon-HP-15-Notebook-PC>
+        Mon, 24 Sep 2018 17:40:54 -0400
+Date: Mon, 24 Sep 2018 17:38:04 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Olof Johansson <olof@lixom.net>
+Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM Based SoC DT Updates for v4.20
+Message-ID: <20180924153803.qfy2cu64cjpimi37@verge.net.au>
+References: <cover.1536824376.git.horms+renesas@verge.net.au>
+ <20180923131817.t2lj6d2sb7bp6lqi@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180923131817.t2lj6d2sb7bp6lqi@localhost>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-convert drm_atomic_helper_suspend/resume() to use
-drm_mode_config_helper_suspend/resume().
+On Sun, Sep 23, 2018 at 06:18:17AM -0700, Olof Johansson wrote:
+> Hi Simon,
+> 
+> On Thu, Sep 13, 2018 at 11:08:18AM +0200, Simon Horman wrote:
+> > Hi Olof, Hi Kevin, Hi Arnd,
+> > 
+> > Please consider these Renesas ARM based SoC DT updates for v4.20.
+> > 
+> > I am sending out this pull-request at this time as there are a number
+> > of patches queued up in my arm (32) DT branch and I hope that this
+> > will ease the burden later on in the development cycle. I expect to
+> > send a follow-up pull-request for this branch at the usual pre-rc6 timing.
+> 
+> This is a good amount of patches, feel free to flush your queue around the time
+> it builds up to about this amount -- no need to hold on to them longer.
 
-remove suspend_state field from the rcar_du_device
-structure as it is no more required.
+Will do. Often the DT branches accumulate quite a lot of patches
+in the course of an entire development cycle. I'll plan to flush
+them out to you when that happens.
 
-With this conversion, also drm_fbdev_cma_set_suspend_unlocked()
-will left with no consumer. So this function can be removed.
+> 
+> > The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+> > 
+> >   Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+> > 
+> > are available in the git repository at:
+> > 
+> >   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm-dt-for-v4.20
+> > 
+> > for you to fetch changes up to 1926bd6bf20fe306797fbf366902674d2d6c20cc:
+> > 
+> >   ARM: dts: r9a06g032: Use r9a06g032-sysctrl binding definitions (2018-09-06 11:31:35 +0200)
+> 
+> Merged, thanks!
+> 
+> 
+> > 
+> > ----------------------------------------------------------------
+> > Renesas ARM Based SoC DT Updates for v4.20
+> > 
+> > * R-Car Gen1 SoCs: Include product name in DTSI files for ease of maintenance
+> > * R-Car Gen2 SoCs:
+> >   - Convert to new DU DT bindings
+> >   - Correct SATA device sizes to 2 MiB
+> > * R-Car H2 (r8a7790) based Porter board: Add DA9063 OnKey PMIC node
+> > * R-Car E2 (r8a7794) based Silk board: Add DA9063 PMIC, RTC and OnKey nodes
+> > * R-Car M2-N (r8a7793) based Gose board: Add DA9210 node for CPU DVFS
+> > * RZ/G1C (R8A77470) SoC:
+> >   - Add GPIO nodes
+> >   - Add PFC support
+> >   - Use r8a77470-sysc binding definitions
+> > * RZ/G1C (r8a77470) iW-RainboW-G23S dev platform:
+> >   - Specify EtherAVB PHY IRQ
+> >   - Add pinctl support for scif1
+> > * RZ/N1D (r9a06g032) SoC: Use r9a06g032-sysctrl binding definitions
+> 
+> I like this format! It's nice, terse and to the point, and it makes
+> it a bit easier to see commonalities across the large number of similar
+> (and different) product and platform names.
+> 
+> Thanks a lot for being flexible and trying different things here!
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
----
- drivers/gpu/drm/drm_fb_cma_helper.c   | 18 ------------------
- drivers/gpu/drm/rcar-du/rcar_du_drv.c | 21 ++-------------------
- drivers/gpu/drm/rcar-du/rcar_du_drv.h |  1 -
- include/drm/drm_fb_cma_helper.h       |  2 --
- 4 files changed, 2 insertions(+), 40 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_fb_cma_helper.c b/drivers/gpu/drm/drm_fb_cma_helper.c
-index 47e0e2f..96efc88 100644
---- a/drivers/gpu/drm/drm_fb_cma_helper.c
-+++ b/drivers/gpu/drm/drm_fb_cma_helper.c
-@@ -224,21 +224,3 @@ void drm_fbdev_cma_hotplug_event(struct drm_fbdev_cma *fbdev_cma)
- 		drm_fb_helper_hotplug_event(&fbdev_cma->fb_helper);
- }
- EXPORT_SYMBOL_GPL(drm_fbdev_cma_hotplug_event);
--
--/**
-- * drm_fbdev_cma_set_suspend_unlocked - wrapper around
-- *                                      drm_fb_helper_set_suspend_unlocked
-- * @fbdev_cma: The drm_fbdev_cma struct, may be NULL
-- * @state: desired state, zero to resume, non-zero to suspend
-- *
-- * Calls drm_fb_helper_set_suspend, which is a wrapper around
-- * fb_set_suspend implemented by fbdev core.
-- */
--void drm_fbdev_cma_set_suspend_unlocked(struct drm_fbdev_cma *fbdev_cma,
--					bool state)
--{
--	if (fbdev_cma)
--		drm_fb_helper_set_suspend_unlocked(&fbdev_cma->fb_helper,
--						   state);
--}
--EXPORT_SYMBOL(drm_fbdev_cma_set_suspend_unlocked);
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index 02aee6c..288220f 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -357,32 +357,15 @@ static void rcar_du_lastclose(struct drm_device *dev)
- static int rcar_du_pm_suspend(struct device *dev)
- {
- 	struct rcar_du_device *rcdu = dev_get_drvdata(dev);
--	struct drm_atomic_state *state;
- 
--	drm_kms_helper_poll_disable(rcdu->ddev);
--	drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, true);
--
--	state = drm_atomic_helper_suspend(rcdu->ddev);
--	if (IS_ERR(state)) {
--		drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, false);
--		drm_kms_helper_poll_enable(rcdu->ddev);
--		return PTR_ERR(state);
--	}
--
--	rcdu->suspend_state = state;
--
--	return 0;
-+	return drm_mode_config_helper_suspend(rcdu->ddev);
- }
- 
- static int rcar_du_pm_resume(struct device *dev)
- {
- 	struct rcar_du_device *rcdu = dev_get_drvdata(dev);
- 
--	drm_atomic_helper_resume(rcdu->ddev, rcdu->suspend_state);
--	drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, false);
--	drm_kms_helper_poll_enable(rcdu->ddev);
--
--	return 0;
-+	return drm_mode_config_helper_resume(rcdu->ddev);
- }
- #endif
- 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-index b3a25e8..ff25c8d 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-@@ -78,7 +78,6 @@ struct rcar_du_device {
- 
- 	struct drm_device *ddev;
- 	struct drm_fbdev_cma *fbdev;
--	struct drm_atomic_state *suspend_state;
- 
- 	struct rcar_du_crtc crtcs[RCAR_DU_MAX_CRTCS];
- 	unsigned int num_crtcs;
-diff --git a/include/drm/drm_fb_cma_helper.h b/include/drm/drm_fb_cma_helper.h
-index 4a65f0d..8dbbe1e 100644
---- a/include/drm/drm_fb_cma_helper.h
-+++ b/include/drm/drm_fb_cma_helper.h
-@@ -26,8 +26,6 @@ struct drm_fbdev_cma *drm_fbdev_cma_init(struct drm_device *dev,
- 
- void drm_fbdev_cma_restore_mode(struct drm_fbdev_cma *fbdev_cma);
- void drm_fbdev_cma_hotplug_event(struct drm_fbdev_cma *fbdev_cma);
--void drm_fbdev_cma_set_suspend_unlocked(struct drm_fbdev_cma *fbdev_cma,
--					bool state);
- 
- struct drm_gem_cma_object *drm_fb_cma_get_gem_obj(struct drm_framebuffer *fb,
- 	unsigned int plane);
--- 
-1.9.1
+Thanks for your patience, I'm glad the new format works for you.
