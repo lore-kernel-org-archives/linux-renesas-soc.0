@@ -1,49 +1,107 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:42946 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726777AbeIZPhJ (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:46921 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728006AbeIXWxT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Sep 2018 11:37:09 -0400
-MIME-Version: 1.0
-References: <20180924164937.36536-1-chris.brandt@renesas.com> <20180924164937.36536-3-chris.brandt@renesas.com>
-In-Reply-To: <20180924164937.36536-3-chris.brandt@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 26 Sep 2018 11:24:55 +0200
-Message-ID: <CAMuHMdWZ5BE4bjOCbVL5BoE4-pYRhD3x3zRs=gPGuCgNKb+=oA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] clk: renesas: r7s9210: Convert some clocks to early
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mon, 24 Sep 2018 18:53:19 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v2 2/3] clk: renesas: r7s9210: Convert some clocks to early
+Date: Mon, 24 Sep 2018 11:49:36 -0500
+Message-Id: <20180924164937.36536-3-chris.brandt@renesas.com>
+In-Reply-To: <20180924164937.36536-1-chris.brandt@renesas.com>
+References: <20180924164937.36536-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Sep 24, 2018 at 6:50 PM Chris Brandt <chris.brandt@renesas.com> wrote:
-> The OSTM timer driver for RZ/A2 uses TIMER_OF_DECLARE which requires the
-> ostm module clocks to be registers early in boot.
->
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> ---
-> v2:
->  * List early clocks first
->  * Remove unnecessary comments
->  * Removed new function r7s9210_update_clk_table (to be included in a
->    separate patch)
+The OSTM timer driver for RZ/A2 uses TIMER_OF_DECLARE which requires the
+ostm module clocks to be registers early in boot.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in clk-renesas-for-v4.20.
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+v2:
+ * List early clocks first
+ * Remove unnecessary comments
+ * Removed new function r7s9210_update_clk_table (to be included in a
+   separate patch)
+---
+ drivers/clk/renesas/r7s9210-cpg-mssr.c | 32 ++++++++++++++++++++++++++------
+ 1 file changed, 26 insertions(+), 6 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/clk/renesas/r7s9210-cpg-mssr.c b/drivers/clk/renesas/r7s9210-cpg-mssr.c
+index bd1dd4ff2051..7ab9030ef8b9 100644
+--- a/drivers/clk/renesas/r7s9210-cpg-mssr.c
++++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
+@@ -53,7 +53,7 @@ enum clk_ids {
+ 	MOD_CLK_BASE
+ };
+ 
+-static struct cpg_core_clk r7s9210_core_clks[] = {
++static struct cpg_core_clk r7s9210_early_core_clks[] = {
+ 	/* External Clock Inputs */
+ 	DEF_INPUT("extal",     CLK_EXTAL),
+ 
+@@ -61,20 +61,26 @@ static struct cpg_core_clk r7s9210_core_clks[] = {
+ 	DEF_BASE(".main",       CLK_MAIN, CLK_TYPE_RZA_MAIN, CLK_EXTAL),
+ 	DEF_BASE(".pll",       CLK_PLL, CLK_TYPE_RZA_PLL, CLK_MAIN),
+ 
++	/* Core Clock Outputs */
++	DEF_FIXED("p1c",    R7S9210_CLK_P1C,   CLK_PLL,         16, 1),
++};
++
++static const struct mssr_mod_clk r7s9210_early_mod_clks[] __initconst = {
++	DEF_MOD_STB("ostm2",	 34,	R7S9210_CLK_P1C),
++	DEF_MOD_STB("ostm1",	 35,	R7S9210_CLK_P1C),
++	DEF_MOD_STB("ostm0",	 36,	R7S9210_CLK_P1C),
++};
++
++static struct cpg_core_clk r7s9210_core_clks[] = {
+ 	/* Core Clock Outputs */
+ 	DEF_FIXED("i",      R7S9210_CLK_I,     CLK_PLL,          2, 1),
+ 	DEF_FIXED("g",      R7S9210_CLK_G,     CLK_PLL,          4, 1),
+ 	DEF_FIXED("b",      R7S9210_CLK_B,     CLK_PLL,          8, 1),
+ 	DEF_FIXED("p1",     R7S9210_CLK_P1,    CLK_PLL,         16, 1),
+-	DEF_FIXED("p1c",    R7S9210_CLK_P1C,   CLK_PLL,         16, 1),
+ 	DEF_FIXED("p0",     R7S9210_CLK_P0,    CLK_PLL,         32, 1),
+ };
+ 
+ static const struct mssr_mod_clk r7s9210_mod_clks[] __initconst = {
+-	DEF_MOD_STB("ostm2",	 34,	R7S9210_CLK_P1C),
+-	DEF_MOD_STB("ostm1",	 35,	R7S9210_CLK_P1C),
+-	DEF_MOD_STB("ostm0",	 36,	R7S9210_CLK_P1C),
+-
+ 	DEF_MOD_STB("scif4",	 43,	R7S9210_CLK_P1C),
+ 	DEF_MOD_STB("scif3",	 44,	R7S9210_CLK_P1C),
+ 	DEF_MOD_STB("scif2",	 45,	R7S9210_CLK_P1C),
+@@ -170,6 +176,12 @@ struct clk * __init rza2_cpg_clk_register(struct device *dev,
+ }
+ 
+ const struct cpg_mssr_info r7s9210_cpg_mssr_info __initconst = {
++	/* Early Clocks */
++	.early_core_clks = r7s9210_early_core_clks,
++	.num_early_core_clks = ARRAY_SIZE(r7s9210_early_core_clks),
++	.early_mod_clks = r7s9210_early_mod_clks,
++	.num_early_mod_clks = ARRAY_SIZE(r7s9210_early_mod_clks),
++
+ 	/* Core Clocks */
+ 	.core_clks = r7s9210_core_clks,
+ 	.num_core_clks = ARRAY_SIZE(r7s9210_core_clks),
+@@ -187,3 +199,11 @@ const struct cpg_mssr_info r7s9210_cpg_mssr_info __initconst = {
+ 	/* RZ/A2 has Standby Control Registers */
+ 	.stbyctrl = true,
+ };
++
++static void __init r7s9210_cpg_mssr_early_init(struct device_node *np)
++{
++	cpg_mssr_early_init(np, &r7s9210_cpg_mssr_info);
++}
++
++CLK_OF_DECLARE_DRIVER(cpg_mstp_clks, "renesas,r7s9210-cpg-mssr",
++		      r7s9210_cpg_mssr_early_init);
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.16.1
