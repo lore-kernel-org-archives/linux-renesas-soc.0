@@ -1,5 +1,10 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Mon, 24 Sep 2018 11:16:37 +0200
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:49855 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728179AbeIXPOA (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 24 Sep 2018 11:14:00 -0400
+Date: Mon, 24 Sep 2018 11:12:51 +0200
 From: Simon Horman <horms@verge.net.au>
 To: Wolfram Sang <wsa@the-dreams.de>
 Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
@@ -16,7 +21,7 @@ Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
 Subject: Re: [PATCH 3/4] ARM: dts: r8a77470: Add SDHI2 support
-Message-ID: <20180924091636.uxaiavvcq5pco3h3@verge.net.au>
+Message-ID: <20180924091250.7cjrubmuzyvvpaed@verge.net.au>
 References: <1537530911-443-1-git-send-email-fabrizio.castro@bp.renesas.com>
  <1537530911-443-4-git-send-email-fabrizio.castro@bp.renesas.com>
  <20180922184449.GE841@kunai>
@@ -24,7 +29,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20180922184449.GE841@kunai>
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 On Sat, Sep 22, 2018 at 08:44:50PM +0200, Wolfram Sang wrote:
