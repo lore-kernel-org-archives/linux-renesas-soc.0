@@ -1,140 +1,198 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:59414 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728078AbeINOYU (ORCPT
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33942 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727074AbeIYCRj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Sep 2018 10:24:20 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, Ulrich Hecht <uli@fpond.eu>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v2 09/16] drm: rcar-du: Cache DSYSR value to ensure known initial value
-Date: Fri, 14 Sep 2018 12:10:39 +0300
-Message-Id: <20180914091046.483-10-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180914091046.483-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180914091046.483-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 24 Sep 2018 22:17:39 -0400
+Received: by mail-lj1-f195.google.com with SMTP id f8-v6so19493835ljk.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Sep 2018 13:13:44 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH v2] arm64: dts: renesas: r8a779{7|8}0: add TMU support
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <fb4eb097-40aa-82df-68c7-9b727c858a8b@cogentembedded.com>
+Message-ID: <2abe82e7-c7b2-7696-402d-1140d2ed4006@cogentembedded.com>
+Date: Mon, 24 Sep 2018 23:13:41 +0300
+MIME-Version: 1.0
+In-Reply-To: <fb4eb097-40aa-82df-68c7-9b727c858a8b@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-DSYSR is a DU channel register that also contains group fields. It is
-thus written to by both the group and CRTC code, using read-update-write
-sequences. As the register isn't initialized explicitly at startup time,
-this can lead to invalid or otherwise unexpected values being written to
-some of the fields if they have been modified by the firmware or just
-not reset properly.
+Describe TMUs in the R8A779{7|8}0 device trees.
 
-To fix this we can write a fully known value to the DSYSR register when
-turning a channel's functional clock on. However, the mix of group and
-channel fields complicate this. A simpler solution is to cache the
-register and initialize the cached value to the desired hardware
-defaults.
+Based on the original (and large) patches by Vladimir Barinov.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c  | 16 ++++++++--------
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h  |  5 +++++
- drivers/gpu/drm/rcar-du/rcar_du_group.c |  7 ++++---
- 3 files changed, 17 insertions(+), 11 deletions(-)
+This  patch is against the 'renesas-devel-20180924-v4.19-rc5' branch of
+Simon Horman's 'renesas.git' repo.
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 2f8776c1ec8f..f827fccf6416 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -57,13 +57,12 @@ static void rcar_du_crtc_set(struct rcar_du_crtc *rcrtc, u32 reg, u32 set)
- 		      rcar_du_read(rcdu, rcrtc->mmio_offset + reg) | set);
- }
- 
--static void rcar_du_crtc_clr_set(struct rcar_du_crtc *rcrtc, u32 reg,
--				 u32 clr, u32 set)
-+void rcar_du_crtc_dsysr_clr_set(struct rcar_du_crtc *rcrtc, u32 clr, u32 set)
- {
- 	struct rcar_du_device *rcdu = rcrtc->group->dev;
--	u32 value = rcar_du_read(rcdu, rcrtc->mmio_offset + reg);
- 
--	rcar_du_write(rcdu, rcrtc->mmio_offset + reg, (value & ~clr) | set);
-+	rcrtc->dsysr = (rcrtc->dsysr & ~clr) | set;
-+	rcar_du_write(rcdu, rcrtc->mmio_offset + DSYSR, rcrtc->dsysr);
- }
- 
- /* -----------------------------------------------------------------------------
-@@ -576,9 +575,9 @@ static void rcar_du_crtc_start(struct rcar_du_crtc *rcrtc)
- 	 * actively driven).
- 	 */
- 	interlaced = rcrtc->crtc.mode.flags & DRM_MODE_FLAG_INTERLACE;
--	rcar_du_crtc_clr_set(rcrtc, DSYSR, DSYSR_TVM_MASK | DSYSR_SCM_MASK,
--			     (interlaced ? DSYSR_SCM_INT_VIDEO : 0) |
--			     DSYSR_TVM_MASTER);
-+	rcar_du_crtc_dsysr_clr_set(rcrtc, DSYSR_TVM_MASK | DSYSR_SCM_MASK,
-+				   (interlaced ? DSYSR_SCM_INT_VIDEO : 0) |
-+				   DSYSR_TVM_MASTER);
- 
- 	rcar_du_group_start_stop(rcrtc->group, true);
- }
-@@ -645,7 +644,7 @@ static void rcar_du_crtc_stop(struct rcar_du_crtc *rcrtc)
- 	 * Select switch sync mode. This stops display operation and configures
- 	 * the HSYNC and VSYNC signals as inputs.
- 	 */
--	rcar_du_crtc_clr_set(rcrtc, DSYSR, DSYSR_TVM_MASK, DSYSR_TVM_SWITCH);
-+	rcar_du_crtc_dsysr_clr_set(rcrtc, DSYSR_TVM_MASK, DSYSR_TVM_SWITCH);
- 
- 	rcar_du_group_start_stop(rcrtc->group, false);
- }
-@@ -1121,6 +1120,7 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int swindex,
- 	rcrtc->group = rgrp;
- 	rcrtc->mmio_offset = mmio_offsets[hwindex];
- 	rcrtc->index = hwindex;
-+	rcrtc->dsysr = (rcrtc->index % 2 ? 0 : DSYSR_DRES) | DSYSR_TVM_TVSYNC;
- 
- 	if (rcar_du_has(rcdu, RCAR_DU_FEATURE_VSP1_SOURCE))
- 		primary = &rcrtc->vsp->planes[rcrtc->vsp_pipe].plane;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-index 4990bbe9ba26..59ac6e7d22c9 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-@@ -30,6 +30,7 @@ struct rcar_du_vsp;
-  * @mmio_offset: offset of the CRTC registers in the DU MMIO block
-  * @index: CRTC software and hardware index
-  * @initialized: whether the CRTC has been initialized and clocks enabled
-+ * @dsysr: cached value of the DSYSR register
-  * @vblank_enable: whether vblank events are enabled on this CRTC
-  * @event: event to post when the pending page flip completes
-  * @flip_wait: wait queue used to signal page flip completion
-@@ -50,6 +51,8 @@ struct rcar_du_crtc {
- 	unsigned int index;
- 	bool initialized;
- 
-+	u32 dsysr;
-+
- 	bool vblank_enable;
- 	struct drm_pending_vblank_event *event;
- 	wait_queue_head_t flip_wait;
-@@ -103,4 +106,6 @@ void rcar_du_crtc_route_output(struct drm_crtc *crtc,
- 			       enum rcar_du_output output);
- void rcar_du_crtc_finish_page_flip(struct rcar_du_crtc *rcrtc);
- 
-+void rcar_du_crtc_dsysr_clr_set(struct rcar_du_crtc *rcrtc, u32 clr, u32 set);
-+
- #endif /* __RCAR_DU_CRTC_H__ */
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-index f38703e7a10d..d85f0a1c1581 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-@@ -202,9 +202,10 @@ void rcar_du_group_put(struct rcar_du_group *rgrp)
- 
- static void __rcar_du_group_start_stop(struct rcar_du_group *rgrp, bool start)
- {
--	rcar_du_group_write(rgrp, DSYSR,
--		(rcar_du_group_read(rgrp, DSYSR) & ~(DSYSR_DRES | DSYSR_DEN)) |
--		(start ? DSYSR_DEN : DSYSR_DRES));
-+	struct rcar_du_crtc *rcrtc = &rgrp->dev->crtcs[rgrp->index * 2];
-+
-+	rcar_du_crtc_dsysr_clr_set(rcrtc, DSYSR_DRES | DSYSR_DEN,
-+				   start ? DSYSR_DEN : DSYSR_DRES);
- }
- 
- void rcar_du_group_start_stop(struct rcar_du_group *rgrp, bool start)
--- 
-Regards,
+Changes in version 2:
+- fixed up the "compatible" prop in the R8A77970 TMU3/4 node;
+- removed the 4th interrupt from the R8A77970 TMU4 node and the R8A77980 TMU1
+  node.
 
-Laurent Pinchart
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi |   65 ++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi |   65 ++++++++++++++++++++++++++++++
+ 2 files changed, 130 insertions(+)
+
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -316,6 +316,71 @@
+ 			resets = <&cpg 407>;
+ 		};
+ 
++		tmu0: timer@e61e0000 {
++			compatible = "renesas,tmu-r8a77970", "renesas,tmu";
++			reg = <0 0xe61e0000 0 0x30>;
++			interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 125>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 125>;
++			status = "disabled";
++		};
++
++		tmu1: timer@e6fc0000 {
++			compatible = "renesas,tmu-r8a77970", "renesas,tmu";
++			reg = <0 0xe6fc0000 0 0x30>;
++			interrupts = <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 124>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 124>;
++			status = "disabled";
++		};
++
++		tmu2: timer@e6fd0000 {
++			compatible = "renesas,tmu-r8a77970", "renesas,tmu";
++			reg = <0 0xe6fd0000 0 0x30>;
++			interrupts = <GIC_SPI 303 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 123>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 123>;
++			status = "disabled";
++		};
++
++		tmu3: timer@e6fe0000 {
++			compatible = "renesas,tmu-r8a77970", "renesas,tmu";
++			reg = <0 0xe6fe0000 0 0x30>;
++			interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 122>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 122>;
++			status = "disabled";
++		};
++
++		tmu4: timer@ffc00000 {
++			compatible = "renesas,tmu-r8a77970", "renesas,tmu";
++			reg = <0 0xffc00000 0 0x30>;
++			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 121>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 121>;
++			status = "disabled";
++		};
++
+ 		i2c0: i2c@e6500000 {
+ 			compatible = "renesas,i2c-r8a77970",
+ 				     "renesas,rcar-gen3-i2c";
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -346,6 +346,71 @@
+ 			resets = <&cpg 407>;
+ 		};
+ 
++		tmu0: timer@e61e0000 {
++			compatible = "renesas,tmu-r8a77980", "renesas,tmu";
++			reg = <0 0xe61e0000 0 0x30>;
++			interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 125>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 125>;
++			status = "disabled";
++		};
++
++		tmu1: timer@e6fc0000 {
++			compatible = "renesas,tmu-r8a77980", "renesas,tmu";
++			reg = <0 0xe6fc0000 0 0x30>;
++			interrupts = <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 124>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 124>;
++			status = "disabled";
++		};
++
++		tmu2: timer@e6fd0000 {
++			compatible = "renesas,tmu-r8a77980", "renesas,tmu";
++			reg = <0 0xe6fd0000 0 0x30>;
++			interrupts = <GIC_SPI 303 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 123>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 123>;
++			status = "disabled";
++		};
++
++		tmu3: timer@e6fe0000 {
++			compatible = "renesas,tmu-r8a77980", "renesas,tmu";
++			reg = <0 0xe6fe0000 0 0x30>;
++			interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 122>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 122>;
++			status = "disabled";
++		};
++
++		tmu4: timer@ffc00000 {
++			compatible = "renesas,tmu-r8a77980", "renesas,tmu";
++			reg = <0 0xffc00000 0 0x30>;
++			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 121>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 121>;
++			status = "disabled";
++		};
++
+ 		i2c0: i2c@e6500000 {
+ 			compatible = "renesas,i2c-r8a77980",
+ 				     "renesas,rcar-gen3-i2c";
