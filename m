@@ -1,63 +1,203 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbeIMOTW (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:35722 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727023AbeIYWlp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:19:22 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
+        Tue, 25 Sep 2018 18:41:45 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 44/58] arm64: dts: renesas: v3hsk: Move lvds0 node
-Date: Thu, 13 Sep 2018 11:09:39 +0200
-Message-Id: <47d7f6822864a8cf2f09d27cb1321bd36ab6d9e4.1536828567.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
-References: <cover.1536828567.git.horms+renesas@verge.net.au>
+Cc: Simon Horman <horms@verge.net.au>
+Subject: [PATCH v3 3/4] arm64: dts: renesas: r8a77990: ebisu: Enable VGA and HDMI outputs
+Date: Tue, 25 Sep 2018 19:33:36 +0300
+Message-Id: <20180925163337.31212-4-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180925163337.31212-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180925163337.31212-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Add the LVDS decoder, HDMI encoder, VGA encoder and HDMI and VGA
+connectors, and wire up the display-related nodes with clocks, pinmux
+and regulators.
 
-To preserve alphabetical sort order.
+The LVDS0 and LVDS1 encoders can use the DU_DOTCLKIN0, DU_DOTCLKIN1 and
+EXTAL externals clocks. Two of them are provided to the SoC on the Ebisu
+board, hook them up in DT.
 
-Fixes: 4edac426aff11a37 ("arm64: dts: renesas: condor/v3hsk: add DU/LVDS/HDMI support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 162 +++++++++++++++++++++++++
+ 1 file changed, 162 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts b/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-index 44ab7344f8aa..dd14a41b32cd 100644
---- a/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-@@ -119,18 +119,6 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+index fd60079169f6..f342dd85b152 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+@@ -51,6 +51,88 @@
+ 			};
+ 		};
+ 	};
++
++	hdmi-out {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_out: endpoint {
++				remote-endpoint = <&adv7511_out>;
++			};
++		};
++	};
++
++	lvds-decoder {
++		compatible = "thine,thc63lvd1024";
++		vcc-supply = <&reg_3p3v>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				thc63lvd1024_in: endpoint {
++					remote-endpoint = <&lvds0_out>;
++				};
++			};
++
++			port@2 {
++				reg = <2>;
++				thc63lvd1024_out: endpoint {
++					remote-endpoint = <&adv7511_in>;
++				};
++			};
++		};
++	};
++
++	vga {
++		compatible = "vga-connector";
++
++		port {
++			vga_in: endpoint {
++				remote-endpoint = <&adv7123_out>;
++			};
++		};
++	};
++
++	vga-encoder {
++		compatible = "adi,adv7123";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7123_in: endpoint {
++					remote-endpoint = <&du_out_rgb>;
++				};
++			};
++			port@1 {
++				reg = <1>;
++				adv7123_out: endpoint {
++					remote-endpoint = <&vga_in>;
++				};
++			};
++		};
++	};
++
++	reg_3p3v: regulator1 {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	x13_clk: x13 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <74250000>;
++	};
+ };
+ 
+ &avb {
+@@ -86,6 +168,25 @@
  	};
  };
  
--&lvds0 {
--	status = "okay";
--
--	ports {
--		port@1 {
--			lvds0_out: endpoint {
--				remote-endpoint = <&thc63lvd1024_in>;
--			};
--		};
--	};
--};
--
++&du {
++	pinctrl-0 = <&du_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	clocks = <&cpg CPG_MOD 724>,
++		 <&cpg CPG_MOD 723>,
++		 <&x13_clk>;
++	clock-names = "du.0", "du.1", "dclkin.0";
++
++	ports {
++		port@0 {
++			endpoint {
++				remote-endpoint = <&adv7123_in>;
++			};
++		};
++	};
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -97,6 +198,38 @@
  &i2c0 {
- 	pinctrl-0 = <&i2c0_pins>;
- 	pinctrl-names = "default";
-@@ -177,6 +165,18 @@
+ 	status = "okay";
+ 
++	hdmi-encoder@39 {
++		compatible = "adi,adv7511w";
++		reg = <0x39>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <1 IRQ_TYPE_LEVEL_LOW>;
++
++		adi,input-depth = <8>;
++		adi,input-colorspace = "rgb";
++		adi,input-clock = "1x";
++		adi,input-style = <1>;
++		adi,input-justification = "evenly";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7511_in: endpoint {
++					remote-endpoint = <&thc63lvd1024_out>;
++				};
++			};
++
++			port@1 {
++				reg = <1>;
++				adv7511_out: endpoint {
++					remote-endpoint = <&hdmi_con_out>;
++				};
++			};
++		};
++	};
++
+ 	video-receiver@70 {
+ 		compatible = "adi,adv7482";
+ 		reg = <0x70>;
+@@ -137,6 +270,30 @@
  	};
  };
  
 +&lvds0 {
 +	status = "okay";
++
++	clocks = <&cpg CPG_MOD 727>,
++		 <&x13_clk>,
++		 <&extal_clk>;
++	clock-names = "fck", "dclkin.0", "extal";
 +
 +	ports {
 +		port@1 {
@@ -68,8 +208,29 @@ index 44ab7344f8aa..dd14a41b32cd 100644
 +	};
 +};
 +
- &pfc {
- 	gether_pins: gether {
- 		groups = "gether_mdio_a", "gether_rgmii",
++&lvds1 {
++	clocks = <&cpg CPG_MOD 727>,
++		 <&x13_clk>,
++		 <&extal_clk>;
++	clock-names = "fck", "dclkin.0", "extal";
++};
++
+ &ohci0 {
+ 	status = "okay";
+ };
+@@ -149,6 +306,11 @@
+ 		};
+ 	};
+ 
++	du_pins: du {
++		groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
++		function = "du";
++	};
++
+ 	pwm3_pins: pwm3 {
+ 		groups = "pwm3_b";
+ 		function = "pwm3";
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
