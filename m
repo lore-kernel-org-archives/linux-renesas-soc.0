@@ -1,126 +1,166 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:45419 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726046AbeIEUAv (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:35720 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726470AbeIYWlq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Sep 2018 16:00:51 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, geert@linux-m68k.org,
-        horms@verge.net.au
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        kieran.bingham+renesas@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se, damm+renesas@opensource.se,
-        ulrich.hecht+renesas@gmail.com, linux-renesas-soc@vger.kernel.org,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Subject: [PATCH v2 6/8] arm64: dts: r8a77990: Add VIN and CSI-2 device nodes
-Date: Wed,  5 Sep 2018 17:29:43 +0200
-Message-Id: <1536161385-25562-7-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1536161385-25562-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1536161385-25562-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 25 Sep 2018 18:41:46 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Simon Horman <horms@verge.net.au>
+Subject: [PATCH v3 4/4] arm64: dts: renesas: r8a77995: draak: Enable HDMI display output
+Date: Tue, 25 Sep 2018 19:33:37 +0300
+Message-Id: <20180925163337.31212-5-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180925163337.31212-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180925163337.31212-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+From: Ulrich Hecht <uli+renesas@fpond.eu>
 
-Add device nodes for VIN4, VIN5 and CSI40 to R-Car E3 R8A77990 device tree.
+Adds LVDS decoder, HDMI encoder and connector for the Draak board.
 
-Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+The LVDS0 and LVDS1 encoders can use the DU_DOTCLKIN0, DU_DOTCLKIN1 and
+EXTAL externals clocks. Two of them are provided to the SoC on the Draak
+board, hook them up in DT.
+
+Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 79 +++++++++++++++++++++++++++++++
- 1 file changed, 79 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 98 +++++++++++++++++++++++++-
+ 1 file changed, 97 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index ae89260..0ae7bbe 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -337,6 +337,85 @@
- 			status = "disabled";
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+index e39b73005381..2405eaad0296 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+@@ -2,7 +2,7 @@
+ /*
+  * Device Tree Source for the Draak board
+  *
+- * Copyright (C) 2016 Renesas Electronics Corp.
++ * Copyright (C) 2016-2018 Renesas Electronics Corp.
+  * Copyright (C) 2017 Glider bvba
+  */
  
-+		csi40: csi2@feaa0000 {
-+			compatible = "renesas,r8a77990-csi2", "renesas,rcar-gen3-csi2";
-+			reg = <0 0xfeaa0000 0 0x10000>;
-+			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 716>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 716>;
-+			status = "disabled";
+@@ -45,6 +45,41 @@
+ 		};
+ 	};
+ 
++	hdmi-out {
++		compatible = "hdmi-connector";
++		type = "a";
 +
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
++		port {
++			hdmi_con_out: endpoint {
++				remote-endpoint = <&adv7511_out>;
++			};
++		};
++	};
 +
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
++	lvds-decoder {
++		compatible = "thine,thc63lvd1024";
++		vcc-supply = <&reg_3p3v>;
 +
-+					reg = <1>;
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
 +
-+					csi40vin4: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&vin4csi40>;
-+					};
-+					csi40vin5: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&vin5csi40>;
-+					};
++			port@0 {
++				reg = <0>;
++				thc63lvd1024_in: endpoint {
++					remote-endpoint = <&lvds0_out>;
++				};
++			};
++
++			port@2 {
++				reg = <2>;
++				thc63lvd1024_out: endpoint {
++					remote-endpoint = <&adv7511_in>;
 +				};
 +			};
 +		};
++	};
 +
-+		vin4: video@e6ef4000 {
-+			compatible = "renesas,vin-r8a77990";
-+			reg = <0 0xe6ef4000 0 0x1000>;
-+			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 807>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 807>;
-+			renesas,id = <4>;
-+			status = "disabled";
+ 	memory@48000000 {
+ 		device_type = "memory";
+ 		/* first 128MB is reserved for secure area. */
+@@ -190,6 +225,43 @@
+ 
+ 	};
+ 
++	hdmi-encoder@39 {
++		compatible = "adi,adv7511w";
++		reg = <0x39>, <0x3f>, <0x38>, <0x3c>;
++		reg-names = "main", "edid", "packet", "cec";
++		interrupt-parent = <&gpio1>;
++		interrupts = <28 IRQ_TYPE_LEVEL_LOW>;
 +
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
++		/* Depends on LVDS */
++		max-clock = <135000000>;
++		min-vrefresh = <50>;
 +
-+				port@1 {
-+					reg = <1>;
++		adi,input-depth = <8>;
++		adi,input-colorspace = "rgb";
++		adi,input-clock = "1x";
++		adi,input-style = <1>;
++		adi,input-justification = "evenly";
 +
-+					vin4csi40: endpoint {
-+						remote-endpoint= <&csi40vin4>;
-+					};
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7511_in: endpoint {
++					remote-endpoint = <&thc63lvd1024_out>;
++				};
++			};
++
++			port@1 {
++				reg = <1>;
++				adv7511_out: endpoint {
++					remote-endpoint = <&hdmi_con_out>;
 +				};
 +			};
 +		};
++	};
 +
-+		vin5: video@e6ef5000 {
-+			compatible = "renesas,vin-r8a77990";
-+			reg = <0 0xe6ef5000 0 0x1000>;
-+			interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 806>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 806>;
-+			renesas,id = <5>;
-+			status = "disabled";
+ 	hdmi-decoder@4c {
+ 		compatible = "adi,adv7612";
+ 		reg = <0x4c>;
+@@ -240,6 +312,30 @@
+ 	status = "okay";
+ };
+ 
++&lvds0 {
++	status = "okay";
 +
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
++	clocks = <&cpg CPG_MOD 727>,
++		 <&x12_clk>,
++		 <&extal_clk>;
++	clock-names = "fck", "dclkin.0", "extal";
 +
-+				port@1 {
-+					reg = <1>;
-+
-+					vin5csi40: endpoint {
-+						remote-endpoint= <&csi40vin5>;
-+					};
-+				};
++	ports {
++		port@1 {
++			lvds0_out: endpoint {
++				remote-endpoint = <&thc63lvd1024_in>;
 +			};
 +		};
++	};
++};
 +
- 		scif2: serial@e6e88000 {
- 			compatible = "renesas,scif-r8a77990",
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
++&lvds1 {
++	clocks = <&cpg CPG_MOD 727>,
++		 <&x12_clk>,
++		 <&extal_clk>;
++	clock-names = "fck", "dclkin.0", "extal";
++};
++
+ &ohci0 {
+ 	status = "okay";
+ };
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
