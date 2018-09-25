@@ -1,29 +1,33 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:29885 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725782AbeICFjI (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35781 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727588AbeIYNh1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Sep 2018 01:39:08 -0400
-From: Nguyen An Hoan <na-hoan@jinso.co.jp>
-To: broonie@kernel.org, linux-renesas-soc@vger.kernel.org,
-        geert+renesas@glider.be
-Cc: magnus.damm@gmail.com, kuninori.morimoto.gx@renesas.com,
-        yoshihiro.shimoda.uh@renesas.com, h-inayoshi@jinso.co.jp,
-        nv-dung@jinso.co.jp, cv-dong@jinso.co.jp, na-hoan@jinso.co.jp
-Subject: Re: [1/2] pinctrl: sh-pfc: r8a77965: add Audio clock pin support
-Date: Mon,  3 Sep 2018 10:21:15 +0900
-Message-Id: <1535937675-7836-1-git-send-email-na-hoan@jinso.co.jp>
-In-Reply-To: <1535431039-2749-2-git-send-email-na-hoan@jinso.co.jp>
-References: <1535431039-2749-2-git-send-email-na-hoan@jinso.co.jp>
+        Tue, 25 Sep 2018 09:37:27 -0400
+Date: Tue, 25 Sep 2018 09:31:10 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 6/8] phy: renesas: rcar-gen3-usb2: change a condition
+ "dr_mode"
+Message-ID: <20180925073109.ovgy7sky5y2t43xi@verge.net.au>
+References: <1537530804-19399-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1537530804-19399-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1537530804-19399-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
-Geert-san,
-
-> Thanks for the update!
+On Fri, Sep 21, 2018 at 08:53:22PM +0900, Yoshihiro Shimoda wrote:
+> This patch changes a condition about dr_mode. If a device node has
+> any dr_mode ("host", "peripheral" or "otg"), this driver allows to
+> set "is_otg_channel" to true. Also, this patch keeps the dr_mode
+> value for future use.
 > 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> i.e. will queue in sh-pfc-for-v4.20.
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Thank you very much for your helps!
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
