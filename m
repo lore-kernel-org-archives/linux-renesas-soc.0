@@ -1,236 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:35722 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727023AbeIYWlp (ORCPT
+Received: from mail.bootlin.com ([62.4.15.54]:36614 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726201AbeIYQFX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Sep 2018 18:41:45 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>
-Subject: [PATCH v3 3/4] arm64: dts: renesas: r8a77990: ebisu: Enable VGA and HDMI outputs
-Date: Tue, 25 Sep 2018 19:33:36 +0300
-Message-Id: <20180925163337.31212-4-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180925163337.31212-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180925163337.31212-1-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 25 Sep 2018 12:05:23 -0400
+Date: Tue, 25 Sep 2018 11:58:23 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mark Brown <broonie@kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>, linux-spi@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] spi: spi-mem: Fix inverted logic in op sanity check
+Message-ID: <20180925115823.3dd07cda@bbrezillon>
+In-Reply-To: <20180925094655.11438-1-geert+renesas@glider.be>
+References: <20180925094655.11438-1-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the LVDS decoder, HDMI encoder, VGA encoder and HDMI and VGA
-connectors, and wire up the display-related nodes with clocks, pinmux
-and regulators.
+On Tue, 25 Sep 2018 11:46:55 +0200
+Geert Uytterhoeven <geert+renesas@glider.be> wrote:
 
-The LVDS0 and LVDS1 encoders can use the DU_DOTCLKIN0, DU_DOTCLKIN1 and
-EXTAL externals clocks. Two of them are provided to the SoC on the Ebisu
-board, hook them up in DT.
+> On r8a7791/koelsch:
+> 
+>     m25p80 spi0.0: error -22 reading 9f
+>     m25p80: probe of spi0.0 failed with error -22
+> 
+> Apparently the logic in spi_mem_check_op() is wrong, rejecting the
+> spi-mem operation if any buswidth is valid, instead of invalid.
+> 
+> Fixes: 380583227c0c7f52 ("spi: spi-mem: Add extra sanity checks on the op param")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 162 +++++++++++++++++++++++++
- 1 file changed, 162 insertions(+)
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-index fd60079169f6..f342dd85b152 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-@@ -51,6 +51,88 @@
- 			};
- 		};
- 	};
-+
-+	hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_out: endpoint {
-+				remote-endpoint = <&adv7511_out>;
-+			};
-+		};
-+	};
-+
-+	lvds-decoder {
-+		compatible = "thine,thc63lvd1024";
-+		vcc-supply = <&reg_3p3v>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				thc63lvd1024_in: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+				thc63lvd1024_out: endpoint {
-+					remote-endpoint = <&adv7511_in>;
-+				};
-+			};
-+		};
-+	};
-+
-+	vga {
-+		compatible = "vga-connector";
-+
-+		port {
-+			vga_in: endpoint {
-+				remote-endpoint = <&adv7123_out>;
-+			};
-+		};
-+	};
-+
-+	vga-encoder {
-+		compatible = "adi,adv7123";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7123_in: endpoint {
-+					remote-endpoint = <&du_out_rgb>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+				adv7123_out: endpoint {
-+					remote-endpoint = <&vga_in>;
-+				};
-+			};
-+		};
-+	};
-+
-+	reg_3p3v: regulator1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	x13_clk: x13 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <74250000>;
-+	};
- };
- 
- &avb {
-@@ -86,6 +168,25 @@
- 	};
- };
- 
-+&du {
-+	pinctrl-0 = <&du_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+
-+	clocks = <&cpg CPG_MOD 724>,
-+		 <&cpg CPG_MOD 723>,
-+		 <&x13_clk>;
-+	clock-names = "du.0", "du.1", "dclkin.0";
-+
-+	ports {
-+		port@0 {
-+			endpoint {
-+				remote-endpoint = <&adv7123_in>;
-+			};
-+		};
-+	};
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -97,6 +198,38 @@
- &i2c0 {
- 	status = "okay";
- 
-+	hdmi-encoder@39 {
-+		compatible = "adi,adv7511w";
-+		reg = <0x39>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <1 IRQ_TYPE_LEVEL_LOW>;
-+
-+		adi,input-depth = <8>;
-+		adi,input-colorspace = "rgb";
-+		adi,input-clock = "1x";
-+		adi,input-style = <1>;
-+		adi,input-justification = "evenly";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7511_in: endpoint {
-+					remote-endpoint = <&thc63lvd1024_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				adv7511_out: endpoint {
-+					remote-endpoint = <&hdmi_con_out>;
-+				};
-+			};
-+		};
-+	};
-+
- 	video-receiver@70 {
- 		compatible = "adi,adv7482";
- 		reg = <0x70>;
-@@ -137,6 +270,30 @@
- 	};
- };
- 
-+&lvds0 {
-+	status = "okay";
-+
-+	clocks = <&cpg CPG_MOD 727>,
-+		 <&x13_clk>,
-+		 <&extal_clk>;
-+	clock-names = "fck", "dclkin.0", "extal";
-+
-+	ports {
-+		port@1 {
-+			lvds0_out: endpoint {
-+				remote-endpoint = <&thc63lvd1024_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&lvds1 {
-+	clocks = <&cpg CPG_MOD 727>,
-+		 <&x13_clk>,
-+		 <&extal_clk>;
-+	clock-names = "fck", "dclkin.0", "extal";
-+};
-+
- &ohci0 {
- 	status = "okay";
- };
-@@ -149,6 +306,11 @@
- 		};
- 	};
- 
-+	du_pins: du {
-+		groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
-+		function = "du";
-+	};
-+
- 	pwm3_pins: pwm3 {
- 		groups = "pwm3_b";
- 		function = "pwm3";
--- 
-Regards,
+Sorry for the mess :-/, and thanks for reporting/fixing it.
 
-Laurent Pinchart
+> ---
+>  drivers/spi/spi-mem.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
+> index cc3d425aae56c634..62a7b80801d22098 100644
+> --- a/drivers/spi/spi-mem.c
+> +++ b/drivers/spi/spi-mem.c
+> @@ -169,10 +169,10 @@ static int spi_mem_check_op(const struct spi_mem_op *op)
+>  	    (op->data.nbytes && !op->data.buswidth))
+>  		return -EINVAL;
+>  
+> -	if (spi_mem_buswidth_is_valid(op->cmd.buswidth) ||
+> -	    spi_mem_buswidth_is_valid(op->addr.buswidth) ||
+> -	    spi_mem_buswidth_is_valid(op->dummy.buswidth) ||
+> -	    spi_mem_buswidth_is_valid(op->data.buswidth))
+> +	if (!spi_mem_buswidth_is_valid(op->cmd.buswidth) ||
+> +	    !spi_mem_buswidth_is_valid(op->addr.buswidth) ||
+> +	    !spi_mem_buswidth_is_valid(op->dummy.buswidth) ||
+> +	    !spi_mem_buswidth_is_valid(op->data.buswidth))
+>  		return -EINVAL;
+>  
+>  	return 0;
