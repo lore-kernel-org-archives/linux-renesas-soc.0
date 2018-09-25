@@ -1,48 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:46254 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727995AbeINV0e (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35834 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727589AbeIYNjX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Sep 2018 17:26:34 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ARM: dma-mapping: update comment about handling dma_ops when detaching from IOMMU
-Date: Fri, 14 Sep 2018 18:11:05 +0200
-Message-Id: <20180914161105.1438-1-wsa+renesas@sang-engineering.com>
+        Tue, 25 Sep 2018 09:39:23 -0400
+Date: Tue, 25 Sep 2018 09:33:06 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/5] usb: renesas_usbhs: use otg mode and add support for
+ R-Car E3
+Message-ID: <20180925073305.ohj7vlnto6hiyvvn@verge.net.au>
+References: <1537532792-20376-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1537532792-20376-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Update the comment because we don't set the pointer to NULL anymore.
-Also use the correct pointer name 'dma_ops' instead of 'dma_map_ops'.
+On Fri, Sep 21, 2018 at 09:26:27PM +0900, Yoshihiro Shimoda wrote:
+> This patch set is based on the latest Greg's usb.git / usb-testing branch
+> (the commit id is ae8a2ca8a2215c7e31e6d874f7303801bb15fbbc)
+> 
+> The previous code set the mode as peripheral mode by the UGCTRL2 register
+> for R-Car D3. But, this SoC can select OTG mode in fact. So, at first,
+> I'd like to revert related patches I submitted in patch 1 and 2.
+> Then, in patch 3, it sets the mode as "OTG" and in patch 4 and 5, it
+> supports for R-Car E3.
+> 
+> To use this controller for R-Car D3 and E3, we need the following
+> patch set. Otherwize, the mode will not be changed to peripheral mode
+> by the phy's COMMCTRL register:
+>  https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=21629
 
-Fixes: 1874619a7df4 ("ARM: dma-mapping: Set proper DMA ops in arm_iommu_detach_device()")
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-
-Changes from RFC:
-	* split out from bigger series and sent seperately to alkml
-	* added Geert's tag (thanks!)
-
- arch/arm/mm/dma-mapping.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index 66566472c153..e3b04786838f 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -2287,7 +2287,7 @@ EXPORT_SYMBOL_GPL(arm_iommu_attach_device);
-  * @dev: valid struct device pointer
-  *
-  * Detaches the provided device from a previously attached map.
-- * This voids the dma operations (dma_map_ops pointer)
-+ * This overwrites the dma_ops pointer with appropriate non-IOMMU ops.
-  */
- void arm_iommu_detach_device(struct device *dev)
- {
--- 
-2.18.0
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
