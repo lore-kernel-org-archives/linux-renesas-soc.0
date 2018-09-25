@@ -1,166 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:35720 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726470AbeIYWlq (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35605 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727588AbeIYNZp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Sep 2018 18:41:46 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>
-Subject: [PATCH v3 4/4] arm64: dts: renesas: r8a77995: draak: Enable HDMI display output
-Date: Tue, 25 Sep 2018 19:33:37 +0300
-Message-Id: <20180925163337.31212-5-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180925163337.31212-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180925163337.31212-1-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 25 Sep 2018 09:25:45 -0400
+Date: Tue, 25 Sep 2018 09:19:31 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: renesas: revise properties for R-Car Gen3
+ SoCs' usb 2.0
+Message-ID: <20180925071930.yvfnxfnc2da4cnqx@verge.net.au>
+References: <1537516457-20421-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1537516457-20421-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ulrich Hecht <uli+renesas@fpond.eu>
+On Fri, Sep 21, 2018 at 04:54:17PM +0900, Yoshihiro Shimoda wrote:
+> R-Car Gen3 SoCs need to enable/deassert clocks/resets of both usb 2.0
+> host (included phy) and peripheral. Otherwise, other side device
+> cannot work correctly. So, this patch revises properties of clocks
+> and resets. After that, each device driver can enable/deassert
+> clocks/resets by its self.
+> 
+> Notes:
+>  - To work the renesas_usbhs driver correctly when host side drivers
+>    are disabled and the renesas_usbhs driver doesn't have multiple
+>    clock management, this patch doesn't change the order of the clocks
+>    property in each hsusb node.
+>  - This patch doesn't have any side-effects even if the renesas_usbhs
+>    driver doesn't have reset_control and multiple clock management.
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Adds LVDS decoder, HDMI encoder and connector for the Draak board.
+Thanks Shimoda-san,
 
-The LVDS0 and LVDS1 encoders can use the DU_DOTCLKIN0, DU_DOTCLKIN1 and
-EXTAL externals clocks. Two of them are provided to the SoC on the Draak
-board, hook them up in DT.
-
-Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 98 +++++++++++++++++++++++++-
- 1 file changed, 97 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index e39b73005381..2405eaad0296 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -2,7 +2,7 @@
- /*
-  * Device Tree Source for the Draak board
-  *
-- * Copyright (C) 2016 Renesas Electronics Corp.
-+ * Copyright (C) 2016-2018 Renesas Electronics Corp.
-  * Copyright (C) 2017 Glider bvba
-  */
- 
-@@ -45,6 +45,41 @@
- 		};
- 	};
- 
-+	hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_out: endpoint {
-+				remote-endpoint = <&adv7511_out>;
-+			};
-+		};
-+	};
-+
-+	lvds-decoder {
-+		compatible = "thine,thc63lvd1024";
-+		vcc-supply = <&reg_3p3v>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				thc63lvd1024_in: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+				thc63lvd1024_out: endpoint {
-+					remote-endpoint = <&adv7511_in>;
-+				};
-+			};
-+		};
-+	};
-+
- 	memory@48000000 {
- 		device_type = "memory";
- 		/* first 128MB is reserved for secure area. */
-@@ -190,6 +225,43 @@
- 
- 	};
- 
-+	hdmi-encoder@39 {
-+		compatible = "adi,adv7511w";
-+		reg = <0x39>, <0x3f>, <0x38>, <0x3c>;
-+		reg-names = "main", "edid", "packet", "cec";
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <28 IRQ_TYPE_LEVEL_LOW>;
-+
-+		/* Depends on LVDS */
-+		max-clock = <135000000>;
-+		min-vrefresh = <50>;
-+
-+		adi,input-depth = <8>;
-+		adi,input-colorspace = "rgb";
-+		adi,input-clock = "1x";
-+		adi,input-style = <1>;
-+		adi,input-justification = "evenly";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7511_in: endpoint {
-+					remote-endpoint = <&thc63lvd1024_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				adv7511_out: endpoint {
-+					remote-endpoint = <&hdmi_con_out>;
-+				};
-+			};
-+		};
-+	};
-+
- 	hdmi-decoder@4c {
- 		compatible = "adi,adv7612";
- 		reg = <0x4c>;
-@@ -240,6 +312,30 @@
- 	status = "okay";
- };
- 
-+&lvds0 {
-+	status = "okay";
-+
-+	clocks = <&cpg CPG_MOD 727>,
-+		 <&x12_clk>,
-+		 <&extal_clk>;
-+	clock-names = "fck", "dclkin.0", "extal";
-+
-+	ports {
-+		port@1 {
-+			lvds0_out: endpoint {
-+				remote-endpoint = <&thc63lvd1024_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&lvds1 {
-+	clocks = <&cpg CPG_MOD 727>,
-+		 <&x12_clk>,
-+		 <&extal_clk>;
-+	clock-names = "fck", "dclkin.0", "extal";
-+};
-+
- &ohci0 {
- 	status = "okay";
- };
--- 
-Regards,
-
-Laurent Pinchart
+applied for v4.20.
