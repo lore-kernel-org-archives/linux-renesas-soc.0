@@ -1,46 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:3111 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726722AbeIKPSX (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35648 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727610AbeIYNac (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Sep 2018 11:18:23 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Tue, 25 Sep 2018 09:30:32 -0400
+Date: Tue, 25 Sep 2018 09:24:16 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 04/10] dt-bindings: reset: rcar-rst: Document r8a7744 reset module
-Date: Tue, 11 Sep 2018 11:12:45 +0100
-Message-Id: <1536660771-32278-5-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1536660771-32278-1-git-send-email-biju.das@bp.renesas.com>
-References: <1536660771-32278-1-git-send-email-biju.das@bp.renesas.com>
+Subject: Re: [PATCH 5/8] phy: renesas: rcar-gen3-usb2: unify OBINTEN handling
+Message-ID: <20180925072415.apfl6s5e7l5rwmxa@verge.net.au>
+References: <1537530804-19399-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1537530804-19399-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1537530804-19399-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document bindings for the RZ/G1N (R8A7744) reset module.
+On Fri, Sep 21, 2018 at 08:53:21PM +0900, Yoshihiro Shimoda wrote:
+> This patch unifies the OBINTEN handling to clean-up the code.
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- Documentation/devicetree/bindings/reset/renesas,rst.txt | 1 +
- 1 file changed, 1 insertion(+)
+The nit below notwithstanding.
 
-diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-index e4fe0ab..d0edd4677 100644
---- a/Documentation/devicetree/bindings/reset/renesas,rst.txt
-+++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-@@ -16,6 +16,7 @@ Required properties:
- 		  - "renesas,<soctype>-rst" for R-Car Gen2 and Gen3, and RZ/G
- 		Examples with soctypes are:
- 		  - "renesas,r8a7743-rst" (RZ/G1M)
-+		  - "renesas,r8a7744-rst" (RZ/G1N)
- 		  - "renesas,r8a7745-rst" (RZ/G1E)
- 		  - "renesas,r8a77470-rst" (RZ/G1C)
- 		  - "renesas,r8a774a1-rst" (RZ/G2M)
--- 
-2.7.4
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+
+> ---
+>  drivers/phy/renesas/phy-rcar-gen3-usb2.c | 23 +++++++++++++++--------
+>  1 file changed, 15 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> index 856056e..e7eaed9 100644
+> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> @@ -142,6 +142,18 @@ static void rcar_gen3_enable_vbus_ctrl(struct rcar_gen3_chan *ch, int vbus)
+>  	writel(val, usb2_base + USB2_ADPCTRL);
+>  }
+>  
+> +static void rcar_gen3_control_otg_irq(struct rcar_gen3_chan *ch, int enable)
+> +{
+
+nit: Perhaps bool would be a better type for the enable parameter.
+
+> +	void __iomem *usb2_base = ch->base;
+> +	u32 val = readl(usb2_base + USB2_OBINTEN);
+> +
+> +	if (enable)
+> +		val |= USB2_OBINT_BITS;
+> +	else
+> +		val &= ~USB2_OBINT_BITS;
+> +	writel(val, usb2_base + USB2_OBINTEN);
+> +}
+> +
+>  static void rcar_gen3_init_for_host(struct rcar_gen3_chan *ch)
+>  {
+>  	rcar_gen3_set_linectrl(ch, 1, 1);
+> @@ -187,16 +199,12 @@ static void rcar_gen3_init_for_a_peri(struct rcar_gen3_chan *ch)
+>  
+>  static void rcar_gen3_init_from_a_peri_to_a_host(struct rcar_gen3_chan *ch)
+>  {
+> -	void __iomem *usb2_base = ch->base;
+> -	u32 val;
+> -
+> -	val = readl(usb2_base + USB2_OBINTEN);
+> -	writel(val & ~USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
+> +	rcar_gen3_control_otg_irq(ch, 0);
+>  
+>  	rcar_gen3_enable_vbus_ctrl(ch, 1);
+>  	rcar_gen3_init_for_host(ch);
+>  
+> -	writel(val | USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
+> +	rcar_gen3_control_otg_irq(ch, 1);
+>  }
+>  
+>  static bool rcar_gen3_check_id(struct rcar_gen3_chan *ch)
+> @@ -286,8 +294,7 @@ static void rcar_gen3_init_otg(struct rcar_gen3_chan *ch)
+>  	val = readl(usb2_base + USB2_VBCTRL);
+>  	writel(val | USB2_VBCTRL_DRVVBUSSEL, usb2_base + USB2_VBCTRL);
+>  	writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
+> -	val = readl(usb2_base + USB2_OBINTEN);
+> -	writel(val | USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
+> +	rcar_gen3_control_otg_irq(ch, 1);
+>  	val = readl(usb2_base + USB2_ADPCTRL);
+>  	writel(val | USB2_ADPCTRL_IDPULLUP, usb2_base + USB2_ADPCTRL);
+>  	val = readl(usb2_base + USB2_LINECTRL1);
+> -- 
+> 1.9.1
+> 
