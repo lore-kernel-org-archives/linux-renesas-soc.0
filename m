@@ -1,120 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58298 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729111AbeI1Qqp (ORCPT
+Received: from mail-it1-f193.google.com ([209.85.166.193]:53485 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727075AbeIYQui (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:46:45 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC Drivers Updates for v4.20
-Date: Fri, 28 Sep 2018 12:23:33 +0200
-Message-Id: <cover.1538128711.git.horms+renesas@verge.net.au>
+        Tue, 25 Sep 2018 12:50:38 -0400
+Received: by mail-it1-f193.google.com with SMTP id q70-v6so6145769itb.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Sep 2018 03:43:42 -0700 (PDT)
+MIME-Version: 1.0
+References: <1537544044-57906-1-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1537544044-57906-1-git-send-email-biju.das@bp.renesas.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 25 Sep 2018 12:43:30 +0200
+Message-ID: <CACRpkdbn3PX6Hk6TtcHPNT0BtGKRXMcCJejOnK5y4_cV=CQMZw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: gpio: rcar: Add r8a7744 (RZ/G1N) support
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+On Fri, Sep 21, 2018 at 5:41 PM Biju Das <biju.das@bp.renesas.com> wrote:
 
-Please consider these Renesas ARM based SoC drivers updates for v4.20.
+> Renesas RZ/G1N (R8A7744) SoC GPIO blocks are identical to the R-Car Gen2
+> family. Add support for its GPIO controllers.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
+Patch applied with the ACKs.
 
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
-
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-drivers-for-v4.20
-
-for you to fetch changes up to fae210bb5bfbd29118e18881f7108c6bd59293b9:
-
-  dt-bindings: apmu: Document r8a7744 support (2018-09-24 17:21:12 +0200)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC Drivers Updates for v4.20
-
-* Convert to SPDX identifiers
-* R-Car V3M (r8a77970) and V3H (r8a77980): Document Timer Unit (TMU) bindings
-* RZ/G1N (r8a7744) and RZ/G1C (r8a77470) SoCs:
-  - Document APMU and SMP enable method
-* RZ/G2M (r8a74a1), RZ/G1N (r8a7744) and RZ/G2E (r8a774c0) SoCs:
-  - Add reset support
-  - Add sysc support
-* RZ/G2M (r8a774a1), RZ/G2E (r8a774c0) and RZ/A2M (r7s9210) SoCs:
-  - Add support for identifying SoC
-* RZ/A2M (r7s9210) SoC:
-  - Add basic SoC setup support
-
-----------------------------------------------------------------
-Biju Das (10):
-      soc: renesas: Identify RZ/G2M
-      dt-bindings: power: Add r8a774a1 SYSC power domain definitions
-      soc: renesas: rcar-sysc: Add r8a774a1 support
-      soc: renesas: rcar-rst: Add support for RZ/G2M
-      dt-bindings: power: rcar-sysc: Document r8a7744 SYSC binding
-      dt-bindings: power: rcar-sysc: Add r8a7744 power domain index macros
-      soc: renesas: rcar-sysc: Add r8a7744 support
-      dt-bindings: reset: rcar-rst: Document r8a7744 reset module
-      soc: renesas: rcar-rst: Add support for RZ/G1N
-      dt-bindings: apmu: Document r8a7744 support
-
-Chris Brandt (2):
-      ARM: shmobile: Add basic RZ/A2 SoC support
-      soc: renesas: identify RZ/A2
-
-Fabrizio Castro (7):
-      soc: renesas: Identify RZ/G2E
-      dt-bindings: power: Add r8a774c0 SYSC power domain definitions
-      dt-bindings: power: rcar-sysc: Document r8a774c0 sysc
-      soc: renesas: rcar-sysc: Add r8a774c0 support
-      dt-bindings: reset: rcar-rst: Document r8a774c0 rst
-      soc: renesas: rcar-rst: Add support for RZ/G2E
-      dt-bindings: apmu: Document r8a77470 support
-
-Kuninori Morimoto (1):
-      soc: renesas: convert to SPDX identifiers
-
-Sergei Shtylyov (1):
-      dt-bindings: timer: renesas: tmu: document R8A779{7|8}0 bindings
-
- .../devicetree/bindings/power/renesas,apmu.txt     |   2 +
- .../bindings/power/renesas,rcar-sysc.txt           |   3 +
- .../devicetree/bindings/reset/renesas,rst.txt      |   3 +
- .../devicetree/bindings/timer/renesas,tmu.txt      |   2 +
- arch/arm/mach-shmobile/Kconfig                     |   6 ++
- arch/arm/mach-shmobile/Makefile                    |   1 +
- arch/arm/mach-shmobile/setup-r7s9210.c             |  27 ++++++
- drivers/soc/renesas/Kconfig                        |  19 +++-
- drivers/soc/renesas/Makefile                       |   2 +
- drivers/soc/renesas/r8a7743-sysc.c                 |   5 +-
- drivers/soc/renesas/r8a7745-sysc.c                 |   5 +-
- drivers/soc/renesas/r8a774a1-sysc.c                |  45 ++++++++++
- drivers/soc/renesas/r8a774c0-sysc.c                |  68 ++++++++++++++
- drivers/soc/renesas/r8a7779-sysc.c                 |   5 +-
- drivers/soc/renesas/r8a7790-sysc.c                 |   5 +-
- drivers/soc/renesas/r8a7791-sysc.c                 |   5 +-
- drivers/soc/renesas/r8a7792-sysc.c                 |   5 +-
- drivers/soc/renesas/r8a7794-sysc.c                 |   5 +-
- drivers/soc/renesas/r8a7795-sysc.c                 |   5 +-
- drivers/soc/renesas/r8a7796-sysc.c                 |   5 +-
- drivers/soc/renesas/r8a77970-sysc.c                |   5 +-
- drivers/soc/renesas/r8a77995-sysc.c                |   5 +-
- drivers/soc/renesas/rcar-rst.c                     |  11 +--
- drivers/soc/renesas/rcar-sysc.c                    |  13 ++-
- drivers/soc/renesas/rcar-sysc.h                    |   9 +-
- drivers/soc/renesas/renesas-soc.c                  | 100 ++++++++++++++++-----
- include/dt-bindings/power/r8a7744-sysc.h           |  24 +++++
- include/dt-bindings/power/r8a774a1-sysc.h          |  31 +++++++
- include/dt-bindings/power/r8a774c0-sysc.h          |  25 ++++++
- 29 files changed, 360 insertions(+), 86 deletions(-)
- create mode 100644 arch/arm/mach-shmobile/setup-r7s9210.c
- create mode 100644 drivers/soc/renesas/r8a774a1-sysc.c
- create mode 100644 drivers/soc/renesas/r8a774c0-sysc.c
- create mode 100644 include/dt-bindings/power/r8a7744-sysc.h
- create mode 100644 include/dt-bindings/power/r8a774a1-sysc.h
- create mode 100644 include/dt-bindings/power/r8a774c0-sysc.h
+Yours,
+Linus Walleij
