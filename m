@@ -1,37 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:52444 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726768AbeIZSrH (ORCPT
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:37074 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727672AbeIZPjV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Sep 2018 14:47:07 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wed, 26 Sep 2018 11:39:21 -0400
+MIME-Version: 1.0
+References: <20180924164937.36536-1-chris.brandt@renesas.com> <20180924164937.36536-4-chris.brandt@renesas.com>
+In-Reply-To: <20180924164937.36536-4-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 26 Sep 2018 11:27:06 +0200
+Message-ID: <CAMuHMdXRWRvxNb12GPDi-agEFhLg3_Cnukm6LwapFdaT8Fpddg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] clk: renesas: r7s9210: Move table update to
+ separate function
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: RE: [PATCH v2 3/3] clk: renesas: r7s9210: Move table update to
- separate function
-Date: Wed, 26 Sep 2018 12:34:16 +0000
-Message-ID: <TYXPR01MB1568A4A2196EEFB785E4505C8A150@TYXPR01MB1568.jpnprd01.prod.outlook.com>
-References: <20180924164937.36536-1-chris.brandt@renesas.com>
- <20180924164937.36536-4-chris.brandt@renesas.com>
- <CAMuHMdXRWRvxNb12GPDi-agEFhLg3_Cnukm6LwapFdaT8Fpddg@mail.gmail.com>
-In-Reply-To: <CAMuHMdXRWRvxNb12GPDi-agEFhLg3_Cnukm6LwapFdaT8Fpddg@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIFdlZG5lc2RheSwgU2VwdGVtYmVyIDI2LCAyMDE4LCBHZWVydCBVeXR0
-ZXJob2V2ZW4gd3JvdGU6DQo+ID4gKy8qIFRoZSBjbG9jayBkaXZpZGVycyBpbiB0aGUgdGFibGUg
-dmFyeSBiYXNlZCBvbiBEVCBhbmQgcmVnaXN0ZXINCj4gc2V0dGluZ3MgKi8NCj4gPiArc3RhdGlj
-IHZvaWQgcjdzOTIxMF91cGRhdGVfY2xrX3RhYmxlKHN0cnVjdCBjbGsgKmV4dGFsX2Nsaywgdm9p
-ZA0KPiBfX2lvbWVtICpiYXNlKQ0KPiANCj4gQ2FuIGJlIF9faW5pdC4NCj4gDQo+IFJldmlld2Vk
-LWJ5OiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPg0KPiBpLmUu
-IHdpbGwgcXVldWUgaW4gY2xrLXJlbmVzYXMtZm9yLXY0LjIwLCB3aXRoIHRoZSBhYm92ZSBmaXhl
-ZC4NCg0KT0ssIHRoYW5rIHlvdSENCg0KQ2hyaXMNCg0K
+On Mon, Sep 24, 2018 at 6:50 PM Chris Brandt <chris.brandt@renesas.com> wrote:
+> Same functionality, just easier to read.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> ---
+>  drivers/clk/renesas/r7s9210-cpg-mssr.c | 94 ++++++++++++++++++----------------
+>  1 file changed, 49 insertions(+), 45 deletions(-)
+>
+> diff --git a/drivers/clk/renesas/r7s9210-cpg-mssr.c b/drivers/clk/renesas/r7s9210-cpg-mssr.c
+> index 7ab9030ef8b9..f9c22b61883b 100644
+> --- a/drivers/clk/renesas/r7s9210-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
+> @@ -97,6 +97,53 @@ static const struct mssr_mod_clk r7s9210_mod_clks[] __initconst = {
+>
+>  };
+>
+> +/* The clock dividers in the table vary based on DT and register settings */
+> +static void r7s9210_update_clk_table(struct clk *extal_clk, void __iomem *base)
+
+Can be __init.
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v4.20, with the above fixed.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
