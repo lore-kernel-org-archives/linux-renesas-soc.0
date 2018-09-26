@@ -1,48 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:35712 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726322AbeIYWln (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:14135 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727250AbeIZSnW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Sep 2018 18:41:43 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>
-Subject: [PATCH v3 0/4] R-Car D3/E3 display DT enablement
-Date: Tue, 25 Sep 2018 19:33:33 +0300
-Message-Id: <20180925163337.31212-1-laurent.pinchart+renesas@ideasonboard.com>
+        Wed, 26 Sep 2018 14:43:22 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: RE: [PATCH v2 1/3] clk: renesas: cpg-mssr: Add early clock support
+Date: Wed, 26 Sep 2018 12:30:32 +0000
+Message-ID: <TYXPR01MB1568A8CBA69F00A42820BEA58A150@TYXPR01MB1568.jpnprd01.prod.outlook.com>
+References: <20180924164937.36536-1-chris.brandt@renesas.com>
+ <20180924164937.36536-2-chris.brandt@renesas.com>
+ <CAMuHMdWhO0A6_wQR44QrB9TkOy6ka417cJN-9bkx8=_k=kfVAQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdWhO0A6_wQR44QrB9TkOy6ka417cJN-9bkx8=_k=kfVAQ@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-
-The patches in this series enable display support for the D3 and E3 SoCs, on
-the Draak and Ebisu boards respectively. They were previously part of the
-"[PATCH v2 00/16] R-Car D3/E3 display support (with LVDS PLL)" series, and
-have been split out now that the DT bindings have been accepted andon their
-way to v4.20 through the DRM tree, along with the code changes.
-
-Compared to v2, the VSPI MSTP clock index has been fixed, and the
-patches rebased on top of Simon's latest devel branch.
-
-Simon, could you please consider this as an update for v4.20 ?
-
-Kieran Bingham (1):
-  arm64: dts: renesas: r8a77995: Add LVDS support
-
-Laurent Pinchart (2):
-  arm64: dts: renesas: r8a77990: Add display output support
-  arm64: dts: renesas: r8a77990: ebisu: Enable VGA and HDMI outputs
-
-Ulrich Hecht (1):
-  arm64: dts: renesas: r8a77995: draak: Enable HDMI display output
-
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 162 ++++++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77990.dtsi      | 167 +++++++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts |  98 ++++++++++++++-
- arch/arm64/boot/dts/renesas/r8a77995.dtsi      |  56 +++++++++
- 4 files changed, 482 insertions(+), 1 deletion(-)
-
--- 
-Regards,
-
-Laurent Pinchart
+SGkgR2VlcnQNCg0KT24gV2VkbmVzZGF5LCBTZXB0ZW1iZXIgMjYsIDIwMTgsIEdlZXJ0IFV5dHRl
+cmhvZXZlbiB3cm90ZToNCj4gVGhhbmtzIGZvciB0aGUgdXBkYXRlIQ0KPiBXb3JrcyBmaW5lIG9u
+IFItQ2FyIEdlbjIgYW5kIEdlbjMuDQoNClRoYW5rIHlvdSBmb3IgY2hlY2tpbmchDQoNCg0KPiA+
+ICAgICAgICAgc3RydWN0IGNsayAqKmNsa3M7DQo+IA0KPiBJbiB2MSwgeW91IGluaXRpYWxpemVk
+IGNsa3MgdG8gTlVMTCwgd2hpY2ggd2FzIG5lZWRlZCAuLi4NCn5+fg0KPiA+ICsgICAgICAgcHJp
+di0+YmFzZSA9IG9mX2lvbWFwKG5wLCAwKTsNCj4gPiArICAgICAgIGlmICghcHJpdi0+YmFzZSkg
+ew0KPiA+ICsgICAgICAgICAgICAgICBlcnJvciA9IC1FTk9NRU07DQo+ID4gKyAgICAgICAgICAg
+ICAgIGdvdG8gb3V0X2VycjsNCj4gDQo+IC4uLiBiZWNhdXNlIGVsc2UgaXQncyBzdGlsbCB1bmlu
+aXRpYWxpemVkIGhlcmUgLi4uDQp+fn4NCj4gPiArb3V0X2VycjoNCj4gPiArICAgICAgIGtmcmVl
+KGNsa3MpOw0KPiANCj4gLi4uIGFuZCBmcmVlZCBoZXJlLg0KDQpEYW1uISBJIGNvdWxkIG5vdCBy
+ZW1lbWJlciB3aHkgSSBzZXQgaXQgdG8gTlVMTC4gQW5kIEkgbW92ZWQgc28gbXVjaCANCmNvZGUg
+YXJvdW5kIEkgdGhvdWdodCBpdCB3YXMgYSBtaXN0YWtlLCBzbyBJIHRvb2sgaXQgb3V0Lg0KDQoN
+Cg0KPiBSZXZpZXdlZC1ieTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydCtyZW5lc2FzQGdsaWRl
+ci5iZT4NCj4gaS5lLiB3aWxsIHF1ZXVlIGluIGNsay1yZW5lc2FzLWZvci12NC4yMCwgd2l0aCB0
+aGUgYWJvdmUgZml4ZWQuDQoNCk9LLCBJJ2xsIHNlbmQgYSBuZXcgdmVyc2lvbiBvdXQgc2hvcnRs
+eS4NCg0KQ2hyaXMNCg0K
