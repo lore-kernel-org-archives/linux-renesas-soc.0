@@ -1,45 +1,202 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57961 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729193AbeI1Qov (ORCPT
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:29980 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727192AbeIZWJ2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:44:51 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/6] ARM: shmobile: defconfig: Enable VIDEO_RENESAS_FDP1
-Date: Fri, 28 Sep 2018 12:21:36 +0200
-Message-Id: <59051a25bfb51d98d50b7270d55d38a928b55073.1538122547.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1538122547.git.horms+renesas@verge.net.au>
-References: <cover.1538122547.git.horms+renesas@verge.net.au>
+        Wed, 26 Sep 2018 18:09:28 -0400
+Date: Wed, 26 Sep 2018 17:55:49 +0200 (CEST)
+From: Ulrich Hecht <uli@fpond.eu>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <2070066196.327364.1537977350002@webmail.strato.com>
+In-Reply-To: <20180914091046.483-11-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180914091046.483-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20180914091046.483-11-laurent.pinchart+renesas@ideasonboard.com>
+Subject: Re: [PATCH v2 10/16] drm: rcar-du: Don't use TV sync mode when not
+ supported by the hardware
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-R-Car Gen2 (and RZ/G1) SoCs have a Fine Display Processor, hence enable
-support for it.
+> On September 14, 2018 at 11:10 AM Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com> wrote:
+> 
+> 
+> The official way to stop the display is to clear the display enable
+> (DEN) bit in the DSYSR register, but that operates at a group level and
+> affects the two channels in the group. To disable channels selectively,
+> the driver uses TV sync mode that stops display operation on the channel
+> and turns output signals into inputs.
+> 
+> While TV sync mode is available in all DU models currently supported,
+> the D3 and E3 DUs don't support it. We will thus need to find an
+> alternative way to turn channels off.
+> 
+> In the meantime, condition the switch to TV sync mode to the
+> availability of the feature, to avoid writing an invalid value to the
+> DSYSR register. The display output will turn blank as all planes are
+> disabled when stopping the CRTC.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.c |  7 ++++++-
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c  | 33 ++++++++++++++++++++++-----------
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.h  |  1 +
+>  3 files changed, 29 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> index f827fccf6416..17741843cf51 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> @@ -643,8 +643,13 @@ static void rcar_du_crtc_stop(struct rcar_du_crtc *rcrtc)
+>  	/*
+>  	 * Select switch sync mode. This stops display operation and configures
+>  	 * the HSYNC and VSYNC signals as inputs.
+> +	 *
+> +	 * TODO: Find another way to stop the display for DUs that don't support
+> +	 * TVM sync.
+>  	 */
+> -	rcar_du_crtc_dsysr_clr_set(rcrtc, DSYSR_TVM_MASK, DSYSR_TVM_SWITCH);
+> +	if (rcar_du_has(rcrtc->group->dev, RCAR_DU_FEATURE_TVM_SYNC))
+> +		rcar_du_crtc_dsysr_clr_set(rcrtc, DSYSR_TVM_MASK,
+> +					   DSYSR_TVM_SWITCH);
+>  
+>  	rcar_du_group_start_stop(rcrtc->group, false);
+>  }
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> index 0954ecd2f943..fa0d381c2d0f 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> @@ -36,7 +36,8 @@ static const struct rcar_du_device_info rzg1_du_r8a7743_info = {
+>  	.gen = 2,
+>  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+>  		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+> -		  | RCAR_DU_FEATURE_INTERLACED,
+> +		  | RCAR_DU_FEATURE_INTERLACED
+> +		  | RCAR_DU_FEATURE_TVM_SYNC,
+>  	.channels_mask = BIT(1) | BIT(0),
+>  	.routes = {
+>  		/*
+> @@ -58,7 +59,8 @@ static const struct rcar_du_device_info rzg1_du_r8a7745_info = {
+>  	.gen = 2,
+>  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+>  		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+> -		  | RCAR_DU_FEATURE_INTERLACED,
+> +		  | RCAR_DU_FEATURE_INTERLACED
+> +		  | RCAR_DU_FEATURE_TVM_SYNC,
+>  	.channels_mask = BIT(1) | BIT(0),
+>  	.routes = {
+>  		/*
+> @@ -77,7 +79,8 @@ static const struct rcar_du_device_info rzg1_du_r8a7745_info = {
+>  
+>  static const struct rcar_du_device_info rcar_du_r8a7779_info = {
+>  	.gen = 2,
+> -	.features = RCAR_DU_FEATURE_INTERLACED,
+> +	.features = RCAR_DU_FEATURE_INTERLACED
+> +		  | RCAR_DU_FEATURE_TVM_SYNC,
+>  	.channels_mask = BIT(1) | BIT(0),
+>  	.routes = {
+>  		/*
+> @@ -99,7 +102,8 @@ static const struct rcar_du_device_info rcar_du_r8a7790_info = {
+>  	.gen = 2,
+>  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+>  		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+> -		  | RCAR_DU_FEATURE_INTERLACED,
+> +		  | RCAR_DU_FEATURE_INTERLACED
+> +		  | RCAR_DU_FEATURE_TVM_SYNC,
+>  	.quirks = RCAR_DU_QUIRK_ALIGN_128B,
+>  	.channels_mask = BIT(2) | BIT(1) | BIT(0),
+>  	.routes = {
+> @@ -128,7 +132,8 @@ static const struct rcar_du_device_info rcar_du_r8a7791_info = {
+>  	.gen = 2,
+>  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+>  		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+> -		  | RCAR_DU_FEATURE_INTERLACED,
+> +		  | RCAR_DU_FEATURE_INTERLACED
+> +		  | RCAR_DU_FEATURE_TVM_SYNC,
+>  	.channels_mask = BIT(1) | BIT(0),
+>  	.routes = {
+>  		/*
+> @@ -151,7 +156,8 @@ static const struct rcar_du_device_info rcar_du_r8a7792_info = {
+>  	.gen = 2,
+>  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+>  		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+> -		  | RCAR_DU_FEATURE_INTERLACED,
+> +		  | RCAR_DU_FEATURE_INTERLACED
+> +		  | RCAR_DU_FEATURE_TVM_SYNC,
+>  	.channels_mask = BIT(1) | BIT(0),
+>  	.routes = {
+>  		/* R8A7792 has two RGB outputs. */
+> @@ -170,7 +176,8 @@ static const struct rcar_du_device_info rcar_du_r8a7794_info = {
+>  	.gen = 2,
+>  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+>  		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+> -		  | RCAR_DU_FEATURE_INTERLACED,
+> +		  | RCAR_DU_FEATURE_INTERLACED
+> +		  | RCAR_DU_FEATURE_TVM_SYNC,
+>  	.channels_mask = BIT(1) | BIT(0),
+>  	.routes = {
+>  		/*
+> @@ -193,7 +200,8 @@ static const struct rcar_du_device_info rcar_du_r8a7795_info = {
+>  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+>  		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+>  		  | RCAR_DU_FEATURE_VSP1_SOURCE
+> -		  | RCAR_DU_FEATURE_INTERLACED,
+> +		  | RCAR_DU_FEATURE_INTERLACED
+> +		  | RCAR_DU_FEATURE_TVM_SYNC,
+>  	.channels_mask = BIT(3) | BIT(2) | BIT(1) | BIT(0),
+>  	.routes = {
+>  		/*
+> @@ -226,7 +234,8 @@ static const struct rcar_du_device_info rcar_du_r8a7796_info = {
+>  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+>  		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+>  		  | RCAR_DU_FEATURE_VSP1_SOURCE
+> -		  | RCAR_DU_FEATURE_INTERLACED,
+> +		  | RCAR_DU_FEATURE_INTERLACED
+> +		  | RCAR_DU_FEATURE_TVM_SYNC,
+>  	.channels_mask = BIT(2) | BIT(1) | BIT(0),
+>  	.routes = {
+>  		/*
+> @@ -255,7 +264,8 @@ static const struct rcar_du_device_info rcar_du_r8a77965_info = {
+>  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+>  		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+>  		  | RCAR_DU_FEATURE_VSP1_SOURCE
+> -		  | RCAR_DU_FEATURE_INTERLACED,
+> +		  | RCAR_DU_FEATURE_INTERLACED
+> +		  | RCAR_DU_FEATURE_TVM_SYNC,
+>  	.channels_mask = BIT(3) | BIT(1) | BIT(0),
+>  	.routes = {
+>  		/*
+> @@ -284,7 +294,8 @@ static const struct rcar_du_device_info rcar_du_r8a77970_info = {
+>  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+>  		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+>  		  | RCAR_DU_FEATURE_VSP1_SOURCE
+> -		  | RCAR_DU_FEATURE_INTERLACED,
+> +		  | RCAR_DU_FEATURE_INTERLACED
+> +		  | RCAR_DU_FEATURE_TVM_SYNC,
+>  	.channels_mask = BIT(0),
+>  	.routes = {
+>  		/* R8A77970 has one RGB output and one LVDS output. */
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> index ebba9aefba6a..143c037e2c0f 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> @@ -27,6 +27,7 @@ struct rcar_du_device;
+>  #define RCAR_DU_FEATURE_EXT_CTRL_REGS	BIT(1)	/* Has extended control registers */
+>  #define RCAR_DU_FEATURE_VSP1_SOURCE	BIT(2)	/* Has inputs from VSP1 */
+>  #define RCAR_DU_FEATURE_INTERLACED	BIT(3)	/* HW supports interlaced */
+> +#define RCAR_DU_FEATURE_TVM_SYNC	BIT(4)	/* Has TV switch/sync modes */
+>  
+>  #define RCAR_DU_QUIRK_ALIGN_128B	BIT(0)	/* Align pitches to 128 bytes */
+>  
+> -- 
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 7b48ec3e63ec..f2b40075819f 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -130,6 +130,7 @@ CONFIG_VIDEO_V4L2_SUBDEV_API=y
- CONFIG_V4L_PLATFORM_DRIVERS=y
- CONFIG_VIDEO_RCAR_VIN=y
- CONFIG_V4L_MEM2MEM_DRIVERS=y
-+CONFIG_VIDEO_RENESAS_FDP1=y
- CONFIG_VIDEO_RENESAS_JPU=y
- CONFIG_VIDEO_RENESAS_VSP1=y
- # CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
--- 
-2.11.0
+CU
+Uli
