@@ -1,140 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726835AbeIMOSg (ORCPT
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:37639 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726841AbeIZRod (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:18:36 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 02/58] arm64: dts: renesas: Include R-Car product name in DTSI files
-Date: Thu, 13 Sep 2018 11:08:57 +0200
-Message-Id: <e18a31a7add2d85c0d3e88460a09032d35e70d6c.1536828567.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
-References: <cover.1536828567.git.horms+renesas@verge.net.au>
+        Wed, 26 Sep 2018 13:44:33 -0400
+MIME-Version: 1.0
+References: <1537894864-61987-1-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1537894864-61987-1-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 26 Sep 2018 13:31:50 +0200
+Message-ID: <CAMuHMdUFkAm15XCUqx8XtcfODGNPk9DfoUF5QkjgKnSV4gYnFg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: thermal: rcar: Add device tree support for r8a7744
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Tue, Sep 25, 2018 at 7:08 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> Add thermal sensor support for r8a7744 SoC. The Renesas RZ/G1N
+> (r8a7744) thermal sensor module is identical to the R-Car Gen2 family.
+>
+> No driver change is needed due to the fallback compatible value
+> "renesas,rcar-gen2-thermal".
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 
-Browsing the DTS for all the R-Car SoCs with similar part numbers
-makes my head hurt, so to improve the user friendliness of the
-DTS code base include R-Car product name in each DTSI file.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Product names are derived from
-Documentation/devicetree/bindings/arm/shmobile.txt
+Gr{oetje,eeting}s,
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 2 +-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 2 +-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi     | 2 +-
- arch/arm64/boot/dts/renesas/r8a77965.dtsi    | 2 +-
- arch/arm64/boot/dts/renesas/r8a77970.dtsi    | 2 +-
- arch/arm64/boot/dts/renesas/r8a77980.dtsi    | 2 +-
- arch/arm64/boot/dts/renesas/r8a77990.dtsi    | 2 +-
- arch/arm64/boot/dts/renesas/r8a77995.dtsi    | 2 +-
- 8 files changed, 8 insertions(+), 8 deletions(-)
+                        Geert
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index 7b2fbaec9aef..d915cff5b1b0 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Device Tree Source for the r8a7795 ES1.x SoC
-+ * Device Tree Source for the R-Car H3 (R8A77950) ES1.x SoC
-  *
-  * Copyright (C) 2015 Renesas Electronics Corp.
-  */
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index fb9d08ad7659..aa0d4c8f6b04 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Device Tree Source for the r8a7795 SoC
-+ * Device Tree Source for the R-Car H3 (R8A77950) SoC
-  *
-  * Copyright (C) 2015 Renesas Electronics Corp.
-  */
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index cbd35c00b4af..b93596c9c6b1 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Device Tree Source for the r8a7796 SoC
-+ * Device Tree Source for the R-Car M3-W (R8A77960) SoC
-  *
-  * Copyright (C) 2016-2017 Renesas Electronics Corp.
-  */
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 0cd44461a0bd..9c4f40589cbd 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Device Tree Source for the r8a77965 SoC
-+ * Device Tree Source for the R-Car M3-N (R8A77965) SoC
-  *
-  * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
-  *
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index 954168858fed..18d1aafe2e30 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Device Tree Source for the r8a77970 SoC
-+ * Device Tree Source for the R-Car V3M (R8A77970) SoC
-  *
-  * Copyright (C) 2016-2017 Renesas Electronics Corp.
-  * Copyright (C) 2017 Cogent Embedded, Inc.
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-index 4a1097e32551..d3532fd4c94a 100644
---- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Device Tree Source for the r8a77980 SoC
-+ * Device Tree Source for the R-Car V3H (R8A77980) SoC
-  *
-  * Copyright (C) 2018 Renesas Electronics Corp.
-  * Copyright (C) 2018 Cogent Embedded, Inc.
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index ae89260baad9..2c8f1194e6b5 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /*
-- * Device Tree Source for the r8a77990 SoC
-+ * Device Tree Source for the R-Car E3 (R8A77990) SoC
-  *
-  * Copyright (C) 2018 Renesas Electronics Corp.
-  */
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index fe77bc43c447..c94513ce5b9b 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Device Tree Source for the r8a77995 SoC
-+ * Device Tree Source for the R-Car D3 (R8A77995) SoC
-  *
-  * Copyright (C) 2016 Renesas Electronics Corp.
-  * Copyright (C) 2017 Glider bvba
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
