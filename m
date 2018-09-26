@@ -1,47 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:40004 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726841AbeIZRoB (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51410 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726404AbeIZPDG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Sep 2018 13:44:01 -0400
-MIME-Version: 1.0
-References: <1537894594-54158-1-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1537894594-54158-1-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 26 Sep 2018 13:31:16 +0200
-Message-ID: <CAMuHMdX4vVccykRZxa3D_N-iXkE329=Ko=p+xbjJ5gnUjSa7tg@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: irqchip: renesas-irqc: Document r8a7744 support
+        Wed, 26 Sep 2018 11:03:06 -0400
+Date: Wed, 26 Sep 2018 10:51:09 +0200
+From: Simon Horman <horms@verge.net.au>
 To: Biju Das <biju.das@bp.renesas.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
         Marc Zyngier <marc.zyngier@arm.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+        devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: irqchip: renesas-irqc: Document r8a7744
+ support
+Message-ID: <20180926085109.lytvdmid5w5rqyk7@verge.net.au>
+References: <1537894594-54158-1-git-send-email-biju.das@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1537894594-54158-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Sep 25, 2018 at 7:03 PM Biju Das <biju.das@bp.renesas.com> wrote:
+On Tue, Sep 25, 2018 at 05:56:34PM +0100, Biju Das wrote:
 > Document RZ/G1N (R8A7744) SoC bindings.
->
+> 
 > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 > Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
