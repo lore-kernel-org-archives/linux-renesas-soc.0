@@ -1,151 +1,127 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:60383 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727100AbeIEUAy (ORCPT
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:25104 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727067AbeIZWJJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Sep 2018 16:00:54 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, geert@linux-m68k.org,
-        horms@verge.net.au
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        kieran.bingham+renesas@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se, damm+renesas@opensource.se,
-        ulrich.hecht+renesas@gmail.com, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 8/8] arm64: dts: renesas: ebisu: Add HDMI and CVBS input
-Date: Wed,  5 Sep 2018 17:29:45 +0200
-Message-Id: <1536161385-25562-9-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1536161385-25562-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1536161385-25562-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 26 Sep 2018 18:09:09 -0400
+Date: Wed, 26 Sep 2018 17:55:31 +0200 (CEST)
+From: Ulrich Hecht <uli@fpond.eu>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <374365030.327346.1537977331797@webmail.strato.com>
+In-Reply-To: <20180914091046.483-9-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180914091046.483-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20180914091046.483-9-laurent.pinchart+renesas@ideasonboard.com>
+Subject: Re: [PATCH v2 08/16] drm: rcar-du: Enable configurable DPAD0
+ routing on Gen3
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add HDMI and CVBS inputs device nodes to R-Car E3 Ebisu board.
 
-Both HDMI and CVBS inputs are connected to an ADV7482 video decoder hooked to
-the SoC CSI-2 receiver port.
+> On September 14, 2018 at 11:10 AM Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com> wrote:
+> 
+> 
+> All Gen3 SoCs supported so far have a fixed association between DPAD0
+> and DU channels, which led to hardcoding that association when writing
+> the corresponding hardware register. The D3 and E3 will break that
+> mechanism as DPAD0 can be dynamically connected to either DU0 or DU1.
+> 
+> Make DPAD0 routing dynamic on Gen3. To ensure a valid hardware
+> configuration when the DU starts without the RGB output enabled, DPAD0
+> is associated at initialization time to the first DU channel that it can
+> be connected to. This makes no change on Gen2 as all Gen2 SoCs can
+> connected DPAD0 to DU0, which is the current implicit default value.
+> 
+> As the DPAD0 source is always 0 when a single source is possible on
+> Gen2, we can also simplify the Gen2 code in the same function to remove
+> a conditional check.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_group.c | 17 ++++++-----------
+>  drivers/gpu/drm/rcar-du/rcar_du_kms.c   | 12 ++++++++++++
+>  2 files changed, 18 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
+> index 4c62841eff2f..f38703e7a10d 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
+> @@ -56,8 +56,6 @@ static void rcar_du_group_setup_pins(struct rcar_du_group *rgrp)
+>  static void rcar_du_group_setup_defr8(struct rcar_du_group *rgrp)
+>  {
+>  	struct rcar_du_device *rcdu = rgrp->dev;
+> -	unsigned int possible_crtcs =
+> -		rcdu->info->routes[RCAR_DU_OUTPUT_DPAD0].possible_crtcs;
+>  	u32 defr8 = DEFR8_CODE;
+>  
+>  	if (rcdu->info->gen < 3) {
+> @@ -69,21 +67,18 @@ static void rcar_du_group_setup_defr8(struct rcar_du_group *rgrp)
+>  		 * DU instances that support it.
+>  		 */
+>  		if (rgrp->index == 0) {
+> -			if (possible_crtcs > 1)
+> -				defr8 |= DEFR8_DRGBS_DU(rcdu->dpad0_source);
+> +			defr8 |= DEFR8_DRGBS_DU(rcdu->dpad0_source);
+>  			if (rgrp->dev->vspd1_sink == 2)
+>  				defr8 |= DEFR8_VSCS;
+>  		}
+>  	} else {
+>  		/*
+> -		 * On Gen3 VSPD routing can't be configured, but DPAD routing
+> -		 * needs to be set despite having a single option available.
+> +		 * On Gen3 VSPD routing can't be configured, and DPAD routing
+> +		 * is set in the group corresponding to the DPAD output (no Gen3
+> +		 * SoC has multiple DPAD sources belonging to separate groups).
+>  		 */
+> -		unsigned int rgb_crtc = ffs(possible_crtcs) - 1;
+> -		struct rcar_du_crtc *crtc = &rcdu->crtcs[rgb_crtc];
+> -
+> -		if (crtc->index / 2 == rgrp->index)
+> -			defr8 |= DEFR8_DRGBS_DU(crtc->index);
+> +		if (rgrp->index == rcdu->dpad0_source / 2)
+> +			defr8 |= DEFR8_DRGBS_DU(rcdu->dpad0_source);
+>  	}
+>  
+>  	rcar_du_group_write(rgrp, DEFR8, defr8);
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> index ed7fa3204892..bd01197700c5 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> @@ -501,6 +501,7 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
+>  	struct drm_device *dev = rcdu->ddev;
+>  	struct drm_encoder *encoder;
+>  	struct drm_fbdev_cma *fbdev;
+> +	unsigned int dpad0_sources;
+>  	unsigned int num_encoders;
+>  	unsigned int num_groups;
+>  	unsigned int swindex;
+> @@ -613,6 +614,17 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
+>  		encoder->possible_clones = (1 << num_encoders) - 1;
+>  	}
+>  
+> +	/*
+> +	 * Initialize the default DPAD0 source to the index of the first DU
+> +	 * channel that can be connected to DPAD0. The exact value doesn't
+> +	 * matter as it should be overwritten by mode setting for the RGB
+> +	 * output, but it is nonetheless required to ensure a valid initial
+> +	 * hardware configuration on Gen3 where DU0 can't always be connected to
+> +	 * DPAD0.
+> +	 */
+> +	dpad0_sources = rcdu->info->routes[RCAR_DU_OUTPUT_DPAD0].possible_crtcs;
+> +	rcdu->dpad0_source = ffs(dpad0_sources) - 1;
+> +
+>  	drm_mode_config_reset(dev);
+>  
+>  	drm_kms_helper_poll_init(dev);
+> -- 
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 86 ++++++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
+Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-index 2bc3a48..d2faf3e 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-@@ -28,6 +28,29 @@
- 		/* first 128MB is reserved for secure area. */
- 		reg = <0x0 0x48000000 0x0 0x38000000>;
- 	};
-+
-+	cvbs-in {
-+		compatible = "composite-video-connector";
-+		label = "CVBS IN";
-+
-+		port {
-+			cvbs_con: endpoint {
-+				remote-endpoint = <&adv7482_ain7>;
-+			};
-+		};
-+	};
-+
-+	hdmi-in {
-+		compatible = "hdmi-connector";
-+		label = "HDMI IN";
-+		type = "a";
-+
-+		port {
-+			hdmi_in_con: endpoint {
-+				remote-endpoint = <&adv7482_hdmi>;
-+			};
-+		};
-+	};
- };
-
- &avb {
-@@ -47,6 +70,22 @@
- 	};
- };
-
-+&csi40 {
-+	status = "okay";
-+
-+	ports {
-+		port@0 {
-+			reg = <0>;
-+
-+			csi40_in: endpoint {
-+				clock-lanes = <0>;
-+				data-lanes = <1 2>;
-+				remote-endpoint = <&adv7482_txa>;
-+			};
-+		};
-+	};
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -55,6 +94,49 @@
- 	clock-frequency = <48000000>;
- };
-
-+&i2c0 {
-+	status = "okay";
-+
-+	video-receiver@70 {
-+		compatible = "adi,adv7482";
-+		reg = <0x70>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		interrupt-parent = <&gpio0>;
-+		interrupt-names = "intrq1", "intrq2";
-+		interrupts = <7 IRQ_TYPE_LEVEL_LOW>,
-+			     <17 IRQ_TYPE_LEVEL_LOW>;
-+
-+		port@7 {
-+			reg = <7>;
-+
-+			adv7482_ain7: endpoint {
-+				remote-endpoint = <&cvbs_con>;
-+			};
-+		};
-+
-+		port@8 {
-+			reg = <8>;
-+
-+			adv7482_hdmi: endpoint {
-+				remote-endpoint = <&hdmi_in_con>;
-+			};
-+		};
-+
-+		port@a {
-+			reg = <0xa>;
-+
-+			adv7482_txa: endpoint {
-+				clock-lanes = <0>;
-+				data-lanes = <1 2>;
-+				remote-endpoint = <&csi40_in>;
-+			};
-+		};
-+	};
-+};
-+
- &ohci0 {
- 	status = "okay";
- };
-@@ -94,6 +176,10 @@
- 	status = "okay";
- };
-
-+&vin4 {
-+	status = "okay";
-+};
-+
- &xhci0 {
- 	pinctrl-0 = <&usb30_pins>;
- 	pinctrl-names = "default";
---
-2.7.4
+CU
+Uli
