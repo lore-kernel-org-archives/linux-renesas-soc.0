@@ -1,41 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:39667 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726841AbeIZUBL (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:46751 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726938AbeIZTxS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Sep 2018 16:01:11 -0400
-MIME-Version: 1.0
-References: <20180926133956.79788-1-chris.brandt@renesas.com>
-In-Reply-To: <20180926133956.79788-1-chris.brandt@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 26 Sep 2018 15:47:56 +0200
-Message-ID: <CAMuHMdUiwwroXOS=b0uUEQ8dAPvMYc=xq+V7wu3TL2A7EcQKUA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r7s9210: Add SPI clocks
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wed, 26 Sep 2018 15:53:18 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH] clk: renesas: r7s9210: Add SPI clocks
+Date: Wed, 26 Sep 2018 08:39:56 -0500
+Message-Id: <20180926133956.79788-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Sep 26, 2018 at 3:40 PM Chris Brandt <chris.brandt@renesas.com> wrote:
-> Add RSPI clocks for RZ/A2.
->
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Add RSPI clocks for RZ/A2.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in clk-renesas-for-v4.20.
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+ drivers/clk/renesas/r7s9210-cpg-mssr.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/clk/renesas/r7s9210-cpg-mssr.c b/drivers/clk/renesas/r7s9210-cpg-mssr.c
+index d8ff4cb0defc..5135f13ec628 100644
+--- a/drivers/clk/renesas/r7s9210-cpg-mssr.c
++++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
+@@ -95,6 +95,9 @@ static const struct mssr_mod_clk r7s9210_mod_clks[] __initconst = {
+ 	DEF_MOD_STB("i2c1",	 86,	R7S9210_CLK_P1),
+ 	DEF_MOD_STB("i2c0",	 87,	R7S9210_CLK_P1),
+ 
++	DEF_MOD_STB("spi2",	 95,	R7S9210_CLK_P1),
++	DEF_MOD_STB("spi1",	 96,	R7S9210_CLK_P1),
++	DEF_MOD_STB("spi0",	 97,	R7S9210_CLK_P1),
+ };
+ 
+ /* The clock dividers in the table vary based on DT and register settings */
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.16.1
