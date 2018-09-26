@@ -1,104 +1,79 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 8/8] phy: renesas: rcar-gen3-usb2: add is_otg_channel to use "role" sysfs
-Date: Fri, 21 Sep 2018 20:53:24 +0900
-Message-Id: <1537530804-19399-9-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1537530804-19399-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1537530804-19399-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:43636 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726593AbeIZRzW (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 26 Sep 2018 13:55:22 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+References: <20180926091053.21255-1-phil.edworthy@renesas.com>
+In-Reply-To: <20180926091053.21255-1-phil.edworthy@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 26 Sep 2018 13:42:35 +0200
+Message-ID: <CAMuHMdWu-GWBompRMwbweOw-N2AOUtpGdAnO8JGbRAvy=Q9j=g@mail.gmail.com>
+Subject: Re: [PATCH v5 0/3] Renesas R9A06G032 PINCTRL Driver
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Simon Horman <horms@verge.net.au>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Even if a board doesn't have otg pins connection, this hardware can
-change the role by a register setting. So, this patch adds
-"is_otg_channel" for it.
+Hi Phil,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+On Wed, Sep 26, 2018 at 11:11 AM Phil Edworthy
+<phil.edworthy@renesas.com> wrote:
+> This implements the pinctrl driver for the RZ/N1 family of devices, including
+> the R9A06G032 (RZ/N1D) device.
+>
+> This series was originally written by Michel Pollet whilst at Renesas, and I
+> have taken over this work.
+>
+> Main changes:
+> v5:
+>  - Address Jacopo's further comments
+>  - Address Geert's comments
+>
+> v4:
+>  - Address Jacopo's comments
+>  - Add alternative way to use the pinmux prop.
+>  - Remove mention of gpios.
+>  - Implement pin_config_group_get()
+>  - Fix function to get pin configs, i.e. return -EINVAL when disabled.
+>
+> v3:
+>  - Use standard DT props instead of proprietary ones.
+>  - Replace virtual pins used for MDIO muxing with extra funcs.
+>  - Use pinctrl_utils funcs to handle the maps.
+>  - Remove the dbg functions to keep things simple.
+>  - Change the way the functions are defined so it is easy to check
+>    against the hardware numbering.
+>
+> v2:
+>  - Change to generic rzn1 family driver, instead of device specific.
+>  - Review comments fixed.
+>  - Fix error handling during probe
+>
+> Phil Edworthy (3):
+>   dt-bindings: pinctrl: renesas,rzn1-pinctrl: documentation
+>   pinctrl: renesas: Renesas RZ/N1 pinctrl driver
+>   ARM: dts: r9a06g032: Add pinctrl node
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 3f2efe5..9903aef 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -86,8 +86,19 @@ struct rcar_gen3_chan {
- 	struct work_struct work;
- 	enum usb_dr_mode dr_mode;
- 	bool extcon_host;
-+	bool is_otg_channel;
- 	bool uses_otg_pins;
- };
-+/*
-+ * Combination about is_otg_channel and uses_otg_pins:
-+ *
-+ * Parameters				|| Behaviors
-+ * is_otg_channel	| uses_otg_pins	|| irqs		| role sysfs
-+ * ---------------------+---------------++--------------+------------
-+ * true			| true		|| enabled	| enabled
-+ * true                 | false		|| disabled	| enabled
-+ * false                | any		|| disabled	| disabled
-+ */
- 
- static void rcar_gen3_phy_usb2_work(struct work_struct *work)
- {
-@@ -244,7 +255,7 @@ static ssize_t role_store(struct device *dev, struct device_attribute *attr,
- 	bool is_b_device;
- 	enum phy_mode cur_mode, new_mode;
- 
--	if (!ch->uses_otg_pins || !ch->phy->init_count)
-+	if (!ch->is_otg_channel || !ch->phy->init_count)
- 		return -EIO;
- 
- 	if (!strncmp(buf, "host", strlen("host")))
-@@ -282,7 +293,7 @@ static ssize_t role_show(struct device *dev, struct device_attribute *attr,
- {
- 	struct rcar_gen3_chan *ch = dev_get_drvdata(dev);
- 
--	if (!ch->uses_otg_pins || !ch->phy->init_count)
-+	if (!ch->is_otg_channel || !ch->phy->init_count)
- 		return -EIO;
- 
- 	return sprintf(buf, "%s\n", rcar_gen3_is_host(ch) ? "host" :
-@@ -320,7 +331,7 @@ static int rcar_gen3_phy_usb2_init(struct phy *p)
- 	writel(USB2_OC_TIMSET_INIT, usb2_base + USB2_OC_TIMSET);
- 
- 	/* Initialize otg part */
--	if (channel->uses_otg_pins)
-+	if (channel->is_otg_channel)
- 		rcar_gen3_init_otg(channel);
- 
- 	return 0;
-@@ -444,6 +455,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	if (channel->dr_mode != USB_DR_MODE_UNKNOWN) {
- 		int ret;
- 
-+		channel->is_otg_channel = true;
- 		channel->uses_otg_pins = !of_property_read_bool(dev->of_node,
- 							"renesas,no-otg-pins");
- 		channel->extcon = devm_extcon_dev_allocate(dev,
-@@ -487,7 +499,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 		dev_err(dev, "Failed to register PHY provider\n");
- 		ret = PTR_ERR(provider);
- 		goto error;
--	} else if (channel->uses_otg_pins) {
-+	} else if (channel->is_otg_channel) {
- 		int ret;
- 
- 		ret = device_create_file(dev, &dev_attr_role);
-@@ -507,7 +519,7 @@ static int rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
- {
- 	struct rcar_gen3_chan *channel = platform_get_drvdata(pdev);
- 
--	if (channel->uses_otg_pins)
-+	if (channel->is_otg_channel)
- 		device_remove_file(&pdev->dev, &dev_attr_role);
- 
- 	pm_runtime_disable(&pdev->dev);
+Thanks, will apply the first two patches to sh-pfc-for-v4.2.0.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-1.9.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
