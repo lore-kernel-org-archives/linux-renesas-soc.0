@@ -1,91 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:58038 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730625AbeICVvM (ORCPT
+Received: from mail-io1-f68.google.com ([209.85.166.68]:39921 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727010AbeI0GFR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:51:12 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Ulrich Hecht <uli+renesas@fpond.eu>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: dts: renesas: r8a77990: Add all MSIOF nodes
-Date: Mon,  3 Sep 2018 19:30:00 +0200
-Message-Id: <20180903173000.6877-1-geert+renesas@glider.be>
+        Thu, 27 Sep 2018 02:05:17 -0400
+Received: by mail-io1-f68.google.com with SMTP id l7-v6so598067iok.6
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 26 Sep 2018 16:49:53 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1537896444-42418-1-git-send-email-biju.das@bp.renesas.com>
+References: <1537896444-42418-1-git-send-email-biju.das@bp.renesas.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 27 Sep 2018 01:49:12 +0200
+Message-ID: <CAPDyKFpZHfi-hZxU=6n9wj=msXsS4obxo12OZpWg9mdDPbmkQQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: mmc: sh_mmcif: Document r8a7744 DT bindings
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the device nodes for all MSIOF SPI controllers, incl. clocks, power
-domains, and resets properties.
+On 25 September 2018 at 19:27, Biju Das <biju.das@bp.renesas.com> wrote:
+> Add support for r8a7744 SoC. Renesas RZ/G1N (R8A7744) MMCIF is identical
+> to the R-Car Gen2 family.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 52 +++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+Applied for next, thanks!
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index aa101a85fd73d513..6677a74ebeaecc37 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -552,6 +552,58 @@
- 			status = "disabled";
- 		};
- 
-+		msiof0: spi@e6e90000 {
-+			compatible = "renesas,msiof-r8a77990",
-+				     "renesas,rcar-gen3-msiof";
-+			reg = <0 0xe6e90000 0 0x0064>;
-+			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 211>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 211>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof1: spi@e6ea0000 {
-+			compatible = "renesas,msiof-r8a77990",
-+				     "renesas,rcar-gen3-msiof";
-+			reg = <0 0xe6ea0000 0 0x0064>;
-+			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 210>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 210>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof2: spi@e6c00000 {
-+			compatible = "renesas,msiof-r8a77990",
-+				     "renesas,rcar-gen3-msiof";
-+			reg = <0 0xe6c00000 0 0x0064>;
-+			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 209>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 209>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof3: spi@e6c10000 {
-+			compatible = "renesas,msiof-r8a77990",
-+				     "renesas,rcar-gen3-msiof";
-+			reg = <0 0xe6c10000 0 0x0064>;
-+			interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 208>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 208>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		xhci0: usb@ee000000 {
- 			compatible = "renesas,xhci-r8a77990",
- 				     "renesas,rcar-gen3-xhci";
--- 
-2.17.1
+Kind regards
+Uffe
+
+> ---
+>  Documentation/devicetree/bindings/mmc/renesas,mmcif.txt | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt b/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
+> index 5ff1e12..c064af5 100644
+> --- a/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
+> +++ b/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
+> @@ -12,6 +12,7 @@ Required properties:
+>         - "renesas,mmcif-r8a73a4" for the MMCIF found in r8a73a4 SoCs
+>         - "renesas,mmcif-r8a7740" for the MMCIF found in r8a7740 SoCs
+>         - "renesas,mmcif-r8a7743" for the MMCIF found in r8a7743 SoCs
+> +       - "renesas,mmcif-r8a7744" for the MMCIF found in r8a7744 SoCs
+>         - "renesas,mmcif-r8a7745" for the MMCIF found in r8a7745 SoCs
+>         - "renesas,mmcif-r8a7778" for the MMCIF found in r8a7778 SoCs
+>         - "renesas,mmcif-r8a7790" for the MMCIF found in r8a7790 SoCs
+> @@ -23,7 +24,8 @@ Required properties:
+>  - interrupts: Some SoCs have only 1 shared interrupt, while others have either
+>    2 or 3 individual interrupts (error, int, card detect). Below is the number
+>    of interrupts for each SoC:
+> -    1: r8a73a4, r8a7743, r8a7745, r8a7778, r8a7790, r8a7791, r8a7793, r8a7794
+> +    1: r8a73a4, r8a7743, r8a7744, r8a7745, r8a7778, r8a7790, r8a7791, r8a7793,
+> +       r8a7794
+>      2: r8a7740, sh73a0
+>      3: r7s72100
+>
+> --
+> 2.7.4
+>
