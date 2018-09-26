@@ -1,51 +1,50 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:14472 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389684AbeIUSRL (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Sep 2018 14:17:11 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/5] usb: renesas_usbhs: use otg mode and add support for R-Car E3
-Date: Fri, 21 Sep 2018 21:26:27 +0900
-Message-Id: <1537532792-20376-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+References: <1537950104-18330-1-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1537950104-18330-1-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 26 Sep 2018 13:37:59 +0200
+Message-ID: <CAMuHMdUPkbVs3UxqrP63Fx=25XvKCB=U5qy5TETydHT3=zi-tQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: shmobile: Document iWave RZ/G1N SOM
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set is based on the latest Greg's usb.git / usb-testing branch
-(the commit id is ae8a2ca8a2215c7e31e6d874f7303801bb15fbbc)
+On Wed, Sep 26, 2018 at 10:28 AM Biju Das <biju.das@bp.renesas.com> wrote:
+> Document the iW-RainboW-G20M-RZ/G1N Qseven device tree bindings,
+> listing it as a supported system on module.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 
-The previous code set the mode as peripheral mode by the UGCTRL2 register
-for R-Car D3. But, this SoC can select OTG mode in fact. So, at first,
-I'd like to revert related patches I submitted in patch 1 and 2.
-Then, in patch 3, it sets the mode as "OTG" and in patch 4 and 5, it
-supports for R-Car E3.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-To use this controller for R-Car D3 and E3, we need the following
-patch set. Otherwize, the mode will not be changed to peripheral mode
-by the phy's COMMCTRL register:
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=21629
+> ---
+> iWave uses the same "iW-RainboW-G20M-Qseven" name for both
+> iWave-RZ/G1N and iWave-RZ/G1M Q7 SOM. Details can be found
+> in the below link
+> https://www.iwavesystems.com/rz-g1m-qseven-module.html
 
+Makes perfect sense, as the SoCs are pin-compatible.
 
-Yoshihiro Shimoda (5):
-  Revert "usb: renesas_usbhs: add extcon notifier to set mode for
-    non-otg channel"
-  Revert "usb: renesas_usbhs: set the mode by using extcon state for
-    non-otg channel"
-  usb: renesas_usbhs: rcar3: Use OTG mode for R-Car D3
-  dt-bindings: usb: renesas_usbhs: add bindings for r8a77990
-  usb: renesas_usbhs: add support for R-Car E3
+Gr{oetje,eeting}s,
 
- .../devicetree/bindings/usb/renesas_usbhs.txt      |  1 +
- drivers/usb/renesas_usbhs/common.c                 | 13 ++++-------
- drivers/usb/renesas_usbhs/common.h                 |  1 -
- drivers/usb/renesas_usbhs/rcar3.c                  | 27 ++--------------------
- 4 files changed, 7 insertions(+), 35 deletions(-)
+                        Geert
 
 -- 
-1.9.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
