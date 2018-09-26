@@ -1,49 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:9123 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728808AbeIXUBx (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:50926 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727017AbeIZT6l (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:01:53 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v5 2/2] dt-bindings: watchdog: renesas-wdt: Add support for R7S9210
-Date: Mon, 24 Sep 2018 08:58:16 -0500
-Message-Id: <20180924135816.19474-3-chris.brandt@renesas.com>
-In-Reply-To: <20180924135816.19474-1-chris.brandt@renesas.com>
-References: <20180924135816.19474-1-chris.brandt@renesas.com>
+        Wed, 26 Sep 2018 15:58:41 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [GIT PULL FOR linux-media] adv748x/for-next
+Date: Wed, 26 Sep 2018 14:45:33 +0100
+Message-Id: <20180926134533.28420-1-kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document support for RZ/A2
+Hi Hans, Mauro,
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
----
-v2:
- * Added Reviewed-by
----
- Documentation/devicetree/bindings/watchdog/renesas-wdt.txt | 1 +
- 1 file changed, 1 insertion(+)
+Please consider including these updates for linux-media
 
-diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-index 9407212a85a8..a9e49da6fa24 100644
---- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-+++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-@@ -20,6 +20,7 @@ Required properties:
- 	         - "renesas,r8a77990-wdt" (R-Car E3)
- 	         - "renesas,r8a77995-wdt" (R-Car D3)
- 	         - "renesas,r7s72100-wdt" (RZ/A1)
-+	         - "renesas,r7s9210-wdt"  (RZ/A2)
- 		The generic compatible string must be:
- 		 - "renesas,rza-wdt" for RZ/A
- 		 - "renesas,rcar-gen2-wdt" for R-Car Gen2 and RZ/G1
--- 
-2.16.1
+--
+Regards
+
+Kieran
+
+The following changes since commit 4158757395b300b6eb308fc20b96d1d231484413:
+
+  media: davinci: Fix implicit enum conversion warning (2018-09-24 09:43:13 -0400)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git adv748x/for-next
+
+for you to fetch changes up to b3abd58a66523a5e5b6644ff481fdf74f942e083:
+
+  media: i2c: adv748x: fix typo in comment for TXB CSI-2 transmitter power down (2018-09-26 14:14:33 +0100)
+
+----------------------------------------------------------------
+Jacopo Mondi (4):
+      media: i2c: adv748x: Support probing a single output
+      media: i2c: adv748x: Handle TX[A|B] power management
+      media: i2c: adv748x: Conditionally enable only CSI-2 outputs
+      media: i2c: adv748x: Register only enabled inputs
+
+Niklas Söderlund (1):
+      media: i2c: adv748x: fix typo in comment for TXB CSI-2 transmitter power down
+
+ drivers/media/i2c/adv748x/adv748x-afe.c  |  2 +-
+ drivers/media/i2c/adv748x/adv748x-core.c | 85 +++++++++++++++++---------------
+ drivers/media/i2c/adv748x/adv748x-csi2.c | 29 ++++-------
+ drivers/media/i2c/adv748x/adv748x-hdmi.c |  2 +-
+ drivers/media/i2c/adv748x/adv748x.h      | 19 +++++--
+ 5 files changed, 69 insertions(+), 68 deletions(-)
