@@ -1,232 +1,188 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:60974 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727320AbeIDQfg (ORCPT
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:28751 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727067AbeIZWJC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Sep 2018 12:35:36 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 15/16] arm64: dts: renesas: r8a77990: ebisu: Enable VGA and HDMI outputs
-Date: Tue,  4 Sep 2018 15:10:26 +0300
-Message-Id: <20180904121027.24031-16-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180904121027.24031-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180904121027.24031-1-laurent.pinchart+renesas@ideasonboard.com>
+        Wed, 26 Sep 2018 18:09:02 -0400
+Date: Wed, 26 Sep 2018 17:55:21 +0200 (CEST)
+From: Ulrich Hecht <uli@fpond.eu>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <1288222060.327334.1537977321553@webmail.strato.com>
+In-Reply-To: <20180914091046.483-8-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180914091046.483-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20180914091046.483-8-laurent.pinchart+renesas@ideasonboard.com>
+Subject: Re: [PATCH v2 07/16] drm: rcar-du: Use LVDS PLL clock as dot clock
+ when possible
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the LVDS decoder, HDMI encoder, VGA encoder and HDMI and VGA
-connectors, and wire up the display-related nodes with clocks, pinmux
-and regulators.
 
-The LVDS0 and LVDS1 encoders can use the DU_DOTCLKIN0, DU_DOTCLKIN1 and
-EXTAL externals clocks. Two of them are provided to the SoC on the Ebisu
-board, hook them up in DT.
+> On September 14, 2018 at 11:10 AM Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com> wrote:
+> 
+> 
+> On selected SoCs, the DU can use the clock output by the LVDS encoder
+> PLL as its input dot clock. This feature is optional, but on the D3 and
+> E3 SoC it is often the only way to obtain a precise dot clock frequency,
+> as the other available clocks (CPG-generated clock and external clock)
+> usually have fixed rates.
+> 
+> Add a DU model information field to describe which DU channels can use
+> the LVDS PLL output clock as their input clock, and configure clock
+> routing accordingly.
+> 
+> This feature is available on H2, M2-W, M2-N, D3 and E3 SoCs, with D3 and
+> E3 being the primary targets. It is left disabled in this commit, and
+> will be enabled per-SoC after careful testing.
+> 
+> At the hardware level, clock routing is configured at runtime in two
+> steps, first selecting an internal dot clock between the LVDS PLL clock
+> and the external DOTCLKIN clock, and then selecting between the internal
+> dot clock and the CPG-generated clock. The first part requires stopping
+> the whole DU group in order for the change to take effect, thus causing
+> flickering on the screen. For this reason we currently hardcode the
+> clock source to the LVDS PLL clock if available, and allow flicker-free
+> selection of the external DOTCLKIN clock or CPG-generated clock
+> otherwise. A more dynamic clock selection process can be implemented
+> later if the need arises.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.c  |  8 +++++
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.h   |  2 ++
+>  drivers/gpu/drm/rcar-du/rcar_du_group.c | 64 +++++++++++++++++++++++++--------
+>  3 files changed, 59 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> index c89751c26f9c..2f8776c1ec8f 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> @@ -261,6 +261,14 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+>  		rcar_du_group_write(rcrtc->group, DPLLCR, dpllcr);
+>  
+>  		escr = ESCR_DCLKSEL_DCLKIN | div;
+> +	} else if (rcdu->info->lvds_clk_mask & BIT(rcrtc->index)) {
+> +		/*
+> +		 * Use the LVDS PLL output as the dot clock when outputting to
+> +		 * the LVDS encoder on an SoC that supports this clock routing
+> +		 * option. We use the clock directly in that case, without any
+> +		 * additional divider.
+> +		 */
+> +		escr = ESCR_DCLKSEL_DCLKIN;
+>  	} else {
+>  		struct du_clk_params params = { .diff = (unsigned long)-1 };
+>  
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> index fef9ea5c22f3..ebba9aefba6a 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> @@ -53,6 +53,7 @@ struct rcar_du_output_routing {
+>   * @routes: array of CRTC to output routes, indexed by output (RCAR_DU_OUTPUT_*)
+>   * @num_lvds: number of internal LVDS encoders
+>   * @dpll_mask: bit mask of DU channels equipped with a DPLL
+> + * @lvds_clk_mask: bitmask of channels that can use the LVDS clock as dot clock
+>   */
+>  struct rcar_du_device_info {
+>  	unsigned int gen;
+> @@ -62,6 +63,7 @@ struct rcar_du_device_info {
+>  	struct rcar_du_output_routing routes[RCAR_DU_OUTPUT_MAX];
+>  	unsigned int num_lvds;
+>  	unsigned int dpll_mask;
+> +	unsigned int lvds_clk_mask;
+>  };
+>  
+>  #define RCAR_DU_MAX_CRTCS		4
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
+> index ef2c177afb6d..4c62841eff2f 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
+> @@ -89,6 +89,54 @@ static void rcar_du_group_setup_defr8(struct rcar_du_group *rgrp)
+>  	rcar_du_group_write(rgrp, DEFR8, defr8);
+>  }
+>  
+> +static void rcar_du_group_setup_didsr(struct rcar_du_group *rgrp)
+> +{
+> +	struct rcar_du_device *rcdu = rgrp->dev;
+> +	struct rcar_du_crtc *rcrtc;
+> +	unsigned int num_crtcs = 0;
+> +	unsigned int i;
+> +	u32 didsr;
+> +
+> +	/*
+> +	 * Configure input dot clock routing with a hardcoded configuration. If
+> +	 * the DU channel can use the LVDS encoder output clock as the dot
+> +	 * clock, do so. Otherwise route DU_DOTCLKINn signal to DUn.
+> +	 *
+> +	 * Each channel can then select between the dot clock configured here
+> +	 * and the clock provided by the CPG through the ESCR register.
+> +	 */
+> +	if (rcdu->info->gen < 3 && rgrp->index == 0) {
+> +		/*
+> +		 * On Gen2 a single register in the first group controls dot
+> +		 * clock selection for all channels.
+> +		 */
+> +		rcrtc = rcdu->crtcs;
+> +		num_crtcs = rcdu->num_crtcs;
+> +	} else if (rcdu->info->gen == 3 && rgrp->num_crtcs > 1) {
+> +		/*
+> +		 * On Gen3 dot clocks are setup through per-group registers,
+> +		 * only available when the group has two channels.
+> +		 */
+> +		rcrtc = &rcdu->crtcs[rgrp->index * 2];
+> +		num_crtcs = rgrp->num_crtcs;
+> +	}
+> +
+> +	if (!num_crtcs)
+> +		return;
+> +
+> +	didsr = DIDSR_CODE;
+> +	for (i = 0; i < num_crtcs; ++i, ++rcrtc) {
+> +		if (rcdu->info->lvds_clk_mask & BIT(rcrtc->index))
+> +			didsr |= DIDSR_LCDS_LVDS0(i)
+> +			      |  DIDSR_PDCS_CLK(i, 0);
+> +		else
+> +			didsr |= DIDSR_LCDS_DCLKIN(i)
+> +			      |  DIDSR_PDCS_CLK(i, 0);
+> +	}
+> +
+> +	rcar_du_group_write(rgrp, DIDSR, didsr);
+> +}
+> +
+>  static void rcar_du_group_setup(struct rcar_du_group *rgrp)
+>  {
+>  	struct rcar_du_device *rcdu = rgrp->dev;
+> @@ -106,21 +154,7 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
+>  
+>  	if (rcar_du_has(rgrp->dev, RCAR_DU_FEATURE_EXT_CTRL_REGS)) {
+>  		rcar_du_group_setup_defr8(rgrp);
+> -
+> -		/*
+> -		 * Configure input dot clock routing. We currently hardcode the
+> -		 * configuration to routing DOTCLKINn to DUn. Register fields
+> -		 * depend on the DU generation, but the resulting value is 0 in
+> -		 * all cases.
+> -		 *
+> -		 * On Gen2 a single register in the first group controls dot
+> -		 * clock selection for all channels, while on Gen3 dot clocks
+> -		 * are setup through per-group registers, only available when
+> -		 * the group has two channels.
+> -		 */
+> -		if ((rcdu->info->gen < 3 && rgrp->index == 0) ||
+> -		    (rcdu->info->gen == 3 &&  rgrp->num_crtcs > 1))
+> -			rcar_du_group_write(rgrp, DIDSR, DIDSR_CODE);
+> +		rcar_du_group_setup_didsr(rgrp);
+>  	}
+>  
+>  	if (rcdu->info->gen >= 3)
+> -- 
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 166 +++++++++++++++++++++++++
- 1 file changed, 166 insertions(+)
+Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-index 2bc3a4884b00..772ea8843d84 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-@@ -28,6 +28,88 @@
- 		/* first 128MB is reserved for secure area. */
- 		reg = <0x0 0x48000000 0x0 0x38000000>;
- 	};
-+
-+	hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_out: endpoint {
-+				remote-endpoint = <&adv7511_out>;
-+			};
-+		};
-+	};
-+
-+	lvds-decoder {
-+		compatible = "thine,thc63lvd1024";
-+		vcc-supply = <&reg_3p3v>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				thc63lvd1024_in: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+				thc63lvd1024_out: endpoint {
-+					remote-endpoint = <&adv7511_in>;
-+				};
-+			};
-+		};
-+	};
-+
-+	vga {
-+		compatible = "vga-connector";
-+
-+		port {
-+			vga_in: endpoint {
-+				remote-endpoint = <&adv7123_out>;
-+			};
-+		};
-+	};
-+
-+	vga-encoder {
-+		compatible = "adi,adv7123";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7123_in: endpoint {
-+					remote-endpoint = <&du_out_rgb>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+				adv7123_out: endpoint {
-+					remote-endpoint = <&vga_in>;
-+				};
-+			};
-+		};
-+	};
-+
-+	reg_3p3v: regulator1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	x13_clk: x13 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <74250000>;
-+	};
- };
- 
- &avb {
-@@ -47,6 +129,25 @@
- 	};
- };
- 
-+&du {
-+	pinctrl-0 = <&du_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+
-+	clocks = <&cpg CPG_MOD 724>,
-+		 <&cpg CPG_MOD 723>,
-+		 <&x13_clk>;
-+	clock-names = "du.0", "du.1", "dclkin.0";
-+
-+	ports {
-+		port@0 {
-+			endpoint {
-+				remote-endpoint = <&adv7123_in>;
-+			};
-+		};
-+	};
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -55,6 +156,66 @@
- 	clock-frequency = <48000000>;
- };
- 
-+&i2c0 {
-+	status = "okay";
-+
-+	hdmi-encoder@39 {
-+		compatible = "adi,adv7511w";
-+		reg = <0x39>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <1 IRQ_TYPE_LEVEL_LOW>;
-+
-+		adi,input-depth = <8>;
-+		adi,input-colorspace = "rgb";
-+		adi,input-clock = "1x";
-+		adi,input-style = <1>;
-+		adi,input-justification = "evenly";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7511_in: endpoint {
-+					remote-endpoint = <&thc63lvd1024_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				adv7511_out: endpoint {
-+					remote-endpoint = <&hdmi_con_out>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&lvds0 {
-+	status = "okay";
-+
-+	clocks = <&cpg CPG_MOD 727>,
-+		 <&x13_clk>,
-+		 <&extal_clk>;
-+	clock-names = "fck", "dclkin.0", "extal";
-+
-+	ports {
-+		port@1 {
-+			lvds0_out: endpoint {
-+				remote-endpoint = <&thc63lvd1024_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&lvds1 {
-+	clocks = <&cpg CPG_MOD 727>,
-+		 <&x13_clk>,
-+		 <&extal_clk>;
-+	clock-names = "fck", "dclkin.0", "extal";
-+};
-+
- &ohci0 {
- 	status = "okay";
- };
-@@ -67,6 +228,11 @@
- 		};
- 	};
- 
-+	du_pins: du {
-+		groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
-+		function = "du";
-+	};
-+
- 	usb0_pins: usb {
- 		groups = "usb0_b";
- 		function = "usb0";
--- 
-Regards,
-
-Laurent Pinchart
+CU
+Uli
