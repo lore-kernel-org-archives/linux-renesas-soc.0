@@ -1,34 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55485 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726106AbeI1Nkp (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:48488 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726915AbeIZSWh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 09:40:45 -0400
-Date: Fri, 28 Sep 2018 09:18:20 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: laurent.pinchart@ideasonboard.com,
-        kieran.bingham+renesas@ideasonboard.com,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+        Wed, 26 Sep 2018 14:22:37 -0400
+Reply-To: kieran.bingham+renesas@ideasonboard.com
 Subject: Re: [RESEND PATCH] drm/rcar-du: Replace drm_dev_unref with
  drm_dev_put
-Message-ID: <20180928071820.o4bzzcaihcpsi3qd@verge.net.au>
+To: Thomas Zimmermann <tzimmermann@suse.de>,
+        laurent.pinchart@ideasonboard.com
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
 References: <20180926115312.24158-1-tzimmermann@suse.de>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <dabee9ce-af07-47c5-32ed-ec673a238fa8@ideasonboard.com>
+Date: Wed, 26 Sep 2018 13:09:51 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20180926115312.24158-1-tzimmermann@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Sep 26, 2018 at 01:53:12PM +0200, Thomas Zimmermann wrote:
+Hi Thomas,
+
+Thank you for the patch,
+
+On 26/09/18 12:53, Thomas Zimmermann wrote:
 > This patch unifies the naming of DRM functions for reference counting
 > of struct drm_device. The resulting code is more aligned with the rest
-> of the Linux kernel interfaces.
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> of the Linux kernel interfaces.> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Looks good to me.
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
 > ---
 >  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 2 +-
