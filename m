@@ -1,79 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:43636 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbeIZRzW (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:7529 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726404AbeIZPXC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Sep 2018 13:55:22 -0400
-MIME-Version: 1.0
-References: <20180926091053.21255-1-phil.edworthy@renesas.com>
-In-Reply-To: <20180926091053.21255-1-phil.edworthy@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 26 Sep 2018 13:42:35 +0200
-Message-ID: <CAMuHMdWu-GWBompRMwbweOw-N2AOUtpGdAnO8JGbRAvy=Q9j=g@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] Renesas R9A06G032 PINCTRL Driver
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wed, 26 Sep 2018 11:23:02 -0400
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Jacopo Mondi <jacopo@jmondi.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH v5 0/3] Renesas R9A06G032 PINCTRL Driver
+Date: Wed, 26 Sep 2018 10:10:50 +0100
+Message-Id: <20180926091053.21255-1-phil.edworthy@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Phil,
+This implements the pinctrl driver for the RZ/N1 family of devices, including
+the R9A06G032 (RZ/N1D) device.
 
-On Wed, Sep 26, 2018 at 11:11 AM Phil Edworthy
-<phil.edworthy@renesas.com> wrote:
-> This implements the pinctrl driver for the RZ/N1 family of devices, including
-> the R9A06G032 (RZ/N1D) device.
->
-> This series was originally written by Michel Pollet whilst at Renesas, and I
-> have taken over this work.
->
-> Main changes:
-> v5:
->  - Address Jacopo's further comments
->  - Address Geert's comments
->
-> v4:
->  - Address Jacopo's comments
->  - Add alternative way to use the pinmux prop.
->  - Remove mention of gpios.
->  - Implement pin_config_group_get()
->  - Fix function to get pin configs, i.e. return -EINVAL when disabled.
->
-> v3:
->  - Use standard DT props instead of proprietary ones.
->  - Replace virtual pins used for MDIO muxing with extra funcs.
->  - Use pinctrl_utils funcs to handle the maps.
->  - Remove the dbg functions to keep things simple.
->  - Change the way the functions are defined so it is easy to check
->    against the hardware numbering.
->
-> v2:
->  - Change to generic rzn1 family driver, instead of device specific.
->  - Review comments fixed.
->  - Fix error handling during probe
->
-> Phil Edworthy (3):
->   dt-bindings: pinctrl: renesas,rzn1-pinctrl: documentation
->   pinctrl: renesas: Renesas RZ/N1 pinctrl driver
->   ARM: dts: r9a06g032: Add pinctrl node
+This series was originally written by Michel Pollet whilst at Renesas, and I
+have taken over this work.
 
-Thanks, will apply the first two patches to sh-pfc-for-v4.2.0.
+Main changes:
+v5:
+ - Address Jacopo's further comments
+ - Address Geert's comments
 
-Gr{oetje,eeting}s,
+v4:
+ - Address Jacopo's comments
+ - Add alternative way to use the pinmux prop.
+ - Remove mention of gpios.
+ - Implement pin_config_group_get()
+ - Fix function to get pin configs, i.e. return -EINVAL when disabled.
 
-                        Geert
+v3:
+ - Use standard DT props instead of proprietary ones.
+ - Replace virtual pins used for MDIO muxing with extra funcs.
+ - Use pinctrl_utils funcs to handle the maps.
+ - Remove the dbg functions to keep things simple.
+ - Change the way the functions are defined so it is easy to check
+   against the hardware numbering.
+
+v2:
+ - Change to generic rzn1 family driver, instead of device specific.
+ - Review comments fixed.
+ - Fix error handling during probe
+
+Phil Edworthy (3):
+  dt-bindings: pinctrl: renesas,rzn1-pinctrl: documentation
+  pinctrl: renesas: Renesas RZ/N1 pinctrl driver
+  ARM: dts: r9a06g032: Add pinctrl node
+
+ .../bindings/pinctrl/renesas,rzn1-pinctrl.txt | 153 +++
+ arch/arm/boot/dts/r9a06g032.dtsi              |   8 +
+ drivers/pinctrl/Kconfig                       |  10 +
+ drivers/pinctrl/Makefile                      |   1 +
+ drivers/pinctrl/pinctrl-rzn1.c                | 948 ++++++++++++++++++
+ include/dt-bindings/pinctrl/rzn1-pinctrl.h    | 141 +++
+ 6 files changed, 1261 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
+ create mode 100644 drivers/pinctrl/pinctrl-rzn1.c
+ create mode 100644 include/dt-bindings/pinctrl/rzn1-pinctrl.h
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.17.1
