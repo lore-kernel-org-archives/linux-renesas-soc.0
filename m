@@ -1,54 +1,35 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 2/5] dt-bindings: display: renesas: du: Document the r8a7744 bindings
-Date: Fri, 21 Sep 2018 19:08:28 +0100
-Message-Id: <1537553311-8831-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1537553311-8831-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1537553311-8831-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:51870 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726777AbeIZPaA (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 26 Sep 2018 11:30:00 -0400
+Date: Wed, 26 Sep 2018 11:17:56 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] R-Car D3/E3 display DT enablement
+Message-ID: <20180926091755.xgbgyoevo4vliv44@verge.net.au>
+References: <20180925163337.31212-1-laurent.pinchart+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180925163337.31212-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+On Tue, Sep 25, 2018 at 07:33:33PM +0300, Laurent Pinchart wrote:
+> Hello,
+> 
+> The patches in this series enable display support for the D3 and E3 SoCs, on
+> the Draak and Ebisu boards respectively. They were previously part of the
+> "[PATCH v2 00/16] R-Car D3/E3 display support (with LVDS PLL)" series, and
+> have been split out now that the DT bindings have been accepted andon their
+> way to v4.20 through the DRM tree, along with the code changes.
+> 
+> Compared to v2, the VSPI MSTP clock index has been fixed, and the
+> patches rebased on top of Simon's latest devel branch.
+> 
+> Simon, could you please consider this as an update for v4.20 ?
 
-Document the RZ/G1N (R8A7744) SoC in the R-Car DU bindings.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- Documentation/devicetree/bindings/display/renesas,du.txt | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
-index 2b28ae2..aad9cf1 100644
---- a/Documentation/devicetree/bindings/display/renesas,du.txt
-+++ b/Documentation/devicetree/bindings/display/renesas,du.txt
-@@ -4,6 +4,7 @@ Required Properties:
- 
-   - compatible: must be one of the following.
-     - "renesas,du-r8a7743" for R8A7743 (RZ/G1M) compatible DU
-+    - "renesas,du-r8a7744" for R8A7744 (RZ/G1N) compatible DU
-     - "renesas,du-r8a7745" for R8A7745 (RZ/G1E) compatible DU
-     - "renesas,du-r8a77470" for R8A77470 (RZ/G1C) compatible DU
-     - "renesas,du-r8a7779" for R8A7779 (R-Car H1) compatible DU
-@@ -51,6 +52,7 @@ corresponding to each DU output.
-                         Port0          Port1          Port2          Port3
- -----------------------------------------------------------------------------
-  R8A7743 (RZ/G1M)       DPAD 0         LVDS 0         -              -
-+ R8A7744 (RZ/G1N)       DPAD 0         LVDS 0         -              -
-  R8A7745 (RZ/G1E)       DPAD 0         DPAD 1         -              -
-  R8A77470 (RZ/G1C)      DPAD 0         DPAD 1         LVDS 0         -
-  R8A7779 (R-Car H1)     DPAD 0         DPAD 1         -              -
--- 
-2.7.4
+Thanks, applied for v4.20.
