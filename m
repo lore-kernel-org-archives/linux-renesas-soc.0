@@ -1,46 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:47609 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727027AbeI0PWY (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:23799 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726401AbeIZPqM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:22:24 -0400
-Subject: Re: [PATCH resend] can: rcar_can: convert to SPDX identifiers
+        Wed, 26 Sep 2018 11:46:12 -0400
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Wolfgang Grandegger <wg@grandegger.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux-Net <netdev@vger.kernel.org>, linux-can@vger.kernel.org
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+CC: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-Net <netdev@vger.kernel.org>,
+        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>
+Subject: RE: [PATCH resend] can: rcar_can: convert to SPDX identifiers
+Date: Wed, 26 Sep 2018 09:34:01 +0000
+Message-ID: <TY2PR01MB19628FAC2F3E5D7D8D6F5C86C3150@TY2PR01MB1962.jpnprd01.prod.outlook.com>
 References: <874ledyrc6.wl-kuninori.morimoto.gx@renesas.com>
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Message-ID: <1bfdc10a-41e9-2a1f-b944-a8816186e998@pengutronix.de>
-Date: Thu, 27 Sep 2018 11:05:02 +0200
-MIME-Version: 1.0
 In-Reply-To: <874ledyrc6.wl-kuninori.morimoto.gx@renesas.com>
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="LqXYgdV2Ll4ppqwzzQQulY2r8c3HCiq2v"
+Content-Language: en-US
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---LqXYgdV2Ll4ppqwzzQQulY2r8c3HCiq2v
-Content-Type: multipart/mixed; boundary="WOHXJ4MorcyPPMh23GJt5evmFzzmmPdHx";
- protected-headers="v1"
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- Wolfgang Grandegger <wg@grandegger.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
- Linux-Net <netdev@vger.kernel.org>, linux-can@vger.kernel.org
-Message-ID: <1bfdc10a-41e9-2a1f-b944-a8816186e998@pengutronix.de>
-Subject: Re: [PATCH resend] can: rcar_can: convert to SPDX identifiers
-References: <874ledyrc6.wl-kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <874ledyrc6.wl-kuninori.morimoto.gx@renesas.com>
+Hi Morimoto-san,
 
---WOHXJ4MorcyPPMh23GJt5evmFzzmmPdHx
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: quoted-printable
+Thank you for the patch.
 
-On 09/26/2018 03:41 AM, Kuninori Morimoto wrote:
+> Subject: [PATCH resend] can: rcar_can: convert to SPDX identifiers
+>=20
 >=20
 > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 >=20
@@ -50,36 +38,85 @@ On 09/26/2018 03:41 AM, Kuninori Morimoto wrote:
 > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Wolfram Sang has already supplied a similar patch, but not for Makefile
-and Kconfig. I've applied your patch for Makefile and Kconfig and
-adjusted the commit message accordingly.
+Acked-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-Marc
+Thanks,
+Ramesh
 
---=20
-Pengutronix e.K.                  | Marc Kleine-Budde           |
-Industrial Linux Solutions        | Phone: +49-231-2826-924     |
-Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
-Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
-
-
---WOHXJ4MorcyPPMh23GJt5evmFzzmmPdHx--
-
---LqXYgdV2Ll4ppqwzzQQulY2r8c3HCiq2v
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAlusnT4ACgkQk9IU1zQo
-ZfGUEggA2BrO340zbi8ZLpi6HoLj7omJuz4WpENUgGU2vmFQF5b4d3Ir8XdNEz+W
-HyYIhFicj+8z1sEAg/4dsQa4LghuQGOmUdN6Wo+F5LOtkaREI2WRV+lXSY/jOES4
-VfXfcm80fIorwIVNMGopgreEzACrJZYFl71erWnT9lgAkttkAlF//vIlYJkklPDd
-t4NpSDiKoxFNQg7fIXRIjDUAkTnLFWwO8V0LvCD0kiG2vBIfwf6hGnAfRwBMzNRa
-Z6jxKMGoURVGqHGDErSCQyuL/CDFJvZjPmJY5NxR3gdPqlQ4fokNZV30qeA6LrPY
-FS/OojcQOuUNuApS+fXFeeVwHSYkdg==
-=gZqz
------END PGP SIGNATURE-----
-
---LqXYgdV2Ll4ppqwzzQQulY2r8c3HCiq2v--
+> ---
+> Wolfgang, Marc
+>=20
+> 2 weeks past, resend patch
+>=20
+>  drivers/net/can/rcar/Kconfig      | 1 +
+>  drivers/net/can/rcar/Makefile     | 1 +
+>  drivers/net/can/rcar/rcar_can.c   | 6 +-----
+>  drivers/net/can/rcar/rcar_canfd.c | 6 +-----
+>  4 files changed, 4 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/drivers/net/can/rcar/Kconfig b/drivers/net/can/rcar/Kconfig
+> index 7b03a3a..bd5a8fc 100644
+> --- a/drivers/net/can/rcar/Kconfig
+> +++ b/drivers/net/can/rcar/Kconfig
+> @@ -1,3 +1,4 @@
+> +# SPDX-License-Identifier: GPL-2.0
+>  config CAN_RCAR
+>  	tristate "Renesas R-Car CAN controller"
+>  	depends on ARCH_RENESAS || ARM
+> diff --git a/drivers/net/can/rcar/Makefile b/drivers/net/can/rcar/Makefil=
+e
+> index 08de36a..c9185b0 100644
+> --- a/drivers/net/can/rcar/Makefile
+> +++ b/drivers/net/can/rcar/Makefile
+> @@ -1,3 +1,4 @@
+> +# SPDX-License-Identifier: GPL-2.0
+>  #
+>  #  Makefile for the Renesas R-Car CAN & CAN FD controller drivers
+>  #
+> diff --git a/drivers/net/can/rcar/rcar_can.c
+> b/drivers/net/can/rcar/rcar_can.c
+> index 11662f4..06f90a0 100644
+> --- a/drivers/net/can/rcar/rcar_can.c
+> +++ b/drivers/net/can/rcar/rcar_can.c
+> @@ -1,12 +1,8 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+>  /* Renesas R-Car CAN device driver
+>   *
+>   * Copyright (C) 2013 Cogent Embedded, Inc. <source@cogentembedded.com>
+>   * Copyright (C) 2013 Renesas Solutions Corp.
+> - *
+> - * This program is free software; you can redistribute  it and/or modify
+> it
+> - * under  the terms of  the GNU General  Public License as published by
+> the
+> - * Free Software Foundation;  either version 2 of the  License, or (at
+> your
+> - * option) any later version.
+>   */
+>=20
+>  #include <linux/module.h>
+> diff --git a/drivers/net/can/rcar/rcar_canfd.c
+> b/drivers/net/can/rcar/rcar_canfd.c
+> index 602c19e..0541000 100644
+> --- a/drivers/net/can/rcar/rcar_canfd.c
+> +++ b/drivers/net/can/rcar/rcar_canfd.c
+> @@ -1,11 +1,7 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+>  /* Renesas R-Car CAN FD device driver
+>   *
+>   * Copyright (C) 2015 Renesas Electronics Corp.
+> - *
+> - * This program is free software; you can redistribute  it and/or modify
+> it
+> - * under  the terms of  the GNU General  Public License as published by
+> the
+> - * Free Software Foundation;  either version 2 of the  License, or (at
+> your
+> - * option) any later version.
+>   */
+>=20
+>  /* The R-Car CAN FD controller can operate in either one of the below tw=
+o
+> modes
+> --
+> 2.7.4
