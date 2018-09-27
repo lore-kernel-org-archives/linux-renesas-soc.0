@@ -1,63 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:41012 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728184AbeINH0g (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:10856 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727112AbeI0TLz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Sep 2018 03:26:36 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 1/3] rcar-vin: align format width with hardware limits
-Date: Fri, 14 Sep 2018 04:13:43 +0200
-Message-Id: <20180914021345.9277-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180914021345.9277-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180914021345.9277-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Thu, 27 Sep 2018 15:11:55 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>, dmaengine@vger.kernel.org,
+        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] dt-bindings: dmaengine: usb-dmac: Add binding for r8a7744
+Date: Thu, 27 Sep 2018 13:46:41 +0100
+Message-Id: <1538052401-44249-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Gen3 datasheets lists specific alignment restrictions compared to
-Gen2. This was overlooked when adding Gen3 support as no problematic
-configuration was encountered. However when adding support for Gen3 Up
-Down Scaler (UDS) strange issues could be observed for odd widths
-without taking this limit into consideration.
+This patch adds binding for r8a7744 (RZ/G1N).
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+This patch is tested against linux-next next-20180927
+---
+ Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index dc77682b47857c97..2fc2a05eaeacb134 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -673,6 +673,21 @@ static void rvin_mc_try_format(struct rvin_dev *vin,
- 	pix->quantization = V4L2_MAP_QUANTIZATION_DEFAULT(true, pix->colorspace,
- 							  pix->ycbcr_enc);
- 
-+	switch (vin->format.pixelformat) {
-+	case V4L2_PIX_FMT_NV16:
-+		pix->width = ALIGN(pix->width, 0x80);
-+		break;
-+	case V4L2_PIX_FMT_YUYV:
-+	case V4L2_PIX_FMT_UYVY:
-+	case V4L2_PIX_FMT_RGB565:
-+	case V4L2_PIX_FMT_XRGB555:
-+		pix->width = ALIGN(pix->width, 0x40);
-+		break;
-+	default:
-+		pix->width = ALIGN(pix->width, 0x20);
-+		break;
-+	}
-+
- 	rvin_format_align(vin, pix);
- }
- 
+diff --git a/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt b/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
+index 482e543..1743017 100644
+--- a/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
++++ b/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
+@@ -4,6 +4,7 @@ Required Properties:
+ -compatible: "renesas,<soctype>-usb-dmac", "renesas,usb-dmac" as fallback.
+ 	Examples with soctypes are:
+ 	  - "renesas,r8a7743-usb-dmac" (RZ/G1M)
++	  - "renesas,r8a7744-usb-dmac" (RZ/G1N)
+ 	  - "renesas,r8a7745-usb-dmac" (RZ/G1E)
+ 	  - "renesas,r8a7790-usb-dmac" (R-Car H2)
+ 	  - "renesas,r8a7791-usb-dmac" (R-Car M2-W)
 -- 
-2.18.0
+2.7.4
