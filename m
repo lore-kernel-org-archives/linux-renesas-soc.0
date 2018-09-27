@@ -1,82 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:43153 "EHLO
+Received: from relmlor3.renesas.com ([210.160.252.173]:60494 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389981AbeIURn5 (ORCPT
+        by vger.kernel.org with ESMTP id S1726947AbeI0Ssm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Sep 2018 13:43:57 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 5/8] phy: renesas: rcar-gen3-usb2: unify OBINTEN handling
-Date: Fri, 21 Sep 2018 20:53:21 +0900
-Message-Id: <1537530804-19399-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1537530804-19399-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1537530804-19399-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Thu, 27 Sep 2018 14:48:42 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] dt-bindings: phy: rcar-gen2: Add r8a7744 support
+Date: Thu, 27 Sep 2018 13:23:34 +0100
+Message-Id: <1538051014-5853-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch unifies the OBINTEN handling to clean-up the code.
+Add USB PHY support for r8a7744 SoC. Renesas RZ/G1N (R8A7744)
+USB PHY is identical to the R-Car Gen2 family.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 ---
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
+This patch is tested against linux-next next-20180927
+---
+ Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 856056e..e7eaed9 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -142,6 +142,18 @@ static void rcar_gen3_enable_vbus_ctrl(struct rcar_gen3_chan *ch, int vbus)
- 	writel(val, usb2_base + USB2_ADPCTRL);
- }
+diff --git a/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt b/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt
+index eeb9e18..4f0879a 100644
+--- a/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt
++++ b/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt
+@@ -5,6 +5,7 @@ This file provides information on what the device node for the R-Car generation
  
-+static void rcar_gen3_control_otg_irq(struct rcar_gen3_chan *ch, int enable)
-+{
-+	void __iomem *usb2_base = ch->base;
-+	u32 val = readl(usb2_base + USB2_OBINTEN);
-+
-+	if (enable)
-+		val |= USB2_OBINT_BITS;
-+	else
-+		val &= ~USB2_OBINT_BITS;
-+	writel(val, usb2_base + USB2_OBINTEN);
-+}
-+
- static void rcar_gen3_init_for_host(struct rcar_gen3_chan *ch)
- {
- 	rcar_gen3_set_linectrl(ch, 1, 1);
-@@ -187,16 +199,12 @@ static void rcar_gen3_init_for_a_peri(struct rcar_gen3_chan *ch)
- 
- static void rcar_gen3_init_from_a_peri_to_a_host(struct rcar_gen3_chan *ch)
- {
--	void __iomem *usb2_base = ch->base;
--	u32 val;
--
--	val = readl(usb2_base + USB2_OBINTEN);
--	writel(val & ~USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
-+	rcar_gen3_control_otg_irq(ch, 0);
- 
- 	rcar_gen3_enable_vbus_ctrl(ch, 1);
- 	rcar_gen3_init_for_host(ch);
- 
--	writel(val | USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
-+	rcar_gen3_control_otg_irq(ch, 1);
- }
- 
- static bool rcar_gen3_check_id(struct rcar_gen3_chan *ch)
-@@ -286,8 +294,7 @@ static void rcar_gen3_init_otg(struct rcar_gen3_chan *ch)
- 	val = readl(usb2_base + USB2_VBCTRL);
- 	writel(val | USB2_VBCTRL_DRVVBUSSEL, usb2_base + USB2_VBCTRL);
- 	writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
--	val = readl(usb2_base + USB2_OBINTEN);
--	writel(val | USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
-+	rcar_gen3_control_otg_irq(ch, 1);
- 	val = readl(usb2_base + USB2_ADPCTRL);
- 	writel(val | USB2_ADPCTRL_IDPULLUP, usb2_base + USB2_ADPCTRL);
- 	val = readl(usb2_base + USB2_LINECTRL1);
+ Required properties:
+ - compatible: "renesas,usb-phy-r8a7743" if the device is a part of R8A7743 SoC.
++	      "renesas,usb-phy-r8a7744" if the device is a part of R8A7744 SoC.
+ 	      "renesas,usb-phy-r8a7745" if the device is a part of R8A7745 SoC.
+ 	      "renesas,usb-phy-r8a7790" if the device is a part of R8A7790 SoC.
+ 	      "renesas,usb-phy-r8a7791" if the device is a part of R8A7791 SoC.
 -- 
-1.9.1
+2.7.4
