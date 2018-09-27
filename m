@@ -1,54 +1,63 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH 03/16] dt-bindings: display: renesas: lvds: Add EXTAL and DU_DOTCLKIN clocks
-Date: Tue,  4 Sep 2018 15:10:14 +0300
-Message-Id: <20180904121027.24031-4-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180904121027.24031-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180904121027.24031-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:47450 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727200AbeI0Rui (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 27 Sep 2018 13:50:38 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/3] thermal: da9062/61: Prevent hardware access during system suspend
+Date: Thu, 27 Sep 2018 13:32:35 +0200
+Message-Id: <20180927113235.30354-4-geert+renesas@glider.be>
+In-Reply-To: <20180927113235.30354-1-geert+renesas@glider.be>
+References: <20180927113235.30354-1-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On the D3 and E3 SoCs, the LVDS encoder can derive its internal pixel
-clock from an externally supplied clock, either through the EXTAL pin or
-through one of the DU_DOTCLKINx pins. Add corresponding clocks to the DT
-bindings.
+The workqueue used for monitoring the hardware may run while the device
+is already suspended.  Fix this by using the freezable system workqueue
+instead, cfr. commit 51e20d0e3a60cf46 ("thermal: Prevent polling from
+happening during system suspend").
 
-To retain backward compatibility with DT that don't specify the
-clock-names property, the functional clock must always be specified
-first, and the clock-names property is optional when only the functional
-clock is specified.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Fixes: 608567aac3206ae8 ("thermal: da9062/61: Thermal junction temperature monitoring driver")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- .../devicetree/bindings/display/bridge/renesas,lvds.txt      | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Untested due to lack of hardware.
+---
+ drivers/thermal/da9062-thermal.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-index 13af7e2ac7e8..9e3913f6a643 100644
---- a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-+++ b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-@@ -19,7 +19,17 @@ Required properties:
-   - "renesas,r8a77995-lvds" for R8A77995 (R-Car D3) compatible LVDS encoders
+diff --git a/drivers/thermal/da9062-thermal.c b/drivers/thermal/da9062-thermal.c
+index dd8dd947b7f0737c..01b0cb9944577851 100644
+--- a/drivers/thermal/da9062-thermal.c
++++ b/drivers/thermal/da9062-thermal.c
+@@ -106,7 +106,7 @@ static void da9062_thermal_poll_on(struct work_struct *work)
+ 					   THERMAL_EVENT_UNSPECIFIED);
  
- - reg: Base address and length for the memory-mapped registers
--- clocks: A phandle + clock-specifier pair for the functional clock
-+- clocks: A list of phandles + clock-specifier pairs, one for each entry in
-+  the clock-names property.
-+- clock-names: Name of the clocks. This property is model-dependent.
-+  - The functional clock is mandatory for all models, shall be listed first,
-+    and shall be named "fck".
-+  - On R8A77990 and R8A77995, the LVDS encoder can use the EXTAL or
-+    DU_DOTCLKINx clocks. Those clocks are optional. When supplied they must be
-+    named "extal" and "dclkin.x" respectively, with "x" being the DU_DOTCLKIN
-+    numerical index.
-+  - When the clocks property only contains the functional clock, the
-+    clock-names property may be omitted.
- - resets: A phandle + reset specifier for the module reset
+ 		delay = msecs_to_jiffies(thermal->zone->passive_delay);
+-		schedule_delayed_work(&thermal->work, delay);
++		queue_delayed_work(system_freezable_wq, &thermal->work, delay);
+ 		return;
+ 	}
  
- Required nodes:
+@@ -125,7 +125,7 @@ static irqreturn_t da9062_thermal_irq_handler(int irq, void *data)
+ 	struct da9062_thermal *thermal = data;
+ 
+ 	disable_irq_nosync(thermal->irq);
+-	schedule_delayed_work(&thermal->work, 0);
++	queue_delayed_work(system_freezable_wq, &thermal->work, 0);
+ 
+ 	return IRQ_HANDLED;
+ }
 -- 
-Regards,
-
-Laurent Pinchart
+2.17.1
