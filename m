@@ -1,87 +1,120 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:36096 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726023AbeICPSq (ORCPT
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:47997 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726820AbeI0RE1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Sep 2018 11:18:46 -0400
+        Thu, 27 Sep 2018 13:04:27 -0400
+Subject: Re: [PATCH v3 net-next] dt-bindings: can: rcar_can: document r8a77965
+ support
+To: Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        Magnus Damm <damm+renesas@opensource.se>,
+        linux-renesas-soc@vger.kernel.org,
+        Eugeniu Rosca <rosca.eugeniu@gmail.com>
+References: <20180820144910.13210-1-erosca@de.adit-jv.com>
+ <50048177-96ad-cbda-6845-20ffc32d025a@pengutronix.de>
+ <20180921194833.GA28500@vmlxhi-102.adit-jv.com>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Message-ID: <129e18fd-8161-0f79-d17a-9bb73c3ed717@pengutronix.de>
+Date: Thu, 27 Sep 2018 12:46:28 +0200
 MIME-Version: 1.0
-References: <8aa6d2cd-68f9-eae4-cba0-222c1511eb9d@cogentembedded.com> <CAMuHMdVZq3rUTWwQPn9nUmmLw2hDo6L1ifPMPL8Q5dTES5A=ng@mail.gmail.com>
-In-Reply-To: <CAMuHMdVZq3rUTWwQPn9nUmmLw2hDo6L1ifPMPL8Q5dTES5A=ng@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 3 Sep 2018 12:58:55 +0200
-Message-ID: <CAMuHMdXVsHRdVoJYPiVvFagdpxrYJs0svPxjMRZorwMgxM5KcA@mail.gmail.com>
-Subject: Re: [PATCH] clocksource: sh_cmt: fixup for 64-bit machines
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        andrey.gusakov@cogentembedded.com,
-        Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
-        Linux-sh list <linux-sh@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180921194833.GA28500@vmlxhi-102.adit-jv.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="vejwY6kMxSSax3MYakY7MtDbDzeZymlzE"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--vejwY6kMxSSax3MYakY7MtDbDzeZymlzE
+Content-Type: multipart/mixed; boundary="ddrS4jMJFRRubP9HSO5wb4GKW9I50qh2d";
+ protected-headers="v1"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+ Wolfgang Grandegger <wg@grandegger.com>,
+ "David S . Miller" <davem@davemloft.net>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, linux-can@vger.kernel.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ Magnus Damm <damm+renesas@opensource.se>, linux-renesas-soc@vger.kernel.org,
+ Eugeniu Rosca <rosca.eugeniu@gmail.com>
+Message-ID: <129e18fd-8161-0f79-d17a-9bb73c3ed717@pengutronix.de>
+Subject: Re: [PATCH v3 net-next] dt-bindings: can: rcar_can: document r8a77965
+ support
+References: <20180820144910.13210-1-erosca@de.adit-jv.com>
+ <50048177-96ad-cbda-6845-20ffc32d025a@pengutronix.de>
+ <20180921194833.GA28500@vmlxhi-102.adit-jv.com>
+In-Reply-To: <20180921194833.GA28500@vmlxhi-102.adit-jv.com>
 
-On Fri, Aug 31, 2018 at 11:05 AM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Thu, Aug 30, 2018 at 9:19 PM Sergei Shtylyov
-> <sergei.shtylyov@cogentembedded.com> wrote:
-> > When trying to use CMT for clockevents on R-Car gen3 SoCs, I noticed that
-> > the maximum delta (in ns) for the broadcast timer was diplayed as 1000 in
-> > /proc/timer_list.  It turned out that when calculating it, the driver did
-> > shift left 1 by 32 (causing what I think was undefined behaviour) getting
-> > 1 as a result. Using 1UL instead fixed the maximum delta and did even fix
-> > switching an active clocksource to a CMT channel (which caused the system
-> > to go non-interactive before).
-> >
-> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> >
-> > ---
-> > This patch is against the 'tip.git' repo's 'timers/core' branch.
-> >
-> > I am not sure whether the CMT driver was ever used on SH64; on R-Car gen3
-> > (ARM64) I'm only enabling this driver now, so not sure how urgent is this...
-> >
-> >  drivers/clocksource/sh_cmt.c |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > Index: tip/drivers/clocksource/sh_cmt.c
-> > ===================================================================
-> > --- tip.orig/drivers/clocksource/sh_cmt.c
-> > +++ tip/drivers/clocksource/sh_cmt.c
-> > @@ -891,7 +891,7 @@ static int sh_cmt_setup_channel(struct s
-> >         if (cmt->info->width == (sizeof(ch->max_match_value) * 8))
-> >                 ch->max_match_value = ~0;
-> >         else
-> > -               ch->max_match_value = (1 << cmt->info->width) - 1;
-> > +               ch->max_match_value = (1UL << cmt->info->width) - 1;
-> >
-> >         ch->match_value = ch->max_match_value;
-> >         raw_spin_lock_init(&ch->lock);
->
-> Shouldn't all those fields/variables be changed from "unsigned long" to "u32",
-> as they really should match the CMT's register sizes?
+--ddrS4jMJFRRubP9HSO5wb4GKW9I50qh2d
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: quoted-printable
 
-To clarify: the if-check above is intended to catch a shift by 32. But it
-fails to do that on 64-bit platforms, as max_match_value is unsigned long,
-and its size thus depends on the platform, while the CMT's register sizes
-are fixed to 32-bit.
+On 09/21/2018 09:48 PM, Eugeniu Rosca wrote:
+> Hi Marc,
+>=20
+> On Mon, Aug 27, 2018 at 12:08:48PM +0200, Marc Kleine-Budde wrote:
+>> On 08/20/2018 04:49 PM, Eugeniu Rosca wrote:
+>>> From: Eugeniu Rosca <rosca.eugeniu@gmail.com>
+>>>
+>>> Document the support for rcar_can on R8A77965 SoC devices.
+>>> Add R8A77965 to the list of SoCs which require the "assigned-clocks" =
+and
+>>> "assigned-clock-rates" properties (thanks, Sergei).
+>>>
+>>> Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+>>> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+>>> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>=
 
-Hence please fix the real bug (abuse of unsigned long for 32-bit values all
-over the place), instead of papering over it.
+>>
+>> Added to linux-can.
+>=20
+> I can't find the patch in below repositories:
+>  - https://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can.git
+>  - https://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.g=
+it
+>=20
+> Could you please let me know what "linux-can" means?
 
-Thanks!
+I haven't pushed it yet, it will be in the testing branch of linux-can.gi=
+t
 
-Gr{oetje,eeting}s,
+Marc
 
-                        Geert
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--ddrS4jMJFRRubP9HSO5wb4GKW9I50qh2d--
+
+--vejwY6kMxSSax3MYakY7MtDbDzeZymlzE
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAlustQQACgkQk9IU1zQo
+ZfF0Cwf/WiJgT7kjKDkGGinIWCmidTQiO5yX26s30pAmfRNRgDIHNax0rtb9A6Lm
+BQ2uv/AAHwXrEhTdM02qGLLEsrVbBIexnjb6ArtCYgFU5hOHzl1LXrPWcFA+2IKW
+Scvum80ttnWW3KZNdsFn1YZ9yPyg213roe9l+FHJghced6YPQN18AVSHrTMjG81a
+mGnzRkAL4qMnd3LqdA39Cm4unyJioY0JHEp1YApXeXsaYCo3thoAHTrvTI0YaIUt
+uGTYlZx9UZ9n0A8QH6mJm/ceM4EEJrY9NTz8w+H5SJOalDE0wG4qNsE/yfxfeFET
+vm3RItkfuquP6uGNY4IGyoIxF2remQ==
+=TvQ0
+-----END PGP SIGNATURE-----
+
+--vejwY6kMxSSax3MYakY7MtDbDzeZymlzE--
