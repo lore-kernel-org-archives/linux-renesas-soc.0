@@ -1,89 +1,104 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726835AbeIMOSt (ORCPT
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:33721 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727828AbeI0Wok (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:18:49 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 10/58] arm64: dts: renesas: salvator-xs: enable SATA
-Date: Thu, 13 Sep 2018 11:09:05 +0200
-Message-Id: <3a0832d093693ede13f5bbc6a641775aa1f9dfbf.1536828567.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
-References: <cover.1536828567.git.horms+renesas@verge.net.au>
+        Thu, 27 Sep 2018 18:44:40 -0400
+Date: Thu, 27 Sep 2018 11:25:36 -0500
+From: Rob Herring <robh@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Phil Edworthy <phil.edworthy@renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Simon Horman <horms@verge.net.au>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v6 1/3] dt-bindings: pinctrl: renesas,rzn1-pinctrl:
+ documentation
+Message-ID: <20180927162536.GA16329@bogus>
+References: <20180927135922.12015-1-phil.edworthy@renesas.com>
+ <20180927135922.12015-2-phil.edworthy@renesas.com>
+ <CAMuHMdV1n9KgU+6LxY3_jHTqgL1gKs+54yY0qjnwBeQX7UdOSg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV1n9KgU+6LxY3_jHTqgL1gKs+54yY0qjnwBeQX7UdOSg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Thu, Sep 27, 2018 at 05:15:54PM +0200, Geert Uytterhoeven wrote:
+> On Thu, Sep 27, 2018 at 3:59 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
+> > The Renesas RZ/N1 device family PINCTRL node description.
+> >
+> > Based on a patch originally written by Michel Pollet at Renesas.
+> >
+> > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> > Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> > v6:
+> >  - Instead of combining the pin nr and func into a single element, use
+> >    a pair of 8-bit elements.
+> 
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
+> 
+> > +- Pin multiplexing sub-nodes:
+> > +  A pin multiplexing sub-node describes how to configure a set of
+> > +  (or a single) pin in some desired alternate function mode.
+> > +  A single sub-node may define several pin configurations.
+> > +  Please refer to pinctrl-bindings.txt to get to know more on generic
+> > +  pin properties usage.
+> > +
+> > +  The allowed generic formats for a pin multiplexing sub-node are the
+> > +  following ones:
+> > +
+> > +  node-1 {
+> > +      pinmux = /bits/ 8 <PIN_NR MUX_FUNC>, <PIN_NR MUX_FUNC>, ... ;
+> > +      GENERIC_PINCONFIG;
+> > +  };
+> 
+> and
+> 
+> > +  Example:
+> > +  A serial communication interface with a TX output pin and an RX input pin.
+> > +
+> > +  &pinctrl {
+> > +       pins_uart0: pins_uart0 {
+> > +               pinmux = /bits/ 8 <
+> > +                       103 RZN1_FUNC_UART0_I   /* UART0_TXD */
+> > +                       104 RZN1_FUNC_UART0_I   /* UART0_RXD */
+> > +               >;
+> > +       };
+> > +  };
+> 
+> So the above is in response to Rob's comment on v4:
+> 
+> | > +#define RZN1_MUX(_gpio, _func) \
+> | > +       (((RZN1_FUNC_##_func) << 8) | (_gpio))
+> |
+> | I'm not a fan of token pasting and it also goes against kernel style.
+> | If every other Renesas platform is doing this, then fine. Otherwise,
+> | you can express it in pretty much the same (source) space:
+> |
+> | pinmux = <RZN1_MUX_UART0_I 104>;
+> |
+> | Yes, this is 2 cells instead of 1, but if you care about space, you
+> | can use 8 or 16 bit size.
+> 
+> I'm not so much impressed by the "/bits/ 8" part.
+> No other pinctrl bindings uses this.
+> We do have RZA1_PINMUX() and STM32_PINMUX() macros.
 
-Add the nodes to enable SATA. Note that MD12 (SW12-7) must be switched
-off for that to work.
+Yes, but those aren't doing token pasting which was my complaint here.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts  | 14 ++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts | 14 ++++++++++++++
- 2 files changed, 28 insertions(+)
+> Rob: Is this really what you intended?
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-index 8c142affee49..ba3357636fdb 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-@@ -151,6 +151,15 @@
- 	};
- };
- 
-+&pca9654 {
-+	pcie_sata_switch {
-+		gpio-hog;
-+		gpios = <7 GPIO_ACTIVE_HIGH>;
-+		output-low; /* enable SATA by default */
-+		line-name = "PCIE/SATA switch";
-+	};
-+};
-+
- &pfc {
- 	usb2_pins: usb2 {
- 		groups = "usb2";
-@@ -175,6 +184,11 @@
- 	};
- };
- 
-+/* MD12 (SW12-7) must be set 'Off' which is not the default! */
-+&sata {
-+	status = "okay";
-+};
-+
- &usb2_phy2 {
- 	pinctrl-0 = <&usb2_pins>;
- 	pinctrl-names = "default";
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
-index 9de4e3db1621..45016a06fab1 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
-@@ -47,3 +47,17 @@
- &hdmi0_con {
- 	remote-endpoint = <&rcar_dw_hdmi0_out>;
- };
-+
-+&pca9654 {
-+	pcie_sata_switch {
-+		gpio-hog;
-+		gpios = <7 GPIO_ACTIVE_HIGH>;
-+		output-low; /* enable SATA by default */
-+		line-name = "PCIE/SATA switch";
-+	};
-+};
-+
-+/* MD12 (SW12-7) must be set 'Off' which is not the default! */
-+&sata {
-+	status = "okay";
-+};
--- 
-2.11.0
+Do whatever is most consistant. If you want a macro to shift fields, 
+then fine.
+
+Rob
