@@ -1,95 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:23472 "EHLO
+Received: from relmlor3.renesas.com ([210.160.252.173]:50005 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2390100AbeIURoA (ORCPT
+        by vger.kernel.org with ESMTP id S1727240AbeI0US2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Sep 2018 13:44:00 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thu, 27 Sep 2018 16:18:28 -0400
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo@jmondi.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 2/4] pinctrl: sh-pfc: r8a77470: Add SDHI2 voltage switch
-Date: Fri, 21 Sep 2018 12:55:09 +0100
-Message-Id: <1537530911-443-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1537530911-443-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1537530911-443-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH v6 3/3] ARM: dts: r9a06g032: Add pinctrl node
+Date: Thu, 27 Sep 2018 14:59:22 +0100
+Message-Id: <20180927135922.12015-4-phil.edworthy@renesas.com>
+In-Reply-To: <20180927135922.12015-1-phil.edworthy@renesas.com>
+References: <20180927135922.12015-1-phil.edworthy@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add SH_PFC_PIN_CFG_IO_VOLTAGE definition for the SDHI2 pins
-capable of switching voltage. Please note that with the
-RZ/G1C only 1 bit of the POC Control Register is used to
-control each interface.
+This provides a pinctrl driver for the Renesas R9A06G032 SoC
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Based on a patch originally written by Michel Pollet at Renesas.
+
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a77470.c | 32 +++++++++++++++++++++++++++++++-
- 1 file changed, 31 insertions(+), 1 deletion(-)
+v6:
+ - No changes.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77470.c b/drivers/pinctrl/sh-pfc/pfc-r8a77470.c
-index 9d3ed43..a1248e2 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77470.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77470.c
-@@ -17,7 +17,19 @@
- 	PORT_GP_1(3, 27, fn, sfx),					\
- 	PORT_GP_1(3, 28, fn, sfx),					\
- 	PORT_GP_1(3, 29, fn, sfx),					\
--	PORT_GP_26(4, fn, sfx),						\
-+	PORT_GP_14(4, fn, sfx),						\
-+	PORT_GP_CFG_1(4, 14, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(4, 15, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(4, 16, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(4, 17, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(4, 18, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(4, 19, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_1(4, 20, fn, sfx),					\
-+	PORT_GP_1(4, 21, fn, sfx),					\
-+	PORT_GP_1(4, 22, fn, sfx),					\
-+	PORT_GP_1(4, 23, fn, sfx),					\
-+	PORT_GP_1(4, 24, fn, sfx),					\
-+	PORT_GP_1(4, 25, fn, sfx),					\
- 	PORT_GP_32(5, fn, sfx)
+v5:
+ - No changes.
+
+v4:
+ - No changes.
+
+v3:
+ - No changes.
+
+v2:
+ - Add "renesas,rzn1-pinctrl" compatible fallback string
+ - Register size corrected.
+---
+ arch/arm/boot/dts/r9a06g032.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+index eaf94976ed6d..2322268bc862 100644
+--- a/arch/arm/boot/dts/r9a06g032.dtsi
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -165,6 +165,14 @@
+ 			status = "disabled";
+ 		};
  
- enum {
-@@ -2321,9 +2333,27 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 	{ },
- };
- 
-+static int r8a77470_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin,
-+				   u32 *pocctrl)
-+{
-+	unsigned int _bank = pin >> 5;
-+	unsigned int _pin = pin & 0x1f;
-+	*pocctrl = 0xe60600b0;
++		pinctrl: pin-controller@40067000 {
++			compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
++			reg = <0x40067000 0x1000>, <0x51000000 0x480>;
++			clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
++			clock-names = "bus";
++			status = "okay";
++		};
 +
-+	if (_bank == 4 && _pin >= 14 && _pin <= 19)
-+		return 1;
-+
-+	return -EINVAL;
-+}
-+
-+static const struct sh_pfc_soc_operations r8a77470_pinmux_ops = {
-+	.pin_to_pocctrl = r8a77470_pin_to_pocctrl,
-+};
-+
- #ifdef CONFIG_PINCTRL_PFC_R8A77470
- const struct sh_pfc_soc_info r8a77470_pinmux_info = {
- 	.name = "r8a77470_pfc",
-+	.ops = &r8a77470_pinmux_ops,
- 	.unlock_reg = 0xe6060000, /* PMMR */
- 
- 	.function = { PINMUX_FUNCTION_BEGIN, PINMUX_FUNCTION_END },
+ 		gic: gic@44101000 {
+ 			compatible = "arm,cortex-a7-gic", "arm,gic-400";
+ 			interrupt-controller;
 -- 
-2.7.4
+2.17.1
