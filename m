@@ -1,55 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:18347 "EHLO
+Received: from relmlor4.renesas.com ([210.160.252.174]:32974 "EHLO
         relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727199AbeI0UyK (ORCPT
+        by vger.kernel.org with ESMTP id S1727199AbeI0Ux1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Sep 2018 16:54:10 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Thu, 27 Sep 2018 16:53:27 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2] dt-bindings: spi: rspi: Add R7S9210 support
-Date: Thu, 27 Sep 2018 09:35:19 -0500
-Message-Id: <20180927143519.104631-1-chris.brandt@renesas.com>
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: RE: [PATCH] dt-bindings: spi: rspi: Add R7S9210 support
+Date: Thu, 27 Sep 2018 14:34:48 +0000
+Message-ID: <TY1PR01MB15620AAA3AC857C6151B60018A140@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+References: <20180927141324.103146-1-chris.brandt@renesas.com>
+ <CAMuHMdX9nPYVmmE7NsYm9ERcQQ7n1PUkn6Kh-q9J8ZrDS05RuA@mail.gmail.com>
+In-Reply-To: <CAMuHMdX9nPYVmmE7NsYm9ERcQQ7n1PUkn6Kh-q9J8ZrDS05RuA@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for RZ/A2
-
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v2:
- * Made instructions more generic for RZ/A devices
-
-FYI: No driver changes were needed
----
- Documentation/devicetree/bindings/spi/spi-rspi.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/spi/spi-rspi.txt b/Documentation/devicetree/bindings/spi/spi-rspi.txt
-index 96fd58548f69..dd5c36a0b9ac 100644
---- a/Documentation/devicetree/bindings/spi/spi-rspi.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-rspi.txt
-@@ -3,7 +3,7 @@ Device tree configuration for Renesas RSPI/QSPI driver
- Required properties:
- - compatible       : For Renesas Serial Peripheral Interface on legacy SH:
- 		     "renesas,rspi-<soctype>", "renesas,rspi" as fallback.
--		     For Renesas Serial Peripheral Interface on RZ/A1H:
-+		     For Renesas Serial Peripheral Interface on RZ/A:
- 		     "renesas,rspi-<soctype>", "renesas,rspi-rz" as fallback.
- 		     For Quad Serial Peripheral Interface on R-Car Gen2 and
- 		     RZ/G1 devices:
-@@ -11,6 +11,7 @@ Required properties:
- 		     Examples with soctypes are:
- 		        - "renesas,rspi-sh7757" (SH)
- 			- "renesas,rspi-r7s72100" (RZ/A1H)
-+			- "renesas,rspi-r7s9210" (RZ/A2)
- 			- "renesas,qspi-r8a7743" (RZ/G1M)
- 			- "renesas,qspi-r8a7745" (RZ/G1E)
- 			- "renesas,qspi-r8a7790" (R-Car H2)
--- 
-2.16.1
+SGkgR2VlcnQsDQoNCk9uIFRodXJzZGF5LCBTZXB0ZW1iZXIgMjcsIDIwMTggMSwgR2VlcnQgVXl0
+dGVyaG9ldmVuIHdyb3RlOg0KPiBMb29rcyBnb29kLCBidXQgeW91IGZvcmdvdCB0byB1cGRhdGUg
+dGhlIHBhcmFncmFwaCBhYm92ZSAob3V0c2lkZSB0aGUNCj4gcXVvdGVkIGNvbnRleHQpLg0KDQpP
+SywgdGhhbmtzLg0KDQpGdW5ueS4uLmV2ZW4gYSAxLWxpbmUgcGF0Y2ggcmVxdWlyZXMgMiB2ZXJz
+aW9ucyBmcm9tIG1lIQ0KDQogICAgKEkgd2lzaCBJIGdvdCBwYWlkIHBlciByZXZpc2lvbikNCg0K
+DQpDaHJpcw0KDQoNCg==
