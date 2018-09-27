@@ -1,62 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:22415 "EHLO
+Received: from relmlor3.renesas.com ([210.160.252.173]:27288 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726970AbeILPqH (ORCPT
+        by vger.kernel.org with ESMTP id S1727223AbeI0Sd4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Sep 2018 11:46:07 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        Thu, 27 Sep 2018 14:33:56 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        "David S. Miller" <davem@davemloft.net>, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
         Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 3/3] dt-bindings: clock: renesas: cpg-mssr: Document r8a774c0
-Date: Wed, 12 Sep 2018 11:41:54 +0100
-Message-Id: <1536748914-27416-4-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1536748914-27416-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1536748914-27416-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: [PATCH] dt-bindings: can: rcar_can: Add r8a7744 support
+Date: Thu, 27 Sep 2018 13:08:48 +0100
+Message-Id: <1538050128-47356-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch documents RZ/G2E (a.k.a. R8A774C0) bindings for the
-Clock Pulse Generator driver.
+Document RZ/G1N (r8a7744) SoC specific bindings.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 ---
- Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+This patch is tested against linux-next next-20180927
+---
+ Documentation/devicetree/bindings/net/can/rcar_can.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-index 5e46e6b..1b4ebe3 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-@@ -18,6 +18,7 @@ Required Properties:
-       - "renesas,r8a7745-cpg-mssr" for the r8a7745 SoC (RZ/G1E)
-       - "renesas,r8a77470-cpg-mssr" for the r8a77470 SoC (RZ/G1C)
-       - "renesas,r8a774a1-cpg-mssr" for the r8a774a1 SoC (RZ/G2M)
-+      - "renesas,r8a774c0-cpg-mssr" for the r8a774c0 SoC (RZ/G2E)
-       - "renesas,r8a7790-cpg-mssr" for the r8a7790 SoC (R-Car H2)
-       - "renesas,r8a7791-cpg-mssr" for the r8a7791 SoC (R-Car M2-W)
-       - "renesas,r8a7792-cpg-mssr" for the r8a7792 SoC (R-Car V2H)
-@@ -37,9 +38,9 @@ Required Properties:
-   - clocks: References to external parent clocks, one entry for each entry in
-     clock-names
-   - clock-names: List of external parent clock names. Valid names are:
--      - "extal" (r7s9210, r8a7743, r8a7745, r8a77470, r8a774a1, r8a7790,
--		 r8a7791, r8a7792, r8a7793, r8a7794, r8a7795, r8a7796, r8a77965,
--		 r8a77970, r8a77980, r8a77990, r8a77995)
-+      - "extal" (r7s9210, r8a7743, r8a7745, r8a77470, r8a774a1, r8a774c0,
-+		 r8a7790, r8a7791, r8a7792, r8a7793, r8a7794, r8a7795, r8a7796,
-+		 r8a77965, r8a77970, r8a77980, r8a77990, r8a77995)
-       - "extalr" (r8a774a1, r8a7795, r8a7796, r8a77965, r8a77970, r8a77980)
-       - "usb_extal" (r8a7743, r8a7745, r8a77470, r8a7790, r8a7791, r8a7793,
- 		     r8a7794)
+diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+index 94a7f33..cc43728 100644
+--- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
++++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+@@ -3,6 +3,7 @@ Renesas R-Car CAN controller Device Tree Bindings
+ 
+ Required properties:
+ - compatible: "renesas,can-r8a7743" if CAN controller is a part of R8A7743 SoC.
++	      "renesas,can-r8a7744" if CAN controller is a part of R8A7744 SoC.
+ 	      "renesas,can-r8a7745" if CAN controller is a part of R8A7745 SoC.
+ 	      "renesas,can-r8a7778" if CAN controller is a part of R8A7778 SoC.
+ 	      "renesas,can-r8a7779" if CAN controller is a part of R8A7779 SoC.
 -- 
 2.7.4
