@@ -1,111 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:38952 "EHLO
+Received: from relmlor4.renesas.com ([210.160.252.174]:35444 "EHLO
         relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727660AbeIQWjc (ORCPT
+        by vger.kernel.org with ESMTP id S1726345AbeI1TXv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Sep 2018 18:39:32 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Jiri Slaby <jslaby@suse.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulrich Hecht <uli+renesas@fpond.eu>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 2/2] Revert "serial: sh-sci: Allow for compressed SCIF
- address"
-Date: Mon, 17 Sep 2018 17:11:11 +0000
-Message-ID: <TY1PR01MB1562A5E7FA583A7B3AE16FC68A1E0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20180830125404.21192-1-geert+renesas@glider.be>
- <20180830125404.21192-3-geert+renesas@glider.be>
-In-Reply-To: <20180830125404.21192-3-geert+renesas@glider.be>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Fri, 28 Sep 2018 15:23:51 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] dt-bindings: spi: rspi: Add r8a7744 to the compatible list
+Date: Fri, 28 Sep 2018 13:53:04 +0100
+Message-Id: <1538139184-53756-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thursday, August 30, 2018, Geert Uytterhoeven wrote:
-> This reverts commit 2d4dd0da45401c7ae7332b4d1eb7bbb1348edde9.
->=20
-> This broke earlycon on all Renesas ARM platforms using a SCIF port for
-> the
-> serial console (R-Car, RZ/A1, RZ/G1, RZ/G2 SoCs), due to an incorrect
-> value
-> of port->regshift.
->=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Document RZ/G1N (r8a7744) SoC specific bindings.
 
-Acked-by: Chris Brandt <chris.brandt@renesas.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+---
+This patch is tested against linux-next next-20180928
+---
+ Documentation/devicetree/bindings/spi/spi-rspi.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-
-> ---
->  drivers/tty/serial/sh-sci.c | 25 ++++++++++---------------
->  1 file changed, 10 insertions(+), 15 deletions(-)
->=20
-> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-> index 5d42c9a63001575a..ab3f6e91853da3c2 100644
-> --- a/drivers/tty/serial/sh-sci.c
-> +++ b/drivers/tty/serial/sh-sci.c
-> @@ -346,15 +346,15 @@ static const struct sci_port_params
-> sci_port_params[SCIx_NR_REGTYPES] =3D {
->  	[SCIx_SH4_SCIF_REGTYPE] =3D {
->  		.regs =3D {
->  			[SCSMR]		=3D { 0x00, 16 },
-> -			[SCBRR]		=3D { 0x02,  8 },
-> -			[SCSCR]		=3D { 0x04, 16 },
-> -			[SCxTDR]	=3D { 0x06,  8 },
-> -			[SCxSR]		=3D { 0x08, 16 },
-> -			[SCxRDR]	=3D { 0x0a,  8 },
-> -			[SCFCR]		=3D { 0x0c, 16 },
-> -			[SCFDR]		=3D { 0x0e, 16 },
-> -			[SCSPTR]	=3D { 0x10, 16 },
-> -			[SCLSR]		=3D { 0x12, 16 },
-> +			[SCBRR]		=3D { 0x04,  8 },
-> +			[SCSCR]		=3D { 0x08, 16 },
-> +			[SCxTDR]	=3D { 0x0c,  8 },
-> +			[SCxSR]		=3D { 0x10, 16 },
-> +			[SCxRDR]	=3D { 0x14,  8 },
-> +			[SCFCR]		=3D { 0x18, 16 },
-> +			[SCFDR]		=3D { 0x1c, 16 },
-> +			[SCSPTR]	=3D { 0x20, 16 },
-> +			[SCLSR]		=3D { 0x24, 16 },
->  		},
->  		.fifosize =3D 16,
->  		.overrun_reg =3D SCLSR,
-> @@ -2837,7 +2837,7 @@ static int sci_init_single(struct platform_device
-> *dev,
->  {
->  	struct uart_port *port =3D &sci_port->port;
->  	const struct resource *res;
-> -	unsigned int i, regtype;
-> +	unsigned int i;
->  	int ret;
->=20
->  	sci_port->cfg	=3D p;
-> @@ -2874,7 +2874,6 @@ static int sci_init_single(struct platform_device
-> *dev,
->  	if (unlikely(sci_port->params =3D=3D NULL))
->  		return -EINVAL;
->=20
-> -	regtype =3D sci_port->params - sci_port_params;
->  	switch (p->type) {
->  	case PORT_SCIFB:
->  		sci_port->rx_trigger =3D 48;
-> @@ -2929,10 +2928,6 @@ static int sci_init_single(struct platform_device
-> *dev,
->  			port->regshift =3D 1;
->  	}
->=20
-> -	if (regtype =3D=3D SCIx_SH4_SCIF_REGTYPE)
-> -		if (sci_port->reg_size >=3D 0x20)
-> -			port->regshift =3D 1;
-> -
->  	/*
->  	 * The UART port needs an IRQ value, so we peg this to the RX IRQ
->  	 * for the multi-IRQ ports, which is where we are primarily
-> --
-> 2.17.1
+diff --git a/Documentation/devicetree/bindings/spi/spi-rspi.txt b/Documentation/devicetree/bindings/spi/spi-rspi.txt
+index dd5c36a..fc97ad6 100644
+--- a/Documentation/devicetree/bindings/spi/spi-rspi.txt
++++ b/Documentation/devicetree/bindings/spi/spi-rspi.txt
+@@ -13,6 +13,7 @@ Required properties:
+ 			- "renesas,rspi-r7s72100" (RZ/A1H)
+ 			- "renesas,rspi-r7s9210" (RZ/A2)
+ 			- "renesas,qspi-r8a7743" (RZ/G1M)
++			- "renesas,qspi-r8a7744" (RZ/G1N)
+ 			- "renesas,qspi-r8a7745" (RZ/G1E)
+ 			- "renesas,qspi-r8a7790" (R-Car H2)
+ 			- "renesas,qspi-r8a7791" (R-Car M2-W)
+-- 
+2.7.4
