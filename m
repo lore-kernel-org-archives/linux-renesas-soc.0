@@ -1,66 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:3111 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726722AbeIKPS2 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:58325 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729116AbeI1QrC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Sep 2018 11:18:28 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fri, 28 Sep 2018 12:47:02 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 06/10] dt-bindings: clock: renesas: cpg-mssr: Document r8a7744 binding
-Date: Tue, 11 Sep 2018 11:12:47 +0100
-Message-Id: <1536660771-32278-7-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1536660771-32278-1-git-send-email-biju.das@bp.renesas.com>
-References: <1536660771-32278-1-git-send-email-biju.das@bp.renesas.com>
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 08/21] soc: renesas: Identify RZ/G2E
+Date: Fri, 28 Sep 2018 12:23:23 +0200
+Message-Id: <2bab3d8012ebc463b899ee2c9292bd9282d75257.1538128711.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1538128711.git.horms+renesas@verge.net.au>
+References: <cover.1538128711.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add binding documentation for the RZ/G1N (R8A7744) Clock Pulse
-Generator driver.
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Add support for identifying the RZ/G2E (r8a774c0) SoC.
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/soc/renesas/renesas-soc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-index 42d0f83..1b8d484 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-@@ -14,6 +14,7 @@ They provide the following functionalities:
- Required Properties:
-   - compatible: Must be one of:
-       - "renesas,r8a7743-cpg-mssr" for the r8a7743 SoC (RZ/G1M)
-+      - "renesas,r8a7744-cpg-mssr" for the r8a7744 SoC (RZ/G1N)
-       - "renesas,r8a7745-cpg-mssr" for the r8a7745 SoC (RZ/G1E)
-       - "renesas,r8a77470-cpg-mssr" for the r8a77470 SoC (RZ/G1C)
-       - "renesas,r8a774a1-cpg-mssr" for the r8a774a1 SoC (RZ/G2M)
-@@ -36,12 +37,12 @@ Required Properties:
-   - clocks: References to external parent clocks, one entry for each entry in
-     clock-names
-   - clock-names: List of external parent clock names. Valid names are:
--      - "extal" (r8a7743, r8a7745, r8a77470, r8a774a1, r8a7790, r8a7791,
--		 r8a7792, r8a7793, r8a7794, r8a7795, r8a7796, r8a77965,
--		 r8a77970, r8a77980, r8a77990, r8a77995)
-+      - "extal" (r8a7743, r8a7744, r8a7745, r8a77470, r8a774a1, r8a7790,
-+		 r8a7791, r8a7792, r8a7793, r8a7794, r8a7795, r8a7796,
-+		 r8a77965, r8a77970, r8a77980, r8a77990, r8a77995)
-       - "extalr" (r8a774a1, r8a7795, r8a7796, r8a77965, r8a77970, r8a77980)
--      - "usb_extal" (r8a7743, r8a7745, r8a77470, r8a7790, r8a7791, r8a7793,
--		     r8a7794)
-+      - "usb_extal" (r8a7743, r8a7744, r8a7745, r8a77470, r8a7790, r8a7791,
-+		     r8a7793, r8a7794)
+diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
+index 9e244206d2dd..4af96e668a2f 100644
+--- a/drivers/soc/renesas/renesas-soc.c
++++ b/drivers/soc/renesas/renesas-soc.c
+@@ -116,6 +116,11 @@ static const struct renesas_soc soc_rz_g2m __initconst __maybe_unused = {
+ 	.id	= 0x52,
+ };
  
-   - #clock-cells: Must be 2
-       - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
++static const struct renesas_soc soc_rz_g2e __initconst __maybe_unused = {
++	.family	= &fam_rzg2,
++	.id	= 0x57,
++};
++
+ static const struct renesas_soc soc_rcar_m1a __initconst __maybe_unused = {
+ 	.family	= &fam_rcar_gen1,
+ };
+@@ -222,6 +227,9 @@ static const struct of_device_id renesas_socs[] __initconst = {
+ #ifdef CONFIG_ARCH_R8A774A1
+ 	{ .compatible = "renesas,r8a774a1",	.data = &soc_rz_g2m },
+ #endif
++#ifdef CONFIG_ARCH_R8A774C0
++	{ .compatible = "renesas,r8a774c0",	.data = &soc_rz_g2e },
++#endif
+ #ifdef CONFIG_ARCH_R8A7778
+ 	{ .compatible = "renesas,r8a7778",	.data = &soc_rcar_m1a },
+ #endif
 -- 
-2.7.4
+2.11.0
