@@ -1,163 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:38140 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728393AbeI1AUH (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:58192 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729111AbeI1QqH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Sep 2018 20:20:07 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Eric Auger <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] reset: Exclusive resets must be dedicated to a single hardware block
-Date: Thu, 27 Sep 2018 20:00:38 +0200
-Message-Id: <20180927180038.24599-1-geert+renesas@glider.be>
+        Fri, 28 Sep 2018 12:46:07 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 5/7] ARM: shmobile: r8a7744: Basic SoC support
+Date: Fri, 28 Sep 2018 12:22:47 +0200
+Message-Id: <bc8871536246e489407a7114a597c0a2a72de895.1538123953.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1538123953.git.horms+renesas@verge.net.au>
+References: <cover.1538123953.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In some SoCs multiple hardware blocks may share a reset control.
-The reset control API for shared resets will only assert such a reset
-when the drivers for all hardware blocks agree.
-The exclusive reset control API still allows to assert such a reset, but
-that impacts all other hardware blocks sharing the reset.
+From: Biju Das <biju.das@bp.renesas.com>
 
-While the kernel doc comments clearly state that the API for shared
-resets applies to reset controls which are shared between hardware
-blocks, the exact meaning of exclusive resets is not documented.
-Fix the semantic ambiguity with respect to exclusive access vs.
-exclusive reset lines by:
-  1. Clarifying that exclusive resets really are intended for use with
-     reset controls which are dedicated to a single hardware block,
-  2. Ensuring that obtaining an exclusive reset control will fail if the
-     reset is shared by multiple hardware blocks, for both DT-based and
-     lookup-based reset controls.
+Add minimal support for the RZ/G1N (R8A7744) SoC.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-This is v2 of "[RFC] reset: Add support for dedicated reset controls":
-  - Fix wrong variable in __reset_is_dedicated() loop,
-  - Add missing of_node_put() in __of_reset_is_dedicated(),
-  - Document that exclusive reset controls imply they are dedicated to a
-    single hardware block,
-  - Drop new dedicated flag and new API reset_control_get_dedicated(),
-    as exclusive already implies dedicated,
-  - Rename {__of_,}reset_is_dedicated() to {__of_,}reset_is_exclusive(),
-  - Reword description.
+ arch/arm/mach-shmobile/Kconfig           | 5 +++++
+ arch/arm/mach-shmobile/setup-rcar-gen2.c | 2 ++
+ 2 files changed, 7 insertions(+)
 
-Note: Exclusive lookup-based reset controls were not tested.
----
- drivers/reset/core.c  | 58 +++++++++++++++++++++++++++++++++++++++++++
- include/linux/reset.h |  5 +++-
- 2 files changed, 62 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index 225e34c56b94a2e3..2f5b61226c7964eb 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -459,6 +459,38 @@ static void __reset_control_put_internal(struct reset_control *rstc)
- 	kref_put(&rstc->refcnt, __reset_control_release);
- }
+diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
+index cc6ab0dde937..9dac7b11460f 100644
+--- a/arch/arm/mach-shmobile/Kconfig
++++ b/arch/arm/mach-shmobile/Kconfig
+@@ -69,6 +69,11 @@ config ARCH_R8A7743
+ 	select ARCH_RCAR_GEN2
+ 	select ARM_ERRATA_798181 if SMP
  
-+static bool __of_reset_is_exclusive(const struct device_node *node,
-+				    const struct of_phandle_args args)
-+{
-+	struct of_phandle_args args2;
-+	struct device_node *node2;
-+	int index, ret;
-+	bool eq;
++config ARCH_R8A7744
++	bool "RZ/G1N (R8A77440)"
++	select ARCH_RCAR_GEN2
++	select ARM_ERRATA_798181 if SMP
 +
-+	for_each_node_with_property(node2, "resets") {
-+		if (node == node2)
-+			continue;
-+
-+		for (index = 0; ; index++) {
-+			ret = of_parse_phandle_with_args(node2, "resets",
-+							 "#reset-cells", index,
-+							 &args2);
-+			if (ret)
-+				break;
-+
-+			eq = (args2.np == args.np &&
-+			      args2.args_count == args.args_count &&
-+			      !memcmp(args2.args, args.args,
-+				      args.args_count * sizeof(args.args[0])));
-+			of_node_put(args2.np);
-+			if (eq)
-+				return false;
-+		}
-+	}
-+
-+	return true;
-+}
-+
- struct reset_control *__of_reset_control_get(struct device_node *node,
- 				     const char *id, int index, bool shared,
- 				     bool optional)
-@@ -514,6 +546,11 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
- 		return ERR_PTR(rstc_id);
- 	}
+ config ARCH_R8A7745
+ 	bool "RZ/G1E (R8A77450)"
+ 	select ARCH_RCAR_GEN2
+diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+index 013acc97795c..eea60b20c6b4 100644
+--- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+@@ -25,6 +25,7 @@
+ static const struct of_device_id cpg_matches[] __initconst = {
+ 	{ .compatible = "renesas,rcar-gen2-cpg-clocks", },
+ 	{ .compatible = "renesas,r8a7743-cpg-mssr", .data = "extal" },
++	{ .compatible = "renesas,r8a7744-cpg-mssr", .data = "extal" },
+ 	{ .compatible = "renesas,r8a7790-cpg-mssr", .data = "extal" },
+ 	{ .compatible = "renesas,r8a7791-cpg-mssr", .data = "extal" },
+ 	{ .compatible = "renesas,r8a7793-cpg-mssr", .data = "extal" },
+@@ -193,6 +194,7 @@ MACHINE_END
  
-+	if (!shared && !__of_reset_is_exclusive(node, args)) {
-+		mutex_unlock(&reset_list_mutex);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
- 	/* reset_list_mutex also protects the rcdev's reset_control list */
- 	rstc = __reset_control_get_internal(rcdev, rstc_id, shared);
- 
-@@ -541,6 +578,22 @@ __reset_controller_by_name(const char *name)
- 	return NULL;
- }
- 
-+static bool __reset_is_exclusive(const struct reset_control_lookup *lookup)
-+{
-+	const struct reset_control_lookup *lookup2;
-+
-+	list_for_each_entry(lookup2, &reset_lookup_list, list) {
-+		if (lookup2 == lookup)
-+			continue;
-+
-+		if (lookup2->provider == lookup->provider &&
-+		    lookup2->index == lookup->index)
-+			return false;
-+	}
-+
-+	return true;
-+}
-+
- static struct reset_control *
- __reset_control_get_from_lookup(struct device *dev, const char *con_id,
- 				bool shared, bool optional)
-@@ -562,6 +615,11 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
- 		if ((!con_id && !lookup->con_id) ||
- 		    ((con_id && lookup->con_id) &&
- 		     !strcmp(con_id, lookup->con_id))) {
-+			if (!shared && !__reset_is_exclusive(lookup)) {
-+				mutex_unlock(&reset_lookup_mutex);
-+				return ERR_PTR(-EINVAL);
-+			}
-+
- 			mutex_lock(&reset_list_mutex);
- 			rcdev = __reset_controller_by_name(lookup->provider);
- 			if (!rcdev) {
-diff --git a/include/linux/reset.h b/include/linux/reset.h
-index 29af6d6b2f4b8103..5881d2594761e48f 100644
---- a/include/linux/reset.h
-+++ b/include/linux/reset.h
-@@ -116,8 +116,11 @@ static inline int device_reset_optional(struct device *dev)
-  * @id: reset line name
-  *
-  * Returns a struct reset_control or IS_ERR() condition containing errno.
-- * If this function is called more than once for the same reset_control it will
-+ * If this function is called more than once for the same reset control it will
-  * return -EBUSY.
-+ * This function is intended for use with reset controls which are dedicated
-+ * to a single hardware block.  If called for a reset control shared among
-+ * multiple hardware blocks, it will return -EINVAL.
-  *
-  * See reset_control_get_shared for details on shared references to
-  * reset-controls.
+ static const char * const rz_g1_boards_compat_dt[] __initconst = {
+ 	"renesas,r8a7743",
++	"renesas,r8a7744",
+ 	"renesas,r8a7745",
+ 	"renesas,r8a77470",
+ 	NULL,
 -- 
-2.17.1
+2.11.0
