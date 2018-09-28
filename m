@@ -1,48 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:59779 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726404AbeIZQNo (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:34440 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729316AbeI1SBZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Sep 2018 12:13:44 -0400
-From: Chris Paterson <chris.paterson2@renesas.com>
-To: Simon Horman <horms@verge.net.au>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH] ARM: dts: iwg20d-q7-dbcm-ca: Improve model string
-Date: Wed, 26 Sep 2018 11:01:22 +0100
-Message-Id: <1537956082-17542-1-git-send-email-chris.paterson2@renesas.com>
+        Fri, 28 Sep 2018 14:01:25 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] arm64: dts: renesas: r8a77990: Add INTC-EX device node
+Date: Fri, 28 Sep 2018 13:37:56 +0200
+Message-Id: <20180928113756.17572-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Update the model string for this platform configuration and fix the
-grammar at the same time.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-This brings the syntax in line with the RZ/G1E iWave board.
+This patch adds a device node for the Interrupt Controller for External
+Devices (INTC-EX) on R-Car E3, which serves external IRQ pins IRQ[0-5].
 
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Perhaps this patch isn't really needed, but the current string annoys me.
-
-Patch applies cleanly to renesas-devel-20180925-v4.19-rc5.
+Tested on Ebisu using IRQ1 and IRQ2 on CP49 and EXIO E.
 ---
- arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts
-index 0d006aea99da1b40..6811ddc4af6460ce 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts
-+++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts
-@@ -11,7 +11,7 @@
- #include "iwg20d-q7-dbcm-ca.dtsi"
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index 5c1d6321a5d22a18..a175b5dd04ce3475 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -341,6 +341,22 @@
+ 			#power-domain-cells = <1>;
+ 		};
  
- / {
--	model = "iW-RainboW-G20D-Q7 RZ/G1M based plus camera daughter board";
-+	model = "iWave RainboW-G20D-Q7 RZ/G1M based board with camera add-on";
- 	compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7743";
- };
- 
++		intc_ex: interrupt-controller@e61c0000 {
++			compatible = "renesas,intc-ex-r8a77990", "renesas,irqc";
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			reg = <0 0xe61c0000 0 0x200>;
++			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 407>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 407>;
++		};
++
+ 		dmac0: dma-controller@e6700000 {
+ 			compatible = "renesas,dmac-r8a77990",
+ 				     "renesas,rcar-dmac";
 -- 
-1.9.1
+2.17.1
