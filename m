@@ -1,45 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57961 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:58192 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729376AbeI1Qoy (ORCPT
+        with ESMTP id S1729111AbeI1QqE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:44:54 -0400
+        Fri, 28 Sep 2018 12:46:04 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 6/6] ARM: shmobile: defconfig: Enable r8a7744 SoC
-Date: Fri, 28 Sep 2018 12:21:39 +0200
-Message-Id: <c26eb6f34c9ea56ed795785ecb7938f008dfed1e.1538122547.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1538122547.git.horms+renesas@verge.net.au>
-References: <cover.1538122547.git.horms+renesas@verge.net.au>
+Subject: [PATCH 1/7] ARM: shmobile: r8a7779: Remove unused includes
+Date: Fri, 28 Sep 2018 12:22:43 +0200
+Message-Id: <ad73cc2b913273df971cf318d0fe40785376dbcd.1538123953.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1538123953.git.horms+renesas@verge.net.au>
+References: <cover.1538123953.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Enable recently added r8a7744 (RZ/G1N) SoC.
+Presumable unused since commit c99cd90d98a98aa1 ("ARM: shmobile:
+r8a7779: Remove legacy SoC code").
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-shmobile/setup-r8a7779.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index f2b40075819f..d090022ca975 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -13,6 +13,7 @@ CONFIG_ARCH_R7S72100=y
- CONFIG_ARCH_R8A73A4=y
- CONFIG_ARCH_R8A7740=y
- CONFIG_ARCH_R8A7743=y
-+CONFIG_ARCH_R8A7744=y
- CONFIG_ARCH_R8A7745=y
- CONFIG_ARCH_R8A77470=y
- CONFIG_ARCH_R8A7778=y
+diff --git a/arch/arm/mach-shmobile/setup-r8a7779.c b/arch/arm/mach-shmobile/setup-r8a7779.c
+index d589326099e0..b13ec9088ce5 100644
+--- a/arch/arm/mach-shmobile/setup-r8a7779.c
++++ b/arch/arm/mach-shmobile/setup-r8a7779.c
+@@ -7,9 +7,7 @@
+  * Copyright (C) 2013  Cogent Embedded, Inc.
+  */
+ #include <linux/init.h>
+-#include <linux/irq.h>
+ #include <linux/irqchip.h>
+-#include <linux/irqchip/arm-gic.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
 -- 
 2.11.0
