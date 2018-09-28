@@ -1,56 +1,55 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:35423 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729111AbeI1Qjt (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 28 Sep 2018 12:39:49 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 3/5] media: dt-bindings: media: rcar_vin: Add r8a774a1 support
-Date: Mon, 10 Sep 2018 15:31:16 +0100
-Message-Id: <1536589878-26218-4-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1536589878-26218-1-git-send-email-biju.das@bp.renesas.com>
-References: <1536589878-26218-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 1/3] dt-bindings: arm: Document RZ/G2E SoC DT bindings
+Date: Fri, 28 Sep 2018 11:16:35 +0100
+Message-Id: <1538129795-26796-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <CAMuHMdVmkLSVoUPX8QcPp5AWeae7iD4Vpz8QjA3nJw=T4J7Pkg@mail.gmail.com>
+References: <CAMuHMdVmkLSVoUPX8QcPp5AWeae7iD4Vpz8QjA3nJw=T4J7Pkg@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document RZ/G2M (R8A774A1) SoC bindings.
+Add device tree bindings documentation for Renesas RZ/G2E (r8a774c0)
+SoC.
 
-The RZ/G2M SoC is similar to R-Car M3-W (R8A7796).
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/media/rcar_vin.txt | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+v1->v2:
+* Fixed typo within the part number, thanks Geert for spotting this
 
-diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
-index 2f42005..8c81689 100644
---- a/Documentation/devicetree/bindings/media/rcar_vin.txt
-+++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
-@@ -12,6 +12,7 @@ on Gen3 platforms to a CSI-2 receiver.
-  - compatible: Must be one or more of the following
-    - "renesas,vin-r8a7743" for the R8A7743 device
-    - "renesas,vin-r8a7745" for the R8A7745 device
-+   - "renesas,vin-r8a774a1" for the R8A774A1 device
-    - "renesas,vin-r8a7778" for the R8A7778 device
-    - "renesas,vin-r8a7779" for the R8A7779 device
-    - "renesas,vin-r8a7790" for the R8A7790 device
-@@ -58,9 +59,9 @@ The per-board settings Gen2 platforms:
-     - data-enable-active: polarity of CLKENB signal, see [1] for
-       description. Default is active high.
- 
--The per-board settings Gen3 platforms:
-+The per-board settings Gen3 and RZ/G2 platforms:
- 
--Gen3 platforms can support both a single connected parallel input source
-+Gen3 and RZ/G2 platforms can support both a single connected parallel input source
- from external SoC pins (port@0) and/or multiple parallel input sources
- from local SoC CSI-2 receivers (port@1) depending on SoC.
- 
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 4a03a6b..58c4256 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -27,6 +27,8 @@ SoCs:
+     compatible = "renesas,r8a77470"
+   - RZ/G2M (R8A774A1)
+     compatible = "renesas,r8a774a1"
++  - RZ/G2E (R8A774C0)
++    compatible = "renesas,r8a774c0"
+   - R-Car M1A (R8A77781)
+     compatible = "renesas,r8a7778"
+   - R-Car H1 (R8A77790)
 -- 
 2.7.4
