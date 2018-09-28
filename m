@@ -1,55 +1,145 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:41022 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726069AbeIMBXv (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:58325 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729116AbeI1Qqv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Sep 2018 21:23:51 -0400
-Received: by mail-lf1-f66.google.com with SMTP id l26-v6so2826637lfc.8
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Sep 2018 13:17:39 -0700 (PDT)
-Subject: [PATCH v2 3/3] clocksource: sh_cmt: add R-Car gen3 support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-renesas-soc@vger.kernel.org
-References: <c94a4ad6-93ee-05e4-e2c1-e8d24d3bc75e@cogentembedded.com>
-Message-ID: <7d32fc9c-903d-1cb3-fdd7-d9165e0016ac@cogentembedded.com>
-Date: Wed, 12 Sep 2018 23:17:37 +0300
-MIME-Version: 1.0
-In-Reply-To: <c94a4ad6-93ee-05e4-e2c1-e8d24d3bc75e@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Fri, 28 Sep 2018 12:46:51 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 03/21] soc: renesas: identify RZ/A2
+Date: Fri, 28 Sep 2018 12:23:18 +0200
+Message-Id: <175f435f44b724e389f23c154d94fda45870c1f6.1538128711.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1538128711.git.horms+renesas@verge.net.au>
+References: <cover.1538128711.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for the R-Car gen3 CMT types 0/1 -- they seem to be the same
-CMT types 0/1 as in R-Car gen2 SoCs.
+From: Chris Brandt <chris.brandt@renesas.com>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Add support for identifying the RZ/A2M (R7S9210) SoC.
+Also add support for reading the BSID register which is a different format
+than the PRR.
 
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-Changes in version 2:
-- split the bindings update into a separate patch. 
+ drivers/soc/renesas/renesas-soc.c | 55 +++++++++++++++++++++++++++++++++------
+ 1 file changed, 47 insertions(+), 8 deletions(-)
 
- drivers/clocksource/sh_cmt.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
-
-Index: tip/drivers/clocksource/sh_cmt.c
-===================================================================
---- tip.orig/drivers/clocksource/sh_cmt.c
-+++ tip/drivers/clocksource/sh_cmt.c
-@@ -943,6 +943,14 @@ static const struct of_device_id sh_cmt_
- 		.compatible = "renesas,rcar-gen2-cmt1",
- 		.data = &sh_cmt_info[SH_CMT1_RCAR_GEN2]
- 	},
-+	{
-+		.compatible = "renesas,rcar-gen3-cmt0",
-+		.data = &sh_cmt_info[SH_CMT0_RCAR_GEN2]
-+	},
-+	{
-+		.compatible = "renesas,rcar-gen3-cmt1",
-+		.data = &sh_cmt_info[SH_CMT1_RCAR_GEN2]
-+	},
- 	{ }
+diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
+index 56916183739b..ce19b2732433 100644
+--- a/drivers/soc/renesas/renesas-soc.c
++++ b/drivers/soc/renesas/renesas-soc.c
+@@ -46,8 +46,12 @@ static const struct renesas_family fam_rmobile __initconst __maybe_unused = {
+ 	.reg	= 0xe600101c,		/* CCCR (Common Chip Code Register) */
  };
- MODULE_DEVICE_TABLE(of, sh_cmt_of_table);
+ 
+-static const struct renesas_family fam_rza __initconst __maybe_unused = {
+-	.name	= "RZ/A",
++static const struct renesas_family fam_rza1 __initconst __maybe_unused = {
++	.name	= "RZ/A1",
++};
++
++static const struct renesas_family fam_rza2 __initconst __maybe_unused = {
++	.name	= "RZ/A2",
+ };
+ 
+ static const struct renesas_family fam_rzg1 __initconst __maybe_unused = {
+@@ -72,7 +76,12 @@ struct renesas_soc {
+ };
+ 
+ static const struct renesas_soc soc_rz_a1h __initconst __maybe_unused = {
+-	.family	= &fam_rza,
++	.family	= &fam_rza1,
++};
++
++static const struct renesas_soc soc_rz_a2m __initconst __maybe_unused = {
++	.family	= &fam_rza2,
++	.id	= 0x3b,
+ };
+ 
+ static const struct renesas_soc soc_rmobile_ape6 __initconst __maybe_unused = {
+@@ -194,6 +203,9 @@ static const struct of_device_id renesas_socs[] __initconst = {
+ #ifdef CONFIG_ARCH_R7S72100
+ 	{ .compatible = "renesas,r7s72100",	.data = &soc_rz_a1h },
+ #endif
++#ifdef CONFIG_ARCH_R7S9210
++	{ .compatible = "renesas,r7s9210",	.data = &soc_rz_a2m },
++#endif
+ #ifdef CONFIG_ARCH_R8A73A4
+ 	{ .compatible = "renesas,r8a73a4",	.data = &soc_rmobile_ape6 },
+ #endif
+@@ -275,7 +287,7 @@ static int __init renesas_soc_init(void)
+ 	void __iomem *chipid = NULL;
+ 	struct soc_device *soc_dev;
+ 	struct device_node *np;
+-	unsigned int product;
++	unsigned int product, eshi = 0, eslo;
+ 
+ 	match = of_match_node(renesas_socs, of_root);
+ 	if (!match)
+@@ -284,6 +296,31 @@ static int __init renesas_soc_init(void)
+ 	soc = match->data;
+ 	family = soc->family;
+ 
++	np = of_find_compatible_node(NULL, NULL, "renesas,bsid");
++	if (np) {
++		chipid = of_iomap(np, 0);
++		of_node_put(np);
++
++		if (chipid) {
++			product = readl(chipid);
++			iounmap(chipid);
++
++			if (soc->id && ((product >> 16) & 0xff) != soc->id) {
++				pr_warn("SoC mismatch (product = 0x%x)\n",
++					product);
++				return -ENODEV;
++			}
++		}
++
++		/*
++		 * TODO: Upper 4 bits of BSID are for chip version, but the
++		 * format is not known at this time so we don't know how to
++		 * specify eshi and eslo
++		 */
++
++		goto done;
++	}
++
+ 	/* Try PRR first, then hardcoded fallback */
+ 	np = of_find_compatible_node(NULL, NULL, "renesas,prr");
+ 	if (np) {
+@@ -302,8 +339,11 @@ static int __init renesas_soc_init(void)
+ 			pr_warn("SoC mismatch (product = 0x%x)\n", product);
+ 			return -ENODEV;
+ 		}
++		eshi = ((product >> 4) & 0x0f) + 1;
++		eslo = product & 0xf;
+ 	}
+ 
++done:
+ 	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
+ 	if (!soc_dev_attr)
+ 		return -ENOMEM;
+@@ -315,10 +355,9 @@ static int __init renesas_soc_init(void)
+ 	soc_dev_attr->family = kstrdup_const(family->name, GFP_KERNEL);
+ 	soc_dev_attr->soc_id = kstrdup_const(strchr(match->compatible, ',') + 1,
+ 					     GFP_KERNEL);
+-	if (chipid)
+-		soc_dev_attr->revision = kasprintf(GFP_KERNEL, "ES%u.%u",
+-						   ((product >> 4) & 0x0f) + 1,
+-						   product & 0xf);
++	if (eshi)
++		soc_dev_attr->revision = kasprintf(GFP_KERNEL, "ES%u.%u", eshi,
++						   eslo);
+ 
+ 	pr_info("Detected Renesas %s %s %s\n", soc_dev_attr->family,
+ 		soc_dev_attr->soc_id, soc_dev_attr->revision ?: "");
+-- 
+2.11.0
