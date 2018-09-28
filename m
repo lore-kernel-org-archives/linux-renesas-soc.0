@@ -1,76 +1,114 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:40904 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729499AbeI1WHb (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57654 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729111AbeI1Qnc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 18:07:31 -0400
-Received: by mail-qt1-f196.google.com with SMTP id e9-v6so7089006qtp.7
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Sep 2018 08:43:11 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1538125184.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1538125184.git.horms+renesas@verge.net.au>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 28 Sep 2018 17:42:55 +0200
-Message-ID: <CAK8P3a2jAPTr3HmbvJQCe+rq3MvhGoJbgcKUiE3ySL_BcA63Qg@mail.gmail.com>
-Subject: Re: [GIT PULL] Second Round of Renesas ARM64 Based SoC DT Updates for v4.20
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: arm-soc <arm@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>,
+        Fri, 28 Sep 2018 12:43:32 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: arm@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
         Kevin Hilman <khilman@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [GIT PULL] Second Round of Renesas ARM64 Based SoC DT Updates for v4.20
+Date: Fri, 28 Sep 2018 12:20:16 +0200
+Message-Id: <cover.1538125184.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Sep 28, 2018 at 12:20 PM Simon Horman
-<horms+renesas@verge.net.au> wrote:
->
-> Hi Olof, Hi Kevin, Hi Arnd,
->
-> Please consider these second round of Renesas ARM64 based SoC DT updates for v4.20.
->
-> This pull request is based on the previous round of
-> such requests, tagged as renesas-arm64-dt-for-v4.20,
-> which you have already pulled.
->
->
-> The following changes since commit 450d6079e8d3c40c7ce67ac8bb4a2da9baf56613:
->
->   arm64: dts: r8a77965: add FDP1 device nodes (2018-09-13 09:48:13 +0200)
->
-> are available in the git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt2-for-v4.20
->
-> for you to fetch changes up to 158928f38e1c6f3ac4dd83cf2240ae412179005d:
->
->   arm64: dts: renesas: r8a77965: Add Sound and Audio DMAC device nodes (2018-09-26 12:31:04 +0200)
->
-> ----------------------------------------------------------------
-> Second Round of Renesas ARM64 Based SoC DT Updates for v4.20
->
-> * Remove unneeded status from thermal nodes
->
-> * R-Car Gen 3 SoCs:
->   - Use 400kHz for I2C DVFS bus
->   - Revise USB2.0 properties
-> * R-Car Gen 3 SoC based ULCB boards: Add default bootargs
-> * R-Car M3-N (r8a77965) SoC based boards: Enable audio with DMA
->
-> * R-Car V3M (r8a77970 and V3H (r8a77980) SoCs:
->   - Add compare match timer (CMT) support
->   - Add timer pulse unit (TPU) support
-> * R-Car V3H (r8a77980) and E3 (r8a77990) SoCs:
->   - Attach the SYS-DMAC to the IPMMU
-> * E3 (r8a77990) SoC: Add display output support
-> * R-Car E3 (r8a77990) based Ebisu board:
->   - Enable HDMI and CVBS input, and VGA and HDMI display output
->
-> * R-Car D3 (r8a77995) SoC: Add LVDS support
-> * R-Car D3 (r8a77995) based Draak board: Enable HDMI display output
+Hi Olof, Hi Kevin, Hi Arnd,
 
-Pulled into next/dt, thanks!
+Please consider these second round of Renesas ARM64 based SoC DT updates for v4.20.
 
-      Arnd
+This pull request is based on the previous round of
+such requests, tagged as renesas-arm64-dt-for-v4.20,
+which you have already pulled.
+
+
+The following changes since commit 450d6079e8d3c40c7ce67ac8bb4a2da9baf56613:
+
+  arm64: dts: r8a77965: add FDP1 device nodes (2018-09-13 09:48:13 +0200)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt2-for-v4.20
+
+for you to fetch changes up to 158928f38e1c6f3ac4dd83cf2240ae412179005d:
+
+  arm64: dts: renesas: r8a77965: Add Sound and Audio DMAC device nodes (2018-09-26 12:31:04 +0200)
+
+----------------------------------------------------------------
+Second Round of Renesas ARM64 Based SoC DT Updates for v4.20
+
+* Remove unneeded status from thermal nodes
+
+* R-Car Gen 3 SoCs:
+  - Use 400kHz for I2C DVFS bus
+  - Revise USB2.0 properties
+* R-Car Gen 3 SoC based ULCB boards: Add default bootargs
+* R-Car M3-N (r8a77965) SoC based boards: Enable audio with DMA
+
+* R-Car V3M (r8a77970 and V3H (r8a77980) SoCs:
+  - Add compare match timer (CMT) support
+  - Add timer pulse unit (TPU) support
+* R-Car V3H (r8a77980) and E3 (r8a77990) SoCs:
+  - Attach the SYS-DMAC to the IPMMU
+* E3 (r8a77990) SoC: Add display output support
+* R-Car E3 (r8a77990) based Ebisu board:
+  - Enable HDMI and CVBS input, and VGA and HDMI display output
+
+* R-Car D3 (r8a77995) SoC: Add LVDS support
+* R-Car D3 (r8a77995) based Draak board: Enable HDMI display output
+
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      arm64: dts: renesas: Remove unneeded status from thermal nodes
+
+Jacopo Mondi (1):
+      arm64: dts: renesas: ebisu: Add HDMI and CVBS input
+
+Kieran Bingham (1):
+      arm64: dts: renesas: r8a77995: Add LVDS support
+
+Kuninori Morimoto (1):
+      arm64: dts: renesas: ulcb: add default bootargs
+
+Laurent Pinchart (2):
+      arm64: dts: renesas: r8a77990: Add display output support
+      arm64: dts: renesas: r8a77990: ebisu: Enable VGA and HDMI outputs
+
+Magnus Damm (2):
+      arm64: dts: renesas: r8a77990: Attach the SYS-DMAC to the IPMMU
+      arm64: dts: renesas: r8a77980: Attach the SYS-DMAC to the IPMMU
+
+Sergei Shtylyov (2):
+      arm64: dts: renesas: r8a779{7|8}0: add CMT support
+      arm64: dts: renesas: r8a779{7|8}0: add TPU support
+
+Takeshi Kihara (1):
+      arm64: dts: renesas: r8a77965: Add Sound and Audio DMAC device nodes
+
+Ulrich Hecht (1):
+      arm64: dts: renesas: r8a77995: draak: Enable HDMI display output
+
+Wolfram Sang (1):
+      arm64: dts: renesas: gen3: use 400kHz for I2C DVFS bus
+
+Yoshihiro Shimoda (1):
+      arm64: dts: renesas: revise properties for R-Car Gen3 SoCs' usb 2.0
+
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi        |   1 -
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi         |  33 ++-
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi         |  17 +-
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi        | 262 +++++++++++++++++++++--
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi        |  80 +++++++
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi        |  97 +++++++++
+ arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts   | 248 +++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi        | 203 +++++++++++++++++-
+ arch/arm64/boot/dts/renesas/r8a77995-draak.dts   |  98 ++++++++-
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi        |  68 +++++-
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi |   2 +
+ arch/arm64/boot/dts/renesas/ulcb.dtsi            |   3 +
+ 12 files changed, 1052 insertions(+), 60 deletions(-)
