@@ -1,56 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58192 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:58325 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729111AbeI1QqL (ORCPT
+        with ESMTP id S1729116AbeI1QrP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:46:11 -0400
+        Fri, 28 Sep 2018 12:47:15 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 6/7] ARM: debug-ll: Add support for r8a7744
-Date: Fri, 28 Sep 2018 12:22:48 +0200
-Message-Id: <abf3bf537d298db18ad929ceb71c0353d6794f42.1538123953.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1538123953.git.horms+renesas@verge.net.au>
-References: <cover.1538123953.git.horms+renesas@verge.net.au>
+Subject: [PATCH 16/21] soc: renesas: rcar-sysc: Add r8a7744 support
+Date: Fri, 28 Sep 2018 12:23:31 +0200
+Message-Id: <c3299eb2770b43471516666bd20f78ed5588f868.1538128711.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1538128711.git.horms+renesas@verge.net.au>
+References: <cover.1538128711.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-Enable low-level debugging support for RZ/G1N (R8A7744). RZ/G1N uses
-SCIF0 for the debug console.
+Add support for RZ/G1N (R8A7744) SoC power areas to the R-Car SYSC driver.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/Kconfig.debug | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/soc/renesas/Kconfig     | 2 +-
+ drivers/soc/renesas/rcar-sysc.c | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index f6fcb8a79889..7c86875c9bae 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -940,12 +940,13 @@ choice
- 
- 	config DEBUG_RCAR_GEN2_SCIF0
- 		bool "Kernel low-level debugging messages via SCIF0 on R-Car Gen2 and RZ/G1"
--		depends on ARCH_R8A7743 || ARCH_R8A7790 || ARCH_R8A7791 || \
--			ARCH_R8A7792 || ARCH_R8A7793
-+		depends on ARCH_R8A7743 || ARCH_R8A7744 || ARCH_R8A7790 || \
-+			ARCH_R8A7791 || ARCH_R8A7792 || ARCH_R8A7793
- 		help
- 		  Say Y here if you want kernel low-level debugging support
--		  via SCIF0 on Renesas RZ/G1M (R8A7743), R-Car H2 (R8A7790),
--		  M2-W (R8A7791), V2H (R8A7792), or M2-N (R8A7793).
-+		  via SCIF0 on Renesas RZ/G1M (R8A7743), RZ/G1N (R8A7744),
-+		  R-Car H2 (R8A7790), M2-W (R8A7791), V2H (R8A7792), or
-+		  M2-N (R8A7793).
- 
- 	config DEBUG_RCAR_GEN2_SCIF1
- 		bool "Kernel low-level debugging messages via SCIF1 on R8A77470"
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index 05086ac2108b..407f02c80e8b 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -7,7 +7,7 @@ config SOC_RENESAS
+ 			   ARCH_R8A774A1 || ARCH_R8A774C0 || ARCH_R8A7795 || \
+ 			   ARCH_R8A7796 || ARCH_R8A77965 || ARCH_R8A77970 || \
+ 			   ARCH_R8A77980 || ARCH_R8A77990 || ARCH_R8A77995
+-	select SYSC_R8A7743 if ARCH_R8A7743
++	select SYSC_R8A7743 if ARCH_R8A7743 || ARCH_R8A7744
+ 	select SYSC_R8A7745 if ARCH_R8A7745
+ 	select SYSC_R8A77470 if ARCH_R8A77470
+ 	select SYSC_R8A774A1 if ARCH_R8A774A1
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index 08c8b62896b7..af53363eda03 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -265,6 +265,8 @@ static int __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
+ static const struct of_device_id rcar_sysc_matches[] __initconst = {
+ #ifdef CONFIG_SYSC_R8A7743
+ 	{ .compatible = "renesas,r8a7743-sysc", .data = &r8a7743_sysc_info },
++	/* RZ/G1N is identical to RZ/G2M w.r.t. power domains. */
++	{ .compatible = "renesas,r8a7744-sysc", .data = &r8a7743_sysc_info },
+ #endif
+ #ifdef CONFIG_SYSC_R8A7745
+ 	{ .compatible = "renesas,r8a7745-sysc", .data = &r8a7745_sysc_info },
 -- 
 2.11.0
