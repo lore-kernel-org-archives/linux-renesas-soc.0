@@ -1,98 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:58325 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729116AbeI1Qqt (ORCPT
+        with ESMTP id S1729116AbeI1QrV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:46:49 -0400
+        Fri, 28 Sep 2018 12:47:21 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 02/21] ARM: shmobile: Add basic RZ/A2 SoC support
-Date: Fri, 28 Sep 2018 12:23:17 +0200
-Message-Id: <332df9828e94d4288825584638b7df6ad4c1ff38.1538128711.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1538128711.git.horms+renesas@verge.net.au>
-References: <cover.1538128711.git.horms+renesas@verge.net.au>
+Subject: [PATCH 1/4] dt-bindings: arm: Document RZ/G2M SoC DT bindings
+Date: Fri, 28 Sep 2018 12:23:47 +0200
+Message-Id: <01588646dbce3bf9a79a190f3949677067cc1e20.1538129305.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1538129305.git.horms+renesas@verge.net.au>
+References: <cover.1538129305.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Chris Brandt <chris.brandt@renesas.com>
+From: Biju Das <biju.das@bp.renesas.com>
 
-Add the RZ/A2 SoC to the Renesas SoC collection.
+Add device tree bindings documentation for Renesas RZ/G2M (r8a774a1) SoC.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-shmobile/Kconfig         |  6 ++++++
- arch/arm/mach-shmobile/Makefile        |  1 +
- arch/arm/mach-shmobile/setup-r7s9210.c | 27 +++++++++++++++++++++++++++
- 3 files changed, 34 insertions(+)
- create mode 100644 arch/arm/mach-shmobile/setup-r7s9210.c
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index aeb2eed08598..94e9431d92b8 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -55,6 +55,12 @@ config ARCH_R7S72100
- 	select SYS_SUPPORTS_SH_MTU2
- 	select RENESAS_OSTM
- 
-+config ARCH_R7S9210
-+	bool "RZ/A2 (R7S9210)"
-+	select PM
-+	select PM_GENERIC_DOMAINS
-+	select RENESAS_OSTM
-+
- config ARCH_R8A73A4
- 	bool "R-Mobile APE6 (R8A73A40)"
- 	select ARCH_RMOBILE
-diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
-index b33dc59d8698..5591646cb9bb 100644
---- a/arch/arm/mach-shmobile/Makefile
-+++ b/arch/arm/mach-shmobile/Makefile
-@@ -14,6 +14,7 @@ obj-$(CONFIG_ARCH_R8A7778)	+= setup-r8a7778.o
- obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o
- obj-$(CONFIG_ARCH_EMEV2)	+= setup-emev2.o
- obj-$(CONFIG_ARCH_R7S72100)	+= setup-r7s72100.o
-+obj-$(CONFIG_ARCH_R7S9210)	+= setup-r7s9210.o
- 
- # CPU reset vector handling objects
- cpu-y				:= platsmp.o headsmp.o
-diff --git a/arch/arm/mach-shmobile/setup-r7s9210.c b/arch/arm/mach-shmobile/setup-r7s9210.c
-new file mode 100644
-index 000000000000..573fb9955e7e
---- /dev/null
-+++ b/arch/arm/mach-shmobile/setup-r7s9210.c
-@@ -0,0 +1,27 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * r7s9210 processor support
-+ *
-+ * Copyright (C) 2018  Renesas Electronics Corporation
-+ * Copyright (C) 2018  Chris Brandt
-+ *
-+ */
-+
-+#include <linux/kernel.h>
-+
-+#include <asm/mach/arch.h>
-+
-+#include "common.h"
-+
-+static const char *const r7s9210_boards_compat_dt[] __initconst = {
-+	"renesas,r7s9210",
-+	NULL,
-+};
-+
-+DT_MACHINE_START(R7S72100_DT, "Generic R7S9210 (Flattened Device Tree)")
-+	.l2c_aux_val    = 0,
-+	.l2c_aux_mask   = ~0,
-+	.init_early	= shmobile_init_delay,
-+	.init_late	= shmobile_init_late,
-+	.dt_compat	= r7s9210_boards_compat_dt,
-+MACHINE_END
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 89b4a389fbc7..8acd3cd819b3 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -23,6 +23,8 @@ SoCs:
+     compatible = "renesas,r8a7745"
+   - RZ/G1C (R8A77470)
+     compatible = "renesas,r8a77470"
++  - RZ/G2M (R8A774A1)
++    compatible = "renesas,r8a774a1"
+   - R-Car M1A (R8A77781)
+     compatible = "renesas,r8a7778"
+   - R-Car H1 (R8A77790)
 -- 
 2.11.0
