@@ -1,173 +1,257 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:12555 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728127AbeIJTgJ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:58192 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729111AbeI1QqK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Sep 2018 15:36:09 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 2/3] soc: renesas: rcar-sysc: Add r8a774c0 support
-Date: Mon, 10 Sep 2018 15:41:27 +0100
-Message-Id: <1536590488-23270-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1536590488-23270-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1536590488-23270-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Fri, 28 Sep 2018 12:46:10 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 7/7] ARM: shmobile: Rework the PMIC IRQ line quirk
+Date: Fri, 28 Sep 2018 12:22:49 +0200
+Message-Id: <6d14d4d313d09dabdb06b4a9f4e5fe4305051e9b.1538123953.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1538123953.git.horms+renesas@verge.net.au>
+References: <cover.1538123953.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for the RZ/G2E (R8A774C0) SoC power areas to the
-R-Car SYSC driver.
+From: Marek Vasut <marek.vasut@gmail.com>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Rather than hard-coding the quirk topology, which stopped scaling,
+parse the information from DT. The code looks for all compatible
+PMICs -- da9063 and da9210 -- and checks if their IRQ line is tied
+to the same pin. If so, the code sends a matching sequence to the
+PMIC to deassert the IRQ.
+
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be> (on Koelsch)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/soc/renesas/Kconfig         |  5 +++
- drivers/soc/renesas/Makefile        |  1 +
- drivers/soc/renesas/r8a774c0-sysc.c | 68 +++++++++++++++++++++++++++++++++++++
- drivers/soc/renesas/rcar-sysc.c     |  3 ++
- drivers/soc/renesas/rcar-sysc.h     |  1 +
- 5 files changed, 78 insertions(+)
- create mode 100644 drivers/soc/renesas/r8a774c0-sysc.c
+ arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c | 139 ++++++++++++++++-----
+ 1 file changed, 110 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index 00d4c9d..163e666 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -10,6 +10,7 @@ config SOC_RENESAS
- 	select SYSC_R8A7745 if ARCH_R8A7745
- 	select SYSC_R8A77470 if ARCH_R8A77470
- 	select SYSC_R8A774A1 if ARCH_R8A774A1
-+	select SYSC_R8A774C0 if ARCH_R8A774C0
- 	select SYSC_R8A7779 if ARCH_R8A7779
- 	select SYSC_R8A7790 if ARCH_R8A7790
- 	select SYSC_R8A7791 if ARCH_R8A7791 || ARCH_R8A7793
-@@ -42,6 +43,10 @@ config SYSC_R8A774A1
- 	bool "RZ/G2M System Controller support" if COMPILE_TEST
- 	select SYSC_RCAR
+diff --git a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+index 21ebc7678ffd..8e50daa99151 100644
+--- a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+@@ -23,11 +23,12 @@
+ #include <linux/i2c.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
++#include <linux/list.h>
+ #include <linux/notifier.h>
+ #include <linux/of.h>
++#include <linux/of_irq.h>
+ #include <linux/mfd/da9063/registers.h>
  
-+config SYSC_R8A774C0
-+	bool "RZ/G2E System Controller support" if COMPILE_TEST
-+	select SYSC_RCAR
-+
- config SYSC_R8A7779
- 	bool "R-Car H1 System Controller support" if COMPILE_TEST
- 	select SYSC_RCAR
-diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
-index 6adb9d6..3bdd7db 100644
---- a/drivers/soc/renesas/Makefile
-+++ b/drivers/soc/renesas/Makefile
-@@ -7,6 +7,7 @@ obj-$(CONFIG_SYSC_R8A7743)	+= r8a7743-sysc.o
- obj-$(CONFIG_SYSC_R8A7745)	+= r8a7745-sysc.o
- obj-$(CONFIG_SYSC_R8A77470)	+= r8a77470-sysc.o
- obj-$(CONFIG_SYSC_R8A774A1)	+= r8a774a1-sysc.o
-+obj-$(CONFIG_SYSC_R8A774C0)	+= r8a774c0-sysc.o
- obj-$(CONFIG_SYSC_R8A7779)	+= r8a7779-sysc.o
- obj-$(CONFIG_SYSC_R8A7790)	+= r8a7790-sysc.o
- obj-$(CONFIG_SYSC_R8A7791)	+= r8a7791-sysc.o
-diff --git a/drivers/soc/renesas/r8a774c0-sysc.c b/drivers/soc/renesas/r8a774c0-sysc.c
-new file mode 100644
-index 0000000..e1ac4c0
---- /dev/null
-+++ b/drivers/soc/renesas/r8a774c0-sysc.c
-@@ -0,0 +1,68 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Renesas RZ/G2E System Controller
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ *
-+ * Based on Renesas R-Car E3 System Controller
-+ */
-+
-+#include <linux/bug.h>
-+#include <linux/kernel.h>
-+#include <linux/sys_soc.h>
-+
-+#include <dt-bindings/power/r8a774c0-sysc.h>
-+
-+#include "rcar-sysc.h"
-+
-+static struct rcar_sysc_area r8a774c0_areas[] __initdata = {
-+	{ "always-on",	    0, 0, R8A774C0_PD_ALWAYS_ON, -1, PD_ALWAYS_ON },
-+	{ "ca53-scu",	0x140, 0, R8A774C0_PD_CA53_SCU,  R8A774C0_PD_ALWAYS_ON,
-+	  PD_SCU },
-+	{ "ca53-cpu0",	0x200, 0, R8A774C0_PD_CA53_CPU0, R8A774C0_PD_CA53_SCU,
-+	  PD_CPU_NOCR },
-+	{ "ca53-cpu1",	0x200, 1, R8A774C0_PD_CA53_CPU1, R8A774C0_PD_CA53_SCU,
-+	  PD_CPU_NOCR },
-+	{ "a3vc",	0x380, 0, R8A774C0_PD_A3VC,	R8A774C0_PD_ALWAYS_ON },
-+	{ "a2vc1",	0x3c0, 1, R8A774C0_PD_A2VC1,	R8A774C0_PD_A3VC },
-+	{ "3dg-a",	0x100, 0, R8A774C0_PD_3DG_A,	R8A774C0_PD_ALWAYS_ON },
-+	{ "3dg-b",	0x100, 1, R8A774C0_PD_3DG_B,	R8A774C0_PD_3DG_A },
+-
+ #define IRQC_BASE		0xe61c0000
+ #define IRQC_MONITOR		0x104	/* IRQn Signal Level Monitor Register */
+ 
+@@ -36,34 +37,45 @@
+ /* start of DA9210 System Control and Event Registers */
+ #define DA9210_REG_MASK_A		0x54
+ 
++struct regulator_quirk {
++	struct list_head		list;
++	const struct of_device_id	*id;
++	struct of_phandle_args		irq_args;
++	struct i2c_msg			i2c_msg;
++	bool				shared;	/* IRQ line is shared */
 +};
 +
-+static void __init rcar_sysc_fix_parent(struct rcar_sysc_area *areas,
-+					unsigned int num_areas, u8 id,
-+					int new_parent)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < num_areas; i++)
-+		if (areas[i].isr_bit == id) {
-+			areas[i].parent = new_parent;
-+			return;
-+		}
-+}
-+
-+/* Fixups for RZ/G2E ES1.0 revision */
-+static const struct soc_device_attribute r8a774c0[] __initconst = {
-+	{ .soc_id = "r8a774c0", .revision = "ES1.0" },
-+	{ /* sentinel */ }
++static LIST_HEAD(quirk_list);
+ static void __iomem *irqc;
+ 
+ /* first byte sets the memory pointer, following are consecutive reg values */
+ static u8 da9063_irq_clr[] = { DA9063_REG_IRQ_MASK_A, 0xff, 0xff, 0xff, 0xff };
+ static u8 da9210_irq_clr[] = { DA9210_REG_MASK_A, 0xff, 0xff };
+ 
+-static struct i2c_msg da9xxx_msgs[3] = {
+-	{
+-		.addr = 0x58,
+-		.len = ARRAY_SIZE(da9063_irq_clr),
+-		.buf = da9063_irq_clr,
+-	}, {
+-		.addr = 0x68,
+-		.len = ARRAY_SIZE(da9210_irq_clr),
+-		.buf = da9210_irq_clr,
+-	}, {
+-		.addr = 0x70,
+-		.len = ARRAY_SIZE(da9210_irq_clr),
+-		.buf = da9210_irq_clr,
+-	},
++static struct i2c_msg da9063_msg = {
++	.len = ARRAY_SIZE(da9063_irq_clr),
++	.buf = da9063_irq_clr,
 +};
 +
-+static int __init r8a774c0_sysc_init(void)
-+{
-+	if (soc_device_match(r8a774c0)) {
-+		rcar_sysc_fix_parent(r8a774c0_areas,
-+				     ARRAY_SIZE(r8a774c0_areas),
-+				     R8A774C0_PD_3DG_A, R8A774C0_PD_3DG_B);
-+		rcar_sysc_fix_parent(r8a774c0_areas,
-+				     ARRAY_SIZE(r8a774c0_areas),
-+				     R8A774C0_PD_3DG_B, R8A774C0_PD_ALWAYS_ON);
++static struct i2c_msg da9210_msg = {
++	.len = ARRAY_SIZE(da9210_irq_clr),
++	.buf = da9210_irq_clr,
++};
++
++static const struct of_device_id rcar_gen2_quirk_match[] = {
++	{ .compatible = "dlg,da9063", .data = &da9063_msg },
++	{ .compatible = "dlg,da9210", .data = &da9210_msg },
++	{},
+ };
+ 
+ static int regulator_quirk_notify(struct notifier_block *nb,
+ 				  unsigned long action, void *data)
+ {
++	struct regulator_quirk *pos, *tmp;
+ 	struct device *dev = data;
+ 	struct i2c_client *client;
+ 	static bool done;
++	int ret;
+ 	u32 mon;
+ 
+ 	if (done)
+@@ -80,17 +92,20 @@ static int regulator_quirk_notify(struct notifier_block *nb,
+ 	client = to_i2c_client(dev);
+ 	dev_dbg(dev, "Detected %s\n", client->name);
+ 
+-	if ((client->addr == 0x58 && !strcmp(client->name, "da9063")) ||
+-	    (client->addr == 0x68 && !strcmp(client->name, "da9210")) ||
+-	    (client->addr == 0x70 && !strcmp(client->name, "da9210"))) {
+-		int ret, len;
++	/*
++	 * Send message to all PMICs that share an IRQ line to deassert it.
++	 *
++	 * WARNING: This works only if all the PMICs are on the same I2C bus.
++	 */
++	list_for_each_entry(pos, &quirk_list, list) {
++		if (!pos->shared)
++			continue;
+ 
+-		/* There are two DA9210 on Stout, one on the other boards. */
+-		len = of_machine_is_compatible("renesas,stout") ? 3 : 2;
++		dev_info(&client->dev, "clearing %s@0x%02x interrupts\n",
++			 pos->id->compatible, pos->i2c_msg.addr);
+ 
+-		dev_info(&client->dev, "clearing da9063/da9210 interrupts\n");
+-		ret = i2c_transfer(client->adapter, da9xxx_msgs, len);
+-		if (ret != len)
++		ret = i2c_transfer(client->adapter, &pos->i2c_msg, 1);
++		if (ret != 1)
+ 			dev_err(&client->dev, "i2c error %d\n", ret);
+ 	}
+ 
+@@ -103,6 +118,11 @@ static int regulator_quirk_notify(struct notifier_block *nb,
+ remove:
+ 	dev_info(dev, "IRQ2 is not asserted, removing quirk\n");
+ 
++	list_for_each_entry_safe(pos, tmp, &quirk_list, list) {
++		list_del(&pos->list);
++		kfree(pos);
 +	}
 +
-+	return 0;
-+}
+ 	done = true;
+ 	iounmap(irqc);
+ 	return 0;
+@@ -114,7 +134,12 @@ static struct notifier_block regulator_quirk_nb = {
+ 
+ static int __init rcar_gen2_regulator_quirk(void)
+ {
+-	u32 mon;
++	struct regulator_quirk *quirk, *pos, *tmp;
++	struct of_phandle_args *argsa, *argsb;
++	const struct of_device_id *id;
++	struct device_node *np;
++	u32 mon, addr;
++	int ret;
+ 
+ 	if (!of_machine_is_compatible("renesas,koelsch") &&
+ 	    !of_machine_is_compatible("renesas,lager") &&
+@@ -122,22 +147,78 @@ static int __init rcar_gen2_regulator_quirk(void)
+ 	    !of_machine_is_compatible("renesas,gose"))
+ 		return -ENODEV;
+ 
++	for_each_matching_node_and_match(np, rcar_gen2_quirk_match, &id) {
++		if (!of_device_is_available(np))
++			break;
 +
-+const struct rcar_sysc_info r8a774c0_sysc_info __initconst = {
-+	.init = r8a774c0_sysc_init,
-+	.areas = r8a774c0_areas,
-+	.num_areas = ARRAY_SIZE(r8a774c0_areas),
-+};
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index fe32f7a..e63d7a2 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -278,6 +278,9 @@ static const struct of_device_id rcar_sysc_matches[] __initconst = {
- #ifdef CONFIG_SYSC_R8A774A1
- 	{ .compatible = "renesas,r8a774a1-sysc", .data = &r8a774a1_sysc_info },
- #endif
-+#ifdef CONFIG_SYSC_R8A774C0
-+	{ .compatible = "renesas,r8a774c0-sysc", .data = &r8a774c0_sysc_info },
-+#endif
- #ifdef CONFIG_SYSC_R8A7779
- 	{ .compatible = "renesas,r8a7779-sysc", .data = &r8a7779_sysc_info },
- #endif
-diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
-index 33defe6..dc71f49 100644
---- a/drivers/soc/renesas/rcar-sysc.h
-+++ b/drivers/soc/renesas/rcar-sysc.h
-@@ -53,6 +53,7 @@ extern const struct rcar_sysc_info r8a7743_sysc_info;
- extern const struct rcar_sysc_info r8a7745_sysc_info;
- extern const struct rcar_sysc_info r8a77470_sysc_info;
- extern const struct rcar_sysc_info r8a774a1_sysc_info;
-+extern const struct rcar_sysc_info r8a774c0_sysc_info;
- extern const struct rcar_sysc_info r8a7779_sysc_info;
- extern const struct rcar_sysc_info r8a7790_sysc_info;
- extern const struct rcar_sysc_info r8a7791_sysc_info;
++		ret = of_property_read_u32(np, "reg", &addr);
++		if (ret)	/* Skip invalid entry and continue */
++			continue;
++
++		quirk = kzalloc(sizeof(*quirk), GFP_KERNEL);
++		if (!quirk) {
++			ret = -ENOMEM;
++			goto err_mem;
++		}
++
++		argsa = &quirk->irq_args;
++		memcpy(&quirk->i2c_msg, id->data, sizeof(quirk->i2c_msg));
++
++		quirk->id = id;
++		quirk->i2c_msg.addr = addr;
++
++		ret = of_irq_parse_one(np, 0, argsa);
++		if (ret) {	/* Skip invalid entry and continue */
++			kfree(quirk);
++			continue;
++		}
++
++		list_for_each_entry(pos, &quirk_list, list) {
++			argsb = &pos->irq_args;
++
++			if (argsa->args_count != argsb->args_count)
++				continue;
++
++			ret = memcmp(argsa->args, argsb->args,
++				     argsa->args_count *
++				     sizeof(argsa->args[0]));
++			if (!ret) {
++				pos->shared = true;
++				quirk->shared = true;
++			}
++		}
++
++		list_add_tail(&quirk->list, &quirk_list);
++	}
++
+ 	irqc = ioremap(IRQC_BASE, PAGE_SIZE);
+-	if (!irqc)
+-		return -ENOMEM;
++	if (!irqc) {
++		ret = -ENOMEM;
++		goto err_mem;
++	}
+ 
+ 	mon = ioread32(irqc + IRQC_MONITOR);
+ 	if (mon & REGULATOR_IRQ_MASK) {
+ 		pr_debug("%s: IRQ2 is not asserted, not installing quirk\n",
+ 			 __func__);
+-		iounmap(irqc);
+-		return 0;
++		ret = 0;
++		goto err_free;
+ 	}
+ 
+ 	pr_info("IRQ2 is asserted, installing da9063/da9210 regulator quirk\n");
+ 
+ 	bus_register_notifier(&i2c_bus_type, &regulator_quirk_nb);
+ 	return 0;
++
++err_free:
++	iounmap(irqc);
++err_mem:
++	list_for_each_entry_safe(pos, tmp, &quirk_list, list) {
++		list_del(&pos->list);
++		kfree(pos);
++	}
++
++	return ret;
+ }
+ 
+ arch_initcall(rcar_gen2_regulator_quirk);
 -- 
-2.7.4
+2.11.0
