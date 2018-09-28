@@ -1,48 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58325 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:58192 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729116AbeI1QrE (ORCPT
+        with ESMTP id S1729111AbeI1QqL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:47:04 -0400
+        Fri, 28 Sep 2018 12:46:11 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 12/21] dt-bindings: reset: rcar-rst: Document r8a774c0 rst
-Date: Fri, 28 Sep 2018 12:23:27 +0200
-Message-Id: <fe46b8229f287e912b8c8d28bf8dde4cd704c17e.1538128711.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1538128711.git.horms+renesas@verge.net.au>
-References: <cover.1538128711.git.horms+renesas@verge.net.au>
+Subject: [PATCH 6/7] ARM: debug-ll: Add support for r8a7744
+Date: Fri, 28 Sep 2018 12:22:48 +0200
+Message-Id: <abf3bf537d298db18ad929ceb71c0353d6794f42.1538123953.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1538123953.git.horms+renesas@verge.net.au>
+References: <cover.1538123953.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+From: Biju Das <biju.das@bp.renesas.com>
 
-Document bindings for the RZ/G2E (a.k.a. R8A774C0) reset
-module.
+Enable low-level debugging support for RZ/G1N (R8A7744). RZ/G1N uses
+SCIF0 for the debug console.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/reset/renesas,rst.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/Kconfig.debug | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-index e4fe0ab294bf..25e6db546215 100644
---- a/Documentation/devicetree/bindings/reset/renesas,rst.txt
-+++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-@@ -19,6 +19,7 @@ Required properties:
- 		  - "renesas,r8a7745-rst" (RZ/G1E)
- 		  - "renesas,r8a77470-rst" (RZ/G1C)
- 		  - "renesas,r8a774a1-rst" (RZ/G2M)
-+		  - "renesas,r8a774c0-rst" (RZ/G2E)
- 		  - "renesas,r8a7778-reset-wdt" (R-Car M1A)
- 		  - "renesas,r8a7779-reset-wdt" (R-Car H1)
- 		  - "renesas,r8a7790-rst" (R-Car H2)
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index f6fcb8a79889..7c86875c9bae 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -940,12 +940,13 @@ choice
+ 
+ 	config DEBUG_RCAR_GEN2_SCIF0
+ 		bool "Kernel low-level debugging messages via SCIF0 on R-Car Gen2 and RZ/G1"
+-		depends on ARCH_R8A7743 || ARCH_R8A7790 || ARCH_R8A7791 || \
+-			ARCH_R8A7792 || ARCH_R8A7793
++		depends on ARCH_R8A7743 || ARCH_R8A7744 || ARCH_R8A7790 || \
++			ARCH_R8A7791 || ARCH_R8A7792 || ARCH_R8A7793
+ 		help
+ 		  Say Y here if you want kernel low-level debugging support
+-		  via SCIF0 on Renesas RZ/G1M (R8A7743), R-Car H2 (R8A7790),
+-		  M2-W (R8A7791), V2H (R8A7792), or M2-N (R8A7793).
++		  via SCIF0 on Renesas RZ/G1M (R8A7743), RZ/G1N (R8A7744),
++		  R-Car H2 (R8A7790), M2-W (R8A7791), V2H (R8A7792), or
++		  M2-N (R8A7793).
+ 
+ 	config DEBUG_RCAR_GEN2_SCIF1
+ 		bool "Kernel low-level debugging messages via SCIF1 on R8A77470"
 -- 
 2.11.0
