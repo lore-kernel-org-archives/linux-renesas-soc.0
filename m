@@ -1,86 +1,64 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42081 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725973AbeISNWn (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Sep 2018 09:22:43 -0400
-Date: Wed, 19 Sep 2018 09:45:58 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 net-next 07/12] net: ethernet: Add helper to remove a
- supported link mode
-Message-ID: <20180919074557.vixjj3rg76ayy3k7@verge.net.au>
-References: <1536709999-13420-1-git-send-email-andrew@lunn.ch>
- <1536709999-13420-8-git-send-email-andrew@lunn.ch>
- <20180917151302.l6mzzy5xmqlbgejj@verge.net.au>
- <20180917153811.GE5458@lunn.ch>
- <20180918105817.z2o5yybcth7diqsu@verge.net.au>
- <20180918130236.GB29092@lunn.ch>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH] dt-bindings: irqchip: renesas-irqc: Document R-Car E3
+ support
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180928113238.17192-1-geert+renesas@glider.be>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Message-ID: <accca8b5-1941-2f28-d939-647ec3b30bd9@arm.com>
+Date: Fri, 28 Sep 2018 12:59:11 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180918130236.GB29092@lunn.ch>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <20180928113238.17192-1-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-[CC Sergei, linux-renesas-soc]
+On 28/09/18 12:32, Geert Uytterhoeven wrote:
+> Document support for the Interrupt Controller for External Devices
+> (INTC-EX) in the Renesas E3 (r8a77990) SoC.
+> 
+> No driver update is needed.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>   .../devicetree/bindings/interrupt-controller/renesas,irqc.txt | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
+> index a046ed374d808d66..b8a86e30e8e67068 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
+> @@ -2,7 +2,8 @@ DT bindings for the R-Mobile/R-Car/RZ/G interrupt controller
+>   
+>   Required properties:
+>   
+> -- compatible: has to be "renesas,irqc-<soctype>", "renesas,irqc" as fallback.
+> +- compatible: must be "renesas,irqc-<soctype>" or "renesas,intc-ex-<soctype>",
+> +	      and "renesas,irqc" as fallback.
+>     Examples with soctypes are:
+>       - "renesas,irqc-r8a73a4" (R-Mobile APE6)
+>       - "renesas,irqc-r8a7743" (RZ/G1M)
+> @@ -19,6 +20,7 @@ Required properties:
+>       - "renesas,intc-ex-r8a77965" (R-Car M3-N)
+>       - "renesas,intc-ex-r8a77970" (R-Car V3M)
+>       - "renesas,intc-ex-r8a77980" (R-Car V3H)
+> +    - "renesas,intc-ex-r8a77990" (R-Car E3)
+>       - "renesas,intc-ex-r8a77995" (R-Car D3)
+>   - #interrupt-cells: has to be <2>: an interrupt index and flags, as defined in
+>     interrupts.txt in this directory
+> 
 
-On Tue, Sep 18, 2018 at 03:02:36PM +0200, Andrew Lunn wrote:
-> > Hi Andrew,
-> 
-> Hi Simon
-> 
-> Thanks for the dumps
->  
-> > 1. net-next: cf7d97e1e54d ("net: mdio: remove duplicated include from mdio_bus.c")
-> > 
-> >   basic status: no link
-> >   capabilities: 1000baseT-HD 1000baseT-FD 100baseTx-FD 100baseTx-HD 10baseT-FD 10baseT-HD
-> >   advertising:  100baseTx-FD 100baseTx-HD flow-control
-> >   link partner: 100baseTx-FD 100baseTx-HD 10baseT-FD 10baseT-HD
-> > 
-> > 2. net-next with this patch reverted
-> > 
-> >   basic status: autonegotiation complete, link ok
-> >   capabilities: 1000baseT-HD 1000baseT-FD 100baseTx-FD 100baseTx-HD 10baseT-FD 10baseT-HD
-> >   advertising:  100baseTx-FD 100baseTx-HD
-> >   link partner: 1000baseT-FD 100baseTx-FD 100baseTx-HD 10baseT-FD 10baseT-HD
-> 
-> So flow-control is not present here.
-> 
-> >   basic status: autonegotiation complete, link ok
-> >   capabilities: 1000baseT-HD 1000baseT-FD 100baseTx-FD 100baseTx-HD 10baseT-FD 10baseT-HD
-> >   advertising:  100baseTx-FD 100baseTx-HD
-> >   link partner: 1000baseT-FD 100baseTx-FD 100baseTx-HD 10baseT-FD 10baseT-HD
-> 
-> And here also.
+Queued for 4.20.
 
-Thanks for raising this, I noticed it too.
+Thanks,
 
-> Looking at the code, i see:
-> 
-> /* E-MAC init function */
-> static void ravb_emac_init(struct net_device *ndev)
-> {
->         struct ravb_private *priv = netdev_priv(ndev);
-> 
->         /* Receive frame limit set register */
->         ravb_write(ndev, ndev->mtu + ETH_HLEN + VLAN_HLEN + ETH_FCS_LEN, RFLR);
-> 
->         /* EMAC Mode: PAUSE prohibition; Duplex; RX Checksum; TX; RX */
->         ravb_write(ndev, ECMR_ZPF | (priv->duplex ? ECMR_DM : 0) |
->                    (ndev->features & NETIF_F_RXCSUM ? ECMR_RCSC : 0) |
->                    ECMR_TE | ECMR_RE, ECMR);
-> 
-> Does this mean Pause is not supported in the hardware?
-
-According to my reading of the documentation Pause is supported by the
-hardware and the above code seems to conflict with the comment (possibly
-both the code and comment predate the current documentation). My reading of
-the documentation is that the above unconditionally _enables_ receiving and
-sending Pause frames with time parameter value 0.
+	M.
+-- 
+Jazz is not dead. It just smells funny...
