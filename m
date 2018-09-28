@@ -1,57 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:61660 "EHLO
+Received: from relmlor3.renesas.com ([210.160.252.173]:25267 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727329AbeIQXzV (ORCPT
+        by vger.kernel.org with ESMTP id S1726291AbeI1Tci (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Sep 2018 19:55:21 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH] serial: sh-sci: Add earlycon for R7S9210
-Date: Mon, 17 Sep 2018 13:26:23 -0500
-Message-Id: <20180917182623.29221-1-chris.brandt@renesas.com>
+        Fri, 28 Sep 2018 15:32:38 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] dt-bindings: spi: sh-msiof: Add r8a7744 support
+Date: Fri, 28 Sep 2018 14:01:49 +0100
+Message-Id: <1538139709-17707-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since the register offsets are different for RZ/A2 SCIF, we need
-to declare a separate string for it.
+Document RZ/G1N (R8A7744) SoC bindings.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 ---
-To be applied on top of Geert's patches:
- *  [PATCH 1/2] Revert "serial: sh-sci: Remove SCIx_RZ_SCIFA_REGTYPE"
- *  [PATCH 2/2] Revert "serial: sh-sci: Allow for compressed SCIF address"
----
- drivers/tty/serial/sh-sci.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ Documentation/devicetree/bindings/spi/sh-msiof.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index ab3f6e91853d..426241da2e44 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -3414,6 +3414,12 @@ static int __init scif_early_console_setup(struct earlycon_device *device,
- {
- 	return early_console_setup(device, PORT_SCIF);
- }
-+static int __init rzscifa_early_console_setup(struct earlycon_device *device,
-+					  const char *opt)
-+{
-+	port_cfg.regtype = SCIx_RZ_SCIFA_REGTYPE;
-+	return early_console_setup(device, PORT_SCIF);
-+}
- static int __init scifa_early_console_setup(struct earlycon_device *device,
- 					  const char *opt)
- {
-@@ -3432,6 +3438,7 @@ static int __init hscif_early_console_setup(struct earlycon_device *device,
+diff --git a/Documentation/devicetree/bindings/spi/sh-msiof.txt b/Documentation/devicetree/bindings/spi/sh-msiof.txt
+index 27b48f0..49fd806 100644
+--- a/Documentation/devicetree/bindings/spi/sh-msiof.txt
++++ b/Documentation/devicetree/bindings/spi/sh-msiof.txt
+@@ -2,6 +2,7 @@ Renesas MSIOF spi controller
  
- OF_EARLYCON_DECLARE(sci, "renesas,sci", sci_early_console_setup);
- OF_EARLYCON_DECLARE(scif, "renesas,scif", scif_early_console_setup);
-+OF_EARLYCON_DECLARE(scif, "renesas,scif-r7s9210", rzscifa_early_console_setup);
- OF_EARLYCON_DECLARE(scifa, "renesas,scifa", scifa_early_console_setup);
- OF_EARLYCON_DECLARE(scifb, "renesas,scifb", scifb_early_console_setup);
- OF_EARLYCON_DECLARE(hscif, "renesas,hscif", hscif_early_console_setup);
+ Required properties:
+ - compatible           : "renesas,msiof-r8a7743" (RZ/G1M)
++			 "renesas,msiof-r8a7744" (RZ/G1N)
+ 			 "renesas,msiof-r8a7745" (RZ/G1E)
+ 			 "renesas,msiof-r8a774a1" (RZ/G2M)
+ 			 "renesas,msiof-r8a7790" (R-Car H2)
 -- 
-2.16.1
+2.7.4
