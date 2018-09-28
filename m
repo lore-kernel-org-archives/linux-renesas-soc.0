@@ -1,85 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57700 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729118AbeI1Qng (ORCPT
+Received: from mail-qt1-f176.google.com ([209.85.160.176]:39125 "EHLO
+        mail-qt1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728765AbeI1WI6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:43:36 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 01/14] arm64: dts: renesas: Remove unneeded status from thermal nodes
-Date: Fri, 28 Sep 2018 12:20:12 +0200
-Message-Id: <c79661eb5060e2bf18875d86caf3324b4ab4c03f.1538125184.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1538125184.git.horms+renesas@verge.net.au>
-References: <cover.1538125184.git.horms+renesas@verge.net.au>
+        Fri, 28 Sep 2018 18:08:58 -0400
+Received: by mail-qt1-f176.google.com with SMTP id c25-v6so7114371qtp.6
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Sep 2018 08:44:38 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1538123642.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1538123642.git.horms+renesas@verge.net.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 28 Sep 2018 17:44:22 +0200
+Message-ID: <CAK8P3a3W+L-6fBvw2-a2SvSSaq2wTnaNtdq2hZcXG53XgCCdgQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Second Round of Renesas ARM Based SoC DT Updates for v4.20
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm-soc <arm@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Fri, Sep 28, 2018 at 12:22 PM Simon Horman
+<horms+renesas@verge.net.au> wrote:
+>
+> Hi Olof, Hi Kevin, Hi Arnd,
+>
+> Please consider these second round of Renesas ARM based SoC DT updates for
+> v4.20.
+>
+> This pull request is based on the previous round of
+> such requests, tagged as renesas-arm-dt-for-v4.20,
+> which you have already pulled.
+>
+>
+> The following changes since commit 1926bd6bf20fe306797fbf366902674d2d6c20cc:
+>
+>   ARM: dts: r9a06g032: Use r9a06g032-sysctrl binding definitions (2018-09-06 11:31:35 +0200)
+>
+> are available in the git repository at:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm-dt2-for-v4.20
+>
+> for you to fetch changes up to e0a39511dafd7e302a974f5cbdfc9c8afffa98d8:
+>
+>   ARM: dts: iwg20d-q7-common: Move pciec node out of common dtsi (2018-09-28 10:32:50 +0200)
+>
+> ----------------------------------------------------------------
+> Second Round of Renesas ARM Based SoC DT Updates for v4.20
+>
+> * RZ/G1M (r8a7743) based iWave G20D-Q7 board and camera daughter board
+>   - Move PCIe node out of common dtsi to allow reuse of the common dtsi
+>     on the iWave RZ/G1N board
+> * RZ/G1C (r8a77470) SoC: Add I2C4, SDHI2 and SMP support
+> * R-Car Gen1 based boards and R-Car Gen2 SoCs:
+>   - Enhance top-of-file comments to include SoC name
+> * RZ/N1D (r9a06g032) SoC:
+>   - Correct UART0 description and add all other UARTs
 
-The thermal device is supposed to be always enabled.  As the default
-value of the status property is "okay", there is no need to make this
-explicit in SoC-specific .dtsi files where no override is involved.
+Pulled into next/dt, thanks!
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 1 -
- arch/arm64/boot/dts/renesas/r8a7795.dtsi  | 1 -
- arch/arm64/boot/dts/renesas/r8a7796.dtsi  | 1 -
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 1 -
- 4 files changed, 4 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index 046fc937da14..012cbb64246e 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -358,7 +358,6 @@
- 			power-domains = <&sysc 32>;
- 			resets = <&cpg 522>;
- 			#thermal-sensor-cells = <1>;
--			status = "okay";
- 		};
- 
- 		intc_ex: interrupt-controller@e61c0000 {
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index abb361e41ef6..83077fdd7e4a 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -455,7 +455,6 @@
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 522>;
- 			#thermal-sensor-cells = <1>;
--			status = "okay";
- 		};
- 
- 		intc_ex: interrupt-controller@e61c0000 {
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 28a0794a4190..947bfc2fe335 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -434,7 +434,6 @@
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			resets = <&cpg 522>;
- 			#thermal-sensor-cells = <1>;
--			status = "okay";
- 		};
- 
- 		intc_ex: interrupt-controller@e61c0000 {
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 3437d5e34f6a..31d23196e720 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -350,7 +350,6 @@
- 			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 522>;
- 			#thermal-sensor-cells = <1>;
--			status = "okay";
- 		};
- 
- 		intc_ex: interrupt-controller@e61c0000 {
--- 
-2.11.0
+       Arnd
