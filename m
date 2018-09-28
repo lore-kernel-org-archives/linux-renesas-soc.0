@@ -1,46 +1,220 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:38904 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728269AbeIMU1X (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57700 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729111AbeI1Qnv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 16:27:23 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: iommu@lists.linux-foundation.org,
-        Robin Murphy <robin.murphy@arm.com>,
-        Christoph Hellwig <hch@lst.de>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 1/3] ARM: dma-mapping: update comment about handling dma_ops when detaching from IOMMU
-Date: Thu, 13 Sep 2018 17:17:14 +0200
-Message-Id: <20180913151716.6333-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180913151716.6333-1-wsa+renesas@sang-engineering.com>
-References: <20180913151716.6333-1-wsa+renesas@sang-engineering.com>
+        Fri, 28 Sep 2018 12:43:51 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 10/14] arm64: dts: renesas: r8a77990: Add display output support
+Date: Fri, 28 Sep 2018 12:20:21 +0200
+Message-Id: <13ee2bfc5444c8950d3c74bd47ff2a7b53c34aa6.1538125184.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1538125184.git.horms+renesas@verge.net.au>
+References: <cover.1538125184.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Update the comment because we don't set the pointer to NULL anymore.
-Also use the correct pointer name 'dma_ops' instead of 'dma_map_ops'.
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Fixes: 1874619a7df4 ("ARM: dma-mapping: Set proper DMA ops in arm_iommu_detach_device()")
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+The R8A77990 (E3) platform has one RGB output and two LVDS outputs
+connected to the DU. Add the DT nodes for the DU, LVDS encoders and
+supporting VSP and FCP.
+
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mm/dma-mapping.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi | 167 ++++++++++++++++++++++++++++++
+ 1 file changed, 167 insertions(+)
 
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index 66566472c153..e3b04786838f 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -2287,7 +2287,7 @@ EXPORT_SYMBOL_GPL(arm_iommu_attach_device);
-  * @dev: valid struct device pointer
-  *
-  * Detaches the provided device from a previously attached map.
-- * This voids the dma operations (dma_map_ops pointer)
-+ * This overwrites the dma_ops pointer with appropriate non-IOMMU ops.
-  */
- void arm_iommu_detach_device(struct device *dev)
- {
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index 0c726ea5d315..9509dc05665f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -843,6 +843,82 @@
+ 			resets = <&cpg 408>;
+ 		};
+ 
++		vspb0: vsp@fe960000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfe960000 0 0x8000>;
++			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 626>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 626>;
++			renesas,fcp = <&fcpvb0>;
++		};
++
++		fcpvb0: fcp@fe96f000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfe96f000 0 0x200>;
++			clocks = <&cpg CPG_MOD 607>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 607>;
++			iommus = <&ipmmu_vp0 5>;
++		};
++
++		vspi0: vsp@fe9a0000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfe9a0000 0 0x8000>;
++			interrupts = <GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 631>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 631>;
++			renesas,fcp = <&fcpvi0>;
++		};
++
++		fcpvi0: fcp@fe9af000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfe9af000 0 0x200>;
++			clocks = <&cpg CPG_MOD 611>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 611>;
++			iommus = <&ipmmu_vp0 8>;
++		};
++
++		vspd0: vsp@fea20000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfea20000 0 0x7000>;
++			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 623>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 623>;
++			renesas,fcp = <&fcpvd0>;
++		};
++
++		fcpvd0: fcp@fea27000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea27000 0 0x200>;
++			clocks = <&cpg CPG_MOD 603>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 603>;
++			iommus = <&ipmmu_vi0 8>;
++		};
++
++		vspd1: vsp@fea28000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfea28000 0 0x7000>;
++			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 622>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 622>;
++			renesas,fcp = <&fcpvd1>;
++		};
++
++		fcpvd1: fcp@fea2f000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea2f000 0 0x200>;
++			clocks = <&cpg CPG_MOD 602>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 602>;
++			iommus = <&ipmmu_vi0 9>;
++		};
++
+ 		csi40: csi2@feaa0000 {
+ 			compatible = "renesas,r8a77990-csi2", "renesas,rcar-gen3-csi2";
+ 			reg = <0 0xfeaa0000 0 0x10000>;
+@@ -874,6 +950,97 @@
+ 			};
+ 		};
+ 
++		du: display@feb00000 {
++			compatible = "renesas,du-r8a77990";
++			reg = <0 0xfeb00000 0 0x80000>;
++			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 724>,
++				 <&cpg CPG_MOD 723>;
++			clock-names = "du.0", "du.1";
++			vsps = <&vspd0 0 &vspd1 0>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					du_out_rgb: endpoint {
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++					du_out_lvds0: endpoint {
++						remote-endpoint = <&lvds0_in>;
++					};
++				};
++
++				port@2 {
++					reg = <2>;
++					du_out_lvds1: endpoint {
++						remote-endpoint = <&lvds1_in>;
++					};
++				};
++			};
++		};
++
++		lvds0: lvds-encoder@feb90000 {
++			compatible = "renesas,r8a77990-lvds";
++			reg = <0 0xfeb90000 0 0x20>;
++			clocks = <&cpg CPG_MOD 727>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 727>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					lvds0_in: endpoint {
++						remote-endpoint = <&du_out_lvds0>;
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++					lvds0_out: endpoint {
++					};
++				};
++			};
++		};
++
++		lvds1: lvds-encoder@feb90100 {
++			compatible = "renesas,r8a77990-lvds";
++			reg = <0 0xfeb90100 0 0x20>;
++			clocks = <&cpg CPG_MOD 727>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 726>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					lvds1_in: endpoint {
++						remote-endpoint = <&du_out_lvds1>;
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++					lvds1_out: endpoint {
++					};
++				};
++			};
++		};
++
+ 		prr: chipid@fff00044 {
+ 			compatible = "renesas,prr";
+ 			reg = <0 0xfff00044 0 4>;
 -- 
-2.18.0
+2.11.0
