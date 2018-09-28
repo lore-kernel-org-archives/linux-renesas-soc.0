@@ -1,66 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58325 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:57961 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729116AbeI1Qq5 (ORCPT
+        with ESMTP id S1729376AbeI1Qow (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:46:57 -0400
+        Fri, 28 Sep 2018 12:44:52 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 15/21] dt-bindings: power: rcar-sysc: Add r8a7744 power domain index macros
-Date: Fri, 28 Sep 2018 12:23:30 +0200
-Message-Id: <841e37a5cad3976a15b531e512076a05b6045b4b.1538128711.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1538128711.git.horms+renesas@verge.net.au>
-References: <cover.1538128711.git.horms+renesas@verge.net.au>
+Subject: [PATCH 4/6] ARM: multi_v7_defconfig: Enable VIDEO_RENESAS_FDP1
+Date: Fri, 28 Sep 2018 12:21:37 +0200
+Message-Id: <3ff7ee8a972ac7379bd74af4dc203359320e7c75.1538122547.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1538122547.git.horms+renesas@verge.net.au>
+References: <cover.1538122547.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add power domain indices for RZ/G1N (R8A7744) SoC.
+R-Car Gen2 (and RZ/G1) SoCs have a Fine Display Processor, hence enable
+support for it.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- include/dt-bindings/power/r8a7744-sysc.h | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
- create mode 100644 include/dt-bindings/power/r8a7744-sysc.h
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/dt-bindings/power/r8a7744-sysc.h b/include/dt-bindings/power/r8a7744-sysc.h
-new file mode 100644
-index 000000000000..8b6529778f98
---- /dev/null
-+++ b/include/dt-bindings/power/r8a7744-sysc.h
-@@ -0,0 +1,24 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A7744_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A7744_SYSC_H__
-+
-+/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
-+ *
-+ * Note that RZ/G1N is identical to RZ/G2M w.r.t. power domains.
-+ */
-+
-+#define R8A7744_PD_CA15_CPU0		 0
-+#define R8A7744_PD_CA15_CPU1		 1
-+#define R8A7744_PD_CA15_SCU		12
-+#define R8A7744_PD_SGX			20
-+
-+/* Always-on power area */
-+#define R8A7744_PD_ALWAYS_ON		32
-+
-+#endif /* __DT_BINDINGS_POWER_R8A7744_SYSC_H__ */
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index fc33444e94f0..dec755c939bb 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -584,6 +584,7 @@ CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC=m
+ CONFIG_VIDEO_STI_BDISP=m
+ CONFIG_VIDEO_STI_HVA=m
+ CONFIG_VIDEO_STI_DELTA=m
++CONFIG_VIDEO_RENESAS_FDP1=m
+ CONFIG_VIDEO_RENESAS_JPU=m
+ CONFIG_VIDEO_RENESAS_VSP1=m
+ CONFIG_V4L_TEST_DRIVERS=y
 -- 
 2.11.0
