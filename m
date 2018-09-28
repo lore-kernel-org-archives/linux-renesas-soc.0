@@ -1,101 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:58074 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729176AbeI1Qp1 (ORCPT
+        with ESMTP id S1729176AbeI1Qpd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:45:27 -0400
+        Fri, 28 Sep 2018 12:45:33 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm@opensource.se>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/7] ARM: dts: Include R-Car Gen2 product name in DTSI files
-Date: Fri, 28 Sep 2018 12:22:09 +0200
-Message-Id: <89b43b08123f454f697f7ab02187f09b6e4a36b6.1538123642.git.horms+renesas@verge.net.au>
+Subject: [PATCH 5/7] ARM: dts: r8a77470: Add SDHI2 support
+Date: Fri, 28 Sep 2018 12:22:12 +0200
+Message-Id: <f068cc816015f8a6af494b584978aa7df96d80fe.1538123642.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1538123642.git.horms+renesas@verge.net.au>
 References: <cover.1538123642.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm@opensource.se>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Improve the user friendliness of the DTS code base by including the
-R-Car product name in each R-Car Gen2 DTSI file.
+Add SoC specific device tree definitions for the SDHI2 interface.
 
-The product names are taken from:
-Documentation/devicetree/bindings/arm/shmobile.txt
-
-Signed-off-by: Magnus Damm <damm@opensource.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 2 +-
- arch/arm/boot/dts/r8a7791.dtsi | 2 +-
- arch/arm/boot/dts/r8a7792.dtsi | 2 +-
- arch/arm/boot/dts/r8a7793.dtsi | 2 +-
- arch/arm/boot/dts/r8a7794.dtsi | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/r8a77470.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 52a757f47bf0..5a2747758f67 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Device Tree Source for the r8a7790 SoC
-+ * Device Tree Source for the R-Car H2 (R8A77900) SoC
-  *
-  * Copyright (C) 2015 Renesas Electronics Corporation
-  * Copyright (C) 2013-2014 Renesas Solutions Corp.
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 25b6a99dd87a..6f875502453c 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Device Tree Source for the r8a7791 SoC
-+ * Device Tree Source for the R-Car M2-W (R8A77910) SoC
-  *
-  * Copyright (C) 2013-2015 Renesas Electronics Corporation
-  * Copyright (C) 2013-2014 Renesas Solutions Corp.
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index 52d16a260db0..8e9eb4b704d3 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Device Tree Source for the r8a7792 SoC
-+ * Device Tree Source for the R-Car V2H (R8A77920) SoC
-  *
-  * Copyright (C) 2016 Cogent Embedded Inc.
-  */
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 620a570307ff..bf05110fac4e 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Device Tree Source for the r8a7793 SoC
-+ * Device Tree Source for the R-Car M2-N (R8A77930) SoC
-  *
-  * Copyright (C) 2014-2015 Renesas Electronics Corporation
-  */
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 886135a273cb..8d797d34816e 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Device Tree Source for the r8a7794 SoC
-+ * Device Tree Source for the R-Car E2 (R8A77940) SoC
-  *
-  * Copyright (C) 2014 Renesas Electronics Corporation
-  * Copyright (C) 2014 Ulrich Hecht
+diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
+index 9aba350f3eaa..9e7f86d42fad 100644
+--- a/arch/arm/boot/dts/r8a77470.dtsi
++++ b/arch/arm/boot/dts/r8a77470.dtsi
+@@ -412,6 +412,21 @@
+ 			status = "disabled";
+ 		};
+ 
++		sdhi2: sd@ee160000 {
++			compatible = "renesas,sdhi-r8a77470",
++				     "renesas,rcar-gen2-sdhi";
++			reg = <0 0xee160000 0 0x328>;
++			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 312>;
++			dmas = <&dmac0 0xd3>, <&dmac0 0xd4>,
++			       <&dmac1 0xd3>, <&dmac1 0xd4>;
++			dma-names = "tx", "rx", "tx", "rx";
++			max-frequency = <97500000>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 312>;
++			status = "disabled";
++		};
++
+ 		gic: interrupt-controller@f1001000 {
+ 			compatible = "arm,gic-400";
+ 			#interrupt-cells = <3>;
 -- 
 2.11.0
