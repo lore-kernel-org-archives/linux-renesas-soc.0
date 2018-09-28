@@ -1,174 +1,116 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:60974 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727035AbeIDQfa (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:57128 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727389AbeI1PEj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Sep 2018 12:35:30 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 07/16] drm: rcar-du: Use LVDS PLL clock as dot clock when possible
-Date: Tue,  4 Sep 2018 15:10:18 +0300
-Message-Id: <20180904121027.24031-8-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180904121027.24031-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180904121027.24031-1-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 28 Sep 2018 11:04:39 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] pinctrl: sh-pfc: Updates for v4.20 (take two)
+Date: Fri, 28 Sep 2018 10:41:56 +0200
+Message-Id: <20180928084156.20198-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On selected SoCs, the DU can use the clock output by the LVDS encoder
-PLL as its input dot clock. This feature is optional, but on the D3 and
-E3 SoC it is often the only way to obtain a precise dot clock frequency,
-as the other available clocks (CPG-generated clock and external clock)
-usually have fixed rates.
+	Hi Linus,
 
-Add a DU model information field to describe which DU channels can use
-the LVDS PLL output clock as their input clock, and configure clock
-routing accordingly.
+The following changes since commit 2ed03c835d6f4dbe9f0d093187825d1c0e2e9b39:
 
-This feature is available on H2, M2-W, M2-N, D3 and E3 SoCs, with D3 and
-E3 being the primary targets. It is left disabled in this commit, and
-will be enabled per-SoC after careful testing.
+  pinctrl: sh-pfc: r8a77990: Add DU pins, groups and function (2018-08-30 14:17:20 +0200)
 
-At the hardware level, clock routing is configured at runtime in two
-steps, first selecting an internal dot clock between the LVDS PLL clock
-and the external DOTCLKIN clock, and then selecting between the internal
-dot clock and the CPG-generated clock. The first part requires stopping
-the whole DU group in order for the change to take effect, thus causing
-flickering on the screen. For this reason we currently hardcode the
-clock source the the LVDS PLL clock if available, and allow flicker-free
-selection of the external DOTCLKIN clock or CPG-generated clock
-otherwise. A more dynamic clock selection process can be implemented
-later if the need arises.
+are available in the Git repository at:
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c  |  8 +++++
- drivers/gpu/drm/rcar-du/rcar_du_drv.h   |  2 ++
- drivers/gpu/drm/rcar-du/rcar_du_group.c | 64 +++++++++++++++++++++++++--------
- 3 files changed, 59 insertions(+), 15 deletions(-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.20-tag2
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 1d81eb244441..39d2fee6d7b8 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -261,6 +261,14 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 		rcar_du_group_write(rcrtc->group, DPLLCR, dpllcr);
- 
- 		escr = ESCR_DCLKSEL_DCLKIN | div;
-+	} else if (rcdu->info->lvds_clk_mask & BIT(rcrtc->index)) {
-+		/*
-+		 * Use the LVDS PLL output as the dot clock when outputting to
-+		 * the LVDS encoder on an SoC that supports this clock routing
-+		 * option. We use the clock directly in that case, without any
-+		 * additional divider.
-+		 */
-+		escr = ESCR_DCLKSEL_DCLKIN;
- 	} else {
- 		struct du_clk_params params = { .diff = (unsigned long)-1 };
- 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-index fef9ea5c22f3..ebba9aefba6a 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-@@ -53,6 +53,7 @@ struct rcar_du_output_routing {
-  * @routes: array of CRTC to output routes, indexed by output (RCAR_DU_OUTPUT_*)
-  * @num_lvds: number of internal LVDS encoders
-  * @dpll_mask: bit mask of DU channels equipped with a DPLL
-+ * @lvds_clk_mask: bitmask of channels that can use the LVDS clock as dot clock
-  */
- struct rcar_du_device_info {
- 	unsigned int gen;
-@@ -62,6 +63,7 @@ struct rcar_du_device_info {
- 	struct rcar_du_output_routing routes[RCAR_DU_OUTPUT_MAX];
- 	unsigned int num_lvds;
- 	unsigned int dpll_mask;
-+	unsigned int lvds_clk_mask;
- };
- 
- #define RCAR_DU_MAX_CRTCS		4
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-index ef2c177afb6d..4c62841eff2f 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-@@ -89,6 +89,54 @@ static void rcar_du_group_setup_defr8(struct rcar_du_group *rgrp)
- 	rcar_du_group_write(rgrp, DEFR8, defr8);
- }
- 
-+static void rcar_du_group_setup_didsr(struct rcar_du_group *rgrp)
-+{
-+	struct rcar_du_device *rcdu = rgrp->dev;
-+	struct rcar_du_crtc *rcrtc;
-+	unsigned int num_crtcs = 0;
-+	unsigned int i;
-+	u32 didsr;
-+
-+	/*
-+	 * Configure input dot clock routing with a hardcoded configuration. If
-+	 * the DU channel can use the LVDS encoder output clock as the dot
-+	 * clock, do so. Otherwise route DU_DOTCLKINn signal to DUn.
-+	 *
-+	 * Each channel can then select between the dot clock configured here
-+	 * and the clock provided by the CPG through the ESCR register.
-+	 */
-+	if (rcdu->info->gen < 3 && rgrp->index == 0) {
-+		/*
-+		 * On Gen2 a single register in the first group controls dot
-+		 * clock selection for all channels.
-+		 */
-+		rcrtc = rcdu->crtcs;
-+		num_crtcs = rcdu->num_crtcs;
-+	} else if (rcdu->info->gen == 3 && rgrp->num_crtcs > 1) {
-+		/*
-+		 * On Gen3 dot clocks are setup through per-group registers,
-+		 * only available when the group has two channels.
-+		 */
-+		rcrtc = &rcdu->crtcs[rgrp->index * 2];
-+		num_crtcs = rgrp->num_crtcs;
-+	}
-+
-+	if (!num_crtcs)
-+		return;
-+
-+	didsr = DIDSR_CODE;
-+	for (i = 0; i < num_crtcs; ++i, ++rcrtc) {
-+		if (rcdu->info->lvds_clk_mask & BIT(rcrtc->index))
-+			didsr |= DIDSR_LCDS_LVDS0(i)
-+			      |  DIDSR_PDCS_CLK(i, 0);
-+		else
-+			didsr |= DIDSR_LCDS_DCLKIN(i)
-+			      |  DIDSR_PDCS_CLK(i, 0);
-+	}
-+
-+	rcar_du_group_write(rgrp, DIDSR, didsr);
-+}
-+
- static void rcar_du_group_setup(struct rcar_du_group *rgrp)
- {
- 	struct rcar_du_device *rcdu = rgrp->dev;
-@@ -106,21 +154,7 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
- 
- 	if (rcar_du_has(rgrp->dev, RCAR_DU_FEATURE_EXT_CTRL_REGS)) {
- 		rcar_du_group_setup_defr8(rgrp);
--
--		/*
--		 * Configure input dot clock routing. We currently hardcode the
--		 * configuration to routing DOTCLKINn to DUn. Register fields
--		 * depend on the DU generation, but the resulting value is 0 in
--		 * all cases.
--		 *
--		 * On Gen2 a single register in the first group controls dot
--		 * clock selection for all channels, while on Gen3 dot clocks
--		 * are setup through per-group registers, only available when
--		 * the group has two channels.
--		 */
--		if ((rcdu->info->gen < 3 && rgrp->index == 0) ||
--		    (rcdu->info->gen == 3 &&  rgrp->num_crtcs > 1))
--			rcar_du_group_write(rgrp, DIDSR, DIDSR_CODE);
-+		rcar_du_group_setup_didsr(rgrp);
- 	}
- 
- 	if (rcdu->info->gen >= 3)
--- 
-Regards,
+for you to fetch changes up to a97f340c0a071bcb32ff68f3d19cf56a76887288:
 
-Laurent Pinchart
+  pinctrl: sh-pfc: rcar: Rename automotive-only arrays to automotive (2018-09-28 09:49:15 +0200)
+
+----------------------------------------------------------------
+pinctrl: sh-pfc: Updates for v4.20 (take two)
+
+  - Add MSIOF pin groups on R-Car E3 and D3,
+  - Add support for the new RZ/G1N (R8A7744) and RZ/G2E (R8A774C0) SoCs,
+  - Add I2C4, DU0, QSPI0, SDHI2, and USB pin groups on RZ/G1C,
+  - Convert to SPDX license identifiers,
+  - Small cleanups.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Biju Das (2):
+      dt-bindings: pinctrl: sh-pfc: Document r8a7744 PFC support
+      pinctrl: sh-pfc: r8a7791: Add r8a7744 support
+
+Fabrizio Castro (7):
+      dt-bindings: pinctrl: sh-pfc: Document r8a774c0 PFC support
+      pinctrl: sh-pfc: r8a77990: Add R8A774C0 PFC support
+      pinctrl: sh-pfc: r8a77470: Add I2C4 pin groups
+      pinctrl: sh-pfc: r8a77470: Add DU0 pin groups
+      pinctrl: sh-pfc: r8a77470: Add QSPI0 pin groups
+      pinctrl: sh-pfc: r8a77470: Add SDHI2 pin groups
+      pinctrl: sh-pfc: r8a77470: Add USB pin groups
+
+Geert Uytterhoeven (1):
+      pinctrl: sh-pfc: rcar: Rename automotive-only arrays to automotive
+
+Kuninori Morimoto (2):
+      pinctrl: sh-pfc: Convert to SPDX identifiers
+      pinctrl: rza1: Convert to SPDX identifiers
+
+Takeshi Kihara (2):
+      pinctrl: sh-pfc: r8a77990: Add MSIOF pins, groups and functions
+      pinctrl: sh-pfc: r8a77995: Add MSIOF pins, groups and functions
+
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |   2 +
+ drivers/pinctrl/pinctrl-rza1.c                     |   5 +-
+ drivers/pinctrl/sh-pfc/Kconfig                     |  11 +
+ drivers/pinctrl/sh-pfc/Makefile                    |   2 +
+ drivers/pinctrl/sh-pfc/core.c                      |  17 +-
+ drivers/pinctrl/sh-pfc/core.h                      |   7 +-
+ drivers/pinctrl/sh-pfc/gpio.c                      |   5 +-
+ drivers/pinctrl/sh-pfc/pfc-emev2.c                 |   5 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a73a4.c               |  15 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7740.c               |  15 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a77470.c              | 275 +++++++++
+ drivers/pinctrl/sh-pfc/pfc-r8a7778.c               |  10 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7779.c               |  14 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c               |  15 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c               |  43 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7792.c               |   5 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c               |   5 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c           |   5 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c               |   5 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c               |  17 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a77970.c              |   5 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a77990.c              | 666 +++++++++++++++++----
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c              | 370 +++++++++++-
+ drivers/pinctrl/sh-pfc/pfc-sh7203.c                |   5 +-
+ drivers/pinctrl/sh-pfc/pfc-sh7264.c                |   5 +-
+ drivers/pinctrl/sh-pfc/pfc-sh7269.c                |   5 +-
+ drivers/pinctrl/sh-pfc/pfc-sh73a0.c                |  15 +-
+ drivers/pinctrl/sh-pfc/pfc-sh7720.c                |   5 +-
+ drivers/pinctrl/sh-pfc/pfc-sh7723.c                |   5 +-
+ drivers/pinctrl/sh-pfc/pfc-sh7724.c                |   5 +-
+ drivers/pinctrl/sh-pfc/pfc-sh7734.c                |   5 +-
+ drivers/pinctrl/sh-pfc/pfc-sh7757.c                |   5 +-
+ drivers/pinctrl/sh-pfc/pfc-sh7785.c                |   5 +-
+ drivers/pinctrl/sh-pfc/pfc-sh7786.c                |   5 +-
+ drivers/pinctrl/sh-pfc/pfc-shx3.c                  |   5 +-
+ drivers/pinctrl/sh-pfc/pinctrl.c                   |   5 +-
+ drivers/pinctrl/sh-pfc/sh_pfc.h                    |   9 +-
+ 37 files changed, 1293 insertions(+), 310 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
