@@ -1,76 +1,48 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 07/10] clk: renesas: Add r8a7744 CPG Core Clock Definitions
-Date: Tue, 11 Sep 2018 11:12:48 +0100
-Message-Id: <1536660771-32278-8-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1536660771-32278-1-git-send-email-biju.das@bp.renesas.com>
-References: <1536660771-32278-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:33334 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726473AbeI1NLO (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 28 Sep 2018 09:11:14 -0400
+Received: by mail-ua1-f67.google.com with SMTP id i4-v6so1923522uak.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Sep 2018 23:48:59 -0700 (PDT)
+MIME-Version: 1.0
+References: <87bm8itkta.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87bm8itkta.wl-kuninori.morimoto.gx@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 28 Sep 2018 08:48:47 +0200
+Message-ID: <CAMuHMdWtgzx=FMnxHj4CiL2MwkLUrnpApSv=gPFC2BqaBfMzzg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a7795: add missing dma-names on hscif2
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add all RZ/G1N Clock Pulse Generator Core Clock Outputs, as listed in
-Table 7.2b ("List of Clocks [RZ/G1M/N]") of the RZ/G1 Hardware User's
-Manual.
+On Fri, Sep 28, 2018 at 4:38 AM Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>
+> hscif2 has 4 dmas, but has only 2 dma-names.
+> This patch add missing dma-names.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- include/dt-bindings/clock/r8a7744-cpg-mssr.h | 39 ++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
- create mode 100644 include/dt-bindings/clock/r8a7744-cpg-mssr.h
+Nice catch!
 
-diff --git a/include/dt-bindings/clock/r8a7744-cpg-mssr.h b/include/dt-bindings/clock/r8a7744-cpg-mssr.h
-new file mode 100644
-index 0000000..2690be0
---- /dev/null
-+++ b/include/dt-bindings/clock/r8a7744-cpg-mssr.h
-@@ -0,0 +1,39 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_R8A7744_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A7744_CPG_MSSR_H__
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* r8a7744 CPG Core Clocks */
-+#define R8A7744_CLK_Z		0
-+#define R8A7744_CLK_ZG		1
-+#define R8A7744_CLK_ZTR		2
-+#define R8A7744_CLK_ZTRD2	3
-+#define R8A7744_CLK_ZT		4
-+#define R8A7744_CLK_ZX		5
-+#define R8A7744_CLK_ZS		6
-+#define R8A7744_CLK_HP		7
-+#define R8A7744_CLK_B		9
-+#define R8A7744_CLK_LB		10
-+#define R8A7744_CLK_P		11
-+#define R8A7744_CLK_CL		12
-+#define R8A7744_CLK_M2		13
-+#define R8A7744_CLK_ZB3		15
-+#define R8A7744_CLK_ZB3D2	16
-+#define R8A7744_CLK_DDR		17
-+#define R8A7744_CLK_SDH		18
-+#define R8A7744_CLK_SD0		19
-+#define R8A7744_CLK_SD2		20
-+#define R8A7744_CLK_SD3		21
-+#define R8A7744_CLK_MMC0	22
-+#define R8A7744_CLK_MP		23
-+#define R8A7744_CLK_QSPI	26
-+#define R8A7744_CLK_CP		27
-+#define R8A7744_CLK_RCAN	28
-+#define R8A7744_CLK_R		29
-+#define R8A7744_CLK_OSC		30
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A7744_CPG_MSSR_H__ */
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+
+Fixes: e0f0bda79337701a ("arm64: dts: renesas: r8a7795: sort subnodes
+of the soc node")
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
