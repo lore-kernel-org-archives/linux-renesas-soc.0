@@ -1,47 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58192 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:57961 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729111AbeI1QqE (ORCPT
+        with ESMTP id S1729193AbeI1Qov (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:46:04 -0400
+        Fri, 28 Sep 2018 12:44:51 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/7] ARM: shmobile: r8a7779: Remove unused includes
-Date: Fri, 28 Sep 2018 12:22:43 +0200
-Message-Id: <ad73cc2b913273df971cf318d0fe40785376dbcd.1538123953.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1538123953.git.horms+renesas@verge.net.au>
-References: <cover.1538123953.git.horms+renesas@verge.net.au>
+Subject: [PATCH 3/6] ARM: shmobile: defconfig: Enable VIDEO_RENESAS_FDP1
+Date: Fri, 28 Sep 2018 12:21:36 +0200
+Message-Id: <59051a25bfb51d98d50b7270d55d38a928b55073.1538122547.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1538122547.git.horms+renesas@verge.net.au>
+References: <cover.1538122547.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Presumable unused since commit c99cd90d98a98aa1 ("ARM: shmobile:
-r8a7779: Remove legacy SoC code").
+R-Car Gen2 (and RZ/G1) SoCs have a Fine Display Processor, hence enable
+support for it.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-shmobile/setup-r8a7779.c | 2 --
- 1 file changed, 2 deletions(-)
+ arch/arm/configs/shmobile_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-shmobile/setup-r8a7779.c b/arch/arm/mach-shmobile/setup-r8a7779.c
-index d589326099e0..b13ec9088ce5 100644
---- a/arch/arm/mach-shmobile/setup-r8a7779.c
-+++ b/arch/arm/mach-shmobile/setup-r8a7779.c
-@@ -7,9 +7,7 @@
-  * Copyright (C) 2013  Cogent Embedded, Inc.
-  */
- #include <linux/init.h>
--#include <linux/irq.h>
- #include <linux/irqchip.h>
--#include <linux/irqchip/arm-gic.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index 7b48ec3e63ec..f2b40075819f 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -130,6 +130,7 @@ CONFIG_VIDEO_V4L2_SUBDEV_API=y
+ CONFIG_V4L_PLATFORM_DRIVERS=y
+ CONFIG_VIDEO_RCAR_VIN=y
+ CONFIG_V4L_MEM2MEM_DRIVERS=y
++CONFIG_VIDEO_RENESAS_FDP1=y
+ CONFIG_VIDEO_RENESAS_JPU=y
+ CONFIG_VIDEO_RENESAS_VSP1=y
+ # CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
 -- 
 2.11.0
