@@ -1,63 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:54198 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726797AbeIMSZD (ORCPT
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:44881 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726496AbeI2Cns (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 14:25:03 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Alex Williamson <alex.williamson@redhat.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, kvm@vger.kernel.org,
-        iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] drivers/vfio: Allow type-1 IOMMU instantiation with all ARM/ARM64 IOMMUs
-Date: Thu, 13 Sep 2018 15:15:29 +0200
-Message-Id: <20180913131529.11837-1-geert+renesas@glider.be>
+        Fri, 28 Sep 2018 22:43:48 -0400
+Received: by mail-qk1-f196.google.com with SMTP id g184-v6so4631011qkc.11
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Sep 2018 13:18:26 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1538128711.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1538128711.git.horms+renesas@verge.net.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 28 Sep 2018 22:18:09 +0200
+Message-ID: <CAK8P3a2ZUdGLG-vVT0MqbZmory6GEVEefZY=6NYMQ=3-kHkZNQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM Based SoC Drivers Updates for v4.20
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm-soc <arm@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently the type-1 IOMMU instantiation depends on "ARM_SMMU ||
-ARM_SMMU_V3", while it applies to other ARM/ARM64 platforms with an
-IOMMU (e.g. Renesas VMSA-compatible IPMMUs).
+On Fri, Sep 28, 2018 at 12:23 PM Simon Horman
+<horms+renesas@verge.net.au> wrote:
+>
+> Hi Olof, Hi Kevin, Hi Arnd,
+>
+> Please consider these Renesas ARM based SoC drivers updates for v4.20.
+>
+>
+> The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+>
+>   Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+>
+> are available in the git repository at:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-drivers-for-v4.20
+>
+> for you to fetch changes up to fae210bb5bfbd29118e18881f7108c6bd59293b9:
+>
+>   dt-bindings: apmu: Document r8a7744 support (2018-09-24 17:21:12 +0200)
+>
+> ----------------------------------------------------------------
+> Renesas ARM Based SoC Drivers Updates for v4.20
+>
+> * Convert to SPDX identifiers
+> * R-Car V3M (r8a77970) and V3H (r8a77980): Document Timer Unit (TMU) bindings
+> * RZ/G1N (r8a7744) and RZ/G1C (r8a77470) SoCs:
+>   - Document APMU and SMP enable method
+> * RZ/G2M (r8a74a1), RZ/G1N (r8a7744) and RZ/G2E (r8a774c0) SoCs:
+>   - Add reset support
+>   - Add sysc support
+> * RZ/G2M (r8a774a1), RZ/G2E (r8a774c0) and RZ/A2M (r7s9210) SoCs:
+>   - Add support for identifying SoC
+> * RZ/A2M (r7s9210) SoC:
+>   - Add basic SoC setup support
 
-Instead of extending the list of IOMMU types on ARM platforms, replace
-the list by "ARM || ARM64", like other architectures do.  The feature is
-still restricted to ARM/ARM64 platforms with an IOMMU by the dependency
-on IOMMU_API.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Tested with sata_rcar on Renesas R-Car H3 ES2.0.
+Pulled into next/drivers, thanks
 
-This causes a trivial merge conflict with commit c01eaa95ad30897b ("Make
-anon_inodes unconditional") in vfs/for-next.
-
-v2:
-  - Make the feature just depend on ARM || ARM64, instead of adding yet
-    another IPMMU_VMSA dependency, as suggested by Robin Murphy
-    <robin.murphy@arm.com>.
----
- drivers/vfio/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/vfio/Kconfig b/drivers/vfio/Kconfig
-index c84333eb5eb59bef..9de5ed38da830a91 100644
---- a/drivers/vfio/Kconfig
-+++ b/drivers/vfio/Kconfig
-@@ -21,7 +21,7 @@ config VFIO_VIRQFD
- menuconfig VFIO
- 	tristate "VFIO Non-Privileged userspace driver framework"
- 	depends on IOMMU_API
--	select VFIO_IOMMU_TYPE1 if (X86 || S390 || ARM_SMMU || ARM_SMMU_V3)
-+	select VFIO_IOMMU_TYPE1 if (X86 || S390 || ARM || ARM64)
- 	select ANON_INODES
- 	help
- 	  VFIO provides a framework for secure userspace device drivers.
--- 
-2.17.1
+        Arnd
