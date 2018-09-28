@@ -1,50 +1,47 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 7/8] phy: renesas: rcar-gen3-usb2: add conditions for uses_otg_pins == false
-Date: Fri, 21 Sep 2018 20:53:23 +0900
-Message-Id: <1537530804-19399-8-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1537530804-19399-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1537530804-19399-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:58179 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729111AbeI1QqB (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 28 Sep 2018 12:46:01 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 3/7] ARM: shmobile: Convert to using %pOFn instead of device_node.name
+Date: Fri, 28 Sep 2018 12:22:45 +0200
+Message-Id: <b9fad74bfe767aa924d5e329ab3c9a92b20f6b91.1538123953.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1538123953.git.horms+renesas@verge.net.au>
+References: <cover.1538123953.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If uses_otg_pins is set to false, this driver 1) should disable otg
-related interruptions, and 2) should not get ID pin signal, to avoid
-unexpected behaviors. So, this patch adds conditions for it.
+From: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+In preparation to remove the node name pointer from struct device_node,
+convert printf users to use the %pOFn format specifier.
+
+Signed-off-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/arm/mach-shmobile/pm-rmobile.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 93ab860..3f2efe5 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -148,7 +148,7 @@ static void rcar_gen3_control_otg_irq(struct rcar_gen3_chan *ch, int enable)
- 	void __iomem *usb2_base = ch->base;
- 	u32 val = readl(usb2_base + USB2_OBINTEN);
+diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/arch/arm/mach-shmobile/pm-rmobile.c
+index e348bcfe389d..9dd6cadcd900 100644
+--- a/arch/arm/mach-shmobile/pm-rmobile.c
++++ b/arch/arm/mach-shmobile/pm-rmobile.c
+@@ -189,7 +189,7 @@ static void __init add_special_pd(struct device_node *np, enum pd_types type)
+ 		return;
+ 	}
  
--	if (enable)
-+	if (ch->uses_otg_pins && enable)
- 		val |= USB2_OBINT_BITS;
- 	else
- 		val &= ~USB2_OBINT_BITS;
-@@ -210,6 +210,9 @@ static void rcar_gen3_init_from_a_peri_to_a_host(struct rcar_gen3_chan *ch)
+-	pr_debug("Special PM domain %s type %d for %pOF\n", pd->name, type, np);
++	pr_debug("Special PM domain %pOFn type %d for %pOF\n", pd, type, np);
  
- static bool rcar_gen3_check_id(struct rcar_gen3_chan *ch)
- {
-+	if (!ch->uses_otg_pins)
-+		return (ch->dr_mode == USB_DR_MODE_HOST) ? false : true;
-+
- 	return !!(readl(ch->base + USB2_ADPCTRL) & USB2_ADPCTRL_IDDIG);
- }
- 
+ 	special_pds[num_special_pds].pd = pd;
+ 	special_pds[num_special_pds].type = type;
 -- 
-1.9.1
+2.11.0
