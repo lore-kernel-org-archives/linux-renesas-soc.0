@@ -1,46 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:23691 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726323AbeIYXMD (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55450 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728811AbeI1NjM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Sep 2018 19:12:03 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+        Fri, 28 Sep 2018 09:39:12 -0400
+Date: Fri, 28 Sep 2018 09:16:48 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Chris Paterson <Chris.Paterson2@renesas.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] dt-bindings: irqchip: renesas-irqc: Document r8a7744 support
-Date: Tue, 25 Sep 2018 17:56:34 +0100
-Message-Id: <1537894594-54158-1-git-send-email-biju.das@bp.renesas.com>
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] ARM: dts: iwg20d-q7-dbcm-ca: Improve model string
+Message-ID: <20180928071647.gb4pe4tqqxbelijl@verge.net.au>
+References: <1537956082-17542-1-git-send-email-chris.paterson2@renesas.com>
+ <CAMuHMdXQSwp_rVPADG8BWPj8BJCPZXLF7hkt6wgDPjUf4QM6mg@mail.gmail.com>
+ <TYAPR01MB2285EFCBFF6ACFF0CC2A8211B7150@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TYAPR01MB2285EFCBFF6ACFF0CC2A8211B7150@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document RZ/G1N (R8A7744) SoC bindings.
+On Wed, Sep 26, 2018 at 11:54:36AM +0000, Chris Paterson wrote:
+> Hello Geert,
+> 
+> > From: devicetree-owner@vger.kernel.org <devicetree-
+> > owner@vger.kernel.org> On Behalf Of Geert Uytterhoeven
+> > Sent: 26 September 2018 12:41
+> > 
+> > Hi Chris,
+> > 
+> > On Wed, Sep 26, 2018 at 12:01 PM Chris Paterson
+> > <chris.paterson2@renesas.com> wrote:
+> > > Update the model string for this platform configuration and fix the
+> > > grammar at the same time.
+> > >
+> > > This brings the syntax in line with the RZ/G1E iWave board.
+> > >
+> > > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+> > > ---
+> > > Perhaps this patch isn't really needed, but the current string annoys me.
+> > >
+> > > Patch applies cleanly to renesas-devel-20180925-v4.19-rc5.
+> > > ---
+> > >  arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts
+> > > b/arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts
+> > > index 0d006aea99da1b40..6811ddc4af6460ce 100644
+> > > --- a/arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts
+> > > +++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts
+> > > @@ -11,7 +11,7 @@
+> > >  #include "iwg20d-q7-dbcm-ca.dtsi"
+> > >
+> > >  / {
+> > > -       model = "iW-RainboW-G20D-Q7 RZ/G1M based plus camera daughter
+> > board";
+> > > +       model = "iWave RainboW-G20D-Q7 RZ/G1M based board with camera
+> > > + add-on";
+> > >         compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7743";
+> > > };
+> > 
+> > Perhaps you want to harmonize the other differences, too?
+> >   - "iWave" vs. "iWave Systems",
+> >   - "Q7" vs. "Qseven",
+> >   - "iW-Rainbow" vs. "Rainbow".
+> 
+> Probably not a bad idea...
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
----
- Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-index a046ed3..97a8c83 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-+++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-@@ -6,6 +6,7 @@ Required properties:
-   Examples with soctypes are:
-     - "renesas,irqc-r8a73a4" (R-Mobile APE6)
-     - "renesas,irqc-r8a7743" (RZ/G1M)
-+    - "renesas,irqc-r8a7744" (RZ/G1N)
-     - "renesas,irqc-r8a7745" (RZ/G1E)
-     - "renesas,irqc-r8a77470" (RZ/G1C)
-     - "renesas,irqc-r8a7790" (R-Car H2)
--- 
-2.7.4
+I lets see if we can make all these updates in one patch.
+Accordingly I'm marking this one as "Changes Requested".
