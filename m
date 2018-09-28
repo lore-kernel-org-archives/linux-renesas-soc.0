@@ -1,90 +1,47 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/5] Revert "usb: renesas_usbhs: add extcon notifier to set mode for non-otg channel"
-Date: Fri, 21 Sep 2018 21:26:28 +0900
-Message-Id: <1537532792-20376-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1537532792-20376-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1537532792-20376-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:57950 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729193AbeI1Qos (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 28 Sep 2018 12:44:48 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/6] ARM: shmobile: defconfig: Remove SOC_CAMERA
+Date: Fri, 28 Sep 2018 12:21:34 +0200
+Message-Id: <f7be103571e8085a363d47b911560a261a440fd4.1538122547.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1538122547.git.horms+renesas@verge.net.au>
+References: <cover.1538122547.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This reverts commit 8ada211d0383b72878582bd312b984a9eae62b30.
+From: Jacopo Mondi <jacopo@jmondi.org>
 
-R-Car D3 can use OTG mode in fact. So, the commit doesn't need anymore.
-In other words, like other R-Car Gen3 SoCs, R-Car D3 can change the mode
-by using the phy-rcar-gen3-usb2 driver.
+As the soc_camera framework is going to be deprecated soon, remove the
+associated configuration options from shmobile defconfig.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/usb/renesas_usbhs/common.c |  9 ---------
- drivers/usb/renesas_usbhs/common.h |  1 -
- drivers/usb/renesas_usbhs/rcar3.c  | 11 -----------
- 3 files changed, 21 deletions(-)
+ arch/arm/configs/shmobile_defconfig | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
-index d6c39ba..522cc09 100644
---- a/drivers/usb/renesas_usbhs/common.c
-+++ b/drivers/usb/renesas_usbhs/common.c
-@@ -677,15 +677,6 @@ static int usbhs_probe(struct platform_device *pdev)
- 		break;
- 	case USBHS_TYPE_RCAR_GEN3_WITH_PLL:
- 		priv->pfunc = usbhs_rcar3_with_pll_ops;
--		if (!IS_ERR_OR_NULL(priv->edev)) {
--			priv->nb.notifier_call = priv->pfunc.notifier;
--			ret = devm_extcon_register_notifier(&pdev->dev,
--							    priv->edev,
--							    EXTCON_USB_HOST,
--							    &priv->nb);
--			if (ret < 0)
--				dev_err(&pdev->dev, "no notifier registered\n");
--		}
- 		break;
- 	case USBHS_TYPE_RZA1:
- 		priv->pfunc = usbhs_rza1_ops;
-diff --git a/drivers/usb/renesas_usbhs/common.h b/drivers/usb/renesas_usbhs/common.h
-index 555b3e7..3777af8 100644
---- a/drivers/usb/renesas_usbhs/common.h
-+++ b/drivers/usb/renesas_usbhs/common.h
-@@ -257,7 +257,6 @@ struct usbhs_priv {
- 	struct platform_device *pdev;
- 
- 	struct extcon_dev *edev;
--	struct notifier_block nb;
- 
- 	spinlock_t		lock;
- 
-diff --git a/drivers/usb/renesas_usbhs/rcar3.c b/drivers/usb/renesas_usbhs/rcar3.c
-index d0ea4ff..b9a8453 100644
---- a/drivers/usb/renesas_usbhs/rcar3.c
-+++ b/drivers/usb/renesas_usbhs/rcar3.c
-@@ -112,16 +112,6 @@ static int usbhs_rcar3_get_id(struct platform_device *pdev)
- 	return USBHS_GADGET;
- }
- 
--static int usbhs_rcar3_notifier(struct notifier_block *nb, unsigned long event,
--				void *data)
--{
--	struct usbhs_priv *priv = container_of(nb, struct usbhs_priv, nb);
--
--	usbhs_rcar3_set_usbsel(priv, !!event);
--
--	return NOTIFY_DONE;
--}
--
- const struct renesas_usbhs_platform_callback usbhs_rcar3_ops = {
- 	.power_ctrl = usbhs_rcar3_power_ctrl,
- 	.get_id = usbhs_rcar3_get_id,
-@@ -130,5 +120,4 @@ static int usbhs_rcar3_notifier(struct notifier_block *nb, unsigned long event,
- const struct renesas_usbhs_platform_callback usbhs_rcar3_with_pll_ops = {
- 	.power_ctrl = usbhs_rcar3_power_and_pll_ctrl,
- 	.get_id = usbhs_rcar3_get_id,
--	.notifier = usbhs_rcar3_notifier,
- };
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index f8faf3729464..c8f2cb9fc7f3 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -129,8 +129,6 @@ CONFIG_MEDIA_CAMERA_SUPPORT=y
+ CONFIG_MEDIA_CONTROLLER=y
+ CONFIG_VIDEO_V4L2_SUBDEV_API=y
+ CONFIG_V4L_PLATFORM_DRIVERS=y
+-CONFIG_SOC_CAMERA=y
+-CONFIG_SOC_CAMERA_PLATFORM=y
+ CONFIG_VIDEO_RCAR_VIN=y
+ CONFIG_V4L_MEM2MEM_DRIVERS=y
+ CONFIG_VIDEO_RENESAS_JPU=y
 -- 
-1.9.1
+2.11.0
