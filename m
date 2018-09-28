@@ -1,35 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:24806 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726031AbeIFXOk (ORCPT
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:41770 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726451AbeI2Clf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Sep 2018 19:14:40 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 0/2] watchdog: Add support for RZ/A2 wdt
-Date: Thu,  6 Sep 2018 13:37:36 -0500
-Message-Id: <20180906183738.81238-1-chris.brandt@renesas.com>
+        Fri, 28 Sep 2018 22:41:35 -0400
+Received: by mail-qt1-f196.google.com with SMTP id m15-v6so8023992qtp.8
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Sep 2018 13:16:13 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1538123953.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1538123953.git.horms+renesas@verge.net.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 28 Sep 2018 22:15:57 +0200
+Message-ID: <CAK8P3a3zLzWY4mPMBkwk8Z_ijLr7R2nOczAorYAgfxw=qmrxng@mail.gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM Based SoC Updates for v4.20
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm-soc <arm@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Slightly modify the rza_wdt.c driver and update the binding docs.
+On Fri, Sep 28, 2018 at 12:22 PM Simon Horman
+<horms+renesas@verge.net.au> wrote:
+>
+> Hi Olof, Hi Kevin, Hi Arnd,
+>
+> Please consider these Renesas ARM based SoC updates for v4.20.
+>
+>
+> The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+>
+>   Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+>
+> are available in the git repository at:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm-soc-for-v4.20
+>
+> for you to fetch changes up to 6d14d4d313d09dabdb06b4a9f4e5fe4305051e9b:
+>
+>   ARM: shmobile: Rework the PMIC IRQ line quirk (2018-09-19 11:11:46 +0200)
+>
+> ----------------------------------------------------------------
+> Renesas ARM Based SoC Updates for v4.20
+>
+> * Rework the PMIC IRQ line quirk to use DT rather than hard coded topology
+> * Convert to SPDX identifiers
+> * Convert to using %pOFn instead of device_node.name
+> * Remove the no longer needed ARCH_SHMOBILE Kconfig symbol
+> * RZ/G1N (r8a7744) SoC: Add basic SoC and debug-ll support
+> * R-Car H1 (r8a7779) SoC: remove unused includes
 
+Pulled into next/soc, thanks,
 
-Chris Brandt (2):
-  watchdog: rza_wdt: Support longer timeouts
-  dt-bindings: watchdog: renesas-wdt: Add support for R7S9210
-
- .../devicetree/bindings/watchdog/renesas-wdt.txt   |  1 +
- drivers/watchdog/rza_wdt.c                         | 81 +++++++++++++++++-----
- 2 files changed, 64 insertions(+), 18 deletions(-)
-
--- 
-2.16.1
+      Arnd
