@@ -1,41 +1,110 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:46751 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726938AbeIZTxS (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57700 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729111AbeI1Qns (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Sep 2018 15:53:18 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH] clk: renesas: r7s9210: Add SPI clocks
-Date: Wed, 26 Sep 2018 08:39:56 -0500
-Message-Id: <20180926133956.79788-1-chris.brandt@renesas.com>
+        Fri, 28 Sep 2018 12:43:48 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Ulrich Hecht <uli+renesas@fpond.eu>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 11/14] arm64: dts: renesas: r8a77995: Add LVDS support
+Date: Fri, 28 Sep 2018 12:20:22 +0200
+Message-Id: <0dc733988b813b4054e2243539855ef535d3c9dd.1538125184.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1538125184.git.horms+renesas@verge.net.au>
+References: <cover.1538125184.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add RSPI clocks for RZ/A2.
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+The r8a77995 D3 platform has 2 LVDS channels connected to the DU.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+[uli: moved lvds* into the soc node, added PM domains, resets]
+Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/clk/renesas/r7s9210-cpg-mssr.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 56 +++++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
-diff --git a/drivers/clk/renesas/r7s9210-cpg-mssr.c b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-index d8ff4cb0defc..5135f13ec628 100644
---- a/drivers/clk/renesas/r7s9210-cpg-mssr.c
-+++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-@@ -95,6 +95,9 @@ static const struct mssr_mod_clk r7s9210_mod_clks[] __initconst = {
- 	DEF_MOD_STB("i2c1",	 86,	R7S9210_CLK_P1),
- 	DEF_MOD_STB("i2c0",	 87,	R7S9210_CLK_P1),
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index 89a04a4496fd..214f4954b321 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -972,12 +972,68 @@
+ 				port@1 {
+ 					reg = <1>;
+ 					du_out_lvds0: endpoint {
++						remote-endpoint = <&lvds0_in>;
+ 					};
+ 				};
  
-+	DEF_MOD_STB("spi2",	 95,	R7S9210_CLK_P1),
-+	DEF_MOD_STB("spi1",	 96,	R7S9210_CLK_P1),
-+	DEF_MOD_STB("spi0",	 97,	R7S9210_CLK_P1),
- };
- 
- /* The clock dividers in the table vary based on DT and register settings */
+ 				port@2 {
+ 					reg = <2>;
+ 					du_out_lvds1: endpoint {
++						remote-endpoint = <&lvds1_in>;
++					};
++				};
++			};
++		};
++
++		lvds0: lvds-encoder@feb90000 {
++			compatible = "renesas,r8a77995-lvds";
++			reg = <0 0xfeb90000 0 0x20>;
++			clocks = <&cpg CPG_MOD 727>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 727>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					lvds0_in: endpoint {
++						remote-endpoint = <&du_out_lvds0>;
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++					lvds0_out: endpoint {
++					};
++				};
++			};
++		};
++
++		lvds1: lvds-encoder@feb90100 {
++			compatible = "renesas,r8a77995-lvds";
++			reg = <0 0xfeb90100 0 0x20>;
++			clocks = <&cpg CPG_MOD 727>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 726>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					lvds1_in: endpoint {
++						remote-endpoint = <&du_out_lvds1>;
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++					lvds1_out: endpoint {
+ 					};
+ 				};
+ 			};
 -- 
-2.16.1
+2.11.0
