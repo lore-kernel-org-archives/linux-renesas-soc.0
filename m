@@ -1,44 +1,55 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:33886 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726885AbeIQUn0 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Sep 2018 16:43:26 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Simon Horman <horms@verge.net.au>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH] dt-bindings: irqchip: renesas-irqc: Document r8a7744
+ support
+To: Biju Das <biju.das@bp.renesas.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH] ARM: shmobile: defconfig: Enable r8a7744 SoC
-Date: Mon, 17 Sep 2018 16:08:47 +0100
-Message-Id: <1537196927-8241-1-git-send-email-biju.das@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+References: <1537894594-54158-1-git-send-email-biju.das@bp.renesas.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Message-ID: <4ff81e4e-4782-0dfa-5c7e-318f7de0a4ff@arm.com>
+Date: Fri, 28 Sep 2018 12:58:56 +0100
+MIME-Version: 1.0
+In-Reply-To: <1537894594-54158-1-git-send-email-biju.das@bp.renesas.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable recently added r8a7744 (RZ/G1N) SoC.
+On 25/09/18 17:56, Biju Das wrote:
+> Document RZ/G1N (R8A7744) SoC bindings.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+> ---
+>   Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
+> index a046ed3..97a8c83 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
+> @@ -6,6 +6,7 @@ Required properties:
+>     Examples with soctypes are:
+>       - "renesas,irqc-r8a73a4" (R-Mobile APE6)
+>       - "renesas,irqc-r8a7743" (RZ/G1M)
+> +    - "renesas,irqc-r8a7744" (RZ/G1N)
+>       - "renesas,irqc-r8a7745" (RZ/G1E)
+>       - "renesas,irqc-r8a77470" (RZ/G1C)
+>       - "renesas,irqc-r8a7790" (R-Car H2)
+> 
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Queued for 4.20.
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index f2b4007..d090022 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -13,6 +13,7 @@ CONFIG_ARCH_R7S72100=y
- CONFIG_ARCH_R8A73A4=y
- CONFIG_ARCH_R8A7740=y
- CONFIG_ARCH_R8A7743=y
-+CONFIG_ARCH_R8A7744=y
- CONFIG_ARCH_R8A7745=y
- CONFIG_ARCH_R8A77470=y
- CONFIG_ARCH_R8A7778=y
+Thanks,
+
+	M.
 -- 
-2.7.4
+Jazz is not dead. It just smells funny...
