@@ -1,240 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57700 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:58074 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729111AbeI1Qnx (ORCPT
+        with ESMTP id S1729176AbeI1Qpc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:43:53 -0400
+        Fri, 28 Sep 2018 12:45:32 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 12/14] arm64: dts: renesas: r8a77990: ebisu: Enable VGA and HDMI outputs
-Date: Fri, 28 Sep 2018 12:20:23 +0200
-Message-Id: <74fe39abbf745737754effe64f5f6c574fbb1412.1538125184.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1538125184.git.horms+renesas@verge.net.au>
-References: <cover.1538125184.git.horms+renesas@verge.net.au>
+Subject: [PATCH 6/7] ARM: dts: r8a77470: Add I2C4 support
+Date: Fri, 28 Sep 2018 12:22:13 +0200
+Message-Id: <3578859661975f8ccb9d8d49c97784d5ff5467df.1538123642.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1538123642.git.horms+renesas@verge.net.au>
+References: <cover.1538123642.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Add the LVDS decoder, HDMI encoder, VGA encoder and HDMI and VGA
-connectors, and wire up the display-related nodes with clocks, pinmux
-and regulators.
+Add I2C4 support to RZ/G1C (a.k.a. r8a77470) SoC specific
+device tree.
 
-The LVDS0 and LVDS1 encoders can use the DU_DOTCLKIN0, DU_DOTCLKIN1 and
-EXTAL externals clocks. Two of them are provided to the SoC on the Ebisu
-board, hook them up in DT.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 162 +++++++++++++++++++++++++
- 1 file changed, 162 insertions(+)
+ arch/arm/boot/dts/r8a77470.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-index fd60079169f6..f342dd85b152 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-@@ -51,6 +51,88 @@
- 			};
+diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
+index 9e7f86d42fad..9ec78d3d0ca8 100644
+--- a/arch/arm/boot/dts/r8a77470.dtsi
++++ b/arch/arm/boot/dts/r8a77470.dtsi
+@@ -237,6 +237,20 @@
+ 			reg = <0 0xe6300000 0 0x20000>;
  		};
- 	};
-+
-+	hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_out: endpoint {
-+				remote-endpoint = <&adv7511_out>;
-+			};
-+		};
-+	};
-+
-+	lvds-decoder {
-+		compatible = "thine,thc63lvd1024";
-+		vcc-supply = <&reg_3p3v>;
-+
-+		ports {
+ 
++		i2c4: i2c@e6520000 {
 +			#address-cells = <1>;
 +			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				thc63lvd1024_in: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+				thc63lvd1024_out: endpoint {
-+					remote-endpoint = <&adv7511_in>;
-+				};
-+			};
++			compatible = "renesas,i2c-r8a77470",
++				     "renesas,rcar-gen2-i2c";
++			reg = <0 0xe6520000 0 0x40>;
++			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 927>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 927>;
++			i2c-scl-internal-delay-ns = <6>;
++			status = "disabled";
 +		};
-+	};
 +
-+	vga {
-+		compatible = "vga-connector";
-+
-+		port {
-+			vga_in: endpoint {
-+				remote-endpoint = <&adv7123_out>;
-+			};
-+		};
-+	};
-+
-+	vga-encoder {
-+		compatible = "adi,adv7123";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7123_in: endpoint {
-+					remote-endpoint = <&du_out_rgb>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+				adv7123_out: endpoint {
-+					remote-endpoint = <&vga_in>;
-+				};
-+			};
-+		};
-+	};
-+
-+	reg_3p3v: regulator1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	x13_clk: x13 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <74250000>;
-+	};
- };
- 
- &avb {
-@@ -86,6 +168,25 @@
- 	};
- };
- 
-+&du {
-+	pinctrl-0 = <&du_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+
-+	clocks = <&cpg CPG_MOD 724>,
-+		 <&cpg CPG_MOD 723>,
-+		 <&x13_clk>;
-+	clock-names = "du.0", "du.1", "dclkin.0";
-+
-+	ports {
-+		port@0 {
-+			endpoint {
-+				remote-endpoint = <&adv7123_in>;
-+			};
-+		};
-+	};
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -97,6 +198,38 @@
- &i2c0 {
- 	status = "okay";
- 
-+	hdmi-encoder@39 {
-+		compatible = "adi,adv7511w";
-+		reg = <0x39>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <1 IRQ_TYPE_LEVEL_LOW>;
-+
-+		adi,input-depth = <8>;
-+		adi,input-colorspace = "rgb";
-+		adi,input-clock = "1x";
-+		adi,input-style = <1>;
-+		adi,input-justification = "evenly";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7511_in: endpoint {
-+					remote-endpoint = <&thc63lvd1024_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				adv7511_out: endpoint {
-+					remote-endpoint = <&hdmi_con_out>;
-+				};
-+			};
-+		};
-+	};
-+
- 	video-receiver@70 {
- 		compatible = "adi,adv7482";
- 		reg = <0x70>;
-@@ -137,6 +270,30 @@
- 	};
- };
- 
-+&lvds0 {
-+	status = "okay";
-+
-+	clocks = <&cpg CPG_MOD 727>,
-+		 <&x13_clk>,
-+		 <&extal_clk>;
-+	clock-names = "fck", "dclkin.0", "extal";
-+
-+	ports {
-+		port@1 {
-+			lvds0_out: endpoint {
-+				remote-endpoint = <&thc63lvd1024_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&lvds1 {
-+	clocks = <&cpg CPG_MOD 727>,
-+		 <&x13_clk>,
-+		 <&extal_clk>;
-+	clock-names = "fck", "dclkin.0", "extal";
-+};
-+
- &ohci0 {
- 	status = "okay";
- };
-@@ -149,6 +306,11 @@
- 		};
- 	};
- 
-+	du_pins: du {
-+		groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
-+		function = "du";
-+	};
-+
- 	pwm3_pins: pwm3 {
- 		groups = "pwm3_b";
- 		function = "pwm3";
+ 		dmac0: dma-controller@e6700000 {
+ 			compatible = "renesas,dmac-r8a77470",
+ 				     "renesas,rcar-dmac";
 -- 
 2.11.0
