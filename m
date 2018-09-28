@@ -1,65 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58325 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:57608 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729116AbeI1QrX (ORCPT
+        with ESMTP id S1729093AbeI1QmN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:47:23 -0400
+        Fri, 28 Sep 2018 12:42:13 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/4] dt-bindings: arm: Document RZ/A2 SoC DT bindings
-Date: Fri, 28 Sep 2018 12:23:48 +0200
-Message-Id: <d0990cd0930c93e06bdf815ce7c350b621e7fd2f.1538129305.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1538129305.git.horms+renesas@verge.net.au>
-References: <cover.1538129305.git.horms+renesas@verge.net.au>
+Subject: [PATCH 1/2] arm64: defconfig: enable R8A774A1 SoC
+Date: Fri, 28 Sep 2018 12:19:02 +0200
+Message-Id: <48acc8440a78596384881ba773e47d55c4de2ebc.1538124193.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1538124193.git.horms+renesas@verge.net.au>
+References: <cover.1538124193.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Chris Brandt <chris.brandt@renesas.com>
+From: Biju Das <biju.das@bp.renesas.com>
 
-Add device tree bindings documentation for Renesas RZ/A2 (r7s9210) SoC.
-Also document new option for "renesas,bsid"
+Enable the Renesas RZ/G2M (R8A774A1) SoC in the ARM64 defconfig.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/arm/shmobile.txt | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 8acd3cd819b3..c0f0a344dfe0 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -7,6 +7,8 @@ SoCs:
-     compatible = "renesas,emev2"
-   - RZ/A1H (R7S72100)
-     compatible = "renesas,r7s72100"
-+  - RZ/A2 (R7S9210)
-+    compatible = "renesas,r7s9210"
-   - SH-Mobile AG5 (R8A73A00/SH73A0)
-     compatible = "renesas,sh73a0"
-   - R-Mobile APE6 (R8A73A40)
-@@ -145,12 +147,12 @@ Boards:
-     compatible = "renesas,wheat", "renesas,r8a7792"
- 
- 
--Most Renesas ARM SoCs have a Product Register that allows to retrieve SoC
--product and revision information.  If present, a device node for this register
--should be added.
-+Most Renesas ARM SoCs have a Product Register or Boundary Scan ID Register that
-+allows to retrieve SoC product and revision information.  If present, a device
-+node for this register should be added.
- 
- Required properties:
--  - compatible: Must be "renesas,prr".
-+  - compatible: Must be "renesas,prr" or "renesas,bsid"
-   - reg: Base address and length of the register block.
- 
- 
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index f67e8d5e93ad..cf19fa4c7baf 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -49,6 +49,7 @@ CONFIG_ARCH_ROCKCHIP=y
+ CONFIG_ARCH_SEATTLE=y
+ CONFIG_ARCH_SYNQUACER=y
+ CONFIG_ARCH_RENESAS=y
++CONFIG_ARCH_R8A774A1=y
+ CONFIG_ARCH_R8A7795=y
+ CONFIG_ARCH_R8A7796=y
+ CONFIG_ARCH_R8A77965=y
 -- 
 2.11.0
