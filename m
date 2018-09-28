@@ -1,55 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58192 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:57700 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729111AbeI1QqD (ORCPT
+        with ESMTP id S1729111AbeI1Qnq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:46:03 -0400
+        Fri, 28 Sep 2018 12:43:46 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/7] ARM: shmobile: Remove the ARCH_SHMOBILE Kconfig symbol
-Date: Fri, 28 Sep 2018 12:22:44 +0200
-Message-Id: <08e735233ea29b17bfec8e4cb302e799d9f920b8.1538123953.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1538123953.git.horms+renesas@verge.net.au>
-References: <cover.1538123953.git.horms+renesas@verge.net.au>
+Subject: [PATCH 07/14] arm64: dts: renesas: ulcb: add default bootargs
+Date: Fri, 28 Sep 2018 12:20:18 +0200
+Message-Id: <ae3d16b93c2a510da003aecb39db3aaaab1a81b0.1538125184.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1538125184.git.horms+renesas@verge.net.au>
+References: <cover.1538125184.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-All drivers for Renesas ARM SoCs have gained proper ARCH_RENESAS
-platform dependencies.  Hence finish the conversion from ARCH_SHMOBILE
-to ARCH_RENESAS for Renesas 32-bit ARM SoCs, as started by commit
-9b5ba0df4ea4f940 ("ARM: shmobile: Introduce ARCH_RENESAS").
+It can't boot without bootargs settings on Uboot on ulcb board.
+This patch adds missing default bootargs.
+ulcb BSP can overwrite it by own UBoot settings.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-shmobile/Kconfig | 4 ----
- 1 file changed, 4 deletions(-)
+ arch/arm64/boot/dts/renesas/ulcb.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index aeb2eed08598..82b8908bec13 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -1,6 +1,3 @@
--config ARCH_SHMOBILE
--	bool
--
- config PM_RMOBILE
- 	bool
- 	select PM
-@@ -30,7 +27,6 @@ config ARCH_RMOBILE
- menuconfig ARCH_RENESAS
- 	bool "Renesas ARM SoCs"
- 	depends on ARCH_MULTI_V7 && MMU
--	select ARCH_SHMOBILE
- 	select ARM_GIC
- 	select GPIOLIB
- 	select HAVE_ARM_SCU if SMP
+diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+index 30506c5ba4e9..89daca7356df 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+@@ -18,6 +18,7 @@
+ 	};
+ 
+ 	chosen {
++		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
 -- 
 2.11.0
