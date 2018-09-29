@@ -1,83 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58053 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729176AbeI1QpW (ORCPT
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39359 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728197AbeI3A6k (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:45:22 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Second Round of Renesas ARM Based SoC DT Updates for v4.20
-Date: Fri, 28 Sep 2018 12:22:12 +0200
-Message-Id: <cover.1538123642.git.horms+renesas@verge.net.au>
+        Sat, 29 Sep 2018 20:58:40 -0400
+Date: Sat, 29 Sep 2018 11:29:11 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: dt-bindings: watchdog: renesas-wdt: Document r8a7744 support
+Message-ID: <20180929182911.GA20830@roeck-us.net>
+References: <1537895241-7686-1-git-send-email-biju.das@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1537895241-7686-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+On Tue, Sep 25, 2018 at 06:07:21PM +0100, Biju Das wrote:
+> RZ/G1N (R8A7744) watchdog implementation is compatible with R-Car
+> Gen2, therefore add relevant documentation.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Please consider these second round of Renesas ARM based SoC DT updates for
-v4.20.
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-This pull request is based on the previous round of
-such requests, tagged as renesas-arm-dt-for-v4.20,
-which you have already pulled.
-
-
-The following changes since commit 1926bd6bf20fe306797fbf366902674d2d6c20cc:
-
-  ARM: dts: r9a06g032: Use r9a06g032-sysctrl binding definitions (2018-09-06 11:31:35 +0200)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm-dt2-for-v4.20
-
-for you to fetch changes up to e0a39511dafd7e302a974f5cbdfc9c8afffa98d8:
-
-  ARM: dts: iwg20d-q7-common: Move pciec node out of common dtsi (2018-09-28 10:32:50 +0200)
-
-----------------------------------------------------------------
-Second Round of Renesas ARM Based SoC DT Updates for v4.20
-
-* RZ/G1M (r8a7743) based iWave G20D-Q7 board and camera daughter board
-  - Move PCIe node out of common dtsi to allow reuse of the common dtsi
-    on the iWave RZ/G1N board
-* RZ/G1C (r8a77470) SoC: Add I2C4, SDHI2 and SMP support
-* R-Car Gen1 based boards and R-Car Gen2 SoCs:
-  - Enhance top-of-file comments to include SoC name
-* RZ/N1D (r9a06g032) SoC:
-  - Correct UART0 description and add all other UARTs
-
-----------------------------------------------------------------
-Biju Das (1):
-      ARM: dts: iwg20d-q7-common: Move pciec node out of common dtsi
-
-Fabrizio Castro (3):
-      ARM: dts: r8a77470: Add SMP support
-      ARM: dts: r8a77470: Add SDHI2 support
-      ARM: dts: r8a77470: Add I2C4 support
-
-Magnus Damm (2):
-      ARM: dts: Include R-Car Gen2 product name in DTSI files
-      ARM: dts: R-Car Gen1 board comment update
-
-Phil Edworthy (1):
-      ARM: dts: r9a06g032: Correct UART and add all other UARTs
-
- arch/arm/boot/dts/iwg20d-q7-common.dtsi         |  4 --
- arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts |  4 ++
- arch/arm/boot/dts/r8a7743-iwg20d-q7.dts         |  4 ++
- arch/arm/boot/dts/r8a77470.dtsi                 | 45 ++++++++++++++
- arch/arm/boot/dts/r8a7778-bockw.dts             |  2 +-
- arch/arm/boot/dts/r8a7779-marzen.dts            |  2 +-
- arch/arm/boot/dts/r8a7790.dtsi                  |  2 +-
- arch/arm/boot/dts/r8a7791.dtsi                  |  2 +-
- arch/arm/boot/dts/r8a7792.dtsi                  |  2 +-
- arch/arm/boot/dts/r8a7793.dtsi                  |  2 +-
- arch/arm/boot/dts/r8a7794.dtsi                  |  2 +-
- arch/arm/boot/dts/r9a06g032.dtsi                | 83 ++++++++++++++++++++++++-
- 12 files changed, 140 insertions(+), 14 deletions(-)
+> ---
+>  Documentation/devicetree/bindings/watchdog/renesas-wdt.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+> index 9407212..d72d118 100644
+> --- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+> +++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+> @@ -6,6 +6,7 @@ Required properties:
+>  		version.
+>  	       Examples with soctypes are:
+>  		 - "renesas,r8a7743-wdt" (RZ/G1M)
+> +		 - "renesas,r8a7744-wdt" (RZ/G1N)
+>  		 - "renesas,r8a7745-wdt" (RZ/G1E)
+>  		 - "renesas,r8a774a1-wdt" (RZ/G2M)
+>  	         - "renesas,r8a7790-wdt" (R-Car H2)
