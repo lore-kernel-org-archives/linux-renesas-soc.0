@@ -1,136 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34748 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbeIMOTt (ORCPT
+Received: from sauhun.de ([88.99.104.3]:60088 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725751AbeJAFEz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Sep 2018 10:19:49 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Mon, 1 Oct 2018 01:04:55 -0400
+Date: Mon, 1 Oct 2018 00:30:07 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 53/58] arm64: dts: renesas: r8a77990: Add VIN and CSI-2 device nodes
-Date: Thu, 13 Sep 2018 11:09:48 +0200
-Message-Id: <ec70407ae7d790d6b34bfe582901c1149e842248.1536828567.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1536828567.git.horms+renesas@verge.net.au>
-References: <cover.1536828567.git.horms+renesas@verge.net.au>
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: Re: [PATCH 1/4] dt-bindings: i2c: rcar: Add r8a77470 support
+Message-ID: <20180930223007.GA1059@kunai>
+References: <1537551421-4259-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1537551421-4259-2-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="HlL+5n6rz5pIUxbD"
+Content-Disposition: inline
+In-Reply-To: <1537551421-4259-2-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
 
-Add device nodes for VIN4, VIN5 and CSI40 to R-Car E3 R8A77990 device tree.
+--HlL+5n6rz5pIUxbD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-[simon: sorted nodes by bus address, then IP block]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 79 +++++++++++++++++++++++++++++++
- 1 file changed, 79 insertions(+)
+On Fri, Sep 21, 2018 at 06:36:58PM +0100, Fabrizio Castro wrote:
+> Although the I2C IP found in the RZ/G1C is not exactly the same
+> as the one found in the R-Car Gen2 family or R-Car Gen3 family,
+> it can still be considered as compatible with R-Car Gen2 from
+> a software perpective.
+> This patch therefore documents the SoC specific compatible string,
+> and the compatibility with Gen2 fallback is retained.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index e3009c5f5210..c010358ba076 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -481,6 +481,54 @@
- 			status = "disabled";
- 		};
- 
-+		vin4: video@e6ef4000 {
-+			compatible = "renesas,vin-r8a77990";
-+			reg = <0 0xe6ef4000 0 0x1000>;
-+			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 807>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 807>;
-+			renesas,id = <4>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					vin4csi40: endpoint {
-+						remote-endpoint= <&csi40vin4>;
-+					};
-+				};
-+			};
-+		};
-+
-+		vin5: video@e6ef5000 {
-+			compatible = "renesas,vin-r8a77990";
-+			reg = <0 0xe6ef5000 0 0x1000>;
-+			interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 806>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 806>;
-+			renesas,id = <5>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					vin5csi40: endpoint {
-+						remote-endpoint= <&csi40vin5>;
-+					};
-+				};
-+			};
-+		};
-+
- 		xhci0: usb@ee000000 {
- 			compatible = "renesas,xhci-r8a77990",
- 				     "renesas,rcar-gen3-xhci";
-@@ -546,6 +594,37 @@
- 			resets = <&cpg 408>;
- 		};
- 
-+		csi40: csi2@feaa0000 {
-+			compatible = "renesas,r8a77990-csi2", "renesas,rcar-gen3-csi2";
-+			reg = <0 0xfeaa0000 0 0x10000>;
-+			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 716>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 716>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					csi40vin4: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&vin4csi40>;
-+					};
-+					csi40vin5: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&vin5csi40>;
-+					};
-+				};
-+			};
-+		};
-+
- 		prr: chipid@fff00044 {
- 			compatible = "renesas,prr";
- 			reg = <0 0xfff00044 0 4>;
--- 
-2.11.0
+Applied to for-next, thanks!
+
+
+--HlL+5n6rz5pIUxbD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluxTmcACgkQFA3kzBSg
+KbYTNg//dRQfmZfdQwU23LsXsVU/nFP7RSgIUt/J6hUTGLu0XkdR9M1ZCznIstAn
+n7nQ7HwM/7GBC81cAyrMMDXW4R8HY6sdJxEdeQyVaUVyUwXWUMPSt96kUuFh9kt9
+ZWEJfQjAAnmwZIB1tJ6+r+f2c2ZA6FXTi7ZXem197d7jWASia14hIvFEUSELMPao
+MwO4UO2e/+irH0gpA5m+mJBhHN4F+DOkmRQ83o+aWkU9Nl/LiSHFBC/A0O2nkXxV
+p2xHGhz9LLJhLQylfb5PxkWnjSkDYntr1z022rrfqW2Rl+mAd3PYyLTy9ktE9Z5T
+KkOzh4QMCfACYfB0DYw8rXeSLdapAtkLpIuo33aSjjjY+BfzoyvjOn4hI+SiZMqi
+9GpxUEPIhA9mRUU7F/TvUYhxxyIvvzLhOcNd+55GSgmg4TErbH9T2C/yiP5tJguM
+hblAmmvdG1Aee1JTQdXcJE5mlVL4gSlhmrVzZ/NMSKg2hb3t/ad4JFGUrVYNxhCe
+3C3ZOyJZJUCFMElpQPpn6Mpk4t8TxfKX92ZLvSaiWE7oWSTGm9EMW7TxBlshKRsC
+MSOxLGlKSzbW0mRkOJQIzxdhNRTEfad0GGhwlZYjdQupUVwrJHpDLqtXm+7uhJwf
+6ybHn2wpRZs11kF1FUHylte6gWEMgh1TCofrXnBhpzFQBHEvryQ=
+=b+ft
+-----END PGP SIGNATURE-----
+
+--HlL+5n6rz5pIUxbD--
