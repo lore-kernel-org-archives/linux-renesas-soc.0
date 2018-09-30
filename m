@@ -1,43 +1,69 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 1/3] dt-bindings: arm: Document RZ/G2E SoC DT bindings
-Date: Mon, 10 Sep 2018 12:53:48 +0100
-Message-Id: <1536580430-17432-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1536580430-17432-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1536580430-17432-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:37234 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727719AbeI3OEu (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 30 Sep 2018 10:04:50 -0400
+Subject: Re: [PATCH qemu v2] hw/char/sh_serial: Add timeout handling to
+ unbreak serial input
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Peter Maydell <peter.maydell@linaro.org>, uli@fpond.eu,
+        Rob Landley <rob@landley.net>, Rich Felker <dalias@libc.org>,
+        QEMU Developers <qemu-devel@nongnu.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>
+References: <20180905131125.12635-1-geert+renesas@glider.be>
+ <76422049-ffe3-d4a9-6dcb-8edf05a8e200@redhat.com>
+ <CAMuHMdU+tV0K1iFTKVZmFbV6aY2jqX96XUJqJGEEup-R5SUqeQ@mail.gmail.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <0b6ca250-056a-baab-bc1d-3dfc603487ff@redhat.com>
+Date: Sun, 30 Sep 2018 09:32:41 +0200
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdU+tV0K1iFTKVZmFbV6aY2jqX96XUJqJGEEup-R5SUqeQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device tree bindings documentation for Renesas RZ/G2E (r8a774c0)
-SoC.
+On 28/09/2018 14:36, Geert Uytterhoeven wrote:
+> Hi Paolo,
+> 
+> On Tue, Sep 11, 2018 at 3:11 PM Paolo Bonzini <pbonzini@redhat.com> wrote:
+>> On 05/09/2018 15:11, Geert Uytterhoeven wrote:
+>>> As of commit 18e8cf159177100e ("serial: sh-sci: increase RX FIFO trigger
+>>> defaults for (H)SCIF") in Linux v4.11-rc1, the serial console on the
+>>> QEMU SH4 target is broken: it delays serial input until enough data has
+>>> been received.
+>>>
+>>> Since aforementioned commit, the Linux SCIF driver programs the Receive
+>>> FIFO Data Count Trigger bits in the FIFO Control Register, to postpone
+>>> generating a receive interrupt until:
+>>>   1. At least the receive trigger count of bytes of data are available
+>>>      in the receive FIFO, OR
+>>>   2. No further data has been received for at least 15 etu after the
+>>>      last received data.
+>>>
+>>> While QEMU implements the former, it does not implement the latter.
+>>> Hence the receive interrupt is not generated until the former condition
+>>> is met.
+>>>
+>>> Fix this by adding basic timeout handling.  As the QEMU SCIF emulation
+>>> ignores any serial speed programming, the timeout value used conforms to
+>>> a default speed of 9600 bps, which is fine for any interactive console.
+>>>
+>>> Reported-by: Rob Landley <rob@landley.net>
+>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>> Tested-by: Ulrich Hecht <uli@fpond.eu>
+>>> Tested-by: Rob Landley <rob@landley.net>
+>>> Tested-by: Rich Felker <dalias@libc.org>
+> 
+>> Queued, thanks.
+> 
+> Does that mean it should show up in qemu.git anytime soon?
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- 1 file changed, 2 insertions(+)
+Yes, I'm testing the pull request now.  (I went to Kernel Recipes and
+forgot at home my ssh private key, otherwise I'd have sent it last week!)
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 4a03a6b..f5e0f82 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -27,6 +27,8 @@ SoCs:
-     compatible = "renesas,r8a77470"
-   - RZ/G2M (R8A774A1)
-     compatible = "renesas,r8a774a1"
-+  - RZ/G2E (RA8774C0)
-+    compatible = "renesas,r8a774c0"
-   - R-Car M1A (R8A77781)
-     compatible = "renesas,r8a7778"
-   - R-Car H1 (R8A77790)
--- 
-2.7.4
+Paolo
