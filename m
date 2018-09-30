@@ -1,86 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56498 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725972AbeI1FBI (ORCPT
+Received: from sauhun.de ([88.99.104.3]:60146 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725751AbeJAFFF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Sep 2018 01:01:08 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Mon, 1 Oct 2018 01:05:05 -0400
+Date: Mon, 1 Oct 2018 00:30:18 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        linux-spi@vger.kernel.org
-Subject: Applied "dt-bindings: spi: rspi: Add R7S9210 support" to the spi tree
-In-Reply-To: <20180927143519.104631-1-chris.brandt@renesas.com>
-Message-Id: <20180927224026.F2F12440078@finisterre.ee.mobilebroadband>
-Date: Thu, 27 Sep 2018 23:40:26 +0100 (BST)
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: Re: [PATCH 3/4] dt-bindings: i2c: sh_mobile: Document r8a7744 support
+Message-ID: <20180930223018.GC1059@kunai>
+References: <1537551421-4259-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1537551421-4259-4-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="UFHRwCdBEJvubb2X"
+Content-Disposition: inline
+In-Reply-To: <1537551421-4259-4-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
 
-   dt-bindings: spi: rspi: Add R7S9210 support
+--UFHRwCdBEJvubb2X
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-has been applied to the spi tree at
+On Fri, Sep 21, 2018 at 06:37:00PM +0100, Fabrizio Castro wrote:
+> From: Biju Das <biju.das@bp.renesas.com>
+>=20
+> Document i2c Device Tree support for RZ/G1N (R8A7744) SoC, which is
+> compatible with R-Car Gen2 SoC family.
+>=20
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+Applied to for-next, thanks!
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+--UFHRwCdBEJvubb2X
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+-----BEGIN PGP SIGNATURE-----
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluxTnoACgkQFA3kzBSg
+KbYTYg//WB4UlzPyv1dQXZeGadXA1E1NAVs2QtsINNsE4xF2G4ewp1Cmmm4l4eIp
+izOOTxrabOvxOr2j/K8oH/Ut9Pbj0TvCMNt/17mM/wEq3JP4uU4WVxAwdwgX5z2+
+2vut1zLYtaejI01Tqo0oXlD3PyoKeR5ISiUsUGRZQLBEsAofR53kf7RzAkR9QHDa
+s4cdFoMpK2y0CmaddxvrgDB5sqG2uZSvpRqrwVReAuusIzvKrrHYBsjL23g9nTwC
+0YCq901hxuHGq0g2cm+N80QvW/rxS2voWi0QwAWNkvT8UELEAATIhUSQgIYNixk/
+oSkyPJQZgDePAKUv6dJ3+j3q4elYCi2c4at/Or7tzNcoR92uaHGSZ9Vc9kkl/eqH
+dbsp6PEfBdqksSlbcJOOyMhzvpnN6MmAZcJUN1wcjERJRXCDOc8ktkUONoYU1rBP
+KEBP0aR6B+O5/WTintuFs4RDiQldyQIyj9RKeVEybvtIq5iSSaQ46TkM+pXgMzHI
+Okj5vdYj8nvASBaslmBUx87VfGIWZBmwjPHRtLR0eTK2DeRYH3PmwaXU1BfFkkto
+QPvgneuf/z/+PWGv63i8SOhogR9egF+ZawMjEdLxd3R6UKLqpO8uc9vv6dUuJCZu
+lFtPYY0/HkQghuTDtnmRd7w9Dh5wk92PKZE6RT2aXARYPM8wr7s=
+=aj3Q
+-----END PGP SIGNATURE-----
 
-Thanks,
-Mark
-
->From 73569a50959e4ec63bcf05839a030e799a350de1 Mon Sep 17 00:00:00 2001
-From: Chris Brandt <chris.brandt@renesas.com>
-Date: Thu, 27 Sep 2018 09:35:19 -0500
-Subject: [PATCH] dt-bindings: spi: rspi: Add R7S9210 support
-
-Add support for RZ/A2
-
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/devicetree/bindings/spi/spi-rspi.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/spi/spi-rspi.txt b/Documentation/devicetree/bindings/spi/spi-rspi.txt
-index 96fd58548f69..dd5c36a0b9ac 100644
---- a/Documentation/devicetree/bindings/spi/spi-rspi.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-rspi.txt
-@@ -3,7 +3,7 @@ Device tree configuration for Renesas RSPI/QSPI driver
- Required properties:
- - compatible       : For Renesas Serial Peripheral Interface on legacy SH:
- 		     "renesas,rspi-<soctype>", "renesas,rspi" as fallback.
--		     For Renesas Serial Peripheral Interface on RZ/A1H:
-+		     For Renesas Serial Peripheral Interface on RZ/A:
- 		     "renesas,rspi-<soctype>", "renesas,rspi-rz" as fallback.
- 		     For Quad Serial Peripheral Interface on R-Car Gen2 and
- 		     RZ/G1 devices:
-@@ -11,6 +11,7 @@ Required properties:
- 		     Examples with soctypes are:
- 		        - "renesas,rspi-sh7757" (SH)
- 			- "renesas,rspi-r7s72100" (RZ/A1H)
-+			- "renesas,rspi-r7s9210" (RZ/A2)
- 			- "renesas,qspi-r8a7743" (RZ/G1M)
- 			- "renesas,qspi-r8a7745" (RZ/G1E)
- 			- "renesas,qspi-r8a7790" (R-Car H2)
--- 
-2.19.0
+--UFHRwCdBEJvubb2X--
