@@ -1,67 +1,125 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm1-f46.google.com ([209.85.128.46]:38877 "EHLO
-        mail-wm1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728145AbeJLTvQ (ORCPT
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:40384 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729364AbeJAUgk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Oct 2018 15:51:16 -0400
-Date: Fri, 12 Oct 2018 14:19:00 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: pwm: rcar: Add r8a774a1 support
-Message-ID: <20181012121900.GF31561@ulmo>
-References: <1534867426-25533-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Mon, 1 Oct 2018 16:36:40 -0400
+Received: by mail-ua1-f66.google.com with SMTP id y16-v6so4398484uaa.7
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 01 Oct 2018 06:58:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="CXFpZVxO6m2Ol4tQ"
-Content-Disposition: inline
-In-Reply-To: <1534867426-25533-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <20180918085053.lu2k46vqffzj37ah@verge.net.au> <CAMuHMdUGKAepFFt5GMrUfqB78pOsYKwRYuOSNoyzAp0ijk+Z0g@mail.gmail.com>
+ <20181001135231.uqz3662hojymllej@verge.net.au>
+In-Reply-To: <20181001135231.uqz3662hojymllej@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 1 Oct 2018 15:58:30 +0200
+Message-ID: <CAMuHMdUNFrCPE7OMbE7guhFE=9Nj=zFLCR_ANZGr4TwL7utSPw@mail.gmail.com>
+Subject: Re: [GIT PULL LTSI-4.14] LTSI-v4.14 Backport or I2C R-Car Fix
+To: Simon Horman <horms@verge.net.au>
+Cc: Greg KH <greg@kroah.com>, ltsi-dev@lists.linuxfoundation.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Simon,
 
---CXFpZVxO6m2Ol4tQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Oct 1, 2018 at 3:52 PM Simon Horman <horms@verge.net.au> wrote:
+> On Mon, Oct 01, 2018 at 12:08:38PM +0200, Geert Uytterhoeven wrote:
+> > On Tue, Sep 18, 2018 at 10:51 AM Simon Horman <horms@verge.net.au> wrote:
+> > > This is intended as a submission to LTSI-4.14. It is the backport
+> > > of a fixes for safe DMA buffer handling for the SH-Mobile I2C driver
+> > > and I2C code. All patches are present in v4.19-rc3.
+> > >
+> > > This pull-request is based on
+> > > "[GIT PULL LTSI-4.14] LTSI-v4.14 Backport or I2C R-Car Fix"
+> > > tagged as backport/v4.14.61/snapshot-to-v4.18+fixes-flattened,
+> > > which I have already sent a pull-request for.
+> > >
+> > > There are 10 patches.
+> > >
+> > > I have performed build testing of this backports on a wide range of
+> > > defconfigs and I am not aware of any regressions over v4.14.40 (the
+> > > baseline chosen when this work began).
+> > >
+> > > The following changes since commit 4d4605e5c137ed9a53582e573118cbc16b82cbf1:
+> > >
+> > >   i2c: rcar: implement STOP and REP_START according to docs (2018-08-28 13:35:06 +0200)
+> > >
+> > > are available in the git repository at:
+> > >
+> > >   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-backport.git backport/v4.14.61/snapshot-to-v4.18+fixes-v2-flattened
+> > >
+> > > for you to fetch changes up to 720043a4efbb3356db116d084c7b877ad41ee51a:
+> > >
+> > >   i2c: sh_mobile: fix leak when using DMA bounce buffer (2018-09-17 15:54:30 +0200)
+> > >
+> > > ----------------------------------------------------------------
+> > > Second Round of LTSI-v4.14 Backports of I2C R-Car Fixes
+> > >
+> > > Base:
+> > > * v4.14.61
+> > > * Backports of components for Renesas SoCs to v4.18
+> > > * First round of Backports of I2C R-Car Fixes
+> > >
+> > > Backport of post-v4.18 fix for i2c-shmobile and I2C core
+> > > The focus of these fixes is to make DMA buffer handling safe
+> > >
+> > > ----------------------------------------------------------------
+> > > Peter Rosin (1):
+> > >       i2c: smbus: kill memory leak on emulated and failed DMA SMBus xfers
+> > >
+> > > Wenwen Wang (1):
+> > >       i2c: core: smbus: fix a potential missing-check bug
+> > >
+> > > Wolfram Sang (8):
+> > >       i2c: dev: mark RDWR buffers as DMA_SAFE
+> > >       i2c: refactor i2c_master_{send_recv}
+> > >       i2c: add i2c_master_{send|recv}_dmasafe
+> > >       i2c: smbus: use DMA safe buffers for emulated SMBus transactions
+> > >       i2c: add docs to clarify DMA handling
+> > >       i2c: refactor function to release a DMA safe buffer
+> > >       i2c: sh_mobile: define start_ch() void as it only returns 0 anyhow
+> >
+> > Somehow I missed that the above introduces a (rightful) compiler warning:
+> >
+> >     drivers/i2c/busses/i2c-sh_mobile.c: In function ‘start_ch’:
+> >     drivers/i2c/busses/i2c-sh_mobile.c:616:10: warning: ‘return’ with
+> > a value, in function returning void
+> >        return -EOPNOTSUPP;
+> >               ^
+> >     drivers/i2c/busses/i2c-sh_mobile.c:611:13: note: declared here
+> >      static void start_ch(struct sh_mobile_i2c_data *pd, struct
+> > i2c_msg *usr_msg,
+> >                  ^~~~~~~~
+> >
+> > as it depends on commit 7957c2e276ee73e6 ("i2c: sh_mobile: use core to
+> > detect 'no zero length read' quirk"), which was not backported.
+> >
+> > I think the easiest solution is to just drop "i2c: sh_mobile: define
+> > start_ch() void as it only returns 0 anyhow", as it was meant not to
+> > introduce any behavioral changes, and nothing depends on it.
+> >
+> > Do you agree?
+> > Thanks!
+>
+> Likewise, thanks for pointing this out.
+>
+> Your proposed solution looks good to me.
+> Have you tested it?
 
-On Tue, Aug 21, 2018 at 05:03:46PM +0100, Fabrizio Castro wrote:
-> Document RZ/G2M (R8A774A1) SoC bindings.
->=20
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-> ---
->  Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt | 1 +
->  1 file changed, 1 insertion(+)
+More or less, the error case is not easily triggered, and the code should
+behave as before.
 
-Applied, thanks.
+Gr{oetje,eeting}s,
 
-Thierry
+                        Geert
 
---CXFpZVxO6m2Ol4tQ
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvAkTQACgkQ3SOs138+
-s6EHTA//Td9pEzzC8bBXI3QYUS/pkqDa7ZKcUux2oi0N/is4x1hiWJoCS5lc2RaW
-BX8LbUhxThEvYUO69XLtxO5ciU35u0nPXzPbtQtTchhDsjztWclZLmZ1WK8RVLFQ
-tijE8EYx78kErkpz0K6i9xI7aZJonkvS0T1jSUEbSoM1OyMpvSiuDj1Fk4xd8Oel
-iIkzSt7SNEK2gM/DYoaEvXERU07o34NFJMUF9NYt73T0BLQSZCYyJNHYEOpB/ijb
-XvtdIe265gzSFQZrnHaSg10UKRWNkEdijlTI7CnxMAqaX76wK5i/zoOG9PtkO33X
-u/NIXwx725HSUo6kvK6WGkyNtZtCHnwLpiYcQuNo7x2yXCQ4bBBqBEO9qXGSwFNT
-bB2AelcUEIrfqBefKQ6yb3APbT4V847grrhNKwuiqiK7GKmWF1mfpO88Em+AceZc
-OyMWW5f320Aies9/HkMm4LjGLKPSIs5tsBo2JnKAD+ujmi16AoJVrWTc6zFrkuWF
-D47kx96Vi5Efjsehu8ZJLUG8RCEXff89vf0Utt4F4Ej4NzkkzL44HnlquGcupTYI
-1+miMk15kyZrt/4a00LxdYZIshKKWY892Hlq18vHhv5lTrKuwWhSodUzNbjyFDzB
-MWFbnDApXrVYx1ncXj3hqdOYfKFffv70rjHCBkrRDvzBQueQ0nY=
-=QlMq
------END PGP SIGNATURE-----
-
---CXFpZVxO6m2Ol4tQ--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
