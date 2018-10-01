@@ -1,89 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45930 "EHLO pokefinder.org"
+Received: from mail.kernel.org ([198.145.29.99]:46734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728644AbeJVEQW (ORCPT
+        id S1725878AbeJBEeG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:16:22 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH 0/5] thermal: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:47 +0200
-Message-Id: <20181021200053.2194-1-wsa+renesas@sang-engineering.com>
+        Tue, 2 Oct 2018 00:34:06 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180928084139.20016-1-geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+References: <20180928084139.20016-1-geert+renesas@glider.be>
+Message-ID: <153843085275.119890.13438984066136473491@swboyd.mtv.corp.google.com>
+Subject: Re: [git pull] clk: renesas: Updates for v4.20 (take two)
+Date: Mon, 01 Oct 2018 14:54:12 -0700
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I got tired of fixing this in Renesas drivers manually, so I took the big
-hammer. Remove this cumbersome code pattern which got copy-pasted too much
-already:
+Quoting Geert Uytterhoeven (2018-09-28 01:41:39)
+>         Hi Mike, Stephen,
+> =
 
--	struct platform_device *pdev = to_platform_device(dev);
--	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
-+	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
+> The following changes since commit b30c862f2a72002c06df23d05c2ca6b49148c4=
+d4:
+> =
 
-A branch, tested by buildbot, can be found here:
+>   clk: renesas: r8a77990: Add missing I2C7 clock (2018-08-31 10:33:59 +02=
+00)
+> =
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git coccinelle/get_drvdata
+> are available in the Git repository at:
+> =
 
-I have been asked if it couldn't be done for dev_set_drvdata as well. I checked
-it and did not find one occasion where it could be simplified like this. Not
-much of a surprise because driver_data is usually set in probe() functions
-which access struct platform_device in many other ways.
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/clk-renesas-for-v4.20-tag2
+> =
 
-I am open for other comments, suggestions, too, of course.
+> for you to fetch changes up to a53a28dca4124048c90b4a8de457668ede57e67c:
+> =
 
-Here is the cocci-script I created:
+>   clk: renesas: r7s9210: Add SPI clocks (2018-09-28 09:57:09 +0200)
+> =
 
-@@
-struct device* d;
-identifier pdev;
-expression *ptr;
-@@
-(
--	struct platform_device *pdev = to_platform_device(d);
-|
--	struct platform_device *pdev;
-	...
--	pdev = to_platform_device(d);
-)
-	<... when != pdev
--	&pdev->dev
-+	d
-	...>
+> ----------------------------------------------------------------
+> clk: renesas: Updates for v4.20 (take two)
+> =
 
-	ptr =
--	platform_get_drvdata(pdev)
-+	dev_get_drvdata(d)
-
-	<... when != pdev
--	&pdev->dev
-+	d
-	...>
-
-Kind regards,
-
-   Wolfram
+>   - Add support for CMT timer clocks on R-Car V3H,
+>   - Add support for SHDI and various timer clocks on R-Car V3M,
+>   - Add support for the new RZ/A2 (R7S9210) SoC, including early clock
+>     support for the Renesas CPG/MSSR driver,
+>   - Add support for the new RZ/G1N (R8A7744) and RZ/G2E (R8A774C0) SoCs,
+>   - Convert DT binding includes to SPDX license identifiers,
+>   - Small fixes and clean ups.
+> =
 
 
-Wolfram Sang (5):
-  thermal: int340x_thermal: int3400_thermal: simplify getting
-    .driver_data
-  thermal: rockchip_thermal: simplify getting .driver_data
-  thermal: spear_thermal: simplify getting .driver_data
-  thermal: st: st_thermal: simplify getting .driver_data
-  thermal: zx2967_thermal: simplify getting .driver_data
-
- drivers/thermal/int340x_thermal/int3400_thermal.c | 9 +++------
- drivers/thermal/rockchip_thermal.c                | 8 +++-----
- drivers/thermal/spear_thermal.c                   | 8 +++-----
- drivers/thermal/st/st_thermal.c                   | 6 ++----
- drivers/thermal/zx2967_thermal.c                  | 6 ++----
- 5 files changed, 13 insertions(+), 24 deletions(-)
-
--- 
-2.19.0
+Thanks. Pulled into clk-next.
