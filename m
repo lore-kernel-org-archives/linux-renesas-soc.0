@@ -1,80 +1,29 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:58752 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728979AbeJATsT (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 1 Oct 2018 15:48:19 -0400
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        devicetree@vger.kernel.org
-Subject: [PATCH v7 0/3] Renesas R9A06G032 PINCTRL Driver
-Date: Mon,  1 Oct 2018 14:10:23 +0100
-Message-Id: <20181001131026.14635-1-phil.edworthy@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Mon, 1 Oct 2018 15:00:50 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: usb: renesas_usbhs: Add support for r8a7744
+Message-ID: <20181001130049.go6q4qnsdmnrerae@verge.net.au>
+References: <1538053276-4200-1-git-send-email-biju.das@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538053276-4200-1-git-send-email-biju.das@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This implements the pinctrl driver for the RZ/N1 family of devices, including
-the R9A06G032 (RZ/N1D) device.
+On Thu, Sep 27, 2018 at 02:01:16PM +0100, Biju Das wrote:
+> Document support for RZ/G1N (R8A7744) SoC.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 
-This series was originally written by Michel Pollet whilst at Renesas, and I
-have taken over this work.
-
-Main changes:
-v7:
- - Revert changes in v6, and just remove the token pasting
-
-v6:
- - Instead of combining the pin nr and func into a single element, use
-   a pair of 8-bit elements.
- - Simplified how the MDIO function is calculated
-
-v5:
- - Address Jacopo's further comments
- - Address Geert's comments
-
-v4:
- - Address Jacopo's comments
- - Add alternative way to use the pinmux prop.
- - Remove mention of gpios.
- - Implement pin_config_group_get()
- - Fix function to get pin configs, i.e. return -EINVAL when disabled.
-
-v3:
- - Use standard DT props instead of proprietary ones.
- - Replace virtual pins used for MDIO muxing with extra funcs.
- - Use pinctrl_utils funcs to handle the maps.
- - Remove the dbg functions to keep things simple.
- - Change the way the functions are defined so it is easy to check
-   against the hardware numbering.
-
-v2:
- - Change to generic rzn1 family driver, instead of device specific.
- - Review comments fixed.
- - Fix error handling during probe
-
-Phil Edworthy (3):
-  dt-bindings: pinctrl: renesas,rzn1-pinctrl: documentation
-  pinctrl: renesas: Renesas RZ/N1 pinctrl driver
-  ARM: dts: r9a06g032: Add pinctrl node
-
- .../bindings/pinctrl/renesas,rzn1-pinctrl.txt | 153 +++
- arch/arm/boot/dts/r9a06g032.dtsi              |   8 +
- drivers/pinctrl/Kconfig                       |  10 +
- drivers/pinctrl/Makefile                      |   1 +
- drivers/pinctrl/pinctrl-rzn1.c                | 948 ++++++++++++++++++
- include/dt-bindings/pinctrl/rzn1-pinctrl.h    | 141 +++
- 6 files changed, 1261 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
- create mode 100644 drivers/pinctrl/pinctrl-rzn1.c
- create mode 100644 include/dt-bindings/pinctrl/rzn1-pinctrl.h
-
--- 
-2.17.1
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
