@@ -1,120 +1,42 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] arm64: dts: renesas: condor: switch from EtherAVB to GEther
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Valentine Barshak <valentine.barshak@cogentembedded.com>
-References: <fb4eb097-40aa-82df-68c7-9b727c858a8b@cogentembedded.com>
-Message-ID: <4f9e79ca-5d61-8dd4-fe79-42e8f7562f90@cogentembedded.com>
-Date: Thu, 18 Oct 2018 19:48:53 +0300
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it1-f194.google.com ([209.85.166.194]:52097 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728921AbeJASAP (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 1 Oct 2018 14:00:15 -0400
+Received: by mail-it1-f194.google.com with SMTP id 74-v6so10719748itw.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 01 Oct 2018 04:22:56 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <fb4eb097-40aa-82df-68c7-9b727c858a8b@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+References: <20180928084156.20198-1-geert+renesas@glider.be>
+In-Reply-To: <20180928084156.20198-1-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 1 Oct 2018 13:22:44 +0200
+Message-ID: <CACRpkdbNSEABy2vpRtYApueEWso7Ed-ZXhD8C1oKPKStGDY8Dw@mail.gmail.com>
+Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.20 (take two)
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The "official" Condor boards have always been wired to mount NFS via
-GEther, not EtherAVB -- the boards resoldered for EtherAVB were local
-to Cogent Embedded, so we've been having an unpleasant situation where
-a "normal" Condor board still can't mount NFS (unless an EtherAVB PHY
-extension board is plugged in). Switch from EtherAVB to GEther at last!
+On Fri, Sep 28, 2018 at 10:41 AM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-Fixes: 8091788f3d38 ("arm64: dts: renesas: condor: add EtherAVB support")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> The following changes since commit 2ed03c835d6f4dbe9f0d093187825d1c0e2e9b39:
+>
+>   pinctrl: sh-pfc: r8a77990: Add DU pins, groups and function (2018-08-30 14:17:20 +0200)
+>
+> are available in the Git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.20-tag2
+>
+> for you to fetch changes up to a97f340c0a071bcb32ff68f3d19cf56a76887288:
+>
+>   pinctrl: sh-pfc: rcar: Rename automotive-only arrays to automotive (2018-09-28 09:49:15 +0200)
 
----
-The patch is against Linus' 'linux.git' repo -- coulan't find a fitting
-brancxh in Simon Horman's 'renesas.git' repo...
+Pulled into my "devel" branch now, thanks!
 
- arch/arm64/boot/dts/renesas/r8a77980-condor.dts |   47 ++++++++++++------------
- 1 file changed, 24 insertions(+), 23 deletions(-)
-
-Index: linux/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-===================================================================
---- linux.orig/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-+++ linux/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-@@ -15,7 +15,7 @@
- 
- 	aliases {
- 		serial0 = &scif0;
--		ethernet0 = &avb;
-+		ethernet0 = &gether;
- 	};
- 
- 	chosen {
-@@ -47,23 +47,6 @@
- 	};
- };
- 
--&avb {
--	pinctrl-0 = <&avb_pins>;
--	pinctrl-names = "default";
--
--	phy-mode = "rgmii-id";
--	phy-handle = <&phy0>;
--	renesas,no-ether-link;
--	status = "okay";
--
--	phy0: ethernet-phy@0 {
--		rxc-skew-ps = <1500>;
--		reg = <0>;
--		interrupt-parent = <&gpio1>;
--		interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
--	};
--};
--
- &canfd {
- 	pinctrl-0 = <&canfd0_pins>;
- 	pinctrl-names = "default";
-@@ -82,6 +65,23 @@
- 	clock-frequency = <32768>;
- };
- 
-+&gether {
-+	pinctrl-0 = <&gether_pins>;
-+	pinctrl-names = "default";
-+
-+	phy-mode = "rgmii-id";
-+	phy-handle = <&phy0>;
-+	renesas,no-ether-link;
-+	status = "okay";
-+
-+	phy0: ethernet-phy@0 {
-+		rxc-skew-ps = <1500>;
-+		reg = <0>;
-+		interrupt-parent = <&gpio4>;
-+		interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+};
-+
- &i2c0 {
- 	pinctrl-0 = <&i2c0_pins>;
- 	pinctrl-names = "default";
-@@ -118,16 +118,17 @@
- };
- 
- &pfc {
--	avb_pins: avb {
--		groups = "avb_mdio", "avb_rgmii";
--		function = "avb";
--	};
--
- 	canfd0_pins: canfd0 {
- 		groups = "canfd0_data_a";
- 		function = "canfd0";
- 	};
- 
-+	gether_pins: gether {
-+		groups = "gether_mdio_a", "gether_rgmii",
-+			 "gether_txcrefclk", "gether_txcrefclk_mega";
-+		function = "gether";
-+	};
-+
- 	i2c0_pins: i2c0 {
- 		groups = "i2c0";
- 		function = "i2c0";
+Yours,
+Linus Walleij
