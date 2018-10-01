@@ -1,19 +1,19 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Mon, 15 Oct 2018 13:26:19 -0500
-From: Rob Herring <robh@kernel.org>
+Date: Mon, 1 Oct 2018 14:56:15 +0200
+From: Simon Horman <horms@verge.net.au>
 To: Biju Das <biju.das@bp.renesas.com>
 Cc: Wolfgang Grandegger <wg@grandegger.com>,
         Marc Kleine-Budde <mkl@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         "David S. Miller" <davem@davemloft.net>, linux-can@vger.kernel.org,
         netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH] dt-bindings: can: rcar_can: Add r8a7744 support
-Message-ID: <20181015182619.GA8820@bogus>
+Message-ID: <20181001125615.vcgyh6zawuftbhtl@verge.net.au>
 References: <1538050128-47356-1-git-send-email-biju.das@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -27,10 +27,5 @@ On Thu, Sep 27, 2018 at 01:08:48PM +0100, Biju Das wrote:
 > 
 > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 > Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-> ---
-> This patch is tested against linux-next next-20180927
-> ---
->  Documentation/devicetree/bindings/net/can/rcar_can.txt | 1 +
->  1 file changed, 1 insertion(+)
 
-Applied.
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
