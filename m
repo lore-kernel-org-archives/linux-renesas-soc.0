@@ -1,21 +1,21 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:53824 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728341AbeJBVd0 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46259 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729124AbeJAThs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 Oct 2018 17:33:26 -0400
-Date: Tue, 2 Oct 2018 20:19:31 +0530
-From: Vinod <vkoul@kernel.org>
+        Mon, 1 Oct 2018 15:37:48 -0400
+Date: Mon, 1 Oct 2018 15:00:01 +0200
+From: Simon Horman <horms@verge.net.au>
 To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH] dt-bindings: dmaengine: usb-dmac: Add binding for r8a7744
-Message-ID: <20181002144931.GE19792@vkoul-mobl>
+Message-ID: <20181001130001.tpnxjnxjwpu33f7d@verge.net.au>
 References: <1538052401-44249-1-git-send-email-biju.das@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -24,10 +24,10 @@ In-Reply-To: <1538052401-44249-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 27-09-18, 13:46, Biju Das wrote:
+On Thu, Sep 27, 2018 at 01:46:41PM +0100, Biju Das wrote:
 > This patch adds binding for r8a7744 (RZ/G1N).
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 
-Applied, thanks
-
--- 
-~Vinod
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
