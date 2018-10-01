@@ -1,56 +1,33 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:64731 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726955AbeJPJ1j (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47020 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729298AbeJAUQW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Oct 2018 05:27:39 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 1/3] mmc: tmio: enable module clock before resetting when resuming
-Date: Tue, 16 Oct 2018 03:38:30 +0200
-Message-Id: <20181016013832.2385-2-niklas.soderlund@ragnatech.se>
-In-Reply-To: <20181016013832.2385-1-niklas.soderlund@ragnatech.se>
-References: <20181016013832.2385-1-niklas.soderlund@ragnatech.se>
+        Mon, 1 Oct 2018 16:16:22 -0400
+Date: Mon, 1 Oct 2018 15:38:26 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: spi: sh-msiof: Add r8a7744 support
+Message-ID: <20181001133826.woblopejwda7wldy@verge.net.au>
+References: <1538139709-17707-1-git-send-email-biju.das@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538139709-17707-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+On Fri, Sep 28, 2018 at 02:01:49PM +0100, Biju Das wrote:
+> Document RZ/G1N (R8A7744) SoC bindings.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 
-On runtime power management resume, the host clock needs to be
-enabled before calling tmio_mmc_reset. If the mmc device has a power
-domain entry, the host clock is enabled via genpd_runtime_resume,
-running before tmio_mmc_host_runtime_resume. If the mmc device has no
-power domain entry, however, genpd_runtime_resume is not called. This
-patch changes tmio_mmc_host_runtime_resume to enable the host clock
-before calling tmio_mmc_reset.
-
-Based on work from Masaharu Hayakawa.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/mmc/host/tmio_mmc_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index f05c3a622f090cd6..71d3b380760d425f 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1330,8 +1330,8 @@ int tmio_mmc_host_runtime_resume(struct device *dev)
- {
- 	struct tmio_mmc_host *host = dev_get_drvdata(dev);
- 
--	tmio_mmc_reset(host);
- 	tmio_mmc_clk_enable(host);
-+	tmio_mmc_reset(host);
- 
- 	if (host->clk_cache)
- 		host->set_clock(host, host->clk_cache);
--- 
-2.19.1
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
