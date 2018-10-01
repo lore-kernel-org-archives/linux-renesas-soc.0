@@ -1,59 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:13898 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728131AbeJLUCK (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45934 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729321AbeJATVb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Oct 2018 16:02:10 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v4 3/3] dt-bindings: mmc: tmio_mmc: Document Renesas R7S9210
-Date: Fri, 12 Oct 2018 07:29:24 -0500
-Message-Id: <20181012122924.5543-4-chris.brandt@renesas.com>
-In-Reply-To: <20181012122924.5543-1-chris.brandt@renesas.com>
-References: <20181012122924.5543-1-chris.brandt@renesas.com>
+        Mon, 1 Oct 2018 15:21:31 -0400
+Date: Mon, 1 Oct 2018 14:43:49 +0200
+From: Simon Horman <horms@verge.net.au>
+To: David Miller <davem@davemloft.net>
+Cc: andrew@lunn.ch, netdev@vger.kernel.org, f.fainelli@gmail.com,
+        sergei.shtylyov@cogentembedded.com,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 net-next 07/12] net: ethernet: Add helper to remove a
+ supported link mode
+Message-ID: <20181001124347.j4clx7ffwrzd6lcx@verge.net.au>
+References: <20180921081735.z3stog3evjh4m7dx@verge.net.au>
+ <20180924153559.kbs6v6o3sj5uenyp@verge.net.au>
+ <20180924155023.GB10667@lunn.ch>
+ <20180926.200846.2016469227623990606.davem@davemloft.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180926.200846.2016469227623990606.davem@davemloft.net>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document support for the RZ/A2 (R7S9210) SoC.
+On Wed, Sep 26, 2018 at 08:08:46PM -0700, David Miller wrote:
+> From: Andrew Lunn <andrew@lunn.ch>
+> Date: Mon, 24 Sep 2018 17:50:23 +0200
+> 
+> > I submitted it to netdev in the usual way. I hope DaveM will accept
+> > and merge it.
+> 
+> Andrew did I miss your patch somehow?
+> 
+> If so, sorry, please resend.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
- * Documented that R7S9210 has 2 clocks
----
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Hi Dave,
 
-diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-index d39d5e46f7d2..cdfbcce34b97 100644
---- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-+++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-@@ -13,6 +13,7 @@ Required properties:
- - compatible: should contain one or more of the following:
- 		"renesas,sdhi-sh73a0" - SDHI IP on SH73A0 SoC
- 		"renesas,sdhi-r7s72100" - SDHI IP on R7S72100 SoC
-+		"renesas,sdhi-r7s9210" - SDHI IP on R7S9210 SoC
- 		"renesas,sdhi-r8a73a4" - SDHI IP on R8A73A4 SoC
- 		"renesas,sdhi-r8a7740" - SDHI IP on R8A7740 SoC
- 		"renesas,sdhi-r8a7743" - SDHI IP on R8A7743 SoC
-@@ -54,7 +55,7 @@ Required properties:
- 	  "core" and "cd". If the controller only has 1 clock, naming is not
- 	  required.
- 	  Devices which have more than 1 clock are listed below:
--	  2: R7S72100
-+	  2: R7S72100, R7S9210
- 
- Optional properties:
- - pinctrl-names: should be "default", "state_uhs"
--- 
-2.16.1
+I believe you have the patch in net-next as:
+
+65c5877f6462 ("ravb: Disable Pause Advertisement")
