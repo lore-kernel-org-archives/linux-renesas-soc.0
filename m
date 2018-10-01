@@ -1,155 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:41568 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725975AbeJBAYH (ORCPT
+Received: from condef-07.nifty.com ([202.248.20.72]:47814 "EHLO
+        condef-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729334AbeJATRB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 1 Oct 2018 20:24:07 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        Peter Rosin <peda@axentia.se>,
-        Tony Lindgren <tony@atomide.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>, Tero Kristo <t-kristo@ti.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC] i2c: reject transfers when adapter is suspended
-Date: Mon,  1 Oct 2018 19:44:50 +0200
-Message-Id: <20181001174450.16625-1-wsa+renesas@sang-engineering.com>
+        Mon, 1 Oct 2018 15:17:01 -0400
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] mmc: tmio: remove TMIO_MMC_HAVE_HIGH_REG flag
+Date: Mon,  1 Oct 2018 21:31:02 +0900
+Message-Id: <1538397062-19162-3-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1538397062-19162-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1538397062-19162-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When an I2C adapter is suspended, it should reject incoming transfers
-from other layers. Some drivers open code this. However, because the
-logical I2C adapter device has its own lock for serialization, we can
-let the I2C core do that to save the (error prone) boilerplate code.
-Make use of a newly added 'is_suspended' flag which gets set if the
-suspend_noirq stage of the driver was successful.
+TMIO_MMC_HAVE_HIGH_REG is confusing due to its counter-intuitive name.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+All the TMIO MMC variants (TMIO MMC, Renesas SDHI, UniPhier SD) actually
+have high registers.  It is just that each of them implements its own
+registers there.  The original IP from Panasonic only defines registers
+0x00-0xff in the bus_shift=1 review.  The register area above them is
+platform-dependent.
+
+In fact, TMIO_MMC_HAVE_HIGH_REG is set only by tmio-mmc.c and used to
+test the accessibility of CTL_SDIO_REGS.  Because it is specific to
+the TMIO MFD variant, the right thing to do is to move such registers
+to tmio_mmc.c and delete the TMIO_MMC_HAVE_HIGH_REG flag.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
-This needs some text. I twisted my brain around all those different PM
-requirements for days. So, I might not see the woods for the trees. Anyway:
+ drivers/mmc/host/tmio_mmc.c | 7 +++++--
+ drivers/mmc/host/tmio_mmc.h | 3 ---
+ include/linux/mfd/tmio.h    | 7 -------
+ 3 files changed, 5 insertions(+), 12 deletions(-)
 
-This is only tackling that resumed I2C adapters should not accept transfers any
-longer. If this happens, it will be rejected with a WARNing. Basically, any
-regression is considered a bug.
-
-This is a bit different to the shutdown/reboot case we were discussing, too. In
-that case (with also no irqs), we decided to introduce a new callback
-'master_xfer_irqless' and if it is not present, then we just try the old
-callback just to avoid regressions, e.g. I have a board which needs to be reset
-using the PMIC watchdog connected via I2C.
-
-I don't like the different handling of these two cases. Ideally, we should
-whitelist such special transfers? The best I could come up with that idea was
-to introduce a flag I2C_CLIENT_I_M_SPECIAL for such I2C clients which will then
-tag all the I2C transfers with a similar flag, so we know these need special
-treatment. I am not really happy with it, though...
-
-I didn't test the below patch as is because I couldn't write a test case to
-trigger it. I tested it by moving these new PM handlers away from _noirq and
-triggered a transfer in a I2C clients' noirq stage. That worked as expected,
-the transfer was rejected.
-
-Which made me wonder if the _noirq stage is really the best hook for this? We
-might not catch drivers doing unwanted transfers in their noirq stage.
-
-I am also not super happy about using the bus_type PM callbacks here. With
-I2C adapters being logical devices only and having no driver attached, I
-didn't see another way, though.
-
-All these issues aside, I hope it is a good starting point for a discussion.
-
-Looking forward to comments,
-
-   Wolfram
-
-
- drivers/i2c/i2c-core-base.c | 40 ++++++++++++++++++++++++++++++++++++++++
- include/linux/i2c.h         |  2 ++
- 2 files changed, 42 insertions(+)
-
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 9ee9a15e7134..ebd1ca38f768 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -448,6 +448,42 @@ static void i2c_device_shutdown(struct device *dev)
- 		driver->shutdown(client);
- }
+diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
+index c8e90cf..9348608 100644
+--- a/drivers/mmc/host/tmio_mmc.c
++++ b/drivers/mmc/host/tmio_mmc.c
+@@ -24,6 +24,11 @@
  
-+static int i2c_adap_suspend_noirq(struct device *dev)
-+{
-+	struct i2c_adapter *adap = i2c_verify_adapter(dev);
-+	int ret;
+ #include "tmio_mmc.h"
+ 
++/* Registers specific to this variant */
++#define CTL_SDIO_REGS		0x100
++#define CTL_CLK_AND_WAIT_CTL	0x138
++#define CTL_RESET_SDIO		0x1e0
 +
-+	if (!adap)
-+		return pm_generic_suspend_noirq(dev);
-+
-+	i2c_lock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
-+	ret = pm_generic_suspend_noirq(dev);
-+	if (ret == 0)
-+		adap->is_suspended = true;
-+	i2c_unlock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
-+	return ret;
-+}
-+
-+static int i2c_adap_resume_noirq(struct device *dev)
-+{
-+	struct i2c_adapter *adap = i2c_verify_adapter(dev);
-+	int ret;
-+
-+	if (!adap)
-+		return pm_generic_resume_noirq(dev);
-+
-+	i2c_lock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
-+	ret = pm_generic_resume_noirq(dev);
-+	if (ret == 0)
-+		adap->is_suspended = false;
-+	i2c_unlock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
-+	return ret;
-+}
-+
-+static const struct dev_pm_ops i2c_bus_pm_ops = {
-+	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(i2c_adap_suspend_noirq, i2c_adap_resume_noirq)
-+};
-+
- static void i2c_client_dev_release(struct device *dev)
+ static void tmio_mmc_clk_start(struct tmio_mmc_host *host)
  {
- 	kfree(to_i2c_client(dev));
-@@ -493,6 +529,7 @@ struct bus_type i2c_bus_type = {
- 	.probe		= i2c_device_probe,
- 	.remove		= i2c_device_remove,
- 	.shutdown	= i2c_device_shutdown,
-+	.pm		= &i2c_bus_pm_ops,
- };
- EXPORT_SYMBOL_GPL(i2c_bus_type);
+ 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
+@@ -153,8 +158,6 @@ static int tmio_mmc_probe(struct platform_device *pdev)
+ 		goto cell_disable;
+ 	}
  
-@@ -1867,6 +1904,9 @@ int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
- 	if (WARN_ON(!msgs || num < 1))
- 		return -EINVAL;
+-	pdata->flags |= TMIO_MMC_HAVE_HIGH_REG;
+-
+ 	host = tmio_mmc_host_alloc(pdev, pdata);
+ 	if (IS_ERR(host)) {
+ 		ret = PTR_ERR(host);
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index a1a661b..18b4308 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -47,9 +47,6 @@
+ #define CTL_RESET_SD 0xe0
+ #define CTL_VERSION 0xe2
+ #define CTL_SDIF_MODE 0xe6
+-#define CTL_SDIO_REGS 0x100
+-#define CTL_CLK_AND_WAIT_CTL 0x138
+-#define CTL_RESET_SDIO 0x1e0
  
-+	if (WARN_ON(adap->is_suspended))
-+		return -ESHUTDOWN;
-+
- 	if (adap->quirks && i2c_check_for_quirks(adap, msgs, num))
- 		return -EOPNOTSUPP;
+ /* Definitions for values the CTL_STOP_INTERNAL_ACTION register can take */
+ #define TMIO_STOP_STP		BIT(0)
+diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
+index 7786621..1e70060 100644
+--- a/include/linux/mfd/tmio.h
++++ b/include/linux/mfd/tmio.h
+@@ -62,13 +62,6 @@
+ #define TMIO_MMC_USE_GPIO_CD		BIT(5)
  
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index 65b4eaed1d96..ee46295a67d4 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -692,6 +692,8 @@ struct i2c_adapter {
- 	const struct i2c_adapter_quirks *quirks;
- 
- 	struct irq_domain *host_notify_domain;
-+
-+	int is_suspended:1;
- };
- #define to_i2c_adapter(d) container_of(d, struct i2c_adapter, dev)
- 
+ /*
+- * Some controllers doesn't have over 0x100 register.
+- * it is used to checking accessibility of
+- * CTL_SD_CARD_CLK_CTL / CTL_CLK_AND_WAIT_CTL
+- */
+-#define TMIO_MMC_HAVE_HIGH_REG		BIT(6)
+-
+-/*
+  * Some controllers have CMD12 automatically
+  * issue/non-issue register
+  */
 -- 
-2.11.0
+2.7.4
