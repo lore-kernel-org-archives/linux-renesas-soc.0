@@ -1,46 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:52856 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726547AbeJCSAe (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:58752 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728979AbeJATsT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Oct 2018 14:00:34 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-serial@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] serial: sh-sci: Add r8a77990 support
-Date: Wed,  3 Oct 2018 13:12:19 +0200
-Message-Id: <20181003111219.2334-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 1 Oct 2018 15:48:19 -0400
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Jacopo Mondi <jacopo@jmondi.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        devicetree@vger.kernel.org
+Subject: [PATCH v7 0/3] Renesas R9A06G032 PINCTRL Driver
+Date: Mon,  1 Oct 2018 14:10:23 +0100
+Message-Id: <20181001131026.14635-1-phil.edworthy@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+This implements the pinctrl driver for the RZ/N1 family of devices, including
+the R9A06G032 (RZ/N1D) device.
 
-This patch adds the R-Car E3 serial documentation.
+This series was originally written by Michel Pollet whilst at Renesas, and I
+have taken over this work.
 
-Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 2 ++
- 1 file changed, 2 insertions(+)
+Main changes:
+v7:
+ - Revert changes in v6, and just remove the token pasting
 
-diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-index eaca9da79d83..0873dc043d4d 100644
---- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-+++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-@@ -50,6 +50,8 @@ Required properties:
-     - "renesas,hscif-r8a77970" for R8A77970 (R-Car V3M) HSCIF compatible UART.
-     - "renesas,scif-r8a77980" for R8A77980 (R-Car V3H) SCIF compatible UART.
-     - "renesas,hscif-r8a77980" for R8A77980 (R-Car V3H) HSCIF compatible UART.
-+    - "renesas,scif-r8a77990" for R8A77990 (R-Car E3) SCIF compatible UART.
-+    - "renesas,hscif-r8a77990" for R8A77990 (R-Car E3) HSCIF compatible UART.
-     - "renesas,scif-r8a77995" for R8A77995 (R-Car D3) SCIF compatible UART.
-     - "renesas,hscif-r8a77995" for R8A77995 (R-Car D3) HSCIF compatible UART.
-     - "renesas,scifa-sh73a0" for SH73A0 (SH-Mobile AG5) SCIFA compatible UART.
+v6:
+ - Instead of combining the pin nr and func into a single element, use
+   a pair of 8-bit elements.
+ - Simplified how the MDIO function is calculated
+
+v5:
+ - Address Jacopo's further comments
+ - Address Geert's comments
+
+v4:
+ - Address Jacopo's comments
+ - Add alternative way to use the pinmux prop.
+ - Remove mention of gpios.
+ - Implement pin_config_group_get()
+ - Fix function to get pin configs, i.e. return -EINVAL when disabled.
+
+v3:
+ - Use standard DT props instead of proprietary ones.
+ - Replace virtual pins used for MDIO muxing with extra funcs.
+ - Use pinctrl_utils funcs to handle the maps.
+ - Remove the dbg functions to keep things simple.
+ - Change the way the functions are defined so it is easy to check
+   against the hardware numbering.
+
+v2:
+ - Change to generic rzn1 family driver, instead of device specific.
+ - Review comments fixed.
+ - Fix error handling during probe
+
+Phil Edworthy (3):
+  dt-bindings: pinctrl: renesas,rzn1-pinctrl: documentation
+  pinctrl: renesas: Renesas RZ/N1 pinctrl driver
+  ARM: dts: r9a06g032: Add pinctrl node
+
+ .../bindings/pinctrl/renesas,rzn1-pinctrl.txt | 153 +++
+ arch/arm/boot/dts/r9a06g032.dtsi              |   8 +
+ drivers/pinctrl/Kconfig                       |  10 +
+ drivers/pinctrl/Makefile                      |   1 +
+ drivers/pinctrl/pinctrl-rzn1.c                | 948 ++++++++++++++++++
+ include/dt-bindings/pinctrl/rzn1-pinctrl.h    | 141 +++
+ 6 files changed, 1261 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
+ create mode 100644 drivers/pinctrl/pinctrl-rzn1.c
+ create mode 100644 include/dt-bindings/pinctrl/rzn1-pinctrl.h
+
 -- 
-2.19.0
+2.17.1
