@@ -1,100 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45698 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728310AbeJVEPr (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46533 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728979AbeJATtr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:15:47 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH 6/6] gpu: drm: omapdrm: displays: panel-dsi-cm: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:11 +0200
-Message-Id: <20181021200012.1583-7-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200012.1583-1-wsa+renesas@sang-engineering.com>
-References: <20181021200012.1583-1-wsa+renesas@sang-engineering.com>
+        Mon, 1 Oct 2018 15:49:47 -0400
+Date: Mon, 1 Oct 2018 15:11:57 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Magnus <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a7795: remove unneeded sound
+ #address/size-cells
+Message-ID: <20181001131157.2bqbq43fn4gnsoyy@verge.net.au>
+References: <87a7o2tkrc.wl-kuninori.morimoto.gx@renesas.com>
+ <20180928080228.nze6n2jea67rrrco@verge.net.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180928080228.nze6n2jea67rrrco@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
+On Fri, Sep 28, 2018 at 10:02:29AM +0200, Simon Horman wrote:
+> On Fri, Sep 28, 2018 at 02:39:47AM +0000, Kuninori Morimoto wrote:
+> > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> > 
+> > commit 2d87dc0e5be2 ("arm64: dts: renesas: r8a7795: Add address
+> > properties to rcar_sound port nodes") added missing #address-cells
+> > and #size-cells for sound ports.
+> > But, these are based on platform, not on SoC. This patch cleanups it.
+> > 
+> > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> Thanks,
+> 
+> This looks fine to me but I will wait to see if there are other reviews
+> before applying.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Thanks again Morimoto-san,
 
-Build tested only. buildbot is happy.
-
- .../gpu/drm/omapdrm/displays/panel-dsi-cm.c    | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c b/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-index 29692a5217c5..88d4b0c60689 100644
---- a/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-+++ b/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-@@ -412,8 +412,7 @@ static const struct backlight_ops dsicm_bl_ops = {
- static ssize_t dsicm_num_errors_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-+	struct panel_drv_data *ddata = dev_get_drvdata(dev);
- 	struct omap_dss_device *src = ddata->dssdev.src;
- 	u8 errors = 0;
- 	int r;
-@@ -444,8 +443,7 @@ static ssize_t dsicm_num_errors_show(struct device *dev,
- static ssize_t dsicm_hw_revision_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-+	struct panel_drv_data *ddata = dev_get_drvdata(dev);
- 	struct omap_dss_device *src = ddata->dssdev.src;
- 	u8 id1, id2, id3;
- 	int r;
-@@ -476,8 +474,7 @@ static ssize_t dsicm_store_ulps(struct device *dev,
- 		struct device_attribute *attr,
- 		const char *buf, size_t count)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-+	struct panel_drv_data *ddata = dev_get_drvdata(dev);
- 	struct omap_dss_device *src = ddata->dssdev.src;
- 	unsigned long t;
- 	int r;
-@@ -511,8 +508,7 @@ static ssize_t dsicm_show_ulps(struct device *dev,
- 		struct device_attribute *attr,
- 		char *buf)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-+	struct panel_drv_data *ddata = dev_get_drvdata(dev);
- 	unsigned int t;
- 
- 	mutex_lock(&ddata->lock);
-@@ -526,8 +522,7 @@ static ssize_t dsicm_store_ulps_timeout(struct device *dev,
- 		struct device_attribute *attr,
- 		const char *buf, size_t count)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-+	struct panel_drv_data *ddata = dev_get_drvdata(dev);
- 	struct omap_dss_device *src = ddata->dssdev.src;
- 	unsigned long t;
- 	int r;
-@@ -558,8 +553,7 @@ static ssize_t dsicm_show_ulps_timeout(struct device *dev,
- 		struct device_attribute *attr,
- 		char *buf)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-+	struct panel_drv_data *ddata = dev_get_drvdata(dev);
- 	unsigned int t;
- 
- 	mutex_lock(&ddata->lock);
--- 
-2.19.0
+applied for v4.21.
