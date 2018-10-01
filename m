@@ -1,43 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:24565 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727290AbeJPOr3 (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:11366 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728979AbeJAUTt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Oct 2018 10:47:29 -0400
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: laurent.pinchart@ideasonboard.com, airlied@linux.ie
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] drm: rcar-du: Fix the return value in case of error in 'rcar_du_crtc_set_crc_source()'
-Date: Tue, 16 Oct 2018 08:58:25 +0200
-Message-Id: <20181016065825.23206-1-christophe.jaillet@wanadoo.fr>
+        Mon, 1 Oct 2018 16:19:49 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Simon Horman <horms@verge.net.au>
+CC: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: RE: [PATCH v2 1/3] dt-bindings: arm: Document RZ/G2E SoC DT bindings
+Date: Mon, 1 Oct 2018 13:41:52 +0000
+Message-ID: <TY1PR01MB177058FE0A213E58A3D8F2B5C0EF0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <CAMuHMdVmkLSVoUPX8QcPp5AWeae7iD4Vpz8QjA3nJw=T4J7Pkg@mail.gmail.com>
+ <1538129795-26796-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20181001131550.ny2cqky3c5ff2pqc@verge.net.au>
+In-Reply-To: <20181001131550.ny2cqky3c5ff2pqc@verge.net.au>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We return 0 unconditionally in 'rcar_du_crtc_set_crc_source()'.
-However, 'ret' is set to some error codes if some function calls fail.
+Hello Simon,
 
-Return 'ret' instead to propagate the error code.
+> Subject: Re: [PATCH v2 1/3] dt-bindings: arm: Document RZ/G2E SoC DT bind=
+ings
+>
+> On Fri, Sep 28, 2018 at 11:16:35AM +0100, Fabrizio Castro wrote:
+> > Add device tree bindings documentation for Renesas RZ/G2E (r8a774c0)
+> > SoC.
+> >
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> >
+> > ---
+> > v1->v2:
+> > * Fixed typo within the part number, thanks Geert for spotting this
+>
+> Unfortunately v1 already went upstream.
+>
+> Please send an incremental patch to resolve this problem.
 
-Fixes: 47a52d024e89 ("media: drm: rcar-du: Add support for CRC computation")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thank you, will do.
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 8a9e5e6f16b4..6eb0a95ad5a6 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -940,7 +940,7 @@ static int rcar_du_crtc_set_crc_source(struct drm_crtc *crtc,
- 	drm_modeset_drop_locks(&ctx);
- 	drm_modeset_acquire_fini(&ctx);
- 
--	return 0;
-+	return ret;
- }
- 
- static const struct drm_crtc_funcs crtc_funcs_gen2 = {
--- 
-2.17.1
+Cheers,
+Fab
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
