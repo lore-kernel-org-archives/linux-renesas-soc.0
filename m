@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51041 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:45965 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727615AbeJRVTV (ORCPT
+        with ESMTP id S1729277AbeJATW0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 Oct 2018 17:19:21 -0400
-Date: Thu, 18 Oct 2018 15:18:17 +0200
+        Mon, 1 Oct 2018 15:22:26 -0400
+Date: Mon, 1 Oct 2018 14:44:43 +0200
 From: Simon Horman <horms@verge.net.au>
 To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Cc: Rob Herring <robh+dt@kernel.org>,
@@ -22,7 +22,7 @@ Cc: Rob Herring <robh+dt@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Biju Das <biju.das@bp.renesas.com>
 Subject: Re: [PATCH v2 3/3] arm64: dts: renesas: r8a774a1: Add CAN nodes
-Message-ID: <20181018131817.bzx4jrzu3ynvq7pe@verge.net.au>
+Message-ID: <20181001124443.g55dwzqpguhglspv@verge.net.au>
 References: <1536576195-11520-1-git-send-email-fabrizio.castro@bp.renesas.com>
  <1536576195-11520-4-git-send-email-fabrizio.castro@bp.renesas.com>
  <20180911133220.3kjx5dqp65drx3qs@verge.net.au>
@@ -61,6 +61,4 @@ On Thu, Sep 27, 2018 at 10:53:41AM +0000, Fabrizio Castro wrote:
 > 
 > Marc has taken the bindings, I guess we can unblock this patch now?
 
-Sorry for letting this slip.
-
-Yes, applied for v4.21.
+Thanks, applied for v4.21.
