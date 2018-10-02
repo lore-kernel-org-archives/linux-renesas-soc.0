@@ -1,65 +1,33 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:2159 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726617AbeJCRx4 (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:53824 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728341AbeJBVd0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Oct 2018 13:53:56 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Tue, 2 Oct 2018 17:33:26 -0400
+Date: Tue, 2 Oct 2018 20:19:31 +0530
+From: Vinod <vkoul@kernel.org>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, dmaengine@vger.kernel.org,
+        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Carlo Caione <carlo@endlessm.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Alex Smith <alex.smith@imgtec.com>, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 0/6] Add uSD and eMMC to iwg23s
-Date: Wed,  3 Oct 2018 12:05:38 +0100
-Message-Id: <1538564744-15590-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: dmaengine: usb-dmac: Add binding for r8a7744
+Message-ID: <20181002144931.GE19792@vkoul-mobl>
+References: <1538052401-44249-1-git-send-email-biju.das@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538052401-44249-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dear All,
+On 27-09-18, 13:46, Biju Das wrote:
+> This patch adds binding for r8a7744 (RZ/G1N).
 
-this series includes all that is necessary for uSD and
-eMMC to work on the iwg23s board, powered by the RZ/G1C
-(a.k.a. r8a77470).
-
-This work applies on top of next-20181002
-
-Thanks,
-Fab
-
-Fabrizio Castro (6):
-  dt-bindings: mmc: renesas_sdhi: Add r8a77470 support
-  pinctrl: sh-pfc: r8a77470: Add SDHI support
-  mmc: renesas_sdhi: Add r8a77470 SDHI1 support
-  ARM: dts: r8a77470: Add SDHI0 support
-  ARM: dts: r8a77470: Add SDHI1 support
-  ARM: dts: iwg23s-sbc: Add uSD and eMMC support
-
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt |   6 +-
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts          |  76 ++++++++++
- arch/arm/boot/dts/r8a77470.dtsi                    |  28 +++-
- drivers/mmc/host/Kconfig                           |   4 +-
- drivers/mmc/host/renesas_sdhi_internal_dmac.c      |   6 +-
- drivers/pinctrl/sh-pfc/pfc-r8a77470.c              | 162 ++++++++++++++++++++-
- 6 files changed, 273 insertions(+), 9 deletions(-)
+Applied, thanks
 
 -- 
-2.7.4
+~Vinod
