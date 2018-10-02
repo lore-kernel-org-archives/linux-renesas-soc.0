@@ -1,99 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:63172 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725767AbeJCIEI (ORCPT
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:37797 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727742AbeJBTle (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Oct 2018 04:04:08 -0400
+        Tue, 2 Oct 2018 15:41:34 -0400
+MIME-Version: 1.0
+References: <1538469324-8028-1-git-send-email-cv-dong@jinso.co.jp>
+ <CAMuHMdXOQdJL14xNj3AHL6RC-fu=SWReXmh1JOS4s9cc-ZL5iQ@mail.gmail.com>
+ <4ed65427-ce94-5586-82ef-f73d7ff413ed@jinso.co.jp> <3fd89cff-4e3f-b4b5-6f45-6a6363003646@roeck-us.net>
+In-Reply-To: <3fd89cff-4e3f-b4b5-6f45-6a6363003646@roeck-us.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 2 Oct 2018 14:58:07 +0200
+Message-ID: <CAMuHMdW_WnRxg1m17UgukKQ4Lwu0_fLbSFoaihw2Y9kdR27Wrg@mail.gmail.com>
 Subject: Re: [PATCH] hwmon: Fix the 'No sensors found' error after replacing
  the parameter NULL by the actual device
 To: Guenter Roeck <linux@roeck-us.net>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mark Brown <broonie@kernel.org>,
+Cc: =?UTF-8?B?44Kr44Kq44O744O044Kh44Oz44O744OJ44Oz?=
+        <cv-dong@jinso.co.jp>, Mark Brown <broonie@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-hwmon@vger.kernel.org,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
-        =?UTF-8?B?RHVuZ++8muS6ug==?= =?UTF-8?B?44K9?=
-        <nv-dung@jinso.co.jp>, Hoan Nguyen An <na-hoan@jinso.co.jp>
-References: <1538469324-8028-1-git-send-email-cv-dong@jinso.co.jp>
- <CAMuHMdXOQdJL14xNj3AHL6RC-fu=SWReXmh1JOS4s9cc-ZL5iQ@mail.gmail.com>
- <4ed65427-ce94-5586-82ef-f73d7ff413ed@jinso.co.jp>
- <3fd89cff-4e3f-b4b5-6f45-6a6363003646@roeck-us.net>
-From: Cao Van Dong <cv-dong@jinso.co.jp>
-Message-ID: <f8a0d9cf-826a-6fae-e675-5dc24007c00c@jinso.co.jp>
-Date: Wed, 3 Oct 2018 10:17:58 +0900
-MIME-Version: 1.0
-In-Reply-To: <3fd89cff-4e3f-b4b5-6f45-6a6363003646@roeck-us.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        =?UTF-8?B?RHVuZ++8muS6uuOCvQ==?= <nv-dung@jinso.co.jp>,
+        Hoan Nguyen An <na-hoan@jinso.co.jp>,
+        Marc Zyngier <Marc.Zyngier@arm.com>,
+        Eduardo Valentin <edubezval@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dear Guente-san,
+CC  Marc, Eduardo
 
-Thanks for your comment!
->>>> In __hwmon_device_register() function of hwmon.c, we have assigned 
->>>> 'dev' directly to 'hdev->parent'.
->>>> Formerly, when registering the hwmon device, we pass NULL as the 
->>>> device. This is not affected.
->>>> Recently, the developer has replaced the parameter NULL as the 
->>>> device by the actual device.
->>> Do you know the commit ID of this recent change?
->>> It's useful for review of your change, and to know to which versions 
->>> your
->>> patch should be backported.
->>
->> The commit ID of this recent change is"f6b6b52 thermal_hwmon: Pass 
->> the originating device down to hwmon_device_register_with_info".
->>
-> If thermal doesn't want hwmon to use the thermal zone device, it 
-> should pass
-> the parent of that device as parameter.
-
-I will see the feedback from Marc-san.
+On Tue, Oct 2, 2018 at 2:56 PM Guenter Roeck <linux@roeck-us.net> wrote:
 >
->>>> This causes the "No sensors found" error. This patch is to fix this 
->>>> error.
->>> On which platform do you see this failure?
->>> Thanks again!
->>
->> This error is found on Gen2 Lager board v4.19-rc2 by RVC team.
->>
+> On 10/02/2018 02:06 AM, Cao Van Dong wrote:
+> > Dear Geert-san,
+> >
+> > Thanks for your comment!
+> >
+> >>> In __hwmon_device_register() function of hwmon.c, we have assigned 'dev' directly to 'hdev->parent'.
+> >>> Formerly, when registering the hwmon device, we pass NULL as the device. This is not affected.
+> >>> Recently, the developer has replaced the parameter NULL as the device by the actual device.
+> >> Do you know the commit ID of this recent change?
+> >> It's useful for review of your change, and to know to which versions your
+> >> patch should be backported.
+> >
+> > The commit ID of this recent change is"f6b6b52 thermal_hwmon: Pass the originating device down to hwmon_device_register_with_info".
+> >
+> If thermal doesn't want hwmon to use the thermal zone device, it should pass
+> the parent of that device as parameter.
+>
+> >>> This causes the "No sensors found" error. This patch is to fix this error.
+> >> On which platform do you see this failure?
+> >> Thanks again!
+> >
+> > This error is found on Gen2 Lager board v4.19-rc2 by RVC team.
+> >
 >
 > Some more details about the error would be useful.
 
-Below are some information about confirm the error:
+Gr{oetje,eeting}s,
 
-- Before the commit "f6b6b52ef7a54160c0a4d2b56a58f84a2e5b33c5" (pass 
-NULL as the device):
-"root@linaro-nano:~# sensors
-  cpu_thermal-virtual-0
-  Adapter: Virtual device
-  temp1:        +30.0�°C  (crit = +95.0�°C)
+                        Geert
 
-  root@linaro-nano:~# "
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
-- After the commit "f6b6b52ef7a54160c0a4d2b56a58f84a2e5b33c5" (pass the 
-actual device):
-"root@linaro-nano:~# sensors
-  No sensors found!
-  Make sure you loaded all the kernel drivers you need.
-  Try sensors-detect to find out which these are.
-  root@linaro-nano:~#"
-
-
-- At my patch (change dev to dev->parent):
-"root@linaro-nano:~# sensors
-  cpu_thermal-virtual-0
-  Adapter: Virtual device
-  temp1:        +30.0�°C  (crit = +95.0�°C)
-
-  root@linaro-nano:~#"
-
-
-Regards,
-Dong/Jinso
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
