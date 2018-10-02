@@ -1,52 +1,64 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from stcim.de ([78.46.90.227]:49588 "EHLO stcim.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728075AbeJGWrz (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 7 Oct 2018 18:47:55 -0400
-From: Stefan Lengfeld <contact@stefanchrist.eu>
-To: wsa+renesas@sang-engineering.com
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        preid@electromag.com.au, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.or, j-keerthy@ti.com,
-        t-kristo@ti.com, grygorii.strashko@ti.com,
-        andriy.shevchenko@linux.intel.com
-Subject: [RFC PATCH 3/3] ARM: dts: phyboard-mira-dl: rely on PMIC for reboot and watchdog
-Date: Sun,  7 Oct 2018 17:39:37 +0200
-Message-Id: <20181007153937.16787-4-contact@stefanchrist.eu>
-In-Reply-To: <20181007153937.16787-1-contact@stefanchrist.eu>
-References: <20180923202034.qugs4fxucj7h4vri@porty>
- <20181007153937.16787-1-contact@stefanchrist.eu>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Tue, 2 Oct 2018 11:04:26 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+        Tho Vu <tho.vu.wh@rvc.renesas.com>,
+        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Rob Herring <robh@kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] DT: pci: rcar-pci: document R8A77990 bindings
+Message-ID: <20181002100426.GA24071@red-moon>
+References: <20180922150252.18754-1-marek.vasut+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180922150252.18754-1-marek.vasut+renesas@gmail.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Stefan Christ <s.christ@phytec.de>
+On Sat, Sep 22, 2018 at 05:02:52PM +0200, Marek Vasut wrote:
+> From: Tho Vu <tho.vu.wh@rvc.renesas.com>
+> 
+> Document the R-Car E3 (R8A77990) SoC in the R-Car PCIe bindings.
+> 
+> Signed-off-by: Tho Vu <tho.vu.wh@rvc.renesas.com>
+> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+>  Documentation/devicetree/bindings/pci/rcar-pci.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-Rely on PMIC watchdog and reboot support. The i.MX6 internal watchdog
-cannot be used, because it does not reset external PMIC voltages on
-reset.
+Applied to pci/controller-misc for v4.20, thanks.
 
-Signed-off-by: Stefan Christ <s.christ@phytec.de>
-Signed-off-by: Christian Hemp <c.hemp@phytec.de>
----
- arch/arm/boot/dts/imx6dl-phytec-mira-rdk-nand.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Lorenzo
 
-diff --git a/arch/arm/boot/dts/imx6dl-phytec-mira-rdk-nand.dts b/arch/arm/boot/dts/imx6dl-phytec-mira-rdk-nand.dts
-index 9f7f9f98139d..04e2d5a1b998 100644
---- a/arch/arm/boot/dts/imx6dl-phytec-mira-rdk-nand.dts
-+++ b/arch/arm/boot/dts/imx6dl-phytec-mira-rdk-nand.dts
-@@ -62,3 +62,11 @@
- &usdhc1 {
- 	status = "okay";
- };
-+
-+&wdog1 {
-+	/*
-+	 * Rely on PMIC reboot handler. Internal i.MX6 watchdog, that is also
-+	 * used for reboot, does not reset all external PMIC voltages on reset.
-+	 */
-+	status = "disabled";
-+};
--- 
-2.16.4
+> diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
+> index a5f7fc62d10e..5f2f9e380efb 100644
+> --- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
+> +++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
+> @@ -9,6 +9,7 @@ compatible: "renesas,pcie-r8a7743" for the R8A7743 SoC;
+>  	    "renesas,pcie-r8a7795" for the R8A7795 SoC;
+>  	    "renesas,pcie-r8a7796" for the R8A7796 SoC;
+>  	    "renesas,pcie-r8a77980" for the R8A77980 SoC;
+> +	    "renesas,pcie-r8a77990" for the R8A77990 SoC;
+>  	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 or
+>  				     RZ/G1 compatible device.
+>  	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 compatible device.
+> -- 
+> 2.18.0
+> 
