@@ -1,42 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:45412 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726706AbeJRIkD (ORCPT
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33210 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbeJBHlH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 Oct 2018 04:40:03 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 1/3] dt-bindings: display: renesas: lvds: Document r8a77965 bindings
-Date: Thu, 18 Oct 2018 03:41:47 +0300
-Message-Id: <20181018004149.29448-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20181018004149.29448-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20181018004149.29448-1-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 2 Oct 2018 03:41:07 -0400
+Subject: Re: [PATCH] iio: adc: Fix Renesas GyroADC MAINTAINERS entry
+To: Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-iio@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Joe Perches <joe@perches.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        linux-renesas-soc@vger.kernel.org
+References: <20181001105804.17802-1-marek.vasut+renesas@gmail.com>
+ <20181001115559.GA4134@kunai>
+ <bc65ecfa-5135-5224-bdeb-938b3025c30c@gmail.com>
+ <20181001121739.GB4134@kunai> <20181001132001.00007423@huawei.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <f7a97c8d-0b80-5873-3fbb-b3c6152323d0@gmail.com>
+Date: Tue, 2 Oct 2018 03:00:33 +0200
+MIME-Version: 1.0
+In-Reply-To: <20181001132001.00007423@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The M3-N (r8a77965) includes one LVDS encoder. Extend the binding to
-support it.
+On 10/01/2018 02:20 PM, Jonathan Cameron wrote:
+> On Mon, 1 Oct 2018 14:17:40 +0200
+> Wolfram Sang <wsa@the-dreams.de> wrote:
+> 
+>> On Mon, Oct 01, 2018 at 01:58:26PM +0200, Marek Vasut wrote:
+>>> On 10/01/2018 01:55 PM, Wolfram Sang wrote:  
+>>>> On Mon, Oct 01, 2018 at 12:58:04PM +0200, Marek Vasut wrote:  
+>>>>> Fix the F: entry in MAINTAINERS file, point it to the correct file.  
+>>>>
+>>>> Right...
+>>>>   
+>>>>> @@ -12471,7 +12471,7 @@ RENESAS R-CAR GYROADC DRIVER
+>>>>>  M:	Marek Vasut <marek.vasut@gmail.com>
+>>>>>  L:	linux-iio@vger.kernel.org
+>>>>>  S:	Supported
+>>>>> -F:	drivers/iio/adc/rcar_gyro_adc.c
+>>>>> +F:	drivers/iio/adc/rcar-gyroadc.c  
+>>>>
+>>>> Add the bindings, too?
+>>>>
+>>>> Documentation/devicetree/bindings/iio/adc/renesas,gyroadc.txt
+>>>>   
+>>> Separate patch or V2 ?  
+>>
+>> I'd say V2, but I am not the IIO maintainer.
+>>
+>>
+> 
+> v2 please given I haven't done anything with v1 yet.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- .../devicetree/bindings/display/bridge/renesas,lvds.txt          | 1 +
- 1 file changed, 1 insertion(+)
+Done
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-index 3aeb0ec06fd0..ba5469dd09f3 100644
---- a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-+++ b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-@@ -13,6 +13,7 @@ Required properties:
-   - "renesas,r8a7793-lvds" for R8A7793 (R-Car M2-N) compatible LVDS encoders
-   - "renesas,r8a7795-lvds" for R8A7795 (R-Car H3) compatible LVDS encoders
-   - "renesas,r8a7796-lvds" for R8A7796 (R-Car M3-W) compatible LVDS encoders
-+  - "renesas,r8a77965-lvds" for R8A77965 (R-Car M3-N) compatible LVDS encoders
-   - "renesas,r8a77970-lvds" for R8A77970 (R-Car V3M) compatible LVDS encoders
-   - "renesas,r8a77980-lvds" for R8A77980 (R-Car V3H) compatible LVDS encoders
-   - "renesas,r8a77990-lvds" for R8A77990 (R-Car E3) compatible LVDS encoders
 -- 
-Regards,
-
-Laurent Pinchart
+Best regards,
+Marek Vasut
