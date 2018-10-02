@@ -1,43 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46613 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729189AbeJATxl (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:40665 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727635AbeJBSn2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 1 Oct 2018 15:53:41 -0400
-Date: Mon, 1 Oct 2018 15:15:51 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Tue, 2 Oct 2018 14:43:28 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: arm: Document RZ/G2E SoC DT bindings
-Message-ID: <20181001131550.ny2cqky3c5ff2pqc@verge.net.au>
-References: <CAMuHMdVmkLSVoUPX8QcPp5AWeae7iD4Vpz8QjA3nJw=T4J7Pkg@mail.gmail.com>
- <1538129795-26796-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/2] usb: gadget: udc: renesas_usb3: add support for r8a77990
+Date: Tue,  2 Oct 2018 20:58:27 +0900
+Message-Id: <1538481507-24821-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1538481507-24821-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1538481507-24821-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1538129795-26796-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Sep 28, 2018 at 11:16:35AM +0100, Fabrizio Castro wrote:
-> Add device tree bindings documentation for Renesas RZ/G2E (r8a774c0)
-> SoC.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> 
-> ---
-> v1->v2:
-> * Fixed typo within the part number, thanks Geert for spotting this
+Since r8a77990 (R-Car E3) doesn't have VBUS detect pin and
+number of ramif is 4, this patch adds a new renesas_usb3_priv
+variable for the SoC.
 
-Unfortunately v1 already went upstream.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/usb/gadget/udc/renesas_usb3.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Please send an incremental patch to resolve this problem.
+diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
+index e1656f3..100e9fa 100644
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -2600,6 +2600,13 @@ static void renesas_usb3_init_ram(struct renesas_usb3 *usb3, struct device *dev,
+ 	.ramsize_per_pipe = SZ_4K,
+ };
+ 
++static const struct renesas_usb3_priv renesas_usb3_priv_r8a77990 = {
++	.ramsize_per_ramif = SZ_16K,
++	.num_ramif = 4,
++	.ramsize_per_pipe = SZ_4K,
++	.workaround_for_vbus = true,
++};
++
+ static const struct of_device_id usb3_of_match[] = {
+ 	{
+ 		.compatible = "renesas,r8a7795-usb3-peri",
+@@ -2618,6 +2625,10 @@ static void renesas_usb3_init_ram(struct renesas_usb3 *usb3, struct device *dev,
+ 		.soc_id = "r8a7795", .revision = "ES1.*",
+ 		.data = &renesas_usb3_priv_r8a7795_es1,
+ 	},
++	{
++		.soc_id = "r8a77990",
++		.data = &renesas_usb3_priv_r8a77990,
++	},
+ 	{ /* sentinel */ },
+ };
+ 
+-- 
+1.9.1
