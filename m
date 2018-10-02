@@ -1,54 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:62581 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbeKAIBS (ORCPT
+Received: from relay1.mentorg.com ([192.94.38.131]:33090 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726884AbeJBOea (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:01:18 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
-        Takeshi Saito <takeshi.saito.xv@renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] mmc: tmio: delete wait in tuning process
-Date: Thu,  1 Nov 2018 00:00:43 +0100
-Message-Id: <20181031230043.1302-1-niklas.soderlund@ragnatech.se>
+        Tue, 2 Oct 2018 10:34:30 -0400
+Subject: Re: [PATCH linux-next 01/10] ASoC: rsnd: ssi: Request dedicated dma
+ channels for busif1 to 7
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+CC: Mark Brown <broonie@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-Kernel <linux-kernel@vger.kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        <dragos_tarcatu@mentor.com>, <twischer@de.adit-jv.com>,
+        <tiwai@suse.com>, <perex@perex.cz>
+References: <20180927050407.17765-1-jiada_wang@mentor.com>
+ <20180927050407.17765-2-jiada_wang@mentor.com>
+ <87k1n6trsf.wl-kuninori.morimoto.gx@renesas.com>
+From: Jiada Wang <jiada_wang@mentor.com>
+Message-ID: <01535cc6-bd85-aec1-b0ce-7ea9e60533d0@mentor.com>
+Date: Tue, 2 Oct 2018 16:52:24 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <87k1n6trsf.wl-kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+Hi Morimoto-san
 
-The manual does not contain information that a wait is needed in the
-tuning process, this might be a leftover from early development.
-Removing the wait don't have any effect on operation so delete the wait
-to shorten the initialization time.
 
-Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-Signed-off-by: Takeshi Saito <takeshi.saito.xv@renesas.com>
-[Niklas: fixup commit message]
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/mmc/host/tmio_mmc_core.c | 2 --
- 1 file changed, 2 deletions(-)
+On 2018/09/28 9:08, Kuninori Morimoto wrote:
+> Hi Jiada
+> Cc: linux-renesas-soc ML
+>
+> Thank you for your patch
+>
+>> From: Jiada Wang <jiada_wang@mentor.com>
+>>
+>> Currently ssi driver only request dma channel for SSI_0,
+>> which is used to transfer data to/from busif0.
+>>
+>> But since busif1 to busif7 also maybe used, dedicated dma channels
+>> are request for data transfer between these busif.
+>>
+>> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+>> ---
+> (snip)
+>> @@ -938,12 +940,20 @@ static struct dma_chan *rsnd_ssi_dma_req(struct rsnd_dai_stream *io,
+>>   {
+>>   	struct rsnd_priv *priv = rsnd_mod_to_priv(mod);
+>>   	int is_play = rsnd_io_is_play(io);
+>> -	char *name;
+>> +	int busif = rsnd_ssi_get_busif(io);
+>> +	char name[SSI_DMA_NAME_SIZE];
+>>   
+>> -	if (rsnd_ssi_use_busif(io))
+>> -		name = is_play ? "rxu" : "txu";
+>> -	else
+>> -		name = is_play ? "rx" : "tx";
+>> +	if (rsnd_ssi_use_busif(io)) {
+>> +		if (is_play)
+>> +			snprintf(name, SSI_DMA_NAME_SIZE, "rxu%d", busif);
+>> +		else
+>> +			snprintf(name, SSI_DMA_NAME_SIZE, "txu%d", busif);
+>> +	} else {
+>> +		if (is_play)
+>> +			snprintf(name, SSI_DMA_NAME_SIZE, "rx");
+>> +		else
+>> +			snprintf(name, SSI_DMA_NAME_SIZE, "tx");
+>> +	}
+> Unfortunately, this patch breaks "git bisect", and Gen2 platforms.
+> We need to keep existing "rxu/txu" more. Please consider compatibility.
+> # we can remove it 2 or 3 version later ?
+>
+> If the commit which has this patch, but doesn't have [02/xx] or later,
+> it can't use BUSIF.
+>
+> And your patch doesn't care Gen2 series.
+> DT compatibility is very sensitive...
+Thanks for your review comments, I will send out v2 patch set to take 
+care of GEN2 series,
+and move this patch after other DT related patches
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 8d64f6196f33e882..a8f917f744fb9f63 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -734,8 +734,6 @@ static int tmio_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
- 		ret = mmc_send_tuning(mmc, opcode, NULL);
- 		if (ret == 0)
- 			set_bit(i, host->taps);
--
--		usleep_range(1000, 1200);
- 	}
- 
- 	ret = host->select_tuning(host);
--- 
-2.19.1
+Thanks,
+Jiada
