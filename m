@@ -1,42 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:24935 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726285AbeJXWTs (ORCPT
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51116 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727271AbeJCEYT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Oct 2018 18:19:48 -0400
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-To: linux-pm@vger.kernel.org
-Cc: linux-i2c@vger.kernel.org,
+        Wed, 3 Oct 2018 00:24:19 -0400
+Date: Tue, 2 Oct 2018 14:38:46 -0700
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jiri Slaby <jslaby@suse.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Subject: [PATCH 0/3] PM: Renesas: Remove dummy runtime PM callbacks
-Date: Wed, 24 Oct 2018 16:51:31 +0300
-Message-Id: <20181024135134.28456-1-jarkko.nikula@linux.intel.com>
+        uli+renesas@fpond.eu,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH 0/2] serial: sh-sci: Fix earlycon on Renesas ARM platforms
+Message-ID: <20181002213846.GA1677@kroah.com>
+References: <20180830125404.21192-1-geert+renesas@glider.be>
+ <CAMuHMdWdByKxivbQwWL9yF9_r8XObnZuXEZvf_9ZWKYYLWr1bQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWdByKxivbQwWL9yF9_r8XObnZuXEZvf_9ZWKYYLWr1bQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I noticed these independent Renesas drivers have needless dummy runtime
-PM callbacks. I don't have the HW so only build tested.
+On Thu, Sep 27, 2018 at 09:38:19AM +0200, Geert Uytterhoeven wrote:
+> Hi Greg,
+> 
+> On Thu, Aug 30, 2018 at 2:54 PM Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+> > Due to an unfortunate oversight, commit 2d4dd0da45401c7a ("serial: sh-sci:
+> > Allow for compressed SCIF address") broke earlycon on all Renesas ARM
+> > platforms using a SCIF port for the serial console (R-Car, RZ/A1, RZ/G1,
+> > RZ/G2 SoCs), due to an incorrect value of port->regshift.
+> >
+> > This patch series fixes that by reverting that commit, and a (reverse)
+> > dependency.
+> >
+> > Earlycon for RZ/A2 (which is a new platform) will be fixed later in a
+> > separate patch.
+> >
+> > Thanks for applying!
+> >
+> > Geert Uytterhoeven (2):
+> >   Revert "serial: sh-sci: Remove SCIx_RZ_SCIFA_REGTYPE"
+> >   Revert "serial: sh-sci: Allow for compressed SCIF address"
+> >
+> >  drivers/tty/serial/sh-sci.c | 56 +++++++++++++++++++++++++++----------
+> >  include/linux/serial_sci.h  |  1 +
+> >  2 files changed, 42 insertions(+), 15 deletions(-)
+> 
+> These are now in tty-next:
+> 
+>     10c63443b74d1ef5 Revert "serial: sh-sci: Remove SCIx_RZ_SCIFA_REGTYPE"
+>     a1c2fd7e1098ea49 Revert "serial: sh-sci: Allow for compressed SCIF address"
+> 
+> Can you please include them in v4.19-rc6, as they fix a regression introduced
+> in v4.19-rc1?
+> 
+> In addition:
+> 
+>     3d8b43ad9c0cf023 serial: sh-sci: Add earlycon for R7S9210
+> 
+> (also in tty-next) enables earlycon on RZ/A2 again, as it was disabled
+> by the two
+> reverts above.
+> 
+> Thanks a lot!
 
-Patches can be applied independently to their own subsystems. I wanted to
-send them together if some of them gets Tested-by or sees a regression.
+Now fixed up, thanks.
 
-Jarkko Nikula (3):
-  i2c: sh_mobile: Remove dummy runtime PM callbacks
-  net: ethernet: Remove dummy runtime PM callbacks from Renesas drivers
-  usb: renesas_usbhs: Remove dummy runtime PM callbacks
-
- drivers/i2c/busses/i2c-sh_mobile.c       | 18 ------------------
- drivers/net/ethernet/renesas/ravb_main.c | 13 -------------
- drivers/net/ethernet/renesas/sh_eth.c    | 13 -------------
- drivers/usb/renesas_usbhs/common.c       | 14 --------------
- 4 files changed, 58 deletions(-)
-
--- 
-2.19.1
+greg k-h
