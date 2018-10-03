@@ -1,60 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:41800 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727058AbeJDOH7 (ORCPT
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44156 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726998AbeJDDhh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Oct 2018 10:07:59 -0400
-MIME-Version: 1.0
-References: <34a21e56-22b0-3603-1aba-0800aa02eff7@cogentembedded.com>
-In-Reply-To: <34a21e56-22b0-3603-1aba-0800aa02eff7@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 4 Oct 2018 09:15:57 +0200
-Message-ID: <CAMuHMdWSvrqe38gXtjNiu7VXiy0sNHLuMi0ySg+A8iBR-FXdkQ@mail.gmail.com>
-Subject: Re: [PATCH] thermal: rcar_thermal: fix duplicate IRQ request
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Zhang Rui <rui.zhang@intel.com>,
+        Wed, 3 Oct 2018 23:37:37 -0400
+Received: by mail-lf1-f65.google.com with SMTP id m18-v6so5158165lfl.11
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 03 Oct 2018 13:47:37 -0700 (PDT)
+To: Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-pm@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH] thermal: rcar_thermal: fix duplicate IRQ request
+Message-ID: <34a21e56-22b0-3603-1aba-0800aa02eff7@cogentembedded.com>
+Date: Wed, 3 Oct 2018 23:47:34 +0300
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-CC Kaneko-san,
+The driver on R8A77995 requests the same IRQ twice since
+platform_get_resource() is always called for the 1st IRQ resource. 
 
-On Wed, Oct 3, 2018 at 10:47 PM Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> The driver on R8A77995 requests the same IRQ twice since
-> platform_get_resource() is always called for the 1st IRQ resource.
->
-> Fixes: 1969d9dc2079 ("thermal: rcar_thermal: add r8a77995 support")
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Fixes: 1969d9dc2079 ("thermal: rcar_thermal: add r8a77995 support")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Nice catch!
+---
+This patch is against the 'master' branch of Zhang Rui's linux.git' repo.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+ drivers/thermal/rcar_thermal.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> --- linux.orig/drivers/thermal/rcar_thermal.c
-> +++ linux/drivers/thermal/rcar_thermal.c
-> @@ -504,7 +504,7 @@ static int rcar_thermal_probe(struct pla
->         pm_runtime_get_sync(dev);
->
->         for (i = 0; i < chip->nirqs; i++) {
-> -               irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-> +               irq = platform_get_resource(pdev, IORESOURCE_IRQ, i);
->                 if (!irq)
->                         continue;
->                 if (!common->base) {
-
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: linux/drivers/thermal/rcar_thermal.c
+===================================================================
+--- linux.orig/drivers/thermal/rcar_thermal.c
++++ linux/drivers/thermal/rcar_thermal.c
+@@ -504,7 +504,7 @@ static int rcar_thermal_probe(struct pla
+ 	pm_runtime_get_sync(dev);
+ 
+ 	for (i = 0; i < chip->nirqs; i++) {
+-		irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
++		irq = platform_get_resource(pdev, IORESOURCE_IRQ, i);
+ 		if (!irq)
+ 			continue;
+ 		if (!common->base) {
