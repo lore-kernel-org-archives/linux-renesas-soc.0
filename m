@@ -1,120 +1,98 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-09.nifty.com ([210.131.2.76]:27453 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726819AbeJCSZZ (ORCPT
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:43076 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726617AbeJCSXp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Oct 2018 14:25:25 -0400
+        Wed, 3 Oct 2018 14:23:45 -0400
+MIME-Version: 1.0
+References: <1538397062-19162-1-git-send-email-yamada.masahiro@socionext.com>
+ <1538397062-19162-2-git-send-email-yamada.masahiro@socionext.com> <20181002230115.GB812@kunai>
+In-Reply-To: <20181002230115.GB812@kunai>
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] mmc: tmio: move MFD variant reset to a platform hook
-Date: Wed,  3 Oct 2018 20:36:26 +0900
-Message-Id: <1538566587-29452-2-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1538566587-29452-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1538566587-29452-1-git-send-email-yamada.masahiro@socionext.com>
+Date: Wed, 3 Oct 2018 20:34:55 +0900
+Message-ID: <CAK7LNAS6TxN8rU-=wr1XXjkTJ2n+FK8YHqWCvOqMvXrMFHXoXg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mmc: tmio: move MFD variant reset to a platform hook
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-CTL_RESET_SDIO register is specific to the TMIO MFD (tmio_mmc.c).
+Hi Wolfram,
 
-Add a new hook host->reset for performing a platform-specific reset
-sequence, and move CTL_RESET_SDIO over there.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+On Wed, Oct 3, 2018 at 8:02 AM Wolfram Sang <wsa@the-dreams.de> wrote:
+>
+> Hi Yamada-san,
+>
+> On Mon, Oct 01, 2018 at 09:31:01PM +0900, Masahiro Yamada wrote:
+> > CTL_RESET_SDIO register is specific to the TMIO MFD (tmio_mmc.c).
+> >
+> > Add a new hook host->reset for performing a platform-specific reset
+> > sequence, and move CTL_RESET_SDIO over there.
+> >
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>
+> I like it in general.
+>
+> > +static void tmio_mmc_reset(struct tmio_mmc_host *host)
+> > +{
+> > +     sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0000);
+> > +     usleep_range(10000, 11000);
+> > +     sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0001);
+> > +     usleep_range(10000, 11000);
+> > +}
+> > +
+>
+> Are you sure resetting SDIO works independently of resetting SD? Maybe
+> we should add resetting SD here, too, to keep the pattern...
 
-Changes in v2:
-  - Preserve the current sequence for tmio_mmc.c
+I am not 100% sure
+since I do not have this hardware.
 
- drivers/mmc/host/tmio_mmc.c      | 17 +++++++++++++++++
- drivers/mmc/host/tmio_mmc.h      |  1 +
- drivers/mmc/host/tmio_mmc_core.c |  8 +++-----
- 3 files changed, 21 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
-index e04c322..00d291c 100644
---- a/drivers/mmc/host/tmio_mmc.c
-+++ b/drivers/mmc/host/tmio_mmc.c
-@@ -78,6 +78,22 @@ static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
- 	tmio_mmc_clk_start(host);
- }
- 
-+static void tmio_mmc_reset(struct tmio_mmc_host *host)
-+{
-+	/* FIXME - should we set stop clock reg here */
-+	sd_ctrl_write16(host, CTL_RESET_SD, 0x0000);
-+	sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0000);
-+	usleep_range(10000, 11000);
-+	sd_ctrl_write16(host, CTL_RESET_SD, 0x0001);
-+	sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0001);
-+	usleep_range(10000, 11000);
-+
-+	if (host->pdata->flags & TMIO_MMC_SDIO_IRQ) {
-+		sd_ctrl_write16(host, CTL_SDIO_IRQ_MASK, host->sdio_irq_mask);
-+		sd_ctrl_write16(host, CTL_TRANSACTION_CTL, 0x0001);
-+	}
-+}
-+
- #ifdef CONFIG_PM_SLEEP
- static int tmio_mmc_suspend(struct device *dev)
- {
-@@ -156,6 +172,7 @@ static int tmio_mmc_probe(struct platform_device *pdev)
- 	/* SD control register space size is 0x200, 0x400 for bus_shift=1 */
- 	host->bus_shift = resource_size(res) >> 10;
- 	host->set_clock = tmio_mmc_set_clock;
-+	host->reset = tmio_mmc_reset;
- 
- 	host->mmc->f_max = pdata->hclk;
- 	host->mmc->f_min = pdata->hclk / 512;
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index e6aa13a..a1a661b 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -176,6 +176,7 @@ struct tmio_mmc_host {
- 	int (*multi_io_quirk)(struct mmc_card *card,
- 			      unsigned int direction, int blk_size);
- 	int (*write16_hook)(struct tmio_mmc_host *host, int addr);
-+	void (*reset)(struct tmio_mmc_host *host);
- 	void (*hw_reset)(struct tmio_mmc_host *host);
- 	void (*prepare_tuning)(struct tmio_mmc_host *host, unsigned long tap);
- 	bool (*check_scc_error)(struct tmio_mmc_host *host);
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 0611824..9bcc760 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -164,19 +164,14 @@ static void tmio_mmc_reset(struct tmio_mmc_host *host)
- {
- 	/* FIXME - should we set stop clock reg here */
- 	sd_ctrl_write16(host, CTL_RESET_SD, 0x0000);
--	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG)
--		sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0000);
- 	usleep_range(10000, 11000);
- 	sd_ctrl_write16(host, CTL_RESET_SD, 0x0001);
--	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG)
--		sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0001);
- 	usleep_range(10000, 11000);
- 
- 	if (host->pdata->flags & TMIO_MMC_SDIO_IRQ) {
- 		sd_ctrl_write16(host, CTL_SDIO_IRQ_MASK, host->sdio_irq_mask);
- 		sd_ctrl_write16(host, CTL_TRANSACTION_CTL, 0x0001);
- 	}
--
- }
- 
- static void tmio_mmc_reset_work(struct work_struct *work)
-@@ -1212,6 +1207,9 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
- 				  mmc->caps & MMC_CAP_NEEDS_POLL ||
- 				  !mmc_card_is_removable(mmc));
- 
-+	if (!_host->reset)
-+		_host->reset = tmio_mmc_reset;
-+
- 	/*
- 	 * On Gen2+, eMMC with NONREMOVABLE currently fails because native
- 	 * hotplug gets disabled. It seems RuntimePM related yet we need further
+> > --- a/drivers/mmc/host/tmio_mmc_core.c
+> > +++ b/drivers/mmc/host/tmio_mmc_core.c
+> > @@ -164,14 +164,13 @@ static void tmio_mmc_reset(struct tmio_mmc_host *host)
+> >  {
+> >       /* FIXME - should we set stop clock reg here */
+> >       sd_ctrl_write16(host, CTL_RESET_SD, 0x0000);
+> > -     if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG)
+> > -             sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0000);
+> >       usleep_range(10000, 11000);
+> >       sd_ctrl_write16(host, CTL_RESET_SD, 0x0001);
+> > -     if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG)
+> > -             sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0001);
+> >       usleep_range(10000, 11000);
+>
+> ... and have this simplified reset pattern either also in a seperate
+> function, or doing...
+>
+> >
+> > +     if (host->reset)
+> > +             host->reset(host);
+>         else
+>                 simplified_reset_pattern
+>
+> ?
+>
+> What's your opinion?
+
+
+OK, I will send v2.
+
+
+
+> Regards,
+>
+>    Wolfram
+>
+
+
 -- 
-2.7.4
+Best Regards
+Masahiro Yamada
