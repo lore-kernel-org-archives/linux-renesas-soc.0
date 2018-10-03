@@ -1,71 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:32264 "EHLO
+Received: from relmlor3.renesas.com ([210.160.252.173]:2159 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728979AbeJATsw (ORCPT
+        by vger.kernel.org with ESMTP id S1726617AbeJCRx4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 1 Oct 2018 15:48:52 -0400
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v7 3/3] ARM: dts: r9a06g032: Add pinctrl node
-Date: Mon,  1 Oct 2018 14:10:26 +0100
-Message-Id: <20181001131026.14635-4-phil.edworthy@renesas.com>
-In-Reply-To: <20181001131026.14635-1-phil.edworthy@renesas.com>
-References: <20181001131026.14635-1-phil.edworthy@renesas.com>
+        Wed, 3 Oct 2018 13:53:56 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Carlo Caione <carlo@endlessm.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alex Smith <alex.smith@imgtec.com>, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 0/6] Add uSD and eMMC to iwg23s
+Date: Wed,  3 Oct 2018 12:05:38 +0100
+Message-Id: <1538564744-15590-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This provides a pinctrl driver for the Renesas R9A06G032 SoC
+Dear All,
 
-Based on a patch originally written by Michel Pollet at Renesas.
+this series includes all that is necessary for uSD and
+eMMC to work on the iwg23s board, powered by the RZ/G1C
+(a.k.a. r8a77470).
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
-v7:
- - No changes.
+This work applies on top of next-20181002
 
-v6:
- - No changes.
+Thanks,
+Fab
 
-v5:
- - No changes.
+Fabrizio Castro (6):
+  dt-bindings: mmc: renesas_sdhi: Add r8a77470 support
+  pinctrl: sh-pfc: r8a77470: Add SDHI support
+  mmc: renesas_sdhi: Add r8a77470 SDHI1 support
+  ARM: dts: r8a77470: Add SDHI0 support
+  ARM: dts: r8a77470: Add SDHI1 support
+  ARM: dts: iwg23s-sbc: Add uSD and eMMC support
 
-v4:
- - No changes.
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt |   6 +-
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts          |  76 ++++++++++
+ arch/arm/boot/dts/r8a77470.dtsi                    |  28 +++-
+ drivers/mmc/host/Kconfig                           |   4 +-
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c      |   6 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a77470.c              | 162 ++++++++++++++++++++-
+ 6 files changed, 273 insertions(+), 9 deletions(-)
 
-v3:
- - No changes.
-
-v2:
- - Add "renesas,rzn1-pinctrl" compatible fallback string
- - Register size corrected.
----
- arch/arm/boot/dts/r9a06g032.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index eaf94976ed6d..2322268bc862 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -165,6 +165,14 @@
- 			status = "disabled";
- 		};
- 
-+		pinctrl: pin-controller@40067000 {
-+			compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
-+			reg = <0x40067000 0x1000>, <0x51000000 0x480>;
-+			clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
-+			clock-names = "bus";
-+			status = "okay";
-+		};
-+
- 		gic: gic@44101000 {
- 			compatible = "arm,cortex-a7-gic", "arm,gic-400";
- 			interrupt-controller;
 -- 
-2.17.1
+2.7.4
