@@ -1,68 +1,92 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34665 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726664AbeJLSxD (ORCPT
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:36513 "EHLO
+        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbeJCKDO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Oct 2018 14:53:03 -0400
-Date: Fri, 12 Oct 2018 13:21:01 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: pwm: renesas: tpu: document R8A779{7|8}0
- bindings
-Message-ID: <20181012112101.GD30261@ulmo>
-References: <ea104bc7-ee9a-b638-36da-6c6af1e622be@cogentembedded.com>
+        Wed, 3 Oct 2018 06:03:14 -0400
+Subject: Re: [PATCH] hwmon: Fix the 'No sensors found' error after replacing
+ the parameter NULL by the actual device
+To: Guenter Roeck <linux@roeck-us.net>, broonie@kernel.org,
+        geert+renesas@glider.be, linux-hwmon@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
+        linux-renesas-soc@vger.kernel.org, h-inayoshi@jinso.co.jp,
+        nv-dung@jinso.co.jp, na-hoan@jinso.co.jp
+References: <1538469324-8028-1-git-send-email-cv-dong@jinso.co.jp>
+ <031294c5-2fd5-f6cc-6762-30e987c5029c@roeck-us.net>
+ <84db03da-fb58-0f77-cfb4-317b434376f8@jinso.co.jp>
+ <aada98e3-fedd-6f8e-2e95-9a924fc871da@roeck-us.net>
+From: Cao Van Dong <cv-dong@jinso.co.jp>
+Message-ID: <702ed5ec-bae4-4ce7-11cd-6900e5179d50@jinso.co.jp>
+Date: Wed, 3 Oct 2018 12:16:44 +0900
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="veXX9dWIonWZEC6h"
-Content-Disposition: inline
-In-Reply-To: <ea104bc7-ee9a-b638-36da-6c6af1e622be@cogentembedded.com>
+In-Reply-To: <aada98e3-fedd-6f8e-2e95-9a924fc871da@roeck-us.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Dear Guenter-san,
 
---veXX9dWIonWZEC6h
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for your comment!
 
-On Sat, Sep 22, 2018 at 10:57:29PM +0300, Sergei Shtylyov wrote:
-> Document the R-Car V3{M|H} (R8A779{7|8}0) SoC in the Renesas TPU bindings;
-> the TPU hardware in those is the Renesas standard 4-channel timer pulse
-> unit.
->=20
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->=20
-> ---
-> This patch is against Linus' repo plus the bindings fix just reposted...
->=20
->  Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt |    4 ++++
->  1 file changed, 4 insertions(+)
+>>>> In __hwmon_device_register() function of hwmon.c, we have assigned 
+>>>> 'dev' directly to 'hdev->parent'.
+>>>> Formerly, when registering the hwmon device, we pass NULL as the 
+>>>> device. This is not affected.
+>>>> Recently, the developer has replaced the parameter NULL as the 
+>>>> device by the actual device.
+>>>> This causes the "No sensors found" error. This patch is to fix this 
+>>>> error.
+>>>>
+>>>> This patch is based on the v4.19-rc3 tag.
+>>>>
+>>>
+>>> NACK.
+>>>
+>>> This is wrong. The passed device is the hwmon driver's parent 
+>>> device. Using that device's
+>>> parent would be wrong. Indeed, that device could be a platform 
+>>> device with no parent.
+>> Maybe I did not know all problem. If I'm wrong, sorry for the 
+>> inconvenience.
+>>
+>>> The problem must be fixed in the calling code.
+>>>
+>> I will see the feedback from Marc-san.
+>>
+>
+> The "No sensors found" message is from the "sensors" application.
+> The device type associated with the passed device is unknown to
+> libsensors (it is parsed from the parent device subsystem name -
+> what is that, anyway ?). This could be addressed in libsensors,
+> or the thermal subsystem could attach itself to a known subsystem,
+> or the thermal subsystem must pass a pointer the parent device.
+>
+> Again, trying to address the problem in the hwmon core is simply wrong.
+>
+I will create other patch(v2) to fix for this error from the calling 
+function.
 
-Applied, thanks.
 
-Thierry
+Regards,
+Dong/Jinso
 
---veXX9dWIonWZEC6h
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvAg50ACgkQ3SOs138+
-s6FHUA//e6N5juO43+gd8+wMUnppTelT59lGPlabiVlDrr7hrlQzolj9Dw3skdvl
-22EeGrG1ZlioUutXapb8JYbgf6OMFE+2FW9EQ9EXGdoKz/d1tCTvtGOvkHWURHsU
-xnGvxznogRVmqR4uS9lp4OaSQSkq5dDw+qxBFCEyfZR0caWtZXT9zBUSlx2LyP+4
-hyskqJPX1/B+9+uM8BcfI6P/EroNkYyYSmL81O+pR4M0OkL6pW3XPWky9YXLCNdE
-tWxtR5HcTJdVuoYC+LfNWeHkgj4LSTVjDv+oxM3/Y76hcLa130+LDZdaaG00km1T
-rBVIHM7cJLJDhrwykk694QxO2AyBlV1vKPbYYVyFxxPf1Pb/hbMgonlaJnd8rVO2
-muNGS2HQcx+lB3/xPp8bHH/KWu2uWxKZzcCTHoHyToyMsz+g3THD5SMydQ/Xphnk
-RRjRma3/ngbfmfuEz4OMG1vQNmQFgoYX0voto+USl7VPlm2gFl8IJjgB1EfVm8gm
-mKxlzIyZgpkbBgI6zOa0bF+hhgP5tg65ITru6ycQAaWieTOJNZnnOD/JmGObv1uK
-bsfWJ1v1p3pO9V0Uoi8qiT9Y+cXt5FR8a7bBkvWnF7b/ih+jMBuxTorMJMUzkKTL
-UKuQah6cvocbEfE5mfffIm7AcokESVGdJRPiAGqFKRevLkU4xxc=
-=bDLK
------END PGP SIGNATURE-----
-
---veXX9dWIonWZEC6h--
+>>>> ---
+>>>>   drivers/hwmon/hwmon.c | 2 +-
+>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
+>>>> index 33d5128..7c8d3cb 100644
+>>>> --- a/drivers/hwmon/hwmon.c
+>>>> +++ b/drivers/hwmon/hwmon.c
+>>>> @@ -610,7 +610,7 @@ __hwmon_device_register(struct device *dev, 
+>>>> const char *name, void *drvdata,
+>>>>         hwdev->name = name;
+>>>>       hdev->class = &hwmon_class;
+>>>> -    hdev->parent = dev;
+>>>> +    hdev->parent = dev->parent;
+>>>>       hdev->of_node = dev ? dev->of_node : NULL;
+>>>>       hwdev->chip = chip;
+>>>>       dev_set_drvdata(hdev, drvdata);
