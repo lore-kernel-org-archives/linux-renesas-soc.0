@@ -1,58 +1,103 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:51704 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728120AbeJKQVe (ORCPT
+Received: from conuserg-09.nifty.com ([210.131.2.76]:27413 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726617AbeJCSZW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 Oct 2018 12:21:34 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Arnd Bergmann <arnd@arndb.de>, Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
+        Wed, 3 Oct 2018 14:25:22 -0400
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
         linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 0/2] arm: renesas: Move SoC Kconfig symbols to drivers/soc/renesas/
-Date: Thu, 11 Oct 2018 10:55:06 +0200
-Message-Id: <20181011085508.5234-1-geert+renesas@glider.be>
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/2] mmc: tmio: remove TMIO_MMC_HAVE_HIGH_REG flag
+Date: Wed,  3 Oct 2018 20:36:27 +0900
+Message-Id: <1538566587-29452-3-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1538566587-29452-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1538566587-29452-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+TMIO_MMC_HAVE_HIGH_REG is confusing due to its counter-intuitive name.
 
-As pointed out by Arnd[*], there are lots of SoC-specific Kconfig
-symbols in the Renesas section of arch/arm64/Kconfig.platforms, while
-other vendors expose a single Kconfig symbol there.
+All the TMIO MMC variants (TMIO MMC, Renesas SDHI, UniPhier SD) actually
+have high registers.  It is just that each of them implements its own
+registers there.  The original IP from Panasonic only defines registers
+0x00-0xff in the bus_shift=1 review.  The register area above them is
+platform-dependent.
 
-Hence this patch series moves them to drivers/soc/renesas/Kconfig,
-reducing the footprint and associated amount of churn in
-arch/arm64/Kconfig.platforms, while preserving the benefits for users of
-automatic selection of e.g. clock and pinctrl drivers.
+In fact, TMIO_MMC_HAVE_HIGH_REG is set only by tmio-mmc.c and used to
+test the accessibility of CTL_SDIO_REGS.  Because it is specific to
+the TMIO MFD variant, the right thing to do is to move such registers
+to tmio_mmc.c and delete the TMIO_MMC_HAVE_HIGH_REG flag.
 
-As my OCD just loves consistency, the second patch does the same for
-arm32 SoCs.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Note that e.g. drivers/clk/ is included before drivers/soc/.  Hence when
-COMPILE_TEST=y and ARCH_RENESAS=n, questions will be asked about clock
-drivers before they can be auto-selected by the corresponding
-SoC-specific Kconfig symbols.
+Changes in v2: None
 
-Of course this will trigger some defconfig updates later...
+ drivers/mmc/host/tmio_mmc.c | 7 +++++--
+ drivers/mmc/host/tmio_mmc.h | 3 ---
+ include/linux/mfd/tmio.h    | 7 -------
+ 3 files changed, 5 insertions(+), 12 deletions(-)
 
-Thanks for your comments!
-
-[*] https://www.spinics.net/lists/arm-kernel/msg679390.html
-
-Geert Uytterhoeven (2):
-  [RFC] arm64: renesas: Move SoC Kconfig symbols to drivers/soc/renesas/
-  [RFC] ARM: shmobile: Move SoC Kconfig symbols to drivers/soc/renesas/
-
- arch/arm/mach-shmobile/Kconfig | 101 -----------------
- arch/arm64/Kconfig.platforms   |  54 ---------
- drivers/soc/renesas/Kconfig    | 201 +++++++++++++++++++++++++++++----
- 3 files changed, 180 insertions(+), 176 deletions(-)
-
+diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
+index 00d291c..4e91020 100644
+--- a/drivers/mmc/host/tmio_mmc.c
++++ b/drivers/mmc/host/tmio_mmc.c
+@@ -24,6 +24,11 @@
+ 
+ #include "tmio_mmc.h"
+ 
++/* Registers specific to this variant */
++#define CTL_SDIO_REGS		0x100
++#define CTL_CLK_AND_WAIT_CTL	0x138
++#define CTL_RESET_SDIO		0x1e0
++
+ static void tmio_mmc_clk_start(struct tmio_mmc_host *host)
+ {
+ 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
+@@ -161,8 +166,6 @@ static int tmio_mmc_probe(struct platform_device *pdev)
+ 		goto cell_disable;
+ 	}
+ 
+-	pdata->flags |= TMIO_MMC_HAVE_HIGH_REG;
+-
+ 	host = tmio_mmc_host_alloc(pdev, pdata);
+ 	if (IS_ERR(host)) {
+ 		ret = PTR_ERR(host);
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index a1a661b..18b4308 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -47,9 +47,6 @@
+ #define CTL_RESET_SD 0xe0
+ #define CTL_VERSION 0xe2
+ #define CTL_SDIF_MODE 0xe6
+-#define CTL_SDIO_REGS 0x100
+-#define CTL_CLK_AND_WAIT_CTL 0x138
+-#define CTL_RESET_SDIO 0x1e0
+ 
+ /* Definitions for values the CTL_STOP_INTERNAL_ACTION register can take */
+ #define TMIO_STOP_STP		BIT(0)
+diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
+index 7786621..1e70060 100644
+--- a/include/linux/mfd/tmio.h
++++ b/include/linux/mfd/tmio.h
+@@ -62,13 +62,6 @@
+ #define TMIO_MMC_USE_GPIO_CD		BIT(5)
+ 
+ /*
+- * Some controllers doesn't have over 0x100 register.
+- * it is used to checking accessibility of
+- * CTL_SD_CARD_CLK_CTL / CTL_CLK_AND_WAIT_CTL
+- */
+-#define TMIO_MMC_HAVE_HIGH_REG		BIT(6)
+-
+-/*
+  * Some controllers have CMD12 automatically
+  * issue/non-issue register
+  */
 -- 
-2.17.1
+2.7.4
