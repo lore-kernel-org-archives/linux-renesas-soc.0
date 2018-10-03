@@ -1,33 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46259 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729124AbeJAThs (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:33954 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726617AbeJCRy0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 1 Oct 2018 15:37:48 -0400
-Date: Mon, 1 Oct 2018 15:00:01 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org,
+        Wed, 3 Oct 2018 13:54:26 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: dmaengine: usb-dmac: Add binding for r8a7744
-Message-ID: <20181001130001.tpnxjnxjwpu33f7d@verge.net.au>
-References: <1538052401-44249-1-git-send-email-biju.das@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1538052401-44249-1-git-send-email-biju.das@bp.renesas.com>
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 4/6] ARM: dts: r8a77470: Add SDHI0 support
+Date: Wed,  3 Oct 2018 12:05:42 +0100
+Message-Id: <1538564744-15590-5-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1538564744-15590-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1538564744-15590-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Sep 27, 2018 at 01:46:41PM +0100, Biju Das wrote:
-> This patch adds binding for r8a7744 (RZ/G1N).
-> 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+RZ/G1C comes with two different types of IP for the SDHI
+interfaces, SDHI0 and SDHI2 share the same IP type, and
+such an IP is also compatible with the one found in R-Car
+Gen2. SDHI1 IP on the other hand is compatible with R-Car
+Gen3 with internal DMA.
+This patch completes the SDHI support of the R-Car Gen2
+compatible IPs, including fixing the max-frequency
+definition of SDHI2, as it turns out there is a bug in
+Section 1.3.9 of the RZ/G1C Hardware User's Manual (Rev.
+1.00 Oct. 2017).
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+
+---
+v2:
+* New patch
+---
+ arch/arm/boot/dts/r8a77470.dtsi | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
+index 9e7f86d..e01df9c 100644
+--- a/arch/arm/boot/dts/r8a77470.dtsi
++++ b/arch/arm/boot/dts/r8a77470.dtsi
+@@ -412,6 +412,21 @@
+ 			status = "disabled";
+ 		};
+ 
++		sdhi0: sd@ee100000 {
++			compatible = "renesas,sdhi-r8a77470",
++				     "renesas,rcar-gen2-sdhi";
++			reg = <0 0xee100000 0 0x328>;
++			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 314>;
++			dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
++			       <&dmac1 0xcd>, <&dmac1 0xce>;
++			dma-names = "tx", "rx", "tx", "rx";
++			max-frequency = <156000000>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 314>;
++			status = "disabled";
++		};
++
+ 		sdhi2: sd@ee160000 {
+ 			compatible = "renesas,sdhi-r8a77470",
+ 				     "renesas,rcar-gen2-sdhi";
+@@ -421,7 +436,7 @@
+ 			dmas = <&dmac0 0xd3>, <&dmac0 0xd4>,
+ 			       <&dmac1 0xd3>, <&dmac1 0xd4>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+-			max-frequency = <97500000>;
++			max-frequency = <78000000>;
+ 			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
+ 			resets = <&cpg 312>;
+ 			status = "disabled";
+-- 
+2.7.4
