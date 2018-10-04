@@ -1,76 +1,80 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:42609 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727077AbeJDRJa (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Oct 2018 13:09:30 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Simon Horman <horms@verge.net.au>
-CC: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Thu, 4 Oct 2018 12:13:45 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: RE: [PATCH RESEND] ARM: dts: iwg23s-sbc: Add pinctl support for
+Subject: Re: [PATCH RESEND] ARM: dts: iwg23s-sbc: Add pinctl support for
  EtherAVB
-Date: Thu, 4 Oct 2018 10:16:49 +0000
-Message-ID: <OSAPR01MB2098788AC7BA34C1DBAE8F95B8EA0@OSAPR01MB2098.jpnprd01.prod.outlook.com>
+Message-ID: <20181004101344.ppufmao3fhtips4i@verge.net.au>
 References: <1538555523-19644-1-git-send-email-biju.das@bp.renesas.com>
- <20181004101344.ppufmao3fhtips4i@verge.net.au>
-In-Reply-To: <20181004101344.ppufmao3fhtips4i@verge.net.au>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538555523-19644-1-git-send-email-biju.das@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Wed, Oct 03, 2018 at 09:32:03AM +0100, Biju Das wrote:
+> Adding pinctrl support for EtherAVB interface.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Hi Simon,
+> 
+> As per the below discussion,I need to resend this patch for V.21
+> 
+> https://patchwork.kernel.org/patch/10558315/
+> 
+> Are you happy to take this patch?
+> 
+> This patch is tested against renesas-dev branch
 
-Hi Simon,
+Hi Biju,
 
-Thanks for the feedback.
+As I understand it this patch has dependencies which should be included
+in v4.20-rc1. If that understanding is correct then I would prefer
+to wait until v4.20-rc1 is released before I accept this patch
+so that I can accept it into a branch based on v4.20-rc1 which will
+have the dependency present.
 
-> Subject: Re: [PATCH RESEND] ARM: dts: iwg23s-sbc: Add pinctl support for
-> EtherAVB
->
-> On Wed, Oct 03, 2018 at 09:32:03AM +0100, Biju Das wrote:
-> > Adding pinctrl support for EtherAVB interface.
-> >
-> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > Hi Simon,
-> >
-> > As per the below discussion,I need to resend this patch for V.21
-> >
-> > https://patchwork.kernel.org/patch/10558315/
-> >
-> > Are you happy to take this patch?
-> >
-> > This patch is tested against renesas-dev branch
->
-> Hi Biju,
->
-> As I understand it this patch has dependencies which should be included i=
-n
-> v4.20-rc1. If that understanding is correct then I would prefer to wait u=
-ntil
-> v4.20-rc1 is released before I accept this patch so that I can accept it =
-into a
-> branch based on v4.20-rc1 which will have the dependency present.
-
-OK.
-
-Regards,
-Biju
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+> ---
+>  arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+> index 22da819..4ceff9c 100644
+> --- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+> +++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+> @@ -28,6 +28,9 @@
+>  };
+>  
+>  &avb {
+> +	pinctrl-0 = <&avb_pins>;
+> +	pinctrl-names = "default";
+> +
+>  	phy-handle = <&phy3>;
+>  	phy-mode = "gmii";
+>  	renesas,no-ether-link;
+> @@ -46,6 +49,11 @@
+>  };
+>  
+>  &pfc {
+> +	avb_pins: avb {
+> +		groups = "avb_mdio", "avb_gmii_tx_rx";
+> +		function = "avb";
+> +	};
+> +
+>  	scif1_pins: scif1 {
+>  		groups = "scif1_data_b";
+>  		function = "scif1";
+> -- 
+> 2.7.4
+> 
