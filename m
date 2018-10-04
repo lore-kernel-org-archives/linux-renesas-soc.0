@@ -1,60 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45688 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726209AbeJVEPn (ORCPT
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:32972 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727499AbeJEDDI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:15:43 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Rob Clark <robdclark@gmail.com>,
-        David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Subject: [PATCH 2/6] gpu: drm: msm: disp: dpu1: dpu_kms: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:07 +0200
-Message-Id: <20181021200012.1583-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200012.1583-1-wsa+renesas@sang-engineering.com>
-References: <20181021200012.1583-1-wsa+renesas@sang-engineering.com>
+        Thu, 4 Oct 2018 23:03:08 -0400
+Received: by mail-lf1-f67.google.com with SMTP id o21-v6so7759130lfe.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Oct 2018 13:08:18 -0700 (PDT)
+Date: Thu, 4 Oct 2018 22:08:15 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH] media: dt-bindings: media: rcar_vin: add device tree
+ support for r8a7744
+Message-ID: <20181004200815.GP24305@bigcity.dyn.berto.se>
+References: <1538668691-1780-1-git-send-email-biju.das@bp.renesas.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1538668691-1780-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
+Hi Biju-san,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Thanks for your patch.
 
-Build tested only. buildbot is happy.
+On 2018-10-04 16:58:11 +0100, Biju Das wrote:
+> Add compatible strings for r8a7744. No driver change is needed as
+> "renesas,rcar-gen2-vin" will activate the right code.However, it is good
+> practice to document compatible strings for the specific SoC as this
+> allows SoC specific changes to the driver if needed, in addition to
+> document SoC support and therefore allow checkpatch.pl to validate
+> compatible string values.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Acked-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-index 0a683e65a9f3..d1a69b490fd1 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-@@ -1270,8 +1270,7 @@ static int dpu_dev_remove(struct platform_device *pdev)
- static int __maybe_unused dpu_runtime_suspend(struct device *dev)
- {
- 	int rc = -1;
--	struct platform_device *pdev = to_platform_device(dev);
--	struct dpu_kms *dpu_kms = platform_get_drvdata(pdev);
-+	struct dpu_kms *dpu_kms = dev_get_drvdata(dev);
- 	struct drm_device *ddev;
- 	struct dss_module_power *mp = &dpu_kms->mp;
- 
-@@ -1297,8 +1296,7 @@ static int __maybe_unused dpu_runtime_suspend(struct device *dev)
- static int __maybe_unused dpu_runtime_resume(struct device *dev)
- {
- 	int rc = -1;
--	struct platform_device *pdev = to_platform_device(dev);
--	struct dpu_kms *dpu_kms = platform_get_drvdata(pdev);
-+	struct dpu_kms *dpu_kms = dev_get_drvdata(dev);
- 	struct drm_device *ddev;
- 	struct dss_module_power *mp = &dpu_kms->mp;
- 
+> ---
+> This patch is tested against linux-next next next-20181004 & media_tree
+> ---
+>  Documentation/devicetree/bindings/media/rcar_vin.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
+> index 2f42005..d329a4e 100644
+> --- a/Documentation/devicetree/bindings/media/rcar_vin.txt
+> +++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
+> @@ -11,6 +11,7 @@ on Gen3 platforms to a CSI-2 receiver.
+>  
+>   - compatible: Must be one or more of the following
+>     - "renesas,vin-r8a7743" for the R8A7743 device
+> +   - "renesas,vin-r8a7744" for the R8A7744 device
+>     - "renesas,vin-r8a7745" for the R8A7745 device
+>     - "renesas,vin-r8a7778" for the R8A7778 device
+>     - "renesas,vin-r8a7779" for the R8A7779 device
+> -- 
+> 2.7.4
+> 
+
 -- 
-2.19.0
+Regards,
+Niklas S�derlund
