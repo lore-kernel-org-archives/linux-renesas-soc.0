@@ -1,46 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:32263 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbeJCOOi (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45436 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727479AbeJDQZe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Oct 2018 10:14:38 -0400
-From: Cao Van Dong <cv-dong@jinso.co.jp>
-To: broonie@kernel.org, geert+renesas@glider.be,
-        linux-pm@vger.kernel.org
-Cc: marc.zyngier@arm.com, kuninori.morimoto.gx@renesas.com,
-        yoshihiro.shimoda.uh@renesas.com,
-        linux-renesas-soc@vger.kernel.org, h-inayoshi@jinso.co.jp,
-        nv-dung@jinso.co.jp, na-hoan@jinso.co.jp, cv-dong@jinso.co.jp
-Subject: [PATCH v2] thermal_hwmon: Fix the 'No sensors found' error after replacing the parameter NULL by the actual device
-Date: Wed,  3 Oct 2018 16:25:51 +0900
-Message-Id: <1538551551-3431-1-git-send-email-cv-dong@jinso.co.jp>
+        Thu, 4 Oct 2018 12:25:34 -0400
+Date: Thu, 4 Oct 2018 11:33:06 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a779{7|8}0: add PWM support
+Message-ID: <20181004093305.jr4i3qsumgmwsejn@verge.net.au>
+References: <fb4eb097-40aa-82df-68c7-9b727c858a8b@cogentembedded.com>
+ <10f8a73a-5f44-3738-4e99-84732ec66c47@cogentembedded.com>
+ <CAMuHMdWAHVYZJqGFSKh138h+oyAfbWPMhxJpq8srKGX+Yzks1w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWAHVYZJqGFSKh138h+oyAfbWPMhxJpq8srKGX+Yzks1w@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Formerly, when registering the hwmon device, we pass NULL as the device. It's not a problem.
-Recently, the developer has replaced the parameter NULL as the device by the actual device.
-This causes the "No sensors found" error. Therefore, instead of using the device we will use pass
-the parent of that device as parameter. This will sync with the processor on the hwmon core.
-This patch is to fix this error.
+On Tue, Oct 02, 2018 at 09:16:30AM +0200, Geert Uytterhoeven wrote:
+> On Mon, Oct 1, 2018 at 10:26 PM Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+> > Describe PWMs in the R8A779{7|8}0 device trees.
+> >
+> > Based on the original (and large) patches by Vladimir Barinov.
+> >
+> > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch is based on the v4.19-rc3 tag.
-
----
- drivers/thermal/thermal_hwmon.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/thermal/thermal_hwmon.c b/drivers/thermal/thermal_hwmon.c
-index 40c69a5..a918ba9 100644
---- a/drivers/thermal/thermal_hwmon.c
-+++ b/drivers/thermal/thermal_hwmon.c
-@@ -143,7 +143,7 @@ int thermal_add_hwmon_sysfs(struct thermal_zone_device *tz)
- 	INIT_LIST_HEAD(&hwmon->tz_list);
- 	strlcpy(hwmon->type, tz->type, THERMAL_NAME_LENGTH);
- 	strreplace(hwmon->type, '-', '_');
--	hwmon->device = hwmon_device_register_with_info(&tz->device, hwmon->type,
-+	hwmon->device = hwmon_device_register_with_info(tz->device.parent, hwmon->type,
- 							hwmon, NULL, NULL);
- 	if (IS_ERR(hwmon->device)) {
- 		result = PTR_ERR(hwmon->device);
--- 
-2.7.4
+Thanks, applied for v4.21.
