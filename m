@@ -1,139 +1,127 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:38508 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726692AbeJ3TiA (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:54482 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725998AbeJEFb3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Oct 2018 15:38:00 -0400
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        devicetree@vger.kernel.org
-Subject: [PATCH v2 1/2] dt-bindings/interrupt-controller: rzn1: Add RZ/N1 gpio irq mux binding
-Date: Tue, 30 Oct 2018 10:44:37 +0000
-Message-Id: <20181030104438.27827-2-phil.edworthy@renesas.com>
-In-Reply-To: <20181030104438.27827-1-phil.edworthy@renesas.com>
-References: <20181030104438.27827-1-phil.edworthy@renesas.com>
+        Fri, 5 Oct 2018 01:31:29 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Jacopo Mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: [PATCH v2 2/5] i2c: adv748x: reorder register writes for CSI-2 transmitters initialization
+Date: Fri, 05 Oct 2018 01:36:11 +0300
+Message-ID: <4501829.jIgCaKJ1df@avalon>
+In-Reply-To: <20181004204138.2784-3-niklas.soderlund@ragnatech.se>
+References: <20181004204138.2784-1-niklas.soderlund@ragnatech.se> <20181004204138.2784-3-niklas.soderlund@ragnatech.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device binding documentation for the Renesas RZ/N1 GPIO interrupt
-multiplexer.
+Hi Niklas,
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
-v2:
- - Use interrupt-map to allow the GPIO controller info to be specified
-   as part of the irq.
- - Don't show status in binding examples.
- - Don't show the soc/board split in binding doc.
----
- .../interrupt-controller/renesas,rzn1-mux.txt | 92 +++++++++++++++++++
- 1 file changed, 92 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt
+Thank you for the patch.
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt
-new file mode 100644
-index 000000000000..0b4ba27c00ef
---- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt
-@@ -0,0 +1,92 @@
-+* Renesas RZ/N1 GPIO Interrupt Multiplexer
-+
-+On Renesas RZ/N1 devices, there are several GPIO Controllers each with a number
-+of interrupt outputs. All of the interrupts from the GPIO Controllers are passed
-+to the GPIO Interrupt Multiplexer, which selects a sub-set of the interrupts to
-+pass onto the system interrupt controller.
-+
-+A single node in the device tree is used to describe the GPIO IRQ Muxer.
-+
-+Required properties:
-+- compatible: SoC-specific compatible string "renesas,<soc-specific>-gpioirqmux"
-+  followed by "renesas,rzn1-gpioirqmux" as fallback. The SoC-specific compatible
-+  strings must be one of:
-+	"renesas,r9a06g032-gpioirqmux" for RZ/N1D
-+	"renesas,r9a06g033-gpioirqmux" for RZ/N1S
-+- interrupt-controller: Identifies the node as an interrupt controller.
-+- #interrupt-cells: should be <1>. The meaning of the cells is the input
-+   interrupt index, 0 to 95.
-+- reg: Base address and size of GPIO IRQ Muxer registers.
-+- interrupts: This is a list of interrupt specifiers. Each interrupt consists of
-+   three numbers that represent:
-+     - (a) the index of the GPIO Interrupt Multiplexer output interrupt (0..7)
-+     - (b) the index of the GPIO Controller input interrupt (0..2)
-+     - (c) the interrupt index of the GPIO Controller input interrupt (0..31).
-+- interrupt-parent: A phandle for a local node that specifies an interrupt-map.
-+   The interrupt-map node must specify #interrupt-cells = <3>, and an
-+   interrupt-map property. The interrupt-map is used to translate the interrupt
-+   specifier to the output interrupts. It is used in conjunction with an
-+   interrupt-map-mask property to mask (b) and (c) from the interrupt specifier
-+   so that essentially there is a direct map from (a) to the output interrupt.
-+   Therefore (b) and (c) can be used to determine the interrupt source and
-+   configure the hardware accordingly. For information on interrupts,
-+   see Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
-+
-+Example:
-+
-+	The following is an example for the RZ/N1D SoC.
-+
-+	gpioirqmux: gpioirqmux@51000480 {
-+		compatible = "renesas,r9a06g032-gpioirqmux",
-+				"renesas,rzn1-gpioirqmux";
-+		reg = <0x51000480 0x20>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <1>;
-+		interrupt-parent = <&gpioirqmux_map>;
-+		interrupts =
-+			<0 1 17>,	/* gpio1a 17 */
-+			<1 1 24>,	/* gpio1a 24 */
-+			<2 1 26>;	/* gpio1a 26 */
-+
-+		gpioirqmux_map: gpioirqmux-map {
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-map-mask = <7 0 0>;
-+			interrupt-map =
-+				<0 0 0 &gic GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+				<1 0 0 &gic GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-+				<2 0 0 &gic GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
-+				<3 0 0 &gic GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
-+				<4 0 0 &gic GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>,
-+				<5 0 0 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>,
-+				<6 0 0 &gic GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>,
-+				<7 0 0 &gic GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+	};
-+
-+	gpio1: gpio@5000c000 {
-+		compatible = "snps,dw-apb-gpio";
-+		reg = <0x5000c000 0x80>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clock-names = "bus";
-+		clocks = <&sysctrl R9A06G032_HCLK_GPIO1>;
-+
-+		gpio1a: gpio-controller@0 {
-+			compatible = "snps,dw-apb-gpio-port";
-+			bank-name = "gpio1a";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			snps,nr-gpios = <32>;
-+			reg = <0>;
-+
-+			interrupt-controller;
-+			interrupt-parent = <&gpioirqmux>;
-+			interrupts =   < 0  1  2  3  4  5  6  7
-+					 8  9 10 11 12 13 14 15
-+					16 17 18 19 20 21 22 23
-+					24 25 26 27 28 29 30 31 >;
-+			#interrupt-cells = <2>;
-+		};
-+	};
--- 
-2.17.1
+On Thursday, 4 October 2018 23:41:35 EEST Niklas S=F6derlund wrote:
+> From: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+>=20
+> Reorder the initialization order of registers to allow for refactoring.
+> The move could have been done at the same time as the refactoring but
+> since the documentation about some registers involved are missing do it
+> separately.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  drivers/media/i2c/adv748x/adv748x-core.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c
+> b/drivers/media/i2c/adv748x/adv748x-core.c index
+> 6854d898fdd1f192..721ed6552bc1cde6 100644
+> --- a/drivers/media/i2c/adv748x/adv748x-core.c
+> +++ b/drivers/media/i2c/adv748x/adv748x-core.c
+> @@ -383,8 +383,6 @@ static const struct adv748x_reg_value
+> adv748x_init_txa_4lane[] =3D { {ADV748X_PAGE_IO, 0x0c, 0xe0},	/* Enable
+> LLC_DLL & Double LLC Timing */ {ADV748X_PAGE_IO, 0x0e, 0xdd},	/*
+> LLC/PIX/SPI PINS TRISTATED AUD */
+>=20
+> -	{ADV748X_PAGE_TXA, 0x00, 0x84},	/* Enable 4-lane MIPI */
+> -	{ADV748X_PAGE_TXA, 0x00, 0xa4},	/* Set Auto DPHY Timing */
+>  	{ADV748X_PAGE_TXA, 0xdb, 0x10},	/* ADI Required Write */
+>  	{ADV748X_PAGE_TXA, 0xd6, 0x07},	/* ADI Required Write */
+>  	{ADV748X_PAGE_TXA, 0xc4, 0x0a},	/* ADI Required Write */
+> @@ -392,6 +390,9 @@ static const struct adv748x_reg_value
+> adv748x_init_txa_4lane[] =3D { {ADV748X_PAGE_TXA, 0x72, 0x11},	/* ADI
+> Required Write */
+>  	{ADV748X_PAGE_TXA, 0xf0, 0x00},	/* i2c_dphy_pwdn - 1'b0 */
+>=20
+> +	{ADV748X_PAGE_TXA, 0x00, 0x84},	/* Enable 4-lane MIPI */
+> +	{ADV748X_PAGE_TXA, 0x00, 0xa4},	/* Set Auto DPHY Timing */
+> +
+>  	{ADV748X_PAGE_TXA, 0x31, 0x82},	/* ADI Required Write */
+>  	{ADV748X_PAGE_TXA, 0x1e, 0x40},	/* ADI Required Write */
+>  	{ADV748X_PAGE_TXA, 0xda, 0x01},	/* i2c_mipi_pll_en - 1'b1 */
+> @@ -435,17 +436,18 @@ static const struct adv748x_reg_value
+> adv748x_init_txb_1lane[] =3D { {ADV748X_PAGE_SDP, 0x31, 0x12},	/* ADI
+> Required Write */
+>  	{ADV748X_PAGE_SDP, 0xe6, 0x4f},  /* V bit end pos manually in NTSC */
+>=20
+> -	{ADV748X_PAGE_TXB, 0x00, 0x81},	/* Enable 1-lane MIPI */
+> -	{ADV748X_PAGE_TXB, 0x00, 0xa1},	/* Set Auto DPHY Timing */
+>  	{ADV748X_PAGE_TXB, 0xd2, 0x40},	/* ADI Required Write */
+>  	{ADV748X_PAGE_TXB, 0xc4, 0x0a},	/* ADI Required Write */
+>  	{ADV748X_PAGE_TXB, 0x71, 0x33},	/* ADI Required Write */
+>  	{ADV748X_PAGE_TXB, 0x72, 0x11},	/* ADI Required Write */
+>  	{ADV748X_PAGE_TXB, 0xf0, 0x00},	/* i2c_dphy_pwdn - 1'b0 */
+> +
+> +	{ADV748X_PAGE_TXB, 0x00, 0x81},	/* Enable 1-lane MIPI */
+> +	{ADV748X_PAGE_TXB, 0x00, 0xa1},	/* Set Auto DPHY Timing */
+> +
+
+This is pretty hard to review, as there's a bunch of undocumented register=
+=20
+writes. I think the first write is safe, as the tables are written immediat=
+ely=20
+following a software reset, and the default value of the register is 0x81=20
+(CSI-TX disabled, 1 lane). The second write, however, enables usage of the=
+=20
+computed DPHY parameters, and I don't know whether the undocumented registe=
+r=20
+writes in-between may interact with that.
+
+That being said, this change enables further important refactoring, so I'm=
+=20
+tempted to accept it. I assume you've tested it and haven't noticed a=20
+regression. The part that still bothers me in particular is that the write =
+to=20
+register 0xf0 just above this takes the DPHY out of power down according to=
+=20
+the datasheet, and I wonder whether at that point the DPHY might not react =
+to=20
+that information. Have you analyzed the power-up sequence in section 9.5.1 =
+of=20
+the hardware manual ? I wonder whether the dphy_pwdn shouldn't be handled i=
+n=20
+the power up and power down sequences, which might involve also moving the=
+=20
+above four (and five for TXA) undocumented writes to the power up sequence =
+as=20
+well.
+
+>  	{ADV748X_PAGE_TXB, 0x31, 0x82},	/* ADI Required Write */
+>  	{ADV748X_PAGE_TXB, 0x1e, 0x40},	/* ADI Required Write */
+>  	{ADV748X_PAGE_TXB, 0xda, 0x01},	/* i2c_mipi_pll_en - 1'b1 */
+> -
+>  	{ADV748X_PAGE_WAIT, 0x00, 0x02},/* delay 2 */
+>  	{ADV748X_PAGE_TXB, 0x00, 0x21 },/* Power-up CSI-TX */
+>  	{ADV748X_PAGE_WAIT, 0x00, 0x01},/* delay 1 */
+
+=2D-=20
+Regards,
+
+Laurent Pinchart
