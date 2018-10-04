@@ -1,56 +1,83 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-Date: Fri, 5 Oct 2018 14:24:09 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Tony Lindgren <tony@atomide.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/12] i2c: omap: use core to detect 'no zero length'
- quirk
-Message-ID: <20181005122409.GH5433@kunai>
-References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
- <20180723202617.15230-5-wsa+renesas@sang-engineering.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:46440 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727077AbeJDRLM (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 4 Oct 2018 13:11:12 -0400
+Date: Thu, 4 Oct 2018 12:18:33 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 3/3] ARM: dts: r9a06g032: Add pinctrl node
+Message-ID: <20181004101833.jlopmzmyx6nkjnux@verge.net.au>
+References: <20181001131026.14635-1-phil.edworthy@renesas.com>
+ <20181001131026.14635-4-phil.edworthy@renesas.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Bg2esWel0ueIH/G/"
-Content-Disposition: inline
-In-Reply-To: <20180723202617.15230-5-wsa+renesas@sang-engineering.com>
-Sender: linux-i2c-owner@vger.kernel.org
-List-ID: <linux-renesas-soc.vger.kernel.org>
-
-
---Bg2esWel0ueIH/G/
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181001131026.14635-4-phil.edworthy@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jul 23, 2018 at 10:26:08PM +0200, Wolfram Sang wrote:
-> And don't reimplement in the driver.
->=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Mon, Oct 01, 2018 at 02:10:26PM +0100, Phil Edworthy wrote:
+> This provides a pinctrl driver for the Renesas R9A06G032 SoC
+> 
+> Based on a patch originally written by Michel Pollet at Renesas.
+> 
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 
-Ping.
+Hi Phil,
 
+I have accepted (a slightly older posting of) this patch
+for v4.21.
 
---Bg2esWel0ueIH/G/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlu3V+kACgkQFA3kzBSg
-KbYnDg/+Liwiu1pXEl0lzisDoU6OD/RdtfHGufCJOMjMfYgDXp3/tRgSSyfXHUpc
-3sRdLsqcG1r6YX79ItTMt9a2DN+TxWgGsiROIsHasWhddcHfPAianibo3uqJQeNd
-8WojGRtiplYVDJbiLUUHfG2z4te0xhh/ryXadY738/PQEmTsaYjbLwHC2ii5dcK3
-yO14ZY4lXPqXqNwl4A5BPxDE+urMuoTVCyS/fL0Uay+YSXJxSCWYBwArNw5/glpG
-lL0d4Rl0Yfq5DZp01iA9OwkOriNfUbp1v+s9QhPzwHCsVChcfj+R1P8PFkd0kKZk
-Sb7VCvZBw9zJQL/ABXGzWrixR58LhKQHJIl3jbE5Lo/pX9B77H/+ZM16BcG401RG
-JC+lCueVHPR2UTCQ1X5CllVlLSJSGPpj1pGbWW/1zmqkit7U9OiUGMA0glle0dvh
-hCI311WhgSoyogLYokNvtFN/u4LRNi6B8PSBXo3j8XweqU+caAFG59M8nZgH6oDQ
-8DvxH2c0mXFK3fT/VtBBO4D9LDFLniSryzbNkQVs9/5ofhP9RHbLtpZmaBAUoeCv
-nfJWa2PPgtZnnr826/ZZ9stEoUZq1Iy0Lr+mTulEd6t2qD3vEGS3agvhu9Z/mFQK
-DWFhGPTE1R5hqRItWDiPJfci4RMz+yBBP7bizl8mbR5HTeBppgo=
-=2cYe
------END PGP SIGNATURE-----
-
---Bg2esWel0ueIH/G/--
+> ---
+> v7:
+>  - No changes.
+> 
+> v6:
+>  - No changes.
+> 
+> v5:
+>  - No changes.
+> 
+> v4:
+>  - No changes.
+> 
+> v3:
+>  - No changes.
+> 
+> v2:
+>  - Add "renesas,rzn1-pinctrl" compatible fallback string
+>  - Register size corrected.
+> ---
+>  arch/arm/boot/dts/r9a06g032.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+> index eaf94976ed6d..2322268bc862 100644
+> --- a/arch/arm/boot/dts/r9a06g032.dtsi
+> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
+> @@ -165,6 +165,14 @@
+>  			status = "disabled";
+>  		};
+>  
+> +		pinctrl: pin-controller@40067000 {
+> +			compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
+> +			reg = <0x40067000 0x1000>, <0x51000000 0x480>;
+> +			clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
+> +			clock-names = "bus";
+> +			status = "okay";
+> +		};
+> +
+>  		gic: gic@44101000 {
+>  			compatible = "arm,cortex-a7-gic", "arm,gic-400";
+>  			interrupt-controller;
+> -- 
+> 2.17.1
+> 
