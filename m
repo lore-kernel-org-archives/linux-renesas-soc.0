@@ -1,54 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:38027 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727581AbeJERod (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:52900 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725758AbeJEFDw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 5 Oct 2018 13:44:33 -0400
-Date: Fri, 5 Oct 2018 12:46:15 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+        Fri, 5 Oct 2018 01:03:52 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
 Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Niklas =?utf-8?Q?S=C3=B6derlund?=
+        Jacopo Mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCH v2 5/5] i2c: adv748x: configure number of lanes used for
- TXA CSI-2 transmitter
-Message-ID: <20181005104615.GP31281@w540>
-References: <20181004204138.2784-1-niklas.soderlund@ragnatech.se>
- <20181004204138.2784-6-niklas.soderlund@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="QAdlk5ze2izLk3Ap"
-Content-Disposition: inline
+Subject: Re: [PATCH v2 5/5] i2c: adv748x: configure number of lanes used for TXA CSI-2 transmitter
+Date: Fri, 05 Oct 2018 01:08:42 +0300
+Message-ID: <2119221.Db59uWWuRb@avalon>
 In-Reply-To: <20181004204138.2784-6-niklas.soderlund@ragnatech.se>
+References: <20181004204138.2784-1-niklas.soderlund@ragnatech.se> <20181004204138.2784-6-niklas.soderlund@ragnatech.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
---QAdlk5ze2izLk3Ap
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
 Hi Niklas,
 
-On Thu, Oct 04, 2018 at 10:41:38PM +0200, Niklas S=C3=B6derlund wrote:
-> From: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
->
+Thank you for the patch.
+
+On Thursday, 4 October 2018 23:41:38 EEST Niklas S=F6derlund wrote:
+> From: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+>=20
 > The driver fixed the TXA CSI-2 transmitter in 4-lane mode while it could
 > operate using 1-, 2- and 4-lanes. Update the driver to support all modes
 > the hardware does.
->
+>=20
 > The driver make use of large tables of static register/value writes when
 > powering up/down the TXA and TXB transmitters which include the write to
 > the NUM_LANES register. By converting the tables into functions and
 > using parameters the power up/down functions for TXA and TXB power
 > up/down can be merged and used for both transmitters.
->
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
->
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+>=20
 > ---
 > * Changes since v1
 > - Convert tables of register/value writes into functions instead of
@@ -56,40 +49,42 @@ se>
 > ---
 >  drivers/media/i2c/adv748x/adv748x-core.c | 132 ++++++++++++-----------
 >  1 file changed, 67 insertions(+), 65 deletions(-)
->
-> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c=
-/adv748x/adv748x-core.c
-> index 3836dd3025d6ffb7..fe29781368a3a6b6 100644
+>=20
+> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c
+> b/drivers/media/i2c/adv748x/adv748x-core.c index
+> 3836dd3025d6ffb7..fe29781368a3a6b6 100644
 > --- a/drivers/media/i2c/adv748x/adv748x-core.c
 > +++ b/drivers/media/i2c/adv748x/adv748x-core.c
 > @@ -125,6 +125,16 @@ int adv748x_write(struct adv748x_state *state, u8 pa=
-ge, u8 reg, u8 value)
->  	return regmap_write(state->regmap[page], reg, value);
+ge,
+> u8 reg, u8 value) return regmap_write(state->regmap[page], reg, value);
 >  }
->
-> +static int adv748x_write_check(struct adv748x_state *state, u8 page, u8 =
-reg,
+>=20
+> +static int adv748x_write_check(struct adv748x_state *state, u8 page, u8
+> reg,
 > +			       u8 value, int *error)
-
-Am I wrong or the return error is ignored and could be dropped?
-
 > +{
 > +	if (*error)
 > +		return *error;
+
+We could also store the error as a write_error field in the state structure=
+ to=20
+avoid passing it around as a parameter all the time. I'll let you and Kiera=
+n=20
+decide.
+
 > +
 > +	*error =3D adv748x_write(state, page, reg, value);
 > +	return *error;
 > +}
 > +
->  /* adv748x_write_block(): Write raw data with a maximum of I2C_SMBUS_BLO=
-CK_MAX
->   * size to one or more registers.
+>  /* adv748x_write_block(): Write raw data with a maximum of
+> I2C_SMBUS_BLOCK_MAX * size to one or more registers.
 >   *
-> @@ -231,69 +241,63 @@ static int adv748x_write_regs(struct adv748x_state =
-*state,
->   * TXA and TXB
+> @@ -231,69 +241,63 @@ static int adv748x_write_regs(struct adv748x_state
+> *state, * TXA and TXB
 >   */
->
+>=20
 > -static const struct adv748x_reg_value adv748x_power_up_txa_4lane[] =3D {
 > -
 > -	{ADV748X_PAGE_TXA, 0x00, 0x84},	/* Enable 4-lane MIPI */
@@ -156,12 +151,18 @@ CK_MAX
 > +	int ret =3D 0;
 > +
 > +	/* Enable 4-lane MIPI */
+
+Not necessarily 4 lanes anymore.
+
 > +	adv748x_write_check(state, page, 0x00, 0x80 | tx->num_lanes, &ret);
 > +
 > +	/* Set Auto DPHY Timing */
 > +	adv748x_write_check(state, page, 0x00, 0xa0 | tx->num_lanes, &ret);
 > +
 > +	/* ADI Required Writes*/
+
+s/\*\// *\//
+
 > +	adv748x_write_check(state, page, 0x31, 0x82, &ret);
 > +	adv748x_write_check(state, page, 0x1e, 0x40, &ret);
 > +
@@ -192,6 +193,9 @@ CK_MAX
 > +	adv748x_write_check(state, page, 0x1e, 0x00, &ret);
 > +
 > +	/* Enable 4-lane MIPI */
+
+Same here.
+
 > +	adv748x_write_check(state, page, 0x00, 0x80 | tx->num_lanes, &ret);
 > +
 > +	/* i2c_mipi_pll_en - 1'b1 */
@@ -202,23 +206,20 @@ CK_MAX
 > +
 > +	return ret;
 > +}
-
-This one looks good to me
-
->
+>=20
 >  int adv748x_tx_power(struct adv748x_csi2 *tx, bool on)
 >  {
 > -	struct adv748x_state *state =3D tx->state;
 > -	const struct adv748x_reg_value *reglist;
 > -	int val;
 > +	int val, ret;
->
+>=20
 >  	if (!is_tx_enabled(tx))
 >  		return 0;
 > @@ -311,13 +315,11 @@ int adv748x_tx_power(struct adv748x_csi2 *tx, bool =
 on)
->  			"Enabling with unknown bit set");
->
+> "Enabling with unknown bit set");
+>=20
 >  	if (on)
 > -		reglist =3D is_txa(tx) ? adv748x_power_up_txa_4lane :
 > -				       adv748x_power_up_txb_1lane;
@@ -227,43 +228,22 @@ on)
 > -		reglist =3D is_txa(tx) ? adv748x_power_down_txa_4lane :
 > -				       adv748x_power_down_txb_1lane;
 > +		ret =3D adv748x_power_down_tx(tx);
->
+
+You could also return directly here and avoid adding a ret variable.
+
+>=20
 > -	return adv748x_write_regs(state, reglist);
 > +	return ret;
-
-As Laurent suggested, or even
-        return on ? adv748x_power_up_tx(tx) : adv748x_power_down_tx(tx);
-
-Thanks
-   j
-
 >  }
->
+>=20
 >  /* ---------------------------------------------------------------------=
---------
-> --
-> 2.19.0
->
+=2D--
 
---QAdlk5ze2izLk3Ap
-Content-Type: application/pgp-signature; name="signature.asc"
+Very nice change overall. With the above small issues fixed,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-iQIcBAEBAgAGBQJbt0D3AAoJEHI0Bo8WoVY8vhgP/iRwIgx6vrf5A78zUTwpGhCU
-viWxb/oTpp8fZA0ckLfKkJ1IUBXBaWZeglekYVKp5rtvZ+gxT5nWlWLUP0rBBCab
-f70HhWsgNeWhT9xNIK8mUcrGffHu7UBPuzRzBVGsB4D1719J9zyCqBJXQ5yIPjbn
-i7C2DCQ8e8q59jwVoXAfu8mjN5fpz/sBC+Fpjx3p8GUrI/brfxoXdLxrh/VnEQ+g
-37iAQ7md3RrBjXVF/sT3gB2S9jheVeqWtXtx9cg8QEuQ1pq+NlvPbK//lIq6NYyN
-Jy+kzcsF6z/1zOEQRD/2ivl8FfebBA+ktsPLF5f8jz9L9ZzeIUj2eF75VG6MLxax
-kdsRBMp5cm/rbgBlgEvpNr0k+oM/+4SLHdb9+9rdMx03eO9IH75ye3oJpU8KkHsT
-1ZLl/wN7hTK6eKovRJlaEPji20xQNoAZj2V2v5bgB7sI7eudn9vssZol3jXHm4wR
-BcXDsBL93WrBmXccR07lYvNCZ8HuY0kccDB6zF2UOsxrP6i/NtgzOBahzCfOnrXo
-lZq+xA8h+LDG75gXOtlfxVMJQ2RVa54rkavri+kHXMVp0wPtxaAjrhvNrzCILLGW
-qA+m3KupZsxPdOZX+NDm2aP1mqlc+BUFC4omPiAcIeLgwtwrs1a6h390N3lbEcIj
-q5+v53owOguHVdtSbPtV
-=KAET
------END PGP SIGNATURE-----
+=2D-=20
+Regards,
 
---QAdlk5ze2izLk3Ap--
+Laurent Pinchart
