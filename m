@@ -1,42 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:41072 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727025AbeJENwB (ORCPT
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:41326 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727530AbeJED6V (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 5 Oct 2018 09:52:01 -0400
-MIME-Version: 1.0
-References: <366d8e06-6164-94ff-823f-6b0d1e2d8d53@cogentembedded.com> <65ec6fcf-931a-a807-af1b-f204c03344f0@cogentembedded.com>
-In-Reply-To: <65ec6fcf-931a-a807-af1b-f204c03344f0@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 5 Oct 2018 08:54:31 +0200
-Message-ID: <CAMuHMdXA1A94riOZqxo2=6vOdW9vWT5+S+fhvaz6fW1t80D=EQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] thermal: rcar_thermal: add R8A77970 support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Zhang Rui <rui.zhang@intel.com>,
+        Thu, 4 Oct 2018 23:58:21 -0400
+Received: by mail-lf1-f67.google.com with SMTP id q39-v6so7836822lfi.8
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Oct 2018 14:03:16 -0700 (PDT)
+Subject: [PATCH 2/2] thermal: rcar_thermal: add R8A77970 support
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-pm@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+References: <366d8e06-6164-94ff-823f-6b0d1e2d8d53@cogentembedded.com>
+Message-ID: <65ec6fcf-931a-a807-af1b-f204c03344f0@cogentembedded.com>
+Date: Fri, 5 Oct 2018 00:03:13 +0300
+MIME-Version: 1.0
+In-Reply-To: <366d8e06-6164-94ff-823f-6b0d1e2d8d53@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Oct 4, 2018 at 11:03 PM Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add the R-Car V3M (R8A77970) SoC support to the R-Car gen2 thermal driver.
-> The hardware is the same as in the R-Car D3 (R8A77995) plus the CIVM status
-> register (we don't use).
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Add the R-Car V3M (R8A77970) SoC support to the R-Car gen2 thermal driver.
+The hardware is the same as in the R-Car D3 (R8A77995) plus the CIVM status
+register (we don't use).
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Gr{oetje,eeting}s,
+---
+ drivers/thermal/rcar_thermal.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: linux-soc-thermal/drivers/thermal/rcar_thermal.c
+===================================================================
+--- linux-soc-thermal.orig/drivers/thermal/rcar_thermal.c
++++ linux-soc-thermal/drivers/thermal/rcar_thermal.c
+@@ -113,6 +113,10 @@ static const struct of_device_id rcar_th
+ 		 .data = &rcar_gen2_thermal,
+ 	},
+ 	{
++		.compatible = "renesas,thermal-r8a77970",
++		.data = &rcar_gen3_thermal,
++	},
++	{
+ 		.compatible = "renesas,thermal-r8a77995",
+ 		.data = &rcar_gen3_thermal,
+ 	},
