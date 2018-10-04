@@ -1,82 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45650 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727225AbeJVEPi (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45653 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727046AbeJDQe5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:15:38 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH 4/6] gpio: gpio-omap: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 21:59:59 +0200
-Message-Id: <20181021200002.1472-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200002.1472-1-wsa+renesas@sang-engineering.com>
-References: <20181021200002.1472-1-wsa+renesas@sang-engineering.com>
+        Thu, 4 Oct 2018 12:34:57 -0400
+Date: Thu, 4 Oct 2018 11:42:26 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: balbi@kernel.org, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] usb: gadget: udc: renesas_usb3: Fix b-device mode for
+ "workaround"
+Message-ID: <20181004094226.t2vymsup77s7kbmu@verge.net.au>
+References: <1538481464-24766-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538481464-24766-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
+On Tue, Oct 02, 2018 at 08:57:44PM +0900, Yoshihiro Shimoda wrote:
+> If the "workaround_for_vbus" is true, the driver will not call
+> usb_disconnect(). So, since the controller keeps some registers'
+> value, the driver doesn't re-enumarate suitable speed after
+> the b-device mode is disabled. To fix the issue, this patch
+> adds usb_disconnect() calling in renesas_usb3_b_device_write()
+> if workaround_for_vbus is true.
+> 
+> Fixes: 43ba968b00ea ("usb: gadget: udc: renesas_usb3: add debugfs to set the b-device mode")
+> Cc: <stable@vger.kernel.org> # v4.14+
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Build tested only. buildbot is happy.
-
- drivers/gpio/gpio-omap.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index 9887c3db6e16..6ed621a00561 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -984,8 +984,7 @@ omap4_gpio_disable_level_quirk(struct gpio_bank *bank)
- 
- static int omap_mpuio_suspend_noirq(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct gpio_bank	*bank = platform_get_drvdata(pdev);
-+	struct gpio_bank	*bank = dev_get_drvdata(dev);
- 	void __iomem		*mask_reg = bank->base +
- 					OMAP_MPUIO_GPIO_MASKIT / bank->stride;
- 	unsigned long		flags;
-@@ -999,8 +998,7 @@ static int omap_mpuio_suspend_noirq(struct device *dev)
- 
- static int omap_mpuio_resume_noirq(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct gpio_bank	*bank = platform_get_drvdata(pdev);
-+	struct gpio_bank	*bank = dev_get_drvdata(dev);
- 	void __iomem		*mask_reg = bank->base +
- 					OMAP_MPUIO_GPIO_MASKIT / bank->stride;
- 	unsigned long		flags;
-@@ -1688,8 +1686,7 @@ static void omap_gpio_restore_context(struct gpio_bank *bank)
- 
- static int __maybe_unused omap_gpio_runtime_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct gpio_bank *bank = platform_get_drvdata(pdev);
-+	struct gpio_bank *bank = dev_get_drvdata(dev);
- 	unsigned long flags;
- 	int error = 0;
- 
-@@ -1709,8 +1706,7 @@ static int __maybe_unused omap_gpio_runtime_suspend(struct device *dev)
- 
- static int __maybe_unused omap_gpio_runtime_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct gpio_bank *bank = platform_get_drvdata(pdev);
-+	struct gpio_bank *bank = dev_get_drvdata(dev);
- 	unsigned long flags;
- 	int error = 0;
- 
--- 
-2.19.0
+> ---
+>  drivers/usb/gadget/udc/renesas_usb3.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
+> index e1656f3..67d8a50 100644
+> --- a/drivers/usb/gadget/udc/renesas_usb3.c
+> +++ b/drivers/usb/gadget/udc/renesas_usb3.c
+> @@ -2437,6 +2437,9 @@ static ssize_t renesas_usb3_b_device_write(struct file *file,
+>  	else
+>  		usb3->forced_b_device = false;
+>  
+> +	if (usb3->workaround_for_vbus)
+> +		usb3_disconnect(usb3);
+> +
+>  	/* Let this driver call usb3_connect() anyway */
+>  	usb3_check_id(usb3);
+>  
+> -- 
+> 1.9.1
+> 
