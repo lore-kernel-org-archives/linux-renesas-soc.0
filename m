@@ -1,43 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44910 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726319AbeJOSkM (ORCPT
+Received: from mail-lf1-f54.google.com ([209.85.167.54]:45702 "EHLO
+        mail-lf1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727735AbeJEDxK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Oct 2018 14:40:12 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-arm-kernel@lists.infradead.org
+        Thu, 4 Oct 2018 23:53:10 -0400
+Received: by mail-lf1-f54.google.com with SMTP id m80-v6so7827638lfi.12
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Oct 2018 13:58:07 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 0/2] Add R8A77970 support to the Renesas R-Car thermal driver
+To: Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        linux-pm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 Cc: linux-renesas-soc@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH RESEND] ARM: dma-mapping: update comment about handling dma_ops when detaching from IOMMU
-Date: Mon, 15 Oct 2018 12:55:17 +0200
-Message-Id: <20181015105517.28032-1-wsa+renesas@sang-engineering.com>
+        Mark Rutland <mark.rutland@arm.com>
+Message-ID: <366d8e06-6164-94ff-823f-6b0d1e2d8d53@cogentembedded.com>
+Date: Thu, 4 Oct 2018 23:58:04 +0300
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Update the comment because we don't set the pointer to NULL anymore.
-Also use the correct pointer name 'dma_ops' instead of 'dma_map_ops'.
+Hello!
 
-Fixes: 1874619a7df4 ("ARM: dma-mapping: Set proper DMA ops in arm_iommu_detach_device()")
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/mm/dma-mapping.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Here's the set of 2 patches against the 'next' branch of Eduardo Valentin's
+'linux-soc-thermal.git' repo. We're adding support for the R8A77970 thermal
+sensor controller to the R-Car thermal driver.
 
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index 66566472c153..e3b04786838f 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -2287,7 +2287,7 @@ EXPORT_SYMBOL_GPL(arm_iommu_attach_device);
-  * @dev: valid struct device pointer
-  *
-  * Detaches the provided device from a previously attached map.
-- * This voids the dma operations (dma_map_ops pointer)
-+ * This overwrites the dma_ops pointer with appropriate non-IOMMU ops.
-  */
- void arm_iommu_detach_device(struct device *dev)
- {
--- 
-2.11.0
+[1/2] dt-bindings: thermal: rcar-thermal: document R8A77970 bindings
+[2/2] thermal: rcar_thermal: add R8A77970 support
+
+MBR, Sergei
