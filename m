@@ -1,87 +1,117 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45812 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728391AbeJVEQC (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:51354 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727354AbeJEDKO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:16:02 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
-Subject: [PATCH 0/5] pinctrl: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:26 +0200
-Message-Id: <20181021200032.1833-1-wsa+renesas@sang-engineering.com>
+        Thu, 4 Oct 2018 23:10:14 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] rcar-vin: declare which VINs can use a Up Down Scaler (UDS)
+Date: Thu, 04 Oct 2018 23:15:38 +0300
+Message-ID: <3830300.X5acWg0Hot@avalon>
+In-Reply-To: <20181004200402.15113-4-niklas.soderlund+renesas@ragnatech.se>
+References: <20181004200402.15113-1-niklas.soderlund+renesas@ragnatech.se> <20181004200402.15113-4-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I got tired of fixing this in Renesas drivers manually, so I took the big
-hammer. Remove this cumbersome code pattern which got copy-pasted too much
-already:
+Hi Niklas,
 
--	struct platform_device *pdev = to_platform_device(dev);
--	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
-+	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
+Thank you for the patch.
 
-A branch, tested by buildbot, can be found here:
+On Thursday, 4 October 2018 23:04:02 EEST Niklas S=F6derlund wrote:
+> Add information about which VINs on which SoC have access to a UDS
+> scaler.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git coccinelle/get_drvdata
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-I have been asked if it couldn't be done for dev_set_drvdata as well. I checked
-it and did not find one occasion where it could be simplified like this. Not
-much of a surprise because driver_data is usually set in probe() functions
-which access struct platform_device in many other ways.
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+>=20
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c
+> b/drivers/media/platform/rcar-vin/rcar-core.c index
+> 01e418c2d4c6792e..337ae8bbe1e0b14c 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -919,12 +919,21 @@ static const struct rvin_group_route
+> rcar_info_r8a7795_routes[] =3D { { /* Sentinel */ }
+>  };
+>=20
+> +static const struct rvin_group_scaler rcar_info_h3_m3w_m3n_scalers[] =3D=
+ {
+> +	{ .vin =3D 0, .companion =3D 1 },
+> +	{ .vin =3D 1, .companion =3D 0 },
+> +	{ .vin =3D 4, .companion =3D 5 },
+> +	{ .vin =3D 5, .companion =3D 4 },
+> +	{ /* Sentinel */ }
+> +};
+> +
+>  static const struct rvin_info rcar_info_r8a7795 =3D {
+>  	.model =3D RCAR_GEN3,
+>  	.use_mc =3D true,
+>  	.max_width =3D 4096,
+>  	.max_height =3D 4096,
+>  	.routes =3D rcar_info_r8a7795_routes,
+> +	.scalers =3D rcar_info_h3_m3w_m3n_scalers,
+>  };
+>=20
+>  static const struct rvin_group_route rcar_info_r8a7795es1_routes[] =3D {
+> @@ -979,6 +988,7 @@ static const struct rvin_info rcar_info_r8a7795es1 =
+=3D {
+>  	.max_width =3D 4096,
+>  	.max_height =3D 4096,
+>  	.routes =3D rcar_info_r8a7795es1_routes,
+> +	.scalers =3D rcar_info_h3_m3w_m3n_scalers,
+>  };
+>=20
+>  static const struct rvin_group_route rcar_info_r8a7796_routes[] =3D {
+> @@ -1019,6 +1029,7 @@ static const struct rvin_info rcar_info_r8a7796 =3D=
+ {
+>  	.max_width =3D 4096,
+>  	.max_height =3D 4096,
+>  	.routes =3D rcar_info_r8a7796_routes,
+> +	.scalers =3D rcar_info_h3_m3w_m3n_scalers,
+>  };
+>=20
+>  static const struct rvin_group_route rcar_info_r8a77965_routes[] =3D {
+> @@ -1063,6 +1074,7 @@ static const struct rvin_info rcar_info_r8a77965 =
+=3D {
+>  	.max_width =3D 4096,
+>  	.max_height =3D 4096,
+>  	.routes =3D rcar_info_r8a77965_routes,
+> +	.scalers =3D rcar_info_h3_m3w_m3n_scalers,
+>  };
+>=20
+>  static const struct rvin_group_route rcar_info_r8a77970_routes[] =3D {
+> @@ -1088,12 +1100,18 @@ static const struct rvin_group_route
+> rcar_info_r8a77995_routes[] =3D { { /* Sentinel */ }
+>  };
+>=20
+> +static const struct rvin_group_scaler rcar_info_r8a77995_scalers[] =3D {
+> +	{ .vin =3D 4, .companion =3D -1 },
+> +	{ /* Sentinel */ }
+> +};
+> +
+>  static const struct rvin_info rcar_info_r8a77995 =3D {
+>  	.model =3D RCAR_GEN3,
+>  	.use_mc =3D true,
+>  	.max_width =3D 4096,
+>  	.max_height =3D 4096,
+>  	.routes =3D rcar_info_r8a77995_routes,
+> +	.scalers =3D rcar_info_r8a77995_scalers,
+>  };
+>=20
+>  static const struct of_device_id rvin_of_id_table[] =3D {
 
-I am open for other comments, suggestions, too, of course.
 
-Here is the cocci-script I created:
+=2D-=20
+Regards,
 
-@@
-struct device* d;
-identifier pdev;
-expression *ptr;
-@@
-(
--	struct platform_device *pdev = to_platform_device(d);
-|
--	struct platform_device *pdev;
-	...
--	pdev = to_platform_device(d);
-)
-	<... when != pdev
--	&pdev->dev
-+	d
-	...>
-
-	ptr =
--	platform_get_drvdata(pdev)
-+	dev_get_drvdata(d)
-
-	<... when != pdev
--	&pdev->dev
-+	d
-	...>
-
-Kind regards,
-
-   Wolfram
-
-
-Wolfram Sang (5):
-  pinctrl: intel: pinctrl-baytrail: simplify getting .driver_data
-  pinctrl: intel: pinctrl-cherryview: simplify getting .driver_data
-  pinctrl: intel: pinctrl-intel: simplify getting .driver_data
-  pinctrl: pinctrl-amd: simplify getting .driver_data
-  pinctrl: pinctrl-at91-pio4: simplify getting .driver_data
-
- drivers/pinctrl/intel/pinctrl-baytrail.c   | 6 ++----
- drivers/pinctrl/intel/pinctrl-cherryview.c | 6 ++----
- drivers/pinctrl/intel/pinctrl-intel.c      | 6 ++----
- drivers/pinctrl/pinctrl-amd.c              | 6 ++----
- drivers/pinctrl/pinctrl-at91-pio4.c        | 6 ++----
- 5 files changed, 10 insertions(+), 20 deletions(-)
-
--- 
-2.19.0
+Laurent Pinchart
