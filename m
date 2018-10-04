@@ -1,46 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:39562 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727025AbeJENvL (ORCPT
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:42133 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727489AbeJED4p (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 5 Oct 2018 09:51:11 -0400
-MIME-Version: 1.0
-References: <366d8e06-6164-94ff-823f-6b0d1e2d8d53@cogentembedded.com> <42fe460f-0c2e-ec8c-ecca-15ec5a5a4117@cogentembedded.com>
-In-Reply-To: <42fe460f-0c2e-ec8c-ecca-15ec5a5a4117@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 5 Oct 2018 08:53:41 +0200
-Message-ID: <CAMuHMdVwe8rtZ1v3KUJDa7h9pwr=67kD6T1eNFuF2ObAYFJapQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: thermal: rcar-thermal: document R8A77970 bindings
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Zhang Rui <rui.zhang@intel.com>,
+        Thu, 4 Oct 2018 23:56:45 -0400
+Received: by mail-lf1-f66.google.com with SMTP id s10-v6so7840659lfc.9
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Oct 2018 14:01:40 -0700 (PDT)
+Subject: [PATCH 1/2] dt-bindings: thermal: rcar-thermal: document R8A77970
+ bindings
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-pm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
         Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+References: <366d8e06-6164-94ff-823f-6b0d1e2d8d53@cogentembedded.com>
+Message-ID: <42fe460f-0c2e-ec8c-ecca-15ec5a5a4117@cogentembedded.com>
+Date: Fri, 5 Oct 2018 00:01:38 +0300
+MIME-Version: 1.0
+In-Reply-To: <366d8e06-6164-94ff-823f-6b0d1e2d8d53@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Oct 4, 2018 at 11:02 PM Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Document  the R-Car V3M (R8A77970) SoC in the Renesas R-Car gen2 thermal
-> bindings. The hardware is the same as  in the R-Car D3 (R8A77995) plus an
-> extra status register.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Document  the R-Car V3M (R8A77970) SoC in the Renesas R-Car gen2 thermal
+bindings. The hardware is the same as  in the R-Car D3 (R8A77995) plus an
+extra status register.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Gr{oetje,eeting}s,
+---
+ Documentation/devicetree/bindings/thermal/rcar-thermal.txt |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: linux-soc-thermal/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
+===================================================================
+--- linux-soc-thermal.orig/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
++++ linux-soc-thermal/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
+@@ -4,7 +4,7 @@ Required properties:
+ - compatible		: "renesas,thermal-<soctype>",
+ 			   "renesas,rcar-gen2-thermal" (with thermal-zone) or
+ 			   "renesas,rcar-thermal" (without thermal-zone) as
+-                           fallback except R-Car D3.
++                           fallback except R-Car V3M/D3.
+ 			  Examples with soctypes are:
+ 			    - "renesas,thermal-r8a73a4" (R-Mobile APE6)
+ 			    - "renesas,thermal-r8a7743" (RZ/G1M)
+@@ -13,6 +13,7 @@ Required properties:
+ 			    - "renesas,thermal-r8a7791" (R-Car M2-W)
+ 			    - "renesas,thermal-r8a7792" (R-Car V2H)
+ 			    - "renesas,thermal-r8a7793" (R-Car M2-N)
++			    - "renesas,thermal-r8a77970" (R-Car V3M)
+ 			    - "renesas,thermal-r8a77995" (R-Car D3)
+ - reg			: Address range of the thermal registers.
+ 			  The 1st reg will be recognized as common register
+@@ -21,7 +22,7 @@ Required properties:
+ Option properties:
+ 
+ - interrupts		: If present should contain 3 interrupts for
+-                          R-Car D3 or 1 interrupt otherwise.
++                          R-Car V3M/D3 or 1 interrupt otherwise.
+ 
+ Example (non interrupt support):
+ 
