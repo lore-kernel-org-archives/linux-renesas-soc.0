@@ -1,211 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:53720 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726135AbeJKQVk (ORCPT
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:33108 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727519AbeJEDh3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 Oct 2018 12:21:40 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Arnd Bergmann <arnd@arndb.de>, Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] [RFC] arm64: renesas: Move SoC Kconfig symbols to drivers/soc/renesas/
-Date: Thu, 11 Oct 2018 10:55:07 +0200
-Message-Id: <20181011085508.5234-2-geert+renesas@glider.be>
-In-Reply-To: <20181011085508.5234-1-geert+renesas@glider.be>
-References: <20181011085508.5234-1-geert+renesas@glider.be>
+        Thu, 4 Oct 2018 23:37:29 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 0/5] i2c: adv748x: add support for CSI-2 TXA to work in 1-, 2- and 4-lane mode
+Date: Thu,  4 Oct 2018 22:41:33 +0200
+Message-Id: <20181004204138.2784-1-niklas.soderlund@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-For consistency with other vendors, which have a single Kconfig symbol
-in arch/arm64/Kconfig.platforms.
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Note that drivers/clk/ is included before drivers/soc/.  Hence when
-COMPILE_TEST=y, questions will be asked about clock drivers before they
-can be auto-selected by SoC support.
+Hi,
 
-Question: Should we introduce a family-specific Kconfig symbol for R-Car
-	  Gen3 (ARCH_RCAR_GEN1), which could be used for enabling
-	  RST_RCAR?
----
- arch/arm64/Kconfig.platforms | 54 ------------------------
- drivers/soc/renesas/Kconfig  | 81 ++++++++++++++++++++++++++++++------
- 2 files changed, 68 insertions(+), 67 deletions(-)
+This series allows the TXA CSI-2 transmitter of the adv748x to function
+in 1-, 2- and 4- lane mode. Currently the driver fixes the hardware in
+4-lane mode. The driver looks at the standard DT property 'data-lanes'
+to determine which mode it should operate in.
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index fecdfc70828c2ac3..e7f1659064f82790 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -165,60 +165,6 @@ config ARCH_RENESAS
- 	help
- 	  This enables support for the ARMv8 based Renesas SoCs.
- 
--config ARCH_R8A774A1
--	bool "Renesas RZ/G2M SoC Platform"
--	depends on ARCH_RENESAS
--	help
--	  This enables support for the Renesas RZ/G2M SoC.
--
--config ARCH_R8A774C0
--	bool "Renesas RZ/G2E SoC Platform"
--	depends on ARCH_RENESAS
--	help
--	  This enables support for the Renesas RZ/G2E SoC.
--
--config ARCH_R8A7795
--	bool "Renesas R-Car H3 SoC Platform"
--	depends on ARCH_RENESAS
--	help
--	  This enables support for the Renesas R-Car H3 SoC.
--
--config ARCH_R8A7796
--	bool "Renesas R-Car M3-W SoC Platform"
--	depends on ARCH_RENESAS
--	help
--	  This enables support for the Renesas R-Car M3-W SoC.
--
--config ARCH_R8A77965
--	bool "Renesas R-Car M3-N SoC Platform"
--	depends on ARCH_RENESAS
--	help
--	  This enables support for the Renesas R-Car M3-N SoC.
--
--config ARCH_R8A77970
--	bool "Renesas R-Car V3M SoC Platform"
--	depends on ARCH_RENESAS
--	help
--	  This enables support for the Renesas R-Car V3M SoC.
--
--config ARCH_R8A77980
--	bool "Renesas R-Car V3H SoC Platform"
--	depends on ARCH_RENESAS
--	help
--	  This enables support for the Renesas R-Car V3H SoC.
--
--config ARCH_R8A77990
--	bool "Renesas R-Car E3 SoC Platform"
--	depends on ARCH_RENESAS
--	help
--	  This enables support for the Renesas R-Car E3 SoC.
--
--config ARCH_R8A77995
--	bool "Renesas R-Car D3 SoC Platform"
--	depends on ARCH_RENESAS
--	help
--	  This enables support for the Renesas R-Car D3 SoC.
--
- config ARCH_ROCKCHIP
- 	bool "Rockchip Platforms"
- 	select ARCH_HAS_RESET_CONTROLLER
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index 407f02c80e8b721c..0ab62024fd20be56 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -3,30 +3,85 @@ config SOC_RENESAS
- 	bool "Renesas SoC driver support" if COMPILE_TEST && !ARCH_RENESAS
- 	default y if ARCH_RENESAS
- 	select SOC_BUS
--	select RST_RCAR if ARCH_RCAR_GEN1 || ARCH_RCAR_GEN2 || \
--			   ARCH_R8A774A1 || ARCH_R8A774C0 || ARCH_R8A7795 || \
--			   ARCH_R8A7796 || ARCH_R8A77965 || ARCH_R8A77970 || \
--			   ARCH_R8A77980 || ARCH_R8A77990 || ARCH_R8A77995
-+	select RST_RCAR if ARCH_RCAR_GEN1 || ARCH_RCAR_GEN2
- 	select SYSC_R8A7743 if ARCH_R8A7743 || ARCH_R8A7744
- 	select SYSC_R8A7745 if ARCH_R8A7745
- 	select SYSC_R8A77470 if ARCH_R8A77470
--	select SYSC_R8A774A1 if ARCH_R8A774A1
--	select SYSC_R8A774C0 if ARCH_R8A774C0
- 	select SYSC_R8A7779 if ARCH_R8A7779
- 	select SYSC_R8A7790 if ARCH_R8A7790
- 	select SYSC_R8A7791 if ARCH_R8A7791 || ARCH_R8A7793
- 	select SYSC_R8A7792 if ARCH_R8A7792
- 	select SYSC_R8A7794 if ARCH_R8A7794
--	select SYSC_R8A7795 if ARCH_R8A7795
--	select SYSC_R8A7796 if ARCH_R8A7796
--	select SYSC_R8A77965 if ARCH_R8A77965
--	select SYSC_R8A77970 if ARCH_R8A77970
--	select SYSC_R8A77980 if ARCH_R8A77980
--	select SYSC_R8A77990 if ARCH_R8A77990
--	select SYSC_R8A77995 if ARCH_R8A77995
- 
- if SOC_RENESAS
- 
-+if ARM64
-+
-+config ARCH_R8A774A1
-+	bool "Renesas RZ/G2M SoC Platform"
-+	select RST_RCAR
-+	select SYSC_R8A774A1
-+	help
-+	  This enables support for the Renesas RZ/G2M SoC.
-+
-+config ARCH_R8A774C0
-+	bool "Renesas RZ/G2E SoC Platform"
-+	select RST_RCAR
-+	select SYSC_R8A774C0
-+	help
-+	  This enables support for the Renesas RZ/G2E SoC.
-+
-+config ARCH_R8A7795
-+	bool "Renesas R-Car H3 SoC Platform"
-+	select RST_RCAR
-+	select SYSC_R8A7795
-+	help
-+	  This enables support for the Renesas R-Car H3 SoC.
-+
-+config ARCH_R8A7796
-+	bool "Renesas R-Car M3-W SoC Platform"
-+	select RST_RCAR
-+	select SYSC_R8A7796
-+	help
-+	  This enables support for the Renesas R-Car M3-W SoC.
-+
-+config ARCH_R8A77965
-+	bool "Renesas R-Car M3-N SoC Platform"
-+	select RST_RCAR
-+	select SYSC_R8A77965
-+	help
-+	  This enables support for the Renesas R-Car M3-N SoC.
-+
-+config ARCH_R8A77970
-+	bool "Renesas R-Car V3M SoC Platform"
-+	select RST_RCAR
-+	select SYSC_R8A77970
-+	help
-+	  This enables support for the Renesas R-Car V3M SoC.
-+
-+config ARCH_R8A77980
-+	bool "Renesas R-Car V3H SoC Platform"
-+	select RST_RCAR
-+	select SYSC_R8A77980
-+	help
-+	  This enables support for the Renesas R-Car V3H SoC.
-+
-+config ARCH_R8A77990
-+	bool "Renesas R-Car E3 SoC Platform"
-+	select RST_RCAR
-+	select SYSC_R8A77990
-+	help
-+	  This enables support for the Renesas R-Car E3 SoC.
-+
-+config ARCH_R8A77995
-+	bool "Renesas R-Car D3 SoC Platform"
-+	select RST_RCAR
-+	select SYSC_R8A77995
-+	help
-+	  This enables support for the Renesas R-Car D3 SoC.
-+
-+endif # ARM64
-+
- # SoC
- config SYSC_R8A7743
- 	bool "RZ/G1M System Controller support" if COMPILE_TEST
+Patch 1/5 lists the 'data-lanes' DT property as mandatory for endpoints 
+describing the CSI-2 transmitters. Patch 2/5 and 3/5 refactors the 
+initialization sequence of the adv748x to be able to reuse more code. 
+Patch 4/5 adds the DT parsing and storing of the number of lanes. Patch
+5/5 merges the TXA and TXB power up/down procedure while also taking the 
+configurable number of lanes into account.
+
+The series is based on the latest media-tree master and is tested on
+Renesas M3-N in 1-, 2- and 4- lane mode.
+
+Niklas Söderlund (5):
+  dt-bindings: adv748x: make data-lanes property mandatory for CSI-2
+    endpoints
+  i2c: adv748x: reorder register writes for CSI-2 transmitters
+    initialization
+  i2c: adv748x: reuse power up sequence when initializing CSI-2
+  i2c: adv748x: store number of CSI-2 lanes described in device tree
+  i2c: adv748x: configure number of lanes used for TXA CSI-2 transmitter
+
+ .../devicetree/bindings/media/i2c/adv748x.txt |   3 +
+ drivers/media/i2c/adv748x/adv748x-core.c      | 207 ++++++++++--------
+ drivers/media/i2c/adv748x/adv748x.h           |   1 +
+ 3 files changed, 122 insertions(+), 89 deletions(-)
+
 -- 
-2.17.1
+2.19.0
