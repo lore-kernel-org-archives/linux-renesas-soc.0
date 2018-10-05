@@ -1,87 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:46407 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727499AbeJEC4E (ORCPT
+Received: from sauhun.de ([88.99.104.3]:40304 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727572AbeJEXHN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Oct 2018 22:56:04 -0400
-Received: by mail-lf1-f66.google.com with SMTP id q2-v6so7705328lfc.13
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Oct 2018 13:01:15 -0700 (PDT)
-From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Date: Thu, 4 Oct 2018 22:01:12 +0200
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/3] rcar-vin: align format width with hardware limits
-Message-ID: <20181004200112.GO24305@bigcity.dyn.berto.se>
-References: <20180914021345.9277-1-niklas.soderlund+renesas@ragnatech.se>
- <20180914021345.9277-2-niklas.soderlund+renesas@ragnatech.se>
- <6676e7fa-5548-7c3e-25f0-19bf6b03ed42@xs4all.nl>
+        Fri, 5 Oct 2018 19:07:13 -0400
+Date: Fri, 5 Oct 2018 18:07:50 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Tony Lindgren <tony@atomide.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/12] i2c: omap: use core to detect 'no zero length'
+ quirk
+Message-ID: <20181005160750.4rehujdlvk7phot4@ninjato>
+References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
+ <20180723202617.15230-5-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="y67gvktqmc777jno"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6676e7fa-5548-7c3e-25f0-19bf6b03ed42@xs4all.nl>
+In-Reply-To: <20180723202617.15230-5-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Hans,
 
-Thanks for your feedback.
+--y67gvktqmc777jno
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2018-09-14 10:47:41 +0200, Hans Verkuil wrote:
-> On 09/14/2018 04:13 AM, Niklas S�derlund wrote:
-> > The Gen3 datasheets lists specific alignment restrictions compared to
-> > Gen2. This was overlooked when adding Gen3 support as no problematic
-> > configuration was encountered. However when adding support for Gen3 Up
-> > Down Scaler (UDS) strange issues could be observed for odd widths
-> > without taking this limit into consideration.
-> > 
-> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-> > ---
-> >  drivers/media/platform/rcar-vin/rcar-v4l2.c | 15 +++++++++++++++
-> >  1 file changed, 15 insertions(+)
-> > 
-> > diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> > index dc77682b47857c97..2fc2a05eaeacb134 100644
-> > --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> > +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> > @@ -673,6 +673,21 @@ static void rvin_mc_try_format(struct rvin_dev *vin,
-> >  	pix->quantization = V4L2_MAP_QUANTIZATION_DEFAULT(true, pix->colorspace,
-> >  							  pix->ycbcr_enc);
-> >  
-> > +	switch (vin->format.pixelformat) {
-> > +	case V4L2_PIX_FMT_NV16:
-> > +		pix->width = ALIGN(pix->width, 0x80);
-> > +		break;
-> > +	case V4L2_PIX_FMT_YUYV:
-> > +	case V4L2_PIX_FMT_UYVY:
-> > +	case V4L2_PIX_FMT_RGB565:
-> > +	case V4L2_PIX_FMT_XRGB555:
-> > +		pix->width = ALIGN(pix->width, 0x40);
-> > +		break;
-> > +	default:
-> > +		pix->width = ALIGN(pix->width, 0x20);
-> > +		break;
-> > +	}
-> > +
-> >  	rvin_format_align(vin, pix);
-> >  }
-> >  
-> > 
-> 
-> This looks weird. So for NV16 the width must be a multiple of 128,
-> do I read that correctly?
-> 
-> Are you sure you don't mean bytesperline?
-> 
-> And if it really is the width, doesn't this place very big constraints
-> on the vin driver? If you don't want/need the UDS, then I can imagine
-> that you don't want these alignments.
+On Mon, Jul 23, 2018 at 10:26:08PM +0200, Wolfram Sang wrote:
+> And don't reimplement in the driver.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Thanks for brining this up, after more carefully reading the datasheet 
-(which is a bit ambiguous in this section) I figured out that this is to 
-strict. Will rewrite this patch for v2.
+Applied to for-next, thanks!
 
--- 
-Regards,
-Niklas S�derlund
+
+--y67gvktqmc777jno
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlu3jFYACgkQFA3kzBSg
+Kbai4Q//bdUqfiGep2cctWYVOG3tEjuwjrQPQkBEz28T8O+l/7rYlBu5nE7PSkjf
+pQhWNe+ORfzMTpnQHbk7F+qaXDICDEWG3ApnKfiudXCHGVfNzTe1gs5Da1J4zQjX
+l1j8TCXQL8go1ftYQdIfIaAFr1VzbFjhDIRhqyAhuIvKWTWFWuLYAC/x1idA+MRr
+9Ijj24y+8DppchR0Ifh+YbqQdejWiv7RwOyW5G8Lxl5rI1ypKc5Rrpr5yEXNGH0/
+gu5mNISUO44CxL+JQ0oy4d30sl56IKXk+JudZE0RgrmjPORltc8g5MZCoTlaSLzj
+IhHvng6CN/qdfaEsix22aXRv1AY0DOp+CGFSNerym2KmbOThNKk2pQhR/iERVSHr
+7O/mZokwEHp7elGhARYB89tA6eTZDJ7WymrUekDKqTEBlM6QbMifmfN4R8T7wXaI
+YLovwVIXNjjHu29fYb+/DxVR/KxJCazyQaDeQjOPn1N60aeE26CBLToXVAsjvndF
+bdmwWYfLfO5MCA9m17lR23XY81sD9JjyBhus3teKb7cDmQW2DdNGQa5eMlq26Lt1
+/ge8zNNA5Tt/toaOz7hOKqKq5fSsrUyNZoKR4vF6TdwQUJbWU+ZohlrQB9oeXY4Q
+zTH3l8jfrjBw0WlBIs1fZHu9nbFDoQplEr8tMeaIlOa2avOF0mM=
+=YmKR
+-----END PGP SIGNATURE-----
+
+--y67gvktqmc777jno--
