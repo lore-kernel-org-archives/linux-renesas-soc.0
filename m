@@ -1,99 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38780 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725973AbeJHPF4 (ORCPT
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34408 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728160AbeJFCd4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 8 Oct 2018 11:05:56 -0400
-Date: Mon, 8 Oct 2018 09:55:27 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Yoshihiro Kaneko <ykaneko0929@gmail.com>
+        Fri, 5 Oct 2018 22:33:56 -0400
+Received: by mail-lj1-f194.google.com with SMTP id j17-v6so3327055lja.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 05 Oct 2018 12:33:45 -0700 (PDT)
 Subject: Re: [PATCH] arm64: dts: renesas: r8a77970: add thermal support
-Message-ID: <20181008075526.7cygudjvtb4q4d6r@verge.net.au>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>
 References: <fb4eb097-40aa-82df-68c7-9b727c858a8b@cogentembedded.com>
  <51491585-16fb-93b1-bb1a-09e89683f2f0@cogentembedded.com>
+Message-ID: <ae8ac632-16b2-73c0-8c16-4defe1fcbec2@cogentembedded.com>
+Date: Fri, 5 Oct 2018 22:33:42 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <51491585-16fb-93b1-bb1a-09e89683f2f0@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Oct 05, 2018 at 10:25:47PM +0300, Sergei Shtylyov wrote:
+On 10/05/2018 10:25 PM, Sergei Shtylyov wrote:
+
 > Describe THS/CIVM in the R8A77970 device trees.
-> 
+
+   Damn, should be singular "tree"! :-/
+
 > Based on the original (and large) patches by Vladimir Barinov.
 > 
 > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> ---
-> This patch is against the 'renesas-devel-20181004-v4.19-rc6' tag of Simon
-> Horman's 'renesas.git' repo.
-> 
-> The thermal driver/bindings patches have been posted yesterday...
-> 
->  arch/arm64/boot/dts/renesas/r8a77970.dtsi |   32 ++++++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
-> 
-> Index: renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-> ===================================================================
-> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-> +++ renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-> @@ -300,6 +300,19 @@
->  			#power-domain-cells = <1>;
->  		};
->  
-> +		thermal: thermal@e6190000 {
-> +			compatible = "renesas,thermal-r8a77970";
-> +			reg =  <0 0xe6190000 0 0x14
 
-What is the motivation for 0x14, to me 0x10 seems like a more natural size
-for the register window.
+[...]
 
-Otherwise the patch looks good to me.
-
-> +				0 0xe6190100 0 0x38>;
-> +			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 522>;
-> +			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-> +			resets = <&cpg 522>;
-> +			#thermal-sensor-cells = <0>;
-> +		};
-> +
->  		intc_ex: interrupt-controller@e61c0000 {
->  			compatible = "renesas,intc-ex-r8a77970", "renesas,irqc";
->  			#interrupt-cells = <2>;
-> @@ -1033,6 +1046,25 @@
->  		};
->  	};
->  
-> +	thermal-zones {
-> +		cpu-thermal {
-> +			polling-delay-passive = <250>;
-> +			polling-delay = <1000>;
-> +			thermal-sensors = <&thermal>;
-> +
-> +			trips {
-> +				cpu-crit {
-> +					temperature = <120000>;
-> +					hysteresis = <2000>;
-> +					type = "critical";
-> +				};
-> +			};
-> +
-> +			cooling-maps {
-> +			};
-> +		};
-> +	};
-> +
->  	timer {
->  		compatible = "arm,armv8-timer";
->  		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-> 
+MBR, Sergei
