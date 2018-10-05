@@ -1,225 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-07.nifty.com ([210.131.2.74]:59979 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728646AbeJLWhG (ORCPT
+Received: from sauhun.de ([88.99.104.3]:40316 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727572AbeJEXHT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Oct 2018 18:37:06 -0400
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] mmc: tmio: simplify the DMA mode test
-Date: Sat, 13 Oct 2018 00:03:08 +0900
-Message-Id: <1539356588-18191-1-git-send-email-yamada.masahiro@socionext.com>
+        Fri, 5 Oct 2018 19:07:19 -0400
+Date: Fri, 5 Oct 2018 18:07:57 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/12] i2c: qup: use core to detect 'no zero length' quirk
+Message-ID: <20181005160757.u3tndasxf2burb74@ninjato>
+References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
+ <20180723202617.15230-7-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bhtjd42horfsmg7w"
+Content-Disposition: inline
+In-Reply-To: <20180723202617.15230-7-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-host->chan_{rx,tx} represents the DMA capability of the platform.
-Even if DMA is supported, there are cases where we want to use PIO,
-for example, data length is short enough as commit 5f52c3552946
-("mmc: tmio: use PIO for short transfers") mentioned.
 
-Regarding the hardware control flow, we are interested in whether DMA
-is currently enabled or not, instead of whether the platform has the
-DMA capability.
+--bhtjd42horfsmg7w
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hence, the several conditionals in tmio_mmc_core.c end up with
-checking host->chan_{rx,tx} and !host->force_pio. This is not nice.
+On Mon, Jul 23, 2018 at 10:26:10PM +0200, Wolfram Sang wrote:
+> And don't reimplement in the driver.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Let's flip the flag host->force_pio into host->dma_on.
+Applied to for-next, thanks!
 
-host->dma_on represents whether the DMA is currently enabled or not.
-This flag is set false in the beginning of each command, then should
-be set true by tmio_mmc_start_dma() when the DMA is turned on.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+--bhtjd42horfsmg7w
+Content-Type: application/pgp-signature; name="signature.asc"
 
- drivers/mmc/host/renesas_sdhi_internal_dmac.c |  3 ++-
- drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 10 ++++------
- drivers/mmc/host/tmio_mmc.h                   |  2 +-
- drivers/mmc/host/tmio_mmc_core.c              | 14 +++++++-------
- drivers/mmc/host/uniphier-sd.c                |  6 ++++--
- 5 files changed, 18 insertions(+), 17 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index ca0b439..885676b 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -201,13 +201,14 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- 	renesas_sdhi_internal_dmac_dm_write(host, DM_DTRAN_ADDR,
- 					    sg_dma_address(sg));
- 
-+	host->dma_on = true;
-+
- 	return;
- 
- force_pio_with_unmap:
- 	dma_unmap_sg(&host->pdev->dev, sg, host->sg_len, mmc_get_dma_dir(data));
- 
- force_pio:
--	host->force_pio = true;
- 	renesas_sdhi_internal_dmac_enable_dma(host, false);
- }
- 
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index 5389c48..3c97831 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -213,10 +213,8 @@ static void renesas_sdhi_sys_dmac_start_dma_rx(struct tmio_mmc_host *host)
- 		goto pio;
- 	}
- 
--	if (sg->length < TMIO_MMC_MIN_DMA_LEN) {
--		host->force_pio = true;
-+	if (sg->length < TMIO_MMC_MIN_DMA_LEN)
- 		return;
--	}
- 
- 	/* The only sg element can be unaligned, use our bounce buffer then */
- 	if (!aligned) {
-@@ -240,6 +238,7 @@ static void renesas_sdhi_sys_dmac_start_dma_rx(struct tmio_mmc_host *host)
- 			desc = NULL;
- 			ret = cookie;
- 		}
-+		host->dma_on = true;
- 	}
- pio:
- 	if (!desc) {
-@@ -286,10 +285,8 @@ static void renesas_sdhi_sys_dmac_start_dma_tx(struct tmio_mmc_host *host)
- 		goto pio;
- 	}
- 
--	if (sg->length < TMIO_MMC_MIN_DMA_LEN) {
--		host->force_pio = true;
-+	if (sg->length < TMIO_MMC_MIN_DMA_LEN)
- 		return;
--	}
- 
- 	/* The only sg element can be unaligned, use our bounce buffer then */
- 	if (!aligned) {
-@@ -318,6 +315,7 @@ static void renesas_sdhi_sys_dmac_start_dma_tx(struct tmio_mmc_host *host)
- 			desc = NULL;
- 			ret = cookie;
- 		}
-+		host->dma_on = true;
- 	}
- pio:
- 	if (!desc) {
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index 18b4308..1c3bdad 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -142,7 +142,7 @@ struct tmio_mmc_host {
- 	struct tmio_mmc_data *pdata;
- 
- 	/* DMA support */
--	bool			force_pio;
-+	bool			dma_on;
- 	struct dma_chan		*chan_rx;
- 	struct dma_chan		*chan_tx;
- 	struct tasklet_struct	dma_issue;
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index a571106..38be3fc 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -364,7 +364,7 @@ static void tmio_mmc_pio_irq(struct tmio_mmc_host *host)
- 	unsigned int count;
- 	unsigned long flags;
- 
--	if ((host->chan_tx || host->chan_rx) && !host->force_pio) {
-+	if (host->dma_on) {
- 		pr_err("PIO IRQ in DMA mode!\n");
- 		return;
- 	} else if (!data) {
-@@ -436,7 +436,7 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
- 	 */
- 
- 	if (data->flags & MMC_DATA_READ) {
--		if (host->chan_rx && !host->force_pio)
-+		if (host->dma_on)
- 			tmio_mmc_check_bounce_buffer(host);
- 		dev_dbg(&host->pdev->dev, "Complete Rx request %p\n",
- 			host->mrq);
-@@ -473,7 +473,7 @@ static void tmio_mmc_data_irq(struct tmio_mmc_host *host, unsigned int stat)
- 	if (stat & TMIO_STAT_CRCFAIL || stat & TMIO_STAT_STOPBIT_ERR ||
- 	    stat & TMIO_STAT_TXUNDERRUN)
- 		data->error = -EILSEQ;
--	if (host->chan_tx && (data->flags & MMC_DATA_WRITE) && !host->force_pio) {
-+	if (host->dma_on && (data->flags & MMC_DATA_WRITE)) {
- 		u32 status = sd_ctrl_read16_and_16_as_32(host, CTL_STATUS);
- 		bool done = false;
- 
-@@ -497,7 +497,7 @@ static void tmio_mmc_data_irq(struct tmio_mmc_host *host, unsigned int stat)
- 			tmio_mmc_disable_mmc_irqs(host, TMIO_STAT_DATAEND);
- 			tmio_mmc_dataend_dma(host);
- 		}
--	} else if (host->chan_rx && (data->flags & MMC_DATA_READ) && !host->force_pio) {
-+	} else if (host->dma_on && (data->flags & MMC_DATA_READ)) {
- 		tmio_mmc_disable_mmc_irqs(host, TMIO_STAT_DATAEND);
- 		tmio_mmc_dataend_dma(host);
- 	} else {
-@@ -550,7 +550,7 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host, unsigned int stat)
- 	 */
- 	if (host->data && (!cmd->error || cmd->error == -EILSEQ)) {
- 		if (host->data->flags & MMC_DATA_READ) {
--			if (host->force_pio || !host->chan_rx) {
-+			if (!host->dma_on) {
- 				tmio_mmc_enable_mmc_irqs(host, TMIO_MASK_READOP);
- 			} else {
- 				tmio_mmc_disable_mmc_irqs(host,
-@@ -558,7 +558,7 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host, unsigned int stat)
- 				tasklet_schedule(&host->dma_issue);
- 			}
- 		} else {
--			if (host->force_pio || !host->chan_tx) {
-+			if (!host->dma_on) {
- 				tmio_mmc_enable_mmc_irqs(host, TMIO_MASK_WRITEOP);
- 			} else {
- 				tmio_mmc_disable_mmc_irqs(host,
-@@ -688,7 +688,7 @@ static int tmio_mmc_start_data(struct tmio_mmc_host *host,
- 
- 	tmio_mmc_init_sg(host, data);
- 	host->data = data;
--	host->force_pio = false;
-+	host->dma_on = false;
- 
- 	/* Set transfer length / blocksize */
- 	sd_ctrl_write16(host, CTL_SD_XFER_LEN, data->blksz);
-diff --git a/drivers/mmc/host/uniphier-sd.c b/drivers/mmc/host/uniphier-sd.c
-index 1ee9fd0..91a2be4 100644
---- a/drivers/mmc/host/uniphier-sd.c
-+++ b/drivers/mmc/host/uniphier-sd.c
-@@ -157,13 +157,14 @@ static void uniphier_sd_external_dma_start(struct tmio_mmc_host *host,
- 	if (cookie < 0)
- 		goto unmap_sg;
- 
-+	host->dma_on = true;
-+
- 	return;
- 
- unmap_sg:
- 	dma_unmap_sg(mmc_dev(host->mmc), host->sg_ptr, host->sg_len,
- 		     priv->dma_dir);
- force_pio:
--	host->force_pio = true;
- 	uniphier_sd_dma_endisable(host, 0);
- }
- 
-@@ -283,9 +284,10 @@ static void uniphier_sd_internal_dma_start(struct tmio_mmc_host *host,
- 	writel(lower_32_bits(dma_addr), host->ctl + UNIPHIER_SD_DMA_ADDR_L);
- 	writel(upper_32_bits(dma_addr), host->ctl + UNIPHIER_SD_DMA_ADDR_H);
- 
-+	host->dma_on = true;
-+
- 	return;
- force_pio:
--	host->force_pio = true;
- 	uniphier_sd_dma_endisable(host, 0);
- }
- 
--- 
-2.7.4
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlu3jF0ACgkQFA3kzBSg
+KbZCGw//SE6mTYuSe6OfLNIuF/2L6CFT1VxnZGqJV4MoPvbHgBewEKW/ZGx8+6hO
+aQdW/KoJCoPJPj5TD6wSod5RJVKk+aSX0lj2olKEtQOr/vgr0oWF7Gx83LjJ99Ur
+WUj0KSTqGoqjRgC0n8pE4KYr0jA/vngjUinJsY5VwNStyHriII2qD256hWfrFpfS
+1B0G0RS8RdeneQAUGcK+w7/UsBNUpeCrjxS0hB2Pf+0fSD9HpIgoVXpqyYQyF1r3
+eJyNxIrYXunUHb9fUGSpmgaaUwCMILR4xZB8m2Ck6SWyuDkABxZmIkQ0uCI+7ICk
+jNzg13HF3f1UbM9ODpKgTzEWfxnLidn7V8I5+1BopD/fFnNlN7sfePkdjxQYDUvy
+d1QOXpYAZmn/bF8XEs84mLZllQPwjE4Ai2Xs9N4jGEeXo4meNzt56QIwqHbelDt4
+7KV7B05CY6lWr8q8FaXg67GmrplpqDB7TLbF2qGao9rHk/pgdsZ5JVv8zgjbkrw8
+OvZ4tSXlZRnwAtVb3DLPerICUQouyeIXyjaqBk6G5p0ie5hqWjvSX+wnKrOajUMn
+CYLgJXe2xixuMadjJ5TYjW9+5Uinnv9d7KINuuVLce0apHNmYFS7D4rJC6zqmOUF
+mg7I35/TlwE34S+OXBlfSDI1sH4z7ByeEf8ZSQ2WCPW5r6BnxWo=
+=3wWn
+-----END PGP SIGNATURE-----
+
+--bhtjd42horfsmg7w--
