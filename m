@@ -1,57 +1,71 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-Date: Fri, 5 Oct 2018 18:08:18 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:17386 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728278AbeJEUu6 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 5 Oct 2018 16:50:58 -0400
 Subject: Re: [PATCH 08/12] i2c: tegra: use core to detect 'no zero length'
  quirk
-Message-ID: <20181005160818.ta2ngy4av7mwpakv@ninjato>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        <linux-i2c@vger.kernel.org>
+CC: <linux-renesas-soc@vger.kernel.org>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
  <20180723202617.15230-9-wsa+renesas@sang-engineering.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <8eb3d00b-0275-30ec-ef44-5e859dd9242f@nvidia.com>
+Date: Fri, 5 Oct 2018 14:52:05 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="j75xnhkbcuolmljp"
-Content-Disposition: inline
 In-Reply-To: <20180723202617.15230-9-wsa+renesas@sang-engineering.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---j75xnhkbcuolmljp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Jul 23, 2018 at 10:26:12PM +0200, Wolfram Sang wrote:
+On 23/07/18 21:26, Wolfram Sang wrote:
 > And don't reimplement in the driver.
->=20
+> 
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> 
+> Only build tested.
+> 
+>  drivers/i2c/busses/i2c-tegra.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index 60c8561fbe65..437294ea2f0a 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -684,9 +684,6 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+>  
+>  	tegra_i2c_flush_fifos(i2c_dev);
+>  
+> -	if (msg->len == 0)
+> -		return -EINVAL;
+> -
+>  	i2c_dev->msg_buf = msg->buf;
+>  	i2c_dev->msg_buf_remaining = msg->len;
+>  	i2c_dev->msg_err = I2C_ERR_NONE;
+> @@ -831,6 +828,7 @@ static const struct i2c_algorithm tegra_i2c_algo = {
+>  
+>  /* payload size is only 12 bit */
+>  static const struct i2c_adapter_quirks tegra_i2c_quirks = {
+> +	.flags = I2C_AQ_NO_ZERO_LEN,
+>  	.max_read_len = 4096,
+>  	.max_write_len = 4096,
+>  };
 
-Applied to for-next, thanks!
+Sorry for missing this, but looks fine to me, so ...
 
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
---j75xnhkbcuolmljp
-Content-Type: application/pgp-signature; name="signature.asc"
+Cheers
+Jon
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlu3jHIACgkQFA3kzBSg
-KbZCShAAnKs4K41P5qCG0kGY1iFAOtC3xA1ZPUDjfkva0GCFDLdc96AxOo0oRiLQ
-wUsBnK+uQ5kzbfXyY+htm3/jlEU0rj+eRGJBuvdSVaEgKHDFoef4yjK0VYnv3BMP
-qAEN8UqKIV8tTKEN0EIPqpSw5TX/n2TVkLORsNVkGg7PaWJtANYTLQWFx6IySZsW
-KAMq868YBtjXn9ZayCKwrT0YFrVmG4L2TpgGtyYyyEjOT2MxVL57MXKtzh24ZQ0B
-rwVKCOgUXEAww87fvaXc9H9ex9fvtxRNwAzpxWPnoZbxoqZhuCccrvxvuOGEWAFW
-MekUtwytiSkvxNLyc09o5RtKzZmFxTKOzpa1Tmg9zgSMWEWmiZHUBkP8h2uQsi7V
-XANzc4hrBu5Qp/qdZJCaUlP/O1HVR8pWwL7R6YYoWrn2fOZIbAEq3qtJB+/iBigS
-5n4naNC2Op5KT6/1v7N7CwkRJHmn1i64ZVEAp6MrBNS39dDTEVmyq4pyiRlbR7/v
-yBlU2gFg1ZHvclBn5xgP1vWU+UDmgvyQbUwMF3vBmKuRCeYxbqIo6V698SGFsnTN
-2B8dU30RfHdMLp2x/HoMRJipZxeubAHpz+RpLAB7akzbhSpso8yiQulYroQzacG5
-UDf1nxO1CjuX57BBv3ujUsCWkOZoZCrLzPuFgaekZciPfhfmr0g=
-=mJp1
------END PGP SIGNATURE-----
-
---j75xnhkbcuolmljp--
+-- 
+nvpublic
