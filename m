@@ -1,71 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:17386 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728278AbeJEUu6 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:38962 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727558AbeJETXD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 5 Oct 2018 16:50:58 -0400
-Subject: Re: [PATCH 08/12] i2c: tegra: use core to detect 'no zero length'
- quirk
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        <linux-i2c@vger.kernel.org>
-CC: <linux-renesas-soc@vger.kernel.org>,
+        Fri, 5 Oct 2018 15:23:03 -0400
+Date: Fri, 5 Oct 2018 14:24:31 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Laxman Dewangan <ldewangan@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/12] i2c: tegra: use core to detect 'no zero length'
+ quirk
+Message-ID: <20181005122431.GJ5433@kunai>
 References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
  <20180723202617.15230-9-wsa+renesas@sang-engineering.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <8eb3d00b-0275-30ec-ef44-5e859dd9242f@nvidia.com>
-Date: Fri, 5 Oct 2018 14:52:05 +0100
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="GvznHscUikHnwW2p"
+Content-Disposition: inline
 In-Reply-To: <20180723202617.15230-9-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
-On 23/07/18 21:26, Wolfram Sang wrote:
+--GvznHscUikHnwW2p
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jul 23, 2018 at 10:26:12PM +0200, Wolfram Sang wrote:
 > And don't reimplement in the driver.
-> 
+>=20
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> Only build tested.
-> 
->  drivers/i2c/busses/i2c-tegra.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index 60c8561fbe65..437294ea2f0a 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -684,9 +684,6 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->  
->  	tegra_i2c_flush_fifos(i2c_dev);
->  
-> -	if (msg->len == 0)
-> -		return -EINVAL;
-> -
->  	i2c_dev->msg_buf = msg->buf;
->  	i2c_dev->msg_buf_remaining = msg->len;
->  	i2c_dev->msg_err = I2C_ERR_NONE;
-> @@ -831,6 +828,7 @@ static const struct i2c_algorithm tegra_i2c_algo = {
->  
->  /* payload size is only 12 bit */
->  static const struct i2c_adapter_quirks tegra_i2c_quirks = {
-> +	.flags = I2C_AQ_NO_ZERO_LEN,
->  	.max_read_len = 4096,
->  	.max_write_len = 4096,
->  };
 
-Sorry for missing this, but looks fine to me, so ...
+Ping.
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
-Cheers
-Jon
+--GvznHscUikHnwW2p
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-nvpublic
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlu3V/8ACgkQFA3kzBSg
+KbaIMg//VoDVkIgkD3T/QM1hU3m4q/+ParcG3kgHrJNciUf/GlzoZcKhvHIvXdli
+PF6F6K8RFXnfNs11r2ihDdICbRGZkd/AX7Vv+f2NUzyEVaXZKQGtEd+cw03k25Cq
+BS0nu4b6clpCEHAKEZgnfrSnifwiVYdNIht2K+n4swAktfoPEX8HAeNnMmSmuWf1
+whdta6zIIzGt/Kstcx6x59nZ3DQx1NfeDJ3AV4Y4V2Rv8BiY1jEIS6ScnPVeHI/A
+zV4QWmIKhHxvCL36rxBhsPjb14kfjPxLdJBLnLFbUTP7S2yZVuvHA4LPIYn7S5PW
+LukXgbEPWPJe3ox28HeRDpzhBFiSza7qjjT3wJFg0f/6F0KtMmDf4DRz1SJ3vPmc
+LlDv6YaIs6KdGxHMxAjRBiIY1MAqgPpvI7tuxOzaiC/FwW9hZPdtZrRu8Lrazr3w
+OVv+uW6pc+FPV4fxn7PMVdlZPV2H/sYbkvPUVSxwerR2OTWBbQM+FELGEOl3ag95
+zrqddnG7DpUS8Ogw0x2wuMM8oxQLK7m8K41b3k4NqjwGfm9ntBj6Af+FmHz3Dr27
+MeHhQnSJhpsfF8v1PuXaWx8J4mRIin/SMO9/RLzdp9nfV+Bxy/NJaJKVY3gUW9XG
+gv3jN3fPYFvSguWlBFKRfVNHEaBcf5qcHz0Wt4N/81bdw0vuJUc=
+=Om5z
+-----END PGP SIGNATURE-----
+
+--GvznHscUikHnwW2p--
