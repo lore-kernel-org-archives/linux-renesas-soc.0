@@ -1,24 +1,8 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:41664 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725857AbeJHOQM (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 8 Oct 2018 10:16:12 -0400
-MIME-Version: 1.0
-References: <20181005165848.3474-1-robh@kernel.org> <20181005165848.3474-6-robh@kernel.org>
-In-Reply-To: <20181005165848.3474-6-robh@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 8 Oct 2018 09:05:45 +0200
-Message-ID: <CAMuHMdV=HaVhGf-7-21OHb05dCc0q9MDUNknAcybEiGSxATeEA@mail.gmail.com>
-Subject: Re: [PATCH 05/36] dt-bindings: arm: renesas: Move 'renesas,prr'
- binding to its own doc
-To: Rob Herring <robh@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Grant Likely <glikely@secretlab.ca>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Rob Herring <robh@kernel.org>
+To: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
+Cc: Grant Likely <glikely@secretlab.ca>,
         Kumar Gala <kumar.gala@linaro.org>,
         Frank Rowand <frowand.list@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -26,38 +10,84 @@ Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
         Mark Brown <broonie@kernel.org>, Tom Rini <trini@konsulko.com>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Jonathan Cameron <jic23@kernel.org>,
-        =?UTF-8?Q?Bj=C3=B6rn_Andersson?= <bjorn.andersson@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 05/36] dt-bindings: arm: renesas: Move 'renesas,prr' binding to its own doc
+Date: Fri,  5 Oct 2018 11:58:17 -0500
+Message-Id: <20181005165848.3474-6-robh@kernel.org>
+In-Reply-To: <20181005165848.3474-1-robh@kernel.org>
+References: <20181005165848.3474-1-robh@kernel.org>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Rob,
+In preparation to convert board-level bindings to json-schema, move
+various misc SoC bindings out to their own file.
 
-On Fri, Oct 5, 2018 at 6:58 PM Rob Herring <robh@kernel.org> wrote:
-> In preparation to convert board-level bindings to json-schema, move
-> various misc SoC bindings out to their own file.
->
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Simon Horman <horms@verge.net.au>
-> Cc: Magnus Damm <magnus.damm@gmail.com>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-renesas-soc@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Cc: devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/arm/renesas,prr.txt    | 18 ++++++++++++++++++
+ .../devicetree/bindings/arm/shmobile.txt       | 18 ------------------
+ 2 files changed, 18 insertions(+), 18 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/renesas,prr.txt
 
-Looks good to me, but needs a rebase, as the PRR section has been extended
-in -next.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/arm/renesas,prr.txt b/Documentation/devicetree/bindings/arm/renesas,prr.txt
+new file mode 100644
+index 000000000000..5000bf492f70
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/renesas,prr.txt
+@@ -0,0 +1,18 @@
++Renesas Product Register
++
++Most Renesas ARM SoCs have a Product Register that allows to retrieve SoC
++product and revision information.  If present, a device node for this register
++should be added.
++
++Required properties:
++  - compatible: Must be "renesas,prr".
++  - reg: Base address and length of the register block.
++
++
++Examples
++--------
++
++	prr: chipid@ff000044 {
++		compatible = "renesas,prr";
++		reg = <0 0xff000044 0 4>;
++	};
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 89b4a389fbc7..619b765e5bee 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -141,21 +141,3 @@ Boards:
+     compatible = "renesas,v3msk", "renesas,r8a77970"
+   - Wheat (RTP0RC7792ASKB0000JE)
+     compatible = "renesas,wheat", "renesas,r8a7792"
+-
+-
+-Most Renesas ARM SoCs have a Product Register that allows to retrieve SoC
+-product and revision information.  If present, a device node for this register
+-should be added.
+-
+-Required properties:
+-  - compatible: Must be "renesas,prr".
+-  - reg: Base address and length of the register block.
+-
+-
+-Examples
+---------
+-
+-	prr: chipid@ff000044 {
+-		compatible = "renesas,prr";
+-		reg = <0 0xff000044 0 4>;
+-	};
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.17.1
