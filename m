@@ -1,45 +1,47 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/4] i2c: core: introduce master_xfer_irqless
-To: Wolfram Sang <wsa@the-dreams.de>, Tony Lindgren <tony@atomide.com>
-CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        <linux-i2c@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-        Stefan Lengfeld <contact@stefanchrist.eu>,
-        <preid@electromag.com.au>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Tero Kristo <t-kristo@ti.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-References: <20180920161423.13990-1-wsa+renesas@sang-engineering.com>
- <20180920220203.GA5662@atomide.com> <20180920225608.GD988@kunai>
-From: Keerthy <j-keerthy@ti.com>
-Message-ID: <80230455-e0c6-be60-4d91-367c86387d6a@ti.com>
-Date: Thu, 18 Oct 2018 16:05:36 +0530
-MIME-Version: 1.0
-In-Reply-To: <20180920225608.GD988@kunai>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from stcim.de ([78.46.90.227]:49558 "EHLO stcim.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726448AbeJGWrk (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 7 Oct 2018 18:47:40 -0400
+From: Stefan Lengfeld <contact@stefanchrist.eu>
+To: wsa+renesas@sang-engineering.com
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        preid@electromag.com.au, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.or, j-keerthy@ti.com,
+        t-kristo@ti.com, grygorii.strashko@ti.com,
+        andriy.shevchenko@linux.intel.com
+Subject: Re: [RFC PATCH 0/3] i2c: core: introduce master_xfer_irqless
+Date: Sun,  7 Oct 2018 17:39:34 +0200
+Message-Id: <20181007153937.16787-1-contact@stefanchrist.eu>
+In-Reply-To: <20180923202034.qugs4fxucj7h4vri@porty>
+References: <20180923202034.qugs4fxucj7h4vri@porty>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
+
+I have ported my i.MX6 patches on your patch stack and tested the reboot
+handler on my i.MX6 Solo Board.  Works without lockdep and non-atomic
+warnings so far.
+
+Kind Regards,
+    Stefan
 
 
-On Friday 21 September 2018 04:26 AM, Wolfram Sang wrote:
-> 
->> Thanks looks nice to me:
->>
->> Acked-by: Tony Lindgren <tony@atomide.com>
-> 
-> Thanks, Tony!
+Stefan Christ (1):
+  ARM: dts: phyboard-mira-dl: rely on PMIC for reboot and watchdog
 
-Hi Wolfram Sang,
+Stefan Lengfeld (2):
+  i2c: imx: implement master_xfer_irqless callback
+  watchdog: da9062: avoid regmap in restart handler
 
-Posted: https://lore.kernel.org/patchwork/patch/1001457/
+ arch/arm/boot/dts/imx6dl-phytec-mira-rdk-nand.dts |   8 ++
+ drivers/i2c/busses/i2c-imx.c                      | 128 ++++++++++++++++------
+ drivers/mfd/da9062-core.c                         |   1 +
+ drivers/watchdog/da9062_wdt.c                     |  17 ++-
+ include/linux/mfd/da9062/core.h                   |   1 +
+ 5 files changed, 116 insertions(+), 39 deletions(-)
 
-Thanks for the series! I tested for poweroff on am572x-idk.
-
-Tested-by: Keerthy <j-keerthy@ti.com>
-
-Regards,
-Keerthy
-> 
+-- 
+2.16.4
