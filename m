@@ -1,14 +1,19 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:49380 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726056AbeJHVSE (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 8 Oct 2018 17:18:04 -0400
 MIME-Version: 1.0
 References: <20181005165848.3474-1-robh@kernel.org> <20181005165848.3474-30-robh@kernel.org>
- <CAMuHMdU=rBV4b3EcenvtMPevx14pvTDcnQ7VDg02VZFiFuU-uw@mail.gmail.com>
-In-Reply-To: <CAMuHMdU=rBV4b3EcenvtMPevx14pvTDcnQ7VDg02VZFiFuU-uw@mail.gmail.com>
+ <20181008080220.rmxk57ckdfmwuk62@verge.net.au>
+In-Reply-To: <20181008080220.rmxk57ckdfmwuk62@verge.net.au>
 From: Rob Herring <robh@kernel.org>
-Date: Mon, 8 Oct 2018 09:57:27 -0500
-Message-ID: <CAL_JsqLbh-UhYTWN_nMDVwGSh0amh6OsOK8H-+xiTdVynL3XiA@mail.gmail.com>
+Date: Mon, 8 Oct 2018 09:05:58 -0500
+Message-ID: <CAL_Jsq+8EwYzBmzSWL0q0YB3rP-xdrZreRnt1Rj-h=D8OTNVwA@mail.gmail.com>
 Subject: Re: [PATCH 29/36] dt-bindings: arm: Convert Renesas board/soc
  bindings to json-schema
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Simon Horman <horms@verge.net.au>
 Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         devicetree@vger.kernel.org,
         "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
@@ -22,21 +27,20 @@ Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
         Mark Brown <broonie@kernel.org>, Tom Rini <trini@konsulko.com>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Jonathan Cameron <jic23@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         "open list:MEDIA DRIVERS FOR RENESAS - FCP"
-        <linux-renesas-soc@vger.kernel.org>
+        <linux-renesas-soc@vger.kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Content-Type: text/plain; charset="UTF-8"
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 8, 2018 at 2:47 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+On Mon, Oct 8, 2018 at 3:02 AM Simon Horman <horms@verge.net.au> wrote:
 >
-> Hi Rob,
->
-> On Fri, Oct 5, 2018 at 6:59 PM Rob Herring <robh@kernel.org> wrote:
+> On Fri, Oct 05, 2018 at 11:58:41AM -0500, Rob Herring wrote:
 > > Convert Renesas SoC bindings to DT schema format using json-schema.
 > >
 > > Cc: Simon Horman <horms@verge.net.au>
@@ -46,93 +50,19 @@ On Mon, Oct 8, 2018 at 2:47 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 > > Cc: devicetree@vger.kernel.org
 > > Signed-off-by: Rob Herring <robh@kernel.org>
 >
-> Thanks for your patch!
+> This seems fine to me other than that it does not seem
+> to apply cleanly to next.
 >
-> Note that this will need a rebase, as more SoCs/boards have been added
-> in -next.
->
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/arm/shmobile.yaml
-> > @@ -0,0 +1,205 @@
-> > +# SPDX-License-Identifier: None
->
-> The old file didn't have an SPDX header, so it was GPL-2.0, implicitly?
+> shmobile.txt sees a couple of updates per release cycle so from my point of
+> view it would ideal if this change could hit -rc1 to allow patches for
+> v4.21 to be accepted smoothly (already one from Sergei will need rebasing).
 
-Right. I meant to update this with something. I'd prefer it be dual
-licensed as these aren't just kernel files, but I don't really want to
-try to gather permissions from all the copyright holders. And who is
-the copyright holder when it is implicit? Everyone listed by git
-blame?
-
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/bindings/arm/shmobile.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Renesas SH-Mobile, R-Mobile, and R-Car Platform Device Tree Bindings
-> > +
-> > +maintainers:
-> > +  - Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Simon Horman <horms@verge.net.au> (supporter:ARM/SHMOBILE ARM ARCHITECTURE)
-> Magnus Damm <magnus.damm@gmail.com> (supporter:ARM/SHMOBILE ARM ARCHITECTURE)
->
-> You had it right in the CC list, though...
-
-I generated it here from git log rather get_maintainers.pl because
-get_maintainers.pl just lists me for a bunch of them.
-
-> > +      - description: RZ/G1M (R8A77430)
-> > +        items:
-> > +          - enum:
-> > +              # iWave Systems RZ/G1M Qseven Development Platform (iW-RainboW-G20D-Qseven)
-> > +              - iwave,g20d
-> > +          - const: iwave,g20m
-> > +          - const: renesas,r8a7743
-> > +
-> > +      - items:
-> > +          - enum:
-> > +              # iWave Systems RZ/G1M Qseven System On Module (iW-RainboW-G20M-Qseven)
-> > +              - iwave,g20m
-> > +          - const: renesas,r8a7743
-> > +
-> > +      - description: RZ/G1N (R8A77440)
-> > +        items:
-> > +          - enum:
-> > +              - renesas,sk-rzg1m # SK-RZG1M (YR8A77430S000BE)
->
-> This board belongs under the RZ/G1M section above
-> (see also the 7743 in the part number).
-
-Indeed. Not sure how I screwed that one up.
-
-> > +          - const: renesas,r8a7744
->
-> > +      - description: Kingfisher (SBEV-RCAR-KF-M03)
-> > +        items:
-> > +          - const: shimafuji,kingfisher
-> > +          - enum:
-> > +              - renesas,h3ulcb
-> > +              - renesas,m3ulcb
-> > +          - enum:
-> > +              - renesas,r8a7795
-> > +              - renesas,r8a7796
->
-> This looks a bit funny: all other entries have the "const" last, and
-> use it for the
-> SoC number. May be correct, though.
-> To clarify, this is an extension board that can fit both the [HM]3ULCB
-> boards (actually also the new M3NULCB, I think).
-
-This being Kingfisher?
-
-I wrote this based on dts files in the tree. There's 2 combinations that I see:
-
-"shimafuji,kingfisher", "renesas,h3ulcb", "renesas,r8a7795"
-"shimafuji,kingfisher", "renesas,m3ulcb", "renesas,r8a7796"
-
-The schema allows 4 combinations (1 * 2 * 2). I have no idea if the
-other combinations are possible. If not, then we could rewrite this as
-2 entries with 3 const values each.
+When we get to the point of merging (which isn't going to be 4.20),
+you and other maintainers can probably take all these patches. Other
+than the few restructuring patches, the only dependency is the build
+support which isn't a dependency to apply it, but build it. I plan to
+build any patches as part of reviewing at least early on. OTOH, the
+build support is small enough and self contained that maybe it can
+just be applied for 4.20.
 
 Rob
