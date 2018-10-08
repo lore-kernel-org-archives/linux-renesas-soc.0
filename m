@@ -1,79 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45866 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728559AbeJVEQL (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:35145 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726013AbeJHQCm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:16:11 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
+        Mon, 8 Oct 2018 12:02:42 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-rtc@vger.kernel.org
-Subject: [PATCH 0/1] rtc: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:40 +0200
-Message-Id: <20181021200042.1993-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        tianshuliang <tianshuliang@hisilicon.com>,
+        Jan Glauber <jglauber@cavium.com>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Carlo Caione <carlo@endlessm.com>,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Liming Sun <lsun@mellanox.com>, Arnd Bergmann <arnd@arndb.de>,
+        Alex Smith <alex.smith@imgtec.com>, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH v3 0/6] Add uSD and eMMC to iwg23s
+Date: Mon,  8 Oct 2018 09:51:46 +0100
+Message-Id: <1538988712-17077-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I got tired of fixing this in Renesas drivers manually, so I took the big
-hammer. Remove this cumbersome code pattern which got copy-pasted too much
-already:
+Dear All,
 
--	struct platform_device *pdev = to_platform_device(dev);
--	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
-+	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
+this new version incorporates Geert's comments.
+This series applies on top of next-20181005.
 
-A branch, tested by buildbot, can be found here:
+Thanks,
+Fab
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git coccinelle/get_drvdata
+Fabrizio Castro (6):
+  dt-bindings: mmc: renesas_sdhi: Add r8a77470 support
+  pinctrl: sh-pfc: r8a77470: Add SDHI support
+  mmc: renesas_sdhi: Add r8a77470 SDHI1 support
+  ARM: dts: r8a77470: Add SDHI0 support
+  ARM: dts: r8a77470: Add SDHI1 support
+  ARM: dts: iwg23s-sbc: Add uSD and eMMC support
 
-I have been asked if it couldn't be done for dev_set_drvdata as well. I checked
-it and did not find one occasion where it could be simplified like this. Not
-much of a surprise because driver_data is usually set in probe() functions
-which access struct platform_device in many other ways.
-
-I am open for other comments, suggestions, too, of course.
-
-Here is the cocci-script I created:
-
-@@
-struct device* d;
-identifier pdev;
-expression *ptr;
-@@
-(
--	struct platform_device *pdev = to_platform_device(d);
-|
--	struct platform_device *pdev;
-	...
--	pdev = to_platform_device(d);
-)
-	<... when != pdev
--	&pdev->dev
-+	d
-	...>
-
-	ptr =
--	platform_get_drvdata(pdev)
-+	dev_get_drvdata(d)
-
-	<... when != pdev
--	&pdev->dev
-+	d
-	...>
-
-Kind regards,
-
-   Wolfram
-
-
-Wolfram Sang (1):
-  rtc: ds1685: simplify getting .driver_data
-
- drivers/rtc/rtc-ds1685.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt |   6 +-
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts          |  76 ++++++++++
+ arch/arm/boot/dts/r8a77470.dtsi                    |  28 +++-
+ drivers/mmc/host/Kconfig                           |   4 +-
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c      |   6 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a77470.c              | 162 ++++++++++++++++++++-
+ 6 files changed, 273 insertions(+), 9 deletions(-)
 
 -- 
-2.19.0
+2.7.4
