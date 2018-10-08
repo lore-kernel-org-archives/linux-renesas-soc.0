@@ -1,60 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45926 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727226AbeJVEQT (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:26890 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726193AbeJHQlP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:16:19 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Mark Brown <broonie@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 3/3] spi: spi-zynqmp-gqspi: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:47 +0200
-Message-Id: <20181021200048.2114-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200048.2114-1-wsa+renesas@sang-engineering.com>
-References: <20181021200048.2114-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 8 Oct 2018 12:41:15 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 0/4] Improve pinctrl support for the RZ/G1C
+Date: Mon,  8 Oct 2018 10:30:15 +0100
+Message-Id: <1538991019-18577-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
+Dear All,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+this series adds support for I2C[0123], DU1, VIN[01], and QSPI1
+to the pinctrl driver of the RZ/G1C (a.k.a. R8A77470).
 
-Build tested only. buildbot is happy.
+This series applies on top of next-20181005, and depends on:
+https://patchwork.kernel.org/patch/10630259/
 
- drivers/spi/spi-zynqmp-gqspi.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Thanks,
+Fab
 
-diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
-index cc4d31033494..9f83e1b17aa1 100644
---- a/drivers/spi/spi-zynqmp-gqspi.c
-+++ b/drivers/spi/spi-zynqmp-gqspi.c
-@@ -960,8 +960,7 @@ static int __maybe_unused zynqmp_qspi_resume(struct device *dev)
-  */
- static int __maybe_unused zynqmp_runtime_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct spi_master *master = platform_get_drvdata(pdev);
-+	struct spi_master *master = dev_get_drvdata(dev);
- 	struct zynqmp_qspi *xqspi = spi_master_get_devdata(master);
- 
- 	clk_disable(xqspi->refclk);
-@@ -980,8 +979,7 @@ static int __maybe_unused zynqmp_runtime_suspend(struct device *dev)
-  */
- static int __maybe_unused zynqmp_runtime_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct spi_master *master = platform_get_drvdata(pdev);
-+	struct spi_master *master = dev_get_drvdata(dev);
- 	struct zynqmp_qspi *xqspi = spi_master_get_devdata(master);
- 	int ret;
- 
+Fabrizio Castro (4):
+  pinctrl: sh-pfc: r8a77470: Add remaining I2C pin groups
+  pinctrl: sh-pfc: r8a77470: Add DU1 pin groups
+  pinctrl: sh-pfc: r8a77470: Add VIN pin groups
+  pinctrl: sh-pfc: r8a77470: Add QSPI1 pin groups
+
+ drivers/pinctrl/sh-pfc/pfc-r8a77470.c | 516 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 516 insertions(+)
+
 -- 
-2.19.0
+2.7.4
