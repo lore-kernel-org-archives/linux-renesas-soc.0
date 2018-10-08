@@ -1,7 +1,20 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Thu, 18 Oct 2018 15:01:05 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Rob Herring <robh@kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:45660 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726291AbeJIAHa (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 8 Oct 2018 20:07:30 -0400
+MIME-Version: 1.0
+References: <20181005165848.3474-1-robh@kernel.org> <20181005165848.3474-30-robh@kernel.org>
+ <CAMuHMdU=rBV4b3EcenvtMPevx14pvTDcnQ7VDg02VZFiFuU-uw@mail.gmail.com>
+ <CAL_JsqLbh-UhYTWN_nMDVwGSh0amh6OsOK8H-+xiTdVynL3XiA@mail.gmail.com> <CAMuHMdVtuKkytpHxJfWHw=-R09_AMZ8Tn=ixjPSSRydQL6qK2g@mail.gmail.com>
+In-Reply-To: <CAMuHMdVtuKkytpHxJfWHw=-R09_AMZ8Tn=ixjPSSRydQL6qK2g@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 8 Oct 2018 11:54:40 -0500
+Message-ID: <CAL_JsqJOc_cTh7rkeQ9auhcFR2Ein+CUQWXBQS74tNBYVSQBig@mail.gmail.com>
+Subject: Re: [PATCH 29/36] dt-bindings: arm: Convert Renesas board/soc
+ bindings to json-schema
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         devicetree@vger.kernel.org,
         "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
@@ -15,56 +28,74 @@ Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
         Mark Brown <broonie@kernel.org>, Tom Rini <trini@konsulko.com>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
         Jonathan Cameron <jic23@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         "open list:MEDIA DRIVERS FOR RENESAS - FCP"
-        <linux-renesas-soc@vger.kernel.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH 29/36] dt-bindings: arm: Convert Renesas board/soc
- bindings to json-schema
-Message-ID: <20181018130105.2guhavajp754qbnk@verge.net.au>
-References: <20181005165848.3474-1-robh@kernel.org>
- <20181005165848.3474-30-robh@kernel.org>
- <20181008080220.rmxk57ckdfmwuk62@verge.net.au>
- <CAL_Jsq+8EwYzBmzSWL0q0YB3rP-xdrZreRnt1Rj-h=D8OTNVwA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_Jsq+8EwYzBmzSWL0q0YB3rP-xdrZreRnt1Rj-h=D8OTNVwA@mail.gmail.com>
-Sender: devicetree-owner@vger.kernel.org
+        <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 08, 2018 at 09:05:58AM -0500, Rob Herring wrote:
-> On Mon, Oct 8, 2018 at 3:02 AM Simon Horman <horms@verge.net.au> wrote:
-> >
-> > On Fri, Oct 05, 2018 at 11:58:41AM -0500, Rob Herring wrote:
-> > > Convert Renesas SoC bindings to DT schema format using json-schema.
+On Mon, Oct 8, 2018 at 10:13 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Rob,
+>
+> On Mon, Oct 8, 2018 at 4:57 PM Rob Herring <robh@kernel.org> wrote:
+> > On Mon, Oct 8, 2018 at 2:47 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > On Fri, Oct 5, 2018 at 6:59 PM Rob Herring <robh@kernel.org> wrote:
+> > > > Convert Renesas SoC bindings to DT schema format using json-schema.
+>
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/arm/shmobile.yaml
+> > > > @@ -0,0 +1,205 @@
+>
+> > > > +      - description: Kingfisher (SBEV-RCAR-KF-M03)
+> > > > +        items:
+> > > > +          - const: shimafuji,kingfisher
+> > > > +          - enum:
+> > > > +              - renesas,h3ulcb
+> > > > +              - renesas,m3ulcb
+> > > > +          - enum:
+> > > > +              - renesas,r8a7795
+> > > > +              - renesas,r8a7796
 > > >
-> > > Cc: Simon Horman <horms@verge.net.au>
-> > > Cc: Magnus Damm <magnus.damm@gmail.com>
-> > > Cc: Mark Rutland <mark.rutland@arm.com>
-> > > Cc: linux-renesas-soc@vger.kernel.org
-> > > Cc: devicetree@vger.kernel.org
-> > > Signed-off-by: Rob Herring <robh@kernel.org>
+> > > This looks a bit funny: all other entries have the "const" last, and
+> > > use it for the
+> > > SoC number. May be correct, though.
+> > > To clarify, this is an extension board that can fit both the [HM]3ULCB
+> > > boards (actually also the new M3NULCB, I think).
 > >
-> > This seems fine to me other than that it does not seem
-> > to apply cleanly to next.
+> > This being Kingfisher?
+>
+> Correct.
+>
+> > I wrote this based on dts files in the tree. There's 2 combinations that I see:
 > >
-> > shmobile.txt sees a couple of updates per release cycle so from my point of
-> > view it would ideal if this change could hit -rc1 to allow patches for
-> > v4.21 to be accepted smoothly (already one from Sergei will need rebasing).
-> 
-> When we get to the point of merging (which isn't going to be 4.20),
-> you and other maintainers can probably take all these patches. Other
-> than the few restructuring patches, the only dependency is the build
-> support which isn't a dependency to apply it, but build it. I plan to
-> build any patches as part of reviewing at least early on. OTOH, the
-> build support is small enough and self contained that maybe it can
-> just be applied for 4.20.
+> > "shimafuji,kingfisher", "renesas,h3ulcb", "renesas,r8a7795"
+> > "shimafuji,kingfisher", "renesas,m3ulcb", "renesas,r8a7796"
+> >
+> > The schema allows 4 combinations (1 * 2 * 2). I have no idea if the
+> > other combinations are possible. If not, then we could rewrite this as
+> > 2 entries with 3 const values each.
+>
+> I expect there will soon be a third one:
+>
+>     "shimafuji,kingfisher", "renesas,m3nulcb", "renesas,r8a77965"
+>
+> Technically, {h3,m3,m3n}ulcb are the same board (although there may be
+> minor revision differences), with a different SiP mounted.
+> But they are called/marketed depending on which SiP is mounted.
+>
+> And on top of that, you can plug in a Kingfisher daughterboard. Could be an
+> overlay ;-)
 
-Thanks, understood.
+We probably shouldn't have put kingfisher as a top-level compatible
+then. But we did, so not really much point to discuss that now.
 
-My preference would be to, as you suggest, take changes like
-this through the renesas tree.
+As to whether there's a better way to express it in the schema, I'm
+not sure. I don't think there's a way with json-schema to express a
+list, but the 1st item is optional.
+
+Rob
