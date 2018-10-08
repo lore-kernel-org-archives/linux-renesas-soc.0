@@ -1,61 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45752 "EHLO pokefinder.org"
+Received: from mga12.intel.com ([192.55.52.136]:11639 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728310AbeJVEPw (ORCPT
+        id S1726794AbeJHRTD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:15:52 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Subject: [PATCH 2/9] net: dsa: qca8k: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:13 +0200
-Message-Id: <20181021200021.1693-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
-References: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
+        Mon, 8 Oct 2018 13:19:03 -0400
+Date: Mon, 8 Oct 2018 13:07:44 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Stefan Lengfeld <contact@stefanchrist.eu>
+Cc: wsa+renesas@sang-engineering.com, linux-i2c@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, preid@electromag.com.au,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.or,
+        j-keerthy@ti.com, t-kristo@ti.com, grygorii.strashko@ti.com
+Subject: Re: [RFC PATCH 2/3] watchdog: da9062: avoid regmap in restart handler
+Message-ID: <20181008100744.GY15943@smile.fi.intel.com>
+References: <20180923202034.qugs4fxucj7h4vri@porty>
+ <20181007153937.16787-1-contact@stefanchrist.eu>
+ <20181007153937.16787-3-contact@stefanchrist.eu>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181007153937.16787-3-contact@stefanchrist.eu>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
+On Sun, Oct 07, 2018 at 05:39:36PM +0200, Stefan Lengfeld wrote:
+> Using i2c_transfer() directly to set the shutdown bit is more reliable
+> than using regmap in atomic contexts, because calls to 'schedule()' or
+> 'sleep()' must be avoided in call code paths.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+>  #include <linux/platform_device.h>
+>  #include <linux/uaccess.h>
+>  #include <linux/slab.h>
+> +#include <linux/i2c.h>
+>  #include <linux/delay.h>
+>  #include <linux/jiffies.h>
+>  #include <linux/mfd/da9062/registers.h>
 
-Build tested only. buildbot is happy.
+The rule of thumb when extending a header inclusion block is that try to
+squeeze the new inclusion in the longest sorted part of the list.
 
- drivers/net/dsa/qca8k.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Rationale behind is easy maintenance.
 
-diff --git a/drivers/net/dsa/qca8k.c b/drivers/net/dsa/qca8k.c
-index cdcde7f8e0b2..7e97e620bd44 100644
---- a/drivers/net/dsa/qca8k.c
-+++ b/drivers/net/dsa/qca8k.c
-@@ -955,8 +955,7 @@ qca8k_set_pm(struct qca8k_priv *priv, int enable)
- 
- static int qca8k_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct qca8k_priv *priv = platform_get_drvdata(pdev);
-+	struct qca8k_priv *priv = dev_get_drvdata(dev);
- 
- 	qca8k_set_pm(priv, 0);
- 
-@@ -965,8 +964,7 @@ static int qca8k_suspend(struct device *dev)
- 
- static int qca8k_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct qca8k_priv *priv = platform_get_drvdata(pdev);
-+	struct qca8k_priv *priv = dev_get_drvdata(dev);
- 
- 	qca8k_set_pm(priv, 1);
- 
 -- 
-2.19.0
+With Best Regards,
+Andy Shevchenko
