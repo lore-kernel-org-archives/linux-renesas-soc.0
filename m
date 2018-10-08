@@ -1,24 +1,18 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:45660 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726291AbeJIAHa (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 8 Oct 2018 20:07:30 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
 References: <20181005165848.3474-1-robh@kernel.org> <20181005165848.3474-30-robh@kernel.org>
- <CAMuHMdU=rBV4b3EcenvtMPevx14pvTDcnQ7VDg02VZFiFuU-uw@mail.gmail.com>
- <CAL_JsqLbh-UhYTWN_nMDVwGSh0amh6OsOK8H-+xiTdVynL3XiA@mail.gmail.com> <CAMuHMdVtuKkytpHxJfWHw=-R09_AMZ8Tn=ixjPSSRydQL6qK2g@mail.gmail.com>
-In-Reply-To: <CAMuHMdVtuKkytpHxJfWHw=-R09_AMZ8Tn=ixjPSSRydQL6qK2g@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 8 Oct 2018 11:54:40 -0500
-Message-ID: <CAL_JsqJOc_cTh7rkeQ9auhcFR2Ein+CUQWXBQS74tNBYVSQBig@mail.gmail.com>
+ <CAMuHMdU=rBV4b3EcenvtMPevx14pvTDcnQ7VDg02VZFiFuU-uw@mail.gmail.com> <CAL_JsqLbh-UhYTWN_nMDVwGSh0amh6OsOK8H-+xiTdVynL3XiA@mail.gmail.com>
+In-Reply-To: <CAL_JsqLbh-UhYTWN_nMDVwGSh0amh6OsOK8H-+xiTdVynL3XiA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 8 Oct 2018 17:12:56 +0200
+Message-ID: <CAMuHMdVtuKkytpHxJfWHw=-R09_AMZ8Tn=ixjPSSRydQL6qK2g@mail.gmail.com>
 Subject: Re: [PATCH 29/36] dt-bindings: arm: Convert Renesas board/soc
  bindings to json-schema
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
+To: Rob Herring <robh@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
         Grant Likely <glikely@secretlab.ca>,
         Kumar Gala <kumar.gala@linaro.org>,
@@ -29,73 +23,72 @@ Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Mark Brown <broonie@kernel.org>, Tom Rini <trini@konsulko.com>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
         Jonathan Cameron <jic23@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        =?UTF-8?Q?Bj=C3=B6rn_Andersson?= <bjorn.andersson@linaro.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
-        <linux-renesas-soc@vger.kernel.org>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 8, 2018 at 10:13 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Rob,
->
-> On Mon, Oct 8, 2018 at 4:57 PM Rob Herring <robh@kernel.org> wrote:
-> > On Mon, Oct 8, 2018 at 2:47 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > On Fri, Oct 5, 2018 at 6:59 PM Rob Herring <robh@kernel.org> wrote:
-> > > > Convert Renesas SoC bindings to DT schema format using json-schema.
->
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/arm/shmobile.yaml
-> > > > @@ -0,0 +1,205 @@
->
-> > > > +      - description: Kingfisher (SBEV-RCAR-KF-M03)
-> > > > +        items:
-> > > > +          - const: shimafuji,kingfisher
-> > > > +          - enum:
-> > > > +              - renesas,h3ulcb
-> > > > +              - renesas,m3ulcb
-> > > > +          - enum:
-> > > > +              - renesas,r8a7795
-> > > > +              - renesas,r8a7796
-> > >
-> > > This looks a bit funny: all other entries have the "const" last, and
-> > > use it for the
-> > > SoC number. May be correct, though.
-> > > To clarify, this is an extension board that can fit both the [HM]3ULCB
-> > > boards (actually also the new M3NULCB, I think).
-> >
-> > This being Kingfisher?
->
-> Correct.
->
-> > I wrote this based on dts files in the tree. There's 2 combinations that I see:
-> >
-> > "shimafuji,kingfisher", "renesas,h3ulcb", "renesas,r8a7795"
-> > "shimafuji,kingfisher", "renesas,m3ulcb", "renesas,r8a7796"
-> >
-> > The schema allows 4 combinations (1 * 2 * 2). I have no idea if the
-> > other combinations are possible. If not, then we could rewrite this as
-> > 2 entries with 3 const values each.
->
-> I expect there will soon be a third one:
->
->     "shimafuji,kingfisher", "renesas,m3nulcb", "renesas,r8a77965"
->
-> Technically, {h3,m3,m3n}ulcb are the same board (although there may be
-> minor revision differences), with a different SiP mounted.
-> But they are called/marketed depending on which SiP is mounted.
->
-> And on top of that, you can plug in a Kingfisher daughterboard. Could be an
-> overlay ;-)
+Hi Rob,
 
-We probably shouldn't have put kingfisher as a top-level compatible
-then. But we did, so not really much point to discuss that now.
+On Mon, Oct 8, 2018 at 4:57 PM Rob Herring <robh@kernel.org> wrote:
+> On Mon, Oct 8, 2018 at 2:47 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Fri, Oct 5, 2018 at 6:59 PM Rob Herring <robh@kernel.org> wrote:
+> > > Convert Renesas SoC bindings to DT schema format using json-schema.
 
-As to whether there's a better way to express it in the schema, I'm
-not sure. I don't think there's a way with json-schema to express a
-list, but the 1st item is optional.
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/arm/shmobile.yaml
+> > > @@ -0,0 +1,205 @@
 
-Rob
+> > > +      - description: Kingfisher (SBEV-RCAR-KF-M03)
+> > > +        items:
+> > > +          - const: shimafuji,kingfisher
+> > > +          - enum:
+> > > +              - renesas,h3ulcb
+> > > +              - renesas,m3ulcb
+> > > +          - enum:
+> > > +              - renesas,r8a7795
+> > > +              - renesas,r8a7796
+> >
+> > This looks a bit funny: all other entries have the "const" last, and
+> > use it for the
+> > SoC number. May be correct, though.
+> > To clarify, this is an extension board that can fit both the [HM]3ULCB
+> > boards (actually also the new M3NULCB, I think).
+>
+> This being Kingfisher?
+
+Correct.
+
+> I wrote this based on dts files in the tree. There's 2 combinations that I see:
+>
+> "shimafuji,kingfisher", "renesas,h3ulcb", "renesas,r8a7795"
+> "shimafuji,kingfisher", "renesas,m3ulcb", "renesas,r8a7796"
+>
+> The schema allows 4 combinations (1 * 2 * 2). I have no idea if the
+> other combinations are possible. If not, then we could rewrite this as
+> 2 entries with 3 const values each.
+
+I expect there will soon be a third one:
+
+    "shimafuji,kingfisher", "renesas,m3nulcb", "renesas,r8a77965"
+
+Technically, {h3,m3,m3n}ulcb are the same board (although there may be
+minor revision differences), with a different SiP mounted.
+But they are called/marketed depending on which SiP is mounted.
+
+And on top of that, you can plug in a Kingfisher daughterboard. Could be an
+overlay ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
