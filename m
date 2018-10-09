@@ -1,75 +1,132 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51116 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727271AbeJCEYT (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:39940 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725748AbeJJEQZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Oct 2018 00:24:19 -0400
-Date: Tue, 2 Oct 2018 14:38:46 -0700
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jiri Slaby <jslaby@suse.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        uli+renesas@fpond.eu,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH 0/2] serial: sh-sci: Fix earlycon on Renesas ARM platforms
-Message-ID: <20181002213846.GA1677@kroah.com>
-References: <20180830125404.21192-1-geert+renesas@glider.be>
- <CAMuHMdWdByKxivbQwWL9yF9_r8XObnZuXEZvf_9ZWKYYLWr1bQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWdByKxivbQwWL9yF9_r8XObnZuXEZvf_9ZWKYYLWr1bQ@mail.gmail.com>
+        Wed, 10 Oct 2018 00:16:25 -0400
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        sakari.ailus@iki.fi
+Cc: Jacopo Mondi <jacopo@jmondi.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>
+Subject: [PATCH v3 2/4] dt-bindings: media: i2c: Add bindings for IMI RDACM20
+Date: Tue,  9 Oct 2018 21:57:24 +0100
+Message-Id: <20181009205726.7664-3-kieran.bingham@ideasonboard.com>
+In-Reply-To: <20181009205726.7664-1-kieran.bingham@ideasonboard.com>
+References: <20181009205726.7664-1-kieran.bingham@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Sep 27, 2018 at 09:38:19AM +0200, Geert Uytterhoeven wrote:
-> Hi Greg,
-> 
-> On Thu, Aug 30, 2018 at 2:54 PM Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
-> > Due to an unfortunate oversight, commit 2d4dd0da45401c7a ("serial: sh-sci:
-> > Allow for compressed SCIF address") broke earlycon on all Renesas ARM
-> > platforms using a SCIF port for the serial console (R-Car, RZ/A1, RZ/G1,
-> > RZ/G2 SoCs), due to an incorrect value of port->regshift.
-> >
-> > This patch series fixes that by reverting that commit, and a (reverse)
-> > dependency.
-> >
-> > Earlycon for RZ/A2 (which is a new platform) will be fixed later in a
-> > separate patch.
-> >
-> > Thanks for applying!
-> >
-> > Geert Uytterhoeven (2):
-> >   Revert "serial: sh-sci: Remove SCIx_RZ_SCIFA_REGTYPE"
-> >   Revert "serial: sh-sci: Allow for compressed SCIF address"
-> >
-> >  drivers/tty/serial/sh-sci.c | 56 +++++++++++++++++++++++++++----------
-> >  include/linux/serial_sci.h  |  1 +
-> >  2 files changed, 42 insertions(+), 15 deletions(-)
-> 
-> These are now in tty-next:
-> 
->     10c63443b74d1ef5 Revert "serial: sh-sci: Remove SCIx_RZ_SCIFA_REGTYPE"
->     a1c2fd7e1098ea49 Revert "serial: sh-sci: Allow for compressed SCIF address"
-> 
-> Can you please include them in v4.19-rc6, as they fix a regression introduced
-> in v4.19-rc1?
-> 
-> In addition:
-> 
->     3d8b43ad9c0cf023 serial: sh-sci: Add earlycon for R7S9210
-> 
-> (also in tty-next) enables earlycon on RZ/A2 again, as it was disabled
-> by the two
-> reverts above.
-> 
-> Thanks a lot!
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Now fixed up, thanks.
+The IMI RDACM20 is a Gigabit Multimedia Serial Link (GMSL) camera
+capable of transmitting video and I2C control messages on a coax cable
+physical link for automotive applications.
 
-greg k-h
+Document its device tree binding interface.
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+---
+v2:
+ - Provide imi vendor prefix
+ - Fix minor spelling
+
+v3:
+ - update binding descriptions
+---
+ .../bindings/media/i2c/imi,rdacm20.txt        | 65 +++++++++++++++++++
+ .../devicetree/bindings/vendor-prefixes.txt   |  1 +
+ 2 files changed, 66 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
+
+diff --git a/Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt b/Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
+new file mode 100644
+index 000000000000..23915da4c3bf
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
+@@ -0,0 +1,65 @@
++IMI D&D RDACM20 Automotive Camera Platform
++------------------------------------------
++
++The IMI D&D RDACM20 is a GMSL-compatible camera designed for automotive
++applications. It encloses a Maxim Integrated MAX9271 GMSL serializer, an
++Omnivision OV10635 camera sensor and an embedded MCU, and connects to a remote
++GMSL endpoint through a coaxial cable.
++
++                                                     IMI RDACM20
++ ---------------                               --------------------------------
++|      GMSL     |   <---  Video Stream        |       <- Video--------\        |
++|               |< ====== GMSL Link ======== >|MAX9271<- I2C bus-> <-->OV10635 |
++| de-serializer |   <---  I2C messages --->   |                   \<-->MCU     |
++ ---------------                               --------------------------------
++
++The RDACM20 transmits video data generated by the embedded camera sensor on the
++GMSL serial channel to a remote GMSL de-serializer, as well as it receives and
++transmits I2C messages encapsulated in the GMSL bidirectional control channel.
++
++All I2C traffic received on the GMSL link not directed to the serializer is
++propagated on the local I2C bus to the embedded camera sensor and MCU. All
++I2C traffic generated on the local I2C bus not directed to the serializer is
++propagated to the remote de-serializer encapsulated in the GMSL control channel.
++
++The RDACM20 DT node should be a direct child of the GMSL Deserializer's I2C bus
++corresponding to the GMSL link that the camera is attached to.
++
++Required Properties:
++
++- compatible: Shall be "imi,rdacm20".
++- reg: Pair of I2C device addresses, the first to be assigned to the serializer
++  the second to be assigned to the camera sensor.
++
++Connection to the remote GMSL endpoint are modelled using the OF graph bindings
++in accordance with the video interface bindings defined in
++Documentation/devicetree/bindings/media/video-interfaces.txt.
++
++The device node contains a single "port" child node with a single "endpoint"
++sub-device.
++
++Required endpoint properties:
++
++- remote-endpoint: phandle to the remote GMSL endpoint sub-node in the remote
++  node port.
++
++Example:
++-------
++
++	i2c@0 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0>;
++
++		camera@51 {
++			compatible = "imi,rdacm20";
++			reg = <0x51 0x61>;
++
++			port {
++				rdacm20_out0: endpoint {
++					remote-endpoint = <&max9286_in0>;
++				};
++			};
++
++		};
++	};
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index 2c3fc512e746..34b0ed876850 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -171,6 +171,7 @@ idt	Integrated Device Technologies, Inc.
+ ifi	Ingenieurburo Fur Ic-Technologie (I/F/I)
+ ilitek	ILI Technology Corporation (ILITEK)
+ img	Imagination Technologies Ltd.
++imi	Integrated Micro-Electronics Inc.
+ infineon Infineon Technologies
+ inforce	Inforce Computing
+ ingenic	Ingenic Semiconductor
+-- 
+2.17.1
