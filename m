@@ -1,47 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:40241 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726656AbeJJPiW (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45087 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbeJITnr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 Oct 2018 11:38:22 -0400
-MIME-Version: 1.0
-References: <1538991019-18577-1-git-send-email-fabrizio.castro@bp.renesas.com> <1538991019-18577-5-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1538991019-18577-5-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 10 Oct 2018 10:17:08 +0200
-Message-ID: <CAMuHMdUGwKqwdJsV2c_9=u6siKuwfLnzKECUj9h5r8f=ZmPNuw@mail.gmail.com>
-Subject: Re: [PATCH 4/4] pinctrl: sh-pfc: r8a77470: Add QSPI1 pin groups
+        Tue, 9 Oct 2018 15:43:47 -0400
+Date: Tue, 9 Oct 2018 14:27:00 +0200
+From: Simon Horman <horms@verge.net.au>
 To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH 4/4] pinctrl: sh-pfc: r8a77470: Add QSPI1 pin groups
+Message-ID: <20181009122700.t66pg5fxkio6qdx6@verge.net.au>
+References: <1538991019-18577-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1538991019-18577-5-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538991019-18577-5-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 8, 2018 at 11:30 AM Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
+On Mon, Oct 08, 2018 at 10:30:19AM +0100, Fabrizio Castro wrote:
 > Add QSPI1 pin groups and function to the RZ/G1C (a.k.a. R8A77470)
 > pinctrl driver.
->
+> 
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v4.21.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
