@@ -1,101 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from condef-07.nifty.com ([202.248.20.72]:47814 "EHLO
-        condef-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729334AbeJATRB (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:38900 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbeJIUF6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 1 Oct 2018 15:17:01 -0400
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] mmc: tmio: remove TMIO_MMC_HAVE_HIGH_REG flag
-Date: Mon,  1 Oct 2018 21:31:02 +0900
-Message-Id: <1538397062-19162-3-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1538397062-19162-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1538397062-19162-1-git-send-email-yamada.masahiro@socionext.com>
+        Tue, 9 Oct 2018 16:05:58 -0400
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1g9rRj-000658-NP
+        for linux-renesas-soc@vger.kernel.org; Tue, 09 Oct 2018 14:49:07 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1g9rRj-0000mH-Lg
+        for linux-renesas-soc@vger.kernel.org; Tue, 09 Oct 2018 14:49:07 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2018-10-09-v4.19-rc7
+Date: Tue,  9 Oct 2018 14:49:07 +0200
+Message-Id: <20181009124907.2947-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-TMIO_MMC_HAVE_HIGH_REG is confusing due to its counter-intuitive name.
+I have pushed renesas-drivers-2018-10-09-v4.19-rc7 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-All the TMIO MMC variants (TMIO MMC, Renesas SDHI, UniPhier SD) actually
-have high registers.  It is just that each of them implements its own
-registers there.  The original IP from Panasonic only defines registers
-0x00-0xff in the bus_shift=1 review.  The register area above them is
-platform-dependent.
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the development branch of
+Simon Horman's renesas.git tree.
 
-In fact, TMIO_MMC_HAVE_HIGH_REG is set only by tmio-mmc.c and used to
-test the accessibility of CTL_SDIO_REGS.  Because it is specific to
-the TMIO MFD variant, the right thing to do is to move such registers
-to tmio_mmc.c and delete the TMIO_MMC_HAVE_HIGH_REG flag.
+Today's version is based on renesas-devel-20181008-v4.19-rc7.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Included branches with driver code:
+  - clk-renesas
+  - sh-pfc
+  - git://linuxtv.org/pinchartl/media.git#drm-du-iommu-v1-20171115
+  - git://git.ragnatech.se/linux#for-renesas-drivers
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#gmsl/for-renesas-drivers
 
- drivers/mmc/host/tmio_mmc.c | 7 +++++--
- drivers/mmc/host/tmio_mmc.h | 3 ---
- include/linux/mfd/tmio.h    | 7 -------
- 3 files changed, 5 insertions(+), 12 deletions(-)
+Included fixes:
+  - [LOCAL] arm64: defconfig: Update renesas_defconfig
 
-diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
-index c8e90cf..9348608 100644
---- a/drivers/mmc/host/tmio_mmc.c
-+++ b/drivers/mmc/host/tmio_mmc.c
-@@ -24,6 +24,11 @@
- 
- #include "tmio_mmc.h"
- 
-+/* Registers specific to this variant */
-+#define CTL_SDIO_REGS		0x100
-+#define CTL_CLK_AND_WAIT_CTL	0x138
-+#define CTL_RESET_SDIO		0x1e0
-+
- static void tmio_mmc_clk_start(struct tmio_mmc_host *host)
- {
- 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
-@@ -153,8 +158,6 @@ static int tmio_mmc_probe(struct platform_device *pdev)
- 		goto cell_disable;
- 	}
- 
--	pdata->flags |= TMIO_MMC_HAVE_HIGH_REG;
--
- 	host = tmio_mmc_host_alloc(pdev, pdata);
- 	if (IS_ERR(host)) {
- 		ret = PTR_ERR(host);
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index a1a661b..18b4308 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -47,9 +47,6 @@
- #define CTL_RESET_SD 0xe0
- #define CTL_VERSION 0xe2
- #define CTL_SDIF_MODE 0xe6
--#define CTL_SDIO_REGS 0x100
--#define CTL_CLK_AND_WAIT_CTL 0x138
--#define CTL_RESET_SDIO 0x1e0
- 
- /* Definitions for values the CTL_STOP_INTERNAL_ACTION register can take */
- #define TMIO_STOP_STP		BIT(0)
-diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
-index 7786621..1e70060 100644
---- a/include/linux/mfd/tmio.h
-+++ b/include/linux/mfd/tmio.h
-@@ -62,13 +62,6 @@
- #define TMIO_MMC_USE_GPIO_CD		BIT(5)
- 
- /*
-- * Some controllers doesn't have over 0x100 register.
-- * it is used to checking accessibility of
-- * CTL_SD_CARD_CLK_CTL / CTL_CLK_AND_WAIT_CTL
-- */
--#define TMIO_MMC_HAVE_HIGH_REG		BIT(6)
--
--/*
-  * Some controllers have CMD12 automatically
-  * issue/non-issue register
-  */
--- 
-2.7.4
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://git.freedesktop.org/git/drm/drm.git#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/media_tree.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://github.com/bzolnier/linux.git#fbdev-for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
