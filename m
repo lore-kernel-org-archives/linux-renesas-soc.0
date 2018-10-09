@@ -1,83 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:53388 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726440AbeJPGMh (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:44453 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726160AbeJITKL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Oct 2018 02:12:37 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
+        Tue, 9 Oct 2018 15:10:11 -0400
+Date: Tue, 9 Oct 2018 13:53:31 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: Re: [PATCH 4/5] drm: rcar-du: Add R8A7744 support
-Date: Tue, 16 Oct 2018 01:25:28 +0300
-Message-ID: <5135719.5JoeYGyzrK@avalon>
-In-Reply-To: <1537553311-8831-5-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1537553311-8831-1-git-send-email-fabrizio.castro@bp.renesas.com> <1537553311-8831-5-git-send-email-fabrizio.castro@bp.renesas.com>
+        netdev <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v3 net-next] ravb: do not write 1 to reserved bits
+Message-ID: <20181009115327.sgq5rdbcpwcqbn6k@verge.net.au>
+References: <20180918102226.8017-1-horms+renesas@verge.net.au>
+ <5bddb393-3060-6d74-4cf1-3547cb87924e@cogentembedded.com>
+ <CAMuHMdU_6uBpHOFshgxc61GOG1o1ibAoi5T1n_ZdYZ+=i8H5Sw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdU_6uBpHOFshgxc61GOG1o1ibAoi5T1n_ZdYZ+=i8H5Sw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Fabrizio,
-
-Thank you for the patch. 
-
-On Friday, 21 September 2018 21:08:30 EEST Fabrizio Castro wrote:
-> From: Biju Das <biju.das@bp.renesas.com>
+On Tue, Oct 09, 2018 at 11:28:40AM +0200, Geert Uytterhoeven wrote:
+> Hi Sergei,
 > 
-> Add support for the R8A7744 DU (which is very similar to the R8A7743 DU);
-> it has 1 DPAD (RGB) output and 1 LVDS output.
+> On Tue, Sep 18, 2018 at 6:55 PM Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+> > On 09/18/2018 01:22 PM, Simon Horman wrote:
+> > > From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> > > EtherAVB hardware requires 0 to be written to status register bits in
+> > > order to clear them, however, care must be taken not to:
+> > >
+> > > 1. Clear other bits, by writing zero to them
+> > > 2. Write one to reserved bits
+> > >
+> > > This patch corrects the ravb driver with respect to the second point above.
+> > > This is done by defining reserved bit masks for the affected registers and,
+> > > after auditing the code, ensure all sites that may write a one to a
+> > > reserved bit use are suitably masked.
+> > >
+> > > Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> > > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > [...]
+> >
+> > Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >
+> > > diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
+> > > index 1470fc12282b..9b6bf557a2f5 100644
+> > > --- a/drivers/net/ethernet/renesas/ravb.h
+> > > +++ b/drivers/net/ethernet/renesas/ravb.h
+> > > @@ -428,6 +428,7 @@ enum EIS_BIT {
+> > >       EIS_CULF1       = 0x00000080,
+> > >       EIS_TFFF        = 0x00000100,
+> > >       EIS_QFS         = 0x00010000,
+> > > +     EIS_RESERVED    = (GENMASK(31, 17) | GENMASK(15, 11)),
+> >
+> >    Well, I'm not a big fan of BIT() and GENMASK() -- they still lack a macro
+> > to #define a bit/field value. But if you prefer to use them, OK, let's be so...
 > 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> ---
->  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 1 +
->  1 file changed, 1 insertion(+)
+> FIELD_PREP()?
 > 
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> b/drivers/gpu/drm/rcar-du/rcar_du_drv.c index c07d3f1..2c3d0e5 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> @@ -321,6 +321,7 @@ static const struct rcar_du_device_info
-> rcar_du_r8a77970_info = {
-> 
->  static const struct of_device_id rcar_du_of_table[] = {
->  	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
-> +	{ .compatible = "renesas,du-r8a7744", .data = &rzg1_du_r8a7743_info },
->  	{ .compatible = "renesas,du-r8a7745", .data = &rzg1_du_r8a7745_info },
->  	{ .compatible = "renesas,du-r8a77470", .data = &rzg1_du_r8a77470_info },
->  	{ .compatible = "renesas,du-r8a7779", .data = &rcar_du_r8a7779_info },
+> Perhaps the other bit definitions should be converted to BIT()?
+> That way it becomes much easier to match valid EIS_* bits with EIS_RESERVED.
 
-This looks good to me. I would also apply this change:
-
-@@ -41,7 +41,7 @@ static const struct rcar_du_device_info rzg1_du_r8a7743_info 
-= {
-        .channels_mask = BIT(1) | BIT(0),
-        .routes = {
-                /*
--                * R8A7743 has one RGB output and one LVDS output
-+                * R8A774[34] has one RGB output and one LVDS output
-                 */
-                [RCAR_DU_OUTPUT_DPAD0] = {
-                        .possible_crtcs = BIT(1) | BIT(0),
-
-With this,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-There's no need to resubmit, I've applied the patch to my tree with the above 
-change.
-
--- 
-Regards,
-
-Laurent Pinchart
++1
