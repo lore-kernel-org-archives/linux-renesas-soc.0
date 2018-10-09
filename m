@@ -1,47 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:40275 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726663AbeJJPbA (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45030 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726160AbeJITkb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 Oct 2018 11:31:00 -0400
-MIME-Version: 1.0
-References: <1538991019-18577-1-git-send-email-fabrizio.castro@bp.renesas.com> <1538991019-18577-4-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1538991019-18577-4-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 10 Oct 2018 10:09:47 +0200
-Message-ID: <CAMuHMdXZQBhB2HHSqZVq4=fkh1y4tG-ti_=VozVrantHX+5bYg@mail.gmail.com>
-Subject: Re: [PATCH 3/4] pinctrl: sh-pfc: r8a77470: Add VIN pin groups
+        Tue, 9 Oct 2018 15:40:31 -0400
+Date: Tue, 9 Oct 2018 14:23:45 +0200
+From: Simon Horman <horms@verge.net.au>
 To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH 3/4] pinctrl: sh-pfc: r8a77470: Add VIN pin groups
+Message-ID: <20181009122344.43fyubrlvzvhdhpm@verge.net.au>
+References: <1538991019-18577-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1538991019-18577-4-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538991019-18577-4-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 8, 2018 at 11:30 AM Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
+On Mon, Oct 08, 2018 at 10:30:18AM +0100, Fabrizio Castro wrote:
 > Add VIN[01] pin groups and functions to the RZ/G1C (a.k.a.
 > R8A77470) pinctrl driver.
->
+> 
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v4.21.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
