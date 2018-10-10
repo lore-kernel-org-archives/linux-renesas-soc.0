@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:12889 "EHLO
+Received: from relmlor3.renesas.com ([210.160.252.173]:37404 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726649AbeJJW3s (ORCPT
+        by vger.kernel.org with ESMTP id S1726700AbeJJT7c (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 Oct 2018 18:29:48 -0400
+        Wed, 10 Oct 2018 15:59:32 -0400
 From: Chris Brandt <chris.brandt@renesas.com>
 To: Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -15,11 +15,11 @@ Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3 1/3] clk: renesas: r7s9210: Add SDHI clocks
-Date: Wed, 10 Oct 2018 10:06:40 -0500
-Message-Id: <20181010150642.73890-2-chris.brandt@renesas.com>
-In-Reply-To: <20181010150642.73890-1-chris.brandt@renesas.com>
-References: <20181010150642.73890-1-chris.brandt@renesas.com>
+Subject: [PATCH v2 1/3] clk: renesas: r7s9210: Add SDHI clocks
+Date: Wed, 10 Oct 2018 07:37:11 -0500
+Message-Id: <20181010123713.67541-2-chris.brandt@renesas.com>
+In-Reply-To: <20181010123713.67541-1-chris.brandt@renesas.com>
+References: <20181010123713.67541-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
