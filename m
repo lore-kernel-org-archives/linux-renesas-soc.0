@@ -1,14 +1,11 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:35039 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726503AbeJJRo6 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38198 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726579AbeJJPuF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 Oct 2018 13:44:58 -0400
-Received: by mail-lf1-f65.google.com with SMTP id r191-v6so3557722lff.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 10 Oct 2018 03:23:27 -0700 (PDT)
-Date: Wed, 10 Oct 2018 12:23:24 +0200
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
+        Wed, 10 Oct 2018 11:50:05 -0400
+Date: Wed, 10 Oct 2018 10:28:56 +0200
+From: Simon Horman <horms@verge.net.au>
 To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>,
@@ -18,57 +15,20 @@ Cc: Zhang Rui <rui.zhang@intel.com>,
         Mark Rutland <mark.rutland@arm.com>
 Subject: Re: [PATCH 1/2] dt-bindings: thermal: rcar-gen3-thermal: document
  R8A77980 bindings
-Message-ID: <20181010102324.GZ24305@bigcity.dyn.berto.se>
+Message-ID: <20181010082856.bexz5hsqtax74fa6@verge.net.au>
 References: <3c96d51e-fc36-2ff9-03a8-176c4c0ed365@cogentembedded.com>
  <e53d379f-bb72-51f7-9216-b3eb1bbe04b5@cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 In-Reply-To: <e53d379f-bb72-51f7-9216-b3eb1bbe04b5@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
-
-Thanks for your work.
-
-On 2018-10-09 22:10:14 +0300, Sergei Shtylyov wrote:
+On Tue, Oct 09, 2018 at 10:10:14PM +0300, Sergei Shtylyov wrote:
 > Document the R-Car V3H (R8A77980) SoC in the Renesas R-Car gen3 thermal
 > bindings.
 > 
 > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-
-> 
-> ---
->  Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> Index: linux-soc-thermal/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
-> ===================================================================
-> --- linux-soc-thermal.orig/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
-> +++ linux-soc-thermal/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
-> @@ -10,6 +10,7 @@ Required properties:
->  			    - "renesas,r8a7795-thermal" (R-Car H3)
->  			    - "renesas,r8a7796-thermal" (R-Car M3-W)
->  			    - "renesas,r8a77965-thermal" (R-Car M3-N)
-> +			    - "renesas,r8a77980-thermal" (R-Car V3H)
->  - reg			: Address ranges of the thermal registers. Each sensor
->  			  needs one address range. Sorting must be done in
->  			  increasing order according to datasheet, i.e.
-> @@ -19,7 +20,8 @@ Required properties:
->  
->  Optional properties:
->  
-> -- interrupts           : interrupts routed to the TSC (3 for H3, M3-W and M3-N)
-> +- interrupts		: interrupts routed to the TSC (3 for H3, M3-W, M3-N,
-> +			  and V3H)
->  - power-domain		: Must contain a reference to the power domain. This
->  			  property is mandatory if the thermal sensor instance
->  			  is part of a controllable power domain.
-
--- 
-Regards,
-Niklas S�derlund
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
