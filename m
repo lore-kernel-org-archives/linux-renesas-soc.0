@@ -1,70 +1,217 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:53642 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726515AbeJJRLn (ORCPT
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:44521 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbeJJQQd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 Oct 2018 13:11:43 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] clocksource/drivers/sh_cmt: wait for CMCNT on init
-Date: Wed, 10 Oct 2018 09:50:15 +0000
-Message-ID: <OSBPR01MB2103F030C3C503773FF99EAFB8E00@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+        Wed, 10 Oct 2018 12:16:33 -0400
+Received: by mail-vs1-f65.google.com with SMTP id w194so4270304vsc.11
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 10 Oct 2018 01:55:22 -0700 (PDT)
+MIME-Version: 1.0
 References: <1528474785-11778-1-git-send-email-biju.das@bp.renesas.com>
  <CAMuHMdX=Ys8aq0ehqu9gZchC9bKtgzF9-Tg6-DoTrzMX68SwTg@mail.gmail.com>
  <OSBPR01MB2103F004406C18F6630CD91BB8780@OSBPR01MB2103.jpnprd01.prod.outlook.com>
  <CAMuHMdUHQ=AHPctY=b7sa0TVUwohP0-d4E2wSMXJ55EQfrLbYA@mail.gmail.com>
  <OSBPR01MB21036654864AE07375A91023B8780@OSBPR01MB2103.jpnprd01.prod.outlook.com>
  <OSBPR01MB2103489A3F5C679650B3436BB8E70@OSBPR01MB2103.jpnprd01.prod.outlook.com>
- <CAMuHMdVq3XqkEECzM+xG37o5zqQquu2n6w_-J8mQxU+Dcs+7Kg@mail.gmail.com>
-In-Reply-To: <CAMuHMdVq3XqkEECzM+xG37o5zqQquu2n6w_-J8mQxU+Dcs+7Kg@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+In-Reply-To: <OSBPR01MB2103489A3F5C679650B3436BB8E70@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 10 Oct 2018 10:55:08 +0200
+Message-ID: <CAMuHMdVq3XqkEECzM+xG37o5zqQquu2n6w_-J8mQxU+Dcs+7Kg@mail.gmail.com>
+Subject: Re: [PATCH] clocksource/drivers/sh_cmt: wait for CMCNT on init
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrLg0KDQo+IFN1YmplY3Q6IFJlOiBb
-UEFUQ0hdIGNsb2Nrc291cmNlL2RyaXZlcnMvc2hfY210OiB3YWl0IGZvciBDTUNOVCBvbiBpbml0
-DQo+DQo+ID4gV2hhdCBzaG91bGQgd2UgZG8gbmV4dCBmb3IgZml4aW5nIHRoaXMgZXJyb3I/ICBB
-ZGRpbmcgdW5jb25kaXRpb25hbCBkZWxheXMNCj4gYWxzbyBmaXhlcyB0aGUgaXNzdWUuDQo+DQo+
-IEknZCBhZGQgNTAgwrVzIGRlbGF5cyBhZnRlciB0aGUgdGhyZWUgcmVnaXN0ZXIgd3JpdGVzLg0K
-DQpJdCBtYWtlIHNlbnNlIHRvIG1lIGFzIHdlbGwsIHNpbmNlIHRoZSBoYXJkd2FyZSBtYW51YWwg
-aXMgbWVudGlvbmluZyBhYm91dCBpbnNlcnRpbmcgZGVsYXlzDQpmb3IgdGhlIHJlbGlhYmxlIGNv
-dW50ZXIgb3BlcmF0aW9uLg0KDQo+ID4gQnV0IEkgZG8gbm90IGhhdmUgdGhlIHNldHVwIHRvIHZl
-cmlmeSB0aGlzIG9uIGdlbjEvZ2VuMi9nZW4zIHZhcmlhbnRzLg0KPiA+DQo+ID4gSSBoYXZlIGVu
-YWJsZWQgQ01UMC8xLzIvMyBvbiBSLUNhciBNMy1XIFNhbHZhdG9yLVhTIGJvYXJkIGFuZCB0aGlz
-IGlzc3VlDQo+IGlzIG5vdCBzZWVuIHdpdGggb3JpZ2luYWwgY29kZS4NCj4gPg0KPiA+IE9ubHkg
-b24gUi1DYXIgR2VuMi8gUlovRzEsIHdlIGFyZSBzZWVpbmcgdGhpcyBpc3N1ZS4NCj4NCj4gQXMg
-eW91IGNhbiB0ZXN0IG9uIEtvZWxzY2gsIE0zLVcgU2FsdmF0b3ItWFMsIGFuZCBSWi9HMSwgdGhh
-dCBzaG91bGQgY292ZXINCj4gbW9zdCB2YXJpYW50cyB3ZSBjYXJlIGFib3V0Lg0KDQpJIHdpbGwg
-c2VuZCBhIHBhdGNoICBWMiwgYWZ0ZXIgdGVzdGluZyBvbiBhbGwgdGhlc2UgdmFyaWFudHMuDQoN
-Cj4gQ01UIGRvZXMgbm90IHNlZW0gdG8gYmUgZW5hYmxlZCBvbiBSLUNhciBNMUEgYW5kIEgxLg0K
-PiBJJ2wgZG8gYm9vdCB0ZXN0cyBvbiBvbGRlciBTSC9SLU1vYmlsZSBTb0NzIGFzIHBhcnQgb2Yg
-bXkgZ2VuZXJhbCB0ZXN0aW5nLg0KPg0KPiA+IE5vdGU6LQ0KPiA+DQo+ID4gRm9yIFItQ2FyIE0z
-LVcgYm9hcmQsIGluY29uc2lzdGVuY3ktY2hlY2sgYW5kIG5hbm9zbGVlcCB0ZXN0cyBhcmUNCj4g
-d29ya2luZyBmaW5lLg0KPiA+DQo+ID4gSG93ZXZlciAgdGhlcmUgaXMgYSBmYWlsdXJlIHdpdGgg
-Y2xvY2tzb3VyY2Vfc3dpdGNoICAiYXN5bmNocm9ub3VzIiAgdGVzdC4NCj4gPiBUaGUgaW5jb25z
-aXN0ZW5jeS1jaGVjayBpcyBmYWlsaW5nICBmb3IgImFyY2hfc3lzX2NvdW50ZXIiIGFmdGVyIHNv
-bWUNCj4gPiBjbG9ja3NvdXJjZV9zd2l0Y2ggb3BlcmF0aW9ucw0KPiA+DQo+ID4gU28gSSBza2lw
-cGVkIHRoZSAiY2xvY2tzb3VyY2Vfc3dpdGNoaW5nIiAgZm9yICBhcmNoX3N5c19jb3VudGVyICBh
-bmQNCj4gPiB0aGUgYXN5bmNocm9ub3VzIHRlc3QgaXMgcGFzc2luZyBmb3INCj4gPiBDTVQwLzEv
-Mi8zIHRpbWVycy4NCj4NCj4gU29ycnksIGJlaW5nIG5vIHRpbWVyIGV4cGVydCwgSSBkb24ndCB1
-bmRlcnN0YW5kIHRoZSBpbXBhY3Qgb2YgdGhlIGFib3ZlDQo+IHBhcmFncmFwaC4NCg0KV2UgbWF5
-IHN0YXJ0IGEgZGlzY3Vzc2lvbiBvbiB0aGlzLCB3aGVuIHdlIHN0YXJ0IHVwc3RyZWFtaW5nIENN
-VCBmb3IgUi1DYXIgTTMtVyBkZXZpY2VzLg0KDQpCYXNpY2FsbHkgY2xvY2tzb3VyY2Vfc3dpdGNo
-ICB0ZXN0IGluICJzZWxmdGVzdHMgInVzZXMgMiB0aHJlYWRzLA0KSW4gMSB0aHJlYWQgaXQgZXhl
-Y3V0ZXMgaW5jb25zaXN0ZW5jeS1jaGVjayB0ZXN0IGZvbGxvd2VkIGJ5IG5hbm8gc2xlZXAgdGVz
-dA0KYW5kIG9uIHRoZSAgc2Vjb25kIHRocmVhZCBpdCBrZWVwIGNoYW5naW5nIGNsb2NrIHNvdXJj
-ZSBvbmUgYWZ0ZXIgdGhlIGFub3RoZXIuDQoNClRoaXMgdGVzdCBhbHdheXMgZmFpbHMgIG9uIFIt
-Q2FyIE0zLVcgd2hpY2ggaXMgYmFzZWQgb24gYXJtNjQuDQoNClJlZ2FyZHMsDQpCaWp1DQoNCg0K
-DQpSZW5lc2FzIEVsZWN0cm9uaWNzIEV1cm9wZSBMdGQsIER1a2VzIE1lYWRvdywgTWlsbGJvYXJk
-IFJvYWQsIEJvdXJuZSBFbmQsIEJ1Y2tpbmdoYW1zaGlyZSwgU0w4IDVGSCwgVUsuIFJlZ2lzdGVy
-ZWQgaW4gRW5nbGFuZCAmIFdhbGVzIHVuZGVyIFJlZ2lzdGVyZWQgTm8uIDA0NTg2NzA5Lg0K
+Hi Biju,
+
+On Tue, Oct 9, 2018 at 3:02 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> What should we do next for fixing this error?  Adding unconditional delays also fixes the issue.
+
+I'd add 50 µs delays after the three register writes.
+
+> But I do not have the setup to verify this on gen1/gen2/gen3 variants.
+>
+> I have enabled CMT0/1/2/3 on R-Car M3-W Salvator-XS board and this issue is not seen with original code.
+>
+> Only on R-Car Gen2/ RZ/G1, we are seeing this issue.
+
+As you can test on Koelsch, M3-W Salvator-XS, and RZ/G1, that should
+cover most variants we care about.
+
+CMT does not seem to be enabled on R-Car M1A and H1.
+I'l do boot tests on older SH/R-Mobile SoCs as part of my general testing.
+
+> Note:-
+>
+> For R-Car M3-W board, inconsistency-check and nanosleep tests are working fine.
+>
+> However  there is a failure with clocksource_switch  "asynchronous"  test.
+> The inconsistency-check is failing  for "arch_sys_counter" after some clocksource_switch operations
+>
+> So I skipped the "clocksource_switching"  for  arch_sys_counter  and the asynchronous test is passing for
+> CMT0/1/2/3 timers.
+
+Sorry, being no timer expert, I don't understand the impact of the
+above paragraph.
+
+> > Subject: RE: [PATCH] clocksource/drivers/sh_cmt: wait for CMCNT on init
+
+> > > -----Original Message-----
+> > > From: Geert Uytterhoeven [mailto:geert@linux-m68k.org]
+> > > Sent: 11 June 2018 12:41
+> > > To: Biju Das <biju.das@bp.renesas.com>
+> > > Cc: Daniel Lezcano <daniel.lezcano@linaro.org>; Thomas Gleixner
+> > > <tglx@linutronix.de>; Simon Horman <horms@verge.net.au>; Geert
+> > > Uytterhoeven <geert+renesas@glider.be>; Chris Paterson
+> > > <Chris.Paterson2@renesas.com>; Fabrizio Castro
+> > > <fabrizio.castro@bp.renesas.com>; Linux-Renesas <linux-renesas-
+> > > soc@vger.kernel.org>
+> > > Subject: Re: [PATCH] clocksource/drivers/sh_cmt: wait for CMCNT on
+> > > init
+> > >
+> > > Hi Biju,
+> > >
+> > > On Mon, Jun 11, 2018 at 1:21 PM Biju Das <biju.das@bp.renesas.com>
+> > wrote:
+> > > > > Subject: Re: [PATCH] clocksource/drivers/sh_cmt: wait for CMCNT on
+> > > > > init On Fri, Jun 8, 2018 at 6:24 PM Biju Das
+> > > > > <biju.das@bp.renesas.com>
+> > > wrote:
+> > > > > > As per section 57A.3.5/69A.3.5/79.A.3.5 of rz/g/r-car gen2/3
+> > > > > > hardware manual,it is mentioned that we need to provide 2 cycles
+> > > > > > in counter input clock (RCLK) for reflecting written data to
+> > > > > > counter
+> > > behaviour.
+> > > > > > Adding sufficient wait to let the CMCNT register value settle
+> > > > > > before starting the timer channel.
+> > > > >
+> > > > > RCLK usually runs at ca. 32 kHz, so 32µs should be sufficient on
+> > > > > R-Car
+> > > > > Gen2/3 and RZ/G1.
+> > > > > R-Mobile A1 is the exception: RCLK runs at 23 kHz, so you need
+> > > > > 43µs to be safe.
+> > > > >
+> > > > > > It fixes the error "sh_cmt ffca0000.timer: ch1: cannot clear CMCNT"
+> > > > > >
+> > > > > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > > > > > Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+> > > > > > ---
+> > > > > > Hello,
+> > > > > >
+> > > > > > During cmt testing, the tool
+> > > > > > (tools/testing/selftests/timers/clocksource-switch.c)
+> > > > > > is complaining about the error "sh_cmt ffca0000.timer: ch1:
+> > > > > > cannot clear
+> > > > > CMCNT".
+> > > > > > The above patch fixes this issue is by adding sufficient wait to
+> > > > > > let the CMCNT register value settle before starting the timer channel.
+> > > > > >
+> > > > > > This issue is reproduced on Koelsch/RZ/G1[ME] based iwave boards
+> > > > > > etc..., as I assume the same issue should be present on lager
+> > > > > > etc. as
+> > > well?
+> > > > >
+> > > > > > --- a/drivers/clocksource/sh_cmt.c
+> > > > > > +++ b/drivers/clocksource/sh_cmt.c
+> > > > > > @@ -328,7 +328,7 @@ static void sh_cmt_start_stop_ch(struct
+> > > > > > sh_cmt_channel *ch, int start)
+> > > > > >
+> > > > > >  static int sh_cmt_enable(struct sh_cmt_channel *ch)  {
+> > > > > > -       int k, ret;
+> > > > > > +       int j, k, ret;
+> > > > > >
+> > > > > >         pm_runtime_get_sync(&ch->cmt->pdev->dev);
+> > > > > >         dev_pm_syscore_device(&ch->cmt->pdev->dev, true); @@
+> > > > > > -368,11 +368,17 @@ static int sh_cmt_enable(struct
+> > > > > > sh_cmt_channel
+> > > > > *ch)
+> > > > > >          * While at it, we're supposed to clear out the CMCNT as of this
+> > > > > >          * moment, so make sure it's processed properly here.  This will
+> > > > > >          * take RCLKx2 at maximum.
+> > > > > > +        *
+> > > > > > +        * Similar register access usage for CMCNT is mentioned in R-Car
+> > > > > > +        * Gen[2/3]/RZ/G1 user's manual, RCLKx2 for cmt0 and RCLKx2 or
+> > > > > > +        * CPϕx2 (CPEXϕx2)) for cmt1.
+> > > > > >          */
+> > > > > > -       for (k = 0; k < 100; k++) {
+> > > > > > -               if (!sh_cmt_read_cmcnt(ch))
+> > > > > > -                       break;
+> > > > > > -               udelay(1);
+> > > > >
+> > > > > 100 * 1µs = 100µs, so the original code should be sufficient?
+> > > >
+> > > > From the test results,  the original code is not sufficient. It
+> > > > needs 137 µs on
+> > > koelsch platform to settle this value.
+> > > >
+> > > > > Or should it wait 42µs unconditionally, i.e. without checking CMCNT?
+> > > >
+> > > > Yes, Adding  wait 42µs unconditionally, just before the for loop
+> > > > also fixes
+> > > the issue, since worst case wait is 137 µs.
+> > > > What is your suggestion here?
+> > > >
+> > > > > The datasheet mentions some other registers 2 RCLK cycles, too.
+> > > > > Should there be a fixed 2 RCLK delay in sh_cmt_write_cmcsr() and
+> > > > > sh_cmt_write_cmcor(), which are both called just before
+> > > > > sh_cmt_write_cmcnt()
+> > > > > above (all out of diff context)?
+> > > >
+> > > > I am not sure on this.
+> > > >
+> > > > > > +       for (j = 0; j < 2; j++) {
+> > > > > > +               for (k = 0; k < 100; k++) {
+> > > > > > +                       if (!sh_cmt_read_cmcnt(ch))
+> > > > > > +                               break;
+> > > > > > +                       udelay(1);
+> > > > > > +               }
+> > > > >
+> > > > > This is now two loops, with two checks for CMCNT, which looks
+> > > > > strange to me.
+> > > > > Do you have figures for the number of loops needed, for both the
+> > > > > first (j=0) and the 2nd (j=1) cycle?
+> > > >
+> > > > From the test results, first cycle  j=0, loop count(max)=100 Second
+> > > > cycle  j=2, loop count(max)= 37.
+> > >
+> > > 137µs ~= 3 x 42µs, and there are 3 register writes above.
+> > > Is that a coincidence? ;-)
+> >
+> > I think so.
+> >
+> > > Does it work if you insert udelay(42) after the register writes in
+> > > sh_cmt_write_cmcsr(), sh_cmt_write_cmcor(), and
+> > sh_cmt_write_cmcnt()?
+> >
+> > yes,  I confirm it worked by putting  udelay(42) after the register writes in
+> > sh_cmt_write_cmcsr(), sh_cmt_write_cmcor(), and sh_cmt_write_cmcnt().
+> >
+> > Here  is the result after  inserting udelay (42) .
+> >
+> > Koelsch board:-  with a max wait of (100+42) µs ( with more than 1000
+> > iterations) RZ/G1M board:- with a max value of (100+42) µs ( with more than
+> > 1000 iterations) RZ/G1E board:-  with a max value of (86+42) µs (with more
+> > than 1000 iterations)
+> >
+> > Looks like udelay(50)  is the safest, even though it worked with udelay(42).
+> > What do you think?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
