@@ -1,61 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:35906 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728625AbeJLR4l (ORCPT
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:44408 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726206AbeJJRqJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Oct 2018 13:56:41 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Zhang Rui <rui.zhang@intel.com>,
+        Wed, 10 Oct 2018 13:46:09 -0400
+Received: by mail-lj1-f194.google.com with SMTP id v6-v6so4354652ljc.11
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 10 Oct 2018 03:24:39 -0700 (PDT)
+Date: Wed, 10 Oct 2018 12:24:36 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/3] thermal: rcar_thermal: Prevent doing work after unbind
-Date: Fri, 12 Oct 2018 09:20:16 +0200
-Message-Id: <20181012072017.10765-3-geert+renesas@glider.be>
-In-Reply-To: <20181012072017.10765-1-geert+renesas@glider.be>
-References: <20181012072017.10765-1-geert+renesas@glider.be>
+        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 2/2] thermal: rcar_gen3_thermal: add R8A77980 support
+Message-ID: <20181010102436.GA24305@bigcity.dyn.berto.se>
+References: <3c96d51e-fc36-2ff9-03a8-176c4c0ed365@cogentembedded.com>
+ <ffa4ab74-aa7c-553a-6246-022e3af7d9fa@cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <ffa4ab74-aa7c-553a-6246-022e3af7d9fa@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When testing bind/unbind on r8a7791/koelsch:
+Hi Sergei,
 
-    WARNING: CPU: 1 PID: 697 at lib/debugobjects.c:329 debug_print_object+0x8c/0xb4
-    ODEBUG: free active (active state 0) object type: timer_list hint: delayed_work_timer_fn+0x0/0x10
+Thanks for your patch.
 
-This happens if the workqueue runs after the device has been unbound.
-Fix this by cancelling any queued work during remove.
+On 2018-10-09 22:11:51 +0300, Sergei Shtylyov wrote:
+> Add the R-Car V3H (R8A77980) SoC support to the R-Car gen3 thermal driver.
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Fixes: e0a5172e9eec7f0d ("thermal: rcar: add interrupt support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
-v2:
-  - Add Reviewed-by.
----
- drivers/thermal/rcar_thermal.c | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-diff --git a/drivers/thermal/rcar_thermal.c b/drivers/thermal/rcar_thermal.c
-index ea132e122b174757..616ba2fccf410d3b 100644
---- a/drivers/thermal/rcar_thermal.c
-+++ b/drivers/thermal/rcar_thermal.c
-@@ -453,6 +453,7 @@ static int rcar_thermal_remove(struct platform_device *pdev)
- 
- 	rcar_thermal_for_each_priv(priv, common) {
- 		rcar_thermal_irq_disable(priv);
-+		cancel_delayed_work_sync(&priv->work);
- 		if (priv->chip->use_of_thermal)
- 			thermal_remove_hwmon_sysfs(priv->zone);
- 		else
+> 
+> ---
+>  drivers/thermal/rcar_gen3_thermal.c |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> Index: linux-soc-thermal/drivers/thermal/rcar_gen3_thermal.c
+> ===================================================================
+> --- linux-soc-thermal.orig/drivers/thermal/rcar_gen3_thermal.c
+> +++ linux-soc-thermal/drivers/thermal/rcar_gen3_thermal.c
+> @@ -321,6 +321,7 @@ static const struct of_device_id rcar_ge
+>  	{ .compatible = "renesas,r8a7795-thermal", },
+>  	{ .compatible = "renesas,r8a7796-thermal", },
+>  	{ .compatible = "renesas,r8a77965-thermal", },
+> +	{ .compatible = "renesas,r8a77980-thermal", },
+>  	{},
+>  };
+>  MODULE_DEVICE_TABLE(of, rcar_gen3_thermal_dt_ids);
+
 -- 
-2.17.1
+Regards,
+Niklas S�derlund
