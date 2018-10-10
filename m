@@ -1,83 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45898 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727226AbeJVEQR (ORCPT
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:39475 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726722AbeJJQD5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:16:17 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
-Subject: [PATCH 0/3] spi: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:44 +0200
-Message-Id: <20181021200048.2114-1-wsa+renesas@sang-engineering.com>
+        Wed, 10 Oct 2018 12:03:57 -0400
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181008162349.42957-1-chris.brandt@renesas.com> <20181008162349.42957-4-chris.brandt@renesas.com>
+In-Reply-To: <20181008162349.42957-4-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 10 Oct 2018 10:42:37 +0200
+Message-ID: <CAMuHMdXRKOggSQo8uX3iKXF+6y+6HgkgoP7m0xKUsTmZ8STVVw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] dt-bindings: mmc: tmio_mmc: Document Renesas R7S9210
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I got tired of fixing this in Renesas drivers manually, so I took the big
-hammer. Remove this cumbersome code pattern which got copy-pasted too much
-already:
+Hi Chris,
 
--	struct platform_device *pdev = to_platform_device(dev);
--	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
-+	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
+On Mon, Oct 8, 2018 at 6:24 PM Chris Brandt <chris.brandt@renesas.com> wrote:
+> Document support for the RZ/A2 (R7S9210) SoC.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
-A branch, tested by buildbot, can be found here:
+Thanks for your patch!
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git coccinelle/get_drvdata
+> --- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> @@ -13,6 +13,7 @@ Required properties:
+>  - compatible: should contain one or more of the following:
+>                 "renesas,sdhi-sh73a0" - SDHI IP on SH73A0 SoC
+>                 "renesas,sdhi-r7s72100" - SDHI IP on R7S72100 SoC
+> +               "renesas,sdhi-r7s9210" - SDHI IP on R7S9210 SoC
+>                 "renesas,sdhi-r8a73a4" - SDHI IP on R8A73A4 SoC
+>                 "renesas,sdhi-r8a7740" - SDHI IP on R8A7740 SoC
+>                 "renesas,sdhi-r8a7743" - SDHI IP on R8A7743 SoC
 
-I have been asked if it couldn't be done for dev_set_drvdata as well. I checked
-it and did not find one occasion where it could be simplified like this. Not
-much of a surprise because driver_data is usually set in probe() functions
-which access struct platform_device in many other ways.
+With
 
-I am open for other comments, suggestions, too, of course.
+          Devices which have more than 1 clock are listed below:
+-         2: R7S72100
++         2: R7S72100, R7S9210
 
-Here is the cocci-script I created:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-@@
-struct device* d;
-identifier pdev;
-expression *ptr;
-@@
-(
--	struct platform_device *pdev = to_platform_device(d);
-|
--	struct platform_device *pdev;
-	...
--	pdev = to_platform_device(d);
-)
-	<... when != pdev
--	&pdev->dev
-+	d
-	...>
+Gr{oetje,eeting}s,
 
-	ptr =
--	platform_get_drvdata(pdev)
-+	dev_get_drvdata(d)
-
-	<... when != pdev
--	&pdev->dev
-+	d
-	...>
-
-Kind regards,
-
-   Wolfram
-
-
-Wolfram Sang (3):
-  spi: spi-rspi: simplify getting .driver_data
-  spi: spi-sh-msiof: simplify getting .driver_data
-  spi: spi-zynqmp-gqspi: simplify getting .driver_data
-
- drivers/spi/spi-rspi.c         | 6 ++----
- drivers/spi/spi-sh-msiof.c     | 6 ++----
- drivers/spi/spi-zynqmp-gqspi.c | 6 ++----
- 3 files changed, 6 insertions(+), 12 deletions(-)
+                        Geert
 
 -- 
-2.19.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
