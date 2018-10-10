@@ -1,45 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:43782 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727219AbeJJCaV (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:13179 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726503AbeJJW3r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Oct 2018 22:30:21 -0400
-Received: by mail-lf1-f68.google.com with SMTP id p34-v6so2108187lfg.10
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 09 Oct 2018 12:11:54 -0700 (PDT)
-Subject: [PATCH 2/2] thermal: rcar_gen3_thermal: add R8A77980 support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        linux-pm@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-References: <3c96d51e-fc36-2ff9-03a8-176c4c0ed365@cogentembedded.com>
-Message-ID: <ffa4ab74-aa7c-553a-6246-022e3af7d9fa@cogentembedded.com>
-Date: Tue, 9 Oct 2018 22:11:51 +0300
-MIME-Version: 1.0
-In-Reply-To: <3c96d51e-fc36-2ff9-03a8-176c4c0ed365@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Wed, 10 Oct 2018 18:29:47 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v3 0/3] mmc: tmio_mmc: Add support for RZ/A2
+Date: Wed, 10 Oct 2018 10:06:39 -0500
+Message-Id: <20181010150642.73890-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the R-Car V3H (R8A77980) SoC support to the R-Car gen3 thermal driver.
+Basically the same HW block that was used in R-Car Gen 3 is used in
+RZ/A2 (with only a couple small differences).
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Not sure if you're going to like the Kconfig change or not.
 
----
- drivers/thermal/rcar_gen3_thermal.c |    1 +
- 1 file changed, 1 insertion(+)
+Chris Brandt (3):
+  clk: renesas: r7s9210: Add SDHI clocks
+  mmc: renesas_sdhi_internal_dmac: Add R7S9210 support
+  dt-bindings: mmc: tmio_mmc: Document Renesas R7S9210
 
-Index: linux-soc-thermal/drivers/thermal/rcar_gen3_thermal.c
-===================================================================
---- linux-soc-thermal.orig/drivers/thermal/rcar_gen3_thermal.c
-+++ linux-soc-thermal/drivers/thermal/rcar_gen3_thermal.c
-@@ -321,6 +321,7 @@ static const struct of_device_id rcar_ge
- 	{ .compatible = "renesas,r8a7795-thermal", },
- 	{ .compatible = "renesas,r8a7796-thermal", },
- 	{ .compatible = "renesas,r8a77965-thermal", },
-+	{ .compatible = "renesas,r8a77980-thermal", },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, rcar_gen3_thermal_dt_ids);
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt |  3 ++-
+ drivers/clk/renesas/r7s9210-cpg-mssr.c             |  5 ++++
+ drivers/mmc/host/Kconfig                           |  5 ++--
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c      | 28 ++++++++++++++++++++--
+ 4 files changed, 36 insertions(+), 5 deletions(-)
+
+-- 
+2.16.1
