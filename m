@@ -1,85 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:7720 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726373AbeJHQCz (ORCPT
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:36344 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726596AbeJJP5a (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 8 Oct 2018 12:02:55 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
+        Wed, 10 Oct 2018 11:57:30 -0400
+MIME-Version: 1.0
+References: <20181008162349.42957-1-chris.brandt@renesas.com> <20181008162349.42957-2-chris.brandt@renesas.com>
+In-Reply-To: <20181008162349.42957-2-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 10 Oct 2018 10:36:12 +0200
+Message-ID: <CAMuHMdUaG_cEc+EuzDJ2+s97O0CRKEGiD8zgN-zvBUREXYuBiw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: renesas: r7s9210: Add SDHI clocks
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v3 4/6] ARM: dts: r8a77470: Add SDHI0 support
-Date: Mon,  8 Oct 2018 09:51:50 +0100
-Message-Id: <1538988712-17077-5-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1538988712-17077-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1538988712-17077-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-RZ/G1C comes with two different types of IP for the SDHI
-interfaces, SDHI0 and SDHI2 share the same IP type, and
-such an IP is also compatible with the one found in R-Car
-Gen2. SDHI1 IP on the other hand is compatible with R-Car
-Gen3 with internal DMA.
-This patch completes the SDHI support of the R-Car Gen2
-compatible IPs, including fixing the max-frequency
-definition of SDHI2, as it turns out there is a bug in
-Section 1.3.9 of the RZ/G1C Hardware User's Manual (Rev.
-1.00 Oct. 2017).
+On Mon, Oct 8, 2018 at 6:24 PM Chris Brandt <chris.brandt@renesas.com> wrote:
+> Add SDHI clocks for RZ/A2
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v4.21.
 
----
-v2->v3:
-* No change
+Gr{oetje,eeting}s,
 
-v2:
-* New patch
----
- arch/arm/boot/dts/r8a77470.dtsi | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+                        Geert
 
-diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index 9e7f86d..e01df9c 100644
---- a/arch/arm/boot/dts/r8a77470.dtsi
-+++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -412,6 +412,21 @@
- 			status = "disabled";
- 		};
- 
-+		sdhi0: sd@ee100000 {
-+			compatible = "renesas,sdhi-r8a77470",
-+				     "renesas,rcar-gen2-sdhi";
-+			reg = <0 0xee100000 0 0x328>;
-+			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 314>;
-+			dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
-+			       <&dmac1 0xcd>, <&dmac1 0xce>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			max-frequency = <156000000>;
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 314>;
-+			status = "disabled";
-+		};
-+
- 		sdhi2: sd@ee160000 {
- 			compatible = "renesas,sdhi-r8a77470",
- 				     "renesas,rcar-gen2-sdhi";
-@@ -421,7 +436,7 @@
- 			dmas = <&dmac0 0xd3>, <&dmac0 0xd4>,
- 			       <&dmac1 0xd3>, <&dmac1 0xd4>;
- 			dma-names = "tx", "rx", "tx", "rx";
--			max-frequency = <97500000>;
-+			max-frequency = <78000000>;
- 			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
- 			resets = <&cpg 312>;
- 			status = "disabled";
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
