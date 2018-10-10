@@ -1,9 +1,4 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:41182 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726503AbeJJW3t (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 Oct 2018 18:29:49 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Chris Brandt <chris.brandt@renesas.com>
 To: Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -15,12 +10,12 @@ Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3 3/3] dt-bindings: mmc: tmio_mmc: Document Renesas R7S9210
-Date: Wed, 10 Oct 2018 10:06:42 -0500
-Message-Id: <20181010150642.73890-4-chris.brandt@renesas.com>
-In-Reply-To: <20181010150642.73890-1-chris.brandt@renesas.com>
-References: <20181010150642.73890-1-chris.brandt@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH v2 3/3] dt-bindings: mmc: tmio_mmc: Document Renesas R7S9210
+Date: Wed, 10 Oct 2018 07:37:13 -0500
+Message-Id: <20181010123713.67541-4-chris.brandt@renesas.com>
+In-Reply-To: <20181010123713.67541-1-chris.brandt@renesas.com>
+References: <20181010123713.67541-1-chris.brandt@renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Document support for the RZ/A2 (R7S9210) SoC.
