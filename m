@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:13179 "EHLO
+Received: from relmlor4.renesas.com ([210.160.252.174]:54844 "EHLO
         relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726503AbeJJW3r (ORCPT
+        by vger.kernel.org with ESMTP id S1726503AbeJJT7c (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 Oct 2018 18:29:47 -0400
+        Wed, 10 Oct 2018 15:59:32 -0400
 From: Chris Brandt <chris.brandt@renesas.com>
 To: Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -15,9 +15,9 @@ Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3 0/3] mmc: tmio_mmc: Add support for RZ/A2
-Date: Wed, 10 Oct 2018 10:06:39 -0500
-Message-Id: <20181010150642.73890-1-chris.brandt@renesas.com>
+Subject: [PATCH v2 0/3] mmc: tmio_mmc: Add support for RZ/A2
+Date: Wed, 10 Oct 2018 07:37:10 -0500
+Message-Id: <20181010123713.67541-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
