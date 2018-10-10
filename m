@@ -1,126 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:53928 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732413AbeKAIPO (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:41182 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726503AbeJJW3t (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:15:14 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 2/3] mmc: renesas_sdhi: align compatibility properties for H3 and M3-W
-Date: Thu,  1 Nov 2018 00:13:39 +0100
-Message-Id: <20181031231340.1958-3-niklas.soderlund@ragnatech.se>
-In-Reply-To: <20181031231340.1958-1-niklas.soderlund@ragnatech.se>
-References: <20181031231340.1958-1-niklas.soderlund@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Wed, 10 Oct 2018 18:29:49 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v3 3/3] dt-bindings: mmc: tmio_mmc: Document Renesas R7S9210
+Date: Wed, 10 Oct 2018 10:06:42 -0500
+Message-Id: <20181010150642.73890-4-chris.brandt@renesas.com>
+In-Reply-To: <20181010150642.73890-1-chris.brandt@renesas.com>
+References: <20181010150642.73890-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Document support for the RZ/A2 (R7S9210) SoC.
 
-It was though all ES revisions of H3 and M3-W SoCs required the
-TMIO_MMC_HAVE_4TAP_HS400 flag. Recent datasheet updates tells us this is
-not true, only early ES revisions of the SoC do.
-
-Since quirk matching based on ES revisions is now used to handle the
-flag it's possible to align all Gen3 compatibility properties. This will
-allow later ES revisions of H3 and M3-W to use the correct 8-tap HS400
-mode.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 20 ++-----------------
- drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 20 +++----------------
- 2 files changed, 5 insertions(+), 35 deletions(-)
+v2:
+ * Documented that R7S9210 has 2 clocks
+---
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index b6f54102bfdd3a76..68abe042e9f765ad 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -81,22 +81,6 @@ static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
- 	},
- };
+diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+index d39d5e46f7d2..cdfbcce34b97 100644
+--- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
++++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+@@ -13,6 +13,7 @@ Required properties:
+ - compatible: should contain one or more of the following:
+ 		"renesas,sdhi-sh73a0" - SDHI IP on SH73A0 SoC
+ 		"renesas,sdhi-r7s72100" - SDHI IP on R7S72100 SoC
++		"renesas,sdhi-r7s9210" - SDHI IP on R7S9210 SoC
+ 		"renesas,sdhi-r8a73a4" - SDHI IP on R8A73A4 SoC
+ 		"renesas,sdhi-r8a7740" - SDHI IP on R8A7740 SoC
+ 		"renesas,sdhi-r8a7743" - SDHI IP on R8A7743 SoC
+@@ -54,7 +55,7 @@ Required properties:
+ 	  "core" and "cd". If the controller only has 1 clock, naming is not
+ 	  required.
+ 	  Devices which have more than 1 clock are listed below:
+-	  2: R7S72100
++	  2: R7S72100, R7S9210
  
--static const struct renesas_sdhi_of_data of_rcar_r8a7795_compatible = {
--	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
--			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2 |
--			  TMIO_MMC_HAVE_4TAP_HS400,
--	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
--			  MMC_CAP_CMD23,
--	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
--	.bus_shift	= 2,
--	.scc_offset	= 0x1000,
--	.taps		= rcar_gen3_scc_taps,
--	.taps_num	= ARRAY_SIZE(rcar_gen3_scc_taps),
--	/* DMAC can handle 0xffffffff blk count but only 1 segment */
--	.max_blk_count	= 0xffffffff,
--	.max_segs	= 1,
--};
--
- static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
- 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
- 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
-@@ -114,8 +98,8 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
- 
- static const struct of_device_id renesas_sdhi_internal_dmac_of_match[] = {
- 	{ .compatible = "renesas,sdhi-mmc-r8a77470", .data = &of_rcar_gen3_compatible, },
--	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_r8a7795_compatible, },
--	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_r8a7795_compatible, },
-+	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
-+	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
- 	{ .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
- 	{},
- };
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index 1a4016f635d398c2..8471160316e073c5 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -75,19 +75,6 @@ static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
- 	},
- };
- 
--static const struct renesas_sdhi_of_data of_rcar_r8a7795_compatible = {
--	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
--			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2 |
--			  TMIO_MMC_HAVE_4TAP_HS400,
--	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
--			  MMC_CAP_CMD23,
--	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
--	.bus_shift	= 2,
--	.scc_offset	= 0x1000,
--	.taps		= rcar_gen3_scc_taps,
--	.taps_num	= ARRAY_SIZE(rcar_gen3_scc_taps),
--};
--
- static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
- 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
- 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
-@@ -114,8 +101,8 @@ static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
- 	{ .compatible = "renesas,sdhi-r8a7792", .data = &of_rcar_gen2_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7793", .data = &of_rcar_gen2_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7794", .data = &of_rcar_gen2_compatible, },
--	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_r8a7795_compatible, },
--	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_r8a7795_compatible, },
-+	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
-+	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
- 	{ .compatible = "renesas,rcar-gen1-sdhi", .data = &of_rcar_gen1_compatible, },
- 	{ .compatible = "renesas,rcar-gen2-sdhi", .data = &of_rcar_gen2_compatible, },
- 	{ .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
-@@ -493,8 +480,7 @@ static const struct soc_device_attribute gen3_soc_whitelist[] = {
- 
- static int renesas_sdhi_sys_dmac_probe(struct platform_device *pdev)
- {
--	if ((of_device_get_match_data(&pdev->dev) == &of_rcar_gen3_compatible ||
--	    of_device_get_match_data(&pdev->dev) == &of_rcar_r8a7795_compatible) &&
-+	if (of_device_get_match_data(&pdev->dev) == &of_rcar_gen3_compatible &&
- 	    !soc_device_match(gen3_soc_whitelist))
- 		return -ENODEV;
- 
+ Optional properties:
+ - pinctrl-names: should be "default", "state_uhs"
 -- 
-2.19.1
+2.16.1
