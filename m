@@ -1,51 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37859 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726158AbeJMDWa (ORCPT
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:40241 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726656AbeJJPiW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Oct 2018 23:22:30 -0400
-Received: by mail-lj1-f196.google.com with SMTP id 63-v6so12359786ljs.4
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 12 Oct 2018 12:48:25 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] spi: sh-msiof: fix deferred probing
-To: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org
-Message-ID: <c705888d-128a-bf3a-7828-ce105b3665d4@cogentembedded.com>
-Date: Fri, 12 Oct 2018 22:48:22 +0300
+        Wed, 10 Oct 2018 11:38:22 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+References: <1538991019-18577-1-git-send-email-fabrizio.castro@bp.renesas.com> <1538991019-18577-5-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1538991019-18577-5-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 10 Oct 2018 10:17:08 +0200
+Message-ID: <CAMuHMdUGwKqwdJsV2c_9=u6siKuwfLnzKECUj9h5r8f=ZmPNuw@mail.gmail.com>
+Subject: Re: [PATCH 4/4] pinctrl: sh-pfc: r8a77470: Add QSPI1 pin groups
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since commit 9ec36cafe43b ("of/irq: do irq resolution in platform_get_irq")
-platform_get_irq() can return -EPROBE_DEFER. However, the driver overrides
-an error returned by that function with -ENOENT which breaks the deferred
-probing. Propagate upstream an error code returned by platform_get_irq()
-and remove the bogus "platform" from the error message, while at it...
+On Mon, Oct 8, 2018 at 11:30 AM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> Add QSPI1 pin groups and function to the RZ/G1C (a.k.a. R8A77470)
+> pinctrl driver.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Fixes: 9ec36cafe43b ("of/irq: do irq resolution in platform_get_irq")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.21.
 
----
-The patch is against the 'for-linus' branch of Mark Brown's 'spi.git' repo.
+Gr{oetje,eeting}s,
 
- drivers/spi/spi-sh-msiof.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+                        Geert
 
-Index: spi/drivers/spi/spi-sh-msiof.c
-===================================================================
---- spi.orig/drivers/spi/spi-sh-msiof.c
-+++ spi/drivers/spi/spi-sh-msiof.c
-@@ -1343,8 +1343,8 @@ static int sh_msiof_spi_probe(struct pla
- 
- 	i = platform_get_irq(pdev, 0);
- 	if (i < 0) {
--		dev_err(&pdev->dev, "cannot get platform IRQ\n");
--		ret = -ENOENT;
-+		dev_err(&pdev->dev, "cannot get IRQ\n");
-+		ret = i;
- 		goto err1;
- 	}
- 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
