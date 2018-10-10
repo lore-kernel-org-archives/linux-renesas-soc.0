@@ -1,48 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:41569 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725895AbeJJQrA (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38018 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725837AbeJJPgF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 Oct 2018 12:47:00 -0400
-MIME-Version: 1.0
-References: <1538992358-19701-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1538992358-19701-1-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 10 Oct 2018 11:25:30 +0200
-Message-ID: <CAMuHMdUeBRUc8s=xKE09FVPfQSSgrVS6Ljv55QO3zQtnA0Ly0w@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: r8a77470: Add I2C[0123] support
+        Wed, 10 Oct 2018 11:36:05 -0400
+Date: Wed, 10 Oct 2018 10:14:59 +0200
+From: Simon Horman <horms@verge.net.au>
 To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Cc: Rob Herring <robh+dt@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
         Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] ARM: dts: r8a77470: Add I2C[0123] support
+Message-ID: <20181010081457.yd4agpn3jmbnfpxl@verge.net.au>
+References: <1538992358-19701-1-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538992358-19701-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 8, 2018 at 11:53 AM Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
+On Mon, Oct 08, 2018 at 10:52:38AM +0100, Fabrizio Castro wrote:
 > Add device tree nodes for the I2C[0123] controllers. Also, add
 > the aliases node.
->
+> 
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thanks,
 
-Gr{oetje,eeting}s,
+This looks fine to me but I will wait to see if there are other reviews
+before applying.
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
