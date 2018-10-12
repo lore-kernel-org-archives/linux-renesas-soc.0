@@ -1,95 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34985 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726607AbeJJC4W (ORCPT
+Received: from sauhun.de ([88.99.104.3]:46976 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728145AbeJLTpV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Oct 2018 22:56:22 -0400
-Received: by mail-lj1-f194.google.com with SMTP id o14-v6so2683193ljj.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 09 Oct 2018 12:37:50 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] arm64: dts: renesas: r8a77980: add thermal support
-To: Simon Horman <horms@verge.net.au>,
+        Fri, 12 Oct 2018 15:45:21 -0400
+Date: Fri, 12 Oct 2018 14:13:07 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>
-References: <fb4eb097-40aa-82df-68c7-9b727c858a8b@cogentembedded.com>
-Message-ID: <90451643-6beb-e61f-912c-3adff4c943cb@cogentembedded.com>
-Date: Tue, 9 Oct 2018 22:37:47 +0300
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v3 2/3] mmc: renesas_sdhi_internal_dmac: Add R7S9210
+ support
+Message-ID: <20181012121307.u3hwqmthoqllxd7r@ninjato>
+References: <20181010150642.73890-1-chris.brandt@renesas.com>
+ <20181010150642.73890-3-chris.brandt@renesas.com>
+ <20181012110755.qdnevfoyq5qymf42@ninjato>
+ <TY1PR01MB1562B5DCB7298E72C96B92998AE20@TY1PR01MB1562.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <fb4eb097-40aa-82df-68c7-9b727c858a8b@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="67l76gewuthmtrwx"
+Content-Disposition: inline
+In-Reply-To: <TY1PR01MB1562B5DCB7298E72C96B92998AE20@TY1PR01MB1562.jpnprd01.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe THS/CIVM in the R8A77980 device trees.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+--67l76gewuthmtrwx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
----
-This patch is against the 'renesas-devel-20181008-v4.19-rc7' tag of Simon
-Horman's 'renesas.git' repo.
 
-The thermal driver/bindings patches have been just posted...
+> Even after you pointed that out...I had to stare real hard to see it. I=
+=20
+> guess the brain corrects what you see.
 
- arch/arm64/boot/dts/renesas/r8a77980.dtsi |   38 ++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+Yes. c57d3e7a9391 ("i2c-dev: Fix typo in ioctl name reference") fixed
+something in 2015 which was around forever. I had to look twice at this
+patch as well.
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -330,6 +330,19 @@
- 			#power-domain-cells = <1>;
- 		};
- 
-+		thermal: thermal@e6198000 {
-+			compatible = "renesas,r8a77980-thermal";
-+			reg = <0 0xe6198000 0 0x100>,
-+			      <0 0xe61a0000 0 0x100>;
-+			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 522>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			resets = <&cpg 522>;
-+			#thermal-sensor-cells = <1>;
-+		};
-+
- 		intc_ex: interrupt-controller@e61c0000 {
- 			compatible = "renesas,intc-ex-r8a77980", "renesas,irqc";
- 			#interrupt-cells = <2>;
-@@ -1404,6 +1417,31 @@
- 		};
- 	};
- 
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&thermal 0>;
-+
-+			trips {
-+				cpu-crit {
-+					temperature = <120000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+
-+			cooling-maps {
-+			};
-+		};
-+
-+		sensor2-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&thermal 1>;
-+		};
-+	};
-+
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) |
+> I was getting information through someone that was not in the design
+> team. So to be fair to the chip design guys, I want to avoid the word
+> "broken". They took the bit out of the hardware manual, and since the
+> HW was designed to work either way (and the default register setting
+> is for fixed), I consider it an 'unsupported feature'.
+>=20
+> So, how about a compromise of:
+>=20
+> #define SDHI_INTERNAL_DMAC_ADDR_MODE_FIXED_ONLY 2
+
+Perfect. Now we nailed it, I think.
+
+> I don't think this applies to Gen3. This is just a RZ/A2 thing.
+
+OK. Thanks for the heads up!
+
+
+--67l76gewuthmtrwx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvAj88ACgkQFA3kzBSg
+KbYuaxAArFozp5f24+QVGZNC4XF4NEZSJtz+JO5yJMOOtU5w+hBrIVPV+aF5ae6E
+T9znsxnPUV26TOBJeEvCGMSFyx5JQCfm9KlQ1ynKzpqtCk7fWd67ib+y34+tyRWh
+X16ygX0r7BV3PCyypwb+3Taat4hOntaEYPQjU8L1Yu5cG9o0P0OF9ESMz7gvNkJg
+NsGYsWtdqCtjiFviYyZvBaTHRdJ3oE1LNk04dTP2HG1ypziqutxB6s/dJJh3+5us
+rQHq/5jS8NJkQf3e129YCdN+YJr0zMd9ixZX2iMK0dXP5OxjUp/gW781uyxDL0OW
+RsRMKb1eywoOrWfrcgJ30/vaCpLHPaLK8FG4YsPBZ7lWE7OKoGFB0ZIo1rDyvDAi
+bX50ZHWMdFHWU7t3Ob2Vh917Lrjckgi28bFanfubodxb6Z9e1leEzstyFv54N4W/
+PN8dSEC+YTlvFLztOyFe4VJYgNO3gMQpQuAzKXyTm5aWW86YeZoXQ0Pi/vzx3MWu
+JWKEJXOMtJFU7TwDghXPFq8SpNTn2/Ou+pIGmXUcxJxB4WVdW52UjVqi2uGfRCun
+YDS4R0X+s7GEhvWhhvN6TsKigfKY2fPrjTCb0gO5cE8xZv10egs51rlOLuKUPlmJ
+I2pEG+icOeSWusj/lvyvruMe9gzpTQIN2CbZ24LmyZ70YYEtOVo=
+=O0B3
+-----END PGP SIGNATURE-----
+
+--67l76gewuthmtrwx--
