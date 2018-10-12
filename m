@@ -1,42 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46464 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:58654 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728979AbeJATsL (ORCPT
+        with ESMTP id S1726664AbeJLSqz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 1 Oct 2018 15:48:11 -0400
-Date: Mon, 1 Oct 2018 15:10:21 +0200
+        Fri, 12 Oct 2018 14:46:55 -0400
+Date: Fri, 12 Oct 2018 13:14:55 +0200
 From: Simon Horman <horms@verge.net.au>
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: Re: [PATCH] dt-bindings: arm: Document iW-RainboW-G20D-Qseven-RZG1N
- board
-Message-ID: <20181001131021.5do6ewa3yrrvzfk7@verge.net.au>
-References: <1537958686-10062-1-git-send-email-biju.das@bp.renesas.com>
- <20180928071401.esaypaqdiokexhvo@verge.net.au>
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH] ARM: dts: r8a77470: Add I2C[0123] support
+Message-ID: <20181012111454.irboyqblqucdvcha@verge.net.au>
+References: <1538992358-19701-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <CAMuHMdUeBRUc8s=xKE09FVPfQSSgrVS6Ljv55QO3zQtnA0Ly0w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180928071401.esaypaqdiokexhvo@verge.net.au>
+In-Reply-To: <CAMuHMdUeBRUc8s=xKE09FVPfQSSgrVS6Ljv55QO3zQtnA0Ly0w@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Sep 28, 2018 at 09:14:02AM +0200, Simon Horman wrote:
-> On Wed, Sep 26, 2018 at 11:44:46AM +0100, Biju Das wrote:
-> > Document the iW-RainboW-G20D-Qseven-RZG1N device tree bindings,
-> > listing it as a supported board.
-> > 
-> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> > Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+On Wed, Oct 10, 2018 at 11:25:30AM +0200, Geert Uytterhoeven wrote:
+> On Mon, Oct 8, 2018 at 11:53 AM Fabrizio Castro
+> <fabrizio.castro@bp.renesas.com> wrote:
+> > Add device tree nodes for the I2C[0123] controllers. Also, add
+> > the aliases node.
+> >
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 > 
-> Thanks,
-> 
-> This looks fine to me but I will wait to see if there are other reviews
-> before applying.
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks again, applied for v4.21.
+Thanks, applied for v4.21.
