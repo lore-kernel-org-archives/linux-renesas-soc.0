@@ -1,41 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:54844 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726503AbeJJT7c (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:58835 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726568AbeJLS4A (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 Oct 2018 15:59:32 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Fri, 12 Oct 2018 14:56:00 -0400
+Date: Fri, 12 Oct 2018 13:23:58 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 0/3] mmc: tmio_mmc: Add support for RZ/A2
-Date: Wed, 10 Oct 2018 07:37:10 -0500
-Message-Id: <20181010123713.67541-1-chris.brandt@renesas.com>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2] arm64: dts: renesas: r8a77980: add thermal support
+Message-ID: <20181012112357.5hh5kpczrb5sm2ra@verge.net.au>
+References: <fb4eb097-40aa-82df-68c7-9b727c858a8b@cogentembedded.com>
+ <90934111-8cc5-482d-8a78-5ccc1113e42d@cogentembedded.com>
+ <20181010221142.GG24305@bigcity.dyn.berto.se>
+ <CAMuHMdU5=CQPopwBspBgngLnMxTSJ3f=DsUOGT94q9fMx55HLA@mail.gmail.com>
+ <20181011073002.GH24305@bigcity.dyn.berto.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181011073002.GH24305@bigcity.dyn.berto.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Basically the same HW block that was used in R-Car Gen 3 is used in
-RZ/A2 (with only a couple small differences).
+On Thu, Oct 11, 2018 at 09:30:02AM +0200, Niklas Söderlund wrote:
+> Hi Geert,
+> 
+> On 2018-10-11 09:02:22 +0200, Geert Uytterhoeven wrote:
+> > Hi Niklas,
+> > 
+> > On Thu, Oct 11, 2018 at 12:11 AM Niklas Söderlund
+> > <niklas.soderlund@ragnatech.se> wrote:
+> > > On 2018-10-10 22:18:11 +0300, Sergei Shtylyov wrote:
+> > > > Describe THS/CIVM in the R8A77980 device trees.
+> > > >
+> > > > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > 
+> > > > --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+> > > > +++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+> > > > @@ -330,6 +330,19 @@
+> > > >                       #power-domain-cells = <1>;
+> > > >               };
+> > > >
+> > > > +             tsc: thermal@e6198000 {
+> > > > +                     compatible = "renesas,r8a77980-thermal";
+> > > > +                     reg = <0 0xe6198000 0 0x100>,
+> > > > +                           <0 0xe61a0000 0 0x100>;
+> > > > +                     interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
+> > > > +                                  <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
+> > > > +                                  <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+> > > > +                     clocks = <&cpg CPG_MOD 522>;
+> > > > +                     power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+> > > > +                     resets = <&cpg 522>;
+> > > > +                     #thermal-sensor-cells = <1>;
+> > >
+> > > The status property is missing but as you told me in v1 it should not
+> > > matter. I will leave it for Simon to decide if he wants it to keep it
+> > > consistent with other SoC or if we should remove it from the other dtsi
+> > > files. In any case with or without the status property.
+> > 
+> > Forgot to review commit c79661eb5060e2bf ("arm64: dts: renesas: Remove
+> > unneeded status from thermal nodes")? ;-)
+> 
+> Not only that also reviewing using the context from v4.19-rc1 which of 
+> course is not correct for dtsi patches, thanks for enlightening me :-)
 
-Not sure if you're going to like the Kconfig change or not.
-
-Chris Brandt (3):
-  clk: renesas: r7s9210: Add SDHI clocks
-  mmc: renesas_sdhi_internal_dmac: Add R7S9210 support
-  dt-bindings: mmc: tmio_mmc: Document Renesas R7S9210
-
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt |  3 ++-
- drivers/clk/renesas/r7s9210-cpg-mssr.c             |  5 ++++
- drivers/mmc/host/Kconfig                           |  5 ++--
- drivers/mmc/host/renesas_sdhi_internal_dmac.c      | 28 ++++++++++++++++++++--
- 4 files changed, 36 insertions(+), 5 deletions(-)
-
--- 
-2.16.1
+Thanks everyone, applied or v4.21.
