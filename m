@@ -1,72 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45948 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728700AbeJVEQZ (ORCPT
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39302 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727640AbeJLSfz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:16:25 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH 2/5] thermal: rockchip_thermal: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:49 +0200
-Message-Id: <20181021200053.2194-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200053.2194-1-wsa+renesas@sang-engineering.com>
-References: <20181021200053.2194-1-wsa+renesas@sang-engineering.com>
+        Fri, 12 Oct 2018 14:35:55 -0400
+Date: Fri, 12 Oct 2018 13:03:58 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-pwm@vger.kernel.org
+Subject: Re: [PATCH resend] pwm: rcar: convert to SPDX identifiers
+Message-ID: <20181012110358.GA30261@ulmo>
+References: <8736txyr6g.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
+Content-Disposition: inline
+In-Reply-To: <8736txyr6g.wl-kuninori.morimoto.gx@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+--ibTvN161/egqYuK8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Build tested only. buildbot is happy.
+On Wed, Sep 26, 2018 at 01:45:17AM +0000, Kuninori Morimoto wrote:
+>=20
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>=20
+> This patch updates license to use SPDX-License-Identifier
+> instead of verbose license text.
+>=20
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+> Thierry
+>=20
+> 2weeks past, resend patch
 
- drivers/thermal/rockchip_thermal.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+There's usually no need to resend a patch, just ping me on the original.
 
-diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchip_thermal.c
-index f36375d5a16c..9c7643d62ed7 100644
---- a/drivers/thermal/rockchip_thermal.c
-+++ b/drivers/thermal/rockchip_thermal.c
-@@ -1327,8 +1327,7 @@ static int rockchip_thermal_remove(struct platform_device *pdev)
- 
- static int __maybe_unused rockchip_thermal_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct rockchip_thermal_data *thermal = platform_get_drvdata(pdev);
-+	struct rockchip_thermal_data *thermal = dev_get_drvdata(dev);
- 	int i;
- 
- 	for (i = 0; i < thermal->chip->chn_num; i++)
-@@ -1346,8 +1345,7 @@ static int __maybe_unused rockchip_thermal_suspend(struct device *dev)
- 
- static int __maybe_unused rockchip_thermal_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct rockchip_thermal_data *thermal = platform_get_drvdata(pdev);
-+	struct rockchip_thermal_data *thermal = dev_get_drvdata(dev);
- 	int i;
- 	int error;
- 
-@@ -1376,7 +1374,7 @@ static int __maybe_unused rockchip_thermal_resume(struct device *dev)
- 					      id, thermal->regs,
- 					      thermal->tshut_temp);
- 		if (error)
--			dev_err(&pdev->dev, "%s: invalid tshut=%d, error=%d\n",
-+			dev_err(dev, "%s: invalid tshut=%d, error=%d\n",
- 				__func__, thermal->tshut_temp, error);
- 	}
- 
--- 
-2.19.0
+Applied, thanks.
+
+Thierry
+
+--ibTvN161/egqYuK8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvAf5wACgkQ3SOs138+
+s6EjBQ/+O6Upv5qKlVvAcSprhwGY4TC0XF3Le1MVpe8ubt1weLeqZQBVERl+8Sf7
+5okfVWIjg4zdzzD8ZsKi7eiR7e4RuEpdG8B8Mc9wPlU4cyobsqavy5VUrJuHtSzN
+Bx1E1LRAkByw/wqPaJYvWiWxvbZS3iNMw3M+eB6ZvYRdOVXXpW9aCcRCvhL+8gOP
+Hf8ktbqPHjRGX0JGWPz4jSmLw/dvgOyXMdVM/ScQIwxkCO2x/r42Q/LDEfPStttY
+CWijOGi1wLj0BjWX3u8sf/nc44bEsZdcWtp8qGUfTYG4LzykJx3nujw0tC8K1xYi
+HQt5/K4TIkUgqWFcoblkG0xsN0gbbBs6MACTlM9vMvbIp3u3vf9nQosg2YV74Daq
+C2w9NQXrVuQbFPCXOAH3mHNvS9hx4TNQZRlzuj7d85ZdRUVpK6d6a18ZWfSGYXj4
+lL2aY6OqJFyaOfK4Lip8QATKHZ1rFVd5HII3JxHYFR9Lz+WLYM7NkHW6VRPw9b1R
+Ugx09unCdXjosW2qpHyrrY/HTWUkt3yOA985Bj5FHnR2i3h40UaIUO7o3S+CTCf3
+R7yLSVBIzUJtzQYEXg0eoCGr0NCaoCtnRKUuDmKqw6Rzo2xwp3eyDcjZDqyQ+yH7
+syu/geJ1pMK7amb5qxDsITCs5TFhJWQcLb3qG5658OpShr0Bct8=
+=4irM
+-----END PGP SIGNATURE-----
+
+--ibTvN161/egqYuK8--
