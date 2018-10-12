@@ -1,43 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41823 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726273AbeJORoM (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:16285 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728131AbeJLUCF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Oct 2018 13:44:12 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH 2/4] arm64: renesas_defconfig: Enable scu-simple-card driver
-Date: Mon, 15 Oct 2018 11:59:22 +0200
-Message-Id: <20181015095924.25794-3-horms+renesas@verge.net.au>
-In-Reply-To: <20181015095924.25794-1-horms+renesas@verge.net.au>
-References: <20181015095924.25794-1-horms+renesas@verge.net.au>
+        Fri, 12 Oct 2018 16:02:05 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v4 1/3] clk: renesas: r7s9210: Add SDHI clocks
+Date: Fri, 12 Oct 2018 07:29:22 -0500
+Message-Id: <20181012122924.5543-2-chris.brandt@renesas.com>
+In-Reply-To: <20181012122924.5543-1-chris.brandt@renesas.com>
+References: <20181012122924.5543-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable the scu-simple-card which is used by
-the R-Car E3 (r8a77990) based Ebisu board.
+Add SDHI clocks for RZ/A2
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-N.B: This is targeted at the devel branch of the renesas tree
-but not upstream where renesas_defconfig does not currently exist
----
- arch/arm64/configs/renesas_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/renesas/r7s9210-cpg-mssr.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
-index f8fca4a777da..54cf065ad84c 100644
---- a/arch/arm64/configs/renesas_defconfig
-+++ b/arch/arm64/configs/renesas_defconfig
-@@ -241,6 +241,7 @@ CONFIG_SND_SOC=y
- CONFIG_SND_SOC_RCAR=y
- CONFIG_SND_SOC_AK4613=y
- CONFIG_SND_SIMPLE_CARD=y
-+CONFIG_SND_SIMPLE_SCU_CARD=y
- CONFIG_SND_AUDIO_GRAPH_CARD=y
- CONFIG_USB=y
- CONFIG_USB_OTG=y
+diff --git a/drivers/clk/renesas/r7s9210-cpg-mssr.c b/drivers/clk/renesas/r7s9210-cpg-mssr.c
+index 5135f13ec628..9056da15dc72 100644
+--- a/drivers/clk/renesas/r7s9210-cpg-mssr.c
++++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
+@@ -98,6 +98,11 @@ static const struct mssr_mod_clk r7s9210_mod_clks[] __initconst = {
+ 	DEF_MOD_STB("spi2",	 95,	R7S9210_CLK_P1),
+ 	DEF_MOD_STB("spi1",	 96,	R7S9210_CLK_P1),
+ 	DEF_MOD_STB("spi0",	 97,	R7S9210_CLK_P1),
++
++	DEF_MOD_STB("sdhi11",	100,	R7S9210_CLK_B),
++	DEF_MOD_STB("sdhi10",	101,	R7S9210_CLK_B),
++	DEF_MOD_STB("sdhi01",	102,	R7S9210_CLK_B),
++	DEF_MOD_STB("sdhi00",	103,	R7S9210_CLK_B),
+ };
+ 
+ /* The clock dividers in the table vary based on DT and register settings */
 -- 
-2.11.0
+2.16.1
