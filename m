@@ -1,50 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:28148 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727091AbeJVOsM (ORCPT
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34665 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726664AbeJLSxD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 10:48:12 -0400
-From: Nguyen An Hoan <na-hoan@jinso.co.jp>
-To: linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be
-Cc: laurent.pinchart@ideasonboard.com,
-        kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
-        h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp, cv-dong@jinso.co.jp,
-        na-hoan@jinso.co.jp
-Subject: [PATCH] drm: rcar-du: Re-update the DSYSR register value for start/stop
-Date: Mon, 22 Oct 2018 15:30:54 +0900
-Message-Id: <1540189854-14726-1-git-send-email-na-hoan@jinso.co.jp>
+        Fri, 12 Oct 2018 14:53:03 -0400
+Date: Fri, 12 Oct 2018 13:21:01 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: pwm: renesas: tpu: document R8A779{7|8}0
+ bindings
+Message-ID: <20181012112101.GD30261@ulmo>
+References: <ea104bc7-ee9a-b638-36da-6c6af1e622be@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="veXX9dWIonWZEC6h"
+Content-Disposition: inline
+In-Reply-To: <ea104bc7-ee9a-b638-36da-6c6af1e622be@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hoan Nguyen An <na-hoan@jinso.co.jp>
 
->From previous commit 0521ccb "drm: rcar-du: Cache DSYSR value to ensure known initial value"
-We only need to update DSYSR0, DSYSR2 for start/stop. So using rgrp-> mmio_offset is enough,
-the change back from rcar_du_crtc -> rcar_du_group -> rcar_du_crtc leading to
-mmio addresses for DSYSR may be different.
+--veXX9dWIonWZEC6h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
----
- drivers/gpu/drm/rcar-du/rcar_du_group.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+On Sat, Sep 22, 2018 at 10:57:29PM +0300, Sergei Shtylyov wrote:
+> Document the R-Car V3{M|H} (R8A779{7|8}0) SoC in the Renesas TPU bindings;
+> the TPU hardware in those is the Renesas standard 4-channel timer pulse
+> unit.
+>=20
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>=20
+> ---
+> This patch is against Linus' repo plus the bindings fix just reposted...
+>=20
+>  Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt |    4 ++++
+>  1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-index d85f0a1..a5f7eed 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-@@ -202,10 +202,9 @@ void rcar_du_group_put(struct rcar_du_group *rgrp)
- 
- static void __rcar_du_group_start_stop(struct rcar_du_group *rgrp, bool start)
- {
--	struct rcar_du_crtc *rcrtc = &rgrp->dev->crtcs[rgrp->index * 2];
--
--	rcar_du_crtc_dsysr_clr_set(rcrtc, DSYSR_DRES | DSYSR_DEN,
--				   start ? DSYSR_DEN : DSYSR_DRES);
-+	rcar_du_group_write(rgrp, DSYSR,
-+			(rcar_du_group_read(rgrp, DSYSR) & ~(DSYSR_DRES | DSYSR_DEN)) |
-+			(start ? DSYSR_DEN : DSYSR_DRES));
- }
- 
- void rcar_du_group_start_stop(struct rcar_du_group *rgrp, bool start)
--- 
-2.7.4
+Applied, thanks.
+
+Thierry
+
+--veXX9dWIonWZEC6h
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvAg50ACgkQ3SOs138+
+s6FHUA//e6N5juO43+gd8+wMUnppTelT59lGPlabiVlDrr7hrlQzolj9Dw3skdvl
+22EeGrG1ZlioUutXapb8JYbgf6OMFE+2FW9EQ9EXGdoKz/d1tCTvtGOvkHWURHsU
+xnGvxznogRVmqR4uS9lp4OaSQSkq5dDw+qxBFCEyfZR0caWtZXT9zBUSlx2LyP+4
+hyskqJPX1/B+9+uM8BcfI6P/EroNkYyYSmL81O+pR4M0OkL6pW3XPWky9YXLCNdE
+tWxtR5HcTJdVuoYC+LfNWeHkgj4LSTVjDv+oxM3/Y76hcLa130+LDZdaaG00km1T
+rBVIHM7cJLJDhrwykk694QxO2AyBlV1vKPbYYVyFxxPf1Pb/hbMgonlaJnd8rVO2
+muNGS2HQcx+lB3/xPp8bHH/KWu2uWxKZzcCTHoHyToyMsz+g3THD5SMydQ/Xphnk
+RRjRma3/ngbfmfuEz4OMG1vQNmQFgoYX0voto+USl7VPlm2gFl8IJjgB1EfVm8gm
+mKxlzIyZgpkbBgI6zOa0bF+hhgP5tg65ITru6ycQAaWieTOJNZnnOD/JmGObv1uK
+bsfWJ1v1p3pO9V0Uoi8qiT9Y+cXt5FR8a7bBkvWnF7b/ih+jMBuxTorMJMUzkKTL
+UKuQah6cvocbEfE5mfffIm7AcokESVGdJRPiAGqFKRevLkU4xxc=
+=bDLK
+-----END PGP SIGNATURE-----
+
+--veXX9dWIonWZEC6h--
