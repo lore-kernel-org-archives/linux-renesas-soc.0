@@ -1,36 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34688 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726607AbeJJCZy (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:35912 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728622AbeJLR4m (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Oct 2018 22:25:54 -0400
-Received: by mail-lf1-f66.google.com with SMTP id y10-v6so2124133lfj.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 09 Oct 2018 12:07:25 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 0/2] Add R8A77980 support to the Renesas R-Car gen3 thermal
- driver
+        Fri, 12 Oct 2018 13:56:42 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>,
-        linux-pm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>
-Message-ID: <3c96d51e-fc36-2ff9-03a8-176c4c0ed365@cogentembedded.com>
-Date: Tue, 9 Oct 2018 22:07:21 +0300
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 1/3] thermal: rcar_thermal: Prevent hardware access during system suspend
+Date: Fri, 12 Oct 2018 09:20:15 +0200
+Message-Id: <20181012072017.10765-2-geert+renesas@glider.be>
+In-Reply-To: <20181012072017.10765-1-geert+renesas@glider.be>
+References: <20181012072017.10765-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+On r8a7791/koelsch, sometimes the following message is printed during
+system suspend:
 
-Here's the set of 2 patches against the 'next' branch of Eduardo Valentin's
-'linux-soc-thermal.git' repo. We're adding support for the R8A77980 thermal
-sensor controller to the R-Car gen3 thermal driver.
+    rcar_thermal e61f0000.thermal: thermal sensor was broken
 
-[1/2] dt-bindings: thermal: rcar-gen3-thermal: document R8A77980 bindings
-[2/2] thermal: rcar_gen3_thermal: add R8A77980 support
+This happens if the workqueue runs while the device is already
+suspended.  Fix this by using the freezable system workqueue instead,
+cfr. commit 51e20d0e3a60cf46 ("thermal: Prevent polling from happening
+during system suspend").
 
-MBR, Sergei
+Fixes: e0a5172e9eec7f0d ("thermal: rcar: add interrupt support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+v2:
+  - Add Reviewed-by.
+---
+ drivers/thermal/rcar_thermal.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/thermal/rcar_thermal.c b/drivers/thermal/rcar_thermal.c
+index 78f932822d381c9d..ea132e122b174757 100644
+--- a/drivers/thermal/rcar_thermal.c
++++ b/drivers/thermal/rcar_thermal.c
+@@ -434,8 +434,8 @@ static irqreturn_t rcar_thermal_irq(int irq, void *data)
+ 	rcar_thermal_for_each_priv(priv, common) {
+ 		if (rcar_thermal_had_changed(priv, status)) {
+ 			rcar_thermal_irq_disable(priv);
+-			schedule_delayed_work(&priv->work,
+-					      msecs_to_jiffies(300));
++			queue_delayed_work(system_freezable_wq, &priv->work,
++					   msecs_to_jiffies(300));
+ 		}
+ 	}
+ 
+-- 
+2.17.1
