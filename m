@@ -1,55 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it1-f193.google.com ([209.85.166.193]:37762 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726530AbeJOVBa (ORCPT
+Received: from sauhun.de ([88.99.104.3]:38412 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726250AbeJOGMn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Oct 2018 17:01:30 -0400
-Received: by mail-it1-f193.google.com with SMTP id e74-v6so27568673ita.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 15 Oct 2018 06:16:14 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1539143492-32605-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1539143492-32605-1-git-send-email-yamada.masahiro@socionext.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 15 Oct 2018 15:15:33 +0200
-Message-ID: <CAPDyKFqaWF889x5MxbE7Q_mBS4GxBR=kV0GViRDw3pwB5=tyJA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] mmc: tmio: remove confusing TMIO_MMC_HAVE_HIGH_REG flag
+        Mon, 15 Oct 2018 02:12:43 -0400
+Date: Mon, 15 Oct 2018 00:30:12 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
 To: Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] mmc: tmio: remove confusing
+ TMIO_MMC_HAVE_HIGH_REG flag
+Message-ID: <20181014223011.GD3260@kunai>
+References: <1539143492-32605-1-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="76DTJ5CE0DCVQemd"
+Content-Disposition: inline
+In-Reply-To: <1539143492-32605-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 10 October 2018 at 05:51, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+
+--76DTJ5CE0DCVQemd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Oct 10, 2018 at 12:51:30PM +0900, Masahiro Yamada wrote:
 > CTL_SDIO_REGS is a register specific to tmio_mmc.c
->
+>=20
 > Currently, we handle it in tmio_mmc_core.c, hence need
 > TMIO_MMC_HAVE_HIGH_REG flag to prevent the other platforms
 > from accessing to it.
->
+>=20
 > We can just move CTL_SDIO_REGS to tmio_mmc.c
 > and delete the confusing TMIO_MMC_HAVE_HIGH_REG flag.
->
->
-> Masahiro Yamada (2):
->   mmc: tmio: move MFD variant reset to a platform hook
->   mmc: tmio: remove TMIO_MMC_HAVE_HIGH_REG flag
->
->  drivers/mmc/host/tmio_mmc.c      | 24 ++++++++++++++++++++++--
->  drivers/mmc/host/tmio_mmc.h      |  4 +---
->  drivers/mmc/host/tmio_mmc_core.c | 14 ++++++--------
->  include/linux/mfd/tmio.h         |  7 -------
->  4 files changed, 29 insertions(+), 20 deletions(-)
->
-> --
-> 2.7.4
->
 
-Applied for next, thanks!
+Looks good, thanks! Ulf, please give me Monday to test the changes on
+some more devices...
 
-Kind regards
-Uffe
+
+--76DTJ5CE0DCVQemd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvDw3MACgkQFA3kzBSg
+KbZLfQ/5Af4/pUZqW/1cDPQlI5MGOgP5r7qOdRItI0JWBkRYEJbxo/3RJDRCki78
+CA9tiz0wUQoWYOrNrgQcPXb7wX68ph8yu7v9upuEZiY6/u8t1k/ez2aSIrZ4nY8g
+s0ePf8txDjTYDYfsMaUsm1G8OvuH1TnCp/NOkBo+FxUtxwCq4vpBQzi0mfYyq0hs
+B8gwzuR8Q8oqCpmttvlnfgW08Odo6UNGNgGLcKSL1I21GtGAawuFDChzkJALKdi2
+WUnaMRaULXFMhvdv7UzxzAcd8ES6HaPKWUlXw6LEnvLWMtM7XYDLSC4ev8mERSAu
+Yd4VxNw8D8QdSbiHsbR5TAFhYB5MTwwVIVrNrNurZyom0ftBE8+s0nZ8v4HFGixS
+r6qYNCvQvRyArsLwmZ2eMthEw7DR6d73aDlKm/4gROwbuuKXlR3kwZU9jqCrS+/6
+dIZUapbH0r8xfQaYqFZrGPhYfWKjr8i2sEzcLzU0IWMT+75E03w9UOkMLJgfHonX
+3kA15Mkuqii+D3CmT7d/mvxRZSSwiYjQMzZEbGYlNzn2aoU7PLjGeEjkMY6bvNDI
+KNRGu1eEltAdQHltfGeMLUJwN7NEPRWhFv2Alv9/nvQmzfY6bwucum6rbBP0AGOr
+H2lvrrdf9AZQJvl4jZUXAThOwSCzVOJ6qjr9Ns0Wp7ujfuwl6x0=
+=XJV3
+-----END PGP SIGNATURE-----
+
+--76DTJ5CE0DCVQemd--
