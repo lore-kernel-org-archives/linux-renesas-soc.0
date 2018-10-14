@@ -1,39 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:46516 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726557AbeJPAmK (ORCPT
+Received: from sauhun.de ([88.99.104.3]:38352 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726250AbeJOGKC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Oct 2018 20:42:10 -0400
-Date: Mon, 15 Oct 2018 11:56:06 -0500
-From: Rob Herring <robh@kernel.org>
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: timer: renesas, cmt: Document r8a7744 CMT
- support
-Message-ID: <20181015165606.GA16226@bogus>
-References: <1537895896-25734-1-git-send-email-biju.das@bp.renesas.com>
+        Mon, 15 Oct 2018 02:10:02 -0400
+Date: Mon, 15 Oct 2018 00:27:32 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mmc: renesas_sdhi: rename DTRAN_MODE_BUS_WID_TH to
+ DTRAN_MODE_BUS_WIDTH
+Message-ID: <20181014222732.GA3260@kunai>
+References: <1538566780-30794-1-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="u3/rZRmxL6MmkK24"
 Content-Disposition: inline
-In-Reply-To: <1537895896-25734-1-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1538566780-30794-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Sep 25, 2018 at 06:18:16PM +0100, Biju Das wrote:
-> Document SoC specific compatible strings for r8a7744. No driver change
-> is needed as the fallback strings will activate the right code.
-> 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-> ---
->  Documentation/devicetree/bindings/timer/renesas,cmt.txt | 2 ++
->  1 file changed, 2 insertions(+)
 
-Applied.
+--u3/rZRmxL6MmkK24
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Oct 03, 2018 at 08:39:40PM +0900, Masahiro Yamada wrote:
+> Socionext UniPhier SoCs use the almost the same internal DMAC.
+> My datasheet says 'BUS_WIDTH' instead of 'BUS_WID_TH'.  I suspect
+> this is a typo.
+>=20
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+
+Already fixed in mmc/next.
+
+
+--u3/rZRmxL6MmkK24
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvDws8ACgkQFA3kzBSg
+Kbae0hAAk1ud4fQ9XRysjZGWzFaoGAk9vpJ/kzPlXu1xTq6gA90U+j6tJ9yOi6DK
+FjnExPdUTtdpHeZ5jbwAmZQbJJObHhkpXBQMPyesRJkfdwo9Ne6oTGuefZayjL4M
+x4UnYpp64xvnageUNEsu5zAgq5sx8TEnN1Ru69G0KnRhE7CXgqVNU2QFsgKpLQ6c
+PqHd3imb4JqXmYHeWlcsHLWY5qz6FfbSqz9oADml8w092FoaE1MMqicFwk6CUTBy
+0TTLOajVxBg1/V0rXUSFqYtBjsZApU7CERHoiWs+WmeTWk5qRRXLLUBx6d97pD8s
+PjAPLUn0FAvVkQTjO63Utw3Z3MutyFSIpdPYe411ytFLCzCWPMECFeOObEh6tta+
+o5izZrh7fYBFJEyPOYelRVxFN4NlUfvBPGuMB7Pvw0n6Yqs6OPBWF6MlZLqsCH3I
+tu9JJ0Vr2NSfBTPrnbIL+oatdW/Ih3cJDkx/By+5WORkpJrTmOGiJOzR0xBeIlxY
+hZ9ntYyPjE3EbjyjYh5FeTw+rOI+siFtg2zh5btXgz6Qf3Jk1wJf5wJvbJRG2FH2
+cUtlX1Wsg9jL5gulUH3tQIbbqEQVm3p8t9bE85vXeu799QU7EwD+pMoqpM3T1fDc
+6e5pDlxGkzKQPHFqHwNcQQK7CeYseQuyhyAEmFD0gl8nAzypVdQ=
+=TH/1
+-----END PGP SIGNATURE-----
+
+--u3/rZRmxL6MmkK24--
