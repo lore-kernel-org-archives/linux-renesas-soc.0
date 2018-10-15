@@ -1,60 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45636 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727432AbeJVEPj (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:48283 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726422AbeJOXYW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:15:39 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 6/6] gpio: gpio-zynq: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:01 +0200
-Message-Id: <20181021200002.1472-7-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200002.1472-1-wsa+renesas@sang-engineering.com>
-References: <20181021200002.1472-1-wsa+renesas@sang-engineering.com>
+        Mon, 15 Oct 2018 19:24:22 -0400
+Date: Mon, 15 Oct 2018 17:38:32 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH v3 5/6] ARM: dts: r8a77470: Add SDHI1 support
+Message-ID: <20181015153832.2haidauznvhrrxvf@verge.net.au>
+References: <1538988712-17077-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1538988712-17077-6-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538988712-17077-6-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
+On Mon, Oct 08, 2018 at 09:51:51AM +0100, Fabrizio Castro wrote:
+> Althought interface SDHI1 found on the RZ/G1C SoC (a.k.a.
+> r8a77470) is compatible with the R-Car Gen3 ones, its OF
+> compatibility is restricted to the SoC specific compatible
+> string to avoid confusion, as from a more generic perspective
+> the RZ/G1C is sharing the most similarities with the R-Car
+> Gen2 family of SoCs, and there is a combination of R-Car
+> Gen2 compatible SDHI IPs and R-Car Gen3 compatible SDHI IP
+> on this specific chip.
+> This patch adds the SoC specific part of SDHI1 support, and
+> since SDHI1 comes with internal DMA, its DT node looks fairly
+> different from SDHI0 and SDHI2.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-
-Build tested only. buildbot is happy.
-
- drivers/gpio/gpio-zynq.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-index 3f5fcdd5a429..ac9b02c9598f 100644
---- a/drivers/gpio/gpio-zynq.c
-+++ b/drivers/gpio/gpio-zynq.c
-@@ -693,8 +693,7 @@ static int __maybe_unused zynq_gpio_resume(struct device *dev)
- 
- static int __maybe_unused zynq_gpio_runtime_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct zynq_gpio *gpio = platform_get_drvdata(pdev);
-+	struct zynq_gpio *gpio = dev_get_drvdata(dev);
- 
- 	clk_disable_unprepare(gpio->clk);
- 
-@@ -703,8 +702,7 @@ static int __maybe_unused zynq_gpio_runtime_suspend(struct device *dev)
- 
- static int __maybe_unused zynq_gpio_runtime_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct zynq_gpio *gpio = platform_get_drvdata(pdev);
-+	struct zynq_gpio *gpio = dev_get_drvdata(dev);
- 
- 	return clk_prepare_enable(gpio->clk);
- }
--- 
-2.19.0
+Thanks, applied for v4.21.
