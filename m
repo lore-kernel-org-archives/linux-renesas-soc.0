@@ -1,44 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46355 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:48301 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726861AbeJQSCZ (ORCPT
+        with ESMTP id S1726422AbeJOXYq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Oct 2018 14:02:25 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Mon, 15 Oct 2018 19:24:46 -0400
+Date: Mon, 15 Oct 2018 17:38:56 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] arm64: renesas_defconfig: Enable R-Car thermal driver
-Date: Wed, 17 Oct 2018 12:07:22 +0200
-Message-Id: <20181017100722.29481-1-horms+renesas@verge.net.au>
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH v3 6/6] ARM: dts: iwg23s-sbc: Add uSD and eMMC support
+Message-ID: <20181015153856.24ilxikpo4c3lxvh@verge.net.au>
+References: <1538988712-17077-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1538988712-17077-7-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538988712-17077-7-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable the R-Car thermal driver.
+On Mon, Oct 08, 2018 at 09:51:52AM +0100, Fabrizio Castro wrote:
+> Add uSD card and eMMC support to the iwg23s single board
+> computer powered by the RZ/G1C SoC (a.k.a. r8a77470).
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 
-This driver is used in conjunction with the R-Car V3M (r8a77970),
-E3 (r8a77990) and D3 (r8a77995) SoCs.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-N.B: This is targeted at the devel branch of the renesas tree
-but not upstream where renesas_defconfig does not currently exist
----
- arch/arm64/configs/renesas_defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
-index f8fca4a777da..b7298a389568 100644
---- a/arch/arm64/configs/renesas_defconfig
-+++ b/arch/arm64/configs/renesas_defconfig
-@@ -154,6 +154,7 @@ CONFIG_THERMAL=y
- CONFIG_THERMAL_GOV_POWER_ALLOCATOR=y
- CONFIG_CPU_THERMAL=y
- CONFIG_THERMAL_EMULATION=y
-+CONFIG_RCAR_THERMAL=y
- CONFIG_RCAR_GEN3_THERMAL=y
- CONFIG_WATCHDOG=y
- CONFIG_RENESAS_WDT=y
--- 
-2.11.0
+Thanks, applied for v4.21.
