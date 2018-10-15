@@ -1,263 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:45215 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726617AbeJCRyJ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41777 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726273AbeJORnG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Oct 2018 13:54:09 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 2/6] pinctrl: sh-pfc: r8a77470: Add SDHI support
-Date: Wed,  3 Oct 2018 12:05:40 +0100
-Message-Id: <1538564744-15590-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1538564744-15590-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1538564744-15590-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Mon, 15 Oct 2018 13:43:06 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH 0/2] sh-pfc: r8a77990: Add Audio clock and SSI pins, groups and functions
+Date: Mon, 15 Oct 2018 11:58:25 +0200
+Message-Id: <20181015095827.25592-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add SH_PFC_PIN_CFG_IO_VOLTAGE definition for the SDHI pins
-capable of switching voltage, also add pin groups and functions
-for SDHI0 and SDHI1. Please note that with the RZ/G1C only 1
-bit of the POC Control Register is used to control each interface.
+Hi,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+this series adds support for Audio clock and SSI pins, groups and functions
+to the pfc driver for the R-Car E3 (r8a77990) SoC. It is a requirement
+for working audio support on that SoC.
 
----
-v1->v2:
-* Reworked implementation of r8a77470_pin_to_pocctrl as per Wolfram's
-  and Geert's comments
-* Added SDHI0 and SDHI1 pins and IO voltage control
-* Added SDHI0 and SDHI1 pin groups and functions
-* Reworked changelog and title
-* Please note that there is some overlapping between mmc pin groups
-  and sdhi1 pin groups
----
- drivers/pinctrl/sh-pfc/pfc-r8a77470.c | 162 +++++++++++++++++++++++++++++++++-
- 1 file changed, 160 insertions(+), 2 deletions(-)
+This series is based on sh-pfc-for-v4.20-tag3
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77470.c b/drivers/pinctrl/sh-pfc/pfc-r8a77470.c
-index 3d36e5f..fa0d42b 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77470.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77470.c
-@@ -10,14 +10,45 @@
- #include "sh_pfc.h"
- 
- #define CPU_ALL_PORT(fn, sfx)						\
--	PORT_GP_23(0, fn, sfx),						\
-+	PORT_GP_4(0, fn, sfx),						\
-+	PORT_GP_1(0, 4, fn, sfx),					\
-+	PORT_GP_CFG_1(0,  5, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(0,  6, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(0,  7, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(0,  8, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(0,  9, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(0, 10, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(0, 11, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(0, 12, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(0, 13, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(0, 14, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(0, 15, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(0, 16, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(0, 17, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(0, 18, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(0, 19, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(0, 20, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(0, 21, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(0, 22, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
- 	PORT_GP_23(1, fn, sfx),						\
- 	PORT_GP_32(2, fn, sfx),						\
- 	PORT_GP_17(3, fn, sfx),						\
- 	PORT_GP_1(3, 27, fn, sfx),					\
- 	PORT_GP_1(3, 28, fn, sfx),					\
- 	PORT_GP_1(3, 29, fn, sfx),					\
--	PORT_GP_26(4, fn, sfx),						\
-+	PORT_GP_14(4, fn, sfx),						\
-+	PORT_GP_CFG_1(4, 14, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(4, 15, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(4, 16, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(4, 17, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(4, 18, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(4, 19, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_1(4, 20, fn, sfx),					\
-+	PORT_GP_1(4, 21, fn, sfx),					\
-+	PORT_GP_1(4, 22, fn, sfx),					\
-+	PORT_GP_1(4, 23, fn, sfx),					\
-+	PORT_GP_1(4, 24, fn, sfx),					\
-+	PORT_GP_1(4, 25, fn, sfx),					\
- 	PORT_GP_32(5, fn, sfx)
- 
- enum {
-@@ -1619,6 +1650,81 @@ static const unsigned int scif_clk_b_pins[] = {
- static const unsigned int scif_clk_b_mux[] = {
- 	SCIF_CLK_B_MARK,
- };
-+/* - SDHI0 ------------------------------------------------------------------ */
-+static const unsigned int sdhi0_data1_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(0, 7),
-+};
-+static const unsigned int sdhi0_data1_mux[] = {
-+	SD0_DAT0_MARK,
-+};
-+static const unsigned int sdhi0_data4_pins[] = {
-+	/* D[0:3] */
-+	RCAR_GP_PIN(0, 7), RCAR_GP_PIN(0, 8),
-+	RCAR_GP_PIN(0, 9), RCAR_GP_PIN(0, 10),
-+};
-+static const unsigned int sdhi0_data4_mux[] = {
-+	SD0_DAT0_MARK, SD0_DAT1_MARK, SD0_DAT2_MARK, SD0_DAT3_MARK,
-+};
-+static const unsigned int sdhi0_ctrl_pins[] = {
-+	/* CLK, CMD */
-+	RCAR_GP_PIN(0, 5), RCAR_GP_PIN(0, 6),
-+};
-+static const unsigned int sdhi0_ctrl_mux[] = {
-+	SD0_CLK_MARK, SD0_CMD_MARK,
-+};
-+static const unsigned int sdhi0_cd_pins[] = {
-+	/* CD */
-+	RCAR_GP_PIN(0, 11),
-+};
-+static const unsigned int sdhi0_cd_mux[] = {
-+	SD0_CD_MARK,
-+};
-+static const unsigned int sdhi0_wp_pins[] = {
-+	/* WP */
-+	RCAR_GP_PIN(0, 12),
-+};
-+static const unsigned int sdhi0_wp_mux[] = {
-+	SD0_WP_MARK,
-+};
-+/* - SDHI1 ------------------------------------------------------------------ */
-+static const unsigned int sdhi1_data1_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(0, 15),
-+};
-+static const unsigned int sdhi1_data1_mux[] = {
-+	MMC0_D0_SDHI1_D0_MARK,
-+};
-+static const unsigned int sdhi1_data4_pins[] = {
-+	/* D[0:3] */
-+	RCAR_GP_PIN(0, 15), RCAR_GP_PIN(0, 16),
-+	RCAR_GP_PIN(0, 17), RCAR_GP_PIN(0, 18),
-+};
-+static const unsigned int sdhi1_data4_mux[] = {
-+	MMC0_D0_SDHI1_D0_MARK, MMC0_D1_SDHI1_D1_MARK,
-+	MMC0_D2_SDHI1_D2_MARK, MMC0_D3_SDHI1_D3_MARK,
-+};
-+static const unsigned int sdhi1_ctrl_pins[] = {
-+	/* CLK, CMD */
-+	RCAR_GP_PIN(0, 13), RCAR_GP_PIN(0, 14),
-+};
-+static const unsigned int sdhi1_ctrl_mux[] = {
-+	MMC0_CLK_SDHI1_CLK_MARK, MMC0_CMD_SDHI1_CMD_MARK,
-+};
-+static const unsigned int sdhi1_cd_pins[] = {
-+	/* CD */
-+	RCAR_GP_PIN(0, 19),
-+};
-+static const unsigned int sdhi1_cd_mux[] = {
-+	SD1_CD_MARK,
-+};
-+static const unsigned int sdhi1_wp_pins[] = {
-+	/* WP */
-+	RCAR_GP_PIN(0, 20),
-+};
-+static const unsigned int sdhi1_wp_mux[] = {
-+	SD1_WP_MARK,
-+};
- /* - SDHI2 ------------------------------------------------------------------ */
- static const unsigned int sdhi2_data1_pins[] = {
- 	/* D0 */
-@@ -1743,6 +1849,16 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(scif5_data_f),
- 	SH_PFC_PIN_GROUP(scif_clk_a),
- 	SH_PFC_PIN_GROUP(scif_clk_b),
-+	SH_PFC_PIN_GROUP(sdhi0_data1),
-+	SH_PFC_PIN_GROUP(sdhi0_data4),
-+	SH_PFC_PIN_GROUP(sdhi0_ctrl),
-+	SH_PFC_PIN_GROUP(sdhi0_cd),
-+	SH_PFC_PIN_GROUP(sdhi0_wp),
-+	SH_PFC_PIN_GROUP(sdhi1_data1),
-+	SH_PFC_PIN_GROUP(sdhi1_data4),
-+	SH_PFC_PIN_GROUP(sdhi1_ctrl),
-+	SH_PFC_PIN_GROUP(sdhi1_cd),
-+	SH_PFC_PIN_GROUP(sdhi1_wp),
- 	SH_PFC_PIN_GROUP(sdhi2_data1),
- 	SH_PFC_PIN_GROUP(sdhi2_data4),
- 	SH_PFC_PIN_GROUP(sdhi2_ctrl),
-@@ -1855,6 +1971,22 @@ static const char * const scif_clk_groups[] = {
- 	"scif_clk_b",
- };
- 
-+static const char * const sdhi0_groups[] = {
-+	"sdhi0_data1",
-+	"sdhi0_data4",
-+	"sdhi0_ctrl",
-+	"sdhi0_cd",
-+	"sdhi0_wp",
-+};
-+
-+static const char * const sdhi1_groups[] = {
-+	"sdhi1_data1",
-+	"sdhi1_data4",
-+	"sdhi1_ctrl",
-+	"sdhi1_cd",
-+	"sdhi1_wp",
-+};
-+
- static const char * const sdhi2_groups[] = {
- 	"sdhi2_data1",
- 	"sdhi2_data4",
-@@ -1884,6 +2016,8 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(scif4),
- 	SH_PFC_FUNCTION(scif5),
- 	SH_PFC_FUNCTION(scif_clk),
-+	SH_PFC_FUNCTION(sdhi0),
-+	SH_PFC_FUNCTION(sdhi1),
- 	SH_PFC_FUNCTION(sdhi2),
- 	SH_PFC_FUNCTION(usb0),
- 	SH_PFC_FUNCTION(usb1),
-@@ -2729,9 +2863,33 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 	{ },
- };
- 
-+static int r8a77470_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin,
-+				   u32 *pocctrl)
-+{
-+	int bit = -EINVAL;
-+
-+	*pocctrl = 0xe60600b0;
-+
-+	if (pin >= RCAR_GP_PIN(0, 5) && pin <= RCAR_GP_PIN(0, 10))
-+		bit = 0;
-+
-+	if (pin >= RCAR_GP_PIN(0, 13) && pin <= RCAR_GP_PIN(0, 22))
-+		bit = 2;
-+
-+	if (pin >= RCAR_GP_PIN(4, 14) && pin <= RCAR_GP_PIN(4, 19))
-+		bit = 1;
-+
-+	return bit;
-+}
-+
-+static const struct sh_pfc_soc_operations r8a77470_pinmux_ops = {
-+	.pin_to_pocctrl = r8a77470_pin_to_pocctrl,
-+};
-+
- #ifdef CONFIG_PINCTRL_PFC_R8A77470
- const struct sh_pfc_soc_info r8a77470_pinmux_info = {
- 	.name = "r8a77470_pfc",
-+	.ops = &r8a77470_pinmux_ops,
- 	.unlock_reg = 0xe6060000, /* PMMR */
- 
- 	.function = { PINMUX_FUNCTION_BEGIN, PINMUX_FUNCTION_END },
+Takeshi Kihara (2):
+  pinctrl: sh-pfc: r8a77990: Add Audio clock pins, groups and functions
+  pinctrl: sh-pfc: r8a77990: Add Audio SSI pins, groups and functions
+
+ drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 443 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 441 insertions(+), 2 deletions(-)
+
 -- 
-2.7.4
+2.11.0
