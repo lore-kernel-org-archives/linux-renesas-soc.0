@@ -1,48 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45145 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726714AbeJQRNV (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:60053 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726273AbeJOQAu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Oct 2018 13:13:21 -0400
-Date: Wed, 17 Oct 2018 11:18:29 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        Mon, 15 Oct 2018 12:00:50 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Simon Horman <horms@verge.net.au>
+CC: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: PCI: rcar: Add device tree support for
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] dt-bindings: PCI: rcar: Add device tree support for
  r8a7744
-Message-ID: <20181017091829.tkorr4mdvpimfrqf@verge.net.au>
+Date: Mon, 15 Oct 2018 08:16:33 +0000
+Message-ID: <OSBPR01MB21034F491B7FDA80CE1824ACB8FD0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 References: <1538669267-17576-1-git-send-email-biju.das@bp.renesas.com>
  <20181008073445.ni4doozxflbqaanw@verge.net.au>
  <20181012160408.GE23257@e107981-ln.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20181012160408.GE23257@e107981-ln.cambridge.arm.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Oct 12, 2018 at 05:04:08PM +0100, Lorenzo Pieralisi wrote:
+Hi Lorenzo,
+
+> Subject: Re: [PATCH] dt-bindings: PCI: rcar: Add device tree support for
+> r8a7744
+>
 > On Mon, Oct 08, 2018 at 09:34:45AM +0200, Simon Horman wrote:
 > > On Thu, Oct 04, 2018 at 05:07:47PM +0100, Biju Das wrote:
-> > > Add support for r8a7744. The Renesas RZ/G1N (R8A7744) PCIe controller
-> > > is identical to the R-Car Gen2 family.
-> > > 
+> > > Add support for r8a7744. The Renesas RZ/G1N (R8A7744) PCIe
+> > > controller is identical to the R-Car Gen2 family.
+> > >
 > > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 > > > Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-> > 
+> >
 > > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-> 
+>
 > Simon, Biju,
-> 
-> I pulled the same binding for rcar2, I would pull this in the PCI tree
-> too unless you object, please let me know.
+>
+> I pulled the same binding for rcar2, I would pull this in the PCI tree to=
+o unless
+> you object, please let me know.
 
-No objection.
+Thanks for pulling this into PCI tree.
+
+Regards,
+Biju
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
