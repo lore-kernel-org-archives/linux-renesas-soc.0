@@ -1,42 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:57626 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:46400 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727639AbeJ2GLB (ORCPT
+        id S1726524AbeJOTeR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Oct 2018 02:11:01 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-gpio@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 0/2] pinctrl: sh-pfc: gen2: initialize TDSEL register
-Date: Sun, 28 Oct 2018 21:24:55 +0000
-Message-Id: <20181028212457.1017-1-wsa+renesas@sang-engineering.com>
+        Mon, 15 Oct 2018 15:34:17 -0400
+Date: Mon, 15 Oct 2018 13:49:20 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Ulrich Hecht <uli+renesas@fpond.eu>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] serial: sh-sci: Fix receive on SCIFA/SCIFB variants with
+ DMA
+Message-ID: <20181015114920.hx4rtzr2fo5naorj@ninjato>
+References: <20181009174158.4476-1-geert+renesas@glider.be>
+ <20181012121908.sbwsojs7vvhiztbb@ninjato>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="k4uzfupmzauvxy5n"
+Content-Disposition: inline
+In-Reply-To: <20181012121908.sbwsojs7vvhiztbb@ninjato>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-During our SDHI hackathon, we found that Lager was the only Gen2 board
-having issues with a stubborn SD card. The issue went away when setting
-TDSEL to the expected value mentioned in the H2 documentation which is
-sadly not the default value. M2-W, M2-N, and V2H have an expected value
-of 0 for TDSEL, so this is why they likely work out of the box (V2H has
-non-zero drive strength bit, though). I can't verify those SoCs here, no
-boards. E2 has a non-zero expected value as well, so we fix it in this
-patch series as well (although on my board the bootloader prepares TDSEL
-correctly, but let's not rely on that).
 
-Based on an RFC patch for H2 sent two years ago.
+--k4uzfupmzauvxy5n
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 
-Wolfram Sang (2):
-  pinctrl: sh-pfc: r8a7790: initialize TDSEL register
-  pinctrl: sh-pfc: r8a7794: initialize TDSEL register
+> > Fixes: 2c4ee23530ffc022 ("serial: sh-sci: Postpone DMA release when fal=
+ling back to PIO")
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>=20
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>=20
+> > ---
+> > Reported on r8a7790/lager using SCIFA1 on Debug Serial 1.
+>=20
+> I hope to test this on Lager this weekend. I am quite sure it will work
+> now, but then we have this formally checked, too.
 
- drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 10 ++++++++++
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c |  9 +++++++++
- 2 files changed, 19 insertions(+)
+Done now:
 
--- 
-2.19.0
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--k4uzfupmzauvxy5n
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvEfsAACgkQFA3kzBSg
+KbYh1w//eqA65zYJZAZkilUKm28PvurMC2FWvglvInAhI5uzUpL1BZL8UTRJstCo
+Gh8fTQ+TNRv8qtjXTNLLd+5bZO4jD6lS/jIimQyqRYi4zP87azqlnhkxcD31ZTXc
+zg+cpvGvdUymH/20hpbHPaQjrFCdV37kRr6Pr3EEHCjZh7N8A3P8TKjZfnC3E8pC
+DOeG65bCCJO8b/I7+MbE48M/YDrARpyBblCVt6UO9a5PCKBsGmcj7pVUUws7cGW9
+jAFTNk64r1pMoF/O8+Fv21UD8qwSyg/mPuLT6QSJQY2ZYJ5oMMeXL1S+ao7EMnnF
+ba2kbc5rc/kd+S221nCEc/QRa9xr2v+fnibNn/PKHa4pLYlcpAaxJ94xpIfmZazZ
+axKEpgoPPUMp1VdSkJLKLGI5An9ZVWLUQ13DhBh/8iOmXfSpFExtmqNgRcm+/EDq
+mRgsQbAjkK6kQqjdlv0NiKXyHwtA8MEQj105SvdNne84R1M3pKBz9diQbDjRxCIP
+srsMpPFQ9gSvSSyh+AjQlcKbXCiyyx80hlXSixbrFddjPHiJzU52CWU47dLWNU1p
+Tt6NNKnTJyCHmShjw5w3pH9t1lNi2ZHjG/0vBpTvRaMq5061hGBBBrjecrkbCLy0
+I7GCOvfznSeeO/GL9N/uwgxfIQXwS6FnOKXt4QnYkM3Je+YNvi4=
+=c8BO
+-----END PGP SIGNATURE-----
+
+--k4uzfupmzauvxy5n--
