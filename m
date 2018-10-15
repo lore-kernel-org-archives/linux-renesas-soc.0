@@ -1,51 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f48.google.com ([209.85.167.48]:41229 "EHLO
-        mail-lf1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726273AbeJOSlG (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41714 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726273AbeJORkg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Oct 2018 14:41:06 -0400
-Received: by mail-lf1-f48.google.com with SMTP id q39-v6so13722367lfi.8
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 15 Oct 2018 03:56:21 -0700 (PDT)
-Subject: Re: [PATCH] iommu/ipmmu-vmsa: Hook up r8a77990 DT matching code
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Alex Williamson <alex.williamson@redhat.com>,
+        Mon, 15 Oct 2018 13:40:36 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Alex Williamson <alex.williamson@redhat.com>,
         Joerg Roedel <joro@8bytes.org>
 Cc: Magnus Damm <magnus.damm@gmail.com>,
         iommu@lists.linux-foundation.org,
         linux-renesas-soc@vger.kernel.org,
         Hai Nguyen Pham <hai.pham.ud@renesas.com>,
-        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-References: <20181015095557.25135-1-horms+renesas@verge.net.au>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <c90c9a8b-d101-280f-7ee6-67e6cc473e64@cogentembedded.com>
-Date: Mon, 15 Oct 2018 13:56:18 +0300
-MIME-Version: 1.0
-In-Reply-To: <20181015095557.25135-1-horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH] iommu/ipmmu-vmsa: Hook up r8a77990 DT matching code
+Date: Mon, 15 Oct 2018 11:55:57 +0200
+Message-Id: <20181015095557.25135-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+From: Hai Nguyen Pham <hai.pham.ud@renesas.com>
 
-On 10/15/2018 12:55 PM, Simon Horman wrote:
+Support the r8a77990 IPMMU and update IPMMU_OF_DECLARE to hook up
+the updated compat string.
 
-> From: Hai Nguyen Pham <hai.pham.ud@renesas.com>
-> 
-> Support the r8a77990 IPMMU and update IPMMU_OF_DECLARE to hook up
+Signed-off-by: Hai Nguyen Pham <hai.pham.ud@renesas.com>
+Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+[simon: rebased; dropped no longer required IOMMU_OF_DECLARE hunk]
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/iommu/ipmmu-vmsa.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-   That macro is gone, you need to update the description.
+ This is based on the next branch pf Joerg Roedel's iommu tree:
+ 2f2fbfb71ecc ("Merge branches 'arm/renesas', 'arm/smmu', 'ppc/pamu', 'x86/vt-d', 'x86/amd' and 'core' into next")
 
-> the updated compat string.
-> 
-> Signed-off-by: Hai Nguyen Pham <hai.pham.ud@renesas.com>
-> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-> [simon: rebased; dropped no longer required IOMMU_OF_DECLARE hunk]
-
-   Yet you didn't drop it from the description. :-)
-
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[...]
-
-MBR, Sergei
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index b98a03189580..e0adf5d6c13c 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -762,6 +762,7 @@ static const struct soc_device_attribute soc_rcar_gen3[] = {
+ 	{ .soc_id = "r8a7796", },
+ 	{ .soc_id = "r8a77965", },
+ 	{ .soc_id = "r8a77970", },
++	{ .soc_id = "r8a77990", },
+ 	{ .soc_id = "r8a77995", },
+ 	{ /* sentinel */ }
+ };
+@@ -950,6 +951,9 @@ static const struct of_device_id ipmmu_of_ids[] = {
+ 		.compatible = "renesas,ipmmu-r8a77970",
+ 		.data = &ipmmu_features_rcar_gen3,
+ 	}, {
++		.compatible = "renesas,ipmmu-r8a77990",
++		.data = &ipmmu_features_rcar_gen3,
++	}, {
+ 		.compatible = "renesas,ipmmu-r8a77995",
+ 		.data = &ipmmu_features_rcar_gen3,
+ 	}, {
+-- 
+2.11.0
