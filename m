@@ -1,79 +1,36 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:46016 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728802AbeJVEQf (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:16:35 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        netdev@vger.kernel.org
-Subject: [PATCH 0/1] net: dsa: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:01:04 +0200
-Message-Id: <20181021200105.2414-1-wsa+renesas@sang-engineering.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Mon, 15 Oct 2018 13:26:19 -0500
+From: Rob Herring <robh@kernel.org>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "David S. Miller" <davem@davemloft.net>, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: can: rcar_can: Add r8a7744 support
+Message-ID: <20181015182619.GA8820@bogus>
+References: <1538050128-47356-1-git-send-email-biju.das@bp.renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538050128-47356-1-git-send-email-biju.das@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I got tired of fixing this in Renesas drivers manually, so I took the big
-hammer. Remove this cumbersome code pattern which got copy-pasted too much
-already:
+On Thu, Sep 27, 2018 at 01:08:48PM +0100, Biju Das wrote:
+> Document RZ/G1N (r8a7744) SoC specific bindings.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+> ---
+> This patch is tested against linux-next next-20180927
+> ---
+>  Documentation/devicetree/bindings/net/can/rcar_can.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
--	struct platform_device *pdev = to_platform_device(dev);
--	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
-+	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
-
-A branch, tested by buildbot, can be found here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git coccinelle/get_drvdata
-
-I have been asked if it couldn't be done for dev_set_drvdata as well. I checked
-it and did not find one occasion where it could be simplified like this. Not
-much of a surprise because driver_data is usually set in probe() functions
-which access struct platform_device in many other ways.
-
-I am open for other comments, suggestions, too, of course.
-
-Here is the cocci-script I created:
-
-@@
-struct device* d;
-identifier pdev;
-expression *ptr;
-@@
-(
--	struct platform_device *pdev = to_platform_device(d);
-|
--	struct platform_device *pdev;
-	...
--	pdev = to_platform_device(d);
-)
-	<... when != pdev
--	&pdev->dev
-+	d
-	...>
-
-	ptr =
--	platform_get_drvdata(pdev)
-+	dev_get_drvdata(d)
-
-	<... when != pdev
--	&pdev->dev
-+	d
-	...>
-
-Kind regards,
-
-   Wolfram
-
-
-Wolfram Sang (1):
-  net: dsa: legacy: simplify getting .driver_data
-
- net/dsa/legacy.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
--- 
-2.19.0
+Applied.
