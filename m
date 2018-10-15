@@ -1,29 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43371 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:41823 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729534AbeJaXbO (ORCPT
+        with ESMTP id S1726273AbeJORoJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 31 Oct 2018 19:31:14 -0400
-Date: Wed, 31 Oct 2018 15:32:53 +0100
-From: Simon Horman <horms@verge.net.au>
+        Mon, 15 Oct 2018 13:44:09 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH 1/4] arm64: defconfig: Enable scu-simple-card driver
-Message-ID: <20181031143253.h56tjjv64x5hap2d@verge.net.au>
+Subject: [PATCH 1/4] arm64: defconfig: Enable scu-simple-card driver
+Date: Mon, 15 Oct 2018 11:59:21 +0200
+Message-Id: <20181015095924.25794-2-horms+renesas@verge.net.au>
+In-Reply-To: <20181015095924.25794-1-horms+renesas@verge.net.au>
 References: <20181015095924.25794-1-horms+renesas@verge.net.au>
- <20181015095924.25794-2-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181015095924.25794-2-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 15, 2018 at 11:59:21AM +0200, Simon Horman wrote:
-> Enable the scu-simple-card which is used by
-> the R-Car E3 (r8a77990) based Ebisu board.
-> 
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Enable the scu-simple-card which is used by
+the R-Car E3 (r8a77990) based Ebisu board.
 
-Applied for v4.21.
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index e6ec9858d33d..19f8cddce9ea 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -477,6 +477,7 @@ CONFIG_SND_SOC_RT5514=m
+ CONFIG_SND_SOC_RT5514_SPI=m
+ CONFIG_SND_SOC_RT5645=m
+ CONFIG_SND_SIMPLE_CARD=m
++CONFIG_SND_SIMPLE_SCU_CARD=y
+ CONFIG_SND_AUDIO_GRAPH_CARD=m
+ CONFIG_I2C_HID=m
+ CONFIG_USB=y
+-- 
+2.11.0
