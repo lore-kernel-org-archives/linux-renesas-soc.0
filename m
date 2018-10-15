@@ -1,79 +1,64 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45856 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728513AbeJVEQI (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:16:08 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Mon, 15 Oct 2018 17:46:57 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        netdev@vger.kernel.org
-Subject: [PATCH 0/1] ptp: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:38 +0200
-Message-Id: <20181021200039.1933-1-wsa+renesas@sang-engineering.com>
+        linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] dt-bindings: mmc: tmio_mmc: Document Renesas
+ R7S9210
+Message-ID: <20181015154656.zlzfuw2oi5oazni3@verge.net.au>
+References: <20181012122924.5543-1-chris.brandt@renesas.com>
+ <20181012122924.5543-4-chris.brandt@renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181012122924.5543-4-chris.brandt@renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I got tired of fixing this in Renesas drivers manually, so I took the big
-hammer. Remove this cumbersome code pattern which got copy-pasted too much
-already:
+On Fri, Oct 12, 2018 at 07:29:24AM -0500, Chris Brandt wrote:
+> Document support for the RZ/A2 (R7S9210) SoC.
+> 
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
--	struct platform_device *pdev = to_platform_device(dev);
--	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
-+	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-A branch, tested by buildbot, can be found here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git coccinelle/get_drvdata
-
-I have been asked if it couldn't be done for dev_set_drvdata as well. I checked
-it and did not find one occasion where it could be simplified like this. Not
-much of a surprise because driver_data is usually set in probe() functions
-which access struct platform_device in many other ways.
-
-I am open for other comments, suggestions, too, of course.
-
-Here is the cocci-script I created:
-
-@@
-struct device* d;
-identifier pdev;
-expression *ptr;
-@@
-(
--	struct platform_device *pdev = to_platform_device(d);
-|
--	struct platform_device *pdev;
-	...
--	pdev = to_platform_device(d);
-)
-	<... when != pdev
--	&pdev->dev
-+	d
-	...>
-
-	ptr =
--	platform_get_drvdata(pdev)
-+	dev_get_drvdata(d)
-
-	<... when != pdev
--	&pdev->dev
-+	d
-	...>
-
-Kind regards,
-
-   Wolfram
-
-
-Wolfram Sang (1):
-  ptp: ptp_dte: simplify getting .driver_data
-
- drivers/ptp/ptp_dte.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
--- 
-2.19.0
+> ---
+> v2:
+>  * Documented that R7S9210 has 2 clocks
+> ---
+>  Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> index d39d5e46f7d2..cdfbcce34b97 100644
+> --- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> @@ -13,6 +13,7 @@ Required properties:
+>  - compatible: should contain one or more of the following:
+>  		"renesas,sdhi-sh73a0" - SDHI IP on SH73A0 SoC
+>  		"renesas,sdhi-r7s72100" - SDHI IP on R7S72100 SoC
+> +		"renesas,sdhi-r7s9210" - SDHI IP on R7S9210 SoC
+>  		"renesas,sdhi-r8a73a4" - SDHI IP on R8A73A4 SoC
+>  		"renesas,sdhi-r8a7740" - SDHI IP on R8A7740 SoC
+>  		"renesas,sdhi-r8a7743" - SDHI IP on R8A7743 SoC
+> @@ -54,7 +55,7 @@ Required properties:
+>  	  "core" and "cd". If the controller only has 1 clock, naming is not
+>  	  required.
+>  	  Devices which have more than 1 clock are listed below:
+> -	  2: R7S72100
+> +	  2: R7S72100, R7S9210
+>  
+>  Optional properties:
+>  - pinctrl-names: should be "default", "state_uhs"
+> -- 
+> 2.16.1
+> 
