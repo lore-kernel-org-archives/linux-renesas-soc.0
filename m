@@ -1,65 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45764 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728391AbeJVEP7 (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:53288 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726430AbeJPGFx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:15:59 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Jon Mason <jonmason@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 9/9] net: phy: mdio-mux-bcm-iproc: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:20 +0200
-Message-Id: <20181021200021.1693-10-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
-References: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
+        Tue, 16 Oct 2018 02:05:53 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: Re: [PATCH 2/5] dt-bindings: display: renesas: du: Document the r8a7744 bindings
+Date: Tue, 16 Oct 2018 01:18:47 +0300
+Message-ID: <7588020.PaOoir5Xgb@avalon>
+In-Reply-To: <1537553311-8831-3-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1537553311-8831-1-git-send-email-fabrizio.castro@bp.renesas.com> <1537553311-8831-3-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
+Hi Fabrizio,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Thank you for the patch.
 
-Build tested only. buildbot is happy.
+On Friday, 21 September 2018 21:08:28 EEST Fabrizio Castro wrote:
+> From: Biju Das <biju.das@bp.renesas.com>
+> 
+> Document the RZ/G1N (R8A7744) SoC in the R-Car DU bindings.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
- drivers/net/phy/mdio-mux-bcm-iproc.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-diff --git a/drivers/net/phy/mdio-mux-bcm-iproc.c b/drivers/net/phy/mdio-mux-bcm-iproc.c
-index c017486e9b86..696bdf1e4576 100644
---- a/drivers/net/phy/mdio-mux-bcm-iproc.c
-+++ b/drivers/net/phy/mdio-mux-bcm-iproc.c
-@@ -289,8 +289,7 @@ static int mdio_mux_iproc_remove(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int mdio_mux_iproc_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct iproc_mdiomux_desc *md = platform_get_drvdata(pdev);
-+	struct iproc_mdiomux_desc *md = dev_get_drvdata(dev);
- 
- 	clk_disable_unprepare(md->core_clk);
- 
-@@ -299,8 +298,7 @@ static int mdio_mux_iproc_suspend(struct device *dev)
- 
- static int mdio_mux_iproc_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct iproc_mdiomux_desc *md = platform_get_drvdata(pdev);
-+	struct iproc_mdiomux_desc *md = dev_get_drvdata(dev);
- 
- 	clk_prepare_enable(md->core_clk);
- 	mdio_mux_iproc_config(md);
+and taken in my tree.
+
+> ---
+>  Documentation/devicetree/bindings/display/renesas,du.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt
+> b/Documentation/devicetree/bindings/display/renesas,du.txt index
+> 2b28ae2..aad9cf1 100644
+> --- a/Documentation/devicetree/bindings/display/renesas,du.txt
+> +++ b/Documentation/devicetree/bindings/display/renesas,du.txt
+> @@ -4,6 +4,7 @@ Required Properties:
+> 
+>    - compatible: must be one of the following.
+>      - "renesas,du-r8a7743" for R8A7743 (RZ/G1M) compatible DU
+> +    - "renesas,du-r8a7744" for R8A7744 (RZ/G1N) compatible DU
+>      - "renesas,du-r8a7745" for R8A7745 (RZ/G1E) compatible DU
+>      - "renesas,du-r8a77470" for R8A77470 (RZ/G1C) compatible DU
+>      - "renesas,du-r8a7779" for R8A7779 (R-Car H1) compatible DU
+> @@ -51,6 +52,7 @@ corresponding to each DU output.
+>                          Port0          Port1          Port2          Port3
+>  ---------------------------------------------------------------------------
+> -- R8A7743 (RZ/G1M)       DPAD 0         LVDS 0         -              - +
+> R8A7744 (RZ/G1N)       DPAD 0         LVDS 0         -              -
+> R8A7745 (RZ/G1E)       DPAD 0         DPAD 1         -              -
+> R8A77470 (RZ/G1C)      DPAD 0         DPAD 1         LVDS 0         -
+> R8A7779 (R-Car H1)     DPAD 0         DPAD 1         -              -
+
+
 -- 
-2.19.0
+Regards,
+
+Laurent Pinchart
