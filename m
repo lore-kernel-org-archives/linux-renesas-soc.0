@@ -1,37 +1,53 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/2] dt-bindings: usb: renesas_usb3: add bindings for r8a77990
-Date: Tue,  2 Oct 2018 20:58:26 +0900
-Message-Id: <1538481507-24821-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1538481507-24821-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1538481507-24821-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:41819 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726273AbeJORoH (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 15 Oct 2018 13:44:07 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: [PATCH 0/4] arm64: renesas: ebisu: Enable Audio
+Date: Mon, 15 Oct 2018 11:59:20 +0200
+Message-Id: <20181015095924.25794-1-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds bindings for r8a77990 (R-Car E3).
+Hi,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- Documentation/devicetree/bindings/usb/renesas_usb3.txt | 1 +
- 1 file changed, 1 insertion(+)
+This series describes R-Car audio for the R-Car E3 (r8a77990) and
+enables it on the Ebisu board which uses that SoC. It also enables the
+scu-simple-card driver in the relevant defconfigs, a dependency for
+enabling audio on the Ebisu board.
 
-diff --git a/Documentation/devicetree/bindings/usb/renesas_usb3.txt b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-index b22f0a5..d366555 100644
---- a/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-+++ b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-@@ -6,6 +6,7 @@ Required properties:
- 	- "renesas,r8a7795-usb3-peri"
- 	- "renesas,r8a7796-usb3-peri"
- 	- "renesas,r8a77965-usb3-peri"
-+	- "renesas,r8a77990-usb3-peri"
- 	- "renesas,rcar-gen3-usb3-peri" for a generic R-Car Gen3 or RZ/G2
- 	  compatible device
- 
+Other dependencies. It is safe to apply this series without them present:
+* "[PATCH 0/2] sh-pfc: r8a77990: Add Audio clock and SSI pins, groups and functions"
+  Required for audio be initialised at boot.
+
+* "[PATCH] iommu/ipmmu-vmsa: Hook up r8a77990 DT matching code"
+  Required for Audio DMA. Without this patch present audio will
+  fall back to using PIO. Alternatively, the iommus properties
+  may be removed from audma0, which is added to DT of
+  patch 3 of this series.
+
+Based on renesas-devel-20181012-v4.19-rc7
+
+Simon Horman (2):
+  arm64: defconfig: Enable scu-simple-card driver
+  arm64: renesas_defconfig: Enable scu-simple-card driver
+
+Takeshi Kihara (1):
+  arm64: dts: renesas: ebisu: Enable Audio
+
+Yoshihiro Kaneko (1):
+  arm64: dts: renesas: r8a77990: Add Audio-DMAC and Sound device nodes
+
+ arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 127 ++++++++++++
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi      | 271 +++++++++++++++++++++++++
+ arch/arm64/configs/defconfig                   |   1 +
+ arch/arm64/configs/renesas_defconfig           |   1 +
+ 4 files changed, 400 insertions(+)
+
 -- 
-1.9.1
+2.11.0
