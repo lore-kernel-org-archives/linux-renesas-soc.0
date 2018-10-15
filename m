@@ -1,75 +1,233 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:39248 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726958AbeJQRvw (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:48341 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726422AbeJOX0j (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Oct 2018 13:51:52 -0400
-Received: by mail-vs1-f68.google.com with SMTP id m5so20358949vsk.6
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 17 Oct 2018 02:56:56 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181011085508.5234-1-geert+renesas@glider.be>
- <20181011085508.5234-2-geert+renesas@glider.be> <20181011135448.sah5unjhclllvqty@verge.net.au>
- <20181015154048.hkmht7cml272xbcg@verge.net.au>
-In-Reply-To: <20181015154048.hkmht7cml272xbcg@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 17 Oct 2018 11:56:43 +0200
-Message-ID: <CAMuHMdWaXCu9KukLioxkcNoDQt4wKs2C9vrRbQRVJ+8+ux4PAQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] [RFC] arm64: renesas: Move SoC Kconfig symbols to drivers/soc/renesas/
-To: Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Mon, 15 Oct 2018 19:26:39 -0400
+Date: Mon, 15 Oct 2018 17:40:49 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Arnd Bergmann <arnd@arndb.de>, Magnus Damm <magnus.damm@gmail.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         Olof Johansson <olof@lixom.net>,
         Kevin Hilman <khilman@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] [RFC] arm64: renesas: Move SoC Kconfig symbols to
+ drivers/soc/renesas/
+Message-ID: <20181015154048.hkmht7cml272xbcg@verge.net.au>
+References: <20181011085508.5234-1-geert+renesas@glider.be>
+ <20181011085508.5234-2-geert+renesas@glider.be>
+ <20181011135448.sah5unjhclllvqty@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181011135448.sah5unjhclllvqty@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+On Thu, Oct 11, 2018 at 03:54:55PM +0200, Simon Horman wrote:
+> On Thu, Oct 11, 2018 at 10:55:07AM +0200, Geert Uytterhoeven wrote:
+> > For consistency with other vendors, which have a single Kconfig symbol
+> > in arch/arm64/Kconfig.platforms.
+> > 
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > Note that drivers/clk/ is included before drivers/soc/.  Hence when
+> > COMPILE_TEST=y, questions will be asked about clock drivers before they
+> > can be auto-selected by SoC support.
+> > 
+> > Question: Should we introduce a family-specific Kconfig symbol for R-Car
+> > 	  Gen3 (ARCH_RCAR_GEN1), which could be used for enabling
+> 
+> s/1/3/?
+> 
+> > 	  RST_RCAR?
+> 
+> Given that it would be consistent with R-Car Gen 1 and 2,
+> that seems like a good idea to me.
 
-On Mon, Oct 15, 2018 at 5:40 PM Simon Horman <horms@verge.net.au> wrote:
-> On Thu, Oct 11, 2018 at 03:54:55PM +0200, Simon Horman wrote:
-> > On Thu, Oct 11, 2018 at 10:55:07AM +0200, Geert Uytterhoeven wrote:
-> > > For consistency with other vendors, which have a single Kconfig symbol
-> > > in arch/arm64/Kconfig.platforms.
-> > >
-> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > ---
-> > > Note that drivers/clk/ is included before drivers/soc/.  Hence when
-> > > COMPILE_TEST=y, questions will be asked about clock drivers before they
-> > > can be auto-selected by SoC support.
-> > >
-> > > Question: Should we introduce a family-specific Kconfig symbol for R-Car
-> > >       Gen3 (ARCH_RCAR_GEN1), which could be used for enabling
-> >
-> > s/1/3/?
+Hi Geert,
 
-Sure.
+there has been no other feedback on this series.
+How would you like to proceed?
 
-> > >
-> > >       RST_RCAR?
-> >
-> > Given that it would be consistent with R-Car Gen 1 and 2,
-> > that seems like a good idea to me.
->
-> there has been no other feedback on this series.
-> How would you like to proceed?
-
-I will add a new symbol ARCH_RCAR_GEN3 for v2?
-
-Any comments about PATCH 2/2?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> 
+> > ---
+> >  arch/arm64/Kconfig.platforms | 54 ------------------------
+> >  drivers/soc/renesas/Kconfig  | 81 ++++++++++++++++++++++++++++++------
+> >  2 files changed, 68 insertions(+), 67 deletions(-)
+> > 
+> > diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> > index fecdfc70828c2ac3..e7f1659064f82790 100644
+> > --- a/arch/arm64/Kconfig.platforms
+> > +++ b/arch/arm64/Kconfig.platforms
+> > @@ -165,60 +165,6 @@ config ARCH_RENESAS
+> >  	help
+> >  	  This enables support for the ARMv8 based Renesas SoCs.
+> >  
+> > -config ARCH_R8A774A1
+> > -	bool "Renesas RZ/G2M SoC Platform"
+> > -	depends on ARCH_RENESAS
+> > -	help
+> > -	  This enables support for the Renesas RZ/G2M SoC.
+> > -
+> > -config ARCH_R8A774C0
+> > -	bool "Renesas RZ/G2E SoC Platform"
+> > -	depends on ARCH_RENESAS
+> > -	help
+> > -	  This enables support for the Renesas RZ/G2E SoC.
+> > -
+> > -config ARCH_R8A7795
+> > -	bool "Renesas R-Car H3 SoC Platform"
+> > -	depends on ARCH_RENESAS
+> > -	help
+> > -	  This enables support for the Renesas R-Car H3 SoC.
+> > -
+> > -config ARCH_R8A7796
+> > -	bool "Renesas R-Car M3-W SoC Platform"
+> > -	depends on ARCH_RENESAS
+> > -	help
+> > -	  This enables support for the Renesas R-Car M3-W SoC.
+> > -
+> > -config ARCH_R8A77965
+> > -	bool "Renesas R-Car M3-N SoC Platform"
+> > -	depends on ARCH_RENESAS
+> > -	help
+> > -	  This enables support for the Renesas R-Car M3-N SoC.
+> > -
+> > -config ARCH_R8A77970
+> > -	bool "Renesas R-Car V3M SoC Platform"
+> > -	depends on ARCH_RENESAS
+> > -	help
+> > -	  This enables support for the Renesas R-Car V3M SoC.
+> > -
+> > -config ARCH_R8A77980
+> > -	bool "Renesas R-Car V3H SoC Platform"
+> > -	depends on ARCH_RENESAS
+> > -	help
+> > -	  This enables support for the Renesas R-Car V3H SoC.
+> > -
+> > -config ARCH_R8A77990
+> > -	bool "Renesas R-Car E3 SoC Platform"
+> > -	depends on ARCH_RENESAS
+> > -	help
+> > -	  This enables support for the Renesas R-Car E3 SoC.
+> > -
+> > -config ARCH_R8A77995
+> > -	bool "Renesas R-Car D3 SoC Platform"
+> > -	depends on ARCH_RENESAS
+> > -	help
+> > -	  This enables support for the Renesas R-Car D3 SoC.
+> > -
+> >  config ARCH_ROCKCHIP
+> >  	bool "Rockchip Platforms"
+> >  	select ARCH_HAS_RESET_CONTROLLER
+> > diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+> > index 407f02c80e8b721c..0ab62024fd20be56 100644
+> > --- a/drivers/soc/renesas/Kconfig
+> > +++ b/drivers/soc/renesas/Kconfig
+> > @@ -3,30 +3,85 @@ config SOC_RENESAS
+> >  	bool "Renesas SoC driver support" if COMPILE_TEST && !ARCH_RENESAS
+> >  	default y if ARCH_RENESAS
+> >  	select SOC_BUS
+> > -	select RST_RCAR if ARCH_RCAR_GEN1 || ARCH_RCAR_GEN2 || \
+> > -			   ARCH_R8A774A1 || ARCH_R8A774C0 || ARCH_R8A7795 || \
+> > -			   ARCH_R8A7796 || ARCH_R8A77965 || ARCH_R8A77970 || \
+> > -			   ARCH_R8A77980 || ARCH_R8A77990 || ARCH_R8A77995
+> > +	select RST_RCAR if ARCH_RCAR_GEN1 || ARCH_RCAR_GEN2
+> >  	select SYSC_R8A7743 if ARCH_R8A7743 || ARCH_R8A7744
+> >  	select SYSC_R8A7745 if ARCH_R8A7745
+> >  	select SYSC_R8A77470 if ARCH_R8A77470
+> > -	select SYSC_R8A774A1 if ARCH_R8A774A1
+> > -	select SYSC_R8A774C0 if ARCH_R8A774C0
+> >  	select SYSC_R8A7779 if ARCH_R8A7779
+> >  	select SYSC_R8A7790 if ARCH_R8A7790
+> >  	select SYSC_R8A7791 if ARCH_R8A7791 || ARCH_R8A7793
+> >  	select SYSC_R8A7792 if ARCH_R8A7792
+> >  	select SYSC_R8A7794 if ARCH_R8A7794
+> > -	select SYSC_R8A7795 if ARCH_R8A7795
+> > -	select SYSC_R8A7796 if ARCH_R8A7796
+> > -	select SYSC_R8A77965 if ARCH_R8A77965
+> > -	select SYSC_R8A77970 if ARCH_R8A77970
+> > -	select SYSC_R8A77980 if ARCH_R8A77980
+> > -	select SYSC_R8A77990 if ARCH_R8A77990
+> > -	select SYSC_R8A77995 if ARCH_R8A77995
+> >  
+> >  if SOC_RENESAS
+> >  
+> > +if ARM64
+> > +
+> > +config ARCH_R8A774A1
+> > +	bool "Renesas RZ/G2M SoC Platform"
+> > +	select RST_RCAR
+> > +	select SYSC_R8A774A1
+> > +	help
+> > +	  This enables support for the Renesas RZ/G2M SoC.
+> > +
+> > +config ARCH_R8A774C0
+> > +	bool "Renesas RZ/G2E SoC Platform"
+> > +	select RST_RCAR
+> > +	select SYSC_R8A774C0
+> > +	help
+> > +	  This enables support for the Renesas RZ/G2E SoC.
+> > +
+> > +config ARCH_R8A7795
+> > +	bool "Renesas R-Car H3 SoC Platform"
+> > +	select RST_RCAR
+> > +	select SYSC_R8A7795
+> > +	help
+> > +	  This enables support for the Renesas R-Car H3 SoC.
+> > +
+> > +config ARCH_R8A7796
+> > +	bool "Renesas R-Car M3-W SoC Platform"
+> > +	select RST_RCAR
+> > +	select SYSC_R8A7796
+> > +	help
+> > +	  This enables support for the Renesas R-Car M3-W SoC.
+> > +
+> > +config ARCH_R8A77965
+> > +	bool "Renesas R-Car M3-N SoC Platform"
+> > +	select RST_RCAR
+> > +	select SYSC_R8A77965
+> > +	help
+> > +	  This enables support for the Renesas R-Car M3-N SoC.
+> > +
+> > +config ARCH_R8A77970
+> > +	bool "Renesas R-Car V3M SoC Platform"
+> > +	select RST_RCAR
+> > +	select SYSC_R8A77970
+> > +	help
+> > +	  This enables support for the Renesas R-Car V3M SoC.
+> > +
+> > +config ARCH_R8A77980
+> > +	bool "Renesas R-Car V3H SoC Platform"
+> > +	select RST_RCAR
+> > +	select SYSC_R8A77980
+> > +	help
+> > +	  This enables support for the Renesas R-Car V3H SoC.
+> > +
+> > +config ARCH_R8A77990
+> > +	bool "Renesas R-Car E3 SoC Platform"
+> > +	select RST_RCAR
+> > +	select SYSC_R8A77990
+> > +	help
+> > +	  This enables support for the Renesas R-Car E3 SoC.
+> > +
+> > +config ARCH_R8A77995
+> > +	bool "Renesas R-Car D3 SoC Platform"
+> > +	select RST_RCAR
+> > +	select SYSC_R8A77995
+> > +	help
+> > +	  This enables support for the Renesas R-Car D3 SoC.
+> > +
+> > +endif # ARM64
+> > +
+> >  # SoC
+> >  config SYSC_R8A7743
+> >  	bool "RZ/G1M System Controller support" if COMPILE_TEST
+> > -- 
+> > 2.17.1
+> > 
+> 
