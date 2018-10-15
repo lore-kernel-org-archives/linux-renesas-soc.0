@@ -1,57 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:39302 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725959AbeKAIAl (ORCPT
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45315 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726576AbeJPAkf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:00:41 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] mmc: renesas_sdhi: remove workaround for HS400 clock
-Date: Wed, 31 Oct 2018 23:59:44 +0100
-Message-Id: <20181031225944.1226-1-niklas.soderlund@ragnatech.se>
+        Mon, 15 Oct 2018 20:40:35 -0400
+Date: Mon, 15 Oct 2018 11:54:30 -0500
+From: Rob Herring <robh@kernel.org>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: thermal: rcar: Add device tree support for
+ r8a7744
+Message-ID: <20181015165430.GA12574@bogus>
+References: <1537894864-61987-1-git-send-email-biju.das@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1537894864-61987-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+On Tue, Sep 25, 2018 at 06:01:04PM +0100, Biju Das wrote:
+> Add thermal sensor support for r8a7744 SoC. The Renesas RZ/G1N
+> (r8a7744) thermal sensor module is identical to the R-Car Gen2 family.
+> 
+> No driver change is needed due to the fallback compatible value
+> "renesas,rcar-gen2-thermal".
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+> ---
+>  Documentation/devicetree/bindings/thermal/rcar-thermal.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-The driver sets an incorrect clock and depends on the clock driver
-knowledge of this incorrect setting to still set a 200Mhz SDn clock.
-Instead of spreading the workaround between the two drivers the clock
-driver should be made aware of the ES versions where the special clock
-handling is needed no need to keep this workaround in the SDHI driver.
+Applied.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/mmc/host/renesas_sdhi_core.c | 9 ---------
- 1 file changed, 9 deletions(-)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index d3ac43c3d0b655dc..78bd117bbe65de46 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -163,15 +163,6 @@ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
- 	if (new_clock == 0)
- 		goto out;
- 
--	/*
--	 * Both HS400 and HS200/SD104 set 200MHz, but some devices need to
--	 * set 400MHz to distinguish the CPG settings in HS400.
--	 */
--	if (host->mmc->ios.timing == MMC_TIMING_MMC_HS400 &&
--	    host->pdata->flags & TMIO_MMC_HAVE_4TAP_HS400 &&
--	    new_clock == 200000000)
--		new_clock = 400000000;
--
- 	clock = renesas_sdhi_clk_update(host, new_clock) / 512;
- 
- 	for (clk = 0x80000080; new_clock >= (clock << 1); clk >>= 1)
--- 
-2.19.1
+Rob
