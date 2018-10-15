@@ -1,66 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:35912 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728622AbeJLR4m (ORCPT
+Received: from sauhun.de ([88.99.104.3]:46242 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726590AbeJOTRE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Oct 2018 13:56:42 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/3] thermal: rcar_thermal: Prevent hardware access during system suspend
-Date: Fri, 12 Oct 2018 09:20:15 +0200
-Message-Id: <20181012072017.10765-2-geert+renesas@glider.be>
-In-Reply-To: <20181012072017.10765-1-geert+renesas@glider.be>
-References: <20181012072017.10765-1-geert+renesas@glider.be>
+        Mon, 15 Oct 2018 15:17:04 -0400
+Date: Mon, 15 Oct 2018 13:32:10 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] mmc: tmio: move MFD variant reset to a platform
+ hook
+Message-ID: <20181015113210.bmrn5jxfhh43yl5v@ninjato>
+References: <1539143492-32605-1-git-send-email-yamada.masahiro@socionext.com>
+ <1539143492-32605-2-git-send-email-yamada.masahiro@socionext.com>
+ <20181014222757.GB3260@kunai>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3tih2gcnk2ua3tyl"
+Content-Disposition: inline
+In-Reply-To: <20181014222757.GB3260@kunai>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On r8a7791/koelsch, sometimes the following message is printed during
-system suspend:
 
-    rcar_thermal e61f0000.thermal: thermal sensor was broken
+--3tih2gcnk2ua3tyl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This happens if the workqueue runs while the device is already
-suspended.  Fix this by using the freezable system workqueue instead,
-cfr. commit 51e20d0e3a60cf46 ("thermal: Prevent polling from happening
-during system suspend").
+On Mon, Oct 15, 2018 at 12:27:58AM +0200, Wolfram Sang wrote:
+> On Wed, Oct 10, 2018 at 12:51:31PM +0900, Masahiro Yamada wrote:
+> > CTL_RESET_SDIO register is specific to the TMIO MFD (tmio_mmc.c).
+> >=20
+> > Add a new hook host->reset() for performing a platform-specific
+> > reset sequence, and move CTL_RESET_SDIO over there.
+> >=20
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>=20
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Fixes: e0a5172e9eec7f0d ("thermal: rcar: add interrupt support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
-v2:
-  - Add Reviewed-by.
----
- drivers/thermal/rcar_thermal.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Tested on R-Car H3 ES1.0 and ES2.0, M3N, and H2. No regressions. I
+pulled the SD card out during transfer to ensure the reset function will
+surely be called.
 
-diff --git a/drivers/thermal/rcar_thermal.c b/drivers/thermal/rcar_thermal.c
-index 78f932822d381c9d..ea132e122b174757 100644
---- a/drivers/thermal/rcar_thermal.c
-+++ b/drivers/thermal/rcar_thermal.c
-@@ -434,8 +434,8 @@ static irqreturn_t rcar_thermal_irq(int irq, void *data)
- 	rcar_thermal_for_each_priv(priv, common) {
- 		if (rcar_thermal_had_changed(priv, status)) {
- 			rcar_thermal_irq_disable(priv);
--			schedule_delayed_work(&priv->work,
--					      msecs_to_jiffies(300));
-+			queue_delayed_work(system_freezable_wq, &priv->work,
-+					   msecs_to_jiffies(300));
- 		}
- 	}
- 
--- 
-2.17.1
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--3tih2gcnk2ua3tyl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvEerYACgkQFA3kzBSg
+KbYc9RAApdABe3wiKFrfOU4fkWeHcMNIInga/R+oYrKZJS1zEWwGN+swrNlEhPOk
+iQ6FR3VC+HWJG6ExLehDUKyQSl5YFeBKNWN9+T4jwZAZ6uQsrEBMjesjxWhuh6GJ
+xSFS875l3CezsDruRS57wHLI0G5VBIvJZBMg/pWa0BwZ5tkOiEwB3Y7+ZXzCB/Dx
+4aTURpq/TfotoF9XlLpR0kaQiR9WEbtrQk8GAJgD6lfnAJfOMDr+h605ojG/oeej
+ouv6m/1uOm7QpM5i3+vh7QCC8BkALl5nH+EiLJ6BuJwzSpcPnd4/rk17bOEwwwAz
+ivEcosBYHzFqV7nVS4TYYwhAKhJXQENxcU7Hirwxrrt2ktZVsKkrD9AraWd96Pde
+mq+AE3USSbLVjHERA6kCccMBW6wvoxUMyfW59qjpBGWmZEqkFfojkCNT+2EwD9ke
+5UWFj3/H8xiv66YfX6sTfPHWEIYgcq5ML8u2gonkiN7A6/qkY2DZCNyQyxh29ACo
+Vd6zvoKo07RzRfLMYZiFsaaUs1ctzPgMqnsLIor3QCfJ5E6tEo6pNCjN1Dq/AxuU
+H07+8pHKlYdmp/6sztqRTPmUXPSiqmg4a8C9wk3V8AuZQXAMYAyTCOjydExZAfSQ
+1A9UWN4IWjinaBx0EDfrU1iWVo0FoNkWhdusPHnfyz1FshQrbF4=
+=2CYy
+-----END PGP SIGNATURE-----
+
+--3tih2gcnk2ua3tyl--
