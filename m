@@ -1,88 +1,139 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:4625 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727017AbeJPPyL (ORCPT
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:43103 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726585AbeJOW5v (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Oct 2018 11:54:11 -0400
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: jacopo mondi <jacopo@jmondi.org>
-CC: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mon, 15 Oct 2018 18:57:51 -0400
+Date: Mon, 15 Oct 2018 17:12:06 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2] pinctrl: rzn1: Fix check for used MDIO bus
-Date: Tue, 16 Oct 2018 08:04:53 +0000
-Message-ID: <TY1PR01MB1769071215D442A9796FE086F5FE0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] pinctrl: rzn1: Fix check for used MDIO bus
+Message-ID: <20181015151206.GE21294@w540>
 References: <20181015150147.23295-1-phil.edworthy@renesas.com>
- <20181015151206.GE21294@w540>
-In-Reply-To: <20181015151206.GE21294@w540>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="DqhR8hV3EnoxUkKN"
+Content-Disposition: inline
+In-Reply-To: <20181015150147.23295-1-phil.edworthy@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgSmFjb3BvLA0KDQpPbiAxNSBPY3RvYmVyIDIwMTggMTY6MTIgamFjb3BvIG1vbmRpIHdyb3Rl
-Og0KPiBPbiBNb24sIE9jdCAxNSwgMjAxOCBhdCAwNDowMTo0N1BNICswMTAwLCBQaGlsIEVkd29y
-dGh5IHdyb3RlOg0KPiA+IFRoaXMgZml4ZXMgdGhlIGNoZWNrIGZvciB1bnVzZWQgbWRpbyBidXMg
-c2V0dGluZyBhbmQgdGhlIGZvbGxvd2luZw0KPiA+IHN0YXRpYyBjaGVja2VyIHdhcm5pbmc6DQo+
-ID4gIGRyaXZlcnMvcGluY3RybC9waW5jdHJsLXJ6bjEuYzoxOTggcnpuMV9waW5jdHJsX21kaW9f
-c2VsZWN0KCkNCj4gPiAgd2FybjogYWx3YXlzIHRydWUgY29uZGl0aW9uICcoaXBjdGwtPm1kaW9f
-ZnVuY1ttZGlvXSA+PSAwKSA9PiAoMC11MzJtYXgNCj4gPj0gMCknDQo+ID4NCj4gPiBJdCBhbHNv
-IGZpeGVzIHRoZSByZXR1cm4gdmFyIHdoZW4gY2FsbGluZyBvZl9nZXRfY2hpbGRfY291bnQoKQ0K
-PiA+DQo+IA0KPiBOb3QgcmVhbGx5LCBzaW5jZSB5b3Ugc2tpcCB0aGUgYXNzaWduZW1lbnQgaWYg
-cmV0dXJuIHZhbHVlIGlzIDw9IDA6DQo+IA0KPiAJbmZ1bmNzID0gb2ZfZ2V0X2NoaWxkX2NvdW50
-KG5wKTsNCj4gCWlmIChuZnVuY3MgPD0gMCkNCj4gCQlyZXR1cm4gMDsNCj4gDQo+IAlpcGN0bC0+
-bmZ1bmN0aW9ucyA9IG5mdW5jczsNCj4gDQo+IFRoaXMgc2VlbXMgbW9yZSBsaWtlbHkgdG8gYmUg
-aGVyZSB0byBtYWtlICdyem4xX3BteF9nZXRfZnVuY3NfY291bnQoKScNCj4gaGFwcHksIGFzIGl0
-IHJldHVybnMgYSBzaWduZWQgaW50ZWdlciwgYnV0IHNpbmNlIG5mdW5jdGlvbnMgaXMgb25seSBh
-c3NpZ25lZCBpZg0KPiAnbmZ1bmNzJyA+IDAsIHRoZW4gdGhlIGNhc3QgaXMgc2FmZSB0aGVyZS4N
-Cj4gDQo+IEkgd291bGQga2VlcCB0aGlzIHVuc2lnbmVkLCBhbmQgcmF0aGVyIHJldHVybiBhbiBl
-cnJvciBpZg0KPiAnb2ZfZ2V0X2NoaWxkX2NvdW50KCknIHJldHVybnMgYW4gZXJyb3Igb2YgYW55
-IHNvcnQgaW4gJ3Byb2JlX2R0KCknLCBvdGhlcndpc2UNCj4gYXNzaWduICdpcGN0bC0+bmZ1bmN0
-aW9ucyA9IG5mdW5jczsnIHVuY29uZGl0aW9uYWxseSBhbmQgcmV0dXJuIGltbWVkaWF0ZWx5IGlm
-DQo+IG5mdW5jcyA9PSAwLiBUaGlzIG1ha2VzIHN1cmUgbmZ1bmN0aW9ucyBpcyBpbml0aWFsaXpl
-ZCBldmVuIGlmIHRoZXJlIGFyZSBubw0KPiBmdW5jdGlvbnMgcmVnaXN0ZXJlZC4NCk9rLCBJIGdl
-dCB3aGF0IHlvdSdyZSBzYXlpbmcsIHRob3VnaCBuZnVuY3Rpb25zIHdpbGwgYWx3YXlzIGJlIGlu
-aXRpYWxpc2VkIGR1ZQ0KdG8gYWxsb2NhdGlvbiB3aXRoIGRldm1fa3phbGxvYy4NCg0KPiBBbnl3
-YXksIHNtYWxsIGlzc3VlcywgdGhpcyBqdXN0IGRvZXNuJ3QgYmVsb25nIHRvIHRoaXMgcGF0Y2gs
-IGJ1dCBpdCdzIGxpa2VseSBub3QNCj4gdG8gY2F1c2UgYW55IGhhcm0gSSBndWVzcy4NClRydWUu
-Li4gc2hvdWxkIEkgbGVhdmUgdGhpcyBwYXRjaCBhcyBpcyBvciByZXNwaW4gYWdhaW4/DQoNClRo
-YW5rcw0KUGhpbA0KIA0KPiA+IFJlcG9ydGVkLWJ5OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVu
-dGVyQG9yYWNsZS5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogUGhpbCBFZHdvcnRoeSA8cGhpbC5l
-ZHdvcnRoeUByZW5lc2FzLmNvbT4NCj4gPiAtLS0NCj4gPiB2MjoNCj4gPiAgLSBEb24ndCB1c2Ug
-aW1wbGljaXQgdHlwZSBjb252ZXJzaW9uLg0KPiA+ICAtIEZpeCB0eXBlIG9mIHJldHVybiB2YXIg
-d2hlbiBjYWxsaW5nIG9mX2dldF9jaGlsZF9jb3VudCgpLg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJz
-L3BpbmN0cmwvcGluY3RybC1yem4xLmMgfCAxMCArKysrKy0tLS0tDQo+ID4gIDEgZmlsZSBjaGFu
-Z2VkLCA1IGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtcnpuMS5jDQo+ID4gYi9kcml2ZXJzL3BpbmN0cmwv
-cGluY3RybC1yem4xLmMgaW5kZXggY2UwNWUzYTAwYmUyLi40OTk4NDYzYzU0YTANCj4gPiAxMDA2
-NDQNCj4gPiAtLS0gYS9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC1yem4xLmMNCj4gPiArKysgYi9k
-cml2ZXJzL3BpbmN0cmwvcGluY3RybC1yem4xLmMNCj4gPiBAQCAtMTEyLDEzICsxMTIsMTMgQEAg
-c3RydWN0IHJ6bjFfcGluY3RybCB7DQo+ID4gIAlzdHJ1Y3QgcnpuMV9waW5jdHJsX3JlZ3MgX19p
-b21lbSAqbGV2MjsNCj4gPiAgCXUzMiBsZXYxX3Byb3RlY3RfcGh5czsNCj4gPiAgCXUzMiBsZXYy
-X3Byb3RlY3RfcGh5czsNCj4gPiAtCXUzMiBtZGlvX2Z1bmNbMl07DQo+ID4gKwlpbnQgbWRpb19m
-dW5jWzJdOw0KPiA+DQo+ID4gIAlzdHJ1Y3QgcnpuMV9waW5fZ3JvdXAgKmdyb3VwczsNCj4gPiAg
-CXVuc2lnbmVkIGludCBuZ3JvdXBzOw0KPiA+DQo+ID4gIAlzdHJ1Y3QgcnpuMV9wbXhfZnVuYyAq
-ZnVuY3Rpb25zOw0KPiA+IC0JdW5zaWduZWQgaW50IG5mdW5jdGlvbnM7DQo+ID4gKwlpbnQgbmZ1
-bmN0aW9uczsNCj4gPiAgfTsNCj4gPg0KPiA+ICAjZGVmaW5lIFJaTjFfUElOU19QUk9QICJwaW5t
-dXgiDQo+ID4gQEAgLTE5NSw5ICsxOTUsOSBAQCBzdGF0aWMgdm9pZCByem4xX2h3X3NldF9sb2Nr
-KHN0cnVjdCByem4xX3BpbmN0cmwNCj4gPiAqaXBjdGwsIHU4IGxvY2ssIHU4IHZhbHVlKSAgc3Rh
-dGljIHZvaWQgcnpuMV9waW5jdHJsX21kaW9fc2VsZWN0KHN0cnVjdA0KPiByem4xX3BpbmN0cmwg
-KmlwY3RsLCBpbnQgbWRpbywNCj4gPiAgCQkJCSAgICAgdTMyIGZ1bmMpDQo+ID4gIHsNCj4gPiAt
-CWlmIChpcGN0bC0+bWRpb19mdW5jW21kaW9dID49IDAgJiYgaXBjdGwtPm1kaW9fZnVuY1ttZGlv
-XSAhPSBmdW5jKQ0KPiA+ICsJaWYgKGlwY3RsLT5tZGlvX2Z1bmNbbWRpb10gPj0gMCAmJiBpcGN0
-bC0+bWRpb19mdW5jW21kaW9dICE9DQo+ID4gKyhpbnQpZnVuYykNCj4gPiAgCQlkZXZfd2Fybihp
-cGN0bC0+ZGV2LCAiY29uZmxpY3Rpbmcgc2V0dGluZyBmb3IgbWRpbyVkIVxuIiwNCj4gbWRpbyk7
-DQo+ID4gLQlpcGN0bC0+bWRpb19mdW5jW21kaW9dID0gZnVuYzsNCj4gPiArCWlwY3RsLT5tZGlv
-X2Z1bmNbbWRpb10gPSAoaW50KWZ1bmM7DQo+ID4NCj4gPiAgCWRldl9kYmcoaXBjdGwtPmRldiwg
-InNldHRpbmcgbWRpbyVkIHRvICV1XG4iLCBtZGlvLCBmdW5jKTsNCj4gPg0KPiA+IEBAIC04MTAs
-OCArODEwLDggQEAgc3RhdGljIGludCByem4xX3BpbmN0cmxfcHJvYmVfZHQoc3RydWN0DQo+IHBs
-YXRmb3JtX2RldmljZSAqcGRldiwNCj4gPiAgCXN0cnVjdCBkZXZpY2Vfbm9kZSAqbnAgPSBwZGV2
-LT5kZXYub2Zfbm9kZTsNCj4gPiAgCXN0cnVjdCBkZXZpY2Vfbm9kZSAqY2hpbGQ7DQo+ID4gIAl1
-bnNpZ25lZCBpbnQgbWF4Z3JvdXBzID0gMDsNCj4gPiAtCXVuc2lnbmVkIGludCBuZnVuY3MgPSAw
-Ow0KPiA+ICAJdW5zaWduZWQgaW50IGkgPSAwOw0KPiA+ICsJaW50IG5mdW5jcyA9IDA7DQo+ID4g
-IAlpbnQgcmV0Ow0KPiA+DQo+ID4gIAluZnVuY3MgPSBvZl9nZXRfY2hpbGRfY291bnQobnApOw0K
-PiA+IC0tDQo+ID4gMi4xNy4xDQo+ID4NCg==
+
+--DqhR8hV3EnoxUkKN
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+
+Hi Phil,
+
+On Mon, Oct 15, 2018 at 04:01:47PM +0100, Phil Edworthy wrote:
+> This fixes the check for unused mdio bus setting and the following static
+> checker warning:
+>  drivers/pinctrl/pinctrl-rzn1.c:198 rzn1_pinctrl_mdio_select()
+>  warn: always true condition '(ipctl->mdio_func[mdio] >= 0) => (0-u32max >= 0)'
+>
+> It also fixes the return var when calling of_get_child_count()
+>
+
+Not really, since you skip the assignement if return value is <= 0:
+
+	nfuncs = of_get_child_count(np);
+	if (nfuncs <= 0)
+		return 0;
+
+	ipctl->nfunctions = nfuncs;
+
+This seems more likely to be here to make 'rzn1_pmx_get_funcs_count()'
+happy, as it returns a signed integer, but since nfunctions is only
+assigned if 'nfuncs' > 0, then the cast is safe there.
+
+I would keep this unsigned, and rather return an error if
+'of_get_child_count()' returns an error of any sort in 'probe_dt()',
+otherwise assign 'ipctl->nfunctions = nfuncs;' unconditionally and
+return immediately if nfuncs == 0. This makes sure nfunctions is
+initialized even if there are no functions registered.
+
+Anyway, small issues, this just doesn't belong to this patch, but it's
+likely not to cause any harm I guess.
+
+
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> ---
+> v2:
+>  - Don't use implicit type conversion.
+>  - Fix type of return var when calling of_get_child_count().
+> ---
+>  drivers/pinctrl/pinctrl-rzn1.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/pinctrl/pinctrl-rzn1.c b/drivers/pinctrl/pinctrl-rzn1.c
+> index ce05e3a00be2..4998463c54a0 100644
+> --- a/drivers/pinctrl/pinctrl-rzn1.c
+> +++ b/drivers/pinctrl/pinctrl-rzn1.c
+> @@ -112,13 +112,13 @@ struct rzn1_pinctrl {
+>  	struct rzn1_pinctrl_regs __iomem *lev2;
+>  	u32 lev1_protect_phys;
+>  	u32 lev2_protect_phys;
+> -	u32 mdio_func[2];
+> +	int mdio_func[2];
+>
+>  	struct rzn1_pin_group *groups;
+>  	unsigned int ngroups;
+>
+>  	struct rzn1_pmx_func *functions;
+> -	unsigned int nfunctions;
+> +	int nfunctions;
+>  };
+>
+>  #define RZN1_PINS_PROP "pinmux"
+> @@ -195,9 +195,9 @@ static void rzn1_hw_set_lock(struct rzn1_pinctrl *ipctl, u8 lock, u8 value)
+>  static void rzn1_pinctrl_mdio_select(struct rzn1_pinctrl *ipctl, int mdio,
+>  				     u32 func)
+>  {
+> -	if (ipctl->mdio_func[mdio] >= 0 && ipctl->mdio_func[mdio] != func)
+> +	if (ipctl->mdio_func[mdio] >= 0 && ipctl->mdio_func[mdio] != (int)func)
+>  		dev_warn(ipctl->dev, "conflicting setting for mdio%d!\n", mdio);
+> -	ipctl->mdio_func[mdio] = func;
+> +	ipctl->mdio_func[mdio] = (int)func;
+>
+>  	dev_dbg(ipctl->dev, "setting mdio%d to %u\n", mdio, func);
+>
+> @@ -810,8 +810,8 @@ static int rzn1_pinctrl_probe_dt(struct platform_device *pdev,
+>  	struct device_node *np = pdev->dev.of_node;
+>  	struct device_node *child;
+>  	unsigned int maxgroups = 0;
+> -	unsigned int nfuncs = 0;
+>  	unsigned int i = 0;
+> +	int nfuncs = 0;
+>  	int ret;
+>
+>  	nfuncs = of_get_child_count(np);
+> --
+> 2.17.1
+>
+
+--DqhR8hV3EnoxUkKN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJbxK5GAAoJEHI0Bo8WoVY8AyAQAI5cgF8rZm22ckAInAnGMSfi
+2GggeEW6zfF+/O/tAW/Ck/cl0lNA7oop519j81hONpQK0C6BIVlfB9ivQHkUa+6K
+e/NDLwiUTXLRFEqEj7pw9zppD+Y1j1xBNIaDiQxr7y756INPEgPHgvEY5Rv/2+PM
+On6DvDuCRXYOvX0dCkH2l1UOOt066D/N5dIfv4o7G8/apSdnZsZiaNEvNYT3n74K
+2XzF6U3sEDU5jK62u8D+2+PhkfG8VCZPH5joH6EDRcpqwIOgMiv4zLQ4h3oDTTmc
+IYrNIYc9QLBzBeSnhY+617vnszgPrMH9vwYSeMHhUorMLwkC7d36vEUF7TVJnczi
+y6U/J0GlmwWNnr4vfbiYAa6aburSuldyXZtrVJaZ97LEClIfLfoT/ZKiKV6+Gn8q
+DmMJXv1wZBY8ToLdIOb0ZYrnnWWZhO3UzMHzV+fIW0x0p2u4WmGlLRGjx4OGKJTB
+FOGKiEzoCfkIa2aYX13LkzBKOnFvZJkMmd/DO812QjhTngFcOy9esBnM/Pv/l3Vy
+qBA6jB/aXKMOswQLE07FDsWvsilk1LtwhfEt8SM7755bcCg3pN/LmT2MyW+ayR+y
+3eswF/Eksbmj3dcxMGiND1ou9Zq48McIerhl14yGXvKrnjmz3xFCaDLGO7xEiANL
+ev20CIM+2gJzSRnuqftk
+=Cohu
+-----END PGP SIGNATURE-----
+
+--DqhR8hV3EnoxUkKN--
