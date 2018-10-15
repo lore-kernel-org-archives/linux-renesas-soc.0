@@ -1,43 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:26890 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726193AbeJHQlP (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:48450 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726524AbeJOX3a (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 8 Oct 2018 12:41:15 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 0/4] Improve pinctrl support for the RZ/G1C
-Date: Mon,  8 Oct 2018 10:30:15 +0100
-Message-Id: <1538991019-18577-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Mon, 15 Oct 2018 19:29:30 -0400
+Date: Mon, 15 Oct 2018 17:43:39 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2] arm64: dts: renesas: r8a77970: add thermal support
+Message-ID: <20181015154339.alaeq7s2xguf7mjo@verge.net.au>
+References: <fb4eb097-40aa-82df-68c7-9b727c858a8b@cogentembedded.com>
+ <575ebd1f-165a-756f-f76a-14a11bba7f19@cogentembedded.com>
+ <CAMuHMdW4JNYiDqwo9ZQbsrxCpXaoJzs8a1L3eNnfhVqgozRNaw@mail.gmail.com>
+ <20181012112107.vtkjojhefzrkwovl@verge.net.au>
+ <263dd8f7-8d7a-75e6-c1f3-43ddcdd98ead@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <263dd8f7-8d7a-75e6-c1f3-43ddcdd98ead@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dear All,
+On Fri, Oct 12, 2018 at 05:36:55PM +0300, Sergei Shtylyov wrote:
+> On 10/12/2018 02:21 PM, Simon Horman wrote:
+> 
+> >>> Describe THS/CIVM in the R8A77970 device tree.
+> >>>
+> >>> Based on the original (and large) patches by Vladimir Barinov.
+> >>>
+> >>> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> >>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >>>
+> >>> ---
+> >>> This patch is against the 'renesas-devel-20181004-v4.19-rc6' tag of Simon
+> >>> Horman's 'renesas.git' repo.
+> >>>
+> >>> Changed in version 2:
+> >>> - fix the "reg" prop in the thermal device node;
+> >>> - fixed wrong plural in the patch description.
+> >>
+> >> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > 
+> > Thanks, applied for v4.21.
+> 
+>    Not seeing any updates -- forgot to push?
 
-this series adds support for I2C[0123], DU1, VIN[01], and QSPI1
-to the pinctrl driver of the RZ/G1C (a.k.a. R8A77470).
-
-This series applies on top of next-20181005, and depends on:
-https://patchwork.kernel.org/patch/10630259/
-
-Thanks,
-Fab
-
-Fabrizio Castro (4):
-  pinctrl: sh-pfc: r8a77470: Add remaining I2C pin groups
-  pinctrl: sh-pfc: r8a77470: Add DU1 pin groups
-  pinctrl: sh-pfc: r8a77470: Add VIN pin groups
-  pinctrl: sh-pfc: r8a77470: Add QSPI1 pin groups
-
- drivers/pinctrl/sh-pfc/pfc-r8a77470.c | 516 ++++++++++++++++++++++++++++++++++
- 1 file changed, 516 insertions(+)
-
--- 
-2.7.4
+Yes, sorry. I noticed that this morning and pushed
+renesas-devel-20181012-v4.19-rc7.
