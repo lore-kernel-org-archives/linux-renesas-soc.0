@@ -1,60 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45698 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727432AbeJVEPp (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:58314 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726914AbeJPIZU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:15:45 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Rob Clark <robdclark@gmail.com>,
-        David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Subject: [PATCH 3/6] gpu: drm: msm: disp: mdp5: mdp5_kms: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:08 +0200
-Message-Id: <20181021200012.1583-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200012.1583-1-wsa+renesas@sang-engineering.com>
-References: <20181021200012.1583-1-wsa+renesas@sang-engineering.com>
+        Tue, 16 Oct 2018 04:25:20 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>
+Subject: Re: [PATCH v3 1/4] dt-bindings: media: i2c: Add bindings for Maxim Integrated MAX9286
+Date: Tue, 16 Oct 2018 03:37:44 +0300
+Message-ID: <2443594.YVDbUcPb3K@avalon>
+In-Reply-To: <20181015190121.GI24305@bigcity.dyn.berto.se>
+References: <20181009205726.7664-1-kieran.bingham@ideasonboard.com> <71c30ead-66cd-2c84-3349-0dd393f66300@ideasonboard.com> <20181015190121.GI24305@bigcity.dyn.berto.se>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
+Hello,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+On Monday, 15 October 2018 22:01:21 EEST Niklas S=F6derlund wrote:
+> On 2018-10-15 18:37:40 +0100, Kieran Bingham wrote:
+> >>> diff --git
+> >>> a/Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt
+> >>> b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt
+> >>> new file mode 100644
+> >>> index 000000000000..a73e3c0dc31b
+> >>> --- /dev/null
+> >>> +++ b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt
+> >>> @@ -0,0 +1,182 @@
+> >>> +Maxim Integrated Quad GMSL Deserializer
+> >>> +---------------------------------------
+> >>> +
+> >>> +The MAX9286 deserializer receives video data on up to 4 Gigabit
+> >>> Multimedia
+> >>> +Serial Links (GMSL) and outputs them on a CSI-2 port using up to 4
+> >>> data lanes.
+> >>
+> >> CSI-2 D-PHY I presume?
+> >=20
+> > Yes, that's how I've adapted the driver based on the latest bus changes.
+> >=20
+> > Niklas - Could you confirm that everything in VIN/CSI2 is configured to
+> > use D-PHY and not C-PHY at all ?
+>=20
+> Yes it's only D-PHY.
+>=20
+> >>> +
+> >>> +- remote-endpoint: phandle to the remote GMSL source endpoint subnode
+> >>> in the
+> >>> +  remote node port.
+> >>> +
+> >>> +Required Endpoint Properties for CSI-2 Output Port (Port 4):
+> >>> +
+> >>> +- data-lanes: array of physical CSI-2 data lane indexes.
+> >>> +- clock-lanes: index of CSI-2 clock lane.
+> >>=20
+> >> Is any number of lanes supported? How about lane remapping? If you do
+> >> not have lane remapping, the clock-lanes property is redundant.
+> >=20
+> > Uhm ... Niklas?
+>=20
+> The MAX9286 documentation contains information on lane remapping and
+> support for any number (1-4) of enabled data-lanes. I have not tested if
+> this works in practice but the registers are there and documented :-)
 
-Build tested only. buildbot is happy.
+That's my understanding too. Clock lane remapping doesn't seem to be suppor=
+ted=20
+though. We could thus omit the clock-lanes property.
 
- drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+=2D-=20
+Regards,
 
-diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-index bddd625ab91b..100f166c1ac2 100644
---- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-+++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-@@ -1063,8 +1063,7 @@ static int mdp5_dev_remove(struct platform_device *pdev)
- 
- static __maybe_unused int mdp5_runtime_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct mdp5_kms *mdp5_kms = platform_get_drvdata(pdev);
-+	struct mdp5_kms *mdp5_kms = dev_get_drvdata(dev);
- 
- 	DBG("");
- 
-@@ -1073,8 +1072,7 @@ static __maybe_unused int mdp5_runtime_suspend(struct device *dev)
- 
- static __maybe_unused int mdp5_runtime_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct mdp5_kms *mdp5_kms = platform_get_drvdata(pdev);
-+	struct mdp5_kms *mdp5_kms = dev_get_drvdata(dev);
- 
- 	DBG("");
- 
--- 
-2.19.0
+Laurent Pinchart
