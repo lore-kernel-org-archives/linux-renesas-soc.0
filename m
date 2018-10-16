@@ -1,58 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45752 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728446AbeJVEP6 (ORCPT
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:35428 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726581AbeJPSgo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:15:58 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Subject: [PATCH 8/9] net: ethernet: wiznet: w5300: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:19 +0200
-Message-Id: <20181021200021.1693-9-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
-References: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
+        Tue, 16 Oct 2018 14:36:44 -0400
+Date: Tue, 16 Oct 2018 12:46:51 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: pwm: renesas: pwm-rcar: document
+ R8A779{7|8}0 bindings
+Message-ID: <20181016104651.GA8852@ulmo>
+References: <7f2ce332-a128-073a-762e-fb268780a145@cogentembedded.com>
+ <20181012112114.GE30261@ulmo>
+ <20181015185713.GA15344@bogus>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
+Content-Disposition: inline
+In-Reply-To: <20181015185713.GA15344@bogus>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+--CE+1k2dSO48ffgeK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Build tested only. buildbot is happy.
+On Mon, Oct 15, 2018 at 01:57:13PM -0500, Rob Herring wrote:
+> On Fri, Oct 12, 2018 at 01:21:14PM +0200, Thierry Reding wrote:
+> > On Mon, Oct 01, 2018 at 10:57:39PM +0300, Sergei Shtylyov wrote:
+> > > Document the R-Car V3{M|H} (R8A779{7|8}0) SoC in the  Renesas R-Car P=
+WM
+> > > bindings. R8A77970's hardware is a generic R-Car gen3 PWM, while R8A7=
+7980
+> > > has an extra error injection register...
+> > >=20
+> > > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > >=20
+> > > ---
+> > > This patch is against the 'for-next' branch of Thierry Reding's 'linu=
+x-pwm.git'
+> > > repo.
+> > >=20
+> > >  Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt |    2 ++
+> > >  1 file changed, 2 insertions(+)
+> >=20
+> > Applied, thanks.
+>=20
+> Some reason your tree isn't updated for linux-next?
 
- drivers/net/ethernet/wiznet/w5300.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+No particular reason, I just had not pushed it out yet because the build
+tests were taking longer than expected and I had to clean up a couple of
+minor things.
 
-diff --git a/drivers/net/ethernet/wiznet/w5300.c b/drivers/net/ethernet/wiznet/w5300.c
-index 80fdbff67d82..f9da5d6172e3 100644
---- a/drivers/net/ethernet/wiznet/w5300.c
-+++ b/drivers/net/ethernet/wiznet/w5300.c
-@@ -661,8 +661,7 @@ static int w5300_remove(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int w5300_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct net_device *ndev = platform_get_drvdata(pdev);
-+	struct net_device *ndev = dev_get_drvdata(dev);
- 	struct w5300_priv *priv = netdev_priv(ndev);
- 
- 	if (netif_running(ndev)) {
-@@ -676,8 +675,7 @@ static int w5300_suspend(struct device *dev)
- 
- static int w5300_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct net_device *ndev = platform_get_drvdata(pdev);
-+	struct net_device *ndev = dev_get_drvdata(dev);
- 	struct w5300_priv *priv = netdev_priv(ndev);
- 
- 	if (!netif_running(ndev)) {
--- 
-2.19.0
+It's pushed out now.
+
+Thierry
+
+--CE+1k2dSO48ffgeK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvFwZgACgkQ3SOs138+
+s6FzSw/9FeyQp9q1T6sOloRSEknt6BjV8JEmsCx7FZobkCWgK6N5P6RwJG4JPPrJ
+7tJ0k24fJLwMzg6gXBoPwdPwkrAJnpoPeU3YWPoLG51c9mrsNsVN/mQoCsq9zYvb
+rv+g6XbvLFkBGfKM8BnHSBSMxbSub5T9vmedyoIMMAq9UBByvAH1JmCETYbkjo2t
+Cq+FGsanNrKm8eIIUYiiLTbqY3kgIV2jlhkZSAcZuv45SwST5VfoWCgQeYfpBLmO
+pPQs+wNQyhLvfJj+9uPE42mUoKXj7Di9XEnj5nIdEQgLrfkcClCx6RjI2wt3giQM
+yGf+73BspGIntRVKscj4nwdhU4ZQM+nl3kwRJB6qVMNOdMCPRhMNZ2PFTCGGE0NY
+UvmBWv+AbSYdZ8/VivDPJNLTou4gg0G7wC4CV4ikLSmLTjy9xXm12aAQM53fB4qC
+Ipl+qaEoZeyAzJsxronngS+0fzIUj67ZIiCWditaiUKbeaOT4vdv1dgCCYbL3FOP
+yLfFtu2Cv0t3gJHYG7zI5Uu2ina9aQlwedtIl77CLa2q+lCXnbJOMBWjFgT49pr5
+/LN63p3e21PjMLp4FMhf77SkzzE8/N6WeoVXjimC7fE6WgDXaR8/EGzyzpACc5gn
+0PbFcyKaYkaLlHOxqr18kc94+/3PYohh7Vz1ssJunknNwIGOeXw=
+=rTY8
+-----END PGP SIGNATURE-----
+
+--CE+1k2dSO48ffgeK--
