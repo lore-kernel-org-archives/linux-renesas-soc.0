@@ -1,91 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:53092 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726751AbeJCSiJ (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:36772 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726083AbeJPR4v (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Oct 2018 14:38:09 -0400
-Date: Wed, 3 Oct 2018 13:50:03 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulrich Hecht <uli@fpond.eu>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-serial@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH 0/2] serial: sh-sci: Use pm_runtime_get_sync()/put()
-Message-ID: <20181003115003.GA1905@kunai>
-References: <1523638854-21804-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <CAMuHMdXn3ngXNFFM6Zsi2-YftvKeWnBSCxoQHd7j3xxFnBORrA@mail.gmail.com>
- <379261410.44634.1537425122812@webmail.strato.com>
+        Tue, 16 Oct 2018 13:56:51 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] drm: rcar-du: Fix the return value in case of error in 'rcar_du_crtc_set_crc_source()'
+Date: Tue, 16 Oct 2018 13:07:16 +0300
+Message-ID: <2042905.omcotxa4GD@avalon>
+In-Reply-To: <20181016065825.23206-1-christophe.jaillet@wanadoo.fr>
+References: <20181016065825.23206-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="BXVAT5kNtrzKuDFl"
-Content-Disposition: inline
-In-Reply-To: <379261410.44634.1537425122812@webmail.strato.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Christophe,
 
---BXVAT5kNtrzKuDFl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thank you for the patch.
 
-Hey guys,
+On Tuesday, 16 October 2018 09:58:25 EEST Christophe JAILLET wrote:
+> We return 0 unconditionally in 'rcar_du_crtc_set_crc_source()'.
+> However, 'ret' is set to some error codes if some function calls fail.
+> 
+> Return 'ret' instead to propagate the error code.
+> 
+> Fixes: 47a52d024e89 ("media: drm: rcar-du: Add support for CRC computation")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-I stumbled over this one again and want to make sure we have a
-conclusion here.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-> The way I understand it, the problem this intends to fix is not the
-> state the device ends up in, but that it needs to be powered while
-> registers are read or written.
+and applied to my tree.
 
-I agree.
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c index 8a9e5e6f16b4..6eb0a95ad5a6
+> 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> @@ -940,7 +940,7 @@ static int rcar_du_crtc_set_crc_source(struct drm_crtc
+> *crtc, drm_modeset_drop_locks(&ctx);
+>  	drm_modeset_acquire_fini(&ctx);
+> 
+> -	return 0;
+> +	return ret;
+>  }
+> 
+>  static const struct drm_crtc_funcs crtc_funcs_gen2 = {
 
-> It seems to me that that the current "resume" code should work in that
-> respect, because it changes the PM state to "on" in uart_resume_port()
-> before any access to hardware registers takes place, so there is
-> nothing that needs to be fixed.
 
-Ack.
-
-> That may be different for the "suspend" part, though, because it
-> assumes that the PM state is "on", and I think that is what the patch
-> asserts to not be a valid assumption anymore. It's hard to tell if
-> that is true, though, because I cannot reproduce the issue here; it
-> just works either way...
-
-So, do we agree then that *if* there needs to be a fix for that, it
-should be in uart_suspend_port() by adding some 'uart_change_pm' shortly
-before accessing the ops-callbacks? I am not super-fit with the uart
-layer, but can't we assume because of the "Nothing to do if the console
-is not suspending"-if-block that (for SCIF at least) it means the port
-is on because it _is_ the console?
-
-(I wonder, though, if the OMAPs won't need such a fix because they seem
-to use runtime_autosuspend, so their state might be off actually?)
-
+-- 
 Regards,
 
-   Wolfram
-
-
---BXVAT5kNtrzKuDFl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlu0rOUACgkQFA3kzBSg
-Kbak7A//VEQuahzKmxkULrPzyWW6yD5IdHId/hcBRQb3AO7BhrkkGtkHMCyZuSQ7
-TBTa/d/0QRcpT8WkfF7BjcprOcu+Z4RQj5yib53NI5VY0hL627hg9ezDMRUAqLIt
-dq/kgO33YitJDJM2yLlfcY9sEo/43X0ZrTtXeQYI5wDxSABa3fItF47ILlfad9O7
-nNA8t5LKQbS+X9bDPayvhYP0cVISH3x7MCE6NOBl16EqJr4YTRKEtT9DoseA+RzH
-M4PSHDQM5SPsSvMuuI5mr9Dt0KNp+DSwuDjDpwoSdk766R1yU3kzjNw+PfSY733b
-8uRBCJeCcJZhPo10wXCjclPzyce7DT6/twGuZFbAx8gjIHXFKA2aGoVsfOXy574E
-Lvhz1NR5dV9UhH3Lu4GyuehqrWBdpowb5u3mht8HaPRBP7YNk6H4Rw2ZIxZAD/w5
-iiY2ASgBNWqWVRL3uIUocJ728KwDNkZMmCKwlgCeWSdLQnSLAASHiOVGTGphKFgr
-xlqfgjF7H7VA8/bhsZ7zKyXqElslaCnedatqvYcoLJFGBVtPGJN0CXvcTC66dygl
-T0SUbLB/AnPPy82oRRhNPIRraTUuRtKuZm44z+7aPGgRVybdDi/zd0XrGNHqWmUU
-SwazVpfJ/7h9XaYHdhBh2Vr4Kg7hinKPzeLdySg7ifIOGrGUnVo=
-=lfWS
------END PGP SIGNATURE-----
-
---BXVAT5kNtrzKuDFl--
+Laurent Pinchart
