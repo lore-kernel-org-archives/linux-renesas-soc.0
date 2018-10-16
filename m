@@ -1,46 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:18119 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727415AbeJDX1D (ORCPT
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:56981 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726946AbeJPJ1l (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Oct 2018 19:27:03 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] dt-bindings: iommu: ipmmu-vmsa: Add r8a7744 support
-Date: Thu,  4 Oct 2018 17:25:47 +0100
-Message-Id: <1538670347-48201-1-git-send-email-biju.das@bp.renesas.com>
+        Tue, 16 Oct 2018 05:27:41 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 3/3] mmc: renesas_sdhi: add initial setting of interrupt mask register
+Date: Tue, 16 Oct 2018 03:38:32 +0200
+Message-Id: <20181016013832.2385-4-niklas.soderlund@ragnatech.se>
+In-Reply-To: <20181016013832.2385-1-niklas.soderlund@ragnatech.se>
+References: <20181016013832.2385-1-niklas.soderlund@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document RZ/G1N (R8A7744) SoC bindings.
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
----
-This patch is tested against next-20181004
----
- Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt | 1 +
- 1 file changed, 1 insertion(+)
+The initial value of the interrupt mask register may be different from
+the H/W manual at the startup of the kernel by setting from the
+bootloader. Since the error interrupts may be unmasked, the driver sets
+initial value.
 
-diff --git a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-index c6e2d85..377ee63 100644
---- a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-+++ b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-@@ -12,6 +12,7 @@ Required Properties:
+The initial value is only known for R-Car Gen2 and Gen3 platforms so
+limit the initialization to those platforms.
+
+Based on work from Masaharu Hayakawa.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+---
+
+* Changes since v1
+- Limit the initialization to Gen2+ platforms by checking the
+  TMIO_MMC_MIN_RCAR2 flag.
+- Rename the constant for the initialization value to reflect it's only
+  for R-Car Gen2+ platforms.
+- Move setting of the initial mask to renesas_sdhi.
+---
+ drivers/mmc/host/renesas_sdhi_core.c | 4 ++++
+ drivers/mmc/host/tmio_mmc.h          | 1 +
+ 2 files changed, 5 insertions(+)
+
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index d3ac43c3d0b655dc..f2162f2b7de3ae05 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -532,6 +532,10 @@ static void renesas_sdhi_hw_reset(struct tmio_mmc_host *host)
+ 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL,
+ 		       ~SH_MOBILE_SDHI_SCC_RVSCNTL_RVSEN &
+ 		       sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL));
++
++	if (host->pdata->flags & TMIO_MMC_MIN_RCAR2)
++		sd_ctrl_write32_as_16_and_16(host, CTL_IRQ_MASK,
++					     TMIO_MASK_INIT_RCAR2);
+ }
  
-     - "renesas,ipmmu-r8a73a4" for the R8A73A4 (R-Mobile APE6) IPMMU.
-     - "renesas,ipmmu-r8a7743" for the R8A7743 (RZ/G1M) IPMMU.
-+    - "renesas,ipmmu-r8a7744" for the R8A7744 (RZ/G1N) IPMMU.
-     - "renesas,ipmmu-r8a7745" for the R8A7745 (RZ/G1E) IPMMU.
-     - "renesas,ipmmu-r8a7790" for the R8A7790 (R-Car H2) IPMMU.
-     - "renesas,ipmmu-r8a7791" for the R8A7791 (R-Car M2-W) IPMMU.
+ static int renesas_sdhi_wait_idle(struct tmio_mmc_host *host, u32 bit)
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index a9972dc60c6fbb8c..00673cec47a4de13 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -99,6 +99,7 @@
+ 
+ /* Define some IRQ masks */
+ /* This is the mask used at reset by the chip */
++#define TMIO_MASK_INIT_RCAR2	0x8b7f031d /* Initial value for R-Car Gen2+ */
+ #define TMIO_MASK_ALL           0x837f031d
+ #define TMIO_MASK_READOP  (TMIO_STAT_RXRDY | TMIO_STAT_DATAEND)
+ #define TMIO_MASK_WRITEOP (TMIO_STAT_TXRQ | TMIO_STAT_DATAEND)
 -- 
-2.7.4
+2.19.1
