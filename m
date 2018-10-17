@@ -1,71 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:59270 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727199AbeJRVfY (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:48977 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726168AbeJQIqv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 Oct 2018 17:35:24 -0400
-MIME-Version: 1.0
-References: <20181005150951.22129-1-chris.brandt@renesas.com>
- <20181005150951.22129-3-chris.brandt@renesas.com> <20181016224700.GA26385@bogus>
- <TY1PR01MB15621C230B196C05F2A5BFAB8AFF0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY1PR01MB15621C230B196C05F2A5BFAB8AFF0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 18 Oct 2018 08:34:07 -0500
-Message-ID: <CAL_Jsq+xH-iCpsgwU_Q4+fdxO=AGz0xar-OXbP2_6zjUroNq6w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] dt-bindings: pinctrl: Add RZ/A2 pinctrl and GPIO
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Wed, 17 Oct 2018 04:46:51 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Rob Herring <robh@kernel.org>
+CC: Linus Walleij <linus.walleij@linaro.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        jmondi <jacopo@jmondi.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
+        jacopo mondi <jacopo@jmondi.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: RE: [PATCH 2/2] dt-bindings: pinctrl: Add RZ/A2 pinctrl and GPIO
+Date: Wed, 17 Oct 2018 00:53:40 +0000
+Message-ID: <TY1PR01MB15621C230B196C05F2A5BFAB8AFF0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+References: <20181005150951.22129-1-chris.brandt@renesas.com>
+ <20181005150951.22129-3-chris.brandt@renesas.com>
+ <20181016224700.GA26385@bogus>
+In-Reply-To: <20181016224700.GA26385@bogus>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Oct 16, 2018 at 7:53 PM Chris Brandt <Chris.Brandt@renesas.com> wrote:
->
-> On Tuesday, October 16, 2018, Rob Herring wrote:
-> > > +Optional properties:
-> > > +  - gpio-controller
-> > > +    Include this in order to enable GPIO functionality. When included,
-> > both
-> > > +    gpio_cells and gpio_ranges are then required.
-> > > +  - #gpio-cells
-> > > +    Must be 2
-> > > +  - gpio-ranges
-> > > +    Expresses the total number GPIO ports/pins in this SoC
-> >
-> > Are these really optional? I guess in theory a board could use no GPIOs,
-> > but that seems unlikely.
->
-> They are 'optional' in the sense that if you don't include them in the
-> DT, the driver still loads (just without any GPIO, but pinctrl still
-> works). So, I was just documenting that fact.
->
-> If you think I should just move these to required, let me know an I'm
-> fine with that. (as in, DT documents HW, not software)
+On Tuesday, October 16, 2018, Rob Herring wrote:
+> > +Optional properties:
+> > +  - gpio-controller
+> > +    Include this in order to enable GPIO functionality. When included,
+> both
+> > +    gpio_cells and gpio_ranges are then required.
+> > +  - #gpio-cells
+> > +    Must be 2
+> > +  - gpio-ranges
+> > +    Expresses the total number GPIO ports/pins in this SoC
+>=20
+> Are these really optional? I guess in theory a board could use no GPIOs,
+> but that seems unlikely.
 
-I do. There's no implicit requirement that the s/w has to support it.
+They are 'optional' in the sense that if you don't include them in the=20
+DT, the driver still loads (just without any GPIO, but pinctrl still=20
+works). So, I was just documenting that fact.
 
-> > > +Sub-nodes
-> > > +---------
-> > > +
-> > > +The child nodes of the pin controller node describe a pin multiplexing
-> > > +function or a GPIO controller alternatively.
-> >
-> > But the parent is already a GPIO controller. This needs to be fully
-> > defined.
->
-> Now that I read this, I think my wording was off (I was borrowing text
-> for other files).
->
-> How about this:
->
-> The child nodes of the pin controller designate pins to be used for
-> specific peripheral functions or as GPIO.
+If you think I should just move these to required, let me know an I'm=20
+fine with that. (as in, DT documents HW, not software)
 
-Sure.
+
+> > +Sub-nodes
+> > +---------
+> > +
+> > +The child nodes of the pin controller node describe a pin multiplexing
+> > +function or a GPIO controller alternatively.
+>=20
+> But the parent is already a GPIO controller. This needs to be fully
+> defined.
+
+Now that I read this, I think my wording was off (I was borrowing text=20
+for other files).
+
+How about this:
+
+The child nodes of the pin controller designate pins to be used for
+specific peripheral functions or as GPIO.
+
+
+Chris
