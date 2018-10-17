@@ -1,61 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45818 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728494AbeJVEQD (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43197 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726967AbeJQQHc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:16:03 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
+        Wed, 17 Oct 2018 12:07:32 -0400
+Date: Wed, 17 Oct 2018 10:12:58 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH 1/5] pinctrl: intel: pinctrl-baytrail: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:27 +0200
-Message-Id: <20181021200032.1833-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200032.1833-1-wsa+renesas@sang-engineering.com>
-References: <20181021200032.1833-1-wsa+renesas@sang-engineering.com>
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH] MAINTAINERS: Remove Laurent Pinchart as Renesas pinctrl
+ maintainer
+Message-ID: <20181017081257.pjpj7r2x6dljpjty@verge.net.au>
+References: <20181016103339.4942-1-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181016103339.4942-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
+On Tue, Oct 16, 2018 at 01:33:39PM +0300, Laurent Pinchart wrote:
+> Geert Uytterhoeven has long taken over and I'm not involved anymore with
+> the Renesas pinctrl driver. Remove myself from the maintainers list.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Build tested only. buildbot is happy.
-
- drivers/pinctrl/intel/pinctrl-baytrail.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-index 6d1a43c0c251..a1c2548123a1 100644
---- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-+++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-@@ -1838,8 +1838,7 @@ static int byt_pinctrl_probe(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int byt_gpio_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct byt_gpio *vg = platform_get_drvdata(pdev);
-+	struct byt_gpio *vg = dev_get_drvdata(dev);
- 	int i;
- 
- 	for (i = 0; i < vg->soc_data->npins; i++) {
-@@ -1867,8 +1866,7 @@ static int byt_gpio_suspend(struct device *dev)
- 
- static int byt_gpio_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct byt_gpio *vg = platform_get_drvdata(pdev);
-+	struct byt_gpio *vg = dev_get_drvdata(dev);
- 	int i;
- 
- 	for (i = 0; i < vg->soc_data->npins; i++) {
--- 
-2.19.0
+> ---
+>  MAINTAINERS | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 69373eb328d4..f9d00cc05202 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11515,7 +11515,6 @@ F:	Documentation/devicetree/bindings/pinctrl/qcom,*.txt
+>  F:	drivers/pinctrl/qcom/
+>  
+>  PIN CONTROLLER - RENESAS
+> -M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>  M:	Geert Uytterhoeven <geert+renesas@glider.be>
+>  L:	linux-renesas-soc@vger.kernel.org
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git sh-pfc
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> 
