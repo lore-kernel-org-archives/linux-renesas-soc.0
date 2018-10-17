@@ -1,41 +1,108 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:16285 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727838AbeJLUCE (ORCPT
+Received: from mail1.bemta26.messagelabs.com ([85.158.142.116]:61029 "EHLO
+        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726868AbeJQSp5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Oct 2018 16:02:04 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v4 0/3] mmc: tmio_mmc: Add support for RZ/A2
-Date: Fri, 12 Oct 2018 07:29:21 -0500
-Message-Id: <20181012122924.5543-1-chris.brandt@renesas.com>
+        Wed, 17 Oct 2018 14:45:57 -0400
+From: Steve Twiss <stwiss.opensource@diasemi.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        "Kuninori Morimoto" <kuninori.morimoto.gx@renesas.com>,
+        Support Opensource <Support.Opensource@diasemi.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        "Linux PM list" <linux-pm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 3/3] thermal: da9062/61: Prevent hardware access
+ during system suspend
+Date: Wed, 17 Oct 2018 10:50:44 +0000
+Message-ID: <6ED8E3B22081A4459DAC7699F3695FB7021C4CD09D@SW-EX-MBX02.diasemi.com>
+References: <20181012072017.10765-1-geert+renesas@glider.be>
+ <20181012072017.10765-4-geert+renesas@glider.be>
+ <6ED8E3B22081A4459DAC7699F3695FB7021C4CCFCB@SW-EX-MBX02.diasemi.com>
+ <CAMuHMdWEzDenwgT8gkK7+_rEyjeVBCKrLaML5sMRkiZkzJN8jg@mail.gmail.com>
+In-Reply-To: <CAMuHMdWEzDenwgT8gkK7+_rEyjeVBCKrLaML5sMRkiZkzJN8jg@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Basically the same HW block that was used in R-Car Gen 3 is used in
-RZ/A2 (with only a couple small differences).
-
-Not sure if you're going to like the Kconfig change or not.
-
-Chris Brandt (3):
-  clk: renesas: r7s9210: Add SDHI clocks
-  mmc: renesas_sdhi_internal_dmac: Add R7S9210 support
-  dt-bindings: mmc: tmio_mmc: Document Renesas R7S9210
-
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt |  3 ++-
- drivers/clk/renesas/r7s9210-cpg-mssr.c             |  5 ++++
- drivers/mmc/host/Kconfig                           |  5 ++--
- drivers/mmc/host/renesas_sdhi_internal_dmac.c      | 28 ++++++++++++++++++++--
- 4 files changed, 36 insertions(+), 5 deletions(-)
-
--- 
-2.16.1
+SGkgR2VlcnQsDQoNCk9uIDE3IE9jdG9iZXIgMjAxOCAxMDoxNCBHZWVydCBVeXR0ZXJob2V2ZW4g
+d3JvdGU6DQoNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MiAzLzNdIHRoZXJtYWw6IGRhOTA2Mi82
+MTogUHJldmVudCBoYXJkd2FyZSBhY2Nlc3MgZHVyaW5nDQo+IHN5c3RlbSBzdXNwZW5kDQo+IA0K
+PiBIaSBTdGV2ZSwNCj4gDQo+IE9uIFdlZCwgT2N0IDE3LCAyMDE4IGF0IDEwOjU3IEFNIFN0ZXZl
+IFR3aXNzIHdyb3RlOg0KPiA+IE9uIDEyIE9jdG9iZXIgMjAxOCAwODoyMCBHZWVydCBVeXR0ZXJo
+b2V2ZW4gd3JvdGU6DQo+ID4gPiBTdWJqZWN0OiBbUEFUQ0ggdjIgMy8zXSB0aGVybWFsOiBkYTkw
+NjIvNjE6IFByZXZlbnQgaGFyZHdhcmUgYWNjZXNzIGR1cmluZw0KPiA+ID4gc3lzdGVtIHN1c3Bl
+bmQNCj4gPiA+DQo+ID4gPiBUaGUgd29ya3F1ZXVlIHVzZWQgZm9yIG1vbml0b3JpbmcgdGhlIGhh
+cmR3YXJlIG1heSBydW4gd2hpbGUgdGhlIGRldmljZQ0KPiA+ID4gaXMgYWxyZWFkeSBzdXNwZW5k
+ZWQuICBGaXggdGhpcyBieSB1c2luZyB0aGUgZnJlZXphYmxlIHN5c3RlbSB3b3JrcXVldWUNCj4g
+PiA+IGluc3RlYWQsIGNmci4gY29tbWl0IDUxZTIwZDBlM2E2MGNmNDYgKCJ0aGVybWFsOiBQcmV2
+ZW50IHBvbGxpbmcgZnJvbQ0KPiA+ID4gaGFwcGVuaW5nIGR1cmluZyBzeXN0ZW0gc3VzcGVuZCIp
+Lg0KPiA+DQo+ID4gTXkgdGhpbmtpbmcgd2FzOiAgdGhpcyBkZXZpY2UgaXMgYSBQTUlDIGFuZCBp
+dCB3aWxsIHBvd2VyIHRoZSBzeXN0ZW0uIFNvIHdoZW4NCj4gPiB0aGUgZGV2aWNlIGlzIHR1cm5l
+ZCBvZmYsIHRoZSBTL1cgd2lsbCBhbHNvIG5vdCBiZSBydW5uaW5nLg0KPiA+DQo+ID4gQWx0aG91
+Z2ggbXkgYXNzdW1wdGlvbiBvbmx5IHdvcmtzIGlmIHRoZSBQTUlDIGRldmljZSBpcyB0aGUgcHJp
+bWFyeSBzeXN0ZW0NCj4gPiBwb3dlciAtLSB0aGlzIGhhcyBhbHdheXMgYmVlbiB0aGUgY2FzZSBz
+byBmYXIuIEFuZCBhbHRob3VnaCBJIGRvbid0IGhhdmUgYW55DQo+ID4gZXZpZGVuY2UgdGhpcyB3
+aWxsIGNoYW5nZSwgaXQgbWF5IGJlY29tZSB1bnRydWUgaW4gdGhlIGZ1dHVyZSBvZiBjb3Vyc2Uu
+DQo+IA0KPiBUaGlzIGlzIG5vdCBhYm91dCBwb3dlcmluZyBvZmYgdGhlIHN5c3RlbSwgYnV0IGFi
+b3V0IHN1c3BlbmRpbmcgdGhlIHN5c3RlbSwNCj4gd2hpY2ggc3VzcGVuZHMgYWxsIGRyaXZlcnMu
+DQo+IA0KPiBUaGUgaXNzdWUgaXMgdGhhdCB0aGUgbm9ybWFsIHdvcmtxdWV1ZSBtYXkgcnVuIHdo
+aWxlIHRoZSBzeXN0ZW0gaXMgYmVpbmcNCj4gc3VzcGVuZGVkLiAgQWNjZXNzaW5nIHRoZSBEQTkw
+NjIgbWF5IG9yIG1heSBub3Qgd29yayBhdCB0aGF0IHRpbWUsDQo+IGRlcGVuZGluZyBvbiB0aGUg
+aTJjIGNvbnRyb2xsZXIgYmVpbmcgdXNhYmxlIG9yIG5vdC4NCg0KSSBzZWUgbm93LiBZZXMuDQoN
+Cj4gDQo+IER1ZSB0byB0aGUgREE5MDYyIGJlaW5nIGFuIGkyYyBkZXZpY2UsIEkgYWdyZWUgdGhp
+cyBpcyBkaWZmZXJlbnQgdGhhbg0KPiBmb3IgcmNhci10aGVybWFsLCB3aGVyZSB0aGUgcmNhci10
+aGVybWFsIGRldmljZSBpdHNlbGYgY2Fubm90IGJlDQo+IGFjY2Vzc2VkIGJlY2F1c2UgaXQgaXMg
+c3VzcGVuZGVkLg0KPiANCj4gPiA+IEZpeGVzOiA2MDg1NjdhYWMzMjA2YWU4ICgidGhlcm1hbDog
+ZGE5MDYyLzYxOiBUaGVybWFsIGp1bmN0aW9uIHRlbXBlcmF0dXJlDQo+ID4gPiBtb25pdG9yaW5n
+IGRyaXZlciIpDQo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0
+K3JlbmVzYXNAZ2xpZGVyLmJlPg0KPiA+ID4gLS0tDQo+ID4gPiBVbnRlc3RlZCBkdWUgdG8gbGFj
+ayBvZiBoYXJkd2FyZS4NCj4gPg0KPiA+IFNvLCBJIGhhdmUgbm90IGJlZW4gYWJsZSB0byBtYWtl
+IGFueSB0aW1lIHRvIHRlc3QgdGhpcyBwYXRjaCB5ZXQgLS0gYW5kIHdpdGgNCj4gPiBjdXJyZW50
+IHdvcmtsb2FkcyB0aGlzIG1pZ2h0IHRha2UgYSBiaXQgb2YgdGltZSBiZWZvcmUgSSBnZXQgdG8g
+aXQuDQo+IA0KPiBUaGUgbWFpbiB0aGluZyB0byB0ZXN0IGlzIHdoYXQgaGFwcGVucyB3aGVuIGRh
+OTA2Ml90aGVybWFsX3BvbGxfb24oKSBpcw0KPiBjYWxsZWQgd2hpbGUgdGhlIGkyYyBjb250cm9s
+bGVyIGlzIGFscmVhZHkgc3VzcGVuZGVkLCBhbmQgd2hldGhlciB0aGF0DQo+IGlzIG1pdGlnYXRl
+ZCBieSBteSBwYXRjaC4NCj4gTG9va2luZyBhdCB0aGUgZnVuY3Rpb24sIEkgZ3Vlc3MgaXQgc3Rh
+cnRzIHNwZXdpbmcgZXJyb3IgbWVzc2FnZXMsIGFuZA0KPiB3aWxsIGNvbnRpbnVlIHRyaWdnZXJp
+bmcgaXRzZWxmLCBieSB2aXJ0dWUgb2YgZW5hYmxpbmcgdGhlIGludGVycnVwdCBhZ2FpbiwNCj4g
+d2l0aG91dCBoYXZpbmcgYmVlbiBhYmxlIHRvIGRpc2FibGUgaXRzIGNhdXNlLg0KDQpXZSBoYXZl
+IGRlZmluaXRlbHkgc2VlbiBzaW1pbGFyIHRoaW5ncyBsaWtlIHRoaXMgYmVmb3JlLCBleGFjdGx5
+IGFzIHlvdSBkZXNjcmliZWQNCndoZW4gZ29pbmcgaW50byBzdXNwZW5kIGFuZCB0aGUgSTJDIGNv
+bnRyb2xsZXIgZGlzYXBwZWFycy4gDQpUaGVyZSB3aWxsIGJlIGEgd2luZG93IG9mIG9wcG9ydHVu
+aXR5IGZvciB0aGlzIHRvIGhhcHBlbi4gDQoNCkkgaGF2ZSBzdGlsbCBub3QgdGVzdGVkLCBidXQ6
+DQoNCkFja2VkLWJ5OiBTdGV2ZSBUd2lzcyA8c3R3aXNzLm9wZW5zb3VyY2VAZGlhc2VtaS5jb20+
+DQoNCkkgd2lsbCBtYWtlIHRpbWUgdG8gdGVzdCB5b3VyIGNoYW5nZXMuDQoNClJlZ2FyZHMsDQpT
+dGV2ZQ0KDQo+IA0KPiA+ID4gLS0tIGEvZHJpdmVycy90aGVybWFsL2RhOTA2Mi10aGVybWFsLmMN
+Cj4gPiA+ICsrKyBiL2RyaXZlcnMvdGhlcm1hbC9kYTkwNjItdGhlcm1hbC5jDQo+ID4gPiBAQCAt
+MTA2LDcgKzEwNiw3IEBAIHN0YXRpYyB2b2lkIGRhOTA2Ml90aGVybWFsX3BvbGxfb24oc3RydWN0
+DQo+IHdvcmtfc3RydWN0DQo+ID4gPiAqd29yaykNCj4gPiA+ICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgVEhFUk1BTF9FVkVOVF9VTlNQRUNJRklFRCk7DQo+ID4gPg0K
+PiA+ID4gICAgICAgICAgICAgICBkZWxheSA9IG1zZWNzX3RvX2ppZmZpZXModGhlcm1hbC0+em9u
+ZS0+cGFzc2l2ZV9kZWxheSk7DQo+ID4gPiAtICAgICAgICAgICAgIHNjaGVkdWxlX2RlbGF5ZWRf
+d29yaygmdGhlcm1hbC0+d29yaywgZGVsYXkpOw0KPiA+ID4gKyAgICAgICAgICAgICBxdWV1ZV9k
+ZWxheWVkX3dvcmsoc3lzdGVtX2ZyZWV6YWJsZV93cSwgJnRoZXJtYWwtPndvcmssDQo+ID4gPiBk
+ZWxheSk7DQo+ID4gPiAgICAgICAgICAgICAgIHJldHVybjsNCj4gPiA+ICAgICAgIH0NCj4gPiA+
+DQo+ID4gPiBAQCAtMTI1LDcgKzEyNSw3IEBAIHN0YXRpYyBpcnFyZXR1cm5fdCBkYTkwNjJfdGhl
+cm1hbF9pcnFfaGFuZGxlcihpbnQgaXJxLA0KPiA+ID4gdm9pZCAqZGF0YSkNCj4gPiA+ICAgICAg
+IHN0cnVjdCBkYTkwNjJfdGhlcm1hbCAqdGhlcm1hbCA9IGRhdGE7DQo+ID4gPg0KPiA+ID4gICAg
+ICAgZGlzYWJsZV9pcnFfbm9zeW5jKHRoZXJtYWwtPmlycSk7DQo+ID4gPiAtICAgICBzY2hlZHVs
+ZV9kZWxheWVkX3dvcmsoJnRoZXJtYWwtPndvcmssIDApOw0KPiA+ID4gKyAgICAgcXVldWVfZGVs
+YXllZF93b3JrKHN5c3RlbV9mcmVlemFibGVfd3EsICZ0aGVybWFsLT53b3JrLCAwKTsNCj4gPiA+
+DQo+ID4gPiAgICAgICByZXR1cm4gSVJRX0hBTkRMRUQ7DQo+ID4gPiAgfQ0KPiANCj4gR3J7b2V0
+amUsZWV0aW5nfXMsDQo+IA0KPiAgICAgICAgICAgICAgICAgICAgICAgICBHZWVydA0KPiANCj4g
+LS0NCj4gR2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQg
+aWEzMiAtLSBnZWVydEBsaW51eC1tNjhrLm9yZw0KPiANCj4gSW4gcGVyc29uYWwgY29udmVyc2F0
+aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0K
+PiB3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIi
+IG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgLS0gTGludXMgVG9ydmFsZHMNCg==
