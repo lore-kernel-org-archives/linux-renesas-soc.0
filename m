@@ -1,50 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45716 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726209AbeJVEPr (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45959 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726636AbeJQRsU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:15:47 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Rob Clark <robdclark@gmail.com>,
-        David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Subject: [PATCH 5/6] gpu: drm: msm: msm_drv: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:10 +0200
-Message-Id: <20181021200012.1583-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200012.1583-1-wsa+renesas@sang-engineering.com>
-References: <20181021200012.1583-1-wsa+renesas@sang-engineering.com>
+        Wed, 17 Oct 2018 13:48:20 -0400
+Date: Wed, 17 Oct 2018 11:53:20 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH/RFT 0/2] thermal: add suport for R8A77990
+Message-ID: <20181017095315.lqgcxjjrzr3qck2i@verge.net.au>
+References: <1539612719-9650-1-git-send-email-ykaneko0929@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1539612719-9650-1-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
+On Mon, Oct 15, 2018 at 11:11:57PM +0900, Yoshihiro Kaneko wrote:
+> This series adds thermal support for R-Car E3 (R8A77990).
+> 
+> This series is based on the next branch of Eduardo Valentin's linux-soc-thermal
+> tree.
+> 
+> Yoshihiro Kaneko (2):
+>   dt-bindings: thermal: rcar-thermal: add R8A77990 support
+>   thermal: rcar_thermal: add R8A77990 support
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Tested in conjunction with "[PATCH/RFT] arm64: dts: renesas: r8a77990: add
+thermal device support".
 
-Build tested only. buildbot is happy.
+# X=1000000; while [ "$X" -gt 0 ]; do X=$(($X -1 )); done; cat
+# /sys/devices/virtual/thermal/thermal_zone0/temp; sleep 1; cat
+# /sys/devices/virtual/thermal/thermal_zone0/temp
+30000
+25000
 
- drivers/gpu/drm/msm/msm_drv.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
-index 4904d0d41409..1ca3a3445b67 100644
---- a/drivers/gpu/drm/msm/msm_drv.c
-+++ b/drivers/gpu/drm/msm/msm_drv.c
-@@ -265,8 +265,7 @@ static int vblank_ctrl_queue_work(struct msm_drm_private *priv,
- 
- static int msm_drm_uninit(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct drm_device *ddev = platform_get_drvdata(pdev);
-+	struct drm_device *ddev = dev_get_drvdata(dev);
- 	struct msm_drm_private *priv = ddev->dev_private;
- 	struct msm_kms *kms = priv->kms;
- 	struct msm_mdss *mdss = priv->mdss;
--- 
-2.19.0
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Tested-by: Simon Horman <horms+renesas@verge.net.au>
+
+> 
+>  Documentation/devicetree/bindings/thermal/rcar-thermal.txt | 5 +++--
+>  drivers/thermal/rcar_thermal.c                             | 4 ++++
+>  2 files changed, 7 insertions(+), 2 deletions(-)
+> 
+> -- 
+> 1.9.1
+> 
