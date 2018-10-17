@@ -1,99 +1,296 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:34473 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725892AbeJIP5s (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46221 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726691AbeJQR6d (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Oct 2018 11:57:48 -0400
-Received: by mail-vs1-f65.google.com with SMTP id v12-v6so726118vsc.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 09 Oct 2018 01:41:59 -0700 (PDT)
+        Wed, 17 Oct 2018 13:58:33 -0400
+Date: Wed, 17 Oct 2018 12:03:32 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Arnd Bergmann <arnd@arndb.de>, Magnus Damm <magnus.damm@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/2] [RFC] ARM: shmobile: Move SoC Kconfig symbols to
+ drivers/soc/renesas/
+Message-ID: <20181017100331.vaxlq4lfxojyh3f3@verge.net.au>
+References: <20181011085508.5234-1-geert+renesas@glider.be>
+ <20181011085508.5234-3-geert+renesas@glider.be>
 MIME-Version: 1.0
-References: <1562156.yf6H1RoyJV@avalon>
-In-Reply-To: <1562156.yf6H1RoyJV@avalon>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 9 Oct 2018 10:41:46 +0200
-Message-ID: <CAMuHMdXvz+UWZ_3QfOHuuXEBjq0_nmsxxhJiiTE=PWX2qMPODQ@mail.gmail.com>
-Subject: Re: [GIT PULL FOR renesas-drivers] D3 and E3 HDMI output support
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181011085508.5234-3-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+On Thu, Oct 11, 2018 at 10:55:08AM +0200, Geert Uytterhoeven wrote:
+> For consistency with arm64, where vendors have a single Kconfig symbol
+> in arch/arm64/Kconfig.platforms.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Note that drivers/clk/ is included before drivers/soc/.  Hence when
+> COMPILE_TEST=y, questions will be asked about clock drivers before they
+> can be auto-selected by SoC support.
+> 
+> Question: Should the family-specific Kconfig symbols be moved, too?
+> 	  Not much would be left in arch/arm/mach-shmobile/Kconfig,
+> 	  though.
 
-On Sat, Sep 15, 2018 at 4:44 PM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> The following changes since commit 6e1637c91742570ff873433ed27227933b792af4:
->
->   drm: rcar-du: Remove packed VYUY support (2018-09-15 17:28:34 +0300)
->
-> are available in the Git repository at:
->
->   git://linuxtv.org/pinchartl/media.git for/renesas-drivers
->
-> for you to fetch changes up to d7e0cb47e1d06d3033812281fe98528d1713ec16:
->
->   Merge tag 'drm-du-dt-lvds-pll-v1-20180915' into for/renesas-drivers
-> (2018-09-15 17:38:05 +0300)
->
-> Please note that the for/renesas-drivers branch is a merge of a code and a DT
-> branch (available under the drm-du-lvds-pll-v1-20180915 and drm-du-dt-lvds-
-> pll-v1-20180915 tags respectively). Those two branches have different bases
-> (drm-next from Dave's tree and devel from Simon's tree respectively), I've
-> thus edited the diffstat below manually.
->
-> ----------------------------------------------------------------
-> Kieran Bingham (1):
->       arm64: dts: renesas: r8a77995: Add LVDS support
->
-> Laurent Pinchart (14):
->       arm64: dts: renesas: r8a77990: Add display output support
->       arm64: dts: renesas: r8a77990: ebisu: Enable VGA and HDMI outputs
->       pinctrl: sh-pfc: r8a77990: Add DU pins, groups and function
->       dt-bindings: display: renesas: du: Document r8a77990 bindings
->       dt-bindings: display: renesas: lvds: Document r8a77990 bindings
->       dt-bindings: display: renesas: lvds: Add EXTAL and DU_DOTCLKIN clocks
->       drm: bridge: thc63: Restrict modes based on hardware operating frequency
->       drm: rcar-du: lvds: D3/E3 support
->       drm: rcar-du: Perform the initial CRTC setup from rcar_du_crtc_get()
->       drm: rcar-du: Use LVDS PLL clock as dot clock when possible
->       drm: rcar-du: Enable configurable DPAD0 routing on Gen3
->       drm: rcar-du: Cache DSYSR value to ensure known initial value
->       drm: rcar-du: Don't use TV sync mode when not supported by the hardware
->       Merge tag 'drm-du-dt-lvds-pll-v1-20180915' into for/renesas-drivers
->
-> Ulrich Hecht (2):
->       arm64: dts: renesas: r8a77995: draak: Enable HDMI display output
->       drm: rcar-du: Add r8a77990 and r8a77995 device support
->
->  Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt |   13
->  Documentation/devicetree/bindings/display/renesas,du.txt          |    2
->  arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts                    |  166 ++++
->  arch/arm64/boot/dts/renesas/r8a77990.dtsi                         |  167 ++++
->  arch/arm64/boot/dts/renesas/r8a77995-draak.dts                    |   98 ++
->  arch/arm64/boot/dts/renesas/r8a77995.dtsi                         |   56 +
->  drivers/gpu/drm/bridge/thc63lvd1024.c                             |   18
->  drivers/gpu/drm/rcar-du/rcar_du_crtc.c                            |  136 ++-
->  drivers/gpu/drm/rcar-du/rcar_du_crtc.h                            |    5
->  drivers/gpu/drm/rcar-du/rcar_du_drv.c                             |   63 +
->  drivers/gpu/drm/rcar-du/rcar_du_drv.h                             |    3
->  drivers/gpu/drm/rcar-du/rcar_du_group.c                           |   88 +-
->  drivers/gpu/drm/rcar-du/rcar_du_kms.c                             |   12
->  drivers/gpu/drm/rcar-du/rcar_lvds.c                               |  355 +++-
->  drivers/gpu/drm/rcar-du/rcar_lvds_regs.h                          |   43 +
->  drivers/pinctrl/sh-pfc/pfc-r8a77990.c                             |  110 +++
->  16 files changed, 1187 insertions(+), 148 deletions(-)
+I have no strong opinion either way. But I lean slightly towards
+moving the family-specific symbols along with the SoC-specific symbols.
 
-Dropped, as all (or a newer version) of this seems to have found its way to\
-maintainers' for-next branches.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> ---
+>  arch/arm/mach-shmobile/Kconfig | 101 ---------------------------
+>  drivers/soc/renesas/Kconfig    | 120 ++++++++++++++++++++++++++++++---
+>  2 files changed, 112 insertions(+), 109 deletions(-)
+> 
+> diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
+> index b100c26a858f9015..50267ad76f990f11 100644
+> --- a/arch/arm/mach-shmobile/Kconfig
+> +++ b/arch/arm/mach-shmobile/Kconfig
+> @@ -36,104 +36,3 @@ menuconfig ARCH_RENESAS
+>  	select PINCTRL
+>  	select SOC_BUS
+>  	select ZONE_DMA if ARM_LPAE
+> -
+> -if ARCH_RENESAS
+> -
+> -#comment "Renesas ARM SoCs System Type"
+> -
+> -config ARCH_EMEV2
+> -	bool "Emma Mobile EV2"
+> -	select SYS_SUPPORTS_EM_STI
+> -
+> -config ARCH_R7S72100
+> -	bool "RZ/A1H (R7S72100)"
+> -	select PM
+> -	select PM_GENERIC_DOMAINS
+> -	select SYS_SUPPORTS_SH_MTU2
+> -	select RENESAS_OSTM
+> -
+> -config ARCH_R7S9210
+> -	bool "RZ/A2 (R7S9210)"
+> -	select PM
+> -	select PM_GENERIC_DOMAINS
+> -	select RENESAS_OSTM
+> -
+> -config ARCH_R8A73A4
+> -	bool "R-Mobile APE6 (R8A73A40)"
+> -	select ARCH_RMOBILE
+> -	select ARM_ERRATA_798181 if SMP
+> -	select HAVE_ARM_ARCH_TIMER
+> -	select RENESAS_IRQC
+> -
+> -config ARCH_R8A7740
+> -	bool "R-Mobile A1 (R8A77400)"
+> -	select ARCH_RMOBILE
+> -	select RENESAS_INTC_IRQPIN
+> -
+> -config ARCH_R8A7743
+> -	bool "RZ/G1M (R8A77430)"
+> -	select ARCH_RCAR_GEN2
+> -	select ARM_ERRATA_798181 if SMP
+> -
+> -config ARCH_R8A7744
+> -	bool "RZ/G1N (R8A77440)"
+> -	select ARCH_RCAR_GEN2
+> -	select ARM_ERRATA_798181 if SMP
+> -
+> -config ARCH_R8A7745
+> -	bool "RZ/G1E (R8A77450)"
+> -	select ARCH_RCAR_GEN2
+> -
+> -config ARCH_R8A77470
+> -	bool "RZ/G1C (R8A77470)"
+> -	select ARCH_RCAR_GEN2
+> -
+> -config ARCH_R8A7778
+> -	bool "R-Car M1A (R8A77781)"
+> -	select ARCH_RCAR_GEN1
+> -
+> -config ARCH_R8A7779
+> -	bool "R-Car H1 (R8A77790)"
+> -	select ARCH_RCAR_GEN1
+> -
+> -config ARCH_R8A7790
+> -	bool "R-Car H2 (R8A77900)"
+> -	select ARCH_RCAR_GEN2
+> -	select ARM_ERRATA_798181 if SMP
+> -	select I2C
+> -
+> -config ARCH_R8A7791
+> -	bool "R-Car M2-W (R8A77910)"
+> -	select ARCH_RCAR_GEN2
+> -	select ARM_ERRATA_798181 if SMP
+> -	select I2C
+> -
+> -config ARCH_R8A7792
+> -	bool "R-Car V2H (R8A77920)"
+> -	select ARCH_RCAR_GEN2
+> -	select ARM_ERRATA_798181 if SMP
+> -
+> -config ARCH_R8A7793
+> -	bool "R-Car M2-N (R8A7793)"
+> -	select ARCH_RCAR_GEN2
+> -	select ARM_ERRATA_798181 if SMP
+> -	select I2C
+> -
+> -config ARCH_R8A7794
+> -	bool "R-Car E2 (R8A77940)"
+> -	select ARCH_RCAR_GEN2
+> -
+> -config ARCH_R9A06G032
+> -	bool "RZ/N1D (R9A06G032)"
+> -	select ARCH_RZN1
+> -
+> -config ARCH_RZN1
+> -	bool "RZ/N1 (R9A06G0xx) Family"
+> -	select ARM_AMBA
+> -	select CPU_V7
+> -
+> -config ARCH_SH73A0
+> -	bool "SH-Mobile AG5 (R8A73A00)"
+> -	select ARCH_RMOBILE
+> -	select RENESAS_INTC_IRQPIN
+> -endif
+> diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+> index 0ab62024fd20be56..5089c65b544909c2 100644
+> --- a/drivers/soc/renesas/Kconfig
+> +++ b/drivers/soc/renesas/Kconfig
+> @@ -4,17 +4,121 @@ config SOC_RENESAS
+>  	default y if ARCH_RENESAS
+>  	select SOC_BUS
+>  	select RST_RCAR if ARCH_RCAR_GEN1 || ARCH_RCAR_GEN2
+> -	select SYSC_R8A7743 if ARCH_R8A7743 || ARCH_R8A7744
+> -	select SYSC_R8A7745 if ARCH_R8A7745
+> -	select SYSC_R8A77470 if ARCH_R8A77470
+> -	select SYSC_R8A7779 if ARCH_R8A7779
+> -	select SYSC_R8A7790 if ARCH_R8A7790
+> -	select SYSC_R8A7791 if ARCH_R8A7791 || ARCH_R8A7793
+> -	select SYSC_R8A7792 if ARCH_R8A7792
+> -	select SYSC_R8A7794 if ARCH_R8A7794
+>  
+>  if SOC_RENESAS
+>  
+> +if ARM
+> +
+> +#comment "Renesas ARM SoCs System Type"
+> +
+> +config ARCH_EMEV2
+> +	bool "Emma Mobile EV2"
+> +	select SYS_SUPPORTS_EM_STI
+> +
+> +config ARCH_R7S72100
+> +	bool "RZ/A1H (R7S72100)"
+> +	select PM
+> +	select PM_GENERIC_DOMAINS
+> +	select SYS_SUPPORTS_SH_MTU2
+> +	select RENESAS_OSTM
+> +
+> +config ARCH_R7S9210
+> +	bool "RZ/A2 (R7S9210)"
+> +	select PM
+> +	select PM_GENERIC_DOMAINS
+> +	select RENESAS_OSTM
+> +
+> +config ARCH_R8A73A4
+> +	bool "R-Mobile APE6 (R8A73A40)"
+> +	select ARCH_RMOBILE
+> +	select ARM_ERRATA_798181 if SMP
+> +	select HAVE_ARM_ARCH_TIMER
+> +	select RENESAS_IRQC
+> +
+> +config ARCH_R8A7740
+> +	bool "R-Mobile A1 (R8A77400)"
+> +	select ARCH_RMOBILE
+> +	select RENESAS_INTC_IRQPIN
+> +
+> +config ARCH_R8A7743
+> +	bool "RZ/G1M (R8A77430)"
+> +	select ARCH_RCAR_GEN2
+> +	select ARM_ERRATA_798181 if SMP
+> +	select SYSC_R8A7743
+> +
+> +config ARCH_R8A7744
+> +	bool "RZ/G1N (R8A77440)"
+> +	select ARCH_RCAR_GEN2
+> +	select ARM_ERRATA_798181 if SMP
+> +	select SYSC_R8A7743
+> +
+> +config ARCH_R8A7745
+> +	bool "RZ/G1E (R8A77450)"
+> +	select ARCH_RCAR_GEN2
+> +	select SYSC_R8A7745
+> +
+> +config ARCH_R8A77470
+> +	bool "RZ/G1C (R8A77470)"
+> +	select ARCH_RCAR_GEN2
+> +	select SYSC_R8A77470
+> +
+> +config ARCH_R8A7778
+> +	bool "R-Car M1A (R8A77781)"
+> +	select ARCH_RCAR_GEN1
+> +
+> +config ARCH_R8A7779
+> +	bool "R-Car H1 (R8A77790)"
+> +	select ARCH_RCAR_GEN1
+> +	select SYSC_R8A7779
+> +
+> +config ARCH_R8A7790
+> +	bool "R-Car H2 (R8A77900)"
+> +	select ARCH_RCAR_GEN2
+> +	select ARM_ERRATA_798181 if SMP
+> +	select I2C
+> +	select SYSC_R8A7790
+> +
+> +config ARCH_R8A7791
+> +	bool "R-Car M2-W (R8A77910)"
+> +	select ARCH_RCAR_GEN2
+> +	select ARM_ERRATA_798181 if SMP
+> +	select I2C
+> +	select SYSC_R8A7791
+> +
+> +config ARCH_R8A7792
+> +	bool "R-Car V2H (R8A77920)"
+> +	select ARCH_RCAR_GEN2
+> +	select ARM_ERRATA_798181 if SMP
+> +	select SYSC_R8A7792
+> +
+> +config ARCH_R8A7793
+> +	bool "R-Car M2-N (R8A7793)"
+> +	select ARCH_RCAR_GEN2
+> +	select ARM_ERRATA_798181 if SMP
+> +	select I2C
+> +	select SYSC_R8A7791
+> +
+> +config ARCH_R8A7794
+> +	bool "R-Car E2 (R8A77940)"
+> +	select ARCH_RCAR_GEN2
+> +	select SYSC_R8A7794
+> +
+> +config ARCH_R9A06G032
+> +	bool "RZ/N1D (R9A06G032)"
+> +	select ARCH_RZN1
+> +
+> +config ARCH_RZN1
+> +	bool "RZ/N1 (R9A06G0xx) Family"
+> +	select ARM_AMBA
+> +	select CPU_V7
+> +
+> +config ARCH_SH73A0
+> +	bool "SH-Mobile AG5 (R8A73A00)"
+> +	select ARCH_RMOBILE
+> +	select RENESAS_INTC_IRQPIN
+> +
+> +endif # ARM
+> +
+>  if ARM64
+>  
+>  config ARCH_R8A774A1
+> -- 
+> 2.17.1
+> 
