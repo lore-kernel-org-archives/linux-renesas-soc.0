@@ -1,55 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:46711 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728104AbeJSCer (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:44986 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726994AbeJQRIj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:34:47 -0400
-Received: by mail-lf1-f67.google.com with SMTP id p143-v6so12291916lfp.13
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Oct 2018 11:32:30 -0700 (PDT)
-Subject: Re: [PATCH v2] arm64: dts: renesas: r8a779{7|8}0: add TMU support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>
-References: <fb4eb097-40aa-82df-68c7-9b727c858a8b@cogentembedded.com>
- <2abe82e7-c7b2-7696-402d-1140d2ed4006@cogentembedded.com>
-Message-ID: <bad4f6a1-9f7b-dc17-7803-b6478b09c976@cogentembedded.com>
-Date: Thu, 18 Oct 2018 21:32:27 +0300
+        Wed, 17 Oct 2018 13:08:39 -0400
+Date: Wed, 17 Oct 2018 11:13:49 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        iommu@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org,
+        Hai Nguyen Pham <hai.pham.ud@renesas.com>,
+        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Subject: Re: [PATCH] iommu/ipmmu-vmsa: Hook up r8a77990 DT matching code
+Message-ID: <20181017091348.gg4rifioitndu3am@verge.net.au>
+References: <20181015095557.25135-1-horms+renesas@verge.net.au>
+ <c90c9a8b-d101-280f-7ee6-67e6cc473e64@cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <2abe82e7-c7b2-7696-402d-1140d2ed4006@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c90c9a8b-d101-280f-7ee6-67e6cc473e64@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+On Mon, Oct 15, 2018 at 01:56:18PM +0300, Sergei Shtylyov wrote:
+> Hello!
+> 
+> On 10/15/2018 12:55 PM, Simon Horman wrote:
+> 
+> > From: Hai Nguyen Pham <hai.pham.ud@renesas.com>
+> > 
+> > Support the r8a77990 IPMMU and update IPMMU_OF_DECLARE to hook up
+> 
+>    That macro is gone, you need to update the description.
 
-On 09/24/2018 11:13 PM, Sergei Shtylyov wrote:
+Thanks, v2 sent.
 
-> Describe TMUs in the R8A779{7|8}0 device trees.
 > 
-> Based on the original (and large) patches by Vladimir Barinov.
+> > the updated compat string.
+> > 
+> > Signed-off-by: Hai Nguyen Pham <hai.pham.ud@renesas.com>
+> > Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> > [simon: rebased; dropped no longer required IOMMU_OF_DECLARE hunk]
 > 
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>    Yet you didn't drop it from the description. :-)
 > 
-> ---
-> This  patch is against the 'renesas-devel-20180924-v4.19-rc5' branch of
-> Simon Horman's 'renesas.git' repo.
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> [...]
 > 
-> Changes in version 2:
-> - fixed up the "compatible" prop in the R8A77970 TMU3/4 node;
-> - removed the 4th interrupt from the R8A77970 TMU4 node and the R8A77980 TMU1
->   node.
+> MBR, Sergei
 > 
->  arch/arm64/boot/dts/renesas/r8a77970.dtsi |   65 ++++++++++++++++++++++++++++++
->  arch/arm64/boot/dts/renesas/r8a77980.dtsi |   65 ++++++++++++++++++++++++++++++
->  2 files changed, 130 insertions(+)
-
-   I thought we had a consensus about TMU? Why this patch is marked as superseded
-in the patchwork?
-
-MBR, Sergei
