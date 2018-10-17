@@ -1,49 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:44856 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726974AbeJQU1g (ORCPT
+Received: from sauhun.de ([88.99.104.3]:36766 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726961AbeJQURK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Oct 2018 16:27:36 -0400
-MIME-Version: 1.0
-References: <TY1PR01MB1770A54E9823E9C6D0FC6986C0FD0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
- <20181017103208.GA1589@kunai> <8db1b1a0-6669-0d4e-7511-6fb44e309a4c@axentia.se>
- <20181017121607.GB3813@kunai> <20181017122141.GC3813@kunai>
-In-Reply-To: <20181017122141.GC3813@kunai>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 17 Oct 2018 14:31:54 +0200
-Message-ID: <CAMuHMdWQnNArCYOiq_BQ101SDL1iQODFz0=k2PstvhYeqdajKw@mail.gmail.com>
-Subject: Re: Delay between stop condition and start condition
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Peter Rosin <peda@axentia.se>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wed, 17 Oct 2018 16:17:10 -0400
+Date: Wed, 17 Oct 2018 14:21:41 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Peter Rosin <peda@axentia.se>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Subject: Re: Delay between stop condition and start condition
+Message-ID: <20181017122141.GC3813@kunai>
+References: <TY1PR01MB1770A54E9823E9C6D0FC6986C0FD0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+ <20181017103208.GA1589@kunai>
+ <8db1b1a0-6669-0d4e-7511-6fb44e309a4c@axentia.se>
+ <20181017121607.GB3813@kunai>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="zCKi3GIZzVBPywwA"
+Content-Disposition: inline
+In-Reply-To: <20181017121607.GB3813@kunai>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
 
-On Wed, Oct 17, 2018 at 2:21 PM Wolfram Sang <wsa@the-dreams.de> wrote:
-> > be fixed in its driver. It probably could be a generic driver, or?
->
-> Wishful thinking. Setting the passthrough mode is probably not default,
-> so it is device specific.
+--zCKi3GIZzVBPywwA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-According to the block diagram in
-https://www.semiconductorstore.com/pdf/newsite/siliconimage/SiI9022a_pb.pdf,
-it has "Registers & Config Logic", and a separate internal "I²C Master".
 
-Gr{oetje,eeting}s,
+> be fixed in its driver. It probably could be a generic driver, or?
 
-                        Geert
+Wishful thinking. Setting the passthrough mode is probably not default,
+so it is device specific.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--zCKi3GIZzVBPywwA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvHKVUACgkQFA3kzBSg
+Kbbiyg/9GDdxaIfcWf6aepa6F1qjvXN0wfCRUGEg97sd/L2gUdBNN/JE+5/raznU
+05dZjpVkJHOl1mZBKs5xl8q0WAVkg1OEaDXKucV6BGKEGdIIuT12nziJ/860qSHv
+nQ3v4pCTpZCDu6ZV64rbEytaNKxAE2pWMIwmAh+kishrLPjotzC1bjH5U1U451Uc
+ZrdC0ojEHLkM1h2dv+IvPv8LEbwVlCiR5v+5j5e52Aq/MVh8duOpy7qiLYyQR20I
+NGpdhkvCF7xN6llbCp9ZI7vQumk89E+bXWsWgDizbHMhkWJRlkC1Z/Z2mCBRmxGm
+NcFjbAddF1onbNqiJ8m2kUHDbMmNt+xE06CEWQ6FTqtmHx2jfm7dXzFdVUFOgJE8
+QtpLMy3aiCIEoAuriGZ526jm2gnkIW3OGoFJIteaEO1aLY62rQrRSyrWQHljuEUg
+QKLFskEOwqV2OoxNTl7N46u5MrRo8Ab8+bwuq/LIlD0g+f3pnMXBrhqfCOD1Nyvu
+S/Y35ndiZILXT6rJSaDIfwtk0gH5ymNy4kZt0IwToQrnGJkKgP48/ueLuBbebSMR
+aDFz8vpPY1uBDtsZFbWnTef/gmIVwvAVmMfinyqZBRDMcLBHDTIscDoJg/m+ocg7
+Al4CgFrOh2/vfPUDqMza454ERJyMJlH4uX7S1YKbFtCbSCDy5Q4=
+=CcQS
+-----END PGP SIGNATURE-----
+
+--zCKi3GIZzVBPywwA--
