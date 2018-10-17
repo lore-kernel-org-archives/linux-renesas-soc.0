@@ -1,52 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42673 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728714AbeJ1BP4 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46085 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726904AbeJQRx3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 27 Oct 2018 21:15:56 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-mmc@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/2] arm64: dts: renesas: salvator: Switch eMMC bus to 1V8
-Date: Sat, 27 Oct 2018 18:34:10 +0200
-Message-Id: <20181027163410.7417-2-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20181027163410.7417-1-marek.vasut+renesas@gmail.com>
-References: <20181027163410.7417-1-marek.vasut+renesas@gmail.com>
+        Wed, 17 Oct 2018 13:53:29 -0400
+Date: Wed, 17 Oct 2018 11:58:29 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH/RFT] arm64: dts: renesas: r8a77990: add thermal device
+ support
+Message-ID: <20181017095828.lgp6e7q4ag4meybs@verge.net.au>
+References: <1539612746-9711-1-git-send-email-ykaneko0929@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1539612746-9711-1-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The eMMC card has two supplies, VCC and VCCQ. The VCC supplies the NAND
-array and the VCCQ supplies the bus. On this particular board, the VCC is
-connected to 3.3V rail, while the VCCQ is connected to 1.8V rail. Adjust
-the pinmux to match the bus, which is always operating in 1.8V mode.
+On Mon, Oct 15, 2018 at 11:12:26PM +0900, Yoshihiro Kaneko wrote:
+> This patch adds the thermal device node and the thermal-zone for
+> the R8A77990 SoC.
+> 
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Thanks,
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org
----
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This looks fine to me but I will wait to see if there are other reviews
+before applying.
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index 7d3d866a0063..d9a309b28fcf 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -602,7 +602,7 @@
- 	sdhi2_pins: sd2 {
- 		groups = "sdhi2_data8", "sdhi2_ctrl", "sdhi2_ds";
- 		function = "sdhi2";
--		power-source = <3300>;
-+		power-source = <1800>;
- 	};
- 
- 	sdhi2_pins_uhs: sd2_uhs {
--- 
-2.17.1
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+
+Also tested on Ebisu/E3 in conjunction with "[PATCH/RFT 0/2] thermal: add
+suport for R8A77990"
+
+# X=1000000; while [ "$X" -gt 0 ]; do X=$(($X -1 )); done; cat
+# /sys/devices/virtual/thermal/thermal_zone0/temp; sleep 1; cat
+# /sys/devices/virtual/thermal/thermal_zone0/temp
+30000
+25000
+
+Tested-by: Simon Horman <horms+renesas@verge.net.au>
