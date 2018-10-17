@@ -1,76 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-eopbgr80091.outbound.protection.outlook.com ([40.107.8.91]:24640
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726954AbeJQTjt (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:24717 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726936AbeJQTWt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Oct 2018 15:39:49 -0400
-From: Peter Rosin <peda@axentia.se>
-To: Wolfram Sang <wsa@the-dreams.de>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+        Wed, 17 Oct 2018 15:22:49 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Wolfram Sang <wsa@the-dreams.de>
 CC: "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: Re: Delay between stop condition and start condition
-Date: Wed, 17 Oct 2018 11:44:23 +0000
-Message-ID: <8db1b1a0-6669-0d4e-7511-6fb44e309a4c@axentia.se>
+        Biju Das <biju.das@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <simon@horms.net>
+Subject: RE: Delay between stop condition and start condition
+Date: Wed, 17 Oct 2018 11:27:23 +0000
+Message-ID: <TY1PR01MB1770B9FD09815A344C330FB6C0FF0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 References: <TY1PR01MB1770A54E9823E9C6D0FC6986C0FD0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
  <20181017103208.GA1589@kunai>
 In-Reply-To: <20181017103208.GA1589@kunai>
 Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E438776B6BB7F54E8F86EA42A770797D@eurprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-T24gMjAxOC0xMC0xNyAxMjozMiwgV29sZnJhbSBTYW5nIHdyb3RlOg0KPiBIaSBGYWJyaXppbywg
-ZXZlcnlvbmUsDQo+IA0KPiBUaGFua3MgZm9yIGJyaW5naW5nIHRoaXMgdXAhDQo+IA0KPj4gV2hh
-dCdzIHRoZSBiZXN0IHdheSB0byBhZGRyZXNzIHRoaXM/IEkgY291bGQgcHVsbCBpbiB0aGUgSERN
-SQ0KPj4gdHJhbnNtaXR0ZXIgZHJpdmVyIHRoZSBjb2RlIHRvIHJlYWQgdGhlIEVESUQgYmFjayBm
-cm9tIHRoZSBtb25pdG9yIHNvDQo+PiB0aGF0IEkgY2FuIGZpdCBkZXZpY2Ugc3BlY2lmaWMgZGVs
-YXlzIHdpdGhvdXQgaW1wYWN0aW5nIHRoZSBnZW5lcmljDQo+PiBpbXBsZW1lbnRhdGlvbiBvZiB0
-aGUgRURJRCByZWFkYmFjaywgYnV0IHRoYXQgd291bGQgcmVwbGljYXRlIHNvbWUNCj4+IGNvZGUg
-YW5kIHRoZSBkcml2ZXIgd291bGQgbm90IGJlbmVmaXQgZnJvbSBmaXhlcyBtYWRlIHRvIHRoZSBn
-ZW5lcmljDQo+PiBpbXBsZW1lbnRhdGlvbi4gSSBjb3VsZCBjaGFuZ2UgdGhlIFJDYXIgSTJDIGRy
-aXZlciBpbiBvcmRlciB0byBmaXQgYQ0KPj4gbmV3IERUIHBhcmFtZXRlciAoaTJjLWRlbGF5LWFm
-dGVyLXN0b3AtdXM/KSwgYW5kIHRoZSBkcml2ZXIgd291bGQgcHV0DQo+PiBpbiB0aGUgZGVzaXJl
-ZCBkZWxheSBhZnRlciBldmVyeSBzdG9wIGNvbmRpdGlvbiwgYnV0IGlzbid0IHRoaXMNCj4+IHBh
-cmFtZXRlciBzb21ldGhpbmcgZXZlcnkgSTJDIGNvbnRyb2xsZXIgd291bGQgYmVuZWZpdCBmcm9t
-IChub3cgdGhhdA0KPj4gd2Uga25vdyB3ZSBoYXZlIGEgdXNlIGNhc2UgZm9yIGl0KT8gV2hhdCBh
-cmUgeW91ciB0aG91Z2h0cyBhbmQNCj4+IHJlY29tbWVuZGF0aW9ucz8NCj4gDQo+IE5vIG5lZWQg
-Zm9yIGEgcHJvcGVydHkuIFRoZSBJMkMgc3RhbmRhcmQgaGFzIGEgY2xlYXJseSBkZWZpbmVkIHZh
-bHVlIGZvcg0KPiB0aGF0IHdoaWNoIGlzIG5hbWVkICd0YnVmJyBhbmQgaXMgaW4gZ2VuZXJhbCB0
-aGUgc2FtZSB2YWx1ZSBhcyB0aGUNCj4gbWluaW1hbCBsb3cgcGVyaW9kIG9mIHRoZSBTQ0wgc2ln
-bmFsLiBTbywgaXQgbXVzdCBiZSBoYW5kbGVkIGF0IHRoZSBJMkMNCj4gYnVzIG1hc3RlciBsZXZl
-bC4NCj4gDQo+IEN1cnJlbnRseSwgd2UgaGF2ZSBubyBydWxlIGF0IHdoYXQgdGltZSBkcml2ZXJz
-IGhhdmUgdG8gbGVhdmUgdGhlDQo+IG1hc3Rlcl94ZmVyKCkgY2FsbGJhY2suIFNvbWUgZXhpdCB3
-aGVuIFNUT1AgaXMgc3RpbGwgcHJvY2Vzc2VkLCBzb21lDQo+IHdoZW4gU1RPUCBoYXMgYmVlbiBz
-ZW50LiBJIGFtIG5vdCBhd2FyZSBvZiBhIGRyaXZlciByZXNwZWN0aW5nIHRidWYuIEl0DQo+IHNl
-ZW1zIHdvcnRoIHJlY29tbWVuZGluZyB0byByZXNwZWN0IHRidWYuDQo+IA0KPiBJIHRoaW5rIHRo
-aXMgbmVlZHMgdG8gYmUgY29tcGxldGVseSBoYW5kbGVkIGluIHRoZSBidXMgbWFzdGVyIGRyaXZl
-ci4gV2UNCj4gaGF2ZSBVU0ItdG8tSTJDIGJyaWRnZXMgd2hpY2ggd2UgY2FuIGNvbnRyb2wgb25s
-eSBoaWdoIGxldmVsIGFuZCB0aGUNCj4gZmlybXdhcmUgb2YgdGhvc2UgbmVlZCB0byByZXNwZWN0
-IHRidWYuIEkgZG9uJ3Qgc2VlIGhvdyB0aGUgSTJDIGNvcmUNCj4gY291bGQgc3VwcG9ydCBpbmRp
-dmlkdWFsIGRyaXZlcnMgaGVyZS4NCj4gDQo+IFNvLCB0aGF0J3MgaG93IEkgc2VlIHRoaXMgc2l0
-dWF0aW9uLiBPdGhlciBjb21tZW50cz8gT3RoZXIgaWRlYXM/DQoNCkZyb20gdGhlIGxvb2tzIG9m
-IHRoZSBwaWN0dXJlLCBpdCBzZWVtcyB0aGF0IHRoZSBTb0MgZG9lcyByZXNwZWN0ICd0YnVmJywN
-CmJ1dCB0aGF0IHRoZSBEREMgcGFzcy10aHJvdWdoIGluIHRoZSBIRE1JIHRyYW5zbWl0dGVyIHRo
-ZW4gZGVzdHJveXMgdGhlDQpzaWduYWxzIHN1Y2ggdGhhdCB0aGUgbW9uaXRvciBoYXMgbm8gY2hh
-bmNlIHRvIGludGVycHJldCBzdHVmZiBjb3JyZWN0bHkuDQoNClNpbmNlIHRoaXMgaXMgbm90IHJl
-bGF0ZWQgdG8gdGhlIHNwZWNpZmljIGJ1cyBkcml2ZXIgaW4gdXNlLCBhbmQgc2luY2UNCml0IHdv
-dWxkIGJlIHVnbHkgdG8gYWRkIHNvbWUgaG9vayB0aGF0IHRoZSBIRE1JIHRyYW5zbWl0dGVyIGRy
-aXZlciBjb3VsZA0KdXNlLCBtZXRoaW5rcyB0aGF0IGEgc2FuZSB3YXkgdG8gZGVzY3JpYmUgdGhh
-dCB0aGUgYnVzIGRyaXZlciBuZWVkcyB0bw0Kc2xvdyBkb3duIGlzIHRvIGFkZCBzb21lIERUIHBy
-b3BlcnR5IHRoYXQgbWFrZXMgdGhlIEkyQyBjb3JlIGFwcGx5IGENCnF1aXJrIGFuZCB0aHVzIGZv
-cmNlIHNvbWUgbWluaW11bSB0aW1lIGJldHdlZW4gc3RvcCBhbmQgc3RhcnQuIEp1c3QgbGlrZQ0K
-RmFicml6aW8gc3VnZ2VzdGVkLi4uDQoNCkVpdGhlciB0aGF0LCBvciBhZGQgc29tZSBob29rIGlu
-IHRoZSBnZW5lcmljIGVkaWQgcmVhZGVyIGNvZGUsIHNvIHRoYXQgaXQNCmNhbiBzbG93IGRvd24g
-b24gcmVxdWVzdC4NCg0KT3IsIGFkZCBhbiBJMkMgZ2F0ZSBkcml2ZXIgKHNvcnQgb2YgbGlrZSBh
-biBJMkMgbXV4IHdpdGggb25seSBvbmUgY2hpbGQNCmJ1cykgaW4gdGhlIEhETUkgdHJhbnNtaXR0
-ZXIgZHJpdmVyIGFuZCBpbXBsZW1lbnQgdGhlIGRlbGF5IHRoZXJlLiBUaGVuDQptb3ZlIHRoZSBt
-b25pdG9yIHRvIHRoaXMgbmV3IGdhdGUvbXV4IGNoaWxkIGJ1cy4NCg0KQ2hlZXJzLA0KUGV0ZXIN
-Cg==
+Hello Wolfram,
+
+Thank you so much for your feedback!
+
+> Subject: Re: Delay between stop condition and start condition
+>
+> Hi Fabrizio, everyone,
+>
+> Thanks for bringing this up!
+>
+> > What's the best way to address this? I could pull in the HDMI
+> > transmitter driver the code to read the EDID back from the monitor so
+> > that I can fit device specific delays without impacting the generic
+> > implementation of the EDID readback, but that would replicate some
+> > code and the driver would not benefit from fixes made to the generic
+> > implementation. I could change the RCar I2C driver in order to fit a
+> > new DT parameter (i2c-delay-after-stop-us?), and the driver would put
+> > in the desired delay after every stop condition, but isn't this
+> > parameter something every I2C controller would benefit from (now that
+> > we know we have a use case for it)? What are your thoughts and
+> > recommendations?
+>
+> No need for a property. The I2C standard has a clearly defined value for
+> that which is named 'tbuf' and is in general the same value as the
+> minimal low period of the SCL signal. So, it must be handled at the I2C
+> bus master level.
+>
+> Currently, we have no rule at what time drivers have to leave the
+> master_xfer() callback. Some exit when STOP is still processed, some
+> when STOP has been sent. I am not aware of a driver respecting tbuf. It
+> seems worth recommending to respect tbuf.
+>
+> I think this needs to be completely handled in the bus master driver. We
+> have USB-to-I2C bridges which we can control only high level and the
+> firmware of those need to respect tbuf. I don't see how the I2C core
+> could support individual drivers here.
+>
+> So, that's how I see this situation. Other comments? Other ideas?
+
+My understanding is that when this HDMI transmitter is configured in pass
+through mode then a bigger 'tbuf' is required.
+The I2C spec (v2.1) says that in "standard mode" tbuf>=3D4.7us" and in
+fast-mode "tbuf>=3D1.3us", in this particular case the 20us of bus free tim=
+e
+between the STOP and START conditions you find in the trace are not enough.
+This device seems to require an out of spec solution (an hack..), what's th=
+e
+most acceptable solution from an upstreaming perspective? Other platforms
+may want to use the same HDMI transmitter in their solutions and may
+stumble across the same problem if the platform is quick enough.
+I may just put this delay in the driver and call it a day by wrapping
+writes/reads/modifies and stuff? What do you think?
+
+Thanks,
+Fab
+
+>
+> Thanks,
+>
+>    Wolfram
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
