@@ -1,108 +1,113 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail1.bemta26.messagelabs.com ([85.158.142.116]:61029 "EHLO
-        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726868AbeJQSp5 (ORCPT
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:42804 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727028AbeJQRJY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Oct 2018 14:45:57 -0400
-From: Steve Twiss <stwiss.opensource@diasemi.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wed, 17 Oct 2018 13:09:24 -0400
+MIME-Version: 1.0
+References: <20181012072017.10765-1-geert+renesas@glider.be>
+ <20181012072017.10765-4-geert+renesas@glider.be> <6ED8E3B22081A4459DAC7699F3695FB7021C4CCFCB@SW-EX-MBX02.diasemi.com>
+In-Reply-To: <6ED8E3B22081A4459DAC7699F3695FB7021C4CCFCB@SW-EX-MBX02.diasemi.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 17 Oct 2018 11:14:24 +0200
+Message-ID: <CAMuHMdWEzDenwgT8gkK7+_rEyjeVBCKrLaML5sMRkiZkzJN8jg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] thermal: da9062/61: Prevent hardware access during
+ system suspend
+To: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>,
-        "Kuninori Morimoto" <kuninori.morimoto.gx@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Support Opensource <Support.Opensource@diasemi.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Arjan van de Ven <arjan@linux.intel.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        "Linux PM list" <linux-pm@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 3/3] thermal: da9062/61: Prevent hardware access
- during system suspend
-Date: Wed, 17 Oct 2018 10:50:44 +0000
-Message-ID: <6ED8E3B22081A4459DAC7699F3695FB7021C4CD09D@SW-EX-MBX02.diasemi.com>
-References: <20181012072017.10765-1-geert+renesas@glider.be>
- <20181012072017.10765-4-geert+renesas@glider.be>
- <6ED8E3B22081A4459DAC7699F3695FB7021C4CCFCB@SW-EX-MBX02.diasemi.com>
- <CAMuHMdWEzDenwgT8gkK7+_rEyjeVBCKrLaML5sMRkiZkzJN8jg@mail.gmail.com>
-In-Reply-To: <CAMuHMdWEzDenwgT8gkK7+_rEyjeVBCKrLaML5sMRkiZkzJN8jg@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIDE3IE9jdG9iZXIgMjAxOCAxMDoxNCBHZWVydCBVeXR0ZXJob2V2ZW4g
-d3JvdGU6DQoNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MiAzLzNdIHRoZXJtYWw6IGRhOTA2Mi82
-MTogUHJldmVudCBoYXJkd2FyZSBhY2Nlc3MgZHVyaW5nDQo+IHN5c3RlbSBzdXNwZW5kDQo+IA0K
-PiBIaSBTdGV2ZSwNCj4gDQo+IE9uIFdlZCwgT2N0IDE3LCAyMDE4IGF0IDEwOjU3IEFNIFN0ZXZl
-IFR3aXNzIHdyb3RlOg0KPiA+IE9uIDEyIE9jdG9iZXIgMjAxOCAwODoyMCBHZWVydCBVeXR0ZXJo
-b2V2ZW4gd3JvdGU6DQo+ID4gPiBTdWJqZWN0OiBbUEFUQ0ggdjIgMy8zXSB0aGVybWFsOiBkYTkw
-NjIvNjE6IFByZXZlbnQgaGFyZHdhcmUgYWNjZXNzIGR1cmluZw0KPiA+ID4gc3lzdGVtIHN1c3Bl
-bmQNCj4gPiA+DQo+ID4gPiBUaGUgd29ya3F1ZXVlIHVzZWQgZm9yIG1vbml0b3JpbmcgdGhlIGhh
-cmR3YXJlIG1heSBydW4gd2hpbGUgdGhlIGRldmljZQ0KPiA+ID4gaXMgYWxyZWFkeSBzdXNwZW5k
-ZWQuICBGaXggdGhpcyBieSB1c2luZyB0aGUgZnJlZXphYmxlIHN5c3RlbSB3b3JrcXVldWUNCj4g
-PiA+IGluc3RlYWQsIGNmci4gY29tbWl0IDUxZTIwZDBlM2E2MGNmNDYgKCJ0aGVybWFsOiBQcmV2
-ZW50IHBvbGxpbmcgZnJvbQ0KPiA+ID4gaGFwcGVuaW5nIGR1cmluZyBzeXN0ZW0gc3VzcGVuZCIp
-Lg0KPiA+DQo+ID4gTXkgdGhpbmtpbmcgd2FzOiAgdGhpcyBkZXZpY2UgaXMgYSBQTUlDIGFuZCBp
-dCB3aWxsIHBvd2VyIHRoZSBzeXN0ZW0uIFNvIHdoZW4NCj4gPiB0aGUgZGV2aWNlIGlzIHR1cm5l
-ZCBvZmYsIHRoZSBTL1cgd2lsbCBhbHNvIG5vdCBiZSBydW5uaW5nLg0KPiA+DQo+ID4gQWx0aG91
-Z2ggbXkgYXNzdW1wdGlvbiBvbmx5IHdvcmtzIGlmIHRoZSBQTUlDIGRldmljZSBpcyB0aGUgcHJp
-bWFyeSBzeXN0ZW0NCj4gPiBwb3dlciAtLSB0aGlzIGhhcyBhbHdheXMgYmVlbiB0aGUgY2FzZSBz
-byBmYXIuIEFuZCBhbHRob3VnaCBJIGRvbid0IGhhdmUgYW55DQo+ID4gZXZpZGVuY2UgdGhpcyB3
-aWxsIGNoYW5nZSwgaXQgbWF5IGJlY29tZSB1bnRydWUgaW4gdGhlIGZ1dHVyZSBvZiBjb3Vyc2Uu
-DQo+IA0KPiBUaGlzIGlzIG5vdCBhYm91dCBwb3dlcmluZyBvZmYgdGhlIHN5c3RlbSwgYnV0IGFi
-b3V0IHN1c3BlbmRpbmcgdGhlIHN5c3RlbSwNCj4gd2hpY2ggc3VzcGVuZHMgYWxsIGRyaXZlcnMu
-DQo+IA0KPiBUaGUgaXNzdWUgaXMgdGhhdCB0aGUgbm9ybWFsIHdvcmtxdWV1ZSBtYXkgcnVuIHdo
-aWxlIHRoZSBzeXN0ZW0gaXMgYmVpbmcNCj4gc3VzcGVuZGVkLiAgQWNjZXNzaW5nIHRoZSBEQTkw
-NjIgbWF5IG9yIG1heSBub3Qgd29yayBhdCB0aGF0IHRpbWUsDQo+IGRlcGVuZGluZyBvbiB0aGUg
-aTJjIGNvbnRyb2xsZXIgYmVpbmcgdXNhYmxlIG9yIG5vdC4NCg0KSSBzZWUgbm93LiBZZXMuDQoN
-Cj4gDQo+IER1ZSB0byB0aGUgREE5MDYyIGJlaW5nIGFuIGkyYyBkZXZpY2UsIEkgYWdyZWUgdGhp
-cyBpcyBkaWZmZXJlbnQgdGhhbg0KPiBmb3IgcmNhci10aGVybWFsLCB3aGVyZSB0aGUgcmNhci10
-aGVybWFsIGRldmljZSBpdHNlbGYgY2Fubm90IGJlDQo+IGFjY2Vzc2VkIGJlY2F1c2UgaXQgaXMg
-c3VzcGVuZGVkLg0KPiANCj4gPiA+IEZpeGVzOiA2MDg1NjdhYWMzMjA2YWU4ICgidGhlcm1hbDog
-ZGE5MDYyLzYxOiBUaGVybWFsIGp1bmN0aW9uIHRlbXBlcmF0dXJlDQo+ID4gPiBtb25pdG9yaW5n
-IGRyaXZlciIpDQo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0
-K3JlbmVzYXNAZ2xpZGVyLmJlPg0KPiA+ID4gLS0tDQo+ID4gPiBVbnRlc3RlZCBkdWUgdG8gbGFj
-ayBvZiBoYXJkd2FyZS4NCj4gPg0KPiA+IFNvLCBJIGhhdmUgbm90IGJlZW4gYWJsZSB0byBtYWtl
-IGFueSB0aW1lIHRvIHRlc3QgdGhpcyBwYXRjaCB5ZXQgLS0gYW5kIHdpdGgNCj4gPiBjdXJyZW50
-IHdvcmtsb2FkcyB0aGlzIG1pZ2h0IHRha2UgYSBiaXQgb2YgdGltZSBiZWZvcmUgSSBnZXQgdG8g
-aXQuDQo+IA0KPiBUaGUgbWFpbiB0aGluZyB0byB0ZXN0IGlzIHdoYXQgaGFwcGVucyB3aGVuIGRh
-OTA2Ml90aGVybWFsX3BvbGxfb24oKSBpcw0KPiBjYWxsZWQgd2hpbGUgdGhlIGkyYyBjb250cm9s
-bGVyIGlzIGFscmVhZHkgc3VzcGVuZGVkLCBhbmQgd2hldGhlciB0aGF0DQo+IGlzIG1pdGlnYXRl
-ZCBieSBteSBwYXRjaC4NCj4gTG9va2luZyBhdCB0aGUgZnVuY3Rpb24sIEkgZ3Vlc3MgaXQgc3Rh
-cnRzIHNwZXdpbmcgZXJyb3IgbWVzc2FnZXMsIGFuZA0KPiB3aWxsIGNvbnRpbnVlIHRyaWdnZXJp
-bmcgaXRzZWxmLCBieSB2aXJ0dWUgb2YgZW5hYmxpbmcgdGhlIGludGVycnVwdCBhZ2FpbiwNCj4g
-d2l0aG91dCBoYXZpbmcgYmVlbiBhYmxlIHRvIGRpc2FibGUgaXRzIGNhdXNlLg0KDQpXZSBoYXZl
-IGRlZmluaXRlbHkgc2VlbiBzaW1pbGFyIHRoaW5ncyBsaWtlIHRoaXMgYmVmb3JlLCBleGFjdGx5
-IGFzIHlvdSBkZXNjcmliZWQNCndoZW4gZ29pbmcgaW50byBzdXNwZW5kIGFuZCB0aGUgSTJDIGNv
-bnRyb2xsZXIgZGlzYXBwZWFycy4gDQpUaGVyZSB3aWxsIGJlIGEgd2luZG93IG9mIG9wcG9ydHVu
-aXR5IGZvciB0aGlzIHRvIGhhcHBlbi4gDQoNCkkgaGF2ZSBzdGlsbCBub3QgdGVzdGVkLCBidXQ6
-DQoNCkFja2VkLWJ5OiBTdGV2ZSBUd2lzcyA8c3R3aXNzLm9wZW5zb3VyY2VAZGlhc2VtaS5jb20+
-DQoNCkkgd2lsbCBtYWtlIHRpbWUgdG8gdGVzdCB5b3VyIGNoYW5nZXMuDQoNClJlZ2FyZHMsDQpT
-dGV2ZQ0KDQo+IA0KPiA+ID4gLS0tIGEvZHJpdmVycy90aGVybWFsL2RhOTA2Mi10aGVybWFsLmMN
-Cj4gPiA+ICsrKyBiL2RyaXZlcnMvdGhlcm1hbC9kYTkwNjItdGhlcm1hbC5jDQo+ID4gPiBAQCAt
-MTA2LDcgKzEwNiw3IEBAIHN0YXRpYyB2b2lkIGRhOTA2Ml90aGVybWFsX3BvbGxfb24oc3RydWN0
-DQo+IHdvcmtfc3RydWN0DQo+ID4gPiAqd29yaykNCj4gPiA+ICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgVEhFUk1BTF9FVkVOVF9VTlNQRUNJRklFRCk7DQo+ID4gPg0K
-PiA+ID4gICAgICAgICAgICAgICBkZWxheSA9IG1zZWNzX3RvX2ppZmZpZXModGhlcm1hbC0+em9u
-ZS0+cGFzc2l2ZV9kZWxheSk7DQo+ID4gPiAtICAgICAgICAgICAgIHNjaGVkdWxlX2RlbGF5ZWRf
-d29yaygmdGhlcm1hbC0+d29yaywgZGVsYXkpOw0KPiA+ID4gKyAgICAgICAgICAgICBxdWV1ZV9k
-ZWxheWVkX3dvcmsoc3lzdGVtX2ZyZWV6YWJsZV93cSwgJnRoZXJtYWwtPndvcmssDQo+ID4gPiBk
-ZWxheSk7DQo+ID4gPiAgICAgICAgICAgICAgIHJldHVybjsNCj4gPiA+ICAgICAgIH0NCj4gPiA+
-DQo+ID4gPiBAQCAtMTI1LDcgKzEyNSw3IEBAIHN0YXRpYyBpcnFyZXR1cm5fdCBkYTkwNjJfdGhl
-cm1hbF9pcnFfaGFuZGxlcihpbnQgaXJxLA0KPiA+ID4gdm9pZCAqZGF0YSkNCj4gPiA+ICAgICAg
-IHN0cnVjdCBkYTkwNjJfdGhlcm1hbCAqdGhlcm1hbCA9IGRhdGE7DQo+ID4gPg0KPiA+ID4gICAg
-ICAgZGlzYWJsZV9pcnFfbm9zeW5jKHRoZXJtYWwtPmlycSk7DQo+ID4gPiAtICAgICBzY2hlZHVs
-ZV9kZWxheWVkX3dvcmsoJnRoZXJtYWwtPndvcmssIDApOw0KPiA+ID4gKyAgICAgcXVldWVfZGVs
-YXllZF93b3JrKHN5c3RlbV9mcmVlemFibGVfd3EsICZ0aGVybWFsLT53b3JrLCAwKTsNCj4gPiA+
-DQo+ID4gPiAgICAgICByZXR1cm4gSVJRX0hBTkRMRUQ7DQo+ID4gPiAgfQ0KPiANCj4gR3J7b2V0
-amUsZWV0aW5nfXMsDQo+IA0KPiAgICAgICAgICAgICAgICAgICAgICAgICBHZWVydA0KPiANCj4g
-LS0NCj4gR2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQg
-aWEzMiAtLSBnZWVydEBsaW51eC1tNjhrLm9yZw0KPiANCj4gSW4gcGVyc29uYWwgY29udmVyc2F0
-aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0K
-PiB3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIi
-IG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgLS0gTGludXMgVG9ydmFsZHMNCg==
+Hi Steve,
+
+On Wed, Oct 17, 2018 at 10:57 AM Steve Twiss
+<stwiss.opensource@diasemi.com> wrote:
+> On 12 October 2018 08:20 Geert Uytterhoeven wrote:
+> > Subject: [PATCH v2 3/3] thermal: da9062/61: Prevent hardware access during
+> > system suspend
+> >
+> > The workqueue used for monitoring the hardware may run while the device
+> > is already suspended.  Fix this by using the freezable system workqueue
+> > instead, cfr. commit 51e20d0e3a60cf46 ("thermal: Prevent polling from
+> > happening during system suspend").
+>
+> My thinking was:  this device is a PMIC and it will power the system. So when
+> the device is turned off, the S/W will also not be running.
+>
+> Although my assumption only works if the PMIC device is the primary system
+> power -- this has always been the case so far. And although I don't have any
+> evidence this will change, it may become untrue in the future of course.
+
+This is not about powering off the system, but about suspending the system,
+which suspends all drivers.
+
+The issue is that the normal workqueue may run while the system is being
+suspended.  Accessing the DA9062 may or may not work at that time,
+depending on the i2c controller being usable or not.
+
+Due to the DA9062 being an i2c device, I agree this is different than
+for rcar-thermal, where the rcar-thermal device itself cannot be
+accessed because it is suspended.
+
+> > Fixes: 608567aac3206ae8 ("thermal: da9062/61: Thermal junction temperature
+> > monitoring driver")
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > Untested due to lack of hardware.
+>
+> So, I have not been able to make any time to test this patch yet -- and with
+> current workloads this might take a bit of time before I get to it.
+
+The main thing to test is what happens when da9062_thermal_poll_on() is
+called while the i2c controller is already suspended, and whether that
+is mitigated by my patch.
+Looking at the function, I guess it starts spewing error messages, and
+will continue triggering itself, by virtue of enabling the interrupt again,
+without having been able to disable its cause.
+
+> > --- a/drivers/thermal/da9062-thermal.c
+> > +++ b/drivers/thermal/da9062-thermal.c
+> > @@ -106,7 +106,7 @@ static void da9062_thermal_poll_on(struct work_struct
+> > *work)
+> >                                          THERMAL_EVENT_UNSPECIFIED);
+> >
+> >               delay = msecs_to_jiffies(thermal->zone->passive_delay);
+> > -             schedule_delayed_work(&thermal->work, delay);
+> > +             queue_delayed_work(system_freezable_wq, &thermal->work,
+> > delay);
+> >               return;
+> >       }
+> >
+> > @@ -125,7 +125,7 @@ static irqreturn_t da9062_thermal_irq_handler(int irq,
+> > void *data)
+> >       struct da9062_thermal *thermal = data;
+> >
+> >       disable_irq_nosync(thermal->irq);
+> > -     schedule_delayed_work(&thermal->work, 0);
+> > +     queue_delayed_work(system_freezable_wq, &thermal->work, 0);
+> >
+> >       return IRQ_HANDLED;
+> >  }
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
