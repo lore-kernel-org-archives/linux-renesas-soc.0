@@ -1,55 +1,70 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:57638 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727653AbeJ2GLD (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Oct 2018 02:11:03 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-gpio@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Thu, 18 Oct 2018 15:01:05 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Rob Herring <robh@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Grant Likely <glikely@secretlab.ca>,
+        Kumar Gala <kumar.gala@linaro.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Brown <broonie@kernel.org>, Tom Rini <trini@konsulko.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 2/2] pinctrl: sh-pfc: r8a7794: initialize TDSEL register
-Date: Sun, 28 Oct 2018 21:24:57 +0000
-Message-Id: <20181028212457.1017-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181028212457.1017-1-wsa+renesas@sang-engineering.com>
-References: <20181028212457.1017-1-wsa+renesas@sang-engineering.com>
+        Jonathan Cameron <jic23@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
+        <linux-renesas-soc@vger.kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 29/36] dt-bindings: arm: Convert Renesas board/soc
+ bindings to json-schema
+Message-ID: <20181018130105.2guhavajp754qbnk@verge.net.au>
+References: <20181005165848.3474-1-robh@kernel.org>
+ <20181005165848.3474-30-robh@kernel.org>
+ <20181008080220.rmxk57ckdfmwuk62@verge.net.au>
+ <CAL_Jsq+8EwYzBmzSWL0q0YB3rP-xdrZreRnt1Rj-h=D8OTNVwA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_Jsq+8EwYzBmzSWL0q0YB3rP-xdrZreRnt1Rj-h=D8OTNVwA@mail.gmail.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Documentation says that some bits in TDSEL must be set (ch 5.3.35 in
-R-Car E2 v0.5). However, the reset value of the register is 0, so
-software has to do it. Add this to the kernel driver to ensure this is
-really done independent of firmware versions. This is needed for some SD
-cards supporting SDR104 transfer mode.
+On Mon, Oct 08, 2018 at 09:05:58AM -0500, Rob Herring wrote:
+> On Mon, Oct 8, 2018 at 3:02 AM Simon Horman <horms@verge.net.au> wrote:
+> >
+> > On Fri, Oct 05, 2018 at 11:58:41AM -0500, Rob Herring wrote:
+> > > Convert Renesas SoC bindings to DT schema format using json-schema.
+> > >
+> > > Cc: Simon Horman <horms@verge.net.au>
+> > > Cc: Magnus Damm <magnus.damm@gmail.com>
+> > > Cc: Mark Rutland <mark.rutland@arm.com>
+> > > Cc: linux-renesas-soc@vger.kernel.org
+> > > Cc: devicetree@vger.kernel.org
+> > > Signed-off-by: Rob Herring <robh@kernel.org>
+> >
+> > This seems fine to me other than that it does not seem
+> > to apply cleanly to next.
+> >
+> > shmobile.txt sees a couple of updates per release cycle so from my point of
+> > view it would ideal if this change could hit -rc1 to allow patches for
+> > v4.21 to be accepted smoothly (already one from Sergei will need rebasing).
+> 
+> When we get to the point of merging (which isn't going to be 4.20),
+> you and other maintainers can probably take all these patches. Other
+> than the few restructuring patches, the only dependency is the build
+> support which isn't a dependency to apply it, but build it. I plan to
+> build any patches as part of reviewing at least early on. OTOH, the
+> build support is small enough and self contained that maybe it can
+> just be applied for 4.20.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Thanks, understood.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-index 6d1e5fdc03f8..8a16053d2bec 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-@@ -5560,7 +5560,16 @@ static int r8a7794_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *poc
- 	return -EINVAL;
- }
- 
-+static int r8a7794_pinmux_soc_init(struct sh_pfc *pfc)
-+{
-+	/* Initialize TDSEL according to datasheet */
-+	sh_pfc_write(pfc, 0xe6060068, 0x55555500);
-+
-+	return 0;
-+}
-+
- static const struct sh_pfc_soc_operations r8a7794_pinmux_ops = {
-+	.init = r8a7794_pinmux_soc_init,
- 	.pin_to_pocctrl = r8a7794_pin_to_pocctrl,
- };
- 
--- 
-2.19.0
+My preference would be to, as you suggest, take changes like
+this through the renesas tree.
