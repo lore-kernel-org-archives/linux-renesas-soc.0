@@ -1,286 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:35552 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726135AbeJKQVf (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:50965 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727633AbeJRVSL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 Oct 2018 12:21:35 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Arnd Bergmann <arnd@arndb.de>, Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Thu, 18 Oct 2018 17:18:11 -0400
+Date: Thu, 18 Oct 2018 15:17:07 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] [RFC] ARM: shmobile: Move SoC Kconfig symbols to drivers/soc/renesas/
-Date: Thu, 11 Oct 2018 10:55:08 +0200
-Message-Id: <20181011085508.5234-3-geert+renesas@glider.be>
-In-Reply-To: <20181011085508.5234-1-geert+renesas@glider.be>
-References: <20181011085508.5234-1-geert+renesas@glider.be>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH 5/5] arm64: dts: renesas: r8a774a1: Add VIN and CSI-2
+ nodes
+Message-ID: <20181018131707.apo5zolpqsmokzjg@verge.net.au>
+References: <1536589878-26218-1-git-send-email-biju.das@bp.renesas.com>
+ <1536589878-26218-6-git-send-email-biju.das@bp.renesas.com>
+ <20180911135341.j5nj4crbg5bjeibw@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180911135341.j5nj4crbg5bjeibw@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-For consistency with arm64, where vendors have a single Kconfig symbol
-in arch/arm64/Kconfig.platforms.
+On Tue, Sep 11, 2018 at 03:53:42PM +0200, Simon Horman wrote:
+> On Mon, Sep 10, 2018 at 03:31:18PM +0100, Biju Das wrote:
+> > Add VIN and CSI-2 nodes to RZ/G2M SoC dtsi.
+> > 
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> 
+> Thanks, I would value a review of this entire series before I apply this
+> patch.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Note that drivers/clk/ is included before drivers/soc/.  Hence when
-COMPILE_TEST=y, questions will be asked about clock drivers before they
-can be auto-selected by SoC support.
-
-Question: Should the family-specific Kconfig symbols be moved, too?
-	  Not much would be left in arch/arm/mach-shmobile/Kconfig,
-	  though.
----
- arch/arm/mach-shmobile/Kconfig | 101 ---------------------------
- drivers/soc/renesas/Kconfig    | 120 ++++++++++++++++++++++++++++++---
- 2 files changed, 112 insertions(+), 109 deletions(-)
-
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index b100c26a858f9015..50267ad76f990f11 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -36,104 +36,3 @@ menuconfig ARCH_RENESAS
- 	select PINCTRL
- 	select SOC_BUS
- 	select ZONE_DMA if ARM_LPAE
--
--if ARCH_RENESAS
--
--#comment "Renesas ARM SoCs System Type"
--
--config ARCH_EMEV2
--	bool "Emma Mobile EV2"
--	select SYS_SUPPORTS_EM_STI
--
--config ARCH_R7S72100
--	bool "RZ/A1H (R7S72100)"
--	select PM
--	select PM_GENERIC_DOMAINS
--	select SYS_SUPPORTS_SH_MTU2
--	select RENESAS_OSTM
--
--config ARCH_R7S9210
--	bool "RZ/A2 (R7S9210)"
--	select PM
--	select PM_GENERIC_DOMAINS
--	select RENESAS_OSTM
--
--config ARCH_R8A73A4
--	bool "R-Mobile APE6 (R8A73A40)"
--	select ARCH_RMOBILE
--	select ARM_ERRATA_798181 if SMP
--	select HAVE_ARM_ARCH_TIMER
--	select RENESAS_IRQC
--
--config ARCH_R8A7740
--	bool "R-Mobile A1 (R8A77400)"
--	select ARCH_RMOBILE
--	select RENESAS_INTC_IRQPIN
--
--config ARCH_R8A7743
--	bool "RZ/G1M (R8A77430)"
--	select ARCH_RCAR_GEN2
--	select ARM_ERRATA_798181 if SMP
--
--config ARCH_R8A7744
--	bool "RZ/G1N (R8A77440)"
--	select ARCH_RCAR_GEN2
--	select ARM_ERRATA_798181 if SMP
--
--config ARCH_R8A7745
--	bool "RZ/G1E (R8A77450)"
--	select ARCH_RCAR_GEN2
--
--config ARCH_R8A77470
--	bool "RZ/G1C (R8A77470)"
--	select ARCH_RCAR_GEN2
--
--config ARCH_R8A7778
--	bool "R-Car M1A (R8A77781)"
--	select ARCH_RCAR_GEN1
--
--config ARCH_R8A7779
--	bool "R-Car H1 (R8A77790)"
--	select ARCH_RCAR_GEN1
--
--config ARCH_R8A7790
--	bool "R-Car H2 (R8A77900)"
--	select ARCH_RCAR_GEN2
--	select ARM_ERRATA_798181 if SMP
--	select I2C
--
--config ARCH_R8A7791
--	bool "R-Car M2-W (R8A77910)"
--	select ARCH_RCAR_GEN2
--	select ARM_ERRATA_798181 if SMP
--	select I2C
--
--config ARCH_R8A7792
--	bool "R-Car V2H (R8A77920)"
--	select ARCH_RCAR_GEN2
--	select ARM_ERRATA_798181 if SMP
--
--config ARCH_R8A7793
--	bool "R-Car M2-N (R8A7793)"
--	select ARCH_RCAR_GEN2
--	select ARM_ERRATA_798181 if SMP
--	select I2C
--
--config ARCH_R8A7794
--	bool "R-Car E2 (R8A77940)"
--	select ARCH_RCAR_GEN2
--
--config ARCH_R9A06G032
--	bool "RZ/N1D (R9A06G032)"
--	select ARCH_RZN1
--
--config ARCH_RZN1
--	bool "RZ/N1 (R9A06G0xx) Family"
--	select ARM_AMBA
--	select CPU_V7
--
--config ARCH_SH73A0
--	bool "SH-Mobile AG5 (R8A73A00)"
--	select ARCH_RMOBILE
--	select RENESAS_INTC_IRQPIN
--endif
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index 0ab62024fd20be56..5089c65b544909c2 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -4,17 +4,121 @@ config SOC_RENESAS
- 	default y if ARCH_RENESAS
- 	select SOC_BUS
- 	select RST_RCAR if ARCH_RCAR_GEN1 || ARCH_RCAR_GEN2
--	select SYSC_R8A7743 if ARCH_R8A7743 || ARCH_R8A7744
--	select SYSC_R8A7745 if ARCH_R8A7745
--	select SYSC_R8A77470 if ARCH_R8A77470
--	select SYSC_R8A7779 if ARCH_R8A7779
--	select SYSC_R8A7790 if ARCH_R8A7790
--	select SYSC_R8A7791 if ARCH_R8A7791 || ARCH_R8A7793
--	select SYSC_R8A7792 if ARCH_R8A7792
--	select SYSC_R8A7794 if ARCH_R8A7794
- 
- if SOC_RENESAS
- 
-+if ARM
-+
-+#comment "Renesas ARM SoCs System Type"
-+
-+config ARCH_EMEV2
-+	bool "Emma Mobile EV2"
-+	select SYS_SUPPORTS_EM_STI
-+
-+config ARCH_R7S72100
-+	bool "RZ/A1H (R7S72100)"
-+	select PM
-+	select PM_GENERIC_DOMAINS
-+	select SYS_SUPPORTS_SH_MTU2
-+	select RENESAS_OSTM
-+
-+config ARCH_R7S9210
-+	bool "RZ/A2 (R7S9210)"
-+	select PM
-+	select PM_GENERIC_DOMAINS
-+	select RENESAS_OSTM
-+
-+config ARCH_R8A73A4
-+	bool "R-Mobile APE6 (R8A73A40)"
-+	select ARCH_RMOBILE
-+	select ARM_ERRATA_798181 if SMP
-+	select HAVE_ARM_ARCH_TIMER
-+	select RENESAS_IRQC
-+
-+config ARCH_R8A7740
-+	bool "R-Mobile A1 (R8A77400)"
-+	select ARCH_RMOBILE
-+	select RENESAS_INTC_IRQPIN
-+
-+config ARCH_R8A7743
-+	bool "RZ/G1M (R8A77430)"
-+	select ARCH_RCAR_GEN2
-+	select ARM_ERRATA_798181 if SMP
-+	select SYSC_R8A7743
-+
-+config ARCH_R8A7744
-+	bool "RZ/G1N (R8A77440)"
-+	select ARCH_RCAR_GEN2
-+	select ARM_ERRATA_798181 if SMP
-+	select SYSC_R8A7743
-+
-+config ARCH_R8A7745
-+	bool "RZ/G1E (R8A77450)"
-+	select ARCH_RCAR_GEN2
-+	select SYSC_R8A7745
-+
-+config ARCH_R8A77470
-+	bool "RZ/G1C (R8A77470)"
-+	select ARCH_RCAR_GEN2
-+	select SYSC_R8A77470
-+
-+config ARCH_R8A7778
-+	bool "R-Car M1A (R8A77781)"
-+	select ARCH_RCAR_GEN1
-+
-+config ARCH_R8A7779
-+	bool "R-Car H1 (R8A77790)"
-+	select ARCH_RCAR_GEN1
-+	select SYSC_R8A7779
-+
-+config ARCH_R8A7790
-+	bool "R-Car H2 (R8A77900)"
-+	select ARCH_RCAR_GEN2
-+	select ARM_ERRATA_798181 if SMP
-+	select I2C
-+	select SYSC_R8A7790
-+
-+config ARCH_R8A7791
-+	bool "R-Car M2-W (R8A77910)"
-+	select ARCH_RCAR_GEN2
-+	select ARM_ERRATA_798181 if SMP
-+	select I2C
-+	select SYSC_R8A7791
-+
-+config ARCH_R8A7792
-+	bool "R-Car V2H (R8A77920)"
-+	select ARCH_RCAR_GEN2
-+	select ARM_ERRATA_798181 if SMP
-+	select SYSC_R8A7792
-+
-+config ARCH_R8A7793
-+	bool "R-Car M2-N (R8A7793)"
-+	select ARCH_RCAR_GEN2
-+	select ARM_ERRATA_798181 if SMP
-+	select I2C
-+	select SYSC_R8A7791
-+
-+config ARCH_R8A7794
-+	bool "R-Car E2 (R8A77940)"
-+	select ARCH_RCAR_GEN2
-+	select SYSC_R8A7794
-+
-+config ARCH_R9A06G032
-+	bool "RZ/N1D (R9A06G032)"
-+	select ARCH_RZN1
-+
-+config ARCH_RZN1
-+	bool "RZ/N1 (R9A06G0xx) Family"
-+	select ARM_AMBA
-+	select CPU_V7
-+
-+config ARCH_SH73A0
-+	bool "SH-Mobile AG5 (R8A73A00)"
-+	select ARCH_RMOBILE
-+	select RENESAS_INTC_IRQPIN
-+
-+endif # ARM
-+
- if ARM64
- 
- config ARCH_R8A774A1
--- 
-2.17.1
+That has now happened, applied for v4.21.
