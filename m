@@ -1,59 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:41185 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728530AbeJ3DDo (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:54464 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727414AbeJRQ3P (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Oct 2018 23:03:44 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
-        horms@verge.net.au
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, linus.walleij@linaro.org,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] pinctrl: sh-pfc: r8a77965: Add VIN4 and VIN5
-Date: Mon, 29 Oct 2018 19:13:42 +0100
-Message-Id: <1540836824-4636-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 18 Oct 2018 12:29:15 -0400
+Reply-To: kieran.bingham+renesas@ideasonboard.com
+Subject: Re: [PATCH 1/3] dt-bindings: display: renesas: lvds: Document
+ r8a77965 bindings
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
+References: <20181018004149.29448-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20181018004149.29448-2-laurent.pinchart+renesas@ideasonboard.com>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <8a274946-ea78-02b7-bf75-e685279ccb3a@ideasonboard.com>
+Date: Thu, 18 Oct 2018 09:29:17 +0100
+MIME-Version: 1.0
+In-Reply-To: <20181018004149.29448-2-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-   this two patches add supports for VIN4 and VIN5 interfaces to R-Car M3-N.
+Hi Laurent,
 
-On this SoC (and in the forthcoming support for E3 R8A77990) the VIN groups
-could appear on different sets of pins, usually the 'a' and 'b' one.
+On 18/10/18 01:41, Laurent Pinchart wrote:
+> The M3-N (r8a77965) includes one LVDS encoder. Extend the binding to
+> support it.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-With the existing VIN_DATA_PIN_GROUP macro we have to specify group names as:
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-VIN_DATA_PIN_GROUP(vin4_data_a, 8)
-
-which results in the group being named as "vin4_data_a_8" which is
-un-consistent with the canonical group names (eg. "vin4_data8_a").
-
-This series adds a macro that allows to specify the group 'version' along with
-the pin and mux numbers in patch [1/1]. I haven't been able to find a better
-term than 'version' as 'group' was already taken. Suggestions welcome.
-
-As I cannot test VIN4 nor VIN5 on Salvator-XS as the parallel pins are not
-wired, I made sure the macro creates correct names and fields not only by
-compile testing it, but with a small C program [1] that replicates the VIN data
-layout defined in the PFC module and access fields (and has helped me testing
-more easily the preprocessor stringification/concatenation process).
-
-Final note: Simon, you took the E3 patches in your tree, and I expect them to
-land on v4.20-rc1. They use the old macros, are follow up patches ok?)
-
-Thanks
-   j
-
-[1] https://paste.debian.net/1049603/
-
-Jacopo Mondi (2):
-  pinctrl: sh-pfc: Introduce VIN_DATA_PIN_GROUP_VER
-  pinctrl: sh-pfc: r8a77965: Add VIN[4|5] groups/functions
-
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 254 ++++++++++++++++++++++++++++++++++
- drivers/pinctrl/sh-pfc/sh_pfc.h       |  20 ++-
- 2 files changed, 269 insertions(+), 5 deletions(-)
-
---
-2.7.4
+> ---
+>  .../devicetree/bindings/display/bridge/renesas,lvds.txt          | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+> index 3aeb0ec06fd0..ba5469dd09f3 100644
+> --- a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+> +++ b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+> @@ -13,6 +13,7 @@ Required properties:
+>    - "renesas,r8a7793-lvds" for R8A7793 (R-Car M2-N) compatible LVDS encoders
+>    - "renesas,r8a7795-lvds" for R8A7795 (R-Car H3) compatible LVDS encoders
+>    - "renesas,r8a7796-lvds" for R8A7796 (R-Car M3-W) compatible LVDS encoders
+> +  - "renesas,r8a77965-lvds" for R8A77965 (R-Car M3-N) compatible LVDS encoders
+>    - "renesas,r8a77970-lvds" for R8A77970 (R-Car V3M) compatible LVDS encoders
+>    - "renesas,r8a77980-lvds" for R8A77980 (R-Car V3H) compatible LVDS encoders
+>    - "renesas,r8a77990-lvds" for R8A77990 (R-Car E3) compatible LVDS encoders
+> 
