@@ -1,56 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:62778 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726942AbeJSNRe (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:50251 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726506AbeJRUlC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Oct 2018 09:17:34 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms@verge.net.au>
-CC: Magnus Damm <magnus.damm@gmail.com>,
+        Thu, 18 Oct 2018 16:41:02 -0400
+Date: Thu, 18 Oct 2018 14:40:08 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] arm64: dts: renesas: revise hsusb's reg size
-Date: Fri, 19 Oct 2018 05:13:03 +0000
-Message-ID: <OSBPR01MB2293CA56C2256DA994755297D8F90@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+Subject: Re: [PATCH] arm64: dts: renesas: revise hsusb's reg size
+Message-ID: <20181018124008.hzwlcay5pxgadexd@verge.net.au>
 References: <1539669890-25719-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
  <20181017085719.5ukyuml3ugmfdtmp@verge.net.au>
  <CAMuHMdU09fTvuF3kCkN0dJk_S25_KYyL-1OCgPGNQxs=w2YaEw@mail.gmail.com>
-In-Reply-To: <CAMuHMdU09fTvuF3kCkN0dJk_S25_KYyL-1OCgPGNQxs=w2YaEw@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdU09fTvuF3kCkN0dJk_S25_KYyL-1OCgPGNQxs=w2YaEw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgU2ltb24tc2FuLCBHZWVydC1zYW4sDQoNCj4gRnJvbTogR2VlcnQgVXl0dGVyaG9ldmVuLCBT
-ZW50OiBXZWRuZXNkYXksIE9jdG9iZXIgMTcsIDIwMTggNjozNSBQTQ0KPiANCj4gSGkgU2ltb24s
-DQo+IA0KPiBPbiBXZWQsIE9jdCAxNywgMjAxOCBhdCAxMDo1NyBBTSBTaW1vbiBIb3JtYW4gPGhv
-cm1zQHZlcmdlLm5ldC5hdT4gd3JvdGU6DQo+ID4gT24gVHVlLCBPY3QgMTYsIDIwMTggYXQgMDM6
-MDQ6NTBQTSArMDkwMCwgWW9zaGloaXJvIFNoaW1vZGEgd3JvdGU6DQo+ID4gPiBUaGlzIHBhdGNo
-IHJldmlzZXMgdGhlIHJlZyBzaXplIG9mIGVhY2ggaHN1c2IgZGV2aWNlIG5vZGUgZm9yDQo+ID4g
-PiByOGE3Nzk1LCByOGE3Nzk2IGFuZCByOGE3Nzk2NS4NCj4gPiA+DQo+ID4gPiBSZXBvcnRlZC1i
-eTogQmlqdSBEYXMgPGJpanUuZGFzQGJwLnJlbmVzYXMuY29tPg0KPiA+ID4gRml4ZXM6IGQyNDIy
-ZTEwODgxMiAoImFybTY0OiBkdHM6IHI4YTc3OTU6IEFkZCBIU1VTQiBkZXZpY2Ugbm9kZSIpDQo+
-ID4gPiBGaXhlczogNDcyNWYyYjg4MDU3ICgiYXJtNjQ6IGR0czogcmVuZXNhczogcjhhNzc5NTog
-YWRkIGhzdXNiIGNoMyBkZXZpY2Ugbm9kZSIpDQo+ID4gPiBGaXhlczogYjk1MzU4NTM3NzdmICgi
-YXJtNjQ6IGR0czogcjhhNzc5NjogQWRkIEhTVVNCIGRldmljZSBub2RlIikNCj4gPiA+IEZpeGVz
-OiA5ZTFiMDBhMmVmNDMgKCJhcm02NDogZHRzOiByZW5lc2FzOiByOGE3Nzk2NTogQWRkICJyZWci
-IHByb3BlcnRpZXMiKQ0KPiA+ID4gU2lnbmVkLW9mZi1ieTogWW9zaGloaXJvIFNoaW1vZGEgPHlv
-c2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMuY29tPg0KPiA+DQo+ID4gVGhhbmtzIFNoaW1vZGEt
-c2FuLA0KPiA+DQo+ID4gVGhpcyBsb29rcyBmaW5lIHRvIG1lIGJ1dCBJIHdpbGwgd2FpdCB0byBz
-ZWUgaWYgdGhlcmUgYXJlIG90aGVyIHJldmlld3MNCj4gPiBiZWZvcmUgYXBwbHlpbmcuDQo+ID4N
-Cj4gPiBSZXZpZXdlZC1ieTogU2ltb24gSG9ybWFuIDxob3JtcytyZW5lc2FzQHZlcmdlLm5ldC5h
-dT4NCj4gPg0KPiA+DQo+ID4gQWxzbywgY291bGQgeW91IGxldCBtZSBrbm93IGlmIHRoaXMgaGFz
-IGFueSBydW4tdGltZSBlZmZlY3Q/DQo+ID4gSWYgc28gcGVyaGFwcyBpdCBzaG91bGQgYmUgdHJl
-YXRlZCBhcyBhIGZpeCBmb3IgdjQuMjAgcmF0aGVyIHRoYW4NCj4gPiBhIHBhdGNoIGZvciB2NC4y
-MS4NCj4gDQo+IFByb2JhYmx5IG5vdCwgYXMgbWFwcGluZyBncmFudWxhcml0eSBpcyBQQUdFX1NJ
-WkUgKD4gMHgyMDApIGFueXdheS4NCg0KQXMgR2VlcnQtc2FuIG1lbnRpb25lZCwgSSBkb24ndCB0
-aGluayB0aGlzIHBhdGNoIG5lZWRzIGFzIGEgZml4IGZvciB2NC4yMC4NCg0KQmVzdCByZWdhcmRz
-LA0KWW9zaGloaXJvIFNoaW1vZGENCg0KPiBHcntvZXRqZSxlZXRpbmd9cywNCj4gDQo+ICAgICAg
-ICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+IA0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4g
-LS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LW02OGsu
-b3JnDQo+IA0KPiBJbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3Bs
-ZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91
-cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4N
-Cj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0K
+On Wed, Oct 17, 2018 at 11:34:43AM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Wed, Oct 17, 2018 at 10:57 AM Simon Horman <horms@verge.net.au> wrote:
+> > On Tue, Oct 16, 2018 at 03:04:50PM +0900, Yoshihiro Shimoda wrote:
+> > > This patch revises the reg size of each hsusb device node for
+> > > r8a7795, r8a7796 and r8a77965.
+> > >
+> > > Reported-by: Biju Das <biju.das@bp.renesas.com>
+> > > Fixes: d2422e108812 ("arm64: dts: r8a7795: Add HSUSB device node")
+> > > Fixes: 4725f2b88057 ("arm64: dts: renesas: r8a7795: add hsusb ch3 device node")
+> > > Fixes: b9535853777f ("arm64: dts: r8a7796: Add HSUSB device node")
+> > > Fixes: 9e1b00a2ef43 ("arm64: dts: renesas: r8a77965: Add "reg" properties")
+> > > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> >
+> > Thanks Shimoda-san,
+> >
+> > This looks fine to me but I will wait to see if there are other reviews
+> > before applying.
+> >
+> > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> >
+> >
+> > Also, could you let me know if this has any run-time effect?
+> > If so perhaps it should be treated as a fix for v4.20 rather than
+> > a patch for v4.21.
+> 
+> Probably not, as mapping granularity is PAGE_SIZE (> 0x200) anyway.
+
+Thanks, I have applied this for v4.21.
