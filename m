@@ -1,90 +1,122 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45614 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727225AbeJVEPe (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:15:34 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH 0/6] gpio: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 21:59:55 +0200
-Message-Id: <20181021200002.1472-1-wsa+renesas@sang-engineering.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: jacopo mondi <jacopo@jmondi.org>
+CC: Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 1/2] pinctrl: Add RZ/A2 pin and gpio controller
+Date: Thu, 18 Oct 2018 21:42:00 +0000
+Message-ID: <TY1PR01MB1562B1681A1D8D2B37AEB0C68AF80@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+References: <20181005150951.22129-1-chris.brandt@renesas.com>
+ <20181005150951.22129-2-chris.brandt@renesas.com>
+ <20181018095706.GD17549@w540>
+In-Reply-To: <20181018095706.GD17549@w540>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I got tired of fixing this in Renesas drivers manually, so I took the big
-hammer. Remove this cumbersome code pattern which got copy-pasted too much
-already:
-
--	struct platform_device *pdev = to_platform_device(dev);
--	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
-+	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
-
-A branch, tested by buildbot, can be found here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git coccinelle/get_drvdata
-
-I have been asked if it couldn't be done for dev_set_drvdata as well. I checked
-it and did not find one occasion where it could be simplified like this. Not
-much of a surprise because driver_data is usually set in probe() functions
-which access struct platform_device in many other ways.
-
-I am open for other comments, suggestions, too, of course.
-
-Here is the cocci-script I created:
-
-@@
-struct device* d;
-identifier pdev;
-expression *ptr;
-@@
-(
--	struct platform_device *pdev = to_platform_device(d);
-|
--	struct platform_device *pdev;
-	...
--	pdev = to_platform_device(d);
-)
-	<... when != pdev
--	&pdev->dev
-+	d
-	...>
-
-	ptr =
--	platform_get_drvdata(pdev)
-+	dev_get_drvdata(d)
-
-	<... when != pdev
--	&pdev->dev
-+	d
-	...>
-
-Kind regards,
-
-   Wolfram
-
-
-Wolfram Sang (6):
-  gpio: gpio-dwapb: simplify getting .driver_data
-  gpio: gpio-lynxpoint: simplify getting .driver_data
-  gpio: gpio-mxc: simplify getting .driver_data
-  gpio: gpio-omap: simplify getting .driver_data
-  gpio: gpio-tegra: simplify getting .driver_data
-  gpio: gpio-zynq: simplify getting .driver_data
-
- drivers/gpio/gpio-dwapb.c     |  6 ++----
- drivers/gpio/gpio-lynxpoint.c |  3 +--
- drivers/gpio/gpio-mxc.c       |  6 ++----
- drivers/gpio/gpio-omap.c      | 12 ++++--------
- drivers/gpio/gpio-tegra.c     |  6 ++----
- drivers/gpio/gpio-zynq.c      |  6 ++----
- 6 files changed, 13 insertions(+), 26 deletions(-)
-
--- 
-2.19.0
+SGkgSmFjb3BvLA0KDQo+ICAgIHRoYW5rcyBmb3IgdGhlIHBhdGNoZXMuDQpUaGFua3MgZm9yIHRo
+ZSByZXZpZXchDQoNCk9uIFRodXJzZGF5LCBPY3RvYmVyIDE4LCAyMDE4LCBqYWNvcG8gbW9uZGkg
+d3JvdGU6DQoNCj4gPiArICogQ29tYmluZWQgR1BJTyBhbmQgcGluIGNvbnRyb2xsZXIgc3VwcG9y
+dCBmb3IgUmVuZXNhcyBSWi9BMg0KPiAoUjdTNzIxMDApIFNvQw0KPiANCj4gUjdTOTIxMA0KDQpU
+aGFua3MuDQpobW0sICBJIHdvbmRlciB3aGF0IHBpbmN0cmwgZHJpdmVyIEkgY29waWVkIHRoYXQg
+ZnJvbS4uLiA7KQ0KDQo+ID4gKyNpbmNsdWRlIDxsaW51eC9ncGlvLmg+DQo+ID4gKyNpbmNsdWRl
+IDxsaW51eC9iaXRvcHMuaD4NCj4gDQo+IEhlYWRlcnMgc29ydGVkIHBsZWFzZSA6KQ0KDQpPSywg
+c29ydGVkLg0KDQoNCj4gPiArI2RlZmluZSBSWkEyX05QT1JUUwkJKFBNICsgMSkNCj4gDQo+IFdo
+eSBub3QgbWFraW5nIHRoaXMgcGFydCBvZiB0aGUgZW51bSBpdHNlbGY/DQoNCkdvb2QgaWRlYS4N
+Cg0KPiA+ICsjZGVmaW5lIE1VWF9GVU5DKHBpbmNvbmYpCSgocGluY29uZiAmIE1VWF9GVU5DX01B
+U0spID4+IE1VWF9GVU5DX09GRlMpDQo+ID4gKyNkZWZpbmUgTVVYX0ZVTkMocGluY29uZikJKChw
+aW5jb25mICYgTVVYX0ZVTkNfTUFTSykgPj4gTVVYX0ZVTkNfT0ZGUykNCj4gDQo+IFNlZW1zIGxp
+a2UgdGhlIHNhbWUgbGluZSB0byBtZS4NCj4gQWxzbywgZG91YmxlIGVtcHR5IGxpbmUuDQoNCk9v
+cHMsIHRoYW5rcy4NCg0KDQo+ID4gK2VudW0gcGZjX3Bpbl9wb3J0X25hbWUge1AwLCBQMSwgUDIs
+IFAzLCBQNCwgUDUsIFA2LCBQNywgUDgsIFA5LCBQQSwgUEIsDQo+IFBDLCBQRCwNCj4gPiArCQkJ
+UEUsIFBGLCBQRywgUEgsCSAgICBQSiwgUEssIFBMLCBQTX07DQo+IHdlaXJkIHNwYWNpbmcgICAg
+ICAgICAgICAgICAgICAgXl5eXg0KDQpJIHdhcyBkb2luZyB0aGF0IHRvIHBvaW50IG91dCB0aGF0
+IHRoZXJlIGlzIG5vICJJIiBwb3J0ICh0aGV5IHNraXBwZWQgDQpvdmVyIGl0KS4gQnV0IGlmIHlv
+dSBkaWRuJ3QgcmVhbGl6ZSB0aGF0LCB0aGVuIGl0IGlzIG5vdCBvYnZpb3VzLCBzbyBJJ2xsIA0K
+anVzdCBmb3JtYXQgaXQgbm9ybWFsbHkuDQoNCg0KDQoNCj4gPiArc3RhdGljIGNvbnN0IGNoYXIg
+cG9ydF9uYW1lc1tdID0gIjAxMjM0NTY3ODlBQkNERUZHSEpLTE0iOw0KPiA+ICsNCj4gPiArc3Ry
+dWN0IHJ6YTJfcGluY3RybF9wcml2IHsNCj4gPiArCXN0cnVjdCBkZXZpY2UgKmRldjsNCj4gPiAr
+CXZvaWQgX19pb21lbSAqYmFzZTsNCj4gPiArDQo+ID4gKwlzdHJ1Y3QgcGluY3RybF9waW5fZGVz
+YyAqcGluczsNCj4gPiArCXN0cnVjdCBwaW5jdHJsX2Rlc2MgZGVzYzsNCj4gPiArCXN0cnVjdCBw
+aW5jdHJsX2RldiAqcGN0bDsNCj4gPiArfTsNCj4gPiArDQo+ID4gKyNkZWZpbmUgUERSX0JBU0Uo
+YikJKGIgKyAweDAwMDApCS8qIDE2LWJpdCwgMiBieXRlcyBhcGFydCAqLw0KPiANCj4gKCkgYXJv
+dW5kIG1hY3JvcyBwYXJhbWV0ZXJzIHdoZW4gdXNlZDoNCj4gICAgICAgICAgICAgICAgICAgICAg
+ICAgKChiKSArIDB4MDAwMCkNCj4gICAgICAgICAgICAgICAgICAgICAgICAgd2hpY2ggaXMganVz
+dCAoYikgYnkgdGhlIHdheSA6KQ0KDQpPSy4NClRoZSAiKyAweDAwMDAiIHdhcyBtb3JlIGZvciBk
+b2N1bWVudGF0aW9uIHJlYXNvbi4NCg0KPiBBbHNvLCBwbGVhc2UgcHJlZml4IGFsbCBkZWZpbmVz
+IHdpdGggUlpBMl8gbm90IHRvIHBvbGx1dGUgdGhlIGdsb2JhbA0KPiBzeW1ib2xzIHNwYWNlLg0K
+DQoNCk9LLg0KDQo+ID4gKyNkZWZpbmUgUE9EUl9CQVNFKGIpCShiICsgMHgwMDQwKQkvKiA4LWJp
+dCwgMSBieXRlIGFwYXJ0ICovDQo+ID4gKyNkZWZpbmUgUElEUl9CQVNFKGIpCShiICsgMHgwMDYw
+KQkvKiA4LWJpdCwgMSBieXRlIGFwYXJ0ICovDQo+ID4gKyNkZWZpbmUgUE1SX0JBU0UoYikJKGIg
+KyAweDAwODApCS8qIDgtYml0LCAxIGJ5dGUgYXBhcnQgKi8NCj4gPiArI2RlZmluZSBEU0NSX0JB
+U0UoYikJKGIgKyAweDAxNDApCS8qIDE2LWJpdCwgMiBieXRlcyBhcGFydCAqLw0KPiA+ICsjZGVm
+aW5lIFBGU19CQVNFKGIpCShiICsgMHgwMjAwKQkvKiA4LWJpdCwgOCBieXRlcyBhcGFydCAqLw0K
+PiANCj4gSGVyZSB5b3UgZGVmaW5lIHJlZ2lzdGVycyBhZGRyZXNzIGJhc2VzLCBidXQgaW5zdGVh
+ZCBvZiBjb21wdXRpbmcNCj4gZXZlcnl0aW1lIHRoZSBwb3J0LXBpbiBkZWRpY2F0ZWQgcmVnaXN0
+ZXIgYWRkcmVzcyAoSSdtIHRoaW5raW5nIGFib3V0DQo+IFBGUyBzcGVjaWZpY2FsbHkgYnV0IGl0
+IGFwcGxpZXMgdG8gb3RoZXJzKSwgd291bGQgeW91IGNvbnNpZGVyIHByb3ZpZGluZw0KPiBhY2Nl
+c3NvcnMgaGVscGVycyB0byB3cml0ZSB0aGUgb2Zmc2V0IGNvbXB1dGF0aW9ucyBwcm9jZXNzIGp1
+c3Qgb25jZSBoZXJlPw0KPiANCj4gRWcuDQo+ICNkZWZpbmUgUlpBMl9QRlMoX2IsIF9wb3J0LCBf
+cGluKSAoUlpBMl9QRlNfQkFTRShfYikgKyAoX3BvcnQpICogOCArDQo+IChfcGluKSkNCj4gDQo+
+IFNhbWUgZm9yIG90aGVyIHJlZ2lzdGVyIHdoaWNoIG5lZWRzIG9mZnNldCBjYWxjdWxhdGlvbiBi
+YXNlZCBvbiBwb3J0DQo+IGFuZCBwaW4gdmFsdWVzLg0KDQpJIGxpa2UgdGhhdCBpZGVhLiBUaGFu
+a3MuDQoNCg0KPiA+ICsjZGVmaW5lIFBXUFIoYikJCShiICsgMHgwMkZGKQkvKiA4LWJpdCAqLw0K
+PiA+ICsjZGVmaW5lIFBGRU5FVChiKQkoYiArIDB4MDgyMCkJLyogOC1iaXQgKi8NCj4gPiArI2Rl
+ZmluZSBQUE9DKGIpCQkoYiArIDB4MDkwMCkJLyogMzItYml0ICovDQo+ID4gKyNkZWZpbmUgUEhN
+T01PKGIpCShiICsgMHgwOTgwKQkvKiAzMi1iaXQgKi8NCj4gPiArI2RlZmluZSBQTU9ERVBGUyhi
+KQkoYiArIDB4MDlDMCkJLyogMzItYml0ICovDQo+ID4gKyNkZWZpbmUgUENLSU8oYikJKGIgKyAw
+eDA5RDApCS8qIDgtYml0ICovDQo+IA0KPiA+ICsNCj4gPiArdm9pZCByemEyX3NldF9waW5fZnVu
+Y3Rpb24odm9pZCBfX2lvbWVtICpwZmNfYmFzZSwgdTggcG9ydCwgdTggcGluLCB1OA0KPiBmdW5j
+KQ0KPiBzdGF0aWMgPw0KDQpJIGFjdHVhbGx5IGxlZnQgdGhhdCBhcyBnbG9iYWwgZm9yIGEgcmVh
+c29uIChiZWNhdXNlIGZvciBzb21lIHRlc3RpbmcsIEkNCm5lZWQgYSB3YXkgdG8gc2V0IHBpbiBk
+aXJlY3RseSBpbiBhIG5vbi1zdGFuZGFyZCB3YXkpLg0KQnV0LCBJIG1pZ2h0IGFzIHdlbGwgbWFr
+ZSBpdCBzdGF0aWMgYW5kIGp1c3QgdXNlIGEgZGlmZmVyZW50IGhhY2sgZm9yIG15DQp0ZXN0aW5n
+Lg0KDQo+ID4gKwkvKiBTZXQgcGluIHRvICdOb24tdXNlIChIaS16IGlucHV0IHByb3RlY3Rpb24p
+JyAgKi8NCj4gPiArCXJlZzE2ID0gcmVhZHcoUERSX0JBU0UocGZjX2Jhc2UpICsgKHBvcnQgKiAy
+KSk7DQo+IA0KPiBhcyBpbiBleGFtcGxlLA0KPiANCj4gICAgICAgICByZWcxNiA9IHJlYWR3KFJa
+QTJfUERSKHBmY19iYXNlKSwgcG9ydCkpOw0KPiANCj4gaXQncyBuaWNlciBhbmQgaXNvbGF0ZXMg
+dGhlIG9mZnNldCBjYWxjdWxhdGlvbnMsIHdoaWNoIGRpZmZlcnMNCj4gZnJvbSBvbmUgcmVnaXN0
+ZXIgdG8gYW5vdGhlciAodGhlICd4IGJ5dGVzIGFwYXJ0JyBjb21tZW50IHlvdSBhZGRlZCBpbg0K
+PiB0aGUgcmVnaXN0ZXJzIGRlZmluaXRpb25zIHJlcHJlc2VudHMgdGhpcywgcmlnaHQ/ICkNCg0K
+WXVwLCB0aGF0J3Mgd2hhdCBteSBjb2RlIGxvb2tzIGxpa2Ugbm93IGFmdGVyIHRoZSBjaGFuZ2Ug
+OikNCg0KPiA+ICsJaWYgKGRpciA9PSBHUElPRl9ESVJfSU4pDQo+ID4gKwkJcmVnMTYgfD0gMiA8
+PCAocGluICogMik7CS8vIHBpbiBhcyBpbnB1dA0KPiANCj4gQysrIGNvbW1lbnRzIHN0eWxlIQ0K
+DQpPSywgSSBjaGFuZ2VkIGl0Lg0KDQpIb3dldmVyLi4uLg0KSSBjYW4ndCBmaW5kIGFueXdoZXJl
+IGl0IHNheXMgdGhhdCAvLyBpcyBub3QgcHJvcGVyLg0KDQpGb3IgZXhhbXBsZSwganVzdCBsb29r
+IGF0IGNoZWNrcGF0Y2gucGw6DQoNCiQgZ3JlcCAtbTEgIGFsbG93X2M5OV9jb21tZW50cyAgc2Ny
+aXB0cy9jaGVja3BhdGNoLnBsDQpteSAkYWxsb3dfYzk5X2NvbW1lbnRzID0gMTsNCg0KQWxzbyBl
+dmVyeSBmaWxlIGhhcyB0aGlzIGFzIHRoZSB2ZXJ5IGZpcnN0IGxpbmU6DQovLyBTUERYLUxpY2Vu
+c2UtSWRlbnRpZmllcjogR1BMLTIuMA0KDQo7KQ0KDQoNCj4gPiArCWVsc2UNCj4gPiArCQlyZWcx
+NiB8PSAzIDw8IChwaW4gKiAyKTsJLy8gcGluIGFzIG91dHB1dA0KPiANCj4gQWxzbywgeW91IGFy
+ZSB1c2luZyB0aG9zZSAnMicgYW5kICczJyB2YWx1ZXMgaGVyZSBhbmQgdGhlcmUgaW4gdGhlDQo+
+IGNvZGUsIGFzIHRoZXkgcmVwcmVzZW50IHRoZSBwaW4gJ3N0YXR1cy4gV291bGQgeW91IGNvbnNp
+ZGVyIG1ha2luZw0KPiBhIGRlZmluZSBmb3IgdGhlbT8gQWN0dWFsbHksIGZvciBhbGwgb2YgdGhl
+bQ0KPiANCj4gI2RlZmluZSBSWkEyX1BJTl9TVEFURV9ISUdIWiAgICAweDAwDQo+ICNkZWZpbmUg
+UlpBMl9QSU5fU1RBVEVfSU5QVVQgICAgMHgwMg0KPiAjZGVmaW5lIFJaQTJfUElOX1NUQVRFX09V
+VFBVVCAgIDB4MDMNCg0KT0suDQoNCg0KPiA+ICsJLyoNCj4gPiArCSAqIFRoaXMgR1BJTyBjb250
+cm9sbGVyIGhhcyBhIGRlZmF1bHQgSGktWiBzdGF0ZSB0aGF0IGlzIG5vdCBpbnB1dA0KPiBvcg0K
+PiA+ICsJICogb3V0cHV0LCBzbyBmb3JjZSB0aGUgcGluIHRvIGlucHV0IG5vdy4NCj4gPiArCSAq
+Lw0KPiBJIHdvbmRlciBpZiBpdCBpcyBmaW5lIGZvciB0aGUgLmdldF9kaXJlY3Rpb24gY2FsbGJh
+Y2sgdG8gY2hhbmdlIHRoZQ0KPiBwaW4gc3RhdGUuDQoNCkkgc2VlIG5vIG90aGVyIG9wdGlvbi4g
+SSBjYW4gb25seSByZXR1cm4gImlucHV0IiBvciAib3V0cHV0IiwgYnV0IEhpLVogDQppcyBuZWl0
+aGVyIG9uZSBvZiB0aG9zZS4NClRoZSAuZ2V0X2RpcmVjdGlvbiBpcyB0aGUgZmlyc3Qgb25lIHRv
+IGdldCBjYWxsZWQgYWZ0ZXIgYXNzaWduaW5nIGEgcGluLg0KSWYgSSByZXR1cm4gdGhhdCBpdCdz
+IGFuICdpbnB1dCcsIGl0IHdpbGwgdGhpbmsgaXQgZG9lcyBub3QgaGF2ZSB0byBjYWxsDQouZGly
+ZWN0aW9uX2lucHV0LCBhbmQgdGhlbiB0aGUgcGluIGRvZXNuJ3Qgd29yay4NCg0KDQo+ID4gKwly
+emEyX3Bpbl90b19ncGlvKHByaXYtPmJhc2UsIHBvcnQsIHBpbiwgR1BJT0ZfRElSX0lOKTsNCj4g
+DQo+IEVtcHR5IGxpbmUgYmVmb3JlIHJldHVybiBpcyBuaWNlIChoZXJlIGFuZCBpbiBvdGhlciBw
+bGFjZXMpLg0KDQpUcnVlLiBJIGFkZGVkIGl0Lg0KDQo+IEknbGwgc3RvcCBoZXJlIHdpdGggY29t
+bWVudHMgb24gdGhlIGRyaXZlciwgYXMgSSBzaG91bGQgaGF2ZSBhIGxvb2sgYXQNCj4gYmluZGlu
+Z3MgYmVmb3JlLiBJJ2xsIGNvbW1lbnQgdGhlcmUgdG9vIGFuZCB0aGUgZ2V0IGJhY2sgdG8gdGhp
+cy4NCg0KT0suIEkndmUgbWFkZSBhbGwgdGhlc2UgY2hhbmdlcy4NCg0KSSBzZWUganVzdCBzZW50
+IHNvbWUgbW9yZSBjb21tZW50cywgc28gSSdsbCBoYXZlIGEgbG9vayBhdCB0aGVtIGZpcnN0IA0K
+YmVmb3JlIEkgc2VuZCBhIFYyLg0KDQpUaGFua3MsDQpDaHJpcw0KDQo=
