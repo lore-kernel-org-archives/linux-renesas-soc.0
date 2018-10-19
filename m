@@ -1,435 +1,192 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42248 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726304AbeJUFm6 (ORCPT
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:36716 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725945AbeJSIVp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 21 Oct 2018 01:42:58 -0400
-Received: by mail-pl1-f193.google.com with SMTP id c8-v6so17333666plo.9
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 20 Oct 2018 14:31:09 -0700 (PDT)
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH/RFT] pinctrl: sh-pfc: r8a77990: Add HSCIF pins, groups, and functions
-Date: Sun, 21 Oct 2018 06:30:55 +0900
-Message-Id: <1540071055-27181-1-git-send-email-ykaneko0929@gmail.com>
+        Fri, 19 Oct 2018 04:21:45 -0400
+Received: by mail-lf1-f65.google.com with SMTP id l1-v6so4152353lfc.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Oct 2018 17:18:12 -0700 (PDT)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Fri, 19 Oct 2018 02:18:08 +0200
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: sh-pfc: Reduce kernel size for narrow VIN
+ channels
+Message-ID: <20181019001808.GD6060@bigcity.dyn.berto.se>
+References: <20181016120036.13041-1-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181016120036.13041-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hi Geert,
 
-This patch adds HSCIF{0,1,2,3,4} pins, groups and functions to
-the R8A77990 SoC.
+Thanks for your patch.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
+On 2018-10-16 14:00:36 +0200, Geert Uytterhoeven wrote:
+> Some VIN channels support less than 24 lanes.  As union vin_data always
+> consumes space for 24 lanes, this wastes memory.
+> 
+> Hence introduce new smaller unions vin_data12 and vin_data16, to
+> accommodate VIN channels with only 12 or 16 lanes.
+> 
+> This reduces the static pin controller driver size by 320 bytes for
+> R-Car V2H, and by 96 bytes for R-Car E2.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch is based on the sh-pfc branch of Geert Uytterhoeven's
-renesas-drivers tree.
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 366 ++++++++++++++++++++++++++++++++++
- 1 file changed, 366 insertions(+)
+> ---
+> To be queued in sh-pfc-for-v4.21.
+> 
+>  drivers/pinctrl/sh-pfc/pfc-r8a7792.c | 16 ++++++++--------
+>  drivers/pinctrl/sh-pfc/pfc-r8a7794.c |  4 ++--
+>  drivers/pinctrl/sh-pfc/sh_pfc.h      | 17 +++++++++++++++--
+>  3 files changed, 25 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7792.c b/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
+> index bf0681b381819a4b..e977121b433b773c 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
+> @@ -1474,7 +1474,7 @@ static const unsigned int vin1_clk_mux[] = {
+>  	VI1_CLK_MARK,
+>  };
+>  /* - VIN2 ------------------------------------------------------------------- */
+> -static const union vin_data vin2_data_pins = {
+> +static const union vin_data16 vin2_data_pins = {
+>  	.data16 = {
+>  		RCAR_GP_PIN(6, 4), RCAR_GP_PIN(6, 5),
+>  		RCAR_GP_PIN(6, 6), RCAR_GP_PIN(6, 7),
+> @@ -1486,7 +1486,7 @@ static const union vin_data vin2_data_pins = {
+>  		RCAR_GP_PIN(8, 11), RCAR_GP_PIN(8, 12),
+>  	},
+>  };
+> -static const union vin_data vin2_data_mux = {
+> +static const union vin_data16 vin2_data_mux = {
+>  	.data16 = {
+>  		VI2_D0_C0_MARK, VI2_D1_C1_MARK,
+>  		VI2_D2_C2_MARK,	VI2_D3_C3_MARK,
+> @@ -1524,7 +1524,7 @@ static const unsigned int vin2_clk_mux[] = {
+>  	VI2_CLK_MARK,
+>  };
+>  /* - VIN3 ------------------------------------------------------------------- */
+> -static const union vin_data vin3_data_pins = {
+> +static const union vin_data16 vin3_data_pins = {
+>  	.data16 = {
+>  		RCAR_GP_PIN(7, 4), RCAR_GP_PIN(7, 5),
+>  		RCAR_GP_PIN(7, 6), RCAR_GP_PIN(7, 7),
+> @@ -1536,7 +1536,7 @@ static const union vin_data vin3_data_pins = {
+>  		RCAR_GP_PIN(8, 15), RCAR_GP_PIN(8, 16),
+>  	},
+>  };
+> -static const union vin_data vin3_data_mux = {
+> +static const union vin_data16 vin3_data_mux = {
+>  	.data16 = {
+>  		VI3_D0_C0_MARK, VI3_D1_C1_MARK,
+>  		VI3_D2_C2_MARK,	VI3_D3_C3_MARK,
+> @@ -1574,7 +1574,7 @@ static const unsigned int vin3_clk_mux[] = {
+>  	VI3_CLK_MARK,
+>  };
+>  /* - VIN4 ------------------------------------------------------------------- */
+> -static const union vin_data vin4_data_pins = {
+> +static const union vin_data12 vin4_data_pins = {
+>  	.data12 = {
+>  		RCAR_GP_PIN(8, 4), RCAR_GP_PIN(8, 5),
+>  		RCAR_GP_PIN(8, 6), RCAR_GP_PIN(8, 7),
+> @@ -1584,7 +1584,7 @@ static const union vin_data vin4_data_pins = {
+>  		RCAR_GP_PIN(8, 14), RCAR_GP_PIN(8, 15),
+>  	},
+>  };
+> -static const union vin_data vin4_data_mux = {
+> +static const union vin_data12 vin4_data_mux = {
+>  	.data12 = {
+>  		VI4_D0_C0_MARK, VI4_D1_C1_MARK,
+>  		VI4_D2_C2_MARK, VI4_D3_C3_MARK,
+> @@ -1620,7 +1620,7 @@ static const unsigned int vin4_clk_mux[] = {
+>  	VI4_CLK_MARK,
+>  };
+>  /* - VIN5 ------------------------------------------------------------------- */
+> -static const union vin_data vin5_data_pins = {
+> +static const union vin_data12 vin5_data_pins = {
+>  	.data12 = {
+>  		RCAR_GP_PIN(9, 4), RCAR_GP_PIN(9, 5),
+>  		RCAR_GP_PIN(9, 6), RCAR_GP_PIN(9, 7),
+> @@ -1630,7 +1630,7 @@ static const union vin_data vin5_data_pins = {
+>  		RCAR_GP_PIN(9, 14), RCAR_GP_PIN(9, 15),
+>  	},
+>  };
+> -static const union vin_data vin5_data_mux = {
+> +static const union vin_data12 vin5_data_mux = {
+>  	.data12 = {
+>  		VI5_D0_C0_MARK, VI5_D1_C1_MARK,
+>  		VI5_D2_C2_MARK, VI5_D3_C3_MARK,
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+> index 6d1e5fdc03f84554..b96a3cc79084ddcc 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+> @@ -3704,7 +3704,7 @@ static const unsigned int vin0_clk_mux[] = {
+>  	VI0_CLK_MARK,
+>  };
+>  /* - VIN1 ------------------------------------------------------------------- */
+> -static const union vin_data vin1_data_pins = {
+> +static const union vin_data12 vin1_data_pins = {
+>  	.data12 = {
+>  		RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 13),
+>  		RCAR_GP_PIN(5, 14), RCAR_GP_PIN(5, 15),
+> @@ -3714,7 +3714,7 @@ static const union vin_data vin1_data_pins = {
+>  		RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 13),
+>  	},
+>  };
+> -static const union vin_data vin1_data_mux = {
+> +static const union vin_data12 vin1_data_mux = {
+>  	.data12 = {
+>  		VI1_DATA0_MARK, VI1_DATA1_MARK,
+>  		VI1_DATA2_MARK, VI1_DATA3_MARK,
+> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+> index 458ae0a6b5404631..1fc13366869abd4c 100644
+> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+> @@ -53,8 +53,8 @@ struct sh_pfc_pin_group {
+>  };
+>  
+>  /*
+> - * Using union vin_data saves memory occupied by the VIN data pins.
+> - * VIN_DATA_PIN_GROUP() is  a macro  used  to describe the VIN pin groups
+> + * Using union vin_data{,12,16} saves memory occupied by the VIN data pins.
+> + * VIN_DATA_PIN_GROUP() is a macro used to describe the VIN pin groups
+>   * in this case.
+>   */
+>  #define VIN_DATA_PIN_GROUP(n, s)				\
+> @@ -65,6 +65,19 @@ struct sh_pfc_pin_group {
+>  		.nr_pins = ARRAY_SIZE(n##_pins.data##s),	\
+>  	}
+>  
+> +union vin_data12 {
+> +	unsigned int data12[12];
+> +	unsigned int data10[10];
+> +	unsigned int data8[8];
+> +};
+> +
+> +union vin_data16 {
+> +	unsigned int data16[16];
+> +	unsigned int data12[12];
+> +	unsigned int data10[10];
+> +	unsigned int data8[8];
+> +};
+> +
+>  union vin_data {
+>  	unsigned int data24[24];
+>  	unsigned int data20[20];
+> -- 
+> 2.17.1
+> 
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-index 1fdafa4..0d0153a 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-@@ -1459,6 +1459,290 @@ enum {
- 	DU_DISP_MARK,
- };
- 
-+/* - HSCIF0 --------------------------------------------------*/
-+static const unsigned int hscif0_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 9),
-+};
-+
-+static const unsigned int hscif0_data_a_mux[] = {
-+	HRX0_A_MARK, HTX0_A_MARK,
-+};
-+
-+static const unsigned int hscif0_clk_a_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(5, 7),
-+};
-+
-+static const unsigned int hscif0_clk_a_mux[] = {
-+	HSCK0_A_MARK,
-+};
-+
-+static const unsigned int hscif0_ctrl_a_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(5, 15), RCAR_GP_PIN(5, 14),
-+};
-+
-+static const unsigned int hscif0_ctrl_a_mux[] = {
-+	HRTS0_N_A_MARK, HCTS0_N_A_MARK,
-+};
-+
-+static const unsigned int hscif0_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(6, 11), RCAR_GP_PIN(6, 12),
-+};
-+
-+static const unsigned int hscif0_data_b_mux[] = {
-+	HRX0_B_MARK, HTX0_B_MARK,
-+};
-+
-+static const unsigned int hscif0_clk_b_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(6, 13),
-+};
-+
-+static const unsigned int hscif0_clk_b_mux[] = {
-+	HSCK0_B_MARK,
-+};
-+
-+/* - HSCIF1 ------------------------------------------------- */
-+static const unsigned int hscif1_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 1), RCAR_GP_PIN(5, 2),
-+};
-+
-+static const unsigned int hscif1_data_a_mux[] = {
-+	HRX1_A_MARK, HTX1_A_MARK,
-+};
-+
-+static const unsigned int hscif1_clk_a_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(5, 0),
-+};
-+
-+static const unsigned int hscif1_clk_a_mux[] = {
-+	HSCK1_A_MARK,
-+};
-+
-+static const unsigned int hscif1_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(3, 1), RCAR_GP_PIN(3, 2),
-+};
-+
-+static const unsigned int hscif1_data_b_mux[] = {
-+	HRX1_B_MARK, HTX1_B_MARK,
-+};
-+
-+static const unsigned int hscif1_clk_b_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(3, 0),
-+};
-+
-+static const unsigned int hscif1_clk_b_mux[] = {
-+	HSCK1_B_MARK,
-+};
-+
-+static const unsigned int hscif1_ctrl_b_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(3, 4), RCAR_GP_PIN(3, 3),
-+};
-+
-+static const unsigned int hscif1_ctrl_b_mux[] = {
-+	HRTS1_N_B_MARK, HCTS1_N_B_MARK,
-+};
-+
-+/* - HSCIF2 ------------------------------------------------- */
-+static const unsigned int hscif2_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 14), RCAR_GP_PIN(5, 15),
-+};
-+
-+static const unsigned int hscif2_data_a_mux[] = {
-+	HRX2_A_MARK, HTX2_A_MARK,
-+};
-+
-+static const unsigned int hscif2_clk_a_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(6, 14),
-+};
-+
-+static const unsigned int hscif2_clk_a_mux[] = {
-+	HSCK2_A_MARK,
-+};
-+
-+static const unsigned int hscif2_ctrl_a_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(6, 16), RCAR_GP_PIN(6, 15),
-+};
-+
-+static const unsigned int hscif2_ctrl_a_mux[] = {
-+	HRTS2_N_A_MARK, HCTS2_N_A_MARK,
-+};
-+
-+static const unsigned int hscif2_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 5), RCAR_GP_PIN(5, 6),
-+};
-+
-+static const unsigned int hscif2_data_b_mux[] = {
-+	HRX2_B_MARK, HTX2_B_MARK,
-+};
-+
-+/* - HSCIF3 ------------------------------------------------*/
-+static const unsigned int hscif3_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 15),
-+};
-+
-+static const unsigned int hscif3_data_a_mux[] = {
-+	HRX3_A_MARK, HTX3_A_MARK,
-+};
-+
-+static const unsigned int hscif3_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(0, 5), RCAR_GP_PIN(0, 6),
-+};
-+
-+static const unsigned int hscif3_data_b_mux[] = {
-+	HRX3_B_MARK, HTX3_B_MARK,
-+};
-+
-+static const unsigned int hscif3_clk_b_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(0, 4),
-+};
-+
-+static const unsigned int hscif3_clk_b_mux[] = {
-+	HSCK3_B_MARK,
-+};
-+
-+static const unsigned int hscif3_data_c_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(2, 10), RCAR_GP_PIN(2, 9),
-+};
-+
-+static const unsigned int hscif3_data_c_mux[] = {
-+	HRX3_C_MARK, HTX3_C_MARK,
-+};
-+
-+static const unsigned int hscif3_clk_c_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(2, 11),
-+};
-+
-+static const unsigned int hscif3_clk_c_mux[] = {
-+	HSCK3_C_MARK,
-+};
-+
-+static const unsigned int hscif3_ctrl_c_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(2, 13), RCAR_GP_PIN(2, 12),
-+};
-+
-+static const unsigned int hscif3_ctrl_c_mux[] = {
-+	HRTS3_N_C_MARK, HCTS3_N_C_MARK,
-+};
-+
-+static const unsigned int hscif3_data_d_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(1, 3), RCAR_GP_PIN(1, 0),
-+};
-+
-+static const unsigned int hscif3_data_d_mux[] = {
-+	HRX3_D_MARK, HTX3_D_MARK,
-+};
-+
-+static const unsigned int hscif3_data_e_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(0, 9), RCAR_GP_PIN(0, 10),
-+};
-+
-+static const unsigned int hscif3_data_e_mux[] = {
-+	HRX3_E_MARK, HTX3_E_MARK,
-+};
-+
-+static const unsigned int hscif3_ctrl_e_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(0, 11), RCAR_GP_PIN(0, 8),
-+};
-+
-+static const unsigned int hscif3_ctrl_e_mux[] = {
-+	HRTS3_N_E_MARK, HCTS3_N_E_MARK,
-+};
-+
-+/* - HSCIF4 -------------------------------------------------- */
-+static const unsigned int hscif4_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(2, 4), RCAR_GP_PIN(2, 3),
-+};
-+
-+static const unsigned int hscif4_data_a_mux[] = {
-+	HRX4_A_MARK, HTX4_A_MARK,
-+};
-+
-+static const unsigned int hscif4_clk_a_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(2, 0),
-+};
-+
-+static const unsigned int hscif4_clk_a_mux[] = {
-+	HSCK4_A_MARK,
-+};
-+
-+static const unsigned int hscif4_ctrl_a_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(2, 2), RCAR_GP_PIN(2, 1),
-+};
-+
-+static const unsigned int hscif4_ctrl_a_mux[] = {
-+	HRTS4_N_A_MARK, HCTS4_N_A_MARK,
-+};
-+
-+static const unsigned int hscif4_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(2, 8), RCAR_GP_PIN(2, 7),
-+};
-+
-+static const unsigned int hscif4_data_b_mux[] = {
-+	HRX4_B_MARK, HTX4_B_MARK,
-+};
-+
-+static const unsigned int hscif4_clk_b_pins[] = {
-+/* SCK */
-+	RCAR_GP_PIN(2, 6),
-+};
-+
-+static const unsigned int hscif4_clk_b_mux[] = {
-+	HSCK4_B_MARK,
-+};
-+
-+static const unsigned int hscif4_data_c_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(1, 8), RCAR_GP_PIN(1, 11),
-+};
-+
-+static const unsigned int hscif4_data_c_mux[] = {
-+	HRX4_C_MARK, HTX4_C_MARK,
-+};
-+
-+static const unsigned int hscif4_data_d_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(1, 13), RCAR_GP_PIN(1, 14),
-+};
-+
-+static const unsigned int hscif4_data_d_mux[] = {
-+	HRX4_D_MARK, HTX4_D_MARK,
-+};
-+
-+static const unsigned int hscif4_data_e_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(1, 18), RCAR_GP_PIN(1, 19),
-+};
-+
-+static const unsigned int hscif4_data_e_mux[] = {
-+	HRX4_E_MARK, HTX4_E_MARK,
-+};
-+
- /* - I2C -------------------------------------------------------------------- */
- static const unsigned int i2c1_a_pins[] = {
- 	/* SCL, SDA */
-@@ -2454,6 +2738,37 @@ enum {
- 		SH_PFC_PIN_GROUP(du_disp_cde),
- 		SH_PFC_PIN_GROUP(du_cde),
- 		SH_PFC_PIN_GROUP(du_disp),
-+		SH_PFC_PIN_GROUP(hscif0_data_a),
-+		SH_PFC_PIN_GROUP(hscif0_clk_a),
-+		SH_PFC_PIN_GROUP(hscif0_ctrl_a),
-+		SH_PFC_PIN_GROUP(hscif0_data_b),
-+		SH_PFC_PIN_GROUP(hscif0_clk_b),
-+		SH_PFC_PIN_GROUP(hscif1_data_a),
-+		SH_PFC_PIN_GROUP(hscif1_clk_a),
-+		SH_PFC_PIN_GROUP(hscif1_data_b),
-+		SH_PFC_PIN_GROUP(hscif1_clk_b),
-+		SH_PFC_PIN_GROUP(hscif1_ctrl_b),
-+		SH_PFC_PIN_GROUP(hscif2_data_a),
-+		SH_PFC_PIN_GROUP(hscif2_clk_a),
-+		SH_PFC_PIN_GROUP(hscif2_ctrl_a),
-+		SH_PFC_PIN_GROUP(hscif2_data_b),
-+		SH_PFC_PIN_GROUP(hscif3_data_a),
-+		SH_PFC_PIN_GROUP(hscif3_data_b),
-+		SH_PFC_PIN_GROUP(hscif3_clk_b),
-+		SH_PFC_PIN_GROUP(hscif3_data_c),
-+		SH_PFC_PIN_GROUP(hscif3_clk_c),
-+		SH_PFC_PIN_GROUP(hscif3_ctrl_c),
-+		SH_PFC_PIN_GROUP(hscif3_data_d),
-+		SH_PFC_PIN_GROUP(hscif3_data_e),
-+		SH_PFC_PIN_GROUP(hscif3_ctrl_e),
-+		SH_PFC_PIN_GROUP(hscif4_data_a),
-+		SH_PFC_PIN_GROUP(hscif4_clk_a),
-+		SH_PFC_PIN_GROUP(hscif4_ctrl_a),
-+		SH_PFC_PIN_GROUP(hscif4_data_b),
-+		SH_PFC_PIN_GROUP(hscif4_clk_b),
-+		SH_PFC_PIN_GROUP(hscif4_data_c),
-+		SH_PFC_PIN_GROUP(hscif4_data_d),
-+		SH_PFC_PIN_GROUP(hscif4_data_e),
- 		SH_PFC_PIN_GROUP(i2c1_a),
- 		SH_PFC_PIN_GROUP(i2c1_b),
- 		SH_PFC_PIN_GROUP(i2c1_c),
-@@ -2586,6 +2901,52 @@ enum {
- 	"du_disp",
- };
- 
-+static const char * const hscif0_groups[] = {
-+	"hscif0_data_a",
-+	"hscif0_clk_a",
-+	"hscif0_ctrl_a",
-+	"hscif0_data_b",
-+	"hscif0_clk_b",
-+};
-+
-+static const char * const hscif1_groups[] = {
-+	"hscif1_data_a",
-+	"hscif1_clk_a",
-+	"hscif1_data_b",
-+	"hscif1_clk_b",
-+	"hscif1_ctrl_b",
-+};
-+
-+static const char * const hscif2_groups[] = {
-+	"hscif2_data_a",
-+	"hscif2_clk_a",
-+	"hscif2_ctrl_a",
-+	"hscif2_data_b",
-+};
-+
-+static const char * const hscif3_groups[] = {
-+	"hscif3_data_a",
-+	"hscif3_data_b",
-+	"hscif3_clk_b",
-+	"hscif3_data_c",
-+	"hscif3_clk_c",
-+	"hscif3_ctrl_c",
-+	"hscif3_data_d",
-+	"hscif3_data_e",
-+	"hscif3_ctrl_e",
-+};
-+
-+static const char * const hscif4_groups[] = {
-+	"hscif4_data_a",
-+	"hscif4_clk_a",
-+	"hscif4_ctrl_a",
-+	"hscif4_data_b",
-+	"hscif4_clk_b",
-+	"hscif4_data_c",
-+	"hscif4_data_d",
-+	"hscif4_data_e",
-+};
-+
- static const char * const i2c1_groups[] = {
- 	"i2c1_a",
- 	"i2c1_b",
-@@ -2781,6 +3142,11 @@ enum {
- 	.common = {
- 		SH_PFC_FUNCTION(avb),
- 		SH_PFC_FUNCTION(du),
-+		SH_PFC_FUNCTION(hscif0),
-+		SH_PFC_FUNCTION(hscif1),
-+		SH_PFC_FUNCTION(hscif2),
-+		SH_PFC_FUNCTION(hscif3),
-+		SH_PFC_FUNCTION(hscif4),
- 		SH_PFC_FUNCTION(i2c1),
- 		SH_PFC_FUNCTION(i2c2),
- 		SH_PFC_FUNCTION(i2c4),
 -- 
-1.9.1
+Regards,
+Niklas S�derlund
