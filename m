@@ -1,37 +1,56 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Mon, 15 Oct 2018 11:55:27 -0500
-From: Rob Herring <robh@kernel.org>
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: watchdog: renesas-wdt: Document r8a7744
- support
-Message-ID: <20181015165527.GA14954@bogus>
-References: <1537895241-7686-1-git-send-email-biju.das@bp.renesas.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:62778 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726942AbeJSNRe (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 19 Oct 2018 09:17:34 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms@verge.net.au>
+CC: Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] arm64: dts: renesas: revise hsusb's reg size
+Date: Fri, 19 Oct 2018 05:13:03 +0000
+Message-ID: <OSBPR01MB2293CA56C2256DA994755297D8F90@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+References: <1539669890-25719-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20181017085719.5ukyuml3ugmfdtmp@verge.net.au>
+ <CAMuHMdU09fTvuF3kCkN0dJk_S25_KYyL-1OCgPGNQxs=w2YaEw@mail.gmail.com>
+In-Reply-To: <CAMuHMdU09fTvuF3kCkN0dJk_S25_KYyL-1OCgPGNQxs=w2YaEw@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1537895241-7686-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Sep 25, 2018 at 06:07:21PM +0100, Biju Das wrote:
-> RZ/G1N (R8A7744) watchdog implementation is compatible with R-Car
-> Gen2, therefore add relevant documentation.
-> 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-> ---
->  Documentation/devicetree/bindings/watchdog/renesas-wdt.txt | 1 +
->  1 file changed, 1 insertion(+)
-
-Applied.
-
-Rob
+SGkgU2ltb24tc2FuLCBHZWVydC1zYW4sDQoNCj4gRnJvbTogR2VlcnQgVXl0dGVyaG9ldmVuLCBT
+ZW50OiBXZWRuZXNkYXksIE9jdG9iZXIgMTcsIDIwMTggNjozNSBQTQ0KPiANCj4gSGkgU2ltb24s
+DQo+IA0KPiBPbiBXZWQsIE9jdCAxNywgMjAxOCBhdCAxMDo1NyBBTSBTaW1vbiBIb3JtYW4gPGhv
+cm1zQHZlcmdlLm5ldC5hdT4gd3JvdGU6DQo+ID4gT24gVHVlLCBPY3QgMTYsIDIwMTggYXQgMDM6
+MDQ6NTBQTSArMDkwMCwgWW9zaGloaXJvIFNoaW1vZGEgd3JvdGU6DQo+ID4gPiBUaGlzIHBhdGNo
+IHJldmlzZXMgdGhlIHJlZyBzaXplIG9mIGVhY2ggaHN1c2IgZGV2aWNlIG5vZGUgZm9yDQo+ID4g
+PiByOGE3Nzk1LCByOGE3Nzk2IGFuZCByOGE3Nzk2NS4NCj4gPiA+DQo+ID4gPiBSZXBvcnRlZC1i
+eTogQmlqdSBEYXMgPGJpanUuZGFzQGJwLnJlbmVzYXMuY29tPg0KPiA+ID4gRml4ZXM6IGQyNDIy
+ZTEwODgxMiAoImFybTY0OiBkdHM6IHI4YTc3OTU6IEFkZCBIU1VTQiBkZXZpY2Ugbm9kZSIpDQo+
+ID4gPiBGaXhlczogNDcyNWYyYjg4MDU3ICgiYXJtNjQ6IGR0czogcmVuZXNhczogcjhhNzc5NTog
+YWRkIGhzdXNiIGNoMyBkZXZpY2Ugbm9kZSIpDQo+ID4gPiBGaXhlczogYjk1MzU4NTM3NzdmICgi
+YXJtNjQ6IGR0czogcjhhNzc5NjogQWRkIEhTVVNCIGRldmljZSBub2RlIikNCj4gPiA+IEZpeGVz
+OiA5ZTFiMDBhMmVmNDMgKCJhcm02NDogZHRzOiByZW5lc2FzOiByOGE3Nzk2NTogQWRkICJyZWci
+IHByb3BlcnRpZXMiKQ0KPiA+ID4gU2lnbmVkLW9mZi1ieTogWW9zaGloaXJvIFNoaW1vZGEgPHlv
+c2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMuY29tPg0KPiA+DQo+ID4gVGhhbmtzIFNoaW1vZGEt
+c2FuLA0KPiA+DQo+ID4gVGhpcyBsb29rcyBmaW5lIHRvIG1lIGJ1dCBJIHdpbGwgd2FpdCB0byBz
+ZWUgaWYgdGhlcmUgYXJlIG90aGVyIHJldmlld3MNCj4gPiBiZWZvcmUgYXBwbHlpbmcuDQo+ID4N
+Cj4gPiBSZXZpZXdlZC1ieTogU2ltb24gSG9ybWFuIDxob3JtcytyZW5lc2FzQHZlcmdlLm5ldC5h
+dT4NCj4gPg0KPiA+DQo+ID4gQWxzbywgY291bGQgeW91IGxldCBtZSBrbm93IGlmIHRoaXMgaGFz
+IGFueSBydW4tdGltZSBlZmZlY3Q/DQo+ID4gSWYgc28gcGVyaGFwcyBpdCBzaG91bGQgYmUgdHJl
+YXRlZCBhcyBhIGZpeCBmb3IgdjQuMjAgcmF0aGVyIHRoYW4NCj4gPiBhIHBhdGNoIGZvciB2NC4y
+MS4NCj4gDQo+IFByb2JhYmx5IG5vdCwgYXMgbWFwcGluZyBncmFudWxhcml0eSBpcyBQQUdFX1NJ
+WkUgKD4gMHgyMDApIGFueXdheS4NCg0KQXMgR2VlcnQtc2FuIG1lbnRpb25lZCwgSSBkb24ndCB0
+aGluayB0aGlzIHBhdGNoIG5lZWRzIGFzIGEgZml4IGZvciB2NC4yMC4NCg0KQmVzdCByZWdhcmRz
+LA0KWW9zaGloaXJvIFNoaW1vZGENCg0KPiBHcntvZXRqZSxlZXRpbmd9cywNCj4gDQo+ICAgICAg
+ICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+IA0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4g
+LS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LW02OGsu
+b3JnDQo+IA0KPiBJbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3Bs
+ZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91
+cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4N
+Cj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0K
