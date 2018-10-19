@@ -1,39 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:37368 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726553AbeJPSXX (ORCPT
+Received: from sauhun.de ([88.99.104.3]:59556 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726194AbeJTGVY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Oct 2018 14:23:23 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] MAINTAINERS: Remove Laurent Pinchart as Renesas pinctrl maintainer
-Date: Tue, 16 Oct 2018 13:33:39 +0300
-Message-Id: <20181016103339.4942-1-laurent.pinchart+renesas@ideasonboard.com>
+        Sat, 20 Oct 2018 02:21:24 -0400
+Date: Sat, 20 Oct 2018 00:13:26 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: [PATCH v2 2/3] mmc: tmio: fix reset operation
+Message-ID: <20181019221325.GC4548@kunai>
+References: <20181016013832.2385-1-niklas.soderlund@ragnatech.se>
+ <20181016013832.2385-3-niklas.soderlund@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="oTHb8nViIGeoXxdp"
+Content-Disposition: inline
+In-Reply-To: <20181016013832.2385-3-niklas.soderlund@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Geert Uytterhoeven has long taken over and I'm not involved anymore with
-the Renesas pinctrl driver. Remove myself from the maintainers list.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
+--oTHb8nViIGeoXxdp
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 69373eb328d4..f9d00cc05202 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11515,7 +11515,6 @@ F:	Documentation/devicetree/bindings/pinctrl/qcom,*.txt
- F:	drivers/pinctrl/qcom/
- 
- PIN CONTROLLER - RENESAS
--M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
- M:	Geert Uytterhoeven <geert+renesas@glider.be>
- L:	linux-renesas-soc@vger.kernel.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git sh-pfc
--- 
-Regards,
+On Tue, Oct 16, 2018 at 03:38:31AM +0200, Niklas S=C3=B6derlund wrote:
+> From: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
+>=20
+> SD / MMC did not operate properly when suspend transition failed.
+> Because the SCC was not reset at resume, issue of the command failed.
+> Merge tmio_mmc_reset() into tmio_mmc_hw_reset() in order to add reset
+> of SCC to tmio_mmc_host_runtime_resume().
+>=20
+> Based on work from Masaharu Hayakawa.
+>=20
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
 
-Laurent Pinchart
+This needs to be rebased on top of mmc/next because Yamada-san
+introduced a new hook for reset. Hmm, I thought I mentioned that before
+but can't recall where :(
+
+
+--oTHb8nViIGeoXxdp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvKVwEACgkQFA3kzBSg
+KbZN+A/+OPQioRkRvcES9ZdtYfgTxB/jrg3L3ZiLBAhjMbAWpYCG798V6MWlZBYP
+/0mIKQcQ7otkT4UKkRDvwGDy4nre4M2pY+i/ghCPx/IQf8/sY9Crifta9S4Y7+Nk
+OrfSjHWUptPhO5rlxgwp76S5UcTF53OJi+xMPuT8Uoie9W+QIeC8CpNITqbn5N0a
+SIZUdYU7Ym54Wio7tn30EtPX5gYR28HCYrfKLIMJ2T7OxpYM2WmzZX+NWxANfQpv
+qjIWHfklGgLYzGwDPzc1Hxz9oHOxlyc9flVIhY9iPF0Gv1WcX3Igei/seBuiuktO
+YBWWLSTqiWq4t7fvtJZJB/GuMZfbOUdXedBTOnOlqsqdAaOnKwquDAFamngOznfM
+F28LyvNZtGSv3Qn7J+dwqCrX5Ezo34rl8+XmX4xTWHsACye4HXH4Kay8JGTSZxV7
+bckXO5Ys12oRjkMv6Lc4gIH/2vpg1cJHzTAhgpJb0swJRgSlBQRXtivwMlj3smzw
+TNj0Gw/y2t7xCciY1eg+0lAo553x/HwJr0aIWoGdxglDeYuZI0I36dF2QMWQPQ+f
+8BinPwa4ck7c/YY/Ao7H676Jwk2CC5T8kwsu4COo6puQ3wUr6UNgaSKclKOwgYar
+pjBcR6rIawzNbm5EVNQIFKvyZTWG0HbMNsQ6P1nb/v9CsDjgKa8=
+=c8yK
+-----END PGP SIGNATURE-----
+
+--oTHb8nViIGeoXxdp--
