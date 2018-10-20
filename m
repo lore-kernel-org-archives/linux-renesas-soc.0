@@ -1,59 +1,108 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45890 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727226AbeJVEQP (ORCPT
+Received: from mail-pf1-f180.google.com ([209.85.210.180]:34349 "EHLO
+        mail-pf1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726549AbeJUFr1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:16:15 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        alsa-devel@alsa-project.org
-Subject: [PATCH 1/1] slimbus: qcom-ctrl: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:44 +0200
-Message-Id: <20181021200045.2053-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200045.2053-1-wsa+renesas@sang-engineering.com>
-References: <20181021200045.2053-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sun, 21 Oct 2018 01:47:27 -0400
+Received: by mail-pf1-f180.google.com with SMTP id f78-v6so12297931pfe.1
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 20 Oct 2018 14:35:37 -0700 (PDT)
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH/RFT] arm64: dts: renesas: r8a77990: Enable I2C DMA
+Date: Sun, 21 Oct 2018 06:35:26 +0900
+Message-Id: <1540071326-27428-1-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This patch enables I2C DMA.
+
+NOTE: I2C7 DMA is not supported by R-Car Gen3 Hardware User's Manual
+Rev.0.80E.
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 ---
 
-Build tested only. buildbot is happy.
+This patch is based on the devel branch of Simon Horman's renesas tree.
 
- drivers/slimbus/qcom-ctrl.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/slimbus/qcom-ctrl.c b/drivers/slimbus/qcom-ctrl.c
-index db1f5135846a..ad3e2e23f56e 100644
---- a/drivers/slimbus/qcom-ctrl.c
-+++ b/drivers/slimbus/qcom-ctrl.c
-@@ -654,8 +654,7 @@ static int qcom_slim_remove(struct platform_device *pdev)
- #ifdef CONFIG_PM
- static int qcom_slim_runtime_suspend(struct device *device)
- {
--	struct platform_device *pdev = to_platform_device(device);
--	struct qcom_slim_ctrl *ctrl = platform_get_drvdata(pdev);
-+	struct qcom_slim_ctrl *ctrl = dev_get_drvdata(device);
- 	int ret;
- 
- 	dev_dbg(device, "pm_runtime: suspending...\n");
-@@ -672,8 +671,7 @@ static int qcom_slim_runtime_suspend(struct device *device)
- 
- static int qcom_slim_runtime_resume(struct device *device)
- {
--	struct platform_device *pdev = to_platform_device(device);
--	struct qcom_slim_ctrl *ctrl = platform_get_drvdata(pdev);
-+	struct qcom_slim_ctrl *ctrl = dev_get_drvdata(device);
- 	int ret = 0;
- 
- 	dev_dbg(device, "pm_runtime: resuming...\n");
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index a437862..9df0751 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -213,6 +213,9 @@
+ 			clocks = <&cpg CPG_MOD 931>;
+ 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 931>;
++			dmas = <&dmac1 0x91>, <&dmac1 0x90>,
++			       <&dmac2 0x91>, <&dmac2 0x90>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <110>;
+ 			status = "disabled";
+ 		};
+@@ -227,6 +230,9 @@
+ 			clocks = <&cpg CPG_MOD 930>;
+ 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 930>;
++			dmas = <&dmac1 0x93>, <&dmac1 0x92>,
++			       <&dmac2 0x93>, <&dmac2 0x92>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			status = "disabled";
+ 		};
+@@ -241,6 +247,9 @@
+ 			clocks = <&cpg CPG_MOD 929>;
+ 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 929>;
++			dmas = <&dmac1 0x95>, <&dmac1 0x94>,
++			       <&dmac2 0x95>, <&dmac2 0x94>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			status = "disabled";
+ 		};
+@@ -255,6 +264,8 @@
+ 			clocks = <&cpg CPG_MOD 928>;
+ 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 928>;
++			dmas = <&dmac0 0x97>, <&dmac0 0x96>;
++			dma-names = "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <110>;
+ 			status = "disabled";
+ 		};
+@@ -269,6 +280,8 @@
+ 			clocks = <&cpg CPG_MOD 927>;
+ 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 927>;
++			dmas = <&dmac0 0x99>, <&dmac0 0x98>;
++			dma-names = "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			status = "disabled";
+ 		};
+@@ -283,6 +296,8 @@
+ 			clocks = <&cpg CPG_MOD 919>;
+ 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 919>;
++			dmas = <&dmac0 0x9b>, <&dmac0 0x9a>;
++			dma-names = "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			status = "disabled";
+ 		};
+@@ -297,6 +312,8 @@
+ 			clocks = <&cpg CPG_MOD 918>;
+ 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 918>;
++			dmas = <&dmac0 0x9d>, <&dmac0 0x9c>;
++			dma-names = "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			status = "disabled";
+ 		};
 -- 
-2.19.0
+1.9.1
