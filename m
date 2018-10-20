@@ -1,85 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:51316 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727475AbeJYWhn (ORCPT
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36853 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726609AbeJUFrq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:37:43 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
+        Sun, 21 Oct 2018 01:47:46 -0400
+Received: by mail-pg1-f196.google.com with SMTP id f18-v6so17288750pgv.3
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 20 Oct 2018 14:35:55 -0700 (PDT)
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 3/7] ARM: dts: r8a77470: Add USB PHY DT support
-Date: Thu, 25 Oct 2018 14:56:55 +0100
-Message-Id: <1540475819-47950-4-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1540475819-47950-1-git-send-email-biju.das@bp.renesas.com>
-References: <1540475819-47950-1-git-send-email-biju.das@bp.renesas.com>
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH/RFT] arm64: dts: renesas: r8a77990: Add I2C-DVFS device node
+Date: Sun, 21 Oct 2018 06:35:49 +0900
+Message-Id: <1540071349-27483-1-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the r8a77470 generic part of the USB PHY device node.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
-This patch is tested against renesas-devel
----
- arch/arm/boot/dts/r8a77470.dtsi | 38 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+This patch adds I2C-DVFS device node for the R8A77990 SoC.
 
-diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index 6ac7f46..7d20c3b 100644
---- a/arch/arm/boot/dts/r8a77470.dtsi
-+++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -315,6 +315,44 @@
- 			status = "disabled";
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+---
+
+This patch is based on the devel branch of Simon Horman's renesas tree.
+
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index 9df0751..5d9905f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -22,7 +22,8 @@
+ 		i2c4 = &i2c4;
+ 		i2c5 = &i2c5;
+ 		i2c6 = &i2c6;
+-		i2c7 = &i2c7;
++		i2c7 = &i2c_dvfs;
++		i2c8 = &i2c7;
+ 	};
+ 
+ 	cpus {
+@@ -337,6 +338,22 @@
+ 			reg = <0 0xe6060000 0 0x508>;
  		};
  
-+		usbphy0: usb-phy@e6590100 {
-+			compatible = "renesas,usb-phy-r8a77470",
-+				     "renesas,rcar-gen2-usb-phy";
-+			reg = <0 0xe6590100 0 0x100>,
-+				<0 0xee080200 0 0x118>;
++		i2c_dvfs: i2c@e60b0000 {
 +			#address-cells = <1>;
 +			#size-cells = <0>;
-+			clocks = <&cpg CPG_MOD 704>, <&cpg CPG_MOD 703>;
-+			clock-names = "usbhs", "usb20_host";
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 704>, <&cpg 703>;
++			compatible = "renesas,iic-r8a77990",
++				     "renesas,rcar-gen3-iic",
++				     "renesas,rmobile-iic";
++			reg = <0 0xe60b0000 0 0x34>;
++			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 926>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 926>;
++			dmas = <&dmac0 0x11>, <&dmac0 0x10>;
++			dma-names = "tx", "rx";
 +			status = "disabled";
-+
-+			usb0: usb-channel@0 {
-+				reg = <0>;
-+				#phy-cells = <1>;
-+			};
 +		};
 +
-+		usbphy1: usb-phy@e6598100 {
-+			compatible = "renesas,usb-phy-r8a77470",
-+				     "renesas,rcar-gen2-usb-phy";
-+			reg = <0 0xe6598100 0 0x100>,
-+			      <0 0xee0c0200 0 0x118>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			clocks = <&cpg CPG_MOD 706>, <&cpg CPG_MOD 705>;
-+			clock-names = "usbhs", "usb20_host";
-+			status = "disabled";
-+			resets = <&cpg 706>, <&cpg 705>;
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+
-+			usb1: usb-channel@0 {
-+				reg = <0>;
-+				#phy-cells = <1>;
-+			};
-+		};
-+
- 		dmac0: dma-controller@e6700000 {
- 			compatible = "renesas,dmac-r8a77470",
- 				     "renesas,rcar-dmac";
+ 		cpg: clock-controller@e6150000 {
+ 			compatible = "renesas,r8a77990-cpg-mssr";
+ 			reg = <0 0xe6150000 0 0x1000>;
 -- 
-2.7.4
+1.9.1
