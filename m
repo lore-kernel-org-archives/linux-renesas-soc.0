@@ -1,57 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:63368 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727489AbeJEDAO (ORCPT
+Received: from sauhun.de ([88.99.104.3]:35796 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727324AbeJTVhr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Oct 2018 23:00:14 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 0/3] rcar-vin: add support for UDS (Up Down Scaler)
-Date: Thu,  4 Oct 2018 22:03:59 +0200
-Message-Id: <20181004200402.15113-1-niklas.soderlund+renesas@ragnatech.se>
+        Sat, 20 Oct 2018 17:37:47 -0400
+Date: Sat, 20 Oct 2018 15:27:17 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] i2c: rcar: cleanup DMA for all kinds of failure
+Message-ID: <20181020132716.GB1750@kunai>
+References: <20181019191526.3712-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="6sX45UoQRIJXqkqR"
+Content-Disposition: inline
+In-Reply-To: <20181019191526.3712-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
 
-This series adds support for Renesas R-Car Gen3 VIN Up Down Scaler
-(UDS). Some VIN instances have access to a often shared UDS which can be
-used to scale the captured image up or down. If the scaler is shared it
-can only be used exclusively by one VIN at a time, switching in runtime
-and detection if a UDS are in use is supported in this series. If the
-user tries to start a capture on a VIN which would require the use of a
-scaler but that scaler is in use -EBUSY is returned.
+--6sX45UoQRIJXqkqR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Patch 1/3 fix a format alignment issue found when working with UDS
-support. While patch 2/3 ands the UDS logic and 3/3 defines which VIN on
-which SoC have access to a UDS and how it's shared.
+On Fri, Oct 19, 2018 at 09:15:26PM +0200, Wolfram Sang wrote:
+> DMA needs to be cleaned up not only on timeout, but on all errors where
+> it has been setup before.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-The series is based on top of media-tree/master and is tested on R-Car
-Gen3 H3, M3-W, M3-N and Gen2 Koelsch (checking for regressions as Gen2
-have no UDS).
+Added fixes-tag and applied to for-current, thanks!
 
-* Changes since v1
-- Patch 1/3 have been replaced with a less strict version after good 
-  comments from Hans.
 
-Niklas Söderlund (3):
-  rcar-vin: align width before stream start
-  rcar-vin: add support for UDS (Up Down Scaler)
-  rcar-vin: declare which VINs can use a Up Down Scaler (UDS)
+--6sX45UoQRIJXqkqR
+Content-Type: application/pgp-signature; name="signature.asc"
 
- drivers/media/platform/rcar-vin/rcar-core.c |  18 +++
- drivers/media/platform/rcar-vin/rcar-dma.c  | 139 ++++++++++++++++++--
- drivers/media/platform/rcar-vin/rcar-v4l2.c |   9 ++
- drivers/media/platform/rcar-vin/rcar-vin.h  |  24 ++++
- 4 files changed, 180 insertions(+), 10 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
--- 
-2.19.0
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvLLTQACgkQFA3kzBSg
+KbbPGA//ZpOtjFayZbnm81D/0bD7dP0GtFIOeB6wJ6f8DLhajUjbK6/GiY7CP3NK
+/lZvKLat3dtMwS6nTHZhnQo91KIiNeh77JulSWx0p0K1MY9A0ZjCIT3yhw2IHwzv
+OsbA4+ngmbFdjvpDEvmmjGnzOxY0YHEWeE2fQmh64ISqwhwFClxRiBGFUcP9hG2e
+rsSivwh+y2hOTTRsFWSiTENEvCQA5Ipq/apfuLAMFst6pIkBFDhdsmhvgX1QitIn
+aieTHyT1FlfFu2qJDvLs1xMkI+bpx5E8/h1zZu4abphPgA4Ddmz9r4MHzgnd2Mzg
+7YPIBCU7G0PHECHb3hHW9kzZXPXhhMCTBQavx6qxZ0mKJTZxNznkQJ+Kq/fLPknq
+aW+CF4Zg5l5fu1inEIcNH+Zex09jTkvM8C1qYxCxsbwkS/slaL/4BRTIVhJhKDJk
+l1T0TqPtUDsgzi67BfpOMn/Ld25WeuQMhuZGpRB2R/cpVD1uTPsV3AGwn+x87OoV
+5/S/ZMmEbykInzPYwrQO7q6EPPA0EqsrrRjlV1WFhzqrxE+KItbDHLRkApNDmQ0c
+ViAK2kjaouWWiMic6QAdJJjuzmWYB96au22BqMZqt6GTx9S2UuLL8QdsP8QJFhV2
+SxzYg1btiy5MMioDp9T8M22dGs+qLhuRDdrMJ4OmG4Lr8ra9BUc=
+=YBUw
+-----END PGP SIGNATURE-----
+
+--6sX45UoQRIJXqkqR--
