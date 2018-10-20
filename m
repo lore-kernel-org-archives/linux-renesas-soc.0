@@ -1,60 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45738 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728368AbeJVEPw (ORCPT
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:34732 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726495AbeJUFn3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:15:52 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Subject: [PATCH 1/9] net: dsa: bcm_sf2: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:12 +0200
-Message-Id: <20181021200021.1693-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
-References: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sun, 21 Oct 2018 01:43:29 -0400
+Received: by mail-pg1-f193.google.com with SMTP id g12-v6so17275115pgs.1
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 20 Oct 2018 14:31:40 -0700 (PDT)
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH/RFT] arm64: dts: renesas: r8a77990-ebisu: Add serial console pins
+Date: Sun, 21 Oct 2018 06:31:28 +0900
+Message-Id: <1540071088-27224-1-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This patch adds pin control for SCIF2.
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 ---
 
-Build tested only. buildbot is happy.
+This patch is based on the devel branch of Simon Horman's renesas tree.
 
- drivers/net/dsa/bcm_sf2.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/net/dsa/bcm_sf2.c b/drivers/net/dsa/bcm_sf2.c
-index 3017ecf82ca5..2eb68769562c 100644
---- a/drivers/net/dsa/bcm_sf2.c
-+++ b/drivers/net/dsa/bcm_sf2.c
-@@ -1190,16 +1190,14 @@ static void bcm_sf2_sw_shutdown(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int bcm_sf2_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct bcm_sf2_priv *priv = platform_get_drvdata(pdev);
-+	struct bcm_sf2_priv *priv = dev_get_drvdata(dev);
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+index f342dd8..611f026 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+@@ -321,6 +321,11 @@
+ 		function = "pwm5";
+ 	};
  
- 	return dsa_switch_suspend(priv->dev->ds);
- }
++	scif2_pins: scif2 {
++		groups = "scif2_data_a";
++		function = "scif2";
++	};
++
+ 	usb0_pins: usb {
+ 		groups = "usb0_b";
+ 		function = "usb0";
+@@ -352,6 +357,9 @@
+ };
  
- static int bcm_sf2_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct bcm_sf2_priv *priv = platform_get_drvdata(pdev);
-+	struct bcm_sf2_priv *priv = dev_get_drvdata(dev);
+ &scif2 {
++	pinctrl-0 = <&scif2_pins>;
++	pinctrl-names = "default";
++
+ 	status = "okay";
+ };
  
- 	return dsa_switch_resume(priv->dev->ds);
- }
 -- 
-2.19.0
+1.9.1
