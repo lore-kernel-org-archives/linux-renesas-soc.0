@@ -1,111 +1,140 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:49396 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726373AbeJHQCv (ORCPT
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:40542 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727413AbeJUDPo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 8 Oct 2018 12:02:51 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Nan Li <nan.li@amlogic.com>, Jan Glauber <jglauber@cavium.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Carlo Caione <carlo@endlessm.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        tianshuliang <tianshuliang@hisilicon.com>,
-        Liming Sun <lsun@mellanox.com>, Arnd Bergmann <arnd@arndb.de>,
-        Alex Smith <alex.smith@imgtec.com>, linux-mmc@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 3/6] mmc: renesas_sdhi: Add r8a77470 SDHI1 support
-Date: Mon,  8 Oct 2018 09:51:49 +0100
-Message-Id: <1538988712-17077-4-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1538988712-17077-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1538988712-17077-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Sat, 20 Oct 2018 23:15:44 -0400
+Received: by mail-vk1-f196.google.com with SMTP id h20-v6so8870395vke.7
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 20 Oct 2018 12:04:20 -0700 (PDT)
+MIME-Version: 1.0
+References: <1536161385-25562-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1536161385-25562-6-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdV1NKag-1KWFuWwgxgj+HDG-kB0F7L-WDVM+1E4-RncRw@mail.gmail.com> <20181019165544.GH11703@w540>
+In-Reply-To: <20181019165544.GH11703@w540>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sat, 20 Oct 2018 21:04:07 +0200
+Message-ID: <CAMuHMdUqKKLsmVKVzdmg06c6HhNKO03ROQgXx_A6O-_Rvam5jQ@mail.gmail.com>
+Subject: Re: [PATCH v2 5/8] pinctrl: sh-pfc: r8a77990: Add VIN pins, groups
+ and functions
+To: Jacopo Mondi <jacopo@jmondi.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Simon Horman <horms@verge.net.au>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The RZ/G1C (a.k.a. R8A77470) comes with three SDHI interfaces,
-SDHI0 and SDHI2 are compatible with the R-Car Gen2 SDHIs, SDHI1
-is compatible with R-Car Gen3 SDHIs and it can be used as
-eMMC as well. This patch adds driver compatibility, and makes
-sure both drivers get compiled for the R8A77470.
+Hi Jacopo,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+On Fri, Oct 19, 2018 at 6:55 PM jacopo mondi <jacopo@jmondi.org> wrote:
+>    sorry to resurect this one, but while upporting VIN pin definition
+> for R8A77965 I have noticed something in this patch.
+>
+> Please see below.
+>
+> On Tue, Oct 02, 2018 at 11:25:31AM +0200, Geert Uytterhoeven wrote:
+> > Hi Jacopo,
+>
+> [snip]
+>
+> > > @@ -1889,6 +2077,32 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+> > >         SH_PFC_PIN_GROUP(usb0_id),
+> > >         SH_PFC_PIN_GROUP(usb30),
+> > >         SH_PFC_PIN_GROUP(usb30_id),
+> > > +       VIN_DATA_PIN_GROUP(vin4_data_a, 8),
+> > > +       VIN_DATA_PIN_GROUP(vin4_data_a, 10),
+> > > +       VIN_DATA_PIN_GROUP(vin4_data_a, 12),
+> > > +       VIN_DATA_PIN_GROUP(vin4_data_a, 16),
+> > > +       VIN_DATA_PIN_GROUP(vin4_data_a, 20),
+> > > +       VIN_DATA_PIN_GROUP(vin4_data_a, 24),
+> > > +       VIN_DATA_PIN_GROUP(vin4_data_b, 8),
+> > > +       VIN_DATA_PIN_GROUP(vin4_data_b, 10),
+> > > +       VIN_DATA_PIN_GROUP(vin4_data_b, 12),
+> > > +       VIN_DATA_PIN_GROUP(vin4_data_b, 16),
+> > > +       VIN_DATA_PIN_GROUP(vin4_data_b, 20),
+> > > +       VIN_DATA_PIN_GROUP(vin4_data_b, 24),
+>
+> look here...
+>
+> [snip]
+>
+> > >
+> > > +static const char * const vin4_groups[] = {
+> > > +       "vin4_data8_a",
+> > > +       "vin4_data10_a",
+> > > +       "vin4_data12_a",
+> > > +       "vin4_data16_a",
+> > > +       "vin4_data20_a",
+> > > +       "vin4_data24_a",
+> > > +       "vin4_data8_b",
+> > > +       "vin4_data10_b",
+> > > +       "vin4_data12_b",
+> > > +       "vin4_data16_b",
+> > > +       "vin4_data20_b",
+> > > +       "vin4_data24_b",
+>
+> Then here.
+>
+> VIN_DATA_PIN_GROUP() expands as:
+>
+> #define VIN_DATA_PIN_GROUP(n, s)                                \
+>         {                                                       \
+>                 .name = #n#s,                                   \
+>                 .pins = n##_pins.data##s,                       \
+>                 .mux = n##_mux.data##s,                         \
+>                 .nr_pins = ARRAY_SIZE(n##_pins.data##s),        \
+>         }
+>
+> So these groups should not be named
+>         "vin4_dataX_a" and
+>         "vin4_dataX_b"
+>
+> But instead
+>         "vin4_data_aX" and
+>         "vin4_data_bX"
+>
+> Am I wrong?
 
----
-v2->v3:
-* No change
+Nice catch!
 
-v2:
-* New patch
----
- drivers/mmc/host/Kconfig                      | 4 ++--
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 6 ++++--
- 2 files changed, 6 insertions(+), 4 deletions(-)
+For consistency with other groups, they should be named "vin4_dataX_a"
+and "vin4_dataX_b".
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 694d082..fb654cd 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -622,9 +622,9 @@ config MMC_SDHI_SYS_DMAC
- 
- config MMC_SDHI_INTERNAL_DMAC
- 	tristate "DMA for SDHI SD/SDIO controllers using on-chip bus mastering"
--	depends on ARM64 || COMPILE_TEST
-+	depends on ARM64 || ARCH_R8A77470 || COMPILE_TEST
- 	depends on MMC_SDHI
--	default MMC_SDHI if ARM64
-+	default MMC_SDHI if (ARM64 || ARCH_R8A77470)
- 	help
- 	  This provides DMA support for SDHI SD/SDIO controllers
- 	  using on-chip bus mastering. This supports the controllers
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index e5e5015..e729c39 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -113,6 +113,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
- };
- 
- static const struct of_device_id renesas_sdhi_internal_dmac_of_match[] = {
-+	{ .compatible = "renesas,sdhi-mmc-r8a77470", .data = &of_rcar_gen3_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_r8a7795_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_r8a7795_compatible, },
- 	{ .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
-@@ -288,7 +289,7 @@ static const struct tmio_mmc_dma_ops renesas_sdhi_internal_dmac_dma_ops = {
-  * Whitelist of specific R-Car Gen3 SoC ES versions to use this DMAC
-  * implementation as others may use a different implementation.
-  */
--static const struct soc_device_attribute gen3_soc_whitelist[] = {
-+static const struct soc_device_attribute soc_whitelist[] = {
- 	/* specific ones */
- 	{ .soc_id = "r8a7795", .revision = "ES1.*",
- 	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
-@@ -296,6 +297,7 @@ static const struct soc_device_attribute gen3_soc_whitelist[] = {
- 	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
- 	/* generic ones */
- 	{ .soc_id = "r8a774a1" },
-+	{ .soc_id = "r8a77470" },
- 	{ .soc_id = "r8a7795" },
- 	{ .soc_id = "r8a7796" },
- 	{ .soc_id = "r8a77965" },
-@@ -307,7 +309,7 @@ static const struct soc_device_attribute gen3_soc_whitelist[] = {
- 
- static int renesas_sdhi_internal_dmac_probe(struct platform_device *pdev)
- {
--	const struct soc_device_attribute *soc = soc_device_match(gen3_soc_whitelist);
-+	const struct soc_device_attribute *soc = soc_device_match(soc_whitelist);
- 	struct device *dev = &pdev->dev;
- 
- 	if (!soc)
+> The only Gen3 SoC in mainline which uses the VIN data pins defined
+> through this macro is D3, which fortunately does not have any 'a' or
+> 'b' group.
+>
+> $ git grep vin\.*_data* arch/arm64/boot/dts/
+> arch/arm64/boot/dts/renesas/r8a77995-draak.dts:        groups =  "vin4_data8", "vin4_sync", "vin4_clk";
+>
+> $ cat drivers/pinctrl/sh-pfc/pfc-r8a77995.c | grep "vin4_data, 8"
+>         VIN_DATA_PIN_GROUP(vin4_data, 8),
+>
+> Going forward we might see some user of vin data groups having to
+> refer to "vin4_data_a8" and so on, which is not nice compared to
+> "vin4_data8_a".
+>
+> What do you think?
+> In any case, this patch is indeed wrong. Or we align the group names
+> to what the macro produces, or change the macro, but I cannot tell how
+> to do that in a sane way? (introduce a new one that wants a 'group'
+> argument too?)
+
+I only gave this a brief look, but it seems like we need more/better macros.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
