@@ -1,64 +1,91 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Tue, 2 Oct 2018 11:04:26 +0100
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-        Tho Vu <tho.vu.wh@rvc.renesas.com>,
-        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Rob Herring <robh@kernel.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] DT: pci: rcar-pci: document R8A77990 bindings
-Message-ID: <20181002100426.GA24071@red-moon>
-References: <20180922150252.18754-1-marek.vasut+renesas@gmail.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:45672 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727432AbeJVEPl (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 22 Oct 2018 00:15:41 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org
+Subject: [PATCH 0/6] gpu: simplify getting .driver_data
+Date: Sun, 21 Oct 2018 22:00:05 +0200
+Message-Id: <20181021200012.1583-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180922150252.18754-1-marek.vasut+renesas@gmail.com>
-Sender: devicetree-owner@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, Sep 22, 2018 at 05:02:52PM +0200, Marek Vasut wrote:
-> From: Tho Vu <tho.vu.wh@rvc.renesas.com>
-> 
-> Document the R-Car E3 (R8A77990) SoC in the R-Car PCIe bindings.
-> 
-> Signed-off-by: Tho Vu <tho.vu.wh@rvc.renesas.com>
-> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Cc: Phil Edworthy <phil.edworthy@renesas.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Cc: Simon Horman <horms+renesas@verge.net.au>
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
->  Documentation/devicetree/bindings/pci/rcar-pci.txt | 1 +
->  1 file changed, 1 insertion(+)
+I got tired of fixing this in Renesas drivers manually, so I took the big
+hammer. Remove this cumbersome code pattern which got copy-pasted too much
+already:
 
-Applied to pci/controller-misc for v4.20, thanks.
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
++	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
 
-Lorenzo
+A branch, tested by buildbot, can be found here:
 
-> diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-> index a5f7fc62d10e..5f2f9e380efb 100644
-> --- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
-> +++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-> @@ -9,6 +9,7 @@ compatible: "renesas,pcie-r8a7743" for the R8A7743 SoC;
->  	    "renesas,pcie-r8a7795" for the R8A7795 SoC;
->  	    "renesas,pcie-r8a7796" for the R8A7796 SoC;
->  	    "renesas,pcie-r8a77980" for the R8A77980 SoC;
-> +	    "renesas,pcie-r8a77990" for the R8A77990 SoC;
->  	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 or
->  				     RZ/G1 compatible device.
->  	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 compatible device.
-> -- 
-> 2.18.0
-> 
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git coccinelle/get_drvdata
+
+I have been asked if it couldn't be done for dev_set_drvdata as well. I checked
+it and did not find one occasion where it could be simplified like this. Not
+much of a surprise because driver_data is usually set in probe() functions
+which access struct platform_device in many other ways.
+
+I am open for other comments, suggestions, too, of course.
+
+Here is the cocci-script I created:
+
+@@
+struct device* d;
+identifier pdev;
+expression *ptr;
+@@
+(
+-	struct platform_device *pdev = to_platform_device(d);
+|
+-	struct platform_device *pdev;
+	...
+-	pdev = to_platform_device(d);
+)
+	<... when != pdev
+-	&pdev->dev
++	d
+	...>
+
+	ptr =
+-	platform_get_drvdata(pdev)
++	dev_get_drvdata(d)
+
+	<... when != pdev
+-	&pdev->dev
++	d
+	...>
+
+Kind regards,
+
+   Wolfram
+
+
+Wolfram Sang (6):
+  gpu: drm: msm: adreno: adreno_device: simplify getting .driver_data
+  gpu: drm: msm: disp: dpu1: dpu_kms: simplify getting .driver_data
+  gpu: drm: msm: disp: mdp5: mdp5_kms: simplify getting .driver_data
+  gpu: drm: msm: dsi: dsi_host: simplify getting .driver_data
+  gpu: drm: msm: msm_drv: simplify getting .driver_data
+  gpu: drm: omapdrm: displays: panel-dsi-cm: simplify getting
+    .driver_data
+
+ drivers/gpu/drm/msm/adreno/adreno_device.c     |  6 ++----
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c        |  6 ++----
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c       |  6 ++----
+ drivers/gpu/drm/msm/dsi/dsi_host.c             |  6 ++----
+ drivers/gpu/drm/msm/msm_drv.c                  |  3 +--
+ .../gpu/drm/omapdrm/displays/panel-dsi-cm.c    | 18 ++++++------------
+ 6 files changed, 15 insertions(+), 30 deletions(-)
+
+-- 
+2.19.0
