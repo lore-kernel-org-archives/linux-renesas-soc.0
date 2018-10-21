@@ -1,74 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:24935 "EHLO mga11.intel.com"
+Received: from sauhun.de ([88.99.104.3]:45884 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726285AbeJXWTv (ORCPT
+        id S1728560AbeJVEQO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Oct 2018 18:19:51 -0400
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-To: linux-pm@vger.kernel.org
-Cc: linux-i2c@vger.kernel.org,
+        Mon, 22 Oct 2018 00:16:14 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Subject: [PATCH 1/3] i2c: sh_mobile: Remove dummy runtime PM callbacks
-Date: Wed, 24 Oct 2018 16:51:32 +0300
-Message-Id: <20181024135134.28456-2-jarkko.nikula@linux.intel.com>
-In-Reply-To: <20181024135134.28456-1-jarkko.nikula@linux.intel.com>
-References: <20181024135134.28456-1-jarkko.nikula@linux.intel.com>
+        alsa-devel@alsa-project.org
+Subject: [PATCH 0/1] slimbus: simplify getting .driver_data
+Date: Sun, 21 Oct 2018 22:00:43 +0200
+Message-Id: <20181021200045.2053-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Platform drivers don't need dummy runtime PM callbacks that just return
-success and non-NULL pm pointer in their struct device_driver in order
-to have runtime PM happening. This has changed since following commits:
+I got tired of fixing this in Renesas drivers manually, so I took the big
+hammer. Remove this cumbersome code pattern which got copy-pasted too much
+already:
 
-05aa55dddb9e ("PM / Runtime: Lenient generic runtime pm callbacks")
-543f2503a956 ("PM / platform_bus: Allow runtime PM by default")
-8b313a38ecff ("PM / Platform: Use generic runtime PM callbacks directly")
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
++	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
 
-Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
----
-Only build tested.
----
- drivers/i2c/busses/i2c-sh_mobile.c | 18 ------------------
- 1 file changed, 18 deletions(-)
+A branch, tested by buildbot, can be found here:
 
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index 818cab14e87c..a7a7a9c3bc7c 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -947,27 +947,9 @@ static int sh_mobile_i2c_remove(struct platform_device *dev)
- 	return 0;
- }
- 
--static int sh_mobile_i2c_runtime_nop(struct device *dev)
--{
--	/* Runtime PM callback shared between ->runtime_suspend()
--	 * and ->runtime_resume(). Simply returns success.
--	 *
--	 * This driver re-initializes all registers after
--	 * pm_runtime_get_sync() anyway so there is no need
--	 * to save and restore registers here.
--	 */
--	return 0;
--}
--
--static const struct dev_pm_ops sh_mobile_i2c_dev_pm_ops = {
--	.runtime_suspend = sh_mobile_i2c_runtime_nop,
--	.runtime_resume = sh_mobile_i2c_runtime_nop,
--};
--
- static struct platform_driver sh_mobile_i2c_driver = {
- 	.driver		= {
- 		.name		= "i2c-sh_mobile",
--		.pm		= &sh_mobile_i2c_dev_pm_ops,
- 		.of_match_table = sh_mobile_i2c_dt_ids,
- 	},
- 	.probe		= sh_mobile_i2c_probe,
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git coccinelle/get_drvdata
+
+I have been asked if it couldn't be done for dev_set_drvdata as well. I checked
+it and did not find one occasion where it could be simplified like this. Not
+much of a surprise because driver_data is usually set in probe() functions
+which access struct platform_device in many other ways.
+
+I am open for other comments, suggestions, too, of course.
+
+Here is the cocci-script I created:
+
+@@
+struct device* d;
+identifier pdev;
+expression *ptr;
+@@
+(
+-	struct platform_device *pdev = to_platform_device(d);
+|
+-	struct platform_device *pdev;
+	...
+-	pdev = to_platform_device(d);
+)
+	<... when != pdev
+-	&pdev->dev
++	d
+	...>
+
+	ptr =
+-	platform_get_drvdata(pdev)
++	dev_get_drvdata(d)
+
+	<... when != pdev
+-	&pdev->dev
++	d
+	...>
+
+Kind regards,
+
+   Wolfram
+
+
+Wolfram Sang (1):
+  slimbus: qcom-ctrl: simplify getting .driver_data
+
+ drivers/slimbus/qcom-ctrl.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
 -- 
-2.19.1
+2.19.0
