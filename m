@@ -1,66 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55194 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727523AbeJVQTV (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45658 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728088AbeJVEPi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 12:19:21 -0400
-Date: Mon, 22 Oct 2018 10:01:50 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Mon, 22 Oct 2018 00:15:38 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 5/6] gpio: gpio-tegra: simplify getting .driver_data
-Message-ID: <20181022080150.GA3620@ulmo>
+Subject: [PATCH 5/6] gpio: gpio-tegra: simplify getting .driver_data
+Date: Sun, 21 Oct 2018 22:00:00 +0200
+Message-Id: <20181021200002.1472-6-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181021200002.1472-1-wsa+renesas@sang-engineering.com>
 References: <20181021200002.1472-1-wsa+renesas@sang-engineering.com>
- <20181021200002.1472-6-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="oyUTqETQ0mS9luUI"
-Content-Disposition: inline
-In-Reply-To: <20181021200002.1472-6-wsa+renesas@sang-engineering.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+We should get 'driver_data' from 'struct device' directly. Going via
+platform_device is an unneeded step back and forth.
 
---oyUTqETQ0mS9luUI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-On Sun, Oct 21, 2018 at 10:00:00PM +0200, Wolfram Sang wrote:
-> We should get 'driver_data' from 'struct device' directly. Going via
-> platform_device is an unneeded step back and forth.
->=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->=20
-> Build tested only. buildbot is happy.
->=20
->  drivers/gpio/gpio-tegra.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+Build tested only. buildbot is happy.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+ drivers/gpio/gpio-tegra.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---oyUTqETQ0mS9luUI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvNg+sACgkQ3SOs138+
-s6HO3hAAp2ajg6Q+V/KuVKnYNlR0s50A+tJvu3lYFZrpDkkYBquJ9XI+35g1THdS
-fBG1mwfVp5JpJ2FRLNuFpHo0gR8b+D2ef05a+2Ywni2vbLguAqvIw92b3Nlo1bCA
-E4rJJBLsKZPt2FH0RLxkrQOzIiJ7YRxLaOVyiAy36eCQBAPGnHrrrXY0WZGbsDyv
-5uN7/Q8Mt1h4SB85QVdou0DHydrfI+9HGqymrDeiX5XWZg7Hj8L2nXOBrqVgxFyI
-TQoIxr98RkfN6Y+x+Vi3N890vaATHzf2egHkC1+LQqOKyWvrcodRbkOISTP7YX+f
-0FeUhvcMjKuEw1gDxLVoHrnPHcun71J5r0Ycw0RywjYqLGEq2ODaJV+jhLlMTQ4S
-YBCNBdEP7sJJJtpT5Ntw+3adsmEboVqqAXw2Zng9N9gi8Gdrf5Vmd0t3lttt/OMR
-vqvjE6fzjOTcjW/hDX0UMTWc5OyFc59NVGbLZZ6n2uQVYuXhAeWLoGualjjhKqew
-toa8Ipd6rQ+ur6JLinSWVJKn3q+lhcF5W3CBfnnn0obS8+f9gec7IqBWl+bh8zqw
-Vd+reN252gjEhxXMasadvO5NMXP5sHa/djdGBRz4cszr2vaDVb8F/nUED8j3G9zf
-+FtjMjSygcd/qvHupBBJoN8lWXEblvjLuRy/kph1EUARIO60SpA=
-=kBfA
------END PGP SIGNATURE-----
-
---oyUTqETQ0mS9luUI--
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 47dbd19751d0..02f6db925fd5 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -404,8 +404,7 @@ static void tegra_gpio_irq_handler(struct irq_desc *desc)
+ #ifdef CONFIG_PM_SLEEP
+ static int tegra_gpio_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct tegra_gpio_info *tgi = platform_get_drvdata(pdev);
++	struct tegra_gpio_info *tgi = dev_get_drvdata(dev);
+ 	unsigned long flags;
+ 	unsigned int b, p;
+ 
+@@ -444,8 +443,7 @@ static int tegra_gpio_resume(struct device *dev)
+ 
+ static int tegra_gpio_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct tegra_gpio_info *tgi = platform_get_drvdata(pdev);
++	struct tegra_gpio_info *tgi = dev_get_drvdata(dev);
+ 	unsigned long flags;
+ 	unsigned int b, p;
+ 
+-- 
+2.19.0
