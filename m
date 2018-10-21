@@ -1,36 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39111 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727768AbeJ3WFy (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45622 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727399AbeJVEPe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:05:54 -0400
-Received: by mail-lj1-f196.google.com with SMTP id a28-v6so8271940ljd.6
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Oct 2018 06:12:30 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181021200002.1472-1-wsa+renesas@sang-engineering.com> <20181021200002.1472-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200002.1472-2-wsa+renesas@sang-engineering.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 30 Oct 2018 14:12:17 +0100
-Message-ID: <CACRpkdaU8_0G5zmiXHpjLzvKQXUuqY_A0XUkGV0jOWaCfok8zg@mail.gmail.com>
-Subject: Re: [PATCH 1/6] gpio: gpio-dwapb: simplify getting .driver_data
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Mon, 22 Oct 2018 00:15:34 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Hoan Tran <hotran@apm.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH 1/6] gpio: gpio-dwapb: simplify getting .driver_data
+Date: Sun, 21 Oct 2018 21:59:56 +0200
+Message-Id: <20181021200002.1472-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181021200002.1472-1-wsa+renesas@sang-engineering.com>
+References: <20181021200002.1472-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, Oct 21, 2018 at 10:00 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
+We should get 'driver_data' from 'struct device' directly. Going via
+platform_device is an unneeded step back and forth.
 
-> We should get 'driver_data' from 'struct device' directly. Going via
-> platform_device is an unneeded step back and forth.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Patch applied for v4.21.
+Build tested only. buildbot is happy.
 
-Yours,
-Linus Walleij
+ drivers/gpio/gpio-dwapb.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index 044888fd96a1..84ae04402f70 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -748,8 +748,7 @@ static int dwapb_gpio_remove(struct platform_device *pdev)
+ #ifdef CONFIG_PM_SLEEP
+ static int dwapb_gpio_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct dwapb_gpio *gpio = platform_get_drvdata(pdev);
++	struct dwapb_gpio *gpio = dev_get_drvdata(dev);
+ 	struct gpio_chip *gc	= &gpio->ports[0].gc;
+ 	unsigned long flags;
+ 	int i;
+@@ -793,8 +792,7 @@ static int dwapb_gpio_suspend(struct device *dev)
+ 
+ static int dwapb_gpio_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct dwapb_gpio *gpio = platform_get_drvdata(pdev);
++	struct dwapb_gpio *gpio = dev_get_drvdata(dev);
+ 	struct gpio_chip *gc	= &gpio->ports[0].gc;
+ 	unsigned long flags;
+ 	int i;
+-- 
+2.19.0
