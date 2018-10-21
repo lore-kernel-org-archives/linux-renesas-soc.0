@@ -1,46 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:44200 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726450AbeJ1WNs (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45906 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728302AbeJVEQS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 28 Oct 2018 18:13:48 -0400
+        Mon, 22 Oct 2018 00:16:18 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
+Subject: [PATCH 1/3] spi: spi-rspi: simplify getting .driver_data
+Date: Sun, 21 Oct 2018 22:00:45 +0200
+Message-Id: <20181021200048.2114-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181021200048.2114-1-wsa+renesas@sang-engineering.com>
+References: <20181021200048.2114-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-References: <20181021200048.2114-1-wsa+renesas@sang-engineering.com> <20181021200048.2114-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200048.2114-2-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Sun, 28 Oct 2018 14:28:56 +0100
-Message-ID: <CAMuHMdUBf7AZSeEX4SffGapBRainhRCoKKVrEXA1dmyM=7kh6A@mail.gmail.com>
-Subject: Re: [PATCH 1/3] spi: spi-rspi: simplify getting .driver_data
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
+We should get 'driver_data' from 'struct device' directly. Going via
+platform_device is an unneeded step back and forth.
 
-On Sun, Oct 21, 2018 at 10:03 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> We should get 'driver_data' from 'struct device' directly. Going via
-> platform_device is an unneeded step back and forth.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->
-> Build tested only. buildbot is happy.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-How disappointing, you do have a Lager ;-)
+Build tested only. buildbot is happy.
 
-Gr{oetje,eeting}s,
+ drivers/spi/spi-rspi.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-                        Geert
-
+diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+index 55f8e55327b3..a4ef641b5227 100644
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -1347,16 +1347,14 @@ MODULE_DEVICE_TABLE(platform, spi_driver_ids);
+ #ifdef CONFIG_PM_SLEEP
+ static int rspi_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct rspi_data *rspi = platform_get_drvdata(pdev);
++	struct rspi_data *rspi = dev_get_drvdata(dev);
+ 
+ 	return spi_master_suspend(rspi->master);
+ }
+ 
+ static int rspi_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct rspi_data *rspi = platform_get_drvdata(pdev);
++	struct rspi_data *rspi = dev_get_drvdata(dev);
+ 
+ 	return spi_master_resume(rspi->master);
+ }
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.19.0
