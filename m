@@ -1,77 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:48342 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727290AbeJRBom (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45962 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728644AbeJVEQZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Oct 2018 21:44:42 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ARM: dts: r8a779[01]: Disable unconnected LVDS encoders
-Date: Wed, 17 Oct 2018 20:48:01 +0300
-Message-Id: <20181017174801.19838-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 22 Oct 2018 00:16:25 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org
+Subject: [PATCH 3/5] thermal: spear_thermal: simplify getting .driver_data
+Date: Sun, 21 Oct 2018 22:00:50 +0200
+Message-Id: <20181021200053.2194-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181021200053.2194-1-wsa+renesas@sang-engineering.com>
+References: <20181021200053.2194-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The LVDS0 encoder on Koelsh and Porter, and the LVDS1 encoder on Lager,
-are enabled in DT but have no device connected to their output. This
-result in spurious messages being printed to the kernel log such as
+We should get 'driver_data' from 'struct device' directly. Going via
+platform_device is an unneeded step back and forth.
 
-rcar-du feb00000.display: no connector for encoder /soc/lvds@feb90000, skipping
-
-Fix it by disabling the encoders.
-
-Fixes: 15a1ff30d8f9 ("ARM: dts: r8a7790: Convert to new LVDS DT bindings")
-Fixes: e5c3f4707f39 ("ARM: dts: r8a7791: Convert to new LVDS DT bindings")
-Reported-by: Simon Horman <horms@verge.net.au>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7790-lager.dts   | 2 --
- arch/arm/boot/dts/r8a7791-koelsch.dts | 2 --
- arch/arm/boot/dts/r8a7791-porter.dts  | 2 --
- 3 files changed, 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 50312e752e2f..7b9508e83d46 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -489,8 +489,6 @@
- };
+Build tested only. buildbot is happy.
+
+ drivers/thermal/spear_thermal.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/thermal/spear_thermal.c b/drivers/thermal/spear_thermal.c
+index 81b35aace9de..8b9d567134d0 100644
+--- a/drivers/thermal/spear_thermal.c
++++ b/drivers/thermal/spear_thermal.c
+@@ -56,8 +56,7 @@ static struct thermal_zone_device_ops ops = {
  
- &lvds1 {
--	status = "okay";
--
- 	ports {
- 		port@1 {
- 			lvds_connector: endpoint {
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index ce22db01fbba..e6580aa0cea3 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -479,8 +479,6 @@
- };
+ static int __maybe_unused spear_thermal_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct thermal_zone_device *spear_thermal = platform_get_drvdata(pdev);
++	struct thermal_zone_device *spear_thermal = dev_get_drvdata(dev);
+ 	struct spear_thermal_dev *stdev = spear_thermal->devdata;
+ 	unsigned int actual_mask = 0;
  
- &lvds0 {
--	status = "okay";
--
- 	ports {
- 		port@1 {
- 			lvds_connector: endpoint {
-diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-index f02036e5de01..fefdf8238bbe 100644
---- a/arch/arm/boot/dts/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -482,8 +482,6 @@
- };
+@@ -73,15 +72,14 @@ static int __maybe_unused spear_thermal_suspend(struct device *dev)
  
- &lvds0 {
--	status = "okay";
--
- 	ports {
- 		port@1 {
- 			lvds_connector: endpoint {
+ static int __maybe_unused spear_thermal_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct thermal_zone_device *spear_thermal = platform_get_drvdata(pdev);
++	struct thermal_zone_device *spear_thermal = dev_get_drvdata(dev);
+ 	struct spear_thermal_dev *stdev = spear_thermal->devdata;
+ 	unsigned int actual_mask = 0;
+ 	int ret = 0;
+ 
+ 	ret = clk_enable(stdev->clk);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "Can't enable clock\n");
++		dev_err(dev, "Can't enable clock\n");
+ 		return ret;
+ 	}
+ 
 -- 
-Regards,
-
-Laurent Pinchart
+2.19.0
