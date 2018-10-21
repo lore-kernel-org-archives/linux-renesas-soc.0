@@ -1,66 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:35928 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728621AbeJLR4l (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45972 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728699AbeJVEQ0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Oct 2018 13:56:41 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Zhang Rui <rui.zhang@intel.com>,
+        Mon, 22 Oct 2018 00:16:26 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/3] thermal: Fix workqueue-related issues in drivers
-Date: Fri, 12 Oct 2018 09:20:14 +0200
-Message-Id: <20181012072017.10765-1-geert+renesas@glider.be>
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org
+Subject: [PATCH 4/5] thermal: st: st_thermal: simplify getting .driver_data
+Date: Sun, 21 Oct 2018 22:00:51 +0200
+Message-Id: <20181021200053.2194-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181021200053.2194-1-wsa+renesas@sang-engineering.com>
+References: <20181021200053.2194-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi,
+We should get 'driver_data' from 'struct device' directly. Going via
+platform_device is an unneeded step back and forth.
 
-This patch series fixes workqueue-related issues in the Renesas R-Car
-Thermal and Dialog DA9062/9061 PMIC drivers, where the workqueue may run
-while the device is suspended, or unbound.
-The R-Car Thermal driver fixes have been tested on R-Car M2-W and R-Mobile
-APE6.
-The DA9062/9061 fixes have been compile-tested only.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Changes compared to v1:
-  - Add Reviewed-by.
+Build tested only. buildbot is happy.
 
-Note: The Intel PowerClamp driver also uses schedule_delayed_work(), but I
-believe that is OK, as the thermal registers are part of the CPU.
+ drivers/thermal/st/st_thermal.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Thanks!
-
-Geert Uytterhoeven (3):
-  thermal: rcar_thermal: Prevent hardware access during system suspend
-  thermal: rcar_thermal: Prevent doing work after unbind
-  thermal: da9062/61: Prevent hardware access during system suspend
-
- drivers/thermal/da9062-thermal.c | 4 ++--
- drivers/thermal/rcar_thermal.c   | 5 +++--
- 2 files changed, 5 insertions(+), 4 deletions(-)
-
+diff --git a/drivers/thermal/st/st_thermal.c b/drivers/thermal/st/st_thermal.c
+index be637e6b01d2..b2bbdf6eb02b 100644
+--- a/drivers/thermal/st/st_thermal.c
++++ b/drivers/thermal/st/st_thermal.c
+@@ -277,8 +277,7 @@ EXPORT_SYMBOL_GPL(st_thermal_unregister);
+ #ifdef CONFIG_PM_SLEEP
+ static int st_thermal_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct st_thermal_sensor *sensor = platform_get_drvdata(pdev);
++	struct st_thermal_sensor *sensor = dev_get_drvdata(dev);
+ 
+ 	return st_thermal_sensor_off(sensor);
+ }
+@@ -286,8 +285,7 @@ static int st_thermal_suspend(struct device *dev)
+ static int st_thermal_resume(struct device *dev)
+ {
+ 	int ret;
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct st_thermal_sensor *sensor = platform_get_drvdata(pdev);
++	struct st_thermal_sensor *sensor = dev_get_drvdata(dev);
+ 
+ 	ret = st_thermal_sensor_on(sensor);
+ 	if (ret)
 -- 
-2.17.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.19.0
