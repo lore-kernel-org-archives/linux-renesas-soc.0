@@ -1,69 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:43210 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727128AbeJBPak (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45678 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728245AbeJVEPm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 Oct 2018 11:30:40 -0400
+        Mon, 22 Oct 2018 00:15:42 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Rob Clark <robdclark@gmail.com>,
+        David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: [PATCH 1/6] gpu: drm: msm: adreno: adreno_device: simplify getting .driver_data
+Date: Sun, 21 Oct 2018 22:00:06 +0200
+Message-Id: <20181021200012.1583-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181021200012.1583-1-wsa+renesas@sang-engineering.com>
+References: <20181021200012.1583-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-References: <1538469324-8028-1-git-send-email-cv-dong@jinso.co.jp>
-In-Reply-To: <1538469324-8028-1-git-send-email-cv-dong@jinso.co.jp>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 2 Oct 2018 10:48:17 +0200
-Message-ID: <CAMuHMdXOQdJL14xNj3AHL6RC-fu=SWReXmh1JOS4s9cc-ZL5iQ@mail.gmail.com>
-Subject: Re: [PATCH] hwmon: Fix the 'No sensors found' error after replacing
- the parameter NULL by the actual device
-To: =?UTF-8?B?44Kr44Kq44O744O044Kh44Oz44O744OJ44Oz?=
-        <cv-dong@jinso.co.jp>
-Cc: Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-hwmon@vger.kernel.org,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
-        =?UTF-8?B?RHVuZ++8muS6uuOCvQ==?= <nv-dung@jinso.co.jp>,
-        Hoan Nguyen An <na-hoan@jinso.co.jp>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Cao,
+We should get 'driver_data' from 'struct device' directly. Going via
+platform_device is an unneeded step back and forth.
 
-Thanks for your patch!
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-On Tue, Oct 2, 2018 at 10:35 AM Cao Van Dong <cv-dong@jinso.co.jp> wrote:
-> In __hwmon_device_register() function of hwmon.c, we have assigned 'dev' directly to 'hdev->parent'.
-> Formerly, when registering the hwmon device, we pass NULL as the device. This is not affected.
-> Recently, the developer has replaced the parameter NULL as the device by the actual device.
+Build tested only. buildbot is happy.
 
-Do you know the commit ID of this recent change?
-It's useful for review of your change, and to know to which versions your
-patch should be backported.
+ drivers/gpu/drm/msm/adreno/adreno_device.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-> This causes the "No sensors found" error. This patch is to fix this error.
-
-On which platform do you see this failure?
-Thanks again!
-
-> --- a/drivers/hwmon/hwmon.c
-> +++ b/drivers/hwmon/hwmon.c
-> @@ -610,7 +610,7 @@ __hwmon_device_register(struct device *dev, const char *name, void *drvdata,
->
->         hwdev->name = name;
->         hdev->class = &hwmon_class;
-> -       hdev->parent = dev;
-> +       hdev->parent = dev->parent;
->         hdev->of_node = dev ? dev->of_node : NULL;
->         hwdev->chip = chip;
->         dev_set_drvdata(hdev, drvdata);
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/drm/msm/adreno/adreno_device.c
+index 86abdb2b3a9c..5871e41f85be 100644
+--- a/drivers/gpu/drm/msm/adreno/adreno_device.c
++++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
+@@ -345,16 +345,14 @@ static const struct of_device_id dt_match[] = {
+ #ifdef CONFIG_PM
+ static int adreno_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct msm_gpu *gpu = platform_get_drvdata(pdev);
++	struct msm_gpu *gpu = dev_get_drvdata(dev);
+ 
+ 	return gpu->funcs->pm_resume(gpu);
+ }
+ 
+ static int adreno_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct msm_gpu *gpu = platform_get_drvdata(pdev);
++	struct msm_gpu *gpu = dev_get_drvdata(dev);
+ 
+ 	return gpu->funcs->pm_suspend(gpu);
+ }
+-- 
+2.19.0
