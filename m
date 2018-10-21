@@ -1,35 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f54.google.com ([209.85.167.54]:45702 "EHLO
-        mail-lf1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727735AbeJEDxK (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45926 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727226AbeJVEQT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Oct 2018 23:53:10 -0400
-Received: by mail-lf1-f54.google.com with SMTP id m80-v6so7827638lfi.12
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Oct 2018 13:58:07 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 0/2] Add R8A77970 support to the Renesas R-Car thermal driver
-To: Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        linux-pm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+        Mon, 22 Oct 2018 00:16:19 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>
-Message-ID: <366d8e06-6164-94ff-823f-6b0d1e2d8d53@cogentembedded.com>
-Date: Thu, 4 Oct 2018 23:58:04 +0300
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Mark Brown <broonie@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 3/3] spi: spi-zynqmp-gqspi: simplify getting .driver_data
+Date: Sun, 21 Oct 2018 22:00:47 +0200
+Message-Id: <20181021200048.2114-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181021200048.2114-1-wsa+renesas@sang-engineering.com>
+References: <20181021200048.2114-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+We should get 'driver_data' from 'struct device' directly. Going via
+platform_device is an unneeded step back and forth.
 
-Here's the set of 2 patches against the 'next' branch of Eduardo Valentin's
-'linux-soc-thermal.git' repo. We're adding support for the R8A77970 thermal
-sensor controller to the R-Car thermal driver.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-[1/2] dt-bindings: thermal: rcar-thermal: document R8A77970 bindings
-[2/2] thermal: rcar_thermal: add R8A77970 support
+Build tested only. buildbot is happy.
 
-MBR, Sergei
+ drivers/spi/spi-zynqmp-gqspi.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
+index cc4d31033494..9f83e1b17aa1 100644
+--- a/drivers/spi/spi-zynqmp-gqspi.c
++++ b/drivers/spi/spi-zynqmp-gqspi.c
+@@ -960,8 +960,7 @@ static int __maybe_unused zynqmp_qspi_resume(struct device *dev)
+  */
+ static int __maybe_unused zynqmp_runtime_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct spi_master *master = platform_get_drvdata(pdev);
++	struct spi_master *master = dev_get_drvdata(dev);
+ 	struct zynqmp_qspi *xqspi = spi_master_get_devdata(master);
+ 
+ 	clk_disable(xqspi->refclk);
+@@ -980,8 +979,7 @@ static int __maybe_unused zynqmp_runtime_suspend(struct device *dev)
+  */
+ static int __maybe_unused zynqmp_runtime_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct spi_master *master = platform_get_drvdata(pdev);
++	struct spi_master *master = dev_get_drvdata(dev);
+ 	struct zynqmp_qspi *xqspi = spi_master_get_devdata(master);
+ 	int ret;
+ 
+-- 
+2.19.0
