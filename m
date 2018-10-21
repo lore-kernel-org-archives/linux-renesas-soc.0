@@ -1,49 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:1676 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726179AbeJZSQd (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45938 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728699AbeJVEQY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Oct 2018 14:16:33 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 2/2] ARM: dts: iwg23s-sbc: Enable watchdog support
-Date: Fri, 26 Oct 2018 10:32:27 +0100
-Message-Id: <1540546347-42791-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1540546347-42791-1-git-send-email-biju.das@bp.renesas.com>
-References: <1540546347-42791-1-git-send-email-biju.das@bp.renesas.com>
+        Mon, 22 Oct 2018 00:16:24 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org
+Subject: [PATCH 1/5] thermal: int340x_thermal: int3400_thermal: simplify getting .driver_data
+Date: Sun, 21 Oct 2018 22:00:48 +0200
+Message-Id: <20181021200053.2194-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181021200053.2194-1-wsa+renesas@sang-engineering.com>
+References: <20181021200053.2194-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch enables watchdog support on the iWave iwg23s sbc.
+We should get 'driver_data' from 'struct device' directly. Going via
+platform_device is an unneeded step back and forth.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-index 6277571..bc953fa 100644
---- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -128,6 +128,11 @@
- 	};
- };
+Build tested only. buildbot is happy.
+
+ drivers/thermal/int340x_thermal/int3400_thermal.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/thermal/int340x_thermal/int3400_thermal.c b/drivers/thermal/int340x_thermal/int3400_thermal.c
+index e26b01c05e82..61ca7ce3624e 100644
+--- a/drivers/thermal/int340x_thermal/int3400_thermal.c
++++ b/drivers/thermal/int340x_thermal/int3400_thermal.c
+@@ -48,8 +48,7 @@ static ssize_t available_uuids_show(struct device *dev,
+ 				    struct device_attribute *attr,
+ 				    char *buf)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct int3400_thermal_priv *priv = platform_get_drvdata(pdev);
++	struct int3400_thermal_priv *priv = dev_get_drvdata(dev);
+ 	int i;
+ 	int length = 0;
  
-+&rwdt {
-+	timeout-sec = <60>;
-+	status = "okay";
-+};
-+
- &scif1 {
- 	pinctrl-0 = <&scif1_pins>;
- 	pinctrl-names = "default";
+@@ -68,8 +67,7 @@ static ssize_t available_uuids_show(struct device *dev,
+ static ssize_t current_uuid_show(struct device *dev,
+ 				 struct device_attribute *devattr, char *buf)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct int3400_thermal_priv *priv = platform_get_drvdata(pdev);
++	struct int3400_thermal_priv *priv = dev_get_drvdata(dev);
+ 
+ 	if (priv->uuid_bitmap & (1 << priv->current_uuid_index))
+ 		return sprintf(buf, "%s\n",
+@@ -82,8 +80,7 @@ static ssize_t current_uuid_store(struct device *dev,
+ 				  struct device_attribute *attr,
+ 				  const char *buf, size_t count)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct int3400_thermal_priv *priv = platform_get_drvdata(pdev);
++	struct int3400_thermal_priv *priv = dev_get_drvdata(dev);
+ 	int i;
+ 
+ 	for (i = 0; i < INT3400_THERMAL_MAXIMUM_UUID; ++i) {
 -- 
-2.7.4
+2.19.0
