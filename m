@@ -1,61 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:38940 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:45688 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727558AbeJETWx (ORCPT
+        id S1728295AbeJVEPp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 5 Oct 2018 15:22:53 -0400
-Date: Fri, 5 Oct 2018 14:24:22 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 06/12] i2c: qup: use core to detect 'no zero length' quirk
-Message-ID: <20181005122422.GI5433@kunai>
-References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
- <20180723202617.15230-7-wsa+renesas@sang-engineering.com>
+        Mon, 22 Oct 2018 00:15:45 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Rob Clark <robdclark@gmail.com>,
+        David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: [PATCH 4/6] gpu: drm: msm: dsi: dsi_host: simplify getting .driver_data
+Date: Sun, 21 Oct 2018 22:00:09 +0200
+Message-Id: <20181021200012.1583-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181021200012.1583-1-wsa+renesas@sang-engineering.com>
+References: <20181021200012.1583-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="LYw3s/afESlflPpp"
-Content-Disposition: inline
-In-Reply-To: <20180723202617.15230-7-wsa+renesas@sang-engineering.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+We should get 'driver_data' from 'struct device' directly. Going via
+platform_device is an unneeded step back and forth.
 
---LYw3s/afESlflPpp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-On Mon, Jul 23, 2018 at 10:26:10PM +0200, Wolfram Sang wrote:
-> And don't reimplement in the driver.
->=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Build tested only. buildbot is happy.
 
-Ping.
+ drivers/gpu/drm/msm/dsi/dsi_host.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-
---LYw3s/afESlflPpp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlu3V/UACgkQFA3kzBSg
-KbZXHA/+N6hfddOcX01gbCol367kzHol2md/H6PTSaLsq4/+Gc7+CVB2QZMi5/ao
-OJcipA09/6idjhO/YkcCVF3MOJr1gLSbh8u3mZFvom+9bcjlZdIkI+7VZRP8J4cd
-l+Bd8Y7/G8RUwHgbDWWtaCR/NpGb/0azh1SWTJRSiVy6x+QyxjapMAIuYSe+7bcV
-Apmzm783ytzhS5SzqgRNWC9cgVM27Iger6az38uQyScNFabbuiSp9Whg3kT1HZfV
-2WMc5WvN4TkZd8FFeHSshtmz/I38tCpaYE4FcZIIrJpnTPtEFNi8/WtzHS77rDrt
-vE8U1CaUOBuC/4gHPEVqxK6w5w7lJRQX1qSaRXsIoY7JOAbzrQxclnuRqlxTzCsR
-pyKaihmOo+gVnjC0N/RciPpx1jvHp61DZfe/EQFawXSGq+RsLX+KPaNaimpAf6hS
-v8mkXzH2g4PTuOE+bxBlw7uBOCypWSSL8PLXdA7QegMlvifK9Z6OXGj+CbxovQHt
-7oc+ASJ14/UqDe4QmNQbyeTdmGEEcXpofHARhFJ6lvzob8kfOnRx5gDSp0Q0/Wki
-ma0AzdcIG39rGEVWreJY23KZG9K4PI8l1P1ohMrJZCA1iWf8gWZk7TgaFZI02RpU
-gjTzd1OLBHZqrwFQ8B6BDwJLJUUU11A8p5TFVqO/r7msTcPtgec=
-=5qTJ
------END PGP SIGNATURE-----
-
---LYw3s/afESlflPpp--
+diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
+index 9c6c523eacdc..0df8c7da84bd 100644
+--- a/drivers/gpu/drm/msm/dsi/dsi_host.c
++++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+@@ -485,8 +485,7 @@ static void dsi_bus_clk_disable(struct msm_dsi_host *msm_host)
+ 
+ int msm_dsi_runtime_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct msm_dsi *msm_dsi = platform_get_drvdata(pdev);
++	struct msm_dsi *msm_dsi = dev_get_drvdata(dev);
+ 	struct mipi_dsi_host *host = msm_dsi->host;
+ 	struct msm_dsi_host *msm_host = to_msm_dsi_host(host);
+ 
+@@ -500,8 +499,7 @@ int msm_dsi_runtime_suspend(struct device *dev)
+ 
+ int msm_dsi_runtime_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct msm_dsi *msm_dsi = platform_get_drvdata(pdev);
++	struct msm_dsi *msm_dsi = dev_get_drvdata(dev);
+ 	struct mipi_dsi_host *host = msm_dsi->host;
+ 	struct msm_dsi_host *msm_host = to_msm_dsi_host(host);
+ 
+-- 
+2.19.0
