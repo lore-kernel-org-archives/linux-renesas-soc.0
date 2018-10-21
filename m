@@ -1,43 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:45418 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726706AbeJRIkE (ORCPT
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44364 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727688AbeJVB3Z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 Oct 2018 04:40:04 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 2/3] drm: rcar-du: lvds: Add R8A77965 support
-Date: Thu, 18 Oct 2018 03:41:48 +0300
-Message-Id: <20181018004149.29448-3-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20181018004149.29448-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20181018004149.29448-1-laurent.pinchart+renesas@ideasonboard.com>
+        Sun, 21 Oct 2018 21:29:25 -0400
+Received: by mail-pl1-f193.google.com with SMTP id d23-v6so4541072pls.11
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 21 Oct 2018 10:14:26 -0700 (PDT)
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Date: Mon, 22 Oct 2018 02:14:34 +0900
+Message-Id: <154014207424.4344.6894320987219157257.sendpatchset@octo>
+Subject: [PATCH 00/03] Connect R-Car Gen3 Ethernet-AVB to IPMMU
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for the R-Car M3-N (R8A77965) SoC to the LVDS encoder
-driver. The encoder appears identical to the M3-W version, we can thus
-simply point to the generic Gen3 data.
+Connect R-Car Gen3 Ethernet-AVB to IPMMU
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+[PATCH 01/03] arm64: dts: renesas: r8a77965: Connect R-Car M3-N AVB to IPMMU
+[PATCH 02/03] arm64: dts: renesas: r8a77980: Connect R-Car V3H AVB to IPMMU
+[PATCH 03/03] arm64: dts: renesas: r8a77990: Connect R-Car E3 AVB to IPMMU
+
+For each SoC describe Ethernet-AVB to IPMMU hardware connection in the
+Device Tree. This series affects R-Car M3-N, V3H and E3. Other members
+of the R-Car Gen3 family such as H3, M3-W, V3M and D3 already includes
+this information in their DT files.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- drivers/gpu/drm/rcar-du/rcar_lvds.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-index 173d7ad0b991..534a128a869d 100644
---- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-@@ -790,6 +790,7 @@ static const struct of_device_id rcar_lvds_of_table[] = {
- 	{ .compatible = "renesas,r8a7793-lvds", .data = &rcar_lvds_gen2_info },
- 	{ .compatible = "renesas,r8a7795-lvds", .data = &rcar_lvds_gen3_info },
- 	{ .compatible = "renesas,r8a7796-lvds", .data = &rcar_lvds_gen3_info },
-+	{ .compatible = "renesas,r8a77965-lvds", .data = &rcar_lvds_gen3_info },
- 	{ .compatible = "renesas,r8a77970-lvds", .data = &rcar_lvds_r8a77970_info },
- 	{ .compatible = "renesas,r8a77980-lvds", .data = &rcar_lvds_gen3_info },
- 	{ .compatible = "renesas,r8a77990-lvds", .data = &rcar_lvds_r8a77990_info },
--- 
-Regards,
+ Developed on top of renesas-devel-20181019-v4.19-rc8
 
-Laurent Pinchart
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi |    1 +
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi |    1 +
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi |    1 +
+ 3 files changed, 3 insertions(+)
