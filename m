@@ -1,48 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:44156 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726998AbeJDDhh (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45930 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728644AbeJVEQW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Oct 2018 23:37:37 -0400
-Received: by mail-lf1-f65.google.com with SMTP id m18-v6so5158165lfl.11
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 03 Oct 2018 13:47:37 -0700 (PDT)
-To: Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        linux-pm@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] thermal: rcar_thermal: fix duplicate IRQ request
-Message-ID: <34a21e56-22b0-3603-1aba-0800aa02eff7@cogentembedded.com>
-Date: Wed, 3 Oct 2018 23:47:34 +0300
+        Mon, 22 Oct 2018 00:16:22 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-rockchip@lists.infradead.org
+Subject: [PATCH 0/5] thermal: simplify getting .driver_data
+Date: Sun, 21 Oct 2018 22:00:47 +0200
+Message-Id: <20181021200053.2194-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The driver on R8A77995 requests the same IRQ twice since
-platform_get_resource() is always called for the 1st IRQ resource. 
+I got tired of fixing this in Renesas drivers manually, so I took the big
+hammer. Remove this cumbersome code pattern which got copy-pasted too much
+already:
 
-Fixes: 1969d9dc2079 ("thermal: rcar_thermal: add r8a77995 support")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
++	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
 
----
-This patch is against the 'master' branch of Zhang Rui's linux.git' repo.
+A branch, tested by buildbot, can be found here:
 
- drivers/thermal/rcar_thermal.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git coccinelle/get_drvdata
 
-Index: linux/drivers/thermal/rcar_thermal.c
-===================================================================
---- linux.orig/drivers/thermal/rcar_thermal.c
-+++ linux/drivers/thermal/rcar_thermal.c
-@@ -504,7 +504,7 @@ static int rcar_thermal_probe(struct pla
- 	pm_runtime_get_sync(dev);
- 
- 	for (i = 0; i < chip->nirqs; i++) {
--		irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-+		irq = platform_get_resource(pdev, IORESOURCE_IRQ, i);
- 		if (!irq)
- 			continue;
- 		if (!common->base) {
+I have been asked if it couldn't be done for dev_set_drvdata as well. I checked
+it and did not find one occasion where it could be simplified like this. Not
+much of a surprise because driver_data is usually set in probe() functions
+which access struct platform_device in many other ways.
+
+I am open for other comments, suggestions, too, of course.
+
+Here is the cocci-script I created:
+
+@@
+struct device* d;
+identifier pdev;
+expression *ptr;
+@@
+(
+-	struct platform_device *pdev = to_platform_device(d);
+|
+-	struct platform_device *pdev;
+	...
+-	pdev = to_platform_device(d);
+)
+	<... when != pdev
+-	&pdev->dev
++	d
+	...>
+
+	ptr =
+-	platform_get_drvdata(pdev)
++	dev_get_drvdata(d)
+
+	<... when != pdev
+-	&pdev->dev
++	d
+	...>
+
+Kind regards,
+
+   Wolfram
+
+
+Wolfram Sang (5):
+  thermal: int340x_thermal: int3400_thermal: simplify getting
+    .driver_data
+  thermal: rockchip_thermal: simplify getting .driver_data
+  thermal: spear_thermal: simplify getting .driver_data
+  thermal: st: st_thermal: simplify getting .driver_data
+  thermal: zx2967_thermal: simplify getting .driver_data
+
+ drivers/thermal/int340x_thermal/int3400_thermal.c | 9 +++------
+ drivers/thermal/rockchip_thermal.c                | 8 +++-----
+ drivers/thermal/spear_thermal.c                   | 8 +++-----
+ drivers/thermal/st/st_thermal.c                   | 6 ++----
+ drivers/thermal/zx2967_thermal.c                  | 6 ++----
+ 5 files changed, 13 insertions(+), 24 deletions(-)
+
+-- 
+2.19.0
