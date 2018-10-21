@@ -1,69 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:7697 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727040AbeJCP0k (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45812 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728391AbeJVEQC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Oct 2018 11:26:40 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH RESEND] ARM: dts: iwg23s-sbc: Add pinctl support for EtherAVB
-Date: Wed,  3 Oct 2018 09:32:03 +0100
-Message-Id: <1538555523-19644-1-git-send-email-biju.das@bp.renesas.com>
+        Mon, 22 Oct 2018 00:16:02 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Subject: [PATCH 0/5] pinctrl: simplify getting .driver_data
+Date: Sun, 21 Oct 2018 22:00:26 +0200
+Message-Id: <20181021200032.1833-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Adding pinctrl support for EtherAVB interface.
+I got tired of fixing this in Renesas drivers manually, so I took the big
+hammer. Remove this cumbersome code pattern which got copy-pasted too much
+already:
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Hi Simon,
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
++	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
 
-As per the below discussion,I need to resend this patch for V.21
+A branch, tested by buildbot, can be found here:
 
-https://patchwork.kernel.org/patch/10558315/
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git coccinelle/get_drvdata
 
-Are you happy to take this patch?
+I have been asked if it couldn't be done for dev_set_drvdata as well. I checked
+it and did not find one occasion where it could be simplified like this. Not
+much of a surprise because driver_data is usually set in probe() functions
+which access struct platform_device in many other ways.
 
-This patch is tested against renesas-dev branch
----
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+I am open for other comments, suggestions, too, of course.
 
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-index 22da819..4ceff9c 100644
---- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -28,6 +28,9 @@
- };
- 
- &avb {
-+	pinctrl-0 = <&avb_pins>;
-+	pinctrl-names = "default";
-+
- 	phy-handle = <&phy3>;
- 	phy-mode = "gmii";
- 	renesas,no-ether-link;
-@@ -46,6 +49,11 @@
- };
- 
- &pfc {
-+	avb_pins: avb {
-+		groups = "avb_mdio", "avb_gmii_tx_rx";
-+		function = "avb";
-+	};
-+
- 	scif1_pins: scif1 {
- 		groups = "scif1_data_b";
- 		function = "scif1";
+Here is the cocci-script I created:
+
+@@
+struct device* d;
+identifier pdev;
+expression *ptr;
+@@
+(
+-	struct platform_device *pdev = to_platform_device(d);
+|
+-	struct platform_device *pdev;
+	...
+-	pdev = to_platform_device(d);
+)
+	<... when != pdev
+-	&pdev->dev
++	d
+	...>
+
+	ptr =
+-	platform_get_drvdata(pdev)
++	dev_get_drvdata(d)
+
+	<... when != pdev
+-	&pdev->dev
++	d
+	...>
+
+Kind regards,
+
+   Wolfram
+
+
+Wolfram Sang (5):
+  pinctrl: intel: pinctrl-baytrail: simplify getting .driver_data
+  pinctrl: intel: pinctrl-cherryview: simplify getting .driver_data
+  pinctrl: intel: pinctrl-intel: simplify getting .driver_data
+  pinctrl: pinctrl-amd: simplify getting .driver_data
+  pinctrl: pinctrl-at91-pio4: simplify getting .driver_data
+
+ drivers/pinctrl/intel/pinctrl-baytrail.c   | 6 ++----
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 6 ++----
+ drivers/pinctrl/intel/pinctrl-intel.c      | 6 ++----
+ drivers/pinctrl/pinctrl-amd.c              | 6 ++----
+ drivers/pinctrl/pinctrl-at91-pio4.c        | 6 ++----
+ 5 files changed, 10 insertions(+), 20 deletions(-)
+
 -- 
-2.7.4
+2.19.0
