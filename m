@@ -1,29 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:47870 "EHLO mail.kernel.org"
+Received: from sauhun.de ([88.99.104.3]:46006 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726527AbeJGVmG (ORCPT
+        id S1728699AbeJVEQc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 7 Oct 2018 17:42:06 -0400
-Date: Sun, 7 Oct 2018 20:04:31 +0530
-From: Vinod <vkoul@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] dmaengine: rcar-dmac: set scatter/gather max segment size
-Message-ID: <20181007143431.GW2372@vkoul-mobl>
-References: <20180914154328.984-1-wsa+renesas@sang-engineering.com>
+        Mon, 22 Oct 2018 00:16:32 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 0/1] uio: simplify getting .driver_data
+Date: Sun, 21 Oct 2018 22:01:01 +0200
+Message-Id: <20181021200102.2354-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180914154328.984-1-wsa+renesas@sang-engineering.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 14-09-18, 17:43, Wolfram Sang wrote:
-> Fix warning when running with CONFIG_DMA_API_DEBUG_SG=y by allocating a
-> device_dma_parameters structure and filling in the max segment size.
+I got tired of fixing this in Renesas drivers manually, so I took the big
+hammer. Remove this cumbersome code pattern which got copy-pasted too much
+already:
 
-Applied, thanks
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
++	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
+
+A branch, tested by buildbot, can be found here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git coccinelle/get_drvdata
+
+I have been asked if it couldn't be done for dev_set_drvdata as well. I checked
+it and did not find one occasion where it could be simplified like this. Not
+much of a surprise because driver_data is usually set in probe() functions
+which access struct platform_device in many other ways.
+
+I am open for other comments, suggestions, too, of course.
+
+Here is the cocci-script I created:
+
+@@
+struct device* d;
+identifier pdev;
+expression *ptr;
+@@
+(
+-	struct platform_device *pdev = to_platform_device(d);
+|
+-	struct platform_device *pdev;
+	...
+-	pdev = to_platform_device(d);
+)
+	<... when != pdev
+-	&pdev->dev
++	d
+	...>
+
+	ptr =
+-	platform_get_drvdata(pdev)
++	dev_get_drvdata(d)
+
+	<... when != pdev
+-	&pdev->dev
++	d
+	...>
+
+Kind regards,
+
+   Wolfram
+
+
+Wolfram Sang (1):
+  uio: uio_fsl_elbc_gpcm: simplify getting .driver_data
+
+ drivers/uio/uio_fsl_elbc_gpcm.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 -- 
-~Vinod
+2.19.0
