@@ -1,70 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46970 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729289AbeJAUOS (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45716 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726209AbeJVEPr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 1 Oct 2018 16:14:18 -0400
-Date: Mon, 1 Oct 2018 15:36:24 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Subject: Re: [PATCH] arm64: dts: renesas: r8a77990: Add INTC-EX device node
-Message-ID: <20181001133623.t3t3xvcxcldjxqgm@verge.net.au>
-References: <20180928113756.17572-1-geert+renesas@glider.be>
+        Mon, 22 Oct 2018 00:15:47 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Rob Clark <robdclark@gmail.com>,
+        David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: [PATCH 5/6] gpu: drm: msm: msm_drv: simplify getting .driver_data
+Date: Sun, 21 Oct 2018 22:00:10 +0200
+Message-Id: <20181021200012.1583-6-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181021200012.1583-1-wsa+renesas@sang-engineering.com>
+References: <20181021200012.1583-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180928113756.17572-1-geert+renesas@glider.be>
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Sep 28, 2018 at 01:37:56PM +0200, Geert Uytterhoeven wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> 
-> This patch adds a device node for the Interrupt Controller for External
-> Devices (INTC-EX) on R-Car E3, which serves external IRQ pins IRQ[0-5].
-> 
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Tested on Ebisu using IRQ1 and IRQ2 on CP49 and EXIO E.
-> ---
->  arch/arm64/boot/dts/renesas/r8a77990.dtsi | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> index 5c1d6321a5d22a18..a175b5dd04ce3475 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> @@ -341,6 +341,22 @@
->  			#power-domain-cells = <1>;
->  		};
->  
-> +		intc_ex: interrupt-controller@e61c0000 {
-> +			compatible = "renesas,intc-ex-r8a77990", "renesas,irqc";
-> +			#interrupt-cells = <2>;
-> +			interrupt-controller;
-> +			reg = <0 0xe61c0000 0 0x200>;
-> +			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH
-> +				      GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH
-> +				      GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH
-> +				      GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH
-> +				      GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH
-> +				      GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 407>;
+We should get 'driver_data' from 'struct device' directly. Going via
+platform_device is an unneeded step back and forth.
 
-I am struggling to locate the documentation for this clock,
-although I do see it is consistent with (at least) the dtsi for H3.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-> +			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-> +			resets = <&cpg 407>;
-> +		};
-> +
->  		dmac0: dma-controller@e6700000 {
->  			compatible = "renesas,dmac-r8a77990",
->  				     "renesas,rcar-dmac";
-> -- 
-> 2.17.1
-> 
+Build tested only. buildbot is happy.
+
+ drivers/gpu/drm/msm/msm_drv.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
+index 4904d0d41409..1ca3a3445b67 100644
+--- a/drivers/gpu/drm/msm/msm_drv.c
++++ b/drivers/gpu/drm/msm/msm_drv.c
+@@ -265,8 +265,7 @@ static int vblank_ctrl_queue_work(struct msm_drm_private *priv,
+ 
+ static int msm_drm_uninit(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct drm_device *ddev = platform_get_drvdata(pdev);
++	struct drm_device *ddev = dev_get_drvdata(dev);
+ 	struct msm_drm_private *priv = ddev->dev_private;
+ 	struct msm_kms *kms = priv->kms;
+ 	struct msm_mdss *mdss = priv->mdss;
+-- 
+2.19.0
