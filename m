@@ -1,33 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41080 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726035AbeJ2XmV (ORCPT
+Received: from mail-pg1-f182.google.com ([209.85.215.182]:46817 "EHLO
+        mail-pg1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727688AbeJVB3o (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Oct 2018 19:42:21 -0400
-Date: Mon, 29 Oct 2018 15:53:19 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 02/03] arm64: dts: renesas: r8a77980: Connect R-Car V3H
- AVB to IPMMU
-Message-ID: <20181029145318.o2zzm2bq4kw6tx4y@verge.net.au>
+        Sun, 21 Oct 2018 21:29:44 -0400
+Received: by mail-pg1-f182.google.com with SMTP id r190-v6so6291867pgr.13
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 21 Oct 2018 10:14:46 -0700 (PDT)
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Date: Mon, 22 Oct 2018 02:14:54 +0900
+Message-Id: <154014209450.4344.15784321191626541752.sendpatchset@octo>
+In-Reply-To: <154014207424.4344.6894320987219157257.sendpatchset@octo>
 References: <154014207424.4344.6894320987219157257.sendpatchset@octo>
- <154014209450.4344.15784321191626541752.sendpatchset@octo>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154014209450.4344.15784321191626541752.sendpatchset@octo>
+Subject: [PATCH 02/03] arm64: dts: renesas: r8a77980: Connect R-Car V3H AVB to IPMMU
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 22, 2018 at 02:14:54AM +0900, Magnus Damm wrote:
-> From: Magnus Damm <damm@opensource.se>
-> 
-> Hook up the R-Car V3H AVB device to IPMMU-DS1 33 as described in
-> the data sheet.
-> 
-> Signed-off-by: Magnus Damm <damm@opensource.se>
+From: Magnus Damm <damm@opensource.se>
 
-Thanks Magnus,
+Hook up the R-Car V3H AVB device to IPMMU-DS1 33 as described in
+the data sheet.
 
-applied for v4.21.
+Signed-off-by: Magnus Damm <damm@opensource.se>
+---
+
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- 0001/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ work/arch/arm64/boot/dts/renesas/r8a77980.dtsi	2018-10-22 01:50:17.072036042 +0900
+@@ -667,6 +667,7 @@
+ 			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+ 			resets = <&cpg 812>;
+ 			phy-mode = "rgmii";
++			iommus = <&ipmmu_ds1 33>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			status = "disabled";
