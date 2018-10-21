@@ -1,139 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:13898 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728131AbeJLUCI (ORCPT
+Received: from sauhun.de ([88.99.104.3]:46008 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728780AbeJVEQd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Oct 2018 16:02:08 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v4 2/3] mmc: renesas_sdhi_internal_dmac: Add R7S9210 support
-Date: Fri, 12 Oct 2018 07:29:23 -0500
-Message-Id: <20181012122924.5543-3-chris.brandt@renesas.com>
-In-Reply-To: <20181012122924.5543-1-chris.brandt@renesas.com>
-References: <20181012122924.5543-1-chris.brandt@renesas.com>
+        Mon, 22 Oct 2018 00:16:33 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 1/1] uio: uio_fsl_elbc_gpcm: simplify getting .driver_data
+Date: Sun, 21 Oct 2018 22:01:02 +0200
+Message-Id: <20181021200102.2354-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181021200102.2354-1-wsa+renesas@sang-engineering.com>
+References: <20181021200102.2354-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The SDHI/MMC controller in the RZ/A2 is almost the same as R-Car gen3, but
-with some minor differences.
+We should get 'driver_data' from 'struct device' directly. Going via
+platform_device is an unneeded step back and forth.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-v4:
- * Fixed spelling in #define
-v3:
- * Removed extra space in Kconfig
- * Removed unneeded parentheses
-v2:
- * Made comment clearer
----
- drivers/mmc/host/Kconfig                      |  5 +++--
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 28 +++++++++++++++++++++++++--
- 2 files changed, 29 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index cf984f0f0246..b69d5cd45d0f 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -636,13 +636,14 @@ config MMC_SDHI_SYS_DMAC
- 
- config MMC_SDHI_INTERNAL_DMAC
- 	tristate "DMA for SDHI SD/SDIO controllers using on-chip bus mastering"
--	depends on ARM64 || COMPILE_TEST
-+	depends on ARM64 || ARCH_R7S9210 || COMPILE_TEST
- 	depends on MMC_SDHI
- 	default MMC_SDHI if ARM64
- 	help
- 	  This provides DMA support for SDHI SD/SDIO controllers
- 	  using on-chip bus mastering. This supports the controllers
--	  found in arm64 based SoCs.
-+	  found in arm64 based SoCs. This controller is also found in
-+	  RZ/A2 series SoCs.
- 
- config MMC_UNIPHIER
- 	tristate "UniPhier SD/eMMC Host Controller support"
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index e5e5015ca680..065dc527291c 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -34,7 +34,7 @@
- #define DTRAN_MODE_CH_NUM_CH0	0	/* "downstream" = for write commands */
- #define DTRAN_MODE_CH_NUM_CH1	BIT(16)	/* "upstream" = for read commands */
- #define DTRAN_MODE_BUS_WIDTH	(BIT(5) | BIT(4))
--#define DTRAN_MODE_ADDR_MODE	BIT(0)	/* 1 = Increment address */
-+#define DTRAN_MODE_ADDR_MODE	BIT(0)	/* 1 = Increment address, 0 = Fixed */
- 
- /* DM_CM_DTRAN_CTRL */
- #define DTRAN_CTRL_DM_START	BIT(0)
-@@ -73,6 +73,9 @@ static unsigned long global_flags;
- #define SDHI_INTERNAL_DMAC_ONE_RX_ONLY	0
- #define SDHI_INTERNAL_DMAC_RX_IN_USE	1
- 
-+/* RZ/A2 does not have the ADRR_MODE bit */
-+#define SDHI_INTERNAL_DMAC_ADDR_MODE_FIXED_ONLY 2
-+
- /* Definitions for sampling clocks */
- static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
- 	{
-@@ -81,6 +84,21 @@ static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
- 	},
- };
- 
-+static const struct renesas_sdhi_of_data of_rza2_compatible = {
-+	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
-+			  TMIO_MMC_HAVE_CBSY,
-+	.tmio_ocr_mask	= MMC_VDD_32_33,
-+	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
-+			  MMC_CAP_CMD23,
-+	.bus_shift	= 2,
-+	.scc_offset	= 0 - 0x1000,
-+	.taps		= rcar_gen3_scc_taps,
-+	.taps_num	= ARRAY_SIZE(rcar_gen3_scc_taps),
-+	/* DMAC can handle 0xffffffff blk count but only 1 segment */
-+	.max_blk_count	= 0xffffffff,
-+	.max_segs	= 1,
-+};
-+
- static const struct renesas_sdhi_of_data of_rcar_r8a7795_compatible = {
- 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
- 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2 |
-@@ -113,6 +131,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
- };
- 
- static const struct of_device_id renesas_sdhi_internal_dmac_of_match[] = {
-+	{ .compatible = "renesas,sdhi-r7s9210", .data = &of_rza2_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_r8a7795_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_r8a7795_compatible, },
- 	{ .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
-@@ -171,7 +190,10 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- 				     struct mmc_data *data)
+Build tested only. buildbot is happy.
+
+ drivers/uio/uio_fsl_elbc_gpcm.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/uio/uio_fsl_elbc_gpcm.c b/drivers/uio/uio_fsl_elbc_gpcm.c
+index 9cc37fe07d35..0ee3cd3c25ee 100644
+--- a/drivers/uio/uio_fsl_elbc_gpcm.c
++++ b/drivers/uio/uio_fsl_elbc_gpcm.c
+@@ -74,8 +74,7 @@ DEVICE_ATTR(reg_or, S_IRUGO|S_IWUSR|S_IWGRP, reg_show, reg_store);
+ static ssize_t reg_show(struct device *dev, struct device_attribute *attr,
+ 			char *buf)
  {
- 	struct scatterlist *sg = host->sg_ptr;
--	u32 dtran_mode = DTRAN_MODE_BUS_WIDTH | DTRAN_MODE_ADDR_MODE;
-+	u32 dtran_mode = DTRAN_MODE_BUS_WIDTH;
-+
-+	if (!test_bit(SDHI_INTERNAL_DMAC_ADDR_MODE_FIXED_ONLY, &global_flags))
-+		dtran_mode |= DTRAN_MODE_ADDR_MODE;
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct uio_info *info = platform_get_drvdata(pdev);
++	struct uio_info *info = dev_get_drvdata(dev);
+ 	struct fsl_elbc_gpcm *priv = info->priv;
+ 	struct fsl_lbc_bank *bank = &priv->lbc->bank[priv->bank];
  
- 	if (!dma_map_sg(&host->pdev->dev, sg, host->sg_len,
- 			mmc_get_dma_dir(data)))
-@@ -290,6 +312,8 @@ static const struct tmio_mmc_dma_ops renesas_sdhi_internal_dmac_dma_ops = {
-  */
- static const struct soc_device_attribute gen3_soc_whitelist[] = {
- 	/* specific ones */
-+	{ .soc_id = "r7s9210",
-+	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ADDR_MODE_FIXED_ONLY) },
- 	{ .soc_id = "r8a7795", .revision = "ES1.*",
- 	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
- 	{ .soc_id = "r8a7796", .revision = "ES1.0",
+@@ -94,8 +93,7 @@ static ssize_t reg_show(struct device *dev, struct device_attribute *attr,
+ static ssize_t reg_store(struct device *dev, struct device_attribute *attr,
+ 			 const char *buf, size_t count)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct uio_info *info = platform_get_drvdata(pdev);
++	struct uio_info *info = dev_get_drvdata(dev);
+ 	struct fsl_elbc_gpcm *priv = info->priv;
+ 	struct fsl_lbc_bank *bank = &priv->lbc->bank[priv->bank];
+ 	unsigned long val;
 -- 
-2.16.1
+2.19.0
