@@ -1,61 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:12782 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727363AbeJYWhg (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45688 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726209AbeJVEPn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:37:36 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
+        Mon, 22 Oct 2018 00:15:43 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 0/7] Add RZ/G1C USB2.0 Host support
-Date: Thu, 25 Oct 2018 14:56:52 +0100
-Message-Id: <1540475819-47950-1-git-send-email-biju.das@bp.renesas.com>
+        Rob Clark <robdclark@gmail.com>,
+        David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: [PATCH 2/6] gpu: drm: msm: disp: dpu1: dpu_kms: simplify getting .driver_data
+Date: Sun, 21 Oct 2018 22:00:07 +0200
+Message-Id: <20181021200012.1583-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181021200012.1583-1-wsa+renesas@sang-engineering.com>
+References: <20181021200012.1583-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch series aims to add USB2.0 Host support for RZ/G1C SoC. RZ/G1C
-SoC is similar to R-Car Gen2 SoC, but there are some differences
+We should get 'driver_data' from 'struct device' directly. Going via
+platform_device is an unneeded step back and forth.
 
-- It has a shared pll reset register for hsusb0/hsusb1 and this register 
-  reside in hsusb0 block.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-- Each USB host needs to deassert the pll reset of hsusb block apart from
-  initializing interrupt enable,OVC detection timer and suspend/resume timer
-  register.
+Build tested only. buildbot is happy.
 
-To address the above scenarios, add optional usb2.0 host reg and clock
-properties.
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-This patch is tested against phy-next, usb-next and renesas-devel.
-
-References:-
- *) https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg32115.html
-
-Biju Das (7):
-  dt-bindings: phy: rcar-gen2: Add r8a77470 support
-  phy: renesas: phy-rcar-gen2: Add support for r8a77470
-  ARM: dts: r8a77470: Add USB PHY DT support
-  ARM: dts: iwg23s-sbc: Enable USB Phy[01]
-  ARM: dts: r8a77470: Add USB2.0 Host (EHCI/OHCI) device nodes
-  ARM: dts: iwg23s-sbc: Enable USB USB2.0 Host
-  ARM: shmobile: Enable USB [EO]HCI HCD PLATFORM support in
-    shmobile_defconfig
-
- .../devicetree/bindings/phy/rcar-gen2-phy.txt      |  64 ++++++-
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts          |  32 ++++
- arch/arm/boot/dts/r8a77470.dtsi                    |  88 ++++++++++
- arch/arm/configs/shmobile_defconfig                |   2 +
- drivers/phy/renesas/phy-rcar-gen2.c                | 188 ++++++++++++++++++++-
- 5 files changed, 361 insertions(+), 13 deletions(-)
-
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+index 0a683e65a9f3..d1a69b490fd1 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+@@ -1270,8 +1270,7 @@ static int dpu_dev_remove(struct platform_device *pdev)
+ static int __maybe_unused dpu_runtime_suspend(struct device *dev)
+ {
+ 	int rc = -1;
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct dpu_kms *dpu_kms = platform_get_drvdata(pdev);
++	struct dpu_kms *dpu_kms = dev_get_drvdata(dev);
+ 	struct drm_device *ddev;
+ 	struct dss_module_power *mp = &dpu_kms->mp;
+ 
+@@ -1297,8 +1296,7 @@ static int __maybe_unused dpu_runtime_suspend(struct device *dev)
+ static int __maybe_unused dpu_runtime_resume(struct device *dev)
+ {
+ 	int rc = -1;
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct dpu_kms *dpu_kms = platform_get_drvdata(pdev);
++	struct dpu_kms *dpu_kms = dev_get_drvdata(dev);
+ 	struct drm_device *ddev;
+ 	struct dss_module_power *mp = &dpu_kms->mp;
+ 
 -- 
-2.7.4
+2.19.0
