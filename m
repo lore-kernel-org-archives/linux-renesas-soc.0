@@ -1,41 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45896 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729017AbeJATUL (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45776 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728391AbeJVEPz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 1 Oct 2018 15:20:11 -0400
-Date: Mon, 1 Oct 2018 14:42:28 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-Subject: Re: [PATCH v2] mmc: tmio: Add initial setting of interrupt mask
- register
-Message-ID: <20181001124228.6xb2msmabctteidt@verge.net.au>
-References: <20180926150026.668-1-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 22 Oct 2018 00:15:55 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Subject: [PATCH 5/9] net: ethernet: smsc: smc91x: simplify getting .driver_data
+Date: Sun, 21 Oct 2018 22:00:16 +0200
+Message-Id: <20181021200021.1693-6-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
+References: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180926150026.668-1-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Sep 26, 2018 at 05:00:26PM +0200, Niklas Söderlund wrote:
-> From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-> 
-> The initial value of the interrupt mask register may be different from
-> the H/W manual at the startup of the kernel by setting from the
-> bootloader. Since the error interrupts may be unmasked, the driver sets
-> initial value.
-> 
-> The initial value is only known for R-Car Gen2 and Gen3 platforms so
-> limit the initialization to those platforms.
-> 
-> Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+We should get 'driver_data' from 'struct device' directly. Going via
+platform_device is an unneeded step back and forth.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+
+Build tested only. buildbot is happy.
+
+ drivers/net/ethernet/smsc/smc91x.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/smsc/smc91x.c b/drivers/net/ethernet/smsc/smc91x.c
+index 8d6cff8bd162..4823b6a51134 100644
+--- a/drivers/net/ethernet/smsc/smc91x.c
++++ b/drivers/net/ethernet/smsc/smc91x.c
+@@ -2447,8 +2447,7 @@ static int smc_drv_remove(struct platform_device *pdev)
+ 
+ static int smc_drv_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct net_device *ndev = platform_get_drvdata(pdev);
++	struct net_device *ndev = dev_get_drvdata(dev);
+ 
+ 	if (ndev) {
+ 		if (netif_running(ndev)) {
+-- 
+2.19.0
