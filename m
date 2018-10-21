@@ -1,46 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:45315 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726576AbeJPAkf (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45898 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727226AbeJVEQR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Oct 2018 20:40:35 -0400
-Date: Mon, 15 Oct 2018 11:54:30 -0500
-From: Rob Herring <robh@kernel.org>
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: thermal: rcar: Add device tree support for
- r8a7744
-Message-ID: <20181015165430.GA12574@bogus>
-References: <1537894864-61987-1-git-send-email-biju.das@bp.renesas.com>
+        Mon, 22 Oct 2018 00:16:17 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
+Subject: [PATCH 0/3] spi: simplify getting .driver_data
+Date: Sun, 21 Oct 2018 22:00:44 +0200
+Message-Id: <20181021200048.2114-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1537894864-61987-1-git-send-email-biju.das@bp.renesas.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Sep 25, 2018 at 06:01:04PM +0100, Biju Das wrote:
-> Add thermal sensor support for r8a7744 SoC. The Renesas RZ/G1N
-> (r8a7744) thermal sensor module is identical to the R-Car Gen2 family.
-> 
-> No driver change is needed due to the fallback compatible value
-> "renesas,rcar-gen2-thermal".
-> 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-> ---
->  Documentation/devicetree/bindings/thermal/rcar-thermal.txt | 1 +
->  1 file changed, 1 insertion(+)
+I got tired of fixing this in Renesas drivers manually, so I took the big
+hammer. Remove this cumbersome code pattern which got copy-pasted too much
+already:
 
-Applied.
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
++	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
 
-Rob
+A branch, tested by buildbot, can be found here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git coccinelle/get_drvdata
+
+I have been asked if it couldn't be done for dev_set_drvdata as well. I checked
+it and did not find one occasion where it could be simplified like this. Not
+much of a surprise because driver_data is usually set in probe() functions
+which access struct platform_device in many other ways.
+
+I am open for other comments, suggestions, too, of course.
+
+Here is the cocci-script I created:
+
+@@
+struct device* d;
+identifier pdev;
+expression *ptr;
+@@
+(
+-	struct platform_device *pdev = to_platform_device(d);
+|
+-	struct platform_device *pdev;
+	...
+-	pdev = to_platform_device(d);
+)
+	<... when != pdev
+-	&pdev->dev
++	d
+	...>
+
+	ptr =
+-	platform_get_drvdata(pdev)
++	dev_get_drvdata(d)
+
+	<... when != pdev
+-	&pdev->dev
++	d
+	...>
+
+Kind regards,
+
+   Wolfram
+
+
+Wolfram Sang (3):
+  spi: spi-rspi: simplify getting .driver_data
+  spi: spi-sh-msiof: simplify getting .driver_data
+  spi: spi-zynqmp-gqspi: simplify getting .driver_data
+
+ drivers/spi/spi-rspi.c         | 6 ++----
+ drivers/spi/spi-sh-msiof.c     | 6 ++----
+ drivers/spi/spi-zynqmp-gqspi.c | 6 ++----
+ 3 files changed, 6 insertions(+), 12 deletions(-)
+
+-- 
+2.19.0
