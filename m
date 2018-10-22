@@ -1,47 +1,110 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:6273 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727546AbeKAI1N (ORCPT
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37294 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727218AbeJWBZR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:27:13 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/2] renesas: rcar-gen3: add HS400 quirk for SD clock
-Date: Thu,  1 Nov 2018 00:25:16 +0100
-Message-Id: <20181031232518.2490-1-niklas.soderlund@ragnatech.se>
+        Mon, 22 Oct 2018 21:25:17 -0400
+Subject: Re: [PATCH 0/9] net: simplify getting .driver_data
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org
+References: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <7a2fdd94-a883-da02-845e-f6dd8dcfb969@gmail.com>
+Date: Mon, 22 Oct 2018 10:05:45 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+On 10/21/18 1:00 PM, Wolfram Sang wrote:
+> I got tired of fixing this in Renesas drivers manually, so I took the big
+> hammer. Remove this cumbersome code pattern which got copy-pasted too much
+> already:
+> 
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
+> +	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
+> 
+> A branch, tested by buildbot, can be found here:
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git coccinelle/get_drvdata
+> 
+> I have been asked if it couldn't be done for dev_set_drvdata as well. I checked
+> it and did not find one occasion where it could be simplified like this. Not
+> much of a surprise because driver_data is usually set in probe() functions
+> which access struct platform_device in many other ways.
+> 
+> I am open for other comments, suggestions, too, of course.
 
-Hi Geert,
+Would it make sense to annotate platform_get_drvdata() with __deprecated
+or something like that to prevent further uses by driver authors?
 
-This is the result of the SDHI hackathon for a possible solution to the 
-clock issue on early ES versions. It is based on the Gen2 solution where 
-a row of the possible clock settings are ignored on the effected SoC+ES 
-versions. The first row is not effected when reading settings left by 
-the bootloader, only when the setting the clock.
+Do you mind submitting the cocci-script to the maintainers of the
+coccinelle scripts that way it can be included and run by automated
+tools? Thanks!
 
-This is tested on H3 (ES1.0, ES2.0), M3-W (ES1.0) and M3-N together with 
-patches to enable HS400 with great results. No regressions found for 
-eMMC HS200/HS400 modes nor for SDR{25,50,104} on any of the SoCs.
+> 
+> Here is the cocci-script I created:
+> 
+> @@
+> struct device* d;
+> identifier pdev;
+> expression *ptr;
+> @@
+> (
+> -	struct platform_device *pdev = to_platform_device(d);
+> |
+> -	struct platform_device *pdev;
+> 	...
+> -	pdev = to_platform_device(d);
+> )
+> 	<... when != pdev
+> -	&pdev->dev
+> +	d
+> 	...>
+> 
+> 	ptr =
+> -	platform_get_drvdata(pdev)
+> +	dev_get_drvdata(d)
+> 
+> 	<... when != pdev
+> -	&pdev->dev
+> +	d
+> 	...>
+> 
+> Kind regards,
+> 
+>    Wolfram
+> 
+> 
+> Wolfram Sang (9):
+>   net: dsa: bcm_sf2: simplify getting .driver_data
+>   net: dsa: qca8k: simplify getting .driver_data
+>   net: ethernet: cadence: macb_main: simplify getting .driver_data
+>   net: ethernet: davicom: dm9000: simplify getting .driver_data
+>   net: ethernet: smsc: smc91x: simplify getting .driver_data
+>   net: ethernet: ti: cpsw: simplify getting .driver_data
+>   net: ethernet: ti: davinci_emac: simplify getting .driver_data
+>   net: ethernet: wiznet: w5300: simplify getting .driver_data
+>   net: phy: mdio-mux-bcm-iproc: simplify getting .driver_data
+> 
+>  drivers/net/dsa/bcm_sf2.c                | 6 ++----
+>  drivers/net/dsa/qca8k.c                  | 6 ++----
+>  drivers/net/ethernet/cadence/macb_main.c | 6 ++----
+>  drivers/net/ethernet/davicom/dm9000.c    | 6 ++----
+>  drivers/net/ethernet/smsc/smc91x.c       | 3 +--
+>  drivers/net/ethernet/ti/cpsw.c           | 6 ++----
+>  drivers/net/ethernet/ti/davinci_emac.c   | 6 ++----
+>  drivers/net/ethernet/wiznet/w5300.c      | 6 ++----
+>  drivers/net/phy/mdio-mux-bcm-iproc.c     | 6 ++----
+>  9 files changed, 17 insertions(+), 34 deletions(-)
+> 
 
-Patch 1/2 adds documentation on which settings is used while 2/2 is the 
-real change where the quirk is implemented.
-
-Niklas Söderlund (2):
-  clk: renesas: rcar-gen3: add documentation for SD clocks
-  clk: renesas: rcar-gen3: add HS400 quirk for SD clock
-
- drivers/clk/renesas/rcar-gen3-cpg.c | 38 ++++++++++++++++++++---------
- 1 file changed, 27 insertions(+), 11 deletions(-)
 
 -- 
-2.19.1
+Florian
