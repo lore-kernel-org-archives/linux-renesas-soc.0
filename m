@@ -1,69 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:36666 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728234AbeJES4O (ORCPT
+Received: from sauhun.de ([88.99.104.3]:55290 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728456AbeJWFay (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 5 Oct 2018 14:56:14 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] pinctrl: sh-pfc: Updates for v4.20 (take three)
-Date: Fri,  5 Oct 2018 13:57:41 +0200
-Message-Id: <20181005115741.27477-1-geert+renesas@glider.be>
+        Tue, 23 Oct 2018 01:30:54 -0400
+Date: Mon, 22 Oct 2018 22:10:38 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Joshua Kinard <kumba@gentoo.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        linux-rtc@vger.kernel.org
+Subject: Re: [PATCH 1/1] rtc: ds1685: simplify getting .driver_data
+Message-ID: <20181022211038.GA4915@kunai>
+References: <20181021200042.1993-1-wsa+renesas@sang-engineering.com>
+ <20181021200042.1993-2-wsa+renesas@sang-engineering.com>
+ <20181022155335.GT17341@piout.net>
+ <20181022172815.GW17341@piout.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="4Ckj6UjgE2iN1+kY"
+Content-Disposition: inline
+In-Reply-To: <20181022172815.GW17341@piout.net>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Linus,
 
-The following changes since commit a97f340c0a071bcb32ff68f3d19cf56a76887288:
+--4Ckj6UjgE2iN1+kY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-  pinctrl: sh-pfc: rcar: Rename automotive-only arrays to automotive (2018-09-28 09:49:15 +0200)
 
-are available in the Git repository at:
+> By the way, is there any reason why this was not part of your patch back
+> in April? I had a deja vu feeling ;)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.20-tag3
+I haven't checked but I guess the driver looked different back then. I
+didn't update the rule, so it should have matched back then, too.
 
-for you to fetch changes up to ef26d96023a4c34b1bcc4294f570df2b63a1b952:
 
-  pinctrl: sh-pfc: r8a77990: Add INTC-EX pins, groups and function (2018-10-02 12:16:47 +0200)
+--4Ckj6UjgE2iN1+kY
+Content-Type: application/pgp-signature; name="signature.asc"
 
-----------------------------------------------------------------
-pinctrl: sh-pfc: Updates for v4.20 (take three)
+-----BEGIN PGP SIGNATURE-----
 
-  - Add support for the new RZ/N1D (R9A06G032) and RZ/N1S (R9A06G033)
-    SoCs,
-  - Add INTC-EX pin groups on R-Car E3.
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvOPMoACgkQFA3kzBSg
+KbZnzxAAqvCrc6pG+W7HZnIYZ1Ae/KZkLbvS+c92Ihmvuw8YyRWoGkRW1HGDFYaC
+KjaXr5lBDwNQb+JHu3gRLQUAGijRvmI3jD5JmBysqCmwFY+nXxXdcM8rpa9CPTP+
+eZcnYyTKf9YWoTLQB0VHugUAocG6H3X0HhLKzAIwOlnPOezuvK3z1XjTFOeumgxr
+esCNFs3a7MqYvJkDK4d+q2UtEjcQ8F2eZKiX6jXAH8svDCQ8shJ82LY6Hnl4fmJg
+OWuLiq3UgToTES+UX65h5ipWUesB/kUs1kKdRA/LMQvHqVp4Ip5HXJgK58YGTf3Z
+2DG5ycqL2+4UWct7QwuUn7Tblyv67CAHfpUIxYxtZ6D+G/GnpnucVVBt9EzHRnsx
+2EUrVCPZUft+HJgTip9ILj57El1jKbt4F2vrKC2yatu51M9CldOrbHZMRBguTB6u
+4AyjGEgV3jKrp/HBjenLRc+nJkj44I+9ozLaqYRjPp+A0NKVr8ZXgPtzzLFoePis
+WGCI+5rzCr7G+nm62ME7jFQgOD7Vc/bqQzTOE12Ym6SLS1kFeTIVfeBIZrLputxS
+gm9ab5Lq35b1ZfQHXY9uEQpAsEG7i7rziTLIJFl0ofaNR58nitzJEzegun46zNRJ
+dHGur/wywayZObLjFmUiJK6du5UpZwF0v0WDz8FZljJoQ6LPfIE=
+=0mbV
+-----END PGP SIGNATURE-----
 
-Thanks for pulling!
-
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      pinctrl: sh-pfc: r8a77990: Add INTC-EX pins, groups and function
-
-Phil Edworthy (2):
-      dt-bindings: pinctrl: renesas,rzn1-pinctrl: documentation
-      pinctrl: renesas: Renesas RZ/N1 pinctrl driver
-
- .../bindings/pinctrl/renesas,rzn1-pinctrl.txt      | 153 ++++
- drivers/pinctrl/Kconfig                            |  10 +
- drivers/pinctrl/Makefile                           |   1 +
- drivers/pinctrl/pinctrl-rzn1.c                     | 948 +++++++++++++++++++++
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c              |  64 +-
- include/dt-bindings/pinctrl/rzn1-pinctrl.h         | 141 +++
- 6 files changed, 1315 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
- create mode 100644 drivers/pinctrl/pinctrl-rzn1.c
- create mode 100644 include/dt-bindings/pinctrl/rzn1-pinctrl.h
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+--4Ckj6UjgE2iN1+kY--
