@@ -1,27 +1,28 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37294 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727218AbeJWBZR (ORCPT
+Received: from shards.monkeyblade.net ([23.128.96.9]:52054 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726694AbeJVM16 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 21:25:17 -0400
+        Mon, 22 Oct 2018 08:27:58 -0400
+Date: Sun, 21 Oct 2018 21:11:08 -0700 (PDT)
+Message-Id: <20181021.211108.848222946495599164.davem@davemloft.net>
+To: wsa+renesas@sang-engineering.com
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        netdev@vger.kernel.org
 Subject: Re: [PATCH 0/9] net: simplify getting .driver_data
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org
-References: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <7a2fdd94-a883-da02-845e-f6dd8dcfb969@gmail.com>
-Date: Mon, 22 Oct 2018 10:05:45 -0700
-MIME-Version: 1.0
+From: David Miller <davem@davemloft.net>
 In-Reply-To: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+References: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 10/21/18 1:00 PM, Wolfram Sang wrote:
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Sun, 21 Oct 2018 22:00:11 +0200
+
 > I got tired of fixing this in Renesas drivers manually, so I took the big
 > hammer. Remove this cumbersome code pattern which got copy-pasted too much
 > already:
@@ -40,71 +41,8 @@ On 10/21/18 1:00 PM, Wolfram Sang wrote:
 > which access struct platform_device in many other ways.
 > 
 > I am open for other comments, suggestions, too, of course.
-
-Would it make sense to annotate platform_get_drvdata() with __deprecated
-or something like that to prevent further uses by driver authors?
-
-Do you mind submitting the cocci-script to the maintainers of the
-coccinelle scripts that way it can be included and run by automated
-tools? Thanks!
-
 > 
 > Here is the cocci-script I created:
-> 
-> @@
-> struct device* d;
-> identifier pdev;
-> expression *ptr;
-> @@
-> (
-> -	struct platform_device *pdev = to_platform_device(d);
-> |
-> -	struct platform_device *pdev;
-> 	...
-> -	pdev = to_platform_device(d);
-> )
-> 	<... when != pdev
-> -	&pdev->dev
-> +	d
-> 	...>
-> 
-> 	ptr =
-> -	platform_get_drvdata(pdev)
-> +	dev_get_drvdata(d)
-> 
-> 	<... when != pdev
-> -	&pdev->dev
-> +	d
-> 	...>
-> 
-> Kind regards,
-> 
->    Wolfram
-> 
-> 
-> Wolfram Sang (9):
->   net: dsa: bcm_sf2: simplify getting .driver_data
->   net: dsa: qca8k: simplify getting .driver_data
->   net: ethernet: cadence: macb_main: simplify getting .driver_data
->   net: ethernet: davicom: dm9000: simplify getting .driver_data
->   net: ethernet: smsc: smc91x: simplify getting .driver_data
->   net: ethernet: ti: cpsw: simplify getting .driver_data
->   net: ethernet: ti: davinci_emac: simplify getting .driver_data
->   net: ethernet: wiznet: w5300: simplify getting .driver_data
->   net: phy: mdio-mux-bcm-iproc: simplify getting .driver_data
-> 
->  drivers/net/dsa/bcm_sf2.c                | 6 ++----
->  drivers/net/dsa/qca8k.c                  | 6 ++----
->  drivers/net/ethernet/cadence/macb_main.c | 6 ++----
->  drivers/net/ethernet/davicom/dm9000.c    | 6 ++----
->  drivers/net/ethernet/smsc/smc91x.c       | 3 +--
->  drivers/net/ethernet/ti/cpsw.c           | 6 ++----
->  drivers/net/ethernet/ti/davinci_emac.c   | 6 ++----
->  drivers/net/ethernet/wiznet/w5300.c      | 6 ++----
->  drivers/net/phy/mdio-mux-bcm-iproc.c     | 6 ++----
->  9 files changed, 17 insertions(+), 34 deletions(-)
-> 
+ ...
 
-
--- 
-Florian
+Series applied to net-next, thanks.
