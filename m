@@ -1,38 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41845 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727864AbeJ3WOg (ORCPT
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55194 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727523AbeJVQTV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:14:36 -0400
-Received: by mail-lj1-f193.google.com with SMTP id z80-v6so5250559ljb.8
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Oct 2018 06:21:09 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181021200002.1472-1-wsa+renesas@sang-engineering.com> <20181021200002.1472-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200002.1472-6-wsa+renesas@sang-engineering.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 30 Oct 2018 14:20:57 +0100
-Message-ID: <CACRpkdaECY93yxrA_mL3rCPvBu+JiNbDoZTP8zKM6DiWT95pRw@mail.gmail.com>
-Subject: Re: [PATCH 5/6] gpio: gpio-tegra: simplify getting .driver_data
+        Mon, 22 Oct 2018 12:19:21 -0400
+Date: Mon, 22 Oct 2018 10:01:50 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 5/6] gpio: gpio-tegra: simplify getting .driver_data
+Message-ID: <20181022080150.GA3620@ulmo>
+References: <20181021200002.1472-1-wsa+renesas@sang-engineering.com>
+ <20181021200002.1472-6-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="oyUTqETQ0mS9luUI"
+Content-Disposition: inline
+In-Reply-To: <20181021200002.1472-6-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, Oct 21, 2018 at 10:00 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
 
+--oyUTqETQ0mS9luUI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sun, Oct 21, 2018 at 10:00:00PM +0200, Wolfram Sang wrote:
 > We should get 'driver_data' from 'struct device' directly. Going via
 > platform_device is an unneeded step back and forth.
->
+>=20
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>=20
+> Build tested only. buildbot is happy.
+>=20
+>  drivers/gpio/gpio-tegra.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 
-Patch applied.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Yours,
-Linus Walleij
+--oyUTqETQ0mS9luUI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvNg+sACgkQ3SOs138+
+s6HO3hAAp2ajg6Q+V/KuVKnYNlR0s50A+tJvu3lYFZrpDkkYBquJ9XI+35g1THdS
+fBG1mwfVp5JpJ2FRLNuFpHo0gR8b+D2ef05a+2Ywni2vbLguAqvIw92b3Nlo1bCA
+E4rJJBLsKZPt2FH0RLxkrQOzIiJ7YRxLaOVyiAy36eCQBAPGnHrrrXY0WZGbsDyv
+5uN7/Q8Mt1h4SB85QVdou0DHydrfI+9HGqymrDeiX5XWZg7Hj8L2nXOBrqVgxFyI
+TQoIxr98RkfN6Y+x+Vi3N890vaATHzf2egHkC1+LQqOKyWvrcodRbkOISTP7YX+f
+0FeUhvcMjKuEw1gDxLVoHrnPHcun71J5r0Ycw0RywjYqLGEq2ODaJV+jhLlMTQ4S
+YBCNBdEP7sJJJtpT5Ntw+3adsmEboVqqAXw2Zng9N9gi8Gdrf5Vmd0t3lttt/OMR
+vqvjE6fzjOTcjW/hDX0UMTWc5OyFc59NVGbLZZ6n2uQVYuXhAeWLoGualjjhKqew
+toa8Ipd6rQ+ur6JLinSWVJKn3q+lhcF5W3CBfnnn0obS8+f9gec7IqBWl+bh8zqw
+Vd+reN252gjEhxXMasadvO5NMXP5sHa/djdGBRz4cszr2vaDVb8F/nUED8j3G9zf
++FtjMjSygcd/qvHupBBJoN8lWXEblvjLuRy/kph1EUARIO60SpA=
+=kBfA
+-----END PGP SIGNATURE-----
+
+--oyUTqETQ0mS9luUI--
