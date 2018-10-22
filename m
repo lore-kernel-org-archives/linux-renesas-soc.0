@@ -1,69 +1,33 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39302 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727640AbeJLSfz (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:51968 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725723AbeJVJ2k (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Oct 2018 14:35:55 -0400
-Date: Fri, 12 Oct 2018 13:03:58 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-pwm@vger.kernel.org
-Subject: Re: [PATCH resend] pwm: rcar: convert to SPDX identifiers
-Message-ID: <20181012110358.GA30261@ulmo>
-References: <8736txyr6g.wl-kuninori.morimoto.gx@renesas.com>
+        Mon, 22 Oct 2018 05:28:40 -0400
+Date: Mon, 22 Oct 2018 09:12:05 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Jun Nie <jun.nie@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 5/5] thermal: zx2967_thermal: simplify getting
+ .driver_data
+Message-ID: <20181022011203.GA13039@tiger>
+References: <20181021200053.2194-1-wsa+renesas@sang-engineering.com>
+ <20181021200053.2194-6-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8736txyr6g.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <20181021200053.2194-6-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Sun, Oct 21, 2018 at 10:00:52PM +0200, Wolfram Sang wrote:
+> We should get 'driver_data' from 'struct device' directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
---ibTvN161/egqYuK8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Sep 26, 2018 at 01:45:17AM +0000, Kuninori Morimoto wrote:
->=20
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->=20
-> This patch updates license to use SPDX-License-Identifier
-> instead of verbose license text.
->=20
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
-> Thierry
->=20
-> 2weeks past, resend patch
-
-There's usually no need to resend a patch, just ping me on the original.
-
-Applied, thanks.
-
-Thierry
-
---ibTvN161/egqYuK8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvAf5wACgkQ3SOs138+
-s6EjBQ/+O6Upv5qKlVvAcSprhwGY4TC0XF3Le1MVpe8ubt1weLeqZQBVERl+8Sf7
-5okfVWIjg4zdzzD8ZsKi7eiR7e4RuEpdG8B8Mc9wPlU4cyobsqavy5VUrJuHtSzN
-Bx1E1LRAkByw/wqPaJYvWiWxvbZS3iNMw3M+eB6ZvYRdOVXXpW9aCcRCvhL+8gOP
-Hf8ktbqPHjRGX0JGWPz4jSmLw/dvgOyXMdVM/ScQIwxkCO2x/r42Q/LDEfPStttY
-CWijOGi1wLj0BjWX3u8sf/nc44bEsZdcWtp8qGUfTYG4LzykJx3nujw0tC8K1xYi
-HQt5/K4TIkUgqWFcoblkG0xsN0gbbBs6MACTlM9vMvbIp3u3vf9nQosg2YV74Daq
-C2w9NQXrVuQbFPCXOAH3mHNvS9hx4TNQZRlzuj7d85ZdRUVpK6d6a18ZWfSGYXj4
-lL2aY6OqJFyaOfK4Lip8QATKHZ1rFVd5HII3JxHYFR9Lz+WLYM7NkHW6VRPw9b1R
-Ugx09unCdXjosW2qpHyrrY/HTWUkt3yOA985Bj5FHnR2i3h40UaIUO7o3S+CTCf3
-R7yLSVBIzUJtzQYEXg0eoCGr0NCaoCtnRKUuDmKqw6Rzo2xwp3eyDcjZDqyQ+yH7
-syu/geJ1pMK7amb5qxDsITCs5TFhJWQcLb3qG5658OpShr0Bct8=
-=4irM
------END PGP SIGNATURE-----
-
---ibTvN161/egqYuK8--
+Acked-by: Shawn Guo <shawnguo@kernel.org>
