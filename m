@@ -1,53 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41819 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726273AbeJORoH (ORCPT
+Received: from mail-pf1-f169.google.com ([209.85.210.169]:41775 "EHLO
+        mail-pf1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728428AbeJWBV3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Oct 2018 13:44:07 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH 0/4] arm64: renesas: ebisu: Enable Audio
-Date: Mon, 15 Oct 2018 11:59:20 +0200
-Message-Id: <20181015095924.25794-1-horms+renesas@verge.net.au>
+        Mon, 22 Oct 2018 21:21:29 -0400
+Subject: Re: [PATCH 9/9] net: phy: mdio-mux-bcm-iproc: simplify getting
+ .driver_data
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Jon Mason <jonmason@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
+ <20181021200021.1693-10-wsa+renesas@sang-engineering.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <886a1e4b-214a-8fa0-f11e-11804f4a611f@gmail.com>
+Date: Mon, 22 Oct 2018 10:02:08 -0700
+MIME-Version: 1.0
+In-Reply-To: <20181021200021.1693-10-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+On 10/21/18 1:00 PM, Wolfram Sang wrote:
+> We should get 'driver_data' from 'struct device' directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-This series describes R-Car audio for the R-Car E3 (r8a77990) and
-enables it on the Ebisu board which uses that SoC. It also enables the
-scu-simple-card driver in the relevant defconfigs, a dependency for
-enabling audio on the Ebisu board.
-
-Other dependencies. It is safe to apply this series without them present:
-* "[PATCH 0/2] sh-pfc: r8a77990: Add Audio clock and SSI pins, groups and functions"
-  Required for audio be initialised at boot.
-
-* "[PATCH] iommu/ipmmu-vmsa: Hook up r8a77990 DT matching code"
-  Required for Audio DMA. Without this patch present audio will
-  fall back to using PIO. Alternatively, the iommus properties
-  may be removed from audma0, which is added to DT of
-  patch 3 of this series.
-
-Based on renesas-devel-20181012-v4.19-rc7
-
-Simon Horman (2):
-  arm64: defconfig: Enable scu-simple-card driver
-  arm64: renesas_defconfig: Enable scu-simple-card driver
-
-Takeshi Kihara (1):
-  arm64: dts: renesas: ebisu: Enable Audio
-
-Yoshihiro Kaneko (1):
-  arm64: dts: renesas: r8a77990: Add Audio-DMAC and Sound device nodes
-
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 127 ++++++++++++
- arch/arm64/boot/dts/renesas/r8a77990.dtsi      | 271 +++++++++++++++++++++++++
- arch/arm64/configs/defconfig                   |   1 +
- arch/arm64/configs/renesas_defconfig           |   1 +
- 4 files changed, 400 insertions(+)
-
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 -- 
-2.11.0
+Florian
