@@ -1,74 +1,125 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:46190 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726483AbeJIQov (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:37084 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726970AbeJWWjG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Oct 2018 12:44:51 -0400
+        Tue, 23 Oct 2018 18:39:06 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Souptick Joarder <jrdr.linux@gmail.com>, noralf@tronnes.org,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        sean@poorly.run, airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] drm/rcar-du: Convert drm_atomic_helper_suspend/resume()
+Date: Tue, 23 Oct 2018 17:15:27 +0300
+Message-ID: <2275810.TWHE3rLQ5u@avalon>
+In-Reply-To: <20181023134041.GO324@phenom.ffwll.local>
+References: <20180918163903.GA11172@jordon-HP-15-Notebook-PC> <CAFqt6zaaEWb-vQ6BVhYg1GgsxwKX=4H661OHU3Qfbk0FD3Cz9g@mail.gmail.com> <20181023134041.GO324@phenom.ffwll.local>
 MIME-Version: 1.0
-References: <20180918102226.8017-1-horms+renesas@verge.net.au> <5bddb393-3060-6d74-4cf1-3547cb87924e@cogentembedded.com>
-In-Reply-To: <5bddb393-3060-6d74-4cf1-3547cb87924e@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 9 Oct 2018 11:28:40 +0200
-Message-ID: <CAMuHMdU_6uBpHOFshgxc61GOG1o1ibAoi5T1n_ZdYZ+=i8H5Sw@mail.gmail.com>
-Subject: Re: [PATCH v3 net-next] ravb: do not write 1 to reserved bits
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        netdev <netdev@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+Hi Daniel,
 
-On Tue, Sep 18, 2018 at 6:55 PM Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> On 09/18/2018 01:22 PM, Simon Horman wrote:
-> > From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-> > EtherAVB hardware requires 0 to be written to status register bits in
-> > order to clear them, however, care must be taken not to:
-> >
-> > 1. Clear other bits, by writing zero to them
-> > 2. Write one to reserved bits
-> >
-> > This patch corrects the ravb driver with respect to the second point above.
-> > This is done by defining reserved bit masks for the affected registers and,
-> > after auditing the code, ensure all sites that may write a one to a
-> > reserved bit use are suitably masked.
-> >
-> > Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> [...]
->
-> Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->
-> > diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-> > index 1470fc12282b..9b6bf557a2f5 100644
-> > --- a/drivers/net/ethernet/renesas/ravb.h
-> > +++ b/drivers/net/ethernet/renesas/ravb.h
-> > @@ -428,6 +428,7 @@ enum EIS_BIT {
-> >       EIS_CULF1       = 0x00000080,
-> >       EIS_TFFF        = 0x00000100,
-> >       EIS_QFS         = 0x00010000,
-> > +     EIS_RESERVED    = (GENMASK(31, 17) | GENMASK(15, 11)),
->
->    Well, I'm not a big fan of BIT() and GENMASK() -- they still lack a macro
-> to #define a bit/field value. But if you prefer to use them, OK, let's be so...
+On Tuesday, 23 October 2018 16:40:41 EEST Daniel Vetter wrote:
+> On Mon, Oct 22, 2018 at 01:51:35PM +0530, Souptick Joarder wrote:
+> > On Thu, Oct 11, 2018 at 1:48 PM Daniel Vetter <daniel@ffwll.ch> wrote:
+> >> On Mon, Oct 08, 2018 at 09:57:52PM +0530, Souptick Joarder wrote:
+> >>> On Mon, Oct 1, 2018 at 6:12 PM Noralf Tr=F8nnes wrote:
+> >>>> Den 01.10.2018 13.56, skrev Laurent Pinchart:
+> >>>>> On Monday, 1 October 2018 09:52:20 EEST Daniel Vetter wrote:
+> >>>>>> On Fri, Sep 28, 2018 at 06:30:35PM +0300, Laurent Pinchart wrote:
+> >>>>>>> On Friday, 28 September 2018 18:05:18 EEST Laurent Pinchart wrote:
+> >>>>>>>> On Thursday, 27 September 2018 09:34:18 EEST Souptick Joarder=20
+wrote:
+> >>>>>>>>> On Tue, Sep 18, 2018 at 10:05 PM Souptick Joarder wrote:
+> >>>>>>>>>> convert drm_atomic_helper_suspend/resume() to use
+> >>>>>>>>>> drm_mode_config_helper_suspend/resume().
+> >>>>>>>>>>=20
+> >>>>>>>>>> remove suspend_state field from the rcar_du_device
+> >>>>>>>>>> structure as it is no more required.
+> >>>>>>>>>>=20
+> >>>>>>>>>> With this conversion, also
+> >>>>>>>>>> drm_fbdev_cma_set_suspend_unlocked()
+> >>>>>>>>>> will left with no consumer. So this function can be removed.
+> >>>>>>>>>>=20
+> >>>>>>>>>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> >>>>>>>>>=20
+> >>>>>>>>> Laurent, any comment on this patch ??
+> >>>>>>>>=20
+> >>>>>>>> Sorry for the delay, and thanks for pinging me.
+> >>>>>>>>=20
+> >>>>>>>> Reviewed-by: Laurent Pinchart
+> >>>>>>>> <laurent.pinchart@ideasonboard.com>
+> >>>>>>>>=20
+> >>>>>>>> Should I apply this to my tree or do you plan to merge it
+> >>>>>>>> through drm-misc as it touches drm_fb_cma_helper.c ?
+> >>>>>>>=20
+> >>>>>>> I just realized that the same patch got supplied by Noralf
+> >>>>>>> Tr=F8nnes nearly a year ago, and was later superseded by
+> >>>>>>> https://patchwork.freedesktop.org/patch/247861/. I think we
+> >>>>>>> should thus apply Noralf's patches instead (once he sends v4
+> >>>>>>> out).
+> >>>>>>=20
+> >>>>>> I don't think Noralf is still actively working on this, he's busy
+> >>>>>> with the fbdev emulation stuff. Probably better if you pick up
+> >>>>>> one of the existing ones, than waiting another year or so :-)
+> >>>>>=20
+> >>>>> Isn't https://patchwork.freedesktop.org/patch/247861/ part of the
+> >>>>> fbdev emulation stuff ? That patch series is from less than a
+> >>>>> month ago, so I thought it was actively developed.
+> >>>>>=20
+> >>>>> Let's ask him. Noralf, any comment ? :-)
+> >>>>=20
+> >>>> I see now that I've caused some confusion here.
+> >>>>=20
+> >>>> I did some refactoring of the fbdev stuff in the CMA helper last
+> >>>> year. In the last series of that work there is this patch:
+> >>>>=20
+> >>>> [v3,07/11] drm/rcar-du: Use drm_mode_config_helper_suspend/resume()
+> >>>> https://patchwork.freedesktop.org/patch/192414/
+> >>>>=20
+> >>>> During Christmas I got the idea that maybe it was possible to use a
+> >>>> dumb buffer to do generic fbdev emulation. That work took me 6
+> >>>> months before a solution using a general internal DRM client was
+> >>>> hammered out. By the time I started to convert drivers I had
+> >>>> forgotten about that patch.
+> >>>>=20
+> >>>> When I wrote the patch (#247861) to convert rcar to the generic
+> >>>> fbdev, I just bundled up the suspend/resume change with the fbdev
+> >>>> conversion. Laurent and Sam commented on that bundling, so I said
+> >>>> that I would split it up in the next version.
+> >>>>=20
+> >>>> All that being said, I think that this patch should be applied and
+> >>>> I'll just rebase the rcar fbdev conversion patch on top of that.
+> >>>> It's the easiest for me at least :-)
+> >>>=20
+> >>> Any conclusion on this patch ? :-)
+> >>=20
+> >> Laurent should pick it up and apply to his rcar-du tree I think. We can
+> >> also stuff it into drm-misc as a fallback.
+> >=20
+> > Can we get this patch in queue for 4.20 ?
+>=20
+> 5.1, 4.20 is already done.
+>=20
+> But yes, I pulled this into drm-misc-next. Thanks for your patch.
 
-FIELD_PREP()?
+I would have preferred applying this through my tree. I'm currently at ELCE=
+=20
+and had to prepare for the conference, hence the delay.
 
-Perhaps the other bit definitions should be converted to BIT()?
-That way it becomes much easier to match valid EIS_* bits with EIS_RESERVED.
+> >>>>>>>>>>   drivers/gpu/drm/drm_fb_cma_helper.c   | 18 ------------------
+> >>>>>>>>>>   drivers/gpu/drm/rcar-du/rcar_du_drv.c | 21 ++---------------=
+=2D-
+> >>>>>>>>>>   drivers/gpu/drm/rcar-du/rcar_du_drv.h |  1 -
+> >>>>>>>>>>   include/drm/drm_fb_cma_helper.h       |  2 --
+> >>>>>>>>>>   4 files changed, 2 insertions(+), 40 deletions(-)
 
-Gr{oetje,eeting}s,
+=2D-=20
+Regards,
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
