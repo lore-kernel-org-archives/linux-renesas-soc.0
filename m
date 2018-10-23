@@ -1,125 +1,253 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:37084 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726970AbeJWWjG (ORCPT
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:44920 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727350AbeJWWES (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 Oct 2018 18:39:06 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Souptick Joarder <jrdr.linux@gmail.com>, noralf@tronnes.org,
+        Tue, 23 Oct 2018 18:04:18 -0400
+Received: by mail-ed1-f68.google.com with SMTP id z21-v6so1646503edb.11
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Oct 2018 06:40:45 -0700 (PDT)
+Date: Tue, 23 Oct 2018 15:40:41 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Souptick Joarder <jrdr.linux@gmail.com>
+Cc: noralf@tronnes.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Gustavo Padovan <gustavo@padovan.org>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         sean@poorly.run, airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Daniel Vetter <daniel@ffwll.ch>
 Subject: Re: [PATCH] drm/rcar-du: Convert drm_atomic_helper_suspend/resume()
-Date: Tue, 23 Oct 2018 17:15:27 +0300
-Message-ID: <2275810.TWHE3rLQ5u@avalon>
-In-Reply-To: <20181023134041.GO324@phenom.ffwll.local>
-References: <20180918163903.GA11172@jordon-HP-15-Notebook-PC> <CAFqt6zaaEWb-vQ6BVhYg1GgsxwKX=4H661OHU3Qfbk0FD3Cz9g@mail.gmail.com> <20181023134041.GO324@phenom.ffwll.local>
+Message-ID: <20181023134041.GO324@phenom.ffwll.local>
+References: <20180918163903.GA11172@jordon-HP-15-Notebook-PC>
+ <20809880.gF2CxujBy3@avalon>
+ <20181001065220.GE11082@phenom.ffwll.local>
+ <26527911.hs5tlrnKDc@avalon>
+ <042a6076-62e2-c029-2a09-f1123d9ac403@tronnes.org>
+ <CAFqt6zZ9vZ8qDpockDyUgqxJxA-d6ajyufzBUCPzKkxv0Vnu_Q@mail.gmail.com>
+ <20181011081849.GR31561@phenom.ffwll.local>
+ <CAFqt6zaaEWb-vQ6BVhYg1GgsxwKX=4H661OHU3Qfbk0FD3Cz9g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFqt6zaaEWb-vQ6BVhYg1GgsxwKX=4H661OHU3Qfbk0FD3Cz9g@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Daniel,
+On Mon, Oct 22, 2018 at 01:51:35PM +0530, Souptick Joarder wrote:
+> Hi Laurent,
+> 
+> On Thu, Oct 11, 2018 at 1:48 PM Daniel Vetter <daniel@ffwll.ch> wrote:
+> >
+> > On Mon, Oct 08, 2018 at 09:57:52PM +0530, Souptick Joarder wrote:
+> > > Hi Laurent,
+> > > On Mon, Oct 1, 2018 at 6:12 PM Noralf Tr�nnes <noralf@tronnes.org> wrote:
+> > > >
+> > > >
+> > > > Den 01.10.2018 13.56, skrev Laurent Pinchart:
+> > > > > Hi Daniel,
+> > > > >
+> > > > > On Monday, 1 October 2018 09:52:20 EEST Daniel Vetter wrote:
+> > > > >> On Fri, Sep 28, 2018 at 06:30:35PM +0300, Laurent Pinchart wrote:
+> > > > >>> On Friday, 28 September 2018 18:05:18 EEST Laurent Pinchart wrote:
+> > > > >>>> On Thursday, 27 September 2018 09:34:18 EEST Souptick Joarder wrote:
+> > > > >>>>> On Tue, Sep 18, 2018 at 10:05 PM Souptick Joarder wrote:
+> > > > >>>>>> convert drm_atomic_helper_suspend/resume() to use
+> > > > >>>>>> drm_mode_config_helper_suspend/resume().
+> > > > >>>>>>
+> > > > >>>>>> remove suspend_state field from the rcar_du_device
+> > > > >>>>>> structure as it is no more required.
+> > > > >>>>>>
+> > > > >>>>>> With this conversion, also drm_fbdev_cma_set_suspend_unlocked()
+> > > > >>>>>> will left with no consumer. So this function can be removed.
+> > > > >>>>>>
+> > > > >>>>>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> > > > >>>>> Laurent, any comment on this patch ??
+> > > > >>>> Sorry for the delay, and thanks for pinging me.
+> > > > >>>>
+> > > > >>>> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > > >>>>
+> > > > >>>> Should I apply this to my tree or do you plan to merge it through
+> > > > >>>> drm-misc
+> > > > >>>> as it touches drm_fb_cma_helper.c ?
+> > > > >>> I just realized that the same patch got supplied by Noralf Tr�nnes nearly
+> > > > >>> a
+> > > > >>> year ago, and was later superseded by
+> > > > >>> https://patchwork.freedesktop.org/patch/247861/. I think we should thus
+> > > > >>> apply Noralf's patches instead (once he sends v4 out).
+> > > > >> I don't think Noralf is still actively working on this, he's busy with the
+> > > > >> fbdev emulation stuff. Probably better if you pick up one of the existing
+> > > > >> ones, than waiting another year or so :-)
+> > > > > Isn't https://patchwork.freedesktop.org/patch/247861/ part of the fbdev
+> > > > > emulation stuff ? That patch series is from less than a month ago, so I
+> > > > > thought it was actively developed.
+> > > > >
+> > > > > Let's ask him. Noralf, any comment ? :-)
+> > > >
+> > > > I see now that I've caused some confusion here.
+> > > >
+> > > > I did some refactoring of the fbdev stuff in the CMA helper last year.
+> > > > In the last series of that work there is this patch:
+> > > >
+> > > > [v3,07/11] drm/rcar-du: Use drm_mode_config_helper_suspend/resume()
+> > > > https://patchwork.freedesktop.org/patch/192414/
+> > > >
+> > > > During Christmas I got the idea that maybe it was possible to use a dumb
+> > > > buffer to do generic fbdev emulation. That work took me 6 months before a
+> > > > solution using a general internal DRM client was hammered out. By the
+> > > > time I started to convert drivers I had forgotten about that patch.
+> > > >
+> > > > When I wrote the patch (#247861) to convert rcar to the generic fbdev, I
+> > > > just bundled up the suspend/resume change with the fbdev conversion.
+> > > > Laurent and Sam commented on that bundling, so I said that I would split
+> > > > it up in the next version.
+> > > >
+> > > > All that being said, I think that this patch should be applied and I'll
+> > > > just rebase the rcar fbdev conversion patch on top of that.
+> > > > It's the easiest for me at least :-)
+> > > >
+> > > Any conclusion on this patch ? :-)
+> >
+> > Laurent should pick it up and apply to his rcar-du tree I think. We can
+> > also stuff it into drm-misc as a fallback.
+> 
+> Can we get this patch in queue for 4.20 ?
 
-On Tuesday, 23 October 2018 16:40:41 EEST Daniel Vetter wrote:
-> On Mon, Oct 22, 2018 at 01:51:35PM +0530, Souptick Joarder wrote:
-> > On Thu, Oct 11, 2018 at 1:48 PM Daniel Vetter <daniel@ffwll.ch> wrote:
-> >> On Mon, Oct 08, 2018 at 09:57:52PM +0530, Souptick Joarder wrote:
-> >>> On Mon, Oct 1, 2018 at 6:12 PM Noralf Tr=F8nnes wrote:
-> >>>> Den 01.10.2018 13.56, skrev Laurent Pinchart:
-> >>>>> On Monday, 1 October 2018 09:52:20 EEST Daniel Vetter wrote:
-> >>>>>> On Fri, Sep 28, 2018 at 06:30:35PM +0300, Laurent Pinchart wrote:
-> >>>>>>> On Friday, 28 September 2018 18:05:18 EEST Laurent Pinchart wrote:
-> >>>>>>>> On Thursday, 27 September 2018 09:34:18 EEST Souptick Joarder=20
-wrote:
-> >>>>>>>>> On Tue, Sep 18, 2018 at 10:05 PM Souptick Joarder wrote:
-> >>>>>>>>>> convert drm_atomic_helper_suspend/resume() to use
-> >>>>>>>>>> drm_mode_config_helper_suspend/resume().
-> >>>>>>>>>>=20
-> >>>>>>>>>> remove suspend_state field from the rcar_du_device
-> >>>>>>>>>> structure as it is no more required.
-> >>>>>>>>>>=20
-> >>>>>>>>>> With this conversion, also
-> >>>>>>>>>> drm_fbdev_cma_set_suspend_unlocked()
-> >>>>>>>>>> will left with no consumer. So this function can be removed.
-> >>>>>>>>>>=20
-> >>>>>>>>>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> >>>>>>>>>=20
-> >>>>>>>>> Laurent, any comment on this patch ??
-> >>>>>>>>=20
-> >>>>>>>> Sorry for the delay, and thanks for pinging me.
-> >>>>>>>>=20
-> >>>>>>>> Reviewed-by: Laurent Pinchart
-> >>>>>>>> <laurent.pinchart@ideasonboard.com>
-> >>>>>>>>=20
-> >>>>>>>> Should I apply this to my tree or do you plan to merge it
-> >>>>>>>> through drm-misc as it touches drm_fb_cma_helper.c ?
-> >>>>>>>=20
-> >>>>>>> I just realized that the same patch got supplied by Noralf
-> >>>>>>> Tr=F8nnes nearly a year ago, and was later superseded by
-> >>>>>>> https://patchwork.freedesktop.org/patch/247861/. I think we
-> >>>>>>> should thus apply Noralf's patches instead (once he sends v4
-> >>>>>>> out).
-> >>>>>>=20
-> >>>>>> I don't think Noralf is still actively working on this, he's busy
-> >>>>>> with the fbdev emulation stuff. Probably better if you pick up
-> >>>>>> one of the existing ones, than waiting another year or so :-)
-> >>>>>=20
-> >>>>> Isn't https://patchwork.freedesktop.org/patch/247861/ part of the
-> >>>>> fbdev emulation stuff ? That patch series is from less than a
-> >>>>> month ago, so I thought it was actively developed.
-> >>>>>=20
-> >>>>> Let's ask him. Noralf, any comment ? :-)
-> >>>>=20
-> >>>> I see now that I've caused some confusion here.
-> >>>>=20
-> >>>> I did some refactoring of the fbdev stuff in the CMA helper last
-> >>>> year. In the last series of that work there is this patch:
-> >>>>=20
-> >>>> [v3,07/11] drm/rcar-du: Use drm_mode_config_helper_suspend/resume()
-> >>>> https://patchwork.freedesktop.org/patch/192414/
-> >>>>=20
-> >>>> During Christmas I got the idea that maybe it was possible to use a
-> >>>> dumb buffer to do generic fbdev emulation. That work took me 6
-> >>>> months before a solution using a general internal DRM client was
-> >>>> hammered out. By the time I started to convert drivers I had
-> >>>> forgotten about that patch.
-> >>>>=20
-> >>>> When I wrote the patch (#247861) to convert rcar to the generic
-> >>>> fbdev, I just bundled up the suspend/resume change with the fbdev
-> >>>> conversion. Laurent and Sam commented on that bundling, so I said
-> >>>> that I would split it up in the next version.
-> >>>>=20
-> >>>> All that being said, I think that this patch should be applied and
-> >>>> I'll just rebase the rcar fbdev conversion patch on top of that.
-> >>>> It's the easiest for me at least :-)
-> >>>=20
-> >>> Any conclusion on this patch ? :-)
-> >>=20
-> >> Laurent should pick it up and apply to his rcar-du tree I think. We can
-> >> also stuff it into drm-misc as a fallback.
-> >=20
-> > Can we get this patch in queue for 4.20 ?
->=20
-> 5.1, 4.20 is already done.
->=20
-> But yes, I pulled this into drm-misc-next. Thanks for your patch.
+5.1, 4.20 is already done.
 
-I would have preferred applying this through my tree. I'm currently at ELCE=
-=20
-and had to prepare for the conference, hence the delay.
+But yes, I pulled this into drm-misc-next. Thanks for your patch.
+-Daniel
 
-> >>>>>>>>>>   drivers/gpu/drm/drm_fb_cma_helper.c   | 18 ------------------
-> >>>>>>>>>>   drivers/gpu/drm/rcar-du/rcar_du_drv.c | 21 ++---------------=
-=2D-
-> >>>>>>>>>>   drivers/gpu/drm/rcar-du/rcar_du_drv.h |  1 -
-> >>>>>>>>>>   include/drm/drm_fb_cma_helper.h       |  2 --
-> >>>>>>>>>>   4 files changed, 2 insertions(+), 40 deletions(-)
+> 
+> > -Daniel
+> >
+> > >
+> > > ers/gpu/drm/drm_fb_cma_helper.c   | 18 ------------------
+> > > > >>>>>>   drivers/gpu/drm/rcar-du/rcar_du_drv.c | 21 ++-------------------
+> > > > >>>>>>   drivers/gpu/drm/rcar-du/rcar_du_drv.h |  1 -
+> > > > >>>>>>   include/drm/drm_fb_cma_helper.h       |  2 --
+> > > > >>>>>>   4 files changed, 2 insertions(+), 40 deletions(-)
+> > > > >>>>>>
+> > > > >>>>>> diff --git a/drivers/gpu/drm/drm_fb_cma_helper.c
+> > > > >>>>>> b/drivers/gpu/drm/drm_fb_cma_helper.c index 47e0e2f..96efc88 100644
+> > > > >>>>>> --- a/drivers/gpu/drm/drm_fb_cma_helper.c
+> > > > >>>>>> +++ b/drivers/gpu/drm/drm_fb_cma_helper.c
+> > > > >>>>>> @@ -224,21 +224,3 @@ void drm_fbdev_cma_hotplug_event(struct
+> > > > >>>>>> drm_fbdev_cma *fbdev_cma)
+> > > > >>>>>>
+> > > > >>>>>>                  drm_fb_helper_hotplug_event(&fbdev_cma->fb_helper);
+> > > > >>>>>>
+> > > > >>>>>>   }
+> > > > >>>>>>   EXPORT_SYMBOL_GPL(drm_fbdev_cma_hotplug_event);
+> > > > >>>>>>
+> > > > >>>>>> -
+> > > > >>>>>> -/**
+> > > > >>>>>> - * drm_fbdev_cma_set_suspend_unlocked - wrapper around
+> > > > >>>>>> - *
+> > > > >>>>>> drm_fb_helper_set_suspend_unlocked
+> > > > >>>>>> - * @fbdev_cma: The drm_fbdev_cma struct, may be NULL
+> > > > >>>>>> - * @state: desired state, zero to resume, non-zero to suspend
+> > > > >>>>>> - *
+> > > > >>>>>> - * Calls drm_fb_helper_set_suspend, which is a wrapper around
+> > > > >>>>>> - * fb_set_suspend implemented by fbdev core.
+> > > > >>>>>> - */
+> > > > >>>>>> -void drm_fbdev_cma_set_suspend_unlocked(struct drm_fbdev_cma
+> > > > >>>>>> *fbdev_cma,
+> > > > >>>>>> -                                       bool state)
+> > > > >>>>>> -{
+> > > > >>>>>> -       if (fbdev_cma)
+> > > > >>>>>> -
+> > > > >>>>>> drm_fb_helper_set_suspend_unlocked(&fbdev_cma->fb_helper,
+> > > > >>>>>> -                                                  state);
+> > > > >>>>>> -}
+> > > > >>>>>> -EXPORT_SYMBOL(drm_fbdev_cma_set_suspend_unlocked);
+> > > > >>>>>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> > > > >>>>>> b/drivers/gpu/drm/rcar-du/rcar_du_drv.c index 02aee6c..288220f 100644
+> > > > >>>>>> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> > > > >>>>>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> > > > >>>>>> @@ -357,32 +357,15 @@ static void rcar_du_lastclose(struct drm_device
+> > > > >>>>>> *dev)
+> > > > >>>>>>
+> > > > >>>>>>   static int rcar_du_pm_suspend(struct device *dev)
+> > > > >>>>>>   {
+> > > > >>>>>>
+> > > > >>>>>>          struct rcar_du_device *rcdu = dev_get_drvdata(dev);
+> > > > >>>>>>
+> > > > >>>>>> -       struct drm_atomic_state *state;
+> > > > >>>>>>
+> > > > >>>>>> -       drm_kms_helper_poll_disable(rcdu->ddev);
+> > > > >>>>>> -       drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, true);
+> > > > >>>>>> -
+> > > > >>>>>> -       state = drm_atomic_helper_suspend(rcdu->ddev);
+> > > > >>>>>> -       if (IS_ERR(state)) {
+> > > > >>>>>> -               drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev,
+> > > > >>>>>> false);
+> > > > >>>>>> -               drm_kms_helper_poll_enable(rcdu->ddev);
+> > > > >>>>>> -               return PTR_ERR(state);
+> > > > >>>>>> -       }
+> > > > >>>>>> -
+> > > > >>>>>> -       rcdu->suspend_state = state;
+> > > > >>>>>> -
+> > > > >>>>>> -       return 0;
+> > > > >>>>>> +       return drm_mode_config_helper_suspend(rcdu->ddev);
+> > > > >>>>>>
+> > > > >>>>>>   }
+> > > > >>>>>>
+> > > > >>>>>>   static int rcar_du_pm_resume(struct device *dev)
+> > > > >>>>>>   {
+> > > > >>>>>>
+> > > > >>>>>>          struct rcar_du_device *rcdu = dev_get_drvdata(dev);
+> > > > >>>>>>
+> > > > >>>>>> -       drm_atomic_helper_resume(rcdu->ddev, rcdu->suspend_state);
+> > > > >>>>>> -       drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, false);
+> > > > >>>>>> -       drm_kms_helper_poll_enable(rcdu->ddev);
+> > > > >>>>>> -
+> > > > >>>>>> -       return 0;
+> > > > >>>>>> +       return drm_mode_config_helper_resume(rcdu->ddev);
+> > > > >>>>>>
+> > > > >>>>>>   }
+> > > > >>>>>>   #endif
+> > > > >>>>>>
+> > > > >>>>>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> > > > >>>>>> b/drivers/gpu/drm/rcar-du/rcar_du_drv.h index b3a25e8..ff25c8d 100644
+> > > > >>>>>> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> > > > >>>>>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> > > > >>>>>> @@ -78,7 +78,6 @@ struct rcar_du_device {
+> > > > >>>>>>
+> > > > >>>>>>          struct drm_device *ddev;
+> > > > >>>>>>          struct drm_fbdev_cma *fbdev;
+> > > > >>>>>>
+> > > > >>>>>> -       struct drm_atomic_state *suspend_state;
+> > > > >>>>>>
+> > > > >>>>>>          struct rcar_du_crtc crtcs[RCAR_DU_MAX_CRTCS];
+> > > > >>>>>>          unsigned int num_crtcs;
+> > > > >>>>>>
+> > > > >>>>>> diff --git a/include/drm/drm_fb_cma_helper.h
+> > > > >>>>>> b/include/drm/drm_fb_cma_helper.h index 4a65f0d..8dbbe1e 100644
+> > > > >>>>>> --- a/include/drm/drm_fb_cma_helper.h
+> > > > >>>>>> +++ b/include/drm/drm_fb_cma_helper.h
+> > > > >>>>>> @@ -26,8 +26,6 @@ struct drm_fbdev_cma *drm_fbdev_cma_init(struct
+> > > > >>>>>> drm_device *dev,
+> > > > >>>>>>
+> > > > >>>>>>   void drm_fbdev_cma_restore_mode(struct drm_fbdev_cma *fbdev_cma);
+> > > > >>>>>>   void drm_fbdev_cma_hotplug_event(struct drm_fbdev_cma *fbdev_cma);
+> > > > >>>>>>
+> > > > >>>>>> -void drm_fbdev_cma_set_suspend_unlocked(struct drm_fbdev_cma
+> > > > >>>>>> *fbdev_cma,
+> > > > >>>>>> -                                       bool state);
+> > > > >>>>>>
+> > > > >>>>>>   struct drm_gem_cma_object *drm_fb_cma_get_gem_obj(struct
+> > > > >>>>>>   drm_framebuffer *fb,
+> > > > >>>>>>
+> > > > >>>>>>          unsigned int plane);
+> > > >
+> >
+> > --
+> > Daniel Vetter
+> > Software Engineer, Intel Corporation
+> > http://blog.ffwll.ch
 
-=2D-=20
-Regards,
-
-Laurent Pinchart
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
