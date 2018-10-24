@@ -1,55 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:40558 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727149AbeJYCNK (ORCPT
+Received: from mga11.intel.com ([192.55.52.93]:24935 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726285AbeJXWTy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Oct 2018 22:13:10 -0400
-Received: by mail-lj1-f194.google.com with SMTP id t22-v6so5585744lji.7
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 24 Oct 2018 10:44:11 -0700 (PDT)
-Subject: Re: [PATCH 2/3] net: ethernet: Remove dummy runtime PM callbacks from
- Renesas drivers
-To: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        linux-pm@vger.kernel.org
+        Wed, 24 Oct 2018 18:19:54 -0400
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+To: linux-pm@vger.kernel.org
 Cc: linux-i2c@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Subject: [PATCH 2/3] net: ethernet: Remove dummy runtime PM callbacks from Renesas drivers
+Date: Wed, 24 Oct 2018 16:51:33 +0300
+Message-Id: <20181024135134.28456-3-jarkko.nikula@linux.intel.com>
+In-Reply-To: <20181024135134.28456-1-jarkko.nikula@linux.intel.com>
 References: <20181024135134.28456-1-jarkko.nikula@linux.intel.com>
- <20181024135134.28456-3-jarkko.nikula@linux.intel.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <ecf01d95-f973-5294-932f-41e2a68decf3@cogentembedded.com>
-Date: Wed, 24 Oct 2018 20:44:07 +0300
 MIME-Version: 1.0
-In-Reply-To: <20181024135134.28456-3-jarkko.nikula@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+Platform drivers don't need dummy runtime PM callbacks that just return
+success in order to have runtime PM happening. This has changed since
+following commits:
 
-On 10/24/2018 04:51 PM, Jarkko Nikula wrote:
+05aa55dddb9e ("PM / Runtime: Lenient generic runtime pm callbacks")
+543f2503a956 ("PM / platform_bus: Allow runtime PM by default")
+8b313a38ecff ("PM / Platform: Use generic runtime PM callbacks directly")
 
-> Platform drivers don't need dummy runtime PM callbacks that just return
-> success in order to have runtime PM happening. This has changed since
-> following commits:
-> 
-> 05aa55dddb9e ("PM / Runtime: Lenient generic runtime pm callbacks")
-> 543f2503a956 ("PM / platform_bus: Allow runtime PM by default")
-> 8b313a38ecff ("PM / Platform: Use generic runtime PM callbacks directly")
+Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+---
+Only build tested.
+---
+ drivers/net/ethernet/renesas/ravb_main.c | 13 -------------
+ drivers/net/ethernet/renesas/sh_eth.c    | 13 -------------
+ 2 files changed, 26 deletions(-)
 
-   Wow, these are old! :-)
-
-> Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-> ---
-> Only build tested.
-
-   Seems long overdue...
-
-[...]
-
-Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-MBR, Sergei
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index defed0d0c51d..9498f9d67501 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -2335,21 +2335,8 @@ static int __maybe_unused ravb_resume(struct device *dev)
+ 	return ret;
+ }
+ 
+-static int __maybe_unused ravb_runtime_nop(struct device *dev)
+-{
+-	/* Runtime PM callback shared between ->runtime_suspend()
+-	 * and ->runtime_resume(). Simply returns success.
+-	 *
+-	 * This driver re-initializes all registers after
+-	 * pm_runtime_get_sync() anyway so there is no need
+-	 * to save and restore registers here.
+-	 */
+-	return 0;
+-}
+-
+ static const struct dev_pm_ops ravb_dev_pm_ops = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(ravb_suspend, ravb_resume)
+-	SET_RUNTIME_PM_OPS(ravb_runtime_nop, ravb_runtime_nop, NULL)
+ };
+ 
+ static struct platform_driver ravb_driver = {
+diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+index f27a0dc8c563..980310686d45 100644
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -3447,21 +3447,8 @@ static int sh_eth_resume(struct device *dev)
+ }
+ #endif
+ 
+-static int sh_eth_runtime_nop(struct device *dev)
+-{
+-	/* Runtime PM callback shared between ->runtime_suspend()
+-	 * and ->runtime_resume(). Simply returns success.
+-	 *
+-	 * This driver re-initializes all registers after
+-	 * pm_runtime_get_sync() anyway so there is no need
+-	 * to save and restore registers here.
+-	 */
+-	return 0;
+-}
+-
+ static const struct dev_pm_ops sh_eth_dev_pm_ops = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(sh_eth_suspend, sh_eth_resume)
+-	SET_RUNTIME_PM_OPS(sh_eth_runtime_nop, sh_eth_runtime_nop, NULL)
+ };
+ #define SH_ETH_PM_OPS (&sh_eth_dev_pm_ops)
+ #else
+-- 
+2.19.1
