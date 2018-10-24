@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:49192 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:45194 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725829AbeJYIuq (ORCPT
+        id S1726407AbeJXWu0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Oct 2018 04:50:46 -0400
-Date: Thu, 25 Oct 2018 01:20:28 +0100
+        Wed, 24 Oct 2018 18:50:26 -0400
+Date: Wed, 24 Oct 2018 15:22:00 +0100
 From: Wolfram Sang <wsa@the-dreams.de>
 To: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
         Magnus Damm <magnus.damm@gmail.com>
@@ -15,50 +15,70 @@ Cc: linux-pm@vger.kernel.org, linux-i2c@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Subject: Re: [PATCH 0/3] PM: Renesas: Remove dummy runtime PM callbacks
-Message-ID: <20181025002028.GA971@kunai>
+Message-ID: <20181024142200.GA5637@kunai>
 References: <20181024135134.28456-1-jarkko.nikula@linux.intel.com>
- <20181024142200.GA5637@kunai>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="EVF5PPMfhYS0aIcm"
+        protocol="application/pgp-signature"; boundary="ZGiS0Q5IWpPtfppv"
 Content-Disposition: inline
-In-Reply-To: <20181024142200.GA5637@kunai>
+In-Reply-To: <20181024135134.28456-1-jarkko.nikula@linux.intel.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---EVF5PPMfhYS0aIcm
+--ZGiS0Q5IWpPtfppv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Oct 24, 2018 at 04:51:31PM +0300, Jarkko Nikula wrote:
+> I noticed these independent Renesas drivers have needless dummy runtime
+> PM callbacks. I don't have the HW so only build tested.
+>=20
+> Patches can be applied independently to their own subsystems. I wanted to
+> send them together if some of them gets Tested-by or sees a regression.
 
-> At least the I2C driver part of this was on my todo list as well (just a
-> bit lower :/). I wanted to find out why they have been there in the
-> first place. Do you know if such callbacks were needed "back in the
-> days"?
+At least the I2C driver part of this was on my todo list as well (just a
+bit lower :/). I wanted to find out why they have been there in the
+first place. Do you know if such callbacks were needed "back in the
+days"?
 
-I see now that you referenced the relevant commits in the patch
-descriptions. Thanks!
+Adding Magnus to recipients...
 
+>=20
+> Jarkko Nikula (3):
+>   i2c: sh_mobile: Remove dummy runtime PM callbacks
+>   net: ethernet: Remove dummy runtime PM callbacks from Renesas drivers
+>   usb: renesas_usbhs: Remove dummy runtime PM callbacks
+>=20
+>  drivers/i2c/busses/i2c-sh_mobile.c       | 18 ------------------
+>  drivers/net/ethernet/renesas/ravb_main.c | 13 -------------
+>  drivers/net/ethernet/renesas/sh_eth.c    | 13 -------------
+>  drivers/usb/renesas_usbhs/common.c       | 14 --------------
+>  4 files changed, 58 deletions(-)
+>=20
+> --=20
+> 2.19.1
+>=20
 
---EVF5PPMfhYS0aIcm
+--ZGiS0Q5IWpPtfppv
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvRDEgACgkQFA3kzBSg
-KbaDBQ/+KTpFHWvtzXdOg+h3bFKG7Ta8pS7RAhlNLEuHAJ13puGdNoGIS09aVuQW
-WgkAj7osjFqkLApx2t53T3d2Aps7CCTHNfeqMTQYEzAUQvDYlI3ryw0J7XJZNzHF
-MOzbHA8KOQVFkGY99n2YPVmc7lmFQA7ZmcTFwEMyzvAIeMMLW6W8PM9e9Ju80HG8
-BpiyIu1TUAzxvS/dp2XUl3e6+MIR0QPrt3uViKS5otlBxa2ATz6Fs8zHs5ASyMuw
-EQPgextL9Xd7EAQ3/PjCCFVmhBy0X0RMFGmMYBpwkmweXqfxSOQ6ojIMclgd83O1
-DLPrnlyRVbpWf3JAwKC2m9zLkt9fJao5wgSeTTlwcZqfkAib6RISfaIpZt01wkfH
-wmObxb7Q6AjVu8T5Fi/gKIagKp0lzrioRbV+XW1YbJ8U/gHRkFwa5eR/wsoRtsu5
-r3d3ZWfRjY5pkYpUCsXS9x3/Xf+XVQsDjtcf9KBafz+OrX38vb7GkvdMedmQk9+Z
-F4bfQlKlXGzfu8LBK74h4BMfkayeT7Og4orPmYeJrNDTFXzIWH96UlNJEuyvjqzv
-1kAw2GXkglirdOCYMqr+C51RSyPJn1/8T/NObpTXrZHN2E7XmqFIJ8FDorgiVNZo
-qt2yUCTkvhveE2k9EXmGSCPmMshV98UyqeANHr0mXOQOKo/o4HI=
-=O5ra
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvQgAQACgkQFA3kzBSg
+KbZ1+Q//YX0k/nI/3Cs6uu3E0BXdOQUKn502WYwXrs9SGPTdie+6Ps0SPVHPmCuQ
+GKknAMm/8ChvHq+pV0N2f6ouyZd/fEFFcopwDZecXyZCREuPGbivsKqtTnTzbPOt
+QMDWvvpF2Rzg1tM+svsSUQdchptlRHGQwP6zF6+/tr0mdrbaRSyQ01Wyk6S/Xtk5
+G3BIhflMT1yHYmWz2L4HZ0JjqthXv0cNYOHNrV83a20PGsQd1zqXs2LLJDz4WpxH
+00zffS4O+86fm8kj6F8TddIVNJzEEeXx39ctyKiyCLxlRODc8wCd4aI/JU+1SKXR
+zgOBJnEzFbZVFX6auRtVUxrJ8+8q9AVP5bcCg1teaDf1PEUQUmfkGXPn2PI92jwt
+zH5y6mMA5bJXUj/gWGXr6SNCkB0geZOe4xNsAEpDo/GKVtBQIBYF1k7NYPz32OYJ
+qFD3Eds+QOdz/YNo+z0+Jat1yWXEd+HsME8WrmqbdRXe5B/4L2d01zISbBHnxjC0
+aGrRd+TnBg7DXlDmAo8v7cNugMKNxauVUD1IsyJ/yfl/rpjoVxOP82qsqTluQ+6W
+Lu7Z7KPln2Y3Rv5AnQXeP3pO59Lll81Eaq6mAItcrjX7QPn0WH8LVUdIyz3ssKs6
+1v+LsYSdpyVvMvH4yKPqfUDnMAMjx8Q/as/K/0Y5A8isjHN6GrE=
+=3659
 -----END PGP SIGNATURE-----
 
---EVF5PPMfhYS0aIcm--
+--ZGiS0Q5IWpPtfppv--
