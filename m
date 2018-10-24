@@ -1,42 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42288 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727565AbeJ3A6Y (ORCPT
+Received: from mail-pu1apc01on0118.outbound.protection.outlook.com ([104.47.126.118]:34569
+        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726720AbeJXRNE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Oct 2018 20:58:24 -0400
-Date: Mon, 29 Oct 2018 17:09:05 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3] arm64: dts: renesas: add/enable USB2.0 peripheral for
+        Wed, 24 Oct 2018 13:13:04 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Simon Horman <horms@verge.net.au>
+CC: "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v2] arm64: dts: renesas: add/enable USB2.0 peripheral for
  R-Car [DE]3
-Message-ID: <20181029160859.v26w4fr73mpnthf5@verge.net.au>
-References: <1540369953-4097-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Date: Wed, 24 Oct 2018 08:45:46 +0000
+Message-ID: <TY2PR01MB2297BF50E7789F54C1FDAE05D8F60@TY2PR01MB2297.jpnprd01.prod.outlook.com>
+References: <1539669909-25767-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20181017085345.sbzrcxbxyajyvvop@verge.net.au>
+ <OSBPR01MB2293AE3D7213D255E2416B28D8F60@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSBPR01MB2293AE3D7213D255E2416B28D8F60@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1540369953-4097-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Oct 24, 2018 at 05:32:33PM +0900, Yoshihiro Shimoda wrote:
-> This patch adds/enables USB2.0 peripheral for R-Car [DE]3 boards.
-> 
-> R-Car E3 Ebisu board connects the ID pin to the SoC, so this adds
-> a group "usb0_id" into usb0_pins node. Also, to use SW15 pin 3 side,
-> this patch adds vbus0_usb2 node on r8a77990-ebisu.dts.
-> 
-> R-Car D3 Draak board doesn't connect the ID pin, so this adds
-> "renesas,no-otg-pins" property into usb2_phy0 node.
-> 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
-> Changed from v2:
->  - Use otg pin on r8a77990-ebisu board. So, I revise the commit log.
->  - I got Reviewed-by from Simon-san at v2. However, since I change
->    the integration at v3 as above. I didn't add Reviewed-by on this.
-> 
-> Changed from v1:
->  - Revise the reg size for each hsusb node.
+Hi Simon-san again,
 
-Thanks, applied for v4.21.
+> From: Yoshihiro Shimoda, Sent: Wednesday, October 24, 2018 10:05 AM
+>=20
+> Hi Simon-san,
+>=20
+> > From: Simon Horman, Sent: Wednesday, October 17, 2018 5:54 PM
+> >
+> > On Tue, Oct 16, 2018 at 03:05:09PM +0900, Yoshihiro Shimoda wrote:
+> > > This patch adds/enables USB2.0 peripheral for R-Car [DE]3 boards.
+> > > So, the default mode on each board is:
+> > >  - R-Car D3 Draak board (has a type-A connector) =3D host.
+> > >  - R-Car E3 Ebisu board (has a type-B micro connector) =3D peripheral=
+.
+> > >
+> > > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> >
+> > Thanks Shimoda-san,
+> >
+> > This looks fine to me but I will wait to see if there are other reviews
+> > before applying.
+> >
+> > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+>=20
+> Thank you for your review!
+> However, I'm afraid but, would you wait to apply this patch for a moment?
+> I realized this board also connects the ID pin to the SoC. So. I'd like t=
+o try to use
+> the pin like other R-Car Gen3 boards.
+
+The R-Car E3 Ebisu board can use the ID pin.
+# Main problem is my using usb connector converter for R-Car E3 doesn't con=
+nect the ID pin to the GND.
+# If I used other usb connector converter, it worked correctly...
+
+So, I submitted v3 patch like below:
+https://patchwork.kernel.org/patch/10654395/
+
+Best regards,
+Yoshihiro Shimoda
