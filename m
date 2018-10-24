@@ -1,69 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:60848 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726570AbeJZH3Z (ORCPT
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:40558 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727149AbeJYCNK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Oct 2018 03:29:25 -0400
-Date: Thu, 25 Oct 2018 23:54:48 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Cc: linux-pm@vger.kernel.org, linux-i2c@vger.kernel.org,
+        Wed, 24 Oct 2018 22:13:10 -0400
+Received: by mail-lj1-f194.google.com with SMTP id t22-v6so5585744lji.7
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 24 Oct 2018 10:44:11 -0700 (PDT)
+Subject: Re: [PATCH 2/3] net: ethernet: Remove dummy runtime PM callbacks from
+ Renesas drivers
+To: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        linux-pm@vger.kernel.org
+Cc: linux-i2c@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: Re: [PATCH 2/3] net: ethernet: Remove dummy runtime PM callbacks
- from Renesas drivers
-Message-ID: <20181025225448.GA20207@kunai>
 References: <20181024135134.28456-1-jarkko.nikula@linux.intel.com>
  <20181024135134.28456-3-jarkko.nikula@linux.intel.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <ecf01d95-f973-5294-932f-41e2a68decf3@cogentembedded.com>
+Date: Wed, 24 Oct 2018 20:44:07 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
-Content-Disposition: inline
 In-Reply-To: <20181024135134.28456-3-jarkko.nikula@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hello!
 
---SUOF0GtieIMvvwua
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 10/24/2018 04:51 PM, Jarkko Nikula wrote:
 
-On Wed, Oct 24, 2018 at 04:51:33PM +0300, Jarkko Nikula wrote:
 > Platform drivers don't need dummy runtime PM callbacks that just return
 > success in order to have runtime PM happening. This has changed since
 > following commits:
->=20
+> 
 > 05aa55dddb9e ("PM / Runtime: Lenient generic runtime pm callbacks")
 > 543f2503a956 ("PM / platform_bus: Allow runtime PM by default")
 > 8b313a38ecff ("PM / Platform: Use generic runtime PM callbacks directly")
->=20
+
+   Wow, these are old! :-)
+
 > Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+> ---
+> Only build tested.
 
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+   Seems long overdue...
 
+[...]
 
---SUOF0GtieIMvvwua
-Content-Type: application/pgp-signature; name="signature.asc"
+Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvSSbQACgkQFA3kzBSg
-KbYGnBAAmp5zgNu+6o7Pl5OOiVuZ5cK8mN103rg589Oi3cJvdw3/H10OzQlc7Id7
-OGUqtO/nSOgDRvO+xHbvERAknUj+WxYwYdtHFTPE4+I07U1cZ2tZq2upERWIUn5X
-I+808CZwjkgUtGNt5vf2eAmyxIR/c3Q0n8PxeIt3rUhsScUPdZzT82cK0GRTgi5f
-i6E/F4Qzmlsw/LHKXxq0dYukuIo1s7SCP9j/kl83BCbIWimLLvwU/Sisdl28xk8y
-uzMCxiXjYLunrns37ryJPBpLS6TBoLb8pQEBmgy57xSrJ5JbyJnVbXIoS+5IOGNu
-iW8ASzbXdow+0V6fGtoerWbXnJoZUhgy+1vs3sdiUTDQkaoOCDfvx5mbejJGk96c
-9lPuP1nq1bsIKr3zoE+YnJ/IU8YVvgLHGk+KCGnSE3aSp/EQAgXaWyqnZ2mCQ693
-u1ilFp/P3QE1nJtTMZBcUU9LeFjX8/oYF0fylFIMbPNBYBE7m963moKt5sarDNBX
-gBvlur961KQ89Ru5b2fi8H7qgqM9Gm2GnOKg7BJJp+mSEPlC5VrSEILNRUnDGuMb
-0Qu+kDPE8W0rMzI1gbED9c1HgVda8Hxrn0Xp/yNkhu0LVTHhcMOr3XXpvlgpTkcw
-WZrFL6CysQKcZF3Sre6UEc6a+Lj/Saw//Cj1jMUCeZOjNpwX9OY=
-=G1JU
------END PGP SIGNATURE-----
-
---SUOF0GtieIMvvwua--
+MBR, Sergei
