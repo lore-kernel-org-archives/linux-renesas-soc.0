@@ -1,39 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:10540 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725977AbeJ2XVG (ORCPT
+Received: from mail.bootlin.com ([62.4.15.54]:42475 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727721AbeJXTnE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Oct 2018 19:21:06 -0400
-Date: Mon, 29 Oct 2018 15:32:10 +0100
-From: Ludovic Desroches <ludovic.desroches@microchip.com>
+        Wed, 24 Oct 2018 15:43:04 -0400
+Date: Wed, 24 Oct 2018 13:15:18 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-CC: <linux-kernel@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        "Linus Walleij" <linus.walleij@linaro.org>,
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 Subject: Re: [PATCH 5/5] pinctrl: pinctrl-at91-pio4: simplify getting
  .driver_data
-Message-ID: <20181029143210.m3ymirqjkhoty2wu@M43218.corp.atmel.com>
+Message-ID: <20181024111518.GA15587@piout.net>
 References: <20181021200032.1833-1-wsa+renesas@sang-engineering.com>
  <20181021200032.1833-6-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20181021200032.1833-6-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, Oct 21, 2018 at 10:00:31PM +0200, Wolfram Sang wrote:
+On 21/10/2018 22:00:31+0200, Wolfram Sang wrote:
 > We should get 'driver_data' from 'struct device' directly. Going via
 > platform_device is an unneeded step back and forth.
 > 
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-
-Thanks
+Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
 > ---
 > 
@@ -69,3 +65,8 @@ Thanks
 > -- 
 > 2.19.0
 > 
+
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
