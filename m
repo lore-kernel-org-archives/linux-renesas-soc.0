@@ -1,71 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45938 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728699AbeJVEQY (ORCPT
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:38339 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726633AbeJYDIM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:16:24 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-pm@vger.kernel.org
-Subject: [PATCH 1/5] thermal: int340x_thermal: int3400_thermal: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:48 +0200
-Message-Id: <20181021200053.2194-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200053.2194-1-wsa+renesas@sang-engineering.com>
-References: <20181021200053.2194-1-wsa+renesas@sang-engineering.com>
+        Wed, 24 Oct 2018 23:08:12 -0400
+Date: Wed, 24 Oct 2018 13:39:00 -0500
+From: Rob Herring <robh@kernel.org>
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        jacopo mondi <jacopo@jmondi.org>, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: Re: [PATCH v2 2/2] dt-bindings: pinctrl: Add RZ/A2 pinctrl and GPIO
+Message-ID: <20181024183900.GA22215@bogus>
+References: <20181019134030.10472-1-chris.brandt@renesas.com>
+ <20181019134030.10472-3-chris.brandt@renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181019134030.10472-3-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
+On Fri, 19 Oct 2018 08:40:30 -0500, Chris Brandt wrote:
+> Add device tree binding documentation and header file for Renesas R7S9210
+> (RZ/A2) SoCs.
+> 
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> ---
+> v2:
+>  * Moved gpio-controller to required
+>  * Wrote a better description of what the sub-nodes are for
+>  * Added pinmux property description
+>  * Changed macro RZA2_PIN_ID to RZA2_PIN
+> ---
+>  .../bindings/pinctrl/renesas,rza2-pinctrl.txt      | 88 ++++++++++++++++++++++
+>  include/dt-bindings/pinctrl/r7s9210-pinctrl.h      | 47 ++++++++++++
+>  2 files changed, 135 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza2-pinctrl.txt
+>  create mode 100644 include/dt-bindings/pinctrl/r7s9210-pinctrl.h
+> 
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-
-Build tested only. buildbot is happy.
-
- drivers/thermal/int340x_thermal/int3400_thermal.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/thermal/int340x_thermal/int3400_thermal.c b/drivers/thermal/int340x_thermal/int3400_thermal.c
-index e26b01c05e82..61ca7ce3624e 100644
---- a/drivers/thermal/int340x_thermal/int3400_thermal.c
-+++ b/drivers/thermal/int340x_thermal/int3400_thermal.c
-@@ -48,8 +48,7 @@ static ssize_t available_uuids_show(struct device *dev,
- 				    struct device_attribute *attr,
- 				    char *buf)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct int3400_thermal_priv *priv = platform_get_drvdata(pdev);
-+	struct int3400_thermal_priv *priv = dev_get_drvdata(dev);
- 	int i;
- 	int length = 0;
- 
-@@ -68,8 +67,7 @@ static ssize_t available_uuids_show(struct device *dev,
- static ssize_t current_uuid_show(struct device *dev,
- 				 struct device_attribute *devattr, char *buf)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct int3400_thermal_priv *priv = platform_get_drvdata(pdev);
-+	struct int3400_thermal_priv *priv = dev_get_drvdata(dev);
- 
- 	if (priv->uuid_bitmap & (1 << priv->current_uuid_index))
- 		return sprintf(buf, "%s\n",
-@@ -82,8 +80,7 @@ static ssize_t current_uuid_store(struct device *dev,
- 				  struct device_attribute *attr,
- 				  const char *buf, size_t count)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct int3400_thermal_priv *priv = platform_get_drvdata(pdev);
-+	struct int3400_thermal_priv *priv = dev_get_drvdata(dev);
- 	int i;
- 
- 	for (i = 0; i < INT3400_THERMAL_MAXIMUM_UUID; ++i) {
--- 
-2.19.0
+Reviewed-by: Rob Herring <robh@kernel.org>
