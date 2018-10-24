@@ -1,120 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:1597 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726656AbeJHRDt (ORCPT
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:40936 "EHLO
+        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726301AbeJXSQY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 8 Oct 2018 13:03:49 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH] ARM: dts: r8a77470: Add I2C[0123] support
-Date: Mon,  8 Oct 2018 10:52:38 +0100
-Message-Id: <1538992358-19701-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Wed, 24 Oct 2018 14:16:24 -0400
+From: Nguyen An Hoan <na-hoan@jinso.co.jp>
+To: linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be
+Cc: wsa@sang-engineering.com, kuninori.morimoto.gx@renesas.com,
+        yoshihiro.shimoda.uh@renesas.com, h-inayoshi@jinso.co.jp,
+        nv-dung@jinso.co.jp, cv-dong@jinso.co.jp, na-hoan@jinso.co.jp
+Subject: [PATCH] thermal: rcar_gen3_thermal: Fix init value of IRQCTL register
+Date: Wed, 24 Oct 2018 18:48:51 +0900
+Message-Id: <1540374531-11053-1-git-send-email-na-hoan@jinso.co.jp>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device tree nodes for the I2C[0123] controllers. Also, add
-the aliases node.
+From: Hoan Nguyen An <na-hoan@jinso.co.jp>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Fix setting value for IRQCTL register. We are setting the last 6 bits
+of (IRQCTL) to be 1 (0x3f). But according to Hardware manual, values 1
+are "setting prohibited".
 
+Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
 ---
-This patch depends on:
-https://patchwork.kernel.org/patch/10630265/
-https://patchwork.kernel.org/patch/10630267/
----
- arch/arm/boot/dts/r8a77470.dtsi | 64 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
+ drivers/thermal/rcar_gen3_thermal.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index 48902b4..6ac7f46 100644
---- a/arch/arm/boot/dts/r8a77470.dtsi
-+++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -14,6 +14,14 @@
- 	#address-cells = <2>;
- 	#size-cells = <2>;
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index 7aed533..2b8fb1e 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -280,7 +280,7 @@ static void rcar_gen3_thermal_init_r8a7795es1(struct rcar_gen3_thermal_tsc *tsc)
  
-+	aliases {
-+		i2c0 = &i2c0;
-+		i2c1 = &i2c1;
-+		i2c2 = &i2c2;
-+		i2c3 = &i2c3;
-+		i2c4 = &i2c4;
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -237,6 +245,62 @@
- 			reg = <0 0xe6300000 0 0x20000>;
- 		};
+ 	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR, CTSR_PONM);
  
-+		i2c0: i2c@e6508000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a77470",
-+				     "renesas,rcar-gen2-i2c";
-+			reg = <0 0xe6508000 0 0x40>;
-+			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 931>;
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 931>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
-+
-+		i2c1: i2c@e6518000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a77470",
-+				     "renesas,rcar-gen2-i2c";
-+			reg = <0 0xe6518000 0 0x40>;
-+			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 930>;
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 930>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
-+
-+		i2c2: i2c@e6530000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a77470",
-+				     "renesas,rcar-gen2-i2c";
-+			reg = <0 0xe6530000 0 0x40>;
-+			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 929>;
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 929>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
-+
-+		i2c3: i2c@e6540000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a77470",
-+				     "renesas,rcar-gen2-i2c";
-+			reg = <0 0xe6540000 0 0x40>;
-+			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 928>;
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 928>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
-+
- 		i2c4: i2c@e6520000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
+-	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQCTL, 0x3F);
++	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQCTL, 0);
+ 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQMSK, 0);
+ 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQEN, IRQ_TEMPD1 | IRQ_TEMP2);
+ 
+@@ -306,7 +306,7 @@ static void rcar_gen3_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
+ 
+ 	usleep_range(1000, 2000);
+ 
+-	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQCTL, 0x3F);
++	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQCTL, 0);
+ 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQMSK, 0);
+ 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQEN, IRQ_TEMPD1 | IRQ_TEMP2);
+ 
 -- 
 2.7.4
