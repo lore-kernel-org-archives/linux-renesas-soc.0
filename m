@@ -1,265 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-os2jpn01on0099.outbound.protection.outlook.com ([104.47.92.99]:36682
+Received: from mail-os2jpn01on0130.outbound.protection.outlook.com ([104.47.92.130]:14752
         "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726964AbeJXRB5 (ORCPT
+        id S1725979AbeJXLPq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Oct 2018 13:01:57 -0400
+        Wed, 24 Oct 2018 07:15:46 -0400
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3] arm64: dts: renesas: add/enable USB2.0 peripheral for R-Car [DE]3
-Date: Wed, 24 Oct 2018 17:32:33 +0900
-Message-Id: <1540369953-4097-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+To: Simon Horman <horms@verge.net.au>
+CC: "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v2] arm64: dts: renesas: add/enable USB2.0 peripheral for
+ R-Car [DE]3
+Date: Wed, 24 Oct 2018 01:05:18 +0000
+Message-ID: <OSBPR01MB2293AE3D7213D255E2416B28D8F60@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+References: <1539669909-25767-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20181017085345.sbzrcxbxyajyvvop@verge.net.au>
+In-Reply-To: <20181017085345.sbzrcxbxyajyvvop@verge.net.au>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds/enables USB2.0 peripheral for R-Car [DE]3 boards.
+Hi Simon-san,
 
-R-Car E3 Ebisu board connects the ID pin to the SoC, so this adds
-a group "usb0_id" into usb0_pins node. Also, to use SW15 pin 3 side,
-this patch adds vbus0_usb2 node on r8a77990-ebisu.dts.
+> From: Simon Horman, Sent: Wednesday, October 17, 2018 5:54 PM
+>=20
+> On Tue, Oct 16, 2018 at 03:05:09PM +0900, Yoshihiro Shimoda wrote:
+> > This patch adds/enables USB2.0 peripheral for R-Car [DE]3 boards.
+> > So, the default mode on each board is:
+> >  - R-Car D3 Draak board (has a type-A connector) =3D host.
+> >  - R-Car E3 Ebisu board (has a type-B micro connector) =3D peripheral.
+> >
+> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+>=20
+> Thanks Shimoda-san,
+>=20
+> This looks fine to me but I will wait to see if there are other reviews
+> before applying.
+>=20
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-R-Car D3 Draak board doesn't connect the ID pin, so this adds
-"renesas,no-otg-pins" property into usb2_phy0 node.
+Thank you for your review!
+However, I'm afraid but, would you wait to apply this patch for a moment?
+I realized this board also connects the ID pin to the SoC. So. I'd like to =
+try to use
+the pin like other R-Car Gen3 boards.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
-Changed from v2:
- - Use otg pin on r8a77990-ebisu board. So, I revise the commit log.
- - I got Reviewed-by from Simon-san at v2. However, since I change
-   the integration at v3 as above. I didn't add Reviewed-by on this.
-
-Changed from v1:
- - Revise the reg size for each hsusb node.
-
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 21 +++++++++++-
- arch/arm64/boot/dts/renesas/r8a77990.dtsi      | 45 ++++++++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts |  8 +++++
- arch/arm64/boot/dts/renesas/r8a77995.dtsi      | 45 ++++++++++++++++++++++++++
- 4 files changed, 118 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-index f342dd8..2538051 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-@@ -128,6 +128,17 @@
- 		regulator-always-on;
- 	};
- 
-+	vbus0_usb2: regulator-vbus0-usb2 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "USB20_VBUS_CN";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+
-+		gpio = <&gpio6 4 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
- 	x13_clk: x13 {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
-@@ -188,6 +199,7 @@
- };
- 
- &ehci0 {
-+	dr_mode = "otg";
- 	status = "okay";
- };
- 
-@@ -195,6 +207,11 @@
- 	clock-frequency = <48000000>;
- };
- 
-+&hsusb {
-+	dr_mode = "otg";
-+	status = "okay";
-+};
-+
- &i2c0 {
- 	status = "okay";
- 
-@@ -295,6 +312,7 @@
- };
- 
- &ohci0 {
-+	dr_mode = "otg";
- 	status = "okay";
- };
- 
-@@ -322,7 +340,7 @@
- 	};
- 
- 	usb0_pins: usb {
--		groups = "usb0_b";
-+		groups = "usb0_b", "usb0_id";
- 		function = "usb0";
- 	};
- 
-@@ -359,6 +377,7 @@
- 	pinctrl-0 = <&usb0_pins>;
- 	pinctrl-names = "default";
- 
-+	vbus-supply = <&vbus0_usb2>;
- 	status = "okay";
- };
- 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index 6d5efeb..4bafc38 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -357,6 +357,51 @@
- 			resets = <&cpg 407>;
- 		};
- 
-+		hsusb: usb@e6590000 {
-+			compatible = "renesas,usbhs-r8a77990",
-+				     "renesas,rcar-gen3-usbhs";
-+			reg = <0 0xe6590000 0 0x200>;
-+			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 704>, <&cpg CPG_MOD 703>;
-+			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
-+			       <&usb_dmac1 0>, <&usb_dmac1 1>;
-+			dma-names = "ch0", "ch1", "ch2", "ch3";
-+			renesas,buswait = <11>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 704>, <&cpg 703>;
-+			status = "disabled";
-+		};
-+
-+		usb_dmac0: dma-controller@e65a0000 {
-+			compatible = "renesas,r8a77990-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe65a0000 0 0x100>;
-+			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&cpg CPG_MOD 330>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 330>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
-+		};
-+
-+		usb_dmac1: dma-controller@e65b0000 {
-+			compatible = "renesas,r8a77990-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe65b0000 0 0x100>;
-+			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&cpg CPG_MOD 331>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 331>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
-+		};
-+
- 		dmac0: dma-controller@e6700000 {
- 			compatible = "renesas,dmac-r8a77990",
- 				     "renesas,rcar-dmac";
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index 2405eaa..48bb1d7 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -179,6 +179,7 @@
- };
- 
- &ehci0 {
-+	dr_mode = "host";
- 	status = "okay";
- };
- 
-@@ -186,6 +187,11 @@
- 	clock-frequency = <48000000>;
- };
- 
-+&hsusb {
-+	dr_mode = "host";
-+	status = "okay";
-+};
-+
- &i2c0 {
- 	pinctrl-0 = <&i2c0_pins>;
- 	pinctrl-names = "default";
-@@ -337,6 +343,7 @@
- };
- 
- &ohci0 {
-+	dr_mode = "host";
- 	status = "okay";
- };
- 
-@@ -445,6 +452,7 @@
- 	pinctrl-0 = <&usb0_pins>;
- 	pinctrl-names = "default";
- 
-+	renesas,no-otg-pins;
- 	status = "okay";
- };
- 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 214f495..8530d9f 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -344,6 +344,51 @@
- 			status = "disabled";
- 		};
- 
-+		hsusb: usb@e6590000 {
-+			compatible = "renesas,usbhs-r8a77995",
-+				     "renesas,rcar-gen3-usbhs";
-+			reg = <0 0xe6590000 0 0x200>;
-+			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 704>, <&cpg CPG_MOD 703>;
-+			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
-+			       <&usb_dmac1 0>, <&usb_dmac1 1>;
-+			dma-names = "ch0", "ch1", "ch2", "ch3";
-+			renesas,buswait = <11>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 704>, <&cpg 703>;
-+			status = "disabled";
-+		};
-+
-+		usb_dmac0: dma-controller@e65a0000 {
-+			compatible = "renesas,r8a77995-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe65a0000 0 0x100>;
-+			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&cpg CPG_MOD 330>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 330>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
-+		};
-+
-+		usb_dmac1: dma-controller@e65b0000 {
-+			compatible = "renesas,r8a77995-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe65b0000 0 0x100>;
-+			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&cpg CPG_MOD 331>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 331>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
-+		};
-+
- 		canfd: can@e66c0000 {
- 			compatible = "renesas,r8a77995-canfd",
- 				     "renesas,rcar-gen3-canfd";
--- 
-1.9.1
+Best regards,
+Yoshihiro Shimoda
