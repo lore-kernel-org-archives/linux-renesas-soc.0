@@ -1,33 +1,38 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-Date: Thu, 25 Oct 2018 23:57:42 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-ty1jpn01on0123.outbound.protection.outlook.com ([104.47.93.123]:16112
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726236AbeJYLQG (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 25 Oct 2018 07:16:06 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-pm@vger.kernel.org, linux-i2c@vger.kernel.org,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+CC: "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: Re: [PATCH 3/3] usb: renesas_usbhs: Remove dummy runtime PM callbacks
-Message-ID: <20181025225742.GB20207@kunai>
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
+Subject: RE: [PATCH 3/3] usb: renesas_usbhs: Remove dummy runtime PM callbacks
+Date: Thu, 25 Oct 2018 02:45:18 +0000
+Message-ID: <OSBPR01MB229365A4E6587232987F1F1CD8F70@OSBPR01MB2293.jpnprd01.prod.outlook.com>
 References: <20181024135134.28456-1-jarkko.nikula@linux.intel.com>
  <20181024135134.28456-4-jarkko.nikula@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="nVMJ2NtxeReIH9PS"
-Content-Disposition: inline
 In-Reply-To: <20181024135134.28456-4-jarkko.nikula@linux.intel.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Jarkko,
 
---nVMJ2NtxeReIH9PS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Oct 24, 2018 at 04:51:34PM +0300, Jarkko Nikula wrote:
+> From: Jarkko Nikula, Sent: Wednesday, October 24, 2018 10:52 PM
+>=20
 > Platform drivers don't need dummy runtime PM callbacks that just return
 > success in order to have runtime PM happening. This has changed since
 > following commits:
@@ -37,35 +42,52 @@ On Wed, Oct 24, 2018 at 04:51:34PM +0300, Jarkko Nikula wrote:
 > 8b313a38ecff ("PM / Platform: Use generic runtime PM callbacks directly")
 >=20
 > Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+> ---
+> Only build tested.
 
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Thank you for the patch!
 
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+
+> ---
+>  drivers/usb/renesas_usbhs/common.c | 14 --------------
+>  1 file changed, 14 deletions(-)
+>=20
+> diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usb=
+hs/common.c
+> index a3e1290d682d..0e760f228dd8 100644
+> --- a/drivers/usb/renesas_usbhs/common.c
+> +++ b/drivers/usb/renesas_usbhs/common.c
+> @@ -874,23 +874,9 @@ static int usbhsc_resume(struct device *dev)
+>  	return 0;
+>  }
+>=20
+> -static int usbhsc_runtime_nop(struct device *dev)
+> -{
+> -	/* Runtime PM callback shared between ->runtime_suspend()
+> -	 * and ->runtime_resume(). Simply returns success.
+> -	 *
+> -	 * This driver re-initializes all registers after
+> -	 * pm_runtime_get_sync() anyway so there is no need
+> -	 * to save and restore registers here.
+> -	 */
+
+I guess this code came from i2c-sh_mobile.c or sh_eth.c
+and we didn't realize this code didn't need at that time (Oct 10 2011).
+
+Best regards,
+Yoshihiro Shimoda
+
+> -	return 0;
+> -}
+> -
 >  static const struct dev_pm_ops usbhsc_pm_ops =3D {
 >  	.suspend		=3D usbhsc_suspend,
 >  	.resume			=3D usbhsc_resume,
-
-Unrelated to this patch, but I wonder right now: is there a reason not
-to use SET_SYSTEM_SLEEP_PM_OPS here? Shimoda-san?
-
-
---nVMJ2NtxeReIH9PS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvSSmYACgkQFA3kzBSg
-KbbAEBAAiijKbXVmk4TAvTBtxKdonKPpq0cfvkvdCZkf2sl2VauHrPnEvqurY9Mk
-puhF4HRD+a/eL6E9YgGd/lK7gF8ytOGvYPxqkT+m4iKZLA4rWyEpS2gKt48EQQuJ
-YWnRu2vH+5wrYhWN/k78yh69dJ5wB6IOix2X4RP3x6ceAn08Fz9B63Cf11c6ObLZ
-31wOETuq6zB3gh07F81iUtkOyMksDFZu+eo1s5xZPSoJHMQ1oAo+xvzxw1qUAXdz
-UqCi6m7++N6voOrwJOz05Fuo6oavL5vJoWxnBREoheG3Z5pZVryz9Ys2Mp+Ce+xS
-SJLt0V2IfbcCWXbejqcfsdXv58QWydyGDSjKT3CU/VQk+3Km/302gfU8nhajXcew
-qOf2eH9kMkO71+5fB41CXK3hNuyFHjB5G9f5ryUHdmIlqy32Xo6BGkAalhZnHuW9
-7gpt8LG7oJjqxMH2Oc+TPQBorSHHZKMSMcmOO5EZoKBle5n4p2TbWwjQ+7sgU5hm
-GqAug9YpIzh8WzpyzOGsguGc48Zn2keSXjCDn+3t90M83mYzg0v8BAnTlUguDYeD
-FIv6FlWCrOkBuw4a6KK4m/rxwjk+CyUe6Q9gEw8TlOKT6E7YHggGsiKkhn5NTiAY
-R8iDCM+agPcnbdgIYF0PwydbK64pJ75bguhXDpMKozk8njefk9o=
-=tTS7
------END PGP SIGNATURE-----
-
---nVMJ2NtxeReIH9PS--
+> -	.runtime_suspend	=3D usbhsc_runtime_nop,
+> -	.runtime_resume		=3D usbhsc_runtime_nop,
+>  };
+>=20
+>  static struct platform_driver renesas_usbhs_driver =3D {
+> --
+> 2.19.1
