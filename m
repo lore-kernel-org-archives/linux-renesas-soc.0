@@ -1,68 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:42133 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727489AbeJED4p (ORCPT
+Received: from relay1.mentorg.com ([192.94.38.131]:64977 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726497AbeJYPzl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Oct 2018 23:56:45 -0400
-Received: by mail-lf1-f66.google.com with SMTP id s10-v6so7840659lfc.9
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Oct 2018 14:01:40 -0700 (PDT)
-Subject: [PATCH 1/2] dt-bindings: thermal: rcar-thermal: document R8A77970
- bindings
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        linux-pm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>
-References: <366d8e06-6164-94ff-823f-6b0d1e2d8d53@cogentembedded.com>
-Message-ID: <42fe460f-0c2e-ec8c-ecca-15ec5a5a4117@cogentembedded.com>
-Date: Fri, 5 Oct 2018 00:01:38 +0300
+        Thu, 25 Oct 2018 11:55:41 -0400
+From: <jiada_wang@mentor.com>
+To: <geert+renesas@glider.be>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <horms@verge.net.au>, <magnus.damm@gmail.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC: <linux-kernel@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <jiada_wang@mentor.com>
+Subject: [PATCH linux-next v1 4/4] arm64: salvator-common: Add avb counter clock
+Date: Thu, 25 Oct 2018 16:23:49 +0900
+Message-ID: <20181025072349.15173-5-jiada_wang@mentor.com>
+In-Reply-To: <20181025072349.15173-1-jiada_wang@mentor.com>
+References: <20181025072349.15173-1-jiada_wang@mentor.com>
 MIME-Version: 1.0
-In-Reply-To: <366d8e06-6164-94ff-823f-6b0d1e2d8d53@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document  the R-Car V3M (R8A77970) SoC in the Renesas R-Car gen2 thermal
-bindings. The hardware is the same as  in the R-Car D3 (R8A77995) plus an
-extra status register.
+From: Jiada Wang <jiada_wang@mentor.com>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Add avb counter clock node to R-Car Salvator boards
 
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
 ---
- Documentation/devicetree/bindings/thermal/rcar-thermal.txt |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Index: linux-soc-thermal/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
-===================================================================
---- linux-soc-thermal.orig/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
-+++ linux-soc-thermal/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
-@@ -4,7 +4,7 @@ Required properties:
- - compatible		: "renesas,thermal-<soctype>",
- 			   "renesas,rcar-gen2-thermal" (with thermal-zone) or
- 			   "renesas,rcar-thermal" (without thermal-zone) as
--                           fallback except R-Car D3.
-+                           fallback except R-Car V3M/D3.
- 			  Examples with soctypes are:
- 			    - "renesas,thermal-r8a73a4" (R-Mobile APE6)
- 			    - "renesas,thermal-r8a7743" (RZ/G1M)
-@@ -13,6 +13,7 @@ Required properties:
- 			    - "renesas,thermal-r8a7791" (R-Car M2-W)
- 			    - "renesas,thermal-r8a7792" (R-Car V2H)
- 			    - "renesas,thermal-r8a7793" (R-Car M2-N)
-+			    - "renesas,thermal-r8a77970" (R-Car V3M)
- 			    - "renesas,thermal-r8a77995" (R-Car D3)
- - reg			: Address range of the thermal registers.
- 			  The 1st reg will be recognized as common register
-@@ -21,7 +22,7 @@ Required properties:
- Option properties:
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index 7f91ff524109..09a228d04b9e 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -63,6 +63,12 @@
+ 		enable-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
+ 	};
  
- - interrupts		: If present should contain 3 interrupts for
--                          R-Car D3 or 1 interrupt otherwise.
-+                          R-Car V3M/D3 or 1 interrupt otherwise.
- 
- Example (non interrupt support):
- 
++	clk_avb: avb-clock@ec5a011c {
++		compatible = "renesas,clk-avb";
++		reg = <0 0xec5a011c 0 0x24>;
++		#clock-cells = <1>;
++	};
++
+ 	cvbs-in {
+ 		compatible = "composite-video-connector";
+ 		label = "CVBS IN";
+-- 
+2.17.0
