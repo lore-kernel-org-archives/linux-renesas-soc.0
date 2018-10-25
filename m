@@ -1,47 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from stcim.de ([78.46.90.227]:49558 "EHLO stcim.de"
+Received: from sauhun.de ([88.99.104.3]:49192 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726448AbeJGWrk (ORCPT
+        id S1725829AbeJYIuq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 7 Oct 2018 18:47:40 -0400
-From: Stefan Lengfeld <contact@stefanchrist.eu>
-To: wsa+renesas@sang-engineering.com
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        preid@electromag.com.au, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.or, j-keerthy@ti.com,
-        t-kristo@ti.com, grygorii.strashko@ti.com,
-        andriy.shevchenko@linux.intel.com
-Subject: Re: [RFC PATCH 0/3] i2c: core: introduce master_xfer_irqless
-Date: Sun,  7 Oct 2018 17:39:34 +0200
-Message-Id: <20181007153937.16787-1-contact@stefanchrist.eu>
-In-Reply-To: <20180923202034.qugs4fxucj7h4vri@porty>
-References: <20180923202034.qugs4fxucj7h4vri@porty>
+        Thu, 25 Oct 2018 04:50:46 -0400
+Date: Thu, 25 Oct 2018 01:20:28 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-pm@vger.kernel.org, linux-i2c@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH 0/3] PM: Renesas: Remove dummy runtime PM callbacks
+Message-ID: <20181025002028.GA971@kunai>
+References: <20181024135134.28456-1-jarkko.nikula@linux.intel.com>
+ <20181024142200.GA5637@kunai>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="EVF5PPMfhYS0aIcm"
+Content-Disposition: inline
+In-Reply-To: <20181024142200.GA5637@kunai>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
 
-I have ported my i.MX6 patches on your patch stack and tested the reboot
-handler on my i.MX6 Solo Board.  Works without lockdep and non-atomic
-warnings so far.
-
-Kind Regards,
-    Stefan
+--EVF5PPMfhYS0aIcm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 
-Stefan Christ (1):
-  ARM: dts: phyboard-mira-dl: rely on PMIC for reboot and watchdog
+> At least the I2C driver part of this was on my todo list as well (just a
+> bit lower :/). I wanted to find out why they have been there in the
+> first place. Do you know if such callbacks were needed "back in the
+> days"?
 
-Stefan Lengfeld (2):
-  i2c: imx: implement master_xfer_irqless callback
-  watchdog: da9062: avoid regmap in restart handler
+I see now that you referenced the relevant commits in the patch
+descriptions. Thanks!
 
- arch/arm/boot/dts/imx6dl-phytec-mira-rdk-nand.dts |   8 ++
- drivers/i2c/busses/i2c-imx.c                      | 128 ++++++++++++++++------
- drivers/mfd/da9062-core.c                         |   1 +
- drivers/watchdog/da9062_wdt.c                     |  17 ++-
- include/linux/mfd/da9062/core.h                   |   1 +
- 5 files changed, 116 insertions(+), 39 deletions(-)
 
--- 
-2.16.4
+--EVF5PPMfhYS0aIcm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvRDEgACgkQFA3kzBSg
+KbaDBQ/+KTpFHWvtzXdOg+h3bFKG7Ta8pS7RAhlNLEuHAJ13puGdNoGIS09aVuQW
+WgkAj7osjFqkLApx2t53T3d2Aps7CCTHNfeqMTQYEzAUQvDYlI3ryw0J7XJZNzHF
+MOzbHA8KOQVFkGY99n2YPVmc7lmFQA7ZmcTFwEMyzvAIeMMLW6W8PM9e9Ju80HG8
+BpiyIu1TUAzxvS/dp2XUl3e6+MIR0QPrt3uViKS5otlBxa2ATz6Fs8zHs5ASyMuw
+EQPgextL9Xd7EAQ3/PjCCFVmhBy0X0RMFGmMYBpwkmweXqfxSOQ6ojIMclgd83O1
+DLPrnlyRVbpWf3JAwKC2m9zLkt9fJao5wgSeTTlwcZqfkAib6RISfaIpZt01wkfH
+wmObxb7Q6AjVu8T5Fi/gKIagKp0lzrioRbV+XW1YbJ8U/gHRkFwa5eR/wsoRtsu5
+r3d3ZWfRjY5pkYpUCsXS9x3/Xf+XVQsDjtcf9KBafz+OrX38vb7GkvdMedmQk9+Z
+F4bfQlKlXGzfu8LBK74h4BMfkayeT7Og4orPmYeJrNDTFXzIWH96UlNJEuyvjqzv
+1kAw2GXkglirdOCYMqr+C51RSyPJn1/8T/NObpTXrZHN2E7XmqFIJ8FDorgiVNZo
+qt2yUCTkvhveE2k9EXmGSCPmMshV98UyqeANHr0mXOQOKo/o4HI=
+=O5ra
+-----END PGP SIGNATURE-----
+
+--EVF5PPMfhYS0aIcm--
