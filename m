@@ -1,225 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:42573 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726485AbeJISDn (ORCPT
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:63932 "EHLO
+        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726317AbeJYKyj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Oct 2018 14:03:43 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] arm64: dts: renesas: add/enable USB2.0 peripheral for R-Car [DE]3
-Date: Tue,  9 Oct 2018 19:45:11 +0900
-Message-Id: <1539081911-9020-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Thu, 25 Oct 2018 06:54:39 -0400
+Subject: Re: [v2 PATCH] thermal: rcar_gen3_thermal: Fix init value of IRQCTL
+ register
+To: linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be
+Cc: wsa@sang-engineering.com,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        h-inayoshi@jinso.co.jp,
+        "nv-dung@jinso.co.jp" <nv-dung@jinso.co.jp>, na-hoan@jinso.co.jp,
+        DongCV <cv-dong@jinso.co.jp>
+References: <1540433621-24114-1-git-send-email-na-hoan@jinso.co.jp>
+From: Hoan <na-hoan@jinso.co.jp>
+Message-ID: <8cc28537-7adb-af11-1f05-4241460a6f20@jinso.co.jp>
+Date: Thu, 25 Oct 2018 11:23:58 +0900
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1540433621-24114-1-git-send-email-na-hoan@jinso.co.jp>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds/enables USB2.0 peripheral for R-Car [DE]3 boards.
-So, the default mode on each board is:
- - R-Car D3 Draak board (has a type-A connector) = host.
- - R-Car E3 Ebisu board (has a type-B micro connector) = peripheral.
+Dear Geert-san, Wolfram-san
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts |  8 +++++
- arch/arm64/boot/dts/renesas/r8a77990.dtsi      | 45 ++++++++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts |  8 +++++
- arch/arm64/boot/dts/renesas/r8a77995.dtsi      | 45 ++++++++++++++++++++++++++
- 4 files changed, 106 insertions(+)
+I am very sorry for not being re-test for this patch v1 with H3ES1.*.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-index f342dd8..f85655d 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-@@ -188,6 +188,7 @@
- };
- 
- &ehci0 {
-+	dr_mode = "peripheral";
- 	status = "okay";
- };
- 
-@@ -195,6 +196,11 @@
- 	clock-frequency = <48000000>;
- };
- 
-+&hsusb {
-+	dr_mode = "peripheral";
-+	status = "okay";
-+};
-+
- &i2c0 {
- 	status = "okay";
- 
-@@ -295,6 +301,7 @@
- };
- 
- &ohci0 {
-+	dr_mode = "peripheral";
- 	status = "okay";
- };
- 
-@@ -359,6 +366,7 @@
- 	pinctrl-0 = <&usb0_pins>;
- 	pinctrl-names = "default";
- 
-+	renesas,no-otg-pins;
- 	status = "okay";
- };
- 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index 7278cd5..e3726307 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -357,6 +357,51 @@
- 			resets = <&cpg 407>;
- 		};
- 
-+		hsusb: usb@e6590000 {
-+			compatible = "renesas,usbhs-r8a77990",
-+				     "renesas,rcar-gen3-usbhs";
-+			reg = <0 0xe6590000 0 0x100>;
-+			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 704>, <&cpg CPG_MOD 703>;
-+			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
-+			       <&usb_dmac1 0>, <&usb_dmac1 1>;
-+			dma-names = "ch0", "ch1", "ch2", "ch3";
-+			renesas,buswait = <11>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 704>, <&cpg 703>;
-+			status = "disabled";
-+		};
-+
-+		usb_dmac0: dma-controller@e65a0000 {
-+			compatible = "renesas,r8a77990-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe65a0000 0 0x100>;
-+			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&cpg CPG_MOD 330>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 330>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
-+		};
-+
-+		usb_dmac1: dma-controller@e65b0000 {
-+			compatible = "renesas,r8a77990-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe65b0000 0 0x100>;
-+			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&cpg CPG_MOD 331>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 331>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
-+		};
-+
- 		dmac0: dma-controller@e6700000 {
- 			compatible = "renesas,dmac-r8a77990",
- 				     "renesas,rcar-dmac";
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index 2405eaa..48bb1d7 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -179,6 +179,7 @@
- };
- 
- &ehci0 {
-+	dr_mode = "host";
- 	status = "okay";
- };
- 
-@@ -186,6 +187,11 @@
- 	clock-frequency = <48000000>;
- };
- 
-+&hsusb {
-+	dr_mode = "host";
-+	status = "okay";
-+};
-+
- &i2c0 {
- 	pinctrl-0 = <&i2c0_pins>;
- 	pinctrl-names = "default";
-@@ -337,6 +343,7 @@
- };
- 
- &ohci0 {
-+	dr_mode = "host";
- 	status = "okay";
- };
- 
-@@ -445,6 +452,7 @@
- 	pinctrl-0 = <&usb0_pins>;
- 	pinctrl-names = "default";
- 
-+	renesas,no-otg-pins;
- 	status = "okay";
- };
- 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 214f495..186f477 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -344,6 +344,51 @@
- 			status = "disabled";
- 		};
- 
-+		hsusb: usb@e6590000 {
-+			compatible = "renesas,usbhs-r8a77995",
-+				     "renesas,rcar-gen3-usbhs";
-+			reg = <0 0xe6590000 0 0x100>;
-+			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 704>, <&cpg CPG_MOD 703>;
-+			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
-+			       <&usb_dmac1 0>, <&usb_dmac1 1>;
-+			dma-names = "ch0", "ch1", "ch2", "ch3";
-+			renesas,buswait = <11>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 704>, <&cpg 703>;
-+			status = "disabled";
-+		};
-+
-+		usb_dmac0: dma-controller@e65a0000 {
-+			compatible = "renesas,r8a77995-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe65a0000 0 0x100>;
-+			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&cpg CPG_MOD 330>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 330>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
-+		};
-+
-+		usb_dmac1: dma-controller@e65b0000 {
-+			compatible = "renesas,r8a77995-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe65b0000 0 0x100>;
-+			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&cpg CPG_MOD 331>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 331>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
-+		};
-+
- 		canfd: can@e66c0000 {
- 			compatible = "renesas,r8a77995-canfd",
- 				     "renesas,rcar-gen3-canfd";
--- 
-1.9.1
+Although I tested with M3-N, M3W H3ES2.0 and did not test
+
+with H3ES1.1.  I  discarded v1 and updated v2.
+
+Thank you! Hoan.
+
+
+On 2018/10/25 11:13, Nguyen An Hoan wrote:
+> From: Hoan Nguyen An <na-hoan@jinso.co.jp>
+>
+> Fix setting value for IRQCTL register. We are setting the last 6 bits
+> of (IRQCTL) to be 1 (0x3f), this is only suitable for H3ES1.*, according
+> to new Hardware manual values 1 are "setting prohibited" for Gen3!
+>
+> Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
+> ---
+>   drivers/thermal/rcar_gen3_thermal.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+> index 7aed533..fde3fd8 100644
+> --- a/drivers/thermal/rcar_gen3_thermal.c
+> +++ b/drivers/thermal/rcar_gen3_thermal.c
+> @@ -306,7 +306,7 @@ static void rcar_gen3_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
+>   
+>   	usleep_range(1000, 2000);
+>   
+> -	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQCTL, 0x3F);
+> +	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQCTL, 0);
+>   	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQMSK, 0);
+>   	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQEN, IRQ_TEMPD1 | IRQ_TEMP2);
+>   
