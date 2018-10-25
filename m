@@ -1,103 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-09.nifty.com ([210.131.2.76]:27413 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbeJCSZW (ORCPT
+Received: from sauhun.de ([88.99.104.3]:60848 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726570AbeJZH3Z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Oct 2018 14:25:22 -0400
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] mmc: tmio: remove TMIO_MMC_HAVE_HIGH_REG flag
-Date: Wed,  3 Oct 2018 20:36:27 +0900
-Message-Id: <1538566587-29452-3-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1538566587-29452-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1538566587-29452-1-git-send-email-yamada.masahiro@socionext.com>
+        Fri, 26 Oct 2018 03:29:25 -0400
+Date: Thu, 25 Oct 2018 23:54:48 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Cc: linux-pm@vger.kernel.org, linux-i2c@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH 2/3] net: ethernet: Remove dummy runtime PM callbacks
+ from Renesas drivers
+Message-ID: <20181025225448.GA20207@kunai>
+References: <20181024135134.28456-1-jarkko.nikula@linux.intel.com>
+ <20181024135134.28456-3-jarkko.nikula@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
+Content-Disposition: inline
+In-Reply-To: <20181024135134.28456-3-jarkko.nikula@linux.intel.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-TMIO_MMC_HAVE_HIGH_REG is confusing due to its counter-intuitive name.
 
-All the TMIO MMC variants (TMIO MMC, Renesas SDHI, UniPhier SD) actually
-have high registers.  It is just that each of them implements its own
-registers there.  The original IP from Panasonic only defines registers
-0x00-0xff in the bus_shift=1 review.  The register area above them is
-platform-dependent.
+--SUOF0GtieIMvvwua
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In fact, TMIO_MMC_HAVE_HIGH_REG is set only by tmio-mmc.c and used to
-test the accessibility of CTL_SDIO_REGS.  Because it is specific to
-the TMIO MFD variant, the right thing to do is to move such registers
-to tmio_mmc.c and delete the TMIO_MMC_HAVE_HIGH_REG flag.
+On Wed, Oct 24, 2018 at 04:51:33PM +0300, Jarkko Nikula wrote:
+> Platform drivers don't need dummy runtime PM callbacks that just return
+> success in order to have runtime PM happening. This has changed since
+> following commits:
+>=20
+> 05aa55dddb9e ("PM / Runtime: Lenient generic runtime pm callbacks")
+> 543f2503a956 ("PM / platform_bus: Allow runtime PM by default")
+> 8b313a38ecff ("PM / Platform: Use generic runtime PM callbacks directly")
+>=20
+> Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Changes in v2: None
 
- drivers/mmc/host/tmio_mmc.c | 7 +++++--
- drivers/mmc/host/tmio_mmc.h | 3 ---
- include/linux/mfd/tmio.h    | 7 -------
- 3 files changed, 5 insertions(+), 12 deletions(-)
+--SUOF0GtieIMvvwua
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
-index 00d291c..4e91020 100644
---- a/drivers/mmc/host/tmio_mmc.c
-+++ b/drivers/mmc/host/tmio_mmc.c
-@@ -24,6 +24,11 @@
- 
- #include "tmio_mmc.h"
- 
-+/* Registers specific to this variant */
-+#define CTL_SDIO_REGS		0x100
-+#define CTL_CLK_AND_WAIT_CTL	0x138
-+#define CTL_RESET_SDIO		0x1e0
-+
- static void tmio_mmc_clk_start(struct tmio_mmc_host *host)
- {
- 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
-@@ -161,8 +166,6 @@ static int tmio_mmc_probe(struct platform_device *pdev)
- 		goto cell_disable;
- 	}
- 
--	pdata->flags |= TMIO_MMC_HAVE_HIGH_REG;
--
- 	host = tmio_mmc_host_alloc(pdev, pdata);
- 	if (IS_ERR(host)) {
- 		ret = PTR_ERR(host);
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index a1a661b..18b4308 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -47,9 +47,6 @@
- #define CTL_RESET_SD 0xe0
- #define CTL_VERSION 0xe2
- #define CTL_SDIF_MODE 0xe6
--#define CTL_SDIO_REGS 0x100
--#define CTL_CLK_AND_WAIT_CTL 0x138
--#define CTL_RESET_SDIO 0x1e0
- 
- /* Definitions for values the CTL_STOP_INTERNAL_ACTION register can take */
- #define TMIO_STOP_STP		BIT(0)
-diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
-index 7786621..1e70060 100644
---- a/include/linux/mfd/tmio.h
-+++ b/include/linux/mfd/tmio.h
-@@ -62,13 +62,6 @@
- #define TMIO_MMC_USE_GPIO_CD		BIT(5)
- 
- /*
-- * Some controllers doesn't have over 0x100 register.
-- * it is used to checking accessibility of
-- * CTL_SD_CARD_CLK_CTL / CTL_CLK_AND_WAIT_CTL
-- */
--#define TMIO_MMC_HAVE_HIGH_REG		BIT(6)
--
--/*
-  * Some controllers have CMD12 automatically
-  * issue/non-issue register
-  */
--- 
-2.7.4
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvSSbQACgkQFA3kzBSg
+KbYGnBAAmp5zgNu+6o7Pl5OOiVuZ5cK8mN103rg589Oi3cJvdw3/H10OzQlc7Id7
+OGUqtO/nSOgDRvO+xHbvERAknUj+WxYwYdtHFTPE4+I07U1cZ2tZq2upERWIUn5X
+I+808CZwjkgUtGNt5vf2eAmyxIR/c3Q0n8PxeIt3rUhsScUPdZzT82cK0GRTgi5f
+i6E/F4Qzmlsw/LHKXxq0dYukuIo1s7SCP9j/kl83BCbIWimLLvwU/Sisdl28xk8y
+uzMCxiXjYLunrns37ryJPBpLS6TBoLb8pQEBmgy57xSrJ5JbyJnVbXIoS+5IOGNu
+iW8ASzbXdow+0V6fGtoerWbXnJoZUhgy+1vs3sdiUTDQkaoOCDfvx5mbejJGk96c
+9lPuP1nq1bsIKr3zoE+YnJ/IU8YVvgLHGk+KCGnSE3aSp/EQAgXaWyqnZ2mCQ693
+u1ilFp/P3QE1nJtTMZBcUU9LeFjX8/oYF0fylFIMbPNBYBE7m963moKt5sarDNBX
+gBvlur961KQ89Ru5b2fi8H7qgqM9Gm2GnOKg7BJJp+mSEPlC5VrSEILNRUnDGuMb
+0Qu+kDPE8W0rMzI1gbED9c1HgVda8Hxrn0Xp/yNkhu0LVTHhcMOr3XXpvlgpTkcw
+WZrFL6CysQKcZF3Sre6UEc6a+Lj/Saw//Cj1jMUCeZOjNpwX9OY=
+=G1JU
+-----END PGP SIGNATURE-----
+
+--SUOF0GtieIMvvwua--
