@@ -1,83 +1,90 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:9463 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726986AbeJPNzu (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Oct 2018 09:55:50 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] arm64: dts: renesas: revise hsusb's reg size
-Date: Tue, 16 Oct 2018 15:04:50 +0900
-Message-Id: <1539669890-25719-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Biju Das <biju.das@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: RE: [PATCH 4/7] ARM: dts: iwg23s-sbc: Enable USB Phy[01]
+Date: Fri, 26 Oct 2018 09:45:14 +0000
+Message-ID: <TYXPR01MB177556DDE03E958D60264F3DC0F00@TYXPR01MB1775.jpnprd01.prod.outlook.com>
+References: <1540475819-47950-1-git-send-email-biju.das@bp.renesas.com>
+ <1540475819-47950-5-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1540475819-47950-5-git-send-email-biju.das@bp.renesas.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch revises the reg size of each hsusb device node for
-r8a7795, r8a7796 and r8a77965.
+> Subject: [PATCH 4/7] ARM: dts: iwg23s-sbc: Enable USB Phy[01]
+>
+> Enable USB phy[01] on iWave iwg23s sbc based on RZ/G1C SoC.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-Reported-by: Biju Das <biju.das@bp.renesas.com>
-Fixes: d2422e108812 ("arm64: dts: r8a7795: Add HSUSB device node")
-Fixes: 4725f2b88057 ("arm64: dts: renesas: r8a7795: add hsusb ch3 device node")
-Fixes: b9535853777f ("arm64: dts: r8a7796: Add HSUSB device node")
-Fixes: 9e1b00a2ef43 ("arm64: dts: renesas: r8a77965: Add "reg" properties")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi  | 4 ++--
- arch/arm64/boot/dts/renesas/r8a7796.dtsi  | 2 +-
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 5f6020e..0b54c53 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -695,7 +695,7 @@
- 		hsusb: usb@e6590000 {
- 			compatible = "renesas,usbhs-r8a7795",
- 				     "renesas,rcar-gen3-usbhs";
--			reg = <0 0xe6590000 0 0x100>;
-+			reg = <0 0xe6590000 0 0x200>;
- 			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 704>, <&cpg CPG_MOD 703>;
- 			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
-@@ -712,7 +712,7 @@
- 		hsusb3: usb@e659c000 {
- 			compatible = "renesas,usbhs-r8a7795",
- 				     "renesas,rcar-gen3-usbhs";
--			reg = <0 0xe659c000 0 0x100>;
-+			reg = <0 0xe659c000 0 0x200>;
- 			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 705>, <&cpg CPG_MOD 700>;
- 			dmas = <&usb_dmac2 0>, <&usb_dmac2 1>,
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 1ec6aaa..3baee26 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -674,7 +674,7 @@
- 		hsusb: usb@e6590000 {
- 			compatible = "renesas,usbhs-r8a7796",
- 				     "renesas,rcar-gen3-usbhs";
--			reg = <0 0xe6590000 0 0x100>;
-+			reg = <0 0xe6590000 0 0x200>;
- 			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 704>, <&cpg CPG_MOD 703>;
- 			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 83946ca..f12be5b 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -590,7 +590,7 @@
- 		hsusb: usb@e6590000 {
- 			compatible = "renesas,usbhs-r8a77965",
- 				     "renesas,rcar-gen3-usbhs";
--			reg = <0 0xe6590000 0 0x100>;
-+			reg = <0 0xe6590000 0 0x200>;
- 			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 704>, <&cpg CPG_MOD 703>;
- 			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
--- 
-1.9.1
+> ---
+> This patch is tested against renesas devel.
+> ---
+>  arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dt=
+s/r8a77470-iwg23s-sbc.dts
+> index e5cfb50..157af7c 100644
+> --- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+> +++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+> @@ -100,6 +100,16 @@
+>  function =3D "sdhi2";
+>  power-source =3D <1800>;
+>  };
+> +
+> +usb0_pins: usb0 {
+> +groups =3D "usb0";
+> +function =3D "usb0";
+> +};
+> +
+> +usb1_pins: usb1 {
+> +groups =3D "usb1";
+> +function =3D "usb1";
+> +};
+>  };
+>
+>  &scif1 {
+> @@ -134,3 +144,17 @@
+>  sd-uhs-sdr50;
+>  status =3D "okay";
+>  };
+> +
+> +&usbphy0 {
+> +pinctrl-0 =3D <&usb0_pins>;
+> +pinctrl-names =3D "default";
+> +
+> +status =3D "okay";
+> +};
+> +
+> +&usbphy1 {
+> +pinctrl-0 =3D <&usb1_pins>;
+> +pinctrl-names =3D "default";
+> +
+> +status =3D "okay";
+> +};
+> --
+> 2.7.4
+
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
