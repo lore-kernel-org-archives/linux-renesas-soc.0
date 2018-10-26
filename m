@@ -1,56 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35385 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725769AbeJ2ECI (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:60780 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725965AbeJ0Ef6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Oct 2018 00:02:08 -0400
-Received: by mail-lf1-f66.google.com with SMTP id d7-v6so4431588lfi.2
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 28 Oct 2018 12:16:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <1540583850-30825-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1540583850-30825-1-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sun, 28 Oct 2018 20:16:20 +0100
-Message-ID: <CACRpkdahZAKWSPdMk=yp-GrSSAjFAzBijMK1ws3a4KUfzFmzgg@mail.gmail.com>
-Subject: Re: [RFC] gpio: rcar: Request GPIO before enabling interrupt
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Sat, 27 Oct 2018 00:35:58 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-gpio@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org
+Subject: [RFC] gpio: rcar: Request GPIO before enabling interrupt
+Date: Fri, 26 Oct 2018 20:57:30 +0100
+Message-Id: <1540583850-30825-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Oct 26, 2018 at 9:57 PM Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
+There are cases when the bootloader configures a pin to work
+as a function rather than GPIO, and other cases when the pin
+is configured as a function at POR.
+This commit makes sure the pin is configured as a GPIO the
+moment we need it to work as an interrupt.
 
-> There are cases when the bootloader configures a pin to work
-> as a function rather than GPIO, and other cases when the pin
-> is configured as a function at POR.
-> This commit makes sure the pin is configured as a GPIO the
-> moment we need it to work as an interrupt.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-(...)
-> +       err = gc->request(gc, hwirq);
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
 
-This is done in some drivers when what you want is exactly
-the work carried out by that callback. But can't you just call
-gpio_rcar_request() directly in this case so it is clear that
-the driver is meddling with the internal state of the hardware
-and not really intending to loop out into the external
-API or external callbacks?
+Dear All,
 
-You're not on one of these platforms that prefer setting up
-the pin as GPIO using a pin control hog in the device tree?
+we have got some issues while trying to bring up the interrupt
+line of the HDMI transmitter on the iwg23s, as GP2_29 is configured
+as a function when the kernel starts, and therefore setting up the
+interrupt from the driver won't have the desired effect.
+This patch makes sure the pinctrl driver sets GP2[29] to GP-2-29
+before enabling the interrupt, but it doesn't addresses the
+"direction problem", as in the pin will be a GPIO after calling
+gc->request, but the direction would be whatever was previously
+configured. There could be the option of moving the additional
+code added by this patch to the bottom of function
+gpio_rcar_irq_set_type, but is that going to behave properly on
+every SoC this driver is supporting?
+Is configuring every gpio with direction input while probing
+something that should be looked into to reduce concerns over
+switching from function to GPIO?
 
-Sadly there is sometimes more than one way to do things
-around here :/
+Comments very welcome!
 
-Geert will know what is best.
+Thanks,
+Fab
 
-Yours,
-Linus Walleij
+ drivers/gpio/gpio-rcar.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index 3c82bb3..8c69431 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -147,6 +147,14 @@ static int gpio_rcar_irq_set_type(struct irq_data *d, unsigned int type)
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct gpio_rcar_priv *p = gpiochip_get_data(gc);
+ 	unsigned int hwirq = irqd_to_hwirq(d);
++	int err;
++
++	err = gc->request(gc, hwirq);
++	if (err) {
++		dev_err(&p->pdev->dev, "Can't request GPIO %d from %s\n", hwirq,
++			gc->label);
++		return err;
++	}
+ 
+ 	dev_dbg(&p->pdev->dev, "sense irq = %d, type = %d\n", hwirq, type);
+ 
+-- 
+2.7.4
