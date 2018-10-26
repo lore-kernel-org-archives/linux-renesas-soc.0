@@ -1,40 +1,49 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45818 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729166AbeJATRb (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 1 Oct 2018 15:17:31 -0400
-Date: Mon, 1 Oct 2018 14:39:49 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 3/3] ARM: dts: r9a06g032: Add pinctrl node
-Message-ID: <20181001123949.4l47km37qqqclcq4@verge.net.au>
-References: <20180926091053.21255-1-phil.edworthy@renesas.com>
- <20180926091053.21255-4-phil.edworthy@renesas.com>
- <CAMuHMdVg8XZQxpGM5ZB5P03SNbsr3y=kBg-pftNrRLt6xE-34w@mail.gmail.com>
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Wolfram Sang <wsa@the-dreams.de>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>
+CC: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
+Subject: RE: [PATCH 3/3] usb: renesas_usbhs: Remove dummy runtime PM callbacks
+Date: Fri, 26 Oct 2018 02:09:31 +0000
+Message-ID: <OSBPR01MB229369A87CAC7846EB6BD8A6D8F00@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+References: <20181024135134.28456-1-jarkko.nikula@linux.intel.com>
+ <20181024135134.28456-4-jarkko.nikula@linux.intel.com>
+ <20181025225742.GB20207@kunai>
+In-Reply-To: <20181025225742.GB20207@kunai>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVg8XZQxpGM5ZB5P03SNbsr3y=kBg-pftNrRLt6xE-34w@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Sep 26, 2018 at 01:41:39PM +0200, Geert Uytterhoeven wrote:
-> On Wed, Sep 26, 2018 at 11:11 AM Phil Edworthy
-> <phil.edworthy@renesas.com> wrote:
-> > This provides a pinctrl driver for the Renesas R9A06G032 SoC
-> >
-> > Based on a patch originally written by Michel Pollet at Renesas.
-> >
-> > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Wolfram-san,
 
-Thanks, applied for v4.21.
+> From: Wolfram Sang, Sent: Friday, October 26, 2018 7:58 AM
+<snip>
+> >  static const struct dev_pm_ops usbhsc_pm_ops =3D {
+> >  	.suspend		=3D usbhsc_suspend,
+> >  	.resume			=3D usbhsc_resume,
+>=20
+> Unrelated to this patch, but I wonder right now: is there a reason not
+> to use SET_SYSTEM_SLEEP_PM_OPS here? Shimoda-san?
+
+I don't know why because this code is contributed from Morimoto-san.
+I'm guessing this code seems to come from sh_eth.c or i2c-sh_mobile.c
+and we don't have the SET_SYSTEM_SLEEP_PM_OPS macro at 2009.
+Morimoto-san contributed this code at 2010, but it seems not to realize
+we have such macro.
+
+Anyway, I'll try to use SET_SYSTEM_SLEEP_PM_OPS on the renesas_usbhs driver=
+.
+
+Best regards,
+Yoshihiro Shimoda
