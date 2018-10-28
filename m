@@ -1,53 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:64946 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726652AbeJYPzb (ORCPT
+Received: from mail-vk1-f174.google.com ([209.85.221.174]:35726 "EHLO
+        mail-vk1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726441AbeJ1Sgj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Oct 2018 11:55:31 -0400
-From: <jiada_wang@mentor.com>
-To: <geert+renesas@glider.be>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <horms@verge.net.au>, <magnus.damm@gmail.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC: <linux-kernel@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <jiada_wang@mentor.com>
-Subject: [PATCH linux-next v1 0/4] Add AVB Counter Clock
-Date: Thu, 25 Oct 2018 16:23:45 +0900
-Message-ID: <20181025072349.15173-1-jiada_wang@mentor.com>
+        Sun, 28 Oct 2018 14:36:39 -0400
+Received: by mail-vk1-f174.google.com with SMTP id b207so1327567vke.2
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 28 Oct 2018 02:52:29 -0700 (PDT)
 MIME-Version: 1.0
+References: <20181023134237.22937-1-geert+renesas@glider.be>
+In-Reply-To: <20181023134237.22937-1-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sun, 28 Oct 2018 10:52:17 +0100
+Message-ID: <CAMuHMdXDTwTkHkt9EyMYsDD3fjOmwThF8oeNyhu0fm=Et+niiQ@mail.gmail.com>
+Subject: Re: renesas-drivers-2018-10-23-v4.19
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Jiada Wang <jiada_wang@mentor.com>
+On Tue, Oct 23, 2018 at 3:43 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> I have pushed renesas-drivers-2018-10-23-v4.19 to
+> https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+>
+> This tree is meant to ease development of platform support and drivers
+> for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+> of various subsystem trees and (b) branches with driver code submitted
+> or planned for submission to maintainers into the development branch of
+> Simon Horman's renesas.git tree.
+>
+> Today's version is based on renesas-devel-20181019-v4.19-rc8.
+>
+> Note: Due to my presence at ELC-E, this has received less testing than
+>       usual.  In addition, I could not sign the tag.
+>       Sorry for the inconvenience.
 
-on R-Car SoCs there are AVB Counter Clocks, each clock has 12bits integral
-and 8 bits fractional dividers which operates with S0D1ϕ clock.
+Replaced by a signed tag.
 
-This patch set adds avb clock provider, which registers all 8 AVB
-Counter Clocks, and provide them via clock provider.
+Gr{oetje,eeting}s,
 
-AVB Clock node are added to R-Car ULCB and Salvator boards,
-so that like Audio Clock Generator (ADG) can use avb counter clocks
-via common clock framework.
-
-
-Jiada Wang (4):
-  clk: renesas: clk-avb: add AVB Clock driver
-  clk: renesas: Add binding document for AVB Counter Clock
-  arm64: ulcb: Add avb counter clock
-  arm64: salvator-common: Add avb counter clock
-
- .../bindings/clock/renesas,avb-clk.txt        |  19 ++
- .../boot/dts/renesas/salvator-common.dtsi     |   6 +
- arch/arm64/boot/dts/renesas/ulcb.dtsi         |   6 +
- drivers/clk/renesas/Kconfig                   |   6 +
- drivers/clk/renesas/Makefile                  |   1 +
- drivers/clk/renesas/clk-avb.c                 | 257 ++++++++++++++++++
- 6 files changed, 295 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/renesas,avb-clk.txt
- create mode 100644 drivers/clk/renesas/clk-avb.c
+                        Geert
 
 -- 
-2.17.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
