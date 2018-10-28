@@ -1,50 +1,63 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37449 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726572AbeJUFsD (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 21 Oct 2018 01:48:03 -0400
-Received: by mail-pf1-f196.google.com with SMTP id j23-v6so18061192pfi.4
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 20 Oct 2018 14:36:13 -0700 (PDT)
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH/RFT] arm64: dts: renesas: r8a77990-ebisu: Enable i2c
-Date: Sun, 21 Oct 2018 06:36:05 +0900
-Message-Id: <1540071365-27533-1-git-send-email-ykaneko0929@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+Date: Sun, 28 Oct 2018 22:22:37 +0000
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Cc: linux-pm@vger.kernel.org, linux-i2c@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH 1/3] i2c: sh_mobile: Remove dummy runtime PM callbacks
+Message-ID: <20181028222237.GG1882@kunai>
+References: <20181024135134.28456-1-jarkko.nikula@linux.intel.com>
+ <20181024135134.28456-2-jarkko.nikula@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="gm5TwAJMO0F2iVRz"
+Content-Disposition: inline
+In-Reply-To: <20181024135134.28456-2-jarkko.nikula@linux.intel.com>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-This patch enables I2C3 channels for the r8a77990-ebisu.
+--gm5TwAJMO0F2iVRz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
+On Wed, Oct 24, 2018 at 04:51:32PM +0300, Jarkko Nikula wrote:
+> Platform drivers don't need dummy runtime PM callbacks that just return
+> success and non-NULL pm pointer in their struct device_driver in order
+> to have runtime PM happening. This has changed since following commits:
+>=20
+> 05aa55dddb9e ("PM / Runtime: Lenient generic runtime pm callbacks")
+> 543f2503a956 ("PM / platform_bus: Allow runtime PM by default")
+> 8b313a38ecff ("PM / Platform: Use generic runtime PM callbacks directly")
+>=20
+> Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
-This patch is based on the devel branch of Simon Horman's renesas tree.
+Applied to for-next, thanks!
 
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-index 611f026..4a596ef 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-@@ -294,6 +294,10 @@
- 	clock-names = "fck", "dclkin.0", "extal";
- };
- 
-+&i2c3 {
-+	status = "okay";
-+};
-+
- &ohci0 {
- 	status = "okay";
- };
--- 
-1.9.1
+--gm5TwAJMO0F2iVRz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvWNq0ACgkQFA3kzBSg
+KbaZrw//SNsMT9sG1waPr8dZfdP8N42mjVNRfqABCx+9SUftMbMe+BbeWxyU7j2P
+tk3HxyctyyTpjG3NbnODXzCv5Jk29XcxV8CxNe8NZdxGSObwjGnS5yT9lW+Ptn8t
+A8vZKSlc4q56Y6NpRtk0sWHPk3X/XvJOiEs7ClvchoJjQJ6AG36xAqsq0uhqYjx0
+b/7nuj2PcmRoP5aXM7Zo2ZJs0jGcyfX9RSDVGLGa45rxggPJB+kDbt0KHkRSP485
+zQ59Qy7yxTNAyfMwjV9LYp4+uhq79DTZUyoYilwTCBmUP5HDMI8yqxikrLuZZ4Ze
+Tk7BEvLPO5MiucSzkgsZSAMEY/TIylU7JA36uUIgBuo+5wxS2e1K8xRO7Y8hzrv8
+kU1ndKW7Hz7bBKdY4AMg8NUIRbJENF7EqnUNMxLsQgODlE+RYEPhzVpEF+vcyVhL
+/z0C4XcLLUb9zDeIWuwtnjPhKT1BkJxC2/d/+ztaY7NDeOG43KR90kZUyRW9oF29
+hRJd4MQNoFIMpeEYx3LLDBOjNGvlkGBlM1E/x52AluUA+boqDsyXJPtfSRvdIvtT
+rYjbur8sVIXHPLEmg5ysjVJrvYNp0HtB2qWc/j/sPnaMEGwP9a6KSIAtGbJ8TrrF
+/zzSxmjU88EvmWt0YmBGARTMbPppjZ1JwD6lXyDbNdaZZ0qO+1w=
+=+Vek
+-----END PGP SIGNATURE-----
+
+--gm5TwAJMO0F2iVRz--
