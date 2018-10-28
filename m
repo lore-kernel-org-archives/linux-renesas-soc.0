@@ -1,62 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:38962 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:57626 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727558AbeJETXD (ORCPT
+        id S1727639AbeJ2GLB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 5 Oct 2018 15:23:03 -0400
-Date: Fri, 5 Oct 2018 14:24:31 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/12] i2c: tegra: use core to detect 'no zero length'
- quirk
-Message-ID: <20181005122431.GJ5433@kunai>
-References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
- <20180723202617.15230-9-wsa+renesas@sang-engineering.com>
+        Mon, 29 Oct 2018 02:11:01 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-gpio@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 0/2] pinctrl: sh-pfc: gen2: initialize TDSEL register
+Date: Sun, 28 Oct 2018 21:24:55 +0000
+Message-Id: <20181028212457.1017-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="GvznHscUikHnwW2p"
-Content-Disposition: inline
-In-Reply-To: <20180723202617.15230-9-wsa+renesas@sang-engineering.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+During our SDHI hackathon, we found that Lager was the only Gen2 board
+having issues with a stubborn SD card. The issue went away when setting
+TDSEL to the expected value mentioned in the H2 documentation which is
+sadly not the default value. M2-W, M2-N, and V2H have an expected value
+of 0 for TDSEL, so this is why they likely work out of the box (V2H has
+non-zero drive strength bit, though). I can't verify those SoCs here, no
+boards. E2 has a non-zero expected value as well, so we fix it in this
+patch series as well (although on my board the bootloader prepares TDSEL
+correctly, but let's not rely on that).
 
---GvznHscUikHnwW2p
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Jul 23, 2018 at 10:26:12PM +0200, Wolfram Sang wrote:
-> And don't reimplement in the driver.
->=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Ping.
+Based on an RFC patch for H2 sent two years ago.
 
 
---GvznHscUikHnwW2p
-Content-Type: application/pgp-signature; name="signature.asc"
+Wolfram Sang (2):
+  pinctrl: sh-pfc: r8a7790: initialize TDSEL register
+  pinctrl: sh-pfc: r8a7794: initialize TDSEL register
 
------BEGIN PGP SIGNATURE-----
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 10 ++++++++++
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c |  9 +++++++++
+ 2 files changed, 19 insertions(+)
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlu3V/8ACgkQFA3kzBSg
-KbaIMg//VoDVkIgkD3T/QM1hU3m4q/+ParcG3kgHrJNciUf/GlzoZcKhvHIvXdli
-PF6F6K8RFXnfNs11r2ihDdICbRGZkd/AX7Vv+f2NUzyEVaXZKQGtEd+cw03k25Cq
-BS0nu4b6clpCEHAKEZgnfrSnifwiVYdNIht2K+n4swAktfoPEX8HAeNnMmSmuWf1
-whdta6zIIzGt/Kstcx6x59nZ3DQx1NfeDJ3AV4Y4V2Rv8BiY1jEIS6ScnPVeHI/A
-zV4QWmIKhHxvCL36rxBhsPjb14kfjPxLdJBLnLFbUTP7S2yZVuvHA4LPIYn7S5PW
-LukXgbEPWPJe3ox28HeRDpzhBFiSza7qjjT3wJFg0f/6F0KtMmDf4DRz1SJ3vPmc
-LlDv6YaIs6KdGxHMxAjRBiIY1MAqgPpvI7tuxOzaiC/FwW9hZPdtZrRu8Lrazr3w
-OVv+uW6pc+FPV4fxn7PMVdlZPV2H/sYbkvPUVSxwerR2OTWBbQM+FELGEOl3ag95
-zrqddnG7DpUS8Ogw0x2wuMM8oxQLK7m8K41b3k4NqjwGfm9ntBj6Af+FmHz3Dr27
-MeHhQnSJhpsfF8v1PuXaWx8J4mRIin/SMO9/RLzdp9nfV+Bxy/NJaJKVY3gUW9XG
-gv3jN3fPYFvSguWlBFKRfVNHEaBcf5qcHz0Wt4N/81bdw0vuJUc=
-=Om5z
------END PGP SIGNATURE-----
-
---GvznHscUikHnwW2p--
+-- 
+2.19.0
