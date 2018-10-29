@@ -1,50 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:15012 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726415AbeJHXgk (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41123 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726066AbeJ2Xo3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 8 Oct 2018 19:36:40 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 1/3] clk: renesas: r7s9210: Add SDHI clocks
-Date: Mon,  8 Oct 2018 11:23:47 -0500
-Message-Id: <20181008162349.42957-2-chris.brandt@renesas.com>
-In-Reply-To: <20181008162349.42957-1-chris.brandt@renesas.com>
-References: <20181008162349.42957-1-chris.brandt@renesas.com>
+        Mon, 29 Oct 2018 19:44:29 -0400
+Date: Mon, 29 Oct 2018 15:55:26 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: renesas: salvator-common: add companion
+ property in usb3_peri0
+Message-ID: <20181029145525.leurznhqtsveyp4u@verge.net.au>
+References: <1540190849-23573-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1540190849-23573-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add SDHI clocks for RZ/A2
+On Mon, Oct 22, 2018 at 03:47:29PM +0900, Yoshihiro Shimoda wrote:
+> This patch adds a property "companion" with xhci0 phandle to
+> the usb3_peri0 node in salvator-common.dtsi.
+> 
+> About the detail of this property for renesas_usb3 udc driver, please
+> refer to the commit 39facfa01c9f ("usb: gadget: udc: renesas_usb3:
+> Add register of usb role switch").
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- drivers/clk/renesas/r7s9210-cpg-mssr.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Thanks Shimoda-san,
 
-diff --git a/drivers/clk/renesas/r7s9210-cpg-mssr.c b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-index 5135f13ec628..9056da15dc72 100644
---- a/drivers/clk/renesas/r7s9210-cpg-mssr.c
-+++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-@@ -98,6 +98,11 @@ static const struct mssr_mod_clk r7s9210_mod_clks[] __initconst = {
- 	DEF_MOD_STB("spi2",	 95,	R7S9210_CLK_P1),
- 	DEF_MOD_STB("spi1",	 96,	R7S9210_CLK_P1),
- 	DEF_MOD_STB("spi0",	 97,	R7S9210_CLK_P1),
-+
-+	DEF_MOD_STB("sdhi11",	100,	R7S9210_CLK_B),
-+	DEF_MOD_STB("sdhi10",	101,	R7S9210_CLK_B),
-+	DEF_MOD_STB("sdhi01",	102,	R7S9210_CLK_B),
-+	DEF_MOD_STB("sdhi00",	103,	R7S9210_CLK_B),
- };
- 
- /* The clock dividers in the table vary based on DT and register settings */
--- 
-2.16.1
+applied for v4.21.
+
+> ---
+>  arch/arm64/boot/dts/renesas/salvator-common.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+> index 054a7ee..a3e8950 100644
+> --- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+> @@ -817,6 +817,8 @@
+>  	phys = <&usb3_phy0>;
+>  	phy-names = "usb";
+>  
+> +	companion = <&xhci0>;
+> +
+>  	status = "okay";
+>  };
+>  
+> -- 
+> 1.9.1
+> 
