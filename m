@@ -1,40 +1,29 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg1-f182.google.com ([209.85.215.182]:46817 "EHLO
-        mail-pg1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727688AbeJVB3o (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41236 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726066AbeJ2Xuv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 21 Oct 2018 21:29:44 -0400
-Received: by mail-pg1-f182.google.com with SMTP id r190-v6so6291867pgr.13
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 21 Oct 2018 10:14:46 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Mon, 22 Oct 2018 02:14:54 +0900
-Message-Id: <154014209450.4344.15784321191626541752.sendpatchset@octo>
-In-Reply-To: <154014207424.4344.6894320987219157257.sendpatchset@octo>
-References: <154014207424.4344.6894320987219157257.sendpatchset@octo>
-Subject: [PATCH 02/03] arm64: dts: renesas: r8a77980: Connect R-Car V3H AVB to IPMMU
+        Mon, 29 Oct 2018 19:50:51 -0400
+Date: Mon, 29 Oct 2018 16:01:47 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 02/03] arm: dts: Include SoC name in DTSI for sh73a0
+Message-ID: <20181029150146.wm5m6vudncbgqxvw@verge.net.au>
+References: <154014607107.1639.11934965040569923.sendpatchset@octo>
+ <154014609000.1639.15909663089954894139.sendpatchset@octo>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154014609000.1639.15909663089954894139.sendpatchset@octo>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm@opensource.se>
+On Mon, Oct 22, 2018 at 03:21:30AM +0900, Magnus Damm wrote:
+> From: Magnus Damm <damm@opensource.se>
+> 
+> Update the SH-Mobile AG5 DTSI to include product name.
+> 
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 
-Hook up the R-Car V3H AVB device to IPMMU-DS1 33 as described in
-the data sheet.
-
-Signed-off-by: Magnus Damm <damm@opensource.se>
----
-
- arch/arm64/boot/dts/renesas/r8a77980.dtsi |    1 +
- 1 file changed, 1 insertion(+)
-
---- 0001/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a77980.dtsi	2018-10-22 01:50:17.072036042 +0900
-@@ -667,6 +667,7 @@
- 			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			phy-mode = "rgmii";
-+			iommus = <&ipmmu_ds1 33>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
+Thanks, applied for v4.21.
