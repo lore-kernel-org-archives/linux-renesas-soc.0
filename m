@@ -1,65 +1,30 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:48522 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726523AbeJJBAR (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:40696 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbeJ2XS7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Oct 2018 21:00:17 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Ulrich Hecht <uli+renesas@fpond.eu>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] serial: sh-sci: Fix receive on SCIFA/SCIFB variants with DMA
-Date: Tue,  9 Oct 2018 19:41:58 +0200
-Message-Id: <20181009174158.4476-1-geert+renesas@glider.be>
+        Mon, 29 Oct 2018 19:18:59 -0400
+Date: Mon, 29 Oct 2018 15:30:02 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77990: add/enable USB3.0
+ peripheral device node
+Message-ID: <20181029142957.2jdtgo6kgzvswqhk@verge.net.au>
+References: <1540190828-23524-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1540190828-23524-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On SCIFA and SCIFB serial ports with DMA support (i.e. some ports on
-R-Car Gen2 and RZ/G1 SoCs), receive DMA operations are submitted before
-the DMA channel pointer is initialized.  Hence this fails, and the
-driver tries to fall back to PIO.  However, at this early phase in the
-initialization sequence, fallback to PIO does not work, leading to a
-serial port that cannot receive any data.
+On Mon, Oct 22, 2018 at 03:47:08PM +0900, Yoshihiro Shimoda wrote:
+> This patch adds/enables USB3.0 peripheral device node for r8a77990
+> ebisu board.
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Fix this by calling sci_submit_rx() after initialization of the DMA
-channel pointer.
+Thanks Shimoda-san,
 
-Reported-by: Jinzai Solution and RVC Test Teams via Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Fixes: 2c4ee23530ffc022 ("serial: sh-sci: Postpone DMA release when falling back to PIO")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Reported on r8a7790/lager using SCIFA1 on Debug Serial 1.
-Tested on r8a7791/koelsch using SCIFA3 on EXIO-B.
-
-This fixes a regression introduced in v4.19-rc1, so please queue for
-v4.19.
-
-Thanks!
----
- drivers/tty/serial/sh-sci.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index b73b27dc45e60ffb..7e98a4f3ec77abbd 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1614,10 +1614,10 @@ static void sci_request_dma(struct uart_port *port)
- 		hrtimer_init(&s->rx_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
- 		s->rx_timer.function = rx_timer_fn;
- 
-+		s->chan_rx_saved = s->chan_rx = chan;
-+
- 		if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
- 			sci_submit_rx(s);
--
--		s->chan_rx_saved = s->chan_rx = chan;
- 	}
- }
- 
--- 
-2.17.1
+applied for v4.21.
