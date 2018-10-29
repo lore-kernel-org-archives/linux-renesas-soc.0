@@ -1,39 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:33146 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726135AbeJ3WSf (ORCPT
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:10540 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725977AbeJ2XVG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:18:35 -0400
-Received: by mail-lf1-f65.google.com with SMTP id i26so4521909lfc.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Oct 2018 06:25:07 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181021200032.1833-1-wsa+renesas@sang-engineering.com> <20181021200032.1833-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200032.1833-6-wsa+renesas@sang-engineering.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 30 Oct 2018 14:24:46 +0100
-Message-ID: <CACRpkdYVa=0JOkRT=sm-eB+NSMGjHyWAzzZrc6UY8jdYRpuOtw@mail.gmail.com>
-Subject: Re: [PATCH 5/5] pinctrl: pinctrl-at91-pio4: simplify getting .driver_data
+        Mon, 29 Oct 2018 19:21:06 -0400
+Date: Mon, 29 Oct 2018 15:32:10 +0100
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
+CC: <linux-kernel@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        "Linus Walleij" <linus.walleij@linaro.org>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH 5/5] pinctrl: pinctrl-at91-pio4: simplify getting
+ .driver_data
+Message-ID: <20181029143210.m3ymirqjkhoty2wu@M43218.corp.atmel.com>
+References: <20181021200032.1833-1-wsa+renesas@sang-engineering.com>
+ <20181021200032.1833-6-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181021200032.1833-6-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, Oct 21, 2018 at 10:00 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-
+On Sun, Oct 21, 2018 at 10:00:31PM +0200, Wolfram Sang wrote:
 > We should get 'driver_data' from 'struct device' directly. Going via
 > platform_device is an unneeded step back and forth.
->
+> 
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
 
-Patch applied with the acks.
+Thanks
 
-Yours,
-Linus Walleij
+> ---
+> 
+> Build tested only. buildbot is happy.
+> 
+>  drivers/pinctrl/pinctrl-at91-pio4.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
+> index 5a850491a5cb..4ee135d7b883 100644
+> --- a/drivers/pinctrl/pinctrl-at91-pio4.c
+> +++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+> @@ -868,8 +868,7 @@ static struct pinctrl_desc atmel_pinctrl_desc = {
+>  
+>  static int __maybe_unused atmel_pctrl_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
+> +	struct atmel_pioctrl *atmel_pioctrl = dev_get_drvdata(dev);
+>  	int i, j;
+>  
+>  	/*
+> @@ -897,8 +896,7 @@ static int __maybe_unused atmel_pctrl_suspend(struct device *dev)
+>  
+>  static int __maybe_unused atmel_pctrl_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
+> +	struct atmel_pioctrl *atmel_pioctrl = dev_get_drvdata(dev);
+>  	int i, j;
+>  
+>  	for (i = 0; i < atmel_pioctrl->nbanks; i++) {
+> -- 
+> 2.19.0
+> 
