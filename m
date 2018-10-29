@@ -1,60 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45582 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726182AbeJVEP0 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:37015 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729343AbeJ2TLD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:15:26 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-ide@vger.kernel.org
-Subject: [PATCH 1/1] ata: pata_samsung_cf: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 21:59:49 +0200
-Message-Id: <20181021195949.1351-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021195949.1351-1-wsa+renesas@sang-engineering.com>
-References: <20181021195949.1351-1-wsa+renesas@sang-engineering.com>
+        Mon, 29 Oct 2018 15:11:03 -0400
+Date: Mon, 29 Oct 2018 11:22:57 +0100
+From: Simon Horman <horms@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH] arm64: renesas_defconfig: Enable R-Car thermal driver
+Message-ID: <20181029102257.csg7i2fucsa6urlb@verge.net.au>
+References: <20181017100722.29481-1-horms+renesas@verge.net.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181017100722.29481-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
+On Wed, Oct 17, 2018 at 12:07:22PM +0200, Simon Horman wrote:
+> Enable the R-Car thermal driver.
+> 
+> This driver is used in conjunction with the R-Car V3M (r8a77970),
+> E3 (r8a77990) and D3 (r8a77995) SoCs.
+> 
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+> N.B: This is targeted at the devel branch of the renesas tree
+> but not upstream where renesas_defconfig does not currently exist
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-
-Build tested only. buildbot is happy.
-
- drivers/ata/pata_samsung_cf.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/ata/pata_samsung_cf.c b/drivers/ata/pata_samsung_cf.c
-index f5bd44b8bd63..1dc3361cb5a5 100644
---- a/drivers/ata/pata_samsung_cf.c
-+++ b/drivers/ata/pata_samsung_cf.c
-@@ -609,17 +609,15 @@ static int __exit pata_s3c_remove(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int pata_s3c_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct ata_host *host = platform_get_drvdata(pdev);
-+	struct ata_host *host = dev_get_drvdata(dev);
- 
- 	return ata_host_suspend(host, PMSG_SUSPEND);
- }
- 
- static int pata_s3c_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct ata_host *host = platform_get_drvdata(pdev);
--	struct s3c_ide_platdata *pdata = dev_get_platdata(&pdev->dev);
-+	struct ata_host *host = dev_get_drvdata(dev);
-+	struct s3c_ide_platdata *pdata = dev_get_platdata(dev);
- 	struct s3c_ide_info *info = host->private_data;
- 
- 	pata_s3c_hwinit(info, pdata);
--- 
-2.19.0
+Applied to the topic/renesas_defconfig branch of the renesas tree
+which is carried in the devel branch of the same tree but not
+targeted at upstream.
