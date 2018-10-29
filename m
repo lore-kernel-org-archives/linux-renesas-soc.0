@@ -1,80 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37980 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726469AbeJOTG6 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:42411 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727597AbeJ3BEA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Oct 2018 15:06:58 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Applied "spi: sh-msiof: fix deferred probing" to the spi tree
-In-Reply-To: <c705888d-128a-bf3a-7828-ce105b3665d4@cogentembedded.com>
-Message-Id: <20181015112206.75EE011224A9@debutante.sirena.org.uk>
-Date: Mon, 15 Oct 2018 12:22:06 +0100 (BST)
+        Mon, 29 Oct 2018 21:04:00 -0400
+Date: Mon, 29 Oct 2018 17:14:40 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: Re: [PATCH 2/2] ARM: dts: iwg23s-sbc: Enable watchdog support
+Message-ID: <20181029161439.fcdaahyho25urddu@verge.net.au>
+References: <1540546347-42791-1-git-send-email-biju.das@bp.renesas.com>
+ <1540546347-42791-2-git-send-email-biju.das@bp.renesas.com>
+ <TYXPR01MB177563B2A1D45D6033AEDE4BC0F00@TYXPR01MB1775.jpnprd01.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TYXPR01MB177563B2A1D45D6033AEDE4BC0F00@TYXPR01MB1775.jpnprd01.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Fri, Oct 26, 2018 at 09:42:40AM +0000, Fabrizio Castro wrote:
+> > Subject: [PATCH 2/2] ARM: dts: iwg23s-sbc: Enable watchdog support
+> >
+> > This patch enables watchdog support on the iWave iwg23s sbc.
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> 
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-   spi: sh-msiof: fix deferred probing
-
-has been applied to the spi tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From f34c6e6257aa477cdfe7e9bbbecd3c5648ecda69 Mon Sep 17 00:00:00 2001
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Date: Fri, 12 Oct 2018 22:48:22 +0300
-Subject: [PATCH] spi: sh-msiof: fix deferred probing
-
-Since commit 9ec36cafe43b ("of/irq: do irq resolution in platform_get_irq")
-platform_get_irq() can return -EPROBE_DEFER. However, the driver overrides
-an error returned by that function with -ENOENT which breaks the deferred
-probing. Propagate upstream an error code returned by platform_get_irq()
-and remove the bogus "platform" from the error message, while at it...
-
-Fixes: 9ec36cafe43b ("of/irq: do irq resolution in platform_get_irq")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-sh-msiof.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 101cd6aae2ea..30ea0a2068e0 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -1343,8 +1343,8 @@ static int sh_msiof_spi_probe(struct platform_device *pdev)
- 
- 	i = platform_get_irq(pdev, 0);
- 	if (i < 0) {
--		dev_err(&pdev->dev, "cannot get platform IRQ\n");
--		ret = -ENOENT;
-+		dev_err(&pdev->dev, "cannot get IRQ\n");
-+		ret = i;
- 		goto err1;
- 	}
- 
--- 
-2.19.0.rc2
+Thanks, applied for v4.21.
