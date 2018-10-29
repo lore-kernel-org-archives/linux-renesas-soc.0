@@ -1,70 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37781 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727640AbeJLSgJ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:37273 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729555AbeJ2T1Y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Oct 2018 14:36:09 -0400
-Date: Fri, 12 Oct 2018 13:04:11 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-pwm@vger.kernel.org
-Subject: Re: [PATCH resend] pwm: renesas-tpu: convert to SPDX identifiers
-Message-ID: <20181012110411.GB30261@ulmo>
-References: <871s9hyr5m.wl-kuninori.morimoto.gx@renesas.com>
+        Mon, 29 Oct 2018 15:27:24 -0400
+Date: Mon, 29 Oct 2018 11:39:13 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH/RFT] arm64: dts: renesas: r8a77990: Add SCIF-{0,1,3,4,5}
+ device nodes
+Message-ID: <20181029103905.4wkgxabyylguzmou@verge.net.au>
+References: <1540071000-27091-1-git-send-email-ykaneko0929@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Y7xTucakfITjPcLV"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <871s9hyr5m.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <1540071000-27091-1-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Sun, Oct 21, 2018 at 06:30:00AM +0900, Yoshihiro Kaneko wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> 
+> This patch adds the device nodes for SCIF-{0,1,3,4,5} serial ports to
+> the R8A77990 SoC.
+> 
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
---Y7xTucakfITjPcLV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks.
 
-On Wed, Sep 26, 2018 at 01:45:47AM +0000, Kuninori Morimoto wrote:
->=20
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->=20
-> This patch updates license to use SPDX-License-Identifier
-> instead of verbose license text.
->=20
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
-> Thierry
->=20
-> 2weeks past, resend patch
->=20
->  drivers/pwm/pwm-renesas-tpu.c | 10 +---------
->  1 file changed, 1 insertion(+), 9 deletions(-)
+I don't believe this can (easily) be tested as SCIF-{0,1,3,4,5}
+do not appear to be exposed on the Ebisu board.
 
-Applied, thanks.
-
-Thierry
-
---Y7xTucakfITjPcLV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvAf6sACgkQ3SOs138+
-s6FvjxAAu7q4kTkBiVYPYM3Qp8EAwwR7lqwpn7izhemsW8uunjj4eBq39DS4Pb8u
-CSgfxACoqLGYXpIN2xfapyWPk5ndEa5WhkRaQXwzie5asaL/YNLO2FiAP3AINRRK
-BYWL9n//USxETNjfIbzfGhI/2HyrmQMBNUBZryCb0uS5jEmgdn9kb/+Uhf5k3npb
-PJC6/P1uOhxYfyfoxZH3qcVLylvafTbvWto+iCStMhFK6itvmlQnMVESJUNntIbM
-FS0F9PieGnri9Zfd7SA7RXVqEsoU/N6phtH4vS3MPkespbn6l1v5DY/lL6nsptSp
-Z2HxIYww1Ccq2gmotpcAVONEsBnjlkj+5klKBB5/F7HqRAfuBRvK1Ytn0569vlwW
-3QgOli5ZaX548IqXEwNWvaTBQw/fCjieUDGo4WTjIiwkZlXgpLueXD3ZQ6nv0r+f
-/3Om7katfZcR3u2Afhek7OZj/KKFp+Wr4Hgay9d/KGnQiH6hxJ0afJQkIFxxQcdQ
-4D82caO4v+5tsJWhlCD09PLMK6Pd6wzbe/YkxnAC/eq4cBU+kBlEtEoS3V73SRF/
-wWmFBlCQdhwlgStFfYIrXygoYPho8Dz4qlw2ExpS6T0Dw9AmufEhpawZo6Ljsbv+
-1/guH605r/ZLtJzkLbkg55QbGlX0OufO0rS+sC6nLFIV+gMol3M=
-=KOI2
------END PGP SIGNATURE-----
-
---Y7xTucakfITjPcLV--
+I have checked this patch with reference to the documentation
+and it looks good to me. I have applied if for v4.21.
