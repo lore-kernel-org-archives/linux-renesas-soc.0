@@ -1,35 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf1-f179.google.com ([209.85.210.179]:41062 "EHLO
-        mail-pf1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726525AbeJOV5f (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:42386 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727597AbeJ3BC5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Oct 2018 17:57:35 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-pm@vger.kernel.org
-Cc: Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
+        Mon, 29 Oct 2018 21:02:57 -0400
+Date: Mon, 29 Oct 2018 17:13:37 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
+        Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH/RFT 0/2] thermal: add suport for R8A77990
-Date: Mon, 15 Oct 2018 23:11:57 +0900
-Message-Id: <1539612719-9650-1-git-send-email-ykaneko0929@gmail.com>
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: Re: [PATCH 1/2] ARM: dts: r8a77470: Add watchdog support to SoC dtsi
+Message-ID: <20181029161337.b3n763qbqouiuuet@verge.net.au>
+References: <1540546347-42791-1-git-send-email-biju.das@bp.renesas.com>
+ <TYXPR01MB177526B71CBDB2AC8A16C652C0F00@TYXPR01MB1775.jpnprd01.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TYXPR01MB177526B71CBDB2AC8A16C652C0F00@TYXPR01MB1775.jpnprd01.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series adds thermal support for R-Car E3 (R8A77990).
+On Fri, Oct 26, 2018 at 09:42:38AM +0000, Fabrizio Castro wrote:
+> > Subject: [PATCH 1/2] ARM: dts: r8a77470: Add watchdog support to SoC dtsi
+> >
+> > This patch adds watchdog support to the r8a77470 SoC dtsi.
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> 
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-This series is based on the next branch of Eduardo Valentin's linux-soc-thermal
-tree.
-
-Yoshihiro Kaneko (2):
-  dt-bindings: thermal: rcar-thermal: add R8A77990 support
-  thermal: rcar_thermal: add R8A77990 support
-
- Documentation/devicetree/bindings/thermal/rcar-thermal.txt | 5 +++--
- drivers/thermal/rcar_thermal.c                             | 4 ++++
- 2 files changed, 7 insertions(+), 2 deletions(-)
-
--- 
-1.9.1
+Thanks, applied for v4.21.
