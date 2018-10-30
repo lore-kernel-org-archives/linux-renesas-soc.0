@@ -1,58 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45752 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728368AbeJVEPy (ORCPT
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:36440 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727825AbeJ3WQk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:15:54 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Subject: [PATCH 4/9] net: ethernet: davicom: dm9000: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:15 +0200
-Message-Id: <20181021200021.1693-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
-References: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
+        Tue, 30 Oct 2018 18:16:40 -0400
+Received: by mail-lf1-f66.google.com with SMTP id h192so8855227lfg.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Oct 2018 06:23:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181021200032.1833-1-wsa+renesas@sang-engineering.com> <20181021200032.1833-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181021200032.1833-2-wsa+renesas@sang-engineering.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 30 Oct 2018 14:22:59 +0100
+Message-ID: <CACRpkdai_bEJ8K=Bo0KeARS=KF5BP4C8B0fGGAJQFZ6RMZRRsw@mail.gmail.com>
+Subject: Re: [PATCH 1/5] pinctrl: intel: pinctrl-baytrail: simplify getting .driver_data
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
+On Sun, Oct 21, 2018 at 10:00 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+> We should get 'driver_data' from 'struct device' directly. Going via
+> platform_device is an unneeded step back and forth.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Build tested only. buildbot is happy.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+for all 3 Intel patches
 
- drivers/net/ethernet/davicom/dm9000.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Andy is collecting Intel pin control patches so he will
+pick these 3 up I think, let me know if all works out!
 
-diff --git a/drivers/net/ethernet/davicom/dm9000.c b/drivers/net/ethernet/davicom/dm9000.c
-index 50222b7b81f3..0a82fcf16d35 100644
---- a/drivers/net/ethernet/davicom/dm9000.c
-+++ b/drivers/net/ethernet/davicom/dm9000.c
-@@ -1722,8 +1722,7 @@ dm9000_probe(struct platform_device *pdev)
- static int
- dm9000_drv_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct net_device *ndev = platform_get_drvdata(pdev);
-+	struct net_device *ndev = dev_get_drvdata(dev);
- 	struct board_info *db;
- 
- 	if (ndev) {
-@@ -1745,8 +1744,7 @@ dm9000_drv_suspend(struct device *dev)
- static int
- dm9000_drv_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct net_device *ndev = platform_get_drvdata(pdev);
-+	struct net_device *ndev = dev_get_drvdata(dev);
- 	struct board_info *db = netdev_priv(ndev);
- 
- 	if (ndev) {
--- 
-2.19.0
+Yours,
+Linus Walleij
