@@ -1,59 +1,36 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45842 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728513AbeJVEQG (ORCPT
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39111 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727768AbeJ3WFy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:16:06 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH 4/5] pinctrl: pinctrl-amd: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:30 +0200
-Message-Id: <20181021200032.1833-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200032.1833-1-wsa+renesas@sang-engineering.com>
-References: <20181021200032.1833-1-wsa+renesas@sang-engineering.com>
+        Tue, 30 Oct 2018 18:05:54 -0400
+Received: by mail-lj1-f196.google.com with SMTP id a28-v6so8271940ljd.6
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Oct 2018 06:12:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181021200002.1472-1-wsa+renesas@sang-engineering.com> <20181021200002.1472-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181021200002.1472-2-wsa+renesas@sang-engineering.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 30 Oct 2018 14:12:17 +0100
+Message-ID: <CACRpkdaU8_0G5zmiXHpjLzvKQXUuqY_A0XUkGV0jOWaCfok8zg@mail.gmail.com>
+Subject: Re: [PATCH 1/6] gpio: gpio-dwapb: simplify getting .driver_data
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Hoan Tran <hotran@apm.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
+On Sun, Oct 21, 2018 at 10:00 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+> We should get 'driver_data' from 'struct device' directly. Going via
+> platform_device is an unneeded step back and forth.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Build tested only. buildbot is happy.
+Patch applied for v4.21.
 
- drivers/pinctrl/pinctrl-amd.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index 67718b0f978d..2a7d638978d8 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -791,8 +791,7 @@ static bool amd_gpio_should_save(struct amd_gpio *gpio_dev, unsigned int pin)
- 
- static int amd_gpio_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct amd_gpio *gpio_dev = platform_get_drvdata(pdev);
-+	struct amd_gpio *gpio_dev = dev_get_drvdata(dev);
- 	struct pinctrl_desc *desc = gpio_dev->pctrl->desc;
- 	int i;
- 
-@@ -810,8 +809,7 @@ static int amd_gpio_suspend(struct device *dev)
- 
- static int amd_gpio_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct amd_gpio *gpio_dev = platform_get_drvdata(pdev);
-+	struct amd_gpio *gpio_dev = dev_get_drvdata(dev);
- 	struct pinctrl_desc *desc = gpio_dev->pctrl->desc;
- 	int i;
- 
--- 
-2.19.0
+Yours,
+Linus Walleij
