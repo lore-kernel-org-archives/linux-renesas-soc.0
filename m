@@ -1,113 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:55519 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726967AbeJPJ1k (ORCPT
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.24]:21150 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726136AbeJ3Pxq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Oct 2018 05:27:40 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 2/3] mmc: tmio: fix reset operation
-Date: Tue, 16 Oct 2018 03:38:31 +0200
-Message-Id: <20181016013832.2385-3-niklas.soderlund@ragnatech.se>
-In-Reply-To: <20181016013832.2385-1-niklas.soderlund@ragnatech.se>
-References: <20181016013832.2385-1-niklas.soderlund@ragnatech.se>
+        Tue, 30 Oct 2018 11:53:46 -0400
+Date: Tue, 30 Oct 2018 08:01:25 +0100 (CET)
+From: Ulrich Hecht <uli@fpond.eu>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        gregkh@linuxfoundation.org, jslaby@suse.com,
+        linux-serial@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org
+Message-ID: <1191666249.337476.1540882885280@webmail.strato.com>
+In-Reply-To: <1540880015-11877-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1540880015-11877-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH] serial: sh-sci: Fix could not remove
+ dev_attr_rx_fifo_timeout
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Thanks for your patch!
 
-SD / MMC did not operate properly when suspend transition failed.
-Because the SCC was not reset at resume, issue of the command failed.
-Merge tmio_mmc_reset() into tmio_mmc_hw_reset() in order to add reset
-of SCC to tmio_mmc_host_runtime_resume().
+> On October 30, 2018 at 7:13 AM Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com> wrote:
+> 
+> 
+> This patch fixes an issue that the sci_remove() could not remove
+> dev_attr_rx_fifo_timeout because uart_remove_one_port() set
+> the port->port.type to PORT_UNKNOWN.
+> 
+> Reported-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+> Fixes: 5d23188a473d ("serial: sh-sci: make RX FIFO parameters tunable via sysfs")
+> Cc: <stable@vger.kernel.org> # v4.11+
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  drivers/tty/serial/sh-sci.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+> index ab3f6e91..3649b83 100644
+> --- a/drivers/tty/serial/sh-sci.c
+> +++ b/drivers/tty/serial/sh-sci.c
+> @@ -3102,6 +3102,7 @@ static inline int sci_probe_earlyprintk(struct platform_device *pdev)
+>  static int sci_remove(struct platform_device *dev)
+>  {
+>  	struct sci_port *port = platform_get_drvdata(dev);
+> +	unsigned int type = port->port.type;	/* uart_remove_... clears it */
+>  
+>  	sci_ports_in_use &= ~BIT(port->port.line);
+>  	uart_remove_one_port(&sci_uart_driver, &port->port);
+> @@ -3112,8 +3113,7 @@ static int sci_remove(struct platform_device *dev)
+>  		sysfs_remove_file(&dev->dev.kobj,
+>  				  &dev_attr_rx_fifo_trigger.attr);
+>  	}
+> -	if (port->port.type == PORT_SCIFA || port->port.type == PORT_SCIFB ||
+> -	    port->port.type == PORT_HSCIF) {
+> +	if (type == PORT_SCIFA || type == PORT_SCIFB || type == PORT_HSCIF) {
+>  		sysfs_remove_file(&dev->dev.kobj,
+>  				  &dev_attr_rx_fifo_timeout.attr);
+>  	}
+> -- 
+> 1.9.1
+>
 
-Based on work from Masaharu Hayakawa.
+Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
----
-* Changes sine v1
-- Merge tmio_mmc_reset() into tmio_mmc_hw_reset() as it's now the only
-  caller.
----
- drivers/mmc/host/tmio_mmc_core.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 71d3b380760d425f..da7a5ceeeef0b7ae 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -157,8 +157,10 @@ static void tmio_mmc_enable_sdio_irq(struct mmc_host *mmc, int enable)
- 	}
- }
- 
--static void tmio_mmc_reset(struct tmio_mmc_host *host)
-+static void tmio_mmc_hw_reset(struct mmc_host *mmc)
- {
-+	struct tmio_mmc_host *host = mmc_priv(mmc);
-+
- 	/* FIXME - should we set stop clock reg here */
- 	sd_ctrl_write16(host, CTL_RESET_SD, 0x0000);
- 	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG)
-@@ -174,6 +176,10 @@ static void tmio_mmc_reset(struct tmio_mmc_host *host)
- 		sd_ctrl_write16(host, CTL_TRANSACTION_CTL, 0x0001);
- 	}
- 
-+	tmio_mmc_abort_dma(host);
-+
-+	if (host->hw_reset)
-+		host->hw_reset(host);
- }
- 
- static void tmio_mmc_reset_work(struct work_struct *work)
-@@ -214,7 +220,7 @@ static void tmio_mmc_reset_work(struct work_struct *work)
- 
- 	spin_unlock_irqrestore(&host->lock, flags);
- 
--	tmio_mmc_reset(host);
-+	tmio_mmc_hw_reset(host->mmc);
- 
- 	/* Ready for new calls */
- 	host->mrq = NULL;
-@@ -701,14 +707,6 @@ static int tmio_mmc_start_data(struct tmio_mmc_host *host,
- 	return 0;
- }
- 
--static void tmio_mmc_hw_reset(struct mmc_host *mmc)
--{
--	struct tmio_mmc_host *host = mmc_priv(mmc);
--
--	if (host->hw_reset)
--		host->hw_reset(host);
--}
--
- static int tmio_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
- {
- 	struct tmio_mmc_host *host = mmc_priv(mmc);
-@@ -1230,7 +1228,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
- 		_host->sdio_irq_mask = TMIO_SDIO_MASK_ALL;
- 
- 	_host->set_clock(_host, 0);
--	tmio_mmc_reset(_host);
-+	tmio_mmc_hw_reset(mmc);
- 
- 	_host->sdcard_irq_mask = sd_ctrl_read16_and_16_as_32(_host, CTL_IRQ_MASK);
- 	tmio_mmc_disable_mmc_irqs(_host, TMIO_MASK_ALL);
-@@ -1331,7 +1329,7 @@ int tmio_mmc_host_runtime_resume(struct device *dev)
- 	struct tmio_mmc_host *host = dev_get_drvdata(dev);
- 
- 	tmio_mmc_clk_enable(host);
--	tmio_mmc_reset(host);
-+	tmio_mmc_hw_reset(host->mmc);
- 
- 	if (host->clk_cache)
- 		host->set_clock(host, host->clk_cache);
--- 
-2.19.1
+CU
+Uli
