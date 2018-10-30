@@ -1,30 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46352 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729149AbeJATmU (ORCPT
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33147 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727719AbeJ3Ute (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 1 Oct 2018 15:42:20 -0400
-Date: Mon, 1 Oct 2018 15:04:32 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: timer: ostm: Add R7S9210 support
-Message-ID: <20181001130431.5p2ibzekemsrhlw5@verge.net.au>
-References: <20180927141258.103071-1-chris.brandt@renesas.com>
+        Tue, 30 Oct 2018 16:49:34 -0400
+Received: by mail-lj1-f195.google.com with SMTP id z21-v6so11058322ljz.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Oct 2018 04:56:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180927141258.103071-1-chris.brandt@renesas.com>
+References: <20181016115653.12810-1-geert+renesas@glider.be>
+In-Reply-To: <20181016115653.12810-1-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 30 Oct 2018 12:56:10 +0100
+Message-ID: <CACRpkdbfP9asChbNTgNriBVWmEJJJNzp7tqfg4jtMUF=xFANLg@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Add Renesas RZ/A and RZ/N files to Renesas
+ pinctrl section
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Sep 27, 2018 at 09:12:58AM -0500, Chris Brandt wrote:
-> The R7S9210 belongs to the RZ/A2 SoC series
-> 
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+On Tue, Oct 16, 2018 at 3:24 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> Add paths for the Renesas RZ/A and RZ/N series pin controller drivers,
+> as they are not under sh-pfc/, but still maintained with the other
+> Renesas pin controller drivers.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
