@@ -1,70 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:24935 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726285AbeJXWT6 (ORCPT
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:41875 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727680AbeJ3WID (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Oct 2018 18:19:58 -0400
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-To: linux-pm@vger.kernel.org
-Cc: linux-i2c@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Subject: [PATCH 3/3] usb: renesas_usbhs: Remove dummy runtime PM callbacks
-Date: Wed, 24 Oct 2018 16:51:34 +0300
-Message-Id: <20181024135134.28456-4-jarkko.nikula@linux.intel.com>
-In-Reply-To: <20181024135134.28456-1-jarkko.nikula@linux.intel.com>
-References: <20181024135134.28456-1-jarkko.nikula@linux.intel.com>
+        Tue, 30 Oct 2018 18:08:03 -0400
+Received: by mail-lf1-f66.google.com with SMTP id c16so8812029lfj.8
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Oct 2018 06:14:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181021200002.1472-1-wsa+renesas@sang-engineering.com> <20181021200002.1472-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181021200002.1472-3-wsa+renesas@sang-engineering.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 30 Oct 2018 14:14:25 +0100
+Message-ID: <CACRpkdZB+WMBuuqOENFduBHFQvGrxN--nPxF2dr6Ov4i904L7A@mail.gmail.com>
+Subject: Re: [PATCH 2/6] gpio: gpio-lynxpoint: simplify getting .driver_data
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Platform drivers don't need dummy runtime PM callbacks that just return
-success in order to have runtime PM happening. This has changed since
-following commits:
+On Sun, Oct 21, 2018 at 10:00 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
 
-05aa55dddb9e ("PM / Runtime: Lenient generic runtime pm callbacks")
-543f2503a956 ("PM / platform_bus: Allow runtime PM by default")
-8b313a38ecff ("PM / Platform: Use generic runtime PM callbacks directly")
+> We should get 'driver_data' from 'struct device' directly. Going via
+> platform_device is an unneeded step back and forth.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
----
-Only build tested.
----
- drivers/usb/renesas_usbhs/common.c | 14 --------------
- 1 file changed, 14 deletions(-)
+Patch applied for v4.21.
 
-diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
-index a3e1290d682d..0e760f228dd8 100644
---- a/drivers/usb/renesas_usbhs/common.c
-+++ b/drivers/usb/renesas_usbhs/common.c
-@@ -874,23 +874,9 @@ static int usbhsc_resume(struct device *dev)
- 	return 0;
- }
- 
--static int usbhsc_runtime_nop(struct device *dev)
--{
--	/* Runtime PM callback shared between ->runtime_suspend()
--	 * and ->runtime_resume(). Simply returns success.
--	 *
--	 * This driver re-initializes all registers after
--	 * pm_runtime_get_sync() anyway so there is no need
--	 * to save and restore registers here.
--	 */
--	return 0;
--}
--
- static const struct dev_pm_ops usbhsc_pm_ops = {
- 	.suspend		= usbhsc_suspend,
- 	.resume			= usbhsc_resume,
--	.runtime_suspend	= usbhsc_runtime_nop,
--	.runtime_resume		= usbhsc_runtime_nop,
- };
- 
- static struct platform_driver renesas_usbhs_driver = {
--- 
-2.19.1
+Yours,
+Linus Walleij
