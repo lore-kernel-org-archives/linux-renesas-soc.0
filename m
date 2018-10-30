@@ -1,61 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45658 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728088AbeJVEPi (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35988 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbeJaAj4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:15:38 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH 5/6] gpio: gpio-tegra: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:00 +0200
-Message-Id: <20181021200002.1472-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200002.1472-1-wsa+renesas@sang-engineering.com>
-References: <20181021200002.1472-1-wsa+renesas@sang-engineering.com>
+        Tue, 30 Oct 2018 20:39:56 -0400
+Date: Tue, 30 Oct 2018 16:45:53 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: Re: [PATCH 1/2] ARM: dts: r8a77470: Add CMT SoC specific support
+Message-ID: <20181030154552.kjcvdvargosrlm5u@verge.net.au>
+References: <1540543709-35959-1-git-send-email-biju.das@bp.renesas.com>
+ <TYXPR01MB17755F6C9C4785DDC0592808C0F00@TYXPR01MB1775.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TYXPR01MB17755F6C9C4785DDC0592808C0F00@TYXPR01MB1775.jpnprd01.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
+On Fri, Oct 26, 2018 at 09:48:33AM +0000, Fabrizio Castro wrote:
+> > Subject: [PATCH 1/2] ARM: dts: r8a77470: Add CMT SoC specific support
+> >
+> > Add CMT[01] support to r8a77470 SoC DT.
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> 
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-
-Build tested only. buildbot is happy.
-
- drivers/gpio/gpio-tegra.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 47dbd19751d0..02f6db925fd5 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -404,8 +404,7 @@ static void tegra_gpio_irq_handler(struct irq_desc *desc)
- #ifdef CONFIG_PM_SLEEP
- static int tegra_gpio_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct tegra_gpio_info *tgi = platform_get_drvdata(pdev);
-+	struct tegra_gpio_info *tgi = dev_get_drvdata(dev);
- 	unsigned long flags;
- 	unsigned int b, p;
- 
-@@ -444,8 +443,7 @@ static int tegra_gpio_resume(struct device *dev)
- 
- static int tegra_gpio_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct tegra_gpio_info *tgi = platform_get_drvdata(pdev);
-+	struct tegra_gpio_info *tgi = dev_get_drvdata(dev);
- 	unsigned long flags;
- 	unsigned int b, p;
- 
--- 
-2.19.0
+Thanks, applied for v4.21.
