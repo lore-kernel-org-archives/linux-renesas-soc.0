@@ -1,52 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:40936 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726301AbeJXSQY (ORCPT
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:35961 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725853AbeJ3WLo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Oct 2018 14:16:24 -0400
-From: Nguyen An Hoan <na-hoan@jinso.co.jp>
-To: linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be
-Cc: wsa@sang-engineering.com, kuninori.morimoto.gx@renesas.com,
-        yoshihiro.shimoda.uh@renesas.com, h-inayoshi@jinso.co.jp,
-        nv-dung@jinso.co.jp, cv-dong@jinso.co.jp, na-hoan@jinso.co.jp
-Subject: [PATCH] thermal: rcar_gen3_thermal: Fix init value of IRQCTL register
-Date: Wed, 24 Oct 2018 18:48:51 +0900
-Message-Id: <1540374531-11053-1-git-send-email-na-hoan@jinso.co.jp>
+        Tue, 30 Oct 2018 18:11:44 -0400
+Received: by mail-lf1-f68.google.com with SMTP id h192so8842068lfg.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Oct 2018 06:18:19 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181021200002.1472-1-wsa+renesas@sang-engineering.com> <20181021200002.1472-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181021200002.1472-5-wsa+renesas@sang-engineering.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 30 Oct 2018 14:18:06 +0100
+Message-ID: <CACRpkdbT9HuCJSZ6HZwaapz7gtwtmxmE1sZ4FB9_Z_JeUobADQ@mail.gmail.com>
+Subject: Re: [PATCH 4/6] gpio: gpio-omap: simplify getting .driver_data
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hoan Nguyen An <na-hoan@jinso.co.jp>
+On Sun, Oct 21, 2018 at 10:00 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
 
-Fix setting value for IRQCTL register. We are setting the last 6 bits
-of (IRQCTL) to be 1 (0x3f). But according to Hardware manual, values 1
-are "setting prohibited".
+> We should get 'driver_data' from 'struct device' directly. Going via
+> platform_device is an unneeded step back and forth.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
----
- drivers/thermal/rcar_gen3_thermal.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Patch applied.
 
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index 7aed533..2b8fb1e 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -280,7 +280,7 @@ static void rcar_gen3_thermal_init_r8a7795es1(struct rcar_gen3_thermal_tsc *tsc)
- 
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR, CTSR_PONM);
- 
--	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQCTL, 0x3F);
-+	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQCTL, 0);
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQMSK, 0);
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQEN, IRQ_TEMPD1 | IRQ_TEMP2);
- 
-@@ -306,7 +306,7 @@ static void rcar_gen3_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
- 
- 	usleep_range(1000, 2000);
- 
--	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQCTL, 0x3F);
-+	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQCTL, 0);
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQMSK, 0);
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQEN, IRQ_TEMPD1 | IRQ_TEMP2);
- 
--- 
-2.7.4
+Yours,
+Linus Walleij
