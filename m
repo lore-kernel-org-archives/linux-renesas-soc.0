@@ -1,408 +1,113 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:34087 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729525AbeJEX7H (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:53906 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732411AbeKAIPN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 5 Oct 2018 19:59:07 -0400
-From: Rob Herring <robh@kernel.org>
-To: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
-Cc: Grant Likely <glikely@secretlab.ca>,
-        Kumar Gala <kumar.gala@linaro.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        Mark Brown <broonie@kernel.org>, Tom Rini <trini@konsulko.com>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 29/36] dt-bindings: arm: Convert Renesas board/soc bindings to json-schema
-Date: Fri,  5 Oct 2018 11:58:41 -0500
-Message-Id: <20181005165848.3474-30-robh@kernel.org>
-In-Reply-To: <20181005165848.3474-1-robh@kernel.org>
-References: <20181005165848.3474-1-robh@kernel.org>
+        Thu, 1 Nov 2018 04:15:13 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 1/3] mmc: renesas_sdhi: handle 4tap hs400 mode quirk based on SoC revision
+Date: Thu,  1 Nov 2018 00:13:38 +0100
+Message-Id: <20181031231340.1958-2-niklas.soderlund@ragnatech.se>
+In-Reply-To: <20181031231340.1958-1-niklas.soderlund@ragnatech.se>
+References: <20181031231340.1958-1-niklas.soderlund@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Convert Renesas SoC bindings to DT schema format using json-schema.
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Cc: Simon Horman <horms@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Rob Herring <robh@kernel.org>
+Latest datasheet makes it clear that not all ES revisions of the H3 and
+M3-W have the 4-tap HS400 mode quirk, currently the quirk is set
+unconditionally for these two SoCs. Prepare to handle the quirk based on
+SoC revision instead of compatibility value by using soc_device_match()
+and set the TMIO_MMC_HAVE_4TAP_HS400 flag explicitly.
+
+The reason for adding a new quirks struct instead of just a flag is that
+looking ahead it seems more quirks needs to be handled in a SoC revision
+basis.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- .../devicetree/bindings/arm/shmobile.txt      | 143 ------------
- .../devicetree/bindings/arm/shmobile.yaml     | 205 ++++++++++++++++++
- 2 files changed, 205 insertions(+), 143 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/shmobile.txt
- create mode 100644 Documentation/devicetree/bindings/arm/shmobile.yaml
+ drivers/mmc/host/renesas_sdhi_core.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-deleted file mode 100644
-index 619b765e5bee..000000000000
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ /dev/null
-@@ -1,143 +0,0 @@
--Renesas SH-Mobile, R-Mobile, and R-Car Platform Device Tree Bindings
----------------------------------------------------------------------
--
--SoCs:
--
--  - Emma Mobile EV2
--    compatible = "renesas,emev2"
--  - RZ/A1H (R7S72100)
--    compatible = "renesas,r7s72100"
--  - SH-Mobile AG5 (R8A73A00/SH73A0)
--    compatible = "renesas,sh73a0"
--  - R-Mobile APE6 (R8A73A40)
--    compatible = "renesas,r8a73a4"
--  - R-Mobile A1 (R8A77400)
--    compatible = "renesas,r8a7740"
--  - RZ/G1H (R8A77420)
--    compatible = "renesas,r8a7742"
--  - RZ/G1M (R8A77430)
--    compatible = "renesas,r8a7743"
--  - RZ/G1N (R8A77440)
--    compatible = "renesas,r8a7744"
--  - RZ/G1E (R8A77450)
--    compatible = "renesas,r8a7745"
--  - RZ/G1C (R8A77470)
--    compatible = "renesas,r8a77470"
--  - R-Car M1A (R8A77781)
--    compatible = "renesas,r8a7778"
--  - R-Car H1 (R8A77790)
--    compatible = "renesas,r8a7779"
--  - R-Car H2 (R8A77900)
--    compatible = "renesas,r8a7790"
--  - R-Car M2-W (R8A77910)
--    compatible = "renesas,r8a7791"
--  - R-Car V2H (R8A77920)
--    compatible = "renesas,r8a7792"
--  - R-Car M2-N (R8A77930)
--    compatible = "renesas,r8a7793"
--  - R-Car E2 (R8A77940)
--    compatible = "renesas,r8a7794"
--  - R-Car H3 (R8A77950)
--    compatible = "renesas,r8a7795"
--  - R-Car M3-W (R8A77960)
--    compatible = "renesas,r8a7796"
--  - R-Car M3-N (R8A77965)
--    compatible = "renesas,r8a77965"
--  - R-Car V3M (R8A77970)
--    compatible = "renesas,r8a77970"
--  - R-Car V3H (R8A77980)
--    compatible = "renesas,r8a77980"
--  - R-Car E3 (R8A77990)
--    compatible = "renesas,r8a77990"
--  - R-Car D3 (R8A77995)
--    compatible = "renesas,r8a77995"
--  - RZ/N1D (R9A06G032)
--    compatible = "renesas,r9a06g032"
--
--Boards:
--
--  - Alt (RTP0RC7794SEB00010S)
--    compatible = "renesas,alt", "renesas,r8a7794"
--  - APE6-EVM
--    compatible = "renesas,ape6evm", "renesas,r8a73a4"
--  - Atmark Techno Armadillo-800 EVA
--    compatible = "renesas,armadillo800eva", "renesas,r8a7740"
--  - Blanche (RTP0RC7792SEB00010S)
--    compatible = "renesas,blanche", "renesas,r8a7792"
--  - BOCK-W
--    compatible = "renesas,bockw", "renesas,r8a7778"
--  - Condor (RTP0RC77980SEB0010SS/RTP0RC77980SEB0010SA01)
--    compatible = "renesas,condor", "renesas,r8a77980"
--  - Draak (RTP0RC77995SEB0010S)
--    compatible = "renesas,draak", "renesas,r8a77995"
--  - Eagle (RTP0RC77970SEB0010S)
--    compatible = "renesas,eagle", "renesas,r8a77970"
--  - Ebisu (RTP0RC77990SEB0010S)
--    compatible = "renesas,ebisu", "renesas,r8a77990"
--  - Genmai (RTK772100BC00000BR)
--    compatible = "renesas,genmai", "renesas,r7s72100"
--  - GR-Peach (X28A-M01-E/F)
--    compatible = "renesas,gr-peach", "renesas,r7s72100"
--  - Gose (RTP0RC7793SEB00010S)
--    compatible = "renesas,gose", "renesas,r8a7793"
--  - H3ULCB (R-Car Starter Kit Premier, RTP0RC7795SKBX0010SA00 (H3 ES1.1))
--    H3ULCB (R-Car Starter Kit Premier, RTP0RC77951SKBX010SA00 (H3 ES2.0))
--    compatible = "renesas,h3ulcb", "renesas,r8a7795"
--  - Henninger
--    compatible = "renesas,henninger", "renesas,r8a7791"
--  - iWave Systems RZ/G1C Single Board Computer (iW-RainboW-G23S)
--    compatible = "iwave,g23s", "renesas,r8a77470"
--  - iWave Systems RZ/G1E SODIMM SOM Development Platform (iW-RainboW-G22D)
--    compatible = "iwave,g22d", "iwave,g22m", "renesas,r8a7745"
--  - iWave Systems RZ/G1E SODIMM System On Module (iW-RainboW-G22M-SM)
--    compatible = "iwave,g22m", "renesas,r8a7745"
--  - iWave Systems RZ/G1M Qseven Development Platform (iW-RainboW-G20D-Qseven)
--    compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7743"
--  - iWave Systems RZ/G1M Qseven System On Module (iW-RainboW-G20M-Qseven)
--    compatible = "iwave,g20m", "renesas,r8a7743"
--  - Kingfisher (SBEV-RCAR-KF-M03)
--    compatible = "shimafuji,kingfisher"
--  - Koelsch (RTP0RC7791SEB00010S)
--    compatible = "renesas,koelsch", "renesas,r8a7791"
--  - Kyoto Microcomputer Co. KZM-A9-Dual
--    compatible = "renesas,kzm9d", "renesas,emev2"
--  - Kyoto Microcomputer Co. KZM-A9-GT
--    compatible = "renesas,kzm9g", "renesas,sh73a0"
--  - Lager (RTP0RC7790SEB00010S)
--    compatible = "renesas,lager", "renesas,r8a7790"
--  - M3ULCB (R-Car Starter Kit Pro, RTP0RC7796SKBX0010SA09 (M3 ES1.0))
--    compatible = "renesas,m3ulcb", "renesas,r8a7796"
--  - Marzen (R0P7779A00010S)
--    compatible = "renesas,marzen", "renesas,r8a7779"
--  - Porter (M2-LCDP)
--    compatible = "renesas,porter", "renesas,r8a7791"
--  - RSKRZA1 (YR0K77210C000BE)
--    compatible = "renesas,rskrza1", "renesas,r7s72100"
--  - RZN1D-DB (RZ/N1D Demo Board for the RZ/N1D 400 pins package)
--    compatible = "renesas,rzn1d400-db", "renesas,r9a06g032"
--  - Salvator-X (RTP0RC7795SIPB0010S)
--    compatible = "renesas,salvator-x", "renesas,r8a7795"
--  - Salvator-X (RTP0RC7796SIPB0011S)
--    compatible = "renesas,salvator-x", "renesas,r8a7796"
--  - Salvator-X (RTP0RC7796SIPB0011S (M3-N))
--    compatible = "renesas,salvator-x", "renesas,r8a77965"
--  - Salvator-XS (Salvator-X 2nd version, RTP0RC7795SIPB0012S)
--    compatible = "renesas,salvator-xs", "renesas,r8a7795"
--  - Salvator-XS (Salvator-X 2nd version, RTP0RC7796SIPB0012S)
--    compatible = "renesas,salvator-xs", "renesas,r8a7796"
--  - Salvator-XS (Salvator-X 2nd version, RTP0RC77965SIPB012S)
--    compatible = "renesas,salvator-xs", "renesas,r8a77965"
--  - SILK (RTP0RC7794LCB00011S)
--    compatible = "renesas,silk", "renesas,r8a7794"
--  - SK-RZG1E (YR8A77450S000BE)
--    compatible = "renesas,sk-rzg1e", "renesas,r8a7745"
--  - SK-RZG1M (YR8A77430S000BE)
--    compatible = "renesas,sk-rzg1m", "renesas,r8a7743"
--  - Stout (ADAS Starterkit, Y-R-CAR-ADAS-SKH2-BOARD)
--    compatible = "renesas,stout", "renesas,r8a7790"
--  - V3HSK (Y-ASK-RCAR-V3H-WS10)
--    compatible = "renesas,v3hsk", "renesas,r8a77980"
--  - V3MSK (Y-ASK-RCAR-V3M-WS10)
--    compatible = "renesas,v3msk", "renesas,r8a77970"
--  - Wheat (RTP0RC7792ASKB0000JE)
--    compatible = "renesas,wheat", "renesas,r8a7792"
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.yaml b/Documentation/devicetree/bindings/arm/shmobile.yaml
-new file mode 100644
-index 000000000000..31009e7fb0ea
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/shmobile.yaml
-@@ -0,0 +1,205 @@
-+# SPDX-License-Identifier: None
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/bindings/arm/shmobile.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index d3ac43c3d0b655dc..19d89b4dda64c13c 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -32,6 +32,7 @@
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/pinctrl/pinctrl-state.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/sys_soc.h>
+ 
+ #include "renesas_sdhi.h"
+ #include "tmio_mmc.h"
+@@ -45,6 +46,10 @@
+ #define SDHI_VER_GEN3_SD	0xcc10
+ #define SDHI_VER_GEN3_SDMMC	0xcd10
+ 
++struct renesas_sdhi_quirks {
++	bool hs400_4taps;
++};
 +
-+title: Renesas SH-Mobile, R-Mobile, and R-Car Platform Device Tree Bindings
+ static void renesas_sdhi_sdbuf_width(struct tmio_mmc_host *host, int width)
+ {
+ 	u32 val;
+@@ -602,11 +607,25 @@ static void renesas_sdhi_enable_dma(struct tmio_mmc_host *host, bool enable)
+ 	renesas_sdhi_sdbuf_width(host, enable ? width : 16);
+ }
+ 
++static const struct renesas_sdhi_quirks sdhi_quirks_h3_m3w = {
++	.hs400_4taps = true,
++};
 +
-+maintainers:
-+  - Geert Uytterhoeven <geert+renesas@glider.be>
++static const struct soc_device_attribute sdhi_quirks_match[]  = {
++	{ .soc_id = "r8a7795", .revision = "ES1.*", .data = &sdhi_quirks_h3_m3w },
++	{ .soc_id = "r8a7795", .revision = "ES2.0", .data = &sdhi_quirks_h3_m3w },
++	{ .soc_id = "r8a7796", .revision = "ES1.0", .data = &sdhi_quirks_h3_m3w },
++	{ .soc_id = "r8a7796", .revision = "ES1.1", .data = &sdhi_quirks_h3_m3w },
++	{ /* Sentinel. */ },
++};
 +
-+properties:
-+  $nodename:
-+    const: '/'
-+  compatible:
-+    oneOf:
-+      - description: Emma Mobile EV2
-+        items:
-+          - enum:
-+              - renesas,kzm9d # Kyoto Microcomputer Co. KZM-A9-Dual
-+          - const: renesas,emev2
+ int renesas_sdhi_probe(struct platform_device *pdev,
+ 		       const struct tmio_mmc_dma_ops *dma_ops)
+ {
+ 	struct tmio_mmc_data *mmd = pdev->dev.platform_data;
++	const struct renesas_sdhi_quirks *quirks = NULL;
+ 	const struct renesas_sdhi_of_data *of_data;
++	const struct soc_device_attribute *attr;
+ 	struct tmio_mmc_data *mmc_data;
+ 	struct tmio_mmc_dma *dma_priv;
+ 	struct tmio_mmc_host *host;
+@@ -616,6 +635,10 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 
+ 	of_data = of_device_get_match_data(&pdev->dev);
+ 
++	attr = soc_device_match(sdhi_quirks_match);
++	if (attr)
++		quirks = attr->data;
 +
-+      - description:  RZ/A1H (R7S72100)
-+        items:
-+          - enum:
-+              - renesas,genmai # Genmai (RTK772100BC00000BR)
-+              - renesas,gr-peach # GR-Peach (X28A-M01-E/F)
-+              - renesas,rskrza1 # RSKRZA1 (YR0K77210C000BE)
-+          - const: renesas,r7s72100
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res)
+ 		return -EINVAL;
+@@ -681,6 +704,9 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 	host->multi_io_quirk	= renesas_sdhi_multi_io_quirk;
+ 	host->dma_ops		= dma_ops;
+ 
++	if (quirks && quirks->hs400_4taps)
++		mmc_data->flags |= TMIO_MMC_HAVE_4TAP_HS400;
 +
-+      - description:  SH-Mobile AG5 (R8A73A00/SH73A0)
-+        items:
-+          - enum:
-+              - renesas,kzm9g # Kyoto Microcomputer Co. KZM-A9-GT
-+          - const: renesas,sh73a0
-+
-+      - description:  R-Mobile APE6 (R8A73A40)
-+        items:
-+          - enum:
-+              - renesas,ape6evm
-+          - const: renesas,r8a73a4
-+
-+      - description:  R-Mobile A1 (R8A77400)
-+        items:
-+          - enum:
-+              - renesas,armadillo800eva # Atmark Techno Armadillo-800 EVA
-+          - const: renesas,r8a7740
-+
-+      - description:  RZ/G1H (R8A77420)
-+        items:
-+          - const: renesas,r8a7742
-+
-+      - description: RZ/G1M (R8A77430)
-+        items:
-+          - enum:
-+              # iWave Systems RZ/G1M Qseven Development Platform (iW-RainboW-G20D-Qseven)
-+              - iwave,g20d
-+          - const: iwave,g20m
-+          - const: renesas,r8a7743
-+
-+      - items:
-+          - enum:
-+              # iWave Systems RZ/G1M Qseven System On Module (iW-RainboW-G20M-Qseven)
-+              - iwave,g20m
-+          - const: renesas,r8a7743
-+
-+      - description: RZ/G1N (R8A77440)
-+        items:
-+          - enum:
-+              - renesas,sk-rzg1m # SK-RZG1M (YR8A77430S000BE)
-+          - const: renesas,r8a7744
-+
-+      - description: RZ/G1E (R8A77450)
-+        items:
-+          - enum:
-+              - iwave,g22m # iWave Systems RZ/G1E SODIMM System On Module (iW-RainboW-G22M-SM)
-+              - renesas,sk-rzg1e # SK-RZG1E (YR8A77450S000BE)
-+          - const: renesas,r8a7745
-+      - items:
-+          # iWave Systems RZ/G1E SODIMM SOM Development Platform (iW-RainboW-G22D)
-+          - const: iwave,g22d
-+          - const: iwave,g22m
-+          - const: renesas,r8a7745
-+
-+      - description: RZ/G1C (R8A77470)
-+        items:
-+          - enum:
-+              - iwave,g23s #iWave Systems RZ/G1C Single Board Computer (iW-RainboW-G23S)
-+          - const: renesas,r8a77470
-+
-+      - description: R-Car M1A (R8A77781)
-+        items:
-+          - enum:
-+              - renesas,bockw
-+          - const: renesas,r8a7778
-+
-+      - description: R-Car H1 (R8A77790)
-+        items:
-+          - enum:
-+              - renesas,marzen # Marzen (R0P7779A00010S)
-+              - renesas,stout # Stout (ADAS Starterkit, Y-R-CAR-ADAS-SKH2-BOARD)
-+          - const: renesas,r8a7779
-+
-+      - description: R-Car H2 (R8A77900)
-+        items:
-+          - enum:
-+              - renesas,lager # Lager (RTP0RC7790SEB00010S)
-+          - const: renesas,r8a7790
-+
-+      - description: R-Car M2-W (R8A77910)
-+        items:
-+          - enum:
-+              - renesas,henninger
-+              - renesas,koelsch # Koelsch (RTP0RC7791SEB00010S)
-+              - renesas,porter # Porter (M2-LCDP)
-+          - const: renesas,r8a7791
-+
-+      - description: R-Car V2H (R8A77920)
-+        items:
-+          - enum:
-+              - renesas,blanche # Blanche (RTP0RC7792SEB00010S)
-+              - renesas,wheat # Wheat (RTP0RC7792ASKB0000JE)
-+          - const: renesas,r8a7792
-+
-+      - description: R-Car M2-N (R8A77930)
-+        items:
-+          - enum:
-+              - renesas,gose # Gose (RTP0RC7793SEB00010S)
-+          - const: renesas,r8a7793
-+
-+      - description: R-Car E2 (R8A77940)
-+        items:
-+          - enum:
-+              - renesas,alt # Alt (RTP0RC7794SEB00010S)
-+              - renesas,silk # SILK (RTP0RC7794LCB00011S)
-+          - const: renesas,r8a7794
-+
-+      - description: R-Car H3 (R8A77950)
-+        items:
-+          - enum:
-+                # H3ULCB (R-Car Starter Kit Premier, RTP0RC7795SKBX0010SA00 (H3 ES1.1))
-+                # H3ULCB (R-Car Starter Kit Premier, RTP0RC77951SKBX010SA00 (H3 ES2.0))
-+              - renesas,h3ulcb
-+              - renesas,salvator-x # Salvator-X (RTP0RC7795SIPB0010S)
-+              - renesas,salvator-xs # Salvator-XS (Salvator-X 2nd version, RTP0RC7795SIPB0012S)
-+          - const: renesas,r8a7795
-+
-+      - description: R-Car M3-W (R8A77960)
-+        items:
-+          - enum:
-+              - renesas,m3ulcb # M3ULCB (R-Car Starter Kit Pro, RTP0RC7796SKBX0010SA09 (M3 ES1.0))
-+              - renesas,salvator-x # Salvator-X (RTP0RC7796SIPB0011S)
-+              - renesas,salvator-xs # Salvator-XS (Salvator-X 2nd version, RTP0RC7796SIPB0012S)
-+          - const: renesas,r8a7796
-+
-+      - description: Kingfisher (SBEV-RCAR-KF-M03)
-+        items:
-+          - const: shimafuji,kingfisher
-+          - enum:
-+              - renesas,h3ulcb
-+              - renesas,m3ulcb
-+          - enum:
-+              - renesas,r8a7795
-+              - renesas,r8a7796
-+
-+      - description: R-Car M3-N (R8A77965)
-+        items:
-+          - enum:
-+              - renesas,salvator-x # Salvator-X (RTP0RC7796SIPB0011S (M3-N))
-+              - renesas,salvator-xs # Salvator-XS (Salvator-X 2nd version, RTP0RC77965SIPB012S)
-+          - const: renesas,r8a77965
-+
-+      - description: R-Car V3M (R8A77970)
-+        items:
-+          - enum:
-+              - renesas,eagle # Eagle (RTP0RC77970SEB0010S)
-+              - renesas,v3msk # V3MSK (Y-ASK-RCAR-V3M-WS10)
-+          - const: renesas,r8a77970
-+
-+      - description: R-Car V3H (R8A77980)
-+        items:
-+          - enum:
-+              - renesas,condor # Condor (RTP0RC77980SEB0010SS/RTP0RC77980SEB0010SA01)
-+              - renesas,v3hsk # V3HSK (Y-ASK-RCAR-V3H-WS10)
-+          - const: renesas,r8a77980
-+
-+      - description: R-Car E3 (R8A77990)
-+        items:
-+          - enum:
-+              - renesas,ebisu # Ebisu (RTP0RC77990SEB0010S)
-+          - const: renesas,r8a77990
-+
-+      - description: R-Car D3 (R8A77995)
-+        items:
-+          - enum:
-+              - renesas,draak # Draak (RTP0RC77995SEB0010S)
-+          - const: renesas,r8a77995
-+
-+      - description: RZ/N1D (R9A06G032)
-+        items:
-+          - enum:
-+              - renesas,rzn1d400-db # RZN1D-DB (RZ/N1D Demo Board for the RZ/N1D 400 pins package)
-+          - const: renesas,r9a06g032
-+
-+...
+ 	/* For some SoC, we disable internal WP. GPIO may override this */
+ 	if (mmc_can_gpio_ro(host->mmc))
+ 		mmc_data->capabilities2 &= ~MMC_CAP2_NO_WRITE_PROTECT;
 -- 
-2.17.1
+2.19.1
