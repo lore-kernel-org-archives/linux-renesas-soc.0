@@ -1,40 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg1-f172.google.com ([209.85.215.172]:33423 "EHLO
-        mail-pg1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727688AbeJVB3z (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:39302 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725959AbeKAIAl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 21 Oct 2018 21:29:55 -0400
-Received: by mail-pg1-f172.google.com with SMTP id z2-v6so1516214pgp.0
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 21 Oct 2018 10:14:56 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Mon, 22 Oct 2018 02:15:03 +0900
-Message-Id: <154014210372.4344.14651283156002646732.sendpatchset@octo>
-In-Reply-To: <154014207424.4344.6894320987219157257.sendpatchset@octo>
-References: <154014207424.4344.6894320987219157257.sendpatchset@octo>
-Subject: [PATCH 03/03] arm64: dts: renesas: r8a77990: Connect R-Car E3 AVB to IPMMU
+        Thu, 1 Nov 2018 04:00:41 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH] mmc: renesas_sdhi: remove workaround for HS400 clock
+Date: Wed, 31 Oct 2018 23:59:44 +0100
+Message-Id: <20181031225944.1226-1-niklas.soderlund@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm@opensource.se>
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Hook up the R-Car E3 AVB device to IPMMU-DS0 16 as described in
-the data sheet.
+The driver sets an incorrect clock and depends on the clock driver
+knowledge of this incorrect setting to still set a 200Mhz SDn clock.
+Instead of spreading the workaround between the two drivers the clock
+driver should be made aware of the ES versions where the special clock
+handling is needed no need to keep this workaround in the SDHI driver.
 
-Signed-off-by: Magnus Damm <damm@opensource.se>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
+ drivers/mmc/host/renesas_sdhi_core.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
- arch/arm64/boot/dts/renesas/r8a77990.dtsi |    1 +
- 1 file changed, 1 insertion(+)
-
---- 0001/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a77990.dtsi	2018-10-22 01:48:50.488496607 +0900
-@@ -604,6 +604,7 @@
- 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			phy-mode = "rgmii";
-+			iommus = <&ipmmu_ds0 16>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index d3ac43c3d0b655dc..78bd117bbe65de46 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -163,15 +163,6 @@ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
+ 	if (new_clock == 0)
+ 		goto out;
+ 
+-	/*
+-	 * Both HS400 and HS200/SD104 set 200MHz, but some devices need to
+-	 * set 400MHz to distinguish the CPG settings in HS400.
+-	 */
+-	if (host->mmc->ios.timing == MMC_TIMING_MMC_HS400 &&
+-	    host->pdata->flags & TMIO_MMC_HAVE_4TAP_HS400 &&
+-	    new_clock == 200000000)
+-		new_clock = 400000000;
+-
+ 	clock = renesas_sdhi_clk_update(host, new_clock) / 512;
+ 
+ 	for (clk = 0x80000080; new_clock >= (clock << 1); clk >>= 1)
+-- 
+2.19.1
