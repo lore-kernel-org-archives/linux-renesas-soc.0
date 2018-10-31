@@ -1,103 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:32841 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727595AbeJEDAQ (ORCPT
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35229 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727858AbeJaKQg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Oct 2018 23:00:16 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org
+        Wed, 31 Oct 2018 06:16:36 -0400
+Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a7790: initialize TDSEL register
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-gpio@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 3/3] rcar-vin: declare which VINs can use a Up Down Scaler (UDS)
-Date: Thu,  4 Oct 2018 22:04:02 +0200
-Message-Id: <20181004200402.15113-4-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20181004200402.15113-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20181004200402.15113-1-niklas.soderlund+renesas@ragnatech.se>
+        Geert Uytterhoeven <geert@linux-m68k.org>
+References: <20181028212457.1017-1-wsa+renesas@sang-engineering.com>
+ <20181028212457.1017-2-wsa+renesas@sang-engineering.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <8976b08f-ed27-6e4d-f10d-8ace5c75b8fc@gmail.com>
+Date: Wed, 31 Oct 2018 02:19:18 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181028212457.1017-2-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add information about which VINs on which SoC have access to a UDS
-scaler.
+On 10/28/2018 10:24 PM, Wolfram Sang wrote:
+> Documentation says that some bits in TDSEL must be set (ch 5.3.39 in R-Car H2
+> v0.91). However, the reset value of the register is 0, so software has to do
+> it. Add this to the kernel driver to ensure this is really done independent of
+> firmware versions.
+> 
+> This is needed for some SD cards supporting SDR104 transfer mode. For
+> me, TDSEL was not initialized by the firmware and I had problems with
+> the card when re-inserting it.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 01e418c2d4c6792e..337ae8bbe1e0b14c 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -919,12 +919,21 @@ static const struct rvin_group_route rcar_info_r8a7795_routes[] = {
- 	{ /* Sentinel */ }
- };
- 
-+static const struct rvin_group_scaler rcar_info_h3_m3w_m3n_scalers[] = {
-+	{ .vin = 0, .companion = 1 },
-+	{ .vin = 1, .companion = 0 },
-+	{ .vin = 4, .companion = 5 },
-+	{ .vin = 5, .companion = 4 },
-+	{ /* Sentinel */ }
-+};
-+
- static const struct rvin_info rcar_info_r8a7795 = {
- 	.model = RCAR_GEN3,
- 	.use_mc = true,
- 	.max_width = 4096,
- 	.max_height = 4096,
- 	.routes = rcar_info_r8a7795_routes,
-+	.scalers = rcar_info_h3_m3w_m3n_scalers,
- };
- 
- static const struct rvin_group_route rcar_info_r8a7795es1_routes[] = {
-@@ -979,6 +988,7 @@ static const struct rvin_info rcar_info_r8a7795es1 = {
- 	.max_width = 4096,
- 	.max_height = 4096,
- 	.routes = rcar_info_r8a7795es1_routes,
-+	.scalers = rcar_info_h3_m3w_m3n_scalers,
- };
- 
- static const struct rvin_group_route rcar_info_r8a7796_routes[] = {
-@@ -1019,6 +1029,7 @@ static const struct rvin_info rcar_info_r8a7796 = {
- 	.max_width = 4096,
- 	.max_height = 4096,
- 	.routes = rcar_info_r8a7796_routes,
-+	.scalers = rcar_info_h3_m3w_m3n_scalers,
- };
- 
- static const struct rvin_group_route rcar_info_r8a77965_routes[] = {
-@@ -1063,6 +1074,7 @@ static const struct rvin_info rcar_info_r8a77965 = {
- 	.max_width = 4096,
- 	.max_height = 4096,
- 	.routes = rcar_info_r8a77965_routes,
-+	.scalers = rcar_info_h3_m3w_m3n_scalers,
- };
- 
- static const struct rvin_group_route rcar_info_r8a77970_routes[] = {
-@@ -1088,12 +1100,18 @@ static const struct rvin_group_route rcar_info_r8a77995_routes[] = {
- 	{ /* Sentinel */ }
- };
- 
-+static const struct rvin_group_scaler rcar_info_r8a77995_scalers[] = {
-+	{ .vin = 4, .companion = -1 },
-+	{ /* Sentinel */ }
-+};
-+
- static const struct rvin_info rcar_info_r8a77995 = {
- 	.model = RCAR_GEN3,
- 	.use_mc = true,
- 	.max_width = 4096,
- 	.max_height = 4096,
- 	.routes = rcar_info_r8a77995_routes,
-+	.scalers = rcar_info_r8a77995_scalers,
- };
- 
- static const struct of_device_id rvin_of_id_table[] = {
+> ---
+>  drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+> index ab7a35392cd8..c0e679105df9 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/io.h>
+>  #include <linux/kernel.h>
+>  
+> +#include "core.h"
+>  #include "sh_pfc.h"
+>  
+>  /*
+> @@ -5691,7 +5692,16 @@ static int r8a7790_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *poc
+>  	return 31 - (pin & 0x1f);
+>  }
+>  
+> +static int r8a7790_pinmux_soc_init(struct sh_pfc *pfc)
+> +{
+> +	/* Initialize TDSEL according to datasheet */
+> +	sh_pfc_write(pfc, 0xe6060088, 0x00155554);
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct sh_pfc_soc_operations r8a7790_pinmux_ops = {
+> +	.init = r8a7790_pinmux_soc_init,
+>  	.pin_to_pocctrl = r8a7790_pin_to_pocctrl,
+>  };
+>  
+> 
+
+
 -- 
-2.19.0
+Best regards,
+Marek Vasut
