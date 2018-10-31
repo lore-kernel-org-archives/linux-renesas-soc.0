@@ -1,61 +1,112 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg1-f179.google.com ([209.85.215.179]:41213 "EHLO
-        mail-pg1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726525AbeJOV5j (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Oct 2018 17:57:39 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-pm@vger.kernel.org
-Cc: Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 31 Oct 2018 13:50:28 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH/RFT 1/2] dt-bindings: thermal: rcar-thermal: add R8A77990 support
-Date: Mon, 15 Oct 2018 23:11:58 +0900
-Message-Id: <1539612719-9650-2-git-send-email-ykaneko0929@gmail.com>
-In-Reply-To: <1539612719-9650-1-git-send-email-ykaneko0929@gmail.com>
-References: <1539612719-9650-1-git-send-email-ykaneko0929@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH 2/2] ARM: dts: iwg23s-sbc: Enable cmt0
+Message-ID: <20181031125028.nvirj7btb4sr6qw4@verge.net.au>
+References: <1540543709-35959-1-git-send-email-biju.das@bp.renesas.com>
+ <1540543709-35959-2-git-send-email-biju.das@bp.renesas.com>
+ <20181030155151.7jxqfzvd4y44zuij@verge.net.au>
+ <OSBPR01MB21031B41A3384F13D02E9BDCB8CC0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <OSBPR01MB21031B41A3384F13D02E9BDCB8CC0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the R-Car E3 (R8A77990) SoC bindings.
+On Tue, Oct 30, 2018 at 04:48:30PM +0000, Biju Das wrote:
+> Hi Simon,
+> 
+> Thanks for the feedback.
+> 
+> > Subject: Re: [PATCH 2/2] ARM: dts: iwg23s-sbc: Enable cmt0
+> >
+> > On Fri, Oct 26, 2018 at 09:48:29AM +0100, Biju Das wrote:
+> > > This patch enables cmt0 support on the iWave iwg23s sbc.
+> > >
+> > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> >
+> > Thanks, I applied this for v4.21, resolving a conflict.
+> > The result is as follows:
+> >
+> > From: Biju Das <biju.das@bp.renesas.com>
+> > Date: Fri, 26 Oct 2018 09:48:29 +0100
+> > Subject: [PATCH] ARM: dts: iwg23s-sbc: Enable cmt0
+> >
+> > This patch enables cmt0 support on the iWave iwg23s sbc.
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > ---
+> >  arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+> > b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+> > index ffd8216f28c3..295f11afac21 100644
+> > --- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+> > +++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+> > @@ -77,6 +77,10 @@
+> >  clock-frequency = <20000000>;
+> >  };
+> >
+> > +&cmt0 {
+> > +status = "okay";
+> > +};
+> 
+> I believe as per our process, the nodes should be in alphabetical order,
+> If it is the case, it should be above  extal_clk
+> 
+> &extal_clk {
+>         clock-frequency = <20000000>;
+> };
+> 
+> >  &pfc {
+> >  mmc_pins_uhs: mmc_uhs {
+> >  groups = "mmc_data8", "mmc_ctrl";
 
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Yes, indeed. That was my intention but I messed things up.
+I've updated the patch accordingly.
+
+
+From: Biju Das <biju.das@bp.renesas.com>
+Date: Fri, 26 Oct 2018 09:48:29 +0100
+Subject: [PATCH] ARM: dts: iwg23s-sbc: Enable cmt0
+
+This patch enables cmt0 support on the iWave iwg23s sbc.
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/thermal/rcar-thermal.txt | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/thermal/rcar-thermal.txt b/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
-index 67c563f..18353b9 100644
---- a/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
-+++ b/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
-@@ -4,7 +4,7 @@ Required properties:
- - compatible		: "renesas,thermal-<soctype>",
- 			   "renesas,rcar-gen2-thermal" (with thermal-zone) or
- 			   "renesas,rcar-thermal" (without thermal-zone) as
--                           fallback except R-Car D3.
-+                           fallback except R-Car E3/D3.
- 			  Examples with soctypes are:
- 			    - "renesas,thermal-r8a73a4" (R-Mobile APE6)
- 			    - "renesas,thermal-r8a7743" (RZ/G1M)
-@@ -13,6 +13,7 @@ Required properties:
- 			    - "renesas,thermal-r8a7791" (R-Car M2-W)
- 			    - "renesas,thermal-r8a7792" (R-Car V2H)
- 			    - "renesas,thermal-r8a7793" (R-Car M2-N)
-+			    - "renesas,thermal-r8a77990" (R-Car E3)
- 			    - "renesas,thermal-r8a77995" (R-Car D3)
- - reg			: Address range of the thermal registers.
- 			  The 1st reg will be recognized as common register
-@@ -21,7 +22,7 @@ Required properties:
- Option properties:
+diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+index ffd8216f28c3..18d22631e188 100644
+--- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
++++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+@@ -73,6 +73,10 @@
+ 	};
+ };
  
- - interrupts		: If present should contain 3 interrupts for
--                          R-Car D3 or 1 interrupt otherwise.
-+                          R-Car E3/D3 or 1 interrupt otherwise.
- 
- Example (non interrupt support):
- 
++&cmt0 {
++	status = "okay";
++};
++
+ &extal_clk {
+ 	clock-frequency = <20000000>;
+ };
 -- 
-1.9.1
+2.11.0
