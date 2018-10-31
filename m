@@ -1,103 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:53338 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726836AbeJPGJ1 (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:53953 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731453AbeKAIPP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Oct 2018 02:09:27 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: Re: [PATCH 3/5] drm: rcar-du: Add r8a77470 support
-Date: Tue, 16 Oct 2018 01:22:21 +0300
-Message-ID: <1733512.u0bX59egiB@avalon>
-In-Reply-To: <1537553311-8831-4-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1537553311-8831-1-git-send-email-fabrizio.castro@bp.renesas.com> <1537553311-8831-4-git-send-email-fabrizio.castro@bp.renesas.com>
+        Thu, 1 Nov 2018 04:15:15 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 3/3] mmc: renesas_sdhi: disable HS400 on H3 ES1.x and M3-W ES1.x
+Date: Thu,  1 Nov 2018 00:13:40 +0100
+Message-Id: <20181031231340.1958-4-niklas.soderlund@ragnatech.se>
+In-Reply-To: <20181031231340.1958-1-niklas.soderlund@ragnatech.se>
+References: <20181031231340.1958-1-niklas.soderlund@ragnatech.se>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Fabrizio,
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Thank you for the patch.
+The Renesas BSP confirms that H3 ES1.x and M3-W ES1.x do not properly
+support HS400. Add a quirk to indicate this and disable HS400 in the MMC
+capabilities if the quirk is set.
 
-On Friday, 21 September 2018 21:08:29 EEST Fabrizio Castro wrote:
-> Add RZ/G1C (a.k.a. r8a77470) support to the R-Car DU driver.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-> ---
->  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> b/drivers/gpu/drm/rcar-du/rcar_du_drv.c index 02aee6c..c07d3f1 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> @@ -77,6 +77,31 @@ static const struct rcar_du_device_info
-> rzg1_du_r8a7745_info = { },
->  };
-> 
-> +static const struct rcar_du_device_info rzg1_du_r8a77470_info = {
-> +	.gen = 2,
-> +	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
-> +		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/mmc/host/renesas_sdhi_core.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
-The DU driver has recently gained two new feature flags, 
-RCAR_DU_FEATURE_INTERLACED and RCAR_DU_FEATURE_TVM_SYNC. I believe that both 
-should be set here. Could you please confirm (and test) ?
-
-> +	.channels_mask = BIT(1) | BIT(0),
-> +	.routes = {
-> +		/*
-> +		 * R8A77470 has two RGB outputs, one LVDS output, and
-> +		 * one analog video output (unsupported)
-
-I'd write this "and one (currently unsupported) analog video output" to match 
-the other device entries. With this fixed,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> +		 */
-> +		[RCAR_DU_OUTPUT_DPAD0] = {
-> +			.possible_crtcs = BIT(0),
-> +			.port = 0,
-> +		},
-> +		[RCAR_DU_OUTPUT_DPAD1] = {
-> +			.possible_crtcs = BIT(1),
-> +			.port = 1,
-> +		},
-> +		[RCAR_DU_OUTPUT_LVDS0] = {
-> +			.possible_crtcs = BIT(0) | BIT(1),
-> +			.port = 2,
-> +		},
-> +	},
-> +};
-> +
->  static const struct rcar_du_device_info rcar_du_r8a7779_info = {
->  	.gen = 2,
->  	.features = 0,
-> @@ -297,6 +322,7 @@ static const struct rcar_du_device_info
-> rcar_du_r8a77970_info = { static const struct of_device_id
-> rcar_du_of_table[] = {
->  	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
->  	{ .compatible = "renesas,du-r8a7745", .data = &rzg1_du_r8a7745_info },
-> +	{ .compatible = "renesas,du-r8a77470", .data = &rzg1_du_r8a77470_info },
->  	{ .compatible = "renesas,du-r8a7779", .data = &rcar_du_r8a7779_info },
->  	{ .compatible = "renesas,du-r8a7790", .data = &rcar_du_r8a7790_info },
->  	{ .compatible = "renesas,du-r8a7791", .data = &rcar_du_r8a7791_info },
-
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index 19d89b4dda64c13c..ed2c406fd62b5c7d 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -47,6 +47,7 @@
+ #define SDHI_VER_GEN3_SDMMC	0xcd10
+ 
+ struct renesas_sdhi_quirks {
++	bool hs400_disabled;
+ 	bool hs400_4taps;
+ };
+ 
+@@ -607,15 +608,21 @@ static void renesas_sdhi_enable_dma(struct tmio_mmc_host *host, bool enable)
+ 	renesas_sdhi_sdbuf_width(host, enable ? width : 16);
+ }
+ 
+-static const struct renesas_sdhi_quirks sdhi_quirks_h3_m3w = {
++static const struct renesas_sdhi_quirks sdhi_quirks_h3_m3w_es1 = {
++	.hs400_disabled = true,
++	.hs400_4taps = true,
++};
++
++static const struct renesas_sdhi_quirks sdhi_quirks_h3_es2 = {
++	.hs400_disabled = false,
+ 	.hs400_4taps = true,
+ };
+ 
+ static const struct soc_device_attribute sdhi_quirks_match[]  = {
+-	{ .soc_id = "r8a7795", .revision = "ES1.*", .data = &sdhi_quirks_h3_m3w },
+-	{ .soc_id = "r8a7795", .revision = "ES2.0", .data = &sdhi_quirks_h3_m3w },
+-	{ .soc_id = "r8a7796", .revision = "ES1.0", .data = &sdhi_quirks_h3_m3w },
+-	{ .soc_id = "r8a7796", .revision = "ES1.1", .data = &sdhi_quirks_h3_m3w },
++	{ .soc_id = "r8a7795", .revision = "ES1.*", .data = &sdhi_quirks_h3_m3w_es1 },
++	{ .soc_id = "r8a7795", .revision = "ES2.0", .data = &sdhi_quirks_h3_es2 },
++	{ .soc_id = "r8a7796", .revision = "ES1.0", .data = &sdhi_quirks_h3_m3w_es1 },
++	{ .soc_id = "r8a7796", .revision = "ES1.1", .data = &sdhi_quirks_h3_m3w_es1 },
+ 	{ /* Sentinel. */ },
+ };
+ 
+@@ -704,6 +711,9 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 	host->multi_io_quirk	= renesas_sdhi_multi_io_quirk;
+ 	host->dma_ops		= dma_ops;
+ 
++	if (quirks && quirks->hs400_disabled)
++		host->mmc->caps2 &= ~(MMC_CAP2_HS400 | MMC_CAP2_HS400_ES);
++
+ 	if (quirks && quirks->hs400_4taps)
+ 		mmc_data->flags |= TMIO_MMC_HAVE_4TAP_HS400;
+ 
 -- 
-Regards,
-
-Laurent Pinchart
+2.19.1
