@@ -1,48 +1,42 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:55942 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726078AbeJZRc0 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Oct 2018 13:32:26 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 31 Oct 2018 15:25:05 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 2/2] ARM: dts: iwg23s-sbc: Enable cmt0
-Date: Fri, 26 Oct 2018 09:48:29 +0100
-Message-Id: <1540543709-35959-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1540543709-35959-1-git-send-email-biju.das@bp.renesas.com>
-References: <1540543709-35959-1-git-send-email-biju.das@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] dt-bindings: timer: renesas, cmt: Document r8a77470 CMT
+ support
+Message-ID: <20181031142501.dun2rla6mi5vginu@verge.net.au>
+References: <1540542973-15752-1-git-send-email-biju.das@bp.renesas.com>
+ <TYXPR01MB1775E03BA074105B92580477C0F00@TYXPR01MB1775.jpnprd01.prod.outlook.com>
+ <20181031125516.t7ahujfvqmuej5u2@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181031125516.t7ahujfvqmuej5u2@verge.net.au>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch enables cmt0 support on the iWave iwg23s sbc.
+On Wed, Oct 31, 2018 at 01:55:16PM +0100, Simon Horman wrote:
+> On Fri, Oct 26, 2018 at 09:48:19AM +0000, Fabrizio Castro wrote:
+> > > Subject: [PATCH] dt-bindings: timer: renesas, cmt: Document r8a77470 CMT support
+> > >
+> > > Document SoC specific compatible strings for r8a77470. No driver change
+> > > is needed as the fallback strings will activate the right code.
+> > >
+> > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > 
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> 
+> Thanks, applied for v4.21.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-index 518b0c0..6277571 100644
---- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -73,6 +73,10 @@
- 	};
- };
- 
-+&cmt0 {
-+	status = "okay";
-+};
-+
- &ehci1 {
- 	status = "okay";
- };
--- 
-2.7.4
+On second thoughts, I think this should either go through
+Daniel's tree or be acked by him.
