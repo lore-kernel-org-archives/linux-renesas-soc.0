@@ -1,158 +1,318 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ty1jpn01on0125.outbound.protection.outlook.com ([104.47.93.125]:24307
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728848AbeKAAhY (ORCPT
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42818 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729002AbeKAA3W (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 31 Oct 2018 20:37:24 -0400
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Marc Zyngier <marc.zyngier@arm.com>
-CC: Thomas Gleixner <tglx@linutronix.de>,
+        Wed, 31 Oct 2018 20:29:22 -0400
+Subject: Re: [PATCH v2 2/2] irqchip: Add support for Renesas RZ/N1 GPIO
+ interrupt multiplexer
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 2/2] irqchip: Add support for Renesas RZ/N1 GPIO
- interrupt multiplexer
-Date: Wed, 31 Oct 2018 15:38:48 +0000
-Message-ID: <TY1PR01MB1769D6F84F7BCD91C1018922F5CD0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
 References: <20181030104438.27827-1-phil.edworthy@renesas.com>
  <20181030104438.27827-3-phil.edworthy@renesas.com>
  <86d0rq35o1.wl-marc.zyngier@arm.com>
  <TY1PR01MB176959B0CF663D0ECB298924F5CD0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
- <b95c7fc3-7fda-48b7-6933-b7b183b6fa67@arm.com>
-In-Reply-To: <b95c7fc3-7fda-48b7-6933-b7b183b6fa67@arm.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Marc Zyngier <marc.zyngier@arm.com>
+Message-ID: <b95c7fc3-7fda-48b7-6933-b7b183b6fa67@arm.com>
+Date: Wed, 31 Oct 2018 15:30:50 +0000
 MIME-Version: 1.0
+In-Reply-To: <TY1PR01MB176959B0CF663D0ECB298924F5CD0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgTWFyYywNCg0KT24gMzEgT2N0b2JlciAyMDE4IDE1OjMxLCBNYXJjIFp5bmdpZXIgd3JvdGU6
-DQo+IE9uIDMxLzEwLzE4IDE1OjA5LCBQaGlsIEVkd29ydGh5IHdyb3RlOg0KPiA+IE9uIDMxIE9j
-dG9iZXIgMjAxOCAwODowMiwgTWFyYyBaeW5naWVyIHdvdGU6DQo+ID4+IE9uIFR1ZSwgMzAgT2N0
-IDIwMTggMTA6NDQ6MzggKzAwMDAsIFBoaWwgRWR3b3J0aHkgd3JvdGU6DQo+ID4+Pg0KPiA+Pj4g
-T24gUlovTjEgZGV2aWNlcywgdGhlcmUgYXJlIDMgU3lub3BzeXMgRGVzaWduV2FyZSBHUElPIGJs
-b2NrcyBlYWNoDQo+ID4+PiBjb25maWd1cmVkIHRvIGhhdmUgMzIgaW50ZXJydXB0IG91dHB1dHMs
-IHNvIHdlIGhhdmUgYSB0b3RhbCBvZiA5Ng0KPiA+Pj4gR1BJTyBpbnRlcnJ1cHRzLiBBbGwgb2Yg
-dGhlc2UgYXJlIHBhc3NlZCB0byB0aGUgR1BJTyBJUlEgTXV4ZXIsDQo+ID4+PiB3aGljaCBzZWxl
-Y3RzDQo+ID4+PiA4IG9mIHRoZSBHUElPIGludGVycnVwdHMgdG8gcGFzcyBvbnRvIHRoZSBHSUMu
-IFRoZSBpbnRlcnJ1cHQgc2lnbmFscw0KPiA+Pj4gYXJlbid0IGxhdGNoZWQsIHNvIHRoZXJlIGlz
-IG5vdGhpbmcgdG8gZG8gaW4gdGhpcyBkcml2ZXIgd2hlbiBhbg0KPiA+Pj4gaW50ZXJydXB0IGlz
-IHJlY2VpdmVkLCBvdGhlciB0aGFuIHRlbGwgdGhlIGNvcnJlc3BvbmRpbmcgR1BJTyBibG9jay4N
-Cj4gPj4+DQo+ID4+PiBTaWduZWQtb2ZmLWJ5OiBQaGlsIEVkd29ydGh5IDxwaGlsLmVkd29ydGh5
-QHJlbmVzYXMuY29tPg0KPiA+Pj4gLS0tDQo+ID4+PiB2MjoNCj4gPj4+ICAtIFVzZSBpbnRlcnJ1
-cHQtbWFwIHRvIGFsbG93IHRoZSBHUElPIGNvbnRyb2xsZXIgaW5mbyB0byBiZSBzcGVjaWZpZWQN
-Cj4gPj4+ICAgIGFzIHBhcnQgb2YgdGhlIGlycS4NCj4gPj4+ICAtIFJlbmFtZWQgc3RydWN0IGFu
-ZCBmdW5jcyBmcm9tICdnaXJxJyB0byBhIG1vcmUgY29tcHJlaGVuaXNibGUNCj4gJ2lycW11eCcu
-DQo+ID4+PiAtLS0NCj4gPj4+ICBkcml2ZXJzL2lycWNoaXAvS2NvbmZpZyAgICAgICAgfCAgMTAg
-KysNCj4gPj4+ICBkcml2ZXJzL2lycWNoaXAvTWFrZWZpbGUgICAgICAgfCAgIDEgKw0KPiA+Pj4g
-IGRyaXZlcnMvaXJxY2hpcC9yem4xLWlycS1tdXguYyB8IDIzNQ0KPiA+Pj4gKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrDQo+ID4+PiAgMyBmaWxlcyBjaGFuZ2VkLCAyNDYgaW5zZXJ0
-aW9ucygrKQ0KPiA+Pj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2lycWNoaXAvcnpuMS1p
-cnEtbXV4LmMNCj4gPj4+DQo+ID4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9pcnFjaGlwL0tjb25m
-aWcgYi9kcml2ZXJzL2lycWNoaXAvS2NvbmZpZyBpbmRleA0KPiA+Pj4gOTY0NTFiNTgxNDUyLi4z
-YTYwYThhZjYwZGQgMTAwNjQ0DQo+ID4+PiAtLS0gYS9kcml2ZXJzL2lycWNoaXAvS2NvbmZpZw0K
-PiA+Pj4gKysrIGIvZHJpdmVycy9pcnFjaGlwL0tjb25maWcNCj4gPj4+IEBAIC0yMDQsNiArMjA0
-LDE2IEBAIGNvbmZpZyBSRU5FU0FTX0lSUUMNCj4gPj4+ICAJc2VsZWN0IEdFTkVSSUNfSVJRX0NI
-SVANCj4gPj4+ICAJc2VsZWN0IElSUV9ET01BSU4NCj4gPj4+DQo+ID4+PiArY29uZmlnIFJFTkVT
-QVNfUlpOMV9JUlFfTVVYDQo+ID4+PiArCWJvb2wgIlJlbmVzYXMgUlovTjEgR1BJTyBJUlEgbXVs
-dGlwbGV4ZXIgc3VwcG9ydCINCj4gPj4+ICsJZGVwZW5kcyBvbiBBUkNIX1JaTjENCj4gPj4+ICsJ
-c2VsZWN0IElSUV9ET01BSU4NCj4gPj4+ICsJc2VsZWN0IElSUV9ET01BSU5fSElFUkFSQ0hZDQo+
-ID4+PiArCWhlbHANCj4gPj4+ICsJICBTYXkgeWVzIGhlcmUgdG8gYWRkIHN1cHBvcnQgZm9yIHRo
-ZSBHUElPIElSUSBtdWx0aXBsZXhlcg0KPiA+PiBlbWJlZGRlZA0KPiA+Pj4gKwkgIGluIFJlbmVz
-YXMgUlovTjEgU29DIGRldmljZXMuIFRoZSBHUElPIElSUSBNdXhlciBzZWxlY3RzIHdoaWNoIG9m
-DQo+ID4+PiArCSAgdGhlIGludGVycnVwdHMgY29taW5nIGZyb20gdGhlIEdQSU8gY29udHJvbGxl
-cnMgYXJlIHVzZWQuDQo+ID4+PiArDQo+ID4+PiAgY29uZmlnIFNUX0lSUUNISVANCj4gPj4+ICAJ
-Ym9vbA0KPiA+Pj4gIAlzZWxlY3QgUkVHTUFQDQo+ID4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9p
-cnFjaGlwL01ha2VmaWxlIGIvZHJpdmVycy9pcnFjaGlwL01ha2VmaWxlDQo+ID4+PiBpbmRleCBi
-ODIyMTk5NDQ1ZmYuLmIwOTBmODRkZDQyZSAxMDA2NDQNCj4gPj4+IC0tLSBhL2RyaXZlcnMvaXJx
-Y2hpcC9NYWtlZmlsZQ0KPiA+Pj4gKysrIGIvZHJpdmVycy9pcnFjaGlwL01ha2VmaWxlDQo+ID4+
-PiBAQCAtNDUsNiArNDUsNyBAQCBvYmotJChDT05GSUdfU0lSRl9JUlEpCQkJKz0NCj4gPj4gaXJx
-LXNpcmZzb2Mubw0KPiA+Pj4gIG9iai0kKENPTkZJR19KQ09SRV9BSUMpCQkJKz0gaXJxLWpjb3Jl
-LWFpYy5vDQo+ID4+PiAgb2JqLSQoQ09ORklHX1JFTkVTQVNfSU5UQ19JUlFQSU4pCSs9IGlycS1y
-ZW5lc2FzLWludGMtaXJxcGluLm8NCj4gPj4+ICBvYmotJChDT05GSUdfUkVORVNBU19JUlFDKQkJ
-Kz0gaXJxLXJlbmVzYXMtaXJxYy5vDQo+ID4+PiArb2JqLSQoQ09ORklHX1JFTkVTQVNfUlpOMV9J
-UlFfTVVYKQkrPSByem4xLWlycS1tdXgubw0KPiA+Pj4gIG9iai0kKENPTkZJR19WRVJTQVRJTEVf
-RlBHQV9JUlEpCSs9IGlycS12ZXJzYXRpbGUtZnBnYS5vDQo+ID4+PiAgb2JqLSQoQ09ORklHX0FS
-Q0hfTlNQSVJFKQkJKz0gaXJxLXpldmlvLm8NCj4gPj4+ICBvYmotJChDT05GSUdfQVJDSF9WVDg1
-MDApCQkrPSBpcnEtdnQ4NTAwLm8NCj4gPj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2lycWNoaXAv
-cnpuMS1pcnEtbXV4LmMNCj4gPj4+IGIvZHJpdmVycy9pcnFjaGlwL3J6bjEtaXJxLW11eC5jIG5l
-dyBmaWxlIG1vZGUgMTAwNjQ0IGluZGV4DQo+ID4+PiAwMDAwMDAwMDAwMDAuLjc2N2NlNjdlMzRk
-Mg0KPiA+Pj4gLS0tIC9kZXYvbnVsbA0KPiA+Pj4gKysrIGIvZHJpdmVycy9pcnFjaGlwL3J6bjEt
-aXJxLW11eC5jDQo+ID4+PiBAQCAtMCwwICsxLDIzNSBAQA0KPiA+Pj4gKy8vIFNQRFgtTGljZW5z
-ZS1JZGVudGlmaWVyOiBHUEwtMi4wDQo+ID4+PiArLyoNCj4gPj4+ICsgKiBSWi9OMSBHUElPIElu
-dGVycnVwdCBNdWx0aXBsZXhlcg0KPiA+Pj4gKyAqDQo+ID4+PiArICogQ29weXJpZ2h0IChDKSAy
-MDE4IFJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIExpbWl0ZWQNCj4gPj4+ICsgKg0KPiA+Pj4g
-KyAqIE9uIFJaL04xIGRldmljZXMsIHRoZXJlIGFyZSAzIFN5bm9wc3lzIERlc2lnbldhcmUgR1BJ
-TyBibG9ja3MNCj4gPj4+ICtlYWNoIGNvbmZpZ3VyZWQNCj4gPj4+ICsgKiB0byBoYXZlIDMyIGlu
-dGVycnVwdCBvdXRwdXRzLCBzbyB3ZSBoYXZlIGEgdG90YWwgb2YgOTYgR1BJTw0KPiBpbnRlcnJ1
-cHRzLg0KPiA+Pj4gKyAqIEFsbCBvZiB0aGVzZSBhcmUgcGFzc2VkIHRvIHRoZSBHUElPIElSUSBN
-dXhlciwgd2hpY2ggc2VsZWN0cyA4DQo+ID4+PiArb2YgdGhlIEdQSU8NCj4gPj4+ICsgKiBpbnRl
-cnJ1cHRzIHRvIHBhc3Mgb250byB0aGUgR0lDLg0KPiA+Pj4gKyAqLw0KPiA+Pj4gKw0KPiA+Pj4g
-KyNpbmNsdWRlIDxsaW51eC9iaXRvcHMuaD4NCj4gPj4+ICsjaW5jbHVkZSA8bGludXgvaW50ZXJy
-dXB0Lmg+DQo+ID4+PiArI2luY2x1ZGUgPGxpbnV4L2lycS5oPg0KPiA+Pj4gKyNpbmNsdWRlIDxs
-aW51eC9pcnFjaGlwL2NoYWluZWRfaXJxLmg+ICNpbmNsdWRlIDxsaW51eC9pcnFkb21haW4uaD4N
-Cj4gPj4+ICsjaW5jbHVkZSA8bGludXgva2VybmVsLmg+ICNpbmNsdWRlIDxsaW51eC9tb2R1bGUu
-aD4gI2luY2x1ZGUNCj4gPj4+ICs8bGludXgvb2ZfaXJxLmg+ICNpbmNsdWRlIDxsaW51eC9vZl9w
-bGF0Zm9ybS5oPg0KPiA+Pj4gKw0KPiA+Pj4gKyNkZWZpbmUgR1BJT19JUlFfU1BFQ19TSVpFCTMN
-Cj4gPj4+ICsjZGVmaW5lIE1BWF9OUl9HUElPX0NPTlRST0xMRVJTCTMNCj4gPj4+ICsjZGVmaW5l
-IE1BWF9OUl9HUElPX0lSUQkJMzINCj4gPj4+ICsjZGVmaW5lIE1BWF9OUl9JTlBVVF9JUlFTCShN
-QVhfTlJfR1BJT19DT05UUk9MTEVSUyAqDQo+ID4+IE1BWF9OUl9HUElPX0lSUSkNCj4gPj4+ICsj
-ZGVmaW5lIE1BWF9OUl9PVVRQVVRfSVJRUwk4DQo+ID4+PiArDQo+ID4+PiArc3RydWN0IGlycW11
-eF9wcml2Ow0KPiA+Pj4gK3N0cnVjdCBpcnFtdXhfb25lIHsNCj4gPj4+ICsJdW5zaWduZWQgaW50
-IG1hcHBlZF9pcnE7DQo+ID4+PiArCXVuc2lnbmVkIGludCBpbnB1dF9pcnFfbnI7DQo+ID4+PiAr
-CXN0cnVjdCBpcnFtdXhfcHJpdiAqcHJpdjsNCj4gPj4+ICt9Ow0KPiA+Pj4gKw0KPiA+Pj4gK3N0
-cnVjdCBpcnFtdXhfcHJpdiB7DQo+ID4+PiArCXN0cnVjdCBkZXZpY2UgKmRldjsNCj4gPj4+ICsJ
-c3RydWN0IGlycV9jaGlwIGlycV9jaGlwOw0KPiA+Pg0KPiA+PiBEbyB3ZSByZWFsbHkgbmVlZCB0
-aGlzIHRvIGJlIHBlci1kZXZpY2U/IFNlZSBiZWxvdy4NCj4gPiBJIHRob3VnaHQgd2UgZ2VuZXJh
-bGx5IHdhbnRlZCBldmVyeXRoaW5nIHRvIGJlIHBlci1kZXZpY2Ugc28gdGhhdCB3ZQ0KPiA+IGNh
-biBjb3BlIHdoZW4gc29tZW9uZSBzdGlja3MgdHdvIG9mIHRoZXNlIGluIGEgZGV2aWNlLiBBbSBJ
-IHdyb25nPw0KPiANCj4gVGhpcyBvbmx5IGNvbnRhaW5zIGZ1bmN0aW9uIHBvaW50ZXJzIHRoYXQg
-YXJlIHNwZWNpZmljIHRvIGEgcGFydGljdWxhciB0eXBlIG9mDQo+IGludGVycnVwdCBjb250cm9s
-bGVyLiBOb3RoaW5nIGluIHN0cnVjdCBpcnFfY2hpcCBpcyBpbnN0YW5jZS1zcGVjaWZpYy4NCkFo
-LCBJIHNlZSENCg0KPHNuaXA+DQo+ID4+IE9LLCB0aGF0J3Mgd2hlcmUgSSB0aGluayB3ZSBoYXZl
-IGEgcHJvYmxlbS4gWW91ciBpcnFjaGlwIHN0cnVjdHVyZQ0KPiA+PiBzZWVtIHRvIG9ubHkgYmUg
-dXNlZCB0byBkaXNwbGF5IGEgbmFtZT8hPw0KPiA+IFJpZ2h0LCB0aGF0IHdhc24ndCB0aGUgaW50
-ZW50aW9uISBTbywgaG93IGRvIEkgaG9vayBpbiBteSBvd24NCj4gPiBpbnRlcnJ1cHQgaGFuZGxl
-ciB3aXRob3V0IGNhbGxpbmcgaXJxX3NldF9jaGlwX2FuZF9oYW5kbGVyKCk/DQo+ID4gVGhhdCdz
-IHdoYXQgbGVkIG1lIHRvIHRoaW5rIEkgbmVlZCBhbiBpcnFfY2hpcCBpbnN0YW5jZS4NCj4gDQo+
-IFRoYXQncyB0aGUgdGhpbmcsIHlvdSBkb24ndCBuZWVkIGl0LiBlYWNoIGlycV9jaGlwIGlzIGp1
-c3QgYSBidW5jaCBvZiBtZXRob2RzLA0KPiBhbmQgdGhlc2UgbWV0aG9kcyBhcHBseSB0byBhbGwg
-dGhlIGluc3RhbmNlcyBvZiB0aGUgc2FtZSBjb250cm9sbGVyLg0KPiANCj4gPj4gVG8gc3RhcnQg
-d2l0aCwgdGhhdCdzIG5vdCByZWFsbHkgdGhlIHByaW1hcnkgdXNlIGZvciB0aGlzIG9iamVjdCwg
-YW5kDQo+ID4+IEknZCBsaWtlIGl0IHRvIGJlIGEgc2luZ2xlIHN0YXRpYyBzdHJ1Y3R1cmUgZm9y
-IHRoZSB3aG9sZSBkcml2ZXIuDQo+ID4+IFVzZXJzcGFjZSBkb2Vzbid0IG5lZWQgdG8ga25vdyBh
-Ym91dCB0aGUgbmFtZSwgc28gcGxlYXNlIGdldCByaWQgb2YNCj4gdGhpcy4NCj4gPj4NCj4gPj4g
-VGhlIHJlYWwgaXNzdWUgaXMgdGhhdCB5b3UgYnVpbGQgdGhlIHdob2xlIHRoaW5nIGFzIGEgY2hh
-aW5lZA0KPiA+PiBpbnRlcnJ1cHQgY29udHJvbGxlciwgbWVhbmluZyB0aGF0IG5vdGhpbmcgY29u
-dHJvbHMgdGhlIG1hc2tpbmcgb2YNCj4gPj4gdGhlIGludGVycnVwdC4gSWYsIGFzIEkgdW5kZXJz
-dGFuZCBpdCwgdGhpcyBJUCBpcyBhbiBpbnRlcnJ1cHQgcm91dGVyDQo+ID4+IHRoYXQgc2VsZWN0
-cyA4IG91dCBvZiAzMiBpbnRlcnJ1cHRzIGFuZCBwYXNzZXMgdGhlbSBvbnRvIHRoZSBHSUMsDQo+
-ID4+IHRoZW4gYSBub2lzeSBkZXZpY2UgY2FuIGp1c3QgdGFrZSB0aGUgd2hvbGUgQ1BVIGRvd24g
-Ynkga2VlcGluZyB0aGUgbGluZQ0KPiBhc3NlcnRlZCwgYW5kIFNXIGNhbm5vdCBtYXNrIGl0Lg0K
-PiA+IFRoZSBpbnRlcnJ1cHRzIGludG8gdGhpcyBtdXggY29tZSBmcm9tIEdQSU8gYmxvY2tzIHRo
-YXQgZG8gdGhlDQo+ID4gbWFza2luZy4gVGhlIEdQSU8gYmxvY2tzIGluIHRoaXMgY2FzZSBhcmUg
-c3RhbmRhcmQgU3lub3BzeXMgSVAgYmxvY2tzLg0KPiA+IFRoZXJlIGlzIG5vdGhpbmcgaW4gdGhl
-IGlycSBtdXggaGFyZHdhcmUgdGhhdCBjYW4gbWFzayB0aGVtLCBvciBkbw0KPiA+IGFueXRoaW5n
-IG90aGVyIHRoYW4gc2VsZWN0IHdoaWNoIG9uZSB0byB1c2UsIGhlbmNlIHdoeSB0aGlzIGlzIGEN
-Cj4gPiBjaGFpbmVkIGludGVycnVwdCBjb250cm9sbGVyLiBTaG91bGQgSSBiZSB1c2luZyBzb21l
-dGhpbmcgZWxzZSBpbiB0aGlzIGNhc2U/DQo+IA0KPiBUaGVyZSBhcmUgdHdvIGNhc2VzOg0KPiAx
-KSB0aGVyZSBpcyAxOjEgbWFwcGluZyBiZXR3ZWVuIGEgdXNlZCBpbnB1dCBhbmQgYW4gb3V0cHV0
-LCBsZWF2aW5nIHNvbWUNCj4gaW5wdXQgdW51c2VkDQo+IDIpIHRoZXJlIGlzIGFuIG46MSBtYXBw
-aW5nIGJldHdlZW4gaW5wdXQgYW5kIG91dHB1dCwgYW5kIGFsbCB0aGUgaW5wdXQgY2FuIGJlDQo+
-IHVzZWQgYXQgYW55IGdpdmVuIHRpbWUNCj4gDQo+IElmIHdoYXQgeW91IGhhdmUgaXMgKDEpLCB5
-b3UgbmVlZCB0byBpbXBsZW1lbnQgYW4gaGllcmFyY2h5Lg0KPiBJZiB3aGF0IHlvdSBoYXZlIGlz
-ICgyKSwgeW91IG5lZWQgdG8gaW1wbGVtZW50IGEgY2hhaW5lZCBjb250cm9sbGVyLg0KPiANCj4g
-KDEpIHJlcXVpcmVzIHlvdSB0byByZXZpc2l0IHRoaXMgZHJpdmVyLCBtYWtpbmcgaXQgYSBsb3Qg
-bW9yZSBsaWtlIHRpJ3MgaXJxLWNyb3NzYmFyDQo+ICgyKSByZXF1aXJlcyB5b3UgdG8gYWN0dWFs
-bHkgZG8gc29tZSBkZWNvZGluZyBpbiB0aGUgY2hhaW5lZCBoYW5kbGVyDQo+IA0KPiBJIGJlbGll
-dmUgeW91J3JlIGluIGNvbmZpZ3VyYXRpb24gKDEpLiBBbSBJIHJpZ2h0Pw0KUmlnaHQsIGl0J3Mg
-YSAxOjEgbWFwcGluZy4gVGhlIGluZm9ybWF0aW9uIGFib3V0IHdoaWNoIGlucHV0IHRvIGJlIHVz
-ZWQgbmVlZHMNCnRvIGJlIHNwZWNpZmllZCBpbiBkdC4NCkkgZGlkbuKAmXQgdGhpbmsgSSBjb3Vs
-ZCBpbXBsZW1lbnQgYSBoaWVyYXJjaHkgdGhhdCBkaWRu4oCZdCBtYXNrIHRoZSBpbnRlcnJ1cHRz
-LCBzbyBJDQpuZWVkIHRvIGdvIGJhY2sgb3ZlciB0aGF0IGFuZCBsb29rIGFnYWluLi4uDQoNCk1h
-bnkgdGhhbmtzIQ0KUGhpbA0KDQo+IFRoYW5rcywNCj4gDQo+IAlNLg0KPiAtLQ0KPiBKYXp6IGlz
-IG5vdCBkZWFkLiBJdCBqdXN0IHNtZWxscyBmdW5ueS4uLg0K
+Hi Phil,
+
+On 31/10/18 15:09, Phil Edworthy wrote:
+> Hi Marc,
+> 
+> Many thanks for a quick response!
+> 
+> On 31 October 2018 08:02, Marc Zyngier wote:
+>> On Tue, 30 Oct 2018 10:44:38 +0000, Phil Edworthy wrote:
+>>>
+>>> On RZ/N1 devices, there are 3 Synopsys DesignWare GPIO blocks each
+>>> configured to have 32 interrupt outputs, so we have a total of 96 GPIO
+>>> interrupts. All of these are passed to the GPIO IRQ Muxer, which
+>>> selects
+>>> 8 of the GPIO interrupts to pass onto the GIC. The interrupt signals
+>>> aren't latched, so there is nothing to do in this driver when an
+>>> interrupt is received, other than tell the corresponding GPIO block.
+>>>
+>>> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+>>> ---
+>>> v2:
+>>>  - Use interrupt-map to allow the GPIO controller info to be specified
+>>>    as part of the irq.
+>>>  - Renamed struct and funcs from 'girq' to a more comprehenisble 'irqmux'.
+>>> ---
+>>>  drivers/irqchip/Kconfig        |  10 ++
+>>>  drivers/irqchip/Makefile       |   1 +
+>>>  drivers/irqchip/rzn1-irq-mux.c | 235
+>>> +++++++++++++++++++++++++++++++++
+>>>  3 files changed, 246 insertions(+)
+>>>  create mode 100644 drivers/irqchip/rzn1-irq-mux.c
+>>>
+>>> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig index
+>>> 96451b581452..3a60a8af60dd 100644
+>>> --- a/drivers/irqchip/Kconfig
+>>> +++ b/drivers/irqchip/Kconfig
+>>> @@ -204,6 +204,16 @@ config RENESAS_IRQC
+>>>  	select GENERIC_IRQ_CHIP
+>>>  	select IRQ_DOMAIN
+>>>
+>>> +config RENESAS_RZN1_IRQ_MUX
+>>> +	bool "Renesas RZ/N1 GPIO IRQ multiplexer support"
+>>> +	depends on ARCH_RZN1
+>>> +	select IRQ_DOMAIN
+>>> +	select IRQ_DOMAIN_HIERARCHY
+>>> +	help
+>>> +	  Say yes here to add support for the GPIO IRQ multiplexer
+>> embedded
+>>> +	  in Renesas RZ/N1 SoC devices. The GPIO IRQ Muxer selects which of
+>>> +	  the interrupts coming from the GPIO controllers are used.
+>>> +
+>>>  config ST_IRQCHIP
+>>>  	bool
+>>>  	select REGMAP
+>>> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile index
+>>> b822199445ff..b090f84dd42e 100644
+>>> --- a/drivers/irqchip/Makefile
+>>> +++ b/drivers/irqchip/Makefile
+>>> @@ -45,6 +45,7 @@ obj-$(CONFIG_SIRF_IRQ)			+=
+>> irq-sirfsoc.o
+>>>  obj-$(CONFIG_JCORE_AIC)			+= irq-jcore-aic.o
+>>>  obj-$(CONFIG_RENESAS_INTC_IRQPIN)	+= irq-renesas-intc-irqpin.o
+>>>  obj-$(CONFIG_RENESAS_IRQC)		+= irq-renesas-irqc.o
+>>> +obj-$(CONFIG_RENESAS_RZN1_IRQ_MUX)	+= rzn1-irq-mux.o
+>>>  obj-$(CONFIG_VERSATILE_FPGA_IRQ)	+= irq-versatile-fpga.o
+>>>  obj-$(CONFIG_ARCH_NSPIRE)		+= irq-zevio.o
+>>>  obj-$(CONFIG_ARCH_VT8500)		+= irq-vt8500.o
+>>> diff --git a/drivers/irqchip/rzn1-irq-mux.c
+>>> b/drivers/irqchip/rzn1-irq-mux.c new file mode 100644 index
+>>> 000000000000..767ce67e34d2
+>>> --- /dev/null
+>>> +++ b/drivers/irqchip/rzn1-irq-mux.c
+>>> @@ -0,0 +1,235 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + * RZ/N1 GPIO Interrupt Multiplexer
+>>> + *
+>>> + * Copyright (C) 2018 Renesas Electronics Europe Limited
+>>> + *
+>>> + * On RZ/N1 devices, there are 3 Synopsys DesignWare GPIO blocks each
+>>> +configured
+>>> + * to have 32 interrupt outputs, so we have a total of 96 GPIO interrupts.
+>>> + * All of these are passed to the GPIO IRQ Muxer, which selects 8 of
+>>> +the GPIO
+>>> + * interrupts to pass onto the GIC.
+>>> + */
+>>> +
+>>> +#include <linux/bitops.h>
+>>> +#include <linux/interrupt.h>
+>>> +#include <linux/irq.h>
+>>> +#include <linux/irqchip/chained_irq.h> #include <linux/irqdomain.h>
+>>> +#include <linux/kernel.h> #include <linux/module.h> #include
+>>> +<linux/of_irq.h> #include <linux/of_platform.h>
+>>> +
+>>> +#define GPIO_IRQ_SPEC_SIZE	3
+>>> +#define MAX_NR_GPIO_CONTROLLERS	3
+>>> +#define MAX_NR_GPIO_IRQ		32
+>>> +#define MAX_NR_INPUT_IRQS	(MAX_NR_GPIO_CONTROLLERS *
+>> MAX_NR_GPIO_IRQ)
+>>> +#define MAX_NR_OUTPUT_IRQS	8
+>>> +
+>>> +struct irqmux_priv;
+>>> +struct irqmux_one {
+>>> +	unsigned int mapped_irq;
+>>> +	unsigned int input_irq_nr;
+>>> +	struct irqmux_priv *priv;
+>>> +};
+>>> +
+>>> +struct irqmux_priv {
+>>> +	struct device *dev;
+>>> +	struct irq_chip irq_chip;
+>>
+>> Do we really need this to be per-device? See below.
+> I thought we generally wanted everything to be per-device so that we can
+> cope when someone sticks two of these in a device. Am I wrong?
+
+This only contains function pointers that are specific to a particular
+type of interrupt controller. Nothing in struct irq_chip is
+instance-specific.
+
+> 
+>>
+>>> +	struct irq_domain *irq_domain;
+>>> +	unsigned int nr_irqs;
+>>> +	struct irqmux_one irq[MAX_NR_OUTPUT_IRQS]; };
+>>> +
+>>> +static void irqmux_handler(struct irq_desc *desc) {
+>>> +	struct irq_chip *chip = irq_desc_get_chip(desc);
+>>> +	struct irqmux_one *girq = irq_desc_get_handler_data(desc);
+>>> +	struct irqmux_priv *priv = girq->priv;
+>>> +	unsigned int irq;
+>>> +
+>>> +	chained_irq_enter(chip, desc);
+>>> +
+>>> +	irq = irq_find_mapping(priv->irq_domain, girq->input_irq_nr);
+>>> +	generic_handle_irq(irq);
+>>
+>> No error handling? See below again, as I think this outline a fundamental flaw
+>> in the driver.
+>>
+>>> +
+>>> +	chained_irq_exit(chip, desc);
+>>> +}
+>>> +
+>>> +static int irqmux_domain_map(struct irq_domain *h, unsigned int irq,
+>>> +			     irq_hw_number_t hwirq)
+>>> +{
+>>> +	struct irqmux_priv *priv = h->host_data;
+>>> +
+>>> +	irq_set_chip_data(irq, h->host_data);
+>>> +	irq_set_chip_and_handler(irq, &priv->irq_chip, handle_simple_irq);
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static const struct irq_domain_ops irqmux_domain_ops = {
+>>> +	.map	= irqmux_domain_map,
+>>> +};
+>>> +
+>>> +static int irqmux_probe(struct platform_device *pdev) {
+>>> +	struct device *dev = &pdev->dev;
+>>> +	struct device_node *np = dev->of_node;
+>>> +	struct resource *res;
+>>> +	u32 __iomem *regs;
+>>> +	struct irqmux_priv *priv;
+>>> +	u32 int_specs[MAX_NR_OUTPUT_IRQS][GPIO_IRQ_SPEC_SIZE];
+>>> +	DECLARE_BITMAP(irqs_in_used, MAX_NR_INPUT_IRQS);
+>>> +	unsigned int irqs_out_used = 0;
+>>> +	unsigned int i;
+>>> +	int nr_irqs;
+>>> +	int ret;
+>>> +
+>>> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+>>> +	if (!priv)
+>>> +		return -ENOMEM;
+>>> +
+>>> +	priv->dev = dev;
+>>> +	platform_set_drvdata(pdev, priv);
+>>> +
+>>> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>>> +	regs = devm_ioremap_resource(dev, res);
+>>> +	if (IS_ERR(regs))
+>>> +		return PTR_ERR(regs);
+>>> +
+>>> +	nr_irqs = of_irq_count(np);
+>>> +	if (nr_irqs < 0)
+>>> +		return nr_irqs;
+>>> +
+>>> +	if (nr_irqs > MAX_NR_OUTPUT_IRQS) {
+>>> +		dev_err(dev, "too many output interrupts\n");
+>>> +		return -ENOENT;
+>>> +	}
+>>> +
+>>> +	priv->nr_irqs = nr_irqs;
+>>> +
+>>> +	/* Get the interrupt specifers */
+>>> +	if (of_property_read_u32_array(dev->of_node, "interrupts",
+>>> +				       (u32 *)int_specs,
+>>> +				       priv->nr_irqs * GPIO_IRQ_SPEC_SIZE)) {
+>>> +		dev_err(dev, "cannot get interrupt specifiers\n");
+>>> +		return -ENOENT;
+>>> +	}
+>>> +
+>>> +	bitmap_zero(irqs_in_used, MAX_NR_INPUT_IRQS);
+>>> +
+>>> +	/* Check the interrupt specifiers */
+>>> +	for (i = 0; i < priv->nr_irqs; i++) {
+>>> +		u32 *int_spec = int_specs[i];
+>>> +		u32 input_irq = int_spec[1] * MAX_NR_GPIO_IRQ +
+>> int_spec[2];
+>>> +
+>>> +		dev_info(dev, "irq %u=gpio%ua:%u\n", int_spec[0],
+>> int_spec[1],
+>>> +			 int_spec[2]);
+>>> +
+>>> +		if (int_spec[0] >= MAX_NR_OUTPUT_IRQS ||
+>>> +		    int_spec[1] >= MAX_NR_GPIO_CONTROLLERS ||
+>>> +		    int_spec[2] >= MAX_NR_GPIO_IRQ) {
+>>> +			dev_err(dev, "invalid interrupt args\n");
+>>> +			return -ENOENT;
+>>> +		}
+>>> +
+>>> +		if (irqs_out_used & BIT(int_spec[0]) ||
+>>> +		    test_bit(input_irq, irqs_in_used)) {
+>>> +			dev_err(dev, "irq %d already used\n", i);
+>>> +			return -ENOENT;
+>>> +		}
+>>
+>> I don't think the driver should be in the business of DT validation, and that
+>> you should simply drop this code.
+> When I implement Rob H's feedback on the binding, this should no longer be
+> needed.
+> 
+>>
+>>> +
+>>> +		irqs_out_used |= BIT(int_spec[0]);
+>>> +		set_bit(input_irq, irqs_in_used);
+>>> +	}
+>>> +
+>>> +	/* Create IRQ domain for the interrupts coming from the GPIO blocks
+>> */
+>>> +	priv->irq_chip.name = dev_name(dev);
+>>
+>> OK, that's where I think we have a problem. Your irqchip structure seem to
+>> only be used to display a name?!?
+> Right, that wasn't the intention! So, how do I hook in my own interrupt handler
+> without calling irq_set_chip_and_handler()?
+> That's what led me to think I need an irq_chip instance.
+
+That's the thing, you don't need it. each irq_chip is just a bunch of
+methods, and these methods apply to all the instances of the same
+controller.
+
+>> To start with, that's not really the primary use for this object, and I'd like it to
+>> be a single static structure for the whole driver. Userspace doesn't need to
+>> know about the name, so please get rid of this.
+>>
+>> The real issue is that you build the whole thing as a chained interrupt
+>> controller, meaning that nothing controls the masking of the interrupt. If, as I
+>> understand it, this IP is an interrupt router that selects 8 out of 32 interrupts
+>> and passes them onto the GIC, then a noisy device can just take the whole
+>> CPU down by keeping the line asserted, and SW cannot mask it.
+> The interrupts into this mux come from GPIO blocks that do the masking. The
+> GPIO blocks in this case are standard Synopsys IP blocks.
+> There is nothing in the irq mux hardware that can mask them, or do anything
+> other than select which one to use, hence why this is a chained interrupt
+> controller. Should I be using something else in this case?
+
+There are two cases:
+1) there is 1:1 mapping between a used input and an output, leaving some
+input unused
+2) there is an n:1 mapping between input and output, and all the input
+can be used at any given time
+
+If what you have is (1), you need to implement an hierarchy.
+If what you have is (2), you need to implement a chained controller.
+
+(1) requires you to revisit this driver, making it a lot more like ti's
+irq-crossbar
+(2) requires you to actually do some decoding in the chained handler
+
+I believe you're in configuration (1). Am I right?
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
