@@ -1,69 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45962 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728644AbeJVEQZ (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:62581 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725955AbeKAIBS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:16:25 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
+        Thu, 1 Nov 2018 04:01:18 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-pm@vger.kernel.org
-Subject: [PATCH 3/5] thermal: spear_thermal: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:50 +0200
-Message-Id: <20181021200053.2194-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200053.2194-1-wsa+renesas@sang-engineering.com>
-References: <20181021200053.2194-1-wsa+renesas@sang-engineering.com>
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
+        Takeshi Saito <takeshi.saito.xv@renesas.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH] mmc: tmio: delete wait in tuning process
+Date: Thu,  1 Nov 2018 00:00:43 +0100
+Message-Id: <20181031230043.1302-1-niklas.soderlund@ragnatech.se>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
+From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+The manual does not contain information that a wait is needed in the
+tuning process, this might be a leftover from early development.
+Removing the wait don't have any effect on operation so delete the wait
+to shorten the initialization time.
+
+Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+Signed-off-by: Takeshi Saito <takeshi.saito.xv@renesas.com>
+[Niklas: fixup commit message]
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
+ drivers/mmc/host/tmio_mmc_core.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Build tested only. buildbot is happy.
-
- drivers/thermal/spear_thermal.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/thermal/spear_thermal.c b/drivers/thermal/spear_thermal.c
-index 81b35aace9de..8b9d567134d0 100644
---- a/drivers/thermal/spear_thermal.c
-+++ b/drivers/thermal/spear_thermal.c
-@@ -56,8 +56,7 @@ static struct thermal_zone_device_ops ops = {
- 
- static int __maybe_unused spear_thermal_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct thermal_zone_device *spear_thermal = platform_get_drvdata(pdev);
-+	struct thermal_zone_device *spear_thermal = dev_get_drvdata(dev);
- 	struct spear_thermal_dev *stdev = spear_thermal->devdata;
- 	unsigned int actual_mask = 0;
- 
-@@ -73,15 +72,14 @@ static int __maybe_unused spear_thermal_suspend(struct device *dev)
- 
- static int __maybe_unused spear_thermal_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct thermal_zone_device *spear_thermal = platform_get_drvdata(pdev);
-+	struct thermal_zone_device *spear_thermal = dev_get_drvdata(dev);
- 	struct spear_thermal_dev *stdev = spear_thermal->devdata;
- 	unsigned int actual_mask = 0;
- 	int ret = 0;
- 
- 	ret = clk_enable(stdev->clk);
- 	if (ret) {
--		dev_err(&pdev->dev, "Can't enable clock\n");
-+		dev_err(dev, "Can't enable clock\n");
- 		return ret;
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 8d64f6196f33e882..a8f917f744fb9f63 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -734,8 +734,6 @@ static int tmio_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
+ 		ret = mmc_send_tuning(mmc, opcode, NULL);
+ 		if (ret == 0)
+ 			set_bit(i, host->taps);
+-
+-		usleep_range(1000, 1200);
  	}
  
+ 	ret = host->select_tuning(host);
 -- 
-2.19.0
+2.19.1
