@@ -1,90 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:40839 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727315AbeJBPNO (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:6273 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727546AbeKAI1N (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 Oct 2018 11:13:14 -0400
-Received: by mail-vk1-f195.google.com with SMTP id q184-v6so230955vke.7
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 02 Oct 2018 01:31:08 -0700 (PDT)
+        Thu, 1 Nov 2018 04:27:13 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 0/2] renesas: rcar-gen3: add HS400 quirk for SD clock
+Date: Thu,  1 Nov 2018 00:25:16 +0100
+Message-Id: <20181031232518.2490-1-niklas.soderlund@ragnatech.se>
 MIME-Version: 1.0
-References: <cover.1538127537.git.horms+renesas@verge.net.au> <CAK8P3a0NreOTfL6L+w2WHnC5uf3jELf6ud_wdBZ7iAU3yuf4VA@mail.gmail.com>
-In-Reply-To: <CAK8P3a0NreOTfL6L+w2WHnC5uf3jELf6ud_wdBZ7iAU3yuf4VA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 2 Oct 2018 10:30:56 +0200
-Message-ID: <CAMuHMdWF2XwWbb0-f_RuSYnFfQzLKNW7Foq9XM7cha3QVU+kHg@mail.gmail.com>
-Subject: Re: [GIT PULL] Renesas ARM64 Based SoC SoC Updates for v4.20
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Simon Horman <horms+renesas@verge.net.au>, arm@kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Arnd,
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-On Fri, Sep 28, 2018 at 10:10 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> On Fri, Sep 28, 2018 at 12:21 PM Simon Horman
-> <horms+renesas@verge.net.au> wrote:
-> > * Add support for RZ/G2E (r8a774c0) and RZ/G2M (r8a774a1) SoCs
-> > * Enable Compare Match Timer (CMT) and Timer Unit (TMU)
-> >   for Renesas SoCs
-> > * Remove no longer needed ARCH_SHMOBILE Kconfig symbol
->
-> The ARCH_SHMOBILE removal and cleanup is fine, but I wonder about
-> the newly added symbols for specific SoCs. I see you already have a
-> couple of those, but the other manufacturers don't.
->
-> I think what happened here is that I tried to reject those additions
-> normally, but I never noticed yours. From what I see in drivers,
-> you have additional symbols depending on these in clk, pinctrl,
-> drivers/soc, and the dtb files, so at the very least we can't
-> just drop the config options, but I'd still like to see this work
-> more like other platforms.
+Hi Geert,
 
-The main motivation for SoC-specific controls is to avoid including pinctrl
-and (to a lesser extent) clock tables for unused SoCs.  Each pinctrl driver
-consumes a few tens of KiB, each clock driver a few KiB.
-If we remove the SoC-specific ARCH_* controls, the user has to configure
-both pinctrl and clock driver selections, thus trading one user-visible
-symbol for two new user-visible symbols (except for RZ/A and RZ/N,
-where the pinctrl symbols are already visible, to allow reducing kernel
-size).
-Perhaps that is acceptable?
+This is the result of the SDHI hackathon for a possible solution to the 
+clock issue on early ES versions. It is based on the Gen2 solution where 
+a row of the possible clock settings are ignored on the effected SoC+ES 
+versions. The first row is not effected when reading settings left by 
+the bootloader, only when the setting the clock.
 
-For the smaller parts in drivers/soc/, removing SoC-specific dependencies
-may be viable for R-Car and RZ/G Socs, but not for e.g. RZ/A.  The latter
-may be used without external RAM, and can run with a few MiB of internal
-SRAM, and XIP (with a still out-of-tree patch).
-So at least a family-specific dependency is worth to keep.  For now, RZ/A
-is arm32 only, though.
+This is tested on H3 (ES1.0, ES2.0), M3-W (ES1.0) and M3-N together with 
+patches to enable HS400 with great results. No regressions found for 
+eMMC HS200/HS400 modes nor for SDR{25,50,104} on any of the SoCs.
 
-Note that on arm64, there are no family-specific Kconfig symbols yet.
-We just have ARCH_RENESAS, which is also set on arm32.
-So either we introduce e.g. ARCH_RCAR_GEN3 (cfr. ARCH_RCAR_GEN1 and
-ARCH_RCAR_GEN2 or arm32), or use "ARCH_RENESAS && ARM64" for e.g. RST_RCAR
-in drivers/soc/renesas/Kconfig, which currently depends on all R-Car Gen3
-(and RZ/G2) SoCs explicitly.
-Choosing the latter option means we may need to migrate to the former option
-later, once other families appear (e.g. RZ/A SoCs may start using
-Cortex-A53 instead of Cortex-A9 cores).
+Patch 1/2 adds documentation on which settings is used while 2/2 is the 
+real change where the quirk is implemented.
 
-For the DTB files, I believe we can just remove the dependencies, and
-always build all DTBs.
+Niklas Söderlund (2):
+  clk: renesas: rcar-gen3: add documentation for SD clocks
+  clk: renesas: rcar-gen3: add HS400 quirk for SD clock
 
-What do you think?
-Thanks!
+ drivers/clk/renesas/rcar-gen3-cpg.c | 38 ++++++++++++++++++++---------
+ 1 file changed, 27 insertions(+), 11 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+2.19.1
