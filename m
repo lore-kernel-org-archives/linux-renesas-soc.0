@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:38710 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:38388 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725792AbeKBEiz (ORCPT
+        id S1725722AbeKBEES (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Nov 2018 00:38:55 -0400
-Date: Thu, 1 Nov 2018 20:34:33 +0100
+        Fri, 2 Nov 2018 00:04:18 -0400
+Date: Thu, 1 Nov 2018 20:00:00 +0100
 From: Wolfram Sang <wsa@the-dreams.de>
 To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -14,18 +14,18 @@ Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Niklas =?utf-8?Q?S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 Subject: Re: [PATCH] mmc: renesas_sdhi: remove workaround for HS400 clock
-Message-ID: <20181101193432.GL2433@kunai>
+Message-ID: <20181101190000.GB2433@kunai>
 References: <20181031225944.1226-1-niklas.soderlund@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="iK/wEI4vkfDmI6Zw"
+        protocol="application/pgp-signature"; boundary="V0207lvV8h4k8FAm"
 Content-Disposition: inline
 In-Reply-To: <20181031225944.1226-1-niklas.soderlund@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---iK/wEI4vkfDmI6Zw
+--V0207lvV8h4k8FAm
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -42,27 +42,27 @@ On Wed, Oct 31, 2018 at 11:59:44PM +0100, Niklas S=C3=B6derlund wrote:
 > Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
 se>
 
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 
---iK/wEI4vkfDmI6Zw
+--V0207lvV8h4k8FAm
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvbVUgACgkQFA3kzBSg
-Kba1ng//QWRehHuNK5Tc+/lUNw9w/1Ayk8lRKWHawe4rfB5L/y+WA5kJZ1BujTQd
-Qjq3Pg623c63+jFV0edePfdokH6LQBZvRQwqefTKeFMBvGh0QaSkhQCW5JB7MdNw
-DEjYtFSpokreHcQQVIg2ymzONp7nTUkpVRGxhOMoGLv7MXJK8fd2qt/RTc5RyxMS
-e8UkHq0uTkmZCUbWyhKhsT9ouU36w2/4eUJY3Zr26K6nnUSgQ0hzPhtEja9CXJYv
-5fKv7zzCrlx91jGd17+gxHhtZehprJ60Jo7Bjvk5xvWufyYiuYuVKxoyfQd123P1
-cUzViUmGfkrKBmN9FIVOqx5W9Nn/ND5+C8SfQ3xi7xAuik2oc7wDptvZHeyUAPx1
-9wq/BVOPlctzpe7K7hWVo3/jVzrhwnx19euhFNr4RquMxkRdkcLhLSzNmJiW6qle
-CuBgCfCg+LEnsbSgRfhsPr7Ug3gMHgJToGRWUYSnh3a7KusTRqLQ/PXrerzaE/TT
-RfJXmis9RZMOIxUULFCcZuQbiqC33/mJoMcaY4prikerno78ZP0YdEpm5AZ5L1We
-i3+wkVF7X38Iyoayy0KKx1Q6Z5Bs5hfPAxQl4Njp7eorMjcwkZl230j/D3vIvKcy
-10Bqe3KMWYSe+x+eLzTLvkK4oeD7ljHYXgGxhRHi8OZ4PR2tFRM=
-=HyKN
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvbTTAACgkQFA3kzBSg
+KbZRHQ//UnxDbOU/v7QSWQ4PKfy1r/QnEDb5D50/4DabKW0PhCbi1jaqahXraY7Y
+c3I0V8r4DiYl9dW2uG3ARqunXRX/ZHW3lhEZc84M4XdOtHyrAjnZcpiGFAuFljjQ
+ldl7JjGsHE4iDNNsJV77oOglWwCzS6p4U2PGNY7Gb8Yhy341qn5hWiG5f7W/Wfba
++DUMEo/oBezCqnHV0NV3kTjjn3FxW0kSZKJDr29D65ZFUftdACOmEIjnOkaZBR39
+buvksmRfQhCYxnjbIUDMTzMzJWA7H7GiD+te3CkeLeyvREZaWtllhSYets7cFxBi
+f9lqNm9/AuMvh6OKA+tkLroL2Zh0cvBd9H4JnxiwGjrLrsdhwd9xHSkC/6IcvLga
++GbZxbeXoEQOtFwtXq48TT+8jn72v2ou8/6s1+VrpPC9rnPeGvmHdI4C0GyDM/xC
+lTR+d1OekoR3A35ZrC8AGILsskIylfXPrQ7uBqGhwYm9MmF6EEMy+rt8xMrdzbwR
+Nc/T5DY9ojVOL27T+UO9K3EwBq2LT/kgpUln1n8yvrkfqgcA5iZvl3R0DY3YJf8H
+Dz0IJeTG4HWTe0HSjuLXDDkcCA12ZR754yCjoQsXRfU8h267IjiUFyMWqkx+YYjm
+rh53WB4TNCVu5pabeTmu/3tu4bvNxdawdvdBUeuwfzwncjr1Pk4=
+=5jvA
 -----END PGP SIGNATURE-----
 
---iK/wEI4vkfDmI6Zw--
+--V0207lvV8h4k8FAm--
