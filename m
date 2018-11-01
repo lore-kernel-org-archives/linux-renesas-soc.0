@@ -1,116 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726943AbeKZXuF (ORCPT
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:57355 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728270AbeKBIiS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Nov 2018 18:50:05 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 40/40] arm64: dts: renesas: Add all CPUs in cooling maps
-Date: Mon, 26 Nov 2018 13:55:06 +0100
-Message-Id: <275e4eb3f21a09b6b8bd4a353b9a01e500240385.1543229516.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
-References: <cover.1543229515.git.horms+renesas@verge.net.au>
+        Fri, 2 Nov 2018 04:38:18 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 25/30] adv748x: csi2: only allow formats on sink pads
+Date: Fri,  2 Nov 2018 00:31:39 +0100
+Message-Id: <20181101233144.31507-26-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+Once the CSI-2 subdevice of the ADV748X becomes aware of multiplexed
+streams the format of the source pad is of no value as it carries
+multiple streams. Prepare for this by explicitly denying setting a
+format on anything but the sink pad.
 
-Each CPU can (and does) participate in cooling down the system but the
-DT only captures a handful of them, normally CPU0, in the cooling maps.
-Things work by chance currently as under normal circumstances its the
-first CPU of each cluster which is used by the operating systems to
-probe the cooling devices. But as soon as this CPU ordering changes and
-any other CPU is used to bring up the cooling device, we will start
-seeing failures.
-
-Also the DT is rather incomplete when we list only one CPU in the
-cooling maps, as the hardware doesn't have any such limitations.
-
-Update cooling maps to include all devices affected by individual trip
-points.
-
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 15 ++++++++++++---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi |  6 +++---
- 2 files changed, 15 insertions(+), 6 deletions(-)
+ drivers/media/i2c/adv748x/adv748x-csi2.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index e94a5f2dbd08..8643ecb1a3f3 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -3115,7 +3115,10 @@
- 			cooling-maps {
- 				map0 {
- 					trip = <&sensor1_passive>;
--					cooling-device = <&a57_0 4 4>;
-+					cooling-device = <&a57_0 4 4>,
-+							 <&a57_1 4 4>,
-+							 <&a57_2 4 4>,
-+							 <&a57_3 4 4>;
- 				};
- 			};
- 		};
-@@ -3141,7 +3144,10 @@
- 			cooling-maps {
- 				map0 {
- 					trip = <&sensor2_passive>;
--					cooling-device = <&a57_0 4 4>;
-+					cooling-device = <&a57_0 4 4>,
-+							 <&a57_1 4 4>,
-+							 <&a57_2 4 4>,
-+							 <&a57_3 4 4>;
- 				};
- 			};
- 		};
-@@ -3167,7 +3173,10 @@
- 			cooling-maps {
- 				map0 {
- 					trip = <&sensor3_passive>;
--					cooling-device = <&a57_0 4 4>;
-+					cooling-device = <&a57_0 4 4>,
-+							 <&a57_1 4 4>,
-+							 <&a57_2 4 4>,
-+							 <&a57_3 4 4>;
- 				};
- 			};
- 		};
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index e7614b781308..afedbf5728ec 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -2839,7 +2839,7 @@
- 			cooling-maps {
- 				map0 {
- 					trip = <&sensor1_passive>;
--					cooling-device = <&a57_0 5 5>;
-+					cooling-device = <&a57_0 5 5>, <&a57_1 5 5>;
- 				};
- 			};
- 		};
-@@ -2865,7 +2865,7 @@
- 			cooling-maps {
- 				map0 {
- 					trip = <&sensor2_passive>;
--					cooling-device = <&a57_0 5 5>;
-+					cooling-device = <&a57_0 5 5>, <&a57_1 5 5>;
- 				};
- 			};
- 		};
-@@ -2891,7 +2891,7 @@
- 			cooling-maps {
- 				map0 {
- 					trip = <&sensor3_passive>;
--					cooling-device = <&a57_0 5 5>;
-+					cooling-device = <&a57_0 5 5>, <&a57_1 5 5>;
- 				};
- 			};
- 		};
+diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
+index 8a7cc713c7adfcc1..9f2c49221a8ddebc 100644
+--- a/drivers/media/i2c/adv748x/adv748x-csi2.c
++++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
+@@ -163,6 +163,9 @@ static int adv748x_csi2_get_format(struct v4l2_subdev *sd,
+ 	struct adv748x_state *state = tx->state;
+ 	struct v4l2_mbus_framefmt *mbusformat;
+ 
++	if (sdformat->pad != ADV748X_CSI2_SINK)
++		return -EINVAL;
++
+ 	mbusformat = adv748x_csi2_get_pad_format(sd, cfg, sdformat->pad,
+ 						 sdformat->which);
+ 	if (!mbusformat)
+@@ -186,6 +189,9 @@ static int adv748x_csi2_set_format(struct v4l2_subdev *sd,
+ 	struct v4l2_mbus_framefmt *mbusformat;
+ 	int ret = 0;
+ 
++	if (sdformat->pad != ADV748X_CSI2_SINK)
++		return -EINVAL;
++
+ 	mbusformat = adv748x_csi2_get_pad_format(sd, cfg, sdformat->pad,
+ 						 sdformat->which);
+ 	if (!mbusformat)
 -- 
-2.11.0
+2.19.1
