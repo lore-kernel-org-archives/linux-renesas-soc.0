@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:38734 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:38500 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725792AbeKBEjn (ORCPT
+        id S1725722AbeKBEIl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Nov 2018 00:39:43 -0400
-Date: Thu, 1 Nov 2018 20:35:18 +0100
+        Fri, 2 Nov 2018 00:08:41 -0400
+Date: Thu, 1 Nov 2018 20:04:25 +0100
 From: Wolfram Sang <wsa@the-dreams.de>
 To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -14,45 +14,45 @@ Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Niklas =?utf-8?Q?S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 Subject: Re: [PATCH v3 0/3] mmc: tmio: fix reset operation
-Message-ID: <20181101193517.GN2433@kunai>
+Message-ID: <20181101190425.GG2433@kunai>
 References: <20181031230554.1660-1-niklas.soderlund@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="JVu9XMG6uEpKCPDY"
+        protocol="application/pgp-signature"; boundary="/i8j2F0k9BYX4qLc"
 Content-Disposition: inline
 In-Reply-To: <20181031230554.1660-1-niklas.soderlund@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---JVu9XMG6uEpKCPDY
+--/i8j2F0k9BYX4qLc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 
-All patches tested on M3N, H2, and E2.
+So, we agreed on this series during our Renesas SDHI hackathon.
+Comments / testing from Yamada-san would be very welcome because we
+really don't want to cause regressions on his hardware.
 
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-
---JVu9XMG6uEpKCPDY
+--/i8j2F0k9BYX4qLc
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvbVXUACgkQFA3kzBSg
-KbajhRAAnEl/AH/R5+PVvWLFNLg/MH9OmUGRms9gUqdUO56vlT73VIkjeyzG+/4K
-8PptuIcMg2cma46XdKQBmUpRWF7BEPzVBfBARIypTy3muo3UxyiWAtQhL7e2dlIp
-y88HDLvJk+pklrpoj+YD57WUIvodBQu1DGGW7WPtzp6kIadD/6nWWCeI4FzBr3ay
-u162MVVci7soxl3WhdJxdVG1oaNu273E0PFIyaVUf7eqoNIfhAPdT3kwHWS3kml8
-5IzrWqXcy+ldiIJN3yTNAwApkP+VhmimNd7oDnb3cbdHhCA2vA2D6wVb/5L1s3ZK
-6XBk1eHjoXKpPOf5GEu5NJCpfgtnc/UhR+OYUmpeAqMFZNwPtqPSA5qaeIHtVxvu
-rJjvZk/vxdcGJzpvShGoQtp8DxPXodHgYNFkv0tRSlfgkNsD92SCcaBAJRQlNyd/
-v7Fpa4MKEjMCcyB3ygmzHrTx5RUMilmL1PGHJqGYn+DUxwJ7RGrwqpgbfV80Nsus
-EsR6qK5bho/Opil/cWyvE7NsoX9hYf337AwpG7Ve0KdV+NUOJUD3oDKT5Qf4OvtZ
-M79msQ5ZWXbElOQ/V5xXB7e2R8rdl6vD87vweMHBhMqmT9NrkyzYw+khgJWHmC34
-wwie0uk+/+Lz4kgYjvoNrsZAllcL7aN02biphbVF+HNaCWFHemQ=
-=g6mw
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvbTjkACgkQFA3kzBSg
+KbY7MxAAsGrZ/Xcnlr8RI4eqwxNIs3qPq6T3nHKuhS0eUPVWHjLnJC/1bUrOPoFO
+IIJoNeW65mhQ16u0UpCOx5arrva+uqEIIqIGTiJKKOs9+JkPPmGpESgbL7gQk1C4
+lbaC1ucnVlwYVSBugUAA/TPYr5WuJzXK6U/ODFutZu6ChoIBjJb+zaPPCuN9ZHoF
+kRV1Fv/YreTjcTXr8qolMrELKDYh6AvRyVd9FNvYI7GNN37+WpHS6V8JeJnhQf0R
+/Dc7qAU6cEKwI0vVIosytXVzv5ZoUXFYC3w+By8fHX+bpwkEW8mIxyTPcs44FO3j
+geBObZUISYT4xYOOqclUc2fH7XY0gDpGu9puc9lbkVGsrILdXLDYb0yWxjR416Tv
+uEXbLt23F/fDG2xmVeO6LqyfAM6z5cGXQ/DyVCuzd/3+hSswDBSqfaM28H1tNqUu
+BbfUY53IRtRzU+YM9dd5XTTep7mpYyM+xM7wxi6uPckXe0HWKEMOBPBsSGjmpJGH
+EBPOewVArnir97QH9xwRJ7a6aXh43q+36HLzWCIPTDvOCH0d/IQfuLPf4PP9QW2L
+ZJI2l2kKdpycwD1qeL2IEUkWCQPL0EzjenZXsRrAF6sTZ9PE2PWBXsGBqnww7zsH
+BF9Qu/KYayL97liM2W9+WPJK6K0fW50xp3uXoyN9oGKXoPjuYbI=
+=FIJk
 -----END PGP SIGNATURE-----
 
---JVu9XMG6uEpKCPDY--
+--/i8j2F0k9BYX4qLc--
