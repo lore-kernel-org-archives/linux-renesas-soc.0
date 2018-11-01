@@ -1,48 +1,53 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] arm64: dts: renesas: r8a77965: Remove non-existent IPMMU-IR
-Date: Thu, 29 Nov 2018 11:34:34 +0100
-Message-Id: <20181129103435.9260-2-geert+renesas@glider.be>
-In-Reply-To: <20181129103435.9260-1-geert+renesas@glider.be>
-References: <20181129103435.9260-1-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:57503 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728258AbeKBIiG (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 2 Nov 2018 04:38:06 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 11/30] media: entity: Skip link validation for pads to which there is no route to
+Date: Fri,  2 Nov 2018 00:31:25 +0100
+Message-Id: <20181101233144.31507-12-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R-Car Gen3 HardWare Manual Errata for Rev. 1.00 (Aug 24, 2018)
-removed the IPMMU-IR IOMMU instance on R-Car M3-N, as this SoC does not
-have an Image Processing Unit (IMP-X5) nor the A3IR power domain.
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Fixes: 55697cbb44e4f7ea ("arm64: dts: renesas: r8a779{65,80,90}: Add IPMMU devices nodes")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This is a prerequisite for "dt-bindings: power: r8a77965: Remove
-non-existent A3IR power domain".
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 8 --------
- 1 file changed, 8 deletions(-)
+Links are validated along the pipeline which is about to start streaming.
+Not all the pads in entities that are traversed along that pipeline are
+part of the pipeline, however. Skip the link validation for such pads.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 3a958fb2524509a2..bca0fefec6b38989 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -795,14 +795,6 @@
- 			#iommu-cells = <1>;
- 		};
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/media-entity.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
+index 4d10bc186e1e7a10..cdf3805dec755ec5 100644
+--- a/drivers/media/media-entity.c
++++ b/drivers/media/media-entity.c
+@@ -493,6 +493,11 @@ __must_check int __media_pipeline_start(struct media_pad *pad,
+ 			struct media_pad *other_pad = link->sink->entity == entity
+ 				? link->sink : link->source;
  
--		ipmmu_ir: mmu@ff8b0000 {
--			compatible = "renesas,ipmmu-r8a77965";
--			reg = <0 0xff8b0000 0 0x1000>;
--			renesas,ipmmu-main = <&ipmmu_mm 3>;
--			power-domains = <&sysc R8A77965_PD_A3IR>;
--			#iommu-cells = <1>;
--		};
--
- 		ipmmu_mm: mmu@e67b0000 {
- 			compatible = "renesas,ipmmu-r8a77965";
- 			reg = <0 0xe67b0000 0 0x1000>;
++			/* Ignore pads to which there is no route. */
++			if (!media_entity_has_route(entity, pad->index,
++						    other_pad->index))
++				continue;
++
+ 			/* Mark that a pad is connected by a link. */
+ 			bitmap_clear(has_no_links, other_pad->index, 1);
+ 
 -- 
-2.17.1
+2.19.1
