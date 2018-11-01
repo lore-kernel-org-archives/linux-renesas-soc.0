@@ -1,14 +1,13 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51690 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726016AbeKBVBH (ORCPT
+Received: from sauhun.de ([88.99.104.3]:38756 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725792AbeKBElC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Nov 2018 17:01:07 -0400
-Date: Fri, 2 Nov 2018 12:54:06 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Fri, 2 Nov 2018 00:41:02 -0400
+Date: Thu, 1 Nov 2018 20:36:38 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
@@ -16,31 +15,45 @@ Cc: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
         <niklas.soderlund+renesas@ragnatech.se>
 Subject: Re: [PATCH v2 0/3] mmc: renesas_sdhi: extend quirk selection to
  handle ES revisions
-Message-ID: <20181102115406.2vasx3tfauq5dyg3@verge.net.au>
+Message-ID: <20181101193637.GO2433@kunai>
 References: <20181031231340.1958-1-niklas.soderlund@ragnatech.se>
- <20181101193415.GK2433@kunai>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="xn9xNsWbHJd/50IB"
 Content-Disposition: inline
-In-Reply-To: <20181101193415.GK2433@kunai>
+In-Reply-To: <20181031231340.1958-1-niklas.soderlund@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Nov 01, 2018 at 08:34:16PM +0100, Wolfram Sang wrote:
-> 
-> > Patch 1/3 adds support to select quirks based on SoC + ES revision using 
-> > soc_device_match() and converts the only existing quirk. Patch 2/3 
-> > Removes the old method to select quirk based on compatibility string.  
-> > While Patch 3/3 adds a new quirk from the BSP which blacklists some 
-> > known problematic ES versions for HS400. HS400 is not yet enabled 
-> > upstream so blacklisting these ES versions is not a regression of 
-> > functionality.
-> 
-> This will allow us even to get rid of the TMIO_MMC_HAVE_4TAP_HS400 flag
-> entirely because we now use it only within the Renesas part of SDHI. We
-> want to do this incrementally, though, because we first want to get the
-> HS400 feature enabled as the first step.
 
-Thanks, this looks good to me.
+--xn9xNsWbHJd/50IB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+
+All patches tested on M3N:
+
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--xn9xNsWbHJd/50IB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvbVcUACgkQFA3kzBSg
+KbYkPQ/9FbUmHHnobEfOI/kfMY7DcUn4MktRoNaD2Zq9C+iOZ/pZVYhIHIt4xeQz
+f4B/RieWmvsULBO7MYszcNmAlDQZ0d/Srb8SUZ2Ct3DLA3G+llRMtUUhdQ26e4AF
+515sLcfJXNRcw7Dym8PZ1QK84Hfgm2S9mwHIiJWsEJhNzolPzoMzfofCC/GVNVCO
+k2is03ogkO/Sd+FOigjptN6LW//qgbBcaT1EzpD7nS/0C7PtkpVZgiwu16T9Cx7U
+4sCM3Jkedl3m8OKCZ+aL1AzFA+VHuKjOIrJ+sOAxQD65NwWyeD/ShV2kzxX9VrPS
+28ZEQm+uurKDEsvfykVNsxuHcuvsqYHNqtaupdIIZLFpBXwJQoF0EWD3QY5i6miV
+S25mNwnTosfsut7cKEvjEzIwVeCfbMoY+Ymv7DTBlWVegT9svn4VYGnegYT4VO1a
+ViP5xJmU0nOjpZ+wjrzvW3+mo0KQZ4uKOKQiZWbMk/PMMULV9k62aLTT85QKuF9Q
+IwajrmCelt21kPUZrPXYUVk4Qa8/pckSRDe3Ix+J0jZ4hv6a+EIlfg/b4B7cleDX
+1l7GjIrBbHb4gme8eYrhO4N0ROgdTcYCwi3vBVmdsAkgwRSJytS/kfs18X2Ya+u4
+zkrR/0x630an46yvgIDxG+WuL3yyXyjQcG4oBwhgAYJq9mFaqj0=
+=UTeL
+-----END PGP SIGNATURE-----
+
+--xn9xNsWbHJd/50IB--
