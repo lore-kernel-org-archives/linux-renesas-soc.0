@@ -1,47 +1,51 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:48136 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726357AbeKGTrG (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Nov 2018 14:47:06 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH LOCAL 0/2] arm64: renesas_defconfig: Updates for v4.20-rc1
-Date: Wed,  7 Nov 2018 11:17:16 +0100
-Message-Id: <20181107101718.2412-1-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 23/30] v4l: Add stream to frame descriptor
+Date: Fri,  2 Nov 2018 00:31:37 +0100
+Message-Id: <20181101233144.31507-24-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-This patch series updates renesas_defconfig for dropped and new support in
-v4.20-rc1.
+The stream field identifies the stream this frame descriptor applies to in
+routing configuration across a multiplexed link.
 
-Note that this is not intended for upstream merge.
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ include/media/v4l2-subdev.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Thanks!
-
-Geert Uytterhoeven (2):
-  [LOCAL] arm64: renesas_defconfig: Drop CONFIG_ARM_BIG_LITTLE_CPUFREQ=y
-  [LOCAL] arm64: renesas_defconfig: Enable CONFIG_PHY_RCAR_GEN3_PCIE
-
- arch/arm64/configs/renesas_defconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
+diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
+index ffd98e4f368358a6..5fbce1932107a990 100644
+--- a/include/media/v4l2-subdev.h
++++ b/include/media/v4l2-subdev.h
+@@ -347,6 +347,7 @@ enum v4l2_mbus_frame_desc_flags {
+  * struct v4l2_mbus_frame_desc_entry - media bus frame description structure
+  *
+  * @flags:	bitmask flags, as defined by &enum v4l2_mbus_frame_desc_flags.
++ * @stream:	stream in routing configuration
+  * @pixelcode:	media bus pixel code, valid if @flags
+  *		%FRAME_DESC_FL_BLOB is not set.
+  * @length:	number of octets per frame, valid if @flags
+@@ -356,6 +357,7 @@ enum v4l2_mbus_frame_desc_flags {
+  */
+ struct v4l2_mbus_frame_desc_entry {
+ 	enum v4l2_mbus_frame_desc_flags flags;
++	u32 stream;
+ 	u32 pixelcode;
+ 	u32 length;
+ 	union {
 -- 
-2.17.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.19.1
