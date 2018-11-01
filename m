@@ -1,410 +1,286 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:9727 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387594AbeKVUBh (ORCPT
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:40427 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728337AbeKBIiW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Nov 2018 15:01:37 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 2/7] ARM: dts: r8a7744: Initial SoC device tree
-Date: Thu, 22 Nov 2018 09:14:30 +0000
-Message-Id: <1542878075-61314-3-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1542878075-61314-1-git-send-email-biju.das@bp.renesas.com>
-References: <1542878075-61314-1-git-send-email-biju.das@bp.renesas.com>
+        Fri, 2 Nov 2018 04:38:22 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 29/30] rcar-csi2: use frame description information to configure CSI-2 bus
+Date: Fri,  2 Nov 2018 00:31:43 +0100
+Message-Id: <20181101233144.31507-30-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Basic support for the RZ/G1N (R8A7744) SoC. Added placeholders
-to avoid compilation error with the common platform code.
+The driver can now access frame descriptor information, use it when
+configuring the CSI-2 bus. Only enable the virtual channels which are
+described in the frame descriptor and calculate the link based on all
+enabled streams.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+With multiplexed stream supported it's now meaningful to have different
+formats on the different source pads. Make source formats independent
+off each other and disallowing a format on the multiplexed sink pad.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm/boot/dts/r8a7744.dtsi | 369 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 369 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7744.dtsi
+ drivers/media/platform/rcar-vin/rcar-csi2.c | 135 ++++++++++++++------
+ 1 file changed, 98 insertions(+), 37 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-new file mode 100644
-index 0000000..cf02bf7
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -0,0 +1,369 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the r8a7744 SoC
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
+diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+index b0044a08e71ed017..00564c969dd021db 100644
+--- a/drivers/media/platform/rcar-vin/rcar-csi2.c
++++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+@@ -304,25 +304,22 @@ static const struct rcsi2_mbps_reg hsfreqrange_m3w_h3es1[] = {
+ #define CSI0CLKFREQRANGE(n)		((n & 0x3f) << 16)
+ 
+ struct rcar_csi2_format {
+-	u32 code;
+ 	unsigned int datatype;
+ 	unsigned int bpp;
+ };
+ 
+ static const struct rcar_csi2_format rcar_csi2_formats[] = {
+-	{ .code = MEDIA_BUS_FMT_RGB888_1X24,	.datatype = 0x24, .bpp = 24 },
+-	{ .code = MEDIA_BUS_FMT_UYVY8_1X16,	.datatype = 0x1e, .bpp = 16 },
+-	{ .code = MEDIA_BUS_FMT_YUYV8_1X16,	.datatype = 0x1e, .bpp = 16 },
+-	{ .code = MEDIA_BUS_FMT_UYVY8_2X8,	.datatype = 0x1e, .bpp = 16 },
+-	{ .code = MEDIA_BUS_FMT_YUYV10_2X10,	.datatype = 0x1e, .bpp = 20 },
++	{ .datatype = 0x1e, .bpp = 16 },
++	{ .datatype = 0x24, .bpp = 24 },
+ };
+ 
+-static const struct rcar_csi2_format *rcsi2_code_to_fmt(unsigned int code)
++static const struct rcar_csi2_format
++*rcsi2_datatype_to_fmt(unsigned int datatype)
+ {
+ 	unsigned int i;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(rcar_csi2_formats); i++)
+-		if (rcar_csi2_formats[i].code == code)
++		if (rcar_csi2_formats[i].datatype == datatype)
+ 			return &rcar_csi2_formats[i];
+ 
+ 	return NULL;
+@@ -337,6 +334,14 @@ enum rcar_csi2_pads {
+ 	NR_OF_RCAR_CSI2_PAD,
+ };
+ 
++static int rcsi2_pad_to_vc(unsigned int pad)
++{
++	if (pad < RCAR_CSI2_SOURCE_VC0 || pad > RCAR_CSI2_SOURCE_VC3)
++		return -EINVAL;
 +
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/r8a7744-cpg-mssr.h>
-+#include <dt-bindings/power/r8a7744-sysc.h>
++	return pad - RCAR_CSI2_SOURCE_VC0;
++}
 +
-+/ {
-+	compatible = "renesas,r8a7744";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
+ struct rcar_csi2_info {
+ 	int (*init_phtw)(struct rcar_csi2 *priv, unsigned int mbps);
+ 	int (*confirm_start)(struct rcar_csi2 *priv);
+@@ -357,7 +362,7 @@ struct rcar_csi2 {
+ 	struct v4l2_async_subdev asd;
+ 	struct v4l2_subdev *remote;
+ 
+-	struct v4l2_mbus_framefmt mf;
++	struct v4l2_mbus_framefmt mf[4];
+ 
+ 	struct mutex lock;
+ 	int stream_count;
+@@ -393,6 +398,32 @@ static void rcsi2_reset(struct rcar_csi2 *priv)
+ 	rcsi2_write(priv, SRST_REG, 0);
+ }
+ 
++static int rcsi2_get_remote_frame_desc(struct rcar_csi2 *priv,
++				       struct v4l2_mbus_frame_desc *fd)
++{
++	struct media_pad *pad;
++	int ret;
 +
-+	/*
-+	 * The external audio clocks are configured as 0 Hz fixed frequency
-+	 * clocks by default.
-+	 * Boards that provide audio clocks should override them.
-+	 */
-+	audio_clk_a: audio_clk_a {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
++	if (!priv->remote)
++		return -ENODEV;
 +
-+	audio_clk_b: audio_clk_b {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
++	pad = media_entity_remote_pad(&priv->pads[RCAR_CSI2_SINK]);
++	if (!pad)
++		return -ENODEV;
 +
-+	audio_clk_c: audio_clk_c {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
++	ret = v4l2_subdev_call(priv->remote, pad, get_frame_desc,
++			       pad->index, fd);
++	if (ret)
++		return -ENODEV;
 +
-+	/* External CAN clock */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
++	if (fd->type != V4L2_MBUS_FRAME_DESC_TYPE_CSI2) {
++		dev_err(priv->dev, "Frame desc do not describe CSI-2 link");
++		return -EINVAL;
++	}
 +
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++	return 0;
++}
 +
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <0>;
-+			clock-frequency = <1500000000>;
-+			clocks = <&cpg CPG_CORE R8A7744_CLK_Z>;
-+			clock-latency = <300000>; /* 300 us */
-+			power-domains = <&sysc R8A7744_PD_CA15_CPU0>;
-+			next-level-cache = <&L2_CA15>;
+ static int rcsi2_wait_phy_start(struct rcar_csi2 *priv)
+ {
+ 	unsigned int timeout;
+@@ -431,10 +462,12 @@ static int rcsi2_set_phypll(struct rcar_csi2 *priv, unsigned int mbps)
+ 	return 0;
+ }
+ 
+-static int rcsi2_calc_mbps(struct rcar_csi2 *priv, unsigned int bpp)
++static int rcsi2_calc_mbps(struct rcar_csi2 *priv,
++			   struct v4l2_mbus_frame_desc *fd)
+ {
+ 	struct v4l2_subdev *source;
+ 	struct v4l2_ctrl *ctrl;
++	unsigned int i, bpp = 0;
+ 	u64 mbps;
+ 
+ 	if (!priv->remote)
+@@ -450,6 +483,21 @@ static int rcsi2_calc_mbps(struct rcar_csi2 *priv, unsigned int bpp)
+ 		return -EINVAL;
+ 	}
+ 
++	/* Calculate total bpp */
++	for (i = 0; i < fd->num_entries; i++) {
++		const struct rcar_csi2_format *format;
 +
-+			/* kHz - uV - OPPs unknown yet */
-+			operating-points = <1500000 1000000>,
-+					   <1312500 1000000>,
-+					   <1125000 1000000>,
-+					   < 937500 1000000>,
-+					   < 750000 1000000>,
-+					   < 375000 1000000>;
-+		};
++		format = rcsi2_datatype_to_fmt(
++					fd->entry[i].bus.csi2.data_type);
++		if (!format) {
++			dev_err(priv->dev, "Unknown data type: %d\n",
++				fd->entry[i].bus.csi2.data_type);
++			return -EINVAL;
++		}
 +
-+		L2_CA15: cache-controller-0 {
-+			compatible = "cache";
-+			cache-unified;
-+			cache-level = <2>;
-+			power-domains = <&sysc R8A7744_PD_CA15_SCU>;
-+		};
-+	};
++		bpp += format->bpp;
++	}
 +
-+	/* External root clock */
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
+ 	/*
+ 	 * Calculate the phypll in mbps.
+ 	 * link_freq = (pixel_rate * bits_per_sample) / (2 * nr_of_lanes)
+@@ -463,42 +511,40 @@ static int rcsi2_calc_mbps(struct rcar_csi2 *priv, unsigned int bpp)
+ 
+ static int rcsi2_start(struct rcar_csi2 *priv)
+ {
+-	const struct rcar_csi2_format *format;
++	struct v4l2_mbus_frame_desc fd;
+ 	u32 phycnt, vcdt = 0, vcdt2 = 0;
+ 	unsigned int i;
+ 	int mbps, ret;
+ 
+-	dev_dbg(priv->dev, "Input size (%ux%u%c)\n",
+-		priv->mf.width, priv->mf.height,
+-		priv->mf.field == V4L2_FIELD_NONE ? 'p' : 'i');
+-
+-	/* Code is validated in set_fmt. */
+-	format = rcsi2_code_to_fmt(priv->mf.code);
++	/* Get information about multiplexed link. */
++	ret = rcsi2_get_remote_frame_desc(priv, &fd);
++	if (ret)
++		return ret;
+ 
+-	/*
+-	 * Enable all Virtual Channels.
+-	 *
+-	 * NOTE: It's not possible to get individual datatype for each
+-	 *       source virtual channel. Once this is possible in V4L2
+-	 *       it should be used here.
+-	 */
+-	for (i = 0; i < 4; i++) {
++	for (i = 0; i < fd.num_entries; i++) {
++		struct v4l2_mbus_frame_desc_entry *entry = &fd.entry[i];
+ 		u32 vcdt_part;
+ 
+-		vcdt_part = VCDT_SEL_VC(i) | VCDT_VCDTN_EN | VCDT_SEL_DTN_ON |
+-			VCDT_SEL_DT(format->datatype);
++		vcdt_part = VCDT_SEL_VC(entry->bus.csi2.channel) |
++			VCDT_VCDTN_EN | VCDT_SEL_DTN_ON |
++			VCDT_SEL_DT(entry->bus.csi2.data_type);
+ 
+ 		/* Store in correct reg and offset. */
+-		if (i < 2)
+-			vcdt |= vcdt_part << ((i % 2) * 16);
++		if (entry->bus.csi2.channel < 2)
++			vcdt |= vcdt_part <<
++				((entry->bus.csi2.channel % 2) * 16);
+ 		else
+-			vcdt2 |= vcdt_part << ((i % 2) * 16);
++			vcdt2 |= vcdt_part <<
++				((entry->bus.csi2.channel % 2) * 16);
 +
-+	/* External PCIe clock - can be overridden by the board */
-+	pcie_bus_clk: pcie_bus {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
++		dev_dbg(priv->dev, "VC%d datatype: 0x%x\n",
++			entry->bus.csi2.channel, entry->bus.csi2.data_type);
+ 	}
+ 
+ 	phycnt = PHYCNT_ENABLECLK;
+ 	phycnt |= (1 << priv->lanes) - 1;
+ 
+-	mbps = rcsi2_calc_mbps(priv, format->bpp);
++	mbps = rcsi2_calc_mbps(priv, &fd);
+ 	if (mbps < 0)
+ 		return mbps;
+ 
+@@ -619,14 +665,16 @@ static int rcsi2_set_pad_format(struct v4l2_subdev *sd,
+ {
+ 	struct rcar_csi2 *priv = sd_to_csi2(sd);
+ 	struct v4l2_mbus_framefmt *framefmt;
++	int vc;
+ 
+-	if (!rcsi2_code_to_fmt(format->format.code))
+-		format->format.code = rcar_csi2_formats[0].code;
++	vc = rcsi2_pad_to_vc(format->pad);
++	if (vc < 0)
++		return vc;
+ 
+ 	if (format->which == V4L2_SUBDEV_FORMAT_ACTIVE) {
+-		priv->mf = format->format;
++		priv->mf[vc] = format->format;
+ 	} else {
+-		framefmt = v4l2_subdev_get_try_format(sd, cfg, 0);
++		framefmt = v4l2_subdev_get_try_format(sd, cfg, format->pad);
+ 		*framefmt = format->format;
+ 	}
+ 
+@@ -638,11 +686,17 @@ static int rcsi2_get_pad_format(struct v4l2_subdev *sd,
+ 				struct v4l2_subdev_format *format)
+ {
+ 	struct rcar_csi2 *priv = sd_to_csi2(sd);
++	int vc;
 +
-+	pmu {
-+		compatible = "arm,cortex-a15-pmu";
-+		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&cpu0>;
-+	};
++	vc = rcsi2_pad_to_vc(format->pad);
++	if (vc < 0)
++		return vc;
+ 
+ 	if (format->which == V4L2_SUBDEV_FORMAT_ACTIVE)
+-		format->format = priv->mf;
++		format->format = priv->mf[vc];
+ 	else
+-		format->format = *v4l2_subdev_get_try_format(sd, cfg, 0);
++		format->format = *v4l2_subdev_get_try_format(sd, cfg,
++							     format->pad);
+ 
+ 	return 0;
+ }
+@@ -672,6 +726,13 @@ static int rcsi2_notify_bound(struct v4l2_async_notifier *notifier,
+ 	struct rcar_csi2 *priv = notifier_to_csi2(notifier);
+ 	int pad;
+ 
++	if (!v4l2_subdev_has_op(subdev, pad, get_frame_desc)) {
++		dev_err(priv->dev,
++			"Failed as '%s' do not support frame descriptors\n",
++			subdev->name);
++		return -EINVAL;
++	}
 +
-+	/* External SCIF clock */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		gpio0: gpio@e6050000 {
-+			reg = <0 0xe6050000 0 0x50>;
-+			#gpio-cells = <2>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			/* placeholder */
-+		};
-+
-+		gpio1: gpio@e6051000 {
-+			reg = <0 0xe6051000 0 0x50>;
-+			#gpio-cells = <2>;
-+			/* placeholder */
-+		};
-+
-+		gpio2: gpio@e6052000 {
-+			reg = <0 0xe6052000 0 0x50>;
-+			#gpio-cells = <2>;
-+			/* placeholder */
-+		};
-+
-+		gpio6: gpio@e6055400 {
-+			reg = <0 0xe6055400 0 0x50>;
-+			#gpio-cells = <2>;
-+			/* placeholder */
-+		};
-+
-+		pfc: pin-controller@e6060000 {
-+			compatible = "renesas,pfc-r8a7744";
-+			reg = <0 0xe6060000 0 0x164>;
-+		};
-+
-+		cpg: clock-controller@e6150000 {
-+			compatible = "renesas,r8a7744-cpg-mssr";
-+			reg = <0 0xe6150000 0 0x1000>;
-+			clocks = <&extal_clk>, <&usb_extal_clk>;
-+			clock-names = "extal", "usb_extal";
-+			#clock-cells = <2>;
-+			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
-+		};
-+
-+		rst: reset-controller@e6160000 {
-+			compatible = "renesas,r8a7744-rst";
-+			reg = <0 0xe6160000 0 0x100>;
-+		};
-+
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a7744-sysc";
-+			reg = <0 0xe6180000 0 0x200>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		icram0:	sram@e63a0000 {
-+			compatible = "mmio-sram";
-+			reg = <0 0xe63a0000 0 0x12000>;
-+		};
-+
-+		icram1:	sram@e63c0000 {
-+			compatible = "mmio-sram";
-+			reg = <0 0xe63c0000 0 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0 0 0xe63c0000 0x1000>;
-+
-+			smp-sram@0 {
-+				compatible = "renesas,smp-sram";
-+				reg = <0 0x100>;
-+			};
-+		};
-+
-+		icram2:	sram@e6300000 {
-+			compatible = "mmio-sram";
-+			reg = <0 0xe6300000 0 0x40000>;
-+		};
-+
-+		i2c2: i2c@e6530000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0 0xe6530000 0 0x40>;
-+			/* placeholder */
-+		};
-+
-+		i2c5: i2c@e6528000 {
-+			/* doesn't need pinmux */
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0 0xe6528000 0 0x40>;
-+			/* placeholder */
-+		};
-+
-+		hsusb: usb@e6590000 {
-+			reg = <0 0xe6590000 0 0x100>;
-+			/* placeholder */
-+		};
-+
-+		usbphy: usb-phy@e6590100 {
-+			reg = <0 0xe6590100 0 0x100>;
-+			/* placeholder */
-+		};
-+
-+		avb: ethernet@e6800000 {
-+			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			/* placeholder */
-+		};
-+
-+		scifb1: serial@e6c30000 {
-+			reg = <0 0xe6c30000 0 0x100>;
-+			/* placeholder */
-+		};
-+
-+		scif0: serial@e6e60000 {
-+			compatible = "renesas,scif-r8a7744",
-+				     "renesas,rcar-gen2-scif", "renesas,scif";
-+			reg = <0 0xe6e60000 0 0x40>;
-+			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 721>,
-+				 <&cpg CPG_CORE R8A7744_CLK_ZS>, <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 721>;
-+			status = "disabled";
-+		};
-+
-+		scif1: serial@e6e68000 {
-+			reg = <0 0xe6e68000 0 0x40>;
-+			/* placeholder */
-+		};
-+
-+		hscif1: serial@e62c8000 {
-+			reg = <0 0xe62c8000 0 0x60>;
-+			/* placeholder */
-+		};
-+
-+		can0: can@e6e80000 {
-+			reg = <0 0xe6e80000 0 0x1000>;
-+			/* placeholder */
-+		};
-+
-+		can1: can@e6e88000 {
-+			reg = <0 0xe6e88000 0 0x1000>;
-+			/* placeholder */
-+		};
-+
-+		rcar_sound: sound@ec500000 {
-+			reg = <0 0xec500000 0 0x1000>;
-+
-+			rcar_sound,dvc {
-+				dvc0: dvc-0 {};
-+				dvc1: dvc-1 {};
-+			};
-+
-+			rcar_sound,src {
-+				src2: src-2 {};
-+				src3: src-3 {};
-+			};
-+
-+			rcar_sound,ssi {
-+				ssi0: ssi-0 {};
-+				ssi1: ssi-1 {};
-+			};
-+			/* placeholder */
-+		};
-+
-+		pci0: pci@ee090000 {
-+			reg = <0 0xee090000 0 0xc00>;
-+
-+			bus-range = <0 0>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			#interrupt-cells = <1>;
-+			/* placeholder */
-+		};
-+
-+		pci1: pci@ee0d0000 {
-+			reg = <0 0xee0d0000 0 0xc00>;
-+
-+			bus-range = <1 1>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			#interrupt-cells = <1>;
-+			/* placeholder */
-+		};
-+
-+		sdhi1: sd@ee140000 {
-+			reg = <0 0xee140000 0 0x100>;
-+			/* placeholder */
-+		};
-+
-+		sdhi2: sd@ee160000 {
-+			reg = <0 0xee160000 0 0x100>;
-+			/* placeholder */
-+		};
-+
-+		gic: interrupt-controller@f1001000 {
-+			compatible = "arm,gic-400";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0 0xf1001000 0 0x1000>, <0 0xf1002000 0 0x2000>,
-+			      <0 0xf1004000 0 0x2000>, <0 0xf1006000 0 0x2000>;
-+			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-+			clocks = <&cpg CPG_MOD 408>;
-+			clock-names = "clk";
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 408>;
-+		};
-+
-+		du: display@feb00000 {
-+			reg = <0 0xfeb00000 0 0x40000>,
-+			      <0 0xfeb90000 0 0x1c>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					du_out_rgb: endpoint {
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					du_out_lvds0: endpoint {
-+					};
-+				};
-+			};
-+			/* placeholder */
-+		};
-+
-+		prr: chipid@ff000044 {
-+			compatible = "renesas,prr";
-+			reg = <0 0xff000044 0 4>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv7-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
-+	/* External USB clock - can be overridden by the board */
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <48000000>;
-+	};
-+};
+ 	pad = media_entity_get_fwnode_pad(&subdev->entity, asd->match.fwnode,
+ 					  MEDIA_PAD_FL_SOURCE);
+ 	if (pad < 0) {
 -- 
-2.7.4
+2.19.1
