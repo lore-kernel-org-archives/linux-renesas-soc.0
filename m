@@ -1,73 +1,83 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:58678 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726442AbeK0XDm (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Nov 2018 18:03:42 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 22/22] ARM: dts: r8a7744: Add PCIe Controller device node
-Date: Tue, 27 Nov 2018 11:56:35 +0000
-Message-Id: <1543319795-48325-23-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com>
-References: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 13/30] media: entity: Add only connected pads to the pipeline
+Date: Fri,  2 Nov 2018 00:31:27 +0100
+Message-Id: <20181101233144.31507-14-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the PCIe controller on the Renesas
-RZ/G1N (r8a7744) SoC.
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+A single entity may contain multiple pipelines. Only add pads that were
+connected to the pad through which the entity was reached to the pipeline.
+
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm/boot/dts/r8a7744.dtsi | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ drivers/media/media-entity.c | 20 ++++++--------------
+ 1 file changed, 6 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index 9c9508e..2eae905 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -1432,6 +1432,34 @@
- 			resets = <&cpg 408>;
- 		};
+diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
+index cdf3805dec755ec5..a5bb257d5a68f755 100644
+--- a/drivers/media/media-entity.c
++++ b/drivers/media/media-entity.c
+@@ -460,15 +460,13 @@ __must_check int __media_pipeline_start(struct media_pad *pad,
  
-+		pciec: pcie@fe000000 {
-+			compatible = "renesas,pcie-r8a7744",
-+				     "renesas,pcie-rcar-gen2";
-+			reg = <0 0xfe000000 0 0x80000>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			bus-range = <0x00 0xff>;
-+			device_type = "pci";
-+			ranges = <0x01000000 0 0x00000000 0 0xfe100000 0 0x00100000
-+				  0x02000000 0 0xfe200000 0 0xfe200000 0 0x00200000
-+				  0x02000000 0 0x30000000 0 0x30000000 0 0x08000000
-+				  0x42000000 0 0x38000000 0 0x38000000 0 0x08000000>;
-+			/* Map all possible DDR as inbound ranges */
-+			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x80000000
-+				      0x43000000 2 0x00000000 2 0x00000000 1 0x00000000>;
-+			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0>;
-+			interrupt-map = <0 0 0 0 &gic GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 319>, <&pcie_bus_clk>;
-+			clock-names = "pcie", "pcie_bus";
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 319>;
-+			status = "disabled";
-+		};
-+
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a7744";
- 			reg = <0 0xfeb00000 0 0x40000>,
+ 	while ((pad = media_graph_walk_next(graph))) {
+ 		struct media_entity *entity = pad->entity;
+-		unsigned int i;
++		struct media_pad *iter;
+ 		bool skip_validation = pad->pipe;
+ 
+ 		DECLARE_BITMAP(active, MEDIA_ENTITY_MAX_PADS);
+ 		DECLARE_BITMAP(has_no_links, MEDIA_ENTITY_MAX_PADS);
+ 
+-		for (i = 0; i < entity->num_pads; i++) {
+-			struct media_pad *iter = &entity->pads[i];
+-
++		media_entity_for_routed_pads(pad, iter) {
+ 			if (iter->pipe && WARN_ON(iter->pipe != pipe))
+ 				ret = -EBUSY;
+ 			else
+@@ -553,12 +551,9 @@ __must_check int __media_pipeline_start(struct media_pad *pad,
+ 	media_graph_walk_start(graph, pad_err);
+ 
+ 	while ((pad_err = media_graph_walk_next(graph))) {
+-		struct media_entity *entity_err = pad_err->entity;
+-		unsigned int i;
+-
+-		for (i = 0; i < entity_err->num_pads; i++) {
+-			struct media_pad *iter = &entity_err->pads[i];
++		struct media_pad *iter;
+ 
++		media_entity_for_routed_pads(pad_err, iter) {
+ 			/* Sanity check for negative stream_count */
+ 			if (!WARN_ON_ONCE(iter->stream_count <= 0)) {
+ 				--iter->stream_count;
+@@ -611,12 +606,9 @@ void __media_pipeline_stop(struct media_pad *pad)
+ 	media_graph_walk_start(graph, pad);
+ 
+ 	while ((pad = media_graph_walk_next(graph))) {
+-		struct media_entity *entity = pad->entity;
+-		unsigned int i;
+-
+-		for (i = 0; i < entity->num_pads; i++) {
+-			struct media_pad *iter = &entity->pads[i];
++		struct media_pad *iter;
+ 
++		media_entity_for_routed_pads(pad, iter) {
+ 			/* Sanity check for negative stream_count */
+ 			if (!WARN_ON_ONCE(iter->stream_count <= 0)) {
+ 				iter->stream_count--;
 -- 
-2.7.4
+2.19.1
