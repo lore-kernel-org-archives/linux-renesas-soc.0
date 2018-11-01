@@ -1,52 +1,188 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:34844 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726411AbeKGXIC (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Nov 2018 18:08:02 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc: Ulrich Hecht <uli+renesas@fpond.eu>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] serial: sh-sci: Improve type-safety calling sci_receive_chars()
-Date: Wed,  7 Nov 2018 14:37:31 +0100
-Message-Id: <20181107133731.13058-1-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 02/30] media: entity: Use pads instead of entities in the media graph walk stack
+Date: Fri,  2 Nov 2018 00:31:16 +0100
+Message-Id: <20181101233144.31507-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-While ptr and port both point to the uart_port structure, the former is
-the untyped pointer cookie passed to interrupt handlers.
-Use the correctly typed port variable instead, to improve type-safety.
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Change the media graph walk stack structure to use media pads instead of
+using media entities. In addition to the entity, the pad contains the
+information which pad in the entity are being dealt with.
+
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/tty/serial/sh-sci.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/media-entity.c | 53 ++++++++++++++++++------------------
+ include/media/media-entity.h |  6 ++--
+ 2 files changed, 29 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 8863689a6eebcc72..f1ee992532717a34 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1710,7 +1710,7 @@ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
- 	 * of whether the I_IXOFF is set, otherwise, how is the interrupt
- 	 * to be disabled?
- 	 */
--	sci_receive_chars(ptr);
-+	sci_receive_chars(port);
+diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
+index 2bbc07de71aa5e6d..892e64a0a9d8ec42 100644
+--- a/drivers/media/media-entity.c
++++ b/drivers/media/media-entity.c
+@@ -237,40 +237,39 @@ EXPORT_SYMBOL_GPL(media_entity_pads_init);
+  * Graph traversal
+  */
  
- 	return IRQ_HANDLED;
+-static struct media_entity *
+-media_entity_other(struct media_entity *entity, struct media_link *link)
++static struct media_pad *
++media_entity_other(struct media_pad *pad, struct media_link *link)
+ {
+-	if (link->source->entity == entity)
+-		return link->sink->entity;
++	if (link->source == pad)
++		return link->sink;
+ 	else
+-		return link->source->entity;
++		return link->source;
  }
-@@ -1766,7 +1766,7 @@ static irqreturn_t sci_er_interrupt(int irq, void *ptr)
- 	} else {
- 		sci_handle_fifo_overrun(port);
- 		if (!s->chan_rx)
--			sci_receive_chars(ptr);
-+			sci_receive_chars(port);
+ 
+ /* push an entity to traversal stack */
+-static void stack_push(struct media_graph *graph,
+-		       struct media_entity *entity)
++static void stack_push(struct media_graph *graph, struct media_pad *pad)
+ {
+ 	if (graph->top == MEDIA_ENTITY_ENUM_MAX_DEPTH - 1) {
+ 		WARN_ON(1);
+ 		return;
+ 	}
+ 	graph->top++;
+-	graph->stack[graph->top].link = entity->links.next;
+-	graph->stack[graph->top].entity = entity;
++	graph->stack[graph->top].link = pad->entity->links.next;
++	graph->stack[graph->top].pad = pad;
+ }
+ 
+-static struct media_entity *stack_pop(struct media_graph *graph)
++static struct media_pad *stack_pop(struct media_graph *graph)
+ {
+-	struct media_entity *entity;
++	struct media_pad *pad;
+ 
+-	entity = graph->stack[graph->top].entity;
++	pad = graph->stack[graph->top].pad;
+ 	graph->top--;
+ 
+-	return entity;
++	return pad;
+ }
+ 
+ #define link_top(en)	((en)->stack[(en)->top].link)
+-#define stack_top(en)	((en)->stack[(en)->top].entity)
++#define stack_top(en)	((en)->stack[(en)->top].pad)
+ 
+ /**
+  * media_graph_walk_init - Allocate resources for graph walk
+@@ -306,8 +305,8 @@ void media_graph_walk_start(struct media_graph *graph, struct media_pad *pad)
+ 	media_entity_enum_set(&graph->ent_enum, pad->entity);
+ 
+ 	graph->top = 0;
+-	graph->stack[graph->top].entity = NULL;
+-	stack_push(graph, pad->entity);
++	graph->stack[graph->top].pad = NULL;
++	stack_push(graph, pad);
+ 	dev_dbg(pad->graph_obj.mdev->dev,
+ 		"begin graph walk at '%s':%u\n", pad->entity->name, pad->index);
+ }
+@@ -315,16 +314,16 @@ EXPORT_SYMBOL_GPL(media_graph_walk_start);
+ 
+ static void media_graph_walk_iter(struct media_graph *graph)
+ {
+-	struct media_entity *entity = stack_top(graph);
++	struct media_pad *pad = stack_top(graph);
+ 	struct media_link *link;
+-	struct media_entity *next;
++	struct media_pad *next;
+ 
+ 	link = list_entry(link_top(graph), typeof(*link), list);
+ 
+ 	/* The link is not enabled so we do not follow. */
+ 	if (!(link->flags & MEDIA_LNK_FL_ENABLED)) {
+ 		link_top(graph) = link_top(graph)->next;
+-		dev_dbg(entity->graph_obj.mdev->dev,
++		dev_dbg(pad->graph_obj.mdev->dev,
+ 			"walk: skipping disabled link '%s':%u -> '%s':%u\n",
+ 			link->source->entity->name, link->source->index,
+ 			link->sink->entity->name, link->sink->index);
+@@ -332,22 +331,22 @@ static void media_graph_walk_iter(struct media_graph *graph)
  	}
  
- 	sci_clear_SCxSR(port, SCxSR_ERROR_CLEAR(port));
+ 	/* Get the entity in the other end of the link . */
+-	next = media_entity_other(entity, link);
++	next = media_entity_other(pad, link);
+ 
+ 	/* Has the entity already been visited? */
+-	if (media_entity_enum_test_and_set(&graph->ent_enum, next)) {
++	if (media_entity_enum_test_and_set(&graph->ent_enum, next->entity)) {
+ 		link_top(graph) = link_top(graph)->next;
+-		dev_dbg(entity->graph_obj.mdev->dev,
++		dev_dbg(pad->graph_obj.mdev->dev,
+ 			"walk: skipping entity '%s' (already seen)\n",
+-			next->name);
++			next->entity->name);
+ 		return;
+ 	}
+ 
+ 	/* Push the new entity to stack and start over. */
+ 	link_top(graph) = link_top(graph)->next;
+ 	stack_push(graph, next);
+-	dev_dbg(entity->graph_obj.mdev->dev, "walk: pushing '%s' on stack\n",
+-		next->name);
++	dev_dbg(next->graph_obj.mdev->dev, "walk: pushing '%s':%u on stack\n",
++		next->entity->name, next->index);
+ }
+ 
+ struct media_entity *media_graph_walk_next(struct media_graph *graph)
+@@ -362,10 +361,10 @@ struct media_entity *media_graph_walk_next(struct media_graph *graph)
+ 	 * top of the stack until no more entities on the level can be
+ 	 * found.
+ 	 */
+-	while (link_top(graph) != &stack_top(graph)->links)
++	while (link_top(graph) != &stack_top(graph)->entity->links)
+ 		media_graph_walk_iter(graph);
+ 
+-	entity = stack_pop(graph);
++	entity = stack_pop(graph)->entity;
+ 	dev_dbg(entity->graph_obj.mdev->dev,
+ 		"walk: returning entity '%s'\n", entity->name);
+ 
+diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+index 07ab141e739ef5ff..99c7606f01317741 100644
+--- a/include/media/media-entity.h
++++ b/include/media/media-entity.h
+@@ -86,16 +86,16 @@ struct media_entity_enum {
+  * struct media_graph - Media graph traversal state
+  *
+  * @stack:		Graph traversal stack; the stack contains information
+- *			on the path the media entities to be walked and the
++ *			on the path the media pads to be walked and the
+  *			links through which they were reached.
+- * @stack.entity:	pointer to &struct media_entity at the graph.
++ * @stack.pad:		pointer to &struct media_pad at the graph.
+  * @stack.link:		pointer to &struct list_head.
+  * @ent_enum:		Visited entities
+  * @top:		The top of the stack
+  */
+ struct media_graph {
+ 	struct {
+-		struct media_entity *entity;
++		struct media_pad *pad;
+ 		struct list_head *link;
+ 	} stack[MEDIA_ENTITY_ENUM_MAX_DEPTH];
+ 
 -- 
-2.17.1
+2.19.1
