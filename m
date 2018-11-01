@@ -1,122 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:5210 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728413AbeK2DV0 (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:8497 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728516AbeKAViV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Nov 2018 22:21:26 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 1/3] mmc: renesas_sdhi: handle 4tap hs400 mode quirk based on SoC revision
-Date: Wed, 28 Nov 2018 17:18:27 +0100
-Message-Id: <20181128161829.27266-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20181128161829.27266-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20181128161829.27266-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Thu, 1 Nov 2018 17:38:21 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Richard Weinberger <richard@nod.at>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-mtd@lists.infradead.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 4/4] ARM: dts: iwg23s-sbc: Add QSPI flash support
+Date: Thu,  1 Nov 2018 12:35:05 +0000
+Message-Id: <1541075705-1333-5-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1541075705-1333-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1541075705-1333-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Latest datasheet makes it clear that not all ES revisions of the H3 and
-M3-W have the 4-tap HS400 mode quirk, currently the quirk is set
-unconditionally for these two SoCs. Prepare to handle the quirk based on
-SoC revision instead of compatibility value by using soc_device_match()
-and set the TMIO_MMC_HAVE_4TAP_HS400 flag explicitly.
+This commit adds QSPI flash support to the iwg23s board specific
+device tree.
 
-The reason for adding a new quirks struct instead of just a flag is that
-looking ahead it seems more quirks needs to be handled in a SoC revision
-basis.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
-* Changes since v2
-- Renamed sdhi_quirks_h3_m3w to sdhi_quirks_4tap. This have little
-  effect as the last patch in this series renames the variable once more
-  once more quirks are added which are more SoC specific. Suggested by
-  Geert, thanks.
----
- drivers/mmc/host/renesas_sdhi_core.c | 26 ++++++++++++++++++++++++++
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 26 ++++++++++++++++++++++++++
  1 file changed, 26 insertions(+)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 78bd117bbe65de46..f20df18f49e0d7c5 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -32,6 +32,7 @@
- #include <linux/pinctrl/consumer.h>
- #include <linux/pinctrl/pinctrl-state.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/sys_soc.h>
+diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+index 18d2263..5245a1e 100644
+--- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
++++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+@@ -88,6 +88,11 @@
+ 		power-source = <1800>;
+ 	};
  
- #include "renesas_sdhi.h"
- #include "tmio_mmc.h"
-@@ -45,6 +46,10 @@
- #define SDHI_VER_GEN3_SD	0xcc10
- #define SDHI_VER_GEN3_SDMMC	0xcd10
++	qspi0_pins: qspi0 {
++		groups = "qspi0_ctrl", "qspi0_data2";
++		function = "qspi0";
++	};
++
+ 	scif1_pins: scif1 {
+ 		groups = "scif1_data_b";
+ 		function = "scif1";
+@@ -106,6 +111,27 @@
+ 	};
+ };
  
-+struct renesas_sdhi_quirks {
-+	bool hs400_4taps;
++&qspi0 {
++	pinctrl-0 = <&qspi0_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++
++	/* WARNING - This device contains the bootloader. Handle with care. */
++	flash: flash@0 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "issi,is25lp016d", "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <133000000>;
++		spi-tx-bus-width = <1>;
++		spi-rx-bus-width = <1>;
++		m25p,fast-read;
++		spi-cpol;
++		spi-cpha;
++	};
 +};
 +
- static void renesas_sdhi_sdbuf_width(struct tmio_mmc_host *host, int width)
- {
- 	u32 val;
-@@ -593,11 +598,25 @@ static void renesas_sdhi_enable_dma(struct tmio_mmc_host *host, bool enable)
- 	renesas_sdhi_sdbuf_width(host, enable ? width : 16);
- }
- 
-+static const struct renesas_sdhi_quirks sdhi_quirks_4tap = {
-+	.hs400_4taps = true,
-+};
-+
-+static const struct soc_device_attribute sdhi_quirks_match[]  = {
-+	{ .soc_id = "r8a7795", .revision = "ES1.*", .data = &sdhi_quirks_4tap },
-+	{ .soc_id = "r8a7795", .revision = "ES2.0", .data = &sdhi_quirks_4tap },
-+	{ .soc_id = "r8a7796", .revision = "ES1.0", .data = &sdhi_quirks_4tap },
-+	{ .soc_id = "r8a7796", .revision = "ES1.1", .data = &sdhi_quirks_4tap },
-+	{ /* Sentinel. */ },
-+};
-+
- int renesas_sdhi_probe(struct platform_device *pdev,
- 		       const struct tmio_mmc_dma_ops *dma_ops)
- {
- 	struct tmio_mmc_data *mmd = pdev->dev.platform_data;
-+	const struct renesas_sdhi_quirks *quirks = NULL;
- 	const struct renesas_sdhi_of_data *of_data;
-+	const struct soc_device_attribute *attr;
- 	struct tmio_mmc_data *mmc_data;
- 	struct tmio_mmc_dma *dma_priv;
- 	struct tmio_mmc_host *host;
-@@ -607,6 +626,10 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 
- 	of_data = of_device_get_match_data(&pdev->dev);
- 
-+	attr = soc_device_match(sdhi_quirks_match);
-+	if (attr)
-+		quirks = attr->data;
-+
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!res)
- 		return -EINVAL;
-@@ -672,6 +695,9 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 	host->multi_io_quirk	= renesas_sdhi_multi_io_quirk;
- 	host->dma_ops		= dma_ops;
- 
-+	if (quirks && quirks->hs400_4taps)
-+		mmc_data->flags |= TMIO_MMC_HAVE_4TAP_HS400;
-+
- 	/* For some SoC, we disable internal WP. GPIO may override this */
- 	if (mmc_can_gpio_ro(host->mmc))
- 		mmc_data->capabilities2 &= ~MMC_CAP2_NO_WRITE_PROTECT;
+ &rwdt {
+ 	timeout-sec = <60>;
+ 	status = "okay";
 -- 
-2.19.1
+2.7.4
