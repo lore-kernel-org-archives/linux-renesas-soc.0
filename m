@@ -1,16 +1,11 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55576 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727644AbeKAUYC (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Nov 2018 16:24:02 -0400
-Date: Thu, 1 Nov 2018 11:21:17 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Archit Taneja <architt@codeaurora.org>,
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Peter Rosin <peda@axentia.se>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>
+CC: Archit Taneja <architt@codeaurora.org>,
         Andrzej Hajda <a.hajda@samsung.com>,
-        Dave Airlie <airlied@linux.ie>, Peter Rosin <peda@axentia.se>,
+        Dave Airlie <airlied@linux.ie>,
         Wolfram Sang <wsa@the-dreams.de>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
         "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
@@ -22,53 +17,121 @@ Cc: Linus Walleij <linus.walleij@linaro.org>,
         "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
         Inki Dae <inki.dae@samsung.com>,
         Boris BREZILLON <boris.brezillon@free-electrons.com>
-Subject: Re: [RFC] drm/bridge/sii902x: Fix EDID readback
-Message-ID: <20181101112117.GA6425@sirena.org.uk>
+Subject: RE: [RFC] drm/bridge/sii902x: Fix EDID readback
+Date: Thu, 1 Nov 2018 11:04:57 +0000
+Message-ID: <TY1PR01MB17702AF616C920C3ADFB2021C0CE0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 References: <1540990667-14109-1-git-send-email-fabrizio.castro@bp.renesas.com>
  <CACRpkdarsCKrb4OepC+7LNi9epRks48b4F_5eXJ_on1OJ+h1Mg@mail.gmail.com>
  <TY1PR01MB177051AC6C2B556E32AC08AEC0CD0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+ <755e644c-d734-0bde-6908-36dd681de50e@axentia.se>
+In-Reply-To: <755e644c-d734-0bde-6908-36dd681de50e@axentia.se>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="G4iJoqBmSsgzjUCe"
-Content-Disposition: inline
-In-Reply-To: <TY1PR01MB177051AC6C2B556E32AC08AEC0CD0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
---G4iJoqBmSsgzjUCe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Oct 31, 2018 at 04:55:53PM +0000, Fabrizio Castro wrote:
-
-> Having the option of using "unlocked" flavours of reads and writes
-> is what we need here, but looking at drivers/base/regmap/regmap-i2c.c
-> I couldn't find anything suitable for my case, maybe Mark could advise
-> on this one? I am sure I overlooked something here, is there a better
-> way to address this?
-
-As Linus said you can go as far as writing your own read and write
-functions if you want to.  That seems to be the easiest thing, though I
-am suspicous that you're having to use the I2C framework in this way -
-it doesn't sound terribly clever.  You could I guess also just have a
-custom function for whatever register is doing all this stuff that just
-ignores regmap and bodge things that way while using regmap as normal
-for everything else.
-
---G4iJoqBmSsgzjUCe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlva4akACgkQJNaLcl1U
-h9DKhQf/YICRTIBGlEtOiNrPdVAyHW+fyf6uzw449B9rJr5gT8xALK+/7MttSSjI
-8tDB20nxgt4bYyG3FH7OtVwS2EzDS+ZL3ChcXHmlBgRqfoV/yOZIsK3XnOmXDGUi
-zAfTxvDb/RG2S6Qhm3S2v5wTlQ48GrSrTZHbaV5ma0JuESJlajuO/ere+ymR5czC
-nkSBsSCQh1URtZaQyc8RHf5GKBdMvCydHtwKOTwE5BIOimHw5NCcJAkyhWQmpj2Q
-u76nnLPs/k063m0SbrW426cbwIbdHIs667exkekMm7fjt2NIACtS0HBAzj6CrUj6
-CY6Ftar70dfdukyFj/TYN07tF9MS5Q==
-=Xdnj
------END PGP SIGNATURE-----
-
---G4iJoqBmSsgzjUCe--
+SGVsbG8gUGV0ZXIsDQoNClRoYW5rIHlvdSBmb3IgeW91ciBmZWVkYmFjayENCg0Kc25pcA0KDQo+
+ID4gWWVhaCwgdGhlcmUgaXMgc29tZSBpc3N1ZSB3aXRoIGxvY2tpbmcgaGVyZSwgYW5kIHRoYXQn
+cyBjb21pbmcgZG93bg0KPiA+IGZyb20gdGhlIGZhY3QgdGhhdCB3aGVuIHdlIGNhbGwgaW50byBk
+cm1fZ2V0X2VkaWQsIHdlIGltcGxpY2l0bHkgY2FsbA0KPiA+IGkyY190cmFuc2ZlciB3aGljaCB1
+bHRpbWF0ZWx5IGxvY2tzIHRoZSBpMmMgYWRhcHRlciwgYW5kIHRoZW4gY2FsbHMNCj4gPiBpbnRv
+IG91ciBzaWk5MDJ4X2kyY19ieXBhc3Nfc2VsZWN0LCB3aGljaCBpbiB0dXJuIGNhbGxzIGludG8g
+dGhlIHJlZ21hcA0KPiA+IGZ1bmN0aW9ucyBhbmQgdGhlcmVmb3JlIHdlIHRyeSBhbmQgbG9jayB0
+aGUgc2FtZSBpMmMgYWRhcHRlciBhZ2FpbiwNCj4gPiBkcml2aW5nIHRoZSBzeXN0ZW0gaW50byBh
+IGRlYWRsb2NrLg0KPiA+IEhhdmluZyB0aGUgb3B0aW9uIG9mIHVzaW5nICJ1bmxvY2tlZCIgZmxh
+dm91cnMgb2YgcmVhZHMgYW5kIHdyaXRlcw0KPiA+IGlzIHdoYXQgd2UgbmVlZCBoZXJlLCBidXQg
+bG9va2luZyBhdCBkcml2ZXJzL2Jhc2UvcmVnbWFwL3JlZ21hcC1pMmMuYw0KPiA+IEkgY291bGRu
+J3QgZmluZCBhbnl0aGluZyBzdWl0YWJsZSBmb3IgbXkgY2FzZSwgbWF5YmUgTWFyayBjb3VsZCBh
+ZHZpc2UNCj4gPiBvbiB0aGlzIG9uZT8gSSBhbSBzdXJlIEkgb3Zlcmxvb2tlZCBzb21ldGhpbmcg
+aGVyZSwgaXMgdGhlcmUgYSBiZXR0ZXINCj4gPiB3YXkgdG8gYWRkcmVzcyB0aGlzPw0KPg0KPiBU
+aGlzIHJlY3Vyc2l2ZSBsb2NraW5nIHByb2JsZW0gc3VyZmFjZXMgd2hlbiBhbiBpMmMgbXV4IGlz
+IG9wZXJhdGVkDQo+IGJ5IHdyaXRpbmcgY29tbWFuZHMgb24gdGhlIHNhbWUgaTJjIGJ1cyB0aGF0
+IGlzIG11eGVkLiBXaGVuIHRoaXMNCj4gaGFwcGVucyBmb3IgYSB0eXBpY2FsIGkyYyBtdXggY2hp
+cCBsaWtlIG54cCxwY2E5NTQ4IHRoaXMgY2FuIGJlIGtlcHQNCj4gbG9jYWwgdG8gdGhhdCBkcml2
+ZXIuIEhvd2V2ZXIsIHdoZW4gdGhlcmUgYXJlIGludGVyYWN0aW9ucyB3aXRoIG90aGVyDQo+IHBh
+cnRzIG9mIHRoZSBrZXJuZWwgKGUuZy4gaWYgdGhlIGkyYy1tdXggaXMgb3BlcmF0ZWQgYnkgZ3Bp
+byBwaW5zLA0KPiBhbmQgdGhvc2UgZ3BpbyBwaW5zIGluIHR1cm4gYXJlIG9wZXJhdGVkIGJ5IGFj
+Y2Vzc2VzIHRvIHRoZSBpMmMgYnVzDQo+IHRoYXQgaXMgbXV4ZWQpIHRoaXMgbG9ja2VkIHZzLiB1
+bmxvY2tlZCB0aGluZyB3b3VsZCBzcHJlYWQgbGlrZQ0KPiB3aWxkZmlyZS4NCj4NCj4gU2luY2Ug
+SSBkaWQgbm90IGxpa2UgdGhhdCB3aWxkZmlyZSwgSSBjYW1lIHVwIHdpdGggdGhlICJtdXgtbG9j
+a2VkIg0KPiBzY2hlbWUuIEl0IGlzIG5vdCBhcHByb3ByaWF0ZSBldmVyeXdoZXJlLCBidXQgaW4g
+dGhpcyBjYXNlIEkgdGhpbmsgaXQNCj4gaXMgYSBwZXJmZWN0IGZpdC4gQnkgdXNpbmcgaXQsIHlv
+dSBzaG91bGQgYmUgYWJsZSB0byBkb2RnZSBhbGwgbG9ja2luZw0KPiBpc3N1ZXMgYW5kIGl0IHNo
+b3VsZCBiZSBwb3NzaWJsZSB0byBrZWVwIHRoZSByZWdtYXAgdXNhZ2UgYXMtaXMgYW5kIHRoZQ0K
+PiBwYXRjaCB3b3VsZCBpbiBhbGwgbGlrZWxpaG9vZCBiZSBtdWNoIGxlc3MgaW50cnVzaXZlLg0K
+Pg0KPiBGb3Igc29tZSBiYWNrZ3JvdW5kIG9uICJtdXgtbG9ja2VkIiB2cy4gInBhcmVudC1sb2Nr
+ZWQiICh3aGljaCBpcyB3aGF0DQo+IHlvdSBoYXZlIHVzZWQgaW4gdGhpcyBSRkMgcGF0Y2gpLCBz
+ZWUgRG9jdW1lbnRhdGlvbi9pMmMvaTJjLXRvcG9sb2d5Lg0KDQpUaGUgIm11eC1sb2NrZWQiIGlt
+cGxlbWVudGF0aW9uIHdhcyB0aGUgb25lIEkgZmlyc3QgdHJpZWQgYW5kIEkgZGlzY292ZXJlZA0K
+aXQgZG9lc24ndCB3b3JrIGZvciBtZSwgYXMgb3RoZXIgdHJhZmZpYyBvbiB0aGUgcGFyZW50IGFk
+YXB0ZXIgY2FuIGdldCBpbiB0aGUNCndheS4gV2hhdCB3ZSBuZWVkIGZvciB0aGlzIGRldmljZSBp
+cyBubyBvdGhlciB0cmFmZmljIG9uIHRoZSBidXMgZHVyaW5nIHRoZQ0KInNlbGVjdCB0cmFuc2Fj
+dGlvbiBkZXNlbGVjdCIgcHJvY2VkdXJlLCB0aGF0J3Mgd2h5IEkgd2VudCB3aXRoIHRoZSBwYXJl
+bnQNCmxvY2tpbmcuIEFsc28gdGhpcyBkZXZpY2UgbmVlZHMgYSBkZWxheSBiZXR3ZWVuIHN0b3Ag
+YW5kIHN0YXJ0IGNvbmRpdGlvbnMNCndoaWxlIGFkZHJlc3NpbmcgdGhlIG1vbml0b3IuDQoNCj4N
+Cj4gVGhlcmUgYXJlIGEgY291cGxlIG9mIG1vcmUgY29tbWVudHMgYmVsb3csIGlubGluZS4NCj4N
+Cg0Kc25pcA0KDQo+ID4+Pg0KPiA+Pj4gK3N0YXRpYyBpbnQgc2lpOTAyeF9pMmNfYnlwYXNzX3Nl
+bGVjdChzdHJ1Y3QgaTJjX211eF9jb3JlICptdXgsIHUzMiBjaGFuX2lkKQ0KPiA+Pj4gK3sNCj4g
+Pj4+ICsgICAgICAgc3RydWN0IHNpaTkwMnggKnNpaTkwMnggPSBpMmNfbXV4X3ByaXYobXV4KTsN
+Cj4gPj4+ICsgICAgICAgc3RydWN0IGRldmljZSAqZGV2ID0gJnNpaTkwMngtPmkyYy0+ZGV2Ow0K
+PiA+Pj4gKyAgICAgICB1bnNpZ25lZCBsb25nIHRpbWVvdXQ7DQo+ID4+PiArICAgICAgIHU4IHN0
+YXR1czsNCj4gPj4+ICsgICAgICAgaW50IHJldDsNCj4gPj4+ICsNCj4gPj4+ICsgICAgICAgcmV0
+ID0gX19zaWk5MDJ4X3VwZGF0ZV9iaXRzKHNpaTkwMngtPmkyYywgU0lJOTAyWF9TWVNfQ1RSTF9E
+QVRBLA0KPiA+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgU0lJOTAyWF9T
+WVNfQ1RSTF9ERENfQlVTX1JFUSwNCj4gPj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIFNJSTkwMlhfU1lTX0NUUkxfRERDX0JVU19SRVEpOw0KPiA+Pj4gKw0KPiA+Pj4gKyAg
+ICAgICB0aW1lb3V0ID0gamlmZmllcyArDQo+ID4+PiArICAgICAgICAgICAgICAgICBtc2Vjc190
+b19qaWZmaWVzKFNJSTkwMlhfSTJDX0JVU19BQ1FVSVNJVElPTl9USU1FT1VUX01TKTsNCj4gPj4+
+ICsgICAgICAgZG8gew0KPiA+Pj4gKyAgICAgICAgICAgICAgIHJldCA9IF9fc2lpOTAyeF9yZWFk
+KHNpaTkwMngtPmkyYywgU0lJOTAyWF9TWVNfQ1RSTF9EQVRBLA0KPiA+Pj4gKyAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICZzdGF0dXMpOw0KPiA+Pj4gKyAgICAgICAgICAgICAg
+IGlmIChyZXQpDQo+ID4+PiArICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gcmV0Ow0KPiA+
+Pj4gKyAgICAgICB9IHdoaWxlICghKHN0YXR1cyAmIFNJSTkwMlhfU1lTX0NUUkxfRERDX0JVU19H
+UlREKSAmJg0KPiA+Pj4gKyAgICAgICAgICAgICAgICB0aW1lX2JlZm9yZShqaWZmaWVzLCB0aW1l
+b3V0KSk7DQo+ID4+PiArDQo+ID4+PiArICAgICAgIGlmICghKHN0YXR1cyAmIFNJSTkwMlhfU1lT
+X0NUUkxfRERDX0JVU19HUlREKSkgew0KPiA+Pj4gKyAgICAgICAgICAgICAgIGRldl9lcnIoZGV2
+LCAiRmFpbGVkIHRvIGFjcXVpcmUgdGhlIGkyYyBidXNcbiIpOw0KPiA+Pj4gKyAgICAgICAgICAg
+ICAgIHJldHVybiAtRVRJTUVET1VUOw0KPiA+Pj4gKyAgICAgICB9DQo+ID4+PiArDQo+ID4+PiAr
+ICAgICAgIHJldCA9IF9fc2lpOTAyeF93cml0ZShzaWk5MDJ4LT5pMmMsIFNJSTkwMlhfU1lTX0NU
+UkxfREFUQSwgc3RhdHVzKTsNCj4gPj4+ICsgICAgICAgaWYgKHJldCkNCj4gPj4+ICsgICAgICAg
+ICAgICAgICByZXR1cm4gcmV0Ow0KPg0KPiBXaHkgZG8gSSBub3Qgc2VlIGEgZGVsYXkgaGVyZT8g
+SSB0aG91Z2h0IHRoZSB3aG9sZSBwb2ludCBvZiBhZGRpbmcgdGhlIGkyYyBnYXRlDQo+IHdhcyB0
+aGF0IGl0IGVuYWJsZWQgdGhlIGludHJvZHVjdGlvbiBvZiBhIGRlbGF5IGJldHdlZW4gb3Blbmlu
+ZyBmb3IgZWRpZCByZWFkaW5nDQo+IGFuZCB0aGUgYWN0dWFsIGVkaWQgcmVhZGluZz8NCg0KVGhl
+IGRlbGF5IGlzIG5lZWRlZCBiZXR3ZWVuIFNUT1AgYW5kIFNUQVJUIGNvbmRpdGlvbiB3aGlsZSBp
+biBwYXNzdGhyb3VnaCBtb2RlLg0KX19pMmNfdHJhbnNmZXIgZ2V0cyBjYWxsZWQgYWZ0ZXIgdGhl
+IHNlbGVjdCBjYWxsYmFjayAod2hpY2ggZW5hYmxlcyB0aGUgcGFzc3Rocm91Z2gNCm1vZGUpLCB3
+aGVuIF9faTJjX3RyYW5zZmVyIGlzIGRvbmUgaXQgZ2VuZXJhdGVzIGEgU1RPUCBjb25kaXRpb24g
+YW5kIHRoZW4gd2UgY2FsbCBpbnRvDQp0aGUgZGVzZWxlY3QgY2FsbGJhY2suIFdlIG5lZWQgYSBk
+ZWxheSBiZXR3ZWVuIF9faTJjX3RyYW5zZmVyIGFuZCBkZXNlbGVjdC4NCg0KPg0KPiA+Pj4gKyAg
+ICAgICByZXR1cm4gMDsNCj4gPj4+ICt9DQo+ID4+PiArDQo+ID4+PiArc3RhdGljIGludCBzaWk5
+MDJ4X2kyY19ieXBhc3NfZGVzZWxlY3Qoc3RydWN0IGkyY19tdXhfY29yZSAqbXV4LCB1MzIgY2hh
+bl9pZCkNCj4gPj4+ICt7DQo+ID4+PiArICAgICAgIHN0cnVjdCBzaWk5MDJ4ICpzaWk5MDJ4ID0g
+aTJjX211eF9wcml2KG11eCk7DQo+ID4+PiArICAgICAgIHN0cnVjdCBkZXZpY2UgKmRldiA9ICZz
+aWk5MDJ4LT5pMmMtPmRldjsNCj4gPj4+ICsgICAgICAgdW5zaWduZWQgbG9uZyB0aW1lb3V0Ow0K
+PiA+Pj4gKyAgICAgICB1bnNpZ25lZCBpbnQgcmV0cmllczsNCj4gPj4+ICsgICAgICAgdTggc3Rh
+dHVzOw0KPiA+Pj4gKyAgICAgICBpbnQgcmV0Ow0KPiA+Pj4gKw0KPiA+Pj4gKyAgICAgICB1ZGVs
+YXkoMzApOw0KDQpIZXJlIGlzIHdoZXJlIHdlIG5lZWQgdGhlIGRlbGF5DQoNCnNuaXANCg0KPiA+
+Pj4gQEAgLTQzMyw2ICs1NTgsMjIgQEAgc3RhdGljIGludCBzaWk5MDJ4X3Byb2JlKHN0cnVjdCBp
+MmNfY2xpZW50ICpjbGllbnQsDQo+ID4+Pg0KPiA+Pj4gICAgICAgICBpMmNfc2V0X2NsaWVudGRh
+dGEoY2xpZW50LCBzaWk5MDJ4KTsNCj4gPj4+DQo+ID4+PiArICAgICAgIHNpaTkwMngtPmkyY211
+eCA9IGkyY19tdXhfYWxsb2MoY2xpZW50LT5hZGFwdGVyLCBkZXYsDQo+ID4+PiArICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgMSwgMCwgSTJDX01VWF9HQVRFLA0KPg0KPiBK
+dXN0IHVzZSBJMkNfTVVYX0dBVEUgfCBJMkNfTVVYX0xPQ0tFRCBmb3IgdGhlIGZsYWdzIGFyZ3Vt
+ZW50LCBhbmQgeW91IHNob3VsZCBiZQ0KPiBhYmxlIHRvIG1ha2Ugbm9ybWFsIGkyYyBhY2Nlc3Nl
+cy4NCg0KVGhpcyBpcyBwcmVjaXNlbHkgd2hhdCBJIHRyaWVkIGluIHRoZSBmaXJzdCBwbGFjZSwg
+YnV0IGJ5IGdlbmVyYXRpbmcgdHJhZmZpYyBvbiB0aGUgcGFyZW50IGFkYXB0ZXINCihzaW5jZSBJ
+IGRvbid0IGhhdmUgYW55IG90aGVyIHNsYXZlIG9uIHRoZSBzYW1lIGkyYyBidXMgSSBoYXZlIGJl
+ZW4gdXNpbmcgaTJjZGV0ZWN0KSB3aGlsZSB0YWxraW5nDQp0byB0aGUgbW9uaXRvciBJIGhhdmUg
+YmVlbiBhYmxlIHRvIGJyZWFrIGNvbW11bmljYXRpb25zLCBhbmQgc29tZXRpbWVzIHN0YWxsIHRo
+ZSBidXMsIHRoZXJlZm9yZQ0KSSBoYXZlIHRha2VuIG91dCBJMkNfTVVYX0xPQ0tFRC4NCg0KQWgs
+IGRvIHlvdSB0aGluayB0aGUgZm9sbG93aW5nIGlzIGdvaW5nIHRvIGNhdXNlIGFueSBpc3N1ZSBp
+biB0aGUgZnV0dXJlPw0KLWVkaWQgPSBkcm1fZ2V0X2VkaWQoY29ubmVjdG9yLCBzaWk5MDJ4LT5p
+MmMtPmFkYXB0ZXIpOw0KK2VkaWQgPSBkcm1fZ2V0X2VkaWQoY29ubmVjdG9yLCBzaWk5MDJ4LT5p
+MmNtdXgtPmFkYXB0ZXJbMF0pOw0KDQpUaGFua3MsDQpGYWINCg0KPg0KPiBDaGVlcnMsDQo+IFBl
+dGVyDQo+DQoNCg0KDQpSZW5lc2FzIEVsZWN0cm9uaWNzIEV1cm9wZSBMdGQsIER1a2VzIE1lYWRv
+dywgTWlsbGJvYXJkIFJvYWQsIEJvdXJuZSBFbmQsIEJ1Y2tpbmdoYW1zaGlyZSwgU0w4IDVGSCwg
+VUsuIFJlZ2lzdGVyZWQgaW4gRW5nbGFuZCAmIFdhbGVzIHVuZGVyIFJlZ2lzdGVyZWQgTm8uIDA0
+NTg2NzA5Lg0K
