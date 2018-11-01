@@ -1,110 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:9727 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2393439AbeKVUBn (ORCPT
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:33062 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728315AbeKBIiI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Nov 2018 15:01:43 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 4/7] ARM: dts: r8a7744: Add SYS-DMAC support
-Date: Thu, 22 Nov 2018 09:14:32 +0000
-Message-Id: <1542878075-61314-5-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1542878075-61314-1-git-send-email-biju.das@bp.renesas.com>
-References: <1542878075-61314-1-git-send-email-biju.das@bp.renesas.com>
+        Fri, 2 Nov 2018 04:38:08 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 14/30] media: entity: Add debug information in graph walk route check
+Date: Fri,  2 Nov 2018 00:31:28 +0100
+Message-Id: <20181101233144.31507-15-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe SYS-DMAC0/1 in the R8A7744 device tree.
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm/boot/dts/r8a7744.dtsi | 66 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+ drivers/media/media-entity.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index cf02bf7..a9ebd09 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -215,6 +215,72 @@
- 			/* placeholder */
- 		};
+diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
+index a5bb257d5a68f755..42977634d7102852 100644
+--- a/drivers/media/media-entity.c
++++ b/drivers/media/media-entity.c
+@@ -360,6 +360,9 @@ static void media_graph_walk_iter(struct media_graph *graph)
+ 	 */
+ 	if (!media_entity_has_route(pad->entity, pad->index, local->index)) {
+ 		link_top(graph) = link_top(graph)->next;
++		dev_dbg(pad->graph_obj.mdev->dev,
++			"walk: skipping \"%s\":%u -> %u (no route)\n",
++			pad->entity->name, pad->index, local->index);
+ 		return;
+ 	}
  
-+		dmac0: dma-controller@e6700000 {
-+			compatible = "renesas,dmac-r8a7744",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe6700000 0 0x20000>;
-+			interrupts = <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14";
-+			clocks = <&cpg CPG_MOD 219>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 219>;
-+			#dma-cells = <1>;
-+			dma-channels = <15>;
-+		};
-+
-+		dmac1: dma-controller@e6720000 {
-+			compatible = "renesas,dmac-r8a7744",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe6720000 0 0x20000>;
-+			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14";
-+			clocks = <&cpg CPG_MOD 218>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 218>;
-+			#dma-cells = <1>;
-+			dma-channels = <15>;
-+		};
-+
- 		avb: ethernet@e6800000 {
- 			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
- 			#address-cells = <1>;
 -- 
-2.7.4
+2.19.1
