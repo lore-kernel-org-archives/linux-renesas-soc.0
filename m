@@ -1,74 +1,154 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:38796 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726628AbeKBEm1 (ORCPT
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:40162 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728106AbeKBIiL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Nov 2018 00:42:27 -0400
-Date: Thu, 1 Nov 2018 20:38:03 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Niklas =?utf-8?Q?S=C3=B6derlund?=
+        Fri, 2 Nov 2018 04:38:11 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCH 2/2] clk: renesas: rcar-gen3: add HS400 quirk for SD clock
-Message-ID: <20181101193802.GQ2433@kunai>
-References: <20181031232518.2490-1-niklas.soderlund@ragnatech.se>
- <20181031232518.2490-3-niklas.soderlund@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 17/30] v4l: subdev: compat: Implement handling for VIDIOC_SUBDEV_[GS]_ROUTING
+Date: Fri,  2 Nov 2018 00:31:31 +0100
+Message-Id: <20181101233144.31507-18-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="K9fy5ol1Oes4Q/ix"
-Content-Disposition: inline
-In-Reply-To: <20181031232518.2490-3-niklas.soderlund@ragnatech.se>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
---K9fy5ol1Oes4Q/ix
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Implement compat IOCTL handling for VIDIOC_SUBDEV_G_ROUTING and
+VIDIOC_SUBDEV_S_ROUTING IOCTLs.
 
-On Thu, Nov 01, 2018 at 12:25:18AM +0100, Niklas S=C3=B6derlund wrote:
-> From: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
->=20
-> On H3 (ES1.0,ES2.0) and M3-W (ES1.0,ES1.1) the clock setting for HS400
-> needs a quirk to function properly. The reason for the quirk is that
-> there are two settings which produces same divider vale for the SDn
-> clock. On the effected boards the one currently selected results in HS00
-> not working.
->=20
-> This change uses the same method as the Gen2 CPG driver and simply
-> ignores the first clock setting as this is the offending one when
-> selecting the settings. Which of the two possible settings is used have
-> no effect for SDR104.
->=20
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c | 77 +++++++++++++++++++
+ 1 file changed, 77 insertions(+)
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---K9fy5ol1Oes4Q/ix
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvbVhoACgkQFA3kzBSg
-KbYfQg//aH4OVsSLzTGyoyKYYUumglO/QIZcEmOhEAeHeHvyVzZ6lndFJx57EeLT
-J9dleSphOFjfVfZK616cVLCLtCfQhx2PIHp3DMhq4ajJkH4fGl67RBV5PYZprXma
-nN9lB+8MGkFFASbfU+Kc31aN3NphMagUCCsNJ8ptq1VYv2+Cfcd6SMb3ifoDMKSl
-YFBiJKv028w/AgbE9EvaX9YA4t6OmbyJ+MHZB4xHQbb7h2W571pprYuxn3pZK8oF
-i03Ghgs4yqwgCyWMOuml1HgZgbiGDjTTPLC09Y7k6S3xKwC41fQ3xBuoprJmTrbv
-ot7eJzwqUPy2C18YaGgaw4oSVeSY6O9RA63hH0bB8kRxCRPGW1ILfbPIP306A7NL
-Cs7qRK31j4KlVy/IhFAmCoZOQf7TqgOpjIL3eWdiQIkeimAyWwY+vWiyzSN6yEJh
-ceVdRt3ILghFKSqk3dKwXIXFgRAPmTlMyf4hEMMyS6XZoQIw76+JVMERojUrwnqN
-KQeGMG373SFnuNnjVtCX5NvyukK30AZFk/rBDiFFZUJuf5qrx7VTHJ7CIKEHknue
-lanF0aHdo3nxxqx205sjbD/E0Fi2C+XeNqDKgAb6EWVYmBTLwRLzZbajWmk7ysYq
-H/Dh2BgYaA3YTiWu9Ua94lAvYhi15p1wuJkYA1v5IyVo6uN6TaQ=
-=gP0J
------END PGP SIGNATURE-----
-
---K9fy5ol1Oes4Q/ix--
+diff --git a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
+index 6481212fda772c73..83af332763f41a6b 100644
+--- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
++++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
+@@ -1045,6 +1045,66 @@ static int put_v4l2_event32(struct v4l2_event __user *p64,
+ 	return 0;
+ }
+ 
++struct v4l2_subdev_routing32 {
++	compat_caddr_t routes;
++	__u32 num_routes;
++	__u32 reserved[5];
++};
++
++static int get_v4l2_subdev_routing(struct v4l2_subdev_routing __user *p64,
++				   struct v4l2_subdev_routing32 __user *p32)
++{
++	struct v4l2_subdev_route __user *routes;
++	compat_caddr_t p;
++	u32 num_routes;
++
++	if (!access_ok(VERIFY_READ, p32, sizeof(*p32)) ||
++	    get_user(p, &p32->routes) ||
++	    get_user(num_routes, &p32->num_routes) ||
++	    put_user(num_routes, &p64->num_routes) ||
++	    copy_in_user(&p64->reserved, &p32->reserved,
++			 sizeof(p64->reserved)) ||
++	    num_routes > U32_MAX / sizeof(*p64->routes))
++		return -EFAULT;
++
++	routes = compat_ptr(p);
++
++	if (!access_ok(VERIFY_READ, routes,
++		       num_routes * sizeof(*p64->routes)))
++		return -EFAULT;
++
++	if (put_user((__force struct v4l2_subdev_route *)routes,
++		     &p64->routes))
++		return -EFAULT;
++
++	return 0;
++}
++
++static int put_v4l2_subdev_routing(struct v4l2_subdev_routing __user *p64,
++				   struct v4l2_subdev_routing32 __user *p32)
++{
++	struct v4l2_subdev_route __user *routes;
++	compat_caddr_t p;
++	u32 num_routes;
++
++	if (!access_ok(VERIFY_WRITE, p32, sizeof(*p32)) ||
++	    get_user(p, &p32->routes) ||
++	    get_user(num_routes, &p64->num_routes) ||
++	    put_user(num_routes, &p32->num_routes) ||
++	    copy_in_user(&p32->reserved, &p64->reserved,
++			 sizeof(p64->reserved)) ||
++	    num_routes > U32_MAX / sizeof(*p64->routes))
++		return -EFAULT;
++
++	routes = compat_ptr(p);
++
++	if (!access_ok(VERIFY_WRITE, routes,
++		       num_routes * sizeof(*p64->routes)))
++		return -EFAULT;
++
++	return 0;
++}
++
+ struct v4l2_edid32 {
+ 	__u32 pad;
+ 	__u32 start_block;
+@@ -1117,6 +1177,8 @@ static int put_v4l2_edid32(struct v4l2_edid __user *p64,
+ #define VIDIOC_STREAMOFF32	_IOW ('V', 19, s32)
+ #define VIDIOC_G_INPUT32	_IOR ('V', 38, s32)
+ #define VIDIOC_S_INPUT32	_IOWR('V', 39, s32)
++#define VIDIOC_SUBDEV_G_ROUTING32 _IOWR('V', 38, struct v4l2_subdev_routing32)
++#define VIDIOC_SUBDEV_S_ROUTING32 _IOWR('V', 39, struct v4l2_subdev_routing32)
+ #define VIDIOC_G_OUTPUT32	_IOR ('V', 46, s32)
+ #define VIDIOC_S_OUTPUT32	_IOWR('V', 47, s32)
+ 
+@@ -1195,6 +1257,8 @@ static long do_video_ioctl(struct file *file, unsigned int cmd, unsigned long ar
+ 	case VIDIOC_STREAMOFF32: cmd = VIDIOC_STREAMOFF; break;
+ 	case VIDIOC_G_INPUT32: cmd = VIDIOC_G_INPUT; break;
+ 	case VIDIOC_S_INPUT32: cmd = VIDIOC_S_INPUT; break;
++	case VIDIOC_SUBDEV_G_ROUTING32: cmd = VIDIOC_SUBDEV_G_ROUTING; break;
++	case VIDIOC_SUBDEV_S_ROUTING32: cmd = VIDIOC_SUBDEV_S_ROUTING; break;
+ 	case VIDIOC_G_OUTPUT32: cmd = VIDIOC_G_OUTPUT; break;
+ 	case VIDIOC_S_OUTPUT32: cmd = VIDIOC_S_OUTPUT; break;
+ 	case VIDIOC_CREATE_BUFS32: cmd = VIDIOC_CREATE_BUFS; break;
+@@ -1227,6 +1291,15 @@ static long do_video_ioctl(struct file *file, unsigned int cmd, unsigned long ar
+ 		compatible_arg = 0;
+ 		break;
+ 
++	case VIDIOC_SUBDEV_G_ROUTING:
++	case VIDIOC_SUBDEV_S_ROUTING:
++		err = alloc_userspace(sizeof(struct v4l2_subdev_routing),
++				      0, &new_p64);
++		if (!err)
++			err = get_v4l2_subdev_routing(new_p64, p32);
++		compatible_arg = 0;
++		break;
++
+ 	case VIDIOC_G_EDID:
+ 	case VIDIOC_S_EDID:
+ 		err = alloc_userspace(sizeof(struct v4l2_edid), 0, &new_p64);
+@@ -1368,6 +1441,10 @@ static long do_video_ioctl(struct file *file, unsigned int cmd, unsigned long ar
+ 		if (put_v4l2_edid32(new_p64, p32))
+ 			err = -EFAULT;
+ 		break;
++	case VIDIOC_SUBDEV_G_ROUTING:
++	case VIDIOC_SUBDEV_S_ROUTING:
++		err = put_v4l2_subdev_routing(new_p64, p32);
++		break;
+ 	}
+ 	if (err)
+ 		return err;
+-- 
+2.19.1
