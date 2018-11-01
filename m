@@ -1,128 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:57470 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387605AbeKWTno (ORCPT
+Received: from sauhun.de ([88.99.104.3]:38658 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725792AbeKBEg0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Nov 2018 14:43:44 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] pinctrl: sh-pfc: Updates for v4.21
-Date: Fri, 23 Nov 2018 10:00:15 +0100
-Message-Id: <20181123090015.31373-1-geert+renesas@glider.be>
+        Fri, 2 Nov 2018 00:36:26 -0400
+Date: Thu, 1 Nov 2018 20:32:03 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: [PATCH v2 2/3] mmc: renesas_sdhi: align compatibility properties
+ for H3 and M3-W
+Message-ID: <20181101193200.GI2433@kunai>
+References: <20181031231340.1958-1-niklas.soderlund@ragnatech.se>
+ <20181031231340.1958-3-niklas.soderlund@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="r4QXMf6/kyF/FvJJ"
+Content-Disposition: inline
+In-Reply-To: <20181031231340.1958-3-niklas.soderlund@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Linus,
 
-The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+--r4QXMf6/kyF/FvJJ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+On Thu, Nov 01, 2018 at 12:13:39AM +0100, Niklas S=C3=B6derlund wrote:
+> From: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
+>=20
+> It was though all ES revisions of H3 and M3-W SoCs required the
+> TMIO_MMC_HAVE_4TAP_HS400 flag. Recent datasheet updates tells us this is
+> not true, only early ES revisions of the SoC do.
+>=20
+> Since quirk matching based on ES revisions is now used to handle the
+> flag it's possible to align all Gen3 compatibility properties. This will
+> allow later ES revisions of H3 and M3-W to use the correct 8-tap HS400
+> mode.
+>=20
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
 
-are available in the Git repository at:
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.21-tag1
 
-for you to fetch changes up to b59d0e782706785b7042539e820e95df3be4d04c:
+--r4QXMf6/kyF/FvJJ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  pinctrl: Add RZ/A2 pin and gpio controller (2018-11-23 09:30:27 +0100)
+-----BEGIN PGP SIGNATURE-----
 
-----------------------------------------------------------------
-pinctrl: sh-pfc: Updates for v4.21
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvbVLAACgkQFA3kzBSg
+Kbbc6A/7BkfSwwt4Pb8Iwb+3fqGs65ao4+qUhy+cTKZFbm54Nz3nIUrWVFdQKW6S
+OVGi50HwH5BnKom/dUMAFwxk6izxSeH60d7waGtkgF5YRai53YeTt9Iu55lI5Lnd
+7WiCRzNrIh4LrWb9vhLjUw7J6HR57Obn2vRjxRA9AQo3/sKwMLcP06xHIIMVAPWa
+Gv06wVnhoWcyYQm64kc8t4odgoeukL/sfo8av718yyTzyc/yUokAT9J3HdhQD34s
+RiQLGCLuzi2edlzcFDIAA676DUWL/3GRKPoPXnfKuevYLQJCzMHZXsgJpGNJP96t
+MbViA0vlIXiiSPZhk6hYHk/4B8Wo4Z1gSxdShBaCnZO4HVf/yY79odMTaeVU40lP
+wB9Mmele2zfpA7fjC1EyPzFUNjUckXbWttsDPbtP18TtC0EhfMIRRvUmB+EfSiEk
+B0f74Kyp0sw5J3DyHUJ5NUIzfIm4gL2IO0m1gmDudWxFLhr0oSo4BIOfi9eId5kZ
+aCQwEofY7MHpKqOUhcF1dSayhBX0Z/SEKBGUOJ7548wbTXax4kThgLsHNTtSj00J
+vCl0PGrwGcpARIiqOHVC72YezVW0m1gqhnGABoVLt8dD08G7YxVuwY0P+HDQ4udC
+i8WjGa3N4ctqO/dHLBbubrw2Jv/UPsl0R/9B4As8N+mEYvbxRsI=
+=bJFw
+-----END PGP SIGNATURE-----
 
-  - Fix VIN (Video IN) versioned groups on R-Car V2H, H3, and M3-W,
-  - Add I2C[0-3], DU1, VIN, QSPI1, and SDHI pin groups on RZ/G1C,
-  - Add audio, SDHI, VIN, HSCIF, and CAN(FD) support on R-Car E3,
-  - Add QSPI pin groups on R-Car V3M and V3H,
-  - Add VIN and CAN(FD) pin groups on R-Car M3-N,
-  - Add I2C[035] pin groups on R-Car H3 and M3-W,
-  - Add pinctrl and GPIO support for the new RZ/A2M (R7S9210) SoC,
-  - Small cleanups,
-  - Maintainership updates.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Chris Brandt (2):
-      dt-bindings: pinctrl: Add RZ/A2 pinctrl and GPIO
-      pinctrl: Add RZ/A2 pin and gpio controller
-
-Dmitry Shifrin (2):
-      pinctrl: sh-pfc: r8a77970: Add QSPI pins, groups, and functions
-      pinctrl: sh-pfc: r8a77980: Add QSPI pins, groups, and functions
-
-Fabrizio Castro (5):
-      pinctrl: sh-pfc: r8a77470: Add remaining I2C pin groups
-      pinctrl: sh-pfc: r8a77470: Add DU1 pin groups
-      pinctrl: sh-pfc: r8a77470: Add VIN pin groups
-      pinctrl: sh-pfc: r8a77470: Add QSPI1 pin groups
-      pinctrl: sh-pfc: r8a77470: Add SDHI support
-
-Geert Uytterhoeven (3):
-      MAINTAINERS: Add Renesas RZ/A and RZ/N files to Renesas pinctrl section
-      pinctrl: sh-pfc: Reduce kernel size for narrow VIN channels
-      pinctrl: sh-pfc: r8a77995: Remove unused PINMUX_IPSR_{MSEL2,PHYS}()
-
-Jacopo Mondi (6):
-      pinctrl: sh-pfc: Add optional arg to VIN_DATA_PIN_GROUP
-      pinctrl: sh-pfc: r8a7792: Fix VIN versioned groups
-      pinctrl: sh-pfc: r8a7795: Fix VIN versioned groups
-      pinctrl: sh-pfc: r8a7796: Fix VIN versioned groups
-      pinctrl: sh-pfc: r8a77965: Add VIN[4|5] groups/functions
-      pinctrl: sh-pfc: r8a77990: Add VIN[4|5] groups/functions
-
-Laurent Pinchart (1):
-      MAINTAINERS: Remove Laurent Pinchart as Renesas pinctrl maintainer
-
-Takeshi Kihara (12):
-      pinctrl: sh-pfc: r8a77990: Add Audio clock pins, groups and functions
-      pinctrl: sh-pfc: r8a77990: Add Audio SSI pins, groups and functions
-      pinctrl: sh-pfc: r8a77990: Add SDHI pins, groups and functions
-      pinctrl: sh-pfc: r8a77990: Add voltage switch operations for SDHI
-      pinctrl: sh-pfc: r8a77990: Add HSCIF pins, groups, and functions
-      pinctrl: sh-pfc: r8a7795: Add I2C{0,3,5} pins, groups and functions
-      pinctrl: sh-pfc: r8a7795-es1: Add I2C{0,3,5} pins, groups and functions
-      pinctrl: sh-pfc: r8a7796: Add I2C{0,3,5} pins, groups and functions
-      pinctrl: sh-pfc: r8a77965: Add CAN pins, groups and functions
-      pinctrl: sh-pfc: r8a77965: Add CAN FD pins, groups and functions
-      pinctrl: sh-pfc: r8a77990: Add CAN pins, groups and functions
-      pinctrl: sh-pfc: r8a77990: Add CAN FD pins, groups and functions
-
-Ulrich Hecht (1):
-      pinctrl: sh-pfc: Add physical pin multiplexing helper macros
-
- .../bindings/pinctrl/renesas,rza2-pinctrl.txt      |   87 +
- MAINTAINERS                                        |    2 +-
- drivers/pinctrl/Kconfig                            |   11 +
- drivers/pinctrl/Makefile                           |    1 +
- drivers/pinctrl/pinctrl-rza2.c                     |  519 ++++++
- drivers/pinctrl/sh-pfc/pfc-r8a77470.c              |  678 ++++++-
- drivers/pinctrl/sh-pfc/pfc-r8a7792.c               |   22 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c               |    4 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c           |   97 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c               |  119 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c               |  122 +-
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c              |  370 ++++
- drivers/pinctrl/sh-pfc/pfc-r8a77970.c              |   70 +
- drivers/pinctrl/sh-pfc/pfc-r8a77980.c              |   70 +
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c              | 1934 +++++++++++++++++---
- drivers/pinctrl/sh-pfc/pfc-r8a77995.c              |    6 -
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |   54 +-
- include/dt-bindings/pinctrl/r7s9210-pinctrl.h      |   47 +
- 18 files changed, 3841 insertions(+), 372 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza2-pinctrl.txt
- create mode 100644 drivers/pinctrl/pinctrl-rza2.c
- create mode 100644 include/dt-bindings/pinctrl/r7s9210-pinctrl.h
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+--r4QXMf6/kyF/FvJJ--
