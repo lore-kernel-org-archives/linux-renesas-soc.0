@@ -1,89 +1,89 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:37569 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725888AbeKPI16 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Nov 2018 03:27:58 -0500
-From: Fernando Ramos <greenfoo@gluegarage.com>
-To: dri-devel@lists.freedesktop.org
-Cc: David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, Jonathan Corbet <corbet@lwn.net>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        virtualization@lists.linux-foundation.org,
-        etnaviv@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        cocci@systeme.lip6.fr
-Subject: [PATCH 9/9] docs: drm: remove no longer relevant TODO entry
-Date: Thu, 15 Nov 2018 23:16:29 +0100
-Message-Id: <20181115221634.22715-10-greenfoo@gluegarage.com>
-In-Reply-To: <20181115221634.22715-1-greenfoo@gluegarage.com>
-References: <20181115221634.22715-1-greenfoo@gluegarage.com>
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Michal Simek <michal.simek@xilinx.com>
+Subject: [PATCH v2 08/30] media: entity: Add media_has_route() function
+Date: Fri,  2 Nov 2018 00:31:22 +0100
+Message-Id: <20181101233144.31507-9-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This entry asked to rename all drm core "*_reference/_unrefence"
-functions to "*_get/_put".
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Now that this task is complete, we can remove this entry from the TODO
-list.
+This is a wrapper around the media entity has_route operation.
 
-Signed-off-by: Fernando Ramos <greenfoo@gluegarage.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- Documentation/gpu/todo.rst | 17 -----------------
- 1 file changed, 17 deletions(-)
+ drivers/media/media-entity.c | 16 ++++++++++++++++
+ include/media/media-entity.h | 17 +++++++++++++++++
+ 2 files changed, 33 insertions(+)
 
-diff --git a/Documentation/gpu/todo.rst b/Documentation/gpu/todo.rst
-index 77c2b3c25565..85433af65442 100644
---- a/Documentation/gpu/todo.rst
-+++ b/Documentation/gpu/todo.rst
-@@ -28,23 +28,6 @@ them, but also all the virtual ones used by KVM, so everyone qualifies).
+diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
+index f2fa0b7826dbc2f3..3c0e7425c8983b45 100644
+--- a/drivers/media/media-entity.c
++++ b/drivers/media/media-entity.c
+@@ -237,6 +237,22 @@ EXPORT_SYMBOL_GPL(media_entity_pads_init);
+  * Graph traversal
+  */
  
- Contact: Daniel Vetter, Thierry Reding, respective driver maintainers
++bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
++			    unsigned int pad1)
++{
++	if (pad0 >= entity->num_pads || pad1 >= entity->num_pads)
++		return false;
++
++	if (pad0 == pad1)
++		return true;
++
++	if (!entity->ops || !entity->ops->has_route)
++		return true;
++
++	return entity->ops->has_route(entity, pad0, pad1);
++}
++EXPORT_SYMBOL_GPL(media_entity_has_route);
++
+ static struct media_pad *
+ media_entity_other(struct media_pad *pad, struct media_link *link)
+ {
+diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+index cd482814654616b5..9540d2af80f19805 100644
+--- a/include/media/media-entity.h
++++ b/include/media/media-entity.h
+@@ -919,6 +919,23 @@ int media_entity_get_fwnode_pad(struct media_entity *entity,
+ __must_check int media_graph_walk_init(
+ 	struct media_graph *graph, struct media_device *mdev);
  
--Switch from reference/unreference to get/put
----------------------------------------------
--
--For some reason DRM core uses ``reference``/``unreference`` suffixes for
--refcounting functions, but kernel uses ``get``/``put`` (e.g.
--``kref_get``/``put()``). It would be good to switch over for consistency, and
--it's shorter. Needs to be done in 3 steps for each pair of functions:
--
--* Create new ``get``/``put`` functions, define the old names as compatibility
--  wrappers
--* Switch over each file/driver using a cocci-generated spatch.
--* Once all users of the old names are gone, remove them.
--
--This way drivers/patches in the progress of getting merged won't break.
--
--Contact: Daniel Vetter
--
- Convert existing KMS drivers to atomic modesetting
- --------------------------------------------------
- 
++/**
++ * media_entity_has_route - Check if two entity pads are connected internally
++ *
++ * @entity: The entity
++ * @pad0: The first pad index
++ * @pad1: The second pad index
++ *
++ * This function can be used to check whether two pads of an entity are
++ * connected internally in the entity.
++ *
++ * The caller must hold entity->graph_obj.mdev->mutex.
++ *
++ * Return: true if the pads are connected internally and false otherwise.
++ */
++bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
++			    unsigned int pad1);
++
+ /**
+  * media_graph_walk_cleanup - Release resources used by graph walk.
+  *
 -- 
 2.19.1
