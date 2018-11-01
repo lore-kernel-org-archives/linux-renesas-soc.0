@@ -1,57 +1,153 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:49649 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726672AbeKIClZ (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:44152 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728060AbeKBIhw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Nov 2018 21:41:25 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Richard Weinberger <richard@nod.at>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-mtd@lists.infradead.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v2 1/3] mtd: spi-nor: Add support for is25lp016d
-Date: Thu,  8 Nov 2018 17:04:41 +0000
-Message-Id: <1541696684-21235-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1541696684-21235-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1541696684-21235-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Fri, 2 Nov 2018 04:37:52 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 00/30] v4l: add support for multiplexed streams
+Date: Fri,  2 Nov 2018 00:31:14 +0100
+Message-Id: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The is25lp016d is found on the iwg23s from iWave, therefore
-add driver support for it so that we can upstream board support.
+Hi all,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+This series adds support for multiplexed streams within a media device
+link. The use-case addressed in this series covers CSI-2 Virtual
+Channels on the Renesas R-Car Gen3 platforms. The v4l2 changes have been
+a joint effort between Sakari and Laurent and floating around for some
+time [1].
 
----
-v1->v2:
-* No change
+I have added driver support for the devices used on the Renesas Gen3
+platforms, a ADV7482 connected to the R-Car CSI-2 receiver. With these
+changes I can control which of the analog inputs of the ADV7482 the
+video source is captured from and on which CSI-2 virtual channel the
+video is transmitted on to the R-Car CSI-2 receiver.
 
- drivers/mtd/spi-nor/spi-nor.c | 2 ++
- 1 file changed, 2 insertions(+)
+The series adds two new subdev IOCTLs [GS]_ROUTING which allows
+user-space to get and set routes inside a subdevice. I have added RFC
+support for these to v4l-utils [2] which can be used to test this
+series, example:
 
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index 9407ca5..85d869b 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -1352,6 +1352,8 @@ static const struct flash_info spi_nor_ids[] = {
- 	{ "is25cd512",  INFO(0x7f9d20, 0, 32 * 1024,   2, SECT_4K) },
- 	{ "is25lq040b", INFO(0x9d4013, 0, 64 * 1024,   8,
- 			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
-+	{ "is25lp016d", INFO(0x9d6015, 0, 64 * 1024,  32,
-+			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
- 	{ "is25lp080d", INFO(0x9d6014, 0, 64 * 1024,  16,
- 			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
- 	{ "is25lp128",  INFO(0x9d6018, 0, 64 * 1024, 256,
+    Check the internal routing of the adv748x csi-2 transmitter:
+    v4l2-ctl -d /dev/v4l-subdev24 --get-routing
+    0/0 -> 1/0 [ENABLED]
+    0/0 -> 1/1 []
+    0/0 -> 1/2 []
+    0/0 -> 1/3 []
+
+
+    Select that video should be outputed on VC 2 and check the result:
+    $ v4l2-ctl -d /dev/v4l-subdev24 --set-routing '0/0 -> 1/2 [1]'
+
+    $ v4l2-ctl -d /dev/v4l-subdev24 --get-routing
+    0/0 -> 1/0 []
+    0/0 -> 1/1 []
+    0/0 -> 1/2 [ENABLED]
+    0/0 -> 1/3 []
+
+This series is tested on R-Car M3-N and for your testing needs this
+series is available at
+
+    git://git.ragnatech.se/linux v4l2/mux
+
+* Changes since v1
+- Rebased on latest media-tree.
+- Incorporated changes to patch 'v4l: subdev: compat: Implement handling 
+  for VIDIOC_SUBDEV_[GS]_ROUTING' by Sakari.
+- Added review tags.
+
+Thanks.
+
+1. git://linuxtv.org/sailus/media_tree.git vc
+2. git://git.ragnatech.se/v4l-utils routing
+
+Laurent Pinchart (4):
+  media: entity: Add has_route entity operation
+  media: entity: Add media_has_route() function
+  media: entity: Use routing information during graph traversal
+  v4l: subdev: Add [GS]_ROUTING subdev ioctls and operations
+
+Niklas Söderlund (7):
+  adv748x: csi2: add translation from pixelcode to CSI-2 datatype
+  adv748x: csi2: only allow formats on sink pads
+  adv748x: csi2: describe the multiplexed stream
+  adv748x: csi2: add internal routing configuration
+  adv748x: afe: add routing support
+  rcar-csi2: use frame description information to configure CSI-2 bus
+  rcar-csi2: expose the subdevice internal routing
+
+Sakari Ailus (19):
+  media: entity: Use pad as a starting point for graph walk
+  media: entity: Use pads instead of entities in the media graph walk
+    stack
+  media: entity: Walk the graph based on pads
+  v4l: mc: Start walk from a specific pad in use count calculation
+  media: entity: Move the pipeline from entity to pads
+  media: entity: Use pad as the starting point for a pipeline
+  media: entity: Swap pads if route is checked from source to sink
+  media: entity: Skip link validation for pads to which there is no
+    route to
+  media: entity: Add an iterator helper for connected pads
+  media: entity: Add only connected pads to the pipeline
+  media: entity: Add debug information in graph walk route check
+  media: entity: Look for indirect routes
+  v4l: subdev: compat: Implement handling for VIDIOC_SUBDEV_[GS]_ROUTING
+  v4l: subdev: Take routing information into account in link validation
+  v4l: subdev: Improve link format validation debug messages
+  v4l: mc: Add an S_ROUTING helper function for power state changes
+  v4l: Add bus type to frame descriptors
+  v4l: Add CSI-2 bus configuration to frame descriptors
+  v4l: Add stream to frame descriptor
+
+ Documentation/media/kapi/mc-core.rst          |  15 +-
+ drivers/media/i2c/adv748x/adv748x-afe.c       |  65 ++++
+ drivers/media/i2c/adv748x/adv748x-csi2.c      | 124 +++++++-
+ drivers/media/i2c/adv748x/adv748x.h           |   1 +
+ drivers/media/media-entity.c                  | 252 ++++++++++------
+ drivers/media/pci/intel/ipu3/ipu3-cio2.c      |   6 +-
+ .../media/platform/exynos4-is/fimc-capture.c  |   8 +-
+ .../platform/exynos4-is/fimc-isp-video.c      |   8 +-
+ drivers/media/platform/exynos4-is/fimc-isp.c  |   2 +-
+ drivers/media/platform/exynos4-is/fimc-lite.c |  10 +-
+ drivers/media/platform/exynos4-is/media-dev.c |  20 +-
+ drivers/media/platform/omap3isp/isp.c         |   2 +-
+ drivers/media/platform/omap3isp/ispvideo.c    |  25 +-
+ drivers/media/platform/omap3isp/ispvideo.h    |   2 +-
+ .../media/platform/qcom/camss/camss-video.c   |   6 +-
+ drivers/media/platform/rcar-vin/rcar-csi2.c   | 188 +++++++++---
+ drivers/media/platform/rcar-vin/rcar-dma.c    |   8 +-
+ .../media/platform/s3c-camif/camif-capture.c  |   6 +-
+ drivers/media/platform/vimc/vimc-capture.c    |   6 +-
+ drivers/media/platform/vsp1/vsp1_video.c      |  18 +-
+ drivers/media/platform/xilinx/xilinx-dma.c    |  20 +-
+ drivers/media/platform/xilinx/xilinx-dma.h    |   2 +-
+ drivers/media/usb/au0828/au0828-core.c        |   4 +-
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c |  77 +++++
+ drivers/media/v4l2-core/v4l2-ioctl.c          |  20 +-
+ drivers/media/v4l2-core/v4l2-mc.c             |  76 +++--
+ drivers/media/v4l2-core/v4l2-subdev.c         | 285 ++++++++++++++++--
+ .../staging/media/davinci_vpfe/vpfe_video.c   |  47 +--
+ drivers/staging/media/imx/imx-media-utils.c   |   8 +-
+ drivers/staging/media/omap4iss/iss.c          |   2 +-
+ drivers/staging/media/omap4iss/iss_video.c    |  38 +--
+ drivers/staging/media/omap4iss/iss_video.h    |   2 +-
+ include/media/media-entity.h                  | 122 +++++---
+ include/media/v4l2-mc.h                       |  22 ++
+ include/media/v4l2-subdev.h                   |  34 +++
+ include/uapi/linux/v4l2-subdev.h              |  40 +++
+ 36 files changed, 1241 insertions(+), 330 deletions(-)
+
 -- 
-2.7.4
+2.19.1
