@@ -1,68 +1,76 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/6] soc: renesas: r8a77970-sysc: Correct names of A2DP/A2CN power domains
-Date: Thu, 29 Nov 2018 11:56:16 +0100
-Message-Id: <20181129105619.10695-4-geert+renesas@glider.be>
-In-Reply-To: <20181129105619.10695-1-geert+renesas@glider.be>
-References: <20181129105619.10695-1-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:40052 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728283AbeKBIiI (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 2 Nov 2018 04:38:08 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 12/30] media: entity: Add an iterator helper for connected pads
+Date: Fri,  2 Nov 2018 00:31:26 +0100
+Message-Id: <20181101233144.31507-13-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R-Car Gen3 HardWare Manual Errata for Rev. 0.80 (Feb 28, 2018)
-renamed the A2IR2 and A2IR3 power domains on R-Car V3M to A2DP resp.
-A2CN.
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-As these definitions are not yet used from DT, they can just be renamed.
+Add a helper macro for iterating over pads that are connected through
+enabled routes. This can be used to find all the connected pads within an
+entity, for instance starting from the pad which has been obtained during
+the graph walk.
 
-While at it, fix the indentation of the A3IR definition.
-
-Fixes: 833bdb47c826a1a6 ("dt-bindings: power: add R8A77970 SYSC power domain definitions")
-Fixes: bab9b2a74fe9da96 ("soc: renesas: rcar-sysc: add R8A77970 support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/soc/renesas/r8a77970-sysc.c       | 4 ++--
- include/dt-bindings/power/r8a77970-sysc.h | 6 +++---
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ include/media/media-entity.h | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/drivers/soc/renesas/r8a77970-sysc.c b/drivers/soc/renesas/r8a77970-sysc.c
-index 2c6d76490ca096ca..280c48b80f240424 100644
---- a/drivers/soc/renesas/r8a77970-sysc.c
-+++ b/drivers/soc/renesas/r8a77970-sysc.c
-@@ -23,8 +23,8 @@ static const struct rcar_sysc_area r8a77970_areas[] __initconst = {
- 	{ "a3ir",	0x180, 0, R8A77970_PD_A3IR,	R8A77970_PD_ALWAYS_ON },
- 	{ "a2ir0",	0x400, 0, R8A77970_PD_A2IR0,	R8A77970_PD_A3IR },
- 	{ "a2ir1",	0x400, 1, R8A77970_PD_A2IR1,	R8A77970_PD_A3IR },
--	{ "a2ir2",	0x400, 2, R8A77970_PD_A2IR2,	R8A77970_PD_A3IR },
--	{ "a2ir3",	0x400, 3, R8A77970_PD_A2IR3,	R8A77970_PD_A3IR },
-+	{ "a2dp",	0x400, 2, R8A77970_PD_A2DP,	R8A77970_PD_A3IR },
-+	{ "a2cn",	0x400, 3, R8A77970_PD_A2CN,	R8A77970_PD_A3IR },
- 	{ "a2sc0",	0x400, 4, R8A77970_PD_A2SC0,	R8A77970_PD_A3IR },
- 	{ "a2sc1",	0x400, 5, R8A77970_PD_A2SC1,	R8A77970_PD_A3IR },
- };
-diff --git a/include/dt-bindings/power/r8a77970-sysc.h b/include/dt-bindings/power/r8a77970-sysc.h
-index 5c1ef1398b704ab5..85cc5f23cf9f8e72 100644
---- a/include/dt-bindings/power/r8a77970-sysc.h
-+++ b/include/dt-bindings/power/r8a77970-sysc.h
-@@ -18,10 +18,10 @@
- #define R8A77970_PD_CA53_CPU1		 6
- #define R8A77970_PD_CA53_SCU		21
- #define R8A77970_PD_A2IR0		23
--#define R8A77970_PD_A3IR			24
-+#define R8A77970_PD_A3IR		24
- #define R8A77970_PD_A2IR1		27
--#define R8A77970_PD_A2IR2		28
--#define R8A77970_PD_A2IR3		29
-+#define R8A77970_PD_A2DP		28
-+#define R8A77970_PD_A2CN		29
- #define R8A77970_PD_A2SC0		30
- #define R8A77970_PD_A2SC1		31
+diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+index 9540d2af80f19805..4bb1b568e1ac4795 100644
+--- a/include/media/media-entity.h
++++ b/include/media/media-entity.h
+@@ -936,6 +936,33 @@ __must_check int media_graph_walk_init(
+ bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
+ 			    unsigned int pad1);
  
++static inline struct media_pad *__media_entity_for_routed_pads_next(
++	struct media_pad *start, struct media_pad *iter)
++{
++	struct media_entity *entity = start->entity;
++
++	while (iter < &entity->pads[entity->num_pads] &&
++	       !media_entity_has_route(entity, start->index, iter->index))
++		iter++;
++
++	return iter;
++}
++
++/**
++ * media_entity_for_routed_pads - Iterate over entity pads connected by routes
++ *
++ * @start: The stating pad
++ * @iter: The iterator pad
++ *
++ * Iterate over all pads connected through routes from a given pad
++ * within an entity. The iteration will include the starting pad itself.
++ */
++#define media_entity_for_routed_pads(start, iter)			\
++	for (iter = __media_entity_for_routed_pads_next(		\
++		     start, (start)->entity->pads);			\
++	     iter < &(start)->entity->pads[(start)->entity->num_pads];	\
++	     iter = __media_entity_for_routed_pads_next(start, iter + 1))
++
+ /**
+  * media_graph_walk_cleanup - Release resources used by graph walk.
+  *
 -- 
-2.17.1
+2.19.1
