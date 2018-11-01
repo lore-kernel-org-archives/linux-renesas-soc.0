@@ -1,53 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:46817 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726319AbeKETv2 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:38848 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726670AbeKBEr7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Nov 2018 14:51:28 -0500
-Received: by mail-ua1-f67.google.com with SMTP id v24so2961690uap.13
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 05 Nov 2018 02:32:27 -0800 (PST)
-MIME-Version: 1.0
-References: <20181031232518.2490-1-niklas.soderlund@ragnatech.se>
-In-Reply-To: <20181031232518.2490-1-niklas.soderlund@ragnatech.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 5 Nov 2018 11:32:15 +0100
-Message-ID: <CAMuHMdU9KewOQLaNrrWxd3YfLJs+uwto9=fSwo9r6QQCYMy2gA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] renesas: rcar-gen3: add HS400 quirk for SD clock
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+        Fri, 2 Nov 2018 00:47:59 -0400
+Date: Thu, 1 Nov 2018 20:43:34 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        linux-renesas-soc@vger.kernel.org,
+        Niklas =?utf-8?Q?S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH 0/2] renesas: rcar-gen3: add HS400 quirk for SD clock
+Message-ID: <20181101194332.GR2433@kunai>
+References: <20181031232518.2490-1-niklas.soderlund@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="pqmPt9oPL4cuP/b5"
+Content-Disposition: inline
+In-Reply-To: <20181031232518.2490-1-niklas.soderlund@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
 
-On Thu, Nov 1, 2018 at 12:26 AM Niklas Söderlund
-<niklas.soderlund@ragnatech.se> wrote:
-> This is the result of the SDHI hackathon for a possible solution to the
-> clock issue on early ES versions. It is based on the Gen2 solution where
-> a row of the possible clock settings are ignored on the effected SoC+ES
-> versions. The first row is not effected when reading settings left by
+--pqmPt9oPL4cuP/b5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+
+> This is the result of the SDHI hackathon for a possible solution to the=
+=20
+> clock issue on early ES versions. It is based on the Gen2 solution where=
+=20
+> a row of the possible clock settings are ignored on the effected SoC+ES=
+=20
+> versions. The first row is not effected when reading settings left by=20
 > the bootloader, only when the setting the clock.
 
-To clarify, you decided not to describe the SDH clock in DT, but went for
-heuristics with a quirk instead?
+We really thought about exposing both clocks, SDn and SDHn. I got
+convinced to use this less intrusive approach to get HS400 reliably to
+work as a first step. "First make it work, then make it beautiful" so to
+say...
 
-Is there any chance this can start to bite us in the future?
 
-Thanks!
+--pqmPt9oPL4cuP/b5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Gr{oetje,eeting}s,
+-----BEGIN PGP SIGNATURE-----
 
-                        Geert
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvbV2QACgkQFA3kzBSg
+Kbb8zg/9HqYss8KD3OaWm4S5rV1lBoT7BLwhRmZhQgJQJYldZYoh2Gmj/n3NtFeF
+T2LEFTkjq0Hd+stahQ2FNXNnaLLG0f8RGpKczwDHU8FXE6vZgf2GQ6LucN/RY4HH
+xZYYLoNU5yDFLhLOcjhq/UHnljBPx+3o92RJTd4Ze0iK7SG3t4TakPlNNa/fCgN4
+3fRvs1/fJEGYQD4TDsOZ0Of74UGD4ALTG+G5jAtAdu3ji/iKRtf5cB78dMkCOFB4
+rjEqDSxiCMD1V2uownOLqKfOOaJz8QxBplw6UnwCW5DAeosu3LQt3URsjtEWjbwp
+8cHd0WiABF4Z7ylATPq6NBu1qOUFPOalNwjsZdlDXa1Ii2sduF6hmQ5YTvu4OUU7
+RxuwEHJVhfIjHwtwAPpdCuKyjzHegyTOZMegHJ06iES3wzNy+oX4msNPGmKJDOr3
++AuiRG7O41ubtuAbv5hQBs9u+w8gkoK9lumesT0crA7eKyFxn0+sWGHow9+Y4Wyz
+RTp81UlJuPLSdM8MuAkruvcZ1HUhG7sPei87tVEnubMuZQvEb3X+EuaVQUB936ct
+YQ41295cy+ieePtaCPEYvIgxGRHGj/sxollxaqL5aAl49uvC74aSmaeZRZtJ6B+T
+WhaUvH05+dZz2BRQZjVTq/Sq+jcsr8TaOvLglaS7ECRMiEyxfkc=
+=IGZZ
+-----END PGP SIGNATURE-----
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--pqmPt9oPL4cuP/b5--
