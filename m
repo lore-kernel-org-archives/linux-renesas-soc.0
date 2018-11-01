@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:38500 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:38458 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725722AbeKBEIl (ORCPT
+        id S1725722AbeKBEGw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Nov 2018 00:08:41 -0400
-Date: Thu, 1 Nov 2018 20:04:25 +0100
+        Fri, 2 Nov 2018 00:06:52 -0400
+Date: Thu, 1 Nov 2018 20:02:31 +0100
 From: Wolfram Sang <wsa@the-dreams.de>
 To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -13,46 +13,60 @@ Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Niklas =?utf-8?Q?S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCH v3 0/3] mmc: tmio: fix reset operation
-Message-ID: <20181101190425.GG2433@kunai>
+Subject: Re: [PATCH v3 2/3] mmc: tmio: fix reset operation
+Message-ID: <20181101190230.GE2433@kunai>
 References: <20181031230554.1660-1-niklas.soderlund@ragnatech.se>
+ <20181031230554.1660-3-niklas.soderlund@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="/i8j2F0k9BYX4qLc"
+        protocol="application/pgp-signature"; boundary="7CZp05NP8/gJM8Cl"
 Content-Disposition: inline
-In-Reply-To: <20181031230554.1660-1-niklas.soderlund@ragnatech.se>
+In-Reply-To: <20181031230554.1660-3-niklas.soderlund@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---/i8j2F0k9BYX4qLc
-Content-Type: text/plain; charset=us-ascii
+--7CZp05NP8/gJM8Cl
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Nov 01, 2018 at 12:05:53AM +0100, Niklas S=C3=B6derlund wrote:
+> From: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
+>=20
+> SD / MMC did not operate properly when suspend transition failed.
+> Because the SCC was not reset at resume, issue of the command failed.
+> Call the host specific reset function and reset the hardware in order to
+> add reset of SCC. This change also fixes tuning on some stubborn cards
+> on Gen2.
+>=20
+> Based on work from Masaharu Hayakawa.
+>=20
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
+>=20
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 
-So, we agreed on this series during our Renesas SDHI hackathon.
-Comments / testing from Yamada-san would be very welcome because we
-really don't want to cause regressions on his hardware.
-
-
---/i8j2F0k9BYX4qLc
+--7CZp05NP8/gJM8Cl
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvbTjkACgkQFA3kzBSg
-KbY7MxAAsGrZ/Xcnlr8RI4eqwxNIs3qPq6T3nHKuhS0eUPVWHjLnJC/1bUrOPoFO
-IIJoNeW65mhQ16u0UpCOx5arrva+uqEIIqIGTiJKKOs9+JkPPmGpESgbL7gQk1C4
-lbaC1ucnVlwYVSBugUAA/TPYr5WuJzXK6U/ODFutZu6ChoIBjJb+zaPPCuN9ZHoF
-kRV1Fv/YreTjcTXr8qolMrELKDYh6AvRyVd9FNvYI7GNN37+WpHS6V8JeJnhQf0R
-/Dc7qAU6cEKwI0vVIosytXVzv5ZoUXFYC3w+By8fHX+bpwkEW8mIxyTPcs44FO3j
-geBObZUISYT4xYOOqclUc2fH7XY0gDpGu9puc9lbkVGsrILdXLDYb0yWxjR416Tv
-uEXbLt23F/fDG2xmVeO6LqyfAM6z5cGXQ/DyVCuzd/3+hSswDBSqfaM28H1tNqUu
-BbfUY53IRtRzU+YM9dd5XTTep7mpYyM+xM7wxi6uPckXe0HWKEMOBPBsSGjmpJGH
-EBPOewVArnir97QH9xwRJ7a6aXh43q+36HLzWCIPTDvOCH0d/IQfuLPf4PP9QW2L
-ZJI2l2kKdpycwD1qeL2IEUkWCQPL0EzjenZXsRrAF6sTZ9PE2PWBXsGBqnww7zsH
-BF9Qu/KYayL97liM2W9+WPJK6K0fW50xp3uXoyN9oGKXoPjuYbI=
-=FIJk
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvbTcYACgkQFA3kzBSg
+Kbbifw//WfIKHdvPju/nQu5Yb6O8Ctmh6FwMpYXbO/iZv2N4uE0cCCHIS3yi0SHR
+S+/QQpNBlJstMf9tPS81xZkzIHkd7JiRdFVouzRMIhdJe5stVVQ2dfG1v4SoKbbi
+bJY9d61kl1Fsq5meF2fBx7QxoyvAwPACunTzIi33JnOvw6rXBbimflRUsp9uwWpL
+eveR4NomXg6MOKdZ7/lYyzzrgIzhHDTizfBlUrqNkCGHGTMFIl/5fLnBh2OPvznJ
+GVgTzh+AqanzgpyiDuSvdvrtDyyc2DpLERpGBcunuyIaUhZHvKOPSa6VFHWIbpHw
+1olN7ezb1zuIY+V6oxzjAZoBPQXr2srgCDiDOkBHZ1J6rreK8br/H8sqYZeGRAeR
+/tbblzarU/ktwbwZ/5NMGy3JCF8wFNba09OJcAU2d0WGfDN6wW+vOe1HhEZluXCA
+o+ycwDJBaxsRUbQgsA5ODX70AKW4ui+J+6UU5caXkCNngzK4KvqZ/kE+NIPZsrnf
+HdRfYnYSdG6xlOORM+J4WW4yb/4HEAuUHXfiwEqp3lYORpm0TXu/+uI3m+GCQtr4
+PQamcd8auA5yiX+GSnhPA8VSQuS8N4kXjVOlkgMCmWFY93kBL0EfTyZBjLbbdWMf
+6fbrq7BeZC53GlDGUC/4IdwP/lYWP6r2A9uKGG6s7E1EBxcgbGA=
+=9r5X
 -----END PGP SIGNATURE-----
 
---/i8j2F0k9BYX4qLc--
+--7CZp05NP8/gJM8Cl--
