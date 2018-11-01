@@ -1,48 +1,87 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:59352 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727871AbeK2Vjl (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Nov 2018 16:39:41 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] arm64: dts: renesas: Miscellaneous IPMMU fixes
-Date: Thu, 29 Nov 2018 11:34:33 +0100
-Message-Id: <20181129103435.9260-1-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 15/30] media: entity: Look for indirect routes
+Date: Fri,  2 Nov 2018 00:31:29 +0100
+Message-Id: <20181101233144.31507-16-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-This patch series contains two IPMMU-related fixes for the R-Car M3-N
-and R-Car H3 ES1.x SoCs.
+Two pads are considered having an active route for the purpose of
+has_route() if an indirect active route can be found between the two pads.
+An simple example of this is that a source pad has an active route to
+another source pad if both of the pads have an active route to the same
+sink pad.
 
-The first patch is a dependency for a later fix.
+Make media_entity_has_route() return true in that case, and do not rely on
+drivers performing this by themselves.
 
-Thanks!
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/media-entity.c | 32 +++++++++++++++++++++++++++++++-
+ 1 file changed, 31 insertions(+), 1 deletion(-)
 
-Geert Uytterhoeven (2):
-  arm64: dts: renesas: r8a77965: Remove non-existent IPMMU-IR
-  arm64: dts: renesas: r8a7795-es1: Add missing power domains to IPMMU
-    nodes
-
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 2 ++
- arch/arm64/boot/dts/renesas/r8a77965.dtsi    | 8 --------
- 2 files changed, 2 insertions(+), 8 deletions(-)
-
+diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
+index 42977634d7102852..e45fc2549017615a 100644
+--- a/drivers/media/media-entity.c
++++ b/drivers/media/media-entity.c
+@@ -240,6 +240,9 @@ EXPORT_SYMBOL_GPL(media_entity_pads_init);
+ bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
+ 			    unsigned int pad1)
+ {
++	unsigned int i;
++	bool has_route;
++
+ 	if (pad0 >= entity->num_pads || pad1 >= entity->num_pads)
+ 		return false;
+ 
+@@ -253,7 +256,34 @@ bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
+ 	    && entity->pads[pad1].flags & MEDIA_PAD_FL_SINK)
+ 		swap(pad0, pad1);
+ 
+-	return entity->ops->has_route(entity, pad0, pad1);
++	has_route = entity->ops->has_route(entity, pad0, pad1);
++	/* A direct route is returned immediately */
++	if (has_route ||
++	    (entity->pads[pad0].flags & MEDIA_PAD_FL_SINK &&
++	     entity->pads[pad1].flags & MEDIA_PAD_FL_SOURCE))
++		return true;
++
++	/* Look for indirect routes */
++	for (i = 0; i < entity->num_pads; i++) {
++		if (i == pad0 || i == pad1)
++			continue;
++
++		/*
++		 * There are no direct routes between same types of
++		 * pads, so skip checking this route
++		 */
++		if (!((entity->pads[pad0].flags ^ entity->pads[i].flags) &
++		      (MEDIA_PAD_FL_SOURCE | MEDIA_PAD_FL_SINK)))
++			continue;
++
++		/* Is there an indirect route? */
++		if (entity->ops->has_route(entity, i, pad0) &&
++		    entity->ops->has_route(entity, i, pad1))
++			return true;
++	}
++
++	return false;
++
+ }
+ EXPORT_SYMBOL_GPL(media_entity_has_route);
+ 
 -- 
-2.17.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.19.1
