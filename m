@@ -1,64 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:46831 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728998AbeK0XC6 (ORCPT
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:11190 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728230AbeKBIiF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Nov 2018 18:02:58 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 06/22] ARM: dts: r8a7744-iwg20m: Enable SDHI10 controller
-Date: Tue, 27 Nov 2018 11:56:19 +0000
-Message-Id: <1543319795-48325-7-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com>
-References: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com>
+        Fri, 2 Nov 2018 04:38:05 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 09/30] media: entity: Swap pads if route is checked from source to sink
+Date: Fri,  2 Nov 2018 00:31:23 +0100
+Message-Id: <20181101233144.31507-10-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable the SDHI0 controller on iWave RZ/G1N Qseven System On Module.
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+This way the pads are always passed to the has_route() op sink pad first.
+Makes sense.
+
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm/boot/dts/r8a7744-iwg20m.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/media/media-entity.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7744-iwg20m.dtsi b/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
-index 1e57b1f..503583e 100644
---- a/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
-+++ b/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
-@@ -35,6 +35,12 @@
- 		groups = "mmc_data8_b", "mmc_ctrl";
- 		function = "mmc";
- 	};
-+
-+	sdhi0_pins: sd0 {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+		power-source = <3300>;
-+	};
- };
+diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
+index 3c0e7425c8983b45..33f00e35ccd92c6f 100644
+--- a/drivers/media/media-entity.c
++++ b/drivers/media/media-entity.c
+@@ -249,6 +249,10 @@ bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
+ 	if (!entity->ops || !entity->ops->has_route)
+ 		return true;
  
- &mmcif0 {
-@@ -46,3 +52,13 @@
- 	non-removable;
- 	status = "okay";
- };
++	if (entity->pads[pad0].flags & MEDIA_PAD_FL_SOURCE
++	    && entity->pads[pad1].flags & MEDIA_PAD_FL_SINK)
++		swap(pad0, pad1);
 +
-+&sdhi0 {
-+	pinctrl-0 = <&sdhi0_pins>;
-+	pinctrl-names = "default";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&reg_3p3v>;
-+	cd-gpios = <&gpio7 11 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
+ 	return entity->ops->has_route(entity, pad0, pad1);
+ }
+ EXPORT_SYMBOL_GPL(media_entity_has_route);
 -- 
-2.7.4
+2.19.1
