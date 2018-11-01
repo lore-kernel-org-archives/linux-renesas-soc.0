@@ -1,55 +1,124 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:58245 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729241AbeKFUAX (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:65301 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728337AbeKBIiU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Nov 2018 15:00:23 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert+renesas@glider.be, horms@verge.net.au,
-        laurent.pinchart@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, linus.walleij@linaro.org,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH v4 0/4] sh-pfc: Variadic VIN_DATA_PIN_GROUP macro + updates
-Date: Tue,  6 Nov 2018 11:35:29 +0100
-Message-Id: <1541500533-21843-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 2 Nov 2018 04:38:20 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 28/30] adv748x: afe: add routing support
+Date: Fri,  2 Nov 2018 00:31:42 +0100
+Message-Id: <20181101233144.31507-29-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
-   thanks to your suggestion I made a variadic macro out of the
-VIN_DATA_PIN_GROUP one. The macro accepts an optional third argument 'version'
-and creates properly formatted names in the form of 'vin4_data8_a' in place of
-the previous 'vin4_data_a8' ones.
+The adv748x afe has eight analog sink pads, currently one of them is
+chosen to be the active route based on device tree configuration. With
+the new routing API it's possible to expose and change which of the
+eight sink pads are routed to the source pad.
 
-I included in this series the refactoring of existing users of versioned
-VIN_DATA_PIN_GROUP macro and upstreaming of VIN4 and VIN5 enablement for both
-R-Car M3-N and E3, both of them users of versioned VIN groups.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/i2c/adv748x/adv748x-afe.c | 65 +++++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
 
-Thanks
-   j
-
-v3 -> v4:
-- The series gathers different patch series previously sent separately:
-  [PATCH 0/2] pinctrl: sh-pfc: r8a77965: Add VIN4 and VIN5
-  [PATCH] pinctrl: sh-pfc: r8a77990: Add VIN pins, groups and functions
-  As E3 patch depends on the M3-N series, I made a single one out of those.
-  Changelog for the E3 patch (which was actually at v3) is included in the
-  single patch commit message.
-
-
-Jacopo Mondi (4):
-  pinctrl: sh-pfc: Add optional arg to VIN_DATA_PIN_GROUP
-  pinctrl: sh-pfc: Fix VIN versioned groups name
-  pinctrl: sh-pfc: r8a77965: Add VIN[4|5] groups/functions
-  pinctrl: sh-pfc: r8a77990: Add VIN[4|5] groups/functions
-
- drivers/pinctrl/sh-pfc/pfc-r8a7792.c  |   6 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c  |  24 ++--
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c  |  24 ++--
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 254 ++++++++++++++++++++++++++++++++++
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 244 ++++++++++++++++++++++++++++++++
- drivers/pinctrl/sh-pfc/sh_pfc.h       |  17 +--
- 6 files changed, 534 insertions(+), 35 deletions(-)
-
---
-2.7.4
+diff --git a/drivers/media/i2c/adv748x/adv748x-afe.c b/drivers/media/i2c/adv748x/adv748x-afe.c
+index 71714634efb08bd4..6b7fd4685aa4c177 100644
+--- a/drivers/media/i2c/adv748x/adv748x-afe.c
++++ b/drivers/media/i2c/adv748x/adv748x-afe.c
+@@ -39,6 +39,9 @@
+ #define ADV748X_AFE_STD_PAL_SECAM			0xe
+ #define ADV748X_AFE_STD_PAL_SECAM_PED			0xf
+ 
++#define ADV748X_AFE_ROUTES_MAX ((ADV748X_AFE_SINK_AIN7 - \
++				ADV748X_AFE_SINK_AIN0) + 1)
++
+ static int adv748x_afe_read_ro_map(struct adv748x_state *state, u8 reg)
+ {
+ 	int ret;
+@@ -383,10 +386,72 @@ static int adv748x_afe_set_format(struct v4l2_subdev *sd,
+ 	return 0;
+ }
+ 
++static int adv748x_afe_get_routing(struct v4l2_subdev *sd,
++				   struct v4l2_subdev_routing *routing)
++{
++	struct adv748x_afe *afe = adv748x_sd_to_afe(sd);
++	struct v4l2_subdev_route *r = routing->routes;
++	unsigned int i;
++
++	/* There is one possible route from each sink */
++	if (routing->num_routes < ADV748X_AFE_ROUTES_MAX) {
++		routing->num_routes = ADV748X_AFE_ROUTES_MAX;
++		return -ENOSPC;
++	}
++
++	routing->num_routes = ADV748X_AFE_ROUTES_MAX;
++
++	for (i = ADV748X_AFE_SINK_AIN0; i <= ADV748X_AFE_SINK_AIN7; i++) {
++		r->sink_pad = i;
++		r->sink_stream = 0;
++		r->source_pad = ADV748X_AFE_SOURCE;
++		r->source_stream = 0;
++		r->flags = afe->input == i ? V4L2_SUBDEV_ROUTE_FL_ACTIVE : 0;
++		r++;
++	}
++
++	return 0;
++}
++
++static int adv748x_afe_set_routing(struct v4l2_subdev *sd,
++				   struct v4l2_subdev_routing *routing)
++{
++	struct adv748x_afe *afe = adv748x_sd_to_afe(sd);
++	struct v4l2_subdev_route *r = routing->routes;
++	int input = -1;
++	unsigned int i;
++
++	if (routing->num_routes > ADV748X_AFE_ROUTES_MAX)
++		return -ENOSPC;
++
++	for (i = 0; i < routing->num_routes; i++) {
++		if (r->sink_pad > ADV748X_AFE_SINK_AIN7 ||
++		    r->sink_stream != 0 ||
++		    r->source_pad != ADV748X_AFE_SOURCE ||
++		    r->source_stream != 0)
++			return -EINVAL;
++
++		if (r->flags & V4L2_SUBDEV_ROUTE_FL_ACTIVE) {
++			if (input != -1)
++				return -EMLINK;
++
++			input = r->sink_pad;
++		}
++		r++;
++	}
++
++	if (input != -1)
++		afe->input = input;
++
++	return 0;
++}
++
+ static const struct v4l2_subdev_pad_ops adv748x_afe_pad_ops = {
+ 	.enum_mbus_code = adv748x_afe_enum_mbus_code,
+ 	.set_fmt = adv748x_afe_set_format,
+ 	.get_fmt = adv748x_afe_get_format,
++	.get_routing = adv748x_afe_get_routing,
++	.set_routing = adv748x_afe_set_routing,
+ };
+ 
+ /* -----------------------------------------------------------------------------
+-- 
+2.19.1
