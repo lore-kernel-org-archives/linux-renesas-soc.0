@@ -1,53 +1,114 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:41782 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389987AbeKQBNM (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Nov 2018 20:13:12 -0500
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Greg Ungerer <gerg@linux-m68k.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        linux-m68k@lists.linux-m68k.org
-Subject: [PATCH v6 3/6] m68k: coldfire: Add clk_get_optional() function
-Date: Fri, 16 Nov 2018 14:59:34 +0000
-Message-Id: <20181116145937.27660-4-phil.edworthy@renesas.com>
-In-Reply-To: <20181116145937.27660-1-phil.edworthy@renesas.com>
-References: <20181116145937.27660-1-phil.edworthy@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Michal Simek <michal.simek@xilinx.com>
+Subject: [PATCH v2 10/30] media: entity: Use routing information during graph traversal
+Date: Fri,  2 Nov 2018 00:31:24 +0100
+Message-Id: <20181101233144.31507-11-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-clk_get_optional() returns NULL if not found instead of -ENOENT,
-otherwise the behaviour is the same as clk_get().
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Take internal routing information as reported by the entity has_route
+operation into account during graph traversal to avoid following
+unrelated links.
+
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/m68k/coldfire/clk.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/media/media-entity.c | 44 ++++++++++++++++++++++--------------
+ 1 file changed, 27 insertions(+), 17 deletions(-)
 
-diff --git a/arch/m68k/coldfire/clk.c b/arch/m68k/coldfire/clk.c
-index 7bc666e482eb..b221cabc7f54 100644
---- a/arch/m68k/coldfire/clk.c
-+++ b/arch/m68k/coldfire/clk.c
-@@ -87,6 +87,17 @@ struct clk *clk_get(struct device *dev, const char *id)
+diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
+index 33f00e35ccd92c6f..4d10bc186e1e7a10 100644
+--- a/drivers/media/media-entity.c
++++ b/drivers/media/media-entity.c
+@@ -257,15 +257,6 @@ bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
  }
- EXPORT_SYMBOL(clk_get);
+ EXPORT_SYMBOL_GPL(media_entity_has_route);
  
-+struct clk *clk_get_optional(struct device *dev, const char *id)
-+{
-+	struct clk *clk = clk_get(dev, id);
-+
-+	if (clk == ERR_PTR(-ENOENT))
-+		clk = NULL;
-+
-+	return clk;
-+}
-+EXPORT_SYMBOL(clk_get_optional);
-+
- int clk_enable(struct clk *clk)
+-static struct media_pad *
+-media_entity_other(struct media_pad *pad, struct media_link *link)
+-{
+-	if (link->source == pad)
+-		return link->sink;
+-	else
+-		return link->source;
+-}
+-
+ /* push an entity to traversal stack */
+ static void stack_push(struct media_graph *graph, struct media_pad *pad)
  {
- 	unsigned long flags;
+@@ -336,7 +327,8 @@ static void media_graph_walk_iter(struct media_graph *graph)
+ {
+ 	struct media_pad *pad = stack_top(graph);
+ 	struct media_link *link;
+-	struct media_pad *next;
++	struct media_pad *remote;
++	struct media_pad *local;
+ 
+ 	link = list_entry(link_top(graph), typeof(*link), list);
+ 
+@@ -350,23 +342,41 @@ static void media_graph_walk_iter(struct media_graph *graph)
+ 		return;
+ 	}
+ 
+-	/* Get the entity in the other end of the link . */
+-	next = media_entity_other(pad, link);
++	/*
++	 * Get the local pad, the remote pad and the entity at the other
++	 * end of the link.
++	 */
++	if (link->source->entity == pad->entity) {
++		remote = link->sink;
++		local = link->source;
++	} else {
++		remote = link->source;
++		local = link->sink;
++	}
++
++	/*
++	 * Are the local pad and the pad we came from connected
++	 * internally in the entity ?
++	 */
++	if (!media_entity_has_route(pad->entity, pad->index, local->index)) {
++		link_top(graph) = link_top(graph)->next;
++		return;
++	}
+ 
+ 	/* Has the entity already been visited? */
+-	if (media_entity_enum_test_and_set(&graph->ent_enum, next->entity)) {
++	if (media_entity_enum_test_and_set(&graph->ent_enum, remote->entity)) {
+ 		link_top(graph) = link_top(graph)->next;
+ 		dev_dbg(pad->graph_obj.mdev->dev,
+ 			"walk: skipping entity '%s' (already seen)\n",
+-			next->entity->name);
++			remote->entity->name);
+ 		return;
+ 	}
+ 
+ 	/* Push the new entity to stack and start over. */
+ 	link_top(graph) = link_top(graph)->next;
+-	stack_push(graph, next);
+-	dev_dbg(next->graph_obj.mdev->dev, "walk: pushing '%s':%u on stack\n",
+-		next->entity->name, next->index);
++	stack_push(graph, remote);
++	dev_dbg(remote->graph_obj.mdev->dev, "walk: pushing '%s':%u on stack\n",
++		remote->entity->name, remote->index);
+ }
+ 
+ struct media_pad *media_graph_walk_next(struct media_graph *graph)
 -- 
-2.17.1
+2.19.1
