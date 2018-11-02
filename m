@@ -1,64 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:58678 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726442AbeK0XDU (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51794 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbeKBVJG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Nov 2018 18:03:20 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 14/22] ARM: dts: r8a7744: Add IRQC support
-Date: Tue, 27 Nov 2018 11:56:27 +0000
-Message-Id: <1543319795-48325-15-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com>
-References: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com>
+        Fri, 2 Nov 2018 17:09:06 -0400
+Date: Fri, 2 Nov 2018 13:02:05 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: [PATCH v3 3/3] mmc: renesas_sdhi: add initial setting of
+ interrupt mask register
+Message-ID: <20181102120205.rpyd2ldjd2vh4yth@verge.net.au>
+References: <20181031230554.1660-1-niklas.soderlund@ragnatech.se>
+ <20181031230554.1660-4-niklas.soderlund@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181031230554.1660-4-niklas.soderlund@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the IRQC interrupt controller in the r8a7744 device tree.
+On Thu, Nov 01, 2018 at 12:05:54AM +0100, Niklas Söderlund wrote:
+> From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> 
+> The initial value of the interrupt mask register may be different from
+> the H/W manual at the startup of the kernel by setting from the
+> bootloader. Since the error interrupts may be unmasked, the driver sets
+> initial value.
+> 
+> The initial value is only known for R-Car Gen2 and Gen3 platforms so
+> limit the initialization to those platforms.
+> 
+> Based on work from Masaharu Hayakawa.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm/boot/dts/r8a7744.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index e6662d9..b26315d 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -309,6 +309,26 @@
- 			#power-domain-cells = <1>;
- 		};
- 
-+		irqc: interrupt-controller@e61c0000 {
-+			compatible = "renesas,irqc-r8a7744", "renesas,irqc";
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			reg = <0 0xe61c0000 0 0x200>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 407>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 407>;
-+		};
-+
- 		icram0:	sram@e63a0000 {
- 			compatible = "mmio-sram";
- 			reg = <0 0xe63a0000 0 0x12000>;
--- 
-2.7.4
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
