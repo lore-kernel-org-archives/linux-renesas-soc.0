@@ -1,101 +1,75 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:45136 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726636AbeKVFEe (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:04:34 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Alexandru-Cosmin Gheorghe <Alexandru-Cosmin.Gheorghe@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] drm: rcar-du: Enable alpha property on primary planes
-Date: Wed, 21 Nov 2018 20:29:22 +0200
-Message-ID: <3478783.2iBfSyQcgT@avalon>
-In-Reply-To: <1604918.OXgyMDt7RE@avalon>
-References: <20180919155700.10342-1-kieran.bingham+renesas@ideasonboard.com> <20180919155700.10342-3-kieran.bingham+renesas@ideasonboard.com> <1604918.OXgyMDt7RE@avalon>
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, sakari.ailus@iki.fi
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        linux-kernel@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH v4 0/4] MAX9286 GMSL Support
+Date: Fri,  2 Nov 2018 15:47:19 +0000
+Message-Id: <20181102154723.23662-1-kieran.bingham@ideasonboard.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+This series provides a pair of drivers for GMSL cameras on the R-Car
+ADAS platforms.
 
-On Thursday, 20 September 2018 14:22:38 EET Laurent Pinchart wrote:
-> On Wednesday, 19 September 2018 18:56:59 EEST Kieran Bingham wrote:
-> > If the alpha property is not added to a plane, a default value will be
-> > used, which can result in a non-visible layer if the alpha is
-> > initialised as 0.
-> > 
-> > Provide an alpha blend property on all planes.
-> > 
-> > Fixes: 161ad653d6c9 ("drm: rcar-du: Use __drm_atomic_helper_plane_reset
-> > instead of copying the logic")
-> > 
-> > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> > ---
-> > 
-> >  drivers/gpu/drm/rcar-du/rcar_du_plane.c | 7 ++++++-
-> >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-> > b/drivers/gpu/drm/rcar-du/rcar_du_plane.c index 9e07758a755c..72399a19d8a6
-> > 100644
-> > --- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-> > @@ -783,13 +783,18 @@ int rcar_du_planes_init(struct rcar_du_group *rgrp)
-> > 
-> >  		drm_plane_helper_add(&plane->plane,
-> >  		
-> >  				     &rcar_du_plane_helper_funcs);
-> > 
-> > +		/*
-> > +		 * The alpha property needs to be initialised on all planes
-> > +		 * to ensure the correct setting at the output.
-> > +		 */
-> > +		drm_plane_create_alpha_property(&plane->plane);
-> > +
-> 
-> As mentioned in the cover letter, both patches in this series fix the issue
-> at hand. The first patch is more generic as it will fix it for all drivers,
-> while this patch is specific to the R-Car DU driver. It however makes sense
-> to merge it, as it adds alpha support to the primary plane, which can be
-> useful.
-> 
-> Once the first patch gets merged, the above comment won't be correct
-> anymore. I wonder whether we shouldn't change the patch description and
-> comment to focus on usage of the alpha property for primary planes, and not
-> on the bug fix. What's your opinion ?
+These drivers originate from Cogent Embedded, and have been refactored
+to split the MAX9286 away from the RDACM20 drivers which were once very
+tightly coupled.
 
-I've removed the comment and changed the commit message to
+This posting is the culmination of ~100 changesets spread across Jacopo,
+Niklas, Laurent and myself - thus they contain all of our SoB tags.
 
-  drm: rcar-du: Enable alpha property on primary planes
-  
-  The hardware supports alpha on all planes, and using it on the primary
-  plane can be useful. Don't restrict the alpha property to overlay
-  planes.
+This series makes use of Sakari's VC developments and is based upon the
+most recent rebase of this series by Niklas at:
+  git://git.ragnatech.se/linux/ v4l2/mux
 
-With this,
+Thanks to the VC developments, this driver is capable of streaming from
+all 4 input ports simultaneously through the RCar-VIN capture system.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+This driver along with the associated platform support for the Renesas
+R-Car Salvator-X, and the Eagle-V3M can be found at:
 
-and applied to my tree.
+  git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git gmsl/v4
 
-> >  		if (type == DRM_PLANE_TYPE_PRIMARY)
-> >  			continue;
-> >  		
-> >  		drm_object_attach_property(&plane->plane.base,
-> >  					   rcdu->props.colorkey,
-> >  					   RCAR_DU_COLORKEY_NONE);
-> > 
-> > -		drm_plane_create_alpha_property(&plane->plane);
-> >  		drm_plane_create_zpos_property(&plane->plane, 1, 1, 7);
-> >  	}
+
+Further anticipated work in this area includes supporting the RDACM21
+camera, at which point the RDACM20 will be adapted to separate out the
+MAX9271 and the OV10635 sensor components.
+
+
+Jacopo Mondi (1):
+  dt-bindings: media: i2c: Add bindings for IMI RDACM20
+
+Kieran Bingham (2):
+  media: i2c: Add MAX9286 driver
+  media: i2c: Add RDACM20 driver
+
+Laurent Pinchart (1):
+  dt-bindings: media: i2c: Add bindings for Maxim Integrated MAX9286
+
+ .../bindings/media/i2c/imi,rdacm20.txt        |   65 +
+ .../bindings/media/i2c/maxim,max9286.txt      |  182 +++
+ .../devicetree/bindings/vendor-prefixes.txt   |    1 +
+ MAINTAINERS                                   |   20 +
+ drivers/media/i2c/Kconfig                     |   22 +
+ drivers/media/i2c/Makefile                    |    2 +
+ drivers/media/i2c/max9286.c                   | 1189 +++++++++++++++++
+ drivers/media/i2c/rdacm20-ov10635.h           |  953 +++++++++++++
+ drivers/media/i2c/rdacm20.c                   |  635 +++++++++
+ 9 files changed, 3069 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt
+ create mode 100644 drivers/media/i2c/max9286.c
+ create mode 100644 drivers/media/i2c/rdacm20-ov10635.h
+ create mode 100644 drivers/media/i2c/rdacm20.c
 
 -- 
-Regards,
-
-Laurent Pinchart
+2.17.1
