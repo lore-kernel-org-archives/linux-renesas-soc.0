@@ -1,16 +1,11 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ty1jpn01on0107.outbound.protection.outlook.com ([104.47.93.107]:23800
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725935AbeKBVML (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Nov 2018 17:12:11 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Mark Brown <broonie@kernel.org>
-CC: Linus Walleij <linus.walleij@linaro.org>,
-        Archit Taneja <architt@codeaurora.org>,
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+From: Peter Rosin <peda@axentia.se>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>
+CC: Archit Taneja <architt@codeaurora.org>,
         Andrzej Hajda <a.hajda@samsung.com>,
-        Dave Airlie <airlied@linux.ie>, Peter Rosin <peda@axentia.se>,
+        Dave Airlie <airlied@linux.ie>,
         Wolfram Sang <wsa@the-dreams.de>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
         "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
@@ -22,50 +17,89 @@ CC: Linus Walleij <linus.walleij@linaro.org>,
         "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
         Inki Dae <inki.dae@samsung.com>,
         Boris BREZILLON <boris.brezillon@free-electrons.com>
-Subject: RE: [RFC] drm/bridge/sii902x: Fix EDID readback
-Date: Fri, 2 Nov 2018 12:05:05 +0000
-Message-ID: <OSBPR01MB1766BE0BE66B3CE2644F059DC0CF0@OSBPR01MB1766.jpnprd01.prod.outlook.com>
+Subject: Re: [RFC] drm/bridge/sii902x: Fix EDID readback
+Date: Fri, 2 Nov 2018 08:53:27 +0000
+Message-ID: <f9059d97-a1bf-5b1a-7a01-15c341188573@axentia.se>
 References: <1540990667-14109-1-git-send-email-fabrizio.castro@bp.renesas.com>
  <CACRpkdarsCKrb4OepC+7LNi9epRks48b4F_5eXJ_on1OJ+h1Mg@mail.gmail.com>
  <TY1PR01MB177051AC6C2B556E32AC08AEC0CD0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
- <20181101112117.GA6425@sirena.org.uk>
-In-Reply-To: <20181101112117.GA6425@sirena.org.uk>
+ <755e644c-d734-0bde-6908-36dd681de50e@axentia.se>
+ <TY1PR01MB17702AF616C920C3ADFB2021C0CE0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+ <7d0df588-8051-b426-aed7-635e013bd2a3@axentia.se>
+ <TY1PR01MB1770677FAD621ADA6CC810FBC0CE0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+ <424d4f17-bf2e-6c9e-2605-36ab20fd412b@axentia.se>
+ <TY1PR01MB1770C1B50F8BADDD77178A61C0CE0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY1PR01MB1770C1B50F8BADDD77178A61C0CE0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <8BBB43A9805C8E429FE2C3302845E948@eurprd02.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Mark,
-
-Thank you for your feedback!
-
-> Subject: Re: [RFC] drm/bridge/sii902x: Fix EDID readback
->
-> On Wed, Oct 31, 2018 at 04:55:53PM +0000, Fabrizio Castro wrote:
->
-> > Having the option of using "unlocked" flavours of reads and writes
-> > is what we need here, but looking at drivers/base/regmap/regmap-i2c.c
-> > I couldn't find anything suitable for my case, maybe Mark could advise
-> > on this one? I am sure I overlooked something here, is there a better
-> > way to address this?
->
-> As Linus said you can go as far as writing your own read and write
-> functions if you want to.  That seems to be the easiest thing, though I
-> am suspicous that you're having to use the I2C framework in this way -
-> it doesn't sound terribly clever.  You could I guess also just have a
-> custom function for whatever register is doing all this stuff that just
-> ignores regmap and bodge things that way while using regmap as normal
-> for everything else.
-
-I agree, I have prototyped it and it seems to be working just fine.
-Will send a patch addressing all of the comments, including this one.
-
-Fab
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+T24gMjAxOC0xMS0wMSAxODozMiwgRmFicml6aW8gQ2FzdHJvIHdyb3RlOg0KPiBIZWxsbyBQZXRl
+ciwNCj4gDQo+IFRoYW5rIHlvdSBmb3IgeW91ciBmZWVkYmFjayENCj4gDQo+PiBTdWJqZWN0OiBS
+ZTogW1JGQ10gZHJtL2JyaWRnZS9zaWk5MDJ4OiBGaXggRURJRCByZWFkYmFjaw0KPiANCj4gc25p
+cA0KPiANCj4+Pg0KPj4+IFRvIGZ1cnRoZXIgZGV0YWlsIHRoZSBwcm9ibGVtLCB0aGUgc3lzdGVt
+IGlzIHZ1bG5lcmFibGUgZnJvbSBiZWZvcmUgdGhlIGxhc3Qgd3JpdGUNCj4+PiBwZXJmb3JtZWQg
+Ynkgc2lpOTAyeF9pMmNfYnlwYXNzX3NlbGVjdCB0byBhZnRlciB3ZSBjb25maXJtIHdlIG5lZWQg
+dGhlIHN3aXRjaA0KPj4+IHRvIGJlIGNsb3NlZCB3aXRoaW4gc2lpOTAyeF9pMmNfYnlwYXNzX2Rl
+c2VsZWN0LCB0aGF0J3MgdGhlIG1pbmltdW0gYW1vdW50IG9mIHRpbWUNCj4+PiB3ZSBjb3VsZCBr
+ZWVwIHRoZSBwYXJlbnQgYWRhcHRlciBsb2NrZWQgZm9yLCBJIGd1ZXNzIEkgYW0gc3R1Y2sgd2l0
+aCBhIHBhcmVudC1sb2NraW5nDQo+Pj4gYXJjaGl0ZWN0dXJlLCBhcmVuJ3QgST8NCj4+DQo+PiBJ
+ZiB0aGF0IHByb2JsZW0gZGVzY3JpcHRpb24gaXMgY29ycmVjdCwgdGhlbiB5ZXMsIEkgdGhpbmsg
+dGhlICpvbmx5KiBzb2x1dGlvbg0KPj4gaXMgdG8gY29tYmluZSB0aGUgdGhyZWUgcGFydHMgIm9w
+ZW4gYnlwYXNzIG1vZGUiLCAiZWRpZCB4ZmVyIiBhbmQgImNsb3NlIGJ5cGFzcw0KPj4gbW9kZSIs
+IGFuZCB0byBrZWVwIHRoZSBpMmMgYWRhcHRlciBsb2NrZWQgZHVyaW5nIHRoZSBwcm9jZWR1cmUg
+c28gdGhhdCBvdGhlcg0KPj4geGZlcnMgZG8gbm90IGNyZWVwIGluIGFuZCBjcmFwIHRoaW5nIHVw
+IGZyb20gdGhlIHNpZGUuIEFuZCBvbmUgd2F5IHRvIGNvbWJpbmUNCj4+IHRoZSB0aHJlZSBwYXJ0
+cyBpcyB0byB1c2UgYSBwYXJlbnQtbG9ja2VkIGkyYyBnYXRlLiBBbmQgc2luY2UgeW91IG5lZWQg
+dG8ga2VlcA0KPj4gdGhlIGkyYyBhZGFwdGVyIGxvY2tlZCBvdmVyIHRoZSB3aG9sZSBwcm9jZWR1
+cmUsIHlvdSBuZWVkIHRvIHVzZSB1bmxvY2tlZCB4ZmVycw0KPj4gKGFzIHlvdSBoYXZlIGFscmVh
+ZHkgZGlzY292ZXJlZCkuIEJ1dCBob3cgZG8geW91IGtub3cgdGhhdCB0aGlzIHByb2JsZW0NCj4+
+IGRlc2NyaXB0aW9uIGlzIGFjY3VyYXRlPw0KPiANCj4gSSBiYXNpY2FsbHkgb2JzZXJ2ZWQgd2hh
+dCB3YXMgZ29pbmcgb24gb24gdGhlIGJ1cyAod2l0aCBhIGxvZ2ljIGFuYWx5c2VyKSB3aGlsZSBn
+ZW5lcmF0aW5nDQo+IHRyYWZmaWMgb24gdGhlIHBhcmVudCBhZGFwdGVyDQo+IA0KPj4gV2h5IGlz
+IGl0IG5vdCBvayBmb3IgdW5yZWxhdGVkIHhmZXJzIHRvIGNyZWVwIGluDQo+PiBiZXR3ZWVuIG9w
+ZW5pbmcgdGhlIGJ5cGFzcyBtb2RlIGFuZCB0aGUgZWRpZCB4ZmVyLCBhbmQgaG93IGRvIHlvdSBr
+bm93IHRoYXQNCj4+IHRoaXMgaXMgbm90IG9rPw0KPiANCj4gQmVjYXVzZSB0aG9zZSB0cmFuc2Zl
+cnMgd291bGQgY29tZSB3aXRoIG5vIGV4dHJhIGRlbGF5IGJldHdlZW4gU1RPUCBhbmQgU1RBUlQN
+Cj4gY29uZGl0aW9ucyB3aGlsZSB0aGUgSERNSSB0cmFuc21pdHRlciBpcyBpbiBwYXNzdGhyb3Vn
+aCBtb2RlDQoNClllYWggeWVhaCwgbm93IEkgZ2V0IGl0LiBJdCdzIG5vdCB0aGUgZWRpZCBlZXBy
+b20gdGhhdCdzIGJhZCwgaXQncyB0aGUNCnBhc3N0aHJvdWdoIG1vZGUgaW4gdGhlIGhkbWkgdHJh
+bnNtaXR0ZXIgdGhhdCdzIGJyb2tlbi4gWW91ciBwcm9ibGVtDQpkZXNjcmlwdGlvbiBmb2xsb3dz
+IG5hdHVyYWxseS4NCg0KPj4NCj4+PiBCdXQgSSBndWVzcyBJIGNvdWxkIHJlbGVhc2UgaXQgd2hl
+biBpdCdzIG5vdCBhY3R1YWxseSBuZWVkZWQsDQo+Pg0KPj4gSG93IHdvdWxkIHlvdSBmaWd1cmUg
+b3V0IHdoZW4gaXQncyBub3QgbmVlZGVkPw0KPiANCj4gVGhlIG1vbWVudCB5b3UgdGVsbCB0aGUg
+SERNSSB0cmFuc21pdHRlciB5b3UgYXJlIGdvaW5nIHRvIHRhbGsgdG8gdGhlIG1vbml0b3Igbm90
+aGluZyBlbHNlIGNhbg0KPiBmbG93IG9uIHRoZSBidXMsIHVwIHVudGlsIHlvdSBncmFjZWZ1bGx5
+IGNsb3NlIHRoZSBwYXNzIHRocm91Z2ggc2Vzc2lvbiwgd2hpY2ggbWVhbnMgSSB3b3VsZG4ndA0K
+PiByZWFsbHkgbmVlZCB0byBob2xkIHRoZSBwYXJlbnQgbG9jayBkdXJpbmcgdGhlIGVudGlyZSBk
+dXJhdGlvbiBvZiB0aGUgc2VsZWN0IGNhbGxiYWNrLCBJIHdvdWxkIG5lZWQNCj4gdG8gaG9sZCB0
+aGUgcGFyZW50IGxvY2sgb25seSBmcm9tIGJlZm9yZSB0aGUgbGFzdCB3cml0ZSBhcyB0aGF0J3Mg
+d2hlbiB3ZSB0ZWxsIHRoZSBIRE1JIHRyYW5zbWl0dGVyDQo+IHRvIGFjdGl2YXRlIHRoZSBwYXNz
+dGhyb3VnaCBtb2RlLCBidXQgSSBndWVzcyBpdCB3b3VsZCBtYWtlIHRoZSBkcml2ZXIgaGFyZCB0
+byBtYWludGFpbiAoYXMgaW4NCj4gb3RoZXJzIHdvdWxkIG5lZWQgdG8gdW5kZXJzdGFuZCB0aGlz
+IHByb3Blcmx5IGJlZm9yZSBtYWtpbmcgYW55IGNoYW5nZXMpLCB3b3VsZG4ndCBpdD8NCg0KWWVz
+LCB0aGF0IHdvdWxkIGp1c3QgY29tcGxpY2F0ZSB0aGluZ3MgYW5kIHdvdWxkIHByb2JhYmx5IG5v
+dCBoYXZlIGFsbCB0aGF0DQptdWNoIGJlbmVmaXQuIEkgZG9uJ3QgdGhpbmsgSSdkIGdvIHRoZXJl
+Li4uDQogDQo+Pg0KPj4+IG9yIGlzIHRoaXMgZ29pbmcgdG8gYmUgYSBwYWluIHRvIG1haW50YWlu
+PyBTaGFsbCBJIGp1c3Qga2VlcCBnb2luZyB3aXRoIHRoZSBwYXJlbnQtbG9ja2luZw0KPj4+IGJ1
+dCB1c2luZyBiYXJlIGkyYyB0cmFuc2FjdGlvbnMgb25seSB3aXRoaW4gc2VsZWN0IGFuZCBkZXNl
+bGVjdCBhbmQgbGVhdmUgcmVnbWFwDQo+Pj4gdG8gZGVhbCB3aXRoIGV2ZXJ5dGhpbmcgZWxzZT8N
+Cj4+DQo+PiBUaGF0J3MgYSBwb3NzaWJpbGl0eS4gVGFrZSBjYXJlIHRvIG5vdCBtZXNzIHVwIGFu
+eSBjYWNoZWQgc3RhdGUgaW4gcmVnbWFwIHRob3VnaC4NCj4gDQo+IFRoZSBvcmlnaW5hbCB2ZXJz
+aW9uIG9mIHRoZSBkcml2ZXIgd2Fzbid0IHVzaW5nIGFueSBjYWNoaW5nLCBzbyBJIGd1ZXNzIEkg
+d291bGQgbmVlZCB0byBmYWxsYmFjaw0KPiBleGFjdGx5IHRvIHRoZSBzYW1lIGltcGxlbWVudGF0
+aW9uLg0KPiANCj4gU28sIHdoYXQgc2hvdWxkIEkgZG8/IFNob3VsZCBJIGtlZXAgdGhlIHBhcmVu
+dC1sb2NraW5nLCB0aGUgdW5sb2NrZWQgZmxhdm91cnMgb2YgcmQvd3Ivcm13IGZyb20NCj4gd2l0
+aGluIHNlbGVjdC9kZXNlbGVjdCwgYW5kIHB1dCBiYWNrIHJlZ21hcCBiYXNlZCByZC93ci9ybXcg
+d2l0aCBubyBjYWNoaW5nIGZvciBldmVyeXRoaW5nIGVsc2U/DQoNCkkgdGhpbmsgdGhhdCBzb3Vu
+ZHMgbGlrZSBhIHJlYXNvbmFibGUgY29tcHJvbWlzZSwgYnV0IGJlIGNhcmVmdWwgc2luY2UgeW91
+IHN0aWxsDQptaWdodCBuZWVkIHRoZSB0d28gaW1wbGVtZW50YXRpb25zIHRvIGludGVyYWN0LCBl
+LmcuIHRoZSB0d28gcm13IHZhcmlhbnRzIG1pZ2h0DQpzdGlsbCBuZWVkIGEgY29tbW9uIGxvY2sg
+c28gdGhhdCB0aGV5IGRvbid0IHRyYW1wbGUgb24gZWFjaCBvdGhlcnMgdG9lcy4gQXQNCmxlYXN0
+IGlmIHRoZXJlIGFyZSBhY2Nlc3NlcyB0byB0aGUgc2FtZSByZWdpc3RlciAoU0lJOTAyWF9TWVNf
+Q1RSTF9EQVRBIGluIHRoaXMNCmNhc2UgaWYgSSByZWFkIGl0IHJpZ2h0KS4NCg0KQ2hlZXJzLA0K
+UGV0ZXINCg==
