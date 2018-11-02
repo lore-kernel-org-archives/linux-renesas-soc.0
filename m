@@ -1,249 +1,397 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-he1eur01on0111.outbound.protection.outlook.com ([104.47.0.111]:30848
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726008AbeKBVdt (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:41876 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726008AbeKBVVC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Nov 2018 17:33:49 -0400
-From: Peter Rosin <peda@axentia.se>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Archit Taneja <architt@codeaurora.org>,
+        Fri, 2 Nov 2018 17:21:02 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Archit Taneja <architt@codeaurora.org>,
         Andrzej Hajda <a.hajda@samsung.com>,
-        David Airlie <airlied@linux.ie>,
+        David Airlie <airlied@linux.ie>, Peter Rosin <peda@axentia.se>,
         Wolfram Sang <wsa@the-dreams.de>,
         Mark Brown <broonie@kernel.org>
-CC: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Simon Horman <horms@verge.net.au>,
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
         Inki Dae <inki.dae@samsung.com>,
         Boris Brezillon <boris.brezillon@free-electrons.com>,
         Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] drm/bridge/sii902x: Fix EDID readback
-Date: Fri, 2 Nov 2018 12:26:40 +0000
-Message-ID: <2f970e6a-3ff1-1788-f454-781c7baca62d@axentia.se>
-References: <1541160827-14255-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1541160827-14255-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0609B3D58438DE46BF1829B222140DDA@eurprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Subject: [PATCH] drm/bridge/sii902x: Fix EDID readback
+Date: Fri,  2 Nov 2018 12:13:47 +0000
+Message-Id: <1541160827-14255-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-T24gMjAxOC0xMS0wMiAxMzoxMywgRmFicml6aW8gQ2FzdHJvIHdyb3RlOg0KPiBXaGlsZSBhZGRp
-bmcgU2lJOTAyMkEgc3VwcG9ydCB0byB0aGUgaXdnMjNzIGJvYXJkLCBpdCBjYW1lDQo+IHVwIHRo
-YXQgd2hlbiB0aGUgSERNSSB0cmFuc21pdHRlciBpcyBpbiBwYXNzIHRocm91Z2ggbW9kZSB0aGUN
-Cj4gZGV2aWNlIGlzIG5vdCBjb21wbGlhbnQgd2l0aCB0aGUgSTJDIHNwZWNpZmljYXRpb24gYW55
-bW9yZSwNCj4gYXMgaXQgcmVxdWlyZXMgYSBmYXIgYmlnZ2VyIHRidWYsIGR1ZSB0byBhIGRlbGF5
-IHRoZSBIRE1JDQo+IHRyYW5zbWl0dGVyIGlzIGFkZGluZyB3aGVuIHJlbGF5aW5nIHRoZSBTVE9Q
-IGNvbmRpdGlvbiBvbiB0aGUNCj4gbW9uaXRvciBpMmMgc2lkZSBvZiB0aGluZ3MuDQo+IA0KPiBX
-aGVuIG5vdCBwcm92aWRpbmcgYW4gYXBwcm9wcmlhdGUgZGVsYXkgYWZ0ZXIgdGhlIFNUT1AgY29u
-ZGl0aW9uDQo+IHRoZSBpMmMgYnVzIHdvdWxkIGdldCBzdHVjay4gQWxzbywgYW55IG90aGVyIHRy
-YWZmaWMgb24gdGhlIGJ1cw0KPiB3aGlsZSB0YWxraW5nIHRvIHRoZSBtb25pdG9yIG1heSBjYXVz
-ZSB0aGUgdHJhbnNhY3Rpb24gdG8gZmFpbA0KPiBvciBldmVuIGNhdXNlIGlzc3VlcyB3aXRoIHRo
-ZSBpMmMgYnVzIGFzIHdlbGwuDQo+IA0KPiBJMmMtZ2F0ZXMgc2VlbWVkIHRvIHJlYWNoIGNvbnNl
-bnQgYXMgYSBwb3NzaWJsZSB3YXkgdG8gYWRkcmVzcw0KPiB0aGVzZSBpc3N1ZXMsIGFuZCBhcyBz
-dWNoIHRoaXMgcGF0Y2ggaXMgaW1wbGVtZW50aW5nIGEgc29sdXRpb24NCj4gYmFzZWQgb24gdGhh
-dC4gU2luY2Ugb3RoZXJzIGFyZSBjbGVhcmx5IHJlbHlpbmcgb24gdGhlIGN1cnJlbnQNCj4gaW1w
-bGVtZW50YXRpb24gb2YgdGhlIGRyaXZlciwgdGhpcyBwYXRjaCB3b24ndCByZXF1aXJlIGFueSBE
-VA0KPiBjaGFuZ2VzLg0KPiANCj4gU2luY2Ugd2UgZG9uJ3Qgd2FudCBhbnkgaW50ZXJmZXJlbmNl
-IGR1cmluZyB0aGUgRERDIEJ1cw0KPiBSZXF1ZXN0L0dyYW50IHByb2NlZHVyZSBhbmQgd2hpbGUg
-dGFsa2luZyB0byB0aGUgbW9uaXRvciwgd2UNCj4gaGF2ZSB0byB1c2UgdGhlIGFkYXB0ZXIgbG9j
-a2luZyBwcmltaXRpdmVzIHJhdGhlciB0aGFuIHRoZQ0KPiBpMmMtbXV4IGxvY2tpbmcgcHJpbWl0
-aXZlcy4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEZhYnJpemlvIENhc3RybyA8ZmFicml6aW8uY2Fz
-dHJvQGJwLnJlbmVzYXMuY29tPg0KPiAtLS0NCj4gUkZDLT5QQVRDSDoNCj4gKiBJbmNvcnBvcmF0
-ZWQgTGludXMgV2FsbGVpaiwgUGV0ZXIgUm9zaW4sIGFuZCBNYXJrIEJyb3duIGNvbW1lbnRzDQo+
-IA0KPiBUaGFuayB5b3UgZ3V5cw0KPiANCj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc2lpOTAy
-eC5jIHwgMjY0ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLQ0KPiAgMSBm
-aWxlIGNoYW5nZWQsIDE5NiBpbnNlcnRpb25zKCspLCA2OCBkZWxldGlvbnMoLSkNCj4gDQo+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3NpaTkwMnguYyBiL2RyaXZlcnMvZ3B1
-L2RybS9icmlkZ2Uvc2lpOTAyeC5jDQo+IGluZGV4IGU1OWExMzUuLjRmOWQ5YzcgMTAwNjQ0DQo+
-IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc2lpOTAyeC5jDQo+ICsrKyBiL2RyaXZlcnMv
-Z3B1L2RybS9icmlkZ2Uvc2lpOTAyeC5jDQo+IEBAIC0xLDQgKzEsNiBAQA0KPiAgLyoNCj4gKyAq
-IENvcHlyaWdodCAoQykgMjAxOCBSZW5lc2FzIEVsZWN0cm9uaWNzDQo+ICsgKg0KPiAgICogQ29w
-eXJpZ2h0IChDKSAyMDE2IEF0bWVsDQo+ICAgKgkJICAgICAgQm8gU2hlbiA8dm9pY2Uuc2hlbkBh
-dG1lbC5jb20+DQo+ICAgKg0KPiBAQCAtMjEsNiArMjMsNyBAQA0KPiAgICovDQo+ICANCj4gICNp
-bmNsdWRlIDxsaW51eC9ncGlvL2NvbnN1bWVyLmg+DQo+ICsjaW5jbHVkZSA8bGludXgvaTJjLW11
-eC5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4L2kyYy5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4L21vZHVs
-ZS5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4L3JlZ21hcC5oPg0KPiBAQCAtODYsOCArODksNjggQEAg
-c3RydWN0IHNpaTkwMnggew0KPiAgCXN0cnVjdCBkcm1fYnJpZGdlIGJyaWRnZTsNCj4gIAlzdHJ1
-Y3QgZHJtX2Nvbm5lY3RvciBjb25uZWN0b3I7DQo+ICAJc3RydWN0IGdwaW9fZGVzYyAqcmVzZXRf
-Z3BpbzsNCj4gKwlzdHJ1Y3QgaTJjX211eF9jb3JlICppMmNtdXg7DQo+ICB9Ow0KPiAgDQo+ICtz
-dGF0aWMgaW50IHNpaTkwMnhfcmVhZF91bmxvY2tlZChzdHJ1Y3QgaTJjX2NsaWVudCAqaTJjLCB1
-OCByZWcsIHU4ICp2YWwpDQo+ICt7DQo+ICsJc3RydWN0IGkyY19tc2cgeGZlcltdID0gew0KPiAr
-CQl7DQo+ICsJCQkuYWRkciA9IGkyYy0+YWRkciwNCj4gKwkJCS5mbGFncyA9IDAsDQo+ICsJCQku
-bGVuID0gMSwNCj4gKwkJCS5idWYgPSAmcmVnLA0KPiArCQl9LCB7DQo+ICsJCQkuYWRkciA9IGky
-Yy0+YWRkciwNCj4gKwkJCS5mbGFncyA9IEkyQ19NX1JELA0KPiArCQkJLmxlbiA9IDEsDQo+ICsJ
-CQkuYnVmID0gdmFsLA0KPiArCQl9DQo+ICsJfTsNCj4gKwl1bnNpZ25lZCBjaGFyIHhmZXJzID0g
-QVJSQVlfU0laRSh4ZmVyKTsNCj4gKwlpbnQgcmV0LCByZXRyaWVzID0gNTsNCj4gKw0KPiArCWRv
-IHsNCj4gKwkJcmV0ID0gX19pMmNfdHJhbnNmZXIoaTJjLT5hZGFwdGVyLCB4ZmVyLCB4ZmVycyk7
-DQo+ICsJCWlmIChyZXQgPCAwKQ0KPiArCQkJcmV0dXJuIHJldDsNCj4gKwl9IHdoaWxlIChyZXQg
-IT0geGZlcnMgJiYgLS1yZXRyaWVzKTsNCj4gKwlyZXR1cm4gcmV0ID09IHhmZXJzID8gMCA6IC0x
-Ow0KPiArfQ0KPiArDQo+ICtzdGF0aWMgaW50IHNpaTkwMnhfd3JpdGVfdW5sb2NrZWQoc3RydWN0
-IGkyY19jbGllbnQgKmkyYywgdTggcmVnLCB1OCB2YWwpDQo+ICt7DQo+ICsJdTggZGF0YVsyXSA9
-IHtyZWcsIHZhbH07DQo+ICsJc3RydWN0IGkyY19tc2cgeGZlciA9IHsNCj4gKwkJLmFkZHIgPSBp
-MmMtPmFkZHIsDQo+ICsJCS5mbGFncyA9IDAsDQo+ICsJCS5sZW4gPSBzaXplb2YoZGF0YSksDQo+
-ICsJCS5idWYgPSBkYXRhLA0KPiArCX07DQo+ICsJaW50IHJldCwgcmV0cmllcyA9IDU7DQo+ICsN
-Cj4gKwlkbyB7DQo+ICsJCXJldCA9IF9faTJjX3RyYW5zZmVyKGkyYy0+YWRhcHRlciwgJnhmZXIs
-IDEpOw0KPiArCQlpZiAocmV0IDwgMCkNCj4gKwkJCXJldHVybiByZXQ7DQo+ICsJfSB3aGlsZSAo
-IXJldCAmJiAtLXJldHJpZXMpOw0KPiArCXJldHVybiAhcmV0ID8gLTEgOiAwOw0KPiArfQ0KPiAr
-DQo+ICtzdGF0aWMgaW50IHNpaTkwMnhfdXBkYXRlX2JpdHNfdW5sb2NrZWQoc3RydWN0IGkyY19j
-bGllbnQgKmkyYywgdTggcmVnLCB1OCBtYXNrLA0KPiArCQkJCQl1OCB2YWwpDQo+ICt7DQo+ICsJ
-aW50IHJldDsNCj4gKwl1OCBzdGF0dXM7DQo+ICsNCj4gKwlyZXQgPSBzaWk5MDJ4X3JlYWRfdW5s
-b2NrZWQoaTJjLCByZWcsICZzdGF0dXMpOw0KPiArCWlmIChyZXQpDQo+ICsJCXJldHVybiByZXQ7
-DQo+ICsJc3RhdHVzICY9IH5tYXNrOw0KPiArCXN0YXR1cyB8PSB2YWwgJiBtYXNrOw0KPiArCXJl
-dHVybiBzaWk5MDJ4X3dyaXRlX3VubG9ja2VkKGkyYywgcmVnLCBzdGF0dXMpOw0KPiArfQ0KPiAr
-DQo+ICBzdGF0aWMgaW5saW5lIHN0cnVjdCBzaWk5MDJ4ICpicmlkZ2VfdG9fc2lpOTAyeChzdHJ1
-Y3QgZHJtX2JyaWRnZSAqYnJpZGdlKQ0KPiAgew0KPiAgCXJldHVybiBjb250YWluZXJfb2YoYnJp
-ZGdlLCBzdHJ1Y3Qgc2lpOTAyeCwgYnJpZGdlKTsNCj4gQEAgLTEzNSw0MSArMTk4LDExIEBAIHN0
-YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX2Nvbm5lY3Rvcl9mdW5jcyBzaWk5MDJ4X2Nvbm5lY3Rvcl9m
-dW5jcyA9IHsNCj4gIHN0YXRpYyBpbnQgc2lpOTAyeF9nZXRfbW9kZXMoc3RydWN0IGRybV9jb25u
-ZWN0b3IgKmNvbm5lY3RvcikNCj4gIHsNCj4gIAlzdHJ1Y3Qgc2lpOTAyeCAqc2lpOTAyeCA9IGNv
-bm5lY3Rvcl90b19zaWk5MDJ4KGNvbm5lY3Rvcik7DQo+IC0Jc3RydWN0IHJlZ21hcCAqcmVnbWFw
-ID0gc2lpOTAyeC0+cmVnbWFwOw0KPiAgCXUzMiBidXNfZm9ybWF0ID0gTUVESUFfQlVTX0ZNVF9S
-R0I4ODhfMVgyNDsNCj4gLQlzdHJ1Y3QgZGV2aWNlICpkZXYgPSAmc2lpOTAyeC0+aTJjLT5kZXY7
-DQo+IC0JdW5zaWduZWQgbG9uZyB0aW1lb3V0Ow0KPiAtCXVuc2lnbmVkIGludCByZXRyaWVzOw0K
-PiAtCXVuc2lnbmVkIGludCBzdGF0dXM7DQo+ICAJc3RydWN0IGVkaWQgKmVkaWQ7DQo+IC0JaW50
-IG51bSA9IDA7DQo+IC0JaW50IHJldDsNCj4gLQ0KPiAtCXJldCA9IHJlZ21hcF91cGRhdGVfYml0
-cyhyZWdtYXAsIFNJSTkwMlhfU1lTX0NUUkxfREFUQSwNCj4gLQkJCQkgU0lJOTAyWF9TWVNfQ1RS
-TF9ERENfQlVTX1JFUSwNCj4gLQkJCQkgU0lJOTAyWF9TWVNfQ1RSTF9ERENfQlVTX1JFUSk7DQo+
-IC0JaWYgKHJldCkNCj4gLQkJcmV0dXJuIHJldDsNCj4gLQ0KPiAtCXRpbWVvdXQgPSBqaWZmaWVz
-ICsNCj4gLQkJICBtc2Vjc190b19qaWZmaWVzKFNJSTkwMlhfSTJDX0JVU19BQ1FVSVNJVElPTl9U
-SU1FT1VUX01TKTsNCj4gLQlkbyB7DQo+IC0JCXJldCA9IHJlZ21hcF9yZWFkKHJlZ21hcCwgU0lJ
-OTAyWF9TWVNfQ1RSTF9EQVRBLCAmc3RhdHVzKTsNCj4gLQkJaWYgKHJldCkNCj4gLQkJCXJldHVy
-biByZXQ7DQo+IC0JfSB3aGlsZSAoIShzdGF0dXMgJiBTSUk5MDJYX1NZU19DVFJMX0REQ19CVVNf
-R1JURCkgJiYNCj4gLQkJIHRpbWVfYmVmb3JlKGppZmZpZXMsIHRpbWVvdXQpKTsNCj4gLQ0KPiAt
-CWlmICghKHN0YXR1cyAmIFNJSTkwMlhfU1lTX0NUUkxfRERDX0JVU19HUlREKSkgew0KPiAtCQlk
-ZXZfZXJyKGRldiwgImZhaWxlZCB0byBhY3F1aXJlIHRoZSBpMmMgYnVzXG4iKTsNCj4gLQkJcmV0
-dXJuIC1FVElNRURPVVQ7DQo+IC0JfQ0KPiAtDQo+IC0JcmV0ID0gcmVnbWFwX3dyaXRlKHJlZ21h
-cCwgU0lJOTAyWF9TWVNfQ1RSTF9EQVRBLCBzdGF0dXMpOw0KPiAtCWlmIChyZXQpDQo+IC0JCXJl
-dHVybiByZXQ7DQo+ICsJaW50IG51bSA9IDAsIHJldDsNCj4gIA0KPiAtCWVkaWQgPSBkcm1fZ2V0
-X2VkaWQoY29ubmVjdG9yLCBzaWk5MDJ4LT5pMmMtPmFkYXB0ZXIpOw0KPiArCWVkaWQgPSBkcm1f
-Z2V0X2VkaWQoY29ubmVjdG9yLCBzaWk5MDJ4LT5pMmNtdXgtPmFkYXB0ZXJbMF0pOw0KPiAgCWRy
-bV9jb25uZWN0b3JfdXBkYXRlX2VkaWRfcHJvcGVydHkoY29ubmVjdG9yLCBlZGlkKTsNCj4gIAlp
-ZiAoZWRpZCkgew0KPiAgCQludW0gPSBkcm1fYWRkX2VkaWRfbW9kZXMoY29ubmVjdG9yLCBlZGlk
-KTsNCj4gQEAgLTE4MSw0MiArMjE0LDYgQEAgc3RhdGljIGludCBzaWk5MDJ4X2dldF9tb2Rlcyhz
-dHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yKQ0KPiAgCWlmIChyZXQpDQo+ICAJCXJldHVy
-biByZXQ7DQo+ICANCj4gLQkvKg0KPiAtCSAqIFNvbWV0aW1lcyB0aGUgSTJDIGJ1cyBjYW4gc3Rh
-bGwgYWZ0ZXIgZmFpbHVyZSB0byB1c2UgdGhlDQo+IC0JICogRURJRCBjaGFubmVsLiBSZXRyeSBh
-IGZldyB0aW1lcyB0byBzZWUgaWYgdGhpbmdzIGNsZWFyDQo+IC0JICogdXAsIGVsc2UgY29udGlu
-dWUgYW55d2F5Lg0KPiAtCSAqLw0KPiAtCXJldHJpZXMgPSA1Ow0KPiAtCWRvIHsNCj4gLQkJcmV0
-ID0gcmVnbWFwX3JlYWQocmVnbWFwLCBTSUk5MDJYX1NZU19DVFJMX0RBVEEsDQo+IC0JCQkJICAm
-c3RhdHVzKTsNCj4gLQkJcmV0cmllcy0tOw0KPiAtCX0gd2hpbGUgKHJldCAmJiByZXRyaWVzKTsN
-Cj4gLQlpZiAocmV0KQ0KPiAtCQlkZXZfZXJyKGRldiwgImZhaWxlZCB0byByZWFkIHN0YXR1cyAo
-JWQpXG4iLCByZXQpOw0KPiAtDQo+IC0JcmV0ID0gcmVnbWFwX3VwZGF0ZV9iaXRzKHJlZ21hcCwg
-U0lJOTAyWF9TWVNfQ1RSTF9EQVRBLA0KPiAtCQkJCSBTSUk5MDJYX1NZU19DVFJMX0REQ19CVVNf
-UkVRIHwNCj4gLQkJCQkgU0lJOTAyWF9TWVNfQ1RSTF9ERENfQlVTX0dSVEQsIDApOw0KPiAtCWlm
-IChyZXQpDQo+IC0JCXJldHVybiByZXQ7DQo+IC0NCj4gLQl0aW1lb3V0ID0gamlmZmllcyArDQo+
-IC0JCSAgbXNlY3NfdG9famlmZmllcyhTSUk5MDJYX0kyQ19CVVNfQUNRVUlTSVRJT05fVElNRU9V
-VF9NUyk7DQo+IC0JZG8gew0KPiAtCQlyZXQgPSByZWdtYXBfcmVhZChyZWdtYXAsIFNJSTkwMlhf
-U1lTX0NUUkxfREFUQSwgJnN0YXR1cyk7DQo+IC0JCWlmIChyZXQpDQo+IC0JCQlyZXR1cm4gcmV0
-Ow0KPiAtCX0gd2hpbGUgKHN0YXR1cyAmIChTSUk5MDJYX1NZU19DVFJMX0REQ19CVVNfUkVRIHwN
-Cj4gLQkJCSAgIFNJSTkwMlhfU1lTX0NUUkxfRERDX0JVU19HUlREKSAmJg0KPiAtCQkgdGltZV9i
-ZWZvcmUoamlmZmllcywgdGltZW91dCkpOw0KPiAtDQo+IC0JaWYgKHN0YXR1cyAmIChTSUk5MDJY
-X1NZU19DVFJMX0REQ19CVVNfUkVRIHwNCj4gLQkJICAgICAgU0lJOTAyWF9TWVNfQ1RSTF9ERENf
-QlVTX0dSVEQpKSB7DQo+IC0JCWRldl9lcnIoZGV2LCAiZmFpbGVkIHRvIHJlbGVhc2UgdGhlIGky
-YyBidXNcbiIpOw0KPiAtCQlyZXR1cm4gLUVUSU1FRE9VVDsNCj4gLQl9DQo+IC0NCj4gIAlyZXR1
-cm4gbnVtOw0KPiAgfQ0KPiAgDQo+IEBAIC0zNjYsNiArMzYzLDExMiBAQCBzdGF0aWMgaXJxcmV0
-dXJuX3Qgc2lpOTAyeF9pbnRlcnJ1cHQoaW50IGlycSwgdm9pZCAqZGF0YSkNCj4gIAlyZXR1cm4g
-SVJRX0hBTkRMRUQ7DQo+ICB9DQo+ICANCj4gKy8qDQo+ICsgKiBUaGUgcHVycG9zZSBvZiBzaWk5
-MDJ4X2kyY19ieXBhc3Nfc2VsZWN0IGlzIHRvIGVuYWJsZSB0aGUgcGFzcyB0aHJvdWdoDQo+ICsg
-KiBtb2RlIG9mIHRoZSBIRE1JIHRyYW5zbWl0dGVyLiBEbyBub3QgdXNlIHJlZ21hcCBmcm9tIHdp
-dGhpbiB0aGlzIGZ1bmN0aW9uLA0KPiArICogb25seSB1c2Ugc2lpOTAyeF8qX3VubG9ja2VkIGZ1
-bmN0aW9ucyB0byByZWFkL21vZGlmeS93cml0ZSByZWdpc3RlcnMuDQo+ICsgKiBXZSBhcmUgaG9s
-ZGluZyB0aGUgcGFyZW50IGFkYXB0ZXIgbG9jayBoZXJlLCBrZWVwIHRoaXMgaW4gbWluZCBiZWZv
-cmUNCj4gKyAqIGFkZGluZyBtb3JlIGkyYyB0cmFuc2FjdGlvbnMuDQo+ICsgKi8NCj4gK3N0YXRp
-YyBpbnQgc2lpOTAyeF9pMmNfYnlwYXNzX3NlbGVjdChzdHJ1Y3QgaTJjX211eF9jb3JlICptdXgs
-IHUzMiBjaGFuX2lkKQ0KPiArew0KPiArCXN0cnVjdCBzaWk5MDJ4ICpzaWk5MDJ4ID0gaTJjX211
-eF9wcml2KG11eCk7DQo+ICsJc3RydWN0IGRldmljZSAqZGV2ID0gJnNpaTkwMngtPmkyYy0+ZGV2
-Ow0KPiArCXVuc2lnbmVkIGxvbmcgdGltZW91dDsNCj4gKwl1OCBzdGF0dXM7DQo+ICsJaW50IHJl
-dDsNCj4gKw0KPiArCXJldCA9IHNpaTkwMnhfdXBkYXRlX2JpdHNfdW5sb2NrZWQoc2lpOTAyeC0+
-aTJjLCBTSUk5MDJYX1NZU19DVFJMX0RBVEEsDQo+ICsJCQkJCSAgIFNJSTkwMlhfU1lTX0NUUkxf
-RERDX0JVU19SRVEsDQo+ICsJCQkJCSAgIFNJSTkwMlhfU1lTX0NUUkxfRERDX0JVU19SRVEpOw0K
-DQpIZXJlIChhbmQgYWxzbyBpbiBzaWk5MDJ4X2kyY19ieXBhc3NfZGVzZWxlY3QpIHlvdSBkbyBh
-IHJtdyBhY2Nlc3MgdG8gdGhlDQpTSUk5MDJYX1NZU19DVFJMX0RBVEEgcmVnaXN0ZXIgd2l0aG91
-dCBjb29yZGluYXRpbmcgd2l0aCByZWdtYXAuIFJlZ21hcCBpcw0KYWxzbyBkb2luZyBybXcgYWNj
-ZXNzZXMgdG8gdGhhdCByZWdpc3RlciBpbiBvdGhlciBwYXJ0cyBvZiB0aGUgZHJpdmVyLiBJDQp0
-aGluayB5b3UgbmVlZCB0byBlaXRoZXIgYWRkIGNvbW1lbnQgYXMgdG8gd2h5IHRoYXQgaXMgc2Fm
-ZSAobWF5YmUgb3RoZXINCnRoaW5ncyBtYWtlIGl0IGltcG9zc2libGUgZm9yIHRoZSB0d28gcm13
-IGFjY2Vzc2VzIHRvIGNyb3NzPyksIG9yIGFkZCB0aGUNCm1pc3NpbmcgY29vcmRpbmF0aW9uLg0K
-DQo+ICsNCj4gKwl0aW1lb3V0ID0gamlmZmllcyArDQo+ICsJCSAgbXNlY3NfdG9famlmZmllcyhT
-SUk5MDJYX0kyQ19CVVNfQUNRVUlTSVRJT05fVElNRU9VVF9NUyk7DQo+ICsJZG8gew0KPiArCQly
-ZXQgPSBzaWk5MDJ4X3JlYWRfdW5sb2NrZWQoc2lpOTAyeC0+aTJjLCBTSUk5MDJYX1NZU19DVFJM
-X0RBVEEsDQo+ICsJCQkJCSAgICAmc3RhdHVzKTsNCj4gKwkJaWYgKHJldCkNCj4gKwkJCXJldHVy
-biByZXQ7DQo+ICsJfSB3aGlsZSAoIShzdGF0dXMgJiBTSUk5MDJYX1NZU19DVFJMX0REQ19CVVNf
-R1JURCkgJiYNCj4gKwkJIHRpbWVfYmVmb3JlKGppZmZpZXMsIHRpbWVvdXQpKTsNCj4gKw0KPiAr
-CWlmICghKHN0YXR1cyAmIFNJSTkwMlhfU1lTX0NUUkxfRERDX0JVU19HUlREKSkgew0KPiArCQlk
-ZXZfZXJyKGRldiwgIkZhaWxlZCB0byBhY3F1aXJlIHRoZSBpMmMgYnVzXG4iKTsNCj4gKwkJcmV0
-dXJuIC1FVElNRURPVVQ7DQo+ICsJfQ0KPiArDQo+ICsJcmV0ID0gc2lpOTAyeF93cml0ZV91bmxv
-Y2tlZChzaWk5MDJ4LT5pMmMsIFNJSTkwMlhfU1lTX0NUUkxfREFUQSwNCj4gKwkJCQkgICAgIHN0
-YXR1cyk7DQo+ICsJaWYgKHJldCkNCj4gKwkJcmV0dXJuIHJldDsNCj4gKwlyZXR1cm4gMDsNCj4g
-K30NCj4gKw0KPiArLyoNCj4gKyAqIFRoZSBwdXJwb3NlIG9mIHNpaTkwMnhfaTJjX2J5cGFzc19k
-ZXNlbGVjdCBpcyB0byBkaXNhYmxlIHRoZSBwYXNzIHRocm91Z2gNCj4gKyAqIG1vZGUgb2YgdGhl
-IEhETUkgdHJhbnNtaXR0ZXIuIERvIG5vdCB1c2UgcmVnbWFwIGZyb20gd2l0aGluIHRoaXMgZnVu
-Y3Rpb24sDQo+ICsgKiBvbmx5IHVzZSBzaWk5MDJ4XypfdW5sb2NrZWQgZnVuY3Rpb25zIHRvIHJl
-YWQvbW9kaWZ5L3dyaXRlIHJlZ2lzdGVycy4NCj4gKyAqIFdlIGFyZSBob2xkaW5nIHRoZSBwYXJl
-bnQgYWRhcHRlciBsb2NrIGhlcmUsIGtlZXAgdGhpcyBpbiBtaW5kIGJlZm9yZQ0KPiArICogYWRk
-aW5nIG1vcmUgaTJjIHRyYW5zYWN0aW9ucy4NCj4gKyAqLw0KPiArc3RhdGljIGludCBzaWk5MDJ4
-X2kyY19ieXBhc3NfZGVzZWxlY3Qoc3RydWN0IGkyY19tdXhfY29yZSAqbXV4LCB1MzIgY2hhbl9p
-ZCkNCj4gK3sNCj4gKwlzdHJ1Y3Qgc2lpOTAyeCAqc2lpOTAyeCA9IGkyY19tdXhfcHJpdihtdXgp
-Ow0KPiArCXN0cnVjdCBkZXZpY2UgKmRldiA9ICZzaWk5MDJ4LT5pMmMtPmRldjsNCj4gKwl1bnNp
-Z25lZCBsb25nIHRpbWVvdXQ7DQo+ICsJdW5zaWduZWQgaW50IHJldHJpZXM7DQo+ICsJdTggc3Rh
-dHVzOw0KPiArCWludCByZXQ7DQo+ICsNCj4gKwkvKg0KPiArCSAqIFdoZW4gdGhlIEhETUkgdHJh
-bnNtaXR0ZXIgaXMgaW4gcGFzcyB0aHJvdWdoIG1vZGUsIHdlIG5lZWQgYW4NCj4gKwkgKiAodW5k
-b2N1bWVudGVkKSBhZGRpdGlvbmFsIGRlbGF5IGJldHdlZW4gU1RPUCBhbmQgU1RBUlQgY29uZGl0
-aW9ucw0KPiArCSAqIHRvIGd1YXJhbnRlZSB0aGUgYnVzIHdvbid0IGdldCBzdHVjay4NCj4gKwkg
-Ki8NCj4gKwl1ZGVsYXkoMzApOw0KPiArDQo+ICsJLyoNCj4gKwkgKiBTb21ldGltZXMgdGhlIEky
-QyBidXMgY2FuIHN0YWxsIGFmdGVyIGZhaWx1cmUgdG8gdXNlIHRoZQ0KPiArCSAqIEVESUQgY2hh
-bm5lbC4gUmV0cnkgYSBmZXcgdGltZXMgdG8gc2VlIGlmIHRoaW5ncyBjbGVhcg0KPiArCSAqIHVw
-LCBlbHNlIGNvbnRpbnVlIGFueXdheS4NCj4gKwkgKi8NCj4gKwlyZXRyaWVzID0gNTsNCj4gKwlk
-byB7DQo+ICsJCXJldCA9IHNpaTkwMnhfcmVhZF91bmxvY2tlZChzaWk5MDJ4LT5pMmMsIFNJSTkw
-MlhfU1lTX0NUUkxfREFUQSwNCj4gKwkJCQkJICAgICZzdGF0dXMpOw0KPiArCQlyZXRyaWVzLS07
-DQo+ICsJfSB3aGlsZSAocmV0ICYmIHJldHJpZXMpOw0KPiArCWlmIChyZXQpIHsNCj4gKwkJZGV2
-X2VycihkZXYsICJmYWlsZWQgdG8gcmVhZCBzdGF0dXMgKCVkKVxuIiwgcmV0KTsNCj4gKwkJcmV0
-dXJuIHJldDsNCj4gKwl9DQo+ICsNCj4gKwlyZXQgPSBzaWk5MDJ4X3VwZGF0ZV9iaXRzX3VubG9j
-a2VkKHNpaTkwMngtPmkyYywgU0lJOTAyWF9TWVNfQ1RSTF9EQVRBLA0KPiArCQkJCQkgICBTSUk5
-MDJYX1NZU19DVFJMX0REQ19CVVNfUkVRIHwNCj4gKwkJCQkJICAgU0lJOTAyWF9TWVNfQ1RSTF9E
-RENfQlVTX0dSVEQsIDApOw0KPiArCWlmIChyZXQpDQo+ICsJCXJldHVybiByZXQ7DQo+ICsNCj4g
-Kwl0aW1lb3V0ID0gamlmZmllcyArDQo+ICsJCSAgbXNlY3NfdG9famlmZmllcyhTSUk5MDJYX0ky
-Q19CVVNfQUNRVUlTSVRJT05fVElNRU9VVF9NUyk7DQo+ICsJZG8gew0KPiArCQlyZXQgPSBzaWk5
-MDJ4X3JlYWRfdW5sb2NrZWQoc2lpOTAyeC0+aTJjLCBTSUk5MDJYX1NZU19DVFJMX0RBVEEsDQo+
-ICsJCQkJCSAgICAmc3RhdHVzKTsNCj4gKwkJaWYgKHJldCkNCj4gKwkJCXJldHVybiByZXQ7DQo+
-ICsJfSB3aGlsZSAoc3RhdHVzICYgKFNJSTkwMlhfU1lTX0NUUkxfRERDX0JVU19SRVEgfA0KPiAr
-CQkJICAgU0lJOTAyWF9TWVNfQ1RSTF9ERENfQlVTX0dSVEQpICYmDQo+ICsJCSB0aW1lX2JlZm9y
-ZShqaWZmaWVzLCB0aW1lb3V0KSk7DQo+ICsNCj4gKwlpZiAoc3RhdHVzICYgKFNJSTkwMlhfU1lT
-X0NUUkxfRERDX0JVU19SRVEgfA0KPiArCQkgICAgICBTSUk5MDJYX1NZU19DVFJMX0REQ19CVVNf
-R1JURCkpIHsNCj4gKwkJZGV2X2VycihkZXYsICJmYWlsZWQgdG8gcmVsZWFzZSB0aGUgaTJjIGJ1
-c1xuIik7DQo+ICsJCXJldHVybiAtRVRJTUVET1VUOw0KPiArCX0NCj4gKw0KPiArCXJldHVybiAw
-Ow0KPiArfQ0KPiArDQo+ICBzdGF0aWMgaW50IHNpaTkwMnhfcHJvYmUoc3RydWN0IGkyY19jbGll
-bnQgKmNsaWVudCwNCj4gIAkJCSBjb25zdCBzdHJ1Y3QgaTJjX2RldmljZV9pZCAqaWQpDQo+ICB7
-DQo+IEBAIC0zNzUsNiArNDc4LDEyIEBAIHN0YXRpYyBpbnQgc2lpOTAyeF9wcm9iZShzdHJ1Y3Qg
-aTJjX2NsaWVudCAqY2xpZW50LA0KPiAgCXU4IGNoaXBpZFs0XTsNCj4gIAlpbnQgcmV0Ow0KPiAg
-DQo+ICsJcmV0ID0gaTJjX2NoZWNrX2Z1bmN0aW9uYWxpdHkoY2xpZW50LT5hZGFwdGVyLCBJMkNf
-RlVOQ19JMkMpOw0KPiArCWlmICghcmV0KSB7DQo+ICsJCWRldl9lcnIoZGV2LCAiSTJDIGFkYXB0
-ZXIgbm90IHN1aXRhYmxlXG4iKTsNCj4gKwkJcmV0dXJuIC1FSU87DQo+ICsJfQ0KPiArDQo+ICAJ
-c2lpOTAyeCA9IGRldm1fa3phbGxvYyhkZXYsIHNpemVvZigqc2lpOTAyeCksIEdGUF9LRVJORUwp
-Ow0KPiAgCWlmICghc2lpOTAyeCkNCj4gIAkJcmV0dXJuIC1FTk9NRU07DQo+IEBAIC00MzMsNiAr
-NTQyLDIyIEBAIHN0YXRpYyBpbnQgc2lpOTAyeF9wcm9iZShzdHJ1Y3QgaTJjX2NsaWVudCAqY2xp
-ZW50LA0KPiAgDQo+ICAJaTJjX3NldF9jbGllbnRkYXRhKGNsaWVudCwgc2lpOTAyeCk7DQo+ICAN
-Cj4gKwlzaWk5MDJ4LT5pMmNtdXggPSBpMmNfbXV4X2FsbG9jKGNsaWVudC0+YWRhcHRlciwgZGV2
-LA0KPiArCQkJCQkxLCAwLCBJMkNfTVVYX0dBVEUsDQo+ICsJCQkJCXNpaTkwMnhfaTJjX2J5cGFz
-c19zZWxlY3QsDQo+ICsJCQkJCXNpaTkwMnhfaTJjX2J5cGFzc19kZXNlbGVjdCk7DQo+ICsJaWYg
-KCFzaWk5MDJ4LT5pMmNtdXgpIHsNCj4gKwkJZGV2X2VycihkZXYsICJmYWlsZWQgdG8gYWxsb2Nh
-dGUgSTJDIG11eFxuIik7DQo+ICsJCXJldHVybiAtRU5PTUVNOw0KPiArCX0NCj4gKw0KPiArCXNp
-aTkwMngtPmkyY211eC0+cHJpdiA9IHNpaTkwMng7DQo+ICsJcmV0ID0gaTJjX211eF9hZGRfYWRh
-cHRlcihzaWk5MDJ4LT5pMmNtdXgsIDAsIDAsIDApOw0KPiArCWlmIChyZXQpIHsNCj4gKwkJZGV2
-X2VycihkZXYsICJDb3VsZG4ndCBhZGQgaTJjIG11eCBhZGFwdGVyXG4iKTsNCj4gKwkJcmV0dXJu
-IHJldDsNCj4gKwl9DQo+ICsNCj4gIAlyZXR1cm4gMDsNCj4gIH0NCj4gIA0KPiBAQCAtNDQxLDYg
-KzU2Niw5IEBAIHN0YXRpYyBpbnQgc2lpOTAyeF9yZW1vdmUoc3RydWN0IGkyY19jbGllbnQgKmNs
-aWVudCkNCj4gIHsNCj4gIAlzdHJ1Y3Qgc2lpOTAyeCAqc2lpOTAyeCA9IGkyY19nZXRfY2xpZW50
-ZGF0YShjbGllbnQpOw0KPiAgDQo+ICsJaWYgKHNpaTkwMngtPmkyY211eCkNCj4gKwkJaTJjX211
-eF9kZWxfYWRhcHRlcnMoc2lpOTAyeC0+aTJjbXV4KTsNCj4gKw0KPiAgCWRybV9icmlkZ2VfcmVt
-b3ZlKCZzaWk5MDJ4LT5icmlkZ2UpOw0KPiAgDQo+ICAJcmV0dXJuIDA7DQo+IA0KDQo=
+While adding SiI9022A support to the iwg23s board, it came
+up that when the HDMI transmitter is in pass through mode the
+device is not compliant with the I2C specification anymore,
+as it requires a far bigger tbuf, due to a delay the HDMI
+transmitter is adding when relaying the STOP condition on the
+monitor i2c side of things.
+
+When not providing an appropriate delay after the STOP condition
+the i2c bus would get stuck. Also, any other traffic on the bus
+while talking to the monitor may cause the transaction to fail
+or even cause issues with the i2c bus as well.
+
+I2c-gates seemed to reach consent as a possible way to address
+these issues, and as such this patch is implementing a solution
+based on that. Since others are clearly relying on the current
+implementation of the driver, this patch won't require any DT
+changes.
+
+Since we don't want any interference during the DDC Bus
+Request/Grant procedure and while talking to the monitor, we
+have to use the adapter locking primitives rather than the
+i2c-mux locking primitives.
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+RFC->PATCH:
+* Incorporated Linus Walleij, Peter Rosin, and Mark Brown comments
+
+Thank you guys
+
+ drivers/gpu/drm/bridge/sii902x.c | 264 +++++++++++++++++++++++++++++----------
+ 1 file changed, 196 insertions(+), 68 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
+index e59a135..4f9d9c7 100644
+--- a/drivers/gpu/drm/bridge/sii902x.c
++++ b/drivers/gpu/drm/bridge/sii902x.c
+@@ -1,4 +1,6 @@
+ /*
++ * Copyright (C) 2018 Renesas Electronics
++ *
+  * Copyright (C) 2016 Atmel
+  *		      Bo Shen <voice.shen@atmel.com>
+  *
+@@ -21,6 +23,7 @@
+  */
+ 
+ #include <linux/gpio/consumer.h>
++#include <linux/i2c-mux.h>
+ #include <linux/i2c.h>
+ #include <linux/module.h>
+ #include <linux/regmap.h>
+@@ -86,8 +89,68 @@ struct sii902x {
+ 	struct drm_bridge bridge;
+ 	struct drm_connector connector;
+ 	struct gpio_desc *reset_gpio;
++	struct i2c_mux_core *i2cmux;
+ };
+ 
++static int sii902x_read_unlocked(struct i2c_client *i2c, u8 reg, u8 *val)
++{
++	struct i2c_msg xfer[] = {
++		{
++			.addr = i2c->addr,
++			.flags = 0,
++			.len = 1,
++			.buf = &reg,
++		}, {
++			.addr = i2c->addr,
++			.flags = I2C_M_RD,
++			.len = 1,
++			.buf = val,
++		}
++	};
++	unsigned char xfers = ARRAY_SIZE(xfer);
++	int ret, retries = 5;
++
++	do {
++		ret = __i2c_transfer(i2c->adapter, xfer, xfers);
++		if (ret < 0)
++			return ret;
++	} while (ret != xfers && --retries);
++	return ret == xfers ? 0 : -1;
++}
++
++static int sii902x_write_unlocked(struct i2c_client *i2c, u8 reg, u8 val)
++{
++	u8 data[2] = {reg, val};
++	struct i2c_msg xfer = {
++		.addr = i2c->addr,
++		.flags = 0,
++		.len = sizeof(data),
++		.buf = data,
++	};
++	int ret, retries = 5;
++
++	do {
++		ret = __i2c_transfer(i2c->adapter, &xfer, 1);
++		if (ret < 0)
++			return ret;
++	} while (!ret && --retries);
++	return !ret ? -1 : 0;
++}
++
++static int sii902x_update_bits_unlocked(struct i2c_client *i2c, u8 reg, u8 mask,
++					u8 val)
++{
++	int ret;
++	u8 status;
++
++	ret = sii902x_read_unlocked(i2c, reg, &status);
++	if (ret)
++		return ret;
++	status &= ~mask;
++	status |= val & mask;
++	return sii902x_write_unlocked(i2c, reg, status);
++}
++
+ static inline struct sii902x *bridge_to_sii902x(struct drm_bridge *bridge)
+ {
+ 	return container_of(bridge, struct sii902x, bridge);
+@@ -135,41 +198,11 @@ static const struct drm_connector_funcs sii902x_connector_funcs = {
+ static int sii902x_get_modes(struct drm_connector *connector)
+ {
+ 	struct sii902x *sii902x = connector_to_sii902x(connector);
+-	struct regmap *regmap = sii902x->regmap;
+ 	u32 bus_format = MEDIA_BUS_FMT_RGB888_1X24;
+-	struct device *dev = &sii902x->i2c->dev;
+-	unsigned long timeout;
+-	unsigned int retries;
+-	unsigned int status;
+ 	struct edid *edid;
+-	int num = 0;
+-	int ret;
+-
+-	ret = regmap_update_bits(regmap, SII902X_SYS_CTRL_DATA,
+-				 SII902X_SYS_CTRL_DDC_BUS_REQ,
+-				 SII902X_SYS_CTRL_DDC_BUS_REQ);
+-	if (ret)
+-		return ret;
+-
+-	timeout = jiffies +
+-		  msecs_to_jiffies(SII902X_I2C_BUS_ACQUISITION_TIMEOUT_MS);
+-	do {
+-		ret = regmap_read(regmap, SII902X_SYS_CTRL_DATA, &status);
+-		if (ret)
+-			return ret;
+-	} while (!(status & SII902X_SYS_CTRL_DDC_BUS_GRTD) &&
+-		 time_before(jiffies, timeout));
+-
+-	if (!(status & SII902X_SYS_CTRL_DDC_BUS_GRTD)) {
+-		dev_err(dev, "failed to acquire the i2c bus\n");
+-		return -ETIMEDOUT;
+-	}
+-
+-	ret = regmap_write(regmap, SII902X_SYS_CTRL_DATA, status);
+-	if (ret)
+-		return ret;
++	int num = 0, ret;
+ 
+-	edid = drm_get_edid(connector, sii902x->i2c->adapter);
++	edid = drm_get_edid(connector, sii902x->i2cmux->adapter[0]);
+ 	drm_connector_update_edid_property(connector, edid);
+ 	if (edid) {
+ 		num = drm_add_edid_modes(connector, edid);
+@@ -181,42 +214,6 @@ static int sii902x_get_modes(struct drm_connector *connector)
+ 	if (ret)
+ 		return ret;
+ 
+-	/*
+-	 * Sometimes the I2C bus can stall after failure to use the
+-	 * EDID channel. Retry a few times to see if things clear
+-	 * up, else continue anyway.
+-	 */
+-	retries = 5;
+-	do {
+-		ret = regmap_read(regmap, SII902X_SYS_CTRL_DATA,
+-				  &status);
+-		retries--;
+-	} while (ret && retries);
+-	if (ret)
+-		dev_err(dev, "failed to read status (%d)\n", ret);
+-
+-	ret = regmap_update_bits(regmap, SII902X_SYS_CTRL_DATA,
+-				 SII902X_SYS_CTRL_DDC_BUS_REQ |
+-				 SII902X_SYS_CTRL_DDC_BUS_GRTD, 0);
+-	if (ret)
+-		return ret;
+-
+-	timeout = jiffies +
+-		  msecs_to_jiffies(SII902X_I2C_BUS_ACQUISITION_TIMEOUT_MS);
+-	do {
+-		ret = regmap_read(regmap, SII902X_SYS_CTRL_DATA, &status);
+-		if (ret)
+-			return ret;
+-	} while (status & (SII902X_SYS_CTRL_DDC_BUS_REQ |
+-			   SII902X_SYS_CTRL_DDC_BUS_GRTD) &&
+-		 time_before(jiffies, timeout));
+-
+-	if (status & (SII902X_SYS_CTRL_DDC_BUS_REQ |
+-		      SII902X_SYS_CTRL_DDC_BUS_GRTD)) {
+-		dev_err(dev, "failed to release the i2c bus\n");
+-		return -ETIMEDOUT;
+-	}
+-
+ 	return num;
+ }
+ 
+@@ -366,6 +363,112 @@ static irqreturn_t sii902x_interrupt(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
+ 
++/*
++ * The purpose of sii902x_i2c_bypass_select is to enable the pass through
++ * mode of the HDMI transmitter. Do not use regmap from within this function,
++ * only use sii902x_*_unlocked functions to read/modify/write registers.
++ * We are holding the parent adapter lock here, keep this in mind before
++ * adding more i2c transactions.
++ */
++static int sii902x_i2c_bypass_select(struct i2c_mux_core *mux, u32 chan_id)
++{
++	struct sii902x *sii902x = i2c_mux_priv(mux);
++	struct device *dev = &sii902x->i2c->dev;
++	unsigned long timeout;
++	u8 status;
++	int ret;
++
++	ret = sii902x_update_bits_unlocked(sii902x->i2c, SII902X_SYS_CTRL_DATA,
++					   SII902X_SYS_CTRL_DDC_BUS_REQ,
++					   SII902X_SYS_CTRL_DDC_BUS_REQ);
++
++	timeout = jiffies +
++		  msecs_to_jiffies(SII902X_I2C_BUS_ACQUISITION_TIMEOUT_MS);
++	do {
++		ret = sii902x_read_unlocked(sii902x->i2c, SII902X_SYS_CTRL_DATA,
++					    &status);
++		if (ret)
++			return ret;
++	} while (!(status & SII902X_SYS_CTRL_DDC_BUS_GRTD) &&
++		 time_before(jiffies, timeout));
++
++	if (!(status & SII902X_SYS_CTRL_DDC_BUS_GRTD)) {
++		dev_err(dev, "Failed to acquire the i2c bus\n");
++		return -ETIMEDOUT;
++	}
++
++	ret = sii902x_write_unlocked(sii902x->i2c, SII902X_SYS_CTRL_DATA,
++				     status);
++	if (ret)
++		return ret;
++	return 0;
++}
++
++/*
++ * The purpose of sii902x_i2c_bypass_deselect is to disable the pass through
++ * mode of the HDMI transmitter. Do not use regmap from within this function,
++ * only use sii902x_*_unlocked functions to read/modify/write registers.
++ * We are holding the parent adapter lock here, keep this in mind before
++ * adding more i2c transactions.
++ */
++static int sii902x_i2c_bypass_deselect(struct i2c_mux_core *mux, u32 chan_id)
++{
++	struct sii902x *sii902x = i2c_mux_priv(mux);
++	struct device *dev = &sii902x->i2c->dev;
++	unsigned long timeout;
++	unsigned int retries;
++	u8 status;
++	int ret;
++
++	/*
++	 * When the HDMI transmitter is in pass through mode, we need an
++	 * (undocumented) additional delay between STOP and START conditions
++	 * to guarantee the bus won't get stuck.
++	 */
++	udelay(30);
++
++	/*
++	 * Sometimes the I2C bus can stall after failure to use the
++	 * EDID channel. Retry a few times to see if things clear
++	 * up, else continue anyway.
++	 */
++	retries = 5;
++	do {
++		ret = sii902x_read_unlocked(sii902x->i2c, SII902X_SYS_CTRL_DATA,
++					    &status);
++		retries--;
++	} while (ret && retries);
++	if (ret) {
++		dev_err(dev, "failed to read status (%d)\n", ret);
++		return ret;
++	}
++
++	ret = sii902x_update_bits_unlocked(sii902x->i2c, SII902X_SYS_CTRL_DATA,
++					   SII902X_SYS_CTRL_DDC_BUS_REQ |
++					   SII902X_SYS_CTRL_DDC_BUS_GRTD, 0);
++	if (ret)
++		return ret;
++
++	timeout = jiffies +
++		  msecs_to_jiffies(SII902X_I2C_BUS_ACQUISITION_TIMEOUT_MS);
++	do {
++		ret = sii902x_read_unlocked(sii902x->i2c, SII902X_SYS_CTRL_DATA,
++					    &status);
++		if (ret)
++			return ret;
++	} while (status & (SII902X_SYS_CTRL_DDC_BUS_REQ |
++			   SII902X_SYS_CTRL_DDC_BUS_GRTD) &&
++		 time_before(jiffies, timeout));
++
++	if (status & (SII902X_SYS_CTRL_DDC_BUS_REQ |
++		      SII902X_SYS_CTRL_DDC_BUS_GRTD)) {
++		dev_err(dev, "failed to release the i2c bus\n");
++		return -ETIMEDOUT;
++	}
++
++	return 0;
++}
++
+ static int sii902x_probe(struct i2c_client *client,
+ 			 const struct i2c_device_id *id)
+ {
+@@ -375,6 +478,12 @@ static int sii902x_probe(struct i2c_client *client,
+ 	u8 chipid[4];
+ 	int ret;
+ 
++	ret = i2c_check_functionality(client->adapter, I2C_FUNC_I2C);
++	if (!ret) {
++		dev_err(dev, "I2C adapter not suitable\n");
++		return -EIO;
++	}
++
+ 	sii902x = devm_kzalloc(dev, sizeof(*sii902x), GFP_KERNEL);
+ 	if (!sii902x)
+ 		return -ENOMEM;
+@@ -433,6 +542,22 @@ static int sii902x_probe(struct i2c_client *client,
+ 
+ 	i2c_set_clientdata(client, sii902x);
+ 
++	sii902x->i2cmux = i2c_mux_alloc(client->adapter, dev,
++					1, 0, I2C_MUX_GATE,
++					sii902x_i2c_bypass_select,
++					sii902x_i2c_bypass_deselect);
++	if (!sii902x->i2cmux) {
++		dev_err(dev, "failed to allocate I2C mux\n");
++		return -ENOMEM;
++	}
++
++	sii902x->i2cmux->priv = sii902x;
++	ret = i2c_mux_add_adapter(sii902x->i2cmux, 0, 0, 0);
++	if (ret) {
++		dev_err(dev, "Couldn't add i2c mux adapter\n");
++		return ret;
++	}
++
+ 	return 0;
+ }
+ 
+@@ -441,6 +566,9 @@ static int sii902x_remove(struct i2c_client *client)
+ {
+ 	struct sii902x *sii902x = i2c_get_clientdata(client);
+ 
++	if (sii902x->i2cmux)
++		i2c_mux_del_adapters(sii902x->i2cmux);
++
+ 	drm_bridge_remove(&sii902x->bridge);
+ 
+ 	return 0;
+-- 
+2.7.4
