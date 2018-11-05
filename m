@@ -1,80 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ty1jpn01on0092.outbound.protection.outlook.com ([104.47.93.92]:27138
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387537AbeKGEjY (ORCPT
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:39849 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726319AbeKET3v (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Nov 2018 23:39:24 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Linus Walleij <linus.walleij@linaro.org>,
+        Mon, 5 Nov 2018 14:29:51 -0500
+MIME-Version: 1.0
+References: <1541185843-32732-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1541185843-32732-1-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 5 Nov 2018 11:10:41 +0100
+Message-ID: <CAMuHMdV4gz8rZNFc_i-x5CsKEucG10Sin-_cyQvFN67X3qDS0g@mail.gmail.com>
+Subject: Re: [PATCH] gpio: rcar: Request GPIO while enabling interrupt
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] gpio: rcar: Request GPIO while enabling interrupt
-Date: Tue, 6 Nov 2018 19:12:36 +0000
-Message-ID: <TY1PR01MB1770EBDBF8EFF2117615A8F0C0CB0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1541185843-32732-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAMuHMdV4gz8rZNFc_i-x5CsKEucG10Sin-_cyQvFN67X3qDS0g@mail.gmail.com>
-In-Reply-To: <CAMuHMdV4gz8rZNFc_i-x5CsKEucG10Sin-_cyQvFN67X3qDS0g@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gR2VlcnQsDQoNClRoYW5rIHlvdSBmb3IgeW91ciBmZWVkYmFjayENCg0KPiBTdWJqZWN0
-OiBSZTogW1BBVENIXSBncGlvOiByY2FyOiBSZXF1ZXN0IEdQSU8gd2hpbGUgZW5hYmxpbmcgaW50
-ZXJydXB0DQo+DQo+IEhpIEZhYnJpemlvLA0KPg0KPiBPbiBGcmksIE5vdiAyLCAyMDE4IGF0IDg6
-MTAgUE0gRmFicml6aW8gQ2FzdHJvDQo+IDxmYWJyaXppby5jYXN0cm9AYnAucmVuZXNhcy5jb20+
-IHdyb3RlOg0KPiA+IFRoZXJlIGFyZSBjYXNlcyB3aGVuIHRoZSBib290bG9hZGVyIGNvbmZpZ3Vy
-ZXMgYSBwaW4gdG8gd29yaw0KPiA+IGFzIGEgZnVuY3Rpb24gcmF0aGVyIHRoYW4gR1BJTywgYW5k
-IG90aGVyIGNhc2VzIHdoZW4gdGhlIHBpbg0KPiA+IGlzIGNvbmZpZ3VyZWQgYXMgYSBmdW5jdGlv
-biBhdCBQT1IuDQo+ID4gVGhpcyBjb21taXQgbWFrZXMgc3VyZSB0aGUgcGluIGlzIGNvbmZpZ3Vy
-ZWQgYXMgYSBHUElPIHRoZQ0KPiA+IG1vbWVudCB3ZSBuZWVkIGl0IHRvIHdvcmsgYXMgYW4gaW50
-ZXJydXB0Lg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogRmFicml6aW8gQ2FzdHJvIDxmYWJyaXpp
-by5jYXN0cm9AYnAucmVuZXNhcy5jb20+DQo+ID4gLS0tDQo+ID4gUkZDLT5QQVRDSDoNCj4gPiAq
-IE1vdmVkIGdjLT5yZXF1ZXN0IHRvIHRoZSBib3R0b20gb2YgZ3Bpb19yY2FyX2lycV9zZXRfdHlw
-ZQ0KPg0KPiBUaGFua3MgZm9yIHRoZSB1cGRhdGUhDQo+DQo+ID4gLS0tIGEvZHJpdmVycy9ncGlv
-L2dwaW8tcmNhci5jDQo+ID4gKysrIGIvZHJpdmVycy9ncGlvL2dwaW8tcmNhci5jDQo+ID4gQEAg
-LTE0Nyw2ICsxNDcsNyBAQCBzdGF0aWMgaW50IGdwaW9fcmNhcl9pcnFfc2V0X3R5cGUoc3RydWN0
-IGlycV9kYXRhICpkLCB1bnNpZ25lZCBpbnQgdHlwZSkNCj4gPiAgICAgICAgIHN0cnVjdCBncGlv
-X2NoaXAgKmdjID0gaXJxX2RhdGFfZ2V0X2lycV9jaGlwX2RhdGEoZCk7DQo+ID4gICAgICAgICBz
-dHJ1Y3QgZ3Bpb19yY2FyX3ByaXYgKnAgPSBncGlvY2hpcF9nZXRfZGF0YShnYyk7DQo+ID4gICAg
-ICAgICB1bnNpZ25lZCBpbnQgaHdpcnEgPSBpcnFkX3RvX2h3aXJxKGQpOw0KPiA+ICsgICAgICAg
-aW50IGVycjsNCj4gPg0KPiA+ICAgICAgICAgZGV2X2RiZygmcC0+cGRldi0+ZGV2LCAic2Vuc2Ug
-aXJxID0gJWQsIHR5cGUgPSAlZFxuIiwgaHdpcnEsIHR5cGUpOw0KPiA+DQo+ID4gQEAgLTE3Niw2
-ICsxNzcsMTMgQEAgc3RhdGljIGludCBncGlvX3JjYXJfaXJxX3NldF90eXBlKHN0cnVjdCBpcnFf
-ZGF0YSAqZCwgdW5zaWduZWQgaW50IHR5cGUpDQo+ID4gICAgICAgICBkZWZhdWx0Og0KPiA+ICAg
-ICAgICAgICAgICAgICByZXR1cm4gLUVJTlZBTDsNCj4gPiAgICAgICAgIH0NCj4gPiArDQo+ID4g
-KyAgICAgICBlcnIgPSBnYy0+cmVxdWVzdChnYywgaHdpcnEpOw0KPg0KPiBDYWxsIGdwaW9fcmNh
-cl9yZXF1ZXN0KCkgZGlyZWN0bHk/DQoNCldpbGwgY2hhbmdlDQoNCj4NCj4gV2hlcmUgc2hvdWxk
-IHRoZSBtYXRjaGluZyBncGlvX3JjYXJfZnJlZSgpIGJlIGNhbGxlZD8NCg0KVGhhdCBpcyB0aGUg
-cXVlc3Rpb24sIGlzbid0IGl0PyEgSSBoYXZlIGxvb2tlZCBhcm91bmQgYW5kIEkgY291bGRuJ3Qg
-ZmluZCBhbnl3aGVyZSBzZW5zaWJsZSB3aGVyZSB0bw0KY2FsbCBncGlvX3JjYXJfZnJlZSBmcm9t
-IGluIHN1Y2ggYSB3YXkgdGhhdCB3b3VsZCBiZSBzb21laG93IGJhbGFuY2UgZ3Bpb19yY2FyX3Jl
-cXVlc3QgIGZyb20NCmdwaW9fcmNhcl9pcnFfc2V0X3R5cGUuDQpUaGFuayB5b3UgZm9yIHN1Z2dl
-c3RpbmcgaXJxX3JlcXVlc3RfcmVzb3VyY2VzIGFuZCBpcnFfcmVsZWFzZV9yZXNvdXJjZXMgb24g
-SVJDLCBpdCBzZWVtcyBhcHByb3ByaWF0ZQ0KdG8gbWUsIGFuZCBhZnRlciB0ZXN0aW5nIGl0ICBl
-dmVyeXRoaW5nIHNlZW1zIHRvIGJlIHdvcmtpbmcgZmluZSwgSSdsbCBzZW5kIGEgbmV3IHZlcnNp
-b24gZXhwbG9yaW5nIHRoaXMNCm9wdGlvbiwgYW5kIEknbGwgd2FpdCBmb3IgdmFsdWFibGUgY29t
-bWVudHMuDQoNCj4NCj4gPiArICAgICAgIGlmIChlcnIpIHsNCj4gPiArICAgICAgICAgICAgICAg
-ZGV2X2VycigmcC0+cGRldi0+ZGV2LCAiQ2FuJ3QgcmVxdWVzdCBHUElPICVkIGZyb20gJXNcbiIs
-IGh3aXJxLA0KPg0KPiAldSBmb3IgdW5zaWduZWQgaW50DQoNCldlbGwgc3BvdHRlZCwgd2lsbCBm
-aXgNCg0KDQpUaGFua3MsDQpGYWINCg0KPg0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGdj
-LT5sYWJlbCk7DQo+ID4gKyAgICAgICAgICAgICAgIHJldHVybiBlcnI7DQo+ID4gKyAgICAgICB9
-DQo+ID4gICAgICAgICByZXR1cm4gMDsNCj4gPiAgfQ0KPg0KPiBHcntvZXRqZSxlZXRpbmd9cywN
-Cj4NCj4gICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCj4NCj4gLS0NCj4gR2VlcnQgVXl0
-dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBs
-aW51eC1tNjhrLm9yZw0KPg0KPiBJbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVjaG5p
-Y2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0DQo+IHdoZW4gSSdtIHRhbGtp
-bmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxp
-a2UgdGhhdC4NCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2
-YWxkcw0KDQoNCg0KUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgTHRkLCBEdWtlcyBNZWFkb3cs
-IE1pbGxib2FyZCBSb2FkLCBCb3VybmUgRW5kLCBCdWNraW5naGFtc2hpcmUsIFNMOCA1RkgsIFVL
-LiBSZWdpc3RlcmVkIGluIEVuZ2xhbmQgJiBXYWxlcyB1bmRlciBSZWdpc3RlcmVkIE5vLiAwNDU4
-NjcwOS4NCg==
+Hi Fabrizio,
+
+On Fri, Nov 2, 2018 at 8:10 PM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> There are cases when the bootloader configures a pin to work
+> as a function rather than GPIO, and other cases when the pin
+> is configured as a function at POR.
+> This commit makes sure the pin is configured as a GPIO the
+> moment we need it to work as an interrupt.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> ---
+> RFC->PATCH:
+> * Moved gc->request to the bottom of gpio_rcar_irq_set_type
+
+Thanks for the update!
+
+> --- a/drivers/gpio/gpio-rcar.c
+> +++ b/drivers/gpio/gpio-rcar.c
+> @@ -147,6 +147,7 @@ static int gpio_rcar_irq_set_type(struct irq_data *d, unsigned int type)
+>         struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+>         struct gpio_rcar_priv *p = gpiochip_get_data(gc);
+>         unsigned int hwirq = irqd_to_hwirq(d);
+> +       int err;
+>
+>         dev_dbg(&p->pdev->dev, "sense irq = %d, type = %d\n", hwirq, type);
+>
+> @@ -176,6 +177,13 @@ static int gpio_rcar_irq_set_type(struct irq_data *d, unsigned int type)
+>         default:
+>                 return -EINVAL;
+>         }
+> +
+> +       err = gc->request(gc, hwirq);
+
+Call gpio_rcar_request() directly?
+
+Where should the matching gpio_rcar_free() be called?
+
+> +       if (err) {
+> +               dev_err(&p->pdev->dev, "Can't request GPIO %d from %s\n", hwirq,
+
+%u for unsigned int
+
+> +                       gc->label);
+> +               return err;
+> +       }
+>         return 0;
+>  }
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
