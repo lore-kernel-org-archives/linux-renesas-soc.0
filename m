@@ -1,71 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ty1jpn01on0127.outbound.protection.outlook.com ([104.47.93.127]:22900
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730532AbeKGEcc (ORCPT
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:34794 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726319AbeKET2G (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Nov 2018 23:32:32 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Linus Walleij <linus.walleij@linaro.org>,
+        Mon, 5 Nov 2018 14:28:06 -0500
+MIME-Version: 1.0
+References: <1540583850-30825-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <CACRpkdahZAKWSPdMk=yp-GrSSAjFAzBijMK1ws3a4KUfzFmzgg@mail.gmail.com> <TY1PR01MB177079AA335A6017A66ED183C0CF0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY1PR01MB177079AA335A6017A66ED183C0CF0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 5 Nov 2018 11:08:56 +0100
+Message-ID: <CAMuHMdXNeRW6ZtUD65J9T5pZVmMz0wbVo-Q=DncPekZV-PrFsQ@mail.gmail.com>
+Subject: Re: [RFC] gpio: rcar: Request GPIO before enabling interrupt
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [RFC] gpio: rcar: Request GPIO before enabling interrupt
-Date: Tue, 6 Nov 2018 19:04:44 +0000
-Message-ID: <TY1PR01MB1770BFF0D5FEFAE68BBAD70DC0CB0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1540583850-30825-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAMuHMdXZyAvNApzWHgCkO1t_fNGL2J_PMd1R=wcusCZ=QKkB=g@mail.gmail.com>
-In-Reply-To: <CAMuHMdXZyAvNApzWHgCkO1t_fNGL2J_PMd1R=wcusCZ=QKkB=g@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gR2VlcnQsDQoNClRoYW5rIHlvdSBmb3IgeW91ciBmZWVkYmFjayENCg0KPiBTdWJqZWN0
-OiBSZTogW1JGQ10gZ3BpbzogcmNhcjogUmVxdWVzdCBHUElPIGJlZm9yZSBlbmFibGluZyBpbnRl
-cnJ1cHQNCj4NCj4gSGkgRmFicml6aW8sDQo+DQo+IE9uIEZyaSwgT2N0IDI2LCAyMDE4IGF0IDk6
-NTcgUE0gRmFicml6aW8gQ2FzdHJvDQo+IDxmYWJyaXppby5jYXN0cm9AYnAucmVuZXNhcy5jb20+
-IHdyb3RlOg0KPiA+IFRoZXJlIGFyZSBjYXNlcyB3aGVuIHRoZSBib290bG9hZGVyIGNvbmZpZ3Vy
-ZXMgYSBwaW4gdG8gd29yaw0KPiA+IGFzIGEgZnVuY3Rpb24gcmF0aGVyIHRoYW4gR1BJTywgYW5k
-IG90aGVyIGNhc2VzIHdoZW4gdGhlIHBpbg0KPiA+IGlzIGNvbmZpZ3VyZWQgYXMgYSBmdW5jdGlv
-biBhdCBQT1IuDQo+ID4gVGhpcyBjb21taXQgbWFrZXMgc3VyZSB0aGUgcGluIGlzIGNvbmZpZ3Vy
-ZWQgYXMgYSBHUElPIHRoZQ0KPiA+IG1vbWVudCB3ZSBuZWVkIGl0IHRvIHdvcmsgYXMgYW4gaW50
-ZXJydXB0Lg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogRmFicml6aW8gQ2FzdHJvIDxmYWJyaXpp
-by5jYXN0cm9AYnAucmVuZXNhcy5jb20+DQo+ID4gLS0tDQo+ID4NCj4gPiBEZWFyIEFsbCwNCj4g
-Pg0KPiA+IHdlIGhhdmUgZ290IHNvbWUgaXNzdWVzIHdoaWxlIHRyeWluZyB0byBicmluZyB1cCB0
-aGUgaW50ZXJydXB0DQo+ID4gbGluZSBvZiB0aGUgSERNSSB0cmFuc21pdHRlciBvbiB0aGUgaXdn
-MjNzLCBhcyBHUDJfMjkgaXMgY29uZmlndXJlZA0KPiA+IGFzIGEgZnVuY3Rpb24gd2hlbiB0aGUg
-a2VybmVsIHN0YXJ0cywgYW5kIHRoZXJlZm9yZSBzZXR0aW5nIHVwIHRoZQ0KPiA+IGludGVycnVw
-dCBmcm9tIHRoZSBkcml2ZXIgd29uJ3QgaGF2ZSB0aGUgZGVzaXJlZCBlZmZlY3QuDQo+ID4gVGhp
-cyBwYXRjaCBtYWtlcyBzdXJlIHRoZSBwaW5jdHJsIGRyaXZlciBzZXRzIEdQMlsyOV0gdG8gR1At
-Mi0yOQ0KPiA+IGJlZm9yZSBlbmFibGluZyB0aGUgaW50ZXJydXB0LCBidXQgaXQgZG9lc24ndCBh
-ZGRyZXNzZXMgdGhlDQo+ID4gImRpcmVjdGlvbiBwcm9ibGVtIiwgYXMgaW4gdGhlIHBpbiB3aWxs
-IGJlIGEgR1BJTyBhZnRlciBjYWxsaW5nDQo+ID4gZ2MtPnJlcXVlc3QsIGJ1dCB0aGUgZGlyZWN0
-aW9uIHdvdWxkIGJlIHdoYXRldmVyIHdhcyBwcmV2aW91c2x5DQo+ID4gY29uZmlndXJlZC4gVGhl
-cmUgY291bGQgYmUgdGhlIG9wdGlvbiBvZiBtb3ZpbmcgdGhlIGFkZGl0aW9uYWwNCj4gPiBjb2Rl
-IGFkZGVkIGJ5IHRoaXMgcGF0Y2ggdG8gdGhlIGJvdHRvbSBvZiBmdW5jdGlvbg0KPiA+IGdwaW9f
-cmNhcl9pcnFfc2V0X3R5cGUsIGJ1dCBpcyB0aGF0IGdvaW5nIHRvIGJlaGF2ZSBwcm9wZXJseSBv
-bg0KPiA+IGV2ZXJ5IFNvQyB0aGlzIGRyaXZlciBpcyBzdXBwb3J0aW5nPw0KPiA+IElzIGNvbmZp
-Z3VyaW5nIGV2ZXJ5IGdwaW8gd2l0aCBkaXJlY3Rpb24gaW5wdXQgd2hpbGUgcHJvYmluZw0KPiA+
-IHNvbWV0aGluZyB0aGF0IHNob3VsZCBiZSBsb29rZWQgaW50byB0byByZWR1Y2UgY29uY2VybnMg
-b3Zlcg0KPiA+IHN3aXRjaGluZyBmcm9tIGZ1bmN0aW9uIHRvIEdQSU8/DQo+DQo+IENvbmZpZ3Vy
-aW5nIGV2ZXJ5dGhpbmcgdG8gaW5wdXQgbWF5IGNhdXNlIGlzc3VlcyB3aGVyZSBhIEdQSU8gaXMg
-Y29ubmVjdGVkDQo+IHRvIHRoZSByZXNldCBsaW5lIG9mIGFuIGV4dGVybmFsIGRldmljZSwgYW5k
-IHdoZXJlIHRoZSBib290bG9hZGVyIGNvbmZpZ3VyZWQgdGhlDQo+IGxpbmUgdG8gZGVhc3NlcnQg
-dGhlIHJlc2V0Lg0KDQpJIGFtIGdvaW5nIHRvIHN0YXkgYXdheSBmcm9tIHRoaXMgdGhlbi4NCg0K
-VGhhbmtzLA0KRmFiDQoNCj4NCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+DQo+ICAgICAgICAgICAg
-ICAgICAgICAgICAgIEdlZXJ0DQo+DQo+IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBUaGVy
-ZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5vcmcNCj4N
-Cj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2Fs
-bCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0KPiB3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3Rz
-IEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuDQo+ICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGludXMgVG9ydmFsZHMNCg0KDQoNClJlbmVz
-YXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9hZCwg
-Qm91cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBF
-bmdsYW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
+Hi Fabrizio,
+
+On Fri, Nov 2, 2018 at 8:00 PM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> I am sorry for the delay of my answer, I was hoping others
+> would jump in the discussion as well.
+>
+> > > +       err = gc->request(gc, hwirq);
+> >
+> > This is done in some drivers when what you want is exactly
+> > the work carried out by that callback. But can't you just call
+> > gpio_rcar_request() directly in this case so it is clear that
+> > the driver is meddling with the internal state of the hardware
+> > and not really intending to loop out into the external
+> > API or external callbacks?
+>
+> gpio_rcar_request is static unfortunately, maybe I should
+> export the symbol?
+
+I think Linus meant calling gpio_rcar_request() instead of gc->request()
+from gpio_rcar_irq_set_type(), i.e. from the GPIO driver, not from the
+HDMI driver. So static is fine.
+
+> > You're not on one of these platforms that prefer setting up
+> > the pin as GPIO using a pin control hog in the device tree?
+>
+> My personal preference would be to deal with this from
+> within irqchip, as when you hook up a gpio as interrupt
+> from the DT the kernel should do everything that's necessary
+> to make it happen, but that is just a personal opinion.
+> Anyway, I did give gpio-hog a try and it works for me.
+
+Isn't the purpose of an input GPIO hog to configure the GPIO to not
+drive the line, in the absence of any other driver with a need to read
+the line value?
+
+In this case there is another driver (via the interrupt subsystem), so using
+an input GPIO doesn't look like the real solution to me.
+
+> > Geert will know what is best.
+
+People put way too much faith in me ;-)
+
+> Yeah, I am really keen in hearing from him about this, in the meantime
+> I went through a bunch of manuals, and moving the gpio request to the
+> bottom of gpio_rcar_irq_set_type seems to be okay for RCar devices in
+> general, but Geert knows definitely better.
+
+Moving it down, after all other checks, is indeed better.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
