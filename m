@@ -1,53 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:51086 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388038AbeKOVc0 (ORCPT
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:41652 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726358AbeKEVkl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Nov 2018 16:32:26 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: renesas: Enable GPIOLIB to allow GPIO driver selection
-Date: Thu, 15 Nov 2018 10:46:49 +0100
-Message-Id: <20181115094649.16675-1-geert+renesas@glider.be>
+        Mon, 5 Nov 2018 16:40:41 -0500
+MIME-Version: 1.0
+References: <20181031231340.1958-1-niklas.soderlund@ragnatech.se> <20181031231340.1958-4-niklas.soderlund@ragnatech.se>
+In-Reply-To: <20181031231340.1958-4-niklas.soderlund@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 5 Nov 2018 13:20:58 +0100
+Message-ID: <CAMuHMdXsWRXH=HkDJ1+7QCsH0ey3CmTOX90NxfvP2VspVaUvMQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] mmc: renesas_sdhi: disable HS400 on H3 ES1.x and
+ M3-W ES1.x
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hi Niklas,
 
-The R-Car GPIO driver cannot be enabled when Renesas SoC's ARCH configs
-(ARCH_RENESAS, ARCH_R8A7795, ARCH_R8A7796 and ARCH_R8A77965) are enabled
-only.
+Thanks for your patch!
 
-As GPIOs are a critical resource for proper operation on Renesas
-platforms, this patch selects GPIOLIB, just like is done for other SoC
-vendors, and on Renesas arm32 SoCs.
+On Thu, Nov 1, 2018 at 12:15 AM Niklas Söderlund
+<niklas.soderlund@ragnatech.se> wrote:
+> From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+>
+> The Renesas BSP confirms that H3 ES1.x and M3-W ES1.x do not properly
 
-Reported-by: Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[geert: Improve patch description]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/Kconfig.platforms | 1 +
- 1 file changed, 1 insertion(+)
+M3-W ES1.[012] (also in the subject)? (ES1.2 is indistinguishable from ES1.1)
+Or does this apply to M3-W ES1.3, too?
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 51bc479334a43f5d..2eb02734ae4575a0 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -157,6 +157,7 @@ config ARCH_REALTEK
- 
- config ARCH_RENESAS
- 	bool "Renesas SoC Platforms"
-+	select GPIOLIB
- 	select PINCTRL
- 	select PM
- 	select PM_GENERIC_DOMAINS
+> support HS400. Add a quirk to indicate this and disable HS400 in the MMC
+> capabilities if the quirk is set.
+>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+> @@ -607,15 +608,21 @@ static void renesas_sdhi_enable_dma(struct tmio_mmc_host *host, bool enable)
+>         renesas_sdhi_sdbuf_width(host, enable ? width : 16);
+>  }
+>
+> -static const struct renesas_sdhi_quirks sdhi_quirks_h3_m3w = {
+> +static const struct renesas_sdhi_quirks sdhi_quirks_h3_m3w_es1 = {
+> +       .hs400_disabled = true,
+> +       .hs400_4taps = true,
+> +};
+> +
+> +static const struct renesas_sdhi_quirks sdhi_quirks_h3_es2 = {
+> +       .hs400_disabled = false,
+>         .hs400_4taps = true,
+>  };
+>
+>  static const struct soc_device_attribute sdhi_quirks_match[]  = {
+> -       { .soc_id = "r8a7795", .revision = "ES1.*", .data = &sdhi_quirks_h3_m3w },
+> -       { .soc_id = "r8a7795", .revision = "ES2.0", .data = &sdhi_quirks_h3_m3w },
+> -       { .soc_id = "r8a7796", .revision = "ES1.0", .data = &sdhi_quirks_h3_m3w },
+> -       { .soc_id = "r8a7796", .revision = "ES1.1", .data = &sdhi_quirks_h3_m3w },
+> +       { .soc_id = "r8a7795", .revision = "ES1.*", .data = &sdhi_quirks_h3_m3w_es1 },
+> +       { .soc_id = "r8a7795", .revision = "ES2.0", .data = &sdhi_quirks_h3_es2 },
+> +       { .soc_id = "r8a7796", .revision = "ES1.0", .data = &sdhi_quirks_h3_m3w_es1 },
+> +       { .soc_id = "r8a7796", .revision = "ES1.1", .data = &sdhi_quirks_h3_m3w_es1 },
+>         { /* Sentinel. */ },
+>  };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
