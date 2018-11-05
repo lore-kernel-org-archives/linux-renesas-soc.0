@@ -1,48 +1,71 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pl1-f181.google.com ([209.85.214.181]:43087 "EHLO
-        mail-pl1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726001AbeKUVEz (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Nov 2018 16:04:55 -0500
-Received: by mail-pl1-f181.google.com with SMTP id gn14so4931277plb.10
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Nov 2018 02:31:03 -0800 (PST)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Wed, 21 Nov 2018 19:31:22 +0900
-Message-Id: <154279628230.29528.4406846561982098560.sendpatchset@octo>
-In-Reply-To: <154279624819.29528.954090919447072739.sendpatchset@octo>
-References: <154279624819.29528.954090919447072739.sendpatchset@octo>
-Subject: [PATCH 04/05] arm64: dts: renesas: r8a77965: Add FCPCS+VDPB node for R-Car M3-N
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Mon, 5 Nov 2018 14:39:09 -0600
+From: Rob Herring <robh@kernel.org>
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: adv748x: make data-lanes property
+ mandatory for CSI-2 endpoints
+Message-ID: <20181105203909.GA5500@bogus>
+References: <20181102160009.17267-1-niklas.soderlund+renesas@ragnatech.se>
+ <20181102160009.17267-2-niklas.soderlund+renesas@ragnatech.se>
+ <20181105084106.GE20885@w540>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181105084106.GE20885@w540>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Mon, Nov 05, 2018 at 09:41:06AM +0100, jacopo mondi wrote:
+> Hi Niklas,
+> 
+> On Fri, Nov 02, 2018 at 05:00:06PM +0100, Niklas S�derlund wrote:
+> > The CSI-2 transmitters can use a different number of lanes to transmit
+> > data. Make the data-lanes mandatory for the endpoints that describe the
+> > transmitters as no good default can be set to fallback on.
+> >
+> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> >
+> > ---
+> > * Changes since v2
+> > - Update paragraph according to Laurents comments.
+> > ---
+> >  Documentation/devicetree/bindings/media/i2c/adv748x.txt | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/media/i2c/adv748x.txt b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
+> > index 5dddc95f9cc46084..bffbabc879efd86c 100644
+> > --- a/Documentation/devicetree/bindings/media/i2c/adv748x.txt
+> > +++ b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
+> > @@ -48,7 +48,9 @@ are numbered as follows.
+> >  	  TXA		source		10
+> >  	  TXB		source		11
+> >
+> > -The digital output port nodes must contain at least one endpoint.
+> > +The digital output port nodes, when present, shall contain at least one
+> > +endpoint. Each of those endpoints shall contain the data-lanes property as
+> > +described in video-interfaces.txt.
+> >
+> >  Ports are optional if they are not connected to anything at the hardware level.
+> >
+> 
+> Re-vamping my ignored comment on v2, I still think you should list here the
+> accepted values for each TX as they're actually a property of the hw
+> device itself.
+> 
+>  Required endpoint properties:
+> - data-lanes: See "video-interfaces.txt" for description. The property
+>   is mandatory for CSI-2 output endpoints and the accepted value
+>   depends on which endpoint the property is applied to:
+>   - TXA: accepted values are <1>, <2>, <4>
+>   - TXB: accepted value is <1>
 
-Add a temporary FCPCS device that also includes VDPB for testing
-purpose. This prototype level code is not intended for upstream merge.
++1
 
-Not-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- arch/arm64/boot/dts/renesas/r8a77965.dtsi |    9 +++++++++
- 1 file changed, 9 insertions(+)
-
---- 0001/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a77965.dtsi	2018-11-21 18:43:24.355401176 +0900
-@@ -1890,6 +1890,15 @@
- 			status = "disabled";
- 		};
- 
-+		fcpcs: fcp@fe90f000 {
-+			compatible = "renesas,fcpc";
-+			reg = <0 0xfe90f000 0 0x200>,
-+			      <0 0xfe900000 0 0x400>; /* Hack to test VDPB */
-+			clocks = <&cpg CPG_MOD 619>;
-+			power-domains = <&sysc R8A77965_PD_A2VC1>;
-+			resets = <&cpg 619>;
-+		};
-+
- 		fdp1@fe940000 {
- 			compatible = "renesas,fdp1";
- 			reg = <0 0xfe940000 0 0x2400>;
+Rob
