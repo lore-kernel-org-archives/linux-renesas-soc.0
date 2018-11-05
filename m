@@ -1,46 +1,54 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-Date: Fri, 23 Nov 2018 15:01:54 +0100
-From: jacopo mondi <jacopo@jmondi.org>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from perceval.ideasonboard.com ([213.167.242.64]:58224 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727275AbeKEUUp (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 5 Nov 2018 15:20:45 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 4/4] i2c: adv748x: configure number of lanes used for
- TXA CSI-2 transmitter
-Message-ID: <20181123140154.GF8279@w540>
-References: <20181102160009.17267-1-niklas.soderlund+renesas@ragnatech.se>
- <20181102160009.17267-5-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gm5TwAJMO0F2iVRz"
-Content-Disposition: inline
+        Jacopo Mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 4/4] i2c: adv748x: configure number of lanes used for TXA CSI-2 transmitter
+Date: Mon, 05 Nov 2018 13:01:43 +0200
+Message-ID: <2284392.jROv1qFbmM@avalon>
 In-Reply-To: <20181102160009.17267-5-niklas.soderlund+renesas@ragnatech.se>
-Sender: linux-media-owner@vger.kernel.org
-List-ID: <linux-renesas-soc.vger.kernel.org>
-
-
---gm5TwAJMO0F2iVRz
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20181102160009.17267-1-niklas.soderlund+renesas@ragnatech.se> <20181102160009.17267-5-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+Sender: linux-renesas-soc-owner@vger.kernel.org
+List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Niklas,
 
-On Fri, Nov 02, 2018 at 05:00:09PM +0100, Niklas S=C3=B6derlund wrote:
+Thank you for the patch.
+
+On Friday, 2 November 2018 18:00:09 EET Niklas S=F6derlund wrote:
 > The driver fixed the TXA CSI-2 transmitter in 4-lane mode while it could
 > operate using 1-, 2- and 4-lanes. Update the driver to support all modes
 > the hardware does.
->
+
+"all modes the hardware does" sounds weird. How about simple "all available=
+=20
+modes" ?
+
 > The driver make use of large tables of static register/value writes when
+
+s/make/makes/
+
 > powering up/down the TXA and TXB transmitters which include the write to
 > the NUM_LANES register. By converting the tables into functions and
 > using parameters the power up/down functions for TXA and TXB power
 > up/down can be merged and used for both transmitters.
->
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
->
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+The code looks so much better now :-)
+
 > ---
 > * Changes since v2
 > - Fix typos in comments.
@@ -49,26 +57,26 @@ se>
 > - Take into account the two different register used when powering up TXA
 >   and TXB due to an earlier patch in this series aligns the power
 >   sequence with the manual.
->
+>=20
 > * Changes since v1
 > - Convert tables of register/value writes into functions instead of
 >   intercepting and modifying the writes to the NUM_LANES register.
 > ---
 >  drivers/media/i2c/adv748x/adv748x-core.c | 157 ++++++++++++-----------
 >  1 file changed, 79 insertions(+), 78 deletions(-)
->
-> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c=
-/adv748x/adv748x-core.c
-> index 9d80d7f3062b16bc..d94c63cb6a2efdba 100644
+>=20
+> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c
+> b/drivers/media/i2c/adv748x/adv748x-core.c index
+> 9d80d7f3062b16bc..d94c63cb6a2efdba 100644
 > --- a/drivers/media/i2c/adv748x/adv748x-core.c
 > +++ b/drivers/media/i2c/adv748x/adv748x-core.c
 > @@ -125,6 +125,16 @@ int adv748x_write(struct adv748x_state *state, u8 pa=
-ge, u8 reg, u8 value)
->  	return regmap_write(state->regmap[page], reg, value);
+ge,
+> u8 reg, u8 value) return regmap_write(state->regmap[page], reg, value);
 >  }
->
-> +static int adv748x_write_check(struct adv748x_state *state, u8 page, u8 =
-reg,
+>=20
+> +static int adv748x_write_check(struct adv748x_state *state, u8 page, u8
+> reg,
 > +			       u8 value, int *error)
 > +{
 > +	if (*error)
@@ -78,15 +86,13 @@ reg,
 > +	return *error;
 > +}
 > +
->  /* adv748x_write_block(): Write raw data with a maximum of I2C_SMBUS_BLO=
-CK_MAX
->   * size to one or more registers.
+>  /* adv748x_write_block(): Write raw data with a maximum of
+> I2C_SMBUS_BLOCK_MAX * size to one or more registers.
 >   *
-> @@ -231,79 +241,77 @@ static int adv748x_write_regs(struct adv748x_state =
-*state,
->   * TXA and TXB
+> @@ -231,79 +241,77 @@ static int adv748x_write_regs(struct adv748x_state
+> *state, * TXA and TXB
 >   */
->
+>=20
 > -static const struct adv748x_reg_value adv748x_power_up_txa_4lane[] =3D {
 > -
 > -	{ADV748X_PAGE_TXA, 0x00, 0x84},	/* Enable 4-lane MIPI */
@@ -194,10 +200,6 @@ CK_MAX
 > +
 > +	/* Power-up CSI-TX */
 > +	adv748x_write_check(state, page, 0x00, 0x20 | tx->num_lanes, &ret);
-
-Where does the 0x20 come from? I don't see it in the register
-description in the HW manual..
-
 > +	usleep_range(1000, 1500);
 > +
 > +	/* ADI Required Writes */
@@ -219,52 +221,29 @@ description in the HW manual..
 > +	adv748x_write_check(state, page, 0x1e, 0x00, &ret);
 > +
 > +	/* Enable n-lane MIPI */
-
-The comment is wrong here: this write disables the CSI TX interface.
-
 > +	adv748x_write_check(state, page, 0x00, 0x80 | tx->num_lanes, &ret);
 > +
 > +	/* i2c_mipi_pll_en - 1'b1 */
 > +	adv748x_write_check(state, page, 0xda, 0x01, &ret);
-
-Re-looking at power up/down sequences, this should actually be 0xda =3D 0x0=
-0,
-as specified in seciont 9.5.2 of the HW manual.
-
-I know all of these come from tables in the previous version and has not
-been introduced by this patch, but while at there it might be worth
-fixing them.
-
-And actually, I don't like much the comments for registers pll_en and
-dphy_pdn registers, and they might be improved, since you're rewriting
-this sequence anyhow.
-
-I had a patch pending, before I realized you could change this in your
-next v4. In case you want to have a look:
-https://paste.debian.net/1052965/
-
-Thanks
-   j
-
 > +
 > +	/* ADI Required Write */
 > +	adv748x_write_check(state, page, 0xc1, 0x3b, &ret);
 > +
 > +	return ret;
 > +}
->
+>=20
 >  int adv748x_tx_power(struct adv748x_csi2 *tx, bool on)
 >  {
 > -	struct adv748x_state *state =3D tx->state;
 > -	const struct adv748x_reg_value *reglist;
 >  	int val;
->
+>=20
 >  	if (!is_tx_enabled(tx))
 > @@ -321,14 +329,7 @@ int adv748x_tx_power(struct adv748x_csi2 *tx, bool o=
 n)
 >  	WARN_ONCE((on && val & ADV748X_CSI_FS_AS_LS_UNKNOWN),
 >  			"Enabling with unknown bit set");
->
+>=20
 > -	if (on)
 > -		reglist =3D is_txa(tx) ? adv748x_power_up_txa_4lane :
 > -				       adv748x_power_up_txb_1lane;
@@ -275,32 +254,11 @@ n)
 > -	return adv748x_write_regs(state, reglist);
 > +	return on ? adv748x_power_up_tx(tx) : adv748x_power_down_tx(tx);
 >  }
->
+>=20
 >  /* ---------------------------------------------------------------------=
---------
-> --
-> 2.19.1
->
+=2D--
 
---gm5TwAJMO0F2iVRz
-Content-Type: application/pgp-signature; name="signature.asc"
+=2D-=20
+Regards,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJb+AhSAAoJEHI0Bo8WoVY8nmsP/2iRzR4ZoKtZ5YPHzQIi4txl
-dlpIQcExMiUd9EUATiouEkHNj+6gtbJB+cIZzlFYPJfMakF/5wZ3epMM5YEGBk+G
-2XX0EwzuCvjZ/wGaZTj/TY/XsPCw8Bo7eceZIGg5UdIBW98wxQ3skMVINo02CMKo
-+mTQei26rib3f2vP3KFsC0MBDjjUql7t5Wnm5SorkWpZsB53udsFPDtRxwV+utZG
-h/JsS/0X/rBwuPDeKoypliizg7BhetzbEbxGtJ87pYcOqpiFVyir8VncYZudWY5r
-ijJiApzCX/vCbWT+dmxELOmd3JBOFufo01g1flJRcbTnJGCI7pMu5P5BNQFD38r/
-PbZKLckrsZh95jhCYxw8E2NyL1auCvLFNdKJfLF3+fwi1qvrkUqZVOUObGLV0aZp
-467pgXHtmMsMcyaSPdQ1UWuPoDpq4cN6rly0IyVLu39W5j6jgvGEUgOH2PFTyKur
-zcAOVKtoKQUwq+Mh41M5sFF6g+aLKBjepMDfoEUH5zXXpBCaLo+4jqPgAFN0bkqZ
-kZhjkBwZoIaYMGIh+tx5cCwosfwynhh1Av7fOdkEEkhIPdyZ4plfXIYmd2r2xTj5
-JqRBl0rXqkyITgIhr4P/HbJJazsYygXYqOjVpkiXx5QJSDTVKtfHQtnqXgz++9IN
-xxEf6UHcpb/Pyc8y+iPQ
-=b2OW
------END PGP SIGNATURE-----
-
---gm5TwAJMO0F2iVRz--
+Laurent Pinchart
