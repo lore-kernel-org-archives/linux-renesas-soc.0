@@ -1,34 +1,29 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Luca Ceresoli <luca@lucaceresoli.net>
-Subject: Re: [PATCH v4 1/4] dt-bindings: media: i2c: Add bindings for Maxim
- Integrated MAX9286
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, sakari.ailus@iki.fi
-Cc: =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Jacopo Mondi <jacopo@jmondi.org>,
+Date: Mon, 5 Nov 2018 14:02:38 -0600
+From: Rob Herring <robh@kernel.org>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, sakari.ailus@iki.fi,
+        Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>, Jacopo Mondi <jacopo@jmondi.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         linux-kernel@vger.kernel.org,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>
+Subject: Re: [PATCH v4 1/4] dt-bindings: media: i2c: Add bindings for Maxim
+ Integrated MAX9286
+Message-ID: <20181105200238.GA12435@bogus>
 References: <20181102154723.23662-1-kieran.bingham@ideasonboard.com>
  <20181102154723.23662-2-kieran.bingham@ideasonboard.com>
-Message-ID: <b3ef6780-a1a7-e86c-0dba-916d9398c1ef@lucaceresoli.net>
-Date: Tue, 13 Nov 2018 23:42:56 +0100
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20181102154723.23662-2-kieran.bingham@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran, All,
-
-sorry for joining this late... See below my considerations.
-
-On 02/11/18 16:47, Kieran Bingham wrote:
+On Fri, Nov 02, 2018 at 03:47:20PM +0000, Kieran Bingham wrote:
 > From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 > 
 > The MAX9286 deserializes video data received on up to 4 Gigabit
@@ -138,77 +133,13 @@ On 02/11/18 16:47, Kieran Bingham wrote:
 > +		ports {
 > +			#address-cells = <1>;
 > +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-> +				max9286_in0: endpoint {
-> +					remote-endpoint = <&rdacm20_out0>;
-> +				};
-> +			};
-> +
-> +			port@1 {
-> +				reg = <1>;
-> +				max9286_in1: endpoint {
-> +					remote-endpoint = <&rdacm20_out1>;
-> +				};
-> +			};
-> +
-> +			port@2 {
-> +				reg = <2>;
-> +				max9286_in2: endpoint {
-> +					remote-endpoint = <&rdacm20_out2>;
-> +				};
-> +			};
-> +
-> +			port@3 {
-> +				reg = <3>;
-> +				max9286_in3: endpoint {
-> +					remote-endpoint = <&rdacm20_out3>;
-> +				};
-> +			};
-> +
-> +			port@4 {
-> +				reg = <4>;
-> +				max9286_out: endpoint {
-> +					data-lanes = <1 2 3 4>;
-> +					remote-endpoint = <&csi40_in>;
-> +				};
-> +			};
-> +		};
+
 > +
 > +		i2c@0 {
 > +			#address-cells = <1>;
 > +			#size-cells = <0>;
-> +			reg = <0>;
-> +
-> +			camera@51 {
-> +				compatible = "imi,rdacm20";
-> +				reg = <0x51 0x61>;
 
-I find this kind of address mapping is the weak point in this patchset.
+It's better to not have a mixture of nodes at a level with and without 
+unit-addresses. So I'd move all the i2c nodes under an 'i2c-mux' node.
 
-The ser-deser chipset splits the world in "local" and "remote" side. The
-camera node belongs to the remote side, but the 0x51 and 0x61 addresses
-belong to the local side. Think about supporting N different main boards
-and M remote boards. 0x51 might be available on some main boards but not
-all. IMO under the camera@51 (even the i2c@0) node there should be only
-remote hardware description. To support the N*M possible combinations,
-there should be:
-
- * a DT for the main board mentioning only addresses for the
-   local i2c bus, down to the i2c@0 with address-cells, size-cells and
-   reg properties
- * a DT overlay for each remote board, mentioning the remote i2c
-   chips with their physical addresses, but no local addresses
-
-The only way I could devise to be generic is to bind each physical
-remote address to a local address at runtime.
-
-Also, to be implemented reliably, an address translation feature is
-required on the local (de)ser chip.
-
-So the question is: can the max9286 chip do i2c address translation?
-
-Thanks,
--- 
-Luca
+Rob
