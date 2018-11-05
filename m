@@ -1,45 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51370 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbeKBUc0 (ORCPT
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44960 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726358AbeKEVVO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Nov 2018 16:32:26 -0400
-Date: Fri, 2 Nov 2018 12:25:32 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Valentine Barshak <valentine.barshak@cogentembedded.com>
-Subject: Re: [PATCH] arm64: dts: renesas: condor: switch from EtherAVB to
- GEther
-Message-ID: <20181102112532.6hosjv7ycz6ibji3@verge.net.au>
-References: <fb4eb097-40aa-82df-68c7-9b727c858a8b@cogentembedded.com>
- <4f9e79ca-5d61-8dd4-fe79-42e8f7562f90@cogentembedded.com>
- <20181031143042.3j4ohumfpxmn7xdu@verge.net.au>
- <0070b215-cd49-edcb-8abc-79e7150589ec@cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0070b215-cd49-edcb-8abc-79e7150589ec@cogentembedded.com>
+        Mon, 5 Nov 2018 16:21:14 -0500
+From: Mark Brown <broonie@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-spi@vger.kernel.org
+Subject: Applied "spi: spi-zynqmp-gqspi: simplify getting .driver_data" to the spi tree
+In-Reply-To: <20181021200048.2114-4-wsa+renesas@sang-engineering.com>
+Message-Id: <20181105120145.0D9251124D98@debutante.sirena.org.uk>
+Date: Mon,  5 Nov 2018 12:01:45 +0000 (GMT)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Oct 31, 2018 at 08:29:50PM +0300, Sergei Shtylyov wrote:
-> On 10/31/2018 5:30 PM, Simon Horman wrote:
-> 
-> > > The "official" Condor boards have always been wired to mount NFS via
-> > > GEther, not EtherAVB -- the boards resoldered for EtherAVB were local
-> > > to Cogent Embedded, so we've been having an unpleasant situation where
-> > > a "normal" Condor board still can't mount NFS (unless an EtherAVB PHY
-> > > extension board is plugged in). Switch from EtherAVB to GEther at last!
-> > > 
-> > > Fixes: 8091788f3d38 ("arm64: dts: renesas: condor: add EtherAVB support")
-> > > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> > 
-> > Thanks, applied for v4.21.
-> 
->    Wait, this was intended as a fix for 4.20...
+The patch
 
-Thanks, I have re-queued this as a fix for v4.20.
+   spi: spi-zynqmp-gqspi: simplify getting .driver_data
+
+has been applied to the spi tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 6eee6d317aa2511ea86c4f8f28d79bfd3d621826 Mon Sep 17 00:00:00 2001
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Sun, 21 Oct 2018 22:00:47 +0200
+Subject: [PATCH] spi: spi-zynqmp-gqspi: simplify getting .driver_data
+
+We should get 'driver_data' from 'struct device' directly. Going via
+platform_device is an unneeded step back and forth.
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-zynqmp-gqspi.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
+index cc4d31033494..9f83e1b17aa1 100644
+--- a/drivers/spi/spi-zynqmp-gqspi.c
++++ b/drivers/spi/spi-zynqmp-gqspi.c
+@@ -960,8 +960,7 @@ static int __maybe_unused zynqmp_qspi_resume(struct device *dev)
+  */
+ static int __maybe_unused zynqmp_runtime_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct spi_master *master = platform_get_drvdata(pdev);
++	struct spi_master *master = dev_get_drvdata(dev);
+ 	struct zynqmp_qspi *xqspi = spi_master_get_devdata(master);
+ 
+ 	clk_disable(xqspi->refclk);
+@@ -980,8 +979,7 @@ static int __maybe_unused zynqmp_runtime_suspend(struct device *dev)
+  */
+ static int __maybe_unused zynqmp_runtime_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct spi_master *master = platform_get_drvdata(pdev);
++	struct spi_master *master = dev_get_drvdata(dev);
+ 	struct zynqmp_qspi *xqspi = spi_master_get_devdata(master);
+ 	int ret;
+ 
+-- 
+2.19.0.rc2
