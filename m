@@ -1,72 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:56711 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729400AbeKEUiv (ORCPT
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37191 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729536AbeKFA0m (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Nov 2018 15:38:51 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        kieran.bingham@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/6] media: rcar-vin: Add support for R-Car R8A77990
-Date: Mon,  5 Nov 2018 12:19:07 +0100
-Message-Id: <1541416751-19810-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1541416751-19810-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1541416751-19810-1-git-send-email-jacopo+renesas@jmondi.org>
+        Mon, 5 Nov 2018 19:26:42 -0500
+Received: by mail-wm1-f67.google.com with SMTP id p2-v6so8361922wmc.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 05 Nov 2018 07:06:33 -0800 (PST)
+Subject: Re: [PATCH 4/5] thermal: st: st_thermal: simplify getting
+ .driver_data
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        linux-pm@vger.kernel.org
+References: <20181021200053.2194-1-wsa+renesas@sang-engineering.com>
+ <20181021200053.2194-5-wsa+renesas@sang-engineering.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <0c7d3c84-c073-087e-eafb-c93bb5d43ea7@linaro.org>
+Date: Mon, 5 Nov 2018 16:06:30 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20181021200053.2194-5-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add R-Car E3 R8A77990 SoC to the rcar-vin supported ones.
-Based on the experimental patch from Magnus Damm.
+On 21/10/2018 22:00, Wolfram Sang wrote:
+> We should get 'driver_data' from 'struct device' directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index f476b2f..cae2166 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -1088,6 +1088,22 @@ static const struct rvin_info rcar_info_r8a77970 = {
- 	.routes = rcar_info_r8a77970_routes,
- };
- 
-+static const struct rvin_group_route rcar_info_r8a77990_routes[] = {
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 4, .mask = BIT(0) | BIT(3) },
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 5, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI40, .channel = 1, .vin = 4, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI40, .channel = 1, .vin = 5, .mask = BIT(1) | BIT(3) },
-+	{ /* Sentinel */ }
-+};
-+
-+static const struct rvin_info rcar_info_r8a77990 = {
-+	.model = RCAR_GEN3,
-+	.use_mc = true,
-+	.max_width = 4096,
-+	.max_height = 4096,
-+	.routes = rcar_info_r8a77990_routes,
-+};
-+
- static const struct rvin_group_route rcar_info_r8a77995_routes[] = {
- 	{ /* Sentinel */ }
- };
-@@ -1146,6 +1162,10 @@ static const struct of_device_id rvin_of_id_table[] = {
- 		.data = &rcar_info_r8a77970,
- 	},
- 	{
-+		.compatible = "renesas,vin-r8a77990",
-+		.data = &rcar_info_r8a77990,
-+	},
-+	{
- 		.compatible = "renesas,vin-r8a77995",
- 		.data = &rcar_info_r8a77995,
- 	},
+> ---
+> 
+> Build tested only. buildbot is happy.
+> 
+>  drivers/thermal/st/st_thermal.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/thermal/st/st_thermal.c b/drivers/thermal/st/st_thermal.c
+> index be637e6b01d2..b2bbdf6eb02b 100644
+> --- a/drivers/thermal/st/st_thermal.c
+> +++ b/drivers/thermal/st/st_thermal.c
+> @@ -277,8 +277,7 @@ EXPORT_SYMBOL_GPL(st_thermal_unregister);
+>  #ifdef CONFIG_PM_SLEEP
+>  static int st_thermal_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct st_thermal_sensor *sensor = platform_get_drvdata(pdev);
+> +	struct st_thermal_sensor *sensor = dev_get_drvdata(dev);
+>  
+>  	return st_thermal_sensor_off(sensor);
+>  }
+> @@ -286,8 +285,7 @@ static int st_thermal_suspend(struct device *dev)
+>  static int st_thermal_resume(struct device *dev)
+>  {
+>  	int ret;
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct st_thermal_sensor *sensor = platform_get_drvdata(pdev);
+> +	struct st_thermal_sensor *sensor = dev_get_drvdata(dev);
+>  
+>  	ret = st_thermal_sensor_on(sensor);
+>  	if (ret)
+> 
+
+
 -- 
-2.7.4
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
