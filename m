@@ -1,16 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:34794 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726319AbeKET2G (ORCPT
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:42138 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726086AbeKETVZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Nov 2018 14:28:06 -0500
+        Mon, 5 Nov 2018 14:21:25 -0500
 MIME-Version: 1.0
 References: <1540583850-30825-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <CACRpkdahZAKWSPdMk=yp-GrSSAjFAzBijMK1ws3a4KUfzFmzgg@mail.gmail.com> <TY1PR01MB177079AA335A6017A66ED183C0CF0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY1PR01MB177079AA335A6017A66ED183C0CF0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+In-Reply-To: <1540583850-30825-1-git-send-email-fabrizio.castro@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 5 Nov 2018 11:08:56 +0100
-Message-ID: <CAMuHMdXNeRW6ZtUD65J9T5pZVmMz0wbVo-Q=DncPekZV-PrFsQ@mail.gmail.com>
+Date: Mon, 5 Nov 2018 11:02:17 +0100
+Message-ID: <CAMuHMdXZyAvNApzWHgCkO1t_fNGL2J_PMd1R=wcusCZ=QKkB=g@mail.gmail.com>
 Subject: Re: [RFC] gpio: rcar: Request GPIO before enabling interrupt
 To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>,
@@ -26,59 +25,44 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Fabrizio,
 
-On Fri, Nov 2, 2018 at 8:00 PM Fabrizio Castro
+On Fri, Oct 26, 2018 at 9:57 PM Fabrizio Castro
 <fabrizio.castro@bp.renesas.com> wrote:
-> I am sorry for the delay of my answer, I was hoping others
-> would jump in the discussion as well.
+> There are cases when the bootloader configures a pin to work
+> as a function rather than GPIO, and other cases when the pin
+> is configured as a function at POR.
+> This commit makes sure the pin is configured as a GPIO the
+> moment we need it to work as an interrupt.
 >
-> > > +       err = gc->request(gc, hwirq);
-> >
-> > This is done in some drivers when what you want is exactly
-> > the work carried out by that callback. But can't you just call
-> > gpio_rcar_request() directly in this case so it is clear that
-> > the driver is meddling with the internal state of the hardware
-> > and not really intending to loop out into the external
-> > API or external callbacks?
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> ---
 >
-> gpio_rcar_request is static unfortunately, maybe I should
-> export the symbol?
-
-I think Linus meant calling gpio_rcar_request() instead of gc->request()
-from gpio_rcar_irq_set_type(), i.e. from the GPIO driver, not from the
-HDMI driver. So static is fine.
-
-> > You're not on one of these platforms that prefer setting up
-> > the pin as GPIO using a pin control hog in the device tree?
+> Dear All,
 >
-> My personal preference would be to deal with this from
-> within irqchip, as when you hook up a gpio as interrupt
-> from the DT the kernel should do everything that's necessary
-> to make it happen, but that is just a personal opinion.
-> Anyway, I did give gpio-hog a try and it works for me.
+> we have got some issues while trying to bring up the interrupt
+> line of the HDMI transmitter on the iwg23s, as GP2_29 is configured
+> as a function when the kernel starts, and therefore setting up the
+> interrupt from the driver won't have the desired effect.
+> This patch makes sure the pinctrl driver sets GP2[29] to GP-2-29
+> before enabling the interrupt, but it doesn't addresses the
+> "direction problem", as in the pin will be a GPIO after calling
+> gc->request, but the direction would be whatever was previously
+> configured. There could be the option of moving the additional
+> code added by this patch to the bottom of function
+> gpio_rcar_irq_set_type, but is that going to behave properly on
+> every SoC this driver is supporting?
+> Is configuring every gpio with direction input while probing
+> something that should be looked into to reduce concerns over
+> switching from function to GPIO?
 
-Isn't the purpose of an input GPIO hog to configure the GPIO to not
-drive the line, in the absence of any other driver with a need to read
-the line value?
-
-In this case there is another driver (via the interrupt subsystem), so using
-an input GPIO doesn't look like the real solution to me.
-
-> > Geert will know what is best.
-
-People put way too much faith in me ;-)
-
-> Yeah, I am really keen in hearing from him about this, in the meantime
-> I went through a bunch of manuals, and moving the gpio request to the
-> bottom of gpio_rcar_irq_set_type seems to be okay for RCar devices in
-> general, but Geert knows definitely better.
-
-Moving it down, after all other checks, is indeed better.
+Configuring everything to input may cause issues where a GPIO is connected
+to the reset line of an external device, and where the bootloader configured the
+line to deassert the reset.
 
 Gr{oetje,eeting}s,
 
                         Geert
 
---
+-- 
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
