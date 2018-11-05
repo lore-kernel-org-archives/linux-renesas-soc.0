@@ -1,109 +1,122 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726751AbeKZXuA (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:58832 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726358AbeKEVNc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Nov 2018 18:50:00 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Yoshihiro Kaneko <ykaneko0929@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 38/40] arm64: dts: renesas: r8a77990: Enable I2C DMA
-Date: Mon, 26 Nov 2018 13:55:04 +0100
-Message-Id: <8fbe048bd95b560ed5fcb8eaa80456a64aeb66a2.1543229516.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
-References: <cover.1543229515.git.horms+renesas@verge.net.au>
+        Mon, 5 Nov 2018 16:13:32 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: niklas.soderlund@ragnatech.se, kieran.bingham@ideasonboard.com,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 5/6] media: rcar: rcar-csi2: Update V3M/E3 PHTW tables
+Date: Mon, 05 Nov 2018 13:54:20 +0200
+Message-ID: <3468054.M8sVNk3f1N@avalon>
+In-Reply-To: <1541416751-19810-6-git-send-email-jacopo+renesas@jmondi.org>
+References: <1541416751-19810-1-git-send-email-jacopo+renesas@jmondi.org> <1541416751-19810-6-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hi Jacopo,
 
-This patch enables I2C DMA.
+Thank you for the patch.
 
-NOTE: I2C7 DMA is not supported by R-Car Gen3 Hardware User's Manual
-Rev.0.80E.
+On Monday, 5 November 2018 13:19:10 EET Jacopo Mondi wrote:
+> Update PHTW tables for V3M and E3 SoCs to the latest datasheet release.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-csi2.c | 71 +++++++++++++++-----------
+>  1 file changed, 39 insertions(+), 32 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c
+> b/drivers/media/platform/rcar-vin/rcar-csi2.c index 695686b..5689a60 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> @@ -152,38 +152,45 @@ static const struct rcsi2_mbps_reg
+> phtw_mbps_h3_v3h_m3n[] = { };
+> 
+>  static const struct rcsi2_mbps_reg phtw_mbps_v3m_e3[] = {
+> -	{ .mbps =   80, .reg = 0x00 },
+> -	{ .mbps =   90, .reg = 0x20 },
+> -	{ .mbps =  100, .reg = 0x40 },
+> -	{ .mbps =  110, .reg = 0x02 },
+> -	{ .mbps =  130, .reg = 0x22 },
+> -	{ .mbps =  140, .reg = 0x42 },
+> -	{ .mbps =  150, .reg = 0x04 },
+> -	{ .mbps =  170, .reg = 0x24 },
+> -	{ .mbps =  180, .reg = 0x44 },
+> -	{ .mbps =  200, .reg = 0x06 },
+> -	{ .mbps =  220, .reg = 0x26 },
+> -	{ .mbps =  240, .reg = 0x46 },
+> -	{ .mbps =  250, .reg = 0x08 },
+> -	{ .mbps =  270, .reg = 0x28 },
+> -	{ .mbps =  300, .reg = 0x0a },
+> -	{ .mbps =  330, .reg = 0x2a },
+> -	{ .mbps =  360, .reg = 0x4a },
+> -	{ .mbps =  400, .reg = 0x0c },
+> -	{ .mbps =  450, .reg = 0x2c },
+> -	{ .mbps =  500, .reg = 0x0e },
+> -	{ .mbps =  550, .reg = 0x2e },
+> -	{ .mbps =  600, .reg = 0x10 },
+> -	{ .mbps =  650, .reg = 0x30 },
+> -	{ .mbps =  700, .reg = 0x12 },
+> -	{ .mbps =  750, .reg = 0x32 },
+> -	{ .mbps =  800, .reg = 0x52 },
+> -	{ .mbps =  850, .reg = 0x72 },
+> -	{ .mbps =  900, .reg = 0x14 },
+> -	{ .mbps =  950, .reg = 0x34 },
+> -	{ .mbps = 1000, .reg = 0x54 },
+> -	{ .mbps = 1050, .reg = 0x74 },
+> -	{ .mbps = 1125, .reg = 0x16 },
+> +	{ .mbps =   89, .reg = 0x00 },
+> +	{ .mbps =   99, .reg = 0x20 },
+> +	{ .mbps =  109, .reg = 0x40 },
+> +	{ .mbps =  129, .reg = 0x02 },
+> +	{ .mbps =  139, .reg = 0x22 },
+> +	{ .mbps =  149, .reg = 0x42 },
+> +	{ .mbps =  169, .reg = 0x04 },
+> +	{ .mbps =  179, .reg = 0x24 },
+> +	{ .mbps =  199, .reg = 0x44 },
+> +	{ .mbps =  219, .reg = 0x06 },
+> +	{ .mbps =  239, .reg = 0x26 },
+> +	{ .mbps =  249, .reg = 0x46 },
+> +	{ .mbps =  269, .reg = 0x08 },
+> +	{ .mbps =  299, .reg = 0x28 },
+> +	{ .mbps =  329, .reg = 0x0a },
+> +	{ .mbps =  359, .reg = 0x2a },
+> +	{ .mbps =  399, .reg = 0x4a },
+> +	{ .mbps =  449, .reg = 0x0c },
+> +	{ .mbps =  499, .reg = 0x2c },
+> +	{ .mbps =  549, .reg = 0x0e },
+> +	{ .mbps =  599, .reg = 0x2e },
+> +	{ .mbps =  649, .reg = 0x10 },
+> +	{ .mbps =  699, .reg = 0x30 },
+> +	{ .mbps =  749, .reg = 0x12 },
+> +	{ .mbps =  799, .reg = 0x32 },
+> +	{ .mbps =  849, .reg = 0x52 },
+> +	{ .mbps =  899, .reg = 0x72 },
+> +	{ .mbps =  949, .reg = 0x14 },
+> +	{ .mbps =  999, .reg = 0x34 },
+> +	{ .mbps = 1049, .reg = 0x54 },
+> +	{ .mbps = 1099, .reg = 0x74 },
+> +	{ .mbps = 1149, .reg = 0x16 },
+> +	{ .mbps = 1199, .reg = 0x36 },
+> +	{ .mbps = 1249, .reg = 0x56 },
+> +	{ .mbps = 1299, .reg = 0x76 },
+> +	{ .mbps = 1349, .reg = 0x18 },
+> +	{ .mbps = 1399, .reg = 0x38 },
+> +	{ .mbps = 1449, .reg = 0x58 },
+> +	{ .mbps = 1500, .reg = 0x78 },
+>  	{ /* sentinel */ },
+>  };
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Tested-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+In the latest datasheet version I can find, the frequencies go up to 1125 MHz 
+only. I've verified values up to that point, but not beyond it.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index 3b334be843f4..de25eda4f2f4 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -250,6 +250,9 @@
- 			clocks = <&cpg CPG_MOD 931>;
- 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 931>;
-+			dmas = <&dmac1 0x91>, <&dmac1 0x90>,
-+			       <&dmac2 0x91>, <&dmac2 0x90>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			i2c-scl-internal-delay-ns = <110>;
- 			status = "disabled";
- 		};
-@@ -264,6 +267,9 @@
- 			clocks = <&cpg CPG_MOD 930>;
- 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 930>;
-+			dmas = <&dmac1 0x93>, <&dmac1 0x92>,
-+			       <&dmac2 0x93>, <&dmac2 0x92>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			i2c-scl-internal-delay-ns = <6>;
- 			status = "disabled";
- 		};
-@@ -278,6 +284,9 @@
- 			clocks = <&cpg CPG_MOD 929>;
- 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 929>;
-+			dmas = <&dmac1 0x95>, <&dmac1 0x94>,
-+			       <&dmac2 0x95>, <&dmac2 0x94>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			i2c-scl-internal-delay-ns = <6>;
- 			status = "disabled";
- 		};
-@@ -292,6 +301,8 @@
- 			clocks = <&cpg CPG_MOD 928>;
- 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 928>;
-+			dmas = <&dmac0 0x97>, <&dmac0 0x96>;
-+			dma-names = "tx", "rx";
- 			i2c-scl-internal-delay-ns = <110>;
- 			status = "disabled";
- 		};
-@@ -306,6 +317,8 @@
- 			clocks = <&cpg CPG_MOD 927>;
- 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 927>;
-+			dmas = <&dmac0 0x99>, <&dmac0 0x98>;
-+			dma-names = "tx", "rx";
- 			i2c-scl-internal-delay-ns = <6>;
- 			status = "disabled";
- 		};
-@@ -320,6 +333,8 @@
- 			clocks = <&cpg CPG_MOD 919>;
- 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 919>;
-+			dmas = <&dmac0 0x9b>, <&dmac0 0x9a>;
-+			dma-names = "tx", "rx";
- 			i2c-scl-internal-delay-ns = <6>;
- 			status = "disabled";
- 		};
-@@ -334,6 +349,8 @@
- 			clocks = <&cpg CPG_MOD 918>;
- 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 918>;
-+			dmas = <&dmac0 0x9d>, <&dmac0 0x9c>;
-+			dma-names = "tx", "rx";
- 			i2c-scl-internal-delay-ns = <6>;
- 			status = "disabled";
- 		};
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
