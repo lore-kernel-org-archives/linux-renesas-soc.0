@@ -1,127 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:38425 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729605AbeKFUA0 (ORCPT
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45024 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727814AbeKEVVR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Nov 2018 15:00:26 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert+renesas@glider.be, horms@verge.net.au,
-        laurent.pinchart@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, linus.walleij@linaro.org,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH v4 2/4] pinctrl: sh-pfc: Fix VIN versioned groups name
-Date: Tue,  6 Nov 2018 11:35:31 +0100
-Message-Id: <1541500533-21843-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1541500533-21843-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1541500533-21843-1-git-send-email-jacopo+renesas@jmondi.org>
+        Mon, 5 Nov 2018 16:21:17 -0500
+From: Mark Brown <broonie@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        linux-spi@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Applied "spi: spi-sh-msiof: simplify getting .driver_data" to the spi tree
+In-Reply-To: <20181021200048.2114-3-wsa+renesas@sang-engineering.com>
+Message-Id: <20181105120149.A4F341124D98@debutante.sirena.org.uk>
+Date: Mon,  5 Nov 2018 12:01:49 +0000 (GMT)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Versioned VIN groups can appear on different sets of pins. Using the
-VIN_DATA_PIN_GROUP macro now supports proper naming of said groups through
-an optional 'version' argument.
+The patch
 
-Use the 'version' argument for said macro to fix naming of versioned
-groups for R-Car SoCs that defines them.
+   spi: spi-sh-msiof: simplify getting .driver_data
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+has been applied to the spi tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 07c7df3ecdba3d8b9a4145edd9cac47b27dd7f67 Mon Sep 17 00:00:00 2001
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Sun, 21 Oct 2018 22:00:46 +0200
+Subject: [PATCH] spi: spi-sh-msiof: simplify getting .driver_data
+
+We should get 'driver_data' from 'struct device' directly. Going via
+platform_device is an unneeded step back and forth.
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7792.c |  6 +++---
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 24 ++++++++++++------------
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 24 ++++++++++++------------
- 3 files changed, 27 insertions(+), 27 deletions(-)
+ drivers/spi/spi-sh-msiof.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7792.c b/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-index bf0681b..a8a110d 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-@@ -1744,10 +1744,10 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	VIN_DATA_PIN_GROUP(vin1_data, 12),
- 	VIN_DATA_PIN_GROUP(vin1_data, 10),
- 	VIN_DATA_PIN_GROUP(vin1_data, 8),
--	VIN_DATA_PIN_GROUP(vin1_data_b, 24),
--	VIN_DATA_PIN_GROUP(vin1_data_b, 20),
-+	VIN_DATA_PIN_GROUP(vin1_data, 24, _b),
-+	VIN_DATA_PIN_GROUP(vin1_data, 20, _b),
- 	SH_PFC_PIN_GROUP(vin1_data18_b),
--	VIN_DATA_PIN_GROUP(vin1_data_b, 16),
-+	VIN_DATA_PIN_GROUP(vin1_data, 16, _b),
- 	SH_PFC_PIN_GROUP(vin1_sync),
- 	SH_PFC_PIN_GROUP(vin1_field),
- 	SH_PFC_PIN_GROUP(vin1_clkenb),
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 0af737d..20fac0f 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -4474,20 +4474,20 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(usb2),
- 	SH_PFC_PIN_GROUP(usb2_ch3),
- 	SH_PFC_PIN_GROUP(usb30),
--	VIN_DATA_PIN_GROUP(vin4_data_a, 8),
--	VIN_DATA_PIN_GROUP(vin4_data_a, 10),
--	VIN_DATA_PIN_GROUP(vin4_data_a, 12),
--	VIN_DATA_PIN_GROUP(vin4_data_a, 16),
-+	VIN_DATA_PIN_GROUP(vin4_data, 8, _a),
-+	VIN_DATA_PIN_GROUP(vin4_data, 10, _a),
-+	VIN_DATA_PIN_GROUP(vin4_data, 12, _a),
-+	VIN_DATA_PIN_GROUP(vin4_data, 16, _a),
- 	SH_PFC_PIN_GROUP(vin4_data18_a),
--	VIN_DATA_PIN_GROUP(vin4_data_a, 20),
--	VIN_DATA_PIN_GROUP(vin4_data_a, 24),
--	VIN_DATA_PIN_GROUP(vin4_data_b, 8),
--	VIN_DATA_PIN_GROUP(vin4_data_b, 10),
--	VIN_DATA_PIN_GROUP(vin4_data_b, 12),
--	VIN_DATA_PIN_GROUP(vin4_data_b, 16),
-+	VIN_DATA_PIN_GROUP(vin4_data, 20, _a),
-+	VIN_DATA_PIN_GROUP(vin4_data, 24, _a),
-+	VIN_DATA_PIN_GROUP(vin4_data, 8, _b),
-+	VIN_DATA_PIN_GROUP(vin4_data, 10, _b),
-+	VIN_DATA_PIN_GROUP(vin4_data, 12, _b),
-+	VIN_DATA_PIN_GROUP(vin4_data, 16, _b),
- 	SH_PFC_PIN_GROUP(vin4_data18_b),
--	VIN_DATA_PIN_GROUP(vin4_data_b, 20),
--	VIN_DATA_PIN_GROUP(vin4_data_b, 24),
-+	VIN_DATA_PIN_GROUP(vin4_data, 20, _b),
-+	VIN_DATA_PIN_GROUP(vin4_data, 24, _b),
- 	SH_PFC_PIN_GROUP(vin4_sync),
- 	SH_PFC_PIN_GROUP(vin4_field),
- 	SH_PFC_PIN_GROUP(vin4_clkenb),
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index 3a6d21d..b003abd 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -4409,20 +4409,20 @@ static const struct {
- 		SH_PFC_PIN_GROUP(usb0),
- 		SH_PFC_PIN_GROUP(usb1),
- 		SH_PFC_PIN_GROUP(usb30),
--		VIN_DATA_PIN_GROUP(vin4_data_a, 8),
--		VIN_DATA_PIN_GROUP(vin4_data_a, 10),
--		VIN_DATA_PIN_GROUP(vin4_data_a, 12),
--		VIN_DATA_PIN_GROUP(vin4_data_a, 16),
-+		VIN_DATA_PIN_GROUP(vin4_data, 8, _a),
-+		VIN_DATA_PIN_GROUP(vin4_data, 10, _a),
-+		VIN_DATA_PIN_GROUP(vin4_data, 12, _a),
-+		VIN_DATA_PIN_GROUP(vin4_data, 16, _a),
- 		SH_PFC_PIN_GROUP(vin4_data18_a),
--		VIN_DATA_PIN_GROUP(vin4_data_a, 20),
--		VIN_DATA_PIN_GROUP(vin4_data_a, 24),
--		VIN_DATA_PIN_GROUP(vin4_data_b, 8),
--		VIN_DATA_PIN_GROUP(vin4_data_b, 10),
--		VIN_DATA_PIN_GROUP(vin4_data_b, 12),
--		VIN_DATA_PIN_GROUP(vin4_data_b, 16),
-+		VIN_DATA_PIN_GROUP(vin4_data, 20, _a),
-+		VIN_DATA_PIN_GROUP(vin4_data, 24, _a),
-+		VIN_DATA_PIN_GROUP(vin4_data, 8, _b),
-+		VIN_DATA_PIN_GROUP(vin4_data, 10, _b),
-+		VIN_DATA_PIN_GROUP(vin4_data, 12, _b),
-+		VIN_DATA_PIN_GROUP(vin4_data, 16, _b),
- 		SH_PFC_PIN_GROUP(vin4_data18_b),
--		VIN_DATA_PIN_GROUP(vin4_data_b, 20),
--		VIN_DATA_PIN_GROUP(vin4_data_b, 24),
-+		VIN_DATA_PIN_GROUP(vin4_data, 20, _b),
-+		VIN_DATA_PIN_GROUP(vin4_data, 24, _b),
- 		SH_PFC_PIN_GROUP(vin4_sync),
- 		SH_PFC_PIN_GROUP(vin4_field),
- 		SH_PFC_PIN_GROUP(vin4_clkenb),
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index adf384323934..d495d8604397 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -1426,16 +1426,14 @@ MODULE_DEVICE_TABLE(platform, spi_driver_ids);
+ #ifdef CONFIG_PM_SLEEP
+ static int sh_msiof_spi_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct sh_msiof_spi_priv *p = platform_get_drvdata(pdev);
++	struct sh_msiof_spi_priv *p = dev_get_drvdata(dev);
+ 
+ 	return spi_master_suspend(p->master);
+ }
+ 
+ static int sh_msiof_spi_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct sh_msiof_spi_priv *p = platform_get_drvdata(pdev);
++	struct sh_msiof_spi_priv *p = dev_get_drvdata(dev);
+ 
+ 	return spi_master_resume(p->master);
+ }
 -- 
-2.7.4
+2.19.0.rc2
