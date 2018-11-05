@@ -1,94 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:42141 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728998AbeK0XDE (ORCPT
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:43641 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728122AbeKEUik (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Nov 2018 18:03:04 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 08/22] ARM: dts: r8a7744: Add USB-DMAC and HSUSB device nodes
-Date: Tue, 27 Nov 2018 11:56:21 +0000
-Message-Id: <1543319795-48325-9-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com>
-References: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com>
+        Mon, 5 Nov 2018 15:38:40 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
+        kieran.bingham@ideasonboard.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 0/6] media: rcar-vin: Add support for R-Car E3
+Date: Mon,  5 Nov 2018 12:19:05 +0100
+Message-Id: <1541416751-19810-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add usb dmac and hsusb device nodes on RZ/G1N SoC dtsi.
+Hello,
+    this series add support for the R-Car E3 R8A77990 SoC to the rcar-vin
+and rcar-csi2 driver.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm/boot/dts/r8a7744.dtsi | 42 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 41 insertions(+), 1 deletion(-)
+Nothing new compared to v2, except for the last two patches, which updates
+PHTW tables to the latest SoC manual revision, and add a SoC-specific number
+of CSI-2 channels to handle the E3 case properly, as this is the only SoC
+in mainline with a number of CSI-2 channels < 4.
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index 3549ee1..118a596 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -463,8 +463,20 @@
- 		};
- 
- 		hsusb: usb@e6590000 {
-+			compatible = "renesas,usbhs-r8a7744",
-+				     "renesas,rcar-gen2-usbhs";
- 			reg = <0 0xe6590000 0 0x100>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 704>;
-+			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
-+			       <&usb_dmac1 0>, <&usb_dmac1 1>;
-+			dma-names = "ch0", "ch1", "ch2", "ch3";
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 704>;
-+			renesas,buswait = <4>;
-+			phys = <&usb0 1>;
-+			phy-names = "usb";
-+			status = "disabled";
- 		};
- 
- 		usbphy: usb-phy@e6590100 {
-@@ -489,6 +501,34 @@
- 			};
- 		};
- 
-+		usb_dmac0: dma-controller@e65a0000 {
-+			compatible = "renesas,r8a7744-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe65a0000 0 0x100>;
-+			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&cpg CPG_MOD 330>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 330>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
-+		};
-+
-+		usb_dmac1: dma-controller@e65b0000 {
-+			compatible = "renesas,r8a7744-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe65b0000 0 0x100>;
-+			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&cpg CPG_MOD 331>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 331>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
-+		};
-+
- 		dmac0: dma-controller@e6700000 {
- 			compatible = "renesas,dmac-r8a7744",
- 				     "renesas,rcar-dmac";
--- 
+Most patches are already reviewed-by and acked-by, so I expect this to
+be easy to have accepted.
+
+Tested on E3 Ebisu board capturing frames from the HDMI input in different
+resolutions (up to 1280x800). Testing requires Niklas' series to allow using
+a numer of data lanes < 4 for ADV748x, PFC and DTS updates.
+
+A branch for testing is available at:
+git://jmondi.org/linux ebisu/v4.20-rc1/test
+
+Thanks
+   j
+
+Jacopo Mondi (6):
+  media: dt-bindings: rcar-vin: Add R8A77990 support
+  media: rcar-vin: Add support for R-Car R8A77990
+  media: dt-bindings: rcar-csi2: Add R8A77990
+  media: rcar-csi2: Add R8A77990 support
+  media: rcar: rcar-csi2: Update V3M/E3 PHTW tables
+  media: rcar-csi2: Handle per-SoC number of channels
+
+ .../devicetree/bindings/media/rcar_vin.txt         |  1 +
+ .../bindings/media/renesas,rcar-csi2.txt           |  1 +
+ drivers/media/platform/rcar-vin/rcar-core.c        | 20 +++++
+ drivers/media/platform/rcar-vin/rcar-csi2.c        | 95 ++++++++++++++--------
+ 4 files changed, 82 insertions(+), 35 deletions(-)
+
+--
 2.7.4
