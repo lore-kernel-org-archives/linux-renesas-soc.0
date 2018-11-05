@@ -1,68 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:36546 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726595AbeLADM2 (ORCPT
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44812 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726368AbeKEVVI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Nov 2018 22:12:28 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v2 00/21] Add support for iWave G20D-Q7 board based on RZ/G1N
-Date: Fri, 30 Nov 2018 15:54:11 +0000
-Message-Id: <1543593251-15322-1-git-send-email-biju.das@bp.renesas.com>
+        Mon, 5 Nov 2018 16:21:08 -0500
+From: Mark Brown <broonie@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        linux-spi@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Applied "spi: spi-rspi: simplify getting .driver_data" to the spi tree
+In-Reply-To: <20181021200048.2114-2-wsa+renesas@sang-engineering.com>
+Message-Id: <20181105120141.553C41124D98@debutante.sirena.org.uk>
+Date: Mon,  5 Nov 2018 12:01:41 +0000 (GMT)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch series aims to add support for iWave G20D-Q7 board based on RZ/G1N.
+The patch
 
-This patch series is tested against renesas-dev
+   spi: spi-rspi: simplify getting .driver_data
 
-V1-->V2
-    * r8a7744: Initial SoC device tree: Fixed pfc register size, GIC_CPU_MASK_SIMPLE in gic/timer nodes
-    * r8a7744: Add SMP support: Fixed GIC_CPU_MASK_SIMPLE in gic/timer nodes
-    * r8a7744: Add I2C and IIC support: Dropped i2c aliases, removed generic compatible from iic3.
-    * r8a7744-iwg20m: Enable SDHI0 controller: Fixed subject line
-    * r8a7744: Add RWDT node: Moved rwdt node just before gpio.
+has been applied to the spi tree at
 
-Biju Das (21):
-  ARM: dts: r8a7744-iwg20m: Add iWave RZ/G1N Qseven SOM
-  ARM: dts: r8a7744: Initial SoC device tree
-  ARM: dts: r8a7744-iwg20d-q7: Add support for iWave G20D-Q7 board based
-    on RZ/G1N
-  ARM: dts: r8a7744: Add SYS-DMAC support
-  ARM: dts: r8a7744: Add GPIO support
-  ARM: dts: r8a7744: Add Ethernet AVB support
-  ARM: dts: r8a7744: Add SMP support
-  ARM: dts: r8a7744: Add [H]SCIF{A|B} support
-  ARM: dts: r8a7744: Add I2C and IIC support
-  ARM: dts: r8a7744: Add SDHI nodes
-  ARM: dts: r8a7744: Add MMC node
-  ARM: dts: r8a7744-iwg20m: Add eMMC support
-  ARM: dts: r8a7744-iwg20m: Enable SDHI0 controller
-  ARM: dts: r8a7744: USB 2.0 host support
-  ARM: dts: r8a7744: Add USB-DMAC and HSUSB device nodes
-  ARM: dts: r8a7744: Add RWDT node
-  ARM: dts: r8a7744: Add audio support
-  ARM: dts: r8a7744: Add CAN support
-  ARM: dts: r8a7744: Add IRQC support
-  ARM: dts: r8a7744: Add thermal device to DT
-  ARM: dts: r8a7744: Add CMT SoC specific support
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
- arch/arm/boot/dts/Makefile              |    1 +
- arch/arm/boot/dts/r8a7744-iwg20d-q7.dts |   15 +
- arch/arm/boot/dts/r8a7744-iwg20m.dtsi   |   64 ++
- arch/arm/boot/dts/r8a7744.dtsi          | 1431 +++++++++++++++++++++++++++++++
- 4 files changed, 1511 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7744-iwg20d-q7.dts
- create mode 100644 arch/arm/boot/dts/r8a7744-iwg20m.dtsi
- create mode 100644 arch/arm/boot/dts/r8a7744.dtsi
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From be0bf62e3df9afcb3f7a72de347770568dd60af6 Mon Sep 17 00:00:00 2001
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Sun, 21 Oct 2018 22:00:45 +0200
+Subject: [PATCH] spi: spi-rspi: simplify getting .driver_data
+
+We should get 'driver_data' from 'struct device' directly. Going via
+platform_device is an unneeded step back and forth.
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-rspi.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+index 55f8e55327b3..a4ef641b5227 100644
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -1347,16 +1347,14 @@ MODULE_DEVICE_TABLE(platform, spi_driver_ids);
+ #ifdef CONFIG_PM_SLEEP
+ static int rspi_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct rspi_data *rspi = platform_get_drvdata(pdev);
++	struct rspi_data *rspi = dev_get_drvdata(dev);
+ 
+ 	return spi_master_suspend(rspi->master);
+ }
+ 
+ static int rspi_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct rspi_data *rspi = platform_get_drvdata(pdev);
++	struct rspi_data *rspi = dev_get_drvdata(dev);
+ 
+ 	return spi_master_resume(rspi->master);
+ }
 -- 
-2.7.4
+2.19.0.rc2
