@@ -1,84 +1,209 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-os2jpn01on0120.outbound.protection.outlook.com ([104.47.92.120]:6368
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726263AbeKFOwt (ORCPT
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34157 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387580AbeKFHDL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Nov 2018 09:52:49 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Marek Vasut <marek.vasut@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-CC: TAKESHI KIHARA <takeshi.kihara.df@renesas.com>,
+        Tue, 6 Nov 2018 02:03:11 -0500
+From: Marek Vasut <marek.vasut@gmail.com>
+To: devicetree@vger.kernel.org
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa@the-dreams.de>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH 2/2] arm64: dts: r8a77990: ebisu: Enable SDHI interfaces
-Date: Tue, 6 Nov 2018 05:29:15 +0000
-Message-ID: <OSBPR01MB2293D944698EE5776B23B00DD8CB0@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 2/2] arm64: dts: r8a77990: ebisu: Enable SDHI interfaces
+Date: Mon,  5 Nov 2018 22:41:17 +0100
+Message-Id: <20181105214117.11734-2-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20181105214117.11734-1-marek.vasut+renesas@gmail.com>
 References: <20181105214117.11734-1-marek.vasut+renesas@gmail.com>
- <20181105214117.11734-2-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20181105214117.11734-2-marek.vasut+renesas@gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Marek-san,
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-> From: Marek Vasut, Sent: Tuesday, November 6, 2018 6:41 AM
->=20
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->=20
-> This patch enables SD card slot connected to SDHI0, micro SD card slot
-> connected to SDHI1 and eMMC connected to SDHI3 on the Ebisu board using
-> the R8A77990 SoC.
->=20
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Simon Horman <horms+renesas@verge.net.au>
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> ---
+This patch enables SD card slot connected to SDHI0, micro SD card slot
+connected to SDHI1 and eMMC connected to SDHI3 on the Ebisu board using
+the R8A77990 SoC.
 
-Thank you for the patch!
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+---
+ .../arm64/boot/dts/renesas/r8a77990-ebisu.dts | 136 ++++++++++++++++++
+ 1 file changed, 136 insertions(+)
 
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-
-I have a few nit comments below.
-
->  .../arm64/boot/dts/renesas/r8a77990-ebisu.dts | 136 ++++++++++++++++++
->  1 file changed, 136 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/=
-boot/dts/renesas/r8a77990-ebisu.dts
-> index 611f0265fcc5..bda1765dcdbd 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-<snip>
-> +	sdhi3_pins: sd3 {
-> +		groups =3D "sdhi3_data8", "sdhi3_ctrl";
-> +		function =3D "sdhi3";
-> +		power-source =3D <1800>;
-> +	};
-> +
-> +	sdhi3_pins_uhs: sd3_uhs {
-> +		groups =3D "sdhi3_data8", "sdhi3_ctrl";
-> +		function =3D "sdhi3";
-> +		power-source =3D <1800>;
-> +	};
-
-I assumed that we will add "sdhi3_ds" into these groups when we add support=
- for HS400 mode.
-
-Best regards,
-Yoshihiro Shimoda
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+index 611f0265fcc5..bda1765dcdbd 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+@@ -119,6 +119,15 @@
+ 		};
+ 	};
+ 
++	reg_1p8v: regulator0 {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-1.8V";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
+ 	reg_3p3v: regulator1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "fixed-3.3V";
+@@ -133,6 +142,54 @@
+ 		#clock-cells = <0>;
+ 		clock-frequency = <74250000>;
+ 	};
++
++	vcc_sdhi0: regulator-vcc-sdhi0 {
++		compatible = "regulator-fixed";
++
++		regulator-name = "SDHI0 Vcc";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpio = <&gpio5 17 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
++	vccq_sdhi0: regulator-vccq-sdhi0 {
++		compatible = "regulator-gpio";
++
++		regulator-name = "SDHI0 VccQ";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpios = <&gpio5 18 GPIO_ACTIVE_HIGH>;
++		gpios-states = <1>;
++		states = <3300000 1
++			  1800000 0>;
++	};
++
++	vcc_sdhi1: regulator-vcc-sdhi1 {
++		compatible = "regulator-fixed";
++
++		regulator-name = "SDHI1 Vcc";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpio = <&gpio0 4 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
++	vccq_sdhi1: regulator-vccq-sdhi1 {
++		compatible = "regulator-gpio";
++
++		regulator-name = "SDHI1 VccQ";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpios = <&gpio3 15 GPIO_ACTIVE_HIGH>;
++		gpios-states = <1>;
++		states = <3300000 1
++			  1800000 0>;
++	};
+ };
+ 
+ &avb {
+@@ -326,6 +383,42 @@
+ 		function = "scif2";
+ 	};
+ 
++	sdhi0_pins: sd0 {
++		groups = "sdhi0_data4", "sdhi0_ctrl";
++		function = "sdhi0";
++		power-source = <3300>;
++	};
++
++	sdhi0_pins_uhs: sd0_uhs {
++		groups = "sdhi0_data4", "sdhi0_ctrl";
++		function = "sdhi0";
++		power-source = <1800>;
++	};
++
++	sdhi1_pins: sd1 {
++		groups = "sdhi1_data4", "sdhi1_ctrl";
++		function = "sdhi1";
++		power-source = <3300>;
++	};
++
++	sdhi1_pins_uhs: sd1_uhs {
++		groups = "sdhi1_data4", "sdhi1_ctrl";
++		function = "sdhi1";
++		power-source = <1800>;
++	};
++
++	sdhi3_pins: sd3 {
++		groups = "sdhi3_data8", "sdhi3_ctrl";
++		function = "sdhi3";
++		power-source = <1800>;
++	};
++
++	sdhi3_pins_uhs: sd3_uhs {
++		groups = "sdhi3_data8", "sdhi3_ctrl";
++		function = "sdhi3";
++		power-source = <1800>;
++	};
++
+ 	usb0_pins: usb {
+ 		groups = "usb0_b";
+ 		function = "usb0";
+@@ -380,3 +473,46 @@
+ 
+ 	status = "okay";
+ };
++
++&sdhi0 {
++	pinctrl-0 = <&sdhi0_pins>;
++	pinctrl-1 = <&sdhi0_pins_uhs>;
++	pinctrl-names = "default", "state_uhs";
++
++	vmmc-supply = <&vcc_sdhi0>;
++	vqmmc-supply = <&vccq_sdhi0>;
++	cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
++	wp-gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
++	bus-width = <4>;
++	sd-uhs-sdr50;
++	sd-uhs-sdr104;
++	status = "okay";
++};
++
++&sdhi1 {
++	pinctrl-0 = <&sdhi1_pins>;
++	pinctrl-1 = <&sdhi1_pins_uhs>;
++	pinctrl-names = "default", "state_uhs";
++
++	vmmc-supply = <&vcc_sdhi1>;
++	vqmmc-supply = <&vccq_sdhi1>;
++	cd-gpios = <&gpio3 14 GPIO_ACTIVE_LOW>;
++	bus-width = <4>;
++	sd-uhs-sdr50;
++	sd-uhs-sdr104;
++	status = "okay";
++};
++
++&sdhi3 {
++	/* used for on-board 8bit eMMC */
++	pinctrl-0 = <&sdhi3_pins>;
++	pinctrl-1 = <&sdhi3_pins_uhs>;
++	pinctrl-names = "default", "state_uhs";
++
++	vmmc-supply = <&reg_3p3v>;
++	vqmmc-supply = <&reg_1p8v>;
++	mmc-hs200-1_8v;
++	bus-width = <8>;
++	non-removable;
++	status = "okay";
++};
+-- 
+2.18.0
