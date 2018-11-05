@@ -1,232 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:37225 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729045AbeKPI1F (ORCPT
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53938 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729714AbeKFAZ3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Nov 2018 03:27:05 -0500
-From: Fernando Ramos <greenfoo@gluegarage.com>
-To: dri-devel@lists.freedesktop.org
-Cc: David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, Jonathan Corbet <corbet@lwn.net>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mon, 5 Nov 2018 19:25:29 -0500
+Received: by mail-wm1-f66.google.com with SMTP id v24-v6so8722324wmh.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 05 Nov 2018 07:05:20 -0800 (PST)
+Subject: Re: [PATCH 2/5] thermal: rockchip_thermal: simplify getting
+ .driver_data
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        virtualization@lists.linux-foundation.org,
-        etnaviv@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        cocci@systeme.lip6.fr
-Subject: [PATCH 3/9] drm: replace "drm_dev_unref" function with "drm_dev_put"
-Date: Thu, 15 Nov 2018 23:16:23 +0100
-Message-Id: <20181115221634.22715-4-greenfoo@gluegarage.com>
-In-Reply-To: <20181115221634.22715-1-greenfoo@gluegarage.com>
-References: <20181115221634.22715-1-greenfoo@gluegarage.com>
+        linux-rockchip@lists.infradead.org
+References: <20181021200053.2194-1-wsa+renesas@sang-engineering.com>
+ <20181021200053.2194-3-wsa+renesas@sang-engineering.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <e022320e-3a85-070c-4f9e-700457ae4386@linaro.org>
+Date: Mon, 5 Nov 2018 16:05:16 +0100
 MIME-Version: 1.0
+In-Reply-To: <20181021200053.2194-3-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch unifies the naming of DRM functions for reference counting as
-requested on Documentation/gpu/todo.rst
+On 21/10/2018 22:00, Wolfram Sang wrote:
+> We should get 'driver_data' from 'struct device' directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Fernando Ramos <greenfoo@gluegarage.com>
----
- drivers/gpu/drm/arc/arcpgu_drv.c             | 4 ++--
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c | 4 ++--
- drivers/gpu/drm/etnaviv/etnaviv_drv.c        | 4 ++--
- drivers/gpu/drm/mxsfb/mxsfb_drv.c            | 4 ++--
- drivers/gpu/drm/rcar-du/rcar_du_drv.c        | 2 +-
- drivers/gpu/drm/shmobile/shmob_drm_drv.c     | 4 ++--
- drivers/gpu/drm/tve200/tve200_drv.c          | 4 ++--
- drivers/gpu/drm/zte/zx_drm_drv.c             | 4 ++--
- 8 files changed, 15 insertions(+), 15 deletions(-)
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-diff --git a/drivers/gpu/drm/arc/arcpgu_drv.c b/drivers/gpu/drm/arc/arcpgu_drv.c
-index f067de4e1e82..dcb06d4e9135 100644
---- a/drivers/gpu/drm/arc/arcpgu_drv.c
-+++ b/drivers/gpu/drm/arc/arcpgu_drv.c
-@@ -216,7 +216,7 @@ static int arcpgu_probe(struct platform_device *pdev)
- 	arcpgu_unload(drm);
- 
- err_unref:
--	drm_dev_unref(drm);
-+	drm_dev_put(drm);
- 
- 	return ret;
- }
-@@ -227,7 +227,7 @@ static int arcpgu_remove(struct platform_device *pdev)
- 
- 	drm_dev_unregister(drm);
- 	arcpgu_unload(drm);
--	drm_dev_unref(drm);
-+	drm_dev_put(drm);
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-index 843cac222e60..f8da51a63e2f 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-@@ -775,7 +775,7 @@ static int atmel_hlcdc_dc_drm_probe(struct platform_device *pdev)
- 	atmel_hlcdc_dc_unload(ddev);
- 
- err_unref:
--	drm_dev_unref(ddev);
-+	drm_dev_put(ddev);
- 
- 	return ret;
- }
-@@ -786,7 +786,7 @@ static int atmel_hlcdc_dc_drm_remove(struct platform_device *pdev)
- 
- 	drm_dev_unregister(ddev);
- 	atmel_hlcdc_dc_unload(ddev);
--	drm_dev_unref(ddev);
-+	drm_dev_put(ddev);
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-index 83c1f46670bf..52802e6049e0 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-@@ -550,7 +550,7 @@ static int etnaviv_bind(struct device *dev)
- out_bind:
- 	kfree(priv);
- out_unref:
--	drm_dev_unref(drm);
-+	drm_dev_put(drm);
- 
- 	return ret;
- }
-@@ -567,7 +567,7 @@ static void etnaviv_unbind(struct device *dev)
- 	drm->dev_private = NULL;
- 	kfree(priv);
- 
--	drm_dev_unref(drm);
-+	drm_dev_put(drm);
- }
- 
- static const struct component_master_ops etnaviv_master_ops = {
-diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-index 2393e6d16ffd..88ba003979e6 100644
---- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-+++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-@@ -417,7 +417,7 @@ static int mxsfb_probe(struct platform_device *pdev)
- err_unload:
- 	mxsfb_unload(drm);
- err_free:
--	drm_dev_unref(drm);
-+	drm_dev_put(drm);
- 
- 	return ret;
- }
-@@ -428,7 +428,7 @@ static int mxsfb_remove(struct platform_device *pdev)
- 
- 	drm_dev_unregister(drm);
- 	mxsfb_unload(drm);
--	drm_dev_unref(drm);
-+	drm_dev_put(drm);
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index 084f58df4a8c..c7fe2433ab9e 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -454,7 +454,7 @@ static int rcar_du_remove(struct platform_device *pdev)
- 	drm_kms_helper_poll_fini(ddev);
- 	drm_mode_config_cleanup(ddev);
- 
--	drm_dev_unref(ddev);
-+	drm_dev_put(ddev);
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
-index 6ececad6f845..8554102a6ead 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_drv.c
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
-@@ -194,7 +194,7 @@ static int shmob_drm_remove(struct platform_device *pdev)
- 	drm_kms_helper_poll_fini(ddev);
- 	drm_mode_config_cleanup(ddev);
- 	drm_irq_uninstall(ddev);
--	drm_dev_unref(ddev);
-+	drm_dev_put(ddev);
- 
- 	return 0;
- }
-@@ -290,7 +290,7 @@ static int shmob_drm_probe(struct platform_device *pdev)
- 	drm_kms_helper_poll_fini(ddev);
- 	drm_mode_config_cleanup(ddev);
- err_free_drm_dev:
--	drm_dev_unref(ddev);
-+	drm_dev_put(ddev);
- 
- 	return ret;
- }
-diff --git a/drivers/gpu/drm/tve200/tve200_drv.c b/drivers/gpu/drm/tve200/tve200_drv.c
-index 72efcecb44f7..28e2d03c0ccf 100644
---- a/drivers/gpu/drm/tve200/tve200_drv.c
-+++ b/drivers/gpu/drm/tve200/tve200_drv.c
-@@ -249,7 +249,7 @@ static int tve200_probe(struct platform_device *pdev)
- clk_disable:
- 	clk_disable_unprepare(priv->pclk);
- dev_unref:
--	drm_dev_unref(drm);
-+	drm_dev_put(drm);
- 	return ret;
- }
- 
-@@ -263,7 +263,7 @@ static int tve200_remove(struct platform_device *pdev)
- 		drm_panel_bridge_remove(priv->bridge);
- 	drm_mode_config_cleanup(drm);
- 	clk_disable_unprepare(priv->pclk);
--	drm_dev_unref(drm);
-+	drm_dev_put(drm);
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/zte/zx_drm_drv.c b/drivers/gpu/drm/zte/zx_drm_drv.c
-index 11ef17c2d1c1..5b6f1eda52e0 100644
---- a/drivers/gpu/drm/zte/zx_drm_drv.c
-+++ b/drivers/gpu/drm/zte/zx_drm_drv.c
-@@ -114,7 +114,7 @@ static int zx_drm_bind(struct device *dev)
- 	component_unbind_all(dev, drm);
- out_unregister:
- 	dev_set_drvdata(dev, NULL);
--	drm_dev_unref(drm);
-+	drm_dev_put(drm);
- 	return ret;
- }
- 
-@@ -127,7 +127,7 @@ static void zx_drm_unbind(struct device *dev)
- 	drm_mode_config_cleanup(drm);
- 	component_unbind_all(dev, drm);
- 	dev_set_drvdata(dev, NULL);
--	drm_dev_unref(drm);
-+	drm_dev_put(drm);
- }
- 
- static const struct component_master_ops zx_drm_master_ops = {
+> ---
+> 
+> Build tested only. buildbot is happy.
+> 
+>  drivers/thermal/rockchip_thermal.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchip_thermal.c
+> index f36375d5a16c..9c7643d62ed7 100644
+> --- a/drivers/thermal/rockchip_thermal.c
+> +++ b/drivers/thermal/rockchip_thermal.c
+> @@ -1327,8 +1327,7 @@ static int rockchip_thermal_remove(struct platform_device *pdev)
+>  
+>  static int __maybe_unused rockchip_thermal_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct rockchip_thermal_data *thermal = platform_get_drvdata(pdev);
+> +	struct rockchip_thermal_data *thermal = dev_get_drvdata(dev);
+>  	int i;
+>  
+>  	for (i = 0; i < thermal->chip->chn_num; i++)
+> @@ -1346,8 +1345,7 @@ static int __maybe_unused rockchip_thermal_suspend(struct device *dev)
+>  
+>  static int __maybe_unused rockchip_thermal_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct rockchip_thermal_data *thermal = platform_get_drvdata(pdev);
+> +	struct rockchip_thermal_data *thermal = dev_get_drvdata(dev);
+>  	int i;
+>  	int error;
+>  
+> @@ -1376,7 +1374,7 @@ static int __maybe_unused rockchip_thermal_resume(struct device *dev)
+>  					      id, thermal->regs,
+>  					      thermal->tshut_temp);
+>  		if (error)
+> -			dev_err(&pdev->dev, "%s: invalid tshut=%d, error=%d\n",
+> +			dev_err(dev, "%s: invalid tshut=%d, error=%d\n",
+>  				__func__, thermal->tshut_temp, error);
+>  	}
+>  
+> 
+
+
 -- 
-2.19.1
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
