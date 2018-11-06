@@ -1,77 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45317 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:44525 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728044AbeK2AFK (ORCPT
+        with ESMTP id S2388652AbeKFXhA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Nov 2018 19:05:10 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Tue, 6 Nov 2018 18:37:00 -0500
+Date: Tue, 6 Nov 2018 15:11:30 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 15/16] ARM: dts: iwg23s-sbc: Add QSPI flash support
-Date: Wed, 28 Nov 2018 14:03:17 +0100
-Message-Id: <91f5c32dd0c8fc662694de4d8c5eeb61e4b4210b.1543409901.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1543409901.git.horms+renesas@verge.net.au>
-References: <cover.1543409901.git.horms+renesas@verge.net.au>
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH/RFT] arm64: dts: renesas: r8a77990-ebisu: Add serial
+ console pins
+Message-ID: <20181106141129.ku5xdnv333l2qtkw@verge.net.au>
+References: <1540071088-27224-1-git-send-email-ykaneko0929@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1540071088-27224-1-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+On Sun, Oct 21, 2018 at 06:31:28AM +0900, Yoshihiro Kaneko wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> 
+> This patch adds pin control for SCIF2.
+> 
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> ---
+> 
+> This patch is based on the devel branch of Simon Horman's renesas tree.
 
-This commit adds QSPI flash support to the iwg23s board specific
-device tree.
+Hi Kaneko-san,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-index 52f23b858885..40b7f98d6013 100644
---- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -96,6 +96,11 @@
- 		power-source = <1800>;
- 	};
- 
-+	qspi0_pins: qspi0 {
-+		groups = "qspi0_ctrl", "qspi0_data2";
-+		function = "qspi0";
-+	};
-+
- 	scif1_pins: scif1 {
- 		groups = "scif1_data_b";
- 		function = "scif1";
-@@ -114,6 +119,27 @@
- 	};
- };
- 
-+&qspi0 {
-+	pinctrl-0 = <&qspi0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+
-+	/* WARNING - This device contains the bootloader. Handle with care. */
-+	flash: flash@0 {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "issi,is25lp016d", "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <133000000>;
-+		spi-tx-bus-width = <1>;
-+		spi-rx-bus-width = <1>;
-+		m25p,fast-read;
-+		spi-cpol;
-+		spi-cpha;
-+	};
-+};
-+
- &rwdt {
- 	timeout-sec = <60>;
- 	status = "okay";
--- 
-2.11.0
+It seems that Marek also, subsequently, posted an upport of this patch.
+I have arbitrarily taken his version (which is the same).
