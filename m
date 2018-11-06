@@ -1,56 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:25540 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728757AbeKOWLP (ORCPT
+Received: from mail-ty1jpn01on0127.outbound.protection.outlook.com ([104.47.93.127]:22900
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730532AbeKGEcc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Nov 2018 17:11:15 -0500
+        Tue, 6 Nov 2018 23:32:32 -0500
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Linus Walleij <linus.walleij@linaro.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH resend] dmaengine: rcar-dmac: Document R8A774A1 bindings
-Date: Thu, 15 Nov 2018 11:58:29 +0000
-Message-Id: <1542283109-8322-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [RFC] gpio: rcar: Request GPIO before enabling interrupt
+Date: Tue, 6 Nov 2018 19:04:44 +0000
+Message-ID: <TY1PR01MB1770BFF0D5FEFAE68BBAD70DC0CB0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1540583850-30825-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <CAMuHMdXZyAvNApzWHgCkO1t_fNGL2J_PMd1R=wcusCZ=QKkB=g@mail.gmail.com>
+In-Reply-To: <CAMuHMdXZyAvNApzWHgCkO1t_fNGL2J_PMd1R=wcusCZ=QKkB=g@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Renesas' RZ/G2M (R8A774A1) SoC has DMA controllers compatible
-with this driver, therefore document RZ/G2M specific bindings.
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
----
-
- Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-index a5a7c3f..cdf32b2 100644
---- a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-+++ b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-@@ -1,6 +1,6 @@
- * Renesas R-Car (RZ/G) DMA Controller Device Tree bindings
- 
--Renesas R-Car Generation 2 SoCs have multiple multi-channel DMA
-+Renesas R-Car (Gen 2/3) and RZ/G SoCs have multiple multi-channel DMA
- controller instances named DMAC capable of serving multiple clients. Channels
- can be dedicated to specific clients or shared between a large number of
- clients.
-@@ -20,6 +20,7 @@ Required Properties:
- 		- "renesas,dmac-r8a7744" (RZ/G1N)
- 		- "renesas,dmac-r8a7745" (RZ/G1E)
- 		- "renesas,dmac-r8a77470" (RZ/G1C)
-+		- "renesas,dmac-r8a774a1" (RZ/G2M)
- 		- "renesas,dmac-r8a7790" (R-Car H2)
- 		- "renesas,dmac-r8a7791" (R-Car M2-W)
- 		- "renesas,dmac-r8a7792" (R-Car V2H)
--- 
-2.7.4
+SGVsbG8gR2VlcnQsDQoNClRoYW5rIHlvdSBmb3IgeW91ciBmZWVkYmFjayENCg0KPiBTdWJqZWN0
+OiBSZTogW1JGQ10gZ3BpbzogcmNhcjogUmVxdWVzdCBHUElPIGJlZm9yZSBlbmFibGluZyBpbnRl
+cnJ1cHQNCj4NCj4gSGkgRmFicml6aW8sDQo+DQo+IE9uIEZyaSwgT2N0IDI2LCAyMDE4IGF0IDk6
+NTcgUE0gRmFicml6aW8gQ2FzdHJvDQo+IDxmYWJyaXppby5jYXN0cm9AYnAucmVuZXNhcy5jb20+
+IHdyb3RlOg0KPiA+IFRoZXJlIGFyZSBjYXNlcyB3aGVuIHRoZSBib290bG9hZGVyIGNvbmZpZ3Vy
+ZXMgYSBwaW4gdG8gd29yaw0KPiA+IGFzIGEgZnVuY3Rpb24gcmF0aGVyIHRoYW4gR1BJTywgYW5k
+IG90aGVyIGNhc2VzIHdoZW4gdGhlIHBpbg0KPiA+IGlzIGNvbmZpZ3VyZWQgYXMgYSBmdW5jdGlv
+biBhdCBQT1IuDQo+ID4gVGhpcyBjb21taXQgbWFrZXMgc3VyZSB0aGUgcGluIGlzIGNvbmZpZ3Vy
+ZWQgYXMgYSBHUElPIHRoZQ0KPiA+IG1vbWVudCB3ZSBuZWVkIGl0IHRvIHdvcmsgYXMgYW4gaW50
+ZXJydXB0Lg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogRmFicml6aW8gQ2FzdHJvIDxmYWJyaXpp
+by5jYXN0cm9AYnAucmVuZXNhcy5jb20+DQo+ID4gLS0tDQo+ID4NCj4gPiBEZWFyIEFsbCwNCj4g
+Pg0KPiA+IHdlIGhhdmUgZ290IHNvbWUgaXNzdWVzIHdoaWxlIHRyeWluZyB0byBicmluZyB1cCB0
+aGUgaW50ZXJydXB0DQo+ID4gbGluZSBvZiB0aGUgSERNSSB0cmFuc21pdHRlciBvbiB0aGUgaXdn
+MjNzLCBhcyBHUDJfMjkgaXMgY29uZmlndXJlZA0KPiA+IGFzIGEgZnVuY3Rpb24gd2hlbiB0aGUg
+a2VybmVsIHN0YXJ0cywgYW5kIHRoZXJlZm9yZSBzZXR0aW5nIHVwIHRoZQ0KPiA+IGludGVycnVw
+dCBmcm9tIHRoZSBkcml2ZXIgd29uJ3QgaGF2ZSB0aGUgZGVzaXJlZCBlZmZlY3QuDQo+ID4gVGhp
+cyBwYXRjaCBtYWtlcyBzdXJlIHRoZSBwaW5jdHJsIGRyaXZlciBzZXRzIEdQMlsyOV0gdG8gR1At
+Mi0yOQ0KPiA+IGJlZm9yZSBlbmFibGluZyB0aGUgaW50ZXJydXB0LCBidXQgaXQgZG9lc24ndCBh
+ZGRyZXNzZXMgdGhlDQo+ID4gImRpcmVjdGlvbiBwcm9ibGVtIiwgYXMgaW4gdGhlIHBpbiB3aWxs
+IGJlIGEgR1BJTyBhZnRlciBjYWxsaW5nDQo+ID4gZ2MtPnJlcXVlc3QsIGJ1dCB0aGUgZGlyZWN0
+aW9uIHdvdWxkIGJlIHdoYXRldmVyIHdhcyBwcmV2aW91c2x5DQo+ID4gY29uZmlndXJlZC4gVGhl
+cmUgY291bGQgYmUgdGhlIG9wdGlvbiBvZiBtb3ZpbmcgdGhlIGFkZGl0aW9uYWwNCj4gPiBjb2Rl
+IGFkZGVkIGJ5IHRoaXMgcGF0Y2ggdG8gdGhlIGJvdHRvbSBvZiBmdW5jdGlvbg0KPiA+IGdwaW9f
+cmNhcl9pcnFfc2V0X3R5cGUsIGJ1dCBpcyB0aGF0IGdvaW5nIHRvIGJlaGF2ZSBwcm9wZXJseSBv
+bg0KPiA+IGV2ZXJ5IFNvQyB0aGlzIGRyaXZlciBpcyBzdXBwb3J0aW5nPw0KPiA+IElzIGNvbmZp
+Z3VyaW5nIGV2ZXJ5IGdwaW8gd2l0aCBkaXJlY3Rpb24gaW5wdXQgd2hpbGUgcHJvYmluZw0KPiA+
+IHNvbWV0aGluZyB0aGF0IHNob3VsZCBiZSBsb29rZWQgaW50byB0byByZWR1Y2UgY29uY2VybnMg
+b3Zlcg0KPiA+IHN3aXRjaGluZyBmcm9tIGZ1bmN0aW9uIHRvIEdQSU8/DQo+DQo+IENvbmZpZ3Vy
+aW5nIGV2ZXJ5dGhpbmcgdG8gaW5wdXQgbWF5IGNhdXNlIGlzc3VlcyB3aGVyZSBhIEdQSU8gaXMg
+Y29ubmVjdGVkDQo+IHRvIHRoZSByZXNldCBsaW5lIG9mIGFuIGV4dGVybmFsIGRldmljZSwgYW5k
+IHdoZXJlIHRoZSBib290bG9hZGVyIGNvbmZpZ3VyZWQgdGhlDQo+IGxpbmUgdG8gZGVhc3NlcnQg
+dGhlIHJlc2V0Lg0KDQpJIGFtIGdvaW5nIHRvIHN0YXkgYXdheSBmcm9tIHRoaXMgdGhlbi4NCg0K
+VGhhbmtzLA0KRmFiDQoNCj4NCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+DQo+ICAgICAgICAgICAg
+ICAgICAgICAgICAgIEdlZXJ0DQo+DQo+IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBUaGVy
+ZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5vcmcNCj4N
+Cj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2Fs
+bCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0KPiB3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3Rz
+IEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuDQo+ICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGludXMgVG9ydmFsZHMNCg0KDQoNClJlbmVz
+YXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9hZCwg
+Qm91cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBF
+bmdsYW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
