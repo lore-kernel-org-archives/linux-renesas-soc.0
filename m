@@ -1,58 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:46831 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728998AbeK0XC4 (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:56164 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726069AbeKGHPK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Nov 2018 18:02:56 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 05/22] ARM: dts: r8a7744-iwg20m: Add eMMC support
-Date: Tue, 27 Nov 2018 11:56:18 +0000
-Message-Id: <1543319795-48325-6-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com>
-References: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com>
+        Wed, 7 Nov 2018 02:15:10 -0500
+Reply-To: kieran.bingham+renesas@ideasonboard.com
+Subject: Re: [PATCH] drm: rcar-du: Fix external clock error checks
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+References: <20181106153930.21915-1-laurent.pinchart+renesas@ideasonboard.com>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <0bc99f00-bb0d-86d7-cabc-f2697df9d3eb@ideasonboard.com>
+Date: Tue, 6 Nov 2018 21:47:47 +0000
+MIME-Version: 1.0
+In-Reply-To: <20181106153930.21915-1-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add eMMC support for iWave RZ/G1N Qseven System On Module.
+Hi Laurent,
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm/boot/dts/r8a7744-iwg20m.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+Thank you for the patch,
 
-diff --git a/arch/arm/boot/dts/r8a7744-iwg20m.dtsi b/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
-index 6166ae0..1e57b1f 100644
---- a/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
-+++ b/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
-@@ -29,3 +29,20 @@
- &extal_clk {
- 	clock-frequency = <20000000>;
- };
-+
-+&pfc {
-+	mmcif0_pins: mmc {
-+		groups = "mmc_data8_b", "mmc_ctrl";
-+		function = "mmc";
-+	};
-+};
-+
-+&mmcif0 {
-+	pinctrl-0 = <&mmcif0_pins>;
-+	pinctrl-names = "default";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	bus-width = <8>;
-+	non-removable;
-+	status = "okay";
-+};
--- 
-2.7.4
+On 06/11/2018 15:39, Laurent Pinchart wrote:
+> The rcar-du driver supports probe deferral for external clocks, but
+> implements it badly by checking the wrong pointer due to a bad copy and
+> paste. Fix it.
+> 
+> While at it, reject invalid clocks outright for DU channels that have a
+> display PLL, as the external clock is mandatory in that case. This
+> avoids a WARN_ON() at runtime.
+> 
+> Fixes: 1b30dbde8596 ("drm: rcar-du: Add support for external pixel clock")
+> Reported-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+This looks good to me:
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> index d18a342626b5..79021d7aa3ce 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> @@ -226,9 +226,6 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+>  		 * system clock, and have no internal clock divider.
+>  		 */
+>  
+> -		if (WARN_ON(!rcrtc->extclock))
+> -			return;
+> -
+>  		/*
+>  		 * The H3 ES1.x exhibits dot clock duty cycle stability issues.
+>  		 * We can work around them by configuring the DPLL to twice the
+> @@ -1113,9 +1110,16 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int swindex,
+>  	clk = devm_clk_get(rcdu->dev, clk_name);
+>  	if (!IS_ERR(clk)) {
+>  		rcrtc->extclock = clk;
+> -	} else if (PTR_ERR(rcrtc->clock) == -EPROBE_DEFER) {
+> -		dev_info(rcdu->dev, "can't get external clock %u\n", hwindex);
+> +	} else if (PTR_ERR(clk) == -EPROBE_DEFER) {
+>  		return -EPROBE_DEFER;
+> +	} else if (rcdu->info->dpll_mask & BIT(hwindex)) {
+> +		/*
+> +		 * DU channels that have a display PLL can't use the internal
+> +		 * system clock and thus require an external clock.
+> +		 */
+> +		ret = PTR_ERR(clk);
+> +		dev_err(rcdu->dev, "can't get dclkin.%u: %d\n", hwindex, ret);
+> +		return ret;
+>  	}
+>  
+>  	init_waitqueue_head(&rcrtc->flip_wait);
+> 
