@@ -1,63 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:11551 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726616AbeLACpS (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43133 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726976AbeKFVjw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Nov 2018 21:45:18 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Tue, 6 Nov 2018 16:39:52 -0500
+Date: Tue, 6 Nov 2018 13:14:52 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Marek Vasut <marek.vasut@gmail.com>, devicetree@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v2 12/21] ARM: dts: r8a7744-iwg20m: Add eMMC support
-Date: Fri, 30 Nov 2018 15:26:26 +0000
-Message-Id: <1543591595-37861-13-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
-References: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-mmc@vger.kernel.org
+Subject: Re: [PATCH V2] arm64: dts: renesas: Switch eMMC bus to 1V8 on
+ Salvator-X and ULCB
+Message-ID: <20181106121451.4sjiceqkrnfuhhvt@verge.net.au>
+References: <20181104203707.20996-1-marek.vasut+renesas@gmail.com>
+ <20181106105717.bdrvfwbry4ci6pii@ninjato>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181106105717.bdrvfwbry4ci6pii@ninjato>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add eMMC support for iWave RZ/G1N Qseven System On Module.
+On Tue, Nov 06, 2018 at 11:57:17AM +0100, Wolfram Sang wrote:
+> On Sun, Nov 04, 2018 at 09:37:07PM +0100, Marek Vasut wrote:
+> > The eMMC card has two supplies, VCC and VCCQ. The VCC supplies the NAND
+> > array and the VCCQ supplies the bus. On Salvator-X and ULCB, the VCC is
+> > connected to 3.3V rail, while the VCCQ is connected to 1.8V rail. Adjust
+> > the pinmux to match the bus, which is always operating in 1.8V mode.
+> > 
+> > While at it, deduplicate the pinmux entries, which are now the same for
+> > both default and UHS modes. We still need the two pinctrl entries to
+> > match the bindings though.
+> > 
+> > Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> > Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Cc: Simon Horman <horms+renesas@verge.net.au>
+> > Cc: Wolfram Sang <wsa@the-dreams.de>
+> > Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > Cc: linux-renesas-soc@vger.kernel.org
+> > Cc: linux-mmc@vger.kernel.org
+> 
+> Tested on M3-N and H3 ES2.0 with HS400 enabled eMMC:
+> 
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-V1-->V2
-   * No Change
----
- arch/arm/boot/dts/r8a7744-iwg20m.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7744-iwg20m.dtsi b/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
-index 6166ae0..1e57b1f 100644
---- a/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
-+++ b/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
-@@ -29,3 +29,20 @@
- &extal_clk {
- 	clock-frequency = <20000000>;
- };
-+
-+&pfc {
-+	mmcif0_pins: mmc {
-+		groups = "mmc_data8_b", "mmc_ctrl";
-+		function = "mmc";
-+	};
-+};
-+
-+&mmcif0 {
-+	pinctrl-0 = <&mmcif0_pins>;
-+	pinctrl-names = "default";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	bus-width = <8>;
-+	non-removable;
-+	status = "okay";
-+};
--- 
-2.7.4
+Thanks, applied for v4.21.
