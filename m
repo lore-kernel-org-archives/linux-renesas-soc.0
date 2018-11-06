@@ -1,54 +1,62 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35091 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbeKZXs0 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Nov 2018 18:48:26 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 01/16] ARM: dts: r9a06g032: Add pinctrl node
-Date: Mon, 26 Nov 2018 13:54:03 +0100
-Message-Id: <2b421730228e2ac6e49c3202e4f7ef79a65da71c.1543236456.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1543236456.git.horms+renesas@verge.net.au>
-References: <cover.1543236456.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Tue, 6 Nov 2018 15:09:05 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Richard Weinberger <richard@nod.at>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-mtd@lists.infradead.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH 1/4] spi: rspi: Add r8a77470 to the compatible list
+Message-ID: <20181106140905.yfhr7fayi6decjzz@verge.net.au>
+References: <1541075705-1333-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1541075705-1333-2-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1541075705-1333-2-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Phil Edworthy <phil.edworthy@renesas.com>
+On Thu, Nov 01, 2018 at 12:35:02PM +0000, Fabrizio Castro wrote:
+> Add r8a77470 to the list of examples with soctypes.
+> No driver change is needed as "renesas,qspi" will activate
+> the right code within the corresponding driver.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-This provides a pinctrl driver for the Renesas R9A06G032 SoC
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Based on a patch originally written by Michel Pollet at Renesas.
-
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r9a06g032.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index eaf94976ed6d..2322268bc862 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -165,6 +165,14 @@
- 			status = "disabled";
- 		};
- 
-+		pinctrl: pin-controller@40067000 {
-+			compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
-+			reg = <0x40067000 0x1000>, <0x51000000 0x480>;
-+			clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
-+			clock-names = "bus";
-+			status = "okay";
-+		};
-+
- 		gic: gic@44101000 {
- 			compatible = "arm,cortex-a7-gic", "arm,gic-400";
- 			interrupt-controller;
--- 
-2.11.0
+> 
+> ---
+> 
+> As per Mark Brown's comment on patch "dt-bindings: spi: rspi: Add
+> r8a7744 to the compatible list", this patch doesn't come with the
+> "dt-bindings" prefix in the title.
+> 
+>  Documentation/devicetree/bindings/spi/spi-rspi.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/spi/spi-rspi.txt b/Documentation/devicetree/bindings/spi/spi-rspi.txt
+> index fc97ad6..421722b 100644
+> --- a/Documentation/devicetree/bindings/spi/spi-rspi.txt
+> +++ b/Documentation/devicetree/bindings/spi/spi-rspi.txt
+> @@ -15,6 +15,7 @@ Required properties:
+>  			- "renesas,qspi-r8a7743" (RZ/G1M)
+>  			- "renesas,qspi-r8a7744" (RZ/G1N)
+>  			- "renesas,qspi-r8a7745" (RZ/G1E)
+> +			- "renesas,qspi-r8a77470" (RZ/G1C)
+>  			- "renesas,qspi-r8a7790" (R-Car H2)
+>  			- "renesas,qspi-r8a7791" (R-Car M2-W)
+>  			- "renesas,qspi-r8a7792" (R-Car V2H)
+> -- 
+> 2.7.4
+> 
