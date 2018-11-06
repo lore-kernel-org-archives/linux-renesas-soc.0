@@ -1,61 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:35355 "EHLO
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:58245 "EHLO
         relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730336AbeKFUT4 (ORCPT
+        with ESMTP id S1729241AbeKFUAX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Nov 2018 15:19:56 -0500
+        Tue, 6 Nov 2018 15:00:23 -0500
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        kieran.bingham@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 4/6] media: rcar-csi2: Add R8A77990 support
-Date: Tue,  6 Nov 2018 11:54:25 +0100
-Message-Id: <1541501667-28817-5-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1541501667-28817-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1541501667-28817-1-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+To: geert+renesas@glider.be, horms@verge.net.au,
+        laurent.pinchart@ideasonboard.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, linus.walleij@linaro.org,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH v4 0/4] sh-pfc: Variadic VIN_DATA_PIN_GROUP macro + updates
+Date: Tue,  6 Nov 2018 11:35:29 +0100
+Message-Id: <1541500533-21843-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for R-Car E3 R8A77965 to R-Car CSI-2 driver.
-Based on the experimental patch from Magnus Damm.
+Hi Geert,
+   thanks to your suggestion I made a variadic macro out of the
+VIN_DATA_PIN_GROUP one. The macro accepts an optional third argument 'version'
+and creates properly formatted names in the form of 'vin4_data8_a' in place of
+the previous 'vin4_data_a8' ones.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-csi2.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+I included in this series the refactoring of existing users of versioned
+VIN_DATA_PIN_GROUP macro and upstreaming of VIN4 and VIN5 enablement for both
+R-Car M3-N and E3, both of them users of versioned VIN groups.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-index b0044a0..695686b 100644
---- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-@@ -963,6 +963,11 @@ static const struct rcar_csi2_info rcar_csi2_info_r8a77970 = {
- 	.confirm_start = rcsi2_confirm_start_v3m_e3,
- };
- 
-+static const struct rcar_csi2_info rcar_csi2_info_r8a77990 = {
-+	.init_phtw = rcsi2_init_phtw_v3m_e3,
-+	.confirm_start = rcsi2_confirm_start_v3m_e3,
-+};
-+
- static const struct of_device_id rcar_csi2_of_table[] = {
- 	{
- 		.compatible = "renesas,r8a7795-csi2",
-@@ -980,6 +985,10 @@ static const struct of_device_id rcar_csi2_of_table[] = {
- 		.compatible = "renesas,r8a77970-csi2",
- 		.data = &rcar_csi2_info_r8a77970,
- 	},
-+	{
-+		.compatible = "renesas,r8a77990-csi2",
-+		.data = &rcar_csi2_info_r8a77990,
-+	},
- 	{ /* sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, rcar_csi2_of_table);
--- 
+Thanks
+   j
+
+v3 -> v4:
+- The series gathers different patch series previously sent separately:
+  [PATCH 0/2] pinctrl: sh-pfc: r8a77965: Add VIN4 and VIN5
+  [PATCH] pinctrl: sh-pfc: r8a77990: Add VIN pins, groups and functions
+  As E3 patch depends on the M3-N series, I made a single one out of those.
+  Changelog for the E3 patch (which was actually at v3) is included in the
+  single patch commit message.
+
+
+Jacopo Mondi (4):
+  pinctrl: sh-pfc: Add optional arg to VIN_DATA_PIN_GROUP
+  pinctrl: sh-pfc: Fix VIN versioned groups name
+  pinctrl: sh-pfc: r8a77965: Add VIN[4|5] groups/functions
+  pinctrl: sh-pfc: r8a77990: Add VIN[4|5] groups/functions
+
+ drivers/pinctrl/sh-pfc/pfc-r8a7792.c  |   6 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c  |  24 ++--
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c  |  24 ++--
+ drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 254 ++++++++++++++++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 244 ++++++++++++++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/sh_pfc.h       |  17 +--
+ 6 files changed, 534 insertions(+), 35 deletions(-)
+
+--
 2.7.4
