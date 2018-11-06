@@ -1,48 +1,96 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay10.mail.gandi.net ([217.70.178.230]:36827 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726700AbeKIBnt (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:42020 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730447AbeKFWfj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Nov 2018 20:43:49 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert+renesas@glider.be, horms@verge.net.au,
-        laurent.pinchart@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, linus.walleij@linaro.org,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH v5 0/6] sh-pfc: Variadic VIN_DATA_PIN_GROUP macro + VIN updates
-Date: Thu,  8 Nov 2018 17:07:21 +0100
-Message-Id: <1541693247-15599-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 6 Nov 2018 17:35:39 -0500
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gK17k-0003rg-EA
+        for linux-renesas-soc@vger.kernel.org; Tue, 06 Nov 2018 14:10:28 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gK17k-0006lD-Cn
+        for linux-renesas-soc@vger.kernel.org; Tue, 06 Nov 2018 14:10:28 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2018-11-06-v4.20-rc1
+Date: Tue,  6 Nov 2018 14:10:28 +0100
+Message-Id: <20181106131028.25945-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert, Simon,
-   this version uses the new variadic macro VIN_DATA_PIN_GROUP as v4 (this
-for real in [3/6].
+I have pushed renesas-drivers-2018-11-06-v4.20-rc1 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-Refactoring of users of the macro old version have broken out to single
-patches, comments on M3-N and E3 VIN PFC groups have been incorporated.
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the development branch of
+Simon Horman's renesas.git tree.
 
-Quite a few changes in M3-N and E3 VIN support in PFC, so the single
-patches changelog is in commit messages.
+Today's version is based on renesas-devel-20181105-v4.20-rc1.
 
-Thanks
-   j
+Included branches with driver code:
+  - clk-renesas
+  - sh-pfc
+  - topic/pinctrl-rza2-v2
+  - git://linuxtv.org/pinchartl/media.git#drm-du-iommu-v1-20171115
+  - git://git.ragnatech.se/linux#for-renesas-drivers
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#gmsl/for-renesas-drivers
 
-Jacopo Mondi (6):
-  pinctrl: sh-pfc: Add optional arg to VIN_DATA_PIN_GROUP
-  pinctrl: sh-pfc: r8a77965: Add VIN[4|5] groups/functions
-  pinctrl: sh-pfc: r8a77990: Add VIN[4|5] groups/functions
-  pinctrl: sh-pfc: r8a7792: Fix VIN versioned groups
-  pinctrl: sh-pfc: r8a7795: Fix VIN versioned groups
-  pinctrl: sh-pfc: r8a7796: Fix VIN versioned groups
+Included fixes:
+  - serial: sh-sci: Fix receive on SCIFA/SCIFB variants with DMA
+  - [LOCAL] arm64: defconfig: Update renesas_defconfig
 
- drivers/pinctrl/sh-pfc/pfc-r8a7792.c  |   6 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c  |  24 +--
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c  |  24 +--
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 270 ++++++++++++++++++++++++++++++++++
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 244 ++++++++++++++++++++++++++++++
- drivers/pinctrl/sh-pfc/sh_pfc.h       |  15 +-
- 6 files changed, 549 insertions(+), 34 deletions(-)
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://git.freedesktop.org/git/drm/drm.git#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/media_tree.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://github.com/bzolnier/linux.git#fbdev-for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+
+Gr{oetje,eeting}s,
+
+						Geert
 
 --
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
