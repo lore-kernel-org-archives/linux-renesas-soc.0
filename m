@@ -1,60 +1,60 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:56547 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726413AbeKGTjP (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 7 Nov 2018 14:39:15 -0500
+Date: Wed, 7 Nov 2018 11:09:30 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-watchdog@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v2 11/21] ARM: dts: r8a7744: Add MMC node
-Date: Fri, 30 Nov 2018 15:26:25 +0000
-Message-Id: <1543591595-37861-12-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
-References: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] watchdog: renesas_wdt: Fix typos
+Message-ID: <20181107100930.l4opb3k43yqe7ayt@verge.net.au>
+References: <1541415227-4991-1-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1541415227-4991-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add MMC node to the DT of the r8a7744 SoC.
+On Mon, Nov 05, 2018 at 10:53:47AM +0000, Fabrizio Castro wrote:
+> Do not use "," but ";" to separate instructions.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> 
+> ---
+> v1->v2:
+> * Added changelog as suggested by Guenter Roeck
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-V1-->V2
-   * No Change
----
- arch/arm/boot/dts/r8a7744.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index 97b417c..3f7674b 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -911,6 +911,22 @@
- 			status = "disabled";
- 		};
- 
-+		mmcif0: mmc@ee200000 {
-+			compatible = "renesas,mmcif-r8a7744",
-+				     "renesas,sh-mmcif";
-+			reg = <0 0xee200000 0 0x80>;
-+			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 315>;
-+			dmas = <&dmac0 0xd1>, <&dmac0 0xd2>,
-+			       <&dmac1 0xd1>, <&dmac1 0xd2>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 315>;
-+			reg-io-width = <4>;
-+			max-frequency = <97500000>;
-+			status = "disabled";
-+		};
-+
- 		gic: interrupt-controller@f1001000 {
- 			compatible = "arm,gic-400";
- 			#interrupt-cells = <3>;
--- 
-2.7.4
+> 
+>  drivers/watchdog/renesas_wdt.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+> index 0d74c3e..b570962 100644
+> --- a/drivers/watchdog/renesas_wdt.c
+> +++ b/drivers/watchdog/renesas_wdt.c
+> @@ -220,8 +220,8 @@ static int rwdt_probe(struct platform_device *pdev)
+>  		goto out_pm_disable;
+>  	}
+>  
+> -	priv->wdev.info = &rwdt_ident,
+> -	priv->wdev.ops = &rwdt_ops,
+> +	priv->wdev.info = &rwdt_ident;
+> +	priv->wdev.ops = &rwdt_ops;
+>  	priv->wdev.parent = &pdev->dev;
+>  	priv->wdev.min_timeout = 1;
+>  	priv->wdev.max_timeout = DIV_BY_CLKS_PER_SEC(priv, 65536);
+> -- 
+> 2.7.4
+> 
