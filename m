@@ -1,36 +1,68 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Thu, 8 Nov 2018 11:45:48 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:40325 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726369AbeKGVgz (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 7 Nov 2018 16:36:55 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Biju Das <biju.das@bp.renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: Re: [PATCH v3 resend] ARM: dts: iwg23s-sbc: Add pinctl support for
- EtherAVB
-Message-ID: <20181108104548.qwrwhhh3vmnjkel5@verge.net.au>
-References: <1541592403-2752-1-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1541592403-2752-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH v3 resend] ARM: dts: iwg23s-sbc: Add pinctl support for EtherAVB
+Date: Wed,  7 Nov 2018 12:06:43 +0000
+Message-Id: <1541592403-2752-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Nov 07, 2018 at 12:06:43PM +0000, Fabrizio Castro wrote:
-> From: Biju Das <biju.das@bp.renesas.com>
-> 
-> Adding pinctrl support for EtherAVB interface.
-> 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> ---
-> v4.20 RC1 is out, this update rebases the patch on top of
-> renesas-devel-20181107-v4.20-rc1
+From: Biju Das <biju.das@bp.renesas.com>
 
-Thanks, applied for v4.21.
+Adding pinctrl support for EtherAVB interface.
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+v4.20 RC1 is out, this update rebases the patch on top of
+renesas-devel-20181107-v4.20-rc1
+
+Thanks,
+Fab
+
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+index 18d2263..52f23b8 100644
+--- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
++++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+@@ -60,6 +60,9 @@
+ };
+ 
+ &avb {
++	pinctrl-0 = <&avb_pins>;
++	pinctrl-names = "default";
++
+ 	phy-handle = <&phy3>;
+ 	phy-mode = "gmii";
+ 	renesas,no-ether-link;
+@@ -82,6 +85,11 @@
+ };
+ 
+ &pfc {
++	avb_pins: avb {
++		groups = "avb_mdio", "avb_gmii_tx_rx";
++		function = "avb";
++	};
++
+ 	mmc_pins_uhs: mmc_uhs {
+ 		groups = "mmc_data8", "mmc_ctrl";
+ 		function = "mmc";
+-- 
+2.7.4
