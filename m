@@ -1,105 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-eopbgr1400139.outbound.protection.outlook.com ([40.107.140.139]:52032
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726359AbeK0XQN (ORCPT
+Received: from 8bytes.org ([81.169.241.247]:42830 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727546AbeKHCYs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Nov 2018 18:16:13 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: "andrew@lunn.ch" <andrew@lunn.ch>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "davem@davemloft.net" <davem@davemloft.net>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC] net: phy: device: Don't deassert the reset when register
- and probe
-Date: Tue, 27 Nov 2018 12:18:20 +0000
-Message-ID: <1543320947-32763-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 7 Nov 2018 21:24:48 -0500
+Date: Wed, 7 Nov 2018 17:53:36 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] iommu/ipmmu-vmsa: Fix crash on early domain free
+Message-ID: <20181107165336.GB19831@8bytes.org>
+References: <20181107131850.11584-1-geert+renesas@glider.be>
+ <e4dcd8b2-768e-b11d-b6de-337b7e942050@arm.com>
+ <20181107153418.cge2dj5zmztahxrf@8bytes.org>
+ <CAMuHMdWPkMtnGrxrtFGmyJ5NEvSSCiMUVXXBWX+NS-J4tQXLAw@mail.gmail.com>
+ <20181107160341.pfpukoqhyhapfzpn@8bytes.org>
+ <f8259910-3e07-497b-9f18-6bcb47430cff@arm.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f8259910-3e07-497b-9f18-6bcb47430cff@arm.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some PHY device needs edge signal of the reset, but the previous code
-is impossible to achieve it like following:
+On Wed, Nov 07, 2018 at 04:17:09PM +0000, Robin Murphy wrote:
+> FWIW it looks like it *has* always been possible to hit this crash by
+> allocating a domain and freeing it again without attaching any devices, it's
+> just highly improbable for any sane code to do that explicitly, so the real
+> latent triggers are failure paths in external callers (which in this case
+> are themselves only being reached thanks to my bug elsewhere).
 
- 1) Kernel boots by using initramfs.
- --> No open the nic, so the provious code deasserts the reset by
-     phy_device_register() and phy_probe().
- 2) Kernel enters the suspend.
- --> So, keep the reset signal as deassert.
- --> On R-Car Salvator-XS board, unfortunately, the board power is
-     turned off.
- 3) Kernel returns from suspend.
- 4) ifconfig eth0 up
- --> Then, since edge signal of the reset doesn't happen,
-     it cannot link up.
- 5) ifconfig eth0 down
- 6) ifconfig eth0 up
- --> In this case, it can link up.
+Okay, given this, it probably makes more sense to change the fixes tag.
+This is what I just committed:
 
-This patch is possible to break if ->probe() in a phy driver will
-access the PHY. But, I believe ->config_init() only initializes
-the PHY. However, I think this patch should be RFC at first.
+Fixes: d25a2a16f0889 ('iommu: Add driver for Renesas VMSA-compatible IPMMU')
 
-Reported-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/net/phy/phy_device.c | 22 +---------------------
- 1 file changed, 1 insertion(+), 21 deletions(-)
+Regards,
 
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index e06613f..e01a752 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -802,16 +802,6 @@ int phy_device_register(struct phy_device *phydev)
- 	if (err)
- 		return err;
-=20
--	/* Deassert the reset signal */
--	phy_device_reset(phydev, 0);
--
--	/* Run all of the fixups for this PHY */
--	err =3D phy_scan_fixups(phydev);
--	if (err) {
--		pr_err("PHY %d failed to initialize\n", phydev->mdio.addr);
--		goto out;
--	}
--
- 	err =3D device_add(&phydev->mdio.dev);
- 	if (err) {
- 		pr_err("PHY %d failed to add\n", phydev->mdio.addr);
-@@ -821,8 +811,6 @@ int phy_device_register(struct phy_device *phydev)
- 	return 0;
-=20
-  out:
--	/* Assert the reset signal */
--	phy_device_reset(phydev, 1);
-=20
- 	mdiobus_unregister_device(&phydev->mdio);
- 	return err;
-@@ -2202,16 +2190,8 @@ static int phy_probe(struct device *dev)
- 	/* Set the state to READY by default */
- 	phydev->state =3D PHY_READY;
-=20
--	if (phydev->drv->probe) {
--		/* Deassert the reset signal */
--		phy_device_reset(phydev, 0);
--
-+	if (phydev->drv->probe)
- 		err =3D phydev->drv->probe(phydev);
--		if (err) {
--			/* Assert the reset signal */
--			phy_device_reset(phydev, 1);
--		}
--	}
-=20
- 	mutex_unlock(&phydev->lock);
-=20
---=20
-1.9.1
+	Joerg
