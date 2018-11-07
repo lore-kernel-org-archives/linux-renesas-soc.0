@@ -1,37 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from 8bytes.org ([81.169.241.247]:39342 "EHLO theia.8bytes.org"
+Received: from foss.arm.com ([217.140.101.70]:50942 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727387AbeKHBFN (ORCPT
+        id S1726635AbeKGWxR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Nov 2018 20:05:13 -0500
-Date: Wed, 7 Nov 2018 16:34:18 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+        Wed, 7 Nov 2018 17:53:17 -0500
 Subject: Re: [PATCH] iommu/ipmmu-vmsa: Fix crash on early domain free
-Message-ID: <20181107153418.cge2dj5zmztahxrf@8bytes.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Joerg Roedel <joro@8bytes.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: iommu@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20181107131850.11584-1-geert+renesas@glider.be>
- <e4dcd8b2-768e-b11d-b6de-337b7e942050@arm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <e4dcd8b2-768e-b11d-b6de-337b7e942050@arm.com>
+Date: Wed, 7 Nov 2018 13:22:52 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e4dcd8b2-768e-b11d-b6de-337b7e942050@arm.com>
+In-Reply-To: <20181107131850.11584-1-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Nov 07, 2018 at 01:22:52PM +0000, Robin Murphy wrote:
-> On 2018-11-07 1:18 pm, Geert Uytterhoeven wrote:
-> > Fix this by checking if the domain's context already exists, before
-> > trying to destroy it.
+On 2018-11-07 1:18 pm, Geert Uytterhoeven wrote:
+> If iommu_ops.add_device() fails, iommu_ops.domain_free() is still
+> called, leading to a crash, as the domain was only partially
+> initialized:
 > 
-> Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+>      ipmmu-vmsa e67b0000.mmu: Cannot accommodate DMA translation for IOMMU page tables
+>      sata_rcar ee300000.sata: Unable to initialize IPMMU context
+>      iommu: Failed to add device ee300000.sata to group 0: -22
+>      Unable to handle kernel NULL pointer dereference at virtual address 0000000000000038
+>      ...
+>      Call trace:
+>       ipmmu_domain_free+0x1c/0xa0
+>       iommu_group_release+0x48/0x68
+>       kobject_put+0x74/0xe8
+>       kobject_del.part.0+0x3c/0x50
+>       kobject_put+0x60/0xe8
+>       iommu_group_get_for_dev+0xa8/0x1f0
+>       ipmmu_add_device+0x1c/0x40
+>       of_iommu_configure+0x118/0x190
+> 
+> Fix this by checking if the domain's context already exists, before
+> trying to destroy it.
 
-Does this need a Fixes-tag? If so, which patch should be in that tag?
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 
-
-Thanks,
-
-	Joerg
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>   drivers/iommu/ipmmu-vmsa.c | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+> index c4114b92652eb0c9..a8b2c649c1d1f1b9 100644
+> --- a/drivers/iommu/ipmmu-vmsa.c
+> +++ b/drivers/iommu/ipmmu-vmsa.c
+> @@ -498,6 +498,9 @@ static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
+>   
+>   static void ipmmu_domain_destroy_context(struct ipmmu_vmsa_domain *domain)
+>   {
+> +	if (!domain->mmu)
+> +		return;
+> +
+>   	/*
+>   	 * Disable the context. Flush the TLB as required when modifying the
+>   	 * context registers.
+> 
