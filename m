@@ -1,68 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:40325 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726369AbeKGVgz (ORCPT
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34870 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726242AbeKGS5c (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Nov 2018 16:36:55 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v3 resend] ARM: dts: iwg23s-sbc: Add pinctl support for EtherAVB
-Date: Wed,  7 Nov 2018 12:06:43 +0000
-Message-Id: <1541592403-2752-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Wed, 7 Nov 2018 13:57:32 -0500
+Received: by mail-wr1-f67.google.com with SMTP id z16-v6so16603173wrv.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 07 Nov 2018 01:28:00 -0800 (PST)
+Subject: Re: [PATCH 1/1] slimbus: qcom-ctrl: simplify getting .driver_data
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, alsa-devel@alsa-project.org
+References: <20181021200045.2053-1-wsa+renesas@sang-engineering.com>
+ <20181021200045.2053-2-wsa+renesas@sang-engineering.com>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <40978484-383a-6cd8-9d4d-9b3185583b69@linaro.org>
+Date: Wed, 7 Nov 2018 09:27:58 +0000
+MIME-Version: 1.0
+In-Reply-To: <20181021200045.2053-2-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
 
-Adding pinctrl support for EtherAVB interface.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
-v4.20 RC1 is out, this update rebases the patch on top of
-renesas-devel-20181107-v4.20-rc1
-
-Thanks,
-Fab
-
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-index 18d2263..52f23b8 100644
---- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -60,6 +60,9 @@
- };
- 
- &avb {
-+	pinctrl-0 = <&avb_pins>;
-+	pinctrl-names = "default";
-+
- 	phy-handle = <&phy3>;
- 	phy-mode = "gmii";
- 	renesas,no-ether-link;
-@@ -82,6 +85,11 @@
- };
- 
- &pfc {
-+	avb_pins: avb {
-+		groups = "avb_mdio", "avb_gmii_tx_rx";
-+		function = "avb";
-+	};
-+
- 	mmc_pins_uhs: mmc_uhs {
- 		groups = "mmc_data8", "mmc_ctrl";
- 		function = "mmc";
--- 
-2.7.4
+On 21/10/18 21:00, Wolfram Sang wrote:
+> We should get 'driver_data' from 'struct device' directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang<wsa+renesas@sang-engineering.com>
+> ---
+Applied to slimbus tree!
