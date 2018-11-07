@@ -1,43 +1,121 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:54620 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728106AbeK2VzY (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57527 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726241AbeKGUzK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Nov 2018 16:55:24 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 04/13] clk: renesas: r8a7795: Add CPEX clock
-Date: Thu, 29 Nov 2018 11:49:59 +0100
-Message-Id: <20181129105008.10239-5-geert+renesas@glider.be>
-In-Reply-To: <20181129105008.10239-1-geert+renesas@glider.be>
-References: <20181129105008.10239-1-geert+renesas@glider.be>
+        Wed, 7 Nov 2018 15:55:10 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 3/3] arm64: dts: renesas: condor: switch from EtherAVB to GEther
+Date: Wed,  7 Nov 2018 12:25:05 +0100
+Message-Id: <eab53fdfd60a84b0cc514d4f1f5d79226c76df01.1541514075.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1541514075.git.horms+renesas@verge.net.au>
+References: <cover.1541514075.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Implement support for the CPEX clock on R-Car H3.  This clock can be
-selected as a clock source for CMT1 (Compare Match Timer Type 1).
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The "official" Condor boards have always been wired to mount NFS via
+GEther, not EtherAVB -- the boards resoldered for EtherAVB were local
+to Cogent Embedded, so we've been having an unpleasant situation where
+a "normal" Condor board still can't mount NFS (unless an EtherAVB PHY
+extension board is plugged in). Switch from EtherAVB to GEther at last!
+
+Fixes: 8091788f3d38 ("arm64: dts: renesas: condor: add EtherAVB support")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/r8a77980-condor.dts | 47 +++++++++++++------------
+ 1 file changed, 24 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index 119c024407263568..86842c9fd314e924 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -104,6 +104,7 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
- 	DEF_FIXED("cl",         R8A7795_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
- 	DEF_FIXED("cr",         R8A7795_CLK_CR,    CLK_PLL1_DIV4,  2, 1),
- 	DEF_FIXED("cp",         R8A7795_CLK_CP,    CLK_EXTAL,      2, 1),
-+	DEF_FIXED("cpex",       R8A7795_CLK_CPEX,  CLK_EXTAL,      2, 1),
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980-condor.dts b/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+index fe2e2c051cc9..5a7012be0d6a 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+@@ -15,7 +15,7 @@
  
- 	DEF_DIV6P1("canfd",     R8A7795_CLK_CANFD, CLK_PLL1_DIV4, 0x244),
- 	DEF_DIV6P1("csi0",      R8A7795_CLK_CSI0,  CLK_PLL1_DIV4, 0x00c),
+ 	aliases {
+ 		serial0 = &scif0;
+-		ethernet0 = &avb;
++		ethernet0 = &gether;
+ 	};
+ 
+ 	chosen {
+@@ -97,23 +97,6 @@
+ 	};
+ };
+ 
+-&avb {
+-	pinctrl-0 = <&avb_pins>;
+-	pinctrl-names = "default";
+-
+-	phy-mode = "rgmii-id";
+-	phy-handle = <&phy0>;
+-	renesas,no-ether-link;
+-	status = "okay";
+-
+-	phy0: ethernet-phy@0 {
+-		rxc-skew-ps = <1500>;
+-		reg = <0>;
+-		interrupt-parent = <&gpio1>;
+-		interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
+-	};
+-};
+-
+ &canfd {
+ 	pinctrl-0 = <&canfd0_pins>;
+ 	pinctrl-names = "default";
+@@ -139,6 +122,23 @@
+ 	clock-frequency = <32768>;
+ };
+ 
++&gether {
++	pinctrl-0 = <&gether_pins>;
++	pinctrl-names = "default";
++
++	phy-mode = "rgmii-id";
++	phy-handle = <&phy0>;
++	renesas,no-ether-link;
++	status = "okay";
++
++	phy0: ethernet-phy@0 {
++		rxc-skew-ps = <1500>;
++		reg = <0>;
++		interrupt-parent = <&gpio4>;
++		interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
++	};
++};
++
+ &i2c0 {
+ 	pinctrl-0 = <&i2c0_pins>;
+ 	pinctrl-names = "default";
+@@ -236,16 +236,17 @@
+ };
+ 
+ &pfc {
+-	avb_pins: avb {
+-		groups = "avb_mdio", "avb_rgmii";
+-		function = "avb";
+-	};
+-
+ 	canfd0_pins: canfd0 {
+ 		groups = "canfd0_data_a";
+ 		function = "canfd0";
+ 	};
+ 
++	gether_pins: gether {
++		groups = "gether_mdio_a", "gether_rgmii",
++			 "gether_txcrefclk", "gether_txcrefclk_mega";
++		function = "gether";
++	};
++
+ 	i2c0_pins: i2c0 {
+ 		groups = "i2c0";
+ 		function = "i2c0";
 -- 
-2.17.1
+2.11.0
