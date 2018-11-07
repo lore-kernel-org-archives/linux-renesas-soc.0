@@ -1,49 +1,39 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:13114 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727722AbeKHDIS (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 7 Nov 2018 22:08:18 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 0/4] i2c: adv748x: add support for CSI-2 TXA to work 
-Date: Fri,  2 Nov 2018 17:00:05 +0100
-Message-Id: <20181102160009.17267-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+        Simon Horman <horms+renesas@verge.net.au>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH 0/3] usb: renesas: rcar-gen3-usb2: Add support for RZ/A2
+Date: Wed,  7 Nov 2018 12:35:55 -0500
+Message-Id: <20181107173558.54481-1-chris.brandt@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Add support for RZ/A2. Basically has the same IP as R-Car Gen3.
 
-This series allows the TXA CSI-2 transmitter of the adv748x to function
-in 1-, 2- and 4- lane mode. Currently the driver fixes the hardware in
-4-lane mode. The driver looks at the standard DT property 'data-lanes'
-to determine which mode it should operate in.
 
-Patch 1/4 lists the 'data-lanes' DT property as mandatory for endpoints
-describing the CSI-2 transmitters. Patch 2/4 refactors the 
-initialization sequence of the adv748x to be able to reuse more code.
-Patch 3/4 adds the DT parsing and storing of the number of lanes. Patch
-4/4 merges the TXA and TXB power up/down procedure while also taking the
-configurable number of lanes into account.
+Chris Brandt (3):
+  clk: renesas: r7s9210: Add USB clocks
+  phy: renesas: rcar-gen3-usb2: Add support for R7S9210
+  dt-bindings: rcar-gen3-phy-usb2: Add r7s9210 support
 
-The series is based on the latest media-tree master and is tested on
-Renesas M3-N in 1-, 2- and 4- lane mode.
-
-Niklas Söderlund (4):
-  dt-bindings: adv748x: make data-lanes property mandatory for CSI-2
-    endpoints
-  i2c: adv748x: reuse power up sequence when initializing CSI-2
-  i2c: adv748x: store number of CSI-2 lanes described in device tree
-  i2c: adv748x: configure number of lanes used for TXA CSI-2 transmitter
-
- .../devicetree/bindings/media/i2c/adv748x.txt |   4 +-
- drivers/media/i2c/adv748x/adv748x-core.c      | 235 ++++++++++--------
- drivers/media/i2c/adv748x/adv748x.h           |   1 +
- 3 files changed, 135 insertions(+), 105 deletions(-)
+ Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 10 ++++++----
+ drivers/clk/renesas/r7s9210-cpg-mssr.c                       |  2 ++
+ drivers/phy/renesas/Kconfig                                  |  2 +-
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c                     | 12 ++++++++++++
+ 4 files changed, 21 insertions(+), 5 deletions(-)
 
 -- 
-2.19.1
+2.16.1
