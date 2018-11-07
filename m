@@ -1,45 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:44563 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbeKIFVc (ORCPT
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41153 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726659AbeKHGRn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Nov 2018 00:21:32 -0500
-MIME-Version: 1.0
-References: <20181028212457.1017-1-wsa+renesas@sang-engineering.com> <20181028212457.1017-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181028212457.1017-2-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 8 Nov 2018 20:44:23 +0100
-Message-ID: <CAMuHMdVzOet6RXn+iU1Ru0EP3nOK6tbVmZLs=kpjxodz1cfZCQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a7790: initialize TDSEL register
+        Thu, 8 Nov 2018 01:17:43 -0500
+Date: Wed, 7 Nov 2018 12:45:35 -0800
+From: Guenter Roeck <linux@roeck-us.net>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc: linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH v2] watchdog: renesas_wdt: don't set divider while
+ watchdog is running
+Message-ID: <20181107204535.GA12273@roeck-us.net>
+References: <20181107194602.7209-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181107194602.7209-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, Oct 28, 2018 at 10:25 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Documentation says that some bits in TDSEL must be set (ch 5.3.39 in R-Car H2
-> v0.91). However, the reset value of the register is 0, so software has to do
-> it. Add this to the kernel driver to ensure this is really done independent of
-> firmware versions.
->
-> This is needed for some SD cards supporting SDR104 transfer mode. For
-> me, TDSEL was not initialized by the firmware and I had problems with
-> the card when re-inserting it.
->
+On Wed, Nov 07, 2018 at 08:46:02PM +0100, Wolfram Sang wrote:
+> The datasheet says we must stop the timer before changing the clock
+> divider. This can happen when the restart handler is called while the
+> watchdog is running.
+> 
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> ---
+> 
+> Change since V1: reworded commit message.
+> 
+> I sent V1 back then when it was more a recommendation of the datasheet to do it
+> like this. But meanwhile the code changed, so we actually need to do it.
+> 
+>  drivers/watchdog/renesas_wdt.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+> index 0d74c3e48979..55c9eb6c6e51 100644
+> --- a/drivers/watchdog/renesas_wdt.c
+> +++ b/drivers/watchdog/renesas_wdt.c
+> @@ -74,12 +74,17 @@ static int rwdt_init_timeout(struct watchdog_device *wdev)
+>  static int rwdt_start(struct watchdog_device *wdev)
+>  {
+>  	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
+> +	u8 val;
+>  
+>  	pm_runtime_get_sync(wdev->parent);
+>  
+> -	rwdt_write(priv, 0, RWTCSRB);
+> -	rwdt_write(priv, priv->cks, RWTCSRA);
+> +	/* Stop the timer before we modify any register */
+> +	val = readb_relaxed(priv->base + RWTCSRA) & ~RWTCSRA_TME;
+> +	rwdt_write(priv, val, RWTCSRA);
+> +
+>  	rwdt_init_timeout(wdev);
+> +	rwdt_write(priv, priv->cks, RWTCSRA);
+> +	rwdt_write(priv, 0, RWTCSRB);
+>  
+>  	while (readb_relaxed(priv->base + RWTCSRA) & RWTCSRA_WRFLG)
+>  		cpu_relax();
+> -- 
+> 2.11.0
+> 
