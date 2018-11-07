@@ -1,13 +1,13 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm1-f50.google.com ([209.85.128.50]:36107 "EHLO
-        mail-wm1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726653AbeKHHTo (ORCPT
+Received: from sauhun.de ([88.99.104.3]:58736 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726453AbeKHEzi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Nov 2018 02:19:44 -0500
-Subject: Re: [PATCH V3] arm64: dts: r8a77990: ebisu: Add and enable SDHI
- device nodes
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Wed, 7 Nov 2018 23:55:38 -0500
+Date: Wed, 7 Nov 2018 20:23:45 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
         devicetree@vger.kernel.org,
         Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
@@ -16,36 +16,53 @@ Cc: =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH V3] arm64: dts: r8a77990: ebisu: Add and enable SDHI
+ device nodes
+Message-ID: <20181107192345.6cq6hzpqzl6j535b@ninjato>
 References: <20181106204647.18051-1-marek.vasut+renesas@gmail.com>
  <20181107085056.GB31092@kunai>
  <7154affe-751a-7cb4-48ea-3d4d6f467ac8@gmail.com>
  <20181107130810.GA18223@kunai>
  <f7d99456-f68f-7880-f22e-8bd47a546e82@gmail.com>
- <20181107192345.6cq6hzpqzl6j535b@ninjato>
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <b94ce89b-af37-4270-a7ad-1447a88f69fb@gmail.com>
-Date: Wed, 7 Nov 2018 21:35:51 +0100
 MIME-Version: 1.0
-In-Reply-To: <20181107192345.6cq6hzpqzl6j535b@ninjato>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pl5mm5sxrcz3eoqt"
+Content-Disposition: inline
+In-Reply-To: <f7d99456-f68f-7880-f22e-8bd47a546e82@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 11/07/2018 08:23 PM, Wolfram Sang wrote:
-> 
->> We discussed this on IRC already, which is why I need to look into that.
->> The HS200 works well on the M3N though.
-> 
-> Can you push the branch you used somewhere? I retested the branch from
-> Dunbar with my M3N and it works fine with my tests.
 
-Sure.
+--pl5mm5sxrcz3eoqt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-btw I think this might even have something to do with ATF 1.0.24 or
-mainline U-Boot, which switches the eMMC card to HS200 mode.
 
--- 
-Best regards,
-Marek Vasut
+> We discussed this on IRC already, which is why I need to look into that.
+> The HS200 works well on the M3N though.
+
+Can you push the branch you used somewhere? I retested the branch from
+Dunbar with my M3N and it works fine with my tests.
+
+
+--pl5mm5sxrcz3eoqt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvjO70ACgkQFA3kzBSg
+Kbb7XQ/+OhNZhaUstxUORWmcbw6coeRKx66ddc013CX7x3GMd5OUo/dJwrzNI5GF
+1J21yLBURVtTymZ4LY0fH23YgPm/FpJNLCuCurcvcKDPBy8gZpLC0es43ACB99ej
+4CStOQOK2DJGDf4S92gbi6xBh6c+IeEQrhgEJnojagnAoI9PYekOnls/NAbjM+lj
++TokHrYHiDEeEGPiyGxoMQ0tX8+HLTaKlHq1IqpN4PaipsvK+JYJKd0i1nA84hGO
+MTvD/IbW9nhsr3Z+52pOROuiIwOZdFdncdIp7nt1JM0GdIuhLe7VzYTrWnQRD4as
+WO3zN1lmtYlHinEnVgD4whb5fCLEln9J3fGzHgTJHecEZH9eJJYznCHQreijAs+t
+L+xdgCMPRImx91VW/cjI7lPgEjGI8svQSRtMEEZGWoe0lqpGEk0+vN78cQAu20Ut
+czWFyAkGMIeqtPlRxnT9b51Cjl6RPl0kLmKsMhpnkB+/624kL7Y6yfeiwE45cRnI
+D7mIDz/afcuYuFdXC15fKpHjSlxnhpVFiSmIr1pkhwu/+/mS8g+7sT2dUPm1/l0e
+Rvj1rGFARNwQUm1bsr6skOx+4dY7zE56fEtwbkRa+VIPLWDVhOj7oYP1azDeJjDs
+l4on8FQje0hX8hR3ZLei3mECl/oO9SpVSdy3aHxgYCsifRIYErg=
+=z10R
+-----END PGP SIGNATURE-----
+
+--pl5mm5sxrcz3eoqt--
