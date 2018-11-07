@@ -1,48 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:53780 "EHLO foss.arm.com"
+Received: from 8bytes.org ([81.169.241.247]:40128 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727546AbeKHBsT (ORCPT
+        id S1727561AbeKHBfH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Nov 2018 20:48:19 -0500
-Subject: Re: [PATCH] iommu/ipmmu-vmsa: Fix crash on early domain free
-To: Joerg Roedel <joro@8bytes.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wed, 7 Nov 2018 20:35:07 -0500
+Date: Wed, 7 Nov 2018 17:04:06 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Robin Murphy <robin.murphy@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        iommu@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iommu/ipmmu-vmsa: Fix crash on early domain free
+Message-ID: <20181107160406.3j54niulfv5qgdx3@8bytes.org>
 References: <20181107131850.11584-1-geert+renesas@glider.be>
- <e4dcd8b2-768e-b11d-b6de-337b7e942050@arm.com>
- <20181107153418.cge2dj5zmztahxrf@8bytes.org>
- <CAMuHMdWPkMtnGrxrtFGmyJ5NEvSSCiMUVXXBWX+NS-J4tQXLAw@mail.gmail.com>
- <20181107160341.pfpukoqhyhapfzpn@8bytes.org>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <f8259910-3e07-497b-9f18-6bcb47430cff@arm.com>
-Date: Wed, 7 Nov 2018 16:17:09 +0000
 MIME-Version: 1.0
-In-Reply-To: <20181107160341.pfpukoqhyhapfzpn@8bytes.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181107131850.11584-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 2018-11-07 4:03 pm, Joerg Roedel wrote:
-> On Wed, Nov 07, 2018 at 04:50:40PM +0100, Geert Uytterhoeven wrote:
->> It only got triggered by the combination of commits 6c2fb2ea76361da9
->> ("of/device: Set bus DMA mask as appropriate") and b4ebe6063204da58
->> ("dma-direct: implement complete bus_dma_mask handling"), which is being
->> fixed by "of/device: Really only set bus DMA mask when
->> appropriate" (https://patchwork.kernel.org/patch/10670177/).
+On Wed, Nov 07, 2018 at 02:18:50PM +0100, Geert Uytterhoeven wrote:
+ 
+> Fix this by checking if the domain's context already exists, before
+> trying to destroy it.
 > 
-> Okay, but the bug is triggered since 6c2fb2ea76361da9, so I took this
-> one for the fixes-tag.
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/iommu/ipmmu-vmsa.c | 3 +++
+>  1 file changed, 3 insertions(+)
 
-FWIW it looks like it *has* always been possible to hit this crash by 
-allocating a domain and freeing it again without attaching any devices, 
-it's just highly improbable for any sane code to do that explicitly, so 
-the real latent triggers are failure paths in external callers (which in 
-this case are themselves only being reached thanks to my bug elsewhere).
-
-Robin.
+Applied, thanks.
