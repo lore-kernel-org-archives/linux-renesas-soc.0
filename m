@@ -1,55 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:9727 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387738AbeKVUBr (ORCPT
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51428 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727564AbeKHBMU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Nov 2018 15:01:47 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Wed, 7 Nov 2018 20:12:20 -0500
+From: Mark Brown <broonie@kernel.org>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Richard Weinberger <richard@nod.at>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-mtd@lists.infradead.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 6/7] ARM: dts: r8a7744: Add Ethernet AVB support
-Date: Thu, 22 Nov 2018 09:14:34 +0000
-Message-Id: <1542878075-61314-7-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1542878075-61314-1-git-send-email-biju.das@bp.renesas.com>
-References: <1542878075-61314-1-git-send-email-biju.das@bp.renesas.com>
+        Biju Das <biju.das@bp.renesas.com>, linux-spi@vger.kernel.org
+Subject: Applied "spi: rspi: Add r8a77470 to the compatible list" to the spi tree
+In-Reply-To: <1541075705-1333-2-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-Id: <20181107154103.C8F421124E14@debutante.sirena.org.uk>
+Date: Wed,  7 Nov 2018 15:41:03 +0000 (GMT)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add Ethernet AVB support for R8A7744 SoC.
+The patch
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+   spi: rspi: Add r8a77470 to the compatible list
+
+has been applied to the spi tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From df80e0478972260bf285c5ed33f99b2424fba2af Mon Sep 17 00:00:00 2001
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Date: Thu, 1 Nov 2018 12:35:02 +0000
+Subject: [PATCH] spi: rspi: Add r8a77470 to the compatible list
+
+Add r8a77470 to the list of examples with soctypes.
+No driver change is needed as "renesas,qspi" will activate
+the right code within the corresponding driver.
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/boot/dts/r8a7744.dtsi | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/spi/spi-rspi.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index 114642a..046ed94 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -376,10 +376,16 @@
- 		};
- 
- 		avb: ethernet@e6800000 {
-+			compatible = "renesas,etheravb-r8a7744",
-+				     "renesas,etheravb-rcar-gen2";
- 			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
-+			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 812>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 812>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			/* placeholder */
-+			status = "disabled";
- 		};
- 
- 		scifb1: serial@e6c30000 {
+diff --git a/Documentation/devicetree/bindings/spi/spi-rspi.txt b/Documentation/devicetree/bindings/spi/spi-rspi.txt
+index fc97ad64fbf2..421722b93992 100644
+--- a/Documentation/devicetree/bindings/spi/spi-rspi.txt
++++ b/Documentation/devicetree/bindings/spi/spi-rspi.txt
+@@ -15,6 +15,7 @@ Required properties:
+ 			- "renesas,qspi-r8a7743" (RZ/G1M)
+ 			- "renesas,qspi-r8a7744" (RZ/G1N)
+ 			- "renesas,qspi-r8a7745" (RZ/G1E)
++			- "renesas,qspi-r8a77470" (RZ/G1C)
+ 			- "renesas,qspi-r8a7790" (R-Car H2)
+ 			- "renesas,qspi-r8a7791" (R-Car M2-W)
+ 			- "renesas,qspi-r8a7792" (R-Car V2H)
 -- 
-2.7.4
+2.19.0.rc2
