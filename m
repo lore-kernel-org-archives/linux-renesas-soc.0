@@ -1,14 +1,14 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:58736 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726453AbeKHEzi (ORCPT
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36555 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726669AbeKGWt0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Nov 2018 23:55:38 -0500
-Date: Wed, 7 Nov 2018 20:23:45 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        devicetree@vger.kernel.org,
+        Wed, 7 Nov 2018 17:49:26 -0500
+Subject: Re: [PATCH V3] arm64: dts: r8a77990: ebisu: Add and enable SDHI
+ device nodes
+To: Wolfram Sang <wsa@the-dreams.de>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: devicetree@vger.kernel.org,
         Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -16,53 +16,38 @@ Cc: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH V3] arm64: dts: r8a77990: ebisu: Add and enable SDHI
- device nodes
-Message-ID: <20181107192345.6cq6hzpqzl6j535b@ninjato>
 References: <20181106204647.18051-1-marek.vasut+renesas@gmail.com>
  <20181107085056.GB31092@kunai>
  <7154affe-751a-7cb4-48ea-3d4d6f467ac8@gmail.com>
  <20181107130810.GA18223@kunai>
- <f7d99456-f68f-7880-f22e-8bd47a546e82@gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <f7d99456-f68f-7880-f22e-8bd47a546e82@gmail.com>
+Date: Wed, 7 Nov 2018 14:19:01 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pl5mm5sxrcz3eoqt"
-Content-Disposition: inline
-In-Reply-To: <f7d99456-f68f-7880-f22e-8bd47a546e82@gmail.com>
+In-Reply-To: <20181107130810.GA18223@kunai>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On 11/07/2018 02:08 PM, Wolfram Sang wrote:
+> 
+>> Nope. I tried that patchset on M3N again yesterday and got error -84
+>> while initing the eMMC, so I need to look into that first. Then I'll
+>> try it on E3.
+> 
+> Hmmm, we tried M3N at the hackfest and it worked great there.
+> 
+> First idea: are you sure you have all depending patch series applied as
+> well?
+> 
+> @Niklas: Have you/can you push a publich branch out with everything
+> included.
 
---pl5mm5sxrcz3eoqt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+We discussed this on IRC already, which is why I need to look into that.
+The HS200 works well on the M3N though.
 
-
-> We discussed this on IRC already, which is why I need to look into that.
-> The HS200 works well on the M3N though.
-
-Can you push the branch you used somewhere? I retested the branch from
-Dunbar with my M3N and it works fine with my tests.
-
-
---pl5mm5sxrcz3eoqt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvjO70ACgkQFA3kzBSg
-Kbb7XQ/+OhNZhaUstxUORWmcbw6coeRKx66ddc013CX7x3GMd5OUo/dJwrzNI5GF
-1J21yLBURVtTymZ4LY0fH23YgPm/FpJNLCuCurcvcKDPBy8gZpLC0es43ACB99ej
-4CStOQOK2DJGDf4S92gbi6xBh6c+IeEQrhgEJnojagnAoI9PYekOnls/NAbjM+lj
-+TokHrYHiDEeEGPiyGxoMQ0tX8+HLTaKlHq1IqpN4PaipsvK+JYJKd0i1nA84hGO
-MTvD/IbW9nhsr3Z+52pOROuiIwOZdFdncdIp7nt1JM0GdIuhLe7VzYTrWnQRD4as
-WO3zN1lmtYlHinEnVgD4whb5fCLEln9J3fGzHgTJHecEZH9eJJYznCHQreijAs+t
-L+xdgCMPRImx91VW/cjI7lPgEjGI8svQSRtMEEZGWoe0lqpGEk0+vN78cQAu20Ut
-czWFyAkGMIeqtPlRxnT9b51Cjl6RPl0kLmKsMhpnkB+/624kL7Y6yfeiwE45cRnI
-D7mIDz/afcuYuFdXC15fKpHjSlxnhpVFiSmIr1pkhwu/+/mS8g+7sT2dUPm1/l0e
-Rvj1rGFARNwQUm1bsr6skOx+4dY7zE56fEtwbkRa+VIPLWDVhOj7oYP1azDeJjDs
-l4on8FQje0hX8hR3ZLei3mECl/oO9SpVSdy3aHxgYCsifRIYErg=
-=z10R
------END PGP SIGNATURE-----
-
---pl5mm5sxrcz3eoqt--
+-- 
+Best regards,
+Marek Vasut
