@@ -1,80 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ty1jpn01on0136.outbound.protection.outlook.com ([104.47.93.136]:20284
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726777AbeKGUjS (ORCPT
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:42890 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726097AbeKGTBk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Nov 2018 15:39:18 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wed, 7 Nov 2018 14:01:40 -0500
+MIME-Version: 1.0
+References: <201811071730.l9oHq1qJ%fengguang.wu@intel.com> <CAMuHMdVO1kAVnsGFD6mc2Z-0RqT=w=mP4Et0iBRzhbBrF7CF3A@mail.gmail.com>
+In-Reply-To: <CAMuHMdVO1kAVnsGFD6mc2Z-0RqT=w=mP4Et0iBRzhbBrF7CF3A@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 7 Nov 2018 10:31:56 +0100
+Message-ID: <CAMuHMdWf1Lv_pd4EmL7ORwZ9oNZDuSV_kc8CZ+QMjAfDGA7TBg@mail.gmail.com>
+Subject: Re: [renesas-drivers:topic/pinctrl-rza2-v2 1/2] drivers//pinctrl/pinctrl-rza2.c:25:43:
+ error: 'RZA2_NPORTS' undeclared here (not in a function); did you mean 'RZA2_NPINS'?
+To: kbuild test robot <lkp@intel.com>
+Cc: Chris Brandt <chris.brandt@renesas.com>, kbuild-all@01.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linux MIPS Mailing List <linux-mips@linux-mips.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Subject: RE: [renesas-drivers:topic/pinctrl-rza2-v2 1/2]
- drivers//pinctrl/pinctrl-rza2.c:25:43: error: 'RZA2_NPORTS' undeclared here
- (not in a function); did you mean 'RZA2_NPINS'?
-Date: Wed, 7 Nov 2018 11:09:18 +0000
-Message-ID: <TY1PR01MB1562C57F509DF2B8876339EA8AC40@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <201811071730.l9oHq1qJ%fengguang.wu@intel.com>
- <CAMuHMdVO1kAVnsGFD6mc2Z-0RqT=w=mP4Et0iBRzhbBrF7CF3A@mail.gmail.com>
- <CAMuHMdWf1Lv_pd4EmL7ORwZ9oNZDuSV_kc8CZ+QMjAfDGA7TBg@mail.gmail.com>
-In-Reply-To: <CAMuHMdWf1Lv_pd4EmL7ORwZ9oNZDuSV_kc8CZ+QMjAfDGA7TBg@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCj4gPiBHcmVhdCwgc28gTUlQUyBkZWZpbmVzIFBDLCBwcmVjbHVkaW5nIGl0
-IHVzZSBpbiBhbnkgZHJpdmVyIHRoYXQgaW5jbHVkZXMNCj4gPiA8YXNtL3B0cmFjZS5oPiBpbiBz
-b21lIHdheS4NCg0KVGhhdCByZWFsbHkgc3RpbmtzISEhDQoNCg0KPiBBbnl3YXksIGRyaXZlcnMv
-L3BpbmN0cmwvcGluY3RybC1yemEyLmMgZG9lc24ndCByZWFsbHkgdXNlIHRoZSBlbnVtDQo+IHZh
-bHVlcyBpdCBkZWZpbmVzLA0KPiBzbyB0aGV5IGNhbiBiZSByZW5hbWVkIChQQyAtPiBQT1JUQywg
-b3IgUE9SVF9DKS4NCg0KT2YgY291cnNlIHRoYXQgbWVhbnMgSSBoYXZlIHRvIGdvIGJhY2sgYW5k
-IGNoYW5nZSBldmVyeXRoaW5nIHRvIFBPUlR4Lg0KDQo6KA0KDQpEYW1uIHlvdSBNSVBTISEhISEN
-Cg0KQ2hyaXMNCg0KDQpPbiBXZWRuZXNkYXksIE5vdmVtYmVyIDA3LCAyMDE4LCBHZWVydCBVeXR0
-ZXJob2V2ZW4gd3JvdGU6DQo+IE9uIFdlZCwgTm92IDcsIDIwMTggYXQgMTA6MjIgQU0gR2VlcnQg
-VXl0dGVyaG9ldmVuIDxnZWVydEBsaW51eC1tNjhrLm9yZz4NCj4gd3JvdGU6DQo+ID4gT24gV2Vk
-LCBOb3YgNywgMjAxOCBhdCAxMDoxMiBBTSBrYnVpbGQgdGVzdCByb2JvdCA8bGtwQGludGVsLmNv
-bT4gd3JvdGU6DQo+ID4gPiB0cmVlOiAgIGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9s
-aW51eC9rZXJuZWwvZ2l0L2dlZXJ0L3JlbmVzYXMtDQo+IGRyaXZlcnMuZ2l0IHRvcGljL3BpbmN0
-cmwtcnphMi12Mg0KPiA+ID4gaGVhZDogICBiYjBmNDg4ZmIyOTA3ZjQ3MjUwZjdmMzRhZjYwYTQ4
-MmZkM2RiZmU0DQo+ID4gPiBjb21taXQ6IGZlYWM5ZThjYjFhZDdiNDk3OWU0YjU1M2ZjZGYyZDg1
-ODIwNDkyMjcgWzEvMl0gcGluY3RybDogQWRkDQo+IFJaL0EyIHBpbiBhbmQgZ3BpbyBjb250cm9s
-bGVyDQo+ID4gPiBjb25maWc6IG1pcHMtYWxsbW9kY29uZmlnIChhdHRhY2hlZCBhcyAuY29uZmln
-KQ0KPiA+ID4gY29tcGlsZXI6IG1pcHMtbGludXgtZ251LWdjYyAoRGViaWFuIDcuMi4wLTExKSA3
-LjIuMA0KPiA+ID4gcmVwcm9kdWNlOg0KPiA+ID4gICAgICAgICB3Z2V0IGh0dHBzOi8vcmF3Lmdp
-dGh1YnVzZXJjb250ZW50LmNvbS9pbnRlbC9sa3AtDQo+IHRlc3RzL21hc3Rlci9zYmluL21ha2Uu
-Y3Jvc3MgLU8gfi9iaW4vbWFrZS5jcm9zcw0KPiA+ID4gICAgICAgICBjaG1vZCAreCB+L2Jpbi9t
-YWtlLmNyb3NzDQo+ID4gPiAgICAgICAgIGdpdCBjaGVja291dCBmZWFjOWU4Y2IxYWQ3YjQ5Nzll
-NGI1NTNmY2RmMmQ4NTgyMDQ5MjI3DQo+ID4gPiAgICAgICAgICMgc2F2ZSB0aGUgYXR0YWNoZWQg
-LmNvbmZpZyB0byBsaW51eCBidWlsZCB0cmVlDQo+ID4gPiAgICAgICAgIEdDQ19WRVJTSU9OPTcu
-Mi4wIG1ha2UuY3Jvc3MgQVJDSD1taXBzDQo+ID4gPg0KPiA+ID4gQWxsIGVycm9yL3dhcm5pbmdz
-IChuZXcgb25lcyBwcmVmaXhlZCBieSA+Pik6DQo+ID4gPg0KPiA+ID4gICAgSW4gZmlsZSBpbmNs
-dWRlZCBmcm9tIGFyY2gvbWlwcy9pbmNsdWRlL2FzbS9wdHJhY2UuaDoxOTowLA0KPiA+ID4gICAg
-ICAgICAgICAgICAgICAgICBmcm9tIGluY2x1ZGUvbGludXgvaXJxLmg6MjQsDQo+ID4gPiAgICAg
-ICAgICAgICAgICAgICAgIGZyb20gaW5jbHVkZS9saW51eC9ncGlvL2RyaXZlci5oOjcsDQo+ID4g
-PiAgICAgICAgICAgICAgICAgICAgIGZyb20gaW5jbHVkZS9hc20tZ2VuZXJpYy9ncGlvLmg6MTMs
-DQo+ID4gPiAgICAgICAgICAgICAgICAgICAgIGZyb20gaW5jbHVkZS9saW51eC9ncGlvLmg6NjIs
-DQo+ID4gPiAgICAgICAgICAgICAgICAgICAgIGZyb20gZHJpdmVycy8vcGluY3RybC9waW5jdHJs
-LXJ6YTIuYzoxNDoNCj4gPiA+ID4+IGFyY2gvbWlwcy9pbmNsdWRlL3VhcGkvYXNtL3B0cmFjZS5o
-OjE3OjEzOiBlcnJvcjogZXhwZWN0ZWQNCj4gaWRlbnRpZmllciBiZWZvcmUgbnVtZXJpYyBjb25z
-dGFudA0KPiA+ID4gICAgICNkZWZpbmUgUEMgIDY0DQo+ID4gPiAgICAgICAgICAgICAgICAgXg0K
-PiA+DQo+ID4gR3JlYXQsIHNvIE1JUFMgZGVmaW5lcyBQQywgcHJlY2x1ZGluZyBpdCB1c2UgaW4g
-YW55IGRyaXZlciB0aGF0IGluY2x1ZGVzDQo+ID4gPGFzbS9wdHJhY2UuaD4gaW4gc29tZSB3YXku
-DQo+ID4NCj4gPiBIb3dldmVyLCBpdCBsb29rcyBsaWtlIDxsaW51eC9ncGlvL2RyaXZlci5oPiBk
-b2Vzbid0IHJlYWxseSBuZWVkDQo+IDxsaW51eC9pcnEuaD4uDQo+ID4gV2lsbCBzZW5kIGEgcGF0
-Y2ggdG8gdHJ5IHRoYXQuLi4NCj4gDQo+IERvZXNuJ3Qgd29yaywgYXMgaXQgYWxzbyBpbmNsdWRl
-cyA8aXJxY2hpcC9jaGFpbmVkX2lycS5oPiwgd2hpY2ggaXMgbmVlZGVkLg0KPiANCj4gQW55d2F5
-LCBkcml2ZXJzLy9waW5jdHJsL3BpbmN0cmwtcnphMi5jIGRvZXNuJ3QgcmVhbGx5IHVzZSB0aGUg
-ZW51bQ0KPiB2YWx1ZXMgaXQgZGVmaW5lcywNCj4gc28gdGhleSBjYW4gYmUgcmVuYW1lZCAoUEMg
-LT4gUE9SVEMsIG9yIFBPUlRfQykuDQo+IA0KPiBHcntvZXRqZSxlZXRpbmd9cywNCj4gDQo+ICAg
-ICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+IA0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2
-ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LQ0K
-PiBtNjhrLm9yZw0KPiANCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNh
-bCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuDQo+IEJ1dA0KPiB3aGVuIEknbSB0YWxr
-aW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBs
-aWtlDQo+IHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGludXMg
-VG9ydmFsZHMNCg==
+On Wed, Nov 7, 2018 at 10:22 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Wed, Nov 7, 2018 at 10:12 AM kbuild test robot <lkp@intel.com> wrote:
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git topic/pinctrl-rza2-v2
+> > head:   bb0f488fb2907f47250f7f34af60a482fd3dbfe4
+> > commit: feac9e8cb1ad7b4979e4b553fcdf2d8582049227 [1/2] pinctrl: Add RZ/A2 pin and gpio controller
+> > config: mips-allmodconfig (attached as .config)
+> > compiler: mips-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+> > reproduce:
+> >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+> >         chmod +x ~/bin/make.cross
+> >         git checkout feac9e8cb1ad7b4979e4b553fcdf2d8582049227
+> >         # save the attached .config to linux build tree
+> >         GCC_VERSION=7.2.0 make.cross ARCH=mips
+> >
+> > All error/warnings (new ones prefixed by >>):
+> >
+> >    In file included from arch/mips/include/asm/ptrace.h:19:0,
+> >                     from include/linux/irq.h:24,
+> >                     from include/linux/gpio/driver.h:7,
+> >                     from include/asm-generic/gpio.h:13,
+> >                     from include/linux/gpio.h:62,
+> >                     from drivers//pinctrl/pinctrl-rza2.c:14:
+> > >> arch/mips/include/uapi/asm/ptrace.h:17:13: error: expected identifier before numeric constant
+> >     #define PC  64
+> >                 ^
+>
+> Great, so MIPS defines PC, precluding it use in any driver that includes
+> <asm/ptrace.h> in some way.
+>
+> However, it looks like <linux/gpio/driver.h> doesn't really need <linux/irq.h>.
+> Will send a patch to try that...
+
+Doesn't work, as it also includes <irqchip/chained_irq.h>, which is needed.
+
+Anyway, drivers//pinctrl/pinctrl-rza2.c doesn't really use the enum
+values it defines,
+so they can be renamed (PC -> PORTC, or PORT_C).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
