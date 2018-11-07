@@ -1,41 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from 8bytes.org ([81.169.241.247]:40110 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727561AbeKHBem (ORCPT
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:33790 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727604AbeKHBVs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Nov 2018 20:34:42 -0500
-Date: Wed, 7 Nov 2018 17:03:41 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+        Wed, 7 Nov 2018 20:21:48 -0500
+MIME-Version: 1.0
+References: <20181107131850.11584-1-geert+renesas@glider.be>
+ <e4dcd8b2-768e-b11d-b6de-337b7e942050@arm.com> <20181107153418.cge2dj5zmztahxrf@8bytes.org>
+In-Reply-To: <20181107153418.cge2dj5zmztahxrf@8bytes.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 7 Nov 2018 16:50:40 +0100
+Message-ID: <CAMuHMdWPkMtnGrxrtFGmyJ5NEvSSCiMUVXXBWX+NS-J4tQXLAw@mail.gmail.com>
+Subject: Re: [PATCH] iommu/ipmmu-vmsa: Fix crash on early domain free
+To: Joerg Roedel <joro@8bytes.org>
 Cc: Robin Murphy <robin.murphy@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
         Linux IOMMU <iommu@lists.linux-foundation.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] iommu/ipmmu-vmsa: Fix crash on early domain free
-Message-ID: <20181107160341.pfpukoqhyhapfzpn@8bytes.org>
-References: <20181107131850.11584-1-geert+renesas@glider.be>
- <e4dcd8b2-768e-b11d-b6de-337b7e942050@arm.com>
- <20181107153418.cge2dj5zmztahxrf@8bytes.org>
- <CAMuHMdWPkMtnGrxrtFGmyJ5NEvSSCiMUVXXBWX+NS-J4tQXLAw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWPkMtnGrxrtFGmyJ5NEvSSCiMUVXXBWX+NS-J4tQXLAw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Nov 07, 2018 at 04:50:40PM +0100, Geert Uytterhoeven wrote:
-> It only got triggered by the combination of commits 6c2fb2ea76361da9
-> ("of/device: Set bus DMA mask as appropriate") and b4ebe6063204da58
-> ("dma-direct: implement complete bus_dma_mask handling"), which is being
-> fixed by "of/device: Really only set bus DMA mask when
-> appropriate" (https://patchwork.kernel.org/patch/10670177/).
+Hi Jörg,
 
-Okay, but the bug is triggered since 6c2fb2ea76361da9, so I took this
-one for the fixes-tag.
+On Wed, Nov 7, 2018 at 4:34 PM Joerg Roedel <joro@8bytes.org> wrote:
+> On Wed, Nov 07, 2018 at 01:22:52PM +0000, Robin Murphy wrote:
+> > On 2018-11-07 1:18 pm, Geert Uytterhoeven wrote:
+> > > Fix this by checking if the domain's context already exists, before
+> > > trying to destroy it.
+> >
+> > Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+>
+> Does this need a Fixes-tag? If so, which patch should be in that tag?
 
-Thanks,
+I think this bug has been present since the initial version of the driver, but
+this failure mode has probably never been tested before.
 
-	Joerg
+It only got triggered by the combination of commits 6c2fb2ea76361da9
+("of/device: Set bus DMA mask as appropriate") and b4ebe6063204da58
+("dma-direct: implement complete bus_dma_mask handling"), which is being
+fixed by "of/device: Really only set bus DMA mask when
+appropriate" (https://patchwork.kernel.org/patch/10670177/).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
