@@ -1,82 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:10300 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726266AbeK0D7E (ORCPT
+Received: from mail-ty1jpn01on0136.outbound.protection.outlook.com ([104.47.93.136]:20284
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726777AbeKGUjS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Nov 2018 22:59:04 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v4 3/3] mmc: renesas_sdhi: add initial setting of interrupt mask register
-Date: Mon, 26 Nov 2018 18:02:47 +0100
-Message-Id: <20181126170247.4076-4-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20181126170247.4076-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20181126170247.4076-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 7 Nov 2018 15:39:18 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Subject: RE: [renesas-drivers:topic/pinctrl-rza2-v2 1/2]
+ drivers//pinctrl/pinctrl-rza2.c:25:43: error: 'RZA2_NPORTS' undeclared here
+ (not in a function); did you mean 'RZA2_NPINS'?
+Date: Wed, 7 Nov 2018 11:09:18 +0000
+Message-ID: <TY1PR01MB1562C57F509DF2B8876339EA8AC40@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+References: <201811071730.l9oHq1qJ%fengguang.wu@intel.com>
+ <CAMuHMdVO1kAVnsGFD6mc2Z-0RqT=w=mP4Et0iBRzhbBrF7CF3A@mail.gmail.com>
+ <CAMuHMdWf1Lv_pd4EmL7ORwZ9oNZDuSV_kc8CZ+QMjAfDGA7TBg@mail.gmail.com>
+In-Reply-To: <CAMuHMdWf1Lv_pd4EmL7ORwZ9oNZDuSV_kc8CZ+QMjAfDGA7TBg@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The initial value of the interrupt mask register may be different from
-the H/W manual at the startup of the kernel by setting from the
-bootloader. Since the error interrupts may be unmasked, the driver sets
-initial value.
-
-The initial value is only known for R-Car Gen2 and Gen3 platforms so
-limit the initialization to those platforms.
-
-Based on work from Masaharu Hayakawa.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
----
-
-* Changes since v1
-- Limit the initialization to Gen2+ platforms by checking the
-  TMIO_MMC_MIN_RCAR2 flag.
-- Rename the constant for the initialization value to reflect it's only
-  for R-Car Gen2+ platforms.
-- Move setting of the initial mask to renesas_sdhi.
----
- drivers/mmc/host/renesas_sdhi_core.c | 4 ++++
- drivers/mmc/host/tmio_mmc.h          | 1 +
- 2 files changed, 5 insertions(+)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 78bd117bbe65de46..26da095f8ad5a56c 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -523,6 +523,10 @@ static void renesas_sdhi_hw_reset(struct tmio_mmc_host *host)
- 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL,
- 		       ~SH_MOBILE_SDHI_SCC_RVSCNTL_RVSEN &
- 		       sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL));
-+
-+	if (host->pdata->flags & TMIO_MMC_MIN_RCAR2)
-+		sd_ctrl_write32_as_16_and_16(host, CTL_IRQ_MASK,
-+					     TMIO_MASK_INIT_RCAR2);
- }
- 
- static int renesas_sdhi_wait_idle(struct tmio_mmc_host *host, u32 bit)
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index 1e317027bf534612..5f6dfb86e43e8208 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -96,6 +96,7 @@
- 
- /* Define some IRQ masks */
- /* This is the mask used at reset by the chip */
-+#define TMIO_MASK_INIT_RCAR2	0x8b7f031d /* Initial value for R-Car Gen2+ */
- #define TMIO_MASK_ALL           0x837f031d
- #define TMIO_MASK_READOP  (TMIO_STAT_RXRDY | TMIO_STAT_DATAEND)
- #define TMIO_MASK_WRITEOP (TMIO_STAT_TXRQ | TMIO_STAT_DATAEND)
--- 
-2.19.1
+SGkgR2VlcnQsDQoNCj4gPiBHcmVhdCwgc28gTUlQUyBkZWZpbmVzIFBDLCBwcmVjbHVkaW5nIGl0
+IHVzZSBpbiBhbnkgZHJpdmVyIHRoYXQgaW5jbHVkZXMNCj4gPiA8YXNtL3B0cmFjZS5oPiBpbiBz
+b21lIHdheS4NCg0KVGhhdCByZWFsbHkgc3RpbmtzISEhDQoNCg0KPiBBbnl3YXksIGRyaXZlcnMv
+L3BpbmN0cmwvcGluY3RybC1yemEyLmMgZG9lc24ndCByZWFsbHkgdXNlIHRoZSBlbnVtDQo+IHZh
+bHVlcyBpdCBkZWZpbmVzLA0KPiBzbyB0aGV5IGNhbiBiZSByZW5hbWVkIChQQyAtPiBQT1JUQywg
+b3IgUE9SVF9DKS4NCg0KT2YgY291cnNlIHRoYXQgbWVhbnMgSSBoYXZlIHRvIGdvIGJhY2sgYW5k
+IGNoYW5nZSBldmVyeXRoaW5nIHRvIFBPUlR4Lg0KDQo6KA0KDQpEYW1uIHlvdSBNSVBTISEhISEN
+Cg0KQ2hyaXMNCg0KDQpPbiBXZWRuZXNkYXksIE5vdmVtYmVyIDA3LCAyMDE4LCBHZWVydCBVeXR0
+ZXJob2V2ZW4gd3JvdGU6DQo+IE9uIFdlZCwgTm92IDcsIDIwMTggYXQgMTA6MjIgQU0gR2VlcnQg
+VXl0dGVyaG9ldmVuIDxnZWVydEBsaW51eC1tNjhrLm9yZz4NCj4gd3JvdGU6DQo+ID4gT24gV2Vk
+LCBOb3YgNywgMjAxOCBhdCAxMDoxMiBBTSBrYnVpbGQgdGVzdCByb2JvdCA8bGtwQGludGVsLmNv
+bT4gd3JvdGU6DQo+ID4gPiB0cmVlOiAgIGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9s
+aW51eC9rZXJuZWwvZ2l0L2dlZXJ0L3JlbmVzYXMtDQo+IGRyaXZlcnMuZ2l0IHRvcGljL3BpbmN0
+cmwtcnphMi12Mg0KPiA+ID4gaGVhZDogICBiYjBmNDg4ZmIyOTA3ZjQ3MjUwZjdmMzRhZjYwYTQ4
+MmZkM2RiZmU0DQo+ID4gPiBjb21taXQ6IGZlYWM5ZThjYjFhZDdiNDk3OWU0YjU1M2ZjZGYyZDg1
+ODIwNDkyMjcgWzEvMl0gcGluY3RybDogQWRkDQo+IFJaL0EyIHBpbiBhbmQgZ3BpbyBjb250cm9s
+bGVyDQo+ID4gPiBjb25maWc6IG1pcHMtYWxsbW9kY29uZmlnIChhdHRhY2hlZCBhcyAuY29uZmln
+KQ0KPiA+ID4gY29tcGlsZXI6IG1pcHMtbGludXgtZ251LWdjYyAoRGViaWFuIDcuMi4wLTExKSA3
+LjIuMA0KPiA+ID4gcmVwcm9kdWNlOg0KPiA+ID4gICAgICAgICB3Z2V0IGh0dHBzOi8vcmF3Lmdp
+dGh1YnVzZXJjb250ZW50LmNvbS9pbnRlbC9sa3AtDQo+IHRlc3RzL21hc3Rlci9zYmluL21ha2Uu
+Y3Jvc3MgLU8gfi9iaW4vbWFrZS5jcm9zcw0KPiA+ID4gICAgICAgICBjaG1vZCAreCB+L2Jpbi9t
+YWtlLmNyb3NzDQo+ID4gPiAgICAgICAgIGdpdCBjaGVja291dCBmZWFjOWU4Y2IxYWQ3YjQ5Nzll
+NGI1NTNmY2RmMmQ4NTgyMDQ5MjI3DQo+ID4gPiAgICAgICAgICMgc2F2ZSB0aGUgYXR0YWNoZWQg
+LmNvbmZpZyB0byBsaW51eCBidWlsZCB0cmVlDQo+ID4gPiAgICAgICAgIEdDQ19WRVJTSU9OPTcu
+Mi4wIG1ha2UuY3Jvc3MgQVJDSD1taXBzDQo+ID4gPg0KPiA+ID4gQWxsIGVycm9yL3dhcm5pbmdz
+IChuZXcgb25lcyBwcmVmaXhlZCBieSA+Pik6DQo+ID4gPg0KPiA+ID4gICAgSW4gZmlsZSBpbmNs
+dWRlZCBmcm9tIGFyY2gvbWlwcy9pbmNsdWRlL2FzbS9wdHJhY2UuaDoxOTowLA0KPiA+ID4gICAg
+ICAgICAgICAgICAgICAgICBmcm9tIGluY2x1ZGUvbGludXgvaXJxLmg6MjQsDQo+ID4gPiAgICAg
+ICAgICAgICAgICAgICAgIGZyb20gaW5jbHVkZS9saW51eC9ncGlvL2RyaXZlci5oOjcsDQo+ID4g
+PiAgICAgICAgICAgICAgICAgICAgIGZyb20gaW5jbHVkZS9hc20tZ2VuZXJpYy9ncGlvLmg6MTMs
+DQo+ID4gPiAgICAgICAgICAgICAgICAgICAgIGZyb20gaW5jbHVkZS9saW51eC9ncGlvLmg6NjIs
+DQo+ID4gPiAgICAgICAgICAgICAgICAgICAgIGZyb20gZHJpdmVycy8vcGluY3RybC9waW5jdHJs
+LXJ6YTIuYzoxNDoNCj4gPiA+ID4+IGFyY2gvbWlwcy9pbmNsdWRlL3VhcGkvYXNtL3B0cmFjZS5o
+OjE3OjEzOiBlcnJvcjogZXhwZWN0ZWQNCj4gaWRlbnRpZmllciBiZWZvcmUgbnVtZXJpYyBjb25z
+dGFudA0KPiA+ID4gICAgICNkZWZpbmUgUEMgIDY0DQo+ID4gPiAgICAgICAgICAgICAgICAgXg0K
+PiA+DQo+ID4gR3JlYXQsIHNvIE1JUFMgZGVmaW5lcyBQQywgcHJlY2x1ZGluZyBpdCB1c2UgaW4g
+YW55IGRyaXZlciB0aGF0IGluY2x1ZGVzDQo+ID4gPGFzbS9wdHJhY2UuaD4gaW4gc29tZSB3YXku
+DQo+ID4NCj4gPiBIb3dldmVyLCBpdCBsb29rcyBsaWtlIDxsaW51eC9ncGlvL2RyaXZlci5oPiBk
+b2Vzbid0IHJlYWxseSBuZWVkDQo+IDxsaW51eC9pcnEuaD4uDQo+ID4gV2lsbCBzZW5kIGEgcGF0
+Y2ggdG8gdHJ5IHRoYXQuLi4NCj4gDQo+IERvZXNuJ3Qgd29yaywgYXMgaXQgYWxzbyBpbmNsdWRl
+cyA8aXJxY2hpcC9jaGFpbmVkX2lycS5oPiwgd2hpY2ggaXMgbmVlZGVkLg0KPiANCj4gQW55d2F5
+LCBkcml2ZXJzLy9waW5jdHJsL3BpbmN0cmwtcnphMi5jIGRvZXNuJ3QgcmVhbGx5IHVzZSB0aGUg
+ZW51bQ0KPiB2YWx1ZXMgaXQgZGVmaW5lcywNCj4gc28gdGhleSBjYW4gYmUgcmVuYW1lZCAoUEMg
+LT4gUE9SVEMsIG9yIFBPUlRfQykuDQo+IA0KPiBHcntvZXRqZSxlZXRpbmd9cywNCj4gDQo+ICAg
+ICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+IA0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2
+ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LQ0K
+PiBtNjhrLm9yZw0KPiANCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNh
+bCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuDQo+IEJ1dA0KPiB3aGVuIEknbSB0YWxr
+aW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBs
+aWtlDQo+IHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGludXMg
+VG9ydmFsZHMNCg==
