@@ -1,77 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-os2jpn01on0090.outbound.protection.outlook.com ([104.47.92.90]:5088
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726541AbeKHW2x (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45078 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726363AbeKHWBJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Nov 2018 17:28:53 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Biju Das <biju.das@bp.renesas.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: Biju Das <biju.das@bp.renesas.com>,
-        =?iso-8859-1?Q?Niklas_S=F6derlund?= <niklas.soderlund@ragnatech.se>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
+        Thu, 8 Nov 2018 17:01:09 -0500
+Date: Thu, 8 Nov 2018 13:25:49 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: RE: [PATCH 4/5] media: rcar-vin: Enable support for r8a774a1
-Date: Thu, 8 Nov 2018 12:53:27 +0000
-Message-ID: <TY1PR01MB1770B05BF0650AF58E35659AC0C50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1536589878-26218-1-git-send-email-biju.das@bp.renesas.com>
- <1536589878-26218-5-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1536589878-26218-5-git-send-email-biju.das@bp.renesas.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] serial: sh-sci: Document r8a774a1 bindings
+Message-ID: <20181108122549.hh3k6cekvguyffx5@verge.net.au>
+References: <1534250042-15815-1-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1534250042-15815-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dear All,
+On Tue, Aug 14, 2018 at 01:34:02PM +0100, Fabrizio Castro wrote:
+> RZ/G2M (R8A774A1) SoC also has the R-Car Gen3 compatible SCIF and
+> HSCIF ports, so document the SoC specific bindings. While at it,
+> update the RZ/G1 and RZ/G2 family specific strings description as
+> outdated.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 
-Who is the best person to take this patch?
-
-Cheers,
-Fab
-
-> From: Biju Das <biju.das@bp.renesas.com>
-> Sent: 10 September 2018 15:31
-> Subject: [PATCH 4/5] media: rcar-vin: Enable support for r8a774a1
->
-> Add the SoC specific information for RZ/G2M(r8a774a1) SoC.
-> The VIN module of RZ/G2M is similar to R-Car M3-W.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> ---
->  drivers/media/platform/rcar-vin/rcar-core.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/=
-platform/rcar-vin/rcar-core.c
-> index d3072e1..c0c84d1 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-core.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
-> @@ -995,6 +995,10 @@ static const struct rvin_info rcar_info_r8a77970 =3D=
- {
->
->  static const struct of_device_id rvin_of_id_table[] =3D {
->  {
-> +.compatible =3D "renesas,vin-r8a774a1",
-> +.data =3D &rcar_info_r8a7796,
-> +},
-> +{
->  .compatible =3D "renesas,vin-r8a7778",
->  .data =3D &rcar_info_m1,
->  },
-> --
-> 2.7.4
-
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
