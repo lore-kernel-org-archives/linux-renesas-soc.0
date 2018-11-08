@@ -1,38 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45569 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726375AbeKHWmT (ORCPT
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:38068 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726359AbeKHVfd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Nov 2018 17:42:19 -0500
-Date: Thu, 8 Nov 2018 14:06:48 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Marek Vasut <marek.vasut@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        Thu, 8 Nov 2018 16:35:33 -0500
+MIME-Version: 1.0
+References: <20181106204647.18051-1-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20181106204647.18051-1-marek.vasut+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 8 Nov 2018 13:00:11 +0100
+Message-ID: <CAMuHMdVB0G3R5bbZchJE01dJkOtESE+NDEakqYuRu_Fkh+F9Sw@mail.gmail.com>
+Subject: Re: [PATCH V3] arm64: dts: r8a77990: ebisu: Add and enable SDHI
+ device nodes
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
         <devicetree@vger.kernel.org>,
         Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa@the-dreams.de>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH V3] arm64: dts: r8a77990: ebisu: Add and enable SDHI
- device nodes
-Message-ID: <20181108130643.2ztauann7jfnfro5@verge.net.au>
-References: <20181106204647.18051-1-marek.vasut+renesas@gmail.com>
- <CAMuHMdVB0G3R5bbZchJE01dJkOtESE+NDEakqYuRu_Fkh+F9Sw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVB0G3R5bbZchJE01dJkOtESE+NDEakqYuRu_Fkh+F9Sw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Nov 08, 2018 at 01:00:11PM +0100, Geert Uytterhoeven wrote:
-> On Tue, Nov 6, 2018 at 9:46 PM Marek Vasut <marek.vasut@gmail.com> wrote:
-> > Subject: [PATCH V3] arm64: dts: r8a77990: ebisu: Add and enable SDHI device nodes
-> 
-> arm64: dts: renesas: r8a77990: ebisu: Add and enable SDHI device nodes
+On Tue, Nov 6, 2018 at 9:46 PM Marek Vasut <marek.vasut@gmail.com> wrote:
+> Subject: [PATCH V3] arm64: dts: r8a77990: ebisu: Add and enable SDHI device nodes
 
-Thanks, fixed.
+arm64: dts: renesas: r8a77990: ebisu: Add and enable SDHI device nodes
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
