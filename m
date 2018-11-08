@@ -1,15 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:37865 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726571AbeKHWGw (ORCPT
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:38355 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726359AbeKHV5d (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Nov 2018 17:06:52 -0500
+        Thu, 8 Nov 2018 16:57:33 -0500
 MIME-Version: 1.0
 References: <1541500533-21843-1-git-send-email-jacopo+renesas@jmondi.org> <1541500533-21843-4-git-send-email-jacopo+renesas@jmondi.org>
 In-Reply-To: <1541500533-21843-4-git-send-email-jacopo+renesas@jmondi.org>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 8 Nov 2018 13:31:23 +0100
-Message-ID: <CAMuHMdWPqT7QyQsKx7bOYBv02ZYY19F7J6XTVmGBALVkLpJkuw@mail.gmail.com>
+Date: Thu, 8 Nov 2018 13:22:06 +0100
+Message-ID: <CAMuHMdWYV3avN==bSn9K-JS3fHjssijf9nhJQK4spgf2HvMRPA@mail.gmail.com>
 Subject: Re: [PATCH v4 3/4] pinctrl: sh-pfc: r8a77965: Add VIN[4|5] groups/functions
 To: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -22,6 +22,8 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Jacopo,
+
 On Tue, Nov 6, 2018 at 11:35 AM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
 > The VIN4 and VIN5 interfaces supports parallel video input.
 > Add pin, mux and functions definitions for VIN4 and VIN5 for R-Car M3-N.
@@ -29,43 +31,77 @@ On Tue, Nov 6, 2018 at 11:35 AM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
 > Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
 > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
+Thanks for your patch!
+
 > --- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
 > +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
 
-Oops, found two more...
+> @@ -4000,6 +4210,24 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+>         SH_PFC_PIN_GROUP(usb0),
+>         SH_PFC_PIN_GROUP(usb1),
+>         SH_PFC_PIN_GROUP(usb30),
+> +       VIN_DATA_PIN_GROUP(vin4_data, 8, _a),
+> +       VIN_DATA_PIN_GROUP(vin4_data, 16, _a),
+> +       SH_PFC_PIN_GROUP(vin4_data18_a),
+> +       VIN_DATA_PIN_GROUP(vin4_data, 24, _a),
+> +       VIN_DATA_PIN_GROUP(vin4_data, 8, _b),
+> +       VIN_DATA_PIN_GROUP(vin4_data, 16, _b),
+> +       SH_PFC_PIN_GROUP(vin4_data18_b),
+> +       VIN_DATA_PIN_GROUP(vin4_data, 24, _b),
 
-> +/* - VIN5 ------------------------------------------------------------------- */
-> +static const union vin_data vin5_data_pins = {
+Missing support for 10/12/20?
 
-union vin_data16
+> +       SH_PFC_PIN_GROUP(vin4_sync),
+> +       SH_PFC_PIN_GROUP(vin4_field),
+> +       SH_PFC_PIN_GROUP(vin4_clkenb),
+> +       SH_PFC_PIN_GROUP(vin4_clk),
+> +       VIN_DATA_PIN_GROUP(vin5_data, 8),
+> +       VIN_DATA_PIN_GROUP(vin5_data, 16),
 
-> +       .data16 = {
-> +               RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
-> +               RCAR_GP_PIN(0, 2), RCAR_GP_PIN(0, 3),
-> +               RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 5),
-> +               RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 7),
-> +               RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 13),
-> +               RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 15),
-> +               RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 5),
-> +               RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 7),
-> +       },
+Missing support for 10/12?
+
+> +       SH_PFC_PIN_GROUP(vin5_sync),
+> +       SH_PFC_PIN_GROUP(vin5_field),
+> +       SH_PFC_PIN_GROUP(vin5_clkenb),
+> +       SH_PFC_PIN_GROUP(vin5_clk),
+>  };
+>
+>  static const char * const audio_clk_groups[] = {
+> @@ -4392,6 +4620,30 @@ static const char * const usb30_groups[] = {
+>         "usb30",
+>  };
+>
+> +static const char * const vin4_groups[] = {
+> +       "vin4_data8_a",
+> +       "vin4_data16_a",
+> +       "vin4_data18_a",
+> +       "vin4_data24_a",
+> +       "vin4_data8_b",
+> +       "vin4_data16_b",
+> +       "vin4_data18_b",
+> +       "vin4_data24_b",
+
+Missing support for 10/12/20?
+
+> +       "vin4_sync",
+> +       "vin4_field",
+> +       "vin4_clkenb",
+> +       "vin4_clk",
 > +};
 > +
-> +static const union vin_data vin5_data_mux = {
+> +static const char * const vin5_groups[] = {
+> +       "vin5_data8",
+> +       "vin5_data16",
 
-union vin_data16
+Missing support for 10/12?
 
-> +       .data16 = {
-> +               VI5_DATA0_MARK, VI5_DATA1_MARK,
-> +               VI5_DATA2_MARK, VI5_DATA3_MARK,
-> +               VI5_DATA4_MARK, VI5_DATA5_MARK,
-> +               VI5_DATA6_MARK, VI5_DATA7_MARK,
-> +               VI5_DATA8_MARK,  VI5_DATA9_MARK,
-> +               VI5_DATA10_MARK, VI5_DATA11_MARK,
-> +               VI5_DATA12_MARK, VI5_DATA13_MARK,
-> +               VI5_DATA14_MARK, VI5_DATA15_MARK,
-> +       },
+> +       "vin5_sync",
+> +       "vin5_field",
+> +       "vin5_clkenb",
+> +       "vin5_clk",
 > +};
+
+With the above fixed:
 
 Gr{oetje,eeting}s,
 
