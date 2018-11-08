@@ -1,89 +1,68 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH v2 08/30] media: entity: Add media_has_route() function
-Date: Fri,  2 Nov 2018 00:31:22 +0100
-Message-Id: <20181101233144.31507-9-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:45549 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726274AbeKHVNZ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 8 Nov 2018 16:13:25 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+References: <1541500533-21843-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1541500533-21843-2-git-send-email-jacopo+renesas@jmondi.org> <CAMuHMdUhdegwmWBbxqmtxM0d4bxRoa=FFpZsWOpSc_bky7SHDA@mail.gmail.com>
+In-Reply-To: <CAMuHMdUhdegwmWBbxqmtxM0d4bxRoa=FFpZsWOpSc_bky7SHDA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 8 Nov 2018 12:38:07 +0100
+Message-ID: <CAMuHMdUpWuret9xW9Fa4aD+XO+W2_ZBQPPybM6AzK8DUjgEHKg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/4] pinctrl: sh-pfc: Add optional arg to VIN_DATA_PIN_GROUP
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Hi Jacopo,
 
-This is a wrapper around the media entity has_route operation.
+On Thu, Nov 8, 2018 at 11:58 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Tue, Nov 6, 2018 at 11:35 AM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> > VIN data groups may appear on different sets of pins, usually named
+> > "vinX_data_[a|b]". The existing VIN_DATA_PIN_GROUP() does not support
+> > appending the '_a' or '_b' suffix, leading to the definition of groups
+>
+> group
+>
+> > names not consistent with the ones defined using SH_PFC_PIN_GROUP() macro.
+>
+> the SH_PFC_PIN_GROUP() macro.
+>
+> >
+> > Fix this by adding making the VIN_DATA_PIN_GROUP macro a variadic one,
+>
+> Please drop "adding".
+> VIN_DATA_PIN_GROUP()
+>
+> > which accepts an optional 'version' argument.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/media-entity.c | 16 ++++++++++++++++
- include/media/media-entity.h | 17 +++++++++++++++++
- 2 files changed, 33 insertions(+)
+Perhaps it makes sense to add
 
-diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-index f2fa0b7826dbc2f3..3c0e7425c8983b45 100644
---- a/drivers/media/media-entity.c
-+++ b/drivers/media/media-entity.c
-@@ -237,6 +237,22 @@ EXPORT_SYMBOL_GPL(media_entity_pads_init);
-  * Graph traversal
-  */
- 
-+bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
-+			    unsigned int pad1)
-+{
-+	if (pad0 >= entity->num_pads || pad1 >= entity->num_pads)
-+		return false;
-+
-+	if (pad0 == pad1)
-+		return true;
-+
-+	if (!entity->ops || !entity->ops->has_route)
-+		return true;
-+
-+	return entity->ops->has_route(entity, pad0, pad1);
-+}
-+EXPORT_SYMBOL_GPL(media_entity_has_route);
-+
- static struct media_pad *
- media_entity_other(struct media_pad *pad, struct media_link *link)
- {
-diff --git a/include/media/media-entity.h b/include/media/media-entity.h
-index cd482814654616b5..9540d2af80f19805 100644
---- a/include/media/media-entity.h
-+++ b/include/media/media-entity.h
-@@ -919,6 +919,23 @@ int media_entity_get_fwnode_pad(struct media_entity *entity,
- __must_check int media_graph_walk_init(
- 	struct media_graph *graph, struct media_device *mdev);
- 
-+/**
-+ * media_entity_has_route - Check if two entity pads are connected internally
-+ *
-+ * @entity: The entity
-+ * @pad0: The first pad index
-+ * @pad1: The second pad index
-+ *
-+ * This function can be used to check whether two pads of an entity are
-+ * connected internally in the entity.
-+ *
-+ * The caller must hold entity->graph_obj.mdev->mutex.
-+ *
-+ * Return: true if the pads are connected internally and false otherwise.
-+ */
-+bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
-+			    unsigned int pad1);
-+
- /**
-  * media_graph_walk_cleanup - Release resources used by graph walk.
-  *
+    Fixes: 423caa52534ff15a ("pinctrl: sh-pfc: r8a779[01]: Move 'union
+vin_data' to shared header file")
+
+to make sure it gets backported with the SoC-specific fixes that depend on it?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.19.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
