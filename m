@@ -1,33 +1,34 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Thu, 8 Nov 2018 14:26:08 +0100
+Date: Thu, 8 Nov 2018 14:21:21 +0100
 From: Simon Horman <horms@verge.net.au>
 To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH 4/6] dt-bindings: dmaengine: usb-dmac: Add binding for
  r8a774a1
-Message-ID: <20181108132607.xpsizybw6zawyjdk@verge.net.au>
+Message-ID: <20181108132121.2nrat2ecofcd3jc6@verge.net.au>
 References: <1535097375-5561-1-git-send-email-fabrizio.castro@bp.renesas.com>
  <1535097375-5561-5-git-send-email-fabrizio.castro@bp.renesas.com>
+ <TY1PR01MB1770EDC8696798A93FB7E3D2C0C50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1535097375-5561-5-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <TY1PR01MB1770EDC8696798A93FB7E3D2C0C50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Aug 24, 2018 at 08:56:13AM +0100, Fabrizio Castro wrote:
-> From: Biju Das <biju.das@bp.renesas.com>
+On Thu, Nov 08, 2018 at 12:48:46PM +0000, Fabrizio Castro wrote:
+> Dear All,
 > 
-> This patch adds binding for r8a774a1 (RZ/G2M).
-> 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Who is the best person to take this patch?
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+I believe this one is for Vinod.
