@@ -1,13 +1,13 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:59742 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727532AbeKITpx (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:16735 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726672AbeKICla (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Nov 2018 14:45:53 -0500
-Date: Fri, 9 Nov 2018 11:05:56 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thu, 8 Nov 2018 21:41:30 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Richard Weinberger <richard@nod.at>,
         Boris Brezillon <boris.brezillon@bootlin.com>,
         Brian Norris <computersforpeace@gmail.com>,
@@ -21,25 +21,67 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-mtd@lists.infradead.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: Re: [PATCH v2 2/3] ARM: dts: r8a77470: Add QSPI support
-Message-ID: <20181109100556.3yh7lkg5ehnbkrzi@verge.net.au>
+Subject: [PATCH v2 2/3] ARM: dts: r8a77470: Add QSPI support
+Date: Thu,  8 Nov 2018 17:04:42 +0000
+Message-Id: <1541696684-21235-3-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1541696684-21235-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1541696684-21235-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1541696684-21235-3-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1541696684-21235-3-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Nov 08, 2018 at 05:04:42PM +0000, Fabrizio Castro wrote:
-> Add QSPI[01] support to the RZ/G1C SoC specific device tree.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Add QSPI[01] support to the RZ/G1C SoC specific device tree.
 
-Thanks,
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-This looks fine to me but I will wait to see if there are other reviews
-before applying.
+---
+v1->v2:
+* Removed aliases
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+ arch/arm/boot/dts/r8a77470.dtsi | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
+index 5c0e48d..f4e232b 100644
+--- a/arch/arm/boot/dts/r8a77470.dtsi
++++ b/arch/arm/boot/dts/r8a77470.dtsi
+@@ -460,6 +460,38 @@
+ 			status = "disabled";
+ 		};
+ 
++		qspi0: spi@e6b10000 {
++			compatible = "renesas,qspi-r8a77470", "renesas,qspi";
++			reg = <0 0xe6b10000 0 0x2c>;
++			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 918>;
++			dmas = <&dmac0 0x17>, <&dmac0 0x18>,
++			       <&dmac1 0x17>, <&dmac1 0x18>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			resets = <&cpg 918>;
++			status = "disabled";
++		};
++
++		qspi1: spi@ee200000 {
++			compatible = "renesas,qspi-r8a77470", "renesas,qspi";
++			reg = <0 0xee200000 0 0x2c>;
++			interrupts = <GIC_SPI 239 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 917>;
++			dmas = <&dmac0 0xd1>, <&dmac0 0xd2>,
++			       <&dmac1 0xd1>, <&dmac1 0xd2>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			resets = <&cpg 917>;
++			status = "disabled";
++		};
++
+ 		scif0: serial@e6e60000 {
+ 			compatible = "renesas,scif-r8a77470",
+ 				     "renesas,rcar-gen2-scif", "renesas,scif";
+-- 
+2.7.4
