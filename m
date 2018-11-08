@@ -1,70 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33880 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728543AbeKEX3N (ORCPT
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:35562 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726252AbeKHUYm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Nov 2018 18:29:13 -0500
-Received: by mail-lj1-f196.google.com with SMTP id u6-v6so8161946ljd.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 05 Nov 2018 06:09:17 -0800 (PST)
-Date: Mon, 5 Nov 2018 15:09:13 +0100
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-To: Nguyen An Hoan <na-hoan@jinso.co.jp>
-Cc: linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be,
-        wsa@sang-engineering.com, kuninori.morimoto.gx@renesas.com,
-        yoshihiro.shimoda.uh@renesas.com, h-inayoshi@jinso.co.jp,
-        nv-dung@jinso.co.jp, cv-dong@jinso.co.jp
-Subject: Re: [v2 PATCH] thermal: rcar_gen3_thermal: Fix init value of IRQCTL
- register
-Message-ID: <20181105140913.GA461@bigcity.dyn.berto.se>
-References: <1540433621-24114-1-git-send-email-na-hoan@jinso.co.jp>
+        Thu, 8 Nov 2018 15:24:42 -0500
+Received: by mail-vk1-f195.google.com with SMTP id b18so4447633vke.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Nov 2018 02:49:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1540433621-24114-1-git-send-email-na-hoan@jinso.co.jp>
+References: <cover.1541514075.git.horms+renesas@verge.net.au> <CAOesGMjosJGENSm8jjAaZxcr4ehjBB5LF7OQ8PJR-J2kMktfWQ@mail.gmail.com>
+In-Reply-To: <CAOesGMjosJGENSm8jjAaZxcr4ehjBB5LF7OQ8PJR-J2kMktfWQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 8 Nov 2018 11:49:32 +0100
+Message-ID: <CAMuHMdX-oLaQ8LHRiUjWLHOQ020GKLbbuDURuy0K_Jsp32B17g@mail.gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM Based SoC Fixes for v4.20
+To: Olof Johansson <olof@lixom.net>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kevin Hilman <khilman@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        arm@kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Hoan-san,
+Hi Olof,
 
-Thanks for your patch.
+On Wed, Nov 7, 2018 at 5:03 PM Olof Johansson <olof@lixom.net> wrote:
+> On Wed, Nov 7, 2018 at 3:25 AM Simon Horman <horms+renesas@verge.net.au> wrote:
+> > * R-Car V3H (r8a77980) based Condor board
+> >   - Switch from EtherAVB to GEther to match offical boards
+> >
+> > * RZ/G2E (ra8774c0) SoC: correct documentation of part number
+>
+> I have to admit, Renesas part numbers have got to be _really_ hard to
+> deal with for anyone who has even the slightest hint of dyslexia. :-)
 
-On 2018-10-25 11:13:41 +0900, Nguyen An Hoan wrote:
-> From: Hoan Nguyen An <na-hoan@jinso.co.jp>
-> 
-> Fix setting value for IRQCTL register. We are setting the last 6 bits
-> of (IRQCTL) to be 1 (0x3f), this is only suitable for H3ES1.*, according
-> to new Hardware manual values 1 are "setting prohibited" for Gen3!
+Yeah, for some on them, you can trick people into believing Renesas did
+switch to "r" + a truncated commit ID in the HDL source repository ;-)
 
-Hum, as you point out this change is not suitable for H3 ES1.x so this 
-would introduce a regression, which is not good. I will leave the final 
-word to Wolfram but in my view you need to introduce quirk handling to 
-keep support for H3 ES1.x or blacklist that SoC in the driver.
+Gr{oetje,eeting}s,
 
-> 
-> Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
-> ---
->  drivers/thermal/rcar_gen3_thermal.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-> index 7aed533..fde3fd8 100644
-> --- a/drivers/thermal/rcar_gen3_thermal.c
-> +++ b/drivers/thermal/rcar_gen3_thermal.c
-> @@ -306,7 +306,7 @@ static void rcar_gen3_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
->  
->  	usleep_range(1000, 2000);
->  
-> -	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQCTL, 0x3F);
-> +	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQCTL, 0);
->  	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQMSK, 0);
->  	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQEN, IRQ_TEMPD1 | IRQ_TEMP2);
->  
-> -- 
-> 2.7.4
-> 
+                        Geert
 
 -- 
-Regards,
-Niklas S�derlund
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
