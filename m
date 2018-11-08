@@ -1,51 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:35562 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726252AbeKHUYm (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43651 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726145AbeKHUQZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Nov 2018 15:24:42 -0500
-Received: by mail-vk1-f195.google.com with SMTP id b18so4447633vke.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Nov 2018 02:49:49 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1541514075.git.horms+renesas@verge.net.au> <CAOesGMjosJGENSm8jjAaZxcr4ehjBB5LF7OQ8PJR-J2kMktfWQ@mail.gmail.com>
-In-Reply-To: <CAOesGMjosJGENSm8jjAaZxcr4ehjBB5LF7OQ8PJR-J2kMktfWQ@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 8 Nov 2018 11:49:32 +0100
-Message-ID: <CAMuHMdX-oLaQ8LHRiUjWLHOQ020GKLbbuDURuy0K_Jsp32B17g@mail.gmail.com>
-Subject: Re: [GIT PULL] Renesas ARM Based SoC Fixes for v4.20
+        Thu, 8 Nov 2018 15:16:25 -0500
+Date: Thu, 8 Nov 2018 11:41:30 +0100
+From: Simon Horman <horms@verge.net.au>
 To: Olof Johansson <olof@lixom.net>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kevin Hilman <khilman@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
+Cc: ARM-SoC Maintainers <arm@kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        arm@kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM Based SoC Fixes for v4.20
+Message-ID: <20181108104130.dywmeorjdxmfuubr@verge.net.au>
+References: <cover.1541514075.git.horms+renesas@verge.net.au>
+ <CAOesGMjosJGENSm8jjAaZxcr4ehjBB5LF7OQ8PJR-J2kMktfWQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOesGMjosJGENSm8jjAaZxcr4ehjBB5LF7OQ8PJR-J2kMktfWQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof,
-
-On Wed, Nov 7, 2018 at 5:03 PM Olof Johansson <olof@lixom.net> wrote:
+On Wed, Nov 07, 2018 at 08:02:17AM -0800, Olof Johansson wrote:
 > On Wed, Nov 7, 2018 at 3:25 AM Simon Horman <horms+renesas@verge.net.au> wrote:
+> >
+> > Hi Olof, Hi Kevin, Hi Arnd,
+> >
+> > Please consider these Renesas ARM based SoC fixes for v4.20.
+> >
+> >
+> > The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+> >
+> >   Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+> >
+> > are available in the git repository at:
+> >
+> >   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-fixes-for-v4.20
+> >
+> > for you to fetch changes up to eab53fdfd60a84b0cc514d4f1f5d79226c76df01:
+> >
+> >   arm64: dts: renesas: condor: switch from EtherAVB to GEther (2018-11-05 15:08:44 +0100)
+> >
+> > ----------------------------------------------------------------
+> > Renesas ARM Based SoC Fixes for v4.20
+> >
 > > * R-Car V3H (r8a77980) based Condor board
 > >   - Switch from EtherAVB to GEther to match offical boards
 > >
 > > * RZ/G2E (ra8774c0) SoC: correct documentation of part number
->
+> 
 > I have to admit, Renesas part numbers have got to be _really_ hard to
 > deal with for anyone who has even the slightest hint of dyslexia. :-)
 
-Yeah, for some on them, you can trick people into believing Renesas did
-switch to "r" + a truncated commit ID in the HDL source repository ;-)
+I have my own problems in this area :)
 
-Gr{oetje,eeting}s,
+> 
+> > * R-Car H3 (r8a7795) SoC: reinstate all DMA channels on HSCIF2
+> 
+> Thanks Simon! I've merged this branch now.
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks!
