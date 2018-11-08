@@ -1,243 +1,57 @@
-Return-Path: <na-hoan@jinso.co.jp>
-Subject: Re: [PATCH] drm: rcar-du: Re-update the DSYSR register value for
- start/stop
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be,
-        kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
-        h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp, cv-dong@jinso.co.jp
-References: <1540189854-14726-1-git-send-email-na-hoan@jinso.co.jp>
- <35008313.pubLakprOv@avalon>
-From: Hoan <na-hoan@jinso.co.jp>
-Message-ID: <cbb0afc5-1b15-cb30-ea19-2666fcd7d151@jinso.co.jp>
-Date: Tue, 23 Oct 2018 19:10:14 +0900
-MIME-Version: 1.0
-In-Reply-To: <35008313.pubLakprOv@avalon>
-Content-Type: multipart/alternative;
- boundary="------------5BB7DD29ECD9DD23D87CE38A"
-Content-Language: en-US
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:49649 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726672AbeKIClZ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 8 Nov 2018 21:41:25 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Richard Weinberger <richard@nod.at>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-mtd@lists.infradead.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH v2 1/3] mtd: spi-nor: Add support for is25lp016d
+Date: Thu,  8 Nov 2018 17:04:41 +0000
+Message-Id: <1541696684-21235-2-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1541696684-21235-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1541696684-21235-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This is a multi-part message in MIME format.
---------------5BB7DD29ECD9DD23D87CE38A
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+The is25lp016d is found on the iwg23s from iWave, therefore
+add driver support for it so that we can upstream board support.
 
-Dear Laurent-san
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-On 2018/10/22 20:23, Laurent Pinchart wrote:
-> Hello Hoan,
->
-> Thank you for the patch.
->
-> On Monday, 22 October 2018 09:30:54 EEST Nguyen An Hoan wrote:
->> From: Hoan Nguyen An <na-hoan@jinso.co.jp>
->>
->>  From previous commit 0521ccb "drm: rcar-du: Cache DSYSR value to ensure
->> known initial value"
-> What exact commit are you referring to ? The mainline commit that has this
-> subject is 9144adc5e5a99577bce0d4ee2ca3615f53b9d296.
->
->> We only need to update DSYSR0, DSYSR2 for start/stop.
->> So using rgrp-> mmio_offset is enough, the change back from rcar_du_crtc ->
->> rcar_du_group -> rcar_du_crtc leading to mmio addresses for DSYSR may be
->> different.
-> Is this fixing an actual problem ? If you look at the code, the line
->
-> 	struct rcar_du_crtc *rcrtc = &rgrp->dev->crtcs[rgrp->index * 2];
->
-> makes sure that we select DU0 or DU2 only, so the register write
->
-> 	rcar_du_crtc_dsysr_clr_set(rcrtc, DSYSR_DRES | DSYSR_DEN,
-> 				   start ? DSYSR_DEN : DSYSR_DRES);
->
-> should only access DSYSR0 and DSYSR2.
-
-Dear Laurent-san
-
-I add information about the current error occurring at M3N-r8a77965
-
-when probe rcar-du driver:
-
-    [   13.027115] [drm:drm_atomic_helper_wait_for_flip_done] *ERROR*
-    [CRTC:55:crtc-2] flip_done timed out
-    [   23.267103] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR*
-    [CRTC:55:crtc-2] flip_done timed out
-    [   33.507102] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR*
-    [CONNECTOR:57:VGA-1] flip_done timed out
-    [   43.747100] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR*
-    [PLANE:30:plane-1] flip_done timed out
-    [   53.987100] [drm:drm_atomic_helper_wait_for_flip_done] *ERROR*
-    [CRTC:55:crtc-2] flip_done timed out
-    [   53.989913] Console: switching to colour frame buffer device 128x48
-    [   64.227102] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR*
-    [CRTC:55:crtc-2] flip_done timed out
-    [   74.467099] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR*
-    [CONNECTOR:57:VGA-1] flip_done timed out
-    [   84.707100] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR*
-    [PLANE:30:plane-1] flip_done timed out
-    [   94.947100] [drm:drm_atomic_helper_wait_for_flip_done] *ERROR*
-    [CRTC:55:crtc-2] flip_done timed out
-    [   95.040076] rcar-du feb00000.display: fb0: DRM emulated frame
-    buffer device
-    [   95.047747] [drm] Initialized rcar-du 1.0.0 20130110 for
-    feb00000.display on minor 0
-    [   95.055512] [drm] Device feb00000.display probed
-    [   95.061252] bd9571mwv 7-0030: Device: BD9571MWV rev. 4
-
-renesas-drivers-2018-10-09-v4.19-rc7
-
-Thank you!
-
-Hoan.
-
->> Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
->> ---
->>   drivers/gpu/drm/rcar-du/rcar_du_group.c | 7 +++----
->>   1 file changed, 3 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c
->> b/drivers/gpu/drm/rcar-du/rcar_du_group.c index d85f0a1..a5f7eed 100644
->> --- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
->> +++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
->> @@ -202,10 +202,9 @@ void rcar_du_group_put(struct rcar_du_group *rgrp)
->>
->>   static void __rcar_du_group_start_stop(struct rcar_du_group *rgrp, bool
->> start) {
->> -	struct rcar_du_crtc *rcrtc = &rgrp->dev->crtcs[rgrp->index * 2];
->> -
->> -	rcar_du_crtc_dsysr_clr_set(rcrtc, DSYSR_DRES | DSYSR_DEN,
->> -				   start ? DSYSR_DEN : DSYSR_DRES);
->> +	rcar_du_group_write(rgrp, DSYSR,
->> +			(rcar_du_group_read(rgrp, DSYSR) & ~(DSYSR_DRES | DSYSR_DEN)) |
->> +			(start ? DSYSR_DEN : DSYSR_DRES));
->>   }
->>
->>   void rcar_du_group_start_stop(struct rcar_du_group *rgrp, bool start)
-
---------------5BB7DD29ECD9DD23D87CE38A
-Content-Type: text/html; charset=utf-8
-Content-Transfer-Encoding: 8bit
-
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  </head>
-  <body text="#000000" bgcolor="#FFFFFF">
-    <p>Dear Laurent-san</p>
-    <div class="moz-cite-prefix">On 2018/10/22 20:23, Laurent Pinchart
-      wrote:<br>
-    </div>
-    <blockquote type="cite" cite="mid:35008313.pubLakprOv@avalon">
-      <pre class="moz-quote-pre" wrap="">Hello Hoan,
-
-Thank you for the patch.
-
-On Monday, 22 October 2018 09:30:54 EEST Nguyen An Hoan wrote:
-</pre>
-      <blockquote type="cite">
-        <pre class="moz-quote-pre" wrap="">From: Hoan Nguyen An <a class="moz-txt-link-rfc2396E" href="mailto:na-hoan@jinso.co.jp">&lt;na-hoan@jinso.co.jp&gt;</a>
-
->From previous commit 0521ccb "drm: rcar-du: Cache DSYSR value to ensure
-known initial value"
-</pre>
-      </blockquote>
-      <pre class="moz-quote-pre" wrap="">
-What exact commit are you referring to ? The mainline commit that has this 
-subject is 9144adc5e5a99577bce0d4ee2ca3615f53b9d296.
-
-</pre>
-      <blockquote type="cite">
-        <pre class="moz-quote-pre" wrap="">We only need to update DSYSR0, DSYSR2 for start/stop.
-So using rgrp-&gt; mmio_offset is enough, the change back from rcar_du_crtc -&gt;
-rcar_du_group -&gt; rcar_du_crtc leading to mmio addresses for DSYSR may be
-different.
-</pre>
-      </blockquote>
-      <pre class="moz-quote-pre" wrap="">
-Is this fixing an actual problem ? If you look at the code, the line
-
-	struct rcar_du_crtc *rcrtc = &amp;rgrp-&gt;dev-&gt;crtcs[rgrp-&gt;index * 2];
-
-makes sure that we select DU0 or DU2 only, so the register write
-
-	rcar_du_crtc_dsysr_clr_set(rcrtc, DSYSR_DRES | DSYSR_DEN,
-				   start ? DSYSR_DEN : DSYSR_DRES);
-
-should only access DSYSR0 and DSYSR2.
-</pre>
-    </blockquote>
-    <p>Dear Laurent-san</p>
-    <p>I add information about the current error occurring at
-      M3N-r8a77965 <br>
-    </p>
-    <p>when probe rcar-du driver:</p>
-    <blockquote>
-      <p>[   13.027115] [drm:drm_atomic_helper_wait_for_flip_done]
-        *ERROR* [CRTC:55:crtc-2] flip_done timed out<br>
-        [   23.267103] [drm:drm_atomic_helper_wait_for_dependencies]
-        *ERROR* [CRTC:55:crtc-2] flip_done timed out<br>
-        [   33.507102] [drm:drm_atomic_helper_wait_for_dependencies]
-        *ERROR* [CONNECTOR:57:VGA-1] flip_done timed out<br>
-        [   43.747100] [drm:drm_atomic_helper_wait_for_dependencies]
-        *ERROR* [PLANE:30:plane-1] flip_done timed out<br>
-        [   53.987100] [drm:drm_atomic_helper_wait_for_flip_done]
-        *ERROR* [CRTC:55:crtc-2] flip_done timed out<br>
-        [   53.989913] Console: switching to colour frame buffer device
-        128x48<br>
-        [   64.227102] [drm:drm_atomic_helper_wait_for_dependencies]
-        *ERROR* [CRTC:55:crtc-2] flip_done timed out<br>
-        [   74.467099] [drm:drm_atomic_helper_wait_for_dependencies]
-        *ERROR* [CONNECTOR:57:VGA-1] flip_done timed out<br>
-        [   84.707100] [drm:drm_atomic_helper_wait_for_dependencies]
-        *ERROR* [PLANE:30:plane-1] flip_done timed out<br>
-        [   94.947100] [drm:drm_atomic_helper_wait_for_flip_done]
-        *ERROR* [CRTC:55:crtc-2] flip_done timed out<br>
-        [   95.040076] rcar-du feb00000.display: fb0: DRM emulated frame
-        buffer device<br>
-        [   95.047747] [drm] Initialized rcar-du 1.0.0 20130110 for
-        feb00000.display on minor 0<br>
-        [   95.055512] [drm] Device feb00000.display probed<br>
-        [   95.061252] bd9571mwv 7-0030: Device: BD9571MWV rev. 4<br>
-      </p>
-    </blockquote>
-    <p>renesas-drivers-2018-10-09-v4.19-rc7<br>
-    </p>
-    <p>Thank you!</p>
-    <p>Hoan.<br>
-    </p>
-    <blockquote type="cite" cite="mid:35008313.pubLakprOv@avalon">
-      <pre class="moz-quote-pre" wrap="">
-</pre>
-      <blockquote type="cite">
-        <pre class="moz-quote-pre" wrap="">Signed-off-by: Hoan Nguyen An <a class="moz-txt-link-rfc2396E" href="mailto:na-hoan@jinso.co.jp">&lt;na-hoan@jinso.co.jp&gt;</a>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_group.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+v1->v2:
+* No change
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c
-b/drivers/gpu/drm/rcar-du/rcar_du_group.c index d85f0a1..a5f7eed 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-@@ -202,10 +202,9 @@ void rcar_du_group_put(struct rcar_du_group *rgrp)
+ drivers/mtd/spi-nor/spi-nor.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- static void __rcar_du_group_start_stop(struct rcar_du_group *rgrp, bool
-start) {
--	struct rcar_du_crtc *rcrtc = &amp;rgrp-&gt;dev-&gt;crtcs[rgrp-&gt;index * 2];
--
--	rcar_du_crtc_dsysr_clr_set(rcrtc, DSYSR_DRES | DSYSR_DEN,
--				   start ? DSYSR_DEN : DSYSR_DRES);
-+	rcar_du_group_write(rgrp, DSYSR,
-+			(rcar_du_group_read(rgrp, DSYSR) &amp; ~(DSYSR_DRES | DSYSR_DEN)) |
-+			(start ? DSYSR_DEN : DSYSR_DRES));
- }
-
- void rcar_du_group_start_stop(struct rcar_du_group *rgrp, bool start)
-</pre>
-      </blockquote>
-      <pre class="moz-quote-pre" wrap="">
-</pre>
-    </blockquote>
-  </body>
-</html>
-
---------------5BB7DD29ECD9DD23D87CE38A--
+diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+index 9407ca5..85d869b 100644
+--- a/drivers/mtd/spi-nor/spi-nor.c
++++ b/drivers/mtd/spi-nor/spi-nor.c
+@@ -1352,6 +1352,8 @@ static const struct flash_info spi_nor_ids[] = {
+ 	{ "is25cd512",  INFO(0x7f9d20, 0, 32 * 1024,   2, SECT_4K) },
+ 	{ "is25lq040b", INFO(0x9d4013, 0, 64 * 1024,   8,
+ 			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
++	{ "is25lp016d", INFO(0x9d6015, 0, 64 * 1024,  32,
++			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
+ 	{ "is25lp080d", INFO(0x9d6014, 0, 64 * 1024,  16,
+ 			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
+ 	{ "is25lp128",  INFO(0x9d6018, 0, 64 * 1024, 256,
+-- 
+2.7.4
