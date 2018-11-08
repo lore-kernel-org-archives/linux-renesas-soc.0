@@ -1,51 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:43638 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726792AbeKUUmj (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45746 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726359AbeKHWz5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Nov 2018 15:42:39 -0500
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v2] ARM: dts: r9a06g032: Correct the GIC DT node name
-Date: Wed, 21 Nov 2018 10:08:44 +0000
-Message-Id: <20181121100844.25825-1-phil.edworthy@renesas.com>
+        Thu, 8 Nov 2018 17:55:57 -0500
+Date: Thu, 8 Nov 2018 14:20:25 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 1/3][can-next] can: rcar_can: Fix erroneous
+ registration
+Message-ID: <20181108132025.xuvzxqbulqjhivfk@verge.net.au>
+References: <1536576195-11520-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1536576195-11520-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <TY1PR01MB17709CF3F3391728480C26B2C0C50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TY1PR01MB17709CF3F3391728480C26B2C0C50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Harmless mistake, but it's incorrect. The DT spec provides recommendations
-for the node names:
-"The name of a node should be somewhat generic, reflecting the function
-of the device and not its precise programming model. If appropriate, the
-name should be one of the following choices:
-...
-interrupt-controller"
+On Thu, Nov 08, 2018 at 12:39:00PM +0000, Fabrizio Castro wrote:
+> Dear All,
+> 
+> Is this patch ok?
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
-v2:
- - Add commit log details about why
----
- arch/arm/boot/dts/r9a06g032.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It looks ok to me.
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index 2322268bc862..4c1ab49c7d39 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -173,7 +173,7 @@
- 			status = "okay";
- 		};
- 
--		gic: gic@44101000 {
-+		gic: interrupt-controller@44101000 {
- 			compatible = "arm,cortex-a7-gic", "arm,gic-400";
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
--- 
-2.17.1
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
