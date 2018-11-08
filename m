@@ -1,247 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:45408 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728343AbeK3ALl (ORCPT
+Received: from relay10.mail.gandi.net ([217.70.178.230]:36827 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726700AbeKIBnt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Nov 2018 19:11:41 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 1/2] ARM: dts: r7s9210: Initial SoC device tree
-Date: Thu, 29 Nov 2018 08:05:58 -0500
-Message-Id: <20181129130559.66732-2-chris.brandt@renesas.com>
-In-Reply-To: <20181129130559.66732-1-chris.brandt@renesas.com>
-References: <20181129130559.66732-1-chris.brandt@renesas.com>
+        Thu, 8 Nov 2018 20:43:49 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert+renesas@glider.be, horms@verge.net.au,
+        laurent.pinchart@ideasonboard.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, linus.walleij@linaro.org,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH v5 0/6] sh-pfc: Variadic VIN_DATA_PIN_GROUP macro + VIN updates
+Date: Thu,  8 Nov 2018 17:07:21 +0100
+Message-Id: <1541693247-15599-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Basic support for the RZ/A2 (R7S9210) SoC.
+Hi Geert, Simon,
+   this version uses the new variadic macro VIN_DATA_PIN_GROUP as v4 (this
+for real in [3/6].
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- arch/arm/boot/dts/r7s9210.dtsi | 211 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 211 insertions(+)
- create mode 100644 arch/arm/boot/dts/r7s9210.dtsi
+Refactoring of users of the macro old version have broken out to single
+patches, comments on M3-N and E3 VIN PFC groups have been incorporated.
 
-diff --git a/arch/arm/boot/dts/r7s9210.dtsi b/arch/arm/boot/dts/r7s9210.dtsi
-new file mode 100644
-index 000000000000..3c5373a5c7d2
---- /dev/null
-+++ b/arch/arm/boot/dts/r7s9210.dtsi
-@@ -0,0 +1,211 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the R7S9210 SoC
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corporation
-+ *
-+ */
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/r7s9210-cpg-mssr.h>
-+
-+/ {
-+	compatible = "renesas,r7s9210";
-+	interrupt-parent = <&gic>;
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+
-+	bsid: chipid@fcfe8004 {
-+		compatible = "renesas,bsid";
-+		reg = <0xfcfe8004 4>;
-+	};
-+
-+	clocks {
-+		ranges;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		/* External clocks */
-+		extal_clk: extal {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			/* Value must be set by board */
-+			clock-frequency = <0>;
-+		};
-+
-+		rtc_x1_clk: rtc_x1 {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			/* If clk present, value (32678) must be set by board */
-+			clock-frequency = <0>;
-+		};
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a9";
-+			reg = <0>;
-+			clock-frequency = <528000000>;
-+			next-level-cache = <&L2>;
-+		};
-+	};
-+
-+	gic: interrupt-controller@e8221000 {
-+		compatible = "arm,gic-400";
-+		#interrupt-cells = <3>;
-+		#address-cells = <0>;
-+		interrupt-controller;
-+		reg = <0xe8221000 0x1000>,
-+		      <0xe8222000 0x1000>;
-+	};
-+
-+	L2: cache-controller@1f003000 {
-+		compatible = "arm,pl310-cache";
-+		reg = <0x1f003000 0x1000>;
-+		interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-+		arm,early-bresp-disable;
-+		arm,full-line-zero-disable;
-+		cache-unified;
-+		cache-level = <2>;
-+	};
-+
-+	cpg: clock-controller@fcfe0020 {
-+		compatible = "renesas,r7s9210-cpg-mssr";
-+		reg = <0xfcfe0010 0x455>;
-+		clocks = <&extal_clk>;
-+		clock-names = "extal";
-+		#clock-cells = <2>;
-+		#power-domain-cells = <0>;
-+		#reset-cells = <1>;
-+	};
-+
-+	ostm0: timer@e803b000 {
-+		compatible = "renesas,r7s9210-ostm", "renesas,ostm";
-+		reg = <0xe803b000 0x30>;
-+		interrupts = <GIC_SPI 56 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&cpg CPG_MOD 36>;
-+		clock-names = "ostm0";
-+		power-domains = <&cpg>;
-+		status = "disabled";
-+	};
-+
-+	ostm1: timer@e803c000 {
-+		compatible = "renesas,r7s9210-ostm", "renesas,ostm";
-+		reg = <0xe803c000 0x30>;
-+		interrupts = <GIC_SPI 57 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&cpg CPG_MOD 35>;
-+		clock-names = "ostm1";
-+		power-domains = <&cpg>;
-+		status = "disabled";
-+	};
-+
-+	ostm2: timer@e803d000 {
-+		compatible = "renesas,r7s9210-ostm", "renesas,ostm";
-+		reg = <0xe803d000 0x30>;
-+		interrupts = <GIC_SPI 58 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&cpg CPG_MOD 34>;
-+		clock-names = "ostm2";
-+		power-domains = <&cpg>;
-+		status = "disabled";
-+	};
-+
-+	wdt: watchdog@fcfe7000 {
-+		compatible = "renesas,r7s9210-wdt", "renesas,rza-wdt";
-+		reg = <0xfcfe7000 0x26>;
-+		interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cpg CPG_CORE R7S9210_CLK_P0>;
-+	};
-+
-+	pinctrl: pin-controller@fcffe000 {
-+		compatible = "renesas,r7s9210-pinctrl";
-+		reg = <0xfcffe000 0x1000>;
-+
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		gpio-ranges = <&pinctrl 0 0 176>;
-+	};
-+
-+	scif0: serial@e8007000 {
-+		compatible = "renesas,scif-r7s9210";
-+		reg = <0xe8007000 18>;
-+		interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "eri", "rxi", "txi", "bri", "dri", "tei";
-+		clocks = <&cpg CPG_MOD 47>;
-+		clock-names = "fck";
-+		power-domains = <&cpg>;
-+		status = "disabled";
-+	};
-+
-+	scif1: serial@e8007800 {
-+		compatible = "renesas,scif-r7s9210";
-+		reg = <0xe8007800 18>;
-+		interrupts = <GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "eri", "rxi", "txi", "bri", "dri", "tei";
-+		clocks = <&cpg CPG_MOD 46>;
-+		clock-names = "fck";
-+		power-domains = <&cpg>;
-+		status = "disabled";
-+	};
-+
-+	scif2: serial@e8008000 {
-+		compatible = "renesas,scif-r7s9210";
-+		reg = <0xe8008000 18>;
-+		interrupts = <GIC_SPI 277 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 279 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 277 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 280 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 280 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "eri", "rxi", "txi", "bri", "dri", "tei";
-+		clocks = <&cpg CPG_MOD 45>;
-+		clock-names = "fck";
-+		power-domains = <&cpg>;
-+		status = "disabled";
-+	};
-+
-+	scif3: serial@e8008800 {
-+		compatible = "renesas,scif-r7s9210";
-+		reg = <0xe8008800 18>;
-+		interrupts = <GIC_SPI 283 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 284 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 285 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 283 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "eri", "rxi", "txi", "bri", "dri", "tei";
-+		clocks = <&cpg CPG_MOD 44>;
-+		clock-names = "fck";
-+		power-domains = <&cpg>;
-+		status = "disabled";
-+	};
-+
-+	scif4: serial@e8009000 {
-+		compatible = "renesas,scif-r7s9210";
-+		reg = <0xe8009000 18>;
-+		interrupts = <GIC_SPI 289 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 291 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 289 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 292 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 292 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "eri", "rxi", "txi", "bri", "dri", "tei";
-+		clocks = <&cpg CPG_MOD 43>;
-+		clock-names = "fck";
-+		power-domains = <&cpg>;
-+		status = "disabled";
-+	};
-+};
--- 
-2.16.1
+Quite a few changes in M3-N and E3 VIN support in PFC, so the single
+patches changelog is in commit messages.
+
+Thanks
+   j
+
+Jacopo Mondi (6):
+  pinctrl: sh-pfc: Add optional arg to VIN_DATA_PIN_GROUP
+  pinctrl: sh-pfc: r8a77965: Add VIN[4|5] groups/functions
+  pinctrl: sh-pfc: r8a77990: Add VIN[4|5] groups/functions
+  pinctrl: sh-pfc: r8a7792: Fix VIN versioned groups
+  pinctrl: sh-pfc: r8a7795: Fix VIN versioned groups
+  pinctrl: sh-pfc: r8a7796: Fix VIN versioned groups
+
+ drivers/pinctrl/sh-pfc/pfc-r8a7792.c  |   6 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c  |  24 +--
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c  |  24 +--
+ drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 270 ++++++++++++++++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 244 ++++++++++++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/sh_pfc.h       |  15 +-
+ 6 files changed, 549 insertions(+), 34 deletions(-)
+
+--
+2.7.4
