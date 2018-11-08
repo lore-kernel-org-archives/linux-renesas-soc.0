@@ -1,69 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:36646 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729342AbeKFPcH (ORCPT
+Received: from mail-os2jpn01on0126.outbound.protection.outlook.com ([104.47.92.126]:17920
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726719AbeKHXgU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Nov 2018 10:32:07 -0500
-From: Nguyen An Hoan <na-hoan@jinso.co.jp>
-To: linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be,
-        wsa@sang-engineering.com
-Cc: niklas.soderlund@ragnatech.se, kuninori.morimoto.gx@renesas.com,
-        yoshihiro.shimoda.uh@renesas.com, h-inayoshi@jinso.co.jp,
-        nv-dung@jinso.co.jp, na-hoan@jinso.co.jp, cv-dong@jinso.co.jp
-Subject: [v2 PATCH] thermal: rcar_gen3_thermal: Add Standby/Reset Mode support
-Date: Tue,  6 Nov 2018 15:08:26 +0900
-Message-Id: <1541484506-30736-1-git-send-email-na-hoan@jinso.co.jp>
+        Thu, 8 Nov 2018 18:36:20 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Simon Horman <horms@verge.net.au>, Joerg Roedel <joro@8bytes.org>
+CC: "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v2 1/2] iommu/ipmmu-vmsa: Hook up R8A774A1 DT maching code
+Date: Thu, 8 Nov 2018 14:00:37 +0000
+Message-ID: <TY1PR01MB1770000EE64E62385F53330EC0C50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <CAMuHMdUe=p42Bp6xgmvrNwPKs=VHUP2BezDBPPn9KgPawvOtgA@mail.gmail.com>
+ <1535038384-27080-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <TY1PR01MB1770B9A0AEF082A9CBF5B0E8C0C50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+ <20181108122802.q6kye2tzy6ofod5q@verge.net.au>
+In-Reply-To: <20181108122802.q6kye2tzy6ofod5q@verge.net.au>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hoan Nguyen An <na-hoan@jinso.co.jp>
+Thank you Simon for getting back to me.
 
-According to the hardware manual, Gen3 supports Standby/Reset mode.
-Add this function, and we should use this function while suspend
-to reduce the energy consumption.
+Joerg, does this patch look ok to you?
 
-Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
----
- drivers/thermal/rcar_gen3_thermal.c | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+Thanks,
+Fab
 
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index 7aed533..e654519 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -447,11 +447,32 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
-+static int rcar_gen3_thermal_reset(struct rcar_gen3_thermal_priv* priv)
-+{
-+	unsigned int i;
-+	u32 reg_val;
-+
-+	for (i = 0; i < priv->num_tscs; i++) {
-+		struct rcar_gen3_thermal_tsc *tsc = priv->tscs[i];
-+
-+		rcar_gen3_thermal_write(tsc, REG_GEN3_IRQEN, 0);
-+		rcar_gen3_thermal_write(tsc, REG_GEN3_IRQMSK, 0);
-+
-+		reg_val = rcar_gen3_thermal_read(tsc, REG_GEN3_THCTR);
-+		rcar_gen3_thermal_write(tsc, REG_GEN3_THCTR, reg_val & ~THCTR_THSST);
-+	}
-+
-+	usleep_range(1000, 2000);
-+
-+	return 0;
-+}
-+
- static int __maybe_unused rcar_gen3_thermal_suspend(struct device *dev)
- {
- 	struct rcar_gen3_thermal_priv *priv = dev_get_drvdata(dev);
- 
--	rcar_thermal_irq_set(priv, false);
-+	/* Reset to enter standby mode */
-+	rcar_gen3_thermal_reset(priv);
- 
- 	return 0;
- }
--- 
-2.7.4
+> Subject: Re: [PATCH v2 1/2] iommu/ipmmu-vmsa: Hook up R8A774A1 DT maching=
+ code
+>
+> Hi Fabrizio,
+>
+> I believe this one is for Joerg.
+>
+> On Thu, Nov 08, 2018 at 11:22:55AM +0000, Fabrizio Castro wrote:
+> > Dear All,
+> >
+> > Who is the best person to take this patch?
+> >
+> > Thanks,
+> > Fab
+> >
+> > > From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > > Sent: 23 August 2018 16:33
+> > > Subject: [PATCH v2 1/2] iommu/ipmmu-vmsa: Hook up R8A774A1 DT maching=
+ code
+> > >
+> > > Add support for RZ/G2M (R8A774A1) SoC IPMMUs.
+> > >
+> > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> > > ---
+> > > v1-v2:
+> > > * taken out IOMMU_OF_DECLARE
+> > >
+> > >  drivers/iommu/ipmmu-vmsa.c | 4 ++++
+> > >  1 file changed, 4 insertions(+)
+> > >
+> > > diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+> > > index 51af2c5..331562f 100644
+> > > --- a/drivers/iommu/ipmmu-vmsa.c
+> > > +++ b/drivers/iommu/ipmmu-vmsa.c
+> > > @@ -761,6 +761,7 @@ static bool ipmmu_slave_whitelist(struct device *=
+dev)
+> > >  }
+> > >
+> > >  static const struct soc_device_attribute soc_rcar_gen3[] =3D {
+> > > +{ .soc_id =3D "r8a774a1", },
+> > >  { .soc_id =3D "r8a7795", },
+> > >  { .soc_id =3D "r8a7796", },
+> > >  { .soc_id =3D "r8a77965", },
+> > > @@ -942,6 +943,9 @@ static const struct of_device_id ipmmu_of_ids[] =
+=3D {
+> > >  .compatible =3D "renesas,ipmmu-vmsa",
+> > >  .data =3D &ipmmu_features_default,
+> > >  }, {
+> > > +.compatible =3D "renesas,ipmmu-r8a774a1",
+> > > +.data =3D &ipmmu_features_rcar_gen3,
+> > > +}, {
+> > >  .compatible =3D "renesas,ipmmu-r8a7795",
+> > >  .data =3D &ipmmu_features_rcar_gen3,
+> > >  }, {
+> > > --
+> > > 2.7.4
+> >
+> >
+> >
+> >
+> > Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne En=
+d, Buckinghamshire, SL8 5FH, UK. Registered in England
+> & Wales under Registered No. 04586709.
+> >
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
