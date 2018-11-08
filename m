@@ -1,92 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:50532 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728569AbeKAViP (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45617 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726375AbeKHWrO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Nov 2018 17:38:15 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Richard Weinberger <richard@nod.at>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-mtd@lists.infradead.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 3/4] ARM: dts: r8a77470: Add QSPI support
-Date: Thu,  1 Nov 2018 12:35:04 +0000
-Message-Id: <1541075705-1333-4-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1541075705-1333-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1541075705-1333-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Thu, 8 Nov 2018 17:47:14 -0500
+Date: Thu, 8 Nov 2018 14:11:44 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Marek Vasut <marek.vasut@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] arm64: dts: r8a77990: ebisu: Add serial console pins
+Message-ID: <20181108131143.on5j7w4bhlfloy7d@verge.net.au>
+References: <20181105213859.11408-1-marek.vasut+renesas@gmail.com>
+ <CAMuHMdX19CmPCVpyhkq0Szjaj=Q24sT1BGT+_TtwUw2FvSAZsQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdX19CmPCVpyhkq0Szjaj=Q24sT1BGT+_TtwUw2FvSAZsQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add QSPI[01] support to the RZ/G1C SoC specific device tree.
+On Thu, Nov 08, 2018 at 01:01:08PM +0100, Geert Uytterhoeven wrote:
+> On Mon, Nov 5, 2018 at 10:39 PM Marek Vasut <marek.vasut@gmail.com> wrote:
+> > Subject: [PATCH] arm64: dts: r8a77990: ebisu: Add serial console pins
+> 
+> arm64: dts: renesas: r8a77990: ebisu: Add serial console pins
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- arch/arm/boot/dts/r8a77470.dtsi | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index e6407e5..04a8877 100644
---- a/arch/arm/boot/dts/r8a77470.dtsi
-+++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -20,6 +20,8 @@
- 		i2c2 = &i2c2;
- 		i2c3 = &i2c3;
- 		i2c4 = &i2c4;
-+		spi0 = &qspi0;
-+		spi1 = &qspi1;
- 	};
- 
- 	cpus {
-@@ -460,6 +462,38 @@
- 			status = "disabled";
- 		};
- 
-+		qspi0: spi@e6b10000 {
-+			compatible = "renesas,qspi-r8a77470", "renesas,qspi";
-+			reg = <0 0xe6b10000 0 0x2c>;
-+			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 918>;
-+			dmas = <&dmac0 0x17>, <&dmac0 0x18>,
-+			       <&dmac1 0x17>, <&dmac1 0x18>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			resets = <&cpg 918>;
-+			status = "disabled";
-+		};
-+
-+		qspi1: spi@ee200000 {
-+			compatible = "renesas,qspi-r8a77470", "renesas,qspi";
-+			reg = <0 0xee200000 0 0x2c>;
-+			interrupts = <GIC_SPI 239 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 917>;
-+			dmas = <&dmac0 0xd1>, <&dmac0 0xd2>,
-+			       <&dmac1 0xd1>, <&dmac1 0xd2>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			resets = <&cpg 917>;
-+			status = "disabled";
-+		};
-+
- 		scif0: serial@e6e60000 {
- 			compatible = "renesas,scif-r8a77470",
- 				     "renesas,rcar-gen2-scif", "renesas,scif";
--- 
-2.7.4
+Thanks, fixed.
