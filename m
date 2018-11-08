@@ -1,53 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:61809 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727857AbeKSVvr (ORCPT
+Received: from mail-ty1jpn01on0105.outbound.protection.outlook.com ([104.47.93.105]:60895
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726375AbeKIBN0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Nov 2018 16:51:47 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH  0/4] Add NXP pcf85263 real-time clock support
-Date: Mon, 19 Nov 2018 11:15:04 +0000
-Message-Id: <1542626108-61344-1-git-send-email-biju.das@bp.renesas.com>
+        Thu, 8 Nov 2018 20:13:26 -0500
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh@kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 2/2] irqchip: Add support for Renesas RZ/N1 GPIO
+ interrupt multiplexer
+Date: Thu, 8 Nov 2018 15:37:19 +0000
+Message-ID: <TY1PR01MB17691CBAA81188A9D13D0576F5C50@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <20181030104438.27827-1-phil.edworthy@renesas.com>
+ <20181030104438.27827-3-phil.edworthy@renesas.com>
+ <86d0rq35o1.wl-marc.zyngier@arm.com>
+ <TY1PR01MB176959B0CF663D0ECB298924F5CD0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <b95c7fc3-7fda-48b7-6933-b7b183b6fa67@arm.com>
+ <TY1PR01MB1769D6F84F7BCD91C1018922F5CD0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <TY1PR01MB17696E2B10CA447CD3508ADAF5CB0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY1PR01MB17696E2B10CA447CD3508ADAF5CB0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set aims to add support for NXP pcf85263 real-time clock. 
-pcf85263 rtc is compatible with pcf85363 rtc except that pcf85363 has
-64 bytes additional RAM. 
-
-1 byte of nvmem is supported in pcf85263 and is exposed through sysfs.
-
-The details of pcf85363 and pcf85263 can be found in the below
-data sheets.
-
-https://www.nxp.com/docs/en/data-sheet/PCF85363A.pdf
-
-https://www.nxp.com/docs/en/data-sheet/PCF85263A.pdf
-
-
-This patch is tested against linux-next and renesas-dev.
-
-Biju Das (4):
-  dt-bindings: rtc: pcf85363: Document pcf85263 real-time clock
-  rtc: pcf85363: Add support for NXP pcf85263 rtc
-  ARM: shmobile: Enable NXP pcf85363 rtc in shmobile_defconfig
-  ARM: dts: iwg23s-sbc: Enable RTC
-
- Documentation/devicetree/bindings/rtc/pcf85363.txt |  4 +-
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts          | 18 +++++++++
- arch/arm/configs/shmobile_defconfig                |  1 +
- drivers/rtc/rtc-pcf85363.c                         | 44 +++++++++++++++++++---
- 4 files changed, 60 insertions(+), 7 deletions(-)
-
--- 
-2.7.4
+SGVsbG8gTWFyYywNCg0KT24gMDYgTm92ZW1iZXIgMjAxOCAxMzoxNiBQaGlsIEVkd29ydGh5IHdy
+b3RlOg0KPiBPbiAzMSBPY3RvYmVyIDIwMTggMTU6MzksIFBoaWwgRWR3b3J0aHkgd3JvdGUNCj4g
+PiBPbiAzMSBPY3RvYmVyIDIwMTggMTU6MzEsIE1hcmMgWnluZ2llciB3cm90ZToNCj4gPiA+IE9u
+IDMxLzEwLzE4IDE1OjA5LCBQaGlsIEVkd29ydGh5IHdyb3RlOg0KPiA+ID4gPiBPbiAzMSBPY3Rv
+YmVyIDIwMTggMDg6MDIsIE1hcmMgWnluZ2llciB3b3RlOg0KPiA+ID4gPj4gT24gVHVlLCAzMCBP
+Y3QgMjAxOCAxMDo0NDozOCArMDAwMCwgUGhpbCBFZHdvcnRoeSB3cm90ZToNCj4gPiA+ID4+Pg0K
+PiA+ID4gPj4+IE9uIFJaL04xIGRldmljZXMsIHRoZXJlIGFyZSAzIFN5bm9wc3lzIERlc2lnbldh
+cmUgR1BJTyBibG9ja3MNCj4gPiA+ID4+PiBlYWNoIGNvbmZpZ3VyZWQgdG8gaGF2ZSAzMiBpbnRl
+cnJ1cHQgb3V0cHV0cywgc28gd2UgaGF2ZSBhIHRvdGFsDQo+ID4gPiA+Pj4gb2YgOTYgR1BJTyBp
+bnRlcnJ1cHRzLiBBbGwgb2YgdGhlc2UgYXJlIHBhc3NlZCB0byB0aGUgR1BJTyBJUlENCj4gPiA+
+ID4+PiBNdXhlciwgd2hpY2ggc2VsZWN0cw0KPiA+ID4gPj4+IDggb2YgdGhlIEdQSU8gaW50ZXJy
+dXB0cyB0byBwYXNzIG9udG8gdGhlIEdJQy4gVGhlIGludGVycnVwdA0KPiA+ID4gPj4+IHNpZ25h
+bHMgYXJlbid0IGxhdGNoZWQsIHNvIHRoZXJlIGlzIG5vdGhpbmcgdG8gZG8gaW4gdGhpcyBkcml2
+ZXINCj4gPiA+ID4+PiB3aGVuIGFuIGludGVycnVwdCBpcyByZWNlaXZlZCwgb3RoZXIgdGhhbiB0
+ZWxsIHRoZSBjb3JyZXNwb25kaW5nDQo+ID4gPiA+Pj4gR1BJTw0KPiA+IGJsb2NrLg0KPiA8c25p
+cD4NCj4gDQo+ID4gPiBUaGVyZSBhcmUgdHdvIGNhc2VzOg0KPiA+ID4gMSkgdGhlcmUgaXMgMTox
+IG1hcHBpbmcgYmV0d2VlbiBhIHVzZWQgaW5wdXQgYW5kIGFuIG91dHB1dCwgbGVhdmluZw0KPiA+
+ID4gc29tZSBpbnB1dCB1bnVzZWQNCj4gPiA+IDIpIHRoZXJlIGlzIGFuIG46MSBtYXBwaW5nIGJl
+dHdlZW4gaW5wdXQgYW5kIG91dHB1dCwgYW5kIGFsbCB0aGUNCj4gPiA+IGlucHV0IGNhbiBiZSB1
+c2VkIGF0IGFueSBnaXZlbiB0aW1lDQo+ID4gPg0KPiA+ID4gSWYgd2hhdCB5b3UgaGF2ZSBpcyAo
+MSksIHlvdSBuZWVkIHRvIGltcGxlbWVudCBhbiBoaWVyYXJjaHkuDQo+ID4gPiBJZiB3aGF0IHlv
+dSBoYXZlIGlzICgyKSwgeW91IG5lZWQgdG8gaW1wbGVtZW50IGEgY2hhaW5lZCBjb250cm9sbGVy
+Lg0KPiA+ID4NCj4gPiA+ICgxKSByZXF1aXJlcyB5b3UgdG8gcmV2aXNpdCB0aGlzIGRyaXZlciwg
+bWFraW5nIGl0IGEgbG90IG1vcmUgbGlrZQ0KPiA+ID4gdGkncyBpcnEtY3Jvc3NiYXINCj4gPiA+
+ICgyKSByZXF1aXJlcyB5b3UgdG8gYWN0dWFsbHkgZG8gc29tZSBkZWNvZGluZyBpbiB0aGUgY2hh
+aW5lZCBoYW5kbGVyDQo+ID4gPg0KPiA+ID4gSSBiZWxpZXZlIHlvdSdyZSBpbiBjb25maWd1cmF0
+aW9uICgxKS4gQW0gSSByaWdodD8NCj4gPiBSaWdodCwgaXQncyBhIDE6MSBtYXBwaW5nLiBUaGUg
+aW5mb3JtYXRpb24gYWJvdXQgd2hpY2ggaW5wdXQgdG8gYmUNCj4gPiB1c2VkIG5lZWRzIHRvIGJl
+IHNwZWNpZmllZCBpbiBkdC4NCj4gPiBJIGRpZG7igJl0IHRoaW5rIEkgY291bGQgaW1wbGVtZW50
+IGEgaGllcmFyY2h5IHRoYXQgZGlkbuKAmXQgbWFzayB0aGUNCj4gPiBpbnRlcnJ1cHRzLCBzbyBJ
+IG5lZWQgdG8gZ28gYmFjayBvdmVyIHRoYXQgYW5kIGxvb2sgYWdhaW4uLi4NCj4gDQo+IE9rLCBJ
+IGhhdmUgY2hhbmdlZCB0aGUgZHJpdmVyIHRvIGltcGxlbWVudCBhIGhpZXJhcmNoeSwgaS5lLg0K
+PiBjYWxsIGlycV9kb21haW5fY3JlYXRlX2hpZXJhcmNoeSgpIGluIHByb2JlLCBjYWxsDQo+IGly
+cV9kb21haW5fc2V0X2h3aXJxX2FuZF9jaGlwKCkgYW5kIGlycV9kb21haW5fYWxsb2NfaXJxc19w
+YXJlbnQoKSBpbg0KPiB0aGUgaXJxX2RvbWFpbl9vcHMuYWxsb2MgZnVuY3Rpb24uDQoNCkkgc3Vz
+cGVjdCB0aGF0IEkgd2VudCBpbiB0aGUgd3JvbmcgZGlyZWN0aW9uIHlldCBhZ2Fpbi4uLg0KQWZ0
+ZXIgbG9va2luZyBhdCBSb2IgSCdzIGVtYWlsIGFnYWluLCBJIGFtIG5vdyBvZiB0aGUgb3Bpbmlv
+biB0aGF0IHRoaXMNCmhhcmR3YXJlLCBhbmQgdGhlIHdheSB0byBoYW5kbGUgaXQsIGlzIHZlcnkg
+c2ltaWxhciB0byBQQ0llIE1TSS4NCg0KQSBjdXRkb3duIERUIGxvb2tzIGxpa2UgdGhpczoNCglp
+bnRlcnJ1cHRzID0NCgkJPEdJQ19TUEkgMTAzIElSUV9UWVBFX0xFVkVMX0hJR0g+LA0KCQk8R0lD
+X1NQSSAxMDQgSVJRX1RZUEVfTEVWRUxfSElHSD47DQoJI2ludGVycnVwdC1jZWxscyA9IDwxPjsN
+CgkjYWRkcmVzcy1jZWxscyA9IDwwPjsNCglpbnRlcnJ1cHQtbWFwLW1hc2sgPSA8MTI3PjsNCglp
+bnRlcnJ1cHQtbWFwID0NCgkJLyogZ3BpbzJhIDI0LCBwaW4gMTQ2OiBFVEggUG9ydCAxIElSUSAq
+Lw0KCQk8ODggJmdpYyBHSUNfU1BJIDEwMyBJUlFfVFlQRV9MRVZFTF9ISUdIPiwNCgkJLyogZ3Bp
+bzJhIDI2LCBwaW4gMTQ4OiBUb3VjaHNjcmVlbl9JUlEgKi8NCgkJPDkwICZnaWMgR0lDX1NQSSAx
+MDQgSVJRX1RZUEVfTEVWRUxfSElHSD47DQoNClRoZSBvbmx5IGlzc3VlIGlzIHRoYXQgSSBjYW4n
+dCBzZWUgaG93IHRvIGdldCB0aGUgZmlyc3QgZWxlbWVudCBvZiBlYWNoDQppbnRlcnJ1cHQtbWFw
+IGVudHJ5IGluIHRoZSBkcml2ZXIuIFRoZSBkcml2ZXIgbmVlZHMgdG8ga25vdyB0aGF0IGlucHV0
+DQppbnRlcnJ1cHQgaHdpcnEgODggY29ycmVzcG9uZHMgdG8gR0lDX1NQSSAxMDMsIGFuZCA5MCB0
+byBHSUNfU1BJIDEwNC4NCg0KVGhhbmtzIGZvciB5b3VyIHRpbWUgJiBwYXRpZW5jZSwNClBoaWwN
+Cg==
