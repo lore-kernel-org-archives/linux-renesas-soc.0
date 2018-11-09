@@ -1,76 +1,100 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:58288 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726568AbeKUJkS (ORCPT
+Received: from mail-os2jpn01on0090.outbound.protection.outlook.com ([104.47.92.90]:2177
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727656AbeKIV1R (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Nov 2018 04:40:18 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-Subject: [RFC PATCH 2/3] mmc: core: use mrq->sbc when sending CMD23 for RPMB
-Date: Wed, 21 Nov 2018 00:08:31 +0100
-Message-Id: <20181120230832.1840-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181120230832.1840-1-wsa+renesas@sang-engineering.com>
-References: <20181120230832.1840-1-wsa+renesas@sang-engineering.com>
+        Fri, 9 Nov 2018 16:27:17 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH] usb: gadget: udc: renesas_usb3: add a safety connection way for forced_b_device
+Date: Fri,  9 Nov 2018 20:44:36 +0900
+Message-Id: <1541763876-19622-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When sending out CMD23 in the blk preparation, the comment there
-rightfully says:
+This patch adds a safety connection way for "forced_b_device" with
+"workaround_for_vbus" like below:
 
-	 * However, it is not sufficient to just send CMD23,
-	 * and avoid the final CMD12, as on an error condition
-	 * CMD12 (stop) needs to be sent anyway. This, coupled
-	 * with Auto-CMD23 enhancements provided by some
-	 * hosts, means that the complexity of dealing
-	 * with this is best left to the host. If CMD23 is
-	 * supported by card and host, we'll fill sbc in and let
-	 * the host deal with handling it correctly.
+< Example for R-Car E3 Ebisu >
+ # modprobe <any usb gadget driver>
+ # echo 1 > /sys/kernel/debug/ee020000.usb/b_device
+ (connect a usb cable to host side.)
+ # echo 2 > /sys/kernel/debug/ee020000.usb/b_device
 
-Let's do this behaviour for RPMB as well, and not send CMD23
-independently. Otherwise IP cores (like Renesas SDHI) may timeout
-because of automatic CMD23/CMD12 handling.
+Previous code should have connected a usb cable before the "b_device"
+is set to 1 on the Ebisu board. However, if xHCI driver on the board
+is probed, it causes some troubles:
+ - Conflicts USB VBUS/signals between the board and another host.
+ - "Cannot enable. Maybe the USB cable is bad?" might happen on
+   both the board and another host with a usb hub.
+ - Cannot enumerate a usb gadget correctly because an interruption
+   of VBUS change happens unexpectedly.
 
-Reported-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reported-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
+ drivers/usb/gadget/udc/renesas_usb3.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-I also noticed that write_flag is an int, and we are playing with the sign bit
-on 32-bit systems. But sadly this is exported to userspace...
-
- drivers/mmc/core/block.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-index 9e0f7e4aa8c6..66fc425615cd 100644
---- a/drivers/mmc/core/block.c
-+++ b/drivers/mmc/core/block.c
-@@ -472,7 +472,7 @@ static int ioctl_do_sanitize(struct mmc_card *card)
- static int __mmc_blk_ioctl_cmd(struct mmc_card *card, struct mmc_blk_data *md,
- 			       struct mmc_blk_ioc_data *idata)
+diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
+index cdffbd1..6e34f95 100644
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -358,6 +358,7 @@ struct renesas_usb3 {
+ 	bool extcon_host;		/* check id and set EXTCON_USB_HOST */
+ 	bool extcon_usb;		/* check vbus and set EXTCON_USB */
+ 	bool forced_b_device;
++	bool start_to_connect;
+ };
+ 
+ #define gadget_to_renesas_usb3(_gadget)	\
+@@ -476,7 +477,8 @@ static void usb3_init_axi_bridge(struct renesas_usb3 *usb3)
+ static void usb3_init_epc_registers(struct renesas_usb3 *usb3)
  {
--	struct mmc_command cmd = {};
-+	struct mmc_command cmd = {}, sbc = {};
- 	struct mmc_data data = {};
- 	struct mmc_request mrq = {};
- 	struct scatterlist sg;
-@@ -553,10 +553,11 @@ static int __mmc_blk_ioctl_cmd(struct mmc_card *card, struct mmc_blk_data *md,
- 		if (data.blocks > 65535 || !data.blocks)
- 			return -EINVAL;
+ 	usb3_write(usb3, ~0, USB3_USB_INT_STA_1);
+-	usb3_enable_irq_1(usb3, USB_INT_1_VBUS_CNG);
++	if (!usb3->workaround_for_vbus)
++		usb3_enable_irq_1(usb3, USB_INT_1_VBUS_CNG);
+ }
  
--		err = mmc_set_blockcount(card, data.blocks,
--			idata->ic.write_flag & (1 << 31));
--		if (err)
--			return err;
-+		sbc.opcode = MMC_SET_BLOCK_COUNT;
-+		/* copy the 'Reliable Write' bit */
-+		sbc.arg = data.blocks | (idata->ic.write_flag & BIT(31));
-+		sbc.flags = MMC_RSP_R1 | MMC_CMD_AC;
-+		mrq.sbc = &sbc;
- 	}
+ static bool usb3_wakeup_usb2_phy(struct renesas_usb3 *usb3)
+@@ -700,8 +702,7 @@ static void usb3_mode_config(struct renesas_usb3 *usb3, bool host, bool a_dev)
+ 	usb3_set_mode_by_role_sw(usb3, host);
+ 	usb3_vbus_out(usb3, a_dev);
+ 	/* for A-Peripheral or forced B-device mode */
+-	if ((!host && a_dev) ||
+-	    (usb3->workaround_for_vbus && usb3->forced_b_device))
++	if ((!host && a_dev) || usb3->start_to_connect)
+ 		usb3_connect(usb3);
+ 	spin_unlock_irqrestore(&usb3->lock, flags);
+ }
+@@ -2432,7 +2433,11 @@ static ssize_t renesas_usb3_b_device_write(struct file *file,
+ 	if (copy_from_user(&buf, ubuf, min_t(size_t, sizeof(buf) - 1, count)))
+ 		return -EFAULT;
  
- 	if ((MMC_EXTRACT_INDEX_FROM_ARG(cmd.arg) == EXT_CSD_SANITIZE_START) &&
+-	if (!strncmp(buf, "1", 1))
++	usb3->start_to_connect = false;
++	if (usb3->workaround_for_vbus && usb3->forced_b_device &&
++	    !strncmp(buf, "2", 1))
++		usb3->start_to_connect = true;
++	else if (!strncmp(buf, "1", 1))
+ 		usb3->forced_b_device = true;
+ 	else
+ 		usb3->forced_b_device = false;
+@@ -2440,7 +2445,7 @@ static ssize_t renesas_usb3_b_device_write(struct file *file,
+ 	if (usb3->workaround_for_vbus)
+ 		usb3_disconnect(usb3);
+ 
+-	/* Let this driver call usb3_connect() anyway */
++	/* Let this driver call usb3_connect() if needed */
+ 	usb3_check_id(usb3);
+ 
+ 	return count;
 -- 
-2.11.0
+1.9.1
