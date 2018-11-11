@@ -1,43 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:60981 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725727AbeKCE3k (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:37000 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727334AbeKKTTq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 3 Nov 2018 00:29:40 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-watchdog@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Sun, 11 Nov 2018 14:19:46 -0500
+Date: Sun, 11 Nov 2018 15:01:34 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, dmaengine@vger.kernel.org,
+        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] watchdog: renesas_wdt: Fix typos
-Date: Fri,  2 Nov 2018 19:21:11 +0000
-Message-Id: <1541186471-2998-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH 1/2] dt-bindings: dmaengine: usb-dmac: Add binding for
+ r8a77470
+Message-ID: <20181111093134.GE12092@vkoul-mobl>
+References: <1540479218-4954-1-git-send-email-biju.das@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1540479218-4954-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- drivers/watchdog/renesas_wdt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 25-10-18, 15:53, Biju Das wrote:
+> This patch adds usb high-speed dmac binding for r8a77470 (RZ/G1C) SoC.
 
-diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index 0d74c3e..b570962 100644
---- a/drivers/watchdog/renesas_wdt.c
-+++ b/drivers/watchdog/renesas_wdt.c
-@@ -220,8 +220,8 @@ static int rwdt_probe(struct platform_device *pdev)
- 		goto out_pm_disable;
- 	}
- 
--	priv->wdev.info = &rwdt_ident,
--	priv->wdev.ops = &rwdt_ops,
-+	priv->wdev.info = &rwdt_ident;
-+	priv->wdev.ops = &rwdt_ops;
- 	priv->wdev.parent = &pdev->dev;
- 	priv->wdev.min_timeout = 1;
- 	priv->wdev.max_timeout = DIV_BY_CLKS_PER_SEC(priv, 65536);
+Applied, thanks
+
 -- 
-2.7.4
+~Vinod
