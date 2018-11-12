@@ -1,63 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:33444 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726780AbeK2WBT (ORCPT
+Received: from mail-it1-f195.google.com ([209.85.166.195]:39984 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728847AbeKLU6l (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Nov 2018 17:01:19 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/6] soc: renesas: Miscellaneous fixes
-Date: Thu, 29 Nov 2018 11:56:13 +0100
-Message-Id: <20181129105619.10695-1-geert+renesas@glider.be>
+        Mon, 12 Nov 2018 15:58:41 -0500
+Received: by mail-it1-f195.google.com with SMTP id e11so12566888itl.5
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Nov 2018 03:05:56 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20181024222301.21455-4-chris.brandt@renesas.com>
+References: <20181024222301.21455-1-chris.brandt@renesas.com> <20181024222301.21455-4-chris.brandt@renesas.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 12 Nov 2018 12:05:15 +0100
+Message-ID: <CAPDyKFoTa4mUQmKrn+T_Qu5sbWCFxZZWYL1U9daA+bTJMYU3nw@mail.gmail.com>
+Subject: Re: [PATCH v5 3/3] dt-bindings: mmc: tmio_mmc: Document Renesas R7S9210
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+On 25 October 2018 at 00:23, Chris Brandt <chris.brandt@renesas.com> wrote:
+> Document support for the RZ/A2 (R7S9210) SoC.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-This patch series contains several fixes for the Renesas SYSC (power
-domain) drivers and DT bindings:
-  - Removal of non-existent power domains,
-  - Correction of power domain names and hierarchy.
-These are the result of skimming the Hardware Manual Errata.
+Applied for next, thanks!
 
-Note that the last patch (marked RFC) cannot be applied yet, as there is
-an existing (but incorrect) user of the removed definition.
+Kind regards
+Uffe
 
-Thanks!
-
-Geert Uytterhoeven (6):
-  soc: renesas: r8a77965-sysc: Remove non-existent A3IR power domain
-  soc: renesas: r8a77970-sysc: Remove non-existent CR7 power domain
-  soc: renesas: r8a77970-sysc: Correct names of A2DP/A2CN power domains
-  soc: renesas: r8a77980-sysc: Correct names of A2DP[01] power domains
-  soc: renesas: r8a77980-sysc: Correct A3VIP[012] power domain hierarchy
-  [RFC] dt-bindings: power: r8a77965: Remove non-existent A3IR power
-    domain
-
- drivers/soc/renesas/r8a77965-sysc.c       |  1 -
- drivers/soc/renesas/r8a77970-sysc.c       |  5 ++---
- drivers/soc/renesas/r8a77980-sysc.c       | 10 +++++-----
- include/dt-bindings/power/r8a77965-sysc.h |  1 -
- include/dt-bindings/power/r8a77970-sysc.h |  7 +++----
- include/dt-bindings/power/r8a77980-sysc.h |  6 +++---
- 6 files changed, 13 insertions(+), 17 deletions(-)
-
--- 
-2.17.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+> ---
+> v3:
+>  * Added Reviewed-by from Rob and Simon
+> v2:
+>  * Documented that R7S9210 has 2 clocks
+> ---
+>  Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> index 27f2eab2981d..9391ae9a1d9d 100644
+> --- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> @@ -13,6 +13,7 @@ Required properties:
+>  - compatible: should contain one or more of the following:
+>                 "renesas,sdhi-sh73a0" - SDHI IP on SH73A0 SoC
+>                 "renesas,sdhi-r7s72100" - SDHI IP on R7S72100 SoC
+> +               "renesas,sdhi-r7s9210" - SDHI IP on R7S9210 SoC
+>                 "renesas,sdhi-r8a73a4" - SDHI IP on R8A73A4 SoC
+>                 "renesas,sdhi-r8a7740" - SDHI IP on R8A7740 SoC
+>                 "renesas,sdhi-r8a7743" - SDHI IP on R8A7743 SoC
+> @@ -56,7 +57,7 @@ Required properties:
+>           "core" and "cd". If the controller only has 1 clock, naming is not
+>           required.
+>           Devices which have more than 1 clock are listed below:
+> -         2: R7S72100
+> +         2: R7S72100, R7S9210
+>
+>  Optional properties:
+>  - pinctrl-names: should be "default", "state_uhs"
+> --
+> 2.16.1
+>
