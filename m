@@ -1,74 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-eopbgr1400125.outbound.protection.outlook.com ([40.107.140.125]:12115
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727996AbeKLSqE (ORCPT
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:43588 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727296AbeKLSLA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Nov 2018 13:46:04 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH/RFC] iommu/ipmmu-vmsa: R-Car M3-N/V3H/E3 AVB whitelist
- prototype
-Date: Mon, 12 Nov 2018 08:53:46 +0000
-Message-ID: <OSBPR01MB229375E9A5748E3931A4701CD8C10@OSBPR01MB2293.jpnprd01.prod.outlook.com>
-References: <154014429795.2869.7870954544925695802.sendpatchset@octo>
- <CAMuHMdXv3LYcjpWxRxnVbcei5e7i0VxOL5RRro24b5_mKODakw@mail.gmail.com>
- <OSBPR01MB2293329B49BE6DCC6E949EF7D8C10@OSBPR01MB2293.jpnprd01.prod.outlook.com>
- <CAMuHMdW9U1rJ1mR2kHosb_e7zMGTDN2eznmeEwDu6V0fO35aCA@mail.gmail.com>
-In-Reply-To: <CAMuHMdW9U1rJ1mR2kHosb_e7zMGTDN2eznmeEwDu6V0fO35aCA@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 12 Nov 2018 13:11:00 -0500
+Received: by mail-vs1-f67.google.com with SMTP id x1so4583307vsc.10
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Nov 2018 00:18:54 -0800 (PST)
 MIME-Version: 1.0
+References: <154014429795.2869.7870954544925695802.sendpatchset@octo>
+ <CAMuHMdXv3LYcjpWxRxnVbcei5e7i0VxOL5RRro24b5_mKODakw@mail.gmail.com> <OSBPR01MB2293329B49BE6DCC6E949EF7D8C10@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSBPR01MB2293329B49BE6DCC6E949EF7D8C10@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 Nov 2018 09:18:41 +0100
+Message-ID: <CAMuHMdW9U1rJ1mR2kHosb_e7zMGTDN2eznmeEwDu6V0fO35aCA@mail.gmail.com>
+Subject: Re: [PATCH/RFC] iommu/ipmmu-vmsa: R-Car M3-N/V3H/E3 AVB whitelist prototype
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQtc2FuLA0KDQpUaGFuayB5b3UgZm9yIHRoZSBjb21tZW50IQ0KDQo+IEZyb206IEdl
-ZXJ0IFV5dHRlcmhvZXZlbiwgU2VudDogTW9uZGF5LCBOb3ZlbWJlciAxMiwgMjAxOCA1OjE5IFBN
-DQo+IA0KPiBIaSBTaGltb2RhLXNhbiwNCj4gDQo+IE9uIE1vbiwgTm92IDEyLCAyMDE4IGF0IDg6
-MjQgQU0gWW9zaGloaXJvIFNoaW1vZGENCj4gPHlvc2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMu
-Y29tPiB3cm90ZToNCjxzbmlwPg0KPiA+IC0tLSBhL2RyaXZlcnMvaW9tbXUvaXBtbXUtdm1zYS5j
-DQo+ID4gKysrIGIvZHJpdmVycy9pb21tdS9pcG1tdS12bXNhLmMNCj4gPiBAQCAtNzU4LDEwICs3
-NTgsMTAgQEAgc3RhdGljIGJvb2wgaXBtbXVfc2xhdmVfd2hpdGVsaXN0KHN0cnVjdCBkZXZpY2Ug
-KmRldikNCj4gPiAgfQ0KPiA+DQo+ID4gIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgc29jX2RldmljZV9h
-dHRyaWJ1dGUgc29jX3JjYXJfZ2VuM1tdID0gew0KPiA+IC0gICAgICAgeyAuc29jX2lkID0gInI4
-YTc3OTUiLCB9LA0KPiA+IC0gICAgICAgeyAuc29jX2lkID0gInI4YTc3OTYiLCB9LA0KPiA+ICsg
-ICAgICAgeyAuc29jX2lkID0gInI4YTc3OTUiLCAucmV2aXNpb24gPSAiRVMzLioiIH0sDQo+ID4g
-ICAgICAgICB7IC5zb2NfaWQgPSAicjhhNzc5NjUiLCB9LA0KPiA+ICAgICAgICAgeyAuc29jX2lk
-ID0gInI4YTc3OTcwIiwgfSwNCj4gPiArICAgICAgIHsgLnNvY19pZCA9ICJyOGE3Nzk5MCIsIH0s
-DQo+ID4gICAgICAgICB7IC5zb2NfaWQgPSAicjhhNzc5OTUiLCB9LA0KPiA+ICAgICAgICAgeyAv
-KiBzZW50aW5lbCAqLyB9DQo+ID4gIH07DQo+IA0KPiBHaXZlbiB0aGUgYWJvdmUsIEkgdGhpbmsg
-dGhlIHRpbWUgaXMgcmlwZSB0byBjb252ZXJ0IHRoaXMgZnJvbSBhIHdoaXRlbGlzdCB0byBhDQo+
-IGJsYWNrbGlzdD8NCg0KQWJvdXQgdGhlIFNvQ3MsIEkgdGhpbmsgc28uIChJIHVwZGF0ZWQgZXhh
-bXBsZSBwYXRjaCBiZWxvdyBhbmQgaXQgc2VlbXMgYmV0dGVyIDopICkNCkhvd2V2ZXIsIEkgd291
-bGQgbGlrZSB0byBrZWVwIGlwbW11X3NsYXZlX3doaXRlbGlzdCB0byBhdm9pZCBhbnkgdHJvdWJs
-ZSBmb3Igbm93Li4uDQoNCi0tLQ0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvaW9tbXUvaXBtbXUtdm1z
-YS5jIGIvZHJpdmVycy9pb21tdS9pcG1tdS12bXNhLmMNCmluZGV4IGI5OGEwMzEuLmFiMjQxMjgg
-MTAwNjQ0DQotLS0gYS9kcml2ZXJzL2lvbW11L2lwbW11LXZtc2EuYw0KKysrIGIvZHJpdmVycy9p
-b21tdS9pcG1tdS12bXNhLmMNCkBAIC03NTcsMTIgKzc1NywxMCBAQCBzdGF0aWMgYm9vbCBpcG1t
-dV9zbGF2ZV93aGl0ZWxpc3Qoc3RydWN0IGRldmljZSAqZGV2KQ0KIAlyZXR1cm4gZmFsc2U7DQog
-fQ0KIA0KLXN0YXRpYyBjb25zdCBzdHJ1Y3Qgc29jX2RldmljZV9hdHRyaWJ1dGUgc29jX3JjYXJf
-Z2VuM1tdID0gew0KLQl7IC5zb2NfaWQgPSAicjhhNzc5NSIsIH0sDQotCXsgLnNvY19pZCA9ICJy
-OGE3Nzk2IiwgfSwNCi0JeyAuc29jX2lkID0gInI4YTc3OTY1IiwgfSwNCi0JeyAuc29jX2lkID0g
-InI4YTc3OTcwIiwgfSwNCi0JeyAuc29jX2lkID0gInI4YTc3OTk1IiwgfSwNCitzdGF0aWMgY29u
-c3Qgc3RydWN0IHNvY19kZXZpY2VfYXR0cmlidXRlIHNvY19yY2FyX2dlbjNfYmxhY2tsaXN0W10g
-PSB7DQorCXsgLnNvY19pZCA9ICJyOGE3Nzk1IiwgLnJldmlzaW9uID0gIkVTMS4qIiB9LA0KKwl7
-IC5zb2NfaWQgPSAicjhhNzc5NSIsIC5yZXZpc2lvbiA9ICJFUzIuKiIgfSwNCisJeyAuc29jX2lk
-ID0gInI4YTc3OTYiLCAucmV2aXNpb24gPSAiRVMxLioiIH0sDQogCXsgLyogc2VudGluZWwgKi8g
-fQ0KIH07DQogDQpAQCAtNzcwLDcgKzc2OCw4IEBAIHN0YXRpYyBpbnQgaXBtbXVfb2ZfeGxhdGUo
-c3RydWN0IGRldmljZSAqZGV2LA0KIAkJCSAgc3RydWN0IG9mX3BoYW5kbGVfYXJncyAqc3BlYykN
-CiB7DQogCS8qIEZvciBSLUNhciBHZW4zIHVzZSBhIHdoaXRlIGxpc3QgdG8gb3B0LWluIHNsYXZl
-IGRldmljZXMgKi8NCi0JaWYgKHNvY19kZXZpY2VfbWF0Y2goc29jX3JjYXJfZ2VuMykgJiYgIWlw
-bW11X3NsYXZlX3doaXRlbGlzdChkZXYpKQ0KKwlpZiAoIXNvY19kZXZpY2VfbWF0Y2goc29jX3Jj
-YXJfZ2VuM19ibGFja2xpc3QpICYmDQorCSAgICAhaXBtbXVfc2xhdmVfd2hpdGVsaXN0KGRldikp
-DQogCQlyZXR1cm4gLUVOT0RFVjsNCiANCiAJaW9tbXVfZndzcGVjX2FkZF9pZHMoZGV2LCBzcGVj
-LT5hcmdzLCAxKTsNCi0tLQ0KQmVzdCByZWdhcmRzLA0KWW9zaGloaXJvIFNoaW1vZGENCg0KPiBH
-cntvZXRqZSxlZXRpbmd9cywNCj4gDQo+ICAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+
-IA0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJl
-eW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LW02OGsub3JnDQo+IA0KPiBJbiBwZXJzb25hbCBjb252
-ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4g
-QnV0DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3Jh
-bW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4gICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0K
+Hi Shimoda-san,
+
+On Mon, Nov 12, 2018 at 8:24 AM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> > From: Geert Uytterhoeven, Sent: Sunday, October 28, 2018 10:33 PM
+> > On Sun, Oct 21, 2018 at 7:56 PM Magnus Damm <magnus.damm@gmail.com> wrote:
+> > > From: Magnus Damm <damm@opensource.se>
+> > >
+> > > For testing purpose enable IPMMU for Ethernet-AVB on R-Car M3-N/V3H/E3.
+> > >
+> > > Not for upstream merge.
+> > >
+> > > Not-Yet-Signed-off-by: Magnus Damm <damm@opensource.se>
+> > > ---
+> > >
+> > >  Applies on top of renesas-devel-20181019-v4.19-rc8
+> > >
+> > >  drivers/iommu/ipmmu-vmsa.c |    4 ++++
+> > >  1 file changed, 4 insertions(+)
+> > >
+> > > --- 0001/drivers/iommu/ipmmu-vmsa.c
+> > > +++ work/drivers/iommu/ipmmu-vmsa.c     2018-10-22 02:46:30.139880557 +0900
+> > > @@ -756,6 +756,10 @@ static int ipmmu_init_platform_device(st
+> > >
+> > >  static bool ipmmu_slave_whitelist(struct device *dev)
+> > >  {
+> > > +       /* R-Car M3-N/V3H/E3 Ethernet-AVB */
+> > > +       if (!strcmp(dev_name(dev), "e6800000.ethernet"))
+> > > +               return true;
+> >
+> > I'm afraid the whitelisting doesn't work that way: with the above check, it will
+> > be enabled on all R-Car Gen3 SoCs.
+>
+> I agree with Geert-san.
+> So, how about adding .revision into the soc_rcar_gen3 like a whitelist of SoCs first as following?
+> I believe almost all R-Car Gen3 SoCs can use IPMMU safety, except H3 ES2.0 or older and M3-W ES1.*.
+
+Thanks for the information!
+
+> --- a/drivers/iommu/ipmmu-vmsa.c
+> +++ b/drivers/iommu/ipmmu-vmsa.c
+> @@ -758,10 +758,10 @@ static bool ipmmu_slave_whitelist(struct device *dev)
+>  }
+>
+>  static const struct soc_device_attribute soc_rcar_gen3[] = {
+> -       { .soc_id = "r8a7795", },
+> -       { .soc_id = "r8a7796", },
+> +       { .soc_id = "r8a7795", .revision = "ES3.*" },
+>         { .soc_id = "r8a77965", },
+>         { .soc_id = "r8a77970", },
+> +       { .soc_id = "r8a77990", },
+>         { .soc_id = "r8a77995", },
+>         { /* sentinel */ }
+>  };
+
+Given the above, I think the time is ripe to convert this from a whitelist to a
+blacklist?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
