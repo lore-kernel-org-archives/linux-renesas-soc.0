@@ -1,121 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57527 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726241AbeKGUzK (ORCPT
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:36444 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725873AbeKLTfY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Nov 2018 15:55:10 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Mon, 12 Nov 2018 14:35:24 -0500
+MIME-Version: 1.0
+References: <1541623464-49041-1-git-send-email-carmeli.tamir@gmail.com> <1541623464-49041-2-git-send-email-carmeli.tamir@gmail.com>
+In-Reply-To: <1541623464-49041-2-git-send-email-carmeli.tamir@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 Nov 2018 10:42:47 +0100
+Message-ID: <CAMuHMdXqAbWHCFKD6L_JqJQ1J17=QtopHFihXnWcWufkUJqrTw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] staging: emxx_udc: Added static modifier to udc_controller
+To: carmeli.tamir@gmail.com
+Cc: Greg KH <gregkh@linuxfoundation.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        chrisadr@gentoo.org, areklis909@gmail.com,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        driverdevel <devel@driverdev.osuosl.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/3] arm64: dts: renesas: condor: switch from EtherAVB to GEther
-Date: Wed,  7 Nov 2018 12:25:05 +0100
-Message-Id: <eab53fdfd60a84b0cc514d4f1f5d79226c76df01.1541514075.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1541514075.git.horms+renesas@verge.net.au>
-References: <cover.1541514075.git.horms+renesas@verge.net.au>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hi Carmeli,
 
-The "official" Condor boards have always been wired to mount NFS via
-GEther, not EtherAVB -- the boards resoldered for EtherAVB were local
-to Cogent Embedded, so we've been having an unpleasant situation where
-a "normal" Condor board still can't mount NFS (unless an EtherAVB PHY
-extension board is plugged in). Switch from EtherAVB to GEther at last!
+CC Magnus
 
-Fixes: 8091788f3d38 ("arm64: dts: renesas: condor: add EtherAVB support")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77980-condor.dts | 47 +++++++++++++------------
- 1 file changed, 24 insertions(+), 23 deletions(-)
+(staging drivers receive so may janitorial changes that the original author is
+ lost in the git shortlog noise)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980-condor.dts b/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-index fe2e2c051cc9..5a7012be0d6a 100644
---- a/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-@@ -15,7 +15,7 @@
- 
- 	aliases {
- 		serial0 = &scif0;
--		ethernet0 = &avb;
-+		ethernet0 = &gether;
- 	};
- 
- 	chosen {
-@@ -97,23 +97,6 @@
- 	};
- };
- 
--&avb {
--	pinctrl-0 = <&avb_pins>;
--	pinctrl-names = "default";
--
--	phy-mode = "rgmii-id";
--	phy-handle = <&phy0>;
--	renesas,no-ether-link;
--	status = "okay";
--
--	phy0: ethernet-phy@0 {
--		rxc-skew-ps = <1500>;
--		reg = <0>;
--		interrupt-parent = <&gpio1>;
--		interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
--	};
--};
--
- &canfd {
- 	pinctrl-0 = <&canfd0_pins>;
- 	pinctrl-names = "default";
-@@ -139,6 +122,23 @@
- 	clock-frequency = <32768>;
- };
- 
-+&gether {
-+	pinctrl-0 = <&gether_pins>;
-+	pinctrl-names = "default";
-+
-+	phy-mode = "rgmii-id";
-+	phy-handle = <&phy0>;
-+	renesas,no-ether-link;
-+	status = "okay";
-+
-+	phy0: ethernet-phy@0 {
-+		rxc-skew-ps = <1500>;
-+		reg = <0>;
-+		interrupt-parent = <&gpio4>;
-+		interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+};
-+
- &i2c0 {
- 	pinctrl-0 = <&i2c0_pins>;
- 	pinctrl-names = "default";
-@@ -236,16 +236,17 @@
- };
- 
- &pfc {
--	avb_pins: avb {
--		groups = "avb_mdio", "avb_rgmii";
--		function = "avb";
--	};
--
- 	canfd0_pins: canfd0 {
- 		groups = "canfd0_data_a";
- 		function = "canfd0";
- 	};
- 
-+	gether_pins: gether {
-+		groups = "gether_mdio_a", "gether_rgmii",
-+			 "gether_txcrefclk", "gether_txcrefclk_mega";
-+		function = "gether";
-+	};
-+
- 	i2c0_pins: i2c0 {
- 		groups = "i2c0";
- 		function = "i2c0";
+On Wed, Nov 7, 2018 at 9:46 PM Carmeli Tamir <carmeli.tamir@gmail.com> wrote:
+> Added static modifier to the udc_controller, since it's only
+> required within emxx_udc.c.
+>
+> Signed-off-by: Carmeli Tamir <carmeli.tamir@gmail.com>
+
+Thanks for your patch!
+
+> --- a/drivers/staging/emxx_udc/emxx_udc.c
+> +++ b/drivers/staging/emxx_udc/emxx_udc.c
+> @@ -56,7 +56,7 @@ static void _nbu2ss_fifo_flush(struct nbu2ss_udc *, struct nbu2ss_ep *);
+>
+>  /*===========================================================================*/
+>  /* Global */
+> -struct nbu2ss_udc udc_controller;
+> +static struct nbu2ss_udc udc_controller;
+
+What about the "Global" comment?
+Perhaps this was intentional?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
