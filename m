@@ -1,143 +1,157 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:42141 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728998AbeK0XDC (ORCPT
+Received: from mail-io1-f68.google.com ([209.85.166.68]:40734 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728394AbeKLU6f (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Nov 2018 18:03:02 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Mon, 12 Nov 2018 15:58:35 -0500
+Received: by mail-io1-f68.google.com with SMTP id r7-v6so5760362iog.7
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Nov 2018 03:05:49 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20181024222301.21455-3-chris.brandt@renesas.com>
+References: <20181024222301.21455-1-chris.brandt@renesas.com> <20181024222301.21455-3-chris.brandt@renesas.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 12 Nov 2018 12:05:08 +0100
+Message-ID: <CAPDyKFpMAH+528BouQiepHbi55uF=EEQqNoXxMUhQctMdoJu_A@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] mmc: renesas_sdhi_internal_dmac: Add R7S9210 support
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 07/22] ARM: dts: r8a7744: USB 2.0 host support
-Date: Tue, 27 Nov 2018 11:56:20 +0000
-Message-Id: <1543319795-48325-8-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com>
-References: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe internal PCI bridge devices, USB phy device and
-link PCI USB devices to USB phy.
+On 25 October 2018 at 00:23, Chris Brandt <chris.brandt@renesas.com> wrote:
+> The SDHI/MMC controller in the RZ/A2 is almost the same as R-Car gen3, but
+> with some minor differences.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm/boot/dts/r8a7744.dtsi | 77 +++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 72 insertions(+), 5 deletions(-)
+Applied for next, thanks!
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index 7a0ccae..3549ee1 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -468,8 +468,25 @@
- 		};
- 
- 		usbphy: usb-phy@e6590100 {
-+			compatible = "renesas,usb-phy-r8a7744",
-+				     "renesas,rcar-gen2-usb-phy";
- 			reg = <0 0xe6590100 0 0x100>;
--			/* placeholder */
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			clocks = <&cpg CPG_MOD 704>;
-+			clock-names = "usbhs";
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 704>;
-+			status = "disabled";
-+
-+			usb0: usb-channel@0 {
-+				reg = <0>;
-+				#phy-cells = <1>;
-+			};
-+			usb2: usb-channel@2 {
-+				reg = <2>;
-+				#phy-cells = <1>;
-+			};
- 		};
- 
- 		dmac0: dma-controller@e6700000 {
-@@ -861,23 +878,73 @@
- 		};
- 
- 		pci0: pci@ee090000 {
--			reg = <0 0xee090000 0 0xc00>;
-+			compatible = "renesas,pci-r8a7744",
-+				     "renesas,pci-rcar-gen2";
-+			device_type = "pci";
-+			reg = <0 0xee090000 0 0xc00>,
-+			      <0 0xee080000 0 0x1100>;
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 703>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 703>;
-+			status = "disabled";
- 
- 			bus-range = <0 0>;
- 			#address-cells = <3>;
- 			#size-cells = <2>;
- 			#interrupt-cells = <1>;
--			/* placeholder */
-+			ranges = <0x02000000 0 0xee080000 0 0xee080000 0 0x00010000>;
-+			interrupt-map-mask = <0xff00 0 0 0x7>;
-+			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
-+					 0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
-+					 0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			usb@1,0 {
-+				reg = <0x800 0 0 0 0>;
-+				phys = <&usb0 0>;
-+				phy-names = "usb";
-+			};
-+
-+			usb@2,0 {
-+				reg = <0x1000 0 0 0 0>;
-+				phys = <&usb0 0>;
-+				phy-names = "usb";
-+			};
- 		};
- 
- 		pci1: pci@ee0d0000 {
--			reg = <0 0xee0d0000 0 0xc00>;
-+			compatible = "renesas,pci-r8a7744",
-+				     "renesas,pci-rcar-gen2";
-+			device_type = "pci";
-+			reg = <0 0xee0d0000 0 0xc00>,
-+			      <0 0xee0c0000 0 0x1100>;
-+			interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 703>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 703>;
-+			status = "disabled";
- 
- 			bus-range = <1 1>;
- 			#address-cells = <3>;
- 			#size-cells = <2>;
- 			#interrupt-cells = <1>;
--			/* placeholder */
-+			ranges = <0x02000000 0 0xee0c0000 0 0xee0c0000 0 0x00010000>;
-+			interrupt-map-mask = <0xff00 0 0 0x7>;
-+			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
-+					 0x0800 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
-+					 0x1000 0 0 2 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			usb@1,0 {
-+				reg = <0x10800 0 0 0 0>;
-+				phys = <&usb2 0>;
-+				phy-names = "usb";
-+			};
-+
-+			usb@2,0 {
-+				reg = <0x11000 0 0 0 0>;
-+				phys = <&usb2 0>;
-+				phy-names = "usb";
-+			};
- 		};
- 
- 		sdhi0: sd@ee100000 {
--- 
-2.7.4
+Kind regards
+Uffe
+
+> ---
+> v5:
+>  * Rebased against -next to fix conficts with RZ/G1C patches
+>  * Changed Kconfig message to say "found in some RZ" instead of just
+>    "found in RZ/A"
+> v4:
+>  * Fixed spelling in #define
+> v3:
+>  * Removed extra space in Kconfig
+>  * Removed unneeded parentheses
+> v2:
+>  * Made comment clearer
+> ---
+>  drivers/mmc/host/Kconfig                      |  7 ++++---
+>  drivers/mmc/host/renesas_sdhi_internal_dmac.c | 28 +++++++++++++++++++++++++--
+>  2 files changed, 30 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index 1b58739d9744..720311ece714 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -646,13 +646,14 @@ config MMC_SDHI_SYS_DMAC
+>
+>  config MMC_SDHI_INTERNAL_DMAC
+>         tristate "DMA for SDHI SD/SDIO controllers using on-chip bus mastering"
+> -       depends on ARM64 || ARCH_R8A77470 || COMPILE_TEST
+> +       depends on ARM64 || ARCH_R7S9210 || ARCH_R8A77470 || COMPILE_TEST
+>         depends on MMC_SDHI
+> -       default MMC_SDHI if (ARM64 || ARCH_R8A77470)
+> +       default MMC_SDHI if (ARM64 || ARCH_R7S9210 || ARCH_R8A77470)
+>         help
+>           This provides DMA support for SDHI SD/SDIO controllers
+>           using on-chip bus mastering. This supports the controllers
+> -         found in arm64 based SoCs.
+> +         found in arm64 based SoCs. This controller is also found in
+> +         some RZ family SoCs.
+>
+>  config MMC_UNIPHIER
+>         tristate "UniPhier SD/eMMC Host Controller support"
+> diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> index b6f54102bfdd..b9d83d6ed346 100644
+> --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> @@ -34,7 +34,7 @@
+>  #define DTRAN_MODE_CH_NUM_CH0  0       /* "downstream" = for write commands */
+>  #define DTRAN_MODE_CH_NUM_CH1  BIT(16) /* "upstream" = for read commands */
+>  #define DTRAN_MODE_BUS_WIDTH   (BIT(5) | BIT(4))
+> -#define DTRAN_MODE_ADDR_MODE   BIT(0)  /* 1 = Increment address */
+> +#define DTRAN_MODE_ADDR_MODE   BIT(0)  /* 1 = Increment address, 0 = Fixed */
+>
+>  /* DM_CM_DTRAN_CTRL */
+>  #define DTRAN_CTRL_DM_START    BIT(0)
+> @@ -73,6 +73,9 @@ static unsigned long global_flags;
+>  #define SDHI_INTERNAL_DMAC_ONE_RX_ONLY 0
+>  #define SDHI_INTERNAL_DMAC_RX_IN_USE   1
+>
+> +/* RZ/A2 does not have the ADRR_MODE bit */
+> +#define SDHI_INTERNAL_DMAC_ADDR_MODE_FIXED_ONLY 2
+> +
+>  /* Definitions for sampling clocks */
+>  static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
+>         {
+> @@ -81,6 +84,21 @@ static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
+>         },
+>  };
+>
+> +static const struct renesas_sdhi_of_data of_rza2_compatible = {
+> +       .tmio_flags     = TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
+> +                         TMIO_MMC_HAVE_CBSY,
+> +       .tmio_ocr_mask  = MMC_VDD_32_33,
+> +       .capabilities   = MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
+> +                         MMC_CAP_CMD23,
+> +       .bus_shift      = 2,
+> +       .scc_offset     = 0 - 0x1000,
+> +       .taps           = rcar_gen3_scc_taps,
+> +       .taps_num       = ARRAY_SIZE(rcar_gen3_scc_taps),
+> +       /* DMAC can handle 0xffffffff blk count but only 1 segment */
+> +       .max_blk_count  = 0xffffffff,
+> +       .max_segs       = 1,
+> +};
+> +
+>  static const struct renesas_sdhi_of_data of_rcar_r8a7795_compatible = {
+>         .tmio_flags     = TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
+>                           TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2 |
+> @@ -113,6 +131,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+>  };
+>
+>  static const struct of_device_id renesas_sdhi_internal_dmac_of_match[] = {
+> +       { .compatible = "renesas,sdhi-r7s9210", .data = &of_rza2_compatible, },
+>         { .compatible = "renesas,sdhi-mmc-r8a77470", .data = &of_rcar_gen3_compatible, },
+>         { .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_r8a7795_compatible, },
+>         { .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_r8a7795_compatible, },
+> @@ -172,7 +191,10 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
+>                                      struct mmc_data *data)
+>  {
+>         struct scatterlist *sg = host->sg_ptr;
+> -       u32 dtran_mode = DTRAN_MODE_BUS_WIDTH | DTRAN_MODE_ADDR_MODE;
+> +       u32 dtran_mode = DTRAN_MODE_BUS_WIDTH;
+> +
+> +       if (!test_bit(SDHI_INTERNAL_DMAC_ADDR_MODE_FIXED_ONLY, &global_flags))
+> +               dtran_mode |= DTRAN_MODE_ADDR_MODE;
+>
+>         if (!dma_map_sg(&host->pdev->dev, sg, host->sg_len,
+>                         mmc_get_dma_dir(data)))
+> @@ -292,6 +314,8 @@ static const struct tmio_mmc_dma_ops renesas_sdhi_internal_dmac_dma_ops = {
+>   */
+>  static const struct soc_device_attribute soc_whitelist[] = {
+>         /* specific ones */
+> +       { .soc_id = "r7s9210",
+> +         .data = (void *)BIT(SDHI_INTERNAL_DMAC_ADDR_MODE_FIXED_ONLY) },
+>         { .soc_id = "r8a7795", .revision = "ES1.*",
+>           .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
+>         { .soc_id = "r8a7796", .revision = "ES1.0",
+> --
+> 2.16.1
+>
