@@ -1,55 +1,107 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:12977 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729818AbeK3EJR (ORCPT
+Received: from sauhun.de ([88.99.104.3]:47574 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726934AbeKMVzJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:09:17 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Tue, 13 Nov 2018 16:55:09 -0500
+Date: Tue, 13 Nov 2018 12:57:18 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Hoan Nguyen An <na-hoan@jinso.co.jp>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 0/4] Add NXP pcf85263 real-time clock support
-Date: Thu, 29 Nov 2018 16:54:42 +0000
-Message-Id: <1543510486-29532-1-git-send-email-biju.das@bp.renesas.com>
+        Wolfram Sang <wsa@sang-engineering.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        =?utf-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
+        =?utf-8?B?RHVuZ++8muS6uuOCvQ==?= <nv-dung@jinso.co.jp>,
+        =?utf-8?B?44Kr44Kq44O744O044Kh44Oz44O744OJ44Oz?=
+        <cv-dong@jinso.co.jp>, Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH] thermal: rcar_gen3_thermal: Add supports the hwmon
+ thermal sysfs
+Message-ID: <20181113115718.327dw3maw26bzkcd@ninjato>
+References: <1542091543-31597-1-git-send-email-na-hoan@jinso.co.jp>
+ <CAMuHMdVXN3ZpXwbODrOWThCE+y0mxkOriDOjDGo2rXEG1asOaw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="flsidio6bx43qzs6"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVXN3ZpXwbODrOWThCE+y0mxkOriDOjDGo2rXEG1asOaw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set aims to add support for NXP pcf85263 real-time clock. 
-pcf85263 rtc is compatible with pcf85363 rtc except that pcf85363 has
-64 bytes additional RAM. 
 
-1 byte of nvmem is supported in pcf85263 and is exposed through sysfs.
+--flsidio6bx43qzs6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The details of pcf85363 and pcf85263 can be found in the below data sheets.
 
-https://www.nxp.com/docs/en/data-sheet/PCF85363A.pdf
+> Please run scripts/get_maintainer.pl on your patches, to get the list of
+> maintainers.
+>=20
+> CC thermal
 
-https://www.nxp.com/docs/en/data-sheet/PCF85263A.pdf
+Thanks, Geert!
 
-This patch is tested against linux-next.
 
-V1-->V2
-   * Incorporated simon's review comment for binding patch.
-   * Incorporated Geert and Alexandre's review comments.
+Hi Hoan,
 
-Biju Das (4):
-  dt-bindings: rtc: pcf85363: Document pcf85263 real-time clock
-  rtc: pcf85363: Add support for NXP pcf85263 rtc
-  ARM: shmobile: Enable NXP pcf85363 rtc in shmobile_defconfig
-  ARM: dts: iwg23s-sbc: Enable RTC
+> +		/* Enable hwmon thermal sysfs */
+> +		tsc->zone->tzp->no_hwmon =3D false;
 
- Documentation/devicetree/bindings/rtc/pcf85363.txt |  4 +-
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts          | 18 ++++++
- arch/arm/configs/shmobile_defconfig                |  1 +
- drivers/rtc/rtc-pcf85363.c                         | 72 +++++++++++++++++-----
- 4 files changed, 78 insertions(+), 17 deletions(-)
+A driver diving so deep into core structures always looks suspicious.
+Questions I have:
 
--- 
-2.7.4
+1)
+
+We have that code also in rcar_thermal.c, but the commit introducing
+it[1] has a reason which does not apply for this driver, or?
+
+2)
+
+of_parse_thermal_zones() intentionally sets this flag with this
+comment:
+
+/* No hwmon because there might be hwmon drivers registering */
+
+Why does it not apply for us?
+
+3)
+
+If it turns out, we really need it, there should be some thermal core
+helper or flag for it, I'd think...
+
+Regards,
+
+   Wolfram
+
+[1] 64a411e8042e ("thermal: rcar-thermal: enable hwmon when thermal_zone_of=
+_sensor_register is used")
+
+
+--flsidio6bx43qzs6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvqvB4ACgkQFA3kzBSg
+KbZeoRAAnb7LRuVItFADKUHj+tFoFp7z/XU2W4QAWkLlFtVW+M/M/BlgdSRdLseq
+9966kHtSkptqpfADmrP1ZoGF189lwDWG0LbykVomOgyqZSWmInlrJ9ewJ2PrP2Fw
+IYPSPSNVxVKzTViAO8rYGPcR0ePDr7yxRc35Q6o7G1B6VkHo89AQ7ii4j+x5V5qU
++yp/a6hyuoOk7yk+h2/ahg3PbqEzZtL2GxBgX7SiNSaDgKSILFLGxOvR/W+w6Wxc
+OBwHL4ecDJU71rdjJaX65ZN9d7sAPPwX9+6UA/tZox7qLdbJkrW4bZGP1k8tfQtG
+5qbf6Mn7M6Unp5kdNcrncEnJEOh0PAx1Kp840+A793VMDdoWTInVk3O/JYmk9yn+
+PcSg1GIsbutEmc1yY94/UEwcgFg2MfOdIYORJPo7l+Nwb2MfHLZIQsD1sOQbByIC
+mYouZ8gLV36WnbXYdrFk0aTaE3i32WPyb2JpIisnyrU9rrkfMCHR8Cvf4t7pZuiZ
+6+sRDh9X18lqslBNd8z1NBXOlNse7QsAe8yBjUVGVe5Q6ccJrFuH8j6+dsE174xe
+N0LQfLxS7k8bV98kttNw/LTCXBDja5PXCIz32SvYojOTDGTSlnHJ6V0MgNvMzxtI
+lo02kZuEJW+/jq8BSMWQ/ah23YKVsEhAyHHCBhfgJFsOsKJSRdY=
+=nHGy
+-----END PGP SIGNATURE-----
+
+--flsidio6bx43qzs6--
