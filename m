@@ -1,69 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-eopbgr1400124.outbound.protection.outlook.com ([40.107.140.124]:50807
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725821AbeKLRQA (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:60161 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727166AbeKNAat (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Nov 2018 12:16:00 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH/RFC] iommu/ipmmu-vmsa: R-Car M3-N/V3H/E3 AVB whitelist
- prototype
-Date: Mon, 12 Nov 2018 07:23:57 +0000
-Message-ID: <OSBPR01MB2293329B49BE6DCC6E949EF7D8C10@OSBPR01MB2293.jpnprd01.prod.outlook.com>
-References: <154014429795.2869.7870954544925695802.sendpatchset@octo>
- <CAMuHMdXv3LYcjpWxRxnVbcei5e7i0VxOL5RRro24b5_mKODakw@mail.gmail.com>
-In-Reply-To: <CAMuHMdXv3LYcjpWxRxnVbcei5e7i0VxOL5RRro24b5_mKODakw@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 13 Nov 2018 19:30:49 -0500
+Date: Tue, 13 Nov 2018 06:32:22 -0800
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH LOCAL 2/2] arm64: renesas_defconfig: Enable
+ CONFIG_PHY_RCAR_GEN3_PCIE
+Message-ID: <20181113143221.ebx3zrj2j7mfphl7@verge.net.au>
+References: <20181107101718.2412-1-geert+renesas@glider.be>
+ <20181107101718.2412-3-geert+renesas@glider.be>
+ <20181108104423.xqx5ettetwwunbxd@verge.net.au>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181108104423.xqx5ettetwwunbxd@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgTWFnbnVzLXNhbiwgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbiwg
-U2VudDogU3VuZGF5LCBPY3RvYmVyIDI4LCAyMDE4IDEwOjMzIFBNDQo+IA0KPiBIaSBNYWdudXMs
-DQo+IA0KPiBUaGFua3MgZm9yIHlvdXIgcGF0Y2ghDQo+IA0KPiBPbiBTdW4sIE9jdCAyMSwgMjAx
-OCBhdCA3OjU2IFBNIE1hZ251cyBEYW1tIDxtYWdudXMuZGFtbUBnbWFpbC5jb20+IHdyb3RlOg0K
-PiA+IEZyb206IE1hZ251cyBEYW1tIDxkYW1tQG9wZW5zb3VyY2Uuc2U+DQo+ID4NCj4gPiBGb3Ig
-dGVzdGluZyBwdXJwb3NlIGVuYWJsZSBJUE1NVSBmb3IgRXRoZXJuZXQtQVZCIG9uIFItQ2FyIE0z
-LU4vVjNIL0UzLg0KPiA+DQo+ID4gTm90IGZvciB1cHN0cmVhbSBtZXJnZS4NCj4gPg0KPiA+IE5v
-dC1ZZXQtU2lnbmVkLW9mZi1ieTogTWFnbnVzIERhbW0gPGRhbW1Ab3BlbnNvdXJjZS5zZT4NCj4g
-PiAtLS0NCj4gPg0KPiA+ICBBcHBsaWVzIG9uIHRvcCBvZiByZW5lc2FzLWRldmVsLTIwMTgxMDE5
-LXY0LjE5LXJjOA0KPiA+DQo+ID4gIGRyaXZlcnMvaW9tbXUvaXBtbXUtdm1zYS5jIHwgICAgNCAr
-KysrDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKykNCj4gPg0KPiA+IC0tLSAw
-MDAxL2RyaXZlcnMvaW9tbXUvaXBtbXUtdm1zYS5jDQo+ID4gKysrIHdvcmsvZHJpdmVycy9pb21t
-dS9pcG1tdS12bXNhLmMgICAgIDIwMTgtMTAtMjIgMDI6NDY6MzAuMTM5ODgwNTU3ICswOTAwDQo+
-ID4gQEAgLTc1Niw2ICs3NTYsMTAgQEAgc3RhdGljIGludCBpcG1tdV9pbml0X3BsYXRmb3JtX2Rl
-dmljZShzdA0KPiA+DQo+ID4gIHN0YXRpYyBib29sIGlwbW11X3NsYXZlX3doaXRlbGlzdChzdHJ1
-Y3QgZGV2aWNlICpkZXYpDQo+ID4gIHsNCj4gPiArICAgICAgIC8qIFItQ2FyIE0zLU4vVjNIL0Uz
-IEV0aGVybmV0LUFWQiAqLw0KPiA+ICsgICAgICAgaWYgKCFzdHJjbXAoZGV2X25hbWUoZGV2KSwg
-ImU2ODAwMDAwLmV0aGVybmV0IikpDQo+ID4gKyAgICAgICAgICAgICAgIHJldHVybiB0cnVlOw0K
-PiANCj4gSSdtIGFmcmFpZCB0aGUgd2hpdGVsaXN0aW5nIGRvZXNuJ3Qgd29yayB0aGF0IHdheTog
-d2l0aCB0aGUgYWJvdmUgY2hlY2ssIGl0IHdpbGwNCj4gYmUgZW5hYmxlZCBvbiBhbGwgUi1DYXIg
-R2VuMyBTb0NzLg0KDQpJIGFncmVlIHdpdGggR2VlcnQtc2FuLg0KU28sIGhvdyBhYm91dCBhZGRp
-bmcgLnJldmlzaW9uIGludG8gdGhlIHNvY19yY2FyX2dlbjMgbGlrZSBhIHdoaXRlbGlzdCBvZiBT
-b0NzIGZpcnN0IGFzIGZvbGxvd2luZz8NCkkgYmVsaWV2ZSBhbG1vc3QgYWxsIFItQ2FyIEdlbjMg
-U29DcyBjYW4gdXNlIElQTU1VIHNhZmV0eSwgZXhjZXB0IEgzIEVTMi4wIG9yIG9sZGVyIGFuZCBN
-My1XIEVTMS4qLg0KDQotLS0NCmRpZmYgLS1naXQgYS9kcml2ZXJzL2lvbW11L2lwbW11LXZtc2Eu
-YyBiL2RyaXZlcnMvaW9tbXUvaXBtbXUtdm1zYS5jDQppbmRleCBiOThhMDMxLi43YTUyOGI4IDEw
-MDY0NA0KLS0tIGEvZHJpdmVycy9pb21tdS9pcG1tdS12bXNhLmMNCisrKyBiL2RyaXZlcnMvaW9t
-bXUvaXBtbXUtdm1zYS5jDQpAQCAtNzU4LDEwICs3NTgsMTAgQEAgc3RhdGljIGJvb2wgaXBtbXVf
-c2xhdmVfd2hpdGVsaXN0KHN0cnVjdCBkZXZpY2UgKmRldikNCiB9DQogDQogc3RhdGljIGNvbnN0
-IHN0cnVjdCBzb2NfZGV2aWNlX2F0dHJpYnV0ZSBzb2NfcmNhcl9nZW4zW10gPSB7DQotCXsgLnNv
-Y19pZCA9ICJyOGE3Nzk1IiwgfSwNCi0JeyAuc29jX2lkID0gInI4YTc3OTYiLCB9LA0KKwl7IC5z
-b2NfaWQgPSAicjhhNzc5NSIsIC5yZXZpc2lvbiA9ICJFUzMuKiIgfSwNCiAJeyAuc29jX2lkID0g
-InI4YTc3OTY1IiwgfSwNCiAJeyAuc29jX2lkID0gInI4YTc3OTcwIiwgfSwNCisJeyAuc29jX2lk
-ID0gInI4YTc3OTkwIiwgfSwNCiAJeyAuc29jX2lkID0gInI4YTc3OTk1IiwgfSwNCiAJeyAvKiBz
-ZW50aW5lbCAqLyB9DQogfTsNCg0KQmVzdCByZWdhcmRzLA0KWW9zaGloaXJvIFNoaW1vZGENCg0K
-DQo+ID4gKw0KPiA+ICAgICAgICAgLyogQnkgZGVmYXVsdCwgZG8gbm90IGFsbG93IHVzZSBvZiBJ
-UE1NVSAqLw0KPiA+ICAgICAgICAgcmV0dXJuIGZhbHNlOw0KPiA+ICB9DQo+IA0KPiBHcntvZXRq
-ZSxlZXRpbmd9cywNCj4gDQo+ICAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+IA0KPiAt
-LQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBp
-YTMyIC0tIGdlZXJ0QGxpbnV4LW02OGsub3JnDQo+IA0KPiBJbiBwZXJzb25hbCBjb252ZXJzYXRp
-b25zIHdpdGggdGVjaG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0DQo+
-IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIg
-b3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAtLSBMaW51cyBUb3J2YWxkcw0K
+On Thu, Nov 08, 2018 at 11:44:24AM +0100, Simon Horman wrote:
+> On Wed, Nov 07, 2018 at 11:17:18AM +0100, Geert Uytterhoeven wrote:
+> > Enable R-Car Gen3 PCIe PHY support, which is needed for PCIe to function
+> > on the Renesas Condor board.
+> > 
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > Not intended for upstream merge.
+> 
+> Thanks,
+> 
+> This looks fine to me but I will wait to see if there are other reviews
+> before applying.
+
+Thanks again. I have applied this to topic/renesas-defconfig which              
+it targeted at the devel branch of the renesas tree but not upstream. 
