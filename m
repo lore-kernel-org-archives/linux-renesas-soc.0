@@ -1,45 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:47956 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:47694 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726210AbeK0Acm (ORCPT
+        id S1732565AbeKMWL0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Nov 2018 19:32:42 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>,
-        Avri Altman <Avri.Altman@wdc.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 0/2] mmc: refactor RPMB block count handling
-Date: Mon, 26 Nov 2018 14:38:12 +0100
-Message-Id: <20181126133814.1185-1-wsa+renesas@sang-engineering.com>
+        Tue, 13 Nov 2018 17:11:26 -0500
+Date: Tue, 13 Nov 2018 13:13:32 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH/RFT 1/2] dt-bindings: thermal: rcar-thermal: add R8A77990
+ support
+Message-ID: <20181113121331.krvvn6txtgfkyhh6@ninjato>
+References: <1539612719-9650-1-git-send-email-ykaneko0929@gmail.com>
+ <1539612719-9650-2-git-send-email-ykaneko0929@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tzgsyurnlb27erju"
+Content-Disposition: inline
+In-Reply-To: <1539612719-9650-2-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Renesas R-Car SDHI hardware, we sometimes had timeouts accessing the RPMB.
-This is because AutoCMD23/12 features needs a properly filled sbc to work
-correctly. But RPMB sends an individual CMD23. I could have fixed the driver
-but after some research concluded that fixing the core seems the proper thing
-to do. Tested on a R-Car M3-N. No timeouts showed up anymore.
 
-Changes since RFC:
+--tzgsyurnlb27erju
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-* dropped sanity checks on block count size
-* added comment why we don't do sanity checks
-* rebased to current mmc/next
-* added Tested-tags from Clément, thanks!
 
-Wolfram Sang (2):
-  mmc: core: use mrq->sbc when sending CMD23 for RPMB
-  mmc: core: remove obsolete mmc_set_blockcount() function
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
- drivers/mmc/core/block.c | 15 ++++++++++-----
- drivers/mmc/core/core.c  | 14 --------------
- drivers/mmc/core/core.h  |  2 --
- 3 files changed, 10 insertions(+), 21 deletions(-)
 
--- 
-2.11.0
+--tzgsyurnlb27erju
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvqv+YACgkQFA3kzBSg
+KbaI/A//Rk8Ta+zUAwxTzQFXtx0dN4vMdiY1EQT+TaC3n3OoI6ld7Cj72ZVDsiDF
+UYfsOlU3FKPjNOaXNGM+zO+DOwNvvnJpugtLDkuCy2GawRIClKXG8FYawPO7w8Xf
+MvmN98pNBwVJa9luXl6PJTCK/QGOOSmYlIMr56PmDdM8HkuiLbe/CZOVoSoLWIuU
+EvgqSbeWuECvvD3xYkwNPSUxbfeSrC/mTx84SBYPhEo0MCzdIyG9USglEP9TBTbp
+yeaow7UZt65Q+cH18BCsnE9wIjViGm/Cj3CNGl6wit1qDm+BadOMO4GJ+OZpcdzI
+e+SqmabPG2MOkab7M9v/xIJmUK0I1bKJH7KLgznvuAsOPGZrxiIeKdu3Bhui/gS0
+Rr8erjONpK4a2f3ZpUkVWr31s8QANmPWUhG7b0EmeCOGgp/oXysU9331FOV5JVFN
+q4Ket/iWTyApHiA+Z/e+AWXDW4BgbAeGTzmo4/vvVCW35vJBL+wVduTrtiGlm4Ux
+aEAHlF+YA6oKi0MXyCFePUIiRo54+GFtbH2oTGS8F/tJAZifN2FKg32mjpwpYowT
+fnvD5k19L2IUWCphzDwc4zpQZ9kEpyMZWxA4po7/+rfXavq1bvX/9HK9JbIYh7ol
+2yiZros/liEwOtzqZscv3/JVeTC4oW440qe/WpiHIntcJinn5Oc=
+=9p4x
+-----END PGP SIGNATURE-----
+
+--tzgsyurnlb27erju--
