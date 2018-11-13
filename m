@@ -1,143 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:41287 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725888AbeKPI1u (ORCPT
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:39409 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731968AbeKMUWs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Nov 2018 03:27:50 -0500
-From: Fernando Ramos <greenfoo@gluegarage.com>
-To: dri-devel@lists.freedesktop.org
-Cc: David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, Jonathan Corbet <corbet@lwn.net>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        virtualization@lists.linux-foundation.org,
-        etnaviv@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        cocci@systeme.lip6.fr
-Subject: [PATCH 8/9] drm: remove no longer needed drm-get-put coccinelle script
-Date: Thu, 15 Nov 2018 23:16:28 +0100
-Message-Id: <20181115221634.22715-9-greenfoo@gluegarage.com>
-In-Reply-To: <20181115221634.22715-1-greenfoo@gluegarage.com>
-References: <20181115221634.22715-1-greenfoo@gluegarage.com>
+        Tue, 13 Nov 2018 15:22:48 -0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1541693247-15599-1-git-send-email-jacopo+renesas@jmondi.org> <1541693247-15599-3-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1541693247-15599-3-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 13 Nov 2018 11:25:08 +0100
+Message-ID: <CAMuHMdWo9kUBLCaRdx_OrS-sDSukUJXUaCYytOPjHQZxDfunOA@mail.gmail.com>
+Subject: Re: [PATCH v5 2/6] pinctrl: sh-pfc: r8a77965: Add VIN[4|5] groups/functions
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The coccinelle script was used to rename some (deprecated) functions
-which no longer exist now.
+On Thu, Nov 8, 2018 at 5:07 PM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> The VIN4 and VIN5 interfaces supports parallel video input.
+> Add pin, mux and functions definitions for VIN4 and VIN5 for R-Car M3-N.
+>
+> Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>
+> ---
+> v4 -> v5:
+> - Add definitions for 10, 12 and 20 pin groups for VIN4 as suggested by Geert
+> - Add definitions for 10 and 12 pin groups for VIN5 as suggested by Geert
+> - s/union vin_data/union vin_data16/ for VIN5 pins and mux as suggested by Geert
 
-Signed-off-by: Fernando Ramos <greenfoo@gluegarage.com>
----
- scripts/coccinelle/api/drm-get-put.cocci | 78 ------------------------
- 1 file changed, 78 deletions(-)
- delete mode 100644 scripts/coccinelle/api/drm-get-put.cocci
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I.e. queuing in sh-pfc-for-v4.21.
 
-diff --git a/scripts/coccinelle/api/drm-get-put.cocci b/scripts/coccinelle/api/drm-get-put.cocci
-deleted file mode 100644
-index 3a09c97ad87d..000000000000
---- a/scripts/coccinelle/api/drm-get-put.cocci
-+++ /dev/null
-@@ -1,78 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--///
--/// Use drm_*_get() and drm_*_put() helpers instead of drm_*_reference() and
--/// drm_*_unreference() helpers.
--///
--// Confidence: High
--// Copyright: (C) 2017 NVIDIA Corporation
--// Options: --no-includes --include-headers
--//
--
--virtual patch
--virtual report
--
--@depends on patch@
--expression object;
--@@
--
--(
--- drm_connector_reference(object)
--+ drm_connector_get(object)
--|
--- drm_connector_unreference(object)
--+ drm_connector_put(object)
--|
--- drm_framebuffer_reference(object)
--+ drm_framebuffer_get(object)
--|
--- drm_framebuffer_unreference(object)
--+ drm_framebuffer_put(object)
--|
--- drm_gem_object_reference(object)
--+ drm_gem_object_get(object)
--|
--- drm_gem_object_unreference(object)
--+ drm_gem_object_put(object)
--|
--- __drm_gem_object_unreference(object)
--+ __drm_gem_object_put(object)
--|
--- drm_gem_object_unreference_unlocked(object)
--+ drm_gem_object_put_unlocked(object)
--|
--- drm_dev_unref(object)
--+ drm_dev_put(object)
--)
--
--@r depends on report@
--expression object;
--position p;
--@@
--
--(
--drm_connector_unreference@p(object)
--|
--drm_connector_reference@p(object)
--|
--drm_framebuffer_unreference@p(object)
--|
--drm_framebuffer_reference@p(object)
--|
--drm_gem_object_unreference@p(object)
--|
--drm_gem_object_reference@p(object)
--|
--__drm_gem_object_unreference(object)
--|
--drm_gem_object_unreference_unlocked(object)
--|
--drm_dev_unref@p(object)
--)
--
--@script:python depends on report@
--object << r.object;
--p << r.p;
--@@
--
--msg="WARNING: use get/put helpers to reference and dereference %s" % (object)
--coccilib.report.print_report(p[0], msg)
--- 
-2.19.1
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
