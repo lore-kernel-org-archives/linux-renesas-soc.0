@@ -1,42 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:54984 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728798AbeK2DtO (ORCPT
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:43716 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726765AbeKMUXc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Nov 2018 22:49:14 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
+        Tue, 13 Nov 2018 15:23:32 -0500
+MIME-Version: 1.0
+References: <1541693247-15599-1-git-send-email-jacopo+renesas@jmondi.org> <1541693247-15599-5-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1541693247-15599-5-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 13 Nov 2018 11:25:52 +0100
+Message-ID: <CAMuHMdU1Zf2Z0i7So8gE1_=jB8kd045nQ=JCuf_kN4Mv8guZpQ@mail.gmail.com>
+Subject: Re: [PATCH v5 4/6] pinctrl: sh-pfc: r8a7792: Fix VIN versioned groups
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 0/5] Add more support to RZ/G1N
-Date: Wed, 28 Nov 2018 16:38:26 +0000
-Message-Id: <1543423111-19745-1-git-send-email-biju.das@bp.renesas.com>
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch series aims to add support for some more interfaces
-to RZ/G1N SoC (IPMMU, VSP, VIN, PWM and TPU).
+Hi Jacopo,
 
-This patch series tested against renesas-dev.
-it depends on the the below patch series.
+On Thu, Nov 8, 2018 at 5:07 PM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> Versioned VIN groups can appear on different sets of pins. Use of the
+> VIN_DATA_PIN_GROUP macro fix naming of said groups through an optional
+> 'version' argument.
 
-https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=48065
+I more liked the description from the previous version, which you retained
+in PATCH 6/6, so I used that ;-)
 
-Biju Das (5):
-  ARM: dts: r8a7744: add VIN dt support
-  ARM: dts: r8a7744: Add VSP support
-  ARM: dts: r8a7744: Add IPMMU DT nodes
-  ARM: dts: r8a7744: Add PWM SoC support
-  ARM: dts: r8a7744: Add TPU support
+> Use the 'version' argument for said macro to fix naming of versioned
+> groups for R-Car V2H R8A7792 SoC.
+>
+> Fixes: 7dd74bb1f058 ("pinctrl: sh-pfc: r8a7792: Add VIN pin groups")
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
- arch/arm/boot/dts/r8a7744.dtsi | 198 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 198 insertions(+)
+Queuing in sh-pfc-for-v4.21.
 
--- 
-2.7.4
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
