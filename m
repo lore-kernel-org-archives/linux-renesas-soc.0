@@ -1,53 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:57503 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728258AbeKBIiG (ORCPT
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:33828 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726765AbeKMUYJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Nov 2018 04:38:06 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 11/30] media: entity: Skip link validation for pads to which there is no route to
-Date: Fri,  2 Nov 2018 00:31:25 +0100
-Message-Id: <20181101233144.31507-12-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 13 Nov 2018 15:24:09 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <1541693247-15599-1-git-send-email-jacopo+renesas@jmondi.org> <1541693247-15599-6-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1541693247-15599-6-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 13 Nov 2018 11:26:29 +0100
+Message-ID: <CAMuHMdWn2F=6=8Lp-iin7uqJjoU9XaE5_7HQakqpVFqA8S5Nqg@mail.gmail.com>
+Subject: Re: [PATCH v5 5/6] pinctrl: sh-pfc: r8a7795: Fix VIN versioned groups
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
+Hi Jacopo,
 
-Links are validated along the pipeline which is about to start streaming.
-Not all the pads in entities that are traversed along that pipeline are
-part of the pipeline, however. Skip the link validation for such pads.
+On Thu, Nov 8, 2018 at 5:07 PM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> Versioned VIN groups can appear on different sets of pins. Use of the
+> VIN_DATA_PIN_GROUP macro fix naming of said groups through an optional
+> 'version' argument.
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/media-entity.c | 5 +++++
- 1 file changed, 5 insertions(+)
+I more liked the description from the previous version, which you retained
+for PATCH 6/6, so I used that ;-)
 
-diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-index 4d10bc186e1e7a10..cdf3805dec755ec5 100644
---- a/drivers/media/media-entity.c
-+++ b/drivers/media/media-entity.c
-@@ -493,6 +493,11 @@ __must_check int __media_pipeline_start(struct media_pad *pad,
- 			struct media_pad *other_pad = link->sink->entity == entity
- 				? link->sink : link->source;
- 
-+			/* Ignore pads to which there is no route. */
-+			if (!media_entity_has_route(entity, pad->index,
-+						    other_pad->index))
-+				continue;
-+
- 			/* Mark that a pad is connected by a link. */
- 			bitmap_clear(has_no_links, other_pad->index, 1);
- 
--- 
-2.19.1
+> Use the 'version' argument for said macro to fix naming of versioned
+> groups for R-Car H3 R8A7795 SoC.
+>
+> Fixes: 9942a5b52990 ("pinctrl: sh-pfc: r8a7795: Deduplicate VIN4 pin definitions")
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+
+Queueing in sh-pfc-for-v4.21.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
