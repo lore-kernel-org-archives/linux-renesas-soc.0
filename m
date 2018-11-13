@@ -1,68 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:58160 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:47240 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726512AbeK0WwG (ORCPT
+        id S1726581AbeKMVNd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Nov 2018 17:52:06 -0500
-Date: Tue, 27 Nov 2018 12:54:25 +0100
+        Tue, 13 Nov 2018 16:13:33 -0500
 From: Wolfram Sang <wsa@the-dreams.de>
 To: linux-i2c@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH] i2c: rcar: check bus state before reinitializing
-Message-ID: <20181127115425.GF1107@kunai>
-References: <20181113111542.5224-1-wsa@the-dreams.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="QXO0/MSS4VvK6f+D"
-Content-Disposition: inline
-In-Reply-To: <20181113111542.5224-1-wsa@the-dreams.de>
+Subject: [PATCH] i2c: rcar: check bus state before reinitializing
+Date: Tue, 13 Nov 2018 12:15:42 +0100
+Message-Id: <20181113111542.5224-1-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
---QXO0/MSS4VvK6f+D
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We should check the bus state before reinitializing the IP core.
+Otherwise, the internal bus busy state which also tracks multi-master
+activity is lost.
 
-On Tue, Nov 13, 2018 at 12:15:42PM +0100, Wolfram Sang wrote:
-> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
->=20
-> We should check the bus state before reinitializing the IP core.
-> Otherwise, the internal bus busy state which also tracks multi-master
-> activity is lost.
->=20
-> Credits go to the Renesas BSP team for suggesting this change.
->=20
-> Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Fixes: ae481cc13965 ("i2c: rcar: fix resume by always initializing regist=
-ers before transfer")
->=20
+Credits go to the Renesas BSP team for suggesting this change.
 
-Applied to for-current, thanks!
+Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Fixes: ae481cc13965 ("i2c: rcar: fix resume by always initializing registers before transfer")
 
+---
 
---QXO0/MSS4VvK6f+D
-Content-Type: application/pgp-signature; name="signature.asc"
+Tested with a Lager board (R-Car H2) and used the GPIO fault injector to ensure
+the bus recovery mechanism still works as expected.
 
------BEGIN PGP SIGNATURE-----
+ drivers/i2c/busses/i2c-rcar.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlv9MHAACgkQFA3kzBSg
-KbYnFg/9EgnH91Qj4v7zfIYKNQS12xjI+N1+Tj1XvCSpdt3lTaeQm2VNKLiqy1hu
-kqJxfZ8L7tA59yi/bxJGvSo8DpMs36XKdpsXktuTXhJV9IUQbgWPpUWzkWSF2oab
-1WkIORYD5ECuCSjB3VsmmVm0DHMlTLGQnPkR06lPgRKpRS6k0N0PwUO0U83RTpk8
-zSuq2f5W2Uftx4F8PH2+5P8fpDbQE30uWNoHIbn+fJZMa2jTrHdVXuBjZazFcaNu
-off0mZpbO5J9gH9yQugE11DQGmzFdJ36ZpoqArbkAmyO4cg21EQRY7XZNcCjchds
-WIF/xT+tr1CJybMG4Wy9RKunPNcWtr5YgVKqF3SuxsVAPB7+d5dD31Immu3/slyZ
-0Y5utEvUQJpuj4efD1oKNhjAqFR4qQ0Q1Qjcl3enxcT4IeWYWLmGjy4Dxc34drkh
-BAKwgw4ZxzVdunxoed7WvkeSu1Y6VkFOoCTZ4ywKh+MMo2dLyrbuwrIovTAVFiki
-1cVoGDabwVALY6L34s4ajGlIgjWRMZouOzWJHQPJx3UAWbpP4GV/o+mo8gJn8Uv6
-HpXK7PycbQemzKlBPcTzhh8lq89aISqxLQIwfyph9lv7Ky+zCfnPN5VxK/581aLE
-/3y+Aumt3ko14b56/oZg2Ccvy6+HG1zWb/dEe0wGQiZVTRRu7W0=
-=bVmA
------END PGP SIGNATURE-----
-
---QXO0/MSS4VvK6f+D--
+diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
+index 4aa7dde876f3..254e6219e538 100644
+--- a/drivers/i2c/busses/i2c-rcar.c
++++ b/drivers/i2c/busses/i2c-rcar.c
+@@ -779,6 +779,11 @@ static int rcar_i2c_master_xfer(struct i2c_adapter *adap,
+ 
+ 	pm_runtime_get_sync(dev);
+ 
++	/* Check bus state before init otherwise bus busy info will be lost */
++	ret = rcar_i2c_bus_barrier(priv);
++	if (ret < 0)
++		goto out;
++
+ 	/* Gen3 needs a reset before allowing RXDMA once */
+ 	if (priv->devtype == I2C_RCAR_GEN3) {
+ 		priv->flags |= ID_P_NO_RXDMA;
+@@ -791,10 +796,6 @@ static int rcar_i2c_master_xfer(struct i2c_adapter *adap,
+ 
+ 	rcar_i2c_init(priv);
+ 
+-	ret = rcar_i2c_bus_barrier(priv);
+-	if (ret < 0)
+-		goto out;
+-
+ 	for (i = 0; i < num; i++)
+ 		rcar_i2c_request_dma(priv, msgs + i);
+ 
+-- 
+2.11.0
