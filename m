@@ -1,128 +1,291 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, sakari.ailus@iki.fi
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        linux-kernel@vger.kernel.org,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: [PATCH v4 2/4] dt-bindings: media: i2c: Add bindings for IMI RDACM20
-Date: Fri,  2 Nov 2018 15:47:21 +0000
-Message-Id: <20181102154723.23662-3-kieran.bingham@ideasonboard.com>
-In-Reply-To: <20181102154723.23662-1-kieran.bingham@ideasonboard.com>
-References: <20181102154723.23662-1-kieran.bingham@ideasonboard.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor1.renesas.com ([210.160.252.171]:38807 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732728AbeKMXMv (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 13 Nov 2018 18:12:51 -0500
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Marc Zyngier <marc.zyngier@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH v3 2/2] irqchip: Add support for Renesas RZ/N1 GPIO interrupt multiplexer
+Date: Tue, 13 Nov 2018 13:09:10 +0000
+Message-Id: <20181113130910.22130-3-phil.edworthy@renesas.com>
+In-Reply-To: <20181113130910.22130-1-phil.edworthy@renesas.com>
+References: <20181113130910.22130-1-phil.edworthy@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+On RZ/N1 devices, there are 3 Synopsys DesignWare GPIO blocks each
+configured to have 32 interrupt outputs, so we have a total of 96 GPIO
+interrupts. All of these are passed to the GPIO IRQ Muxer, which selects
+8 of the GPIO interrupts to pass onto the GIC. The interrupt signals
+aren't latched, so there is nothing to do in this driver when an interrupt
+is received, other than tell the corresponding GPIO block.
 
-The IMI RDACM20 is a Gigabit Multimedia Serial Link (GMSL) camera
-capable of transmitting video and I2C control messages on a coax cable
-physical link for automotive applications.
-
-Document its device tree binding interface.
-
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 ---
-v2:
- - Provide imi vendor prefix
- - Fix minor spelling
-
 v3:
- - update binding descriptions
+ - Use 'interrupt-map' DT property to map the interrupts, this is very similar
+   to PCIe MSI. The only difference is that we need to get hold of the interrupt
+   specifier for the interupts coming into the irqmux.
+ - Do not use a chained interrupt controller.
+v2:
+ - Use interrupt-map to allow the GPIO controller info to be specified
+   as part of the irq.
+ - Renamed struct and funcs from 'girq' to a more comprehenisble 'irqmux'.
 ---
- .../bindings/media/i2c/imi,rdacm20.txt        | 65 +++++++++++++++++++
- .../devicetree/bindings/vendor-prefixes.txt   |  1 +
- 2 files changed, 66 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
+ drivers/irqchip/Kconfig        |   9 ++
+ drivers/irqchip/Makefile       |   1 +
+ drivers/irqchip/rzn1-irq-mux.c | 205 +++++++++++++++++++++++++++++++++
+ 3 files changed, 215 insertions(+)
+ create mode 100644 drivers/irqchip/rzn1-irq-mux.c
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt b/Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
+diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+index 96451b581452..53c54bba1dd8 100644
+--- a/drivers/irqchip/Kconfig
++++ b/drivers/irqchip/Kconfig
+@@ -204,6 +204,15 @@ config RENESAS_IRQC
+ 	select GENERIC_IRQ_CHIP
+ 	select IRQ_DOMAIN
+ 
++config RENESAS_RZN1_IRQ_MUX
++	bool "Renesas RZ/N1 GPIO IRQ multiplexer support"
++	depends on ARCH_RZN1
++	select IRQ_DOMAIN
++	help
++	  Say yes here to add support for the GPIO IRQ multiplexer embedded
++	  in Renesas RZ/N1 SoC devices. The GPIO IRQ Muxer selects which of
++	  the interrupts coming from the GPIO controllers are used.
++
+ config ST_IRQCHIP
+ 	bool
+ 	select REGMAP
+diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+index b822199445ff..b090f84dd42e 100644
+--- a/drivers/irqchip/Makefile
++++ b/drivers/irqchip/Makefile
+@@ -45,6 +45,7 @@ obj-$(CONFIG_SIRF_IRQ)			+= irq-sirfsoc.o
+ obj-$(CONFIG_JCORE_AIC)			+= irq-jcore-aic.o
+ obj-$(CONFIG_RENESAS_INTC_IRQPIN)	+= irq-renesas-intc-irqpin.o
+ obj-$(CONFIG_RENESAS_IRQC)		+= irq-renesas-irqc.o
++obj-$(CONFIG_RENESAS_RZN1_IRQ_MUX)	+= rzn1-irq-mux.o
+ obj-$(CONFIG_VERSATILE_FPGA_IRQ)	+= irq-versatile-fpga.o
+ obj-$(CONFIG_ARCH_NSPIRE)		+= irq-zevio.o
+ obj-$(CONFIG_ARCH_VT8500)		+= irq-vt8500.o
+diff --git a/drivers/irqchip/rzn1-irq-mux.c b/drivers/irqchip/rzn1-irq-mux.c
 new file mode 100644
-index 000000000000..23915da4c3bf
+index 000000000000..ee7810b9b3f3
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
-@@ -0,0 +1,65 @@
-+IMI D&D RDACM20 Automotive Camera Platform
-+------------------------------------------
++++ b/drivers/irqchip/rzn1-irq-mux.c
+@@ -0,0 +1,205 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * RZ/N1 GPIO Interrupt Multiplexer
++ *
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ * On RZ/N1 devices, there are 3 Synopsys DesignWare GPIO blocks each configured
++ * to have 32 interrupt outputs, so we have a total of 96 GPIO interrupts.
++ * All of these are passed to the GPIO IRQ Muxer, which selects 8 of the GPIO
++ * interrupts to pass onto the GIC.
++ */
 +
-+The IMI D&D RDACM20 is a GMSL-compatible camera designed for automotive
-+applications. It encloses a Maxim Integrated MAX9271 GMSL serializer, an
-+Omnivision OV10635 camera sensor and an embedded MCU, and connects to a remote
-+GMSL endpoint through a coaxial cable.
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/irqdomain.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of_irq.h>
++#include <linux/of_platform.h>
 +
-+                                                     IMI RDACM20
-+ ---------------                               --------------------------------
-+|      GMSL     |   <---  Video Stream        |       <- Video--------\        |
-+|               |< ====== GMSL Link ======== >|MAX9271<- I2C bus-> <-->OV10635 |
-+| de-serializer |   <---  I2C messages --->   |                   \<-->MCU     |
-+ ---------------                               --------------------------------
++#define MAX_NR_INPUT_IRQS	96
++#define MAX_NR_OUTPUT_IRQS	8
 +
-+The RDACM20 transmits video data generated by the embedded camera sensor on the
-+GMSL serial channel to a remote GMSL de-serializer, as well as it receives and
-+transmits I2C messages encapsulated in the GMSL bidirectional control channel.
++/*
++ * "interrupt-map" consists of 1 interrupt cell, 0 address cells, phandle to
++ * interrupt parent, and parent interrupt specifier (3 cells for GIC), giving
++ * a total of 5 cells.
++ */
++#define IMAP_LENGTH		5
 +
-+All I2C traffic received on the GMSL link not directed to the serializer is
-+propagated on the local I2C bus to the embedded camera sensor and MCU. All
-+I2C traffic generated on the local I2C bus not directed to the serializer is
-+propagated to the remote de-serializer encapsulated in the GMSL control channel.
++struct irqmux_priv;
++struct irqmux_one {
++	unsigned int irq;
++	unsigned int src_hwirq;
++	struct irqmux_priv *priv;
++};
 +
-+The RDACM20 DT node should be a direct child of the GMSL Deserializer's I2C bus
-+corresponding to the GMSL link that the camera is attached to.
++struct irqmux_priv {
++	struct device *dev;
++	struct irq_domain *irq_domain;
++	unsigned int nr_irqs;
++	struct irqmux_one mux[MAX_NR_OUTPUT_IRQS];
++};
 +
-+Required Properties:
++static irqreturn_t irqmux_handler(int irq, void *data)
++{
++	struct irqmux_one *mux = data;
++	struct irqmux_priv *priv = mux->priv;
++	unsigned int virq;
 +
-+- compatible: Shall be "imi,rdacm20".
-+- reg: Pair of I2C device addresses, the first to be assigned to the serializer
-+  the second to be assigned to the camera sensor.
++	virq = irq_find_mapping(priv->irq_domain, mux->src_hwirq);
 +
-+Connection to the remote GMSL endpoint are modelled using the OF graph bindings
-+in accordance with the video interface bindings defined in
-+Documentation/devicetree/bindings/media/video-interfaces.txt.
++	generic_handle_irq(virq);
 +
-+The device node contains a single "port" child node with a single "endpoint"
-+sub-device.
++	return IRQ_HANDLED;
++}
 +
-+Required endpoint properties:
++static int irqmux_domain_map(struct irq_domain *h, unsigned int irq,
++			     irq_hw_number_t hwirq)
++{
++	irq_set_chip_data(irq, h->host_data);
++	irq_set_chip_and_handler(irq, &dummy_irq_chip, handle_simple_irq);
 +
-+- remote-endpoint: phandle to the remote GMSL endpoint sub-node in the remote
-+  node port.
++	return 0;
++}
 +
-+Example:
-+-------
++static const struct irq_domain_ops irqmux_domain_ops = {
++	.map = irqmux_domain_map,
++};
 +
-+	i2c@0 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0>;
++static int irqmux_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *np = dev->of_node;
++	struct resource *res;
++	u32 __iomem *regs;
++	struct irqmux_priv *priv;
++	unsigned int i;
++	int nr_irqs;
++	int ret;
++	const __be32 *imap;
++	int imaplen;
 +
-+		camera@51 {
-+			compatible = "imi,rdacm20";
-+			reg = <0x51 0x61>;
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
 +
-+			port {
-+				rdacm20_out0: endpoint {
-+					remote-endpoint = <&max9286_in0>;
-+				};
-+			};
++	priv->dev = dev;
++	platform_set_drvdata(pdev, priv);
 +
-+		};
-+	};
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 2c3fc512e746..34b0ed876850 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -171,6 +171,7 @@ idt	Integrated Device Technologies, Inc.
- ifi	Ingenieurburo Fur Ic-Technologie (I/F/I)
- ilitek	ILI Technology Corporation (ILITEK)
- img	Imagination Technologies Ltd.
-+imi	Integrated Micro-Electronics Inc.
- infineon Infineon Technologies
- inforce	Inforce Computing
- ingenic	Ingenic Semiconductor
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	regs = devm_ioremap_resource(dev, res);
++	if (IS_ERR(regs))
++		return PTR_ERR(regs);
++
++	nr_irqs = of_irq_count(np);
++	if (nr_irqs < 0)
++		return nr_irqs;
++
++	if (nr_irqs > MAX_NR_OUTPUT_IRQS) {
++		dev_err(dev, "too many output interrupts\n");
++		return -ENOENT;
++	}
++
++	priv->nr_irqs = nr_irqs;
++
++	/* Look for the interrupt-map */
++	imap = of_get_property(np, "interrupt-map", &imaplen);
++	if (!imap)
++		return -ENOENT;
++	imaplen /= IMAP_LENGTH * sizeof(__be32);
++
++	/* Sometimes not all muxs are used */
++	if (imaplen < priv->nr_irqs)
++		priv->nr_irqs = imaplen;
++
++	/* Create IRQ domain for the interrupts coming from the GPIO blocks */
++	priv->irq_domain = irq_domain_add_linear(np, MAX_NR_INPUT_IRQS,
++						 &irqmux_domain_ops, priv);
++	if (!priv->irq_domain)
++		return -ENOMEM;
++
++	for (i = 0; i < MAX_NR_INPUT_IRQS; i++)
++		irq_create_mapping(priv->irq_domain, i);
++
++	for (i = 0; i < priv->nr_irqs; i++) {
++		struct irqmux_one *mux = &priv->mux[i];
++
++		ret = irq_of_parse_and_map(np, i);
++		if (ret < 0) {
++			ret = -ENOENT;
++			goto err;
++		}
++
++		mux->irq = ret;
++		mux->priv = priv;
++
++		/*
++		 * We need the first cell of the interrupt-map to configure
++		 * the hardware.
++		 */
++		mux->src_hwirq = be32_to_cpu(*imap);
++		imap += IMAP_LENGTH;
++
++		dev_info(dev, "%u: %u mapped irq %u\n", i,  mux->src_hwirq,
++			 mux->irq);
++
++		ret = devm_request_irq(dev, mux->irq, irqmux_handler,
++				       IRQF_SHARED | IRQF_NO_THREAD,
++				       "irqmux", mux);
++		if (ret < 0) {
++			dev_err(dev, "failed to request IRQ: %d\n", ret);
++			goto err;
++		}
++
++		/* Set up the hardware to pass the interrupt through */
++		writel(mux->src_hwirq, &regs[i]);
++	}
++
++	dev_info(dev, "probed, %d gpio interrupts\n", priv->nr_irqs);
++
++	return 0;
++
++err:
++	while (i--)
++		irq_dispose_mapping(priv->mux[i].irq);
++	irq_domain_remove(priv->irq_domain);
++
++	return ret;
++}
++
++static int irqmux_remove(struct platform_device *pdev)
++{
++	struct irqmux_priv *priv = platform_get_drvdata(pdev);
++	unsigned int i;
++
++	for (i = 0; i < priv->nr_irqs; i++)
++		irq_dispose_mapping(priv->mux[i].irq);
++	irq_domain_remove(priv->irq_domain);
++
++	return 0;
++}
++
++static const struct of_device_id irqmux_match[] = {
++	{ .compatible = "renesas,rzn1-gpioirqmux", },
++	{ /* sentinel */ },
++};
++
++MODULE_DEVICE_TABLE(of, irqmux_match);
++
++static struct platform_driver irqmux_driver = {
++	.driver = {
++		.name = "gpio_irq_mux",
++		.owner = THIS_MODULE,
++		.of_match_table = irqmux_match,
++	},
++	.probe = irqmux_probe,
++	.remove = irqmux_remove,
++};
++
++module_platform_driver(irqmux_driver);
++
++MODULE_DESCRIPTION("Renesas RZ/N1 GPIO IRQ Multiplexer Driver");
++MODULE_AUTHOR("Phil Edworthy <phil.edworthy@renesas.com>");
++MODULE_LICENSE("GPL v2");
 -- 
 2.17.1
