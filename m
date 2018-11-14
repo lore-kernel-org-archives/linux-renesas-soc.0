@@ -1,48 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:54616 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728096AbeK2VzY (ORCPT
+Received: from mail-eopbgr1400125.outbound.protection.outlook.com ([40.107.140.125]:20736
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727758AbeKNWJN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Nov 2018 16:55:24 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
+        Wed, 14 Nov 2018 17:09:13 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Chris Brandt <Chris.Brandt@renesas.com>
+CC: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 02/13] dt-bindings: clock: r8a7796: Remove CSIREF clock
-Date: Thu, 29 Nov 2018 11:49:57 +0100
-Message-Id: <20181129105008.10239-3-geert+renesas@glider.be>
-In-Reply-To: <20181129105008.10239-1-geert+renesas@glider.be>
-References: <20181129105008.10239-1-geert+renesas@glider.be>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH 3/3] dt-bindings: rcar-gen3-phy-usb2: Add r7s9210 support
+Date: Wed, 14 Nov 2018 12:05:56 +0000
+Message-ID: <OSBPR01MB2293042419890D6EECA0C9A2D8C30@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+References: <20181107173558.54481-1-chris.brandt@renesas.com>
+ <20181107173558.54481-4-chris.brandt@renesas.com>
+ <CAMuHMdX7_bk4b7WTmxDuLPR=-WZYdbt=7P2e-gs4ZOT=-EzL-g@mail.gmail.com>
+In-Reply-To: <CAMuHMdX7_bk4b7WTmxDuLPR=-WZYdbt=7P2e-gs4ZOT=-EzL-g@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R-Car Gen3 HardWare Manual Errata for Rev. 0.52 (Nov 30, 2016)
-removed the CSI reference clock on R-Car M3-W.
-
-As this definition was never used, it can just be removed.
-The freed slot in the DT bindings header must not be reused, though.
-
-Fixes: 972610fb23b08dd5 ("clk: renesas: Add r8a7796 CPG Core Clock Definitions")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- include/dt-bindings/clock/r8a7796-cpg-mssr.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/dt-bindings/clock/r8a7796-cpg-mssr.h b/include/dt-bindings/clock/r8a7796-cpg-mssr.h
-index e6087f2f7e3aff4a..c0957cf458403bfb 100644
---- a/include/dt-bindings/clock/r8a7796-cpg-mssr.h
-+++ b/include/dt-bindings/clock/r8a7796-cpg-mssr.h
-@@ -56,7 +56,7 @@
- #define R8A7796_CLK_CANFD		45
- #define R8A7796_CLK_HDMI		46
- #define R8A7796_CLK_CSI0		47
--#define R8A7796_CLK_CSIREF		48
-+/* CLK_CSIREF was removed */
- #define R8A7796_CLK_CP			49
- #define R8A7796_CLK_CPEX		50
- #define R8A7796_CLK_R			51
--- 
-2.17.1
+SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbiwgU2VudDogV2VkbmVz
+ZGF5LCBOb3ZlbWJlciAxNCwgMjAxOCA4OjAzIFBNDQo+IA0KPiBIaSBDaHJpcywNCj4gDQo+IE9u
+IFdlZCwgTm92IDcsIDIwMTggYXQgNjozNiBQTSBDaHJpcyBCcmFuZHQgPGNocmlzLmJyYW5kdEBy
+ZW5lc2FzLmNvbT4gd3JvdGU6DQo8c25pcD4NCj4gPiBAQCAtMTYsOCArMTgsOCBAQCBSZXF1aXJl
+ZCBwcm9wZXJ0aWVzOg0KPiA+ICAgICAgICAgICAgICAgUjhBNzc5OTAgU29DLg0KPiA+ICAgICAg
+ICAgICAgICAgInJlbmVzYXMsdXNiMi1waHktcjhhNzc5OTUiIGlmIHRoZSBkZXZpY2UgaXMgYSBw
+YXJ0IG9mIGFuDQo+ID4gICAgICAgICAgICAgICBSOEE3Nzk5NSBTb0MuDQo+ID4gLSAgICAgICAg
+ICAgICAicmVuZXNhcyxyY2FyLWdlbjMtdXNiMi1waHkiIGZvciBhIGdlbmVyaWMgUi1DYXIgR2Vu
+MyBvciBSWi9HMg0KPiA+IC0gICAgICAgICAgICAgY29tcGF0aWJsZSBkZXZpY2UuDQo+ID4gKyAg
+ICAgICAgICAgICAicmVuZXNhcyxyY2FyLWdlbjMtdXNiMi1waHkiIGZvciBhIGdlbmVyaWMgUi1D
+YXIgR2VuMywgUlovRzIgb3INCj4gPiArICAgICAgICAgICAgIFJaL0EyIGNvbXBhdGlibGUgZGV2
+aWNlLg0KPiANCj4gSXMgaXQgYSBnb29kIGlkZWEgdG8gZGVjbGFyZSBSWi9BMiBjb21wYXRpYmxl
+IHRvIFItQ2FyIEdlbjM/DQo+IFVzdWFsbHkgd2UgZG9uJ3QgZG8gdGhhdCBmb3IgUmVuZXNhcyBJ
+UCBjb3JlcyB1c2VkIGluIGRpZmZlcmVudCBmYW1pbGllc1sqXS4NCj4gT2YgY291cnNlLCBJIGtu
+b3cgeW91IGRvIGhhdmUgYSBnb29kIHJlbGF0aW9uc2hpcCB3aXRoIHRoZSBhY3R1YWwgUlovQTIN
+Cj4gaGFyZHdhcmUgZGVzaWduZXJzIDstKQ0KPiANCj4gSW4gbGlnaHQgb2YgU2hpbW9kYS1zYW4n
+cyBjb21tZW50IHcuci50LiBSLUNhciBIMyBVU0IgcG9ydDEgaW4gdGhlIGRyaXZlcg0KPiBjb2Rl
+LCBwZXJoYXBzICJyZW5lc2FzLHJjYXItZ2VuMy11c2IyLXBoeSIgc2hvdWxkIG5vdCBiZSB1c2Vk
+Pw0KDQpTb3JyeSBmb3IgbGFjayBleHBsYW5hdGlvbi4gDQogLSBUaGUgZGVmYXVsdCB2YWx1ZSBv
+ZiBDT01NQ1RSTCBvbiBlYWNoIHBvcnQgb2YgUi1DYXIgR2VuMyBpcyB0aGUgc2FtZSAoMHg4MDAw
+MDAwMCkuDQogLSBIb3dldmVyLCBSLUNhciBIMyBVU0IgcG9ydDEgc2VlbXMgdG8gaWdub3JlIHRo
+aXMgdmFsdWUgYmVjYXVzZQ0KICAgdGhlIHBvcnQgYWx3YXlzIGFjdHMgYXMgaG9zdC4gSWYgSSBj
+aGFuZ2VkIHRoZSByZWdpc3RlciB0byAwIG9uIFItQ2FyIEgzIEVTMy4wLA0KICAgdGhlIHBvcnQx
+IGNhbiB3b3JrIGFzIGhvc3QuDQoNClNvLCBJIG1lYW50IGFsbCAicmVuZXNhcyxyY2FyLWdlbjMt
+dXNiMi1waHkiIGRldmljZXMgd2l0aG91dCAiaXNfb3RnX2NoYW5uZWwiDQpjYW4gc2V0IHRoZSBD
+T01NQ1RSTCByZWdpc3RlciB0byAwLg0KDQpPZiBjb3Vyc2UsIGFkZGluZyBhIG5ldyBSWi9BMiBm
+YW1pbHkgY29tcGF0aWJsZSBpcyBPSyB0byBtZS4NCg0KQmVzdCByZWdhcmRzLA0KWW9zaGloaXJv
+IFNoaW1vZGENCg0KPiBbKl0gU29sZSBleGNlcHRpb25zIEknbSBhd2FyZSBvZiBhcmU6DQo+ICAg
+ICAgIC0gInJlbmVzYXMscm1vYmlsZS1paWMiLCBpbiBhZGRpdGlvbiB0byAicmVuZXNhcyxyY2Fy
+LWdlbjItaWljIiBvcg0KPiAgICAgICAgICJyZW5lc2FzLHJjYXItZ2VuMy1paWMiIG9uIFItQ2Fy
+IEdlbjIvMywNCj4gICAgICAgLSAicmVuZXNhcyxyY2FyLWdlbjItY210MSIgYW5kICJyZW5lc2Fz
+LHJjYXItdGhlcm1hbCIgb24gUi1Nb2JpbGUgQVBFNi4NCj4gDQo+IEdye29ldGplLGVldGluZ31z
+LA0KPiANCj4gICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCj4gDQo+IC0tDQo+IEdlZXJ0
+IFV5dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2Vl
+cnRAbGludXgtbTY4ay5vcmcNCj4gDQo+IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0
+ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLiBCdXQNCj4gd2hlbiBJJ20g
+dGFsa2luZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhp
+bmcgbGlrZSB0aGF0Lg0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVz
+IFRvcnZhbGRzDQo=
