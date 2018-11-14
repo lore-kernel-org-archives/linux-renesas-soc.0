@@ -1,107 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbeKZXuS (ORCPT
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:43825 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727558AbeKNTkV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Nov 2018 18:50:18 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 32/40] arm64: dts: renesas: r8a77990: ebisu: Add and enable PCIe device node
-Date: Mon, 26 Nov 2018 13:54:58 +0100
-Message-Id: <ba3ac35b4896cf291f6fdaf04a505985e5ccce30.1543229516.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
-References: <cover.1543229515.git.horms+renesas@verge.net.au>
+        Wed, 14 Nov 2018 14:40:21 -0500
+MIME-Version: 1.0
+References: <20181113124744.7769-1-geert+renesas@glider.be>
+ <1090034354.41357.1542177021922@webmail.strato.com> <CAMuHMdV=1GL43ogU3PO6u8x6f2gX-vdgBVON2+t+1QUJtj=Tkg@mail.gmail.com>
+ <1542187561.4095.1.camel@pengutronix.de>
+In-Reply-To: <1542187561.4095.1.camel@pengutronix.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 14 Nov 2018 10:37:40 +0100
+Message-ID: <CAMuHMdXyud10A0mv0VeV+o1jJH8K012rGztD0vi26aFg4ZzxYA@mail.gmail.com>
+Subject: Re: [PATCH] reset: Add reset_control_get_count()
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: uli@fpond.eu, Geert Uytterhoeven <geert+renesas@glider.be>,
+        Auger Eric <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        KVM list <kvm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hi Philipp,
 
-This patch adds PCI express channel 0 device node to the R8A77990 SoC
-and enables PCIEC0 PCI express controller on the Ebisu board.
+On Wed, Nov 14, 2018 at 10:26 AM Philipp Zabel <p.zabel@pengutronix.de> wrote:
+> On Wed, 2018-11-14 at 09:58 +0100, Geert Uytterhoeven wrote:
+> > On Wed, Nov 14, 2018 at 7:30 AM Ulrich Hecht <uli@fpond.eu> wrote:
+> > > On November 13, 2018 at 1:47 PM Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+> > > > Currently the reset core has internal support for counting the number of
+> > > > resets for a device described in DT.  Generalize this to devices using
+> > > > lookup resets, and export it for public use.
+> > > >
+> > > > This will be used by generic drivers that need to be sure a device is
+> > > > controlled by a single, dedicated reset line (e.g. vfio-platform).
+> > > >
+> > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts |  8 ++++++
- arch/arm64/boot/dts/renesas/r8a77990.dtsi      | 34 ++++++++++++++++++++++++++
- 2 files changed, 42 insertions(+)
+> > > > --- a/drivers/reset/core.c
+> > > > +++ b/drivers/reset/core.c
+> > > > +/**
+> > > > + * of_reset_control_get_count - Count number of resets available with a device
+> > >
+> > > Should be "reset_control_get_count", without of_ prefix.
+> >
+> > Oops, thanks for catching!
+> >
+> > Philipp: Do you want a v2 or incremental, or can you fix it up yourself?
+>
+> No need, I'll fix it up.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-index 2f1cbcde8ae0..3e4d90b654cc 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-@@ -444,6 +444,14 @@
- 	status = "okay";
- };
- 
-+&pcie_bus_clk {
-+	clock-frequency = <100000000>;
-+};
-+
-+&pciec0 {
-+	status = "okay";
-+};
-+
- &pfc {
- 	avb_pins: avb {
- 		mux {
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index a2524fc138a2..46868dacbeef 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -85,6 +85,13 @@
- 		clock-frequency = <0>;
- 	};
- 
-+	/* External PCIe clock - can be overridden by the board */
-+	pcie_bus_clk: pcie_bus {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
- 	pmu_a53 {
- 		compatible = "arm,cortex-a53-pmu";
- 		interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-@@ -1610,6 +1617,33 @@
- 			};
- 		};
- 
-+		pciec0: pcie@fe000000 {
-+			compatible = "renesas,pcie-r8a77990",
-+				     "renesas,pcie-rcar-gen3";
-+			reg = <0 0xfe000000 0 0x80000>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			bus-range = <0x00 0xff>;
-+			device_type = "pci";
-+			ranges = <0x01000000 0 0x00000000 0 0xfe100000 0 0x00100000
-+				0x02000000 0 0xfe200000 0 0xfe200000 0 0x00200000
-+				0x02000000 0 0x30000000 0 0x30000000 0 0x08000000
-+				0x42000000 0 0x38000000 0 0x38000000 0 0x08000000>;
-+			/* Map all possible DDR as inbound ranges */
-+			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x40000000>;
-+			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0>;
-+			interrupt-map = <0 0 0 0 &gic GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 319>, <&pcie_bus_clk>;
-+			clock-names = "pcie", "pcie_bus";
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 319>;
-+			status = "disabled";
-+		};
-+
- 		prr: chipid@fff00044 {
- 			compatible = "renesas,prr";
- 			reg = <0 0xfff00044 0 4>;
+Thanks, and sorry for the typo.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
