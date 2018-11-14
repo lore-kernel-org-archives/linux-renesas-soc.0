@@ -1,60 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:36798 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729825AbeKTCmr (ORCPT
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46391 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725766AbeKOFuA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:42:47 -0500
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH] pinctrl: rzn1: Fix check for used MDIO bus
-Date: Mon, 19 Nov 2018 16:18:38 +0000
-Message-Id: <20181119161838.10610-1-phil.edworthy@renesas.com>
+        Thu, 15 Nov 2018 00:50:00 -0500
+Received: by mail-lf1-f66.google.com with SMTP id f23so12399752lfc.13
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Nov 2018 11:45:26 -0800 (PST)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Wed, 14 Nov 2018 20:45:23 +0100
+To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 30/30] rcar-csi2: expose the subdevice internal routing
+Message-ID: <20181114194523.GE6901@bigcity.dyn.berto.se>
+References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+ <20181101233144.31507-31-niklas.soderlund+renesas@ragnatech.se>
+ <aae0c45f-4c22-d463-1f1f-36e368d96bc5@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aae0c45f-4c22-d463-1f1f-36e368d96bc5@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This fixes the check for unused mdio bus setting and the following static
-checker warning:
- drivers/pinctrl/pinctrl-rzn1.c:198 rzn1_pinctrl_mdio_select()
- warn: always true condition '(ipctl->mdio_func[mdio] >= 0) => (0-u32max >= 0)'
+Hi Nikita,
 
-It also fixes the return var when calling of_get_child_count()
+Thanks for your feedback.
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
-v2:
- - Don't rely on rely on the implicit typecast from -1 to uint
----
- drivers/pinctrl/pinctrl-rzn1.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 2018-11-14 16:10:37 +0300, Nikita Yushchenko wrote:
+> > +	for (i = 0; i < fd.num_entries; i++) {
+> > +		struct v4l2_mbus_frame_desc_entry *entry = &fd.entry[i];
+> > +		int source_pad;
+> > +
+> > +		source_pad = rcsi2_vc_to_pad(entry->bus.csi2.channel);
+> > +		if (source_pad < 0) {
+> > +			dev_err(priv->dev, "Virtual Channel out of range: %u\n",
+> > +				entry->bus.csi2.channel);
+> > +			return -ENOSPC;
+> 
+> Why -ENOSPC here?
+> 
+> AFAIU negative source_pad here means driver internal error (frame desc
+> returned from rcsi2_get_remote_frame_desc() is invalid).  Then I think
+> error return should be -EIO.
 
-diff --git a/drivers/pinctrl/pinctrl-rzn1.c b/drivers/pinctrl/pinctrl-rzn1.c
-index 57886dcff53d..cc0e5aa9128a 100644
---- a/drivers/pinctrl/pinctrl-rzn1.c
-+++ b/drivers/pinctrl/pinctrl-rzn1.c
-@@ -112,7 +112,7 @@ struct rzn1_pinctrl {
- 	struct rzn1_pinctrl_regs __iomem *lev2;
- 	u32 lev1_protect_phys;
- 	u32 lev2_protect_phys;
--	u32 mdio_func[2];
-+	int mdio_func[2];
- 
- 	struct rzn1_pin_group *groups;
- 	unsigned int ngroups;
-@@ -810,8 +810,8 @@ static int rzn1_pinctrl_probe_dt(struct platform_device *pdev,
- 	struct device_node *np = pdev->dev.of_node;
- 	struct device_node *child;
- 	unsigned int maxgroups = 0;
--	unsigned int nfuncs = 0;
- 	unsigned int i = 0;
-+	int nfuncs = 0;
- 	int ret;
- 
- 	nfuncs = of_get_child_count(np);
+Wops, I agree with you this should not be -ENOSPC. Looking at the code 
+this seems I just reused the same error code as if there is no space in 
+the routes array check above this chunk, my bad. I will fix this for the 
+next version.
+
 -- 
-2.17.1
+Regards,
+Niklas S�derlund
