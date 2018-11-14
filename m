@@ -1,69 +1,128 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:40709 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727154AbeKNTAc (ORCPT
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.164]:23425 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727528AbeKNQcQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Nov 2018 14:00:32 -0500
-MIME-Version: 1.0
-References: <20181113124744.7769-1-geert+renesas@glider.be> <1090034354.41357.1542177021922@webmail.strato.com>
-In-Reply-To: <1090034354.41357.1542177021922@webmail.strato.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 14 Nov 2018 09:58:00 +0100
-Message-ID: <CAMuHMdV=1GL43ogU3PO6u8x6f2gX-vdgBVON2+t+1QUJtj=Tkg@mail.gmail.com>
-Subject: Re: [PATCH] reset: Add reset_control_get_count()
-To: uli@fpond.eu
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Auger Eric <eric.auger@redhat.com>,
+        Wed, 14 Nov 2018 11:32:16 -0500
+Date: Wed, 14 Nov 2018 07:30:21 +0100 (CET)
+From: Ulrich Hecht <uli@fpond.eu>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Eric Auger <eric.auger@redhat.com>,
         Alex Williamson <alex.williamson@redhat.com>,
-        KVM list <kvm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        kvm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Message-ID: <1090034354.41357.1542177021922@webmail.strato.com>
+In-Reply-To: <20181113124744.7769-1-geert+renesas@glider.be>
+References: <20181113124744.7769-1-geert+renesas@glider.be>
+Subject: Re: [PATCH] reset: Add reset_control_get_count()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Nov 14, 2018 at 7:30 AM Ulrich Hecht <uli@fpond.eu> wrote:
+Thank you for your patch.
+
 > On November 13, 2018 at 1:47 PM Geert Uytterhoeven <geert+renesas@glider.be> wrote:
-> > Currently the reset core has internal support for counting the number of
-> > resets for a device described in DT.  Generalize this to devices using
-> > lookup resets, and export it for public use.
-> >
-> > This will be used by generic drivers that need to be sure a device is
-> > controlled by a single, dedicated reset line (e.g. vfio-platform).
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > See https://lore.kernel.org/lkml/1539003437.11512.20.camel@pengutronix.de/
-> > for the rationale to ensure a single, dedicated reset line.
-> >
-> >  drivers/reset/core.c  | 41 +++++++++++++++++++++++++++++++++++++++++
-> >  include/linux/reset.h |  7 +++++++
-> >  2 files changed, 48 insertions(+)
-> >
-> > diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> > index 654e20ff2d5da9d4..c32b755ec373c338 100644
-> > --- a/drivers/reset/core.c
-> > +++ b/drivers/reset/core.c
+> 
+> 
+> Currently the reset core has internal support for counting the number of
+> resets for a device described in DT.  Generalize this to devices using
+> lookup resets, and export it for public use.
+> 
+> This will be used by generic drivers that need to be sure a device is
+> controlled by a single, dedicated reset line (e.g. vfio-platform).
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> See https://lore.kernel.org/lkml/1539003437.11512.20.camel@pengutronix.de/
+> for the rationale to ensure a single, dedicated reset line.
+> 
+>  drivers/reset/core.c  | 41 +++++++++++++++++++++++++++++++++++++++++
+>  include/linux/reset.h |  7 +++++++
+>  2 files changed, 48 insertions(+)
+> 
+> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+> index 654e20ff2d5da9d4..c32b755ec373c338 100644
+> --- a/drivers/reset/core.c
+> +++ b/drivers/reset/core.c
+> @@ -859,3 +859,44 @@ devm_reset_control_array_get(struct device *dev, bool shared, bool optional)
+>  	return rstc;
+>  }
+>  EXPORT_SYMBOL_GPL(devm_reset_control_array_get);
+> +
+> +static int reset_control_get_count_from_lookup(struct device *dev)
+> +{
+> +	const struct reset_control_lookup *lookup;
+> +	const char *dev_id = dev_name(dev);
+> +	int count = 0;
+> +
+> +	if (!dev)
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&reset_lookup_mutex);
+> +
+> +	list_for_each_entry(lookup, &reset_lookup_list, list) {
+> +		if (!strcmp(lookup->dev_id, dev_id))
+> +			count++;
+> +	}
+> +
+> +	mutex_unlock(&reset_lookup_mutex);
+> +
+> +	if (count == 0)
+> +		count = -ENOENT;
+> +
+> +	return count;
+> +}
+> +
+> +/**
+> + * of_reset_control_get_count - Count number of resets available with a device
 
-> > +/**
-> > + * of_reset_control_get_count - Count number of resets available with a device
+Should be "reset_control_get_count", without of_ prefix.
+
+> + *
+> + * @dev: device for which to return the number of resets
+> + *
+> + * Returns positive reset count on success, or error number on failure and
+> + * on count being zero.
+> + */
+> +int reset_control_get_count(struct device *dev)
+> +{
+> +	if (dev->of_node)
+> +		return of_reset_control_get_count(dev->of_node);
+> +
+> +	return reset_control_get_count_from_lookup(dev);
+> +}
+> +EXPORT_SYMBOL_GPL(reset_control_get_count);
+> diff --git a/include/linux/reset.h b/include/linux/reset.h
+> index f0b094130686bf32..2698b36bd1eb3e0c 100644
+> --- a/include/linux/reset.h
+> +++ b/include/linux/reset.h
+> @@ -32,6 +32,8 @@ struct reset_control *devm_reset_control_array_get(struct device *dev,
+>  struct reset_control *of_reset_control_array_get(struct device_node *np,
+>  						 bool shared, bool optional);
+>  
+> +int reset_control_get_count(struct device *dev);
+> +
+>  #else
+>  
+>  static inline int reset_control_reset(struct reset_control *rstc)
+> @@ -97,6 +99,11 @@ of_reset_control_array_get(struct device_node *np, bool shared, bool optional)
+>  	return optional ? NULL : ERR_PTR(-ENOTSUPP);
+>  }
+>  
+> +static inline int reset_control_get_count(struct device *dev)
+> +{
+> +	return -ENOENT;
+> +}
+> +
+>  #endif /* CONFIG_RESET_CONTROLLER */
+>  
+>  static inline int __must_check device_reset(struct device *dev)
+> -- 
+> 2.17.1
 >
-> Should be "reset_control_get_count", without of_ prefix.
 
-Oops, thanks for catching!
-
-Philipp: Do you want a v2 or incremental, or can you fix it up yourself?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+CU
+Uli
