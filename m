@@ -1,62 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35091 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726562AbeKZXst (ORCPT
+Received: from mail-eopbgr1410110.outbound.protection.outlook.com ([40.107.141.110]:16180
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727598AbeKNVXb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Nov 2018 18:48:49 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 13/16] ARM: dts: iwg23s-sbc: Add pinctl support for EtherAVB
-Date: Mon, 26 Nov 2018 13:54:15 +0100
-Message-Id: <49b497e70f1f033638368bcd06b21f1abda011c2.1543236456.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1543236456.git.horms+renesas@verge.net.au>
-References: <cover.1543236456.git.horms+renesas@verge.net.au>
+        Wed, 14 Nov 2018 16:23:31 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH/RFC] iommu/ipmmu-vmsa: R-Car M3-N/V3H/E3 AVB whitelist
+ prototype
+Date: Wed, 14 Nov 2018 11:20:37 +0000
+Message-ID: <OSBPR01MB2293C63D0A41DA46824DA83FD8C30@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+References: <154014429795.2869.7870954544925695802.sendpatchset@octo>
+ <CAMuHMdXv3LYcjpWxRxnVbcei5e7i0VxOL5RRro24b5_mKODakw@mail.gmail.com>
+ <OSBPR01MB2293329B49BE6DCC6E949EF7D8C10@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+ <CAMuHMdW9U1rJ1mR2kHosb_e7zMGTDN2eznmeEwDu6V0fO35aCA@mail.gmail.com>
+ <OSBPR01MB229375E9A5748E3931A4701CD8C10@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+ <CAMuHMdViRia++mKaTnTkoEd42M1nN-L=mvBg32mye_eGxmgpwg@mail.gmail.com>
+In-Reply-To: <CAMuHMdViRia++mKaTnTkoEd42M1nN-L=mvBg32mye_eGxmgpwg@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
-
-Adding pinctrl support for EtherAVB interface.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-index 18d22631e188..52f23b858885 100644
---- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -60,6 +60,9 @@
- };
- 
- &avb {
-+	pinctrl-0 = <&avb_pins>;
-+	pinctrl-names = "default";
-+
- 	phy-handle = <&phy3>;
- 	phy-mode = "gmii";
- 	renesas,no-ether-link;
-@@ -82,6 +85,11 @@
- };
- 
- &pfc {
-+	avb_pins: avb {
-+		groups = "avb_mdio", "avb_gmii_tx_rx";
-+		function = "avb";
-+	};
-+
- 	mmc_pins_uhs: mmc_uhs {
- 		groups = "mmc_data8", "mmc_ctrl";
- 		function = "mmc";
--- 
-2.11.0
+SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbiwgU2VudDogTW9uZGF5
+LCBOb3ZlbWJlciAxMiwgMjAxOCA2OjA4IFBNDQo+IA0KPiBIaSBTaGltb2RhLXNhbiwNCj4gDQo+
+IE9uIE1vbiwgTm92IDEyLCAyMDE4IGF0IDk6NTMgQU0gWW9zaGloaXJvIFNoaW1vZGENCj4gPHlv
+c2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiA+IEZyb206IEdlZXJ0
+IFV5dHRlcmhvZXZlbiwgU2VudDogTW9uZGF5LCBOb3ZlbWJlciAxMiwgMjAxOCA1OjE5IFBNDQo+
+ID4gPiBPbiBNb24sIE5vdiAxMiwgMjAxOCBhdCA4OjI0IEFNIFlvc2hpaGlybyBTaGltb2RhDQo+
+ID4gPiA8eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+IHdyb3RlOg0KPHNuaXA+DQo+
+ID4gQEAgLTc3MCw3ICs3NjgsOCBAQCBzdGF0aWMgaW50IGlwbW11X29mX3hsYXRlKHN0cnVjdCBk
+ZXZpY2UgKmRldiwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBvZl9waGFu
+ZGxlX2FyZ3MgKnNwZWMpDQo+ID4gIHsNCj4gPiAgICAgICAgIC8qIEZvciBSLUNhciBHZW4zIHVz
+ZSBhIHdoaXRlIGxpc3QgdG8gb3B0LWluIHNsYXZlIGRldmljZXMgKi8NCj4gPiAtICAgICAgIGlm
+IChzb2NfZGV2aWNlX21hdGNoKHNvY19yY2FyX2dlbjMpICYmICFpcG1tdV9zbGF2ZV93aGl0ZWxp
+c3QoZGV2KSkNCj4gPiArICAgICAgIGlmICghc29jX2RldmljZV9tYXRjaChzb2NfcmNhcl9nZW4z
+X2JsYWNrbGlzdCkgJiYNCj4gPiArICAgICAgICAgICAhaXBtbXVfc2xhdmVfd2hpdGVsaXN0KGRl
+dikpDQo+ID4gICAgICAgICAgICAgICAgIHJldHVybiAtRU5PREVWOw0KPiANCj4gQWgsIHRoaXMg
+aGFzIHRoZSBzaWRlIGVmZmVjdCBvZiBhcHBseWluZyBpcG1tdV9zbGF2ZV93aGl0ZWxpc3QoKSBv
+biBSLUNhcg0KPiBHZW4yLCB0b28sIHdoaWNoIGlzIHByb2JhYmx5IG5vdCB3aGF0IHdlIHdhbnQ/
+DQoNCk9vcHMhIFlvdSdyZSBjb3JyZWN0LiBUaGUgY3VycmVudCBjb2RlIGJlaGF2aW9yIGlzOg0K
+IC0gR2VuMiBkb2Vzbid0IHVzZSBhbnkgd2hpdGVsaXN0Lg0KIC0gR2VuMyB1c2VzIHRoZSB3aGl0
+ZWxpc3QuDQoNCklmIHdlIGFwcGx5IHRoaXMgbXkgcGF0Y2ggYWJvdmU6DQogLSBHZW4yIGFuZCBH
+ZW4zIHVzZSB0aGUgd2hpdGVsaXN0IGFueXdheS4NCg0KVGhpcyBpcyBub3Qgb3VyIGV4cGVjdGVk
+LCBzbyBJIHRoaW5rIHdlIGtlZXAgdG8gdXNlIHRoZSBjdXJyZW50IHN0eWxlLg0KIyBOb3RlIHRo
+YXQgbXkgZmlyc3Qgc3VnZ2VzdGlvbiBbMV0gYWxzbyBicm9rZSB0aGUgY29kZSBiZWNhdXNlDQoj
+IHI4YTc3OTUgRVMyLjAgb3Igb2xkZXIgYW5kIHI4YTc3OTYgZG9uJ3QgdXNlIHRoZSB3aGl0ZWxp
+c3QuLi4NCiMgDQojIFsxXSBodHRwczovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9saW51eC1yZW5l
+c2FzLXNvYy9tc2czNTA0OC5odG1sDQoNCkJlc3QgcmVnYXJkcywNCllvc2hpaGlybyBTaGltb2Rh
+DQoNCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+IA0KPiAgICAgICAgICAgICAgICAgICAgICAgICBH
+ZWVydA0KPiANCj4gLS0NCj4gR2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBM
+aW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51eC1tNjhrLm9yZw0KPiANCj4gSW4gcGVyc29u
+YWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBo
+YWNrZXIuIEJ1dA0KPiB3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkg
+InByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgLS0gTGludXMgVG9ydmFsZHMNCg==
