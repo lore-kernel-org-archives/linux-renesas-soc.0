@@ -1,253 +1,298 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-eopbgr1410091.outbound.protection.outlook.com ([40.107.141.91]:49134
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729010AbeKPAH6 (ORCPT
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:35810 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727731AbeKNWzq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Nov 2018 19:07:58 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Linus Walleij <linus.walleij@linaro.org>,
+        Wed, 14 Nov 2018 17:55:46 -0500
+MIME-Version: 1.0
+References: <1541531949-23407-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1541531949-23407-1-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 14 Nov 2018 13:52:21 +0100
+Message-ID: <CAMuHMdWdLQfmTjzag4Rp62MQw_n=zZx9W7LZP4p3FgHV=_seQQ@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: rcar: Request GPIO while enabling interrupt
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2] gpio: rcar: Request GPIO while enabling interrupt
-Date: Thu, 15 Nov 2018 13:59:51 +0000
-Message-ID: <TY1PR01MB1770E9D01CD63C585C5B931BC0DC0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1541531949-23407-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAMuHMdWdLQfmTjzag4Rp62MQw_n=zZx9W7LZP4p3FgHV=_seQQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdWdLQfmTjzag4Rp62MQw_n=zZx9W7LZP4p3FgHV=_seQQ@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gR2VlcnQsDQoNClRoYW5rIHlvdSBmb3IgeW91ciBmZWVkYmFjayENCg0KPiBGcm9tOiBH
-ZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0QGxpbnV4LW02OGsub3JnPg0KPiBTZW50OiAxNCBOb3Zl
-bWJlciAyMDE4IDEyOjUyDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjJdIGdwaW86IHJjYXI6IFJl
-cXVlc3QgR1BJTyB3aGlsZSBlbmFibGluZyBpbnRlcnJ1cHQNCj4NCj4gSGkgRmFicml6aW8sDQo+
-DQo+IE9uIFR1ZSwgTm92IDYsIDIwMTggYXQgODoxOSBQTSBGYWJyaXppbyBDYXN0cm8NCj4gPGZh
-YnJpemlvLmNhc3Ryb0BicC5yZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gVGhlcmUgYXJlIGNhc2Vz
-IHdoZW4gdGhlIGJvb3Rsb2FkZXIgY29uZmlndXJlcyBhIHBpbiB0byB3b3JrDQo+ID4gYXMgYSBm
-dW5jdGlvbiByYXRoZXIgdGhhbiBHUElPLCBhbmQgb3RoZXIgY2FzZXMgd2hlbiB0aGUgcGluDQo+
-ID4gaXMgY29uZmlndXJlZCBhcyBhIGZ1bmN0aW9uIGF0IFBPUi4NCj4gPiBUaGlzIGNvbW1pdCBt
-YWtlcyBzdXJlIHRoZSBwaW4gaXMgY29uZmlndXJlZCBhcyBhIEdQSU8gdGhlDQo+ID4gbW9tZW50
-IHdlIG5lZWQgaXQgdG8gd29yayBhcyBhbiBpbnRlcnJ1cHQuDQo+ID4NCj4gPiBTaWduZWQtb2Zm
-LWJ5OiBGYWJyaXppbyBDYXN0cm8gPGZhYnJpemlvLmNhc3Ryb0BicC5yZW5lc2FzLmNvbT4NCj4g
-Pg0KPiA+IC0tLQ0KPiA+IHYxLT52MjoNCj4gPiAqIE1vdmVkIGdwaW9fcmNhcl9yZXF1ZXN0IGNh
-bGwgZnJvbSBncGlvX3JjYXJfaXJxX3NldF90eXBlIHRvDQo+ID4gICByY2FyX2dwaW9faXJxX3Jl
-cXVlc3RfcmVzb3VyY2VzDQo+ID4gKiBBZGRlZCByY2FyX2dwaW9faXJxX3JlbGVhc2VfcmVzb3Vy
-Y2VzIGZvciBjYWxsaW5nIGdwaW9fcmNhcl9mcmVlDQo+DQo+IFRoYW5rcyBmb3IgeW91ciBwYXRj
-aCENCj4NCj4gV2hpbGUgSSBjb3VsZCBzZWUgbm8gb2J2aW91cyBkZWZpY2llbmNpZXMgYXQgZmly
-c3QgZ2xhbmNlLCBJIGdhdmUgeW91cg0KPiBwYXRjaCBhIHRyeSBvbiBLb2Vsc2NoIGFuZCBTYWx2
-YXRvci1YUy4NCg0KVGhhbmsgeW91IGZvciB0ZXN0aW5nIHRoZSBwYXRjaCENCg0KVGhlc2UgaXNz
-dWVzIHNlZW0gdG8gYmUgcmVsYXRlZCB0byBhIGZldyBwYXRjaGVzIHRoYXQgd2VyZSBtZXJnZWQg
-b25seSByZWNlbnRseSwNCkkgaGF2ZSByZWJhc2VkIG15IHdvcmsgb24gdG9wIG9mIHRoZSBuZXh0
-LTIwMTgxMTE1IG5vdywgYW5kIEkgZ2V0IHRoZSBzYW1lIHRoaW5nLg0KSSBuZWVkIHRvIGxvb2sg
-aW50byB0aGlzIGZyb20gc2NyYXRjaCBhZ2FpbiwgSSdsbCBiZSBpbiB0b3VjaCBhcyBzb29uIGFz
-IEkgaGF2ZSBmb3VuZA0KYW4gYWx0ZXJuYXRpdmUgd2F5IHRvIGZpeCB0aGUgaXNzdWUuDQoNClRo
-YW5rcywNCkZhYg0KDQo+DQo+IEtvZWxzY2g6DQo+DQo+ICAgLSBBRFY3NTExIEhETUkgZW5jb2Rl
-ciBXQVJOX09OKCF0ZXN0X2JpdChGTEFHX1VTRURfQVNfSVJRLCAmZGVzYy0+ZmxhZ3MpDQo+ICAg
-ICBpbiBncGlvY2hpcF9lbmFibGVfaXJxKCk6DQo+DQo+ICAgICBXQVJOSU5HOiBDUFU6IDAgUElE
-OiAxIGF0IGRyaXZlcnMvZ3Bpby9ncGlvbGliLmM6MzUxMw0KPiBncGlvY2hpcF9pcnFfZW5hYmxl
-KzB4MTgvMHgzNA0KPiAgICAgTW9kdWxlcyBsaW5rZWQgaW46DQo+ICAgICBDUFU6IDAgUElEOiAx
-IENvbW06IHN3YXBwZXIvMCBOb3QgdGFpbnRlZA0KPiA0LjIwLjAtcmMyLWtvZWxzY2gtMDA4NzMt
-Z2Y0MzNlMjk0YTkwNzkyZGEtZGlydHkgIzE3OQ0KPiAgICAgSGFyZHdhcmUgbmFtZTogR2VuZXJp
-YyBSLUNhciBHZW4yIChGbGF0dGVuZWQgRGV2aWNlIFRyZWUpDQo+ICAgICBbPGMwMjBmMTljPl0g
-KHVud2luZF9iYWNrdHJhY2UpIGZyb20gWzxjMDIwYWVjYz5dIChzaG93X3N0YWNrKzB4MTAvMHgx
-NCkNCj4gICAgIFs8YzAyMGFlY2M+XSAoc2hvd19zdGFjaykgZnJvbSBbPGMwN2IwMmY4Pl0gKGR1
-bXBfc3RhY2srMHg3Yy8weDljKQ0KPiAgICAgWzxjMDdiMDJmOD5dIChkdW1wX3N0YWNrKSBmcm9t
-IFs8YzAyMjA2MTA+XSAoX193YXJuKzB4ZDAvMHhlYykNCj4gICAgIFs8YzAyMjA2MTA+XSAoX193
-YXJuKSBmcm9tIFs8YzAyMjA3M2M+XSAod2Fybl9zbG93cGF0aF9udWxsKzB4MzgvMHg0NCkNCj4g
-ICAgIFs8YzAyMjA3M2M+XSAod2Fybl9zbG93cGF0aF9udWxsKSBmcm9tIFs8YzA0NmEwODQ+XQ0K
-PiAoZ3Bpb2NoaXBfaXJxX2VuYWJsZSsweDE4LzB4MzQpDQo+ICAgICBbPGMwNDZhMDg0Pl0gKGdw
-aW9jaGlwX2lycV9lbmFibGUpIGZyb20gWzxjMDI2Y2JiMD5dIChpcnFfZW5hYmxlKzB4M2MvMHg1
-MCkNCj4gICAgIFs8YzAyNmNiYjA+XSAoaXJxX2VuYWJsZSkgZnJvbSBbPGMwMjZjYzU4Pl0gKF9f
-aXJxX3N0YXJ0dXArMHg5NC8weGE0KQ0KPiAgICAgWzxjMDI2Y2M1OD5dIChfX2lycV9zdGFydHVw
-KSBmcm9tIFs8YzAyNmNjYjQ+XSAoaXJxX3N0YXJ0dXArMHg0Yy8weDExYykNCj4gICAgIFs8YzAy
-NmNjYjQ+XSAoaXJxX3N0YXJ0dXApIGZyb20gWzxjMDI2YjRjND5dIChfX3NldHVwX2lycSsweDRk
-MC8weDZhNCkNCj4gICAgIFs8YzAyNmI0YzQ+XSAoX19zZXR1cF9pcnEpIGZyb20gWzxjMDI2Yjdh
-Yz5dDQo+IChyZXF1ZXN0X3RocmVhZGVkX2lycSsweDljLzB4MTM0KQ0KPiAgICAgWzxjMDI2Yjdh
-Yz5dIChyZXF1ZXN0X3RocmVhZGVkX2lycSkgZnJvbSBbPGMwMjZkYWM0Pl0NCj4gKGRldm1fcmVx
-dWVzdF90aHJlYWRlZF9pcnErMHg2OC8weGE0KQ0KPiAgICAgWzxjMDI2ZGFjND5dIChkZXZtX3Jl
-cXVlc3RfdGhyZWFkZWRfaXJxKSBmcm9tIFs8YzA1MThlZDg+XQ0KPiAoYWR2NzUxMV9wcm9iZSsw
-eDc0OC8weDg2MCkNCj4gICAgIFs8YzA1MThlZDg+XSAoYWR2NzUxMV9wcm9iZSkgZnJvbSBbPGMw
-NWVmMDJjPl0NCj4gKGkyY19kZXZpY2VfcHJvYmUrMHgyMTAvMHgyMjgpDQo+ICAgICBbPGMwNWVm
-MDJjPl0gKGkyY19kZXZpY2VfcHJvYmUpIGZyb20gWzxjMDUyMjlhYz5dIChyZWFsbHlfcHJvYmUr
-MHgxZjAvMHgyYzApDQo+ICAgICBbPGMwNTIyOWFjPl0gKHJlYWxseV9wcm9iZSkgZnJvbSBbPGMw
-NTIyZDA0Pl0NCj4gKGRyaXZlcl9wcm9iZV9kZXZpY2UrMHgxNDAvMHgxNWMpDQo+ICAgICBbPGMw
-NTIyZDA0Pl0gKGRyaXZlcl9wcm9iZV9kZXZpY2UpIGZyb20gWzxjMDUyMGVkND5dDQo+IChidXNf
-Zm9yX2VhY2hfZHJ2KzB4YTAvMHhiNCkNCj4gICAgIFs8YzA1MjBlZDQ+XSAoYnVzX2Zvcl9lYWNo
-X2RydikgZnJvbSBbPGMwNTIyYjJjPl0NCj4gKF9fZGV2aWNlX2F0dGFjaCsweGIwLzB4MTI0KQ0K
-PiAgICAgWzxjMDUyMmIyYz5dIChfX2RldmljZV9hdHRhY2gpIGZyb20gWzxjMDUyMWM5ND5dDQo+
-IChidXNfcHJvYmVfZGV2aWNlKzB4MjgvMHg4MCkNCj4gICAgIFs8YzA1MjFjOTQ+XSAoYnVzX3By
-b2JlX2RldmljZSkgZnJvbSBbPGMwNTFmZjQ0Pl0gKGRldmljZV9hZGQrMHg0MzgvMHg1NzApDQo+
-ICAgICBbPGMwNTFmZjQ0Pl0gKGRldmljZV9hZGQpIGZyb20gWzxjMDVlZDk3OD5dIChpMmNfbmV3
-X2RldmljZSsweDIzOC8weDI3OCkNCj4gICAgIFs8YzA1ZWQ5Nzg+XSAoaTJjX25ld19kZXZpY2Up
-IGZyb20gWzxjMDVmMDhhOD5dDQo+IChvZl9pMmNfcmVnaXN0ZXJfZGV2aWNlKzB4NDAvMHg4MCkN
-Cj4gICAgIFs8YzA1ZjA4YTg+XSAob2ZfaTJjX3JlZ2lzdGVyX2RldmljZSkgZnJvbSBbPGMwNWYw
-YmFjPl0NCj4gKG9mX2kyY19yZWdpc3Rlcl9kZXZpY2VzKzB4ODAvMHhjMCkNCj4gICAgIFs8YzA1
-ZjBiYWM+XSAob2ZfaTJjX3JlZ2lzdGVyX2RldmljZXMpIGZyb20gWzxjMDVlZTZmND5dDQo+IChp
-MmNfcmVnaXN0ZXJfYWRhcHRlcisweDFlYy8weDM5MCkNCj4gICAgIFs8YzA1ZWU2ZjQ+XSAoaTJj
-X3JlZ2lzdGVyX2FkYXB0ZXIpIGZyb20gWzxjMDVmNTY1MD5dDQo+IChpMmNfZGVtdXhfYWN0aXZh
-dGVfbWFzdGVyKzB4ZDQvMHgxNTgpDQo+ICAgICBbPGMwNWY1NjUwPl0gKGkyY19kZW11eF9hY3Rp
-dmF0ZV9tYXN0ZXIpIGZyb20gWzxjMDVmNTllMD5dDQo+IChpMmNfZGVtdXhfcGluY3RybF9wcm9i
-ZSsweDE5MC8weDFmMCkNCj4gICAgIFs8YzA1ZjU5ZTA+XSAoaTJjX2RlbXV4X3BpbmN0cmxfcHJv
-YmUpIGZyb20gWzxjMDUyNDM5Yz5dDQo+IChwbGF0Zm9ybV9kcnZfcHJvYmUrMHg0OC8weDk0KQ0K
-PiAgICAgWzxjMDUyNDM5Yz5dIChwbGF0Zm9ybV9kcnZfcHJvYmUpIGZyb20gWzxjMDUyMjlhYz5d
-DQo+IChyZWFsbHlfcHJvYmUrMHgxZjAvMHgyYzApDQo+ICAgICBbPGMwNTIyOWFjPl0gKHJlYWxs
-eV9wcm9iZSkgZnJvbSBbPGMwNTIyZDA0Pl0NCj4gKGRyaXZlcl9wcm9iZV9kZXZpY2UrMHgxNDAv
-MHgxNWMpDQo+ICAgICBbPGMwNTIyZDA0Pl0gKGRyaXZlcl9wcm9iZV9kZXZpY2UpIGZyb20gWzxj
-MDUyMmRhYz5dDQo+IChfX2RyaXZlcl9hdHRhY2grMHg4Yy8weGM4KQ0KPiAgICAgWzxjMDUyMmRh
-Yz5dIChfX2RyaXZlcl9hdHRhY2gpIGZyb20gWzxjMDUyMGRlND5dDQo+IChidXNfZm9yX2VhY2hf
-ZGV2KzB4NjQvMHhhMCkNCj4gICAgIFs8YzA1MjBkZTQ+XSAoYnVzX2Zvcl9lYWNoX2RldikgZnJv
-bSBbPGMwNTIxZjM0Pl0NCj4gKGJ1c19hZGRfZHJpdmVyKzB4MTZjLzB4MWQ0KQ0KPiAgICAgWzxj
-MDUyMWYzND5dIChidXNfYWRkX2RyaXZlcikgZnJvbSBbPGMwNTIzNmI4Pl0gKGRyaXZlcl9yZWdp
-c3RlcisweGFjLzB4ZjApDQo+ICAgICBbPGMwNTIzNmI4Pl0gKGRyaXZlcl9yZWdpc3RlcikgZnJv
-bSBbPGMwMjAyNTg0Pl0NCj4gKGRvX29uZV9pbml0Y2FsbCsweDcwLzB4MTcwKQ0KPiAgICAgWzxj
-MDIwMjU4ND5dIChkb19vbmVfaW5pdGNhbGwpIGZyb20gWzxjMGMwMGVmOD5dDQo+IChrZXJuZWxf
-aW5pdF9mcmVlYWJsZSsweDE5NC8weDFkOCkNCj4gICAgIFs8YzBjMDBlZjg+XSAoa2VybmVsX2lu
-aXRfZnJlZWFibGUpIGZyb20gWzxjMDdjNDVlOD5dDQo+IChrZXJuZWxfaW5pdCsweDgvMHgxMTAp
-DQo+ICAgICBbPGMwN2M0NWU4Pl0gKGtlcm5lbF9pbml0KSBmcm9tIFs8YzAyMDEwZDg+XSAocmV0
-X2Zyb21fZm9yaysweDE0LzB4M2MpDQo+ICAgICBFeGNlcHRpb24gc3RhY2soMHhlYjQ0ZGZiMCB0
-byAweGViNDRkZmY4KQ0KPiAgICAgZGZhMDogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgMDAwMDAwMDAgMDAwMDAwMDANCj4gMDAwMDAwMDAgMDAwMDAwMDANCj4gICAgIGRmYzA6
-IDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwDQo+
-IDAwMDAwMDAwIDAwMDAwMDAwDQo+ICAgICBkZmUwOiAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAw
-MCAwMDAwMDAwMCAwMDAwMDAxMyAwMDAwMDAwMA0KPg0KPiAgIC0gU0RISSBDRCBwaW4gZmFpbHVy
-ZSAoZmlyc3QgY2hhbm5lbCBzaG93biBvbmx5KToNCj4NCj4gICAgIHNoLXBmYyBlNjA2MDAwMC5w
-aW4tY29udHJvbGxlcjogcGluIEdQXzZfNiBhbHJlYWR5IHJlcXVlc3RlZCBieQ0KPiBlNjA1NTQw
-MC5ncGlvOjgxMjsgY2Fubm90IGNsYWltIGZvciBlNjA1NTQwMC5ncGlvOjgxMg0KPiAgICAgc2gt
-cGZjIGU2MDYwMDAwLnBpbi1jb250cm9sbGVyOiBwaW4tMTk4IChlNjA1NTQwMC5ncGlvOjgxMikg
-c3RhdHVzIC0yMg0KPiAgICAgZ3Bpb19yY2FyIGU2MDU1NDAwLmdwaW86IENhbid0IHJlcXVlc3Qg
-R1BJTyA2IGZyb20gZTYwNTU0MDAuZ3Bpbw0KPiAgICAgZ2VuaXJxOiBGYWlsZWQgdG8gcmVxdWVz
-dCByZXNvdXJjZXMgZm9yIGVlMTAwMDAwLnNkIGNkIChpcnEgMTg2KQ0KPiBvbiBpcnFjaGlwIGU2
-MDU1NDAwLmdwaW8NCj4NCj4gICAtIGdwaW8ta2V5cyBmYWlsdXJlOg0KPg0KPiAgICAgc2gtcGZj
-IGU2MDYwMDAwLnBpbi1jb250cm9sbGVyOiBwaW4gR1BfNV8wIGFscmVhZHkgcmVxdWVzdGVkIGJ5
-DQo+IGU2MDU1MDAwLmdwaW86ODM4OyBjYW5ub3QgY2xhaW0gZm9yIGU2MDU1MDAwLmdwaW86ODM4
-DQo+ICAgICBzaC1wZmMgZTYwNjAwMDAucGluLWNvbnRyb2xsZXI6IHBpbi0xNjAgKGU2MDU1MDAw
-LmdwaW86ODM4KSBzdGF0dXMgLTIyDQo+ICAgICBncGlvX3JjYXIgZTYwNTUwMDAuZ3BpbzogQ2Fu
-J3QgcmVxdWVzdCBHUElPIDAgZnJvbSBlNjA1NTAwMC5ncGlvDQo+ICAgICBnZW5pcnE6IEZhaWxl
-ZCB0byByZXF1ZXN0IHJlc291cmNlcyBmb3IgU1cyLTEgKGlycSAxODkpIG9uIGlycWNoaXANCj4g
-ZTYwNTUwMDAuZ3Bpbw0KPiAgICAgZ3Bpby1rZXlzIGtleWJvYXJkOiBVbmFibGUgdG8gY2xhaW0g
-aXJxIDE4OTsgZXJyb3IgLTIyDQo+ICAgICBncGlvLWtleXM6IHByb2JlIG9mIGtleWJvYXJkIGZh
-aWxlZCB3aXRoIGVycm9yIC0yMg0KPg0KPiAgIC0gL3N5cy9rZXJuZWwvZGVidWcvcGluY3RybC9l
-NjA2MDAwMC5waW4tY29udHJvbGxlci1zaC1wZmMvcGlubXV4LXBpbnMNCj4gY2hhbmdlczoNCj4N
-Cj4gICAgIEFEVjc1MTEgSVJRIGlzIG5vdyBjbGFpbWVkIGFzIGEgR1BJTywgd2hpY2ggd2FzIHRo
-ZSBpbnRlbnRpb24gb2YgeW91cg0KPiAgICAgcGF0Y2g6DQo+DQo+ICAgICAgICAgLXBpbiAxMjUg
-KEdQXzNfMjkpOiAoTVVYIFVOQ0xBSU1FRCkgKEdQSU8gVU5DTEFJTUVEKQ0KPiAgICAgICAgICtw
-aW4gMTI1IChHUF8zXzI5KTogKE1VWCBVTkNMQUlNRUQpIGU2MDUzMDAwLmdwaW86OTMxDQo+DQo+
-ICAgICBXaXRoICNkZWZpbmUgREVCVUcgaW4gZHJpdmVycy9waW5jdHJsL3NoLXBmYy9jb3JlLmM6
-DQo+DQo+ICAgICAgICAgc2gtcGZjIGU2MDYwMDAwLnBpbi1jb250cm9sbGVyOiB3cml0ZV9yZWcg
-YWRkciA9IGU2MDYwMDEwLA0KPiB2YWx1ZSA9IDB4MCwgZmllbGQgPSAyLCByX3dpZHRoID0gMzIs
-IGZfd2lkdGggPSAxDQo+DQo+ICAgICB3aGljaCBtZWFucyB0aGF0IEdQXzNfMjkgaXMgc3dpdGNo
-ZWQgdG8gR1BJTyAoR1AzWzI5XSA9IDB4MCkNCj4gICAgIChiaXQgMjkgPSAzMSAtIGZpZWxkIDIp
-LCBnb29kIQ0KPg0KPiAgICAgZ3Bpby1rZXlzIGZhaWx1cmVzOg0KPg0KPiAgICAgICAgIC1waW4g
-MTYwIChHUF81XzApOiAoTVVYIFVOQ0xBSU1FRCkgZTYwNTUwMDAuZ3Bpbzo4MzgNCj4gICAgICAg
-ICAtcGluIDE2MSAoR1BfNV8xKTogKE1VWCBVTkNMQUlNRUQpIGU2MDU1MDAwLmdwaW86ODM5DQo+
-ICAgICAgICAgLXBpbiAxNjIgKEdQXzVfMik6IChNVVggVU5DTEFJTUVEKSBlNjA1NTAwMC5ncGlv
-Ojg0MA0KPiAgICAgICAgIC1waW4gMTYzIChHUF81XzMpOiAoTVVYIFVOQ0xBSU1FRCkgZTYwNTUw
-MDAuZ3Bpbzo4NDENCj4gICAgICAgICArcGluIDE2MCAoR1BfNV8wKTogKE1VWCBVTkNMQUlNRUQp
-IChHUElPIFVOQ0xBSU1FRCkNCj4gICAgICAgICArcGluIDE2MSAoR1BfNV8xKTogKE1VWCBVTkNM
-QUlNRUQpIChHUElPIFVOQ0xBSU1FRCkNCj4gICAgICAgICArcGluIDE2MiAoR1BfNV8yKTogKE1V
-WCBVTkNMQUlNRUQpIChHUElPIFVOQ0xBSU1FRCkNCj4gICAgICAgICArcGluIDE2MyAoR1BfNV8z
-KTogKE1VWCBVTkNMQUlNRUQpIChHUElPIFVOQ0xBSU1FRCkNCj4NCj4gICAgICAgICAtcGluIDIy
-NCAoR1BfN18wKTogKE1VWCBVTkNMQUlNRUQpIGU2MDU1ODAwLmdwaW86NzgwDQo+ICAgICAgICAg
-LXBpbiAyMjUgKEdQXzdfMSk6IChNVVggVU5DTEFJTUVEKSBlNjA1NTgwMC5ncGlvOjc4MQ0KPiAg
-ICAgICAgIC1waW4gMjI2IChHUF83XzIpOiAoTVVYIFVOQ0xBSU1FRCkgZTYwNTU4MDAuZ3Bpbzo3
-ODINCj4gICAgICAgICAtcGluIDIyNyAoR1BfN18zKTogKE1VWCBVTkNMQUlNRUQpIGU2MDU1ODAw
-LmdwaW86NzgzDQo+ICAgICAgICAgLXBpbiAyMjggKEdQXzdfNCk6IChNVVggVU5DTEFJTUVEKSBl
-NjA1NTgwMC5ncGlvOjc4NA0KPiAgICAgICAgIC1waW4gMjI5IChHUF83XzUpOiAoTVVYIFVOQ0xB
-SU1FRCkgZTYwNTU4MDAuZ3Bpbzo3ODUNCj4gICAgICAgICAtcGluIDIzMCAoR1BfN182KTogKE1V
-WCBVTkNMQUlNRUQpIGU2MDU1ODAwLmdwaW86Nzg2DQo+ICAgICAgICAgK3BpbiAyMjQgKEdQXzdf
-MCk6IChNVVggVU5DTEFJTUVEKSAoR1BJTyBVTkNMQUlNRUQpDQo+ICAgICAgICAgK3BpbiAyMjUg
-KEdQXzdfMSk6IChNVVggVU5DTEFJTUVEKSAoR1BJTyBVTkNMQUlNRUQpDQo+ICAgICAgICAgK3Bp
-biAyMjYgKEdQXzdfMik6IChNVVggVU5DTEFJTUVEKSAoR1BJTyBVTkNMQUlNRUQpDQo+ICAgICAg
-ICAgK3BpbiAyMjcgKEdQXzdfMyk6IChNVVggVU5DTEFJTUVEKSAoR1BJTyBVTkNMQUlNRUQpDQo+
-ICAgICAgICAgK3BpbiAyMjggKEdQXzdfNCk6IChNVVggVU5DTEFJTUVEKSAoR1BJTyBVTkNMQUlN
-RUQpDQo+ICAgICAgICAgK3BpbiAyMjkgKEdQXzdfNSk6IChNVVggVU5DTEFJTUVEKSAoR1BJTyBV
-TkNMQUlNRUQpDQo+ICAgICAgICAgK3BpbiAyMzAgKEdQXzdfNik6IChNVVggVU5DTEFJTUVEKSAo
-R1BJTyBVTkNMQUlNRUQpDQo+DQo+ICAgICBOb3RlIHRoYXQgdGhlIFNESEkgQ0QgcGlucyBhcmUg
-c3RpbGwgY2xhaW1lZCBhcyBHUElPcywgYXMgdGhlIFNESEkgZHJpdmVyDQo+ICAgICBjb250aW51
-ZWQgd2l0aG91dCBhIENEIHBpbjoNCj4NCj4gICAgICAgICBwaW4gMTk4IChHUF82XzYpOiAoTVVY
-IFVOQ0xBSU1FRCkgZTYwNTU0MDAuZ3Bpbzo4MTINCj4NCj4NCj4gU2FsdmF0b3ItWFM6DQo+DQo+
-ICAgLSBTaW1pbGFyIFNESEkgQ0QgcGluIGFuZCBncGlvLWtleXMgZmFpbHVyZXMNCj4NCj4gICAt
-IFJBVkIgRXRoZXJuZXQgV0FSTl9PTighdGVzdF9iaXQoRkxBR19VU0VEX0FTX0lSUSwgJmRlc2Mt
-PmZsYWdzKQ0KPiAgICAgaW4gZ3Bpb2NoaXBfZW5hYmxlX2lycSgpOg0KPg0KPiAgICAgV0FSTklO
-RzogQ1BVOiAyIFBJRDogMSBhdCBkcml2ZXJzL2dwaW8vZ3Bpb2xpYi5jOjM1MTMNCj4gZ3Bpb2No
-aXBfZW5hYmxlX2lycSsweDIwLzB4NTgNCj4gICAgIE1vZHVsZXMgbGlua2VkIGluOg0KPiAgICAg
-Q1BVOiAyIFBJRDogMSBDb21tOiBzd2FwcGVyLzAgTm90IHRhaW50ZWQNCj4gNC4yMC4wLXJjMi1z
-YWx2YXRvci14LTAwODczLWdmNDMzZTI5NGE5MDc5MmRhLWRpcnR5ICMyMzgNCj4gICAgIEhhcmR3
-YXJlIG5hbWU6IFJlbmVzYXMgU2FsdmF0b3ItWCAybmQgdmVyc2lvbiBib2FyZCBiYXNlZCBvbg0K
-PiByOGE3Nzk1IEVTMi4wKyAoRFQpDQo+ICAgICBwc3RhdGU6IDQwNDAwMDg1IChuWmN2IGRhSWYg
-K1BBTiAtVUFPKQ0KPiAgICAgcGMgOiBncGlvY2hpcF9lbmFibGVfaXJxKzB4MjAvMHg1OA0KPiAg
-ICAgbHIgOiBncGlvY2hpcF9lbmFibGVfaXJxKzB4Yy8weDU4DQo+ICAgICBzcCA6IGZmZmZmZjgw
-MDgwNmI5YjANCj4gICAgIHgyOTogZmZmZmZmODAwODA2YjliMCB4Mjg6IGZmZmZmZjgwMDhkMzc3
-NzgNCj4gICAgIHgyNzogMDAwMDAwMDAwMDAwMDAwMCB4MjY6IDAwMDAwMDAwMDAwMDAwMDANCj4g
-ICAgIHgyNTogZmZmZmZmYzZmODNjZWNhOCB4MjQ6IGZmZmZmZmM2ZjgzY2VkZDANCj4gICAgIHgy
-MzogMDAwMDAwMDAwMDAwMDAwMCB4MjI6IDAwMDAwMDAwMDAwMDAwMDENCj4gICAgIHgyMTogMDAw
-MDAwMDAwMDAwMDAwMCB4MjA6IGZmZmZmZmM2ZjgzY2VjMjgNCj4gICAgIHgxOTogZmZmZmZmYzZm
-ODNjZWMyOCB4MTg6IDAwMDAwMDAwMDAwMDAwMGENCj4gICAgIHgxNzogMDAwMDAwMDA2NjAyZjgy
-OCB4MTY6IGZmZmZmZjgwMDgwNmI3YzgNCj4gICAgIHgxNTogMDAwMDAwMDAwMDAxZjQwYyB4MTQ6
-IDA3MjAwNzIwMDcyMDA3MjANCj4gICAgIHgxMzogMDcyMDA3MjAwNzIwMDcyMCB4MTI6IDA3MjAw
-NzIwMDcyMDA3MjANCj4gICAgIHgxMTogMDcyMDA3MjAwNzIwMDcyMCB4MTA6IDA3MzgwNzIwMDcz
-ZDA3MjANCj4gICAgIHg5IDogZmZmZmZmODAwOTAwZTZkMCB4OCA6IDAwMDAwMDAwMDAwMDAwMDAN
-Cj4gICAgIHg3IDogZmZmZmZmODAwODQwMWNmYyB4NiA6IDAwMDAwMDAwMDAwMDAwODANCj4gICAg
-IHg1IDogMDAwMDAwMDAwMDAwMDAwMCB4NCA6IGZmZmZmZmM2ZjhmZjQ4NjANCj4gICAgIHgzIDog
-ZmZmZmZmYzZmODNjZWMyOCB4MiA6IDAwMDAwMDAwMDAwMDAwMGYNCj4gICAgIHgxIDogMDAwMDAw
-MDAwMDAwMDAwMCB4MCA6IGZmZmZmZmM2ZjljZDVkNjANCj4gICAgIENhbGwgdHJhY2U6DQo+ICAg
-ICAgZ3Bpb2NoaXBfZW5hYmxlX2lycSsweDIwLzB4NTgNCj4gICAgICBncGlvY2hpcF9pcnFfZW5h
-YmxlKzB4MWMvMHg0MA0KPiAgICAgIGlycV9lbmFibGUrMHg0OC8weDVjDQo+ICAgICAgX19pcnFf
-c3RhcnR1cCsweDc0LzB4N2MNCj4gICAgICBpcnFfc3RhcnR1cCsweDU0LzB4MTAwDQo+ICAgICAg
-X19zZXR1cF9pcnErMHg0OGMvMHg2NDANCj4gICAgICByZXF1ZXN0X3RocmVhZGVkX2lycSsweGI4
-LzB4MTQ0DQo+ICAgICAgcGh5X3N0YXJ0X2ludGVycnVwdHMrMHgzOC8weDc4DQo+ICAgICAgcGh5
-X2Nvbm5lY3RfZGlyZWN0KzB4NDgvMHg1Yw0KPiAgICAgIG9mX3BoeV9jb25uZWN0KzB4NGMvMHg3
-OA0KPiAgICAgIHJhdmJfb3BlbisweDM4Yy8weDVmNA0KPiAgICAgIF9fZGV2X29wZW4rMHgxMTAv
-MHgxMjANCj4gICAgICBfX2Rldl9jaGFuZ2VfZmxhZ3MrMHgxMTgvMHgxYzANCj4gICAgICBkZXZf
-Y2hhbmdlX2ZsYWdzKzB4MjAvMHg1Yw0KPiAgICAgIGlwX2F1dG9fY29uZmlnKzB4Mjg4LzB4ZjJj
-DQo+ICAgICAgZG9fb25lX2luaXRjYWxsKzB4MTU4LzB4MzEwDQo+ICAgICAga2VybmVsX2luaXRf
-ZnJlZWFibGUrMHg0MzgvMHg0NDQNCj4gICAgICBrZXJuZWxfaW5pdCsweDEwLzB4MTAwDQo+ICAg
-ICAgcmV0X2Zyb21fZm9yaysweDEwLzB4MTgNCj4gICAgIGlycSBldmVudCBzdGFtcDogNTQwMzM3
-DQo+ICAgICBoYXJkaXJxcyBsYXN0ICBlbmFibGVkIGF0ICg1NDAzMzcpOiBbPGZmZmZmZjgwMDgy
-MzEyZjg+XQ0KPiBfX2ttYWxsb2MrMHgyYjAvMHgyZDANCj4gICAgIGhhcmRpcnFzIGxhc3QgZGlz
-YWJsZWQgYXQgKDU0MDMzNik6IFs8ZmZmZmZmODAwODIzMTBmOD5dDQo+IF9fa21hbGxvYysweGIw
-LzB4MmQwDQo+ICAgICBzb2Z0aXJxcyBsYXN0ICBlbmFibGVkIGF0ICg1Mzg5NjgpOiBbPGZmZmZm
-ZjgwMDgwODFkZjA+XQ0KPiBfX2RvX3NvZnRpcnErMHgxODAvMHg0OTQNCj4gICAgIHNvZnRpcnFz
-IGxhc3QgZGlzYWJsZWQgYXQgKDUzODk2MSk6IFs8ZmZmZmZmODAwODBlZDhjYz5dIGlycV9leGl0
-KzB4YTQvMHgxMDANCj4NCj4gICAtIC9zeXMva2VybmVsL2RlYnVnL3BpbmN0cmwvZTYwNjAwMDAu
-cGluLWNvbnRyb2xsZXItc2gtcGZjL3Bpbm11eC1waW5zDQo+IGNoYW5nZXM6DQo+DQo+ICAgICBS
-QVZCIElSUSBpcyBub3cgY2xhaW1lZCBhcyBhIEdQSU8sIHdoaWNoIHdhcyB0aGUgaW50ZW50aW9u
-IG9mIHlvdXINCj4gICAgIHBhdGNoOg0KPg0KPiAgICAgICAgIC1waW4gNzUgKEdQXzJfMTEpOiAo
-TVVYIFVOQ0xBSU1FRCkgKEdQSU8gVU5DTEFJTUVEKQ0KPiAgICAgICAgICtwaW4gNzUgKEdQXzJf
-MTEpOiAoTVVYIFVOQ0xBSU1FRCkgZTYwNTIwMDAuZ3Bpbzo0NjMNCj4NCj4gICAgIFdpdGggI2Rl
-ZmluZSBERUJVRyBpbiBkcml2ZXJzL3BpbmN0cmwvc2gtcGZjL2NvcmUuYzoNCj4NCj4gICAgICAg
-ICBzaC1wZmMgZTYwNjAwMDAucGluLWNvbnRyb2xsZXI6IHdyaXRlX3JlZyBhZGRyID0gZTYwNjAx
-MDgsDQo+IHZhbHVlID0gMHgwLCBmaWVsZCA9IDIwLCByX3dpZHRoID0gMzIsIGZfd2lkdGggPSAx
-DQo+DQo+ICAgICB3aGljaCBtZWFucyB0aGF0IEdQXzJfMTEgaXMgc3dpdGNoZWQgdG8gR1BJTyAo
-R1AzWzExXSA9IDB4MCkNCj4gICAgIChiaXQgMTEgPSAzMSAtIGZpZWxkIDIwKSwgZ29vZCENCj4N
-Cj4gICAgIGdwaW8ta2V5cyBmYWlsdXJlczoNCj4NCj4gICAgICAgICAtcGluIDE3NyAoR1BfNV8x
-Nyk6IChNVVggVU5DTEFJTUVEKSBlNjA1NTAwMC5ncGlvOjQwOQ0KPiAgICAgICAgICtwaW4gMTc3
-IChHUF81XzE3KTogKE1VWCBVTkNMQUlNRUQpIChHUElPIFVOQ0xBSU1FRCkNCj4NCj4gICAgICAg
-ICAtcGluIDE4MCAoR1BfNV8yMCk6IChNVVggVU5DTEFJTUVEKSBlNjA1NTAwMC5ncGlvOjQxMg0K
-PiAgICAgICAgICtwaW4gMTgwIChHUF81XzIwKTogKE1VWCBVTkNMQUlNRUQpIChHUElPIFVOQ0xB
-SU1FRCkNCj4NCj4gICAgICAgICAtcGluIDE4MiAoR1BfNV8yMik6IChNVVggVU5DTEFJTUVEKSBl
-NjA1NTAwMC5ncGlvOjQxNA0KPiAgICAgICAgIC1waW4gMTgzIChHUF81XzIzKTogKE1VWCBVTkNM
-QUlNRUQpIGU2MDU1MDAwLmdwaW86NDE1DQo+ICAgICAgICAgK3BpbiAxODIgKEdQXzVfMjIpOiAo
-TVVYIFVOQ0xBSU1FRCkgKEdQSU8gVU5DTEFJTUVEKQ0KPiAgICAgICAgICtwaW4gMTgzIChHUF81
-XzIzKTogKE1VWCBVTkNMQUlNRUQpIChHUElPIFVOQ0xBSU1FRCkNCj4NCj4gU28gaXQgbG9va3Mg
-bGlrZSBjYWxsaW5nIGdwaW9fcmNhcl9yZXF1ZXN0KCkgaXMgZG9pbmcgdG9vIG11Y2guDQo+DQo+
-IEdye29ldGplLGVldGluZ31zLA0KPg0KPiAgICAgICAgICAgICAgICAgICAgICAgICBHZWVydA0K
-Pg0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJl
-eW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LW02OGsub3JnDQo+DQo+IEluIHBlcnNvbmFsIGNvbnZl
-cnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLiBC
-dXQNCj4gd2hlbiBJJ20gdGFsa2luZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFt
-bWVyIiBvciBzb21ldGhpbmcgbGlrZSB0aGF0Lg0KPiAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIC0tIExpbnVzIFRvcnZhbGRzDQoNCg0KDQpSZW5lc2FzIEVsZWN0cm9uaWNzIEV1cm9w
-ZSBMdGQsIER1a2VzIE1lYWRvdywgTWlsbGJvYXJkIFJvYWQsIEJvdXJuZSBFbmQsIEJ1Y2tpbmdo
-YW1zaGlyZSwgU0w4IDVGSCwgVUsuIFJlZ2lzdGVyZWQgaW4gRW5nbGFuZCAmIFdhbGVzIHVuZGVy
-IFJlZ2lzdGVyZWQgTm8uIDA0NTg2NzA5Lg0K
+Hi Fabrizio,
+
+On Tue, Nov 6, 2018 at 8:19 PM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> There are cases when the bootloader configures a pin to work
+> as a function rather than GPIO, and other cases when the pin
+> is configured as a function at POR.
+> This commit makes sure the pin is configured as a GPIO the
+> moment we need it to work as an interrupt.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+>
+> ---
+> v1->v2:
+> * Moved gpio_rcar_request call from gpio_rcar_irq_set_type to
+>   rcar_gpio_irq_request_resources
+> * Added rcar_gpio_irq_release_resources for calling gpio_rcar_free
+
+Thanks for your patch!
+
+While I could see no obvious deficiencies at first glance, I gave your
+patch a try on Koelsch and Salvator-XS.
+
+Koelsch:
+
+  - ADV7511 HDMI encoder WARN_ON(!test_bit(FLAG_USED_AS_IRQ, &desc->flags)
+    in gpiochip_enable_irq():
+
+    WARNING: CPU: 0 PID: 1 at drivers/gpio/gpiolib.c:3513
+gpiochip_irq_enable+0x18/0x34
+    Modules linked in:
+    CPU: 0 PID: 1 Comm: swapper/0 Not tainted
+4.20.0-rc2-koelsch-00873-gf433e294a90792da-dirty #179
+    Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
+    [<c020f19c>] (unwind_backtrace) from [<c020aecc>] (show_stack+0x10/0x14)
+    [<c020aecc>] (show_stack) from [<c07b02f8>] (dump_stack+0x7c/0x9c)
+    [<c07b02f8>] (dump_stack) from [<c0220610>] (__warn+0xd0/0xec)
+    [<c0220610>] (__warn) from [<c022073c>] (warn_slowpath_null+0x38/0x44)
+    [<c022073c>] (warn_slowpath_null) from [<c046a084>]
+(gpiochip_irq_enable+0x18/0x34)
+    [<c046a084>] (gpiochip_irq_enable) from [<c026cbb0>] (irq_enable+0x3c/0x50)
+    [<c026cbb0>] (irq_enable) from [<c026cc58>] (__irq_startup+0x94/0xa4)
+    [<c026cc58>] (__irq_startup) from [<c026ccb4>] (irq_startup+0x4c/0x11c)
+    [<c026ccb4>] (irq_startup) from [<c026b4c4>] (__setup_irq+0x4d0/0x6a4)
+    [<c026b4c4>] (__setup_irq) from [<c026b7ac>]
+(request_threaded_irq+0x9c/0x134)
+    [<c026b7ac>] (request_threaded_irq) from [<c026dac4>]
+(devm_request_threaded_irq+0x68/0xa4)
+    [<c026dac4>] (devm_request_threaded_irq) from [<c0518ed8>]
+(adv7511_probe+0x748/0x860)
+    [<c0518ed8>] (adv7511_probe) from [<c05ef02c>]
+(i2c_device_probe+0x210/0x228)
+    [<c05ef02c>] (i2c_device_probe) from [<c05229ac>] (really_probe+0x1f0/0x2c0)
+    [<c05229ac>] (really_probe) from [<c0522d04>]
+(driver_probe_device+0x140/0x15c)
+    [<c0522d04>] (driver_probe_device) from [<c0520ed4>]
+(bus_for_each_drv+0xa0/0xb4)
+    [<c0520ed4>] (bus_for_each_drv) from [<c0522b2c>]
+(__device_attach+0xb0/0x124)
+    [<c0522b2c>] (__device_attach) from [<c0521c94>]
+(bus_probe_device+0x28/0x80)
+    [<c0521c94>] (bus_probe_device) from [<c051ff44>] (device_add+0x438/0x570)
+    [<c051ff44>] (device_add) from [<c05ed978>] (i2c_new_device+0x238/0x278)
+    [<c05ed978>] (i2c_new_device) from [<c05f08a8>]
+(of_i2c_register_device+0x40/0x80)
+    [<c05f08a8>] (of_i2c_register_device) from [<c05f0bac>]
+(of_i2c_register_devices+0x80/0xc0)
+    [<c05f0bac>] (of_i2c_register_devices) from [<c05ee6f4>]
+(i2c_register_adapter+0x1ec/0x390)
+    [<c05ee6f4>] (i2c_register_adapter) from [<c05f5650>]
+(i2c_demux_activate_master+0xd4/0x158)
+    [<c05f5650>] (i2c_demux_activate_master) from [<c05f59e0>]
+(i2c_demux_pinctrl_probe+0x190/0x1f0)
+    [<c05f59e0>] (i2c_demux_pinctrl_probe) from [<c052439c>]
+(platform_drv_probe+0x48/0x94)
+    [<c052439c>] (platform_drv_probe) from [<c05229ac>]
+(really_probe+0x1f0/0x2c0)
+    [<c05229ac>] (really_probe) from [<c0522d04>]
+(driver_probe_device+0x140/0x15c)
+    [<c0522d04>] (driver_probe_device) from [<c0522dac>]
+(__driver_attach+0x8c/0xc8)
+    [<c0522dac>] (__driver_attach) from [<c0520de4>]
+(bus_for_each_dev+0x64/0xa0)
+    [<c0520de4>] (bus_for_each_dev) from [<c0521f34>]
+(bus_add_driver+0x16c/0x1d4)
+    [<c0521f34>] (bus_add_driver) from [<c05236b8>] (driver_register+0xac/0xf0)
+    [<c05236b8>] (driver_register) from [<c0202584>]
+(do_one_initcall+0x70/0x170)
+    [<c0202584>] (do_one_initcall) from [<c0c00ef8>]
+(kernel_init_freeable+0x194/0x1d8)
+    [<c0c00ef8>] (kernel_init_freeable) from [<c07c45e8>]
+(kernel_init+0x8/0x110)
+    [<c07c45e8>] (kernel_init) from [<c02010d8>] (ret_from_fork+0x14/0x3c)
+    Exception stack(0xeb44dfb0 to 0xeb44dff8)
+    dfa0:                                     00000000 00000000
+00000000 00000000
+    dfc0: 00000000 00000000 00000000 00000000 00000000 00000000
+00000000 00000000
+    dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+
+  - SDHI CD pin failure (first channel shown only):
+
+    sh-pfc e6060000.pin-controller: pin GP_6_6 already requested by
+e6055400.gpio:812; cannot claim for e6055400.gpio:812
+    sh-pfc e6060000.pin-controller: pin-198 (e6055400.gpio:812) status -22
+    gpio_rcar e6055400.gpio: Can't request GPIO 6 from e6055400.gpio
+    genirq: Failed to request resources for ee100000.sd cd (irq 186)
+on irqchip e6055400.gpio
+
+  - gpio-keys failure:
+
+    sh-pfc e6060000.pin-controller: pin GP_5_0 already requested by
+e6055000.gpio:838; cannot claim for e6055000.gpio:838
+    sh-pfc e6060000.pin-controller: pin-160 (e6055000.gpio:838) status -22
+    gpio_rcar e6055000.gpio: Can't request GPIO 0 from e6055000.gpio
+    genirq: Failed to request resources for SW2-1 (irq 189) on irqchip
+e6055000.gpio
+    gpio-keys keyboard: Unable to claim irq 189; error -22
+    gpio-keys: probe of keyboard failed with error -22
+
+  - /sys/kernel/debug/pinctrl/e6060000.pin-controller-sh-pfc/pinmux-pins
+changes:
+
+    ADV7511 IRQ is now claimed as a GPIO, which was the intention of your
+    patch:
+
+        -pin 125 (GP_3_29): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+        +pin 125 (GP_3_29): (MUX UNCLAIMED) e6053000.gpio:931
+
+    With #define DEBUG in drivers/pinctrl/sh-pfc/core.c:
+
+        sh-pfc e6060000.pin-controller: write_reg addr = e6060010,
+value = 0x0, field = 2, r_width = 32, f_width = 1
+
+    which means that GP_3_29 is switched to GPIO (GP3[29] = 0x0)
+    (bit 29 = 31 - field 2), good!
+
+    gpio-keys failures:
+
+        -pin 160 (GP_5_0): (MUX UNCLAIMED) e6055000.gpio:838
+        -pin 161 (GP_5_1): (MUX UNCLAIMED) e6055000.gpio:839
+        -pin 162 (GP_5_2): (MUX UNCLAIMED) e6055000.gpio:840
+        -pin 163 (GP_5_3): (MUX UNCLAIMED) e6055000.gpio:841
+        +pin 160 (GP_5_0): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+        +pin 161 (GP_5_1): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+        +pin 162 (GP_5_2): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+        +pin 163 (GP_5_3): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+
+        -pin 224 (GP_7_0): (MUX UNCLAIMED) e6055800.gpio:780
+        -pin 225 (GP_7_1): (MUX UNCLAIMED) e6055800.gpio:781
+        -pin 226 (GP_7_2): (MUX UNCLAIMED) e6055800.gpio:782
+        -pin 227 (GP_7_3): (MUX UNCLAIMED) e6055800.gpio:783
+        -pin 228 (GP_7_4): (MUX UNCLAIMED) e6055800.gpio:784
+        -pin 229 (GP_7_5): (MUX UNCLAIMED) e6055800.gpio:785
+        -pin 230 (GP_7_6): (MUX UNCLAIMED) e6055800.gpio:786
+        +pin 224 (GP_7_0): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+        +pin 225 (GP_7_1): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+        +pin 226 (GP_7_2): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+        +pin 227 (GP_7_3): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+        +pin 228 (GP_7_4): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+        +pin 229 (GP_7_5): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+        +pin 230 (GP_7_6): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+
+    Note that the SDHI CD pins are still claimed as GPIOs, as the SDHI driver
+    continued without a CD pin:
+
+        pin 198 (GP_6_6): (MUX UNCLAIMED) e6055400.gpio:812
+
+
+Salvator-XS:
+
+  - Similar SDHI CD pin and gpio-keys failures
+
+  - RAVB Ethernet WARN_ON(!test_bit(FLAG_USED_AS_IRQ, &desc->flags)
+    in gpiochip_enable_irq():
+
+    WARNING: CPU: 2 PID: 1 at drivers/gpio/gpiolib.c:3513
+gpiochip_enable_irq+0x20/0x58
+    Modules linked in:
+    CPU: 2 PID: 1 Comm: swapper/0 Not tainted
+4.20.0-rc2-salvator-x-00873-gf433e294a90792da-dirty #238
+    Hardware name: Renesas Salvator-X 2nd version board based on
+r8a7795 ES2.0+ (DT)
+    pstate: 40400085 (nZcv daIf +PAN -UAO)
+    pc : gpiochip_enable_irq+0x20/0x58
+    lr : gpiochip_enable_irq+0xc/0x58
+    sp : ffffff800806b9b0
+    x29: ffffff800806b9b0 x28: ffffff8008d37778
+    x27: 0000000000000000 x26: 0000000000000000
+    x25: ffffffc6f83ceca8 x24: ffffffc6f83cedd0
+    x23: 0000000000000000 x22: 0000000000000001
+    x21: 0000000000000000 x20: ffffffc6f83cec28
+    x19: ffffffc6f83cec28 x18: 000000000000000a
+    x17: 000000006602f828 x16: ffffff800806b7c8
+    x15: 000000000001f40c x14: 0720072007200720
+    x13: 0720072007200720 x12: 0720072007200720
+    x11: 0720072007200720 x10: 07380720073d0720
+    x9 : ffffff800900e6d0 x8 : 0000000000000000
+    x7 : ffffff8008401cfc x6 : 0000000000000080
+    x5 : 0000000000000000 x4 : ffffffc6f8ff4860
+    x3 : ffffffc6f83cec28 x2 : 000000000000000f
+    x1 : 0000000000000000 x0 : ffffffc6f9cd5d60
+    Call trace:
+     gpiochip_enable_irq+0x20/0x58
+     gpiochip_irq_enable+0x1c/0x40
+     irq_enable+0x48/0x5c
+     __irq_startup+0x74/0x7c
+     irq_startup+0x54/0x100
+     __setup_irq+0x48c/0x640
+     request_threaded_irq+0xb8/0x144
+     phy_start_interrupts+0x38/0x78
+     phy_connect_direct+0x48/0x5c
+     of_phy_connect+0x4c/0x78
+     ravb_open+0x38c/0x5f4
+     __dev_open+0x110/0x120
+     __dev_change_flags+0x118/0x1c0
+     dev_change_flags+0x20/0x5c
+     ip_auto_config+0x288/0xf2c
+     do_one_initcall+0x158/0x310
+     kernel_init_freeable+0x438/0x444
+     kernel_init+0x10/0x100
+     ret_from_fork+0x10/0x18
+    irq event stamp: 540337
+    hardirqs last  enabled at (540337): [<ffffff80082312f8>]
+__kmalloc+0x2b0/0x2d0
+    hardirqs last disabled at (540336): [<ffffff80082310f8>]
+__kmalloc+0xb0/0x2d0
+    softirqs last  enabled at (538968): [<ffffff8008081df0>]
+__do_softirq+0x180/0x494
+    softirqs last disabled at (538961): [<ffffff80080ed8cc>] irq_exit+0xa4/0x100
+
+  - /sys/kernel/debug/pinctrl/e6060000.pin-controller-sh-pfc/pinmux-pins
+changes:
+
+    RAVB IRQ is now claimed as a GPIO, which was the intention of your
+    patch:
+
+        -pin 75 (GP_2_11): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+        +pin 75 (GP_2_11): (MUX UNCLAIMED) e6052000.gpio:463
+
+    With #define DEBUG in drivers/pinctrl/sh-pfc/core.c:
+
+        sh-pfc e6060000.pin-controller: write_reg addr = e6060108,
+value = 0x0, field = 20, r_width = 32, f_width = 1
+
+    which means that GP_2_11 is switched to GPIO (GP3[11] = 0x0)
+    (bit 11 = 31 - field 20), good!
+
+    gpio-keys failures:
+
+        -pin 177 (GP_5_17): (MUX UNCLAIMED) e6055000.gpio:409
+        +pin 177 (GP_5_17): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+
+        -pin 180 (GP_5_20): (MUX UNCLAIMED) e6055000.gpio:412
+        +pin 180 (GP_5_20): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+
+        -pin 182 (GP_5_22): (MUX UNCLAIMED) e6055000.gpio:414
+        -pin 183 (GP_5_23): (MUX UNCLAIMED) e6055000.gpio:415
+        +pin 182 (GP_5_22): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+        +pin 183 (GP_5_23): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+
+So it looks like calling gpio_rcar_request() is doing too much.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
