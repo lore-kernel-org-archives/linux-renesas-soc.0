@@ -1,29 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:54542 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729986AbeKTEba (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:51056 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388012AbeKOVc0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Nov 2018 23:31:30 -0500
-Date: Mon, 19 Nov 2018 10:06:52 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
+        Thu, 15 Nov 2018 16:32:26 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Tony Lindgren <tony@atomide.com>
 Cc: linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: OMAP2+: timer: Remove obsolete inclusion of
- <asm/smp_twd.h>
-Message-ID: <20181119180652.GT53235@atomide.com>
-References: <20181115095858.17530-1-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181115095858.17530-1-geert+renesas@glider.be>
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] ARM: OMAP2+: timer: Remove obsolete inclusion of <asm/smp_twd.h>
+Date: Thu, 15 Nov 2018 10:58:58 +0100
+Message-Id: <20181115095858.17530-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-* Geert Uytterhoeven <geert+renesas@glider.be> [181115 03:25]:
-> As of commit d1dabab2841d546f ("ARM: OMAP2+: Clean up
-> omap4_local_timer_init"), this header file is no longer used.
+As of commit d1dabab2841d546f ("ARM: OMAP2+: Clean up
+omap4_local_timer_init"), this header file is no longer used.
 
-Applying into omap-for-v4.21/soc thanks.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/mach-omap2/timer.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Tony
+diff --git a/arch/arm/mach-omap2/timer.c b/arch/arm/mach-omap2/timer.c
+index 98ed5ac073bc1fca..07bea84c5d6e4f2a 100644
+--- a/arch/arm/mach-omap2/timer.c
++++ b/arch/arm/mach-omap2/timer.c
+@@ -44,7 +44,6 @@
+ #include <linux/sched_clock.h>
+ 
+ #include <asm/mach/time.h>
+-#include <asm/smp_twd.h>
+ 
+ #include "omap_hwmod.h"
+ #include "omap_device.h"
+-- 
+2.17.1
