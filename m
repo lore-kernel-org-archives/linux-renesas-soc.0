@@ -1,16 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:43812 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727659AbeKUUQX (ORCPT
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40235 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726603AbeKPIse (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Nov 2018 15:16:23 -0500
-Received: by mail-ed1-f65.google.com with SMTP id f4so4316183edq.10
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Nov 2018 01:42:37 -0800 (PST)
-Date: Wed, 21 Nov 2018 10:42:33 +0100
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: greenfoo@gluegarage.com,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        Fri, 16 Nov 2018 03:48:34 -0500
+Received: by mail-lj1-f195.google.com with SMTP id t22-v6so18630209lji.7
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Nov 2018 14:38:49 -0800 (PST)
+MIME-Version: 1.0
+References: <20181115221634.22715-1-greenfoo@gluegarage.com>
+In-Reply-To: <20181115221634.22715-1-greenfoo@gluegarage.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 15 Nov 2018 23:38:35 +0100
+Message-ID: <CACRpkdZmTSo02yQeU=qe9WyJMXEq76CNmc2kkFEHuwdo=HKPJw@mail.gmail.com>
+Subject: Re: [PATCH 0/9] drm: remove deprecated functions
+To: greenfoo@gluegarage.com
+Cc: "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>, sean@poorly.run,
         Dave Airlie <airlied@linux.ie>,
@@ -39,32 +43,18 @@ Cc: greenfoo@gluegarage.com,
         etnaviv@lists.freedesktop.org,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         cocci@systeme.lip6.fr
-Subject: Re: [PATCH 0/9] drm: remove deprecated functions
-Message-ID: <20181121094233.GN4266@phenom.ffwll.local>
-References: <20181115221634.22715-1-greenfoo@gluegarage.com>
- <CACRpkdZmTSo02yQeU=qe9WyJMXEq76CNmc2kkFEHuwdo=HKPJw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZmTSo02yQeU=qe9WyJMXEq76CNmc2kkFEHuwdo=HKPJw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Nov 15, 2018 at 11:38:35PM +0100, Linus Walleij wrote:
-> On Thu, Nov 15, 2018 at 11:17 PM Fernando Ramos <greenfoo@gluegarage.com> wrote:
-> 
-> > One of the things in the DRM TODO list ("Documentation/gpu/todo.rst") was to
-> > "switch from reference/unreference to get/put". That's what this patch series is
-> > about.
-> 
-> The series:
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+On Thu, Nov 15, 2018 at 11:17 PM Fernando Ramos <greenfoo@gluegarage.com> wrote:
 
-Since your reviewed it all, and there's a pile of acks for the driver
-parts too: Want to go ahead and apply it too?
+> One of the things in the DRM TODO list ("Documentation/gpu/todo.rst") was to
+> "switch from reference/unreference to get/put". That's what this patch series is
+> about.
 
-Thanks, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+The series:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
