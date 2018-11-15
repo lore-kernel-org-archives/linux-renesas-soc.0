@@ -1,9 +1,4 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:12318 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387833AbeKPCYT (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Nov 2018 21:24:19 -0500
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Chris Brandt <chris.brandt@renesas.com>
 To: Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -12,12 +7,12 @@ To: Linus Walleij <linus.walleij@linaro.org>,
 Cc: jacopo mondi <jacopo@jmondi.org>, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v7 2/2] dt-bindings: pinctrl: Add RZ/A2 pinctrl and GPIO
-Date: Thu, 15 Nov 2018 11:15:28 -0500
-Message-Id: <20181115161528.34326-3-chris.brandt@renesas.com>
-In-Reply-To: <20181115161528.34326-1-chris.brandt@renesas.com>
-References: <20181115161528.34326-1-chris.brandt@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH v6 2/2] dt-bindings: pinctrl: Add RZ/A2 pinctrl and GPIO
+Date: Thu, 15 Nov 2018 09:00:45 -0500
+Message-Id: <20181115140045.24733-3-chris.brandt@renesas.com>
+In-Reply-To: <20181115140045.24733-1-chris.brandt@renesas.com>
+References: <20181115140045.24733-1-chris.brandt@renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Add device tree binding documentation and header file for Renesas R7S9210
