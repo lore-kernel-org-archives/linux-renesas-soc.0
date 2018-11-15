@@ -1,50 +1,41 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+Date: Thu, 15 Nov 2018 06:27:56 -0800
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Gaku Inami <gaku.inami.xh@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 1/4] dt-bindings: rtc: pcf85363: Document pcf85263 real-time clock
-Date: Thu, 29 Nov 2018 16:54:43 +0000
-Message-Id: <1543510486-29532-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1543510486-29532-1-git-send-email-biju.das@bp.renesas.com>
-References: <1543510486-29532-1-git-send-email-biju.das@bp.renesas.com>
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] arm64: dts: renesas: Add CPU topology on R-Car
+ Gen3 SoCs
+Message-ID: <20181115142756.oumknzcuymhdlw5e@verge.net.au>
+References: <1541661895-7064-1-git-send-email-gaku.inami.xh@renesas.com>
+ <1541661895-7064-2-git-send-email-gaku.inami.xh@renesas.com>
+ <CAMuHMdV5zFmVR7r5Lxky5uT77T7e=om0DpnW=YLz=YfD6F=hyg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV5zFmVR7r5Lxky5uT77T7e=om0DpnW=YLz=YfD6F=hyg@mail.gmail.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The pcf85263 RTC is compatible with the pcf85363 RTC.
+On Wed, Nov 14, 2018 at 10:50:03AM +0100, Geert Uytterhoeven wrote:
+> Hi Inami-san,
+> 
+> On Thu, Nov 8, 2018 at 8:25 AM Gaku Inami <gaku.inami.xh@renesas.com> wrote:
+> > This patch adds the "cpu-map" into r8a7795/r8a7796 composed of
+> > multi-cluster. This definition is used to parse the cpu topology.
+> >
+> > Signed-off-by: Gaku Inami <gaku.inami.xh@renesas.com>
+> 
+> Thanks for your patch!
+> 
+> Next time, please collect tags provided by reviewers on the previous
+> version.
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The difference between the pcf85263 and pcf85363 RTC is that the latter has
-64 bytes more RAM. This renders them incompatible from a DT point of view.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
-  V1-->V2 Incorporated Simon's review comment.
----
- Documentation/devicetree/bindings/rtc/pcf85363.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/rtc/pcf85363.txt b/Documentation/devicetree/bindings/rtc/pcf85363.txt
-index 76fdabc..94adc1c 100644
---- a/Documentation/devicetree/bindings/rtc/pcf85363.txt
-+++ b/Documentation/devicetree/bindings/rtc/pcf85363.txt
-@@ -1,8 +1,8 @@
--NXP PCF85363 Real Time Clock
-+NXP PCF85263/PCF85363 Real Time Clock
- ============================
- 
- Required properties:
--- compatible: Should contain "nxp,pcf85363".
-+- compatible: Should contain "nxp,pcf85263" or "nxp,pcf85363".
- - reg: I2C address for chip.
- 
- Optional properties:
--- 
-2.7.4
+Thanks, applied for v4.21.
