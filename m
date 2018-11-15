@@ -1,91 +1,67 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Boris Brezillon <boris.brezillon@bootlin.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-CC: Archit Taneja <architt@codeaurora.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-eopbgr150127.outbound.protection.outlook.com ([40.107.15.127]:53184
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728757AbeKOU0K (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 15 Nov 2018 15:26:10 -0500
+From: Peter Rosin <peda@axentia.se>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Archit Taneja <architt@codeaurora.org>,
         Andrzej Hajda <a.hajda@samsung.com>,
-        Dave Airlie <airlied@linux.ie>, Peter Rosin <peda@axentia.se>,
+        David Airlie <airlied@linux.ie>,
         Wolfram Sang <wsa@the-dreams.de>,
-        Mark Brown <broonie@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        Mark Brown <broonie@kernel.org>
+CC: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
         Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
         "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
         Inki Dae <inki.dae@samsung.com>,
-        Boris BREZILLON <boris.brezillon@free-electrons.com>
-Subject: RE: [PATCH v3] drm/bridge/sii902x: Fix EDID readback
-Date: Thu, 15 Nov 2018 11:39:30 +0000
-Message-ID: <TY1PR01MB1770CD25E936A7DE3421E61DC0DC0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3] drm/bridge/sii902x: Fix EDID readback
+Date: Thu, 15 Nov 2018 10:18:41 +0000
+Message-ID: <5aca6188-5d76-9d45-cef9-96b54a9fbd12@axentia.se>
 References: <1541505156-8097-1-git-send-email-fabrizio.castro@bp.renesas.com>
-        <CACRpkda+YcxCOQeSo=2Jk5S2b4Sa7WcROeaJitzgPcBzM1qBrA@mail.gmail.com>
- <20181115111611.783e5c42@bbrezillon>
-In-Reply-To: <20181115111611.783e5c42@bbrezillon>
+In-Reply-To: <1541505156-8097-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <07C055577E73F641ADEB1CF40628369E@eurprd02.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Sender: linux-i2c-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Boris,
-
-> From: Boris Brezillon <boris.brezillon@bootlin.com>
-> Sent: 15 November 2018 10:16
-> Subject: Re: [PATCH v3] drm/bridge/sii902x: Fix EDID readback
->
-> On Thu, 15 Nov 2018 11:13:52 +0100
-> Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> > On Tue, Nov 6, 2018 at 12:52 PM Fabrizio Castro
-> > <fabrizio.castro@bp.renesas.com> wrote:
-> >
-> > > While adding SiI9022A support to the iwg23s board, it came
-> > > up that when the HDMI transmitter is in pass through mode the
-> > > device is not compliant with the I2C specification anymore,
-> > > as it requires a far bigger tbuf, due to a delay the HDMI
-> > > transmitter is adding when relaying the STOP condition on the
-> > > monitor i2c side of things.
-> > >
-> > > When not providing an appropriate delay after the STOP condition
-> > > the i2c bus would get stuck. Also, any other traffic on the bus
-> > > while talking to the monitor may cause the transaction to fail
-> > > or even cause issues with the i2c bus as well.
-> > >
-> > > I2c-gates seemed to reach consent as a possible way to address
-> > > these issues, and as such this patch is implementing a solution
-> > > based on that. Since others are clearly relying on the current
-> > > implementation of the driver, this patch won't require any DT
-> > > changes.
-> > >
-> > > Since we don't want any interference during the DDC Bus
-> > > Request/Grant procedure and while talking to the monitor, we
-> > > have to use the adapter locking primitives rather than the
-> > > i2c-mux locking primitives.
-> > >
-> > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > >
-> > > ---
-> > > v2->v3:
-> > > * Incorporated comments from Boris Brezillon and Peter Rosin
-> >
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> >
-> > Do you need help to apply this to drm-misc or do you
-> > have commit access?
->
-> I can do it if needed.
-
-Yes, please, your help is very much appreciated.
-
-Thanks,
-Fab
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+T24gMjAxOC0xMS0wNiAxMjo1MiwgRmFicml6aW8gQ2FzdHJvIHdyb3RlOg0KPiBXaGlsZSBhZGRp
+bmcgU2lJOTAyMkEgc3VwcG9ydCB0byB0aGUgaXdnMjNzIGJvYXJkLCBpdCBjYW1lDQo+IHVwIHRo
+YXQgd2hlbiB0aGUgSERNSSB0cmFuc21pdHRlciBpcyBpbiBwYXNzIHRocm91Z2ggbW9kZSB0aGUN
+Cj4gZGV2aWNlIGlzIG5vdCBjb21wbGlhbnQgd2l0aCB0aGUgSTJDIHNwZWNpZmljYXRpb24gYW55
+bW9yZSwNCj4gYXMgaXQgcmVxdWlyZXMgYSBmYXIgYmlnZ2VyIHRidWYsIGR1ZSB0byBhIGRlbGF5
+IHRoZSBIRE1JDQo+IHRyYW5zbWl0dGVyIGlzIGFkZGluZyB3aGVuIHJlbGF5aW5nIHRoZSBTVE9Q
+IGNvbmRpdGlvbiBvbiB0aGUNCj4gbW9uaXRvciBpMmMgc2lkZSBvZiB0aGluZ3MuDQo+IA0KPiBX
+aGVuIG5vdCBwcm92aWRpbmcgYW4gYXBwcm9wcmlhdGUgZGVsYXkgYWZ0ZXIgdGhlIFNUT1AgY29u
+ZGl0aW9uDQo+IHRoZSBpMmMgYnVzIHdvdWxkIGdldCBzdHVjay4gQWxzbywgYW55IG90aGVyIHRy
+YWZmaWMgb24gdGhlIGJ1cw0KPiB3aGlsZSB0YWxraW5nIHRvIHRoZSBtb25pdG9yIG1heSBjYXVz
+ZSB0aGUgdHJhbnNhY3Rpb24gdG8gZmFpbA0KPiBvciBldmVuIGNhdXNlIGlzc3VlcyB3aXRoIHRo
+ZSBpMmMgYnVzIGFzIHdlbGwuDQo+IA0KPiBJMmMtZ2F0ZXMgc2VlbWVkIHRvIHJlYWNoIGNvbnNl
+bnQgYXMgYSBwb3NzaWJsZSB3YXkgdG8gYWRkcmVzcw0KPiB0aGVzZSBpc3N1ZXMsIGFuZCBhcyBz
+dWNoIHRoaXMgcGF0Y2ggaXMgaW1wbGVtZW50aW5nIGEgc29sdXRpb24NCj4gYmFzZWQgb24gdGhh
+dC4gU2luY2Ugb3RoZXJzIGFyZSBjbGVhcmx5IHJlbHlpbmcgb24gdGhlIGN1cnJlbnQNCj4gaW1w
+bGVtZW50YXRpb24gb2YgdGhlIGRyaXZlciwgdGhpcyBwYXRjaCB3b24ndCByZXF1aXJlIGFueSBE
+VA0KPiBjaGFuZ2VzLg0KPiANCj4gU2luY2Ugd2UgZG9uJ3Qgd2FudCBhbnkgaW50ZXJmZXJlbmNl
+IGR1cmluZyB0aGUgRERDIEJ1cw0KPiBSZXF1ZXN0L0dyYW50IHByb2NlZHVyZSBhbmQgd2hpbGUg
+dGFsa2luZyB0byB0aGUgbW9uaXRvciwgd2UNCj4gaGF2ZSB0byB1c2UgdGhlIGFkYXB0ZXIgbG9j
+a2luZyBwcmltaXRpdmVzIHJhdGhlciB0aGFuIHRoZQ0KPiBpMmMtbXV4IGxvY2tpbmcgcHJpbWl0
+aXZlcy4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEZhYnJpemlvIENhc3RybyA8ZmFicml6aW8uY2Fz
+dHJvQGJwLnJlbmVzYXMuY29tPg0KDQpSZXZpZXdlZC1ieTogUGV0ZXIgUm9zaW4gPHBlZGFAYXhl
+bnRpYS5zZT4NCg0KQ2hlZXJzLA0KUGV0ZXINCg0KPiANCj4gLS0tDQo+IHYyLT52MzoNCj4gKiBJ
+bmNvcnBvcmF0ZWQgY29tbWVudHMgZnJvbSBCb3JpcyBCcmV6aWxsb24gYW5kIFBldGVyIFJvc2lu
+DQo+IA0KPiB2MS0+djI6DQo+ICogSW5jb3Jwb3JhdGVkIGNvbW1lbnRzIGZyb20gUGV0ZXIgUm9z
+aW4NCj4gDQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3NpaTkwMnguYyB8IDI0NyArKysrKysr
+KysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxNzgg
+aW5zZXJ0aW9ucygrKSwgNjkgZGVsZXRpb25zKC0pDQo=
