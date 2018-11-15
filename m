@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:23683 "EHLO
+Received: from relmlor1.renesas.com ([210.160.252.171]:27177 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388452AbeKPCYR (ORCPT
+        by vger.kernel.org with ESMTP id S1729034AbeKPAJA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Nov 2018 21:24:17 -0500
+        Thu, 15 Nov 2018 19:09:00 -0500
 From: Chris Brandt <chris.brandt@renesas.com>
 To: Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -12,11 +12,11 @@ To: Linus Walleij <linus.walleij@linaro.org>,
 Cc: jacopo mondi <jacopo@jmondi.org>, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v7 1/2] pinctrl: Add RZ/A2 pin and gpio controller
-Date: Thu, 15 Nov 2018 11:15:27 -0500
-Message-Id: <20181115161528.34326-2-chris.brandt@renesas.com>
-In-Reply-To: <20181115161528.34326-1-chris.brandt@renesas.com>
-References: <20181115161528.34326-1-chris.brandt@renesas.com>
+Subject: [PATCH v6 1/2] pinctrl: Add RZ/A2 pin and gpio controller
+Date: Thu, 15 Nov 2018 09:00:44 -0500
+Message-Id: <20181115140045.24733-2-chris.brandt@renesas.com>
+In-Reply-To: <20181115140045.24733-1-chris.brandt@renesas.com>
+References: <20181115140045.24733-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -25,8 +25,6 @@ Adds support for the pin and gpio controller found in R7S9210 (RZ/A2) SoCs.
 Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
-v6:
- * Bug fix: Output value not being set in rza2_chip_direction_output()
 v5:
  * Specify number of ports using of_device_id.data and save as priv->npins
  * Use priv->npins everywhere instead of hard coded RZA2_NPINS
@@ -62,8 +60,8 @@ v2:
 ---
  drivers/pinctrl/Kconfig        |  11 +
  drivers/pinctrl/Makefile       |   1 +
- drivers/pinctrl/pinctrl-rza2.c | 519 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 531 insertions(+)
+ drivers/pinctrl/pinctrl-rza2.c | 518 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 530 insertions(+)
  create mode 100644 drivers/pinctrl/pinctrl-rza2.c
 
 diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
@@ -102,10 +100,10 @@ index 18a13c1e2c21..712184b74a5c 100644
  obj-$(CONFIG_PINCTRL_SIRF)	+= sirf/
 diff --git a/drivers/pinctrl/pinctrl-rza2.c b/drivers/pinctrl/pinctrl-rza2.c
 new file mode 100644
-index 000000000000..5b951c7422cc
+index 000000000000..f05da0ef0793
 --- /dev/null
 +++ b/drivers/pinctrl/pinctrl-rza2.c
-@@ -0,0 +1,519 @@
+@@ -0,0 +1,518 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Combined GPIO and pin controller support for Renesas RZ/A2 (R7S9210) SoC
@@ -266,6 +264,16 @@ index 000000000000..5b951c7422cc
 +	return 0;
 +}
 +
++static int rza2_chip_direction_output(struct gpio_chip *chip,
++				      unsigned int offset, int val)
++{
++	struct rza2_pinctrl_priv *priv = gpiochip_get_data(chip);
++
++	rza2_pin_to_gpio(priv->base, offset, GPIOF_DIR_OUT);
++
++	return 0;
++}
++
 +static int rza2_chip_get(struct gpio_chip *chip, unsigned int offset)
 +{
 +	struct rza2_pinctrl_priv *priv = gpiochip_get_data(chip);
@@ -291,17 +299,6 @@ index 000000000000..5b951c7422cc
 +		new_value &= ~BIT(pin);
 +
 +	writeb(new_value, priv->base + RZA2_PODR(port));
-+}
-+
-+static int rza2_chip_direction_output(struct gpio_chip *chip,
-+				      unsigned int offset, int val)
-+{
-+	struct rza2_pinctrl_priv *priv = gpiochip_get_data(chip);
-+
-+	rza2_chip_set(chip, offset, val);
-+	rza2_pin_to_gpio(priv->base, offset, GPIOF_DIR_OUT);
-+
-+	return 0;
 +}
 +
 +static const char * const rza2_gpio_names[] = {
