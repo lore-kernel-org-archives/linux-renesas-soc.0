@@ -1,25 +1,16 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37888 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726298AbeKYHpF (ORCPT
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:49331 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725888AbeKPI1l (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 25 Nov 2018 02:45:05 -0500
-Received: by mail-lj1-f196.google.com with SMTP id c19-v6so13284779lja.5
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 24 Nov 2018 12:55:48 -0800 (PST)
-MIME-Version: 1.0
-References: <20181115221634.22715-1-greenfoo@gluegarage.com> <20181115221634.22715-8-greenfoo@gluegarage.com>
-In-Reply-To: <20181115221634.22715-8-greenfoo@gluegarage.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sat, 24 Nov 2018 21:55:35 +0100
-Message-ID: <CACRpkdbj1q8qSR3ffJOki2pcB-rj5-sq2CDdUKUZ0UD=m0_cAQ@mail.gmail.com>
-Subject: Re: [PATCH 7/9] drm: remove deprecated "drm_framebuffer_[un]reference"
- functions
-To: greenfoo@gluegarage.com
-Cc: "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>, sean@poorly.run,
-        Dave Airlie <airlied@linux.ie>,
-        Jonathan Corbet <corbet@lwn.net>, abrodkin@synopsys.com,
+        Fri, 16 Nov 2018 03:27:41 -0500
+From: Fernando Ramos <greenfoo@gluegarage.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexey Brodkin <abrodkin@synopsys.com>,
         Boris Brezillon <boris.brezillon@bootlin.com>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
@@ -29,34 +20,74 @@ Cc: "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
         Andrzej Hajda <a.hajda@samsung.com>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
         Lucas Stach <l.stach@pengutronix.de>,
-        linux+etnaviv@armlinux.org.uk,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
         Christian Gmeiner <christian.gmeiner@gmail.com>,
         Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
-        kieran.bingham+renesas@ideasonboard.com,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Julia Lawall <Julia.Lawall@lip6.fr>,
         Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>, michal.lkml@markovi.net,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>,
         Haneen Mohammed <hamohammed.sa@gmail.com>,
-        linux-doc@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         virtualization@lists.linux-foundation.org,
-        etnaviv@lists.freedesktop.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        etnaviv@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         cocci@systeme.lip6.fr
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH 7/9] drm: remove deprecated "drm_framebuffer_[un]reference" functions
+Date: Thu, 15 Nov 2018 23:16:27 +0100
+Message-Id: <20181115221634.22715-8-greenfoo@gluegarage.com>
+In-Reply-To: <20181115221634.22715-1-greenfoo@gluegarage.com>
+References: <20181115221634.22715-1-greenfoo@gluegarage.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Nov 15, 2018 at 11:17 PM Fernando Ramos <greenfoo@gluegarage.com> wrote:
+There are no more places where this (deprecated) function is being used
+from, thus it can now be removed.
 
-> There are no more places where this (deprecated) function is being used
-> from, thus it can now be removed.
->
-> Signed-off-by: Fernando Ramos <greenfoo@gluegarage.com>
+Signed-off-by: Fernando Ramos <greenfoo@gluegarage.com>
+---
+ include/drm/drm_framebuffer.h | 24 ------------------------
+ 1 file changed, 24 deletions(-)
 
-Patch applied.
-
-Yours,
-Linus Walleij
+diff --git a/include/drm/drm_framebuffer.h b/include/drm/drm_framebuffer.h
+index c50502c656e5..c94acedfb08e 100644
+--- a/include/drm/drm_framebuffer.h
++++ b/include/drm/drm_framebuffer.h
+@@ -240,30 +240,6 @@ static inline void drm_framebuffer_put(struct drm_framebuffer *fb)
+ 	drm_mode_object_put(&fb->base);
+ }
+ 
+-/**
+- * drm_framebuffer_reference - acquire a framebuffer reference
+- * @fb: DRM framebuffer
+- *
+- * This is a compatibility alias for drm_framebuffer_get() and should not be
+- * used by new code.
+- */
+-static inline void drm_framebuffer_reference(struct drm_framebuffer *fb)
+-{
+-	drm_framebuffer_get(fb);
+-}
+-
+-/**
+- * drm_framebuffer_unreference - release a framebuffer reference
+- * @fb: DRM framebuffer
+- *
+- * This is a compatibility alias for drm_framebuffer_put() and should not be
+- * used by new code.
+- */
+-static inline void drm_framebuffer_unreference(struct drm_framebuffer *fb)
+-{
+-	drm_framebuffer_put(fb);
+-}
+-
+ /**
+  * drm_framebuffer_read_refcount - read the framebuffer reference count.
+  * @fb: framebuffer
+-- 
+2.19.1
