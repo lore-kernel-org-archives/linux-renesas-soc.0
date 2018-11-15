@@ -1,88 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:39712 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726186AbeKES57 (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:47000 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733254AbeKOVcX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Nov 2018 13:57:59 -0500
-Subject: Re: [Qemu-devel] New crash
-To: Thomas Huth <thuth@redhat.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Eduardo Habkost <ehabkost@redhat.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        qemu-devel@nongnu.org, linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        qemu-arm@nongnu.org
-References: <20180927115454.31471-1-geert+renesas@glider.be>
- <20180927115454.31471-3-geert+renesas@glider.be>
- <2f7f45ec-c689-2cd4-e44f-90c82b47d151@redhat.com>
-From: Auger Eric <eric.auger@redhat.com>
-Message-ID: <634eb7a6-5eca-37b8-bcb3-70677ebc2e99@redhat.com>
-Date: Mon, 5 Nov 2018 10:39:01 +0100
-MIME-Version: 1.0
-In-Reply-To: <2f7f45ec-c689-2cd4-e44f-90c82b47d151@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 15 Nov 2018 16:32:23 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/2] ARM: shmobile: Restrict SCU/TWD support to SoCs that have it
+Date: Thu, 15 Nov 2018 10:56:37 +0100
+Message-Id: <20181115095639.17206-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Thomas,
+	Hi Simon, Magnus,
 
-On 11/5/18 10:17 AM, Thomas Huth wrote:
-> On 2018-09-27 13:54, Geert Uytterhoeven wrote:
->> From: Auger Eric <eric.auger@redhat.com>
->>
->> Up to now we have relied on the device type to identify a device tree
->> node creation function.  Since we would like the vfio-platform device to
->> be instantiable with different compatible strings we introduce the
->> capability to specialize the node creation depending on actual
->> compatible value.
->>
->> NodeCreationPair is renamed into BindingEntry. The struct is enhanced
->> with compat and match_fn() fields.  We introduce a new matching function
->> adapted to the vfio-platform generic device.
->>
->> Soon, the AMD XGBE can be instantiated with either manner, i.e.:
->>
->>     -device vfio-amd-xgbe,host=e0900000.xgmac
->>
->> or using the new option line:
->>
->>     -device vfio-platform,host=e0900000.xgmac
->>
->> Signed-off-by: Eric Auger <eric.auger@redhat.com>
->> [geert: Match using compatible values in sysfs instead of user-supplied
->> 	manufacturer/model options, reword]
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> Reviewed-by: Eric Auger <eric.auger@redhat.com>
->> Tested-by: Eric Auger <eric.auger@redhat.com>
-> 
-> scripts/device-crash-test reports a new "crash" with current QEMU master
-> branch, where QEMU aborts like this:
-> 
-> aarch64-softmmu/qemu-system-aarch64 -S -machine virt-2.9,accel=tcg
-> -device ramfb
-> hw/arm/sysbus-fdt.c:422:vfio_platform_match: Object 0x564cf9ae8f80 is
-> not an instance of type vfio-platform
-> Aborted (core dumped)
-> 
-> I think it is likely due to this patch here ... any chance that you
-> could make this a little bit more user friendly instead of aborting the
-> hard way here?
+When Renesas ARM multi-platform support was conceived in commit
+efacfce5f8a52345 ("ARM: shmobile: Introduce ARCH_SHMOBILE_MULTI"),
+support for the ARM Cortex-A9 Snoop Control Unit and the Timer and
+Watchdog Unit was enabled unconditionally.
 
-thank you for spotting the bug. We should use object_dynamic_cast() to
-test if the device is a VFIO_PLATFORM one.
+However, only some Renesas multicore Cortex-A9 SoCs have these units,
+and in the modern world, the share of Cortex-A9 SoCs is decreasing.
 
-I will prepare a patch.
+Hence only enable support for the SCU and TWD when building a kernel
+that includes support for SoCs that have these units.
 
-Thanks
+Thanks!
 
-Eric
-> 
->  Thanks,
->   Thomas
-> 
+Geert Uytterhoeven (2):
+  ARM: shmobile: Restrict SCU support to SoCs that have it
+  ARM: shmobile: Restrict TWD support to SoCs that have it
+
+ arch/arm/mach-shmobile/Kconfig | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+-- 
+2.17.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
