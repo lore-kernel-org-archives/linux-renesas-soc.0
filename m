@@ -1,52 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35091 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:48567 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726562AbeKZXsu (ORCPT
+        with ESMTP id S1728079AbeKQBIA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Nov 2018 18:48:50 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 16/16] ARM: dts: r9a06g032: Correct the GIC DT node name
-Date: Mon, 26 Nov 2018 13:54:18 +0100
-Message-Id: <83d3483e4977eeedf258f053878a88db507630d4.1543236456.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1543236456.git.horms+renesas@verge.net.au>
-References: <cover.1543236456.git.horms+renesas@verge.net.au>
+        Fri, 16 Nov 2018 20:08:00 -0500
+Date: Fri, 16 Nov 2018 06:55:15 -0800
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] ARM: shmobile: Move SoC Kconfig symbols to
+ drivers/soc/renesas/
+Message-ID: <20181116145514.kmg462fzgnfzownj@verge.net.au>
+References: <20181116134842.26488-1-geert+renesas@glider.be>
+ <20181116134842.26488-3-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181116134842.26488-3-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Phil Edworthy <phil.edworthy@renesas.com>
+On Fri, Nov 16, 2018 at 02:48:42PM +0100, Geert Uytterhoeven wrote:
+> For consistency with arm64, where vendors have a single Kconfig symbol
+> in arch/arm64/Kconfig.platforms.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Harmless mistake, but it's incorrect. The DT spec provides recommendations
-for the node names:
-"The name of a node should be somewhat generic, reflecting the function
-of the device and not its precise programming model. If appropriate, the
-name should be one of the following choices:
-...
-interrupt-controller"
+Thanks Geert,
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r9a06g032.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index 2322268bc862..4c1ab49c7d39 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -173,7 +173,7 @@
- 			status = "okay";
- 		};
- 
--		gic: gic@44101000 {
-+		gic: interrupt-controller@44101000 {
- 			compatible = "arm,cortex-a7-gic", "arm,gic-400";
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
--- 
-2.11.0
+applied for v4.21.
