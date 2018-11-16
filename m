@@ -1,54 +1,92 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-eopbgr1410104.outbound.protection.outlook.com ([40.107.141.104]:25671
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727726AbeK2AWn (ORCPT
+Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.219]:31461 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726214AbeKQKFA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Nov 2018 19:22:43 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        =?iso-8859-1?Q?Niklas_S=F6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: Issue with enabling VSP source on rcar gen2 koelsch board
-Date: Wed, 28 Nov 2018 13:20:58 +0000
-Message-ID: <OSBPR01MB2103C4452BD3C3E0803CA34FB8D10@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Sat, 17 Nov 2018 05:05:00 -0500
+Date: Sat, 17 Nov 2018 00:50:31 +0100 (CET)
+From: Ulrich Hecht <uli@fpond.eu>
+To: Geert Uytterhoeven <geert@linux-m68k.org>, uli+renesas@fpond.eu
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>
+Message-ID: <580133467.90254.1542412231173@webmail.strato.com>
+In-Reply-To: <CAMuHMdWK436=5cjzu7FneKYc7=Szo6z0gLtu0hbSZ5EGeXMNEA@mail.gmail.com>
+References: <1542352851-25393-1-git-send-email-uli+renesas@fpond.eu>
+ <1542352851-25393-2-git-send-email-uli+renesas@fpond.eu>
+ <CAMuHMdWK436=5cjzu7FneKYc7=Szo6z0gLtu0hbSZ5EGeXMNEA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] pinctrl: sh-pfc: Add physical pin multiplexing
+ helper macros
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi all,
 
-On the past, I have tested vsp source  on rcar gen2 koelsch board, using th=
-e patches series below(Apart from the below  patch series, I have enabled "=
-CONFIG_DRM_RCAR_VSP=3Dy")
-https://git.linuxtv.org/pinchartl/media.git/log/?h=3Ddrm/du/panels
+> On November 16, 2018 at 9:42 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> 
+> 
+> Hi Uli,
+> 
+> On Fri, Nov 16, 2018 at 8:21 AM Ulrich Hecht <uli+renesas@fpond.eu> wrote:
+> > Used by I2C controllers 0, 3 and 5 in R8A7795 and R8A7796 SoCs.
+> >
+> > Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+> 
+> Thanks for your patch!
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Some bikeshedding below, which I believe would increase readability.
+> 
+> > --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> > +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+> > @@ -386,6 +386,28 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
+> >         PINMUX_DATA(fn##_MARK, FN_##msel, FN_##fn, FN_##ipsr)
+> >
+> >  /*
+> > + * Describe a pinmux configuration similar to PINMUX_IPSR_MSEL, but with
+> > + * an additional select register that controls physical multiplexing
+> > + * with another pin.
+> > + *   - ipsr: IPSR field
+> > + *   - fn: Function name, also referring to the IPSR field
+> > + *   - msel1: Physical multiplexing selector
+> 
+> psel?
+> 
+> > + *   - msel2: Module selector
+> 
+> msel?
+> 
+> > + */
+> > +#define PINMUX_IPSR_MSEL2(ipsr, fn, msel1, msel2) \
+> 
+> PINMUX_IPSR_PHYS_MSEL?
+> 
+> > +       PINMUX_DATA(fn##_MARK, FN_##msel1, FN_##msel2, FN_##fn, FN_##ipsr)
+> > +
+> > +/*
+> > + * Describe a pinmux configuration in which a pin is physically multiplexed
+> > + * with other pins.
+> > + *   - ipsr: IPSR field
+> > + *   - fn: Function name, also referring to the IPSR field
+> > + *   - msel: Phyiscal multiplexing selector
+> 
+> psel?
+> Physical
+> 
+> > + */
+> > +#define PINMUX_IPSR_PHYS(ipsr, fn, msel) \
+> > +       PINMUX_DATA(fn##_MARK, FN_##msel)
+> > +
+> > +/*
+> >   * Describe a pinmux configuration for a single-function pin with GPIO
+> >   * capability.
+> >   *   - fn: Function name
+> 
+> If you agree, I can fix up all of the above while applying.
 
-1) [HACK] ARM: shmobile: r8a7791: Link the VSP1 and DU
-2) [HACK] v4l: vsp1: Disable UAPI for VSP1D
-3) [HACK] drm: rcar-du: Enable VSP source support for R8A7791
+That would be fine with me, thank you.
 
-But on the latest renesas-dev branch looks like  it is broken
-
-The issue is kernel doesn't boot, if I connect display panel.  Looks like i=
-t is hanging in register_framebuffer.
-
-[    5.344412] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
-[    5.364250] [drm] No driver support for vblank timestamp query.
-
-Have any one noticed this issue?
-
-Regards,
-Biju
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+CU
+Uli
