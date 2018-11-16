@@ -1,68 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35255 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726567AbeKZXtN (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:5643 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728079AbeKQBMf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Nov 2018 18:49:13 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 01/40] arm64: dts: renesas: r8a774a1: Add CAN nodes
-Date: Mon, 26 Nov 2018 13:54:27 +0100
-Message-Id: <b823d65f3380e9d7dd19c8e015dd7f22a0a09957.1543229515.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
-References: <cover.1543229515.git.horms+renesas@verge.net.au>
+        Fri, 16 Nov 2018 20:12:35 -0500
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Huacai Chen <chenhc@lemote.com>, Guan Xuetao <gxt@pku.edu.cn>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+        <u.kleine-koenig@pengutronix.de>, linux-m68k@lists.linux-m68k.org,
+        linux-mips@linux-mips.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v6 0/6] clk: Add functions to get optional clocks
+Date: Fri, 16 Nov 2018 14:59:31 +0000
+Message-Id: <20181116145937.27660-1-phil.edworthy@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Chris Paterson <chris.paterson2@renesas.com>
+Quite a few drivers get an optional clock, e.g. a bus clock required to 
+access peripheral's registers that is always enabled on some devices. This
+series adds of_clk_get_by_name_optional(), clk_get_optional() and
+devm_clk_get_optional() functions for this purpose.
 
-Add the device nodes for both RZ/G2M CAN channels.
+The functions behave the same as of_clk_get_by_name(), clk_get() and
+devm_clk_get() except that they will return NULL instead of -ENOENT. This
+allows for simpler error handling in the callers.
 
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+*Note*
+This changes the return values for of_clk_get_by_name() in some cases, see
+[PATCH 1/6] clk: Add of_clk_get_by_name_optional() function.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index 012cbb64246e..a4817a012e11 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -873,6 +873,30 @@
- 			status = "disabled";
- 		};
- 
-+		can0: can@e6c30000 {
-+			compatible = "renesas,can-r8a774a1",
-+				     "renesas,rcar-gen3-can";
-+			reg = <0 0xe6c30000 0 0x1000>;
-+			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 916>, <&can_clk>;
-+			clock-names = "clkp1", "can_clk";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 916>;
-+			status = "disabled";
-+		};
-+
-+		can1: can@e6c38000 {
-+			compatible = "renesas,can-r8a774a1",
-+				     "renesas,rcar-gen3-can";
-+			reg = <0 0xe6c38000 0 0x1000>;
-+			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 915>, <&can_clk>;
-+			clock-names = "clkp1", "can_clk";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 915>;
-+			status = "disabled";
-+		};
-+
- 		pwm0: pwm@e6e30000 {
- 			compatible = "renesas,pwm-r8a774a1", "renesas,pwm-rcar";
- 			reg = <0 0xe6e30000 0 0x8>;
+v6:
+ - Rework the __of_clk_get_by_name() logic so as to avoid duplicate tests.
+ - Add doxygen style comment for devm_clk_get_optional() args
+ - Add clk_get_optional() to archs that don't use the commom clk framework.
+
+Phil Edworthy (6):
+  clk: Add of_clk_get_by_name_optional() function
+  clk: Add functions to get optional clocks
+  m68k: coldfire: Add clk_get_optional() function
+  MIPS: AR7: Add clk_get_optional() function
+  MIPS: Loongson 2F: Add clk_get_optional() function
+  arch/unicore32/kernel/clock.c: Add clk_get_optional() function
+
+ arch/m68k/coldfire/clk.c               | 11 ++++
+ arch/mips/ar7/clock.c                  | 11 ++++
+ arch/mips/loongson64/lemote-2f/clock.c | 11 ++++
+ arch/unicore32/kernel/clock.c          | 11 ++++
+ drivers/clk/clk-devres.c               | 18 ++++-
+ drivers/clk/clkdev.c                   | 91 ++++++++++++++++++++++----
+ include/linux/clk.h                    | 38 +++++++++++
+ 7 files changed, 175 insertions(+), 16 deletions(-)
+
 -- 
-2.11.0
+2.17.1
