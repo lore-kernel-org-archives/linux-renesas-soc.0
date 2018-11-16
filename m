@@ -1,65 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:58678 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726442AbeK0XDj (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:60899 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389903AbeKQBNX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Nov 2018 18:03:39 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 21/22] ARM: dts: r8a7744: Add xhci support
-Date: Tue, 27 Nov 2018 11:56:34 +0000
-Message-Id: <1543319795-48325-22-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com>
-References: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com>
+        Fri, 16 Nov 2018 20:13:23 -0500
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-mips@linux-mips.org
+Subject: [PATCH v6 4/6] MIPS: AR7: Add clk_get_optional() function
+Date: Fri, 16 Nov 2018 14:59:35 +0000
+Message-Id: <20181116145937.27660-5-phil.edworthy@renesas.com>
+In-Reply-To: <20181116145937.27660-1-phil.edworthy@renesas.com>
+References: <20181116145937.27660-1-phil.edworthy@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the xhci controller on the Renesas
-RZ/G1N (r8a7744) SoC.
+clk_get_optional() returns NULL if not found instead of -ENOENT,
+otherwise the behaviour is the same as clk_get().
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 ---
- arch/arm/boot/dts/r8a7744.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/mips/ar7/clock.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index c9e9678..9c9508e 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -1267,6 +1267,26 @@
- 			dma-channels = <13>;
- 		};
+diff --git a/arch/mips/ar7/clock.c b/arch/mips/ar7/clock.c
+index 6b64fd96dba8..b13f763948b1 100644
+--- a/arch/mips/ar7/clock.c
++++ b/arch/mips/ar7/clock.c
+@@ -454,6 +454,17 @@ struct clk *clk_get(struct device *dev, const char *id)
+ }
+ EXPORT_SYMBOL(clk_get);
  
-+		/*
-+		 * pci1 and xhci share the same phy, therefore only one of them
-+		 * can be active at any one time. If both of them are enabled,
-+		 * a race condition will determine who'll control the phy.
-+		 * A firmware file is needed by the xhci driver in order for
-+		 * USB 3.0 to work properly.
-+		 */
-+		xhci: usb@ee000000 {
-+			compatible = "renesas,xhci-r8a7744",
-+				     "renesas,rcar-gen2-xhci";
-+			reg = <0 0xee000000 0 0xc00>;
-+			interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 328>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 328>;
-+			phys = <&usb2 1>;
-+			phy-names = "usb";
-+			status = "disabled";
-+		};
++struct clk *clk_get_optional(struct device *dev, const char *id)
++{
++	struct clk *clk = clk_get(dev, id);
 +
- 		pci0: pci@ee090000 {
- 			compatible = "renesas,pci-r8a7744",
- 				     "renesas,pci-rcar-gen2";
++	if (clk == ERR_PTR(-ENOENT))
++		clk = NULL;
++
++	return clk;
++}
++EXPORT_SYMBOL(clk_get_optional);
++
+ void clk_put(struct clk *clk)
+ {
+ }
 -- 
-2.7.4
+2.17.1
