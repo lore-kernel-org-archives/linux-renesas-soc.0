@@ -1,51 +1,98 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:34372 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726830AbeKGXF3 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Nov 2018 18:05:29 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, arm@kernel.org,
+        Andy Gross <andy.gross@linaro.org>,
+        Carlo Caione <carlo@caione.org>,
+        David Brown <david.brown@linaro.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Wei Xu <xuwei5@hisilicon.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, devicetree@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dt-bindings: thermal: rcar-gen3-thermal: All variants use 3 interrupts
-Date: Wed,  7 Nov 2018 14:35:00 +0100
-Message-Id: <20181107133500.12865-1-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-soc@vger.kernel.org
+Subject: [PATCH 00/10] ARM64: dts: Fix incomplete cooling-maps
+Date: Fri, 16 Nov 2018 15:34:23 +0530
+Message-Id: <cover.1542362530.git.viresh.kumar@linaro.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-RZ/G2M also has 3 interrupts routed to the TSC, but the list was not
-updated to reflect this.
+Hello,
 
-Just drop the list, as this is the case for this TSC variant in all
-R-Car Gen3 and RZ/G2 SoCs.
+Now that the below commit are merged in mainline, we can start fixing
+the ARM64 platform specific DT files:
+    
+commit d7a4303b8d1f ("dt-bindings: thermal: Allow multiple devices to
+share cooling map")
 
-Fixes: be6af481f3b2d508 ("dt-bindings: thermal: rcar-gen3-thermal: Add r8a774a1 support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- .../devicetree/bindings/thermal/rcar-gen3-thermal.txt          | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+commit a92bab8919e3 ("of: thermal: Allow multiple devices to share
+cooling map")
 
-diff --git a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
-index ad9a435afef446f6..b6ab60f6abbf95fd 100644
---- a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
-+++ b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
-@@ -21,8 +21,7 @@ Required properties:
- 
- Optional properties:
- 
--- interrupts		: interrupts routed to the TSC (3 for H3, M3-W, M3-N,
--			  and V3H)
-+- interrupts		: interrupts routed to the TSC (must be 3).
- - power-domain		: Must contain a reference to the power domain. This
- 			  property is mandatory if the thermal sensor instance
- 			  is part of a controllable power domain.
+Each CPU can (and does) participate in cooling down the system but the
+DT only captures a handful of them, normally CPU0, in the cooling maps.
+Things work by chance currently as under normal circumstances its the
+first CPU of each cluster which is used by the operating systems to
+probe the cooling devices. But as soon as this CPU ordering changes and
+any other CPU is used to bring up the cooling device, we will start
+seeing failures.
+
+Also the DT is rather incomplete when we list only one CPU in the
+cooling maps, as the hardware doesn't have any such limitations.
+
+Update cooling maps to include all devices affected by individual trip
+points.
+
+Individual maintainers can take the patches through their tree.
+
+--
+viresh
+
+Viresh Kumar (10):
+  ARM64: dts: amlogic: Add all CPUs in cooling maps
+  ARM64: dts: exynos: Add all CPUs in cooling maps
+  ARM64: dts: fsl: Add all CPUs in cooling maps
+  arm64: dts: hi3660: Add missing cooling device properties for CPUs
+  ARM64: dts: hisilicon: Add all CPUs in cooling maps
+  ARM64: dts: mediatek: Add all CPUs in cooling maps
+  ARM64: dts: msm8916: Add all CPUs in cooling maps
+  ARM64: dts: renesas: Add all CPUs in cooling maps
+  ARM64: dts: rockchip: Add all CPUs in cooling maps
+  ARM64: dts: uniphier: Add all CPUs in cooling maps
+
+ .../dts/amlogic/meson-gxm-khadas-vim2.dts     | 22 +++++-------
+ .../arm64/boot/dts/exynos/exynos5433-tmu.dtsi | 36 ++++++++++++-------
+ .../arm64/boot/dts/freescale/fsl-ls1043a.dtsi |  6 ++--
+ .../arm64/boot/dts/freescale/fsl-ls1046a.dtsi |  6 ++--
+ .../arm64/boot/dts/freescale/fsl-ls1088a.dtsi | 17 +++++----
+ .../arm64/boot/dts/freescale/fsl-ls208xa.dtsi | 28 +++++----------
+ arch/arm64/boot/dts/hisilicon/hi3660.dtsi     | 16 +++++++--
+ arch/arm64/boot/dts/hisilicon/hi6220.dtsi     |  9 ++++-
+ arch/arm64/boot/dts/mediatek/mt7622.dtsi      |  9 +++--
+ arch/arm64/boot/dts/mediatek/mt8173.dtsi      |  6 ++--
+ arch/arm64/boot/dts/qcom/msm8916.dtsi         | 10 ++++--
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi      | 15 ++++++--
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi      |  6 ++--
+ arch/arm64/boot/dts/rockchip/rk3328.dtsi      |  5 ++-
+ arch/arm64/boot/dts/rockchip/rk3368.dtsi      | 15 ++++++--
+ .../boot/dts/rockchip/rk3399-gru-kevin.dts    |  8 +++--
+ arch/arm64/boot/dts/rockchip/rk3399.dtsi      | 12 +++++--
+ .../boot/dts/socionext/uniphier-ld20.dtsi     | 11 +++---
+ 18 files changed, 147 insertions(+), 90 deletions(-)
+
 -- 
-2.17.1
+2.19.1.568.g152ad8e3369a
