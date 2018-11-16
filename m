@@ -1,121 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mleia.com ([178.79.152.223]:50442 "EHLO mail.mleia.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732806AbeKWHAn (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:48504 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728124AbeKQBAH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Nov 2018 02:00:43 -0500
-From: Vladimir Zapolskiy <vz@mleia.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] gpio: rcar: reference device instead of platform device
-Date: Thu, 22 Nov 2018 22:19:41 +0200
-Message-Id: <20181122201941.1654-1-vz@mleia.com>
+        Fri, 16 Nov 2018 20:00:07 -0500
+Date: Fri, 16 Nov 2018 06:47:24 -0800
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] arm64: renesas: Move SoC Kconfig symbols to
+ drivers/soc/renesas/
+Message-ID: <20181116144723.tpbquqzazfqtkm2d@verge.net.au>
+References: <20181116134842.26488-1-geert+renesas@glider.be>
+ <20181116134842.26488-2-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181116134842.26488-2-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The change simplifies dereferences to the mediated struct device, also
-it allows to limit the scope of the platform device usage to probe and
-remove functions only.
+On Fri, Nov 16, 2018 at 02:48:41PM +0100, Geert Uytterhoeven wrote:
+> arch/arm64/Kconfig.platforms has SoC-specific Kconfig symbols for
+> Renesas SoCs, while other vendors have only a single Kconfig symbol.
+> 
+> Increase consistency with other vendors by moving the SoC-specific
+> Kconfig symbols to drivers/soc/renesas/Kconfig.
+> 
+> Increase consistency with R-Car Gen1 and Gen2 SoCs on arm32 by
+> introducing a family-specific Kconfig symbol for R-Car Gen3
+> (ARCH_RCAR_GEN3), which enables family-specific hardware features.
+> While so far only a single family (R-Car Gen3 and derivatives) of
+> Renesas arm64 SoCs is supported by Linux, this will make it easier
+> to add support for other SoC families later.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v2:
+>   - Introduce a family-specific Kconfig symbol for R-Car Gen3.
 
-Non-functional change.
+Thanks Geert,
 
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
----
- drivers/gpio/gpio-rcar.c | 24 +++++++++++-------------
- 1 file changed, 11 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index 1322f7e0cfde..068ce25ffd28 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -35,7 +35,7 @@ struct gpio_rcar_bank_info {
- struct gpio_rcar_priv {
- 	void __iomem *base;
- 	spinlock_t lock;
--	struct platform_device *pdev;
-+	struct device *dev;
- 	struct gpio_chip gpio_chip;
- 	struct irq_chip irq_chip;
- 	unsigned int irq_parent;
-@@ -140,7 +140,7 @@ static int gpio_rcar_irq_set_type(struct irq_data *d, unsigned int type)
- 	struct gpio_rcar_priv *p = gpiochip_get_data(gc);
- 	unsigned int hwirq = irqd_to_hwirq(d);
- 
--	dev_dbg(&p->pdev->dev, "sense irq = %d, type = %d\n", hwirq, type);
-+	dev_dbg(p->dev, "sense irq = %d, type = %d\n", hwirq, type);
- 
- 	switch (type & IRQ_TYPE_SENSE_MASK) {
- 	case IRQ_TYPE_LEVEL_HIGH:
-@@ -180,8 +180,7 @@ static int gpio_rcar_irq_set_wake(struct irq_data *d, unsigned int on)
- 	if (p->irq_parent) {
- 		error = irq_set_irq_wake(p->irq_parent, on);
- 		if (error) {
--			dev_dbg(&p->pdev->dev,
--				"irq %u doesn't support irq_set_wake\n",
-+			dev_dbg(p->dev, "irq %u doesn't support irq_set_wake\n",
- 				p->irq_parent);
- 			p->irq_parent = 0;
- 		}
-@@ -244,13 +243,13 @@ static int gpio_rcar_request(struct gpio_chip *chip, unsigned offset)
- 	struct gpio_rcar_priv *p = gpiochip_get_data(chip);
- 	int error;
- 
--	error = pm_runtime_get_sync(&p->pdev->dev);
-+	error = pm_runtime_get_sync(p->dev);
- 	if (error < 0)
- 		return error;
- 
- 	error = pinctrl_gpio_request(chip->base + offset);
- 	if (error)
--		pm_runtime_put(&p->pdev->dev);
-+		pm_runtime_put(p->dev);
- 
- 	return error;
- }
-@@ -267,7 +266,7 @@ static void gpio_rcar_free(struct gpio_chip *chip, unsigned offset)
- 	 */
- 	gpio_rcar_config_general_input_output_mode(chip, offset, false);
- 
--	pm_runtime_put(&p->pdev->dev);
-+	pm_runtime_put(p->dev);
- }
- 
- static int gpio_rcar_get_direction(struct gpio_chip *chip, unsigned int offset)
-@@ -398,21 +397,20 @@ MODULE_DEVICE_TABLE(of, gpio_rcar_of_table);
- 
- static int gpio_rcar_parse_dt(struct gpio_rcar_priv *p, unsigned int *npins)
- {
--	struct device_node *np = p->pdev->dev.of_node;
-+	struct device_node *np = p->dev->of_node;
- 	const struct gpio_rcar_info *info;
- 	struct of_phandle_args args;
- 	int ret;
- 
--	info = of_device_get_match_data(&p->pdev->dev);
-+	info = of_device_get_match_data(p->dev);
- 
- 	ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0, &args);
- 	*npins = ret == 0 ? args.args[2] : RCAR_MAX_GPIO_PER_BANK;
- 	p->has_both_edge_trigger = info->has_both_edge_trigger;
- 
- 	if (*npins == 0 || *npins > RCAR_MAX_GPIO_PER_BANK) {
--		dev_warn(&p->pdev->dev,
--			 "Invalid number of gpio lines %u, using %u\n", *npins,
--			 RCAR_MAX_GPIO_PER_BANK);
-+		dev_warn(p->dev, "Invalid number of gpio lines %u, using %u\n",
-+			 *npins, RCAR_MAX_GPIO_PER_BANK);
- 		*npins = RCAR_MAX_GPIO_PER_BANK;
- 	}
- 
-@@ -434,7 +432,7 @@ static int gpio_rcar_probe(struct platform_device *pdev)
- 	if (!p)
- 		return -ENOMEM;
- 
--	p->pdev = pdev;
-+	p->dev = dev;
- 	spin_lock_init(&p->lock);
- 
- 	/* Get device configuration from DT node */
--- 
-2.17.1
+applied for v4.21.
