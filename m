@@ -1,88 +1,202 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:34711 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726366AbeKSDy0 (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:24899 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728079AbeKQBNA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 18 Nov 2018 22:54:26 -0500
-From: Marek Vasut <marek.vasut@gmail.com>
-To: devicetree@vger.kernel.org
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Fri, 16 Nov 2018 20:13:00 -0500
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+        <u.kleine-koenig@pengutronix.de>,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/2] arm64: dts: renesas: r8a77965: Add CAN controller nodes
-Date: Sun, 18 Nov 2018 18:33:26 +0100
-Message-Id: <20181118173327.4704-1-marek.vasut+renesas@gmail.com>
+Subject: [PATCH v6 2/6] clk: Add (devm_)clk_get_optional() functions
+Date: Fri, 16 Nov 2018 14:59:33 +0000
+Message-Id: <20181116145937.27660-3-phil.edworthy@renesas.com>
+In-Reply-To: <20181116145937.27660-1-phil.edworthy@renesas.com>
+References: <20181116145937.27660-1-phil.edworthy@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+This adds clk_get_optional() and devm_clk_get_optional() functions to get
+optional clocks.
+They behave the same as (devm_)clk_get except where there is no clock
+producer. In this case, instead of returning -ENOENT, the function
+returns NULL. This makes error checking simpler and allows
+clk_prepare_enable, etc to be called on the returned reference
+without additional checks.
 
-This patch adds CAN{0,1} controller nodes for the R8A77965 SoC.
-
-Based on several similar patches of the R8A7795 device tree
-by Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-and Geert Uytterhoeven <geert+renesas@glider.be>.
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 26 +++++++++++++++++++++--
- 1 file changed, 24 insertions(+), 2 deletions(-)
+v6:
+ - Add doxygen style comment for devm_clk_get_optional() args
+v5:
+ - No changes.
+v4:
+ - No changes.
+v3:
+ - No changes.
+---
+ drivers/clk/clk-devres.c | 18 ++++++++++++++++--
+ drivers/clk/clkdev.c     | 17 +++++++++++++++--
+ include/linux/clk.h      | 32 ++++++++++++++++++++++++++++++++
+ 3 files changed, 63 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 3a958fb25245..3485624921bf 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -907,13 +907,35 @@
- 		};
+diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+index 12c87457eca1..be07536725a2 100644
+--- a/drivers/clk/clk-devres.c
++++ b/drivers/clk/clk-devres.c
+@@ -14,7 +14,7 @@ static void devm_clk_release(struct device *dev, void *res)
+ 	clk_put(*(struct clk **)res);
+ }
  
- 		can0: can@e6c30000 {
-+			compatible = "renesas,can-r8a77965",
-+				     "renesas,rcar-gen3-can";
- 			reg = <0 0xe6c30000 0 0x1000>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 916>,
-+			       <&cpg CPG_CORE R8A77965_CLK_CANFD>,
-+			       <&can_clk>;
-+			clock-names = "clkp1", "clkp2", "can_clk";
-+			assigned-clocks = <&cpg CPG_CORE R8A77965_CLK_CANFD>;
-+			assigned-clock-rates = <40000000>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 916>;
-+			status = "disabled";
- 		};
+-struct clk *devm_clk_get(struct device *dev, const char *id)
++static struct clk *__devm_clk_get(struct device *dev, const char *id, bool optional)
+ {
+ 	struct clk **ptr, *clk;
  
- 		can1: can@e6c38000 {
-+			compatible = "renesas,can-r8a77965",
-+				     "renesas,rcar-gen3-can";
- 			reg = <0 0xe6c38000 0 0x1000>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 915>,
-+			       <&cpg CPG_CORE R8A77965_CLK_CANFD>,
-+			       <&can_clk>;
-+			clock-names = "clkp1", "clkp2", "can_clk";
-+			assigned-clocks = <&cpg CPG_CORE R8A77965_CLK_CANFD>;
-+			assigned-clock-rates = <40000000>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 915>;
-+			status = "disabled";
- 		};
+@@ -22,7 +22,10 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
+ 	if (!ptr)
+ 		return ERR_PTR(-ENOMEM);
  
- 		pwm0: pwm@e6e30000 {
+-	clk = clk_get(dev, id);
++	if (!optional)
++		clk = clk_get(dev, id);
++	else
++		clk = clk_get_optional(dev, id);
+ 	if (!IS_ERR(clk)) {
+ 		*ptr = clk;
+ 		devres_add(dev, ptr);
+@@ -32,8 +35,19 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
+ 
+ 	return clk;
+ }
++
++struct clk *devm_clk_get(struct device *dev, const char *id)
++{
++	return __devm_clk_get(dev, id, false);
++}
+ EXPORT_SYMBOL(devm_clk_get);
+ 
++struct clk *devm_clk_get_optional(struct device *dev, const char *id)
++{
++	return __devm_clk_get(dev, id, true);
++}
++EXPORT_SYMBOL(devm_clk_get_optional);
++
+ struct clk_bulk_devres {
+ 	struct clk_bulk_data *clks;
+ 	int num_clks;
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index 0c655d1ba1d9..ebf3afef4371 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -241,21 +241,34 @@ struct clk *clk_get_sys(const char *dev_id, const char *con_id)
+ }
+ EXPORT_SYMBOL(clk_get_sys);
+ 
+-struct clk *clk_get(struct device *dev, const char *con_id)
++static struct clk *internal_clk_get(struct device *dev, const char *con_id,
++				    bool optional)
+ {
+ 	const char *dev_id = dev ? dev_name(dev) : NULL;
+ 	struct clk *clk;
+ 
+ 	if (dev && dev->of_node) {
+-		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id, false);
++		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id,
++					   optional);
+ 		if (!IS_ERR(clk) || PTR_ERR(clk) == -EPROBE_DEFER)
+ 			return clk;
+ 	}
+ 
+ 	return clk_get_sys(dev_id, con_id);
+ }
++
++struct clk *clk_get(struct device *dev, const char *con_id)
++{
++	return internal_clk_get(dev, con_id, false);
++}
+ EXPORT_SYMBOL(clk_get);
+ 
++struct clk *clk_get_optional(struct device *dev, const char *con_id)
++{
++	return internal_clk_get(dev, con_id, true);
++}
++EXPORT_SYMBOL(clk_get_optional);
++
+ void clk_put(struct clk *clk)
+ {
+ 	__clk_put(clk);
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 84512b3ecf5c..58bebc32133e 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -290,6 +290,16 @@ static inline void clk_bulk_unprepare(int num_clks, struct clk_bulk_data *clks)
+  */
+ struct clk *clk_get(struct device *dev, const char *id);
+ 
++/**
++ * clk_get_optional - lookup and obtain a reference to optional clock producer.
++ * @dev: device for clock "consumer"
++ * @id: clock consumer ID
++ *
++ * Behaves the same as clk_get except where there is no clock producer. In this
++ * case, instead of returning -ENOENT, the function returns NULL.
++ */
++struct clk *clk_get_optional(struct device *dev, const char *id);
++
+ /**
+  * clk_bulk_get - lookup and obtain a number of references to clock producer.
+  * @dev: device for clock "consumer"
+@@ -383,6 +393,17 @@ int __must_check devm_clk_bulk_get_all(struct device *dev,
+  */
+ struct clk *devm_clk_get(struct device *dev, const char *id);
+ 
++/**
++ * devm_clk_get_optional - lookup and obtain a managed reference to an optional
++ *			   clock producer.
++ * @dev: device for clock "consumer"
++ * @id: clock consumer ID
++ *
++ * Behaves the same as devm_clk_get except where there is no clock producer. In
++ * this case, instead of returning -ENOENT, the function returns NULL.
++ */
++struct clk *devm_clk_get_optional(struct device *dev, const char *id);
++
+ /**
+  * devm_get_clk_from_child - lookup and obtain a managed reference to a
+  *			     clock producer from child node.
+@@ -701,6 +722,11 @@ static inline struct clk *clk_get(struct device *dev, const char *id)
+ 	return NULL;
+ }
+ 
++static inline struct clk *clk_get_optional(struct device *dev, const char *id)
++{
++	return NULL;
++}
++
+ static inline int __must_check clk_bulk_get(struct device *dev, int num_clks,
+ 					    struct clk_bulk_data *clks)
+ {
+@@ -718,6 +744,12 @@ static inline struct clk *devm_clk_get(struct device *dev, const char *id)
+ 	return NULL;
+ }
+ 
++static inline struct clk *devm_clk_get_optional(struct device *dev,
++						const char *id)
++{
++	return NULL;
++}
++
+ static inline int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
+ 						 struct clk_bulk_data *clks)
+ {
 -- 
-2.18.0
+2.17.1
