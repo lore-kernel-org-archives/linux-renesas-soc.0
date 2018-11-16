@@ -1,162 +1,78 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-Date: Thu, 29 Nov 2018 19:47:10 +0100
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-To: Steve Longerbeam <slongerbeam@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Possible regression in v4l2-async
-Message-ID: <20181129184710.GA10382@bigcity.dyn.berto.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from andre.telenet-ops.be ([195.130.132.53]:41216 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728024AbeKQABQ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 16 Nov 2018 19:01:16 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 0/2] arm: renesas: Move SoC Kconfig symbols to drivers/soc/renesas/
+Date: Fri, 16 Nov 2018 14:48:40 +0100
+Message-Id: <20181116134842.26488-1-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Steve, Sakari and Hans,
+	Hi all,
 
-I have been made aware of a possible regression by a few users of 
-rcar-vin and I'm a bit puzzled how to best handle it. Maybe you can help 
-me out?
+As pointed out by Arnd[*], there are lots of SoC-specific Kconfig
+symbols in the Renesas section of arch/arm64/Kconfig.platforms, while
+other vendors expose a single Kconfig symbol there.
 
-The issue is visible when running with LOCKDEP enabled and it prints a 
-warning about a possible circular locking dependency, see end of mail.  
-The warning is triggered because rcar-vin takes a mutex (group->lock) in 
-its async bound call back while the async framework already holds one 
-(lisk_lock).
+Hence this patch series moves them to drivers/soc/renesas/Kconfig,
+reducing the footprint and associated amount of churn in
+arch/arm64/Kconfig.platforms, while preserving the benefits for users of
+automatic selection of e.g. clock and pinctrl drivers.
 
-I traced the issue back to [1]. I don't believe this is any real trouble 
-here unless any of the async callbacks where to call into the async 
-framework themself which would trigger further calls to driver 
-callbacks, or maybe I'm naive and this is a real problem today.
+As my OCD just loves consistency, the second patch does the same for
+arm32 SoCs.
 
-Even if it's no real problem today I'm not sure this is never going to 
-be a problem, it would be nice if this warning could be handled somehow.  
-It is my understanding that any implementation of the async callbacks 
-who take a driver specific lock would trigger this warning which is not 
-nice.
+Note that e.g. drivers/clk/ is included before drivers/soc/.  Hence when
+COMPILE_TEST=y and ARCH_RENESAS=n, questions will be asked about clock
+drivers before they can be auto-selected by the corresponding
+SoC-specific Kconfig symbols.
 
-Any suggestions or hints on how to move forward with this would be 
-appreciated.
+Of course this will trigger some defconfig updates later...
 
-1. eae2aed1eab9bf08 ("media: v4l2-fwnode: Switch to v4l2_async_notifier_add_subdev")
+Changes compared to v1/RFC:
+  - Introduce a family-specific Kconfig symbol for R-Car Gen3,
+  - Move arm32 family-specific Kconfig symbols, too.
 
----->> Warning output <<----
+This depends on Simon's devel branch, and "ARM: shmobile: Hide ARCH_RZN1
+to improve consistency".
 
- ======================================================
- WARNING: possible circular locking dependency detected
- 4.19.0-rc1-arm64-renesas-00212-geae2aed1eab9bf08 #56 Not tainted
- ------------------------------------------------------
- swapper/0/1 is trying to acquire lock:
- (____ptrval____) (&group->lock){+.+.}, at: rvin_group_notify_bound+0x30/0xa8
+Thanks!
 
- but task is already holding lock:
- (____ptrval____) (list_lock){+.+.}, at: __v4l2_async_notifier_register+0x54/0x1b0
-
- which lock already depends on the new lock.
+[*] https://www.spinics.net/lists/arm-kernel/msg679390.html
 
 
- the existing dependency chain (in reverse order) is:
+Geert Uytterhoeven (2):
+  arm64: renesas: Move SoC Kconfig symbols to drivers/soc/renesas/
+  ARM: shmobile: Move SoC Kconfig symbols to drivers/soc/renesas/
 
- -> #1 (list_lock){+.+.}:
-        __mutex_lock+0x70/0x7f0
-        mutex_lock_nested+0x1c/0x28
-        v4l2_async_notifier_init+0x28/0x48
-        rcar_vin_probe+0x13c/0x630
-        platform_drv_probe+0x50/0xa0
-        really_probe+0x1e0/0x298
-        driver_probe_device+0x54/0xe8
-        __driver_attach+0xf0/0xf8
-        bus_for_each_dev+0x70/0xc0
-        driver_attach+0x20/0x28
-        bus_add_driver+0x1d4/0x200
-        driver_register+0x60/0x110
-        __platform_driver_register+0x44/0x50
-        rcar_vin_driver_init+0x18/0x20
-        do_one_initcall+0x180/0x35c
-        kernel_init_freeable+0x454/0x4f8
-        kernel_init+0x10/0xfc
-        ret_from_fork+0x10/0x1c
-
- -> #0 (&group->lock){+.+.}:
-        lock_acquire+0xc8/0x238
-        __mutex_lock+0x70/0x7f0
-        mutex_lock_nested+0x1c/0x28
-        rvin_group_notify_bound+0x30/0xa8
-        v4l2_async_match_notify+0x50/0x138
-        v4l2_async_notifier_try_all_subdevs+0x58/0xb8
-        __v4l2_async_notifier_register+0xdc/0x1b0
-        v4l2_async_notifier_register+0x38/0x58
-        rcar_vin_probe+0x1b8/0x630
-        platform_drv_probe+0x50/0xa0
-        really_probe+0x1e0/0x298
-        driver_probe_device+0x54/0xe8
-        __driver_attach+0xf0/0xf8
-        bus_for_each_dev+0x70/0xc0
-        driver_attach+0x20/0x28
-        bus_add_driver+0x1d4/0x200
-        driver_register+0x60/0x110
-        __platform_driver_register+0x44/0x50
-        rcar_vin_driver_init+0x18/0x20
-        do_one_initcall+0x180/0x35c
-        kernel_init_freeable+0x454/0x4f8
-        kernel_init+0x10/0xfc
-        ret_from_fork+0x10/0x1c
-
- other info that might help us debug this:
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(list_lock);
-                                lock(&group->lock);
-                                lock(list_lock);
-   lock(&group->lock);
-
-  *** DEADLOCK ***
-
- 2 locks held by swapper/0/1:
-  #0: (____ptrval____) (&dev->mutex){....}, at: __driver_attach+0x60/0xf8
-  #1: (____ptrval____) (list_lock){+.+.}, at: __v4l2_async_notifier_register+0x54/0x1b0
-
- stack backtrace:
- CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc1-arm64-renesas-00212-geae2aed1eab9bf08 #56
- Hardware name: Renesas Salvator-X 2nd version board based on r8a77965 (DT)
- Call trace:
-  dump_backtrace+0x0/0x188
-  show_stack+0x14/0x20
-  dump_stack+0xbc/0xf4
-  print_circular_bug.isra.18+0x270/0x2d8
-  __lock_acquire+0x12e8/0x17c8
-  lock_acquire+0xc8/0x238
-  __mutex_lock+0x70/0x7f0
-  mutex_lock_nested+0x1c/0x28
-  rvin_group_notify_bound+0x30/0xa8
-  v4l2_async_match_notify+0x50/0x138
-  v4l2_async_notifier_try_all_subdevs+0x58/0xb8
-  __v4l2_async_notifier_register+0xdc/0x1b0
-  v4l2_async_notifier_register+0x38/0x58
-  rcar_vin_probe+0x1b8/0x630
-  platform_drv_probe+0x50/0xa0
-  really_probe+0x1e0/0x298
-  driver_probe_device+0x54/0xe8
-  __driver_attach+0xf0/0xf8
-  bus_for_each_dev+0x70/0xc0
-  driver_attach+0x20/0x28
-  bus_add_driver+0x1d4/0x200
-  driver_register+0x60/0x110
-  __platform_driver_register+0x44/0x50
-  rcar_vin_driver_init+0x18/0x20
-  do_one_initcall+0x180/0x35c
-  kernel_init_freeable+0x454/0x4f8
-  kernel_init+0x10/0xfc
-  ret_from_fork+0x10/0x1c
-
+ arch/arm/mach-shmobile/Kconfig | 126 ------------------
+ arch/arm64/Kconfig.platforms   |  59 ---------
+ drivers/soc/renesas/Kconfig    | 236 ++++++++++++++++++++++++++++++---
+ 3 files changed, 215 insertions(+), 206 deletions(-)
 
 -- 
-Regards,
-Niklas S�derlund
+2.17.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
