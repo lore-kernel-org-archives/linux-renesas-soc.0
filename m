@@ -1,51 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:11190 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728230AbeKBIiF (ORCPT
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:46896 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727413AbeKPSvV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Nov 2018 04:38:05 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 09/30] media: entity: Swap pads if route is checked from source to sink
-Date: Fri,  2 Nov 2018 00:31:23 +0100
-Message-Id: <20181101233144.31507-10-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+        Fri, 16 Nov 2018 13:51:21 -0500
+Received: by mail-ua1-f66.google.com with SMTP id v24so7972244uap.13
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Nov 2018 00:40:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <1542352851-25393-1-git-send-email-uli+renesas@fpond.eu> <1542352851-25393-3-git-send-email-uli+renesas@fpond.eu>
+In-Reply-To: <1542352851-25393-3-git-send-email-uli+renesas@fpond.eu>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 16 Nov 2018 09:39:47 +0100
+Message-ID: <CAMuHMdUax0Kcs3+f2RrKjZyZKFekpXGsJ23kU5owTyPomcc_BA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] pinctrl: sh-pfc: r8a7795: Add I2C{0,3,5} pins,
+ groups and functions
+To: uli+renesas@fpond.eu
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
+On Fri, Nov 16, 2018 at 8:21 AM Ulrich Hecht <uli+renesas@fpond.eu> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds I2C{0,3,5} pins, groups and functions to the R8A7795 SoC.
+>
+> These pins are physically muxed with other pins. Therefore, setup of
+> MOD_SEL is needed for exclusive control with other pins.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
 
-This way the pads are always passed to the has_route() op sink pad first.
-Makes sense.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/media-entity.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-index 3c0e7425c8983b45..33f00e35ccd92c6f 100644
---- a/drivers/media/media-entity.c
-+++ b/drivers/media/media-entity.c
-@@ -249,6 +249,10 @@ bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
- 	if (!entity->ops || !entity->ops->has_route)
- 		return true;
- 
-+	if (entity->pads[pad0].flags & MEDIA_PAD_FL_SOURCE
-+	    && entity->pads[pad1].flags & MEDIA_PAD_FL_SINK)
-+		swap(pad0, pad1);
-+
- 	return entity->ops->has_route(entity, pad0, pad1);
- }
- EXPORT_SYMBOL_GPL(media_entity_has_route);
+                        Geert
+
 -- 
-2.19.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
