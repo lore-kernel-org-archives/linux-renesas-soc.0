@@ -1,14 +1,7 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:40332 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726890AbeKSJYx (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Nov 2018 04:24:53 -0500
-Date: Mon, 19 Nov 2018 00:03:13 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: devicetree@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Marek Vasut <marek.vasut@gmail.com>
+To: devicetree@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Marc Kleine-Budde <mkl@pengutronix.de>,
         Rob Herring <robh@kernel.org>,
@@ -17,60 +10,144 @@ Cc: devicetree@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: renesas: r8a77990: ebisu: Add and enable
- CAN,FD device nodes
-Message-ID: <20181118230313.GB2553@kunai>
-References: <20181118173424.4807-1-marek.vasut+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="CdrF4e02JqNVZeln"
-Content-Disposition: inline
-In-Reply-To: <20181118173424.4807-1-marek.vasut+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH] arm64: dts: renesas: r8a77990: ebisu: Add and enable CAN,FD device nodes
+Date: Sun, 18 Nov 2018 18:34:24 +0100
+Message-Id: <20181118173424.4807-1-marek.vasut+renesas@gmail.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+This patch adds CAN0,1 and CANFD device nodes for the r8a77990 SoC
+and enables CANFD connected to CN10 on the E3 Ebisu board using the
+R8A77990 SoC.
 
---CdrF4e02JqNVZeln
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-renesas-soc@vger.kernel.org
+---
+ .../arm64/boot/dts/renesas/r8a77990-ebisu.dts | 15 +++++
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi     | 64 +++++++++++++++++++
+ 2 files changed, 79 insertions(+)
 
-On Sun, Nov 18, 2018 at 06:34:24PM +0100, Marek Vasut wrote:
-> This patch adds CAN0,1 and CANFD device nodes for the r8a77990 SoC
-> and enables CANFD connected to CN10 on the E3 Ebisu board using the
-> R8A77990 SoC.
->=20
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Marc Kleine-Budde <mkl@pengutronix.de>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Simon Horman <horms+renesas@verge.net.au>
-> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-renesas-soc@vger.kernel.org
-
-Same here, what was tested?
-
-
---CdrF4e02JqNVZeln
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvx77AACgkQFA3kzBSg
-KbaXihAAo1cAg2Wtw9zh6dbR+jo/gpfqoyMCcSIZFUTNJvKPumJWavYvZSaGZN1F
-UlLPpdsrctRHC8kR8V4X1PjAQmdFikkJPoII5tma5hILM+NbjL3uM2ECUbcF/Ug6
-wwDTpaUisk470L/JiQUL//qEbArV1lGiz/25CynrlnkavLrBGjTfU3rJJRveECeC
-xWQwVEVZljFX3NKg++k0MbrITQ+tJZ0AjhXiEJ0+8sMHGd/qDL96DGYK1L+rlX2G
-jCZa8QZuM5RAKo6UK+IZ7/kvEd+KurW1d93/SqW4f6LigMeToUixsSp1n5if9Lty
-TezpGJrOVDp+4ch5Emch3yGfHr+P/Q6HkYpoRQbU7moOd3f3cv2Jmfg2BWkBuVf1
-lO+3cQ5iHePjHlxsQqVv7h5mFw1ARiuuh1B5ob8rf+4Hqb37ObvDB+WFLAxdcLKe
-8gecd+3rdIFzRIj5FdIPmRX+0TqFbQLh4vU+S4mMIhRfmZU7mRGckm7CwPo5RYQj
-xygDCJNacBw+3yY5TsNoE5vqN3c9EYApSGMtpF2PAyXySqE5QD5JBPF6YJtiF53Y
-yxwhjU2lQeZxekPeVpX6i0cV0K2VfPAw02AiJltaRvI+0LgkDRiH7ojNKLPwkQ/7
-6f6WWNMqXgAtzcfedA/uwgSGt0yoxUm84U+oOcv8f8LaY7366Yw=
-=LBB0
------END PGP SIGNATURE-----
-
---CdrF4e02JqNVZeln--
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+index 2ef9067616ee..e282ef500001 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+@@ -260,6 +260,16 @@
+ 	};
+ };
+ 
++&canfd {
++	pinctrl-0 = <&canfd0_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	channel0 {
++		status = "okay";
++	};
++};
++
+ &csi40 {
+ 	status = "okay";
+ 
+@@ -460,6 +470,11 @@
+ 		};
+ 	};
+ 
++	canfd0_pins: canfd0 {
++		groups = "canfd0_data";
++		function = "canfd0";
++	};
++
+ 	du_pins: du {
+ 		groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
+ 		function = "du";
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index 46868dacbeef..b0398e05e8ed 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -48,6 +48,13 @@
+ 		clock-frequency = <0>;
+ 	};
+ 
++	/* External CAN clock - to be overridden by boards that provide it */
++	can_clk: can {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -773,6 +780,63 @@
+ 			status = "disabled";
+ 		};
+ 
++		can0: can@e6c30000 {
++			compatible = "renesas,can-r8a77990",
++				     "renesas,rcar-gen3-can";
++			reg = <0 0xe6c30000 0 0x1000>;
++			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 916>,
++			       <&cpg CPG_CORE R8A77990_CLK_CANFD>,
++			       <&can_clk>;
++			clock-names = "clkp1", "clkp2", "can_clk";
++			assigned-clocks = <&cpg CPG_CORE R8A77990_CLK_CANFD>;
++			assigned-clock-rates = <40000000>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 916>;
++			status = "disabled";
++		};
++
++		can1: can@e6c38000 {
++			compatible = "renesas,can-r8a77990",
++				     "renesas,rcar-gen3-can";
++			reg = <0 0xe6c38000 0 0x1000>;
++			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 915>,
++			       <&cpg CPG_CORE R8A77990_CLK_CANFD>,
++			       <&can_clk>;
++			clock-names = "clkp1", "clkp2", "can_clk";
++			assigned-clocks = <&cpg CPG_CORE R8A77990_CLK_CANFD>;
++			assigned-clock-rates = <40000000>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 915>;
++			status = "disabled";
++		};
++
++		canfd: can@e66c0000 {
++			compatible = "renesas,r8a77990-canfd",
++				     "renesas,rcar-gen3-canfd";
++			reg = <0 0xe66c0000 0 0x8000>;
++			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
++				   <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 914>,
++			       <&cpg CPG_CORE R8A77990_CLK_CANFD>,
++			       <&can_clk>;
++			clock-names = "fck", "canfd", "can_clk";
++			assigned-clocks = <&cpg CPG_CORE R8A77990_CLK_CANFD>;
++			assigned-clock-rates = <40000000>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 914>;
++			status = "disabled";
++
++			channel0 {
++				status = "disabled";
++			};
++
++			channel1 {
++				status = "disabled";
++			};
++		};
++
+ 		pwm0: pwm@e6e30000 {
+ 			compatible = "renesas,pwm-r8a77990", "renesas,pwm-rcar";
+ 			reg = <0 0xe6e30000 0 0x8>;
+-- 
+2.18.0
