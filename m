@@ -1,71 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-eopbgr1400129.outbound.protection.outlook.com ([40.107.140.129]:16704
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726195AbeKUSnm (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:49223 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727728AbeKSVR1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Nov 2018 13:43:42 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: "kishon@ti.com" <kishon@ti.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] phy: renesas: rcar-gen3-usb2: follow the hardware manual
- procedure
-Date: Wed, 21 Nov 2018 08:10:06 +0000
-Message-ID: <1542787663-32142-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 19 Nov 2018 16:17:27 -0500
+Date: Mon, 19 Nov 2018 11:54:07 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Ulrich Hecht <uli+renesas@fpond.eu>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a77995: Remove unused
+ PINMUX_IPSR_{MSEL2,PHYS}()
+Message-ID: <20181119105406.d3u3ayt5ssjp6x34@verge.net.au>
+References: <20181119102152.5144-1-geert+renesas@glider.be>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181119102152.5144-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch modifies rcar_gen3_init_otg() procedure to follow Figure
-73.4 of "R-Car Series, 3rd Generation User's Manual: Hardware Rev.1.00".
+On Mon, Nov 19, 2018 at 11:21:52AM +0100, Geert Uytterhoeven wrote:
+> The PINMUX_IPSR_MSEL2() and PINMUX_IPSR_PHYS() macros are unused, and
+> will conflict with generic macros that are to be added.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> To be queued in sh-pfc-for-v4.21, before "pinctrl: sh-pfc: Add physical
+> pin multiplexing helper macros".
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- This patch is based on the latest linux-phy / next branch
-(commit id =3D 0eb86fa77f0f0c81631a030f10679a45c05df33a).
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas=
-/phy-rcar-gen3-usb2.c
-index d0f412c..a9e53e8 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -307,16 +307,21 @@ static void rcar_gen3_init_otg(struct rcar_gen3_chan =
-*ch)
- 	void __iomem *usb2_base =3D ch->base;
- 	u32 val;
-=20
-+	rcar_gen3_set_linectrl(ch, 0, 1);
-+	val =3D readl(usb2_base + USB2_LINECTRL1);
-+	writel(val | USB2_LINECTRL1_DPRPD_EN | USB2_LINECTRL1_DMRPD_EN,
-+	       usb2_base + USB2_LINECTRL1);
-+
- 	val =3D readl(usb2_base + USB2_VBCTRL);
- 	writel(val | USB2_VBCTRL_DRVVBUSSEL, usb2_base + USB2_VBCTRL);
--	writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
--	rcar_gen3_control_otg_irq(ch, 1);
- 	val =3D readl(usb2_base + USB2_ADPCTRL);
- 	writel(val | USB2_ADPCTRL_IDPULLUP, usb2_base + USB2_ADPCTRL);
--	val =3D readl(usb2_base + USB2_LINECTRL1);
--	rcar_gen3_set_linectrl(ch, 0, 0);
--	writel(val | USB2_LINECTRL1_DPRPD_EN | USB2_LINECTRL1_DMRPD_EN,
--	       usb2_base + USB2_LINECTRL1);
-+
-+	msleep(20);
-+
-+	writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
-+
-+	rcar_gen3_control_otg_irq(ch, 1);
-=20
- 	rcar_gen3_device_recognition(ch);
- }
---=20
-1.9.1
+> 
+>  drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+> index 9484eaa8522aec6f..e457539a61c55bb9 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+> @@ -468,12 +468,6 @@ enum {
+>  #undef FM
+>  };
+>  
+> -#define PINMUX_IPSR_MSEL2(ipsr, fn, msel1, msel2) \
+> -	PINMUX_DATA(fn##_MARK, FN_##msel1, FN_##msel2, FN_##fn, FN_##ipsr)
+> -
+> -#define PINMUX_IPSR_PHYS(ipsr, fn, msel) \
+> -	PINMUX_DATA(fn##_MARK, FN_##msel)
+> -
+>  static const u16 pinmux_data[] = {
+>  	PINMUX_DATA_GP_ALL(),
+>  
+> -- 
+> 2.17.1
+> 
