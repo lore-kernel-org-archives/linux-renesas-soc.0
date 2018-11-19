@@ -1,60 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga18.intel.com ([134.134.136.126]:28551 "EHLO mga18.intel.com"
+Received: from mail.kernel.org ([198.145.29.99]:52068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726943AbeKTUVd (ORCPT
+        id S1728676AbeKSWhZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Nov 2018 15:21:33 -0500
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Fernando <greenfoo@gluegarage.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        dri-devel@lists.freedesktop.org
-Cc: Haneen Mohammed <hamohammed.sa@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        David Airlie <airlied@linux.ie>,
-        virtualization@lists.linux-foundation.org,
-        Gerd Hoffmann <kraxel@redhat.com>, cocci@systeme.lip6.fr,
-        Marek Vasut <marex@denx.de>, Jonathan Corbet <corbet@lwn.net>,
-        linux-doc@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
+        Mon, 19 Nov 2018 17:37:25 -0500
+Date: Mon, 19 Nov 2018 20:13:28 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Fernando Ramos <greenfoo@gluegarage.com>
+Cc: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        etnaviv@lists.freedesktop.org, Julia Lawall <Julia.Lawall@lip6.fr>,
-        Sean Paul <sean@poorly.run>,
-        linux-arm-kernel@lists.infradead.org,
-        Michal Marek <michal.lkml@markovi.net>,
+        Sean Paul <sean@poorly.run>, Jonathan Corbet <corbet@lwn.net>,
+        Alexey Brodkin <abrodkin@synopsys.com>,
         Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 3/9] drm: replace "drm_dev_unref" function with "drm_dev_put"
-In-Reply-To: <1542387884.1134874.1579436592.07F916C5@webmail.messagingengine.com>
-References: <20181115221634.22715-1-greenfoo@gluegarage.com> <20181115221634.22715-4-greenfoo@gluegarage.com> <1542363310.23489.22.camel@pengutronix.de> <1542387884.1134874.1579436592.07F916C5@webmail.messagingengine.com>
-Date: Tue, 20 Nov 2018 11:53:43 +0200
-Message-ID: <87lg5of520.fsf@intel.com>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        virtualization@lists.linux-foundation.org,
+        etnaviv@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        cocci@systeme.lip6.fr
+Subject: Re: [PATCH 3/9] drm: replace "drm_dev_unref" function with
+ "drm_dev_put"
+Message-ID: <20181119121327.GS5829@dragon>
+References: <20181115221634.22715-1-greenfoo@gluegarage.com>
+ <20181115221634.22715-4-greenfoo@gluegarage.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181115221634.22715-4-greenfoo@gluegarage.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, 16 Nov 2018, Fernando <greenfoo@gluegarage.com> wrote:
-> And, related to this, what is the "good" branch to start developing
-> new drm patches? Is is "drm-next" or "linux-next"? Or does it change
-> depending on how much time until the merge window closes?
+On Thu, Nov 15, 2018 at 11:16:23PM +0100, Fernando Ramos wrote:
+> This patch unifies the naming of DRM functions for reference counting as
+> requested on Documentation/gpu/todo.rst
+> 
+> Signed-off-by: Fernando Ramos <greenfoo@gluegarage.com>
+> ---
+>  drivers/gpu/drm/arc/arcpgu_drv.c             | 4 ++--
+>  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c | 4 ++--
+>  drivers/gpu/drm/etnaviv/etnaviv_drv.c        | 4 ++--
+>  drivers/gpu/drm/mxsfb/mxsfb_drv.c            | 4 ++--
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c        | 2 +-
+>  drivers/gpu/drm/shmobile/shmob_drm_drv.c     | 4 ++--
+>  drivers/gpu/drm/tve200/tve200_drv.c          | 4 ++--
+>  drivers/gpu/drm/zte/zx_drm_drv.c             | 4 ++--
 
-I advise most of our developers to work on drm-tip because it contains
-the latest stuff in drm core, i915, amd, most of the small drivers, as
-well as sound. It's a bit like "linux-next for graphics". And you don't
-really have to care about the merge cycles with that.
+We have already queued a patch [1] from Thomas Zimmermann for
+zx_drm_drv.
 
-But YMMV, it probably doesn't work for everyone.
+Shawn
 
-BR,
-Jani.
-
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
+[1] https://patchwork.kernel.org/patch/10615837/
