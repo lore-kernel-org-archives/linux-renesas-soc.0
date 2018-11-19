@@ -1,73 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:38658 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725792AbeKBEg0 (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:61809 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728679AbeKSVvx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Nov 2018 00:36:26 -0400
-Date: Thu, 1 Nov 2018 20:32:03 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Niklas =?utf-8?Q?S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCH v2 2/3] mmc: renesas_sdhi: align compatibility properties
- for H3 and M3-W
-Message-ID: <20181101193200.GI2433@kunai>
-References: <20181031231340.1958-1-niklas.soderlund@ragnatech.se>
- <20181031231340.1958-3-niklas.soderlund@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="r4QXMf6/kyF/FvJJ"
-Content-Disposition: inline
-In-Reply-To: <20181031231340.1958-3-niklas.soderlund@ragnatech.se>
+        Mon, 19 Nov 2018 16:51:53 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Simon Horman <horms@verge.net.au>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH  3/4] ARM: shmobile: Enable NXP pcf85363 rtc in shmobile_defconfig
+Date: Mon, 19 Nov 2018 11:15:07 +0000
+Message-Id: <1542626108-61344-4-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1542626108-61344-1-git-send-email-biju.das@bp.renesas.com>
+References: <1542626108-61344-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+The iWave RZ/G1C SBC supports RTC (NXP pcf85263). To increase hardware
+support enable the driver in the shmobile_defconfig multiplatform
+configuration.
 
---r4QXMf6/kyF/FvJJ
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+ arch/arm/configs/shmobile_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Thu, Nov 01, 2018 at 12:13:39AM +0100, Niklas S=C3=B6derlund wrote:
-> From: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
->=20
-> It was though all ES revisions of H3 and M3-W SoCs required the
-> TMIO_MMC_HAVE_4TAP_HS400 flag. Recent datasheet updates tells us this is
-> not true, only early ES revisions of the SoC do.
->=20
-> Since quirk matching based on ES revisions is now used to handle the
-> flag it's possible to align all Gen3 compatibility properties. This will
-> allow later ES revisions of H3 and M3-W to use the correct 8-tap HS400
-> mode.
->=20
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
-
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---r4QXMf6/kyF/FvJJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvbVLAACgkQFA3kzBSg
-Kbbc6A/7BkfSwwt4Pb8Iwb+3fqGs65ao4+qUhy+cTKZFbm54Nz3nIUrWVFdQKW6S
-OVGi50HwH5BnKom/dUMAFwxk6izxSeH60d7waGtkgF5YRai53YeTt9Iu55lI5Lnd
-7WiCRzNrIh4LrWb9vhLjUw7J6HR57Obn2vRjxRA9AQo3/sKwMLcP06xHIIMVAPWa
-Gv06wVnhoWcyYQm64kc8t4odgoeukL/sfo8av718yyTzyc/yUokAT9J3HdhQD34s
-RiQLGCLuzi2edlzcFDIAA676DUWL/3GRKPoPXnfKuevYLQJCzMHZXsgJpGNJP96t
-MbViA0vlIXiiSPZhk6hYHk/4B8Wo4Z1gSxdShBaCnZO4HVf/yY79odMTaeVU40lP
-wB9Mmele2zfpA7fjC1EyPzFUNjUckXbWttsDPbtP18TtC0EhfMIRRvUmB+EfSiEk
-B0f74Kyp0sw5J3DyHUJ5NUIzfIm4gL2IO0m1gmDudWxFLhr0oSo4BIOfi9eId5kZ
-aCQwEofY7MHpKqOUhcF1dSayhBX0Z/SEKBGUOJ7548wbTXax4kThgLsHNTtSj00J
-vCl0PGrwGcpARIiqOHVC72YezVW0m1gqhnGABoVLt8dD08G7YxVuwY0P+HDQ4udC
-i8WjGa3N4ctqO/dHLBbubrw2Jv/UPsl0R/9B4As8N+mEYvbxRsI=
-=bJFw
------END PGP SIGNATURE-----
-
---r4QXMf6/kyF/FvJJ--
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index 9e5a5ad..fdac4e4 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -177,6 +177,7 @@ CONFIG_LEDS_CLASS=y
+ CONFIG_LEDS_GPIO=y
+ CONFIG_RTC_CLASS=y
+ CONFIG_RTC_DRV_RS5C372=y
++CONFIG_RTC_DRV_PCF85363=y
+ CONFIG_RTC_DRV_BQ32K=y
+ CONFIG_RTC_DRV_S35390A=y
+ CONFIG_RTC_DRV_RX8581=y
+-- 
+2.7.4
