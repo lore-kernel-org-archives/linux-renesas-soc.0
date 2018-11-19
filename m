@@ -1,124 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:65301 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728337AbeKBIiU (ORCPT
+Received: from twhmllg4.macronix.com ([211.75.127.132]:21750 "EHLO
+        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727728AbeKSVOB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Nov 2018 04:38:20 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 28/30] adv748x: afe: add routing support
-Date: Fri,  2 Nov 2018 00:31:42 +0100
-Message-Id: <20181101233144.31507-29-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 19 Nov 2018 16:14:01 -0500
+Received: from TWHMLLG4.macronix.com (localhost [127.0.0.2] (may be forged))
+        by TWHMLLG4.macronix.com with ESMTP id wAJA2DSI036267
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Nov 2018 18:02:13 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+From: Mason Yang <masonccyang@mxic.com.tw>
+To: broonie@kernel.org, tpiepho@impinj.com,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: boris.brezillon@bootlin.com, juliensu@mxic.com.tw,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        zhengxunli@mxic.com.tw, Mason Yang <masonccyang@mxic.com.tw>
+Subject: [PATCH 0/2] spi: Add Renesas R-Car D3 RPC SPI driver
+Date: Mon, 19 Nov 2018 18:01:28 +0800
+Message-Id: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The adv748x afe has eight analog sink pads, currently one of them is
-chosen to be the active route based on device tree configuration. With
-the new routing API it's possible to expose and change which of the
-eight sink pads are routed to the source pad.
+Hi Mark,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/i2c/adv748x/adv748x-afe.c | 65 +++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
+This Renesas R-Car D3 RPC SPI driver is based on Boris's 
+new spi-mem direct mapping read/write mode[1][2] and
+test on R-Car D3 Draak board.
 
-diff --git a/drivers/media/i2c/adv748x/adv748x-afe.c b/drivers/media/i2c/adv748x/adv748x-afe.c
-index 71714634efb08bd4..6b7fd4685aa4c177 100644
---- a/drivers/media/i2c/adv748x/adv748x-afe.c
-+++ b/drivers/media/i2c/adv748x/adv748x-afe.c
-@@ -39,6 +39,9 @@
- #define ADV748X_AFE_STD_PAL_SECAM			0xe
- #define ADV748X_AFE_STD_PAL_SECAM_PED			0xf
- 
-+#define ADV748X_AFE_ROUTES_MAX ((ADV748X_AFE_SINK_AIN7 - \
-+				ADV748X_AFE_SINK_AIN0) + 1)
-+
- static int adv748x_afe_read_ro_map(struct adv748x_state *state, u8 reg)
- {
- 	int ret;
-@@ -383,10 +386,72 @@ static int adv748x_afe_set_format(struct v4l2_subdev *sd,
- 	return 0;
- }
- 
-+static int adv748x_afe_get_routing(struct v4l2_subdev *sd,
-+				   struct v4l2_subdev_routing *routing)
-+{
-+	struct adv748x_afe *afe = adv748x_sd_to_afe(sd);
-+	struct v4l2_subdev_route *r = routing->routes;
-+	unsigned int i;
-+
-+	/* There is one possible route from each sink */
-+	if (routing->num_routes < ADV748X_AFE_ROUTES_MAX) {
-+		routing->num_routes = ADV748X_AFE_ROUTES_MAX;
-+		return -ENOSPC;
-+	}
-+
-+	routing->num_routes = ADV748X_AFE_ROUTES_MAX;
-+
-+	for (i = ADV748X_AFE_SINK_AIN0; i <= ADV748X_AFE_SINK_AIN7; i++) {
-+		r->sink_pad = i;
-+		r->sink_stream = 0;
-+		r->source_pad = ADV748X_AFE_SOURCE;
-+		r->source_stream = 0;
-+		r->flags = afe->input == i ? V4L2_SUBDEV_ROUTE_FL_ACTIVE : 0;
-+		r++;
-+	}
-+
-+	return 0;
-+}
-+
-+static int adv748x_afe_set_routing(struct v4l2_subdev *sd,
-+				   struct v4l2_subdev_routing *routing)
-+{
-+	struct adv748x_afe *afe = adv748x_sd_to_afe(sd);
-+	struct v4l2_subdev_route *r = routing->routes;
-+	int input = -1;
-+	unsigned int i;
-+
-+	if (routing->num_routes > ADV748X_AFE_ROUTES_MAX)
-+		return -ENOSPC;
-+
-+	for (i = 0; i < routing->num_routes; i++) {
-+		if (r->sink_pad > ADV748X_AFE_SINK_AIN7 ||
-+		    r->sink_stream != 0 ||
-+		    r->source_pad != ADV748X_AFE_SOURCE ||
-+		    r->source_stream != 0)
-+			return -EINVAL;
-+
-+		if (r->flags & V4L2_SUBDEV_ROUTE_FL_ACTIVE) {
-+			if (input != -1)
-+				return -EMLINK;
-+
-+			input = r->sink_pad;
-+		}
-+		r++;
-+	}
-+
-+	if (input != -1)
-+		afe->input = input;
-+
-+	return 0;
-+}
-+
- static const struct v4l2_subdev_pad_ops adv748x_afe_pad_ops = {
- 	.enum_mbus_code = adv748x_afe_enum_mbus_code,
- 	.set_fmt = adv748x_afe_set_format,
- 	.get_fmt = adv748x_afe_get_format,
-+	.get_routing = adv748x_afe_get_routing,
-+	.set_routing = adv748x_afe_set_routing,
- };
- 
- /* -----------------------------------------------------------------------------
+thanks for your review.
+
+best regards,
+Mason
+
+[1] https://patchwork.kernel.org/patch/10670753/
+[2] https://patchwork.kernel.org/patch/10670747/
+
+
+Mason Yang (2):
+  spi: Add Renesas R-Car RPC SPI controller driver
+  dt-binding: spi: Document Renesas R-Car RPC controller bindings
+
+ .../devicetree/bindings/spi/spi-renesas-rpc.txt    |  33 +
+ drivers/spi/Kconfig                                |   6 +
+ drivers/spi/Makefile                               |   1 +
+ drivers/spi/spi-renesas-rpc.c                      | 750 +++++++++++++++++++++
+ 4 files changed, 790 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+ create mode 100644 drivers/spi/spi-renesas-rpc.c
+
 -- 
-2.19.1
+1.9.1
