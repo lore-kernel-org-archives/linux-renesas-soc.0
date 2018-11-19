@@ -1,64 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:46200 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726050AbeKZBb0 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:48779 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727619AbeKSU5j (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 25 Nov 2018 20:31:26 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, kieran.bingham@ideasonboard.com
-Subject: [PATCH 0/5] R-Car DU: Fix DPAD output routing on D3 and E3
-Date: Sun, 25 Nov 2018 16:40:26 +0200
-Message-Id: <20181125144031.4407-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 19 Nov 2018 15:57:39 -0500
+Date: Mon, 19 Nov 2018 11:34:22 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: devicetree@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77990: ebisu: Add and enable
+ PCIe device node
+Message-ID: <20181119103422.573mtgkfka5onfhx@verge.net.au>
+References: <20181113192226.17762-1-marek.vasut+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181113192226.17762-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+On Tue, Nov 13, 2018 at 08:22:26PM +0100, Marek Vasut wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> 
+> This patch adds PCI express channel 0 device node to the R8A77990 SoC
+> and enables PCIEC0 PCI express controller on the Ebisu board.
+> 
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
+> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> To: devicetree@vger.kernel.org
+> ---
+>  .../arm64/boot/dts/renesas/r8a77990-ebisu.dts |  8 +++++
+>  arch/arm64/boot/dts/renesas/r8a77990.dtsi     | 34 +++++++++++++++++++
+>  2 files changed, 42 insertions(+)
 
-DU channels are routed to DPAD outputs in an SoC-dependent way. The routing
-can be fixed (e.g. DU3 to DPAD0 on H3) or configurable (e.g. DU0 or DU1 to
-DPAD0 on D3/E3). The hardware offers no option to disconnect DPAD outputs,
-which are thus always driven by a DU channel.
+Thanks Marek,
 
-On SoCs that have less DU channels than DU outputs, such as D3 and E3, the
-DPAD output is always driven when all channels are in used by other outputs
-(such as the internal LVDS and HDMI encoders). This creates an unwanted clone
-on the DPAD output.
-
-However, the parallel output of the DU channels routed to DPAD can be set to
-fixed levels in the DU channels themselves through the DOFLR group register.
-This patch series uses this feature to fix the problem and get rid of unwanted
-clones.
-
-Patch 1/5 is a small cleanup not strictly required by the series, but included
-as it was developed at the same time. Patch 2/5 moves output routing
-information from the CRTC structure to the CRTC state, in order to make the
-information available early enough for output routing configuration. Patch 3/5
-then fixes the DPAD output routing issue using the DOFLR register.
-
-Patches 4/5 and 5/5 add backlight and panel support to the Draak board DT, in
-order to test the series. Only patch 4/5 should be upstreamed at this time as
-5/5 should be rewritten using DT overlays. It can be merged separately from
-the rest of the series as code and DT are not dependent.
-
-Laurent Pinchart (5):
-  drm: rcar-du: Replace EXT_CTRL_REGS feature flag with generation check
-  drm: rcar-du: Move CRTC outputs bitmask to private CRTC state
-  drm: rcar-du: Disable unused DPAD outputs
-  arm64: dts: renesas: r8a77995: draak: Add backlight
-  [HACK] arm64: dts: r8a77995: draak: Add panel to DT
-
- .../arm64/boot/dts/renesas/r8a77995-draak.dts | 31 ++++++++++++
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c        | 42 ++++++++--------
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h        |  7 +--
- drivers/gpu/drm/rcar-du/rcar_du_drv.c         | 14 +-----
- drivers/gpu/drm/rcar-du/rcar_du_drv.h         |  8 +--
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c     | 10 ----
- drivers/gpu/drm/rcar-du/rcar_du_group.c       | 50 +++++++++++++++++--
- drivers/gpu/drm/rcar-du/rcar_du_kms.c         | 22 ++++++++
- 8 files changed, 126 insertions(+), 58 deletions(-)
-
--- 
-Regards,
-
-Laurent Pinchart
+applied for v4.21.
