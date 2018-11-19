@@ -1,11 +1,15 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:36123 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726088AbeKSTGK (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 19 Nov 2018 14:06:10 -0500
 MIME-Version: 1.0
-References: <20181118173201.4645-1-marek.vasut+renesas@gmail.com>
- <20181118231807.GE2553@kunai> <CAMuHMdXOonhf3kJM7kqA2Tx_Zsuq7D-jE71xgwJCJN_Nt2YEjg@mail.gmail.com>
-In-Reply-To: <CAMuHMdXOonhf3kJM7kqA2Tx_Zsuq7D-jE71xgwJCJN_Nt2YEjg@mail.gmail.com>
+References: <20181118173201.4645-1-marek.vasut+renesas@gmail.com> <20181118231807.GE2553@kunai>
+In-Reply-To: <20181118231807.GE2553@kunai>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 19 Nov 2018 10:40:31 +0100
-Message-ID: <CAMuHMdX5SW8thshJ8K_K1CkdhNO6h23hu-84yN+ky2oZGA8r6g@mail.gmail.com>
+Date: Mon, 19 Nov 2018 09:43:00 +0100
+Message-ID: <CAMuHMdXOonhf3kJM7kqA2Tx_Zsuq7D-jE71xgwJCJN_Nt2YEjg@mail.gmail.com>
 Subject: Re: [PATCH 1/2] dt-bindings: can: rcar_canfd: document r8a77965 support
 To: Wolfram Sang <wsa@the-dreams.de>
 Cc: Marek Vasut <marek.vasut@gmail.com>,
@@ -20,28 +24,20 @@ Cc: Marek Vasut <marek.vasut@gmail.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Wolfram,
 
-On Mon, Nov 19, 2018 at 9:43 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Mon, Nov 19, 2018 at 12:18 AM Wolfram Sang <wsa@the-dreams.de> wrote:
-> > > +  - "renesas,r8a77965-canfd" for R8A77965 (R-Car M3-N) compatible controller.
-> >
-> > Eeeks, the 'canfd' is a suffix here not a prefix :( Not your issue,
-> > of course. But Simon, shall we fix that for all CANFD?
+On Mon, Nov 19, 2018 at 12:18 AM Wolfram Sang <wsa@the-dreams.de> wrote:
+> > +  - "renesas,r8a77965-canfd" for R8A77965 (R-Car M3-N) compatible controller.
 >
-> Unfortunately we cannot, due to backwards compatibility.
-> Hence we keep following existing compatible value conventions for existing
-> bindings, but follow the recommended way for new devices/bindings.
+> Eeeks, the 'canfd' is a suffix here not a prefix :( Not your issue,
+> of course. But Simon, shall we fix that for all CANFD?
 
-So that's what I wrote _before_ my mornin' coffee...
-
-"renesas,r8a77965-canfd" _is_ using the recommended order.
-"renesas,can-r8a77965" is not.
-
-But my main argument is still valid, of course.
+Unfortunately we cannot, due to backwards compatibility.
+Hence we keep following existing compatible value conventions for existing
+bindings, but follow the recommended way for new devices/bindings.
 
 Gr{oetje,eeting}s,
 
