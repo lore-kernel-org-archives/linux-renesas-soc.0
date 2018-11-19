@@ -1,62 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:50358 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731864AbeKVI4P (ORCPT
+Received: from mail-eopbgr1400119.outbound.protection.outlook.com ([40.107.140.119]:17680
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726487AbeKTAFJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Nov 2018 03:56:15 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, kieran.bingham@ideasonboard.com
-Subject: [PATCH v2] drm: rcar-du: Reject modes that fail CRTC timing requirements
-Date: Thu, 22 Nov 2018 00:20:12 +0200
-Message-Id: <20181121222012.11801-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 19 Nov 2018 19:05:09 -0500
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+CC: Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v6 1/6] clk: Add of_clk_get_by_name_optional() function
+Date: Mon, 19 Nov 2018 13:41:24 +0000
+Message-ID: <TY1PR01MB1769E377D88AF59EBD2A9C3BF5D80@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <20181116145937.27660-1-phil.edworthy@renesas.com>
+ <20181116145937.27660-2-phil.edworthy@renesas.com>
+ <20181116160128.pkuya6rwqm4schdn@pengutronix.de>
+ <20181116161122.hhvslbzdujxpk3up@pengutronix.de>
+ <TY1PR01MB17697C2C8BCE98009EBDECF7F5D80@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <20181119104603.qzuvpoha622l4xvy@pengutronix.de>
+ <TY1PR01MB17695E8ED56BBC03AAA7FD8FF5D80@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <20181119125811.6bujcow5wf4hvfz4@pengutronix.de>
+In-Reply-To: <20181119125811.6bujcow5wf4hvfz4@pengutronix.de>
+Content-Language: en-US
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The hardware requires the HDSR and VDSR registers to be set to 1 or
-higher. This translates to a minimum combined horizontal sync and back
-porch of 20 pixels and a minimum vertical back porch of 3 lines. Reject
-modes that fail those requirements.
+Hi Uwe,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
-Changes since v1:
+On 19 November 2018 12:58 Uwe Kleine-K=F6nig wrote:
+> On Mon, Nov 19, 2018 at 12:53:46PM +0000, Phil Edworthy wrote:
+> > On 19 November 2018 10:46 Uwe Kleine-K=F6nig wrote:
+> > > On Mon, Nov 19, 2018 at 10:41:42AM +0000, Phil Edworthy wrote:
+> > > > btw, do we need to add of_clk_get_by_name_optional()? I only added
+> it
+> > > > as a counterpart to of_clk_get_by_name(), but it may not be needed.
+> > >
+> > > I don't need it. Given that it is easy to add when someone has a need=
+, I'd
+> say,
+> > > skip it for now.
+> >
+> > I'm wondering if we actually need clk_get_optional(). For me at least, =
+I just
+> > want devm_clk_get_optional(). That would get rid of the arch patches.
+>=20
+> Given that clk_get_optional will be that simple, it can live in
+> linux/clk.h for all implementors of the clk API, then you don't have to
+> care about different archs. (Unless I'm missing something.)
+You are absolutely right, I'm such a clutz sometimes!
 
-- Don't use mode->crtc_v* as they are only set after calling .mode_valid()
-- Tested the patch on real hardware (which would have prevented the
-  buggy v1...)
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Thanks
+Phil
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 79021d7aa3ce..90dacab67be5 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -735,10 +735,22 @@ enum drm_mode_status rcar_du_crtc_mode_valid(struct drm_crtc *crtc,
- 	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
- 	struct rcar_du_device *rcdu = rcrtc->group->dev;
- 	bool interlaced = mode->flags & DRM_MODE_FLAG_INTERLACE;
-+	unsigned int vbp;
- 
- 	if (interlaced && !rcar_du_has(rcdu, RCAR_DU_FEATURE_INTERLACED))
- 		return MODE_NO_INTERLACE;
- 
-+	/*
-+	 * The hardware requires a minimum combined horizontal sync and back
-+	 * porch of 20 pixels and a minimum vertical back porch of 3 lines.
-+	 */
-+	if (mode->htotal - mode->hsync_start < 20)
-+		return MODE_HBLANK_NARROW;
-+
-+	vbp = (mode->vtotal - mode->vsync_end) / (interlaced ? 2 : 1);
-+	if (vbp < 3)
-+		return MODE_VBLANK_NARROW;
-+
- 	return MODE_OK;
- }
- 
--- 
-Regards,
-
-Laurent Pinchart
+> I don't think it's a good idea to drop clk_get_optional even if you'd
+> have to provide arch-specific stuff.
+>=20
+> Best regards
+> Uwe
+>=20
+> --
+> Pengutronix e.K.                           | Uwe Kleine-K=F6nig          =
+  |
+> Industrial Linux Solutions                 | http://www.pengutronix.de/  =
+|
