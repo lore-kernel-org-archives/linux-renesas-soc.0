@@ -1,89 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726411AbeKZXtj (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:5545 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728679AbeKSVv5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Nov 2018 18:49:39 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Mon, 19 Nov 2018 16:51:57 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 09/40] arm64: dts: renesas: revise hsusb's reg size
-Date: Mon, 26 Nov 2018 13:54:35 +0100
-Message-Id: <e67898dc2d2b4bf484dd8807d62c88480f6290fb.1543229515.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
-References: <cover.1543229515.git.horms+renesas@verge.net.au>
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH  4/4] ARM: dts: iwg23s-sbc: Enable RTC
+Date: Mon, 19 Nov 2018 11:15:08 +0000
+Message-Id: <1542626108-61344-5-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1542626108-61344-1-git-send-email-biju.das@bp.renesas.com>
+References: <1542626108-61344-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Enable NXP pcf85263 real time clock for the iWave SBC based on RZ/G1C.
 
-This patch revises the reg size of each hsusb device node for
-r8a7795, r8a7796 and r8a77965.
-
-Reported-by: Biju Das <biju.das@bp.renesas.com>
-Fixes: d2422e108812 ("arm64: dts: r8a7795: Add HSUSB device node")
-Fixes: 4725f2b88057 ("arm64: dts: renesas: r8a7795: add hsusb ch3 device node")
-Fixes: b9535853777f ("arm64: dts: r8a7796: Add HSUSB device node")
-Fixes: 9e1b00a2ef43 ("arm64: dts: renesas: r8a77965: Add "reg" properties")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi  | 4 ++--
- arch/arm64/boot/dts/renesas/r8a7796.dtsi  | 2 +-
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 95a8ed40e7d3..27faaccd0cae 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -695,7 +695,7 @@
- 		hsusb: usb@e6590000 {
- 			compatible = "renesas,usbhs-r8a7795",
- 				     "renesas,rcar-gen3-usbhs";
--			reg = <0 0xe6590000 0 0x100>;
-+			reg = <0 0xe6590000 0 0x200>;
- 			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 704>, <&cpg CPG_MOD 703>;
- 			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
-@@ -712,7 +712,7 @@
- 		hsusb3: usb@e659c000 {
- 			compatible = "renesas,usbhs-r8a7795",
- 				     "renesas,rcar-gen3-usbhs";
--			reg = <0 0xe659c000 0 0x100>;
-+			reg = <0 0xe659c000 0 0x200>;
- 			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 705>, <&cpg CPG_MOD 700>;
- 			dmas = <&usb_dmac2 0>, <&usb_dmac2 1>,
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 1ec6aaa520c1..3baee26ae372 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -674,7 +674,7 @@
- 		hsusb: usb@e6590000 {
- 			compatible = "renesas,usbhs-r8a7796",
- 				     "renesas,rcar-gen3-usbhs";
--			reg = <0 0xe6590000 0 0x100>;
-+			reg = <0 0xe6590000 0 0x200>;
- 			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 704>, <&cpg CPG_MOD 703>;
- 			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index b984b85dc066..4ac2abeda48c 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -590,7 +590,7 @@
- 		hsusb: usb@e6590000 {
- 			compatible = "renesas,usbhs-r8a77965",
- 				     "renesas,rcar-gen3-usbhs";
--			reg = <0 0xe6590000 0 0x100>;
-+			reg = <0 0xe6590000 0 0x200>;
- 			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 704>, <&cpg CPG_MOD 703>;
- 			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
+diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+index 40b7f98..77d1824 100644
+--- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
++++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+@@ -84,12 +84,30 @@
+ 	clock-frequency = <20000000>;
+ };
+ 
++&i2c3 {
++	pinctrl-0 = <&i2c3_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++	clock-frequency = <400000>;
++
++	rtc@51 {
++		compatible = "nxp,pcf85263";
++		reg = <0x51>;
++	};
++};
++
+ &pfc {
+ 	avb_pins: avb {
+ 		groups = "avb_mdio", "avb_gmii_tx_rx";
+ 		function = "avb";
+ 	};
+ 
++	i2c3_pins: i2c3 {
++		groups = "i2c3_c";
++		function = "i2c3";
++	};
++
+ 	mmc_pins_uhs: mmc_uhs {
+ 		groups = "mmc_data8", "mmc_ctrl";
+ 		function = "mmc";
 -- 
-2.11.0
+2.7.4
