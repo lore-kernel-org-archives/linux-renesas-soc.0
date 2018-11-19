@@ -1,86 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ty1jpn01on0134.outbound.protection.outlook.com ([104.47.93.134]:55816
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387537AbeKFWkw (ORCPT
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:39202 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727059AbeKTAGp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Nov 2018 17:40:52 -0500
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh@kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 2/2] irqchip: Add support for Renesas RZ/N1 GPIO
- interrupt multiplexer
-Date: Tue, 6 Nov 2018 13:15:35 +0000
-Message-ID: <TY1PR01MB17696E2B10CA447CD3508ADAF5CB0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <20181030104438.27827-1-phil.edworthy@renesas.com>
- <20181030104438.27827-3-phil.edworthy@renesas.com>
- <86d0rq35o1.wl-marc.zyngier@arm.com>
- <TY1PR01MB176959B0CF663D0ECB298924F5CD0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
- <b95c7fc3-7fda-48b7-6933-b7b183b6fa67@arm.com>
- <TY1PR01MB1769D6F84F7BCD91C1018922F5CD0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY1PR01MB1769D6F84F7BCD91C1018922F5CD0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 19 Nov 2018 19:06:45 -0500
 MIME-Version: 1.0
+References: <20181107182733.62155-1-chris.brandt@renesas.com>
+ <20181107182733.62155-3-chris.brandt@renesas.com> <CAMuHMdX3QJq+QgU-wwFLawyLwqqoUDLS=uwNqRhJqVtP0_yLNQ@mail.gmail.com>
+ <OSAPR01MB15538DC8B31310DF044242DF8AC20@OSAPR01MB1553.jpnprd01.prod.outlook.com>
+ <CAMuHMdV5QXj-O6NNOF0FjVEjukhQwa7BbvB1AW3jZNT9TenWaQ@mail.gmail.com> <CACRpkdasMsVZS_H=xxDC4JKkOyx1i4JWZyu7UF95EVkBNimGKQ@mail.gmail.com>
+In-Reply-To: <CACRpkdasMsVZS_H=xxDC4JKkOyx1i4JWZyu7UF95EVkBNimGKQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 19 Nov 2018 14:42:50 +0100
+Message-ID: <CAMuHMdVKbShmqZ3O1ctckr_SQBqf0iBRJVyFG=HTtu6cFE9_fw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] dt-bindings: pinctrl: Add RZ/A2 pinctrl and GPIO
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Chris Brandt <Chris.Brandt@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgTWFyYywNCg0KT24gMzEgT2N0b2JlciAyMDE4IDE1OjM5LCBQaGlsIEVkd29ydGh5IHdyb3Rl
-DQo+IE9uIDMxIE9jdG9iZXIgMjAxOCAxNTozMSwgTWFyYyBaeW5naWVyIHdyb3RlOg0KPiA+IE9u
-IDMxLzEwLzE4IDE1OjA5LCBQaGlsIEVkd29ydGh5IHdyb3RlOg0KPiA+ID4gT24gMzEgT2N0b2Jl
-ciAyMDE4IDA4OjAyLCBNYXJjIFp5bmdpZXIgd290ZToNCj4gPiA+PiBPbiBUdWUsIDMwIE9jdCAy
-MDE4IDEwOjQ0OjM4ICswMDAwLCBQaGlsIEVkd29ydGh5IHdyb3RlOg0KPiA+ID4+Pg0KPiA+ID4+
-PiBPbiBSWi9OMSBkZXZpY2VzLCB0aGVyZSBhcmUgMyBTeW5vcHN5cyBEZXNpZ25XYXJlIEdQSU8g
-YmxvY2tzIGVhY2gNCj4gPiA+Pj4gY29uZmlndXJlZCB0byBoYXZlIDMyIGludGVycnVwdCBvdXRw
-dXRzLCBzbyB3ZSBoYXZlIGEgdG90YWwgb2YgOTYNCj4gPiA+Pj4gR1BJTyBpbnRlcnJ1cHRzLiBB
-bGwgb2YgdGhlc2UgYXJlIHBhc3NlZCB0byB0aGUgR1BJTyBJUlEgTXV4ZXIsDQo+ID4gPj4+IHdo
-aWNoIHNlbGVjdHMNCj4gPiA+Pj4gOCBvZiB0aGUgR1BJTyBpbnRlcnJ1cHRzIHRvIHBhc3Mgb250
-byB0aGUgR0lDLiBUaGUgaW50ZXJydXB0DQo+ID4gPj4+IHNpZ25hbHMgYXJlbid0IGxhdGNoZWQs
-IHNvIHRoZXJlIGlzIG5vdGhpbmcgdG8gZG8gaW4gdGhpcyBkcml2ZXINCj4gPiA+Pj4gd2hlbiBh
-biBpbnRlcnJ1cHQgaXMgcmVjZWl2ZWQsIG90aGVyIHRoYW4gdGVsbCB0aGUgY29ycmVzcG9uZGlu
-ZyBHUElPDQo+IGJsb2NrLg0KPHNuaXA+DQoNCj4gPiBUaGVyZSBhcmUgdHdvIGNhc2VzOg0KPiA+
-IDEpIHRoZXJlIGlzIDE6MSBtYXBwaW5nIGJldHdlZW4gYSB1c2VkIGlucHV0IGFuZCBhbiBvdXRw
-dXQsIGxlYXZpbmcNCj4gPiBzb21lIGlucHV0IHVudXNlZA0KPiA+IDIpIHRoZXJlIGlzIGFuIG46
-MSBtYXBwaW5nIGJldHdlZW4gaW5wdXQgYW5kIG91dHB1dCwgYW5kIGFsbCB0aGUgaW5wdXQNCj4g
-PiBjYW4gYmUgdXNlZCBhdCBhbnkgZ2l2ZW4gdGltZQ0KPiA+DQo+ID4gSWYgd2hhdCB5b3UgaGF2
-ZSBpcyAoMSksIHlvdSBuZWVkIHRvIGltcGxlbWVudCBhbiBoaWVyYXJjaHkuDQo+ID4gSWYgd2hh
-dCB5b3UgaGF2ZSBpcyAoMiksIHlvdSBuZWVkIHRvIGltcGxlbWVudCBhIGNoYWluZWQgY29udHJv
-bGxlci4NCj4gPg0KPiA+ICgxKSByZXF1aXJlcyB5b3UgdG8gcmV2aXNpdCB0aGlzIGRyaXZlciwg
-bWFraW5nIGl0IGEgbG90IG1vcmUgbGlrZQ0KPiA+IHRpJ3MgaXJxLWNyb3NzYmFyDQo+ID4gKDIp
-IHJlcXVpcmVzIHlvdSB0byBhY3R1YWxseSBkbyBzb21lIGRlY29kaW5nIGluIHRoZSBjaGFpbmVk
-IGhhbmRsZXINCj4gPg0KPiA+IEkgYmVsaWV2ZSB5b3UncmUgaW4gY29uZmlndXJhdGlvbiAoMSku
-IEFtIEkgcmlnaHQ/DQo+IFJpZ2h0LCBpdCdzIGEgMToxIG1hcHBpbmcuIFRoZSBpbmZvcm1hdGlv
-biBhYm91dCB3aGljaCBpbnB1dCB0byBiZSB1c2VkIG5lZWRzDQo+IHRvIGJlIHNwZWNpZmllZCBp
-biBkdC4NCj4gSSBkaWRu4oCZdCB0aGluayBJIGNvdWxkIGltcGxlbWVudCBhIGhpZXJhcmNoeSB0
-aGF0IGRpZG7igJl0IG1hc2sgdGhlIGludGVycnVwdHMsDQo+IHNvIEkgbmVlZCB0byBnbyBiYWNr
-IG92ZXIgdGhhdCBhbmQgbG9vayBhZ2Fpbi4uLg0KDQpPaywgSSBoYXZlIGNoYW5nZWQgdGhlIGRy
-aXZlciB0byBpbXBsZW1lbnQgYSBoaWVyYXJjaHksIGkuZS4NCmNhbGwgaXJxX2RvbWFpbl9jcmVh
-dGVfaGllcmFyY2h5KCkgaW4gcHJvYmUsDQpjYWxsIGlycV9kb21haW5fc2V0X2h3aXJxX2FuZF9j
-aGlwKCkgYW5kIGlycV9kb21haW5fYWxsb2NfaXJxc19wYXJlbnQoKQ0KaW4gdGhlIGlycV9kb21h
-aW5fb3BzLmFsbG9jIGZ1bmN0aW9uLg0KDQpJJ3ZlIGdvdCBhIGNvdXBsZSBvZiBpc3N1ZXMgdGhh
-dCBJIGhvcGUgeW91IGNhbiBwcm92aWRlIHNvbWUgaW5wdXQgb24uDQoNCkZpcnN0IGlzIHdoYXQg
-dG8gZG8gd2l0aCBpcnFzIHRoYXQgYXJlIGlucHV0IHRvIHRoaXMgbXV4IGJ1dCBub3Qgc2VsZWN0
-ZWQuDQpJZiBJIGRvbid0IGNhbGwgaXJxX2RvbWFpbl9zZXRfaHdpcnFfYW5kX2NoaXAoKSBhbmQg
-aXJxX2RvbWFpbl9hbGxvY19pcnFzX3BhcmVudCgpLA0KaXQgY2F1c2VzIHRoZSBkcml2ZXIgZm9y
-IHRoZSBoYXJkd2FyZSB0aGF0IGdlbmVyYXRlcyB0aGVzZSBpbnRlcnJ1cHRzIChpbg0KdGhpcyBj
-YXNlLCBTeW5vcHN5cyBkd2FwYl9ncGlvKSB0byB0aHJvdyBhbiBleGNlcHRpb24gaW4NCmlycV9z
-ZXRfY2hhaW5lZF9oYW5kbGVyX2FuZF9kYXRhKCkuDQpBcyBhIGhhY2ssIEkgaGF2ZSBzaW1wbHkg
-dXNlZCBhbiB1bnVzZWQgb3V0cHV0IGlycS4NCg0KU2Vjb25kIGlzIHNwZWNpZnlpbmcgdGhlIG91
-dHB1dCBpcnFzLiBDdXJyZW50bHksIEkgc3BlY2lmeSB0aGVtIGxpa2UgdGhpczoNCglpbnRlcnJ1
-cHRzID0NCgkJPEdJQ19TUEkgMTAzIElSUV9UWVBFX0xFVkVMX0hJR0g+LA0KCQk8R0lDX1NQSSAx
-MDQgSVJRX1RZUEVfTEVWRUxfSElHSD4sDQoJCS4uLg0KCQk8R0lDX1NQSSAxMTAgSVJRX1RZUEVf
-TEVWRUxfSElHSD47DQpIb3dldmVyLCBJIGFtIG9ubHkgcmVhZGluZyB0aGUgcHJvcGVydHkgc28g
-SSBjYW4gcGFzcyB0aGUgZndzcGVjIHRvDQppcnFfZG9tYWluX2FsbG9jX2lycXNfcGFyZW50KCku
-IEkgYW0gbm90IHVzaW5nIGFueXRoaW5nIHRoYXQgZW5kcyB1cA0KaW4gb2ZfaXJxX3BhcnNlX3Jh
-dygpLg0KDQpSb2IgSCBoYXMgcHJldmlvdXNseSBzYWlkIHRoYXQgSSBzaG91bGQgdXNlIGludGVy
-cnVwdC1tYXAgdG8gZGVzY3JpYmUgdGhlDQpyZWxhdGlvbnNoaXAgYmV0d2VlbiB0aGUgaW5wdXQg
-YW5kIG91dHB1dCBpcnFzLiBVbmZvcnR1bmF0ZWx5LCBpcnENCmhpZXJhcmNoeSBzZWVtcyB0byBi
-ZSBzb21ld2hhdCBhdCBvZGRzIHdpdGggdXNpbmcgaW50ZXJydXB0LW1hcC4NCk9yIGF0IGxlYXN0
-LCBJIGNhbuKAmXQgc2VlIGhvdyB0aGUgdHdvIGNhbiBiZSBjb21iaW5lZC4NCg0KWW91ciBmZWVk
-YmFjayBvbiB0aGlzIGlzIGdyZWF0bHkgYXBwcmVjaWF0ZWQhDQpUaGFua3MNClBoaWwNCg==
+Hi Linus,
+
+On Mon, Nov 19, 2018 at 2:22 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Nov 13, 2018 at 6:28 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > Anyway, we're getting closer to bikeshedding, so with the real issues fixed:
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> I assume you are queueing the RZ/A2 stuff as well Geert?
+
+Yes, that's the plan...
+
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> FWIW, I trust Geert to have the final say on Renesas code.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
