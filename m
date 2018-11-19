@@ -1,128 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:4432 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728624AbeK2DVq (ORCPT
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:46466 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728402AbeKTF6N (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Nov 2018 22:21:46 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 2/3] mmc: renesas_sdhi: align compatibility properties for H3 and M3-W
-Date: Wed, 28 Nov 2018 17:18:28 +0100
-Message-Id: <20181128161829.27266-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20181128161829.27266-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20181128161829.27266-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 20 Nov 2018 00:58:13 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20181118173056.4591-1-marek.vasut+renesas@gmail.com>
+ <20181118231428.GD2553@kunai> <f45e099c-fd4f-0c12-dbde-6b4988f5ff9a@gmail.com>
+ <CAMuHMdXHK-asgL-9-PTjjYG1gA21qcxaTGy7H13BXVhdrw7u+Q@mail.gmail.com>
+In-Reply-To: <CAMuHMdXHK-asgL-9-PTjjYG1gA21qcxaTGy7H13BXVhdrw7u+Q@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 19 Nov 2018 20:32:56 +0100
+Message-ID: <CAMuHMdWMFFnXY_r_+3oZsBJ+Mws8uXoSX7qXkqqbguKpa+CUng@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: can: rcar_can: document r8a77990 support
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Rob Herring <robh@kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-It was though all ES revisions of H3 and M3-W SoCs required the
-TMIO_MMC_HAVE_4TAP_HS400 flag. Recent datasheet updates tells us this is
-not true, only early ES revisions of the SoC do.
+On Mon, Nov 19, 2018 at 10:38 AM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Wolfram: Eugenu's commit 4f145f14f6b98b5a ("dt-bindings: can:
+> rcar_can: document r8a77965 support") is in next as of next-20181115 .
+> However, it's not part of linux-can-next. Seems to be destined for v4.20 as
+> a fix.
 
-Since quirk matching based on ES revisions is now used to handle the
-flag it's possible to align all Gen3 compatibility properties. This will
-allow later ES revisions of H3 and M3-W to use the correct 8-tap HS400
-mode.
+... which has just landed in Linus' tree.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 20 ++-----------------
- drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 20 +++----------------
- 2 files changed, 5 insertions(+), 35 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 57e829223c40e0ee..332c5c60edb3d9c4 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -99,22 +99,6 @@ static const struct renesas_sdhi_of_data of_rza2_compatible = {
- 	.max_segs	= 1,
- };
- 
--static const struct renesas_sdhi_of_data of_rcar_r8a7795_compatible = {
--	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
--			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2 |
--			  TMIO_MMC_HAVE_4TAP_HS400,
--	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
--			  MMC_CAP_CMD23,
--	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
--	.bus_shift	= 2,
--	.scc_offset	= 0x1000,
--	.taps		= rcar_gen3_scc_taps,
--	.taps_num	= ARRAY_SIZE(rcar_gen3_scc_taps),
--	/* DMAC can handle 0xffffffff blk count but only 1 segment */
--	.max_blk_count	= 0xffffffff,
--	.max_segs	= 1,
--};
--
- static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
- 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
- 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
-@@ -133,8 +117,8 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
- static const struct of_device_id renesas_sdhi_internal_dmac_of_match[] = {
- 	{ .compatible = "renesas,sdhi-r7s9210", .data = &of_rza2_compatible, },
- 	{ .compatible = "renesas,sdhi-mmc-r8a77470", .data = &of_rcar_gen3_compatible, },
--	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_r8a7795_compatible, },
--	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_r8a7795_compatible, },
-+	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
-+	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
- 	{ .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
- 	{},
- };
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index 1a4016f635d398c2..8471160316e073c5 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -75,19 +75,6 @@ static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
- 	},
- };
- 
--static const struct renesas_sdhi_of_data of_rcar_r8a7795_compatible = {
--	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
--			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2 |
--			  TMIO_MMC_HAVE_4TAP_HS400,
--	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
--			  MMC_CAP_CMD23,
--	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
--	.bus_shift	= 2,
--	.scc_offset	= 0x1000,
--	.taps		= rcar_gen3_scc_taps,
--	.taps_num	= ARRAY_SIZE(rcar_gen3_scc_taps),
--};
--
- static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
- 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
- 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
-@@ -114,8 +101,8 @@ static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
- 	{ .compatible = "renesas,sdhi-r8a7792", .data = &of_rcar_gen2_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7793", .data = &of_rcar_gen2_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7794", .data = &of_rcar_gen2_compatible, },
--	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_r8a7795_compatible, },
--	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_r8a7795_compatible, },
-+	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
-+	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
- 	{ .compatible = "renesas,rcar-gen1-sdhi", .data = &of_rcar_gen1_compatible, },
- 	{ .compatible = "renesas,rcar-gen2-sdhi", .data = &of_rcar_gen2_compatible, },
- 	{ .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
-@@ -493,8 +480,7 @@ static const struct soc_device_attribute gen3_soc_whitelist[] = {
- 
- static int renesas_sdhi_sys_dmac_probe(struct platform_device *pdev)
- {
--	if ((of_device_get_match_data(&pdev->dev) == &of_rcar_gen3_compatible ||
--	    of_device_get_match_data(&pdev->dev) == &of_rcar_r8a7795_compatible) &&
-+	if (of_device_get_match_data(&pdev->dev) == &of_rcar_gen3_compatible &&
- 	    !soc_device_match(gen3_soc_whitelist))
- 		return -ENODEV;
- 
+                        Geert
+
 -- 
-2.19.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
