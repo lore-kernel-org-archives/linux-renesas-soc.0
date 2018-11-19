@@ -1,13 +1,21 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-eopbgr1400129.outbound.protection.outlook.com ([40.107.140.129]:39488
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726398AbeKTU7s (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:53268 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730748AbeKTIQb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Nov 2018 15:59:48 -0500
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Rob Herring <robh@kernel.org>
-CC: Marc Zyngier <marc.zyngier@arm.com>,
+        Tue, 20 Nov 2018 03:16:31 -0500
+MIME-Version: 1.0
+References: <20181113130910.22130-1-phil.edworthy@renesas.com>
+ <20181113130910.22130-2-phil.edworthy@renesas.com> <20181117143253.GA27381@bogus>
+ <TY1PR01MB176917D755CB102AB5FD6BEAF5D80@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY1PR01MB176917D755CB102AB5FD6BEAF5D80@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 19 Nov 2018 15:50:39 -0600
+Message-ID: <CAL_JsqJca7mXS_9msTbCovnXpFxC0VY81COk98x-c1Ug5a=jQQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings/interrupt-controller: rzn1: Add RZ/N1
+ gpio irq mux binding
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -15,120 +23,147 @@ CC: Marc Zyngier <marc.zyngier@arm.com>,
         "open list:MEDIA DRIVERS FOR RENESAS - FCP"
         <linux-renesas-soc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [PATCH v3 1/2] dt-bindings/interrupt-controller: rzn1: Add RZ/N1
- gpio irq mux binding
-Date: Tue, 20 Nov 2018 10:30:58 +0000
-Message-ID: <TY1PR01MB1769AD7F2D11DB06E1B0CC0DF5D90@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <20181113130910.22130-1-phil.edworthy@renesas.com>
- <20181113130910.22130-2-phil.edworthy@renesas.com>
- <20181117143253.GA27381@bogus>
- <TY1PR01MB176917D755CB102AB5FD6BEAF5D80@TY1PR01MB1769.jpnprd01.prod.outlook.com>
- <CAL_JsqJca7mXS_9msTbCovnXpFxC0VY81COk98x-c1Ug5a=jQQ@mail.gmail.com>
-In-Reply-To: <CAL_JsqJca7mXS_9msTbCovnXpFxC0VY81COk98x-c1Ug5a=jQQ@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgUm9iLA0KDQpPbiAxOSBOb3ZlbWJlciAyMDE4IDIxOjUxLCBSb2IgSGVycmluZyB3cm90ZToN
-Cj4gT24gTW9uLCBOb3YgMTksIDIwMTggYXQgMzozOSBBTSBQaGlsIEVkd29ydGh5DQo+IDxwaGls
-LmVkd29ydGh5QHJlbmVzYXMuY29tPiB3cm90ZToNCj4gPg0KPiA+IEhpIFJvYiwNCj4gPg0KPiA+
-IE9uIDE3IE5vdmVtYmVyIDIwMTggMTQ6MzMgUm9iIEhlcnJpbmcgd3JvdGU6DQo+ID4gPiBPbiBU
-dWUsIE5vdiAxMywgMjAxOCBhdCAwMTowOTowOVBNICswMDAwLCBQaGlsIEVkd29ydGh5IHdyb3Rl
-Og0KPiA+ID4gPiBBZGQgZGV2aWNlIGJpbmRpbmcgZG9jdW1lbnRhdGlvbiBmb3IgdGhlIFJlbmVz
-YXMgUlovTjEgR1BJTw0KPiA+ID4gPiBpbnRlcnJ1cHQgbXVsdGlwbGV4ZXIuDQo+ID4gPiA+DQo+
-ID4gPiA+IFNpZ25lZC1vZmYtYnk6IFBoaWwgRWR3b3J0aHkgPHBoaWwuZWR3b3J0aHlAcmVuZXNh
-cy5jb20+DQo+ID4gPiA+IC0tLQ0KPiA+ID4gPiB2MzoNCj4gPiA+ID4gIC0gVXNlICdpbnRlcnJ1
-cHQtbWFwJyBEVCBwcm9wZXJ0eSBjb3JyZWN0bHkuDQo+ID4gPiA+IHYyOg0KPiA+ID4gPiAgLSBV
-c2UgaW50ZXJydXB0LW1hcCB0byBhbGxvdyB0aGUgR1BJTyBjb250cm9sbGVyIGluZm8gdG8gYmUg
-c3BlY2lmaWVkDQo+ID4gPiA+ICAgIGFzIHBhcnQgb2YgdGhlIGlycS4NCj4gPiA+ID4gIC0gRG9u
-J3Qgc2hvdyBzdGF0dXMgaW4gYmluZGluZyBleGFtcGxlcy4NCj4gPiA+ID4gIC0gRG9uJ3Qgc2hv
-dyB0aGUgc29jL2JvYXJkIHNwbGl0IGluIGJpbmRpbmcgZG9jLg0KPiA+ID4gPiAtLS0NCj4gPiA+
-ID4gIC4uLi9pbnRlcnJ1cHQtY29udHJvbGxlci9yZW5lc2FzLHJ6bjEtbXV4LnR4dCB8IDczDQo+
-ID4gPiA+ICsrKysrKysrKysrKysrKysrKysNCj4gPiA+ID4gIDEgZmlsZSBjaGFuZ2VkLCA3MyBp
-bnNlcnRpb25zKCspDQo+ID4gPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQNCj4gPiA+ID4gRG9jdW1l
-bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2ludGVycnVwdC1jb250cm9sbGVyL3JlbmVzYXMs
-cnpuDQo+ID4gPiA+IDEtbXUNCj4gPiA+ID4geC50eHQNCj4gPiA+DQo+ID4gPiBBIGZldyBuaXRz
-LCBvdGhlcndpc2U6DQo+ID4gPg0KPiA+ID4gUmV2aWV3ZWQtYnk6IFJvYiBIZXJyaW5nIDxyb2Jo
-QGtlcm5lbC5vcmc+DQo+ID4gVGhhbmtzIGZvciB0aGUgcmV2aWV3IQ0KPiA+DQo+ID4gPiA+DQo+
-ID4gPiA+IGRpZmYgLS1naXQNCj4gPiA+ID4gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
-ZGluZ3MvaW50ZXJydXB0LWNvbnRyb2xsZXIvcmVuZXNhcyxyDQo+ID4gPiA+IHpuMS0NCj4gPiA+
-ID4gbXV4LnR4dA0KPiA+ID4gPiBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9p
-bnRlcnJ1cHQtY29udHJvbGxlci9yZW5lc2FzLHINCj4gPiA+ID4gem4xLQ0KPiA+ID4gPiBtdXgu
-dHh0DQo+ID4gPiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+ID4gPiA+IGluZGV4IDAwMDAwMDAw
-MDAwMC4uNjUxNTg4MGUyNWNjDQo+ID4gPiA+IC0tLSAvZGV2L251bGwNCj4gPiA+ID4gKysrIGIv
-RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2ludGVycnVwdC1jb250cm9sbGVyL3Jl
-bmVzDQo+ID4gPiA+ICsrKyBhcyxyDQo+ID4gPiA+ICsrKyB6bjEtbXV4LnR4dA0KPiA+ID4gPiBA
-QCAtMCwwICsxLDczIEBADQo+ID4gPiA+ICsqIFJlbmVzYXMgUlovTjEgR1BJTyBJbnRlcnJ1cHQg
-TXVsdGlwbGV4ZXINCj4gPiA+ID4gKw0KPiA+ID4gPiArT24gUmVuZXNhcyBSWi9OMSBkZXZpY2Vz
-LCB0aGVyZSBhcmUgc2V2ZXJhbCBHUElPIENvbnRyb2xsZXJzIGVhY2gNCj4gPiA+ID4gK3dpdGgg
-YSBudW1iZXIgb2YgaW50ZXJydXB0IG91dHB1dHMuIEFsbCBvZiB0aGUgaW50ZXJydXB0cyBmcm9t
-DQo+ID4gPiA+ICt0aGUgR1BJTyBDb250cm9sbGVycyBhcmUgcGFzc2VkIHRvIHRoZSBHUElPIElu
-dGVycnVwdA0KPiA+ID4gPiArTXVsdGlwbGV4ZXIsIHdoaWNoIHNlbGVjdHMgYSBzdWItc2V0IG9m
-IHRoZSBpbnRlcnJ1cHRzIHRvIHBhc3MNCj4gPiA+ID4gK29udG8gdGhlIHN5c3RlbSBpbnRlcnJ1
-cHQNCj4gPiA+IGNvbnRyb2xsZXIuDQo+ID4gPiA+ICsNCj4gPiA+ID4gK0Egc2luZ2xlIG5vZGUg
-aW4gdGhlIGRldmljZSB0cmVlIGlzIHVzZWQgdG8gZGVzY3JpYmUgdGhlIEdQSU8gSVJRDQo+IE11
-eGVyLg0KPiA+ID4gPiArDQo+ID4gPiA+ICtSZXF1aXJlZCBwcm9wZXJ0aWVzOg0KPiA+ID4gPiAr
-LSBjb21wYXRpYmxlOiBTb0Mtc3BlY2lmaWMgY29tcGF0aWJsZSBzdHJpbmcNCj4gPiA+ID4gKyJy
-ZW5lc2FzLDxzb2Mtc3BlY2lmaWM+LQ0KPiA+ID4gZ3Bpb2lycW11eCINCj4gPiA+ID4gKyAgZm9s
-bG93ZWQgYnkgInJlbmVzYXMscnpuMS1ncGlvaXJxbXV4IiBhcyBmYWxsYmFjay4gVGhlDQo+ID4g
-PiA+ICtTb0Mtc3BlY2lmaWMgY29tcGF0aWJsZQ0KPiA+ID4gPiArICBzdHJpbmdzIG11c3QgYmUg
-b25lIG9mOg0KPiA+ID4gPiArICAgInJlbmVzYXMscjlhMDZnMDMyLWdwaW9pcnFtdXgiIGZvciBS
-Wi9OMUQNCj4gPiA+ID4gKyAgICJyZW5lc2FzLHI5YTA2ZzAzMy1ncGlvaXJxbXV4IiBmb3IgUlov
-TjFTDQo+ID4gPiA+ICstIHJlZzogQmFzZSBhZGRyZXNzIGFuZCBzaXplIG9mIEdQSU8gSVJRIE11
-eGVyIHJlZ2lzdGVycy4NCj4gPiA+ID4gKy0gaW50ZXJydXB0czogTGlzdCBvZiBvdXRwdXQgaW50
-ZXJydXB0cy4NCj4gPiA+ID4gKy0gI2ludGVycnVwdC1jZWxsczogTnVtZGVyIG9mIGNlbGxzIGlu
-IHRoZSBpbnB1dCBpbnRlcnJ1cHQNCj4gPiA+ID4gK3NwZWNpZmllciwgbXVzdCBiZQ0KPiA+ID4g
-MS4NCj4gPiA+ID4gKy0gI2FkZHJlc3MtY2VsbHM6IE11c3QgYmUgMC4NCj4gPiA+ID4gKy0gaW50
-ZXJydXB0LW1hcC1tYXNrOiBtdXN0IGJlIDEyNy4NCj4gPiA+ID4gKy0gaW50ZXJydXB0LW1hcDog
-U3RhbmRhcmQgcHJvcGVydHkgZGV0YWlsaW5nIHRoZSBtYXBzIGJldHdlZW4NCj4gPiA+ID4gK2lu
-cHV0IGlycXMgYW5kIHRoZQ0KPiA+ID4gPiArICBjb3JyZXNwb25kaW5nIG91dHB1dCBpcnEuIFRo
-aXMgY29uc2lzdCBvZiBhIGxpc3Qgb2Y6DQo+ID4gPiA+ICsgICA8aW5wdXQtaXJxLXNwZWMgcGhh
-bmRsZS10by1pbnRlcnJ1cHQtY29udHJvbGxlcg0KPiA+ID4gPiArb3V0cHV0LWlycS1zcGVjPg0K
-PiA+ID4gPiArICBUaGUgaW5wdXQtaXJxLXNwZWMgaXMgZnJvbSAwIHRvIDk1LCBjb3JyZXNwb25k
-aW5nIHRvIHRoZQ0KPiA+ID4gPiArb3V0cHV0cyBvZiB0aGUgR1BJTw0KPiA+ID4gPiArICBDb250
-cm9sbGVycy4NCj4gPiA+ID4gKw0KPiA+ID4gPiArRXhhbXBsZToNCj4gPiA+ID4gKw0KPiA+ID4g
-PiArICAgVGhlIGZvbGxvd2luZyBpcyBhbiBleGFtcGxlIGZvciB0aGUgUlovTjFEIFNvQy4NCj4g
-PiA+ID4gKw0KPiA+ID4gPiArICAgZ3Bpb2lycW11eDogZ3Bpb2lycW11eEA1MTAwMDQ4MCB7DQo+
-ID4gPg0KPiA+ID4gaW50ZXJydXB0LWNvbnRyb2xsZXJALi4uDQo+ID4gU3VyZQ0KPiA+DQo+ID4g
-PiA+ICsgICAgICAgICAgIGNvbXBhdGlibGUgPSAicmVuZXNhcyxyOWEwNmcwMzItZ3Bpb2lycW11
-eCIsDQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAicmVuZXNhcyxyem4xLWdw
-aW9pcnFtdXgiOw0KPiA+ID4gPiArICAgICAgICAgICByZWcgPSA8MHg1MTAwMDQ4MCAweDIwPjsN
-Cj4gPiA+ID4gKyAgICAgICAgICAgaW50ZXJydXB0cyA9DQo+ID4gPiA+ICsgICAgICAgICAgICAg
-ICAgICAgPEdJQ19TUEkgMTAzIElSUV9UWVBFX0xFVkVMX0hJR0g+LA0KPiA+ID4gPiArICAgICAg
-ICAgICAgICAgICAgIDxHSUNfU1BJIDEwNCBJUlFfVFlQRV9MRVZFTF9ISUdIPjsNCj4gPiA+DQo+
-ID4gPiBUaGlzIGlzIGEgYml0IHJlZHVuZGFudCBhcyB0aGUgc2FtZSBpbmZvcm1hdGlvbiBpcyBp
-biBpbnRlcnJ1cHQtbWFwLA0KPiA+ID4gYnV0IEkgZ3Vlc3MgeW91IG5lZWQgaXQgdG8gZ2V0IHRo
-ZSBpcnEgcmVzb3VyY2VzLg0KPiA+IFRoYXQncyByaWdodC4NCj4gPg0KPiA+ID4gPiArDQo+ID4g
-PiA+ICsgICAgICAgICAgICNpbnRlcnJ1cHQtY2VsbHMgPSA8MT47DQo+ID4gPiA+ICsgICAgICAg
-ICAgICNhZGRyZXNzLWNlbGxzID0gPDA+Ow0KPiA+ID4gPiArICAgICAgICAgICBpbnRlcnJ1cHQt
-bWFwLW1hc2sgPSA8MTI3PjsNCj4gPiA+DQo+ID4gPiBVc2UgaGV4IGZvciBtYXNrcy4NCj4gPiBP
-ay4NCj4gPg0KPiA+ID4gPiArICAgICAgICAgICBpbnRlcnJ1cHQtbWFwID0NCj4gPiA+ID4gKyAg
-ICAgICAgICAgICAgICAgICAvKiBncGlvMmEgMjQsIHBpbiAxNDY6IEVUSCBQb3J0IDEgSVJRICov
-DQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgPDg4ICZnaWMgR0lDX1NQSSAxMDMgSVJRX1RZ
-UEVfTEVWRUxfSElHSD4sDQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgLyogZ3BpbzJhIDI2
-LCBwaW4gMTQ4OiBUb3VjaFNDUk5fSVJRICovDQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAg
-PDkwICZnaWMgR0lDX1NQSSAxMDQgSVJRX1RZUEVfTEVWRUxfSElHSD47DQo+ID4gPiA+ICsgICB9
-Ow0KPiA+ID4gPiArDQo+ID4gPiA+ICsgICBncGlvMjogZ3Bpb0A1MDAwZDAwMCB7DQo+ID4gPiA+
-ICsgICAgICAgICAgIGNvbXBhdGlibGUgPSAic25wcyxkdy1hcGItZ3BpbyI7DQo+ID4gPiA+ICsg
-ICAgICAgICAgIHJlZyA9IDwweDUwMDBkMDAwIDB4ODA+Ow0KPiA+ID4gPiArICAgICAgICAgICAj
-YWRkcmVzcy1jZWxscyA9IDwxPjsNCj4gPiA+ID4gKyAgICAgICAgICAgI3NpemUtY2VsbHMgPSA8
-MD47DQo+ID4gPiA+ICsgICAgICAgICAgIGNsb2NrLW5hbWVzID0gImJ1cyI7DQo+ID4gPiA+ICsg
-ICAgICAgICAgIGNsb2NrcyA9IDwmc3lzY3RybCBSOUEwNkcwMzJfSENMS19HUElPMj47DQo+ID4g
-PiA+ICsNCj4gPiA+ID4gKyAgICAgICAgICAgZ3BpbzJhOiBncGlvLWNvbnRyb2xsZXJAMCB7DQo+
-ID4gPg0KPiA+ID4gZ3Bpb0AwDQo+ID4gQXJlIHlvdSBzdXJlIGFib3V0IHRoaXM/DQo+IA0KPiBZ
-ZXMsICdncGlvJyBpcyB3aGF0IHRoZSBEVCBzcGVjIHNheXMuIEl0IGlzIHRoZSBvZGRiYWxsIHRo
-b3VnaCBhbmQgSSBhbHdheXMgaGF2ZQ0KPiB0byB0aGluayBhYm91dCBpdC4NCk9LLCBnb3QgaXQu
-DQoNCj4gPiBUaGUgYmluZGluZ3MgaW4NCj4gPiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
-ZGluZ3MvZ3Bpby9zbnBzLWR3YXBiLWdwaW8udHh0DQo+ID4gc2hvdyBhbiBleGFtcGxlIHdoZXJl
-IHRoZSBzdWItbm9kZXMgZm9yIGdwaW8gYmFua3MgYXJlIGdwaW8tDQo+IGNvbnRyb2xsZXJALg0K
-PiA+IFRoaXMgaXMgYWxzbyBpbiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZ3Bp
-by9ncGlvLnR4dC4NCj4gDQo+IEluZGVlZC4gVGhvc2Ugc2hvdWxkIGJlIGZpeGVkLiBJIHdvdWxk
-IGJlIGVhc2lseSBwZXJzdWFkZWQgdG8ganVzdCBjaGFuZ2UNCj4gdGhlIHNwZWMsIGJ1dCAnZ3Bp
-b0AnIGlzIG11Y2ggbW9yZSB3aWRlbHkgdXNlZDoNCj4gDQo+ICQgZ2l0IGdyZXAgZ3Bpb0AgLS0g
-YXJjaC8gfCB3Yw0KPiAgICAxMTEwICAgIDQzNzggICA2Nzc2Ng0KPiAkIGdpdCBncmVwIGdwaW8t
-Y29udHJvbGxlckAgLS0gYXJjaC8gfCB3Yw0KPiAgICAgIDYwICAgICAyMzIgICAgNDI3MA0KPiAN
-ClllcywgaW5kZWVkLg0KDQpUaGFua3MNClBoaWwNCg==
+On Mon, Nov 19, 2018 at 3:39 AM Phil Edworthy <phil.edworthy@renesas.com> wrote:
+>
+> Hi Rob,
+>
+> On 17 November 2018 14:33 Rob Herring wrote:
+> > On Tue, Nov 13, 2018 at 01:09:09PM +0000, Phil Edworthy wrote:
+> > > Add device binding documentation for the Renesas RZ/N1 GPIO interrupt
+> > > multiplexer.
+> > >
+> > > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> > > ---
+> > > v3:
+> > >  - Use 'interrupt-map' DT property correctly.
+> > > v2:
+> > >  - Use interrupt-map to allow the GPIO controller info to be specified
+> > >    as part of the irq.
+> > >  - Don't show status in binding examples.
+> > >  - Don't show the soc/board split in binding doc.
+> > > ---
+> > >  .../interrupt-controller/renesas,rzn1-mux.txt | 73
+> > > +++++++++++++++++++
+> > >  1 file changed, 73 insertions(+)
+> > >  create mode 100644
+> > > Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mu
+> > > x.txt
+> >
+> > A few nits, otherwise:
+> >
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> Thanks for the review!
+>
+> > >
+> > > diff --git
+> > > a/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-
+> > > mux.txt
+> > > b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-
+> > > mux.txt
+> > > new file mode 100644
+> > > index 000000000000..6515880e25cc
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,r
+> > > +++ zn1-mux.txt
+> > > @@ -0,0 +1,73 @@
+> > > +* Renesas RZ/N1 GPIO Interrupt Multiplexer
+> > > +
+> > > +On Renesas RZ/N1 devices, there are several GPIO Controllers each
+> > > +with a number of interrupt outputs. All of the interrupts from the
+> > > +GPIO Controllers are passed to the GPIO Interrupt Multiplexer, which
+> > > +selects a sub-set of the interrupts to pass onto the system interrupt
+> > controller.
+> > > +
+> > > +A single node in the device tree is used to describe the GPIO IRQ Muxer.
+> > > +
+> > > +Required properties:
+> > > +- compatible: SoC-specific compatible string "renesas,<soc-specific>-
+> > gpioirqmux"
+> > > +  followed by "renesas,rzn1-gpioirqmux" as fallback. The SoC-specific
+> > > +compatible
+> > > +  strings must be one of:
+> > > +   "renesas,r9a06g032-gpioirqmux" for RZ/N1D
+> > > +   "renesas,r9a06g033-gpioirqmux" for RZ/N1S
+> > > +- reg: Base address and size of GPIO IRQ Muxer registers.
+> > > +- interrupts: List of output interrupts.
+> > > +- #interrupt-cells: Numder of cells in the input interrupt specifier, must be
+> > 1.
+> > > +- #address-cells: Must be 0.
+> > > +- interrupt-map-mask: must be 127.
+> > > +- interrupt-map: Standard property detailing the maps between input
+> > > +irqs and the
+> > > +  corresponding output irq. This consist of a list of:
+> > > +   <input-irq-spec phandle-to-interrupt-controller output-irq-spec>
+> > > +  The input-irq-spec is from 0 to 95, corresponding to the outputs of
+> > > +the GPIO
+> > > +  Controllers.
+> > > +
+> > > +Example:
+> > > +
+> > > +   The following is an example for the RZ/N1D SoC.
+> > > +
+> > > +   gpioirqmux: gpioirqmux@51000480 {
+> >
+> > interrupt-controller@...
+> Sure
+>
+> > > +           compatible = "renesas,r9a06g032-gpioirqmux",
+> > > +                           "renesas,rzn1-gpioirqmux";
+> > > +           reg = <0x51000480 0x20>;
+> > > +           interrupts =
+> > > +                   <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
+> > > +                   <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
+> >
+> > This is a bit redundant as the same information is in interrupt-map, but I
+> > guess you need it to get the irq resources.
+> That's right.
+>
+> > > +
+> > > +           #interrupt-cells = <1>;
+> > > +           #address-cells = <0>;
+> > > +           interrupt-map-mask = <127>;
+> >
+> > Use hex for masks.
+> Ok.
+>
+> > > +           interrupt-map =
+> > > +                   /* gpio2a 24, pin 146: ETH Port 1 IRQ */
+> > > +                   <88 &gic GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
+> > > +                   /* gpio2a 26, pin 148: TouchSCRN_IRQ */
+> > > +                   <90 &gic GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
+> > > +   };
+> > > +
+> > > +   gpio2: gpio@5000d000 {
+> > > +           compatible = "snps,dw-apb-gpio";
+> > > +           reg = <0x5000d000 0x80>;
+> > > +           #address-cells = <1>;
+> > > +           #size-cells = <0>;
+> > > +           clock-names = "bus";
+> > > +           clocks = <&sysctrl R9A06G032_HCLK_GPIO2>;
+> > > +
+> > > +           gpio2a: gpio-controller@0 {
+> >
+> > gpio@0
+> Are you sure about this?
+
+Yes, 'gpio' is what the DT spec says. It is the oddball though and I
+always have to think about it.
+
+> The bindings in Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+> show an example where the sub-nodes for gpio banks are gpio-controller@.
+> This is also in Documentation/devicetree/bindings/gpio/gpio.txt.
+
+Indeed. Those should be fixed. I would be easily persuaded to just
+change the spec, but 'gpio@' is much more widely used:
+
+$ git grep gpio@ -- arch/ | wc
+   1110    4378   67766
+$ git grep gpio-controller@ -- arch/ | wc
+     60     232    4270
+
+Rob
