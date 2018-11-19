@@ -1,62 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45317 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728044AbeK2AFW (ORCPT
+Received: from sauhun.de ([88.99.104.3]:44908 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728681AbeKSWiq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Nov 2018 19:05:22 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 13/16] ARM: dts: iwg23s-sbc: Add pinctl support for EtherAVB
-Date: Wed, 28 Nov 2018 14:03:15 +0100
-Message-Id: <976a5ccb808da21f77a3bb1123a9e5df6f2d9564.1543409901.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1543409901.git.horms+renesas@verge.net.au>
-References: <cover.1543409901.git.horms+renesas@verge.net.au>
+        Mon, 19 Nov 2018 17:38:46 -0500
+Date: Mon, 19 Nov 2018 13:15:17 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: [PATCH v2 0/3] mmc: renesas_sdhi: extend quirk selection to
+ handle ES revisions
+Message-ID: <20181119121517.hlq6ipifinlp3am7@ninjato>
+References: <20181031231340.1958-1-niklas.soderlund@ragnatech.se>
+ <CAPDyKFpMqbH-iazzJQgGAFgRgpPJ=2yyiMwj6Z+Lc13vToGrDg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="t52uayms73245rbw"
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFpMqbH-iazzJQgGAFgRgpPJ=2yyiMwj6Z+Lc13vToGrDg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
 
-Adding pinctrl support for EtherAVB interface.
+--t52uayms73245rbw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-index 18d22631e188..52f23b858885 100644
---- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -60,6 +60,9 @@
- };
- 
- &avb {
-+	pinctrl-0 = <&avb_pins>;
-+	pinctrl-names = "default";
-+
- 	phy-handle = <&phy3>;
- 	phy-mode = "gmii";
- 	renesas,no-ether-link;
-@@ -82,6 +85,11 @@
- };
- 
- &pfc {
-+	avb_pins: avb {
-+		groups = "avb_mdio", "avb_gmii_tx_rx";
-+		function = "avb";
-+	};
-+
- 	mmc_pins_uhs: mmc_uhs {
- 		groups = "mmc_data8", "mmc_ctrl";
- 		function = "mmc";
--- 
-2.11.0
+> I noticed there were a minor comment from Geert, however I decided to
+> pick this as is and leave further improvements to be made on top.
+
+Same here; could we wait for v2?
+
+
+--t52uayms73245rbw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvyqVUACgkQFA3kzBSg
+KbZskQ//XGLmf26wTuUxXhG+vofO7MOTqANtEkjKQdanjVSpQy2hLEKIgRFF/kBM
+U3UNM/bM5It971VQfKXZNiG1kJf49vybf9M5tOnMjq0DBavIGUv57mp6hQpg8Z6Z
+v+uky2B5FCwvFq/YxH5D8Vchh2lkjb3+zsbpwkMJV0MN7hstBPpIw4kYkUPUHKXf
+Tn4hcUEz1oqwjrO+qhJLTWu3nrVfAbJbL4xLzWMuPaxFkhZWwUWsZ0/xvr6ON03I
+bIykb+93ROYFne8ZbVF0pCzTwctTwwckRkPsKbO0APbgkcSj73mipbP4c89gouTk
+6tqovJ2rtUaGKxy7ZXsKdmxcyIUmhaVbpf90tMHkT68rMVHdyUHumiWY7jmz4I7D
+r+WGy/2PbRlCiwdvFlFpp6IQnkuCYnB44rMvjJERQ2xx6A3hOBLHvW6k3vngPmpJ
+/NUA2XImzQA7fJvS0DDgoceaYKbbZECSB4NsD0Xt7HzZRHJ8EIalL+WfVjVsPhMH
+amTExt6B3sG1D7Z0VyiYAW0Ce/Q4ihOPRGUyb2g8bFOE1jndgvwrtj2cRwNnxOrC
++vYdnMwiJsjtUcKYe2Wmn8O938U7eFd08qgK9bfl5wybGw8nW1EMh+DzGWjI9vnP
+OnQ1lFS4amJ/9iwB3CPdenzCl6d1ZKSfDcKymDQzhPP3gJXF8QM=
+=lbdE
+-----END PGP SIGNATURE-----
+
+--t52uayms73245rbw--
