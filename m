@@ -1,105 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:49594 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727114AbeK2WOk (ORCPT
+Received: from mail-eopbgr1410130.outbound.protection.outlook.com ([40.107.141.130]:1632
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726522AbeKTFKD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Nov 2018 17:14:40 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
+        Tue, 20 Nov 2018 00:10:03 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] ARM: shmobile: R-Mobile: Move pm-rmobile to drivers/soc/renesas/
-Date: Thu, 29 Nov 2018 12:09:31 +0100
-Message-Id: <20181129110931.11783-3-geert+renesas@glider.be>
-In-Reply-To: <20181129110931.11783-1-geert+renesas@glider.be>
-References: <20181129110931.11783-1-geert+renesas@glider.be>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: RE: [PATCH 2/3] phy: renesas: rcar-gen3-usb2: Add support for R7S9210
+Date: Mon, 19 Nov 2018 18:45:06 +0000
+Message-ID: <OSAPR01MB1553577EA2508275D59810808AD80@OSAPR01MB1553.jpnprd01.prod.outlook.com>
+References: <20181107173558.54481-1-chris.brandt@renesas.com>
+ <20181107173558.54481-3-chris.brandt@renesas.com>
+ <OSBPR01MB2293D01ACA9E7294DD803938D8C30@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+ <OSAPR01MB15539BF29A15A03FFC890B848AC30@OSAPR01MB1553.jpnprd01.prod.outlook.com>
+ <OSBPR01MB2293489B7D5C98CB73CFE101D8C30@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+ <OSAPR01MB15533265A0BEE499122EC95A8AC30@OSAPR01MB1553.jpnprd01.prod.outlook.com>
+ <OSBPR01MB2293DBE98E32D8621E5A6551D8DC0@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+ <OSAPR01MB155323BF2746B075DA3E8F7D8ADC0@OSAPR01MB1553.jpnprd01.prod.outlook.com>
+ <OSBPR01MB2293302E77DDCC330ABE3927D8D80@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSBPR01MB2293302E77DDCC330ABE3927D8D80@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The pm-rmobile driver is really a driver for the System Controller
-(SYSC) found in R-Mobile SoCs.  An equivalent driver for R-Car SoCs is
-already located under drivers/soc/renesas/.
+Hi Shimoda=1B$B$5$s=1B(B
 
-Hence move the pm-rmobile driver from arch/arm/mach-shmobile/ to
-drivers/soc/renesas/, and rename it to rmobile-sysc.
+From: Yoshihiro Shimoda
+Sent: Monday, November 19, 2018 3:58 AM
+> And I read Figure 32.1 of the RZ/A2 documentation and I wonder if we need
+> to release
+> USBCTR.PLL_RST even if we use USB peripheral mode.
 
-Enable compile-testing on non-ARM and non-R-Mobile SoCs.
+I will ask the RZ/A2 design team to confirm.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/mach-shmobile/Kconfig                             | 5 -----
- arch/arm/mach-shmobile/Makefile                            | 1 -
- drivers/soc/renesas/Kconfig                                | 7 ++++++-
- drivers/soc/renesas/Makefile                               | 1 +
- .../pm-rmobile.c => drivers/soc/renesas/rmobile-sysc.c     | 0
- 5 files changed, 7 insertions(+), 7 deletions(-)
- rename arch/arm/mach-shmobile/pm-rmobile.c => drivers/soc/renesas/rmobile-sysc.c (100%)
+If this setting is required, I think we should use your suggestion:
 
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index 9b798c9dffe4e94a..3683d6f109730ee7 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -1,9 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
--config PM_RMOBILE
--	bool
--	select PM
--	select PM_GENERIC_DOMAINS
--
- menuconfig ARCH_RENESAS
- 	bool "Renesas ARM SoCs"
- 	depends on ARCH_MULTI_V7 && MMU
-diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
-index 5591646cb9bbfd33..f7bf17b7abaef7a9 100644
---- a/arch/arm/mach-shmobile/Makefile
-+++ b/arch/arm/mach-shmobile/Makefile
-@@ -35,7 +35,6 @@ smp-$(CONFIG_ARCH_EMEV2)	+= smp-emev2.o headsmp-scu.o platsmp-scu.o
- 
- # PM objects
- obj-$(CONFIG_SUSPEND)		+= suspend.o
--obj-$(CONFIG_PM_RMOBILE)	+= pm-rmobile.o
- obj-$(CONFIG_ARCH_RCAR_GEN2)	+= pm-rcar-gen2.o
- 
- # Framework support
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index fe7f58616cdd6cf7..4d8012e1205c5a7f 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -34,9 +34,11 @@ config ARCH_RCAR_GEN3
- 
- config ARCH_RMOBILE
- 	bool
--	select PM_RMOBILE
-+	select PM
-+	select PM_GENERIC_DOMAINS
- 	select SYS_SUPPORTS_SH_CMT
- 	select SYS_SUPPORTS_SH_TMU
-+	select SYSC_RMOBILE
- 
- config ARCH_RZN1
- 	bool
-@@ -297,4 +299,7 @@ config RST_RCAR
- config SYSC_RCAR
- 	bool "R-Car System Controller support" if COMPILE_TEST
- 
-+config SYSC_RMOBILE
-+	bool "R-Mobile System Controller support" if COMPILE_TEST
-+
- endif # SOC_RENESAS
-diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
-index 3bdd7dbc38a9c7a3..00764d5a60b33dfe 100644
---- a/drivers/soc/renesas/Makefile
-+++ b/drivers/soc/renesas/Makefile
-@@ -27,3 +27,4 @@ endif
- # Family
- obj-$(CONFIG_RST_RCAR)		+= rcar-rst.o
- obj-$(CONFIG_SYSC_RCAR)		+= rcar-sysc.o
-+obj-$(CONFIG_SYSC_RMOBILE)	+= rmobile-sysc.o
-diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/drivers/soc/renesas/rmobile-sysc.c
-similarity index 100%
-rename from arch/arm/mach-shmobile/pm-rmobile.c
-rename to drivers/soc/renesas/rmobile-sysc.c
--- 
-2.17.1
+From: Yoshihiro Shimoda
+Sent: Thursday, November 15, 2018 4:20 AM
+> So, I have an idea to set the default mode by using "dr_mode" property,
+> instead of hardcoded. Since the driver already has such a function,
+> we can reuse rcar_gen3_device_recognition() to set the default value.
+> To achieve that, we need to modify the following though.
+>  - Don't enable "is_otg_channel".
+>  - Don't call rcar_gen3_enable_vbus_ctrl() to avoid ADPCTRL register
+>    because RZ/A2 doesn't have it.
+>  - Don't need to call rcar_gen3_set_linectrl to avoid LINECTRL1 register
+>    because RZ/A2 doesn't seem to need the setting on host mode.
+
+
+Chris
