@@ -1,48 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:15493 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726492AbeK2Lo1 (ORCPT
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:34383 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726088AbeKST2h (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Nov 2018 06:44:27 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 0/2] renesas: rcar-gen3: add HS400 quirk for SD clock
-Date: Thu, 29 Nov 2018 01:39:47 +0100
-Message-Id: <20181129003949.19984-1-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 19 Nov 2018 14:28:37 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20181118172903.4481-1-marek.vasut+renesas@gmail.com> <20181118172903.4481-3-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20181118172903.4481-3-marek.vasut+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 19 Nov 2018 10:05:24 +0100
+Message-ID: <CAMuHMdXZxjyfxxgY6JR-tLht_VmKbD9W1DRL6sOXGA6FSLmyXg@mail.gmail.com>
+Subject: Re: [PATCH 3/4] pinctrl: sh-pfc: r8a77990: Add CAN pins, groups and functions
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+On Sun, Nov 18, 2018 at 6:29 PM Marek Vasut <marek.vasut@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds CAN{0,1} pins, groups and functions to the R8A77990 SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-This series aims to solve the clock quirk needed to enabled HS400 on 
-SoCs needing special clock handeling. It uses the same method as v1 of 
-this series and which was discussed during the SDHI hackathon. However 
-patch 2/2 have been completely rewritten to take your comments from v1 
-into account. Due to this change this series now depends on [1].
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.21.
 
-This is tested on H3 (ES1.0, ES2.0), M3-W (ES1.0) and M3-N together with
-patches to enable HS400 with great results. No regressions found for
-eMMC HS200/HS400 modes nor for SDR{25,50,104} on any of the SoCs.
+Gr{oetje,eeting}s,
 
-Patch 1/2 adds documentation on which settings is used while 2/2 is the
-real change where the quirk is implemented.
-
-1. [PATCH] clk: renesas: rcar-gen3: set state when registering SD clocks
-
-Niklas Söderlund (2):
-  clk: renesas: rcar-gen3: add documentation for SD clocks
-  clk: renesas: rcar-gen3: add HS400 quirk for SD clock
-
- drivers/clk/renesas/rcar-gen3-cpg.c | 43 +++++++++++++++++++++--------
- 1 file changed, 31 insertions(+), 12 deletions(-)
+                        Geert
 
 -- 
-2.19.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
