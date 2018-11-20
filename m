@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:51210 "EHLO mail.bootlin.com"
+Received: from mail.bootlin.com ([62.4.15.54]:49331 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727642AbeKTTzv (ORCPT
+        id S1725780AbeKTS2r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Nov 2018 14:55:51 -0500
-Date: Tue, 20 Nov 2018 10:27:29 +0100
+        Tue, 20 Nov 2018 13:28:47 -0500
+Date: Tue, 20 Nov 2018 09:00:47 +0100
 From: Boris Brezillon <boris.brezillon@bootlin.com>
 To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Cc: Peter Rosin <peda@axentia.se>,
@@ -21,86 +21,82 @@ Cc: Peter Rosin <peda@axentia.se>,
         <linux-renesas-soc@vger.kernel.org>
 Subject: Re: [PATCH v3] drm/bridge/sii902x: Add missing dependency on
  I2C_MUX
-Message-ID: <20181120102729.2626e003@bbrezillon>
-In-Reply-To: <20181120090047.68047e91@bbrezillon>
+Message-ID: <20181120090047.68047e91@bbrezillon>
+In-Reply-To: <TY1PR01MB17702A32DE7C9449BF88B17DC0D80@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 References: <1542633978-22064-1-git-send-email-fabrizio.castro@bp.renesas.com>
         <20181119175511.3992cf03@bbrezillon>
         <TY1PR01MB177034C8979E0EC2C7EA7172C0D80@TY1PR01MB1770.jpnprd01.prod.outlook.com>
         <20181119200720.3b459743@bbrezillon>
         <TY1PR01MB17702A32DE7C9449BF88B17DC0D80@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-        <20181120090047.68047e91@bbrezillon>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, 20 Nov 2018 09:00:47 +0100
-Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+On Mon, 19 Nov 2018 19:09:33 +0000
+Fabrizio Castro <fabrizio.castro@bp.renesas.com> wrote:
 
-> On Mon, 19 Nov 2018 19:09:33 +0000
-> Fabrizio Castro <fabrizio.castro@bp.renesas.com> wrote:
+> Hello Boris,
 > 
-> > Hello Boris,
-> >   
-> > > From: Boris Brezillon <boris.brezillon@bootlin.com>
-> > > Sent: 19 November 2018 19:07
-> > > Subject: Re: [PATCH v3] drm/bridge/sii902x: Add missing dependency on I2C_MUX
-> > >
-> > > On Mon, 19 Nov 2018 18:59:04 +0000
-> > > Fabrizio Castro <fabrizio.castro@bp.renesas.com> wrote:
-> > >    
-> > > > Hello Boris,
-> > > >    
-> > > > > From: Boris Brezillon <boris.brezillon@bootlin.com>
-> > > > > Sent: 19 November 2018 16:55
-> > > > > Subject: Re: [PATCH v3] drm/bridge/sii902x: Add missing dependency on I2C_MUX
-> > > > >
-> > > > > Hi Fabrizio,
-> > > > >
-> > > > > On Mon, 19 Nov 2018 13:26:18 +0000
-> > > > > Fabrizio Castro <fabrizio.castro@bp.renesas.com> wrote:
-> > > > >    
-> > > > > > kbuild test robot reports:
-> > > > > >    
-> > > > > > >> ERROR: "i2c_mux_add_adapter" [drivers/gpu/drm/bridge/sii902x.ko]    
-> > > > > > undefined!    
-> > > > > > >> ERROR: "i2c_mux_alloc" [drivers/gpu/drm/bridge/sii902x.ko]    
-> > > > > > undefined!    
-> > > > > > >> ERROR: "i2c_mux_del_adapters" [drivers/gpu/drm/bridge/sii902x.ko]    
-> > > > > > undefined!
-> > > > > >
-> > > > > > Quite obviously the driver depends on I2C_MUX, but adding a "depends on"
-> > > > > > introduces a recursive dependency, therefore this patch selects I2C_MUX
-> > > > > > instead.
-> > > > > >
-> > > > > > Fixes: 21d808405fe4 ("drm/bridge/sii902x: Fix EDID readback")
-> > > > > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > > > > > Link: https://lists.01.org/pipermail/kbuild-all/2018-November/054924.html    
-> > > > >
-> > > > > I don't see the patch on the dri-devel ML, and it does not appear in
-> > > > > patchwork either :-/.    
+> > From: Boris Brezillon <boris.brezillon@bootlin.com>
+> > Sent: 19 November 2018 19:07
+> > Subject: Re: [PATCH v3] drm/bridge/sii902x: Add missing dependency on I2C_MUX
+> >
+> > On Mon, 19 Nov 2018 18:59:04 +0000
+> > Fabrizio Castro <fabrizio.castro@bp.renesas.com> wrote:
+> >  
+> > > Hello Boris,
+> > >  
+> > > > From: Boris Brezillon <boris.brezillon@bootlin.com>
+> > > > Sent: 19 November 2018 16:55
+> > > > Subject: Re: [PATCH v3] drm/bridge/sii902x: Add missing dependency on I2C_MUX
 > > > >
-> > > > Mmm, my email address may have been blocked somehow by the dri-devel ML,
-> > > > I can't think of anything else that could get in the way, as the dri-devel ML was
-> > > > in copy in every email. Maybe that's because I am not subscribed? I have started
-> > > > the subscription process, once I am subscribed I'll try and repost.    
+> > > > Hi Fabrizio,
+> > > >
+> > > > On Mon, 19 Nov 2018 13:26:18 +0000
+> > > > Fabrizio Castro <fabrizio.castro@bp.renesas.com> wrote:
+> > > >  
+> > > > > kbuild test robot reports:
+> > > > >  
+> > > > > >> ERROR: "i2c_mux_add_adapter" [drivers/gpu/drm/bridge/sii902x.ko]  
+> > > > > undefined!  
+> > > > > >> ERROR: "i2c_mux_alloc" [drivers/gpu/drm/bridge/sii902x.ko]  
+> > > > > undefined!  
+> > > > > >> ERROR: "i2c_mux_del_adapters" [drivers/gpu/drm/bridge/sii902x.ko]  
+> > > > > undefined!
+> > > > >
+> > > > > Quite obviously the driver depends on I2C_MUX, but adding a "depends on"
+> > > > > introduces a recursive dependency, therefore this patch selects I2C_MUX
+> > > > > instead.
+> > > > >
+> > > > > Fixes: 21d808405fe4 ("drm/bridge/sii902x: Fix EDID readback")
+> > > > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > > > > Link: https://lists.01.org/pipermail/kbuild-all/2018-November/054924.html  
+> > > >
+> > > > I don't see the patch on the dri-devel ML, and it does not appear in
+> > > > patchwork either :-/.  
 > > >
-> > > That's weird. Your previous were visible on the dri-devel patchwork [1].    
-> > 
-> > It is, let's see if my subscription makes things better.
-> > 
-> > Thank you for your patience!  
+> > > Mmm, my email address may have been blocked somehow by the dri-devel ML,
+> > > I can't think of anything else that could get in the way, as the dri-devel ML was
+> > > in copy in every email. Maybe that's because I am not subscribed? I have started
+> > > the subscription process, once I am subscribed I'll try and repost.  
+> >
+> > That's weird. Your previous were visible on the dri-devel patchwork [1].  
 > 
-> Can you try to send a v4 addressing Peter's comments? If it still
-> doesn't appear on the ML, I'll apply it anyway.
+> It is, let's see if my subscription makes things better.
+> 
+> Thank you for your patience!
 
-Nevermind, the patch appeared on the ML (and in patchwork) in the
-meantime.
+Can you try to send a v4 addressing Peter's comments? If it still
+doesn't appear on the ML, I'll apply it anyway.
 
-Queued to drm-misc-next after unwrapping the error lines as suggested
-by Peter.
-
-Thanks,
-
-Boris
+> 
+> Fab
+> 
+> >
+> > [1]https://patchwork.freedesktop.org/patch/260693/  
+> 
+> 
+> 
+> Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered No. 04586709.
