@@ -1,195 +1,50 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: jacopo mondi <jacopo@jmondi.org>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v6 2/2] dt-bindings: pinctrl: Add RZ/A2 pinctrl and GPIO
-Date: Thu, 15 Nov 2018 09:00:45 -0500
-Message-Id: <20181115140045.24733-3-chris.brandt@renesas.com>
-In-Reply-To: <20181115140045.24733-1-chris.brandt@renesas.com>
-References: <20181115140045.24733-1-chris.brandt@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:46878 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725816AbeKTSz1 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 20 Nov 2018 13:55:27 -0500
+MIME-Version: 1.0
+References: <21306a59-8f20-ad08-fdc1-bcc6333c01d4@cogentembedded.com> <0f421bfb-8d5b-1a28-e5e5-2cbccfc62479@cogentembedded.com>
+In-Reply-To: <0f421bfb-8d5b-1a28-e5e5-2cbccfc62479@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 20 Nov 2018 09:27:20 +0100
+Message-ID: <CAMuHMdVvT_XNoQABhBsHYVdhiKkGv8MMr7Vxz=sYMq2vH9jekw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a77980: add QSPI pins, groups, and functions
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device tree binding documentation and header file for Renesas R7S9210
-(RZ/A2) SoCs.
+On Mon, Nov 19, 2018 at 6:30 PM Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> From: Dmitry Shifrin <dmitry.shifrin@cogentembedded.com>
+>
+> Add the QSPI{0|1} pins/groups/functions to the R8A77980 PFC driver.
+>
+> [Sergei: ported to the upstream driver, fixed up the swapped QSPI0 SPCLK/
+> SSL pins, fixed up the comments, moved the QSPI pins/groups/functions to
+> be in the alphanumeric order, removed unneeded empty lines, renamed the
+> patch.]
+>
+> Signed-off-by: Dmitry Shifrin <dmitry.shifrin@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
-v4:
- * Converted Px to PORTx because of conflict with "PM"
- * Rounded up reg range
- * Changed 'should' to 'shall' because when there is only 1 in a list, you
-   have no choice but to choose it.
- * Commented that Port M pins are also called JP_x in HW manual
- * Fixed typos and grammar
- * Added more Reviewed-by
-v3:
- * Added Reviewed-by
-v2:
- * Moved gpio-controller to required
- * Wrote a better description of what the sub-nodes are for
- * Added pinmux property description
- * Changed macro RZA2_PIN_ID to RZA2_PIN
----
- .../bindings/pinctrl/renesas,rza2-pinctrl.txt      | 87 ++++++++++++++++++++++
- include/dt-bindings/pinctrl/r7s9210-pinctrl.h      | 47 ++++++++++++
- 2 files changed, 134 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza2-pinctrl.txt
- create mode 100644 include/dt-bindings/pinctrl/r7s9210-pinctrl.h
+i.e. queuing in sh-pfc-for-v4.21.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rza2-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,rza2-pinctrl.txt
-new file mode 100644
-index 000000000000..a63ccd476cda
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/renesas,rza2-pinctrl.txt
-@@ -0,0 +1,87 @@
-+Renesas RZ/A2 combined Pin and GPIO controller
-+
-+The Renesas SoCs of the RZ/A2 series feature a combined Pin and GPIO controller.
-+Pin multiplexing and GPIO configuration is performed on a per-pin basis.
-+Each port features up to 8 pins, each of them configurable for GPIO
-+function (port mode) or in alternate function mode.
-+Up to 8 different alternate function modes exist for each single pin.
-+
-+Pin controller node
-+-------------------
-+
-+Required properties:
-+  - compatible: shall be:
-+    - "renesas,r7s9210-pinctrl": for RZ/A2M
-+  - reg
-+    Address base and length of the memory area where the pin controller
-+    hardware is mapped to.
-+  - gpio-controller
-+    This pin controller also controls pins as GPIO
-+  - #gpio-cells
-+    Must be 2
-+  - gpio-ranges
-+    Expresses the total number of GPIO ports/pins in this SoC
-+
-+Example: Pin controller node for RZ/A2M SoC (r7s9210)
-+
-+	pinctrl: pin-controller@fcffe000 {
-+		compatible = "renesas,r7s9210-pinctrl";
-+		reg = <0xfcffe000 0x1000>;
-+
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		gpio-ranges = <&pinctrl 0 0 176>;
-+	};
-+
-+Sub-nodes
-+---------
-+
-+The child nodes of the pin controller designate pins to be used for
-+specific peripheral functions or as GPIO.
-+
-+- Pin multiplexing sub-nodes:
-+  A pin multiplexing sub-node describes how to configure a set of
-+  (or a single) pin in some desired alternate function mode.
-+  The values for the pinmux properties are a combination of port name, pin
-+  number and the desired function index. Use the RZA2_PINMUX macro located
-+  in include/dt-bindings/pinctrl/r7s9210-pinctrl.h to easily define these.
-+  For assigning GPIO pins, use the macro RZA2_PIN also in r7s9210-pinctrl.h
-+  to express the desired port pin.
-+
-+  Required properties:
-+    - pinmux:
-+      integer array representing pin number and pin multiplexing configuration.
-+      When a pin has to be configured in alternate function mode, use this
-+      property to identify the pin by its global index, and provide its
-+      alternate function configuration number along with it.
-+      When multiple pins are required to be configured as part of the same
-+      alternate function they shall be specified as members of the same
-+      argument list of a single "pinmux" property.
-+      Helper macros to ease assembling the pin index from its position
-+      (port where it sits on and pin number) and alternate function identifier
-+      are provided by the pin controller header file at:
-+      <dt-bindings/pinctrl/r7s9210-pinctrl.h>
-+      Integers values in "pinmux" argument list are assembled as:
-+      ((PORT * 8 + PIN) | MUX_FUNC << 16)
-+
-+  Example: Board specific pins configuration
-+
-+	&pinctrl {
-+		/* Serial Console */
-+		scif4_pins: serial4 {
-+			pinmux = <RZA2_PINMUX(PORT9, 0, 4)>,	/* TxD4 */
-+				 <RZA2_PINMUX(PORT9, 1, 4)>;	/* RxD4 */
-+		};
-+	};
-+
-+  Example: Assigning a GPIO:
-+
-+	leds {
-+		status = "okay";
-+		compatible = "gpio-leds";
-+
-+		led0 {
-+			/* P6_0 */
-+			gpios = <&pinctrl RZA2_PIN(PORT6, 0) GPIO_ACTIVE_HIGH>;
-+		};
-+	};
-diff --git a/include/dt-bindings/pinctrl/r7s9210-pinctrl.h b/include/dt-bindings/pinctrl/r7s9210-pinctrl.h
-new file mode 100644
-index 000000000000..2d0c23e5d3a7
---- /dev/null
-+++ b/include/dt-bindings/pinctrl/r7s9210-pinctrl.h
-@@ -0,0 +1,47 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Defines macros and constants for Renesas RZ/A2 pin controller pin
-+ * muxing functions.
-+ */
-+#ifndef __DT_BINDINGS_PINCTRL_RENESAS_RZA2_H
-+#define __DT_BINDINGS_PINCTRL_RENESAS_RZA2_H
-+
-+#define RZA2_PINS_PER_PORT	8
-+
-+/* Port names as labeled in the Hardware Manual */
-+#define PORT0 0
-+#define PORT1 1
-+#define PORT2 2
-+#define PORT3 3
-+#define PORT4 4
-+#define PORT5 5
-+#define PORT6 6
-+#define PORT7 7
-+#define PORT8 8
-+#define PORT9 9
-+#define PORTA 10
-+#define PORTB 11
-+#define PORTC 12
-+#define PORTD 13
-+#define PORTE 14
-+#define PORTF 15
-+#define PORTG 16
-+#define PORTH 17
-+/* No I */
-+#define PORTJ 18
-+#define PORTK 19
-+#define PORTL 20
-+#define PORTM 21	/* Pins PM_0/1 are labeled JP_0/1 in HW manual */
-+
-+/*
-+ * Create the pin index from its bank and position numbers and store in
-+ * the upper 16 bits the alternate function identifier
-+ */
-+#define RZA2_PINMUX(b, p, f)	((b) * RZA2_PINS_PER_PORT + (p) | (f << 16))
-+
-+/*
-+ * Convert a port and pin label to its global pin index
-+ */
-+ #define RZA2_PIN(port, pin)	((port) * RZA2_PINS_PER_PORT + (pin))
-+
-+#endif /* __DT_BINDINGS_PINCTRL_RENESAS_RZA2_H */
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.16.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
