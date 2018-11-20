@@ -1,51 +1,49 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH v3 1/4] dt-bindings: adv748x: make data-lanes property mandatory for CSI-2 endpoints
-Date: Fri,  2 Nov 2018 17:00:06 +0100
-Message-Id: <20181102160009.17267-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20181102160009.17267-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20181102160009.17267-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from perceval.ideasonboard.com ([213.167.242.64]:47956 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726628AbeKTOC4 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 20 Nov 2018 09:02:56 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org, kieran.bingham@ideasonboard.com
+Subject: [PATCH] drm: rcar-du: Reject modes that fail CRTC timing requirements
+Date: Tue, 20 Nov 2018 05:36:04 +0200
+Message-Id: <20181120033604.11109-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The CSI-2 transmitters can use a different number of lanes to transmit
-data. Make the data-lanes mandatory for the endpoints that describe the
-transmitters as no good default can be set to fallback on.
+The hardware requires the HDSR and VDSR registers to be set to 1 or
+higher. This translates to a minimum combined horizontal sync and back
+porch of 20 pixels and a minimum vertical back porch of 3 lines. Reject
+modes that fail those requirements.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
-* Changes since v2
-- Update paragraph according to Laurents comments.
----
- Documentation/devicetree/bindings/media/i2c/adv748x.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/adv748x.txt b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-index 5dddc95f9cc46084..bffbabc879efd86c 100644
---- a/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-+++ b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-@@ -48,7 +48,9 @@ are numbered as follows.
- 	  TXA		source		10
- 	  TXB		source		11
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+index 79021d7aa3ce..9d425894e000 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+@@ -739,6 +739,15 @@ enum drm_mode_status rcar_du_crtc_mode_valid(struct drm_crtc *crtc,
+ 	if (interlaced && !rcar_du_has(rcdu, RCAR_DU_FEATURE_INTERLACED))
+ 		return MODE_NO_INTERLACE;
  
--The digital output port nodes must contain at least one endpoint.
-+The digital output port nodes, when present, shall contain at least one
-+endpoint. Each of those endpoints shall contain the data-lanes property as
-+described in video-interfaces.txt.
- 
- Ports are optional if they are not connected to anything at the hardware level.
++	/*
++	 * The hardware requires a minimum combined horizontal sync and back
++	 * porch of 20 pixels and a minimum vertical back porch of 3 lines.
++	 */
++	if (mode->htotal - mode->hsync_start < 20)
++		return MODE_HBLANK_NARROW;
++	if (mode->crtc_vtotal - mode->crtc_vsync_end < 3)
++		return MODE_VBLANK_NARROW;
++
+ 	return MODE_OK;
+ }
  
 -- 
-2.19.1
+Regards,
+
+Laurent Pinchart
