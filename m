@@ -1,163 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42346 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbeKTXiN (ORCPT
+Received: from mail.bootlin.com ([62.4.15.54]:49551 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726215AbeKTSiy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Nov 2018 18:38:13 -0500
-Subject: Re: [PATCH 1/2] spi: Add Renesas R-Car RPC SPI controller driver
-To: masonccyang@mxic.com.tw
-Cc: boris.brezillon@bootlin.com, broonie@kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Tue, 20 Nov 2018 13:38:54 -0500
+Date: Tue, 20 Nov 2018 09:10:52 +0100
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: masonccyang@mxic.com.tw, Mark Brown <broonie@kernel.org>,
+        Trent Piepho <tpiepho@impinj.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org, tpiepho@impinj.com,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         zhengxunli@mxic.com.tw
+Subject: Re: [PATCH 1/2] spi: Add Renesas R-Car RPC SPI controller driver
+Message-ID: <20181120091052.096ab7e3@bbrezillon>
+In-Reply-To: <CAMuHMdVjqkHsqEjEgBWg0eGtE-9ND+a=OeHwu=r39LrfkQq=Yw@mail.gmail.com>
 References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw>
- <1542621690-10229-2-git-send-email-masonccyang@mxic.com.tw>
- <0223f43b-c6a6-eade-49af-4e7b7ef7f022@gmail.com>
- <OF4FAD10C5.F4F6D29B-ON4825834B.001FAB40-4825834B.00289635@mxic.com.tw>
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <6b024f18-d0bc-3e65-f07c-cef913f795ab@gmail.com>
-Date: Tue, 20 Nov 2018 14:09:05 +0100
+        <1542621690-10229-2-git-send-email-masonccyang@mxic.com.tw>
+        <CAMuHMdVjqkHsqEjEgBWg0eGtE-9ND+a=OeHwu=r39LrfkQq=Yw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <OF4FAD10C5.F4F6D29B-ON4825834B.001FAB40-4825834B.00289635@mxic.com.tw>
-Content-Type: text/plain; charset=UTF-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 11/20/2018 08:23 AM, masonccyang@mxic.com.tw wrote:
-> Hi Marek,
+On Tue, 20 Nov 2018 09:01:29 +0100
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-Hi,
-
->> Marek Vasut <marek.vasut@gmail.com>
->> 2018/11/19 下午 10:12
->>
->> To
->>
->> > +
->> > +static int rpc_spi_set_freq(struct rpc_spi *rpc, unsigned long freq)
->> > +{
->> > +   int ret;
->> > +
->> > +   if (rpc->cur_speed_hz == freq)
->> > +      return 0;
->> > +
->> > +   clk_disable_unprepare(rpc->clk_rpc);
->> > +   ret = clk_set_rate(rpc->clk_rpc, freq);
->> > +   if (ret)
->> > +      return ret;
->> > +
->> > +   ret = clk_prepare_enable(rpc->clk_rpc);
->> > +   if (ret)
->> > +      return ret;
->>
->> Is this clock disable/update/enable really needed ? I'd think that
->> clk_set_rate() would handle the rate update correctly.
+> > --- /dev/null
+> > +++ b/drivers/spi/spi-renesas-rpc.c
+> > @@ -0,0 +1,750 @@  
 > 
-> This is for run time PM mechanism in spi-mem layer and __spi_sync(),
-> you may refer to another patch [1].
+> > +static int rpc_spi_set_freq(struct rpc_spi *rpc, unsigned long freq)
+> > +{
+> > +       int ret;
+> > +
+> > +       if (rpc->cur_speed_hz == freq)
+> > +               return 0;
+> > +
+> > +       clk_disable_unprepare(rpc->clk_rpc);
+> > +       ret = clk_set_rate(rpc->clk_rpc, freq);
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       ret = clk_prepare_enable(rpc->clk_rpc);
+> > +       if (ret)
+> > +               return ret;  
 > 
-> [1]
-> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git/commit/?h=for-4.21&id=b942d80b0a394e8ea18fce3b032b4700439e8ca3
-
-I think Geert commented on the clock topic, so let's move it there.
-Disabling and enabling clock to change their rate looks real odd to me.
-
->> > +   rpc->cur_speed_hz = freq;
->> > +   return ret;
->> > +}
->> > +
->> > +static void rpc_spi_hw_init(struct rpc_spi *rpc)
->> > +{
->> > +   /*
->> > +    * NOTE: The 0x260 are undocumented bits, but they must be set.
->> > +    */
->>
->> FYI:
->>
-> http://git.denx.de/?p=u-boot.git;a=blob;f=drivers/spi/renesas_rpc_spi.c#l207
->>
->> I think the STRTIM should be 6 .
->>
+> The clk_{disable_unprepare,prepare_enable}() may be needed on the Macronix
+> controller you based this driver on, but will be futile on Renesas SoCs.
 > 
-> In my D3 Draak board, the STRTIM is 0x3 for on board qspi flash and
-> mx25uw51245g.
-> And this is also refer to Renesas R-Car Gen3 bare-metal code,
-> mini-monitor v4.01.
-
-The copy of minimon I have says 6 , but maybe this is flash specific ?
-
-[...]
-
->> > +         writel(rpc->cmd, rpc->regs + RPC_SMCMR);
->> > +         writel(rpc->dummy, rpc->regs + RPC_SMDMCR);
->> > +         writel(rpc->addr + pos, rpc->regs + RPC_SMADR);
->> > +         writel(rpc->smenr, rpc->regs + RPC_SMENR);
->> > +         writel(rpc->smcr | RPC_SMCR_SPIE, rpc->regs + RPC_SMCR);
->> > +         ret = wait_msg_xfer_end(rpc);
->> > +         if (ret)
->> > +            goto out;
->> > +
->> > +         data = readl(rpc->regs + RPC_SMRDR0);
->> > +         memcpy_fromio(rx_buf + pos, (void *)&data, nbytes);
->> > +         pos += nbytes;
->> > +      }
->> > +   } else {
->> > +      writel(rpc->cmd, rpc->regs + RPC_SMCMR);
->> > +      writel(rpc->dummy, rpc->regs + RPC_SMDMCR);
->> > +      writel(rpc->addr + pos, rpc->regs + RPC_SMADR);
->> > +      writel(rpc->smenr, rpc->regs + RPC_SMENR);
->> > +      writel(rpc->smcr | RPC_SMCR_SPIE, rpc->regs + RPC_SMCR);
->> > +      ret = wait_msg_xfer_end(rpc);
->> > +   }
->> > +out:
->>
->> Dont you need to stop the RPC somehow in case the transmission fails ?
+> As the RPC is part of the CPG/MSSR clock domain, its clock will be controlled
+> by the Runtime PM.  As you've already called pm_runtime_get_sync() from your
+> .probe() calback, Runtime PM will have enabled the clock.
+> If you disable it manually, you create an imbalance between automatic and
+> manual clock control.
 > 
-> It seems there is no any RPC registers bit to monitor xfer fail !
+> So please don't control the clock explicitly, but always use
+> pm_runtime_*() calls.
 
-What happens if wait_msg_xfer_end() returns non-zero ? I guess that
-means the transfer timed out ?
+More about that. The reason we did that on MXIC is that the clk rate
+can't be changed when the clk is enabled. So we have to
 
-[...]
+1/ explicitly disable the clk that has been enabled by runtime PM
+2/ set the new rate
+3/ re-enable the clk
 
->> > +static const struct of_device_id rpc_spi_of_ids[] = {
->> > +   { .compatible = "renesas,rpc-r8a77995", },
->> > +   { /* sentinel */ }
->> > +};
->> > +MODULE_DEVICE_TABLE(of, rpc_spi_of_ids);
->> > +
->> > +static struct platform_driver rpc_spi_driver = {
->> > +   .probe = rpc_spi_probe,
->> > +   .remove = rpc_spi_remove,
->> > +   .driver = {
->> > +      .name = "rpc-spi",
->> > +      .of_match_table = rpc_spi_of_ids,
->> > +      .pm = &rpc_spi_dev_pm_ops,
->> > +   },
->> > +};
->> > +module_platform_driver(rpc_spi_driver);
->> > +
->> > +MODULE_AUTHOR("Mason Yang <masonccyang@mxic.com.tw>");
->> > +MODULE_DESCRIPTION("Renesas R-Car D3 RPC SPI controller driver");
->>
->> This is not D3 specific and not SPI-only controller btw.
-> 
-> In R-Car Gen3, there are some registers(i.e,. RPC_PHYCNT) in different
-> setting
-> for R-Car H3, M3-W, V3M, V3H, D3, M3-N and E3 model.
-> 
-> I test this patch is based on D3 Draak board, it works fine but I am not
-> sure
-> if these registers setting is ok for others R-Card model.
-> 
-> I think this could be a reference when patch others Gen3 model is needed.
-You can take a look into the U-Boot driver(s) I linked, that's used on
-the other SoCs you listed (except for V3H).
-
--- 
-Best regards,
-Marek Vasut
+So the clk enable/disable are not unbalanced, but it's also true that
+this disable/set_rate/enable dance might be unneeded on your platform.
