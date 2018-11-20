@@ -1,60 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:48069 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726485AbeK2Lok (ORCPT
+Received: from mail-eopbgr1410137.outbound.protection.outlook.com ([40.107.141.137]:62688
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725900AbeKUKAK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Nov 2018 06:44:40 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 1/2] clk: renesas: rcar-gen3: add documentation for SD clocks
-Date: Thu, 29 Nov 2018 01:39:48 +0100
-Message-Id: <20181129003949.19984-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20181129003949.19984-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20181129003949.19984-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 21 Nov 2018 05:00:10 -0500
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: Jiada Wang <jiada_wang@mentor.com>
+CC: Simon <horms@verge.net.au>, Magnus <magnus.damm@gmail.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 3/4] arm64: renesas: ulcb-kf: add pcm3168 sound codec
+Date: Tue, 20 Nov 2018 23:28:23 +0000
+Message-ID: <8736rv2v8d.wl-kuninori.morimoto.gx@renesas.com>
+References: <87in18e3um.wl-kuninori.morimoto.gx@renesas.com>
+        <87bm70e3rc.wl-kuninori.morimoto.gx@renesas.com>
+        <12136bb6-d0af-bdb8-f288-345c733499d7@mentor.com>
+        <b06ac026-d9a5-9537-a92b-77d0662ee9f5@mentor.com>
+In-Reply-To: <b06ac026-d9a5-9537-a92b-77d0662ee9f5@mentor.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <B9610CCF02E7B44DB274FD93F893F3D1@jpnprd01.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the known use cases of the different clock settings. This is
-useful as different SoC and ES versions uses different settings to do
-the same thing as there are more then one combination to achieve the
-same SDn clock speed.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hi Jiada
+
+> >> +
+> >> +=A0=A0=A0 clk8snd: clk8snd {
+> >> +=A0=A0=A0=A0=A0=A0=A0 compatible =3D "fixed-clock";
+> >> +=A0=A0=A0=A0=A0=A0=A0 #clock-cells =3D <0>;
+> >> +=A0=A0=A0=A0=A0=A0=A0 clock-frequency =3D <24576000>;
+> >> +=A0=A0=A0 };
+> > This is the same clock as cs2000, why not directly refer to &cs2000
+> > from clksndsel,
+> > otherwise, if snd_soc_rcar is loaded after snd_soc_pcm3168a_i2c,
+> > load of snd_soc_pcm3168a_i2c fails with
+> > "[=A0=A0=A0 8.412356] pcm3168a 15-0044: Failed to reset device: -6"
+> > and sound cards can not be created
+> >=20
+>=20
+> Could you let me know your thoughts on this?
+
+Thank you for pointing it.
+I will fix it in v2
+
+Best regards
 ---
- drivers/clk/renesas/rcar-gen3-cpg.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index f6335357c85505df..bca6c7f51de18db7 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -232,13 +232,13 @@ struct sd_clock {
-  *                     sd_srcfc   sd_fc   div
-  * stp_hck   stp_ck    (div)      (div)     = sd_srcfc x sd_fc
-  *-------------------------------------------------------------------
-- *  0         0         0 (1)      1 (4)      4
-- *  0         0         1 (2)      1 (4)      8
-- *  1         0         2 (4)      1 (4)     16
-- *  1         0         3 (8)      1 (4)     32
-+ *  0         0         0 (1)      1 (4)      4 : SDR104 / HS200 / HS400 (8 TAP)
-+ *  0         0         1 (2)      1 (4)      8 : SDR50
-+ *  1         0         2 (4)      1 (4)     16 : HS / SDR25
-+ *  1         0         3 (8)      1 (4)     32 : NS / SDR12
-  *  1         0         4 (16)     1 (4)     64
-  *  0         0         0 (1)      0 (2)      2
-- *  0         0         1 (2)      0 (2)      4
-+ *  0         0         1 (2)      0 (2)      4 : SDR104 / HS200 / HS400 (4 TAP)
-  *  1         0         2 (4)      0 (2)      8
-  *  1         0         3 (8)      0 (2)     16
-  *  1         0         4 (16)     0 (2)     32
--- 
-2.19.1
+Kuninori Morimoto
