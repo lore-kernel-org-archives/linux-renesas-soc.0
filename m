@@ -1,56 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:32930 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726395AbeKYHdk (ORCPT
+Received: from mga18.intel.com ([134.134.136.126]:28551 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726943AbeKTUVd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 25 Nov 2018 02:33:40 -0500
-Received: by mail-lf1-f66.google.com with SMTP id i26so10853288lfc.0
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 24 Nov 2018 12:44:24 -0800 (PST)
-MIME-Version: 1.0
-References: <20181115221634.22715-1-greenfoo@gluegarage.com>
- <20181115221634.22715-4-greenfoo@gluegarage.com> <1542363310.23489.22.camel@pengutronix.de>
- <1542387884.1134874.1579436592.07F916C5@webmail.messagingengine.com>
-In-Reply-To: <1542387884.1134874.1579436592.07F916C5@webmail.messagingengine.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sat, 24 Nov 2018 21:44:11 +0100
-Message-ID: <CACRpkda1FJOzBn42=7GgExA3fdNJabc_=JUba4y7k34uy9tsKA@mail.gmail.com>
-Subject: Re: [PATCH 3/9] drm: replace "drm_dev_unref" function with "drm_dev_put"
-To: greenfoo@gluegarage.com
-Cc: Lucas Stach <l.stach@pengutronix.de>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        Tue, 20 Nov 2018 15:21:33 -0500
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Fernando <greenfoo@gluegarage.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        dri-devel@lists.freedesktop.org
+Cc: Haneen Mohammed <hamohammed.sa@gmail.com>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Gilles Muller <Gilles.Muller@lip6.fr>,
-        Dave Airlie <airlied@linux.ie>,
+        David Airlie <airlied@linux.ie>,
         virtualization@lists.linux-foundation.org,
         Gerd Hoffmann <kraxel@redhat.com>, cocci@systeme.lip6.fr,
         Marek Vasut <marex@denx.de>, Jonathan Corbet <corbet@lwn.net>,
-        linux-doc@vger.kernel.org, abrodkin@synopsys.com,
+        linux-doc@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
         Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux+etnaviv@armlinux.org.uk,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
         Nicolas Palix <nicolas.palix@imag.fr>,
         etnaviv@lists.freedesktop.org, Julia Lawall <Julia.Lawall@lip6.fr>,
-        sean@poorly.run, Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        michal.lkml@markovi.net,
+        Sean Paul <sean@poorly.run>,
+        linux-arm-kernel@lists.infradead.org,
+        Michal Marek <michal.lkml@markovi.net>,
         Boris Brezillon <boris.brezillon@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        kieran.bingham+renesas@ideasonboard.com,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Shawn Guo <shawnguo@kernel.org>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH 3/9] drm: replace "drm_dev_unref" function with "drm_dev_put"
+In-Reply-To: <1542387884.1134874.1579436592.07F916C5@webmail.messagingengine.com>
+References: <20181115221634.22715-1-greenfoo@gluegarage.com> <20181115221634.22715-4-greenfoo@gluegarage.com> <1542363310.23489.22.camel@pengutronix.de> <1542387884.1134874.1579436592.07F916C5@webmail.messagingengine.com>
+Date: Tue, 20 Nov 2018 11:53:43 +0200
+Message-ID: <87lg5of520.fsf@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Nov 16, 2018 at 6:04 PM Fernando <greenfoo@gluegarage.com> wrote:
+On Fri, 16 Nov 2018, Fernando <greenfoo@gluegarage.com> wrote:
+> And, related to this, what is the "good" branch to start developing
+> new drm patches? Is is "drm-next" or "linux-next"? Or does it change
+> depending on how much time until the merge window closes?
 
-> I'm new on this, how should I proceed? Should I create a new (V2) patch series with
-> these changes reverted? Or will the maintainer automatically take care
-> of this when merging?
+I advise most of our developers to work on drm-tip because it contains
+the latest stuff in drm core, i915, amd, most of the small drivers, as
+well as sound. It's a bit like "linux-next for graphics". And you don't
+really have to care about the merge cycles with that.
 
-I fixed it :) I think. At least I hope I didn't do something bad.
+But YMMV, it probably doesn't work for everyone.
 
-Yours,
-Linus Walleij
+BR,
+Jani.
+
+
+-- 
+Jani Nikula, Intel Open Source Graphics Center
