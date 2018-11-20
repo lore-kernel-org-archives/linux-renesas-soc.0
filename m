@@ -1,48 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38271 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726001AbeKUVFD (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:28671 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725977AbeKUBtI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Nov 2018 16:05:03 -0500
-Received: by mail-pl1-f195.google.com with SMTP id e5so4928895plb.5
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Nov 2018 02:31:12 -0800 (PST)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Wed, 21 Nov 2018 19:31:30 +0900
-Message-Id: <154279629062.29528.16838446106465412292.sendpatchset@octo>
-In-Reply-To: <154279624819.29528.954090919447072739.sendpatchset@octo>
-References: <154279624819.29528.954090919447072739.sendpatchset@octo>
-Subject: [PATCH 05/05] arm64: dts: renesas: r8a77990: Add FCPCS+VDPB node for R-Car E3
+        Tue, 20 Nov 2018 20:49:08 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-gpio@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [RFC v3 2/2] gpio: rcar: Set pin as a GPIO when configuring an interrupt
+Date: Tue, 20 Nov 2018 15:19:16 +0000
+Message-Id: <1542727156-31432-3-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1542727156-31432-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1542727156-31432-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+As it turns out, the bootloader or a POR may get in the way
+of the current implementation of gpio_rcar_irq_set_type, as
+the pinmuxing may not be GPIO.
+This patch makes sure the pin is configured as a GPIO when
+requesting it an interrupt, as that's necessary for the
+interrupt to work properly. Failing to do so may damage
+the board as this can cause shorts.
 
-Add a temporary FCPCS device that also includes VDPB for testing
-purpose. This prototype level code is not intended for upstream merge.
-
-Not-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
+ drivers/gpio/gpio-rcar.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
- arch/arm64/boot/dts/renesas/r8a77990.dtsi |    9 +++++++++
- 1 file changed, 9 insertions(+)
-
---- 0001/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a77990.dtsi	2018-11-21 18:48:07.085224248 +0900
-@@ -1419,6 +1419,15 @@
- 			resets = <&cpg 408>;
- 		};
- 
-+		fcpcs: fcp@fe90f000 {
-+			compatible = "renesas,fcpc";
-+			reg = <0 0xfe90f000 0 0x200>,
-+			      <0 0xfe900000 0 0x400>; /* Hack to test VDPB */
-+			clocks = <&cpg CPG_MOD 619>;
-+			power-domains = <&sysc R8A77990_PD_A2VC1>;
-+			resets = <&cpg 619>;
-+		};
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index 1322f7e..615404c 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -168,6 +168,9 @@ static int gpio_rcar_irq_set_type(struct irq_data *d, unsigned int type)
+ 	default:
+ 		return -EINVAL;
+ 	}
 +
- 		vspb0: vsp@fe960000 {
- 			compatible = "renesas,vsp2";
- 			reg = <0 0xfe960000 0 0x8000>;
++	pinctrl_mux_gpio_request_enable(gc->base + hwirq);
++
+ 	return 0;
+ }
+ 
+-- 
+2.7.4
