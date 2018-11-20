@@ -1,64 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:13114 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728096AbeKHDIW (ORCPT
+Received: from mga14.intel.com ([192.55.52.115]:36829 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726911AbeKTXzd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Nov 2018 22:08:22 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Tue, 20 Nov 2018 18:55:33 -0500
+Date: Tue, 20 Nov 2018 15:26:19 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+Cc: Phil Edworthy <phil.edworthy@renesas.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 3/3] dt-bindings: rcar-gen3-phy-usb2: Add r7s9210 support
-Date: Wed,  7 Nov 2018 12:35:58 -0500
-Message-Id: <20181107173558.54481-4-chris.brandt@renesas.com>
-In-Reply-To: <20181107173558.54481-1-chris.brandt@renesas.com>
-References: <20181107173558.54481-1-chris.brandt@renesas.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Huacai Chen <chenhc@lemote.com>, Guan Xuetao <gxt@pku.edu.cn>,
+        linux-m68k@lists.linux-m68k.org, linux-mips@linux-mips.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: Add (devm_)clk_get_optional() functions
+Message-ID: <20181120132619.GY10650@smile.fi.intel.com>
+References: <20181119141259.11992-1-phil.edworthy@renesas.com>
+ <20181120103832.GV10650@smile.fi.intel.com>
+ <20181120125652.afk2rltmnunfo346@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181120125652.afk2rltmnunfo346@pengutronix.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document RZ/A2 (R7S9210) SoC bindings.
+On Tue, Nov 20, 2018 at 01:56:52PM +0100, Uwe Kleine-K�nig wrote:
+> On Tue, Nov 20, 2018 at 12:38:33PM +0200, Andy Shevchenko wrote:
+> > On Mon, Nov 19, 2018 at 02:12:59PM +0000, Phil Edworthy wrote:
+> > > +	if (clk == ERR_PTR(-ENOENT))
+> > > +		return NULL;
+> > > +	else
+> > > +		return clk;
+> > 
+> > return clk == ERR_PTR(-ENOENT) ? NULL : clk;
+> > 
+> > ?
+> 
+> Not sure this adds to the readability of the expression. Personally I
+> prefer the explicit if. Maybe even:
+> 
+> 	clk = clk_get(...);
+> 
+> 	if (clk == ERR_PTR(-ENOENT))
+> 		clk = NULL;
+> 
+> 	return clk;
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+So, it almost repeats the initial variant.
+I'm fine with no 'else' in initial code, like
 
-diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-index de7b5393c163..b545daf8ccb3 100644
---- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-+++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-@@ -1,10 +1,12 @@
- * Renesas R-Car generation 3 USB 2.0 PHY
- 
- This file provides information on what the device node for the R-Car generation
--3 and RZ/G2 USB 2.0 PHY contain.
-+3, RZ/G2 and RZ/A2 USB 2.0 PHY contain.
- 
- Required properties:
--- compatible: "renesas,usb2-phy-r8a774a1" if the device is a part of an R8A774A1
-+- compatible: "renesas,usb2-phy-r7s9210" if the device is a part of an R7S9210
-+	      SoC.
-+	      "renesas,usb2-phy-r8a774a1" if the device is a part of an R8A774A1
- 	      SoC.
- 	      "renesas,usb2-phy-r8a7795" if the device is a part of an R8A7795
- 	      SoC.
-@@ -16,8 +18,8 @@ Required properties:
- 	      R8A77990 SoC.
- 	      "renesas,usb2-phy-r8a77995" if the device is a part of an
- 	      R8A77995 SoC.
--	      "renesas,rcar-gen3-usb2-phy" for a generic R-Car Gen3 or RZ/G2
--	      compatible device.
-+	      "renesas,rcar-gen3-usb2-phy" for a generic R-Car Gen3, RZ/G2 or
-+	      RZ/A2 compatible device.
- 
- 	      When compatible with the generic version, nodes must list the
- 	      SoC-specific version corresponding to the platform first
+if (...)
+	return NULL;
+
+return clk;
+
+
 -- 
-2.16.1
+With Best Regards,
+Andy Shevchenko
