@@ -1,104 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51678 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726911AbeKTX0Y (ORCPT
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:36863 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbeKTSfr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Nov 2018 18:26:24 -0500
+        Tue, 20 Nov 2018 13:35:47 -0500
+MIME-Version: 1.0
+References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw> <1542621690-10229-3-git-send-email-masonccyang@mxic.com.tw>
+In-Reply-To: <1542621690-10229-3-git-send-email-masonccyang@mxic.com.tw>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 20 Nov 2018 09:07:44 +0100
+Message-ID: <CAMuHMdXhx2iudXaPQto-c1kYAYdKc1T9vMr5yYNqONJwoNmRCw@mail.gmail.com>
 Subject: Re: [PATCH 2/2] dt-binding: spi: Document Renesas R-Car RPC
  controller bindings
 To: masonccyang@mxic.com.tw
-Cc: boris.brezillon@bootlin.com, broonie@kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org, tpiepho@impinj.com,
+Cc: Mark Brown <broonie@kernel.org>, Trent Piepho <tpiepho@impinj.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        juliensu@mxic.com.tw, Geert Uytterhoeven <geert+renesas@glider.be>,
         zhengxunli@mxic.com.tw
-References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw>
- <1542621690-10229-3-git-send-email-masonccyang@mxic.com.tw>
- <629a5d6f-5c13-9b24-1c21-461d09f1aa8a@gmail.com>
- <OFDD04CD59.10199EDD-ON4825834B.001E1390-4825834B.001F65DD@mxic.com.tw>
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <e7fd0653-75a7-249a-462a-18a7bf4616d1@gmail.com>
-Date: Tue, 20 Nov 2018 13:57:21 +0100
-MIME-Version: 1.0
-In-Reply-To: <OFDD04CD59.10199EDD-ON4825834B.001E1390-4825834B.001F65DD@mxic.com.tw>
-Content-Type: text/plain; charset=UTF-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 11/20/2018 06:42 AM, masonccyang@mxic.com.tw wrote:
-> Hi Marek,
-> 
-> Marek Vasut <marek.vasut@gmail.com> 已在 2018/11/19 下午 09:49:31 上寫入:
-> 
->> Marek Vasut <marek.vasut@gmail.com>
->> 2018/11/19 下午 09:49
->>
->> To
->>
->> Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
->> tpiepho@impinj.com, linux-kernel@vger.kernel.org, linux-
->> spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Simon Horman
->> <horms@verge.net.au>,
->>
->> cc
->>
->> boris.brezillon@bootlin.com, juliensu@mxic.com.tw, Geert
->> Uytterhoeven <geert+renesas@glider.be>, zhengxunli@mxic.com.tw
->>
->> Subject
->>
->> Re: [PATCH 2/2] dt-binding: spi: Document Renesas R-Car RPC
->> controller bindings
->>
->> On 11/19/2018 11:01 AM, Mason Yang wrote:
->> > Document the bindings used by the Renesas R-Car D3 RPC controller.
->> >
->> > Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
->> > ---
->> >  .../devicetree/bindings/spi/spi-renesas-rpc.txt    | 33 +++++++++
->> +++++++++++++
->> >  1 file changed, 33 insertions(+)
->> >  create mode 100644 Documentation/devicetree/bindings/spi/spi-
->> renesas-rpc.txt
->> >
->> > diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-
->> rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
->> > new file mode 100644
->> > index 0000000..8286cc8
->> > --- /dev/null
->> > +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
->> > @@ -0,0 +1,33 @@
->> > +Renesas R-Car D3 RPC controller Device Tree Bindings
->> > +----------------------------------------------------
->> > +
->> > +Required properties:
->> > +- compatible: should be "renesas,rpc-r8a77995"
->> > +- #address-cells: should be 1
->> > +- #size-cells: should be 0
->> > +- reg: should contain 2 entries, one for the registers and one
->> for the direct
->> > +       mapping area
->> > +- reg-names: should contain "rpc_regs" and "dirmap"
->> > +- interrupts: interrupt line connected to the RPC SPI controller
->>
->> Do you also plan to support the RPC HF mode ? And if so, how would that
->> look in the bindings ? I'd like to avoid having to redesign the bindings
->> later to handle both the SPI and HF modes.
->>
-> 
-> I patched this RPC SPI/Octa driver is for mx25uw51245g and you may also
-> refer to Boris's patch. [1][2][3]
+Hi Mason,
 
-Does this mean the driver is specific to one particular kind of flash ?
+On Mon, Nov 19, 2018 at 11:02 AM Mason Yang <masonccyang@mxic.com.tw> wrote:
+> Document the bindings used by the Renesas R-Car D3 RPC controller.
+>
+> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
 
-> [1] https://patchwork.kernel.org/cover/10638055/
-> [2] https://patchwork.kernel.org/patch/10638057/
-> [3] https://patchwork.kernel.org/patch/10638085/
+Thanks for your patch
 
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> @@ -0,0 +1,33 @@
+> +Renesas R-Car D3 RPC controller Device Tree Bindings
 
--- 
-Best regards,
-Marek Vasut
+R-Car Gen3
+
+> +----------------------------------------------------
+> +
+> +Required properties:
+> +- compatible: should be "renesas,rpc-r8a77995"
+
+Please use "renesas,r8a77995-rpc".
+
+> +- #address-cells: should be 1
+> +- #size-cells: should be 0
+> +- reg: should contain 2 entries, one for the registers and one for the direct
+> +       mapping area
+> +- reg-names: should contain "rpc_regs" and "dirmap"
+> +- interrupts: interrupt line connected to the RPC SPI controller
+> +- clock-names: should contain "clk_rpc"
+> +- clocks: should contain 1 entries for the CPG Module 917 clocks
+
+... for the module's clock
+
+> +
+> +Example:
+> +
+> +       rpc: spi@ee200000 {
+> +               compatible = "renesas,rpc-r8a77995";
+> +               reg = <0 0xee200000 0 0x8100>, <0 0x08000000 0 0x4000000>;
+> +               reg-names = "rpc_regs", "dirmap";
+> +               clocks = <&cpg CPG_MOD 917>;
+> +               clock-names = "clk_rpc";
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+
+power-domains?
+resets?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
