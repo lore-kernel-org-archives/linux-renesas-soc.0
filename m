@@ -1,51 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:61809 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727857AbeKSVvs (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:44374 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbeKTXHD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Nov 2018 16:51:48 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH  1/4] dt-bindings: rtc: pcf85363: Document pcf85263 real-time clock
-Date: Mon, 19 Nov 2018 11:15:05 +0000
-Message-Id: <1542626108-61344-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1542626108-61344-1-git-send-email-biju.das@bp.renesas.com>
-References: <1542626108-61344-1-git-send-email-biju.das@bp.renesas.com>
+        Tue, 20 Nov 2018 18:07:03 -0500
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gP5I4-0003IB-Uu
+        for linux-renesas-soc@vger.kernel.org; Tue, 20 Nov 2018 13:38:04 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gP5I4-0008CU-SH
+        for linux-renesas-soc@vger.kernel.org; Tue, 20 Nov 2018 13:38:04 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2018-11-20-v4.20-rc3
+Date: Tue, 20 Nov 2018 13:38:04 +0100
+Message-Id: <20181120123804.31480-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds binding for NXP pcf85263 real-time clock. pcf85263 rtc is
-compatible with pcf85363 rtc except that pcf85363 has 64 bytes additional
-RAM.
+I have pushed renesas-drivers-2018-11-20-v4.20-rc3 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- Documentation/devicetree/bindings/rtc/pcf85363.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the development branch of
+Simon Horman's renesas.git tree.
 
-diff --git a/Documentation/devicetree/bindings/rtc/pcf85363.txt b/Documentation/devicetree/bindings/rtc/pcf85363.txt
-index 76fdabc..94adc1c 100644
---- a/Documentation/devicetree/bindings/rtc/pcf85363.txt
-+++ b/Documentation/devicetree/bindings/rtc/pcf85363.txt
-@@ -1,8 +1,8 @@
--NXP PCF85363 Real Time Clock
-+NXP PCF85263/PCF85363 Real Time Clock
- ============================
- 
- Required properties:
--- compatible: Should contain "nxp,pcf85363".
-+- compatible: Should contain "nxp,pcf85263" or "nxp,pcf85363".
- - reg: I2C address for chip.
- 
- Optional properties:
--- 
-2.7.4
+Today's version is based on renesas-devel-20181119-v4.20-rc3.
+
+Included branches with driver code:
+  - clk-renesas
+  - sh-pfc
+  - topic/pinctrl-rza2-v7
+  - git://linuxtv.org/pinchartl/media.git#drm-du-iommu-v1-20171115
+  - git://git.ragnatech.se/linux#for-renesas-drivers
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#gmsl/for-renesas-drivers
+
+Included fixes:
+  - [LOCAL] arm64: defconfig: Update renesas_defconfig
+
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://git.freedesktop.org/git/drm/drm.git#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/media_tree.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://github.com/bzolnier/linux.git#fbdev-for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
