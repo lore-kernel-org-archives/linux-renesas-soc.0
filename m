@@ -1,59 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:39994 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728603AbeKDM1b (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:28671 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725977AbeKUBtB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 4 Nov 2018 07:27:31 -0500
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To: Jiada Wang <jiada_wang@mentor.com>, geert+renesas@glider.be,
-        horms@verge.net.au, magnus.damm@gmail.com, mark.rutland@arm.com,
-        mturquette@baylibre.com, robh+dt@kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <9f9fbf3a-4455-bdf3-0438-b39b9cdda112@mentor.com>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-References: <20181025072349.15173-1-jiada_wang@mentor.com>
- <20181025072349.15173-3-jiada_wang@mentor.com>
- <154083775062.98144.11157403961171783929@swboyd.mtv.corp.google.com>
- <9f9fbf3a-4455-bdf3-0438-b39b9cdda112@mentor.com>
-Message-ID: <154130125117.88331.5969014008610987799@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH linux-next v1 2/4] clk: renesas: Add binding document for AVB
- Counter Clock
-Date: Sat, 03 Nov 2018 20:14:11 -0700
+        Tue, 20 Nov 2018 20:49:01 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-gpio@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [RFC v3 0/2] Request GPIO when enabling interrupt
+Date: Tue, 20 Nov 2018 15:19:14 +0000
+Message-Id: <1542727156-31432-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Quoting Jiada Wang (2018-10-31 05:00:49)
-> On 2018/10/30 3:29, Stephen Boyd wrote:
-> > Quoting jiada_wang@mentor.com (2018-10-25 00:23:47)
-> >> +Required Properties:
-> >> +  - compatible: Must be "renesas,clk-avb"
-> >> +  - reg: Base address and length of the memory resource used by the A=
-VB
-> >> +  - #clock-cells: Must be 1
-> >> +
-> >> +Example
-> >> +-------
-> >> +
-> >> +       clk_avb: avb-clock@ec5a011c {
-> >> +               compatible =3D "renesas,clk-avb";
-> >> +               reg =3D <0 0xec5a011c 0 0x24>;
-> > This is an odd register offset. Is this just one clk inside of a larger
-> > clk controller?
-> >
-> Yes, avb_counter clock is part of Audio Clock Generator reg: <0 =
+Dear All,
 
-> 0xec5a0000 0 0x140>,
-> but "adg" has already been declared in R-Car GEN2/GEN3 SoC .dtsi file, =
+here is a new iteration of the fix for the pinmuxing issue while
+requesting an interrupt.
+I don't like this implementation either as:
+* pinctrl_mux_gpio_request_enable is very similar to pinctrl_gpio_request,
+  and the name I have picked up is not exactly brilliant...
+* it may cause an error message like "Pin X is busy, can't configure it as
+  GPIO." (for cd-gpios pins for example) as it can't check the status of the pin
+  before requesting it (can it?)
+* because it's discarding errors returned by pinctrl_mux_gpio_request_enable
 
-> with reg: <0 0xec5a0000 0 0x100>,
-> which leaves <0 0xec5a0100 0 0x140> currently not used by any module.
-> =
+This problem needs fixing, but the solutions proposed so far don't look
+great, as they are not spectacularly neat.
 
+What's the best way to fix this?
 
-So why can't we expand the register size in the dts file and update the
-audio clock generator driver to register this avb clock too? Presumably
-the mapping is large enough to cover the clk registers already so it is
-more of a formality to expand the register size than a requirement.
+Ideas and comments very welcome!
+
+Thanks,
+Fab
+
+Fabrizio Castro (2):
+  pinctrl: core: Add pinctrl_mux_gpio_request_enable
+  gpio: rcar: Set pin as a GPIO when configuring an interrupt
+
+ drivers/gpio/gpio-rcar.c         |  3 +++
+ drivers/pinctrl/core.c           | 34 ++++++++++++++++++++++++++++++++++
+ include/linux/pinctrl/consumer.h |  6 ++++++
+ 3 files changed, 43 insertions(+)
+
+-- 
+2.7.4
