@@ -1,47 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41482 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726212AbeKUACP (ORCPT
+Received: from mail.bootlin.com ([62.4.15.54]:56433 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726911AbeKUABW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Nov 2018 19:02:15 -0500
-Subject: Re: [PATCH 1/2] spi: Add Renesas R-Car RPC SPI controller driver
-To: Mark Brown <broonie@kernel.org>
-Cc: Mason Yang <masonccyang@mxic.com.tw>, tpiepho@impinj.com,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>, boris.brezillon@bootlin.com,
-        juliensu@mxic.com.tw, Geert Uytterhoeven <geert+renesas@glider.be>,
+        Tue, 20 Nov 2018 19:01:22 -0500
+Date: Tue, 20 Nov 2018 14:32:09 +0100
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: masonccyang@mxic.com.tw, broonie@kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-spi@vger.kernel.org, tpiepho@impinj.com,
         zhengxunli@mxic.com.tw
+Subject: Re: [PATCH 1/2] spi: Add Renesas R-Car RPC SPI controller driver
+Message-ID: <20181120143209.49217efb@bbrezillon>
+In-Reply-To: <6b024f18-d0bc-3e65-f07c-cef913f795ab@gmail.com>
 References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw>
- <1542621690-10229-2-git-send-email-masonccyang@mxic.com.tw>
- <0223f43b-c6a6-eade-49af-4e7b7ef7f022@gmail.com>
- <20181119152735.GB3535@sirena.org.uk>
- <cbbc3dba-7f85-c6a3-525f-01eb23e50592@gmail.com>
- <20181120132624.GD3894@sirena.org.uk>
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <1597e984-6b69-1d1e-f033-296d658f8011@gmail.com>
-Date: Tue, 20 Nov 2018 14:33:02 +0100
+        <1542621690-10229-2-git-send-email-masonccyang@mxic.com.tw>
+        <0223f43b-c6a6-eade-49af-4e7b7ef7f022@gmail.com>
+        <OF4FAD10C5.F4F6D29B-ON4825834B.001FAB40-4825834B.00289635@mxic.com.tw>
+        <6b024f18-d0bc-3e65-f07c-cef913f795ab@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181120132624.GD3894@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 11/20/2018 02:26 PM, Mark Brown wrote:
-> On Mon, Nov 19, 2018 at 11:10:04PM +0100, Marek Vasut wrote:
->> On 11/19/2018 04:27 PM, Mark Brown wrote:
-> 
->>> The SPDX header needs to be C++ style so I push people to make the whole
->>> block C++ otherwise it looks messy.
-> 
->> OK, I'm not gonna wrestle you on this, but I think it looks horrible ;-)
-> 
-> I don't really like the C++ comment in the first place :(
+On Tue, 20 Nov 2018 14:09:05 +0100
+Marek Vasut <marek.vasut@gmail.com> wrote:
 
-Then we are in agreement :-)
+> On 11/20/2018 08:23 AM, masonccyang@mxic.com.tw wrote:
+> > Hi Marek,  
+> 
+> Hi,
+> 
+> >> Marek Vasut <marek.vasut@gmail.com>
+> >> 2018/11/19 下午 10:12
+> >>
+> >> To
+> >>  
+> >> > +
+> >> > +static int rpc_spi_set_freq(struct rpc_spi *rpc, unsigned long freq)
+> >> > +{
+> >> > +   int ret;
+> >> > +
+> >> > +   if (rpc->cur_speed_hz == freq)
+> >> > +      return 0;
+> >> > +
+> >> > +   clk_disable_unprepare(rpc->clk_rpc);
+> >> > +   ret = clk_set_rate(rpc->clk_rpc, freq);
+> >> > +   if (ret)
+> >> > +      return ret;
+> >> > +
+> >> > +   ret = clk_prepare_enable(rpc->clk_rpc);
+> >> > +   if (ret)
+> >> > +      return ret;  
+> >>
+> >> Is this clock disable/update/enable really needed ? I'd think that
+> >> clk_set_rate() would handle the rate update correctly.  
+> > 
+> > This is for run time PM mechanism in spi-mem layer and __spi_sync(),
+> > you may refer to another patch [1].
+> > 
+> > [1]
+> > https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git/commit/?h=for-4.21&id=b942d80b0a394e8ea18fce3b032b4700439e8ca3  
+> 
+> I think Geert commented on the clock topic, so let's move it there.
+> Disabling and enabling clock to change their rate looks real odd to me.
 
--- 
-Best regards,
-Marek Vasut
+Look at the CLK_SET_RATE_GATE definition and its users and you'll see
+it's not unusual to have such constraints on clks. Maybe your HW does
+not have such constraints, but it's not particularly odd to do that
+(though it could probably be automated by the clk framework somehow).
