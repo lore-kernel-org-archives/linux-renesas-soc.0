@@ -1,105 +1,156 @@
+Return-Path: <masonccyang@mxic.com.tw>
+In-Reply-To: <e7fd0653-75a7-249a-462a-18a7bf4616d1@gmail.com>
+References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw> <1542621690-10229-3-git-send-email-masonccyang@mxic.com.tw> <629a5d6f-5c13-9b24-1c21-461d09f1aa8a@gmail.com> <OFDD04CD59.10199EDD-ON4825834B.001E1390-4825834B.001F65DD@mxic.com.tw> <e7fd0653-75a7-249a-462a-18a7bf4616d1@gmail.com>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: boris.brezillon@bootlin.com, broonie@kernel.org,
+        Geert Uytterhoeven<geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-spi@vger.kernel.org, tpiepho@impinj.com, zhengxunli@mxic.com.tw
+Subject: Re: [PATCH 2/2] dt-binding: spi: Document Renesas R-Car RPC controller
+ bindings
 MIME-Version: 1.0
-Date: Wed, 28 Nov 2018 10:41:24 +0100
-References: <152923212426.18394.1638836062311758848.sendpatchset@little-apple>
-	<20180620091416.s4vdg5tgkl3mnoxd@verge.net.au>
-	<20180716074939.76mes7rt5ddqnyy6@verge.net.au>
-In-Reply-To: <20180716074939.76mes7rt5ddqnyy6@verge.net.au>
-Message-ID: <CAMuHMdVPvmNXmwjbNXsQWxfsjKUa6E+caSf-mHhXarnVo0FTyA@mail.gmail.com>
-Subject: Re: [PATCH v2 00/03] arm64: dts: renesas: Add IPMMU device nodes V2
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Simon Horman <horms@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <OF26D8352D.B4B02BBE-ON4825834C.00043726-4825834C.0004E2F7@mxic.com.tw>
+From: masonccyang@mxic.com.tw
+Date: Wed, 21 Nov 2018 08:53:22 +0800
+Content-Type: multipart/alternative; boundary="=_alternative 0004E2F64825834C_="
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jul 16, 2018 at 9:50 AM Simon Horman <horms@verge.net.au> wrote:
-> On Wed, Jun 20, 2018 at 11:14:17AM +0200, Simon Horman wrote:
-> > On Sun, Jun 17, 2018 at 07:42:04PM +0900, Magnus Damm wrote:
-> > > arm64: dts: renesas: Add IPMMU device nodes V2
-> > >
-> > > [PATCH v2 01/03] arm64: dts: renesas: r8a77965: Add IPMMU devices nodes
-> > > [PATCH v2 02/03] arm64: dts: renesas: r8a77980: Add IPMMU devices nodes
-> > > [PATCH v2 03/03] arm64: dts: renesas: r8a77990: Add IPMMU devices nodes
-> > >
-> > > This series is the second attempt to add IPMMU device nodes to R-Car M3-N,
-> > > R-Car V3H and R-Car E3 SoCs.
-> > >
-> > > The IPMMU DT binding changes are not yet merged upstream however they
-> > > have been documented by the following patches:
-> > >
-> > > [PATCH] iommu/ipmmu-vmsa: Document R-Car M3-N IPMMU DT bindings
-> > > [PATCH] iommu/ipmmu-vmsa: Document R-Car V3H and E3 IPMMU DT bindings
-> > >
-> > > Please see each individual patch for list of changes.
-> >
-> > Hi Magnus,
-> >
-> > as per my comment on v1, did you consider merging these patches into one
-> > patch. Olof has asked that we consider such consolidation.
->
-> The above dependencies now appear have been accepted for v4.19.
->
-> I have now applied this series. I took the liberty of squashing all three
-> patches into one. The result is as follows.
->
->
-> From: Magnus Damm <damm+renesas@opensource.se>
-> Date: Sun, 17 Jun 2018 19:42:13 +0900
-> Subject: [PATCH] arm64: dts: renesas: r8a779{65,80,90}: Add IPMMU devices
->  nodes
->
-> Add IPMMU device nodes for the R-Car M3-N (r8a77965),
-> V3H (r8a77980) and E3 (r8a77990) SoCs.
->
-> * The r8a77965 IPMMU is quite similar to r8a7796 however VP0
->   has been added and PV1 has been removed. Also the IMSSTR
->   bit assignment has been reworked.
+This is a multipart message in MIME format.
+--=_alternative 0004E2F64825834C_=
+Content-Type: text/plain; charset="Big5"
+Content-Transfer-Encoding: base64
 
-> --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
 
-> +               ipmmu_ir: mmu@ff8b0000 {
-> +                       compatible = "renesas,ipmmu-r8a77965";
-> +                       reg = <0 0xff8b0000 0 0x1000>;
-> +                       renesas,ipmmu-main = <&ipmmu_mm 3>;
-> +                       power-domains = <&sysc R8A77965_PD_A3IR>;
-> +                       #iommu-cells = <1>;
-> +               };
+SGkgTWFyZWssDQoNCj4gTWFyZWsgVmFzdXQgPG1hcmVrLnZhc3V0QGdtYWlsLmNvbT4gDQo+IDIw
+MTgvMTEvMjAgpFWkyCAwODo1Nw0KPiANCj4gPj4gPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlv
+bi9kZXZpY2V0cmVlL2JpbmRpbmdzL3NwaS9zcGktcmVuZXNhcy0NCj4gPj4gcnBjLnR4dCBiL0Rv
+Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9zcGkvc3BpLXJlbmVzYXMtcnBjLnR4dA0K
+PiA+PiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+ID4+ID4gaW5kZXggMDAwMDAwMC4uODI4NmNj
+OA0KPiA+PiA+IC0tLSAvZGV2L251bGwNCj4gPj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2Rldmlj
+ZXRyZWUvYmluZGluZ3Mvc3BpL3NwaS1yZW5lc2FzLXJwYy50eHQNCj4gPj4gPiBAQCAtMCwwICsx
+LDMzIEBADQo+ID4+ID4gK1JlbmVzYXMgUi1DYXIgRDMgUlBDIGNvbnRyb2xsZXIgRGV2aWNlIFRy
+ZWUgQmluZGluZ3MNCj4gPj4gPiArLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLQ0KPiA+PiA+ICsNCj4gPj4gPiArUmVxdWlyZWQgcHJvcGVydGllczoN
+Cj4gPj4gPiArLSBjb21wYXRpYmxlOiBzaG91bGQgYmUgInJlbmVzYXMscnBjLXI4YTc3OTk1Ig0K
+PiA+PiA+ICstICNhZGRyZXNzLWNlbGxzOiBzaG91bGQgYmUgMQ0KPiA+PiA+ICstICNzaXplLWNl
+bGxzOiBzaG91bGQgYmUgMA0KPiA+PiA+ICstIHJlZzogc2hvdWxkIGNvbnRhaW4gMiBlbnRyaWVz
+LCBvbmUgZm9yIHRoZSByZWdpc3RlcnMgYW5kIG9uZQ0KPiA+PiBmb3IgdGhlIGRpcmVjdA0KPiA+
+PiA+ICsgICAgICAgbWFwcGluZyBhcmVhDQo+ID4+ID4gKy0gcmVnLW5hbWVzOiBzaG91bGQgY29u
+dGFpbiAicnBjX3JlZ3MiIGFuZCAiZGlybWFwIg0KPiA+PiA+ICstIGludGVycnVwdHM6IGludGVy
+cnVwdCBsaW5lIGNvbm5lY3RlZCB0byB0aGUgUlBDIFNQSSBjb250cm9sbGVyDQo+ID4+DQo+ID4+
+IERvIHlvdSBhbHNvIHBsYW4gdG8gc3VwcG9ydCB0aGUgUlBDIEhGIG1vZGUgPyBBbmQgaWYgc28s
+IGhvdyB3b3VsZCANCnRoYXQNCj4gPj4gbG9vayBpbiB0aGUgYmluZGluZ3MgPyBJJ2QgbGlrZSB0
+byBhdm9pZCBoYXZpbmcgdG8gcmVkZXNpZ24gdGhlIA0KYmluZGluZ3MNCj4gPj4gbGF0ZXIgdG8g
+aGFuZGxlIGJvdGggdGhlIFNQSSBhbmQgSEYgbW9kZXMuDQo+ID4+DQo+ID4gDQo+ID4gSSBwYXRj
+aGVkIHRoaXMgUlBDIFNQSS9PY3RhIGRyaXZlciBpcyBmb3IgbXgyNXV3NTEyNDVnIGFuZCB5b3Ug
+bWF5IA0KYWxzbw0KPiA+IHJlZmVyIHRvIEJvcmlzJ3MgcGF0Y2guIFsxXVsyXVszXQ0KPiANCj4g
+RG9lcyB0aGlzIG1lYW4gdGhlIGRyaXZlciBpcyBzcGVjaWZpYyB0byBvbmUgcGFydGljdWxhciBr
+aW5kIG9mIGZsYXNoID8NCj4gDQoNCk5vLCB0aGlzIGRyaXZlciBzdXBwb3J0cyBhbGwgU1BJIGZs
+YXNoLCBzcGksIHFzcGkgYW5kIG9jdGEgZmxhc2guDQoNClRoZSB0YXJnZXQgaXMgT2N0YSA4LTgt
+OCBERFIyIG1vZGUgb25jZSBzcGktbm9yIGxheWVyIGlzIG1lcmdlZC5bMV1bMl1bM10NCg0KdGhh
+bmtzICYgYmVzdCByZWdhcmRzLA0KTWFzb24NCg0KPiA+IFsxXSBodHRwczovL3BhdGNod29yay5r
+ZXJuZWwub3JnL2NvdmVyLzEwNjM4MDU1Lw0KPiA+IFsyXSBodHRwczovL3BhdGNod29yay5rZXJu
+ZWwub3JnL3BhdGNoLzEwNjM4MDU3Lw0KPiA+IFszXSBodHRwczovL3BhdGNod29yay5rZXJuZWwu
+b3JnL3BhdGNoLzEwNjM4MDg1Lw0KPiANCj4gDQoNCg0KDQpDT05GSURFTlRJQUxJVFkgTk9URToN
+Cg0KVGhpcyBlLW1haWwgYW5kIGFueSBhdHRhY2htZW50cyBtYXkgY29udGFpbiBjb25maWRlbnRp
+YWwgaW5mb3JtYXRpb24gDQphbmQvb3IgcGVyc29uYWwgZGF0YSwgd2hpY2ggaXMgcHJvdGVjdGVk
+IGJ5IGFwcGxpY2FibGUgbGF3cy4gUGxlYXNlIGJlIA0KcmVtaW5kZWQgdGhhdCBkdXBsaWNhdGlv
+biwgZGlzY2xvc3VyZSwgZGlzdHJpYnV0aW9uLCBvciB1c2Ugb2YgdGhpcyBlLW1haWwgDQooYW5k
+L29yIGl0cyBhdHRhY2htZW50cykgb3IgYW55IHBhcnQgdGhlcmVvZiBpcyBwcm9oaWJpdGVkLiBJ
+ZiB5b3UgcmVjZWl2ZSANCnRoaXMgZS1tYWlsIGluIGVycm9yLCBwbGVhc2Ugbm90aWZ5IHVzIGlt
+bWVkaWF0ZWx5IGFuZCBkZWxldGUgdGhpcyBtYWlsIGFzIA0Kd2VsbCBhcyBpdHMgYXR0YWNobWVu
+dChzKSBmcm9tIHlvdXIgc3lzdGVtLiBJbiBhZGRpdGlvbiwgcGxlYXNlIGJlIA0KaW5mb3JtZWQg
+dGhhdCBjb2xsZWN0aW9uLCBwcm9jZXNzaW5nLCBhbmQvb3IgdXNlIG9mIHBlcnNvbmFsIGRhdGEg
+aXMgDQpwcm9oaWJpdGVkIHVubGVzcyBleHByZXNzbHkgcGVybWl0dGVkIGJ5IHBlcnNvbmFsIGRh
+dGEgcHJvdGVjdGlvbiBsYXdzLiANClRoYW5rIHlvdSBmb3IgeW91ciBhdHRlbnRpb24gYW5kIGNv
+b3BlcmF0aW9uLg0KDQpNYWNyb25peCBJbnRlcm5hdGlvbmFsIENvLiwgTHRkLg0KDQo9PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT0NCg0KDQoNCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NCg0KQ09ORklERU5USUFMSVRZIE5PVEU6
+DQoNClRoaXMgZS1tYWlsIGFuZCBhbnkgYXR0YWNobWVudHMgbWF5IGNvbnRhaW4gY29uZmlkZW50
+aWFsIGluZm9ybWF0aW9uIGFuZC9vciBwZXJzb25hbCBkYXRhLCB3aGljaCBpcyBwcm90ZWN0ZWQg
+YnkgYXBwbGljYWJsZSBsYXdzLiBQbGVhc2UgYmUgcmVtaW5kZWQgdGhhdCBkdXBsaWNhdGlvbiwg
+ZGlzY2xvc3VyZSwgZGlzdHJpYnV0aW9uLCBvciB1c2Ugb2YgdGhpcyBlLW1haWwgKGFuZC9vciBp
+dHMgYXR0YWNobWVudHMpIG9yIGFueSBwYXJ0IHRoZXJlb2YgaXMgcHJvaGliaXRlZC4gSWYgeW91
+IHJlY2VpdmUgdGhpcyBlLW1haWwgaW4gZXJyb3IsIHBsZWFzZSBub3RpZnkgdXMgaW1tZWRpYXRl
+bHkgYW5kIGRlbGV0ZSB0aGlzIG1haWwgYXMgd2VsbCBhcyBpdHMgYXR0YWNobWVudChzKSBmcm9t
+IHlvdXIgc3lzdGVtLiBJbiBhZGRpdGlvbiwgcGxlYXNlIGJlIGluZm9ybWVkIHRoYXQgY29sbGVj
+dGlvbiwgcHJvY2Vzc2luZywgYW5kL29yIHVzZSBvZiBwZXJzb25hbCBkYXRhIGlzIHByb2hpYml0
+ZWQgdW5sZXNzIGV4cHJlc3NseSBwZXJtaXR0ZWQgYnkgcGVyc29uYWwgZGF0YSBwcm90ZWN0aW9u
+IGxhd3MuIFRoYW5rIHlvdSBmb3IgeW91ciBhdHRlbnRpb24gYW5kIGNvb3BlcmF0aW9uLg0KDQpN
+YWNyb25peCBJbnRlcm5hdGlvbmFsIENvLiwgTHRkLg0KDQo9PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NCg==
 
-Please note that R-Car Gen3 HardWare Manual Errata for Rev. 1.00 (Aug 24,
-2018) removed the IPMMU-IR IOMMU instance on R-Car M3-N, as this SoC
-does not have an Image Processing Unit (IMP-X5) nor the A3IR power domain.
+--=_alternative 0004E2F64825834C_=
+Content-Type: text/html; charset="Big5"
+Content-Transfer-Encoding: base64
 
-I've sent a patch to fix that.
 
-> * The r8a77980 IPMMU is quite similar to r8a77970 however VC0
->   has been added. The IMSSTR bit assignment has also been
->   reworked. Power domains are also quite different however the
->   the documentation is rather unclear about this topic.
->
->   Until we know better VC0 gets assigned to R8A77980_PD_ALWAYS_ON.
+PHR0Pjxmb250IHNpemU9Mj5IaSBNYXJlayw8YnI+DQo8YnI+DQomZ3Q7IE1hcmVrIFZhc3V0ICZs
+dDttYXJlay52YXN1dEBnbWFpbC5jb20mZ3Q7IDwvZm9udD48L3R0Pg0KPGJyPjx0dD48Zm9udCBz
+aXplPTI+Jmd0OyAyMDE4LzExLzIwIKRVpMggMDg6NTc8L2ZvbnQ+PC90dD4NCjxicj48dHQ+PGZv
+bnQgc2l6ZT0yPiZndDsgPGJyPg0KJmd0OyAmZ3Q7Jmd0OyAmZ3Q7IGRpZmYgLS1naXQgYS9Eb2N1
+bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mvc3BpL3NwaS1yZW5lc2FzLTxicj4NCiZndDsg
+Jmd0OyZndDsgcnBjLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9zcGkv
+c3BpLXJlbmVzYXMtcnBjLnR4dDxicj4NCiZndDsgJmd0OyZndDsgJmd0OyBuZXcgZmlsZSBtb2Rl
+IDEwMDY0NDxicj4NCiZndDsgJmd0OyZndDsgJmd0OyBpbmRleCAwMDAwMDAwLi44Mjg2Y2M4PGJy
+Pg0KJmd0OyAmZ3Q7Jmd0OyAmZ3Q7IC0tLSAvZGV2L251bGw8YnI+DQomZ3Q7ICZndDsmZ3Q7ICZn
+dDsgKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3NwaS9zcGktcmVuZXNh
+cy1ycGMudHh0PGJyPg0KJmd0OyAmZ3Q7Jmd0OyAmZ3Q7IEBAIC0wLDAgKzEsMzMgQEA8YnI+DQom
+Z3Q7ICZndDsmZ3Q7ICZndDsgK1JlbmVzYXMgUi1DYXIgRDMgUlBDIGNvbnRyb2xsZXIgRGV2aWNl
+IFRyZWUgQmluZGluZ3M8YnI+DQomZ3Q7ICZndDsmZ3Q7ICZndDsgKy0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS08YnI+DQomZ3Q7ICZndDsmZ3Q7ICZn
+dDsgKzxicj4NCiZndDsgJmd0OyZndDsgJmd0OyArUmVxdWlyZWQgcHJvcGVydGllczo8YnI+DQom
+Z3Q7ICZndDsmZ3Q7ICZndDsgKy0gY29tcGF0aWJsZTogc2hvdWxkIGJlICZxdW90O3JlbmVzYXMs
+cnBjLXI4YTc3OTk1JnF1b3Q7PGJyPg0KJmd0OyAmZ3Q7Jmd0OyAmZ3Q7ICstICNhZGRyZXNzLWNl
+bGxzOiBzaG91bGQgYmUgMTxicj4NCiZndDsgJmd0OyZndDsgJmd0OyArLSAjc2l6ZS1jZWxsczog
+c2hvdWxkIGJlIDA8YnI+DQomZ3Q7ICZndDsmZ3Q7ICZndDsgKy0gcmVnOiBzaG91bGQgY29udGFp
+biAyIGVudHJpZXMsIG9uZSBmb3IgdGhlIHJlZ2lzdGVycw0KYW5kIG9uZTxicj4NCiZndDsgJmd0
+OyZndDsgZm9yIHRoZSBkaXJlY3Q8YnI+DQomZ3Q7ICZndDsmZ3Q7ICZndDsgKyAmbmJzcDsgJm5i
+c3A7ICZuYnNwOyBtYXBwaW5nIGFyZWE8YnI+DQomZ3Q7ICZndDsmZ3Q7ICZndDsgKy0gcmVnLW5h
+bWVzOiBzaG91bGQgY29udGFpbiAmcXVvdDtycGNfcmVncyZxdW90OyBhbmQNCiZxdW90O2Rpcm1h
+cCZxdW90Ozxicj4NCiZndDsgJmd0OyZndDsgJmd0OyArLSBpbnRlcnJ1cHRzOiBpbnRlcnJ1cHQg
+bGluZSBjb25uZWN0ZWQgdG8gdGhlIFJQQyBTUEkNCmNvbnRyb2xsZXI8YnI+DQomZ3Q7ICZndDsm
+Z3Q7PGJyPg0KJmd0OyAmZ3Q7Jmd0OyBEbyB5b3UgYWxzbyBwbGFuIHRvIHN1cHBvcnQgdGhlIFJQ
+QyBIRiBtb2RlID8gQW5kIGlmIHNvLA0KaG93IHdvdWxkIHRoYXQ8YnI+DQomZ3Q7ICZndDsmZ3Q7
+IGxvb2sgaW4gdGhlIGJpbmRpbmdzID8gSSdkIGxpa2UgdG8gYXZvaWQgaGF2aW5nIHRvIHJlZGVz
+aWduDQp0aGUgYmluZGluZ3M8YnI+DQomZ3Q7ICZndDsmZ3Q7IGxhdGVyIHRvIGhhbmRsZSBib3Ro
+IHRoZSBTUEkgYW5kIEhGIG1vZGVzLjxicj4NCiZndDsgJmd0OyZndDs8YnI+DQomZ3Q7ICZndDsg
+PGJyPg0KJmd0OyAmZ3Q7IEkgcGF0Y2hlZCB0aGlzIFJQQyBTUEkvT2N0YSBkcml2ZXIgaXMgZm9y
+IG14MjV1dzUxMjQ1ZyBhbmQgeW91DQptYXkgYWxzbzxicj4NCiZndDsgJmd0OyByZWZlciB0byBC
+b3JpcydzIHBhdGNoLiBbMV1bMl1bM108YnI+DQomZ3Q7IDxicj4NCiZndDsgRG9lcyB0aGlzIG1l
+YW4gdGhlIGRyaXZlciBpcyBzcGVjaWZpYyB0byBvbmUgcGFydGljdWxhciBraW5kIG9mIGZsYXNo
+DQo/PGJyPg0KJmd0OyA8L2ZvbnQ+PC90dD4NCjxicj4NCjxicj48dHQ+PGZvbnQgc2l6ZT0yPk5v
+LCB0aGlzIGRyaXZlciBzdXBwb3J0cyBhbGwgU1BJIGZsYXNoLCBzcGksIHFzcGkNCmFuZCBvY3Rh
+IGZsYXNoLjwvZm9udD48L3R0Pg0KPGJyPg0KPGJyPjx0dD48Zm9udCBzaXplPTI+VGhlIHRhcmdl
+dCBpcyBPY3RhIDgtOC04IEREUjIgbW9kZSBvbmNlIHNwaS1ub3IgbGF5ZXINCmlzIG1lcmdlZC5b
+MV1bMl1bM108L2ZvbnQ+PC90dD4NCjxicj4NCjxicj48dHQ+PGZvbnQgc2l6ZT0yPnRoYW5rcyAm
+YW1wOyBiZXN0IHJlZ2FyZHMsPC9mb250PjwvdHQ+DQo8YnI+PHR0Pjxmb250IHNpemU9Mj5NYXNv
+bjwvZm9udD48L3R0Pg0KPGJyPjx0dD48Zm9udCBzaXplPTI+PGJyPg0KJmd0OyAmZ3Q7IFsxXSA8
+L2ZvbnQ+PC90dD48YSBocmVmPWh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvY292ZXIvMTA2
+MzgwNTUvPjx0dD48Zm9udCBzaXplPTI+aHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9jb3Zl
+ci8xMDYzODA1NS88L2ZvbnQ+PC90dD48L2E+PHR0Pjxmb250IHNpemU9Mj48YnI+DQomZ3Q7ICZn
+dDsgWzJdIDwvZm9udD48L3R0PjxhIGhyZWY9aHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9w
+YXRjaC8xMDYzODA1Ny8+PHR0Pjxmb250IHNpemU9Mj5odHRwczovL3BhdGNod29yay5rZXJuZWwu
+b3JnL3BhdGNoLzEwNjM4MDU3LzwvZm9udD48L3R0PjwvYT48dHQ+PGZvbnQgc2l6ZT0yPjxicj4N
+CiZndDsgJmd0OyBbM10gPC9mb250PjwvdHQ+PGEgaHJlZj1odHRwczovL3BhdGNod29yay5rZXJu
+ZWwub3JnL3BhdGNoLzEwNjM4MDg1Lz48dHQ+PGZvbnQgc2l6ZT0yPmh0dHBzOi8vcGF0Y2h3b3Jr
+Lmtlcm5lbC5vcmcvcGF0Y2gvMTA2MzgwODUvPC9mb250PjwvdHQ+PC9hPjx0dD48Zm9udCBzaXpl
+PTI+PGJyPg0KJmd0OyA8YnI+DQomZ3Q7IDxicj4NCjxicj4NCjxicj4NCjxicj4NCkNPTkZJREVO
+VElBTElUWSBOT1RFOjxicj4NCjxicj4NClRoaXMgZS1tYWlsIGFuZCBhbnkgYXR0YWNobWVudHMg
+bWF5IGNvbnRhaW4gY29uZmlkZW50aWFsIGluZm9ybWF0aW9uIGFuZC9vcg0KcGVyc29uYWwgZGF0
+YSwgd2hpY2ggaXMgcHJvdGVjdGVkIGJ5IGFwcGxpY2FibGUgbGF3cy4gUGxlYXNlIGJlIHJlbWlu
+ZGVkDQp0aGF0IGR1cGxpY2F0aW9uLCBkaXNjbG9zdXJlLCBkaXN0cmlidXRpb24sIG9yIHVzZSBv
+ZiB0aGlzIGUtbWFpbCAoYW5kL29yDQppdHMgYXR0YWNobWVudHMpIG9yIGFueSBwYXJ0IHRoZXJl
+b2YgaXMgcHJvaGliaXRlZC4gSWYgeW91IHJlY2VpdmUgdGhpcw0KZS1tYWlsIGluIGVycm9yLCBw
+bGVhc2Ugbm90aWZ5IHVzIGltbWVkaWF0ZWx5IGFuZCBkZWxldGUgdGhpcyBtYWlsIGFzIHdlbGwN
+CmFzIGl0cyBhdHRhY2htZW50KHMpIGZyb20geW91ciBzeXN0ZW0uIEluIGFkZGl0aW9uLCBwbGVh
+c2UgYmUgaW5mb3JtZWQNCnRoYXQgY29sbGVjdGlvbiwgcHJvY2Vzc2luZywgYW5kL29yIHVzZSBv
+ZiBwZXJzb25hbCBkYXRhIGlzIHByb2hpYml0ZWQNCnVubGVzcyBleHByZXNzbHkgcGVybWl0dGVk
+IGJ5IHBlcnNvbmFsIGRhdGEgcHJvdGVjdGlvbiBsYXdzLiBUaGFuayB5b3UNCmZvciB5b3VyIGF0
+dGVudGlvbiBhbmQgY29vcGVyYXRpb24uPGJyPg0KPGJyPg0KTWFjcm9uaXggSW50ZXJuYXRpb25h
+bCBDby4sIEx0ZC48YnI+DQo8YnI+DQo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT08YnI+DQo8L2ZvbnQ+PC90dD4NCg==
 
-JFTR, this matches the R-Car Gen3 HardWare Manual Errata for Rev. 1.00
-(Jul 20, 2018).
-
-> * The r8a77990 IPMMU is similar to r8a77995. Power domains are
->   however different and the public documentation is still unclear.
->
->   Based on preliminary information from the hardware team the R-Car E3
->   SoC comes with an IPMMU-VP0 device in an Always-on power domain and
->   the IPMMU-VC0 is placed as expected in the A3VC power domain.
-
-JFTR, this matches the R-Car Gen3 HardWare Manual Errata for Rev. 1.00
-(Jul 20, 2018).
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--=_alternative 0004E2F64825834C_=--
