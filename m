@@ -1,42 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:38384 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387711AbeKWUGf (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43355 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729743AbeKUWnw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Nov 2018 15:06:35 -0500
-MIME-Version: 1.0
-References: <20181121120928.25179-1-horms+renesas@verge.net.au> <20181121120928.25179-2-horms+renesas@verge.net.au>
-In-Reply-To: <20181121120928.25179-2-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 23 Nov 2018 10:22:57 +0100
-Message-ID: <CAMuHMdVzjJH3cmvYT1DtY5Woj4f0-9po97paaZLYrXE2dLBxvw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] i2c: sh_mobile: document support for r8a77990 (R-Car E3)
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 21 Nov 2018 17:43:52 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-i2c@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/2] i2c: sh_mobile: document support for r8a77990 (R-Car E3)
+Date: Wed, 21 Nov 2018 13:09:27 +0100
+Message-Id: <20181121120928.25179-2-horms+renesas@verge.net.au>
+In-Reply-To: <20181121120928.25179-1-horms+renesas@verge.net.au>
+References: <20181121120928.25179-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Nov 21, 2018 at 1:11 PM Simon Horman <horms+renesas@verge.net.au> wrote:
-> Document support for the IIC code for the r8a77990 (R-Car E3).
->
-> It is not considered compatible with existing fallback bindings
-> due to the documented absence of automatic transmission registers.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Document support for the IIC code for the r8a77990 (R-Car E3).
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+It is not considered compatible with existing fallback bindings
+due to the documented absence of automatic transmission registers.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt b/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
+index d81b62643655..bc876b71d1e4 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
++++ b/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
+@@ -16,6 +16,7 @@ Required properties:
+ 			- "renesas,iic-r8a7795" (R-Car H3)
+ 			- "renesas,iic-r8a7796" (R-Car M3-W)
+ 			- "renesas,iic-r8a77965" (R-Car M3-N)
++			- "renesas,iic-r8a77990" (R-Car E3)
+ 			- "renesas,iic-sh73a0" (SH-Mobile AG5)
+ 			- "renesas,rcar-gen2-iic" (generic R-Car Gen2 or RZ/G1
+ 							compatible device)
+@@ -28,7 +29,13 @@ Required properties:
+ 			the platform first followed by the generic R-Car
+ 			version.
+ 
+-			renesas,rmobile-iic must always follow.
++			When compatible with "renesas,rmobile-iic" it should
++			be the last compatibility string listed.
++
++			The r8a77990 (R-Car E3) controller is not
++			considered compatible with "renesas,rcar-gen3-iic"
++			or "renesas,rmobile-iic" due to the absence of
++			automatic transmission registers.
+ 
+ - reg             : address start and address range size of device
+ - interrupts      : interrupt of device
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.11.0
