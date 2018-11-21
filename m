@@ -1,72 +1,48 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 2/2] dt-bindings: iommu: ipmmu-vmsa: Add r8a774a1 support
-Date: Thu, 8 Nov 2018 11:23:58 +0000
-Message-ID: <TY1PR01MB177011B91A9CA579E01760A4C0C50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1534516265-10059-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1534516265-10059-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1534516265-10059-3-git-send-email-fabrizio.castro@bp.renesas.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:38127 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726001AbeKUVEi (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 21 Nov 2018 16:04:38 -0500
+Received: by mail-pl1-f196.google.com with SMTP id e5so4927127plb.5
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Nov 2018 02:30:46 -0800 (PST)
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Date: Wed, 21 Nov 2018 19:31:05 +0900
+Message-Id: <154279626537.29528.16284240304226935084.sendpatchset@octo>
+In-Reply-To: <154279624819.29528.954090919447072739.sendpatchset@octo>
+References: <154279624819.29528.954090919447072739.sendpatchset@octo>
+Subject: [PATCH 02/05] arm64: dts: renesas: r8a7795: Add FCPCS+VDPB node for R-Car H3
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dear All,
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Who is the best person to take this patch?
+Add a temporary FCPCS device that also includes VDPB for testing
+purpose. This prototype level code is not intended for upstream merge.
 
-Thanks,
-Fab
+Not-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
-> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Sent: 17 August 2018 15:31
-> Subject: [PATCH 2/2] dt-bindings: iommu: ipmmu-vmsa: Add r8a774a1 support
->
-> Document RZ/G2M (R8A774A1) SoC bindings.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-> ---
-> This patch applies on top of next-20180817
->
->  Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.t=
-xt
-> b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-> index ffadb7c..68446dd 100644
-> --- a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-> +++ b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-> @@ -13,6 +13,7 @@ Required Properties:
->      - "renesas,ipmmu-r8a73a4" for the R8A73A4 (R-Mobile APE6) IPMMU.
->      - "renesas,ipmmu-r8a7743" for the R8A7743 (RZ/G1M) IPMMU.
->      - "renesas,ipmmu-r8a7745" for the R8A7745 (RZ/G1E) IPMMU.
-> +    - "renesas,ipmmu-r8a774a1" for the R8A774A1 (RZ/G2M) IPMMU.
->      - "renesas,ipmmu-r8a7790" for the R8A7790 (R-Car H2) IPMMU.
->      - "renesas,ipmmu-r8a7791" for the R8A7791 (R-Car M2-W) IPMMU.
->      - "renesas,ipmmu-r8a7793" for the R8A7793 (R-Car M2-N) IPMMU.
-> --
-> 2.7.4
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+--- 0001/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ work/arch/arm64/boot/dts/renesas/r8a7795.dtsi	2018-11-21 18:34:31.469462826 +0900
+@@ -2647,6 +2647,15 @@
+ 			resets = <&cpg 820>;
+ 		};
+ 
++		fcpcs: fcp@fe90f000 {
++			compatible = "renesas,fcpc";
++			reg = <0 0xfe90f000 0 0x200>,
++			      <0 0xfe900000 0 0x400>; /* Hack to test VDPB */
++			clocks = <&cpg CPG_MOD 619>;
++			power-domains = <&sysc R8A7795_PD_A2VC1>;
++			resets = <&cpg 619>;
++		};
++
+ 		fdp1@fe940000 {
+ 			compatible = "renesas,fdp1";
+ 			reg = <0 0xfe940000 0 0x2400>;
