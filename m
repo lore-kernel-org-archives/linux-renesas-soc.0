@@ -1,48 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:42103 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729426AbeKEUi6 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41655 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727981AbeKUUfe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Nov 2018 15:38:58 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        kieran.bingham@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH 3/6] media: dt-bindings: rcar-csi2: Add R8A77990
-Date: Mon,  5 Nov 2018 12:19:08 +0100
-Message-Id: <1541416751-19810-4-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1541416751-19810-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1541416751-19810-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 21 Nov 2018 15:35:34 -0500
+Date: Wed, 21 Nov 2018 11:01:42 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: r9a06g032: Correct the GIC DT node name
+Message-ID: <20181121100142.q3wwgcu5pywsdzpx@verge.net.au>
+References: <20181120103427.23950-1-phil.edworthy@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181120103427.23950-1-phil.edworthy@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add compatible string for R-Car E3 R8A77990 to the list of supported SoCs.
+On Tue, Nov 20, 2018 at 10:34:27AM +0000, Phil Edworthy wrote:
+> Harmless mistake, but it's incorrect.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt | 1 +
- 1 file changed, 1 insertion(+)
+Hi Phil,
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt b/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
-index 2d385b6..2824489 100644
---- a/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
-+++ b/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
-@@ -12,6 +12,7 @@ Mandatory properties
-    - "renesas,r8a7796-csi2" for the R8A7796 device.
-    - "renesas,r8a77965-csi2" for the R8A77965 device.
-    - "renesas,r8a77970-csi2" for the R8A77970 device.
-+   - "renesas,r8a77990-csi2" for the R8A77990 device.
+please fill-out this changelog with an explanation of "why".
 
-  - reg: the register base and size for the device registers
-  - interrupts: the interrupt for the device
---
-2.7.4
+Thanks!
+
+> 
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> ---
+>  arch/arm/boot/dts/r9a06g032.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+> index 2322268bc862..4c1ab49c7d39 100644
+> --- a/arch/arm/boot/dts/r9a06g032.dtsi
+> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
+> @@ -173,7 +173,7 @@
+>  			status = "okay";
+>  		};
+>  
+> -		gic: gic@44101000 {
+> +		gic: interrupt-controller@44101000 {
+>  			compatible = "arm,cortex-a7-gic", "arm,gic-400";
+>  			interrupt-controller;
+>  			#interrupt-cells = <3>;
+> -- 
+> 2.17.1
+> 
