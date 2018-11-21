@@ -1,255 +1,113 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:32932 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbeKGGN7 (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:47984 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733229AbeKVHqF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Nov 2018 01:13:59 -0500
-From: Marek Vasut <marek.vasut@gmail.com>
-To: devicetree@vger.kernel.org
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH V3] arm64: dts: r8a77990: ebisu: Add and enable SDHI device nodes
-Date: Tue,  6 Nov 2018 21:46:47 +0100
-Message-Id: <20181106204647.18051-1-marek.vasut+renesas@gmail.com>
+        Thu, 22 Nov 2018 02:46:05 -0500
+Reply-To: kieran.bingham+renesas@ideasonboard.com
+Subject: Re: [PATCH 2/2] drm: rcar-du: Enable alpha property on primary planes
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Alexandru-Cosmin Gheorghe <Alexandru-Cosmin.Gheorghe@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20180919155700.10342-1-kieran.bingham+renesas@ideasonboard.com>
+ <20180919155700.10342-3-kieran.bingham+renesas@ideasonboard.com>
+ <1604918.OXgyMDt7RE@avalon> <3478783.2iBfSyQcgT@avalon>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <e43c48cf-0774-c1f2-24a9-25b32438d3bf@ideasonboard.com>
+Date: Wed, 21 Nov 2018 21:10:00 +0000
+MIME-Version: 1.0
+In-Reply-To: <3478783.2iBfSyQcgT@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hi Laurent,
 
-This patch adds SDHI{0,1,3} device nodes for the r8a77990 SoC
-and enables SD card slot connected to SDHI0, micro SD card slot
-connected to SDHI1 and eMMC connected to SDHI3 on the Ebisu board
-using the R8A77990 SoC.
+On 21/11/2018 18:29, Laurent Pinchart wrote:
+> Hi Kieran,
+> 
+> On Thursday, 20 September 2018 14:22:38 EET Laurent Pinchart wrote:
+>> On Wednesday, 19 September 2018 18:56:59 EEST Kieran Bingham wrote:
+>>> If the alpha property is not added to a plane, a default value will be
+>>> used, which can result in a non-visible layer if the alpha is
+>>> initialised as 0.
+>>>
+>>> Provide an alpha blend property on all planes.
+>>>
+>>> Fixes: 161ad653d6c9 ("drm: rcar-du: Use __drm_atomic_helper_plane_reset
+>>> instead of copying the logic")
+>>>
+>>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>>> ---
+>>>
+>>>  drivers/gpu/drm/rcar-du/rcar_du_plane.c | 7 ++++++-
+>>>  1 file changed, 6 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+>>> b/drivers/gpu/drm/rcar-du/rcar_du_plane.c index 9e07758a755c..72399a19d8a6
+>>> 100644
+>>> --- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+>>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+>>> @@ -783,13 +783,18 @@ int rcar_du_planes_init(struct rcar_du_group *rgrp)
+>>>
+>>>  		drm_plane_helper_add(&plane->plane,
+>>>  		
+>>>  				     &rcar_du_plane_helper_funcs);
+>>>
+>>> +		/*
+>>> +		 * The alpha property needs to be initialised on all planes
+>>> +		 * to ensure the correct setting at the output.
+>>> +		 */
+>>> +		drm_plane_create_alpha_property(&plane->plane);
+>>> +
+>>
+>> As mentioned in the cover letter, both patches in this series fix the issue
+>> at hand. The first patch is more generic as it will fix it for all drivers,
+>> while this patch is specific to the R-Car DU driver. It however makes sense
+>> to merge it, as it adds alpha support to the primary plane, which can be
+>> useful.
+>>
+>> Once the first patch gets merged, the above comment won't be correct
+>> anymore. I wonder whether we shouldn't change the patch description and
+>> comment to focus on usage of the alpha property for primary planes, and not
+>> on the bug fix. What's your opinion ?
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
----
-V2: - Deduplicated regular and UHS pins
-    - Added sdhi3_ds pin pinmux
-V3: - Squash two patches, one adding SDHI nodes to R8A77990 E3 DTSI
-      and another enabling them on E3 Ebisu, together.
----
- .../arm64/boot/dts/renesas/r8a77990-ebisu.dts | 130 ++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77990.dtsi     |  36 +++++
- 2 files changed, 166 insertions(+)
+Aha - sorry this slipped my queue.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-index 0b5aead76077..306b35f0f541 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-@@ -129,6 +129,15 @@
- 		};
- 	};
- 
-+	reg_1p8v: regulator0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
- 	reg_3p3v: regulator1 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-3.3V";
-@@ -180,6 +189,54 @@
- 		#clock-cells = <0>;
- 		clock-frequency = <74250000>;
- 	};
-+
-+	vcc_sdhi0: regulator-vcc-sdhi0 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "SDHI0 Vcc";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&gpio5 17 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	vccq_sdhi0: regulator-vccq-sdhi0 {
-+		compatible = "regulator-gpio";
-+
-+		regulator-name = "SDHI0 VccQ";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpios = <&gpio5 18 GPIO_ACTIVE_HIGH>;
-+		gpios-states = <1>;
-+		states = <3300000 1
-+			  1800000 0>;
-+	};
-+
-+	vcc_sdhi1: regulator-vcc-sdhi1 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "SDHI1 Vcc";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&gpio0 4 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	vccq_sdhi1: regulator-vccq-sdhi1 {
-+		compatible = "regulator-gpio";
-+
-+		regulator-name = "SDHI1 VccQ";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpios = <&gpio3 15 GPIO_ACTIVE_HIGH>;
-+		gpios-states = <1>;
-+		states = <3300000 1
-+			  1800000 0>;
-+	};
- };
- 
- &audio_clk_a {
-@@ -415,6 +472,36 @@
- 		function = "scif2";
- 	};
- 
-+	sdhi0_pins: sd0 {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi0_pins_uhs: sd0_uhs {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+		power-source = <1800>;
-+	};
-+
-+	sdhi1_pins: sd1 {
-+		groups = "sdhi1_data4", "sdhi1_ctrl";
-+		function = "sdhi1";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi1_pins_uhs: sd1_uhs {
-+		groups = "sdhi1_data4", "sdhi1_ctrl";
-+		function = "sdhi1";
-+		power-source = <1800>;
-+	};
-+
-+	sdhi3_pins: sd3 {
-+		groups = "sdhi3_data8", "sdhi3_ctrl", "sdhi3_ds";
-+		function = "sdhi3";
-+		power-source = <1800>;
-+	};
-+
- 	sound_pins: sound {
- 		groups = "ssi01239_ctrl", "ssi0_data", "ssi1_data";
- 		function = "ssi";
-@@ -531,3 +618,46 @@
- 
- 	status = "okay";
- };
-+
-+&sdhi0 {
-+	pinctrl-0 = <&sdhi0_pins>;
-+	pinctrl-1 = <&sdhi0_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&vcc_sdhi0>;
-+	vqmmc-supply = <&vccq_sdhi0>;
-+	cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
-+	wp-gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
-+	bus-width = <4>;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
-+	status = "okay";
-+};
-+
-+&sdhi1 {
-+	pinctrl-0 = <&sdhi1_pins>;
-+	pinctrl-1 = <&sdhi1_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&vcc_sdhi1>;
-+	vqmmc-supply = <&vccq_sdhi1>;
-+	cd-gpios = <&gpio3 14 GPIO_ACTIVE_LOW>;
-+	bus-width = <4>;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
-+	status = "okay";
-+};
-+
-+&sdhi3 {
-+	/* used for on-board 8bit eMMC */
-+	pinctrl-0 = <&sdhi3_pins>;
-+	pinctrl-1 = <&sdhi3_pins>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&reg_1p8v>;
-+	mmc-hs200-1_8v;
-+	bus-width = <8>;
-+	non-removable;
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index beb53aaa9e2c..e0092fb27ec0 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -1351,6 +1351,42 @@
- 			status = "disabled";
- 		};
- 
-+		sdhi0: sd@ee100000 {
-+			compatible = "renesas,sdhi-r8a77990",
-+				     "renesas,rcar-gen3-sdhi";
-+			reg = <0 0xee100000 0 0x2000>;
-+			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 314>;
-+			max-frequency = <200000000>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 314>;
-+			status = "disabled";
-+		};
-+
-+		sdhi1: sd@ee120000 {
-+			compatible = "renesas,sdhi-r8a77990",
-+				     "renesas,rcar-gen3-sdhi";
-+			reg = <0 0xee120000 0 0x2000>;
-+			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 313>;
-+			max-frequency = <200000000>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 313>;
-+			status = "disabled";
-+		};
-+
-+		sdhi3: sd@ee160000 {
-+			compatible = "renesas,sdhi-r8a77990",
-+				     "renesas,rcar-gen3-sdhi";
-+			reg = <0 0xee160000 0 0x2000>;
-+			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 311>;
-+			max-frequency = <200000000>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 311>;
-+			status = "disabled";
-+		};
-+
- 		gic: interrupt-controller@f1010000 {
- 			compatible = "arm,gic-400";
- 			#interrupt-cells = <3>;
--- 
-2.18.0
+
+> I've removed the comment and changed the commit message to
+> 
+>   drm: rcar-du: Enable alpha property on primary planes
+>   
+>   The hardware supports alpha on all planes, and using it on the primary
+>   plane can be useful. Don't restrict the alpha property to overlay
+>   planes.
+> 
+> With this,
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+Perfect, - That reads fine.
+
+Thank you.
+
+
+
+> 
+> and applied to my tree.
+> 
+>>>  		if (type == DRM_PLANE_TYPE_PRIMARY)
+>>>  			continue;
+>>>  		
+>>>  		drm_object_attach_property(&plane->plane.base,
+>>>  					   rcdu->props.colorkey,
+>>>  					   RCAR_DU_COLORKEY_NONE);
+>>>
+>>> -		drm_plane_create_alpha_property(&plane->plane);
+>>>  		drm_plane_create_zpos_property(&plane->plane, 1, 1, 7);
+>>>  	}
+> 
