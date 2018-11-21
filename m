@@ -1,103 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35067 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbeKZXsY (ORCPT
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45799 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729334AbeKUVEV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Nov 2018 18:48:24 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC DT Updates for v4.21
-Date: Mon, 26 Nov 2018 13:53:38 +0100
-Message-Id: <cover.1543236456.git.horms+renesas@verge.net.au>
+        Wed, 21 Nov 2018 16:04:21 -0500
+Received: by mail-pl1-f195.google.com with SMTP id a14so4908703plm.12
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Nov 2018 02:30:29 -0800 (PST)
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Date: Wed, 21 Nov 2018 19:30:48 +0900
+Message-Id: <154279624819.29528.954090919447072739.sendpatchset@octo>
+Subject: [PATCH 00/05] Test R-Car Gen3 SYSC power domains used by FCPCS and VDPB
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Test R-Car Gen3 SYSC power domains used by FCPCS and VDPB
 
-Please consider these Renesas ARM based SoC DT updates for v4.21.
+[PATCH 01/05] Hack FCP driver to poke at FCPCS and VDPB during probe
+[PATCH 02/05] arm64: dts: renesas: r8a7795: Add FCPCS+VDPB node for R-Car H3
+[PATCH 03/05] arm64: dts: renesas: r8a7796: Add FCPCS+VDPB node for R-Car M3-W
+[PATCH 04/05] arm64: dts: renesas: r8a77965: Add FCPCS+VDPB node for R-Car M3-N
+[PATCH 05/05] arm64: dts: renesas: r8a77990: Add FCPCS+VDPB node for R-Car E3
 
-I am sending out this pull-request at this time as there are a number
-of patches queued up in my arm (32) DT branch and I hope that this
-will ease the burden later on in the development cycle. I expect to
-send a follow-up pull-request for this branch at the usual pre-rc6 timing.
+These patches temporarily extend the FCP driver to manage power domain
+power and poke at FCPCS and VDPB devices after power on and optionally
+after power off as well. Access while power off is expected to fail and
+is currently disabled by #ifdef wrap.
 
-The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+Example of console printout from H3 ULCB:
 
-  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+[    1.921670] Enabling FCPCS device (Runtime PM on)
+[    1.926449] Power-on FCPCS version is 0x00000103
+[    1.931117] Power-on VDPB read at offset 0x200 is 0x00000000
+[    1.936819] Disabling FCPCS device (Runtime PM off) 
+[    1.941853] rcar_sysc_pd_power_off: a2vc1
+[    1.945960] sysc power off domain 26: 0000000e -> 0
+[    1.950892] rcar_sysc_pd_power_off: a3vc
+[    1.954903] sysc power off domain 14: 0000000e -> 0
 
-are available in the git repository at:
+Register details for FCPCS and VDPB are omitted from the data sheet,
+however this code assumes the version register in FCPCS is available
+following same register layout as other documented FCP devices.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm-dt-for-v4.21
+As can be seen by the printout above, some sort of value is read out when
+the power domain is on. Reading out the same register when turned off
+triggers an exception on H3 ES2 as expected.
 
-for you to fetch changes up to 83d3483e4977eeedf258f053878a88db507630d4:
+Please note that repeated power on-off-on has not been performed. Also
+no verification has been made that devices actually are located in A2VC
+instead of for instance A3VC. Since A3VC is parent of A2VC an incorrect
+power domain pointer in DT to A2VC while the (rather undocumented) device
+is located in A3VC might result in some hidden errors.
 
-  ARM: dts: r9a06g032: Correct the GIC DT node name (2018-11-23 13:20:17 +0100)
+The VDPB register access results in all-zero value while powered on. Which
+actual register that should be used for poking remains guess work at this
+point. Reading VDPB while powered off results in an exception on H3 ES2.
 
-----------------------------------------------------------------
-Renesas ARM Based SoC DT Updates for v4.21
+The basic testing performed by this series shows that A2VC power domain
+handling for H3 ES2 seems to work as expected.
 
-* RZ/N1D (r9a06g032) SoC:
-  - Correct GIC DT node name
-  - Enable pin controller
+This series is not intended for upstream merge.
 
-* RZ/G1C (r8a77470) iWave g23S single board computer
-  - Add QSPI flash support
-  - Add pinctl support for EtherAVB
-  - Enable CMT0 (Renesas R-Car Compare Match Timer)
-  - Enable RWDT (Renesas Watchdog Timer)
-  - Enable uSD and eMMC support
+Created as an example of how to test power domains for a certain device.
+I hope to use this approach to test IPMMU power domain support in the future.
 
-* RZ/G1C (r8a77470) SoC:
-  - Describe USB-DMAC and I2C devices in DT
+Not-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
-* R-Mobile A1 (r8a7740), Emma Mobile EV2 (emev2) and
-  SH-Mobile AG5 (sh72a0) SoCs:
-  - Include SoC name in DTSI
+ Developed on top of renesas-devel-20181119-v4.20-rc3
 
-* R-Car H2 (r8a7790) based lager, and
-  R-Car M2-W (r8a7791) based koelsch and porter boards:
-  - Disable unconnected LVDS encoders
-
-----------------------------------------------------------------
-Biju Das (6):
-      ARM: dts: r8a77470: Add watchdog support to SoC dtsi
-      ARM: dts: iwg23s-sbc: Enable watchdog support
-      ARM: dts: r8a77470: Add USB-DMAC device nodes
-      ARM: dts: r8a77470: Add CMT SoC specific support
-      ARM: dts: iwg23s-sbc: Enable cmt0
-      ARM: dts: iwg23s-sbc: Add pinctl support for EtherAVB
-
-Fabrizio Castro (6):
-      ARM: dts: r8a77470: Add I2C[0123] support
-      ARM: dts: r8a77470: Add SDHI0 support
-      ARM: dts: r8a77470: Add SDHI1 support
-      ARM: dts: iwg23s-sbc: Add uSD and eMMC support
-      ARM: dts: r8a77470: Add QSPI support
-      ARM: dts: iwg23s-sbc: Add QSPI flash support
-
-Laurent Pinchart (1):
-      ARM: dts: r8a779[01]: Disable unconnected LVDS encoders
-
-Magnus Damm (1):
-      ARM: dts: r8a7740, emev2, sh73a0: Include SoC name in DTSI
-
-Phil Edworthy (2):
-      ARM: dts: r9a06g032: Add pinctrl node
-      ARM: dts: r9a06g032: Correct the GIC DT node name
-
- arch/arm/boot/dts/emev2.dtsi              |   2 +-
- arch/arm/boot/dts/r8a7740.dtsi            |   2 +-
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 119 ++++++++++++++++
- arch/arm/boot/dts/r8a77470.dtsi           | 222 +++++++++++++++++++++++++++++-
- arch/arm/boot/dts/r8a7790-lager.dts       |   2 -
- arch/arm/boot/dts/r8a7791-koelsch.dts     |   2 -
- arch/arm/boot/dts/r8a7791-porter.dts      |   2 -
- arch/arm/boot/dts/r9a06g032.dtsi          |  10 +-
- arch/arm/boot/dts/sh73a0.dtsi             |   2 +-
- 9 files changed, 352 insertions(+), 11 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi  |    9 ++++++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi  |    9 ++++++
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi |    9 ++++++
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi |    9 ++++++
+ drivers/media/platform/rcar-fcp.c         |   42 ++++++++++++++++++++++++++++-
+ drivers/soc/renesas/rcar-sysc.c           |    1 
+ 6 files changed, 78 insertions(+), 1 deletion(-)
