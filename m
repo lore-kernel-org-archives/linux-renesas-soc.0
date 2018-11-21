@@ -1,82 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-eopbgr1400107.outbound.protection.outlook.com ([40.107.140.107]:25053
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727341AbeK1UDm (ORCPT
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33282 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725937AbeKUMXY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Nov 2018 15:03:42 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: "andrew@lunn.ch" <andrew@lunn.ch>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "davem@davemloft.net" <davem@davemloft.net>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 2/2] net: phy: micrel: add toggling phy reset if PHY is not
- attached
-Date: Wed, 28 Nov 2018 09:02:42 +0000
-Message-ID: <1543395612-5430-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1543395612-5430-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1543395612-5430-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 21 Nov 2018 07:23:24 -0500
+Subject: Re: [PATCH 2/2] dt-binding: spi: Document Renesas R-Car RPC
+ controller bindings
+To: masonccyang@mxic.com.tw
+Cc: boris.brezillon@bootlin.com, broonie@kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-spi@vger.kernel.org, tpiepho@impinj.com,
+        zhengxunli@mxic.com.tw
+References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw>
+ <1542621690-10229-3-git-send-email-masonccyang@mxic.com.tw>
+ <629a5d6f-5c13-9b24-1c21-461d09f1aa8a@gmail.com>
+ <OFDD04CD59.10199EDD-ON4825834B.001E1390-4825834B.001F65DD@mxic.com.tw>
+ <e7fd0653-75a7-249a-462a-18a7bf4616d1@gmail.com>
+ <OF26D8352D.B4B02BBE-ON4825834C.00043726-4825834C.0004E2F7@mxic.com.tw>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <163dfc15-71b2-fdbe-f872-f6c6e4c3e14e@gmail.com>
+Date: Wed, 21 Nov 2018 02:51:08 +0100
 MIME-Version: 1.0
+In-Reply-To: <OF26D8352D.B4B02BBE-ON4825834C.00043726-4825834C.0004E2F7@mxic.com.tw>
+Content-Type: text/plain; charset=UTF-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds toggling phy reset if PHY is not attached. Otherwise,
-some boards (e.g. R-Car H3 Salvator-XS) cannot link up correctly if
-we do the following method:
+On 11/21/2018 01:53 AM, masonccyang@mxic.com.tw wrote:
+> Hi Marek,
 
- 1) Kernel boots by using initramfs.
- --> No open the nic, so phy_device_register() and phy_probe()
-     deasserts the reset.
- 2) Kernel enters the suspend.
- --> So, keep the reset signal as deassert.
- --> On R-Car Salvator-XS board, unfortunately, the board power is
-     turned off.
- 3) Kernel returns from suspend.
- 4) ifconfig eth0 up
- --> Then, since edge signal of the reset doesn't happen,
-     it cannot link up.
- 5) ifconfig eth0 down
- 6) ifconfig eth0 up
- --> In this case, it can link up.
+Hi,
 
-Reported-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/net/phy/micrel.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+>> Marek Vasut <marek.vasut@gmail.com>
+>> 2018/11/20 下午 08:57
+>>
+>> >> > diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-
+>> >> rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+>> >> > new file mode 100644
+>> >> > index 0000000..8286cc8
+>> >> > --- /dev/null
+>> >> > +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+>> >> > @@ -0,0 +1,33 @@
+>> >> > +Renesas R-Car D3 RPC controller Device Tree Bindings
+>> >> > +----------------------------------------------------
+>> >> > +
+>> >> > +Required properties:
+>> >> > +- compatible: should be "renesas,rpc-r8a77995"
+>> >> > +- #address-cells: should be 1
+>> >> > +- #size-cells: should be 0
+>> >> > +- reg: should contain 2 entries, one for the registers and one
+>> >> for the direct
+>> >> > +       mapping area
+>> >> > +- reg-names: should contain "rpc_regs" and "dirmap"
+>> >> > +- interrupts: interrupt line connected to the RPC SPI controller
+>> >>
+>> >> Do you also plan to support the RPC HF mode ? And if so, how would that
+>> >> look in the bindings ? I'd like to avoid having to redesign the
+> bindings
+>> >> later to handle both the SPI and HF modes.
+>> >>
+>> >
+>> > I patched this RPC SPI/Octa driver is for mx25uw51245g and you may also
+>> > refer to Boris's patch. [1][2][3]
+>>
+>> Does this mean the driver is specific to one particular kind of flash ?
+>>
+> 
+> No, this driver supports all SPI flash, spi, qspi and octa flash.
+> 
+> The target is Octa 8-8-8 DDR2 mode once spi-nor layer is merged.[1][2][3]
 
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index c333847..fcb561b 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -23,6 +23,7 @@
-  *			 ksz9477
-  */
-=20
-+#include <linux/delay.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/phy.h>
-@@ -840,6 +841,13 @@ static int kszphy_resume(struct phy_device *phydev)
- {
- 	int ret;
-=20
-+	if (!phydev->attached_dev) {
-+		/* If the PHY is not attached, toggle the reset */
-+		phy_device_reset(phydev, 1);
-+		udelay(1);
-+		phy_device_reset(phydev, 0);
-+	}
-+
- 	genphy_resume(phydev);
-=20
- 	ret =3D kszphy_config_reset(phydev);
---=20
-1.9.1
+The HyperFlash must also be supported, cfr my previous comment that I'd
+like to avoid redesigning the bindings again when the HF mode is added.
+
+-- 
+Best regards,
+Marek Vasut
