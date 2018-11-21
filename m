@@ -1,49 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:44407 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390277AbeKWUHo (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:43638 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726792AbeKUUmj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Nov 2018 15:07:44 -0500
-MIME-Version: 1.0
-References: <20181121100844.25825-1-phil.edworthy@renesas.com>
-In-Reply-To: <20181121100844.25825-1-phil.edworthy@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 23 Nov 2018 10:24:06 +0100
-Message-ID: <CAMuHMdUH74QA5oSuOe9LgoS08-CEHiGSz_FzPQs6S9BzCijDag@mail.gmail.com>
-Subject: Re: [PATCH v2] ARM: dts: r9a06g032: Correct the GIC DT node name
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 21 Nov 2018 15:42:39 -0500
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH v2] ARM: dts: r9a06g032: Correct the GIC DT node name
+Date: Wed, 21 Nov 2018 10:08:44 +0000
+Message-Id: <20181121100844.25825-1-phil.edworthy@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Nov 21, 2018 at 11:10 AM Phil Edworthy
-<phil.edworthy@renesas.com> wrote:
-> Harmless mistake, but it's incorrect. The DT spec provides recommendations
-> for the node names:
-> "The name of a node should be somewhat generic, reflecting the function
-> of the device and not its precise programming model. If appropriate, the
-> name should be one of the following choices:
-> ...
-> interrupt-controller"
->
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Harmless mistake, but it's incorrect. The DT spec provides recommendations
+for the node names:
+"The name of a node should be somewhat generic, reflecting the function
+of the device and not its precise programming model. If appropriate, the
+name should be one of the following choices:
+...
+interrupt-controller"
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+---
+v2:
+ - Add commit log details about why
+---
+ arch/arm/boot/dts/r9a06g032.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+index 2322268bc862..4c1ab49c7d39 100644
+--- a/arch/arm/boot/dts/r9a06g032.dtsi
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -173,7 +173,7 @@
+ 			status = "okay";
+ 		};
+ 
+-		gic: gic@44101000 {
++		gic: interrupt-controller@44101000 {
+ 			compatible = "arm,cortex-a7-gic", "arm,gic-400";
+ 			interrupt-controller;
+ 			#interrupt-cells = <3>;
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.17.1
