@@ -1,56 +1,169 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Marek Vasut <marek.vasut@gmail.com>
-To: devicetree@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] dt-bindings: can: rcar_can: document r8a77990 support
-Date: Sun, 18 Nov 2018 18:30:56 +0100
-Message-Id: <20181118173056.4591-1-marek.vasut+renesas@gmail.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:43249 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730043AbeKUWh4 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 21 Nov 2018 17:37:56 -0500
+Date: Wed, 21 Nov 2018 13:03:43 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH/RFT] arm64: dts: renesas: r8a77990: Add I2C-DVFS device
+ node
+Message-ID: <20181121120342.ilan5nb6jlbsq5yb@verge.net.au>
+References: <1540071349-27483-1-git-send-email-ykaneko0929@gmail.com>
+ <CAMuHMdV=ZinKOWZco9t4rGncYY5BqghXxGE6w9qCNW55UVSa+A@mail.gmail.com>
+ <20181107123002.t6xg4m4vbq7cuapb@verge.net.au>
+ <20181108102201.kuheale47tqygoe4@verge.net.au>
+ <CAMuHMdW=f77EafYXSzD3BiuMLirm+gjMnQZ7WzE0kX-TjXwkdg@mail.gmail.com>
+ <20181108115219.47lf5iauoygomdbh@verge.net.au>
+ <CAMuHMdX=Gj1a5rjfRWSDKMbDuqyeztBCGb+9yam8w8UQMLkUPg@mail.gmail.com>
+ <20181108131815.5jebwxqbaldofk6d@verge.net.au>
+ <20181119101438.flbtwyslfdgumkhf@verge.net.au>
+ <CAMuHMdV7uRZL72LkzgCNJVnvHZ5bcnXwJYWv2NYswKbihCKCqA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV7uRZL72LkzgCNJVnvHZ5bcnXwJYWv2NYswKbihCKCqA@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the support for rcar_can on R8A77990 SoC devices.
-Add R8A77990 to the list of SoCs which require the "assigned-clocks"
-and "assigned-clock-rates" properties.
+On Mon, Nov 19, 2018 at 11:41:23AM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Mon, Nov 19, 2018 at 11:14 AM Simon Horman <horms@verge.net.au> wrote:
+> > On Thu, Nov 08, 2018 at 02:18:16PM +0100, Simon Horman wrote:
+> > > On Thu, Nov 08, 2018 at 01:25:45PM +0100, Geert Uytterhoeven wrote:
+> > > > On Thu, Nov 8, 2018 at 12:52 PM Simon Horman <horms@verge.net.au> wrote:
+> > > > > On Thu, Nov 08, 2018 at 11:27:31AM +0100, Geert Uytterhoeven wrote:
+> > > > > > On Thu, Nov 8, 2018 at 11:22 AM Simon Horman <horms@verge.net.au> wrote:
+> > > > > > > On Wed, Nov 07, 2018 at 01:30:10PM +0100, Simon Horman wrote:
+> > > > > > > > On Mon, Nov 05, 2018 at 09:52:48AM +0100, Geert Uytterhoeven wrote:
+> > > > > > > > > On Sat, Oct 20, 2018 at 11:35 PM Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> > > > > > > > > > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> > > > > > > > > >
+> > > > > > > > > > This patch adds I2C-DVFS device node for the R8A77990 SoC.
+> > > > > > > > > >
+> > > > > > > > > > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> > > > > > > > > > Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> > > > > > > > >
+> > > > > > > > > Thanks for your patch!
+> > > > > > > > >
+> > > > > > > > > > --- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+> > > > > > > > > > +++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+> > > > > >
+> > > > > > > > > >         };
+> > > > > > > > > >
+> > > > > > > > > >         cpus {
+> > > > > > > > > > @@ -337,6 +338,22 @@
+> > > > > > > > > >                         reg = <0 0xe6060000 0 0x508>;
+> > > > > > > > > >                 };
+> > > > > > > > > >
+> > > > > > > > > > +               i2c_dvfs: i2c@e60b0000 {
+> > > > > > > > > > +                       #address-cells = <1>;
+> > > > > > > > > > +                       #size-cells = <0>;
+> > > > > > > > > > +                       compatible = "renesas,iic-r8a77990",
+> > > > > > > > >
+> > > > > > > > > "renesas,iic-r8a77990" is not yet documented.
+> > > > > > > >
+> > > > > > > > Thanks, as per my comment below I wonder if as well as documenting
+> > > > > > > > "renesas,iic-r8a77990" we also to teach the driver about it.
+> > > > > > > >
+> > > > > > > > >
+> > > > > > > > > > +                                    "renesas,rcar-gen3-iic",
+> > > > > > > > > > +                                    "renesas,rmobile-iic";
+> > > > > > > > >
+> > > > > > > > > Also, IIC on R-Car E3 does not have the automatic transmission registers.
+> > > > > > > > > Does this affect claiming compatibility with the family-specific or generic
+> > > > > > > > > compatible values?
+> > > > > > > >
+> > > > > > > > My cursory reading of the driver indicates that only register that is
+> > > > > > > > used by it but documented as not existing on E3 is ICSTART (offset 0x70).
+> > > > > > > >
+> > > > > > > > It seems to me that we should confirm with Renesas that the register does
+> > > > > > > > indeed not exist - as this patch comes from the BSP which implies it is
+> > > > > > > > being used there. And if it does not exist we should try teaching the
+> > > > > > > > driver not to use ICSTART via the "renesas,iic-r8a77990" compat string.
+> > > > > > > > What do you think?
+> > > > > > >
+> > > > > > > Further examination by Wolfram Sang has shown that the code in question is
+> > > > > > > only used on the r8a7740. I don't think there is any compatibility issue
+> > > > > > > for r8a77990 when using the current driver.
+> > > > > >
+> > > > > > "When using the current driver".
+> > > > > > Do we want to claim compatibility with "renesas,rcar-gen3-iic" and/or
+> > > > > > "renesas,rmobile-iic"?
+> > > > >
+> > > > > Thinking a bit more since I wrote my previous email.
+> > > > >
+> > > > > It seems that the r8a77990 has a different feature set to other R-Car Gen3
+> > > > > SoCs but that the current driver implementation "renesas,rcar-gen3-iic"
+> > > > > and "renesas,rmobile-iic" do not exceed that feature set.
+> > > > >
+> > > > > In future we could expand the features supported by the driver for other
+> > > > > Gen3 SoCs beyond what is supported for r8a77990. If we chose to describe
+> > > > > r8a77990 as compatible with renesas,rcar-gen3-iic then that implies those
+> > > > > new features would not be activated by matching on "renesas,rcar-gen3-iic",
+> > > > > though we could choose to control that using soc_match. Conversely if we
+> > > > > decide that r8a77990 is not compatible with renesas,rcar-gen3-iic then we
+> > > > > have more freedom to move with regards to adding features not supported by
+> > > > > r8a77990 to renesas,rcar-gen3-iic in future.
+> > > > >
+> > > > > So perhaps it would be wise to be conservative and, for now,
+> > > > > not document r8a77990 as being compatible with renesas,iic-r8a77990.
+> > > > >
+> > > > > I'm tempted to say that renesas,rmobile-iic is a lowest common denominator
+> > > > > and r8a77990 can be documented as being compatible with it. But we could
+> > > > > say the same of renesas,rcar-gen3-iic.
+> > > > >
+> > > > > What do you think?
+> > > >
+> > > > That matches my thoughts.
+> > > >
+> > > > Given R-Mobile A1 does have the register, I think r8a77990 should not claim
+> > > > compatibility with it.
+> > >
+> > > Right, but the ICSTART register is only used on R-Mobile A1
+> > > (r8a7740) via the "renesas,iic-r8a7740" compat string. Never, in my reading
+> > > of the driver, via more generic compat strings.
+> > >
+> > > Also, fwiw, the function the ICSTART register is called
+> > > sh_mobile_i2c_r8a7740_workaround. Note the use of workaround.
+> > >
+> > > > Of course all this assumes there's no bug in the datasheet w.r.t. r8a77990...
+> > >
+> > > The safest approach would be not to declare r8a77990 as being compatible
+> > > with the more generic compat strings. We can reverse that decision in
+> > > future.  The converse is not, strictly speaking, true.
+> >
+> > Could we revive this conversation?
+> >
+> > I propose that we document the r8a77990 compat string but rely on driver
+> > initialisation via the more generic compat strings for now. If the driver
+> > is enhanced in future then the generic compat strings will need to preserve
+> > that compatibility. But new features for any SoC can be enabled via
+> > SoC-specific compat strings.
+> 
+> If we do that, please document this in the driver, so we don't forget about it:
+> 
+> + /*
+> +  * The automatic transmission registers are not assumed to be present
+> +  * for generic compatible values like "renesas,rmobile-iic",
+> "renesas,rcar-gen2-iic",
+> +  * and "renesas,rcar-gen3-iic"
+> +  */
+>   #define ICSTART                 0x70
+> 
+> Is there any probability we may start using the automatic transmission registers
+> in the future?
+> If yes, with the above decision, the driver would need to start matching on all
+> SoC-specific compatible values for SoCs that do have it.
+> 
+> So declaring r8a77990 not compatible with the generic version may be easier.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Eugeniu Rosca <erosca@de.adit-jv.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
----
- Documentation/devicetree/bindings/net/can/rcar_can.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-index 9936b9ee67c3..d962138d5b50 100644
---- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
-+++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-@@ -16,6 +16,7 @@ Required properties:
- 	      "renesas,can-r8a7795" if CAN controller is a part of R8A7795 SoC.
- 	      "renesas,can-r8a7796" if CAN controller is a part of R8A7796 SoC.
- 	      "renesas,can-r8a77965" if CAN controller is a part of R8A77965 SoC.
-+	      "renesas,can-r8a77990" if CAN controller is a part of R8A77990 SoC.
- 	      "renesas,rcar-gen1-can" for a generic R-Car Gen1 compatible device.
- 	      "renesas,rcar-gen2-can" for a generic R-Car Gen2 or RZ/G1
- 	      compatible device.
-@@ -37,7 +38,7 @@ Required properties:
- - pinctrl-0: pin control group to be used for this controller.
- - pinctrl-names: must be "default".
- 
--Required properties for R8A7795, R8A7796 and R8A77965:
-+Required properties for R8A7795, R8A7796, R8A77965 and R8A77990:
- For the denoted SoCs, "clkp2" can be CANFD clock. This is a div6 clock and can
- be used by both CAN and CAN FD controller at the same time. It needs to be
- scaled to maximum frequency if any of these controllers use it. This is done
--- 
-2.18.0
+Thanks, I will post patches to implement the more restrictive approach
+where E3 IIC is not considered compatibile with existing fallback compat
+strings.
