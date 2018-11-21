@@ -1,114 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:54984 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728798AbeK2DtY (ORCPT
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:41429 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730195AbeKUVzA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Nov 2018 22:49:24 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 4/5] ARM: dts: r8a7744: Add PWM SoC support
-Date: Wed, 28 Nov 2018 16:38:30 +0000
-Message-Id: <1543423111-19745-5-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1543423111-19745-1-git-send-email-biju.das@bp.renesas.com>
-References: <1543423111-19745-1-git-send-email-biju.das@bp.renesas.com>
+        Wed, 21 Nov 2018 16:55:00 -0500
+From: Magnus Damm <magnus.damm@gmail.com>
+To: netdev@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>, davem@davemloft.net,
+        sergei.shtylyov@cogentembedded.com
+Date: Wed, 21 Nov 2018 20:21:17 +0900
+Message-Id: <154279927781.10272.2774991326285490398.sendpatchset@octo>
+In-Reply-To: <154279926877.10272.700833429936129422.sendpatchset@octo>
+References: <154279926877.10272.700833429936129422.sendpatchset@octo>
+Subject: [PATCH v3 01/02] ravb: Do not announce HDX as supported
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the definitions for pwm[0123456] to the SoC dtsi.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+According to the data sheet the Ethernet-AVB hardware in R-Car Gen3
+and R-Car Gen2 SoCs do not support half duplex operation. So update
+the driver to mark 100Mbit and 1Gbps HDX as unsupported.
+
+Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 ---
- arch/arm/boot/dts/r8a7744.dtsi | 70 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index 152431c..43da6a0 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -1050,6 +1050,76 @@
- 			status = "disabled";
- 		};
+ Slightly reworked since V2 to make use of phy_remove_link_mode().
+ In case Sergei wants to opt-out from the Reviewed-by tag for V2 let us know.
  
-+		pwm0: pwm@e6e30000 {
-+			compatible = "renesas,pwm-r8a7744", "renesas,pwm-rcar";
-+			reg = <0 0xe6e30000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
+ Applies on top of next-20181121
+
+ drivers/net/ethernet/renesas/ravb_main.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- 0001/drivers/net/ethernet/renesas/ravb_main.c
++++ work/drivers/net/ethernet/renesas/ravb_main.c	2018-11-21 19:47:58.165498803 +0900
+@@ -1088,6 +1088,10 @@ static int ravb_phy_init(struct net_devi
+ 	phy_remove_link_mode(phydev, ETHTOOL_LINK_MODE_Pause_BIT);
+ 	phy_remove_link_mode(phydev, ETHTOOL_LINK_MODE_Asym_Pause_BIT);
+ 
++	/* Half Duplex is not supported */
++	phy_remove_link_mode(phydev, ETHTOOL_LINK_MODE_1000baseT_Half_BIT);
++	phy_remove_link_mode(phydev, ETHTOOL_LINK_MODE_100baseT_Half_BIT);
 +
-+		pwm1: pwm@e6e31000 {
-+			compatible = "renesas,pwm-r8a7744", "renesas,pwm-rcar";
-+			reg = <0 0xe6e31000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm2: pwm@e6e32000 {
-+			compatible = "renesas,pwm-r8a7744", "renesas,pwm-rcar";
-+			reg = <0 0xe6e32000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm3: pwm@e6e33000 {
-+			compatible = "renesas,pwm-r8a7744", "renesas,pwm-rcar";
-+			reg = <0 0xe6e33000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm4: pwm@e6e34000 {
-+			compatible = "renesas,pwm-r8a7744", "renesas,pwm-rcar";
-+			reg = <0 0xe6e34000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm5: pwm@e6e35000 {
-+			compatible = "renesas,pwm-r8a7744", "renesas,pwm-rcar";
-+			reg = <0 0xe6e35000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm6: pwm@e6e36000 {
-+			compatible = "renesas,pwm-r8a7744", "renesas,pwm-rcar";
-+			reg = <0 0xe6e36000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
- 		can0: can@e6e80000 {
- 			compatible = "renesas,can-r8a7744",
- 				     "renesas,rcar-gen2-can";
--- 
-2.7.4
+ 	phy_attached_info(phydev);
+ 
+ 	return 0;
