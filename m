@@ -1,95 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:44374 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725843AbeKTXHD (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:50944 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387447AbeKVJVe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Nov 2018 18:07:03 -0500
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gP5I4-0003IB-Uu
-        for linux-renesas-soc@vger.kernel.org; Tue, 20 Nov 2018 13:38:04 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gP5I4-0008CU-SH
-        for linux-renesas-soc@vger.kernel.org; Tue, 20 Nov 2018 13:38:04 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2018-11-20-v4.20-rc3
-Date: Tue, 20 Nov 2018 13:38:04 +0100
-Message-Id: <20181120123804.31480-1-geert+renesas@glider.be>
+        Thu, 22 Nov 2018 04:21:34 -0500
+Reply-To: kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH v2] drm: rcar-du: Reject modes that fail CRTC timing
+ requirements
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
+References: <20181121222012.11801-1-laurent.pinchart+renesas@ideasonboard.com>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <25cce316-508f-0a7b-7d4a-de5427aa5259@ideasonboard.com>
+Date: Wed, 21 Nov 2018 22:45:04 +0000
+MIME-Version: 1.0
+In-Reply-To: <20181121222012.11801-1-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I have pushed renesas-drivers-2018-11-20-v4.20-rc3 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+Hi Laurent,
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging (a) the for-next branches
-of various subsystem trees and (b) branches with driver code submitted
-or planned for submission to maintainers into the development branch of
-Simon Horman's renesas.git tree.
+Thank you for the patch(es)
 
-Today's version is based on renesas-devel-20181119-v4.20-rc3.
+On 21/11/2018 22:20, Laurent Pinchart wrote:
+> The hardware requires the HDSR and VDSR registers to be set to 1 or
+> higher. This translates to a minimum combined horizontal sync and back
+> porch of 20 pixels and a minimum vertical back porch of 3 lines. Reject
+> modes that fail those requirements.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Included branches with driver code:
-  - clk-renesas
-  - sh-pfc
-  - topic/pinctrl-rza2-v7
-  - git://linuxtv.org/pinchartl/media.git#drm-du-iommu-v1-20171115
-  - git://git.ragnatech.se/linux#for-renesas-drivers
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#gmsl/for-renesas-drivers
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Included fixes:
-  - [LOCAL] arm64: defconfig: Update renesas_defconfig
+> ---
+> Changes since v1:
+> 
+> - Don't use mode->crtc_v* as they are only set after calling .mode_valid()
+> - Tested the patch on real hardware (which would have prevented the
+>   buggy v1...)
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> index 79021d7aa3ce..90dacab67be5 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> @@ -735,10 +735,22 @@ enum drm_mode_status rcar_du_crtc_mode_valid(struct drm_crtc *crtc,
+>  	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
+>  	struct rcar_du_device *rcdu = rcrtc->group->dev;
+>  	bool interlaced = mode->flags & DRM_MODE_FLAG_INTERLACE;
+> +	unsigned int vbp;
+>  
+>  	if (interlaced && !rcar_du_has(rcdu, RCAR_DU_FEATURE_INTERLACED))
+>  		return MODE_NO_INTERLACE;
+>  
+> +	/*
+> +	 * The hardware requires a minimum combined horizontal sync and back
+> +	 * porch of 20 pixels and a minimum vertical back porch of 3 lines.
+> +	 */
+> +	if (mode->htotal - mode->hsync_start < 20)
+> +		return MODE_HBLANK_NARROW;
+> +
+> +	vbp = (mode->vtotal - mode->vsync_end) / (interlaced ? 2 : 1);
 
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://git.freedesktop.org/git/drm/drm.git#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/media_tree.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
-  - git://git.infradead.org/users/vkoul/slave-dma.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
-  - git://github.com/bzolnier/linux.git#fbdev-for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+I can't see where the interlaced value was calculated before on patch
+v1. Was it handled somewhere before/while being set in to crtc->vtotal?,
 
-Gr{oetje,eeting}s,
+That said, I can see that it makes sense here, so it's not a problem.
 
-						Geert
 
+> +	if (vbp < 3)
+> +		return MODE_VBLANK_NARROW;
+> +
+>  	return MODE_OK;
+>  }
+>  
+> 
+
+-- 
+Regards
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Kieran
