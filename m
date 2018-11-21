@@ -1,65 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:59660 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725926AbeKUNID (ORCPT
+Received: from mail-it1-f195.google.com ([209.85.166.195]:35076 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726144AbeKULEM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Nov 2018 08:08:03 -0500
-Date: Wed, 21 Nov 2018 03:35:41 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        Avri Altman <avri.altman@wdc.com>
-Subject: Re: [RFC PATCH 0/3] mmc: refactor RPMB block count handling
-Message-ID: <20181121023540.GB2445@kunai>
-References: <20181120230832.1840-1-wsa+renesas@sang-engineering.com>
- <CAPDyKFotAvkLzpAeDvvv0GB=_nJsJPkRbRc657=o3ftoxdXZDA@mail.gmail.com>
+        Wed, 21 Nov 2018 06:04:12 -0500
+Received: by mail-it1-f195.google.com with SMTP id v11so6528632itj.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 20 Nov 2018 16:32:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="CUfgB8w4ZwR/yMy5"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFotAvkLzpAeDvvv0GB=_nJsJPkRbRc657=o3ftoxdXZDA@mail.gmail.com>
+In-Reply-To: <20181120230832.1840-1-wsa+renesas@sang-engineering.com>
+References: <20181120230832.1840-1-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 21 Nov 2018 01:31:35 +0100
+Message-ID: <CAPDyKFotAvkLzpAeDvvv0GB=_nJsJPkRbRc657=o3ftoxdXZDA@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/3] mmc: refactor RPMB block count handling
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
+        Avri Altman <avri.altman@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
++ Avri, Cl=C3=A9ment (due to recent related discussions)
 
---CUfgB8w4ZwR/yMy5
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 21 November 2018 at 00:08, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> On Renesas R-Car SDHI hardware, we sometimes had timeouts accessing the R=
+PMB.
+> This is because AutoCMD23/12 features needs a properly filled sbc to work
+> correctly. But RPMB sends an individual CMD23. I could have fixed the dri=
+ver
+> but after some research concluded that fixing the core seems the proper t=
+hing
+> to do. I also added some sanity checking while here. Please let me know w=
+hat
+> you think.
+>
+> Tested on a R-Car M3-N. No timeouts showed up anymore. I'll try to improv=
+e the
+> testing, though, to check if I can make the occasional timeouts from befo=
+re
+> more reproducible. And then confirm that this patchset improves the situa=
+tion :)
+>
+> Wolfram Sang (3):
+>   mmc: core: validate user input for RPMB block count
+>   mmc: core: use mrq->sbc when sending CMD23 for RPMB
+>   mmc: core: remove obsolete mmc_set_blockcount() function
+>
+>  drivers/mmc/core/block.c | 14 +++++++++-----
+>  drivers/mmc/core/core.c  | 14 --------------
+>  drivers/mmc/core/core.h  |  2 --
+>  3 files changed, 9 insertions(+), 21 deletions(-)
+>
+> --
+> 2.11.0
+>
 
-On Wed, Nov 21, 2018 at 01:31:35AM +0100, Ulf Hansson wrote:
-> + Avri, Cl=C3=A9ment (due to recent related discussions)
+These changes makes perfect sense to me! I give it a day or two to
+allow people to comment/test, then I will queue them up.
 
-Thanks!
+Perhaps we should add a suggested by tag from Cl=C3=A9ment for patch2, as
+he kind of suggested this change already [1].
 
-> Perhaps we should add a suggested by tag from Cl=C3=A9ment for patch2, as
-> he kind of suggested this change already [1].
+Kind regards
+Uffe
 
-No strong opinion on that, but technically my inspiration for patch 2
-was Hayakawa-san. Add it as you see fit...
-
-
---CUfgB8w4ZwR/yMy5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlv0xHwACgkQFA3kzBSg
-KbbuKQ/9FbQVUUc8/eivzbu0koISboHmd1zOTQfSk0bJYwCQq8G8jwVMRAtR6rnE
-rtSZu8ysgTfwaScIkQZhEF7UKNda/KwPyaTTSKnWroP/lz8N86xILEDhPVOhJjLY
-503XoBFTv+9V2BUhG9+f7CxS8YQpkpMJ4OoA/e3as+YMlhf/z2a8iHt38cY7tdrz
-9YC000KjY2OogcZXx2PcJFpICbw2GPMwgkQHRu/bp64s4/D1Vs7q588RjVx5t6h5
-UQ7FIefWGhv0yoDBtWhXaN7H40XyMP/6rNvsjecmKHUSw7gWFavHUXS35rkJL+uQ
-b74rI47hXwny1cGgPRUCadJv7IMt6lfCmDG4FhVMcmY9Rgbxbwbq+ALPPkCwJy/T
-yIG003sxWSMxZoe8LZnumers33412KSGHZT7tSKY2pY1d7v+QlQSB0UAsc4v+CiU
-raIz4vUJzGOcgOgfa7N9lcP8ThwX1eo41kW1Z3gRGoRn8RpM3NOcFe58UBID7AXb
-g90Z3JJ9yZPfLwR/Efa3wWpLGEZExYALG+qz9iN/KwdhOhh7jYcOQPLpDkOAAElJ
-viLoDFILLFTw8+jIz/MGjQvNRgCxwqyjlDgMNTGy0JEIrmwo9Nz0diJ1Cjup4QAN
-4rWbtFlM4JZQU2ZjLFQaaWvCpRvHVfFOrTR5HRO2v+RE1I0hhl0=
-=ri6O
------END PGP SIGNATURE-----
-
---CUfgB8w4ZwR/yMy5--
+[1]
+https://patchwork.kernel.org/patch/10645847/
