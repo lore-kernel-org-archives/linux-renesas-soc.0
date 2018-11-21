@@ -1,71 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:40820 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387594AbeKVUBf (ORCPT
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38271 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726001AbeKUVFD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Nov 2018 15:01:35 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 1/7] ARM: dts: r8a7744-iwg20m: Add iWave RZ/G1N Qseven SOM
-Date: Thu, 22 Nov 2018 09:14:29 +0000
-Message-Id: <1542878075-61314-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1542878075-61314-1-git-send-email-biju.das@bp.renesas.com>
-References: <1542878075-61314-1-git-send-email-biju.das@bp.renesas.com>
+        Wed, 21 Nov 2018 16:05:03 -0500
+Received: by mail-pl1-f195.google.com with SMTP id e5so4928895plb.5
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Nov 2018 02:31:12 -0800 (PST)
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Date: Wed, 21 Nov 2018 19:31:30 +0900
+Message-Id: <154279629062.29528.16838446106465412292.sendpatchset@octo>
+In-Reply-To: <154279624819.29528.954090919447072739.sendpatchset@octo>
+References: <154279624819.29528.954090919447072739.sendpatchset@octo>
+Subject: [PATCH 05/05] arm64: dts: renesas: r8a77990: Add FCPCS+VDPB node for R-Car E3
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for iWave RZ/G1N Qseven System On Module.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Add a temporary FCPCS device that also includes VDPB for testing
+purpose. This prototype level code is not intended for upstream merge.
+
+Not-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- arch/arm/boot/dts/r8a7744-iwg20m.dtsi | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7744-iwg20m.dtsi
 
-diff --git a/arch/arm/boot/dts/r8a7744-iwg20m.dtsi b/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
-new file mode 100644
-index 0000000..6166ae0
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
-@@ -0,0 +1,31 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the iWave RZ/G1N Qseven SOM
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi |    9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+--- 0001/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ work/arch/arm64/boot/dts/renesas/r8a77990.dtsi	2018-11-21 18:48:07.085224248 +0900
+@@ -1419,6 +1419,15 @@
+ 			resets = <&cpg 408>;
+ 		};
+ 
++		fcpcs: fcp@fe90f000 {
++			compatible = "renesas,fcpc";
++			reg = <0 0xfe90f000 0 0x200>,
++			      <0 0xfe900000 0 0x400>; /* Hack to test VDPB */
++			clocks = <&cpg CPG_MOD 619>;
++			power-domains = <&sysc R8A77990_PD_A2VC1>;
++			resets = <&cpg 619>;
++		};
 +
-+#include "r8a7744.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/ {
-+	compatible = "iwave,g20m", "renesas,r8a7744";
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0 0x40000000 0 0x40000000>;
-+	};
-+
-+	reg_3p3v: 3p3v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "3P3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <20000000>;
-+};
--- 
-2.7.4
+ 		vspb0: vsp@fe960000 {
+ 			compatible = "renesas,vsp2";
+ 			reg = <0 0xfe960000 0 0x8000>;
