@@ -1,97 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:59835 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725888AbeKPI0p (ORCPT
+Received: from mail-eopbgr1410100.outbound.protection.outlook.com ([40.107.141.100]:62514
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726039AbeKUREi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Nov 2018 03:26:45 -0500
-From: Fernando Ramos <greenfoo@gluegarage.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        virtualization@lists.linux-foundation.org,
-        etnaviv@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        cocci@systeme.lip6.fr
-Subject: [PATCH 0/9] drm: remove deprecated functions
-Date: Thu, 15 Nov 2018 23:16:20 +0100
-Message-Id: <20181115221634.22715-1-greenfoo@gluegarage.com>
+        Wed, 21 Nov 2018 12:04:38 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: "balbi@kernel.org" <balbi@kernel.org>
+CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "jarkko.nikula@linux.intel.com" <jarkko.nikula@linux.intel.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 1/2] usb: renesas_usbhs: Remove dummy runtime PM callbacks
+Date: Wed, 21 Nov 2018 06:31:23 +0000
+Message-ID: <1542781735-8548-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1542781735-8548-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1542781735-8548-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi all,
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
-One of the things in the DRM TODO list ("Documentation/gpu/todo.rst") was to
-"switch from reference/unreference to get/put". That's what this patch series is
-about.
+Platform drivers don't need dummy runtime PM callbacks that just return
+success in order to have runtime PM happening. This has changed since
+following commits:
 
-In the past year or so most of the functions had already been renamed and only a
-few remained, which are the ones I fix here.
+commit 05aa55dddb9e ("PM / Runtime: Lenient generic runtime pm callbacks")
+commit 543f2503a956 ("PM / platform_bus: Allow runtime PM by default")
+commit 8b313a38ecff ("PM / Platform: Use generic runtime PM callbacks direc=
+tly")
 
-In addition, now that all calls to these deprecated functions are gone, this
-patch also removes their implementation and the coccinelle script that takes
-care of them (which is no longer needed).
+Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+[shimoda: revise git commit description style]
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/usb/renesas_usbhs/common.c | 14 --------------
+ 1 file changed, 14 deletions(-)
 
-Anyway, this is my first patch and I'm sure I've done something wrong. Please
-let me know :)
-
-Fernando Ramos (9):
-  drm: replace "drm_gem_object_unreference_unlocked" function with
-    "*put_unlocked"
-  drm: remove deprecated "[__]drm_gem_object_[un]reference[_locked]"
-    functions
-  drm: replace "drm_dev_unref" function with "drm_dev_put"
-  drm: remove deprecated "drm_dev_unref" function
-  drm: replace "drm_connector_unreference" with "drm_connector_put"
-  drm: remove deprecated "drm_connector_[un]reference" functions
-  drm: remove deprecated "drm_framebuffer_[un]reference" functions
-  drm: remove no longer needed drm-get-put coccinelle script
-  docs: drm: remove no longer relevant TODO entry
-
- Documentation/gpu/todo.rst                   | 17 -----
- drivers/gpu/drm/arc/arcpgu_drv.c             |  4 +-
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c |  4 +-
- drivers/gpu/drm/bochs/bochs_mm.c             |  4 +-
- drivers/gpu/drm/bridge/tc358764.c            |  2 +-
- drivers/gpu/drm/drm_drv.c                    | 13 ----
- drivers/gpu/drm/etnaviv/etnaviv_drv.c        |  4 +-
- drivers/gpu/drm/mxsfb/mxsfb_drv.c            |  4 +-
- drivers/gpu/drm/rcar-du/rcar_du_drv.c        |  2 +-
- drivers/gpu/drm/shmobile/shmob_drm_drv.c     |  4 +-
- drivers/gpu/drm/tve200/tve200_drv.c          |  4 +-
- drivers/gpu/drm/zte/zx_drm_drv.c             |  4 +-
- include/drm/drm_connector.h                  | 24 ------
- include/drm/drm_drv.h                        |  1 -
- include/drm/drm_framebuffer.h                | 24 ------
- include/drm/drm_gem.h                        | 50 -------------
- scripts/coccinelle/api/drm-get-put.cocci     | 78 --------------------
- 17 files changed, 18 insertions(+), 225 deletions(-)
- delete mode 100644 scripts/coccinelle/api/drm-get-put.cocci
-
--- 
-2.19.1
+diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs=
+/common.c
+index a3e1290..0e760f2 100644
+--- a/drivers/usb/renesas_usbhs/common.c
++++ b/drivers/usb/renesas_usbhs/common.c
+@@ -874,23 +874,9 @@ static int usbhsc_resume(struct device *dev)
+ 	return 0;
+ }
+=20
+-static int usbhsc_runtime_nop(struct device *dev)
+-{
+-	/* Runtime PM callback shared between ->runtime_suspend()
+-	 * and ->runtime_resume(). Simply returns success.
+-	 *
+-	 * This driver re-initializes all registers after
+-	 * pm_runtime_get_sync() anyway so there is no need
+-	 * to save and restore registers here.
+-	 */
+-	return 0;
+-}
+-
+ static const struct dev_pm_ops usbhsc_pm_ops =3D {
+ 	.suspend		=3D usbhsc_suspend,
+ 	.resume			=3D usbhsc_resume,
+-	.runtime_suspend	=3D usbhsc_runtime_nop,
+-	.runtime_resume		=3D usbhsc_runtime_nop,
+ };
+=20
+ static struct platform_driver renesas_usbhs_driver =3D {
+--=20
+1.9.1
