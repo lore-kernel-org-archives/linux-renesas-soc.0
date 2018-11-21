@@ -1,41 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57468 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730533AbeKGUvP (ORCPT
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:35783 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726001AbeKUVEr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Nov 2018 15:51:15 -0500
-Date: Wed, 7 Nov 2018 12:21:16 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 00/03] Connect R-Car Gen3 Ethernet-AVB to IPMMU
-Message-ID: <20181107112115.5d2l2tfpf6nvuvca@verge.net.au>
-References: <154014207424.4344.6894320987219157257.sendpatchset@octo>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154014207424.4344.6894320987219157257.sendpatchset@octo>
+        Wed, 21 Nov 2018 16:04:47 -0500
+Received: by mail-pl1-f194.google.com with SMTP id v1-v6so4936896plo.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Nov 2018 02:30:55 -0800 (PST)
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Date: Wed, 21 Nov 2018 19:31:13 +0900
+Message-Id: <154279627389.29528.9572412886288904639.sendpatchset@octo>
+In-Reply-To: <154279624819.29528.954090919447072739.sendpatchset@octo>
+References: <154279624819.29528.954090919447072739.sendpatchset@octo>
+Subject: [PATCH 03/05] arm64: dts: renesas: r8a7796: Add FCPCS+VDPB node for R-Car M3-W
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 22, 2018 at 02:14:34AM +0900, Magnus Damm wrote:
-> Connect R-Car Gen3 Ethernet-AVB to IPMMU
-> 
-> [PATCH 01/03] arm64: dts: renesas: r8a77965: Connect R-Car M3-N AVB to IPMMU
-> [PATCH 02/03] arm64: dts: renesas: r8a77980: Connect R-Car V3H AVB to IPMMU
-> [PATCH 03/03] arm64: dts: renesas: r8a77990: Connect R-Car E3 AVB to IPMMU
-> 
-> For each SoC describe Ethernet-AVB to IPMMU hardware connection in the
-> Device Tree. This series affects R-Car M3-N, V3H and E3. Other members
-> of the R-Car Gen3 family such as H3, M3-W, V3M and D3 already includes
-> this information in their DT files.
-> 
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Hi,
+Add a temporary FCPCS device that also includes VDPB for testing
+purpose. This prototype level code is not intended for upstream merge.
 
-I have already queued-up these patches but I noticed that
-they do the same thing to different SoCs and recently the ARM-SoC
-maintainers have asked us to consolidate such patches. With that in mind
-I am considering squashing the three patches that comprise this series into
-one. Are there any objections?
+Not-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
+
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi |    9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+--- 0001/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ work/arch/arm64/boot/dts/renesas/r8a7796.dtsi	2018-11-21 18:36:53.552912032 +0900
+@@ -2209,6 +2209,15 @@
+ 			resets = <&cpg 822>;
+ 		};
+ 
++		fcpcs: fcp@fe90f000 {
++			compatible = "renesas,fcpc";
++			reg = <0 0xfe90f000 0 0x200>,
++			      <0 0xfe900000 0 0x400>; /* Hack to test VDPB */
++			clocks = <&cpg CPG_MOD 619>;
++			power-domains = <&sysc R8A7796_PD_A2VC0>;
++			resets = <&cpg 619>;
++		};
++
+ 		fdp1@fe940000 {
+ 			compatible = "renesas,fdp1";
+ 			reg = <0 0xfe940000 0 0x2400>;
