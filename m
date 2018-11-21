@@ -1,47 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:34490 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727352AbeKSUpG (ORCPT
+Received: from mail-eopbgr1410100.outbound.protection.outlook.com ([40.107.141.100]:62514
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726195AbeKUREk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Nov 2018 15:45:06 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Ulrich Hecht <uli+renesas@fpond.eu>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: sh-pfc: r8a77995: Remove unused PINMUX_IPSR_{MSEL2,PHYS}()
-Date: Mon, 19 Nov 2018 11:21:52 +0100
-Message-Id: <20181119102152.5144-1-geert+renesas@glider.be>
+        Wed, 21 Nov 2018 12:04:40 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: "balbi@kernel.org" <balbi@kernel.org>
+CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "jarkko.nikula@linux.intel.com" <jarkko.nikula@linux.intel.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 0/2] usb: renesas_usbhs: clean up the code around dev_pm_ops
+Date: Wed, 21 Nov 2018 06:31:22 +0000
+Message-ID: <1542781735-8548-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The PINMUX_IPSR_MSEL2() and PINMUX_IPSR_PHYS() macros are unused, and
-will conflict with generic macros that are to be added.
+This patch set is based on the Felipe's usb.git / testing/next branch
+(commit id =3D 9c5f54eb289b244dc9f5e24f56c9a9373582ef35).
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in sh-pfc-for-v4.21, before "pinctrl: sh-pfc: Add physical
-pin multiplexing helper macros".
+The patch 1 comes from the following:
+ https://patchwork.kernel.org/patch/10654679/
 
- drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 6 ------
- 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-index 9484eaa8522aec6f..e457539a61c55bb9 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-@@ -468,12 +468,6 @@ enum {
- #undef FM
- };
- 
--#define PINMUX_IPSR_MSEL2(ipsr, fn, msel1, msel2) \
--	PINMUX_DATA(fn##_MARK, FN_##msel1, FN_##msel2, FN_##fn, FN_##ipsr)
--
--#define PINMUX_IPSR_PHYS(ipsr, fn, msel) \
--	PINMUX_DATA(fn##_MARK, FN_##msel)
--
- static const u16 pinmux_data[] = {
- 	PINMUX_DATA_GP_ALL(),
- 
--- 
-2.17.1
+Jarkko Nikula (1):
+  usb: renesas_usbhs: Remove dummy runtime PM callbacks
+
+Yoshihiro Shimoda (1):
+  usb: renesas_usbhs: Use SIMPLE_DEV_PM_OPS macro
+
+ drivers/usb/renesas_usbhs/common.c | 19 +------------------
+ 1 file changed, 1 insertion(+), 18 deletions(-)
+
+--=20
+1.9.1
