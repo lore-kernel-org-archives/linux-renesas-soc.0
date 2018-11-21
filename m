@@ -1,92 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-eopbgr1400112.outbound.protection.outlook.com ([40.107.140.112]:17713
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727445AbeK0LlD (ORCPT
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:43074 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725999AbeKUSKm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Nov 2018 06:41:03 -0500
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>, Ulrich Hecht <uli@fpond.eu>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        KOJI MATSUOKA <koji.matsuoka.xm@renesas.com>
-Subject: Re: [PATCH v2 07/16] drm: rcar-du: Use LVDS PLL clock as dot clock
- when possible
-Date: Tue, 27 Nov 2018 00:44:58 +0000
-Message-ID: <87pnur1ho1.wl-kuninori.morimoto.gx@renesas.com>
-References: <20180914091046.483-1-laurent.pinchart+renesas@ideasonboard.com>
-        <20180914091046.483-8-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180914091046.483-8-laurent.pinchart+renesas@ideasonboard.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <39A687DBE437D8489ACDA13E5C39C0CA@jpnprd01.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 21 Nov 2018 13:10:42 -0500
 MIME-Version: 1.0
+References: <20181118173327.4704-1-marek.vasut+renesas@gmail.com>
+ <20181118230250.GA2553@kunai> <6ffce819-4d8e-e54a-ba82-0845c36a6ec4@gmail.com>
+ <CAMuHMdUjONJYypV0a5wnxyBx+sUMHzRwZObQ=d7xFG2ZSCM3Ag@mail.gmail.com> <8808d836-2454-4166-fbe0-02849e52792b@gmail.com>
+In-Reply-To: <8808d836-2454-4166-fbe0-02849e52792b@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 21 Nov 2018 08:37:06 +0100
+Message-ID: <CAMuHMdWrNjmCmAuKjp=J2bUhXtXCNbNE2QHyT0df3AYF8ua9JA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: dts: renesas: r8a77965: Add CAN controller nodes
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Rob Herring <robh@kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Marek,
 
-Hi Laurent
+On Wed, Nov 21, 2018 at 12:33 AM Marek Vasut <marek.vasut@gmail.com> wrote:
+> On 11/19/2018 10:00 AM, Geert Uytterhoeven wrote:
+> > On Mon, Nov 19, 2018 at 12:46 AM Marek Vasut <marek.vasut@gmail.com> wrote:
+> >> On 11/19/2018 12:02 AM, Wolfram Sang wrote:
+> >>> On Sun, Nov 18, 2018 at 06:33:26PM +0100, Marek Vasut wrote:
+> >>>> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> >>>>
+> >>>> This patch adds CAN{0,1} controller nodes for the R8A77965 SoC.
+> >>>>
+> >>>> Based on several similar patches of the R8A7795 device tree
+> >>>> by Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+> >>>> and Geert Uytterhoeven <geert+renesas@glider.be>.
+> >>>>
+> >>>> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> >>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> >>>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> >>>> Cc: Marc Kleine-Budde <mkl@pengutronix.de>
+> >>>> Cc: Rob Herring <robh@kernel.org>
+> >>>> Cc: Simon Horman <horms+renesas@verge.net.au>
+> >>>> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >>>> Cc: linux-renesas-soc@vger.kernel.org
+> >>>> Cc: linux-arm-kernel@lists.infradead.org
+> >>>
+> >>> Were you able to do some testing using EXIO connectors? Would be nice to
+> >>> know what was tested.
+> >>
+> >> Not on the M3N, since I don't see it broken out on the EXIO ; is it
+> >> really there ? It'd be easy to test on M3NSK with KF, but I don't have
+> >> either KF or M3NSK.
+> >
+> > Please have a look at EXIO Connector D, pins 13/14/15.
+>
+> That's LBSC WE1n/WE0n/CS0n on S-XS . Is there something I obviously
+> don't see ?
 
-Sorry for super late response.
-I got opinion from BSP team about this patch.
+Unless you connect an expansion card to the Ex Memory Connector,
+these signals are free to use, and can be pinmuxed to a CAN function.
 
-> On selected SoCs, the DU can use the clock output by the LVDS encoder
-> PLL as its input dot clock. This feature is optional, but on the D3 and
-> E3 SoC it is often the only way to obtain a precise dot clock frequency,
-> as the other available clocks (CPG-generated clock and external clock)
-> usually have fixed rates.
->=20
-> Add a DU model information field to describe which DU channels can use
-> the LVDS PLL output clock as their input clock, and configure clock
-> routing accordingly.
->=20
-> This feature is available on H2, M2-W, M2-N, D3 and E3 SoCs, with D3 and
-> E3 being the primary targets. It is left disabled in this commit, and
-> will be enabled per-SoC after careful testing.
->=20
-> At the hardware level, clock routing is configured at runtime in two
-> steps, first selecting an internal dot clock between the LVDS PLL clock
-> and the external DOTCLKIN clock, and then selecting between the internal
-> dot clock and the CPG-generated clock. The first part requires stopping
-> the whole DU group in order for the change to take effect, thus causing
-> flickering on the screen. For this reason we currently hardcode the
-> clock source to the LVDS PLL clock if available, and allow flicker-free
-> selection of the external DOTCLKIN clock or CPG-generated clock
-> otherwise. A more dynamic clock selection process can be implemented
-> later if the need arises.
->=20
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.co=
-m>
-> Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
-(snip)
-> +	didsr =3D DIDSR_CODE;
-> +	for (i =3D 0; i < num_crtcs; ++i, ++rcrtc) {
-> +		if (rcdu->info->lvds_clk_mask & BIT(rcrtc->index))
-> +			didsr |=3D DIDSR_LCDS_LVDS0(i)
-> +			      |  DIDSR_PDCS_CLK(i, 0);
-> +		else
-> +			didsr |=3D DIDSR_LCDS_DCLKIN(i)
-> +			      |  DIDSR_PDCS_CLK(i, 0);
-> +	}
+Gr{oetje,eeting}s,
 
-Here, this is for DU pin settings, and fixed for
+                        Geert
 
-	DU_DOTCLKIN0 -> DU0
-	DU_DOTCLKIN1 -> DU1
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-But on E3 (Ebisu) board, it has only DU_DOTCLKIN0.
-We might use like this
-
-	DU_DOTCLKIN0 -> DU0
-	DU_DOTCLKIN0 -> DU1
-
-It is possible to adjust to this situation ?
-DIDSR :: PDCSn allows only 0
-
-Best regards
----
-Kuninori Morimoto
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
