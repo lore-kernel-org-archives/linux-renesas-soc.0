@@ -1,65 +1,125 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35091 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbeKZXsb (ORCPT
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:36187 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728078AbeKUTND (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Nov 2018 18:48:31 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 04/16] ARM: dts: r8a77470: Add SDHI1 support
-Date: Mon, 26 Nov 2018 13:54:06 +0100
-Message-Id: <239a4d7f1271aa255c06240e66d586c4695fb0da.1543236456.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1543236456.git.horms+renesas@verge.net.au>
-References: <cover.1543236456.git.horms+renesas@verge.net.au>
+        Wed, 21 Nov 2018 14:13:03 -0500
+MIME-Version: 1.0
+References: <20181106204647.18051-1-marek.vasut+renesas@gmail.com>
+ <CAMuHMdWQYt4nrjBeQnWcZ+OOT+UX=9KTu3Lki7aS=n3n8FczZg@mail.gmail.com> <94869436-7841-537a-4760-8f117b06200f@gmail.com>
+In-Reply-To: <94869436-7841-537a-4760-8f117b06200f@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 21 Nov 2018 09:39:15 +0100
+Message-ID: <CAMuHMdWXYLkUqBdaYT0f0=OYKi7q5tTFgTRXp28zAiMV_7qFcg@mail.gmail.com>
+Subject: Re: [PATCH V3] arm64: dts: r8a77990: ebisu: Add and enable SDHI
+ device nodes
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+On Wed, Nov 21, 2018 at 12:33 AM Marek Vasut <marek.vasut@gmail.com> wrote:
+> On 11/20/2018 11:16 AM, Geert Uytterhoeven wrote:
+> > On Tue, Nov 6, 2018 at 9:46 PM Marek Vasut <marek.vasut@gmail.com> wrote:
+> >> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> >>
+> >> This patch adds SDHI{0,1,3} device nodes for the r8a77990 SoC
+> >> and enables SD card slot connected to SDHI0, micro SD card slot
+> >> connected to SDHI1 and eMMC connected to SDHI3 on the Ebisu board
+> >> using the R8A77990 SoC.
+> >>
+> >> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> >> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> >
+> >> --- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+> >> +++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+> >> @@ -129,6 +129,15 @@
+> >>                 };
+> >>         };
+> >>
+> >> +       reg_1p8v: regulator0 {
+> >> +               compatible = "regulator-fixed";
+> >> +               regulator-name = "fixed-1.8V";
+> >> +               regulator-min-microvolt = <1800000>;
+> >> +               regulator-max-microvolt = <1800000>;
+> >> +               regulator-boot-on;
+> >> +               regulator-always-on;
+> >> +       };
+> >> +
+> >>         reg_3p3v: regulator1 {
+> >>                 compatible = "regulator-fixed";
+> >>                 regulator-name = "fixed-3.3V";
+> >> @@ -180,6 +189,54 @@
+> >>                 #clock-cells = <0>;
+> >>                 clock-frequency = <74250000>;
+> >>         };
+> >> +
+> >> +       vcc_sdhi0: regulator-vcc-sdhi0 {
+> >> +               compatible = "regulator-fixed";
+> >> +
+> >> +               regulator-name = "SDHI0 Vcc";
+> >> +               regulator-min-microvolt = <3300000>;
+> >> +               regulator-max-microvolt = <3300000>;
+> >> +
+> >> +               gpio = <&gpio5 17 GPIO_ACTIVE_HIGH>;
+> >> +               enable-active-high;
+> >> +       };
+> >> +
+> >> +       vccq_sdhi0: regulator-vccq-sdhi0 {
+> >> +               compatible = "regulator-gpio";
+> >> +
+> >> +               regulator-name = "SDHI0 VccQ";
+> >> +               regulator-min-microvolt = <1800000>;
+> >> +               regulator-max-microvolt = <3300000>;
+> >> +
+> >> +               gpios = <&gpio5 18 GPIO_ACTIVE_HIGH>;
+> >> +               gpios-states = <1>;
+> >> +               states = <3300000 1
+> >> +                         1800000 0>;
+> >
+> > I know this is how it's done in the example in
+> > Documentation/devicetree/bindings/regulator/gpio-regulator.txt,
+> > but usually brackets are used to group tuples, like:
+> >
+> >     states = <3300000 1>, <1800000 0>;
+> >
+> > Perhaps the example should be changed?
+>
+> Well, looking through the DTS, I don't see anyone using tuples for the
+> GPIO regulator states. Then again, it could be updated.
 
-Althought interface SDHI1 found on the RZ/G1C SoC (a.k.a.
-r8a77470) is compatible with the R-Car Gen3 ones, its OF
-compatibility is restricted to the SoC specific compatible
-string to avoid confusion, as from a more generic perspective
-the RZ/G1C is sharing the most similarities with the R-Car
-Gen2 family of SoCs, and there is a combination of R-Car
-Gen2 compatible SDHI IPs and R-Car Gen3 compatible SDHI IP
-on this specific chip.
-This patch adds the SoC specific part of SDHI1 support, and
-since SDHI1 comes with internal DMA, its DT node looks fairly
-different from SDHI0 and SDHI2.
+Probably a good idea given the current work on schema validation:
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a77470.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+    DT YAML Encoding
+    ...
+    dts ‘< >’ are maintained
+      ○ Will need to be stricter about these
+      ○ Same for dtb, not for validation:
+          ■ prop = <1 2 3 4>;
+          ■ prop = <1>, <2>, <3>, <4>;
 
-diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index ab2e0223f8a1..6ac7f467065e 100644
---- a/arch/arm/boot/dts/r8a77470.dtsi
-+++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -505,6 +505,17 @@
- 			status = "disabled";
- 		};
- 
-+		sdhi1: sd@ee300000 {
-+			compatible = "renesas,sdhi-mmc-r8a77470";
-+			reg = <0 0xee300000 0 0x2000>;
-+			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 313>;
-+			max-frequency = <156000000>;
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 313>;
-+			status = "disabled";
-+		};
-+
- 		sdhi2: sd@ee160000 {
- 			compatible = "renesas,sdhi-r8a77470",
- 				     "renesas,rcar-gen2-sdhi";
+https://www.elinux.org/images/6/6b/LPC2018_json-schema_for_Devicetree.pdf
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
