@@ -1,57 +1,47 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor2.renesas.com ([210.160.252.172]:9727 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2387594AbeKVUBc (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 22 Nov 2018 15:01:32 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/6] soc: renesas: r8a77970-sysc: Remove non-existent CR7 power domain
-Date: Thu, 29 Nov 2018 11:56:15 +0100
-Message-Id: <20181129105619.10695-3-geert+renesas@glider.be>
-In-Reply-To: <20181129105619.10695-1-geert+renesas@glider.be>
-References: <20181129105619.10695-1-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 0/7] Add support for iWave G20D-Q7 board based on RZ/G1N
+Date: Thu, 22 Nov 2018 09:14:28 +0000
+Message-Id: <1542878075-61314-1-git-send-email-biju.das@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R-Car Gen3 HardWare Manual Errata for Rev. 0.80 (Feb 28, 2018)
-removed the CR7 power domain on R-Car V3M, as this SoC does not have an
-ARM Cortex-R7 Realtime Core.
+This patch series aims to add support for iWave G20D-Q7 board based on RZ/G1N.
 
-As this definition was never used from DT, it can just be removed.
+This patch series is tested against renesas-dev
 
-Fixes: 833bdb47c826a1a6 ("dt-bindings: power: add R8A77970 SYSC power domain definitions")
-Fixes: bab9b2a74fe9da96 ("soc: renesas: rcar-sysc: add R8A77970 support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/soc/renesas/r8a77970-sysc.c       | 1 -
- include/dt-bindings/power/r8a77970-sysc.h | 1 -
- 2 files changed, 2 deletions(-)
+Biju Das (7):
+  ARM: dts: r8a7744-iwg20m: Add iWave RZ/G1N Qseven SOM
+  ARM: dts: r8a7744: Initial SoC device tree
+  ARM: dts: r8a7744-iwg20d-q7: Add support for iWave G20D-Q7 board based
+    on RZ/G1N
+  ARM: dts: r8a7744: Add SYS-DMAC support
+  ARM: dts: r8a7744: Add GPIO support
+  ARM: dts: r8a7744: Add Ethernet AVB support
+  ARM: dts: r8a7744: Add SMP support
 
-diff --git a/drivers/soc/renesas/r8a77970-sysc.c b/drivers/soc/renesas/r8a77970-sysc.c
-index 35b30d6a8958a063..2c6d76490ca096ca 100644
---- a/drivers/soc/renesas/r8a77970-sysc.c
-+++ b/drivers/soc/renesas/r8a77970-sysc.c
-@@ -20,7 +20,6 @@ static const struct rcar_sysc_area r8a77970_areas[] __initconst = {
- 	  PD_CPU_NOCR },
- 	{ "ca53-cpu1",	0x200, 1, R8A77970_PD_CA53_CPU1, R8A77970_PD_CA53_SCU,
- 	  PD_CPU_NOCR },
--	{ "cr7",	0x240, 0, R8A77970_PD_CR7,	R8A77970_PD_ALWAYS_ON },
- 	{ "a3ir",	0x180, 0, R8A77970_PD_A3IR,	R8A77970_PD_ALWAYS_ON },
- 	{ "a2ir0",	0x400, 0, R8A77970_PD_A2IR0,	R8A77970_PD_A3IR },
- 	{ "a2ir1",	0x400, 1, R8A77970_PD_A2IR1,	R8A77970_PD_A3IR },
-diff --git a/include/dt-bindings/power/r8a77970-sysc.h b/include/dt-bindings/power/r8a77970-sysc.h
-index bf54779d16252a46..5c1ef1398b704ab5 100644
---- a/include/dt-bindings/power/r8a77970-sysc.h
-+++ b/include/dt-bindings/power/r8a77970-sysc.h
-@@ -16,7 +16,6 @@
- 
- #define R8A77970_PD_CA53_CPU0		 5
- #define R8A77970_PD_CA53_CPU1		 6
--#define R8A77970_PD_CR7			13
- #define R8A77970_PD_CA53_SCU		21
- #define R8A77970_PD_A2IR0		23
- #define R8A77970_PD_A3IR			24
+ arch/arm/boot/dts/Makefile              |   1 +
+ arch/arm/boot/dts/r8a7744-iwg20d-q7.dts |  15 +
+ arch/arm/boot/dts/r8a7744-iwg20m.dtsi   |  31 ++
+ arch/arm/boot/dts/r8a7744.dtsi          | 561 ++++++++++++++++++++++++++++++++
+ 4 files changed, 608 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r8a7744-iwg20d-q7.dts
+ create mode 100644 arch/arm/boot/dts/r8a7744-iwg20m.dtsi
+ create mode 100644 arch/arm/boot/dts/r8a7744.dtsi
+
 -- 
-2.17.1
+2.7.4
