@@ -1,54 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:28671 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725977AbeKUBtB (ORCPT
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46635 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729340AbeKWFSM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Nov 2018 20:49:01 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
+        Fri, 23 Nov 2018 00:18:12 -0500
+Received: by mail-lj1-f194.google.com with SMTP id v15-v6so8693508ljh.13
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Nov 2018 10:37:36 -0800 (PST)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 0/4] Renesas R8A77980 CPG/MSSR RPC clock support
+To: linux-renesas-soc@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-gpio@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [RFC v3 0/2] Request GPIO when enabling interrupt
-Date: Tue, 20 Nov 2018 15:19:14 +0000
-Message-Id: <1542727156-31432-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        linux-clk@vger.kernel.org
+Message-ID: <c79d3733-437a-55dc-d946-99521b79ec20@cogentembedded.com>
+Date: Thu, 22 Nov 2018 21:37:33 +0300
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dear All,
+Hello!
 
-here is a new iteration of the fix for the pinmuxing issue while
-requesting an interrupt.
-I don't like this implementation either as:
-* pinctrl_mux_gpio_request_enable is very similar to pinctrl_gpio_request,
-  and the name I have picked up is not exactly brilliant...
-* it may cause an error message like "Pin X is busy, can't configure it as
-  GPIO." (for cd-gpios pins for example) as it can't check the status of the pin
-  before requesting it (can it?)
-* because it's discarding errors returned by pinctrl_mux_gpio_request_enable
+Here's the set of 4 patches against the 'clk-renesas' branch of Geert Uytterhoeven's
+'renesas-drivers.git' repo. We're adding support for the RPC clocks...
 
-This problem needs fixing, but the solutions proposed so far don't look
-great, as they are not spectacularly neat.
+[1/4] clk: renesas: rcar-gen3-cpg: factor out cpg_reg_modify()
+[2/4] clk: renesas: rcar-gen3-cpg: add RPC clock
+[3/4] clk: renesas: rcar-gen3-cpg: add RPCD2 clock
+[4/4] clk: renesas: r8a77980-cpg-mssr: add RPC clocks
 
-What's the best way to fix this?
-
-Ideas and comments very welcome!
-
-Thanks,
-Fab
-
-Fabrizio Castro (2):
-  pinctrl: core: Add pinctrl_mux_gpio_request_enable
-  gpio: rcar: Set pin as a GPIO when configuring an interrupt
-
- drivers/gpio/gpio-rcar.c         |  3 +++
- drivers/pinctrl/core.c           | 34 ++++++++++++++++++++++++++++++++++
- include/linux/pinctrl/consumer.h |  6 ++++++
- 3 files changed, 43 insertions(+)
-
--- 
-2.7.4
+MBR, Sergei
