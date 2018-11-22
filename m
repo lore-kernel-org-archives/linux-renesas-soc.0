@@ -1,15 +1,16 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-eopbgr1410137.outbound.protection.outlook.com ([40.107.141.137]:27048
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726172AbeKWB4F (ORCPT
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51963 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732672AbeKWA07 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Nov 2018 20:56:05 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thu, 22 Nov 2018 19:26:59 -0500
+Received: by mail-wm1-f67.google.com with SMTP id j207so1917505wmj.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Nov 2018 05:47:32 -0800 (PST)
+Subject: Re: [PATCH] arm64: dts: renesas: r8a7796: Add CMT device nodes
+To: Biju Das <biju.das@bp.renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-CC: Simon Horman <horms@verge.net.au>,
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
@@ -18,11 +19,7 @@ CC: Simon Horman <horms@verge.net.au>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         John Stultz <john.stultz@linaro.org>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] arm64: dts: renesas: r8a7796: Add CMT device nodes
-Date: Thu, 22 Nov 2018 15:16:12 +0000
-Message-ID: <OSBPR01MB21034E0B1AE2304A9A17DE50B8DB0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 References: <1540542307-63158-1-git-send-email-biju.das@bp.renesas.com>
  <1be47ef6-1a92-e032-12c1-1deae5b67960@linaro.org>
  <OSBPR01MB210312547BBCBBC9FC01A616B8D80@OSBPR01MB2103.jpnprd01.prod.outlook.com>
@@ -30,87 +27,161 @@ References: <1540542307-63158-1-git-send-email-biju.das@bp.renesas.com>
  <TYAPR01MB2111A4092907D265493DDF3FB8D80@TYAPR01MB2111.jpnprd01.prod.outlook.com>
  <dbc5f62d-aff0-8c6a-e957-e7dea15cc002@linaro.org>
  <OSBPR01MB21030159FAA26E6C8FE492FFB8DB0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
- <a82d3315-7608-3ff8-eaa1-e2a2c05c0694@linaro.org>
-In-Reply-To: <a82d3315-7608-3ff8-eaa1-e2a2c05c0694@linaro.org>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <a82d3315-7608-3ff8-eaa1-e2a2c05c0694@linaro.org>
+Date: Thu, 22 Nov 2018 14:47:28 +0100
 MIME-Version: 1.0
+In-Reply-To: <OSBPR01MB21030159FAA26E6C8FE492FFB8DB0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gRGFuaWVsLA0KDQpUaGFua3MgZm9yIHRoZSBmZWVkYmFjay4NCg0KPiA+PiBTdWJqZWN0
-OiBSZTogW1BBVENIXSBhcm02NDogZHRzOiByZW5lc2FzOiByOGE3Nzk2OiBBZGQgQ01UIGRldmlj
-ZQ0KPiA+PiBub2Rlcw0KPiA+Pg0KPiA+PiBPbiAxOS8xMS8yMDE4IDE2OjUwLCBCaWp1IERhcyB3
-cm90ZToNCj4gPj4+IEhpIERhbmllbCwNCj4gPj4+DQo+ID4+PiBUaGFua3MgZm9yIHRoZSBmZWVk
-YmFjay4NCj4gPj4+DQo+ID4+Pj4+PiBTdWJqZWN0OiBSZTogW1BBVENIXSBhcm02NDogZHRzOiBy
-ZW5lc2FzOiByOGE3Nzk2OiBBZGQgQ01UIGRldmljZQ0KPiA+Pj4+Pj4gbm9kZXMNCj4gPj4+Pj4+
-DQo+ID4+Pj4+PiBPbiAyNi8xMC8yMDE4IDEwOjI1LCBCaWp1IERhcyB3cm90ZToNCj4gPj4+Pj4+
-PiBUaGlzIHBhdGNoIGFkZHMgQ01UezB8MXwyfDN9IGRldmljZSBub2RlcyBmb3IgcjhhNzc5NiBT
-b0MuDQo+ID4+Pj4+Pj4NCj4gPj4+Pj4+PiBTaWduZWQtb2ZmLWJ5OiBCaWp1IERhcyA8YmlqdS5k
-YXNAYnAucmVuZXNhcy5jb20+DQo+ID4+Pj4+Pj4gLS0tDQo+ID4+Pj4+Pj4gVGhpcyBwYXRjaCBp
-cyB0ZXN0ZWQgYWdhaW5zdCByZW5lc2FzLWRldg0KPiA+Pj4+Pj4+DQo+ID4+Pj4+Pj4gSSBoYXZl
-IGV4ZWN1dGVkIG9uIGluY29uc2lzdGVuY3ktY2hlY2ssIG5hbm9zbGVlcCBhbmQNCj4gPj4+Pj4+
-PiBjbG9ja3NvdXJjZV9zd2l0Y2ggc2VsZnRlc3RzIG9uIHRoaXMgYXJtNjQgU29DLiBUaGUNCj4g
-Pj4+Pj4+PiBpbmNvbnNpc3RlbmN5LWNoZWNrIGFuZCBuYW5vc2xlZXAgdGVzdHMgYXJlIHdvcmtp
-bmcgZmluZS5UaGUNCj4gPj4+Pj4+PiBjbG9ja3NvdXJjZV9zd2l0Y2ggYXN5bmNocm9ub3VzIHRl
-c3QgaXMgZmFpbGluZyBkdWUgdG8NCj4gPj4+Pj4+PiBpbmNvbnNpc3RlbmN5LWNoZWNrDQo+ID4+
-Pj4+PiBmYWlsdXJlIG9uICJhcmNoX3N5c19jb3VudGVyIi4NCj4gPj4+Pj4+Pg0KPiA+Pj4+Pj4+
-IEJ1dCBpZiBpIHNraXAgdGhlIGNsb2Nrc291cmNlX3N3aXRjaGluZyBvZiAiYXJjaF9zeXNfY291
-bnRlciIsDQo+ID4+Pj4+Pj4gdGhlIGFzeW5jaHJvbm91cyB0ZXN0IGlzIHBhc3NpbmcgZm9yIENN
-VDAvMS8yLzMgdGltZXIuDQo+ID4+Pj4+Pj4NCj4gPj4+Pj4+PiBIYXMgYW55IG9uZSBub3RpY2Vk
-IHRoaXMgaXNzdWU/DQo+ID4+Pj4+Pg0KPiA+Pj4+Pj4gU28gbm93IHRoYXQgeW91IG1lbnRpb24g
-dGhhdCwgSSd2ZSBiZWVuIHRocm91Z2ggdGhlDQo+ID4+Pj4+PiBjbG9ja3NvdXJjZV9zd2l0Y2gg
-b24gYW5vdGhlciBBUk02NCBwbGF0Zm9ybSAoaGlrZXk5NjApIGFuZA0KPiA+Pj4+Pj4gZGlzYWJs
-ZWQgdGhlDQo+ID4+Pj4+PiBBUk02NF9FUlJBVFVNXzg1ODkyMSBjb25maWcgb3B0aW9uLiBJIGNh
-biBzZWUgdGhlIHNhbWUgaXNzdWUuDQo+ID4+Pj4+Pg0KPiA+Pj4+Pj4gSXMgdGhpcyBvcHRpb24g
-c2V0IG9uIHlvdXIgY29uZmlnID8NCj4gPj4+Pj4NCj4gPj4+Pj4gTm8uICBBcyBwZXIgICIgY29u
-ZmlnIEFSTTY0X0VSUkFUVU1fODU4OTIxIiwgaXQgaXMgIldvcmthcm91bmQgZm9yDQo+ID4+Pj4g
-Q29ydGV4LUE3MyBlcnJhdHVtIDg1ODkyMSINCj4gPj4+Pj4NCj4gPj4+Pj4gT3VyIFNvQyBpcyAy
-eENBLTU3ICsgNCB4IENBLTUzLiAgRG9lcyAgaXQgaW1wYWN0IENBLTU3ICsgQ0FfNTM/DQo+ID4+
-Pj4NCj4gPj4+PiBEdW5ubyA6Lw0KPiA+Pj4+DQo+ID4+Pj4+IEFueSB3YXkgSSB3aWxsIGVuYWJs
-ZSB0aGlzIGNvbmZpZyBvcHRpb24gYW5kIHdpbGwgcHJvdmlkZSB5b3UgdGhlDQo+IHJlc3VsdHMu
-DQo+ID4+Pj4NCj4gPj4+PiBPaywgdGhhbmtzIQ0KPiA+Pj4NCj4gPj4+IFRoZSBmb2xsb3dpbmcg
-Y29uZmlnIGlzIGVuYWJsZWQgYnkgZGVmYXVsdCBvbiB1cHN0cmVhbQ0KPiA+Pj4ga2VybmVsKDQu
-MjAtcmMzKSBDT05GSUdfQVJNX0FSQ0hfVElNRVJfRVZUU1RSRUFNPXkNCj4gPj4+IENPTkZJR19B
-Uk1fQVJDSF9USU1FUl9PT0xfV09SS0FST1VORD15DQo+ID4+PiBDT05GSUdfRlNMX0VSUkFUVU1f
-QTAwODU4NT15DQo+ID4+PiBDT05GSUdfSElTSUxJQ09OX0VSUkFUVU1fMTYxMDEwMTAxPXkNCj4g
-Pj4+IENPTkZJR19BUk02NF9FUlJBVFVNXzg1ODkyMT15DQo+ID4+Pg0KPiA+Pj4gRm9yIGEgcXVp
-Y2sgdGVzdGluZywgIEkgaGF2ZSBhY3RpdmF0ZWQgdGhlIGVycmF0dW0gdXNpbmcgdGhlDQo+ID4+
-PiBwcm9wZXJ0eQ0KPiA+PiAiZnNsLGVycmF0dW0tYTAwODU4NSIgb24gZGV2aWNlIHRyZWUuDQo+
-ID4+PiBXaXRoIHRoaXMgSSBjb25maXJtIHRoZSBpc3N1ZSBpcyBmaXhlZC4NCj4gPj4+DQo+ID4+
-PiBJIGhhdmUgIHNvbWUgcXVlc3Rpb25zIG9uIHRoaXMuDQo+ID4+PiAxKSBCYXNlZCAgb24gdGhl
-IHRlc3QgcmVzdWx0ICxkbyB5b3UgdGhpbmsgcmVuZXNhcyBzb2MgYWxzbw0KPiA+Pj4gaW1wYWN0
-ZWQgYnkgdGhlDQo+ID4+IEFSTTY0X0VSUkFUVU1fODU4OTIxPw0KPiA+Pj4gMikgSXMgdGhlcmUg
-YW55IHdheSB0byBmaW5kLCBpcyB0aGlzIEVycmF0dW0gYWN0dWFsbHkgY2F1c2luZyB0aGUNCj4g
-Pj4gYXN5bmNocm9ub3VzIHRlc3QgdG8gZmFpbD8NCj4gPj4NCj4gPj4gSSBndWVzcywgeW91IGNh
-biBoYWNrIHRoZSBfX2ZzbF9hMDA4NTg1X3JlYWRfcmVnIG1hY3JvIGFuZCBjaGVjayBpZg0KPiA+
-PiB0aGUgaW52YWxpZCBjb25kaXRpb24gaXMgcmVhY2hlZC4NCj4gPj4NCj4gPj4gVGhpcyB0aHJl
-YWQgaHR0cHM6Ly9sa21sLm9yZy9sa21sLzIwMTgvNS8xMC83NzMgd2lsbCBnaXZlIHlvdSBhbGwg
-dGhlDQo+ID4+IGFuc3dlcnMgeW91IGFyZSBsb29raW5nIGZvciAod2VsbCB2ZXJ5IGxpa2VseSku
-DQo+ID4+DQo+ID4+IExldCBtZSBrbm93IGlmIGl0IGhlbHBlZC4NCj4gPg0KPiA+IEluIG91ciBj
-YXNlICwgRGVsdGE6IDE3NDc2MCBucw0KPiA+DQo+ID4gMTUzMDU1MzM1MToyMDU3NjIyODQNCj4g
-PiAxNTMwNTUzMzUxOjIwNTc2MjQwNA0KPiA+IC0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ID4gMTUz
-MDU1MzM1MToyMDU5NTEyMjYNCj4gPiAxNTMwNTUzMzUxOjIwNTc3NjQ2Ng0KPiA+IC0tLS0tLS0t
-LS0tLS0tLS0tLS0tDQo+ID4NCj4gPiBJIGhhdmUgdHJpZWQgdGhlIHdvcmthcm91bmQgZm9yIEFS
-TTY0X0VSUkFUVU1fODU4OTIxLCB0aGF0IGFsc28gZml4ZXMNCj4gdGhlIGlzc3VlLg0KPiA+DQo+
-ID4gQnV0IGFsbCB0aGUgd29ya2Fyb3VuZCBkaXNhYmxlcyBBUk02NCBWRFNPLiBIb3cgZG8gd2Ug
-Y29uY2x1ZGUgdGhhdCBpcw0KPiBpdCBWRFNPIGlzc3VlIG9yIEFSTTY0X0VSUkFUVU0gaXNzdWU/
-DQo+DQo+IE1heSBiZSBkaXNhYmxlIGFsbCBlcnJhdGEgYW5kIHNldCB2ZHNvX2RlZmF1bHQgdG8g
-ZmFsc2U/DQo+DQo+IFsgLi4uIF0NCj4NCj4gLXN0YXRpYyBib29sIHZkc29fZGVmYXVsdCA9IHRy
-dWU7DQo+ICtzdGF0aWMgYm9vbCB2ZHNvX2RlZmF1bHQgPSBmYWxzZTsNCj4NCj4gWyAuLi4gXQ0K
-DQpJIGhhdmUgZGlzYWJsZWQgdGhlICBhY3RpdmF0aW9uIG9mIGVycmF0YSBmcm9tIGRldmljZSB0
-cmVlIGFuZCBzZXQgdmRzb19kZWZhdWx0PWZhbHNlLg0KV2l0aCB0aGlzIGFsc28gaXQgd29ya3Mg
-ZmluZS4gU28gbG9va3MgbGlrZSBhcm02NCB2ZHNvIGlzIHRoZSBpc3N1ZSBpbiBvdXIgY2FzZS4N
-Cg0KRG8geW91IGFncmVlIHdpdGggdGhlIGNvbmNsdXNpb24/DQoNClsgICAgMC4wMDAwMDBdIHJj
-dTogQWRqdXN0aW5nIGdlb21ldHJ5IGZvciByY3VfZmFub3V0X2xlYWY9MTYsIG5yX2NwdV9pZHM9
-Ng0KWyAgICAwLjAwMDAwMF0gTlJfSVJRUzogNjQsIG5yX2lycXM6IDY0LCBwcmVhbGxvY2F0ZWQg
-aXJxczogMA0KWyAgICAwLjAwMDAwMF0gYXJjaF90aW1lcjogY3AxNSB0aW1lcihzKSBydW5uaW5n
-IGF0IDguMzJNSHogKHZpcnQpLg0KWyAgICAwLjAwMDAwMF0gY2xvY2tzb3VyY2U6IGFyY2hfc3lz
-X2NvdW50ZXI6IG1hc2s6IDB4ZmZmZmZmZmZmZmZmZmYgbWF4X2N5Y2xlczogMHgxZWIzOThjMDcs
-IG1heF9pZGxlX25zOiA0NDA3OTUyMDI1MDMgbnMNClsgICAgMC4wMDAwMDRdIHNjaGVkX2Nsb2Nr
-OiA1NiBiaXRzIGF0IDhNSHosIHJlc29sdXRpb24gMTIwbnMsIHdyYXBzIGV2ZXJ5IDIxOTkwMjMy
-NTU1MDNucw0KDQpyZWdhcmRzLA0KIEJpanUNCg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVy
-b3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9hZCwgQm91cm5lIEVuZCwgQnVja2lu
-Z2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5k
-ZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
+On 22/11/2018 10:46, Biju Das wrote:
+> Hello Daniel,
+> 
+> Thanks for the feedback.
+> 
+>> -----Original Message-----
+>> From: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> Sent: 19 November 2018 17:15
+>> To: Biju Das <biju.das@bp.renesas.com>; Rob Herring
+>> <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>
+>> Cc: Simon Horman <horms@verge.net.au>; Magnus Damm
+>> <magnus.damm@gmail.com>; linux-renesas-soc@vger.kernel.org;
+>> devicetree@vger.kernel.org; Geert Uytterhoeven
+>> <geert+renesas@glider.be>; Chris Paterson
+>> <Chris.Paterson2@renesas.com>; Thomas Gleixner <tglx@linutronix.de>;
+>> John Stultz <john.stultz@linaro.org>; Fabrizio Castro
+>> <fabrizio.castro@bp.renesas.com>
+>> Subject: Re: [PATCH] arm64: dts: renesas: r8a7796: Add CMT device nodes
+>>
+>> On 19/11/2018 16:50, Biju Das wrote:
+>>> Hi Daniel,
+>>>
+>>> Thanks for the feedback.
+>>>
+>>>>>> Subject: Re: [PATCH] arm64: dts: renesas: r8a7796: Add CMT device
+>>>>>> nodes
+>>>>>>
+>>>>>> On 26/10/2018 10:25, Biju Das wrote:
+>>>>>>> This patch adds CMT{0|1|2|3} device nodes for r8a7796 SoC.
+>>>>>>>
+>>>>>>> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+>>>>>>> ---
+>>>>>>> This patch is tested against renesas-dev
+>>>>>>>
+>>>>>>> I have executed on inconsistency-check, nanosleep and
+>>>>>>> clocksource_switch selftests on this arm64 SoC. The
+>>>>>>> inconsistency-check and nanosleep tests are working fine.The
+>>>>>>> clocksource_switch asynchronous test is failing due to
+>>>>>>> inconsistency-check
+>>>>>> failure on "arch_sys_counter".
+>>>>>>>
+>>>>>>> But if i skip the clocksource_switching of "arch_sys_counter", the
+>>>>>>> asynchronous test is passing for CMT0/1/2/3 timer.
+>>>>>>>
+>>>>>>> Has any one noticed this issue?
+>>>>>>
+>>>>>> So now that you mention that, I've been through the
+>>>>>> clocksource_switch on another ARM64 platform (hikey960) and
+>>>>>> disabled the
+>>>>>> ARM64_ERRATUM_858921 config option. I can see the same issue.
+>>>>>>
+>>>>>> Is this option set on your config ?
+>>>>>
+>>>>> No.  As per  " config ARM64_ERRATUM_858921", it is "Workaround for
+>>>> Cortex-A73 erratum 858921"
+>>>>>
+>>>>> Our SoC is 2xCA-57 + 4 x CA-53.  Does  it impact CA-57 + CA_53?
+>>>>
+>>>> Dunno :/
+>>>>
+>>>>> Any way I will enable this config option and will provide you the results.
+>>>>
+>>>> Ok, thanks!
+>>>
+>>> The following config is enabled by default on upstream
+>>> kernel(4.20-rc3) CONFIG_ARM_ARCH_TIMER_EVTSTREAM=y
+>>> CONFIG_ARM_ARCH_TIMER_OOL_WORKAROUND=y
+>>> CONFIG_FSL_ERRATUM_A008585=y
+>>> CONFIG_HISILICON_ERRATUM_161010101=y
+>>> CONFIG_ARM64_ERRATUM_858921=y
+>>>
+>>> For a quick testing,  I have activated the erratum using the property
+>> "fsl,erratum-a008585" on device tree.
+>>> With this I confirm the issue is fixed.
+>>>
+>>> I have  some questions on this.
+>>> 1) Based  on the test result ,do you think renesas soc also  impacted by the
+>> ARM64_ERRATUM_858921?
+>>> 2) Is there any way to find, is this Erratum actually causing the
+>> asynchronous test to fail?
+>>
+>> I guess, you can hack the __fsl_a008585_read_reg macro and check if the
+>> invalid condition is reached.
+>>
+>> This thread https://lkml.org/lkml/2018/5/10/773 will give you all the answers
+>> you are looking for (well very likely).
+>>
+>> Let me know if it helped.
+> 
+> In our case , Delta: 174760 ns
+> 
+> 1530553351:205762284
+> 1530553351:205762404
+> --------------------
+> 1530553351:205951226
+> 1530553351:205776466
+> --------------------
+> 
+> I have tried the workaround for ARM64_ERRATUM_858921, that also fixes the issue.
+> 
+> But all the workaround disables ARM64 VDSO. How do we conclude that is it VDSO issue or ARM64_ERRATUM issue?
+
+May be disable all errata and set vdso_default to false?
+
+[ ... ]
+
+-static bool vdso_default = true;
++static bool vdso_default = false;
+
+[ ... ]
+
+>>> timer {
+>>>                 compatible = "arm,armv8-timer";
+>>>                 interrupts-extended = <&gic GIC_PPI 13
+>> (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
+>>>                                       <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(6) |
+>> IRQ_TYPE_LEVEL_LOW)>,
+>>>                                       <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(6) |
+>> IRQ_TYPE_LEVEL_LOW)>,
+>>>                                       <&gic GIC_PPI 10
+>>> (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>;
+>>> +                fsl,erratum-a008585;
+>>> }
+>>
+>>
+>>
+>>
+>> --
+>>  <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+>>
+>> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+>> <http://twitter.com/#!/linaroorg> Twitter | <http://www.linaro.org/linaro-
+>> blog/> Blog
+> 
+> 
+> 
+> 
+> Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered No. 04586709.
+> 
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
