@@ -1,80 +1,103 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Biju Das <biju.das@bp.renesas.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: Biju Das <biju.das@bp.renesas.com>,
-        =?iso-8859-1?Q?Niklas_S=F6derlund?= <niklas.soderlund@ragnatech.se>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-eopbgr1410139.outbound.protection.outlook.com ([40.107.141.139]:64419
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387840AbeKVUSw (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 22 Nov 2018 15:18:52 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Alessandro Zummo <a.zummo@towertech.it>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: RE: [PATCH 1/5] media: dt-bindings: media: rcar-csi2: Add r8a774a1
- support
-Date: Thu, 8 Nov 2018 12:50:22 +0000
-Message-ID: <TY1PR01MB17709220C776F7617FAF36AAC0C50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1536589878-26218-1-git-send-email-biju.das@bp.renesas.com>
- <1536589878-26218-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1536589878-26218-2-git-send-email-biju.das@bp.renesas.com>
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 2/4] rtc: pcf85363: Add support for NXP pcf85263 rtc
+Date: Thu, 22 Nov 2018 09:40:03 +0000
+Message-ID: <OSBPR01MB21034F65FE94BD81EC8C954EB8DB0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <1542626108-61344-1-git-send-email-biju.das@bp.renesas.com>
+ <1542626108-61344-3-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdVpaB0mJq9LmBoHgBY9MNAXYAKN=h8hCX+iph+D_5pY=Q@mail.gmail.com>
+ <20181121103517.GJ8367@piout.net>
+In-Reply-To: <20181121103517.GJ8367@piout.net>
 Content-Language: en-US
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dear All,
+Hi Geert and Alexandre,
 
-Who is the best person to take this patch?
+Thanks for the feedback.
 
-Thanks,
-Fab
+> -----Original Message-----
+> From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Sent: 21 November 2018 10:35
+> To: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Biju Das <biju.das@bp.renesas.com>; Alessandro Zummo
+> <a.zummo@towertech.it>; linux-rtc@vger.kernel.org; Simon Horman
+> <horms@verge.net.au>; Geert Uytterhoeven <geert+renesas@glider.be>;
+> Chris Paterson <Chris.Paterson2@renesas.com>; Fabrizio Castro
+> <fabrizio.castro@bp.renesas.com>; Linux-Renesas <linux-renesas-
+> soc@vger.kernel.org>
+> Subject: Re: [PATCH 2/4] rtc: pcf85363: Add support for NXP pcf85263 rtc
+>
+> On 21/11/2018 11:23:08+0100, Geert Uytterhoeven wrote:
+> > Hi Biju,
+> >
+> > On Mon, Nov 19, 2018 at 12:23 PM Biju Das <biju.das@bp.renesas.com>
+> wrote:
+> > > Add support for NXP pcf85263 real-time clock. pcf85263 rtc is
+> > > compatible with pcf85363,except that pcf85363 has additional 64 bytes=
+ of
+> RAM.
+> > >
+> > > 1 byte of nvmem is supported and exposed in sysfs (# is the instance
+> > > number,starting with 0): /sys/bus/nvmem/devices/pcf85263-#/nvmem
+> > >
+> > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> >
+> > Thanks for your patch!
+> >
+> > > --- a/drivers/rtc/rtc-pcf85363.c
+> > > +++ b/drivers/rtc/rtc-pcf85363.c
+> > > @@ -311,7 +311,30 @@ static int pcf85363_nvram_write(void *priv,
+> unsigned int offset, void *val,
+> > >                                  val, bytes);  }
+> > >
+> > > -static const struct regmap_config regmap_config =3D {
+> > > +static int pcf85263_nvram_read(void *priv, unsigned int offset, void
+> *val,
+> > > +                              size_t bytes) {
+> > > +       struct pcf85363 *pcf85363 =3D priv;
+> > > +
+> > > +       return regmap_read(pcf85363->regmap, CTRL_RAMBYTE, val); }
+> >
+> > AFAIU without reading the datasheet, the pcf85363 also has this
+> > RAMBYTE register. Would it make sense to expose the contents on both
+> parts?
 
-> From: Biju Das <biju.das@bp.renesas.com>
-> Sent: 10 September 2018 15:31
-> Subject: [PATCH 1/5] media: dt-bindings: media: rcar-csi2: Add r8a774a1 s=
-upport
 >
-> Document RZ/G2M (R8A774A1) SoC bindings.
+> Yes it has. This series allows calling rtc_nvmem_register() multiple time=
+s from
+> the same driver:
 >
-> The RZ/G2M SoC is similar to R-Car M3-W (R8A7796).
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> ---
->  Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/media/renesas,rcar-csi2.tx=
-t
-> b/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
-> index 2d385b6..12fe685 100644
-> --- a/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
-> +++ b/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
-> @@ -2,12 +2,13 @@ Renesas R-Car MIPI CSI-2
->  ------------------------
->
->  The R-Car CSI-2 receiver device provides MIPI CSI-2 capabilities for the
-> -Renesas R-Car family of devices. It is used in conjunction with the
-> -R-Car VIN module, which provides the video capture capabilities.
-> +Renesas R-Car Gen3 and RZ/G2 family of devices. It is used in conjunctio=
-n
-> +with the R-Car VIN module, which provides the video capture capabilities=
-.
->
->  Mandatory properties
->  --------------------
->   - compatible: Must be one or more of the following
-> +   - "renesas,r8a774a1-csi2" for the R8A774A1 device.
->     - "renesas,r8a7795-csi2" for the R8A7795 device.
->     - "renesas,r8a7796-csi2" for the R8A7796 device.
->     - "renesas,r8a77965-csi2" for the R8A77965 device.
-> --
-> 2.7.4
+> http://patchwork.ozlabs.org/project/rtc-linux/list/?series=3D75212
+
+Will check and send v2,
+
+1) For pcf85363, calling rtc_nvmem_register  twice (1 with 64 bytes and ano=
+ther with 1 byte)
+
+2) For pcf85263, calling rtc_nvmem_register   ( with 1 byte)
+
+Regards,
+Biju
+
 
 
 
