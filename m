@@ -1,65 +1,43 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([185.11.138.130]:49118 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728416AbeKMBad (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Nov 2018 20:30:33 -0500
-From: Heiko Stuebner <heiko@sntech.de>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        amd-gfx@lists.freedesktop.org,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        David Airlie <airlied@linux.ie>,
-        Mali DP Maintainers <malidp@foss.arm.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 2/2] drm/atomic: Create and use __drm_atomic_helper_crtc_reset() everywhere
-Date: Mon, 12 Nov 2018 16:36:41 +0100
-Message-ID: <2475529.N6HtQ5V54z@phil>
-In-Reply-To: <20181112150114.18395-2-maarten.lankhorst@linux.intel.com>
-References: <20181112150114.18395-1-maarten.lankhorst@linux.intel.com> <20181112150114.18395-2-maarten.lankhorst@linux.intel.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+References: <20181115161528.34326-1-chris.brandt@renesas.com>
+In-Reply-To: <20181115161528.34326-1-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 23 Nov 2018 09:33:05 +0100
+Message-ID: <CAMuHMdXyCO6De0V7eFwL5dyYgjpWABcgi7cn-n+NbuA-Ts0bAQ@mail.gmail.com>
+Subject: Re: [PATCH v7 0/2] pinctrl: Add RZ/A2 pin and gpio driver
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Am Montag, 12. November 2018, 16:01:14 CET schrieb Maarten Lankhorst:
-> We already have __drm_atomic_helper_connector_reset() and
-> __drm_atomic_helper_plane_reset(), extend this to crtc as well.
-> 
-> Most drivers already have a gpu reset hook, correct it.
-> Nouveau already implemented its own __drm_atomic_helper_crtc_reset(),
-> convert it to the common one.
-> 
-> Signed-off-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Hi Chris,
 
+On Thu, Nov 15, 2018 at 5:15 PM Chris Brandt <chris.brandt@renesas.com> wrote:
+> The pin controller in the RZ/A2 is nothing like the pin controller in
+> the RZ/A1. That's a good thing! This pin controller is much more simple
+> and easier to configure.
+>
+> So, this driver is faily simple (I hope).
 
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> index fb70fb486fbf..d2d5aa676084 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> @@ -1071,13 +1071,14 @@ static void vop_crtc_destroy(struct drm_crtc *crtc)
->  
->  static void vop_crtc_reset(struct drm_crtc *crtc)
->  {
-> +	struct rockchip_crtc_state *crtc_state =
-> +		kzalloc(sizeof(*crtc_state), GFP_KERNEL);
-> +
->  	if (crtc->state)
->  		__drm_atomic_helper_crtc_destroy_state(crtc->state);
->  	kfree(crtc->state);
->  
-> -	crtc->state = kzalloc(sizeof(struct rockchip_crtc_state), GFP_KERNEL);
-> -	if (crtc->state)
-> -		crtc->state->crtc = crtc;
-> +	__drm_atomic_helper_crtc_reset(crtc, &crtc_state->base);
->  }
->  
->  static struct drm_crtc_state *vop_crtc_duplicate_state(struct drm_crtc *crtc)
+Thanks, qeuing in sh-pfc-for-v4.21.
 
-for the Rockchip-part
-Acked-by: Heiko Stuebner <heiko@sntech.de>
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
