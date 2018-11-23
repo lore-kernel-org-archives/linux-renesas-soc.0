@@ -1,135 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:50083 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388130AbeKWXLe (ORCPT
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:44329 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393718AbeKWUFR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Nov 2018 18:11:34 -0500
-Date: Fri, 23 Nov 2018 13:27:29 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+        Fri, 23 Nov 2018 15:05:17 -0500
+Received: by mail-ua1-f65.google.com with SMTP id d19so3883007uaq.11
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 23 Nov 2018 01:21:51 -0800 (PST)
+MIME-Version: 1.0
+References: <20181121121139.25493-1-horms+renesas@verge.net.au>
+In-Reply-To: <20181121121139.25493-1-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 23 Nov 2018 10:21:39 +0100
+Message-ID: <CAMuHMdW1Kqmu3spuejDQH6Yv1CPTvmYjFQA8L1n3fHbECoYT9A@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: renesas: r8a77990: Add I2C-DVFS device node
+To: Simon Horman <horms+renesas@verge.net.au>
 Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Magnus Damm <magnus.damm@gmail.com>,
         Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Subject: Re: [PATCH v2] arm64: dts: renesas: r8a77990: Add I2C-DVFS device
- node
-Message-ID: <20181123122728.klshbmzxqjzk6d5r@verge.net.au>
-References: <20181121121139.25493-1-horms+renesas@verge.net.au>
- <CAMuHMdW1Kqmu3spuejDQH6Yv1CPTvmYjFQA8L1n3fHbECoYT9A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdW1Kqmu3spuejDQH6Yv1CPTvmYjFQA8L1n3fHbECoYT9A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Nov 23, 2018 at 10:21:39AM +0100, Geert Uytterhoeven wrote:
-> Hi Simon,
-> 
-> On Wed, Nov 21, 2018 at 1:12 PM Simon Horman <horms+renesas@verge.net.au> wrote:
-> >
-> > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> >
-> > This patch adds I2C-DVFS device node for the R8A77990 SoC.
-> >
-> > v2
-> > * Drop aliases update as in upstream it is not required to configure the
-> >   BD9571 PMIC for DDR backup, nor is the use of i2c are aliases desired.
-> > * Do not describe the device as compatible with "renesas,rcar-gen3-iic" or
-> >   "renesas,rmobile-iic" fallback compat strings. The absence of automatic
-> >   transmission registers leads us to declare the r8a77990 IIC controller as
-> >   incompatible.
-> >
-> > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> > Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-> > [simon: drop aliases hunk and fallback compat string usage]
-> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> 
-> Thanks for the update!
-> 
-> > --- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> > @@ -357,6 +357,20 @@
-> >                         reg = <0 0xe6060000 0 0x508>;
-> >                 };
-> >
-> > +               i2c_dvfs: i2c@e60b0000 {
-> > +                       #address-cells = <1>;
-> > +                       #size-cells = <0>;
-> > +                       compatible = "renesas,iic-r8a77990";
-> > +                       reg = <0 0xe60b0000 0 0x34>;
-> 
-> ... 0x15>;
+Hi Simon,
 
-Thanks, sorry for missing that.
+On Wed, Nov 21, 2018 at 1:12 PM Simon Horman <horms+renesas@verge.net.au> wrote:
+>
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds I2C-DVFS device node for the R8A77990 SoC.
+>
+> v2
+> * Drop aliases update as in upstream it is not required to configure the
+>   BD9571 PMIC for DDR backup, nor is the use of i2c are aliases desired.
+> * Do not describe the device as compatible with "renesas,rcar-gen3-iic" or
+>   "renesas,rmobile-iic" fallback compat strings. The absence of automatic
+>   transmission registers leads us to declare the r8a77990 IIC controller as
+>   incompatible.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> [simon: drop aliases hunk and fallback compat string usage]
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-> > +                       interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
-> > +                       clocks = <&cpg CPG_MOD 926>;
-> > +                       power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-> > +                       resets = <&cpg 926>;
-> > +                       dmas = <&dmac0 0x11>, <&dmac0 0x10>;
-> > +                       dma-names = "tx", "rx";
-> > +                       status = "disabled";
-> > +               };
-> 
-> With thwe above fixed:
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thanks for the update!
 
-I have applied the following for v4.21:
+> --- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+> @@ -357,6 +357,20 @@
+>                         reg = <0 0xe6060000 0 0x508>;
+>                 };
+>
+> +               i2c_dvfs: i2c@e60b0000 {
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +                       compatible = "renesas,iic-r8a77990";
+> +                       reg = <0 0xe60b0000 0 0x34>;
 
->From 0b80b6f4b26e3c6e5861234badc4b12ef2928cac Mon Sep 17 00:00:00 2001
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Date: Wed, 21 Nov 2018 13:11:39 +0100
-Subject: [PATCH] arm64: dts: renesas: r8a77990: Add I2C-DVFS device node
+... 0x15>;
 
-This patch adds I2C-DVFS device node for the R8A77990 SoC.
+> +                       interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&cpg CPG_MOD 926>;
+> +                       power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+> +                       resets = <&cpg 926>;
+> +                       dmas = <&dmac0 0x11>, <&dmac0 0x10>;
+> +                       dma-names = "tx", "rx";
+> +                       status = "disabled";
+> +               };
 
-v2
-* Drop aliases update as in upstream it is not required to configure the
-  BD9571 PMIC for DDR backup, nor is the use of i2c are aliases desired.
-* Do not describe the device as compatible with "renesas,rcar-gen3-iic" or
-  "renesas,rmobile-iic" fallback compat strings. The absence of automatic
-  transmission registers leads us to declare the r8a77990 IIC controller as
-  incompatible.
-
-v2.1
-* Reduced register range to reflect documentation
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+With thwe above fixed:
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index b0398e05e8ed..3b334be843f4 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -357,6 +357,20 @@
- 			reg = <0 0xe6060000 0 0x508>;
- 		};
- 
-+		i2c_dvfs: i2c@e60b0000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,iic-r8a77990";
-+			reg = <0 0xe60b0000 0 0x15>;
-+			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 926>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 926>;
-+			dmas = <&dmac0 0x11>, <&dmac0 0x10>;
-+			dma-names = "tx", "rx";
-+			status = "disabled";
-+		};
-+
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a77990-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x1000>;
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
