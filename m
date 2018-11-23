@@ -1,60 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:65384 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726294AbeK0D6g (ORCPT
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:46926 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387883AbeKWWtA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Nov 2018 22:58:36 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v4 1/3] mmc: tmio: enable module clock before resetting when resuming
-Date: Mon, 26 Nov 2018 18:02:45 +0100
-Message-Id: <20181126170247.4076-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20181126170247.4076-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20181126170247.4076-1-niklas.soderlund+renesas@ragnatech.se>
+        Fri, 23 Nov 2018 17:49:00 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20181123105428.13457-1-phil.edworthy@renesas.com>
+In-Reply-To: <20181123105428.13457-1-phil.edworthy@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 23 Nov 2018 13:04:48 +0100
+Message-ID: <CAMuHMdUNNvkwsFXizEm6-QSCc2JUJa+3rXuwBZdjypFdFcM7tg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: rzn1: Fix check for used MDIO bus
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Jacopo Mondi <jacopo@jmondi.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On runtime power management resume, the host clock needs to be
-enabled before calling tmio_mmc_reset. If the mmc device has a power
-domain entry, the host clock is enabled via genpd_runtime_resume,
-running before tmio_mmc_host_runtime_resume. If the mmc device has no
-power domain entry, however, genpd_runtime_resume is not called. This
-patch changes tmio_mmc_host_runtime_resume to enable the host clock
-before calling tmio_mmc_reset.
+On Fri, Nov 23, 2018 at 11:54 AM Phil Edworthy
+<phil.edworthy@renesas.com> wrote:
+> This fixes the check for unused mdio bus setting and the following static
+> checker warning:
+>  drivers/pinctrl/pinctrl-rzn1.c:198 rzn1_pinctrl_mdio_select()
+>  warn: always true condition '(ipctl->mdio_func[mdio] >= 0) => (0-u32max >= 0)'
+>
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> ---
+> v3:
+>  - Split fixing the return var when calling of_get_child_count() into
+>    a separate patch.
+> v2:
+>  - Don't rely on rely on the implicit typecast from -1 to uint
 
-Based on work from Masaharu Hayakawa.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.21.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/mmc/host/tmio_mmc_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index a8f917f744fb9f63..35acfa4f40b2ef57 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1326,8 +1326,8 @@ int tmio_mmc_host_runtime_resume(struct device *dev)
- {
- 	struct tmio_mmc_host *host = dev_get_drvdata(dev);
- 
--	host->reset(host);
- 	tmio_mmc_clk_enable(host);
-+	host->reset(host);
- 
- 	if (host->clk_cache)
- 		host->set_clock(host, host->clk_cache);
+                        Geert
+
 -- 
-2.19.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
