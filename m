@@ -1,56 +1,47 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        kieran.bingham@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 4/6] media: rcar-csi2: Add R8A77990 support
-Date: Mon,  5 Nov 2018 12:19:09 +0100
-Message-Id: <1541416751-19810-5-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1541416751-19810-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1541416751-19810-1-git-send-email-jacopo+renesas@jmondi.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:36990 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394528AbeKXAES (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 23 Nov 2018 19:04:18 -0500
+Received: by mail-vs1-f67.google.com with SMTP id h18so7147580vsj.4
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 23 Nov 2018 05:20:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+References: <1540071326-27428-1-git-send-email-ykaneko0929@gmail.com>
+In-Reply-To: <1540071326-27428-1-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 23 Nov 2018 14:19:54 +0100
+Message-ID: <CAMuHMdV0RVdYR6SocArG9JujT-GQc-+CjkgUbmtcf-Qy2x2PiQ@mail.gmail.com>
+Subject: Re: [PATCH/RFT] arm64: dts: renesas: r8a77990: Enable I2C DMA
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for R-Car E3 R8A77965 to R-Car CSI-2 driver.
-Based on the experimental patch from Magnus Damm.
+On Sat, Oct 20, 2018 at 11:35 PM Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch enables I2C DMA.
+>
+> NOTE: I2C7 DMA is not supported by R-Car Gen3 Hardware User's Manual
+> Rev.0.80E.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-csi2.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-index b0044a0..695686b 100644
---- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-@@ -963,6 +963,11 @@ static const struct rcar_csi2_info rcar_csi2_info_r8a77970 = {
- 	.confirm_start = rcsi2_confirm_start_v3m_e3,
- };
- 
-+static const struct rcar_csi2_info rcar_csi2_info_r8a77990 = {
-+	.init_phtw = rcsi2_init_phtw_v3m_e3,
-+	.confirm_start = rcsi2_confirm_start_v3m_e3,
-+};
-+
- static const struct of_device_id rcar_csi2_of_table[] = {
- 	{
- 		.compatible = "renesas,r8a7795-csi2",
-@@ -980,6 +985,10 @@ static const struct of_device_id rcar_csi2_of_table[] = {
- 		.compatible = "renesas,r8a77970-csi2",
- 		.data = &rcar_csi2_info_r8a77970,
- 	},
-+	{
-+		.compatible = "renesas,r8a77990-csi2",
-+		.data = &rcar_csi2_info_r8a77990,
-+	},
- 	{ /* sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, rcar_csi2_of_table);
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
