@@ -1,116 +1,135 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-os2jpn01on0120.outbound.protection.outlook.com ([104.47.92.120]:62345
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726143AbeKHQ7S (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:50083 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388130AbeKWXLe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Nov 2018 11:59:18 -0500
-From: Gaku Inami <gaku.inami.xh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Gaku Inami <gaku.inami.xh@renesas.com>
-Subject: [PATCH v2 1/2] arm64: dts: renesas: Add CPU topology on R-Car Gen3 SoCs
-Date: Thu,  8 Nov 2018 16:24:54 +0900
-Message-Id: <1541661895-7064-2-git-send-email-gaku.inami.xh@renesas.com>
-In-Reply-To: <1541661895-7064-1-git-send-email-gaku.inami.xh@renesas.com>
-References: <1541661895-7064-1-git-send-email-gaku.inami.xh@renesas.com>
+        Fri, 23 Nov 2018 18:11:34 -0500
+Date: Fri, 23 Nov 2018 13:27:29 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: renesas: r8a77990: Add I2C-DVFS device
+ node
+Message-ID: <20181123122728.klshbmzxqjzk6d5r@verge.net.au>
+References: <20181121121139.25493-1-horms+renesas@verge.net.au>
+ <CAMuHMdW1Kqmu3spuejDQH6Yv1CPTvmYjFQA8L1n3fHbECoYT9A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdW1Kqmu3spuejDQH6Yv1CPTvmYjFQA8L1n3fHbECoYT9A@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds the "cpu-map" into r8a7795/r8a7796 composed of
-multi-cluster. This definition is used to parse the cpu topology.
+On Fri, Nov 23, 2018 at 10:21:39AM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Wed, Nov 21, 2018 at 1:12 PM Simon Horman <horms+renesas@verge.net.au> wrote:
+> >
+> > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> >
+> > This patch adds I2C-DVFS device node for the R8A77990 SoC.
+> >
+> > v2
+> > * Drop aliases update as in upstream it is not required to configure the
+> >   BD9571 PMIC for DDR backup, nor is the use of i2c are aliases desired.
+> > * Do not describe the device as compatible with "renesas,rcar-gen3-iic" or
+> >   "renesas,rmobile-iic" fallback compat strings. The absence of automatic
+> >   transmission registers leads us to declare the r8a77990 IIC controller as
+> >   incompatible.
+> >
+> > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> > Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> > [simon: drop aliases hunk and fallback compat string usage]
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Thanks for the update!
+> 
+> > --- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+> > @@ -357,6 +357,20 @@
+> >                         reg = <0 0xe6060000 0 0x508>;
+> >                 };
+> >
+> > +               i2c_dvfs: i2c@e60b0000 {
+> > +                       #address-cells = <1>;
+> > +                       #size-cells = <0>;
+> > +                       compatible = "renesas,iic-r8a77990";
+> > +                       reg = <0 0xe60b0000 0 0x34>;
+> 
+> ... 0x15>;
 
-Signed-off-by: Gaku Inami <gaku.inami.xh@renesas.com>
----
-v1 -> v2:
- - Consolidate two patches for r8a7795 and r8a7796 into one patch
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 32 ++++++++++++++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 26 ++++++++++++++++++++++++++
- 2 files changed, 58 insertions(+)
+Thanks, sorry for missing that.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 0b54c53..63d5b61 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -116,6 +116,38 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+> > +                       interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
+> > +                       clocks = <&cpg CPG_MOD 926>;
+> > +                       power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+> > +                       resets = <&cpg 926>;
+> > +                       dmas = <&dmac0 0x11>, <&dmac0 0x10>;
+> > +                       dma-names = "tx", "rx";
+> > +                       status = "disabled";
+> > +               };
+> 
+> With thwe above fixed:
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+I have applied the following for v4.21:
+
+>From 0b80b6f4b26e3c6e5861234badc4b12ef2928cac Mon Sep 17 00:00:00 2001
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Date: Wed, 21 Nov 2018 13:11:39 +0100
+Subject: [PATCH] arm64: dts: renesas: r8a77990: Add I2C-DVFS device node
+
+This patch adds I2C-DVFS device node for the R8A77990 SoC.
+
+v2
+* Drop aliases update as in upstream it is not required to configure the
+  BD9571 PMIC for DDR backup, nor is the use of i2c are aliases desired.
+* Do not describe the device as compatible with "renesas,rcar-gen3-iic" or
+  "renesas,rmobile-iic" fallback compat strings. The absence of automatic
+  transmission registers leads us to declare the r8a77990 IIC controller as
+  incompatible.
+
+v2.1
+* Reduced register range to reflect documentation
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index b0398e05e8ed..3b334be843f4 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -357,6 +357,20 @@
+ 			reg = <0 0xe6060000 0 0x508>;
+ 		};
  
-+		cpu-map {
-+			cluster0 {
-+				core0 {
-+					cpu = <&a57_0>;
-+				};
-+				core1 {
-+					cpu = <&a57_1>;
-+				};
-+				core2 {
-+					cpu = <&a57_2>;
-+				};
-+				core3 {
-+					cpu = <&a57_3>;
-+				};
-+			};
-+
-+			cluster1 {
-+				core0 {
-+					cpu = <&a53_0>;
-+				};
-+				core1 {
-+					cpu = <&a53_1>;
-+				};
-+				core2 {
-+					cpu = <&a53_2>;
-+				};
-+				core3 {
-+					cpu = <&a53_3>;
-+				};
-+			};
++		i2c_dvfs: i2c@e60b0000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,iic-r8a77990";
++			reg = <0 0xe60b0000 0 0x15>;
++			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 926>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 926>;
++			dmas = <&dmac0 0x11>, <&dmac0 0x10>;
++			dma-names = "tx", "rx";
++			status = "disabled";
 +		};
 +
- 		a57_0: cpu@0 {
- 			compatible = "arm,cortex-a57", "arm,armv8";
- 			reg = <0x0>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 3baee26..b12bf73 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -127,6 +127,32 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
-+		cpu-map {
-+			cluster0 {
-+				core0 {
-+					cpu = <&a57_0>;
-+				};
-+				core1 {
-+					cpu = <&a57_1>;
-+				};
-+			};
-+
-+			cluster1 {
-+				core0 {
-+					cpu = <&a53_0>;
-+				};
-+				core1 {
-+					cpu = <&a53_1>;
-+				};
-+				core2 {
-+					cpu = <&a53_2>;
-+				};
-+				core3 {
-+					cpu = <&a53_3>;
-+				};
-+			};
-+		};
-+
- 		a57_0: cpu@0 {
- 			compatible = "arm,cortex-a57", "arm,armv8";
- 			reg = <0x0>;
+ 		cpg: clock-controller@e6150000 {
+ 			compatible = "renesas,r8a77990-cpg-mssr";
+ 			reg = <0 0xe6150000 0 0x1000>;
 -- 
-2.7.4
+2.11.0
