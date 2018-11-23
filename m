@@ -1,43 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:58282 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726553AbeKUJkR (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:50013 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730534AbeKWXEu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Nov 2018 04:40:17 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 1/3] mmc: core: validate user input for RPMB block count
-Date: Wed, 21 Nov 2018 00:08:30 +0100
-Message-Id: <20181120230832.1840-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181120230832.1840-1-wsa+renesas@sang-engineering.com>
-References: <20181120230832.1840-1-wsa+renesas@sang-engineering.com>
+        Fri, 23 Nov 2018 18:04:50 -0500
+Date: Fri, 23 Nov 2018 13:20:46 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Phil Edworthy <phil.edworthy@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2] ARM: dts: r9a06g032: Correct the GIC DT node name
+Message-ID: <20181123122046.xqxq7kxdkp7swxf4@verge.net.au>
+References: <20181121100844.25825-1-phil.edworthy@renesas.com>
+ <CAMuHMdUH74QA5oSuOe9LgoS08-CEHiGSz_FzPQs6S9BzCijDag@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUH74QA5oSuOe9LgoS08-CEHiGSz_FzPQs6S9BzCijDag@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-For RPMB, block count is a non-zero 16 bit wide number. Reject invalid
-values from userspace instead of just masking the unneeded bits. Tested
-with a modified 'mmc-utils' package.
+On Fri, Nov 23, 2018 at 10:24:06AM +0100, Geert Uytterhoeven wrote:
+> On Wed, Nov 21, 2018 at 11:10 AM Phil Edworthy
+> <phil.edworthy@renesas.com> wrote:
+> > Harmless mistake, but it's incorrect. The DT spec provides recommendations
+> > for the node names:
+> > "The name of a node should be somewhat generic, reflecting the function
+> > of the device and not its precise programming model. If appropriate, the
+> > name should be one of the following choices:
+> > ...
+> > interrupt-controller"
+> >
+> > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/core/block.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-index c35b5b08bb33..9e0f7e4aa8c6 100644
---- a/drivers/mmc/core/block.c
-+++ b/drivers/mmc/core/block.c
-@@ -550,6 +550,9 @@ static int __mmc_blk_ioctl_cmd(struct mmc_card *card, struct mmc_blk_data *md,
- 	}
- 
- 	if (idata->rpmb) {
-+		if (data.blocks > 65535 || !data.blocks)
-+			return -EINVAL;
-+
- 		err = mmc_set_blockcount(card, data.blocks,
- 			idata->ic.write_flag & (1 << 31));
- 		if (err)
--- 
-2.11.0
+Thanks, applied for v4.21.
