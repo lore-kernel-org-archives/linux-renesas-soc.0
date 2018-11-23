@@ -1,116 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:45258 "EHLO
+Received: from perceval.ideasonboard.com ([213.167.242.64]:43216 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388503AbeKXCP1 (ORCPT
+        with ESMTP id S2391486AbeKXBbM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Nov 2018 21:15:27 -0500
-Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH] drm: rcar-du: dw-hdmi: Reject modes with a too high clock
- frequency
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+        Fri, 23 Nov 2018 20:31:12 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: kieran.bingham@ideasonboard.com
 Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-References: <20181123143459.13133-1-laurent.pinchart+renesas@ideasonboard.com>
- <8aa0ea79-7e62-cc52-26c7-ad1d03660705@ideasonboard.com>
- <2327045.9znzjyYO5t@avalon>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <7366b1db-0123-6ed4-9b05-7d7c0aeef303@ideasonboard.com>
-Date: Fri, 23 Nov 2018 15:30:43 +0000
+Subject: Re: [PATCH] drm: rcar-du: dw-hdmi: Reject modes with a too high clock frequency
+Date: Fri, 23 Nov 2018 16:47:04 +0200
+Message-ID: <2327045.9znzjyYO5t@avalon>
+In-Reply-To: <8aa0ea79-7e62-cc52-26c7-ad1d03660705@ideasonboard.com>
+References: <20181123143459.13133-1-laurent.pinchart+renesas@ideasonboard.com> <8aa0ea79-7e62-cc52-26c7-ad1d03660705@ideasonboard.com>
 MIME-Version: 1.0
-In-Reply-To: <2327045.9znzjyYO5t@avalon>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+Hi Kieran,
 
-On 23/11/2018 14:47, Laurent Pinchart wrote:
-> Hi Kieran,
+On Friday, 23 November 2018 16:43:28 EET Kieran Bingham wrote:
+> On 23/11/2018 14:34, Laurent Pinchart wrote:
+> > Implement a .mode_valid() handler in the R-Car glue layer to reject
+> > modes with an unsupported clock frequency.
+> > 
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> > 
+> >  drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c | 11 +++++++++++
+> >  1 file changed, 11 insertions(+)
+> > 
+> > diff --git a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+> > b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c index 75490a3e0a2a..8a603235f22d
+> > 100644
+> > --- a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+> > +++ b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+> > @@ -35,6 +35,16 @@ static const struct rcar_hdmi_phy_params
+> > rcar_hdmi_phy_params[] = {
+> >  	{ ~0UL,      0x0000, 0x0000, 0x0000 },
+> >  
+> >  };
+> > 
+> > +static enum drm_mode_status
+> > +rcar_hdmi_mode_valid(struct drm_connector *connector,
+> > +		     const struct drm_display_mode *mode)
+> > +{
+> > +	if (mode->clock > 297000)
 > 
-> On Friday, 23 November 2018 16:43:28 EET Kieran Bingham wrote:
->> On 23/11/2018 14:34, Laurent Pinchart wrote:
->>> Implement a .mode_valid() handler in the R-Car glue layer to reject
->>> modes with an unsupported clock frequency.
->>>
->>> Signed-off-by: Laurent Pinchart
->>> <laurent.pinchart+renesas@ideasonboard.com>
->>> ---
->>>
->>>  drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c | 11 +++++++++++
->>>  1 file changed, 11 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
->>> b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c index 75490a3e0a2a..8a603235f22d
->>> 100644
->>> --- a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
->>> +++ b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
->>> @@ -35,6 +35,16 @@ static const struct rcar_hdmi_phy_params
->>> rcar_hdmi_phy_params[] = {
->>>  	{ ~0UL,      0x0000, 0x0000, 0x0000 },
->>>  
->>>  };
->>>
->>> +static enum drm_mode_status
->>> +rcar_hdmi_mode_valid(struct drm_connector *connector,
->>> +		     const struct drm_display_mode *mode)
->>> +{
->>> +	if (mode->clock > 297000)
->>
->> Is 29700 constant? Can it be determined from any other location or is it
->> just a magically known platform value?
-> 
-> It's the last entry of the rcar_hdmi_phy_params table above. I considered 
-> writing it
-> 
-> 	if (mode->clock > 
-> rcar_hdmi_phy_params[ARRAY_SIZE(rcar_hdmi_phy_params)-2].mpixelclock)
-> 
-> but found it a but hard to parse. Do you think it would be better ?
+> Is 29700 constant? Can it be determined from any other location or is it
+> just a magically known platform value?
 
-Well - for readability - no,
+It's the last entry of the rcar_hdmi_phy_params table above. I considered 
+writing it
 
-But for accuracy - yes:
+	if (mode->clock > 
+rcar_hdmi_phy_params[ARRAY_SIZE(rcar_hdmi_phy_params)-2].mpixelclock)
 
-	297000000 != 297000
+but found it a but hard to parse. Do you think it would be better ?
 
-Unless the /1000 is intentional?
-
-How about keep the (corrected?) constant value, but add a comment
-referencing it's extraction.
-
-I don't think the coded table extraction helps here. Especially as it
-necessitates indexing against ARRAY_SIZE - 2.
-
---
-Regards
-
-Kieran
-
-
-
-
-> 
->>> +		return MODE_CLOCK_HIGH;
->>> +
->>> +	return MODE_OK;
->>> +}
->>> +
->>>
->>>  static int rcar_hdmi_phy_configure(struct dw_hdmi *hdmi,
->>>  				   const struct dw_hdmi_plat_data *pdata,
->>>  				   unsigned long mpixelclock)
->>> @@ -59,6 +69,7 @@ static int rcar_hdmi_phy_configure(struct dw_hdmi *hdmi,
->>>  }
->>>  
->>>  static const struct dw_hdmi_plat_data rcar_dw_hdmi_plat_data = {
->>> +	.mode_valid = rcar_hdmi_mode_valid,
->>>  	.configure_phy	= rcar_hdmi_phy_configure,
->>>  };
-> 
+> > +		return MODE_CLOCK_HIGH;
+> > +
+> > +	return MODE_OK;
+> > +}
+> > +
+> > 
+> >  static int rcar_hdmi_phy_configure(struct dw_hdmi *hdmi,
+> >  				   const struct dw_hdmi_plat_data *pdata,
+> >  				   unsigned long mpixelclock)
+> > @@ -59,6 +69,7 @@ static int rcar_hdmi_phy_configure(struct dw_hdmi *hdmi,
+> >  }
+> >  
+> >  static const struct dw_hdmi_plat_data rcar_dw_hdmi_plat_data = {
+> > +	.mode_valid = rcar_hdmi_mode_valid,
+> >  	.configure_phy	= rcar_hdmi_phy_configure,
+> >  };
 
 -- 
-Regards
---
-Kieran
+Regards,
+
+Laurent Pinchart
