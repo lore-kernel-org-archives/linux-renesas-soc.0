@@ -1,73 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-eopbgr1310111.outbound.protection.outlook.com ([40.107.131.111]:25803
-        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726972AbeK1RLL (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:50168 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2409797AbeKWXR4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Nov 2018 12:11:11 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: "joro@8bytes.org" <joro@8bytes.org>
-CC: "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        Fri, 23 Nov 2018 18:17:56 -0500
+Date: Fri, 23 Nov 2018 13:33:51 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Magnus <magnus.damm@gmail.com>,
         "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/2] iommu/ipmmu-vmsa: add an array of slave devices whitelist
-Date: Wed, 28 Nov 2018 06:10:31 +0000
-Message-ID: <1543385279-1584-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1543385279-1584-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1543385279-1584-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a7796: add SSIU support for sound
+Message-ID: <20181123123350.b7x4rfbtpxt4ncxa@verge.net.au>
+References: <87y39n1c2y.wl-kuninori.morimoto.gx@renesas.com>
+ <20181121095154.3e4e3l2wjaugjyuq@verge.net.au>
+ <875zwqng8c.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <875zwqng8c.wl-kuninori.morimoto.gx@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To avoid adding copy and pasted strcmp codes in the future,
-this patch adds an array "rcar_gen3_slave_whitelist" to check
-whether the device can work with the IPMMU or not.
+On Wed, Nov 21, 2018 at 11:58:59PM +0000, Kuninori Morimoto wrote:
+> 
+> Hi Simon
+> 
+> > > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> > > 
+> > > rsnd driver supports SSIU now, let's use it.
+> > > Then, BUSIF DMA settings on rcar_sound,ssi (= rxu, txu) are
+> > > no longer needed.
+> > > To avoid git merge timing issue / git bisect issue,
+> > > this patch doesn't remove it so far, but will be removed in
+> > > the future.
+> > > 
+> > > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> > > ---
+> > >  arch/arm64/boot/dts/renesas/r8a7796.dtsi | 211 +++++++++++++++++++++++++++++++
+> > >  1 file changed, 211 insertions(+)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> > > index 449eb33..5cc9b8b 100644
+> > > --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> > > +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> > > @@ -1826,6 +1826,217 @@
+> > >  				};
+> > >  			};
+> > >  
+> > > +			rcar_sound,ssiu {
+> > > +				ssiu00: ssiu-0 {
+> > > +					dmas = <&audma0 0x15>, <&audma1 0x16>;
+> > > +					dma-names = "rx", "tx";
+> > > +				};
+> > 
+> > Hi Morimoto-san,
+> > 
+> > I am having a little trouble finding documentation of the audma port
+> > numbers used in this patch.
+> 
+> ?? Sorry what do you mean ?
+> You can find it on
+> 
+> 	Table 48.5 Selecting On-Chip Peripheral Module Request Modes
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/iommu/ipmmu-vmsa.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+Thanks, that is the information that I was looking fore.
 
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 1c38538..1f65469 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -773,8 +773,13 @@ static int ipmmu_init_platform_device(struct device *d=
-ev,
- 	{ /* sentinel */ }
- };
-=20
-+static const char * const rcar_gen3_slave_whitelist[] =3D {
-+};
-+
- static bool ipmmu_slave_whitelist(struct device *dev)
- {
-+	int i;
-+
- 	/*
- 	 * For R-Car Gen3 use a white list to opt-in slave devices.
- 	 * For Other SoCs, this returns true anyway.
-@@ -786,7 +791,13 @@ static bool ipmmu_slave_whitelist(struct device *dev)
- 	if (!soc_device_match(soc_rcar_gen3_whitelist))
- 		return false;
-=20
--	/* By default, do not allow use of IPMMU */
-+	/* Check whether this slave device can work with the IPMMU */
-+	for (i =3D 0; i < ARRAY_SIZE(rcar_gen3_slave_whitelist); i++) {
-+		if (!strcmp(dev_name(dev), rcar_gen3_slave_whitelist[i]))
-+			return true;
-+	}
-+
-+	/* Otherwise, do not allow use of IPMMU */
- 	return false;
- }
-=20
---=20
-1.9.1
+I have gone ahead and applied this patch for v4.21.
