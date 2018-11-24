@@ -1,54 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45317 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728044AbeK2AFA (ORCPT
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37888 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726298AbeKYHpF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Nov 2018 19:05:00 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 01/16] ARM: dts: r9a06g032: Add pinctrl node
-Date: Wed, 28 Nov 2018 14:03:03 +0100
-Message-Id: <ddeec86cb608cc520bd69ab568135ee45d500595.1543409901.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1543409901.git.horms+renesas@verge.net.au>
-References: <cover.1543409901.git.horms+renesas@verge.net.au>
+        Sun, 25 Nov 2018 02:45:05 -0500
+Received: by mail-lj1-f196.google.com with SMTP id c19-v6so13284779lja.5
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 24 Nov 2018 12:55:48 -0800 (PST)
+MIME-Version: 1.0
+References: <20181115221634.22715-1-greenfoo@gluegarage.com> <20181115221634.22715-8-greenfoo@gluegarage.com>
+In-Reply-To: <20181115221634.22715-8-greenfoo@gluegarage.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sat, 24 Nov 2018 21:55:35 +0100
+Message-ID: <CACRpkdbj1q8qSR3ffJOki2pcB-rj5-sq2CDdUKUZ0UD=m0_cAQ@mail.gmail.com>
+Subject: Re: [PATCH 7/9] drm: remove deprecated "drm_framebuffer_[un]reference"
+ functions
+To: greenfoo@gluegarage.com
+Cc: "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>, sean@poorly.run,
+        Dave Airlie <airlied@linux.ie>,
+        Jonathan Corbet <corbet@lwn.net>, abrodkin@synopsys.com,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        linux+etnaviv@armlinux.org.uk,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
+        kieran.bingham+renesas@ideasonboard.com,
+        Shawn Guo <shawnguo@kernel.org>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>, michal.lkml@markovi.net,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        linux-doc@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        virtualization@lists.linux-foundation.org,
+        etnaviv@lists.freedesktop.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        cocci@systeme.lip6.fr
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Phil Edworthy <phil.edworthy@renesas.com>
+On Thu, Nov 15, 2018 at 11:17 PM Fernando Ramos <greenfoo@gluegarage.com> wrote:
 
-This provides a pinctrl driver for the Renesas R9A06G032 SoC
+> There are no more places where this (deprecated) function is being used
+> from, thus it can now be removed.
+>
+> Signed-off-by: Fernando Ramos <greenfoo@gluegarage.com>
 
-Based on a patch originally written by Michel Pollet at Renesas.
+Patch applied.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r9a06g032.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index eaf94976ed6d..2322268bc862 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -165,6 +165,14 @@
- 			status = "disabled";
- 		};
- 
-+		pinctrl: pin-controller@40067000 {
-+			compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
-+			reg = <0x40067000 0x1000>, <0x51000000 0x480>;
-+			clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
-+			clock-names = "bus";
-+			status = "okay";
-+		};
-+
- 		gic: gic@44101000 {
- 			compatible = "arm,cortex-a7-gic", "arm,gic-400";
- 			interrupt-controller;
--- 
-2.11.0
+Yours,
+Linus Walleij
