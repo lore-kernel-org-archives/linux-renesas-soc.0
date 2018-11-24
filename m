@@ -1,46 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:40086 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729080AbeKVOyU (ORCPT
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35868 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726367AbeKYH2D (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Nov 2018 09:54:20 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kieran.bingham@ideasonboard.com,
-        Colin Ian King <colin.king@canonical.com>
-Subject: [PATCH] media: vsp1: Fix LIF buffer thresholds
-Date: Thu, 22 Nov 2018 06:17:00 +0200
-Message-Id: <20181122041700.25461-1-laurent.pinchart+renesas@ideasonboard.com>
+        Sun, 25 Nov 2018 02:28:03 -0500
+Received: by mail-lj1-f193.google.com with SMTP id g11-v6so13289865ljk.3
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 24 Nov 2018 12:38:48 -0800 (PST)
+MIME-Version: 1.0
+References: <20181115221634.22715-1-greenfoo@gluegarage.com> <20181115221634.22715-3-greenfoo@gluegarage.com>
+In-Reply-To: <20181115221634.22715-3-greenfoo@gluegarage.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sat, 24 Nov 2018 21:38:35 +0100
+Message-ID: <CACRpkdZu+RPr4MrsqF_t4Rd0LAu_rYR4omoLh69+02Qhg21jxw@mail.gmail.com>
+Subject: Re: [PATCH 2/9] drm: remove deprecated "[__]drm_gem_object_[un]reference[_locked]"
+ functions
+To: greenfoo@gluegarage.com
+Cc: "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>, sean@poorly.run,
+        Jonathan Corbet <corbet@lwn.net>, abrodkin@synopsys.com,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        linux+etnaviv@armlinux.org.uk,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
+        kieran.bingham+renesas@ideasonboard.com,
+        Shawn Guo <shawnguo@kernel.org>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>, michal.lkml@markovi.net,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        linux-doc@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        virtualization@lists.linux-foundation.org,
+        etnaviv@lists.freedesktop.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        cocci@systeme.lip6.fr
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Commit de2bc45c84f7 ("media: vsp1: Update LIF buffer thresholds")
-updated the LIF buffer thresholds based on the VSP version, but used the
-wrong model mask. This resulted in all VSP instances to be treated as a
-Gen3 VSPD, breaking operation on all Gen2 platforms as well as on
-H3 ES2.0, M3-N, V3M and V3H. Fix it.
+On Thu, Nov 15, 2018 at 11:17 PM Fernando Ramos <greenfoo@gluegarage.com> wrote:
 
-Fixes: de2bc45c84f7 ("media: vsp1: Update LIF buffer thresholds")
-Reported-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_lif.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> There are no more places where these (deprecated) functions are being
+> used from, thus they can now be removed.
+>
+> Signed-off-by: Fernando Ramos <greenfoo@gluegarage.com>
 
-diff --git a/drivers/media/platform/vsp1/vsp1_lif.c b/drivers/media/platform/vsp1/vsp1_lif.c
-index 0b18f0bd7419..8b0a26335d70 100644
---- a/drivers/media/platform/vsp1/vsp1_lif.c
-+++ b/drivers/media/platform/vsp1/vsp1_lif.c
-@@ -95,7 +95,7 @@ static void lif_configure_stream(struct vsp1_entity *entity,
- 	format = vsp1_entity_get_pad_format(&lif->entity, lif->entity.config,
- 					    LIF_PAD_SOURCE);
- 
--	switch (entity->vsp1->version & VI6_IP_VERSION_SOC_MASK) {
-+	switch (entity->vsp1->version & VI6_IP_VERSION_MODEL_MASK) {
- 	case VI6_IP_VERSION_MODEL_VSPD_GEN2:
- 	case VI6_IP_VERSION_MODEL_VSPD_V2H:
- 		hbth = 1536;
--- 
-Regards,
+Patch applied to drm-misc-next.
 
-Laurent Pinchart
+Yours,
+Linus Walleij
