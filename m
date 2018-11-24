@@ -1,97 +1,61 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 26/30] adv748x: csi2: describe the multiplexed stream
-Date: Fri,  2 Nov 2018 00:31:40 +0100
-Message-Id: <20181101233144.31507-27-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39526 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726396AbeKYHeK (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 25 Nov 2018 02:34:10 -0500
+Received: by mail-lj1-f195.google.com with SMTP id t9-v6so13272329ljh.6
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 24 Nov 2018 12:44:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+References: <20181115221634.22715-1-greenfoo@gluegarage.com> <20181115221634.22715-4-greenfoo@gluegarage.com>
+In-Reply-To: <20181115221634.22715-4-greenfoo@gluegarage.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sat, 24 Nov 2018 21:44:41 +0100
+Message-ID: <CACRpkdatws8igmhXrEZSi6+ZES+omtWDone8SjpUrN9pohBNGw@mail.gmail.com>
+Subject: Re: [PATCH 3/9] drm: replace "drm_dev_unref" function with "drm_dev_put"
+To: greenfoo@gluegarage.com
+Cc: "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>, sean@poorly.run,
+        Jonathan Corbet <corbet@lwn.net>, abrodkin@synopsys.com,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        linux+etnaviv@armlinux.org.uk,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
+        kieran.bingham+renesas@ideasonboard.com,
+        Shawn Guo <shawnguo@kernel.org>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>, michal.lkml@markovi.net,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        linux-doc@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        virtualization@lists.linux-foundation.org,
+        etnaviv@lists.freedesktop.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        cocci@systeme.lip6.fr
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The adv748x CSI-2 transmitter can only transmit one stream over the
-CSI-2 link, however it can choose which virtual channel is used. This
-choice effects the CSI-2 receiver and needs to be captured in the frame
-descriptor information, solve this by implementing .get_frame_desc().
+On Thu, Nov 15, 2018 at 11:17 PM Fernando Ramos <greenfoo@gluegarage.com> wrote:
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/i2c/adv748x/adv748x-csi2.c | 31 +++++++++++++++++++++++-
- drivers/media/i2c/adv748x/adv748x.h      |  1 +
- 2 files changed, 31 insertions(+), 1 deletion(-)
+> This patch unifies the naming of DRM functions for reference counting as
+> requested on Documentation/gpu/todo.rst
+>
+> Signed-off-by: Fernando Ramos <greenfoo@gluegarage.com>
 
-diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
-index 9f2c49221a8ddebc..d83ae8e5d802a3bd 100644
---- a/drivers/media/i2c/adv748x/adv748x-csi2.c
-+++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
-@@ -222,9 +222,37 @@ static int adv748x_csi2_set_format(struct v4l2_subdev *sd,
- 	return ret;
- }
- 
-+static int adv748x_csi2_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
-+				       struct v4l2_mbus_frame_desc *fd)
-+{
-+	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
-+	struct v4l2_mbus_framefmt *mbusformat;
-+
-+	memset(fd, 0, sizeof(*fd));
-+
-+	if (pad != ADV748X_CSI2_SOURCE)
-+		return -EINVAL;
-+
-+	mbusformat = adv748x_csi2_get_pad_format(sd, NULL, ADV748X_CSI2_SINK,
-+						 V4L2_SUBDEV_FORMAT_ACTIVE);
-+	if (!mbusformat)
-+		return -EINVAL;
-+
-+	fd->entry->stream = tx->vc;
-+	fd->entry->bus.csi2.channel = tx->vc;
-+	fd->entry->bus.csi2.data_type =
-+		adv748x_csi2_code_to_datatype(mbusformat->code);
-+
-+	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_CSI2;
-+	fd->num_entries = 1;
-+
-+	return 0;
-+}
-+
- static const struct v4l2_subdev_pad_ops adv748x_csi2_pad_ops = {
- 	.get_fmt = adv748x_csi2_get_format,
- 	.set_fmt = adv748x_csi2_set_format,
-+	.get_frame_desc = adv748x_csi2_get_frame_desc,
- };
- 
- /* -----------------------------------------------------------------------------
-@@ -291,7 +319,8 @@ int adv748x_csi2_init(struct adv748x_state *state, struct adv748x_csi2 *tx)
- 		return 0;
- 
- 	/* Initialise the virtual channel */
--	adv748x_csi2_set_virtual_channel(tx, 0);
-+	tx->vc = 0;
-+	adv748x_csi2_set_virtual_channel(tx, tx->vc);
- 
- 	adv748x_subdev_init(&tx->sd, state, &adv748x_csi2_ops,
- 			    MEDIA_ENT_F_VID_IF_BRIDGE,
-diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
-index 39c2fdc3b41667d8..b24e5ea1fe0f8c8d 100644
---- a/drivers/media/i2c/adv748x/adv748x.h
-+++ b/drivers/media/i2c/adv748x/adv748x.h
-@@ -76,6 +76,7 @@ enum adv748x_csi2_pads {
- 
- struct adv748x_csi2 {
- 	struct adv748x_state *state;
-+	unsigned int vc;
- 	struct v4l2_mbus_framefmt format;
- 	unsigned int page;
- 	unsigned int port;
--- 
-2.19.1
+Patch applied after some collecting ACKs and tweaking.
+
+Yours,
+Linus Walleij
