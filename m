@@ -1,62 +1,61 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH v4 1/4] dt-bindings: adv748x: make data-lanes property mandatory for CSI-2 endpoints
-Date: Thu, 29 Nov 2018 03:01:44 +0100
-Message-Id: <20181129020147.22115-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20181129020147.22115-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20181129020147.22115-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43464 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726355AbeKYHrt (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 25 Nov 2018 02:47:49 -0500
+Received: by mail-lj1-f194.google.com with SMTP id 83-v6so13261050ljf.10
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 24 Nov 2018 12:58:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+References: <20181115221634.22715-1-greenfoo@gluegarage.com> <20181115221634.22715-9-greenfoo@gluegarage.com>
+In-Reply-To: <20181115221634.22715-9-greenfoo@gluegarage.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sat, 24 Nov 2018 21:58:19 +0100
+Message-ID: <CACRpkdZs+jk-KY7kUnRz8EoSrGN74i2fiXwp8BNuSG6JNxgixw@mail.gmail.com>
+Subject: Re: [PATCH 8/9] drm: remove no longer needed drm-get-put coccinelle script
+To: greenfoo@gluegarage.com
+Cc: "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>, sean@poorly.run,
+        Jonathan Corbet <corbet@lwn.net>, abrodkin@synopsys.com,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        linux+etnaviv@armlinux.org.uk,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
+        kieran.bingham+renesas@ideasonboard.com,
+        Shawn Guo <shawnguo@kernel.org>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>, michal.lkml@markovi.net,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        linux-doc@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        virtualization@lists.linux-foundation.org,
+        etnaviv@lists.freedesktop.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        cocci@systeme.lip6.fr
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The CSI-2 transmitters can use a different number of lanes to transmit
-data. Make the data-lanes mandatory for the endpoints that describe the
-transmitters as no good default can be set to fallback on.
+On Thu, Nov 15, 2018 at 11:18 PM Fernando Ramos <greenfoo@gluegarage.com> wrote:
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> The coccinelle script was used to rename some (deprecated) functions
+> which no longer exist now.
+>
+> Signed-off-by: Fernando Ramos <greenfoo@gluegarage.com>
 
----
-* Changes since v3
-- Add paragraph to describe the accepted values for the source endpoint
-  data-lane property. Thanks Jacopo for pointing this out and sorry for
-  missing this in v2.
-* Changes since v2
-- Update paragraph according to Laurents comments.
----
- .../devicetree/bindings/media/i2c/adv748x.txt         | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+Patch applied with Julia's ACK.
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/adv748x.txt b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-index 5dddc95f9cc46084..4f91686e54a6b939 100644
---- a/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-+++ b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-@@ -48,7 +48,16 @@ are numbered as follows.
- 	  TXA		source		10
- 	  TXB		source		11
- 
--The digital output port nodes must contain at least one endpoint.
-+The digital output port nodes, when present, shall contain at least one
-+endpoint. Each of those endpoints shall contain the data-lanes property as
-+described in video-interfaces.txt.
-+
-+Required source endpoint properties:
-+  - data-lanes: an array of physical data lane indexes
-+    The accepted value(s) for this property depends on which of the two
-+    sources are described. For TXA 1, 2 or 4 data lanes can be described
-+    while for TXB only 1 data lane is valid. See video-interfaces.txt
-+    for detailed description.
- 
- Ports are optional if they are not connected to anything at the hardware level.
- 
--- 
-2.19.1
+Yours,
+Linus Walleij
