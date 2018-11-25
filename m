@@ -1,69 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:11551 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726585AbeLACpU (ORCPT
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:46094 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbeKZJFa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Nov 2018 21:45:20 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v2 13/21] ARM: dts: r8a7744-iwg20m: Enable SDHI0 controller
-Date: Fri, 30 Nov 2018 15:26:27 +0000
-Message-Id: <1543591595-37861-14-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
-References: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
+        Mon, 26 Nov 2018 04:05:30 -0500
+MIME-Version: 1.0
+References: <20181120230832.1840-1-wsa+renesas@sang-engineering.com> <20181120230832.1840-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181120230832.1840-3-wsa+renesas@sang-engineering.com>
+From: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Date: Sun, 25 Nov 2018 23:13:11 +0100
+Message-ID: <CAJiuCcdoELfNASYjmdRyQD_BL3FD2+dFFRJ-ZVdPmEaVFeuzwg@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/3] mmc: core: use mrq->sbc when sending CMD23 for RPMB
+To: wsa+renesas@sang-engineering.com
+Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        masaharu.hayakawa.ry@renesas.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable the SDHI0 controller on iWave RZ/G1N Qseven System On Module.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-V1-->V2
-   * Fixed subject line SDHI10 to SDHI0
----
- arch/arm/boot/dts/r8a7744-iwg20m.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7744-iwg20m.dtsi b/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
-index 1e57b1f..503583e 100644
---- a/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
-+++ b/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
-@@ -35,6 +35,12 @@
- 		groups = "mmc_data8_b", "mmc_ctrl";
- 		function = "mmc";
- 	};
-+
-+	sdhi0_pins: sd0 {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+		power-source = <3300>;
-+	};
- };
- 
- &mmcif0 {
-@@ -46,3 +52,13 @@
- 	non-removable;
- 	status = "okay";
- };
-+
-+&sdhi0 {
-+	pinctrl-0 = <&sdhi0_pins>;
-+	pinctrl-names = "default";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&reg_3p3v>;
-+	cd-gpios = <&gpio7 11 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
--- 
-2.7.4
+On Wed, 21 Nov 2018 at 00:11, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> When sending out CMD23 in the blk preparation, the comment there
+> rightfully says:
+>
+>          * However, it is not sufficient to just send CMD23,
+>          * and avoid the final CMD12, as on an error condition
+>          * CMD12 (stop) needs to be sent anyway. This, coupled
+>          * with Auto-CMD23 enhancements provided by some
+>          * hosts, means that the complexity of dealing
+>          * with this is best left to the host. If CMD23 is
+>          * supported by card and host, we'll fill sbc in and let
+>          * the host deal with handling it correctly.
+>
+> Let's do this behaviour for RPMB as well, and not send CMD23
+> independently. Otherwise IP cores (like Renesas SDHI) may timeout
+> because of automatic CMD23/CMD12 handling.
+>
+> Reported-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
+> ---
+>
+> I also noticed that write_flag is an int, and we are playing with the sig=
+n bit
+> on 32-bit systems. But sadly this is exported to userspace...
+>
+>  drivers/mmc/core/block.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+> index 9e0f7e4aa8c6..66fc425615cd 100644
+> --- a/drivers/mmc/core/block.c
+> +++ b/drivers/mmc/core/block.c
+> @@ -472,7 +472,7 @@ static int ioctl_do_sanitize(struct mmc_card *card)
+>  static int __mmc_blk_ioctl_cmd(struct mmc_card *card, struct mmc_blk_dat=
+a *md,
+>                                struct mmc_blk_ioc_data *idata)
+>  {
+> -       struct mmc_command cmd =3D {};
+> +       struct mmc_command cmd =3D {}, sbc =3D {};
+>         struct mmc_data data =3D {};
+>         struct mmc_request mrq =3D {};
+>         struct scatterlist sg;
+> @@ -553,10 +553,11 @@ static int __mmc_blk_ioctl_cmd(struct mmc_card *car=
+d, struct mmc_blk_data *md,
+>                 if (data.blocks > 65535 || !data.blocks)
+>                         return -EINVAL;
+>
+> -               err =3D mmc_set_blockcount(card, data.blocks,
+> -                       idata->ic.write_flag & (1 << 31));
+> -               if (err)
+> -                       return err;
+> +               sbc.opcode =3D MMC_SET_BLOCK_COUNT;
+> +               /* copy the 'Reliable Write' bit */
+> +               sbc.arg =3D data.blocks | (idata->ic.write_flag & BIT(31)=
+);
+> +               sbc.flags =3D MMC_RSP_R1 | MMC_CMD_AC;
+> +               mrq.sbc =3D &sbc;
+>         }
+>
+>         if ((MMC_EXTRACT_INDEX_FROM_ARG(cmd.arg) =3D=3D EXT_CSD_SANITIZE_=
+START) &&
+> --
+> 2.11.0
+>
