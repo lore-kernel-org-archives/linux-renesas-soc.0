@@ -1,93 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:44359 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725985AbeKPI1b (ORCPT
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:37577 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbeKZJFs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Nov 2018 03:27:31 -0500
-From: Fernando Ramos <greenfoo@gluegarage.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        virtualization@lists.linux-foundation.org,
-        etnaviv@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        cocci@systeme.lip6.fr
-Subject: [PATCH 6/9] drm: remove deprecated "drm_connector_[un]reference" functions
-Date: Thu, 15 Nov 2018 23:16:26 +0100
-Message-Id: <20181115221634.22715-7-greenfoo@gluegarage.com>
-In-Reply-To: <20181115221634.22715-1-greenfoo@gluegarage.com>
-References: <20181115221634.22715-1-greenfoo@gluegarage.com>
+        Mon, 26 Nov 2018 04:05:48 -0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181120230832.1840-1-wsa+renesas@sang-engineering.com> <20181120230832.1840-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181120230832.1840-4-wsa+renesas@sang-engineering.com>
+From: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Date: Sun, 25 Nov 2018 23:13:29 +0100
+Message-ID: <CAJiuCcfuSXFfp2Gg3EQnDdQJeYLHwNbcF441khNXKCm+kLOkMA@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/3] mmc: core: remove obsolete mmc_set_blockcount() function
+To: wsa+renesas@sang-engineering.com
+Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-There are no more places where this (deprecated) function is being
-used from, thus it can now be removed.
-
-Signed-off-by: Fernando Ramos <greenfoo@gluegarage.com>
----
- include/drm/drm_connector.h | 24 ------------------------
- 1 file changed, 24 deletions(-)
-
-diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
-index 9ccad6b062f2..b91b206f1665 100644
---- a/include/drm/drm_connector.h
-+++ b/include/drm/drm_connector.h
-@@ -1191,30 +1191,6 @@ static inline void drm_connector_put(struct drm_connector *connector)
- 	drm_mode_object_put(&connector->base);
- }
- 
--/**
-- * drm_connector_reference - acquire a connector reference
-- * @connector: DRM connector
-- *
-- * This is a compatibility alias for drm_connector_get() and should not be
-- * used by new code.
-- */
--static inline void drm_connector_reference(struct drm_connector *connector)
--{
--	drm_connector_get(connector);
--}
--
--/**
-- * drm_connector_unreference - release a connector reference
-- * @connector: DRM connector
-- *
-- * This is a compatibility alias for drm_connector_put() and should not be
-- * used by new code.
-- */
--static inline void drm_connector_unreference(struct drm_connector *connector)
--{
--	drm_connector_put(connector);
--}
--
- /**
-  * drm_connector_is_unregistered - has the connector been unregistered from
-  * userspace?
--- 
-2.19.1
+On Wed, 21 Nov 2018 at 00:10, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> The only user was converted to fill a sbc command which is the proper
+> way to do it because of AutoCMD23 feature of some hosts.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
+> ---
+>  drivers/mmc/core/core.c | 14 --------------
+>  drivers/mmc/core/core.h |  2 --
+>  2 files changed, 16 deletions(-)
+>
+> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+> index 50a5c340307b..d3085f70e9a4 100644
+> --- a/drivers/mmc/core/core.c
+> +++ b/drivers/mmc/core/core.c
+> @@ -2413,20 +2413,6 @@ int mmc_set_blocklen(struct mmc_card *card, unsign=
+ed int blocklen)
+>  }
+>  EXPORT_SYMBOL(mmc_set_blocklen);
+>
+> -int mmc_set_blockcount(struct mmc_card *card, unsigned int blockcount,
+> -                       bool is_rel_write)
+> -{
+> -       struct mmc_command cmd =3D {};
+> -
+> -       cmd.opcode =3D MMC_SET_BLOCK_COUNT;
+> -       cmd.arg =3D blockcount & 0x0000FFFF;
+> -       if (is_rel_write)
+> -               cmd.arg |=3D 1 << 31;
+> -       cmd.flags =3D MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_AC;
+> -       return mmc_wait_for_cmd(card->host, &cmd, 5);
+> -}
+> -EXPORT_SYMBOL(mmc_set_blockcount);
+> -
+>  static void mmc_hw_reset_for_init(struct mmc_host *host)
+>  {
+>         mmc_pwrseq_reset(host);
+> diff --git a/drivers/mmc/core/core.h b/drivers/mmc/core/core.h
+> index 087ba68b2920..8fb6bc37f808 100644
+> --- a/drivers/mmc/core/core.h
+> +++ b/drivers/mmc/core/core.h
+> @@ -118,8 +118,6 @@ int mmc_erase_group_aligned(struct mmc_card *card, un=
+signed int from,
+>  unsigned int mmc_calc_max_discard(struct mmc_card *card);
+>
+>  int mmc_set_blocklen(struct mmc_card *card, unsigned int blocklen);
+> -int mmc_set_blockcount(struct mmc_card *card, unsigned int blockcount,
+> -                       bool is_rel_write);
+>
+>  int __mmc_claim_host(struct mmc_host *host, struct mmc_ctx *ctx,
+>                      atomic_t *abort);
+> --
+> 2.11.0
+>
