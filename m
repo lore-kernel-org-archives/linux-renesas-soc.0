@@ -1,72 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726872AbeKZXtf (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:46230 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726083AbeKZBb3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Nov 2018 18:49:35 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 08/40] arm64: dts: renesas: r8a77965: Add LVDS support
-Date: Mon, 26 Nov 2018 13:54:34 +0100
-Message-Id: <bae66bbcf2011f4048d2a99fd02d3a6608327c60.1543229515.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
-References: <cover.1543229515.git.horms+renesas@verge.net.au>
+        Sun, 25 Nov 2018 20:31:29 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org, kieran.bingham@ideasonboard.com
+Subject: [PATCH 4/5] arm64: dts: renesas: r8a77995: draak: Add backlight
+Date: Sun, 25 Nov 2018 16:40:30 +0200
+Message-Id: <20181125144031.4407-5-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20181125144031.4407-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20181125144031.4407-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-The M3-N (r8a77965) platform has one LVDS encoder connected to the DU.
-Add the corresponding DT node and wire it up.
+Add the backlight device for the LVDS1 output, in preparation for panel
+support.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ .../arm64/boot/dts/renesas/r8a77995-draak.dts | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 83946ca2eba5..b984b85dc066 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -2153,6 +2153,33 @@
- 				port@2 {
- 					reg = <2>;
- 					du_out_lvds0: endpoint {
-+						remote-endpoint = <&lvds0_in>;
-+					};
-+				};
-+			};
-+		};
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+index 2405eaad0296..cd067319e6f3 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+@@ -24,6 +24,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	backlight: backlight {
++		compatible = "pwm-backlight";
++		pwms = <&pwm1 0 50000>;
 +
-+		lvds0: lvds@feb90000 {
-+			compatible = "renesas,r8a77965-lvds";
-+			reg = <0 0xfeb90000 0 0x14>;
-+			clocks = <&cpg CPG_MOD 727>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 727>;
-+			status = "disabled";
++		brightness-levels = <256 128 64 16 8 4 0>;
++		default-brightness-level = <6>;
 +
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
++		power-supply = <&reg_12p0v>;
++		enable-gpios = <&gpio4 0 GPIO_ACTIVE_HIGH>;
++	};
 +
-+				port@0 {
-+					reg = <0>;
-+					lvds0_in: endpoint {
-+						remote-endpoint = <&du_out_lvds0>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					lvds0_out: endpoint {
- 					};
- 				};
- 			};
+ 	composite-in {
+ 		compatible = "composite-video-connector";
+ 
+@@ -104,6 +115,15 @@
+ 		regulator-always-on;
+ 	};
+ 
++	reg_12p0v: regulator1 {
++		compatible = "regulator-fixed";
++		regulator-name = "D12.0V";
++		regulator-min-microvolt = <12000000>;
++		regulator-max-microvolt = <12000000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
+ 	vga {
+ 		compatible = "vga-connector";
+ 
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
