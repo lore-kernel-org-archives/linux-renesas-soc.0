@@ -1,171 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-eopbgr1400104.outbound.protection.outlook.com ([40.107.140.104]:53808
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726175AbeKSSuq (ORCPT
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:37560 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbeKZJFJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Nov 2018 13:50:46 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: RE: [PATCH] arm64: dts: renesas: r8a7796: Add CMT device nodes
-Date: Mon, 19 Nov 2018 08:27:44 +0000
-Message-ID: <OSBPR01MB2103D5EEB54FB45B637AF93BB8D80@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <1540542307-63158-1-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1540542307-63158-1-git-send-email-biju.das@bp.renesas.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 26 Nov 2018 04:05:09 -0500
 MIME-Version: 1.0
+References: <20181120230832.1840-1-wsa+renesas@sang-engineering.com> <20181120230832.1840-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181120230832.1840-2-wsa+renesas@sang-engineering.com>
+From: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Date: Sun, 25 Nov 2018 23:12:51 +0100
+Message-ID: <CAJiuCccVQfMWNbfbznfb+baAf4aFZ0Cj7Ayz=p_PXND22Xa30Q@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/3] mmc: core: validate user input for RPMB block count
+To: wsa+renesas@sang-engineering.com
+Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi All,
-
-Gentle reminder, Is this patch looks ok to you? Or any changes needed.
-
-Regards,
-Biju
-
-> -----Original Message-----
-> From: Biju Das <biju.das@bp.renesas.com>
-> Sent: 26 October 2018 09:25
-> To: Rob Herring <robh+dt@kernel.org>; Mark Rutland
-> <mark.rutland@arm.com>
-> Cc: Biju Das <biju.das@bp.renesas.com>; Simon Horman
-> <horms@verge.net.au>; Magnus Damm <magnus.damm@gmail.com>;
-> linux-renesas-soc@vger.kernel.org; devicetree@vger.kernel.org; Geert
-> Uytterhoeven <geert+renesas@glider.be>; Chris Paterson
-> <Chris.Paterson2@renesas.com>; Daniel Lezcano
-> <daniel.lezcano@linaro.org>; Thomas Gleixner <tglx@linutronix.de>; John
-> Stultz <john.stultz@linaro.org>; Fabrizio Castro
-> <fabrizio.castro@bp.renesas.com>
-> Subject: [PATCH] arm64: dts: renesas: r8a7796: Add CMT device nodes
+On Wed, 21 Nov 2018 at 00:10, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
 >
-> This patch adds CMT{0|1|2|3} device nodes for r8a7796 SoC.
+> For RPMB, block count is a non-zero 16 bit wide number. Reject invalid
+> values from userspace instead of just masking the unneeded bits. Tested
+> with a modified 'mmc-utils' package.
 >
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
 > ---
-> This patch is tested against renesas-dev
+>  drivers/mmc/core/block.c | 3 +++
+>  1 file changed, 3 insertions(+)
 >
-> I have executed on inconsistency-check, nanosleep and clocksource_switch
-> selftests on this arm64 SoC. The inconsistency-check and nanosleep tests =
-are
-> working fine.The clocksource_switch asynchronous test is failing due to
-> inconsistency-check failure on "arch_sys_counter".
+> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+> index c35b5b08bb33..9e0f7e4aa8c6 100644
+> --- a/drivers/mmc/core/block.c
+> +++ b/drivers/mmc/core/block.c
+> @@ -550,6 +550,9 @@ static int __mmc_blk_ioctl_cmd(struct mmc_card *card,=
+ struct mmc_blk_data *md,
+>         }
 >
-> But if i skip the clocksource_switching of "arch_sys_counter", the
-> asynchronous test is passing for CMT0/1/2/3 timer.
->
-> Has any one noticed this issue?
-> ---
->  arch/arm64/boot/dts/renesas/r8a7796.dtsi | 70
-> ++++++++++++++++++++++++++++++++
->  1 file changed, 70 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> index 1ec6aaa..d62febd0 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> @@ -401,6 +401,76 @@
->  reg =3D <0 0xe6060000 0 0x50c>;
->  };
->
-> +cmt0: timer@e60f0000 {
-> +compatible =3D "renesas,r8a7796-cmt0",
-> +     "renesas,rcar-gen3-cmt0";
-> +reg =3D <0 0xe60f0000 0 0x1004>;
-> +interrupts =3D <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
-> +     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-> +clocks =3D <&cpg CPG_MOD 303>;
-> +clock-names =3D "fck";
-> +power-domains =3D <&sysc
-> R8A7796_PD_ALWAYS_ON>;
-> +resets =3D <&cpg 303>;
-> +status =3D "disabled";
-> +};
+>         if (idata->rpmb) {
+> +               if (data.blocks > 65535 || !data.blocks)
+> +                       return -EINVAL;
 > +
-> +cmt1: timer@e6130000 {
-> +compatible =3D "renesas,r8a7796-cmt1",
-> +     "renesas,rcar-gen3-cmt1";
-> +reg =3D <0 0xe6130000 0 0x1004>;
-> +interrupts =3D <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
-> +     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
-> +     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-> +     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-> +     <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
-> +     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
-> +     <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
-> +     <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
-> +clocks =3D <&cpg CPG_MOD 302>;
-> +clock-names =3D "fck";
-> +power-domains =3D <&sysc
-> R8A7796_PD_ALWAYS_ON>;
-> +resets =3D <&cpg 302>;
-> +status =3D "disabled";
-> +};
-> +
-> +cmt2: timer@e6140000 {
-> +compatible =3D "renesas,r8a7796-cmt1",
-> +     "renesas,rcar-gen3-cmt1";
-> +reg =3D <0 0xe6140000 0 0x1004>;
-> +interrupts =3D <GIC_SPI 398 IRQ_TYPE_LEVEL_HIGH>,
-> +     <GIC_SPI 399 IRQ_TYPE_LEVEL_HIGH>,
-> +     <GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH>,
-> +     <GIC_SPI 401 IRQ_TYPE_LEVEL_HIGH>,
-> +     <GIC_SPI 402 IRQ_TYPE_LEVEL_HIGH>,
-> +     <GIC_SPI 403 IRQ_TYPE_LEVEL_HIGH>,
-> +     <GIC_SPI 404 IRQ_TYPE_LEVEL_HIGH>,
-> +     <GIC_SPI 405 IRQ_TYPE_LEVEL_HIGH>;
-> +clocks =3D <&cpg CPG_MOD 301>;
-> +clock-names =3D "fck";
-> +power-domains =3D <&sysc
-> R8A7796_PD_ALWAYS_ON>;
-> +resets =3D <&cpg 301>;
-> +status =3D "disabled";
-> +};
-> +
-> +cmt3: timer@e6148000 {
-> +compatible =3D "renesas,r8a7796-cmt1",
-> +     "renesas,rcar-gen3-cmt1";
-> +reg =3D <0 0xe6148000 0 0x1004>;
-> +interrupts =3D <GIC_SPI 470 IRQ_TYPE_LEVEL_HIGH>,
-> +     <GIC_SPI 471 IRQ_TYPE_LEVEL_HIGH>,
-> +     <GIC_SPI 472 IRQ_TYPE_LEVEL_HIGH>,
-> +     <GIC_SPI 473 IRQ_TYPE_LEVEL_HIGH>,
-> +     <GIC_SPI 474 IRQ_TYPE_LEVEL_HIGH>,
-> +     <GIC_SPI 475 IRQ_TYPE_LEVEL_HIGH>,
-> +     <GIC_SPI 476 IRQ_TYPE_LEVEL_HIGH>,
-> +     <GIC_SPI 477 IRQ_TYPE_LEVEL_HIGH>;
-> +clocks =3D <&cpg CPG_MOD 300>;
-> +clock-names =3D "fck";
-> +power-domains =3D <&sysc
-> R8A7796_PD_ALWAYS_ON>;
-> +resets =3D <&cpg 300>;
-> +status =3D "disabled";
-> +};
-> +
->  cpg: clock-controller@e6150000 {
->  compatible =3D "renesas,r8a7796-cpg-mssr";
->  reg =3D <0 0xe6150000 0 0x1000>;
+>                 err =3D mmc_set_blockcount(card, data.blocks,
+>                         idata->ic.write_flag & (1 << 31));
+>                 if (err)
 > --
-> 2.7.4
-
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+> 2.11.0
+>
