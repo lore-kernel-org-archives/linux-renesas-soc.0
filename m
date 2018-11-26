@@ -1,121 +1,139 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38884 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389539AbeKPURB (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726567AbeKZXtP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Nov 2018 15:17:01 -0500
-Received: by mail-pl1-f195.google.com with SMTP id e5so916519plb.5
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Nov 2018 02:05:24 -0800 (PST)
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, arm@kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, devicetree@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 08/10] ARM64: dts: renesas: Add all CPUs in cooling maps
-Date: Fri, 16 Nov 2018 15:34:31 +0530
-Message-Id: <f2116377ab65e4b3ece39c32f54ac3eec2fb7d8c.1542362530.git.viresh.kumar@linaro.org>
-In-Reply-To: <cover.1542362530.git.viresh.kumar@linaro.org>
-References: <cover.1542362530.git.viresh.kumar@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 26 Nov 2018 18:49:15 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 02/40] arm64: dts: renesas: r8a7795: remove unneeded sound #address/size-cells
+Date: Mon, 26 Nov 2018 13:54:28 +0100
+Message-Id: <e20a1b9e10e3d01155bfd3faa2a49174ee16df08.1543229515.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
+References: <cover.1543229515.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Each CPU can (and does) participate in cooling down the system but the
-DT only captures a handful of them, normally CPU0, in the cooling maps.
-Things work by chance currently as under normal circumstances its the
-first CPU of each cluster which is used by the operating systems to
-probe the cooling devices. But as soon as this CPU ordering changes and
-any other CPU is used to bring up the cooling device, we will start
-seeing failures.
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Also the DT is rather incomplete when we list only one CPU in the
-cooling maps, as the hardware doesn't have any such limitations.
+commit 2d87dc0e5be2 ("arm64: dts: renesas: r8a7795: Add address
+properties to rcar_sound port nodes") added missing #address-cells
+and #size-cells for sound ports.
+But, these are based on platform, not on SoC. This patch cleanups it.
 
-Update cooling maps to include all devices affected by individual trip
-points.
-
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 15 ++++++++++++---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi |  6 +++---
- 2 files changed, 15 insertions(+), 6 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts |  2 ++
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts     |  2 ++
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts    |  2 ++
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi               | 14 --------------
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi       |  3 +++
+ 5 files changed, 9 insertions(+), 14 deletions(-)
 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
+index 0895503b69d0..c1a56eab7b24 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
+@@ -112,6 +112,7 @@
+ 	ports {
+ 		/* rsnd_port0 is on salvator-common */
+ 		rsnd_port1: port@1 {
++			reg = <1>;
+ 			rsnd_endpoint1: endpoint {
+ 				remote-endpoint = <&dw_hdmi0_snd_in>;
+ 
+@@ -123,6 +124,7 @@
+ 			};
+ 		};
+ 		rsnd_port2: port@2 {
++			reg = <2>;
+ 			rsnd_endpoint2: endpoint {
+ 				remote-endpoint = <&dw_hdmi1_snd_in>;
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 1620e8d8dacc..d2d48b33b37f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -112,6 +112,7 @@
+ 	ports {
+ 		/* rsnd_port0 is on salvator-common */
+ 		rsnd_port1: port@1 {
++			reg = <1>;
+ 			rsnd_endpoint1: endpoint {
+ 				remote-endpoint = <&dw_hdmi0_snd_in>;
+ 
+@@ -123,6 +124,7 @@
+ 			};
+ 		};
+ 		rsnd_port2: port@2 {
++			reg = <2>;
+ 			rsnd_endpoint2: endpoint {
+ 				remote-endpoint = <&dw_hdmi1_snd_in>;
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+index cf08a119eec0..42101fc76837 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+@@ -127,6 +127,7 @@
+ 	ports {
+ 		/* rsnd_port0 is on salvator-common */
+ 		rsnd_port1: port@1 {
++			reg = <1>;
+ 			rsnd_endpoint1: endpoint {
+ 				remote-endpoint = <&dw_hdmi0_snd_in>;
+ 
+@@ -138,6 +139,7 @@
+ 			};
+ 		};
+ 		rsnd_port2: port@2 {
++			reg = <2>;
+ 			rsnd_endpoint2: endpoint {
+ 				remote-endpoint = <&dw_hdmi1_snd_in>;
+ 
 diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index a79c8d369e0b..3a662df32143 100644
+index b5f2273caca4..95a8ed40e7d3 100644
 --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -2878,7 +2878,10 @@
- 			cooling-maps {
- 				map0 {
- 					trip = <&sensor1_passive>;
--					cooling-device = <&a57_0 4 4>;
-+					cooling-device = <&a57_0 4 4>,
-+							 <&a57_1 4 4>,
-+							 <&a57_2 4 4>,
-+							 <&a57_3 4 4>;
+@@ -1972,20 +1972,6 @@
+ 					dma-names = "rx", "tx", "rxu", "txu";
  				};
  			};
+-
+-			ports {
+-				#address-cells = <1>;
+-				#size-cells = <0>;
+-				port@0 {
+-					reg = <0>;
+-				};
+-				port@1 {
+-					reg = <1>;
+-				};
+-				port@2 {
+-					reg = <2>;
+-				};
+-			};
  		};
-@@ -2904,7 +2907,10 @@
- 			cooling-maps {
- 				map0 {
- 					trip = <&sensor2_passive>;
--					cooling-device = <&a57_0 4 4>;
-+					cooling-device = <&a57_0 4 4>,
-+							 <&a57_1 4 4>,
-+							 <&a57_2 4 4>,
-+							 <&a57_3 4 4>;
- 				};
- 			};
- 		};
-@@ -2930,7 +2936,10 @@
- 			cooling-maps {
- 				map0 {
- 					trip = <&sensor3_passive>;
--					cooling-device = <&a57_0 4 4>;
-+					cooling-device = <&a57_0 4 4>,
-+							 <&a57_1 4 4>,
-+							 <&a57_2 4 4>,
-+							 <&a57_3 4 4>;
- 				};
- 			};
- 		};
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 1ec6aaa520c1..dd95e937f87a 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -2526,7 +2526,7 @@
- 			cooling-maps {
- 				map0 {
- 					trip = <&sensor1_passive>;
--					cooling-device = <&a57_0 5 5>;
-+					cooling-device = <&a57_0 5 5>, <&a57_1 5 5>;
- 				};
- 			};
- 		};
-@@ -2552,7 +2552,7 @@
- 			cooling-maps {
- 				map0 {
- 					trip = <&sensor2_passive>;
--					cooling-device = <&a57_0 5 5>;
-+					cooling-device = <&a57_0 5 5>, <&a57_1 5 5>;
- 				};
- 			};
- 		};
-@@ -2578,7 +2578,7 @@
- 			cooling-maps {
- 				map0 {
- 					trip = <&sensor3_passive>;
--					cooling-device = <&a57_0 5 5>;
-+					cooling-device = <&a57_0 5 5>, <&a57_1 5 5>;
- 				};
- 			};
- 		};
+ 
+ 		audma0: dma-controller@ec700000 {
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index 7f91ff524109..054a7eeeef92 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -707,7 +707,10 @@
+ 		 <&cpg CPG_CORE CPG_AUDIO_CLK_I>;
+ 
+ 	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
+ 		rsnd_port0: port@0 {
++			reg = <0>;
+ 			rsnd_endpoint0: endpoint {
+ 				remote-endpoint = <&ak4613_endpoint>;
+ 
 -- 
-2.19.1.568.g152ad8e3369a
+2.11.0
