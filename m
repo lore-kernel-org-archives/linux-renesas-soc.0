@@ -1,42 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:27177 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729034AbeKPAI5 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726567AbeKZXtY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Nov 2018 19:08:57 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: jacopo mondi <jacopo@jmondi.org>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v6 0/2] pinctrl: Add RZ/A2 pin and gpio driver
-Date: Thu, 15 Nov 2018 09:00:43 -0500
-Message-Id: <20181115140045.24733-1-chris.brandt@renesas.com>
+        Mon, 26 Nov 2018 18:49:24 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm@opensource.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 14/40] arm64: dts: renesas: r8a77965: Connect R-Car M3-N AVB to IPMMU
+Date: Mon, 26 Nov 2018 13:54:40 +0100
+Message-Id: <ea57402f3671d877f12616581bca4c4923bbfd10.1543229515.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
+References: <cover.1543229515.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The pin controller in the RZ/A2 is nothing like the pin controller in
-the RZ/A1. That's a good thing! This pin controller is much more simple
-and easier to configure.
+From: Magnus Damm <damm@opensource.se>
 
-So, this driver is faily simple (I hope).
+Hook up the R-Car M3-N AVB device to IPMMU-DS0 16 as described in
+the data sheet.
 
-Chris Brandt (2):
-  pinctrl: Add RZ/A2 pin and gpio controller
-  dt-bindings: pinctrl: Add RZ/A2 pinctrl and GPIO
+Signed-off-by: Magnus Damm <damm@opensource.se>
+Tested-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
- .../bindings/pinctrl/renesas,rza2-pinctrl.txt      |  87 ++++
- drivers/pinctrl/Kconfig                            |  11 +
- drivers/pinctrl/Makefile                           |   1 +
- drivers/pinctrl/pinctrl-rza2.c                     | 518 +++++++++++++++++++++
- include/dt-bindings/pinctrl/r7s9210-pinctrl.h      |  47 ++
- 5 files changed, 664 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza2-pinctrl.txt
- create mode 100644 drivers/pinctrl/pinctrl-rza2.c
- create mode 100644 include/dt-bindings/pinctrl/r7s9210-pinctrl.h
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index 4ac2abeda48c..3a958fb25245 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -900,6 +900,7 @@
+ 			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
+ 			resets = <&cpg 812>;
+ 			phy-mode = "rgmii";
++			iommus = <&ipmmu_ds0 16>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			status = "disabled";
 -- 
-2.16.1
+2.11.0
