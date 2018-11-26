@@ -1,115 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46173 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727120AbeKSDuL (ORCPT
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:10300 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726266AbeK0D7E (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 18 Nov 2018 22:50:11 -0500
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-gpio@vger.kernel.org
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/4] pinctrl: sh-pfc: r8a77965: Add CAN FD pins, groups and functions
-Date: Sun, 18 Nov 2018 18:29:01 +0100
-Message-Id: <20181118172903.4481-2-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20181118172903.4481-1-marek.vasut+renesas@gmail.com>
-References: <20181118172903.4481-1-marek.vasut+renesas@gmail.com>
+        Mon, 26 Nov 2018 22:59:04 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v4 3/3] mmc: renesas_sdhi: add initial setting of interrupt mask register
+Date: Mon, 26 Nov 2018 18:02:47 +0100
+Message-Id: <20181126170247.4076-4-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20181126170247.4076-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20181126170247.4076-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+The initial value of the interrupt mask register may be different from
+the H/W manual at the startup of the kernel by setting from the
+bootloader. Since the error interrupts may be unmasked, the driver sets
+initial value.
 
-This patch adds CAN FD{0,1} pins, groups and functions to the R8A77965
-SoC.
+The initial value is only known for R-Car Gen2 and Gen3 platforms so
+limit the initialization to those platforms.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org
+Based on work from Masaharu Hayakawa.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 42 +++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-index 759b10e91d74..e26d101fe51c 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-@@ -1822,6 +1822,34 @@ static const unsigned int can_clk_mux[] = {
- 	CAN_CLK_MARK,
- };
+* Changes since v1
+- Limit the initialization to Gen2+ platforms by checking the
+  TMIO_MMC_MIN_RCAR2 flag.
+- Rename the constant for the initialization value to reflect it's only
+  for R-Car Gen2+ platforms.
+- Move setting of the initial mask to renesas_sdhi.
+---
+ drivers/mmc/host/renesas_sdhi_core.c | 4 ++++
+ drivers/mmc/host/tmio_mmc.h          | 1 +
+ 2 files changed, 5 insertions(+)
+
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index 78bd117bbe65de46..26da095f8ad5a56c 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -523,6 +523,10 @@ static void renesas_sdhi_hw_reset(struct tmio_mmc_host *host)
+ 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL,
+ 		       ~SH_MOBILE_SDHI_SCC_RVSCNTL_RVSEN &
+ 		       sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL));
++
++	if (host->pdata->flags & TMIO_MMC_MIN_RCAR2)
++		sd_ctrl_write32_as_16_and_16(host, CTL_IRQ_MASK,
++					     TMIO_MASK_INIT_RCAR2);
+ }
  
-+/* - CAN FD --------------------------------------------------------------- */
-+static const unsigned int canfd0_data_a_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(1, 23),     RCAR_GP_PIN(1, 24),
-+};
-+
-+static const unsigned int canfd0_data_a_mux[] = {
-+	CANFD0_TX_A_MARK,       CANFD0_RX_A_MARK,
-+};
-+
-+static const unsigned int canfd0_data_b_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(2, 0),      RCAR_GP_PIN(2, 1),
-+};
-+
-+static const unsigned int canfd0_data_b_mux[] = {
-+	CANFD0_TX_B_MARK,       CANFD0_RX_B_MARK,
-+};
-+
-+static const unsigned int canfd1_data_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(1, 22),     RCAR_GP_PIN(1, 26),
-+};
-+
-+static const unsigned int canfd1_data_mux[] = {
-+	CANFD1_TX_MARK,         CANFD1_RX_MARK,
-+};
-+
- /* - DU --------------------------------------------------------------------- */
- static const unsigned int du_rgb666_pins[] = {
- 	/* R[7:2], G[7:2], B[7:2] */
-@@ -3796,6 +3824,9 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(can0_data_b),
- 	SH_PFC_PIN_GROUP(can1_data),
- 	SH_PFC_PIN_GROUP(can_clk),
-+	SH_PFC_PIN_GROUP(canfd0_data_a),
-+	SH_PFC_PIN_GROUP(canfd0_data_b),
-+	SH_PFC_PIN_GROUP(canfd1_data),
- 	SH_PFC_PIN_GROUP(du_rgb666),
- 	SH_PFC_PIN_GROUP(du_rgb888),
- 	SH_PFC_PIN_GROUP(du_clk_out_0),
-@@ -4091,6 +4122,15 @@ static const char * const can_clk_groups[] = {
- 	"can_clk",
- };
+ static int renesas_sdhi_wait_idle(struct tmio_mmc_host *host, u32 bit)
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index 1e317027bf534612..5f6dfb86e43e8208 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -96,6 +96,7 @@
  
-+static const char * const canfd0_groups[] = {
-+	"canfd0_data_a",
-+	"canfd0_data_b",
-+};
-+
-+static const char * const canfd1_groups[] = {
-+	"canfd1_data",
-+};
-+
- static const char * const du_groups[] = {
- 	"du_rgb666",
- 	"du_rgb888",
-@@ -4453,6 +4493,8 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(can0),
- 	SH_PFC_FUNCTION(can1),
- 	SH_PFC_FUNCTION(can_clk),
-+	SH_PFC_FUNCTION(canfd0),
-+	SH_PFC_FUNCTION(canfd1),
- 	SH_PFC_FUNCTION(du),
- 	SH_PFC_FUNCTION(hscif0),
- 	SH_PFC_FUNCTION(hscif1),
+ /* Define some IRQ masks */
+ /* This is the mask used at reset by the chip */
++#define TMIO_MASK_INIT_RCAR2	0x8b7f031d /* Initial value for R-Car Gen2+ */
+ #define TMIO_MASK_ALL           0x837f031d
+ #define TMIO_MASK_READOP  (TMIO_STAT_RXRDY | TMIO_STAT_DATAEND)
+ #define TMIO_MASK_WRITEOP (TMIO_STAT_TXRQ | TMIO_STAT_DATAEND)
 -- 
-2.18.0
+2.19.1
