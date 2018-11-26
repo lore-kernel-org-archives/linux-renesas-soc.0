@@ -1,80 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60764 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726176AbeKZUcw (ORCPT
+Received: from mail-eopbgr1400104.outbound.protection.outlook.com ([40.107.140.104]:39264
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726153AbeKZR7p (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Nov 2018 15:32:52 -0500
-Date: Mon, 26 Nov 2018 10:39:16 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: "kishon@ti.com" <kishon@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mon, 26 Nov 2018 12:59:45 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] phy: renesas: rcar-gen3-usb2: follow the hardware manual
+Subject: RE: [PATCH] phy: renesas: rcar-gen3-usb2: follow the hardware manual
  procedure
-Message-ID: <20181126093911.npr3ktohqciuq5my@verge.net.au>
+Date: Mon, 26 Nov 2018 07:05:52 +0000
+Message-ID: <OSBPR01MB22935C64D5F0D06DA7391AB5D8D70@OSBPR01MB2293.jpnprd01.prod.outlook.com>
 References: <1542787663-32142-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <f9a22d1d-6b40-0182-0be2-976494c95063@ti.com>
+In-Reply-To: <f9a22d1d-6b40-0182-0be2-976494c95063@ti.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1542787663-32142-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Nov 21, 2018 at 08:10:06AM +0000, Yoshihiro Shimoda wrote:
-> This patch modifies rcar_gen3_init_otg() procedure to follow Figure
-> 73.4 of "R-Car Series, 3rd Generation User's Manual: Hardware Rev.1.00".
-> 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->  This patch is based on the latest linux-phy / next branch
-> (commit id = 0eb86fa77f0f0c81631a030f10679a45c05df33a).
-> 
->  drivers/phy/renesas/phy-rcar-gen3-usb2.c | 17 +++++++++++------
->  1 file changed, 11 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-> index d0f412c..a9e53e8 100644
-> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-> @@ -307,16 +307,21 @@ static void rcar_gen3_init_otg(struct rcar_gen3_chan *ch)
->  	void __iomem *usb2_base = ch->base;
->  	u32 val;
->  
-> +	rcar_gen3_set_linectrl(ch, 0, 1);
-> +	val = readl(usb2_base + USB2_LINECTRL1);
-> +	writel(val | USB2_LINECTRL1_DPRPD_EN | USB2_LINECTRL1_DMRPD_EN,
-> +	       usb2_base + USB2_LINECTRL1);
-
-I am wondering if as well as the above
-USB2_LINECTRL1_DPRPD_EN should be set and
-USB2_LINECTRL1_DP_RPD should be cleared.
-
-> +
->  	val = readl(usb2_base + USB2_VBCTRL);
->  	writel(val | USB2_VBCTRL_DRVVBUSSEL, usb2_base + USB2_VBCTRL);
-> -	writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
-> -	rcar_gen3_control_otg_irq(ch, 1);
->  	val = readl(usb2_base + USB2_ADPCTRL);
->  	writel(val | USB2_ADPCTRL_IDPULLUP, usb2_base + USB2_ADPCTRL);
-> -	val = readl(usb2_base + USB2_LINECTRL1);
-> -	rcar_gen3_set_linectrl(ch, 0, 0);
-> -	writel(val | USB2_LINECTRL1_DPRPD_EN | USB2_LINECTRL1_DMRPD_EN,
-> -	       usb2_base + USB2_LINECTRL1);
-> +
-> +	msleep(20);
-> +
-> +	writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
-
-I wonder if it is appropriate to write 0xffffffff to USB2_OBINTSTA 
-and then USB2_OBINT_BITS to USB2_OBINTEN here.
-
-> +
-> +	rcar_gen3_control_otg_irq(ch, 1);
->  
->  	rcar_gen3_device_recognition(ch);
->  }
-> -- 
-> 1.9.1
-> 
+SGkgS2lzaG9uLXNhbiwNCg0KPiBGcm9tOiBLaXNob24gVmlqYXkgQWJyYWhhbSBJLCBTZW50OiBG
+cmlkYXksIE5vdmVtYmVyIDIzLCAyMDE4IDQ6NTUgUE0NCj4gDQo+IEhpLA0KPiANCj4gT24gMjEv
+MTEvMTggMTo0MCBQTSwgWW9zaGloaXJvIFNoaW1vZGEgd3JvdGU6DQo+ID4gVGhpcyBwYXRjaCBt
+b2RpZmllcyByY2FyX2dlbjNfaW5pdF9vdGcoKSBwcm9jZWR1cmUgdG8gZm9sbG93IEZpZ3VyZQ0K
+PiA+IDczLjQgb2YgIlItQ2FyIFNlcmllcywgM3JkIEdlbmVyYXRpb24gVXNlcidzIE1hbnVhbDog
+SGFyZHdhcmUgUmV2LjEuMDAiLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogWW9zaGloaXJvIFNo
+aW1vZGEgPHlvc2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMuY29tPg0KPiA+IC0tLQ0KPiA+ICBU
+aGlzIHBhdGNoIGlzIGJhc2VkIG9uIHRoZSBsYXRlc3QgbGludXgtcGh5IC8gbmV4dCBicmFuY2gN
+Cj4gPiAoY29tbWl0IGlkID0gMGViODZmYTc3ZjBmMGM4MTYzMWEwMzBmMTA2NzlhNDVjMDVkZjMz
+YSkuDQo+IA0KPiBUaGlzIHBhdGNoIGhhcyBzb21lIHdlaXJkIGNoYXJhY3RlcnMgd2hpY2ggSSBz
+YXcgd2hpbGUgYXBwbHlpbmcuDQo+IA0KPiBZb3UgY2FuIHNlZSAiPTIwIiwgPTNEIGluIHRoZSBy
+YXcgZm9ybWF0DQo+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xrbWwvMTU0Mjc4NzY2My0zMjE0
+Mi0xLWdpdC1zZW5kLWVtYWlsLXlvc2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMuY29tL3Jhdw0K
+PiANCj4gUGxlYXNlIGZpeCBhbmQgcmVwb3N0IHRoZSBwYXRjaC4NCg0KSSBndWVzcyB0aGlzIGlz
+c3VlIHNlZW1zIG91ciBjb21wYW55J3MgZW1haWwgc2VydmVyIGlzc3VlLi4NCg0KLSBGcm9tIHRo
+aXMgbW9udGgsIG91ciBlbWFpbHMgYWRkICJDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBxdW90
+ZWQtcHJpbnRhYmxlIiBpbiB0aGUgaGVhZGVyLg0KIC0tPiBTbywgd2UgY2FuIHNlZSAiPTIwIiBh
+bmQgIj0zRCIgb24gbXkgZW1haWxzLi4uIA0KLSBFdmVuIGlmIEkgdHJpZWQgdG8gdXNlIHNvbWUg
+b3B0aW9ucyBbMV0gb24gZ2l0IHYyLjE5LjIsIHRoZSBlbmNvZGluZyBpcyBzdGlsbCAicXVvdGVk
+LXByaW50YWJsZSIuDQoNCkknbSBhc2tpbmcgb3VyIElUIHRlYW0gYWJvdXQgdGhpcyBiZWhhdmlv
+ciBub3cuIEJ1dCwgSSBndWVzcyBpdCBuZWVkcyBtb3JlIHRpbWUuLi4NClNvLCBpZiBwb3NzaWJs
+ZSwgd291bGQgeW91IHVzZSBtYm94IGZvcm1hdCBbMl0gdG8gYXBwbHkgdGhpcyBwYXRjaD8NCg0K
+WzFdDQogY2FzZSAxOg0KICAgLS10cmFuc2Zlci1lbmNvZGluZz03Yml0DQogY2FzZSAyOg0KICAg
+LS10cmFuc2Zlci1lbmNvZGluZz03Yml0IC0tY29tcG9zZS1lbmNvZGluZz11cy1hc2NpaQ0KDQpb
+Ml0NCmh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTA2OTIwOTEvbWJveC8NCg0K
+QmVzdCByZWdhcmRzLA0KWW9zaGloaXJvIFNoaW1vZGENCg0KPiBUaGFua3MNCj4gS2lzaG9uDQo+
+ID4NCj4gPiAgZHJpdmVycy9waHkvcmVuZXNhcy9waHktcmNhci1nZW4zLXVzYjIuYyB8IDE3ICsr
+KysrKysrKysrLS0tLS0tDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxMSBpbnNlcnRpb25zKCspLCA2
+IGRlbGV0aW9ucygtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGh5L3JlbmVzYXMv
+cGh5LXJjYXItZ2VuMy11c2IyLmMgYi9kcml2ZXJzL3BoeS9yZW5lc2FzL3BoeS1yY2FyLWdlbjMt
+dXNiMi5jDQo+ID4gaW5kZXggZDBmNDEyYy4uYTllNTNlOCAxMDA2NDQNCj4gPiAtLS0gYS9kcml2
+ZXJzL3BoeS9yZW5lc2FzL3BoeS1yY2FyLWdlbjMtdXNiMi5jDQo+ID4gKysrIGIvZHJpdmVycy9w
+aHkvcmVuZXNhcy9waHktcmNhci1nZW4zLXVzYjIuYw0KPiA+IEBAIC0zMDcsMTYgKzMwNywyMSBA
+QCBzdGF0aWMgdm9pZCByY2FyX2dlbjNfaW5pdF9vdGcoc3RydWN0IHJjYXJfZ2VuM19jaGFuICpj
+aCkNCj4gPiAgCXZvaWQgX19pb21lbSAqdXNiMl9iYXNlID0gY2gtPmJhc2U7DQo+ID4gIAl1MzIg
+dmFsOw0KPiA+DQo+ID4gKwlyY2FyX2dlbjNfc2V0X2xpbmVjdHJsKGNoLCAwLCAxKTsNCj4gPiAr
+CXZhbCA9IHJlYWRsKHVzYjJfYmFzZSArIFVTQjJfTElORUNUUkwxKTsNCj4gPiArCXdyaXRlbCh2
+YWwgfCBVU0IyX0xJTkVDVFJMMV9EUFJQRF9FTiB8IFVTQjJfTElORUNUUkwxX0RNUlBEX0VOLA0K
+PiA+ICsJICAgICAgIHVzYjJfYmFzZSArIFVTQjJfTElORUNUUkwxKTsNCj4gPiArDQo+ID4gIAl2
+YWwgPSByZWFkbCh1c2IyX2Jhc2UgKyBVU0IyX1ZCQ1RSTCk7DQo+ID4gIAl3cml0ZWwodmFsIHwg
+VVNCMl9WQkNUUkxfRFJWVkJVU1NFTCwgdXNiMl9iYXNlICsgVVNCMl9WQkNUUkwpOw0KPiA+IC0J
+d3JpdGVsKFVTQjJfT0JJTlRfQklUUywgdXNiMl9iYXNlICsgVVNCMl9PQklOVFNUQSk7DQo+ID4g
+LQlyY2FyX2dlbjNfY29udHJvbF9vdGdfaXJxKGNoLCAxKTsNCj4gPiAgCXZhbCA9IHJlYWRsKHVz
+YjJfYmFzZSArIFVTQjJfQURQQ1RSTCk7DQo+ID4gIAl3cml0ZWwodmFsIHwgVVNCMl9BRFBDVFJM
+X0lEUFVMTFVQLCB1c2IyX2Jhc2UgKyBVU0IyX0FEUENUUkwpOw0KPiA+IC0JdmFsID0gcmVhZGwo
+dXNiMl9iYXNlICsgVVNCMl9MSU5FQ1RSTDEpOw0KPiA+IC0JcmNhcl9nZW4zX3NldF9saW5lY3Ry
+bChjaCwgMCwgMCk7DQo+ID4gLQl3cml0ZWwodmFsIHwgVVNCMl9MSU5FQ1RSTDFfRFBSUERfRU4g
+fCBVU0IyX0xJTkVDVFJMMV9ETVJQRF9FTiwNCj4gPiAtCSAgICAgICB1c2IyX2Jhc2UgKyBVU0Iy
+X0xJTkVDVFJMMSk7DQo+ID4gKw0KPiA+ICsJbXNsZWVwKDIwKTsNCj4gPiArDQo+ID4gKwl3cml0
+ZWwoVVNCMl9PQklOVF9CSVRTLCB1c2IyX2Jhc2UgKyBVU0IyX09CSU5UU1RBKTsNCj4gPiArDQo+
+ID4gKwlyY2FyX2dlbjNfY29udHJvbF9vdGdfaXJxKGNoLCAxKTsNCj4gPg0KPiA+ICAJcmNhcl9n
+ZW4zX2RldmljZV9yZWNvZ25pdGlvbihjaCk7DQo+ID4gIH0NCj4gPg0K
