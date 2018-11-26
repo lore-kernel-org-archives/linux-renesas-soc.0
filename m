@@ -1,51 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41429 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730195AbeKUVzA (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35091 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbeKZXsu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Nov 2018 16:55:00 -0500
-From: Magnus Damm <magnus.damm@gmail.com>
-To: netdev@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>, davem@davemloft.net,
-        sergei.shtylyov@cogentembedded.com
-Date: Wed, 21 Nov 2018 20:21:17 +0900
-Message-Id: <154279927781.10272.2774991326285490398.sendpatchset@octo>
-In-Reply-To: <154279926877.10272.700833429936129422.sendpatchset@octo>
-References: <154279926877.10272.700833429936129422.sendpatchset@octo>
-Subject: [PATCH v3 01/02] ravb: Do not announce HDX as supported
+        Mon, 26 Nov 2018 18:48:50 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 16/16] ARM: dts: r9a06g032: Correct the GIC DT node name
+Date: Mon, 26 Nov 2018 13:54:18 +0100
+Message-Id: <83d3483e4977eeedf258f053878a88db507630d4.1543236456.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543236456.git.horms+renesas@verge.net.au>
+References: <cover.1543236456.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Phil Edworthy <phil.edworthy@renesas.com>
 
-According to the data sheet the Ethernet-AVB hardware in R-Car Gen3
-and R-Car Gen2 SoCs do not support half duplex operation. So update
-the driver to mark 100Mbit and 1Gbps HDX as unsupported.
+Harmless mistake, but it's incorrect. The DT spec provides recommendations
+for the node names:
+"The name of a node should be somewhat generic, reflecting the function
+of the device and not its precise programming model. If appropriate, the
+name should be one of the following choices:
+...
+interrupt-controller"
 
-Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm/boot/dts/r9a06g032.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- Slightly reworked since V2 to make use of phy_remove_link_mode().
- In case Sergei wants to opt-out from the Reviewed-by tag for V2 let us know.
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+index 2322268bc862..4c1ab49c7d39 100644
+--- a/arch/arm/boot/dts/r9a06g032.dtsi
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -173,7 +173,7 @@
+ 			status = "okay";
+ 		};
  
- Applies on top of next-20181121
-
- drivers/net/ethernet/renesas/ravb_main.c |    4 ++++
- 1 file changed, 4 insertions(+)
-
---- 0001/drivers/net/ethernet/renesas/ravb_main.c
-+++ work/drivers/net/ethernet/renesas/ravb_main.c	2018-11-21 19:47:58.165498803 +0900
-@@ -1088,6 +1088,10 @@ static int ravb_phy_init(struct net_devi
- 	phy_remove_link_mode(phydev, ETHTOOL_LINK_MODE_Pause_BIT);
- 	phy_remove_link_mode(phydev, ETHTOOL_LINK_MODE_Asym_Pause_BIT);
- 
-+	/* Half Duplex is not supported */
-+	phy_remove_link_mode(phydev, ETHTOOL_LINK_MODE_1000baseT_Half_BIT);
-+	phy_remove_link_mode(phydev, ETHTOOL_LINK_MODE_100baseT_Half_BIT);
-+
- 	phy_attached_info(phydev);
- 
- 	return 0;
+-		gic: gic@44101000 {
++		gic: interrupt-controller@44101000 {
+ 			compatible = "arm,cortex-a7-gic", "arm,gic-400";
+ 			interrupt-controller;
+ 			#interrupt-cells = <3>;
+-- 
+2.11.0
