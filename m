@@ -1,56 +1,189 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:43024 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388198AbeKXBTI (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726789AbeKZXtb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Nov 2018 20:19:08 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, kieran.bingham@ideasonboard.com
-Subject: [PATCH] drm: rcar-du: dw-hdmi: Reject modes with a too high clock frequency
-Date: Fri, 23 Nov 2018 16:34:59 +0200
-Message-Id: <20181123143459.13133-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 26 Nov 2018 18:49:31 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 21/40] arm64: dts: renesas: r8a779{7|8}0: add TMU support
+Date: Mon, 26 Nov 2018 13:54:47 +0100
+Message-Id: <cb202e7c5895437fbabd0e575cf2530c65763dde.1543229515.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
+References: <cover.1543229515.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Implement a .mode_valid() handler in the R-Car glue layer to reject
-modes with an unsupported clock frequency.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Describe TMUs in the R8A779{7|8}0 device trees.
+
+Based on the original (and large) patches by Vladimir Barinov.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 65 +++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi | 65 +++++++++++++++++++++++++++++++
+ 2 files changed, 130 insertions(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
-index 75490a3e0a2a..8a603235f22d 100644
---- a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
-@@ -35,6 +35,16 @@ static const struct rcar_hdmi_phy_params rcar_hdmi_phy_params[] = {
- 	{ ~0UL,      0x0000, 0x0000, 0x0000 },
- };
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+index 4abd154bca1f..563428d1cdc2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -329,6 +329,71 @@
+ 			resets = <&cpg 407>;
+ 		};
  
-+static enum drm_mode_status
-+rcar_hdmi_mode_valid(struct drm_connector *connector,
-+		     const struct drm_display_mode *mode)
-+{
-+	if (mode->clock > 297000)
-+		return MODE_CLOCK_HIGH;
++		tmu0: timer@e61e0000 {
++			compatible = "renesas,tmu-r8a77970", "renesas,tmu";
++			reg = <0 0xe61e0000 0 0x30>;
++			interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 125>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 125>;
++			status = "disabled";
++		};
 +
-+	return MODE_OK;
-+}
++		tmu1: timer@e6fc0000 {
++			compatible = "renesas,tmu-r8a77970", "renesas,tmu";
++			reg = <0 0xe6fc0000 0 0x30>;
++			interrupts = <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 124>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 124>;
++			status = "disabled";
++		};
 +
- static int rcar_hdmi_phy_configure(struct dw_hdmi *hdmi,
- 				   const struct dw_hdmi_plat_data *pdata,
- 				   unsigned long mpixelclock)
-@@ -59,6 +69,7 @@ static int rcar_hdmi_phy_configure(struct dw_hdmi *hdmi,
- }
++		tmu2: timer@e6fd0000 {
++			compatible = "renesas,tmu-r8a77970", "renesas,tmu";
++			reg = <0 0xe6fd0000 0 0x30>;
++			interrupts = <GIC_SPI 303 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 123>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 123>;
++			status = "disabled";
++		};
++
++		tmu3: timer@e6fe0000 {
++			compatible = "renesas,tmu-r8a77970", "renesas,tmu";
++			reg = <0 0xe6fe0000 0 0x30>;
++			interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 122>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 122>;
++			status = "disabled";
++		};
++
++		tmu4: timer@ffc00000 {
++			compatible = "renesas,tmu-r8a77970", "renesas,tmu";
++			reg = <0 0xffc00000 0 0x30>;
++			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 121>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 121>;
++			status = "disabled";
++		};
++
+ 		i2c0: i2c@e6500000 {
+ 			compatible = "renesas,i2c-r8a77970",
+ 				     "renesas,rcar-gen3-i2c";
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+index ce2c9955df75..5bd9b2547c36 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -359,6 +359,71 @@
+ 			resets = <&cpg 407>;
+ 		};
  
- static const struct dw_hdmi_plat_data rcar_dw_hdmi_plat_data = {
-+	.mode_valid = rcar_hdmi_mode_valid,
- 	.configure_phy	= rcar_hdmi_phy_configure,
- };
- 
++		tmu0: timer@e61e0000 {
++			compatible = "renesas,tmu-r8a77980", "renesas,tmu";
++			reg = <0 0xe61e0000 0 0x30>;
++			interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 125>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 125>;
++			status = "disabled";
++		};
++
++		tmu1: timer@e6fc0000 {
++			compatible = "renesas,tmu-r8a77980", "renesas,tmu";
++			reg = <0 0xe6fc0000 0 0x30>;
++			interrupts = <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 124>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 124>;
++			status = "disabled";
++		};
++
++		tmu2: timer@e6fd0000 {
++			compatible = "renesas,tmu-r8a77980", "renesas,tmu";
++			reg = <0 0xe6fd0000 0 0x30>;
++			interrupts = <GIC_SPI 303 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 123>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 123>;
++			status = "disabled";
++		};
++
++		tmu3: timer@e6fe0000 {
++			compatible = "renesas,tmu-r8a77980", "renesas,tmu";
++			reg = <0 0xe6fe0000 0 0x30>;
++			interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 122>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 122>;
++			status = "disabled";
++		};
++
++		tmu4: timer@ffc00000 {
++			compatible = "renesas,tmu-r8a77980", "renesas,tmu";
++			reg = <0 0xffc00000 0 0x30>;
++			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 121>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 121>;
++			status = "disabled";
++		};
++
+ 		i2c0: i2c@e6500000 {
+ 			compatible = "renesas,i2c-r8a77980",
+ 				     "renesas,rcar-gen3-i2c";
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
