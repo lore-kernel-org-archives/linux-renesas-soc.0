@@ -1,62 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:39940 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728283AbeKBIiD (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35091 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726210AbeKZXsb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Nov 2018 04:38:03 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH v2 07/30] media: entity: Add has_route entity operation
-Date: Fri,  2 Nov 2018 00:31:21 +0100
-Message-Id: <20181101233144.31507-8-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 26 Nov 2018 18:48:31 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 04/16] ARM: dts: r8a77470: Add SDHI1 support
+Date: Mon, 26 Nov 2018 13:54:06 +0100
+Message-Id: <239a4d7f1271aa255c06240e66d586c4695fb0da.1543236456.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543236456.git.horms+renesas@verge.net.au>
+References: <cover.1543236456.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-The optional operation can be used by entities to report whether two
-pads are internally connected.
+Althought interface SDHI1 found on the RZ/G1C SoC (a.k.a.
+r8a77470) is compatible with the R-Car Gen3 ones, its OF
+compatibility is restricted to the SoC specific compatible
+string to avoid confusion, as from a more generic perspective
+the RZ/G1C is sharing the most similarities with the R-Car
+Gen2 family of SoCs, and there is a combination of R-Car
+Gen2 compatible SDHI IPs and R-Car Gen3 compatible SDHI IP
+on this specific chip.
+This patch adds the SoC specific part of SDHI1 support, and
+since SDHI1 comes with internal DMA, its DT node looks fairly
+different from SDHI0 and SDHI2.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- include/media/media-entity.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/r8a77470.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/include/media/media-entity.h b/include/media/media-entity.h
-index 8378f700389635ea..cd482814654616b5 100644
---- a/include/media/media-entity.h
-+++ b/include/media/media-entity.h
-@@ -223,6 +223,9 @@ struct media_pad {
-  * @link_validate:	Return whether a link is valid from the entity point of
-  *			view. The media_pipeline_start() function
-  *			validates all links by calling this operation. Optional.
-+ * @has_route:		Return whether a route exists inside the entity between
-+ *			two given pads. Optional. If the operation isn't
-+ *			implemented all pads will be considered as connected.
-  *
-  * .. note::
-  *
-@@ -235,6 +238,8 @@ struct media_entity_operations {
- 			  const struct media_pad *local,
- 			  const struct media_pad *remote, u32 flags);
- 	int (*link_validate)(struct media_link *link);
-+	bool (*has_route)(struct media_entity *entity, unsigned int pad0,
-+			  unsigned int pad1);
- };
+diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
+index ab2e0223f8a1..6ac7f467065e 100644
+--- a/arch/arm/boot/dts/r8a77470.dtsi
++++ b/arch/arm/boot/dts/r8a77470.dtsi
+@@ -505,6 +505,17 @@
+ 			status = "disabled";
+ 		};
  
- /**
++		sdhi1: sd@ee300000 {
++			compatible = "renesas,sdhi-mmc-r8a77470";
++			reg = <0 0xee300000 0 0x2000>;
++			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 313>;
++			max-frequency = <156000000>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 313>;
++			status = "disabled";
++		};
++
+ 		sdhi2: sd@ee160000 {
+ 			compatible = "renesas,sdhi-r8a77470",
+ 				     "renesas,rcar-gen2-sdhi";
 -- 
-2.19.1
+2.11.0
