@@ -1,74 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:41952 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392588AbeKWKFN (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35255 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726567AbeKZXtN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Nov 2018 05:05:13 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Nguyen An Hoan <na-hoan@jinso.co.jp>
-Cc: broonie@kernel.org, linux-renesas-soc@vger.kernel.org,
-        geert+renesas@glider.be, kuninori.morimoto.gx@renesas.com,
-        yoshihiro.shimoda.uh@renesas.com, magnus.damm@gmail.com,
-        h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp, cv-dong@jinso.co.jp
-Subject: Re: [PATCH] drm: rcar-du: fix probe error when DRM_RCAR_DW_HDMI disabled
-Date: Fri, 23 Nov 2018 01:23:47 +0200
-Message-ID: <3976026.jii4pGMLAq@avalon>
-In-Reply-To: <1537530543-29518-2-git-send-email-na-hoan@jinso.co.jp>
-References: <1537530543-29518-1-git-send-email-na-hoan@jinso.co.jp> <1537530543-29518-2-git-send-email-na-hoan@jinso.co.jp>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Mon, 26 Nov 2018 18:49:13 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 01/40] arm64: dts: renesas: r8a774a1: Add CAN nodes
+Date: Mon, 26 Nov 2018 13:54:27 +0100
+Message-Id: <b823d65f3380e9d7dd19c8e015dd7f22a0a09957.1543229515.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
+References: <cover.1543229515.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Hoan,
+From: Chris Paterson <chris.paterson2@renesas.com>
 
-Thank you for the patch.
+Add the device nodes for both RZ/G2M CAN channels.
 
-On Friday, 21 September 2018 14:49:03 EET Nguyen An Hoan wrote:
-> From: Hoan Nguyen An <na-hoan@jinso.co.jp>
-> 
-> Skip return EPROBE_DEFER when DRM_RCAR_DW_HDMI is disabled in case HDMI
-> initialize. At this time, the rcar-du driver not be able to successfully
-> initialize if disable DRM_RCAR_DW_HDMI (rcar_du_probe return error),
-> so can not use other features such as RGB Analog, this patch to fix.
-> 
-> Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
-> ---
->  drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-> b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c index f9c933d..4dbc508 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-> @@ -66,8 +66,15 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
->  	/* Locate the DRM bridge from the encoder DT node. */
->  	bridge = of_drm_find_bridge(enc_node);
->  	if (!bridge) {
-> +#if IS_ENABLED(CONFIG_DRM_RCAR_DW_HDMI)
->  		ret = -EPROBE_DEFER;
->  		goto done;
-> +#else
-> +		if (output == RCAR_DU_OUTPUT_HDMI0 ||
-> +		    output == RCAR_DU_OUTPUT_HDMI1)
-> +		    ret = 0;
-> +		    goto done;
-> +#endif
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-The dw-hdmi driver could be compiled out of tree, I don't think is the right 
-fix. If the HDMI output should be disabled on a particular system, the 
-corresponding DT node should be marked as disable, and no change to the DU 
-driver is needed. Otherwise the necessary drivers should be present.
-
-In the long term we should implement support for registration of additional 
-encoders at runtime, but that's way down the road.
-
->  	}
-> 
->  	ret = drm_encoder_init(rcdu->ddev, encoder, &encoder_funcs,
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index 012cbb64246e..a4817a012e11 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -873,6 +873,30 @@
+ 			status = "disabled";
+ 		};
+ 
++		can0: can@e6c30000 {
++			compatible = "renesas,can-r8a774a1",
++				     "renesas,rcar-gen3-can";
++			reg = <0 0xe6c30000 0 0x1000>;
++			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 916>, <&can_clk>;
++			clock-names = "clkp1", "can_clk";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 916>;
++			status = "disabled";
++		};
++
++		can1: can@e6c38000 {
++			compatible = "renesas,can-r8a774a1",
++				     "renesas,rcar-gen3-can";
++			reg = <0 0xe6c38000 0 0x1000>;
++			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 915>, <&can_clk>;
++			clock-names = "clkp1", "can_clk";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 915>;
++			status = "disabled";
++		};
++
+ 		pwm0: pwm@e6e30000 {
+ 			compatible = "renesas,pwm-r8a774a1", "renesas,pwm-rcar";
+ 			reg = <0 0xe6e30000 0 0x8>;
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
