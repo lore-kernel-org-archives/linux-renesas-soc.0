@@ -1,86 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51428 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727564AbeKHBMU (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726567AbeKZXt1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Nov 2018 20:12:20 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Richard Weinberger <richard@nod.at>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-mtd@lists.infradead.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>, linux-spi@vger.kernel.org
-Subject: Applied "spi: rspi: Add r8a77470 to the compatible list" to the spi tree
-In-Reply-To: <1541075705-1333-2-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-Id: <20181107154103.C8F421124E14@debutante.sirena.org.uk>
-Date: Wed,  7 Nov 2018 15:41:03 +0000 (GMT)
+        Mon, 26 Nov 2018 18:49:27 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 17/40] arm64: dts: renesas: salvator-common: add companion property in usb3_peri0
+Date: Mon, 26 Nov 2018 13:54:43 +0100
+Message-Id: <396aadeb951dfb11c075ac6ed18178fa8513e746.1543229515.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
+References: <cover.1543229515.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-   spi: rspi: Add r8a77470 to the compatible list
+This patch adds a property "companion" with xhci0 phandle to
+the usb3_peri0 node in salvator-common.dtsi.
 
-has been applied to the spi tree at
+About the detail of this property for renesas_usb3 udc driver, please
+refer to the commit 39facfa01c9f ("usb: gadget: udc: renesas_usb3:
+Add register of usb role switch").
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From df80e0478972260bf285c5ed33f99b2424fba2af Mon Sep 17 00:00:00 2001
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Date: Thu, 1 Nov 2018 12:35:02 +0000
-Subject: [PATCH] spi: rspi: Add r8a77470 to the compatible list
-
-Add r8a77470 to the list of examples with soctypes.
-No driver change is needed as "renesas,qspi" will activate
-the right code within the corresponding driver.
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/spi/spi-rspi.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-rspi.txt b/Documentation/devicetree/bindings/spi/spi-rspi.txt
-index fc97ad64fbf2..421722b93992 100644
---- a/Documentation/devicetree/bindings/spi/spi-rspi.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-rspi.txt
-@@ -15,6 +15,7 @@ Required properties:
- 			- "renesas,qspi-r8a7743" (RZ/G1M)
- 			- "renesas,qspi-r8a7744" (RZ/G1N)
- 			- "renesas,qspi-r8a7745" (RZ/G1E)
-+			- "renesas,qspi-r8a77470" (RZ/G1C)
- 			- "renesas,qspi-r8a7790" (R-Car H2)
- 			- "renesas,qspi-r8a7791" (R-Car M2-W)
- 			- "renesas,qspi-r8a7792" (R-Car V2H)
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index 054a7eeeef92..a3e89504e044 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -817,6 +817,8 @@
+ 	phys = <&usb3_phy0>;
+ 	phy-names = "usb";
+ 
++	companion = <&xhci0>;
++
+ 	status = "okay";
+ };
+ 
 -- 
-2.19.0.rc2
+2.11.0
