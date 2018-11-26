@@ -1,61 +1,107 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46455 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbeKBT3h (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726876AbeKZXte (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Nov 2018 15:29:37 -0400
-Received: by mail-lj1-f195.google.com with SMTP id x3-v6so1248350lji.13
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Nov 2018 03:22:57 -0700 (PDT)
-From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Date: Fri, 2 Nov 2018 11:22:54 +0100
-To: Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux-foundation.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dma-mapping: fix return type of dma_set_max_seg_size()
-Message-ID: <20181102102254.GF22306@bigcity.dyn.berto.se>
-References: <20180829212921.10665-1-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 26 Nov 2018 18:49:34 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 07/40] arm64: dts: renesas: r8a77980: add thermal support
+Date: Mon, 26 Nov 2018 13:54:33 +0100
+Message-Id: <69c5e602d0bd717da04c18c08017d195ec10da8d.1543229515.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
+References: <cover.1543229515.git.horms+renesas@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180829212921.10665-1-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-A gentle ping on this patch.
+Describe THS/CIVM in the R8A77980 device trees.
 
-On 2018-08-29 23:29:21 +0200, Niklas S�derlund wrote:
-> The function dma_set_max_seg_size() can return either 0 on success or
-> -EIO on error. Change its return type from unsigned int to int to
-> capture this.
-> 
-> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->  include/linux/dma-mapping.h | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-> index 1db6a6b46d0d3dbd..669cde2fa8723ac5 100644
-> --- a/include/linux/dma-mapping.h
-> +++ b/include/linux/dma-mapping.h
-> @@ -674,8 +674,7 @@ static inline unsigned int dma_get_max_seg_size(struct device *dev)
->  	return SZ_64K;
->  }
->  
-> -static inline unsigned int dma_set_max_seg_size(struct device *dev,
-> -						unsigned int size)
-> +static inline int dma_set_max_seg_size(struct device *dev, unsigned int size)
->  {
->  	if (dev->dma_parms) {
->  		dev->dma_parms->max_segment_size = size;
-> -- 
-> 2.18.0
-> 
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi | 53 +++++++++++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+index a1fda9901423..42c7088223c8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -330,6 +330,19 @@
+ 			#power-domain-cells = <1>;
+ 		};
+ 
++		tsc: thermal@e6198000 {
++			compatible = "renesas,r8a77980-thermal";
++			reg = <0 0xe6198000 0 0x100>,
++			      <0 0xe61a0000 0 0x100>;
++			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 522>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 522>;
++			#thermal-sensor-cells = <1>;
++		};
++
+ 		intc_ex: interrupt-controller@e61c0000 {
+ 			compatible = "renesas,intc-ex-r8a77980", "renesas,irqc";
+ 			#interrupt-cells = <2>;
+@@ -1404,6 +1417,46 @@
+ 		};
+ 	};
+ 
++	thermal-zones {
++		thermal-sensor-1 {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++			thermal-sensors = <&tsc 0>;
++
++			trips {
++				sensor1-passive {
++					temperature = <95000>;
++					hysteresis = <1000>;
++					type = "passive";
++				};
++				sensor1-critical {
++					temperature = <120000>;
++					hysteresis = <1000>;
++					type = "critical";
++				};
++			};
++		};
++
++		thermal-sensor-2 {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++			thermal-sensors = <&tsc 1>;
++
++			trips {
++				sensor2-passive {
++					temperature = <95000>;
++					hysteresis = <1000>;
++					type = "passive";
++				};
++				sensor2-critical {
++					temperature = <120000>;
++					hysteresis = <1000>;
++					type = "critical";
++				};
++			};
++		};
++	};
++
+ 	timer {
+ 		compatible = "arm,armv8-timer";
+ 		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) |
 -- 
-Regards,
-Niklas S�derlund
+2.11.0
