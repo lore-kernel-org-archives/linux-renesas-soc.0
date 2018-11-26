@@ -1,58 +1,99 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:44606 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725882AbeKIFhj (ORCPT
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:45657 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726318AbeK0Cri (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Nov 2018 00:37:39 -0500
-MIME-Version: 1.0
-References: <20181028212457.1017-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181028212457.1017-1-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 8 Nov 2018 21:00:26 +0100
-Message-ID: <CAMuHMdW0LH+D0QrswYT9=Kt3m1DCc2ZcvOi7yLz-ryPo8OY_wA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] pinctrl: sh-pfc: gen2: initialize TDSEL register
+        Mon, 26 Nov 2018 21:47:38 -0500
+Received: by mail-lj1-f193.google.com with SMTP id s5-v6so17041281ljd.12
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Nov 2018 07:53:07 -0800 (PST)
+Date: Mon, 26 Nov 2018 16:52:16 +0100
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>,
+        Avri Altman <Avri.Altman@wdc.com>,
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+Subject: Re: [PATCH 1/2] mmc: core: use mrq->sbc when sending CMD23 for RPMB
+Message-ID: <20181126155215.GN1158@bigcity.dyn.berto.se>
+References: <20181126133814.1185-1-wsa+renesas@sang-engineering.com>
+ <20181126133814.1185-2-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181126133814.1185-2-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Wolfram,
 
-CC Chris Paterson
+Thanks for your patch.
 
-On Sun, Oct 28, 2018 at 10:25 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> During our SDHI hackathon, we found that Lager was the only Gen2 board
-> having issues with a stubborn SD card. The issue went away when setting
-> TDSEL to the expected value mentioned in the H2 documentation which is
-> sadly not the default value. M2-W, M2-N, and V2H have an expected value
-> of 0 for TDSEL, so this is why they likely work out of the box (V2H has
-> non-zero drive strength bit, though). I can't verify those SoCs here, no
+On 2018-11-26 14:38:13 +0100, Wolfram Sang wrote:
+> When sending out CMD23 in the blk preparation, the comment there
+> rightfully says:
+> 
+> 	 * However, it is not sufficient to just send CMD23,
+> 	 * and avoid the final CMD12, as on an error condition
+> 	 * CMD12 (stop) needs to be sent anyway. This, coupled
+> 	 * with Auto-CMD23 enhancements provided by some
+> 	 * hosts, means that the complexity of dealing
+> 	 * with this is best left to the host. If CMD23 is
+> 	 * supported by card and host, we'll fill sbc in and let
+> 	 * the host deal with handling it correctly.
+> 
+> Let's do this behaviour for RPMB as well, and not send CMD23
+> independently. Otherwise IP cores (like Renesas SDHI) may timeout
+> because of automatic CMD23/CMD12 handling.
+> 
+> Reported-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Tested-by: Cl�ment P�ron <peron.clem@gmail.com>
 
-But the default non-zero drive strength bit does match the required value
-on V2H.
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-> boards. E2 has a non-zero expected value as well, so we fix it in this
-> patch series as well (although on my board the bootloader prepares TDSEL
-> correctly, but let's not rely on that).
-
-Probably we should program TDSEL regardless, to avoid any dependency on
-reset state or boot loader.
-
-Note that all RZ/G1 SoCs requires zero TDSEL values, except for RZ/G1C
-(which doesn't document required values, just the initial values).
-So we need some soc_device_match() handling to obtain the required value.
-
-Gr{oetje,eeting}s,
-
-                        Geert
+> ---
+>  drivers/mmc/core/block.c | 15 ++++++++++-----
+>  1 file changed, 10 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+> index c35b5b08bb33..111934838da2 100644
+> --- a/drivers/mmc/core/block.c
+> +++ b/drivers/mmc/core/block.c
+> @@ -472,7 +472,7 @@ static int ioctl_do_sanitize(struct mmc_card *card)
+>  static int __mmc_blk_ioctl_cmd(struct mmc_card *card, struct mmc_blk_data *md,
+>  			       struct mmc_blk_ioc_data *idata)
+>  {
+> -	struct mmc_command cmd = {};
+> +	struct mmc_command cmd = {}, sbc = {};
+>  	struct mmc_data data = {};
+>  	struct mmc_request mrq = {};
+>  	struct scatterlist sg;
+> @@ -550,10 +550,15 @@ static int __mmc_blk_ioctl_cmd(struct mmc_card *card, struct mmc_blk_data *md,
+>  	}
+>  
+>  	if (idata->rpmb) {
+> -		err = mmc_set_blockcount(card, data.blocks,
+> -			idata->ic.write_flag & (1 << 31));
+> -		if (err)
+> -			return err;
+> +		sbc.opcode = MMC_SET_BLOCK_COUNT;
+> +		/*
+> +		 * We don't do any blockcount validation because the max size
+> +		 * may be increased by a future standard. We just copy the
+> +		 * 'Reliable Write' bit here.
+> +		 */
+> +		sbc.arg = data.blocks | (idata->ic.write_flag & BIT(31));
+> +		sbc.flags = MMC_RSP_R1 | MMC_CMD_AC;
+> +		mrq.sbc = &sbc;
+>  	}
+>  
+>  	if ((MMC_EXTRACT_INDEX_FROM_ARG(cmd.arg) == EXT_CSD_SANITIZE_START) &&
+> -- 
+> 2.11.0
+> 
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regards,
+Niklas S�derlund
