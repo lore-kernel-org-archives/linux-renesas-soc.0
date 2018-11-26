@@ -1,99 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45657 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726318AbeK0Cri (ORCPT
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:30882 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726312AbeK0Cqi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Nov 2018 21:47:38 -0500
-Received: by mail-lj1-f193.google.com with SMTP id s5-v6so17041281ljd.12
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Nov 2018 07:53:07 -0800 (PST)
-Date: Mon, 26 Nov 2018 16:52:16 +0100
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>,
-        Avri Altman <Avri.Altman@wdc.com>,
+        Mon, 26 Nov 2018 21:46:38 -0500
+From: Avri Altman <Avri.Altman@wdc.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
         Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-Subject: Re: [PATCH 1/2] mmc: core: use mrq->sbc when sending CMD23 for RPMB
-Message-ID: <20181126155215.GN1158@bigcity.dyn.berto.se>
+Subject: RE: [PATCH 1/2] mmc: core: use mrq->sbc when sending CMD23 for RPMB
+Date: Mon, 26 Nov 2018 15:52:06 +0000
+Message-ID: <DM6PR04MB49237DADD4A3419028CDCF8BFCD70@DM6PR04MB4923.namprd04.prod.outlook.com>
 References: <20181126133814.1185-1-wsa+renesas@sang-engineering.com>
  <20181126133814.1185-2-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 In-Reply-To: <20181126133814.1185-2-wsa+renesas@sang-engineering.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
-
-Thanks for your patch.
-
-On 2018-11-26 14:38:13 +0100, Wolfram Sang wrote:
-> When sending out CMD23 in the blk preparation, the comment there
-> rightfully says:
-> 
-> 	 * However, it is not sufficient to just send CMD23,
-> 	 * and avoid the final CMD12, as on an error condition
-> 	 * CMD12 (stop) needs to be sent anyway. This, coupled
-> 	 * with Auto-CMD23 enhancements provided by some
-> 	 * hosts, means that the complexity of dealing
-> 	 * with this is best left to the host. If CMD23 is
-> 	 * supported by card and host, we'll fill sbc in and let
-> 	 * the host deal with handling it correctly.
-> 
-> Let's do this behaviour for RPMB as well, and not send CMD23
-> independently. Otherwise IP cores (like Renesas SDHI) may timeout
-> because of automatic CMD23/CMD12 handling.
-> 
-> Reported-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Tested-by: Cl�ment P�ron <peron.clem@gmail.com>
-
-Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-
-> ---
->  drivers/mmc/core/block.c | 15 ++++++++++-----
->  1 file changed, 10 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-> index c35b5b08bb33..111934838da2 100644
-> --- a/drivers/mmc/core/block.c
-> +++ b/drivers/mmc/core/block.c
-> @@ -472,7 +472,7 @@ static int ioctl_do_sanitize(struct mmc_card *card)
->  static int __mmc_blk_ioctl_cmd(struct mmc_card *card, struct mmc_blk_data *md,
->  			       struct mmc_blk_ioc_data *idata)
->  {
-> -	struct mmc_command cmd = {};
-> +	struct mmc_command cmd = {}, sbc = {};
->  	struct mmc_data data = {};
->  	struct mmc_request mrq = {};
->  	struct scatterlist sg;
-> @@ -550,10 +550,15 @@ static int __mmc_blk_ioctl_cmd(struct mmc_card *card, struct mmc_blk_data *md,
->  	}
->  
->  	if (idata->rpmb) {
-> -		err = mmc_set_blockcount(card, data.blocks,
-> -			idata->ic.write_flag & (1 << 31));
-> -		if (err)
-> -			return err;
-> +		sbc.opcode = MMC_SET_BLOCK_COUNT;
-> +		/*
-> +		 * We don't do any blockcount validation because the max size
-> +		 * may be increased by a future standard. We just copy the
-> +		 * 'Reliable Write' bit here.
-> +		 */
-> +		sbc.arg = data.blocks | (idata->ic.write_flag & BIT(31));
-> +		sbc.flags = MMC_RSP_R1 | MMC_CMD_AC;
-> +		mrq.sbc = &sbc;
->  	}
->  
->  	if ((MMC_EXTRACT_INDEX_FROM_ARG(cmd.arg) == EXT_CSD_SANITIZE_START) &&
-> -- 
-> 2.11.0
-> 
-
--- 
-Regards,
-Niklas S�derlund
+PiANCj4gV2hlbiBzZW5kaW5nIG91dCBDTUQyMyBpbiB0aGUgYmxrIHByZXBhcmF0aW9uLCB0aGUg
+Y29tbWVudCB0aGVyZQ0KPiByaWdodGZ1bGx5IHNheXM6DQo+IA0KPiAJICogSG93ZXZlciwgaXQg
+aXMgbm90IHN1ZmZpY2llbnQgdG8ganVzdCBzZW5kIENNRDIzLA0KPiAJICogYW5kIGF2b2lkIHRo
+ZSBmaW5hbCBDTUQxMiwgYXMgb24gYW4gZXJyb3IgY29uZGl0aW9uDQo+IAkgKiBDTUQxMiAoc3Rv
+cCkgbmVlZHMgdG8gYmUgc2VudCBhbnl3YXkuIFRoaXMsIGNvdXBsZWQNCj4gCSAqIHdpdGggQXV0
+by1DTUQyMyBlbmhhbmNlbWVudHMgcHJvdmlkZWQgYnkgc29tZQ0KPiAJICogaG9zdHMsIG1lYW5z
+IHRoYXQgdGhlIGNvbXBsZXhpdHkgb2YgZGVhbGluZw0KPiAJICogd2l0aCB0aGlzIGlzIGJlc3Qg
+bGVmdCB0byB0aGUgaG9zdC4gSWYgQ01EMjMgaXMNCj4gCSAqIHN1cHBvcnRlZCBieSBjYXJkIGFu
+ZCBob3N0LCB3ZSdsbCBmaWxsIHNiYyBpbiBhbmQgbGV0DQo+IAkgKiB0aGUgaG9zdCBkZWFsIHdp
+dGggaGFuZGxpbmcgaXQgY29ycmVjdGx5Lg0KPiANCj4gTGV0J3MgZG8gdGhpcyBiZWhhdmlvdXIg
+Zm9yIFJQTUIgYXMgd2VsbCwgYW5kIG5vdCBzZW5kIENNRDIzDQo+IGluZGVwZW5kZW50bHkuIE90
+aGVyd2lzZSBJUCBjb3JlcyAobGlrZSBSZW5lc2FzIFNESEkpIG1heSB0aW1lb3V0DQo+IGJlY2F1
+c2Ugb2YgYXV0b21hdGljIENNRDIzL0NNRDEyIGhhbmRsaW5nLg0KPiANCj4gUmVwb3J0ZWQtYnk6
+IE1hc2FoYXJ1IEhheWFrYXdhIDxtYXNhaGFydS5oYXlha2F3YS5yeUByZW5lc2FzLmNvbT4NCj4g
+U2lnbmVkLW9mZi1ieTogV29sZnJhbSBTYW5nIDx3c2ErcmVuZXNhc0BzYW5nLWVuZ2luZWVyaW5n
+LmNvbT4NCj4gVGVzdGVkLWJ5OiBDbMOpbWVudCBQw6lyb24gPHBlcm9uLmNsZW1AZ21haWwuY29t
+Pg0KUmV2aWV3ZWQtYnk6IEF2cmkgQWx0bWFuIDxhdnJpLmFsdG1hbkB3ZGMuY29tPg0KDQo=
