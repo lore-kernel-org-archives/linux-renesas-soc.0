@@ -1,125 +1,171 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:48955 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728360AbeKBIiU (ORCPT
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33782 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726203AbeK0DsN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Nov 2018 04:38:20 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 27/30] adv748x: csi2: add internal routing configuration
-Date: Fri,  2 Nov 2018 00:31:41 +0100
-Message-Id: <20181101233144.31507-28-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 26 Nov 2018 22:48:13 -0500
+Received: by mail-lj1-f194.google.com with SMTP id v1-v6so17303548ljd.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Nov 2018 08:53:31 -0800 (PST)
+Date: Mon, 26 Nov 2018 17:53:29 +0100
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v3 2/3] mmc: tmio: fix reset operation
+Message-ID: <20181126165329.GS1158@bigcity.dyn.berto.se>
+References: <20181031230554.1660-1-niklas.soderlund@ragnatech.se>
+ <20181031230554.1660-3-niklas.soderlund@ragnatech.se>
+ <CAK7LNAQ4FwnmLb_O+mNrWa6kF6KEpyDSg3r_zJbc_b8=hyLZ+w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNAQ4FwnmLb_O+mNrWa6kF6KEpyDSg3r_zJbc_b8=hyLZ+w@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support to get and set the internal routing between the adv748x
-CSI-2 transmitters sink pad and its multiplexed source pad. This routing
-includes which stream of the multiplexed pad to use, allowing the user
-to select which CSI-2 virtual channel to use when transmitting the
-stream.
+Hi Yamada-san,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/i2c/adv748x/adv748x-csi2.c | 65 ++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
+Thanks for your feedback.
 
-diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
-index d83ae8e5d802a3bd..ef588567313574c7 100644
---- a/drivers/media/i2c/adv748x/adv748x-csi2.c
-+++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
-@@ -14,6 +14,8 @@
- 
- #include "adv748x.h"
- 
-+#define ADV748X_CSI2_ROUTES_MAX 4
-+
- struct adv748x_csi2_format {
- 	unsigned int code;
- 	unsigned int datatype;
-@@ -249,10 +251,73 @@ static int adv748x_csi2_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
- 	return 0;
- }
- 
-+static int adv748x_csi2_get_routing(struct v4l2_subdev *sd,
-+				    struct v4l2_subdev_routing *routing)
-+{
-+	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
-+	struct v4l2_subdev_route *r = routing->routes;
-+	unsigned int vc;
-+
-+	if (routing->num_routes < ADV748X_CSI2_ROUTES_MAX) {
-+		routing->num_routes = ADV748X_CSI2_ROUTES_MAX;
-+		return -ENOSPC;
-+	}
-+
-+	routing->num_routes = ADV748X_CSI2_ROUTES_MAX;
-+
-+	for (vc = 0; vc < ADV748X_CSI2_ROUTES_MAX; vc++) {
-+		r->sink_pad = ADV748X_CSI2_SINK;
-+		r->sink_stream = 0;
-+		r->source_pad = ADV748X_CSI2_SOURCE;
-+		r->source_stream = vc;
-+		r->flags = vc == tx->vc ? V4L2_SUBDEV_ROUTE_FL_ACTIVE : 0;
-+		r++;
-+	}
-+
-+	return 0;
-+}
-+
-+static int adv748x_csi2_set_routing(struct v4l2_subdev *sd,
-+				    struct v4l2_subdev_routing *routing)
-+{
-+	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
-+	struct v4l2_subdev_route *r = routing->routes;
-+	unsigned int i;
-+	int vc = -1;
-+
-+	if (routing->num_routes > ADV748X_CSI2_ROUTES_MAX)
-+		return -ENOSPC;
-+
-+	for (i = 0; i < routing->num_routes; i++) {
-+		if (r->sink_pad != ADV748X_CSI2_SINK ||
-+		    r->sink_stream != 0 ||
-+		    r->source_pad != ADV748X_CSI2_SOURCE ||
-+		    r->source_stream >= ADV748X_CSI2_ROUTES_MAX)
-+			return -EINVAL;
-+
-+		if (r->flags & V4L2_SUBDEV_ROUTE_FL_ACTIVE) {
-+			if (vc != -1)
-+				return -EMLINK;
-+
-+			vc = r->source_stream;
-+		}
-+		r++;
-+	}
-+
-+	if (vc != -1)
-+		tx->vc = vc;
-+
-+	adv748x_csi2_set_virtual_channel(tx, tx->vc);
-+
-+	return 0;
-+}
-+
- static const struct v4l2_subdev_pad_ops adv748x_csi2_pad_ops = {
- 	.get_fmt = adv748x_csi2_get_format,
- 	.set_fmt = adv748x_csi2_set_format,
- 	.get_frame_desc = adv748x_csi2_get_frame_desc,
-+	.get_routing = adv748x_csi2_get_routing,
-+	.set_routing = adv748x_csi2_set_routing,
- };
- 
- /* -----------------------------------------------------------------------------
+On 2018-11-02 15:54:17 +0900, Masahiro Yamada wrote:
+> On Thu, Nov 1, 2018 at 8:53 AM Niklas S�derlund
+> <niklas.soderlund@ragnatech.se> wrote:
+> >
+> > From: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> >
+> > SD / MMC did not operate properly when suspend transition failed.
+> > Because the SCC was not reset at resume, issue of the command failed.
+> > Call the host specific reset function and reset the hardware in order to
+> > add reset of SCC. This change also fixes tuning on some stubborn cards
+> > on Gen2.
+> >
+> > Based on work from Masaharu Hayakawa.
+> >
+> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> >
+> > ---
+> > * Changes sine v1
+> > - Merge tmio_mmc_reset() into tmio_mmc_hw_reset() as it's now the only
+> >   caller.
+> >
+> > * Changes since v2
+> > - Rebased on mmc/next caused small refactoring of the code.
+> > ---
+> >  drivers/mmc/host/tmio_mmc_core.c | 26 +++++++++++++++-----------
+> >  1 file changed, 15 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+> > index 953562a12a0d6ebc..662161be03b6d52e 100644
+> > --- a/drivers/mmc/host/tmio_mmc_core.c
+> > +++ b/drivers/mmc/host/tmio_mmc_core.c
+> > @@ -171,6 +171,18 @@ static void tmio_mmc_reset(struct tmio_mmc_host *host)
+> >         }
+> >  }
+> >
+> > +static void tmio_mmc_hw_reset(struct mmc_host *mmc)
+> > +{
+> > +       struct tmio_mmc_host *host = mmc_priv(mmc);
+> > +
+> > +       host->reset(host);
+> > +
+> > +       tmio_mmc_abort_dma(host);
+> > +
+> > +       if (host->hw_reset)
+> > +               host->hw_reset(host);
+> > +}
+> > +
+> >  static void tmio_mmc_reset_work(struct work_struct *work)
+> >  {
+> >         struct tmio_mmc_host *host = container_of(work, struct tmio_mmc_host,
+> > @@ -209,7 +221,7 @@ static void tmio_mmc_reset_work(struct work_struct *work)
+> >
+> >         spin_unlock_irqrestore(&host->lock, flags);
+> >
+> > -       host->reset(host);
+> > +       tmio_mmc_hw_reset(host->mmc);
+> >
+> >         /* Ready for new calls */
+> >         host->mrq = NULL;
+> 
+> 
+> 
+> I see tmio_mmc_abort_dma() a few lines below.
+> 
+> If you add tmio_mmc_abort_dma() into tmio_mmc_hw_reset(),
+> you do not need to abort DMA twice, don't you?
+> 
+> 
+> 
+> 
+>         tmio_mmc_hw_reset(host->mmc);
+> 
+>         /* Ready for new calls */
+>         host->mrq = NULL;
+> 
+>         tmio_mmc_abort_dma(host);              /* <-- abort DMA again? */
+>         mmc_request_done(host->mmc, mrq);
+> }
+> 
+
+You are correct with this change the call to tmio_mmc_abort_dma() can be 
+dropped here. Will do so and send out a new version. Thanks for pointing 
+this out!
+
+> 
+> > @@ -696,14 +708,6 @@ static int tmio_mmc_start_data(struct tmio_mmc_host *host,
+> >         return 0;
+> >  }
+> >
+> > -static void tmio_mmc_hw_reset(struct mmc_host *mmc)
+> > -{
+> > -       struct tmio_mmc_host *host = mmc_priv(mmc);
+> > -
+> > -       if (host->hw_reset)
+> > -               host->hw_reset(host);
+> > -}
+> > -
+> >  static int tmio_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
+> >  {
+> >         struct tmio_mmc_host *host = mmc_priv(mmc);
+> > @@ -1228,7 +1232,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
+> >                 _host->sdio_irq_mask = TMIO_SDIO_MASK_ALL;
+> >
+> >         _host->set_clock(_host, 0);
+> > -       _host->reset(_host);
+> > +       tmio_mmc_hw_reset(mmc);
+> 
+> 
+> I think it is weird to call tmio_mmc_abort_dma()
+> before tmio_mmc_request_dma().
+> 
+> 
+> 
+> 
+> 
+> >         _host->sdcard_irq_mask = sd_ctrl_read16_and_16_as_32(_host, CTL_IRQ_MASK);
+> >         tmio_mmc_disable_mmc_irqs(_host, TMIO_MASK_ALL);
+> > @@ -1329,7 +1333,7 @@ int tmio_mmc_host_runtime_resume(struct device *dev)
+> >         struct tmio_mmc_host *host = dev_get_drvdata(dev);
+> >
+> >         tmio_mmc_clk_enable(host);
+> > -       host->reset(host);
+> > +       tmio_mmc_hw_reset(host->mmc);
+> >
+> >         if (host->clk_cache)
+> >                 host->set_clock(host, host->clk_cache);
+> > --
+> > 2.19.1
+> >
+> 
+> 
+> --
+> Best Regards
+> Masahiro Yamada
+
 -- 
-2.19.1
+Regards,
+Niklas S�derlund
