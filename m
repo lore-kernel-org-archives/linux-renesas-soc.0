@@ -1,220 +1,261 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:33002 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726621AbeK2WXt (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726411AbeKZXtr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Nov 2018 17:23:49 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>
-Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        Mon, 26 Nov 2018 18:49:47 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, dmaengine@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] dmaengine: sh: Remove R-Mobile APE6 support
-Date: Thu, 29 Nov 2018 12:18:39 +0100
-Message-Id: <20181129111839.12879-1-geert+renesas@glider.be>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 18/40] arm64: dts: renesas: r8a7799{0|5}: add/enable USB2.0 peripheral
+Date: Mon, 26 Nov 2018 13:54:44 +0100
+Message-Id: <5c6479d9b25b40001e814003f62a93485f9ff82f.1543229515.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
+References: <cover.1543229515.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Renesas R-Mobile APE6 support is currently unused:
-  - DMA slaves were never enabled in r8a73a4.dtsi,
-  - The driver relies on legacy filter matching and describing all
-    slaves and MID/RIDs in a table, unlike modern DMA engine drivers for
-    similar hardware like rcar-dmac,
-  - The driver doesn't seem to work well.
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Remove the driver, it can be resurrected from git history when needed.
+This patch adds/enables USB2.0 peripheral for R-Car [DE]3 boards.
 
-As this was the last user of SH_DMAE_BASE on Renesas ARM SoCs, the
-sh-dma-engine driver core is now used on SuperH only.
+R-Car E3 Ebisu board connects the ID pin to the SoC, so this adds
+a group "usb0_id" into usb0_pins node. Also, to use SW15 pin 3 side,
+this patch adds vbus0_usb2 node on r8a77990-ebisu.dts.
 
-Note that the DT bindings are still present, as r8a73a4.dtsi uses them.
+R-Car D3 Draak board doesn't connect the ID pin, so this adds
+"renesas,no-otg-pins" property into usb2_phy0 node.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v2:
-  - Add Reviewed-by,
-  - Drop RFC.
+ arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 21 +++++++++++-
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi      | 45 ++++++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a77995-draak.dts |  8 +++++
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi      | 45 ++++++++++++++++++++++++++
+ 4 files changed, 118 insertions(+), 1 deletion(-)
 
----
- drivers/dma/sh/Kconfig         | 11 +----
- drivers/dma/sh/Makefile        |  1 -
- drivers/dma/sh/shdma-r8a73a4.c | 74 ----------------------------------
- drivers/dma/sh/shdma.h         |  7 ----
- drivers/dma/sh/shdmac.c        |  7 ----
- 5 files changed, 1 insertion(+), 99 deletions(-)
- delete mode 100644 drivers/dma/sh/shdma-r8a73a4.c
-
-diff --git a/drivers/dma/sh/Kconfig b/drivers/dma/sh/Kconfig
-index 6e0685f1a83814f4..b728cfaf4d700f96 100644
---- a/drivers/dma/sh/Kconfig
-+++ b/drivers/dma/sh/Kconfig
-@@ -12,7 +12,7 @@ config RENESAS_DMA
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+index ff428a64341c..038664e0cdcb 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+@@ -128,6 +128,17 @@
+ 		regulator-always-on;
+ 	};
  
- config SH_DMAE_BASE
- 	bool "Renesas SuperH DMA Engine support"
--	depends on SUPERH || ARCH_RENESAS || COMPILE_TEST
-+	depends on SUPERH || COMPILE_TEST
- 	depends on !SUPERH || SH_DMA
- 	depends on !SH_DMA_API
- 	default y
-@@ -30,15 +30,6 @@ config SH_DMAE
- 	help
- 	  Enable support for the Renesas SuperH DMA controllers.
- 
--if SH_DMAE
--
--config SH_DMAE_R8A73A4
--	def_bool y
--	depends on ARCH_R8A73A4
--	depends on OF
--
--endif
--
- config RCAR_DMAC
- 	tristate "Renesas R-Car Gen2 DMA Controller"
- 	depends on ARCH_RENESAS || COMPILE_TEST
-diff --git a/drivers/dma/sh/Makefile b/drivers/dma/sh/Makefile
-index 7d7c9491ade1216d..42110dd57a56fda8 100644
---- a/drivers/dma/sh/Makefile
-+++ b/drivers/dma/sh/Makefile
-@@ -10,7 +10,6 @@ obj-$(CONFIG_SH_DMAE_BASE) += shdma-base.o shdma-of.o
- #
- 
- shdma-y := shdmac.o
--shdma-$(CONFIG_SH_DMAE_R8A73A4) += shdma-r8a73a4.o
- shdma-objs := $(shdma-y)
- obj-$(CONFIG_SH_DMAE) += shdma.o
- 
-diff --git a/drivers/dma/sh/shdma-r8a73a4.c b/drivers/dma/sh/shdma-r8a73a4.c
-deleted file mode 100644
-index ddc9a35783534bdd..0000000000000000
---- a/drivers/dma/sh/shdma-r8a73a4.c
-+++ /dev/null
-@@ -1,74 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Renesas SuperH DMA Engine support for r8a73a4 (APE6) SoCs
-- *
-- * Copyright (C) 2013 Renesas Electronics, Inc.
-- */
--#include <linux/sh_dma.h>
--
--#include "shdma-arm.h"
--
--static const unsigned int dma_ts_shift[] = SH_DMAE_TS_SHIFT;
--
--static const struct sh_dmae_slave_config dma_slaves[] = {
--	{
--		.chcr		= CHCR_TX(XMIT_SZ_32BIT),
--		.mid_rid	= 0xd1,		/* MMC0 Tx */
--	}, {
--		.chcr		= CHCR_RX(XMIT_SZ_32BIT),
--		.mid_rid	= 0xd2,		/* MMC0 Rx */
--	}, {
--		.chcr		= CHCR_TX(XMIT_SZ_32BIT),
--		.mid_rid	= 0xe1,		/* MMC1 Tx */
--	}, {
--		.chcr		= CHCR_RX(XMIT_SZ_32BIT),
--		.mid_rid	= 0xe2,		/* MMC1 Rx */
--	},
--};
--
--#define DMAE_CHANNEL(a, b)				\
--	{						\
--		.offset         = (a) - 0x20,		\
--		.dmars          = (a) - 0x20 + 0x40,	\
--		.chclr_bit	= (b),			\
--		.chclr_offset	= 0x80 - 0x20,		\
--	}
--
--static const struct sh_dmae_channel dma_channels[] = {
--	DMAE_CHANNEL(0x8000, 0),
--	DMAE_CHANNEL(0x8080, 1),
--	DMAE_CHANNEL(0x8100, 2),
--	DMAE_CHANNEL(0x8180, 3),
--	DMAE_CHANNEL(0x8200, 4),
--	DMAE_CHANNEL(0x8280, 5),
--	DMAE_CHANNEL(0x8300, 6),
--	DMAE_CHANNEL(0x8380, 7),
--	DMAE_CHANNEL(0x8400, 8),
--	DMAE_CHANNEL(0x8480, 9),
--	DMAE_CHANNEL(0x8500, 10),
--	DMAE_CHANNEL(0x8580, 11),
--	DMAE_CHANNEL(0x8600, 12),
--	DMAE_CHANNEL(0x8680, 13),
--	DMAE_CHANNEL(0x8700, 14),
--	DMAE_CHANNEL(0x8780, 15),
--	DMAE_CHANNEL(0x8800, 16),
--	DMAE_CHANNEL(0x8880, 17),
--	DMAE_CHANNEL(0x8900, 18),
--	DMAE_CHANNEL(0x8980, 19),
--};
--
--const struct sh_dmae_pdata r8a73a4_dma_pdata = {
--	.slave		= dma_slaves,
--	.slave_num	= ARRAY_SIZE(dma_slaves),
--	.channel	= dma_channels,
--	.channel_num	= ARRAY_SIZE(dma_channels),
--	.ts_low_shift	= TS_LOW_SHIFT,
--	.ts_low_mask	= TS_LOW_BIT << TS_LOW_SHIFT,
--	.ts_high_shift	= TS_HI_SHIFT,
--	.ts_high_mask	= TS_HI_BIT << TS_HI_SHIFT,
--	.ts_shift	= dma_ts_shift,
--	.ts_shift_num	= ARRAY_SIZE(dma_ts_shift),
--	.dmaor_init     = DMAOR_DME,
--	.chclr_present	= 1,
--	.chclr_bitwise	= 1,
--};
-diff --git a/drivers/dma/sh/shdma.h b/drivers/dma/sh/shdma.h
-index bfb69909bd192759..9c121a4b33ad829c 100644
---- a/drivers/dma/sh/shdma.h
-+++ b/drivers/dma/sh/shdma.h
-@@ -58,11 +58,4 @@ struct sh_dmae_desc {
- #define to_sh_dev(chan) container_of(chan->shdma_chan.dma_chan.device,\
- 				     struct sh_dmae_device, shdma_dev.dma_dev)
- 
--#ifdef CONFIG_SH_DMAE_R8A73A4
--extern const struct sh_dmae_pdata r8a73a4_dma_pdata;
--#define r8a73a4_shdma_devid (&r8a73a4_dma_pdata)
--#else
--#define r8a73a4_shdma_devid NULL
--#endif
--
- #endif	/* __DMA_SHDMA_H */
-diff --git a/drivers/dma/sh/shdmac.c b/drivers/dma/sh/shdmac.c
-index 2ab7971928e3d8b5..ce19ab7ed30c3a8f 100644
---- a/drivers/dma/sh/shdmac.c
-+++ b/drivers/dma/sh/shdmac.c
-@@ -662,12 +662,6 @@ static const struct shdma_ops sh_dmae_shdma_ops = {
- 	.get_residue = sh_dmae_get_residue,
++	vbus0_usb2: regulator-vbus0-usb2 {
++		compatible = "regulator-fixed";
++
++		regulator-name = "USB20_VBUS_CN";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++
++		gpio = <&gpio6 4 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
+ 	x13_clk: x13 {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+@@ -188,6 +199,7 @@
  };
  
--static const struct of_device_id sh_dmae_of_match[] = {
--	{.compatible = "renesas,shdma-r8a73a4", .data = r8a73a4_shdma_devid,},
--	{}
--};
--MODULE_DEVICE_TABLE(of, sh_dmae_of_match);
--
- static int sh_dmae_probe(struct platform_device *pdev)
- {
- 	const enum dma_slave_buswidth widths =
-@@ -912,7 +906,6 @@ static struct platform_driver sh_dmae_driver = {
- 	.driver		= {
- 		.pm	= &sh_dmae_pm,
- 		.name	= SH_DMAE_DRV_NAME,
--		.of_match_table = sh_dmae_of_match,
- 	},
- 	.remove		= sh_dmae_remove,
+ &ehci0 {
++	dr_mode = "otg";
+ 	status = "okay";
  };
+ 
+@@ -195,6 +207,11 @@
+ 	clock-frequency = <48000000>;
+ };
+ 
++&hsusb {
++	dr_mode = "otg";
++	status = "okay";
++};
++
+ &i2c0 {
+ 	status = "okay";
+ 
+@@ -295,6 +312,7 @@
+ };
+ 
+ &ohci0 {
++	dr_mode = "otg";
+ 	status = "okay";
+ };
+ 
+@@ -322,7 +340,7 @@
+ 	};
+ 
+ 	usb0_pins: usb {
+-		groups = "usb0_b";
++		groups = "usb0_b", "usb0_id";
+ 		function = "usb0";
+ 	};
+ 
+@@ -359,6 +377,7 @@
+ 	pinctrl-0 = <&usb0_pins>;
+ 	pinctrl-names = "default";
+ 
++	vbus-supply = <&vbus0_usb2>;
+ 	status = "okay";
+ };
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index a945db3c4644..8c9d7faa9e65 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -357,6 +357,51 @@
+ 			resets = <&cpg 407>;
+ 		};
+ 
++		hsusb: usb@e6590000 {
++			compatible = "renesas,usbhs-r8a77990",
++				     "renesas,rcar-gen3-usbhs";
++			reg = <0 0xe6590000 0 0x200>;
++			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 704>, <&cpg CPG_MOD 703>;
++			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
++			       <&usb_dmac1 0>, <&usb_dmac1 1>;
++			dma-names = "ch0", "ch1", "ch2", "ch3";
++			renesas,buswait = <11>;
++			phys = <&usb2_phy0>;
++			phy-names = "usb";
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 704>, <&cpg 703>;
++			status = "disabled";
++		};
++
++		usb_dmac0: dma-controller@e65a0000 {
++			compatible = "renesas,r8a77990-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65a0000 0 0x100>;
++			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 330>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 330>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
++		usb_dmac1: dma-controller@e65b0000 {
++			compatible = "renesas,r8a77990-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65b0000 0 0x100>;
++			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 331>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 331>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
+ 		dmac0: dma-controller@e6700000 {
+ 			compatible = "renesas,dmac-r8a77990",
+ 				     "renesas,rcar-dmac";
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+index 2405eaad0296..48bb1d77744f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+@@ -179,6 +179,7 @@
+ };
+ 
+ &ehci0 {
++	dr_mode = "host";
+ 	status = "okay";
+ };
+ 
+@@ -186,6 +187,11 @@
+ 	clock-frequency = <48000000>;
+ };
+ 
++&hsusb {
++	dr_mode = "host";
++	status = "okay";
++};
++
+ &i2c0 {
+ 	pinctrl-0 = <&i2c0_pins>;
+ 	pinctrl-names = "default";
+@@ -337,6 +343,7 @@
+ };
+ 
+ &ohci0 {
++	dr_mode = "host";
+ 	status = "okay";
+ };
+ 
+@@ -445,6 +452,7 @@
+ 	pinctrl-0 = <&usb0_pins>;
+ 	pinctrl-names = "default";
+ 
++	renesas,no-otg-pins;
+ 	status = "okay";
+ };
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index 214f4954b321..8530d9fc1371 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -344,6 +344,51 @@
+ 			status = "disabled";
+ 		};
+ 
++		hsusb: usb@e6590000 {
++			compatible = "renesas,usbhs-r8a77995",
++				     "renesas,rcar-gen3-usbhs";
++			reg = <0 0xe6590000 0 0x200>;
++			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 704>, <&cpg CPG_MOD 703>;
++			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
++			       <&usb_dmac1 0>, <&usb_dmac1 1>;
++			dma-names = "ch0", "ch1", "ch2", "ch3";
++			renesas,buswait = <11>;
++			phys = <&usb2_phy0>;
++			phy-names = "usb";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 704>, <&cpg 703>;
++			status = "disabled";
++		};
++
++		usb_dmac0: dma-controller@e65a0000 {
++			compatible = "renesas,r8a77995-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65a0000 0 0x100>;
++			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 330>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 330>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
++		usb_dmac1: dma-controller@e65b0000 {
++			compatible = "renesas,r8a77995-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65b0000 0 0x100>;
++			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 331>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 331>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
+ 		canfd: can@e66c0000 {
+ 			compatible = "renesas,r8a77995-canfd",
+ 				     "renesas,rcar-gen3-canfd";
 -- 
-2.17.1
+2.11.0
