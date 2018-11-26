@@ -1,53 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:47000 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733254AbeKOVcX (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35091 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbeKZXsq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Nov 2018 16:32:23 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] ARM: shmobile: Restrict SCU/TWD support to SoCs that have it
-Date: Thu, 15 Nov 2018 10:56:37 +0100
-Message-Id: <20181115095639.17206-1-geert+renesas@glider.be>
+        Mon, 26 Nov 2018 18:48:46 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 11/16] ARM: dts: r8a77470: Add CMT SoC specific support
+Date: Mon, 26 Nov 2018 13:54:13 +0100
+Message-Id: <be8f6b8eca0f11096acf6e2d6641f6a027218d69.1543236456.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543236456.git.horms+renesas@verge.net.au>
+References: <cover.1543236456.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+From: Biju Das <biju.das@bp.renesas.com>
 
-When Renesas ARM multi-platform support was conceived in commit
-efacfce5f8a52345 ("ARM: shmobile: Introduce ARCH_SHMOBILE_MULTI"),
-support for the ARM Cortex-A9 Snoop Control Unit and the Timer and
-Watchdog Unit was enabled unconditionally.
+Add CMT[01] support to r8a77470 SoC DT.
 
-However, only some Renesas multicore Cortex-A9 SoCs have these units,
-and in the modern world, the share of Cortex-A9 SoCs is decreasing.
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a77470.dtsi | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-Hence only enable support for the SCU and TWD when building a kernel
-that includes support for SoCs that have these units.
-
-Thanks!
-
-Geert Uytterhoeven (2):
-  ARM: shmobile: Restrict SCU support to SoCs that have it
-  ARM: shmobile: Restrict TWD support to SoCs that have it
-
- arch/arm/mach-shmobile/Kconfig | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
+diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
+index 0a7ca2ff4dc4..5c0e48d0449a 100644
+--- a/arch/arm/boot/dts/r8a77470.dtsi
++++ b/arch/arm/boot/dts/r8a77470.dtsi
+@@ -615,6 +615,38 @@
+ 			compatible = "renesas,prr";
+ 			reg = <0 0xff000044 0 4>;
+ 		};
++
++		cmt0: timer@ffca0000 {
++			compatible = "renesas,r8a77470-cmt0",
++				     "renesas,rcar-gen2-cmt0";
++			reg = <0 0xffca0000 0 0x1004>;
++			interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 124>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 124>;
++			status = "disabled";
++		};
++
++		cmt1: timer@e6130000 {
++			compatible = "renesas,r8a77470-cmt1",
++				     "renesas,rcar-gen2-cmt1";
++			reg = <0 0xe6130000 0 0x1004>;
++			interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 329>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 329>;
++			status = "disabled";
++		};
+ 	};
+ 
+ 	timer {
 -- 
-2.17.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.11.0
