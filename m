@@ -1,235 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:48444 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727727AbeKQABQ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726751AbeKZXuA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Nov 2018 19:01:16 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+        Mon, 26 Nov 2018 18:50:00 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/2] arm64: renesas: Move SoC Kconfig symbols to drivers/soc/renesas/
-Date: Fri, 16 Nov 2018 14:48:41 +0100
-Message-Id: <20181116134842.26488-2-geert+renesas@glider.be>
-In-Reply-To: <20181116134842.26488-1-geert+renesas@glider.be>
-References: <20181116134842.26488-1-geert+renesas@glider.be>
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Yoshihiro Kaneko <ykaneko0929@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 38/40] arm64: dts: renesas: r8a77990: Enable I2C DMA
+Date: Mon, 26 Nov 2018 13:55:04 +0100
+Message-Id: <8fbe048bd95b560ed5fcb8eaa80456a64aeb66a2.1543229516.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
+References: <cover.1543229515.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-arch/arm64/Kconfig.platforms has SoC-specific Kconfig symbols for
-Renesas SoCs, while other vendors have only a single Kconfig symbol.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Increase consistency with other vendors by moving the SoC-specific
-Kconfig symbols to drivers/soc/renesas/Kconfig.
+This patch enables I2C DMA.
 
-Increase consistency with R-Car Gen1 and Gen2 SoCs on arm32 by
-introducing a family-specific Kconfig symbol for R-Car Gen3
-(ARCH_RCAR_GEN3), which enables family-specific hardware features.
-While so far only a single family (R-Car Gen3 and derivatives) of
-Renesas arm64 SoCs is supported by Linux, this will make it easier
-to add support for other SoC families later.
+NOTE: I2C7 DMA is not supported by R-Car Gen3 Hardware User's Manual
+Rev.0.80E.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Tested-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v2:
-  - Introduce a family-specific Kconfig symbol for R-Car Gen3.
----
- arch/arm64/Kconfig.platforms | 59 -----------------------
- drivers/soc/renesas/Kconfig  | 90 ++++++++++++++++++++++++++++++------
- 2 files changed, 77 insertions(+), 72 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 2eb02734ae4575a0..28f052185eb6e6b3 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -159,69 +159,10 @@ config ARCH_RENESAS
- 	bool "Renesas SoC Platforms"
- 	select GPIOLIB
- 	select PINCTRL
--	select PM
--	select PM_GENERIC_DOMAINS
--	select RENESAS_IRQC
- 	select SOC_BUS
--	select SYS_SUPPORTS_SH_CMT
--	select SYS_SUPPORTS_SH_TMU
- 	help
- 	  This enables support for the ARMv8 based Renesas SoCs.
- 
--config ARCH_R8A774A1
--	bool "Renesas RZ/G2M SoC Platform"
--	depends on ARCH_RENESAS
--	help
--	  This enables support for the Renesas RZ/G2M SoC.
--
--config ARCH_R8A774C0
--	bool "Renesas RZ/G2E SoC Platform"
--	depends on ARCH_RENESAS
--	help
--	  This enables support for the Renesas RZ/G2E SoC.
--
--config ARCH_R8A7795
--	bool "Renesas R-Car H3 SoC Platform"
--	depends on ARCH_RENESAS
--	help
--	  This enables support for the Renesas R-Car H3 SoC.
--
--config ARCH_R8A7796
--	bool "Renesas R-Car M3-W SoC Platform"
--	depends on ARCH_RENESAS
--	help
--	  This enables support for the Renesas R-Car M3-W SoC.
--
--config ARCH_R8A77965
--	bool "Renesas R-Car M3-N SoC Platform"
--	depends on ARCH_RENESAS
--	help
--	  This enables support for the Renesas R-Car M3-N SoC.
--
--config ARCH_R8A77970
--	bool "Renesas R-Car V3M SoC Platform"
--	depends on ARCH_RENESAS
--	help
--	  This enables support for the Renesas R-Car V3M SoC.
--
--config ARCH_R8A77980
--	bool "Renesas R-Car V3H SoC Platform"
--	depends on ARCH_RENESAS
--	help
--	  This enables support for the Renesas R-Car V3H SoC.
--
--config ARCH_R8A77990
--	bool "Renesas R-Car E3 SoC Platform"
--	depends on ARCH_RENESAS
--	help
--	  This enables support for the Renesas R-Car E3 SoC.
--
--config ARCH_R8A77995
--	bool "Renesas R-Car D3 SoC Platform"
--	depends on ARCH_RENESAS
--	help
--	  This enables support for the Renesas R-Car D3 SoC.
--
- config ARCH_ROCKCHIP
- 	bool "Rockchip Platforms"
- 	select ARCH_HAS_RESET_CONTROLLER
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index 407f02c80e8b721c..2f5bc5a6ae2b67e3 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -3,30 +3,94 @@ config SOC_RENESAS
- 	bool "Renesas SoC driver support" if COMPILE_TEST && !ARCH_RENESAS
- 	default y if ARCH_RENESAS
- 	select SOC_BUS
--	select RST_RCAR if ARCH_RCAR_GEN1 || ARCH_RCAR_GEN2 || \
--			   ARCH_R8A774A1 || ARCH_R8A774C0 || ARCH_R8A7795 || \
--			   ARCH_R8A7796 || ARCH_R8A77965 || ARCH_R8A77970 || \
--			   ARCH_R8A77980 || ARCH_R8A77990 || ARCH_R8A77995
-+	select RST_RCAR if ARCH_RCAR_GEN1 || ARCH_RCAR_GEN2
- 	select SYSC_R8A7743 if ARCH_R8A7743 || ARCH_R8A7744
- 	select SYSC_R8A7745 if ARCH_R8A7745
- 	select SYSC_R8A77470 if ARCH_R8A77470
--	select SYSC_R8A774A1 if ARCH_R8A774A1
--	select SYSC_R8A774C0 if ARCH_R8A774C0
- 	select SYSC_R8A7779 if ARCH_R8A7779
- 	select SYSC_R8A7790 if ARCH_R8A7790
- 	select SYSC_R8A7791 if ARCH_R8A7791 || ARCH_R8A7793
- 	select SYSC_R8A7792 if ARCH_R8A7792
- 	select SYSC_R8A7794 if ARCH_R8A7794
--	select SYSC_R8A7795 if ARCH_R8A7795
--	select SYSC_R8A7796 if ARCH_R8A7796
--	select SYSC_R8A77965 if ARCH_R8A77965
--	select SYSC_R8A77970 if ARCH_R8A77970
--	select SYSC_R8A77980 if ARCH_R8A77980
--	select SYSC_R8A77990 if ARCH_R8A77990
--	select SYSC_R8A77995 if ARCH_R8A77995
- 
- if SOC_RENESAS
- 
-+config ARCH_RCAR_GEN3
-+	bool
-+	select PM
-+	select PM_GENERIC_DOMAINS
-+	select RENESAS_IRQC
-+	select RST_RCAR
-+	select SYS_SUPPORTS_SH_CMT
-+	select SYS_SUPPORTS_SH_TMU
-+
-+if ARM64
-+
-+config ARCH_R8A774A1
-+	bool "Renesas RZ/G2M SoC Platform"
-+	select ARCH_RCAR_GEN3
-+	select SYSC_R8A774A1
-+	help
-+	  This enables support for the Renesas RZ/G2M SoC.
-+
-+config ARCH_R8A774C0
-+	bool "Renesas RZ/G2E SoC Platform"
-+	select ARCH_RCAR_GEN3
-+	select SYSC_R8A774C0
-+	help
-+	  This enables support for the Renesas RZ/G2E SoC.
-+
-+config ARCH_R8A7795
-+	bool "Renesas R-Car H3 SoC Platform"
-+	select ARCH_RCAR_GEN3
-+	select SYSC_R8A7795
-+	help
-+	  This enables support for the Renesas R-Car H3 SoC.
-+
-+config ARCH_R8A7796
-+	bool "Renesas R-Car M3-W SoC Platform"
-+	select ARCH_RCAR_GEN3
-+	select SYSC_R8A7796
-+	help
-+	  This enables support for the Renesas R-Car M3-W SoC.
-+
-+config ARCH_R8A77965
-+	bool "Renesas R-Car M3-N SoC Platform"
-+	select ARCH_RCAR_GEN3
-+	select SYSC_R8A77965
-+	help
-+	  This enables support for the Renesas R-Car M3-N SoC.
-+
-+config ARCH_R8A77970
-+	bool "Renesas R-Car V3M SoC Platform"
-+	select ARCH_RCAR_GEN3
-+	select SYSC_R8A77970
-+	help
-+	  This enables support for the Renesas R-Car V3M SoC.
-+
-+config ARCH_R8A77980
-+	bool "Renesas R-Car V3H SoC Platform"
-+	select ARCH_RCAR_GEN3
-+	select SYSC_R8A77980
-+	help
-+	  This enables support for the Renesas R-Car V3H SoC.
-+
-+config ARCH_R8A77990
-+	bool "Renesas R-Car E3 SoC Platform"
-+	select ARCH_RCAR_GEN3
-+	select SYSC_R8A77990
-+	help
-+	  This enables support for the Renesas R-Car E3 SoC.
-+
-+config ARCH_R8A77995
-+	bool "Renesas R-Car D3 SoC Platform"
-+	select ARCH_RCAR_GEN3
-+	select SYSC_R8A77995
-+	help
-+	  This enables support for the Renesas R-Car D3 SoC.
-+
-+endif # ARM64
-+
- # SoC
- config SYSC_R8A7743
- 	bool "RZ/G1M System Controller support" if COMPILE_TEST
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index 3b334be843f4..de25eda4f2f4 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -250,6 +250,9 @@
+ 			clocks = <&cpg CPG_MOD 931>;
+ 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 931>;
++			dmas = <&dmac1 0x91>, <&dmac1 0x90>,
++			       <&dmac2 0x91>, <&dmac2 0x90>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <110>;
+ 			status = "disabled";
+ 		};
+@@ -264,6 +267,9 @@
+ 			clocks = <&cpg CPG_MOD 930>;
+ 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 930>;
++			dmas = <&dmac1 0x93>, <&dmac1 0x92>,
++			       <&dmac2 0x93>, <&dmac2 0x92>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			status = "disabled";
+ 		};
+@@ -278,6 +284,9 @@
+ 			clocks = <&cpg CPG_MOD 929>;
+ 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 929>;
++			dmas = <&dmac1 0x95>, <&dmac1 0x94>,
++			       <&dmac2 0x95>, <&dmac2 0x94>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			status = "disabled";
+ 		};
+@@ -292,6 +301,8 @@
+ 			clocks = <&cpg CPG_MOD 928>;
+ 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 928>;
++			dmas = <&dmac0 0x97>, <&dmac0 0x96>;
++			dma-names = "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <110>;
+ 			status = "disabled";
+ 		};
+@@ -306,6 +317,8 @@
+ 			clocks = <&cpg CPG_MOD 927>;
+ 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 927>;
++			dmas = <&dmac0 0x99>, <&dmac0 0x98>;
++			dma-names = "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			status = "disabled";
+ 		};
+@@ -320,6 +333,8 @@
+ 			clocks = <&cpg CPG_MOD 919>;
+ 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 919>;
++			dmas = <&dmac0 0x9b>, <&dmac0 0x9a>;
++			dma-names = "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			status = "disabled";
+ 		};
+@@ -334,6 +349,8 @@
+ 			clocks = <&cpg CPG_MOD 918>;
+ 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 918>;
++			dmas = <&dmac0 0x9d>, <&dmac0 0x9c>;
++			dma-names = "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			status = "disabled";
+ 		};
 -- 
-2.17.1
+2.11.0
