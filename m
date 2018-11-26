@@ -1,75 +1,213 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:38474 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725722AbeKBEHK (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726713AbeKZXuD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Nov 2018 00:07:10 -0400
-Date: Thu, 1 Nov 2018 20:02:54 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Niklas =?utf-8?Q?S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCH v3 3/3] mmc: renesas_sdhi: add initial setting of
- interrupt mask register
-Message-ID: <20181101190253.GF2433@kunai>
-References: <20181031230554.1660-1-niklas.soderlund@ragnatech.se>
- <20181031230554.1660-4-niklas.soderlund@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="f61P+fpdnY2FZS1u"
-Content-Disposition: inline
-In-Reply-To: <20181031230554.1660-4-niklas.soderlund@ragnatech.se>
+        Mon, 26 Nov 2018 18:50:03 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 20/40] arm64: dts: renesas: ebisu: Enable Audio
+Date: Mon, 26 Nov 2018 13:54:46 +0100
+Message-Id: <56629fcba94c698d8c5be3413981506479566869.1543229515.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
+References: <cover.1543229515.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
---f61P+fpdnY2FZS1u
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch enables Audio for the Ebisu board on R8A77990 SoC.
 
-On Thu, Nov 01, 2018 at 12:05:54AM +0100, Niklas S=C3=B6derlund wrote:
-> From: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
->=20
-> The initial value of the interrupt mask register may be different from
-> the H/W manual at the startup of the kernel by setting from the
-> bootloader. Since the error interrupts may be unmasked, the driver sets
-> initial value.
->=20
-> The initial value is only known for R-Car Gen2 and Gen3 platforms so
-> limit the initialization to those platforms.
->=20
-> Based on work from Masaharu Hayakawa.
->=20
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
->=20
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[simon: rebased]
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 127 +++++++++++++++++++++++++
+ 1 file changed, 127 insertions(+)
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---f61P+fpdnY2FZS1u
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvbTd0ACgkQFA3kzBSg
-KbYvPw/9FpcJv5a/qFjChkLxU9YOZdhs6Qij2c6MZxclwL8+jCT5xZ8oyRNcCc5Y
-nw2LHYvDe78Y5/WpXdn6k9tvnWHwtf8j9ex4MNMxeinHGbvnNinaxtvK/qCoQLMN
-lDHbLMH6wFJYggpliIBtvuMWWsD6nsCzJsRBg/gyeXeiNQjtp0Tj7HKahYx/SE58
-hUiSxjoZbuy2Zy7gxOf2/36qsJ7mG+AevJSe7T3n/5ZYPyJy5mXm8kb0/Zuq+wk3
-DIeKH1qyR9T2uIciI5ldvedqTt02ZGmp7ZrHHoRXb+SDg46WPVxtWqs0x4MjtoS5
-C2VGOo5H0ER1xZxLwyfyYCI2FsX+El/FWqJobEoviCq1UvKUdXzTMPUBfT41hcu0
-kfXfxncnTQZk6R1Fjrp/MuxiB87+J3OlPLHGgk41ulVMCKqlHQTGnkDqQXh4bJMo
-dIDheLkUsdSiiFfya8W9MBKWWCpS1bW6+K10YNpo7lVZPwtZbChrS7gwpZ59PUMg
-W7UKS8eTn0SWczi0wOlkWJQlVYt/yaIUaQJSbxmrrD9cRGFsf8VTKxGe+sgyTMVn
-PYeQMEvgzsv/1KitGZtalYSz4JhMexH2MeRucMBM77dCMlej0VQwNzrOEnKcHzAw
-Igb8cEMQiUgfxWYN8QhIb+ZPAy7PMHg/7borOzaikUKWZb3vjxQ=
-=R7HR
------END PGP SIGNATURE-----
-
---f61P+fpdnY2FZS1u--
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+index 038664e0cdcb..b178f261d805 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+@@ -29,6 +29,16 @@
+ 		reg = <0x0 0x48000000 0x0 0x38000000>;
+ 	};
+ 
++	audio_clkout: audio-clkout {
++		/*
++		 * This is same as <&rcar_sound 0>
++		 * but needed to avoid cs2000/rcar_sound probe dead-lock
++		 */
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <11289600>;
++	};
++
+ 	cvbs-in {
+ 		compatible = "composite-video-connector";
+ 		label = "CVBS IN";
+@@ -139,6 +149,32 @@
+ 		enable-active-high;
+ 	};
+ 
++	rsnd_ak4613: sound {
++		compatible = "simple-scu-audio-card";
++
++		simple-audio-card,name = "rsnd-ak4613";
++		simple-audio-card,format = "left_j";
++		simple-audio-card,bitclock-master = <&sndcpu>;
++		simple-audio-card,frame-master = <&sndcpu>;
++
++		simple-audio-card,prefix = "ak4613";
++		simple-audio-card,routing = "ak4613 Playback", "DAI0 Playback",
++		"DAI0 Capture", "ak4613 Capture";
++		sndcpu: simple-audio-card,cpu {
++			sound-dai = <&rcar_sound>;
++		};
++
++		sndcodec: simple-audio-card,codec {
++			sound-dai = <&ak4613>;
++		};
++	};
++
++	x12_clk: x12 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <24576000>;
++	};
++
+ 	x13_clk: x13 {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+@@ -146,6 +182,10 @@
+ 	};
+ };
+ 
++&audio_clk_a {
++	clock-frequency = <22579200>;
++};
++
+ &avb {
+ 	pinctrl-0 = <&avb_pins>;
+ 	pinctrl-names = "default";
+@@ -287,6 +327,37 @@
+ 	};
+ };
+ 
++&i2c3 {
++	status = "okay";
++
++	ak4613: codec@10 {
++		compatible = "asahi-kasei,ak4613";
++		#sound-dai-cells = <0>;
++		reg = <0x10>;
++		clocks = <&rcar_sound 3>;
++
++		asahi-kasei,in1-single-end;
++		asahi-kasei,in2-single-end;
++		asahi-kasei,out1-single-end;
++		asahi-kasei,out2-single-end;
++		asahi-kasei,out3-single-end;
++		asahi-kasei,out4-single-end;
++		asahi-kasei,out5-single-end;
++		asahi-kasei,out6-single-end;
++	};
++
++	cs2000: clk-multiplier@4f {
++		#clock-cells = <0>;
++		compatible = "cirrus,cs2000-cp";
++		reg = <0x4f>;
++		clocks = <&audio_clkout>, <&x12_clk>;
++		clock-names = "clk_in", "ref_clk";
++
++		assigned-clocks = <&cs2000>;
++		assigned-clock-rates = <24576000>; /* 1/1 divide */
++	};
++};
++
+ &lvds0 {
+ 	status = "okay";
+ 
+@@ -339,6 +410,17 @@
+ 		function = "pwm5";
+ 	};
+ 
++	sound_pins: sound {
++		groups = "ssi01239_ctrl", "ssi0_data", "ssi1_data";
++		function = "ssi";
++	};
++
++	sound_clk_pins: sound_clk {
++		groups = "audio_clk_a", "audio_clk_b_a", "audio_clk_c_a",
++			 "audio_clkout_a", "audio_clkout1_a";
++		function = "audio_clk";
++	};
++
+ 	usb0_pins: usb {
+ 		groups = "usb0_b", "usb0_id";
+ 		function = "usb0";
+@@ -364,6 +446,47 @@
+ 	status = "okay";
+ };
+ 
++&rcar_sound {
++	pinctrl-0 = <&sound_pins &sound_clk_pins>;
++	pinctrl-names = "default";
++
++	/* Single DAI */
++	#sound-dai-cells = <0>;
++
++	/* audio_clkout0/1/2/3 */
++	#clock-cells = <1>;
++	clock-frequency = <12288000 11289600>;
++	clkout-lr-synchronous;
++
++	status = "okay";
++
++	/* update <audio_clk_b> to <cs2000> */
++	clocks = <&cpg CPG_MOD 1005>,
++		 <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
++		 <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
++		 <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
++		 <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1013>,
++		 <&cpg CPG_MOD 1014>, <&cpg CPG_MOD 1015>,
++		 <&cpg CPG_MOD 1022>, <&cpg CPG_MOD 1023>,
++		 <&cpg CPG_MOD 1024>, <&cpg CPG_MOD 1025>,
++		 <&cpg CPG_MOD 1026>, <&cpg CPG_MOD 1027>,
++		 <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
++		 <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
++		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
++		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
++		 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
++		 <&audio_clk_a>, <&cs2000>, <&audio_clk_c>,
++		 <&cpg CPG_CORE R8A77990_CLK_ZA2>;
++
++	rcar_sound,dai {
++		dai0 {
++			playback = <&ssi0 &src0 &dvc0>;
++			capture  = <&ssi1 &src1 &dvc1>;
++		};
++	};
++
++};
++
+ &rwdt {
+ 	timeout-sec = <60>;
+ 	status = "okay";
+@@ -373,6 +496,10 @@
+ 	status = "okay";
+ };
+ 
++&ssi1 {
++	shared-pin;
++};
++
+ &usb2_phy0 {
+ 	pinctrl-0 = <&usb0_pins>;
+ 	pinctrl-names = "default";
+-- 
+2.11.0
