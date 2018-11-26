@@ -1,52 +1,100 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:49649 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726672AbeKIClV (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35091 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbeKZXsl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Nov 2018 21:41:21 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Richard Weinberger <richard@nod.at>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-mtd@lists.infradead.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v2 0/3] Add QSPI flash support to iwg23s
-Date: Thu,  8 Nov 2018 17:04:40 +0000
-Message-Id: <1541696684-21235-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Mon, 26 Nov 2018 18:48:41 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 10/16] ARM: dts: r8a77470: Add USB-DMAC device nodes
+Date: Mon, 26 Nov 2018 13:54:12 +0100
+Message-Id: <50e620319c1f05fd197f78a83b07d1cc5fdc21fe.1543236456.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543236456.git.horms+renesas@verge.net.au>
+References: <cover.1543236456.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dear All,
+From: Biju Das <biju.das@bp.renesas.com>
 
-this series includes all that is necessary to add QSPI flash
-support to the iwg23s board powered by the RZ/G1C SoC (a.k.a.
-r8a77470). The second version of this series is to address
-a comment made by both Simon and Geert on one of the patches.
+This patch adds USB DMAC nodes.
 
-This series applies on top of renesas-devel-20181108v3-v4.20-rc1
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a77470.dtsi | 56 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
-Thanks,
-Fab
-
-Fabrizio Castro (3):
-  mtd: spi-nor: Add support for is25lp016d
-  ARM: dts: r8a77470: Add QSPI support
-  ARM: dts: iwg23s-sbc: Add QSPI flash support
-
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 26 +++++++++++++++++++++++++
- arch/arm/boot/dts/r8a77470.dtsi           | 32 +++++++++++++++++++++++++++++++
- drivers/mtd/spi-nor/spi-nor.c             |  2 ++
- 3 files changed, 60 insertions(+)
-
+diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
+index a703b74cc1f9..0a7ca2ff4dc4 100644
+--- a/arch/arm/boot/dts/r8a77470.dtsi
++++ b/arch/arm/boot/dts/r8a77470.dtsi
+@@ -325,6 +325,62 @@
+ 			status = "disabled";
+ 		};
+ 
++		usb_dmac00: dma-controller@e65a0000 {
++			compatible = "renesas,r8a77470-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65a0000 0 0x100>;
++			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 330>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 330>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
++		usb_dmac10: dma-controller@e65b0000 {
++			compatible = "renesas,r8a77470-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65b0000 0 0x100>;
++			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 331>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 331>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
++		usb_dmac01: dma-controller@e65a8000 {
++			compatible = "renesas,r8a77470-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65a8000 0 0x100>;
++			interrupts = <GIC_SPI 293 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 293 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 326>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 326>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
++		usb_dmac11: dma-controller@e65b8000 {
++			compatible = "renesas,r8a77470-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65b8000 0 0x100>;
++			interrupts = <GIC_SPI 292 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 292 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 327>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 327>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
+ 		dmac0: dma-controller@e6700000 {
+ 			compatible = "renesas,dmac-r8a77470",
+ 				     "renesas,rcar-dmac";
 -- 
-2.7.4
+2.11.0
