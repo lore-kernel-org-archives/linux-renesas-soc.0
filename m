@@ -1,48 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38127 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726001AbeKUVEi (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35091 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726210AbeKZXsj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Nov 2018 16:04:38 -0500
-Received: by mail-pl1-f196.google.com with SMTP id e5so4927127plb.5
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Nov 2018 02:30:46 -0800 (PST)
-From: Magnus Damm <magnus.damm@gmail.com>
+        Mon, 26 Nov 2018 18:48:39 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Wed, 21 Nov 2018 19:31:05 +0900
-Message-Id: <154279626537.29528.16284240304226935084.sendpatchset@octo>
-In-Reply-To: <154279624819.29528.954090919447072739.sendpatchset@octo>
-References: <154279624819.29528.954090919447072739.sendpatchset@octo>
-Subject: [PATCH 02/05] arm64: dts: renesas: r8a7795: Add FCPCS+VDPB node for R-Car H3
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm@opensource.se>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 07/16] ARM: dts: r8a7740, emev2, sh73a0: Include SoC name in DTSI
+Date: Mon, 26 Nov 2018 13:54:09 +0100
+Message-Id: <4b6cc41011e3bbd705d11c5b8d08f31ba251f104.1543236456.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543236456.git.horms+renesas@verge.net.au>
+References: <cover.1543236456.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Magnus Damm <damm@opensource.se>
 
-Add a temporary FCPCS device that also includes VDPB for testing
-purpose. This prototype level code is not intended for upstream merge.
+Update the R-Mobile A1 (r8a7740), Emma Mobile EV2 (emev2) and
+SH-Mobile AG5 (sh72a0) DTSI to include product name.
 
-Not-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+[simon: squashed similar patches]
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm/boot/dts/emev2.dtsi   | 2 +-
+ arch/arm/boot/dts/r8a7740.dtsi | 2 +-
+ arch/arm/boot/dts/sh73a0.dtsi  | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
- arch/arm64/boot/dts/renesas/r8a7795.dtsi |    9 +++++++++
- 1 file changed, 9 insertions(+)
-
---- 0001/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a7795.dtsi	2018-11-21 18:34:31.469462826 +0900
-@@ -2647,6 +2647,15 @@
- 			resets = <&cpg 820>;
- 		};
- 
-+		fcpcs: fcp@fe90f000 {
-+			compatible = "renesas,fcpc";
-+			reg = <0 0xfe90f000 0 0x200>,
-+			      <0 0xfe900000 0 0x400>; /* Hack to test VDPB */
-+			clocks = <&cpg CPG_MOD 619>;
-+			power-domains = <&sysc R8A7795_PD_A2VC1>;
-+			resets = <&cpg 619>;
-+		};
-+
- 		fdp1@fe940000 {
- 			compatible = "renesas,fdp1";
- 			reg = <0 0xfe940000 0 0x2400>;
+diff --git a/arch/arm/boot/dts/emev2.dtsi b/arch/arm/boot/dts/emev2.dtsi
+index 373ea8720769..67d86012a85c 100644
+--- a/arch/arm/boot/dts/emev2.dtsi
++++ b/arch/arm/boot/dts/emev2.dtsi
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Device Tree Source for the EMEV2 SoC
++ * Device Tree Source for the Emma Mobile EV2 SoC
+  *
+  * Copyright (C) 2012 Renesas Solutions Corp.
+  */
+diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
+index 383cba68dbba..12ffe73bf2bc 100644
+--- a/arch/arm/boot/dts/r8a7740.dtsi
++++ b/arch/arm/boot/dts/r8a7740.dtsi
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Device Tree Source for the r8a7740 SoC
++ * Device Tree Source for the R-Mobile A1 (R8A77400) SoC
+  *
+  * Copyright (C) 2012 Renesas Solutions Corp.
+  */
+diff --git a/arch/arm/boot/dts/sh73a0.dtsi b/arch/arm/boot/dts/sh73a0.dtsi
+index e8f0a07c4564..33836990b102 100644
+--- a/arch/arm/boot/dts/sh73a0.dtsi
++++ b/arch/arm/boot/dts/sh73a0.dtsi
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Device Tree Source for the SH73A0 SoC
++ * Device Tree Source for the SH-Mobile AG5 (R8A73A00/SH73A0) SoC
+  *
+  * Copyright (C) 2012 Renesas Solutions Corp.
+  */
+-- 
+2.11.0
