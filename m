@@ -1,52 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:28671 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725977AbeKUBtI (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726411AbeKZXty (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Nov 2018 20:49:08 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-gpio@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [RFC v3 2/2] gpio: rcar: Set pin as a GPIO when configuring an interrupt
-Date: Tue, 20 Nov 2018 15:19:16 +0000
-Message-Id: <1542727156-31432-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1542727156-31432-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1542727156-31432-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Mon, 26 Nov 2018 18:49:54 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 33/40] arm64: dts: renesas: r8a77965: Add CAN and CANFD controller nodes
+Date: Mon, 26 Nov 2018 13:54:59 +0100
+Message-Id: <55db8ac68d38755d631cffdc4c6cf7d68a63decc.1543229516.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
+References: <cover.1543229515.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-As it turns out, the bootloader or a POR may get in the way
-of the current implementation of gpio_rcar_irq_set_type, as
-the pinmuxing may not be GPIO.
-This patch makes sure the pin is configured as a GPIO when
-requesting it an interrupt, as that's necessary for the
-interrupt to work properly. Failing to do so may damage
-the board as this can cause shorts.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+This patch adds CAN{0,1} and CANFD controller nodes for the R8A77965 SoC.
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/gpio/gpio-rcar.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 51 +++++++++++++++++++++++++++++--
+ 1 file changed, 49 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index 1322f7e..615404c 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -168,6 +168,9 @@ static int gpio_rcar_irq_set_type(struct irq_data *d, unsigned int type)
- 	default:
- 		return -EINVAL;
- 	}
-+
-+	pinctrl_mux_gpio_request_enable(gc->base + hwirq);
-+
- 	return 0;
- }
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index 3a958fb25245..1c86e6f4dc71 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -907,13 +907,60 @@
+ 		};
  
+ 		can0: can@e6c30000 {
++			compatible = "renesas,can-r8a77965",
++				     "renesas,rcar-gen3-can";
+ 			reg = <0 0xe6c30000 0 0x1000>;
+-			/* placeholder */
++			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 916>,
++			       <&cpg CPG_CORE R8A77965_CLK_CANFD>,
++			       <&can_clk>;
++			clock-names = "clkp1", "clkp2", "can_clk";
++			assigned-clocks = <&cpg CPG_CORE R8A77965_CLK_CANFD>;
++			assigned-clock-rates = <40000000>;
++			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
++			resets = <&cpg 916>;
++			status = "disabled";
+ 		};
+ 
+ 		can1: can@e6c38000 {
++			compatible = "renesas,can-r8a77965",
++				     "renesas,rcar-gen3-can";
+ 			reg = <0 0xe6c38000 0 0x1000>;
+-			/* placeholder */
++			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 915>,
++			       <&cpg CPG_CORE R8A77965_CLK_CANFD>,
++			       <&can_clk>;
++			clock-names = "clkp1", "clkp2", "can_clk";
++			assigned-clocks = <&cpg CPG_CORE R8A77965_CLK_CANFD>;
++			assigned-clock-rates = <40000000>;
++			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
++			resets = <&cpg 915>;
++			status = "disabled";
++		};
++
++		canfd: can@e66c0000 {
++			compatible = "renesas,r8a77965-canfd",
++				     "renesas,rcar-gen3-canfd";
++			reg = <0 0xe66c0000 0 0x8000>;
++			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
++				   <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 914>,
++			       <&cpg CPG_CORE R8A77965_CLK_CANFD>,
++			       <&can_clk>;
++			clock-names = "fck", "canfd", "can_clk";
++			assigned-clocks = <&cpg CPG_CORE R8A77965_CLK_CANFD>;
++			assigned-clock-rates = <40000000>;
++			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
++			resets = <&cpg 914>;
++			status = "disabled";
++
++			channel0 {
++				status = "disabled";
++			};
++
++			channel1 {
++				status = "disabled";
++			};
+ 		};
+ 
+ 		pwm0: pwm@e6e30000 {
 -- 
-2.7.4
+2.11.0
