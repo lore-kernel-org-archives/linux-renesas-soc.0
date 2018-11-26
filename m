@@ -1,53 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:50532 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728326AbeKAViL (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726713AbeKZXuB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Nov 2018 17:38:11 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Richard Weinberger <richard@nod.at>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-mtd@lists.infradead.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 2/4] mtd: spi-nor: Add support for is25lp016d
-Date: Thu,  1 Nov 2018 12:35:03 +0000
-Message-Id: <1541075705-1333-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1541075705-1333-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1541075705-1333-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Mon, 26 Nov 2018 18:50:01 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Kaneko <ykaneko0929@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 39/40] arm64: dts: renesas: r8a77990: add thermal device support
+Date: Mon, 26 Nov 2018 13:55:05 +0100
+Message-Id: <8f1ee2a166f88388fd3b20698958334be357aa52.1543229516.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
+References: <cover.1543229515.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The is25lp016d is found on the iwg23s from iWave, therefore
-add driver support for it so that we can upstream board support.
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+This patch adds the thermal device node and the thermal-zone for
+the R8A77990 SoC.
+
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Tested-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/mtd/spi-nor/spi-nor.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index 9407ca5..85d869b 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -1352,6 +1352,8 @@ static const struct flash_info spi_nor_ids[] = {
- 	{ "is25cd512",  INFO(0x7f9d20, 0, 32 * 1024,   2, SECT_4K) },
- 	{ "is25lq040b", INFO(0x9d4013, 0, 64 * 1024,   8,
- 			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
-+	{ "is25lp016d", INFO(0x9d6015, 0, 64 * 1024,  32,
-+			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
- 	{ "is25lp080d", INFO(0x9d6014, 0, 64 * 1024,  16,
- 			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
- 	{ "is25lp128",  INFO(0x9d6018, 0, 64 * 1024, 256,
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index de25eda4f2f4..b2f606e286ce 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -409,6 +409,18 @@
+ 			#power-domain-cells = <1>;
+ 		};
+ 
++		thermal: thermal@e6190000 {
++			compatible = "renesas,thermal-r8a77990";
++			reg = <0 0xe6190000 0 0x10>, <0 0xe6190100 0 0x38>;
++			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 522>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 522>;
++			#thermal-sensor-cells = <0>;
++		};
++
+ 		intc_ex: interrupt-controller@e61c0000 {
+ 			compatible = "renesas,intc-ex-r8a77990", "renesas,irqc";
+ 			#interrupt-cells = <2>;
+@@ -1745,6 +1757,25 @@
+ 		};
+ 	};
+ 
++	thermal-zones {
++		cpu-thermal {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++			thermal-sensors = <&thermal>;
++
++			trips {
++				cpu-crit {
++					temperature = <120000>;
++					hysteresis = <2000>;
++					type = "critical";
++				};
++			};
++
++			cooling-maps {
++			};
++		};
++	};
++
+ 	timer {
+ 		compatible = "arm,armv8-timer";
+ 		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
 -- 
-2.7.4
+2.11.0
