@@ -1,84 +1,178 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:10137 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726266AbeK0D6W (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726567AbeKZXtW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Nov 2018 22:58:22 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v4 0/3] mmc: tmio: fix reset operation
-Date: Mon, 26 Nov 2018 18:02:44 +0100
-Message-Id: <20181126170247.4076-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 26 Nov 2018 18:49:22 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 11/40] arm64: dts: renesas: r8a779{7|8}0: add MSIOF support
+Date: Mon, 26 Nov 2018 13:54:37 +0100
+Message-Id: <122ddb7104f7c305ed83d49b2e2b65df497519e0.1543229515.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
+References: <cover.1543229515.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-While looking at the Renesas BSP kernel I found patches which improves
-the state of the hardware at probe and after runtime resume.
+Describe MSIOF in the R8A779{7|8}0 device trees.
 
-Patch 1/3 make sure the module clock is enabled after resuming before
-register are accessed. Patch 2/3 is the real change in this series and
-brings in reset of the vendor specific callback when resetting (SCC in
-the Renesas case). While 3/3 simply make sure that the IRQ mask for
-Renesas boards (Gen2 and later) are in a good shape after probe (and
-reset).
+The DMA props are omitted for R8A77980 as the RT-DMAC isn't supported
+(yet?)...
 
-In addition to addressing the state after resuming it helped unbreak a
-SD card I have which are very problematic on Koelsch. Without this
-series inserting the card results in:
+Based on the original (and large) patches by Vladimir Barinov.
 
-sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
-sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
-sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
-sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
-sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
-sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
-sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
-sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
-sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
-sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
-sh_mobile_sdhi ee100000.sd: Tuning procedure failed
-mmc0: tuning execution failed: -5
-mmc0: error -5 whilst initialising SD card
-sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 64 +++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi | 52 +++++++++++++++++++++++++
+ 2 files changed, 116 insertions(+)
 
-While with this series applied (patch 2/3):
-
-sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
-mmc0: new ultra high speed SDR50 SDHC card at address aaaa
-mmcblk0: mmc0:aaaa SU04G 3.69 GiB
- mmcblk0: p1 p2
-
-Patch 1/3 was previously part of 2/3 but as it deals with a unrelated
-issue it's here broken out to a separate patch. Patch 3/3 have once been
-posted outside this series bit after comments from Wolfram it's brought
-back as it now deepens on 2/3.
-
-Most changes in this series are based on similar work from Masaharu
-Hayakawa but for this version all changes now differ quiet a lot from
-his work.  All mails sent to him bounce with a "Undelivered Mail
-Returned to Sender" error. I therefor felt the need to claim authorship
-as I don't want to post blame of my (potential) mistakes on some else.
-
-Niklas Söderlund (3):
-  mmc: tmio: enable module clock before resetting when resuming
-  mmc: tmio: fix reset operation
-  mmc: renesas_sdhi: add initial setting of interrupt mask register
-
- drivers/mmc/host/renesas_sdhi_core.c |  4 ++++
- drivers/mmc/host/tmio_mmc.h          |  1 +
- drivers/mmc/host/tmio_mmc_core.c     | 27 +++++++++++++++------------
- 3 files changed, 20 insertions(+), 12 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+index ba903fc32166..4abd154bca1f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -688,6 +688,70 @@
+ 			status = "disabled";
+ 		};
+ 
++		msiof0: spi@e6e90000 {
++			compatible = "renesas,msiof-r8a77970",
++				     "renesas,rcar-gen3-msiof";
++			reg = <0 0xe6e90000 0 0x64>;
++			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 211>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 211>;
++			dmas = <&dmac1 0x41>, <&dmac1 0x40>,
++			       <&dmac2 0x41>, <&dmac2 0x40>;
++			dma-names = "tx", "rx", "tx", "rx";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		msiof1: spi@e6ea0000 {
++			compatible = "renesas,msiof-r8a77970",
++				     "renesas,rcar-gen3-msiof";
++			reg = <0 0xe6ea0000 0 0x0064>;
++			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 210>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 210>;
++			dmas = <&dmac1 0x43>, <&dmac1 0x42>,
++			       <&dmac2 0x43>, <&dmac2 0x42>;
++			dma-names = "tx", "rx", "tx", "rx";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		msiof2: spi@e6c00000 {
++			compatible = "renesas,msiof-r8a77970",
++				     "renesas,rcar-gen3-msiof";
++			reg = <0 0xe6c00000 0 0x0064>;
++			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 209>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 209>;
++			dmas = <&dmac1 0x45>, <&dmac1 0x44>,
++			       <&dmac2 0x45>, <&dmac2 0x44>;
++			dma-names = "tx", "rx", "tx", "rx";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		msiof3: spi@e6c10000 {
++			compatible = "renesas,msiof-r8a77970",
++				     "renesas,rcar-gen3-msiof";
++			reg = <0 0xe6c10000 0 0x0064>;
++			interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 208>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 208>;
++			dmas = <&dmac1 0x47>, <&dmac1 0x46>,
++			       <&dmac2 0x47>, <&dmac2 0x46>;
++			dma-names = "tx", "rx", "tx", "rx";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		vin0: video@e6ef0000 {
+ 			compatible = "renesas,vin-r8a77970";
+ 			reg = <0 0xe6ef0000 0 0x1000>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+index 42c7088223c8..54acc494a43f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -740,6 +740,58 @@
+ 			status = "disabled";
+ 		};
+ 
++		msiof0: spi@e6e90000 {
++			compatible = "renesas,msiof-r8a77980",
++				     "renesas,rcar-gen3-msiof";
++			reg = <0 0xe6e90000 0 0x64>;
++			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 211>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 211>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		msiof1: spi@e6ea0000 {
++			compatible = "renesas,msiof-r8a77980",
++				     "renesas,rcar-gen3-msiof";
++			reg = <0 0xe6ea0000 0 0x0064>;
++			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 210>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 210>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		msiof2: spi@e6c00000 {
++			compatible = "renesas,msiof-r8a77980",
++				     "renesas,rcar-gen3-msiof";
++			reg = <0 0xe6c00000 0 0x0064>;
++			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 209>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 209>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		msiof3: spi@e6c10000 {
++			compatible = "renesas,msiof-r8a77980",
++				     "renesas,rcar-gen3-msiof";
++			reg = <0 0xe6c10000 0 0x0064>;
++			interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 208>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 208>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		vin0: video@e6ef0000 {
+ 			compatible = "renesas,vin-r8a77980";
+ 			reg = <0 0xe6ef0000 0 0x1000>;
 -- 
-2.19.1
+2.11.0
