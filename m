@@ -1,133 +1,116 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:34869 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729400AbeKWFUV (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726943AbeKZXuF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Nov 2018 00:20:21 -0500
-Received: by mail-lf1-f68.google.com with SMTP id e26so7149603lfc.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Nov 2018 10:39:45 -0800 (PST)
-Subject: [PATCH 1/4] clk: renesas: rcar-gen3-cpg: factor out cpg_reg_modify()
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org
-References: <c79d3733-437a-55dc-d946-99521b79ec20@cogentembedded.com>
-Message-ID: <8cca22f7-dbd7-2da0-2f58-e490982d2f6c@cogentembedded.com>
-Date: Thu, 22 Nov 2018 21:39:42 +0300
-MIME-Version: 1.0
-In-Reply-To: <c79d3733-437a-55dc-d946-99521b79ec20@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Mon, 26 Nov 2018 18:50:05 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 40/40] arm64: dts: renesas: Add all CPUs in cooling maps
+Date: Mon, 26 Nov 2018 13:55:06 +0100
+Message-Id: <275e4eb3f21a09b6b8bd4a353b9a01e500240385.1543229516.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
+References: <cover.1543229515.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-There's quite often repeated sequence of a CPG register read-modify-write,
-so it seems worth factoring it out into a function -- this saves 68 bytes
-of the object code already (AArch64 gcc 4.8.5) and will save more with the
-next patches...
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Each CPU can (and does) participate in cooling down the system but the
+DT only captures a handful of them, normally CPU0, in the cooling maps.
+Things work by chance currently as under normal circumstances its the
+first CPU of each cluster which is used by the operating systems to
+probe the cooling devices. But as soon as this CPU ordering changes and
+any other CPU is used to bring up the cooling device, we will start
+seeing failures.
 
+Also the DT is rather incomplete when we list only one CPU in the
+cooling maps, as the hardware doesn't have any such limitations.
+
+Update cooling maps to include all devices affected by individual trip
+points.
+
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/clk/renesas/rcar-gen3-cpg.c |   37 ++++++++++++++++++------------------
- 1 file changed, 19 insertions(+), 18 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 15 ++++++++++++---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi |  6 +++---
+ 2 files changed, 15 insertions(+), 6 deletions(-)
 
-Index: renesas-drivers/drivers/clk/renesas/rcar-gen3-cpg.c
-===================================================================
---- renesas-drivers.orig/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ renesas-drivers/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -30,6 +30,15 @@
- 
- #define CPG_RCKCR_CKSEL	BIT(15)	/* RCLK Clock Source Select */
- 
-+static void cpg_reg_modify(void __iomem *reg, u32 clear, u32 set)
-+{
-+	u32 val = readl(reg);
-+
-+	val &= ~clear;
-+	val |= set;
-+	writel(val, reg);
-+};
-+
- struct cpg_simple_notifier {
- 	struct notifier_block nb;
- 	void __iomem *reg;
-@@ -118,7 +127,6 @@ static int cpg_z_clk_set_rate(struct clk
- 	struct cpg_z_clk *zclk = to_z_clk(hw);
- 	unsigned int mult;
- 	unsigned int i;
--	u32 val, kick;
- 
- 	/* Factor of 2 is for fixed divider */
- 	mult = DIV_ROUND_CLOSEST_ULL(rate * 32ULL * 2, parent_rate);
-@@ -127,17 +135,14 @@ static int cpg_z_clk_set_rate(struct clk
- 	if (readl(zclk->kick_reg) & CPG_FRQCRB_KICK)
- 		return -EBUSY;
- 
--	val = readl(zclk->reg) & ~zclk->mask;
--	val |= ((32 - mult) << __ffs(zclk->mask)) & zclk->mask;
--	writel(val, zclk->reg);
-+	cpg_reg_modify(zclk->reg, zclk->mask,
-+		       ((32 - mult) << __ffs(zclk->mask)) & zclk->mask);
- 
- 	/*
- 	 * Set KICK bit in FRQCRB to update hardware setting and wait for
- 	 * clock change completion.
- 	 */
--	kick = readl(zclk->kick_reg);
--	kick |= CPG_FRQCRB_KICK;
--	writel(kick, zclk->kick_reg);
-+	cpg_reg_modify(zclk->kick_reg, 0, CPG_FRQCRB_KICK);
- 
- 	/*
- 	 * Note: There is no HW information about the worst case latency.
-@@ -262,12 +267,10 @@ static const struct sd_div_table cpg_sd_
- static int cpg_sd_clock_enable(struct clk_hw *hw)
- {
- 	struct sd_clock *clock = to_sd_clock(hw);
--	u32 val = readl(clock->csn.reg);
--
--	val &= ~(CPG_SD_STP_MASK);
--	val |= clock->div_table[clock->cur_div_idx].val & CPG_SD_STP_MASK;
- 
--	writel(val, clock->csn.reg);
-+	cpg_reg_modify(clock->csn.reg, CPG_SD_STP_MASK,
-+		       clock->div_table[clock->cur_div_idx].val &
-+		       CPG_SD_STP_MASK);
- 
- 	return 0;
- }
-@@ -276,7 +279,7 @@ static void cpg_sd_clock_disable(struct
- {
- 	struct sd_clock *clock = to_sd_clock(hw);
- 
--	writel(readl(clock->csn.reg) | CPG_SD_STP_MASK, clock->csn.reg);
-+	cpg_reg_modify(clock->csn.reg, 0, CPG_SD_STP_MASK);
- }
- 
- static int cpg_sd_clock_is_enabled(struct clk_hw *hw)
-@@ -323,7 +326,6 @@ static int cpg_sd_clock_set_rate(struct
- {
- 	struct sd_clock *clock = to_sd_clock(hw);
- 	unsigned int div = cpg_sd_clock_calc_div(clock, rate, parent_rate);
--	u32 val;
- 	unsigned int i;
- 
- 	for (i = 0; i < clock->div_num; i++)
-@@ -335,10 +337,9 @@ static int cpg_sd_clock_set_rate(struct
- 
- 	clock->cur_div_idx = i;
- 
--	val = readl(clock->csn.reg);
--	val &= ~(CPG_SD_STP_MASK | CPG_SD_FC_MASK);
--	val |= clock->div_table[i].val & (CPG_SD_STP_MASK | CPG_SD_FC_MASK);
--	writel(val, clock->csn.reg);
-+	cpg_reg_modify(clock->csn.reg, CPG_SD_STP_MASK | CPG_SD_FC_MASK,
-+		       clock->div_table[i].val &
-+		       (CPG_SD_STP_MASK | CPG_SD_FC_MASK));
- 
- 	return 0;
- }
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index e94a5f2dbd08..8643ecb1a3f3 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -3115,7 +3115,10 @@
+ 			cooling-maps {
+ 				map0 {
+ 					trip = <&sensor1_passive>;
+-					cooling-device = <&a57_0 4 4>;
++					cooling-device = <&a57_0 4 4>,
++							 <&a57_1 4 4>,
++							 <&a57_2 4 4>,
++							 <&a57_3 4 4>;
+ 				};
+ 			};
+ 		};
+@@ -3141,7 +3144,10 @@
+ 			cooling-maps {
+ 				map0 {
+ 					trip = <&sensor2_passive>;
+-					cooling-device = <&a57_0 4 4>;
++					cooling-device = <&a57_0 4 4>,
++							 <&a57_1 4 4>,
++							 <&a57_2 4 4>,
++							 <&a57_3 4 4>;
+ 				};
+ 			};
+ 		};
+@@ -3167,7 +3173,10 @@
+ 			cooling-maps {
+ 				map0 {
+ 					trip = <&sensor3_passive>;
+-					cooling-device = <&a57_0 4 4>;
++					cooling-device = <&a57_0 4 4>,
++							 <&a57_1 4 4>,
++							 <&a57_2 4 4>,
++							 <&a57_3 4 4>;
+ 				};
+ 			};
+ 		};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index e7614b781308..afedbf5728ec 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -2839,7 +2839,7 @@
+ 			cooling-maps {
+ 				map0 {
+ 					trip = <&sensor1_passive>;
+-					cooling-device = <&a57_0 5 5>;
++					cooling-device = <&a57_0 5 5>, <&a57_1 5 5>;
+ 				};
+ 			};
+ 		};
+@@ -2865,7 +2865,7 @@
+ 			cooling-maps {
+ 				map0 {
+ 					trip = <&sensor2_passive>;
+-					cooling-device = <&a57_0 5 5>;
++					cooling-device = <&a57_0 5 5>, <&a57_1 5 5>;
+ 				};
+ 			};
+ 		};
+@@ -2891,7 +2891,7 @@
+ 			cooling-maps {
+ 				map0 {
+ 					trip = <&sensor3_passive>;
+-					cooling-device = <&a57_0 5 5>;
++					cooling-device = <&a57_0 5 5>, <&a57_1 5 5>;
+ 				};
+ 			};
+ 		};
+-- 
+2.11.0
