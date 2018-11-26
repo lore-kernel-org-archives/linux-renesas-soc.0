@@ -1,54 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:54984 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728798AbeK2Dt1 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726567AbeKZXtT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Nov 2018 22:49:27 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
+        Mon, 26 Nov 2018 18:49:19 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 5/5] ARM: dts: r8a7744: Add TPU support
-Date: Wed, 28 Nov 2018 16:38:31 +0000
-Message-Id: <1543423111-19745-6-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1543423111-19745-1-git-send-email-biju.das@bp.renesas.com>
-References: <1543423111-19745-1-git-send-email-biju.das@bp.renesas.com>
+        Yoshihiro Kaneko <ykaneko0929@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 05/40] arm64: dts: renesas: r8a77990: Add DMA properties to MSIOF nodes
+Date: Mon, 26 Nov 2018 13:54:31 +0100
+Message-Id: <8517042060b55a37c1b7d3cbb04e131bfe61c13a.1543229515.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
+References: <cover.1543229515.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add TPU support to SoC DT.
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+This patch adds DMA properties to the MSIOF device nodes of R8A77990 SoC.
+
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7744.dtsi | 10 ++++++++++
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi | 10 ++++++++++
  1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index 43da6a0..40de227 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -272,6 +272,16 @@
- 			reg = <0 0xe6060000 0 0x164>;
- 		};
- 
-+		tpu: pwm@e60f0000 {
-+			compatible = "renesas,tpu-r8a7744", "renesas,tpu";
-+			reg = <0 0xe60f0000 0 0x148>;
-+			clocks = <&cpg CPG_MOD 304>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 304>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
-+
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a7744-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x1000>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index 7278cd52891d..6d5efeb9f363 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -700,6 +700,9 @@
+ 			reg = <0 0xe6e90000 0 0x0064>;
+ 			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 211>;
++			dmas = <&dmac1 0x41>, <&dmac1 0x40>,
++			       <&dmac2 0x41>, <&dmac2 0x40>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 211>;
+ 			#address-cells = <1>;
+@@ -713,6 +716,9 @@
+ 			reg = <0 0xe6ea0000 0 0x0064>;
+ 			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 210>;
++			dmas = <&dmac1 0x43>, <&dmac1 0x42>,
++			       <&dmac2 0x43>, <&dmac2 0x42>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 210>;
+ 			#address-cells = <1>;
+@@ -726,6 +732,8 @@
+ 			reg = <0 0xe6c00000 0 0x0064>;
+ 			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 209>;
++			dmas = <&dmac0 0x45>, <&dmac0 0x44>;
++			dma-names = "tx", "rx";
+ 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 209>;
+ 			#address-cells = <1>;
+@@ -739,6 +747,8 @@
+ 			reg = <0 0xe6c10000 0 0x0064>;
+ 			interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 208>;
++			dmas = <&dmac0 0x47>, <&dmac0 0x46>;
++			dma-names = "tx", "rx";
+ 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
+ 			resets = <&cpg 208>;
+ 			#address-cells = <1>;
 -- 
-2.7.4
+2.11.0
